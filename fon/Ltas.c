@@ -1,0 +1,454 @@
+/* Ltas.c
+ *
+ * Copyright (C) 1992-2004 Paul Boersma
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * pb 2002/07/16 GPL
+ * pb 2003/04/16 Ltases_merge
+ * pb 2003/06/19 Ltas_computeTrendLine, Ltas_subtractTrendLine
+ * pb 2004/05/05 more drawing options
+ * pb 2004/05/13 pitch-corrected LTAS
+ * pb 2004/10/24 Sampled statistics
+ * pb 2004/10/31 info
+ * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ */
+
+#include "Ltas.h"
+#include "Sound_and_Spectrum.h"
+
+static void info (I) {
+	iam (Ltas);
+	double meanPowerDensity;
+	classThing -> info (me);
+	Melder_info (
+		"Frequency domain:\n"
+		"   Lowest frequency: %s Hz\n"
+		"   Highest frequency: %s Hz\n"
+		"   Total frequency domain: %s Hz",
+		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
+	Melder_info (
+		"Frequency sampling:\n"
+		"   Number of frequency bands: %s\n"
+		"   Width of each band: %s Hz\n"
+		"   First band centred at: %s Hz",
+		Melder_integer (my nx), Melder_double (my dx), Melder_double (my x1));
+	meanPowerDensity = Sampled_getMean (me, my xmin, my xmax, 0, 1, FALSE);
+	Melder_info ("Total SPL: %s dB",
+		Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin))));
+}
+
+static double getValueAtSample (I, long isamp, long which, int units) {
+	iam (Ltas);
+	double value = my z [1] [isamp];
+	(void) which;
+	if (value == NUMundefined) return NUMundefined;
+	if (units == 1) {
+		return pow (10.0, 0.1 * value);   /* energy */
+	} else if (units == 2) {
+		return pow (2.0, 0.1 * value);   /* sones */
+	}
+	return value;
+}
+
+static double backToStandardUnits (I, double value, long which, int units) {
+	iam (Ltas);
+	(void) me;
+	(void) which;
+	return
+		value == NUMundefined ?
+			NUMundefined :
+		units == 1 ?
+			10.0 * log10 (value) :   /* value = energy */
+		units == 2 ?
+			10.0 * NUMlog2 (value) :   /* value = sones */
+		value;   /* value = dB */
+}
+
+class_methods (Ltas, Vector)
+	class_method (info)
+	class_method (getValueAtSample)
+	class_method (backToStandardUnits)
+class_methods_end
+
+Ltas Ltas_create (long nx, double dx) {
+	Ltas me = new (Ltas);
+	if (! me || ! Matrix_init (me, 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1)) return NULL;
+	return me;
+}
+
+void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish, const char *method) {
+	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, 1, "Frequency (Hz)");
+		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, 1, "Sound pressure level (dB/Hz)");
+		Graphics_marksLeft (g, 2, 1, 1, 0);
+	}
+}
+
+double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits) {
+	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, FALSE);
+	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, FALSE);
+	if (low == NUMundefined || high == NUMundefined) return NUMundefined;
+	return averagingUnits == 3 ? high - low : our backToStandardUnits (me, high / low, 0, averagingUnits);
+}
+
+double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits) {
+	double environmentLow = Sampled_getMean (me, environmentMin, peakMin, 0, averagingUnits, FALSE);
+	double environmentHigh = Sampled_getMean (me, peakMax, environmentMax, 0, averagingUnits, FALSE);
+	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, FALSE);
+	if (environmentLow == NUMundefined || environmentHigh == NUMundefined || peak == NUMundefined) return NUMundefined;
+	return averagingUnits == 3 ? peak - 0.5 * (environmentLow + environmentHigh) :
+		our backToStandardUnits (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
+}
+
+Matrix Ltas_to_Matrix (Ltas me) {
+	Matrix thee = Data_copy (me);
+	if (! thee) return NULL;
+	Thing_overrideClass (thee, classMatrix);
+	return thee;
+}
+
+Ltas Matrix_to_Ltas (Matrix me) {
+	Ltas thee = Data_copy (me);
+	if (! thee) return NULL;
+	Thing_overrideClass (thee, classLtas);
+	return thee;
+}
+
+Ltas Ltases_merge (Collection ltases) {
+	Ltas me, thee = NULL;
+	long iband, ispec;
+	if (ltases -> size < 1) { Melder_error ("Cannot merge zero Ltas objects."); goto end; }
+	me = ltases -> item [1];
+	thee = Data_copy (me); cherror
+	/*
+	 * Convert to energy.
+	 */
+	for (iband = 1; iband <= thy nx; iband ++) {
+		thy z [1] [iband] = pow (10.0, thy z [1] [iband] / 10.0);
+	}
+	for (ispec = 2; ispec <= ltases -> size; ispec ++) {
+		Ltas him = ltases -> item [ispec];
+		if (his xmin != thy xmin || his xmax != thy xmax) { Melder_error ("Frequency domains do not match."); goto end; }
+		if (his dx != thy dx) { Melder_error ("Bandwidths do not match."); goto end; }
+		if (his nx != thy nx || his x1 != thy x1) { Melder_error ("Frequency bands do not match."); goto end; }
+		/*
+		 * Add band energies.
+		 */
+		for (iband = 1; iband <= thy nx; iband ++) {
+			thy z [1] [iband] += pow (10.0, his z [1] [iband] / 10.0);
+		}
+	}
+	/*
+	 * Convert back to dB.
+	 */
+	for (iband = 1; iband <= thy nx; iband ++) {
+		thy z [1] [iband] = 10.0 * log10 (thy z [1] [iband]);
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
+	Ltas thee = NULL;
+	long imin, imax, n, i;
+	double sum = 0.0, amean, fmean, numerator = 0.0, denominator = 0.0, slope;
+	/*
+	 * Find the first and last bin.
+	 */
+	if ((n = Sampled_getWindowSamples (me, fmin, fmax, & imin, & imax)) < 2) {
+		return Melder_errorp ("(Ltas_computeTrendLine:) Number of bins too low (%ld). Should be at least 2.", n);
+	}
+	thee = Data_copy (me);
+	/*
+	 * Compute average amplitude and frequency.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		sum += thy z [1] [i];
+	}
+	amean = sum / n;
+	fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+	/*
+	 * Compute slope.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		double da = thy z [1] [i] - amean, df = thy x1 + (i - 1) * thy dx - fmean;
+		numerator += da * df;
+		denominator += df * df;
+	}
+	slope = numerator / denominator;
+	/*
+	 * Modify bins.
+	 */
+	for (i = 1; i <= thy nx; i ++) {
+		double df = thy x1 + (i - 1) * thy dx - fmean;
+		thy z [1] [i] = amean + slope * df;
+	}
+	return thee;
+}
+
+Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
+	Ltas thee = NULL;
+	long imin, imax, n, i;
+	double sum = 0.0, amean, fmean, numerator = 0.0, denominator = 0.0, slope;
+	/*
+	 * Find the first and last bin.
+	 */
+	if ((n = Sampled_getWindowSamples (me, fmin, fmax, & imin, & imax)) < 2) {
+		return Melder_errorp ("(Ltas_subtractTrendLine:) Number of bins too low (%ld). Should be at least 2.", n);
+	}
+	thee = Data_copy (me);
+	/*
+	 * Compute average amplitude and frequency.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		sum += thy z [1] [i];
+	}
+	amean = sum / n;
+	fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+	/*
+	 * Compute slope.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		double da = thy z [1] [i] - amean, df = thy x1 + (i - 1) * thy dx - fmean;
+		numerator += da * df;
+		denominator += df * df;
+	}
+	slope = numerator / denominator;
+	/*
+	 * Modify bins.
+	 */
+	for (i = 1; i < imin; i ++) {
+		thy z [1] [i] = 0.0;
+	}
+	for (i = imin; i <= imax; i ++) {
+		double df = thy x1 + (i - 1) * thy dx - fmean;
+		thy z [1] [i] -= amean + slope * df;
+	}
+	for (i = imax + 1; i <= thy nx; i ++) {
+		thy z [1] [i] = 0.0;
+	}
+	return thee;
+}
+
+Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
+	Ltas thee = NULL;
+	long numberOfBands = ceil ((my xmax - my xmin) / bandWidth), iband;
+	if (bandWidth <= my dx) {
+		Melder_error ("Bandwidth must be greater than %f.", my dx);
+		goto end;
+	}
+	thee = new (Ltas); cherror
+	Matrix_init (thee, my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1); cherror
+	for (iband = 1; iband <= numberOfBands; iband ++) {
+		double fmin = thy xmin + (iband - 1) * bandWidth;
+		double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, FALSE);
+		double meanPowerDensity = meanEnergyDensity * my dx;
+		thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10 * log10 (meanPowerDensity / 4.0e-10);
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
+	long iband;
+	Ltas thee = new (Ltas); cherror
+	Matrix_init (thee, my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1); cherror
+	for (iband = 1; iband <= my nx; iband ++) {
+		thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Ltas Sound_to_Ltas (Sound me, double bandwidth) {
+	Spectrum thee = NULL;
+	Ltas him = NULL;
+	long iband;
+	double correction;
+	thee = Sound_to_Spectrum (me, TRUE); cherror
+	him = Spectrum_to_Ltas (thee, bandwidth); cherror
+	correction = -10 * log10 (thy dx * my nx * my dx);
+	for (iband = 1; iband <= his nx; iband ++) {
+		his z [1] [iband] += correction;
+	}
+end:
+	iferror forget (him);
+	forget (thee);
+	return him;
+}
+
+Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
+	double maximumFrequency, double bandWidth,
+	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
+{
+	Ltas ltas = NULL, numbers = NULL;
+	Sound period = NULL;
+	Spectrum spectrum = NULL;
+	long numberOfPeriods = pulses -> nt - 2, ipulse, ifreq, iband;
+	ltas = Ltas_create (maximumFrequency / bandWidth, bandWidth); cherror
+	ltas -> xmax = maximumFrequency;
+	numbers = Data_copy (ltas);
+	if (numberOfPeriods < 1) {
+		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
+		goto end;
+	}
+	for (ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
+		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
+		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
+		double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
+		Melder_progress ((double) ipulse / pulses -> nt, "Sound & PointProcess: To Ltas: pulse %ld out of %ld", ipulse, pulses -> nt);
+		if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
+		    rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
+		    intervalFactor <= maximumPeriodFactor)
+		{
+			/*
+			 * We have a period! Compute the spectrum.
+			 */
+			period = Sound_extractPart (sound,
+				pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
+				enumi (Sound_WINDOW, Rectangular), 1.0, FALSE); cherror
+			spectrum = Sound_to_Spectrum (period, FALSE); cherror
+			for (ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
+				double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
+				double realPart = spectrum -> z [1] [ifreq];
+				double imaginaryPart = spectrum -> z [2] [ifreq];
+				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * sound -> nx;
+				iband = ceil (frequency / bandWidth);
+				if (iband >= 1 && iband <= ltas -> nx) {
+					ltas -> z [1] [iband] += energy;
+					numbers -> z [1] [iband] += 1;
+				}
+			}
+			forget (spectrum);
+			forget (period);
+		} else {
+			numberOfPeriods -= 1;
+		}
+	}
+	if (numberOfPeriods < 1) {
+		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
+		goto end;
+	}
+	for (iband = 1; iband <= ltas -> nx; iband ++) {
+		if (numbers -> z [1] [iband] == 0) {
+			ltas -> z [1] [iband] = NUMundefined;
+		} else {
+			ltas -> z [1] [iband] = 10.0 * log10 (ltas -> z [1] [iband] / numbers -> z [1] [iband] * sound -> nx);
+		}
+	}
+	for (iband = 1; iband <= ltas -> nx; iband ++) {
+		if (ltas -> z [1] [iband] == NUMundefined) {
+			long ibandleft = iband - 1, ibandright = iband + 1;
+			while (ibandleft >= 1 && ltas -> z [1] [ibandleft] == NUMundefined) ibandleft --;
+			while (ibandright <= ltas -> nx && ltas -> z [1] [ibandright] == NUMundefined) ibandright ++;
+			if (ibandleft < 1 && ibandright > ltas -> nx) {
+				Melder_error ("Cannot create an Ltas without energy in any bins.");
+				goto end;
+			}
+			if (ibandleft < 1) {
+				ltas -> z [1] [iband] = ltas -> z [1] [ibandright];
+			} else if (ibandright > ltas -> nx) {
+				ltas -> z [1] [iband] = ltas -> z [1] [ibandleft];
+			} else {
+				double frequency = ltas -> x1 + (iband - 1) * ltas -> dx;
+				double fleft = ltas -> x1 + (ibandleft - 1) * ltas -> dx;
+				double fright = ltas -> x1 + (ibandright - 1) * ltas -> dx;
+				ltas -> z [1] [iband] = ((fright - frequency) * ltas -> z [1] [ibandleft]
+					+ (frequency - fleft) * ltas -> z [1] [ibandright]) / (fright - fleft);
+			}
+		}
+	}
+end:
+	Melder_progress (1.0, NULL);
+	iferror forget (ltas);
+	forget (numbers);
+	forget (period);
+	forget (spectrum);
+	return ltas;
+}
+
+Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
+	long maximumHarmonic,
+	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
+{
+	Ltas ltas = NULL;
+	Sound period = NULL;
+	Spectrum spectrum = NULL;
+	long numberOfPeriods = pulses -> nt - 2, ipulse, iharm;
+	ltas = Ltas_create (maximumHarmonic, 1.0); cherror
+	ltas -> xmax = maximumHarmonic;
+	if (numberOfPeriods < 1) {
+		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
+		goto end;
+	}
+	for (ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
+		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
+		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
+		double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
+		Melder_progress ((double) ipulse / pulses -> nt, "Sound & PointProcess: To Ltas: pulse %ld out of %ld", ipulse, pulses -> nt);
+		if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
+		    rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
+		    intervalFactor <= maximumPeriodFactor)
+		{
+			/*
+			 * We have a period! Compute the spectrum.
+			 */
+			long localMaximumHarmonic;
+			period = Sound_extractPart (sound,
+				pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
+				enumi (Sound_WINDOW, Rectangular), 1.0, FALSE); cherror
+			spectrum = Sound_to_Spectrum (period, FALSE); cherror
+			localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
+			for (iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
+				double realPart = spectrum -> z [1] [iharm];
+				double imaginaryPart = spectrum -> z [2] [iharm];
+				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * sound -> nx;
+				ltas -> z [1] [iharm] += energy;
+			}
+			forget (spectrum);
+			forget (period);
+		} else {
+			numberOfPeriods -= 1;
+		}
+	}
+	if (numberOfPeriods < 1) {
+		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
+		goto end;
+	}
+	for (iharm = 1; iharm <= ltas -> nx; iharm ++) {
+		if (ltas -> z [1] [iharm] == 0) {
+			ltas -> z [1] [iharm] = -300;
+		} else {
+			ltas -> z [1] [iharm] = 10.0 * log10 (ltas -> z [1] [iharm]);
+		}
+	}
+end:
+	Melder_progress (1.0, NULL);
+	iferror forget (ltas);
+	forget (period);
+	forget (spectrum);
+	return ltas;
+}
+
+/* End of file Ltas.c */

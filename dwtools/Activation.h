@@ -1,0 +1,59 @@
+#ifndef _Activation_h_
+#define _Activation_h_
+/* Activation.h
+ * 
+ * Copyright (C) 1993-2004 David Weenink
+ * 
+ * This program is free oftware; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ djmw 20020315 GPL header.
+ djmw 20041203 Latest modification.
+ */
+
+#include "Matrix.h"
+
+#define Activation_members Matrix_members
+#define Activation_methods Matrix_methods
+class_create (Activation, Matrix)
+
+/* Attributes:
+   xmin				:1
+   xmax				:#units
+   nx				:#units
+   dx				:1
+   x1				:1
+   ymin				:1
+   ymax				:#patterns
+   ny				:#patterns
+   dy				:1
+   y1				:1
+   z[iy][ix]		:the activities
+*/
+
+int Activation_init (I, long ny, long nx);
+
+Any Activation_create (long ny, long nx);
+
+Any Matrix_to_Activation (I);
+
+Any Activation_to_Matrix (I);
+
+
+int _Activation_checkElements (Activation me);
+/* Return 1 if all elements are in interval [0,1] else 0. */
+
+#endif /* _Activation_h_ */

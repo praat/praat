@@ -1,0 +1,11 @@
+# File: makefile.defs.solaris.cde
+
+# System: Solaris-CDE, gcc.
+# Site: MaxPlanck, Nijmegen.
+# Paul Boersma, February 18, 2000.
+
+CC = gcc -DUNIX -Dsun -DFUNCPROTO
+
+LIBS = -lXm -lm
+
+RANLIB = ls

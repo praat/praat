@@ -1,0 +1,54 @@
+#ifndef _Strings_extensions_h_
+#define _Strings_extensions_h_
+/* Strings_extensions.h
+ *
+ * Copyright (C) 1993-2004 David Weenink
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ djmw 20010114
+ djmw 20020813 GPL header
+ djmw 20040629 Strings_append  now accepts an Ordered of Strings.
+*/
+#ifndef _Collection_h_
+	#include "Collection.h"
+#endif
+
+#ifndef _Strings_h_
+	#include "Strings.h"
+#endif
+
+Strings Strings_createFixedLength (long numberOfStrings);
+
+Strings Strings_append (Ordered me);
+
+Strings Strings_change (Strings me, char *search, char *replace, 
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+	int use_regexp);
+
+int Strings_setString (Strings me, char *new, long index);
+
+Strings strings_to_Strings (char **strings, long from, long to);
+
+Strings Strings_extractPart (Strings me, long start, long end);
+
+Strings strings_to_Strings_link (char** strings, long n);
+/* for (i=1; i<= n; i++) my strings[i] = strings[i]; */
+void _Strings_unlink (Strings me);
+/* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */
+
+#endif /* _Strings_extensions_h_ */

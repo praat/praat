@@ -1,0 +1,847 @@
+/* Pitch.c
+ *
+ * Copyright (C) 1992-2004 Paul Boersma
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * pb 2002/07/16 GPL
+ * pb 2004/05/08 standard info
+ * pb 2004/10/16 struct Pitch_Candidate -> struct structPitch_Candidate
+ * pb 2004/10/24 Sampled statistics
+ * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ */
+
+#include "Pitch.h"
+#include <ctype.h>
+#include "Sound_and_Spectrum.h"
+#include "Matrix_and_Pitch.h"
+
+#include "oo_DESTROY.h"
+#include "Pitch_def.h"
+#include "oo_COPY.h"
+#include "Pitch_def.h"
+#include "oo_EQUAL.h"
+#include "Pitch_def.h"
+#include "oo_WRITE_ASCII.h"
+#include "Pitch_def.h"
+#include "oo_READ_ASCII.h"
+#include "Pitch_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "Pitch_def.h"
+#include "oo_READ_BINARY.h"
+#include "Pitch_def.h"
+#include "oo_DESCRIPTION.h"
+#include "Pitch_def.h"
+
+#define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
+#define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
+#define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
+
+static double hertzToUnits (double f, int units) {
+	if (units == Pitch_MEL) return NUMhertzToMel (f);
+	if (units == Pitch_SEMITONES) return NUMhertzToSemitones (f);
+	if (units == Pitch_ERB) return NUMhertzToErb (f);
+	return f;
+}
+
+/* one method function */
+
+static double getValueAtSample (I, long iframe, long which, int units) {
+	iam (Pitch);
+	double f = my frame [iframe]. candidate [1]. frequency;
+	if (f <= 0.0 || f >= my ceiling) return NUMundefined;   /* Frequency out of range (or NUMundefined)? Voiceless. */
+	if (which == 1) {
+		if (units == Pitch_HERTZ) return f;
+		if (units == Pitch_MEL) return NUMhertzToMel (f);
+		if (units == Pitch_SEMITONES) return NUMhertzToSemitones (f);
+		if (units == Pitch_ERB) return NUMhertzToErb (f);
+	} else if (which == 2) {
+		double s = my frame [iframe]. candidate [1]. strength;
+		if (units == Pitch_STRENGTH_UNIT_AUTOCORRELATION)
+			return s;
+		if (units == Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO)
+			return s <= 1e-15 ? 1e15 : s > 1.0 - 1e-15 ? 1e-15 : (1.0 - s) / s;   /* Before losing precision. */
+		if (units == Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB)
+			return s <= 1e-15 ? -150.0 : s > 1.0 - 1e-15 ? 150.0 : 10 * log10 (s / (1.0 - s));   /* Before losing precision. */
+	}
+	return NUMundefined;
+}
+
+int Pitch_isVoiced_i (Pitch me, long iframe) {
+	return NUMdefined (Sampled_getValueAtSample (me, iframe, 1, Pitch_HERTZ));
+}
+
+int Pitch_isVoiced_t (Pitch me, double time) {
+	return NUMdefined (Sampled_getValueAtX (me, time, 1, Pitch_HERTZ, FALSE));
+}
+
+double Pitch_getValueInFrame (Pitch me, long iframe, int units) {
+	return Sampled_getValueAtSample (me, iframe, 1, units);
+}
+
+double Pitch_getStrengthInFrame (Pitch me, long iframe, int units) {
+	return Sampled_getValueAtSample (me, iframe, 2, units);
+}
+
+double Pitch_getValueAtTime (Pitch me, double time, int units, int interpolate) {
+	return Sampled_getValueAtX (me, time, 1, units, interpolate);
+}
+
+double Pitch_getStrengthAtTime (Pitch me, double time, int units, int interpolate) {
+	return Sampled_getValueAtX (me, time, 2, units, interpolate);
+}
+
+long Pitch_countVoicedFrames (Pitch me) {
+	return Sampled_countDefinedSamples (me, 1, Pitch_HERTZ);
+}
+
+double Pitch_getMean (Pitch me, double tmin, double tmax, int units) {
+	return Sampled_getMean (me, tmin, tmax, 1, units, TRUE);
+}
+
+double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int units) {
+	return Sampled_getMean (me, tmin, tmax, 2, units, TRUE);
+}
+
+double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int units) {
+	long imin, imax;
+	double mean = Pitch_getMean (me, tmin, tmax, units), standardDeviation = NUMundefined;
+	if (mean == NUMundefined) return NUMundefined;
+	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	if (Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax)) {
+		double sum = 0.0;
+		long i, nVoiced = 0;
+		for (i = imin; i <= imax; i ++) {
+			Pitch_Frame frame = & my frame [i];
+			double f = FREQUENCY (frame);
+			if (NOT_VOICED (f)) continue;   /* Ignore unvoiced frames. */
+			nVoiced ++;
+			f = hertzToUnits (f, units) - mean;
+			sum += f * f;
+		}
+		if (nVoiced > 1) standardDeviation = sqrt (sum / (nVoiced - 1));
+	}
+	return standardDeviation;
+}
+
+#define MEL(f)  NUMhertzToMel (f)
+#define SEMITONES(f)  NUMhertzToSemitones (f)
+#define ERB(f)  NUMhertzToErb (f)
+
+double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int units) {
+	return Sampled_getQuantile (me, tmin, tmax, quantile, 1, units);
+}
+
+void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int units, int interpolate,
+	double *return_maximum, double *return_timeOfMaximum)
+{
+	Sampled_getMaximumAndX (me, tmin, tmax, 1, units, interpolate, return_maximum, return_timeOfMaximum);
+	if (units != Pitch_SEMITONES && return_maximum && *return_maximum <= 0.0) *return_maximum = NUMundefined;   /* Unlikely. */
+}
+
+double Pitch_getMaximum (Pitch me, double tmin, double tmax, int units, int interpolate) {
+	double maximum;
+	Pitch_getMaximumAndTime (me, tmin, tmax, units, interpolate, & maximum, NULL);
+	return maximum;
+}
+
+double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int units, int interpolate) {
+	double time;
+	Pitch_getMaximumAndTime (me, tmin, tmax, units, interpolate, NULL, & time);
+	return time;
+}
+
+void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int units, int interpolate,
+	double *return_minimum, double *return_timeOfMinimum)
+{
+	Sampled_getMinimumAndX (me, tmin, tmax, 1, units, interpolate, return_minimum, return_timeOfMinimum);
+	if (units != Pitch_SEMITONES && return_minimum && *return_minimum <= 0.0) *return_minimum = NUMundefined;
+}
+
+double Pitch_getMinimum (Pitch me, double tmin, double tmax, int units, int interpolate) {
+	double minimum;
+	Pitch_getMinimumAndTime (me, tmin, tmax, units, interpolate, & minimum, NULL);
+	return minimum;
+}
+
+double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int units, int interpolate) {
+	double time;
+	Pitch_getMinimumAndTime (me, tmin, tmax, units, interpolate, NULL, & time);
+	return time;
+}
+
+static long Pitch_getMeanAbsoluteSlope (Pitch me,
+	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
+{
+	long firstVoicedFrame = 0, lastVoicedFrame = 0, nVoiced = 0, i;
+	double *frequencies = NUMdvector (1, my nx);
+	for (i = 1; i <= my nx; i ++) {
+		double frequency = my frame [i]. candidate [1]. frequency;
+		frequencies [i] = frequency > 0.0 && frequency < my ceiling ? frequency : 0.0;
+		if (frequencies [i]) nVoiced ++;
+	}
+	for (i = 1; i <= my nx; i ++)   /* Look for first voiced frame. */
+		if (frequencies [i] != 0.0) { firstVoicedFrame = i; break; }
+	for (i = my nx; i >= 1; i --)   /* Look for last voiced frame. */
+		if (frequencies [i] != 0.0) { lastVoicedFrame = i; break; }
+	if (nVoiced > 1) {
+		int ilast = firstVoicedFrame;
+		double span = (lastVoicedFrame - firstVoicedFrame) * my dx, flast = frequencies [ilast];
+		double slopeHz = 0, slopeMel = 0, slopeSemitones = 0, slopeErb = 0, slopeRobust = 0;
+		for (i = firstVoicedFrame + 1; i <= lastVoicedFrame; i ++) if (frequencies [i] != 0.0) {
+			double localStepSemitones = fabs (SEMITONES (frequencies [i]) - SEMITONES (flast));
+			slopeHz += fabs (frequencies [i] - flast);
+			slopeMel += fabs (MEL (frequencies [i]) - MEL (flast));
+			slopeSemitones += localStepSemitones;
+			slopeErb += fabs (ERB (frequencies [i]) - ERB (flast));
+			while (localStepSemitones >= 12.0) localStepSemitones -= 12.0;   /* Kill octave jumps. */
+			if (localStepSemitones > 6.0) localStepSemitones = 12.0 - localStepSemitones;
+			slopeRobust += localStepSemitones;
+			ilast = i;
+			flast = frequencies [i];
+		}
+		if (out_hertz) *out_hertz = slopeHz / span;
+		if (out_mel) *out_mel = slopeMel / span;
+		if (out_semitones) *out_semitones = slopeSemitones / span;
+		if (out_erb) *out_erb = slopeErb / span;
+		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = slopeRobust / span;
+	} else {
+		if (out_hertz) *out_hertz = 0.0;
+		if (out_mel) *out_mel = 0.0;
+		if (out_semitones) *out_semitones = 0.0;
+		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = 0.0;
+	}
+	NUMdvector_free (frequencies, 1);
+	return nVoiced;
+}
+
+long Pitch_getMeanAbsSlope_hertz (Pitch me, double *slope) {
+	return Pitch_getMeanAbsoluteSlope (me, slope, NULL, NULL, NULL, NULL);
+}
+
+long Pitch_getMeanAbsSlope_mel (Pitch me, double *slope) {
+	return Pitch_getMeanAbsoluteSlope (me, NULL, slope, NULL, NULL, NULL);
+}
+
+long Pitch_getMeanAbsSlope_semitones (Pitch me, double *slope) {
+	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, slope, NULL, NULL);
+}
+
+long Pitch_getMeanAbsSlope_erb (Pitch me, double *slope) {
+	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, NULL, slope, NULL);
+}
+
+long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
+	return Pitch_getMeanAbsoluteSlope (me, NULL, NULL, NULL, NULL, slope);
+}
+
+static void info (I) {
+	iam (Pitch);
+	char info [3000];
+	long nVoiced;
+	double *frequencies = Sampled_getSortedValues (me, 1, Pitch_HERTZ, & nVoiced);
+	classData -> info (me);
+	Melder_info (
+		"Time domain:\n"
+		"   Starting time: %s s\n"
+		"   Finishing time: %s s\n"
+		"   Total duration: %s s",
+		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
+	Melder_info (
+		"Time sampling:\n"
+		"   Number of frames: %ld (%ld voiced)\n"
+		"   Time step: %.15g seconds\n"
+		"   First frame at: %.15g seconds\n"
+		"Ceiling at: %.15g Hertz",
+		my nx, nVoiced, my dx, my x1, (double) my ceiling);
+
+	info [0] = '\0';
+	if (nVoiced >= 1) {   /* Quantiles. */
+		double quantile10, quantile16, quantile50, quantile84, quantile90;
+		quantile10 = NUMquantile_d (nVoiced, frequencies, 0.10);
+		quantile16 = NUMquantile_d (nVoiced, frequencies, 0.16);
+		quantile50 = NUMquantile_d (nVoiced, frequencies, 0.50);   /* Median. */
+		quantile84 = NUMquantile_d (nVoiced, frequencies, 0.84);
+		quantile90 = NUMquantile_d (nVoiced, frequencies, 0.90);
+		sprintf (info + strlen (info), "\nEstimated quantiles:\n   10%% = %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			quantile10, MEL (quantile10), SEMITONES (quantile10), ERB (quantile10));
+		sprintf (info + strlen (info), "\n   16%% = %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			quantile16, MEL (quantile16), SEMITONES (quantile16), ERB (quantile16));
+		sprintf (info + strlen (info), "\n   50%% (median) = %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			quantile50, MEL (quantile50), SEMITONES (quantile50), ERB (quantile50));
+		sprintf (info + strlen (info), "\n   84%% = %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			quantile84, MEL (quantile84), SEMITONES (quantile84), ERB (quantile84));
+		sprintf (info + strlen (info), "\n   90%% = %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			quantile90, MEL (quantile90), SEMITONES (quantile90), ERB (quantile90));
+		if (nVoiced > 1) {
+			double corr = sqrt (nVoiced / (nVoiced - 1.0));
+			sprintf (info + strlen (info), "\nEstimated spreading:\n   84%%-median = %.3g Hz = %.3g Mel = %.3g semitones = %.3g ERB",
+				(quantile84 - quantile50) * corr, (MEL (quantile84) - MEL (quantile50)) * corr,
+				(SEMITONES (quantile84) - SEMITONES (quantile50)) * corr, (ERB (quantile84) - ERB (quantile50)) * corr);
+			sprintf (info + strlen (info), "\n   median-16%% = %.3g Hz = %.3g Mel = %.3g semitones = %.3g ERB",
+				(quantile50 - quantile16) * corr, (MEL (quantile50) - MEL (quantile16)) * corr,
+				(SEMITONES (quantile50) - SEMITONES (quantile16)) * corr, (ERB (quantile50) - ERB (quantile16)) * corr);
+			sprintf (info + strlen (info), "\n   90%%-10%% = %.3g Hz = %.3g Mel = %.3g semitones = %.3g ERB",
+				(quantile90 - quantile10) * corr, (MEL (quantile90) - MEL (quantile10)) * corr,
+				(SEMITONES (quantile90) - SEMITONES (quantile10)) * corr, (ERB (quantile90) - ERB (quantile10)) * corr);
+		}
+	}
+	if (nVoiced >= 1) {   /* Extrema, range, mean and standard deviation. */
+		double minimum = Pitch_getMinimum (me, my xmin, my xmax, Pitch_HERTZ, FALSE);
+		double maximum = Pitch_getMaximum (me, my xmin, my xmax, Pitch_HERTZ, FALSE);
+		double meanHertz, meanMel, meanSemitones, meanErb, stdevHertz, stdevMel, stdevSemitones, stdevErb;
+		sprintf (info + strlen (info), "\n\nMinimum %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB"
+			"\nMaximum %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			minimum, MEL (minimum), SEMITONES (minimum), ERB (minimum),
+			maximum, MEL (maximum), SEMITONES (maximum), ERB (maximum));
+		sprintf (info + strlen (info), "\nRange %.10g Hz = %.5g Mel = %.5g semitones = %.5g ERB",
+			maximum - minimum, MEL (maximum) - MEL (minimum),
+			SEMITONES (maximum) - SEMITONES (minimum), ERB (maximum) - ERB (minimum));
+		meanHertz = Pitch_getMean (me, 0, 0, Pitch_HERTZ);
+		meanMel = Pitch_getMean (me, 0, 0, Pitch_MEL);
+		meanSemitones = Pitch_getMean (me, 0, 0, Pitch_SEMITONES);
+		meanErb = Pitch_getMean (me, 0, 0, Pitch_ERB);
+		stdevHertz = Pitch_getStandardDeviation (me, 0, 0, Pitch_HERTZ);
+		stdevMel = Pitch_getStandardDeviation (me, 0, 0, Pitch_MEL);
+		stdevSemitones = Pitch_getStandardDeviation (me, 0, 0, Pitch_SEMITONES);
+		stdevErb = Pitch_getStandardDeviation (me, 0, 0, Pitch_ERB);
+		sprintf (info + strlen (info), "\nAverage: %.10g Hz = %.5g Mel = %.5g semitones above 100 Hz = %.5g ERB",
+			meanHertz, meanMel, meanSemitones, meanErb);
+		if (nVoiced >= 2) {
+			sprintf (info + strlen (info), "\nStandard deviation: %.3g Hz = %.3g Mel = %.3g semitones = %.3g ERB",
+				stdevHertz, stdevMel, stdevSemitones, stdevErb);
+		}
+	}
+	NUMdvector_free (frequencies, 1);
+	if (nVoiced > 1) {   /* Variability: mean absolute slope. */
+		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
+		Pitch_getMeanAbsoluteSlope (me, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);
+		sprintf (info + strlen (info), "\n\nMean absolute slope: %.5g Hz/s = %.5g Mel/s = %.5g semitones/s = %.5g ERB/s"
+			"\nMean absolute slope without octave jumps: %.5g semitones/s", slopeHertz, slopeMel,
+				slopeSemitones, slopeErb, slopeWithoutOctaveJumps);
+	}
+	Melder_info ("%s\n", info);   /* Extra new line. */
+}
+
+class_methods (Pitch, Sampled)
+	class_method_local (Pitch, destroy)
+	class_method_local (Pitch, description)
+	class_method_local (Pitch, copy)
+	class_method_local (Pitch, equal)
+	class_method_local (Pitch, writeAscii)
+	class_method_local (Pitch, readAscii)
+	class_method_local (Pitch, writeBinary)
+	class_method_local (Pitch, readBinary)
+	class_method (info)
+	class_method (getValueAtSample)
+class_methods_end
+
+int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
+	NUMstructvector_free (Pitch_Candidate, my candidate, 1);
+	if (! (my candidate = NUMstructvector (Pitch_Candidate, 1, nCandidates))) return 0;
+	my nCandidates = nCandidates;
+	return 1;
+}
+
+Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
+	double ceiling, int maxnCandidates)
+{
+	Pitch me = new (Pitch);
+	long it;
+	if (! me || ! Sampled_init (me, tmin, tmax, nt, dt, t1)) goto error;
+	my ceiling = ceiling;
+	my maxnCandidates = maxnCandidates;
+	if (! (my frame = NUMstructvector (Pitch_Frame, 1, nt))) goto error;
+
+	/* Put one candidate in every frame (unvoiced, silent). */
+	for (it = 1; it <= nt; it ++)
+		if (! Pitch_Frame_init (& my frame [it], 1)) goto error;
+
+	return me;
+error:
+	forget (me);
+	return Melder_errorp ("Pitch not created.");
+}
+
+void Pitch_setCeiling (Pitch me, double ceiling)   { my ceiling = ceiling; }
+
+int Pitch_getMaxnCandidates (Pitch me) {
+	int result = 0;
+	long i;
+	for (i = 1; i <= my nx; i ++) {
+		int nCandidates = my frame [i]. nCandidates;
+		if (nCandidates > result) result = nCandidates;
+	}
+	return result;
+}
+
+void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshold,
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost,
+	double ceiling, int pullFormants)
+{
+	long iframe;
+	int icand, icand1, icand2, maxnCandidates = Pitch_getMaxnCandidates (me), place;
+	float maximum, value;
+	float **delta;
+	int **psi;
+	double ceiling2 = pullFormants ? 2 * ceiling : ceiling;
+	/* Next three lines 20011015 */
+	double timeStepCorrection = 0.01 / my dx;
+	octaveJumpCost *= timeStepCorrection;
+	voicedUnvoicedCost *= timeStepCorrection;
+
+	my ceiling = ceiling;
+	delta = NUMfmatrix (1, my nx, 1, maxnCandidates);
+	psi = NUMimatrix (1, my nx, 1, maxnCandidates);
+	if (! delta || ! psi) goto end;
+
+	for (iframe = 1; iframe <= my nx; iframe ++) {
+		Pitch_Frame frame = & my frame [iframe];
+		double unvoicedStrength = silenceThreshold <= 0 ? 0 :
+			2 - frame->intensity / (silenceThreshold / (1 + voicingThreshold));
+		unvoicedStrength = voicingThreshold + (unvoicedStrength > 0 ? unvoicedStrength : 0);
+		for (icand = 1; icand <= frame->nCandidates; icand ++) {
+			Pitch_Candidate candidate = & frame->candidate [icand];
+			int voiceless = candidate->frequency == 0 || candidate->frequency > ceiling2;
+			delta [iframe] [icand] = voiceless ? unvoicedStrength :
+				candidate->strength - octaveCost * NUMlog2 (ceiling / candidate->frequency);
+		}
+	}
+
+	/* Look for the most probable path through the maxima. */
+	/* There is a cost for the voiced/unvoiced transition, */
+	/* and a cost for a frequency jump. */
+
+	for (iframe = 2; iframe <= my nx; iframe ++) {
+		Pitch_Frame prevFrame = & my frame [iframe - 1], curFrame = & my frame [iframe];
+		float *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
+		int *curPsi = psi [iframe];
+		for (icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
+			double f2 = curFrame -> candidate [icand2]. frequency;
+			maximum = -10;
+			place = 0;
+			for (icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
+				double f1 = prevFrame -> candidate [icand1]. frequency, transitionCost;
+				int previousVoiceless = f1 <= 0 || f1 >= ceiling2;
+				int currentVoiceless = f2 <= 0 || f2 >= ceiling2;
+				if (previousVoiceless != currentVoiceless)   /* Voice transition. */
+					transitionCost = voicedUnvoicedCost;
+				else if (currentVoiceless)   /* Both voiceless. */
+					transitionCost = 0;
+				else   /* Both voiced; frequency jump. */
+					transitionCost = octaveJumpCost * fabs (NUMlog2 (f1 / f2));
+				value = prevDelta [icand1] - transitionCost + curDelta [icand2];
+				if (value > maximum) {
+					maximum = value;
+					place = icand1;
+				}
+			}
+			curDelta [icand2] = maximum;
+			curPsi [icand2] = place;
+		}
+	}
+
+	/* Find the end of the most probable path. */
+
+	maximum = delta [my nx] [place = 1];
+	for (icand = 2; icand <= my frame [my nx]. nCandidates; icand ++)
+		if (delta [my nx] [icand] > maximum)
+			maximum = delta [my nx] [place = icand];
+
+	/* Backtracking: follow the path backwards. */
+
+	for (iframe = my nx; iframe >= 1; iframe --) {
+		Pitch_Frame frame = & my frame [iframe];
+		struct structPitch_Candidate help = frame -> candidate [1];
+		frame -> candidate [1] = frame -> candidate [place];
+		frame -> candidate [place] = help;
+		place = psi [iframe] [place];
+		/*
+		 * Correct translation by CodeWarrior 11, with "Reduction in strength" or "Lifetime analysis" off:
+		 *
+000004B1: 8B 4C 24 1C             mov       ecx,dword ptr [esp]+01C       // ecx = iframe
+000004B5: 8B 44 24 28             mov       eax,dword ptr [esp]+028       // eax = psi
+000004B9: 8B 14 88                mov       edx,dword ptr [eax][ecx*04]   // edx = * (psi + iframe*4) = psi [iframe]
+000004BC: 8B 4C 24 18             mov       ecx,dword ptr [esp]+018       // ecx = place
+000004C0: 8B 04 8A                mov       eax,dword ptr [edx][ecx*04]  // eax = * (psi [iframe] + place*4) = psi [iframe] [place]
+000004C3: 89 44 24 18             mov       dword ptr [esp]+018,eax       // place = eax
+		 *
+		 * Incorrect when both "Reduction in strength" and "Lifetime analysis" on:
+		 *
+000004B2: 8B 4C 24 1C             mov       ecx,dword ptr [esp]+01C       // ecx = iframe
+000004B6: 8B 44 24 28             mov       eax,dword ptr [esp]+028       // eax = psi
+000004BA: 8B 0C 88                mov       ecx,dword ptr [eax][ecx*04]   // ecx = * (psi + iframe*4) = psi [iframe]
+000004BD: 8B 4C 24 18             mov       ecx,dword ptr [esp]+018       // ecx = place !!
+000004C1: 8B 04 89                mov       eax,dword ptr [ecx][ecx*04]  // eax = * (place + place*4) !!!!
+000004C4: 89 44 24 18             mov       dword ptr [esp]+018,eax
+		 */
+	}
+
+	/* Pull formants: devoice frames with frequencies between ceiling and ceiling2. */
+
+	if (ceiling2 > ceiling) for (iframe = my nx; iframe >= 1; iframe --) {
+		Pitch_Frame frame = & my frame [iframe];
+		Pitch_Candidate winner = & frame -> candidate [1];
+		double f = winner -> frequency;
+		if (f > ceiling && f <= ceiling2) {
+			for (icand = 2; icand <= frame -> nCandidates; icand ++) {
+				Pitch_Candidate loser = & frame -> candidate [icand];
+				if (loser -> frequency == 0.0) {
+					struct structPitch_Candidate help = * winner;
+					* winner = * loser;
+					* loser = help;
+					break;
+				}
+			}
+		}
+	}
+
+end:
+	NUMfmatrix_free (delta, 1, 1);
+	NUMimatrix_free (psi, 1, 1);
+}
+
+void Pitch_convertYscale (double *fmin, double *fmax, int yscale) {
+	if (yscale == Pitch_yscale_LOGARITHMIC) {
+		if (*fmin <= 0) *fmin = 1;
+		*fmin = log10 (*fmin);
+		*fmax = log10 (*fmax);
+	}
+}
+
+double Pitch_convertFrequency (double f_Hz, int yscale) {
+	return yscale == Pitch_yscale_LINEAR ? f_Hz :
+		yscale == Pitch_yscale_LOGARITHMIC ? log10 (f_Hz) :
+		yscale == Pitch_yscale_SEMITONES ? NUMhertzToSemitones (f_Hz) :
+		yscale == Pitch_yscale_MEL ? NUMhertzToMel (f_Hz) :
+		NUMhertzToErb (f_Hz);
+}
+
+const char * Pitch_yscaleText (int yscale) {
+	return yscale == Pitch_yscale_SEMITONES ? "Pitch (semitones %%re% 100 Hz)" :
+		yscale == Pitch_yscale_MEL ? "Pitch (mel)" : yscale == Pitch_yscale_ERB ? "Pitch (ERB)" : "Pitch (Hz)";
+}
+
+const char * Pitch_shortUnitText (int yscale) {
+	return yscale == Pitch_yscale_SEMITONES ? "st" : yscale == Pitch_yscale_MEL ? "mel" :
+		yscale == Pitch_yscale_ERB ? "erb" : "Hz";
+}
+
+const char * Pitch_longUnitText (int yscale) {
+	return yscale == Pitch_yscale_SEMITONES ? "semitones" : yscale == Pitch_yscale_MEL ? "mel" :
+		yscale == Pitch_yscale_ERB ? "ERB" : "Hertz";
+}
+
+int Pitch_yscaleToUnits (int yscale) {
+	return yscale == Pitch_yscale_SEMITONES ? Pitch_SEMITONES : yscale == Pitch_yscale_MEL ? Pitch_MEL :
+		yscale == Pitch_yscale_ERB ? Pitch_ERB : Pitch_HERTZ;
+}
+
+void Pitch_drawInside (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, int speckle, int yscale) {
+	long itmin, itmax, it;
+	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
+	Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+	Pitch_convertYscale (& fmin, & fmax, yscale);
+	if (fmax <= fmin) return;
+	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+	for (it = itmin; it <= itmax; it ++) {
+		double f = my frame [it]. candidate [1]. frequency;
+		if (f > 0.0 && f < my ceiling) {   /* This frame voiced? */
+			double t = Sampled_indexToX (me, it);
+			if (speckle) {
+				f = Pitch_convertFrequency (f, yscale);
+				if (f >= fmin && f <= fmax)
+					Graphics_fillCircle_mm (g, t, f, speckle);
+			} else {
+				double fprevious = it == 1 ? 0.0 : my frame [it - 1]. candidate [1]. frequency;
+				double fnext = it == my nx ? 0.0 : my frame [it + 1]. candidate [1]. frequency;
+				int previousFrameVoiced = fprevious > 0.0 && fprevious < my ceiling;
+				int nextFrameVoiced = fnext > 0.0 && fnext < my ceiling;
+				double fleft, fright;
+				f = fleft = fright = Pitch_convertFrequency (f, yscale);
+				if (previousFrameVoiced) fprevious = Pitch_convertFrequency (fprevious, yscale);
+				if (nextFrameVoiced) fnext = Pitch_convertFrequency (fnext, yscale);
+				if (previousFrameVoiced) fleft = 0.5 * (fprevious + f);   /* Interpolate. */
+				else if (nextFrameVoiced) fleft = 1.5 * f - 0.5 * fnext;   /* Extrapolate. */
+				if (nextFrameVoiced) fright = 0.5 * (fnext + f);   /* Interpolate. */
+				else if (previousFrameVoiced) fright = 1.5 * f - 0.5 * fprevious;   /* Extrapolate. */
+				if (f >= fmin && f <= fmax || fleft >= fmin && fleft <= fmax)
+					Graphics_line (g, t - 0.5 * my dx, fleft, t, f);
+				if (f >= fmin && f <= fmax || fright >= fmin && fright <= fmax)
+					Graphics_line (g, t, f, t + 0.5 * my dx, fright);
+			}
+		}
+	}
+}
+
+void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, int garnish, int speckle, int yscale) {
+	Graphics_setInner (g);
+	Pitch_drawInside (me, g, tmin, tmax, fmin, fmax, speckle, yscale);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, TRUE, "Time (s)");
+		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_textLeft (g, TRUE, Pitch_yscaleText (yscale));
+		if (yscale == Pitch_yscale_LOGARITHMIC) {
+			Graphics_marksLeftLogarithmic (g, 6, TRUE, TRUE, FALSE);
+		} else {
+			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+		}
+	}
+}
+
+void Pitch_difference (Pitch me, Pitch thee) {
+	long i, nuvtov = 0, nvtouv = 0, ndfdown = 0, ndfup = 0;
+	if (my nx != thy nx || my dx != thy dx || my x1 != thy x1) {
+		Melder_flushError ("Pitch_difference: these Pitches are not aligned.");
+		return;
+	}
+	for (i = 1; i <= my nx; i ++) {
+		double myf = my frame [i]. candidate [1]. frequency, thyf = thy frame [i]. candidate [1]. frequency;
+		int myUnvoiced = myf == 0 || myf > my ceiling;
+		int thyUnvoiced = thyf == 0 || thyf > thy ceiling;
+		double t = Sampled_indexToX (me, i);
+		if (myUnvoiced && ! thyUnvoiced) {
+			Melder_casual ("Frame %ld time %f: unvoiced to voiced.", i, t);
+			nuvtov ++;
+		}
+		else if (! myUnvoiced && thyUnvoiced) {
+			Melder_casual ("Frame %ld time %f: voiced to unvoiced.", i, t);
+			nvtouv ++;
+		}
+		else if (! myUnvoiced && ! thyUnvoiced)
+			if (myf > thyf) {
+				Melder_casual ("Frame %ld time %f: downward frequency jump "
+					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
+				ndfdown ++;
+			}
+			else if (myf < thyf) {
+				Melder_casual ("Frame %ld time %f: upward frequency jump "
+					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
+				ndfup ++;
+			}
+	}
+	Melder_information ("Difference between two Pitches:\n\n"
+		"Unvoiced to voiced: %ld frames.\n"
+		"Voiced to unvoiced: %ld frames.\n"
+		"Downward frequency jump: %ld frames.\n"
+		"Upward frequency jump: %ld frames.",
+		nuvtov, nvtouv, ndfdown, ndfup);
+}
+
+Pitch Pitch_killOctaveJumps (Pitch me) {
+	Pitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, my ceiling, 2);
+	long i, nVoiced = 0, nUp = 0;
+	double lastFrequency = 0;
+	if (! thee) return NULL;
+	for (i = 1; i <= my nx; i ++) {
+		double f = my frame [i]. candidate [1]. frequency;
+		thy frame [i]. candidate [1]. strength = my frame [i]. candidate [1]. strength;
+		if (f > 0.0 && f < my ceiling) {
+			nVoiced ++;
+			if (lastFrequency != 0.0) {
+				double fmin = lastFrequency * 0.7071, fmax = 2.0 * fmin;
+				while (f < fmin) { f *= 2.0; nUp ++; }
+				while (f > fmax) { f *= 0.5; nUp --; }
+			}
+			lastFrequency = thy frame [i]. candidate [1]. frequency = f;
+		}
+	}
+	thy ceiling *= 2;   /* Make room for some octave jumps. */
+	while (nUp > nVoiced / 2) {
+		for (i = 1; i <= thy nx; i ++)
+			thy frame [i]. candidate [1]. frequency *= 0.5;
+		nUp -= nVoiced;
+	}
+	while (nUp < - nVoiced / 2) {
+		for (i = 1; i <= thy nx; i ++)
+			thy frame [i]. candidate [1]. frequency *= 2.0;
+		nUp += nVoiced;
+	}
+	return thee;
+}
+
+Pitch Pitch_interpolate (Pitch me) {
+	Pitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, my ceiling, 2);
+	long i;
+	if (! thee) return NULL;
+	for (i = 1; i <= my nx; i ++) {
+		double f = my frame [i]. candidate [1]. frequency;
+		thy frame [i]. candidate [1]. strength = 0.9;
+		if (f > 0.0 && f < my ceiling) {
+			thy frame [i]. candidate [1]. frequency = f;
+		} else {
+			long left, right;
+			double fleft = 0.0, fright = 0.0;
+			for (left = i - 1; left >= 1 && fleft == 0.0; left --) {
+				fleft = my frame [left]. candidate [1]. frequency;
+				if (fleft >= my ceiling) fleft = 0.0;
+			}
+			for (right = i + 1; right <= my nx && fright == 0.0; right ++) {
+				fright = my frame [right]. candidate [1]. frequency;
+				if (fright >= my ceiling) fright = 0.0;
+			}
+			if (fleft && fright)
+				thy frame [i]. candidate [1]. frequency =
+					((i - left) * fright + (right - i) * fleft) / (right - left);
+		}
+	}
+	return thee;
+}
+
+Pitch Pitch_subtractLinearFit (Pitch me, int units) {
+	Pitch thee = Pitch_interpolate (me);
+	long imin = thy nx + 1, imax = 0, n, i;
+	double sum = 0.0, fmean, tmean, numerator = 0.0, denominator = 0.0, slope;
+	/*
+	 * Find the first and last voiced frame.
+	 */
+	for (i = 1; i <= my nx; i ++) if (Pitch_isVoiced_i (thee, i)) { imin = i; break; }
+	for (i = imin + 1; i <= my nx; i ++) if (! Pitch_isVoiced_i (thee, i)) { imax = i - 1; break; }
+	n = imax - imin + 1;
+	if (n < 3) return thee;
+	/*
+	 * Compute average pitch and time.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		Pitch_Frame frame = & thy frame [i];
+		double f = FREQUENCY (frame);
+		f = hertzToUnits (f, units);
+		sum += f;
+	}
+	fmean = sum / n;
+	tmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+	/*
+	 * Compute slope.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		Pitch_Frame frame = & thy frame [i];
+		double f = FREQUENCY (frame), t = thy x1 + (i - 1) * thy dx - tmean;
+		f = hertzToUnits (f, units) - fmean;
+		numerator += f * t;
+		denominator += t * t;
+	}
+	slope = numerator / denominator;
+	/*
+	 * Modify frequencies.
+	 */
+	for (i = imin; i <= imax; i ++) {
+		Pitch_Frame myFrame = & my frame [i], thyFrame = & thy frame [i];
+		double f = FREQUENCY (thyFrame), t = thy x1 + (i - 1) * thy dx - tmean, myFreq = FREQUENCY (myFrame);
+		f = hertzToUnits (f, units);
+		f -= slope * t;
+		if (NOT_VOICED (myFreq))
+			FREQUENCY (thyFrame) = 0.0;
+		else
+			FREQUENCY (thyFrame) = units == 0 ? f : units == 1 ? NUMmelToHertz (f) : units == 2 ? NUMsemitonesToHertz (f) : NUMerbToHertz (f);
+	}
+	return thee;
+}
+
+Pitch Pitch_smooth (Pitch me, double bandWidth) {
+	Pitch interp = NULL, thee = NULL;
+	Matrix matrix1 = NULL, matrix2 = NULL;
+	Sound sound1 = NULL, sound2 = NULL;
+	Spectrum spectrum = NULL;
+	long firstVoiced = 0, lastVoiced = 0, i;
+	double fextrap;
+	if (! (interp = Pitch_interpolate (me))) goto error;
+	if (! (matrix1 = Pitch_to_Matrix (interp))) goto error;
+	if (! (sound1 = Sound_create (2 * matrix1->xmin - matrix1->xmax, 2 * matrix1->xmax - matrix1->xmin,
+		3 * matrix1->nx, matrix1->dx, matrix1->x1 - 2 * matrix1->nx * matrix1->dx))) goto error;
+	for (i = 1; i <= matrix1 -> nx; i ++) {
+		double f = matrix1 -> z [1] [i];
+		if (f) {
+			if (! firstVoiced) firstVoiced = i;
+			lastVoiced = i;
+			sound1 -> z [1] [i + matrix1 -> nx] = f;
+		}
+	}
+
+	/* Extrapolate. */
+	fextrap = matrix1 -> z [1] [firstVoiced];
+	firstVoiced += matrix1 -> nx;
+	for (i = 1; i < firstVoiced; i ++)
+		sound1 -> z [1] [i] = fextrap;
+	fextrap = matrix1 -> z [1] [lastVoiced];
+	lastVoiced += matrix1 -> nx;
+	for (i = lastVoiced + 1; i <= sound1 -> nx; i ++)
+		sound1 -> z [1] [i] = fextrap;
+
+	/* Smooth. */
+	if (! (spectrum = Sound_to_Spectrum (sound1, TRUE))) goto error;
+	for (i = 1; i <= spectrum -> nx; i ++) {
+		double f = (i - 1) * spectrum -> dx, fT = f / bandWidth, factor = exp (- fT * fT);
+		spectrum -> z [1] [i] *= factor;
+		spectrum -> z [2] [i] *= factor;
+	}
+	if (! (sound2 = Spectrum_to_Sound (spectrum))) goto error;
+
+	if (! (matrix2 = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1))) goto error;
+	for (i = 1; i <= my nx; i ++) {
+		double originalF0 = my frame [i]. candidate [1]. frequency;
+		matrix2 -> z [1] [i] = originalF0 > 0.0 && originalF0 < my ceiling ?
+			sound2 -> z [1] [i + matrix2 -> nx] : 0.0;
+	}
+	if (! (thee = Matrix_to_Pitch (matrix2))) goto error;
+	thy ceiling = my ceiling;
+error:
+	if (Melder_hasError ()) forget (thee);
+	forget (interp);
+	forget (matrix1);
+	forget (sound1);
+	forget (spectrum);
+	forget (sound2);
+	forget (matrix2);
+	return thee;
+}
+
+void Pitch_step (Pitch me, double step, double precision, double tmin, double tmax) {
+	long imin, imax, i;
+	Melder_assert (precision >= 0.0 && precision < 1.0);
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax)) return;
+	for (i = imin; i <= imax; i ++) {
+		Pitch_Frame frame = & my frame [i];
+		double currentFrequency = frame -> candidate [1]. frequency;
+		if (currentFrequency > 0.0 && currentFrequency < my ceiling) {
+			double targetFrequency = currentFrequency * step;
+			double fmin = (1 - precision) * targetFrequency;
+			double fmax = (1 + precision) * targetFrequency;
+			int icand, nearestCandidate = 0;
+			double nearestDistance = my ceiling;
+			if (fmax > my ceiling) fmax = my ceiling;
+			for (icand = 2; icand <= frame -> nCandidates; icand ++) {
+				double f = frame -> candidate [icand]. frequency;
+				if (f > fmin && f < fmax) {
+					double localDistance = fabs (f - targetFrequency);
+					if (localDistance < nearestDistance) {
+						nearestCandidate = icand;
+						nearestDistance = localDistance;
+					}
+				}
+			}
+			if (nearestCandidate) {   /* Swap candidates. */
+				struct structPitch_Candidate candidate = frame -> candidate [nearestCandidate];
+				frame -> candidate [nearestCandidate] = frame -> candidate [1];
+				frame -> candidate [1] = candidate;
+			}
+		}
+	}
+}
+
+/* End of file Pitch.c */

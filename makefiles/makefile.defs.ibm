@@ -1,0 +1,10 @@
+# File: makefile.defs.ibm
+
+# System: IBM RS6000
+# Paul Boersma, December 10, 1995
+
+CC = cc -g -O -float -DFUNCPROTO
+
+LIBS = -lXm -lXt -lX11 -lPW -lm
+
+RANLIB = ls

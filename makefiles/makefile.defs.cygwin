@@ -1,0 +1,10 @@
+# File: makefile.defs.cygwin
+
+# System: CYGWIN
+# Benard Wiese, March 26, 2001
+
+CC = gcc -g -mwindows -mno-cygwin
+
+LIBS = -lwinmm -lwsock32 -lcomctl32
+
+RANLIB = ls

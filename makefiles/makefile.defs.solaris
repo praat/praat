@@ -1,0 +1,12 @@
+# File: makefile.defs.solaris
+
+# System: Solaris, SPARCompiler C.
+# Paul Boersma, November 26, 1997.
+
+CC = cc -DUNIX -g -I /opt/SUNWmotif/include -I /usr/openwin/include -DFUNCPROTO -v -Xa -Dsun
+
+LIBS = -R/opt/SUNWspro/lib:$(OPENWINHOME)/lib:/opt/SUNWmotif/lib \
+     -L/opt/SUNWspro/lib -L$(OPENWINHOME)/lib -L/opt/SUNWmotif/lib \
+     -lXm -lXt -lX -lgen -lc -lm
+
+RANLIB = ls

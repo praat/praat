@@ -1,0 +1,92 @@
+/* OTGrammar_def.h
+ *
+ * Copyright (C) 1997-2002 Paul Boersma
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * pb 1998/12/30
+ * pb 2002/07/16 GPL
+ * pb 2003/10/19
+ */
+
+
+#define ooSTRUCT OTGrammarConstraint
+oo_DEFINE_STRUCT (OTGrammarConstraint)
+
+	oo_STRING (name)
+	oo_DOUBLE (ranking)
+	oo_DOUBLE (disharmony)
+	#if !oo_READING && !oo_WRITING
+		oo_INT (tiedToTheLeft)
+		oo_INT (tiedToTheRight)
+	#endif
+
+oo_END_STRUCT (OTGrammarConstraint)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT OTGrammarFixedRanking
+oo_DEFINE_STRUCT (OTGrammarFixedRanking)
+
+	oo_LONG (higher)
+	oo_LONG (lower)
+
+oo_END_STRUCT (OTGrammarFixedRanking)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT OTGrammarCandidate
+oo_DEFINE_STRUCT (OTGrammarCandidate)
+
+	oo_STRING (output)
+	oo_LONG (numberOfConstraints)
+	oo_INT_VECTOR (marks, my numberOfConstraints)
+
+oo_END_STRUCT (OTGrammarCandidate)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT OTGrammarTableau
+oo_DEFINE_STRUCT (OTGrammarTableau)
+
+	oo_STRING (input)
+	oo_LONG (numberOfCandidates)
+	oo_STRUCT_VECTOR (OTGrammarCandidate, candidates, my numberOfCandidates)
+
+oo_END_STRUCT (OTGrammarTableau)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT OTGrammar
+oo_DEFINE_CLASS (OTGrammar, Data)
+
+	oo_LONG (numberOfConstraints)
+	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)
+	oo_LONG_VECTOR (index, my numberOfConstraints)
+	oo_LONG (numberOfFixedRankings)
+	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, my numberOfFixedRankings)
+	oo_LONG (numberOfTableaus)
+	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, my numberOfTableaus)
+	#if oo_READING
+		OTGrammar_sort (me);
+	#endif
+
+oo_END_CLASS (OTGrammar)
+#undef ooSTRUCT
+
+
+/* End of file OTGrammar_def.h */

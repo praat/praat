@@ -1,0 +1,29 @@
+#ifndef _Eigen_and_Procrustus_h_
+#define _Eigen_and_Procrustus_h_
+
+/* Eigen_and_Procrustus.h
+ * Copyright (C) 2004 David Weenink
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/* djmw 20041025 Initial version */
+ 
+#include "Eigen.h"
+#include "Procrustus.h"
+
+Procrustus Eigens_to_Procrustus (I, thou, long evec_from, long evec_to);
+
+#endif /* _Eigen_and_Procrustus_h_ */
