@@ -1,6 +1,6 @@
 /* FunctionEditor_SoundAnalysis.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2004/11/28 improved screen text for unavailable pitch
  * pb 2004/11/28 warning in settings dialogs for non-standard tiems tep strategies
+ * pb 2005/03/02 all pref string buffers are 260 bytes long
+ * pb 2005/03/07 'intensity' logging sensitive to averaging method
  */
 
 #include <time.h>
@@ -69,7 +71,7 @@ static const char *pitchUnits_strings [] = { 0, "Hz", "Hz", "st", "mel", "erb" }
 
 struct logInfo {
 	int toInfoWindow, toLogFile;
-	char fileName [256], format [300];
+	char fileName [Resources_STRING_BUFFER_SIZE], format [Resources_STRING_BUFFER_SIZE];
 };
 
 #if defined (macintosh)
@@ -106,7 +108,7 @@ static struct {
 	struct FunctionEditor_formant formant;
 	struct FunctionEditor_pulses pulses;
 	struct logInfo log [2];
-	char logScript3 [256], logScript4 [256];
+	char logScript3 [Resources_STRING_BUFFER_SIZE], logScript4 [Resources_STRING_BUFFER_SIZE];
 } preferences = {
 	10.0,
 	1 /* automatic time step */, 0.01 /* in case of a fixed step */, 100 /* in case of a fixed number per view */,
@@ -1545,7 +1547,7 @@ static int cb_log (FunctionEditor me, int which) {
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Vector_getValueAtX (my intensity.data, tmin, 1);
 			} else {
-				value = Sampled_getMean_standardUnits (my intensity.data, tmin, tmax, 0, Intensity_averaging_DB, TRUE);
+				value = Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod);
 			}
 		}
 		if (NUMdefined (value)) {

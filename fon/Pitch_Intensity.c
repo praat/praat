@@ -1,6 +1,6 @@
 /* Pitch_Intensity.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1997/04/27
  * pb 2002/07/16 GPL
+ * pb 2005/03/08 connect
  */
 
 #include "Pitch_Intensity.h"
@@ -38,9 +38,10 @@ static void Pitch_getExtrema (Pitch me, double *minimum, double *maximum) {
 }
 
 void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
-	double f1, double f2, double s1, double s2, int garnish)
+	double f1, double f2, double s1, double s2, int garnish, int connect)
 {
-	long i;
+	long i, previousI = 0;
+	double previousX = NUMundefined, previousY = NUMundefined;
 	if (f2 <= f1) Pitch_getExtrema (pitch, & f1, & f2);
 	if (f1 == 0.0) return;   /* All voiceless. */
 	if (f1 == f2) { f1 -= 1.0; f2 += 1.0; }
@@ -52,9 +53,21 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 		double t = Sampled_indexToX (pitch, i);
 		double index = Sampled_xToIndex (intensity, t);
 		double x = pitch -> frame [i]. candidate [1]. frequency;
-		double y = NUM_interpolate_sinc (intensity -> z [1], intensity -> nx, index, 50);
-		if (x == 0) continue;   /* Voiceless. */
-		Graphics_fillCircle_mm (g, x, y, 1.0);
+		double y = Sampled_getValueAtX (intensity, t, 1, 0, TRUE);
+		if (x == 0) {
+			continue;   /* Voiceless. */
+		}
+		if (connect & 1) Graphics_fillCircle_mm (g, x, y, 1.0);
+		if ((connect & 2) && NUMdefined (previousX)) {
+			if (previousI >= 1 && previousI < i - 1) {
+				Graphics_setLineType (g, Graphics_DOTTED);
+			}
+			Graphics_line (g, previousX, previousY, x, y);
+			Graphics_setLineType (g, Graphics_DRAWN);
+		}
+		previousX = x;
+		previousY = y;
+		previousI = i;
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {

@@ -1,6 +1,6 @@
 /* Resources.c
  *
- * Copyright (C) 1996-2003 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 1999/11/09
  * pb 2002/03/07 GPL
  * pb 2002/11/24 Melder_double
  * pb 2003/12/09 guard against Preference file that has been copied from one platform to another
+ * pb 2005/03/04 guard against hand-edited Preference files that contain strings longer than (Resources_STRING_BUFFER_SIZE - 1) bytes
  */
 
 #include "Resources.h"
@@ -128,7 +128,7 @@ void Resources_read (MelderFile file) {
 			case charwa: * (char *) resource -> value = value [0]; break;
 			case floatwa: * (float *) resource -> value = atof (value); break;
 			case doublewa: * (double *) resource -> value = atof (value); break;
-			case stringwa: strcpy (resource -> value, value); break;
+			case stringwa: strncpy (resource -> value, value, Resources_STRING_BUFFER_SIZE); ((char *) resource -> value) [Resources_STRING_BUFFER_SIZE - 1] = '\0'; break;
 		}
 	}
 end:

@@ -27,6 +27,7 @@
  * pb 2004/11/28 Melder_debug == 15 to force bitmapped IPA
  * pb 2004/12/02 Linux: xipa support
  * pb 2005/02/03 TeX-xipa10-Praat-Regular
+ * pb 2005/03/08 psEncoding; SILIPA93 encoding for Windows and Mac
  */
 
 #include <ctype.h>
@@ -101,7 +102,7 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 		font == Graphics_TIMES ? "times" :
 		font == Graphics_COURIER ? "courier" :
 		font == Graphics_PALATINO ? "palatino" :
-		font == Graphics_IPATIMES ? "xipa" :
+		font == Graphics_IPATIMES ? "xipadontusebecausethishasthewrongencoding" :
 		font == Graphics_DINGBATS ? "itc zapf dingbats" :
 		font == Graphics_SYMBOL ? "symbol" : "helvetica",
 		font == Graphics_SYMBOL || font == Graphics_DINGBATS ? "medium-r" :
@@ -122,7 +123,8 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 	if (! fontInfo) {
 		/*
 		 * Font not available. Is likely to happen with New Century Schoolbook and with SIL Doulos IPA.
-		 * For SIL Doulos IPA, we have a replacement in the form of Praat-internal bitmaps;
+		 * For SIL Doulos IPA, we have a replacement in the form of Praat-internal bitmaps,
+		 * encoded in the same way as the TeX-xipa-Praat PostScript font (so that xwin encoding equals ps encoding for IPA);
 		 * for New Century Schoolbook, we will use Courier instead.
 		 */
 		if (font == Graphics_IPATIMES) {
@@ -186,13 +188,13 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	if (font == Graphics_IPATIMES && ! ipaInited && Melder_debug != 15) {
 		LOGFONT logFont;
 		logFont. lfCharSet = DEFAULT_CHARSET;
-		strcpy (logFont. lfFaceName, "SILDoulosIPA");
+		strcpy (logFont. lfFaceName, "SILDoulos IPA93");
 		logFont. lfPitchAndFamily = 0;
 		EnumFontFamiliesEx (my dc, & logFont, fontFuncEx, 0, 0);
 		ipaInited = TRUE;
 		if (! ipaAvailable)
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-			/*Melder_warning ("The phonetic font is not available.\nI shall use an ugly bitmap font instead.\nSee http://www.fon.hum.uva.nl/praat/")*/;
+			/*Melder_warning ("The phonetic font is not available.\nI shall use an ugly bitmap font instead.\nSee www.praat.org")*/;
 	}
 	strcpy (spec. lfFaceName,
 		font == Graphics_HELVETICA ? "Arial" :
@@ -201,7 +203,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		font == Graphics_NEWCENTURYSCHOOLBOOK ? "New Century Schoolbook" :
 		font == Graphics_PALATINO ? "Book Antiqua" :
 		font == Graphics_SYMBOL ? "Symbol" :
-		font == Graphics_IPATIMES ? "SILDoulosIPA" :
+		font == Graphics_IPATIMES ? "SILDoulos IPA93" :
 		font == Graphics_DINGBATS ? "Wingdings" :
 		"");
 	return CreateFontIndirect (& spec);
@@ -227,7 +229,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);
 			fontInfo = fontInfos [font] [size] [style];
 			if (! fontInfo &&
-			    (fontInfo = fontInfos [font] [size] [style] = loadFont (me, font, size, style)) == NULL);
+			    (fontInfo = fontInfos [font] [size] [style] = loadFont (me, font, size, style)) == NULL) return;
 			charInfo = & fontInfo -> per_char [info -> xwinEncoding - fontInfo -> min_char_or_byte2];
 			lc -> width = charInfo -> width;
 			lc -> baseline = lc -> baseline < 0 ? - my fontSize / 4 : lc -> baseline > 0 ? my fontSize / 3 : 0;
@@ -238,7 +240,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
 			HFONT fontInfo;
 			int font, size, style;
-			char code;
 			int normalSize = my fontSize < 11 ? 0 : my fontSize < 13 ? 1 : my fontSize < 16 ? 2 : my fontSize < 21 ? 3 : 4;
 			int smallSize = normalSize == 0 ? 0 : normalSize - 1;
 			font = info -> alphabet == Longchar_SYMBOL ? Graphics_SYMBOL :
@@ -256,22 +257,43 @@ static void charSize (I, _Graphics_widechar *lc) {
 					screenFonts [font] [size] [style] = fontInfo;
 				}
 			}
-			code = ( font == Graphics_DINGBATS ? 'F' : info -> winEncoding );   /* HACK: pointing finger is 'F' instead of '+' on Windows. */
 			if (font == Graphics_IPATIMES && ! ipaAvailable) {
-				int overstrike = ipaSerifRegular24 [info -> winEncoding - 32] [0] [0] == 'o';
+				int overstrike = ipaSerifRegular24 [info -> psEncoding - 32] [0] [0] == 'o';
+				lc -> code = info -> psEncoding;
 				if (overstrike)
 					lc -> width = 0;
 				else
-					lc -> width = strlen (ipaSerifRegular24 [info -> winEncoding - 32] [0]);
+					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 			} else {
 				SIZE extent;
+				char code;
+				lc -> code = info -> winEncoding;
+				if (lc -> code == 0) {
+					_Graphics_widechar *lc2;
+					if (lc -> first == 's' && lc -> second == 'r') {
+						info = Longchar_getInfo ('s', 'w');
+						lc -> code = info -> winEncoding;
+						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+						lc2 [1]. first = lc2 [1]. second = '\0';
+						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+						lc [1]. first = 'h';
+						lc [1]. second = 'r';
+					} else if (lc -> first == 'l' && lc -> second == '~') {
+						info = Longchar_getInfo ('l', ' ');
+						lc -> code = info -> winEncoding;
+						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+						lc2 [1]. first = lc2 [1]. second = '\0';
+						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+						lc [1]. first = '~';
+						lc [1]. second = '<';
+					}
+				}
 				SelectFont (my dc, fontInfo);
-				GetTextExtentPoint32 (my dc, & code, 1, & extent);
+				GetTextExtentPoint32 (my dc, (code = lc -> code, & code), 1, & extent);
 				lc -> width = extent. cx;
 			}
 			lc -> baseline = ( lc -> baseline < 0 ? - my fontSize / 4 : lc -> baseline > 0 ? my fontSize / 3 : 0 )
 				* my resolution / 72.0;
-			lc -> code = code;
 			lc -> font.string = NULL;
 			lc -> font.integer = font;   // Graphics_HELVETICA .. Graphics_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
@@ -289,7 +311,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 			        (lc -> style & Graphics_BOLD ? bold : 0);
 			size = lc -> size < 100 ? 0.8 * normalSize : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 			if (font == 0 && ! ipaInited && Melder_debug != 15) {   /* SIL Doulos IPA not initialized. */
-				GetFNum ("\pSILDoulosIPA-Regular", & theIpaTimesFont);   /* May be 0. */
+				/*GetFNum ("\pSILDoulosIPA-Regular", & theIpaTimesFont);   /* May be 0. */
+				GetFNum ("\pSILDoulos IPA93", & theIpaTimesFont);   /* May be 0. */
 				ipaInited = TRUE;
 				if (theIpaTimesFont != 0) {
 					ipaAvailable = TRUE;
@@ -299,21 +322,42 @@ static void charSize (I, _Graphics_widechar *lc) {
 				font = theIpaTimesFont;
 			}
 			if (font == 0) {   /* SIL Doulos IPA not available. */
-				int overstrike = ipaSerifRegular24 [info -> macEncoding - 32] [0] [0] == 'o';
+				int overstrike = ipaSerifRegular24 [info -> psEncoding - 32] [0] [0] == 'o';
 				if (overstrike)
 					lc -> width = 0;
 				else
-					lc -> width = strlen (ipaSerifRegular24 [info -> macEncoding - 32] [0]);
+					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
+				lc -> code = info -> psEncoding;
 			} else {
+				lc -> code = info -> macEncoding;
+				if (lc -> code == 0) {
+					_Graphics_widechar *lc2;
+					if (lc -> first == 's' && lc -> second == 'r') {
+						info = Longchar_getInfo ('s', 'w');
+						lc -> code = info -> macEncoding;
+						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+						lc2 [1]. first = lc2 [1]. second = '\0';
+						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+						lc [1]. first = 'h';
+						lc [1]. second = 'r';
+					} else if (lc -> first == 'l' && lc -> second == '~') {
+						info = Longchar_getInfo ('l', ' ');
+						lc -> code = info -> macEncoding;
+						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+						lc2 [1]. first = lc2 [1]. second = '\0';
+						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+						lc [1]. first = '~';
+						lc [1]. second = '<';
+					}
+				}
 				TextFont (font);
 				TextFace (style);
 				TextSize (size);
-				lc -> width = CharWidth (info -> macEncoding);
+				lc -> width = CharWidth (lc -> code);
 			}
 			lc -> baseline = ! lc -> baseline ? 0 :
 				lc -> baseline < 0 ? - my fontSize * (double) my resolution / 72.0 / 3 :
 				my fontSize * (double) my resolution / 72.0 / 3;
-			lc -> code = info -> macEncoding;
 			lc -> font.string = NULL;
 			lc -> font.integer = font;
 			lc -> style = style;
@@ -451,7 +495,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		}
 		lc -> width *= lc -> size / 1000.0;
-		lc -> code = info -> macEncoding;   /* We force Macintosh encoding onto PostScript. */
+		lc -> code = info -> psEncoding;
 	}
 }
 
@@ -815,7 +859,7 @@ static long bufferSize;
 static _Graphics_widechar *widechar;
 static char *charCodes;
 static int initBuffer (const char *txt) {
-	long sizeNeeded = strlen (txt) + 1;
+	long sizeNeeded = strlen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
 	if (sizeNeeded > bufferSize) {
 		Melder_free (widechar);
 		Melder_free (charCodes);

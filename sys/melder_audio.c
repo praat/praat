@@ -1,6 +1,6 @@
 /* melder_audio.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
  * pb 2004/05/07 removed motif_mac_setNullEventWaitingTime (we nowadays use 1 clock tick everywhere anyway)
  * pb 2004/08/10 fake mono for Linux drivers etc, also if not asynchronous
+ * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
  */
 
 #include "melder.h"
@@ -1117,7 +1118,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #elif defined (linux)
 {
-	if ((my audio_fd = open ("/dev/dsp", O_WRONLY)) == -1)
+	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | O_NDELAY)) == -1)
 		return cancel (), Melder_error (errno == EBUSY ? "Audio device already in use." :
 			"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
 	if (ioctl (my audio_fd, SNDCTL_DSP_SAMPLESIZE, (my val = 16, & my val)) == -1 ||   /* Error? */

@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2004 Paul Boersma
+ * Copyright (C) 2002-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
  */
 
 /*
- * pb 2002/06/23
  * pb 2002/07/16 GPL
- * pb 2003/03/09
  * pb 2003/05/19 Melder_atof
  * pb 2004/07/25 Melder_double
  * pb 2004/10/16 struct tags
+ * pb 2005/03/04 Melder_NUMBER
  */
 
 #include <ctype.h>
@@ -297,7 +296,7 @@ double Table_getStdev (Table me, long icol) {
 	return sqrt (sum / (my rows -> size - 1));
 }
 
-Table Table_selectRowsWhereColumn (Table me, long column, int which, double criterion) {
+Table Table_selectRowsWhereColumn (Table me, long column, enum Melder_NUMBER which, double criterion) {
 	Table thee = NULL;
 	long irow, icol;
 	if (column < 1 || column > my numberOfColumns)
@@ -309,15 +308,7 @@ Table Table_selectRowsWhereColumn (Table me, long column, int which, double crit
 	}
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
-		double value = row -> cells [column]. number;
-		int keep =
-			which == Table_EQUAL_TO && value == criterion ||
-			which == Table_NOT_EQUAL_TO && value != criterion ||
-			which == Table_LESS_THAN && value < criterion ||
-			which == Table_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
-			which == Table_GREATER_THAN && value > criterion ||
-			which == Table_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
-		if (keep) {
+		if (Melder_numberMatchesCriterion (row -> cells [column]. number, which, criterion)) {
 			TableRow newRow = Data_copy (row);
 			Collection_addItem (thy rows, newRow);
 		}

@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
  djmw 20041105 Added TableOfReal_createFromVanNieropData_25females
  djmw 20041115 TableOfReal_drawScatterPlot: plotting a NULL-label crashed Praat.
  djmw 20041213 Added TableOfReal_createFromWeeninkData.
+ djmw 20050221 TableOfReal_meansByRowLabels, extra reduce parameter.
+ djmw 20050222 TableOfReal_drawVectors didn't draw rowlabels.
 */
 
 #include <ctype.h>
@@ -58,12 +60,13 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 		thyrow < 1 || thyrow > thy numberOfRows ||
 		my numberOfColumns != thy numberOfColumns) return 0;
 	
-	if (my rowLabels[myrow])
+	if (my rowLabels[myrow] != NULL && thy rowLabels[thyrow] != my rowLabels[myrow])
 	{
+		Melder_free (thy rowLabels[thyrow]);
 		thy rowLabels[thyrow] = Melder_strdup (my rowLabels[myrow]);
 		if (thy rowLabels[thyrow] == NULL) return 0;
 	}
-	NUMdvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
+	if (my data[myrow] != thy data[thyrow]) NUMdvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
 	return 1;
 }
 
@@ -1487,13 +1490,16 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+
 	if (labelsize > 0) Graphics_setFontSize (g, labelsize);			
 	for (i = 1; i <= ny; i++)
 	{
 		float x1 = my data[i][colx1];
 		float y1 = my data[i][coly1];	 
 		float x2 = my data[i][colx2];
-		float y2 = my data[i][coly2];	 
+		float y2 = my data[i][coly2];
+		char *mark = EMPTY_STRING (my rowLabels[i]) ? "" : my rowLabels[i];	 
 		if (vectype == Graphics_LINE)
 			Graphics_line (g, x1, y1, x2, y2);
 		else if (vectype == Graphics_TWOWAYARROW)
@@ -1504,7 +1510,8 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 		else /*if (vectype == Graphics_ARROW) */	
 			Graphics_arrow (g, x1, y1, x2, y2);
 		if (labelsize <= 0) continue;
-		
+		Graphics_text (g, x1, y1, mark);
+
 	}
 	if (labelsize > 0) Graphics_setFontSize (g, fontsize);
 	Graphics_unsetInner (g);
@@ -1598,6 +1605,7 @@ TableOfReal TableOfReal_sortOnlyByRowLabels (I)
 	return thee;
 }
 
+/*
 TableOfReal TableOfReal_averageColumnsByRowLabels (I)
 {
 	iam (TableOfReal);
@@ -1626,12 +1634,71 @@ TableOfReal TableOfReal_averageColumnsByRowLabels (I)
 	NUMaverageColumns (sorted -> data, indexi, my numberOfRows, 1, 
 		my numberOfColumns);
 
-	/*
-		Now inverse the table.
-	*/
+
 	tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
 	thee = TableOfReal_sortRowsByIndex (sorted, index, 1);
 	sorted -> rowLabels = tmp;
+	
+end:
+	forget (sorted);
+	NUMlvector_free (index, 1);
+	if (Melder_hasError()) forget (thee);
+	return thee;
+}
+*/
+
+TableOfReal TableOfReal_meansByRowLabels (I, int expand)
+{
+	iam (TableOfReal);
+	TableOfReal thee = NULL, sorted = NULL;
+	char *label, **tmp;
+	long *index = NULL, indexi = 1, indexr = 0, i;
+
+	index = TableOfReal_getSortedIndexFromRowLabels (me);
+	if (index == NULL) return NULL;
+	
+	sorted = TableOfReal_sortRowsByIndex (me, index, 0);
+	if (sorted == NULL) goto end;
+
+	label = sorted -> rowLabels[1];
+	for (i = 2; i <= my numberOfRows; i++)
+	{
+		char *li = sorted -> rowLabels[i];
+		if (li != NULL && li != label && strcmp (li, label))
+		{
+			NUMaverageColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns);
+			if (expand == 0)
+			{
+				indexr++;
+				if (!TableOfReal_copyOneRowWithLabel (sorted, sorted, indexi, indexr)) goto end;
+			}
+			label = li; indexi = i;
+		}
+	}
+		
+	NUMaverageColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns);
+	
+	if (expand != 0)
+	{
+		/*
+			Now inverse the table.
+		*/
+		tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
+		thee = TableOfReal_sortRowsByIndex (sorted, index, 1);
+		sorted -> rowLabels = tmp;
+	}
+	else
+	{
+		indexr++;
+		if (! TableOfReal_copyOneRowWithLabel (sorted, sorted, indexi, indexr)) goto end;
+		thee = TableOfReal_create (indexr, my numberOfColumns);
+		if (thee == NULL) goto end;
+		for (i = 1; i <= indexr; i++)
+		{
+			if (!TableOfReal_copyOneRowWithLabel (sorted, thee, i, i)) goto end;
+		}
+		if (! NUMstrings_copyElements (sorted -> columnLabels, thy columnLabels, 1, my numberOfColumns)) goto end;
+	}
 	
 end:
 	forget (sorted);

@@ -1,6 +1,6 @@
 /* RealTier.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2001/08/21
  * pb 2002/07/16 GPL
  * pb 2003/05/31 RealTier_formula
  * pb 2003/11/20 interpolate quadratically
+ * pb 2005/03/02 RealTier_multiplyPart
  */
 
 #include "RealTier.h"
@@ -268,6 +268,18 @@ double RealTier_getStandardDeviation_points (I, double tmin, double tmax) {
 		sum += diff * diff;
 	}
 	return sqrt (sum / (n - 1));
+}
+
+void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
+	iam (RealTier);
+	long ipoint;
+	for (ipoint = 1; ipoint <= my points -> size; ipoint ++) {
+		RealPoint point = my points -> item [ipoint];
+		double t = point -> time;
+		if (t >= tmin && t <= tmax) {
+			point -> value *= factor;
+		}
+	}
 }
 
 void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double fmax,

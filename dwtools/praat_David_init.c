@@ -1,6 +1,6 @@
 /* praat_David_init.h
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3395,6 +3395,13 @@ DIRECT (TableOfReal_getGrandSum)
 		(ONLY_GENERIC(classTableOfReal)), NULL);
 END
 
+FORM (TableOfReal_meansByRowLabels, "TableOfReal: Means by row labels", "TableOfReal: To TableOfReal (means by row labels)...")
+    BOOLEAN ("Expand", 0)
+	OK
+DO
+	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand")), "%s_byrowlabels", NAME))
+END
+
 /***** TableOfReal and Matrix  *****/
 
 FORM (TableOfReal_matrixColumnsIntoRows,
@@ -4293,6 +4300,9 @@ void praat_uvafon_David_init (void)
 		DO_TableOfReal_to_Correlation_rank);
 	praat_addAction1 (classTableOfReal, 0, "To CCA...", 0, 1,
 		DO_TableOfReal_to_CCA);
+	praat_addAction1 (classTableOfReal, 0, "To TableOfReal (means by row labels)...", 0, 1,
+		DO_TableOfReal_meansByRowLabels);
+	
 	praat_addAction1 (classTableOfReal, 0, "-- configurations --", 0, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, "To Configuration (pca)...",
 		0, 1, DO_TableOfReal_to_Configuration_pca);

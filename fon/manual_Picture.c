@@ -1,6 +1,6 @@
 /* manual_Picture.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,9 +120,9 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 		static struct { float x, y; char *string; } symbols [] = {
 4, 6, "i", 5, 6, "y", 6.5, 6, "\\i-", 7.5, 6, "\\u-", 9, 6, "\\mt", 10, 6, "u",
 4.2, 5, "\\ic", 5.2, 5, "\\yc", 9.8, 5, "\\hs",
-4, 4, "e", 5, 4, "\\o/", 7.5, 4, "\\o-", 9, 4, "\\rh", 10, 4, "o",
+4, 4, "e", 5, 4, "\\o/", 6.5, 4, "\\e-", 7.5, 4, "\\o-", 9, 4, "\\rh", 10, 4, "o",
 7, 3, "\\sw", 7, 1, "\\at",
-4, 2, "\\ep", 5, 2, "\\oe", 6.5, 2, "\\er", 9, 2, "\\vt", 10, 2, "\\ct",
+4, 2, "\\ep", 5, 2, "\\oe", 6.5, 2, "\\er", 7.5, 2, "\\kb", 9, 2, "\\vt", 10, 2, "\\ct",
 4, 1, "\\ae",
 4, 0, "a", 5, 0, "\\Oe", 9, 0, "\\as", 10, 0, "\\ab",
 		0 };
@@ -264,18 +264,18 @@ ENTRY ("See also")
 NORMAL ("@@Special symbols@")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols", "ppgb", 20040211)
+MAN_BEGIN ("Phonetic symbols", "ppgb", 20050308)
 NORMAL ("To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1989 font, e.g. from www.praat.org. "
+	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use backslash sequences as described in:")
 LIST_ITEM ("\\bu @@Phonetic symbols: consonants")
 LIST_ITEM ("\\bu @@Phonetic symbols: vowels")
 LIST_ITEM ("\\bu @@Phonetic symbols: diacritics")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: consonants", "ppgb", 20040211)
+MAN_BEGIN ("Phonetic symbols: consonants", "ppgb", 20050308)
 NORMAL ("To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1989 font, e.g. from www.praat.org. "
+	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 7.0, draw_IPA_consonant_chart)
 NORMAL ("Other consonant symbols:")
@@ -291,9 +291,9 @@ NORMAL ("For most of the codes, the first letter tells you the most similar lett
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20040211)
+MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20050308)
 NORMAL ("To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1989 font, e.g. from www.praat.org. "
+	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
 NORMAL ("In line:")
 LIST_ITEM ("\\:f \\bs:f the phonetic length sign")
@@ -322,14 +322,14 @@ LIST_ITEM ("o\\:^ o\\bs:\\^  (%diaresisover): centralized")
 LIST_ITEM ("k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20040211)
+MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050308)
 NORMAL ("To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1989 font, e.g. from www.praat.org. "
+	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
 NORMAL ("Other vowel symbols are:")
 LIST_ITEM ("\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
-LIST_ITEM ("\\ef \\bsef (%%phonetic epsilon%, not recommended)")
+LIST_ITEM ("\\ef \\bsef (%%phonetic epsilon%)")
 ENTRY ("How to remember the codes")
 NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
 	"The second letter can be %t (%turned), %c (%capital), %s (%script), %r (%reversed), - (%barred), or / (%slashed). "

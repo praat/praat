@@ -1,6 +1,6 @@
 /* praat_script.c
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2005 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/02/22 allow numeric expressions after select/plus/minus
  * pb 2004/10/27 warning off
  * pb 2004/12/04 support for multiple open script dialogs with Apply buttons, both from "Run script..." and from added buttons
+ * pb 2005/02/10 corrected bug in nowarn
  */
 
 #include <ctype.h>
@@ -120,7 +121,7 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		} else if (strnequ (command, "nowarn ", 7)) {
 			int result;
 			Melder_warningOff ();
-			result = praat_executeCommand (interpreter, command + 10);
+			result = praat_executeCommand (interpreter, command + 7);
 			Melder_warningOn ();
 			return result;
 		} else if (strnequ (command, "noprogress ", 11)) {

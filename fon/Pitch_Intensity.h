@@ -1,6 +1,6 @@
 /* Pitch_Intensity.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1995/03/08
- * pb 2002/07/16 GPL
+ * pb 2005/03/08
  */
 
 #ifndef _Pitch_h_
@@ -33,6 +32,6 @@
 #endif
 
 void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
-	double f1, double f2, double s1, double s2, int garnish);
+	double f1, double f2, double s1, double s2, int garnish, int connect);
 
 /* End of file Pitch_Intensity.h */

@@ -1,6 +1,6 @@
 /* Matrix_extensions.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020813 GPL header
  djmw 20040226 Matrix_drawAsSquares: respect the colour environment (fill with current colour).
  djmw 20041110 Matrix_drawDistribution did't draw lowest bin correctly.
+ djmw 20050221 Matrix_drawDistribution would draw outside window.
 */
 
 #include "Matrix_extensions.h"
@@ -189,6 +190,7 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 	long i, j, ixmin, ixmax, iymin, iymax, nxy = 0, *freq = NULL;
 	double binWidth, fi = 0;
 	
+	if (nBins <= 0) return;
 	if (xmax <= xmin)
 	{
 		xmin = my xmin; xmax = my xmax;
@@ -249,9 +251,11 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 	for (i = 1; i <= nBins; i++)
 	{
 		double ftmp = freq[i];
-		fi = cumulative ? fi + ftmp / nxy : ftmp;
-		if (fi > freqMin) Graphics_rectangle (g, minimum + (i-1) * 
-			binWidth, minimum + i * binWidth, freqMin, fi);
+		fi = cumulative ? fi + freq[i] / nxy : freq[i];
+		ftmp = fi;
+		if (ftmp > freqMax) ftmp = freqMax;
+		if (ftmp > freqMin) Graphics_rectangle (g, minimum + (i-1) * 
+			binWidth, minimum + i * binWidth, freqMin, ftmp);
 	}	
     Graphics_unsetInner (g);
     if (garnish)

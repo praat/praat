@@ -18,12 +18,24 @@
  */
 
 #include "ManPagesM.h"
+#include "praat_version.h"
 
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050209)
+MAN_BEGIN ("What's new?", "ppgb", 20050309)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.04# (March 9, 2005)")
+LIST_ITEM ("\\bu Use SIL Doulos IPA 1993/1996 instead of 1989.")
+NORMAL ("##4.3.03# (March 2, 2005)")
+LIST_ITEM ("\\bu TextGrid window: green colouring of matching text.")
+LIST_ITEM ("\\bu Regular expressions can be used in many places.")
+LIST_ITEM ("\\bu Pitch analysis: switched off formant-pulling.")
+NORMAL ("##4.3.02# (February 16, 2005)")
+LIST_ITEM ("\\bu TextGrid: Remove boundary at time...")
+LIST_ITEM ("\\bu Scripting: corrected %nowarn.")
+LIST_ITEM ("\\bu Linux: guard against blocking audio device.")
+LIST_ITEM ("\\bu Macintosh: guard against out-of-range audio level meter.")
 NORMAL ("##4.3.01# (February 9, 2005)")
 LIST_ITEM ("\\bu Replaced PostScript font SILDoulosIPA with XIPA (adapted for Praat by Rafael Laboissi\\e`re).")
 LIST_ITEM ("\\bu Sound: Set part to zero...")
@@ -798,7 +810,8 @@ INTRO ("One of the commands in the Spectrogram menu of the @SoundEditor and the 
 NORMAL ("See @@Intro 3. Spectral analysis@")
 MAN_END
 
-MAN_BEGIN ("FAQ (Frequently Asked Questions)", "ppgb", 20010824)
+MAN_BEGIN ("FAQ (Frequently Asked Questions)", "ppgb", 20050227)
+LIST_ITEM ("@@FAQ: How to cite Praat")
 LIST_ITEM ("@@FAQ: Formant analysis")
 LIST_ITEM ("@@FAQ: Pitch analysis")
 LIST_ITEM ("@@FAQ: Spectrograms")
@@ -825,6 +838,20 @@ NORMAL ("This occurs mainly in back vowels (F1 and F2 close together) for male v
 NORMAL ("")
 NORMAL ("#Question: what algorithm is used for formant analysis?")
 NORMAL ("Answer: see @@Sound: To Formant (burg)...@.")
+MAN_END
+
+MAN_BEGIN ("FAQ: How to cite Praat", "ppgb", 20050227)
+NORMAL ("#Question: how do I cite Praat in my articles?")
+NORMAL ("Answer: nowadays most journals allow you to cite computer programs and web sites. "
+	"The style approved by the American Psychological Association, "
+	"and therefore by many journals, is like the following "
+	"(change the dates and version number as needed):")
+NORMAL ("Boersma, Paul & Weenink, David (" PRAAT_YEAR "). "
+	"Praat: doing phonetics by computer (Version " PRAAT_VERSION ") [Computer program]. "
+	"Retrieved " PRAAT_MONTH " " PRAAT_DAY ", " PRAAT_YEAR ", from http://www.praat.org/")
+NORMAL ("If the journal does not allow you to cite a web site, then try:")
+NORMAL ("Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
+	"%%Glot International% ##5:9/10#, 341-345.")
 MAN_END
 
 MAN_BEGIN ("FAQ: Pitch analysis", "ppgb", 20021219)

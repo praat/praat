@@ -25,6 +25,7 @@
  djmw 20040425 FFNet_drawTopology fill input units; increase distance from arrow for output labels
  djmw 20040513 Info changes. 
  djmw 20040526 Adapted FFNet_drawCostHistory.
+ djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
 */
 
 #include "FFNet_Matrix.h"
@@ -100,31 +101,42 @@ static double sigmoid (I, double x, double *deriv)
 
 /* ******************* cost functions ****************************************/
 
+/*
+	For the errors calculated in the cost functions:
+		if target > activity ==> error > 0
+		if target < activity ==> error < 0
+*/
+
 static double minimumSquaredError (I, const float target[])
 {
-    iam (FFNet); long i, k = my nNodes-my nOutputs+1;
+    iam (FFNet); 
+	long i, k = my nNodes - my nOutputs + 1;
     double cost = 0.0;
     
-    for (i=1; i <= my nOutputs; i++, k++)
+    for (i = 1; i <= my nOutputs; i++, k++)
     {
 		double e = my error[k] = target[i] - my activity[k];
 		cost += e * e;
     }
     return 0.5 * cost;
 }
-/* E = - sum (i=1; i=nPatterns; sum (k=1;k=nOutputs; t[k]*ln (o[k]) + (1-t[k])ln (1-o[k])))*/
-/* dE/do[k] = (1-t[k])/ (1-o[k]) - t[k]/o[k] */
+
+/* E = - sum (i=1; i=nPatterns; sum (k=1;k=nOutputs; t[k]*ln (o[k]) + (1-t[k])ln (1-o[k]))) */
+/* dE/do[k] = -(1-t[k])/ (1-o[k]) + t[k]/o[k] */
 /* werkt niet bij (grote?) netten */
 static double minimumCrossEntropy (I, const float target[])
 {
-    iam (FFNet); long i, k = my nNodes-my nOutputs+1;
+    iam (FFNet); 
+	long i, k = my nNodes - my nOutputs + 1;
     double cost = 0.0;
     
-    for (i=1; i <= my nOutputs; i++, k++)
+    for (i = 1; i <= my nOutputs; i++, k++)
     {
-    	double t1 = 1.0 - target[i], a1 = 1.0 - my activity[k];
-   		cost -= target[i] * log (my activity[k]) + t1 * log (a1);
-		my error[k] = t1 / a1 - target[i] / my activity[k];
+    	double t1 = 1.0 - target[i];
+		double o1 = 1.0 - my activity[k];
+		
+   		cost -= target[i] * log (my activity[k]) + t1 * log (o1);
+		my error[k] = -t1 / o1 + target[i] / my activity[k];
     }
     return cost;
 }
@@ -355,10 +367,15 @@ double FFNet_computeError (FFNet me, const float target[])
 void FFNet_computeDerivative (FFNet me)
 {
     long i, j, k = 1;
-    for (i=my nInputs+2; i <= my nNodes; i++)
+    for (i = my nInputs+2; i <= my nNodes; i++)
     {
-        if ( ! my isbias[i]) for (j=my nodeFirst[i]; j <= my nodeLast[i]; j++, k++)
-            my dwi[k] = - my error[i] * my activity[j];
+        if (! my isbias[i])
+		{
+			for (j = my nodeFirst[i]; j <= my nodeLast[i]; j++, k++)
+			{
+            	my dwi[k] = - my error[i] * my activity[j];
+			}
+		}
     }
 }
 

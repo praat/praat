@@ -89,6 +89,35 @@
 	} structMelderDir, *MelderDir;
 #endif
 
+/********** NUMBER AND STRING COMPARISON **********/
+
+enum Melder_NUMBER {
+	Melder_NUMBER_EQUAL_TO = 1,
+	Melder_NUMBER_NOT_EQUAL_TO = 2,
+	Melder_NUMBER_LESS_THAN = 3,
+	Melder_NUMBER_LESS_THAN_OR_EQUAL_TO = 4,
+	Melder_NUMBER_GREATER_THAN = 5,
+	Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO = 6,
+	Melder_NUMBER_max = 6
+};
+const char * Melder_NUMBER_text_adjective (enum Melder_NUMBER which);
+int Melder_numberMatchesCriterion (double value, enum Melder_NUMBER which, double criterion);
+
+enum Melder_STRING {
+	Melder_STRING_EQUAL_TO = 1,
+	Melder_STRING_NOT_EQUAL_TO = 2,
+	Melder_STRING_CONTAINS = 3,
+	Melder_STRING_DOES_NOT_CONTAIN = 4,
+	Melder_STRING_STARTS_WITH = 5,
+	Melder_STRING_DOES_NOT_START_WITH = 6,
+	Melder_STRING_ENDS_WITH = 7,
+	Melder_STRING_DOES_NOT_END_WITH = 8,
+	Melder_STRING_MATCH_REGEXP = 9,
+	Melder_STRING_max = 9
+};
+const char * Melder_STRING_text_finiteVerb (enum Melder_STRING which);
+int Melder_stringMatchesCriterion (const char *value, enum Melder_STRING which, const char *criterion);
+
 /********** NUMBER TO STRING CONVERSION **********/
 
 /*

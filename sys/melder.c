@@ -1,6 +1,6 @@
 /* melder.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 /*
-	pb 2002/02/05
 	pb 2002/03/07 GPL
 	pb 2002/03/13 Mach
 	pb 2002/11/30 Melder_fixed
@@ -34,6 +33,7 @@
 	              (which used to cause up to seven seconds of delay in a 1-second sound window)
 	pb 2004/10/24 info buffer can grow
 	pb 2004/11/28 author notification in Melder_fatal
+	pb 2005/03/04 number and string comparisons, including regular expressions
  */
 
 #include <math.h>
@@ -42,6 +42,7 @@
 #include "melder.h"
 #include "longchar.h"
 #include "NUM.h"
+#include "regularExp.h"
 #ifdef _WIN32
 	#include <windows.h>
 #endif
@@ -385,6 +386,71 @@ int Melder_pause (const char *format, ...) {
 	interruption = theMelder. pause (Melder_buffer1);
 	va_end (arg);
 	return interruption;
+}
+
+/********** NUMBER AND STRING COMPARISONS **********/
+
+const char * Melder_NUMBER_text_adjective (enum Melder_NUMBER which) {
+	static const char *strings [1+Melder_NUMBER_max] = { "",
+		"equal to", "not equal to",
+		"less than", "less than or equal to",
+		"greater than", "greater than or equal to"
+	};
+	return strings [which < 0 || which > Melder_NUMBER_max ? 0 : which];
+}
+
+int Melder_numberMatchesCriterion (double value, enum Melder_NUMBER which, double criterion) {
+	return
+		which == Melder_NUMBER_EQUAL_TO && value == criterion ||
+		which == Melder_NUMBER_NOT_EQUAL_TO && value != criterion ||
+		which == Melder_NUMBER_LESS_THAN && value < criterion ||
+		which == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
+		which == Melder_NUMBER_GREATER_THAN && value > criterion ||
+		which == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
+}
+
+const char * Melder_STRING_text_finiteVerb (enum Melder_STRING which) {
+	static const char *strings [1+Melder_STRING_max] = { "",
+		"is equal to", "is not equal to",
+		"contains", "does not contain",
+		"starts with", "does not start with",
+		"ends with", "does not end with",
+		"matches (regex)"
+	};
+	return strings [which < 0 || which > Melder_STRING_max ? 0 : which];
+}
+
+int Melder_stringMatchesCriterion (const char *value, enum Melder_STRING which, const char *criterion) {
+	if (value == NULL) {
+		value = "";   /* Regard null strings as empty strings, as is usual in Praat. */
+	}
+	if (which <= Melder_STRING_NOT_EQUAL_TO) {
+		int matchPositiveCriterion = strequ (value, criterion);
+		return (which == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
+	}
+	if (which <= Melder_STRING_DOES_NOT_CONTAIN) {
+		int matchPositiveCriterion = strstr (value, criterion) != NULL;
+		return (which == Melder_STRING_CONTAINS) == matchPositiveCriterion;
+	}
+	if (which <= Melder_STRING_DOES_NOT_START_WITH) {
+		int matchPositiveCriterion = strnequ (value, criterion, strlen (criterion));
+		return (which == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
+	}
+	if (which <= Melder_STRING_DOES_NOT_END_WITH) {
+		int criterionLength = strlen (criterion), valueLength = strlen (value);
+		int matchPositiveCriterion = criterionLength <= valueLength && strequ (value + valueLength - criterionLength, criterion);
+		return (which == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
+	}
+	if (which == Melder_STRING_MATCH_REGEXP) {
+		char *place = NULL, *errorMessage;
+		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
+		if (compiled_regexp == NULL) return FALSE;
+		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL))
+			place = compiled_regexp -> startp [0];
+		free (compiled_regexp);
+		return place != NULL;
+	}
+	return 0;   /* Should not occur. */
 }
 
 /********** NUMBER TO STRING CONVERSION **********/

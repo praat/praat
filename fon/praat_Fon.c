@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/02/09
+ * pb 2005/03/04
  */
 
 #include "praat.h"
@@ -1183,11 +1183,28 @@ FORM (Pitch_Intensity_draw, "Plot intensity by pitch", 0)
 	REAL ("From intensity (dB)", "0.0")
 	REAL ("To intensity (dB)", "100.0")
 	BOOLEAN ("Garnish", 1)
+	RADIO ("Drawing method", 1)
+	RADIOBUTTON ("Speckles")
+	RADIOBUTTON ("Curve")
+	RADIOBUTTON ("Speckles and curve")
 	OK
 DO
 	EVERY_DRAW (Pitch_Intensity_draw (ONLY (classPitch), ONLY (classIntensity), GRAPHICS,
 		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("From intensity"), GET_REAL ("To intensity"), GET_INTEGER ("Garnish")))
+		GET_REAL ("From intensity"), GET_REAL ("To intensity"), GET_INTEGER ("Garnish"), GET_INTEGER ("Drawing method")))
+END
+
+FORM (Pitch_Intensity_speckle, "Plot intensity by pitch", 0)
+	REAL ("From frequency (Hertz)", "0.0")
+	REAL ("To frequency (Hertz)", "0.0 (= auto)")
+	REAL ("From intensity (dB)", "0.0")
+	REAL ("To intensity (dB)", "100.0")
+	BOOLEAN ("Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (Pitch_Intensity_draw (ONLY (classPitch), ONLY (classIntensity), GRAPHICS,
+		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+		GET_REAL ("From intensity"), GET_REAL ("To intensity"), GET_INTEGER ("Garnish"), 1))
 END
 
 /***** INTENSITY & POINTPROCESS *****/
@@ -3791,9 +3808,22 @@ FORM (TextGrid_Sound_extractIntervals, "TextGrid & Sound: Extract intervals", 0)
 	SENTENCE ("Label text", "")
 	OK
 DO
-	if (! praat_new (TextGrid_Sound_extractIntervals (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER ("Tier"), GET_STRING ("Label text"), 
+	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
+		GET_INTEGER ("Tier"), Melder_STRING_EQUAL_TO, GET_STRING ("Label text"),
 		GET_INTEGER ("Preserve times")), GET_STRING ("Label text"))) return 0;
+END
+
+FORM (TextGrid_Sound_extractIntervalsWhere, "TextGrid & Sound: Extract intervals", 0)
+	INTEGER ("Tier", "1")
+	BOOLEAN ("Preserve times", 0)
+	OPTIONMENU ("Extract all intervals whose label...", 1)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	SENTENCE ("...the text", "")
+	OK
+DO
+	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
+		GET_INTEGER ("Tier"), GET_INTEGER ("Extract all intervals whose label..."), GET_STRING ("...the text"),
+		GET_INTEGER ("Preserve times")), GET_STRING ("...the text"))) return 0;
 END
 
 DIRECT (TextGrid_Sound_scaleTimes)
@@ -4389,14 +4419,7 @@ END
 
 FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
 	OPTIONMENU ("Extract all columns whose label...", 1)
-		OPTION ("is equal to")
-		OPTION ("is not equal to")
-		OPTION ("contains")
-		OPTION ("does not contain")
-		OPTION ("starts with")
-		OPTION ("does not start with")
-		OPTION ("ends with")
-		OPTION ("does not end with")
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
@@ -4410,12 +4433,7 @@ END
 FORM (TableOfReal_extractColumnsWhereRow, "Extract columns where row", 0)
 	NATURAL ("Extract all columns where row...", "1")
 	OPTIONMENU ("...is...", 1)
-		OPTION ("equal to")
-		OPTION ("not equal to")
-		OPTION ("less than")
-		OPTION ("less than or equal to")
-		OPTION ("greater than")
-		OPTION ("greater than or equal to")
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -4456,12 +4474,7 @@ END
 FORM (TableOfReal_extractRowsWhereColumn, "Extract rows where column", 0)
 	NATURAL ("Extract all rows where column...", "1")
 	OPTIONMENU ("...is...", 1)
-		OPTION ("equal to")
-		OPTION ("not equal to")
-		OPTION ("less than")
-		OPTION ("less than or equal to")
-		OPTION ("greater than")
-		OPTION ("greater than or equal to")
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -4476,14 +4489,7 @@ END
 
 FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
 	OPTIONMENU ("Extract all rows whose label...", 1)
-		OPTION ("is equal to")
-		OPTION ("is not equal to")
-		OPTION ("contains")
-		OPTION ("does not contain")
-		OPTION ("starts with")
-		OPTION ("does not start with")
-		OPTION ("ends with")
-		OPTION ("does not end with")
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
@@ -5114,6 +5120,17 @@ END
 
 DIRECT (info_TextGrid_Pitch_draw)
 	Melder_information ("You can draw a TextGrid together with a Pitch after selecting them both.");
+END
+
+FORM (TextGrid_removeBoundaryAtTime, "TextGrid: Remove boundary at time", 0)
+	NATURAL ("Tier number", "1")
+	REAL ("Time (s)", "0.5")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TextGrid_removeBoundaryAtTime (OBJECT, GET_INTEGER ("Tier number"), GET_REAL ("Time"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
 FORM (TextGrid_removeTier, "TextGrid: Remove tier", 0)
@@ -6267,6 +6284,7 @@ praat_addAction1 (classTextGrid, 0, "Draw", 0, 0, 0);
 		praat_addAction1 (classTextGrid, 0, "Scale times...", 0, 1, DO_TextGrid_scaleTimes);
 		praat_addAction1 (classTextGrid, 0, "-- modify intervals --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 0, "Insert boundary...", 0, 1, DO_TextGrid_insertBoundary);
+		praat_addAction1 (classTextGrid, 0, "Remove boundary at time...", 0, 1, DO_TextGrid_removeBoundaryAtTime);
 		praat_addAction1 (classTextGrid, 0, "Set interval text...", 0, 1, DO_TextGrid_setIntervalText);
 		praat_addAction1 (classTextGrid, 0, "-- modify points --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 0, "Insert point...", 0, 1, DO_TextGrid_insertPoint);
@@ -6327,7 +6345,8 @@ praat_addAction1 (classTransition, 0, "Cast", 0, 0, 0);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, "Filter", 0, 0, DO_Sound_FormantTier_filter);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, "Filter (no scale)", 0, 0, DO_Sound_FormantTier_filter_noscale);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, "Draw", 0, 0, 0);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, "Speckle (phonetogram)...", 0, 0, DO_Pitch_Intensity_draw);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, "Draw (phonetogram)...", 0, 0, DO_Pitch_Intensity_draw);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, "Speckle (phonetogram)...", 0, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
 	praat_addAction2 (classIntensity, 1, classPointProcess, 1, "To IntensityTier", 0, 0, DO_Intensity_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, "To IntensityTier", 0, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, "Edit", 0, 0, DO_IntensityTier_edit);
@@ -6396,9 +6415,11 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, "Analyse", 0, 0, 0);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, "To Ltas (only harmonics)...", 0, 0, DO_PointProcess_Sound_to_Ltas_harmonics);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, "Edit", 0, 0, DO_TextGrid_edit);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, "Draw...", 0, 0, DO_TextGrid_Sound_draw);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract all intervals...", 0, 0, DO_TextGrid_Sound_extractAllIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract non-empty intervals...", 0, 0, DO_TextGrid_Sound_extractNonemptyIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract intervals...", 0, 0, DO_TextGrid_Sound_extractIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract -       ", 0, 0, 0);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract all intervals...", 0, praat_DEPTH_1, DO_TextGrid_Sound_extractAllIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract non-empty intervals...", 0, praat_DEPTH_1, DO_TextGrid_Sound_extractNonemptyIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract intervals...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_TextGrid_Sound_extractIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, "Extract intervals where...", 0, praat_DEPTH_1, DO_TextGrid_Sound_extractIntervalsWhere);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, "Modify TextGrid", 0, 0, 0);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, "Scale times", 0, 0, DO_TextGrid_Sound_scaleTimes);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, "Modify Sound", 0, 0, 0);

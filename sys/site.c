@@ -1,6 +1,6 @@
 /* site.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2004/10/21 simplified print command
+ * pb 2005/03/02 pref string buffer 260 bytes long
  */
 
 #include "Resources.h"
 #include <string.h>
 #include "site.h"
 
-static char printCommand [200] = "lp -c %s";
+static char printCommand [Resources_STRING_BUFFER_SIZE] = "lp -c %s";
 
 char * Site_getPrintCommand (void) { return printCommand; }
 

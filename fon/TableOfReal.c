@@ -1,6 +1,6 @@
 /* TableOfReal.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * dw 2004/02/27 drawAsSquares: fill colour same as outline colour
  * pb 2004/05/09 more Extract Part and Extract commands
  * pb 2004/10/01 Melder_double instead of %.17g
+ * pb 2005/03/04 Melder_NUMBER and Melder_STRING
  */
 
 #include <ctype.h>
@@ -367,41 +368,7 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 	}
 }
 
-static doesNumericValueMatchCriterion (double value, int which, double criterion) {
-	return
-		which == TableOfReal_EQUAL_TO && value == criterion ||
-		which == TableOfReal_NOT_EQUAL_TO && value != criterion ||
-		which == TableOfReal_LESS_THAN && value < criterion ||
-		which == TableOfReal_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
-		which == TableOfReal_GREATER_THAN && value > criterion ||
-		which == TableOfReal_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
-}
-
-static int doesStringValueMatchCriterion (const char *value, int which, const char *criterion) {
-	if (value == NULL) {
-		value = "";   /* Regard null strings as empty strings, as is usual in Praat. */
-	}
-	if (which <= TableOfReal_NOT_EQUAL_TO) {
-		int matchPositiveCriterion = strequ (value, criterion);
-		return (which == TableOfReal_EQUAL_TO) == matchPositiveCriterion;
-	}
-	if (which <= TableOfReal_DOES_NOT_CONTAIN) {
-		int matchPositiveCriterion = strstr (value, criterion) != NULL;
-		return (which == TableOfReal_CONTAINS) == matchPositiveCriterion;
-	}
-	if (which <= TableOfReal_DOES_NOT_START_WITH) {
-		int matchPositiveCriterion = strnequ (value, criterion, strlen (criterion));
-		return (which == TableOfReal_STARTS_WITH) == matchPositiveCriterion;
-	}
-	if (which <= TableOfReal_DOES_NOT_END_WITH) {
-		int criterionLength = strlen (criterion), valueLength = strlen (value);
-		int matchPositiveCriterion = criterionLength <= valueLength && strequ (value + valueLength - criterionLength, criterion);
-		return (which == TableOfReal_ENDS_WITH) == matchPositiveCriterion;
-	}
-	return 0;   /* Should not occur. */
-}
-
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which, double criterion) {
+TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, enum Melder_NUMBER which, double criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, n = 0;
@@ -410,7 +377,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which, doubl
 		goto end;
 	}
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (doesNumericValueMatchCriterion (my data [irow] [column], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
 			n ++;
 		}
 	}
@@ -422,7 +389,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which, doubl
 	copyColumnLabels (me, thee); cherror
 	n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (doesNumericValueMatchCriterion (my data [irow] [column], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
 	}
@@ -431,12 +398,12 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, int which, const char *criterion) {
+TableOfReal TableOfReal_extractRowsWhereLabel (I, enum Melder_STRING which, const char *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (doesStringValueMatchCriterion (my rowLabels [irow], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
 			n ++;
 		}
 	}
@@ -448,7 +415,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which, const char *criteri
 	copyColumnLabels (me, thee); cherror
 	n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (doesStringValueMatchCriterion (my rowLabels [irow], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
 	}
@@ -457,7 +424,7 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which, double criterion) {
+TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, enum Melder_NUMBER which, double criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long icol, n = 0;
@@ -466,7 +433,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which, double c
 		goto end;
 	}
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (doesNumericValueMatchCriterion (my data [row] [icol], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
 			n ++;
 		}
 	}
@@ -478,7 +445,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which, double c
 	copyRowLabels (me, thee); cherror
 	n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (doesNumericValueMatchCriterion (my data [row] [icol], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
 	}
@@ -487,12 +454,12 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which, const char *criterion) {
+TableOfReal TableOfReal_extractColumnsWhereLabel (I, enum Melder_STRING which, const char *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long icol, n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (doesStringValueMatchCriterion (my columnLabels [icol], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
 			n ++;
 		}
 	}
@@ -504,7 +471,7 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which, const char *crit
 	copyRowLabels (me, thee); cherror
 	n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (doesStringValueMatchCriterion (my columnLabels [icol], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
 	}

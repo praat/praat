@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/04/14
+ * pb 2005/03/04
  */
 
 #ifndef _AnyTier_h_
@@ -97,8 +97,8 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	int showBoundaries, int useTextStyles, int garnish);
 Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-Collection TextGrid_Sound_extractIntervals (TextGrid me, Sound sound,
-	long itier, const char *text, int preserveTimes);
+Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
+	long itier, enum Melder_STRING comparison, const char *text, int preserveTimes);
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
 	double fontSize, int useTextStyles, int garnish, int speckle, int yscale);
@@ -129,6 +129,7 @@ void IntervalTier_removeText (IntervalTier me);
 void TextTier_removeText (TextTier me);
 
 int TextGrid_insertBoundary (TextGrid me, int itier, double t);
+int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t);
 int TextGrid_setIntervalText (TextGrid me, int itier, long iinterval, const char *text);
 int TextGrid_insertPoint (TextGrid me, int itier, double t, const char *mark);
 int TextGrid_setPointText (TextGrid me, int itier, long ipoint, const char *text);

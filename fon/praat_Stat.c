@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 2004/06/18 corrected dialog title for scatter plot
- * pb 2004/11/30 turned ...... into ... at Remove column
+ * pb 2005/03/06
  */
 
 #include "praat.h"
@@ -112,6 +111,25 @@ DIRECT (Table_appendRow)
 		Table_appendRow (OBJECT);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
+	}
+END
+
+FORM (Table_extractRowsWhereColumn, "Table: Extract rows where column", 0)
+	WORD ("Extract all rows where column...", "")
+	RADIO ("...is...", 1)
+	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
+	REAL ("...the value", "0.0")
+	OK
+DO
+	double value = GET_REAL ("...the value");
+	WHERE (SELECTED) {
+		Table me = OBJECT;
+		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
+		if (icol == 0) return Melder_error ("No such column.");
+		if (! praat_new (Table_selectRowsWhereColumn (OBJECT,
+			icol, GET_INTEGER ("...is..."), value),
+			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
+		praat_dataChanged (OBJECT);
 	}
 END
 
@@ -358,30 +376,6 @@ DO
 	Melder_information ("%ld", Table_searchColumn (me, icol, GET_STRING ("Value")));
 END
 	
-FORM (Table_selectRowsWhereColumn, "Table: Select rows where column", 0)
-	WORD ("Column", "")
-	RADIO ("Is", 1)
-		RADIOBUTTON ("equal to")
-		RADIOBUTTON ("not equal to")
-		RADIOBUTTON ("less than")
-		RADIOBUTTON ("less than or equal to")
-		RADIOBUTTON ("greater than")
-		RADIOBUTTON ("greater than or equal to")
-	REAL ("Value", "0.0")
-	OK
-DO
-	double value = GET_REAL ("Value");
-	WHERE (SELECTED) {
-		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column"));
-		if (icol == 0) return Melder_error ("No such column.");
-		if (! praat_new (Table_selectRowsWhereColumn (OBJECT,
-			icol, GET_INTEGER ("Is"), value),
-			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
 FORM (Table_setColumnLabel_index, "Set column label", 0)
 	NATURAL ("Column number", "1")
 	SENTENCE ("Label", "")
@@ -494,7 +488,8 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Set column label (index)...", 0, 1, DO_Table_setColumnLabel_index);
 		praat_addAction1 (classTable, 0, "Set column label (label)...", 0, 1, DO_Table_setColumnLabel_label);
 	praat_addAction1 (classTable, 0, "Extract -     ", 0, 0, 0);
-		praat_addAction1 (classTable, 0, "Select rows where column...", 0, 1, DO_Table_selectRowsWhereColumn);
+		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, 1, DO_Table_extractRowsWhereColumn);
+		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn);
 
 }
 

@@ -401,7 +401,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 
 	Melder_progress (0.95, "Sound to Pitch: path finder");
 	Pitch_pathFinder (thee, silenceThreshold, voicingThreshold,
-		octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, TRUE);
+		octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, FALSE);
 
 end:
 	Melder_progress (1.0, NULL);   /* Done. */

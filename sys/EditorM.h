@@ -1,6 +1,6 @@
 /* EditorM.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/03/06
  */
 
 #undef FORM
@@ -70,6 +70,8 @@
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define ENUM(label,type,def)	UiForm_addEnum (cmd -> dialog, label, & enum_##type, def);
+#define RADIOBUTTONS_ENUM(labelProc,max) { int i; for (i = 1; i <= max; i ++) RADIOBUTTON (labelProc (i)) }
+#define OPTIONS_ENUM(labelProc,max) { int i; for (i = 1; i <= max; i ++) OPTION (labelProc (i)) }
 #define LIST(label,n,str,def)	UiForm_addList (cmd -> dialog, label, n, str, def);
 #define OK UiForm_finish (cmd -> dialog); } if (sender == NULL) {
 #define SET_REAL(name,value)	UiForm_setReal (cmd -> dialog, name, value);

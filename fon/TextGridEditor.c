@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2002/03/11
  * pb 2002/07/16 GPL
  * pb 2002/10/06 improved visibility of dragging
  * pb 2004/04/13 less flashing
  * pb 2005/01/11 better visibility of yellow line
+ * pb 2005/03/02 green colouring for matching labels
  */
 
 #include "TextGridEditor.h"
@@ -40,20 +40,24 @@
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
 	Widget publishButton, publishPreserveButton; \
 	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton; \
-	char *findString;
+	char *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
+	int greenMethod;
 #define TextGridEditor_methods FunctionEditor_methods
 class_create_opaque (TextGridEditor, FunctionEditor)
 
 static struct {
-	int useTextStyles, fontSize, alignment, shiftDragMultiple;
+	int useTextStyles, fontSize, alignment, shiftDragMultiple, greenMethod;
+	char greenString [Resources_STRING_BUFFER_SIZE];
 }
-	preferences = { FALSE, 12, Graphics_CENTRE, TRUE };
+	preferences = { FALSE, 12, Graphics_CENTRE, TRUE, Melder_STRING_EQUAL_TO, "any matching string for green colouring" };
 
 void TextGridEditor_prefs (void) {
 	Resources_addInt ("TextGridEditor.useTextStyles", & preferences.useTextStyles);
 	Resources_addInt ("TextGridEditor.fontSize", & preferences.fontSize);
 	Resources_addInt ("TextGridEditor.alignment", & preferences.alignment);
 	Resources_addInt ("TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
+	Resources_addInt ("TextGridEditor.greenMethod", & preferences.greenMethod);
+	Resources_addString ("TextGridEditor.greenString", & preferences.greenString [0]);
 }
 
 static double computeSoundY (TextGridEditor me) {
@@ -274,6 +278,9 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 	RADIO ("With the shift key, you drag", 2)
 		RADIOBUTTON ("a single boundary")
 		RADIOBUTTON ("multiple boundaries")
+	OPTIONMENU ("Paint intervals green whose label...", 1)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	SENTENCE ("...the text", "some text here for green paint")
 }
 static void prefs_setValues (I, EditorCommand cmd) {
 	iam (TextGridEditor);
@@ -281,6 +288,8 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_INTEGER ("Font size", my fontSize)
 	SET_INTEGER ("Text alignment in intervals", my alignment + 1)
 	SET_INTEGER ("With the shift key, you drag", my shiftDragMultiple + 1)
+	SET_INTEGER ("Paint intervals green whose label...", my greenMethod)
+	SET_STRING ("...the text", my greenString)
 }
 static void prefs_getValues (I, EditorCommand cmd) {
  	iam (TextGridEditor);
@@ -288,6 +297,10 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	preferences.fontSize = my fontSize = GET_INTEGER ("Font size");
 	preferences.alignment = my alignment = GET_INTEGER ("Text alignment in intervals") - 1;
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER ("With the shift key, you drag") - 1;
+	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...");
+	strncpy (my greenString, GET_STRING ("...the text"), Resources_STRING_BUFFER_SIZE);
+	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
+	strcpy (preferences.greenString, my greenString);
 	FunctionEditor_redraw (me);
 }
 
@@ -1280,21 +1293,33 @@ static void drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
 	Graphics_setUnderscoreIsSubscript (my graphics, my useTextStyles);
 
 	/*
-	 * Highlight selected interval.
+	 * Highlight interval: yellow (selected) or green (matching label).
 	 */
 	
-	if (selectedInterval) {
-		TextInterval interval = tier -> intervals -> item [selectedInterval];
+	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
+		TextInterval interval = tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmax > my startWindow && tmin < my endWindow) {   /* Selected interval visible? */
-			Graphics_setColour (my graphics, Graphics_YELLOW);
-			Graphics_fillRectangle (my graphics, tmin > my startWindow ? tmin : my startWindow,
-				tmax < my endWindow ? tmax : my endWindow, 0.0, 1.0);
-			Graphics_setColour (my graphics, Graphics_RED);
-			Graphics_rectangle (my graphics, tmin > my startWindow ? tmin : my startWindow,
-				tmax < my endWindow ? tmax : my endWindow, 0.0, 1.0);
+		if (tmax > my startWindow && tmin < my endWindow) {   /* Interval visible? */
+			int selected = iinterval == selectedInterval;
+			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my greenMethod, my greenString);
+			if (tmin < my startWindow) tmin = my startWindow;
+			if (tmax > my endWindow) tmax = my endWindow;
+			if (labelMatches) {
+				Graphics_setColour (my graphics, Graphics_LIME);
+				Graphics_fillRectangle (my graphics, tmin, tmax, 0.0, 1.0);
+			}
+			if (selected) {
+				if (labelMatches) {
+					tmin = 0.85 * tmin + 0.15 * tmax;
+					tmax = 0.15 * tmin + 0.85 * tmax;
+				}
+				Graphics_setColour (my graphics, Graphics_YELLOW);
+				Graphics_fillRectangle (my graphics, tmin, tmax, labelMatches ? 0.15 : 0.0, labelMatches? 0.85: 1.0);
+			}
 		}
 	}
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_line (my graphics, my endWindow, 0.0, my endWindow, 1.0);
 
 	/*
 	 * Draw a grey bar and a selection button at the cursor position.
@@ -1323,7 +1348,7 @@ static void drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
 		int selected;
 		if (tmin < my tmin) tmin = my tmin; if (tmax > my tmax) tmax = my tmax;
 		if (tmin >= tmax) continue;
-		selected = my selectedTier == itier && selectedInterval == iinterval;
+		selected = selectedInterval == iinterval;
 
 		/*
 		 * Draw left boundary.
@@ -2023,6 +2048,8 @@ TextGridEditor TextGridEditor_create (Widget parent, const char *title, TextGrid
 	my fontSize = preferences.fontSize;
 	my alignment = preferences.alignment;
 	my shiftDragMultiple = preferences.shiftDragMultiple;
+	my greenMethod = preferences.greenMethod;
+	strcpy (my greenString, preferences.greenString);
 	my selectedTier = 1;
 	FunctionEditor_init (me, parent, title, grid); cherror
 	FunctionEditor_Sound_init (me);

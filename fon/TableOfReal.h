@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/05/09
+ * pb 2005/03/04
  */
 
 
@@ -80,23 +80,11 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 TableOfReal TableOfReal_extractRowRanges (I, const char *ranges);
 TableOfReal TableOfReal_extractColumnRanges (I, const char *ranges);
 
-#define TableOfReal_EQUAL_TO  1
-#define TableOfReal_NOT_EQUAL_TO  2
-#define TableOfReal_LESS_THAN  3
-#define TableOfReal_LESS_THAN_OR_EQUAL_TO  4
-#define TableOfReal_GREATER_THAN  5
-#define TableOfReal_GREATER_THAN_OR_EQUAL_TO  6
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long icol, int which, double criterion);
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, int which, double criterion);
+TableOfReal TableOfReal_extractRowsWhereColumn (I, long icol, enum Melder_NUMBER which, double criterion);
+TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, enum Melder_NUMBER which, double criterion);
 
-#define TableOfReal_CONTAINS  3
-#define TableOfReal_DOES_NOT_CONTAIN  4
-#define TableOfReal_STARTS_WITH  5
-#define TableOfReal_DOES_NOT_START_WITH  6
-#define TableOfReal_ENDS_WITH  7
-#define TableOfReal_DOES_NOT_END_WITH  8
-TableOfReal TableOfReal_extractRowsWhereLabel (I, int which, const char *criterion);
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which, const char *criterion);
+TableOfReal TableOfReal_extractRowsWhereLabel (I, enum Melder_STRING which, const char *criterion);
+TableOfReal TableOfReal_extractColumnsWhereLabel (I, enum Melder_STRING which, const char *criterion);
 
 TableOfReal TableOfReal_extractRowsWhere (I, const char *condition);
 TableOfReal TableOfReal_extractColumnsWhere (I, const char *condition);

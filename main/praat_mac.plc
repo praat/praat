@@ -18,11 +18,13 @@
  */
 
 /*
- * pb 2005/02/09
+ * pb 2005/02/27
  */
 
-#define kBundleShortVersion "Praat 4.3.01"
-#define kBundleGetInfo kBundleShortVersion ", © 1992-2005 by Paul Boersma and David Weenink"
+#include "praat_version.h"
+
+#define kBundleShortVersion "Praat " PRAAT_VERSION 
+#define kBundleGetInfo kBundleShortVersion ", © 1992-" PRAAT_YEAR " by Paul Boersma and David Weenink"
 
 plist {
 	dictionary {

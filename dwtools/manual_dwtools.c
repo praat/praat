@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20041201 Latest modification
+ djmw 20050222 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -3251,6 +3251,25 @@ NORMAL ("For example, when the vector #y equals the first column of #Y and "
 	"are the linear combinations from #T__%y_ and #T__%x_ that have maximum "
 	"correlation. Their correlation coefficient equals the first canonical "
 	"correlation coefficient.")
+MAN_END
+
+MAN_BEGIN ("TableOfReal: To TableOfReal (means by row labels)...", "djmw", 20050221)
+INTRO ("A command that appears in the ##Multivariate statistics# menu if you select a @@TableOfReal@. "
+	"It calculates the multivariate means for the different row labels from the selected TableOfReal.")
+ENTRY ("Argument")
+TAG ("%%Expand")
+DEFINITION ("when %off, then for a table with %n rows and %m different labels (%m\\<_%n), the resulting table will have %m rows. "
+	"When %on, the dimensions of the resulting table will be the same as the originating, and corresponding means substituded "
+	"in each row.")
+ENTRY ("Example")
+NORMAL ("The following commands")
+CODE ("@@Create TableOfReal (Pols 1973)...@ 0")
+CODE ("To TableOfReal (means by row labels)... 0")
+NORMAL ("will result in a new TableOfReal that has 12 rows. Each row will contain the mean F1, F2 and F3 values for a particular vowel. These means "
+	" were obtained from 50 representations of that vowel.")
+NORMAL ("If we had chosen the %expansion:")
+CODE ("To TableOfReal (means by row labels)... 1")
+NORMAL ("the resulting TableOfReal would have had 600 rows. This representation  comes in handy when, for example, you have to calculate deviations from the mean.")
 MAN_END
 
 MAN_BEGIN ("TextGrid: Extend time...", "djmw", 20020702)

@@ -1,6 +1,6 @@
 /* praat_statistics.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/09 OSX no mention of free memory
  * pb 2004/10/18 more big integers
+ * pb 2005/03/02 pref string 260 bytes long
  */
 
 #include <time.h>
@@ -29,7 +30,7 @@
 static struct {
 	long batchSessions, interactiveSessions;
 	double memory;
-	char dateOfFirstSession [50];
+	char dateOfFirstSession [Resources_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs (void) {

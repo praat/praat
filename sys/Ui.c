@@ -1,6 +1,6 @@
 /* Ui.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/11/16 added Apply button
  * pb 2004/12/06 UiForm_getXXX_check
  * pb 2004/12/14 less space after LABEL unless its value is empty or ends in a period
+ * pb 2005/03/06 guard against incorrect prefs files
  */
 
 #include <ctype.h>
@@ -1239,7 +1240,7 @@ void UiForm_setInteger (I, const char *fieldName, long value) {
 			XmToggleButtonSetState (field -> toggle, (int) value, False);
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			int i;
-			if (value < 1 || value > field -> options -> size) fatalField (me);
+			if (value < 1 || value > field -> options -> size) value = 1;   /* Guard against incorrect prefs file. */
 			for (i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
 				XmToggleButtonSetState (b -> toggle, i == value, False);
@@ -1249,10 +1250,10 @@ void UiForm_setInteger (I, const char *fieldName, long value) {
 				}
 			}
 		} break; case UI_ENUM: {
-			if (value < 0 || value > enum_length (field -> enumerated)) fatalField (me);
+			if (value < 0 || value > enum_length (field -> enumerated)) value = 0;   /* Guard against incorrect prefs file. */
 			XmListSelectPos (field -> list, value + field -> includeZero, False);
 		} break; case UI_LIST: {
-			if (value < 1 || value > field -> numberOfStrings) fatalField (me);
+			if (value < 1 || value > field -> numberOfStrings) value = 1;   /* Guard against incorrect prefs file. */
 			XmListSelectPos (field -> list, value, False);
 		} break; default: {
 			fatalField (me);
@@ -1286,16 +1287,16 @@ void UiForm_setString (I, const char *fieldName, const char *value) {
 					XmToggleButtonSetState (b -> toggle, False, False);
 				}
 			}
-			if (! found) fatalField (me);
+			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_ENUM: {
 			long integerValue = enum_search (field -> enumerated, value);
-			if (integerValue < 0) fatalField (me);
+			if (integerValue < 0) integerValue = 0;   /* Guard against incorrect prefs file. */
 			XmListSelectPos (field -> list, integerValue + field -> includeZero, False);
 		} break; case UI_LIST: {
 			long i;
 			for (i = 1; i <= field -> numberOfStrings; i ++)
 				if (strequ (value, field -> strings [i])) break;
-			if (i > field -> numberOfStrings) fatalField (me);
+			if (i > field -> numberOfStrings) i = 1;   /* Guard against incorrect prefs file. */
 			XmListSelectPos (field -> list, i, False);
 		} break; default: {
 			fatalField (me);

@@ -1,6 +1,6 @@
 /* TextGrid.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
  */
 
 /*
- * pb 2001/08/07
  * pb 2002/07/16 GPL
  * pb 2003/03/12 corrected TextGrid_extractPart (could crash)
  * pb 2003/05/09 added extractNonemptyIntervals
  * pb 2004/04/14 TextGrid_merge supports more than two TextGrids
+ * pb 2005/02/16 TextGrid_removeBoundaryAtTime
+ * pb 2005/03/04 TextGrid_Sound_extractIntervalsWhere
  */
 
 #include "TextGrid.h"
@@ -633,7 +634,9 @@ end:
 	return collection;
 }
 
-Collection TextGrid_Sound_extractIntervals (TextGrid me, Sound sound, long itier, const char *text, int preserveTimes) {
+Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long itier,
+	enum Melder_STRING comparison, const char *text, int preserveTimes)
+{
 	IntervalTier tier;
 	long iseg, count = 0;
 	Collection collection;
@@ -646,7 +649,7 @@ Collection TextGrid_Sound_extractIntervals (TextGrid me, Sound sound, long itier
 	if (! collection) goto error;
 	for (iseg = 1; iseg <= tier -> intervals -> size; iseg ++) {
 		TextInterval segment = tier -> intervals -> item [iseg];
-		if (segment -> text && strequ (segment -> text, text)) {
+		if (Melder_stringMatchesCriterion (segment -> text, comparison, text)) {
 			Sound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax,
 				0, 1.0, preserveTimes);
 			char name [1000];
@@ -656,7 +659,8 @@ Collection TextGrid_Sound_extractIntervals (TextGrid me, Sound sound, long itier
 			if (! Collection_addItem (collection, interval)) goto error;
 		}
 	}
-	if (collection -> size == 0) Melder_warning ("No labels \"%s\" were found.", text);
+	if (collection -> size == 0)
+		Melder_warning ("No label that %s the text \"%s\" was found.", Melder_STRING_text_finiteVerb (comparison), text);
 	return collection;
 error:
 	forget (collection);
@@ -1308,6 +1312,43 @@ int TextGrid_insertBoundary (TextGrid me, int itier, double t) {
 	if (newInterval == NULL) return 0;
 	interval -> xmax = t;
 	return Collection_addItem (intervalTier -> intervals, newInterval);
+}
+
+int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t) {
+	IntervalTier intervalTier;
+	TextInterval left, right;
+	long iinterval;
+	if (itier < 1 || itier > my tiers -> size)
+		return Melder_error ("Cannot remove a boundary from tier %d, because that tier does not exist.", itier);
+	intervalTier = my tiers -> item [itier];
+	if (intervalTier -> methods != classIntervalTier)
+		return Melder_error ("Cannot remove a boundary from tier %d, because that tier is not an interval tier.", itier);
+	if (! IntervalTier_hasTime (intervalTier, t))
+		return Melder_error ("Cannot remove a boundary at %f seconds, because there is no boundary there.", t);
+	iinterval = IntervalTier_timeToIndex (intervalTier, t);
+	if (iinterval == 0)
+		return Melder_error ("Cannot remove a boundary at %f seconds, because this is outside the time domain of the intervals.", t);
+	if (iinterval == 1)
+		return Melder_error ("Cannot remove a boundary at %f seconds, because this is at the left edge of the tier.", t);
+	left = intervalTier -> intervals -> item [iinterval - 1];
+	right = intervalTier -> intervals -> item [iinterval];
+	/*
+	 * Move the text to the left of the boundary.
+	 */
+	left -> xmax = right -> xmax;   /* Collapse left and right intervals into left interval. */
+	if (right -> text == NULL) {
+		;
+	} else if (left -> text == NULL) {
+		TextInterval_setText (left, right -> text);
+	} else {
+		char *buffer = Melder_malloc (strlen (left -> text) + strlen (right -> text) + 1);
+		if (! buffer) return 0;
+		sprintf (buffer, "%s%s", left -> text, right -> text);
+		if (! TextInterval_setText (left, buffer)) { Melder_free (buffer); return 0; }
+		Melder_free (buffer);
+	}
+	Collection_removeItem (intervalTier -> intervals, iinterval);   /* Remove right interval. */
+	return 1;
 }
 
 int TextGrid_setIntervalText (TextGrid me, int itier, long iinterval, const char *text) {

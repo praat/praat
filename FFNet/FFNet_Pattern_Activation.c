@@ -204,7 +204,7 @@ double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation 
 
 double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activation a, int costFunctionType)
 {
-	double costs = FFNet_Pattern_Activation_getCosts_average (me, p, a, costFunctionType);
+	double costs = FFNet_Pattern_Activation_getCosts_total (me, p, a, costFunctionType);
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 

@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/11 nativize & genericize are each other's inverse and their second application is identity
  * pb 2004/12/02 differentiate between X11 and Windows encodings
+ * pb 2005/03/08 added "PostScript" encodings (mostly Mac and Praat-IPA)
  */
 
 /********** NON-ASCII CHARACTERS **********/
@@ -105,8 +106,9 @@ typedef struct Longchar_Info {
 	}
 		ps;   /* PostScript properties. */
 	unsigned short xwinEncoding;   /* The one-byte encoding for X11 (ISO8859-1 for Roman). */
-	unsigned short winEncoding;   /* The one-byte encoding for Windows (ISO8859-1 for Roman, Mac for SILDoulosIPA). */
-	unsigned short macEncoding;   /* The one-byte encoding for Macintosh. */
+	unsigned short winEncoding;   /* The one-byte encoding for Windows (ISO8859-1 for Roman; SILDoulosIPA 1993). */
+	unsigned short macEncoding;   /* The one-byte encoding for Macintosh (Mac for Roman; SILDoulosIPA 1993). */
+	unsigned short psEncoding;   /* The one-byte encoding for PostScript (Mac-Praat, TeX-xipa-Praat). */
 	unsigned short unicode;   /* The two-byte encoding for Unicode. */
 	const char *sgml;   /* The SGML name, max. 6 characters between ampersand and semicolon. */
 	const char *tex;   /* The TEX name, between backslash and space. */

@@ -1,6 +1,6 @@
 /* SoundRecorder.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
  * pb 2004/11/26 fake Mono on MacOS X
  * pb 2004/11/26 check available sampling frequencies on MacOS X
+ * pb 2005/02/13 defended against weird meter levels
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -143,8 +144,8 @@ class_create_opaque (SoundRecorder, Editor)
 
 static int theCouplePreference = 1;
 static int nmaxMB_pref = 4;
-static char macDefaultDevice [100];
-static char macDefaultSource [100];
+static char macDefaultDevice [Resources_STRING_BUFFER_SIZE];
+static char macDefaultSource [Resources_STRING_BUFFER_SIZE];
 
 void SoundRecorder_prefs (void) {
 	Resources_addInt ("SoundRecorder.bufferSize_MB", & nmaxMB_pref);
@@ -605,7 +606,8 @@ static Boolean workProc (XtPointer void_me) {
 					& totalSamplesToRecord, & numberOfSamplesRecorded,
 					& totalMsecsToRecord, & numberOfMsecsRecorded);
 			if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
-			Melder_assert (meterLevel >= 0); Melder_assert (meterLevel <= 255);
+			if (meterLevel < 0) meterLevel = 0;   /* Should not occur. */
+			if (meterLevel > 255) meterLevel = 255;   /* Should not occur. */
 			leftMaximum = rightMaximum = 128 * meterLevel;
 			if (my recording) {
 				if (totalSamplesToRecord == 0)

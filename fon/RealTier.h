@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2003/11/20
+ * pb 2005/03/02
  */
 
 #ifndef _AnyTier_h_
@@ -96,6 +96,7 @@ RealTier Vector_to_RealTier_valleys (I);
 RealTier PointProcess_upto_RealTier (PointProcess me, double value);
 
 int RealTier_formula (I, const char *expression, thou);
+void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
 
 /* End of file RealTier.h */
 #endif

@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2004 Paul Boersma
+ * Copyright (C) 2002-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@
  */
 
 /*
- * pb 2002/06/11
- * pb 2002/07/16 GPL
- * pb 2004/02/27 inheritable
+ * pb 2005/03/04
  */
 
 #ifndef _Collection_h_
@@ -89,13 +87,7 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 
-#define Table_EQUAL_TO  1
-#define Table_NOT_EQUAL_TO  2
-#define Table_LESS_THAN  3
-#define Table_LESS_THAN_OR_EQUAL_TO  4
-#define Table_GREATER_THAN  5
-#define Table_GREATER_THAN_OR_EQUAL_TO  6
-Table Table_selectRowsWhereColumn (Table me, long icol, int which, double criterion);
+Table Table_selectRowsWhereColumn (Table me, long icol, enum Melder_NUMBER which, double criterion);
 
 #endif
 /* End of file Table.h */

@@ -99,6 +99,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	
 	node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
+	if (node < 1) return;
 	
 	/*
 		Suppose p1 and p2 are the two points in the eigenplane, spanned by the eigenvectors

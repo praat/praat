@@ -2,7 +2,7 @@
 #define _Resources_h_
 /* Resources.h
  *
- * Copyright (C) 1996-2002 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,19 @@
  */
 
 /*
- * pb 1999/11/09
- * pb 2002/03/07 GPL
+ * pb 2005/03/02
  */
 
 #ifndef _melder_h_
 	#include "melder.h"
 #endif
+
+/*
+ * All strings added with Resources_addString should have the following buffer size,
+ * which conveniently equals the size of the path buffer in MelderFile so that
+ * file paths can be used as preferences.
+ */
+#define Resources_STRING_BUFFER_SIZE 260
 
 void Resources_addByte (const char *string, signed char *value);
 void Resources_addShort (const char *string, short *value);
