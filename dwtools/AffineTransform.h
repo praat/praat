@@ -2,7 +2,7 @@
 #define _AffineTransform_h_
 /* AffineTransform.h
  * 
- * Copyright (C) 2001-2002 David Weenink
+ * Copyright (C) 2001-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

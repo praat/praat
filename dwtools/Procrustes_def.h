@@ -1,4 +1,4 @@
-/* Procrustus_def.h
+/* Procrustes_def.h
  *
  * Copyright (C) 1993-2005 David Weenink
  *
@@ -22,12 +22,12 @@
  djmw 20020813 GPL header
 */
 
-#define ooSTRUCT Procrustus
-oo_DEFINE_CLASS (Procrustus, AffineTransform)
+#define ooSTRUCT Procrustes
+oo_DEFINE_CLASS (Procrustes, AffineTransform)
 
 	oo_DOUBLE (s)
 			
-oo_END_CLASS (Procrustus)	
+oo_END_CLASS (Procrustes)	
 #undef ooSTRUCT
 
-/* End of file Procrustus_def.h */	
+/* End of file Procrustes_def.h */	

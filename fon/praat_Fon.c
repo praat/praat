@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/03/04
+ * pb 2005/03/21
  */
 
 #include "praat.h"
@@ -1588,6 +1588,19 @@ FORM (Ltas_getSlope, "Ltas: Get slope", 0)
 DO
 	Melder_informationReal (Ltas_getSlope (ONLY (classLtas), GET_REAL ("left Low band"), GET_REAL ("right Low band"),
 		GET_REAL ("left High band"), GET_REAL ("right High band"), GET_INTEGER ("Averaging method")), "dB");
+END
+
+FORM (Ltas_getStandardDeviation, "Ltas: Get standard deviation", "Ltas: Get standard deviation...")
+	REAL ("From frequency (Hz)", "0.0")
+	REAL ("To frequency (Hz)", "0.0 (= all)")
+	RADIO ("Averaging method", 1)
+		RADIOBUTTON ("energy")
+		RADIOBUTTON ("sones")
+		RADIOBUTTON ("dB")
+	OK
+DO
+	Melder_informationReal (Sampled_getStandardDeviation_standardUnits (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+		0, GET_INTEGER ("Averaging method"), FALSE), "dB");
 END
 
 FORM (Ltas_getValueAtFrequency, "Ltas: Get value", "Ltas: Get value at frequency...")
@@ -5901,6 +5914,7 @@ praat_addAction1 (classIntervalTier, 0, "Convert", 0, 0, 0);
 		praat_addAction1 (classLtas, 1, "Get mean...", 0, 1, DO_Ltas_getMean);
 		praat_addAction1 (classLtas, 1, "Get slope...", 0, 1, DO_Ltas_getSlope);
 		praat_addAction1 (classLtas, 1, "Get local peak height...", 0, 1, DO_Ltas_getLocalPeakHeight);
+		praat_addAction1 (classLtas, 1, "Get standard deviation...", 0, 1, DO_Ltas_getStandardDeviation);
 	praat_addAction1 (classLtas, 0, "Modify", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, "Formula...", 0, 0, DO_Ltas_formula);
 	praat_addAction1 (classLtas, 0, "Convert", 0, 0, 0);

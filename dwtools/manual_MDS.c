@@ -1,6 +1,6 @@
 /* manual_MDS.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  djmw 20020422 GPL + removed "C syntax" part of manpage
  djmw 20030317 Latest modification.
  djmw 20030825 Spelling corrections.
- djmw 20040118 Procrustus modifications.
+ djmw 20040118 Procrustes modifications.
  djmw 20040214 Removed last link to @praat program@.
  djmw 20040407 Change Arguments -> Settings.
  djmw 20040513 Spelling.
- djmw 20041028 Latest modification.
+ djmw 20050406 Latest modification.
 */
 
 #include "ManPagesM.h"
@@ -174,7 +174,7 @@ LIST_ITEM ("  \\bu @@Dissimilarity & Configuration: To Configuration (absolute m
 NORMAL ("By transforming an existing Configuration:")
 LIST_ITEM ("  \\bu @@Configuration: To Configuration (varimax)...")
 LIST_ITEM ("  \\bu @@Configuration & AffineTransform: To Configuration")
-LIST_ITEM ("  \\bu @@Configuration & Procrustus: To Configuration")
+LIST_ITEM ("  \\bu @@Configuration & Procrustes: To Configuration")
 NORMAL ("From @@Principal component analysis@:")
 LIST_ITEM ("  \\bu @@TableOfReal: To Configuration (pca)...")
 LIST_ITEM ("  \\bu @@PCA & TableOfReal: To Configuration...")
@@ -278,12 +278,12 @@ INTRO ("Rotates the @Configuration to principal directions. The principal direct
 	"correspond to the principal components.")
 MAN_END
 
-MAN_BEGIN ("Configuration: To Configuration (procrustus)", "djmw", 19971219)
+MAN_BEGIN ("Configuration: To Configuration (procrustes)", "djmw", 19971219)
 INTRO ("A command that transforms the second selected @Configuration object "
 	"to match the first selected Configuration object as closely as possible."
 	"This problem of fitting one configuration (testee) to another (target) "
-	"as closely as possible is called the Procrustus problem. We use a "
-	"special @@Procrustus transform@ algorithm that does not "
+	"as closely as possible is called the Procrustes problem. We use a "
+	"special @@Procrustes transform@ algorithm that does not "
 	"mutilate or distort the testee configuration.")
 NORMAL ("Both Configuration objects must have the same dimensions.")
 MAN_END
@@ -351,10 +351,10 @@ INTRO ("A command that transforms the selected @Configuration to a new "
 	"@AffineTransform object.")
 MAN_END
 
-MAN_BEGIN ("Configuration & Procrustus: To Configuration", "djmw", 20011008)
+MAN_BEGIN ("Configuration & Procrustes: To Configuration", "djmw", 20011008)
 INTRO ("A command that transforms the selected @Configuration to a new "
 	"Configuration object according to the specifications in the selected "
-	"@Procrustus object.")
+	"@Procrustes object.")
 MAN_END
 
 MAN_BEGIN ("Configurations: To AffineTransform (congruence)...", "djmw", 20040407)
@@ -377,7 +377,7 @@ NORMAL ("The iteration process stops when either the %%maximum number of "
 	"iterations% is reached or the %tolerance criterion is met, which ever "
 	"one is first.")
 ENTRY ("Algorithm")
-NORMAL ("Sometimes the criterion used in a @@Procrustus transform@ is too "
+NORMAL ("Sometimes the criterion used in a @@Procrustes transform@ is too "
 	"restrictive for comparing two configurations. This criterion is only "
 	"zero when the positions in the rotated configuration (#A#T) equal the "
 	"positions in the other configuration (#B). @@Brokken (1983)@ proposed an "
@@ -392,13 +392,13 @@ NORMAL ("where #t\\'p__%i_ and #b\\'p__%i_ are the %i^^th^ column of #T and "
 	"@@Kiers & Groenen (1996)@ and shows excellent convergence properties.")
 MAN_END
 
-MAN_BEGIN ("Configuration & Configuration: To Procrustus...", "djmw", 20011008)
-INTRO ("A command that creates a @Procrustus object from two selected "
+MAN_BEGIN ("Configuration & Configuration: To Procrustes...", "djmw", 20011008)
+INTRO ("A command that creates a @Procrustes object from two selected "
 	"@Configuration objects.")
 ENTRY ("Argument")
 TAG ("%%Orthogonal transform%")
 DEFINITION ("determines whether or not a translation and a scaling are allowed in the transform.")
-NORMAL ("We calculate the @@Procrustus transform@ that transforms the second "
+NORMAL ("We calculate the @@Procrustes transform@ that transforms the second "
 	"selected Configuration object to match the first selected Configuration "
 	"object as closely as possible.")
 MAN_END
@@ -1532,9 +1532,9 @@ NORMAL ("This type of analysis on multiple objects results in two new objects: "
 	"a Configuration and a @Salience.")
 MAN_END
 
-MAN_BEGIN ("Procrustus", "djmw", 20010927)
+MAN_BEGIN ("Procrustes", "djmw", 20010927)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}.")
-NORMAL ("An object of type Procrustus represents the special @@AffineTransform|"
+NORMAL ("An object of type Procrustes represents the special @@AffineTransform|"
 	"affine transform@ that consists of a "
 	"combination of a translation, a shape preserving transformation and a scaling (this scaling is often called %dilation). "
 	"Because the transformation has to be shape preserving, only a combination of a rotation and a reflection is allowed. "
@@ -1542,18 +1542,18 @@ NORMAL ("An object of type Procrustus represents the special @@AffineTransform|"
 FORMULA ("#%Y = %s #%X #%T+ #1#%t',")
 NORMAL ("where %s is the scaling factor, #%T is the shape preserving transformation matrix, #%t is the translation vector, "
 	"and #1 is the vector with only ones as its elements.")
-NORMAL ("For more information about the Procrustus transform and its algorithm "
+NORMAL ("For more information about the Procrustes transform and its algorithm "
 	"see chapter 19 in @@Borg & Groenen (1997)@.")
 MAN_END
 
 
-MAN_BEGIN ("Procrustus transform", "djmw", 19980119)
+MAN_BEGIN ("Procrustes transform", "djmw", 19980119)
 INTRO ("A transformation that only uses a combination of a translation, "
 	"a scaling and a rigid transformation to transform one Configuration such that it "
 	"matches as closely as possible another Configuration. ")
-NORMAL ("We speak of %%orthogonal Procrustus transform% when only the rigid "
+NORMAL ("We speak of %%orthogonal Procrustes transform% when only the rigid "
 	"transformation is allowed but no scaling or translation.")
-NORMAL ("For more information about the Procrustus transform and its algorithm "
+NORMAL ("For more information about the Procrustes transform and its algorithm "
 	"see chapter 19 in @@Borg & Groenen (1997)@.")
 MAN_END
 
@@ -1891,7 +1891,7 @@ MAN_END
 
 
 MAN_BEGIN ("Brokken (1983)", "djmw", 19980406)
-NORMAL (" F.B. Brokken (1983), \"Orthogonal Procrustus rotation maximizing "
+NORMAL (" F.B. Brokken (1983), \"Orthogonal Procrustes rotation maximizing "
 	"congruence\", %Psychometrika #48, 343-352.")
 MAN_END
 

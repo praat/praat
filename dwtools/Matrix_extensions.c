@@ -22,6 +22,7 @@
  djmw 20040226 Matrix_drawAsSquares: respect the colour environment (fill with current colour).
  djmw 20041110 Matrix_drawDistribution did't draw lowest bin correctly.
  djmw 20050221 Matrix_drawDistribution would draw outside window.
+ djmw 20050405 Matrix_drawDistribution crashed if minimum > data minimum
 */
 
 #include "Matrix_extensions.h"
@@ -221,9 +222,9 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 		for (j = ixmin; j <= ixmax; j++)
 		{
 			long bin = 1 + floor ((my z[i][j] - minimum) / binWidth);
-			if (bin <= nBins)
+			if (bin <= nBins && bin > 0)
 			{
-				freq [bin]++; nxy ++;
+				freq[bin]++; nxy ++;
 			}
 		}
 	}

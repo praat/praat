@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20050222 Latest modification
+ djmw 20050505 Latest modification
 */
 
 #ifndef _TableOfReal_h_
@@ -185,6 +185,7 @@ TableOfReal TableOfReal_to_TableOfReal (I);
 TableOfReal TableOfReal_choleskyDecomposition (I, int upper, int inverse);
 
 TableOfReal TableOfReal_appendColumns (I, thou);
+Any TableOfReal_appendColumnsMany (Collection me);
 
 int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
 

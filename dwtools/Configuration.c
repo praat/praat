@@ -18,13 +18,13 @@
  */
 
 /*
- djmw 20010920 adapted NUMprocrustus
  djmw 20010920 +Configuration_getDilationFactor
  djmw 20020315 GPL header
  djmw 20030513 applied change in numeric label generation
  djmw 20030801 Configuration_drawConcentrationEllipses extra argument
  djmw 20040303 Moved containsPrintableCharacter to NUM2.c
  djmw 20041026 Removed non-used code.
+ djmw 20050314 Configuration_draw crashed when rowlabel==NULL
  */
 
 #include <ctype.h>
@@ -34,7 +34,6 @@
 #include "Configuration_AffineTransform.h"
 #include "TableOfReal_extensions.h"
 #include "SSCP.h"
-#include "Procrustus.h"
 
 #include "oo_DESTROY.h"
 #include "Configuration_def.h"
@@ -432,8 +431,11 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 		if (x[i] >= xmin && x[i] <= xmax && y[i] >= ymin && y[i] <= ymax)
 		{
 			char *plotLabel = useRowLabels ? my rowLabels[i] : label;
-			if (! NUMstring_containsPrintableCharacter (plotLabel)) noLabel++;
-			Graphics_text (g, x[i], y[i], plotLabel);
+			if (NUMstring_containsPrintableCharacter (plotLabel))
+			{
+				Graphics_text (g, x[i], y[i], plotLabel);
+			}
+			else noLabel++;
 		}
 	}
 	Graphics_setFontSize (g, fontSize);

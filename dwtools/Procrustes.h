@@ -1,8 +1,8 @@
-#ifndef _Configuration_and_Procrustus_h_
-#define _Configuration_and_Procrustus_h_
-/* Configuration_and_Procrustus.h
+#ifndef _Procrustes_h_
+#define _Procrustes_h_
+/* Procrustes.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,20 @@
  */
 
 /*
+ djmw 20010926
  djmw 20020813 GPL header
- djmw 20041025 Latest modification.
 */
 
-#ifndef _Configuration_h_
-	#include "Configuration.h"
-#endif
-#ifndef _Procrustus_h_
-	#include "Procrustus.h"
+#ifndef _AffineTransform_h_
+	#include "AffineTransform.h"
 #endif
 
-Procrustus Configurations_to_Procrustus (Configuration me, Configuration thee, int orthogonal);
+#define Procrustes_members AffineTransform_members \
+	double s;
 
-#endif /* _Configuration_and_Procrustus_h_ */
+#define Procrustes_methods AffineTransform_methods
+class_create (Procrustes, AffineTransform)
+
+Procrustes Procrustes_create (long n);
+
+#endif /* _Procrustes_h_ */

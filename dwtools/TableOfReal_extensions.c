@@ -1793,7 +1793,7 @@ end:
 
 TableOfReal TableOfReal_appendColumns (I, thou)
 {
-	char *proc = "TableOfReal TableOfReal_appendColumns";
+	char *proc = "TableOfReal_appendColumns";
 	iam (TableOfReal); thouart (TableOfReal);
 	TableOfReal him;
 	long i, ncols = my numberOfColumns + thy numberOfColumns;
@@ -1801,6 +1801,13 @@ TableOfReal TableOfReal_appendColumns (I, thou)
 
 	if (my numberOfRows != thy numberOfRows) return Melder_errorp ("%s: "
 		"The number of rows must be equal.", proc);
+	/* Stricter label checking???
+		append only if
+		  (my rowLabels[i] == thy rowlabels[i], i=1..my numberOfRows) or
+		  (my rowLabels[i] == 'empty', i=1..my numberOfRows)  or 
+		  (thy rowLabels[i] == 'empty', i=1..my numberOfRows);
+		'empty':  NULL or \w*
+	*/
 	him = TableOfReal_create (my numberOfRows, ncols);
 	if (him == NULL) return NULL;
 	if (! NUMstrings_copyElements (my rowLabels, his rowLabels, 1, my numberOfRows) ||
@@ -1822,6 +1829,56 @@ end:
 	{
 		Melder_warning ("%s: %d row labels differed.", proc, labeldiffs);
 	}
+	return him;
+}
+
+Any TableOfReal_appendColumnsMany (Collection me) 
+{
+	TableOfReal him = NULL, thee;
+	long itab, irow, icol, nrow, ncol;
+	
+	if (my size == 0) return Melder_errorp ("Cannot add zero tables.");
+	thee = my item [1];
+	nrow = thy numberOfRows;
+	ncol = thy numberOfColumns;
+	for (itab = 2; itab <= my size; itab++)
+	{
+		thee = my item [itab];
+		ncol += thy numberOfColumns;
+		if (thy numberOfRows != nrow)
+		{
+			Melder_error ("Numbers of rows do not match.");
+			goto end;
+		}
+	}
+	if ((him = Thing_new (thy methods)) == NULL || 
+		! TableOfReal_init (him, nrow, ncol)) goto end;
+	/* Unsafe: new attributes not initialized. */
+	for (irow = 1; irow <= nrow; irow++)
+	{
+		TableOfReal_setRowLabel (him, irow, thy rowLabels [irow]);
+		if (Melder_hasError ()) goto end;
+	}
+	ncol = 0;
+	for (itab = 1; itab <= my size; itab++)
+	{
+		thee = my item [itab];
+		for (icol = 1; icol <= thy numberOfColumns; icol++)
+		{
+			ncol++;
+			TableOfReal_setColumnLabel (him, ncol, thy columnLabels [icol]);
+			if (Melder_hasError ()) goto end;
+			for (irow = 1; irow <= nrow; irow++)
+			{
+				his data[irow][ncol] = thy data[irow][icol];
+			}
+		}
+	}
+	Melder_assert (ncol == his numberOfColumns);
+	
+end:
+
+	if (Melder_hasError ()) forget (him);
 	return him;
 }
 

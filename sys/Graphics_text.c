@@ -28,6 +28,7 @@
  * pb 2004/12/02 Linux: xipa support
  * pb 2005/02/03 TeX-xipa10-Praat-Regular
  * pb 2005/03/08 psEncoding; SILIPA93 encoding for Windows and Mac
+ * pb 2005/03/15 find PostScript Courier with -p-
  */
 
 #include <ctype.h>
@@ -116,7 +117,7 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 		size == 0 ? 10 : size == 1 ? 11 : size == 2 ? 14 : size == 3 ? 18 : 24,
 		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
 		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
-		font == Graphics_COURIER ? "m" : "p",
+		"*" /*font == Graphics_COURIER ? "m" : "p"*/,
 		font == Graphics_SYMBOL || font == Graphics_IPATIMES || font == Graphics_DINGBATS ?
 			"adobe-fontspecific" : "iso8859-1");
 	fontInfo = XLoadQueryFont (my display, name);
@@ -144,8 +145,9 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 			}
 		} else {
 			Melder_casual ("Font \"%s\" not found. Using Courier instead.", name);
-			sprintf (name, "*courier-medium-r-normal--*-%d0*",
-				size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24);
+			sprintf (name, "-*-courier-medium-r-normal--*-%d0-%d-%d-*-*-iso8859-1",
+				size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
+				my resolution < 100 ? 75 : 100, my resolution < 100 ? 75 : 100);
 			fontInfo = XLoadQueryFont (my display, name);
 			if (! fontInfo) return NULL;
 		}

@@ -1,6 +1,6 @@
 # Makefile
 # 
-#  Copyright (C) 1993-2003 David Weenink
+#  Copyright (C) 1993-2005 David Weenink
 # 
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20041026 Latest modification.
+#  djmw 20050406 Latest modification.
 
 
 include ../makefile.defs
@@ -37,9 +37,9 @@ OBJECTS = Activation.o AffineTransform.o \
 	CC.o CCs_to_DTW.o \
 	ClassificationTable.o Confusion.o \
 	Configuration.o Configuration_AffineTransform.o \
-	Configuration_and_Procrustus.o Distance.o \
+	Configuration_and_Procrustes.o Distance.o \
 	DTW.o Discriminant.o  Discriminant_Pattern_Categories.o \
-	Eigen.o Eigen_and_Matrix.o Eigen_and_Procrustus.o \
+	Eigen.o Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o Formant_extensions.o \
@@ -50,7 +50,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	Matrix_Categories.o MDS.o \
 	Pattern.o PCA.o \
 	Pitch_extensions.o Polynomial.o \
-	Polygon_extensions.o Procrustus.o Proximity.o \
+	Polygon_extensions.o Procrustes.o  Procrustus.o \
+	Proximity.o \
 	Sampled_extensions.o Sampled2.o \
 	Sound_and_FilterBank.o Sound_extensions.o \
 	Sound_to_MFCC.o \

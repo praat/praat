@@ -1,4 +1,4 @@
-/* Procrustus.c
+/* Procrustes.c
  *
  * Copyright (C) 1993-2005 David Weenink
  *
@@ -20,17 +20,17 @@
 /*
  djmw 2001
  djmw 20020813 GPL header
- djmw 20040117 Corrected bug in classProcrustus_transform: scale (s) was not
+ djmw 20040117 Corrected bug in classProcrustes_transform: scale (s) was not
  used.
- djmw 20050406 Renamed Procrustus Procrustus
+ djmw 20050406 Renamed Procrustus Procrustes
 */
 
-#include "Procrustus.h"
+#include "Procrustes.h"
 
-static void classProcrustus_transform (I, double **in, long nrows, 
+static void classProcrustes_transform (I, double **in, long nrows, 
 	double **out)
 {
-	iam (Procrustus);
+	iam (Procrustes);
 	long i, j, k;
 
 	for (i = 1; i <= nrows; i++)
@@ -47,10 +47,10 @@ static void classProcrustus_transform (I, double **in, long nrows,
 	}	
 }
 
-static Any classProcrustus_invert (I)
+static Any classProcrustes_invert (I)
 {
-	iam (Procrustus);
-	Procrustus thee = Data_copy (me);
+	iam (Procrustes);
+	Procrustes thee = Data_copy (me);
 	long i, j;
 	
 	if (thee == NULL) return NULL;
@@ -80,36 +80,36 @@ static Any classProcrustus_invert (I)
 }
 
 #include "oo_DESTROY.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_COPY.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_EQUAL.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_WRITE_ASCII.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_WRITE_BINARY.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_READ_ASCII.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_READ_BINARY.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 #include "oo_DESCRIPTION.h"
-#include "Procrustus_def.h"
+#include "Procrustes_def.h"
 
-class_methods (Procrustus, AffineTransform)
-	class_method_local (Procrustus, destroy)
-	class_method_local (Procrustus, copy)
-	class_method_local (Procrustus, equal)
-	class_method_local (Procrustus, writeAscii)
-	class_method_local (Procrustus, writeBinary)
-	class_method_local (Procrustus, readAscii)
-	class_method_local (Procrustus, readBinary)
-	class_method_local (Procrustus, description)
-	class_method_local (Procrustus, transform)
-	class_method_local (Procrustus, invert)
+class_methods (Procrustes, AffineTransform)
+	class_method_local (Procrustes, destroy)
+	class_method_local (Procrustes, copy)
+	class_method_local (Procrustes, equal)
+	class_method_local (Procrustes, writeAscii)
+	class_method_local (Procrustes, writeBinary)
+	class_method_local (Procrustes, readAscii)
+	class_method_local (Procrustes, readBinary)
+	class_method_local (Procrustes, description)
+	class_method_local (Procrustes, transform)
+	class_method_local (Procrustes, invert)
 class_methods_end
 
-static void Procrustus_setDefaults (Procrustus me)
+static void Procrustes_setDefaults (Procrustes me)
 {
 	long i, j;
 
@@ -125,18 +125,18 @@ static void Procrustus_setDefaults (Procrustus me)
 	}
 }
 
-Procrustus Procrustus_create (long n)
+Procrustes Procrustes_create (long n)
 {
-	Procrustus me = new (Procrustus);
+	Procrustes me = new (Procrustes);
 
 	if (me == NULL || ! AffineTransform_init (me, n))
 	{
 		forget (me);
 		return NULL;
 	}
-	Procrustus_setDefaults (me);
+	Procrustes_setDefaults (me);
 	return me;
 }
 
 
-/* End of file Procrustus.c */
+/* End of file Procrustes.c */

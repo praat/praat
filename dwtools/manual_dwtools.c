@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20050222 Latest modification
+ djmw 20050406 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1224,7 +1224,7 @@ MAN_BEGIN ("Create TableOfReal (Weenink 1985)...", "djmw", 19990426)
 INTRO ("A command to create a @TableOfReal filled with the first three formant "
 	"frequency values from the 12 Dutch monophthongal "
 	"vowels as spoken in isolation by either 10 men or 10 women or 10 children.")
-NORMAL ("The first three columns will contain the formant frequencies in Hz. Each row will "
+NORMAL ("The three columns will contain the formant frequencies in Hz. Each row will "
 	"be labelled with its corresponding vowel symbol.")
 NORMAL ("More details about these data and how they were measured can be found in the paper of "
 	"@@Weenink (1985)@.")
@@ -1495,6 +1495,43 @@ NORMAL ("Query:")
 LIST_ITEM ("\\bu @@DTW: Get time along path...@")
 MAN_END
 
+MAN_BEGIN ("DTW: Find path (band)...", "djmw", 20050306)
+INTRO ("Finds the optimal path for the selected @DTW satisfying constraints within a Sakoe-Chiba band.")
+ENTRY ("Arguments")
+TAG ("%%Adjustment window duration")
+DEFINITION ("The maximum distance from the start of the sound that a path may start. This is the parameter "
+	"that determines the @@Sakoe & Chiba (1978)@ band.")
+TAG ("%%Adjustment window includes end")
+DEFINITION ("determines whether the adjustment window includes the endpoint. When off and when the durations of "
+	"the two objects in the DTW differ by more than the adjustment window duration, the last part of the longest object "
+	"cannot be matched at all.")
+TAG ("%%X weight, Y weight, Diagonal weight")
+DEFINITION ("determine the weights in the cumulative distance calculation.")
+NORMAL ("To visualize the Sakoe-Chiba band, select a DTW and chose @@DTW: To Polygon (band)...|To Polygon (band)...@. "
+	"Next select ##Draw...# (don't forget to make the drawing domains equal to the domains of the two objects in the DTW).")
+NORMAL ("For more information see the article of @@Sakoe & Chiba (1978)@.")
+MAN_END
+
+MAN_BEGIN ("DTW: Find path (slopes)...", "djmw", 20050306)
+INTRO ("Finds the optimal path for the selected @DTW satisfying slope constraints.")
+TAG ("%%Non-diagonal steps, Diagonal steps")
+DEFINITION ("implement a slope constraint. Every %%nonDiagonalSteps% steps in a X or Y direction must be followed by "
+	"at least %%diagonalSteps% steps in the diagonal direction. By chosing %nonDiagonalSteps = 0 you explicitly forbid "
+	"non-diagonal steps, while %diagonalSteps = 0 does not impose any slope constraints at all.")
+TAG ("%%X weight, Y weight, Diagonal weight")
+DEFINITION ("determine the weights in the cumulative distance calculation.")
+ENTRY ("Examples")
+NORMAL ("For the constraint 1/2 <= slope <= 2, set %nonDiagonalSteps = 2 and %diagonalSteps = 1.")
+NORMAL ("For the constraint 1/3 <= slope <= 3, set %nonDiagonalSteps = 3 and %diagonalSteps = 1.")
+NORMAL ("To visualize the slope constraints, select a DTW and chose @@DTW: To Polygon (slopes)...|To Polygon (slopes)...@. "
+	"Next select ##Draw...# (don't forget to make the drawing domains equal to the domains of the two objects in the DTW).")
+NORMAL ("For more information see the article of @@Sakoe & Chiba (1978)@.")
+MAN_END
+
+MAN_BEGIN ("DTW: Get maximum consecutive steps...", "djmw", 20050307)
+INTRO ("Get the maximum number of consecutive steps in the chosen direction along the optimal path from the selected @DTW.")
+MAN_END
+
 MAN_BEGIN ("DTW: Get time along path...", "djmw", 20040407)
 INTRO ("Queries the selected @DTW object for the time along the minimal path "
 	"given the time along the \"x-direction\". ")
@@ -1516,6 +1553,20 @@ NORMAL ("When the %input time is in the interval [%xmin, %xmax], the %returned "
 	"DTW-object was constructed."
 	"For all other input times we assume that the two object are aligned. The "
 	"returned time value will therefore simply equal the input time." )
+MAN_END
+
+MAN_BEGIN ("DTW: Swap axes", "djmw", 20050306)
+INTRO ("Swap the x and y-axes of the selected @DTW.")
+MAN_END
+
+MAN_BEGIN ("DTW: To Polygon (band)...", "djmw", 20050307)
+INTRO ("A command to convert for a selected @DTW the Sakoe-Chiba band, as implemented by the window adjustment duration parameter, "
+	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
+MAN_END
+
+MAN_BEGIN ("DTW: To Polygon (slopes)...", "djmw", 20050307)
+INTRO ("A command to convert for a selected @DTW the slope constraints "
+	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
 MAN_END
 
 MAN_BEGIN ("Eigen", "djmw", 19981102)
@@ -2025,9 +2076,9 @@ NORMAL ("Now the cosine of the angle between the two planes is given by \\si__2_
 FORMULA ("arccos (\\si__2_)\\.c180/\\pi")
 MAN_END
 
-MAN_BEGIN ("PCA & PCA: To Procrustus...", "djmw", 20041028)
-INTRO ("A command to calculate a @Procrustus from the two selected @@PCA@'s.")
-NORMAL ("Determines the orthogonal @@Procrustus transform@.")
+MAN_BEGIN ("PCA & PCA: To Procrustes...", "djmw", 20041028)
+INTRO ("A command to calculate a @Procrustes from the two selected @@PCA@'s.")
+NORMAL ("Determines the orthogonal @@Procrustes transform@.")
 NORMAL ("Algorithm 12.4.1 in @@Golub & van Loan (1996)@.") 
 MAN_END
 
@@ -3032,7 +3083,7 @@ NORMAL ("where %nc is the number of columns (groups) to draw, %nr is the number 
 NORMAL ("The spacing between the bars drawn from a row:")
 FORMULA ("%dx = (%intergroup + %nr + (%nr -1) \\.c %interbar) *% width")
 NORMAL ("The first bar for the %k-th row starts at:")
-FORMULA ("%x1 = %hoffset \\.c %width + (%i - 1) \\.c (1 + %interbar) \\.c %width")
+FORMULA ("%x1 = %hoffset \\.c %width + (%k - 1) \\.c (1 + %interbar) \\.c %width")
 MAN_END
 
 MAN_BEGIN ("TableOfReal: Select columns where row...", "djmw", 20020502)
@@ -3400,6 +3451,11 @@ MAN_BEGIN ("Press et al. (1992)", "djmw", 19980114)
 NORMAL ("W.H. Press, S.A. Teukolsky, W.T. Vetterling & B.P. Flannery (1992), "
 	"%%Numerical Recipes in C: the art of scientific computing%, "
 	"Second Edition, Cambridge University Press.")
+MAN_END
+
+MAN_BEGIN ("Sakoe & Chiba (1978)", "djmw", 20050302)
+NORMAL ("H. Sakoe & S. Chiba (1978), \"Dynamic programming algorithm optimization for spoken word recognition\", "
+	"%%Trans. on ASSP% #26, 43-49.")
 MAN_END
 
 MAN_BEGIN ("Shepard (1964)", "djmw", 19980114)

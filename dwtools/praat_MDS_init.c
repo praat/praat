@@ -1,6 +1,6 @@
 /* praat_MDS_init.c
  *
- * Copyright (C) 1992-2004 David Weenink
+ * Copyright (C) 1992-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,17 @@
  djmw 20020603 Changes due to TableOfReal dynamic menu changes.
  djmw 20040415 Forms texts.
  djmw 20040513 More forms text changes
- djmw 20041027 Orhogonal transform parameter for Configurations_to_Procrustus
+ djmw 20041027 Orhogonal transform parameter for Configurations_to_Procrustes
+ djmw 20050406 classProcrustus -> classProcrustes.
 */
 
 #include <math.h>
 #include "NUM2.h"
 #include "praat.h"
 #include "MDS.h"
+#include "Procrustus.h"
 #include "TableOfReal_extensions.h"
-#include "Configuration_and_Procrustus.h"
+#include "Configuration_and_Procrustes.h"
 #include "Configuration_AffineTransform.h"
 #include "Confusion.h"
 #include "Formula.h"
@@ -167,7 +169,7 @@ DIRECT (AffineTransform_invert)
 		"%s_inverse", NAME))	 
 END
 
-FORM (AffineTransform_getTransformationElement, "AffineTransform: Get transformation element", "Procrustus")
+FORM (AffineTransform_getTransformationElement, "AffineTransform: Get transformation element", "Procrustes")
 	NATURAL ("Row number", "1")
 	NATURAL ("Column number", "1")
 	OK
@@ -180,7 +182,7 @@ DO
 	Melder_informationReal (my r [row] [column], NULL);
 END
 
-FORM (AffineTransform_getTranslationElement, "AffineTransform: Get translation element", "Procrustus")
+FORM (AffineTransform_getTranslationElement, "AffineTransform: Get translation element", "Procrustes")
 	NATURAL ("Index", "1")
 	OK
 DO
@@ -359,25 +361,25 @@ DIRECT (Configuration_to_Similarity_cc)
 	if (! praat_new (s, "congruence")) return 0;
 END
 
-FORM (Configurations_to_Procrustus, "Configuration & Configuration: To Procrustus",
-	"Configuration & Configuration: To Procrustus...")
+FORM (Configurations_to_Procrustes, "Configuration & Configuration: To Procrustes",
+	"Configuration & Configuration: To Procrustes...")
 	BOOLEAN ("Orthogonal transform", 0)
 	OK
 DO
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
-	if (! praat_new (Configurations_to_Procrustus (c1, c2, GET_INTEGER ("Orthogonal transform")), 
+	if (! praat_new (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
 		"%s_%s", Thing_getName (c1), Thing_getName (c2))) return 0;
 END
 
-DIRECT (Configurations_to_Procrustus_old)
+DIRECT (Configurations_to_Procrustes_old)
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED && CLASS == classConfiguration)
 	{
 		if (c1) c2 = OBJECT; 
 		else c1 = OBJECT;
 	}	
-	NEW (Configurations_to_Procrustus (c1, c2, 0))
+	NEW (Configurations_to_Procrustes (c1, c2, 0))
 
 END
 
@@ -1480,14 +1482,14 @@ DO
 		GET_INTEGER ("Number of dimensions")))
 END
 
-/********* Procrustus ***************************/
+/********* Procrustes ***************************/
 
-DIRECT (Procrustus_help)
-	Melder_help ("Procrustus"); 
+DIRECT (Procrustes_help)
+	Melder_help ("Procrustes"); 
 END
 
-DIRECT (Procrustus_getScale)
-	Procrustus me = ONLY_OBJECT;
+DIRECT (Procrustes_getScale)
+	Procrustes me = ONLY_OBJECT;
 	Melder_informationReal (my s, NULL);
 END
 
@@ -1618,10 +1620,11 @@ static void praat_TableOfReal_extras (void *klas)
 void praat_uvafon_MDS_init (void);
 void praat_uvafon_MDS_init (void)
 {
-	Thing_recognizeClassesByName (classProcrustus,
+	Thing_recognizeClassesByName (classProcrustes,
 		classContingencyTable, classDissimilarity,
 		classSimilarity, classConfiguration, classDistance,
 		classSalience, NULL);
+	Thing_recognizeClassByOtherName (classProcrustes, classProcrustus);
 		
     praat_addMenuCommand ("Objects", "New", "Multidimensional scaling",
 		0, 0, 0);
@@ -1690,8 +1693,8 @@ void praat_uvafon_MDS_init (void)
 
 	praat_addAction1 (classConfiguration, 0, "Match configurations - ", 
 		0, 0, 0);
-	praat_addAction1 (classConfiguration, 2, "To Procrustus...", 
-		0, 1, DO_Configurations_to_Procrustus);	
+	praat_addAction1 (classConfiguration, 2, "To Procrustes...", 
+		0, 1, DO_Configurations_to_Procrustes);	
 	praat_addAction1 (classConfiguration, 2, 
 		"To AffineTransform (congruence)...", 
 		0, 1, DO_Configurations_to_AffineTransform_congruence);
@@ -1772,12 +1775,12 @@ void praat_uvafon_MDS_init (void)
 		DO_Distance_to_ScalarProduct);
 
 
-	praat_addAction1 (classProcrustus, 0, "Procrustus help", 0, 0,
-		DO_Procrustus_help);
-	praat_AffineTransform_init (classProcrustus);
-	praat_addAction1 (classProcrustus, 1, "Get scale", QUERY_BUTTON , 
-		1, DO_Procrustus_getScale);
-	praat_addAction1 (classProcrustus, 0, "Extract transformation matrix", 0, 0,
+	praat_addAction1 (classProcrustes, 0, "Procrustes help", 0, 0,
+		DO_Procrustes_help);
+	praat_AffineTransform_init (classProcrustes);
+	praat_addAction1 (classProcrustes, 1, "Get scale", QUERY_BUTTON , 
+		1, DO_Procrustes_getScale);
+	praat_addAction1 (classProcrustes, 0, "Extract transformation matrix", 0, 0,
 		DO_AffineTransform_extractMatrix);
 
 	praat_TableOfReal_init2 (classSalience);
@@ -1831,7 +1834,7 @@ void praat_uvafon_MDS_init (void)
 /****** 2 classes ********************************************************/
 
 	praat_Configuration_and_AffineTransform_init (classAffineTransform);
-	praat_Configuration_and_AffineTransform_init (classProcrustus);
+	praat_Configuration_and_AffineTransform_init (classProcrustes);
 
 	praat_addAction2 (classConfiguration, 0, classWeight, 1, "Analyse", 
 		0, 0, 0);

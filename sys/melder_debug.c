@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2004/11/28
+ * pb 2005/03/28
  */
 
 #include "melder.h"
@@ -43,6 +43,7 @@ the behaviour of that program changes in the following way:
 12: no forced update event in XmUpdateDisplay on Mac
 14: switches off the progress window in melder.c
 15: don't use TrueType IPA fonts, but always bitmaps instead
+16: Linux: open /dev/dsp without O_NDELAY
 
 (negative values are for David)
 

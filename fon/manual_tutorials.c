@@ -23,8 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050309)
+MAN_BEGIN ("What's new?", "ppgb", 20050331)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.07# (March 31, 2005)")
+LIST_ITEM ("\\bu Linux: removed a bug that could cause a sound to stop playing.")
 NORMAL ("##4.3.04# (March 9, 2005)")
 LIST_ITEM ("\\bu Use SIL Doulos IPA 1993/1996 instead of 1989.")
 NORMAL ("##4.3.03# (March 2, 2005)")
@@ -683,6 +685,9 @@ ENTRY ("To do")
 	LIST_ITEM ("\\bu Improve scrolling and add selection in hyperpages.")
 	LIST_ITEM ("\\bu Segment spectrograph?") /* Ton Wempe, Jul 16 1996 */
 	LIST_ITEM ("\\bu Phoneme-to-articulation conversion??") /* Mirjam Ernestus, Jul 1 1996 */
+ENTRY ("Known bugs in the all edition")
+	LIST_ITEM ("\\bu (small) No navigation by tabs.")
+	LIST_ITEM ("\\bu (small) Tabs in texts and scripts should be considered spaces.")
 ENTRY ("Known bugs in the Macintosh version")
 	LIST_ITEM ("\\bu (small) Pause window modal.")
 	LIST_ITEM ("\\bu (small) Cascade buttons grey after suspend+resume during progress window.")

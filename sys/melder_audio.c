@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2003/08/22 used getenv ("AUDIODEV") on Sun (thanks to Michel Scheffers)
  * pb 2003/10/22 fake mono for Linux drivers that do not support mono
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
  * pb 2004/05/07 removed motif_mac_setNullEventWaitingTime (we nowadays use 1 clock tick everywhere anyway)
  * pb 2004/08/10 fake mono for Linux drivers etc, also if not asynchronous
  * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
+ * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
  */
 
 #include "melder.h"
@@ -1118,7 +1118,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #elif defined (linux)
 {
-	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | O_NDELAY)) == -1)
+	if ((my audio_fd = open ("/dev/dsp", O_WRONLY /* | (Melder_debug == 16 ? 0 : O_NDELAY) */)) == -1)
 		return cancel (), Melder_error (errno == EBUSY ? "Audio device already in use." :
 			"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
 	if (ioctl (my audio_fd, SNDCTL_DSP_SAMPLESIZE, (my val = 16, & my val)) == -1 ||   /* Error? */

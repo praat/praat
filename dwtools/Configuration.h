@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  * 
- * Copyright (C) 1992-2003 David Weenink
+ * Copyright (C) 1992-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020315 GPL header
- djmw 20030801 Latest modification
+ djmw 20050406 Latest modification
  */
 
 #ifndef _Data_h_
@@ -78,10 +78,6 @@ void Configuration_invertDimension (Configuration me, int dimension);
 		for (i=1; i <= my numberOfRows; i++)
 			my data[i][dimension] = - my data[i][dimension];
 */
-
-Configuration Configuration_procrustus (Configuration me, Configuration thee);
-double Configuration_getProcrustusDilation (Configuration me, 
-	Configuration thee);
 
 Configuration Configuration_congruenceRotation (Configuration me, Configuration thee,
 	long maximumNumberOfIterations, double tolerance);

@@ -1,6 +1,6 @@
 /* Sampled.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/11/06 better interpolation in marginal cases in Sampled_getMean
  * pb 2004/11/08 Sampled_getIntegral
  * pb 2004/11/25 corrected crashing bug in Sampled_getSumAndDefinitionRange
+ * pb 2005/03/21 implemented Sampled_getStandardDeviation
  */
 
 #include <math.h>
@@ -374,6 +375,184 @@ double Sampled_getIntegral (I, double xmin, double xmax, long which, int units, 
 double Sampled_getIntegral_standardUnits (I, double xmin, double xmax, long which, int averagingUnits, int interpolate) {
 	iam (Sampled);
 	return our backToStandardUnits (me, Sampled_getIntegral (me, xmin, xmax, which, averagingUnits, interpolate), which, averagingUnits);
+}
+
+static void Sampled_getSum2AndDefinitionRange
+	(I, double xmin, double xmax, long which, int units, double mean, int interpolate, double *return_sum2, double *return_definitionRange)
+{
+	/*
+		This function computes the area under the linearly interpolated squared difference curve between xmin and xmax.
+		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
+		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
+	*/
+	iam (Sampled);
+	long imin, imax, isamp;
+	double sum2 = 0.0, definitionRange = 0.0;
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
+	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
+		if (interpolate) {
+			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
+				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
+				for (isamp = imin; isamp <= imax; isamp ++) {
+					double value = our getValueAtSample (me, isamp, which, units);   /* A fast way to integrate a linearly interpolated curve; works everywhere except at the edges. */
+					if (NUMdefined (value)) {
+						value -= mean;
+						value *= value;
+						definitionRange += 1.0;
+						sum2 += value;
+					}
+				}
+				/*
+				 * Corrections within the first and last sampling intervals.
+				 */
+				if (xmin > leftEdge) {   /* Otherwise, constant extrapolation over 0.5 sample is OK. */
+					double phase = (my x1 + (imin - 1) * my dx - xmin) / my dx;   /* This fraction of sampling interval is still to be determined. */
+					double rightValue = Sampled_getValueAtSample (me, imin, which, units);
+					double leftValue = Sampled_getValueAtSample (me, imin - 1, which, units);
+					if (NUMdefined (rightValue)) {
+						rightValue -= mean;
+						rightValue *= rightValue;
+						definitionRange -= 0.5;   /* Delete constant extrapolation over 0.5 sample. */
+						sum2 -= 0.5 * rightValue;
+						if (NUMdefined (leftValue)) {
+							leftValue -= mean;
+							leftValue *= leftValue;
+							definitionRange += phase;   /* Add current fraction. */
+							sum2 += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   /* Interpolate to outside sample. */
+						} else {
+							if (phase > 0.5) phase = 0.5;
+							definitionRange += phase;   /* Add current fraction, but never more than 0.5. */
+							sum2 += phase * rightValue;
+						}
+					} else if (NUMdefined (leftValue) && phase > 0.5) {
+						leftValue -= mean;
+						leftValue *= leftValue;
+						definitionRange += phase - 0.5;
+						sum2 += (phase - 0.5) * leftValue;
+					}
+				}
+				if (xmax < rightEdge) {   /* Otherwise, constant extrapolation is OK. */
+					double phase = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;   /* This fraction of sampling interval is still to be determined. */
+					double leftValue = Sampled_getValueAtSample (me, imax, which, units);
+					double rightValue = Sampled_getValueAtSample (me, imax + 1, which, units);
+					if (NUMdefined (leftValue)) {
+						leftValue -= mean;
+						leftValue *= leftValue;
+						definitionRange -= 0.5;   /* Delete constant extrapolation over 0.5 sample. */
+						sum2 -= 0.5 * leftValue;
+						if (NUMdefined (rightValue)) {
+							rightValue -= mean;
+							rightValue *= rightValue;
+							definitionRange += phase;   /* Add current fraction. */
+							sum2 += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   /* Interpolate to outside sample. */
+						} else {
+							if (phase > 0.5) phase = 0.5;
+							definitionRange += phase;   /* Add current fraction, but never more than 0.5. */
+							sum2 += phase * leftValue;
+						}
+					} else if (NUMdefined (rightValue) && phase > 0.5) {
+						rightValue -= mean;
+						rightValue *= rightValue;
+						definitionRange += phase - 0.5;
+						sum2 += (phase - 0.5) * rightValue;
+					}
+				}
+			} else {   /* No sample centres between xmin and xmax. */
+				/*
+				 * Try to return the mean of the interpolated values at these two points.
+				 * Thus, a small (xmin, xmax) range gives the same value as the (xmin+xmax)/2 point.
+				 */
+				double leftValue = Sampled_getValueAtSample (me, imax, which, units);
+				double rightValue = Sampled_getValueAtSample (me, imin, which, units);
+				double phase1 = (xmin - (my x1 + (imax - 1) * my dx)) / my dx;
+				double phase2 = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;
+				if (imin == imax + 1) {   /* Not too far from sample definition region. */
+					if (NUMdefined (leftValue)) {
+						leftValue -= mean;
+						leftValue *= leftValue;
+						if (NUMdefined (rightValue)) {
+							rightValue -= mean;
+							rightValue *= rightValue;
+							definitionRange += phase2 - phase1;
+							sum2 += (phase2 - phase1) * (leftValue + 0.5 * (phase1 + phase2) * (rightValue - leftValue));
+						} else if (phase1 < 0.5) {
+							if (phase2 > 0.5) phase2 = 0.5;
+							definitionRange += phase2 - phase1;
+							sum2 += (phase2 - phase1) * leftValue;
+						}
+					} else if (NUMdefined (rightValue) && phase2 > 0.5) {
+						rightValue -= mean;
+						rightValue *= rightValue;
+						if (phase1 < 0.5) phase1 = 0.5;
+						definitionRange += phase2 - phase1;
+						sum2 += (phase2 - phase1) * rightValue;
+					}
+				}
+			}
+		} else {   /* No interpolation. */
+			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
+			if (rimax >= 0.5 && rimin < my nx + 0.5) {
+				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
+				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
+				for (isamp = imin + 1; isamp < imax; isamp ++) {
+					double value = our getValueAtSample (me, isamp, which, units);
+					if (NUMdefined (value)) {
+						value -= mean;
+						value *= value;
+						definitionRange += 1.0;
+						sum2 += value;
+					}
+				}
+				if (imin == imax) {
+					double value = our getValueAtSample (me, imin, which, units);
+					if (NUMdefined (value)) {
+						double phase = rimax - rimin;
+						value -= mean;
+						value *= value;
+						definitionRange += phase;
+						sum2 += phase * value;
+					}
+				} else {
+					if (imin >= 1) {
+						double value = our getValueAtSample (me, imin, which, units);
+						if (NUMdefined (value)) {
+							double phase = imin - rimin + 0.5;
+							value -= mean;
+							value *= value;
+							definitionRange += phase;
+							sum2 += phase * value;
+						}
+					}
+					if (imax <= my nx) {
+						double value = our getValueAtSample (me, imax, which, units);
+						if (NUMdefined (value)) {
+							double phase = rimax - imax + 0.5;
+							value -= mean;
+							value *= value;
+							definitionRange += phase;
+							sum2 += phase * value;
+						}
+					}
+				}
+			}
+		}
+	}
+	if (return_sum2) *return_sum2 = sum2;
+	if (return_definitionRange) *return_definitionRange = definitionRange;
+}
+
+double Sampled_getStandardDeviation (I, double xmin, double xmax, long which, int units, int interpolate) {
+	iam (Sampled);
+	double sum, sum2, definitionRange;
+	Sampled_getSumAndDefinitionRange (me, xmin, xmax, which, units, interpolate, & sum, & definitionRange);
+	if (definitionRange <= 1.0) return NUMundefined;
+	Sampled_getSum2AndDefinitionRange (me, xmin, xmax, which, units, sum / definitionRange, interpolate, & sum2, & definitionRange);
+	return sqrt (sum2 / (definitionRange - 1.0));
+}
+
+double Sampled_getStandardDeviation_standardUnits (I, double xmin, double xmax, long which, int averagingUnits, int interpolate) {
+	iam (Sampled);
+	return our backToStandardUnits (me, Sampled_getStandardDeviation (me, xmin, xmax, which, averagingUnits, interpolate), which, averagingUnits);
 }
 
 void Sampled_getMinimumAndX (I, double xmin, double xmax, long which, int units, int interpolate,

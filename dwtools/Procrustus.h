@@ -2,7 +2,7 @@
 #define _Procrustus_h_
 /* Procrustus.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

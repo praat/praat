@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20040105 latest modification.
+ djmw 20050406 latest modification.
 */
 
 #ifndef _NUM_h_
@@ -554,15 +554,15 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doubl
 		alpha >= 0
 */
 
-int NUMprocrustus (double **x, double **y, long nPoints, 
+int NUMProcrustes (double **x, double **y, long nPoints, 
 	long nDimensions, double **t, double *v, double *s);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the 
-	the Procrustus rotation/reflection matrix T, the translation vector v and the scaling
+	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
 	factor s such that Y = sXT+1v' (1 is the nPoints vector with ones).
 	Solution: see Borg and Groenen (1997), Modern Multidimensional Scaling, pp 340-346.
 	When on input v == NULL or s == NULL, only the matrix T will be solved for:
-	the orthogonal Procrustus transform.
+	the orthogonal Procrustes transform.
 */
 
 int NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), 

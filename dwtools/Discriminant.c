@@ -26,6 +26,7 @@
  djmw 20020418 Removed some causes for compiler warnings
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
+ djmw 20050405 Modified column label: eigenvector->Eigenvector
 */
 
 #include "Discriminant.h"
@@ -594,7 +595,7 @@ Configuration Discriminant_and_TableOfReal_to_Configuration
 	if (! Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns,
 		& him, 1, numberOfDimensions) ||	
 		! TableOfReal_copyLabels (thee, him, 1, 0) ||
-		! TableOfReal_setSequentialColumnLabels (him, 0, 0, "eigenvector ", 1, 1))
+		! TableOfReal_setSequentialColumnLabels (him, 0, 0, "Eigenvector ", 1, 1))
 	{
 		forget (him);
 	}

@@ -1,8 +1,8 @@
-#ifndef _Eigen_and_Procrustus_h_
-#define _Eigen_and_Procrustus_h_
-
-/* Eigen_and_Procrustus.h
- * Copyright (C) 2004 David Weenink
+#ifndef _Configuration_and_Procrustes_h_
+#define _Configuration_and_Procrustes_h_
+/* Configuration_and_Procrustes.h
+ *
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* djmw 20041025 Initial version */
- 
-#include "Eigen.h"
-#include "Procrustus.h"
+/*
+ djmw 20020813 GPL header
+ djmw 20041025 Latest modification.
+*/
 
-Procrustus Eigens_to_Procrustus (I, thou, long evec_from, long evec_to);
+#ifndef _Configuration_h_
+	#include "Configuration.h"
+#endif
+#ifndef _Procrustes_h_
+	#include "Procrustes.h"
+#endif
 
-#endif /* _Eigen_and_Procrustus_h_ */
+Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal);
+
+#endif /* _Configuration_and_Procrustes_h_ */

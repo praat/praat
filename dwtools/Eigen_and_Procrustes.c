@@ -1,5 +1,5 @@
-/* Eigen_and_Procrustus.c
- * Copyright (C) 2004 David Weenink
+/* Eigen_and_Procrustes.c
+ * Copyright (C) 2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  
 /* djmw 2004 Initial version */
 
-#include "Eigen_and_Procrustus.h"
-#include "Configuration_and_Procrustus.h"
+#include "Eigen_and_Procrustes.h"
+#include "Configuration_and_Procrustes.h"
 #include "NUM2.h"
 
-Procrustus Eigens_to_Procrustus (I, thou, long evec_from, long evec_to)
+Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to)
 {
 	iam (Eigen); thouart (Eigen);
-	Procrustus him = NULL;
+	Procrustes him = NULL;
 	long i, j, nvectors = evec_to - evec_from + 1; 
 	long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 	double **x = NULL, **y = NULL;
@@ -49,10 +49,10 @@ Procrustus Eigens_to_Procrustus (I, thou, long evec_from, long evec_to)
 		}
 	}
 	
-	him = Procrustus_create (nvectors);
+	him = Procrustes_create (nvectors);
 	if (him == NULL) goto end;
 
-	if (! NUMprocrustus (x, y, my dimension, nvectors, his r, NULL, NULL)) forget (him);
+	if (! NUMProcrustes (x, y, my dimension, nvectors, his r, NULL, NULL)) forget (him);
 	
 end:
 
@@ -62,4 +62,4 @@ end:
 }
 
 
-/* End of file Eigen_and_Procrustus.c */
+/* End of file Eigen_and_Procrustes.c */

@@ -1,6 +1,8 @@
-/* Procrustus_def.h
- *
- * Copyright (C) 1993-2005 David Weenink
+#ifndef _Eigen_and_Procrustes_h_
+#define _Eigen_and_Procrustes_h_
+
+/* Eigen_and_Procrustes.h
+ * Copyright (C) 2004-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20010926
- djmw 20020813 GPL header
-*/
+/* djmw 20041025 Initial version */
+ 
+#include "Eigen.h"
+#include "Procrustes.h"
 
-#define ooSTRUCT Procrustus
-oo_DEFINE_CLASS (Procrustus, AffineTransform)
+Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to);
 
-	oo_DOUBLE (s)
-			
-oo_END_CLASS (Procrustus)	
-#undef ooSTRUCT
-
-/* End of file Procrustus_def.h */	
+#endif /* _Eigen_and_Procrustes_h_ */

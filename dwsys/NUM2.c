@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
  djmw 20040105 Added NUMmahalanobisDistance_chi
  djmw 20040211 Modified NUMstrings_copyElements: if (form[i]==NULL) then {to[i]= NULL}.
  djmw 20040303 Added NUMstring_containsPrintableCharacter.
+ djmw 20050406 NUMprocrutus->NUMprocrustes
 */
 
 #include "SVD.h"
@@ -1920,7 +1921,7 @@ end:
 	return status;
 }
 
-int NUMprocrustus (double **x, double **y, long nPoints, 
+int NUMProcrustes (double **x, double **y, long nPoints, 
 	long nDimensions, double **t, double *v, double *s)
 {
 	SVD svd = NULL;
@@ -1966,7 +1967,7 @@ int NUMprocrustus (double **x, double **y, long nPoints,
 	
 	if (trace == 0)
 	{
-		(void) Melder_error ("NUMprocrustus: degenerate configuration(s).");
+		(void) Melder_error ("NUMProcrustes: degenerate configuration(s).");
 		goto end;
 	}
 	

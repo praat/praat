@@ -2,7 +2,7 @@
 #define _DTW_h_
 /* DTW.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20050306 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -29,16 +30,36 @@
 #ifndef _Graphics_h_
 	#include "Graphics.h"
 #endif
+#ifndef _Polygon_h
+	#include "Polygon.h"
+#endif
 
 #include "DTW_def.h"
 #define DTW_methods Matrix_methods
 oo_CLASS_CREATE (DTW, Matrix)
 
+#define DTW_SAKOECHIBA 1
+#define DTW_SLOPES 2
+
+#define DTW_UNREACHABLE 0
+#define DTW_FORBIDDEN 1
+#define DTW_START 3
+#define DTW_XANDY 2
+#define DTW_X 4
+#define DTW_Y 6
+
+
 Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
-	double tminc, double tmaxc, long ntc, double dtc, double t1c); 
+	double tminc, double tmaxc, long ntc, double dtc, double t1c);
+	
+DTW DTW_swapAxes (DTW me);
+
+int DTW_pathFinder_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end, 
+	 double costs_x, double costs_y, double costs_xandy);
+int DTW_pathFinder_slopes (DTW me, long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy);
 
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope);
-/*
+/* Obsolete
 	Function:
 		Calculate the minimum path (through a distance matrix).
 		 
@@ -64,7 +85,7 @@ double DTW_getPathY (DTW me, double t, int lowest);
 	When t is outside the x-domain of the DTW-object, the value of t 
 	will be returned. 
 */
-
+long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
 void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, int garnish);
@@ -74,6 +95,9 @@ void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 	
 void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	double dmin, double dmax, int garnish);
+	
+Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end);
+Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy);
 	
 Matrix DTW_distancesToMatrix (DTW me);
 	

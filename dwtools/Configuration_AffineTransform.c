@@ -1,6 +1,6 @@
 /* Configuration_AffineTransform.c
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
  */
 
 #include "Configuration_AffineTransform.h"
-#include "Configuration_and_Procrustus.h"
-#include "Procrustus.h"
+#include "Configuration_and_Procrustes.h"
+#include "Procrustes.h"
 #include "SVD.h"
 
 static void do_steps45 (double **w, double **t, double **c, long n, double *f)
@@ -234,15 +234,15 @@ end:
 AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
 	Configuration thee, long maximumNumberOfIterations, double tolerance)
 {
-	Procrustus p = NULL;
+	Procrustes p = NULL;
 	AffineTransform at = NULL;
 		
 	/*
-		Use procrustus transform to obtain starting configuration.
+		Use Procrustes transform to obtain starting configuration.
 		(We only need the transformation matrix T.)
 	*/
 
-	p = Configurations_to_Procrustus (me, thee, 0);
+	p = Configurations_to_Procrustes (me, thee, 0);
 	if (p == NULL) return NULL;
 
 	if (! NUMmaximizeCongruence (my data, thy data, my numberOfRows,

@@ -36,6 +36,10 @@
  djmw 20041020 MelderFile -> structMelderFile.
  djmw 20041105 TableOfReal_createFromVanNieropData_25females.
  djmw 20041108 FormantFilter_drawSpectrum bug correted (wrong field name).
+ djmw 20050308 Find path (slopes), Find path (band)... and others.
+ djmw 20050404 TableOfReal_appendColumns -> TableOfReal_appendColumnsMany
+ djmw 20050406 Procrustus->Prorustes
+ djmw 20050407 MelFilter_drawFilterFunctions error in field names crashed praat
 */
 
 #include "praat.h"
@@ -53,7 +57,7 @@ extern machar_Table NUMfpp;
 #include "Discriminant.h"
 #include "Editor.h"
 #include "Eigen_and_Matrix.h"
-#include "Eigen_and_Procrustus.h"
+#include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
@@ -116,6 +120,8 @@ int praat_Fon_formula (Any dia);
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 #endif
+
+#undef INCLUDE_DTW_SLOPES
 
 static int pr_LongSounds_appendToExistingSoundFile (MelderFile file)
 {
@@ -1107,6 +1113,20 @@ DO
 	 	lowest), NULL);	
 END
 
+FORM (DTW_getMaximumConsecutiveSteps, "DTW: Get maximum consecutive steps", "DTW: Get maximum consecutive steps...")
+	OPTIONMENU ("Direction", 1)
+	OPTION ("X")
+	OPTION ("Y")
+	OPTION ("Diagonaal")
+	OK
+DO
+	int direction[] = {DTW_START, DTW_X, DTW_Y, DTW_XANDY};
+	char *string[] = {"", "x", "y", "diagonal"};
+	int d = GET_INTEGER ("Direction");
+	Melder_information ("%d (=maximum number of consecutive steps in %s direction)", 
+		DTW_getMaximumConsecutiveSteps (ONLY_OBJECT, direction[d]), string[d]);
+END
+
 DIRECT (DTW_getWeightedDistance)
 	DTW me = ONLY_OBJECT;
 	Melder_informationReal (my weightedDistance, NULL); 
@@ -1127,8 +1147,63 @@ DO
 		GET_INTEGER("Match end positions"), GET_INTEGER("Slope constraints")))
 END
 
+#ifdef INCLUDE_DTW_SLOPES
+FORM (DTW_pathFinder_slopes, "DTW: Find path (slopes)", "DTW: Find path (slopes)...")
+	LABEL ("", "Slope constraints:")
+	LABEL ("", "This number of")
+	INTEGER ("Non-diagonal steps", "1")
+	LABEL ("", "must be followed by at least this number of")
+	INTEGER ("Diagonal steps", "0 (=no constraints)")
+	LABEL ("", "Directional weights")
+	REAL ("X weight", "1.0")
+	REAL ("Y weight", "1.0")
+	REAL ("Diagonal weight", "2.0")
+	OK
+DO
+	EVERY_CHECK (DTW_pathFinder_slopes (OBJECT, GET_INTEGER ("Non-diagonal steps"), GET_INTEGER ("Diagonal steps"),
+		GET_REAL ("X weight"), GET_REAL ("Y weight"), GET_REAL ("Diagonal weight")))
+END
+#endif
+
+FORM (DTW_pathFinder_band, "DTW: Find path (Sakoe-Chiba band)", "DTW: Find path (band)...")
+	REAL ("Adjustment window duration (s)", "0.1")
+	BOOLEAN ("Adjustment window includes end", 0)
+	LABEL ("", "Directional weights")
+	REAL ("X weight", "1.0")
+	REAL ("Y weight", "1.0")
+	REAL ("Diagonal weight", "2.0")
+	OK
+DO
+	EVERY_CHECK (DTW_pathFinder_band (OBJECT, GET_REAL ("Adjustment window duration"),
+		GET_INTEGER ("Adjustment window includes end"),
+		GET_REAL ("X weight"), GET_REAL ("Y weight"), GET_REAL ("Diagonal weight")))
+END
+
+FORM (DTW_to_Polygon_slopes, "DTW: To Polygon (slopes)", "DTW: To Polygon (slopes)...")
+	LABEL ("", "Slope constraints:")
+	LABEL ("", "This number of")
+	INTEGER ("Non-diagonal steps", "1")
+	LABEL ("", "must be followed by at least this number of")
+	INTEGER ("Diagonal steps", "0 (=no constraints)")
+	OK
+DO
+	EVERY_TO (DTW_to_Polygon_slopes (OBJECT, GET_INTEGER ("Non-diagonal steps"), GET_INTEGER ("Diagonal steps")))
+END
+
+FORM (DTW_to_Polygon_band, "DTW: To Polygon (band)", "DTW: To Polygon (band)...")
+	REAL ("Adjustment window duration (s)", "0.1")
+	BOOLEAN ("Adjustment window includes end", 0)
+	OK
+DO
+	EVERY_TO (DTW_to_Polygon_band (OBJECT, GET_REAL ("Adjustment window duration"), GET_INTEGER ("Adjustment window includes end")))
+END
+
 DIRECT (DTW_distancesToMatrix)
 	EVERY_TO (DTW_distancesToMatrix (OBJECT))
+END
+
+DIRECT (DTW_swapAxes)
+	EVERY_TO (DTW_swapAxes (OBJECT))
 END
 
 /******************** Eigen ********************************************/
@@ -1324,45 +1399,45 @@ END
 FORM (FilterBank_drawFilters, "FilterBank: Draw filters", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
 	REAL ("left Amplitude range", "0.0")
 	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_drawRows (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
 		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range")))
 END
 
 FORM (FilterBank_drawOneContour, "FilterBank: Draw one contour", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
 	REAL ("Height (dB)", "40.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_drawOneContour (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
 		GET_REAL ("Height")))
 END
 
 FORM (FilterBank_drawContours, "FilterBank: Draw contours", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
-	REAL ("Minimum", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
+	REAL ("left Amplitude range", "0.0")
 	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_drawContours (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("Minimum"), GET_REAL ("right Amplitude range")))
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range")))
 END
 
 FORM (FilterBank_drawFrequencyScales, "FilterBank: Draw frequency scales", 
@@ -1394,62 +1469,63 @@ END
 FORM (FilterBank_paintImage, "FilterBank: Paint image", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
-	REAL ("Minimum", "0.0")
-	REAL ("Maximum", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
+	REAL ("left Amplitude range", "0.0")
+	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_paintImage (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("Minimum"), GET_REAL ("Maximum")))
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range")))
 END
 
 FORM (FilterBank_paintContours, "FilterBank: Paint contours", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
-	REAL ("Minimum", "0.0")
-	REAL ("Maximum", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
+	REAL ("left Amplitude range", "0.0")
+	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_paintContours (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("Minimum"), GET_REAL ("Maximum")))
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range")))
 END
 
 
 FORM (FilterBank_paintCells, "FilterBank: Paint cells", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
-	REAL ("Minimum", "0.0")
-	REAL ("Maximum", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
+	REAL ("left Amplitude range", "0.0")
+	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_paintCells (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("Minimum"), GET_REAL ("Maximum")))
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range")))
 END
 
 FORM (FilterBank_paintSurface, "FilterBank: Paint surface", 0)
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0")
-	REAL ("From frequency", "0.0")
-	REAL ("To frequency", "0.0")
-	REAL ("Minimum", "0.0")
-	REAL ("Maximum", "0.0")
+	REAL ("left Frequency range", "0.0")
+	REAL ("right Frequency range", "0.0")
+	REAL ("left Amplitude range", "0.0")
+	REAL ("right Amplitude range", "0.0")
 	OK
 DO
 	EVERY_DRAW (Matrix_paintSurface (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), 
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		GET_REAL ("Minimum"), GET_REAL ("Maximum"), 30, 45))
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range"),
+		30, 45))
 END
 
 FORM (FilterBank_getFrequencyInHertz, "FilterBank: Get frequency in Hertz", 
@@ -1975,12 +2051,12 @@ FORM (MelFilter_drawFilterFunctions, "MelFilter: Draw filter functions",
 	RADIO ("Frequency scale", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
-	RADIOBUTTON ("mel")
+	RADIOBUTTON ("Mel")
 	REAL ("left Frequency range", "0.0")
 	REAL ("right Frequency range", "0.0")
 	BOOLEAN ("Amplitude scale in dB", 0)
-	REAL ("Minimum", "0.0")
-	REAL ("Maximum", "0.0")
+	REAL ("left Amplitude range", "0.0")
+	REAL ("right Amplitude range", "0.0")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -1989,21 +2065,22 @@ DO
 		GET_INTEGER ("left Filter range"), GET_INTEGER ("right Filter range"),
 		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
 		GET_INTEGER ("Amplitude scale in dB"),
-		GET_REAL ("left Amplitude range"), GET_REAL ("Maximum"), GET_INTEGER ("Garnish")))
+		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range"),
+		GET_INTEGER ("Garnish")))
 END
 
 FORM (MelFilter_drawSpectrum, "MelFilter: Draw spectrum (slice)", "FilterBank: Draw spectrum (slice)...")
 	POSITIVE ("Time (s)", "0.1")
-	REAL ("Minimum frequency (mel)", "0.0")
-	REAL ("Maximum frequency (mel)", "0.0")
+	REAL ("left Frequency range (mel)", "0.0")
+	REAL ("right Frequency range (mel)", "0.0")
 	REAL ("left Amplitude range (dB)", "0.0")
 	REAL ("right Amplitude range (dB)", "0.0")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO	
 	EVERY_DRAW (FilterBank_drawTimeSlice (OBJECT, GRAPHICS, 
-		GET_REAL ("Time"), GET_REAL ("Minimum frequency"),
-		GET_REAL ("Maximum frequency"), GET_REAL ("left Amplitude range"),
+		GET_REAL ("Time"), GET_REAL ("left Frequency range"),
+		GET_REAL ("right Frequency range"), GET_REAL ("left Amplitude range"),
 		GET_REAL ("right Amplitude range"), "Mels", GET_INTEGER ("Garnish")))
 END
 
@@ -2217,7 +2294,7 @@ DO
 	EVERY_TO (PCA_to_TableOfReal_reconstruct1 (OBJECT, GET_STRING ("Coefficients")))
 END
 
-FORM (PCAs_to_Procrustus, "PCA & PCA: To Procrustus", "PCA & PCA: To Procrustus...")
+FORM (PCAs_to_Procrustes, "PCA & PCA: To Procrustes", "PCA & PCA: To Procrustes...")
 	NATURAL ("left Eigenvector range", "1")
 	NATURAL ("right Eigenvector range", "2")
 	OK
@@ -2226,7 +2303,7 @@ DO
 	long to = GET_INTEGER ("right Eigenvector range");
 	PCA me = NULL, thee = NULL;
 	WHERE (SELECTED) if (me) thee = OBJECT; else me = OBJECT;
-	if (! praat_new (Eigens_to_Procrustus (me, thee, from, to), "%s_%s", Thing_getName(me), Thing_getName(thee))) return 0;
+	if (! praat_new (Eigens_to_Procrustes (me, thee, from, to), "%s_%s", Thing_getName(me), Thing_getName(thee))) return 0;
 END
 
 
@@ -3147,18 +3224,22 @@ DIRECT (Table_createFromWeeninkData)
 END
 
 /******************* TableOfReal ****************************/
-    
-DIRECT (TableOfReal_appendColumns)
-	TableOfReal me = NULL, thee = NULL;
-	WHERE (SELECTED)
-	{
-		if (me) thee = OBJECT;
-		else me = OBJECT;
-	}	
-	if (! praat_new (TableOfReal_appendColumns (me, thee), "columns_appended"))
-		return 0;
-END
 
+DIRECT (TableOfReal_appendColumns)
+	Collection me = Collection_create (classTableOfReal, 10);
+	if (! me) return 0;
+	WHERE (SELECTED)
+		if (! Collection_addItem (me, OBJECT))
+		{ 
+			my size = 0; forget (me); return 0;
+		}
+	if (! praat_new (TableOfReal_appendColumnsMany (me), "columns_appended"))
+	{
+		my size = 0; forget (me); return 0;
+	}
+	my size = 0; forget (me);
+END
+    
 FORM (TableOfReal_createFromPolsData_50males, "Create TableOfReal (Pols 1973)",
 	"Create TableOfReal (Pols 1973)...")
 	BOOLEAN ("Include formant levels", 0)
@@ -3976,16 +4057,21 @@ void praat_uvafon_David_init (void)
     praat_addAction1 (classDTW, 0, "Paint distances...", 0, 0,
 		DO_DTW_paintDistances);
     praat_addAction1 (classDTW, 0, QUERY_BUTTON, 0, 0, 0);
-    praat_addAction1 (classDTW, 1, "Get distance (weighted)", 0, 1,
-		DO_DTW_getWeightedDistance);
-    praat_addAction1 (classDTW, 1, "Get time along path...", 0, 1,
-		DO_DTW_getPathY);
+    praat_addAction1 (classDTW, 1, "Get distance (weighted)", 0, 1, DO_DTW_getWeightedDistance);
+	praat_addAction1 (classDTW, 1, "Get maximum consecutive steps...", 0, 1, DO_DTW_getMaximumConsecutiveSteps);
+    praat_addAction1 (classDTW, 1, "Get time along path...", 0, 1, DO_DTW_getPathY);
 		
 
     praat_addAction1 (classDTW, 0, "Analyse", 0, 0, 0);
     praat_addAction1 (classDTW, 0, "Find path...", 0, 0, DO_DTW_findPath);
-    praat_addAction1 (classDTW, 0, "To Matrix (distances)", 0, 0,
-		DO_DTW_distancesToMatrix);
+	praat_addAction1 (classDTW, 0, "Find path (band)...", 0, 0, DO_DTW_pathFinder_band);
+#ifdef INCLUDE_DTW_SLOPES 
+	praat_addAction1 (classDTW, 0, "Find path (slopes)...", 0, 0, DO_DTW_pathFinder_slopes);
+#endif
+	praat_addAction1 (classDTW, 0, "To Polygon (band)...", 0, 0, DO_DTW_to_Polygon_band);
+	praat_addAction1 (classDTW, 0, "To Polygon (slopes)...", 0, 0, DO_DTW_to_Polygon_slopes);
+    praat_addAction1 (classDTW, 0, "To Matrix (distances)", 0, 0, DO_DTW_distancesToMatrix);
+	praat_addAction1 (classDTW, 0, "Swap axes", 0, 0, DO_DTW_swapAxes);
     
     praat_addAction1 (classExcitation, 0, "Synthesize", "To Formant...", 0, 0);
     praat_addAction1 (classExcitation, 0, "To Excitations", "Synthesize", 0,
@@ -4117,7 +4203,7 @@ void praat_uvafon_David_init (void)
 			DO_PCA_invertEigenvector);
 		praat_addAction1 (classPCA, 0, "Align eigenvectors",
 			0, 1, DO_Eigens_alignEigenvectors);
-	praat_addAction1 (classPCA, 2, "To Procrustus...", 0, 0, DO_PCAs_to_Procrustus);
+	praat_addAction1 (classPCA, 2, "To Procrustes...", 0, 0, DO_PCAs_to_Procrustes);
 	praat_addAction1 (classPCA, 0, "To TableOfReal (reconstruct 1)...", 0, 0, 
 		DO_PCA_to_TableOfReal_reconstruct1);
 	praat_addAction1 (classPCA, 0, "& TableOfReal: To Configuration?", 0, 0, DO_hint_PCA_and_TableOfReal_to_Configuration);
@@ -4282,7 +4368,7 @@ void praat_uvafon_David_init (void)
 		0, 0, DO_SVD_to_TableOfReal);
 
 	
-	praat_addAction1 (classTableOfReal, 2, "Append columns", 
+	praat_addAction1 (classTableOfReal, 0, "Append columns", 
 		"Append", 1, DO_TableOfReal_appendColumns);
 	praat_addAction1 (classTableOfReal, 0, "Multivariate statistics -",
 		0, 0, 0);

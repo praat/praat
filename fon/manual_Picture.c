@@ -322,7 +322,7 @@ LIST_ITEM ("o\\:^ o\\bs:\\^  (%diaresisover): centralized")
 LIST_ITEM ("k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050308)
+MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050310)
 NORMAL ("To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
@@ -332,9 +332,9 @@ LIST_ITEM ("\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
 LIST_ITEM ("\\ef \\bsef (%%phonetic epsilon%)")
 ENTRY ("How to remember the codes")
 NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
-	"The second letter can be %t (%turned), %c (%capital), %s (%script), %r (%reversed), - (%barred), or / (%slashed). "
+	"The second letter can be %t (%turned), %c (%capital), %s (%script), %r (%reversed), - (%barred or %retracted), or / (%slashed). "
 	"One symbol (\\ep) is a Greek letter. "
-	"The codes for \\sw, \\rh, and \\hs are abbreviations for %schwa, %%ram's horn%, and %horseshoe.")
+	"The codes for \\sw, \\rh, \\hs and \\kb are abbreviations for %schwa, %%ram's horn%, %horseshoe, and %%kidney bean%.")
 MAN_END
 
 MAN_BEGIN ("Axes...", "ppgb", 19970330)
