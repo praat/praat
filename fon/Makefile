@@ -1,10 +1,10 @@
 # Makefile of the library "fon"
-# Paul Boersma, November 23, 2004
+# Paul Boersma, May 3, 2005
 
 include ../makefile.defs
 CFLAGS = -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
 
-OBJECTS =   Table.o manual_statistics.o praat_Stat.o \
+OBJECTS =   Table.o Regression.o manual_statistics.o praat_Stat.o \
    TableOfReal.o Strings.o \
    Distributions.o Transition.o Distributions_and_Transition.o \
    Distributions_and_Strings.o PairDistribution.o \

@@ -18,12 +18,13 @@
  */
 
 /*
- * pb 2005/03/06
+ * pb 2005/05/01
  */
 
 #include "praat.h"
 
 #include "Table.h"
+#include "Regression.h"
 
 /***** TABLE *****/
 
@@ -127,7 +128,7 @@ DO
 		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_selectRowsWhereColumn (OBJECT,
-			icol, GET_INTEGER ("...is..."), value),
+			icol, (enum Melder_NUMBER) GET_INTEGER ("...is..."), value),
 			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -162,6 +163,14 @@ DO
 	long icol = GET_INTEGER ("Column number");
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
 	Melder_information ("%s", my columnHeaders [icol]. label == NULL ? "" : my columnHeaders [icol]. label);
+END
+
+DIRECT (Table_to_LinearRegression)
+	EVERY_TO (Table_to_LinearRegression (OBJECT))
+END
+
+DIRECT (Table_to_LogisticRegression)
+	EVERY_TO (Table_to_LogisticRegression (OBJECT))
 END
 
 DIRECT (Table_getNumberOfColumns)
@@ -440,6 +449,10 @@ DO
 	}
 END
 
+DIRECT (Table_to_Matrix)
+	EVERY_TO (Table_to_Matrix (OBJECT))
+END
+
 FORM_WRITE (Table_writeToTableFile, "Write Table to table file", 0, "txt")
 	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
 END
@@ -448,6 +461,8 @@ DIRECT (StatisticsTutorial) Melder_help ("Statistics"); END
 
 void praat_uvafon_Stat_init (void);
 void praat_uvafon_Stat_init (void) {
+
+	Thing_recognizeClassesByName (classTable, classLinearRegression, classLogisticRegression, NULL);
 
 	praat_addAction1 (classTable, 0, "Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, "Write to table file...", 0, 0, DO_Table_writeToTableFile);
@@ -468,6 +483,8 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, "Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
 		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, "To linear regression", 0, 1, DO_Table_to_LinearRegression);
+		praat_addAction1 (classTable, 1, "To logistic regression", 0, 1, DO_Table_to_LogisticRegression);
 	praat_addAction1 (classTable, 0, "Modify -        ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, "Set string value...", 0, 1, DO_Table_setStringValue);
 		praat_addAction1 (classTable, 0, "Set numeric value...", 0, 1, DO_Table_setNumericValue);
@@ -490,7 +507,7 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classTable, 0, "Extract -     ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, 1, DO_Table_extractRowsWhereColumn);
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn);
-
+	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
 }
 
 /* End of file praat_Stat.c */

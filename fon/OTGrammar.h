@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/01/24
+ * pb 2005/04/20
  */
 
 #ifndef _Strings_h_
@@ -35,11 +35,18 @@
 #ifndef _Distributions_h_
 	#include "Distributions.h"
 #endif
+#ifndef _TableOfReal_h_
+	#include "TableOfReal.h"
+#endif
 
 #include "OTGrammar_def.h"
 
 #define OTGrammar_methods Data_methods
 oo_CLASS_CREATE (OTGrammar, Data)
+
+#define OTHistory_members  TableOfReal_members
+#define OTHistory_methods  TableOfReal_methods
+class_create (OTHistory, TableOfReal)
 
 void OTGrammar_sort (OTGrammar me);
 /* Low level: meant to maintain the invariant
@@ -120,11 +127,12 @@ int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultO
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, int warnIfStalled);
 int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews);
+	double demotionMean, double relativeDemotionSpreading, long numberOfChews, long storeHistoryEvery, OTHistory *history);
 int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, int strategy, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews);
+	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
+	long storeHistoryEvery, OTHistory *history_out);
 int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs, double *fractionCorrect);
 int OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions thee, long columnNumber,

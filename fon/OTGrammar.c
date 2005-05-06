@@ -35,6 +35,7 @@
  * pb 2004/09/10 monitor rankings during learning from PairDistribution or Distributions
  * pb 2004/10/16 struct structOTxx
  * pb 2005/01/24 write to headerless spreadsheet file
+ * pb 2005/04/19 OTHistory
  */
 
 #include "OTGrammar.h"
@@ -52,7 +53,7 @@
 #include "oo_DESCRIPTION.h"
 #include "OTGrammar_def.h"
 
-static void info (I) {
+static void classOTGrammar_info (I) {
 	iam (OTGrammar);
 	long numberOfCandidates = 0, itab, numberOfViolations = 0, icand, icons;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -157,7 +158,7 @@ static int readAscii (I, FILE *f) {
 
 class_methods (OTGrammar, Data)
 	class_method_local (OTGrammar, destroy)
-	class_method (info)
+	class_method_local (OTGrammar, info)
 	class_method_local (OTGrammar, description)
 	class_method_local (OTGrammar, copy)
 	class_method_local (OTGrammar, equal)
@@ -165,6 +166,15 @@ class_methods (OTGrammar, Data)
 	class_method (readAscii)
 	class_method_local (OTGrammar, writeBinary)
 	class_method_local (OTGrammar, readBinary)
+class_methods_end
+
+static void classOTHistory_info (I) {
+	iam (OTHistory);
+	inherited (OTHistory) info (me);
+}
+
+class_methods (OTHistory, TableOfReal)
+	class_method_local (OTHistory, info)
 class_methods_end
 
 void OTGrammar_sort (OTGrammar me) {
@@ -532,11 +542,11 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 		Graphics_text (g, x + candWidth - margin, y + descent, tableau -> candidates [icand]. output);
 		if (candidateIsOptimal) {
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-			Graphics_setFontSize (g, 1.5 * fontSize);
+			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
 			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, "\\pf");
 			Graphics_setColour (g, Graphics_BLACK);
-			Graphics_setFontSize (g, fontSize);
+			Graphics_setFontSize (g, (int) fontSize);
 		}
 		Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
 		/*
@@ -1206,30 +1216,95 @@ end:
 	return 1;
 }
 
+static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, long numberOfData) {
+	long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   /* E.g. 0, 20, 40, ... */
+	OTHistory thee = new (OTHistory); cherror
+	TableOfReal_init (thee, 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints); cherror
+	TableOfReal_setColumnLabel (thee, 1, "Datum");
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		TableOfReal_setColumnLabel (thee, icons + 1, my constraints [icons]. name); cherror
+	}
+	TableOfReal_setRowLabel (thee, 1, "Initial state"); cherror
+	thy data [1] [1] = 0;
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		thy data [1] [icons + 1] = my constraints [icons]. ranking;
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+static int OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHistoryEvery, long idatum, const char *input) {
+	if (idatum % storeHistoryEvery == 0) {
+		long irow = 2 * idatum / storeHistoryEvery, icons;
+		TableOfReal_setRowLabel (thee, irow, input); cherror
+		thy data [irow] [1] = idatum;
+		thy data [irow + 1] [1] = idatum;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			thy data [irow] [icons + 1] = my constraints [icons]. disharmony;
+			thy data [irow + 1] [icons + 1] = my constraints [icons]. ranking;
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+static int OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, long idatum) {
+	long icons;
+	TableOfReal_setRowLabel (thee, thy numberOfRows, "Final state"); cherror
+	thy data [thy numberOfRows] [1] = idatum;
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		thy data [thy numberOfRows] [icons + 1] = my constraints [icons]. ranking;
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
 int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews)
+	double demotionMean, double relativeDemotionSpreading, long numberOfChews,
+	long storeHistoryEvery, OTHistory *history_out)
 {
-	long iform;
-	for (iform = 1; iform <= partialOutputs -> numberOfStrings; iform ++) {
-		if (! OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [iform],
-			rankingSpreading, strategy, honourLocalRankings,
-			demotionMean, relativeDemotionSpreading, numberOfChews, FALSE)) return 0;
+	long idatum = 0;
+	OTHistory history = NULL;
+	if (storeHistoryEvery) {
+		history = OTGrammar_createHistory (me, storeHistoryEvery, partialOutputs -> numberOfStrings); cherror
 	}
+	for (idatum = 1; idatum <= partialOutputs -> numberOfStrings; idatum ++) {
+		OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum],
+			rankingSpreading, strategy, honourLocalRankings,
+			demotionMean, relativeDemotionSpreading, numberOfChews, FALSE);   /* Delay error check till after we save current state. */
+		if (history) {
+			OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
+		}
+		cherror
+	}
+end:
+	*history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
 	iferror return Melder_error ("(OTGrammar_learnFromPartialOutputs:) Not completed.");
+	if (history) {
+		OTGrammar_finalizeHistory (me, history, partialOutputs -> numberOfStrings);
+	}
 	return 1;
 }
 
 int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, int strategy, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews)
+	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
+	long storeHistoryEvery, OTHistory *history_out)
 {
 	long iplasticity, ireplication, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	double plasticity = initialPlasticity;
+	OTHistory history = NULL;
 	Graphics graphics = Melder_monitor (0.0, "Learning with limited knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
+	}
+	if (storeHistoryEvery) {
+		history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData); cherror
 	}
 	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
@@ -1252,15 +1327,23 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 				Melder_flushError ("Only %ld partial outputs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
 			}
-			if (! OTGrammar_learnOneFromPartialOutput (me, partialOutput,
+			OTGrammar_learnOneFromPartialOutput (me, partialOutput,
 				evaluationNoise, strategy, honourLocalRankings,
-				plasticity, relativePlasticityNoise, numberOfChews, TRUE)) goto end;
+				plasticity, relativePlasticityNoise, numberOfChews, TRUE);
+			if (history) {
+				OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, partialOutput);
+			}
+			cherror
 		}
 		plasticity *= plasticityDecrement;
 	}
 end:
 	Melder_monitor (1.0, NULL);
+	*history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
 	iferror return Melder_error ("OTGrammar did not complete learning from partial outputs.");
+	if (history) {
+		OTGrammar_finalizeHistory (me, history, numberOfData);
+	}
 	return 1;
 }
 

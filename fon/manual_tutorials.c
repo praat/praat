@@ -23,8 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050331)
+MAN_BEGIN ("What's new?", "ppgb", 20050505)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.10# (May 6, 2005)")
+LIST_ITEM ("\\bu TextGrid editor: show number of intervals.")
+NORMAL ("##4.3.10# (April 25, 2005)")
+LIST_ITEM ("\\bu Table: Get logistic regression.")
+NORMAL ("##4.3.08# (April 19, 2005)")
+LIST_ITEM ("\\bu OT learning: store history with \"OTGrammar & Strings: Learn from partial outputs...\".")
 NORMAL ("##4.3.07# (March 31, 2005)")
 LIST_ITEM ("\\bu Linux: removed a bug that could cause a sound to stop playing.")
 NORMAL ("##4.3.04# (March 9, 2005)")

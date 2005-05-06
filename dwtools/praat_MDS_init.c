@@ -25,13 +25,13 @@
  djmw 20040513 More forms text changes
  djmw 20041027 Orhogonal transform parameter for Configurations_to_Procrustes
  djmw 20050406 classProcrustus -> classProcrustes.
+ djmw 20050426 Removed "Procrustus.h"
 */
 
 #include <math.h>
 #include "NUM2.h"
 #include "praat.h"
 #include "MDS.h"
-#include "Procrustus.h"
 #include "TableOfReal_extensions.h"
 #include "Configuration_and_Procrustes.h"
 #include "Configuration_AffineTransform.h"
@@ -370,17 +370,6 @@ DO
 	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
 	if (! praat_new (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
 		"%s_%s", Thing_getName (c1), Thing_getName (c2))) return 0;
-END
-
-DIRECT (Configurations_to_Procrustes_old)
-	Configuration c1 = NULL, c2 = NULL;
-	WHERE (SELECTED && CLASS == classConfiguration)
-	{
-		if (c1) c2 = OBJECT; 
-		else c1 = OBJECT;
-	}	
-	NEW (Configurations_to_Procrustes (c1, c2, 0))
-
 END
 
 FORM (Configurations_to_AffineTransform_congruence, "Configurations: To AffineTransform (congruence)",
@@ -1624,7 +1613,7 @@ void praat_uvafon_MDS_init (void)
 		classContingencyTable, classDissimilarity,
 		classSimilarity, classConfiguration, classDistance,
 		classSalience, NULL);
-	Thing_recognizeClassByOtherName (classProcrustes, classProcrustus);
+	Thing_recognizeClassByOtherName (classProcrustes, "Procrustus");
 		
     praat_addMenuCommand ("Objects", "New", "Multidimensional scaling",
 		0, 0, 0);

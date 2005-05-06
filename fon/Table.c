@@ -23,6 +23,8 @@
  * pb 2004/07/25 Melder_double
  * pb 2004/10/16 struct tags
  * pb 2005/03/04 Melder_NUMBER
+ * pb 2005/04/25 Table_getLogisticRegression
+ * pb 2005/04/25 Table_to_Matrix
  */
 
 #include <ctype.h>
@@ -269,6 +271,25 @@ static int Table_numericize (Table me, long icol) {
 	return 1;
 }
 
+const char * Table_getStringValue (Table me, long irow, long icol) {
+	TableRow row;
+	if (irow < 1 || irow > my rows -> size) return NULL;
+	if (icol < 1 || icol > my numberOfColumns) return NULL;
+	row = my rows -> item [irow];
+	return row -> cells [icol]. string;
+}
+
+double Table_getNumericValue (Table me, long irow, long icol) {
+	TableRow row;
+	if (irow < 1 || irow > my rows -> size) return NUMundefined;
+	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
+	row = my rows -> item [irow];
+	Table_numericize (me, icol); cherror
+end:
+	iferror return NUMundefined;   /* BUG */
+	return row -> cells [icol]. number;
+}
+
 double Table_getMean (Table me, long icol) {
 	double sum = 0.0;
 	long irow;
@@ -339,7 +360,7 @@ void Table_sortRows (Table me, long column1, long column2) {
 	if (column1 >= 1 && column1 <= my numberOfColumns) {
 		Table_numericize (me, column1);
 		cellCompare_column = column1;
-		qsort (& my rows -> item [1], my rows -> size, sizeof (TableRow), cellCompare);
+		qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), cellCompare);
 	}
 	if (column2 >= 1 && column2 <= my numberOfColumns) {
 		Table_numericize (me, column2);
@@ -351,7 +372,7 @@ void Table_sortRows (Table me, long column1, long column2) {
 				if (((TableRow) my rows -> item [imax]) -> cells [column1]. number != value)
 					break;
 			}
-			qsort (& my rows -> item [imin], imax - imin, sizeof (TableRow), cellCompare);
+			qsort (& my rows -> item [imin], (unsigned long) imax - imin, sizeof (TableRow), cellCompare);
 			imin = imax;
 		}
 	}
@@ -573,6 +594,23 @@ double Table_getDifference_studentT (Table me, long column1, long column2, doubl
 	return difference;
 }
 
+Matrix Table_to_Matrix (Table me) {
+	long irow, icol;
+	Matrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		Table_numericize (me, icol);
+	}
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			thy z [irow] [icol] = (float) row -> cells [icol]. number;
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
+}
+
 double Table_getFisherF (Table me, long col1, long col2);
 double Table_getOneWayAnovaSignificance (Table me, long col1, long col2);
 double Table_getFisherFLowerLimit (Table me, long col1, long col2, double significanceLevel);
@@ -659,17 +697,6 @@ static void print4 (char *buffer, double value, int iformat, int width, int prec
 		sprintf (formatString, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
 		sprintf (buffer, formatString, value);
 	}
-}
-
-Matrix Table_to_Matrix (I) {
-	iam (Table);
-	long i, j;
-	Matrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns); cherror
-	for (i = 1; i <= my numberOfRows; i ++) for (j = 1; j <= my numberOfColumns; j ++)
-		thy z [i] [j] = my data [i] [j];
-end:
-	iferror return NULL;
-	return thee;
 }
 
 Table Matrix_to_Table (I) {

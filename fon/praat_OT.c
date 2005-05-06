@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/01/24
+ * pb 2005/04/19
  */
 
 #include "praat.h"
@@ -360,14 +360,21 @@ FORM (OTGrammar_learnFromPartialOutputs, "OTGrammar: Learn from partial adult ou
 	REAL ("Rel. plasticity spreading", "0.1")
 	BOOLEAN ("Honour local rankings", 1)
 	NATURAL ("Number of chews", "1")
+	NATURAL ("Store history every", "0")
 	OK
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
+	OTHistory history = NULL;
 	OTGrammar_learnFromPartialOutputs (grammar, ONLY (classStrings),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
-		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"));
+		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"),
+		GET_INTEGER ("Store history every"), & history);
 	praat_dataChanged (grammar);
-	iferror return 0;
+	if (history) praat_new (history, "%s", grammar -> name);
+	iferror {
+		if (history) praat_updateSelection ();
+		return 0;
+	}
 END
 
 FORM (OTGrammar_learnOne, "OTGrammar: Learn one", "OTGrammar: Learn one...")
@@ -497,16 +504,23 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, "OTGrammar & Distribution
 	REAL ("Rel. plasticity spreading", "0.1")
 	BOOLEAN ("Honour local rankings", 1)
 	NATURAL ("Number of chews", "1")
+	NATURAL ("Store history every", "0")
 	OK
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
+	OTHistory history = NULL;
 	OTGrammar_Distributions_learnFromPartialOutputs (grammar, ONLY (classDistributions), GET_INTEGER ("Column number"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Initial plasticity"), GET_INTEGER ("Replications per plasticity"),
 		GET_REAL ("Plasticity decrement"), GET_INTEGER ("Number of plasticities"),
-		GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"));
+		GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"),
+		GET_INTEGER ("Store history every"), & history);
 	praat_dataChanged (grammar);
-	iferror return 0;
+	if (history) praat_new (history, "%s", grammar -> name);
+	iferror {
+		if (history) praat_updateSelection ();
+		return 0;
+	}
 END
 
 FORM (OTGrammar_PairDistribution_getFractionCorrect, "OTGrammar & PairDistribution: Get fraction correct...", 0)
@@ -644,6 +658,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTGrammar, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 0, "Remove constraint...", 0, 1, DO_OTGrammar_removeConstraint);
 	praat_addAction1 (classOTGrammar, 0, "Remove harmonically bounded candidates...", 0, 1, DO_OTGrammar_removeHarmonicallyBoundedCandidates);
+
+	{ void praat_TableOfReal_init (void *klas); praat_TableOfReal_init (classOTHistory); }
 
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Learn from partial outputs...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Get fraction correct...", 0, 0, DO_OTGrammar_Distributions_getFractionCorrect);

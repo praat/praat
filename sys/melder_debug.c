@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2005/03/28
+ * pb 2005/04/25
  */
 
 #include "melder.h"
@@ -44,6 +44,7 @@ the behaviour of that program changes in the following way:
 14: switches off the progress window in melder.c
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY
+1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)
 

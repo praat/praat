@@ -28,6 +28,7 @@
  * pb 2004/11/26 fake Mono on MacOS X
  * pb 2004/11/26 check available sampling frequencies on MacOS X
  * pb 2005/02/13 defended against weird meter levels
+ * pb 2005/04/25 made 24 kHz available for Mac
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -59,11 +60,11 @@
 	XtWorkProcId workProcId; \
 	long nsamp, nmax; \
 	int synchronous, recording, lastLeftMaximum, lastRightMaximum, coupled; \
-	int can8000, can9800, can11025, can16000, can22050, can22254, can32000, can44100, can48000; \
+	int can8000, can9800, can11025, can16000, can22050, can22254, can24000, can32000, can44100, can48000; \
 	short *buffer; \
 	Widget progressScale, recordButton, stopButton, playButton, closeButton; \
 	Widget publishLeftButton, publishRightButton, leftName, rightName; \
-	Widget button8000, button9800, button11025, button16000, button22050, button22254, \
+	Widget button8000, button9800, button11025, button16000, button22050, button22254, button24000, \
 		button32000, button44100, button48000, leftMeter, rightMeter; \
 	Widget microphoneButton, lineButton, digitalButton, in4Button, in5Button, in6Button, in7Button, in8Button; \
 	Widget leftGainScale, rightGainScale; \
@@ -878,6 +879,7 @@ static int open_mac (SoundRecorder me) {
 		my can11025 = FALSE;
 		my can16000 = FALSE;
 		my can22050 = FALSE;
+		my can24000 = FALSE;
 		my can32000 = FALSE;
 		my can44100 = FALSE;
 		my can48000 = FALSE;
@@ -890,6 +892,7 @@ static int open_mac (SoundRecorder me) {
 				case 16000: my can16000 = TRUE; break;
 				case 22050: my can22050 = TRUE; break;
 				case 22254: my can22254 = TRUE; break;
+				case 24000: my can24000 = TRUE; break;
 				case 32000: my can32000 = TRUE; break;
 				case 44100: my can44100 = TRUE; break;
 				case 48000: my can48000 = TRUE; break;
@@ -1338,6 +1341,11 @@ static void createChildren (I) {
 		my button22254 = XmCreateToggleButton (fsamp, "22254.54545", NULL, 0);
 		XtAddCallback (my button22254, XmNvalueChangedCallback, cb_fsamp, me);
 		XtManageChild (my button22254);
+	}
+	if (my can24000) {
+		my button24000 = XmCreateToggleButton (fsamp, "24000", NULL, 0);
+		XtAddCallback (my button24000, XmNvalueChangedCallback, cb_fsamp, me);
+		XtManageChild (my button24000);
 	}
 	if (my can32000) {
 		my button32000 = XmCreateToggleButton (fsamp, "32000", NULL, 0);

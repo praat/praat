@@ -23,6 +23,7 @@
  * pb 2004/04/13 less flashing
  * pb 2005/01/11 better visibility of yellow line
  * pb 2005/03/02 green colouring for matching labels
+ * pb 2005/05/05 show number of intervals
  */
 
 #include "TextGridEditor.h"
@@ -41,21 +42,22 @@
 	Widget publishButton, publishPreserveButton; \
 	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton; \
 	char *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
-	int greenMethod;
+	int showNumberOf, greenMethod;
 #define TextGridEditor_methods FunctionEditor_methods
 class_create_opaque (TextGridEditor, FunctionEditor)
 
 static struct {
-	int useTextStyles, fontSize, alignment, shiftDragMultiple, greenMethod;
+	int useTextStyles, fontSize, alignment, shiftDragMultiple, showNumberOf, greenMethod;
 	char greenString [Resources_STRING_BUFFER_SIZE];
 }
-	preferences = { FALSE, 12, Graphics_CENTRE, TRUE, Melder_STRING_EQUAL_TO, "any matching string for green colouring" };
+	preferences = { FALSE, 12, Graphics_CENTRE, TRUE, 1, Melder_STRING_EQUAL_TO, "any matching string for green colouring" };
 
 void TextGridEditor_prefs (void) {
 	Resources_addInt ("TextGridEditor.useTextStyles", & preferences.useTextStyles);
 	Resources_addInt ("TextGridEditor.fontSize", & preferences.fontSize);
 	Resources_addInt ("TextGridEditor.alignment", & preferences.alignment);
 	Resources_addInt ("TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
+	Resources_addInt ("TextGridEditor.showNumberOf", & preferences.showNumberOf);
 	Resources_addInt ("TextGridEditor.greenMethod", & preferences.greenMethod);
 	Resources_addString ("TextGridEditor.greenString", & preferences.greenString [0]);
 }
@@ -268,16 +270,20 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 	Any radio;
 	(void) editor;
 	NATURAL ("Font size (points)", "18")
-	RADIO ("Text alignment in intervals", 2)
-		RADIOBUTTON ("Left")
-		RADIOBUTTON ("Centre")
-		RADIOBUTTON ("Right")
-	RADIO ("The symbols %#_^ in labels", 1)
-		RADIOBUTTON ("are shown as typed")
-		RADIOBUTTON ("mean italic/bold/sub/super")
-	RADIO ("With the shift key, you drag", 2)
-		RADIOBUTTON ("a single boundary")
-		RADIOBUTTON ("multiple boundaries")
+	OPTIONMENU ("Text alignment in intervals", 2)
+		OPTION ("Left")
+		OPTION ("Centre")
+		OPTION ("Right")
+	OPTIONMENU ("The symbols %#_^ in labels", 1)
+		OPTION ("are shown as typed")
+		OPTION ("mean italic/bold/sub/super")
+	OPTIONMENU ("With the shift key, you drag", 2)
+		OPTION ("a single boundary")
+		OPTION ("multiple boundaries")
+	OPTIONMENU ("Show number of", 1)
+		OPTION ("nothing")
+		OPTION ("intervals or points")
+		OPTION ("non-empty intervals or points")
 	OPTIONMENU ("Paint intervals green whose label...", 1)
 	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
 	SENTENCE ("...the text", "some text here for green paint")
@@ -288,6 +294,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_INTEGER ("Font size", my fontSize)
 	SET_INTEGER ("Text alignment in intervals", my alignment + 1)
 	SET_INTEGER ("With the shift key, you drag", my shiftDragMultiple + 1)
+	SET_INTEGER ("Show number of", my showNumberOf)
 	SET_INTEGER ("Paint intervals green whose label...", my greenMethod)
 	SET_STRING ("...the text", my greenString)
 }
@@ -297,6 +304,7 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	preferences.fontSize = my fontSize = GET_INTEGER ("Font size");
 	preferences.alignment = my alignment = GET_INTEGER ("Text alignment in intervals") - 1;
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER ("With the shift key, you drag") - 1;
+	preferences.showNumberOf = my showNumberOf = GET_INTEGER ("Show number of");
 	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...");
 	strncpy (my greenString, GET_STRING ("...the text"), Resources_STRING_BUFFER_SIZE);
 	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
@@ -1503,9 +1511,39 @@ static void draw (I) {
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
 		Graphics_printf (my graphics, my startWindow, 0.5, selected ? "\\pf %ld" : "%ld", itier);
 		Graphics_setFontSize (my graphics, oldFontSize);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		if (anyTier -> name && anyTier -> name [0])
+		if (anyTier -> name && anyTier -> name [0]) {
+			Graphics_setTextAlignment (my graphics, Graphics_LEFT, my showNumberOf > 1 ? Graphics_BOTTOM : Graphics_HALF);
 			Graphics_printf (my graphics, my endWindow, 0.5, anyTier -> name);
+		}
+		if (my showNumberOf > 1) {
+			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
+			if (my showNumberOf == 2) {
+				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
+				Graphics_printf (my graphics, my endWindow, 0.5, "(%ld)", count);
+			} else {
+				long count = 0;
+				if (isIntervalTier) {
+					IntervalTier tier = (IntervalTier) anyTier;
+					long ninterval = tier -> intervals -> size, iinterval;
+					for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
+						TextInterval interval = tier -> intervals -> item [iinterval];
+						if (interval -> text != NULL && interval -> text [0] != '\0') {
+							count ++;
+						}
+					}
+				} else {
+					TextTier tier = (TextTier) anyTier;
+					long npoint = tier -> points -> size, ipoint;
+					for (ipoint = 1; ipoint <= npoint; ipoint ++) {
+						TextPoint point = tier -> points -> item [ipoint];
+						if (point -> mark != NULL && point -> mark [0] != '\0') {
+							count ++;
+						}
+					}
+				}
+				Graphics_printf (my graphics, my endWindow, 0.5, "(##%ld#)", count);
+			}
+		}
 
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setFont (my graphics, Graphics_TIMES);
@@ -2048,6 +2086,7 @@ TextGridEditor TextGridEditor_create (Widget parent, const char *title, TextGrid
 	my fontSize = preferences.fontSize;
 	my alignment = preferences.alignment;
 	my shiftDragMultiple = preferences.shiftDragMultiple;
+	my showNumberOf = preferences.showNumberOf;
 	my greenMethod = preferences.greenMethod;
 	strcpy (my greenString, preferences.greenString);
 	my selectedTier = 1;

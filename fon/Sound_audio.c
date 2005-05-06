@@ -1,6 +1,6 @@
 /* Sound_audio.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2002/07/16 GPL
  * pb 2003/09/14 Sound_recordFixedTime records in stereo if mono is not available
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
+ * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
  */
 
 #include <errno.h>
@@ -208,8 +208,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			("(Sound_record:) Do not know how to record a sound on this machine.");
 		/* We do not open the port yet, because the info is an argument to opening the port. */
 	#elif defined (macintosh)
-		if (SPBOpenDevice (NULL, siWritePermission, & refNum) != noErr)
-			return Melder_errorp ("(Sound_record:) Cannot open audio input device.");
+		if (SPBOpenDevice (Melder_debug == 1264 ? "\pFW Solo (1264)" : NULL, siWritePermission, & refNum) != noErr)
+			return Melder_errorp ("Cannot open audio input device.\n"
+				"Perhaps somebody else is recording on your computer.");
 	#elif defined (_WIN32)
 	#else
 		/* We must open the port now, because we use an ioctl to set the info to an open port. */

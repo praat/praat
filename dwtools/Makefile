@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20050406 Latest modification.
+#  djmw 20050426 Latest modification.
 
 
 include ../makefile.defs
@@ -50,7 +50,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Matrix_Categories.o MDS.o \
 	Pattern.o PCA.o \
 	Pitch_extensions.o Polynomial.o \
-	Polygon_extensions.o Procrustes.o  Procrustus.o \
+	Polygon_extensions.o Procrustes.o \
 	Proximity.o \
 	Sampled_extensions.o Sampled2.o \
 	Sound_and_FilterBank.o Sound_extensions.o \

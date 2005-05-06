@@ -472,7 +472,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 	}
 	my tableaus = NUMstructvector (OTGrammarTableau, 1, numberOfTableaus); cherror
 	for (numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-		long numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : floor (pow (maximumUnderlyingWeight, numberOfSyllables) + 0.5);
+		long numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : (long) floor (pow (maximumUnderlyingWeight, numberOfSyllables) + 0.5);
 		long iweightPattern;
 		for (isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 			underlyingWeightPattern [isyll] = 1;   /* L or cv */

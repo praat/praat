@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/03/04
+ * pb 2005/05/01
  */
 
 #ifndef _Collection_h_
@@ -59,6 +59,18 @@ int Table_insertColumn (Table me, long icol, const char *label);
 void Table_setColumnLabel (Table me, long icol, const char *label);
 long Table_columnLabelToIndex (Table me, const char *label);
 long Table_searchColumn (Table me, long icol, const char *value);
+
+/*
+ * Procedure for reading strings or numbers from table cells:
+ * use the following two calls exclusively.
+ */
+const char * Table_getStringValue (Table me, long irow, long icol);
+double Table_getNumericValue (Table me, long irow, long icol);
+
+/*
+ * Procedure for writing strings or numbers into table cells:
+ * use the following two calls exclusively.
+ */
 int Table_setStringValue (Table me, long irow, long icol, const char *value);
 int Table_setNumericValue (Table me, long irow, long icol, double value);
 
@@ -73,8 +85,6 @@ double Table_getDifference_studentT (Table me, long col1, long col2, double sign
 double Table_getVarianceRatio (Table me, long col1, long col2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 
-Matrix Table_to_Matrix (I);
-Table Matrix_to_Table (I);
 int Table_formula (Table me, long icol, const char *formula);
 
 Table Tables_append (I, thou);
@@ -88,6 +98,8 @@ int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 
 Table Table_selectRowsWhereColumn (Table me, long icol, enum Melder_NUMBER which, double criterion);
+
+Matrix Table_to_Matrix (Table me);
 
 #endif
 /* End of file Table.h */

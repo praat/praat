@@ -79,6 +79,11 @@ NORMAL ("Dimitar D. Deliyski: \"Acoustic model and evaluation of pathological vo
 	"%%Proceedings Eurospeech '93%, Vol. 3, 1969\\--1972.")
 MAN_END
 
+MAN_BEGIN ("Escudero & Boersma (2004)", "ppgb", 20050427)
+NORMAL ("Paola Escudero & Paul Boersma (2004): \"Bridging the gap between L2 speech perception "
+	"and phonological theory.\" %%Studies in Second Language Acquisition% #26: 551\\--585.")
+MAN_END
+
 MAN_BEGIN ("Jesteadt, Wier & Green (1977)", "ppgb", 20021215)
 NORMAL ("W. Jesteadt, G.C. Wier, & D.M. Green (1977): \"Intensity discrimination as a function "
 	"of frequency and sensation level.\" %%Journal of the Acoustical Society of America% #61: 169\\--177.")

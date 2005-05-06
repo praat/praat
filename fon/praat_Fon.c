@@ -5618,7 +5618,7 @@ void praat_uvafon_init (void) {
 		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier,
 		classLabel, classTier, classAutosegment,   /* Three obsolete classes. */
 		classIntensity, classPitch, classHarmonicity,
-		classStrings, classTable,
+		classStrings,
 		classTableOfReal, classDistributions, classTransition, classPairDistribution,
 		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
