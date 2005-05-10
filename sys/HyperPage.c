@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2003/09/15 better positioning of buttons
  * pb 2004/11/23 made vertical spacing dependent on font size
+ * pb 2005/05/07 script
  */
 
 #include <ctype.h>
@@ -30,6 +31,8 @@
 #include "Resources.h"
 #include "site.h"
 #include "machine.h"
+
+#include "praatP.h"
 #include "EditorM.h"
 
 #define PAGE_HEIGHT  320.0
@@ -405,6 +408,76 @@ if (! my printing) {
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 	my previousBottomSpacing = bottomSpacing;
+	return 1;
+}
+
+int HyperPage_script (I, double width_inches, double height_inches, const char *script) {
+	iam (HyperPage);
+	char *text = Melder_strdup (script);
+	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
+	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
+	int font = my font, size = my fontSize;
+	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
+	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
+if (! my printing) {
+	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - 10) {
+		my y -= height_inches;
+	} else {
+		my y -= height_inches;
+		Graphics_setFont (my g, font);
+		Graphics_setFontStyle (my g, 0);
+		Graphics_setFontSize (my g, size);
+		my x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
+		Graphics_setWrapWidth (my g, 0);
+		Graphics_setViewport (my g, my x, my x + width_inches, my y, my y + height_inches);
+		{
+			Graphics saveGraphics = praat.graphics;
+			praat.graphics = my g;
+			praatP.inManual = TRUE;
+			praat_background ();
+			Interpreter_run (interpreter, text);
+			praat_foreground ();
+			praatP.inManual = FALSE;
+			praat.graphics = saveGraphics;
+		}
+		Graphics_setViewport (my g, 0, 1, 0, 1);
+		Graphics_setWindow (my g, 0, 1, 0, 1);
+		Graphics_setTextAlignment (my g, Graphics_LEFT, Graphics_BOTTOM);
+	}
+} else {
+	Graphics_setFont (my ps, font);
+	Graphics_setFontStyle (my ps, 0);
+	Graphics_setFontSize (my ps, size);
+	my y -= my y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my y -= height_inches;
+	if (my y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+		Graphics_nextSheetOfPaper (my ps);
+		if (my pageNumber) my pageNumber ++;
+		HyperPage_initSheetOfPaper (me);
+		Graphics_setFont (my ps, font);
+		Graphics_setFontSize (my ps, size);
+		my y -= height_inches;
+	}
+	my x = 3.7 - 0.5 * width_inches;
+	if (my x < 0) my x = 0;
+	Graphics_setWrapWidth (my ps, 0);
+	Graphics_setViewport (my ps, my x, my x + width_inches, my y, my y + height_inches);
+	{
+		Graphics saveGraphics = praat.graphics;
+		praat.graphics = my ps;
+		praat_background ();
+		Interpreter_run (interpreter, text);
+		praat_foreground ();
+		praat.graphics = saveGraphics;
+	}
+	Graphics_setViewport (my ps, 0, 1, 0, 1);
+	Graphics_setWindow (my ps, 0, 1, 0, 1);
+	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
+}
+	my previousBottomSpacing = bottomSpacing;
+	forget (interpreter);
+	Melder_free (text);
 	return 1;
 }
 

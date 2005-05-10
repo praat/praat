@@ -1,6 +1,6 @@
 /* ManPage_enums.h
  *
- * Copyright (C) 1996-2002 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1998/12/20
  * pb 2002/03/07 GPL
+ * pb 2005/05/06 script
  */
 
 enum_begin (ManPage_TYPE, _)
@@ -33,6 +33,7 @@ enum_begin (ManPage_TYPE, _)
         enum (prototype)
         enum (formula)
         enum (picture)
+        enum (script)
         enum (list_item1)
         enum (list_item2)
         enum (list_item3)

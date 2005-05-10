@@ -31,6 +31,8 @@
  djmw 20041213 Added TableOfReal_createFromWeeninkData.
  djmw 20050221 TableOfReal_meansByRowLabels, extra reduce parameter.
  djmw 20050222 TableOfReal_drawVectors didn't draw rowlabels.
+ djmw 20050512 TableOfReal TableOfReal_meansByRowLabels crashed if first label in sorted was NULL.
+ 
 */
 
 #include <ctype.h>
@@ -1664,7 +1666,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand)
 	for (i = 2; i <= my numberOfRows; i++)
 	{
 		char *li = sorted -> rowLabels[i];
-		if (li != NULL && li != label && strcmp (li, label))
+		if (li != NULL && li != label && (label == NULL || strcmp (li, label)))
 		{
 			NUMaverageColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns);
 			if (expand == 0)

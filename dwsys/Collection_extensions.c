@@ -20,6 +20,7 @@
 /*
  djmw 20020812 GPL header
  djmw 20040420 Fraction in OrderedOfString_difference must be double.
+ djmw 20050511 Skip printing unique labels in OrderedOfString
 */
 
 #include "Collection_extensions.h"
@@ -69,20 +70,15 @@ static void info (I)
 {
 	iam (OrderedOfString); 
 	OrderedOfString uStrings = NULL;
-    long i, *count = NULL;
+    long i;
 	
-    Melder_info ("I have %ld strings.", my size);
-    if (! (uStrings = OrderedOfString_selectUniqueItems (me, 1)) ||
-    	! (count = NUMlvector (1, uStrings->size))) goto end;
-    OrderedOfString_frequency (me, uStrings, count);
-    Melder_info ("%ld unique strings.\nFrequencies:\n", uStrings->size);
-    for (i=1; i <= uStrings->size; i++)
-    {
-    	Melder_info ("%5ld : %s", count[i], SimpleString_c (uStrings->item[i]));
-    } 
-end:
-	NUMlvector_free (count, 1);
-    forget (uStrings);
+    Melder_info ("%ld strings.", my size);
+	uStrings = OrderedOfString_selectUniqueItems (me, 1);
+    if (uStrings != NULL)
+	{
+    	Melder_info ("%ld unique categories.", uStrings->size);
+		forget (uStrings);
+	}
 }
 
 class_methods (OrderedOfString, Ordered)

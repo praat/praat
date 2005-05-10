@@ -461,6 +461,7 @@ static struct stylesInfo {
 /* PROTOTYPE: */ { "<p>", "</p>" },
 /* FORMULA: */ { "<table width=\"100%\"><tr><td align=middle>", "</table>" },
 /* PICTURE: */ { "<p>", "</p>" },
+/* SCRIPT: */ { "<p>", "</p>" },
 /* LIST_ITEM1: */ { "<dd>&nbsp;&nbsp;&nbsp;", "" },
 /* LIST_ITEM2: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
 /* LIST_ITEM3: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },

@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/04/02 nicer dialogs
  * pb 2004/06/18 allow reversed axes
  * pb 2004/09/05 allow selection of inner viewport
+ * pb 2005/05/07 inManual
  */
 
 #include "praatP.h"
@@ -55,9 +56,12 @@ static void updateFontMenu (void) {
 }
 static void setFont (int font) {
 	praat_picture_open ();
-	Graphics_setFont (GRAPHICS, praat_font = font);
+	Graphics_setFont (GRAPHICS, font);
 	praat_picture_close ();
-	updateFontMenu ();
+	if (! praatP.inManual) {
+		praat_font = font;
+		updateFontMenu ();
+	}
 }
 DIRECT (Times) setFont (Graphics_TIMES); END
 DIRECT (Helvetica) setFont (Graphics_HELVETICA); END
@@ -79,9 +83,12 @@ static void updateSizeMenu (void) {
 }
 static void setFontSize (int fontSize) {
 	praat_picture_open ();
-	Graphics_setFontSize (GRAPHICS, praat_size = fontSize);
+	Graphics_setFontSize (GRAPHICS, fontSize);
 	praat_picture_close ();
-	updateSizeMenu ();
+	if (! praatP.inManual) {
+		praat_size = fontSize;
+		updateSizeMenu ();
+	}
 }
 DIRECT (10) setFontSize (10); END
 DIRECT (12) setFontSize (12); END
@@ -277,9 +284,12 @@ static void updatePenMenu (void) {
 }
 static void setLineType (int lineType) {
 	praat_picture_open ();
-	Graphics_setLineType (GRAPHICS, praat_lineType = lineType);
+	Graphics_setLineType (GRAPHICS, lineType);
 	praat_picture_close ();
-	updatePenMenu ();
+	if (! praatP.inManual) {
+		praat_lineType = lineType;
+		updatePenMenu ();
+	}
 }
 DIRECT (Plain_line) setLineType (Graphics_DRAWN); END
 DIRECT (Dotted_line) setLineType (Graphics_DOTTED); END
@@ -290,16 +300,23 @@ FORM (Line_width, "Praat picture: Line width", 0)
 	OK
 SET_REAL ("Line width", praat_lineWidth);
 DO
+	double lineWidth = GET_REAL ("Line width");
 	praat_picture_open ();
-	Graphics_setLineWidth (GRAPHICS, praat_lineWidth = GET_REAL ("Line width"));
+	Graphics_setLineWidth (GRAPHICS, lineWidth);
 	praat_picture_close ();
+	if (! praatP.inManual) {
+		praat_lineWidth = lineWidth;
+	}
 END
 
 static void setColour (int colour) {
 	praat_picture_open ();
-	Graphics_setColour (GRAPHICS, praat_colour = colour);
+	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
-	updatePenMenu ();
+	if (! praatP.inManual) {
+		praat_colour = colour;
+		updatePenMenu ();
+	}
 }
 DIRECT (Black) setColour (Graphics_BLACK); END
 DIRECT (White) setColour (Graphics_WHITE); END
@@ -1248,6 +1265,7 @@ void praat_picture_exit (void) {
 
 void praat_picture_open (void) {
 	double x1WC, x2WC, y1WC, y2WC;
+	if (praatP.inManual) return;
 	Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
 	if (! praat.batch) {
 		XtMapWidget (shell);
@@ -1272,6 +1290,7 @@ void praat_picture_open (void) {
 }
 
 void praat_picture_close (void) {
+	if (praatP.inManual) return;
 	if (! praat.batch) Picture_highlight (praat_picture);
 }
 

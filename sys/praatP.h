@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2002/12/01
  * pb 2003/10/03 praat_executeFromFile(AndArguments)
  * pb 2004/11/09 topBar
  * pb 2004/11/16 shorter praat_Command (with signed chars)
+ * pb 2005/05/07 inManual
  */
 
 #include "praat.h"
@@ -169,7 +169,7 @@ extern struct PraatP {
 	int dontUsePictureWindow;   /* See praat_dontUsePictureWindow (). */
 	char *title;
 	Widget topBar, menuBar;
-	int phase;
+	int phase, inManual;
 	Any editor;   /* Scripting environment. */
 } praatP;
 

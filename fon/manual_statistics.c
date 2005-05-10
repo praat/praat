@@ -62,6 +62,24 @@ NORMAL ("A table as above can be typed into a text file. The columns can be sepa
 	"The file can be read into Praat with ##Read Table from table file...#. "
 	"The command \"To logistic regression\" will become available in the #Statistics menu.")
 ENTRY ("What does it do?")
+SCRIPT (4.5, 4,
+	"Axes... 60 180 900 500\n"
+	"Marks bottom every... 1 30 yes yes no\n"
+	"Marks left every... 1 50 yes yes no\n"
+	"Text bottom... yes Duration (ms)\n"
+	"Text left... yes F1 (Hz)\n"
+	"mdur_ae = 135\n"
+	"mdur_ep = 95\n"
+	"sdur = 25\n"
+	"mf1_ae = 780\n"
+	"mf1_ep = 620\n"
+	"sf1 = 60\n"
+	"Draw ellipse... mdur_ae-sdur mdur_ae+sdur mf1_ae-sf1 mf1_ae+sf1\n"
+	"Text... mdur_ae Centre mf1_ae Half /\\ae/\n"
+	"Draw ellipse... mdur_ep-sdur mdur_ep+sdur mf1_ep-sf1 mf1_ep+sf1\n"
+	"Text... mdur_ep Centre mf1_ep Half /\\ep/\n"
+	"Draw inner box\n"
+)
 NORMAL ("The logistic regression method will find values %\\al, %%\\be__F1_% and %%\\be__dur_% "
 	"that optimize")
 FORMULA ("%\\al + %%\\be__F1_% %F1__%k_ + %%\\be__dur_% %Dur__%k_ = ln (%p__%k_(/\\ep/)/%p__%k_(/\\ae/))")

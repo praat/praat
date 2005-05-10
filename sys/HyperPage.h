@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  */
 
 /*
- * pb 2000/10/04
  * pb 2002/03/07 GPL
+ * pb 2005/05/06 HyperPage_script
  */
 
 #ifndef _Editor_h_
@@ -98,6 +98,7 @@ int HyperPage_code5 (I, const char *text);
 int HyperPage_prototype (I, const char *text);
 int HyperPage_formula (I, const char *formula);
 int HyperPage_picture (I, double width_inches, double height_inches, void (*draw) (Graphics g));
+int HyperPage_script (I, double width_inches, double height_inches, const char *script);
 
 int HyperPage_goToPage (I, const char *title);
 int HyperPage_goToPage_i (I, long i);

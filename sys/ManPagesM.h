@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/05/06
  */
 
 /* ManPages macros. */
@@ -55,6 +55,7 @@
 #define PROTOTYPE(text)  { enumi (ManPage_TYPE, prototype), text },
 #define FORMULA(text)  { enumi (ManPage_TYPE, formula), text },
 #define PICTURE(width,height,draw)  { enumi (ManPage_TYPE, picture), NULL, width, height, draw },
+#define SCRIPT(width,height,text)  { enumi (ManPage_TYPE, script), text, width, height },
 #define MAN_END  { 0 } }; ManPages_addPage (me, title, author, date, page); }
 
 /* End of file ManPagesM.h */

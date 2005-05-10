@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050505)
+MAN_BEGIN ("What's new?", "ppgb", 20050510)
 INTRO ("Latest changes in P\\s{RAAT}.")
-NORMAL ("##4.3.10# (May 6, 2005)")
+NORMAL ("##4.3.12# (May 10, 2005)")
+LIST_ITEM ("\\bu Some more manual tricks.")
+NORMAL ("##4.3.11# (May 6, 2005)")
 LIST_ITEM ("\\bu TextGrid editor: show number of intervals.")
 NORMAL ("##4.3.10# (April 25, 2005)")
 LIST_ITEM ("\\bu Table: Get logistic regression.")

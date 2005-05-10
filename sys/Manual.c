@@ -1,6 +1,6 @@
 /* Manual.c
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2003/03/09 searching: more points for multiple occurrences within a paragraph
  * pb 2003/10/03 praat_executeFromFile without arguments
  * pb 2003/11/26 use recording time from file
  * pb 2003/11/30 removed newline from date
  * pb 2004/02/08 allow arguments in scripts
+ * pb 2005/05/08 script
  */
 
 #include <ctype.h>
@@ -116,6 +116,8 @@ static void draw (I) {
 			case  enumi (ManPage_TYPE, formula): HyperPage_formula (me, paragraph -> text); break;
 			case  enumi (ManPage_TYPE, picture): HyperPage_picture (me, paragraph -> width,
 				paragraph -> height, paragraph -> draw); break;
+			case  enumi (ManPage_TYPE, script): HyperPage_script (me, paragraph -> width,
+				paragraph -> height, paragraph -> text); break;
 			case  enumi (ManPage_TYPE, list_item1): HyperPage_listItem1 (me, paragraph -> text); break;
 			case  enumi (ManPage_TYPE, list_item2): HyperPage_listItem2 (me, paragraph -> text); break;
 			case  enumi (ManPage_TYPE, list_item3): HyperPage_listItem3 (me, paragraph -> text); break;
