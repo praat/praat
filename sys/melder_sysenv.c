@@ -1,6 +1,6 @@
 /* melder_sysenv.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2004/10/14 made Cygwin-compatible
+ * Eric Carlson & Paul Boersma 2005/05/19 made MinGW-compatible
  */
 
 /*
@@ -27,7 +28,7 @@
  */
 
 #if defined (_WIN32)
-	#ifndef __CYGWIN__
+	#if ! defined (__CYGWIN__) && ! defined (MINGW)
 		#include <crtl.h>
 	#endif
 	#include <windows.h>
@@ -41,7 +42,7 @@
 #include "melder.h"
 
 char * Melder_getenv (const char *variableName) {
-	#if defined (UNIX)
+	#if defined (UNIX) || defined (MINGW)
 		return getenv (variableName);
 	#elif defined (macintosh)
 		(void) variableName;

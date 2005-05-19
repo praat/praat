@@ -2,7 +2,7 @@
 #define _Printer_h_
 /* Printer.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2004/05/25 font choice strategy
+ * pb 2005/05/19 preference for whether EPS files include a screen preview
  */
 
 #ifndef _Graphics_h_
@@ -30,7 +31,8 @@
 
 /* When changing the following structure, update its initialization in Printer.c */
 struct Printer {
-	int spots, paperSize, orientation, postScript, allowDirectPostScript, fontChoiceStrategy;
+	int spots, paperSize, orientation, postScript, allowDirectPostScript;
+	int fontChoiceStrategy, epsFilesHavePreview;
 	long resolution, paperWidth, paperHeight;
 	double magnification;
 	Graphics graphics;

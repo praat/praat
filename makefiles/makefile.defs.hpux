@@ -2,8 +2,7 @@
 
 # System: HP-UX 10.20
 # Site: Max Planck Instituut Nijmegen.
-# Compiler: cc.
-# Paul Boersma, October 14, 2000
+# Paul Boersma, May 19, 2005
 
 # The GNU C compiler gives error messages when trying to link.
 # So we use the native HP C compiler.
@@ -19,4 +18,6 @@ CC = cc -DUNIX -DHPUX -D_HPUX_SOURCE -Aa +e +DAportable -I /usr/local/include/X1
 
 LIBS = -L /usr/lib/X11R5 -L /usr/lib/Motif1.2 -lXm -lXt -lX11 -lm -L /opt/audio/lib -lAlib
 
-RANLIB = ranlib
+RANLIB = ls
+ICON =
+MAIN_ICON =

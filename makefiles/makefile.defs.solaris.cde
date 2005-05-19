@@ -2,10 +2,12 @@
 
 # System: Solaris-CDE, gcc.
 # Site: MaxPlanck, Nijmegen.
-# Paul Boersma, February 18, 2000.
+# Paul Boersma, May 19, 2005.
 
 CC = gcc -DUNIX -Dsun -DFUNCPROTO
 
 LIBS = -lXm -lm
 
 RANLIB = ls
+ICON =
+MAIN_ICON =

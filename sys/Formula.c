@@ -1,6 +1,6 @@
 /* Formula.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 /*
- * pb 2002/06/11
  * pb 2002/10/02 getenv -> Melder_getenv
  * pb 2002/11/24 Melder_double
  * pb 2002/11/30 extractWord, extractLine
@@ -29,6 +28,7 @@
  * pb 2003/06/23 removed Bessel functions J and Y
  * pb 2003/07/26 min and max
  * pb 2004/10/16 C++ compatible struct tags
+ * pb 2005/05/15 messages
  */
 
 #include <ctype.h>
@@ -402,8 +402,8 @@ static int Formula_lexan (void) {
 			 */
 			underscore = strchr (stok, '_');
 			if (underscore == NULL) {
-				formulefout ("Object name should contain an underscore (note: variables start with lower case)", ikar);
-				return 0;
+				return Melder_error ("Unknown symbol \\<<%s\\>> in formula "
+					"(variables start with lower case; object names contain an underscore).", stok);
 			} else {
 				int i = praat.n;
 				*underscore = ' ';

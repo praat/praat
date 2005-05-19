@@ -22,15 +22,15 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN ("Programming with Praat", "ppgb", 20050208)
+MAN_BEGIN ("Programming with Praat", "ppgb", 20050515)
 INTRO ("You can extend the functionality of the P\\s{RAAT} program "
 	"by adding modules written in C to it. All of P\\s{RAAT}'s source code "
 	"is available under the General Public Licence.")
 ENTRY ("1. Warning")
-NORMAL ("Before trying the task of learning how to write P\\s{RAAT} extensions, "
+NORMAL ("Before trying the task of learning how to write P\\s{RAAT} extensions in C, "
 	"you should be well aware of the possibilities of @scripting. "
 	"Many built-in commands in P\\s{RAAT} have started their "
-	"lives as P\\s{RAAT} scripts, and scripts are easier to write than C extensions.")
+	"lives as P\\s{RAAT} scripts, and scripts are easier to write than extensions in C.")
 ENTRY ("2. Getting the existing source code")
 NORMAL ("You obtain the P\\s{RAAT} source code via ##www.praat.org#, in a file with a name like "
 	"##praat4301_sources.tar.gz# (depending on the P\\s{RAAT} version), and unpack this with #gunzip and ##tar xvf# "
@@ -56,11 +56,13 @@ NORMAL ("P\\s{RAAT} is preferably linked with a real Motif version (Lesstif give
 	"on SGI, Solaris, and HPUX, Motif libraries are included with the system, "
 	"and the include directory comes with the development package.")
 ENTRY ("4. Building P\\s{RAAT} on Macintosh")
-NORMAL ("Open ##praat.mcp# in CodeWarrior (version 8.2 or higher), choose the target "
+NORMAL ("Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
 	"##praat_macx# (for MacOS X), ##praat_mac9# (for MacOS 8.5 to 9.2), "
-	"or ##praat_mac7# (for older systems from 7.1 on), and choose Make or Run.")
+	"or ##praat_mac7# (for older systems from 7.1 on), and choose Make or Run. "
+	"You probably have to edit the prefix (Language Settings: C/C++ Preprocessor), "
+	"e.g. by changing \"\\# if 0\" to \"\\# if 1\".")
 ENTRY ("5. Building P\\s{RAAT} on Windows")
-NORMAL ("Open ##praat.mcp# in CodeWarrior (version 8.0 or higher), choose the target "
+NORMAL ("Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
 	"##praat_win#, and choose Make or Run.")
 NORMAL ("P\\s{RAAT} may compile under Visual C++ as well.")
 ENTRY ("6. Extending P\\s{RAAT}")

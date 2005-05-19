@@ -1,5 +1,5 @@
 /* Printer.c
- * Copyright (C) 1998-2004 Paul Boersma
+ * Copyright (C) 1998-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2003/02/05 distinct treatment of NT and non-NT
  * pb 2004/05/25 font choice strategy
  * pb 2004/09/25 use /tmp as temporary directory
+ * pb 2005/05/19 preference to switch screen preview off
  */
 
 #include "melder.h"
 
 #if defined (macintosh)
 	#include "macport_on.h"
-	#include <Memory.h>
+	#include <MacMemory.h>
 	#if TARGET_API_MAC_CARBON
 		#define PM_USE_SESSION_APIS  1
 		#include <PMApplication.h>
@@ -52,7 +52,8 @@
  */
 
 /* exported */ struct Printer thePrinter = {
-	GraphicsPostscript_FINE, Graphics_US_LETTER, Graphics_PORTRAIT, FALSE, TRUE, GraphicsPostscript_AUTOMATIC,
+	GraphicsPostscript_FINE, Graphics_US_LETTER, Graphics_PORTRAIT, FALSE, TRUE,
+	GraphicsPostscript_AUTOMATIC, TRUE,
 	600, 5100, 6600,
 	1.0
 };
@@ -62,6 +63,7 @@ void Printer_prefs (void) {
 	Resources_addInt ("Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript);
 	Resources_addInt ("Printer.spots", & thePrinter. spots);
 	Resources_addInt ("Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy);
+	Resources_addInt ("Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview);
 }
 
 #if defined (macintosh)
@@ -329,6 +331,7 @@ static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 		Site_setPrintCommand (UiForm_getString (dia, "printCommand"));
 	#endif
 	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, "Font choice strategy") - 1;
+	thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, "EPS files include preview");
 	return 1;
 }
 
@@ -364,6 +367,9 @@ int Printer_postScriptSettings (void) {
 			UiOptionMenu_addButton (radio, "Linotype");
 			UiOptionMenu_addButton (radio, "Monotype");
 			UiOptionMenu_addButton (radio, "PS Monotype");
+		#if defined (macintosh)
+			UiForm_addBoolean (dia, "EPS files include preview", TRUE);
+		#endif
 		UiForm_finish (dia);
 	}
 	#if defined (_WIN32) || defined (macintosh)
@@ -377,6 +383,9 @@ int Printer_postScriptSettings (void) {
 		UiForm_setString (dia, "printCommand", Site_getPrintCommand ());
 	#endif
 	UiForm_setInteger (dia, "Font choice strategy", thePrinter. fontChoiceStrategy + 1);
+	#if defined (macintosh)
+		UiForm_setInteger (dia, "EPS files include preview", thePrinter. epsFilesHavePreview);
+	#endif
 	UiForm_do (dia, FALSE);
 	return 1;
 }

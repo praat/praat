@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2002/01/29
  * pb 2002/03/07 GPL
  * pb 2003/07/19 extra null byte in Windows metafile name
  * pb 2004/02/19 outer selection
  * pb 2004/09/05 inner selection
+ * pb 2005/05/19 EPS files have the option to switch off the screen preview
  */
 
 #include "melder.h"
@@ -31,7 +31,7 @@
 	#include "macport_on.h"
 	#include <Resources.h>
 	#include <Files.h>
-	#include <Memory.h>
+	#include <MacMemory.h>
 	#include <Scrap.h>
 	#include <Quickdraw.h>
 	#include <MacWindows.h>
@@ -601,7 +601,7 @@ int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts) {
 	/*
 		Create an 8-bit screen preview.
 	*/
-	{
+	if (thePrinter. epsFilesHavePreview) {
 		int path;
 		FSSpec fspec;
 		PicHandle pict = copyToPict_screenImage (me);

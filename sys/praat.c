@@ -359,7 +359,7 @@ int praat_new (I, const char *format, ...) {
 		#endif
 
 		/* The new item must appear unselected (for the moment).
-		 * If we would call XmListAddItem (), the item will appear selected if there is already
+		 * If we called XmListAddItem () instead, the item would appear selected if there is already
 		 * a selected item with the same name.
 		 * It is an enigma to me why this should be a problem, but it is,
 		 * because the new item would end up UNselected in this case, after praat_updateSelection.

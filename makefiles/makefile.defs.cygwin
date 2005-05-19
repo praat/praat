@@ -2,9 +2,12 @@
 
 # System: CYGWIN
 # Benard Wiese, March 26, 2001
+# Paul Boersma, May 19, 2005
 
 CC = gcc -g -mwindows -mno-cygwin
 
 LIBS = -lwinmm -lwsock32 -lcomctl32
 
 RANLIB = ls
+ICON = praat_win.o
+MAIN_ICON = main/praat_win.o

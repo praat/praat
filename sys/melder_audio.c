@@ -25,6 +25,7 @@
  * pb 2004/08/10 fake mono for Linux drivers etc, also if not asynchronous
  * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
  * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
+ * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
  */
 
 #include "melder.h"
@@ -54,6 +55,10 @@
 	#include <Sound.h>
 	#ifndef __MACH__
 		#include <SoundInput.h>
+		#define USE_COREAUDIO  1
+		#if USE_COREAUDIO
+			#include <AudioUnit.h>
+		#endif
 	#endif
 	#ifdef __MACH__
 		#include <sys/time.h>
@@ -509,6 +514,48 @@ static void cancel (void) {
 }
 #endif
 
+#ifdef macintosh
+# define FloatToUnsigned(f)  \
+	 ((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
+static void double2real10 (double x, unsigned char *bytes) {
+	int sign, exponent;
+	double fMantissa, fsMantissa;
+	unsigned long highMantissa, lowMantissa;
+	if (x < 0.0) { sign = 0x8000; x *= -1; }
+	else sign = 0;
+	if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
+	else {
+		fMantissa = frexp (x, & exponent);
+		if ((exponent > 16384) || ! (fMantissa < 1))   /* Infinity or Not-a-Number. */
+			{ exponent = sign | 0x7FFF; highMantissa = 0; lowMantissa = 0; }   /* Infinity. */
+		else {   /* Finite */
+			exponent += 16382;   /* Add bias. */
+			if (exponent < 0) {   /* Denormalized. */
+				fMantissa = ldexp (fMantissa, exponent);
+				exponent = 0;
+			}
+			exponent |= sign;
+			fMantissa = ldexp (fMantissa, 32);          
+			fsMantissa = floor (fMantissa); 
+			highMantissa = FloatToUnsigned (fsMantissa);
+			fMantissa = ldexp (fMantissa - fsMantissa, 32); 
+			fsMantissa = floor (fMantissa); 
+			lowMantissa = FloatToUnsigned (fsMantissa);
+		}
+	}
+	bytes [0] = exponent >> 8;
+	bytes [1] = exponent;
+	bytes [2] = highMantissa >> 24;
+	bytes [3] = highMantissa >> 16;
+	bytes [4] = highMantissa >> 8;
+	bytes [5] = highMantissa;
+	bytes [6] = lowMantissa >> 24;
+	bytes [7] = lowMantissa >> 16;
+	bytes [8] = lowMantissa >> 8;
+	bytes [9] = lowMantissa;
+}
+#endif
+
 int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	int (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure)
 {
@@ -817,6 +864,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		soundHeader -> samplePtr = (char *) my buffer;
 		soundHeader -> numChannels = my numberOfChannels;
 		soundHeader -> sampleRate = (UnsignedFixed) (unsigned long) floor (65536.0 * my sampleRate);
+		double2real10 (my sampleRate, (unsigned char *) & soundHeader -> AIFFSampleRate);
 		soundHeader -> loopStart = 0L;
 		soundHeader -> loopEnd = 0L;
 		soundHeader -> encode = extSH;
@@ -1118,9 +1166,11 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #elif defined (linux)
 {
-	if ((my audio_fd = open ("/dev/dsp", O_WRONLY /* | (Melder_debug == 16 ? 0 : O_NDELAY) */)) == -1)
+	/* O_NDELAY option added by Rafael Laboissiere, May 19, 2005 */
+	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | (Melder_debug == 16 ? 0 : O_NDELAY))) == -1)
 		return cancel (), Melder_error (errno == EBUSY ? "Audio device already in use." :
 			"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
+	fcntl (my audio_fd, F_SETFL, 0);   /* Added by Rafael Laboissiere, May 19, 2005 */
 	if (ioctl (my audio_fd, SNDCTL_DSP_SAMPLESIZE, (my val = 16, & my val)) == -1 ||   /* Error? */
 	    my val != 16)   /* Has sound card overridden our sample size? */
 	{

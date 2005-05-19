@@ -2,7 +2,7 @@
 
 # System: Solaris-CDE, Intel.
 # Site: Pretoria.
-# Paul Boersma, Mei 1998.
+# Paul Boersma, May 19, 2005.
 
 CC = cc -DUNIX -g -I /usr/dt/share/include -I /usr/openwin/include -Dsun -DFUNCPROTO
 
@@ -11,3 +11,5 @@ LIBS = -R/opt/SUNWspro/lib:/usr/dt/lib \
      -lXm -lXt -lX -lgen -lc -lm
 
 RANLIB = ls
+ICON =
+MAIN_ICON =
