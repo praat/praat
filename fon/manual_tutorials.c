@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050519)
+MAN_BEGIN ("What's new?", "ppgb", 20050614)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.14# (June 14, 2005)")
+LIST_ITEM ("\\bu Scripting: regular expressions.")
+LIST_ITEM ("\\bu Removed a bug that caused Praat to crash if a proposed object name was longer than 200 characters.")
 NORMAL ("##4.3.13# (May 19, 2005)")
 LIST_ITEM ("\\bu Macintosh: an option to switch off screen previews in EPS files.")
 LIST_ITEM ("\\bu Sources: compatibility of makefiles with MinGW (Minimalist GNU for Windows).")

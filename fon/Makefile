@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, May 3, 2005
+# Paul Boersma, June 13, 2005
 
 include ../makefile.defs
 CFLAGS = -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
@@ -33,7 +33,7 @@ OBJECTS =   Table.o Regression.o manual_statistics.o praat_Stat.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
    ExperimentMFC.o RunnerMFC.o manual_Exp.o praat_Exp.o \
-   OTGrammar.o OTGrammarEditor.o manual_OT.o praat_OT.o \
+   OTGrammar.o OTGrammarEditor.o manual_OT.o praat_OT.o OTMultiLevel.o \
    OTGrammar_ex_metrics.o OTGrammar_ex_NoCoda.o OTGrammar_ex_NPA.o OTGrammar_ex_tongueRoot.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
    manual_soundFiles.o manual_tutorials.o manual_references.o \

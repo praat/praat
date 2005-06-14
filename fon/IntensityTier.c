@@ -1,6 +1,6 @@
 /* IntensityTier.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2001/08/16
  * pb 2002/07/16 GPL
  * pb 2003/05/31 use PointProcess_upto_RealTier
+ * pb 2005/05/26 switch for scaling in multiply
  */
 
 #include "IntensityTier.h"
@@ -106,11 +106,11 @@ void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 	}
 }
 
-Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity) {
+Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
 	Sound thee = Data_copy (me);
 	if (! thee) return NULL;
 	Sound_IntensityTier_multiply_inline (thee, intensity);
-	Vector_scale (thee, 0.9);
+	if (scale) Vector_scale (thee, 0.9);
 	return thee;
 }
 

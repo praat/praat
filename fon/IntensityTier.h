@@ -2,7 +2,7 @@
 #define _IntensityTier_h_
 /* IntensityTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2001/08/16
- * pb 2002/07/16 GPL
+ * pb 2005/05/26
  */
 
 #ifndef _RealTier_h_
@@ -56,7 +55,7 @@ IntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProces
 IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp);
 TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me);
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity);
-Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity);
+Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale);
 
 /* End of file IntensityTier.h */
 #endif

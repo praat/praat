@@ -343,7 +343,7 @@ NORMAL ("and click OK. The Info window will show the result:")
 CODE ("seeking")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.2. Numeric expressions", "ppgb", 20021201)
+MAN_BEGIN ("Formulas 1.2. Numeric expressions", "ppgb", 20050614)
 INTRO ("All the formulas whose outcome is a number are called numeric expressions. "
 	"For the following examples, all the outcomes can be checked with the @calculator.")
 ENTRY ("Examples with numbers")
@@ -362,9 +362,19 @@ TAG ("##length (\"internationalization\")")
 DEFINITION ("computes the length of the string \"internationalization\". Outcome: 20.")
 TAG ("##index (\"internationalization\", \"ation\")")
 DEFINITION ("computes the location of the first occurrence of the string \"ation\" in the string \"internationalization\". Outcome: 7, "
-	"because the first letter of \"ation\" lines up with the seventh letter of \"internationalization\".")
+	"because the first letter of \"ation\" lines up with the seventh letter of \"internationalization\". "
+	"If the substring does not occur, the outcome is 0.")
 TAG ("##rindex (\"internationalization\", \"ation\")")
 DEFINITION ("computes the location of the last occurrence of the string \"ation\" in the string \"internationalization\". Outcome: 16.")
+TAG ("##startsWith (\"internationalization\", \"int\")")
+DEFINITION ("determines whether the string \"internationalization\" starts with \"intern\". Outcome: 1 (true).")
+TAG ("##endsWith (\"internationalization\", \"nation\")")
+DEFINITION ("determines whether the string \"internationalization\" ends with \"nation\". Outcome: 0 (false).")
+TAG ("##index_regex (\"internationalization\", \"a.*n\")")
+DEFINITION ("determines where the string \"internationalization\" first matches the @@regular expressions|regular expression@ \"a.*n\". Outcome: 7. "
+	"If there is no match, the outcome is 0.")
+TAG ("##rindex_regex (\"internationalization\", \"a.*n\")")
+DEFINITION ("determines where the string \"internationalization\" last matches the @@regular expressions|regular expression@ \"a.*n\". Outcome: 16.")
 MAN_END
 
 MAN_BEGIN ("Formulas 1.3. String expressions", "ppgb", 20040414)

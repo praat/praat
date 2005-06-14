@@ -303,7 +303,9 @@ int praat_new (I, const char *format, ...) {
 	va_list arg;
 	va_start (arg, format);
 	if (format) {
-		vsprintf (myName, format, arg);
+		vsprintf (Melder_buffer1, format, arg);
+		strncpy (myName, Melder_buffer1, 100);
+		myName [100] = '\0';
 	} else {
 		myName [0] = '\0';
 	}

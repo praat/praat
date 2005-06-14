@@ -55,10 +55,6 @@
 	#include <Sound.h>
 	#ifndef __MACH__
 		#include <SoundInput.h>
-		#define USE_COREAUDIO  1
-		#if USE_COREAUDIO
-			#include <AudioUnit.h>
-		#endif
 	#endif
 	#ifdef __MACH__
 		#include <sys/time.h>
@@ -69,6 +65,10 @@
 	#include "macport_off.h"
 	#if TARGET_API_MAC_CARBON
 		#define OSEventAvail  EventAvail
+		#define USE_COREAUDIO  1
+		#if USE_COREAUDIO
+			#include <AudioUnit.h>
+		#endif
 	#endif
 	#include <math.h>
 #elif defined (_WIN32)

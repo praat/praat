@@ -20,6 +20,7 @@
 /*
  djmw 20030613 Latest modification
  djmw 20040414 Forms texts.
+ djmw 20050614 Latest modification
 */
 
 #include <math.h>
@@ -347,6 +348,11 @@ DO
 		GET_REAL ("Maximum frequency"), GET_REAL ("Distance between filters")))
 END
 
+DIRECT (VocalTract_getLength)
+	VocalTract v = ONLY_OBJECT;
+    double length = v -> xmax - v -> xmin;
+	Melder_informationReal (length, "m");
+END
 
 /******************* LPC & Sound *************************************/
 
@@ -436,6 +442,8 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classSound, 0, "To MFCC...","To LPC (marple)...", 1,
 		DO_Sound_to_MFCC);
 
+	praat_addAction1 (classVocalTract, 1, "Get length", "Draw", 0,
+		DO_VocalTract_getLength);
 
 	INCLUDE_MANPAGES (manual_LPC_init)
 	

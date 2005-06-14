@@ -29,12 +29,14 @@
  * pb 2003/07/26 min and max
  * pb 2004/10/16 C++ compatible struct tags
  * pb 2005/05/15 messages
+ * pb 2005/06/14 startsWith, endsWith, index_regex
  */
 
 #include <ctype.h>
 #include <time.h>
 #include "NUM.h"
 #include "NUM2.h"
+#include "regularExp.h"
 #include "Formula.h"
 #include "Interpreter.h"
 #include "Ui.h"
@@ -132,7 +134,9 @@ enum { GEENSYMBOOL_,
 		LENGTH_, FILE_READABLE_,
 	#define HIGH_FUNCTION_STRNUM  FILE_READABLE_
 		DATESTR_,
-		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENT_, INDEX_, RINDEX_, EXTRACT_NUMBER_, EXTRACT_WORD_, EXTRACT_LINE_,
+		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENT_, INDEX_, RINDEX_,
+		STARTS_WITH_, ENDS_WITH_, INDEX_REGEX_, RINDEX_REGEX_,
+		EXTRACT_NUMBER_, EXTRACT_WORD_, EXTRACT_LINE_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
 		FIXED_, PERCENT_,
 	#define HIGH_STRING_FUNCTION  PERCENT_
@@ -190,7 +194,9 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"min", "max", "imin", "imax",
 	"length", "fileReadable",
 	"date$",
-	"left$", "right$", "mid$", "environment$", "index", "rindex", "extractNumber", "extractWord$", "extractLine$",
+	"left$", "right$", "mid$", "environment$", "index", "rindex",
+	"startsWith", "endsWith", "index_regex", "rindex_regex",
+	"extractNumber", "extractWord$", "extractLine$",
 	"selected", "selected$", "numberOfSelected",
 	"fixed$", "percent$",
 	".",
@@ -825,7 +831,10 @@ static int parsePowerFactor (void) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			if (! parseStringExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == INDEX_ || symbol == RINDEX_ || symbol == EXTRACT_NUMBER_) {
+		} else if (symbol == INDEX_ || symbol == RINDEX_ ||
+			symbol == STARTS_WITH_ || symbol == ENDS_WITH_ ||
+			symbol == INDEX_REGEX_ || symbol == RINDEX_REGEX_ || symbol == EXTRACT_NUMBER_)
+		{
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			if (! parseStringExpression ()) return 0;
 			if (! pas (KOMMA_)) return 0;
@@ -1847,6 +1856,46 @@ case NUMBER_: {
 		s [++ w] = lastSubstring - string + 1;
 	} else {
 		s [++ w] = 0;
+	}
+	Melder_free (ss [sw - 1]);
+	Melder_free (ss [sw]);
+	sw -= 2;
+} break; case STARTS_WITH_: {
+	s [++ w] = Melder_stringMatchesCriterion  (ss [sw - 1], Melder_STRING_STARTS_WITH, ss [sw]);
+	Melder_free (ss [sw - 1]);
+	Melder_free (ss [sw]);
+	sw -= 2;
+} break; case ENDS_WITH_: {
+	s [++ w] = Melder_stringMatchesCriterion  (ss [sw - 1], Melder_STRING_ENDS_WITH, ss [sw]);
+	Melder_free (ss [sw - 1]);
+	Melder_free (ss [sw]);
+	sw -= 2;
+} break; case INDEX_REGEX_: {
+	char *place = NULL, *errorMessage;
+	regexp *compiled_regexp = CompileRE (ss [sw], & errorMessage, 0);
+	if (compiled_regexp == NULL) {
+		s [++ w] = NUMundefined;
+	} else if (ExecRE (compiled_regexp, NULL, ss [sw - 1], NULL, FALSE, '\0', '\0', NULL)) {
+		char *place = compiled_regexp -> startp [0];
+		free (compiled_regexp);
+		s [++ w] = (place - ss [sw - 1]) + 1;
+	} else {
+		s [++ w] = FALSE;
+	}
+	Melder_free (ss [sw - 1]);
+	Melder_free (ss [sw]);
+	sw -= 2;
+} break; case RINDEX_REGEX_: {
+	char *place = NULL, *errorMessage;
+	regexp *compiled_regexp = CompileRE (ss [sw], & errorMessage, 0);
+	if (compiled_regexp == NULL) {
+		s [++ w] = NUMundefined;
+	} else if (ExecRE (compiled_regexp, NULL, ss [sw - 1], NULL, TRUE, '\0', '\0', NULL)) {
+		char *place = compiled_regexp -> startp [0];
+		free (compiled_regexp);
+		s [++ w] = (place - ss [sw - 1]) + 1;
+	} else {
+		s [++ w] = FALSE;
 	}
 	Melder_free (ss [sw - 1]);
 	Melder_free (ss [sw]);

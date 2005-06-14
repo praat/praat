@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/03/21
+ * pb 2005/05/26
  */
 
 #include "praat.h"
@@ -1311,9 +1311,17 @@ END
 
 /***** INTENSITYTIER & SOUND *****/
 
-DIRECT (Sound_IntensityTier_multiply)
+DIRECT (Sound_IntensityTier_multiply_old)
 	Sound sound = ONLY (classSound);
-	if (! praat_new (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier)), "%s_int", sound -> name)) return 0;
+	if (! praat_new (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), TRUE), "%s_int", sound -> name)) return 0;
+END
+
+FORM (Sound_IntensityTier_multiply, "Sound & IntervalTier: Multiply", 0)
+	BOOLEAN ("Scale to 0.9", 1)
+	OK
+DO
+	Sound sound = ONLY (classSound);
+	if (! praat_new (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), GET_INTEGER ("Scale to 0.9")), "%s_int", sound -> name)) return 0;
 END
 
 /***** INTERVALTIER *****/
@@ -6364,7 +6372,8 @@ praat_addAction1 (classTransition, 0, "Cast", 0, 0, 0);
 	praat_addAction2 (classIntensity, 1, classPointProcess, 1, "To IntensityTier", 0, 0, DO_Intensity_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, "To IntensityTier", 0, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, "Edit", 0, 0, DO_IntensityTier_edit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, "Multiply", 0, 0, DO_Sound_IntensityTier_multiply);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, "Multiply", 0, praat_HIDDEN, DO_Sound_IntensityTier_multiply_old);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, "Multiply...", 0, 0, DO_Sound_IntensityTier_multiply);
 	praat_addAction2 (classIntervalTier, 1, classPointProcess, 1, "Start to centre...", 0, 0, DO_IntervalTier_PointProcess_startToCentre);
 	praat_addAction2 (classIntervalTier, 1, classPointProcess, 1, "End to centre...", 0, 0, DO_IntervalTier_PointProcess_endToCentre);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, "Collect", 0, 0, 0);
