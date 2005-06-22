@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/03/04
+ * pb 2005/06/16
  */
 
 
@@ -80,11 +80,11 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 TableOfReal TableOfReal_extractRowRanges (I, const char *ranges);
 TableOfReal TableOfReal_extractColumnRanges (I, const char *ranges);
 
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long icol, enum Melder_NUMBER which, double criterion);
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, enum Melder_NUMBER which, double criterion);
+TableOfReal TableOfReal_extractRowsWhereColumn (I, long icol, int which_Melder_NUMBER, double criterion);
+TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, int which_Melder_NUMBER, double criterion);
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, enum Melder_STRING which, const char *criterion);
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, enum Melder_STRING which, const char *criterion);
+TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const char *criterion);
+TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const char *criterion);
 
 TableOfReal TableOfReal_extractRowsWhere (I, const char *condition);
 TableOfReal TableOfReal_extractColumnsWhere (I, const char *condition);

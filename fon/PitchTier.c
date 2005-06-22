@@ -1,6 +1,6 @@
 /* PitchTier.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/05/31 PointProcess_upto_RealTier
  * pb 2004/10/03 moved audio to PitchTier_to_Sound.c
+ * pb 2005/06/16 units
  */
 
 #include "PitchTier.h"
@@ -95,32 +96,34 @@ int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile fs) {
 	return PitchTier_writeToSpreadsheetFile (me, fs, FALSE);
 }
 
-int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int units) {
+int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
 	long i;
 	for (i = 1; i <= my points -> size; i ++) {
 		RealPoint point = my points -> item [i];
 		double frequency = point -> value;
 		if (point -> time < tmin || point -> time > tmax) continue;
-		switch (units) {
-			case Pitch_HERTZ: {	
+		switch (unit) {
+			case Pitch_UNIT_HERTZ: {	
 				frequency += shift;
 				if (frequency <= 0.0) {
 					Melder_error ("Resulting frequency has to be greater than 0 Hz.");
 					goto end;
 				}
-			} break; case Pitch_MEL: {
+			} break; case Pitch_UNIT_MEL: {
 				frequency = NUMhertzToMel (frequency) + shift;
 				if (frequency <= 0.0) {
-					Melder_error ("Resulting frequency has to be greater than 0 Mel.");
+					Melder_error ("Resulting frequency has to be greater than 0 mel.");
 					goto end;
 				}
 				frequency = NUMmelToHertz (frequency);
-			} break; case Pitch_SEMITONES: {
+			} break; case Pitch_UNIT_LOG_HERTZ: {
+				frequency = pow (10.0, log10 (frequency) + shift);
+			} break; case Pitch_UNIT_SEMITONES_1: {
 				frequency = NUMsemitonesToHertz (NUMhertzToSemitones (frequency) + shift);
-			} break; case Pitch_ERB: {
+			} break; case Pitch_UNIT_ERB: {
 				frequency = NUMhertzToErb (frequency) + shift;
 				if (frequency <= 0.0) {
-					Melder_error ("Resulting frequency has to be greater than 0 Erb.");
+					Melder_error ("Resulting frequency has to be greater than 0 ERB.");
 					goto end;
 				}
 				frequency = NUMerbToHertz (frequency);

@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2005/03/08 connect
+ * pb 2005/06/17 units
  */
 
 #include "Pitch_Intensity.h"
@@ -53,7 +54,7 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 		double t = Sampled_indexToX (pitch, i);
 		double index = Sampled_xToIndex (intensity, t);
 		double x = pitch -> frame [i]. candidate [1]. frequency;
-		double y = Sampled_getValueAtX (intensity, t, 1, 0, TRUE);
+		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, Pitch_UNIT_HERTZ, TRUE);
 		if (x == 0) {
 			continue;   /* Voiceless. */
 		}

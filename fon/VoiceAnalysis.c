@@ -1,6 +1,6 @@
 /* VoiceAnalysis.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2003/07/20
  * pb 2003/10/15 check whether AmplitudeTier is NULL
  * pb 2004/04/17 maximum period factor for jitter
  * pb 2004/07/14 maximum amplitude factor for shimmer
+ * pb 2005/06/16 units
  */
 
 #include "VoiceAnalysis.h"
@@ -250,11 +250,11 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	 * Pitch statistics.
 	 */
 	MelderInfo_writeLine1 ("Pitch:");
-	MelderInfo_writeLine3 ("   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, Pitch_HERTZ), 3), " Hz");
-	MelderInfo_writeLine3 ("   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, Pitch_HERTZ), 3), " Hz");
-	MelderInfo_writeLine3 ("   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, Pitch_HERTZ), 3), " Hz");
-	MelderInfo_writeLine3 ("   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, Pitch_HERTZ, 1), 3), " Hz");
-	MelderInfo_writeLine3 ("   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, Pitch_HERTZ, 1), 3), " Hz");
+	MelderInfo_writeLine3 ("   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, Pitch_UNIT_HERTZ), 3), " Hz");
+	MelderInfo_writeLine3 ("   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, Pitch_UNIT_HERTZ), 3), " Hz");
+	MelderInfo_writeLine3 ("   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, Pitch_UNIT_HERTZ), 3), " Hz");
+	MelderInfo_writeLine3 ("   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, Pitch_UNIT_HERTZ, 1), 3), " Hz");
+	MelderInfo_writeLine3 ("   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, Pitch_UNIT_HERTZ, 1), 3), " Hz");
 	/*
 	 * Pulses statistics.
 	 */

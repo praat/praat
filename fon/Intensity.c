@@ -43,36 +43,32 @@ static void info (I) {
 		my nx, Melder_double (my dx), Melder_double (my x1));
 }
 
-static double getValueAtSample (I, long isamp, long which, int units) {
+static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
 	iam (Intensity);
-	double value = my z [1] [isamp];
-	(void) which;
-	if (! NUMdefined (value)) return NUMundefined;
-	if (units == 1) {
+	(void) ilevel;
+	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   /* energy */
-	} else if (units == 2) {
+	} else if (unit == 2) {
 		return pow (2.0, 0.1 * value);   /* sones */
 	}
 	return value;   /* default, especially if units=0 (as in Vector_getMean) or units=3 (averaging_DB) */
 }
 
-static double backToStandardUnits (I, double value, long which, int units) {
+static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
 	iam (Intensity);
-	(void) which;
+	(void) ilevel;
 	return
-		value == NUMundefined ?
-			NUMundefined :
-		units == 1 ?
+		unit == 1 ?
 			10.0 * log10 (value) :   /* value = energy */
-		units == 2 ?
+		unit == 2 ?
 			10.0 * NUMlog2 (value) :   /* value = sones */
 		value;   /* value = dB */
 }
 
 class_methods (Intensity, Vector)
 	class_method (info)
-	class_method (getValueAtSample)
-	class_method (backToStandardUnits)
+	class_method (convertStandardToSpecialUnit)
+	class_method (convertSpecialToStandardUnit)
 class_methods_end
 
 int Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1) {
@@ -134,7 +130,7 @@ double Intensity_getAverage (Intensity me, double tmin, double tmax, int averagi
 	return
 		averagingMethod == Intensity_averaging_MEDIAN ?
 			Intensity_getQuantile (me, tmin, tmax, 0.50) :
-			Sampled_getMean_standardUnits (me, tmin, tmax, 0, averagingMethod, TRUE);
+			Sampled_getMean_standardUnit (me, tmin, tmax, 0, averagingMethod, TRUE);
 }
 
 /* End of file Intensity.c */

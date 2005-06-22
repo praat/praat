@@ -23,8 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050614)
+MAN_BEGIN ("What's new?", "ppgb", 20050622)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.16# (June 22, 2005)")
+LIST_ITEM ("\\bu Pitch drawing: corrected logarithmic scales.")
+NORMAL ("##4.3.15# (June 22, 2005)")
+LIST_ITEM ("\\bu Graphics: better dotted lines in pitch contours; clipped pitch curves in editor windows.")
+LIST_ITEM ("\\bu Pitch analysis: more different units (semitones %re 1 Hz).")
 NORMAL ("##4.3.14# (June 14, 2005)")
 LIST_ITEM ("\\bu Scripting: regular expressions.")
 LIST_ITEM ("\\bu Removed a bug that caused Praat to crash if a proposed object name was longer than 200 characters.")

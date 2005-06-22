@@ -1,6 +1,6 @@
 /* PitchEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2001/08/04
  * pb 2002/07/16 GPL
  * pb 2004/04/13 less flashing
  * pb 2004/05/10 undefined pitch is NUMundefined rather than 0.0
  * pb 2004/10/16 struct PitchCandidate -> struct structPitchCandidate
+ * pb 2005/06/16 units
  */
 
 #include "Pitch_to_Sound.h"
@@ -76,9 +76,9 @@ END
 
 DIRECT (PitchEditor, cb_getPitch)
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, Pitch_HERTZ, 1), "Hertz");
+		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, Pitch_UNIT_HERTZ, 1), "Hertz");
 	} else {
-		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, Pitch_HERTZ), "Hertz");
+		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, Pitch_UNIT_HERTZ), "Hertz");
 	}
 END
 
@@ -199,7 +199,7 @@ static void draw (I) {
 		/* Horizontal hair at current pitch. */
 
 		if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-			double f = Pitch_getValueAtTime (pitch, my startSelection, Pitch_HERTZ, Pitch_LINEAR);
+			double f = Pitch_getValueAtTime (pitch, my startSelection, Pitch_UNIT_HERTZ, Pitch_LINEAR);
 			if (NUMdefined (f)) {
 				Graphics_setColour (my graphics, Graphics_RED);
 				Graphics_line (my graphics, my startWindow - radius, f, my endWindow, f);

@@ -19,7 +19,7 @@
 
 /*
  djmw 20020422 GPL + removed "C syntax" part of manpage
- djmw 20040407 Latest modification
+ djmw 20050615 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -248,7 +248,7 @@ NORMAL ("For each LPC_Frame the corresponding Spectrum will be calculated accord
 	"corresponding area in the Spectrogram.")
 MAN_END
 
-MAN_BEGIN ("LPC: To VocalTract (slice)...", "djmw", 20040407)
+MAN_BEGIN ("LPC: To VocalTract (slice)...", "djmw", 20050615)
 INTRO ("You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY ("Settings")
 TAG ("%Time")
@@ -259,7 +259,14 @@ TAG ("%%Length according to Wakita")
 DEFINITION ("the length of the vocal tract is calculated according "
 	"to the algorithm as described in @@Wakita (1977)@.")
 ENTRY ("Behaviour")
-NORMAL (" A new @VocalTract area function is calculated from the prediction coefficients in the frame.")
+NORMAL ("A new @VocalTract area function is calculated from the prediction coefficients in the frame. ")
+ENTRY ("Warning")
+NORMAL ("When %%Length according to Wakita% is on, the optimal length is searched for in the range from 0.1 m to "
+	"0.25 m. This length calculation is extremely sensitive to the number of and the positions of the formants "
+	"with respect to the @@Nyquist frequency@. For example, there is a large difference "
+	"between the vocal tract length estimates if the highest formant is just below or just above the "
+	"Nyquist frequency. "
+	"The algorithm is not very reliable in vocal tract length estimation and we do not recommend using it. " )
 MAN_END
 
 MAN_BEGIN ("LPC & Sound: Filter...", "djmw", 20040407)

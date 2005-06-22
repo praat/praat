@@ -22,6 +22,7 @@
  * pb 2003/09/14 Sound_recordFixedTime records in stereo if mono is not available
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
  * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
+ * pb 2005/06/16 removed previous change (System Preferences handles this)
  */
 
 #include <errno.h>
@@ -65,7 +66,7 @@
 #elif defined (macintosh)
 	#include "macport_on.h"
 	#include <Resources.h>
-	#include <Memory.h>
+	#include <MacMemory.h>
 	#include <Sound.h>
 	#ifndef __MACH__
 		#include <SoundInput.h>
@@ -208,7 +209,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			("(Sound_record:) Do not know how to record a sound on this machine.");
 		/* We do not open the port yet, because the info is an argument to opening the port. */
 	#elif defined (macintosh)
-		if (SPBOpenDevice (Melder_debug == 1264 ? "\pFW Solo (1264)" : NULL, siWritePermission, & refNum) != noErr)
+		if (SPBOpenDevice (NULL, siWritePermission, & refNum) != noErr)
 			return Melder_errorp ("Cannot open audio input device.\n"
 				"Perhaps somebody else is recording on your computer.");
 	#elif defined (_WIN32)

@@ -1,6 +1,6 @@
 /* Ltas.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2004/10/24 Sampled statistics
  * pb 2004/10/31 info
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ * pb 2005/06/16 units
  */
 
 #include "Ltas.h"
@@ -52,37 +53,32 @@ static void info (I) {
 		Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin))));
 }
 
-static double getValueAtSample (I, long isamp, long which, int units) {
-	iam (Ltas);
-	double value = my z [1] [isamp];
-	(void) which;
-	if (value == NUMundefined) return NUMundefined;
-	if (units == 1) {
+static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
+	(void) void_me;
+	(void) ilevel;
+	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   /* energy */
-	} else if (units == 2) {
+	} else if (unit == 2) {
 		return pow (2.0, 0.1 * value);   /* sones */
 	}
 	return value;
 }
 
-static double backToStandardUnits (I, double value, long which, int units) {
-	iam (Ltas);
-	(void) me;
-	(void) which;
+static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
+	(void) void_me;
+	(void) ilevel;
 	return
-		value == NUMundefined ?
-			NUMundefined :
-		units == 1 ?
+		unit == 1 ?
 			10.0 * log10 (value) :   /* value = energy */
-		units == 2 ?
+		unit == 2 ?
 			10.0 * NUMlog2 (value) :   /* value = sones */
 		value;   /* value = dB */
 }
 
 class_methods (Ltas, Vector)
 	class_method (info)
-	class_method (getValueAtSample)
-	class_method (backToStandardUnits)
+	class_method (convertStandardToSpecialUnit)
+	class_method (convertSpecialToStandardUnit)
 class_methods_end
 
 Ltas Ltas_create (long nx, double dx) {
@@ -106,7 +102,7 @@ double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double 
 	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, FALSE);
 	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, FALSE);
 	if (low == NUMundefined || high == NUMundefined) return NUMundefined;
-	return averagingUnits == 3 ? high - low : our backToStandardUnits (me, high / low, 0, averagingUnits);
+	return averagingUnits == 3 ? high - low : ClassFunction_convertSpecialToStandardUnit (classLtas, high / low, 0, averagingUnits);
 }
 
 double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits) {
@@ -115,7 +111,7 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, FALSE);
 	if (environmentLow == NUMundefined || environmentHigh == NUMundefined || peak == NUMundefined) return NUMundefined;
 	return averagingUnits == 3 ? peak - 0.5 * (environmentLow + environmentHigh) :
-		our backToStandardUnits (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
+		ClassFunction_convertSpecialToStandardUnit (classLtas, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
 }
 
 Matrix Ltas_to_Matrix (Ltas me) {
@@ -128,6 +124,7 @@ Matrix Ltas_to_Matrix (Ltas me) {
 Ltas Matrix_to_Ltas (Matrix me) {
 	Ltas thee = Data_copy (me);
 	if (! thee) return NULL;
+	Melder_assert (sizeof (struct structLtas) == sizeof (struct structMatrix));
 	Thing_overrideClass (thee, classLtas);
 	return thee;
 }

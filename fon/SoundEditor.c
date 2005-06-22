@@ -1,6 +1,6 @@
 /* SoundEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2001/10/03
  * pb 2002/07/16 GPL
  * pb 2003/05/21 more complete settings report
  * pb 2004/02/15 highlight selection, but not the spectrogram
+ * pb 2005/06/16 units
  */
 
 #include "SoundEditor.h"
@@ -370,10 +370,10 @@ DIRECT (SoundEditor, cb_settingsReport)
 	/* Pitch settings: */
 	MelderInfo_writeLine3 ("Pitch floor: ", Melder_double (my pitch.floor), " Hertz");
 	MelderInfo_writeLine3 ("Pitch ceiling: ", Melder_double (my pitch.ceiling), " Hertz");
-	MelderInfo_writeLine2 ("Pitch units: ", Pitch_longUnitText (my pitch.units));
+	MelderInfo_writeLine2 ("Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
 	/* Advanced pitch settings: */
-	MelderInfo_writeLine4 ("Pitch view from: ", Melder_double (my pitch.viewFrom), " ", Pitch_longUnitText (my pitch.units));
-	MelderInfo_writeLine4 ("Pitch view to: ", Melder_double (my pitch.viewTo), " ", Pitch_longUnitText (my pitch.units));
+	MelderInfo_writeLine4 ("Pitch view from: ", Melder_double (my pitch.viewFrom), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine4 ("Pitch view to: ", Melder_double (my pitch.viewTo), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine2 ("Pitch method: ", my pitch.method == 1 ? "Autocorrelation" : "Forward cross-correlation");
 	MelderInfo_writeLine2 ("Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
 	MelderInfo_writeLine2 ("Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));

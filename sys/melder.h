@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 	pb 2004/10/16 C++ compatibility (unique name for struct tags)
 	pb 2004/10/18 allocation count is double
 	pb 2004/10/27 Melder_warningOff/On
+	pb 2005/06/16 no enums (because of compiler warnings)
  */
 
 #include <stdio.h>
@@ -91,32 +92,30 @@
 
 /********** NUMBER AND STRING COMPARISON **********/
 
-enum Melder_NUMBER {
-	Melder_NUMBER_EQUAL_TO = 1,
-	Melder_NUMBER_NOT_EQUAL_TO = 2,
-	Melder_NUMBER_LESS_THAN = 3,
-	Melder_NUMBER_LESS_THAN_OR_EQUAL_TO = 4,
-	Melder_NUMBER_GREATER_THAN = 5,
-	Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO = 6,
-	Melder_NUMBER_max = 6
-};
-const char * Melder_NUMBER_text_adjective (enum Melder_NUMBER which);
-int Melder_numberMatchesCriterion (double value, enum Melder_NUMBER which, double criterion);
+#define Melder_NUMBER_min  1
+#define Melder_NUMBER_EQUAL_TO  1
+#define Melder_NUMBER_NOT_EQUAL_TO  2
+#define Melder_NUMBER_LESS_THAN  3
+#define Melder_NUMBER_LESS_THAN_OR_EQUAL_TO  4
+#define Melder_NUMBER_GREATER_THAN  5
+#define Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO  6
+#define Melder_NUMBER_max  6
+const char * Melder_NUMBER_text_adjective (int which_Melder_NUMBER);
+int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion);
 
-enum Melder_STRING {
-	Melder_STRING_EQUAL_TO = 1,
-	Melder_STRING_NOT_EQUAL_TO = 2,
-	Melder_STRING_CONTAINS = 3,
-	Melder_STRING_DOES_NOT_CONTAIN = 4,
-	Melder_STRING_STARTS_WITH = 5,
-	Melder_STRING_DOES_NOT_START_WITH = 6,
-	Melder_STRING_ENDS_WITH = 7,
-	Melder_STRING_DOES_NOT_END_WITH = 8,
-	Melder_STRING_MATCH_REGEXP = 9,
-	Melder_STRING_max = 9
-};
-const char * Melder_STRING_text_finiteVerb (enum Melder_STRING which);
-int Melder_stringMatchesCriterion (const char *value, enum Melder_STRING which, const char *criterion);
+#define Melder_STRING_min  1
+#define Melder_STRING_EQUAL_TO  1
+#define Melder_STRING_NOT_EQUAL_TO  2
+#define Melder_STRING_CONTAINS  3
+#define Melder_STRING_DOES_NOT_CONTAIN  4
+#define Melder_STRING_STARTS_WITH  5
+#define Melder_STRING_DOES_NOT_START_WITH  6
+#define Melder_STRING_ENDS_WITH  7
+#define Melder_STRING_DOES_NOT_END_WITH  8
+#define Melder_STRING_MATCH_REGEXP  9
+#define Melder_STRING_max  9
+const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING);
+int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, const char *criterion);
 
 /********** NUMBER TO STRING CONVERSION **********/
 

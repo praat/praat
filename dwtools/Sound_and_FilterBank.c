@@ -394,7 +394,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 		("Sound_and_Pitch_to_FormantFilters: the domain of the Sound is "
 		"not included in the domain of the Pitch.");
 	
-	f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, Pitch_HERTZ);
+	f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, Pitch_UNIT_HERTZ);
 	
 	if (f0_median == NUMundefined || f0_median == 0)
 	{
@@ -426,7 +426,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 	for (i = 1; i <= nt; i++)
 	{
 		double t = Sampled_indexToX (him, i);
-		double b, f0 = Pitch_getValueAtTime (thee, t, Pitch_HERTZ, 0);
+		double b, f0 = Pitch_getValueAtTime (thee, t, Pitch_UNIT_HERTZ, 0);
 		
 		if (f0 == NUMundefined || f0 == 0)
 		{

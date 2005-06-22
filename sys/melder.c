@@ -34,6 +34,7 @@
 	pb 2004/10/24 info buffer can grow
 	pb 2004/11/28 author notification in Melder_fatal
 	pb 2005/03/04 number and string comparisons, including regular expressions
+	pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
  */
 
 #include <math.h>
@@ -390,26 +391,26 @@ int Melder_pause (const char *format, ...) {
 
 /********** NUMBER AND STRING COMPARISONS **********/
 
-const char * Melder_NUMBER_text_adjective (enum Melder_NUMBER which) {
+const char * Melder_NUMBER_text_adjective (int which_Melder_NUMBER) {
 	static const char *strings [1+Melder_NUMBER_max] = { "",
 		"equal to", "not equal to",
 		"less than", "less than or equal to",
 		"greater than", "greater than or equal to"
 	};
-	return strings [which < 0 || which > Melder_NUMBER_max ? 0 : which];
+	return strings [which_Melder_NUMBER < 0 || which_Melder_NUMBER > Melder_NUMBER_max ? 0 : which_Melder_NUMBER];
 }
 
-int Melder_numberMatchesCriterion (double value, enum Melder_NUMBER which, double criterion) {
+int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion) {
 	return
-		which == Melder_NUMBER_EQUAL_TO && value == criterion ||
-		which == Melder_NUMBER_NOT_EQUAL_TO && value != criterion ||
-		which == Melder_NUMBER_LESS_THAN && value < criterion ||
-		which == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
-		which == Melder_NUMBER_GREATER_THAN && value > criterion ||
-		which == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
+		which_Melder_NUMBER == Melder_NUMBER_EQUAL_TO && value == criterion ||
+		which_Melder_NUMBER == Melder_NUMBER_NOT_EQUAL_TO && value != criterion ||
+		which_Melder_NUMBER == Melder_NUMBER_LESS_THAN && value < criterion ||
+		which_Melder_NUMBER == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
+		which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN && value > criterion ||
+		which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
 }
 
-const char * Melder_STRING_text_finiteVerb (enum Melder_STRING which) {
+const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {
 	static const char *strings [1+Melder_STRING_max] = { "",
 		"is equal to", "is not equal to",
 		"contains", "does not contain",
@@ -417,31 +418,31 @@ const char * Melder_STRING_text_finiteVerb (enum Melder_STRING which) {
 		"ends with", "does not end with",
 		"matches (regex)"
 	};
-	return strings [which < 0 || which > Melder_STRING_max ? 0 : which];
+	return strings [which_Melder_STRING < 0 || which_Melder_STRING > Melder_STRING_max ? 0 : which_Melder_STRING];
 }
 
-int Melder_stringMatchesCriterion (const char *value, enum Melder_STRING which, const char *criterion) {
+int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, const char *criterion) {
 	if (value == NULL) {
 		value = "";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
-	if (which <= Melder_STRING_NOT_EQUAL_TO) {
+	if (which_Melder_STRING <= Melder_STRING_NOT_EQUAL_TO) {
 		int matchPositiveCriterion = strequ (value, criterion);
-		return (which == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
+		return (which_Melder_STRING == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
 	}
-	if (which <= Melder_STRING_DOES_NOT_CONTAIN) {
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_CONTAIN) {
 		int matchPositiveCriterion = strstr (value, criterion) != NULL;
-		return (which == Melder_STRING_CONTAINS) == matchPositiveCriterion;
+		return (which_Melder_STRING == Melder_STRING_CONTAINS) == matchPositiveCriterion;
 	}
-	if (which <= Melder_STRING_DOES_NOT_START_WITH) {
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_START_WITH) {
 		int matchPositiveCriterion = strnequ (value, criterion, strlen (criterion));
-		return (which == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
+		return (which_Melder_STRING == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
 	}
-	if (which <= Melder_STRING_DOES_NOT_END_WITH) {
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_END_WITH) {
 		int criterionLength = strlen (criterion), valueLength = strlen (value);
 		int matchPositiveCriterion = criterionLength <= valueLength && strequ (value + valueLength - criterionLength, criterion);
-		return (which == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
+		return (which_Melder_STRING == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
 	}
-	if (which == Melder_STRING_MATCH_REGEXP) {
+	if (which_Melder_STRING == Melder_STRING_MATCH_REGEXP) {
 		char *place = NULL, *errorMessage;
 		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;

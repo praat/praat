@@ -35,6 +35,7 @@
  * pb 2004/10/24 intensity.averagingMethod
  * pb 2004/10/27 intensity.subtractMeanPressure
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
+ * pb 2005/06/16 units
  */
 
 #ifndef _Editor_h_
@@ -90,7 +91,7 @@ struct FunctionEditor_pitch {
 	/* KEEP IN SYNC WITH PREFS. */
 	Pitch data; int show;
 	/* Pitch settings: */
-	double floor, ceiling; int units;
+	double floor, ceiling; int unit;
 	/* Advanced pitch settings: */
 	double viewFrom, viewTo;
 	int method, veryAccurate;

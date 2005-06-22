@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/03/04
+ * pb 2005/06/17
  */
 
 #include "Editor.h"
@@ -230,8 +230,8 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define ENUM(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
-#define RADIOBUTTONS_ENUM(labelProc,max) { int i; for (i = 1; i <= max; i ++) RADIOBUTTON (labelProc (i)) }
-#define OPTIONS_ENUM(labelProc,max) { int i; for (i = 1; i <= max; i ++) OPTION (labelProc (i)) }
+#define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
+#define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define LIST(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);

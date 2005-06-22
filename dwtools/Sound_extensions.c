@@ -24,6 +24,7 @@
  djmw 20030926 Sound_changeGender
  djmw 20040405 Renamed: Sound_overrideSamplingFrequency
  djmw 20041124 Changed call to Sound_to_Spectrum & Spectrum_to_Sound.
+ djmw 20050620 Changed Pitch_HERTZ to Pitch_UNIT_HERTZ
 */
 
 #include "Sound_extensions.h"
@@ -1544,7 +1545,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double
 	pitchTier = Pitch_to_PitchTier (pitch);
 	if (pitchTier == NULL) goto end;
 		
-	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_HERTZ);
+	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
 	if (median != 0 && median != NUMundefined)
 	{
 		/* Incorporate pitch shift from overriding the sampling frequency */
@@ -1663,7 +1664,7 @@ Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchMin, double
 	pitchTier = Pitch_to_PitchTier (pitch);
 	if (pitchTier == NULL) goto end;
 		
-	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_HERTZ);
+	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
 	if (median != 0 && median != NUMundefined)
 	{
 		/* Incorporate pitch shift from overriding the sampling frequency */

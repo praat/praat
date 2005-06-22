@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/05/01
+ * pb 2005/06/16
  */
 
 #ifndef _Collection_h_
@@ -97,7 +97,7 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 
-Table Table_selectRowsWhereColumn (Table me, long icol, enum Melder_NUMBER which, double criterion);
+Table Table_selectRowsWhereColumn (Table me, long icol, int which_Melder_NUMBER, double criterion);
 
 Matrix Table_to_Matrix (Table me);
 

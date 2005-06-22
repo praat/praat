@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/03/04
+ * pb 2005/06/16
  */
 
 #ifndef _AnyTier_h_
@@ -98,7 +98,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	long itier, enum Melder_STRING comparison, const char *text, int preserveTimes);
+	long itier, int which_Melder_STRING, const char *text, int preserveTimes);
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
 	double fontSize, int useTextStyles, int garnish, int speckle, int yscale);

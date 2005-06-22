@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/05/01
+ * pb 2005/06/16
  */
 
 #include "praat.h"
@@ -118,7 +118,7 @@ END
 FORM (Table_extractRowsWhereColumn, "Table: Extract rows where column", 0)
 	WORD ("Extract all rows where column...", "")
 	RADIO ("...is...", 1)
-	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
+	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -128,7 +128,7 @@ DO
 		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_selectRowsWhereColumn (OBJECT,
-			icol, (enum Melder_NUMBER) GET_INTEGER ("...is..."), value),
+			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
 			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
 		praat_dataChanged (OBJECT);
 	}

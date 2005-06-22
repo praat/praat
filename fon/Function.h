@@ -1,6 +1,6 @@
 /* Function.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2004/10/31
+ * pb 2005/06/16
  */
 
 #ifndef _Function_h_
@@ -31,7 +31,13 @@
 
 #define Function_members  Data_members \
 	double xmin, xmax;
-#define Function_methods  Data_methods
+#define Function_methods  Data_methods \
+	int (*getMinimumUnit) (void *klas, long ilevel); \
+	int (*getMaximumUnit) (void *klas, long ilevel); \
+	const char * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
+	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
+	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
+	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit);
 class_create (Function, Data)
 
 /*
@@ -49,6 +55,28 @@ int Function_init (I, double xmin, double xmax);
 		result -> xmin == xmin;
 		result -> xmax == xmax;
 */
+
+/*
+ * A function value is often expressed in some unit, such as:
+ * Pa, Hz, dB, sones.
+ * In the following, 'ilevel' is for multidimensional functions; it could be the row number of a matrix,
+ * or pitch height (Hz) vs. pitch strength (dimensionless), and so on.
+ * 'unit' is enumerated type that has to be defined in the header files of the descendant class,
+ * starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
+ */
+int ClassFunction_getMinimumUnit (void *klas, long ilevel);
+int ClassFunction_getMaximumUnit (void *klas, long ilevel);
+
+#define Function_UNIT_TEXT_SHORT            0x00000001
+#define Function_UNIT_TEXT_GRAPHICAL        0x00000002
+#define Function_UNIT_TEXT_MENU             0x00000004
+const char * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
+
+int ClassFunction_isUnitLogarithmic (void *klas, long ilevel, int unit);
+
+double ClassFunction_convertStandardToSpecialUnit (void *klas, double value, long ilevel, int unit);
+double ClassFunction_convertSpecialToStandardUnit (void *klas, double value, long ilevel, int unit);
+double ClassFunction_convertToNonlogarithmic (void *klas, double value, long ilevel, int unit);
 
 /* The domain of a function can be changed by windowing. */
 /* Here follow some window functions. */
@@ -108,6 +136,9 @@ double Function_window (double tim, int windowType);
 			...
 */
 
+/*
+ * Procedures to adapt a range to the extent of the function domain.
+ */
 void Function_unidirectionalAutowindow (I, double *xmin, double *xmax);
 void Function_bidirectionalAutowindow (I, double *x1, double *x2);
 int Function_intersectRangeWithDomain (I, double *x1, double *x2);

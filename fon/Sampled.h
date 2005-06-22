@@ -1,6 +1,6 @@
 /* Sampled.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2004/11/09
+ * pb 2005/06/16
  */
 
 #ifndef _Sampled_h_
@@ -28,13 +28,15 @@
 #ifndef _Function_h_
 	#include "Function.h"
 #endif
+#ifndef _Graphics_h_
+	#include "Graphics.h"
+#endif
 
 #define Sampled_members Function_members \
 	long nx; \
 	double dx, x1;
 #define Sampled_methods Function_methods \
-	double (*getValueAtSample) (I, long isamp, long which, int units); \
-	double (*backToStandardUnits) (I, double value, long which, int units);
+	double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
 class_create (Sampled, Function)
 
 /* A Sampled is a Function that is sampled at nx points [1..nx], */
@@ -90,33 +92,37 @@ int Sampled_shortTermAnalysis (I, double windowDuration, double timeStep,
 			result -> x1 == firstTime;
 */
 
-double Sampled_getValueAtSample (I, long isamp, long which, int units);
-double Sampled_getValueAtX (I, double x, long which, int units, int interpolate);
-long Sampled_countDefinedSamples (I, long which, int units);
-double * Sampled_getSortedValues (I, long which, int units, long *numberOfValues);
+double Sampled_getValueAtSample (I, long isamp, long ilevel, int unit);
+double Sampled_getValueAtX (I, double x, long ilevel, int unit, int interpolate);
+long Sampled_countDefinedSamples (I, long ilevel, int unit);
+double * Sampled_getSortedValues (I, long ilevel, int unit, long *numberOfValues);
 
-double Sampled_getQuantile (I, double xmin, double xmax, double quantile, long which, int units);
+double Sampled_getQuantile
+	(I, double xmin, double xmax, double quantile, long ilevel, int unit);
 double Sampled_getMean
-	(I, double xmin, double xmax, long which, int units, int interpolate);
-double Sampled_getMean_standardUnits
-	(I, double xmin, double xmax, long which, int averagingUnits, int interpolate);
+	(I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+double Sampled_getMean_standardUnit
+	(I, double xmin, double xmax, long ilevel, int averagingUnit, int interpolate);
 double Sampled_getIntegral
-	(I, double xmin, double xmax, long which, int units, int interpolate);
-double Sampled_getIntegral_standardUnits
-	(I, double xmin, double xmax, long which, int averagingUnits, int interpolate);
+	(I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+double Sampled_getIntegral_standardUnit
+	(I, double xmin, double xmax, long ilevel, int averagingUnit, int interpolate);
 double Sampled_getStandardDeviation
-	(I, double xmin, double xmax, long which, int units, int interpolate);
-double Sampled_getStandardDeviation_standardUnits
-	(I, double xmin, double xmax, long which, int averagingUnits, int interpolate);
+	(I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+double Sampled_getStandardDeviation_standardUnit
+	(I, double xmin, double xmax, long ilevel, int averagingUnit, int interpolate);
 
-void Sampled_getMinimumAndX (I, double xmin, double xmax, long which, int units, int interpolate,
+void Sampled_getMinimumAndX (I, double xmin, double xmax, long ilevel, int unit, int interpolate,
 	double *return_minimum, double *return_xOfMinimum);
-double Sampled_getMinimum (I, double xmin, double xmax, long which, int units, int interpolate);
-double Sampled_getXOfMinimum (I, double xmin, double xmax, long which, int units, int interpolate);
-void Sampled_getMaximumAndX (I, double xmin, double xmax, long which, int units, int interpolate,
+double Sampled_getMinimum (I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+double Sampled_getXOfMinimum (I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+void Sampled_getMaximumAndX (I, double xmin, double xmax, long ilevel, int unit, int interpolate,
 	double *return_maximum, double *return_xOfMaximum);
-double Sampled_getMaximum (I, double xmin, double xmax, long which, int units, int interpolate);
-double Sampled_getXOfMaximum (I, double xmin, double xmax, long which, int units, int interpolate);
+double Sampled_getMaximum (I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+double Sampled_getXOfMaximum (I, double xmin, double xmax, long ilevel, int unit, int interpolate);
+
+void Sampled_drawInside
+	(I, Graphics g, double xmin, double xmax, double ymin, double ymax, double speckle_mm, long ilevel, int unit);
 
 #endif
 /* End of file Sampled.h */

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/05/26
+ * pb 2005/06/22
  */
 
 #include "praat.h"
@@ -104,6 +104,12 @@ static void dia_Vector_getValue (Any dia) {
 	RADIOBUTTON ("Cubic")
 	RADIOBUTTON ("Sinc70")
 	RADIOBUTTON ("Sinc700")
+}
+static void dia_pitchUnits (Any dia) {
+	Any radio;
+	OPTIONMENU ("Unit", 1)
+		OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU),
+			Pitch_UNIT_min, Pitch_UNIT_max)
 }
 
 static int getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmin, double *fmax) {
@@ -649,7 +655,7 @@ END
 FORM (Formant_getBandwidthAtTime, "Formant: Get bandwidth", "Formant: Get bandwidth at time...")
 	NATURAL ("Formant number", "1")
 	REAL ("Time (s)", "0.5")
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 1)
@@ -657,13 +663,13 @@ FORM (Formant_getBandwidthAtTime, "Formant: Get bandwidth", "Formant: Get bandwi
 	OK
 DO
 	Melder_informationReal (Formant_getBandwidthAtTime (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 	
 FORM (Formant_getMaximum, "Formant: Get maximum", "Formant: Get maximum...")
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 2)
@@ -672,8 +678,8 @@ FORM (Formant_getMaximum, "Formant: Get maximum", "Formant: Get maximum...")
 	OK
 DO
 	Melder_informationReal (Formant_getMaximum (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1,
-		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Units"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1,
+		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Unit"));
 END
 
 DIRECT (Formant_getMaximumNumberOfFormants)
@@ -684,19 +690,19 @@ END
 FORM (Formant_getMean, "Formant: Get mean", "Formant: Get mean...")
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	OK
 DO
 	Melder_informationReal (Formant_getMean (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 
 FORM (Formant_getMinimum, "Formant: Get minimum", "Formant: Get minimum...")
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 2)
@@ -705,8 +711,8 @@ FORM (Formant_getMinimum, "Formant: Get minimum", "Formant: Get minimum...")
 	OK
 DO
 	Melder_informationReal (Formant_getMinimum (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1,
-		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Units"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1,
+		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Unit"));
 END
 
 DIRECT (Formant_getMinimumNumberOfFormants)
@@ -727,32 +733,32 @@ END
 FORM (Formant_getQuantile, "Formant: Get quantile", 0)
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	REAL ("Quantile", "0.50 (= median)")
 	OK
 DO
 	Melder_informationReal (Formant_getQuantile (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 
 FORM (Formant_getStandardDeviation, "Formant: Get standard deviation", 0)
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	OK
 DO
 	Melder_informationReal (Formant_getStandardDeviation (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 
 FORM (Formant_getTimeOfMaximum, "Formant: Get time of maximum", "Formant: Get time of maximum...")
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 2)
@@ -762,13 +768,13 @@ FORM (Formant_getTimeOfMaximum, "Formant: Get time of maximum", "Formant: Get ti
 DO
 	Melder_informationReal (Formant_getTimeOfMaximum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
 END
 
 FORM (Formant_getTimeOfMinimum, "Formant: Get time of minimum", "Formant: Get time of minimum...")
 	NATURAL ("Formant number", "1")
 	dia_timeRange (dia);
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 2)
@@ -778,13 +784,13 @@ FORM (Formant_getTimeOfMinimum, "Formant: Get time of minimum", "Formant: Get ti
 DO
 	Melder_informationReal (Formant_getTimeOfMinimum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
 END
 
 FORM (Formant_getValueAtTime, "Formant: Get value", "Formant: Get value at time...")
 	NATURAL ("Formant number", "1")
 	REAL ("Time (s)", "0.5")
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Bark")
 	RADIO ("Interpolation", 1)
@@ -792,7 +798,7 @@ FORM (Formant_getValueAtTime, "Formant: Get value", "Formant: Get value at time.
 	OK
 DO
 	Melder_informationReal (Formant_getValueAtTime (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 	
 DIRECT (Formant_help) Melder_help ("Formant"); END
@@ -1093,7 +1099,7 @@ FORM (old_Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
 	dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (Sampled_getMean_standardUnits (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
+	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
 		0, 0, TRUE), "dB");
 END
 
@@ -1105,7 +1111,7 @@ FORM (Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
 		RADIOBUTTON ("dB")
 	OK
 DO_ALTERNATIVE (old_Intensity_getMean)
-	Melder_informationReal (Sampled_getMean_standardUnits (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
+	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
 		0, GET_INTEGER ("Averaging method"), TRUE), "dB");
 END
 
@@ -1544,7 +1550,7 @@ FORM (Ltas_getMean, "Ltas: Get mean", "Ltas: Get mean...")
 		RADIOBUTTON ("dB")
 	OK
 DO
-	Melder_informationReal (Sampled_getMean_standardUnits (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
 		0, GET_INTEGER ("Averaging method"), FALSE), "dB");
 END
 
@@ -1607,7 +1613,7 @@ FORM (Ltas_getStandardDeviation, "Ltas: Get standard deviation", "Ltas: Get stan
 		RADIOBUTTON ("dB")
 	OK
 DO
-	Melder_informationReal (Sampled_getStandardDeviation_standardUnits (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
+	Melder_informationReal (Sampled_getStandardDeviation_standardUnit (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
 		0, GET_INTEGER ("Averaging method"), FALSE), "dB");
 END
 
@@ -2222,7 +2228,7 @@ FORM (Pitch_draw, "Pitch: Draw", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_yscale_LINEAR))
+		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_UNIT_HERTZ))
 END
 
 FORM (Pitch_drawErb, "Pitch: Draw erb", "Pitch: Draw...")
@@ -2235,7 +2241,7 @@ FORM (Pitch_drawErb, "Pitch: Draw erb", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_yscale_ERB))
+		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_UNIT_ERB))
 END
 
 FORM (Pitch_drawLogarithmic, "Pitch: Draw logarithmic", "Pitch: Draw...")
@@ -2248,20 +2254,20 @@ FORM (Pitch_drawLogarithmic, "Pitch: Draw logarithmic", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_yscale_LOGARITHMIC))
+		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC))
 END
 
 FORM (Pitch_drawMel, "Pitch: Draw mel", "Pitch: Draw...")
 	REAL (STRING_FROM_TIME_SECONDS, "0.0")
 	REAL (STRING_TO_TIME_SECONDS, "0.0 (= all)")
-	REAL ("left Frequency range (mel)", "0")
-	REAL ("right Frequency range (mel)", "500")
+	REAL ("left Frequency range (mel)", "0.0")
+	REAL ("right Frequency range (mel)", "500.0")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_yscale_MEL))
+		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_UNIT_MEL))
 END
 
 FORM (Pitch_drawSemitones, "Pitch: Draw semitones", "Pitch: Draw...")
@@ -2275,7 +2281,7 @@ FORM (Pitch_drawSemitones, "Pitch: Draw semitones", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_yscale_SEMITONES))
+		GET_INTEGER ("Garnish"), Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100))
 END
 
 DIRECT (Pitch_edit)
@@ -2300,35 +2306,43 @@ END
 
 FORM (Pitch_getMaximum, "Pitch: Get maximum", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	RADIO ("Interpolation", 2)
 	RADIOBUTTON ("None")
 	RADIOBUTTON ("Parabolic")
 	OK
 DO
-	Melder_informationReal (Pitch_getMaximum (ONLY (classPitch),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Pitch_getMaximum (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
+		unit, GET_INTEGER ("Interpolation") - 1);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getMean, "Pitch: Get mean", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	OK
 DO
-	Melder_informationReal (Pitch_getMean (ONLY (classPitch),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Pitch_getMean (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"), unit);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getMeanAbsoluteSlope, "Pitch: Get mean absolute slope", 0)
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	RADIO ("Unit", 1)
+		RADIOBUTTON ("Hertz")
+		RADIOBUTTON ("Mel")
+		RADIOBUTTON ("Semitones")
+		RADIOBUTTON ("ERB")
 	OK
 DO
-	int units = GET_INTEGER ("Units");
+	int unit = GET_INTEGER ("Unit");
 	double slope;
-	long nVoiced = (units == 1 ? Pitch_getMeanAbsSlope_hertz : units == 2 ? Pitch_getMeanAbsSlope_mel : units == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
+	long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 		(ONLY (classPitch), & slope);
-	Melder_information (nVoiced < 2 ? "--undefined--" : "%.17g %s/s", slope, GET_STRING ("Units"));
+	Melder_information (nVoiced < 2 ? "--undefined--" : "%.17g %s/s", slope, GET_STRING ("Unit"));
 END
 
 DIRECT (Pitch_getMeanAbsSlope_noOctave)
@@ -2339,59 +2353,64 @@ END
 
 FORM (Pitch_getMinimum, "Pitch: Get minimum", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	RADIO ("Interpolation", 2)
 	RADIOBUTTON ("None")
 	RADIOBUTTON ("Parabolic")
 	OK
 DO
-	Melder_informationReal (Pitch_getMinimum (ONLY (classPitch),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Sampled_getMinimum (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
+		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER ("Interpolation") - 1);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getQuantile, "Pitch: Get quantile", 0)
 	dia_timeRange (dia);
 	REAL ("Quantile", "0.50 (= median)")
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	OK
 DO
-	Melder_informationReal (Pitch_getQuantile (ONLY (classPitch),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Quantile"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Sampled_getQuantile (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
+		GET_REAL ("Quantile"), Pitch_LEVEL_FREQUENCY, unit);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
-
-/*
-FORM (Pitch_getSpreading, "Pitch: Get spreading", 0)
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
-	REAL ("From quantile", "0.16")
-	REAL ("To quantile", "0.84")
-	OK
-DO
-	int units = GET_INTEGER ("Units") - 1;
-	double fromQuantile = GET_REAL ("From quantile");
-	double toQuantile = GET_REAL ("To quantile");
-	double lowValue, highValue;
-	Pitch pitch = ONLY (classPitch);
-	long nVoiced = (units == 1 ? Pitch_getQuantile_hertz : units == 2 ? Pitch_getQuantile_mel : units == 3 ? Pitch_getQuantile_semitones : Pitch_getQuantile_erb)
-		(pitch, fromQuantile, & lowValue);
-	(void) (units == 1 ? Pitch_getQuantile_hertz : units == 2 ? Pitch_getQuantile_mel : units == 3 ? Pitch_getQuantile_semitones : Pitch_getQuantile_erb)
-		(pitch, toQuantile, & highValue);
-	Melder_information (nVoiced < 2 ? "<undefined>" : "%.17g %s", highValue - lowValue, GET_STRING ("Units"));
-END*/
 
 FORM (Pitch_getStandardDeviation, "Pitch: Get standard deviation", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	OPTIONMENU ("Unit", 1)
+		OPTION ("Hertz")
+		OPTION ("mel")
+		OPTION ("logHertz")
+		OPTION ("semitones")
+		OPTION ("ERB")
 	OK
 DO
-	Melder_informationReal (Pitch_getStandardDeviation (ONLY (classPitch),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit");
+	double value;
+	const char *unitText;
+	unit =
+		unit == 1 ? Pitch_UNIT_HERTZ :
+		unit == 2 ? Pitch_UNIT_MEL :
+		unit == 3 ? Pitch_UNIT_LOG_HERTZ :
+		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
+		Pitch_UNIT_ERB;
+	value = Pitch_getStandardDeviation (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"), unit);
+	unitText =
+		unit == Pitch_UNIT_HERTZ ? "Hz" :
+		unit == Pitch_UNIT_MEL ? "mel" :
+		unit == Pitch_UNIT_LOG_HERTZ ? "logHz" :
+		unit == Pitch_UNIT_SEMITONES_1 ? "semitones" :
+		"ERB";
+	Melder_information ("%s %s", Melder_double (value), unitText);
 END
 
 FORM (Pitch_getTimeOfMaximum, "Pitch: Get time of maximum", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	RADIO ("Interpolation", 2)
 	RADIOBUTTON ("None")
 	RADIOBUTTON ("Parabolic")
@@ -2399,12 +2418,12 @@ FORM (Pitch_getTimeOfMaximum, "Pitch: Get time of maximum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMaximum (ONLY (classPitch),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), "seconds");
 END
 
 FORM (Pitch_getTimeOfMinimum, "Pitch: Get time of minimum", 0)
 	dia_timeRange (dia);
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	RADIO ("Interpolation", 2)
 	RADIOBUTTON ("None")
 	RADIOBUTTON ("Parabolic")
@@ -2412,28 +2431,32 @@ FORM (Pitch_getTimeOfMinimum, "Pitch: Get time of minimum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMinimum (ONLY (classPitch),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), "seconds");
 END
 
-FORM (Pitch_getValueAtTime, "Pitch: Get value", "Pitch: Get value at time...")
+FORM (Pitch_getValueAtTime, "Pitch: Get value at time", "Pitch: Get value at time...")
 	REAL ("Time (s)", "0.5")
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	RADIO ("Interpolation", 2)
 	RADIOBUTTON ("Nearest")
 	RADIOBUTTON ("Linear")
 	OK
 DO
-	Melder_informationReal (Pitch_getValueAtTime (ONLY (classPitch), GET_REAL ("Time"),
-		GET_INTEGER ("Units") - 1, GET_INTEGER ("Interpolation") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Sampled_getValueAtX (ONLY (classPitch), GET_REAL ("Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER ("Interpolation") - 1);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 	
 FORM (Pitch_getValueInFrame, "Pitch: Get value in frame", "Pitch: Get value in frame...")
 	INTEGER ("Frame number", "10")
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	dia_pitchUnits (dia);
 	OK
 DO
-	Melder_informationReal (Pitch_getValueInFrame (ONLY (classPitch), GET_INTEGER ("Frame number"),
-		GET_INTEGER ("Units") - 1), GET_STRING ("Units"));
+	int unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	double value = Sampled_getValueAtSample (ONLY (classPitch), GET_INTEGER ("Frame number"), Pitch_LEVEL_FREQUENCY, unit);
+	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_information ("%s %s", Melder_double (value), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 DIRECT (Pitch_help) Melder_help ("Pitch"); END
@@ -2471,7 +2494,7 @@ FORM (Pitch_speckle, "Pitch: Speckle", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_yscale_LINEAR))
+		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_UNIT_HERTZ))
 END
 
 FORM (Pitch_speckleErb, "Pitch: Speckle erb", "Pitch: Draw...")
@@ -2484,7 +2507,7 @@ FORM (Pitch_speckleErb, "Pitch: Speckle erb", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_yscale_ERB))
+		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_UNIT_ERB))
 END
 
 FORM (Pitch_speckleLogarithmic, "Pitch: Speckle logarithmic", "Pitch: Draw...")
@@ -2497,7 +2520,7 @@ FORM (Pitch_speckleLogarithmic, "Pitch: Speckle logarithmic", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_yscale_LOGARITHMIC))
+		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC))
 END
 
 FORM (Pitch_speckleMel, "Pitch: Speckle mel", "Pitch: Draw...")
@@ -2510,7 +2533,7 @@ FORM (Pitch_speckleMel, "Pitch: Speckle mel", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_yscale_MEL))
+		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_UNIT_MEL))
 END
 
 FORM (Pitch_speckleSemitones, "Pitch: Speckle semitones", "Pitch: Draw...")
@@ -2524,14 +2547,19 @@ FORM (Pitch_speckleSemitones, "Pitch: Speckle semitones", "Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_yscale_SEMITONES))
+		GET_INTEGER ("Garnish"), Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100))
 END
 
 FORM (Pitch_subtractLinearFit, "Pitch: subtract linear fit", 0)
-	RADIO ("Units", 1)   RADIOBUTTON ("Hertz")   RADIOBUTTON ("Mel")   RADIOBUTTON ("Semitones")   RADIOBUTTON ("ERB")
+	RADIO ("Unit", 1)
+		RADIOBUTTON ("Hertz")
+		RADIOBUTTON ("Hertz (logarithmic)")
+		RADIOBUTTON ("Mel")
+		RADIOBUTTON ("Semitones")
+		RADIOBUTTON ("ERB")
 	OK
 DO
-	EVERY_TO (Pitch_subtractLinearFit (OBJECT, GET_INTEGER ("Units") - 1))
+	EVERY_TO (Pitch_subtractLinearFit (OBJECT, GET_INTEGER ("Unit") - 1))
 END
 
 DIRECT (Pitch_to_IntervalTier)
@@ -2643,12 +2671,12 @@ END
 
 /***** PITCH & TEXTGRID *****/
 
-static int pr_TextGrid_Pitch_draw (Any dia, int speckle, int yscale) {
+static int pr_TextGrid_Pitch_draw (Any dia, int speckle, int unit) {
 	GET_TMIN_TMAX_FMIN_FMAX
 	praat_picture_open ();
 	TextGrid_Pitch_draw (ONLY (classTextGrid), ONLY (classPitch), GRAPHICS,
 		GET_INTEGER ("Tier"), tmin, tmax, fmin, fmax, GET_INTEGER ("Font size"),
-		GET_INTEGER ("Use text styles"), GET_INTEGER ("Garnish"), speckle, yscale);
+		GET_INTEGER ("Use text styles"), GET_INTEGER ("Garnish"), speckle, unit);
 	praat_picture_close ();
 	return 1;
 }
@@ -2664,7 +2692,7 @@ FORM (TextGrid_Pitch_draw, "TextGrid & Pitch: Draw", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_yscale_LINEAR)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawErb, "TextGrid & Pitch: Draw erb", 0)
@@ -2678,7 +2706,7 @@ FORM (TextGrid_Pitch_drawErb, "TextGrid & Pitch: Draw erb", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_yscale_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawLogarithmic, "TextGrid & Pitch: Draw logarithmic", 0)
@@ -2692,7 +2720,7 @@ FORM (TextGrid_Pitch_drawLogarithmic, "TextGrid & Pitch: Draw logarithmic", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_yscale_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawMel, "TextGrid & Pitch: Draw mel", 0)
@@ -2706,7 +2734,7 @@ FORM (TextGrid_Pitch_drawMel, "TextGrid & Pitch: Draw mel", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_yscale_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSemitones, "TextGrid & Pitch: Draw semitones", 0)
@@ -2721,15 +2749,15 @@ FORM (TextGrid_Pitch_drawSemitones, "TextGrid & Pitch: Draw semitones", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_yscale_SEMITONES)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100)) return 0;
 END
 
-static int pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int yscale) {
+static int pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int unit) {
 	GET_TMIN_TMAX_FMIN_FMAX
 	praat_picture_open ();
 	TextGrid_Pitch_drawSeparately (ONLY (classTextGrid), ONLY (classPitch), GRAPHICS,
 		tmin, tmax, fmin, fmax, GET_INTEGER ("Show boundaries"),
-		GET_INTEGER ("Use text styles"), GET_INTEGER ("Garnish"), speckle, yscale);
+		GET_INTEGER ("Use text styles"), GET_INTEGER ("Garnish"), speckle, unit);
 	praat_picture_close ();
 	return 1;
 }
@@ -2744,7 +2772,7 @@ FORM (TextGrid_Pitch_drawSeparately, "TextGrid & Pitch: Draw separately", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_yscale_LINEAR)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyErb, "TextGrid & Pitch: Draw separately erb", 0)
@@ -2757,7 +2785,7 @@ FORM (TextGrid_Pitch_drawSeparatelyErb, "TextGrid & Pitch: Draw separately erb",
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_yscale_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyLogarithmic, "TextGrid & Pitch: Draw separately logarithmic", 0)
@@ -2770,7 +2798,7 @@ FORM (TextGrid_Pitch_drawSeparatelyLogarithmic, "TextGrid & Pitch: Draw separate
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_yscale_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyMel, "TextGrid & Pitch: Draw separately mel", 0)
@@ -2783,7 +2811,7 @@ FORM (TextGrid_Pitch_drawSeparatelyMel, "TextGrid & Pitch: Draw separately mel",
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_yscale_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelySemitones, "TextGrid & Pitch: Draw separately semitones", 0)
@@ -2797,7 +2825,7 @@ FORM (TextGrid_Pitch_drawSeparatelySemitones, "TextGrid & Pitch: Draw separately
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_yscale_SEMITONES)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckle, "TextGrid & Pitch: Speckle", 0)
@@ -2811,7 +2839,7 @@ FORM (TextGrid_Pitch_speckle, "TextGrid & Pitch: Speckle", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_yscale_LINEAR)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleErb, "TextGrid & Pitch: Speckle erb", 0)
@@ -2825,7 +2853,7 @@ FORM (TextGrid_Pitch_speckleErb, "TextGrid & Pitch: Speckle erb", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_yscale_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleLogarithmic, "TextGrid & Pitch: Speckle logarithmic", 0)
@@ -2839,7 +2867,7 @@ FORM (TextGrid_Pitch_speckleLogarithmic, "TextGrid & Pitch: Speckle logarithmic"
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_yscale_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleMel, "TextGrid & Pitch: Speckle mel", 0)
@@ -2853,7 +2881,7 @@ FORM (TextGrid_Pitch_speckleMel, "TextGrid & Pitch: Speckle mel", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_yscale_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSemitones, "TextGrid & Pitch: Speckle semitones", 0)
@@ -2868,7 +2896,7 @@ FORM (TextGrid_Pitch_speckleSemitones, "TextGrid & Pitch: Speckle semitones", 0)
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_yscale_SEMITONES)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparately, "TextGrid & Pitch: Speckle separately", 0)
@@ -2881,7 +2909,7 @@ FORM (TextGrid_Pitch_speckleSeparately, "TextGrid & Pitch: Speckle separately", 
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_yscale_LINEAR)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyErb, "TextGrid & Pitch: Speckle separately erb", 0)
@@ -2894,7 +2922,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyErb, "TextGrid & Pitch: Speckle separately
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_yscale_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyLogarithmic, "TextGrid & Pitch: Speckle separately logarithmic", 0)
@@ -2907,7 +2935,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyLogarithmic, "TextGrid & Pitch: Speckle se
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_yscale_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyMel, "TextGrid & Pitch: Speckle separately mel", 0)
@@ -2920,7 +2948,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyMel, "TextGrid & Pitch: Speckle separately
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_yscale_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelySemitones, "TextGrid & Pitch: Speckle separately semitones", 0)
@@ -2934,7 +2962,7 @@ FORM (TextGrid_Pitch_speckleSeparatelySemitones, "TextGrid & Pitch: Speckle sepa
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_yscale_SEMITONES)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100)) return 0;
 END
 
 /***** PITCH & TEXTTIER *****/
@@ -2979,12 +3007,12 @@ DIRECT (PitchTier_downto_PointProcess)
 END
 
 FORM (PitchTier_downto_TableOfReal, "PitchTier: Down to TableOfReal", NULL)
-	RADIO ("Units", 1)
+	RADIO ("Unit", 1)
 	RADIOBUTTON ("Hertz")
 	RADIOBUTTON ("Semitones")
 	OK
 DO
-	EVERY_TO (PitchTier_downto_TableOfReal (OBJECT, GET_INTEGER ("Units") - 1))
+	EVERY_TO (PitchTier_downto_TableOfReal (OBJECT, GET_INTEGER ("Unit") - 1))
 END
 
 FORM (PitchTier_draw, "PitchTier: Draw", 0)
@@ -3083,13 +3111,13 @@ END
 
 FORM (PitchTier_interpolateQuadratically, "PitchTier: Interpolate quadratically", 0)
 	NATURAL ("Number of points per parabola", "4")
-	RADIO ("Units", 2)
+	RADIO ("Unit", 2)
 	RADIOBUTTON ("Hz")
 	RADIOBUTTON ("Semitones")
 	OK
 DO
 	WHERE (SELECTED) {
-		RealTier_interpolateQuadratically (OBJECT, GET_INTEGER ("Number of points per parabola"), GET_INTEGER ("Units") - 1);
+		RealTier_interpolateQuadratically (OBJECT, GET_INTEGER ("Number of points per parabola"), GET_INTEGER ("Unit") - 1);
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -3103,46 +3131,53 @@ DIRECT (PitchTier_playSine)
 END
 
 FORM (PitchTier_shiftFrequencies, "PitchTier: Shift frequencies", 0)
-	REAL ("left Time domain (s)", "0.0")
-	REAL ("right Time domain (s)", "1000.0")
+	REAL ("left Time range (s)", "0.0")
+	REAL ("right Time range (s)", "1000.0")
 	REAL ("Frequency shift", "-20.0")
-	RADIO ("Units", 1)
-		RADIOBUTTON ("Hertz")
-		RADIOBUTTON ("Mel")
-		RADIOBUTTON ("Semitones")
-		RADIOBUTTON ("Erb")
+	OPTIONMENU ("Unit", 1)
+		OPTION ("Hertz")
+		OPTION ("mel")
+		OPTION ("logHertz")
+		OPTION ("semitones")
+		OPTION ("ERB")
 	OK
 DO
+	int unit = GET_INTEGER ("Unit");
+	unit =
+		unit == 1 ? Pitch_UNIT_HERTZ :
+		unit == 2 ? Pitch_UNIT_MEL :
+		unit == 3 ? Pitch_UNIT_LOG_HERTZ :
+		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
+		Pitch_UNIT_ERB;
 	WHERE (SELECTED) {
-		PitchTier_shiftFrequencies (OBJECT, GET_REAL ("left Time domain"), GET_REAL ("right Time domain"),
-			GET_REAL ("Frequency shift"), GET_INTEGER ("Units") - 1);
+		PitchTier_shiftFrequencies (OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_REAL ("Frequency shift"), unit);
 		iferror return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
 
 FORM (PitchTier_multiplyFrequencies, "PitchTier: Multiply frequencies", 0)
-	REAL ("left Time domain (s)", "0.0")
-	REAL ("right Time domain (s)", "1000.0")
+	REAL ("left Time range (s)", "0.0")
+	REAL ("right Time range (s)", "1000.0")
 	POSITIVE ("Factor", "1.2")
 	OK
 DO
 	WHERE (SELECTED) {
 		PitchTier_multiplyFrequencies (OBJECT,
-			GET_REAL ("left Time domain"), GET_REAL ("right Time domain"), GET_REAL ("Factor"));
+			GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_REAL ("Factor"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
 FORM (PitchTier_stylize, "PitchTier: Stylize", 0)
 	REAL ("Frequency resolution", "4.0")
-	RADIO ("Units", 2)
+	RADIO ("Unit", 2)
 	RADIOBUTTON ("Hz")
 	RADIOBUTTON ("Semitones")
 	OK
 DO
 	WHERE (SELECTED) {
-		PitchTier_stylize (OBJECT, GET_REAL ("Frequency resolution"), GET_INTEGER ("Units") - 1);
+		PitchTier_stylize (OBJECT, GET_REAL ("Frequency resolution"), GET_INTEGER ("Unit") - 1);
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -3838,12 +3873,14 @@ FORM (TextGrid_Sound_extractIntervalsWhere, "TextGrid & Sound: Extract intervals
 	INTEGER ("Tier", "1")
 	BOOLEAN ("Preserve times", 0)
 	OPTIONMENU ("Extract all intervals whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "")
 	OK
 DO
 	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER ("Tier"), GET_INTEGER ("Extract all intervals whose label..."), GET_STRING ("...the text"),
+		GET_INTEGER ("Tier"),
+		GET_INTEGER ("Extract all intervals whose label...") - 1 + Melder_STRING_min,
+		GET_STRING ("...the text"),
 		GET_INTEGER ("Preserve times")), GET_STRING ("...the text"))) return 0;
 END
 
@@ -4440,13 +4477,14 @@ END
 
 FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
 	OPTIONMENU ("Extract all columns whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
 	const char *text = GET_STRING ("...the text");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT, GET_INTEGER ("Extract all columns whose label..."), text),
+		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT,
+			GET_INTEGER ("Extract all columns whose label...") - 1 + Melder_STRING_min, text),
 			"%s_%s", NAME, text)) return 0;
 	}
 END
@@ -4454,7 +4492,7 @@ END
 FORM (TableOfReal_extractColumnsWhereRow, "Extract columns where row", 0)
 	NATURAL ("Extract all columns where row...", "1")
 	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -4462,7 +4500,7 @@ DO
 	double value = GET_REAL ("...the value");
 	WHERE (SELECTED) {
 		if (! praat_new (TableOfReal_extractColumnsWhereRow (OBJECT,
-			row, GET_INTEGER ("...is..."), value),
+			row, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
 			"%s_%ld_%ld", NAME, row, (long) floor (value+0.5))) return 0;
 	}
 END
@@ -4495,7 +4533,7 @@ END
 FORM (TableOfReal_extractRowsWhereColumn, "Extract rows where column", 0)
 	NATURAL ("Extract all rows where column...", "1")
 	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective, Melder_NUMBER_max)
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -4503,20 +4541,21 @@ DO
 	double value = GET_REAL ("...the value");
 	WHERE (SELECTED) {
 		if (! praat_new (TableOfReal_extractRowsWhereColumn (OBJECT,
-			column, GET_INTEGER ("...is..."), value),
+			column, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
 			"%s_%ld_%ld", NAME, column, (long) floor (value+0.5))) return 0;
 	}
 END
 
 FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
 	OPTIONMENU ("Extract all rows whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
 	const char *text = GET_STRING ("...the text");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT, GET_INTEGER ("Extract all rows whose label..."), text),
+		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT,
+			GET_INTEGER ("Extract all rows whose label...") - 1 + Melder_STRING_min, text),
 			"%s_%s", NAME, text)) return 0;
 	}
 END

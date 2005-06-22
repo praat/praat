@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/11/09
+ * pb 2005/06/17
  */
 
 #ifndef _Sampled_h_
@@ -103,49 +103,46 @@ int Pitch_isVoiced_t (Pitch me, double t);
 	The answer is TRUE iff 't' lies within a voiced frame.
 */
 
-#define Pitch_HERTZ  0
-#define Pitch_MEL  1
-#define Pitch_SEMITONES  2
-#define Pitch_ERB  3
+#define Pitch_LEVEL_FREQUENCY  1
+#define Pitch_LEVEL_STRENGTH  2
 
+#define Pitch_UNIT_min  0
+#define Pitch_UNIT_HERTZ  0
+#define Pitch_UNIT_HERTZ_LOGARITHMIC  1
+#define Pitch_UNIT_MEL  2
+#define Pitch_UNIT_LOG_HERTZ  3
+#define Pitch_UNIT_SEMITONES_1  4
+#define Pitch_UNIT_SEMITONES_100  5
+#define Pitch_UNIT_SEMITONES_440  6
+#define Pitch_UNIT_ERB  7
+#define Pitch_UNIT_max  7
+
+#define Pitch_STRENGTH_UNIT_min  0
 #define Pitch_STRENGTH_UNIT_AUTOCORRELATION  0
 #define Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO  1
 #define Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB  2
+#define Pitch_STRENGTH_UNIT_max  2
 
 #define Pitch_NEAREST  0
 #define Pitch_LINEAR  1
 
-/* The following routines return NUMundefined if the answer cannot be determined. */
-
-double Pitch_getValueInFrame (Pitch me, long frameNumber, int units);
-double Pitch_getStrengthInFrame (Pitch me, long frameNumber, int units);
-/*
-	Return NUMundefined if the frame 'index' is unvoiced, else the frequency or strength of its first candidate.
-*/
-double Pitch_getValueAtTime (Pitch me, double t, int units, int interpolation);
-double Pitch_getStrengthAtTime (Pitch me, double t, int units, int interpolation);
-/*
-	Return NUMundefined if 't' is not within a voiced frame.
-	Otherwise, the result is linearly interpolated between the centres of two adjacent voiced frames,
-	or equal to the centre frequency or strength of a frame at the edge of a sequence of voiced frames. 
-*/
-
-double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int units);
-double Pitch_getMean (Pitch me, double tmin, double tmax, int units);
-double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int units);
-double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int units);
-
-void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int units, int interpolate,
-	double *return_maximum, double *return_timeOfMaximum);
-double Pitch_getMaximum (Pitch me, double tmin, double tmax, int units, int interpolate);
-double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int units, int interpolate);
-void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int units, int interpolate,
-	double *return_minimum, double *return_timeOfMinimum);
-double Pitch_getMinimum (Pitch me, double tmin, double tmax, int units, int interpolate);
-double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int units, int interpolate);
-
+double Pitch_getValueAtTime (Pitch me, double time, int unit, int interpolate);
+double Pitch_getStrengthAtTime (Pitch me, double time, int unit, int interpolate);
 
 long Pitch_countVoicedFrames (Pitch me);
+
+double Pitch_getMean (Pitch me, double tmin, double tmax, int unit);
+double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit);
+double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit);
+double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int unit);
+void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+	double *return_maximum, double *return_timeOfMaximum);
+double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate);
+double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate);
+void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+	double *return_minimum, double *return_timeOfMinimum);
+double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate);
+double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate);
 
 int Pitch_getMaxnCandidates (Pitch me);
 /*
@@ -165,17 +162,6 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 /* Drawing methods. */
 #define Pitch_speckle_NO  FALSE
 #define Pitch_speckle_YES  TRUE
-#define Pitch_yscale_LINEAR  1
-#define Pitch_yscale_LOGARITHMIC  2
-#define Pitch_yscale_SEMITONES  3
-#define Pitch_yscale_MEL  4
-#define Pitch_yscale_ERB  5
-void Pitch_convertYscale (double *fmin, double *fmax, int yscale);
-double Pitch_convertFrequency (double f_Hz, int yscale);
-const char * Pitch_yscaleText (int yscale);
-const char * Pitch_shortUnitText (int yscale);
-const char * Pitch_longUnitText (int yscale);
-int Pitch_yscaleToUnits (int yscale);
 void Pitch_drawInside (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	int speckle, int yscale);
 void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, int garnish,
@@ -214,7 +200,7 @@ Pitch Pitch_interpolate (Pitch me);
 /* Interpolate the pitch values of unvoiced frames. */
 /* No extrapolation beyond first and last voiced frames. */
 
-Pitch Pitch_subtractLinearFit (Pitch me, int units);
+Pitch Pitch_subtractLinearFit (Pitch me, int unit);
 
 Pitch Pitch_smooth (Pitch me, double bandWidth);
 /* Smoothing by convolution with Gaussian curve.

@@ -111,9 +111,9 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		f -> nFormants < 1) goto end;
 	
 	area = af -> c;
-	lmin = length = 0.14;
+	lmin = length = 0.10;
 	plength = refLength;	
-	while (length <= 0.22)
+	while (length <= 0.25)
 	{
 		/* Step 3 */
 		

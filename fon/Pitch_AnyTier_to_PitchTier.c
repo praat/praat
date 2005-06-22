@@ -1,6 +1,6 @@
 /* Pitch_AnyTier_to_PitchTier.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
  */
 
 /*
- * pb 1998/03/19
  * pb 2002/07/16 GPL
- * pb 2004/05/12
+ * pb 2005/06/16 units
  */
 
 #include "Pitch_AnyTier_to_PitchTier.h"
@@ -84,7 +83,7 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 	for (ipoint = 1; ipoint <= points -> size; ipoint ++) {
 		AnyPoint point = points -> item [ipoint];
 		double time = point -> time;
-		double frequency = Pitch_getValueAtTime (pitch, time, Pitch_HERTZ, Pitch_LINEAR);
+		double frequency = Pitch_getValueAtTime (pitch, time, Pitch_UNIT_HERTZ, Pitch_LINEAR);
 		if (frequency == NUMundefined && checkMethod) {
 			Melder_error ("No periodicity at time %.8g.", time);
 			goto end;

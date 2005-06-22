@@ -1,6 +1,6 @@
 /* Vector.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/10/24 Sampled statistics
+ * pb 2005/06/16 units
  */
 
 #include "Vector.h"
@@ -40,11 +41,11 @@ static double getFunction1 (I, double x) {
 	return (1.0 - dcol) * z1 + dcol * z2;
 }
 
-static double getValueAtSample (I, long isamp, long which, int units) {
+static double getValueAtSample (I, long isamp, long ilevel, int unit) {
 	iam (Vector);
-	(void) which;
-	(void) units;
-	return my z [1] [isamp];
+	double value = my z [1] [isamp];
+	(void) ilevel;
+	return NUMdefined (value) ? our convertStandardToSpecialUnit (me, value, ilevel, unit) : NUMundefined;
 }
 
 class_methods (Vector, Matrix)

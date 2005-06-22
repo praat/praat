@@ -1,6 +1,6 @@
 /* Function.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/07/10 NUMbessel_i0_f
+ * pb 2005/06/16 units
  */
 
 #include "Function.h"
@@ -39,8 +40,64 @@
 #include "oo_DESCRIPTION.h"
 #include "Function_def.h"
 
-static double getXmin (I) { iam (Function); return my xmin; }
-static double getXmax (I) { iam (Function); return my xmax; }
+/*
+ * Methods for Function.
+ */
+
+static double getXmin (I) {
+	iam (Function);
+	return my xmin;
+}
+
+static double getXmax (I) {
+	iam (Function);
+	return my xmax;
+}
+
+/*
+ * Methods for Function_Table.
+ */
+
+static int getMinimumUnit (I, long ilevel) {
+	(void) void_me;
+	(void) ilevel;
+	return 0;
+}
+
+static int getMaximumUnit (I, long ilevel) {
+	(void) void_me;
+	(void) ilevel;
+	return 0;
+}
+
+static const char * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	(void) flags;
+	return "";
+}
+
+static int isUnitLogarithmic (I, long ilevel, int unit) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	return FALSE;
+}
+
+static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	return value;
+}
+
+static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	return value;
+}
 
 class_methods (Function, Data)
 	class_method_local (Function, copy)
@@ -52,6 +109,12 @@ class_methods (Function, Data)
 	class_method_local (Function, description)
 	class_method (getXmin)
 	class_method (getXmax)
+	class_method (getMinimumUnit)
+	class_method (getMaximumUnit)
+	class_method (getUnitText)
+	class_method (isUnitLogarithmic)
+	class_method (convertStandardToSpecialUnit)
+	class_method (convertSpecialToStandardUnit)
 class_methods_end
 
 int Function_init (I, double xmin, double xmax) {
@@ -59,6 +122,50 @@ int Function_init (I, double xmin, double xmax) {
 	my xmin = xmin;
 	my xmax = xmax;
 	return 1;
+}
+
+int ClassFunction_getMinimumUnit (I, long ilevel) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return my getMinimumUnit (me, ilevel);
+}
+
+int ClassFunction_getMaximumUnit (I, long ilevel) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return my getMaximumUnit (me, ilevel);
+}
+
+const char * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));
+	return my getUnitText (me, ilevel, unit, flags);
+}
+
+int ClassFunction_isUnitLogarithmic (I, long ilevel, int unit) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));
+	return my isUnitLogarithmic (me, ilevel, unit);
+}
+
+double ClassFunction_convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return NUMdefined (value) ? my convertStandardToSpecialUnit (me, value, ilevel, unit) : NUMundefined;
+}
+
+double ClassFunction_convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return NUMdefined (value) ? my convertSpecialToStandardUnit (me, value, ilevel, unit) : NUMundefined;
+}
+
+double ClassFunction_convertToNonlogarithmic (I, double value, long ilevel, int unit) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return NUMdefined (value) && my isUnitLogarithmic (me, ilevel, unit) ? pow (10.0, value) : value;
 }
 
 double Function_window (double tim, int windowType) {

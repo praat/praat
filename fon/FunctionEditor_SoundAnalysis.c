@@ -52,6 +52,7 @@
  * pb 2004/11/28 warning in settings dialogs for non-standard tiems tep strategies
  * pb 2005/03/02 all pref string buffers are 260 bytes long
  * pb 2005/03/07 'intensity' logging sensitive to averaging method
+ * pb 2005/06/16 units
  */
 
 #include <time.h>
@@ -66,8 +67,6 @@
 #include "Resources.h"
 #include "EditorM.h"
 #include "praat_script.h"
-
-static const char *pitchUnits_strings [] = { 0, "Hz", "Hz", "st", "mel", "erb" };
 
 struct logInfo {
 	int toInfoWindow, toLogFile;
@@ -131,7 +130,7 @@ static struct {
 	}, {
 		NULL, TRUE,
 		/* Pitch settings: */
-		75.0, 500.0, Pitch_yscale_LINEAR,
+		75.0, 500.0, Pitch_UNIT_HERTZ,
 		/* Advanced pitch settings: */
 		0.0 /* auto view from */, 0.0 /* auto view to */,
 		1, FALSE,
@@ -180,7 +179,7 @@ void FunctionEditor_SoundAnalysis_prefs (void) {
 	Resources_addInt ("FunctionEditor.pitch.show", & preferences.pitch.show);
 	Resources_addDouble ("FunctionEditor.pitch.floor", & preferences.pitch.floor);
 	Resources_addDouble ("FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling);
-	Resources_addInt ("FunctionEditor.pitch.units", & preferences.pitch.units);
+	Resources_addInt ("FunctionEditor.pitch.unit", & preferences.pitch.unit);
 	Resources_addDouble ("FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom);
 	Resources_addDouble ("FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo);
 	Resources_addInt ("FunctionEditor.pitch.method", & preferences.pitch.method);
@@ -611,12 +610,8 @@ END
 FORM (FunctionEditor, cb_pitchSettings, "Pitch settings", "Intro 4.2. Configuring the pitch contour")
 	POSITIVE ("left Pitch range (Hz)", "75.0")
 	POSITIVE ("right Pitch range (Hz)", "500.0")
-	OPTIONMENU ("Units", 1)
-		OPTION ("Hertz")
-		OPTION ("Hertz logarithmic")
-		OPTION ("Semitones re 100 Hz")
-		OPTION ("Mel")
-		OPTION ("Erb")
+	OPTIONMENU ("Unit", 1)
+		OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
 	RADIO ("Optimize for", 1)
 		RADIOBUTTON ("Intonation (AC method)")
 		RADIOBUTTON ("Voice analysis (CC method)")
@@ -625,7 +620,7 @@ FORM (FunctionEditor, cb_pitchSettings, "Pitch settings", "Intro 4.2. Configurin
 	OK
 SET_REAL ("left Pitch range", my pitch.floor)
 SET_REAL ("right Pitch range", my pitch.ceiling)
-SET_INTEGER ("Units", my pitch.units)
+SET_INTEGER ("Unit", my pitch.unit + 1 - Pitch_UNIT_min)
 SET_INTEGER ("Optimize for", my pitch.method)
 if (my pitch.viewFrom != 0.0 || my pitch.viewTo != 0.0 ||
     my pitch.veryAccurate != FALSE || my pitch.maximumNumberOfCandidates != 15 ||
@@ -645,7 +640,7 @@ if (my timeStepStrategy != 1)
 DO
 	preferences.pitch.floor = my pitch.floor = GET_REAL ("left Pitch range");
 	preferences.pitch.ceiling = my pitch.ceiling = GET_REAL ("right Pitch range");
-	preferences.pitch.units = my pitch.units = GET_INTEGER ("Units");
+	preferences.pitch.unit = my pitch.unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
 	preferences.pitch.method = my pitch.method = GET_INTEGER ("Optimize for");
 	forget (my pitch.data);
 	forget (my intensity.data);
@@ -703,16 +698,18 @@ DIRECT (FunctionEditor, cb_pitchListing)
 		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine2 ("Time_s   F0_", Pitch_shortUnitText (my pitch.units));
+	MelderInfo_writeLine2 ("Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
 	if (part == FunctionEditor_PART_CURSOR) {
-		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, Pitch_yscaleToUnits (my pitch.units), TRUE);
+		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
+		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), "   ", Melder_fixed (f0, 6));
 	} else {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my pitch.data, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my pitch.data, i);
-			double f0 = Pitch_getValueInFrame (my pitch.data, i, Pitch_yscaleToUnits (my pitch.units));
+			double f0 = Sampled_getValueAtSample (my pitch.data, i, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+			f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 			MelderInfo_writeLine3 (Melder_fixed (t, 6), "   ", Melder_fixed (f0, 6));
 		}
 	}
@@ -730,18 +727,21 @@ DIRECT (FunctionEditor, cb_getPitch)
 		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
+		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
+		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		Melder_information ("%s %s (interpolated pitch at CURSOR)",
-			Melder_double (Pitch_getValueAtTime (my pitch.data, tmin, Pitch_yscaleToUnits (my pitch.units), 1)),
-			Pitch_longUnitText (my pitch.units));
+			Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0));
 	} else {
+		double f0 = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
+		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		Melder_information ("%s %s (mean pitch %s)",
-			Melder_double (Pitch_getMean (my pitch.data, tmin, tmax, Pitch_yscaleToUnits (my pitch.units))),
-			Pitch_longUnitText (my pitch.units), FunctionEditor_partString_locative (part));
+			Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+			FunctionEditor_partString_locative (part));
 	}
 END
 
 DIRECT (FunctionEditor, cb_getMinimumPitch)
-	double tmin, tmax, value;
+	double tmin, tmax, f0;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
 	if (! my pitch.show)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -749,13 +749,15 @@ DIRECT (FunctionEditor, cb_getMinimumPitch)
 		computePitch (me);
 		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
 	}
-	Pitch_getMinimumAndTime (my pitch.data, tmin, tmax, Pitch_yscaleToUnits (my pitch.units), 1, & value, NULL);
+	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
+	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 	Melder_information ("%s %s (minimum pitch %s)",
-		Melder_double (value), Pitch_longUnitText (my pitch.units), FunctionEditor_partString_locative (part));
+		Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		FunctionEditor_partString_locative (part));
 END
 
 DIRECT (FunctionEditor, cb_getMaximumPitch)
-	double tmin, tmax, value;
+	double tmin, tmax, f0;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
 	if (! my pitch.show)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -763,9 +765,11 @@ DIRECT (FunctionEditor, cb_getMaximumPitch)
 		computePitch (me);
 		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
 	}
-	Pitch_getMaximumAndTime (my pitch.data, tmin, tmax, Pitch_yscaleToUnits (my pitch.units), 1, & value, NULL);
+	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
+	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 	Melder_information ("%s %s (maximum pitch %s)",
-		Melder_double (value), Pitch_longUnitText (my pitch.units), FunctionEditor_partString_locative (part));
+		Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		FunctionEditor_partString_locative (part));
 END
 
 DIRECT (FunctionEditor, cb_extractVisiblePitchContour)
@@ -1183,7 +1187,7 @@ DIRECT (FunctionEditor, cb_moveCursorToMinimumPitch)
 	} else {
 		double time;
 		Pitch_getMinimumAndTime (my pitch.data, my startSelection, my endSelection,
-			Pitch_yscaleToUnits (my pitch.units), 1, NULL, & time);
+			my pitch.unit, 1, NULL, & time);
 		if (! NUMdefined (time))
 			return Melder_error ("Selection is voiceless.");
 		my startSelection = my endSelection = time;
@@ -1203,7 +1207,7 @@ DIRECT (FunctionEditor, cb_moveCursorToMaximumPitch)
 	} else {
 		double time;
 		Pitch_getMaximumAndTime (my pitch.data, my startSelection, my endSelection,
-			Pitch_yscaleToUnits (my pitch.units), 1, NULL, & time);
+			my pitch.unit, 1, NULL, & time);
 		if (! NUMdefined (time))
 			return Melder_error ("Selection is voiceless.");
 		my startSelection = my endSelection = time;
@@ -1213,12 +1217,14 @@ END
 
 void FunctionEditor_SoundAnalysis_draw (I) {
 	iam (FunctionEditor);
-	double pitchViewFrom = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom :
-		my pitch.units == Pitch_yscale_LOGARITHMIC ? my pitch.floor : Pitch_convertFrequency (my pitch.floor, my pitch.units);
-	double pitchViewTo = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo :
-		my pitch.units == Pitch_yscale_LOGARITHMIC ? my pitch.ceiling : Pitch_convertFrequency (my pitch.ceiling, my pitch.units);
-	double yPitchViewFrom = my pitch.units == Pitch_yscale_LOGARITHMIC ? log10 (pitchViewFrom) : pitchViewFrom;
-	double yPitchViewTo = my pitch.units == Pitch_yscale_LOGARITHMIC ? log10 (pitchViewTo) : pitchViewTo;
+	double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	double pitchFloor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	double pitchCeiling_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
+	double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
+	double pitchViewFrom_hidden = ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
+	double pitchViewTo_hidden = ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_WHITE);
@@ -1255,18 +1261,18 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setColour (my graphics, Graphics_CYAN);
 		Graphics_setLineWidth (my graphics, 3.0);
 		if (undersampled || numberOfVisiblePitchPoints < 101) {
-			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom, pitchViewTo, 2, my pitch.units);
+			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 2, my pitch.unit);
 		}
 		if (! undersampled) {
-			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom, pitchViewTo, FALSE, my pitch.units);
+			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
 		Graphics_setColour (my graphics, Graphics_BLUE);
 		Graphics_setLineWidth (my graphics, 1.0);
 		if (undersampled || numberOfVisiblePitchPoints < 101) {
-			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom, pitchViewTo, 1, my pitch.units);
+			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 1, my pitch.unit);
 		}
 		if (! undersampled) {
-			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom, pitchViewTo, FALSE, my pitch.units);
+			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}
@@ -1290,32 +1296,38 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 	 * Draw vertical scales.
 	 */
 	if (my pitch.show) {
-		double pitchCursor = NUMundefined, yPitchCursor = NUMundefined;
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, yPitchViewFrom, yPitchViewTo);
+		double pitchCursor_overt = NUMundefined, pitchCursor_hidden = NUMundefined;
+		Graphics_setWindow (my graphics, my startWindow, my endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
 		Graphics_setColour (my graphics, Graphics_NAVY);
 		if (my pitch.data) {
 			if (my startSelection == my endSelection)
-				pitchCursor = Pitch_getValueAtTime (my pitch.data, my startSelection, Pitch_yscaleToUnits (my pitch.units), 1);
+				pitchCursor_hidden = Pitch_getValueAtTime (my pitch.data, my startSelection, my pitch.unit, 1);
 			else
-				pitchCursor = Pitch_getMean (my pitch.data, my startSelection, my endSelection, Pitch_yscaleToUnits (my pitch.units));
-			yPitchCursor = my pitch.units == Pitch_yscale_LOGARITHMIC ? log10 (pitchCursor) : pitchCursor;
-			if (NUMdefined (pitchCursor)) {
+				pitchCursor_hidden = Pitch_getMean (my pitch.data, my startSelection, my endSelection, my pitch.unit);
+			pitchCursor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+			if (NUMdefined (pitchCursor_hidden)) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-				Graphics_printf (my graphics, my endWindow, yPitchCursor, "%.5g %s", pitchCursor, Pitch_shortUnitText (my pitch.units));
+				Graphics_printf (my graphics, my endWindow, pitchCursor_hidden, "%.5g %s", pitchCursor_overt,
+					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
+						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor) || Graphics_dyWCtoMM (my graphics, yPitchCursor - yPitchViewFrom) > 5.0) {
+			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-				Graphics_printf (my graphics, my endWindow, yPitchViewFrom - Graphics_dyMMtoWC (my graphics, 0.5), "%.4g %s",
-					pitchViewFrom, Pitch_shortUnitText (my pitch.units));
+				Graphics_printf (my graphics, my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics, 0.5), "%.4g %s",
+					pitchViewFrom_overt,
+					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
+						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor) || Graphics_dyWCtoMM (my graphics, pitchViewTo - yPitchCursor) > 5.0) {
+			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-				Graphics_printf (my graphics, my endWindow, yPitchViewTo, "%.4g %s",
-					pitchViewTo, Pitch_shortUnitText (my pitch.units));
+				Graphics_printf (my graphics, my endWindow, pitchViewTo_hidden, "%.4g %s",
+					pitchViewTo_overt,
+					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
+						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 		} else {
 			Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-			Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (yPitchViewFrom + yPitchViewTo),
+			Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (pitchViewFrom_hidden + pitchViewTo_hidden),
 				"(Cannot show pitch contour. Zoom out or change bottom of pitch range in pitch settings.)");
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
@@ -1516,9 +1528,9 @@ static int cb_log (FunctionEditor me, int which) {
 				return Melder_error ("No pitch contour available (out of memory?).");
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
-				value = Pitch_getValueAtTime (my pitch.data, tmin, Pitch_yscaleToUnits (my pitch.units), 1);
+				value = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, 1);
 			} else {
-				value = Pitch_getMean (my pitch.data, tmin, tmax, Pitch_yscaleToUnits (my pitch.units));
+				value = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
 			}
 		} else if (varName [0] == 'f' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
@@ -1571,7 +1583,7 @@ static int cb_log (FunctionEditor me, int which) {
 			strcpy (Melder_buffer1 + headlen, "\t");
 			strcpy (Melder_buffer1 + headlen + 1, p + 4 + 2);
 			strcpy (format, Melder_buffer1);
-			p += 1 - 1;
+			/* p += 1 - 1; */
 		} else {
 			p = q - 1;   /* Go to before next quote. */
 		}
@@ -1628,7 +1640,7 @@ void FunctionEditor_SoundAnalysis_addMenus (I) {
 	EditorMenu_addCommand (menu, "-- query spectrogram --", 0, NULL);
 	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, "Get frequency", 0, cb_getFrequency);
-	EditorMenu_addCommand (menu, "Get spectral power at cursor cross", motif_F9, cb_getSpectralPowerAtCursorCross);
+	EditorMenu_addCommand (menu, "Get spectral power at cursor cross", motif_F7, cb_getSpectralPowerAtCursorCross);
 
 	menu = Editor_addMenu (me, "Pitch", 0);
 	my pitchToggle = EditorMenu_addCommand (menu, "Show pitch",
@@ -1639,9 +1651,9 @@ void FunctionEditor_SoundAnalysis_addMenus (I) {
 	EditorMenu_addCommand (menu, "-- query pitch --", 0, NULL);
 	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, "Pitch listing", 0, cb_pitchListing);
-	EditorMenu_addCommand (menu, "Get pitch", motif_F10, cb_getPitch);
-	EditorMenu_addCommand (menu, "Get minimum pitch", motif_F10 + motif_COMMAND, cb_getMinimumPitch);
-	EditorMenu_addCommand (menu, "Get maximum pitch", motif_F10 + motif_SHIFT, cb_getMaximumPitch);
+	EditorMenu_addCommand (menu, "Get pitch", motif_F5, cb_getPitch);
+	EditorMenu_addCommand (menu, "Get minimum pitch", motif_F5 + motif_COMMAND, cb_getMinimumPitch);
+	EditorMenu_addCommand (menu, "Get maximum pitch", motif_F5 + motif_SHIFT, cb_getMaximumPitch);
 	EditorMenu_addCommand (menu, "-- select pitch --", 0, NULL);
 	EditorMenu_addCommand (menu, "Select:", motif_INSENSITIVE, cb_moveCursorToMinimumPitch /* dummy */);
 	EditorMenu_addCommand (menu, "Move cursor to minimum pitch", 'L', cb_moveCursorToMinimumPitch);
@@ -1655,7 +1667,7 @@ void FunctionEditor_SoundAnalysis_addMenus (I) {
 	EditorMenu_addCommand (menu, "-- query intensity --", 0, NULL);
 	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, "Intensity listing", 0, cb_intensityListing);
-	EditorMenu_addCommand (menu, "Get intensity", motif_F11, cb_getIntensity);
+	EditorMenu_addCommand (menu, "Get intensity", motif_F8, cb_getIntensity);
 
 	menu = Editor_addMenu (me, "Formant", 0);
 	my formantToggle = EditorMenu_addCommand (menu, "Show formants",

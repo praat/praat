@@ -25,6 +25,7 @@
  * pb 2005/03/04 Melder_NUMBER
  * pb 2005/04/25 Table_getLogisticRegression
  * pb 2005/04/25 Table_to_Matrix
+ * pb 2005/06/16 enums -> ints
  */
 
 #include <ctype.h>
@@ -317,7 +318,7 @@ double Table_getStdev (Table me, long icol) {
 	return sqrt (sum / (my rows -> size - 1));
 }
 
-Table Table_selectRowsWhereColumn (Table me, long column, enum Melder_NUMBER which, double criterion) {
+Table Table_selectRowsWhereColumn (Table me, long column, int which_Melder_NUMBER, double criterion) {
 	Table thee = NULL;
 	long irow, icol;
 	if (column < 1 || column > my numberOfColumns)
@@ -329,7 +330,7 @@ Table Table_selectRowsWhereColumn (Table me, long column, enum Melder_NUMBER whi
 	}
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
-		if (Melder_numberMatchesCriterion (row -> cells [column]. number, which, criterion)) {
+		if (Melder_numberMatchesCriterion (row -> cells [column]. number, which_Melder_NUMBER, criterion)) {
 			TableRow newRow = Data_copy (row);
 			Collection_addItem (thy rows, newRow);
 		}

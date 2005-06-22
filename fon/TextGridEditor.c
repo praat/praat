@@ -24,6 +24,7 @@
  * pb 2005/01/11 better visibility of yellow line
  * pb 2005/03/02 green colouring for matching labels
  * pb 2005/05/05 show number of intervals
+ * pb 2005/06/17 enums
  */
 
 #include "TextGridEditor.h"
@@ -285,7 +286,7 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 		OPTION ("intervals or points")
 		OPTION ("non-empty intervals or points")
 	OPTIONMENU ("Paint intervals green whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb, Melder_STRING_max)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "some text here for green paint")
 }
 static void prefs_setValues (I, EditorCommand cmd) {
@@ -295,7 +296,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_INTEGER ("Text alignment in intervals", my alignment + 1)
 	SET_INTEGER ("With the shift key, you drag", my shiftDragMultiple + 1)
 	SET_INTEGER ("Show number of", my showNumberOf)
-	SET_INTEGER ("Paint intervals green whose label...", my greenMethod)
+	SET_INTEGER ("Paint intervals green whose label...", my greenMethod + 1 - Melder_STRING_min)
 	SET_STRING ("...the text", my greenString)
 }
 static void prefs_getValues (I, EditorCommand cmd) {
@@ -305,7 +306,7 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	preferences.alignment = my alignment = GET_INTEGER ("Text alignment in intervals") - 1;
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER ("With the shift key, you drag") - 1;
 	preferences.showNumberOf = my showNumberOf = GET_INTEGER ("Show number of");
-	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...");
+	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...") - 1 + Melder_STRING_min;
 	strncpy (my greenString, GET_STRING ("...the text"), Resources_STRING_BUFFER_SIZE);
 	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
 	strcpy (preferences.greenString, my greenString);

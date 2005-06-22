@@ -1,6 +1,6 @@
 /* Sound_files.c
  *
- * Copyright (C) 1992-2004 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2005 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/09/12 MelderFile_checkSoundFile
  * pb 2004/10/17 test for NULL file pointer when closing in Sound_read(2)FromSoundFile
+ * pb 2005/06/17 Mac headers
  */
 
 #include "Sound.h"
@@ -53,7 +54,7 @@ static void Sound_alawDecode (Sound me) {
 
 #if defined (macintosh)
 	#include <Resources.h>
-	#include <Memory.h>
+	#include <MacMemory.h>
 	#include <Sound.h>
 	#ifndef  __MACH__
 		#include <SoundInput.h>

@@ -791,10 +791,10 @@ static void createMenus (I) {
 	Editor_addCommand (me, "File", "-- after prefs --", 0, 0);
 
 	Editor_addMenu (me, "Query", 0);
-	Editor_addCommand (me, "Query", "Get begin of selection", motif_F5, cb_getB);
+	Editor_addCommand (me, "Query", "Get begin of selection", 0, cb_getB);
 	Editor_addCommand (me, "Query", "Get cursor", motif_F6, cb_getCursor);
-	Editor_addCommand (me, "Query", "Get end of selection", motif_F7, cb_getE);
-	Editor_addCommand (me, "Query", "Get selection length", motif_F8, cb_getSelectionDuration);
+	Editor_addCommand (me, "Query", "Get end of selection", 0, cb_getE);
+	Editor_addCommand (me, "Query", "Get selection length", 0, cb_getSelectionDuration);
 
 	Editor_addMenu (me, "View", 0);
 	our viewMenuEntries (me);

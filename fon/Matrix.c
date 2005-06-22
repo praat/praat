@@ -1,6 +1,6 @@
 /* Matrix.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
  */
 
 /*
- * pb 2002/06/04
  * pb 2002/07/16 GPL
- * pb 2003/03/09
  * pb 2003/04/03 Matrix_getValueAtXY
  * pb 2003/06/19 Eigen
  * pb 2003/08/28 Matrix_writeToHeaderlessSpreadsheetFile
+ * pb 2005/06/16 units
  */
 
 #include "Matrix.h"
@@ -89,6 +88,12 @@ static void info (I) {
 		my dx, 1 / my dx, my dy, 1 / my dy, my x1, my y1, minimum, maximum);
 }
 
+static double getValueAtSample (I, long isamp, long ilevel, int unit) {
+	iam (Matrix);
+	double value = my z [ilevel] [isamp];
+	return NUMdefined (value) ? our convertStandardToSpecialUnit (me, value, ilevel, unit) : NUMundefined;
+}
+
 static double getNrow (I) { iam (Matrix); return my ny; }
 static double getNcol (I) { iam (Matrix); return my nx; }
 static double getYmin (I) { iam (Matrix); return my ymin; }
@@ -127,6 +132,7 @@ class_methods (Matrix, Sampled)
 	class_method_local (Matrix, writeBinary)
 	class_method_local (Matrix, readBinary)
 	class_method (info)
+	class_method (getValueAtSample)
 	class_method (getNrow)
 	class_method (getNcol)
 	class_method (getYmin)

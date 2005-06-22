@@ -23,7 +23,8 @@
  * dw 2004/02/27 drawAsSquares: fill colour same as outline colour
  * pb 2004/05/09 more Extract Part and Extract commands
  * pb 2004/10/01 Melder_double instead of %.17g
- * pb 2005/03/04 Melder_NUMBER and Melder_STRING
+ * pb 2005/03/04 Melder_NUMBER and Melder_STRING as enums
+ * pb 2005/06/16 Melder_NUMBER and Melder_STRING as ints
  */
 
 #include <ctype.h>
@@ -368,7 +369,7 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, enum Melder_NUMBER which, double criterion) {
+TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder_NUMBER, double criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, n = 0;
@@ -377,7 +378,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, enum Melder_NUMB
 		goto end;
 	}
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
 			n ++;
 		}
 	}
@@ -389,7 +390,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, enum Melder_NUMB
 	copyColumnLabels (me, thee); cherror
 	n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
 	}
@@ -398,12 +399,12 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, enum Melder_STRING which, const char *criterion) {
+TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const char *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
 			n ++;
 		}
 	}
@@ -415,7 +416,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, enum Melder_STRING which, cons
 	copyColumnLabels (me, thee); cherror
 	n = 0;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
 	}
@@ -424,7 +425,7 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, enum Melder_NUMBER which, double criterion) {
+TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NUMBER, double criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long icol, n = 0;
@@ -433,7 +434,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, enum Melder_NUMBER 
 		goto end;
 	}
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
 			n ++;
 		}
 	}
@@ -445,7 +446,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, enum Melder_NUMBER 
 	copyRowLabels (me, thee); cherror
 	n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
+		if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
 	}
@@ -454,12 +455,12 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, enum Melder_STRING which, const char *criterion) {
+TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const char *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long icol, n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
 			n ++;
 		}
 	}
@@ -471,7 +472,7 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, enum Melder_STRING which, c
 	copyRowLabels (me, thee); cherror
 	n = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
+		if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
 	}

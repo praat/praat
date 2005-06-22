@@ -1783,7 +1783,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 			Str255 hybridDeviceName;
 			OSErr err = SPBGetIndexedDevice (idevice, & hybridDeviceName [0], NULL);
 			if (err == siBadSoundInDevice) break;
-			PtoCstr (hybridDeviceName);
+			(void) PtoCstr (hybridDeviceName);
 			if (SPBOpenDevice (hybridDeviceName, siWritePermission, & my refNum) == noErr) {
 				Handle handle;
 				if (SPBGetDeviceInfo (my refNum, siInputSourceNames, & handle) == noErr) {
