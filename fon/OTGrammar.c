@@ -36,6 +36,7 @@
  * pb 2004/10/16 struct structOTxx
  * pb 2005/01/24 write to headerless spreadsheet file
  * pb 2005/04/19 OTHistory
+ * pb 2005/06/30 learning from partial pairs
  */
 
 #include "OTGrammar.h"
@@ -855,55 +856,18 @@ static double demotionStep (double mean, double relativeSpreading) {
 	return relativeSpreading == 0.0 ? mean : NUMrandomGauss (mean, relativeSpreading * mean);
 }
 
-int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *adultOutput,
-	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
+static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long iloser,
+	int strategy, int honourLocalRankings,
+	double demotionMean, double relativeDemotionSpreading, int warnIfStalled, int *grammarHasChanged)
 {
-	long itab, iwinner, iloser, icons;
-	OTGrammarTableau tableau;
-	OTGrammarCandidate winner, loser;
-	double step;
-	if (newDisharmonies) OTGrammar_newDisharmonies (me, rankingSpreading);
-	if (grammarHasChanged != NULL) *grammarHasChanged = FALSE;
-
-	/*
-	 * Evaluate the input in the learner's hypothesis.
-	 */
-	itab = OTGrammar_getTableau (me, underlyingForm); cherror
-	tableau = & my tableaus [itab];
-
-	/*
-	 * Determine the "winner", i.e. the candidate that wins in the learner's grammar
-	 * (Tesar & Smolensky call this the "loser").
-	 */
-	iwinner = OTGrammar_getWinner (me, itab);
-	winner = & tableau -> candidates [iwinner];
-
-	/*
-	 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
-	 */
-	if (strequ (winner -> output, adultOutput)) goto end;
-
-	/*
-	 * Find (perhaps the learner's interpretation of) the adult winner (the "loser") in the learner's own tableau
-	 * (Tesar & Smolensky call this the "winner").
-	 */
-	for (iloser = 1; iloser <= tableau -> numberOfCandidates; iloser ++) {
-		loser = & tableau -> candidates [iloser];
-		if (strequ (loser -> output, adultOutput)) break;
-	}
-	if (iloser > tableau -> numberOfCandidates)
-		{ Melder_error ("Cannot generate adult output \"%s\".", adultOutput); goto end; }
-
-	/*
-	 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
-	 * The grammar will have to change.
-	 */
+	OTGrammarTableau tableau = & my tableaus [itab];
+	OTGrammarCandidate winner = & tableau -> candidates [iwinner], loser = & tableau -> candidates [iloser];
+	long icons;
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		int icons = NUMrandomInteger (1, my numberOfConstraints);
 		int winnerMarks = winner -> marks [icons];
 		int loserMarks = loser -> marks [icons];
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
+		double step = demotionStep (demotionMean, relativeDemotionSpreading);
 		if (loserMarks > winnerMarks) {
 			my constraints [icons]. ranking -= step;
 			if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
@@ -913,7 +877,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 			if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 		}
 	} else if (strategy == OTGrammar_SYMMETRIC_ALL) {
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
+		double step = demotionStep (demotionMean, relativeDemotionSpreading);
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
@@ -928,7 +892,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 		}
 	} else if (strategy == OTGrammar_WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
+		double step = demotionStep (demotionMean, relativeDemotionSpreading);
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
@@ -949,7 +913,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 		}
 	} else if (strategy == OTGrammar_WEIGHTED_ALL) {
 		int winningConstraints = 0, losingConstraints = 0;
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
+		double step = demotionStep (demotionMean, relativeDemotionSpreading);
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
@@ -972,7 +936,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 		/*
 		 * Determine the crucial winner mark.
 		 */
-		double pivotRanking;
+		double pivotRanking, step;
 		int equivalent = TRUE;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
@@ -983,7 +947,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 		if (icons > my numberOfConstraints) {   /* Completed the loop? */
 			if (warnIfStalled && ! equivalent)
 				Melder_warning ("(OTGrammar_step:) Adult form has strict superset violations! EDCD stalls.\n"
-					"Underlying form: %s\nAdult output: %s\nWinner output: %s", underlyingForm, adultOutput, winner -> output);
+					"Underlying form: %s\nAdult output: %s\nWinner output: %s", tableau -> input, loser -> output, winner -> output);
 			goto end;
 		}
 		/*
@@ -1011,6 +975,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 		 * Determine the crucial loser mark.
 		 */
 		long crucialLoserMark;
+		double step;
 		OTGrammarConstraint offendingConstraint;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
@@ -1047,6 +1012,57 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 			}
 		} while (improved);
 	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *adultOutput,
+	double rankingSpreading, int strategy, int honourLocalRankings,
+	double demotionMean, double relativeDemotionSpreading, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
+{
+	long itab, iwinner, iloser;
+	OTGrammarTableau tableau;
+	OTGrammarCandidate winner, loser;
+	if (newDisharmonies) OTGrammar_newDisharmonies (me, rankingSpreading);
+	if (grammarHasChanged != NULL) *grammarHasChanged = FALSE;
+
+	/*
+	 * Evaluate the input in the learner's hypothesis.
+	 */
+	itab = OTGrammar_getTableau (me, underlyingForm); cherror
+	tableau = & my tableaus [itab];
+
+	/*
+	 * Determine the "winner", i.e. the candidate that wins in the learner's grammar
+	 * (Tesar & Smolensky call this the "loser").
+	 */
+	iwinner = OTGrammar_getWinner (me, itab);
+	winner = & tableau -> candidates [iwinner];
+
+	/*
+	 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
+	 */
+	if (strequ (winner -> output, adultOutput)) goto end;
+
+	/*
+	 * Find (perhaps the learner's interpretation of) the adult winner (the "loser") in the learner's own tableau
+	 * (Tesar & Smolensky call this the "winner").
+	 */
+	for (iloser = 1; iloser <= tableau -> numberOfCandidates; iloser ++) {
+		loser = & tableau -> candidates [iloser];
+		if (strequ (loser -> output, adultOutput)) break;
+	}
+	if (iloser > tableau -> numberOfCandidates)
+		{ Melder_error ("Cannot generate adult output \"%s\".", adultOutput); goto end; }
+
+	/*
+	 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
+	 * The grammar will have to change.
+	 */
+	OTGrammar_modifyRankings (me, itab, iwinner, iloser, strategy, honourLocalRankings,
+		demotionMean, relativeDemotionSpreading, warnIfStalled, grammarHasChanged); cherror
+
 end:
 	iferror return 0;
 	return 1;

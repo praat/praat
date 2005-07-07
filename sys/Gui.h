@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/11/24
+ * pb 2005/06/28
  */
 
 #ifndef _melder_h_
@@ -412,6 +412,7 @@ Widget motif_addSeparator (Widget menu);
 int motif_getResolution (Widget widget);
 
 Widget GuiText_createScrolled (Widget parent, const char *name, int editable, int topOffset);
+void GuiText_setFontSize (Widget me, int size);
 
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*

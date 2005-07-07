@@ -18,13 +18,15 @@
  */
 
 /*
- * pb 2005/04/19
+ * pb 2005/07/01
  */
 
 #include "praat.h"
 
 #include "OTGrammar.h"
+#include "OTMulti.h"
 #include "OTGrammarEditor.h"
+#include "OTMultiEditor.h"
 
 /***** HELP *****/
 
@@ -220,13 +222,15 @@ END
 FORM (OTGrammar_getNumberOfViolations, "Get number of violations", 0)
 	NATURAL ("Tableau number", "1")
 	NATURAL ("Candidate number", "1")
+	NATURAL ("Constraint number", "1")
 	OK
 DO
 	OTGrammar me = ONLY_OBJECT;
-	long itab = GET_INTEGER ("Tableau number"), icand = GET_INTEGER ("Candidate number");
+	long itab = GET_INTEGER ("Tableau number"), icand = GET_INTEGER ("Candidate number"), icons = GET_INTEGER ("Constraint number");
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau number' should not exceed number of tableaus.")
 	REQUIRE (icand <= my tableaus [itab]. numberOfCandidates, "'Candidate number' should not exceed number of candidates for this tableau.")
-	Melder_information ("%ld", my tableaus [itab]. candidates [icand]. marks);
+	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
+	Melder_information ("%ld", my tableaus [itab]. candidates [icand]. marks [icons]);
 END
 
 FORM (OTGrammar_getRankingValue, "Get ranking value", 0)
@@ -601,12 +605,226 @@ FORM_WRITE (OTGrammar_writeToHeaderlessSpreadsheetFile, "Write OTGrammar to spre
 	if (! OTGrammar_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
 END
 
+FORM (OTMulti_drawTableau, "Draw tableau", "OT learning")
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	OK
+DO
+	EVERY_DRAW (OTMulti_drawTableau (OBJECT, GRAPHICS, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2")))
+END
+
+DIRECT (OTMulti_edit)
+	if (praat.batch) {
+		return Melder_error ("Cannot edit from batch.");
+	} else {
+		WHERE (SELECTED) {
+			if (! praat_installEditor (OTMultiEditor_create (praat.topShell, FULL_NAME,
+				OBJECT), IOBJECT)) return 0;
+		}
+	}
+END
+
+FORM (OTMulti_getCandidate, "Get candidate", 0)
+	NATURAL ("Candidate", "1")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	long icand = GET_INTEGER ("Candidate");
+	REQUIRE (icand <= my numberOfCandidates, "'Candidate' should not exceed number of candidates.")
+	Melder_information ("%s", my candidates [icand]. string);
+END
+
+FORM (OTMulti_getConstraint, "Get constraint name", 0)
+	NATURAL ("Constraint number", "1")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	long icons = GET_INTEGER ("Constraint number");
+	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
+	Melder_information ("%s", my constraints [icons]. name);
+END
+
+FORM (OTMulti_getDisharmony, "Get disharmony", 0)
+	NATURAL ("Constraint number", "1")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	long icons = GET_INTEGER ("Constraint number");
+	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
+	Melder_information ("%s", Melder_double (my constraints [icons]. disharmony));
+END
+
+DIRECT (OTMulti_getNumberOfCandidates)
+	OTMulti me = ONLY_OBJECT;
+	Melder_information ("%ld", my numberOfCandidates);
+END
+
+DIRECT (OTMulti_getNumberOfConstraints)
+	OTMulti me = ONLY_OBJECT;
+	Melder_information ("%ld", my numberOfConstraints);
+END
+
+FORM (OTMulti_getNumberOfViolations, "Get number of violations", 0)
+	NATURAL ("Candidate number", "1")
+	NATURAL ("Constraint number", "1")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	long icand = GET_INTEGER ("Candidate number"), icons = GET_INTEGER ("Constraint number");
+	REQUIRE (icand <= my numberOfCandidates, "'Candidate number' should not exceed number of candidates.")
+	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
+	Melder_information ("%ld", my candidates [icand]. marks [icons]);
+END
+
+FORM (OTMulti_getRankingValue, "Get ranking value", 0)
+	NATURAL ("Constraint number", "1")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	long icons = GET_INTEGER ("Constraint number");
+	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
+	Melder_information ("%s", Melder_double (my constraints [icons]. ranking));
+END
+
+FORM (OTMulti_getWinner, "OTMulti: Get winner", 0)
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	Melder_information ("%ld", OTMulti_getWinner (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2")));
+END
+
+FORM (OTMulti_generateOptimalForm, "OTMulti: Generate optimal form", 0)
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	REAL ("Evaluation noise", "2.0")
+	OK
+DO
+	char output [100];
+	if (! OTMulti_generateOptimalForm (ONLY_OBJECT, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		output, GET_REAL ("Evaluation noise"))) return 0;
+	Melder_information ("%s", output);
+	praat_dataChanged (ONLY_OBJECT);
+END
+
+FORM (OTMulti_generateOptimalForms, "OTMulti: Generate optimal forms", 0)
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	REAL ("Evaluation noise", "2.0")
+	NATURAL ("Trials", "1000")
+	OK
+DO
+	OTMulti me = ONLY (classOTMulti);
+	if (! praat_new (OTMulti_generateOptimalForms (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		GET_REAL ("Evaluation noise"), GET_INTEGER ("Trials")), "%s_out", my name)) return 0;
+	praat_dataChanged (me);
+END
+
+FORM (OTMulti_learnOne, "OTMulti: Learn one", 0)
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	OPTIONMENU ("Learn", 3)
+		OPTION ("forward")
+		OPTION ("backward")
+		OPTION ("bidirectionally")
+	REAL ("Plasticity", "0.1")
+	REAL ("Rel. plasticity spreading", "0.1")
+	OK
+DO
+	WHERE (SELECTED) {
+		OTMulti_learnOne (OBJECT, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+			GET_INTEGER ("Learn"), GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"));
+		praat_dataChanged (OBJECT);
+		iferror return 0;
+	}
+END
+
+FORM (OTMulti_removeConstraint, "OTMulti: Remove constraint", 0)
+	SENTENCE ("Constraint name", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! OTMulti_removeConstraint (OBJECT, GET_STRING ("Constraint name"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (OTMulti_resetAllRankings, "OTMulti: Reset all rankings", 0)
+	REAL ("Ranking", "100.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		OTMulti_reset (OBJECT, GET_REAL ("Ranking"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (OTMulti_setRanking, "OTMulti: Set ranking", 0)
+	NATURAL ("Constraint", "1")
+	REAL ("Ranking", "100.0")
+	REAL ("Disharmony", "100.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! OTMulti_setRanking (OBJECT, GET_INTEGER ("Constraint"), GET_REAL ("Ranking"), GET_REAL ("Disharmony"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (OTMulti_to_Distribution, "OTMulti: Compute output distribution", 0)
+	SENTENCE ("Partial form 1", "")
+	SENTENCE ("Partial form 2", "")
+	NATURAL ("Number of trials", "100000")
+	POSITIVE ("Evaluation noise", "2.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		int status = praat_new (OTMulti_to_Distribution (OBJECT,  GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		GET_INTEGER ("Number of trials"), GET_REAL ("Evaluation noise")), "%s_out", NAME);
+		praat_dataChanged (OBJECT);
+		if (! status) return 0;
+	}
+END
+
+FORM (OTMulti_PairDistribution_learn, "OTMulti & PairDistribution: Learn", 0)
+	REAL ("Evaluation noise", "2.0")
+	OPTIONMENU ("Learn", 3)
+		OPTION ("forward")
+		OPTION ("backward")
+		OPTION ("bidirectionally")
+	REAL ("Initial plasticity", "1.0")
+	INTEGER ("Replications per plasticity", "100000")
+	REAL ("Plasticity decrement", "0.1")
+	INTEGER ("Number of plasticities", "4")
+	REAL ("Rel. plasticity spreading", "0.1")
+	OK
+DO
+	OTMulti grammar = ONLY (classOTMulti);
+	OTMulti_PairDistribution_learn (grammar, ONLY (classPairDistribution),
+		GET_REAL ("Evaluation noise"), GET_INTEGER ("Learn"),
+		GET_REAL ("Initial plasticity"), GET_INTEGER ("Replications per plasticity"),
+		GET_REAL ("Plasticity decrement"), GET_INTEGER ("Number of plasticities"),
+		GET_REAL ("Rel. plasticity spreading"));
+	praat_dataChanged (grammar);
+	iferror return 0;
+END
+
+FORM (OTMulti_Strings_generateOptimalForms, "OTGrammar: Inputs to outputs", "OTGrammar: Inputs to outputs...")
+	REAL ("Evaluation noise", "2.0")
+	OK
+DO
+	OTMulti me = ONLY (classOTMulti);
+	if (! praat_new (OTMulti_Strings_generateOptimalForms (me,
+		ONLY (classStrings), GET_REAL ("Evaluation noise")), "%s_out", my name)) return 0;
+	praat_dataChanged (me);
+END
 
 /***** buttons *****/
 
 void praat_uvafon_OT_init (void);
 void praat_uvafon_OT_init (void) {
-	Thing_recognizeClassesByName (classOTGrammar, NULL);
+	Thing_recognizeClassesByName (classOTGrammar, classOTMulti, NULL);
 	Thing_recognizeClassByOtherName (classOTGrammar, "OTCase");
 
 	praat_addMenuCommand ("Objects", "New", "-- new optimality --", 0, 0, 0);
@@ -661,6 +879,29 @@ void praat_uvafon_OT_init (void) {
 
 	{ void praat_TableOfReal_init (void *klas); praat_TableOfReal_init (classOTHistory); }
 
+	praat_addAction1 (classOTMulti, 0, "Edit", 0, 0, DO_OTMulti_edit);
+	praat_addAction1 (classOTMulti, 0, "Draw tableau...", 0, 0, DO_OTMulti_drawTableau);
+	praat_addAction1 (classOTMulti, 0, "Query -          ", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 1, "Get number of constraints", 0, 1, DO_OTMulti_getNumberOfConstraints);
+	praat_addAction1 (classOTMulti, 1, "Get constraint...", 0, 1, DO_OTMulti_getConstraint);
+	praat_addAction1 (classOTMulti, 1, "Get ranking value...", 0, 1, DO_OTMulti_getRankingValue);
+	praat_addAction1 (classOTMulti, 1, "Get disharmony...", 0, 1, DO_OTMulti_getDisharmony);
+	praat_addAction1 (classOTMulti, 1, "Get number of candidates", 0, 1, DO_OTMulti_getNumberOfCandidates);
+	praat_addAction1 (classOTMulti, 1, "Get candidate...", 0, 1, DO_OTMulti_getCandidate);
+	praat_addAction1 (classOTMulti, 1, "Get number of violations...", 0, 1, DO_OTMulti_getNumberOfViolations);
+	praat_addAction1 (classOTMulti, 1, "-- parse --", 0, 1, 0);
+	praat_addAction1 (classOTMulti, 1, "Get winner...", 0, 1, DO_OTMulti_getWinner);
+	praat_addAction1 (classOTMulti, 0, "Evaluate", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 0, "Get output...", 0, 0, DO_OTMulti_generateOptimalForm);
+	praat_addAction1 (classOTMulti, 0, "Get outputs...", 0, 0, DO_OTMulti_generateOptimalForms);
+	praat_addAction1 (classOTMulti, 0, "To output Distribution...", 0, 0, DO_OTMulti_to_Distribution);
+	praat_addAction1 (classOTMulti, 0, "Modify ranking", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 0, "Set ranking...", 0, 0, DO_OTMulti_setRanking);
+	praat_addAction1 (classOTMulti, 0, "Reset all rankings...", 0, 0, DO_OTMulti_resetAllRankings);
+	praat_addAction1 (classOTMulti, 0, "Learn one...", 0, 0, DO_OTMulti_learnOne);
+	praat_addAction1 (classOTMulti, 0, "Modify structure -", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 0, "Remove constraint...", 0, 1, DO_OTMulti_removeConstraint);
+
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Learn from partial outputs...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Get fraction correct...", 0, 0, DO_OTGrammar_Distributions_getFractionCorrect);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, "Learn...", 0, 0, DO_OTGrammar_PairDistribution_learn);
@@ -668,6 +909,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, "Inputs to outputs...", 0, 0, DO_OTGrammar_inputsToOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, "Learn from partial outputs...", 0, 0, DO_OTGrammar_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 2, "Learn...", 0, 0, DO_OTGrammar_learn);
+	praat_addAction2 (classOTMulti, 1, classPairDistribution, 1, "Learn...", 0, 0, DO_OTMulti_PairDistribution_learn);
+	praat_addAction2 (classOTMulti, 1, classStrings, 1, "Get outputs...", 0, 0, DO_OTMulti_Strings_generateOptimalForms);
 }
 
 /* End of file praat_OT.c */

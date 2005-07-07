@@ -1,6 +1,6 @@
 /* TextEditor.c
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
  */
 
 /*
- * pb 2001/08/02
  * pb 2002/03/07 GPL
  * pb 2004/01/07 use GuiWindow_setDirty
  * pb 2004/01/28 MacOS X: use trick for ensuring dirtiness callback
+ * pb 2005/06/28 font size
  */
 
 #include "TextEditor.h"
 #include "machine.h"
 #include "longchar.h"
 #include "EditorM.h"
+#include "Resources.h"
 
 /***** TextEditor methods *****/
 
@@ -365,6 +366,35 @@ DO
 	XmTextShowPosition (my textWidget, left);
 END
 
+/***** 'Font' menu *****/
+
+static int theTextEditorFontSize = 12;
+static void updateSizeMenu (TextEditor me) {
+	if (my fontSizeButton_10) XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
+	if (my fontSizeButton_12) XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
+	if (my fontSizeButton_14) XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
+	if (my fontSizeButton_18) XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
+	if (my fontSizeButton_24) XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
+}
+static void setFontSize (TextEditor me, int fontSize) {
+	GuiText_setFontSize (my textWidget, fontSize);
+	theTextEditorFontSize = my fontSize = fontSize;
+	updateSizeMenu (me);
+}
+
+DIRECT (TextEditor, cb_10) setFontSize (me, 10); END
+DIRECT (TextEditor, cb_12) setFontSize (me, 12); END
+DIRECT (TextEditor, cb_14) setFontSize (me, 14); END
+DIRECT (TextEditor, cb_18) setFontSize (me, 18); END
+DIRECT (TextEditor, cb_24) setFontSize (me, 24); END
+FORM (TextEditor, cb_fontSize, "Text window: Font size", 0)
+	NATURAL ("Font size (points)", "12")
+	OK
+SET_INTEGER ("Font size", (long) my fontSize);
+DO
+	setFontSize (me, GET_INTEGER ("Font size"));
+END
+
 static void createMenus (I) {
 	iam (TextEditor);
 	inherited (TextEditor) createMenus (me);
@@ -390,6 +420,15 @@ static void createMenus (I) {
 	Editor_addMenu (me, "Search", 0);
 	if (our fileBased) Editor_addCommand (me, "Search", "Where am I?", 0, cb_whereAmI);
 	Editor_addCommand (me, "Search", "Go to line...", 'L', cb_goToLine);
+	#ifdef macintosh
+		Editor_addMenu (me, "Font", 0);
+		my fontSizeButton_10 = Editor_addCommand (me, "Font", "10", motif_CHECKABLE, cb_10);
+		my fontSizeButton_12 = Editor_addCommand (me, "Font", "12", motif_CHECKABLE, cb_12);
+		my fontSizeButton_14 = Editor_addCommand (me, "Font", "14", motif_CHECKABLE, cb_14);
+		my fontSizeButton_18 = Editor_addCommand (me, "Font", "18", motif_CHECKABLE, cb_18);
+		my fontSizeButton_24 = Editor_addCommand (me, "Font", "24", motif_CHECKABLE, cb_24);
+		Editor_addCommand (me, "Font", "Font size...", 0, cb_fontSize);
+	#endif
 }
 
 MOTIF_CALLBACK (cb_valueChanged)
@@ -424,6 +463,7 @@ class_methods_end
 int TextEditor_init (I, Widget parent, const char *initialText) {
 	iam (TextEditor);
 	if (! Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL)) return 0;
+	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
 		XmTextSetString (my textWidget, MOTIF_CONST_CHAR_ARG (initialText));
 		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
@@ -441,6 +481,10 @@ TextEditor TextEditor_create (Widget parent, const char *initialText) {
 void TextEditor_showOpen (I) {
 	iam (TextEditor);
 	cb_showOpen (Editor_getMenuCommand (me, "File", "Open..."), NULL);
+}
+
+void TextEditor_prefs (void) {
+	Resources_addInt ("TextEditor.fontSize", & theTextEditorFontSize);
 }
 
 /* End of file TextEditor.c */

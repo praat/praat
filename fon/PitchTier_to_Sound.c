@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2004/10/03 sine wave generation
+ * pb 2005/07/07 PitchTier_to_Sound_glottalSource
  */
 
 #include "PitchTier_to_Sound.h"
@@ -35,8 +36,25 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	PointProcess point = PitchTier_to_PointProcess (me);
 	Sound sound;
 	if (! point) return NULL;
-	sound = PointProcess_to_Sound (point, samplingFrequency, adaptFactor,
+	sound = PointProcess_to_Sound_pulseTrain (point, samplingFrequency, adaptFactor,
 		adaptTime, interpolationDepth);
+	if (hum && ! Sound_filterWithFormants (sound, 0, 0, 6, formant, bandwidth)) { forget (point); return NULL; }
+	forget (point);
+	return sound;
+}
+
+Sound PitchTier_to_Sound_glottalSource (PitchTier me, double samplingFrequency,
+	 double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2, int hum)
+{
+	static float formant [1 + 6] =
+		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
+	static float bandwidth [1 + 6] =
+		{ 0, 50, 100, 200, 300, 400, 500 };
+	PointProcess point = PitchTier_to_PointProcess (me);
+	Sound sound;
+	if (! point) return NULL;
+	sound = PointProcess_to_Sound_glottalSource (point, samplingFrequency, adaptFactor,
+		maximumPeriod, openPhase, collisionPhase, power1, power2);
 	if (hum && ! Sound_filterWithFormants (sound, 0, 0, 6, formant, bandwidth)) { forget (point); return NULL; }
 	forget (point);
 	return sound;

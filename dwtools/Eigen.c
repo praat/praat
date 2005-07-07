@@ -1,6 +1,6 @@
 /* Eigen.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  djmw 20030322 Extra test in Eigen_initFromSquareRootPair. 
  djmw 20040329 Added fractionOfTotal  and cumulative parameters in Eigen_drawEigenvalues_scree.
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
+ djmw 20050706 Shortened horizontal offsets in Eigen_drawEigenvalues from 1 to 0.5
 */
 
 #include "Eigen.h"
@@ -460,7 +461,7 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	{
 		first = 1; last = my numberOfEigenvalues;
 	}
-	xmin = first - 1; xmax = last + 1;
+	xmin = first - 0.5; xmax = last + 0.5;
 	if (fractionOfTotal || cumulative)
 	{
 		sumOfEigenvalues = Eigen_getSumOfEigenvalues (me, 0, 0);

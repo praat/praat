@@ -54,7 +54,8 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	char *entryHint; double entryPosition; \
 	struct { char *page; int top; } history [20]; \
 	int historyPointer; \
-	char *currentPageTitle;
+	char *currentPageTitle; \
+	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 #define HyperPage_methods Editor_methods \
 	void (*draw) (I); \
 	long (*getNumberOfPages) (I); \

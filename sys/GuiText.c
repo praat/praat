@@ -999,4 +999,16 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 	return me;
 }
 
+void GuiText_setFontSize (Widget me, int size) {
+	#if mac
+		if (isMLTE (me)) {
+			TXNTypeAttributes attr;
+			attr. tag = kTXNQDFontSizeAttribute;
+			attr. size = kTXNFontSizeAttributeSize;
+			attr. data. dataValue = (unsigned long) size << 16;
+			TXNSetTypeAttributes (my macMlteObject, 1, & attr, 0, 2000000000);
+		}
+	#endif
+}
+
 /* End of file GuiText.c */

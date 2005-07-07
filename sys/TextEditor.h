@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/21
+ * pb 2005/06/28
  */
 
 #ifndef _Editor_h_
@@ -31,8 +31,9 @@
 	structMelderFile file; \
 	Widget textWidget; \
 	Any openDialog, saveDialog, printDialog, findDialog; \
-	int dirty; \
-	Widget dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
+	int dirty, fontSize; \
+	Widget dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
+	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 #define TextEditor_methods Editor_methods \
 	int fileBased; \
 	void (*clear) (I);
@@ -42,6 +43,8 @@ int TextEditor_init (I, Widget parent, const char *initialText);
 TextEditor TextEditor_create (Widget parent, const char *initialText);
 	/* 'initalText' may be NULL. */
 void TextEditor_showOpen (I);
+
+void TextEditor_prefs (void);
 
 /* End of file TextEditor.h */
 #endif

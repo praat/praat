@@ -1057,7 +1057,7 @@ int MelderFile_writeText (MelderFile fs, const char *text) {
 	fwrite (text, sizeof (char), strlen (text), f);   /* Not trailing null byte. */
 	if (fclose (f))
 		return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (fs));
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', textCreator);
+	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
 	return 1;
 }
 

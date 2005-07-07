@@ -18,7 +18,6 @@
  */
 
 /*
- * pb 2000/09/21
  * pb 2002/03/07 GPL
  * pb 2002/10/14 added scripting examples to Help menu
  * pb 2002/12/05 include

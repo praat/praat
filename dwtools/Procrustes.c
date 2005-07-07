@@ -20,8 +20,7 @@
 /*
  djmw 2001
  djmw 20020813 GPL header
- djmw 20040117 Corrected bug in classProcrustes_transform: scale (s) was not
- used.
+ djmw 20040117 Corrected bug in classProcrustes_transform: scale (s) was not used.
  djmw 20050406 Renamed Procrustus Procrustes
 */
 
@@ -42,7 +41,7 @@ static void classProcrustes_transform (I, double **in, long nrows,
 			{
 				tmp += in[i][k] * my r[k][j];
 			}
-			out[i][j] = my  s* tmp + my t[j];
+			out[i][j] = my s * tmp + my t[j];
 		}
 	}	
 }
@@ -70,10 +69,17 @@ static Any classProcrustes_invert (I)
 			thy r[j][i] = my r[i][j];
 		}
 		thy t[i] = 0;
+		/*
 		for (j = 1; j <= thy n; j++)
 		{
 			thy t[i] -= thy r[i][j] * my t[j];
 		}
+		*/
+		for (j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[j][i] * my t[j];
+		}
+		
 		thy t[i] *= thy s;
 	}	
 	return thee;	

@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20040406 Latest modification
+ djmw 20050628 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -98,6 +98,10 @@ Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samp
 	
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
+
+Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
+	double samplingFrequency, double lowestFrequency, long numberOfComponents,
+	double frequencyChange_st, double amplitudeRange, double octaveShiftFraction);
 
 Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyShiftRatio, long numberOfComponents);

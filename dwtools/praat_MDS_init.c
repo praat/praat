@@ -26,6 +26,7 @@
  djmw 20041027 Orhogonal transform parameter for Configurations_to_Procrustes
  djmw 20050406 classProcrustus -> classProcrustes.
  djmw 20050426 Removed "Procrustus.h"
+ djmw 20050630 Better name of Procrustes object after Configurations_to_Procrustes.
 */
 
 #include <math.h>
@@ -369,7 +370,7 @@ DO
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
 	if (! praat_new (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
-		"%s_%s", Thing_getName (c1), Thing_getName (c2))) return 0;
+		"%s_to_%s", Thing_getName (c2), Thing_getName (c1))) return 0;
 END
 
 FORM (Configurations_to_AffineTransform_congruence, "Configurations: To AffineTransform (congruence)",

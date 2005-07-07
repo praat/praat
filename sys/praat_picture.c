@@ -25,12 +25,14 @@
  * pb 2004/06/18 allow reversed axes
  * pb 2004/09/05 allow selection of inner viewport
  * pb 2005/05/07 inManual
+ * pb 2005/07/05 Draw function...
  */
 
 #include "praatP.h"
 #include "Picture.h"
 #include "Printer.h"
 #include "machine.h"
+#include "Formula.h"
 
 /***** static variable *****/
 
@@ -593,6 +595,66 @@ DO
 		GET_REAL ("From y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
+END
+
+#define PraatPictureFunction_members Data_members \
+	double xmin, xmax, dx, x1; \
+	long nx;
+#define PraatPictureFunction_methods Data_methods
+class_create (PraatPictureFunction, Data)
+
+static double getXmin (I) { iam (PraatPictureFunction); return my xmin; }
+static double getXmax (I) { iam (PraatPictureFunction); return my xmax; }
+static double getNx (I) { iam (PraatPictureFunction); return my nx; }
+static double getDx (I) { iam (PraatPictureFunction); return my dx; }
+static double getX (I, long ix) { iam (PraatPictureFunction); return my x1 + (ix - 1) * my dx; }
+
+class_methods (PraatPictureFunction, Data)
+	class_method (getXmin)
+	class_method (getXmax)
+	class_method (getNx)
+	class_method (getDx)
+	class_method (getX)
+class_methods_end
+
+FORM (DrawFunction, "Praat picture: Draw function", 0)
+	REAL ("From x", "0.0")
+	REAL ("To x", "0.0 (= all)")
+	NATURAL ("Number of horizontal steps", "1000")
+	LABEL ("", "Formula:")
+	TEXTFIELD ("formula", "x^2 - x^4")
+	OK
+DO
+	double x1WC, x2WC, y1WC, y2WC;
+	double fromX = GET_REAL ("From x"), toX = GET_REAL ("To x");
+	long n = GET_INTEGER ("Number of horizontal steps"), i;
+	float *y = NULL;
+	PraatPictureFunction function = NULL;
+	if (n < 2) return 1;
+	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	if (fromX == toX) fromX = x1WC, toX = x2WC;
+	y = NUMfvector (1, n); cherror
+	function = new (PraatPictureFunction); cherror
+	function -> xmin = x1WC;
+	function -> xmax = x2WC;
+	function -> nx = n;
+	function -> x1 = fromX;
+	function -> dx = (toX - fromX) / (n - 1);
+	if (! Formula_compile (NULL, function, GET_STRING ("formula"), FALSE, TRUE)) return 0;
+	for (i = 1; i <= n; i ++) {
+		double result;
+		if (! Formula_run (1, i, & result, NULL)) return 0;
+		y [i] = result;
+	}
+	praat_picture_open ();
+	Graphics_setInner (GRAPHICS);
+	Graphics_function (GRAPHICS, y, 1, n, fromX, toX);
+	Graphics_unsetInner (GRAPHICS);
+	praat_picture_close ();
+end:
+	NUMfvector_free (y, 1);
+	forget (function);
+	iferror return 0;
 END
 
 static void dia_rectangle (Any dia) {
@@ -1409,6 +1471,8 @@ void praat_picture_init (void) {
 	praat_addMenuCommand ("Picture", "World", "Draw line...", 0, 0, DO_DrawLine);
 	praat_addMenuCommand ("Picture", "World", "Draw arrow...", 0, 0, DO_DrawArrow);
 	praat_addMenuCommand ("Picture", "World", "Draw two-way arrow...", 0, 0, DO_DrawDoubleArrow);
+	praat_addMenuCommand ("Picture", "World", "-- function --", 0, 0, 0);
+	praat_addMenuCommand ("Picture", "World", "Draw function...", 0, 0, DO_DrawFunction);
 	praat_addMenuCommand ("Picture", "World", "-- rectangle --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "World", "Draw rectangle...", 0, 0, DO_DrawRectangle);
 	praat_addMenuCommand ("Picture", "World", "Paint rectangle...", 0, 0, DO_PaintRectangle);

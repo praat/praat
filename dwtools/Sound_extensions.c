@@ -1,6 +1,6 @@
 /* Sound_extensions.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  djmw 20040405 Renamed: Sound_overrideSamplingFrequency
  djmw 20041124 Changed call to Sound_to_Spectrum & Spectrum_to_Sound.
  djmw 20050620 Changed Pitch_HERTZ to Pitch_UNIT_HERTZ
+ djmw 20050628 New and extended Sound_createShepardToneComplex that corrects incorrect amplitudes of tones in complex.
+ 		(amplitudes were on linar instead of log scale)
 */
 
 #include "Sound_extensions.h"
@@ -1077,6 +1079,91 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 	return me;
 }
 */
+
+Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
+	double samplingFrequency, double lowestFrequency, long numberOfComponents,
+	double frequencyChange_st, double amplitudeRange, double octaveShiftFraction)
+{
+	char *proc = "Sound_createShepardToneComplex";
+	Sound me;
+	long i, j;
+	double nyquist = samplingFrequency / 2;
+	double highestFrequency = lowestFrequency * pow (2, numberOfComponents);
+	double lmax_db = 0, lmin_db = lmax_db - fabs (amplitudeRange);
+	double octaveTime, sweeptime;
+	double a = frequencyChange_st / 12;
+
+	if (highestFrequency > nyquist) return Melder_errorp ("%s: The highest frequency you want to generate is above "
+		"the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
+		"\"Number of components\" or \"Lowest frequency\".", proc);
+	if (octaveShiftFraction < 0 || octaveShiftFraction >= 1) return Melder_errorp ("%s: Octave offset fraction "
+		"must be greater or equal zero and smaller than one.", proc);
+	if (frequencyChange_st != 0)
+	{
+		octaveTime = 12 / fabs (frequencyChange_st);
+		sweeptime = numberOfComponents * octaveTime;
+	}
+	else
+	{
+		octaveTime = sweeptime = 1e38;
+	}
+	me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
+	if (me == NULL) return NULL;
+
+	for (i = 1; i <= numberOfComponents; i++)
+	{
+		double tswitch;
+		double freqi = lowestFrequency * pow (2, i - 1 + octaveShiftFraction);
+		double b1, b2;
+		double phasejm1 = 0;
+
+		/*
+			The frequency is f(t) = lowestFrequency * 2^tone(t)
+			The tone is parametrized with a straight line: tone(t) = a * t + b
+			where a = frequencyChange_st / 12 and b depends on the component
+			If frequencyChange_st >=0
+				The tone rises until highest frequency at t=tswich, then falls to lowest and starts rising again.
+				The slope is always the same. The offsets are b1 and b2 respectively.
+				We count octaveShiftFraction as distance from tone base
+			else if frequencyChange_st < 0
+				The tone falls until the lowest frequency at t=tswich, then jumps to highest and starts falling again
+				All tones start one octave higher as in rising case.
+				We also count octaveShiftFraction down from this tone base.
+			else
+				No changes in frequency of the components.
+			endif
+		*/
+		if (frequencyChange_st >=0)
+		{
+			b1 = i - 1 + octaveShiftFraction; b2 = 0;
+			tswitch = (numberOfComponents - b1) * octaveTime;
+		}
+		else
+		{
+			freqi *= 2;
+			b1 = i - octaveShiftFraction; b2 = numberOfComponents;
+			tswitch = b1 * octaveTime;
+		}
+		for (j = 1; j <= my nx; j++)
+		{
+			double t = Sampled_indexToX (me, j);
+			double tmod = fmod (t, sweeptime);
+			double tone = tmod <= tswitch ? b1 + a * tmod : b2 + a * (tmod - tswitch);
+			double f = lowestFrequency * pow (2, tone);
+			/* double theta = 2 * NUMpi * log2 (f / lowestFrequency) / numberOfComponents; */
+			double theta = 2 * NUMpi * tone / numberOfComponents;
+			double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
+			double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
+			double phase1 = j == 1 ? phasej : phase1;
+			double si = level * sin (phasej - phase1);
+
+			my z[1][j] += si;
+			phasejm1 = phasej;
+		}
+	}
+	Vector_scale (me, 0.99996948);
+	return me;
+}
 
 /* can be implemented more efficiently with sin recurrence? */
 /* amplitude(f) = min + (1-min)*(1-cos(2*pi*(ln(f/f1) / ln(fn/f1)))/2 */

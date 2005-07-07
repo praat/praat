@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 /*
- * pb 2001/03/09
  * pb 2002/07/16 GPL
  * pb 2003/04/15 improved handling of edges in Sound_getRms
  * pb 2003/07/20 moved shimmer measurements to VoiceAnalysis.c
+ * pb 2005/07/07 glottal source signals
  */
 
 #include "PointProcess_and_Sound.h"
 
-Sound PointProcess_to_Sound
+Sound PointProcess_to_Sound_pulseTrain
 	(PointProcess me, double samplingFrequency,
 	 double adaptFactor, double adaptTime, long interpolationDepth)
 {
@@ -69,8 +69,94 @@ Sound PointProcess_to_Sound
 	return thee;
 }
 
+Sound PointProcess_to_Sound_glottalSource
+	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
+	 double openPhase, double collisionPhase, double power1, double power2)
+{
+	Sound thee;
+	long it;
+	long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   /* >= 1 */
+	double dt = 1.0 / samplingFrequency;
+	double tmid = (my xmin + my xmax) / 2;
+	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
+	double a = (power1 + power2 + 1.0) / (power2 - power1);
+	double re = openPhase - collisionPhase;
+	float *sound;
+	thee = Sound_create (my xmin, my xmax, sound_nt, dt, t1);
+	if (! thee) return NULL;
+	sound = thy z [1];
+	for (it = 1; it <= my nt; it ++) {
+		double t = my t [it], amplitude = a;
+		double period = NUMundefined, te, phase, flow;
+		long midSample = Sampled_xToNearestIndex (thee, t), beginSample, isamp;
+		/*
+		 * Determine the period: first look left (because that's where the open phase is),
+		 * then right.
+		 */
+		if (it >= 2) {
+			period = my t [it] - my t [it - 1];
+			if (period > maximumPeriod) {
+				period = NUMundefined;
+			}
+		}
+		if (period == NUMundefined) {
+			if (it < my nt) {
+				period = my t [it + 1] - my t [it];
+				if (period > maximumPeriod) {
+					period = NUMundefined;
+				}
+			}
+			if (period == NUMundefined) {
+				period = 0.5 * maximumPeriod;   /* Some default value. */
+			}
+		}
+		te = re * period;
+		/*
+		 * Determine the amplitude of this peak.
+		 */
+		amplitude /= period * openPhase;
+		if (it <= 2 || my t [it - 2] < my t [it - 1] - maximumPeriod) {
+			amplitude *= adaptFactor;
+			if (it == 1 || my t [it - 1] < my t [it] - maximumPeriod)
+				amplitude *= adaptFactor;
+		}
+		/*
+		 * Fill in the samples to the left of the current point.
+		 */
+		beginSample = midSample - floor (te / thy dx);
+		if (beginSample < 1) beginSample = 1;
+		for (isamp = beginSample; isamp <= midSample; isamp ++) {
+			double tsamp = thy x1 + (isamp - 1) * thy dx;
+			phase = (tsamp - (t - te)) / (period * openPhase);
+			sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+		}
+		/*
+		 * Determine the signal parameters at the current point.
+		 */
+		phase = te / (period * openPhase);
+		flow = amplitude * (period * openPhase) * (pow (phase, power1) - pow (phase, power2));
+		/*
+		 * Fill in the samples to the right of the current point.
+		 */
+		if (flow > 0.0) {
+			double flowDerivative = amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+			double ta = - flow / flowDerivative;
+			double ra = ta / period;
+			double factorPerSample = exp (- thy dx / ta);
+			double value = flowDerivative * factorPerSample;
+			long endSample = midSample + floor (20 * ta / thy dx);
+			if (endSample > thy nx) endSample = thy nx;
+			for (isamp = midSample + 1; isamp <= endSample; isamp ++) {
+				sound [isamp] += value;
+				value *= factorPerSample;
+			}
+		}
+	}
+	return thee;
+}
+
 int PointProcess_playPart (PointProcess me, double tmin, double tmax) {
-	Sound sound = PointProcess_to_Sound (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
@@ -86,7 +172,7 @@ int PointProcess_hum (PointProcess me, double tmin, double tmax) {
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static float bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
-	Sound sound = PointProcess_to_Sound (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) return 0;
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
@@ -99,7 +185,7 @@ Sound PointProcess_to_Sound_hum (PointProcess me) {
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static float bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
-	Sound sound = PointProcess_to_Sound (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, my xmin, my xmax, 6, formant, bandwidth)) return 0;
 	return sound;

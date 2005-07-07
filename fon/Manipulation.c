@@ -1,6 +1,6 @@
 /* Manipulation.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
  */
 
 /*
- * pb 2002/03/08
  * pb 2002/07/16 GPL
- * pb 2003/02/26
  * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
+ * pb 2005/07/07
  */
 
 #include "Manipulation.h"
@@ -474,7 +473,7 @@ static Sound synthesize_psola (Manipulation me) {
 
 static Sound synthesize_pulses (Manipulation me) {
 	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
-	return PointProcess_to_Sound (my pulses, 22050, 0.7, 0.05, 30);
+	return PointProcess_to_Sound_pulseTrain (my pulses, 22050, 0.7, 0.05, 30);
 }
 
 static Sound synthesize_pulses_hum (Manipulation me) {
@@ -488,7 +487,7 @@ static Sound synthesize_pitch (Manipulation me) {
 	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch manipulation.");
 	temp = PitchTier_to_PointProcess (my pitch);
 	if (! temp) return NULL;
-	thee = PointProcess_to_Sound (temp, 22050, 0.7, 0.05, 30);
+	thee = PointProcess_to_Sound_pulseTrain (temp, 22050, 0.7, 0.05, 30);
 	if (! thee) { forget (temp); return NULL; }
 	forget (temp);
 	return thee;
@@ -513,7 +512,7 @@ static Sound synthesize_pulses_pitch (Manipulation me) {
 	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch manipulation.");
 	temp = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 	if (! temp) return NULL;
-	thee = PointProcess_to_Sound (temp, 22050, 0.7, 0.05, 30);
+	thee = PointProcess_to_Sound_pulseTrain (temp, 22050, 0.7, 0.05, 30);
 	if (! thee) { forget (temp); return NULL; }
 	forget (temp);
 	return thee;
@@ -594,7 +593,7 @@ static Sound synthesize_pulses_lpc (Manipulation me) {
 		if (! my lpc) return NULL;
 	}
 	if (! my pulses) return Melder_errorp ("Cannot synthesize this without pulses analysis.");
-	train = PointProcess_to_Sound (my pulses, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
+	train = PointProcess_to_Sound_pulseTrain (my pulses, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 	if (! train) return Melder_errorp ("Manipulation_to_Sound: not performed.");
 	train -> dx = my lpc -> samplingPeriod;   /* To be exact. */
 	Sound_PointProcess_fillVoiceless (train, my pulses);
@@ -622,7 +621,7 @@ static Sound synthesize_pitch_lpc (Manipulation me) {
 	if (! my pulses) return Melder_errorp ("Cannot synthesize pitch manipulation without pulses.");
 	temp = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 	if (! temp) return NULL;
-	train = PointProcess_to_Sound (temp, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
+	train = PointProcess_to_Sound_pulseTrain (temp, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 	forget (temp);
 	if (! train) return NULL;
 	train -> dx = my lpc -> samplingPeriod;   /* To be exact. */

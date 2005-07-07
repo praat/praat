@@ -1073,7 +1073,7 @@ NORMAL ("To avoid @aliasing in the chirp sound, a sound is only generated during
 	"instantaneous frequency is greater than zero and smaller than the @@Nyquist frequency@.")
 MAN_END
 
-MAN_BEGIN ("Create Sound from Shepard tone...", "djmw", 20040407)
+MAN_BEGIN ("Create Sound from Shepard tone...", "djmw", 20050629)
 INTRO ("One of the commands that create a @Sound.")
 ENTRY ("Arguments")
 TAG ("%Name")
@@ -1083,33 +1083,52 @@ DEFINITION ("the start and end time of the resulting Sound.")
 TAG ("%%Sampling frequency% (Hz)")
 DEFINITION ("the @@sampling frequency@ of the resulting Sound.")
 TAG ("%%Lowest frequency% (Hz)")
-DEFINITION ("the frequency of the lowest component.")
+DEFINITION ("the frequency of the lowest component in the tone complex.")
 TAG ("%%Number of components%")
-DEFINITION ("the number of frequency components.")
+DEFINITION ("the number of frequency components in the tone complex.")
 TAG ("%%Frequency change% (semitones/s)")
-DEFINITION ("determines how long it takes to change all frequencies by one octave.")
+DEFINITION ("determines how many semitones the frequency of each component will change in one second. "
+	"The number of seconds needed to change one octave will then be 12 divided by this number. "
+	"You can make rising, falling and monotonous tone complexes by chosing a positive, negative or zero value.")
 TAG ("%%Amplitude range% (dB)")
-DEFINITION ("determines the relative size of the maximum and the minimum amplitude of components.")
+DEFINITION ("determines the relative size in decibels of the maximum and the minimum amplitude of the components in a tone complex. These relative amplitudes will then be 10^^\\--%amplitudeRange/20^. ")
+TAG ("%%Octave shift fraction% [0,1)]")
+DEFINITION ("shifts all frequency components by this fraction at the start. You will probably only need this "
+	"if you want to generate static tone complexes as the example script below shows.")
 ENTRY ("Purpose")
-NORMAL ("to create a Sound that is a continuous variant of the sound sequences "
+NORMAL ("To create a Sound that is a continuous variant of the sound sequences "
 	"used by @@Shepard (1964)@ in his "
 	"experiment about the circularity in judgments of relative pitch.")
 NORMAL ("The tone consists of many sinusoidal components whose frequencies "
-	"increase exponentially in time. "
+	"might increase exponentially in time. "
 	"All frequencies are always at successive intervals of an octave and sounded simultaneously. "
 	"Thus the frequency of each component above the lowest is at each moment in time exactly twice "
 	"the frequency of the one just below. The amplitudes are large for the components of intermediate "
 	"frequency only, and tapered off gradually to subthreshold levels for the components at the "
 	"highest and lowest extremes of frequency.")
-NORMAL ("The Sound is generated according to the following specification:")
+NORMAL ("For a rising tone complex, the Sound is generated according to the following specification:")
 FORMULA ("%s(%t) = \\su__%i=1..%numberOfComponents_ %A__%i_(%t) sin (arg__%i_(%t)), where")
-FORMULA ("arg__%i_(%t) = \\in 2%\\pi f__%i_(%t) %dt , and")
-FORMULA ("f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + %t/(12/%frequencyChange_st)^, with")
-FORMULA ("%A__%i_(%t) = %L__min_ + (1 \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2, with,")
-FORMULA ("%\\te__%i_(%t) = ln ((%f__%i_(%t) + 1 Hz) / (%lowestFrequency + 1 Hz)) / "
-	"ln ((%maximumFrequency + 1 Hz) / (%lowestFrequency + 1 Hz))")
-FORMULA ("%L__min_ = 10^^\\--%amplitudeRange/10^, and,")
-FORMULA ("%maximumFrequency = %lowestFrequency\\.c2^^%numberOfComponents\\--1^")
+FORMULA ("arg__%i_(%t) = \\in 2%\\pi f__%i_(%\\ta) %d\\ta , and")
+FORMULA ("f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange_st)^, with")
+FORMULA ("%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
+FORMULA ("%L__max_ = 0, %L__min_ = 10^^\\--%amplitudeRange/20^, and,")
+FORMULA ("%\\te__%i_(%t) = 2\\pi log2 (%f(%t) / %lowestFrequency) / %numberOfComponents.")
+NORMAL ("The maximum frequency that can be reached during a sweep by any single tone is:")
+FORMULA ("%maximumFrequency = %lowestFrequency\\.c2^^%numberOfComponents^.")
+NORMAL ("A component that reaches the maximum frequency falls instantaneously to the lowest frequency and then starts rising again.")
+NORMAL ("The absolute @@sound pressure level@ of the resulting sound will not be set, it is only guaranteed that the peak value "
+	"is just below 1. You can always scale the intensity with the ##Scale Intensity...# command.")
+ENTRY ("Example")
+NORMAL ("The following script generates 12 static Shepard tone complexes, 1 semitone 'apart', "
+	"with a cosine window to temper the abrupt start and finish.")
+CODE ("twin = 0.010")
+CODE ("fwin = 1 / (2 * twin)")
+CODE ("for i to 12")
+CODE1 ("fraction = (i-1)/12")
+CODE1 ("Create Sound from Shepard tone... s'i' 0 0.1 22050 4.863 10 0 34 'fraction'")
+CODE1 ("Formula... if x<twin then self*(1+cos(2*pi*fwin*(x+twin)))/2 else self fi")
+CODE1 ("Formula... if x>xmax-twin then self*(1+cos(2*pi*fwin*(x-xmax+twin)))/2 else self fi")
+CODE ("endfor")
 MAN_END
 
 MAN_BEGIN ("Create formant table (Peterson & Barney 1952)", "djmw", 20040512)

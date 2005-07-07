@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050622)
+MAN_BEGIN ("What's new?", "ppgb", 20050707)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.17# (July 7, 2005)")
+LIST_ITEM ("\\bu Glottal source for sound synthesis.")
+LIST_ITEM ("\\bu Multi-level Optimality Theory: parallel evaluation and bidirectional learning.")
 NORMAL ("##4.3.16# (June 22, 2005)")
 LIST_ITEM ("\\bu Pitch drawing: corrected logarithmic scales.")
 NORMAL ("##4.3.15# (June 22, 2005)")

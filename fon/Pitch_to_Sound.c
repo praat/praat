@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2005/02/09 Pitch_to_Sound_sine
+ * pb 2005/07/07
  */
 
 #include "Pitch_to_PointProcess.h"
@@ -37,7 +38,7 @@ Sound Pitch_to_Sound (I, double tmin, double tmax, int hum) {
 	PointProcess point = NULL;
 	Sound sound = NULL;
 	if (! (point = Pitch_to_PointProcess (me))) goto error;
-	if (! (sound = PointProcess_to_Sound (point, 22050, 0.7, 0.05, 30))) goto error;
+	if (! (sound = PointProcess_to_Sound_pulseTrain (point, 22050, 0.7, 0.05, 30))) goto error;
 	if (hum && ! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) goto error;
 	forget (point);
 	return sound;

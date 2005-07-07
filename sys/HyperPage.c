@@ -599,13 +599,31 @@ DO
 	if (my g) Graphics_updateWs (my g);
 END
 
-FORM (HyperPage, cb_fontSize, "Font size", 0)
-	NATURAL ("Size (points)", "12")
-	OK
-SET_INTEGER ("Size", my fontSize)
-DO
-	prefs_fontSize = my fontSize = GET_INTEGER ("Size");
+static void updateSizeMenu (HyperPage me) {
+	XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
+	XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
+	XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
+	XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
+	XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
+}
+static void setFontSize (HyperPage me, int fontSize) {
+	prefs_fontSize = my fontSize = fontSize;
 	if (my g) Graphics_updateWs (my g);
+	updateSizeMenu (me);
+}
+
+DIRECT (HyperPage, cb_10) setFontSize (me, 10); END
+DIRECT (HyperPage, cb_12) setFontSize (me, 12); END
+DIRECT (HyperPage, cb_14) setFontSize (me, 14); END
+DIRECT (HyperPage, cb_18) setFontSize (me, 18); END
+DIRECT (HyperPage, cb_24) setFontSize (me, 24); END
+
+FORM (HyperPage, cb_fontSize, "Font size", 0)
+	NATURAL ("Font size (points)", "12")
+	OK
+SET_INTEGER ("Font size", my fontSize)
+DO
+	setFontSize (me, GET_INTEGER ("Font size"));
 END
 
 FORM (HyperPage, cb_searchForPage, "Search for page", 0)
@@ -818,9 +836,14 @@ static void createMenus (I) {
 		Editor_addCommand (me, "Go to", "Page down", motif_PAGE_DOWN, cb_pageDown);
 	}
 
-	Editor_addMenu (me, "View", 0);
-	Editor_addCommand (me, "View", "Font...", 0, cb_font);
-	Editor_addCommand (me, "View", "Font size...", 0, cb_fontSize);
+	Editor_addMenu (me, "Font", 0);
+	my fontSizeButton_10 = Editor_addCommand (me, "Font", "10", motif_CHECKABLE, cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, "Font", "12", motif_CHECKABLE, cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, "Font", "14", motif_CHECKABLE, cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, "Font", "18", motif_CHECKABLE, cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, "Font", "24", motif_CHECKABLE, cb_24);
+	Editor_addCommand (me, "Font", "Font size...", 0, cb_fontSize);
+	Editor_addCommand (me, "Font", "Font...", 0, cb_font);
 }
 
 /********** **********/
@@ -923,7 +946,7 @@ int HyperPage_init (I, Widget parent, const char *title, Any data) {
 	Graphics_setDollarSignIsCode (my g, TRUE);
 	Graphics_setFont (my g, Graphics_TIMES);
 	my font = prefs_font;
-	my fontSize = prefs_fontSize;
+	setFontSize (me, prefs_fontSize);
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNresizeCallback, cb_resize, (XtPointer) me);

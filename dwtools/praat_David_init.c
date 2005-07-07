@@ -40,6 +40,7 @@
  djmw 20050404 TableOfReal_appendColumns -> TableOfReal_appendColumnsMany
  djmw 20050406 Procrustus->Prorustes
  djmw 20050407 MelFilter_drawFilterFunctions error in field names crashed praat
+ djmw 20050706 Eigen_getSumOfEigenvalues
 */
 
 #include "praat.h"
@@ -267,7 +268,7 @@ END
 
 DIRECT (Categories_to_Confusion)
 	Categories c1 = NULL, c2 = NULL;
-	int i1, i2;
+	int i1 = 0, i2 = 0;
 	char name [200];
 	WHERE (SELECTED)
 	{
@@ -1276,6 +1277,15 @@ DO
 		("DO_Eigen_getEigenvalue: Eigenvalue number must be smaller than %d",
 		my numberOfEigenvalues + 1);
 	Melder_informationReal (my eigenvalues[number], NULL);
+END
+
+FORM (Eigen_getSumOfEigenvalues, "Eigen:Get sum of eigenvalues", "Eigen: Get sum of eigenvalues...")
+	INTEGER ("left Eigenvalue range",  "0")
+	INTEGER ("right Eigenvalue range", "0")
+	OK
+DO
+	Melder_informationReal ( Eigen_getSumOfEigenvalues(ONLY_OBJECT,
+		GET_INTEGER ("left Eigenvalue range"), GET_INTEGER ("right Eigenvalue range")), NULL);
 END
 
 FORM (Eigen_getEigenvectorElement, "Eigen: Get eigenvector element",
@@ -2729,6 +2739,35 @@ FORM (Sound_createFromShepardTone, "Create a Shepard tone",
 	NATURAL ("Number of components", "10")
 	REAL ("Frequency change (semitones/s)", "4.0")
 	REAL ("Amplitude range (dB)", "30.0")
+	REAL ("Octave shift fraction ([0,1))", "0.0")
+	OK
+DO
+	Sound sound = NULL;
+	double startingTime, finishingTime, samplingFrequency;
+	double amplitudeRange = GET_REAL ("Amplitude range");
+	double octaveShiftFraction = GET_REAL ("Octave shift fraction");
+	if (! Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency)) return 0;
+	if (amplitudeRange < 0)
+	{
+		(void) Melder_error ("Amplitude range can not be negative.\n");
+		return Melder_error ("Please use a positive or zero amplitude range.");
+	}
+	sound = Sound_createShepardToneComplex (startingTime, finishingTime, samplingFrequency,
+		GET_REAL ("Lowest frequency"), GET_INTEGER("Number of components"),
+		GET_REAL ("Frequency change"), GET_REAL ("Amplitude range"), octaveShiftFraction);
+	
+	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
+		! praat_new (sound, GET_STRING ("Name"))) return 0; 
+END
+/* old
+FORM (Sound_createFromShepardTone, "Create a Shepard tone",
+	"Create Sound from Shepard tone...")
+	WORD ("Name", "shepardTone")
+	Sound_create_addCommonFields (dia);
+	POSITIVE ("Lowest frequency (Hz)", "4.863")
+	NATURAL ("Number of components", "10")
+	REAL ("Frequency change (semitones/s)", "4.0")
+	REAL ("Amplitude range (dB)", "30.0")
 	OK
 DO
 	Sound sound = NULL;
@@ -2748,7 +2787,7 @@ DO
 	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
 		! praat_new (sound, GET_STRING ("Name"))) return 0; 
 END
-
+*/
 FORM (Sound_to_BarkFilter, "Sound: To BarkFilter", 
 	"Sound: To BarkFilter...")
 	POSITIVE ("Analysis window duration (s)", "0.015")
@@ -3572,6 +3611,8 @@ static void praat_Eigen_query_init (void *klas)
 {
 	praat_addAction1 (klas, 1, "Get eigenvalue...", 0, 1,
 		DO_Eigen_getEigenvalue);
+	praat_addAction1 (klas, 1, "Get sum of eigenvalues...", 0, 1,
+		DO_Eigen_getSumOfEigenvalues);
 	praat_addAction1 (klas, 1, "Get number of eigenvectors", 0, 1,
 		DO_Eigen_getNumberOfEigenvalues);
 	praat_addAction1 (klas, 1, "Get eigenvector dimension", 0, 1,

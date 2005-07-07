@@ -29,7 +29,12 @@
 #endif
 
 Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
-	 double adaptFactor, double adaptTime, long interpolationDepth, int hum);
+	 double adaptFactor, double adaptTime, long interpolationDepth,
+	 int hum);
+Sound PitchTier_to_Sound_glottalSource (PitchTier me, double samplingFrequency,
+	 double adaptFactor, double maximumPeriod,
+	 double openPhase, double collisionPhase, double power1, double power2,
+	 int hum);
 int PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum);
 int PitchTier_play (PitchTier me);
 int PitchTier_hum (PitchTier me);

@@ -1,6 +1,6 @@
 /* praat.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/10/03 praat-executeFromFile without arguments
  * pb 2004/06/17 made Objects label visible on Unix
  * pb 2004/12/29 removed .praat-user-startUp for Windows (empty file name error)
+ * pb 2005/06/28 TextEditor_prefs
  */
 
 #include "melder.h"
@@ -1065,6 +1066,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Site_prefs ();   /* Print command... */
 	Melder_audio_prefs ();   /* Use speaker (Sun & HP), output gain (HP)... */
 	Printer_prefs ();   /* Paper size, printer command... */
+	TextEditor_prefs ();   /* Font size... */
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const char *fileNameTemplate) {

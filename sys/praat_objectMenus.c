@@ -1,6 +1,6 @@
 /* praat_objectMenus.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/03/09 simplified calculator
  * pb 2004/11/16 Win: more room for fixed buttons
  * pb 2004/12/05 renamed script running procedures
+ * pb 2005/07/06 repaired a memory leak in creating a script editor from a double click
  */
 
 #include <ctype.h>
@@ -282,7 +283,9 @@ static int readFromFile (MelderFile file) {
 		return 1;
 	}
 	if (object && Thing_member (object, classScript)) {
-		if (! ScriptEditor_createFromScript (praat.topShell, NULL, (Script) object)) return 0;
+		ScriptEditor_createFromScript (praat.topShell, NULL, (Script) object);
+		forget (object);
+		iferror return 0;
 		return 1;
 	}
 	result = praat_new (object, MelderFile_name (file));
