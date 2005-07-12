@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2004/10/03
+ * pb 2005/07/08
  */
 
 #ifndef _PitchTier_h_
@@ -31,7 +31,7 @@
 Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double adaptTime, long interpolationDepth,
 	 int hum);
-Sound PitchTier_to_Sound_glottalSource (PitchTier me, double samplingFrequency,
+Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2,
 	 int hum);

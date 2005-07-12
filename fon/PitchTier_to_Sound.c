@@ -19,7 +19,7 @@
 
 /*
  * pb 2004/10/03 sine wave generation
- * pb 2005/07/07 PitchTier_to_Sound_glottalSource
+ * pb 2005/07/08 PitchTier_to_Sound_phonation
  */
 
 #include "PitchTier_to_Sound.h"
@@ -43,7 +43,7 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	return sound;
 }
 
-Sound PitchTier_to_Sound_glottalSource (PitchTier me, double samplingFrequency,
+Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2, int hum)
 {
 	static float formant [1 + 6] =
@@ -53,7 +53,7 @@ Sound PitchTier_to_Sound_glottalSource (PitchTier me, double samplingFrequency,
 	PointProcess point = PitchTier_to_PointProcess (me);
 	Sound sound;
 	if (! point) return NULL;
-	sound = PointProcess_to_Sound_glottalSource (point, samplingFrequency, adaptFactor,
+	sound = PointProcess_to_Sound_phonation (point, samplingFrequency, adaptFactor,
 		maximumPeriod, openPhase, collisionPhase, power1, power2);
 	if (hum && ! Sound_filterWithFormants (sound, 0, 0, 6, formant, bandwidth)) { forget (point); return NULL; }
 	forget (point);

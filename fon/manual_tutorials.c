@@ -23,8 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050707)
+MAN_BEGIN ("What's new?", "ppgb", 20050712)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.18# (July 12, 2005)")
+LIST_ITEM ("\\bu Glottal source for sound synthesis, corrected and documented.")
 NORMAL ("##4.3.17# (July 7, 2005)")
 LIST_ITEM ("\\bu Glottal source for sound synthesis.")
 LIST_ITEM ("\\bu Multi-level Optimality Theory: parallel evaluation and bidirectional learning.")
@@ -2181,19 +2183,143 @@ INTRO ("One of the commands in the Spectrogram menu of the @SoundEditor and the 
 NORMAL ("See @@Intro 3. Spectral analysis@.")
 MAN_END
 
-MAN_BEGIN ("Source-filter synthesis", "ppgb", 20040328)
+MAN_BEGIN ("Source-filter synthesis", "ppgb", 20050713)
 INTRO ("This tutorial describes how you can do acoustic synthesis with P\\s{RAAT}. "
 	"It assumes that you are familiar with the @Intro.")
 ENTRY ("1. The source-filter theory of speech production")
-NORMAL ("The source-filter theory hypothesizes that an acoustic speech signal can be seen "
+NORMAL ("The source-filter theory (@@Fant (1960)|Fant 1960@) hypothesizes that an acoustic speech signal can be seen "
 	"as a %source signal (the glottal source, or noise generated at a constriction in the vocal tract), "
 	"%filtered with the resonances in the cavities of the vocal tract downstream from the glottis "
-	"or the constriction.")
-NORMAL ("In the Praat program, you can create a %source signal from an existing "
-	"speech signal or from scratch, and you can extract a %filter from an existing speech signal "
-	"or from scratch. You can manipulate (change, adapt) both the source and the filter before doing "
+	"or the constriction. The %%Klatt synthesizer% (@@Klatt & Klatt (1990)|Klatt & Klatt 1990@), for instance, "
+	"is based on this idea.")
+NORMAL ("In the Praat program, you can create a %source signal from scratch of from an existing "
+	"speech signal, and you can create a %filter from scrtach or extract it from an existing speech signal. "
+	"You can manipulate (change, adapt) both the source and the filter before doing "
 	"the actual synthesis, which combines the two.")
-ENTRY ("2. How to extract the %filter from an existing speech sound")
+LIST_ITEM ("@@Source-filter synthesis 1. Creating a source from pitch targets")
+LIST_ITEM ("@@Source-filter synthesis 2. Filtering a source")
+LIST_ITEM ("@@Source-filter synthesis 3. The ba-da continuum")
+LIST_ITEM ("@@Source-filter synthesis 4. Using existing sounds")
+MAN_END
+
+MAN_BEGIN ("Source-filter synthesis 1. Creating a source from pitch targets", "ppgb", 20050713)
+INTRO ("Creating a glottal source signal for speech synthesis involves creating a @PointProcess, "
+	"which is a series of time points that should represent the exact moments of glottal closure.")
+NORMAL ("You may want to start with creating a well-defined pitch contour. "
+	"Suppose you want to create a sound with a duration of half a second with a pitch that falls from 300 to 200 Hz "
+	"during that time. You first create an empty @PitchTier by choosing @@Create PitchTier...@ from the #New menu "
+	"(I call this PitchTier \"empty\" because it does not contain any pitch information yet); "
+	"you may want to name the PitchTier \"source\" and have it start at 0 seconds and end at 0.5 seconds. "
+	"Once the PitchTier exists and is selected, you can choose @@PitchTier: Add point...@ from the #Modify menu repeatedly "
+	"to add pitch points (pitch targets) at certain times. You would add a pitch point of 300 Hz at time 0.0 "
+	"and a pitch point of 200 Hz at time 1.0. This whole mouse-clicking procedure can be abbreviated as follows "
+	"(if you want to automate this procedure in a script, it would look exactly like this):")
+CODE ("Create PitchTier... source 0 0.5")
+CODE ("Add point... 0 300")
+CODE ("Add point... 0.5 200")
+NORMAL ("If you #Draw or #Edit this PitchTier, you can see that the pitch curve falls linearly "
+	"from 300 to 200 Hz during its time domain. You can hear the falling pitch by choosing "
+	"##Play pulses#, #Hum, or ##Play sine#.")
+NORMAL ("From this PitchTier, you can create a @PointProcess with @@PitchTier: To PointProcess@. "
+	"The resulting PointProcess now represents a series of glottal pulses. To make some parts of this "
+	"point process voiceless, you can use @@PointProcess: Remove points between...@. "
+	"It is advisable to make the very beginning and end of this point process voiceless, so that the filtered sound "
+	"will not start or end abruptly. For instance:")
+CODE ("Remove points between... 0 0.02")
+CODE ("Remove points between... 0.24 0.31")
+CODE ("Remove points between... 0.48 0.5")
+NORMAL ("In this example, the first and last 20 ms are devoiced, and a stretch of 70 ms in the middle "
+	"is made voiceless as well, perhaps because you want to simulate a voiceless plosive there.")
+NORMAL ("Now that we have a glottal point process (a glottal pulse train), the only thing left "
+	"is to turn it into a sound by choosing @@PointProcess: To Sound (phonation)...@. "
+	"If you use the standard settings of this command, the result will be a @Sound with "
+	"reasonable glottal flow derivatives centred around each of the original pulses in the point process. "
+	"You can check this by selecting the Sound and choosing #Edit. "
+	"You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch "
+	"is (realistically) somewhat smaller than the amplitudes of the following wave shapes.")
+NORMAL ("What you have now is what we call a %%glottal source signal%. It does two things: it contains information on the glottal flow, "
+	"and it already takes into account one aspect of the %filter, namely the radiation at the lips. "
+	"This combination is standard procedure in acoustic synthesis.")
+NORMAL ("The glottal source signal sounds as a voice without a vocal tract. "
+	"The following section describes how you add vocal-tract resonances, i.e. the %filter.")
+MAN_END
+
+MAN_BEGIN ("Source-filter synthesis 2. Filtering a source", "ppgb", 20050713)
+INTRO ("Once you have a glottal source signal, you are ready to create a filter that represents "
+	"the resonances of the vocal tract, as a function of time. In other words, you create a @FormantTier object.")
+NORMAL ("For a vowel spoken by an average (i.e. adult female) human voice, tradition assumes five formants in the range "
+	"between 0 and 5500 Hertz. This number comes from a computation of the formants of a "
+	"straight tube, which has resonances at wavelengths of four tube lengths, four thirds of a tube length, "
+	"four fifths, and so on. For a straight tube 16 centimetres long, the shortest wavelength is 64 cm, "
+	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 Hertz. "
+	"The other resonances will be at 1650, 2750, 3850, and 4950 Hertz.")
+NORMAL ("You can create a @FormantTier object with @@Create FormantTier...@, "
+	"and add some points to it with @@FormantTier: Add point...@:")
+CODE ("Create FormantTier... filter 0 0.5")
+CODE ("Add point... 0.00 100 50 500 100 2750 200 3850 300 4950 400 6050 500 7150 600 8250 700 9350 800")
+CODE ("Add point... 0.05 700 50 1100 100 2750 200 3850 300 4950 400 6050 500 7150 600 8250 700 9350 800")
+NORMAL ("This example creates a spectral specification whose %F__1_ rises from 100 to 700 Hertz during the "
+	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 Hertz. "
+	"This may be a [ba]-like formant transition.")
+NORMAL ("To get the final acoustic result (the sound), you select the glottal source signal "
+	"together with the FormantTier and choose @@Sound & FormantTier: Filter@.")
+NORMAL ("The resulting sound will have a fairly straight intensity contour. You can change this with "
+	"the #Formula command (@@Sound: Formula...@), or by multiplying the source signal or the "
+	"acoustic result with an @Intensity or @IntensityTier object.")
+MAN_END
+
+MAN_BEGIN ("Source-filter synthesis 3. The ba-da continuum", "ppgb", 20050713)
+INTRO ("As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference "
+	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
+NORMAL ("We use the same @PitchTier throughout, to model a falling intonation contour:")
+CODE ("Create PitchTier... f0 0.00 0.50")
+CODE ("Add point... 0.00 150")
+CODE ("Add point... 0.50 100")
+NORMAL ("The first and last 50 milliseconds are voiceless:")
+CODE ("To PointProcess")
+CODE ("Remove points between... 0.00 0.05")
+CODE ("Remove points between... 0.45 0.50")
+NORMAL ("Generate the glottal source signal:")
+CODE ("To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0")
+NORMAL ("During the labial or coronal closure, the sound is almost silent, so we use an @IntensityTier "
+	"that models this:")
+CODE ("Create IntensityTier... intens 0.00 0.50")
+CODE ("Add point... 0.05 60")
+CODE ("Add point... 0.10 80")
+NORMAL ("Generate the source signal:")
+CODE ("#plus Sound f0")
+CODE ("Multiply")
+CODE ("Rename... source")
+NORMAL ("The ten sounds are generated in a loop:")
+CODE ("#for i #from 1 #to 10")
+CODE ("   f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
+CODE ("   Create FormantTier... filter 0.00 0.50")
+CODE ("   Add point... 0.05   100 50 'f2_locus' 100")
+CODE ("      ... 3000 300 4000 400 5000 500 6000 600 7000 700 8000 800 9000 900")
+CODE ("   Add point... 0.10   700 50 1100 100")
+CODE ("      ... 3000 300 4000 400 5000 500 6000 600 7000 700 8000 800 9000 900")
+CODE ("   #plus Sound source")
+CODE ("   Filter (no scale)")
+CODE ("   Rename... bada'i'")
+CODE ("   #select FormantTier filter")
+CODE ("   Remove")
+CODE ("#endfor")
+NORMAL ("Clean up:")
+CODE ("#select Sound source")
+CODE ("#plus Sound f0")
+CODE ("#plus IntensityTier intens")
+CODE ("#plus PointProcess f0")
+CODE ("#plus PitchTier f0")
+CODE ("Remove")
+NORMAL ("In this example, filtering was done without automatic scaling, so that "
+	"the resulting signals have equal intensities in the areas where they have "
+	"equal formants. You will probably want to multiply all these signals with "
+	"the same value in order to bring their amplitudes in a suitable range "
+	"between -1 and +1 Pascal.")
+MAN_END
+
+MAN_BEGIN ("Source-filter synthesis 4. Using existing sounds", "ppgb", 20050713)
+ENTRY ("1. How to extract the %filter from an existing speech sound")
 NORMAL ("You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
 	"a small number of peaks, for which it finds the mid frequencies and the bandwidths. "
@@ -2204,12 +2330,8 @@ NORMAL ("For a speech signal, the peaks are identified with the resonances (%for
 	"Since the spectrum of a vowel spoken by an average human being falls off with approximately "
 	"6 dB per octave, %%pre-emphasis% is applied to the signal before the linear-prediction analysis, "
 	"so that the algorithm will not try to match only the lower parts of the spectrum.")
-NORMAL ("For an average (i.e. adult female) human voice, tradition assumes five formants in the range "
-	"between 0 and 5500 Hertz. This number comes from a computation of the formants of a "
-	"straight tube, which has resonances at wavelengths of four tube lengths, four thirds of a tube length, "
-	"four fifths, and so on. For a straight tube 16 centimetres long, the shortest wavelength is 64 cm, "
-	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 Hertz. "
-	"The other resonances will be at 1650, 2750, 3850, and 4950 Hertz. For the linear prediction in "
+NORMAL ("For an adult female human voice, tradition assumes five formants in the range "
+	"between 0 and 5500 Hertz, say at 550, 1650, 2750, 3850, and 4950 Hertz. For the linear prediction in "
 	"Praat, you will have to implement this 5500-Hz band-limiting by resampling the original "
 	"speech signal to 11 kHz. For a male voice, you would use 10 kHz; for a young child, 20 kHz.")
 NORMAL ("To perform the resampling, you use @@Sound: Resample...@: "
@@ -2259,7 +2381,7 @@ NORMAL ("From a Formant object, you can create a @FormantTier with @@Formant: Do
 	"each with a number of formant-bandwidth pairs.")
 NORMAL ("Any of these three classes (@LPC, @Formant, and @FormantTier) can represent the %filter "
 	"in source-filter synthesis.")
-ENTRY ("3. How to extract the %source from an existing speech sound")
+ENTRY ("2. How to extract the %source from an existing speech sound")
 NORMAL ("If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
 	"To get at the %source signal, however, you need the raw @LPC object: "
 	"you select it together with the resampled @Sound, and apply %%inverse filtering%:")
@@ -2279,7 +2401,7 @@ NORMAL ("Note that with inverse filtering you cannot measure the actual spectral
 	"Even if the actual slope is very different from -6 dB/octave, formant extraction will try to "
 	"match the pre-emphasized spectrum. Thus, by choosing a pre-emhasis of -6 dB/octave, "
 	"you %impose a slope of -6 dB/octave on the source signal.")
-ENTRY ("4. How to do the synthesis")
+ENTRY ("3. How to do the synthesis")
 NORMAL ("You can create a new Sound from a source Sound and a filter, in at least four ways.")
 NORMAL ("If your filter is an @LPC object, you select it and the source, and choose @@LPC & Sound: Filter...@:")
 CODE ("#select Sound source")
@@ -2304,7 +2426,7 @@ NORMAL ("Finally, you could just know the %%impulse response% of your filter (in
 CODE ("#select Sound source")
 CODE ("#plus Sound filter")
 CODE ("Convolve")
-ENTRY ("5. How to manipulate the filter")
+ENTRY ("4. How to manipulate the filter")
 NORMAL ("You can hardly change the values in an @LPC object in a meaningful way: "
 	"you would have to manually change its rather opaque data with the help of @Inspect.")
 NORMAL ("A @Formant object can be changed in a friendlier way, with @@Formant: Formula (frequencies)...@ "
@@ -2319,85 +2441,9 @@ LIST_ITEM ("@@FormantTier: Add point...@")
 LIST_ITEM ("@@Remove point...@")
 LIST_ITEM ("@@Remove point near...@")
 LIST_ITEM ("@@Remove points between...@")
-ENTRY ("6. How to manipulate the source signal")
+ENTRY ("5. How to manipulate the source signal")
 NORMAL ("You can manipulate the source signal in the same way you that would manipulate any sound, "
 	"for instance with the @ManipulationEditor.")
-ENTRY ("7. How to create a filter from scratch")
-NORMAL ("You can create a @FormantTier object with @@Create FormantTier...@, "
-	"and add some points to it with @@FormantTier: Add point...@:")
-CODE ("Create FormantTier... filter 0 0.5")
-CODE ("Add point... 0.00 100 50 500 100 2500 200 3600 300 4700 400")
-CODE ("Add point... 0.05 700 50 1100 100 2500 200 3600 300 4700 400")
-NORMAL ("This creates a spectral specification whose %F__1_ rises from 100 to 700 Hertz during the "
-	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 Hertz. "
-	"This may be a [ba]-like formant transition.")
-ENTRY ("8. How to create a source signal from scratch")
-NORMAL ("It is easy to create a pulse train: use @@Create PitchTier...@ and @@PitchTier: Add point...@, "
-	"for instance:")
-CODE ("Create PitchTier... filter 0 0.5")
-CODE ("Add point... 0 300")
-CODE ("Add point... 0.5 200")
-NORMAL ("The resulting @PitchTier falls linearly from 300 to 200 Hz during its time domain.")
-NORMAL ("Form this PitchTier, you can create a @PointProcess with @@PitchTier: To PointProcess@. "
-	"The resulting PointProcess can represent a series of glottal pulses. To make some parts of this "
-	"point process voiceless, you can use @@PointProcess: Remove points between...@.")
-NORMAL ("To create the pulse-train source signal, you use @@PointProcess: To Sound (pulse train)...@.")
-NORMAL ("You are then ready to create the acoustic result with @@Sound & FormantTier: Filter@.")
-NORMAL ("The resulting sound will have fairly straight intensity contour. You can change it with "
-	"the #Formula command (@@Sound: Formula...@), or by multiplying the source signal or the "
-	"acoustic result with an @Intensity or @IntensityTier object. To get the spectral slope at -6 dB/octave, "
-	"you may need to use @@Sound: De-emphasize (in-line)...@.")
-ENTRY ("9. Example: a ba-da continuum")
-NORMAL ("We are going to create a [ba]-[da] continuum in ten steps. The acoustic difference "
-	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
-NORMAL ("We use the same @PitchTier throughout, to model a falling intonation contour:")
-CODE ("Create PitchTier... f0 0.00 0.50")
-CODE ("Add point... 0.00 300")
-CODE ("Add point... 0.50 200")
-NORMAL ("The first and last 50 milliseconds are voiceless:")
-CODE ("To PointProcess")
-CODE ("Remove points between... 0.00 0.05")
-CODE ("Remove points between... 0.45 0.50")
-NORMAL ("Generate the pulse train:")
-CODE ("To Sound (pulse train)... 22050 1 0.05 300")
-NORMAL ("During the labial or coronal closure, the sound is almost silent, so we use an @IntensityTier "
-	"that models this:")
-CODE ("Create IntensityTier... intens 0.00 0.50")
-CODE ("Add point... 0.05 60")
-CODE ("Add point... 0.10 80")
-NORMAL ("Generate the source signal:")
-CODE ("#plus Sound f0")
-CODE ("Multiply")
-CODE ("Rename... source")
-NORMAL ("The filters will be spectrally flat, and the source is also spectrally flat, "
-	"so in order to end up with a natural spectral slope of -6 dB/octave, we de-emphasize the source signal:")
-CODE ("De-emphasize (in-line)... 50")
-NORMAL ("The ten sounds are generated in a loop:")
-CODE ("#for i #from 1 #to 10")
-CODE ("   f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
-CODE ("   Create FormantTier... filter 0.00 0.50")
-CODE ("   Add point... 0.05   100 50 'f2_locus' 100")
-CODE ("      ... 3000 300 4000 400 5000 500")
-CODE ("   Add point... 0.10   700 50 1100 100")
-CODE ("      ... 3000 300 4000 400 5000 500")
-CODE ("   #plus Sound source")
-CODE ("   Filter (no scale)")
-CODE ("   Rename... bada'i'")
-CODE ("   #select FormantTier filter")
-CODE ("   Remove")
-CODE ("#endfor")
-NORMAL ("Clean up:")
-CODE ("#select Sound source")
-CODE ("#plus Sound f0")
-CODE ("#plus IntensityTier intens")
-CODE ("#plus PointProcess f0")
-CODE ("#plus PitchTier f0")
-CODE ("Remove")
-NORMAL ("In this example, filtering was done without automatic scaling, so that "
-	"the resulting signals have equal intensities in the areas where they have "
-	"equal formants. You will probably want to multiply all these signals with "
-	"the same value in order to bring their amplitudes in a suitable range "
-	"between -1 and +1 Pascal.")
 MAN_END
 
 MAN_BEGIN ("Spectrogram settings...", "ppgb", 20030316)
@@ -2405,7 +2451,7 @@ INTRO ("A command in the Spectrogram menu of the @SoundEditor and @TextGridEdito
 	"See @@Intro 3.2. Configuring the spectrogram@.")
 MAN_END
 
-MAN_BEGIN ("Types of objects", "ppgb", 20041110)
+MAN_BEGIN ("Types of objects", "ppgb", 20050713)
 INTRO ("P\\s{RAAT} contains the following types of objects and @Editors. "
 	"For an introduction and tutorials, see @Intro.")
 NORMAL ("General purpose:")
@@ -2417,7 +2463,7 @@ LIST_ITEM ("\\bu @LongSound: a file-based version of a sound (@LongSoundEditor)"
 LIST_ITEM ("\\bu @Strings")
 LIST_ITEM ("\\bu @Distributions, @PairDistribution")
 LIST_ITEM ("\\bu @Table, @TableOfReal")
-LIST_ITEM ("\\bu @Sequence")
+LIST_ITEM ("\\bu @Permutation")
 LIST_ITEM ("\\bu @ParamCurve")
 NORMAL ("Periodicity analysis:")
 LIST_ITEM ("\\bu Tutorials:")

@@ -42,7 +42,7 @@ Sound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequenc
 		"interpolationDepth" is the number of samples for sinxx interpolation in each direction.
 */
 
-Sound PointProcess_to_Sound_glottalSource
+Sound PointProcess_to_Sound_phonation
 	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2);
 

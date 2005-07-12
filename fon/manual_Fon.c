@@ -1,6 +1,6 @@
 /* manual_Fon.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1542,6 +1542,152 @@ INTRO ("A command to convert every selected @PointProcess into a @Sound.")
 ENTRY ("Algorithm")
 NORMAL ("A @Sound is created with the algorithm described at @@PointProcess: To Sound (pulse train)...@. "
 	"This sound is then run through a sequence of second-order filters that represent five formants.")
+MAN_END
+
+MAN_BEGIN ("PointProcess: To Sound (phonation)...", "ppgb", 20050712)
+INTRO ("A command to convert every selected @PointProcess into a @Sound.")
+ENTRY ("Algorithm")
+NORMAL ("A glottal waveform is generated at every point in the point process. "
+	"Its shape depends on the settings %power1 and %power2 according to the formula")
+FORMULA ("%U(%x) = %x^^%power1^ - %x^^%power2^")
+NORMAL ("where %x is a normalized time that runs from 0 to 1 and %U(%x) is the normalized glottal flow in arbitrary units (the real unit is m^3/s). "
+	"If %power1 = 2.0 and %power2 = 3.0, the glottal flow shape is that proposed by @@Rosenberg (1971)@, "
+	"upon which for instance the Klatt synthesizer is based (@@Klatt & Klatt (1990)@):")
+SCRIPT (4.5, 3,
+	"Axes... 0 1 -0.1 1\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 1 1000 (x^2-x^3)*6\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow\n"
+)
+NORMAL ("If %power1 = 3.0 and %power2 = 4.0, the glottal flow shape starts somewhat smoother, "
+	"reflecting the idea that the glottis opens like a zipper:")
+SCRIPT (4.5, 3,
+	"Axes... 0 1 -0.1 1\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 1 1000 (x^3-x^4)*8\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow\n"
+)
+NORMAL ("For the generation of speech sounds, we do not take the glottal flow itself, "
+	"but rather its derivative (this takes into account the influence of raditaion at the lips). "
+	"The glottal flow derivative is given by")
+FORMULA ("%dU(%x)%dx = %power1 %x^^(%power1-1)^ - %power2 %x^^(%power2-1)^")
+NORMAL ("The flow derivative clearly shows the influence of the smoothing mentioned above. "
+	"The unsmoothed curve, with %power1 = 2.0 and %power2 = 3.0, looks like:")
+SCRIPT (4.5, 4,
+	"Axes... 0 1 -9 3\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 1 1000 (2*x-3*x^2)*6\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow derivative\n"
+)
+NORMAL ("Unlike the unsmoothed curve, the smoothed curve, with %power1 = 3.0 and %power2 = 4.0, starts out horizontally:")
+SCRIPT (4.5, 4,
+	"Axes... 0 1 -9 3\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 1 1000 (3*x^2-4*x^3)*8\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow derivative\n"
+)
+NORMAL ("Aother setting is the %%open phase%. If it is 0.70, the glottis will be open during 70 percent of a period. "
+	"Suppose that the PointProcess has a pulse at time 0, at time 1, at time 2, and so on. The pulses at times 1 and 2 will then be turned "
+	"into glottal flows starting at times 0.30 and 1.30:")
+SCRIPT (4.5, 2.5,
+	"Axes... 0 2 -0.1 1\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes yes\n"
+	"One mark bottom... 2 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 0.3 2 0\n"
+	"Draw function... 0.3 1.3 300 if x<1 then (((x-0.3)/0.7)^3-((x-0.3)/0.7)^4)*8 else 0 fi\n"
+	"Draw function... 1.3 2 300 (((x-1.3)/0.7)^3-((x-1.3)/0.7)^4)*8\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow\n"
+)
+SCRIPT (4.5, 2.5,
+	"Axes... 0 2 -9 3\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes yes\n"
+	"One mark bottom... 2 yes yes no\n"
+	"Draw inner box\n"
+	"Draw function... 0 0.3 2 0\n"
+	"Draw function... 0.3 1.3 300 if x<1 then (3*((x-0.3)/0.7)^2-4*((x-0.3)/0.7)^3)*8 else 0 fi\n"
+	"Draw function... 1.3 2 300 (3*((x-1.3)/0.7)^2-4*((x-1.3)/0.7)^3)*8\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow derivative\n"
+)
+NORMAL ("The final setting that influences the shape of the glottal flow is the %%collision phase%. "
+	"If it is 0.03, for instance, the glottal flow derivative will not go abruptly to 0 at a pulse, "
+	"but will instead decay by a factor of %e (\\~~ 2.7183) every 3 percent of a period. "
+	"In order to keep the glottal flow curve smooth (and the derivative continuous), "
+	"the basic shape discussed above has to be shifted slightly to the right and truncated "
+	"at the time of the pulse, to be replaced there with the exponential decay curve; "
+	"this also makes sure that the average of the derivative stays zero, as it was above "
+	"(i.e. the area under the positive part of the curve equals the area above the negative part). "
+	"This is what the curves look like if %power1 = 3.0, %power2 = 4.0, %openPhase = 0.70 and %collisionPhase = 0.03:")
+SCRIPT (4.5, 2.5,
+	"Axes... 0 2 -0.1 1\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes yes\n"
+	"One mark bottom... 2 yes yes no\n"
+	"Draw inner box\n"
+	"xo = 0.32646\n"
+	"g1 = 0.269422\n"
+	"Draw function... 0 xo 300 g1 * exp(-x/0.03)\n"
+	"Draw function... xo 1 300 (((x-xo)/0.7)^3-((x-xo)/0.7)^4)*8 + g1 * exp(-x/0.03)\n"
+	"Draw function... 1 1+xo 300 g1 * exp(-(x-1)/0.03)\n"
+	"Draw function... 1+xo 2 300 (((x-1-xo)/0.7)^3-((x-1-xo)/0.7)^4)*8 + g1 * exp(-(x-1)/0.03)\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow\n"
+)
+SCRIPT (4.5, 2.5,
+	"Axes... 0 2 -9 3\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 1 yes yes yes\n"
+	"One mark bottom... 2 yes yes no\n"
+	"Draw inner box\n"
+	"xo = 0.32646\n"
+	"g1 = -8.980736 * 0.7\n"
+	"Draw function... 0 xo 300 g1 * exp(-x/0.03)\n"
+	"Draw function... xo 1 300 (3*((x-xo)/0.7)^2-4*((x-xo)/0.7)^3)*8 + g1 * exp(-x/0.03)\n"
+	"Draw function... 1 1+xo 300 g1 * exp(-(x-1)/0.03)\n"
+	"Draw function... 1+xo 2 300 (3*((x-1-xo)/0.7)^2-4*((x-1-xo)/0.7)^3)*8 + g1 * exp(-(x-1)/0.03)\n"
+	"Text bottom... yes Time (normalized)\n"
+	"Text left... yes Glottal flow derivative\n"
+)
+NORMAL ("These curves have moved 2.646 percent of a period to the right. At time 1, "
+	"the glottal flow curve turns from a convex polynomial into a concave exponential, "
+	"and the derivative still has its minimum there.")
+ENTRY ("Arguments")
+TAG ("%%Sampling frequency")
+DEFINITION ("the sampling frequency of the resulting Sound object, e.g. 22050 Hertz.")
+TAG ("%%Adaptation factor")
+DEFINITION ("the factor by which a pulse height will be multiplied if the pulse time is not within "
+	"%maximumPeriod from the previous pulse, and by which a pulse height will again be multiplied "
+	"if the previous pulse time is not within %maximumPeriod from the pre-previous pulse. This factor is against "
+	"abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.")
+TAG ("%%Maximum period")
+DEFINITION ("the minimal period that will be considered a silence, e.g. 0.05 seconds. "
+	"Example: if %adaptationFactor is 0.6, and %adaptationTime is 0.02 s, "
+	"then the heights of the first two pulses after silences of at least 20 ms "
+	"will be multiplied by 0.36 and 0.6, respectively.")
 MAN_END
 
 MAN_BEGIN ("PointProcess: To Sound (pulse train)...", "ppgb", 20040331)

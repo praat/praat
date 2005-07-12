@@ -3371,11 +3371,6 @@ NORMAL ("The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN ("Sequence", "djmw", 19970509)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}.")
-NORMAL ("An object of type Sequence holds a particular ordering of integer numbers.")
-MAN_END
-
 /********************* References **************************************/
 
 MAN_BEGIN ("Bai & Demmel (1993)", "djmw", 19981007)

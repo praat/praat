@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20050426 Latest modification.
+#  djmw 20050713 Latest modification.
 
 
 include ../makefile.defs
@@ -45,7 +45,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	FilterBank.o Formant_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	MelFilter_and_MFCC.o MFCC.o \
-	manual_dwtools.o manual_MDS.o Minimizers.o \
+	manual_dwtools.o manual_MDS.o manual_Permutation.o \
+	Minimizers.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
 	Pattern.o PCA.o \
@@ -58,7 +59,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrum_extensions.o SSCP.o Strings_extensions.o \
 	Table_extensions.o TableOfReal_and_SVD.o\
-	TableOfReal_extensions.o TableOfReal_and_Matrix.o\
+	TableOfReal_extensions.o TableOfReal_and_Matrix.o \
+	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
 	praat_MDS_init.o praat_David_init.o
 

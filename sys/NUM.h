@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
  */
 
 /*
- * pb 2002/06/01
  * pb 2002/10/31 NUMlog2 instead of log2
  * pb 2003/06/23 removed NUMbesselJ and NUMbesselY
  * pb 2004/10/16 replaced struct Type with struct structType
+ * pb 2005/07/08 NUMpow
  */
 
 /* "NUM" = "NUMerics" */
@@ -57,13 +57,7 @@
 	#include "abcio.h"
 #endif
 #define NUMlog2(x)  (log (x) * NUMlog2e)
-/*
- * CodeWarrior used to have an incorrect pow function, in which the base cannot be 0.
- */
-#ifdef _WIN32xxxxx
-	double pow_WIN32_CW11 (double base, double exponent);
-	#define pow(base,exponent)   pow_WIN32_CW11 (base, exponent)
-#endif
+double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
 
 /********** Constants **********/
 

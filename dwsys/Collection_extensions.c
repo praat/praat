@@ -25,17 +25,15 @@
 
 #include "Collection_extensions.h"
 #include "Simple_extensions.h"
-#include "Sequence.h"
 #include "NUM2.h"
 
-Collection Collection_permute (Collection me, long seed)
+Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him)
 {
-	Sequence p = NULL; 
 	Collection thee = NULL;
 	long i, *pos = NULL;
 
-	if (! (p = Sequence_create (my size, SEQUENCE_PERMUTE, seed)) ||
-		! (pos = NUMlvector (1, my size)) ||
+	if (my size != his n) return Melder_errorp ("The number of elements are not equal.");
+	if (! (pos = NUMlvector (1, my size)) ||
 		! (thee = Data_copy (me)))
 	{
 		forget (thee); goto end;
@@ -47,7 +45,7 @@ Collection Collection_permute (Collection me, long seed)
 	/* k >= i : the item at position 'k' */
 	for (i = 1; i <= my size; i++)
 	{
-		long ti = pos[i], which = Sequence_ith (p, i);
+		long ti = pos[i], which = Permutation_getValue (him, i);
 		long where = pos[which]; /* where >= i */
 		Data tmp = thy item[i];
 		if (i == where) continue;
@@ -59,8 +57,20 @@ Collection Collection_permute (Collection me, long seed)
 		pos[which] = which <= i ? i : ti;
 	}
 end:
-	forget (p); 
 	NUMlvector_free (pos, 1);
+	return thee;
+}
+
+Collection Collection_permuteItems(Collection me)
+{
+	Collection thee = NULL;
+	Permutation p = Permutation_create (my size);
+	if (p == NULL) return NULL;
+	if (Permutation_permuteRandomly_inline (p, 0, 0))
+	{
+		thee = Collection_and_Permutation_permuteItems (me, p);
+		forget (p);
+	}
 	return thee;
 }
 
@@ -70,7 +80,6 @@ static void info (I)
 {
 	iam (OrderedOfString); 
 	OrderedOfString uStrings = NULL;
-    long i;
 	
     Melder_info ("%ld strings.", my size);
 	uStrings = OrderedOfString_selectUniqueItems (me, 1);
@@ -280,7 +289,7 @@ int OrderedOfString_changeStrings (I, char *search, char *replace,
 	int use_regexp)
 {
 	iam (OrderedOfString);
-	regexp *compiled_search;
+	regexp *compiled_search = NULL;
 	char *compileMsg, *r;
 	long i;
 

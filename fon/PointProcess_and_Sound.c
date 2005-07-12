@@ -69,7 +69,7 @@ Sound PointProcess_to_Sound_pulseTrain
 	return thee;
 }
 
-Sound PointProcess_to_Sound_glottalSource
+Sound PointProcess_to_Sound_phonation
 	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
@@ -84,6 +84,40 @@ Sound PointProcess_to_Sound_glottalSource
 	float *sound;
 	thee = Sound_create (my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
+	/*
+	 * Compute "re" by iteration.
+	 */
+	if (collisionPhase <= 0.0) {
+		re = openPhase;
+	} else {
+		double xmaxFlow = pow (power1 / power2, 1.0 / (power2 - power1));
+		double xleft = xmaxFlow;
+		double gleft = pow (xleft, power1) - pow (xleft, power2);
+		double gderivleft = power1 * pow (xleft, power1 - 1.0) - power2 * pow (xleft, power2 - 1.0);
+		double fleft = - gleft / gderivleft;
+		double xright = 1.0;
+		double gright = pow (xright, power1) - pow (xright, power2);
+		double gderivright = power1 * pow (xright, power1 - 1.0) - power2 * pow (xright, power2 - 1.0);
+		double fright = - gright / gderivright;
+		int i;
+		for (i = 1; i <= 50; i ++) {
+			double xmid = 0.5 * (xleft + xright);
+			double gmid = pow (xmid, power1) - pow (xmid, power2);
+			double gderivmid = power1 * pow (xmid, power1 - 1.0) - power2 * pow (xmid, power2 - 1.0);
+			double fmid = - gmid / gderivmid;
+			if (fmid > collisionPhase / openPhase) {
+				xleft = xmid;
+				fleft = fmid;
+			} else {
+				xright = xmid;
+				fright = fmid;
+			}
+			re = xmid * openPhase;
+		}
+	}
+	/*
+	 * Cycle through the points. Each will become a period.
+	 */
 	sound = thy z [1];
 	for (it = 1; it <= my nt; it ++) {
 		double t = my t [it], amplitude = a;
@@ -128,7 +162,8 @@ Sound PointProcess_to_Sound_glottalSource
 		for (isamp = beginSample; isamp <= midSample; isamp ++) {
 			double tsamp = thy x1 + (isamp - 1) * thy dx;
 			phase = (tsamp - (t - te)) / (period * openPhase);
-			sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+			if (phase > 0.0)
+				sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
 		}
 		/*
 		 * Determine the signal parameters at the current point.
@@ -152,6 +187,7 @@ Sound PointProcess_to_Sound_glottalSource
 			}
 		}
 	}
+	Vector_scale (thee, 0.9);
 	return thee;
 }
 

@@ -21,13 +21,19 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20050719 Latest modification.
 */
 
 #ifndef _Collection_h_
 	#include "Collection.h"
 #endif
 
-Collection Collection_permute (Collection me, long seed);
+#ifndef _Permutation_h_
+	#include "Permutation.h"
+#endif
+
+Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
+Collection Collection_permuteItems(Collection me);
 /* permute the order of my items */
 
 /****************** class OrderedOfString ******************/

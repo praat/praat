@@ -39,8 +39,8 @@
 #include "NUMclapack.h"
 #include "NUM2.h"
 #include "SVD.h"
-#include "Sequence.h"
 #include "TableOfReal_extensions.h"
+#include "TableOfReal_and_Permutation.h"
 #include "regularExp.h"
 #include "Formula.h"
 #include "Table_extensions.h"
@@ -1301,40 +1301,19 @@ end:
 	return thee;
 }
 
-
 TableOfReal TableOfReal_randomizeRows (TableOfReal me)
 {
 	TableOfReal thee = NULL;
-	Sequence s = NULL;
-	long i;
-
-	thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-	if (thee == NULL) return NULL;
-
-	/*
-		Copy column labels.
-	*/
-
-	if (! NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, 
-		my numberOfColumns)) goto end;
-
-	s = Sequence_create (my numberOfRows, SEQUENCE_PERMUTE, 0);
-	if (s == NULL) goto end;
+	Permutation p = NULL, pp = NULL;
 	
-	for (i = 1; i <= my numberOfRows; i++)
-	{
-		long p = Sequence_ith (s, i);
-		NUMdvector_copyElements (my data[p], thy data[i], 
-			1, my numberOfColumns);
-		if (my rowLabels[p])
-		{
-			TableOfReal_setRowLabel (thee, i, my rowLabels[p]);
-		}
-	}
-	
+	p = Permutation_create (my numberOfRows);
+	if (p == NULL) return NULL;
+	pp = Permutation_permuteRandomly (p, 0, 0);
+	if (pp == NULL) goto end;
+	thee = TableOfReal_and_Permutation_permuteRows (me, pp);
 end:
-	forget (s);
-	if (Melder_hasError ()) forget (thee);
+	forget (p);
+	forget (pp);
 	return thee;
 }
 
@@ -1596,58 +1575,16 @@ TableOfReal TableOfReal_sortOnlyByRowLabels (I)
 {
 	iam (TableOfReal); 
 	TableOfReal thee = NULL;
-	long *index = NULL;
+	Permutation index = NULL;
 	
-	index = TableOfReal_getSortedIndexFromRowLabels (me);
+	index = TableOfReal_to_Permutation_sortRowLabels (me);
 	if (index == NULL) return NULL;
 	
-	thee = TableOfReal_sortRowsByIndex (me, index, 0);
+	thee = TableOfReal_and_Permutation_permuteRows (me, index);
 
-	NUMlvector_free (index, 1);
+	forget (index);
 	return thee;
 }
-
-/*
-TableOfReal TableOfReal_averageColumnsByRowLabels (I)
-{
-	iam (TableOfReal);
-	TableOfReal thee = NULL, sorted = NULL;
-	char *label, **tmp;
-	long *index = NULL, indexi = 1, i;
-
-	index = TableOfReal_getSortedIndexFromRowLabels (me);
-	if (index == NULL) return NULL;
-	
-	sorted = TableOfReal_sortRowsByIndex (me, index, 0);
-	if (sorted == NULL) goto end;
-
-	label = sorted -> rowLabels[1];
-	for (i = 2; i <= my numberOfRows; i++)
-	{
-		char *li = sorted -> rowLabels[i];
-		if (li != NULL && li != label && strcmp (li, label))
-		{
-			NUMaverageColumns (sorted -> data, indexi, i - 1, 1, 
-				my numberOfColumns);
-			label = li; indexi = i;
-		}
-	}
-		
-	NUMaverageColumns (sorted -> data, indexi, my numberOfRows, 1, 
-		my numberOfColumns);
-
-
-	tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
-	thee = TableOfReal_sortRowsByIndex (sorted, index, 1);
-	sorted -> rowLabels = tmp;
-	
-end:
-	forget (sorted);
-	NUMlvector_free (index, 1);
-	if (Melder_hasError()) forget (thee);
-	return thee;
-}
-*/
 
 TableOfReal TableOfReal_meansByRowLabels (I, int expand)
 {

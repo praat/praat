@@ -1,5 +1,5 @@
-# makefile for library dwtools.
-# David Weenink 20030703
+# makefile for library dwsys.
+# David Weenink 20050713
 
 
 include ../makefile.defs
@@ -14,7 +14,8 @@ clean:
 OBJECTS = Collection_extensions.o Command.o \
 	NUM2.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_f.o NUMfft_d.o NUMsort2.o \
-	regularExp.o Sequence.o SimpleVector.o Simple_extensions.o \
+	Permutation.o \
+	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o
 
 $(OBJECTS): *.h ../sys/*.h

@@ -84,9 +84,40 @@ NORMAL ("Paola Escudero & Paul Boersma (2004): \"Bridging the gap between L2 spe
 	"and phonological theory.\" %%Studies in Second Language Acquisition% #26: 551\\--585.")
 MAN_END
 
+MAN_BEGIN ("Fant (1960)", "ppgb", 19980201)
+NORMAL ("Gunnar Fant (1960): %%Acoustic Theory of Speech Production.% Mouton, The Hague.")
+MAN_END
+
+MAN_BEGIN ("Flanagan & Landgraf (1968)", "ppgb", 19980201)
+NORMAL ("James L. Flanagan & L.L. Landgraf (1968): \"Self-oscillating source for vocal-tract synthesizers\", "
+	"%%IEEE Transactions on Audio and Electroacoustics% ##AU-16#: 57-64. "
+	"Reprinted in: James L. Flanagan & Lawrence R. Rabiner (eds.) (1973): "
+	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
+NORMAL ("The authors show that if we model each vocal cord as a single mass-spring system, "
+	"the vocal cords will vibrate passively as a result of the interaction with a glottal airflow.")
+MAN_END
+
+MAN_BEGIN ("Ishizaka & Flanagan (1972)", "ppgb", 19980201)
+NORMAL ("Kenzo Ishizaka & James L. Flanagan (1972): \"Synthesis of voiced sounds from a two-mass model "
+	"of the vocal cords\", %%Bell System Technical Journal% #51: 1233-1268. "
+	"Reprinted in: James L. Flanagan & Lawrence R.ÊRabiner (eds.) (1973): "
+	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
+NORMAL ("The authors show that if we model each vocal cord as two coupled mass-spring systems, "
+	"the passive vibration that results from the interaction with a glottal airflow "
+	"will show more realistic behaviour than with the one-mass model of @@Flanagan & Landgraf (1968)@, "
+	"at least for a male speaker.")
+MAN_END
+
+
 MAN_BEGIN ("Jesteadt, Wier & Green (1977)", "ppgb", 20021215)
 NORMAL ("W. Jesteadt, G.C. Wier, & D.M. Green (1977): \"Intensity discrimination as a function "
 	"of frequency and sensation level.\" %%Journal of the Acoustical Society of America% #61: 169\\--177.")
+MAN_END
+
+MAN_BEGIN ("Klatt & Klatt (1990)", "ppgb", 20050712)
+NORMAL ("D.H. Klatt & L.C. Klatt (1990): \"Analysis, synthesis and perception of voice quality "
+	"variations among male and female talkers.\" "
+	"%%Journal of the Acoustical Society of America% #87: 820\\--856.")
 MAN_END
 
 MAN_BEGIN ("Ladefoged (2001)", "ppgb", 20030316)
@@ -117,6 +148,11 @@ MAN_END
 MAN_BEGIN ("Plomp (1967)", "ppgb", 20021215)
 NORMAL ("Reinier Plomp (1967): \"Frequencies dominant in the perception of pitch of complex sounds.\" "
 	"%%Journal of the Acoustical Society of America% #42: 191\\--198.")
+MAN_END
+
+MAN_BEGIN ("Rosenberg (1971)", "ppgb", 20050712)
+NORMAL ("A. Rosenberg (1971): \"Effect of glottal pulse shape on the quality of natural vowels.\" "
+	"%%Journal of the Acoustical Society of America% #49: 583\\--590.")
 MAN_END
 
 MAN_BEGIN ("Tesar & Smolensky (1998)", "ppgb", 19991019)

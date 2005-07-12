@@ -1,6 +1,8 @@
-/* Sequence_def.h
+#ifndef _TableOfReal_and_Permutation_h_
+#define _TableOfReal_and_Permutation_h_
+/* TableOfReal_and_Permutation.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +20,20 @@
  */
 
 /*
- djmw 19970507
- djmw 20020812 GPL header
+ djmw 20050708
 */
 
-#define ooSTRUCT Sequence
-oo_DEFINE_CLASS (Sequence, Data)
-	oo_INT (action)
-	oo_LONG (n)
-	oo_LONG (seed)
-	oo_LONG (iy)
-	oo_LONG (ntab)
-	oo_LONG_VECTOR (tab, my ntab)
-	oo_LONG_VECTOR (p, my n)
-			
-oo_END_CLASS(Sequence)	
-#undef ooSTRUCT
+#ifndef _Permutation_h_
+	#include "Permutation.h"
+#endif
+#ifndef _TableOfReal_h_
+	#include "TableOfReal.h"
+#endif
 
-/* End of file Sequence_def.h */	
+TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee);
+/*
+	Permutation (n1,n2,..nn) new his z[1] = my z[n1], his z[2] = my z[n2], ..*/
+
+Permutation TableOfReal_to_Permutation_sortRowLabels (I);
+	
+#endif /* _TableOfReal_and_Permutation_h_ */

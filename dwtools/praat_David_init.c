@@ -1,4 +1,4 @@
-/* praat_David_init.h
+/* praat_David_init.c
  * 
  * Copyright (C) 1993-2005 David Weenink
  * 
@@ -78,6 +78,7 @@ extern machar_Table NUMfpp;
 #include "Strings_extensions.h"
 #include "SVD.h"
 #include "Table_extensions.h"
+#include "TableOfReal_and_Permutation.h"
 #include "TextGrid_extensions.h"
 
 #include "Categories_and_Strings.h"
@@ -300,15 +301,10 @@ DIRECT (Categories_join)
 	NEW (OrderedOfString_joinItems (l1, l2))
 END
 
-FORM (Categories_permute, "Categories: Permute", 0)
-	LABEL ("", "The seed for the random number generator.")
-	LABEL ("", "Fill in a number greater than zero to get a reproducible sequence.")
-	INTEGER ("Seed", "0")
-	OK
-DO
+DIRECT (Categories_permuteItems)
 	Collection c = NULL;
 	WHERE (SELECTED && CLASS == classCategories) c = OBJECT;
-	NEW (Collection_permute (c, GET_INTEGER("Seed")));
+	NEW (Collection_permuteItems (c));
 END
 
 /***************** CC ****************************************/
@@ -2324,6 +2320,159 @@ DIRECT (PCAs_getAngleBetweenPc1Pc2Plane_degrees)
 		Melder_double(Eigens_getAngleBetweenEigenplanes_degrees (me, thee)));
 END
 
+/******************* Permutation **************************************/
+
+FORM (Permutation_create, "Create Permutation", "Create Permutation...")
+	WORD ("Name", "p")
+	NATURAL ("Number of elements", "10")
+	BOOLEAN ("Identity Permutation", 1)
+	OK
+DO
+	Permutation p = Permutation_create (GET_INTEGER ("Number of elements"));
+	int identity = GET_INTEGER ("Identity Permutation");
+	if (! identity && ! Permutation_permuteRandomly_inline (p, 0, 0))
+	{
+		forget (p); return 0;
+	}
+	if (! praat_new (p, GET_STRING ("Name"))) return 0;
+END
+
+DIRECT (Permutation_getNumberOfElements)
+	Permutation p = ONLY_OBJECT;
+	Melder_info ("%d", p -> n);
+END
+
+FORM (Permutation_getValue, "Permutation: Get value", "Permutation: Get value...")
+	NATURAL ("Index", "1")
+	OK
+DO
+	long index = GET_INTEGER ("Index");
+	Melder_info ("%d (index=%d)", Permutation_getValue (ONLY_OBJECT, index), index);
+END
+
+DIRECT (Permutation_setNaturalOrder)
+	EVERY (Permutation_setNaturalOrder (OBJECT))
+END
+
+FORM (Permutation_permuteOne, "Permutation: Permute one", "Permutation: Permute one...")
+	LABEL ("", "A randomly chosen element from ")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	LABEL ("", "is swapped with the element at")
+	NATURAL ("Index", "1")
+	BOOLEAN ("Forbid same", 1)
+	OK
+DO
+	if (! Permutation_permuteOne (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+		GET_INTEGER ("Index"), GET_INTEGER ("Forbid same"))) return 0;
+END
+
+FORM (Permutation_permuteRandomly, "Permutation: Permute randomly", "Permutation: Permute randomly...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	OK
+DO
+	Permutation p = ONLY_OBJECT;
+	if (! praat_new (Permutation_permuteRandomly (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
+		"%s_randomly", Thing_getName (p))) return 0;
+END
+
+FORM (Permutation_cycle, "Permutation: Cycle", "Permutation: Cycle...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	INTEGER ("Step size", "1")
+	OK
+DO
+	Permutation p = ONLY_OBJECT;
+	long step = GET_INTEGER ("Step size");
+	if (! praat_new (Permutation_cycle (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_cycle%d", Thing_getName (p),step)) return 0;
+END
+
+FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	OK
+DO
+	Permutation p = ONLY_OBJECT;
+	if (! praat_new (Permutation_reverse (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
+		"%s_reverse", Thing_getName (p))) return 0;
+END
+
+FORM (Permutation_permuteBlocksRandomly, "Permutation: Permute blocks randomly", "Permutation: Permute randomly (blocks)...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	NATURAL ("Block size", "12")
+	BOOLEAN ("Permute within blocks", 1)
+	BOOLEAN ("No doublets", 0)
+	OK
+DO
+	Permutation p = ONLY_OBJECT;
+	long blocksize = GET_INTEGER ("Block size");
+	if (! praat_new (Permutation_permuteBlocksRandomly (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+		blocksize, GET_INTEGER ("Permute within blocks"), GET_INTEGER ("No doublets")),
+		"%s_blocks%d", Thing_getName (p), blocksize)) return 0;
+END
+
+FORM (Permutation_stepDownBlocks, "Permutation: Step down blocks", "Permutation: Permute (stepdown blocks)...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	NATURAL ("Block size", "12")
+	OK
+DO
+	Permutation p = ONLY_OBJECT;
+	if (! praat_new (Permutation_stepDownBlocks (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+		GET_INTEGER ("Block size")), "%s_stepdown", Thing_getName (p))) return 0;
+END
+
+DIRECT (Permutation_invert)
+	Permutation p = ONLY_OBJECT;
+	if (! praat_new (Permutation_invert (p), "%s_inverse", Thing_getName (p))) return 0;
+END
+
+DIRECT (Permutations_multiply)
+	long np = 0, n = 0;
+	Permutation buf = NULL, thee = NULL;
+	
+	WHERE (SELECTED)
+	{
+		Permutation me = OBJECT;
+		if (n == 0)
+		{
+			n = my n;
+		}
+		else if (my n != n)
+		{
+			return Melder_error ("To apply a number of permutations they all must have the same number of elements.");	
+		}
+		np += 1;
+	}
+	WHERE (SELECTED)
+	{
+		Permutation p = OBJECT;
+		if (thee == NULL)
+		{
+			thee = Data_copy (p);
+			if (thee == NULL) return 0;
+		}
+		else
+		{
+			long i;
+			buf = Data_copy (thee);
+			if (buf == NULL) goto end;
+			for (i = 1; i <= n; i++)
+			{
+				thy p[i] = buf -> p[p -> p[i]];
+			}
+			forget (buf);
+		}
+	}
+end:
+	if (Melder_hasError ())
+	{
+		forget (thee); return 0;
+	}
+	if (! praat_new (thee, "permuted%d", np)) return 0;
+END
 	
 /******************* Polygon & Categories *************************************/
 
@@ -3264,6 +3413,17 @@ END
 
 /******************* TableOfReal ****************************/
 
+DIRECT (TableOfReal_and_Permutation_permuteRows)
+	TableOfReal t = ONLY (classTableOfReal);
+	Permutation p = ONLY (classPermutation);
+	if (! praat_new (TableOfReal_and_Permutation_permuteRows (t, p),
+		"%s_%s", Thing_getName (t), Thing_getName (p))) return 0;
+END
+
+DIRECT (TableOfReal_to_Permutation_sortRowlabels)
+	EVERY_TO (TableOfReal_to_Permutation_sortRowLabels (OBJECT))
+END
+
 DIRECT (TableOfReal_appendColumns)
 	Collection me = Collection_create (classTableOfReal, 10);
 	if (! me) return 0;
@@ -3807,7 +3967,7 @@ void praat_uvafon_David_init (void)
 		classCategories,
 		classChebyshevSeries,classClassificationTable, classConfusion, 
     	classCorrelation, classCovariance, classDiscriminant, classDTW,
-		classEigen, classExcitations, classFormantFilter,
+		classEigen, classExcitations, classFormantFilter, classPermutation,
 		classISpline, classLegendreSeries,
 		classMelFilter,
 		classMSpline, classPattern, classPCA, classPolynomial, classRoots,
@@ -3815,6 +3975,8 @@ void praat_uvafon_David_init (void)
 
     praat_addMenuCommand ("Objects", "Goodies", "Report floating point properties",
 		0, 0, DO_Praat_ReportFloatingPointProperties);
+		
+	praat_addMenuCommand ("Objects", "New", "Create Permutation...", 0, 0, DO_Permutation_create);
 
     praat_addMenuCommand ("Objects", "New", "Polynomial", 0, 0, 0);
     	praat_addMenuCommand ("Objects", "New", "Create Polynomial...", 0, 1,
@@ -3888,8 +4050,7 @@ void praat_uvafon_David_init (void)
 		DO_Categories_to_Confusion);
     praat_addAction1 (classCategories, 0, "Synthesize", 0, 0, 0);
     praat_addAction1 (classCategories, 2, "Join", 0, 0, DO_Categories_join);
-    praat_addAction1 (classCategories, 0, "Permute...", 0, 0,
-		DO_Categories_permute);
+    praat_addAction1 (classCategories, 0, "Permute items", 0, 0, DO_Categories_permuteItems);
     praat_addAction1 (classCategories, 0, "To Strings", 0, 0,
 		DO_Categories_to_Strings);
 
@@ -4265,6 +4426,20 @@ void praat_uvafon_David_init (void)
 	praat_Eigen_Matrix_project (classPCA, classBarkFilter);
 	praat_Eigen_Matrix_project (classPCA, classMelFilter);
 	
+		
+	praat_addAction1 (classPermutation, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classPermutation, 1, "Get number of elements", 0, 1, DO_Permutation_getNumberOfElements);
+	praat_addAction1 (classPermutation, 1, "Get value...", 0, 1, DO_Permutation_getValue);
+	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classPermutation, 1, "Set to identity", 0, 1, DO_Permutation_setNaturalOrder);
+	praat_addAction1 (classPermutation, 1, "Permute randomly...", 0, 0, DO_Permutation_permuteRandomly);
+	praat_addAction1 (classPermutation, 1, "Permute randomly (blocks)...", 0, 0, DO_Permutation_permuteBlocksRandomly);
+	praat_addAction1 (classPermutation, 1, "Permute (stepdown blocks)...", 0, 0, DO_Permutation_stepDownBlocks);
+	praat_addAction1 (classPermutation, 1, "Cycle...", 0, 0, DO_Permutation_cycle);
+	praat_addAction1 (classPermutation, 1, "Reverse...", 0, 0, DO_Permutation_reverse);
+	praat_addAction1 (classPermutation, 1, "Invert", 0, 0, DO_Permutation_invert);
+	praat_addAction1 (classPermutation, 0, "Multiply", 0, 0, DO_Permutations_multiply);
+
 	praat_addAction1 (classPolygon, 0, "Translate...", "Modify", 0,
 		DO_Polygon_translate);
 	praat_addAction1 (classPolygon, 0, "Rotate...", "Translate...", 0,
@@ -4440,6 +4615,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 1, "Split into Pattern and Categories...",
 		"To Pattern and Categories...",
 		praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_Pattern_and_Categories);
+	praat_addAction1 (classTableOfReal, 0, "To Permutation (sort row labels)",
+		"To Matrix", 1, DO_TableOfReal_to_Permutation_sortRowlabels);
 
 	praat_addAction1 (classTableOfReal, 1, "To SVD", 
 		0, praat_HIDDEN, DO_TableOfReal_to_SVD);
@@ -4461,9 +4638,10 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, "Draw biplot...", 
 		"Draw box plots...", 1, DO_TableOfReal_drawBiplot);
 
-	praat_addAction2 (classTableOfReal, 1, classMatrix, 1, 
-		"Copy columns into rows...", 
+	praat_addAction2 (classTableOfReal, 1, classMatrix, 1, "Copy columns into rows...",
 		0, 0, DO_TableOfReal_matrixColumnsIntoRows);
+	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, "Permute rows",
+		0, 0, DO_TableOfReal_and_Permutation_permuteRows);
 
 	praat_addAction1 (classTextGrid, 0, "Extend time...", 
 		"Scale times...", 1, DO_TextGrid_extendTime);
@@ -4472,6 +4650,7 @@ void praat_uvafon_David_init (void)
         
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)
+	INCLUDE_MANPAGES (manual_Permutation_init)
 }
 
 /* End of file praat_David.c */

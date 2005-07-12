@@ -3186,7 +3186,7 @@ DIRECT (PitchTier_to_PointProcess)
 	EVERY_TO (PitchTier_to_PointProcess (OBJECT))
 END
 
-FORM (PitchTier_to_Sound_glottalSource, "PitchTier: To Sound (glottal source)", 0)
+FORM (PitchTier_to_Sound_phonation, "PitchTier: To Sound (phonation)", 0)
 	POSITIVE ("Sampling frequency (Hz)", "44100")
 	POSITIVE ("Adaptation factor", "1.0")
 	POSITIVE ("Maximum period (s)", "0.05")
@@ -3197,7 +3197,7 @@ FORM (PitchTier_to_Sound_glottalSource, "PitchTier: To Sound (glottal source)", 
 	BOOLEAN ("Hum", 0)
 	OK
 DO
-	EVERY_TO (PitchTier_to_Sound_glottalSource (OBJECT, GET_REAL ("Sampling frequency"),
+	EVERY_TO (PitchTier_to_Sound_phonation (OBJECT, GET_REAL ("Sampling frequency"),
 		GET_REAL ("Adaptation factor"), GET_REAL ("Maximum period"),
 		GET_REAL ("Open phase"), GET_REAL ("Collision phase"), GET_REAL ("Power 1"), GET_REAL ("Power 2"), GET_INTEGER ("Hum")))
 END
@@ -3537,7 +3537,7 @@ DIRECT (PointProcess_to_TextTier)
 	EVERY_TO (TextTier_create (((PointProcess) OBJECT) -> xmin, ((PointProcess) OBJECT) -> xmax))
 END
 
-FORM (PointProcess_to_Sound_glottalSource, "PointProcess: To Sound (glottal source)", "PointProcess: To Sound (glottal source)...")
+FORM (PointProcess_to_Sound_phonation, "PointProcess: To Sound (phonation)", "PointProcess: To Sound (phonation)...")
 	POSITIVE ("Sampling frequency (Hz)", "44100")
 	POSITIVE ("Adaptation factor", "1.0")
 	POSITIVE ("Maximum period (s)", "0.05")
@@ -3547,7 +3547,7 @@ FORM (PointProcess_to_Sound_glottalSource, "PointProcess: To Sound (glottal sour
 	POSITIVE ("Power 2", "4.0")
 	OK
 DO
-	EVERY_TO (PointProcess_to_Sound_glottalSource (OBJECT, GET_REAL ("Sampling frequency"),
+	EVERY_TO (PointProcess_to_Sound_phonation (OBJECT, GET_REAL ("Sampling frequency"),
 		GET_REAL ("Adaptation factor"), GET_REAL ("Maximum period"),
 		GET_REAL ("Open phase"), GET_REAL ("Collision phase"), GET_REAL ("Power 1"), GET_REAL ("Power 2")))
 END
@@ -6172,8 +6172,8 @@ praat_addAction1 (classPitch, 0, "Convert", 0, 0, 0);
 		praat_addAction1 (classPitchTier, 0, "Multiply frequencies...", 0, 1, DO_PitchTier_multiplyFrequencies);
 	praat_addAction1 (classPitchTier, 0, "Synthesize -", 0, 0, 0);
 		praat_addAction1 (classPitchTier, 0, "To PointProcess", 0, 1, DO_PitchTier_to_PointProcess);
-		praat_addAction1 (classPitchTier, 0, "To Sound (glottal source)...", 0, 1, DO_PitchTier_to_Sound_glottalSource);
 		praat_addAction1 (classPitchTier, 0, "To Sound (pulse train)...", 0, 1, DO_PitchTier_to_Sound_pulseTrain);
+		praat_addAction1 (classPitchTier, 0, "To Sound (phonation)...", 0, 1, DO_PitchTier_to_Sound_phonation);
 		praat_addAction1 (classPitchTier, 0, "To Sound (sine)...", 0, 1, DO_PitchTier_to_Sound_sine);
 	praat_addAction1 (classPitchTier, 0, "Convert -", 0, 0, 0);
 		praat_addAction1 (classPitchTier, 0, "Down to PointProcess", 0, 1, DO_PitchTier_downto_PointProcess);
@@ -6228,7 +6228,7 @@ praat_addAction1 (classPointProcess, 0, "Analyse", 0, 0, 0);
 	praat_addAction1 (classPointProcess, 0, "To TextGrid (vuv)...", 0, 0, DO_PointProcess_to_TextGrid_vuv);
 praat_addAction1 (classPointProcess, 0, "Synthesize", 0, 0, 0);
 	praat_addAction1 (classPointProcess, 0, "To Sound (pulse train)...", 0, 0, DO_PointProcess_to_Sound_pulseTrain);
-	praat_addAction1 (classPointProcess, 0, "To Sound (glottal source)...", 0, 0, DO_PointProcess_to_Sound_glottalSource);
+	praat_addAction1 (classPointProcess, 0, "To Sound (phonation)...", 0, 0, DO_PointProcess_to_Sound_phonation);
 	praat_addAction1 (classPointProcess, 0, "To Sound (hum)...", 0, 0, DO_PointProcess_to_Sound_hum);
 praat_addAction1 (classPointProcess, 0, "Convert", 0, 0, 0);
 	praat_addAction1 (classPointProcess, 0, "To Matrix", 0, 0, DO_PointProcess_to_Matrix);

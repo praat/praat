@@ -1,6 +1,6 @@
 /* manual_Artsynth.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2002/12/06
  */
 
 #include "ManPagesM.h"
@@ -161,30 +156,6 @@ NORMAL ("The resulting VocalTract will appear in the list of objects, "
 	"with the same name as the phone.")
 ENTRY ("Algorithm")
 NORMAL ("The area function of the resulting VocalTract is taken from the Russian speaker from @@Fant (1960)@.")
-MAN_END
-
-MAN_BEGIN ("Fant (1960)", "ppgb", 19980201)
-DEFINITION ("Gunnar Fant (1960): %%Acoustic Theory of Speech Production%. Mouton, The Hague.")
-MAN_END
-
-MAN_BEGIN ("Flanagan & Landgraf (1968)", "ppgb", 19980201)
-NORMAL ("James L. Flanagan & L.L. Landgraf (1968): \"Self-oscillating source for vocal-tract synthesizers\", "
-	"%%IEEE Transactions on Audio and Electroacoustics% ##AU-16#: 57-64. "
-	"Reprinted in: James L. Flanagan & Lawrence R. Rabiner (eds.) (1973): "
-	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
-NORMAL ("The authors show that if we model each vocal cord as a single mass-spring system, "
-	"the vocal cords will vibrate passively as a result of the interaction with a glottal airflow.")
-MAN_END
-
-MAN_BEGIN ("Ishizaka & Flanagan (1972)", "ppgb", 19980201)
-NORMAL ("Kenzo Ishizaka & James L. Flanagan (1972): \"Synthesis of voiced sounds from a two-mass model "
-	"of the vocal cords\", %%Bell System Technical Journal% #51: 1233-1268. "
-	"Reprinted in: James L. Flanagan & Lawrence R.ÊRabiner (eds.) (1973): "
-	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
-NORMAL ("The authors show that if we model each vocal cord as two coupled mass-spring systems, "
-	"the passive vibration that results from the interaction with a glottal airflow "
-	"will show more realistic behaviour than with the one-mass model of @@Flanagan & Landgraf (1968)@, "
-	"at least for a male speaker.")
 MAN_END
 
 MAN_BEGIN ("Speaker", "ppgb", 19980201)

@@ -437,6 +437,7 @@ if (! my printing) {
 			praatP.inManual = TRUE;
 			praat_background ();
 			Interpreter_run (interpreter, text);
+			iferror Melder_clearError ();
 			praat_foreground ();
 			praatP.inManual = FALSE;
 			praat.graphics = saveGraphics;
@@ -468,6 +469,7 @@ if (! my printing) {
 		praat.graphics = my ps;
 		praat_background ();
 		Interpreter_run (interpreter, text);
+		iferror Melder_clearError ();
 		praat_foreground ();
 		praat.graphics = saveGraphics;
 	}
