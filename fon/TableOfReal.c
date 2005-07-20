@@ -25,6 +25,7 @@
  * pb 2004/10/01 Melder_double instead of %.17g
  * pb 2005/03/04 Melder_NUMBER and Melder_STRING as enums
  * pb 2005/06/16 Melder_NUMBER and Melder_STRING as ints
+ * pb 2005/07/19 TableOfReal_readFromHeaderlessSpreadsheetFile: allow 30k row and column labels
  */
 
 #include <ctype.h>
@@ -1164,7 +1165,6 @@ int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fil
 TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	FILE *f = NULL;
 	TableOfReal me = NULL;
-	char element [101];
 	long nrow, ncol, nelements, irow, icol;
 
 	f = Melder_fopen (file, "rb");
@@ -1193,7 +1193,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	rewind (f);
 	nelements = 0;
 	for (;;) {
-		if (fscanf (f, "%s", & element) < 1) break;   /* Zero or end-of-file. */
+		if (fscanf (f, "%s", Melder_buffer1) < 1) break;   /* Zero or end-of-file. */
 		nelements ++;
 	}
 
@@ -1219,17 +1219,17 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	 */
 
 	rewind (f);
-	fscanf (f, "%s", element);   /* Ignore header of column with labels. */
+	fscanf (f, "%s", Melder_buffer1);   /* Ignore header of column with labels. */
 	for (icol = 1; icol <= ncol; icol ++) {
-		fscanf (f, "%s", element);
-		TableOfReal_setColumnLabel (me, icol, element);
+		fscanf (f, "%s", Melder_buffer1);
+		TableOfReal_setColumnLabel (me, icol, Melder_buffer1);
 	}
 	for (irow = 1; irow <= nrow; irow ++) {
-		fscanf (f, "%s", element);
-		TableOfReal_setRowLabel (me, irow, element);
+		fscanf (f, "%s", Melder_buffer1);
+		TableOfReal_setRowLabel (me, irow, Melder_buffer1);
 		for (icol = 1; icol <= ncol; icol ++) {
-			fscanf (f, "%s", element);   /* Because some columns may contain strings. */
-			my data [irow] [icol] = atof (element);   /* If cell contains a string, this will be 0. */
+			fscanf (f, "%s", Melder_buffer1);   /* Because some columns may contain strings. */
+			my data [irow] [icol] = atof (Melder_buffer1);   /* If cell contains a string, this will be 0. */
 		}
 	}
 

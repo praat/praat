@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/07/19
  */
 
 #ifndef _HyperPage_h_
@@ -37,7 +37,8 @@
 	Widget homeButton, recordButton, playButton, publishButton; \
 	int numberOfMatches; \
 	long matches [1 + 20], fromPage, toPage; \
-	int suppressLinksHither;
+	int suppressLinksHither; \
+	char *printPagesStartingWith;
 #define Manual_methods HyperPage_methods
 class_create (Manual, HyperPage)
 

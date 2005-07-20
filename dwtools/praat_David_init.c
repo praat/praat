@@ -2322,6 +2322,10 @@ END
 
 /******************* Permutation **************************************/
 
+DIRECT (Permutation_help)
+	Melder_help ("Permutation");
+END
+
 FORM (Permutation_create, "Create Permutation", "Create Permutation...")
 	WORD ("Name", "p")
 	NATURAL ("Number of elements", "10")
@@ -2342,19 +2346,37 @@ DIRECT (Permutation_getNumberOfElements)
 	Melder_info ("%d", p -> n);
 END
 
-FORM (Permutation_getValue, "Permutation: Get value", "Permutation: Get value...")
+FORM (Permutation_getValueAtIndex, "Permutation: Get value", "Permutation: Get value...")
 	NATURAL ("Index", "1")
 	OK
 DO
 	long index = GET_INTEGER ("Index");
-	Melder_info ("%d (index=%d)", Permutation_getValue (ONLY_OBJECT, index), index);
+	Melder_info ("%d (value, at index=%d)", Permutation_getValueAtIndex (ONLY_OBJECT, index), index);
 END
 
-DIRECT (Permutation_setNaturalOrder)
-	EVERY (Permutation_setNaturalOrder (OBJECT))
+FORM (Permutation_getIndexAtValue, "Permutation: Get index", "Permutation: Get index...")
+	NATURAL ("Value", "1")
+	OK
+DO
+	long value = GET_INTEGER ("Value");
+	Melder_info ("%d (index, at value=%d)", Permutation_getIndexAtValue (ONLY_OBJECT, value), value);
 END
 
-FORM (Permutation_permuteOne, "Permutation: Permute one", "Permutation: Permute one...")
+DIRECT (Permutation_sort)
+	EVERY (Permutation_sort (OBJECT))
+END
+
+FORM (Permutation_swapOnePair, "Permutation: Swap one pair", "Permutation: Swap one pair...")
+	NATURAL ("First", "1")
+	NATURAL ("Second", "1")
+	OK
+DO
+	if (! Permutation_swapOnePair (ONLY_OBJECT, GET_INTEGER ("First"), GET_INTEGER ("Second"))) return 0;
+	praat_dataChanged (ONLY_OBJECT);
+END
+
+
+FORM (Permutation_swapOneFromRange, "Permutation: Swap one from range", "Permutation: Swap one from range...")
 	LABEL ("", "A randomly chosen element from ")
 	INTEGER ("left Range", "0")
 	INTEGER ("right Range", "0")
@@ -2363,8 +2385,9 @@ FORM (Permutation_permuteOne, "Permutation: Permute one", "Permutation: Permute 
 	BOOLEAN ("Forbid same", 1)
 	OK
 DO
-	if (! Permutation_permuteOne (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+	if (! Permutation_swapOneFromRange (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
 		GET_INTEGER ("Index"), GET_INTEGER ("Forbid same"))) return 0;
+	praat_dataChanged (ONLY_OBJECT);
 END
 
 FORM (Permutation_permuteRandomly, "Permutation: Permute randomly", "Permutation: Permute randomly...")
@@ -2377,7 +2400,7 @@ DO
 		"%s_randomly", Thing_getName (p))) return 0;
 END
 
-FORM (Permutation_cycle, "Permutation: Cycle", "Permutation: Cycle...")
+FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
 	INTEGER ("left Range", "0")
 	INTEGER ("right Range", "0")
 	INTEGER ("Step size", "1")
@@ -2385,7 +2408,7 @@ FORM (Permutation_cycle, "Permutation: Cycle", "Permutation: Cycle...")
 DO
 	Permutation p = ONLY_OBJECT;
 	long step = GET_INTEGER ("Step size");
-	if (! praat_new (Permutation_cycle (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_cycle%d", Thing_getName (p),step)) return 0;
+	if (! praat_new (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_rotate%d", Thing_getName (p),step)) return 0;
 END
 
 FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
@@ -2413,15 +2436,16 @@ DO
 		"%s_blocks%d", Thing_getName (p), blocksize)) return 0;
 END
 
-FORM (Permutation_stepDownBlocks, "Permutation: Step down blocks", "Permutation: Permute (stepdown blocks)...")
+FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleave...")
 	INTEGER ("left Range", "0")
 	INTEGER ("right Range", "0")
 	NATURAL ("Block size", "12")
+	INTEGER ("Offset", "0")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new (Permutation_stepDownBlocks (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
-		GET_INTEGER ("Block size")), "%s_stepdown", Thing_getName (p))) return 0;
+	if (! praat_new (Permutation_interleave (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+		GET_INTEGER ("Block size"), GET_INTEGER ("Offset")), "%s_interleave", Thing_getName (p))) return 0;
 END
 
 DIRECT (Permutation_invert)
@@ -2471,7 +2495,7 @@ end:
 	{
 		forget (thee); return 0;
 	}
-	if (! praat_new (thee, "permuted%d", np)) return 0;
+	if (! praat_new (thee, "multiply%d", np)) return 0;
 END
 	
 /******************* Polygon & Categories *************************************/
@@ -3387,7 +3411,15 @@ FORM (Strings_extractPart, "Strings: Extract part", "")
 DO
 	EVERY_TO (Strings_extractPart (OBJECT, GET_INTEGER ("From index"), GET_INTEGER ("To index")))
 END
- 
+
+DIRECT (Strings_to_Permutation_sort)
+	EVERY_TO (Strings_to_Permutation_sort (OBJECT))
+END
+
+DIRECT (Strings_and_Permutation_permuteStrings)
+	NEW (Strings_and_Permutation_permuteStrings (ONLY (classStrings), ONLY (classPermutation)))
+END
+
 FORM (SVD_to_TableOfReal, "SVD: To TableOfReal", "SVD: To TableOfReal...")
 	NATURAL ("First component", "1")
 	INTEGER ("Last component", "0 (=all)")
@@ -4426,16 +4458,19 @@ void praat_uvafon_David_init (void)
 	praat_Eigen_Matrix_project (classPCA, classBarkFilter);
 	praat_Eigen_Matrix_project (classPCA, classMelFilter);
 	
-		
+	praat_addAction1 (classPermutation, 0, "Permutation help", 0, 0, DO_Permutation_help);
 	praat_addAction1 (classPermutation, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classPermutation, 1, "Get number of elements", 0, 1, DO_Permutation_getNumberOfElements);
-	praat_addAction1 (classPermutation, 1, "Get value...", 0, 1, DO_Permutation_getValue);
+	praat_addAction1 (classPermutation, 1, "Get value...", 0, 1, DO_Permutation_getValueAtIndex);
+	praat_addAction1 (classPermutation, 1, "Get index...", 0, 1, DO_Permutation_getIndexAtValue);
 	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
-	praat_addAction1 (classPermutation, 1, "Set to identity", 0, 1, DO_Permutation_setNaturalOrder);
+	praat_addAction1 (classPermutation, 1, "Sort", 0, 1, DO_Permutation_sort);
+	praat_addAction1 (classPermutation, 1, "Swap one pair...", 0, 1, DO_Permutation_swapOnePair);
+	praat_addAction1 (classPermutation, 1, "Swap one from range...", 0, 1, DO_Permutation_swapOneFromRange);
 	praat_addAction1 (classPermutation, 1, "Permute randomly...", 0, 0, DO_Permutation_permuteRandomly);
 	praat_addAction1 (classPermutation, 1, "Permute randomly (blocks)...", 0, 0, DO_Permutation_permuteBlocksRandomly);
-	praat_addAction1 (classPermutation, 1, "Permute (stepdown blocks)...", 0, 0, DO_Permutation_stepDownBlocks);
-	praat_addAction1 (classPermutation, 1, "Cycle...", 0, 0, DO_Permutation_cycle);
+	praat_addAction1 (classPermutation, 1, "Interleave...", 0, 0, DO_Permutation_interleave);
+	praat_addAction1 (classPermutation, 1, "Rotate...", 0, 0, DO_Permutation_rotate);
 	praat_addAction1 (classPermutation, 1, "Reverse...", 0, 0, DO_Permutation_reverse);
 	praat_addAction1 (classPermutation, 1, "Invert", 0, 0, DO_Permutation_invert);
 	praat_addAction1 (classPermutation, 0, "Multiply", 0, 0, DO_Permutations_multiply);
@@ -4579,6 +4614,8 @@ void praat_uvafon_David_init (void)
 		 0, DO_Strings_change);
 	praat_addAction1 (classStrings, 0, "Extract part...", "Change...",
 		 0, DO_Strings_extractPart);
+	praat_addAction1 (classStrings, 0, "To Permutation (sort)", "To Distributions",
+		 0, DO_Strings_to_Permutation_sort);
 
 	praat_addAction1 (classSVD, 0, "To TableOfReal...",
 		0, 0, DO_SVD_to_TableOfReal);
@@ -4637,6 +4674,9 @@ void praat_uvafon_David_init (void)
 		"Draw scatter plot matrix...", 1, DO_TableOfReal_drawBoxPlots);
 	praat_addAction1 (classTableOfReal, 0, "Draw biplot...", 
 		"Draw box plots...", 1, DO_TableOfReal_drawBiplot);
+		
+	praat_addAction2 (classStrings, 1, classPermutation, 1, "Permute strings",
+		0, 0, DO_Strings_and_Permutation_permuteStrings);
 
 	praat_addAction2 (classTableOfReal, 1, classMatrix, 1, "Copy columns into rows...",
 		0, 0, DO_TableOfReal_matrixColumnsIntoRows);

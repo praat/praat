@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050712)
+MAN_BEGIN ("What's new?", "ppgb", 20050720)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.19# (July 20, 2005)")
+LIST_ITEM ("\\bu Improved buttons in manual.")
+LIST_ITEM ("\\bu TableOfReal: Read from headerless spreadsheet file: allow row and column labels to be 30,000 rather than 100 characters.")
 NORMAL ("##4.3.18# (July 12, 2005)")
 LIST_ITEM ("\\bu Glottal source for sound synthesis, corrected and documented.")
 NORMAL ("##4.3.17# (July 7, 2005)")

@@ -22,7 +22,8 @@
 /*
  djmw 20010114
  djmw 20020813 GPL header
- djmw 20040629 Strings_append  now accepts an Ordered of Strings.
+ djmw 20040629 Strings_append now accepts an Ordered of Strings.
+ djmw 20050714 Permutations
 */
 #ifndef _Collection_h_
 	#include "Collection.h"
@@ -30,6 +31,10 @@
 
 #ifndef _Strings_h_
 	#include "Strings.h"
+#endif
+
+#ifndef _Permutation_h_
+	#include "Permutation.h"
 #endif
 
 Strings Strings_createFixedLength (long numberOfStrings);
@@ -50,5 +55,8 @@ Strings strings_to_Strings_link (char** strings, long n);
 /* for (i=1; i<= n; i++) my strings[i] = strings[i]; */
 void _Strings_unlink (Strings me);
 /* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */
+
+Permutation Strings_to_Permutation_sort (Strings me);
+Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
 
 #endif /* _Strings_extensions_h_ */

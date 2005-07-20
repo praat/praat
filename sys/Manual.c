@@ -24,6 +24,7 @@
  * pb 2003/11/30 removed newline from date
  * pb 2004/02/08 allow arguments in scripts
  * pb 2005/05/08 script
+ * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
  */
 
 #include <ctype.h>
@@ -181,43 +182,46 @@ static void draw (I) {
 
 static void print (I, Graphics graphics) {
 	iam (Manual);
-	/*ManPages manPages = my data;*/
-	int /*numberOfPages = manPages -> pages -> size,*/ savePage = my path;
-	long ipage;
+	ManPages manPages = my data;
+	int numberOfPages = manPages -> pages -> size, savePage = my path, ipage;
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, TRUE);
 	Graphics_setAtSignIsLink (my ps, TRUE);
 	my printing = TRUE;
 	HyperPage_initSheetOfPaper ((HyperPage) me);
-	/*Melder_progress (0.0, "Printing...");*/
-	for (ipage = my fromPage; ipage <= my toPage; ipage ++) {
-		/*ManPage page = manPages -> pages -> item [ipage];*/
-		our goToPage_i (me, ipage);
-		our draw (me);
-		our goToPage_i (me, savePage);
-		/*
-		 * Guard against the non-reentrance of our draw ().
-		 */
-		my printing = FALSE;
-		/*if (! Melder_progress ((double) ipage / numberOfPages, "%s", page -> title)) break;*/
-		my printing = TRUE;
+	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
+		ManPage page = manPages -> pages -> item [ipage];
+		if (my printPagesStartingWith == NULL ||
+		    Melder_stringMatchesCriterion (page -> title, Melder_STRING_STARTS_WITH, my printPagesStartingWith))
+		{
+			ManPage_Paragraph par;
+			my path = ipage;
+			my paragraphs = page -> paragraphs;
+			my numberOfParagraphs = 0;
+			par = my paragraphs;
+			while ((par ++) -> type) my numberOfParagraphs ++;
+			Melder_free (my currentPageTitle);
+			my currentPageTitle = Melder_strdup (page -> title);
+			our goToPage_i (me, ipage);
+			our draw (me);
+			our goToPage_i (me, savePage);
+		}
 	}
 	my printing = FALSE;
-	/*Melder_progress (1.0, NULL);*/
+	my printPagesStartingWith = NULL;
 }
 
 FORM (Manual, cb_printRange, "Print range", 0)
 	SENTENCE ("Left or inside header", "")
 	SENTENCE ("Middle header", "")
-	LABEL ("", "Right or outside header:")
-	TEXTFIELD ("Right or outside header", "Manual")
+	SENTENCE ("Right or outside header", "Manual")
 	SENTENCE ("Left or inside footer", "")
 	SENTENCE ("Middle footer", "")
 	SENTENCE ("Right or outside footer", "")
 	BOOLEAN ("Mirror even/odd headers", TRUE)
-	INTEGER ("From manual page number", "1")
-	INTEGER ("To manual page number", "100")
-	INTEGER ("First paper page number", "1")
+	LABEL ("", "Print all pages whose title starts with:")
+	TEXTFIELD ("Print pages starting with", "Intro")
+	INTEGER ("First page number", "1")
 	BOOLEAN ("Suppress \"Links to this page\"", FALSE)
 	OK
 ManPages manPages = my data;
@@ -231,11 +235,13 @@ char date [50], *newline;
 #endif
 newline = strchr (date, '\n'); if (newline) *newline = '\0';
 SET_STRING ("Left or inside header", date)
-SET_INTEGER ("To manual page number", manPages -> pages -> size)
+SET_STRING ("Right or outside header", my name)
 if (my pageNumber) SET_INTEGER ("First paper page number", my pageNumber + 1)
+if (my path >= 1 && my path <= manPages -> pages -> size) {
+	ManPage page = manPages -> pages -> item [my path];
+	SET_STRING ("Print pages starting with", page -> title);
+}
 DO
-	ManPages manPages = my data;
-	int numberOfPages = manPages -> pages -> size /*, savePage = my path*/;
 	my insideHeader = GET_STRING ("Left or inside header");
 	my middleHeader = GET_STRING ("Middle header");
 	my outsideHeader = GET_STRING ("Right or outside header");
@@ -243,41 +249,11 @@ DO
 	my middleFooter = GET_STRING ("Middle footer");
 	my outsideFooter = GET_STRING ("Right or outside footer");
 	my mirror = GET_INTEGER ("Mirror even/odd headers");
-	my fromPage = GET_INTEGER ("From manual page number");
-	my toPage = GET_INTEGER ("To manual page number");
-	if (my fromPage < 1) my fromPage = 1;
-	if (my toPage > numberOfPages) my toPage = numberOfPages;
-	if (my toPage < my fromPage) return Melder_error ("No pages to print.");
-	my pageNumber = GET_INTEGER ("First paper page number");
+	my printPagesStartingWith = GET_STRING ("Print pages starting with");
+	my pageNumber = GET_INTEGER ("First page number");
 	my suppressLinksHither = GET_INTEGER ("Suppress \"Links to this page\"");
 	Printer_print (print, me);
 END
-
-#if 0
-FORM (Manual, cb_printRangeToFile, "Print range to file", 0)
-	addLayoutFields (cmd);
-	LABEL ("", "Print to PostScript file:")
-	TEXTFIELD ("fileName", "manual.ps")
-	OK
-structMelderDir dir;
-char fileName [300];
-int length;
-setLayoutFields (me, cmd);
-Melder_getDefaultDir (& dir);
-strcpy (fileName, Melder_dirToPath (& dir));
-length = strlen (fileName);
-#ifndef macintosh
-	fileName [length ++] = Melder_DIRECTORY_SEPARATOR;
-#endif
-strcpy (fileName + length, "manual.ps");
-SET_STRING ("fileName", fileName)
-DO
-	char *fileName = GET_STRING ("fileName");   /* BUG: must use UiFileSelector */
-	structMelderFile file;
-	if (! Melder_relativePathToFile (fileName, & file)) return 0;
-	if (! printFromDialog (me, cmd, & file)) return 0;
-END
-#endif
 
 /********** SEARCHING **********/
 
@@ -420,29 +396,31 @@ static void createChildren (I) {
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (Manual) createChildren (me);
-	my homeButton = XtVaCreateManagedWidget ("H", xmPushButtonWidgetClass, my dialog,
-		XmNx, 74, XmNy, y, XmNheight, height, XmNwidth, 29, 0);
+	my homeButton = XtVaCreateManagedWidget ("Home", xmPushButtonWidgetClass, my dialog,
+		XmNx, 104, XmNy, y, XmNheight, height, XmNwidth, 64, 0);
 	XtAddCallback (my homeButton, XmNactivateCallback, cb_home, (XtPointer) me);
 	if (pages -> dynamic) {
-		my recordButton = XtVaCreateManagedWidget ("Rec", xmPushButtonWidgetClass, my dialog,
-			XmNx, 113, XmNy, y, XmNheight, height, XmNwidth, 46, 0);
+		XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
+		XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
+		my recordButton = XtVaCreateManagedWidget ("Record", xmPushButtonWidgetClass, my dialog,
+			XmNx, 4, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, 0);
 		XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
 		my playButton = XtVaCreateManagedWidget ("Play", xmPushButtonWidgetClass, my dialog,
-			XmNx, 165, XmNy, y, XmNheight, height, XmNwidth, 46, 0);
+			XmNx, 85, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, 0);
 		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
-		my publishButton = XtVaCreateManagedWidget ("Pub", xmPushButtonWidgetClass, my dialog,
-			XmNx, 217, XmNy, y, XmNheight, height, XmNwidth, 46, 0);
+		my publishButton = XtVaCreateManagedWidget ("Copy last played to list", xmPushButtonWidgetClass, my dialog,
+			XmNx, 166, XmNy, y+height+8, XmNheight, height, XmNwidth, 175, 0);
 		XtAddCallback (my publishButton, XmNactivateCallback, cb_publish, (XtPointer) me);
 	}
 	button = XtVaCreateManagedWidget ("Search:", xmPushButtonWidgetClass, my dialog,
-		XmNx, 273, XmNy, y, XmNheight, height, XmNwidth, 63, 0);
+		XmNx, 274, XmNy, y, XmNheight, height, XmNwidth, 63, 0);
 	XtAddCallback (button, XmNactivateCallback, cb_search, (XtPointer) me);
 	#ifdef _WIN32
 	/* BUG: activateCallback should work for texts. */
 	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
 	#endif
 	my searchText = XtVaCreateManagedWidget ("searchText", xmTextFieldWidgetClass, my dialog,
-		XmNx, 336 + STRING_SPACING, XmNy, y, XmNwidth, 452 - 336 - 2, 0);
+		XmNx, 274+63 + STRING_SPACING, XmNy, y, XmNwidth, 452 - (274+63) - 2, 0);
 	XtAddCallback (my searchText, XmNactivateCallback, cb_search, (XtPointer) me);
 }
 
@@ -542,7 +520,7 @@ static int goToPage (I, const char *title) {
 	}
 }
 
-static int hasHistory = TRUE, isOrdered = TRUE, canIndex = TRUE;
+static int hasHistory = TRUE, isOrdered = TRUE;
 
 class_methods (Manual, HyperPage)
 	class_method (destroy)
@@ -557,7 +535,6 @@ class_methods (Manual, HyperPage)
 	class_method (goToPage_i)
 	class_method (hasHistory)
 	class_method (isOrdered)
-	class_method (canIndex)
 class_methods_end
 
 int Manual_init (I, Widget parent, const char *title, Any data) {

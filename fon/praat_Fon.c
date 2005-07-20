@@ -1521,6 +1521,26 @@ DIRECT (Ltas_getHighestFrequency)
 	Melder_informationReal (my xmax, "Hertz");
 END
 
+FORM (Ltas_getLocalPeakHeight, "Ltas: Get local peak height", 0)
+	REAL ("left Environment (Hz)", "1700.0")
+	REAL ("right Environment (Hz)", "4200.0")
+	REAL ("left Peak (Hz)", "2400.0")
+	REAL ("right Peak (Hz)", "3200.0")
+	RADIO ("Averaging method", 1)
+		RADIOBUTTON ("energy")
+		RADIOBUTTON ("sones")
+		RADIOBUTTON ("dB")
+	OK
+DO
+	double environmentMin = GET_REAL ("left Environment"), environmentMax = GET_REAL ("right Environment");
+	double peakMin = GET_REAL ("left Peak"), peakMax = GET_REAL ("right Peak");
+	REQUIRE (environmentMin < peakMin, "The beginning of the environment must lie before the peak.")
+	REQUIRE (peakMin < peakMax, "The end of the peak must lie after its beginning.")
+	REQUIRE (environmentMax > peakMax, "The end of the environment must lie after the peak.")
+	Melder_informationReal (Ltas_getLocalPeakHeight (ONLY (classLtas), environmentMin, environmentMax,
+		peakMin, peakMax, GET_INTEGER ("Averaging method")), "dB");
+END
+
 DIRECT (Ltas_getLowestFrequency)
 	Ltas me = ONLY (classLtas);
 	Melder_informationReal (my xmin, "Hertz");
@@ -1572,21 +1592,6 @@ END
 DIRECT (Ltas_getNumberOfBins)
 	Ltas me = ONLY (classLtas);
 	Melder_information ("%ld bins", my nx);
-END
-
-FORM (Ltas_getLocalPeakHeight, "Ltas: Get local peak height", 0)
-	REAL ("left Environment (Hz)", "1700.0")
-	REAL ("right Environment (Hz)", "4200.0")
-	REAL ("left Peak (Hz)", "2400.0")
-	REAL ("right Peak (Hz)", "3200.0")
-	RADIO ("Averaging method", 1)
-		RADIOBUTTON ("energy")
-		RADIOBUTTON ("sones")
-		RADIOBUTTON ("dB")
-	OK
-DO
-	Melder_informationReal (Ltas_getLocalPeakHeight (ONLY (classLtas), GET_REAL ("left Environment"), GET_REAL ("right Environment"),
-		GET_REAL ("left Peak"), GET_REAL ("right Peak"), GET_INTEGER ("Averaging method")), "dB");
 END
 
 FORM (Ltas_getSlope, "Ltas: Get slope", 0)

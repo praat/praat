@@ -31,11 +31,8 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee)
 	long i;
 	TableOfReal him;
 
-	if (my numberOfRows != thy n) return Melder_errorp ("TableOfReal_and_Permutation_permuteRows: the number of rows in "
-		"the table and the number of items in the Permutation must be equal.");
-	if (! Permutation_checkIfNumbersInRange(thee, 1, thy n)) return Melder_errorp
-		("TableOfReal_and_Permutation_permuteRows:At least one number in the Permutation is not a valid row number.");
-	
+	if (my numberOfRows != thy n) return Melder_errorp ("TableOfReal_and_Permutation_permuteRows: "
+		"The number of rows in the table and the number of elements in the Permutation must be equal.");
 	him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 	if (him == NULL) return NULL;
 	

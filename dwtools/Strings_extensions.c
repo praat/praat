@@ -26,6 +26,7 @@
  djmw 20040308 Corrected bug in strings_to_Strings.
  djmw 20040427 Strings_append added.
  djmw 20040629 Strings_append  now accepts an Ordered of Strings.
+ djmw 20050714 New: Strings_to_Permutation, Strings_and_Permutation_permuteStrings
 */
 
 #include "Strings_extensions.h"
@@ -171,6 +172,39 @@ Strings strings_to_Strings_link (char** strings, long n)
 void _Strings_unlink (Strings me)
 {
 	my numberOfStrings = 0;
+}
+
+Permutation Strings_to_Permutation_sort (Strings me)
+{
+	Permutation thee;
+		
+	thee = Permutation_create (my numberOfStrings);
+	if (thee != NULL)
+	{
+		NUMindexx_s (my strings, my numberOfStrings, thy p);
+	}
+	return thee;
+}
+
+Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
+{
+	long i;
+	Strings him = NULL;
+	if (my numberOfStrings != thy n) return Melder_errorp ("Strings_and_Permutation_permuteStrings: "
+		"The number of strings and the number of elements in the Permutation must be equal.");
+
+	him = Strings_createFixedLength (my numberOfStrings);
+	if (him == NULL) return NULL;
+	for (i = 1; i <= thy n; i++)
+	{
+		long index = thy p[i];
+		if (my strings[index] != NULL &&
+			(his strings[i] = Melder_strdup (my strings[index])) == NULL) break;
+	}
+	
+	if (Melder_hasError ()) forget (him);
+	return him;
+	
 }
 
 /* End of file Strings_extensions.c */

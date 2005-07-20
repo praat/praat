@@ -19,6 +19,7 @@
 
 /*
  djmw 20050706
+ djmw 20050715 info added.
 */
 
 #include <time.h>
@@ -34,12 +35,43 @@
 #include "Permutation_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Permutation_def.h"
-#include "oo_READ_ASCII.h"
-#include "Permutation_def.h"
 #include "oo_READ_BINARY.h"
 #include "Permutation_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Permutation_def.h"
+
+int Permutation_validateValues (Permutation me)
+{
+	long i;
+	Permutation thee = Data_copy (me);
+	if (thee == NULL) return 0;
+	
+	NUMsort_l (thy n, thy p);
+	for (i = 1; i <= my n; i++)
+	{
+		if (thy p[i] != i) return 0;
+	}
+	forget (thee);
+	return 1;
+}
+
+static void info (I)
+{
+	iam (Permutation);
+	classData -> info (me);
+	Melder_info ("Number of elements: %d", my n);
+}
+
+static int readAscii (I, FILE *f)
+{
+	iam (Permutation);
+	my n = ascgeti4 (f);
+	if (my n < 1) return Melder_error ("(Permutation::readAscii:) Number of elements must be >= 1.");
+	if (! (my p = NUMlvector_readAscii (1, my n, f, "p"))) return 0;
+	if (! Permutation_validateValues (me)) return Melder_error
+		("(Permutation::readAscii:) All values must be unique and in the [1, %d] range.", my n);
+	return 1;
+}
 
 class_methods (Permutation, Data)
 	class_method_local (Permutation, destroy)
@@ -47,7 +79,8 @@ class_methods (Permutation, Data)
 	class_method_local (Permutation, equal)
 	class_method_local (Permutation, writeAscii)
 	class_method_local (Permutation, writeBinary)
-	class_method_local (Permutation, readAscii)
+	class_method (readAscii)
+	class_method (info)
 	class_method_local (Permutation, readBinary)
 	class_method_local (Permutation, description)
 class_methods_end
@@ -58,7 +91,7 @@ int Permutation_init (Permutation me, long n)
     my n = n;
     my p = NUMlvector (1, n);
     if (my p == NULL) return 0;
-    Permutation_setNaturalOrder (me);
+    Permutation_sort (me);
     return 1;
 }
 
@@ -79,16 +112,6 @@ static int _Permutation_checkRange (Permutation me, long *from, long *to, long *
 	return 1;
 }
 
-int Permutation_checkIfNumbersInRange (Permutation me, long low, long high)
-{
-	long i;
-	for (i = 1; i <= my n; i++)
-	{
-		if (my p[i] < low || my p[i] > high) return 0;
-	}
-	return 1;
-}
-
 Permutation Permutation_extractPart (Permutation me, long from, long to)
 {
 	long i, n;
@@ -105,7 +128,7 @@ Permutation Permutation_extractPart (Permutation me, long from, long to)
 	return thee;
 }
 
-void Permutation_setNaturalOrder (Permutation me)
+void Permutation_sort (Permutation me)
 {
 	long i;
 	
@@ -115,13 +138,23 @@ void Permutation_setNaturalOrder (Permutation me)
     }
 }
 
+int Permutation_swapOnePair (Permutation me, long first, long second)
+{
+	long tmp;
+	if (first < 0 || first > my n || second < 0 || second > my n) return Melder_error
+		("Permutation_swapOnePair: Positions must be in [1,%d] range.", my n);
+	tmp = my p[first]; my p[first] = my p[second]; my p[second] = tmp;
+	return 1;
+}
+
 int Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 {
 	long i, n;
-
+	Permutation thee = NULL;
+	
 	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_permuteRandomly")) return 0;
 	
-	Permutation thee = Permutation_extractPart (me, from, to);
+	thee = Permutation_extractPart (me, from, to);
 	if (thee == NULL) return 0;
 	
 	for (i = 1; i < thy n; i++)
@@ -158,9 +191,9 @@ Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
     return thee;
 }
 
-Permutation Permutation_cycle (Permutation me, long from, long to, long step)
+Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 {
-	char *proc = "Permutation_cycle";
+	char *proc = "Permutation_rotate";
 	long i, n;
 	Permutation thee;
 	
@@ -171,7 +204,6 @@ Permutation Permutation_cycle (Permutation me, long from, long to, long step)
 	if (thee == NULL) return NULL;
 	for (i = from; i <= to; i++)
 	{
-//		long ifrom = i >= from + step ? i - step : i + to - from + 1 - step;
 		long ifrom = i + step;
 		if (ifrom > to) ifrom -= n;
 		if (ifrom < from) ifrom += n;
@@ -180,18 +212,18 @@ Permutation Permutation_cycle (Permutation me, long from, long to, long step)
 	return thee;
 }
 
-int Permutation_permuteOne (Permutation me, long from, long to, long pos, int forbidsame)
+int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame)
 {
 	long tmp, newpos, n;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_permuteOne")) return 0;
+	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_swapOneFromRange")) return 0;
 	
 	newpos = NUMrandomInteger (from, to);
 	if (newpos == pos && forbidsame)
 	{
 		if (n == 1)
 		{
-			return Melder_error ("Permutation_permuteOne: Impossible to satisfy \"forbid same\" constraint "
+			return Melder_error ("Permutation_swapOneFromRange: Impossible to satisfy \"forbid same\" constraint "
 				"within the chosen range.");
 		}
 		while ((newpos = NUMrandomInteger (from, to)) == pos) ;
@@ -232,7 +264,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 	for (first = from, iblock = 1; iblock <= nblocks; iblock++, first += blocksize)
 	{
 		/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */
-		long blocktomove = Permutation_getValue (pblocks, iblock);
+		long blocktomove = Permutation_getValueAtIndex (pblocks, iblock);
 		
 		for (j = 1; j <= blocksize; j++)
 		{
@@ -245,7 +277,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 			if (! Permutation_permuteRandomly_inline (thee, first, last)) goto end;
 			if (noDoublets && iblock > 0 && (thy p[first - 1] % blocksize) == (thy p[first] % blocksize))
 			{
-				if (! Permutation_permuteOne (thee, first+1, last, first, 0)) goto end;
+				if (! Permutation_swapOneFromRange (thee, first+1, last, first, 0)) goto end;
 			}
 		}
 	}
@@ -255,37 +287,68 @@ end:
 	return thee;
 }
 
-Permutation Permutation_stepDownBlocks (Permutation me, long from, long to, long blocksize)
+Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset)
 {
-	char *proc = "Permutation_stepDownBlocks";
-	long i, nblocks, n, nrest, smallercyclus, size;
+	char *proc = "Permutation_interleave";
+	long i, n, *occupied = NULL, nblocks, nrest, posinblock;
+	Permutation thee = NULL;
 	
 	if (! _Permutation_checkRange (me, &from, &to, &n, proc)) return NULL;
 	nblocks = n / blocksize;
 	if ((nrest = n % blocksize) != 0) return Melder_errorp ("%s: There is not an integer number of blocks in the range.\n"
 			"(The last block is only of size %d instead of %d).", proc, nrest, blocksize);
-
-	Permutation thee = Data_copy (me);
+	if (offset >= blocksize) return Melder_errorp ("%s: Offset must be smaller than blocksize.", proc);
+	
+	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
-
+	
 	if (nblocks == 1) return thee;
-	smallercyclus = blocksize % nblocks == 0 || nblocks % blocksize == 0;
-	size = nblocks > blocksize ? nblocks : blocksize;
+	
+	occupied = NUMlvector (1, blocksize);
+	if (occupied == NULL) goto end;
+
+
+	posinblock = 1 - offset;
 	for (i = 1; i <= n; i++)
 	{
-		long rblock = (i - 1) % nblocks + 1;
-		/* i > blocksize  needed for e.g. 2 blocks, blocksize 4 */
-		long extra = smallercyclus ? (i - 1) / size : 0;
-		long indexinblock = (i  + extra - 1) % blocksize + 1;
-		long index = from - 1 + (rblock - 1) * blocksize + indexinblock;
+		long index, rblock = (i - 1) % nblocks + 1;
+		
+		posinblock += offset;
+		if (posinblock > blocksize) posinblock -= blocksize;
+		
+		if (i % nblocks == 1)
+		{
+			long count = blocksize;
+			while (occupied[posinblock] == 1 && count > 0)
+			{
+				posinblock++; count--;
+				if (posinblock > blocksize) posinblock -= blocksize;
+			}
+			occupied[posinblock] = 1;	
+		}
+		index = from - 1 + (rblock - 1) * blocksize + posinblock;
 		thy p[from - 1 + i] = my p[index];
 	}
+end:
+	NUMlvector_free (occupied, 1);
+	if (Melder_hasError ()) forget (thee);
 	return thee;
 }
 
-long Permutation_getValue (Permutation me, long i)
+long Permutation_getValueAtIndex (Permutation me, long i)
 { 
     return i > 0 && i <= my n ? my p[i] : -1;
+}
+
+long Permutation_getIndexAtValue (Permutation me, long value)
+{
+	long i;
+
+	for (i = 1; i <= my n; i++)
+	{
+		if (my p[i] == value) return i;
+	}
+	return -1;
 }
 
 Permutation Permutation_invert (Permutation me)
@@ -303,7 +366,7 @@ Permutation Permutation_invert (Permutation me)
 Permutation Permutation_reverse (Permutation me, long from, long to)
 {
 	long i, n;
-	Permutation thee;
+	Permutation thee = NULL;
 	
 	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_reverse")) return NULL;
 	thee = Data_copy (me);

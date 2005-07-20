@@ -38,18 +38,16 @@ int Permutation_init (Permutation me, long n);
 
 Permutation Permutation_create (long n);
 /*
-	Create the Permutation data structure and a first sequence.
-		create identical permutation (1,2,..n)
-	seed > 0 generates a reproducible sequence
-	seed == 0 generates a non-reproducible sequence
+	Create the Permutation data structure and fill
+		with the identical permutation (1,2,..n)
 */
 
-int Permutation_checkIfNumbersInRange (Permutation me, long low, long high);
+int Permutation_validateValues (Permutation me);
 /* Check if all elements are in range [low,high] */
 
 Permutation Permutation_extractPart (Permutation me, long from, long to);
 
-void Permutation_setNaturalOrder (Permutation me);
+void Permutation_sort (Permutation me);
 /* Set p[1..n]=1,..n */
 
 int Permutation_permuteRandomly_inline (Permutation me, long from, long to);
@@ -57,21 +55,26 @@ int Permutation_permuteRandomly_inline (Permutation me, long from, long to);
 Permutation Permutation_permuteRandomly (Permutation me, long from, long to);
 /* Generate a new sequence by permuting the elements from..to */
 
-Permutation Permutation_cycle (Permutation me, long from, long to, long step);
+Permutation Permutation_rotate (Permutation me, long from, long to, long step);
 
-int Permutation_permuteOne (Permutation me, long from, long to, long pos, int forbidsame);
+int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame);
 /* Swap item at pos with one randomly chosen in interval [from,to]. If pos in [from,to]
 	and forbidsame==true then new position may not be equal to pos. */
 
-Permutation Permutation_stepDownBlocks (Permutation me, long from, long to, long blocksize);
+int Permutation_swapOnePair (Permutation me, long first, long second);
+
+Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
 
 Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,
 	int permuteWithinBlocks, int noDoublets);
 /* Permute blocks of size blocksize randomly. If permuteWithinBlocks=true and noDoublets=true forbid that the last
 	number in a block and the first number in the following block are 'equal modulo blocksize'. */
 
-long Permutation_getValue (Permutation me, long i);
+long Permutation_getValueAtIndex (Permutation me, long i);
 /* return i > 0 && i < my n ? my p[i] : -1 */
+
+long Permutation_getIndexAtValue (Permutation me, long value);
+/* Find i for which p[i] = value */
 
 Permutation Permutation_invert (Permutation me);
 /*  */

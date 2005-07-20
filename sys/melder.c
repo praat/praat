@@ -35,6 +35,7 @@
 	pb 2004/11/28 author notification in Melder_fatal
 	pb 2005/03/04 number and string comparisons, including regular expressions
 	pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
+	pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
  */
 
 #include <math.h>
@@ -424,6 +425,9 @@ const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {
 int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, const char *criterion) {
 	if (value == NULL) {
 		value = "";   /* Regard null strings as empty strings, as is usual in Praat. */
+	}
+	if (criterion == NULL) {
+		criterion = "";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
 	if (which_Melder_STRING <= Melder_STRING_NOT_EQUAL_TO) {
 		int matchPositiveCriterion = strequ (value, criterion);

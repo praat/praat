@@ -45,7 +45,7 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 	/* k >= i : the item at position 'k' */
 	for (i = 1; i <= my size; i++)
 	{
-		long ti = pos[i], which = Permutation_getValue (him, i);
+		long ti = pos[i], which = Permutation_getValueAtIndex (him, i);
 		long where = pos[which]; /* where >= i */
 		Data tmp = thy item[i];
 		if (i == where) continue;

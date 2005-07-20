@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2002/03/07 GPL
- * pb 2005/05/06 HyperPage_script
+ * pb 2005/07/19
  */
 
 #ifndef _Editor_h_
@@ -42,7 +41,7 @@ class_create (HyperLink, Data)
 HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, double y2);
 
 #define HyperPage_members Editor_members \
-	Widget drawingArea, horizontalScrollBar, pageLabel, verticalScrollBar; \
+	Widget drawingArea, verticalScrollBar; \
 	Graphics g, ps; \
 	double x, y, rightMargin, previousBottomSpacing; \
 	long pageNumber; \
@@ -63,7 +62,7 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	int (*goToPage) (I, const char *title); \
 	int (*goToPage_i) (I, long ipage); \
 	void (*defaultHeaders) (EditorCommand cmd); \
-	int hasHistory, isOrdered, canIndex;
+	int hasHistory, isOrdered;
 class_create (HyperPage, Editor)
 
 void HyperPage_clear (HyperPage me);

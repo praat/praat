@@ -22,6 +22,7 @@
  * pb 2003/09/15 better positioning of buttons
  * pb 2004/11/23 made vertical spacing dependent on font size
  * pb 2005/05/07 script
+ * pb 2005/07/19 moved "<1" and "1>" buttons to the top, removed horizontal scroll bar and page number
  */
 
 #include <ctype.h>
@@ -654,7 +655,7 @@ static void createVerticalScrollBar (HyperPage me, Widget parent) {
 		xmScrollBarWidgetClass, parent, XmNorientation, XmVERTICAL,
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM,
-			XmNtopOffset, Machine_getMenuBarHeight () + Machine_getTextHeight () + 13,
+			XmNtopOffset, Machine_getMenuBarHeight () + Machine_getTextHeight () + 12,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
 		XmNwidth, Machine_getScrollBarWidth (),
 		XmNminimum, 0, XmNmaximum, (int) (PAGE_HEIGHT * 5),
@@ -719,52 +720,6 @@ DIRECT (HyperPage, cb_pageDown)
 	}
 END
 
-/********************************************************************************
- *
- * The horizontal scroll bar controls and/or mirrors
- * the position of the current page within the manual.
- * We show one page at a time; hence, the 'sliderSize' is 1.
- * The slider should be able to move between 1 and numberOfPages;
- * so the 'value' has to take on values between 1 and numberOfPages;
- * hence, the 'minimum' is 1, and the 'maximum' is numberOfPages + 1.
- * Clicking an arrow moves by one page back or forth; hence, the 'increment' is 1.
- *
- */
-
-static void createHorizontalScrollBar (HyperPage me, Widget parent) {
-	int numberOfPages = our getNumberOfPages (me);
-	if (! numberOfPages) return;
-	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
-		xmScrollBarWidgetClass, parent, XmNorientation, XmHORIZONTAL,
-		XmNleftAttachment, XmATTACH_FORM,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 9 * Machine_getScrollBarWidth () + 15,
-		XmNbottomAttachment, XmATTACH_FORM, XmNheight, Machine_getScrollBarWidth (),
-		XmNminimum, 1, XmNmaximum, numberOfPages + 1,
-		XmNsliderSize, 1, XmNvalue, 1,
-		XmNincrement, 1, XmNpageIncrement, 10,
-		0);
-}
-
-static void updateHorizontalScrollBar (HyperPage me)
-/* We cannot call this immediately after creation. */
-{
-	long pageNumber;
-	char pageNumberString [10];
-	if (! my horizontalScrollBar) return;
-	pageNumber = our getCurrentPageNumber (me);
-	XmScrollBarSetValues (my horizontalScrollBar, pageNumber, 1, 1, 10, False);
-	sprintf (pageNumberString, "%ld", pageNumber);
-	XtVaSetValues (my pageLabel, motif_argXmString (XmNlabelString, pageNumberString), NULL);
-}
-
-MOTIF_CALLBACK (cb_horizontalScroll)
-	iam (HyperPage);
-	int value, sliderSize, incr, pincr;
-	XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
-	if (value != our getCurrentPageNumber (me) && ! HyperPage_goToPage_i (me, value))
-		Melder_flushError ("Should not occur; notify paul.boersma@uva.nl.");
-MOTIF_CALLBACK_END
-
 /********** **********/
 
 static int do_back (HyperPage me) {
@@ -776,7 +731,6 @@ static int do_back (HyperPage me) {
 	if (our goToPage (me, page)) {
 		my top = top;
 		HyperPage_clear (me);
-		updateHorizontalScrollBar (me);
 		updateVerticalScrollBar (me);
 	} else return 0;
 	Melder_free (page);
@@ -801,7 +755,6 @@ static int do_forth (HyperPage me) {
 	if (our goToPage (me, page)) {
 		my top = top;
 		HyperPage_clear (me);
-		updateHorizontalScrollBar (me);
 		updateVerticalScrollBar (me);
 	} else return 0;
 	Melder_free (page);
@@ -885,38 +838,23 @@ static void createChildren (I) {
 
 	if (our hasHistory) {
 		button = XtVaCreateManagedWidget ("<", xmPushButtonWidgetClass, my dialog,
-			XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 29, 0);
+			XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
 		XtAddCallback (button, XmNactivateCallback, cb_backButton, (XtPointer) me);
 		button = XtVaCreateManagedWidget (">", xmPushButtonWidgetClass, my dialog,
-			XmNx, 39, XmNy, y, XmNheight, height, XmNwidth, 29, 0);
+			XmNx, 54, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
 		XtAddCallback (button, XmNactivateCallback, cb_forthButton, (XtPointer) me);
 	}
 	if (our isOrdered) {
 		button = XtVaCreateManagedWidget ("< 1", xmPushButtonWidgetClass, my dialog,
-			XmNbottomAttachment, XmATTACH_FORM,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 6 * Machine_getScrollBarWidth () + 9,
-			XmNheight, Machine_getScrollBarWidth (), XmNwidth, 3 * Machine_getScrollBarWidth (), 0);
+			XmNx, 174, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
 		XtAddCallback (button, XmNactivateCallback, cb_previousPage, (XtPointer) me);
-	}
-	if (our canIndex) {
-		my pageLabel = XtVaCreateManagedWidget ("0", xmLabelWidgetClass, my dialog,
-			XmNalignment, XmALIGNMENT_CENTER,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 1,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 4 * Machine_getScrollBarWidth () + 3,
-			XmNheight, Machine_getScrollBarWidth () - 2, XmNwidth, 2 * Machine_getScrollBarWidth (),
-			0);
-	}
-	if (our isOrdered) {
 		button = XtVaCreateManagedWidget ("1 >", xmPushButtonWidgetClass, my dialog,
-			XmNbottomAttachment, XmATTACH_FORM,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth () + 2,
-			XmNheight, Machine_getScrollBarWidth (), XmNwidth, 3 * Machine_getScrollBarWidth (), 0);
+			XmNx, 224, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
 		XtAddCallback (button, XmNactivateCallback, cb_nextPage, (XtPointer) me);
 	}
 
-	/***** Create scroll bars. *****/
+	/***** Create scroll bar. *****/
 
-	if (our canIndex) createHorizontalScrollBar (me, my dialog);
 	createVerticalScrollBar (me, my dialog);
 
 	/***** Create drawing area. *****/
@@ -925,7 +863,7 @@ static void createChildren (I) {
 	XtVaSetValues (my drawingArea,
 		XmNleftAttachment, XmATTACH_FORM,
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + height + 7,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + height + 8,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
 		XmNmarginWidth, 20, XmNborderWidth, 1,
 		0);
@@ -956,11 +894,6 @@ int HyperPage_init (I, Widget parent, const char *title, Any data) {
 	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, cb_verticalScroll, (XtPointer) me);
 	XtAddCallback (my verticalScrollBar, XmNdragCallback, cb_verticalScroll, (XtPointer) me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
-	if (my horizontalScrollBar) {
-		XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, cb_horizontalScroll, (XtPointer) me);
-		XtAddCallback (my horizontalScrollBar, XmNdragCallback, cb_horizontalScroll, (XtPointer) me);
-		updateHorizontalScrollBar (me);   /* Because we are at a new page. */
-	}
 	return 1;
 }
 
@@ -975,7 +908,6 @@ static void dataChanged (I) {
 	(void) our goToPage (me, my currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
 	HyperPage_clear (me);
-	updateHorizontalScrollBar (me);
 	updateVerticalScrollBar (me);
 }
 static long getNumberOfPages (Any hyperPage) {
@@ -1001,7 +933,6 @@ static int goToPage_i (Any hyperPage, long i) {
 }
 static int hasHistory = FALSE;
 static int isOrdered = FALSE;
-static int canIndex = FALSE;
 
 class_methods (HyperPage, Editor)
 	class_method (destroy)
@@ -1017,7 +948,6 @@ class_methods (HyperPage, Editor)
 	class_method (goToPage_i)
 	class_method (hasHistory)
 	class_method (isOrdered)
-	class_method (canIndex)
 class_methods_end
 
 int HyperPage_goToPage (I, const char *title) {
@@ -1031,7 +961,6 @@ int HyperPage_goToPage (I, const char *title) {
 	my currentPageTitle = Melder_strdup (title);
 	my top = 0;
 	HyperPage_clear (me);
-	updateHorizontalScrollBar (me);   /* Because we are at a new page. */
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
 	return 1;	
 }
@@ -1041,7 +970,6 @@ int HyperPage_goToPage_i (I, long i) {
 	if (! our goToPage_i (me, i)) { HyperPage_clear (me); return 0; }
 	my top = 0;
 	HyperPage_clear (me);
-	updateHorizontalScrollBar (me);   /* Because we are at a new page. */
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
 	return 1;
 }
