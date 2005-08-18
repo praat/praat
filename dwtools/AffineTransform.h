@@ -22,6 +22,7 @@
 /*
  djmw 2001
  djmw 20020315 GPL header
+ djmw 20050725 djmw Latest modification
  */
 
 #ifndef _Data_h_
@@ -52,5 +53,7 @@ Any AffineTransform_invert (I);
 */
 
 TableOfReal AffineTransform_extractMatrix (I);
+
+TableOfReal AffineTransform_extractTranslationVector (I);
 
 #endif /* _AffineTransform_h_ */

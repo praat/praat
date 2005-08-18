@@ -1,4 +1,6 @@
-/* Permutation_def.h
+#ifndef _Index_h_
+#define _Index_h_
+/* Index.h
  *
  * Copyright (C) 2005 David Weenink
  *
@@ -18,15 +20,38 @@
  */
 
 /*
- djmw 20050706
+ djmw 20050724
 */
 
-#define ooSTRUCT Permutation
-oo_DEFINE_CLASS (Permutation, Data)
-	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (p, my numberOfElements)
-			
-oo_END_CLASS(Permutation)	
-#undef ooSTRUCT
+#ifndef _Data_h_
+	#include "Data.h"
+#endif
 
-/* End of file Permutation_def.h */	
+#ifndef _Distributions_h_
+	#include "Collection.h"
+#endif
+
+#define Index_members Data_members \
+	Ordered classes; \
+	long numberOfElements; \
+	long *classIndex;
+
+#define Index_methods Data_methods
+class_create (Index, Data)
+
+#define StringsIndex_members Index_members
+
+#define StringsIndex_methods Index_methods
+class_create (StringsIndex, Index)
+
+
+int Index_init (I, long numberOfElements);
+
+Index Index_extractPart (I, long from, long to);
+
+StringsIndex StringsIndex_create (long numberOfElements);
+
+int StringsIndex_getClass (StringsIndex me, char *classLabel);
+
+
+#endif /* _Index_h_ */

@@ -32,7 +32,7 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 	Collection thee = NULL;
 	long i, *pos = NULL;
 
-	if (my size != his n) return Melder_errorp ("The number of elements are not equal.");
+	if (my size != his numberOfElements) return Melder_errorp ("The number of elements are not equal.");
 	if (! (pos = NUMlvector (1, my size)) ||
 		! (thee = Data_copy (me)))
 	{

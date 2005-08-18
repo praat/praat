@@ -692,7 +692,7 @@ NORMAL ("When mentioning the %%Option key%, this manual refers to the key immedi
 NORMAL ("On Macintosh, this key may be labelled #Option or #Alt. On SGI, this key is labelled #Ctrl. ")
 MAN_END
 
-MAN_BEGIN ("Log files", "ppgb", 20030116)
+MAN_BEGIN ("Log files", "ppgb", 20050818)
 INTRO ("With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and to a log file.")
@@ -759,6 +759,7 @@ LIST_ITEM ("\'b1\', \'b2\', \'b3\', \'b4\', \'b5\': the bandwidth of the first/s
 	"at the cursor time or at the centre of the selection.")
 LIST_ITEM ("\'intensity\': the intensity at the cursor time, or the mean intensity in the selection.")
 LIST_ITEM ("\'tab\\$ \': the tab stop.")
+LIST_ITEM ("\'editor\\$ \': the title of the editor window (i.e. the name of the visible Sound or TextGrid).")
 ENTRY ("More flexibility in logging")
 NORMAL ("You may sometimes require information in your log file that cannot be generated directly "
 	"by the loggable values above. Suppose, for instance, that you want to log the values for F1 and F2-F1 "

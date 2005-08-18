@@ -21,6 +21,7 @@
  * pb 2004/05/25 font choice strategy
  * pb 2004/09/25 use /tmp as temporary directory
  * pb 2005/05/19 preference to switch screen preview off
+ * pb 2005/07/21 removed bug in previous change for Linux
  */
 
 #include "melder.h"
@@ -331,7 +332,9 @@ static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 		Site_setPrintCommand (UiForm_getString (dia, "printCommand"));
 	#endif
 	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, "Font choice strategy") - 1;
-	thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, "EPS files include preview");
+	#if defined (macintosh)
+		thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, "EPS files include preview");
+	#endif
 	return 1;
 }
 

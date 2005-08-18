@@ -87,6 +87,7 @@ extern machar_Table NUMfpp;
 #include "CCs_to_DTW.h"
 #include "Discriminant_Pattern_Categories.h"
 #include "MelFilter_and_MFCC.h"
+#include "Permutation_and_Index.h"
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
 #include "TableOfReal_and_Matrix.h"
@@ -1328,6 +1329,87 @@ DIRECT (Eigen_and_Covariance_project)
 		ONLY (classCovariance)))
 END
 
+/******************** Index ********************************************/
+
+DIRECT (Index_help)
+	Melder_help ("Index");
+END
+
+DIRECT (Index_getNumberOfClasses)
+	Index thee = ONLY_OBJECT;
+	Melder_information ("%d", thy classes -> size);
+END
+
+FORM (StringsIndex_getClassLabel, "StringsIndex: Get class label", "StringsIndex: Get class label...")
+	NATURAL ("Class index", "1")
+	OK
+DO
+	StringsIndex thee = ONLY_OBJECT;
+	long class = GET_INTEGER ("Class index");
+	long numberOfClasses = thy classes -> size;
+	SimpleString ss;
+	if (class > numberOfClasses) return Melder_error
+		("Element index must be less than or equal %d.", numberOfClasses);
+	ss = thy classes -> item[class];
+	Melder_information ("%s", ss -> string);
+END
+
+FORM (StringsIndex_getLabel, "StringsIndex: Get label", "StringsIndex: Get label...")
+	NATURAL ("Element index", "1")
+	OK
+DO
+	StringsIndex thee = ONLY_OBJECT;
+	long class, index = GET_INTEGER ("Element index");
+	SimpleString ss;
+	if (index > thy numberOfElements) return Melder_error
+		("Element index must be less than or equal %d.", thy numberOfElements);
+	class = thy classIndex[index];
+	ss = thy classes -> item [class];	
+	Melder_information ("%s", ss -> string);
+END
+
+FORM (Index_getIndex, "Index: Get index", "Index: Get index...")
+	NATURAL ("Element index", "1")
+	OK
+DO
+	Index thee = ONLY_OBJECT;
+	long index = GET_INTEGER ("Element index");
+	if (index > thy numberOfElements) return Melder_error
+		("Element index must be less than or equal %d.", thy numberOfElements);
+	Melder_information ("%d", thy classIndex[index]);
+END
+
+FORM (StringsIndex_getClassIndex, "StringsIndex: Get class index", "StringsIndex: Get class index...")
+	WORD ("Class label", "label")
+	OK
+DO
+	StringsIndex thee = ONLY_OBJECT;
+	char *classLabel = GET_STRING ("Class label");
+	long index = StringsIndex_getClass (thee, classLabel);
+	Melder_information ("%d", index);
+END
+
+FORM (Index_extractPart, "Index: Extract part", "Index: Extract part...")
+	INTEGER ("left Range", "0")
+	INTEGER ("right Range", "0")
+	OK
+DO
+	Index thee = ONLY_OBJECT;
+	if (! praat_new (Index_extractPart (thee, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
+		"%s_part", Thing_getName (thee))) return 0;
+END
+
+FORM (Index_to_Permutation, "Index: To Permutation", "Index: To Permutation...")
+	BOOLEAN ("Permute within classes", 1)
+	OK
+DO
+	EVERY_TO (Index_to_Permutation_permuteRandomly (OBJECT, GET_INTEGER ("Permute within classes")))
+END
+
+DIRECT (StringsIndex_to_Strings)
+	EVERY_TO (StringsIndex_to_Strings (OBJECT))
+END
+
 /******************** Excitation ********************************************/
 
 DIRECT (Excitation_to_Excitations)
@@ -2343,7 +2425,7 @@ END
 
 DIRECT (Permutation_getNumberOfElements)
 	Permutation p = ONLY_OBJECT;
-	Melder_info ("%d", p -> n);
+	Melder_info ("%d", p -> numberOfElements);
 END
 
 FORM (Permutation_getValueAtIndex, "Permutation: Get value", "Permutation: Get value...")
@@ -2363,15 +2445,17 @@ DO
 END
 
 DIRECT (Permutation_sort)
-	EVERY (Permutation_sort (OBJECT))
+	Permutation_sort (ONLY_OBJECT);
+	praat_dataChanged (ONLY_OBJECT);
 END
 
-FORM (Permutation_swapOnePair, "Permutation: Swap one pair", "Permutation: Swap one pair...")
-	NATURAL ("First", "1")
-	NATURAL ("Second", "1")
+FORM (Permutation_swapBlocks, "Permutation: Swap blocks", "Permutation: Swap blocks...")
+	NATURAL ("From", "1")
+	NATURAL ("To", "2")
+	NATURAL ("Block size", "1")
 	OK
 DO
-	if (! Permutation_swapOnePair (ONLY_OBJECT, GET_INTEGER ("First"), GET_INTEGER ("Second"))) return 0;
+	if (! Permutation_swapBlocks (ONLY_OBJECT, GET_INTEGER ("From"), GET_INTEGER ("To"), GET_INTEGER ("Block size"))) return 0;
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -2462,9 +2546,9 @@ DIRECT (Permutations_multiply)
 		Permutation me = OBJECT;
 		if (n == 0)
 		{
-			n = my n;
+			n = my numberOfElements;
 		}
-		else if (my n != n)
+		else if (my numberOfElements != n)
 		{
 			return Melder_error ("To apply a number of permutations they all must have the same number of elements.");	
 		}
@@ -3412,8 +3496,11 @@ DO
 	EVERY_TO (Strings_extractPart (OBJECT, GET_INTEGER ("From index"), GET_INTEGER ("To index")))
 END
 
-DIRECT (Strings_to_Permutation_sort)
-	EVERY_TO (Strings_to_Permutation_sort (OBJECT))
+FORM (Strings_to_Permutation, "Strings: To Permutation", "Strings: To Permutation...")
+	BOOLEAN ("Sort", 1)
+	OK
+DO
+	EVERY_TO (Strings_to_Permutation (OBJECT, GET_INTEGER ("Sort")))
 END
 
 DIRECT (Strings_and_Permutation_permuteStrings)
@@ -3819,6 +3906,13 @@ static void praat_Eigen_draw_init (void *klas)
 	praat_addAction1 (klas, 0, "Draw eigenvalues (scree)...", 0, 
 		praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
 	praat_addAction1 (klas, 0, "Draw eigenvector...", 0, 1, DO_Eigen_drawEigenvector);
+}
+
+static void praat_Index_init (void *klas)
+{
+    praat_addAction1 (klas, 1, "Get number of classes", 0, 0, DO_Index_getNumberOfClasses);
+    praat_addAction1 (klas, 1, "To Permutation...", 0, 0, DO_Index_to_Permutation);
+    praat_addAction1 (klas, 1, "Extract part...", 0, 0, DO_Index_extractPart);
 }
 
 static void praat_FilterBank_query_init (void *klas);
@@ -4306,11 +4400,19 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classDTW, 0, "To Polygon (slopes)...", 0, 0, DO_DTW_to_Polygon_slopes);
     praat_addAction1 (classDTW, 0, "To Matrix (distances)", 0, 0, DO_DTW_distancesToMatrix);
 	praat_addAction1 (classDTW, 0, "Swap axes", 0, 0, DO_DTW_swapAxes);
-    
+
+	praat_Index_init (classStringsIndex);
+    praat_addAction1 (classIndex, 0, "Index help", 0, 0, DO_Index_help);
+	praat_addAction1 (classStringsIndex, 1, "Get class label...", 0, 0, DO_StringsIndex_getClassLabel);
+    praat_addAction1 (classStringsIndex, 1, "Get class index...", 0, 0, DO_StringsIndex_getClassIndex);
+    praat_addAction1 (classStringsIndex, 1, "Get label...", 0, 0, DO_StringsIndex_getLabel);
+    praat_addAction1 (classIndex, 1, "Get index...", 0, 0, DO_Index_getIndex);
+	praat_addAction1 (classStringsIndex, 1, "To Strings", 0, 0, DO_StringsIndex_to_Strings);
+	
     praat_addAction1 (classExcitation, 0, "Synthesize", "To Formant...", 0, 0);
     praat_addAction1 (classExcitation, 0, "To Excitations", "Synthesize", 0,
 		DO_Excitation_to_Excitations);
-   
+
     praat_addAction1 (classExcitations, 0, "Modify", 0, 0, 0);
     praat_addAction1 (classExcitations, 0, "Formula...", 0, 0,
 		DO_Excitations_formula);
@@ -4465,7 +4567,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classPermutation, 1, "Get index...", 0, 1, DO_Permutation_getIndexAtValue);
 	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classPermutation, 1, "Sort", 0, 1, DO_Permutation_sort);
-	praat_addAction1 (classPermutation, 1, "Swap one pair...", 0, 1, DO_Permutation_swapOnePair);
+	praat_addAction1 (classPermutation, 1, "Swap blocks...", 0, 1, DO_Permutation_swapBlocks);
 	praat_addAction1 (classPermutation, 1, "Swap one from range...", 0, 1, DO_Permutation_swapOneFromRange);
 	praat_addAction1 (classPermutation, 1, "Permute randomly...", 0, 0, DO_Permutation_permuteRandomly);
 	praat_addAction1 (classPermutation, 1, "Permute randomly (blocks)...", 0, 0, DO_Permutation_permuteBlocksRandomly);
@@ -4614,8 +4716,8 @@ void praat_uvafon_David_init (void)
 		 0, DO_Strings_change);
 	praat_addAction1 (classStrings, 0, "Extract part...", "Change...",
 		 0, DO_Strings_extractPart);
-	praat_addAction1 (classStrings, 0, "To Permutation (sort)", "To Distributions",
-		 0, DO_Strings_to_Permutation_sort);
+	praat_addAction1 (classStrings, 0, "To Permutation...", "To Distributions",
+		 0, DO_Strings_to_Permutation);
 
 	praat_addAction1 (classSVD, 0, "To TableOfReal...",
 		0, 0, DO_SVD_to_TableOfReal);

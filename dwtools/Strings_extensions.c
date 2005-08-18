@@ -26,7 +26,8 @@
  djmw 20040308 Corrected bug in strings_to_Strings.
  djmw 20040427 Strings_append added.
  djmw 20040629 Strings_append  now accepts an Ordered of Strings.
- djmw 20050714 New: Strings_to_Permutation, Strings_and_Permutation_permuteStrings
+ djmw 20050714 New: Strings_to_Permutation, Strings_and_Permutation_permuteStrings.
+ djmw 20050721 Extra argument in Strings_to_Permutation.
 */
 
 #include "Strings_extensions.h"
@@ -174,12 +175,12 @@ void _Strings_unlink (Strings me)
 	my numberOfStrings = 0;
 }
 
-Permutation Strings_to_Permutation_sort (Strings me)
+Permutation Strings_to_Permutation (Strings me, int sort)
 {
 	Permutation thee;
 		
 	thee = Permutation_create (my numberOfStrings);
-	if (thee != NULL)
+	if (thee != NULL && sort != 0)
 	{
 		NUMindexx_s (my strings, my numberOfStrings, thy p);
 	}
@@ -190,12 +191,12 @@ Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
 {
 	long i;
 	Strings him = NULL;
-	if (my numberOfStrings != thy n) return Melder_errorp ("Strings_and_Permutation_permuteStrings: "
+	if (my numberOfStrings != thy numberOfElements) return Melder_errorp ("Strings_and_Permutation_permuteStrings: "
 		"The number of strings and the number of elements in the Permutation must be equal.");
 
 	him = Strings_createFixedLength (my numberOfStrings);
 	if (him == NULL) return NULL;
-	for (i = 1; i <= thy n; i++)
+	for (i = 1; i <= thy numberOfElements; i++)
 	{
 		long index = thy p[i];
 		if (my strings[index] != NULL &&
@@ -207,4 +208,56 @@ Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
 	
 }
 
+StringsIndex Strings_to_StringsIndex (Strings me)
+{
+	Permutation sorted = NULL;
+	StringsIndex thee = NULL;
+	SimpleString him;
+	char *strings = NULL;
+	long i, numberOfClasses = 0;
+		
+	thee = StringsIndex_create (my numberOfStrings);
+	if (thee == NULL) return NULL;
+	
+	sorted = Strings_to_Permutation (me, 1);
+	if (sorted == NULL) goto end;
+
+	for (i = 1; i <= sorted -> numberOfElements; i++)
+	{
+		long index = sorted -> p[i];
+		char *stringsi = my strings[index];
+		if (i == 1 || NUMstrcmp (strings, stringsi) != 0)
+		{
+			numberOfClasses++;
+			if ((him = SimpleString_create (stringsi)) == NULL) goto end;
+			if (! Collection_addItem (thy classes, him))
+			{
+				forget (him); goto end;
+			}
+			strings = stringsi;
+		}
+		thy classIndex[index] = numberOfClasses;
+	}
+	
+end:
+	forget (sorted);
+	if (Melder_hasError ()) forget (thee);
+	return thee;
+}
+
+Strings StringsIndex_to_Strings (StringsIndex me)
+{
+	Strings thee = Strings_createFixedLength (my numberOfElements);
+	long i;
+
+	if (thee == NULL) return NULL;
+	for (i = 1; i <= thy numberOfStrings; i++)
+	{
+		SimpleString s = my classes -> item[my classIndex[i]];
+		thy strings[i] = Melder_strdup (s -> string);
+		if (thy strings[i] == NULL) break;
+	}
+	if (Melder_hasError ()) forget (thee);
+	return thee;
+}
 /* End of file Strings_extensions.c */

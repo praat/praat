@@ -3,8 +3,9 @@
 # System: CYGWIN
 # Benard Wiese, March 26, 2001
 # Paul Boersma, May 19, 2005
+# August 18, 2005: added -D__CYGWIN__
 
-CC = gcc -g -mwindows -mno-cygwin
+CC = gcc -g -mwindows -mno-cygwin -D__CYGWIN__
 
 LIBS = -lwinmm -lwsock32 -lcomctl32
 

@@ -28,24 +28,28 @@
 #endif
 
 #define Permutation_members Data_members \
-	long n; \
+	long numberOfElements; \
 	long *p;
 
 #define Permutation_methods Data_methods
 class_create (Permutation, Data)
 
-int Permutation_init (Permutation me, long n);
+/*
+	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.
+*/
 
-Permutation Permutation_create (long n);
+
+int Permutation_init (Permutation me, long numberOfElements);
+
+Permutation Permutation_create (long numberOfElements);
 /*
 	Create the Permutation data structure and fill
 		with the identical permutation (1,2,..n)
 */
 
-int Permutation_validateValues (Permutation me);
-/* Check if all elements are in range [low,high] */
+int Permutation_checkInvariant (Permutation me);
+/* Check that the elements, if sorted ascendingly, are exactly equal to the identity (1,2,...). */
 
-Permutation Permutation_extractPart (Permutation me, long from, long to);
 
 void Permutation_sort (Permutation me);
 /* Set p[1..n]=1,..n */
@@ -61,7 +65,8 @@ int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, 
 /* Swap item at pos with one randomly chosen in interval [from,to]. If pos in [from,to]
 	and forbidsame==true then new position may not be equal to pos. */
 
-int Permutation_swapOnePair (Permutation me, long first, long second);
+int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize);
+/* Swap two blocks */
 
 Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
 

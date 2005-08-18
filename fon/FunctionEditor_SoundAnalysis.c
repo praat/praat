@@ -53,6 +53,7 @@
  * pb 2005/03/02 all pref string buffers are 260 bytes long
  * pb 2005/03/07 'intensity' logging sensitive to averaging method
  * pb 2005/06/16 units
+ * pb 2005/08/18 editor name in log files
  */
 
 #include <time.h>
@@ -1498,6 +1499,7 @@ static int cb_log (FunctionEditor me, int which) {
 		char *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
 		double value = NUMundefined;
+		char *stringValue = NULL;
 		while (*q != '\0' && *q != '\'') q ++;
 		if (*q == '\0') break;   /* No matching right quote: done with this line. */
 		if (q - p == 1) continue;   /* Ignore empty variable names. */
@@ -1521,6 +1523,10 @@ static int cb_log (FunctionEditor me, int which) {
 			value = tmax - tmin;
 		} else if (strequ (varName, "freq")) {
 			value = my spectrogram.cursor;
+		} else if (strequ (varName, "tab$")) {
+			stringValue = "\t";
+		} else if (strequ (varName, "editor$")) {
+			stringValue = my name;
 		} else if (strequ (varName, "f0")) {
 			if (! my pitch.show)
 				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
@@ -1577,13 +1583,13 @@ static int cb_log (FunctionEditor me, int which) {
 			strcpy (Melder_buffer1 + headlen + arglen, p + varlen + 2);
 			strcpy (format, Melder_buffer1);
 			p += arglen - 1;
-		} else if (strequ (varName, "tab$")) {
-			int headlen = p - format;
+		} else if (stringValue != NULL) {
+			int varlen = (q - p) - 1, headlen = p - format, arglen = strlen (stringValue);
 			strncpy (Melder_buffer1, format, headlen);
-			strcpy (Melder_buffer1 + headlen, "\t");
-			strcpy (Melder_buffer1 + headlen + 1, p + 4 + 2);
+			strcpy (Melder_buffer1 + headlen, stringValue);
+			strcpy (Melder_buffer1 + headlen + arglen, p + varlen + 2);
 			strcpy (format, Melder_buffer1);
-			/* p += 1 - 1; */
+			p += arglen - 1;
 		} else {
 			p = q - 1;   /* Go to before next quote. */
 		}

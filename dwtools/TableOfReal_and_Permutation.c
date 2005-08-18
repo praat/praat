@@ -31,12 +31,12 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee)
 	long i;
 	TableOfReal him;
 
-	if (my numberOfRows != thy n) return Melder_errorp ("TableOfReal_and_Permutation_permuteRows: "
+	if (my numberOfRows != thy numberOfElements) return Melder_errorp ("TableOfReal_and_Permutation_permuteRows: "
 		"The number of rows in the table and the number of elements in the Permutation must be equal.");
 	him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 	if (him == NULL) return NULL;
 	
-	for (i = 1; i <= thy n; i++)
+	for (i = 1; i <= thy numberOfElements; i++)
 	{
 		if (! TableOfReal_copyOneRowWithLabel (me, him, thy p[i], i)) break;
 	}

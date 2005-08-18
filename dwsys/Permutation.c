@@ -19,7 +19,7 @@
 
 /*
  djmw 20050706
- djmw 20050715 info added.
+ djmw 20050722 Latest modification.
 */
 
 #include <time.h>
@@ -40,14 +40,24 @@
 #include "oo_DESCRIPTION.h"
 #include "Permutation_def.h"
 
-int Permutation_validateValues (Permutation me)
+static int _Permutation_checkRange (Permutation me, long *from, long *to, long *n, char *proc)
+{
+	if ((*from < 0 || *from > my numberOfElements) ||
+		(*to < 0 || *to > my numberOfElements)) return Melder_error ("%s: Range must be in [1, %d]", proc, my numberOfElements);
+	if (*from == 0) *from = 1;
+	if (*to == 0) *to = my numberOfElements;
+	*n = *to - *from + 1;
+	return 1;
+}
+
+int Permutation_checkInvariant (Permutation me)
 {
 	long i;
 	Permutation thee = Data_copy (me);
 	if (thee == NULL) return 0;
 	
-	NUMsort_l (thy n, thy p);
-	for (i = 1; i <= my n; i++)
+	NUMsort_l (thy numberOfElements, thy p);
+	for (i = 1; i <= my numberOfElements; i++)
 	{
 		if (thy p[i] != i) return 0;
 	}
@@ -59,17 +69,17 @@ static void info (I)
 {
 	iam (Permutation);
 	classData -> info (me);
-	Melder_info ("Number of elements: %d", my n);
+	Melder_info ("Number of elements: %d", my numberOfElements);
 }
 
 static int readAscii (I, FILE *f)
 {
 	iam (Permutation);
-	my n = ascgeti4 (f);
-	if (my n < 1) return Melder_error ("(Permutation::readAscii:) Number of elements must be >= 1.");
-	if (! (my p = NUMlvector_readAscii (1, my n, f, "p"))) return 0;
-	if (! Permutation_validateValues (me)) return Melder_error
-		("(Permutation::readAscii:) All values must be unique and in the [1, %d] range.", my n);
+	my numberOfElements = ascgeti4 (f);
+	if (my numberOfElements < 1) return Melder_error ("(Permutation::readAscii:) Number of elements must be >= 1.");
+	if (! (my p = NUMlvector_readAscii (1, my numberOfElements, f, "p"))) return 0;
+	if (! Permutation_checkInvariant (me)) return Melder_error
+		("(Permutation::readAscii:) All values must be unique and in the [1, %d] range.", my numberOfElements);
 	return 1;
 }
 
@@ -85,109 +95,76 @@ class_methods (Permutation, Data)
 	class_method_local (Permutation, description)
 class_methods_end
 
-
-int Permutation_init (Permutation me, long n)
+int Permutation_init (Permutation me, long numberOfElements)
 {
-    my n = n;
-    my p = NUMlvector (1, n);
+    my numberOfElements = numberOfElements;
+    my p = NUMlvector (1, numberOfElements);
     if (my p == NULL) return 0;
     Permutation_sort (me);
     return 1;
 }
 
-Permutation Permutation_create (long n)
+Permutation Permutation_create (long numberOfElements)
 {
     Permutation me = new (Permutation);
-    if (me == NULL || ! Permutation_init (me, n)) forget (me);
+    if (me == NULL || ! Permutation_init (me, numberOfElements)) forget (me);
     return me;
-}
-
-static int _Permutation_checkRange (Permutation me, long *from, long *to, long *n, char *proc)
-{
-	if ((*from < 0 || *from > my n) ||
-		(*to < 0 || *to > my n)) return Melder_error ("%s: Range must be in [1, %d]", proc, my n);
-	if (*from == 0) *from = 1;
-	if (*to == 0) *to = my n;
-	*n = *to - *from + 1;
-	return 1;
-}
-
-Permutation Permutation_extractPart (Permutation me, long from, long to)
-{
-	long i, n;
-	Permutation thee;
-	
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_extractPart")) return NULL;
-	
-	thee = Permutation_create (n);
-	if (thee == NULL) return NULL;
-	for (i = from; i <= to; i++)
-	{
-		thy p[i - from + 1] = my p[i];
-	}
-	return thee;
 }
 
 void Permutation_sort (Permutation me)
 {
 	long i;
 	
-    for (i = 1; i <= my n; i++)
+    for (i = 1; i <= my numberOfElements; i++)
     {
     	my p[i] = i;
     }
 }
 
-int Permutation_swapOnePair (Permutation me, long first, long second)
+int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 {
-	long tmp;
-	if (first < 0 || first > my n || second < 0 || second > my n) return Melder_error
-		("Permutation_swapOnePair: Positions must be in [1,%d] range.", my n);
-	tmp = my p[first]; my p[first] = my p[second]; my p[second] = tmp;
+	char *proc = "Permutation_swap";
+	long i;
+
+	if (blocksize < 1 || blocksize > my numberOfElements) return Melder_error
+		("%s: Blocksize must be in [1, %d] range.", proc, my numberOfElements / 2);
+	if (from < 0 || from + blocksize - 1 > my numberOfElements || to < 0 || to + blocksize - 1 > my numberOfElements)
+		return Melder_error	("%s: Start and finish positions of the two blocks must be in [1,%d] range.",
+		proc, my numberOfElements);
+	if (from == to) return 1;
+	
+	for (i = 1; i <= blocksize; i++)
+	{
+		long tmp = my p[from + i - 1];
+		my p[from + i - 1] = my p[to + i - 1];
+		my p[to + i - 1] = tmp;
+	}
 	return 1;
 }
 
 int Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 {
 	long i, n;
-	Permutation thee = NULL;
 	
 	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_permuteRandomly")) return 0;
 	
-	thee = Permutation_extractPart (me, from, to);
-	if (thee == NULL) return 0;
-	
-	for (i = 1; i < thy n; i++)
+	if (n == 1) return 1;
+	for (i = from; i < to; i++)
 	{
-		long newpos = NUMrandomInteger (1, thy n);
-		long pi = thy p[i];
-		thy p[i] = thy p[newpos]; thy p[newpos] = pi;
+		long newpos = NUMrandomInteger (from, to);
+		long pi = my p[i];
+		my p[i] = my p[newpos];
+		my p[newpos] = pi;
 	}
-	
-	for (i = from; i <= to; i++)
-	{
-		my p[i] = thy p[i - from + 1];
-	}
-	forget (thee);
 	return 1;
 }
 
 Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
 {
-    long i, n;
-    Permutation thee;
+    Permutation thee = Data_copy (me);
 
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_permuteRandomly")) return NULL;
-	
-	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
-    if (n == 1) return thee;
-	for (i = from; i < to; i++)
-	{
-		long newpos = NUMrandomInteger (from, to);
-		long pi = thy p[i];
-		thy p[i] = thy p[newpos]; thy p[newpos] = pi;
-	}
+	if (! Permutation_permuteRandomly_inline (thee, from, to)) forget (thee);
     return thee;
 }
 
@@ -337,14 +314,14 @@ end:
 
 long Permutation_getValueAtIndex (Permutation me, long i)
 { 
-    return i > 0 && i <= my n ? my p[i] : -1;
+    return i > 0 && i <= my numberOfElements ? my p[i] : -1;
 }
 
 long Permutation_getIndexAtValue (Permutation me, long value)
 {
 	long i;
 
-	for (i = 1; i <= my n; i++)
+	for (i = 1; i <= my numberOfElements; i++)
 	{
 		if (my p[i] == value) return i;
 	}
@@ -356,7 +333,7 @@ Permutation Permutation_invert (Permutation me)
 	long i;
 	Permutation thee = Data_copy (me);
 	if (thee == NULL) return NULL;
-	for (i = 1; i <= my n; i++)
+	for (i = 1; i <= my numberOfElements; i++)
 	{
 		thy p[my p[i]] = i;
 	}

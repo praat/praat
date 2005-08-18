@@ -1,4 +1,4 @@
-/* Permutation_def.h
+/* Index_def.h
  *
  * Copyright (C) 2005 David Weenink
  *
@@ -18,15 +18,20 @@
  */
 
 /*
- djmw 20050706
+ djmw 20050724
 */
 
-#define ooSTRUCT Permutation
-oo_DEFINE_CLASS (Permutation, Data)
+#define ooSTRUCT Index
+oo_DEFINE_CLASS (Index, Data)
+	oo_OBJECT (Ordered, classes)
 	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (p, my numberOfElements)
-			
-oo_END_CLASS(Permutation)	
+	oo_LONG_VECTOR (classIndex, my numberOfElements)
+oo_END_CLASS(Index)	
 #undef ooSTRUCT
 
-/* End of file Permutation_def.h */	
+#define ooSTRUCT StringsIndex
+oo_DEFINE_CLASS (StringsIndex, Index)
+oo_END_CLASS(StringsIndex)
+#undef ooSTRUCT
+
+/* End of file Index_def.h */	

@@ -1,10 +1,10 @@
 # makefile for library dwsys.
-# David Weenink 20050713
+# David Weenink 20050725
 
 
 include ../makefile.defs
 
-CFLAGS = -I ../sys -I ../fon -I ../dwtools -I ../GSL
+CFLAGS = -I ../sys -I ../fon -I ../dwtools -I ../GSL -I ../dwsys
 
 all: libdwsys.a
 
@@ -12,9 +12,10 @@ clean:
 	rm *.o
 
 OBJECTS = Collection_extensions.o Command.o \
+	Index.o \
 	NUM2.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_f.o NUMfft_d.o NUMsort2.o \
-	Permutation.o \
+	Permutation.o Permutation_and_Index.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o
 

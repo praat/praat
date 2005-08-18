@@ -1,6 +1,6 @@
 /* AffineTransform.c
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 2001
  djmw 20020315 GPL header
  djmw 20041027 Added AffineTransform_extractMatrix
+ djmw 20050726 Added AffineTransform_extractTranslationVector
  */
 
 #include "AffineTransform.h"
@@ -151,6 +152,18 @@ TableOfReal AffineTransform_extractMatrix (I)
 		TableOfReal_setRowLabel (thee, i, label);
 		TableOfReal_setColumnLabel (thee, i, label);
 	}
+	return thee;
+}
+
+TableOfReal AffineTransform_extractTranslationVector (I)
+{
+	iam (AffineTransform);
+	TableOfReal thee = NULL;
+	long i;
+
+	thee = TableOfReal_create (1, my n);
+	if (thee == NULL) return NULL;
+	for (i = 1; i <= my n; i++) thy data[1][i] = my t[i];
 	return thee;
 }
 

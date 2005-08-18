@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2004/01/13 the same high-resolution line width formula for all platforms
  * pb 2004/01/29 removed path size restriction for polygons
  * pb 2004/02/11 ellipses and rectangles handle reversed axes better
+ * pb 2005/07/31 better arrowheads
  */
 
 #include "GraphicsP.h"
@@ -1153,6 +1154,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 			MoveTo (xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
 			LineTo (xDC, yDC);
 			LineTo (xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
+			LineTo (xDC + cos ((angle - 180) * NUMpi / 180) * 0.7 * size, yDC - sin ((angle - 180) * NUMpi / 180) * 0.7 * size);
 			ClosePoly ();
 			FillPoly (macpolygon, GetQDGlobalsBlack (& pattern));
 			KillPoly (macpolygon);
@@ -1170,14 +1172,20 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 
 void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
+	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC));
+	#if xwin
+		double size = my screen ? 10.0 * my resolution / 75.0 :
+	#else
+		double size = my screen ? 10.0 * my resolution / 72.0 :
+	#endif
+		my resolution / 10;
 	short xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
-	xyDC [2] = wdx (x2WC);
-	xyDC [3] = wdy (y2WC);
+	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
+	xyDC [3] = wdy (y2WC) + (my screen ? -0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
 	polyline (me, 2, xyDC);
-	arrowHead (me, xyDC [2], xyDC [3], (180.0 / NUMpi) *
-		atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC)));
+	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);
 	if (my recording) { op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 

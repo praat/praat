@@ -197,6 +197,10 @@ DIRECT (AffineTransform_extractMatrix)
 	EVERY_TO (AffineTransform_extractMatrix (OBJECT))
 END
 
+DIRECT (AffineTransform_extractTranslationVector)
+	EVERY_TO (AffineTransform_extractTranslationVector (OBJECT))
+END
+
 /***************** Configuration ***************************************/
 
 DIRECT (Configuration_help)
@@ -1772,6 +1776,8 @@ void praat_uvafon_MDS_init (void)
 		1, DO_Procrustes_getScale);
 	praat_addAction1 (classProcrustes, 0, "Extract transformation matrix", 0, 0,
 		DO_AffineTransform_extractMatrix);
+	praat_addAction1 (classProcrustes, 0, "Extract translation vector", 0, 0,
+		DO_AffineTransform_extractTranslationVector);
 
 	praat_TableOfReal_init2 (classSalience);
 	praat_TableOfReal_extras (classSalience);

@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20020813 GPL header
  djmw 20040629 Strings_append now accepts an Ordered of Strings.
  djmw 20050714 Permutations
+ djmw 20050724 Index
 */
 #ifndef _Collection_h_
 	#include "Collection.h"
@@ -35,6 +36,10 @@
 
 #ifndef _Permutation_h_
 	#include "Permutation.h"
+#endif
+
+#ifndef _Index_h_
+	#include "Index.h"
 #endif
 
 Strings Strings_createFixedLength (long numberOfStrings);
@@ -56,7 +61,12 @@ Strings strings_to_Strings_link (char** strings, long n);
 void _Strings_unlink (Strings me);
 /* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */
 
-Permutation Strings_to_Permutation_sort (Strings me);
+StringsIndex Strings_to_StringsIndex (Strings me);
+
+Strings StringsIndex_to_Strings (StringsIndex me);
+
+Permutation Strings_to_Permutation (Strings me, int sort);
+
 Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
 
 #endif /* _Strings_extensions_h_ */

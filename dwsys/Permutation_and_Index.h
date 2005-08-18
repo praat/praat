@@ -1,4 +1,7 @@
-/* Permutation_def.h
+#ifndef _Permutation_and_Index_h_
+#define _Permutation_and_Index_h_
+
+/* Permutation_and_Index.h
  *
  * Copyright (C) 2005 David Weenink
  *
@@ -9,8 +12,8 @@
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
@@ -18,15 +21,17 @@
  */
 
 /*
- djmw 20050706
-*/
+ * djmw 20050725
+ */
+ 
+#ifndef _Permutation_h_
+	#include "Permutation.h"
+#endif
 
-#define ooSTRUCT Permutation
-oo_DEFINE_CLASS (Permutation, Data)
-	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (p, my numberOfElements)
-			
-oo_END_CLASS(Permutation)	
-#undef ooSTRUCT
+#ifndef _Index_h_
+	#include "Index.h"
+#endif
 
-/* End of file Permutation_def.h */	
+Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClass);
+
+#endif /* _Permutation_and_Index_h_ */
