@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/07/07
+ * pb 2005/08/31
  */
 
 #include "praat.h"
@@ -3174,7 +3174,7 @@ DO
 	}
 END
 
-FORM (PitchTier_stylize, "PitchTier: Stylize", 0)
+FORM (PitchTier_stylize, "PitchTier: Stylize", "PitchTier: Stylize...")
 	REAL ("Frequency resolution", "4.0")
 	RADIO ("Unit", 2)
 	RADIOBUTTON ("Hz")
@@ -5546,7 +5546,7 @@ DIRECT (WordList_upto_SpellingChecker)
 	EVERY_TO (WordList_upto_SpellingChecker (OBJECT))
 END
 
-/***** Control menu *****/
+/***** Praat menu *****/
 
 FORM (Praat_test, "Praat test", 0)
 	ENUM ("Test", PraatTests, 1)
@@ -5721,7 +5721,7 @@ void praat_uvafon_init (void) {
 
 	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
 
-	praat_addMenuCommand ("Objects", "Control", "Praat test...", 0, praat_HIDDEN, DO_Praat_test);
+	praat_addMenuCommand ("Objects", "Praat", "Praat test...", 0, praat_HIDDEN, DO_Praat_test);
 
 	praat_addMenuCommand ("Objects", "New", "-- new numerics --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "New", "Matrix", 0, 0, 0);

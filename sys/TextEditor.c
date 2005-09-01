@@ -22,6 +22,7 @@
  * pb 2004/01/07 use GuiWindow_setDirty
  * pb 2004/01/28 MacOS X: use trick for ensuring dirtiness callback
  * pb 2005/06/28 font size
+ * pb 2005/09/01 Undo and Redo buttons
  */
 
 #include "TextEditor.h"
@@ -259,6 +260,14 @@ static void goAway (I) {
 	}
 }
 
+DIRECT (TextEditor, cb_undo)
+	GuiText_undo (my textWidget);
+END
+
+DIRECT (TextEditor, cb_redo)
+	GuiText_redo (my textWidget);
+END
+
 DIRECT (TextEditor, cb_cut)
 	#if defined (UNIX)
 		XmTextCut (my textWidget, 0/*((XmAnyCallbackStruct *) call) -> event -> xbutton. time*/);
@@ -412,6 +421,8 @@ static void createMenus (I) {
 		Editor_addCommand (me, "File", "Save as...", 'S', cb_saveAs);
 	}
 	Editor_addCommand (me, "File", "-- close --", 0, NULL);
+	Editor_addCommand (me, "Edit", "Undo", 'Z', cb_undo);
+	Editor_addCommand (me, "Edit", "Redo", 'Y', cb_redo);
 	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
 	Editor_addCommand (me, "Edit", "Cut", 'X', cb_cut);
 	Editor_addCommand (me, "Edit", "Copy", 'C', cb_copy);

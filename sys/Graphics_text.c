@@ -1454,6 +1454,10 @@ void _Graphics_text_init (I) {   /* BUG: should be done as late as possible. */
 				if (! thePalatinoFont) thePalatinoFont = theTimesFont;
 				GetFNum ("\pZapf Dingbats", & theZapfDingbatsFont);
 				if (! theZapfDingbatsFont) theZapfDingbatsFont = theTimesFont;
+				if (! theTimesFont || ! theHelveticaFont || ! theCourierFont || ! theSymbolFont) {
+					Melder_fatal ("Praat cannot start up because it cannot find one or more of the fonts Times, Helvetica, Courier and Symbol. "
+						"Please install these fonts from your system CD. Praat will now quit.");
+				}
 			}
 		#elif win
 			int font, size, style;

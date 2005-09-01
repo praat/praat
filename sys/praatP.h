@@ -23,6 +23,7 @@
  * pb 2004/11/09 topBar
  * pb 2004/11/16 shorter praat_Command (with signed chars)
  * pb 2005/05/07 inManual
+ * pb 2005/08/22
  */
 
 #include "praat.h"
@@ -47,7 +48,7 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 /* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
-	'window' is "Objects", 'menu' is "Control", "New", "Read", "Help", "Preferences", or "Goodies".
+	'window' is "Objects", 'menu' is "Praat", "New", "Read", "Help", "Preferences", or "Goodies".
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */

@@ -23,8 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050818)
+MAN_BEGIN ("What's new?", "ppgb", 20050901)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.21# (September 1, 2005)")
+LIST_ITEM ("\\bu Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.")
+LIST_ITEM ("\\bu Renamed \"Control\" menu to \"Praat\" on all systems (as on the Mac), "
+	"to reflect the fact that no other programs than Praat have used the Praat shell for five years.")
+LIST_ITEM ("\\bu Script editor: Undo and Redo buttons (only on the Mac for now).")
+LIST_ITEM ("\\bu Manual: corrected a bug that sometimes caused Praat to crash when trying to print.")
 NORMAL ("##4.3.20# (August 18, 2005)")
 LIST_ITEM ("\\bu Log files: include name of editor window.")
 NORMAL ("##4.3.19# (July 20, 2005)")
@@ -699,24 +705,21 @@ ENTRY ("Praat 3.1, December 5, 1995")
 	LIST_ITEM ("\\bu Logarithmic axes.")
 	LIST_ITEM ("\\bu Call remote ADDA server directly.")
 ENTRY ("To do")
-	LIST_ITEM ("\\bu ManipulationEditor: LPC manipulation of duration and intensity.")
 	LIST_ITEM ("\\bu TextGrid & Sound: Extract intervals with margins.")
 	LIST_ITEM ("\\bu Spectrum: draw power, re, im, phase.")
 	LIST_ITEM ("\\bu Formant: To Spectrum (slice)... (combines Formant-to-LPC and LPC-to-Spectrum-slice)")
 	LIST_ITEM ("\\bu Read and/or write Matlab files, MBROLA files, Xwaves files, CHAT files.") /* Aix */
 	LIST_ITEM ("\\bu Matrix: draw numbers.")
 	LIST_ITEM ("\\bu Fractions with \\bsf{a|b}.")
-	LIST_ITEM ("\\bu More fonts for manual.")
 	LIST_ITEM ("\\bu Move objects up and down list.")
 	LIST_ITEM ("\\bu Spectrogram cross-correlation.")
-	LIST_ITEM ("\\bu Spectral moments (done).") /* Allard Jongman 19990609 JASA 84(1):115 */
 	LIST_ITEM ("\\bu Labels in AIFC file.") /* Theo Veenker 19980323 */
 	LIST_ITEM ("\\bu Improve scrolling and add selection in hyperpages.")
 	LIST_ITEM ("\\bu Segment spectrograph?") /* Ton Wempe, Jul 16 1996 */
 	LIST_ITEM ("\\bu Phoneme-to-articulation conversion??") /* Mirjam Ernestus, Jul 1 1996 */
-ENTRY ("Known bugs in the all edition")
+ENTRY ("Known bugs in all editions")
 	LIST_ITEM ("\\bu (small) No navigation by tabs.")
-	LIST_ITEM ("\\bu (small) Tabs in texts and scripts should be considered spaces.")
+	LIST_ITEM ("\\bu (small) Tabs in texts should be considered spaces.")
 ENTRY ("Known bugs in the Macintosh version")
 	LIST_ITEM ("\\bu (small) Pause window modal.")
 	LIST_ITEM ("\\bu (small) Cascade buttons grey after suspend+resume during progress window.")
@@ -779,8 +782,8 @@ LIST_ITEM ("Linguistics & Cognitive Science, Dartmouth College, Hanover NH.")
 LIST_ITEM ("Cornell Phonetics Lab, Ithaca NY.")
 MAN_END
 
-MAN_BEGIN ("Control menu", "ppgb", 20021204)
-INTRO ("The first menu in the @@Object window@. On MacOS X, this menu is called #%Praat.")
+MAN_BEGIN ("Praat menu", "ppgb", 20050822)
+INTRO ("The first menu in the @@Object window@. On MacOS X, this menu is in the main menu bar.")
 MAN_END
 
 MAN_BEGIN ("Copy...", "ppgb", 19960904)
@@ -1022,8 +1025,8 @@ MAN_BEGIN ("Get second formant", "ppgb", 20011107)
 INTRO ("One of the commands in the @@Query menu@ of the @SoundEditor and the @TextGridEditor.")
 MAN_END
 
-MAN_BEGIN ("Goodies", "ppgb", 20021204)
-INTRO ("The title of a submenu of the @@Control menu@.")
+MAN_BEGIN ("Goodies", "ppgb", 20050822)
+INTRO ("The title of a submenu of the @@Praat menu@.")
 MAN_END
 
 MAN_BEGIN ("Info", "ppgb", 19980101)
@@ -1515,18 +1518,18 @@ NORMAL ("To the right of the window, you may see three pitch values, written wit
 	"at the cursor, or the average pitch in the selection.")
 MAN_END
 
-MAN_BEGIN ("Intro 4.2. Configuring the pitch contour", "ppgb", 20030916)
+MAN_BEGIN ("Intro 4.2. Configuring the pitch contour", "ppgb", 20050830)
 NORMAL ("With @@Pitch settings...@ from the #Pitch menu, "
 	"you can determine how the pitch contour is displayed and how it is computed. "
 	"These settings will be remembered across Praat sessions. "
 	"All these settings have standard values (\"factory settings\"), which appear "
 	"when you click #Standards.")
 ENTRY ("The %%pitch range% setting")
-NORMAL ("This is the most important setting for pitch analysis. The standard range is from 75 to 600 Hertz, "
-	"which means that the pitch analysis method will only find values between 75 and 600 Hz. "
+NORMAL ("This is the most important setting for pitch analysis. The standard range is from 75 to 500 Hertz, "
+	"which means that the pitch analysis method will only find values between 75 and 500 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
 NORMAL ("For a male voice, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
-	"for a female voice, set the range to 100-600 Hz instead. For creaky voice you will want to set it much "
+	"for a female voice, set the range to 100-500 Hz instead. For creaky voice you will want to set it much "
 	"lower than 75 Hz.")
 NORMAL ("Here is why you have to supply these settings. If the pitch floor is 75 Hz, "
 	"the pitch analysis method requires a 40-millisecond analysis window, "
@@ -2024,10 +2027,10 @@ LIST_ITEM ("\\bu @@Remove")
 LIST_ITEM ("\\bu @@Inspect")
 ENTRY ("Menus")
 LIST_ITEM ("The Object window contains several fixed menus: "
-	"the #Control (or #Praat), #New, #Read, and #Help menus. "
+	"the #Praat, #New, #Read, and #Help menus. "
 	"It also contains the #Write menu, whose contents vary with the kinds of selected objects, "
 	"and must, therefore, be considered part of the dynamic menu.")
-ENTRY ("The `Control' menu (on MacOS X: the Praat menu)")
+ENTRY ("The Praat menu")
 LIST_ITEM ("\\bu (@@Run script...@)")
 LIST_ITEM ("\\bu @@New Praat script@: creates an empty @@ScriptEditor@")
 LIST_ITEM ("\\bu @@Open Praat script...@: creates a @@ScriptEditor@ with a script from disk")
@@ -2089,8 +2092,8 @@ MAN_BEGIN ("Query menu", "ppgb", 20010417)
 INTRO ("One of the menus in most @editors.")
 MAN_END
 
-MAN_BEGIN ("Quit", "ppgb", 19970911)
-INTRO ("One of the commands in the `Control' menu of the @@Object window@.")
+MAN_BEGIN ("Quit", "ppgb", 20050822)
+INTRO ("One of the commands in the @@Praat menu@.")
 ENTRY ("Purpose")
 NORMAL ("To leave the program.")
 ENTRY ("Behaviour")

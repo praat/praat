@@ -1,6 +1,6 @@
 /* manual_Script.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ NORMAL ("These commands are only available if the right kinds of objects are sel
 	"or in the #Write menu if they start with \"Write to \" or \"Append to \".")
 MAN_END
 
-MAN_BEGIN ("Add action command...", "ppgb", 19970518)
-INTRO ("One of the hidden commands in the Control menu of the @@Object window@. "
+MAN_BEGIN ("Add action command...", "ppgb", 20050822)
+INTRO ("One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to the dynamic menu in the Object window.")
 ENTRY ("Arguments")
 NORMAL ("See @@Add to dynamic menu...@.")
@@ -40,8 +40,8 @@ NORMAL ("Normally, however, if you want to add a command to the dynamic menu, "
 	"you would use the command @@Add to dynamic menu...@ of the @ScriptEditor instead.")
 MAN_END
 
-MAN_BEGIN ("Add menu command...", "ppgb", 19970518)
-INTRO ("One of the hidden commands in the Control menu of the @@Object window@. "
+MAN_BEGIN ("Add menu command...", "ppgb", 20050822)
+INTRO ("One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to any of the fixed menus in the Object or Picture window.")
 ENTRY ("Arguments")
 NORMAL ("See @@Add to fixed menu...@.")
@@ -109,7 +109,7 @@ NORMAL ("To add a dynamic button from a script (perhaps your @@Initialization sc
 	"use the hidden shell command @@Add action command...@ instead.")
 MAN_END
 
-MAN_BEGIN ("Add to fixed menu...", "ppgb", 20021204)
+MAN_BEGIN ("Add to fixed menu...", "ppgb", 20050822)
 INTRO ("A command in the File menu of the @ScriptEditor.")
 NORMAL ("With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
@@ -118,7 +118,7 @@ TAG ("%Window")
 DEFINITION ("the name of the window (\"Objects\" or \"Picture\") that contains the menu that you want to change.")
 TAG ("%Menu")
 DEFINITION ("the title of the menu that you want to change. If %window is \"Objects\", you can specify "
-	"the Control, New, Read, Help, Goodies, or Preferences menu (for the Write menu, which depends on the objects selected, "
+	"the Praat, New, Read, Help, Goodies, or Preferences menu (for the Write menu, which depends on the objects selected, "
 	"you would use @@Add to dynamic menu...@ instead). If %window is \"Picture\", you can specify "
 	"the File, Edit, Margins, World, Select, Pen, Font, or Help menu.")
 TAG ("%Command")
@@ -185,10 +185,10 @@ NORMAL ("We cannot conclude from this test that people have a preference for the
 	"Of course, we cannot conclude either that people do not have such a preference.")
 MAN_END
 
-MAN_BEGIN ("ButtonEditor", "ppgb", 20030916)
+MAN_BEGIN ("ButtonEditor", "ppgb", 20050822)
 INTRO ("An editor for viewing, hiding, showing, removing, and executing the commands "
 	"in the fixed and dynamic menus of the P\\s{RAAT} program. To open it, choose ##Buttons...# "
-	"from the #Control menu of the @@Object window@.")
+	"from the #Praat menu of the @@Object window@.")
 ENTRY ("What the button editor shows")
 NORMAL ("The button editor gives a list of:")
 LIST_ITEM ("1. The five fixed buttons.")
@@ -265,8 +265,8 @@ INTRO ("A window that allows you to calculate all kinds of simple or complicated
 NORMAL ("See the @Formulas tutorial for all the things that you can calculate with this command.")
 MAN_END
 
-MAN_BEGIN ("Calculator...", "ppgb", 20021204)
-INTRO ("A command in the @Goodies submenu of the @@Control menu@ of the @@Object window@. Shortcut: Command-U. "
+MAN_BEGIN ("Calculator...", "ppgb", 20050822)
+INTRO ("A command in the @Goodies submenu of the @@Praat menu@ of the @@Object window@. Shortcut: Command-U. "
 	"Choosing this command brings up Praat's @calculator.")
 MAN_END
 
@@ -282,8 +282,8 @@ ENTRY ("Formula")
 FORMULA ("differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
 MAN_END
 
-MAN_BEGIN ("Fixed menu commands", "ppgb", 19970518)
-INTRO ("The commands in the fixed menus of the @@Object window@ (#Control, #New, #Read, #Help, #Goodies, "
+MAN_BEGIN ("Fixed menu commands", "ppgb", 20050822)
+INTRO ("The commands in the fixed menus of the @@Object window@ (#Praat, #New, #Read, #Help, #Goodies, "
 	"and #Preferences) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
 NORMAL ("These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
@@ -328,8 +328,8 @@ LIST_ITEM ("1.8. @@Formulas 1.8. Formulas for modification|Formulas for modifica
 LIST_ITEM ("1.9. @@Formulas 1.9. Formulas in scripts|Formulas in scripts@")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.1. Formulas in the calculator", "ppgb", 20021204)
-INTRO ("To use the Praat @calculator, go to the @@Control menu@ (in MacOS X, this is the Praat menu), "
+MAN_BEGIN ("Formulas 1.1. Formulas in the calculator", "ppgb", 20050822)
+INTRO ("To use the Praat @calculator, go to the @@Praat menu@ "
 	"and choose @@Calculator...@ from the @Goodies submenu. Or simply type Command-U anywhere in Praat.")
 ENTRY ("Calculating numbers")
 NORMAL ("You can do arithmetic computations. Type the formula")
@@ -343,7 +343,7 @@ NORMAL ("and click OK. The Info window will show the result:")
 CODE ("seeking")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.2. Numeric expressions", "ppgb", 20050614)
+MAN_BEGIN ("Formulas 1.2. Numeric expressions", "ppgb", 20050901)
 INTRO ("All the formulas whose outcome is a number are called numeric expressions. "
 	"For the following examples, all the outcomes can be checked with the @calculator.")
 ENTRY ("Examples with numbers")
@@ -364,17 +364,6 @@ TAG ("##index (\"internationalization\", \"ation\")")
 DEFINITION ("computes the location of the first occurrence of the string \"ation\" in the string \"internationalization\". Outcome: 7, "
 	"because the first letter of \"ation\" lines up with the seventh letter of \"internationalization\". "
 	"If the substring does not occur, the outcome is 0.")
-TAG ("##rindex (\"internationalization\", \"ation\")")
-DEFINITION ("computes the location of the last occurrence of the string \"ation\" in the string \"internationalization\". Outcome: 16.")
-TAG ("##startsWith (\"internationalization\", \"int\")")
-DEFINITION ("determines whether the string \"internationalization\" starts with \"intern\". Outcome: 1 (true).")
-TAG ("##endsWith (\"internationalization\", \"nation\")")
-DEFINITION ("determines whether the string \"internationalization\" ends with \"nation\". Outcome: 0 (false).")
-TAG ("##index_regex (\"internationalization\", \"a.*n\")")
-DEFINITION ("determines where the string \"internationalization\" first matches the @@regular expressions|regular expression@ \"a.*n\". Outcome: 7. "
-	"If there is no match, the outcome is 0.")
-TAG ("##rindex_regex (\"internationalization\", \"a.*n\")")
-DEFINITION ("determines where the string \"internationalization\" last matches the @@regular expressions|regular expression@ \"a.*n\". Outcome: 16.")
 MAN_END
 
 MAN_BEGIN ("Formulas 1.3. String expressions", "ppgb", 20040414)
@@ -562,11 +551,11 @@ TAG ("\\bu ##self (%%x-expression%)")
 DEFINITION ("the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.9. Formulas in scripts", "ppgb", 20030309)
+MAN_BEGIN ("Formulas 1.9. Formulas in scripts", "ppgb", 20050822)
 INTRO ("In scripts, you can assign numeric expressions to numeric variables, "
 	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
 ENTRY ("Example: report a square")
-NORMAL ("Choose @@New Praat script@ from the @@Control menu@. A script editor window will become visible. "
+NORMAL ("Choose @@New Praat script@ from the @@Praat menu@. A script editor window will become visible. "
 	"Type the following lines into that window:")
 CODE ("x = 99")
 CODE ("x2 = x * x")
@@ -861,7 +850,7 @@ TAG ("##besselI (%n, %x)")
 TAG ("##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN ("Formulas 5. String functions", "ppgb", 20040414)
+MAN_BEGIN ("Formulas 5. String functions", "ppgb", 20050901)
 INTRO ("String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -870,7 +859,7 @@ TAG ("##length (a\\$ )")
 DEFINITION ("gives the length of the string. After")
 CODE2 ("string\\$  = \"hallo\"")
 CODE2 ("length = length (string\\$  + \"dag\")")
-DEFINITION ("the variable %length contains the number 8. From this example, "
+DEFINITION ("the variable %length contains the number 8 (by the way, from this example "
 	"you see that variables can have the same names as functions, without any danger of confusing the interpreter).")
 TAG ("##left\\$  (a\\$ , n)")
 DEFINITION ("gives a string consisting of the first %n characters of %%a\\$ %. After")
@@ -892,6 +881,22 @@ DEFINITION ("gives the index of the last occurrence of the string %%b\\$ % in th
 CODE2 ("where = rindex (\"hallo allemaal\", \"al\")")
 DEFINITION ("the variable %where contains the number 13, because the last \"al\" starts at the 13th character. "
 	"If the first string does not contain the second string, %rindex returns 0.")
+TAG ("##startsWith (a\\$ , b\\$ )")
+DEFINITION ("determines whether the string %%a\\$ % starts with the string %%b\\$ %. After")
+CODE2 ("where = startsWith (\"internationalization\", \"int\")")
+DEFINITION ("the variable %where contains the number 1 (true).")
+TAG ("##endsWith (a\\$ , b\\$ )")
+DEFINITION ("determines whether the string %%a\\$ % ends with the string %%b\\$ %. After")
+CODE2 ("where = endsWith (\"internationalization\", \"nation\")")
+DEFINITION ("the variable %where contains the number 0 (false).")
+CODE2 ("##index_regex (a\\$ , b\\$ )")
+DEFINITION ("determines where the string %%a\\$ % first matches the @@regular expressions|regular expression@ %%b\\$ %. After")
+TAG ("where = index_regex (\"internationalization\", \"a.*n\")")
+DEFINITION ("the variable %where contains the number 7. If there is no match, the outcome is 0.")
+CODE2 ("##rindex_regex (a\\$ , b\\$ )")
+DEFINITION ("determines where the string %%a\\$ % last matches the @@regular expressions|regular expression@ %%b\\$ %. After")
+TAG ("where = rindex_regex (\"internationalization\", \"a.*n\")")
+DEFINITION ("the variable %where contains the number 16. If there is no match, the outcome is 0.")
 TAG ("##fixed\\$  (number, precision)")
 DEFINITION ("formats a number as a string with %precision digits after the decimal point. Thus, $$fixed\\$  (72.65687, 3)$ "
 	"becomes the string $$72.657$, and $$fixed\\$  (72.65001, 3)$ becomes the string $$72.650$. "
@@ -1077,7 +1082,7 @@ CODE ("echo The sum of cells along the diagonal is 'sumDiagonal'.")
 NORMAL ("The first version, which accesses the contents directly, is not only three lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN ("Hidden commands", "ppgb", 20030528)
+MAN_BEGIN ("Hidden commands", "ppgb", 20050822)
 NORMAL ("Some commands in P\\s{RAAT}'s fixed and dynamic menus are hidden by default. "
 	"You can still call hidden commands from scripts, run them by clicking on them in a @ButtonEditor, "
 	"or make them visible with the help of the @ButtonEditor.")
@@ -1085,7 +1090,7 @@ NORMAL ("To hide commands that are visible by default, use the @ButtonEditor.")
 ENTRY ("What commands are hidden by default?")
 NORMAL ("Commands that are expected to be of very limited use, are hidden by default. Examples are:")
 LIST_ITEM ("1. The commands @@Add menu command...@, ##Hide menu command...#, ##Show menu command...#, "
-	"@@Add action command...@, ##Hide action command...#, and ##Show action command...# in the #Control menu "
+	"@@Add action command...@, ##Hide action command...#, and ##Show action command...# in the #Praat menu "
 	"of the @@Object window@. These are used in the @@Buttons file@ and could be used by an @@Initialization script@ "
 	"as well; in an interactive session, however, the functionality of these commands is part of the "
 	"@ScriptEditor and the @ButtonEditor.")
@@ -1186,20 +1191,20 @@ NORMAL ("This procedure allows all members of the group to automatically enjoy a
 	"custom command set.")
 MAN_END
 
-MAN_BEGIN ("New Praat script", "ppgb", 20021130)
-INTRO ("A command in the Control menu for creating a new Praat script. "
+MAN_BEGIN ("New Praat script", "ppgb", 20050822)
+INTRO ("A command in the @@Praat menu@ for creating a new Praat script. "
 	"It creates a @ScriptEditor with an empty script that you can edit, run, and save.") 
 MAN_END
 
-MAN_BEGIN ("Open Praat script...", "ppgb", 20021130)
-INTRO ("A command in the Control menu for editing an existing @@Praat script@. "
+MAN_BEGIN ("Open Praat script...", "ppgb", 20050822)
+INTRO ("A command in the @@Praat menu@ for editing an existing @@Praat script@. "
 	"It creates a @ScriptEditor and asks "
 	"you to select a file. If you click #%OK, the file is read into the ScriptEditor window, "
 	"and you can run and edit it; if you click #%Cancel, you get an empty script, as with @@New Praat script@.") 
 MAN_END
 
-MAN_BEGIN ("Paste history", "ppgb", 19981107)
-INTRO ("A command in the Control menu for viewing the history in a @ScriptEditor. "
+MAN_BEGIN ("Paste history", "ppgb", 20050822)
+INTRO ("A command in the Edit menu of a @ScriptEditor, for inserting the history of commands. "
 	"See @@History mechanism@.")
 MAN_END
 
@@ -1262,9 +1267,8 @@ NORMAL ("The preferences file is called %%Preferences.ini%, and it will be in th
 	"the preferences file is ##C:\\bsDocuments and Settings\\bsPaul Boersma\\bsPraat\\bsPreferences.ini#.")
 MAN_END
 
-MAN_BEGIN ("Run script...", "ppgb", 20021130)
-INTRO ("A hidden command in the #%Control menu of the @@Object window@. "
-	"Runs a @@Praat script@.")
+MAN_BEGIN ("Run script...", "ppgb", 20050822)
+INTRO ("A hidden command in the @@Praat menu@. Runs a @@Praat script@.")
 ENTRY ("Usage")
 NORMAL ("This command is hidden because you would normally open a script "
 	"with @@Open Praat script...@, so that you can run it several times without "
@@ -1312,9 +1316,9 @@ LIST_ITEM1 ("@@Scripting 8.3. The sendpraat directive")
 NORMAL ("Also see the @@scripting examples@.")
 MAN_END
 
-MAN_BEGIN ("Scripting 1. My first script", "ppgb", 20040414)
+MAN_BEGIN ("Scripting 1. My first script", "ppgb", 20050822)
 NORMAL ("Suppose that you want to create a script that allows you to play a selected Sound object twice. "
-	"You first create an empty script, by choosing @@New Praat script@ from the Control menu. "
+	"You first create an empty script, by choosing @@New Praat script@ from the Praat menu. "
 	"A @ScriptEditor will appear on your screen. In this editor, you type")
 CODE ("Play")
 CODE ("Play")
@@ -2204,7 +2208,7 @@ NORMAL ("This script reads a sound file from disk, pops up an editor for the res
 	"and returns to the Praat shell to play the entire sound.")
 MAN_END
 
-MAN_BEGIN ("Scripting 7.2. Scripting an editor from within", "ppgb", 20021204)
+MAN_BEGIN ("Scripting 7.2. Scripting an editor from within", "ppgb", 20050822)
 NORMAL ("This section will show how you can permanently extend the functionality of an editor.")
 NORMAL ("As an example, consider the following problem: you want to see a graphic representation "
 	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
@@ -2235,7 +2239,7 @@ NORMAL ("The command will be visible in every SoundEditor that you create from n
 	"You can now view the spectrum around the cursor just by choosing this menu command.")
 NORMAL ("After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
 	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
-	"by choosing #Buttons from the Preferences submenu of the Control menu in the Objects window.")
+	"by choosing #Buttons from the Preferences submenu of the @@Praat menu@.")
 ENTRY ("Improving your script")
 NORMAL ("The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number "
 	"of indiscriminable Sounds and Spectra called \"slice\", and the spectrum is shown up to the Nyquist frequency "
@@ -2297,7 +2301,7 @@ LIST_ITEM ("@@Scripting 8.2. The sendpraat program")
 LIST_ITEM ("@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
-MAN_BEGIN ("Scripting 8.1. The sendpraat subroutine", "ppgb", 20030528)
+MAN_BEGIN ("Scripting 8.1. The sendpraat subroutine", "ppgb", 20050822)
 INTRO ("A subroutine for sending messages to a %running P\\s{RAAT}. "
 	"Also a Unix, MacOS, or DOS console program with the same purpose.")
 ENTRY ("Syntax")
@@ -2326,7 +2330,7 @@ CODE ("strcpy (message, \"Quit\");")
 CODE ("errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
 CODE ("if (errorMessage != NULL) fprintf (stderr, \"\\% s\", errorMessage);")
 NORMAL ("This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
-	"command in the Control menu of that program. "
+	"command in one of the menus of that program. "
 	"On Unix and Macintosh, sendpraat returns immediately; on Windows, you the %timeOut argument is ignored. "
 	"The return value %errorMessage is a statically allocated string internal to sendpraat, "
 	"and is overwritten by the next call to sendpraat.")
@@ -2356,14 +2360,14 @@ NORMAL ("To start a program from the command line instead and sending it a messa
 	"See @@Scripting 6.9. Calling from the command line@.")
 MAN_END
 
-MAN_BEGIN ("Scripting 8.2. The sendpraat program", "ppgb", 20030528)
+MAN_BEGIN ("Scripting 8.2. The sendpraat program", "ppgb", 20050822)
 INTRO ("A Unix or DOS console program for sending messages to a %running P\\s{RAAT} program.")
 ENTRY ("Syntax")
 CODE ("#sendpraat [%timeOut] %program %message...")
 NORMAL ("For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.")
 ENTRY ("Example 1: killing a program")
 CODE ("sendpraat 0 praat Quit")
-NORMAL ("Causes the program #Praat to quit (gracefully), because #Quit is a fixed command in the Control menu. "
+NORMAL ("Causes the program #Praat to quit (gracefully), because #Quit is a fixed command in one of its menus. "
 	"On Unix, #sendpraat returns immediately; on Windows, you leave out the %timeOut argument.")
 ENTRY ("Example 2: playing a sound file in reverse")
 CODE ("sendpraat 1000 praat \"Read from file... hello.wav\" \"Play reverse\" \"Remove\"")
@@ -2399,7 +2403,7 @@ CODE ("...'newline\\$ ' Remove")
 NORMAL ("The first $$newline\\$ $ is superfluous, but this format seems to read nicely.")
 MAN_END
 
-MAN_BEGIN ("ScriptEditor", "ppgb", 20040414)
+MAN_BEGIN ("ScriptEditor", "ppgb", 20050822)
 INTRO ("An aid to @@scripting@.")
 NORMAL ("The #ScriptEditor is a text editor that allows you to edit, save, and run "
 	"any @@Praat script@. You could type such a script from scratch, "
@@ -2410,7 +2414,7 @@ NORMAL ("To add a script as a button to a fixed or dynamic menu, "
 	"use @@Add to fixed menu...@ or @@Add to dynamic menu...@ from the @@File menu@.")
 ENTRY ("Example 1")
 NORMAL ("In this example, we create a fixed button that will play a 1-second sine wave with a specified frequency.")
-NORMAL ("First, we create a ScriptEditor by choosing @@New Praat script@ from the @@Control menu@. "
+NORMAL ("First, we create a ScriptEditor by choosing @@New Praat script@ from the @@Praat menu@. "
 	"Then, we choose @@Clear history@ from the Edit menu in the ScriptEditor. "
 	"We then perform some actions that will create a sine wave, play it, and remove it:")
 LIST_ITEM ("1. Choose ##Create Sound...# from the @@New menu@ and type the formula of a sine wave (i.e. "

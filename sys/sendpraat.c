@@ -2,6 +2,7 @@
 /* by Paul Boersma */
 /* Code version: May 18, 2003 */
 /* Comments version: May 9, 2004 */
+/* Help version: August 22, 2005 */
 
 /*
  * The sendpraat subroutine (Unix with X Window; Windows; Macintosh) sends a message
@@ -355,7 +356,7 @@ int main (int argc, char **argv) {
 			printf ("   sendpraat 0 praat Quit\n");
 		#endif
 		printf ("      Causes the program \"praat\" to quit (gracefully).\n");
-		printf ("      This works because \"Quit\" is a fixed command in Praat's Control menu.\n");
+		printf ("      This works because \"Quit\" is a fixed command in one of Praat's menus.\n");
 		#if ! win
 			printf ("      Sendpraat will return immediately.\n");
 		#endif

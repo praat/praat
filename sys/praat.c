@@ -25,6 +25,7 @@
  * pb 2004/06/17 made Objects label visible on Unix
  * pb 2004/12/29 removed .praat-user-startUp for Windows (empty file name error)
  * pb 2005/06/28 TextEditor_prefs
+ * pb 2005/08/22 renamed Control menu to "Praat"
  */
 
 #include "melder.h"
@@ -1100,12 +1101,12 @@ void praat_run (void) {
 	praat_addMenus2 ();
 	#ifdef macintosh
 	if (Melder_systemVersion >= 0x0A00) {
-		praat_addMenuCommand ("Objects", "Control", "Quit", 0, praat_HIDDEN, DO_Quit);
+		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_HIDDEN, DO_Quit);
 	} else
 	#endif
 	{
-		praat_addMenuCommand ("Objects", "Control", "-- quit --", 0, 0, 0);
-		praat_addMenuCommand ("Objects", "Control", "Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
+		praat_addMenuCommand ("Objects", "Praat", "-- quit --", 0, 0, 0);
+		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
 	}
 
 	/*

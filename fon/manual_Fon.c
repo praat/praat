@@ -1766,7 +1766,7 @@ INTRO ("A command to read a @Strings object from a simple text file. "
 	"Each line is read as a separate string. See @Strings for an example.")
 MAN_END
 
-MAN_BEGIN ("Sound: To Intensity...", "ppgb", 20041123)
+MAN_BEGIN ("Sound: To Intensity...", "ppgb", 20050830)
 INTRO ("A command to create an @Intensity object from every selected @Sound.")
 ENTRY ("Settings")
 TAG ("%%Minimum pitch% (Hz)")
@@ -1781,7 +1781,7 @@ TAG ("%%Subtract mean")
 DEFINITION ("See @@Intro 6.2. Configuring the intensity contour@.")
 ENTRY ("Algorithm")
 NORMAL ("The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). "
-	"The effective duration of this analysis window is 3.2 / (%minimum_pitch), which will guarantee that a periodic signal is analysed with a "
+	"The effective duration of this analysis window is 3.2 / (%minimum_pitch), which will guarantee that a periodic signal is analysed as having a "
 	"pitch-synchronous intensity ripple not greater than our 4-byte floating-point precision (i.e., < 0.00001 dB).")
 MAN_END
 

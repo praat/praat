@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN ("Programming with Praat", "ppgb", 20050515)
+MAN_BEGIN ("Programming with Praat", "ppgb", 20050822)
 INTRO ("You can extend the functionality of the P\\s{RAAT} program "
 	"by adding modules written in C to it. All of P\\s{RAAT}'s source code "
 	"is available under the General Public Licence.")
@@ -57,8 +57,7 @@ NORMAL ("P\\s{RAAT} is preferably linked with a real Motif version (Lesstif give
 	"and the include directory comes with the development package.")
 ENTRY ("4. Building P\\s{RAAT} on Macintosh")
 NORMAL ("Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
-	"##praat_macx# (for MacOS X), ##praat_mac9# (for MacOS 8.5 to 9.2), "
-	"or ##praat_mac7# (for older systems from 7.1 on), and choose Make or Run. "
+	"##praat_macx# (for MacOS X), ##praat_mac9# (for MacOS 8.5 to 9.2), and choose Make or Run. "
 	"You probably have to edit the prefix (Language Settings: C/C++ Preprocessor), "
 	"e.g. by changing \"\\# if 0\" to \"\\# if 1\".")
 ENTRY ("5. Building P\\s{RAAT} on Windows")
@@ -78,7 +77,7 @@ CODE ("")
 CODE ("void main (int argc, char **argv) {")
 CODE1 ("praat_init (\"Praat_Jane\", argc, argv);")
 CODE1 ("INCLUDE_LIBRARY (praat_uvafon_init)")
-CODE1 ("praat_addMenuCommand (\"Objects\", \"Control\", \"Hello from Jane...\", NULL, 0, DO_HelloFromJane);")
+CODE1 ("praat_addMenuCommand (\"Objects\", \"New\", \"Hello from Jane...\", NULL, 0, DO_HelloFromJane);")
 CODE1 ("praat_run ();")
 CODE1 ("return 0;")
 CODE ("}")

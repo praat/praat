@@ -866,7 +866,15 @@ ENTRY ("Algorithm")
 NORMAL ("Pitch-synchronous overlap-and-add.")
 MAN_END
 
-MAN_BEGIN ("Sound: Play", "ppgb", 19960911)
+MAN_BEGIN ("audio control panel", "ppgb", 20050822)
+INTRO ("Your system's way of controlling where sounds will be played, and how loud.")
+NORMAL ("On Windows, double-click the loudspeaker icon in the Start bar. "
+	"On MacOS X, go to System Preferences, then to Sound, then to Output Volume "
+	"(you can put a loudspeaker icon in OSX's menu bar here). "
+	"On HP-UX, try the ##Use internal loudspeaker...# preference in Praat's Preferences menu.")
+MAN_END
+
+MAN_BEGIN ("Sound: Play", "ppgb", 20050822)
 INTRO ("A command to play @Sound objects.")
 ENTRY ("Availability")
 NORMAL ("You can choose this command after selecting one or more Sounds.")
@@ -878,8 +886,8 @@ NORMAL ("All of the Sounds selected are played, "
 	"in the order in which they appear in the list. If the sampling frequency of the Sound does not match any of "
 	"the system's sampling frequencies, a fast but inaccurate conversion is performed via linear interpolation.")
 ENTRY ("Usage")
-NORMAL ("The choice of the output device(s) depends on the settings in your Audio Control Panel "
-	"or (on HP) the setting of the ##Use internal loudspeaker...# preference (in the `Control' menu.")
+NORMAL ("The output level and the choice of the output device(s) depend on the settings "
+	"in your @@audio control panel@.")
 MAN_END
 
 MAN_BEGIN ("Sound: Filter (pre-emphasis)...", "ppgb", 20030309)
@@ -978,7 +986,7 @@ NORMAL ("To synchronize a SoundEditor window with other windows that show a time
 	"You cannot Cut from or Paste into a synchronized SoundEditor window.")
 MAN_END
 
-MAN_BEGIN ("SoundRecorder", "ppgb", 20041119)
+MAN_BEGIN ("SoundRecorder", "ppgb", 20050822)
 INTRO ("With the Praat SoundRecorder window you can record a mono or stereo sound "
 	"for subsequent viewing and analysis in Praat. "
 	"The SoundRecorder appears on your screen if you choose @@Record mono Sound...@ or @@Record stereo Sound...@ "
@@ -999,7 +1007,7 @@ NORMAL ("The size of the recording buffer determines how many seconds of sound y
 	"(440 seconds in mono) at a sampling frequency of 22050 Hz, "
 	"or 110 seconds in stereo (220 seconds in mono) at a sampling frequency of 44100 Hz. "
 	"You can change the size of the recording buffer "
-	"with ##Sound input prefs...# from the Preferences submenu in the Control menu.")
+	"with ##Sound input prefs...# from the Preferences menu.")
 #if defined (macintosh) && ! defined (__MACH__)
 NORMAL ("On Macintosh System 8 or 9 with virtual memory switched off, however, "
 	"the buffer always fills the available temporary memory, i.e. the size of the largest unused block "

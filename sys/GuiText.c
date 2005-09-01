@@ -1,6 +1,6 @@
 /* GuiText.c
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2003/12/30 this file separated from motifEmulator.c
  * pb 2004/01/01 MLTE
  * pb 2004/03/11 tried to make compatible with MacOS X 10.1.x
+ * pb 2005/09/01 GuiText_undo and GuiText_redo
  */
 
 #include "GuiP.h"
@@ -1008,6 +1009,24 @@ void GuiText_setFontSize (Widget me, int size) {
 			attr. data. dataValue = (unsigned long) size << 16;
 			TXNSetTypeAttributes (my macMlteObject, 1, & attr, 0, 2000000000);
 		}
+	#endif
+}
+
+void GuiText_undo (Widget me) {
+	#if mac
+		if (isMLTE (me)) {
+			TXNUndo (my macMlteObject);
+		}
+		_GuiText_handleValueChanged (me);
+	#endif
+}
+
+void GuiText_redo (Widget me) {
+	#if mac
+		if (isMLTE (me)) {
+			TXNRedo (my macMlteObject);
+		}
+		_GuiText_handleValueChanged (me);
 	#endif
 }
 

@@ -25,6 +25,7 @@
  * pb 2004/10/27 warning off
  * pb 2004/12/04 support for multiple open script dialogs with Apply buttons, both from "Run script..." and from added buttons
  * pb 2005/02/10 corrected bug in nowarn
+ * pb 2005/08/22 renamed Control menu to "Praat"
  */
 
 #include <ctype.h>
@@ -426,13 +427,13 @@ static int fileSelectorOkCallback (Any dia, void *dummy) {
 
 /*
  * DO_praat_runScript () is the command callback for "Run script...", which is a bit obsolete command,
- * hidden in the Control menu, and otherwise replaced by "execute".
+ * hidden in the Praat menu, and otherwise replaced by "execute".
  */
 int DO_praat_runScript (Any sender, void *dummy) {
 	(void) dummy;
 	if (sender == NULL) {
 		/*
-		 * User clicked the "Run script..." button in the Control menu.
+		 * User clicked the "Run script..." button in the Praat menu.
 		 */
 		static Any file_dialog;
 		if (! file_dialog)

@@ -24,6 +24,7 @@
  * pb 2004/11/16 Win: more room for fixed buttons
  * pb 2004/12/05 renamed script running procedures
  * pb 2005/07/06 repaired a memory leak in creating a script editor from a double click
+ * pb 2005/08/22 renamed the Control menu to "Praat" on all systems (like on the Mac)
  */
 
 #include <ctype.h>
@@ -109,14 +110,14 @@ END
 
 /********** The fixed menus. **********/
 
-static Widget appleMenu, controlMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
+static Widget appleMenu, praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
 
 Widget praat_objects_resolveMenu (const char *menu) {
 	return
 		#ifdef macintosh
-		strequ (menu, "Control") || strequ (menu, "Praat") ? ( Melder_systemVersion >= 0x0A00 ? appleMenu : controlMenu ) :
+		strequ (menu, "Praat") || strequ (menu, "Control") ? ( Melder_systemVersion >= 0x0A00 ? appleMenu : praatMenu ) :
 		#else
-		strequ (menu, "Control") || strequ (menu, "Praat") ? controlMenu :
+		strequ (menu, "Praat") || strequ (menu, "Control") ? praatMenu :
 		#endif
 		strequ (menu, "New") || strequ (menu, "Create") ? newMenu :
 		strequ (menu, "Read") ? readMenu :
@@ -132,7 +133,7 @@ Widget praat_objects_resolveMenu (const char *menu) {
 		newMenu;   /* Default. */
 }
 
-/********** Callbacks of the Control menu. **********/
+/********** Callbacks of the Praat menu. **********/
 
 DIRECT (About)
 	praat_showLogo (FALSE);
@@ -462,9 +463,9 @@ void praat_addMenus (Widget bar) {
 			appleMenu = motif_addMenu (bar ? praatP.topBar : NULL, "\024", 0); /* Apple icon. */
 		#endif
 		#ifdef macintosh
-			if (Melder_systemVersion < 0x0A00) controlMenu = motif_addMenu (bar ? praatP.topBar : NULL, praatP.title, 0);
+			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, praatP.title, 0);
 		#else
-			controlMenu = motif_addMenu (bar, "Control", 0);
+			praatMenu = motif_addMenu (bar, "Praat", 0);
 		#endif
 		newMenu = motif_addMenu (bar, "New", 0);
 		readMenu = motif_addMenu (bar, "Read", 0);
@@ -480,26 +481,26 @@ void praat_addMenus (Widget bar) {
 		praat_addMenuCommand ("Objects", "Apple", itemTitle_about, 0, praat_UNHIDABLE, DO_About);
 	#endif
 	#ifdef UNIX
-		praat_addMenuCommand ("Objects", "Control", itemTitle_about, 0, praat_UNHIDABLE, DO_About);
-		praat_addMenuCommand ("Objects", "Control", "-- script --", 0, 0, 0);
+		praat_addMenuCommand ("Objects", "Praat", itemTitle_about, 0, praat_UNHIDABLE, DO_About);
+		praat_addMenuCommand ("Objects", "Praat", "-- script --", 0, 0, 0);
 	#endif
-	praat_addMenuCommand ("Objects", "Control", "Debug...", 0, praat_HIDDEN, DO_praat_debug);
-	praat_addMenuCommand ("Objects", "Control", "Statistics...", 0, 0, DO_Memory_info);
-	praat_addMenuCommand ("Objects", "Control", "-- script --", 0, 0, 0);
-	praat_addMenuCommand ("Objects", "Control", "Run script...", 0, praat_HIDDEN, DO_praat_runScript);
-	praat_addMenuCommand ("Objects", "Control", "New Praat script", 0, 0, DO_praat_newScript);
-	praat_addMenuCommand ("Objects", "Control", "Open Praat script...", 0, 0, DO_praat_openScript);
-	praat_addMenuCommand ("Objects", "Control", "-- buttons --", 0, 0, 0);
-	praat_addMenuCommand ("Objects", "Control", "Add menu command...", 0, praat_HIDDEN, DO_praat_addMenuCommand);
-	praat_addMenuCommand ("Objects", "Control", "Hide menu command...", 0, praat_HIDDEN, DO_praat_hideMenuCommand);
-	praat_addMenuCommand ("Objects", "Control", "Show menu command...", 0, praat_HIDDEN, DO_praat_showMenuCommand);
-	praat_addMenuCommand ("Objects", "Control", "Add action command...", 0, praat_HIDDEN, DO_praat_addAction);
-	praat_addMenuCommand ("Objects", "Control", "Hide action command...", 0, praat_HIDDEN, DO_praat_hideAction);
-	praat_addMenuCommand ("Objects", "Control", "Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
-	button = praat_addMenuCommand ("Objects", "Control", "Goodies", 0, praat_UNHIDABLE, 0);
+	praat_addMenuCommand ("Objects", "Praat", "Debug...", 0, praat_HIDDEN, DO_praat_debug);
+	praat_addMenuCommand ("Objects", "Praat", "Statistics...", 0, 0, DO_Memory_info);
+	praat_addMenuCommand ("Objects", "Praat", "-- script --", 0, 0, 0);
+	praat_addMenuCommand ("Objects", "Praat", "Run script...", 0, praat_HIDDEN, DO_praat_runScript);
+	praat_addMenuCommand ("Objects", "Praat", "New Praat script", 0, 0, DO_praat_newScript);
+	praat_addMenuCommand ("Objects", "Praat", "Open Praat script...", 0, 0, DO_praat_openScript);
+	praat_addMenuCommand ("Objects", "Praat", "-- buttons --", 0, 0, 0);
+	praat_addMenuCommand ("Objects", "Praat", "Add menu command...", 0, praat_HIDDEN, DO_praat_addMenuCommand);
+	praat_addMenuCommand ("Objects", "Praat", "Hide menu command...", 0, praat_HIDDEN, DO_praat_hideMenuCommand);
+	praat_addMenuCommand ("Objects", "Praat", "Show menu command...", 0, praat_HIDDEN, DO_praat_showMenuCommand);
+	praat_addMenuCommand ("Objects", "Praat", "Add action command...", 0, praat_HIDDEN, DO_praat_addAction);
+	praat_addMenuCommand ("Objects", "Praat", "Hide action command...", 0, praat_HIDDEN, DO_praat_hideAction);
+	praat_addMenuCommand ("Objects", "Praat", "Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
+	button = praat_addMenuCommand ("Objects", "Praat", "Goodies", 0, praat_UNHIDABLE, 0);
 	if (button) XtVaGetValues (button, XmNsubMenuId, & goodiesMenu, NULL);
 	praat_addMenuCommand ("Objects", "Goodies", "Calculator...", 0, 'U', DO_praat_calculator);
-	button = praat_addMenuCommand ("Objects", "Control", "Preferences", 0, praat_UNHIDABLE, 0);
+	button = praat_addMenuCommand ("Objects", "Praat", "Preferences", 0, praat_UNHIDABLE, 0);
 	if (button) XtVaGetValues (button, XmNsubMenuId, & preferencesMenu, NULL);
 	praat_addMenuCommand ("Objects", "Preferences", "Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
 

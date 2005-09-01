@@ -323,7 +323,7 @@ DO
 	Editor_broadcastChange (me);
 END
 
-FORM (ManipulationEditor, cb_stylizePitch, "Stylize pitch", 0);
+FORM (ManipulationEditor, cb_stylizePitch, "Stylize pitch", "PitchTier: Stylize...");
 	REAL ("Frequency resolution", "2.0")
 	RADIO ("Units", 2)
 		RADIOBUTTON ("Hz")

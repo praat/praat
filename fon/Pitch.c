@@ -24,6 +24,7 @@
  * pb 2004/10/24 Sampled statistics
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2005/06/16 function units
+ * pb 2005/08/31 semitones re 200 Hz
  */
 
 #include "Pitch.h"
@@ -77,6 +78,8 @@ static const char * getUnitText (I, long ilevel, int unit, unsigned long flags) 
 				flags & Function_UNIT_TEXT_SHORT ? "st__1_" : flags & Function_UNIT_TEXT_GRAPHICAL ? "semitones %%re% 1 Hz" : "semitones re 1 Hz" :
 			unit == Pitch_UNIT_SEMITONES_100 ?
 				flags & Function_UNIT_TEXT_SHORT ? "st__100_" : flags & Function_UNIT_TEXT_GRAPHICAL ? "semitones %%re% 100 Hz" : "semitones re 100 Hz" :
+			unit == Pitch_UNIT_SEMITONES_200 ?
+				flags & Function_UNIT_TEXT_SHORT ? "st__200_" : flags & Function_UNIT_TEXT_GRAPHICAL ? "semitones %%re% 200 Hz" : "semitones re 200 Hz" :
 			unit == Pitch_UNIT_SEMITONES_440 ?
 				flags & Function_UNIT_TEXT_SHORT ? "st__a_" : flags & Function_UNIT_TEXT_GRAPHICAL ? "semitones %%re% 440 Hz" : "semitones re 440 Hz" :
 			unit == Pitch_UNIT_ERB ?
@@ -107,6 +110,7 @@ static double convertStandardToSpecialUnit (I, double value, long ilevel, int un
 			unit == Pitch_UNIT_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
 			unit == Pitch_UNIT_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
 			unit == Pitch_UNIT_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
+			unit == Pitch_UNIT_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
 			unit == Pitch_UNIT_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
 			unit == Pitch_UNIT_ERB ? NUMhertzToErb (value) :
 			NUMundefined;
@@ -131,6 +135,7 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 			unit == Pitch_UNIT_LOG_HERTZ ? pow (10.0, value) :
 			unit == Pitch_UNIT_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
 			unit == Pitch_UNIT_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
+			unit == Pitch_UNIT_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
 			unit == Pitch_UNIT_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
 			unit == Pitch_UNIT_ERB ? NUMerbToHertz (value) :
 			NUMundefined;

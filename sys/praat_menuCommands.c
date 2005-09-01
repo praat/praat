@@ -1,6 +1,6 @@
 /* praat_menuCommands.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2001/07/18
  * pb 2002/03/07 GPL
  * pb 2002/03/18 Mach
+ * pb 2005/08/22 renamed Control menu to "Praat"
  */
 
 #include "praatP.h"
@@ -406,7 +406,7 @@ void praat_addCommandsToEditor (Editor me) {
 	long i;
 	for (i = 1; i <= theNumberOfCommands; i ++) if (strequ (theCommands [i]. window, windowName)) {
 		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
-			Melder_flushError ("To fix this, go to Control:Preferences:Buttons:Editors, "
+			Melder_flushError ("To fix this, go to Praat:Preferences:Buttons:Editors, "
 				"and remove the script from this menu.\n"
 				"You may want to install the script in a different menu.");
 	}

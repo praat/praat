@@ -22,6 +22,7 @@
  * pb 2004/04/17 maximum period factor for jitter
  * pb 2004/07/14 maximum amplitude factor for shimmer
  * pb 2005/06/16 units
+ * pb 2005/08/30 voice report: say explicitly that the reported harmonicity is for the voiced parts only
  */
 
 #include "VoiceAnalysis.h"
@@ -332,7 +333,7 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	/*
 	 * Harmonicity.
 	 */
-	MelderInfo_writeLine1 ("Harmonicity:");
+	MelderInfo_writeLine1 ("Harmonicity of the voiced parts only:");
 	MelderInfo_writeLine2 ("   Mean autocorrelation: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION), 6));
 	MelderInfo_writeLine2 ("   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));
 	MelderInfo_writeLine3 ("   Mean harmonics-to-noise ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB), 3), " dB");

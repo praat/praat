@@ -29,6 +29,7 @@
  * pb 2004/11/26 check available sampling frequencies on MacOS X
  * pb 2005/02/13 defended against weird meter levels
  * pb 2005/04/25 made 24 kHz available for Mac
+ * pb 2005/08/22 removed reference to Control menu from message
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -219,7 +220,7 @@ static int win_waveInOpen (SoundRecorder me) {
 static int win_waveInPrepareHeader (SoundRecorder me, int which) {
 	my err = waveInPrepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
 	if (! win_waveInCheck (me)) return Melder_error ("Audio input: cannot prepare header.\n"
-		"Quit some other programs or go to \"Sound input prefs\" in the Preferences submenu of the Control menu.");
+		"Quit some other programs or go to \"Sound input prefs\" in the Preferences menu.");
 	return 1;
 }
 static int win_waveInAddBuffer (SoundRecorder me, int which) {

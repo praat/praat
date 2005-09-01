@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/06/28
+ * pb 2005/09/01
  */
 
 #ifndef _melder_h_
@@ -413,6 +413,8 @@ int motif_getResolution (Widget widget);
 
 Widget GuiText_createScrolled (Widget parent, const char *name, int editable, int topOffset);
 void GuiText_setFontSize (Widget me, int size);
+void GuiText_undo (Widget me);
+void GuiText_redo (Widget me);
 
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*

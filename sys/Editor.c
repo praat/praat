@@ -1,6 +1,6 @@
 /* Editor.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2002/03/22 Editor_setPublish2Callback
+ * pb 2005/09/01 do not add a "(cannot) undo" button if there is no data to save
  */
 
 #include "ScriptEditor.h"
@@ -266,7 +267,8 @@ static void createMenus (I) {
 	Editor_addMenu (me, "File", 0);
 	if (our editable) {
 		Editor_addMenu (me, "Edit", 0);
-		my undoButton = Editor_addCommand (me, "Edit", "Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
+		if (my data)
+			my undoButton = Editor_addCommand (me, "Edit", "Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
 	}
 }
 

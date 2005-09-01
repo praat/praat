@@ -894,7 +894,8 @@ void Melder_flushError (const char *format, ...) {
 }
 
 int Melder_fatal (const char *format, ...) {
-	const char *lead = "Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n";
+	const char *lead = strstr (format, "Praat cannot start up") ? "" :
+		"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n";
 	va_list arg;
 	va_start (arg, format);
 	strcpy (Melder_buffer1, lead);

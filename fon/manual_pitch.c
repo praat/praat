@@ -1,6 +1,6 @@
 /* manual_pitch.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -381,7 +381,7 @@ NORMAL ("To change the ceiling, but not the path, choose `Change ceiling...' fro
 	"if the new ceiling is higher than the old ceiling, some formerly unvoiced frames may become voiced.")
 MAN_END
 
-MAN_BEGIN ("PitchTier", "ppgb", 20030316)
+MAN_BEGIN ("PitchTier", "ppgb", 20050831)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
 	"A PitchTier object represents a time-stamped pitch contour, "
 	"i.e. it contains a number of (%time, %pitch) points, without voiced/unvoiced information. "
@@ -390,6 +390,12 @@ INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
 	"is constant at 150 Hz for all times before 0.5 seconds, constant at 200 Hz for all times after 1.5 seconds, "
 	"and linearly interpolated for all times between 0.5 and 1.5 seconds (i.e. 170 Hz at 0.7 seconds, "
 	"210 Hz at 1.1 seconds, and so on).")
+NORMAL ("PitchTier objects are used for two purposes: "
+	"for manipulating the pitch curve of an existing sound "
+	"(see @@Intro 8.1. Manipulation of pitch@) "
+	"and for synthesizing a new sound "
+	"(see @@Source-filter synthesis 1. Creating a source from pitch targets@, "
+	"and for an example @@Source-filter synthesis 3. The ba-da continuum@).")
 ENTRY ("PitchTier commands")
 NORMAL ("Creation:")
 LIST_ITEM ("From scratch:")
@@ -407,20 +413,26 @@ NORMAL ("Viewing and editing:")
 LIST_ITEM ("\\bu @PitchTierEditor: with or without a Sound.")
 LIST_ITEM ("\\bu @ManipulationEditor")
 NORMAL ("Conversion:")
-LIST_ITEM ("\\bu @@PitchTier: Down to PointProcess@: copy times.")
+LIST_ITEM ("\\bu @@PitchTier: Down to PointProcess@: copy the times.")
 NORMAL ("Synthesis:")
 LIST_ITEM ("\\bu @@PitchTier: To PointProcess@: area-1 pulse generation (used in @PSOLA).")
 LIST_ITEM ("\\bu @@Manipulation: Replace pitch tier@")
 NORMAL ("Queries:")
+LIST_ITEM ("\\bu @@time domain")
 LIST_ITEM ("\\bu @@Get low index from time...")
 LIST_ITEM ("\\bu @@Get high index from time...")
 LIST_ITEM ("\\bu @@Get nearest index from time...")
+LIST_ITEM ("\\bu @@PitchTier: Get mean (curve)...")
+LIST_ITEM ("\\bu @@PitchTier: Get mean (points)...")
+LIST_ITEM ("\\bu @@PitchTier: Get standard deviation (curve)...")
+LIST_ITEM ("\\bu @@PitchTier: Get standard deviation (points)...")
+LIST_ITEM ("\\bu @@Get area...@: the number of periods")
 NORMAL ("Modification:")
 LIST_ITEM ("\\bu @@Remove point...")
 LIST_ITEM ("\\bu @@Remove point near...")
 LIST_ITEM ("\\bu @@Remove points between...")
 LIST_ITEM ("\\bu @@PitchTier: Add point...")
-
+LIST_ITEM ("\\bu @@PitchTier: Stylize...")
 MAN_END
 
 MAN_BEGIN ("PitchTier: Add point...", "ppgb", 20010410)
@@ -503,6 +515,24 @@ NORMAL ("For a PitchTier that was created from a @Pitch object, this command giv
 	"based on quantiles, as available for Pitch objects, are more robust).")
 NORMAL ("To get the standard deviation in the entire curve, i.e. weighted by the durations of the line pieces, "
 	"Use @@PitchTier: Get standard deviation (curve)...@ instead.")
+MAN_END
+
+MAN_BEGIN ("PitchTier: Stylize...", "ppgb", 20050831)
+INTRO ("A command that modifies the selected @PitchTier object "
+	"(or the pitch curve in the @ManipulationEditor).")
+ENTRY ("Purpose")
+NORMAL ("to end up with a much simplified pitch curve.")
+ENTRY ("Settings")
+TAG ("%%Frequency resolution% (standard: 2.0 semitones)")
+DEFINITION ("the minimum amount by which every remaining pitch point will lie "
+	"above or below the line that connects its two neigbours.")
+ENTRY ("Algorithm")
+LIST_ITEM ("1. Look up the pitch point that is closest to the straight line "
+	"that connects its two neighbouring points.")
+LIST_ITEM ("2. If this pitch point is further away from that straight line "
+	"than %%frequency resolution%, we are finished: the curve cannot be stylized any further.")
+LIST_ITEM ("3. If we are not finished, the pitch point we found in step 1 is removed.")
+LIST_ITEM ("4. Go back to step 1.")
 MAN_END
 
 MAN_BEGIN ("PitchTier: To PointProcess", "ppgb", 19960915)
