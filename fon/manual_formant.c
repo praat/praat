@@ -91,7 +91,7 @@ DEFINITION ("determines the signal intensity (as stored in each formant frame) b
 	"which would mean that formants in frames with intensities less than the maximum intensity minus 30 dB will not be drawn.")
 TAG ("%%Garnish")
 DEFINITION ("determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
-	"Turn this button off if you prefer to garnish you picture by yourself with the @Margins menu.")
+	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 MAN_END
 
 MAN_BEGIN ("Formant: Draw tracks...", "ppgb", 19980321)
@@ -107,7 +107,7 @@ TAG ("%%Maximum frequency% (Hz)")
 DEFINITION ("the height of the %y axis. For speech, 5000 Hz is a usual value.")
 TAG ("%%Garnish")
 DEFINITION ("determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
-	"Turn this button off if you prefer to garnish you picture by yourself with the @Margins menu.")
+	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 ENTRY ("Usage")
 NORMAL ("Unlike @@Formant: Speckle...@, this procedure assumes that e.g. the second formant in frame %i "
 	"has something to do with the second formant in frame %i+1. To make this assumption more plausible, "

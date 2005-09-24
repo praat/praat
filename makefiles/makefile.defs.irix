@@ -1,9 +1,9 @@
 # File: makefile.defs.sgi
 
 # System: SGI
-# Paul Boersma, May 19, 2005
+# Paul Boersma, September 12, 2005
 
-CC = cc -DUNIX -O2 -Olimit 2000 -fullwarn -wlint -woff 813,822,826,827,852
+CC = cc -DUNIX -O2 -OPT:Olimit=3000 -fullwarn -wlint -woff 813,822,826,827,852
 #CC = cc -DUNIX -g -fullwarn -wlint -woff 613,813,817,819,820,822,826,827,852
 #!!!!! Warnings off:
 #!!!!!    613: Not supported pragma once

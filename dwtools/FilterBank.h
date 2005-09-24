@@ -44,6 +44,9 @@
 #ifndef _Intensity_h_
 	#include "Intensity.h"
 #endif
+#ifndef _PCA_h_
+	#include "PCA.h"
+#endif
 
 #define HZTOBARK(x) NUMhertzToBark2(x)
 #define HZTOMEL(x)	NUMhertzToMel2(x)
@@ -155,5 +158,8 @@ Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
 */
 
 Intensity FilterBank_to_Intensity (I);
+
+void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
+	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
 
 #endif /* _FilterBank_h_ */

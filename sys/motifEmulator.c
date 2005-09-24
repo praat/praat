@@ -1,6 +1,6 @@
 /* motifEmulator.c
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
  * pb 2004/01/01 extracted text handling to GuiText.c
  * pb 2004/02/28 MacOS X: used SetControlMaximum (32767) to work around MacOS X feature in setting popup control
  * pb 2004/11/24 separated labels from cascade buttons
+ * pb 2005/09/01 assume that we have Appearance (i.e. System 8.5 or up)
  */
 #ifndef UNIX
 
 /* The Motif emulator for Macintosh and Windows. */
 
 #define PRAAT_WINDOW_CLASS_NUMBER  1
-#define SCROLL32  1
 #define motif_mac_controlFont  (kControlUsesOwningWindowsFontVariant)
 
 #include <stdio.h>
@@ -46,9 +46,13 @@
 #include "melder.h"
 #include "GuiP.h"
 
+#if win
+	#define SCROLL32  1
+#else
+	#define SCROLL32  0
+#endif
+
 #if mac
-	#define isBevelControl(widget)  (haveAppearance && (widget) -> nat.control.isBevel)
-	#define isPopupControl(widget)  (haveAppearance && (widget) -> nat.control.isPopup)
 	#include "macport_on.h"
 #endif
 
@@ -700,7 +704,7 @@ static void NativeControl_setTitle (Widget me) {
 		SetWindowText (my window, motif_win_expandAmpersands (my name));
 	#elif mac
 		Melder_assert (my nat.control.handle);
-		if (haveAppearance && my widgetClass == xmLabelWidgetClass) {
+		if (my widgetClass == xmLabelWidgetClass) {
 			/*
 			 * Static Text controls on the Mac do not understand SetControlTitle.
 			 */
@@ -708,7 +712,7 @@ static void NativeControl_setTitle (Widget me) {
 			/* SetControlData does not redraw the control. */
 			if (IsControlVisible (my nat.control.handle))
 				Draw1Control (my nat.control.handle);
-		} else if (isPopupControl (me)) {
+		} else if (my nat.control.isPopup) {
 			Widget menu = my subMenuId, item;
 			if (menu) for (item = menu -> firstChild; item; item = item -> nextSibling) {
 				if (strequ (item -> name, my name)) {
@@ -768,22 +772,10 @@ static void NativeScrollBar_set (Widget me) {
 	}
 	#elif mac
 		if (! my nat.control.handle) return;
-		#if SCROLL32
-			if (my maximum == my minimum + my sliderSize) {
-				SetControlMinimum (my nat.control.handle, 0);
-				SetControlValue (my nat.control.handle, 0);
-				SetControlMaximum (my nat.control.handle, 0);
-			} else {
-				SetControlMinimum (my nat.control.handle, 0);
-				SetControlMaximum (my nat.control.handle, 32767);
-				SetControlValue (my nat.control.handle, my value == my minimum ? 0 :
-					(32767.0 * (my value - my minimum)) / (my maximum - my minimum - my sliderSize));
-			}
-		#else
-			SetControlMinimum (my nat.control.handle, my minimum);
-			SetControlMaximum (my nat.control.handle, my maximum - my sliderSize);
-			SetControlValue (my nat.control.handle, my value);
-		#endif
+		SetControl32BitMinimum (my nat.control.handle, my minimum);
+		SetControl32BitMaximum (my nat.control.handle, my maximum - my sliderSize);
+		SetControlViewSize (my nat.control.handle, my sliderSize);
+		SetControl32BitValue (my nat.control.handle, my value);
 	#endif
 }
 
@@ -910,103 +902,28 @@ static void NativeMenuItem_setText (Widget me) {
 		}
 		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, title);
 	#elif mac
-		if (haveAppearance/*&&carbon*/) {   /* BUG */
-			static int theGlyphs [1+31] = { 0,
-				kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
-				kMenuDeleteRightGlyph, 0, kMenuDeleteLeftGlyph, kMenuTabRightGlyph, 0,
-				0, 0, kMenuReturnGlyph, kMenuPageUpGlyph, kMenuPageDownGlyph,
-				kMenuEscapeGlyph, kMenuF1Glyph, kMenuF2Glyph, kMenuF3Glyph, kMenuF4Glyph,
-				kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
-				kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
-				0 };
-			(void) title;
-			PfromCstr (mac_text, my name);
-			SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
-			if (acc > 32) {
-				SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
-			} else {
-				Melder_assert (acc > 0 && acc < 32);
-				SetItemCmd (my nat.entry.handle, my nat.entry.item, ' ');   /* Funny that this should be needed. */
-				SetMenuItemKeyGlyph (my nat.entry.handle, my nat.entry.item, theGlyphs [acc]);
-			}
-			SetMenuItemModifiers (my nat.entry.handle, my nat.entry.item,
-				( modifiers & _motif_OPTION_MASK ? kMenuOptionModifier : 0 ) +
-				( modifiers & _motif_SHIFT_MASK ? kMenuShiftModifier : 0 ) +
-				( modifiers & _motif_COMMAND_MASK ? 0 : kMenuNoCommandModifier ));
+		static int theGlyphs [1+31] = { 0,
+			kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
+			kMenuDeleteRightGlyph, 0, kMenuDeleteLeftGlyph, kMenuTabRightGlyph, 0,
+			0, 0, kMenuReturnGlyph, kMenuPageUpGlyph, kMenuPageDownGlyph,
+			kMenuEscapeGlyph, kMenuF1Glyph, kMenuF2Glyph, kMenuF3Glyph, kMenuF4Glyph,
+			kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
+			kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
+			0 };
+		(void) title;
+		PfromCstr (mac_text, my name);
+		SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
+		if (acc > 32) {
+			SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
 		} else {
-			if (acc == 0) {
-				PfromCstr (mac_text, my name);
-				SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
-			} else if (acc > 32 && modifiers == _motif_COMMAND_MASK) {
-				PfromCstr (mac_text, my name);
-				SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
-				SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
-			} else {
-				const char *optionString = Melder_systemVersion >= 0x0800 ? "\007" : "Alt-";
-				const char *shiftString = Melder_systemVersion >= 0x0800 ? "\005" : "Shift-";
-				const char *commandString = "\021";
-				/*
-				 * From System 8 on, the system font contains symbols for Shift and Option.
-				 */
-				static const char *keyStrings7 [256] = {
-					0, "<-", "->", "Up", "Down", "PAUSE", "Del", "Ins", "Backspace", "Tab", "LineFeed", "Home", "End", "Enter", "PageUp", "PageDown",
-					"Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", 0, 0, 0,
-					"Space", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/",
-					"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?",
-					"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-					"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_",
-					"`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
-					"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "Del",
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, "\244", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", "]", ",", "?", ".", "\\",
-					";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "-", "`", "=", "\'", 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				static const char *keyStrings8 [256] = {
-					0, "\030", "\032", "\031", "\020", "PAUSE", "Del", "Ins", "Backspace", "Tab", "LineFeed", "Home", "End", "Enter", "PageUp", "PageDown",
-					"Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", 0, 0, 0,
-					"Space", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/",
-					"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?",
-					"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-					"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_",
-					"`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
-					"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "Del",
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, "\244", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", "]", ",", "?", ".", "\\",
-					";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "-", "`", "=", "\'", 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				char *spaces = "                                                            ";   /* 60 spaces. */
-				const char **keyStrings = Melder_systemVersion >= 0x0800 ? & keyStrings8 [0] : & keyStrings7 [0];
-				int width, numberOfSpaces;
-				float spaceWidth;
-				SetPortWindowPort (my macWindow);
-				TextFont (systemFont);
-				TextSize (0);
-				sprintf (title, "%s%s%s%s%s", my name,
-					modifiers & _motif_OPTION_MASK ? optionString : "",
-					modifiers & _motif_SHIFT_MASK ? shiftString : "",
-					modifiers & _motif_COMMAND_MASK ? commandString : "", keyStrings [acc]);
-				width = TextWidth ((Ptr) title, 0, strlen (title));
-				spaceWidth = TextWidth ((Ptr) spaces, 0, 1);
-				motif_mac_defaultFont ();
-				numberOfSpaces = (200 - width) / spaceWidth;
-				if (numberOfSpaces < 3) numberOfSpaces = 3;
-				else if (numberOfSpaces > 60) numberOfSpaces = 60;
-				sprintf (title, "%s%s%s%s%s%s", my name, spaces + 60 - numberOfSpaces,
-					modifiers & _motif_OPTION_MASK ? optionString : "",
-					modifiers & _motif_SHIFT_MASK ? shiftString : "",
-					modifiers & _motif_COMMAND_MASK ? commandString : "", keyStrings [acc]);
-				PfromCstr (mac_text, title);
-				SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
-			}
+			Melder_assert (acc > 0 && acc < 32);
+			SetItemCmd (my nat.entry.handle, my nat.entry.item, ' ');   /* Funny that this should be needed. */
+			SetMenuItemKeyGlyph (my nat.entry.handle, my nat.entry.item, theGlyphs [acc]);
 		}
+		SetMenuItemModifiers (my nat.entry.handle, my nat.entry.item,
+			( modifiers & _motif_OPTION_MASK ? kMenuOptionModifier : 0 ) +
+			( modifiers & _motif_SHIFT_MASK ? kMenuShiftModifier : 0 ) +
+			( modifiers & _motif_COMMAND_MASK ? 0 : kMenuNoCommandModifier ));
 	#endif
 }
 
@@ -1269,21 +1186,19 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 			#elif mac
-				if (haveAppearance) {
-					ControlFontStyleRec fontStyle;
-					fontStyle. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
-					fontStyle. font = systemFont;
-					fontStyle. size = 12;
-					fontStyle. just = my alignment == XmALIGNMENT_END ? teFlushRight :
-						my alignment == XmALIGNMENT_CENTER ? teCenter : teFlushLeft;
-					PfromCstr (mac_text, my name);
-					my nat.control.handle = NewControl (my macWindow, & my rect,
-						"\p", false, 0, 0, 0, kControlStaticTextProc, (long) me);
-					SetControlFontStyle (my nat.control.handle, & fontStyle);
-					SetControlData (my nat.control.handle, kControlEntireControl, kControlStaticTextTextTag, strlen (my name),
-						my name);
-					my isControl = TRUE;
-				}
+				ControlFontStyleRec fontStyle;
+				fontStyle. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
+				fontStyle. font = systemFont;
+				fontStyle. size = 12;
+				fontStyle. just = my alignment == XmALIGNMENT_END ? teFlushRight :
+					my alignment == XmALIGNMENT_CENTER ? teCenter : teFlushLeft;
+				PfromCstr (mac_text, my name);
+				my nat.control.handle = NewControl (my macWindow, & my rect,
+					"\p", false, 0, 0, 0, kControlStaticTextProc, (long) me);
+				SetControlFontStyle (my nat.control.handle, & fontStyle);
+				SetControlData (my nat.control.handle, kControlEntireControl, kControlStaticTextTextTag, strlen (my name),
+					my name);
+				my isControl = TRUE;
 			#endif
 		} break;
 		case xmCascadeButtonWidgetClass: {
@@ -1296,14 +1211,12 @@ static void _GuiNativizeWidget (Widget me) {
 					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 				#elif mac
 					PfromCstr (mac_text, my name);
-					if (haveAppearance) {
-						if (strstr (my name, " -") || my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5) {
-							my nat.control.isBevel = true;
-						} else {
-							my nat.control.isPopup = true;
-						}
+					if (strstr (my name, " -") || my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5) {
+						my nat.control.isBevel = true;
+					} else {
+						my nat.control.isPopup = true;
 					}
-					if (isBevelControl (me)) {
+					if (my nat.control.isBevel) {
 						short dummy = kControlBevelButtonAlignTextFlushLeft;
 						my nat.control.handle = NewControl (my macWindow, & my rect,
 							mac_text, false,
@@ -1315,7 +1228,7 @@ static void _GuiNativizeWidget (Widget me) {
 							0,   /* "max": resource ID. */
 							kControlBevelButtonSmallBevelProc + motif_mac_controlFont, (long) me);
 						/*SetControlData (my nat.control.handle, kControlEntireControl, kControlBevelButtonTextAlignTag, sizeof (short), & dummy);*/
-					} else if (isPopupControl (me)) {
+					} else if (my nat.control.isPopup) {
 						my nat.control.handle = NewControl (my macWindow, & my rect,
 							mac_text, false,
 							/*
@@ -1452,29 +1365,20 @@ static void _GuiNativizeWidget (Widget me) {
 			#elif mac
 				Rect r = my rect;
 				OffsetRect (& r, 0, 22);
-				if (haveAppearance) {
-					CreateNewWindow (kDocumentWindowClass,
-						kWindowCloseBoxAttribute + ( theDialogHint ? 0 : kWindowCollapseBoxAttribute + kWindowResizableAttribute + kWindowFullZoomAttribute),
-						& r, & my nat.window.ptr);
-					SetWRefCon (my nat.window.ptr, (long) me);
-					CreateRootControl (my nat.window.ptr, & my nat.window.rootControl);
-					if (theDialogHint) {
-						SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
-					} else {
-						#if carbon
-							SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
-						#else
-							SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDocumentWindowBackground, False);   /* otherwise too few grey values */
-						#endif
-					}
+				CreateNewWindow (kDocumentWindowClass,
+					kWindowCloseBoxAttribute +
+					( theDialogHint ? 0 : kWindowCollapseBoxAttribute + kWindowResizableAttribute + kWindowFullZoomAttribute),
+					& r, & my nat.window.ptr);
+				SetWRefCon (my nat.window.ptr, (long) me);   /* So we can find the widget from the event with GetWRefCon (). */
+				CreateRootControl (my nat.window.ptr, & my nat.window.rootControl);
+				if (theDialogHint) {
+					SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
 				} else {
-					my nat.window.ptr = NewCWindow (NULL, & r, "\pPraat",
-						false,   /* Invisible. */
-						theDialogHint ? documentProc : zoomDocProc,
-						(WindowPtr) -1,   /* In front of all others (after it is shown). */
-						true,   /* Has a go-away button. */
-						(long) me   /* So we can find the widget from the event with GetWRefCon (). */
-					);
+					#if carbon
+						SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
+					#else
+						SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDocumentWindowBackground, False);   /* otherwise too few grey values */
+					#endif
 				}
 				my macWindow = my nat.window.ptr;   /* Associate drawing context; child widgets will inherit. */
 				my motif.shell.active = true;   /* Why? */
@@ -1894,11 +1798,11 @@ static void _motif_setValues (Widget me, va_list arg) {
 			my shell -> defaultButton = my defaultButton = va_arg (arg, Widget);
 			Melder_assert (MEMBER (my defaultButton, PushButton));
 			#if mac
+			{
+				Boolean set = true;
 				Melder_assert (my defaultButton -> nat.control.handle);
-				if (haveAppearance) {
-					Boolean set = true;
-					SetControlData (my defaultButton -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
-				}
+				SetControlData (my defaultButton -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
+			}
 			#endif
 			break;
 		case XmNdeleteResponse:
@@ -2013,15 +1917,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 						my width = preferredWidth;
 						resize = True;
 					}
-					#if win
-						NativeControl_setTitle (me);
-					#elif mac
-						if (haveAppearance) {
-							NativeControl_setTitle (me);
-						} else {
-							_Gui_invalidateWidget (me);
-						}
-					#endif
+					NativeControl_setTitle (me);
 				} else {
 					NativeControl_setTitle (me);
 				}
@@ -2131,7 +2027,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			} else {
 				#if win
 				#elif mac
-					if (my isControl && isPopupControl (me)) {
+					if (my isControl && my nat.control.isPopup) {
 						SetControlData (my nat.control.handle, kControlMenuPart, kControlPopupButtonMenuHandleTag, 4, & my subMenuId -> nat.menu.handle);
 						NativeControl_setTitle (me);
 					}
@@ -2677,13 +2573,7 @@ void XtDestroyWidget (Widget me) {
 			#if win
 				DestroyWindow (my window);
 			#elif mac
-				if (haveAppearance) {
-					_GuiNativeControl_destroy (me);
-				} else {
-					_GuiMac_clipOn (me);
-					EraseRect (& my rect);
-					GuiMac_clipOff ();
-				}
+				_GuiNativeControl_destroy (me);
 			#endif
 		} break;
 		case xmCascadeButtonWidgetClass: {
@@ -2963,14 +2853,7 @@ static void mapWidget (Widget me) {
 			_GuiNativeControl_show (me);
 		} break;
 		case xmLabelWidgetClass: {
-			#if win
-				_GuiNativeControl_show (me);
-			#elif mac
-				if (haveAppearance)
-					_GuiNativeControl_show (me);
-				else
-					_Gui_invalidateWidget (me);
-			#endif
+			_GuiNativeControl_show (me);
 		} break;
 		case xmCascadeButtonWidgetClass: {
 			#if win
@@ -3108,14 +2991,7 @@ void XtSetSensitive (Widget me, Boolean value) {
 		} break;
 		case xmScrollBarWidgetClass: _GuiNativeControl_setSensitive (me); break;
 		case xmLabelWidgetClass: {
-			#if win
-				_GuiNativeControl_setSensitive (me);
-			#elif mac
-				if (haveAppearance)
-					_GuiNativeControl_setSensitive (me);
-				else
-					_Gui_invalidateWidget (me);
-			#endif
+			_GuiNativeControl_setSensitive (me);
 		} break;
 		case xmCascadeButtonWidgetClass: {
 			if (my inMenu || my motif.cascadeButton.inBar) {
@@ -3169,14 +3045,7 @@ void XtUnmanageChild (Widget me) {
 		case xmPushButtonWidgetClass: _GuiNativeControl_hide (me); break;
 		case xmToggleButtonWidgetClass: _GuiNativeControl_hide (me); break;
 		case xmLabelWidgetClass:
-			#if win
-				_GuiNativeControl_hide (me);
-			#elif mac
-				if (haveAppearance)
-					_GuiNativeControl_hide (me);
-				else
-					_Gui_invalidateWidget (me);
-			#endif
+			_GuiNativeControl_hide (me);
 			break;
 		case xmCascadeButtonWidgetClass:
 			#if win
@@ -3313,16 +3182,8 @@ Widget XtInitialize (void *dum1, const char *name,
 		#if ! carbon
 			InitDialogs (0L);
 			LMSetFractEnable (0);
-			#ifndef haveAppearance
-				/*
-				 * The following will never be reached in the current version,
-				 * because haveAppearance is always #defined.
-				 */
-				haveAppearance = Melder_systemVersion >= 0x0805;   /* Only 1.1 and higher, and assume WindowsLib 8.5. */
-			#endif
 		#endif
-		if (haveAppearance)
-			RegisterAppearanceClient ();
+		RegisterAppearanceClient ();
 		InitCursor ();
 		FlushEvents (everyEvent, 0);
 		AEInstallEventHandler (kCoreEventClass, kAEOpenApplication, NewAEEventHandlerUPP (_motif_processOpenApplicationMessage), 0, false);
@@ -4374,22 +4235,9 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 				_GuiMacText_update (me);
 			} break;
 			case xmLabelWidgetClass: {
-				if (haveAppearance) {
-					_GuiMac_clipOn (me);
-					Draw1Control (my nat.control.handle);
-					GuiMac_clipOff ();
-				} else {
-					Rect r = my rect;
-					/*r.top += 3;*/
-					_GuiMac_clipOn (me);
-					/*if (haveAppearance) {
-						UseThemeFont (kThemeSystemFont, smSystemScript);
-					}*/
-					TETextBox (my name, strlen (my name), & r,
-						my alignment == XmALIGNMENT_BEGINNING ? teJustLeft :
-						my alignment == XmALIGNMENT_CENTER ? teJustCenter : teJustRight);
-					GuiMac_clipOff ();
-				}
+				_GuiMac_clipOn (me);
+				Draw1Control (my nat.control.handle);
+				GuiMac_clipOff ();
 			} break;
 			case xmCascadeButtonWidgetClass: {
 				if (my isControl) {   /* In window menu bar or in dynamic menu. */
@@ -4400,7 +4248,7 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 				}
 			} break;
 			case xmRowColumnWidgetClass: {
-				/*if (haveAppearance && my rowColumnType == XmMENU_BAR)
+				/*if (my rowColumnType == XmMENU_BAR)
 					DrawThemeMenuBarBackground (& my rect, 0, 0);*/
 			} break;
 			case xmScrolledWindowWidgetClass: {
@@ -4458,14 +4306,6 @@ static void _motif_processUpdateEvent (EventRecord *event) {
 		ClipRect (& rect);
 		DrawGrowIcon (macwindow);
 		GuiMac_clipOff ();
-	}
-	if (! haveAppearance && shell -> defaultButton) {
-		Widget defaultButton = shell -> defaultButton;
-		Rect r = defaultButton -> rect;
-		InsetRect (& r, -4, -4);
-		PenSize (3, 3);
-		FrameRoundRect (& r, 16, 16);
-		PenSize (1, 1);
 	}
 	_motif_update (shell, event);
 	EndUpdate (macwindow);
@@ -4548,25 +4388,12 @@ static pascal void _motif_scrollBarAction (ControlHandle maccontrol, short part)
 		case kControlDownButtonPart: my value += my increment; break;
 		case kControlPageUpPart: my value -= my pageIncrement; break;
 		case kControlPageDownPart: my value += my pageIncrement; break;
-		#if SCROLL32
-		case kControlIndicatorPart: {
-			int macValue = GetControlValue (maccontrol);
-			my value = macValue == 0 ? my minimum : macValue == 32767 ? my maximum - my sliderSize :
-				my minimum + (my maximum - my minimum - my sliderSize) * (macValue / 32767.0);
-		} break;
-		#else
-		case kControlIndicatorPart: my value = GetControlValue (maccontrol); break;
-		#endif
+		case kControlIndicatorPart: my value = GetControl32BitValue (maccontrol); break;
 		default: break;
 	}
 	if (my value < my minimum) my value = my minimum;
 	if (my value > my maximum - my sliderSize) my value = my maximum - my sliderSize;
-	#if SCROLL32
-	SetControlValue (maccontrol, my value == my minimum ? 0 :
-			(32767.0 * (my value - my minimum)) / (my maximum - my minimum - my sliderSize));
-	#else
-	SetControlValue (maccontrol, my value);
-	#endif
+	SetControl32BitValue (maccontrol, my value);
 	if (part == kControlIndicatorPart)
 		_Gui_callCallbacks (me, & my motif.scrollBar.dragCallbacks, (XtPointer) (long) part);
 	else
@@ -4580,31 +4407,17 @@ static void _motif_activateControls (Widget me, Boolean act) {
 	Widget control;
 	UInt16 numberOfControls, icontrol;
 	Melder_assert (MEMBER (me, Shell));
-	if (haveAppearance) {
-		Melder_assert (my nat.window.rootControl);
-		CountSubControls (my nat.window.rootControl, & numberOfControls);
-		SetPortWindowPort (my macWindow);
-		for (icontrol = 1; icontrol <= numberOfControls; icontrol ++) {
-			GetIndexedSubControl (my nat.window.rootControl, icontrol, & macControl);
-			control = (Widget) GetControlReference (macControl);
-			if (control && control -> magicNumber == 15111959) {
-				_GuiMac_clipOn (control);
-				HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
-				GuiMac_clipOff ();
-			}
+	Melder_assert (my nat.window.rootControl);
+	CountSubControls (my nat.window.rootControl, & numberOfControls);
+	SetPortWindowPort (my macWindow);
+	for (icontrol = 1; icontrol <= numberOfControls; icontrol ++) {
+		GetIndexedSubControl (my nat.window.rootControl, icontrol, & macControl);
+		control = (Widget) GetControlReference (macControl);
+		if (control && control -> magicNumber == 15111959) {
+			_GuiMac_clipOn (control);
+			HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
+			GuiMac_clipOff ();
 		}
-#if ! carbon
-	} else {
-		SetPortWindowPort (my macWindow);
-		for (macControl = (ControlHandle) ((WindowPeek) my nat.window.ptr) -> controlList; macControl != NULL; macControl = (**macControl). nextControl) {
-			control = (Widget) GetControlReference (macControl);
-			if (control) {
-				_GuiMac_clipOn (control);
-				HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
-				GuiMac_clipOff ();
-			}
-		}
-#endif
 	}
 }
 
@@ -4958,7 +4771,8 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 		 * The existence of an editable text widget forces Command-X to mean 'Cut' and Command-V to mean 'Paste'.
 		 */
 		if (_GuiMacText_tryToHandleClipboardShortcut (text, kar, event)) return;
-		if (kar == '.') {
+		#define USE_COMMAND_PERIOD_AS_CANCEL  0
+		if (USE_COMMAND_PERIOD_AS_CANCEL && kar == '.') {
 			/*
 			 * Command-period: first test for "Escape" keyboard shortcut.
 			 */
@@ -5199,12 +5013,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						} break;
 						case kControlIndicatorPart: {
 							if (TrackControl (maccontrol, event -> where, NULL)) {
-								#if SCROLL32
-								control -> value = control -> minimum + (control -> maximum - control -> minimum - control -> sliderSize) *
-									(GetControlValue (maccontrol) / 32767.0);
-								#else
-								control -> value = GetControlValue (maccontrol);
-								#endif
+								control -> value = GetControl32BitValue (maccontrol);
 								_Gui_callCallbacks (control, & control -> motif.scrollBar.valueChangedCallbacks, (XtPointer) (long) part);
 							}
 						} break;

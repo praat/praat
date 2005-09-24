@@ -23,6 +23,7 @@
  * pb 2004/02/19 outer selection
  * pb 2004/09/05 inner selection
  * pb 2005/05/19 EPS files have the option to switch off the screen preview
+ * pb 2005/09/18 useSilipaPS
  */
 
 #include "melder.h"
@@ -583,13 +584,13 @@ int Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 }
 #endif
 
-int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts) {
+int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS) {
 	Graphics ps;
 	MelderFile_delete (file);   /* To kill resources as well (fopen only kills data fork). */
 	/* BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading). */
 
 	ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
-		my selx1, my selx2, my sely1, my sely2, includeFonts);
+		my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
 	if (! ps)
 		return Melder_error ("Picture_writeToPostScriptFile: "
 			"error opening file %.200s", MelderFile_messageName (file));

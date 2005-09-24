@@ -25,6 +25,7 @@
  * pb 2005/03/02 green colouring for matching labels
  * pb 2005/05/05 show number of intervals
  * pb 2005/06/17 enums
+ * pb 2005/09/23 interface update
  */
 
 #include "TextGridEditor.h"
@@ -41,7 +42,7 @@
 	long selectedTier; \
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
 	Widget publishButton, publishPreserveButton; \
-	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton; \
+	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton; \
 	char *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
 #define TextGridEditor_methods FunctionEditor_methods
@@ -1184,38 +1185,53 @@ static void createMenus (I) {
 
 	if (my sound.data || my longSound.data) {
 		Editor_addCommand (me, "File", "Copy to list of objects:", motif_INSENSITIVE, cb_publish /* dummy */);
-		my publishButton = Editor_addCommand (me, "File", "Extract sound selection (time from 0)", 0, cb_publish);
 		my publishPreserveButton = Editor_addCommand (me, "File", "Extract sound selection (preserve times)", 0, cb_publishPreserve);
+		Editor_addCommand (me, "File", "Extract selection (preserve times)", Editor_HIDDEN, cb_publishPreserve);
+		my publishButton = Editor_addCommand (me, "File", "Extract sound selection (time from 0)", 0, cb_publish);
+		Editor_addCommand (me, "File", "Extract selection (time from 0)", Editor_HIDDEN, cb_publish);
+		Editor_addCommand (me, "File", "Extract selection", Editor_HIDDEN, cb_publish);
 		Editor_addCommand (me, "File", "-- write --", 0, NULL);
 		Editor_addCommand (me, "File", "Copy to disk:", motif_INSENSITIVE, cb_publish /* dummy */);
 	}
 	Editor_addCommand (me, "File", "Write TextGrid to text file...", 'S', cb_writeToTextFile);
 	if (my longSound.data) {
-		my writeAiffButton = Editor_addCommand (me, "File", "Write selection to AIFC file...", 0, cb_writeAifc);
-		my writeAifcButton = Editor_addCommand (me, "File", "Write selection to AIFF file...", 0, cb_writeAiff);
-		my writeWavButton = Editor_addCommand (me, "File", "Write selection to WAV file...", 0, cb_writeWav);
-		my writeNextSunButton = Editor_addCommand (me, "File", "Write selection to Next/Sun file...", 0, cb_writeNextSun);
-		my writeNistButton = Editor_addCommand (me, "File", "Write selection to NIST file...", 0, cb_writeNist);
+		my writeWavButton = Editor_addCommand (me, "File", "Write sound selection to WAV file...", 0, cb_writeWav);
+		Editor_addCommand (me, "File", "Write selection to WAV file...", Editor_HIDDEN, cb_writeWav);
+		my writeAiffButton = Editor_addCommand (me, "File", "Write sound selection to AIFF file...", 0, cb_writeAiff);
+		Editor_addCommand (me, "File", "Write selection to AIFF file...", Editor_HIDDEN, cb_writeAiff);
+		my writeAifcButton = Editor_addCommand (me, "File", "Write sound selection to AIFC file...", 0, cb_writeAifc);
+		Editor_addCommand (me, "File", "Write selection to AIFC file...", Editor_HIDDEN, cb_writeAifc);
+		my writeNextSunButton = Editor_addCommand (me, "File", "Write sound selection to Next/Sun file...", 0, cb_writeNextSun);
+		Editor_addCommand (me, "File", "Write selection to Next/Sun file...", Editor_HIDDEN, cb_writeNextSun);
+		my writeNistButton = Editor_addCommand (me, "File", "Write sound selection to NIST file...", 0, cb_writeNist);
+		Editor_addCommand (me, "File", "Write selection to NIST file...", Editor_HIDDEN, cb_writeNist);
 	}
 	Editor_addCommand (me, "File", "-- close --", 0, NULL);
 
 	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Cut", 'X', cb_cut);
-	Editor_addCommand (me, "Edit", "Copy", 'C', cb_copy);
-	Editor_addCommand (me, "Edit", "Paste", 'V', cb_paste);
-	Editor_addCommand (me, "Edit", "Erase", 0, cb_erase);
+	Editor_addCommand (me, "Edit", "Cut text", 'X', cb_cut);
+	Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, cb_cut);
+	Editor_addCommand (me, "Edit", "Copy text", 'C', cb_copy);
+	Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, cb_copy);
+	Editor_addCommand (me, "Edit", "Paste text", 'V', cb_paste);
+	Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, cb_paste);
+	Editor_addCommand (me, "Edit", "Erase text", 0, cb_erase);
+	Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, cb_erase);
 	Editor_addCommand (me, "Edit", "-- encoding --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Genericize", 0, cb_genericize);
-	Editor_addCommand (me, "Edit", "Nativize", 0, cb_nativize);
+	Editor_addCommand (me, "Edit", "Genericize entire TextGrid", 0, cb_genericize);
+	Editor_addCommand (me, "Edit", "Genericize", Editor_HIDDEN, cb_genericize);
+	Editor_addCommand (me, "Edit", "Nativize entire TextGrid", 0, cb_nativize);
+	Editor_addCommand (me, "Edit", "Nativize", Editor_HIDDEN, cb_nativize);
 	Editor_addCommand (me, "Edit", "-- search --", 0, NULL);
 	Editor_addCommand (me, "Edit", "Find...", 'F', cb_find);
 	Editor_addCommand (me, "Edit", "Find again", 'G', cb_findAgain);
 
 	if (my sound.data) {
 		Editor_addCommand (me, "Select", "-- move to zero --", 0, 0);
-		Editor_addCommand (me, "Select", "Move begin of selection to nearest zero crossing", 0, cb_moveBtoZero);
+		Editor_addCommand (me, "Select", "Move start of selection to nearest zero crossing", ',', cb_moveBtoZero);
+		Editor_addCommand (me, "Select", "Move begin of selection to nearest zero crossing", Editor_HIDDEN, cb_moveBtoZero);
 		Editor_addCommand (me, "Select", "Move cursor to nearest zero crossing", '0', cb_moveCursorToZero);
-		Editor_addCommand (me, "Select", "Move end of selection to nearest zero crossing", 0, cb_moveEtoZero);
+		Editor_addCommand (me, "Select", "Move end of selection to nearest zero crossing", '.', cb_moveEtoZero);
 	}
 
 	Editor_addCommand (me, "Query", "-- query interval --", 0, NULL);
@@ -1596,9 +1612,9 @@ static void draw (I) {
 	if (my longSound.data) {
 		long first, last, selectedSamples;
 		selectedSamples = Sampled_getWindowSamples (my longSound.data, my startSelection, my endSelection, & first, & last);
+		XtSetSensitive (my writeWavButton, selectedSamples != 0);
 		XtSetSensitive (my writeAiffButton, selectedSamples != 0);
 		XtSetSensitive (my writeAifcButton, selectedSamples != 0);
-		XtSetSensitive (my writeWavButton, selectedSamples != 0);
 		XtSetSensitive (my writeNextSunButton, selectedSamples != 0);
 		XtSetSensitive (my writeNistButton, selectedSamples != 0);
 	}

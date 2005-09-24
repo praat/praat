@@ -29,8 +29,8 @@
 
 #if mac
 	#define allowMLTE  1
-	#define haveMLTE  (carbon && allowMLTE && haveAppearance)
-	#define isTextControl(w)  (haveAppearance && (w) -> isControl != NULL)
+	#define haveMLTE  (carbon && allowMLTE)
+	#define isTextControl(w)  ((w) -> isControl != 0)
 	#define isTE(w)  ((w) -> nat.text.handle != NULL)
 	#define isMLTE(w)  (haveMLTE && (w) -> macMlteObject != NULL)
 #endif
@@ -355,11 +355,7 @@ void _GuiText_unmanage (Widget me) {
 			_GuiNativeControl_show (me);
 		} else if (isTE (me)) {
 			_GuiMac_clipOn (me);
-			if (haveAppearance) {
-				DrawThemeEditTextFrame (& my rect, kThemeStateActive);
-			} else {
-				FrameRect (& my rect);
-			}
+			DrawThemeEditTextFrame (& my rect, kThemeStateActive);
 			TEUpdate (& my rect, my nat.text.handle);
 			_GuiMac_clipOffValid (me);
 		} else if (isMLTE (me)) {
@@ -371,11 +367,7 @@ void _GuiText_unmanage (Widget me) {
 			Draw1Control (my nat.control.handle);
 		} else if (isTE (me)) {
 			EraseRect (& my rect);
-			if (haveAppearance) {
-				DrawThemeEditTextFrame (& my rect, kThemeStateActive);
-			} else {
-				FrameRect (& my rect);
-			}
+			DrawThemeEditTextFrame (& my rect, kThemeStateActive);
 			TEUpdate (& my rect, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNDraw (my macMlteObject, NULL);
@@ -443,7 +435,7 @@ void _GuiText_nativizeWidget (Widget me) {
 			margins. bottomMargin = 0;
 			controlData. marginsPtr = & margins;
 			TXNSetTXNObjectControls (my macMlteObject, FALSE, 1, & controlTag, & controlData);
-		} else if (haveAppearance && my parent -> widgetClass != xmScrolledWindowWidgetClass) {
+		} else if (my parent -> widgetClass != xmScrolledWindowWidgetClass) {
 			static short font;
 			Rect r = my rect;
 			Size actualSize;

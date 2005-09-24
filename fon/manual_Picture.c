@@ -89,7 +89,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 13, 12, "\\ht",
 14, 14, "\\wt", 14, 12, "w",
 15, 17, "k", 15, 16, "\\gs", 15, 15, "\\ng", 15, 14, "x", 15, 13, "\\gf", 15, 12, "\\ml", 15, 9, "\\lc", 15, 8, "\\g^",
-16, 17, "q", 16, 16, "\\gc", 16, 15, "\\nc", 16, 14, "\\ci", 16, 13, "\\ri", 16, 11, "\\rc", 16, 8, "\\G^",
+16, 17, "q", 16, 16, "\\gc", 16, 15, "\\nc", 16, 14, "\\cf", 16, 13, "\\ri", 16, 11, "\\rc", 16, 8, "\\G^",
 17, 14, "\\h-", 17, 13, "\\9e",
 18, 17, "\\?-", 18, 14, "\\hc", 18, 13, "\\9-",
 19, 17, "\\?g", 19, 14, "h", 19, 13, "\\h^",
@@ -122,7 +122,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 4.2, 5, "\\ic", 5.2, 5, "\\yc", 9.8, 5, "\\hs",
 4, 4, "e", 5, 4, "\\o/", 6.5, 4, "\\e-", 7.5, 4, "\\o-", 9, 4, "\\rh", 10, 4, "o",
 7, 3, "\\sw", 7, 1, "\\at",
-4, 2, "\\ep", 5, 2, "\\oe", 6.5, 2, "\\er", 7.5, 2, "\\kb", 9, 2, "\\vt", 10, 2, "\\ct",
+4, 2, "\\ef", 5, 2, "\\oe", 6.5, 2, "\\er", 7.5, 2, "\\kb", 9, 2, "\\vt", 10, 2, "\\ct",
 4, 1, "\\ae",
 4, 0, "a", 5, 0, "\\Oe", 9, 0, "\\as", 10, 0, "\\ab",
 		0 };
@@ -273,7 +273,7 @@ LIST_ITEM ("\\bu @@Phonetic symbols: vowels")
 LIST_ITEM ("\\bu @@Phonetic symbols: diacritics")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: consonants", "ppgb", 20050308)
+MAN_BEGIN ("Phonetic symbols: consonants", "ppgb", 20050918)
 NORMAL ("To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
@@ -285,13 +285,13 @@ ENTRY ("How to remember the codes")
 NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
 	"The second letter can be %t (%turned), %c (%capital or %curled), %s (%script), - (%barred), %l (%%with leg%), "
 	"%i (%inverted), or %j (%%left tail%). Some phonetic symbols are similar to Greek letters but have special "
-	"phonetic (%f) versions with serifs (\\ff, \\bf, \\gf) or are otherwise slightly different (\\tf)."
+	"phonetic (%f) versions with serifs (\\ff, \\bf, \\gf) or are otherwise slightly different (\\tf, \\cf). "
 	"The codes for \\ng (%engma), \\dh (%eth), \\sh (%esh), and \\zh (%yogh) are traditional alternative spellings. "
 	"The retroflexes have a period in the second place, because an alternative traditional spelling is to write a dot under them. "
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20050308)
+MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20050918)
 NORMAL ("To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
@@ -315,6 +315,7 @@ NORMAL ("Overstrikes:")
 LIST_ITEM ("\\gf\\0^ \\bsgf\\bs0\\^  (%ringover): voiceless")
 LIST_ITEM ("\\ep\\\'^ \\bsep\\bs\'\\^  (%acuteover): high tone")
 LIST_ITEM ("\\ep\\`^ \\bsep\\bs`\\^  (%graveover): low tone")
+LIST_ITEM ("\\ep\\-^ \\bsep\\bs-\\^  (%minusover): mid tone (or so)")
 LIST_ITEM ("\\ep\\~^ \\bsep\\bs~\\^  (%tildeover): nasalized")
 LIST_ITEM ("\\ep\\v^ \\bsep\\bsv\\^  (%caronover, %hac\\v^ek, %wedge): rising tone")
 LIST_ITEM ("\\ep\\^^ \\bsep\\bs\\^ \\^  (%circumover): falling tone")
@@ -322,18 +323,17 @@ LIST_ITEM ("o\\:^ o\\bs:\\^  (%diaresisover): centralized")
 LIST_ITEM ("k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050310)
+MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050918)
 NORMAL ("To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
 NORMAL ("Other vowel symbols are:")
 LIST_ITEM ("\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
-LIST_ITEM ("\\ef \\bsef (%%phonetic epsilon%)")
 ENTRY ("How to remember the codes")
 NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
 	"The second letter can be %t (%turned), %c (%capital), %s (%script), %r (%reversed), - (%barred or %retracted), or / (%slashed). "
-	"One symbol (\\ep) is a Greek letter. "
+	"One symbol (\\ef) is a phonetic version of a Greek letter. "
 	"The codes for \\sw, \\rh, \\hs and \\kb are abbreviations for %schwa, %%ram's horn%, %horseshoe, and %%kidney bean%.")
 MAN_END
 

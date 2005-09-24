@@ -1,6 +1,6 @@
 /* GraphicsPostscript.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
-	pb 2000/10/12
-	pb 2002/03/07 GPL
-	pb 2002/03/14 Mach
-	pb 2002/11/17 removed showpage from Windows printing
-	pb 2004/03/15 updated version number to 4.2 (after introduction of flexible fonts)
+ * pb 2002/03/07 GPL
+ * pb 2002/03/14 Mach
+ * pb 2002/11/17 removed showpage from Windows printing
+ * pb 2004/03/15 updated version number to 4.2 (after introduction of flexible fonts)
+ * pb 2005/09/18 useSilipaPS
  */
 
 #include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
@@ -128,7 +128,7 @@ static void exitPage (GraphicsPostscript me) {
 	for (font = 0; font <= Graphics_DINGBATS; font ++)
 		for (style = 0; style <= Graphics_BOLD_ITALIC; style ++)
 			Melder_free (my fontInfos [font] [style]);
-	my loadedSilipaR = FALSE;   /* BUG. Include this because of the unpredictable page order with DSC? */
+	my loadedXipa = FALSE;   /* BUG. Include this because of the unpredictable page order with DSC? */
 }
 
 static void destroy (I) {
@@ -214,7 +214,7 @@ static int Eps_postScript_printf (void *stream, const char *format, ... ) {
 #endif
 
 Graphics Graphics_create_epsfile (MelderFile fs, int resolution, int spots,
-	double x1inches, double x2inches, double y1inches, double y2inches, int includeFonts)
+	double x1inches, double x2inches, double y1inches, double y2inches, int includeFonts, int useSilipaPS)
 {
 	GraphicsPostscript me = new (GraphicsPostscript);
 	time_t today;
@@ -237,6 +237,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, int spots,
 	my landscape = FALSE;
 	my magnification = 1.0;
 	my includeFonts = includeFonts;
+	my useSilipaPS = useSilipaPS;
 	if ((my file = Melder_fopen (fs, "w")) == NULL) { forget (me); return 0; }
 	my x1DC = my x1DCmin = 0;
 	my x2DC = my x2DCmax = my paperWidth * resolution; /* 600 dpi -> 4500 virtual dots */

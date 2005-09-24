@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/09/18
  */
 
 #ifndef _Thing_h_
@@ -31,7 +31,7 @@ Graphics Graphics_create (int resolution);
 Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, int spots,
 	int paperSize, int rotation, double magnification);
 Graphics Graphics_create_epsfile (MelderFile file, int resolution, int spots,
-	double xmin, double xmax, double ymin, double ymax, int includeFonts);
+	double xmin, double xmax, double ymin, double ymax, int includeFonts, int useSilipaPS);
 Graphics Graphics_create_postscriptprinter (void);
 Graphics Graphics_create_screenPrinter (void *display, unsigned long window);
 #define GraphicsPostscript_FINE  0
@@ -71,8 +71,8 @@ void Graphics_polyline (I, long numberOfPoints, float *x, float *y);
 void Graphics_text (I, double x, double y, const char * text);
 void Graphics_textRect (I, double x1, double x2, double y1, double y2, const char *txt);
 double Graphics_textWidth (I, const char *txt);
-double Graphics_textWidth_ps (I, const char *txt);
-double Graphics_textWidth_ps_mm (I, const char *txt);
+double Graphics_textWidth_ps (I, const char *txt, int useSilipaPS);
+double Graphics_textWidth_ps_mm (I, const char *txt, int useSilipaPS);
 void Graphics_fillArea (I, long numberOfPoints, float *x, float *y);
 void Graphics_cellArray (I, float **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);

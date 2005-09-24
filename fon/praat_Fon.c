@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/08/31
+ * pb 2005/09/18
  */
 
 #include "praat.h"
@@ -4137,7 +4137,7 @@ END
 
 FORM (Spectrum_passHannBand, "Spectrum: Filter (pass Hann band)", "Spectrum: Filter (pass Hann band)...")
 	REAL ("From frequency (Hz)", "500")
-	REAL ("To frequency (s)", "1000")
+	REAL ("To frequency (Hz)", "1000")
 	POSITIVE ("Smoothing (Hz)", "100")
 	OK
 DO
@@ -4146,7 +4146,7 @@ END
 
 FORM (Spectrum_stopHannBand, "Spectrum: Filter (stop Hann band)", "Spectrum: Filter (stop Hann band)...")
 	REAL ("From frequency (Hz)", "500")
-	REAL ("To frequency (s)", "1000")
+	REAL ("To frequency (Hz)", "1000")
 	POSITIVE ("Smoothing (Hz)", "100")
 	OK
 DO
@@ -4400,6 +4400,14 @@ END
 
 FORM_READ (Table_readFromTableFile, "Read Table from table file", 0)
 	if (! praat_new (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
+END
+
+FORM_READ (Table_readFromCommaSeparatedFile, "Read Table from comma-separated file", 0)
+	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
+END
+
+FORM_READ (Table_readFromTabSeparatedFile, "Read Table from tab-separated file", 0)
+	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
 END
 
 /***** TABLEOFREAL *****/
@@ -5749,6 +5757,9 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand ("Objects", "Read", "Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
 	praat_addMenuCommand ("Objects", "Read", "Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand ("Objects", "Read", "Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
+
 	praat_addMenuCommand ("Objects", "Read", "-- read tier --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "Read", "Read from special tier file...", 0, 0, 0);
 		praat_addMenuCommand ("Objects", "Read", "Read TextTier from Xwaves...", 0, 1, DO_TextTier_readFromXwaves);

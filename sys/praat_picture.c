@@ -367,7 +367,7 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	} else { MelderFile file;
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToEpsFile (praat_picture, file, TRUE); }
+		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE); }
 	}
 	return 1;
 }
@@ -375,17 +375,32 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
-static int DO_Picture_writeToFontlessEpsFile (Any sender, void *dummy) {
+static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to fontless EPS file",
-		DO_Picture_writeToFontlessEpsFile, NULL, NULL);
+		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
 	} else { MelderFile file;
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToEpsFile (praat_picture, file, FALSE); }
+		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE); }
+	}
+	return 1;
+}
+
+static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
+	static Any dia;
+	(void) dummy;
+	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to fontless EPS file",
+		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
+	if (! sender) {
+		UiOutfile_do (dia, "praat.eps");
+	} else { MelderFile file;
+		if (sender == dia) file = UiFile_getFile (sender);
+		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE); }
 	}
 	return 1;
 }
@@ -1248,6 +1263,9 @@ DO
 END
 
 FORM (textWidth_ps_wc, "PostScript text width in world coordinates", 0)
+	RADIO ("Phonetic font", 1)
+		RADIOBUTTON ("XIPA")
+		RADIOBUTTON ("SILIPA")
 	TEXTFIELD ("text", "Hello world")
 	OK
 DO
@@ -1256,12 +1274,15 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING ("text"));
+	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_information ("%.17g", wc);
 END
 
 FORM (textWidth_ps_mm, "PostScript text width in millimetres", 0)
+	RADIO ("Phonetic font", 1)
+		RADIOBUTTON ("XIPA")
+		RADIOBUTTON ("SILIPA")
 	TEXTFIELD ("text", "Hello world")
 	OK
 DO
@@ -1270,7 +1291,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING ("text"));
+	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_information ("%.17g mm", mm);
 END
@@ -1420,7 +1441,8 @@ void praat_picture_init (void) {
 	praat_addMenuCommand ("Picture", "File", "-- print --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "File", "PostScript settings...", 0, 0, DO_PostScript_settings);
 	praat_addMenuCommand ("Picture", "File", "Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
-	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file...", 0, 0, DO_Picture_writeToFontlessEpsFile);
+	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
+	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
 	#if defined (macintosh)
 		praat_addMenuCommand ("Picture", "File", "Page setup...", 0, 0, DO_Page_setup);
 	#endif

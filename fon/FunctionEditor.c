@@ -23,6 +23,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/02/15 highlight methods
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
+ * pb 2005/09/23 interface update
  */
 
 #include "FunctionEditor.h"
@@ -421,13 +422,13 @@ DIRECT (FunctionEditor, cb_interruptPlaying)
 END
 
 FORM (FunctionEditor, cb_select, "Select", 0);
-	REAL ("Begin of selection", "0.0")
+	REAL ("Start of selection", "0.0")
 	REAL ("End of selection", "1.0")
 	OK
-SET_REAL ("Begin of selection", my startSelection)
+SET_REAL ("Start of selection", my startSelection)
 SET_REAL ("End of selection", my endSelection)
 DO
-	my startSelection = GET_REAL ("Begin of selection");
+	my startSelection = GET_REAL ("Start of selection");
 	if (my startSelection < my tmin + 1e-12)
 		my startSelection = my tmin;
 	my endSelection = GET_REAL ("End of selection");
@@ -484,7 +485,7 @@ DO
 	updateGroup (me);
 END
 
-FORM (FunctionEditor, cb_moveBby, "Move begin of selection by", 0)
+FORM (FunctionEditor, cb_moveBby, "Move start of selection by", 0)
 	REAL ("Distance", "0.05")
 	OK
 DO
@@ -791,7 +792,8 @@ static void createMenus (I) {
 	Editor_addCommand (me, "File", "-- after prefs --", 0, 0);
 
 	Editor_addMenu (me, "Query", 0);
-	Editor_addCommand (me, "Query", "Get begin of selection", 0, cb_getB);
+	Editor_addCommand (me, "Query", "Get start of selection", 0, cb_getB);
+	Editor_addCommand (me, "Query", "Get begin of selection", Editor_HIDDEN, cb_getB);
 	Editor_addCommand (me, "Query", "Get cursor", motif_F6, cb_getCursor);
 	Editor_addCommand (me, "Query", "Get end of selection", 0, cb_getE);
 	Editor_addCommand (me, "Query", "Get selection length", 0, cb_getSelectionDuration);
@@ -815,17 +817,21 @@ static void createMenus (I) {
 
 	Editor_addMenu (me, "Select", 0);
 	Editor_addCommand (me, "Select", "Select...", 0, cb_select);
-	Editor_addCommand (me, "Select", "Move cursor to begin of selection", 0, cb_moveCursorToB);
+	Editor_addCommand (me, "Select", "Move cursor to start of selection", 0, cb_moveCursorToB);
+	Editor_addCommand (me, "Select", "Move cursor to begin of selection", Editor_HIDDEN, cb_moveCursorToB);
 	Editor_addCommand (me, "Select", "Move cursor to end of selection", 0, cb_moveCursorToE);
 	Editor_addCommand (me, "Select", "Move cursor to...", 0, cb_moveCursorTo);
 	Editor_addCommand (me, "Select", "Move cursor by...", 0, cb_moveCursorBy);
-	Editor_addCommand (me, "Select", "Move begin of selection by...", 0, cb_moveBby);
+	Editor_addCommand (me, "Select", "Move start of selection by...", 0, cb_moveBby);
+	Editor_addCommand (me, "Select", "Move begin of selection by...", Editor_HIDDEN, cb_moveBby);
 	Editor_addCommand (me, "Select", "Move end of selection by...", 0, cb_moveEby);
 	/*Editor_addCommand (me, "Select", "Move cursor back by half a second", motif_, cb_moveCursorBy);*/
 	Editor_addCommand (me, "Select", "Select earlier", motif_UP_ARROW, cb_selectEarlier);
 	Editor_addCommand (me, "Select", "Select later", motif_DOWN_ARROW, cb_selectLater);
-	Editor_addCommand (me, "Select", "Move begin of selection left", motif_SHIFT + motif_UP_ARROW, cb_moveBleft);
-	Editor_addCommand (me, "Select", "Move begin of selection right", motif_SHIFT + motif_DOWN_ARROW, cb_moveBright);
+	Editor_addCommand (me, "Select", "Move start of selection left", motif_SHIFT + motif_UP_ARROW, cb_moveBleft);
+	Editor_addCommand (me, "Select", "Move begin of selection left", Editor_HIDDEN, cb_moveBleft);
+	Editor_addCommand (me, "Select", "Move start of selection right", motif_SHIFT + motif_DOWN_ARROW, cb_moveBright);
+	Editor_addCommand (me, "Select", "Move begin of selection right", Editor_HIDDEN, cb_moveBright);
 	Editor_addCommand (me, "Select", "Move end of selection left", motif_COMMAND + motif_UP_ARROW, cb_moveEleft);
 	Editor_addCommand (me, "Select", "Move end of selection right", motif_COMMAND + motif_DOWN_ARROW, cb_moveEright);
 

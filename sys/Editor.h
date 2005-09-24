@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/09/23
  */
 
 #ifndef _Collection_h_
@@ -77,6 +77,7 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void (*clipboardChanged) (I, Any data);
 class_create_opaque (Editor, Thing)
 
+#define Editor_HIDDEN  (1 << 11)
 Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
 	int (*commandCallback) (EditorCommand cmd, Any sender));
 Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *itemTitle, long flags,

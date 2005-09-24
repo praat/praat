@@ -190,7 +190,7 @@ class_create (GraphicsScreen, Graphics)
 	FILE *file;	 \
 	int (*printf) (void *stream, const char *format, ...); \
 	int languageLevel; \
-	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedSilipaR; \
+	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS; \
 	double magnification; \
 	char *fontInfos [1 + Graphics_DINGBATS] [1 + Graphics_BOLD_ITALIC]; \
 	const char *lastFid; \

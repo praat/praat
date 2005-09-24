@@ -309,7 +309,7 @@ LIST_ITEM ("\\bu @DurationTierEditor")
 LIST_ITEM ("\\bu #SpectrogramEditor")
 LIST_ITEM ("\\bu #ArtwordEditor")
 LIST_ITEM ("\\bu @OTGrammarEditor")
-LIST_ITEM ("\\bu any type: @Inspect)")
+LIST_ITEM ("\\bu (any type: @Inspect)")
 ENTRY ("How to open an editor for an object")
 NORMAL ("To open an editor window for an object in the list, select the object and choose #Edit "
 	"(if the #Edit button exists, it is usually at the top of the @@Dynamic menu@). "
@@ -323,7 +323,7 @@ NORMAL ("If you @Remove an object that you are viewing or editing from the @@Lis
 NORMAL ("All editors are independent windows: you can minimize and maximize them; "
 	"if an editor window goes hiding behind another window, "
 	"you can raise it by choosing the #Edit command again.")
-NORMAL ("If you rename an object that you are viewing or editing (with @@Rename...@, "
+NORMAL ("If you rename an object that you are viewing or editing (with @@Rename...@), "
 	"the title of the editor window immediately changes to the new name.")
 ENTRY ("Ways to control an editor window")
 LIST_ITEM ("\\bu @@Click")

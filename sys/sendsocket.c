@@ -1,6 +1,6 @@
 /* sendsocket.c
  *
- * Copyright (C) 1999-2004 Paul Boersma
+ * Copyright (C) 1999-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,18 @@
  * pb 2003/12/19 return NULL if no error
  * pb 2004/10/11 re-included windows.h include file (undoes fix of CW5 include-file bug)
  * pb 2004/10/11 user-readable error messages
+ * pb 2005/09/01
  */
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #if defined (UNIX) || defined (__MACH__)
+	#if defined (__MACH__)
+		/* Prevent some warnings with MacOS X 10.4.2 / CodeWarrior 9.6 / Xcode 2.0 */
+		#define GATEWAY 0
+		#define SENDFILE 0
+	#endif
 	#include <sys/types.h>
 	#include <unistd.h>
 	#include <ctype.h>

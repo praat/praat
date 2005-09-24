@@ -26,6 +26,7 @@
  * pb 2005/03/04 Melder_NUMBER and Melder_STRING as enums
  * pb 2005/06/16 Melder_NUMBER and Melder_STRING as ints
  * pb 2005/07/19 TableOfReal_readFromHeaderlessSpreadsheetFile: allow 30k row and column labels
+ * pb 2005/09/18 SILIPA versus XIPA widths
  */
 
 #include <ctype.h>
@@ -805,7 +806,7 @@ static double getMaxRowLabelWidth (TableOfReal me, Graphics g, long rowmin, long
 	if (! my rowLabels) return 0.0;
 	fixRows (me, & rowmin, & rowmax);
 	for (row = rowmin; row <= rowmax; row ++) if (my rowLabels [row] && my rowLabels [row] [0]) {
-		double textWidth = Graphics_textWidth_ps (g, my rowLabels [row]);
+		double textWidth = Graphics_textWidth_ps (g, my rowLabels [row], TRUE);   /* SILIPA is bigger than XIPA */
 		if (textWidth > maxWidth) maxWidth = textWidth;
 	}
 	return maxWidth;

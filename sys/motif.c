@@ -105,7 +105,7 @@ Widget motif_addItem (Widget menu, const char *title, long flags,
 		if (accelerator >= 32)
 			flags |= motif_COMMAND;
 		/*
-		 * Built the Motif accelerator string and the text that will appear in the menu item.
+		 * Build the Motif accelerator string and the text that will appear in the menu item.
 		 */
 		acceleratorString [0] = '\0';
 		acceleratorText [0] = '\0';

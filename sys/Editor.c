@@ -80,14 +80,16 @@ Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags
 	my editor = menu -> editor;
 	my menu = menu;
 	if (! (my itemTitle = Melder_strdup (itemTitle))) { forget (me); return NULL; }
-	my itemWidget = commandCallback == NULL ? motif_addSeparator (menu -> menuWidget) :
+	my itemWidget =
+		commandCallback == NULL ? motif_addSeparator (menu -> menuWidget) :
+		flags & Editor_HIDDEN ? NULL :
 		motif_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, me);
 	Collection_addItem (menu -> commands, me);
 	my commandCallback = commandCallback;
 	return my itemWidget;
 }
 
-Widget EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }
+/*Widget EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
 EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags) {
 	EditorMenu me = new (EditorMenu);
@@ -99,7 +101,7 @@ EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags) {
 	return me;
 }
 
-Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }
+/*Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
 Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
 	int (*commandCallback) (EditorCommand, Any))
@@ -163,7 +165,7 @@ EditorCommand Editor_getMenuCommand (Any editor, const char *menuTitle, const ch
 			}
 		}
 	}
-	return Melder_errorp ("(Editor_addCommand:) No menu \"%s\". Cannot insert command.", menuTitle);
+	return Melder_errorp ("(Editor_getMenuCommand:) No menu \"%s\" with item \"%s\".", menuTitle, itemTitle);
 }
 
 int Editor_doMenuCommand (Any editor, const char *commandTitle, const char *arguments) {

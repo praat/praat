@@ -23,8 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050901)
+MAN_BEGIN ("What's new?", "ppgb", 20050924)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.23# (September 24, 2005)")
+LIST_ITEM ("\\bu Read Table from comma-separated file...")
+LIST_ITEM ("\\bu Read Table from tab-separated file...")
+LIST_ITEM ("\\bu Write picture as fontless EPS file: choice between XIPA and SILIPA93.")
+LIST_ITEM ("\\bu Bold IPA symbols in EPS files (fontless SILIPA93 only).")
+NORMAL ("##4.3.22# (September 8, 2005)")
+LIST_ITEM ("\\bu Macintosh: variable scroll bar size (finally, 7 years since System 8.5).")
 NORMAL ("##4.3.21# (September 1, 2005)")
 LIST_ITEM ("\\bu Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.")
 LIST_ITEM ("\\bu Renamed \"Control\" menu to \"Praat\" on all systems (as on the Mac), "

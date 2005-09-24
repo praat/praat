@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/11/22
+ * pb 2005/09/01
  */
 
 #include "Gui.h"
@@ -83,10 +83,8 @@
 	#if TARGET_API_MAC_CARBON
 		#define carbon 1
 		/* The following line is an optimization. The compiler will throw away most non-appearance code. */
-		#define haveAppearance 1
 	#else
 		#define carbon 0
-		#define haveAppearance MOTIF_EMULATOR_HAS_APPEARANCE
 		#define GetQDGlobalsScreenBits(bits)  (*(bits) = qd.screenBits, bits)
 		#define GetPortBounds(port,dum)  (& (port) -> portRect)
 		#define GetRegionBounds(rgn,rect)  (*(rect) = (**(rgn)). rgnBBox, rect)

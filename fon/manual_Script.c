@@ -1054,8 +1054,8 @@ DEFINITION ("gives the value at a time of 0.7 seconds and at a frequency of 2500
 NORMAL ("In the interpolation, cells outside the objects are considered to contain zeroes.")
 ENTRY ("Object contents in a modification formula")
 NORMAL ("Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #%Reverse "
-	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse. "
-	"You select this new Sound and choose ##%%Formula...#% from the @Modify menu. The formula will be")
+	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse%. "
+	"You select this new Sound and choose ##Formula...# from the @Modify menu. The formula will be")
 CODE ("Sound_hello [ncol + 1 - col]")
 NORMAL ("From this example, you see that the indices between [ ] may be formulas themselves, and that you can use implicit attributes like %ncol "
 	"and position references like %col. An alternative formula is")

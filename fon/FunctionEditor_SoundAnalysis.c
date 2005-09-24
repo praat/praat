@@ -371,18 +371,14 @@ static void computePulses (FunctionEditor me) {
 
 #define FunctionEditor_PART_CURSOR  1
 #define FunctionEditor_PART_SELECTION  2
-#define FunctionEditor_PART_VISIBLE_PART  3
-#define FunctionEditor_PART_VISIBLE_PART_OF_SELECTION  4
 
 static const char *FunctionEditor_partString (int part) {
-	static const char *strings [] = { "",
-		"CURSOR", "SELECTION", "VISIBLE PART", "VISIBLE PART of SELECTION" };
+	static const char *strings [] = { "", "CURSOR", "SELECTION" };
 	return strings [part];
 }
 
 static const char *FunctionEditor_partString_locative (int part) {
-	static const char *strings [] = { "",
-		"at CURSOR", "in SELECTION", "in VISIBLE PART", "in VISIBLE PART of SELECTION" };
+	static const char *strings [] = { "", "at CURSOR", "in SELECTION" };
 	return strings [part];
 }
 
@@ -391,16 +387,15 @@ static int makeQueriable (FunctionEditor me, int allowCursor, double *tmin, doub
 		return Melder_error ("Window too long to show analyses. Zoom in to at most %s seconds or set the \"longest analysis\" "
 			"to at least %s seconds.", Melder_half (my longestAnalysis), Melder_half (my endWindow - my startWindow));
 	}
-	if (my startSelection == my endSelection && ! allowCursor || my startSelection >= my endWindow || my endSelection <= my startWindow) {
-		*tmin = my startWindow, *tmax = my endWindow;
-		return FunctionEditor_PART_VISIBLE_PART;
-	} else if (my startSelection == my endSelection) {
-		*tmin = *tmax = my startSelection;
-		return FunctionEditor_PART_CURSOR;
-	} else if (my startSelection < my startWindow || *tmax > my endWindow) {
-		*tmin = my startSelection < my startWindow ? my startWindow : my startSelection;
-		*tmax = my endSelection > my endWindow ? my endWindow : my endSelection;
-		return FunctionEditor_PART_VISIBLE_PART_OF_SELECTION;
+	if (my startSelection == my endSelection) {
+		if (allowCursor) {
+			*tmin = *tmax = my startSelection;
+			return FunctionEditor_PART_CURSOR;
+		} else {
+			return Melder_error ("Make a selection first.");
+		}
+	} else if (my startSelection < my startWindow || my endSelection > my endWindow) {
+		return Melder_error ("Command ambiguous: a part of the selection is out of view. Either zoom or re-select.");
 	}
 	*tmin = my startSelection;
 	*tmax = my endSelection;
@@ -544,7 +539,7 @@ END
 DIRECT (FunctionEditor, cb_extractVisibleSpectrogram)
 	Spectrogram publish;
 	if (! my spectrogram.show)
-		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrogram menu.");
+		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
 		if (! my spectrogram.data) return Melder_error ("No spectrogram available (out of memory?).");
@@ -588,7 +583,7 @@ DIRECT (FunctionEditor, cb_getSpectralPowerAtCursorCross)
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
 	if (! my spectrogram.show)
-		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spec. menu.");
+		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
 		if (! my spectrogram.data) return Melder_error ("No spectrogram available (out of memory?).");
@@ -1082,7 +1077,7 @@ DIRECT (FunctionEditor, cb_voiceReport)
 	time_t today = time (NULL);
 	Sound sound = NULL;
 	double tmin, tmax;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax);
+	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
 	if (! my pulses.show)
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
@@ -1642,10 +1637,10 @@ void FunctionEditor_SoundAnalysis_addMenus (I) {
 	EditorMenu_addCommand (menu, "Spectrogram settings...", 0, cb_spectrogramSettings);
 	EditorMenu_addCommand (menu, "Advanced spectrogram settings...", 0, cb_advancedSpectrogramSettings);
 	EditorMenu_addCommand (menu, "Extract visible spectrogram", 0, cb_extractVisibleSpectrogram);
-	EditorMenu_addCommand (menu, "View spectral slice", 'S', cb_viewSpectralSlice);
+	EditorMenu_addCommand (menu, "View spectral slice", 'L', cb_viewSpectralSlice);
 	EditorMenu_addCommand (menu, "-- query spectrogram --", 0, NULL);
 	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Get frequency", 0, cb_getFrequency);
+	EditorMenu_addCommand (menu, "Get frequency at frequency cursor", 0, cb_getFrequency);
 	EditorMenu_addCommand (menu, "Get spectral power at cursor cross", motif_F7, cb_getSpectralPowerAtCursorCross);
 
 	menu = Editor_addMenu (me, "Pitch", 0);
@@ -1662,8 +1657,8 @@ void FunctionEditor_SoundAnalysis_addMenus (I) {
 	EditorMenu_addCommand (menu, "Get maximum pitch", motif_F5 + motif_SHIFT, cb_getMaximumPitch);
 	EditorMenu_addCommand (menu, "-- select pitch --", 0, NULL);
 	EditorMenu_addCommand (menu, "Select:", motif_INSENSITIVE, cb_moveCursorToMinimumPitch /* dummy */);
-	EditorMenu_addCommand (menu, "Move cursor to minimum pitch", 'L', cb_moveCursorToMinimumPitch);
-	EditorMenu_addCommand (menu, "Move cursor to maximum pitch", 'H', cb_moveCursorToMaximumPitch);
+	EditorMenu_addCommand (menu, "Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', cb_moveCursorToMinimumPitch);
+	EditorMenu_addCommand (menu, "Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', cb_moveCursorToMaximumPitch);
 
 	menu = Editor_addMenu (me, "Intensity", 0);
 	my intensityToggle = EditorMenu_addCommand (menu, "Show intensity",

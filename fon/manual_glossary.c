@@ -411,15 +411,14 @@ NORMAL ("If you select an object that is a function of time and you click @Inspe
 	"The total duration is not stored in the object, since it can easily be computed as #xmax minus #xmin.")
 MAN_END
 
-MAN_BEGIN ("time selection", "ppgb", 20030216)
-INTRO ("The ways to select a part of the time (or frequency) domain in some @Editors in the ##Praat program#, "
-	"namely those that contain a function of time (or frequency).")
-NORMAL ("The ##time selection# is used for selecting the time (or frequency) interval that will be played, "
+MAN_BEGIN ("time selection", "ppgb", 20050924)
+INTRO ("The ways to select a part of the time domain in some @editors in Praat, "
+	"namely those that contain a function of time.")
+NORMAL ("The ##time selection# is used for selecting the time interval that will be played, "
 	"copied, cut, modified, or questioned:")
 ENTRY ("1. How to make a selection")
 NORMAL ("The easiest way is to @drag the mouse across the part that you want to select. "
 	"This is analogous to how selection works in a text processor.")
-NORMAL ("Also see point 3 below.")
 ENTRY ("2. How to extend or shrink a selection")
 NORMAL ("The easiest way is to click with the Shift key pressed. "
 	"The nearest edge of the selection will move to the time position where you clicked. "
@@ -428,16 +427,8 @@ NORMAL ("For instance, if the currently selected time interval runs from 2 to 5 
 	"and you shift-click at a time position of 4 seconds, the end of the selection will move "
 	"from 5 to 4 seconds, thus shrinking the selection.")
 NORMAL ("You can also shift-drag, i.e. hold the Shift key and the mouse button down while moving the mouse.")
-NORMAL ("Also see point 3 below.")
-ENTRY ("3. How to move beginning and end separately")
-NORMAL ("@@Click@ing with the %middle mouse button (on Mac: clicking while keeping the Option key pressed) "
-	"inside the drawing area will move the \"B\" hair to the time where you click. "
-	"\"B\" stands for %%Begin selection%.")
-NORMAL ("Clicking with the %right mouse button (on Mac: clicking while keeping the Command key pressed) "
-	"will move the \"E\" hair. \"E\" stands for %%End selection%.")
-NORMAL ("If you use a left-hand mouse (on SGI: %%##Desktop - Customize - Mouse%#), "
-	"the left button will be \"B\" and the middle button will be \"E\".")
-NORMAL ("To move one of the marks to the other mark, or to an absolute or relative position, use the Select menu.")
+ENTRY ("3. Other tricks")
+NORMAL ("To select a specific time stretch or collapse the selection to its start or end, use the Select menu.")
 MAN_END
 
 MAN_BEGIN ("total duration", "ppgb", 20040505)

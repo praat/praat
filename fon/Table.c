@@ -26,6 +26,7 @@
  * pb 2005/04/25 Table_getLogisticRegression
  * pb 2005/04/25 Table_to_Matrix
  * pb 2005/06/16 enums -> ints
+ * pb 2005/09/13 Table_readFromCharacterSeparatedTextFile
  */
 
 #include <ctype.h>
@@ -1104,7 +1105,93 @@ Table Table_readFromTableFile (MelderFile file) {
 end:
 	Melder_fclose (file, f);
 	iferror { forget (me); return Melder_errorp (
-		"(Table_readFromHeaderlessSpreadsheetFile:) File %s not read.", MelderFile_messageName (file)); }
+		"(Table_readFromTableFile:) File %s not read.", MelderFile_messageName (file)); }
+	return me;
+}
+
+static long MelderString_countCharacters (const char *string, char character) {
+	long n = 0;
+	for (; *string != '\0'; string ++) {
+		if (*string == character) {
+			n ++;
+		}
+	}
+	return n;
+}
+
+static char * MelderString_getSinglySeparatedToken (char **string, char separator) {
+	char *originalString = *string, *p = originalString;
+	if (*p == '\0') return NULL;
+	while (*p != separator && *p != '\0') p ++;
+	if (*p == '\0') {
+		*string = p;
+	} else {
+		*p = '\0';
+		*string = p + 1;
+	}
+	return originalString;
+}
+
+Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator) {
+	Table me = NULL;
+	long nrow, ncol, irow, icol;
+	char *line;
+	MelderFile_open (file); cherror
+
+	/*
+	 * Count number of columns.
+	 */
+	line = MelderFile_readLine (file); cherror
+	if (line == NULL) {
+		Melder_error ("Empty file.");
+		goto end;
+	}
+	ncol = MelderString_countCharacters (line, separator) + 1;
+
+	/*
+	 * Count and check rows.
+	 */
+	for (nrow = 0;; nrow ++) {
+		line = MelderFile_readLine (file); cherror
+		if (line == NULL) break;
+		if (MelderString_countCharacters (line, separator) + 1 != ncol) {
+			Melder_error ("Row %ld has wrong number of columns.", nrow + 1);
+		}
+	}
+	if (nrow < 1) { Melder_error ("No rows."); goto end; }
+
+	/*
+	 * Create empty table.
+	 */
+	me = Table_create (nrow, ncol);
+	if (! me) goto end;
+
+	/*
+	 * Read column names.
+	 */
+	MelderFile_rewind (file);
+	line = MelderFile_readLine (file); cherror
+	for (icol = 1; icol <= ncol; icol ++) {
+		char *token = MelderString_getSinglySeparatedToken (& line, separator);
+		Table_setColumnLabel (me, icol, token);
+	}
+
+	/*
+	 * Read cells.
+	 */
+	for (irow = 1; irow <= nrow; irow ++) {
+		TableRow row = my rows -> item [irow];
+		line = MelderFile_readLine (file); cherror
+		for (icol = 1; icol <= ncol; icol ++) {
+			char *token = MelderString_getSinglySeparatedToken (& line, separator);
+			row -> cells [icol]. string = Melder_strdup (token);
+		}
+	}
+
+end:
+	MelderFile_close (file);
+	iferror { forget (me); return Melder_errorp (
+		"(Table_readFromCharacterSeparatedTextFile:) File %s not read.", MelderFile_messageName (file)); }
 	return me;
 }
 

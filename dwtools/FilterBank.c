@@ -20,9 +20,11 @@
 /*
  djmw 20010718
  djmw 20020813 GPL header
- djmw 20030901 Added fiter function drawing and frequency scale drawing. 
+ djmw 20030901 Added fiter function drawing and frequency scale drawing.
+ djmw 20050731 +FilterBank_and_PCA_drawComponent
 */
 
+#include "Eigen_and_Matrix.h"
 #include "FilterBank.h"
 #include "Matrix_extensions.h"
 #include "NUM2.h"
@@ -721,6 +723,36 @@ void FilterBank_equalizeIntensities (I, double intensity_db)
 			my z[i][j] += delta_db;
 		}
 	}
+}
+
+void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
+	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax)
+{
+	iam (FilterBank);
+	FilterBank fcopy = NULL;
+	Matrix him = NULL;
+	long j;
+	
+	if (component < 1 || component > thy numberOfEigenvalues)
+	{
+		(void) Melder_error ("Component too large.");
+	}
+	/*
+	 	Scale Intensity
+	 */
+	fcopy = Data_copy (me);
+	if (fcopy == NULL)  return;
+	FilterBank_equalizeIntensities (fcopy, dblevel);
+	him = Eigen_and_Matrix_project (thee, fcopy, component);
+	if (him == NULL) goto end;
+	for (j = 1; j<= my nx; j++)
+	{
+		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];	
+	}
+	Matrix_drawRows (fcopy, g, tmin, tmax, component-0.5, component+0.5, fmin, fmax);
+end:
+	forget (fcopy);
+	forget (him);
 }
  
 /* End of file Filterbank.c */

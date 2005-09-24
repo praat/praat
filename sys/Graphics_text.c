@@ -29,6 +29,7 @@
  * pb 2005/02/03 TeX-xipa10-Praat-Regular
  * pb 2005/03/08 psEncoding; SILIPA93 encoding for Windows and Mac
  * pb 2005/03/15 find PostScript Courier with -p-
+ * pb 2005/09/18 useSilipaPS, including bold
  */
 
 #include <ctype.h>
@@ -412,13 +413,15 @@ static void charSize (I, _Graphics_widechar *lc) {
 					style == Graphics_ITALIC ? "BookAntiqua-Italic" :
 					style == Graphics_BOLD_ITALIC ? "BookAntiqua-BoldItalic" : "BookAntiqua";
 			} else if (font == Graphics_IPATIMES) {
-				if (my includeFonts && ! my loadedSilipaR) {
+				if (my includeFonts && ! my loadedXipa) {
 					char **p;
 					for (p = & ipaSerifRegularPS [0]; *p; p ++)
 						my printf (my file, "%s", *p);
-					my loadedSilipaR = TRUE;
+					my loadedXipa = TRUE;
 				}
-				fontInfo = "TeX-xipa10-Praat-Regular";
+				fontInfo = my useSilipaPS ?
+					(style == Graphics_BOLD || style == Graphics_BOLD_ITALIC ? "SILDoulosIPA93Bold" : "SILDoulosIPA93Regular") :
+					"TeX-xipa10-Praat-Regular";
 			} else if (font == Graphics_SYMBOL) {
 				fontInfo = "Symbol";
 			} else if (font == Graphics_DINGBATS) {
@@ -476,28 +479,54 @@ static void charSize (I, _Graphics_widechar *lc) {
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.century;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatino;
+			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD) {
 			if (font == Graphics_TIMES) lc -> width = info -> ps.timesBold;
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryBold;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBold;
+			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_ITALIC) {
 			if (font == Graphics_TIMES) lc -> width = info -> ps.timesItalic;
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryItalic;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoItalic;
+			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD_ITALIC) {
 			if (font == Graphics_TIMES) lc -> width = info -> ps.timesBoldItalic;
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryBoldItalic;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
+			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		}
 		lc -> width *= lc -> size / 1000.0;
-		lc -> code = info -> psEncoding;
+		lc -> code = font == Graphics_IPATIMES && my useSilipaPS ? info -> macEncoding : info -> psEncoding;
+		if (lc -> code == 0) {
+			_Graphics_widechar *lc2;
+			if (lc -> first == 's' && lc -> second == 'r') {
+				info = Longchar_getInfo ('s', 'w');
+				lc -> code = info -> macEncoding;
+				lc -> width = info -> ps.timesItalic * lc -> size / 1000.0;
+				for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+				lc2 [1]. first = lc2 [1]. second = '\0';
+				while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+				lc [1]. first = 'h';
+				lc [1]. second = 'r';
+			} else if (lc -> first == 'l' && lc -> second == '~') {
+				info = Longchar_getInfo ('l', ' ');
+				lc -> code = info -> macEncoding;
+				lc -> width = info -> ps.timesItalic * lc -> size / 1000.0;
+				for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
+				lc2 [1]. first = lc2 [1]. second = '\0';
+				while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
+				lc [1]. first = '~';
+				lc [1]. second = '<';
+			}
+		}
 	}
 }
 
@@ -1348,7 +1377,7 @@ float Graphics_inqTextY (I) { iam (Graphics); return my textY; }
 
 int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return numberOfLinks; }
 
-static double psTextWidth (_Graphics_widechar string []) {
+static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 	_Graphics_widechar *character;
 	/*
 	 * The following has to be kept IN SYNC with GraphicsPostscript::charSize.
@@ -1371,24 +1400,28 @@ static double psTextWidth (_Graphics_widechar string []) {
 			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) charWidth = info -> ps.century;
 			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatino;
+			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD) {
 			if (font == Graphics_TIMES) charWidth = info -> ps.timesBold;
 			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) charWidth = info -> ps.centuryBold;
 			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoBold;
+			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_ITALIC) {
 			if (font == Graphics_TIMES) charWidth = info -> ps.timesItalic;
 			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) charWidth = info -> ps.centuryItalic;
 			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoItalic;
+			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_BOLD_ITALIC) {
 			if (font == Graphics_TIMES) charWidth = info -> ps.timesBoldItalic;
 			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) charWidth = info -> ps.centuryBoldItalic;
 			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoBoldItalic;
+			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		}
 		charWidth *= size / 1000.0;
@@ -1415,16 +1448,16 @@ static double psTextWidth (_Graphics_widechar string []) {
 	return textWidth;
 }
 
-double Graphics_textWidth_ps_mm (I, const char *txt) {
+double Graphics_textWidth_ps_mm (I, const char *txt, int useSilipaPS) {
 	iam (Graphics);
 	if (! initBuffer (txt)) return 0.0;
 	stringToWidechar (me, txt, widechar);
-	return psTextWidth (widechar) * (double) my fontSize * (25.4 / 72.0);
+	return psTextWidth (widechar, useSilipaPS) * (double) my fontSize * (25.4 / 72.0);
 }
 
-double Graphics_textWidth_ps (I, const char *txt) {
+double Graphics_textWidth_ps (I, const char *txt, int useSilipaPS) {
 	iam (Graphics);
-	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt));
+	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt, useSilipaPS));
 }
 
 void _Graphics_text_init (I) {   /* BUG: should be done as late as possible. */

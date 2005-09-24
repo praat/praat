@@ -124,6 +124,10 @@
 
 /* Define if you have inline */
 #undef HAVE_INLINE
+#ifdef sgi
+   #define inline
+#endif
+
 
 /* Define if you need to hide the static definitions of inline functions */
 /* #undef HIDE_INLINE_STATIC */
