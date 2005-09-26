@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/09/13
+ * pb 2005/09/26
  */
 
 #ifndef _Collection_h_
@@ -28,6 +28,9 @@
 #endif
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+#ifndef _TableOfReal_h_
+	#include "TableOfReal.h"
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
@@ -101,6 +104,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator)
 Table Table_selectRowsWhereColumn (Table me, long icol, int which_Melder_NUMBER, double criterion);
 
 Matrix Table_to_Matrix (Table me);
+TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
 
 #endif
 /* End of file Table.h */

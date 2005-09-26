@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050924)
+MAN_BEGIN ("What's new?", "ppgb", 20050926)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.24# (September 26, 2005)")
+LIST_ITEM ("\\bu Table: Down to TableOfReal...: one column of the Table can be used as the row labels for the TableOfReal, "
+	"and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.")
 NORMAL ("##4.3.23# (September 24, 2005)")
 LIST_ITEM ("\\bu Read Table from comma-separated file...")
 LIST_ITEM ("\\bu Read Table from tab-separated file...")

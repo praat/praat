@@ -27,12 +27,12 @@
  * pb 2005/04/25 Table_to_Matrix
  * pb 2005/06/16 enums -> ints
  * pb 2005/09/13 Table_readFromCharacterSeparatedTextFile
+ * pb 2005/09/26 sorting by string now also works
  */
 
 #include <ctype.h>
 #include "Table.h"
 #include "NUM2.h"
-#include "Matrix.h"
 #include "Formula.h"
 
 #include "oo_DESTROY.h"
@@ -260,14 +260,104 @@ int Table_setNumericValue (Table me, long irow, long icol, double value) {
 	return 1;
 }
 
+static int Melder_isStringNumeric (const char *string) {
+	const char *p = & string [0];
+	if (*p == '+' || *p == '-') p ++;
+	if (*p < '0' || *p > '9') return FALSE;
+	p ++;
+	while (*p >= '0' && *p <= '9') p ++;
+	if (*p == '.') {
+		p ++;
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	if (*p == 'e' || *p == 'E') {
+		p ++;
+		if (*p == '+' || *p == '-') p ++;
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	if (*p == '\0') return TRUE;
+	return FALSE;
+}
+
+static int Table_isCellNumeric (Table me, long irow, long icol) {
+	TableRow row;
+	const char *cell;
+	if (irow < 1 || irow > my rows -> size) return FALSE;
+	if (icol < 1 || icol > my numberOfColumns) return FALSE;
+	row = my rows -> item [irow];
+	cell = row -> cells [icol]. string;
+	if (cell == NULL) return TRUE;   /* The value --undefined-- */
+	if (cell [0] == '?' && cell [1] == '\0') return TRUE;   /* The value --undefined-- */
+	return Melder_isStringNumeric (cell);
+}
+
+static int Table_isColumnNumeric (Table me, long icol) {
+	long irow;
+	if (icol < 1 || icol > my numberOfColumns) return FALSE;
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		const char *cell = row -> cells [icol]. string;
+		if (! Table_isCellNumeric (me, irow, icol)) return FALSE;
+	}
+	return TRUE;
+}
+
+static long stringCompare_column;
+
+static int stringCompare (const void *first, const void *second) {
+	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
+	char *firstString = my cells [stringCompare_column]. string;
+	char *secondString = thy cells [stringCompare_column]. string;
+	return strcmp (firstString ? firstString : "", secondString ? secondString : "");
+}
+
+static void sortRowsByStrings (Table me, long icol) {
+	Melder_assert (icol >= 1 && icol <= my numberOfColumns);
+	stringCompare_column = icol;
+	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), stringCompare);
+}
+
+static int indexCompare (const void *first, const void *second) {
+	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
+	if (my sortingIndex < thy sortingIndex) return -1;
+	if (my sortingIndex > thy sortingIndex) return +1;
+	return 0;
+}
+
+static void sortRowsByIndex (Table me, long icol) {
+	Melder_assert (icol >= 1 && icol <= my numberOfColumns);
+	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), indexCompare);
+}
+
 static int Table_numericize (Table me, long icol) {
 	long irow;
 	if (my columnHeaders [icol]. numericized) return 1;
-	for (irow = 1; irow <= my rows -> size; irow ++) {
-		TableRow row = my rows -> item [irow];
-		char *string = row -> cells [icol]. string;
-		if (string == NULL) return 0;
-		row -> cells [icol]. number = Melder_atof (string);
+	if (Table_isColumnNumeric (me, icol)) {
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			char *string = row -> cells [icol]. string;
+			if (string == NULL) return 0;
+			row -> cells [icol]. number = Melder_atof (string);
+		}
+	} else {
+		long iunique = 0;
+		const char *previousString = NULL;
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			row -> sortingIndex = irow;
+		}
+		sortRowsByStrings (me, icol);
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			char *string = row -> cells [icol]. string;
+			if (string == NULL) string = "";
+			if (previousString == NULL || ! strequ (string, previousString)) {
+				iunique ++;
+			}
+			row -> cells [icol]. number = iunique;
+			previousString = string;
+		}
+		sortRowsByIndex (me, icol);
 	}
 	my columnHeaders [icol]. numericized = TRUE;
 	return 1;
@@ -606,6 +696,48 @@ Matrix Table_to_Matrix (Table me) {
 		TableRow row = my rows -> item [irow];
 		for (icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy z [irow] [icol] = (float) row -> cells [icol]. number;
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
+}
+
+TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
+	long irow, icol;
+	TableOfReal thee;
+	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
+	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		Table_numericize (me, icol);
+	}
+	if (labelColumn) {
+		for (icol = 1; icol < labelColumn; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol - 1, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			char *string = row -> cells [labelColumn]. string;
+			TableOfReal_setRowLabel (thee, irow, string ? string : "");
+			for (icol = 1; icol < labelColumn; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;
+			}
+			for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol - 1] = row -> cells [icol]. number;
+			}
+		}
+	} else {
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			for (icol = 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;
+			}
 		}
 	}
 end:

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/06/16
+ * pb 2005/09/26
  */
 
 #include "praat.h"
@@ -453,6 +453,17 @@ DIRECT (Table_to_Matrix)
 	EVERY_TO (Table_to_Matrix (OBJECT))
 END
 
+FORM (Table_to_TableOfReal, "Table: Down to TableOfReal", 0)
+	WORD ("Column for row labels", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		Table me = OBJECT;
+		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column for row labels"));
+		if (! praat_new (Table_to_TableOfReal (OBJECT, icol), NAME)) return 0;
+	}
+END
+
 FORM_WRITE (Table_writeToTableFile, "Write Table to table file", 0, "txt")
 	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
 END
@@ -508,6 +519,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, 1, DO_Table_extractRowsWhereColumn);
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn);
 	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
+	praat_addAction1 (classTable, 0, "Down to TableOfReal", 0, 0, DO_Table_to_TableOfReal);
 }
 
 /* End of file praat_Stat.c */
