@@ -22,7 +22,7 @@
 void manual_voice_init (ManPages me);
 void manual_voice_init (ManPages me) {
 
-MAN_BEGIN ("Voice", "ppgb", 20040616)
+MAN_BEGIN ("Voice", "ppgb", 20050930)
 INTRO ("This tutorial describes how you can do voice analysis with P\\s{RAAT}. "
 	"To understand this tutorial, you have to be familiar with the @Intro, "
 	"which describes the more general features of the @SoundEditor window.")
@@ -43,6 +43,7 @@ LIST_ITEM ("@@Voice 2. Jitter@")
 LIST_ITEM ("@@Voice 3. Shimmer@")
 LIST_ITEM ("@@Voice 4. Additive noise@ (HNR, harmonicity)")
 LIST_ITEM ("@@Voice 5. Comparison with other programs@")
+LIST_ITEM ("@@Voice 6. Automating voice analysis with a script@")
 MAN_END
 
 MAN_BEGIN ("Voice 1. Voice breaks", "ppgb", 20030916)
@@ -164,6 +165,53 @@ NORMAL ("Different programs use very different methods for deciding whether an i
 	"the measured height of the peak at 1/F0 (in MDVP) to be lower than the real height, as explained by @@Boersma (1993)@.")
 ENTRY ("Peak determination")
 NORMAL ("")
+MAN_END
+
+MAN_BEGIN ("Voice 6. Automating voice analysis with a script", "ppgb", 20050930)
+INTRO ("In a Praat script you usually do not want to raise a Sound window. "
+	"Instead, you probably want to work with objects in the Objects window only. "
+	"This page tells you how to do that for voice analysis.")
+ENTRY ("1. Creating the pulses in the Objects window")
+NORMAL ("The pulses you see as blue lines are a @PointProcess object. You can see this if "
+	"you choose ##Extract visible pulses# from the #Pulses menu in the Sound window: "
+	"a PointProcess object will appear in the list.")
+NORMAL ("You can also create a PointProcess in the Objects window directly. To do this, "
+	"select a Sound and choose @@Sound: To PointProcess (periodic, cc)...@ from the #Periodicity menu.")
+NORMAL ("You can also do this in two steps. First you create a Pitch with "
+	"@@Sound: To Pitch...@ or @@Sound: To Pitch (ac)...@ or @@Sound: To Pitch (cc)...@. "
+	"Then you select the resulting Pitch %together with the original Sound "
+	"and choose @@Sound & Pitch: To PointProcess (cc)@.")
+NORMAL ("Since the direct method of @@Sound: To PointProcess (periodic, cc)...@ actually uses the AC method "
+	"for computing the Pitch (which is optimal for intonation analysis), "
+	"you may prefer the two-step version if your goal is to do voice analysis. "
+	"In that case, you use @@Sound: To Pitch (cc)...@ as the first step, "
+	"and @@Sound & Pitch: To PointProcess (cc)@ as the second step.")
+NORMAL ("What you should %not do if you want to perform voice analysis is to create the PointProcess "
+	"by selecting a Pitch only and then choosing @@Pitch: To PointProcess@. In that way, "
+	"the resulting pulses would not be aligned to the periods in the Sound.")
+ENTRY ("2. Measuring jitter from a script")
+NORMAL ("Once you have a PointProcess that represents the periods in the Sound, "
+	"you can select it and choose some ##Get jitter# commands from the #Query menu.")
+ENTRY ("3. Measuring shimmer from a script")
+NORMAL ("Once you have a PointProcess that represents the periods in the Sound, "
+	"you can select it together with the Sound, then choose some ##Get shimmer# commands from the #Query menu.")
+ENTRY ("4. Getting the whole voice report from a script")
+NORMAL ("If you select the Sound, the Pitch, and the PointProcess together (all three), "
+	"there will be a button that says ##Voice report...#. If you press it, the voice report "
+	"will be written to the Info window. This is identical to the voice report in the Sound window, "
+	"although you will have to specify the time range by manually typing it.")
+NORMAL ("In a script, you can get the jitter and shimmer from the voice report by doing something like:")
+CODE ("voiceReport\\$  = Voice report... 0 0 75 500 1.3 1.6 0.03 0.45")
+CODE ("jitter = extractNumber (voiceReport\\$ , \"Jitter (local): \")")
+CODE ("shimmer = extractNumber (voiceReport\\$ , \"Shimmer (local): \")")
+CODE ("echo Jitter = 'jitter:3\\% ', shimmer = 'shimmer:3\\% '")
+ENTRY ("5. Disadvantage of automating voice analysis")
+NORMAL ("In all the commands mentioned above, you have to guess the time range, "
+	"and you would usually supply \"0.0\" and \"0.0\", in which case "
+	"you will get the average jitter and shimmer for the whole sound. "
+	"This may include parts of the sound that you are often not interested in, such as false starts. "
+	"You do not have these problems when asking for a voice report in the sound window, "
+	"because there you would make an explicit time selection by hand after judging what part of the sound is relevant.")
 MAN_END
 
 MAN_BEGIN ("Voice report", "ppgb", 20030316)

@@ -30,6 +30,8 @@
  * pb 2005/02/13 defended against weird meter levels
  * pb 2005/04/25 made 24 kHz available for Mac
  * pb 2005/08/22 removed reference to Control menu from message
+ * pb 2005/09/28 made 12 and 64 kHz available for Mac
+ * pb 2005/10/13 edition for OpenBSD
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -61,12 +63,12 @@
 	XtWorkProcId workProcId; \
 	long nsamp, nmax; \
 	int synchronous, recording, lastLeftMaximum, lastRightMaximum, coupled; \
-	int can8000, can9800, can11025, can16000, can22050, can22254, can24000, can32000, can44100, can48000; \
+	int can8000, can9800, can11025, can12000, can16000, can22050, can22254, can24000, can32000, can44100, can48000, can64000; \
 	short *buffer; \
 	Widget progressScale, recordButton, stopButton, playButton, closeButton; \
 	Widget publishLeftButton, publishRightButton, leftName, rightName; \
-	Widget button8000, button9800, button11025, button16000, button22050, button22254, button24000, \
-		button32000, button44100, button48000, leftMeter, rightMeter; \
+	Widget button8000, button9800, button11025, button12000, button16000, button22050, button22254, button24000, \
+		button32000, button44100, button48000, button64000, leftMeter, rightMeter; \
 	Widget microphoneButton, lineButton, digitalButton, in4Button, in5Button, in6Button, in7Button, in8Button; \
 	Widget leftGainScale, rightGainScale; \
 	Widget coupleButton; \
@@ -133,7 +135,11 @@
 	#include <sys/ioctl.h>
 	#include <fcntl.h>
 	#include <unistd.h>
-	#include <sys/soundcard.h>
+	#if defined (__OpenBSD__) || defined (__NetBSD__)
+		#include <soundcard.h>
+	#else
+		#include <sys/soundcard.h>
+	#endif
 	#define SoundRecorder_members CommonSoundRecorder_members \
 		int fd;
 #else
@@ -504,21 +510,25 @@ static Boolean workProc (XtPointer void_me) {
 	if (my button8000) XmToggleButtonSetState (my button8000, theControlPanel. sampleRate == 8000, False);
 	if (my button9800) XmToggleButtonSetState (my button9800, theControlPanel. sampleRate == 9800, False);
 	if (my button11025) XmToggleButtonSetState (my button11025, theControlPanel. sampleRate == 11025, False);
+	if (my button12000) XmToggleButtonSetState (my button12000, theControlPanel. sampleRate == 12000, False);
 	if (my button16000) XmToggleButtonSetState (my button16000, theControlPanel. sampleRate == 16000, False);
 	if (my button22050) XmToggleButtonSetState (my button22050, theControlPanel. sampleRate == 22050, False);
 	if (my button22254) XmToggleButtonSetState (my button22254, theControlPanel. sampleRate == 22254.54545, False);
 	if (my button32000) XmToggleButtonSetState (my button32000, theControlPanel. sampleRate == 32000, False);
 	if (my button44100) XmToggleButtonSetState (my button44100, theControlPanel. sampleRate == 44100, False);
 	if (my button48000) XmToggleButtonSetState (my button48000, theControlPanel. sampleRate == 48000, False);
+	if (my button64000) XmToggleButtonSetState (my button64000, theControlPanel. sampleRate == 64000, False);
 	if (my button8000) XtSetSensitive (my button8000, ! my recording);
 	if (my button9800) XtSetSensitive (my button9800, ! my recording);
 	if (my button11025) XtSetSensitive (my button11025, ! my recording);
+	if (my button12000) XtSetSensitive (my button12000, ! my recording);
 	if (my button16000) XtSetSensitive (my button16000, ! my recording);
 	if (my button22050) XtSetSensitive (my button22050, ! my recording);
 	if (my button22254) XtSetSensitive (my button22254, ! my recording);
 	if (my button32000) XtSetSensitive (my button32000, ! my recording);
 	if (my button44100) XtSetSensitive (my button44100, ! my recording);
 	if (my button48000) XtSetSensitive (my button48000, ! my recording);
+	if (my button64000) XtSetSensitive (my button64000, ! my recording);
 	if (my microphoneButton) XmToggleButtonSetState (my microphoneButton, theControlPanel. inputSource == 1, False);
 	if (my lineButton) XmToggleButtonSetState (my lineButton, theControlPanel. inputSource == 2, False);
 	if (my digitalButton) XmToggleButtonSetState (my digitalButton, theControlPanel. inputSource == 3, False);
@@ -878,18 +888,21 @@ static int open_mac (SoundRecorder me) {
 	} else {
 		my can8000 = FALSE;
 		my can11025 = FALSE;
+		my can12000 = FALSE;
 		my can16000 = FALSE;
 		my can22050 = FALSE;
 		my can24000 = FALSE;
 		my can32000 = FALSE;
 		my can44100 = FALSE;
 		my can48000 = FALSE;
+		my can64000 = FALSE;
 		for (irate = 1; irate <= sampleRateInfo. number; irate ++) {
 			Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
 			unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
 			switch (rate_ushort) {
 				case 8000: my can8000 = TRUE; break;
 				case 11025: my can11025 = TRUE; break;
+				case 12000: my can12000 = TRUE; break;
 				case 16000: my can16000 = TRUE; break;
 				case 22050: my can22050 = TRUE; break;
 				case 22254: my can22254 = TRUE; break;
@@ -897,6 +910,7 @@ static int open_mac (SoundRecorder me) {
 				case 32000: my can32000 = TRUE; break;
 				case 44100: my can44100 = TRUE; break;
 				case 48000: my can48000 = TRUE; break;
+				case 64000: my can64000 = TRUE; break;
 				default: Melder_warning ("Your computer seems to support a sampling frequency of %d Hz. "
 					"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.", rate_ushort);
 			}
@@ -1136,12 +1150,14 @@ static void cb_fsamp (Widget w, XtPointer void_me, XtPointer call) {
 		w == my button8000 ? 8000 :
 		w == my button9800 ? 9800 :
 		w == my button11025 ? 11025 :
+		w == my button12000 ? 12000 :
 		w == my button16000 ? 16000 :
 		w == my button22050 ? 22050 :
 		w == my button22254 ? 22254.54545 :
 		w == my button32000 ? 32000 :
 		w == my button44100 ? 44100 :
-		/* w == my button48000 */ 48000;
+		w == my button48000 ? 48000 :
+		/* w == my button64000 */ 64000;
 	(void) call;
 	/*
 	 * If we push the 48000 button while the sampling frequency is 22050,
@@ -1328,6 +1344,11 @@ static void createChildren (I) {
 		XtAddCallback (my button11025, XmNvalueChangedCallback, cb_fsamp, me);
 		XtManageChild (my button11025);
 	}
+	if (my can12000) {
+		my button12000 = XmCreateToggleButton (fsamp, "12000", NULL, 0);
+		XtAddCallback (my button12000, XmNvalueChangedCallback, cb_fsamp, me);
+		XtManageChild (my button12000);
+	}
 	if (my can16000) {
 		my button16000 = XmCreateToggleButton (fsamp, "16000", NULL, 0);
 		XtAddCallback (my button16000, XmNvalueChangedCallback, cb_fsamp, me);
@@ -1362,6 +1383,11 @@ static void createChildren (I) {
 		my button48000 = XmCreateToggleButton (fsamp, "48000", NULL, 0);
 		XtAddCallback (my button48000, XmNvalueChangedCallback, cb_fsamp, me);
 		XtManageChild (my button48000);
+	}
+	if (my can64000) {
+		my button64000 = XmCreateToggleButton (fsamp, "64000", NULL, 0);
+		XtAddCallback (my button64000, XmNvalueChangedCallback, cb_fsamp, me);
+		XtManageChild (my button64000);
 	}
 	XtManageChild (fsamp);
 	XtManageChild (rcRate);
@@ -1817,11 +1843,13 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	 */
 	my can8000 = TRUE;
 	my can11025 = TRUE;
+	my can12000 = TRUE;
 	my can16000 = TRUE;
 	my can22050 = TRUE;
 	my can32000 = TRUE;
 	my can44100 = TRUE;
 	my can48000 = TRUE;
+	my can64000 = TRUE;
 
 	/*
 	 * Initialize system-dependent structures.

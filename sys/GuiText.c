@@ -249,7 +249,7 @@ void _GuiText_handleValueChanged (Widget me) {
 			TEClick (event -> where, (event -> modifiers & shiftKey) != 0, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			LocalToGlobal (& event -> where);
-			TXNClick (my macMlteObject, event);
+			TXNClick (my macMlteObject, event);   /* Handles text selection and scrolling. */
 			GlobalToLocal (& event -> where);
 		}
 		GuiMac_clipOff ();

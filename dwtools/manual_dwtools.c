@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20050406 Latest modification
+ djmw 20051116 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1301,7 +1301,7 @@ NORMAL ("To get an indication of what these data look like, we make a scatter "
 	"following picture.")
 CODE ("Viewport... 0 5 0 5")
 CODE ("select TableOfReal pols_50males")
-CODE ("Draw scatter plot... 1 2 0 0 -2.9 2.9 -2.9 2.9 no yes")
+CODE ("Draw scatter plot... 1 2 0 0 -2.9 2.9 -2.9 2.9 10 y + y")
 PICTURE (5, 5, drawPolsF1F2_log)
 NORMAL ("Apart from a difference in scale this plot is the same as fig. 3 in the "
 	"Pols et al. article.")
@@ -1326,7 +1326,7 @@ CODE ("select TableOfReal pols_50males")
 CODE ("plus Discriminant pols_50males")
 CODE ("To Configuration... 0")
 CODE ("Viewport... 0 5 0 5")
-CODE ("Draw... 1 2 -2.9 2.9 -2.9 2.9 yes")
+CODE ("Draw... 1 2 -2.9 2.9 -2.9 2.9 12 y + y")
 NORMAL ("If you are only interested in this projection, there also is a short cut "
 	"without an intermediate Discriminant object:  "
 	"select the TableOfReal object and choose @@TableOfReal: To Configuration "
@@ -1341,7 +1341,7 @@ NORMAL ("Select the Discriminant object and choose @@Discriminant: Draw sigma "
 	"a 1-%\\si ellipse will cover approximately 39.3\\%  of the data. "
 	"The following code summarizes:")
 CODE ("select Discriminant pols_50males")
-CODE ("Draw sigma ellipses... 1.0 no 1 2 -2.9 2.9 -2.9 2.9 yes")
+CODE ("Draw sigma ellipses... 1.0 no 1 2 -2.9 2.9 -2.9 2.9 12 yes")
 PICTURE (5, 5, drawPolsF1F2ConcentrationEllipses)
 ENTRY ("4. How to classify")
 NORMAL ("Select together the Discriminant object (the classifier), and "

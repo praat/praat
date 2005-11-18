@@ -1,5 +1,5 @@
 # Makefile of the library "LPC"
-# David Weenink 20030616
+# David Weenink 20051012
 
 
 include ../makefile.defs
@@ -16,7 +16,7 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	LPC_and_Polynomial.o \
 	LPC_to_Spectrum.o  LPC_to_Spectrogram.o \
 	LPC_and_Tube.o \
-	Sound_and_LPC.o  \
+	Sound_and_LPC.o  Sound_and_LPC_robust.o \
 	Sound_and_Cepstrum.o Tube.o \
 	praat_LPC_init.o manual_LPC.o
 

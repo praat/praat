@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/09/18
+ * pb 2005/10/07
  */
 
 #include "praat.h"
@@ -2681,7 +2681,7 @@ static int pr_TextGrid_Pitch_draw (Any dia, int speckle, int unit) {
 	praat_picture_open ();
 	TextGrid_Pitch_draw (ONLY (classTextGrid), ONLY (classPitch), GRAPHICS,
 		GET_INTEGER ("Tier"), tmin, tmax, fmin, fmax, GET_INTEGER ("Font size"),
-		GET_INTEGER ("Use text styles"), GET_INTEGER ("Garnish"), speckle, unit);
+		GET_INTEGER ("Use text styles"), GET_INTEGER ("Text alignment") - 1, GET_INTEGER ("Garnish"), speckle, unit);
 	praat_picture_close ();
 	return 1;
 }
@@ -2694,6 +2694,7 @@ FORM (TextGrid_Pitch_draw, "TextGrid & Pitch: Draw", 0)
 	POSITIVE (STRING_TO_FREQUENCY_HZ, "500.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2708,6 +2709,7 @@ FORM (TextGrid_Pitch_drawErb, "TextGrid & Pitch: Draw erb", 0)
 	REAL ("right Frequency range (ERB)", "10.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2722,6 +2724,7 @@ FORM (TextGrid_Pitch_drawLogarithmic, "TextGrid & Pitch: Draw logarithmic", 0)
 	POSITIVE (STRING_TO_FREQUENCY_HZ, "500.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2736,6 +2739,7 @@ FORM (TextGrid_Pitch_drawMel, "TextGrid & Pitch: Draw mel", 0)
 	REAL ("right Frequency range (mel)", "500")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2751,6 +2755,7 @@ FORM (TextGrid_Pitch_drawSemitones, "TextGrid & Pitch: Draw semitones", 0)
 	REAL ("right Frequency range (st)", "30.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2841,6 +2846,7 @@ FORM (TextGrid_Pitch_speckle, "TextGrid & Pitch: Speckle", 0)
 	POSITIVE (STRING_TO_FREQUENCY_HZ, "500.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2855,6 +2861,7 @@ FORM (TextGrid_Pitch_speckleErb, "TextGrid & Pitch: Speckle erb", 0)
 	REAL ("right Frequency range (ERB)", "10.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2869,6 +2876,7 @@ FORM (TextGrid_Pitch_speckleLogarithmic, "TextGrid & Pitch: Speckle logarithmic"
 	POSITIVE (STRING_TO_FREQUENCY_HZ, "500.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2883,6 +2891,7 @@ FORM (TextGrid_Pitch_speckleMel, "TextGrid & Pitch: Speckle mel", 0)
 	REAL ("right Frequency range (mel)", "500")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO
@@ -2898,6 +2907,7 @@ FORM (TextGrid_Pitch_speckleSemitones, "TextGrid & Pitch: Speckle semitones", 0)
 	REAL ("right Frequency range (st)", "30.0")
 	INTEGER ("Font size (points)", "18")
 	BOOLEAN ("Use text styles", 1)
+	OPTIONMENU ("Text alignment", 2) OPTION ("Left") OPTION ("Centre") OPTION ("Right")
 	BOOLEAN ("Garnish", 1)
 	OK
 DO

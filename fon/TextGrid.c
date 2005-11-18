@@ -26,6 +26,7 @@
  * pb 2005/03/04 TextGrid_Sound_extractIntervalsWhere
  * pb 2005/06/16 enums -> ints
  * pb 2005/06/22 corrected log scale bug
+ * pb 2005/10/07 alignment in TextGrid_Pitch_draw
  */
 
 #include "TextGrid.h"
@@ -671,7 +672,7 @@ error:
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, int useTextStyles, int garnish, int speckle, int unit)
+	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int unit)
 {
 	Data anyTier;
 	long i;
@@ -686,7 +687,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		fmin = ClassFunction_convertStandardToSpecialUnit (classPitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
 		fmax = ClassFunction_convertStandardToSpecialUnit (classPitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
 	}
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_setTextAlignment (g, horizontalAlignment, Graphics_BOTTOM);
 	Graphics_setInner (g);
 	Graphics_setFontSize (g, fontSize);
 	Graphics_setPercentSignIsItalic (g, useTextStyles);
@@ -706,7 +707,9 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 			if (tmid < tmin || tmid > tmax) continue;
 			f0 = ClassFunction_convertStandardToSpecialUnit (classPitch, RealTier_getValueAtTime (pitchTier, tmid), Pitch_LEVEL_FREQUENCY, unit);
 			if (f0 < fmin || f0 > fmax) continue;
-			Graphics_text (g, tmid, f0, interval -> text);
+			Graphics_text (g,
+				horizontalAlignment == Graphics_LEFT ? tleft : horizontalAlignment == Graphics_RIGHT ? tright : tmid,
+				f0, interval -> text);
 		}
 	} else {
 		TextTier tier = (TextTier) anyTier;

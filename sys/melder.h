@@ -38,6 +38,7 @@
 	pb 2004/10/18 allocation count is double
 	pb 2004/10/27 Melder_warningOff/On
 	pb 2005/06/16 no enums (because of compiler warnings)
+	pb 2005/11/18 URL support
  */
 
 #include <stdio.h>
@@ -498,6 +499,7 @@ FILE * Melder_fopen (MelderFile file, const char *type);
 	#define MelderFile_setMacTypeAndCreator(f,t,c)  (void) 0
 #endif
 int Melder_fclose (MelderFile file, FILE *stream);
+void Melder_files_cleanUp (void);
 
 /* So these will be the future replacements for the above, as soon as we rid of text files: */
 void MelderFile_open (MelderFile file);

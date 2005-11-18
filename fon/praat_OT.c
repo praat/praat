@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/07/01
+ * pb 2005/10/14
  */
 
 #include "praat.h"
@@ -364,7 +364,7 @@ FORM (OTGrammar_learnFromPartialOutputs, "OTGrammar: Learn from partial adult ou
 	REAL ("Rel. plasticity spreading", "0.1")
 	BOOLEAN ("Honour local rankings", 1)
 	NATURAL ("Number of chews", "1")
-	NATURAL ("Store history every", "0")
+	INTEGER ("Store history every", "0")
 	OK
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
@@ -502,13 +502,13 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, "OTGrammar & Distribution
 		OPTION ("Weighted all")
 		OPTION ("EDCD")
 	REAL ("Initial plasticity", "1.0")
-	INTEGER ("Replications per plasticity", "100000")
+	NATURAL ("Replications per plasticity", "100000")
 	REAL ("Plasticity decrement", "0.1")
-	INTEGER ("Number of plasticities", "4")
+	NATURAL ("Number of plasticities", "4")
 	REAL ("Rel. plasticity spreading", "0.1")
 	BOOLEAN ("Honour local rankings", 1)
 	NATURAL ("Number of chews", "1")
-	NATURAL ("Store history every", "0")
+	INTEGER ("Store history every", "0")
 	OK
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
@@ -550,10 +550,10 @@ FORM (OTGrammar_PairDistribution_learn, "OTGrammar & PairDistribution: Learn", "
 		OPTION ("Weighted uncancelled")
 		OPTION ("Weighted all")
 		OPTION ("EDCD")
-	REAL ("Initial plasticity", "1.0")
-	INTEGER ("Replications per plasticity", "100000")
+	POSITIVE ("Initial plasticity", "1.0")
+	NATURAL ("Replications per plasticity", "100000")
 	REAL ("Plasticity decrement", "0.1")
-	INTEGER ("Number of plasticities", "4")
+	NATURAL ("Number of plasticities", "4")
 	REAL ("Rel. plasticity spreading", "0.1")
 	BOOLEAN ("Honour local rankings", 1)
 	NATURAL ("Number of chews", "1")
@@ -728,7 +728,7 @@ FORM (OTMulti_learnOne, "OTMulti: Learn one", 0)
 		OPTION ("forward")
 		OPTION ("backward")
 		OPTION ("bidirectionally")
-	REAL ("Plasticity", "0.1")
+	POSITIVE ("Plasticity", "0.1")
 	REAL ("Rel. plasticity spreading", "0.1")
 	OK
 DO
@@ -793,10 +793,10 @@ FORM (OTMulti_PairDistribution_learn, "OTMulti & PairDistribution: Learn", 0)
 		OPTION ("forward")
 		OPTION ("backward")
 		OPTION ("bidirectionally")
-	REAL ("Initial plasticity", "1.0")
-	INTEGER ("Replications per plasticity", "100000")
+	POSITIVE ("Initial plasticity", "1.0")
+	NATURAL ("Replications per plasticity", "100000")
 	REAL ("Plasticity decrement", "0.1")
-	INTEGER ("Number of plasticities", "4")
+	NATURAL ("Number of plasticities", "4")
 	REAL ("Rel. plasticity spreading", "0.1")
 	OK
 DO

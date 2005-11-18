@@ -30,6 +30,8 @@
  * pb 2005/03/08 psEncoding; SILIPA93 encoding for Windows and Mac
  * pb 2005/03/15 find PostScript Courier with -p-
  * pb 2005/09/18 useSilipaPS, including bold
+ * pb 2005/10/27 corrected character width for Symbol (should not depend on SILIPA setting)
+ * pb 2005/11/11 Windows: font sizes up to 500
  */
 
 #include <ctype.h>
@@ -67,9 +69,12 @@ extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	#define IPA_ID  -16012112   /* Magic number. */
 	static struct { Window window; GC gc; Pixmap pixmap; XImage *image; } rotate;
 #elif win
-	static HFONT screenFonts [1 + Graphics_DINGBATS] [5] [1 + Graphics_BOLD_ITALIC];
-	static HFONT printerFonts [1 + Graphics_DINGBATS] [5] [1 + Graphics_BOLD_ITALIC];
+	#define win_MAXIMUM_FONT_SIZE  500
+	static HFONT screenFonts [1 + Graphics_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
+	static HFONT printerFonts [1 + Graphics_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int ipaAvailable = FALSE;
+	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
+	static int win_isize2size (int isize) { return isize; }
 #elif mac
 	#include "macport_on.h"
 	#include <Fonts.h>
@@ -172,9 +177,9 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	LOGFONT spec;
 	static int ipaInited;
 	if (my printer || my metafile) {
-		spec. lfHeight = - ( size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24 ) * my resolution / 72;
+		spec. lfHeight = - win_isize2size (size) * my resolution / 72;
 	} else {
-		spec. lfHeight = - ( size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24 );
+		spec. lfHeight = - win_isize2size (size);
 	}
 	if (font == Graphics_IPATIMES) {
 		if (my font == Graphics_TIMES) spec. lfHeight *= 1.13;
@@ -246,8 +251,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
 			HFONT fontInfo;
 			int font, size, style;
-			int normalSize = my fontSize < 11 ? 0 : my fontSize < 13 ? 1 : my fontSize < 16 ? 2 : my fontSize < 21 ? 3 : 4;
-			int smallSize = normalSize == 0 ? 0 : normalSize - 1;
+			int normalSize = win_size2isize (my fontSize);
+			int smallSize = (3 * normalSize + 2) / 4;
 			font = info -> alphabet == Longchar_SYMBOL ? Graphics_SYMBOL :
 			       info -> alphabet == Longchar_PHONETIC ? Graphics_IPATIMES :
 			       info -> alphabet == Longchar_DINGBATS ? Graphics_DINGBATS : lc -> font.integer;
@@ -315,7 +320,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			       lc -> font.integer == Graphics_COURIER ? theCourierFont : my macFont;
 			style = (lc -> style & Graphics_ITALIC ? italic : 0) +
 			        (lc -> style & Graphics_BOLD ? bold : 0);
-			size = lc -> size < 100 ? 0.8 * normalSize : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
+			size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 			if (font == 0 && ! ipaInited && Melder_debug != 15) {   /* SIL Doulos IPA not initialized. */
 				/*GetFNum ("\pSILDoulosIPA-Regular", & theIpaTimesFont);   /* May be 0. */
 				GetFNum ("\pSILDoulos IPA93", & theIpaTimesFont);   /* May be 0. */
@@ -482,13 +487,15 @@ static void charSize (I, _Graphics_widechar *lc) {
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.century;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatino;
+			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
-			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
+			else lc -> width = info -> ps.times;   /* XIPA. */
 		} else if (style == Graphics_BOLD) {
 			if (font == Graphics_TIMES) lc -> width = info -> ps.timesBold;
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryBold;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBold;
+			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_ITALIC) {
@@ -496,6 +503,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryItalic;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoItalic;
+			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD_ITALIC) {
@@ -503,6 +511,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == Graphics_NEWCENTURYSCHOOLBOOK) lc -> width = info -> ps.centuryBoldItalic;
 			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
+			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		}

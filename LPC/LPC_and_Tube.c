@@ -20,7 +20,8 @@
 /*
  djmw 20020612 GPL header
  djmw 20041020 struct Tube_Frame -> struct structTube_Frame; struct LPC_Frame -> struct structLPC_Frame;
- 	struct Formant_Frame->struct structFormant_Frame	
+ 	struct Formant_Frame->struct structFormant_Frame
+ djmw 20051005 Always make a VocalTract with length 0.01 m when wakita_length==NUMundefined.
 */
 
 #include "LPC_and_Tube.h"
@@ -84,7 +85,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	struct structTube_Frame rc_struct, af_struct;
 	Tube_Frame rc = & rc_struct, af = & af_struct;
 	long i, m = my nCoefficients;
-	double lmin, length, dlength = 0.001, plength, wakita_length = 0; 
+	double lmin, length, dlength = 0.001, plength, wakita_length = NUMundefined; 
 	double *area, var, varMin = 1e38, logSum;
 	double fscale = 1;
 	
@@ -217,18 +218,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 	
 	if (! Tube_Frame_init (area, m, length) ||
 		! LPC_Frame_into_Tube_Frame_area (lpc, area)) goto end;
-	
-	if (wakita)
-	{
-		length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);
-		if (length <= 0)
-		{
-			Melder_error ("LPC_to_VocalTract: VTL could not be calculated.");
-			goto end;
-		}
-		area -> length = length;
-	}
-	
+		
 	thee = VocalTract_create (m, area -> length / m);
 	if (thee == NULL) goto end;
 	
@@ -240,7 +230,16 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 	{
 		thy z[1][i] = area -> c[m + 1 - i];
 	}
-	
+	if (wakita)
+	{
+		double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);
+		if (wakita_length == NUMundefined)
+		{
+			Melder_warning ("LPC_to_VocalTract: Vocal tract length could not be calculated.\n"
+				"Relevant tract dimensions will be undefined.");
+			thy xmax = thy x1 = thy dx = NUMundefined;
+		}
+	}
 end:
 
 	Tube_Frame_destroy (area);

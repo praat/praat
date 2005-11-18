@@ -25,6 +25,7 @@
  * pb 2004/12/05 renamed script running procedures
  * pb 2005/07/06 repaired a memory leak in creating a script editor from a double click
  * pb 2005/08/22 renamed the Control menu to "Praat" on all systems (like on the Mac)
+ * pb 2005/11/18 HTML files are considered scripts (this is just for testing)
  */
 
 #include <ctype.h>
@@ -436,7 +437,9 @@ static char itemTitle_about [100];
 static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
 	char *name = MelderFile_name (file);
 	if (nread < 2) return NULL;
-	if (header [0] == '#' && header [1] == '!' || strstr (name, ".praat") == name + strlen (name) - 6) {
+	if (header [0] == '#' && header [1] == '!' || strstr (name, ".praat") == name + strlen (name) - 6
+	    || strstr (name, ".html") == name + strlen (name) - 5)
+	{
 		return Script_createFromFile (file);
 	}
 	return NULL;

@@ -1,0 +1,35 @@
+# dwsys/SConstruct
+# 
+#  Copyright (C) 1993-2005 David Weenink
+# 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or (at
+#  your option) any later version.
+# 
+#  This program is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# 
+# 
+# 
+#  djmw 20050916 
+
+sources = Split("""
+	Collection_extensions.c Command.c
+	Index.c
+	NUM2.c NUMlapack.c NUMmachar.c
+	NUMf2c.c NUMcblas.c NUMclapack.c NUMfft_f.c NUMfft_d.c NUMsort2.c
+	Permutation.c Permutation_and_Index.c
+	regularExp.c SimpleVector.c Simple_extensions.c
+	SVD.c
+""")
+
+	
+Library ('dwsys', sources, CCFLAGS='-I ../sys -I ../fon -I ../dwtools -I ../GSL -I ../dwsys', 
+	CC = 'gcc-3.4 -DUNIX $WARNINGS -O -g -I /usr/X11R6/include -I /usr/src/linux/include')

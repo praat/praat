@@ -23,8 +23,21 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20050926)
+MAN_BEGIN ("What's new?", "ppgb", 20051118)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.30# (November 18, 2005)")
+LIST_ITEM ("\\bu TableOfReal: Scatter plot: allows reversed axes.")
+NORMAL ("##4.3.29# (November 11, 2005)")
+LIST_ITEM ("\\bu Windows: many more font sizes.")
+NORMAL ("##4.3.28# (November 7, 2005)")
+LIST_ITEM ("\\bu Fontless EPS files: corrected character width for Symbol font (depended on SILIPA setting).")
+LIST_ITEM ("\\bu Windows: more reliable detection of home directory.")
+NORMAL ("##4.3.27# (October 7, 2005)")
+LIST_ITEM ("\\bu TextGrid & Pitch: draw with text alignment.")
+NORMAL ("##4.3.26# (September 29, 2005)")
+LIST_ITEM ("\\bu Macintosh: corrected error introduced in 4.3.25.")
+NORMAL ("##4.3.25# (September 28, 2005)")
+LIST_ITEM ("\\bu Macintosh: allowed recording with sample rates of 12 and 64 kHz.")
 NORMAL ("##4.3.24# (September 26, 2005)")
 LIST_ITEM ("\\bu Table: Down to TableOfReal...: one column of the Table can be used as the row labels for the TableOfReal, "
 	"and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.")

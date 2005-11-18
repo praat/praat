@@ -23,6 +23,7 @@
  * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
  * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
  * pb 2005/06/16 removed previous change (System Preferences handles this)
+ * pb 2005/10/13 edition for OpenBSD
  */
 
 #include <errno.h>
@@ -43,9 +44,13 @@
 	#include <audio.h>
 	#include <unistd.h>   /* sginap (): nap while waiting for a sound to finish playing. */
 #elif defined (linux)
-        #include <fcntl.h>
-        #include <sys/soundcard.h>
-        #include <sys/ioctl.h>   /* ioctl */
+	#include <fcntl.h>
+	#if defined (__OpenBSD__) || defined (__NetBSD__)
+		#include <soundcard.h>
+	#else
+		#include <sys/soundcard.h>
+	#endif
+	#include <sys/ioctl.h>   /* ioctl */
 	#include <unistd.h>   /* open write close read */
 #elif defined (sun)
 	#include <fcntl.h>

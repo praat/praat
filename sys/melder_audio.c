@@ -26,6 +26,7 @@
  * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
  * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
  * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
+ * pb 2005/10/13 edition for OpenBSD
  */
 
 #include "melder.h"
@@ -97,7 +98,11 @@
 	#include <sys/ioctl.h>
 	#include <fcntl.h>
 	#include <unistd.h>
-	#include <sys/soundcard.h>
+	#if defined (__OpenBSD__) || defined (__NetBSD__)
+		#include <soundcard.h>
+	#else
+		#include <sys/soundcard.h>
+	#endif
 	#include <errno.h>
 	#include <sys/time.h>
 	#include <signal.h>

@@ -20,7 +20,7 @@
 /*
  djmw 20030613 Latest modification
  djmw 20040414 Forms texts.
- djmw 20050614 Latest modification
+ djmw 20051012 Latest modification
 */
 
 #include <math.h>
@@ -39,6 +39,7 @@
 #include "LPC_to_Spectrum.h"
 #include "MelFilter_and_MFCC.h"
 #include "Sound_and_LPC.h"
+#include "Sound_and_LPC_robust.h"
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "Cepstrum_and_Spectrum.h"
@@ -351,6 +352,7 @@ END
 DIRECT (VocalTract_getLength)
 	VocalTract v = ONLY_OBJECT;
     double length = v -> xmax - v -> xmin;
+    if (length <= 0.02) length = NUMundefined;
 	Melder_informationReal (length, "m");
 END
 
@@ -366,6 +368,24 @@ END
 
 DIRECT (LPC_and_Sound_filterInverse)
 	NEW (LPC_and_Sound_filterInverse (ONLY(classLPC) , ONLY(classSound)))
+END
+
+FORM (LPC_and_Sound_to_LPC_robust, "Robust LPC analysis",
+	"LPC & Sound: To LPC (robust)...")
+	POSITIVE ("Analysis width (s)", "0.025")
+	POSITIVE ("Pre-emphasis frequency (Hz)", "50.0")
+	POSITIVE ("Number of std. dev.", "1.5")
+	NATURAL ("Maximum number of iterations", "5")
+	REAL ("Tolerance", "0.000001")
+	BOOLEAN ("Variable location", 0)
+	OK
+DO
+	Sound sound = ONLY (classSound);	
+	if (! praat_new (LPC_and_Sound_to_LPC_robust (ONLY (classLPC), sound,
+		GET_REAL ("Analysis width"), GET_REAL ("Pre-emphasis frequency"), 
+		GET_REAL ("Number of std. dev."), GET_INTEGER ("Maximum number of iterations"),  
+		GET_REAL ("Tolerance"), GET_INTEGER ("Variable location")),
+			"%s_r", sound -> name)) return 0;
 END
 
 void praat_uvafon_LPC_init (void);
@@ -428,6 +448,8 @@ void praat_uvafon_LPC_init (void)
 		DO_LPC_and_Sound_filter);
 	praat_addAction2 (classLPC, 1, classSound, 1, "Filter (inverse)", 0, 0,
 		DO_LPC_and_Sound_filterInverse);
+	praat_addAction2 (classLPC, 1, classSound, 1, "To LPC (robust)...", 0,
+		praat_HIDDEN + praat_DEPTH_1, DO_LPC_and_Sound_to_LPC_robust);
 
 	praat_addAction1 (classSound, 0, "To LPC (autocorrelation)...",
 		"To Formant (sl)...", 1, DO_Sound_to_LPC_auto);

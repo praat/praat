@@ -32,7 +32,7 @@
  djmw 20050221 TableOfReal_meansByRowLabels, extra reduce parameter.
  djmw 20050222 TableOfReal_drawVectors didn't draw rowlabels.
  djmw 20050512 TableOfReal TableOfReal_meansByRowLabels crashed if first label in sorted was NULL.
- 
+ djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax 
 */
 
 #include <ctype.h>
@@ -1058,10 +1058,10 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 {
     iam (TableOfReal); 
 	double tmp, m = my numberOfRows, n = my numberOfColumns;
-    long i, ix = labs (icx), iy = labs (icy), noLabel = 0;
+    long i, noLabel = 0;
 	int fontSize = Graphics_inqFontSize (g);
     
-    if (ix < 1 || ix > n || iy < 1 || iy > n) return;
+    if (icx < 1 || icx > n || icy < 1 || icy > n) return;
     if (rowb < 1) rowb = 1;
     if (rowe > m) rowe = m;
     if (rowe <= rowb)
@@ -1069,27 +1069,19 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
     	rowb = 1; rowe = m;
     }
     
-    if (xmax <= xmin)
+    if (xmax == xmin)
     {
-		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, ix, & xmin, & xmax);
+		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
 		tmp = xmax - xmin == 0 ? 0.5 : 0.0;
 		xmin -= tmp; xmax += tmp;
     }
-    if (ymax <= ymin)
+    if (ymax == ymin)
     {
-		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, iy, & ymin, & ymax);
+		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icy, & ymin, & ymax);
 		tmp = ymax - ymin == 0 ? 0.5 : 0.0;
 		ymin -= tmp; ymax += tmp;
     }
-    if (icx < 0)
-    {
-    	double t = xmin; xmin = xmax; xmax = t;
-    }
-    if (icy < 0)
-    {
-    	double t = ymin; ymin = ymax; ymax = t;
-    }
-	
+    
     Graphics_setInner (g);
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -1097,9 +1089,10 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 	
     for (i=rowb; i <= rowe; i++)
     {
-    	double x = my data[i][ix], y = my data[i][iy];
+    	double x = my data[i][icx], y = my data[i][icy];
 		
-		if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
+			((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
 		{
 			char *plotLabel = useRowLabels ? my rowLabels[i] : label;
 			if (! NUMstring_containsPrintableCharacter (plotLabel))
@@ -1117,14 +1110,25 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
     if (garnish)
     {
 		Graphics_drawInnerBox (g);
-		if (my columnLabels[ix]) Graphics_textBottom (g, 1, my columnLabels[ix]);
-		if (my columnLabels[iy]) Graphics_textLeft (g, 1, my columnLabels[iy]);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		if (ymax * ymin < 0 && xmax * xmin < 0)
+		if (ymin < ymax)
 		{
-			Graphics_markLeft (g, 0, 0, 1, 1, "");
-			Graphics_markBottom (g, 0, 0, 1, 1, "");
+			if (my columnLabels[icx]) Graphics_textBottom (g, 1, my columnLabels[icx]);
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+		}
+		else
+		{
+			if (my columnLabels[icx]) Graphics_textTop (g, 1, my columnLabels[icx]);
+			Graphics_marksTop (g, 2, 1, 1, 0);
+		}
+		if (xmin < xmax)
+		{
+			if (my columnLabels[icy]) Graphics_textLeft (g, 1, my columnLabels[icy]);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+		else
+		{
+			if (my columnLabels[icy]) Graphics_textRight (g, 1, my columnLabels[icy]);
+			Graphics_marksRight (g, 2, 1, 1, 0);
 		}
 	}
 	if (noLabel > 0) Melder_warning ("TableOfReal_drawScatterPlot: %d from %d labels are "

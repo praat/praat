@@ -26,6 +26,7 @@
  * pb 2004/12/29 removed .praat-user-startUp for Windows (empty file name error)
  * pb 2005/06/28 TextEditor_prefs
  * pb 2005/08/22 renamed Control menu to "Praat"
+ * pb 2005/11/18 URL support
  */
 
 #include "melder.h"
@@ -528,6 +529,7 @@ static void praat_exit (int exit_code) {
 	 * Flush the file-based objects.
 	 */
 	WHERE_DOWN (! MelderFile_isNull (& FILENAME)) praat_remove (IOBJECT);
+	Melder_files_cleanUp ();   /* If a URL is open. */
 
 	/*
 	 * Finally, leave the program.

@@ -38,9 +38,11 @@
  djmw 20041108 FormantFilter_drawSpectrum bug correted (wrong field name).
  djmw 20050308 Find path (slopes), Find path (band)... and others.
  djmw 20050404 TableOfReal_appendColumns -> TableOfReal_appendColumnsMany
- djmw 20050406 Procrustus->Prorustes
+ djmw 20050406 Procrustus -> Prorustes
  djmw 20050407 MelFilter_drawFilterFunctions error in field names crashed praat
  djmw 20050706 Eigen_getSumOfEigenvalues
+ djmw 20051012 Robust LPC analysis test
+ djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices must be positive numbers
 */
 
 #include "praat.h"
@@ -2033,8 +2035,8 @@ DIRECT (Matrix_Categories_to_TableOfReal)
 END
 
 FORM (Matrix_scatterPlot, "Matrix: Scatter plot", 0)
-    INTEGER ("Column for X-axis", "1")
-    INTEGER ("Column for Y-axis", "2")
+    NATURAL ("Column for X-axis", "1")
+    NATURAL ("Column for Y-axis", "2")
     REAL("left Horizontal range", "0.0")
     REAL("right Horizontal range", "0.0")
     REAL("left Vertical range", "0.0")
@@ -3589,7 +3591,7 @@ DO
 		type == 1 ? "m" : type == 2 ? "w" : "c")) return 0;
 END
 
-FORM (TableOfReal_drawScatterPlot, "TableOfReal: Draw scatter plot", 0)
+FORM (TableOfReal_drawScatterPlot, "TableOfReal: Draw scatter plot", "TableOfReal: Draw scatter plot...")
 	LABEL ("","Select the part of the table")
 	NATURAL ("Horizontal axis column number", "1")
 	NATURAL ("Vertical axis column number", "2")

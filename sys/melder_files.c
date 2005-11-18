@@ -1,6 +1,6 @@
 /* melder_files.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@
  * pb 2003/09/12 MelderFile_getMacType
  * pb 2003/09/14 MelderDir_relativePathToFile
  * pb 2004/09/25 use /tmp as temporary directory
- * ob 2004/10/16 C++ compatible structs
+ * pb 2004/10/16 C++ compatible structs
+ * pb 2005/11/07 Windows: use %USERPROFILE% rather than %HOMESHARE%%HOMEPATH%
+ * rvs&pb 2005/11/18 url support
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -37,6 +39,9 @@
 #endif*/
 #if defined (UNIX)
 	#include <sys/stat.h>
+#endif
+#if defined (CURLPRESENT)
+	#include <curl/curl.h>
 #endif
 #ifdef _WIN32
 	#include <windows.h>
@@ -746,10 +751,12 @@ void Melder_getHomeDir (MelderDir homeDir) {
 		char *home = getenv ("HOME");
 		strcpy (homeDir -> path, home ? home : "/");
 	#elif defined (_WIN32)
-		if (GetEnvironmentVariable ("HOMESHARE", homeDir -> path, 255)) {
-			GetEnvironmentVariable ("HOMEPATH", homeDir -> path + strlen (homeDir -> path), 255);
+		/*if (GetEnvironmentVariable ("HOMESHARE", homeDir -> path, 255)) {
+			GetEnvironmentVariable ("HOMEPATH", homeDir -> path + strlen (homeDir -> path), 255);*/
+		if (GetEnvironmentVariable ("USERPROFILE", homeDir -> path, 255)) {
+			;   /* Ready. */
 		} else if (GetEnvironmentVariable ("HOMEDRIVE", homeDir -> path, 255)) {
-			GetEnvironmentVariable ("HOMEPATH", homeDir -> path + strlen (homeDir -> path), 255);
+			GetEnvironmentVariable ("HOMEPATH", homeDir -> path + strlen (homeDir -> path), 255 - strlen (homeDir -> path));
 		} else {
 			MelderDir_setToNull (homeDir);   /* Windows 95 and 98: alas. */
 		}
@@ -847,6 +854,17 @@ unsigned long MelderFile_getMacType (MelderFile file) {
 }
 #endif
 
+static int curl_initialized = 0;
+/* 
+ * The user defined write function that handles storing the result of the
+ * URL request on disc. This function can be platform dependent.
+ * ONLY for internal use.
+ */
+static size_t write_URL_data_to_file (void *buffer, size_t size, size_t nmemb, void *userp) {
+	/* Just use the standard fwrite function (*userp == *stream) */
+	return fwrite (buffer, size, nmemb, userp);
+}
+
 FILE * Melder_fopen (MelderFile file, const char *type) {
 	FILE *f;
 	#ifdef macintosh
@@ -877,7 +895,42 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			f = stdout;
 		#ifdef CURLPRESENT
  		} else if (strstr (file -> path, "://") && strchr (type, 'r')) {
- 			f = praat_getURL (file -> path);
+			CURLcode CURLreturn;
+			CURL *CURLhandle;
+			char errorbuffer [CURL_ERROR_SIZE] = "";
+			f = tmpfile ();   /* Open a temporary file for writing */
+			/* Start global init (necessary only ONCE)	*/
+			if (! curl_initialized) {
+				CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
+				curl_initialized = 1;
+			};
+			CURLhandle = curl_easy_init ();   /* Initialize session */
+			/* 
+			 * Set up the connection parameters	
+			 */
+			/* Debugging: Verbose messages */
+			/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
+			/* Do not return Error pages, just fail. */
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 1);	
+			/* Store error messages in a buffer	*/
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
+			/* The file stream to store the URL	*/
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FILE, f);
+			/* The function to write to the file, necessary for Win32	*/
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
+			/* The actual URL to handle	*/
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, URL);
+			/* Get the URL and write it to the given file */
+			CURLreturn = curl_easy_perform (CURLhandle);
+			/* Handle errors	*/
+			if (CURLreturn) {
+				Melder_error ("%s\n", errorbuffer);
+				f = NULL;
+			};
+			/* Clean up session */
+			curl_easy_cleanup (CURLhandle);
+			/* Do something with the file. Why? */
+			if (f) rewind (f);
  		#endif
 		} else {
 			f = fopen (file -> path, type);
@@ -910,6 +963,15 @@ int Melder_fclose (MelderFile file, FILE *f) {
 		return Melder_error ("Error closing file \"%.200s\".", MelderFile_messageName (file));
 	}
 	return 1;
+}
+
+void Melder_files_cleanUp (void) {
+	#if defined (CURLPRESENT)
+	if (curl_initialized) {
+		curl_global_cleanup ();
+		curl_initialized = 0;
+	};
+	#endif
 }
 
 int MelderFile_exists (MelderFile file) {

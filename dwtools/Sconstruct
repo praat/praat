@@ -1,0 +1,63 @@
+# dwtools/Sconstruct
+# 
+#  Copyright (C) 1993-2005 David Weenink
+# 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or (at
+#  your option) any later version.
+# 
+#  This program is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# 
+# 
+# 
+#  djmw 20050916 
+
+cpppath = Split('../LPC ../fon ../sys ../dwsys')
+
+sources = Split("""
+	Activation.c AffineTransform.c
+	Categories.c CategoriesEditor.c
+	Categories_and_Strings.c CCA.c CCA_and_Correlation.c
+	CC.c CCs_to_DTW.c
+	ClassificationTable.c Confusion.c
+	Configuration.c Configuration_AffineTransform.c
+	Configuration_and_Procrustes.c Distance.c
+	DTW.c Discriminant.c  Discriminant_Pattern_Categories.c
+	Eigen.c Eigen_and_Matrix.c Eigen_and_Procrustes.c
+	Eigen_and_TableOfReal.c
+	Eigen_and_SSCP.c Excitations.c
+	FilterBank.c Formant_extensions.c
+	LFCC.c LongSound_extensions.c
+	MelFilter_and_MFCC.c MFCC.c
+	manual_dwtools.c manual_MDS.c manual_Permutation.c
+	Minimizers.c
+	Matrix_extensions.c
+	Matrix_Categories.c MDS.c
+	Pattern.c PCA.c
+	Pitch_extensions.c Polynomial.c
+	Polygon_extensions.c Procrustes.c
+	Proximity.c
+	Sampled_extensions.c Sampled2.c
+	Sound_and_FilterBank.c Sound_extensions.c
+	Sound_to_MFCC.c
+	Sound_to_Pitch2.c Sound_to_SPINET.c SPINET.c SPINET_to_Pitch.c
+	Spectrum_extensions.c SSCP.c Strings_extensions.c
+	Table_extensions.c TableOfReal_and_SVD.c
+	TableOfReal_extensions.c TableOfReal_and_Matrix.c
+	TableOfReal_and_Permutation.c
+	TextGrid_extensions.c
+	praat_MDS_init.c praat_David_init.c
+""")
+
+objects = Object(sources, CPPPATH=cpppath, CC = 'gcc-3.4 -DUNIX $WARNINGS -O -g -I /usr/X11R6/include -I /usr/src/linux/include')
+	
+Library ('dwtools', objects, CC = 'gcc-3.4 -DUNIX $WARNINGS -O -g -I /usr/X11R6/include -I /usr/src/linux/include')
+	
