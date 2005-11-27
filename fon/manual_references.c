@@ -1,6 +1,6 @@
 /* manual_references.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,12 @@ MAN_END
 MAN_BEGIN ("Boersma & Hayes (2001)", "ppgb", 20020511)
 NORMAL ("Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Learning Algorithm.\" "
 	"%%Linguistic Inquiry% #32: 45\\--86.")
+MAN_END
+
+MAN_BEGIN ("Boersma & Kovacic (to appear)", "ppgb", 20051127)
+NORMAL ("Paul Boersma & Gordana Kovacic (to appear): "
+	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
+	"To appear in %%Journal of the Acoustical Society of America%.")
 MAN_END
 
 MAN_BEGIN ("Childers (1978)", "ppgb", 20030515)

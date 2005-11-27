@@ -2,7 +2,7 @@
 #define _Ltas_h_
 /* Ltas.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/31
+ * pb 2005/11/27
  */
 
 #ifndef _Spectrum_h_
@@ -78,16 +78,22 @@ Ltas Ltases_merge (Collection ltases);
 Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax);
 Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax);
 
+/* Direct computations. */
+
 Ltas Spectrum_to_Ltas (Spectrum me, double bandwidth);
 Ltas Spectrum_to_Ltas_1to1 (Spectrum me);
-Ltas Sound_to_Ltas (Sound me, double bandwidth);
-
 Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
-
 Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 	long maximumHarmonic,
+	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
+
+/* Shortcuts. */
+
+Ltas Sound_to_Ltas (Sound me, double bandwidth);
+Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 
 double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits);

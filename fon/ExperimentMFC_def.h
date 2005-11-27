@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2004 Paul Boersma
+ * Copyright (C) 2001-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,29 @@
  * pb 2003/03/08 added interStimulusInterval
  * pb 2003/03/08 added initialSilenceDuration
  * pb 2004/06/22 added response key
+ * pb 2005/11/21 added replayButton
  */
+
+
+#define ooSTRUCT SoundMFC
+oo_DEFINE_STRUCT (SoundMFC)
+
+	oo_STRING (name)
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (Sound, sound)
+	#endif
+		
+oo_END_STRUCT (SoundMFC)
+#undef ooSTRUCT
 
 
 #define ooSTRUCT StimulusMFC
 oo_DEFINE_STRUCT (StimulusMFC)
 
 	oo_STRING (name)
+	oo_FROM (4)
+		oo_STRING (visibleText)
+	oo_ENDFROM
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (Sound, sound)
 	#endif
@@ -49,7 +65,10 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_FROM (3)
 		oo_STRING (key)
 	oo_ENDFROM
-	oo_STRING (category)
+	oo_STRING (name)
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (Sound, sound)
+	#endif
 
 oo_END_STRUCT (ResponseMFC)
 #undef ooSTRUCT
@@ -94,13 +113,16 @@ oo_END_CLASS (ResultsMFC)
 #define ooSTRUCT ExperimentMFC
 oo_DEFINE_CLASS (ExperimentMFC, Data)
 
-	oo_STRING (fileNameHead)
-	oo_STRING (fileNameTail)
-	oo_STRUCT (StimulusMFC, carrierBefore)
-	oo_STRUCT (StimulusMFC, carrierAfter)
+	oo_FROM (4)
+		oo_QUESTION (stimuliAreSounds)
+	oo_ENDFROM
+	oo_STRING (stimulusFileNameHead)
+	oo_STRING (stimulusFileNameTail)
+	oo_STRUCT (SoundMFC, stimulusCarrierBefore)
+	oo_STRUCT (SoundMFC, stimulusCarrierAfter)
 	oo_FROM (2)
-		oo_DOUBLE (initialSilenceDuration)
-		oo_DOUBLE (interStimulusInterval)
+		oo_DOUBLE (stimulusInitialSilenceDuration)
+		oo_DOUBLE (stimulusMedialSilenceDuration)
 	oo_ENDFROM
 	oo_LONG (numberOfDifferentStimuli)
 	oo_STRUCT_VECTOR (StimulusMFC, stimulus, my numberOfDifferentStimuli)
@@ -111,6 +133,30 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_STRING (runText)
 	oo_STRING (pauseText)
 	oo_STRING (endText)
+	oo_FROM (4)
+		oo_LONG (maximumNumberOfReplays)
+		oo_FLOAT (replay_left)
+		oo_FLOAT (replay_right)
+		oo_FLOAT (replay_bottom)
+		oo_FLOAT (replay_top)
+		oo_STRING (replay_label)
+		oo_STRING (replay_key)
+		oo_FLOAT (ok_left)
+		oo_FLOAT (ok_right)
+		oo_FLOAT (ok_bottom)
+		oo_FLOAT (ok_top)
+		oo_STRING (ok_label)
+		oo_STRING (ok_key)
+	oo_ENDFROM
+	oo_FROM (4)
+		oo_QUESTION (responsesAreSounds)
+		oo_STRING (responseFileNameHead)
+		oo_STRING (responseFileNameTail)
+		oo_STRUCT (SoundMFC, responseCarrierBefore)
+		oo_STRUCT (SoundMFC, responseCarrierAfter)
+		oo_DOUBLE (responseInitialSilenceDuration)
+		oo_DOUBLE (responseMedialSilenceDuration)
+	oo_ENDFROM
 	oo_LONG (numberOfResponseCategories)
 	oo_STRUCT_VECTOR (ResponseMFC, response, my numberOfResponseCategories)
 	oo_FROM (1)

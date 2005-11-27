@@ -919,7 +919,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			/* The function to write to the file, necessary for Win32	*/
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
 			/* The actual URL to handle	*/
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, URL);
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
 			/* Get the URL and write it to the given file */
 			CURLreturn = curl_easy_perform (CURLhandle);
 			/* Handle errors	*/

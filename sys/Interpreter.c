@@ -31,6 +31,7 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2004/12/06 made Interpreter_getArgumentsFromDialog resistant to changes in the script while the dialog is up
  * pb 2005/01/01 there can be spaces before the "form" statement
+ * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
  */
 
 #include <ctype.h>
@@ -489,7 +490,7 @@ int Interpreter_getArgumentsFromString (Interpreter me, const char *arguments) {
 			int jpar;
 			char *arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_BUTTON)
+				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
 					return Melder_error ("Unknown value \"%s\" for choice \"%s\".", arg, my parameters [ipar]);
 				if (strequ (my arguments [jpar], arg)) {   /* The button labels are in the arguments, see Interpreter_readParameters */
 					sprintf (arg, "%d", jpar - ipar);
@@ -503,7 +504,7 @@ int Interpreter_getArgumentsFromString (Interpreter me, const char *arguments) {
 			int jpar;
 			char *arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_OPTION)
+				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
 					return Melder_error ("Unknown value \"%s\" for option menu \"%s\".", arg, my parameters [ipar]);
 				if (strequ (my arguments [jpar], arg)) {
 					sprintf (arg, "%d", jpar - ipar);

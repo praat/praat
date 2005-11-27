@@ -1,6 +1,6 @@
 /* oo_READ_ASCII.h
  *
- * Copyright (C) 1994-2003 Paul Boersma
+ * Copyright (C) 1994-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,25 @@
  */
 
 /*
- * pb 2001/08/04
  * pb 2002/03/07 GPL
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
+ * pb 2005/11/24 more informative error messages
  */
 
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	my x = ascget##storage (f);
+	my x = ascget##storage (f); \
+	iferror return Melder_error ("Trying to read \"%s\".", #x);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
-		for (i = 0; i < n; i ++) \
+		for (i = 0; i < n; i ++) { \
 			my x [i] = ascget##storage (f); \
+			iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
+		} \
 	}
 
 #define oo_SET(type,storage,x,setType)  \
@@ -77,7 +80,7 @@
 	}
 
 #define oo_STRINGx(storage,x)  \
-	if (! (my x = ascget##storage (f))) return 0;
+	if (! (my x = ascget##storage (f))) return Melder_error ("Trying to read \"%s\".", #x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
@@ -98,8 +101,10 @@
 	if (max >= min) { \
 		long i; \
 		if (! (my x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
-			if (! (my x [i] = ascget##storage (f))) return 0; \
+		for (i = min; i <= max; i ++) { \
+			if (! (my x [i] = ascget##storage (f))) \
+				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \

@@ -2,7 +2,7 @@
 #define _ExperimentMFC_h_
 /* ExperimentMFC.h
  *
- * Copyright (C) 2001-2003 Paul Boersma
+ * Copyright (C) 2001-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,7 @@
  */
 
 /*
- * pb 2001/06/07
- * pb 2002/07/16 GPL
- * pb 2002/08/28 to Table
- * pb 2003/03/09 playStimulus
+ * pb 2005/11/24
  */
 
 #ifndef _Sound_h_
@@ -46,6 +43,7 @@ oo_CLASS_CREATE (ResultsMFC, Data)
 
 int ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);
+void ExperimentMFC_playResponse (ExperimentMFC me, long iresp);
 
 ResultsMFC ResultsMFC_create (long numberOfResults);
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);

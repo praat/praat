@@ -25,12 +25,15 @@
  * pb 2004/05/13 pitch-corrected LTAS
  * pb 2004/10/24 Sampled statistics
  * pb 2004/10/31 info
- * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ * pb 2004/11/22 simplified Sound_to_Spectrum
  * pb 2005/06/16 units
+ * pb 2005/11/26 calibrated pitch-corrected Ltas
+ * pb 2005/11/27 Sound_to_Ltas_pitchCorrected
  */
 
 #include "Ltas.h"
 #include "Sound_and_Spectrum.h"
+#include "Sound_to_PointProcess.h"
 
 static void info (I) {
 	iam (Ltas);
@@ -258,7 +261,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	for (iband = 1; iband <= numberOfBands; iband ++) {
 		double fmin = thy xmin + (iband - 1) * bandWidth;
 		double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, FALSE);
-		double meanPowerDensity = meanEnergyDensity * my dx;
+		double meanPowerDensity = meanEnergyDensity * my dx;   /* As an approximation for a division by the original duration. */
 		thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10 * log10 (meanPowerDensity / 4.0e-10);
 	}
 end:
@@ -302,7 +305,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	Ltas ltas = NULL, numbers = NULL;
 	Sound period = NULL;
 	Spectrum spectrum = NULL;
-	long numberOfPeriods = pulses -> nt - 2, ipulse, ifreq, iband;
+	long numberOfPeriods = pulses -> nt - 2, ipulse, ifreq, iband, totalNumberOfEnergies = 0;
 	ltas = Ltas_create (maximumFrequency / bandWidth, bandWidth); cherror
 	ltas -> xmax = maximumFrequency;
 	numbers = Data_copy (ltas);
@@ -330,11 +333,12 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
 				double realPart = spectrum -> z [1] [ifreq];
 				double imaginaryPart = spectrum -> z [2] [ifreq];
-				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * sound -> nx;
+				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx /* OLD: * sound -> nx */;
 				iband = ceil (frequency / bandWidth);
 				if (iband >= 1 && iband <= ltas -> nx) {
 					ltas -> z [1] [iband] += energy;
 					numbers -> z [1] [iband] += 1;
+					totalNumberOfEnergies += 1;
 				}
 			}
 			forget (spectrum);
@@ -351,7 +355,27 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		if (numbers -> z [1] [iband] == 0) {
 			ltas -> z [1] [iband] = NUMundefined;
 		} else {
-			ltas -> z [1] [iband] = 10.0 * log10 (ltas -> z [1] [iband] / numbers -> z [1] [iband] * sound -> nx);
+			/*
+			 * Each bin now contains a total energy in Pa2 sec.
+			 * To convert this to power density, we
+			 */
+			double totalEnergyInThisBand = ltas -> z [1] [iband];
+			if (0 /* i.e. if you just want to have a spectrum of the voiced parts... */) {
+				double energyDensityInThisBand = totalEnergyInThisBand / ltas -> dx;
+				double powerDensityInThisBand = energyDensityInThisBand / (sound -> xmax - sound -> xmin);
+				ltas -> z [1] [iband] = 10.0 * log10 (powerDensityInThisBand / 4.0e-10);
+			} else {
+				/*
+				 * And this is what we really want. The total energy has to be redistributed.
+				 */
+				double meanEnergyInThisBand = totalEnergyInThisBand / numbers -> z [1] [iband];
+				double meanNumberOfEnergiesPerBand = (double) totalNumberOfEnergies / ltas -> nx;
+				double redistributedEnergyInThisBand = meanEnergyInThisBand * meanNumberOfEnergiesPerBand;
+				double redistributedEnergyDensityInThisBand = redistributedEnergyInThisBand / ltas -> dx;
+				double redistributedPowerDensityInThisBand = redistributedEnergyDensityInThisBand / (sound -> xmax - sound -> xmin);
+				ltas -> z [1] [iband] = 10.0 * log10 (redistributedPowerDensityInThisBand / 4.0e-10);
+				/* OLD: ltas -> z [1] [iband] = 10.0 * log10 (ltas -> z [1] [iband] / numbers -> z [1] [iband] * sound -> nx);*/
+			}
 		}
 	}
 	for (iband = 1; iband <= ltas -> nx; iband ++) {
@@ -382,6 +406,21 @@ end:
 	forget (numbers);
 	forget (period);
 	forget (spectrum);
+	return ltas;
+}
+
+Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+	double maximumFrequency, double bandWidth,
+	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
+{
+	PointProcess pulses = NULL;
+	Ltas ltas = NULL;
+	pulses = Sound_to_PointProcess_periodic_cc (sound, minimumPitch, maximumPitch); cherror
+	ltas = PointProcess_Sound_to_Ltas (pulses, sound, maximumFrequency, bandWidth,
+		shortestPeriod, longestPeriod, maximumPeriodFactor); cherror
+end:
+	iferror forget (ltas);
+	forget (pulses);
 	return ltas;
 }
 
@@ -420,7 +459,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 			for (iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
 				double realPart = spectrum -> z [1] [iharm];
 				double imaginaryPart = spectrum -> z [2] [iharm];
-				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * sound -> nx;
+				double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx;
 				ltas -> z [1] [iharm] += energy;
 			}
 			forget (spectrum);
@@ -437,7 +476,9 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		if (ltas -> z [1] [iharm] == 0) {
 			ltas -> z [1] [iharm] = -300;
 		} else {
-			ltas -> z [1] [iharm] = 10.0 * log10 (ltas -> z [1] [iharm]);
+			double energyInThisBand = ltas -> z [1] [iharm];
+			double powerInThisBand = energyInThisBand / (sound -> xmax - sound -> xmin);
+			ltas -> z [1] [iharm] = 10.0 * log10 (powerInThisBand / 4.0e-10);
 		}
 	}
 end:

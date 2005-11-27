@@ -383,6 +383,15 @@ CODE ("Write to console")
 CODE ("! peak at 999.99921 Hz, 3 dB bw 5.786 Hz, 20 dB bw 12 Hz, zero bw 15 Hz, sidelobe -21 dB")
 MAN_END
 
+MAN_BEGIN ("Sound: To Ltas (pitch-corrected)...", "ppgb", 20051127)
+INTRO ("A command available in the #Spectrum menu if you select one or more @Sound objects. "
+	"It tries to compute an @Ltas of the spectral envelope of the voiced parts, "
+	"correcting away the influence of F0 in a way that does not sacrifice frequency selectivity. "
+	"The resulting Ltas is meant to reflect only the resonances (formants) in the vocal tract "
+	"and the envelope of the glottal source spectrum.")
+NORMAL ("The analysis method is described in @@Boersma & Kovacic (to appear)@.")
+MAN_END
+
 MAN_BEGIN ("Sound: To Spectrum...", "ppgb", 20041123)
 INTRO ("A command that appears in the #Spectrum menu if you select one or more @Sound objects. "
 	"It turns the selected Sound into a @Spectrum by an over-all spectral analysis, a %%Fourier transform%.")

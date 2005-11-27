@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/02/09
+ * pb 2005/11/27
  */
 
 #include "praat.h"
@@ -1211,10 +1211,27 @@ DIRECT (Sound_to_IntervalTier)
 END
 
 FORM (Sound_to_Ltas, "Sound: To long-term average spectrum", 0)
-	POSITIVE ("Bandwidth (Hz)", "1000")
+	POSITIVE ("Bandwidth (Hz)", "100")
 	OK
 DO
 	EVERY_TO (Sound_to_Ltas (OBJECT, GET_REAL ("Bandwidth")))
+END
+
+FORM (Sound_to_Ltas_pitchCorrected, "Sound: To Ltas (pitch-corrected)", "Sound: To Ltas (pitch-corrected)...")
+	POSITIVE ("Minimum pitch (Hz)", "75")
+	POSITIVE ("Maximum pitch (Hz)", "600")
+	POSITIVE ("Maximum frequency (Hz)", "5000")
+	POSITIVE ("Bandwidth (Hz)", "100")
+	REAL ("Shortest period (s)", "0.0001")
+	REAL ("Longest period (s)", "0.02")
+	POSITIVE ("Maximum period factor", "1.3")
+	OK
+DO
+	double fmin = GET_REAL ("Minimum pitch"), fmax = GET_REAL ("Maximum pitch");
+	REQUIRE (fmax > fmin, "Maximum pitch must be greater than minimum pitch.");
+	EVERY_TO (Sound_to_Ltas_pitchCorrected (OBJECT, fmin, fmax,
+		GET_REAL ("Maximum frequency"), GET_REAL ("Bandwidth"),
+		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")))
 END
 
 DIRECT (Sound_to_Matrix)
@@ -1591,7 +1608,9 @@ static int recordProc (double duration) {
 static int recordFromFileProc (MelderFile file) {
 	if (last == melderSoundFromFile) last = NULL;
 	forget (melderSoundFromFile);
+	Melder_warningOff ();   /* Like "misssing samples". */
 	melderSoundFromFile = Data_readFromFile (file);
+	Melder_warningOn ();
 	if (! melderSoundFromFile) return 0;
 	if (! Thing_member (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
 	last = melderSoundFromFile;
@@ -1803,6 +1822,7 @@ void praat_uvafon_Sound_init (void) {
 							praat_addAction1 (classSound, 0, "To Spectrum", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Spectrum_fft);
 							praat_addAction1 (classSound, 0, "To Spectrum (dft)", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Spectrum_dft);
 		praat_addAction1 (classSound, 0, "To Ltas...", 0, 1, DO_Sound_to_Ltas);
+		praat_addAction1 (classSound, 0, "To Ltas (pitch-corrected)...", 0, 1, DO_Sound_to_Ltas_pitchCorrected);
 		praat_addAction1 (classSound, 0, "-- spectrotemporal --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, "To Spectrogram...", 0, 1, DO_Sound_to_Spectrogram);
 		praat_addAction1 (classSound, 0, "To Cochleagram...", 0, 1, DO_Sound_to_Cochleagram);
