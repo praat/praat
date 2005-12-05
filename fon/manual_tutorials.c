@@ -23,8 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20051127)
+MAN_BEGIN ("What's new?", "ppgb", 20051205)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.32# (December 5, 2005)")
+LIST_ITEM ("\\bu Many more possibilities in @ExperimentMFC.")
 NORMAL ("##4.3.31# (November 27, 2005)")
 LIST_ITEM ("\\bu @@Sound: To Ltas (pitch-corrected)...@")
 NORMAL ("##4.3.30# (November 18, 2005)")

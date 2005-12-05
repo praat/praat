@@ -1,6 +1,6 @@
 /* DataEditor.c
  *
- * Copyright (C) 1995-2003 Paul Boersma
+ * Copyright (C) 1995-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,23 @@
  */
 
 /*
- * pb 1996/10/04
  * pb 1998/05/17 mac 64-bit floats only
  * pb 1998/05/18 "verticalScrollBar"
  * pb 1998/10/22 removed now duplicate "parent" attribute
  * pb 1998/11/04 removed BUG: added assignment to "my parent"
  * pb 1999/06/21 removed BUG: dcomplex read %lf
- * pb 2002/05/28
  * pb 2003/05/19 Melder_atof
+ * pb 2005/12/04 wider names
  */
 
 #define NAME_X  30
-#define TEXT_X  180
-#define BUTTON_X  180
-#define EDITOR_WIDTH  600
+#define TEXT_X  250
+#define BUTTON_X  250
+#define EDITOR_WIDTH  700
 #define EDITOR_HEIGHT  (LIST_Y + MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
 #define LIST_Y  40
 #define LIST_TOP_MARGIN  11
-#define ROW_HEIGHT  (Machine_getTextHeight () + 2)
+#define ROW_HEIGHT  31
 
 #define SCROLL_BAR_WIDTH  Machine_getScrollBarWidth ()
 
@@ -51,7 +50,7 @@
 	"float", "double", "fcomplex", "dcomplex", "char",
 	"enum", "lenum", "boolean", "question", "sstring", "string", "lstring",
 	"struct", "widget", "object", "collection" };*/
-static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 33, 33, 7, 5, 50, 50, 50 };
+static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 33, 33, 8, 6, 60, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
 	Widget label, button, text;

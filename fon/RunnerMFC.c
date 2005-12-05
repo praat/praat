@@ -22,6 +22,8 @@
  * pb 2002/07/08 goodness
  * pb 2002/07/16 GPL
  * pb 2005/11/21 play again
+ * pb 2005/12/02 response sounds are played
+ * pb 2005/12/04 oops button
  */
 
 #include "RunnerMFC.h"
@@ -30,13 +32,23 @@
 
 #define RunnerMFC_members Editor_members \
 	Widget drawingArea; \
-	Graphics graphics;
+	Graphics graphics; \
+	long numberOfReplays;
 #define RunnerMFC_methods Editor_methods
 class_create_opaque (RunnerMFC, Editor)
 
 static void dataChanged (I) {
 	iam (RunnerMFC);
 	Graphics_updateWs (my graphics);
+}
+
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char *visibleText) {
+	Graphics_setColour (my graphics, Graphics_MAROON);
+	Graphics_setLineWidth (my graphics, 3.0);
+	Graphics_fillRectangle (my graphics, left, right, bottom, top);
+	Graphics_setColour (my graphics, Graphics_YELLOW);
+	Graphics_rectangle (my graphics, left, right, bottom, top);
+	Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
 MOTIF_CALLBACK (cb_draw)
@@ -57,7 +69,14 @@ MOTIF_CALLBACK (cb_draw)
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
 		Graphics_printf (my graphics, 0.5, 0.5, "%s", experiment -> pauseText);
+		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+			drawControlButton (me,
+				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
+				experiment -> oops_label);
+		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
+		const char *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
+		char *visibleText_dup = Melder_strdup (visibleText ? visibleText : ""), *visibleText_p = visibleText_dup, *visibleText_q;
 		Graphics_setFont (my graphics, Graphics_TIMES);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
@@ -65,45 +84,78 @@ MOTIF_CALLBACK (cb_draw)
 		Graphics_printf (my graphics, 0, 1, "%ld / %ld", experiment -> trial, experiment -> numberOfTrials);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics, 24);
-		Graphics_printf (my graphics, 0.5, 1, "%s", experiment -> runText);
+		/*
+		 * The run text.
+		 */
+		if (visibleText_p [0] != '\0') {
+			visibleText_q = strchr (visibleText_p, '|');
+			if (visibleText_q) *visibleText_q = '\0';
+			Graphics_printf (my graphics, 0.5, 1, "%s", visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
+			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += strlen (visibleText_p);
+		} else {
+			Graphics_printf (my graphics, 0.5, 1, "%s", experiment -> runText);
+		}
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		for (iresponse = 1; iresponse <= experiment -> numberOfResponseCategories; iresponse ++) {
+		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
 			Graphics_setColour (my graphics,
 				response -> name [0] == '\0' ? Graphics_SILVER :
 				experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
-				experiment -> responses [experiment -> trial] == 0 ? Graphics_YELLOW : Graphics_SILVER);
+				experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
+				Graphics_YELLOW : Graphics_SILVER);
 			Graphics_setLineWidth (my graphics, 3.0);
 			Graphics_fillRectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
 			Graphics_setColour (my graphics, Graphics_MAROON);
 			Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
-			Graphics_text (my graphics, 0.5 * (response -> left + response -> right), 0.5 * (response -> bottom + response -> top), response -> label);
+			if (visibleText_p [0] != '\0') {
+				visibleText_q = strchr (visibleText_p, '|');
+				if (visibleText_q) *visibleText_q = '\0';
+				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
+					0.5 * (response -> bottom + response -> top), visibleText_p);
+				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += strlen (visibleText_p);
+			} else {
+				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
+					0.5 * (response -> bottom + response -> top), response -> label);
+			}
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 			GoodnessMFC goodness = & experiment -> goodness [iresponse];
-			Graphics_setColour (my graphics, experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER : Graphics_YELLOW);
+			Graphics_setColour (my graphics, experiment -> responses [experiment -> trial] == 0 ? Graphics_SILVER :
+				experiment -> goodnesses [experiment -> trial] == iresponse ? Graphics_RED : Graphics_YELLOW);
 			Graphics_setLineWidth (my graphics, 3.0);
 			Graphics_fillRectangle (my graphics, goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_setColour (my graphics, Graphics_MAROON);
 			Graphics_rectangle (my graphics, goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_text (my graphics, 0.5 * (goodness -> left + goodness -> right), 0.5 * (goodness -> bottom + goodness -> top), goodness -> label);
 		}
-		if (experiment -> replay_right > experiment -> replay_left) {
-			Graphics_setColour (my graphics, Graphics_MAROON);
-			Graphics_setLineWidth (my graphics, 3.0);
-			Graphics_fillRectangle (my graphics,
-				experiment -> replay_left, experiment -> replay_right, experiment -> replay_bottom, experiment -> replay_top);
-			Graphics_setColour (my graphics, Graphics_YELLOW);
-			Graphics_rectangle (my graphics,
-				experiment -> replay_left, experiment -> replay_right, experiment -> replay_bottom, experiment -> replay_top);
-			Graphics_text (my graphics,
-				0.5 * (experiment -> replay_left + experiment -> replay_right),
-				0.5 * (experiment -> replay_bottom + experiment -> replay_top), experiment -> replay_label);
+		if (experiment -> replay_right > experiment -> replay_left && my numberOfReplays < experiment -> maximumNumberOfReplays) {
+			drawControlButton (me,
+				experiment -> replay_left, experiment -> replay_right, experiment -> replay_bottom, experiment -> replay_top,
+				experiment -> replay_label);
 		}
+		if (experiment -> ok_right > experiment -> ok_left &&
+		    experiment -> responses [experiment -> trial] != 0 &&
+		    (experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+		{
+			drawControlButton (me,
+				experiment -> ok_left, experiment -> ok_right, experiment -> ok_bottom, experiment -> ok_top,
+				experiment -> ok_label);
+		}
+		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+			drawControlButton (me,
+				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
+				experiment -> oops_label);
+		}
+		Melder_free (visibleText_dup);
 	} else {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
 		Graphics_printf (my graphics, 0.5, 0.5, "%s", experiment -> endText);
+		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+			drawControlButton (me,
+				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
+				experiment -> oops_label);
+		}
 	}
 MOTIF_CALLBACK_END
 
@@ -120,52 +172,122 @@ MOTIF_CALLBACK (cb_resize)
 	Graphics_updateWs (my graphics);
 MOTIF_CALLBACK_END
 
+static void do_ok (RunnerMFC me) {
+	ExperimentMFC experiment = my data;
+	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
+	my numberOfReplays = 0;
+	if (experiment -> trial == experiment -> numberOfTrials) {
+		experiment -> trial ++;
+		Editor_broadcastChange (me);
+		Graphics_updateWs (my graphics);
+	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
+		experiment -> pausing = TRUE;
+		Editor_broadcastChange (me);
+		Graphics_updateWs (my graphics);
+	} else {
+		experiment -> trial ++;
+		Editor_broadcastChange (me);
+		Graphics_updateWs (my graphics);
+		if (experiment -> stimuliAreSounds) {
+			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+		}
+	}
+}
+
+static void do_oops (RunnerMFC me) {
+	ExperimentMFC experiment = my data;
+	Melder_assert (experiment -> trial >= 2 && experiment -> trial <= experiment -> numberOfTrials);
+	experiment -> responses [experiment -> trial] = 0;
+	experiment -> goodnesses [experiment -> trial] = 0;
+	experiment -> trial --;
+	experiment -> responses [experiment -> trial] = 0;
+	experiment -> goodnesses [experiment -> trial] = 0;
+	experiment -> pausing = FALSE;
+	my numberOfReplays = 0;
+	Editor_broadcastChange (me);
+	Graphics_updateWs (my graphics);
+	if (experiment -> stimuliAreSounds) {
+		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+	}
+}
+
+static void do_replay (RunnerMFC me) {
+	ExperimentMFC experiment = my data;
+	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
+	my numberOfReplays ++;
+	Editor_broadcastChange (me);
+	Graphics_updateWs (my graphics);
+	if (experiment -> stimuliAreSounds) {
+		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+	}
+}
+
 MOTIF_CALLBACK (cb_input)
 	iam (RunnerMFC);
 	ExperimentMFC experiment = my data;
 	MotifEvent event = MotifEvent_fromCallData (call);
 	if (MotifEvent_isButtonPressedEvent (event)) {
-		if (experiment -> trial == 0) {
+		double x, y;
+		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
+		if (experiment -> trial == 0) {   /* The first click of the experiment. */
 			experiment -> trial ++;
 			Editor_broadcastChange (me);
 			Graphics_updateWs (my graphics);
-			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);
-		} else if (experiment -> pausing) {
-			experiment -> pausing = FALSE;
-			experiment -> trial ++;
-			Editor_broadcastChange (me);
-			Graphics_updateWs (my graphics);
-			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-		} else if (experiment -> trial <= experiment -> numberOfTrials) {
-			double x, y;
-			ExperimentMFC experiment = my data;
-			long iresponse;
-			Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
-			if (x > experiment -> replay_left && x < experiment -> replay_right &&
-			    y > experiment -> replay_bottom && y < experiment -> replay_top)
+			if (experiment -> stimuliAreSounds) {
+				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);
+			}
+		} else if (experiment -> pausing) {   /* A click to leave the break. */
+			if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			    y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
 			{
-				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-			} else if (experiment -> responses [experiment -> trial] == 0) {
-				for (iresponse = 1; iresponse <= experiment -> numberOfResponseCategories; iresponse ++) {
+				do_oops (me);
+			} else {
+				experiment -> pausing = FALSE;
+				experiment -> trial ++;
+				Editor_broadcastChange (me);
+				Graphics_updateWs (my graphics);
+				if (experiment -> stimuliAreSounds) {
+					ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+				}
+			}
+		} else if (experiment -> trial <= experiment -> numberOfTrials) {
+			long iresponse;
+			if (x > experiment -> ok_left && x < experiment -> ok_right &&
+			    y > experiment -> ok_bottom && y < experiment -> ok_top &&
+			    experiment -> responses [experiment -> trial] != 0 &&
+			    (experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+			{
+				do_ok (me);
+			} else if (x > experiment -> replay_left && x < experiment -> replay_right &&
+			    y > experiment -> replay_bottom && y < experiment -> replay_top && my numberOfReplays < experiment -> maximumNumberOfReplays)
+			{
+				do_replay (me);
+			} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			    y > experiment -> oops_bottom && y < experiment -> oops_top)
+			{
+				do_oops (me);
+			} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
+				for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 					ResponseMFC response = & experiment -> response [iresponse];
 					if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 						experiment -> responses [experiment -> trial] = iresponse;
-						if (experiment -> numberOfGoodnessCategories == 0) {
-							if (experiment -> trial == experiment -> numberOfTrials) {
-								experiment -> trial ++;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-							} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
-								experiment -> pausing = TRUE;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-							} else {
-								experiment -> trial ++;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-								ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-							}
+						if (experiment -> responsesAreSounds) {
+							ExperimentMFC_playResponse (experiment, iresponse);
+						}
+						if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+							do_ok (me);
 						} else {
+							Editor_broadcastChange (me);
+							Graphics_updateWs (my graphics);
+						}
+					}
+				}
+				if (experiment -> responses [experiment -> trial] != 0) {
+					Melder_assert (experiment -> ok_right > experiment -> ok_left);
+					for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+						GoodnessMFC cat = & experiment -> goodness [iresponse];
+						if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
+							experiment -> goodnesses [experiment -> trial] = iresponse;
 							Editor_broadcastChange (me);
 							Graphics_updateWs (my graphics);
 						}
@@ -176,22 +298,15 @@ MOTIF_CALLBACK (cb_input)
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
-						if (experiment -> trial == experiment -> numberOfTrials) {
-							experiment -> trial ++;
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-						} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
-							experiment -> pausing = TRUE;
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-						} else {
-							experiment -> trial ++;
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-							ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-						}
+						do_ok (me);
 					}
 				}
+			}
+		} else {
+			if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			    y > experiment -> oops_bottom && y < experiment -> oops_top)
+			{
+				do_oops (me);
 			}
 		}
 	} else if (MotifEvent_isKeyPressedEvent (event)) {
@@ -211,28 +326,24 @@ MOTIF_CALLBACK (cb_input)
 			ExperimentMFC experiment = my data;
 			long iresponse;
 			Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
-			if (experiment -> replay_key != NULL && experiment -> replay_key [0] == key) {
-				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+			if (experiment -> ok_key != NULL && experiment -> ok_key [0] == key) {
+				do_ok (me);
+			} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == key &&
+			    my numberOfReplays < experiment -> maximumNumberOfReplays)
+			{
+				do_replay (me);
+			} else if (experiment -> oops_key != NULL && experiment -> oops_key [0] == key) {
+				do_oops (me);
 			} else if (experiment -> responses [experiment -> trial] == 0) {
-				for (iresponse = 1; iresponse <= experiment -> numberOfResponseCategories; iresponse ++) {
+				for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 					ResponseMFC response = & experiment -> response [iresponse];
 					if (response -> key != NULL && response -> key [0] == key) {
 						experiment -> responses [experiment -> trial] = iresponse;
-						if (experiment -> numberOfGoodnessCategories == 0) {
-							if (experiment -> trial == experiment -> numberOfTrials) {
-								experiment -> trial ++;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-							} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
-								experiment -> pausing = TRUE;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-							} else {
-								experiment -> trial ++;
-								Editor_broadcastChange (me);
-								Graphics_updateWs (my graphics);
-								ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-							}
+						if (experiment -> responsesAreSounds) {
+							ExperimentMFC_playResponse (experiment, iresponse);
+						}
+						if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+							do_ok (me);
 						} else {
 							Editor_broadcastChange (me);
 							Graphics_updateWs (my graphics);

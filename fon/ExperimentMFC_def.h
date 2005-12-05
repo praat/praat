@@ -24,6 +24,7 @@
  * pb 2003/03/08 added initialSilenceDuration
  * pb 2004/06/22 added response key
  * pb 2005/11/21 added replayButton
+ * pb 2005/12/04 added okButton and oopsButton
  */
 
 
@@ -147,6 +148,12 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_FLOAT (ok_top)
 		oo_STRING (ok_label)
 		oo_STRING (ok_key)
+		oo_FLOAT (oops_left)
+		oo_FLOAT (oops_right)
+		oo_FLOAT (oops_bottom)
+		oo_FLOAT (oops_top)
+		oo_STRING (oops_label)
+		oo_STRING (oops_key)
 	oo_ENDFROM
 	oo_FROM (4)
 		oo_QUESTION (responsesAreSounds)
@@ -157,8 +164,8 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_DOUBLE (responseInitialSilenceDuration)
 		oo_DOUBLE (responseMedialSilenceDuration)
 	oo_ENDFROM
-	oo_LONG (numberOfResponseCategories)
-	oo_STRUCT_VECTOR (ResponseMFC, response, my numberOfResponseCategories)
+	oo_LONG (numberOfDifferentResponses)
+	oo_STRUCT_VECTOR (ResponseMFC, response, my numberOfDifferentResponses)
 	oo_FROM (1)
 		oo_LONG (numberOfGoodnessCategories)
 		oo_STRUCT_VECTOR (GoodnessMFC, goodness, my numberOfGoodnessCategories)
