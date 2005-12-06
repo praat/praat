@@ -25,6 +25,7 @@
  * pb 2004/06/22 added response key
  * pb 2005/11/21 added replayButton
  * pb 2005/12/04 added okButton and oopsButton
+ * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
  */
 
 
@@ -183,6 +184,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_DIR (rootDirectory)
 	#if oo_READING
 		MelderFile_getParentDir (& Data_fileBeingRead, & my rootDirectory);
+		if (localVersion < 4) my stimuliAreSounds = TRUE;
 	#endif
 
 oo_END_CLASS (ExperimentMFC)

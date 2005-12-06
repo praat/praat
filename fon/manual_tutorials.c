@@ -25,6 +25,8 @@ void manual_tutorials_init (ManPages me) {
 
 MAN_BEGIN ("What's new?", "ppgb", 20051205)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.33# (December 6, 2005)")
+LIST_ITEM ("\\bu Removed three bugs introduced in 4.3.32 in @ExperimentMFC.")
 NORMAL ("##4.3.32# (December 5, 2005)")
 LIST_ITEM ("\\bu Many more possibilities in @ExperimentMFC.")
 NORMAL ("##4.3.31# (November 27, 2005)")

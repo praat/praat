@@ -263,7 +263,7 @@ MOTIF_CALLBACK (cb_input)
 			{
 				do_replay (me);
 			} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			    y > experiment -> oops_bottom && y < experiment -> oops_top)
+			    y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
 			{
 				do_oops (me);
 			} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
@@ -282,8 +282,7 @@ MOTIF_CALLBACK (cb_input)
 						}
 					}
 				}
-				if (experiment -> responses [experiment -> trial] != 0) {
-					Melder_assert (experiment -> ok_right > experiment -> ok_left);
+				if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
 					for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 						GoodnessMFC cat = & experiment -> goodness [iresponse];
 						if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
@@ -294,6 +293,7 @@ MOTIF_CALLBACK (cb_input)
 					}
 				}
 			} else if (experiment -> responses [experiment -> trial] != 0) {
+				Melder_assert (experiment -> ok_right <= experiment -> ok_left);
 				for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
