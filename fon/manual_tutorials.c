@@ -25,6 +25,8 @@ void manual_tutorials_init (ManPages me) {
 
 MAN_BEGIN ("What's new?", "ppgb", 20051208)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.35# (December 8, 2005)")
+LIST_ITEM ("\\bu @ExperimentMFC: switched off warnings for stereo files.")
 NORMAL ("##4.3.34# (December 8, 2005)")
 LIST_ITEM ("\\bu Sound window: the arrow scroll step is settable.")
 LIST_ITEM ("\\bu You can now run multiple listening experiments (@ExperimentMFC) in one \"Run\".")

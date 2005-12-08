@@ -169,6 +169,7 @@ int ExperimentMFC_start (ExperimentMFC me) {
 	long maximumStimulusPlaySamples, maximumResponsePlaySamples, maximumPlaySamples;
 	long stimulusCarrierBeforeSamples = 0, stimulusCarrierAfterSamples = 0, maximumStimulusSamples = 0;
 	long responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
+	Melder_warningOff ();
 	my trial = 0;
 	NUMlvector_free (my stimuli, 1);
 	NUMlvector_free (my responses, 1);
@@ -260,6 +261,7 @@ int ExperimentMFC_start (ExperimentMFC me) {
 			my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
 	}
 end:
+	Melder_warningOn ();
 	iferror {
 		my numberOfTrials = 0;
 		my stimuli = NULL;
