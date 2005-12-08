@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/06/17
+ * pb 2005/12/07
  */
 
 #include "Editor.h"
@@ -189,17 +189,23 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 		The initial value is between 1 and the number of radio buttons.
 	RADIOBUTTON (name)
 		the name is also the title of the button.
+	OPTIONMENU (name, initialValue)
+		the name is also the string displayed in the label;
+		this should be followed by two or more OPTIONs.
+		The initial value is between 1 and the number of options.
+	OPTION (name)
+		the name is also the title of the button.
 	ENUM (name, enumtype, initialValue)
 		the name is also the string displayed in the label.
 		The initial value is between 0 and enumlength(enumtype).
 	OK
 		this statement is obligatory.
 	SET_XXXXXX (name, value)
-		sets the value of REAL..RADIO.
+		sets the value of REAL..LIST.
 	DO
 	The order of the macros should be:
 		FORM
-		one or more from REAL..RADIOBUTTON
+		one or more from REAL..LIST
 		OK
 		zero or more SETs
 		DO
@@ -358,6 +364,8 @@ DIRECT (SiftLdbDisambiguate)
 	}
 END
 */
+int praat_installEditorN (Any editor, Ordered objects);
+
 void praat_dataChanged (Any object);
 /* Call this after changing a screen object. */
 /* Associated editors and data editors will be notified (with Editor_dataChanged). */

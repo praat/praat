@@ -1,6 +1,6 @@
 /* Formant.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/10/05 allow reverse axes in scatter plot (and remove special routine for those)
+ * pb 2005/12/08 Formant_getQuantileOfBandwidth
  */
 
 #include "Formant.h"
@@ -319,6 +320,10 @@ double Formant_getValueAtTime (Formant me, int iformant, double time, int bark) 
 
 double Formant_getBandwidthAtTime (Formant me, int iformant, double time, int bark) {
 	return Sampled_getValueAtX (me, time, (iformant << 1) + 1, bark, TRUE);
+}
+
+double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile, double tmin, double tmax, int bark) {
+	return Sampled_getQuantile (me, tmin, tmax, quantile, (iformant << 1) + 1, bark);
 }
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,

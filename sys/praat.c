@@ -649,6 +649,55 @@ int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
 	return 1;
 }
 
+int praat_installEditorN (Any editor, Ordered objects) {
+	long iOrderedObject, iPraatObject;
+	if (editor == NULL) return 0;
+	/*
+	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
+	 * and check whether there is room to add an editor for each.
+	 */
+	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
+		Data object = objects -> item [iOrderedObject];
+		for (iPraatObject = 1; iPraatObject <= praat.n; iPraatObject ++) {
+			if (object == praat.list [iPraatObject]. object) {
+				int ieditor;
+				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+					if (praat.list [iPraatObject]. editors [ieditor] == NULL) {
+						break;
+					}
+				}
+				if (ieditor >= praat_MAXNUM_EDITORS) {
+					forget (editor);
+					return Melder_error ("Cannot view the same object in more than %d windows.", praat_MAXNUM_EDITORS);
+				}
+				break;
+			}
+		}
+		Melder_assert (iPraatObject <= praat.n);   /* An element of the Ordered does not occur in the List of Objects. */
+	}
+	/*
+	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
+	 */
+	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
+		Data object = objects -> item [iOrderedObject];
+		for (iPraatObject = 1; iPraatObject <= praat.n; iPraatObject ++) {
+			if (object == praat.list [iPraatObject]. object) {
+				int ieditor;
+				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+					if (praat.list [iPraatObject]. editors [ieditor] == NULL) {
+						praat.list [iPraatObject]. editors [ieditor] = editor;
+						break;
+					}
+				}
+				Melder_assert (ieditor < praat_MAXNUM_EDITORS);   /* We just checked, but nevertheless. */
+				break;
+			}
+		}
+		Melder_assert (iPraatObject <= praat.n);   /* We already checked, but still. */
+	}
+	return 1;
+}
+
 void praat_dataChanged (Any object) {
 	int IOBJECT, ieditor;
 	WHERE (OBJECT == object) {

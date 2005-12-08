@@ -2,7 +2,7 @@
 #define _RunnerMFC_h_
 /* RunnerMFC.h
  *
- * Copyright (C) 2001-2004 Paul Boersma
+ * Copyright (C) 2001-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2005/12/08
  */
 
 #ifndef _Editor_h_
@@ -32,7 +32,7 @@
 
 typedef struct structRunnerMFC *RunnerMFC;
 
-RunnerMFC RunnerMFC_create (Widget parent, const char *title, Any data);
+RunnerMFC RunnerMFC_create (Widget parent, const char *title, Ordered experiments);
 
 /* End of file RunnerMFC.h */
 #endif

@@ -23,8 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20051205)
+MAN_BEGIN ("What's new?", "ppgb", 20051208)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.34# (December 8, 2005)")
+LIST_ITEM ("\\bu Sound window: the arrow scroll step is settable.")
+LIST_ITEM ("\\bu You can now run multiple listening experiments (@ExperimentMFC) in one \"Run\".")
+LIST_ITEM ("\\bu Formant: Get quantile of bandwidth...")
 NORMAL ("##4.3.33# (December 6, 2005)")
 LIST_ITEM ("\\bu Removed three bugs introduced in 4.3.32 in @ExperimentMFC.")
 NORMAL ("##4.3.32# (December 5, 2005)")

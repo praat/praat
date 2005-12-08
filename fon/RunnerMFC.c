@@ -24,6 +24,7 @@
  * pb 2005/11/21 play again
  * pb 2005/12/02 response sounds are played
  * pb 2005/12/04 oops button
+ * pb 2005/12/08 multiple experiments
  */
 
 #include "RunnerMFC.h"
@@ -32,14 +33,34 @@
 
 #define RunnerMFC_members Editor_members \
 	Widget drawingArea; \
+	Ordered experiments; \
+	long iexperiment; \
 	Graphics graphics; \
 	long numberOfReplays;
 #define RunnerMFC_methods Editor_methods
 class_create_opaque (RunnerMFC, Editor)
 
+static void destroy (I) {
+	iam (RunnerMFC);
+	if (my experiments) {
+		my experiments -> size = 0;   /* Give ownership back to whoever thinks they own the experiments. */
+		forget (my experiments);
+	}
+	inherited (RunnerMFC) destroy (me);
+}
+
 static void dataChanged (I) {
 	iam (RunnerMFC);
 	Graphics_updateWs (my graphics);
+}
+
+static int RunnerMFC_startExperiment (RunnerMFC me) {
+	my data = my experiments -> item [my iexperiment];
+	if (! ExperimentMFC_start (my data)) return Melder_error ("Cannot start experiment.");
+	Thing_setName (me, ((ExperimentMFC) my data) -> name);
+	Editor_broadcastChange (me);
+	Graphics_updateWs (my graphics);
+	return 1;
 }
 
 static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char *visibleText) {
@@ -55,6 +76,7 @@ MOTIF_CALLBACK (cb_draw)
 	iam (RunnerMFC);
 	ExperimentMFC experiment = my data;
 	long iresponse;
+	if (my data == NULL) return;
 	#ifdef UNIX
 		if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 	#endif
@@ -226,6 +248,7 @@ MOTIF_CALLBACK (cb_input)
 	iam (RunnerMFC);
 	ExperimentMFC experiment = my data;
 	MotifEvent event = MotifEvent_fromCallData (call);
+	if (my data == NULL) return;
 	if (MotifEvent_isButtonPressedEvent (event)) {
 		double x, y;
 		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
@@ -307,6 +330,11 @@ MOTIF_CALLBACK (cb_input)
 			    y > experiment -> oops_bottom && y < experiment -> oops_top)
 			{
 				do_oops (me);
+				return;
+			}
+			if (my iexperiment < my experiments -> size) {
+				my iexperiment ++;
+				RunnerMFC_startExperiment (me);
 			}
 		}
 	} else if (MotifEvent_isKeyPressedEvent (event)) {
@@ -367,21 +395,24 @@ static void createChildren (I) {
 }
 
 class_methods (RunnerMFC, Editor)
+	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	us -> editable = FALSE;
 	us -> scriptable = FALSE;
 class_methods_end
 
-RunnerMFC RunnerMFC_create (Widget parent, const char *title, Any data) {
+RunnerMFC RunnerMFC_create (Widget parent, const char *title, Ordered experiments) {
 	RunnerMFC me = new (RunnerMFC);
-	if (! me || ! Editor_init (me, parent, 0, 0, 2000, 2000, title, data)) { forget (me); return 0; }
-	if (! ExperimentMFC_start (data)) { forget (me); return Melder_errorp ("Cannot start experiment."); }
+	if (! me || ! Editor_init (me, parent, 0, 0, 2000, 2000, title, NULL)) { forget (me); return 0; }
+	my experiments = experiments;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNresizeCallback, cb_resize, (XtPointer) me);
 cb_resize (my drawingArea, (XtPointer) me, 0);
+	my iexperiment = 1;
+	if (! RunnerMFC_startExperiment (me)) { forget (me); return NULL; }
 	return me;
 }
 

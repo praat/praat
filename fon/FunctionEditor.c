@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2002/04/14
  * pb 2002/05/18 Mach
  * pb 2002/07/16 GPL
  * pb 2004/02/15 highlight methods
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/09/23 interface update
+ * pb 2005/12/07 scrollStep
  */
 
 #include "FunctionEditor.h"
@@ -60,11 +60,12 @@
 static struct {
 	int shellWidth, shellHeight;
 	int groupWindow;
+	double arrowScrollStep;
 } prefs =
 #ifdef UNIX
-	{ 700, 440, TRUE };
+	{ 700, 440, TRUE, 0.05 };
 #else
-	{ 600, 340, TRUE };
+	{ 600, 340, TRUE, 0.05 };
 #endif
 
 #define maxGroup 100
@@ -372,13 +373,16 @@ static void updateText (Any functionEditor) {
 
 FORM (FunctionEditor, cb_prefs, "Preferences", 0);
 	BOOLEAN ("Synchronize zoom and scroll", 1)
+	POSITIVE ("Arrow scroll step (s)", "0.05")
 	our prefs_addFields (me, cmd);
 	OK
 SET_INTEGER ("Synchronize zoom and scroll", 2 - prefs.groupWindow)
+SET_REAL ("Arrow scroll step", my arrowScrollStep)
 our prefs_setValues (me, cmd);
 DO
 	int oldGroupWindow = prefs.groupWindow;
 	prefs.groupWindow = 2 - GET_INTEGER ("Synchronize zoom and scroll");
+	prefs.arrowScrollStep = my arrowScrollStep = GET_REAL ("Arrow scroll step");
 	if (oldGroupWindow == FALSE && prefs.groupWindow == TRUE) {
 		updateGroup (me);
 	}
@@ -569,48 +573,48 @@ static void scrollToView (FunctionEditor me, double t) {
 }
 
 DIRECT (FunctionEditor, cb_selectEarlier)
-	my startSelection -= 0.05;
+	my startSelection -= my arrowScrollStep;
 	if (my startSelection < my tmin + 1e-12)
 		my startSelection = my tmin;
-	my endSelection -= 0.05;
+	my endSelection -= my arrowScrollStep;
 	if (my endSelection < my tmin + 1e-12)
 		my endSelection = my tmin;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 END
 
 DIRECT (FunctionEditor, cb_selectLater)
-	my startSelection += 0.05;
+	my startSelection += my arrowScrollStep;
 	if (my startSelection > my tmax - 1e-12)
 		my startSelection = my tmax;
-	my endSelection += 0.05;
+	my endSelection += my arrowScrollStep;
 	if (my endSelection > my tmax - 1e-12)
 		my endSelection = my tmax;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 END
 
 DIRECT (FunctionEditor, cb_moveBleft)
-	my startSelection -= 0.05;
+	my startSelection -= my arrowScrollStep;
 	if (my startSelection < my tmin + 1e-12)
 		my startSelection = my tmin;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 END
 
 DIRECT (FunctionEditor, cb_moveBright)
-	my startSelection += 0.05;
+	my startSelection += my arrowScrollStep;
 	if (my startSelection > my tmax - 1e-12)
 		my startSelection = my tmax;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 END
 
 DIRECT (FunctionEditor, cb_moveEleft)
-	my endSelection -= 0.05;
+	my endSelection -= my arrowScrollStep;
 	if (my endSelection < my tmin + 1e-12)
 		my endSelection = my tmin;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 END
 
 DIRECT (FunctionEditor, cb_moveEright)
-	my endSelection += 0.05;
+	my endSelection += my arrowScrollStep;
 	if (my endSelection > my tmax - 1e-12)
 		my endSelection = my tmax;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
@@ -1435,6 +1439,7 @@ cb_resize (my drawingArea, (XtPointer) me, 0);
 	if (group_equalDomain (my tmin, my tmax))
 		cb_group (NULL, (XtPointer) me, NULL);
 	my enableUpdates = TRUE;
+	my arrowScrollStep = prefs.arrowScrollStep;
 	return 1;
 }
 
@@ -1478,6 +1483,7 @@ void FunctionEditor_prefs (void) {
 	Resources_addInt ("FunctionEditor.shellWidth", & prefs.shellWidth);
 	Resources_addInt ("FunctionEditor.shellHeight", & prefs.shellHeight);
 	Resources_addInt ("FunctionEditor.groupWindow", & prefs.groupWindow);
+	Resources_addDouble ("FunctionEditor.arrowScrollStep", & prefs.arrowScrollStep);
 }
 
 void FunctionEditor_drawRangeMark (I, const char *format, double yWC, int verticalAlignment) {

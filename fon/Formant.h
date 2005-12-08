@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/25
+ * pb 2005/12/08
  */
 
 #ifndef _Matrix_h_
@@ -68,6 +68,7 @@ double Formant_getTimeOfMaximum (Formant me, int iformant, double tmin, double t
 double Formant_getTimeOfMinimum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate);
 
 double Formant_getQuantile (Formant me, int iformant, double quantile, double tmin, double tmax, int bark);
+double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile, double tmin, double tmax, int bark);
 double Formant_getMean (Formant me, int iformant, double tmin, double tmax, int bark);
 double Formant_getStandardDeviation (Formant me, int iformant, double tmin, double tmax, int bark);
 

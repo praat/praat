@@ -36,6 +36,7 @@
  * pb 2004/10/27 intensity.subtractMeanPressure
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/06/16 units
+ * pb 2005/12/07 arrowScrollStep
  */
 
 #ifndef _Editor_h_
@@ -142,7 +143,7 @@ struct FunctionEditor_pulses {
 	int fieldHeight [10]; \
 	struct { Sound data; int autoscaling; } sound; \
 	struct { LongSound data; } longSound; \
-	double longestAnalysis; \
+	double longestAnalysis, arrowScrollStep; \
 	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView; \
 	struct FunctionEditor_spectrogram spectrogram; \
 	struct FunctionEditor_pitch pitch; \

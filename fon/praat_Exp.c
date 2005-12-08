@@ -1,6 +1,6 @@
 /* praat_Exp.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 2001-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2002/08/28
+ * pb 2005/12/08
  */
 
 #include "praat.h"
@@ -43,14 +43,20 @@ END
 
 DIRECT (ExperimentMFC_run)
 	if (praat.batch) {
-		return Melder_error ("Cannot run an ExperimentMFC from batch.");
+		return Melder_error ("Cannot run experiments from the command line.");
 	} else {
-		WHERE (SELECTED) {
-			RunnerMFC runner = RunnerMFC_create (praat.topShell, FULL_NAME, OBJECT);
-			if (! runner) return 0;
-			praat_dataChanged (OBJECT);
-			if (! praat_installEditor (runner, IOBJECT)) return 0;
+		RunnerMFC runner = NULL;
+		Ordered experiments = Ordered_create ();
+		if (experiments == NULL) return 0;
+		WHERE (SELECTED)
+			if (! Collection_addItem (experiments, OBJECT)) {   /* This transfers ownership temporarily. */
+				experiments -> size = 0;   /* Get ownership back. */
+				forget (experiments);
+				return 0;
 		}
+		runner = RunnerMFC_create (praat.topShell, "listening experiments", experiments);
+		if (! runner) return 0;
+		if (! praat_installEditorN (runner, experiments)) return 0;
 	}
 END
 
@@ -121,7 +127,7 @@ void praat_uvafon_Exp_init (void) {
 	praat_addAction1 (classCategories, 0, "Sort", 0, 0, DO_Categories_sort);
 	praat_addAction1 (classCategories, 1, "Get enthropy", 0, 0, DO_Categories_getEnthropy);
 
-	praat_addAction1 (classExperimentMFC, 1, "Run", 0, 0, DO_ExperimentMFC_run);
+	praat_addAction1 (classExperimentMFC, 0, "Run", 0, 0, DO_ExperimentMFC_run);
 	praat_addAction1 (classExperimentMFC, 0, "Extract results", 0, 0, DO_ExperimentMFC_extractResults);
 
 	praat_addAction1 (classResultsMFC, 0, "Query -          ", 0, 0, 0);

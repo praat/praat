@@ -49,6 +49,7 @@ LIST_ITEM ("@@ExperimentMFC 5. Stimulus-dependent texts")
 LIST_ITEM ("@@ExperimentMFC 5.1. The stimulus-dependent run text")
 LIST_ITEM ("@@ExperimentMFC 5.2. Stimulus-dependent response buttons")
 LIST_ITEM ("@@ExperimentMFC 6. Responses are sounds")
+LIST_ITEM ("@@ExperimentMFC 7. Running multiple experiments")
 MAN_END
 
 MAN_BEGIN ("ExperimentMFC 1. When to use Praat", "ppgb", 20051205)
@@ -682,6 +683,85 @@ NORMAL ("The participant will see 16 squares on the screen. First she will have 
 	"A silence of 0.3 seconds is played just before each response sound.")
 MAN_END
 
+MAN_BEGIN ("ExperimentMFC 7. Running multiple experiments", "ppgb", 20051208)
+INTRO ("In all the earlier examples, either the set of stimulus sounds or the set of response sounds stayed "
+	"the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, "
+	"you can run several experiments after each other, simply by selecting more than one experiment, then clicking #Run.")
+NORMAL ("You can put all these ExperimentMFC objects in one text file. The following example contains two experiments. "
+	"The second line has to contain the text \"Collection\", followed by the number of experiments:")
+CODE ("\"ooTextFile\"")
+CODE ("\"Collection\" 2")
+CODE ("")
+CODE ("\"ExperimentMFC 4\" \"i\"")
+CODE ("stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE ("numberOfDifferentStimuli = 1")
+CODE1 ("\"i\"  \"Choose the best \\% \\% ee\\% .\"")
+CODE ("numberOfReplicationsPerStimulus = 1")
+CODE ("breakAfterEvery = 0")
+CODE ("randomize = <CyclicNonRandom>")
+CODE ("startText = \"You are going to choose the best \\% \\% ee\\% . Click to start.\"")
+CODE ("runText = \"\"")
+CODE ("pauseText = \"\"")
+CODE ("endText = \"Thank you for choosing the best \\% \\% ee\\% . Click to proceed.\"")
+CODE ("maximumNumberOfReplays = 0")
+CODE ("replayButton = 0 0 0 0 \"\" \"\"")
+CODE ("okButton = 0.8 0.95 0.45 0.55 \"OK\" \"\"")
+CODE ("oopsButton = 0 0 0 0 \"\" \"\"")
+CODE ("responsesAreSounds? <yes>")
+CODE ("responseFileNameHead = \"Sounds/\"")
+CODE ("responseFileNameTail = \".wav\"")
+CODE ("responseCarrierBefore = \"\"")
+CODE ("responseCarrierAfter = \"\"")
+CODE ("responseInitialSilenceDuration = 0.3")
+CODE ("responseMedialSilenceDuration = 0")
+CODE ("numberOfDifferentResponses = 6")
+CODE1 ("0.2 0.3 0.7 0.8 \"\" \"\" \"i1\"")
+CODE1 ("0.3 0.4 0.7 0.8 \"\" \"\" \"i2\"")
+CODE1 ("0.4 0.5 0.7 0.8 \"\" \"\" \"i3\"")
+CODE1 ("0.5 0.6 0.7 0.8 \"\" \"\" \"i4\"")
+CODE1 ("0.6 0.7 0.7 0.8 \"\" \"\" \"i5\"")
+CODE1 ("0.7 0.8 0.7 0.8 \"\" \"\" \"i6\"")
+CODE ("numberOfGoodnessCategories = 0")
+CODE ("")
+CODE ("\"ExperimentMFC 4\" \"u\"")
+CODE ("stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE ("numberOfDifferentStimuli = 1")
+CODE1 ("\"u\"  \"Choose the best \\% \\% oo\\% .\"")
+CODE ("numberOfReplicationsPerStimulus = 1")
+CODE ("breakAfterEvery = 0")
+CODE ("randomize = <CyclicNonRandom>")
+CODE ("startText = \"You are going to choose the best \\% \\% oo\\% . Click to start.\"")
+CODE ("runText = \"\"")
+CODE ("pauseText = \"\"")
+CODE ("endText = \"All the experiments have finished. You can call the experimenter.\"")
+CODE ("maximumNumberOfReplays = 0")
+CODE ("replayButton = 0 0 0 0 \"\" \"\"")
+CODE ("okButton = 0.8 0.95 0.45 0.55 \"OK\" \"\"")
+CODE ("oopsButton = 0 0 0 0 \"\" \"\"")
+CODE ("responsesAreSounds? <yes>")
+CODE ("responseFileNameHead = \"Sounds/\"")
+CODE ("responseFileNameTail = \".wav\"")
+CODE ("responseCarrierBefore = \"\"")
+CODE ("responseCarrierAfter = \"\"")
+CODE ("responseInitialSilenceDuration = 0.3")
+CODE ("responseMedialSilenceDuration = 0")
+CODE ("numberOfDifferentResponses = 6")
+CODE1 ("0.2 0.3 0.7 0.8 \"\" \"\" \"u1\"")
+CODE1 ("0.3 0.4 0.7 0.8 \"\" \"\" \"u2\"")
+CODE1 ("0.4 0.5 0.7 0.8 \"\" \"\" \"u3\"")
+CODE1 ("0.5 0.6 0.7 0.8 \"\" \"\" \"u4\"")
+CODE1 ("0.6 0.7 0.7 0.8 \"\" \"\" \"u5\"")
+CODE1 ("0.7 0.8 0.7 0.8 \"\" \"\" \"u6\"")
+CODE ("numberOfGoodnessCategories = 0")
+NORMAL ("In this example, the participant first has to choose the best /i/ from among six [i]-like sounds, "
+	"which are in the sound files ##i1.wav# through ##i6.wav#. After that, she has to choose the best /u/ "
+	"from among six [u]-like sounds, which are in the sound files ##u1.wav# through ##u6.wav#. "
+	"The percent signs in \\% \\% ee\\%  mean that %ee will be italicized.")
+NORMAL ("If you read this file with ##Read from file...#, you will see two ExperimentMFC objects, "
+	"named #i and #u. They both stand selected. You then click #Run, and after the participant finishes, "
+	"you select both ExperimentMFC objects again (probably they still stand selected), and click ##Extract results#. "
+	"You will then get two #ResultMFC objects.")
+MAN_END
 }
 
 /* End of file manual_Exp.c */

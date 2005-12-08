@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/10/07
+ * pb 2005/12/08
  */
 
 #include "praat.h"
@@ -740,6 +740,19 @@ FORM (Formant_getQuantile, "Formant: Get quantile", 0)
 	OK
 DO
 	Melder_informationReal (Formant_getQuantile (ONLY (classFormant), GET_INTEGER ("Formant number"),
+		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+END
+
+FORM (Formant_getQuantileOfBandwidth, "Formant: Get quantile of bandwidth", 0)
+	NATURAL ("Formant number", "1")
+	dia_timeRange (dia);
+	RADIO ("Unit", 1)
+	RADIOBUTTON ("Hertz")
+	RADIOBUTTON ("Bark")
+	REAL ("Quantile", "0.50 (= median)")
+	OK
+DO
+	Melder_informationReal (Formant_getQuantileOfBandwidth (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
 END
 
@@ -5891,6 +5904,7 @@ praat_addAction1 (classExcitation, 0, "Hack", 0, 0, 0);
 		praat_addAction1 (classFormant, 1, "Get time of maximum...", 0, 1, DO_Formant_getTimeOfMaximum);
 		praat_addAction1 (classFormant, 1, "-- get distribution --", 0, 1, 0);
 		praat_addAction1 (classFormant, 1, "Get quantile...", 0, 1, DO_Formant_getQuantile);
+		praat_addAction1 (classFormant, 1, "Get quantile of bandwidth...", 0, 1, DO_Formant_getQuantileOfBandwidth);
 		praat_addAction1 (classFormant, 1, "Get mean...", 0, 1, DO_Formant_getMean);
 		praat_addAction1 (classFormant, 1, "Get standard deviation...", 0, 1, DO_Formant_getStandardDeviation);
 	praat_addAction1 (classFormant, 0, "Modify -          ", 0, 0, 0);
