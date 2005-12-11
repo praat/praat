@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/11/27
+ * pb 2005/12/10
  */
 
 #ifndef _Spectrum_h_
@@ -74,6 +74,7 @@ Matrix Ltas_to_Matrix (Ltas me);
 Ltas Matrix_to_Ltas (Matrix me);
 
 Ltas Ltases_merge (Collection ltases);
+Ltas Ltases_average (Collection ltases);
 
 Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax);
 Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax);

@@ -26,7 +26,7 @@
  * pb 2003/10/15 crucial ties option
  * pb 2004/01/17 OTGrammar_Distributions_getFractionCorrect
  * pb 2004/08/08 OTGrammar_removeHarmonicallyBoundedCandidates
- * pb 2004/08/09 bug removal: more complete OTGrammar_save and restore (affected multiple-chew correctness,
+ * pb 2004/08/09 bug removal: more complete OTGrammar_save and restore (affected multiple-chew correctness),
  *     changing the 114.5 in Boersma (Phonology 2003) to 118.1
  * pb 2004/08/09 suppressed superset violation in case of identical constraint violation patterns such
  *     as for /(L L2) L (L2 L) (L1 L)/ and /(L2 L) L (L L2) (L1 L)/, thus restricting the warning to cases
@@ -37,6 +37,8 @@
  * pb 2005/01/24 write to headerless spreadsheet file
  * pb 2005/04/19 OTHistory
  * pb 2005/06/30 learning from partial pairs
+ * pb 2005/12/11 OTGrammar_honourlocalRankings: 
+ * pb 2005/12/11 OTGrammar_PairDistribution_listObligatoryRankings (depth 1)
  */
 
 #include "OTGrammar.h"
@@ -856,6 +858,23 @@ static double demotionStep (double mean, double relativeSpreading) {
 	return relativeSpreading == 0.0 ? mean : NUMrandomGauss (mean, relativeSpreading * mean);
 }
 
+static void OTGrammar_honourLocalRankings (OTGrammar me, double demotionMean, double relativeDemotionSpreading, int *grammarHasChanged) {
+	int improved;
+	do {
+		long irank;
+		improved = FALSE;
+		for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
+			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
+			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
+			while (higher -> ranking <= lower -> ranking) {
+				lower -> ranking -= demotionStep (demotionMean, relativeDemotionSpreading);
+				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
+				improved = TRUE;
+			}
+		}
+	} while (improved);
+}
+
 static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long iloser,
 	int strategy, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, int warnIfStalled, int *grammarHasChanged)
@@ -995,22 +1014,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		offendingConstraint -> ranking -= step;
 		if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 	}
-
 	if (honourLocalRankings && my numberOfFixedRankings) {
-		int improved;
-		do {
-			long irank;
-			improved = FALSE;
-			for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
-				OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-				OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
-				while (higher -> ranking < lower -> ranking) {
-					lower -> ranking -= demotionStep (demotionMean, relativeDemotionSpreading);
-					if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
-					improved = TRUE;
-				}
-			}
-		} while (improved);
+		OTGrammar_honourLocalRankings (me, demotionMean, relativeDemotionSpreading, grammarHasChanged);
 	}
 end:
 	iferror return 0;
@@ -1355,7 +1360,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 	}
 end:
 	Melder_monitor (1.0, NULL);
-	*history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
+	if (history_out) *history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
 	iferror return Melder_error ("OTGrammar did not complete learning from partial outputs.");
 	if (history) {
 		OTGrammar_finalizeHistory (me, history, numberOfData);
@@ -1530,6 +1535,12 @@ static int OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, long itab, 
 		OTGrammar_newDisharmonies (me, 0.0);
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			double stratum = my constraints [my index [icons]]. ranking;
+			#if 0
+			if (stratum < 50.0 - my numberOfConstraints) {
+				OTGrammar_restore (me);
+				return FALSE;   /* We detected a tumble. */
+			}
+			#else
 			if (stratum < previousStratum) {
 				if (stratum < previousStratum - 1.0) {
 					OTGrammar_restore (me);
@@ -1537,6 +1548,7 @@ static int OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, long itab, 
 				}
 				previousStratum = stratum;
 			}
+			#endif
 		}
 	}
 	return 0;   /* Cannot occur. */
@@ -1571,6 +1583,271 @@ int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
 			tab -> candidates = (OTGrammarCandidate) realloc (& tab -> candidates [1], sizeof (struct structOTGrammarCandidate) * tab -> numberOfCandidates) - 1;
 		}	
 	}
+	return 1;
+}
+
+int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
+	OTGrammarFixedRanking savedFixedRankings;
+	long savedNumberOfFixedRankings = my numberOfFixedRankings;
+	long ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+	long ilist, jlist, itrial, iform;
+	int **obligatory = NULL, improved;
+	Ordered list = NULL;
+	if (my numberOfConstraints > 255) return Melder_error ("Cannot compute obligatory rankings if there are more than 255 constraints.");
+	/*
+	 * Save.
+	 */
+	savedFixedRankings = my fixedRankings;
+	OTGrammar_save (me);
+	/*
+	 * Add room for one more fixed ranking.
+	 */
+	my numberOfFixedRankings ++;
+	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings + 1);
+	for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
+		my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
+		my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
+	}
+	/*
+	 * Test learnability of every possible ranked pair.
+	 */
+	obligatory = NUMimatrix (1, my numberOfConstraints, 1, my numberOfConstraints); cherror
+	MelderInfo_open ();
+	Melder_progress (0.0, "");
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+			my fixedRankings [my numberOfFixedRankings]. higher = icons;
+			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
+			OTGrammar_reset (me, 100.0);
+			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %s >> %s", ipair + 1, npair,
+				my constraints [icons]. name, my constraints [jcons]. name);
+			ipair ++;
+			for (itrial = 1; itrial <= 40; itrial ++) {
+				int grammarHasChangedDuringCycle = FALSE;
+				OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+				OTGrammar_newDisharmonies (me, 1e-9);
+				for (iform = 1; iform <= thy pairs -> size; iform ++) {
+					PairProbability prob = thy pairs -> item [iform];
+					if (prob -> weight > 0.0) {
+						int grammarHasChanged;
+						OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+							1e-9, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+							1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
+						if (grammarHasChanged) {
+							OTGrammar_newDisharmonies (me, 1e-9);
+						}
+						grammarHasChangedDuringCycle |= grammarHasChanged;
+					}
+				}
+				if (! grammarHasChangedDuringCycle) break;
+			}
+			if (itrial > 40) {
+				obligatory [jcons] [icons] = TRUE;
+				MelderInfo_writeLine3 (my constraints [jcons]. name, " >> ", my constraints [icons]. name);
+				MelderInfo_close ();
+			}
+		}
+	}
+	my numberOfFixedRankings ++;
+	Melder_progress (0.0, "");
+	npair = npair * npair;
+	list = Ordered_create ();
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
+			my fixedRankings [my numberOfFixedRankings - 1]. higher = icons;
+			my fixedRankings [my numberOfFixedRankings - 1]. lower = jcons;
+			for (kcons = icons; kcons <= my numberOfConstraints; kcons ++) {
+				for (lcons = 1; lcons <= my numberOfConstraints; lcons ++) if (kcons != lcons && ! obligatory [lcons] [kcons]) {
+					if (icons == kcons && jcons >= lcons) continue;
+					if (icons == lcons && jcons == kcons) continue;
+					if (jcons == kcons && obligatory [lcons] [icons]) continue;
+					if (icons == lcons && obligatory [jcons] [kcons]) continue;
+					if (obligatory [lcons] [icons] && obligatory [jcons] [kcons]) continue;
+					my fixedRankings [my numberOfFixedRankings]. higher = kcons;
+					my fixedRankings [my numberOfFixedRankings]. lower = lcons;
+					OTGrammar_reset (me, 100.0);
+					Melder_progress ((double) ipair / npair, "%ld/%ld", ipair + 1, npair);
+					ipair ++;
+					for (itrial = 1; itrial <= 40; itrial ++) {
+						int grammarHasChangedDuringCycle = FALSE;
+						OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+						OTGrammar_newDisharmonies (me, 1e-9);
+						for (iform = 1; iform <= thy pairs -> size; iform ++) {
+							PairProbability prob = thy pairs -> item [iform];
+							if (prob -> weight > 0.0) {
+								int grammarHasChanged;
+								OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+									1e-9, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+									1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
+								if (grammarHasChanged) {
+									OTGrammar_newDisharmonies (me, 1e-9);
+								}
+								grammarHasChangedDuringCycle |= grammarHasChanged;
+							}
+						}
+						if (! grammarHasChangedDuringCycle) break;
+					}
+					if (itrial > 40) {
+						union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uni;
+						SimpleLong listElement;
+						uni.cons.hi1 = jcons;
+						uni.cons.lo1 = icons;
+						uni.cons.hi2 = lcons;
+						uni.cons.lo2 = kcons;
+						listElement = SimpleLong_create (uni.number);
+						Collection_addItem (list, listElement);
+					}
+				}
+			}
+		}
+	}
+	Melder_progress (1.0, "");
+	/*
+	 * Improve list.
+	 */
+	improved = TRUE;
+	while (improved) {
+		improved = FALSE;
+		for (ilist = 1; ilist <= list -> size; ilist ++) {
+			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
+				SimpleLong elA = list -> item [ilist], elB = list -> item [jlist];
+				union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uniA, uniB;
+				int ahi1, alo1, ahi2, alo2, bhi1, blo1, bhi2, blo2;
+				uniA.number = elA -> number;
+				uniB.number = elB -> number;
+				ahi1 = uniA.cons.hi1;
+				alo1 = uniA.cons.lo1;
+				ahi2 = uniA.cons.hi2;
+				alo2 = uniA.cons.lo2;
+				bhi1 = uniB.cons.hi1;
+				blo1 = uniB.cons.lo1;
+				bhi2 = uniB.cons.hi2;
+				blo2 = uniB.cons.lo2;
+				improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
+					(alo1 == blo1 || obligatory [alo1] [blo1]) && (alo2 == blo2 || obligatory [alo2] [blo2]);
+				improved |= (ahi1 == bhi2 || obligatory [bhi2] [ahi1]) && (ahi2 == bhi1 || obligatory [bhi1] [ahi2]) &&
+					(alo1 == blo2 || obligatory [alo1] [blo2]) && (alo2 == blo1 || obligatory [alo2] [blo1]);
+				if (improved) {
+					Collection_removeItem (list, jlist);
+					break;
+				}
+			}
+			if (improved) break;
+		}
+	}
+	improved = TRUE;
+	while (improved) {
+		improved = FALSE;
+		for (ilist = 1; ilist <= list -> size; ilist ++) {
+			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
+				SimpleLong elA = list -> item [ilist], elB = list -> item [jlist];
+				union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uniA, uniB;
+				int ahi1, alo1, ahi2, alo2, bhi1, blo1, bhi2, blo2;
+				uniA.number = elA -> number;
+				uniB.number = elB -> number;
+				ahi1 = uniA.cons.hi1;
+				alo1 = uniA.cons.lo1;
+				ahi2 = uniA.cons.hi2;
+				alo2 = uniA.cons.lo2;
+				bhi1 = uniB.cons.hi1;
+				blo1 = uniB.cons.lo1;
+				bhi2 = uniB.cons.hi2;
+				blo2 = uniB.cons.lo2;
+				improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
+				improved |= ahi1 == bhi2 && alo1 == blo2 && ahi2 == bhi1 && blo1 == bhi2 && alo2 == alo1;
+				improved |= ahi2 == bhi1 && alo2 == blo1 && ahi1 == bhi2 && blo2 == bhi1 && alo1 == alo2;
+				improved |= ahi2 == bhi2 && alo2 == blo2 && ahi1 == bhi1 && blo1 == bhi2 && alo1 == alo2;
+				if (improved) {
+					Collection_removeItem (list, jlist);
+					break;
+				}
+			}
+			if (improved) break;
+		}
+	}
+	for (ilist = 1; ilist <= list -> size; ilist ++) {
+		union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uni;
+		uni.number = ((SimpleLong) list -> item [ilist]) -> number;
+		MelderInfo_write4 (my constraints [uni.cons.hi1]. name, " >> ", my constraints [uni.cons.lo1]. name, " OR ");
+		MelderInfo_writeLine3 (my constraints [uni.cons.hi2]. name, " >> ", my constraints [uni.cons.lo2]. name);
+		MelderInfo_close ();
+	}
+end:
+	Melder_progress (1.0, "");
+	MelderInfo_close ();
+	forget (list);
+	NUMimatrix_free (obligatory, 1, 1);
+	/*
+	 * Remove room.
+	 */
+	my numberOfFixedRankings = savedNumberOfFixedRankings;
+	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+	/*
+	 * Restore.
+	 */
+	my fixedRankings = savedFixedRankings;
+	OTGrammar_restore (me);
+	iferror return 0;
+	return 1;
+}
+
+int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber) {
+	OTGrammarFixedRanking savedFixedRankings;
+	long ifixedRanking, icons, jcons, kcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+	/*
+	 * Save.
+	 */
+	savedFixedRankings = my fixedRankings;
+	OTGrammar_save (me);
+	/*
+	 * Add room for one more fixed ranking.
+	 */
+	my numberOfFixedRankings ++;
+	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings);
+	for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
+		my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
+		my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
+	}
+	/*
+	 * Test learnability of every possible ranked pair.
+	 */
+	MelderInfo_open ();
+	Melder_progress (0.0, "");
+	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+			my fixedRankings [my numberOfFixedRankings]. higher = icons;
+			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
+			OTGrammar_reset (me, 100.0);
+			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %s >> %s", ipair + 1, npair,
+				my constraints [icons]. name, my constraints [jcons]. name);
+			ipair ++;
+			Melder_progressOff ();
+			OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
+				1e-9, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+				1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL); cherror
+			Melder_progressOn ();
+			for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
+				if (my constraints [kcons]. ranking < 0.0) {
+					MelderInfo_writeLine3 (my constraints [jcons]. name, " >> ", my constraints [icons]. name);
+					break;
+				}
+			}
+		}
+	}
+end:
+	Melder_progress (1.0, "");
+	MelderInfo_close ();
+	/*
+	 * Remove room.
+	 */
+	my numberOfFixedRankings --;
+	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+	/*
+	 * Restore.
+	 */
+	my fixedRankings = savedFixedRankings;
+	OTGrammar_restore (me);
+	iferror return 0;
 	return 1;
 }
 

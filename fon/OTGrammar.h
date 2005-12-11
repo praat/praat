@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/06/30
+ * pb 2005/12/09
  */
 
 #ifndef _Strings_h_
@@ -154,6 +154,8 @@ int OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double 
 
 int OTGrammar_removeConstraint (OTGrammar me, const char *constraintName);
 int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly);
+int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee);
+int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber);
 
 int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file);
 

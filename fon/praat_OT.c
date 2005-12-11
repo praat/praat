@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/10/14
+ * pb 2005/12/10
  */
 
 #include "praat.h"
@@ -527,6 +527,13 @@ DO
 	}
 END
 
+FORM (OTGrammar_Distributions_listObligatoryRankings, "OTGrammar & Distributions: Get fraction correct...", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	if (! OTGrammar_Distributions_listObligatoryRankings (ONLY (classOTGrammar), ONLY (classDistributions), GET_INTEGER ("Column number"))) return 0;
+END
+
 FORM (OTGrammar_PairDistribution_getFractionCorrect, "OTGrammar & PairDistribution: Get fraction correct...", 0)
 	REAL ("Evaluation noise", "2.0")
 	INTEGER ("Replications", "100000")
@@ -567,6 +574,10 @@ DO
 		GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"));
 	praat_dataChanged (grammar);
 	iferror return 0;
+END
+
+DIRECT (OTGrammar_PairDistribution_listObligatoryRankings)
+	if (! OTGrammar_PairDistribution_listObligatoryRankings (ONLY (classOTGrammar), ONLY (classPairDistribution))) return 0;
 END
 
 FORM (OTGrammar_to_Distributions, "OTGrammar: Compute output distributions", "OTGrammar: To output Distributions...")
@@ -904,8 +915,10 @@ void praat_uvafon_OT_init (void) {
 
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Learn from partial outputs...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "Get fraction correct...", 0, 0, DO_OTGrammar_Distributions_getFractionCorrect);
+	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, "List obligatory rankings...", 0, praat_HIDDEN, DO_OTGrammar_Distributions_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, "Learn...", 0, 0, DO_OTGrammar_PairDistribution_learn);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, "Get fraction correct...", 0, 0, DO_OTGrammar_PairDistribution_getFractionCorrect);
+	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, "List obligatory rankings", 0, 0, DO_OTGrammar_PairDistribution_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, "Inputs to outputs...", 0, 0, DO_OTGrammar_inputsToOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, "Learn from partial outputs...", 0, 0, DO_OTGrammar_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 2, "Learn...", 0, 0, DO_OTGrammar_learn);

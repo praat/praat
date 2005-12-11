@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20051208)
+MAN_BEGIN ("What's new?", "ppgb", 20051211)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.36# (December 11, 2005)")
+LIST_ITEM ("\\bu Ltas: Average.")
+LIST_ITEM ("\\bu Optimality Theory: compute crucial rankings (select OTGrammar + PairDistribution).")
 NORMAL ("##4.3.35# (December 8, 2005)")
 LIST_ITEM ("\\bu @ExperimentMFC: switched off warnings for stereo files.")
 NORMAL ("##4.3.34# (December 8, 2005)")

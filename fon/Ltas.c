@@ -29,6 +29,7 @@
  * pb 2005/06/16 units
  * pb 2005/11/26 calibrated pitch-corrected Ltas
  * pb 2005/11/27 Sound_to_Ltas_pitchCorrected
+ * pb 2005/12/10 Ltases_average
  */
 
 #include "Ltas.h"
@@ -162,6 +163,19 @@ Ltas Ltases_merge (Collection ltases) {
 	for (iband = 1; iband <= thy nx; iband ++) {
 		thy z [1] [iband] = 10.0 * log10 (thy z [1] [iband]);
 	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Ltas Ltases_average (Collection ltases) {
+	Ltas thee = NULL;
+	long iband;
+	double factor = -10.0 * log10 (ltases -> size);
+	thee = Ltases_merge (ltases); cherror
+	for (iband = 1; iband <= thy nx; iband ++) {
+		thy z [1] [iband] += factor;
+	}	
 end:
 	iferror forget (thee);
 	return thee;

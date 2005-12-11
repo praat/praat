@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/12/08
+ * pb 2005/12/10
  */
 
 #include "praat.h"
@@ -1424,6 +1424,21 @@ DIRECT (info_Label_Sound_to_TextGrid)
 END
 
 /***** LTAS *****/
+
+DIRECT (Ltases_average)
+	Collection ltases;
+	int n = 0;
+	WHERE (SELECTED) n ++;
+	ltases = Collection_create (classLtas, n);
+	WHERE (SELECTED) Collection_addItem (ltases, OBJECT);
+	if (! praat_new (Ltases_average (ltases), "averaged")) {
+		ltases -> size = 0;   /* Undangle. */
+		forget (ltases);
+		return 0;
+	}
+	ltases -> size = 0;   /* Undangle. */
+	forget (ltases);
+END
 
 FORM (Ltas_computeTrendLine, "Ltas: Compute trend line", "Ltas: Compute trend line...")
 	REAL ("left Frequency range (Hz)", "600.0")
@@ -6039,7 +6054,8 @@ praat_addAction1 (classIntervalTier, 0, "Convert", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, "Compute trend line...", 0, 0, DO_Ltas_computeTrendLine);
 	praat_addAction1 (classLtas, 0, "Subtract trend line...", 0, 0, DO_Ltas_subtractTrendLine);
 	praat_addAction1 (classLtas, 0, "Combine", 0, 0, 0);
-	praat_addAction1 (classLtas, 0, "Merge", 0, 0, DO_Ltases_merge);
+	praat_addAction1 (classLtas, 0, "Merge", 0, praat_HIDDEN, DO_Ltases_merge);
+	praat_addAction1 (classLtas, 0, "Average", 0, 0, DO_Ltases_average);
 	praat_addAction1 (classLtas, 0, "Hack", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, "To Matrix", 0, 0, DO_Ltas_to_Matrix);
 
