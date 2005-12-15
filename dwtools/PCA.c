@@ -150,8 +150,8 @@ PCA TableOfReal_to_PCA (I)
 	
 	for (j = 1; j <= n; j++)
 	{
-		double colmean = 0;
-		for (i = 1; i <= m; i++)
+		double colmean = a[1][j];
+		for (i = 2; i <= m; i++)
 		{
 			colmean += a[i][j];
 		}

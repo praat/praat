@@ -1797,7 +1797,7 @@ NORMAL ("The gammatone function has a monotone carrier (the tone) with an "
 MAN_END
 
 MAN_BEGIN ("generalized singular value decomposition", "djmw", 19981007)
-INTRO ("The %%generalized singular value decomposition% (gsvd) of an %m \\xx %n matrix #%A and "
+INTRO ("For %m > %n, the %%generalized singular value decomposition% (gsvd) of an %m \\xx %n matrix #%A and "
 	"a %p \\xx %n matrix #%B is given by the pair of factorizations")
 FORMULA ("#%A = #%U #%\\Si__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%\\Si__2_ [#%0, #%R] #%Q\\'p")
 NORMAL ("The matrices in these factorizations have the following properties:")
@@ -2649,7 +2649,7 @@ NORMAL ("A scree plot shows the sorted eigenvalues, from large to "
 MAN_END
 
 MAN_BEGIN ("singular value decomposition", "djmw", 19981007)
-INTRO ("The %%singular value decomposition% (svd) of a real %m \\xx %n matrix #A is the "
+INTRO ("For %m > %n, the %%singular value decomposition% (svd) of a real %m \\xx %n matrix #A is the "
 	"factorization")
 FORMULA ("#A = #U #\\Si #V\\'p,")
 NORMAL ("The matrices in this factorization have the following properties:")
@@ -2660,6 +2660,7 @@ DEFINITION ("are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., #
 TAG ("#\\Si [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
 DEFINITION ("is a real, nonnegative, and diagonal matrix. Its diagonal contains the so called "
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
+NORMAL ("If %m < %n, the decomposition results in #U [%m \\xx %m] and #V [%n \\xx %m].")
 MAN_END
 
 MAN_BEGIN ("Sound & Pitch: Change gender...", "djmw", 20030208)

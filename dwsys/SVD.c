@@ -1,6 +1,6 @@
 /* SVD.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20031018 Removed  bug in SVD_solve that caused incorrect output when nrow > ncol
  djmw 20031101 Changed documentation in SVD_compute + bug correction in SVD_synthesize.
  djmw 20031111 Added GSVD_create_d.
+ djmw 20051201 Adapt for numberOfRows < numberOfColumns
 */
 
 #include "SVD.h"
@@ -62,6 +63,19 @@
 extern machar_Table NUMfpp;
 static void NUMtranspose_d (double **m, long n);
 
+/* if A=UDV' then A' = (UDV')'=VDU' */
+static void SVD_transpose (I)
+{
+	iam (SVD);
+	long tmpl = my numberOfRows;
+	double **tmpd = my u;
+
+	my u = my v;
+	my v = tmpd;
+	my numberOfRows = my numberOfColumns;
+	my numberOfColumns = tmpl;
+}
+
 static void classSVD_info (I)
 {
 	iam (SVD);
@@ -82,16 +96,21 @@ class_methods (SVD, Data)
 	class_method_local (SVD, info)
 class_methods_end
 
+/*
+	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
+	m < n, mxn matrix A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
+*/
 int SVD_init (I, long numberOfRows, long numberOfColumns)
 {
 	iam (SVD);
+	long mn_min = MIN(numberOfRows, numberOfColumns);
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
 	if (! NUMfpp) NUMmachar ();
 	my tolerance = NUMfpp -> eps * MAX (numberOfRows, numberOfColumns);
-	if (((my u = NUMdmatrix (1, numberOfRows, 1, numberOfColumns)) == NULL) ||
-		((my v = NUMdmatrix (1, numberOfColumns, 1, numberOfColumns)) == NULL) ||
-		((my d = NUMdvector (1, numberOfColumns)) == NULL)) return 0;
+	if (((my u = NUMdmatrix (1, numberOfRows, 1, mn_min)) == NULL) ||
+		((my v = NUMdmatrix (1, numberOfColumns, 1, mn_min)) == NULL) ||
+		((my d = NUMdvector (1, mn_min)) == NULL)) return 0;
 	return 1;
 }
 
@@ -122,8 +141,23 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns)
 int SVD_svd_d (I, double **m)
 {
 	iam (SVD);
-	NUMdmatrix_copyElements (m, my u, 1, my numberOfRows, 1, 
-		my numberOfColumns);
+	long i, j;
+	if (my numberOfRows >= my numberOfColumns)
+	{
+		/* Store m in u */
+		for (i = 1; i <= my numberOfRows; i++ )
+		{
+			for (j = 1; j <= my numberOfColumns; j++) my u[i][j] = m[i][j];
+		}
+	}
+	else
+	{
+		/* Store m transposed in v */
+		for (i = 1; i <= my numberOfRows; i++ )
+		{
+			for (j = 1; j <= my numberOfColumns; j++) my v[j][i] = m[i][j];
+		}
+	}
 	return SVD_compute (me);
 }
 
@@ -131,10 +165,23 @@ int SVD_svd_f (I, float **m)
 {
 	iam (SVD);
 	long i, j;
-	for (i = 1; i <= my numberOfRows; i++)
+	if (my numberOfRows >= my numberOfColumns)
 	{
-		for (j = 1; j <= my numberOfColumns; j++) my u[i][j] = m[i][j];
+		/* Store in u */
+		for (i = 1; i <= my numberOfRows; i++ )
+		{
+			for (j = 1; j <= my numberOfColumns; j++) my u[j][i] = m[i][j];
+		}
 	}
+	else
+	{
+		/* Store transposed in v */
+		for (i = 1; i <= my numberOfRows; i++ )
+		{
+			for (j = 1; j <= my numberOfColumns; j++) my v[i][j] = m[j][i];
+		}
+	}
+	
 	return SVD_compute (me);
 }
 
@@ -165,63 +212,71 @@ static void NUMtranspose_d (double **m, long n)
 }
 
 
+/*
+	Compute svd(A) = U D Vt.
+	The svd routine from CLAPACK uses (fortran) column major storage, while	C uses row major storage.
+	To solve the problem above we have to transpose the matrix A, calculate the
+	solution and transpose the U and Vt matrices of the solution.
+	However, if we solve the transposed problem svd(A') = V D U', we have less work to do:
+	We may call the algorithm with reverted row/column dimensions, and we switch the U and V'
+	output arguments.
+	The only thing that we have to do afterwards is transposing the (small) V matrix
+	because the SVD-object has row vectors in v.
+	The sv's are already sorted.
+	int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long *lda,
+		double *s, double *u, long *ldu, double *vt, long *ldvt, double *work,
+		long *lwork, long *info);
+*/
 int SVD_compute (I)
 {
 	iam (SVD);
 	char jobu = 'S', jobvt = 'O';
-	long m = my numberOfColumns, n = my numberOfRows;
-	long lda = m, ldu = m, ldvt = m, lwork = -1, info;
+	long m, n, lda, ldu, ldvt, info, lwork = -1;
 	double *work = NULL, wt[2];
+	int transpose = my numberOfRows < my numberOfColumns;
 
-	/*
-		Compute svd(A) = U D Vt.
-		The svd routine from CLAPACK uses (fortran) column major storage,
-		we have row major storage (C).
-		To solve the problem above we have to transpose the matrix A, calculate the
-		solution and transpose the U and Vt matrices of the solution.
-		However, when we solve the transposed problem svd(A') = V D U', we have less
-		work to do:
-		We call the algorithm with reverted row/column dimensions, and we switch the U and V'
-		output arguments.
-		The only thing that we have to do afterwards is transposing the (small) V matrix
-		because the SVD-object has row vectors in v.
-		The sv's are already sorted.
-	*/
-
+	/* transpose: if rows < cols then data in v */
+	if (transpose) SVD_transpose (me);
+	
+	lda = ldu = ldvt = m = my numberOfColumns;
+	n = my numberOfRows;
+	
 	(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu,
 		NULL, &ldvt, wt, &lwork, &info);
 
-	if (info != 0) return 0;
+	if (info != 0) goto end;
 
 	lwork = wt[0];
 	work = NUMdvector (1, lwork);
-	if (work == NULL) return 0;
-
+	if (work == NULL) goto end;
 	(void) NUMlapack_dgesvd(&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu,
 		NULL, &ldvt, &work[1], &lwork, &info);
 
 	NUMtranspose_d (my v, MIN(m, n));
-	NUMdvector_free (work, 1);
 
+	NUMdvector_free (work, 1);
+end:
+	if (transpose) SVD_transpose (me);
 	return info == 0;
 }
+
 
 int SVD_solve (I, double b[], double x[])
 {
 	iam (SVD);
 	double *t, tmp;
-	long i, j;
+	long i, j, mn_min = MIN (my numberOfRows, my numberOfColumns);
 
-	t = NUMdvector (1, my numberOfColumns);
+	t = NUMdvector (1, mn_min);
 	if (t == NULL) return 0;
 	
 	/*  Solve UDV' x = b.
 		Solution: x = V D^-1 U' b */
 
-	for (j = 1; j <= my numberOfColumns; j++)
+	for (j = 1; j <= mn_min; j++)
 	{
 		tmp = 0;
-		if (my d[j])
+		if (my d[j] > 0)
 		{
 			for (i = 1; i <= my numberOfRows; i++)
 			{
@@ -235,7 +290,7 @@ int SVD_solve (I, double b[], double x[])
 	for (j = 1; j <= my numberOfColumns; j++)
 	{
 		tmp = 0;
-		for (i = 1; i <= my numberOfColumns; i++)
+		for (i = 1; i <= mn_min; i++)
 		{
 			tmp += my v[j][i] * t[i];
 		}
@@ -249,16 +304,17 @@ int SVD_solve (I, double b[], double x[])
 int SVD_sort (I)
 {
 	iam (SVD); SVD thee = NULL; 
-	long i, j, *index = NULL;
+	long i, j, mn_min = MIN (my numberOfRows, my numberOfColumns);
+	long *index = NULL;
 	
 	if (((thee = Data_copy (me)) == NULL) ||
-		((index = NUMlvector (1, my numberOfColumns)) == NULL)) goto end;
+		((index = NUMlvector (1, mn_min)) == NULL)) goto end;
 	
-	NUMindexx_d (my d, my numberOfColumns, index);
+	NUMindexx_d (my d, mn_min, index);
 			
-	for (j = 1; j <= my numberOfColumns; j++)
+	for (j = 1; j <= mn_min; j++)
 	{
-		long from = index[my numberOfColumns - j + 1];
+		long from = index[mn_min - j + 1];
 		my d[j] = thy d[from];
 		for (i = 1; i <= my numberOfRows; i++) my u[i][j] = thy u[i][from];
 		for (i = 1; i <= my numberOfColumns; i++) my v[i][j] = thy v[i][from];
@@ -272,15 +328,15 @@ end:
 long SVD_zeroSmallSingularValues (I, double tolerance)
 {
 	iam (SVD);
-	long i, numberOfZeroed = 0; 
+	long i, numberOfZeroed = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
 	double dmax = my d[1];
 	
 	if (tolerance == 0) tolerance = my tolerance;
-	for (i = 2; i <= my numberOfColumns; i++)
+	for (i = 2; i <= mn_min; i++)
 	{
 		if (my d[i] > dmax) dmax = my d[i];
 	}
-	for (i = 1; i <= my numberOfColumns; i++)
+	for (i = 1; i <= mn_min; i++)
 	{
 		if (my d[i] < dmax * tolerance)
 		{
@@ -294,24 +350,29 @@ long SVD_zeroSmallSingularValues (I, double tolerance)
 long SVD_getRank (I)
 {
 	iam (SVD);
-	long i, rank = 0;
-	for (i = 1; i <= my numberOfColumns; i++)
+	long i, rank = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
+	for (i = 1; i <= mn_min; i++)
 	{
 		if (my d[i] > 0) rank++;
 	}
 	return rank;
 }
 
+/*
+	SVD of A = U D V'.
+	If u[i] is the i-th column vector of U and v[i] the i-th column vector of V and s[i] the i-th singular value,
+	we can write the svd expansion  A = sum_{i=1}^n {d[i] u[i] v[i]'}.
+	Golub & van Loan, 3rd ed, p 71.
+*/
 int SVD_synthesize (I, long sv_from, long sv_to, double **m)
 {
 	iam (SVD);
-	long i, j, k;
+	long i, j, k, mn_min = MIN (my numberOfRows, my numberOfColumns);
 
-	if (sv_to == 0) sv_to = my numberOfColumns;
+	if (sv_to == 0) sv_to = mn_min;
 
-	if (sv_from > sv_to || sv_from < 1 || sv_to > my numberOfColumns) return
-		Melder_error ("SVD_synthesize: indices must be in range [1, %d].",
-			my numberOfColumns);
+	if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) return
+		Melder_error ("SVD_synthesize: indices must be in range [1, %d].", mn_min);
 
 	for (i = 1; i <= my numberOfRows; i++)
 	{

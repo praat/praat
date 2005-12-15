@@ -23,8 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20051211)
+MAN_BEGIN ("What's new?", "ppgb", 20051215)
 INTRO ("Latest changes in P\\s{RAAT}.")
+NORMAL ("##4.3.37# (December 15, 2005)")
+LIST_ITEM ("\\bu @@Principal component analysis@: now accepts tables with more variables (columns) than cases (rows).")
+LIST_ITEM ("\\bu TIMIT label files: removed a bug that caused Praat to crash for files whose first part was not labelled.")
 NORMAL ("##4.3.36# (December 11, 2005)")
 LIST_ITEM ("\\bu Ltas: Average.")
 LIST_ITEM ("\\bu Optimality Theory: compute crucial rankings (select OTGrammar + PairDistribution).")

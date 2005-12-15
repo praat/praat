@@ -1,6 +1,6 @@
 /* TextGrid_extensions.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2005 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 /*
  djmw 20020702 GPL header
  djmw 20020702 +TextGrid_extendTime
+ djmw 20051215 Corrected a bug in TextGrid_readFromTIMITLabelFile that caused a crash when the first number in
+ 	a file was not 0 (in that case an empty interval was added as the first element in the tier).
 */
 
 #include <ctype.h>
@@ -208,7 +210,15 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		xmin = it1 * dt;
 		xmax = it2 * dt;
 		ni = timit -> intervals -> size - 1;
-		if (ni < 1) ni = 1;
+		if (ni < 1)
+		{
+			ni = 1;
+			/* Some files do not start with a first line "0 <number2> h#".
+			   Instead they start with "<number1> <number2> h#", where number1 > 0.
+			   We override number1 with 0. */
+			
+			if (xmin > 0) xmin = 0;
+		}
 		interval = timit -> intervals -> item[ni];
 		if (xmin < interval -> xmax && linesRead > 1)
 		{
@@ -235,14 +245,17 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	my xmax = xmax;
 	if (phnFile) /* Tier 2: IPA symbols */
 	{
-		if (! (ipa = Data_copy (timit)) || ! Collection_addItem (my tiers, ipa)) goto cleanup;
+		ipa = Data_copy (timit);
+		if (ipa == NULL || ! Collection_addItem (my tiers, ipa)) goto cleanup;
 		for (i = 1; i <= ipa -> intervals -> size; i++)
 		{
 			interval = timit -> intervals -> item[i];
+			
 			if (! TextInterval_setText (ipa -> intervals -> item[i],
 				timitLabelToIpaLabel (interval -> text))) goto cleanup;
 		}
-		Thing_setName (ipa, "ipa"); Thing_setName (timit, "phn");
+		Thing_setName (ipa, "ipa");
+		Thing_setName (timit, "phn");
 	}
 cleanup:
 	fclose (f);

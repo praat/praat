@@ -1586,6 +1586,14 @@ int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
 	return 1;
 }
 
+#define OTGrammar_List4_members Data_members \
+	long hi1, lo1, hi2, lo2;
+#define OTGrammar_List4_methods Data_methods
+class_create (OTGrammar_List4, Data)
+
+class_methods (OTGrammar_List4, Data)
+class_methods_end
+
 int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
 	OTGrammarFixedRanking savedFixedRankings;
 	long savedNumberOfFixedRankings = my numberOfFixedRankings;
@@ -1593,7 +1601,6 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 	long ilist, jlist, itrial, iform;
 	int **obligatory = NULL, improved;
 	Ordered list = NULL;
-	if (my numberOfConstraints > 255) return Melder_error ("Cannot compute obligatory rankings if there are more than 255 constraints.");
 	/*
 	 * Save.
 	 */
@@ -1688,13 +1695,11 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 						if (! grammarHasChangedDuringCycle) break;
 					}
 					if (itrial > 40) {
-						union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uni;
-						SimpleLong listElement;
-						uni.cons.hi1 = jcons;
-						uni.cons.lo1 = icons;
-						uni.cons.hi2 = lcons;
-						uni.cons.lo2 = kcons;
-						listElement = SimpleLong_create (uni.number);
+						OTGrammar_List4 listElement = new (OTGrammar_List4);
+						listElement -> hi1 = jcons;
+						listElement -> lo1 = icons;
+						listElement -> hi2 = lcons;
+						listElement -> lo2 = kcons;
 						Collection_addItem (list, listElement);
 					}
 				}
@@ -1710,19 +1715,9 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		improved = FALSE;
 		for (ilist = 1; ilist <= list -> size; ilist ++) {
 			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-				SimpleLong elA = list -> item [ilist], elB = list -> item [jlist];
-				union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uniA, uniB;
-				int ahi1, alo1, ahi2, alo2, bhi1, blo1, bhi2, blo2;
-				uniA.number = elA -> number;
-				uniB.number = elB -> number;
-				ahi1 = uniA.cons.hi1;
-				alo1 = uniA.cons.lo1;
-				ahi2 = uniA.cons.hi2;
-				alo2 = uniA.cons.lo2;
-				bhi1 = uniB.cons.hi1;
-				blo1 = uniB.cons.lo1;
-				bhi2 = uniB.cons.hi2;
-				blo2 = uniB.cons.lo2;
+				OTGrammar_List4 elA = list -> item [ilist], elB = list -> item [jlist];
+				long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
+				long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 				improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
 					(alo1 == blo1 || obligatory [alo1] [blo1]) && (alo2 == blo2 || obligatory [alo2] [blo2]);
 				improved |= (ahi1 == bhi2 || obligatory [bhi2] [ahi1]) && (ahi2 == bhi1 || obligatory [bhi1] [ahi2]) &&
@@ -1740,19 +1735,9 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		improved = FALSE;
 		for (ilist = 1; ilist <= list -> size; ilist ++) {
 			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-				SimpleLong elA = list -> item [ilist], elB = list -> item [jlist];
-				union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uniA, uniB;
-				int ahi1, alo1, ahi2, alo2, bhi1, blo1, bhi2, blo2;
-				uniA.number = elA -> number;
-				uniB.number = elB -> number;
-				ahi1 = uniA.cons.hi1;
-				alo1 = uniA.cons.lo1;
-				ahi2 = uniA.cons.hi2;
-				alo2 = uniA.cons.lo2;
-				bhi1 = uniB.cons.hi1;
-				blo1 = uniB.cons.lo1;
-				bhi2 = uniB.cons.hi2;
-				blo2 = uniB.cons.lo2;
+				OTGrammar_List4 elA = list -> item [ilist], elB = list -> item [jlist];
+				long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
+				long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 				improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
 				improved |= ahi1 == bhi2 && alo1 == blo2 && ahi2 == bhi1 && blo1 == bhi2 && alo2 == alo1;
 				improved |= ahi2 == bhi1 && alo2 == blo1 && ahi1 == bhi2 && blo2 == bhi1 && alo1 == alo2;
@@ -1766,10 +1751,9 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		}
 	}
 	for (ilist = 1; ilist <= list -> size; ilist ++) {
-		union { long number; struct { unsigned char hi1, lo1, hi2, lo2; } cons; } uni;
-		uni.number = ((SimpleLong) list -> item [ilist]) -> number;
-		MelderInfo_write4 (my constraints [uni.cons.hi1]. name, " >> ", my constraints [uni.cons.lo1]. name, " OR ");
-		MelderInfo_writeLine3 (my constraints [uni.cons.hi2]. name, " >> ", my constraints [uni.cons.lo2]. name);
+		OTGrammar_List4 el = list -> item [ilist];
+		MelderInfo_write4 (my constraints [el -> hi1]. name, " >> ", my constraints [el -> lo1]. name, " OR ");
+		MelderInfo_writeLine3 (my constraints [el -> hi2]. name, " >> ", my constraints [el -> lo2]. name);
 		MelderInfo_close ();
 	}
 end:

@@ -1552,7 +1552,7 @@ DO
 END
 
 DIRECT (TableOfReal_centreRows)
-	EVERY (TableOfReal_centreColumns (OBJECT))
+	EVERY (TableOfReal_centreRows (OBJECT))
 END
 
 DIRECT (TableOfReal_centreColumns)

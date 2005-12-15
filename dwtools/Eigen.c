@@ -32,6 +32,7 @@
  djmw 20040329 Added fractionOfTotal  and cumulative parameters in Eigen_drawEigenvalues_scree.
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
  djmw 20050706 Shortened horizontal offsets in Eigen_drawEigenvalues from 1 to 0.5
+ djmw 20051204 Eigen_initFromSquareRoot adapted for nrows < ncols
 */
 
 #include "Eigen.h"
@@ -131,6 +132,7 @@ int Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCol
 	iam (Eigen);
 	SVD svd;
 	long i, j, k, numberOfZeroed, numberOfEigenvalues;
+	long nsv = MIN (numberOfRows, numberOfColumns);
 	
 	my dimension = numberOfColumns;
 	if (! (svd = SVD_create_d (a, numberOfRows, numberOfColumns))) return 0;
@@ -146,11 +148,11 @@ int Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCol
 
 	numberOfZeroed = SVD_zeroSmallSingularValues (svd, 0);
 
-	numberOfEigenvalues = numberOfColumns - numberOfZeroed;
+	numberOfEigenvalues = nsv - numberOfZeroed;
 
 	if (! Eigen_init (me, numberOfEigenvalues, numberOfColumns)) goto end;
 
-	for (k = 0, i = 1; i <= numberOfColumns; i++)
+	for (k = 0, i = 1; i <= nsv; i++)
 	{
 		double t = svd -> d[i];
 		if (t > 0)

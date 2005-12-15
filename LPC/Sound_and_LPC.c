@@ -41,7 +41,10 @@ a= & work[m+1+1]; // a[1..m+1]
 rc = & work[m+1+m+1+1]; // rc[1..m]
 for (i=1; i<= m+1+m+1+m;i++) work[i] = 0;
 */
-static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee)
+
+#define LPC_METHOD_AUTO_WINDOW_CORRECTION 1
+
+static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, double *window_autocor)
 {
 	long i = 1; /* For error condition at end */
 	long j, m = thy nCoefficients;
@@ -57,6 +60,24 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee)
 		{
 			r[i] += x[j] * x[j+i-1];
 		}
+	}
+	if (Melder_debug == -2)
+	{
+		double *rr = NUMdvector (1, m + 1);
+		for (i = 1; i <= m + 1; i++)
+		{
+			for (j = 1; j <= my nx - i + 1; j++)
+			{
+				rr[i] += x[j] * x[j+i-1];
+			}
+		}
+		
+		for (i = 2; i <= m + 1; i++)
+		{
+			r[i] = rr[i] / window_autocor[i];
+		}
+		r[1] = rr[1];
+		NUMdvector_free (rr, 1);
 	}
 	if (r[1] == 0)
 	{
@@ -382,10 +403,12 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 	double preEmphasisFrequency, int method, double tol1, double tol2)
 {
 	char *proc = "Sound_to_LPC";
-	Sound sound = NULL, sframe = NULL, window = NULL; LPC thee = NULL;
+	Sound sound = NULL, sframe = NULL, window = NULL;
+	LPC thee = NULL;
+	double *window_autocor = NULL;
 	double t1, samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
-	long nFrames, i, frameErrorCount = 0; 
+	long nFrames, i, frameErrorCount = 0;
 	
 	if (floor (windowDuration / my dx) < predictionOrder + 1)
 	{
@@ -401,6 +424,26 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 		! (window = Sound_createGaussian (windowDuration, samplingFrequency)) ||
 		! (thee = LPC_create (my xmin, my xmax, nFrames, dt, t1, predictionOrder, my dx))) goto end;
 		 
+	if (Melder_debug == -2)
+	{
+		/* Auto-correlation of window */
+		long window_nx, j;
+		window_autocor = NUMdvector (1, predictionOrder+1);
+		window_nx = window -> nx;
+		for (i = 1; i <= predictionOrder + 1; i++)
+		{
+			for (j = 1; j <= window_nx - i + 1; j++)
+			{
+				window_autocor[i] += window -> z[1][j] * window -> z[1][i+j-1];
+			}
+		}
+		/* Normalize */
+		for (i = 2; i<= predictionOrder + 1; i++)
+		{
+			window_autocor[i] /= window_autocor[1];
+		}
+		window_autocor[1] = 1;
+	}
 	Melder_progress (0.0, "LPC analysis");
 	
 	if (preEmphasisFrequency < samplingFrequency / 2) Sound_preEmphasis (sound, preEmphasisFrequency);	 	
@@ -412,8 +455,8 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 		if (! LPC_Frame_init (lpcframe, predictionOrder)) goto end;
 		Sound_into_Sound (sound, sframe, t - windowDuration / 2);
 		(void) Vector_subtractMean (sframe);
-		Sounds_multiply (sframe, window);				
-		if ((method == LPC_METHOD_AUTO && ! Sound_into_LPC_Frame_auto (sframe, lpcframe)) ||
+		Sounds_multiply (sframe, window);
+		if ((method == LPC_METHOD_AUTO && ! Sound_into_LPC_Frame_auto (sframe, lpcframe, window_autocor)) ||
 			(method == LPC_METHOD_COVAR && ! Sound_into_LPC_Frame_covar (sframe, lpcframe)) ||
 			(method == LPC_METHOD_BURG && ! Sound_into_LPC_Frame_burg (sframe, lpcframe)) ||
 			(method == LPC_METHOD_MARPLE && ! Sound_into_LPC_Frame_marple (sframe, lpcframe, tol1, tol2)))
@@ -424,6 +467,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 
 end:
 	Melder_progress (1.0, NULL);
+	if (Melder_debug == -2) NUMdvector_free (window_autocor, 1);
 	forget (sound);
 	forget (sframe);
 	forget (window);

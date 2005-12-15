@@ -43,6 +43,7 @@
  djmw 20050706 Eigen_getSumOfEigenvalues
  djmw 20051012 Robust LPC analysis test
  djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices must be positive numbers
+ djmw SVD extract lef/right singular vectors
 */
 
 #include "praat.h"
@@ -3518,6 +3519,21 @@ DO
 		GET_INTEGER ("Last component")))
 END
 
+DIRECT (SVD_extractLeftSingularVectors)
+	SVD svd = ONLY (classSVD);
+	if (! praat_new (SVD_extractLeftSingularVectors (svd), "%s_lsv", Thing_getName (svd))) return 0;
+END
+
+DIRECT (SVD_extractRightSingularVectors)
+	SVD svd = ONLY (classSVD);
+	if (! praat_new (SVD_extractRightSingularVectors (svd), "%s_rsv", Thing_getName (svd))) return 0;
+END
+
+DIRECT (SVD_extractSingularValues)
+	SVD svd = ONLY (classSVD);
+	if (! praat_new (SVD_extractSingularValues (svd), "%s_sv", Thing_getName (svd))) return 0;
+END
+
 /******************* Table ****************************/
 
 DIRECT (Table_createFromPetersonBarneyData)
@@ -4721,8 +4737,10 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classStrings, 0, "To Permutation...", "To Distributions",
 		 0, DO_Strings_to_Permutation);
 
-	praat_addAction1 (classSVD, 0, "To TableOfReal...",
-		0, 0, DO_SVD_to_TableOfReal);
+	praat_addAction1 (classSVD, 0, "To TableOfReal...", 0, 0, DO_SVD_to_TableOfReal);
+	praat_addAction1 (classSVD, 0, "Extract left singular vectors", 0, 0, DO_SVD_extractLeftSingularVectors);
+	praat_addAction1 (classSVD, 0, "Extract right singular vectors", 0, 0, DO_SVD_extractRightSingularVectors);
+	praat_addAction1 (classSVD, 0, "Extract singular values", 0, 0, DO_SVD_extractSingularValues);
 
 	
 	praat_addAction1 (classTableOfReal, 0, "Append columns", 

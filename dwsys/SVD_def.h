@@ -20,7 +20,10 @@
 /*
  djmw 19981210
  djmw 20020812 GPL header
+ djmw 20051204 Latest modification
 */
+
+#define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 #define ooSTRUCT SVD
 oo_DEFINE_CLASS (SVD, Data)
@@ -28,9 +31,9 @@ oo_DEFINE_CLASS (SVD, Data)
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_DOUBLE_MATRIX (u, my numberOfRows, my numberOfColumns)
-	oo_DOUBLE_MATRIX (v, my numberOfColumns, my numberOfColumns)
-	oo_DOUBLE_VECTOR (d, my numberOfColumns)
+	oo_DOUBLE_MATRIX (u, my numberOfRows, MIN(my numberOfColumns, my numberOfRows))
+	oo_DOUBLE_MATRIX (v, my numberOfColumns, MIN(my numberOfColumns, my numberOfRows))
+	oo_DOUBLE_VECTOR (d, MIN(my numberOfColumns, my numberOfRows))
 
 oo_END_CLASS (SVD)
 #undef ooSTRUCT
