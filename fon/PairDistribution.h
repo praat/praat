@@ -2,7 +2,7 @@
 #define _PairDistribution_h_
 /* PairDistribution.h
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/09/03
+ * pb 2005/12/15
  */
 
 #ifndef _Vector_h_
@@ -50,6 +50,7 @@ oo_CLASS_CREATE (PairDistribution, Data)
 PairProbability PairProbability_create (const char *string1, const char *string2, double weight);
 PairDistribution PairDistribution_create (void);
 int PairDistribution_add (PairDistribution me, const char *string1, const char *string2, double weight);
+void PairDistribution_removeZeroWeights (PairDistribution me);
 int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
 int PairDistribution_peekPair (PairDistribution me, char **string1, char **string2);
 

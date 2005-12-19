@@ -175,6 +175,13 @@ CODE ("To Sound (slice)... number_of_components")
 CODE ("Scale amplitudes... 0.99")
 MAN_END
 
+MAN_BEGIN ("Read two sounds from stereo file...", "ppgb", 20051218)
+INTRO ("A command in the @@Read menu@ of the #Objects window. "
+	"You use this if you want to get the two channels of a @stereo sound file "
+	"as two separate @Sound objects in the list. "
+	"Praat will name the two channels %left and %right.")
+MAN_END
+
 MAN_BEGIN ("Record mono Sound...", "ppgb", 20021212)
 INTRO ("A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window, "
 	"except on very old Macintoshes with 8-bit audio, where it presents a native Macintosh sound-recorder window.")

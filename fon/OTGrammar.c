@@ -1600,6 +1600,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 	long ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
 	long ilist, jlist, itrial, iform;
 	int **obligatory = NULL, improved;
+	double evaluationNoise = 1e-9;
 	Ordered list = NULL;
 	/*
 	 * Save.
@@ -1607,17 +1608,44 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 	savedFixedRankings = my fixedRankings;
 	OTGrammar_save (me);
 	/*
-	 * Add room for one more fixed ranking.
+	 * Add room for two more fixed rankings.
 	 */
-	my numberOfFixedRankings ++;
-	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings + 1);
-	for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
+	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings + 2);
+	for (ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
 		my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
 		my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 	}
 	/*
+	 * Test whether there are rankings at all for these output data.
+	 */
+	OTGrammar_reset (me, 100.0);
+	for (itrial = 1; itrial <= 40; itrial ++) {
+		int grammarHasChangedDuringCycle = FALSE;
+		OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+		OTGrammar_newDisharmonies (me, evaluationNoise);
+		for (iform = 1; iform <= thy pairs -> size; iform ++) {
+			PairProbability prob = thy pairs -> item [iform];
+			if (prob -> weight > 0.0) {
+				int grammarHasChanged;
+				OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+					evaluationNoise, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+					1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
+				if (grammarHasChanged) {
+					OTGrammar_newDisharmonies (me, evaluationNoise);
+				}
+				grammarHasChangedDuringCycle |= grammarHasChanged;
+			}
+		}
+		if (! grammarHasChangedDuringCycle) break;
+	}
+	if (itrial > 40) {
+		MelderInfo_writeLine1 ("There are no total rankings that generate these input-output pairs.");
+		goto end;
+	}
+	/*
 	 * Test learnability of every possible ranked pair.
 	 */
+	my numberOfFixedRankings ++;
 	obligatory = NUMimatrix (1, my numberOfConstraints, 1, my numberOfConstraints); cherror
 	MelderInfo_open ();
 	Melder_progress (0.0, "");
@@ -1632,16 +1660,16 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 			for (itrial = 1; itrial <= 40; itrial ++) {
 				int grammarHasChangedDuringCycle = FALSE;
 				OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
-				OTGrammar_newDisharmonies (me, 1e-9);
+				OTGrammar_newDisharmonies (me, evaluationNoise);
 				for (iform = 1; iform <= thy pairs -> size; iform ++) {
 					PairProbability prob = thy pairs -> item [iform];
 					if (prob -> weight > 0.0) {
 						int grammarHasChanged;
 						OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-							1e-9, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+							evaluationNoise, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
 							1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
 						if (grammarHasChanged) {
-							OTGrammar_newDisharmonies (me, 1e-9);
+							OTGrammar_newDisharmonies (me, evaluationNoise);
 						}
 						grammarHasChangedDuringCycle |= grammarHasChanged;
 					}
@@ -1678,16 +1706,16 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 					for (itrial = 1; itrial <= 40; itrial ++) {
 						int grammarHasChangedDuringCycle = FALSE;
 						OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
-						OTGrammar_newDisharmonies (me, 1e-9);
+						OTGrammar_newDisharmonies (me, evaluationNoise);
 						for (iform = 1; iform <= thy pairs -> size; iform ++) {
 							PairProbability prob = thy pairs -> item [iform];
 							if (prob -> weight > 0.0) {
 								int grammarHasChanged;
 								OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-									1e-9, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
+									evaluationNoise, OTGrammar_EDCD, TRUE /* honour fixed rankings; very important */,
 									1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
 								if (grammarHasChanged) {
-									OTGrammar_newDisharmonies (me, 1e-9);
+									OTGrammar_newDisharmonies (me, evaluationNoise);
 								}
 								grammarHasChangedDuringCycle |= grammarHasChanged;
 							}

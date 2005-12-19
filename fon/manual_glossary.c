@@ -339,6 +339,22 @@ MAN_BEGIN ("starting time", "ppgb", 20040420)
 INTRO ("- the beginning of the @@time domain@ (see there).")
 MAN_END
 
+MAN_BEGIN ("stereo", "ppgb", 20051218)
+INTRO ("A stereo sound is a sound consisting of a left and a right channel.")
+ENTRY ("Reading a stereo sound from disk")
+NORMAL ("If you read a @Sound into Praat from disk with @@Read from file...@, "
+	"and that sound file is a stereo file, Praat will combine the two channels into one "
+	"and warn you that it has done that.")
+NORMAL ("If you want to read both channels into Praat separately, "
+	"you use @@Read two sounds from stereo file...@.")
+NORMAL ("If you want to see and listen to both channels into Praat together, "
+	"you use @@Open long sound file...@, then #View.")
+ENTRY ("Writing a stereo sound to disk")
+NORMAL ("If you have two @Sound objects that you want to regard as the two channels of a stereo sound, "
+	"you can select them both together and chose @@Write to stereo WAV file...@ "
+	"(or any of the other file types) from the @@Write menu@.")
+MAN_END
+
 MAN_BEGIN ("time", "ppgb", 20030314)
 INTRO ("In normal life, time is how late the watch says it is.")
 NORMAL ("In P\\s{RAAT}, this definition is largely irrelevant. "

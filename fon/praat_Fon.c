@@ -2182,7 +2182,21 @@ END
 
 /***** PAIRDISTRIBUTION *****/
 
+DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
+	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood (ONLY_OBJECT), NULL);
+	iferror return 0;
+END
+
+DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
+	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching (ONLY_OBJECT), NULL);
+	iferror return 0;
+END
+
 DIRECT (PairDistribution_help) Melder_help ("PairDistribution"); END
+
+DIRECT (PairDistribution_removeZeroWeights)
+	EVERY (PairDistribution_removeZeroWeights (OBJECT))
+END
 
 FORM (PairDistribution_to_Stringses, "Generate two Strings objects", 0)
 	NATURAL ("Number", "1000")
@@ -2196,16 +2210,6 @@ DO
 	if (! praat_new (strings2, "%s", GET_STRING ("Name of second Strings"))) return 0;
 END
 	
-DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
-	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood (ONLY_OBJECT), NULL);
-	iferror return 0;
-END
-
-DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
-	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching (ONLY_OBJECT), NULL);
-	iferror return 0;
-END
-
 /***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
 
 FORM (PairDistribution_Distributions_getFractionCorrect, "PairDistribution & Distributions: Get fraction correct", 0)
@@ -6133,6 +6137,8 @@ praat_addAction1 (classMatrix, 0, "Analyse", 0, 0, 0);
 	praat_addAction1 (classPairDistribution, 0, "Query -          ", 0, 0, 0);
 	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
 	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
+	praat_addAction1 (classPairDistribution, 0, "Modify -          ", 0, 0, 0);
+	praat_addAction1 (classPairDistribution, 1, "Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classParamCurve, 0, "ParamCurve help", 0, 0, DO_ParamCurve_help);
 	praat_addAction1 (classParamCurve, 0, "Draw", 0, 0, 0);

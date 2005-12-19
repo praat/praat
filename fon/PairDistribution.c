@@ -85,6 +85,16 @@ int PairDistribution_add (PairDistribution me, const char *string1, const char *
 	return 1;
 }
 
+void PairDistribution_removeZeroWeights (PairDistribution me) {
+	long ipair;
+	for (ipair = my pairs -> size; ipair > 0; ipair --) {
+		PairProbability prob = my pairs -> item [ipair];
+		if (prob -> weight <= 0.0) {
+			Collection_removeItem (my pairs, ipair);
+		}
+	}
+}
+
 int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2) {
 	double total = 0.0;
 	long nin = my pairs -> size, iin, iout;
