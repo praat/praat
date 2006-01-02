@@ -1,6 +1,6 @@
 /* Graphics_utils.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2004/06/18 allow reversed axes
+ * pb 2004/06/18 allow reversed linear axes
+ * pb 2005/12/20 allow reversed logarithmic axes
  */
 
 #include <math.h>
@@ -312,18 +313,18 @@ void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, int haveNumbe
 	double lineWidth = my lineWidth;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (y2 > 300) return;
-	py1 = pow (10, y1 - 1e-6);
-	py2 = pow (10, y2 + 1e-6);
+	if (y1 > 300 || y2 > 300) return;
+	py1 = pow (10, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
+	py2 = pow (10, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1, y2);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
 	for (i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double y = decade_y [numberOfMarksPerDecade] [i];
-		while (y < py1) y *= 10;
-		while (y >= py1) y /= 10;
-		for (y *= 10; y <= py2; y *= 10) {
+		while (y < (y1<y2?py1:py2)) y *= 10;
+		while (y >= (y1<y2?py1:py2)) y /= 10;
+		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
 			if (haveNumbers) Graphics_printf (me, - my horTick, log10 (y), "%.4g", y);
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -352,18 +353,18 @@ void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, int haveNumb
 	double lineWidth = my lineWidth;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (y2 > 300) return;
-	py1 = pow (10, y1 - 1e-6);
-	py2 = pow (10, y2 + 1e-6);
+	if (y1 > 300 || y2 > 300) return;
+	py1 = pow (10, y1 + ( y1 < y2 ? -1e-6 : 1e-6 ));
+	py2 = pow (10, y2 + ( y1 < y2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1, y2);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
 	for (i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double y = decade_y [numberOfMarksPerDecade] [i];
-		while (y < py1) y *= 10;
-		while (y >= py1) y /= 10;
-		for (y *= 10; y <= py2; y *= 10) {
+		while (y < (y1<y2?py1:py2)) y *= 10;
+		while (y >= (y1<y2?py1:py2)) y /= 10;
+		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
 			if (haveNumbers) Graphics_printf (me, 1 + my horTick, log10 (y), "%.4g", y);
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -392,18 +393,18 @@ void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, int haveNumber
 	double lineWidth = my lineWidth;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (x2 > 300) return;
-	px1 = pow (10, x1 - 1e-6);
-	px2 = pow (10, x2 + 1e-6);
+	if (x1 > 300 || x2 > 300) return;
+	px1 = pow (10, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
+	px2 = pow (10, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1, x2, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
 	for (i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double x = decade_y [numberOfMarksPerDecade] [i];
-		while (x < px1) x *= 10;
-		while (x >= px1) x /= 10;
-		for (x *= 10; x <= px2; x *= 10) {
+		while (x < (x1<x2?px1:px2)) x *= 10;
+		while (x >= (x1<x2?px1:px2)) x /= 10;
+		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
 			if (haveNumbers) Graphics_printf (me, log10 (x), 1 + my vertTick, "%.4g", x);
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -432,18 +433,18 @@ void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, int haveNum
 	double lineWidth = my lineWidth;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
-	if (x2 > 300) return;
-	px1 = pow (10, x1 - 1e-6);
-	px2 = pow (10, x2 + 1e-6);
+	if (x1 > 300 || x2 > 300) return;
+	px1 = pow (10, x1 + ( x1 < x2 ? -1e-6 : 1e-6 ));
+	px2 = pow (10, x2 + ( x1 < x2 ? 1e-6 : -1e-6 ));
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1, x2, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
 	for (i = 1; i <= numberOfMarksPerDecade; i ++) {
 		double x = decade_y [numberOfMarksPerDecade] [i];
-		while (x < px1) x *= 10;
-		while (x >= px1) x /= 10;
-		for (x *= 10; x <= px2; x *= 10) {
+		while (x < (x1<x2?px1:px2)) x *= 10;
+		while (x >= (x1<x2?px1:px2)) x /= 10;
+		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
 			if (haveNumbers) Graphics_printf (me, log10 (x), - my vertTick, "%.4g", x);
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);

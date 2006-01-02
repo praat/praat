@@ -1,6 +1,6 @@
 /* manual_tutorials.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20051219)
+MAN_BEGIN ("What's new?", "ppgb", 20060102)
 INTRO ("Latest changes in P\\s{RAAT}.")
+/*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.01# (January 2, 2005)")
+LIST_ITEM ("\\bu Picture window: \"Logarithmic marks\" allows reversed axes.")
+LIST_ITEM ("\\bu Manipulation window: removed a bug from \"Shift frequencies\" that caused much too small shifts in semitones.")
+LIST_ITEM ("\\bu TextGrid: \"Remove point...\".")
 NORMAL ("##4.4# (December 19, 2005)")
 NORMAL ("##4.3.37# (December 15, 2005)")
 LIST_ITEM ("\\bu @@Principal component analysis@: now accepts tables with more variables (columns) than cases (rows).")

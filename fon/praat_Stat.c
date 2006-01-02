@@ -519,7 +519,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, 1, DO_Table_extractRowsWhereColumn);
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn);
 	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
-	praat_addAction1 (classTable, 0, "Down to TableOfReal", 0, 0, DO_Table_to_TableOfReal);
+	praat_addAction1 (classTable, 0, "Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
 }
 
 /* End of file praat_Stat.c */

@@ -682,27 +682,11 @@ DIRECT (TextGridEditor, cb_removePointOrBoundary)
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		TextInterval left, right;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary) return Melder_error ("To remove a boundary, first click on it.");
 
 		Editor_save (me, "Remove boundary");
-
-		left = tier -> intervals -> item [selectedLeftBoundary - 1];
-		right = tier -> intervals -> item [selectedLeftBoundary];
-		left -> xmax = right -> xmax;   /* Collapse left and right intervals into left interval. */
-		if (right -> text == NULL) {
-			;
-		} else if (left -> text == NULL) {
-			TextInterval_setText (left, right -> text);
-		} else {
-			char *buffer = Melder_malloc (strlen (left -> text) + strlen (right -> text) + 1);
-			if (! buffer) return 0;
-			sprintf (buffer, "%s%s", left -> text, right -> text);
-			if (! TextInterval_setText (left, buffer)) { Melder_free (buffer); return 0; }
-			Melder_free (buffer);
-		}
-		Collection_removeItem (tier -> intervals, selectedLeftBoundary);   /* Remove right interval. */
+		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary); iferror return 0;
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		long selectedPoint = getSelectedPoint (me);

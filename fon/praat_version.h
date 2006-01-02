@@ -1,4 +1,4 @@
-#define PRAAT_VERSION "4.4"
-#define PRAAT_YEAR "2005"
-#define PRAAT_MONTH "December"
-#define PRAAT_DAY "19"
+#define PRAAT_VERSION "4.4.01"
+#define PRAAT_YEAR "2006"
+#define PRAAT_MONTH "January"
+#define PRAAT_DAY "1"

@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, July 1, 2005
+# Paul Boersma, January 1, 2006
 
 include ../makefile.defs
 CFLAGS = -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
@@ -40,7 +40,7 @@ OBJECTS =   Table.o Regression.o manual_statistics.o praat_Stat.o \
    manual_programming.o manual_Fon.o manual_voice.o Praat_tests.o \
    manual_glossary.o manual_Sampling.o manual_exampleSound.o \
    manual_sound.o manual_pitch.o manual_spectrum.o manual_formant.o manual_annotation.o \
-   praat_Sound_init.o praat_Fon.o
+   praat_Sound_init.o praat_TextGrid_init.o praat_Fon.o
 
 all: libfon.a
 libfon.a: $(OBJECTS)

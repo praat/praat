@@ -1,6 +1,6 @@
 /* TextGrid.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2005/06/16 enums -> ints
  * pb 2005/06/22 corrected log scale bug
  * pb 2005/10/07 alignment in TextGrid_Pitch_draw
+ * pb 2006/01/01 IntervalTier_removeLeftBoundary, TextTier_removePoint
  */
 
 #include "TextGrid.h"
@@ -1326,24 +1327,12 @@ int TextGrid_insertBoundary (TextGrid me, int itier, double t) {
 	return Collection_addItem (intervalTier -> intervals, newInterval);
 }
 
-int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t) {
-	IntervalTier intervalTier;
+int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 	TextInterval left, right;
-	long iinterval;
-	if (itier < 1 || itier > my tiers -> size)
-		return Melder_error ("Cannot remove a boundary from tier %d, because that tier does not exist.", itier);
-	intervalTier = my tiers -> item [itier];
-	if (intervalTier -> methods != classIntervalTier)
-		return Melder_error ("Cannot remove a boundary from tier %d, because that tier is not an interval tier.", itier);
-	if (! IntervalTier_hasTime (intervalTier, t))
-		return Melder_error ("Cannot remove a boundary at %f seconds, because there is no boundary there.", t);
-	iinterval = IntervalTier_timeToIndex (intervalTier, t);
-	if (iinterval == 0)
-		return Melder_error ("Cannot remove a boundary at %f seconds, because this is outside the time domain of the intervals.", t);
-	if (iinterval == 1)
-		return Melder_error ("Cannot remove a boundary at %f seconds, because this is at the left edge of the tier.", t);
-	left = intervalTier -> intervals -> item [iinterval - 1];
-	right = intervalTier -> intervals -> item [iinterval];
+	Melder_assert (iinterval > 1);
+	Melder_assert (iinterval <= my intervals -> size);
+	left = my intervals -> item [iinterval - 1];
+	right = my intervals -> item [iinterval];
 	/*
 	 * Move the text to the left of the boundary.
 	 */
@@ -1359,8 +1348,26 @@ int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t) {
 		if (! TextInterval_setText (left, buffer)) { Melder_free (buffer); return 0; }
 		Melder_free (buffer);
 	}
-	Collection_removeItem (intervalTier -> intervals, iinterval);   /* Remove right interval. */
+	Collection_removeItem (my intervals, iinterval);   /* Remove right interval. */
 	return 1;
+}
+
+int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t) {
+	IntervalTier intervalTier;
+	long iinterval;
+	if (itier < 1 || itier > my tiers -> size)
+		return Melder_error ("Cannot remove a boundary from tier %d, because that tier does not exist.", itier);
+	intervalTier = my tiers -> item [itier];
+	if (intervalTier -> methods != classIntervalTier)
+		return Melder_error ("Cannot remove a boundary from tier %d, because that tier is not an interval tier.", itier);
+	if (! IntervalTier_hasTime (intervalTier, t))
+		return Melder_error ("Cannot remove a boundary at %f seconds, because there is no boundary there.", t);
+	iinterval = IntervalTier_timeToIndex (intervalTier, t);
+	if (iinterval == 0)
+		return Melder_error ("Cannot remove a boundary at %f seconds, because this is outside the time domain of the intervals.", t);
+	if (iinterval == 1)
+		return Melder_error ("Cannot remove a boundary at %f seconds, because this is at the left edge of the tier.", t);
+	return IntervalTier_removeLeftBoundary (intervalTier, iinterval);
 }
 
 int TextGrid_setIntervalText (TextGrid me, int itier, long iinterval, const char *text) {
@@ -1389,6 +1396,11 @@ int TextGrid_insertPoint (TextGrid me, int itier, double t, const char *mark) {
 		return Melder_error ("Cannot add a point at %f seconds, because there is already a point there.", t);
 	newPoint = TextPoint_create (t, mark);
 	return Collection_addItem (textTier -> points, newPoint);
+}
+
+void TextTier_removePoint (TextTier me, long ipoint) {
+	Melder_assert (ipoint <= my points -> size);
+	Collection_removeItem (my points, ipoint);
 }
 
 int TextGrid_setPointText (TextGrid me, int itier, long ipoint, const char *text) {

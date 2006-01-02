@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/12/07
+ * pb 2006/01/01
  */
 
 #include "Editor.h"
@@ -26,15 +26,11 @@
 #include "Resources.h"
 
 /* The explanations in this header file assume
-	that you put your extra commands in praat_Sybil.c,
-	but this file would have a different name if you are not Sybil.
-	Please link your praat_Sybil.o and the files referenced by it,
-	with the shared object /u/paul/praats/libpraat.so like follows:
-		cc -o praat_Sybil main_Sybil.o praat_Sybil.o file1.o file2.o file3.o \
-			-L/ifa/lib -lpraat -lXm -lXt -lX11 -laudio \
-			-lmalloc -lsun -lPW -lm -lc -rpath /ifa/lib
-	This will produce an executable program called praat_Sybil
-	that has all the functionality of the basic praat,
+	that you put your extra commands in praat_Sybil.c
+	and the main() function in main_Sybil.c,
+	but these files may have different names if you are not Sybil.
+	Linking with the rest of Praat will create an executable
+	that has all the functionality of the basic Praat,
 	plus everything that you made available in praat_Sybil.c.
 */
 
@@ -108,15 +104,15 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_INSENSITIVE  0x00000100
 #define praat_CHECKABLE  0x00000200
 #define praat_CHECKED  0x00000400
-#define praat_HIDDEN     0x00000800
+#define praat_HIDDEN  0x00000800
 #define praat_UNHIDABLE  0x00001000
-#define praat_DEPTH_1    0x00010000
-#define praat_DEPTH_2    0x00020000
-#define praat_DEPTH_3    0x00030000
-#define praat_DEPTH_4    0x00040000
-#define praat_DEPTH_5    0x00050000
-#define praat_DEPTH_6    0x00060000
-#define praat_DEPTH_7    0x00070000
+#define praat_DEPTH_1  0x00010000
+#define praat_DEPTH_2  0x00020000
+#define praat_DEPTH_3  0x00030000
+#define praat_DEPTH_4  0x00040000
+#define praat_DEPTH_5  0x00050000
+#define praat_DEPTH_6  0x00060000
+#define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
 int praat_removeAction (void *class1, void *class2, void *class3, const char *title);
 	/* 'class2' and 'class3' may be NULL. */

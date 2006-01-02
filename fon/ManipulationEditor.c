@@ -1,6 +1,6 @@
 /* ManipulationEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2002/07/16 GPL
  * pb 2002/10/06 improved visibility of dragging
  * pb 2003/11/20 PitchTier: Interpolate quadratically...
  * pb 2004/04/13 less flashing
+ * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
  */
 
 #include "ManipulationEditor.h"
@@ -376,17 +376,25 @@ END
 
 FORM (ManipulationEditor, cb_shiftPitchFrequencies, "Shift pitch frequencies", 0);
 	REAL ("Frequency shift", "-20.0")
-	RADIO ("Units", 1)
-		RADIOBUTTON ("Hertz")
-		RADIOBUTTON ("Mel")
-		RADIOBUTTON ("Semitones")
-		RADIOBUTTON ("Erb")
+	OPTIONMENU ("Unit", 1)
+		OPTION ("Hertz")
+		OPTION ("mel")
+		OPTION ("logHertz")
+		OPTION ("semitones")
+		OPTION ("ERB")
 	OK
 DO
 	Manipulation ana = my data;
+	int unit = GET_INTEGER ("Unit");
+	unit =
+		unit == 1 ? Pitch_UNIT_HERTZ :
+		unit == 2 ? Pitch_UNIT_MEL :
+		unit == 3 ? Pitch_UNIT_LOG_HERTZ :
+		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
+		Pitch_UNIT_ERB;
 	if (! ana -> pitch) return 0;
 	Editor_save (me, "Shift pitch frequencies");
-	PitchTier_shiftFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL ("Frequency shift"), GET_INTEGER ("Units") - 1);
+	PitchTier_shiftFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL ("Frequency shift"), unit);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	iferror return 0;

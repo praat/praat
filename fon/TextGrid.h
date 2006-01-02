@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/10/07
+ * pb 2006/01/01
  */
 
 #ifndef _AnyTier_h_
@@ -80,6 +80,9 @@ PointProcess IntervalTier_getEndPoints (IntervalTier me, const char *text);
 PointProcess IntervalTier_getCentrePoints (IntervalTier me, const char *text);
 PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
 PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
+int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
+
+void TextTier_removePoint (TextTier me, long ipoint);
 
 #define TextGrid_methods Function_methods
 oo_CLASS_CREATE (TextGrid, Function)
