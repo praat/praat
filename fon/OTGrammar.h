@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2005 Paul Boersma
+ * Copyright (C) 1997-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/12/17
+ * pb 2006/01/05
  */
 
 #ifndef _Strings_h_
@@ -38,6 +38,7 @@
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
 #endif
+#include "OTGrammar_enums.h"
 
 #include "OTGrammar_def.h"
 

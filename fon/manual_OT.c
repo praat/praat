@@ -1,6 +1,6 @@
 /* manual_OT.c
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2002/07/16 GPL
+ * pb 2006/01/05
  */
 
 #include "ManPagesM.h"
@@ -289,12 +289,12 @@ NORMAL ("The second tableau shows that /pa/ always surfaces as [pa], which is no
 	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 19981230)
+MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20060105)
 NORMAL ("You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the Write menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE ("File type = \"ooTextFile\"")
-CODE ("Object class = \"OTGrammar\"")
-CODE (" ")
+CODE ("Object class = \"OTGrammar 1\"")
+CODE ("decisionStrategy = <OptimalityTheory>")
 CODE ("2 constraints")
 CODE ("constraint [1]: \"N\\bss{O}C\\bss{ODA}\" 100 100 ! NOCODA")
 CODE ("constraint [2]: \"P\\bss{ARSE}\" 90 90 ! PARSE")
@@ -313,14 +313,15 @@ NORMAL ("To understand more about this data structure, consult the @OTGrammar cl
 NORMAL ("You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20021204)
+MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20060105)
 NORMAL ("By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
 NORMAL ("As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
 	"across the lines, add all kinds of comments, or leave the comments out. "
 	"For the N\\s{O}C\\s{ODA} example, the text file could also have looked like:")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar\"")
+CODE ("\"OTGrammar 1\"")
+CODE ("<OptimalityTheory>")
 CODE ("2")
 CODE ("\"N\\bss{O}C\\bss{ODA}\" 100 100")
 CODE ("\"P\\bss{ARSE}\"       90  90")
@@ -339,7 +340,8 @@ NORMAL ("To define your own grammar, you just provide a number of constraints an
 	"and, you could also have reversed the order of the candidates within the /pat/ tableau, "
 	"as long as the violations follow the output forms. Thus, you could just as well have written:")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar\"")
+CODE ("\"OTGrammar 1\"")
+CODE ("<OptimalityTheory>")
 CODE ("2")
 CODE ("\"P\\bss{ARSE}\"       90  90")
 CODE ("\"N\\bss{O}C\\bss{ODA}\" 100 100")
@@ -350,6 +352,11 @@ CODE1 ("\"pa\"  0 0")
 CODE ("\"pat\" 2")
 CODE1 ("\"pat\" 0 1")
 CODE1 ("\"pa\"  1 0")
+NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
+	"In this tutorial I assume OT's strict ranking throughout, "
+	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint rankings represent addable, "
+	"possibly negative weights) or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
+	"that there are no negative weights).")
 MAN_END
 
 MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20021105)
@@ -425,7 +432,7 @@ LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      80.000\t      81.581")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
-MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20021204)
+MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20060105)
 NORMAL ("Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
@@ -449,7 +456,8 @@ NORMAL ("As a more functionally oriented example, we consider nasal place assimi
 	"This can be achieved by having the articulatory constraint *G\\s{ESTURE} "
 	"ranked at a short distance above *R\\s{EPLACE} (n, m):")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar\"")
+CODE ("\"OTGrammar 1\"")
+CODE ("decisionStrategy = <OptimalityTheory>")
 CODE ("3 constraints")
 CODE ("\"*G\\bss{ESTURE}\"          102.7 0")
 CODE ("\"*R\\bss{EPLACE} (n, m)\"   100.0 0")

@@ -74,6 +74,9 @@ oo_END_STRUCT (OTGrammarTableau)
 #define ooSTRUCT OTGrammar
 oo_DEFINE_CLASS (OTGrammar, Data)
 
+	oo_FROM (1)
+		oo_ENUM (OTGrammar_DECISION, decisionStrategy)
+	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)
 	oo_LONG_VECTOR (index, my numberOfConstraints)

@@ -1,6 +1,6 @@
 /* OTGrammar.c
  *
- * Copyright (C) 1997-2005 Paul Boersma
+ * Copyright (C) 1997-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
  * pb 2005/06/30 learning from partial pairs
  * pb 2005/12/11 OTGrammar_honourlocalRankings: 
  * pb 2005/12/11 OTGrammar_PairDistribution_listObligatoryRankings (depth 1)
+ * pb 2006/01/05 new decision strategies: HarmonyGrammar and LinearOT
  */
 
 #include "OTGrammar.h"
@@ -75,6 +76,7 @@ static int writeAscii (I, FILE *f) {
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
 	const char *p;
+	fprintf (f, "\n<%s>", enumstring (OTGrammar_DECISION, my decisionStrategy));
 	fprintf (f, "\n%ld constraints", my numberOfConstraints);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
@@ -120,9 +122,13 @@ void OTGrammar_checkIndex (OTGrammar me) {
 }
 
 static int readAscii (I, FILE *f) {
+	int localVersion = Thing_version;
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
 	if (! inherited (OTGrammar) readAscii (me, f)) return 0;
+	if (localVersion >= 1) {
+		if ((my decisionStrategy = ascgete1 (f, & enum_OTGrammar_DECISION)) < 0) return 0;
+	}
 	if ((my numberOfConstraints = ascgeti4 (f)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -160,6 +166,7 @@ static int readAscii (I, FILE *f) {
 }
 
 class_methods (OTGrammar, Data)
+	us -> version = 1;
 	class_method_local (OTGrammar, destroy)
 	class_method_local (OTGrammar, info)
 	class_method_local (OTGrammar, description)
@@ -170,6 +177,9 @@ class_methods (OTGrammar, Data)
 	class_method_local (OTGrammar, writeBinary)
 	class_method_local (OTGrammar, readBinary)
 class_methods_end
+
+#include "enum_c.h"
+#include "OTGrammar_enums.h"
 
 static void classOTHistory_info (I) {
 	iam (OTHistory);
@@ -230,21 +240,43 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
 	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
 	long icons;
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-		int numberOfMarks1 = marks1 [my index [icons]];
-		int numberOfMarks2 = marks2 [my index [icons]];
-		/*
-		 * Count tied constraints as one.
-		 */
-		while (my constraints [my index [icons]]. tiedToTheRight) {
-			icons ++;
-			numberOfMarks1 += marks1 [my index [icons]];
-			numberOfMarks2 += marks2 [my index [icons]];
+	if (my decisionStrategy == enumi (OTGrammar_DECISION, OptimalityTheory)) {
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int numberOfMarks1 = marks1 [my index [icons]];
+			int numberOfMarks2 = marks2 [my index [icons]];
+			/*
+			 * Count tied constraints as one.
+			 */
+			while (my constraints [my index [icons]]. tiedToTheRight) {
+				icons ++;
+				numberOfMarks1 += marks1 [my index [icons]];
+				numberOfMarks2 += marks2 [my index [icons]];
+			}
+			if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
+			if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
 		}
-		if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
-		if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
-	}
-	return 0;   /* None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
+		/* If we arrive here, None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
+		return 0;
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, HarmonyGrammar)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
+			disharmony2 += my constraints [icons]. disharmony * marks2 [icons];
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, LinearOT)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			if (my constraints [icons]. disharmony > 0.0) {
+				disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
+				disharmony2 += my constraints [icons]. disharmony * marks2 [icons];
+			}
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else Melder_fatal ("Unimplemented decision strategy.");
+	return 0;   /* The two total disharmonies are equal. */
 }
 
 long OTGrammar_getWinner (OTGrammar me, long itab) {
@@ -385,6 +417,7 @@ static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwin
 	int icons;
 	OTGrammarTableau tableau = & my tableaus [itab];
 	if (tableau -> numberOfCandidates < 2) return 0;   /* If there is only one candidate, all cells can be greyed. */
+	if (my decisionStrategy != enumi (OTGrammar_DECISION, OptimalityTheory)) return my numberOfConstraints;   /* Nothing grey. */
 	if (OTGrammar_compareCandidates (me, itab, icand, itab, iwinner) == 0) {   /* Candidate equally good as winner? */
 		if (numberOfOptimalCandidates > 1) {
 			/* All cells are important. */
@@ -577,25 +610,30 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 			char markString [40];
 			markString [0] = '\0';
-			/*
-			 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
-			 * 1. the candidate is not optimal;
-			 * 2. the constraint is not tied;
-			 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
-			 */
-			if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
-				int winnerMarks = tableau -> candidates [winner]. marks [index];
-				for (imark = 1; imark <= winnerMarks + 1; imark ++)
-					strcat (markString, "*");
-				strcat (markString, "!");
-				for (imark = winnerMarks + 2; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-					strcat (markString, "*");
-			} else {
-				if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
-				    crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
-				{
-					Graphics_setColour (g, Graphics_RED);
+			if (my decisionStrategy == enumi (OTGrammar_DECISION, OptimalityTheory)) {
+				/*
+				 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
+				 * 1. the candidate is not optimal;
+				 * 2. the constraint is not tied;
+				 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
+				 */
+				if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
+					int winnerMarks = tableau -> candidates [winner]. marks [index];
+					for (imark = 1; imark <= winnerMarks + 1; imark ++)
+						strcat (markString, "*");
+					strcat (markString, "!");
+					for (imark = winnerMarks + 2; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
+						strcat (markString, "*");
+				} else {
+					if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
+					    crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
+					{
+						Graphics_setColour (g, Graphics_RED);
+					}
+					for (imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
+						strcat (markString, "*");
 				}
+			} else {
 				for (imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
 					strcat (markString, "*");
 			}

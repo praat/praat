@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060102)
+MAN_BEGIN ("What's new?", "ppgb", 20060105)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.02# (January 5, 2005)")
+LIST_ITEM ("\\bu OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.")
 NORMAL ("##4.4.01# (January 2, 2005)")
 LIST_ITEM ("\\bu Picture window: \"Logarithmic marks\" allows reversed axes.")
 LIST_ITEM ("\\bu Manipulation window: removed a bug from \"Shift frequencies\" that caused much too small shifts in semitones.")
