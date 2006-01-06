@@ -53,7 +53,7 @@
 #include "Editor.h"
 #include "machine.h"
 #include "EditorM.h"
-#include "Resources.h"
+#include "Preferences.h"
 #ifdef macintosh
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 #endif

@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2006/01/01
+ * pb 2006/01/06
  */
 
 #include "Editor.h"
 #include "Manual.h"
-#include "Resources.h"
+#include "Preferences.h"
 
 /* The explanations in this header file assume
 	that you put your extra commands in praat_Sybil.c

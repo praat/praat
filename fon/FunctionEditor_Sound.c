@@ -25,7 +25,7 @@
 
 #include "FunctionEditor_Sound.h"
 #include "FunctionEditor_SoundAnalysis.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 static struct {

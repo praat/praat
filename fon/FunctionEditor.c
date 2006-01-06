@@ -28,7 +28,7 @@
 
 #include "FunctionEditor.h"
 #include "machine.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 #define maximumScrollBarValue  2000000000

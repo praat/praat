@@ -24,7 +24,7 @@
 
 #include "SpectrumEditor.h"
 #include "Sound_and_Spectrum.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 #define SpectrumEditor_members FunctionEditor_members \

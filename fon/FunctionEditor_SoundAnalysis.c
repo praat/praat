@@ -65,7 +65,7 @@
 #include "Sound_to_Formant.h"
 #include "Pitch_to_PointProcess.h"
 #include "VoiceAnalysis.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 #include "praat_script.h"
 

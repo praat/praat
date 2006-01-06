@@ -30,7 +30,7 @@
 #include "FunctionEditor_SoundAnalysis.h"
 #include "Sound_and_Spectrogram.h"
 #include "Pitch.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 #define SoundEditor_members FunctionEditor_members \

@@ -31,7 +31,7 @@
 
 #include "melder.h"
 #include "Gui.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "NUM.h"
 #include <time.h>
 #define my  me ->

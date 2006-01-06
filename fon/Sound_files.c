@@ -1,6 +1,6 @@
 /* Sound_files.c
  *
- * Copyright (C) 1992-2005 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2006 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/09/12 MelderFile_checkSoundFile
  * pb 2004/10/17 test for NULL file pointer when closing in Sound_read(2)FromSoundFile
  * pb 2005/06/17 Mac headers
+ * pb 2006/01/05 movies for Mac
  */
 
 #include "Sound.h"
@@ -69,6 +70,32 @@ static void Sound_alawDecode (Sound me) {
 		SndCommand itsSndCommand; /* bufferCmd, 0, 20 */
 		SoundHeader itsSndHeader;
 	} *SndResourcePtr, **SndResourceHandle;
+#endif
+#if defined (__MACH__) || defined (_WIN32)
+	#if defined (__MACH__)
+		typedef unsigned char Boolean;
+	#endif
+	#if defined (_WIN32)
+		#define TARGET_API_MAC_CARBON  0
+	#endif
+	#include <QuickTime.h>
+#endif
+#if defined (_WIN32)
+	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
+	static int Melder_fileToMac (MelderFile file, void *void_fspec) {
+		FSSpec *fspec = (FSSpec *) void_fspec;
+		Str255 pname;
+		OSErr err;
+		PfromCstr (pname, file -> path);
+		err = FSMakeFSSpec (0, 0, & pname [0], fspec);
+		if (err != noErr && err != fnfErr) {
+			if (err == -2095) {
+				return Melder_error ("To open this movie file, you have to install QuickTime first (www.apple.com).");
+			}
+			return Melder_error ("Error #%d looking for file %s.", err, file -> path);
+		}
+		return 1;
+	}
 #endif
 
 Sound Sound_readFromSoundFile (MelderFile file) {
@@ -214,6 +241,176 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 	return me;
 }
 #endif
+
+Sound Sound_readFromMovieFile (MelderFile file) {
+	Sound me = NULL;
+#if defined (__MACH__) || defined (_WIN32)
+	FSSpec fspec;
+	short refNum = 0, resourceID = 0;
+	OSErr err = noErr;
+	Movie movie = 0;
+	Boolean wasChanged;
+	Track track;
+	Media media = NULL;
+	long numberOfSamples;
+	double duration;
+	SoundDescriptionHandle hSoundDescription = NULL;   /* Not NewHandle yet (on Windows, initialize QuickTime first). */
+	Handle extension = NULL;
+	AudioFormatAtomPtr decompressionAtom = NULL;
+	short numberOfChannels, sampleSize;
+	double samplingFrequency;
+	unsigned long inputBufferSize, outputBufferSize;
+	unsigned long numberOfInputFrames, numberOfOutputFrames, numberOfOutputBytes;
+	Handle inputBufferHandle = NULL;
+	TimeValue actualTime, durationPerSample;
+	long inputNumberOfBytes, actualNumberOfSamples;
+	long isamp;
+	SoundComponentData input, output;
+	SoundConverter soundConverter = NULL;
+
+	#ifdef _WIN32
+		InitializeQTML (0);
+	#endif
+	EnterMovies ();
+	Melder_fileToMac (file, & fspec); cherror
+	err = OpenMovieFile (& fspec, & refNum, fsRdPerm);
+	if (err != noErr) {
+		Melder_error ("Not a movie file.");
+		goto end;
+	}
+	err = NewMovieFromFile (& movie, refNum, & resourceID, NULL, newMovieActive, & wasChanged);
+	if (err != noErr) {
+		Melder_error ("Cannot find the movie in the movie file.");
+		goto end;
+	}
+	track = GetMovieIndTrackType (movie, 1, SoundMediaType, movieTrackMediaType);
+	if (track == NULL) {
+		Melder_error ("Invalid track in movie file.");
+		goto end;
+	}
+	media = GetTrackMedia (track);
+	if (media == NULL) {
+		Melder_error ("Invalid media in movie file.");
+		goto end;
+	}
+	hSoundDescription = (SoundDescriptionHandle) NewHandle (0);
+	numberOfSamples = GetMediaSampleCount (media);
+	duration = (double) GetMediaDuration (media) / GetMediaTimeScale (media);
+	GetMediaSampleDescription (media, 1, (SampleDescriptionHandle) hSoundDescription);
+	if (GetMoviesError () != noErr) {
+		Melder_error ("Cannot get sound description in movie file.");
+		goto end;
+	}
+	err = GetSoundDescriptionExtension (hSoundDescription, & extension, siDecompressionParams);
+	if (err == noErr) {
+		Size size = GetHandleSize (extension);
+		HLock (extension);
+		decompressionAtom = (AudioFormatAtomPtr) NewPtr (size);
+		err = MemError ();
+		if (err != noErr) {
+			Melder_error ("No memory left when looking into movie file.");
+			goto end;
+		}
+		BlockMoveData (*extension, decompressionAtom, size);
+		HUnlock (extension);
+	} else {
+		err = noErr;   /* No atom: OK. */
+	}
+	numberOfChannels = (*hSoundDescription) -> numChannels;
+	sampleSize = (*hSoundDescription) -> sampleSize;
+	samplingFrequency = (double) (*hSoundDescription) -> sampleRate / 65536.0;
+	me = Sound_createSimple (duration, samplingFrequency); cherror
+	if (my nx != numberOfSamples) {
+		Melder_error ("Promised %ld samples, but got %ld.", my nx, numberOfSamples);
+		goto end;
+	}
+	/*
+	 * The sound converter has to decompress the sound data to 16-bit mono.
+	 */
+	input. flags = output. flags = 0;
+	input. format = (*hSoundDescription) -> dataFormat;
+	output. format = kSoundNotCompressed;
+	input. numChannels = (*hSoundDescription) -> numChannels;
+	output. numChannels = 1;
+	input. sampleSize = (*hSoundDescription) -> sampleSize;
+	output. sampleSize = 16;
+	input. sampleRate = output. sampleRate = (*hSoundDescription) -> sampleRate;
+	input. sampleCount = output. sampleCount = 0;
+	input. buffer = output. buffer = NULL;
+	input. reserved = output. reserved = 0;
+	err = SoundConverterOpen (& input, & output, & soundConverter);
+	if (err != noErr) {
+		Melder_error ("Cannot open sound converter.");
+		goto end;
+	}
+	err = SoundConverterSetInfo (soundConverter, siClientAcceptsVBR, (Ptr) true);
+	if (err != noErr && err != siUnknownInfoType) {
+		Melder_error ("Don't like VBR.");
+		goto end;
+	}
+	err = SoundConverterSetInfo (soundConverter, siDecompressionParams, decompressionAtom);
+	if (err != noErr && err != siUnknownInfoType) {
+		Melder_error ("Don't like that decompression.");
+		goto end;
+	}
+	outputBufferSize = numberOfSamples * 2;
+	SoundConverterGetBufferSizes (soundConverter, outputBufferSize, & numberOfInputFrames,
+		& inputBufferSize, & outputBufferSize);
+	inputBufferHandle = NewHandle (inputBufferSize);
+	if (inputBufferHandle == NULL) {
+		Melder_error ("No room for input buffer.");
+		goto end;
+	}
+	err = GetMediaSample (media,
+		inputBufferHandle, inputBufferSize,
+		& inputNumberOfBytes,
+		0,   /* Starting time. */
+		& actualTime, & durationPerSample, NULL, NULL, numberOfSamples*10, & actualNumberOfSamples, NULL);
+	if (err != noErr) {
+		Melder_error ("Cannot get media samples.");
+		goto end;
+	}
+	/*Melder_error ("%ld/%ld bytes, t=%ld, %ld/sample, %ld samples",
+		inputBufferSize, inputNumberOfBytes, actualTime, durationPerSample, actualNumberOfSamples);*/
+	/*compressionID = (*hSoundDescription) -> compressionID;*/
+	err = SoundConverterBeginConversion (soundConverter);
+	if (err != noErr) {
+		Melder_error ("Cannot begin sound conversion.");
+		goto end;
+	}
+	HLock (inputBufferHandle);
+	err = SoundConverterConvertBuffer (soundConverter,
+		*inputBufferHandle, numberOfInputFrames,
+		& my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
+	HUnlock (inputBufferHandle);
+	if (err != noErr) {
+		Melder_error ("Cannot convert sound.");
+		goto end;
+	}
+/*	err = SoundConverterEndConversion (soundConverter, & my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
+	if (err != noErr) {
+		Melder_error ("Cannot end sound conversion.");
+		goto end;
+	}*/
+	if (numberOfOutputBytes != my nx * 2) {
+		Melder_error ("Promised %ld samples, but got %ld after conversion.", my nx, numberOfOutputBytes / 2);
+		goto end;
+	}
+	for (isamp = my nx; isamp > 0; isamp --) {
+		my z [1] [isamp] = ((short *) & my z [1] [1]) [isamp - 1] / 32768.0;
+	}
+end:
+	if (extension) DisposeHandle (extension);
+	if (hSoundDescription) DisposeHandle ((Handle) hSoundDescription);
+	if (movie) DisposeMovie (movie);
+	if (inputBufferHandle) DisposeHandle (inputBufferHandle);
+	if (decompressionAtom) DisposePtr ((Ptr) decompressionAtom);
+	if (soundConverter) SoundConverterClose (soundConverter);
+	if (refNum) CloseMovieFile (refNum);
+	iferror forget (me);
+#endif
+	return me;
+}
 
 Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	Sound me = NULL;
@@ -398,7 +595,7 @@ int Sound_writeToSesamFile (Sound me, MelderFile file) {
 	/* Sesam header. */
 		header [126] = floor (1 / my dx + 0.5);   /* Sampling frequency, rounded to n Hz. */
 		header [127] = my nx;   /* Number of samples. */
-	Melder_casual ("Sound_writeToSesamFile: writing %ld samples at %g Hz", my nx, 1 / my dx);
+	Melder_warning ("Sound_writeToSesamFile: writing %ld samples at %g Hz", my nx, 1 / my dx);
 	for (i = 1; i <= 128; i ++) binputi4LE (header [i], f);
 	for (i = 1; i <= my nx; i ++) binputi2LE (floor (my z [1] [i] * 2048 + 0.5), f);
 	tail = 256 - my nx % 256;

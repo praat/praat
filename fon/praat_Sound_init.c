@@ -1,6 +1,6 @@
 /* praat_Sound_init.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/11/27
+ * pb 2006/01/05
  */
 
 #include "praat.h"
@@ -1576,6 +1576,18 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 	return NULL;
 }
 
+static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
+	char *fileName = MelderFile_name (file);
+	(void) header;
+	/*Melder_error ("%d %d %d %d %d %d %d %d %d %d", header [0],
+		header [1], header [2], header [3],
+		header [4], header [5], header [6],
+		header [7], header [8], header [9]);*/
+	if (nread < 512 || ! strstr (fileName, ".mov") && ! strstr (fileName, ".MOV") &&
+	    ! strstr (fileName, ".avi") && ! strstr (fileName, ".AVI")) return NULL;
+	return Sound_readFromMovieFile (file);
+}
+
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
 	char *fileName = MelderFile_name (file);
 	(void) header;
@@ -1593,7 +1605,7 @@ static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
 	return Sound_readFromKayFile (file);
 }
 
-/***** override play and records buttons in manuals *****/
+/***** override play and record buttons in manuals *****/
 
 static Sound melderSound, melderSoundFromFile, last;
 static int recordProc (double duration) {
@@ -1638,6 +1650,7 @@ void praat_uvafon_Sound_init (void) {
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);
+	Data_recognizeFileType (movieFileRecognizer);
 	Data_recognizeFileType (sesamFileRecognizer);
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);

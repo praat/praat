@@ -26,7 +26,7 @@
  */
 
 #include "LongSound.h"
-#include "Resources.h"
+#include "Preferences.h"
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 

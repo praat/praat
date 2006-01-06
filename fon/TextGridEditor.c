@@ -32,7 +32,7 @@
 #include "FunctionEditor_Sound.h"
 #include "FunctionEditor_SoundAnalysis.h"
 #include "SpellingChecker.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"

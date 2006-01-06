@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/02/09
+ * pb 2006/01/05
  */
 
 /* Sound inherits from Vector */
@@ -272,23 +272,24 @@ void Sound_play (Sound me,
    the number of samples will equal the maximum of those of 'me' and 'right'. */
 int Sound_writeToAudioFile16 (Sound me, Sound right, MelderFile file, int audioFileType);
 #ifdef macintosh
-	int Sound_writeToMacSoundFile (Sound me, MelderFile fs);   /* 8 bit */
+	int Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
 #endif
-int Sound_writeToRaw8bitSignedFile (Sound me, MelderFile fs);   /* 8 bit */
-int Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile fs);   /* 8 bit */
-int Sound_writeToKayFile (Sound me, MelderFile fs);   /* 16 bit */
-int Sound_writeToSesamFile (Sound me, MelderFile fs);   /* 12-bit SESAM/LVS */
+int Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file);   /* 8 bit */
+int Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file);   /* 8 bit */
+int Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
+int Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
 
-Sound Sound_readFromSoundFile (MelderFile fs);   /* AIFF, WAV, NeXT/Sun, or NIST */
-int Sound_read2FromSoundFile (MelderFile fs, Sound *left, Sound *right);   /* AIFF, WAV, NeXT/Sun, or NIST */
+Sound Sound_readFromSoundFile (MelderFile file);   /* AIFF, WAV, NeXT/Sun, or NIST */
+int Sound_read2FromSoundFile (MelderFile file, Sound *left, Sound *right);   /* AIFF, WAV, NeXT/Sun, or NIST */
 	/* If the file contains mono sound, return only 'left' ('*right' will be NULL). */
 #ifdef macintosh
-	Sound Sound_readFromMacSoundFile (MelderFile fs);   /* 8 bit */
+	Sound Sound_readFromMacSoundFile (MelderFile file);   /* 8 bit */
 #endif
-Sound Sound_readFromKayFile (MelderFile fs);   /* 16 bit */
-Sound Sound_readFromSesamFile (MelderFile fs);   /* 12 bit SESAM/LVS */
-Sound Sound_readFromBellLabsFile (MelderFile fs);   /* 16 bit */
-Sound Sound_readFromRawAlawFile (MelderFile fs);
+Sound Sound_readFromKayFile (MelderFile file);   /* 16 bit */
+Sound Sound_readFromSesamFile (MelderFile file);   /* 12 bit SESAM/LVS */
+Sound Sound_readFromBellLabsFile (MelderFile file);   /* 16 bit */
+Sound Sound_readFromRawAlawFile (MelderFile file);
+Sound Sound_readFromMovieFile (MelderFile file);
 
 int Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate,
 	Sound *left, Sound *right);

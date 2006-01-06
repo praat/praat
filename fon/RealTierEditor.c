@@ -26,7 +26,7 @@
 
 #include "RealTierEditor.h"
 #include "FunctionEditor_Sound.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 #define SOUND_HEIGHT  0.382

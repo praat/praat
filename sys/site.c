@@ -23,7 +23,7 @@
  * pb 2005/03/02 pref string buffer 260 bytes long
  */
 
-#include "Resources.h"
+#include "Preferences.h"
 #include <string.h>
 #include "site.h"
 

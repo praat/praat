@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060105)
+MAN_BEGIN ("What's new?", "ppgb", 20060106)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.04# (January 6, 2005)")
+LIST_ITEM ("\\bu Windows: Quicktime support (see at 4.4.03).")
+NORMAL ("##4.4.03# (January 6, 2005)")
+LIST_ITEM ("\\bu Macintosh: Quicktime support, i.e., \"Read from file\" can now read the audio from several kinds of movie files (.mov, .avi).")
 NORMAL ("##4.4.02# (January 5, 2005)")
 LIST_ITEM ("\\bu OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.")
 NORMAL ("##4.4.01# (January 2, 2005)")

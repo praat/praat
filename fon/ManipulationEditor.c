@@ -26,7 +26,7 @@
  */
 
 #include "ManipulationEditor.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_to_PointProcess.h"
 #include "Sound_to_Pitch.h"

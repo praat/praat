@@ -38,7 +38,7 @@
  * In the new Mac SDK/ CodeWarrior, the following must be included before <Sound.h> and <Resources.h>...???
  */
 #include "Sound.h"
-#include "Resources.h"
+#include "Preferences.h"
 
 #if defined (sgi)
 	#include <audio.h>

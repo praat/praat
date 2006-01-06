@@ -29,7 +29,7 @@
 #include "machine.h"
 #include "longchar.h"
 #include "EditorM.h"
-#include "Resources.h"
+#include "Preferences.h"
 
 /***** TextEditor methods *****/
 

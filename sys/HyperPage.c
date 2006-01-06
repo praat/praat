@@ -29,7 +29,7 @@
 #include "HyperPage.h"
 #include "Printer.h"
 #include "longchar.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "site.h"
 #include "machine.h"
 

@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, September 13, 2004
+# Paul Boersma, January 6, 2005
 
 include ../makefile.defs
 CFLAGS = -I ../dwsys -I ../GSL
@@ -14,7 +14,7 @@ OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    GraphicsPostscript.o Graphics_surface.o \
    ManPage.o ManPages.o Script.o machine.o \
    GraphicsScreen.o Printer.o motif.o \
-   Resources.o site.o \
+   Preferences.o site.o \
    Picture.o Ui.o UiFile.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o \
    praat.o praat_actions.o praat_menuCommands.o praat_picture.o sendpraat.o sendsocket.o \
    praat_script.o praat_statistics.o praat_logo.o \
