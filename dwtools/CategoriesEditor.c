@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
  djmw 19980225 repaired a memory leak, caused by wrong inheritance for
  	 CategoriesEditorInsert command.
  djmw 20020408 GPL 
- djmw 20020408 modified 'createMenus'
+ djmw 20020408 Modified 'createMenus'
+ djmw 20060111 Replaced Resources.h with Preferences.h
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
 
 #include "CategoriesEditor.h"
-#include "Resources.h"
+#include "Preferences.h"
 #include "EditorM.h"
 
 

@@ -115,21 +115,40 @@ DIRECT (Table_appendRow)
 	}
 END
 
-FORM (Table_extractRowsWhereColumn, "Table: Extract rows where column", 0)
+FORM (Table_extractRowsWhereColumn_number, "Table: Extract rows where column (number)", 0)
 	WORD ("Extract all rows where column...", "")
 	RADIO ("...is...", 1)
 	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
-	REAL ("...the value", "0.0")
+	REAL ("...the number", "0.0")
 	OK
 DO
-	double value = GET_REAL ("...the value");
+	double value = GET_REAL ("...the number");
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
-		if (! praat_new (Table_selectRowsWhereColumn (OBJECT,
+		if (! praat_new (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
 			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (Table_extractRowsWhereColumn_text, "Table: Extract rows where column (text)", 0)
+	WORD ("Extract all rows where column...", "")
+	OPTIONMENU ("...", 1)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	SENTENCE ("...the text", "hi")
+	OK
+DO
+	const char *value = GET_STRING ("...the text");
+	WHERE (SELECTED) {
+		Table me = OBJECT;
+		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
+		if (icol == 0) return Melder_error ("No such column.");
+		if (! praat_new (Table_extractRowsWhereColumn_string (OBJECT,
+			icol, GET_INTEGER ("...") - 1 + Melder_STRING_min, value),
+			"%s_%ld_%s", NAME, icol, value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -516,8 +535,10 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Set column label (index)...", 0, 1, DO_Table_setColumnLabel_index);
 		praat_addAction1 (classTable, 0, "Set column label (label)...", 0, 1, DO_Table_setColumnLabel_label);
 	praat_addAction1 (classTable, 0, "Extract -     ", 0, 0, 0);
-		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, 1, DO_Table_extractRowsWhereColumn);
-		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn);
+		praat_addAction1 (classTable, 0, "Extract rows where column (number)...", 0, 1, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0, "Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
 	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
 	praat_addAction1 (classTable, 0, "Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
 }

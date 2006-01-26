@@ -1,6 +1,6 @@
 /* melder_files.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2005/11/07 Windows: use %USERPROFILE% rather than %HOMESHARE%%HOMEPATH%
  * rvs&pb 2005/11/18 url support
+ * pb 2006/01/21 MelderFile_writeText does not create temporary file
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -1073,44 +1074,7 @@ char * MelderFile_readText (MelderFile file) {
    so that we can write DOS files from Unix etc., as determined by a user preference. */
 
 int MelderFile_writeText (MelderFile fs, const char *text) {
-	FILE *f;
-	/*
-	 * If the file exists, we will use a temporary file;
-	 * if not, we are going to write to it directly.
-	 */
-	#if defined (UNIX)
-		if (MelderFile_exists (fs)) {
-			structMelderFile tempFile;
-   			FILE *f;
-			char tempPath [256], command [500];
-			strcpy (tempPath, "/tmp/edjeXXXXXX");
-			mktemp (tempPath);
-			Melder_pathToFile (tempPath, & tempFile);
-			if (! (f = Melder_fopen (& tempFile, "w")))
-				return Melder_error ("Cannot write temporary file.");
-			fwrite (text, sizeof (char), strlen (text), f);   /* Not trailing null byte. */
-			if (fclose (f))
-				return Melder_error ("Error closing temporary file \"%s\".", MelderFile_messageName (& tempFile));
-			sprintf (command, "cp %s \"%s\"", tempPath, fs -> path);
-			if (system (command)) {
-				unlink (tempPath);
-				return Melder_error ("Error creating file \"%s\".", MelderFile_messageName (fs));
-			}
-			unlink (tempPath);
-			return 1;
-		}
-	#elif defined (macintosh)
-		/* Use FspExchangeFiles (IM 25-19) and HGetVol (25-37).
-		 but note that GetDateTime alone does not work if we write multiple files in one second.
-		 We can also look at the code of __temp_file_name in file_io.mac.c. */
-	#elif defined (_WIN32)
-	#endif
-	/*
-	 * Default action: just write the file.
-	 * Appropriate if the file did not exist, or if we just append,
-	 * or for systems for which we do not know how to use temporary files.
-	 */
-	f = Melder_fopen (fs, "w");
+	FILE *f = Melder_fopen (fs, "w");
 	if (! f) return 0;
 	/*
 	 * On all systems, the number of bytes written (i.e. the return value of fwrite) equals strlen (text).
@@ -1127,7 +1091,8 @@ int MelderFile_appendText (MelderFile fs, const char *text) {
 	FILE *f = Melder_fopen (fs, "a");
 	if (! f) return 0;
 	fwrite (text, sizeof (char), strlen (text), f);   /* Not trailing null byte. */
-	if (fclose (f)) return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (fs));
+	if (fclose (f))
+		return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (fs));
 	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
 	return 1;
 }

@@ -1,6 +1,6 @@
 /* Interpreter.c
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2004/12/06 made Interpreter_getArgumentsFromDialog resistant to changes in the script while the dialog is up
  * pb 2005/01/01 there can be spaces before the "form" statement
  * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
+ * pb 2006/01/11 local variables
  */
 
 #include <ctype.h>
@@ -39,8 +40,6 @@
 #include "praatP.h"
 #include "praat_script.h"
 #include "Formula.h"
-
-#define Interpreter_MAX_CALL_DEPTH  50
 
 #define Interpreter_WORD 1
 #define Interpreter_REAL 2
@@ -534,16 +533,34 @@ static InterpreterVariable Interpreter_addStringVariable (Interpreter me, const 
 }
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char *key) {
-	long ivar = SortedSetOfString_lookUp (my variables, key);
+	long ivar = 0;
+	char variableNameIncludingProcedureName [1+200];
+	Melder_assert (key != NULL);
+	if (key [0] == '.') {
+		strcpy (variableNameIncludingProcedureName, my procedureNames [my callDepth]);
+		strcat (variableNameIncludingProcedureName, key);
+	} else {
+		strcpy (variableNameIncludingProcedureName, key);
+	}
+	ivar = SortedSetOfString_lookUp (my variables, variableNameIncludingProcedureName);
 	return ivar ? my variables -> item [ivar] : NULL;
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char *key) {
-	InterpreterVariable var = Interpreter_hasVariable (me, key);
+	InterpreterVariable var = NULL;
+	char variableNameIncludingProcedureName [1+200];
+	Melder_assert (key != NULL);
+	if (key [0] == '.') {
+		strcpy (variableNameIncludingProcedureName, my procedureNames [my callDepth]);
+		strcat (variableNameIncludingProcedureName, key);
+	} else {
+		strcpy (variableNameIncludingProcedureName, key);
+	}
+	var = Interpreter_hasVariable (me, variableNameIncludingProcedureName);
 	if (var) return var;
-	var = InterpreterVariable_create (key);
+	var = InterpreterVariable_create (variableNameIncludingProcedureName);
 	if (! var || ! Collection_addItem (my variables, var)) return NULL;
-	return Interpreter_hasVariable (me, key);
+	return Interpreter_hasVariable (me, variableNameIncludingProcedureName);
 }
 
 static long lookupLabel (Interpreter me, const char *labelName) {
@@ -584,6 +601,7 @@ int Interpreter_run (Interpreter me, char *text) {
 	long lineNumber = 0, numberOfLines = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
 	int atLastLine = FALSE, fromif = FALSE, fromendfor = FALSE, callDepth = 0, chopped = 0, ipar, assertionFailed = FALSE;
 	InterpreterVariable var;
+	my callDepth = 0;
 	/*
 	 * The "environment" is NULL if we are in the Praat shell, or an editor otherwise.
 	 */
@@ -724,12 +742,15 @@ int Interpreter_run (Interpreter me, char *text) {
 			}
 		}
 		c0 = command2 [0];   /* Resume in order to allow things like 'c$' = 5 */
-		if (c0 < 'a' || c0 > 'z') {
+		if ((c0 < 'a' || c0 > 'z') && ! (c0 == '.' && command2 [1] >= 'a' && command2 [1] <= 'z')) {
 			praat_executeCommand (me, command2); cherror
 		/*
 		 * Interpret control flow and variables.
 		 */
 		} else switch (c0) {
+			case '.':
+				fail = TRUE;
+				break;
 			case 'a':
 				if (strnequ (command2, "assert ", 7)) {
 					double value;
@@ -773,6 +794,11 @@ int Interpreter_run (Interpreter me, char *text) {
 									{ Melder_error ("Call to procedure \"%s\" has too many arguments.", callName); goto end; }
 							else if (hasParameters && ! hasArguments)
 									{ Melder_error ("Call to procedure \"%s\" has too few arguments.", callName); goto end; }
+							if (++ my callDepth > Interpreter_MAX_CALL_DEPTH) {
+								Melder_error ("Call depth greater than %d.", Interpreter_MAX_CALL_DEPTH);
+								goto end;
+							}
+							strcpy (my procedureNames [my callDepth], callName);
 							if (hasParameters) {
 								++ p;   /* First argument. */
 								++ q;   /* First parameter. */
@@ -811,7 +837,9 @@ int Interpreter_run (Interpreter me, char *text) {
 										var -> stringValue = Melder_strdup (arg);
 									} else {
 										double value;
+										my callDepth --;
 										Interpreter_numericExpression (me, arg, & value);
+										my callDepth ++;
 										save = *q; *q = '\0'; var = Interpreter_lookUpVariable (me, par); *q = save; cherror
 										var -> numericValue = value;
 									}
@@ -865,6 +893,7 @@ int Interpreter_run (Interpreter me, char *text) {
 					} else if (strnequ (command2, "endproc", 7) && wordEnd (command2 [7])) {
 						if (callDepth == 0) { Melder_error ("Unmatched 'endproc'."); goto end; }
 						lineNumber = callStack [callDepth --];
+						-- my callDepth;
 					} else fail = TRUE;
 				} else if (strnequ (command2, "else", 4) && wordEnd (command2 [4])) {
 					int depth = 0;
@@ -1113,15 +1142,16 @@ int Interpreter_run (Interpreter me, char *text) {
 		}
 		if (fail) {
 			/*
-			 * Found an unknown word starting with a lower-case letter.
+			 * Found an unknown word starting with a lower-case letter, optionally preced by a period.
 			 * See whether the word is a variable name.
 			 */
 			char *p = & command2 [0];
 			/*
 			 * Variable names consist of a sequence of letters, digits, and underscores,
-			 * optionally followed by a $.
+			 * optionally precede by a period and optionally followed by a $.
 			 */
-			while (isalnum (*p) || *p == '_')  p ++;
+			if (*p == '.') p ++;
+			while (isalnum (*p) || *p == '_' || *p == '.')  p ++;
 			if (*p == '$') {
 				/*
 				 * Assign to a string variable.
@@ -1165,7 +1195,7 @@ int Interpreter_run (Interpreter me, char *text) {
 						if (! var) { Melder_error ("Variable %s undefined.", command2); goto end; }
 						MelderFile_writeText (& file, var -> stringValue); cherror
 					}
-				} else if (isupper (*p)) {
+				} else if (isupper (*p) && ! isAnObjectName (p)) {
 					/*
 					 * Example: name$ = Get name
 					 */

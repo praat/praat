@@ -1,6 +1,6 @@
 /* praat_David_init.c
  * 
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@
  djmw 20051012 Robust LPC analysis test
  djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices must be positive numbers
  djmw SVD extract lef/right singular vectors
+ djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
 */
 
 #include "praat.h"
@@ -4806,7 +4807,7 @@ void praat_uvafon_David_init (void)
 		0, 0, DO_TableOfReal_and_Permutation_permuteRows);
 
 	praat_addAction1 (classTextGrid, 0, "Extend time...", 
-		"Scale times...", 1, DO_TextGrid_extendTime);
+		"Scale times...", 2, DO_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, "Set tier name...", 
 		"Remove tier...", 1, DO_TextGrid_setTierName);
         

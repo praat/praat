@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/01
+ * pb 2006/01/25
  */
 
 #ifndef _AnyTier_h_
@@ -62,13 +62,14 @@ oo_CLASS_CREATE (TextTier, Function)
 TextTier TextTier_create (double tmin, double tmax);
 
 int TextTier_addPoint (TextTier me, double time, const char *mark);
-TextTier TextTier_readFromXwaves (MelderFile fs);
+TextTier TextTier_readFromXwaves (MelderFile file);
 PointProcess TextTier_getPoints (TextTier me, const char *text);
 
 #define IntervalTier_methods Function_methods
 oo_CLASS_CREATE (IntervalTier, Function)
 IntervalTier IntervalTier_create (double tmin, double tmax);
-IntervalTier IntervalTier_readFromXwaves (MelderFile fs);
+IntervalTier IntervalTier_readFromXwaves (MelderFile file);
+int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
 long IntervalTier_timeToLowIndex (IntervalTier me, double t);
 long IntervalTier_timeToIndex (IntervalTier me, double t);   /* Obsolete. */

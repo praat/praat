@@ -245,6 +245,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 Sound Sound_readFromMovieFile (MelderFile file) {
 	Sound me = NULL;
 #if defined (__MACH__) || defined (_WIN32)
+	int debug = 0;
 	FSSpec fspec;
 	short refNum = 0, resourceID = 0;
 	OSErr err = noErr;
@@ -252,7 +253,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	Boolean wasChanged;
 	Track track;
 	Media media = NULL;
-	long numberOfSamples;
+	long numberOfMediaSamples, numberOfSamplesPerMediaSample;
 	double duration;
 	SoundDescriptionHandle hSoundDescription = NULL;   /* Not NewHandle yet (on Windows, initialize QuickTime first). */
 	Handle extension = NULL;
@@ -294,7 +295,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		goto end;
 	}
 	hSoundDescription = (SoundDescriptionHandle) NewHandle (0);
-	numberOfSamples = GetMediaSampleCount (media);
+	numberOfMediaSamples = GetMediaSampleCount (media);
 	duration = (double) GetMediaDuration (media) / GetMediaTimeScale (media);
 	GetMediaSampleDescription (media, 1, (SampleDescriptionHandle) hSoundDescription);
 	if (GetMoviesError () != noErr) {
@@ -320,8 +321,9 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	sampleSize = (*hSoundDescription) -> sampleSize;
 	samplingFrequency = (double) (*hSoundDescription) -> sampleRate / 65536.0;
 	me = Sound_createSimple (duration, samplingFrequency); cherror
-	if (my nx != numberOfSamples) {
-		Melder_error ("Promised %ld samples, but got %ld.", my nx, numberOfSamples);
+	numberOfSamplesPerMediaSample = my nx / numberOfMediaSamples;
+	if (my nx % numberOfMediaSamples != 0) {
+		Melder_error ("Media samples not equally long: %ld / %ld gives a remainder.", my nx, numberOfMediaSamples);
 		goto end;
 	}
 	/*
@@ -353,7 +355,9 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		Melder_error ("Don't like that decompression.");
 		goto end;
 	}
-	outputBufferSize = numberOfSamples * 2;
+	outputBufferSize = my nx * 2;
+	if (debug) Melder_casual ("Before SoundConverterGetBufferSizes:\n"
+		"   outputBufferSize = %ld", outputBufferSize);
 	SoundConverterGetBufferSizes (soundConverter, outputBufferSize, & numberOfInputFrames,
 		& inputBufferSize, & outputBufferSize);
 	inputBufferHandle = NewHandle (inputBufferSize);
@@ -361,17 +365,22 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		Melder_error ("No room for input buffer.");
 		goto end;
 	}
+	if (debug) Melder_casual ("Between SoundConverterGetBufferSizes and GetMediaSample:\n"
+		"   numberOfInputFrames = %ld\n   inputBufferSize = %ld\n   outputBufferSize = %ld",
+		numberOfInputFrames, inputBufferSize, outputBufferSize);
 	err = GetMediaSample (media,
 		inputBufferHandle, inputBufferSize,
 		& inputNumberOfBytes,
 		0,   /* Starting time. */
-		& actualTime, & durationPerSample, NULL, NULL, numberOfSamples*10, & actualNumberOfSamples, NULL);
+		& actualTime, & durationPerSample, NULL, NULL, numberOfMediaSamples*10, & actualNumberOfSamples, NULL);
 	if (err != noErr) {
 		Melder_error ("Cannot get media samples.");
 		goto end;
 	}
-	/*Melder_error ("%ld/%ld bytes, t=%ld, %ld/sample, %ld samples",
-		inputBufferSize, inputNumberOfBytes, actualTime, durationPerSample, actualNumberOfSamples);*/
+	if (debug) Melder_casual ("Between GetMediaSample and SoundConverterBeginConversion:\n"
+		"   inputBufferSize = %ld\n   inputNumberOfBytes = %ld\n   actualTime = %ld\n"
+		"   durationPerSample = %ld\n   actualNumberOfMediaSamples = %ld",
+		inputBufferSize, inputNumberOfBytes, actualTime, durationPerSample, actualNumberOfSamples);
 	/*compressionID = (*hSoundDescription) -> compressionID;*/
 	err = SoundConverterBeginConversion (soundConverter);
 	if (err != noErr) {
@@ -384,7 +393,9 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		& my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
 	HUnlock (inputBufferHandle);
 	if (err != noErr) {
-		Melder_error ("Cannot convert sound.");
+		Melder_error ("Cannot convert sound. Error #%ld. "
+			"%ld frames in, %ld frames out, %ld bytes out.", (long) err,
+			numberOfInputFrames, numberOfOutputFrames, numberOfOutputBytes);
 		goto end;
 	}
 /*	err = SoundConverterEndConversion (soundConverter, & my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);

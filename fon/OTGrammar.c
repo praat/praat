@@ -40,6 +40,7 @@
  * pb 2005/12/11 OTGrammar_honourlocalRankings: 
  * pb 2005/12/11 OTGrammar_PairDistribution_listObligatoryRankings (depth 1)
  * pb 2006/01/05 new decision strategies: HarmonyGrammar and LinearOT
+ * pb 2006/01/21 better procedure name
  */
 
 #include "OTGrammar.h"
@@ -190,27 +191,27 @@ class_methods (OTHistory, TableOfReal)
 	class_method_local (OTHistory, info)
 class_methods_end
 
+static OTGrammar constraintCompare_grammar;
+
+static int constraintCompare (const void *first, const void *second) {
+	OTGrammar me = constraintCompare_grammar;
+	long icons = * (long *) first, jcons = * (long *) second;
+	OTGrammarConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
+	/*
+	 * Sort primarily by disharmony.
+	 */
+	if (ci -> disharmony > cj -> disharmony) return -1;
+	if (ci -> disharmony < cj -> disharmony) return +1;
+	/*
+	 * Tied constraints are sorted alphabetically.
+	 */
+	return strcmp (my constraints [icons]. name, my constraints [jcons]. name);
+}
+
 void OTGrammar_sort (OTGrammar me) {
-	long icons, jcons;
-	for (icons = 1; icons < my numberOfConstraints; icons ++) {
-		OTGrammarConstraint ci = & my constraints [my index [icons]];
-		double maximum = ci -> disharmony;
-		long jmax = icons, dummy;
-		for (jcons = icons + 1; jcons <= my numberOfConstraints; jcons ++) {
-			OTGrammarConstraint cj = & my constraints [my index [jcons]];
-			double disharmonyj = cj -> disharmony;
-			/*
-			 * Sort primarily by disharmony; tied constraints are sorted alphabetically.
-			 */
-			if (disharmonyj > maximum ||
-			    disharmonyj == maximum && strcmp (my constraints [my index [jmax]]. name, my constraints [my index [jcons]]. name) > 0)
-			{
-				maximum = disharmonyj;
-				jmax = jcons;
-			}
-		}
-		dummy = my index [icons]; my index [icons] = my index [jmax]; my index [jmax] = dummy;   /* Swap. */
-	}
+	long icons;
+	constraintCompare_grammar = me;
+	qsort (& my index [1], my numberOfConstraints, sizeof (long), constraintCompare);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		constraint -> tiedToTheLeft = icons > 1 &&

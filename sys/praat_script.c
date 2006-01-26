@@ -1,6 +1,6 @@
 /* praat_script.c
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2004/12/04 support for multiple open script dialogs with Apply buttons, both from "Run script..." and from added buttons
  * pb 2005/02/10 corrected bug in nowarn
  * pb 2005/08/22 renamed Control menu to "Praat"
+ * pb 2006/01/11 local variables
  */
 
 #include <ctype.h>
@@ -60,7 +61,7 @@ end:
 int praat_executeCommand (Interpreter interpreter, const char *command) {
 	if (command [0] == '\0' || command [0] == '#' || command [0] == '!' || command [0] == ';')
 		/* Skip empty lines and comments. */;
-	else if (command [0] == '.' || command [0] == '+' || command [0] == '-') {   /* Selection? */
+	else if ((command [0] == '.' || command [0] == '+' || command [0] == '-') && isupper (command [1])) {   /* Selection? */
 		int IOBJECT = praat_findObjectFromString (interpreter, command + 1);
 		if (! IOBJECT) return 0;
 		if (command [0] == '.') praat_deselectAll ();

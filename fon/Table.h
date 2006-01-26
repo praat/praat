@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2005 Paul Boersma
+ * Copyright (C) 2002-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/09/26
+ * pb 2006/01/26
  */
 
 #ifndef _Collection_h_
@@ -101,7 +101,8 @@ int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator);
 
-Table Table_selectRowsWhereColumn (Table me, long icol, int which_Melder_NUMBER, double criterion);
+Table Table_extractRowsWhereColumn_number (Table me, long icol, int which_Melder_NUMBER, double criterion);
+Table Table_extractRowsWhereColumn_string (Table me, long icol, int which_Melder_STRING, const char *criterion);
 
 Matrix Table_to_Matrix (Table me);
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);

@@ -1,8 +1,7 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* Code version: May 18, 2003 */
-/* Comments version: May 9, 2004 */
-/* Help version: August 22, 2005 */
+/* Code version: January 13, 2006 */
+/* Comments version: January 13, 2006 */
 
 /*
  * The sendpraat subroutine (Unix with X Window; Windows; Macintosh) sends a message
@@ -12,7 +11,7 @@
  *
  * New versions: http://www.praat.org or http://www.fon.hum.uva.nl/praat/sendpraat.html
  *
- * On Windows NT, 2000, and XP, this version works only with Praat version 4.0.50 and higher.
+ * On Windows NT, 2000, and XP, this version works only with Praat version 4.3.28 and higher.
  * On Macintosh, this version works only with Praat version 3.8.75 and higher.
  */
 
@@ -137,8 +136,8 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		}
 		sprintf (messageFileName, "%s/.%s-dir/message", home, programName);
 	#elif win
-		if (GetEnvironmentVariable ("HOMESHARE", homeDirectory, 255)) {
-			GetEnvironmentVariable ("HOMEPATH", homeDirectory + strlen (homeDirectory), 255);
+		if (GetEnvironmentVariable ("USERPROFILE", homeDirectory, 255)) {
+			;   /* Ready. */
 		} else if (GetEnvironmentVariable ("HOMEDRIVE", homeDirectory, 255)) {
 			GetEnvironmentVariable ("HOMEPATH", homeDirectory + strlen (homeDirectory), 255);
 		} else {
@@ -322,6 +321,10 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
  * temporarily change the following line to "#if 1" instead of "#if 0":
  */
 #if 0
+/*
+ * To compile on MacOS X:
+cc -o sendpraat -framework CoreServices -framework ApplicationServices -I/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
+*/
 int main (int argc, char **argv) {
 	int iarg, line, length = 0;
 	long timeOut = 10;   /* Default. */

@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/12/06
+ * pb 2006/01/11
  */
 
 #ifndef _Collection_h_
@@ -38,18 +38,19 @@ class_create (InterpreterVariable, Thing)
 
 #define Interpreter_MAXNUM_PARAMETERS  400
 #define Interpreter_MAXNUM_LABELS  30
+#define Interpreter_MAX_CALL_DEPTH  50
 
 #define Interpreter_members Thing_members \
 	char *environmentName; \
 	Any editorClass; \
-	int numberOfParameters, numberOfLabels; \
+	int numberOfParameters, numberOfLabels, callDepth; \
 	char parameters [1+Interpreter_MAXNUM_PARAMETERS] [50]; \
 	unsigned char types [1+Interpreter_MAXNUM_PARAMETERS]; \
 	char *arguments [1+Interpreter_MAXNUM_PARAMETERS]; \
 	char choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100]; \
 	char labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
-	char dialogTitle [1+100]; \
+	char dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
 	SortedSetOfString variables;
 #define Interpreter_methods Thing_methods
 class_create (Interpreter, Thing)

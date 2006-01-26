@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2005 Paul Boersma
+ * Copyright (C) 2002-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
  * pb 2005/06/16 enums -> ints
  * pb 2005/09/13 Table_readFromCharacterSeparatedTextFile
  * pb 2005/09/26 sorting by string now also works
+ * pb 2006/01/24 getMatrixStr
+ * pb 2006/01/26 Table_extractRowsWhereColumn_string
  */
 
 #include <ctype.h>
@@ -79,6 +81,14 @@ static double getMatrix (I, long irow, long icol) {
 	stringValue = ((TableRow) my rows -> item [irow]) -> cells [icol]. string;
 	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
 }
+static char * getMatrixStr (I, long irow, long icol) {
+	iam (Table);
+	char *stringValue;
+	if (irow < 1 || irow > my rows -> size) return "";
+	if (icol < 1 || icol > my numberOfColumns) return "";
+	stringValue = ((TableRow) my rows -> item [irow]) -> cells [icol]. string;
+	return stringValue == NULL ? "" : stringValue;
+}
 static double getColumnIndex (I, const char *columnLabel) {
 	iam (Table);
 	return Table_columnLabelToIndex (me, columnLabel);
@@ -97,6 +107,7 @@ class_methods (Table, Data) {
 	class_method (getNrow)
 	class_method (getNcol)
 	class_method (getMatrix)
+	class_method (getMatrixStr)
 	class_method (getColumnIndex)
 class_methods_end }
 
@@ -409,7 +420,7 @@ double Table_getStdev (Table me, long icol) {
 	return sqrt (sum / (my rows -> size - 1));
 }
 
-Table Table_selectRowsWhereColumn (Table me, long column, int which_Melder_NUMBER, double criterion) {
+Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion) {
 	Table thee = NULL;
 	long irow, icol;
 	if (column < 1 || column > my numberOfColumns)
@@ -422,6 +433,35 @@ Table Table_selectRowsWhereColumn (Table me, long column, int which_Melder_NUMBE
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		if (Melder_numberMatchesCriterion (row -> cells [column]. number, which_Melder_NUMBER, criterion)) {
+			TableRow newRow = Data_copy (row);
+			Collection_addItem (thy rows, newRow);
+		}
+	}
+	if (thy rows -> size == 0) {
+		Melder_error ("No row matches criterion.");
+		goto end;
+	}
+end:
+	iferror {
+		forget (thee);
+		Melder_error ("(Table_selectRowsWhereColumn:) Not performed.");
+	}
+	return thee;
+}
+
+Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const char *criterion) {
+	Table thee = NULL;
+	long irow, icol, n = 0;
+	if (column < 1 || column > my numberOfColumns)
+		{ Melder_error ("No column %ld.", column); goto end; }
+	Table_numericize (me, column);
+	thee = Table_create (0, my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		thy columnHeaders [icol]. label = Melder_strdup (my columnHeaders [icol]. label); cherror
+	}
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (Melder_stringMatchesCriterion (row -> cells [column]. string, which_Melder_STRING, criterion)) {
 			TableRow newRow = Data_copy (row);
 			Collection_addItem (thy rows, newRow);
 		}

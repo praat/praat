@@ -599,7 +599,7 @@ NORMAL ("In this example, Praat will protest if %x is a variable as well, becaus
 	"with the %x that refers to the time in the sound (see @@Formulas 1.8. Formulas for modification@).")
 MAN_END
 
-MAN_BEGIN ("Formulas 2. Operators", "ppgb", 20030211)
+MAN_BEGIN ("Formulas 2. Operators", "ppgb", 20060127)
 NORMAL ("In formulas you can use the numerical and logical operators that are described on this page. "
 	"The order of evaluation of the operators is the order that is most usual in programming languages. "
 	"To force a different order, you use parentheses.")
@@ -653,7 +653,7 @@ CODE ("3 - 8 + 7 \\-> 2       (from left to right)")
 CODE ("3 - (8 + 7) \\-> -12   (use parentheses to change the order)")
 CODE ("3 + 8 * 7 \\-> 59      (multiplication before addition)")
 CODE ("(3 + 8) * 7 \\-> 77    (use parentheses to change the order)")
-CODE ("3 + - 2 \\^  4 \\-> -13   (exponentiation, negation, addition)")
+CODE ("3 + - (2 \\^  4) \\-> -13   (exponentiation, negation, addition)")
 CODE ("3 + 5 / 2 + 3 \\-> 8.5")
 CODE ("(3 + 5) / (2 + 3) \\-> 1.6")
 NORMAL ("The operators with the next highest precedence are the #comparison operators "
@@ -941,11 +941,12 @@ CODE ("800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
 NORMAL ("evaluates to 800.")
 MAN_END
 
-MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20021204)
+MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20060127)
 NORMAL ("You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use the type and the name of the object, connected with an underscore. "
 	"Thus, $$Sound_hallo$ refers to an existing Sound object whose name is \"hallo\" "
-	"(if there is more than one such object, it refers to the one that was created last).")
+	"(if there is more than one such object, it refers to the one that was created last). "
+	"You can also use the unique ID instead of the name. Thus, $$Object_113$ refers to the 113th object that you created in the list.")
 NORMAL ("To refer to an attribute, you use the period ( `.'). "
 	"Thus, $$Sound_hallo.nx$ is the number of samples of Sound_hallo, and "
 	"$$1 / Sound_hallo.dx$ is the sampling frequency of Sound_hallo.")
@@ -1013,18 +1014,19 @@ NORMAL ("The formula above will also work if the Sound under creation is called 
 NORMAL ("If a formula refers to an object under creation, there is a shorter way: you do not have to supply the name of the object at all, "
 	"so you can simply write")
 CODE ("(x - xmin) / (xmax - xmin)")
-NORMAL ("The attributes that you can use in this implicit way are %xmin, %xmax, %ncol, %nrow, %nx, %dx, %ny, and %dy.")
+NORMAL ("The attributes that you can use in this implicit way are %xmin, %xmax, %ncol, %nrow, %nx, %dx, %ny, and %dy. "
+	"To disambiguate in case there exists a script variable %xmin as well, you can write %%Self.xmin%.")
 ENTRY ("Attributes in a modification formula")
 NORMAL ("In formulas for modifying an existing object, you refer to attributes in the same way as in creation formulas, "
 	"i.e., you do not have to specify the name of the object that is being modified. The formula")
 CODE ("self * 20 \\^  (- (x - xmin) / (xmax - xmin))")
 NORMAL ("causes the sound to decay exponentially in such a way that it has only 5 percent of its initial amplitude at the end. "
 	"If you apply this formula to multiple Sound objects at the same time, %xmax will refer to the finishing time of each Sound separately "
-	"as it is modified.")
+	"as it is modified. To disambiguate in case there exists a script variable %xmin as well, you can write %%Self.xmin%.")
 NORMAL ("More examples of the use of attributes are on the next page.")
 MAN_END
 
-MAN_BEGIN ("Formulas 8. Data in objects", "ppgb", 20021204)
+MAN_BEGIN ("Formulas 8. Data in objects", "ppgb", 20060127)
 NORMAL ("With square brackets, you can get the values inside some objects.")
 ENTRY ("Object contents in the calculator")
 NORMAL ("The outcomes of the following examples can be checked with the @calculator.")
@@ -1042,6 +1044,10 @@ TAG ("##Table_listeners [3, \"m3ae\"]")
 DEFINITION ("gives the numeric value in the cell at the third row of column %m3ae of the Table %listeners.")
 TAG ("##Table_listeners [3, 12]")
 DEFINITION ("gives the numeric value in the cell at the third row of the 12th column of the Table %listeners.")
+TAG ("##Table_results\\$  [3, \"response\"]")
+DEFINITION ("gives the string value in the cell at the third row of column %response of the Table %results.")
+TAG ("##Table_results\\$  [3, 12]")
+DEFINITION ("gives the string value in the cell at the third row of the 12th column of the Table %results.")
 NORMAL ("Cells outside the objects are considered to contain zeroes.")
 ENTRY ("Interpolation")
 NORMAL ("The values inside some objects can be interpolated.")

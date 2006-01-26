@@ -1,6 +1,6 @@
 /* melder_debug.c
  *
- * Copyright (C) 2000-2004 Paul Boersma
+ * Copyright (C) 2000-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2005/04/25
+ * pb 2006/01/25
  */
 
 #include "melder.h"
@@ -45,6 +45,7 @@ the behaviour of that program changes in the following way:
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
+17: debugging on in Formula.c
 
 (negative values are for David)
 

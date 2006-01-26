@@ -1,6 +1,6 @@
 /* Formula.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@
  * pb 2004/10/16 C++ compatible struct tags
  * pb 2005/05/15 messages
  * pb 2005/06/14 startsWith, endsWith, index_regex
+ * pb 2006/01/11 local variables
+ * pb 2006/01/21 allow things like Object_137 [row, col]
  */
 
 #include <ctype.h>
@@ -64,6 +66,16 @@ typedef struct FormulaInstruction {
 
 static FormulaInstruction lexan, parse;
 static int ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants;
+
+typedef struct Stackel {
+	int which;   /* 1 = number, 2 = string */
+	union {
+		double number;
+		char *string;
+	} content;
+} *Stackel;
+
+static Stackel theStack;
 static double *s;   /* Numeric stack. */
 static char **ss;   /* String stack. */
 
@@ -93,7 +105,7 @@ enum { GEENSYMBOOL_,
 		#define HIGH_ATTRIBUTE  X_
 	#define HIGH_VALUE  HIGH_ATTRIBUTE
 
-	SELF_, MATRIKS_,
+	SELF_, SELFSTR_, MATRIKS_, MATRIKSSTR_,
 	STOPWATCH_,
 
 /* The following symbols can be followed by "-" only if they are a variable. */
@@ -151,8 +163,10 @@ enum { GEENSYMBOOL_,
 /* Symbols introduced by the parser. */
 
 	TRUE_, FALSE_, IFTRUE_, IFFALSE_, GOTO_, LABEL_,
-	SELF0_, SELFMATRIKS1_, SELFMATRIKS2_, SELFFUNKTIE1_, SELFFUNKTIE2_,
-	MATRIKS0_, MATRIKS1_, MATRIKS2_, FUNKTIE0_, FUNKTIE1_, FUNKTIE2_,
+	SELF0_, SELFSTR0_, SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
+	SELFFUNKTIE1_, SELFFUNKTIESTR1_, SELFFUNKTIE2_, SELFFUNKTIESTR2_,
+	MATRIKS0_, MATRIKSSTR0_, MATRIKS1_, MATRIKSSTR1_, MATRIKS2_, MATRIKSSTR2_,
+	FUNKTIE0_, FUNKTIESTR0_, FUNKTIE1_, FUNKTIESTR1_, FUNKTIE2_, FUNKTIESTR2_,
 	ROW_INDEX_, COLUMN_INDEX_,
 	SQR_,
 
@@ -176,7 +190,7 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"_number", "pi", "e", "undefined",
 	"xmin", "xmax", "ymin", "ymax", "nx", "ny", "dx", "dy",
 	"row", "col", "nrow", "ncol", "y", "x",
-	"self", "_matriks",
+	"self", "self$", "_matriks", "_matriks$",
 	"stopwatch",
 	"abs", "round", "floor", "ceiling", "sqrt", "sin", "cos", "tan", "arcsin", "arccos", "arctan",
 	"exp", "sinh", "cosh", "tanh", "arcsinh", "arccosh", "arctanh",
@@ -201,8 +215,10 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"fixed$", "percent$",
 	".",
 	"_true", "_false", "_iftrue", "_iffalse", "_gaNaar", "_label",
-	"_self0", "_selfmatriks1", "_selfmatriks2", "_selffunktie1", "_selffunktie2",
-	"_matriks0", "_matriks1", "_matriks2", "_funktie0", "_funktie1", "_funktie2",
+	"_self0", "_self0$", "_selfmatriks1", "_selfmatriks1$", "_selfmatriks2", "_selfmatriks2$",
+	"_selffunktie1", "_selffunktie1$", "_selffunktie2", "_selffunktie2$",
+	"_matriks0", "_matriks0$", "_matriks1", "_matriks1$", "_matriks2", "_matriks2$",
+	"_funktie0", "_funktie0$", "_funktie1", "_funktie1$", "_funktie2", "_funktie2$",
 	"_rowIndex", "_columnIndex",
 	"_square",
 	"_string", "_str=", "_str<>", "_str<=", "_str<", "_str>=", "_str>", "_str+", "_str-",
@@ -278,10 +294,11 @@ static int Formula_lexan (void) {
 			oudkar;
 			nieuwtok (NUMBER_)
 			tokgetal (Melder_atof (stok));
-		} else if (kar >= 'a' && kar <= 'z') {
+		} else if (kar >= 'a' && kar <= 'z' || kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
+				&& (itok == 0 || lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)) {
 			int tok, endsInDollarSign = FALSE;
 			stokaan;
-			do stokkar while (kar >= 'A' && kar <= 'Z' || kar >= 'a' && kar <= 'z' || kar >= '0' && kar <= '9' || kar == '_');
+			do stokkar while (kar >= 'A' && kar <= 'Z' || kar >= 'a' && kar <= 'z' || kar >= '0' && kar <= '9' || kar == '_' || kar == '.');
 			if (kar == '$') { stokkar endsInDollarSign = TRUE; }
 			stokuit;
 			oudkar;
@@ -398,28 +415,56 @@ static int Formula_lexan (void) {
 				return Melder_error ("Unknown function or attribute \\<<%s\\>> in formula.", stok);
 			}
 		} else if (kar >= 'A' && kar <= 'Z') {
+			int endsInDollarSign = FALSE;
 			char *underscore;
 			stokaan;
 			do stokkar while (isalnum (kar) || kar == '_');
+			if (kar == '$') { stokkar endsInDollarSign = TRUE; }
 			stokuit;
 			oudkar;
 			/*
 			 * 'stok' now contains a word that could be an object name.
 			 */
 			underscore = strchr (stok, '_');
-			if (underscore == NULL) {
+			if (strequ (stok, "Self")) {
+				if (theSource == NULL) {
+					formulefout ("Cannot use \"Self\" if there is no current object.", ikar);
+					return 0;
+				}
+				nieuwtok (MATRIKS_)
+				tokmatriks (theSource);
+			} else if (strequ (stok, "Self$")) {
+				if (theSource == NULL) {
+					formulefout ("Cannot use \"Self$\" if there is no current object.", ikar);
+					return 0;
+				}
+				nieuwtok (MATRIKSSTR_)
+				tokmatriks (theSource);
+			} else if (underscore == NULL) {
 				return Melder_error ("Unknown symbol \\<<%s\\>> in formula "
 					"(variables start with lower case; object names contain an underscore).", stok);
+			} else if (strnequ (stok, "Object_", 7)) {
+				long uniqueID = atol (stok + 7);
+				int i = praat.n;
+				while (i > 0 && uniqueID != praat.list [i]. id)
+					i --;
+				if (i == 0) {
+					formulefout ("No such object (note: variables start with lower case)", ikar);
+					return 0;
+				}
+				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
+				tokmatriks (praat.list [i]. object);
 			} else {
 				int i = praat.n;
 				*underscore = ' ';
+				if (endsInDollarSign) stok [istok - 1] = '\0';
 				while (i > 0 && ! strequ (stok, praat.list [i]. name))
 					i --;
 				if (i == 0) {
 					formulefout ("No such object (note: variables start with lower case)", ikar);
 					return 0;
 				}
-				nieuwtok (MATRIKS_)
+				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
 				tokmatriks (praat.list [i]. object);
 			}
 		} else if (kar == '(') {
@@ -872,7 +917,7 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
-	formulefout ("Symbol misplaced", lexan [ilexan]. position);
+	formulefout ("Numeric symbol misplaced", lexan [ilexan]. position);
 	oudlees;   /* Needed for retry if we are going to be in a string comparison. */
 	return 0;
 }
@@ -945,6 +990,37 @@ static int parseStringTerm (void) {
 		return 1;
 	}
 		
+	if (symbol == SELFSTR_) {
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (! parseNumericOrStringCellIndex (theSource)) return 0;
+			if (nieuwlees == KOMMA_) {
+				if (parse [iparse]. symbol == COLUMN_INDEX_)
+					parse [iparse]. symbol = ROW_INDEX_;
+				if (! parseNumericOrStringCellIndex (theSource)) return 0;
+				nieuwontleed (SELFMATRIKSSTR2_);
+				return pas (RECHTEHAAKSLUITEN_);
+			}
+			oudlees;
+			nieuwontleed (SELFMATRIKSSTR1_);
+			return pas (RECHTEHAAKSLUITEN_);
+		}
+		if (symbol == HAAKJEOPENEN_) {
+			if (! parseNumericExpression ()) return 0;
+			if (nieuwlees == KOMMA_) {
+				if (! parseNumericExpression ()) return 0;
+				nieuwontleed (SELFFUNKTIESTR2_);
+				return pas (HAAKJESLUITEN_);
+			}
+			oudlees;
+			nieuwontleed (SELFFUNKTIESTR1_);
+			return pas (HAAKJESLUITEN_);
+		}
+		oudlees;
+		nieuwontleed (SELFSTR0_);
+		return 1;
+	}
+
 	if (symbol == HAAKJEOPENEN_) {
 		if (! parseStringExpression ()) return 0;
 		return pas (HAAKJESLUITEN_);
@@ -969,6 +1045,38 @@ static int parseStringTerm (void) {
 		if (! parseStringExpression ()) return 0;
 		if (! pas (ENDIF_)) return 0;
 		nieuwontleed (LABEL_);    ontleedlabel (endifLabel);
+		return 1;
+	}
+
+	if (symbol == MATRIKSSTR_) {
+		Data thee = lexan [ilexan]. content.object;
+		Melder_assert (thee != NULL);
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (nieuwlees == RECHTEHAAKSLUITEN_) {
+				nieuwontleed (MATRIKSSTR0_);
+				parse [iparse]. content.object = thee;
+			} else {
+				oudlees;
+				if (! parseNumericOrStringCellIndex (thee)) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (parse [iparse]. symbol == COLUMN_INDEX_)
+						parse [iparse]. symbol = ROW_INDEX_;
+					if (! parseNumericOrStringCellIndex (thee)) return 0;
+					nieuwontleed (MATRIKSSTR2_);
+					parse [iparse]. content.object = thee;
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (MATRIKSSTR1_);
+					parse [iparse]. content.object = thee;
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				}
+			}
+		} else {
+			formulefout ("After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
+			return 0;
+		}
 		return 1;
 	}
 
@@ -1029,7 +1137,7 @@ static int parseStringTerm (void) {
 		return 1;
 	}
 
-	formulefout ("Symbol misplaced...", lexan [ilexan]. position);
+	formulefout ("String symbol misplaced...", lexan [ilexan]. position);
 	oudlees;
 	return 0;
 }
@@ -1483,20 +1591,20 @@ static void Formula_print (FormulaInstruction f) {
 		symbol = f [++ i]. symbol;
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
-			Melder_info ("%d %s %.17g", i, instructionName, f [i]. content.number);
+			Melder_casual ("%d %s %.17g", i, instructionName, f [i]. content.number);
 		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_)
-			Melder_info ("%d %s %d", i, instructionName, f [i]. content.label);
+			Melder_casual ("%d %s %d", i, instructionName, f [i]. content.label);
 		else if (symbol == NUMERIC_VARIABLE_)
-			Melder_info ("%d %s %s %s", i, instructionName, f [i]. content.variable -> key, Melder_double (f [i]. content.variable -> numericValue));
+			Melder_casual ("%d %s %s %s", i, instructionName, f [i]. content.variable -> key, Melder_double (f [i]. content.variable -> numericValue));
 		else if (symbol == STRING_VARIABLE_)
-			Melder_info ("%d %s %s %s", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
+			Melder_casual ("%d %s %s %s", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
 		else if (symbol == STRING_)
-			Melder_info ("%d %s \"%s\"", i, instructionName, f [i]. content.string);
-		else if (symbol == MATRIKS_)
-			Melder_info ("%d %s %ld %s", i, instructionName,
+			Melder_casual ("%d %s \"%s\"", i, instructionName, f [i]. content.string);
+		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_)
+			Melder_casual ("%d %s %ld %s", i, instructionName,
 				Thing_className (f [i]. content.object), ((Thing) f [i]. content.object) -> name);
 		else
-			Melder_info ("%d %s", i, instructionName);
+			Melder_casual ("%d %s", i, instructionName);
 	} while (symbol != END_);
 }
 
@@ -1532,7 +1640,7 @@ int Formula_compile (Any interpreter, Any data, const char *expression, int expr
 	}
 
 	if (! Formula_lexan ()) return 0;
-	/*Formula_print (lexan);*/
+	if (Melder_debug == 17) Formula_print (lexan);
 	if (theExpressionType == EXPRESSION_TYPE_NUMERIC) {
 		if (! Formula_parseNumericExpression ()) return 0;
 	} else if (theExpressionType == EXPRESSION_TYPE_STRING) {
@@ -1540,15 +1648,15 @@ int Formula_compile (Any interpreter, Any data, const char *expression, int expr
 	} else {
 		if (! Formula_parseNumericOrStringExpression ()) return 0;
 	}
-	/*Formula_print (parse);*/
+	if (Melder_debug == 17) Formula_print (parse);
 	if (theOptimize) {
 		Formula_optimizeFlow ();
-		/*Formula_print (parse);*/
+		if (Melder_debug == 17) Formula_print (parse);
 		Formula_evaluateConstants ();
-		/*Formula_print (parse);*/
+		if (Melder_debug == 17) Formula_print (parse);
 	}
 	Formula_removeLabels ();
-	/*Formula_print (parse);*/
+	if (Melder_debug == 17) Formula_print (parse);
 	return 1;
 }
 
@@ -1562,46 +1670,62 @@ int Formula_run (long row, long col, double *numericResult, char **stringResult)
 		int symbol;
 		switch (symbol = f [i]. symbol) {
 
+#define pushNumber(x)  s [++ w] = (x)
+#define popNumber  s [w --]
+#define pushString(x)  ++ sw; Melder_free (ss [sw]); ss [sw] = (x); cherror
 case NUMBER_: {
-	s [++ w] = f [i]. content.number;
+	pushNumber (f [i]. content.number);
 } break; case STOPWATCH_: {
-	s [++ w] = Melder_stopwatch ();
+	pushNumber (Melder_stopwatch ());
 } break; case ROW_: {
-	s [++ w] = row;
+	pushNumber (row);
 } break; case COL_: {
-	s [++ w] = col;
+	pushNumber (col);
 } break; case X_: {
 	if (our getX == NULL) { Melder_error ("No values for \"x\" for this object."); goto end; }
-	s [++ w] = our getX (me, col);
+	pushNumber (our getX (me, col));
 } break; case Y_: {
 	if (our getY == NULL) { Melder_error ("No values for \"y\" for this object."); goto end; }
-	s [++ w] = our getY (me, row);
+	pushNumber (our getY (me, row));
 } break; case NOT_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : s [w] == 0.0 ? 1.0 : 0.0;
+	double bool1 = popNumber;
+	pushNumber (bool1 == NUMundefined ? NUMundefined : bool1 == 0.0 ? 1.0 : 0.0);
 } break; case EQ_: {
-	-- w; s [w] = s [w] == s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == num2 ? 1.0 : 0.0);
 } break; case NE_: {
-	-- w; s [w] = s [w] != s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 != num2 ? 1.0 : 0.0);
 } break; case LE_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] <= s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 <= num2 ? 1.0 : 0.0);
 } break; case LT_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] <  s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 < num2 ? 1.0 : 0.0);
 } break; case GE_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] >= s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 >= num2 ? 1.0 : 0.0);
 } break; case GT_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] >  s [w + 1] ? 1.0 : 0.0;
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 > num2 ? 1.0 : 0.0);
 } break; case ADD_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] + s [w + 1];
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 + num2);
 } break; case SUB_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] - s [w + 1];
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 - num2);
 } break; case MUL_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : s [w] * s [w + 1];
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 * num2);
 } break; case RDIV_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 1] == 0.0 ? NUMundefined : s [w] / s [w + 1];
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : num1 / num2);
 } break; case IDIV_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 1] == 0.0 ? NUMundefined : floor (s [w] / s [w + 1]);
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : floor (num1 / num2));
 } break; case MOD_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 1] == 0.0 ? NUMundefined : s [w] - floor (s [w] / s [w + 1]) * s [w + 1];
+	double num2 = popNumber, num1 = popNumber;
+	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : num1 - floor (num1 / num2) * num2);
 } break; case MINUS_: {
 	s [w] = s [w] == NUMundefined ? NUMundefined : - s [w];
 } break; case POWER_: {
@@ -1861,10 +1985,12 @@ case NUMBER_: {
 	Melder_free (ss [sw]);
 	sw -= 2;
 } break; case STARTS_WITH_: {
-	s [++ w] = Melder_stringMatchesCriterion  (ss [sw - 1], Melder_STRING_STARTS_WITH, ss [sw]);
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
+	char *criterion, *value;
+	criterion = ss [sw], ss [sw] = NULL, sw --;
+	value = ss [sw], ss [sw] = NULL, sw --;
+	pushNumber (Melder_stringMatchesCriterion  (value, Melder_STRING_STARTS_WITH, criterion));
+	Melder_free (value);
+	Melder_free (criterion);
 } break; case ENDS_WITH_: {
 	s [++ w] = Melder_stringMatchesCriterion  (ss [sw - 1], Melder_STRING_ENDS_WITH, ss [sw]);
 	Melder_free (ss [sw - 1]);
@@ -2051,10 +2177,10 @@ case NUMBER_: {
 		goto end;
 	}
 } break; case SELFMATRIKS1_: {
-	long icol = floor (s [w] + 0.5);   /* Round. */
+	long icol = floor (popNumber + 0.5);   /* Round. */
 	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 	if (our getVector) {
-		s [w] = our getVector (me, icol);
+		pushNumber (our getVector (me, icol));
 	} else if (our getMatrix) {
 		if (row == 0) {
 			Melder_error ("We are not in a loop,\n"
@@ -2062,20 +2188,46 @@ case NUMBER_: {
 				"Try using both [row, column] indexes instead.", Thing_className (me));
 			goto end;
 		} else {
-			s [w] = our getMatrix (me, row, icol);
+			pushNumber (our getMatrix (me, row, icol));
+		}
+	} else {
+		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
+		goto end;
+	}
+} break; case SELFMATRIKSSTR1_: {
+	long icol = floor (popNumber + 0.5);   /* Round. */
+	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	if (our getVectorStr) {
+		pushString (Melder_strdup (our getVectorStr (me, icol)));
+	} else if (our getMatrixStr) {
+		if (row == 0) {
+			Melder_error ("We are not in a loop,\n"
+				"hence no implicit row index for the current %s object (self).\n"
+				"Try using both [row, column] indexes instead.", Thing_className (me));
+			goto end;
+		} else {
+			pushString (Melder_strdup (our getMatrixStr (me, row, icol)));
 		}
 	} else {
 		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
 		goto end;
 	}
 } break; case SELFMATRIKS2_: {
-	long icol = floor (s [w --] + 0.5), irow = floor (s [w] + 0.5);   /* Round. */
+	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
 	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 	if (our getMatrix == NULL) {
 		Melder_error ("%s objects like \"self\" accept no [row, column] indexing.", Thing_className (me));
 		goto end;
 	}
-	s [w] = our getMatrix (me, irow, icol);
+	pushNumber (our getMatrix (me, irow, icol));
+} break; case SELFMATRIKSSTR2_: {
+	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
+	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
+	if (our getMatrixStr == NULL) {
+		Melder_error ("%s objects like \"self$\" accept no [row, column] indexing.", Thing_className (me));
+		goto end;
+	}
+	pushString (Melder_strdup (our getMatrixStr (me, irow, icol)));
 } break; case SELFFUNKTIE1_: {
 	double x = s [w];
 	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
@@ -2137,9 +2289,9 @@ case NUMBER_: {
 	}
 } break; case MATRIKS1_: {
 	Data thee = f [i]. content.object;
-	long icol = floor (s [w] + 0.5);   /* Round. */
+	long icol = floor (popNumber + 0.5);   /* Round. */
 	if (your getVector) {
-		s [w] = your getVector (thee, icol);
+		pushNumber (your getVector (thee, icol));
 	} else if (your getMatrix) {
 		if (row == 0) {
 			Melder_error ("We are not in a loop,\n"
@@ -2147,7 +2299,25 @@ case NUMBER_: {
 				"Try using both [row, column] indexes instead.", Thing_className (thee));
 			goto end;
 		} else {
-			s [w] = your getMatrix (thee, row, icol);
+			pushNumber (your getMatrix (thee, row, icol));
+		}
+	} else {
+		Melder_error ("%s objects accept no [column] indexes.", Thing_className (thee));
+		goto end;
+	}
+} break; case MATRIKSSTR1_: {
+	Data thee = f [i]. content.object;
+	long icol = floor (popNumber + 0.5);   /* Round. */
+	if (your getVectorStr) {
+		pushString (Melder_strdup (your getVectorStr (thee, icol)));
+	} else if (your getMatrixStr) {
+		if (row == 0) {
+			Melder_error ("We are not in a loop,\n"
+				"hence no implicit row index for this %s object.\n"
+				"Try using both [row, column] indexes instead.", Thing_className (thee));
+			goto end;
+		} else {
+			pushString (Melder_strdup (your getMatrixStr (thee, row, icol)));
 		}
 	} else {
 		Melder_error ("%s objects accept no [column] indexes.", Thing_className (thee));
@@ -2155,12 +2325,21 @@ case NUMBER_: {
 	}
 } break; case MATRIKS2_: {
 	Data thee = f [i]. content.object;
-	long icol = floor (s [w --] + 0.5), irow = floor (s [w] + 0.5);   /* Round. */
+	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
 	if (your getMatrix == NULL) {
 		Melder_error ("%s objects accept no [row, column] indexing.", Thing_className (thee));
 		goto end;
 	}
-	s [w] = your getMatrix (thee, irow, icol);
+	pushNumber (your getMatrix (thee, irow, icol));
+} break; case MATRIKSSTR2_: {
+	Data thee = f [i]. content.object;
+	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
+	Melder_assert (thee != NULL);
+	if (your getMatrixStr == NULL) {
+		Melder_error ("%s objects accept no [row, column] indexing.", Thing_className (thee));
+		goto end;
+	}
+	pushString (Melder_strdup (your getMatrixStr (thee, irow, icol)));
 } break; case FUNKTIE0_: {
 	Data thee = f [i]. content.object;
 	if (your getFunction0) {

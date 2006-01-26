@@ -23,16 +23,19 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060106)
+MAN_BEGIN ("What's new?", "ppgb", 20060126)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL ("##4.4.04# (January 6, 2005)")
+NORMAL ("##4.4.05# (January 26, 2006)")
+LIST_ITEM ("\\bu @ExperimentMFC: removed a bug that caused Praat to crash when the Oops button was pressed after the experiment finished.")
+LIST_ITEM ("\\bu TextGrid: an IntervalTier can be written to an Xwaves label file.")
+NORMAL ("##4.4.04# (January 6, 2006)")
 LIST_ITEM ("\\bu Windows: Quicktime support (see at 4.4.03).")
-NORMAL ("##4.4.03# (January 6, 2005)")
+NORMAL ("##4.4.03# (January 6, 2006)")
 LIST_ITEM ("\\bu Macintosh: Quicktime support, i.e., \"Read from file\" can now read the audio from several kinds of movie files (.mov, .avi).")
-NORMAL ("##4.4.02# (January 5, 2005)")
+NORMAL ("##4.4.02# (January 5, 2006)")
 LIST_ITEM ("\\bu OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.")
-NORMAL ("##4.4.01# (January 2, 2005)")
+NORMAL ("##4.4.01# (January 2, 2006)")
 LIST_ITEM ("\\bu Picture window: \"Logarithmic marks\" allows reversed axes.")
 LIST_ITEM ("\\bu Manipulation window: removed a bug from \"Shift frequencies\" that caused much too small shifts in semitones.")
 LIST_ITEM ("\\bu TextGrid: \"Remove point...\".")

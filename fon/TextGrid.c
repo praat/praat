@@ -28,6 +28,7 @@
  * pb 2005/06/22 corrected log scale bug
  * pb 2005/10/07 alignment in TextGrid_Pitch_draw
  * pb 2006/01/01 IntervalTier_removeLeftBoundary, TextTier_removePoint
+ * pb 2006/01/25 IntervalTier_writeToXwaves
  */
 
 #include "TextGrid.h"
@@ -1091,6 +1092,21 @@ end:
 		return Melder_errorp ("(IntervalTier_readFromXwaves:) Not read.");
 	}
 	return me;
+}
+
+int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
+	FILE *f = Melder_fopen (file, "w");
+	long iinterval;
+	if (! f) return 0;
+	fprintf (f, "separator ;\nnfields 1\n#\n");
+	fprintf (f, "\n%ld   ! Number of tiers.", my intervals -> size);
+	for (iinterval = 1; iinterval <= my intervals -> size; iinterval ++) {
+		TextInterval interval = (TextInterval) my intervals -> item [iinterval];
+		fprintf (f, "\t%.5f 26\t%s\n", interval -> xmax, interval -> text);
+	}
+	if (! Melder_fclose (file, f)) return 0;
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	return 1;
 }
 
 TextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT) {

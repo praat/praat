@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/01/01
+ * pb 2006/01/25
  */
 
 #include "praat.h"
@@ -89,6 +89,10 @@ DO
 END
 
 DIRECT (IntervalTier_help) Melder_help ("IntervalTier"); END
+
+FORM_WRITE (IntervalTier_writeToXwaves, "Xwaves label file", 0, 0)
+	if (! IntervalTier_writeToXwaves (ONLY_OBJECT, file)) return 0;
+END
 
 /***** INTERVALTIER & POINTPROCESS *****/
 
@@ -1245,6 +1249,7 @@ void praat_uvafon_TextGrid_init (void) {
 	TextGridEditor_prefs ();
 
 	praat_addAction1 (classIntervalTier, 0, "IntervalTier help", 0, 0, DO_IntervalTier_help);
+	praat_addAction1 (classIntervalTier, 0, "Write to Xwaves label file...", 0, 0, DO_IntervalTier_writeToXwaves);
 	praat_addAction1 (classIntervalTier, 0, "Collect", 0, 0, 0);
 	praat_addAction1 (classIntervalTier, 0, "Into TextGrid", 0, 0, DO_AnyTier_into_TextGrid);
 	praat_addAction1 (classIntervalTier, 0, "Analyse", 0, 0, 0);

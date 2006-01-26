@@ -1,6 +1,6 @@
 /* RunnerMFC.c
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2005/12/02 response sounds are played
  * pb 2005/12/04 oops button
  * pb 2005/12/08 multiple experiments
+ * pb 2006/01/19 fixed a bug that caused an assertion violation when the oops button was pressed after the experiment finished
  */
 
 #include "RunnerMFC.h"
@@ -218,9 +219,11 @@ static void do_ok (RunnerMFC me) {
 
 static void do_oops (RunnerMFC me) {
 	ExperimentMFC experiment = my data;
-	Melder_assert (experiment -> trial >= 2 && experiment -> trial <= experiment -> numberOfTrials);
-	experiment -> responses [experiment -> trial] = 0;
-	experiment -> goodnesses [experiment -> trial] = 0;
+	Melder_assert (experiment -> trial >= 2 && experiment -> trial <= experiment -> numberOfTrials + 1);
+	if (experiment -> trial <= experiment -> numberOfTrials) {
+		experiment -> responses [experiment -> trial] = 0;
+		experiment -> goodnesses [experiment -> trial] = 0;
+	}
 	experiment -> trial --;
 	experiment -> responses [experiment -> trial] = 0;
 	experiment -> goodnesses [experiment -> trial] = 0;

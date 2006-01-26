@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20051116 Latest modification
+ djmw 20051219 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2256,34 +2256,21 @@ NORMAL ("Principal component analysis (PCA) involves a mathematical procedure "
 	"components%. The first principal component accounts for as much of the "
 	"variability in the data as possible, and each succeeding component "
 	"accounts for as much of the remaining variability as possible.")
-NORMAL ("Traditionally, principal component analysis is performed on a square "
-	"symmetric matrix of type @SSCP (pure sums of squares and cross "
-	"products), @Covariance (scaled sums of squares and cross products), or "
-	"@Correlation (sums of squares and cross products from standardized "
-	"data). "
-	"The analysis results for objects of type SSCP and Covariance do not "
-	"differ, since these objects only differ in a global scaling factor. "
-	"A Correlation object has to be used if the variances of "
-	"individual variates differ much, or if the units of measurement of the "
-	"individual variates differ. ")
-NORMAL ("The result of a principal component analysis "
-	"on such objects will be a new object of type @PCA.")
 ENTRY ("1. Objectives of principal component analysis")
 LIST_ITEM ("\\bu To discover or to reduce the dimensionality of the data set.")
 LIST_ITEM ("\\bu To identify new meaningful underlying variables.")
 ENTRY ("2. How to start")
-NORMAL ("We assume that the multi-dimensional data have been collected in a "
-	"@TableOfReal object which "
-	"is a rectangular matrix with (optional) row and column labels.")
-NORMAL ("If the variances of the individual columns in the TableOfReal "
-	"differ much or the measurement units of the columns differ then you "
-	"should first standardize the data. You can do this by choosing "
-	"@@TableOfReal: Standardize columns|Standardize columns@. Performing a "
-	"principal component analysis on a standardized data matrix has the same "
-	"effect as performing the analysis on the correlation matrix (the "
-	"covariance matrix from standardized data is equal to the correlation matrix of "
-	"these data).")
-NORMAL ("Select the TabelOfReal object from the list of objects and choose "
+NORMAL ("We assume that the multi-dimensional data have been collected in a @TableOfReal data matrix, "
+	"in which the rows are associated with the cases and the columns with the variables.")
+NORMAL ("Traditionally, principal component analysis is performed on the "
+	"symmetric @@Covariance|Covariance@ matrix or on the symmetric @@correlation|Correlation@ matrix. "
+	"These matrices can be calculated from the data matrix. "
+	"The covariance matrix contains scaled @@SSCP|sums of squares and cross products@. "
+	"A correlation matrix is like a covariance matrix but first the variables, i.e. the columns, have been standardized.  "
+	"We will have to standardize the data first if the variances of "
+	"variables differ much, or if the units of measurement of the "
+	"variables differ. You can standardize the data in the TableOfReal by choosing @@TableOfReal: Standardize columns|Standardize columns@.")
+NORMAL ("To perform the analysis, we select the TabelOfReal data matrix in the list of objects and choose "
 	"@@TableOfReal: To PCA|To PCA@. This results in a new PCA object in the "
 	"list of objects.")
 NORMAL ("We can now make a @@Scree plot|scree@ plot of the eigenvalues, @@Eigen: Draw "
@@ -2328,16 +2315,15 @@ NORMAL ("The mathematical technique used in PCA is called eigen analysis: "
 	"maximum number of eigenvectors equals the number of rows (or columns) of "
 	"this matrix.")
 ENTRY ("6. Algorithms")
-NORMAL ("If our matrix happens to be symmetric, with some sort of sums of "
-	"squares and cross products, we solve for the eigenvalue and eigenvectors "
+NORMAL ("If our starting point happens to be a symmetric matrix like the covariance matrix, "
+	"we solve for the eigenvalue and eigenvectors "
 	"by first performing a Householder reduction to tridiagonal form, followed"
 	" by the QL algorithm with implicit shifts.")
-NORMAL ("If, conversely, our starting point is a non-square or non-symmetric "
-	"data matrix #%A (that could originate from a TableOfReal), "
+NORMAL ("If, conversely, our starting point is the data matrix #%A , "
 	"we do not have to form explicitly the matrix with sums of squares and "
 	"cross products, #%A\\'p#%A. Instead, we proceed by a numerically more "
-	"stable method, and form the @@singular value decomposition@ "
-	"#%U #%\\Si #%V\\'p of #%A. The matrix #%V then contains the eigenvectors, "
+	"stable method, and form the @@singular value decomposition@ of #%A, "
+	"#%U #%\\Si #%V\\'p. The matrix #%V then contains the eigenvectors, "
 	"and the squared diagonal elements of #%\\Si contain the eigenvalues.")
 MAN_END
 
