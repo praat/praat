@@ -64,6 +64,15 @@ assert (3 + 8) * 7 = 77
 assert 3 + - (2 ^ 4) = -13
 assert 3 + 5 / 2 + 3 = 8.5
 assert (3 + 5) / (2 + 3) = 1.6
+
+assert 1 + 1 = 2
+assert 1 + 1 < 3
+assert 1 + 1 <= 2
+assert 1 + 1 <= 3
+assert 1 + 1 > 1
+assert 1 + 1 >= 2
+assert 1 + 1 >= 1
+
 assert (5 + 6 = 10) = 0
 assert (5 + 6 = 11) = 1
 assert (5 + 6 <> 10) = 1
@@ -102,5 +111,7 @@ assert "hallo" + "dag" = "hallodag"
 assert "hallo" + "dag" <> "hellodag"
 assert "hallo" - "dag" = "hallo"
 assert "hallodag" - "dag" = "hallo"
+
+assert left$ ("hallo", 3) = "hal"
 
 printline OK

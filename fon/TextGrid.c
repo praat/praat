@@ -29,6 +29,7 @@
  * pb 2005/10/07 alignment in TextGrid_Pitch_draw
  * pb 2006/01/01 IntervalTier_removeLeftBoundary, TextTier_removePoint
  * pb 2006/01/25 IntervalTier_writeToXwaves
+ * pb 2006/01/29 IntervalTier_readFromXwaves more forgiving
  */
 
 #include "TextGrid.h"
@@ -1058,14 +1059,21 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 	 */
 	for (;;) {
 		double time;
-		long colour;
+		long colour, numberOfElements;
 		char mark [300];
 
 		line = MelderFile_readLine (file); cherror
 		if (line == NULL) break;   /* Normal end-of-file. */
-		if (sscanf (line, "%lf%ld%s", & time, & colour, mark) < 3) {
+		numberOfElements = sscanf (line, "%lf%ld%s", & time, & colour, mark);
+		if (numberOfElements == 0) {
+			break;   /* An empty line, hopefully at the end. */
+		}
+		if (numberOfElements == 1) {
 			Melder_error ("Line too short: \"%s\".", line);
 			goto end;
+		}
+		if (numberOfElements == 2) {
+			mark [0] = '\0';
 		}
 		if (lastTime == 0.0) {
 			TextInterval interval = my intervals -> item [1];
@@ -1099,7 +1107,6 @@ int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 	long iinterval;
 	if (! f) return 0;
 	fprintf (f, "separator ;\nnfields 1\n#\n");
-	fprintf (f, "\n%ld   ! Number of tiers.", my intervals -> size);
 	for (iinterval = 1; iinterval <= my intervals -> size; iinterval ++) {
 		TextInterval interval = (TextInterval) my intervals -> item [iinterval];
 		fprintf (f, "\t%.5f 26\t%s\n", interval -> xmax, interval -> text);

@@ -82,3 +82,4 @@ assert invFisherQ (0.159, 2, 70) <> undefined ; used to exceed 60 iterations
 #
 # Things that again go wrong.
 #
+printline OK

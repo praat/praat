@@ -596,14 +596,17 @@ double Melder_atof (const char *string) {
 	char numberString [200], *q = & numberString [0];
 	while (*string == ' ' || *string == '\n' || *string == '\t' || *string == '\r')
 		string ++;
-	if (strnequ (string, "undefined", 9) ||
+	if (string [0] >= 'a' && string [0] <= 'z' ||
+		string [0] >= 'A' && string [0] <= 'Z' ||
+		string [0] == '-' && string [1] == '-') return NUMundefined;
+	/*if (strnequ (string, "undefined", 9) ||
 		strnequ (string, "--undefined--", 13) ||
 		strnequ (string, "inf", 3) ||
 		strnequ (string, "INF", 3) ||
 		strnequ (string, "Inf", 3) ||
 		strnequ (string, "nan", 3) ||
 		strnequ (string, "NAN", 3) ||
-		strnequ (string, "NaN", 3)) return NUMundefined;
+		strnequ (string, "NaN", 3)) return NUMundefined;*/
 	if (*string == '-' || *string == '+') * (q ++) = * (string ++);
 	while (*string >= '0' && *string <= '9') * (q ++) = * (string ++);
 	if (*string == '.') {

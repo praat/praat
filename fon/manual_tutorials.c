@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060126)
+MAN_BEGIN ("What's new?", "ppgb", 20060130)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.06# (January 30, 2006)")
+LIST_ITEM ("\\bu More scripting facilities (Object_xxx [ ], Self.nx, Table_xxx\\$  [ ], better messages).")
+LIST_ITEM ("\\bu Better reading and writing of Xwaves label files.")
 NORMAL ("##4.4.05# (January 26, 2006)")
 LIST_ITEM ("\\bu @ExperimentMFC: removed a bug that caused Praat to crash when the Oops button was pressed after the experiment finished.")
 LIST_ITEM ("\\bu TextGrid: an IntervalTier can be written to an Xwaves label file.")

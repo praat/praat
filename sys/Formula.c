@@ -32,6 +32,7 @@
  * pb 2005/06/14 startsWith, endsWith, index_regex
  * pb 2006/01/11 local variables
  * pb 2006/01/21 allow things like Object_137 [row, col]
+ * pb 2006/01/29 run-time type checking
  */
 
 #include <ctype.h>
@@ -66,18 +67,6 @@ typedef struct FormulaInstruction {
 
 static FormulaInstruction lexan, parse;
 static int ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants;
-
-typedef struct Stackel {
-	int which;   /* 1 = number, 2 = string */
-	union {
-		double number;
-		char *string;
-	} content;
-} *Stackel;
-
-static Stackel theStack;
-static double *s;   /* Numeric stack. */
-static char **ss;   /* String stack. */
 
 enum { GEENSYMBOOL_,
 
@@ -146,12 +135,12 @@ enum { GEENSYMBOOL_,
 		LENGTH_, FILE_READABLE_,
 	#define HIGH_FUNCTION_STRNUM  FILE_READABLE_
 		DATESTR_,
-		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENT_, INDEX_, RINDEX_,
+		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, INDEX_REGEX_, RINDEX_REGEX_,
-		EXTRACT_NUMBER_, EXTRACT_WORD_, EXTRACT_LINE_,
+		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
-		FIXED_, PERCENT_,
-	#define HIGH_STRING_FUNCTION  PERCENT_
+		FIXEDSTR_, PERCENTSTR_,
+	#define HIGH_STRING_FUNCTION  PERCENTSTR_
 
 	#define LOW_FUNCTION  LOW_FUNCTION_1
 	#define HIGH_FUNCTION  HIGH_STRING_FUNCTION
@@ -167,13 +156,12 @@ enum { GEENSYMBOOL_,
 	SELFFUNKTIE1_, SELFFUNKTIESTR1_, SELFFUNKTIE2_, SELFFUNKTIESTR2_,
 	MATRIKS0_, MATRIKSSTR0_, MATRIKS1_, MATRIKSSTR1_, MATRIKS2_, MATRIKSSTR2_,
 	FUNKTIE0_, FUNKTIESTR0_, FUNKTIE1_, FUNKTIESTR1_, FUNKTIE2_, FUNKTIESTR2_,
-	ROW_INDEX_, COLUMN_INDEX_,
 	SQR_,
 
 /* Symbols introduced by lexical analysis. */
 
-	STRING_, STRING_EQ_, STRING_NE_, STRING_LE_, STRING_LT_, STRING_GE_, STRING_GT_, STRING_ADD_, STRING_SUB_,
-	NUMERIC_VARIABLE_, STRING_VARIABLE_, NUMERIC_COLUMN_, STRING_COLUMN_,
+	STRING_,
+	NUMERIC_VARIABLE_, STRING_VARIABLE_,
 	SELECTED2_, SELECTEDSTR2_,
 	END_
 	#define hoogsteSymbool END_
@@ -219,10 +207,9 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"_selffunktie1", "_selffunktie1$", "_selffunktie2", "_selffunktie2$",
 	"_matriks0", "_matriks0$", "_matriks1", "_matriks1$", "_matriks2", "_matriks2$",
 	"_funktie0", "_funktie0$", "_funktie1", "_funktie1$", "_funktie2", "_funktie2$",
-	"_rowIndex", "_columnIndex",
 	"_square",
-	"_string", "_str=", "_str<>", "_str<=", "_str<", "_str>=", "_str>", "_str+", "_str-",
-	"_numericVariable", "_stringVariable", "_numericColumn", "_stringColumn",
+	"_string",
+	"_numericVariable", "_stringVariable",
 	"_selected2", "_selected2$",
 	"_end"
 };
@@ -598,30 +585,7 @@ static int pas (int symbol) {
 #define parsenumber(g)  parse [iparse]. content.number = (g)
 #define ontleedlabel(l)  parse [iparse]. content.label = (l)
 
-static int parseNumericExpression (void);
-static int parseStringExpression (void);
-
-static int parseNumericOrStringCellIndex (Data data) {
-	int saveLexan = ilexan, saveParse = iparse, iparseNumeric;
-	if (parseNumericExpression ()) return 1;
-	iparseNumeric = iparse;
-	Melder_clearError ();
-	ilexan = saveLexan, iparse = saveParse;
-	if (parseStringExpression ()) {
-		nieuwontleed (COLUMN_INDEX_);
-		parse [iparse]. content.object = data;
-		return 1;
-	}
-	/*
-	 * If we arrive here, both the numeric parse and the string parse went wrong.
-	 * Give the most sensible message.
-	 */
-	if (iparse > iparseNumeric) return 0;   /* Message for string error. */
-	Melder_clearError ();
-	ilexan = saveLexan, iparse = saveParse;
-	parseNumericExpression ();   /* Re-generate the numeric error message. */
-	return 0;
-}
+static int parseExpression (void);
 
 static int parsePowerFactor (void) {
 	int symbol = nieuwlees;
@@ -632,7 +596,13 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
-	if (symbol == NUMERIC_VARIABLE_) {
+	if (symbol == STRING_) {
+		nieuwontleed (symbol);
+		parse [iparse]. content.string = lexan [ilexan]. content.string;   /* Reference copy! */
+		return 1;
+	}
+
+	if (symbol == NUMERIC_VARIABLE_ || symbol == STRING_VARIABLE_) {
 		nieuwontleed (symbol);
 		parse [iparse]. content.variable = lexan [ilexan]. content.variable;
 		return 1;
@@ -641,11 +611,9 @@ static int parsePowerFactor (void) {
 	if (symbol == SELF_) {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseNumericOrStringCellIndex (theSource)) return 0;
+			if (! parseExpression ()) return 0;
 			if (nieuwlees == KOMMA_) {
-				if (parse [iparse]. symbol == COLUMN_INDEX_)
-					parse [iparse]. symbol = ROW_INDEX_;
-				if (! parseNumericOrStringCellIndex (theSource)) return 0;
+				if (! parseExpression ()) return 0;
 				nieuwontleed (SELFMATRIKS2_);
 				return pas (RECHTEHAAKSLUITEN_);
 			}
@@ -654,9 +622,9 @@ static int parsePowerFactor (void) {
 			return pas (RECHTEHAAKSLUITEN_);
 		}
 		if (symbol == HAAKJEOPENEN_) {
-			if (! parseNumericExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			if (nieuwlees == KOMMA_) {
-				if (! parseNumericExpression ()) return 0;
+				if (! parseExpression ()) return 0;
 				nieuwontleed (SELFFUNKTIE2_);
 				return pas (HAAKJESLUITEN_);
 			}
@@ -669,22 +637,51 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
+	if (symbol == SELFSTR_) {
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (! parseExpression ()) return 0;
+			if (nieuwlees == KOMMA_) {
+				if (! parseExpression ()) return 0;
+				nieuwontleed (SELFMATRIKSSTR2_);
+				return pas (RECHTEHAAKSLUITEN_);
+			}
+			oudlees;
+			nieuwontleed (SELFMATRIKSSTR1_);
+			return pas (RECHTEHAAKSLUITEN_);
+		}
+		if (symbol == HAAKJEOPENEN_) {
+			if (! parseExpression ()) return 0;
+			if (nieuwlees == KOMMA_) {
+				if (! parseExpression ()) return 0;
+				nieuwontleed (SELFFUNKTIESTR2_);
+				return pas (HAAKJESLUITEN_);
+			}
+			oudlees;
+			nieuwontleed (SELFFUNKTIESTR1_);
+			return pas (HAAKJESLUITEN_);
+		}
+		oudlees;
+		nieuwontleed (SELFSTR0_);
+		return 1;
+	}
+
 	if (symbol == HAAKJEOPENEN_) {
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		return pas (HAAKJESLUITEN_);
 	}
 
 	if (symbol == IF_) {
 		int elseLabel = nieuwlabel;   /* Moet lokaal, */
 		int endifLabel = nieuwlabel;   /* vanwege rekursie. */
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		nieuwontleed (IFFALSE_);  ontleedlabel (elseLabel);
 		if (! pas (THEN_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		nieuwontleed (GOTO_);     ontleedlabel (endifLabel);
 		if (! pas (ELSE_)) return 0;
 		nieuwontleed (LABEL_);    ontleedlabel (elseLabel);
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (ENDIF_)) return 0;
 		nieuwontleed (LABEL_);    ontleedlabel (endifLabel);
 		return 1;
@@ -700,11 +697,9 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.object = thee;
 			} else {
 				oudlees;
-				if (! parseNumericOrStringCellIndex (thee)) return 0;
+				if (! parseExpression ()) return 0;
 				if (nieuwlees == KOMMA_) {
-					if (parse [iparse]. symbol == COLUMN_INDEX_)
-						parse [iparse]. symbol = ROW_INDEX_;
-					if (! parseNumericOrStringCellIndex (thee)) return 0;
+					if (! parseExpression ()) return 0;
 					nieuwontleed (MATRIKS2_);
 					parse [iparse]. content.object = thee;
 					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
@@ -721,9 +716,9 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.object = thee;
 			} else {
 				oudlees;
-				if (! parseNumericExpression ()) return 0;
+				if (! parseExpression ()) return 0;
 				if (nieuwlees == KOMMA_) {
-					if (! parseNumericExpression ()) return 0;
+					if (! parseExpression ()) return 0;
 					nieuwontleed (FUNKTIE2_);
 					parse [iparse]. content.object = thee;
 					if (! pas (HAAKJESLUITEN_)) return 0;
@@ -826,9 +821,39 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
+	if (symbol == MATRIKSSTR_) {
+		Data thee = lexan [ilexan]. content.object;
+		Melder_assert (thee != NULL);
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (nieuwlees == RECHTEHAAKSLUITEN_) {
+				nieuwontleed (MATRIKSSTR0_);
+				parse [iparse]. content.object = thee;
+			} else {
+				oudlees;
+				if (! parseExpression ()) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					nieuwontleed (MATRIKSSTR2_);
+					parse [iparse]. content.object = thee;
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (MATRIKSSTR1_);
+					parse [iparse]. content.object = thee;
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				}
+			}
+		} else {
+			formulefout ("After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
+			return 0;
+		}
+		return 1;
+	}
+
 	if (symbol >= LOW_FUNCTION_1 && symbol <= HIGH_FUNCTION_1) {
 		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (HAAKJESLUITEN_)) return 0;
 		nieuwontleed (symbol);
 		return 1;
@@ -836,9 +861,9 @@ static int parsePowerFactor (void) {
 
 	if (symbol >= LOW_FUNCTION_2 && symbol <= HIGH_FUNCTION_2) {
 		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (KOMMA_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (HAAKJESLUITEN_)) return 0;
 		nieuwontleed (symbol);
 		return 1;
@@ -846,11 +871,11 @@ static int parsePowerFactor (void) {
 
 	if (symbol >= LOW_FUNCTION_3 && symbol <= HIGH_FUNCTION_3) {
 		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (KOMMA_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (KOMMA_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		if (! pas (HAAKJESLUITEN_)) return 0;
 		nieuwontleed (symbol);
 		return 1;
@@ -859,9 +884,9 @@ static int parsePowerFactor (void) {
 	if (symbol >= LOW_FUNCTION_N && symbol <= HIGH_FUNCTION_N) {
 		int n = 1;
 		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseNumericExpression ()) return 0;
+		if (! parseExpression ()) return 0;
 		while (nieuwlees == KOMMA_) {
-			if (! parseNumericExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			n ++;
 		}
 		oudlees;
@@ -874,41 +899,76 @@ static int parsePowerFactor (void) {
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
 		if (symbol >= LOW_FUNCTION_STRNUM && symbol <= HIGH_FUNCTION_STRNUM) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == INDEX_ || symbol == RINDEX_ ||
 			symbol == STARTS_WITH_ || symbol == ENDS_WITH_ ||
 			symbol == INDEX_REGEX_ || symbol == RINDEX_REGEX_ || symbol == EXTRACT_NUMBER_)
 		{
 			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			if (! pas (KOMMA_)) return 0;
-			if (! parseStringExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == SELECTED_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
+			if (! parseExpression ()) return 0;
 			if (nieuwlees == KOMMA_) {
-				if (! parseNumericExpression ()) return 0;
+				if (! parseExpression ()) return 0;
 				symbol = SELECTED2_;
 			} else oudlees;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == NUMBER_OF_SELECTED_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == DATESTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == LEFTSTR_ || symbol == RIGHTSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == MIDSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == EXTRACT_WORDSTR_ || symbol == EXTRACT_LINESTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == ENVIRONMENTSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == SELECTEDSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (nieuwlees == KOMMA_) {
+				if (! parseExpression ()) return 0;
+				symbol = SELECTEDSTR2_;
+			} else oudlees;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else {
-			formulefout ("Function returning a number expected", lexan [ilexan]. position);
+			formulefout ("Function expected", lexan [ilexan]. position);
 			oudlees;
 			return 0;
 		}
 		nieuwontleed (symbol);
-		return 1;
-	}
-
-	if (symbol == NUMERIC_COLUMN_) {
-		nieuwontleed (symbol);
-		parsenumber (lexan [ilexan]. content.number);
 		return 1;
 	}
 
@@ -917,7 +977,7 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
-	formulefout ("Numeric symbol misplaced", lexan [ilexan]. position);
+	formulefout ("Symbol misplaced", lexan [ilexan]. position);
 	oudlees;   /* Needed for retry if we are going to be in a string comparison. */
 	return 0;
 }
@@ -981,212 +1041,9 @@ static int parseTerms (void) {
 	return 1;
 }
 
-static int parseStringTerm (void) {
-	int symbol = nieuwlees;
-
-	if (symbol == STRING_VARIABLE_) {
-		nieuwontleed (symbol);
-		parse [iparse]. content.variable = lexan [ilexan]. content.variable;
-		return 1;
-	}
-		
-	if (symbol == SELFSTR_) {
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseNumericOrStringCellIndex (theSource)) return 0;
-			if (nieuwlees == KOMMA_) {
-				if (parse [iparse]. symbol == COLUMN_INDEX_)
-					parse [iparse]. symbol = ROW_INDEX_;
-				if (! parseNumericOrStringCellIndex (theSource)) return 0;
-				nieuwontleed (SELFMATRIKSSTR2_);
-				return pas (RECHTEHAAKSLUITEN_);
-			}
-			oudlees;
-			nieuwontleed (SELFMATRIKSSTR1_);
-			return pas (RECHTEHAAKSLUITEN_);
-		}
-		if (symbol == HAAKJEOPENEN_) {
-			if (! parseNumericExpression ()) return 0;
-			if (nieuwlees == KOMMA_) {
-				if (! parseNumericExpression ()) return 0;
-				nieuwontleed (SELFFUNKTIESTR2_);
-				return pas (HAAKJESLUITEN_);
-			}
-			oudlees;
-			nieuwontleed (SELFFUNKTIESTR1_);
-			return pas (HAAKJESLUITEN_);
-		}
-		oudlees;
-		nieuwontleed (SELFSTR0_);
-		return 1;
-	}
-
-	if (symbol == HAAKJEOPENEN_) {
-		if (! parseStringExpression ()) return 0;
-		return pas (HAAKJESLUITEN_);
-	}
-
-	if (symbol == STRING_) {
-		nieuwontleed (symbol);
-		parse [iparse]. content.string = lexan [ilexan]. content.string;   /* Reference copy! */
-		return 1;
-	}
-
-	if (symbol == IF_) {
-		int elseLabel = nieuwlabel;   /* Moet lokaal, */
-		int endifLabel = nieuwlabel;   /* vanwege rekursie. */
-		if (! parseNumericExpression ()) return 0;
-		nieuwontleed (IFFALSE_);  ontleedlabel (elseLabel);
-		if (! pas (THEN_)) return 0;
-		if (! parseStringExpression ()) return 0;
-		nieuwontleed (GOTO_);     ontleedlabel (endifLabel);
-		if (! pas (ELSE_)) return 0;
-		nieuwontleed (LABEL_);    ontleedlabel (elseLabel);
-		if (! parseStringExpression ()) return 0;
-		if (! pas (ENDIF_)) return 0;
-		nieuwontleed (LABEL_);    ontleedlabel (endifLabel);
-		return 1;
-	}
-
-	if (symbol == MATRIKSSTR_) {
-		Data thee = lexan [ilexan]. content.object;
-		Melder_assert (thee != NULL);
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
-			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				nieuwontleed (MATRIKSSTR0_);
-				parse [iparse]. content.object = thee;
-			} else {
-				oudlees;
-				if (! parseNumericOrStringCellIndex (thee)) return 0;
-				if (nieuwlees == KOMMA_) {
-					if (parse [iparse]. symbol == COLUMN_INDEX_)
-						parse [iparse]. symbol = ROW_INDEX_;
-					if (! parseNumericOrStringCellIndex (thee)) return 0;
-					nieuwontleed (MATRIKSSTR2_);
-					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
-				} else {
-					oudlees;
-					nieuwontleed (MATRIKSSTR1_);
-					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
-				}
-			}
-		} else {
-			formulefout ("After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
-			return 0;
-		}
-		return 1;
-	}
-
-	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
-		if (symbol == DATESTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == LEFTSTR_ || symbol == RIGHTSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseNumericExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == MIDSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseNumericExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseNumericExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == EXTRACT_WORD_ || symbol == EXTRACT_LINE_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == ENVIRONMENT_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == SELECTEDSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseStringExpression ()) return 0;
-			if (nieuwlees == KOMMA_) {
-				if (! parseNumericExpression ()) return 0;
-				symbol = SELECTEDSTR2_;
-			} else oudlees;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == FIXED_ || symbol == PERCENT_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseNumericExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseNumericExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else {
-			formulefout ("Function returning a string expected", lexan [ilexan]. position);
-			oudlees;
-			return 0;
-		}
-		nieuwontleed (symbol);
-		return 1;
-	}
-
-	if (symbol == STRING_COLUMN_) {
-		nieuwontleed (symbol);
-		parsenumber (lexan [ilexan]. content.number);
-		return 1;
-	}
-
-	formulefout ("String symbol misplaced...", lexan [ilexan]. position);
-	oudlees;
-	return 0;
-}
-
-static int parseStringTerms (void) {
-	int symbol = nieuwlees;
-	if (symbol == ADD_ || symbol == SUB_) {
-		if (! parseStringTerm ()) return 0;
-		nieuwontleed (symbol == ADD_ ? STRING_ADD_ : STRING_SUB_);
-		if (! parseStringTerms ()) return 0;
-	}
-	else oudlees;
-	return 1;
-}
-
-static int parseStringExpression (void) {
-	if (! parseStringTerm ()) return 0;
-	if (! parseStringTerms ()) return 0;
-	return 1;
-}
-
-static int parseStringComparison (void) {
-	int symbol;
-	if (! parseStringExpression ()) return 0;
-	symbol = nieuwlees;
-	if (symbol >= EQ_ && symbol <= GT_) {
-		if (! parseStringExpression ()) return 0;
-		nieuwontleed (symbol + STRING_EQ_ - EQ_);
-	} else return formulefout ("Expected numeric expression but found string expression", lexan [ilexan]. position);
-	return 1;
-}
-
 static int parseNot (void) {
 	int saveLexan = ilexan, saveParse = iparse, symbol;
-	if (! parseTerm ()) {
-		int iparseNumeric = iparse;
-		Melder_clearError ();
-		ilexan = saveLexan, iparse = saveParse;
-		if (parseStringComparison ()) return 1;
-		/*
-		 * If we arrive here, both the numeric parse and the string parse went wrong.
-		 * Give the most sensible message.
-		 */
-		if (iparse > iparseNumeric) return 0;   /* Message for string error. */
-		Melder_clearError ();
-		ilexan = saveLexan, iparse = saveParse;
-		parseTerm ();   /* Re-generate the numeric error message. */
-		return 0;
-	}
+	if (! parseTerm ()) return 0;
 	if (! parseTerms ()) return 0;
 	symbol = nieuwlees;
 	if (symbol >= EQ_ && symbol <= GT_) {
@@ -1228,7 +1085,7 @@ static int parseOr (void) {
 	return 1;
 }
 
-static int parseNumericExpression (void) {
+static int parseExpression (void) {
 	if (! parseOr ()) return 0;
 	if (nieuwlees == OR_) {
 		int trueLabel = nieuwlabel;
@@ -1263,47 +1120,12 @@ static int parseNumericExpression (void) {
 		result == 0 || my parse [my numberOfInstructions]. symbol == END_
 */
 
-static int Formula_parseNumericExpression (void) {
+static int Formula_parseExpression (void) {
 	ilabel = ilexan = iparse = 0;
-	if (! parseNumericExpression () || ! pas (END_)) return 0;
+	if (! parseExpression () || ! pas (END_)) return 0;
 	nieuwontleed (END_);
 	numberOfInstructions = iparse;
 	return 1;
-}
-static int Formula_parseStringExpression (void) {
-	ilabel = ilexan = iparse = 0;
-	if (! parseStringExpression () || ! pas (END_)) return 0;
-	nieuwontleed (END_);
-	numberOfInstructions = iparse;
-	return 1;
-}
-static int Formula_parseNumericOrStringExpression (void) {
-	int iparseNumeric;
-	ilabel = ilexan = iparse = 0;
-	if (parseNumericExpression ()) {
-		if (! pas (END_)) return 0;
-		nieuwontleed (END_);
-		numberOfInstructions = iparse;
-		return 1;
-	}
-	iparseNumeric = iparse;
-	Melder_clearError ();
-	ilabel = ilexan = iparse = 0;
-	if (parseStringExpression ()) {
-		if (! pas (END_)) return 0;
-		nieuwontleed (END_);
-		numberOfInstructions = iparse;
-		return 1;
-	}
-	/*
-	 * If we arrive here, both the numeric parse and the string parse went wrong.
-	 * Give the most sensible message.
-	 */
-	if (iparse > iparseNumeric) return 0;   /* String parsing went a bit better than numeric parsing: message for string error. */
-	Melder_clearError ();
-	ilabel = ilexan = iparse = 0;
-	parseNumericExpression ();   /* Re-generate the numeric error message. */
-	return 0;
 }
 
 static void schuif (int begin, int afstand) {
@@ -1619,9 +1441,7 @@ int Formula_compile (Any interpreter, Any data, const char *expression, int expr
 		lexan [3000 - 1]. symbol = END_;   /* Make sure that string cleaning always terminates. */
 	}
 	if (! parse) parse = Melder_calloc (3000, sizeof (struct FormulaInstruction));
-	if (! s) s = (double *) Melder_calloc (10000, sizeof (double));
-	if (! ss) ss = (char **) Melder_calloc (1000, sizeof (char *));
-	if (lexan == NULL || parse == NULL || s == NULL || ss == NULL)
+	if (lexan == NULL || parse == NULL)
 		return Melder_error ("Out of memory during formula computation.");
 
 	/*
@@ -1641,13 +1461,7 @@ int Formula_compile (Any interpreter, Any data, const char *expression, int expr
 
 	if (! Formula_lexan ()) return 0;
 	if (Melder_debug == 17) Formula_print (lexan);
-	if (theExpressionType == EXPRESSION_TYPE_NUMERIC) {
-		if (! Formula_parseNumericExpression ()) return 0;
-	} else if (theExpressionType == EXPRESSION_TYPE_STRING) {
-		if (! Formula_parseStringExpression ()) return 0;
-	} else {
-		if (! Formula_parseNumericOrStringExpression ()) return 0;
-	}
+	if (! Formula_parseExpression ()) return 0;
 	if (Melder_debug == 17) Formula_print (parse);
 	if (theOptimize) {
 		Formula_optimizeFlow ();
@@ -1660,505 +1474,978 @@ int Formula_compile (Any interpreter, Any data, const char *expression, int expr
 	return 1;
 }
 
-int Formula_run (long row, long col, double *numericResult, char **stringResult) {
-	FormulaInstruction f = parse;
-	Data me = theSource;
-	int w = 0, sw = 0;   /* w = numeric stack pointer, sw = string stack pointer; start new stacks. */
-	int i = 1;   /* First symbol of the program. */
-	while (i <= numberOfInstructions) {
-		char *string;
-		int symbol;
-		switch (symbol = f [i]. symbol) {
+/*
+ * Running.
+ */
 
-#define pushNumber(x)  s [++ w] = (x)
-#define popNumber  s [w --]
-#define pushString(x)  ++ sw; Melder_free (ss [sw]); ss [sw] = (x); cherror
-case NUMBER_: {
-	pushNumber (f [i]. content.number);
-} break; case STOPWATCH_: {
-	pushNumber (Melder_stopwatch ());
-} break; case ROW_: {
-	pushNumber (row);
-} break; case COL_: {
-	pushNumber (col);
-} break; case X_: {
-	if (our getX == NULL) { Melder_error ("No values for \"x\" for this object."); goto end; }
-	pushNumber (our getX (me, col));
-} break; case Y_: {
-	if (our getY == NULL) { Melder_error ("No values for \"y\" for this object."); goto end; }
-	pushNumber (our getY (me, row));
-} break; case NOT_: {
-	double bool1 = popNumber;
-	pushNumber (bool1 == NUMundefined ? NUMundefined : bool1 == 0.0 ? 1.0 : 0.0);
-} break; case EQ_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == num2 ? 1.0 : 0.0);
-} break; case NE_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 != num2 ? 1.0 : 0.0);
-} break; case LE_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 <= num2 ? 1.0 : 0.0);
-} break; case LT_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 < num2 ? 1.0 : 0.0);
-} break; case GE_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 >= num2 ? 1.0 : 0.0);
-} break; case GT_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 > num2 ? 1.0 : 0.0);
-} break; case ADD_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 + num2);
-} break; case SUB_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 - num2);
-} break; case MUL_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined ? NUMundefined : num1 * num2);
-} break; case RDIV_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : num1 / num2);
-} break; case IDIV_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : floor (num1 / num2));
-} break; case MOD_: {
-	double num2 = popNumber, num1 = popNumber;
-	pushNumber (num1 == NUMundefined || num2 == NUMundefined || num2 == 0.0 ? NUMundefined : num1 - floor (num1 / num2) * num2);
-} break; case MINUS_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : - s [w];
-} break; case POWER_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : pow (s [w], s [w + 1]);
-/********** Functions of 1 variable: **********/
-} break; case ABS_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : fabs (s [w]);
-} break; case ROUND_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : floor (s [w] + 0.5);
-} break; case FLOOR_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : floor (s [w]);
-} break; case CEILING_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : ceil (s [w]);
-} break; case SQRT_: {
-	s [w] = s [w] == NUMundefined || s [w] < 0.0 ? NUMundefined : sqrt (s [w]);
-} break; case SIN_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : sin (s [w]);
-} break; case COS_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : cos (s [w]);
-} break; case TAN_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : tan (s [w]);
-} break; case ARCSIN_: {
-	s [w] = s [w] == NUMundefined || fabs (s [w]) > 1.0 ? NUMundefined : asin (s [w]);
-} break; case ARCCOS_: {
-	s [w] = s [w] == NUMundefined || fabs (s [w]) > 1.0 ? NUMundefined : acos (s [w]);
-} break; case ARCTAN_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : atan (s [w]);
-} break; case EXP_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : exp (s [w]);
-} break; case SINH_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : sinh (s [w]);
-} break; case COSH_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : cosh (s [w]);
-} break; case TANH_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : tanh (s [w]);
-} break; case ARCSINH_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : log (s [w] + sqrt (1 + s [w] * s [w]));
-} break; case ARCCOSH_: {
-	s [w] = s [w] == NUMundefined || s [w] < 1.0 ? NUMundefined : log (s [w] + sqrt (s [w] * s [w] - 1));
-} break; case ARCTANH_: {
-	s [w] = s [w] == NUMundefined || s [w] <= -1.0 || s [w] >= 1.0 ? NUMundefined : 0.5 * log ((1.0 + s [w]) / (1.0 - s [w]));
-} break; case SIGMOID_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMsigmoid (s [w]);
-} break; case ERF_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : 1 - NUMerfcc (s [w]);
-} break; case ERFC_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMerfcc (s [w]);
-} break; case GAUSS_P_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMgaussP (s [w]);
-} break; case GAUSS_Q_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMgaussQ (s [w]);
-} break; case INV_GAUSS_Q_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMinvGaussQ (s [w]);
-} break; case RANDOM_POISSON_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMrandomPoisson (s [w]);
-} break; case LOG2_: {
-	s [w] = s [w] == NUMundefined || s [w] <= 0.0 ? NUMundefined : log (s [w]) * NUMlog2e;
-} break; case LN_: {
-	s [w] = s [w] == NUMundefined || s [w] <= 0.0 ? NUMundefined : log (s [w]);
-} break; case LOG10_: {
-	s [w] = s [w] == NUMundefined || s [w] <= 0.0 ? NUMundefined : log10 (s [w]);
-} break; case LN_GAMMA_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMlnGamma (s [w]);
-} break; case HERTZ_TO_BARK_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMhertzToBark (s [w]);
-} break; case BARK_TO_HERTZ_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMbarkToHertz (s [w]);
-} break; case PHON_TO_DIFFERENCE_LIMENS_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMphonToDifferenceLimens (s [w]);
-} break; case DIFFERENCE_LIMENS_TO_PHON_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMdifferenceLimensToPhon (s [w]);
-} break; case HERTZ_TO_MEL_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMhertzToMel (s [w]);
-} break; case MEL_TO_HERTZ_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMmelToHertz (s [w]);
-} break; case HERTZ_TO_SEMITONES_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMhertzToSemitones (s [w]);
-} break; case SEMITONES_TO_HERTZ_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMsemitonesToHertz (s [w]);
-} break; case ERB_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMerb (s [w]);
-} break; case HERTZ_TO_ERB_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMhertzToErb (s [w]);
-} break; case ERB_TO_HERTZ_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : NUMerbToHertz (s [w]);
-/********** Functions of 2 variables: **********/
-} break; case ARCTAN2_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : atan2 (s [w], s [w + 1]);
-} break; case RANDOM_UNIFORM_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMrandomUniform (s [w], s [w + 1]);
-} break; case RANDOM_INTEGER_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMrandomInteger (s [w], s [w + 1]);
-} break; case RANDOM_GAUSS_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMrandomGauss (s [w], s [w + 1]);
-} break; case CHI_SQUARE_P_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMchiSquareP (s [w], s [w + 1]);
-} break; case CHI_SQUARE_Q_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMchiSquareQ (s [w], s [w + 1]);
-} break; case INV_CHI_SQUARE_Q_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMinvChiSquareQ (s [w], s [w + 1]);
-} break; case STUDENT_P_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMstudentP (s [w], s [w + 1]);
-} break; case STUDENT_Q_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMstudentQ (s [w], s [w + 1]);
-} break; case INV_STUDENT_Q_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMinvStudentQ (s [w], s [w + 1]);
-} break; case BETA_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMbeta (s [w], s [w + 1]);
-} break; case BESSEL_I_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMbesselI (s [w], s [w + 1]);
-} break; case BESSEL_K_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMbesselK (s [w], s [w + 1]);
-} break; case SOUND_PRESSURE_TO_PHON_: {
-	-- w; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined ? NUMundefined : NUMsoundPressureToPhon (s [w], s [w + 1]);
-/********** Functions of 3 variables: **********/
-} break; case FISHER_P_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMfisherP (s [w], s [w + 1], s [w + 2]);
-} break; case FISHER_Q_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMfisherQ (s [w], s [w + 1], s [w + 2]);
-} break; case INV_FISHER_Q_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMinvFisherQ (s [w], s [w + 1], s [w + 2]);
-} break; case BINOMIAL_P_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMbinomialP (s [w], s [w + 1], s [w + 2]);
-} break; case BINOMIAL_Q_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMbinomialQ (s [w], s [w + 1], s [w + 2]);
-} break; case INV_BINOMIAL_P_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMinvBinomialP (s [w], s [w + 1], s [w + 2]);
-} break; case INV_BINOMIAL_Q_: {
-	w -= 2; s [w] = s [w] == NUMundefined || s [w + 1] == NUMundefined || s [w + 2] == NUMundefined ? NUMundefined : NUMinvBinomialQ (s [w], s [w + 1], s [w + 2]);
-/********** Functions of a variable number of variables: **********/
-} break; case MIN_: {
-	int n = s [w --], j;
-	double minimum;
-	Melder_assert (n >= 1);
-	minimum = s [w --];
-	for (j = n - 1; j > 0; j --) {
-		double value = s [w --];
-		minimum = minimum == NUMundefined || value == NUMundefined ? NUMundefined : minimum < value ? minimum : value;
-	}
-	s [++ w] = minimum;
-} break; case MAX_: {
-	int n = s [w --], j;
-	double maximum;
-	Melder_assert (n >= 1);
-	maximum = s [w --];
-	for (j = n - 1; j > 0; j --) {
-		double value = s [w --];
-		maximum = maximum == NUMundefined || value == NUMundefined ? NUMundefined : maximum > value ? maximum : value;
-	}
-	s [++ w] = maximum;
-} break; case IMIN_: {
-	int n = s [w --], j;
-	double imin = n, minimum;
-	Melder_assert (n >= 1);
-	minimum = s [w --];
-	for (j = n - 1; j > 0; j --) {
-		double value = s [w --];
-		if (minimum == NUMundefined || value == NUMundefined) {
-			minimum = NUMundefined;
-			imin = NUMundefined;
-		} else if (value < minimum) {
-			minimum = value;
-			imin = j;
-		}
-	}
-	s [++ w] = imin;
-} break; case IMAX_: {
-	int n = s [w --], j;
-	double imax = n, maximum;
-	Melder_assert (n >= 1);
-	maximum = s [w --];
-	for (j = n - 1; j > 0; j --) {
-		double value = s [w --];
-		if (maximum == NUMundefined || value == NUMundefined) {
-			maximum = NUMundefined;
-			imax = NUMundefined;
-		} else if (value > maximum) {
-			maximum = value;
-			imax = j;
-		}
-	}
-	s [++ w] = imax;
-/********** String functions: **********/
-} break; case LENGTH_: {
-	s [++ w] = strlen (ss [sw]);
-	Melder_free (ss [sw]);
-	-- sw;
-} break; case FILE_READABLE_: {
-	structMelderFile file;
-	Melder_relativePathToFile (ss [sw], & file); cherror
-	s [++ w] = MelderFile_readable (& file); Melder_free (ss [sw]);
-	-- sw;
-} break; case DATESTR_: {
-	time_t today = time (NULL);
-	char *newline;
-	++ sw;
-	Melder_free (ss [sw]);
-	ss [sw] = Melder_strdup (ctime (& today));
-	newline = strchr (ss [sw], '\n');
-	if (newline) *newline = '\0';
-} break; case LEFTSTR_: {
-	long length = strlen (ss [sw]), newlength = s [w --];
-	if (newlength < length) {
-		if (newlength < 0) newlength = 0;
-		ss [sw] [newlength] = '\0';   /* Truncate in place. */
-	}
-} break; case RIGHTSTR_: {
-	long length = strlen (ss [sw]), newlength = s [w --];
-	if (newlength < length) {
+static int programPointer;
+
+typedef struct Stackel {
+	#define Stackel_NUMBER  0
+	#define Stackel_STRING  1
+	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
+	union {
+		double number;
 		char *string;
-		if (newlength < 0) newlength = 0;
-		string = Melder_strdup (ss [sw] + length - newlength); cherror
-		Melder_free (ss [sw]);
-		ss [sw] = string;
+	} content;
+} Stackel;
+
+static void Stackel_cleanUp (Stackel *me) {
+	if (my which == Stackel_STRING) {
+		Melder_free (my content.string);
 	}
-} break; case MIDSTR_: {
-	long length = strlen (ss [sw]), newlength = s [w --], start = s [w --], finish = start + newlength - 1;
-	char *string;
-	if (start < 1) start = 1;
-	if (finish > length) finish = length;
-	newlength = finish - start + 1;
-	if (newlength > 0) {
-		string = Melder_malloc (newlength + 1); cherror
-		strncpy (string, ss [sw] + start - 1, newlength);
-		string [newlength] = '\0';
+}
+static Stackel *theStack;
+static int w, wmax;   /* w = stack pointer; */
+#define pop  theStack [w --]
+static void pushNumber (double x) {
+	Stackel *stackel = & theStack [++ w];
+	if (stackel -> which > 0) Stackel_cleanUp (stackel); if (w > wmax) wmax ++;
+	stackel -> which = Stackel_NUMBER; stackel -> content.number = x;
+}
+static void pushString (char *x) {
+	Stackel *stackel = & theStack [++ w];
+	if (stackel -> which > 0) Stackel_cleanUp (stackel); if (w > wmax) wmax ++;
+	stackel -> which = Stackel_STRING; stackel -> content.string = x;
+}
+static char *Stackel_whichText (Stackel *me) {
+	return
+		my which == Stackel_NUMBER ? "a number" :
+		my which == Stackel_STRING ? "a string" :
+		"???";
+}
+
+static void do_not (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : x.content.number == 0.0 ? 1.0 : 0.0);
 	} else {
-		string = Melder_strdup (""); cherror
+		Melder_error ("Cannot negate (\"not\") %s.", Stackel_whichText (& x)); goto end;
 	}
-	Melder_free (ss [sw]);
-	ss [sw] = string;
-} break; case ENVIRONMENT_: {
-	char *env = Melder_getenv (ss [sw]);
-	char *string = Melder_strdup (env != NULL ? env : "");
-	Melder_free (ss [sw]);
-	ss [sw] = string;
-} break; case INDEX_: {
-	char *substring = strstr (ss [sw - 1], ss [sw]);
-	s [++ w] = substring ? substring - ss [sw - 1] + 1 : 0;
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case RINDEX_: {
-	char *string = ss [sw - 1], *lastSubstring = strstr (string, ss [sw]);
-	if (ss [sw] [0] == '\0') {
-		s [++ w] = strlen (string);
-	} else if (lastSubstring) {
-		for (;;) {
-			char *substring = strstr (lastSubstring + 1, ss [sw]);
-			if (substring == NULL) break;
-			lastSubstring = substring;
-		}
-		s [++ w] = lastSubstring - string + 1;
+end: return;
+}
+static void do_eq (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == y.content.number ? 1.0 : 0.0);   /* Even if undefined. */
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strequ (x.content.string, y.content.string) ? 1.0 : 0.0;
+		pushNumber (result);
 	} else {
-		s [++ w] = 0;
+		Melder_error ("Cannot compare (=) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
 	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case STARTS_WITH_: {
-	char *criterion, *value;
-	criterion = ss [sw], ss [sw] = NULL, sw --;
-	value = ss [sw], ss [sw] = NULL, sw --;
-	pushNumber (Melder_stringMatchesCriterion  (value, Melder_STRING_STARTS_WITH, criterion));
-	Melder_free (value);
-	Melder_free (criterion);
-} break; case ENDS_WITH_: {
-	s [++ w] = Melder_stringMatchesCriterion  (ss [sw - 1], Melder_STRING_ENDS_WITH, ss [sw]);
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case INDEX_REGEX_: {
-	char *place = NULL, *errorMessage;
-	regexp *compiled_regexp = CompileRE (ss [sw], & errorMessage, 0);
-	if (compiled_regexp == NULL) {
-		s [++ w] = NUMundefined;
-	} else if (ExecRE (compiled_regexp, NULL, ss [sw - 1], NULL, FALSE, '\0', '\0', NULL)) {
-		char *place = compiled_regexp -> startp [0];
-		free (compiled_regexp);
-		s [++ w] = (place - ss [sw - 1]) + 1;
+end: return;
+}
+static void do_ne (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number != y.content.number ? 1.0 : 0.0);   /* Even if undefined. */
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strequ (x.content.string, y.content.string) ? 0.0 : 1.0;
+		pushNumber (result);
 	} else {
-		s [++ w] = FALSE;
+		Melder_error ("Cannot compare (<>) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
 	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case RINDEX_REGEX_: {
-	char *place = NULL, *errorMessage;
-	regexp *compiled_regexp = CompileRE (ss [sw], & errorMessage, 0);
-	if (compiled_regexp == NULL) {
-		s [++ w] = NUMundefined;
-	} else if (ExecRE (compiled_regexp, NULL, ss [sw - 1], NULL, TRUE, '\0', '\0', NULL)) {
-		char *place = compiled_regexp -> startp [0];
-		free (compiled_regexp);
-		s [++ w] = (place - ss [sw - 1]) + 1;
+end: return;
+}
+static void do_le (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number <= y.content.number ? 1.0 : 0.0);
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strcmp (x.content.string, y.content.string) <= 0 ? 1.0 : 0.0;
+		pushNumber (result);
 	} else {
-		s [++ w] = FALSE;
+		Melder_error ("Cannot compare (<=) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
 	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case EXTRACT_NUMBER_: {
-	char *string = ss [sw - 1], *substring = strstr (string, ss [sw]);
-	if (substring == NULL) {
-		s [++ w] = NUMundefined;
+end: return;
+}
+static void do_lt (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number < y.content.number ? 1.0 : 0.0);
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strcmp (x.content.string, y.content.string) < 0 ? 1.0 : 0.0;
+		pushNumber (result);
 	} else {
-		substring += strlen (ss [sw]);
-		/* Skip white space. */
-		while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
-		if (substring [0] == '\0' || strnequ (substring, "--undefined--", 13)) {
-			s [++ w] = NUMundefined;
+		Melder_error ("Cannot compare (<) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_ge (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number >= y.content.number ? 1.0 : 0.0);
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strcmp (x.content.string, y.content.string) >= 0 ? 1.0 : 0.0;
+		pushNumber (result);
+	} else {
+		Melder_error ("Cannot compare (>=) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_gt (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number > y.content.number ? 1.0 : 0.0);
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		double result = strcmp (x.content.string, y.content.string) > 0 ? 1.0 : 0.0;
+		pushNumber (result);
+	} else {
+		Melder_error ("Cannot compare (>) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_add (void) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number + y.content.number);
+	} else if (x.which == Stackel_STRING && y.which == Stackel_STRING) {
+		long length1 = strlen (x.content.string), length2 = strlen (y.content.string);
+		char *result = Melder_malloc (length1 + length2 + 1); cherror
+		strcpy (result, x.content.string);
+		strcpy (result + length1, y.content.string);
+		pushString (result);
+	} else {
+		Melder_error ("Cannot add (+) %s to %s.", Stackel_whichText (& y), Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_sub (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number - y.content.number);
+	} else if (x. which == Stackel_STRING && y. which == Stackel_STRING) {
+		long length1 = strlen (x.content.string), length2 = strlen (y.content.string), newlength = length1 - length2;
+		char *result;
+		if (newlength >= 0 && strnequ (x.content.string + newlength, y.content.string, length2)) {
+			result = Melder_malloc (newlength + 1); cherror
+			strncpy (result, x.content.string, newlength);
+			result [newlength] = '\0';
 		} else {
-			char buffer [101], *slash;
-			int i;
-			for (i = 0; i < 100; i ++) {
-				buffer [i] = *substring;
-				substring ++;
-				if (*substring == '\0' || *substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') break;
+			result = Melder_strdup (x.content.string); cherror
+		}
+		pushString (result);
+	} else {
+		Melder_error ("Cannot subtract (-) %s from %s.", Stackel_whichText (& y), Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_mul (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			x.content.number * y.content.number);
+	} else {
+		Melder_error ("Cannot multiply (*) %s by %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_rdiv (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			y.content.number == 0.0 ? NUMundefined :
+			x.content.number / y.content.number);
+	} else {
+		Melder_error ("Cannot divide (/) %s by %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_idiv (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			y.content.number == 0.0 ? NUMundefined :
+			floor (x.content.number / y.content.number));
+	} else {
+		Melder_error ("Cannot divide (\"div\") %s by %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_mod (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			y.content.number == 0.0 ? NUMundefined :
+			x.content.number - floor (x.content.number / y.content.number) * y.content.number);
+	} else {
+		Melder_error ("Cannot divide (\"mod\") %s by %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_minus (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : - x.content.number);
+	} else {
+		Melder_error ("Cannot take the opposite (-) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_power (void) {
+	Stackel y = pop, x = pop;
+	if (x. which == Stackel_NUMBER && y. which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			pow (x.content.number, y.content.number));
+	} else {
+		Melder_error ("Cannot exponentiate (^) %s to %s.", Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_sqr (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : x.content.number * x.content.number);
+	} else {
+		Melder_error ("Cannot take the square (^ 2) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_function_n_n (double (*f) (double)) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : f (x.content.number));
+	} else {
+		Melder_error ("The function %s requires a numeric argument, not %s.",
+			Formula_instructionNames [parse [programPointer]. symbol], Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_abs (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : fabs (x.content.number));
+	} else {
+		Melder_error ("Cannot take the absolute value (abs) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_round (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : floor (x.content.number + 0.5));
+	} else {
+		Melder_error ("Cannot round %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_floor (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : floor (x.content.number));
+	} else {
+		Melder_error ("Cannot round down (floor) %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_ceiling (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : ceil (x.content.number));
+	} else {
+		Melder_error ("Cannot round up (ceiling) %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_sqrt (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			x.content.number < 0.0 ? NUMundefined : sqrt (x.content.number));
+	} else {
+		Melder_error ("Cannot take the square root (sqrt) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_sin (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : sin (x.content.number));
+	} else {
+		Melder_error ("Cannot take the sine (sin) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_cos (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : cos (x.content.number));
+	} else {
+		Melder_error ("Cannot take the cosine (cos) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_tan (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : tan (x.content.number));
+	} else {
+		Melder_error ("Cannot take the tangent (tan) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_arcsin (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			fabs (x.content.number) > 1.0 ? NUMundefined : asin (x.content.number));
+	} else {
+		Melder_error ("Cannot take the arcsine (arcsin) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_arccos (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			fabs (x.content.number) > 1.0 ? NUMundefined : acos (x.content.number));
+	} else {
+		Melder_error ("Cannot take the arccosine (arccos) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_arctan (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : atan (x.content.number));
+	} else {
+		Melder_error ("Cannot take the arctangent (arctan) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_exp (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : exp (x.content.number));
+	} else {
+		Melder_error ("Cannot exponentiate (exp) %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_sinh (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : sinh (x.content.number));
+	} else {
+		Melder_error ("Cannot take the hyperbolic sine (sinh) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_cosh (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : cosh (x.content.number));
+	} else {
+		Melder_error ("Cannot take the hyperbolic cosine (cosh) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_tanh (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined : tanh (x.content.number));
+	} else {
+		Melder_error ("Cannot take the hyperbolic tangent (tanh) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_log2 (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			x.content.number <= 0.0 ? NUMundefined : log (x.content.number) * NUMlog2e);
+	} else {
+		Melder_error ("Cannot take the base-2 logarithm (log2) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_ln (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			x.content.number <= 0.0 ? NUMundefined : log (x.content.number));
+	} else {
+		Melder_error ("Cannot take the natural logarithm (ln) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_log10 (void) {
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined ? NUMundefined :
+			x.content.number <= 0.0 ? NUMundefined : log10 (x.content.number));
+	} else {
+		Melder_error ("Cannot take the base-10 logarithm (log10) of %s.", Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_function_dd_d (double (*f) (double, double)) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number));
+	} else {
+		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_function_dl_d (double (*f) (double, long)) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number));
+	} else {
+		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_function_ld_d (double (*f) (long, double)) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number));
+	} else {
+		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_function_ll_l (long (*f) (long, long)) {
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number));
+	} else {
+		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y)); goto end;
+	}
+end: return;
+}
+static void do_function_ddd_d (double (*f) (double, double, double)) {
+	Stackel z = pop, y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER && z.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined || z.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number, z.content.number));
+	} else {
+		Melder_error ("The function %s requires three numeric arguments, not %s, %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y), Stackel_whichText (& z)); goto end;
+	}
+end: return;
+}
+static void do_function_dll_d (double (*f) (double, long, long)) {
+	Stackel z = pop, y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER && z.which == Stackel_NUMBER) {
+		pushNumber (x.content.number == NUMundefined || y.content.number == NUMundefined || z.content.number == NUMundefined ? NUMundefined :
+			f (x.content.number, y.content.number, z.content.number));
+	} else {
+		Melder_error ("The function %s requires three numeric arguments, not %s, %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& x), Stackel_whichText (& y), Stackel_whichText (& z)); goto end;
+	}
+end: return;
+}
+static void do_min (void) {
+	Stackel n = pop, last;
+	double result;
+	int j;
+	Melder_assert (n.which == Stackel_NUMBER);
+	if (n.content.number < 1) {
+		Melder_error ("The function \"min\" requires at least one argument."); goto end;
+	}
+	last = pop;
+	if (last.which != Stackel_NUMBER) {
+		Melder_error ("The function \"min\" can only have numeric arguments, not %s.", Stackel_whichText (& last)); goto end;
+	}
+	result = last.content.number;
+	for (j = n.content.number - 1; j > 0; j --) {
+		Stackel previous = pop;
+		if (previous.which != Stackel_NUMBER) {
+			Melder_error ("The function \"min\" can only have numeric arguments, not %s.", Stackel_whichText (& previous)); goto end;
+		}
+		result = result == NUMundefined || previous.content.number == NUMundefined ? NUMundefined :
+			result < previous.content.number ? result : previous.content.number;
+	}
+	pushNumber (result);
+end: return;
+}
+static void do_max (void) {
+	Stackel n = pop, last;
+	double result;
+	int j;
+	Melder_assert (n.which == Stackel_NUMBER);
+	if (n.content.number < 1) {
+		Melder_error ("The function \"max\" requires at least one argument."); goto end;
+	}
+	last = pop;
+	if (last.which != Stackel_NUMBER) {
+		Melder_error ("The function \"max\" can only have numeric arguments, not %s.", Stackel_whichText (& last)); goto end;
+	}
+	result = last.content.number;
+	for (j = n.content.number - 1; j > 0; j --) {
+		Stackel previous = pop;
+		if (previous.which != Stackel_NUMBER) {
+			Melder_error ("The function \"max\" can only have numeric arguments, not %s.", Stackel_whichText (& previous)); goto end;
+		}
+		result = result == NUMundefined || previous.content.number == NUMundefined ? NUMundefined :
+			result > previous.content.number ? result : previous.content.number;
+	}
+	pushNumber (result);
+end: return;
+}
+static void do_imin (void) {
+	Stackel n = pop, last;
+	double minimum, result;
+	int j;
+	Melder_assert (n.which == Stackel_NUMBER);
+	if (n.content.number < 1) {
+		Melder_error ("The function \"imin\" requires at least one argument."); goto end;
+	}
+	last = pop;
+	if (last.which != Stackel_NUMBER) {
+		Melder_error ("The function \"imin\" can only have numeric arguments, not %s.", Stackel_whichText (& last)); goto end;
+	}
+	minimum = last.content.number;
+	result = n.content.number;
+	for (j = n.content.number - 1; j > 0; j --) {
+		Stackel previous = pop;
+		if (previous.which != Stackel_NUMBER) {
+			Melder_error ("The function \"imin\" can only have numeric arguments, not %s.", Stackel_whichText (& previous)); goto end;
+		}
+		if (minimum == NUMundefined || previous.content.number == NUMundefined) {
+			minimum = NUMundefined;
+			result = NUMundefined;
+		} else if (previous.content.number < minimum) {
+			minimum = previous.content.number;
+			result = j;
+		}
+	}
+	pushNumber (result);
+end: return;
+}
+static void do_imax (void) {
+	Stackel n = pop, last;
+	double maximum, result;
+	int j;
+	Melder_assert (n.which == Stackel_NUMBER);
+	if (n.content.number < 1) {
+		Melder_error ("The function \"imax\" requires at least one argument."); goto end;
+	}
+	last = pop;
+	if (last.which != Stackel_NUMBER) {
+		Melder_error ("The function \"imax\" can only have numeric arguments, not %s.", Stackel_whichText (& last)); goto end;
+	}
+	maximum = last.content.number;
+	result = n.content.number;
+	for (j = n.content.number - 1; j > 0; j --) {
+		Stackel previous = pop;
+		if (previous.which != Stackel_NUMBER) {
+			Melder_error ("The function \"imax\" can only have numeric arguments, not %s.", Stackel_whichText (& previous)); goto end;
+		}
+		if (maximum == NUMundefined || previous.content.number == NUMundefined) {
+			maximum = NUMundefined;
+			result = NUMundefined;
+		} else if (previous.content.number > maximum) {
+			maximum = previous.content.number;
+			result = j;
+		}
+	}
+	pushNumber (result);
+end: return;
+}
+static void do_length (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		double result = strlen (s.content.string);
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"length\" requires a string, not %s.", Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_fileReadable (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		structMelderFile file;
+		Melder_relativePathToFile (s.content.string, & file); cherror
+		pushNumber (MelderFile_readable (& file));
+	} else {
+		Melder_error ("The function \"fileReadable\" requires a string, not %s.", Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_dateStr (void) {
+	time_t today = time (NULL);
+	char *date, *newline;
+	date = Melder_strdup (ctime (& today)); cherror
+	newline = strchr (date, '\n');
+	if (newline) *newline = '\0';
+	pushString (date);
+end: return;
+}
+static void do_leftStr (void) {
+	Stackel x = pop, s = pop;
+	if (s.which == Stackel_STRING && x.which == Stackel_NUMBER) {
+		long newlength = x.content.number;
+		char *result;
+		long length = strlen (s.content.string);
+		if (newlength < 0) newlength = 0;
+		if (newlength > length) newlength = length;
+		result = Melder_malloc (newlength + 1); cherror
+		strncpy (result, s.content.string, newlength);
+		result [newlength] = '\0';
+		pushString (result);
+	} else {
+		Melder_error ("The function \"left$\" requires a string and a number."); goto end;
+	}
+end: return;
+}
+static void do_rightStr (void) {
+	Stackel x = pop, s = pop;
+	if (s.which == Stackel_STRING && x.which == Stackel_NUMBER) {
+		long newlength = x.content.number;
+		char *result;
+		long length = strlen (s.content.string);
+		if (newlength < 0) newlength = 0;
+		if (newlength > length) newlength = length;
+		result = Melder_strdup (s.content.string + length - newlength); cherror
+		pushString (result);
+	} else {
+		Melder_error ("The function \"right$\" requires a string and a number."); goto end;
+	}
+end: return;
+}
+static void do_midStr (void) {
+	Stackel y = pop, x = pop, s = pop;
+	if (s.which == Stackel_STRING && x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		long newlength = y.content.number;
+		long start = x.content.number;
+		long length = strlen (s.content.string), finish = start + newlength - 1;
+		char *result;
+		if (start < 1) start = 1;
+		if (finish > length) finish = length;
+		newlength = finish - start + 1;
+		if (newlength > 0) {
+			result = Melder_malloc (newlength + 1); cherror
+			strncpy (result, s.content.string + start - 1, newlength);
+			result [newlength] = '\0';
+		} else {
+			result = Melder_strdup (""); cherror
+		}
+		pushString (result);
+	} else {
+		Melder_error ("The function \"mid$\" requires a string and two numbers."); goto end;
+	}
+end: return;
+}
+static void do_environmentStr (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		char *value = Melder_getenv (s.content.string);
+		char *result = Melder_strdup (value != NULL ? value : ""); cherror
+		pushString (result);
+	} else {
+		Melder_error ("The function \"environment$\" requires a string, not %s.", Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_index (void) {
+	Stackel t = pop, s = pop;
+	if (s.which == Stackel_STRING && t.which == Stackel_STRING) {
+		char *substring = strstr (s.content.string, t.content.string);
+		long result = substring ? substring - s.content.string + 1 : 0;
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"index\" requires two strings, not %s and %s.",
+			Stackel_whichText (& s), Stackel_whichText (& t)); goto end;
+	}
+end: return;
+}
+static void do_rindex (void) {
+	Stackel part = pop, whole = pop;
+	if (whole.which == Stackel_STRING && part.which == Stackel_STRING) {
+		char *lastSubstring = strstr (whole.content.string, part.content.string);
+		if (part.content.string [0] == '\0') {
+			long result = strlen (whole.content.string);
+			pushNumber (result);
+		} else if (lastSubstring) {
+			for (;;) {
+				char *substring = strstr (lastSubstring + 1, part.content.string);
+				if (substring == NULL) break;
+				lastSubstring = substring;
 			}
-			if (i >= 100) {
-				buffer [100] = '\0';
-				s [++ w] = Melder_atof (buffer);
+			pushNumber (lastSubstring - whole.content.string + 1);
+		} else {
+			pushNumber (0);
+		}
+	} else {
+		Melder_error ("The function \"rindex\" requires two strings, not %s and %s.",
+			Stackel_whichText (& whole), Stackel_whichText (& part)); goto end;
+	}
+end: return;
+}
+static void do_stringMatchesCriterion (int criterion) {
+	Stackel t = pop, s = pop;
+	if (s.which == Stackel_STRING && t.which == Stackel_STRING) {
+		int result = Melder_stringMatchesCriterion (s.content.string, criterion, t.content.string);
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& s), Stackel_whichText (& t)); goto end;
+	}
+end: return;
+}
+static void do_index_regex (int backward) {
+	Stackel t = pop, s = pop;
+	if (s.which == Stackel_STRING && t.which == Stackel_STRING) {
+		char *place = NULL, *errorMessage;
+		regexp *compiled_regexp = CompileRE (t.content.string, & errorMessage, 0);
+		if (compiled_regexp == NULL) {
+			pushNumber (NUMundefined);
+		} else if (ExecRE (compiled_regexp, NULL, s.content.string, NULL, backward, '\0', '\0', NULL)) {
+			char *place = compiled_regexp -> startp [0];
+			free (compiled_regexp);
+			pushNumber ((place - s.content.string) + 1);
+		} else {
+			pushNumber (FALSE);
+		}
+	} else {
+		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& s), Stackel_whichText (& t)); goto end;
+	}
+end: return;
+}
+static void do_extractNumber (void) {
+	Stackel t = pop, s = pop;
+	if (s.which == Stackel_STRING && t.which == Stackel_STRING) {
+		char *substring = strstr (s.content.string, t.content.string);
+		if (substring == NULL) {
+			pushNumber (NUMundefined);
+		} else {
+			/* Skip the prompt. */
+			substring += strlen (t.content.string);
+			/* Skip white space. */
+			while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
+			if (substring [0] == '\0' || strnequ (substring, "--undefined--", 13)) {
+				pushNumber (NUMundefined);
 			} else {
-				buffer [i + 1] = '\0';
-				slash = strchr (buffer, '/');
-				if (slash) {
-					double numerator, denominator;
-					*slash = '\0';
-					numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
-					s [++ w] = numerator / denominator;
+				char buffer [101], *slash;
+				int i;
+				for (i = 0; i < 100; i ++) {
+					buffer [i] = *substring;
+					substring ++;
+					if (*substring == '\0' || *substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') break;
+				}
+				if (i >= 100) {
+					buffer [100] = '\0';
+					pushNumber (Melder_atof (buffer));
 				} else {
-					s [++ w] = Melder_atof (buffer);
+					buffer [i + 1] = '\0';
+					slash = strchr (buffer, '/');
+					if (slash) {
+						double numerator, denominator;
+						*slash = '\0';
+						numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
+						pushNumber (numerator / denominator);
+					} else {
+						pushNumber (Melder_atof (buffer));
+					}
 				}
 			}
 		}
-	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 2;
-} break; case EXTRACT_WORD_: {
-	char *string = ss [sw - 1], *substring = strstr (string, ss [sw]), *target, *p;
-	if (substring == NULL) {
-		target = Melder_strdup (""); cherror
 	} else {
-		long length;
-		substring += strlen (ss [sw]);
-		/* Skip white space. */
-		while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
-		p = substring;
-		/* Proceed until next white space. */
-		while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '\n' && *p != '\r') p ++;
-		length = p - substring;
-		target = Melder_malloc (length + 1); cherror
-		strncpy (target, substring, length);
-		target [length] = '\0';
+		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& s), Stackel_whichText (& t)); goto end;
 	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 1;
-	ss [sw] = target;
-} break; case EXTRACT_LINE_: {
-	char *string = ss [sw - 1], *substring = strstr (string, ss [sw]), *target, *p;
-	if (substring == NULL) {
-		target = Melder_strdup (""); cherror
+end: return;
+}
+static void do_extractTextStr (int singleWord) {
+	Stackel t = pop, s = pop;
+	if (s.which == Stackel_STRING && t.which == Stackel_STRING) {
+		char *substring = strstr (s.content.string, t.content.string), *result, *p;
+		if (substring == NULL) {
+			result = Melder_strdup (""); cherror
+		} else {
+			long length;
+			/* Skip the prompt. */
+			substring += strlen (t.content.string);
+			if (singleWord) {
+				/* Skip white space. */
+				while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
+			}
+			p = substring;
+			if (singleWord) {
+				/* Proceed until next white space. */
+				while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '\n' && *p != '\r') p ++;
+			} else {
+				/* Proceed until end of line. */
+				while (*p != '\0' && *p != '\n' && *p != '\r') p ++;
+			}
+			length = p - substring;
+			result = Melder_malloc (length + 1); cherror
+			strncpy (result, substring, length);
+			result [length] = '\0';
+		}
+		pushString (result);
 	} else {
-		long length;
-		substring += strlen (ss [sw]);
-		/* Don't skip white space. */
-		p = substring;
-		/* Proceed until end of line. */
-		while (*p != '\0' && *p != '\n' && *p != '\r') p ++;
-		length = p - substring;
-		target = Melder_malloc (length + 1); cherror
-		strncpy (target, substring, length);
-		target [length] = '\0';
+		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
+			Formula_instructionNames [parse [programPointer]. symbol],
+			Stackel_whichText (& s), Stackel_whichText (& t)); goto end;
 	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	sw -= 1;
-	ss [sw] = target;
-} break; case SELECTED_: {
-	void *klas = Thing_classFromClassName (ss [sw]); cherror
-	s [++ w] = praat_getIdOfSelected (klas, 0); cherror
-	Melder_free (ss [sw]); -- sw;
-} break; case SELECTEDSTR_: {
-	char *name;
-	void *klas = Thing_classFromClassName (ss [sw]); cherror
-	name = praat_getNameOfSelected (klas, 0); cherror
-	Melder_free (ss [sw]);
-	ss [sw] = Melder_strdup (name); cherror
-} break; case NUMBER_OF_SELECTED_: {
-	void *klas = Thing_classFromClassName (ss [sw]); cherror
-	s [++ w] = praat_selection (klas); Melder_free (ss [sw]); -- sw;
-} break; case FIXED_: {
-	double precision = s [w --];
-	double value = s [w --];
-	ss [++ sw] = Melder_strdup (Melder_fixed (value, precision));
-} break; case PERCENT_: {
-	double precision = s [w --];
-	double value = s [w --];
-	ss [++ sw] = Melder_strdup (Melder_percent (value, precision));
-/********** **********/
-} break; case TRUE_: {
-	s [++ w] = 1.0;
-} break; case FALSE_: {
-	s [++ w] = 0.0;
-/* Possible compiler BUG: many compilers cannot handle the following assignment. */
-/* Those compilers have trouble with praat's AND and OR. */
-} break; case IFTRUE_: {
-	if (s [w --] != 0.0) i = f [i]. content.label - theOptimize;
-} break; case IFFALSE_: {
-	if (s [w --] == 0.0) i = f [i]. content.label - theOptimize;
-} break; case GOTO_: {
-	i = f [i]. content.label - theOptimize;
-/* Possible compiler BUG: CodeWarrior 5.3 for Windows cannot handle a simple "break" here. */
-/* It has trouble with praat's AND and OR. */
-} break; case LABEL_: {
-	s[w+1]=2.0;   /* Dummy assignment. */
-} break; case SELF0_: {
+end: return;
+}
+static void do_selected (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		long result;
+		void *klas = Thing_classFromClassName (s.content.string); cherror
+		result = praat_getIdOfSelected (klas, 0); cherror
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"selected\" requires a string (an object type name), not %s.",
+			Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_selected2 (void) {
+	Stackel x = pop, s = pop;
+	if (s.which == Stackel_STRING && x.which == Stackel_NUMBER) {
+		long result;
+		void *klas = Thing_classFromClassName (s.content.string); cherror
+		result = praat_getIdOfSelected (klas, x.content.number); cherror
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"selected\" requires a string (an object type name) and a number, not %s and %s.",
+			Stackel_whichText (& s), Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_selectedStr (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		char *name, *result;
+		void *klas = Thing_classFromClassName (s.content.string); cherror
+		name = praat_getNameOfSelected (klas, 0); cherror
+		result = Melder_strdup (name); cherror
+		pushString (result);
+	} else {
+		Melder_error ("The function \"selected$\" requires a string (an object type name), not %s.",
+			Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_selectedStr2 (void) {
+	Stackel x = pop, s = pop;
+	if (s.which == Stackel_STRING && x.which == Stackel_NUMBER) {
+		char *name, *result;
+		void *klas = Thing_classFromClassName (s.content.string); cherror
+		name = praat_getNameOfSelected (klas, x.content.number); cherror
+		result = Melder_strdup (name); cherror
+		pushString (result);
+	} else {
+		Melder_error ("The function \"selected$\" requires a string (an object type name) and a number, not %s and %s.",
+			Stackel_whichText (& s), Stackel_whichText (& x)); goto end;
+	}
+end: return;
+}
+static void do_numberOfSelected (void) {
+	Stackel s = pop;
+	if (s.which == Stackel_STRING) {
+		long result;
+		void *klas = Thing_classFromClassName (s.content.string); cherror
+		result = praat_selection (klas);
+		pushNumber (result);
+	} else {
+		Melder_error ("The function \"numberOfSelected\" requires a string (an object type name), not %s.",
+			Stackel_whichText (& s)); goto end;
+	}
+end: return;
+}
+static void do_fixedStr (void) {
+	Stackel precision = pop, value = pop;
+	if (value.which == Stackel_NUMBER && precision.which == Stackel_NUMBER) {
+		char *result = Melder_strdup (Melder_fixed (value.content.number, precision.content.number));
+		pushString (result);
+	} else {
+		Melder_error ("The function \"fixed$\" requires two numbers, not %s and %s.",
+			Stackel_whichText (& value), Stackel_whichText (& precision)); goto end;
+	}
+end: return;
+}
+static void do_percentStr (void) {
+	Stackel precision = pop, value = pop;
+	if (value.which == Stackel_NUMBER && precision.which == Stackel_NUMBER) {
+		char *result = Melder_strdup (Melder_percent (value.content.number, precision.content.number));
+		pushString (result);
+	} else {
+		Melder_error ("The function \"percent$\" requires two numbers, not %s and %s.",
+			Stackel_whichText (& value), Stackel_whichText (& precision)); goto end;
+	}
+end: return;
+}
+static long Stackel_getRowNumber (Stackel *row, Data thee) {
+	long result;
+	if (row->which == Stackel_NUMBER) {
+		result = floor (row->content.number + 0.5);   /* Round. */
+	} else if (row->which == Stackel_STRING) {
+		if (your getRowIndex == NULL)
+			return Melder_error ("Objects of type %s do not have row labels, so row indexes have to be numbers.", Thing_className (thee));
+		result = your getRowIndex (thee, row->content.string);
+		if (result == 0)
+			return Melder_error ("Object \"%s\" has no row labelled \"%s\".", thy name, row->content.string);
+	} else {
+		return Melder_error ("A row index should be a number or a string, not a %s.", Stackel_whichText (row));
+	}
+	return result;
+}
+static long Stackel_getColumnNumber (Stackel *column, Data thee) {
+	long result;
+	if (column->which == Stackel_NUMBER) {
+		result = floor (column->content.number + 0.5);   /* Round. */
+	} else if (column->which == Stackel_STRING) {
+		if (your getColumnIndex == NULL)
+			return Melder_error ("Objects of type %s do not have column labels, so column indexes have to be numbers.", Thing_className (thee));
+		result = your getColumnIndex (thee, column->content.string);
+		if (result == 0)
+			return Melder_error ("Object \"%s\" has no column labelled \"%s\".", thy name, column->content.string);
+	} else {
+		return Melder_error ("A column index should be a number or a string, not a %s.", Stackel_whichText (column));
+	}
+	return result;
+}
+static void do_self0 (long irow, long icol) {
+	Data me = theSource;
 	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 	if (our getCell) {
-		s [++ w] = our getCell (me);
+		pushNumber (our getCell (me));
 	} else if (our getVector) {
-		if (col == 0) {
+		if (icol == 0) {
 			Melder_error ("We are not in a loop, "
 				"hence no implicit column index for the current %s object (self).\n"
 				"Try using the [column] index explicitly.", Thing_className (me));
 			goto end;
 		} else {
-			s [++ w] = our getVector (me, col);
+			pushNumber (our getVector (me, icol));
 		}
 	} else if (our getMatrix) {
-		if (row == 0) {
-			if (col == 0) {
+		if (irow == 0) {
+			if (icol == 0) {
 				Melder_error ("We are not in a loop over rows and columns,\n"
 					"hence no implicit row and column indexing for the current %s object (self).\n"
 					"Try using both [row, column] indexes explicitly.", Thing_className (me));
@@ -2170,106 +2457,30 @@ case NUMBER_: {
 				goto end;
 			}
 		} else {
-			s [++ w] = our getMatrix (me, row, col);
+			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
 		Melder_error ("%s objects (like self) accept no [] indexing.", Thing_className (me));
 		goto end;
 	}
-} break; case SELFMATRIKS1_: {
-	long icol = floor (popNumber + 0.5);   /* Round. */
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
-	if (our getVector) {
-		pushNumber (our getVector (me, icol));
-	} else if (our getMatrix) {
-		if (row == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for the current %s object (self).\n"
-				"Try using both [row, column] indexes instead.", Thing_className (me));
-			goto end;
-		} else {
-			pushNumber (our getMatrix (me, row, icol));
-		}
-	} else {
-		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
-		goto end;
-	}
-} break; case SELFMATRIKSSTR1_: {
-	long icol = floor (popNumber + 0.5);   /* Round. */
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
-	if (our getVectorStr) {
-		pushString (Melder_strdup (our getVectorStr (me, icol)));
-	} else if (our getMatrixStr) {
-		if (row == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for the current %s object (self).\n"
-				"Try using both [row, column] indexes instead.", Thing_className (me));
-			goto end;
-		} else {
-			pushString (Melder_strdup (our getMatrixStr (me, row, icol)));
-		}
-	} else {
-		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
-		goto end;
-	}
-} break; case SELFMATRIKS2_: {
-	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
-	if (our getMatrix == NULL) {
-		Melder_error ("%s objects like \"self\" accept no [row, column] indexing.", Thing_className (me));
-		goto end;
-	}
-	pushNumber (our getMatrix (me, irow, icol));
-} break; case SELFMATRIKSSTR2_: {
-	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
-	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
-	if (our getMatrixStr == NULL) {
-		Melder_error ("%s objects like \"self$\" accept no [row, column] indexing.", Thing_className (me));
-		goto end;
-	}
-	pushString (Melder_strdup (our getMatrixStr (me, irow, icol)));
-} break; case SELFFUNKTIE1_: {
-	double x = s [w];
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
-	if (our getFunction1) {
-		s [w] = our getFunction1 (me, x);
-	} else if (our getFunction2) {
-		if (our getY == NULL) {
-			Melder_error ("The current %s object (self) accepts no implicit y values.\n"
-				"Try using both (x, y) arguments instead.", Thing_className (me));
-			goto end;
-		} else {
-			double y = our getY (me, row);
-			s [w] = our getFunction2 (me, x, y);
-		}
-	} else {
-		Melder_error ("%s objects like \"self\" accept no (x) values.", Thing_className (me));
-		goto end;
-	}
-} break; case SELFFUNKTIE2_: {
-	double y = s [w --], x = s [w];
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
-	if (our getFunction2 == NULL) {
-		Melder_error ("%s objects like \"self\" accept no (x, y) values.", Thing_className (me));
-		goto end;
-	}
-	s [w] = our getFunction2 (me, x, y);
-} break; case MATRIKS0_: {
-	Data thee = f [i]. content.object;
+end: return;
+}
+static void do_matriks0 (long irow, long icol) {
+	Data thee = parse [programPointer]. content.object;
 	if (your getCell) {
-		s [++ w] = your getCell (thee);
+		pushNumber (your getCell (thee));
 	} else if (your getVector) {
-		if (col == 0) {
+		if (icol == 0) {
 			Melder_error ("We are not in a loop,\n"
 				"hence no implicit column index for this %s object.\n"
 				"Try using the [column] index explicitly.", Thing_className (thee));
 			goto end;
 		} else {
-			s [++ w] = your getVector (thee, col);
+			pushNumber (your getVector (thee, icol));
 		}
 	} else if (your getMatrix) {
-		if (row == 0) {
-			if (col == 0) {
+		if (irow == 0) {
+			if (icol == 0) {
 				Melder_error ("We are not in a loop over rows and columns,\n"
 					"hence no implicit row and column indexing for this %s object.\n"
 					"Try using both [row, column] indexes explicitly.", Thing_className (thee));
@@ -2281,70 +2492,164 @@ case NUMBER_: {
 				goto end;
 			}
 		} else {
-			s [++ w] = your getMatrix (thee, row, col);
+			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
 		Melder_error ("%s objects accept no [] indexing.", Thing_className (thee));
 		goto end;
 	}
-} break; case MATRIKS1_: {
-	Data thee = f [i]. content.object;
-	long icol = floor (popNumber + 0.5);   /* Round. */
+end: return;
+}
+static void do_selfMatriks1 (long irow) {
+	Data me = theSource;
+	Stackel column = pop;
+	long icol;
+	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	icol = Stackel_getColumnNumber (& column, me); cherror
+	if (our getVector) {
+		pushNumber (our getVector (me, icol));
+	} else if (our getMatrix) {
+		if (irow == 0) {
+			Melder_error ("We are not in a loop,\n"
+				"hence no implicit row index for the current %s object (self).\n"
+				"Try using both [row, column] indexes instead.", Thing_className (me));
+			goto end;
+		} else {
+			pushNumber (our getMatrix (me, irow, icol));
+		}
+	} else {
+		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
+		goto end;
+	}
+end: return;
+}
+static void do_selfMatriksStr1 (long irow) {
+	Data me = theSource;
+	Stackel column = pop;
+	long icol;
+	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
+	icol = Stackel_getColumnNumber (& column, me); cherror
+	if (our getVectorStr) {
+		char *result = Melder_strdup (our getVectorStr (me, icol)); cherror
+		pushString (result);
+	} else if (our getMatrixStr) {
+		if (irow == 0) {
+			Melder_error ("We are not in a loop,\n"
+				"hence no implicit row index for the current %s object (self).\n"
+				"Try using both [row, column] indexes instead.", Thing_className (me));
+			goto end;
+		} else {
+			char *result = Melder_strdup (our getMatrixStr (me, irow, icol)); cherror
+			pushString (result);
+		}
+	} else {
+		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
+		goto end;
+	}
+end: return;
+}
+static void do_matriks1 (long irow) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel column = pop;
+	long icol = Stackel_getColumnNumber (& column, thee); cherror
 	if (your getVector) {
 		pushNumber (your getVector (thee, icol));
 	} else if (your getMatrix) {
-		if (row == 0) {
+		if (irow == 0) {
 			Melder_error ("We are not in a loop,\n"
 				"hence no implicit row index for this %s object.\n"
 				"Try using both [row, column] indexes instead.", Thing_className (thee));
 			goto end;
 		} else {
-			pushNumber (your getMatrix (thee, row, icol));
+			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
 		Melder_error ("%s objects accept no [column] indexes.", Thing_className (thee));
 		goto end;
 	}
-} break; case MATRIKSSTR1_: {
-	Data thee = f [i]. content.object;
-	long icol = floor (popNumber + 0.5);   /* Round. */
+end: return;
+}
+static void do_matrixStr1 (long irow) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel column = pop;
+	long icol = Stackel_getColumnNumber (& column, thee); cherror
 	if (your getVectorStr) {
 		pushString (Melder_strdup (your getVectorStr (thee, icol)));
 	} else if (your getMatrixStr) {
-		if (row == 0) {
+		if (irow == 0) {
 			Melder_error ("We are not in a loop,\n"
 				"hence no implicit row index for this %s object.\n"
 				"Try using both [row, column] indexes instead.", Thing_className (thee));
 			goto end;
 		} else {
-			pushString (Melder_strdup (your getMatrixStr (thee, row, icol)));
+			pushString (Melder_strdup (your getMatrixStr (thee, irow, icol)));
 		}
 	} else {
-		Melder_error ("%s objects accept no [column] indexes.", Thing_className (thee));
+		Melder_error ("%s objects accept no [column] indexes for string cells.", Thing_className (thee));
 		goto end;
 	}
-} break; case MATRIKS2_: {
-	Data thee = f [i]. content.object;
-	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
+end: return;
+}
+static void do_selfMatriks2 (void) {
+	Data me = theSource;
+	Stackel column = pop, row = pop;
+	long irow, icol;
+	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	irow = Stackel_getRowNumber (& row, me); cherror
+	icol = Stackel_getColumnNumber (& column, me); cherror
+	if (our getMatrix == NULL) {
+		Melder_error ("%s objects like \"self\" accept no [row, column] indexing.", Thing_className (me));
+		goto end;
+	}
+	pushNumber (our getMatrix (me, irow, icol));
+end: return;
+}
+static void do_selfMatriksStr2 (void) {
+	Data me = theSource;
+	Stackel column = pop, row = pop;
+	long irow, icol;
+	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
+	irow = Stackel_getRowNumber (& row, me); cherror
+	icol = Stackel_getColumnNumber (& column, me); cherror
+	if (our getMatrixStr == NULL) {
+		Melder_error ("%s objects like \"self$\" accept no [row, column] indexing for string cells.", Thing_className (me));
+		goto end;
+	}
+	pushString (Melder_strdup (our getMatrixStr (me, irow, icol)));
+end: return;
+}
+static void do_matriks2 (void) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel column = pop, row = pop;
+	long irow, icol;
+	irow = Stackel_getRowNumber (& row, thee); cherror
+	icol = Stackel_getColumnNumber (& column, thee); cherror
 	if (your getMatrix == NULL) {
 		Melder_error ("%s objects accept no [row, column] indexing.", Thing_className (thee));
 		goto end;
 	}
 	pushNumber (your getMatrix (thee, irow, icol));
-} break; case MATRIKSSTR2_: {
-	Data thee = f [i]. content.object;
-	long icol = floor (popNumber + 0.5), irow = floor (popNumber + 0.5);   /* Round. */
-	Melder_assert (thee != NULL);
+end: return;
+}
+static void do_matriksStr2 (void) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel column = pop, row = pop;
+	long irow, icol;
+	irow = Stackel_getRowNumber (& row, thee); cherror
+	icol = Stackel_getColumnNumber (& column, thee); cherror
 	if (your getMatrixStr == NULL) {
-		Melder_error ("%s objects accept no [row, column] indexing.", Thing_className (thee));
+		Melder_error ("%s objects accept no [row, column] indexing for string cells.", Thing_className (thee));
 		goto end;
 	}
 	pushString (Melder_strdup (your getMatrixStr (thee, irow, icol)));
-} break; case FUNKTIE0_: {
-	Data thee = f [i]. content.object;
+end: return;
+}
+static void do_funktie0 (long irow, long icol) {
+	Data thee = parse [programPointer]. content.object;
 	if (your getFunction0) {
-		s [++ w] = your getFunction0 (thee);
+		pushNumber (your getFunction0 (thee));
 	} else if (your getFunction1) {
+		Data me = theSource;
 		if (me == NULL) {
 			Melder_error ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x value for this %s object.\n"
@@ -2356,10 +2661,11 @@ case NUMBER_: {
 				"Try using the (x) argument explicitly.", Thing_className (me), Thing_className (thee));
 			goto end;
 		} else {
-			double x = our getX (me, col);
-			s [++ w] = your getFunction1 (thee, x);
+			double x = our getX (me, icol);
+			pushNumber (your getFunction1 (thee, x));
 		}
 	} else if (your getFunction2) {
+		Data me = theSource;
 		if (me == NULL) {
 			Melder_error ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x or y values for this %s object.\n"
@@ -2371,179 +2677,346 @@ case NUMBER_: {
 				"Try using both (x, y) arguments explicitly.", Thing_className (me), Thing_className (thee));
 			goto end;
 		} else {
-			double x = our getX (me, col);
+			double x = our getX (me, icol);
 			if (our getY == NULL) {
 				Melder_error ("The current %s object gives no implicit y values,\n"
 					"hence no implicit y value for this %s object.\n"
 					"Try using the (y) argument explicitly.", Thing_className (me), Thing_className (thee));
 				goto end;
 			} else {
-				double y = our getY (me, row);
-				s [++ w] = your getFunction2 (thee, x, y);
+				double y = our getY (me, irow);
+				pushNumber (your getFunction2 (thee, x, y));
 			}
 		}
 	} else {
 		Melder_error ("%s objects accept no () values.", Thing_className (thee));
 		goto end;
 	}
-} break; case FUNKTIE1_: {
-	Data thee = f [i]. content.object;
-	double x = s [w];
-	if (your getFunction1) {
-		s [w] = your getFunction1 (thee, x);
-	} else if (your getFunction2) {
-		if (me == NULL) {
-			Melder_error ("No current object (we are not in a Formula command),\n"
-				"hence no implicit y value for this %s object.\n"
-				"Try using both (x, y) arguments instead.", Thing_className (thee));
-			goto end;
-		} else if (our getY == NULL) {
-			Melder_error ("The current %s object gives no implicit y values,\n"
-				"hence no implicit y value for this %s object.\n"
-				"Try using both (x, y) arguments instead.", Thing_className (me), Thing_className (thee));
-			goto end;
+end: return;
+}
+static void do_selfFunktie1 (long irow) {
+	Data me = theSource;
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+		if (our getFunction1) {
+			pushNumber (our getFunction1 (me, x.content.number));
+		} else if (our getFunction2) {
+			if (our getY == NULL) {
+				Melder_error ("The current %s object (self) accepts no implicit y values.\n"
+					"Try using both (x, y) arguments instead.", Thing_className (me));
+				goto end;
+			} else {
+				double y = our getY (me, irow);
+				pushNumber (our getFunction2 (me, x.content.number, y));
+			}
 		} else {
-			double y = our getY (me, row);
-			s [w] = your getFunction2 (thee, x, y);
+			Melder_error ("%s objects like \"self\" accept no (x) values.", Thing_className (me));
+			goto end;
 		}
 	} else {
-		Melder_error ("%s objects accept no (x) values.", Thing_className (thee));
-		goto end;
+		Melder_error ("%s objects like \"self\" accept only numeric x values.", Thing_className (me));
 	}
-} break; case FUNKTIE2_: {
-	Data thee = f [i]. content.object;
-	double y = s [w --], x = s [w];
-	if (your getFunction2 == NULL) {
-		Melder_error ("%s objects accept no (x, y) values.", Thing_className (thee));
-		goto end;
+end: return;
+}
+static void do_funktie1 (long irow) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel x = pop;
+	if (x.which == Stackel_NUMBER) {
+		if (your getFunction1) {
+			pushNumber (your getFunction1 (thee, x.content.number));
+		} else if (your getFunction2) {
+			Data me = theSource;
+			if (me == NULL) {
+				Melder_error ("No current object (we are not in a Formula command),\n"
+					"hence no implicit y value for this %s object.\n"
+					"Try using both (x, y) arguments instead.", Thing_className (thee));
+				goto end;
+			} else if (our getY == NULL) {
+				Melder_error ("The current %s object gives no implicit y values,\n"
+					"hence no implicit y value for this %s object.\n"
+					"Try using both (x, y) arguments instead.", Thing_className (me), Thing_className (thee));
+				goto end;
+			} else {
+				double y = our getY (me, irow);
+				pushNumber (your getFunction2 (thee, x.content.number, y));
+			}
+		} else {
+			Melder_error ("%s objects accept no (x) values.", Thing_className (thee));
+			goto end;
+		}
+	} else {
+		Melder_error ("%s objects accept only numeric x values.", Thing_className (thee));
 	}
-	s [w] = your getFunction2 (thee, x, y);
-} break; case ROW_INDEX_: {
-	Data thee = f [i]. content.object;
-	double rowIndex;
-	if (your getRowIndex == NULL) { Melder_error ("No row labels for this object."); goto end; }
-	rowIndex = your getRowIndex (thee, ss [sw]);
-	if (rowIndex == 0) { Melder_error ("No row \"%s\" for this object.", ss [sw]); goto end; }
-	s [++ w] = rowIndex;
-	Melder_free (ss [sw]); -- sw;
-} break; case COLUMN_INDEX_: {
-	Data thee = f [i]. content.object;
-	double columnIndex;
-	if (your getColumnIndex == NULL) { Melder_error ("No column labels for this object."); goto end; }
-	columnIndex = your getColumnIndex (thee, ss [sw]);
-	if (columnIndex == 0) { Melder_error ("No column \"%s\" for this object.", ss [sw]); goto end; }
-	s [++ w] = columnIndex;
-	Melder_free (ss [sw]); -- sw;
-} break; case SQR_: {
-	s [w] = s [w] == NUMundefined ? NUMundefined : s [w] * s [w];
+end: return;
+}
+static void do_selfFunktie2 (void) {
+	Data me = theSource;
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+		if (our getFunction2 == NULL) {
+			Melder_error ("%s objects like \"self\" accept no (x, y) values.", Thing_className (me));
+			goto end;
+		}
+		pushNumber (our getFunction2 (me, x.content.number, y.content.number));
+	} else {
+		Melder_error ("%s objects accept only numeric x values.", Thing_className (me));
+	}
+end: return;
+}
+static void do_funktie2 (void) {
+	Data thee = parse [programPointer]. content.object;
+	Stackel y = pop, x = pop;
+	if (x.which == Stackel_NUMBER && y.which == Stackel_NUMBER) {
+		if (your getFunction2 == NULL) {
+			Melder_error ("%s objects accept no (x, y) values.", Thing_className (thee));
+			goto end;
+		}
+		pushNumber (your getFunction2 (thee, x.content.number, y.content.number));
+	} else {
+		Melder_error ("%s objects accept only numeric x values.", Thing_className (thee));
+	}
+end: return;
+}
+
+static double NUMarcsinh (double x) {
+	return log (x + sqrt (1.0 + x * x));
+}
+static double NUMarccosh (double x) {
+	return x < 1.0 ? NUMundefined : log (x + sqrt (x * x - 1.0));
+}
+static double NUMarctanh (double x) {
+	return x <= -1.0 || x >= 1.0 ? NUMundefined : 0.5 * log ((1.0 + x) / (1.0 - x));
+}
+static double NUMerf (double x) {
+	return 1.0 - NUMerfcc (x);
+}
+
+int Formula_run (long row, long col, double *numericResult, char **stringResult) {
+	FormulaInstruction f = parse;
+	programPointer = 1;   /* First symbol of the program. */
+	if (theStack == NULL) theStack = (Stackel *) Melder_calloc (10000, sizeof (theStack));
+	if (theStack == NULL)
+		return Melder_error ("Out of memory during formula computation.");
+	w = 0, wmax = 0;   /* start new stack. */
+	while (programPointer <= numberOfInstructions) {
+		int symbol;
+		switch (symbol = f [programPointer]. symbol) {
+
+case NUMBER_: { pushNumber (f [programPointer]. content.number);
+} break; case STOPWATCH_: { pushNumber (Melder_stopwatch ());
+} break; case ROW_: { pushNumber (row);
+} break; case COL_: { pushNumber (col);
+} break; case X_: {
+	Data me = theSource;
+	if (our getX == NULL) { Melder_error ("No values for \"x\" for this object."); goto end; }
+	pushNumber (our getX (me, col));
+} break; case Y_: {
+	Data me = theSource;
+	if (our getY == NULL) { Melder_error ("No values for \"y\" for this object."); goto end; }
+	pushNumber (our getY (me, row));
+} break; case NOT_: { do_not ();
+} break; case EQ_: { do_eq ();
+} break; case NE_: { do_ne ();
+} break; case LE_: { do_le ();
+} break; case LT_: { do_lt ();
+} break; case GE_: { do_ge ();
+} break; case GT_: { do_gt ();
+} break; case ADD_: { do_add ();
+} break; case SUB_: { do_sub ();
+} break; case MUL_: { do_mul ();
+} break; case RDIV_: { do_rdiv ();
+} break; case IDIV_: { do_idiv ();
+} break; case MOD_: { do_mod ();
+} break; case MINUS_: { do_minus ();
+} break; case POWER_: { do_power ();
+/********** Functions of 1 numerical variable: **********/
+} break; case ABS_: { do_abs ();
+} break; case ROUND_: { do_round ();
+} break; case FLOOR_: { do_floor ();
+} break; case CEILING_: { do_ceiling ();
+} break; case SQRT_: { do_sqrt ();
+} break; case SIN_: { do_sin ();
+} break; case COS_: { do_cos ();
+} break; case TAN_: { do_tan ();
+} break; case ARCSIN_: { do_arcsin ();
+} break; case ARCCOS_: { do_arccos ();
+} break; case ARCTAN_: { do_arctan ();
+} break; case EXP_: { do_exp ();
+} break; case SINH_: { do_sinh ();
+} break; case COSH_: { do_cosh ();
+} break; case TANH_: { do_tanh ();
+} break; case ARCSINH_: { do_function_n_n (NUMarcsinh);
+} break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
+} break; case ARCTANH_: { do_function_n_n (NUMarctanh);
+} break; case SIGMOID_: { do_function_n_n (NUMsigmoid);
+} break; case ERF_: { do_function_n_n (NUMerf);
+} break; case ERFC_: { do_function_n_n (NUMerfcc);
+} break; case GAUSS_P_: { do_function_n_n (NUMgaussP);
+} break; case GAUSS_Q_: { do_function_n_n (NUMgaussQ);
+} break; case INV_GAUSS_Q_: { do_function_n_n (NUMinvGaussQ);
+} break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
+} break; case LOG2_: { do_log2 ();
+} break; case LN_: { do_ln ();
+} break; case LOG10_: { do_log10 ();
+} break; case LN_GAMMA_: { do_function_n_n (NUMlnGamma);
+} break; case HERTZ_TO_BARK_: { do_function_n_n (NUMhertzToBark);
+} break; case BARK_TO_HERTZ_: { do_function_n_n (NUMbarkToHertz);
+} break; case PHON_TO_DIFFERENCE_LIMENS_: { do_function_n_n (NUMphonToDifferenceLimens);
+} break; case DIFFERENCE_LIMENS_TO_PHON_: { do_function_n_n (NUMdifferenceLimensToPhon);
+} break; case HERTZ_TO_MEL_: { do_function_n_n (NUMhertzToMel);
+} break; case MEL_TO_HERTZ_: { do_function_n_n (NUMmelToHertz);
+} break; case HERTZ_TO_SEMITONES_: { do_function_n_n (NUMhertzToSemitones);
+} break; case SEMITONES_TO_HERTZ_: { do_function_n_n (NUMsemitonesToHertz);
+} break; case ERB_: { do_function_n_n (NUMerb);
+} break; case HERTZ_TO_ERB_: { do_function_n_n (NUMhertzToErb);
+} break; case ERB_TO_HERTZ_: { do_function_n_n (NUMerbToHertz);
+/********** Functions of 2 numerical variables: **********/
+} break; case ARCTAN2_: { do_function_dd_d (atan2);
+} break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
+} break; case RANDOM_INTEGER_: { do_function_ll_l (NUMrandomInteger);
+} break; case RANDOM_GAUSS_: { do_function_dd_d (NUMrandomGauss);
+} break; case CHI_SQUARE_P_: { do_function_dl_d (NUMchiSquareP);
+} break; case CHI_SQUARE_Q_: { do_function_dl_d (NUMchiSquareQ);
+} break; case INV_CHI_SQUARE_Q_: { do_function_dl_d (NUMinvChiSquareQ);
+} break; case STUDENT_P_: { do_function_dl_d (NUMstudentP);
+} break; case STUDENT_Q_: { do_function_dl_d (NUMstudentQ);
+} break; case INV_STUDENT_Q_: { do_function_dl_d (NUMinvStudentQ);
+} break; case BETA_: { do_function_dd_d (NUMbeta);
+} break; case BESSEL_I_: { do_function_ld_d (NUMbesselI);
+} break; case BESSEL_K_: { do_function_ld_d (NUMbesselK);
+} break; case SOUND_PRESSURE_TO_PHON_: { do_function_dd_d (NUMsoundPressureToPhon);
+/********** Functions of 3 numerical variables: **********/
+} break; case FISHER_P_: { do_function_dll_d (NUMfisherP);
+} break; case FISHER_Q_: { do_function_dll_d (NUMfisherQ);
+} break; case INV_FISHER_Q_: { do_function_dll_d (NUMinvFisherQ);
+} break; case BINOMIAL_P_: { do_function_ddd_d (NUMbinomialP);
+} break; case BINOMIAL_Q_: { do_function_ddd_d (NUMbinomialQ);
+} break; case INV_BINOMIAL_P_: { do_function_ddd_d (NUMinvBinomialP);
+} break; case INV_BINOMIAL_Q_: { do_function_ddd_d (NUMinvBinomialQ);
+/********** Functions of a variable number of variables: **********/
+} break; case MIN_: { do_min ();
+} break; case MAX_: { do_max ();
+} break; case IMIN_: { do_imin ();
+} break; case IMAX_: { do_imax ();
+/********** String functions: **********/
+} break; case LENGTH_: { do_length ();
+} break; case FILE_READABLE_: { do_fileReadable ();
+} break; case DATESTR_: { do_dateStr ();
+} break; case LEFTSTR_: { do_leftStr ();
+} break; case RIGHTSTR_: { do_rightStr ();
+} break; case MIDSTR_: { do_midStr ();
+} break; case ENVIRONMENTSTR_: { do_environmentStr ();
+} break; case INDEX_: { do_index ();
+} break; case RINDEX_: { do_rindex ();
+} break; case STARTS_WITH_: { do_stringMatchesCriterion (Melder_STRING_STARTS_WITH);
+} break; case ENDS_WITH_: { do_stringMatchesCriterion (Melder_STRING_ENDS_WITH);
+} break; case INDEX_REGEX_: { do_index_regex (FALSE);
+} break; case RINDEX_REGEX_: { do_index_regex (TRUE);
+} break; case EXTRACT_NUMBER_: { do_extractNumber ();
+} break; case EXTRACT_WORDSTR_: { do_extractTextStr (TRUE);
+} break; case EXTRACT_LINESTR_: { do_extractTextStr (FALSE);
+} break; case SELECTED_: { do_selected ();
+} break; case SELECTEDSTR_: { do_selectedStr ();
+} break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
+} break; case FIXEDSTR_: { do_fixedStr ();
+} break; case PERCENTSTR_: { do_percentStr ();
+/********** **********/
+} break; case TRUE_: {
+	pushNumber (1.0);
+} break; case FALSE_: {
+	pushNumber (0.0);
+/* Possible compiler BUG: many compilers cannot handle the following assignment. */
+/* Those compilers have trouble with praat's AND and OR. */
+} break; case IFTRUE_: {
+	Stackel condition = pop;
+	if (condition.which == Stackel_NUMBER) {
+		if (condition.content.number != 0.0) {
+			programPointer = f [programPointer]. content.label - theOptimize;
+		}
+	} else {
+		Melder_error ("A condition between \"if\" and \"then\" has to be a number, not %s.", Stackel_whichText (& condition));
+	}
+} break; case IFFALSE_: {
+	Stackel condition = pop;
+	if (condition.which == Stackel_NUMBER) {
+		if (condition.content.number == 0.0) {
+			programPointer = f [programPointer]. content.label - theOptimize;
+		}
+	} else {
+		Melder_error ("A condition between \"if\" and \"then\" has to be a number, not %s.", Stackel_whichText (& condition));
+	}
+} break; case GOTO_: {
+	programPointer = f [programPointer]. content.label - theOptimize;
+} break; case LABEL_: {
+	;
+} break; case SELF0_: { do_self0 (row, col);
+} break; case SELFMATRIKS1_: { do_selfMatriks1 (row);
+} break; case SELFMATRIKSSTR1_: { do_selfMatriksStr1 (row);
+} break; case SELFMATRIKS2_: { do_selfMatriks2 ();
+} break; case SELFMATRIKSSTR2_: { do_selfMatriksStr2 ();
+} break; case SELFFUNKTIE1_: { do_selfFunktie1 (row);
+} break; case SELFFUNKTIE2_: { do_selfFunktie2 ();
+} break; case MATRIKS0_: { do_matriks0 (row, col);
+} break; case MATRIKS1_: { do_matriks1 (row);
+} break; case MATRIKSSTR1_: { do_matrixStr1 (row);
+} break; case MATRIKS2_: { do_matriks2 ();
+} break; case MATRIKSSTR2_: { do_matriksStr2 ();
+} break; case FUNKTIE0_: { do_funktie0 (row, col);
+} break; case FUNKTIE1_: { do_funktie1 (row);
+} break; case FUNKTIE2_: { do_funktie2 ();
+} break; case SQR_: { do_sqr ();
 } break; case STRING_: {
-	++ sw; string = f [i]. content.string;
-	if (ss [sw] != NULL && strlen (string) <= strlen (ss [sw])) {
-		strcpy (ss [sw], string);
-	} else {
-		Melder_free (ss [sw]);
-		ss [sw] = Melder_strdup (string);
-	}
-} break; case STRING_EQ_: {
-	s [++ w] = strequ (ss [sw - 1], ss [sw]) ? 1.0 : 0.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_NE_: {
-	s [++ w] = strequ (ss [sw - 1], ss [sw]) ? 0.0 : 1.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_LE_: {
-	s [++ w] = strcmp (ss [sw - 1], ss [sw]) <= 0 ? 1.0 : 0.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_LT_: {
-	s [++ w] = strcmp (ss [sw - 1], ss [sw]) < 0 ? 1.0 : 0.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_GE_: {
-	s [++ w] = strcmp (ss [sw - 1], ss [sw]) >= 0 ? 1.0 : 0.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_GT_: {
-	s [++ w] = strcmp (ss [sw - 1], ss [sw]) > 0 ? 1.0 : 0.0;
-	Melder_free (ss [sw]); -- sw; Melder_free (ss [sw]); -- sw;
-} break; case STRING_ADD_: {
-	long length1 = strlen (ss [sw - 1]), length2 = strlen (ss [sw]);
-	char *string = Melder_malloc (length1 + length2 + 1); cherror
-	strcpy (string, ss [sw - 1]);
-	strcpy (string + length1, ss [sw]);
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	ss [-- sw] = string;
-} break; case STRING_SUB_: {
-	long length1 = strlen (ss [sw - 1]), length2 = strlen (ss [sw]), newlength = length1 - length2;
-	char *string;
-	if (newlength >= 0 && strnequ (ss [sw - 1] + newlength, ss [sw], length2)) {
-		string = Melder_malloc (newlength + 1); if (! string) return 0;
-		strncpy (string, ss [sw - 1], newlength);
-		string [newlength] = '\0';
-	} else {
-		string = Melder_strdup (ss [sw - 1]); if (! string) return 0;
-	}
-	Melder_free (ss [sw - 1]);
-	Melder_free (ss [sw]);
-	ss [-- sw] = string;
+	char *result = Melder_strdup (f [programPointer]. content.string); cherror
+	pushString (result);
 } break; case NUMERIC_VARIABLE_: {
-	InterpreterVariable var = f [i]. content.variable;
-	s [++ w] = var -> numericValue;
+	InterpreterVariable var = f [programPointer]. content.variable;
+	pushNumber (var -> numericValue);
 } break; case STRING_VARIABLE_: {
-	InterpreterVariable var = f [i]. content.variable;
-	string = var -> stringValue;
-	++ sw;
-	if (ss [sw] != NULL && strlen (string) <= strlen (ss [sw])) {   /* Try an optimization. */
-		strcpy (ss [sw], string);
-	} else {
-		Melder_free (ss [sw]);
-		ss [sw] = Melder_strdup (string); cherror
-	}
-} break; case NUMERIC_COLUMN_: {
-	s [++ w] = our getMatrix (me, row, f [i]. content.number);
-} break; case STRING_COLUMN_: {
-	++ sw;
-	Melder_free (ss [sw]);
-	/*ss [sw] = Melder_strdup (our getMatrixStr (me, row, f [i]. content.number));*/
-} break; case SELECTED2_: {
-	void *klas = Thing_classFromClassName (ss [sw]); cherror
-	s [w] = praat_getIdOfSelected (klas, s [w]); cherror
-	Melder_free (ss [sw]); -- sw;
-} break; case SELECTEDSTR2_: {
-	char *name;
-	void *klas = Thing_classFromClassName (ss [sw]); cherror
-	name = praat_getNameOfSelected (klas, s [w --]); cherror
-	Melder_free (ss [sw]);
-	ss [sw] = Melder_strdup (name); cherror
-} break; default: return Melder_error ("Symbol \"%s\" without action.", Formula_instructionNames [f [i]. symbol]);
+	InterpreterVariable var = f [programPointer]. content.variable;
+	char *result = Melder_strdup (var -> stringValue); cherror
+	pushString (result);
+} break; case SELECTED2_: { do_selected2 ();
+} break; case SELECTEDSTR2_: { do_selectedStr2 ();
+} break; default: return Melder_error ("Symbol \"%s\" without action.", Formula_instructionNames [parse [programPointer]. symbol]);
 		} /* switch */
-		i ++;
+		cherror
+		programPointer ++;
 	} /* while */
+	Melder_assert (w == 1);
 	if (theExpressionType == EXPRESSION_TYPE_NUMERIC) {
-		Melder_assert (w == 1 && sw == 0);
-		if (numericResult) *numericResult = s [1];
-		else Melder_information ("%s", Melder_double (s [1]));
+		if (theStack [1]. which == Stackel_STRING) {
+			Melder_error ("Found a string expression instead of a numeric expression."); goto end;
+		}
+		if (numericResult) *numericResult = theStack [1]. content.number;
+		else Melder_information ("%s", Melder_double (theStack [1]. content.number));
 	} else if (theExpressionType == EXPRESSION_TYPE_STRING) {
-		Melder_assert (w == 0 && sw == 1);
-		if (stringResult) { *stringResult = ss [1]; ss [1] = NULL; }   /* Undangle. */
-		else { Melder_information ("%s", ss [1]); Melder_free (ss [1]); }
+		if (theStack [1]. which == Stackel_NUMBER) {
+			Melder_error ("Found a numeric expression instead of a string expression."); goto end;
+		}
+		if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
+		else Melder_information ("%s", theStack [1]. content.string);
 	} else {
 		Melder_assert (theExpressionType == EXPRESSION_TYPE_UNKNOWN);
-		if (w == 1 && sw == 0) {
-			if (numericResult) *numericResult = s [1];
-			else Melder_information ("%s", Melder_double (s [1]));
+		if (theStack [1]. which == Stackel_NUMBER) {
+			if (numericResult) *numericResult = theStack [1]. content.number;
+			else Melder_information ("%s", Melder_double (theStack [1]. content.number));
 		} else {
-			Melder_assert (w == 0 && sw == 1);
-			if (stringResult) { *stringResult = ss [1]; ss [1] = NULL; }   /* Undangle. */
-			else { Melder_information ("%s", ss [1]); Melder_free (ss [1]); }
+			Melder_assert (theStack [1]. which == Stackel_STRING);
+			if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
+			else Melder_information ("%s", theStack [1]. content.string);
 		}
 	}
 end:
-	iferror {
-		/*
-			Clean up the remaining string stack.
-		*/
-		for (sw += 3; sw > 0; sw --)
-			Melder_free (ss [sw]);
-		return 0;
+	/*
+		Clean up the stack (theStack [1] may have been disowned).
+	*/
+	for (w = wmax; w > 0; w --) {
+		Stackel *stackel = & theStack [w];
+		if (stackel -> which > 0) Stackel_cleanUp (stackel);
 	}
+	iferror return 0;
 	return 1;
 }
 

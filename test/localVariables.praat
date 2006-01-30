@@ -1,3 +1,4 @@
+echo Local variables
 procedure add .x .y
 	.result = .x + .y
 endproc
@@ -16,3 +17,4 @@ call hypotenuse 3 4
 assert hypotenuse.result = 5
 assert add.result = 25
 assert square.result = 16
+printline OK
