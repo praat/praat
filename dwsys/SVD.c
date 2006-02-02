@@ -1,6 +1,6 @@
 /* SVD.c
  *
- * Copyright (C) 1994-2005 David Weenink
+ * Copyright (C) 1994-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,8 +117,8 @@ int SVD_init (I, long numberOfRows, long numberOfColumns)
 SVD SVD_create (long numberOfRows, long numberOfColumns)
 {
 	SVD me = new (SVD);
-	if (! me) return NULL;
-	if (! SVD_init (me, numberOfRows, numberOfColumns)) forget (me);
+	
+	if (me == NULL || ! SVD_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }
 

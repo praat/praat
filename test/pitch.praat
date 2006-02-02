@@ -21,9 +21,15 @@ for i from 1080 to 1095
 endfor
 
 for freq from 75.1 to 226
-	call pulseTest freq 0.02
+	call pulseTest freq 0.03
 endfor
-for i from 2 to 54
+for i from 2 to 20
+	call pulseTest i*100+77 1
+endfor
+for i from 210 to 219
+	call pulseTest i*10+77 4
+endfor
+for i from 22 to 53
 	call pulseTest i*100+77 1
 endfor
 call pulseTest 219 1

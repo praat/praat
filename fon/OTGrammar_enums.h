@@ -18,12 +18,13 @@
  */
 
 /*
- * pb 2006/01/05
+ * pb 2006/02/02
  */
 
 enum_begin (OTGrammar_DECISION, OptimalityTheory)   /* This cannot be called "None" !!! */
-	enum (HarmonyGrammar)
+	enum (HarmonicGrammar)
 	enum (LinearOT)
+	enum (ExponentialHG)
 enum_end (OTGrammar_DECISION)
 
 /* End of file Experiment_enums.h */

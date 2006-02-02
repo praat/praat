@@ -39,8 +39,9 @@
  * pb 2005/06/30 learning from partial pairs
  * pb 2005/12/11 OTGrammar_honourlocalRankings: 
  * pb 2005/12/11 OTGrammar_PairDistribution_listObligatoryRankings (depth 1)
- * pb 2006/01/05 new decision strategies: HarmonyGrammar and LinearOT
+ * pb 2006/01/05 new decision strategies: HarmonicGrammar and LinearOT
  * pb 2006/01/21 better procedure name
+ * pb 2006/02/02 new decision strategy: ExponentialHG
  */
 
 #include "OTGrammar.h"
@@ -67,6 +68,7 @@ static void classOTGrammar_info (I) {
 			for (icons = 1; icons <= my numberOfConstraints; icons ++)
 				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
 	}
+	Melder_info ("Decision strategy: %s",  enumstring (OTGrammar_DECISION, my decisionStrategy));
 	Melder_info ("Number of constraints: %ld", my numberOfConstraints);
 	Melder_info ("Number of tableaus: %ld", my numberOfTableaus);
 	Melder_info ("Number of candidates: %ld", numberOfCandidates);
@@ -258,7 +260,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		/* If we arrive here, None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 		return 0;
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, HarmonyGrammar)) {
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, HarmonicGrammar)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
@@ -273,6 +275,14 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 				disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
 				disharmony2 += my constraints [icons]. disharmony * marks2 [icons];
 			}
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, ExponentialHG)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
+			disharmony2 += exp (my constraints [icons]. disharmony) * marks2 [icons];
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */

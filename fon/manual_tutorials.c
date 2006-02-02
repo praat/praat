@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060130)
+MAN_BEGIN ("What's new?", "ppgb", 20060202)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.07# (February 2, 2006)")
+LIST_ITEM ("\\bu More scripting facilities (local variables in procedures, e.g. .x and .text\\$ ).")
+LIST_ITEM ("\\bu Faster formulas.")
 NORMAL ("##4.4.06# (January 30, 2006)")
 LIST_ITEM ("\\bu More scripting facilities (Object_xxx [ ], Self.nx, Table_xxx\\$  [ ], better messages).")
 LIST_ITEM ("\\bu Better reading and writing of Xwaves label files.")

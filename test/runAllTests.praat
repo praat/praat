@@ -1,5 +1,5 @@
 #! runAlltests.praat
-# Paul Boersma, July 22, 2003
+# Paul Boersma, January 30, 2006
 #
 # This script runs all Praat scripts in its directory, except itself.
 
@@ -12,3 +12,22 @@ for i to n
       execute 'file$'
    endif
 endfor
+     echo                  ALL PRAAT TESTS WENT OK
+printline
+printline                ######               #####           #####
+printline            ##############           #####         #####
+printline          #####        #####         #####       #####
+printline         #####          #####        #####     #####
+printline         #####          #####        #####   #####
+printline         #####          #####        ##### #####
+printline         #####          #####        #########
+printline         #####          #####        #######
+printline         #####          #####        #####
+printline         #####          #####        #######
+printline         #####          #####        #########
+printline         #####          #####        ##### #####
+printline         #####          #####        #####   #####
+printline         #####          #####        #####     #####
+printline          #####        #####         #####       #####
+printline            ##############           #####         #####
+printline                ######               #####           #####

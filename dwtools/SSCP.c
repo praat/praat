@@ -1,6 +1,6 @@
 /* SSCP.c
  * 
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
  djmw 20040219 SSCP_getTraceFraction added.
  djmw 20040617 SSCP(s)_drawConcentrationEllipse(s) draw with reverse axes possible.
  	(not yet supported by commands in Picture window like 'One mark bottom...' because of reversed axes)!
+ djmw 20060202 Removed a bug in TableOfReal_to_SSCP that could crash Praat (if nrows < ncols).
 */
 
 #include "SSCP.h"
@@ -506,6 +507,80 @@ end:
 }
 
 SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
+{
+	iam (TableOfReal);
+	SSCP thee = NULL;
+	long i, j, k, m, n;
+	double **v = NULL;
+	
+	if (rowb == 0 && rowe == 0)
+	{
+		rowb = 1; rowe = my numberOfRows;
+	}
+	else if (rowe < rowb || rowb < 1 || rowe > my numberOfRows) return NULL;
+	
+	if (colb == 0 && cole == 0)
+	{
+		colb = 1; cole = my numberOfColumns;
+	}
+	else if (cole < colb || colb < 1 || cole > my numberOfColumns) return NULL;
+	
+	m = rowe - rowb + 1; /* # rows */
+	n = cole - colb + 1; /* # columns */
+	/*
+	if (m < 2) return Melder_errorp ("TableOfReal_to_SSCP: there is only one "
+		"row in the selection from the table.");
+	*/
+	if (m < n) Melder_warning ("TableOfReal_to_SSCP: The SSCP will not have \n"
+		"full dimensionality. This may be a problem in following analysis steps. \n"
+		"(The number of data points (%d) was less than the number of variables (%d).)",
+		m, n);
+		
+	thee = SSCP_create (n);
+	if (thee == NULL) goto end;
+	v = NUMdmatrix (1, m, 1, n);
+	if (v == NULL) goto end;
+	
+	for (i = 1; i <= m; i++)
+	{
+		for (j = 1; j <= n; j++)
+		{
+			v[i][j] = my data[rowb + i - 1][colb + j - 1];
+		}
+	}
+	
+	NUMcentreColumns_d (v, 1, m, 1, n, thy centroid);
+	
+	SSCP_setNumberOfObservations (thee, m);
+
+	/*
+		Covariance = T'T
+	*/
+	
+	for (i = 1; i <= n; i++)
+	{
+		for (j = i; j <= n; j++)
+		{
+			double t = 0;
+			for (k = 1; k <= m; k++)
+			{
+				t += v[k][i] * v[k][j];
+			}
+			thy data[i][j] = thy data[j][i] = t;
+		}
+	}	
+	
+	NUMstrings_copyElements (TOVEC(my columnLabels[colb]), thy columnLabels, 1, n);
+	NUMstrings_copyElements (thy columnLabels, thy rowLabels, 1, n);
+	
+end:
+
+	NUMdmatrix_free (v, 1, 1);
+	if (Melder_hasError ()) forget (thee);
+	return thee; 
+}
+
+static SSCP TableOfReal_to_SSCP_old (I, long rowb, long rowe, long colb, long cole)
 {
 	iam (TableOfReal);
 	SSCP thee = NULL;

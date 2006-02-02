@@ -289,7 +289,7 @@ NORMAL ("The second tableau shows that /pa/ always surfaces as [pa], which is no
 	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20060105)
+MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20060202)
 NORMAL ("You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the Write menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE ("File type = \"ooTextFile\"")
@@ -355,8 +355,9 @@ CODE1 ("\"pa\"  1 0")
 NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
 	"In this tutorial I assume OT's strict ranking throughout, "
 	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint rankings represent addable, "
-	"possibly negative weights) or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
-	"that there are no negative weights).")
+	"possibly negative weights), or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
+	"that there are no negative weights), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), combining "
+	"the continuity advantage of Harmonic Grammar with the positive-definiteness advantage of Linear OT).")
 MAN_END
 
 MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20021105)
