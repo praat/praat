@@ -66,7 +66,7 @@
 	#include "macport_off.h"
 	#if TARGET_API_MAC_CARBON
 		#define OSEventAvail  EventAvail
-		#define USE_COREAUDIO  1
+		#define USE_COREAUDIO  0
 		#if USE_COREAUDIO
 			#include <AudioUnit.h>
 		#endif

@@ -1073,7 +1073,7 @@ static int parseTerms (void) {
 }
 
 static int parseNot (void) {
-	int saveLexan = ilexan, saveParse = iparse, symbol;
+	int symbol;
 	if (! parseTerm ()) return 0;
 	if (! parseTerms ()) return 0;
 	symbol = nieuwlees;
@@ -2243,7 +2243,7 @@ end: return;
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *place = NULL, *errorMessage;
+		char *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);

@@ -1,6 +1,6 @@
 /* Spectrum.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/05/07 support for odd number of samples
  * pb 2004/10/31 Sampled statistics
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ * pb 2006/02/06 better cepstral smoothing
  */
 
 #include "Sound_and_Spectrum.h"
@@ -242,8 +243,8 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 	 * Multiply cepstrum by a Gaussian.
 	 */
 	for (i = 1; i <= cepstrum -> nx; i ++) {
-		double t = cepstrum -> x1 + (i - 1) * cepstrum -> dx;
-		cepstrum -> z [1] [i] *= exp (factor * t * t);
+		double t = (i - 1) * cepstrum -> dx;
+		cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1 : 2 );
 	}
 
 	/*

@@ -41,13 +41,15 @@ static void logo (Graphics g) {
 	#endif
 	Graphics_setFontSize (g, 15);
 	Graphics_text (g, 0.5, 0.55, "%%doing phonetics by computer");
-	Graphics_text (g, 0.5, 0.45, "version " PRAAT_VERSION);
+	#define xstr(s) str(s)
+	#define str(s) #s
+	Graphics_text (g, 0.5, 0.45, "version " xstr(PRAAT_VERSION));
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
 	Graphics_text (g, 0.5, 0.33, "www.praat.org");
 	Graphics_setFont (g, Graphics_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, "Copyright  \\co 1992-" PRAAT_YEAR " by Paul Boersma and David Weenink");
+	Graphics_text (g, 0.5, 0.16, "Copyright  \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_text (g, 0.5, 0.04, "PostScript phonetic font:  \\co 2005 Fukui Rei & Rafael Laboissi\\e`re");
 	Graphics_text (g, 0.5, -0.02, "GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
 }

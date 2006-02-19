@@ -1,6 +1,6 @@
 /* abcio.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
  * pb 2002/03/07 GPL
  * pb 2003/05/19 accept percent signs in getReal
  * pb 2004/10/01 Melder_double instead of %.17g
+ * pb 2006/02/17 support for Intel-based Macs
  */
 
 #include "melder.h"
 #include <math.h>
 #include <ctype.h>
+#ifdef macintosh
+	#include <TargetConditionals.h>
+#endif
 #include "enum.h"
 #include "abcio.h"
 
@@ -409,26 +413,54 @@ void ascputs4 (const char *s, FILE *f,
 
 /* On which machines is "short" a two's complement Big-Endian (MSB-first) 2-byte word? */
 
-#if defined (sgi) || defined (macintosh)
-	#define binario_shortBE2
+#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+	#define binario_shortBE2 1
+	#define binario_shortLE2 0
+#elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
+	#define binario_shortBE2 0
+	#define binario_shortLE2 1
+#else
+	#define binario_shortBE2 0
+	#define binario_shortLE2 0
 #endif
 
 /* On which machines is "long" a two's complement Big-Endian (MSB-first) 4-byte word? */
 
-#if defined (sgi) || defined (macintosh)
-	#define binario_longBE4
+#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+	#define binario_longBE4 1
+	#define binario_longLE4 0
+#elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
+	#define binario_longBE4 0
+	#define binario_longLE4 1
+#else
+	#define binario_longBE4 0
+	#define binario_longLE4 0
 #endif
 
 /* On which machines is "float" IEEE, four bytes, Most Significant Bit first? */
 
-#if defined (sgi) || defined (macintosh)
-	#define binario_floatIEEE4
+#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+	#define binario_floatIEEE4msb 1
+	#define binario_floatIEEE4lsb 0
+#elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
+	#define binario_floatIEEE4msb 0
+	#define binario_floatIEEE4lsb 1
+#else
+	#define binario_floatIEEE4msb 0
+	#define binario_floatIEEE4lsb 0
 #endif
 
 /* On which machines is "double" IEEE, eight bytes, Most Significant Bit first? */
 
-#if defined (sgi) || defined (macintosh) && defined (__POWERPC__)
-	#define binario_doubleIEEE8
+#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+	#define binario_doubleIEEE8msb 1
+	#define binario_doubleIEEE8lsb 0
+#elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
+	#define binario_doubleIEEE8msb 0
+	#define binario_doubleIEEE8lsb 1
+#else
+	#define binario_doubleIEEE8msb 0
+	#define binario_doubleIEEE8lsb 0
 #endif
 
 /*
@@ -536,31 +568,31 @@ macro_bingetb (7)
 void bingetb (FILE *f) { (void) f; bitsInReadBuffer = 0; }
 
 int bingeti2 (FILE *f) {
-	#ifdef binario_shortBE2
+	if (binario_shortBE2 && Melder_debug != 18) {
 		short s; fread (& s, 2, 1, f); return s;   /* With sign extension if an int is 4 bytes. */
-	#else
+	} else {
 		unsigned char bytes [2]; fread (bytes, 1, 2, f);
 		return (signed short) (((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1]);
-	#endif
+	}
 }
 
 unsigned int bingetu2 (FILE *f) {
-	#ifdef binario_shortBE2
+	if (binario_shortBE2 && Melder_debug != 18) {
 		unsigned short s; fread (& s, 2, 1, f); return s;   /* Without sign extension. */
-	#else
+	} else {
 		unsigned char bytes [2]; fread (bytes, 1, 2, f);
 		return ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
-	#endif
+	}
 }
 
 int bingete2 (FILE *f, void *enumerated) {
 	signed short result;
-	#ifdef binario_shortBE2
+	if (binario_shortBE2 && Melder_debug != 18) {
 		fread (& result, 2, 1, f);
-	#else
+	} else {
 		unsigned char bytes [2]; fread (bytes, 1, 2, f);
 		result = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
-	#endif
+	}
 	if (result < 0)
 		(void) Melder_error ("(bingete2:) %d is not a value of enumerated type \"%s\".",
 			result, enum_type (enumerated));
@@ -568,9 +600,9 @@ int bingete2 (FILE *f, void *enumerated) {
 }
 
 long bingeti3 (FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		long l; fread (& l, 3, 1, f); return l;
-	#else
+	} else {
 		unsigned long result;
 		unsigned char bytes [3]; fread (bytes, 1, 3, f);
 		result =
@@ -579,70 +611,86 @@ long bingeti3 (FILE *f) {
 		if ((bytes [0] & 128) != 0)
 			result |= 0xFF000000;
 		return result;
-	#endif
+	}
 }
 
 long bingeti4 (FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		long l; fread (& l, 4, 1, f); return l;
-	#else
+	} else {
 		unsigned char bytes [4]; fread (bytes, 1, 4, f); return
-			((unsigned long) bytes [0] << 24) |
-			((unsigned long) bytes [1] << 16) |
-			((unsigned long) bytes [2] << 8) |
-			(unsigned long) bytes [3];
-	#endif
+			((unsigned long) bytes [0] << 24) | ((unsigned long) bytes [1] << 16) |
+			((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];
+	}
 }
 
 unsigned long bingetu4 (FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		unsigned long l; fread (& l, 4, 1, f); return l;
-	#else
+	} else {
 		unsigned char bytes [4]; fread (bytes, 1, 4, f); return
-			((unsigned long) bytes [0] << 24) |
-			((unsigned long) bytes [1] << 16) |
-			((unsigned long) bytes [2] << 8) |
-			(unsigned long) bytes [3];
-	#endif
+			((unsigned long) bytes [0] << 24) | ((unsigned long) bytes [1] << 16) |
+			((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];
+	}
 }
 
 int bingeti2LE (FILE *f) {
-	unsigned char bytes [2]; fread (bytes, 1, 2, f);
-	return (signed short) (((unsigned short) bytes [1] << 8) | (unsigned short) bytes [0]);
+	if (binario_shortLE2 && Melder_debug != 18) {
+		short s; fread (& s, 2, 1, f); return s;   /* With sign extension if an int is 4 bytes. */
+	} else {
+		unsigned char bytes [2]; fread (bytes, 1, 2, f);
+		return (signed short) (((unsigned short) bytes [1] << 8) | (unsigned short) bytes [0]);
+	}
 }
 
 unsigned int bingetu2LE (FILE *f) {
-	unsigned char bytes [2]; fread (bytes, 1, 2, f);
-	return ((unsigned short) bytes [1] << 8) | (unsigned short) bytes [0];
+	if (binario_shortLE2 && Melder_debug != 18) {
+		unsigned short s; fread (& s, 2, 1, f); return s;   /* Without sign extension. */
+	} else {
+		unsigned char bytes [2]; fread (bytes, 1, 2, f);
+		return ((unsigned short) bytes [1] << 8) | (unsigned short) bytes [0];
+	}
 }
 
 long bingeti3LE (FILE *f) {
-	unsigned long result;
-	unsigned char bytes [3]; fread (bytes, 1, 3, f);
-	result =
-		((unsigned long) bytes [2] << 16) |
-		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
-	if ((bytes [2] & 128) != 0)
-		result |= 0xFF000000;
-	return result;
+	if (binario_longLE4 && Melder_debug != 18) {
+		long l; fread (& l, 3, 1, f); return l;
+	} else {
+		unsigned long result;
+		unsigned char bytes [3]; fread (bytes, 1, 3, f);
+		result =
+			((unsigned long) bytes [2] << 16) |
+			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+		if ((bytes [2] & 128) != 0)
+			result |= 0xFF000000;
+		return result;
+	}
 }
 
 long bingeti4LE (FILE *f) {
-	unsigned char bytes [4]; fread (bytes, 1, 4, f); return
-		((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
-		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+	if (binario_longLE4 && Melder_debug != 18) {
+		long l; fread (& l, 4, 1, f); return l;
+	} else {
+		unsigned char bytes [4]; fread (bytes, 1, 4, f); return
+			((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
+			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+	}
 }
 
 unsigned long bingetu4LE (FILE *f) {
-	unsigned char bytes [4]; fread (bytes, 1, 4, f); return
-		((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
-		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+	if (binario_longLE4 && Melder_debug != 18) {
+		unsigned long l; fread (& l, 4, 1, f); return l;
+	} else {
+		unsigned char bytes [4]; fread (bytes, 1, 4, f); return
+			((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
+			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+	}
 }
 
 double bingetr4 (FILE *f) {
-	#ifdef binario_floatIEEE4
+	if (binario_floatIEEE4msb && Melder_debug != 18) {
 		float x; fread (& x, 4, 1, f); return x;
-	#else
+	} else {
 		unsigned char bytes [4];
 		double x;
 		long exponent;
@@ -660,13 +708,13 @@ double bingetr4 (FILE *f) {
 		else   /* Finite. */
 			x  = ldexp (UnsignedToFloat (mantissa | 0x00800000), exponent - 150);
 		return bytes [0] & 0x80 ? - x : x;
-	#endif
+	}
 }
 
 double bingetr8 (FILE *f) {
-	#ifdef binario_doubleIEEE8
+	if (binario_doubleIEEE8msb && Melder_debug != 18) {
 		double x; fread (& x, 8, 1, f); return x;
-	#else
+	} else {
 		unsigned char bytes [8];
 		double x;
 		long exponent;
@@ -688,7 +736,7 @@ double bingetr8 (FILE *f) {
 			x = ldexp (UnsignedToFloat (highMantissa | 0x00100000), exponent - 1043) +
 				ldexp (UnsignedToFloat (lowMantissa), exponent - 1075);
 		return bytes [0] & 0x80 ? - x : x;
-	#endif
+	}
 }
 
 double bingetr10 (FILE *f) {
@@ -736,94 +784,141 @@ void binputb (FILE *f) {
 }
 
 void binputi2 (int i, FILE *f) {
-	#ifdef binario_shortBE2
+	if (binario_shortBE2 && Melder_debug != 18) {
 		short s = i; fwrite (& s, 2, 1, f);
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = i >> 8;
 		bytes [1] = i;
 		fwrite (bytes, 1, 2, f);
-	#endif
+	}
 }
 
 void binputu2 (unsigned int u, FILE *f) {
-	#ifdef binario_shortBE2
+	if (binario_shortBE2 && Melder_debug != 18) {
 		unsigned short s = u; fwrite (& s, 2, 1, f);
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = u >> 8;
 		bytes [1] = u;
 		fwrite (bytes, 1, 2, f);
-	#endif
+	}
 }
 
 void binpute2 (int value, FILE *f, void *enumerated) {
-	#ifdef binario_shortBE2
+	(void) enumerated;
+	if (binario_shortBE2 && Melder_debug != 18) {
 		short s = value; fwrite (& s, 2, 1, f);
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = value >> 8;
 		bytes [1] = value;
 		fwrite (bytes, 1, 2, f);
-	#endif
-	(void) enumerated;
+	}
 }
 
 void binputi3 (long i, FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		fwrite (& i, 3, 1, f);
-	#else
+	} else {
 		char bytes [3];
 		bytes [0] = i >> 16;
 		bytes [1] = i >> 8;
 		bytes [2] = i;
 		fwrite (bytes, 1, 3, f);
-	#endif
+	}
 }
 
 void binputi4 (long i, FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		fwrite (& i, 4, 1, f);
-	#else
+	} else {
 		char bytes [4];
 		bytes [0] = i >> 24;
 		bytes [1] = i >> 16;
 		bytes [2] = i >> 8;
 		bytes [3] = i;
 		fwrite (bytes, 1, 4, f);
-	#endif
+	}
 }
 
 void binputu4 (unsigned long u, FILE *f) {
-	#ifdef binario_longBE4
+	if (binario_longBE4 && Melder_debug != 18) {
 		fwrite (& u, 4, 1, f);
-	#else
+	} else {
 		char bytes [4];
 		bytes [0] = u >> 24;
 		bytes [1] = u >> 16;
 		bytes [2] = u >> 8;
 		bytes [3] = u;
 		fwrite (bytes, 1, 4, f);
-	#endif
+	}
 }
 
-void binputi2LE (int i, FILE *f) { char bytes [2]; bytes [1] = i >> 8; bytes [0] = i; fwrite (bytes, 1, 2, f); }
+void binputi2LE (int i, FILE *f) {
+	if (binario_shortLE2 && Melder_debug != 18) {
+		short s = i; fwrite (& s, 2, 1, f);
+	} else {
+		char bytes [2];
+		bytes [1] = i >> 8;
+		bytes [0] = i;
+		fwrite (bytes, 1, 2, f);
+	}
+}
 
-void binputu2LE (unsigned int u, FILE *f) { char bytes [2]; bytes [1] = u >> 8; bytes [0] = u; fwrite (bytes, 1, 2, f); }
+void binputu2LE (unsigned int u, FILE *f) {
+	if (binario_shortLE2 && Melder_debug != 18) {
+		unsigned short s = u; fwrite (& s, 2, 1, f);
+	} else {
+		char bytes [2];
+		bytes [1] = u >> 8;
+		bytes [0] = u;
+		fwrite (bytes, 1, 2, f);
+	}
+}
 
-void binputi3LE (long i, FILE *f) { char bytes [3];
-	bytes [2] = i >> 16; bytes [1] = i >> 8; bytes [0] = i; fwrite (bytes, 1, 3, f); }
+void binputi3LE (long i, FILE *f) {
+	if (binario_longLE4 && Melder_debug != 18) {
+		fwrite (& i, 3, 1, f);
+	} else {
+		char bytes [3];
+		bytes [2] = i >> 16;
+		bytes [1] = i >> 8;
+		bytes [0] = i;
+		fwrite (bytes, 1, 3, f);
+	}
+}
 
-void binputi4LE (long i, FILE *f) { char bytes [4];
-	bytes [3] = i >> 24; bytes [2] = i >> 16; bytes [1] = i >> 8; bytes [0] = i; fwrite (bytes, 1, 4, f); }
+void binputi4LE (long i, FILE *f) {
+	if (binario_longLE4 && Melder_debug != 18) {
+		fwrite (& i, 4, 1, f);
+	} else {
+		char bytes [4];
+		bytes [3] = i >> 24;
+		bytes [2] = i >> 16;
+		bytes [1] = i >> 8;
+		bytes [0] = i;
+		fwrite (bytes, 1, 4, f);
+	}
+}
 
-void binputu4LE (unsigned long u, FILE *f) { char bytes [4];
-	bytes [3] = u >> 24; bytes [2] = u >> 16; bytes [1] = u >> 8; bytes [0] = u; fwrite (bytes, 1, 4, f); }
+void binputu4LE (unsigned long u, FILE *f) {
+	if (binario_longLE4 && Melder_debug != 18) {
+		fwrite (& u, 4, 1, f);
+	} else {
+		char bytes [4];
+		bytes [3] = u >> 24;
+		bytes [2] = u >> 16;
+		bytes [1] = u >> 8;
+		bytes [0] = u;
+		fwrite (bytes, 1, 4, f);
+	}
+}
 
 void binputr4 (double x, FILE *f) {
-	#ifdef binario_floatIEEE4
+	if (binario_floatIEEE4msb && Melder_debug != 18) {
 		float x4 = x; fwrite (& x4, 4, 1, f);
-	#else
+	} else {
 		unsigned char bytes [4];
 		int sign, exponent;
 		double fMantissa, fsMantissa;
@@ -852,13 +947,13 @@ void binputr4 (double x, FILE *f) {
 		bytes [2] = mantissa >> 8;
 		bytes [3] = mantissa;
 		fwrite (bytes, 1, 4, f);
-	#endif
+	}
 }
 
 void binputr8 (double x, FILE *f) {
-	#ifdef binario_doubleIEEE8
+	if (binario_doubleIEEE8msb && Melder_debug != 18) {
 		fwrite (& x, 8, 1, f);
-	#else
+	} else {
 		unsigned char bytes [8];
 		int sign, exponent;
 		double fMantissa, fsMantissa;
@@ -894,7 +989,7 @@ void binputr8 (double x, FILE *f) {
 		bytes [6] = lowMantissa >> 8;
 		bytes [7] = lowMantissa;
 		fwrite (bytes, 1, 8, f);
-#endif
+	}
 }
 
 void binputr10 (double x, FILE *f) {
@@ -1115,7 +1210,7 @@ macro_cacgetb (7)
 void cacgetb (CACHE *f) { (void) f; bitsInReadBuffer = 0; }
 
 int cacgeti2 (CACHE *f) {
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		short s;
 		START (s) READ READ
 		return s;   /* With sign extension if an int is 4 bytes. */
@@ -1127,7 +1222,7 @@ int cacgeti2 (CACHE *f) {
 }
 
 unsigned int cacgetu2 (CACHE *f) {
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		unsigned short s;
 		START (s) READ READ
 		return s;   /* Without sign extension. */
@@ -1140,9 +1235,8 @@ unsigned int cacgetu2 (CACHE *f) {
 
 int cacgete2 (CACHE *f, void *enumerated) {
 	signed short s;
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		START (s) READ READ
-
 	#else
 		unsigned char bytes [2];
 		START (bytes) READ READ
@@ -1155,7 +1249,7 @@ int cacgete2 (CACHE *f, void *enumerated) {
 }
 
 long cacgeti4 (CACHE *f) {
-	#ifdef binario_longBE4
+	#if binario_longBE4
 		long l;
 		START (l) READ READ READ READ
 		return l;
@@ -1171,7 +1265,7 @@ long cacgeti4 (CACHE *f) {
 }
 
 unsigned long cacgetu4 (CACHE *f) {
-	#ifdef binario_longBE4
+	#if binario_longBE4
 		unsigned long l;
 		START (l) READ READ READ READ
 		return l;
@@ -1215,7 +1309,7 @@ unsigned long cacgetu4LE (CACHE *f) {
 }
 
 double cacgetr4 (CACHE *f) {
-	#ifdef binario_floatIEEE4
+	#if binario_floatIEEE4msb
 		float x;
 		START (x) READ READ READ READ
 		return x;
@@ -1241,7 +1335,7 @@ double cacgetr4 (CACHE *f) {
 }
 
 double cacgetr8 (CACHE *f) {
-	#ifdef binario_doubleIEEE8
+	#if binario_doubleIEEE8msb
 		double x;
 		START (x) READ READ READ READ READ READ READ READ
 		return x;
@@ -1312,7 +1406,7 @@ void cacputb (CACHE *f) {
 }
 
 void cacputi2 (int i, CACHE *f) {
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		short s = i;
 		START (s) WRITE WRITE
 	#else
@@ -1324,7 +1418,7 @@ void cacputi2 (int i, CACHE *f) {
 }
 
 void cacputu2 (unsigned int u, CACHE *f) {
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		unsigned short s = u;
 		START (s) WRITE WRITE
 	#else
@@ -1336,7 +1430,7 @@ void cacputu2 (unsigned int u, CACHE *f) {
 }
 
 void cacpute2 (int value, CACHE *f, void *enumerated) {
-	#ifdef binario_shortBE2
+	#if binario_shortBE2
 		signed short s = value;
 		START (s) WRITE WRITE
 	#else
@@ -1349,7 +1443,7 @@ void cacpute2 (int value, CACHE *f, void *enumerated) {
 }
 
 void cacputi4 (long i, CACHE *f) {
-	#ifdef binario_longBE4
+	#if binario_longBE4
 		START (i) WRITE WRITE WRITE WRITE
 	#else
 		char bytes [4];
@@ -1362,7 +1456,7 @@ void cacputi4 (long i, CACHE *f) {
 }
 
 void cacputu4 (unsigned long u, CACHE *f) {
-	#ifdef binario_longBE4
+	#if binario_longBE4
 		START (u) WRITE WRITE WRITE WRITE
 	#else
 		char bytes [4];
@@ -1407,7 +1501,7 @@ void cacputu4LE (unsigned long u, CACHE *f) {
 }
 
 void cacputr4 (double x, CACHE *f) {
-	#ifdef binario_floatIEEE4
+	#if binario_floatIEEE4msb
 		float x4 = x;
 		START (x4) WRITE WRITE WRITE WRITE
 	#else
@@ -1443,7 +1537,7 @@ void cacputr4 (double x, CACHE *f) {
 }
 
 void cacputr8 (double x, CACHE *f) {
-	#ifdef binario_doubleIEEE8
+	#if binario_doubleIEEE8msb
 		START (x) WRITE WRITE WRITE WRITE WRITE WRITE WRITE WRITE
 	#else
 		unsigned char bytes [8];

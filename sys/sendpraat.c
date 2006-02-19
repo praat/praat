@@ -1,7 +1,7 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* Code version: January 13, 2006 */
-/* Comments version: January 13, 2006 */
+/* Code version: February 17, 2006 */
+/* Comments version: February 17, 2006 */
 
 /*
  * The sendpraat subroutine (Unix with X Window; Windows; Macintosh) sends a message
@@ -102,7 +102,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		AEDesc programDescriptor;
 		AppleEvent event, reply;
 		OSErr err;
-		const char *signature;
+		UInt32 signature;
 		(void) display;
 	#endif
 
@@ -200,12 +200,12 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		 * I know of no system routine for this, so I'll just translate the two most common names:
 		 */
 		if (! strcmp (programName, "praat") || ! strcmp (programName, "Praat") || ! strcmp (programName, "PRAAT"))
-			signature = "PpgB";
+			signature = 'PpgB';
 		else if (! strcmp (programName, "als") || ! strcmp (programName, "Als") || ! strcmp (programName, "ALS"))
-			signature = "CclA";
+			signature = 'CclA';
 		else
-			signature = programName;
-		AECreateDesc (typeApplSignature, signature, 4, & programDescriptor);
+			signature = 0;
+		AECreateDesc (typeApplSignature, & signature, 4, & programDescriptor);
 	#endif
 
 	/*
@@ -359,7 +359,7 @@ int main (int argc, char **argv) {
 			printf ("   sendpraat 0 praat Quit\n");
 		#endif
 		printf ("      Causes the program \"praat\" to quit (gracefully).\n");
-		printf ("      This works because \"Quit\" is a fixed command in one of Praat's menus.\n");
+		printf ("      This works because \"Quit\" is a fixed command in Praat's Control menu.\n");
 		#if ! win
 			printf ("      Sendpraat will return immediately.\n");
 		#endif

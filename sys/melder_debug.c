@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2006/01/25
+ * pb 2006/02/17
  */
 
 #include "melder.h"
@@ -46,10 +46,10 @@ the behaviour of that program changes in the following way:
 16: Linux: open /dev/dsp without O_NDELAY
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 17: debugging on in Formula.c
+18: no endian assumptions in abcio.c
 
 (negative values are for David)
 
 */
-
 
 /* End of file melder_debug.c */

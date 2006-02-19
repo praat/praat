@@ -1,8 +1,8 @@
-#ifndef _Strings_h_
-#define _Strings_h_
-/* Strings.h
+#ifndef _TableEditor_h_
+#define _TableEditor_h_
+/* TableEditor.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,19 @@
  */
 
 /*
- * pb 2006/02/14
+ * pb 2006/02/11
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
+#ifndef _Editor_h_
+	#include "Editor.h"
 #endif
-#include "Strings_def.h"
+#ifndef _Table_h_
+	#include "Table.h"
+#endif
 
-#define Strings_methods Data_methods
-oo_CLASS_CREATE (Strings, Data)
+typedef struct structTableEditor *TableEditor;
 
-Strings Strings_createAsFileList (const char *path);
-Strings Strings_createAsDirectoryList (const char *path);
-Strings Strings_readFromRawTextFile (MelderFile fs);
-int Strings_writeToRawTextFile (Strings me, MelderFile fs);
+TableEditor TableEditor_create (Widget parent, const char *title, Table table);
 
-void Strings_randomize (Strings me);
-int Strings_genericize (Strings me);
-void Strings_sort (Strings me);
-
-/* End of file Strings.h */
+/* End of file TableEditor.h */
 #endif

@@ -826,7 +826,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 #endif
 	char *p;
 	#ifdef macintosh
-		extern unsigned short Gestalt (unsigned long selector, long *response);
+		#ifndef __MACH__
+			extern unsigned short Gestalt (unsigned long selector, long *response);
+		#endif
 		Gestalt ('sysv', (long *) & Melder_systemVersion);
 	#endif
 	/*

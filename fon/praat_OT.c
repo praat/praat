@@ -464,6 +464,17 @@ DO
 	}
 END
 
+FORM (OTGrammar_setDecisionStrategy, "OTGrammar: Set decision strategy", 0)
+	ENUM ("Decision strategy", OTGrammar_DECISION, 0)
+	OK
+OTGrammar me = ONLY_OBJECT;
+SET_INTEGER ("Decision strategy", my decisionStrategy);
+DO
+	OTGrammar me = ONLY_OBJECT;
+	my decisionStrategy = GET_INTEGER ("Decision strategy");
+	praat_dataChanged (ONLY_OBJECT);
+END
+
 FORM (OTGrammar_setRanking, "OTGrammar: Set ranking", 0)
 	NATURAL ("Constraint", "1")
 	REAL ("Ranking", "100.0")
@@ -884,6 +895,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTGrammar, 0, "Reset all rankings...", 0, 0, DO_OTGrammar_resetAllRankings);
 	praat_addAction1 (classOTGrammar, 0, "Learn one...", 0, 0, DO_OTGrammar_learnOne);
 	praat_addAction1 (classOTGrammar, 0, "Learn one from partial output...", 0, 0, DO_OTGrammar_learnOneFromPartialOutput);
+	praat_addAction1 (classOTGrammar, 0, "Modify behaviour -", 0, 0, 0);
+	praat_addAction1 (classOTGrammar, 1, "Set decision strategy...", 0, 1, DO_OTGrammar_setDecisionStrategy);
 	praat_addAction1 (classOTGrammar, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 0, "Remove constraint...", 0, 1, DO_OTGrammar_removeConstraint);
 	praat_addAction1 (classOTGrammar, 0, "Remove harmonically bounded candidates...", 0, 1, DO_OTGrammar_removeHarmonicallyBoundedCandidates);

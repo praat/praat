@@ -1,6 +1,6 @@
 /* praat.plc
  *
- * Copyright (C) 2002-2005 Paul Boersma
+ * Copyright (C) 2002-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
  */
 
 /*
- * pb 2005/02/27
+ * pb 2006/02/18
  */
 
-#include "praat_version.h"
-
-#define kBundleShortVersion "Praat " PRAAT_VERSION 
-#define kBundleGetInfo kBundleShortVersion ", © 1992-" PRAAT_YEAR " by Paul Boersma and David Weenink"
+#define kBundleShortVersion "Praat 4.4.09"
+#define kBundleGetInfo kBundleShortVersion ", © 1992-2006 by Paul Boersma and David Weenink"
 
 plist {
 	dictionary {
@@ -38,6 +36,7 @@ plist {
 		key "CFBundleVersion" value string "1.0"
 		key "CFBundleDevelopmentRegion" value string "English"
 		key "CFBundleInfoDictionaryVersion" value string "6.0"
+		key "CFBundleIconFile" value string "Praat.icns"
 		key "LSRequiresCarbon" value boolean true
 	}
 }

@@ -198,7 +198,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				NULL,
 				keepLocal   /* Because we're going to access the pixels directly. */
 			) != noErr || offscreenWorld == NULL) {
-				static notified = FALSE;
+				static int notified = FALSE;
 				if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot create offscreen graphics.");
 				notified = TRUE;
 				goto end;
@@ -206,7 +206,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			SetGWorld (offscreenWorld, /* ignored: */ NULL);
 			offscreenPixMap = GetGWorldPixMap (offscreenWorld);
 			if (! LockPixels (offscreenPixMap)) {
-				static notified = FALSE;
+				static int notified = FALSE;
 				if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot lock offscreen pixels.");
 				notified = TRUE;
 				SetGWorld (savePort, saveDevice);

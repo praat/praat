@@ -306,8 +306,6 @@ static int Table_isColumnNumeric (Table me, long icol) {
 	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return FALSE;
 	for (irow = 1; irow <= my rows -> size; irow ++) {
-		TableRow row = my rows -> item [irow];
-		const char *cell = row -> cells [icol]. string;
 		if (! Table_isCellNumeric (me, irow, icol)) return FALSE;
 	}
 	return TRUE;
@@ -451,7 +449,7 @@ end:
 
 Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const char *criterion) {
 	Table thee = NULL;
-	long irow, icol, n = 0;
+	long irow, icol;
 	if (column < 1 || column > my numberOfColumns)
 		{ Melder_error ("No column %ld.", column); goto end; }
 	Table_numericize (me, column);

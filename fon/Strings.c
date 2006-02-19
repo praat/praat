@@ -1,6 +1,6 @@
 /* Strings.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2002/07/16 GPL
  * pb 2003/07/02 corrected Strings_randomize so that the first element can sometimes go to the first place
  * pb 2004/03/21 createAsFileList now accepts spaces in directory names on Unix and Mac
  * pb 2004/04/20 the previous thing now done with backslashes rather than double quotes,
  *               because double quotes prevent the expansion of the wildcard asterisk
+ * pb 2006/02/14 Strings_createAsDirectoryList
  */
 
 #include "Strings.h"
@@ -196,6 +196,29 @@ Strings Strings_createAsFileList (const char *path) {
 					(rightLength == 0 || length >= rightLength && strequ (fileName + (length - rightLength), right)))
 				my strings [++ my numberOfStrings] = Melder_strdup (fileName);
 		}
+	#endif
+end:
+	iferror forget (me);
+	return me;
+}
+
+Strings Strings_createAsDirectoryList (const char *path) {
+	Strings me = new (Strings);
+	#if defined (_WIN32)
+		HANDLE searchHandle;
+		WIN32_FIND_DATA findData;
+		char searchPath [300];
+		int len = strlen (path), hasAsterisk = strchr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
+		my strings = NUMpvector (1, 10000); cherror
+		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
+		searchHandle = FindFirstFile (searchPath, & findData);
+		if (searchHandle == INVALID_HANDLE_VALUE) { Melder_error ("Cannot find first file."); goto end; }
+		do {
+			if ((findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+				my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
+			}
+		} while (FindNextFile (searchHandle, & findData));
+		FindClose (searchHandle);
 	#endif
 end:
 	iferror forget (me);

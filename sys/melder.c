@@ -1042,7 +1042,7 @@ void MelderMotif_create (void *appContext, void *parent) {
 	Melder_setPauseProc (motif_pause);
 }
 
-#ifdef macintosh
+#if defined(macintosh) && ! defined(__MACH__)
 	/* Divert the printf in Melder_casual. */
 	#ifndef __CONSOLE__
 	#include <console.h>

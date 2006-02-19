@@ -53,7 +53,9 @@
 	#include <Files.h>
 	#include <MacErrors.h>
 	#include <Script.h>
-	#include <FSp_fopen.h>
+	#ifndef __MACH__
+		#include <FSp_fopen.h>
+	#endif
 	#include "macport_off.h"
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
@@ -65,6 +67,7 @@
 	#include <sys/stat.h>
 	#undef macintosh
 	#define UNIX
+	#include <unistd.h>
 #endif
 
 static char theShellDirectory [256];

@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  */
 
 /*
- * pb 2005/09/26
+ * pb 2006/02/12
  */
 
 #include "praat.h"
 
 #include "Table.h"
+#include "TableEditor.h"
 #include "Regression.h"
 
 /***** TABLE *****/
@@ -112,6 +113,17 @@ DIRECT (Table_appendRow)
 		Table_appendRow (OBJECT);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
+	}
+END
+
+DIRECT (Table_edit)
+	if (praat.batch) {
+		return Melder_error ("Cannot edit a Table from batch.");
+	} else {
+		WHERE (SELECTED) {
+			TableEditor editor = TableEditor_create (praat.topShell, FULL_NAME, ONLY_OBJECT);
+			if (! praat_installEditor (editor, IOBJECT)) return 0;
+		}
 	}
 END
 
@@ -496,6 +508,7 @@ void praat_uvafon_Stat_init (void) {
 
 	praat_addAction1 (classTable, 0, "Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, "Write to table file...", 0, 0, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, "Edit", 0, 0, DO_Table_edit);
 	praat_addAction1 (classTable, 0, "Draw -                ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, "Scatter plot (mark)...", 0, 1, DO_Table_scatterPlot_mark);
 	praat_addAction1 (classTable, 0, "Query -                ", 0, 0, 0);

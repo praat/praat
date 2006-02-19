@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/01/01
+ * pb 2006/02/14
  */
 
 #include "praat.h"
@@ -3797,6 +3797,34 @@ DO
 	if (! praat_new (Strings_createAsFileList (GET_STRING ("path")), GET_STRING ("Name"))) return 0;
 END
 
+FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create Strings as file list...")
+	SENTENCE ("Name", "directoryList")
+	LABEL ("", "Path:")
+	TEXTFIELD ("path", "/people/Miep/*")
+	OK
+static int inited;
+if (! inited) {
+	structMelderDir defaultDir;
+	char *workingDirectory, path [300];
+	Melder_getDefaultDir (& defaultDir);
+	workingDirectory = Melder_dirToPath (& defaultDir);
+	#if defined (UNIX)
+		sprintf (path, "%s/*", workingDirectory);
+	#elif defined (_WIN32)
+	{
+		int len = strlen (workingDirectory);
+		sprintf (path, "%s%s*", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? "\\" : "");
+	}
+	#else
+		sprintf (path, "%s*", workingDirectory);
+	#endif
+	SET_STRING ("path", path);
+	inited = TRUE;
+}
+DO
+	if (! praat_new (Strings_createAsDirectoryList (GET_STRING ("path")), GET_STRING ("Name"))) return 0;
+END
+
 DIRECT (Strings_equal)
 	Strings s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
@@ -4682,6 +4710,9 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand ("Objects", "New", "-- new textgrid --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "New", "Create TextGrid...", 0, 0, DO_TextGrid_create);
 	praat_addMenuCommand ("Objects", "New", "Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
+	#ifdef _WIN32
+	praat_addMenuCommand ("Objects", "New", "Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
+	#endif
 
 	praat_addMenuCommand ("Objects", "Read", "-- read raw --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "Read", "Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);

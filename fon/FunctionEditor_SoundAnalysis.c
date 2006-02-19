@@ -285,7 +285,6 @@ static void computePitch_inside (FunctionEditor me) {
 }
 
 static void computePitch (FunctionEditor me) {
-	double margin = my pitch.veryAccurate ? 3.0 / my pitch.floor : 1.5 / my pitch.floor;
 	Melder_progressOff ();
 	if (my pitch.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my pitch.data == NULL || my pitch.data -> xmin != my startWindow || my pitch.data -> xmax != my endWindow))
@@ -347,7 +346,6 @@ static void computeFormants (FunctionEditor me) {
 }
 
 static void computePulses (FunctionEditor me) {
-	double margin = my pitch.veryAccurate ? 3.0 / my pitch.floor : 1.5 / my pitch.floor;
 	Melder_progressOff ();
 	if (my pulses.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my pulses.data == NULL || my pulses.data -> xmin != my startWindow || my pulses.data -> xmax != my endWindow))
@@ -1101,7 +1099,7 @@ END
 DIRECT (FunctionEditor, cb_pulseListing)
 	long i, i1, i2;
 	double tmin, tmax;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
 	if (! my pulses.show)
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {

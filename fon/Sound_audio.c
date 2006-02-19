@@ -73,7 +73,7 @@
 	#include <Resources.h>
 	#include <MacMemory.h>
 	#include <Sound.h>
-	#ifndef __MACH__
+	#if ! defined (__MACH__) || defined (__GNUC__)
 		#include <SoundInput.h>
 	#endif
 	#include <Gestalt.h>

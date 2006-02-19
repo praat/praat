@@ -20,6 +20,9 @@
 /*
  djmw 20020627 GPL header
  djmw 20030913 changed 'f' to 'file' as argument in Melder_checkSoundFile
+ djmw 20060206 Set errno = 0:  "An application that needs to examine the value
+ 	of errno to determine the error should set it to 0 before a function call,
+ 	then inspect it before a subsequent function call."
 */
 
 #include "LongSound_extensions.h"
@@ -287,6 +290,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 	pre_append_endpos = MelderFile_tell (file);
 	if (Melder_hasError ()) goto end;
 	
+	errno = 0;
 	for (i = 1; i <= my size; i++)
 	{
 		Data data = my item [i];

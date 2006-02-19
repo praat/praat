@@ -14,20 +14,21 @@ for i to n
 endfor
      echo                  ALL PRAAT TESTS WENT OK
 printline
-printline                ######               #####           #####
-printline            ##############           #####         #####
-printline          #####        #####         #####       #####
-printline         #####          #####        #####     #####
-printline         #####          #####        #####   #####
-printline         #####          #####        ##### #####
-printline         #####          #####        #########
-printline         #####          #####        #######
-printline         #####          #####        #####
-printline         #####          #####        #######
-printline         #####          #####        #########
-printline         #####          #####        ##### #####
-printline         #####          #####        #####   #####
-printline         #####          #####        #####     #####
-printline          #####        #####         #####       #####
-printline            ##############           #####         #####
-printline                ######               #####           #####
+line5$ = "        #####          #####        #####   #####"
+line8$ = "        #####          #####        #######"
+line1$ = "               ######               #####           #####"
+line2$ = "           ##############           #####         #####"
+line4$ = "        #####          #####        #####     #####"
+line7$ = "        #####          #####        #########"
+line9$ = "        #####          #####        #####"
+line3$ = "         #####        #####         #####       #####"
+line6$ = "        #####          #####        ##### #####"
+for line from 1 to 9
+	line$ = line'line'$
+	printline 'line$'
+endfor
+for line2 from 1 to 8
+	line = 9 - line2
+	line$ = line'line'$
+	printline 'line$'
+endfor

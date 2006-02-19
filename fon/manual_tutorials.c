@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060202)
+MAN_BEGIN ("What's new?", "ppgb", 20060219)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.09# (February 19, 2006)")
+LIST_ITEM ("\\bu Macintosh: first Intel mac version.")
+LIST_ITEM ("\\bu Windows: Create Strings from directory list...")
+NORMAL ("##4.4.08# (February 6, 2006)")
+LIST_ITEM ("\\bu Much improved cepstral smoothing.")
 NORMAL ("##4.4.07# (February 2, 2006)")
 LIST_ITEM ("\\bu More scripting facilities (local variables in procedures, e.g. .x and .text\\$ ).")
 LIST_ITEM ("\\bu Faster formulas.")
@@ -811,9 +816,11 @@ NORMAL ("Answer: nowadays most journals allow you to cite computer programs and 
 	"The style approved by the American Psychological Association, "
 	"and therefore by many journals, is like the following "
 	"(change the dates and version number as needed):")
-NORMAL ("Boersma, Paul & Weenink, David (" PRAAT_YEAR "). "
-	"Praat: doing phonetics by computer (Version " PRAAT_VERSION ") [Computer program]. "
-	"Retrieved " PRAAT_MONTH " " PRAAT_DAY ", " PRAAT_YEAR ", from http://www.praat.org/")
+#define xstr(s) str(s)
+#define str(s) #s
+NORMAL ("Boersma, Paul & Weenink, David (" xstr(PRAAT_YEAR) "). "
+	"Praat: doing phonetics by computer (Version " xstr(PRAAT_VERSION) ") [Computer program]. "
+	"Retrieved " xstr(PRAAT_MONTH) " " xstr(PRAAT_DAY) ", " xstr(PRAAT_YEAR) ", from http://www.praat.org/")
 NORMAL ("If the journal does not allow you to cite a web site, then try:")
 NORMAL ("Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
 	"%%Glot International% ##5:9/10#, 341-345.")

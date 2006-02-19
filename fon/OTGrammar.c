@@ -343,7 +343,6 @@ int OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand)
 }
 
 int OTGrammar_getInterpretiveParse (OTGrammar me, const char *partialOutput, long *bestTableau, long *bestCandidate) {
-	OTGrammarCandidate best = NULL;
 	long itab_best = 0, icand_best = 0, itab, icand, numberOfBestCandidates = 0;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
