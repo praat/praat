@@ -30,6 +30,7 @@
  * pb 2006/01/01 IntervalTier_removeLeftBoundary, TextTier_removePoint
  * pb 2006/01/25 IntervalTier_writeToXwaves
  * pb 2006/01/29 IntervalTier_readFromXwaves more forgiving
+ * pb 2006/02/20 TextGrid_create guards against zero tiers
  */
 
 #include "TextGrid.h"
@@ -296,6 +297,10 @@ TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const
 				}
 			}
 		}
+	}
+	if (my tiers -> size == 0) {
+		forget (me);
+		return Melder_errorp ("Cannot create a TextGrid without tiers. Supply at least one tier name.");
 	}
 	return me;
 }

@@ -2,7 +2,7 @@ echo Endian...
 procedure do
 	Read from file... test.wav
 	energyInAir = Get energy in air
-	assert "'energyInAir:17'" = "0.00008397361215620"
+	assert "'energyInAir:11'" = "0.00008397361"
 
 	Read from file... test.Sound
 	energyInAir2 = Get energy in air

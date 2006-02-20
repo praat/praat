@@ -23,11 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060219)
+MAN_BEGIN ("What's new?", "ppgb", 20060220)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.10# (February 20, 2006)")
+LIST_ITEM ("\\bu Intel computers: corrected reading and writing of 24-bit sound files (error introduced in 4.4.09).")
+LIST_ITEM ("\\bu Create TextGrid: guard against zero tiers.")
+LIST_ITEM ("\\bu MacOS X: correct visibility of Praat icon.")
+LIST_ITEM ("\\bu MacOS X: correct dropping of Praat files on Praat icon.")
 NORMAL ("##4.4.09# (February 19, 2006)")
-LIST_ITEM ("\\bu Macintosh: first Intel mac version.")
+LIST_ITEM ("\\bu Macintosh: first Intel Macintosh version.")
 LIST_ITEM ("\\bu Windows: Create Strings from directory list...")
 NORMAL ("##4.4.08# (February 6, 2006)")
 LIST_ITEM ("\\bu Much improved cepstral smoothing.")

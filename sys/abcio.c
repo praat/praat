@@ -22,6 +22,7 @@
  * pb 2003/05/19 accept percent signs in getReal
  * pb 2004/10/01 Melder_double instead of %.17g
  * pb 2006/02/17 support for Intel-based Macs
+ * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
  */
 
 #include "melder.h"
@@ -600,18 +601,14 @@ int bingete2 (FILE *f, void *enumerated) {
 }
 
 long bingeti3 (FILE *f) {
-	if (binario_longBE4 && Melder_debug != 18) {
-		long l; fread (& l, 3, 1, f); return l;
-	} else {
-		unsigned long result;
-		unsigned char bytes [3]; fread (bytes, 1, 3, f);
-		result =
-			((unsigned long) bytes [0] << 16) |
-			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [2];
-		if ((bytes [0] & 128) != 0)
-			result |= 0xFF000000;
-		return result;
-	}
+	unsigned long result;
+	unsigned char bytes [3]; fread (bytes, 1, 3, f);
+	result =
+		((unsigned long) bytes [0] << 16) |
+		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [2];
+	if ((bytes [0] & 128) != 0)
+		result |= 0xFF000000;
+	return result;
 }
 
 long bingeti4 (FILE *f) {
@@ -653,18 +650,14 @@ unsigned int bingetu2LE (FILE *f) {
 }
 
 long bingeti3LE (FILE *f) {
-	if (binario_longLE4 && Melder_debug != 18) {
-		long l; fread (& l, 3, 1, f); return l;
-	} else {
-		unsigned long result;
-		unsigned char bytes [3]; fread (bytes, 1, 3, f);
-		result =
-			((unsigned long) bytes [2] << 16) |
-			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
-		if ((bytes [2] & 128) != 0)
-			result |= 0xFF000000;
-		return result;
-	}
+	unsigned long result;
+	unsigned char bytes [3]; fread (bytes, 1, 3, f);
+	result =
+		((unsigned long) bytes [2] << 16) |
+		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+	if ((bytes [2] & 128) != 0)
+		result |= 0xFF000000;
+	return result;
 }
 
 long bingeti4LE (FILE *f) {
@@ -818,15 +811,11 @@ void binpute2 (int value, FILE *f, void *enumerated) {
 }
 
 void binputi3 (long i, FILE *f) {
-	if (binario_longBE4 && Melder_debug != 18) {
-		fwrite (& i, 3, 1, f);
-	} else {
-		char bytes [3];
-		bytes [0] = i >> 16;
-		bytes [1] = i >> 8;
-		bytes [2] = i;
-		fwrite (bytes, 1, 3, f);
-	}
+	char bytes [3];
+	bytes [0] = i >> 16;
+	bytes [1] = i >> 8;
+	bytes [2] = i;
+	fwrite (bytes, 1, 3, f);
 }
 
 void binputi4 (long i, FILE *f) {
@@ -878,15 +867,11 @@ void binputu2LE (unsigned int u, FILE *f) {
 }
 
 void binputi3LE (long i, FILE *f) {
-	if (binario_longLE4 && Melder_debug != 18) {
-		fwrite (& i, 3, 1, f);
-	} else {
-		char bytes [3];
-		bytes [2] = i >> 16;
-		bytes [1] = i >> 8;
-		bytes [0] = i;
-		fwrite (bytes, 1, 3, f);
-	}
+	char bytes [3];
+	bytes [2] = i >> 16;
+	bytes [1] = i >> 8;
+	bytes [0] = i;
+	fwrite (bytes, 1, 3, f);
 }
 
 void binputi4LE (long i, FILE *f) {
