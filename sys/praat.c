@@ -27,6 +27,7 @@
  * pb 2005/06/28 TextEditor_prefs
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2005/11/18 URL support
+ * pb 2006/02/23 corrected callbacks in praat_installEditorN
  */
 
 #include "melder.h"
@@ -686,6 +687,9 @@ int praat_installEditorN (Any editor, Ordered objects) {
 				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (praat.list [iPraatObject]. editors [ieditor] == NULL) {
 						praat.list [iPraatObject]. editors [ieditor] = editor;
+						Editor_setDestroyCallback (editor, cb_Editor_destroy, NULL);
+						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
+						Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
 						break;
 					}
 				}

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060220)
+MAN_BEGIN ("What's new?", "ppgb", 20060223)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.11# (February 23, 2006)")
+LIST_ITEM ("\\bu Listening experiments: removed a bug that could cause Praat to crash when an ExperimentMFC object was removed.")
 NORMAL ("##4.4.10# (February 20, 2006)")
 LIST_ITEM ("\\bu Intel computers: corrected reading and writing of 24-bit sound files (error introduced in 4.4.09).")
 LIST_ITEM ("\\bu Create TextGrid: guard against zero tiers.")

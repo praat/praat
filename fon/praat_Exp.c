@@ -48,13 +48,14 @@ DIRECT (ExperimentMFC_run)
 		RunnerMFC runner = NULL;
 		Ordered experiments = Ordered_create ();
 		if (experiments == NULL) return 0;
-		WHERE (SELECTED)
+		WHERE (SELECTED) {
 			if (! Collection_addItem (experiments, OBJECT)) {   /* This transfers ownership temporarily. */
 				experiments -> size = 0;   /* Get ownership back. */
 				forget (experiments);
 				return 0;
+			}
 		}
-		runner = RunnerMFC_create (praat.topShell, "listening experiments", experiments);
+		runner = RunnerMFC_create (praat.topShell, "listening experiments", experiments);   /* Transfer ownership of experiments (ref). */
 		if (! runner) return 0;
 		if (! praat_installEditorN (runner, experiments)) return 0;
 	}

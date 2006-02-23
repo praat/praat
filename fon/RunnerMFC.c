@@ -26,6 +26,7 @@
  * pb 2005/12/04 oops button
  * pb 2005/12/08 multiple experiments
  * pb 2006/01/19 fixed a bug that caused an assertion violation when the oops button was pressed after the experiment finished
+ * pb 2006/02/23 repaired small memory leak in destroy()
  */
 
 #include "RunnerMFC.h"
@@ -47,6 +48,7 @@ static void destroy (I) {
 		my experiments -> size = 0;   /* Give ownership back to whoever thinks they own the experiments. */
 		forget (my experiments);
 	}
+	forget (my graphics);
 	inherited (RunnerMFC) destroy (me);
 }
 
