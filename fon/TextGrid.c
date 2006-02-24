@@ -31,6 +31,7 @@
  * pb 2006/01/25 IntervalTier_writeToXwaves
  * pb 2006/01/29 IntervalTier_readFromXwaves more forgiving
  * pb 2006/02/20 TextGrid_create guards against zero tiers
+ * pb 2006/02/24 split TextGrid_create into TextGrid_createWithTiers and TextGrid_createWithoutTiers
  */
 
 #include "TextGrid.h"
@@ -260,13 +261,19 @@ class_methods (TextGrid, Function)
 	class_method_local (TextGrid, info)
 class_methods_end
 
-TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const char *pointTiers) {
+TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	TextGrid me = new (TextGrid);
-	char nameBuffer [400], *tierName;
-	if (! me || ! (my tiers = Ordered_create ()))
+	if (me == NULL || (my tiers = Ordered_create ()) == NULL)
 		{ forget (me); return NULL; }
 	my xmin = tmin;
 	my xmax = tmax;
+	return me;
+}
+
+TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const char *pointTiers) {
+	TextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
+	char nameBuffer [400], *tierName;
+	if (me == NULL) return NULL;
 
 	/*
 	 * Create a number of IntervalTier objects.
@@ -408,7 +415,7 @@ end:
 
 static TextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 	long itier, iinterval;
-	TextGrid thee = TextGrid_create (tmin, tmax, NULL, NULL);
+	TextGrid thee = TextGrid_createWithoutTiers (tmin, tmax);
 	if (! thee) return NULL;
 	for (itier = 1; itier <= my size; itier ++) {
 		Tier tier = my item [itier];
@@ -1595,7 +1602,6 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 	for (;;) {
 		double firstRemainingTime = +1e308;
 		long firstRemainingTier = 2000000000, firstRemainingElement = 0;
-		TextPoint firstRemainingPoint = NULL;
 		for (itier = 1; itier <= my tiers -> size; itier ++) {
 			Data anyTier = my tiers -> item [itier];
 			if (anyTier -> methods == (Data_Table) classIntervalTier) {

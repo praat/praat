@@ -1,6 +1,6 @@
 /* FunctionEditor_SoundAnalysis.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@
  * pb 2005/03/07 'intensity' logging sensitive to averaging method
  * pb 2005/06/16 units
  * pb 2005/08/18 editor name in log files
+ * pb 2006/02/27 more helpful text when analyses are not shown
  */
 
 #include <time.h>
@@ -1231,7 +1232,7 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setFontSize (my graphics, 9);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_printf (my graphics, 0.5, 0.67, "To see the analyses, zoom in to at most %s seconds,", Melder_half (my longestAnalysis));
-		Graphics_text (my graphics, 0.5, 0.33, "or raise the \"longest analysis\" setting in the View menu.");
+		Graphics_text (my graphics, 0.5, 0.33, "or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.");
 		Graphics_setFontSize (my graphics, 10);
 		return;
 	}

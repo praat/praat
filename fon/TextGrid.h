@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/25
+ * pb 2006/02/24
  */
 
 #ifndef _AnyTier_h_
@@ -87,6 +87,7 @@ void TextTier_removePoint (TextTier me, long ipoint);
 
 #define TextGrid_methods Function_methods
 oo_CLASS_CREATE (TextGrid, Function)
+TextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const char *pointTiers);
 
 int TextGrid_add (TextGrid me, Any tier);

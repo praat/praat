@@ -46,7 +46,8 @@ static const char *STRING_POINT_NUMBER = "Point number";
 /***** ANYTIER (generic) *****/
 
 DIRECT (AnyTier_into_TextGrid)
-	TextGrid grid = TextGrid_create (1e30, -1e30, NULL, NULL);
+	TextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
+	if (grid == NULL) return 0;
 	WHERE (SELECTED) if (! TextGrid_add (grid, OBJECT)) { forget (grid); return 0; }
 	if (! praat_new (grid, "grid")) return 0;
 END

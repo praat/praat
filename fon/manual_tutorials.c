@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060223)
+MAN_BEGIN ("What's new?", "ppgb", 20060224)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.12# (February 24, 2006)")
+LIST_ITEM ("\\bu TextGrid: removed a bug introduced in 4.4.10 that caused Praat to crash when converting an IntervalTier into a TextGrid.")
 NORMAL ("##4.4.11# (February 23, 2006)")
 LIST_ITEM ("\\bu Listening experiments: removed a bug that could cause Praat to crash when an ExperimentMFC object was removed.")
 NORMAL ("##4.4.10# (February 20, 2006)")
