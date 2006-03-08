@@ -150,17 +150,17 @@ static void createChildren (I) {
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (OTMultiEditor) createChildren (me);
 	button = XtVaCreateManagedWidget ("Partial forms:", xmPushButtonWidgetClass, my dialog,
-		XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 120, 0);
+		XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_limit, (XtPointer) me);
 	#ifdef _WIN32
 	/* BUG: activateCallback should work for texts. */
 	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
 	#endif
 	my form1Text = XtVaCreateManagedWidget ("form1Text", xmTextFieldWidgetClass, my dialog,
-		XmNx, 124 + STRING_SPACING, XmNy, y, XmNwidth, 150, 0);
+		XmNx, 124 + STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
 	XtAddCallback (my form1Text, XmNactivateCallback, cb_limit, (XtPointer) me);
 	my form2Text = XtVaCreateManagedWidget ("form2Text", xmTextFieldWidgetClass, my dialog,
-		XmNx, 274 + 2 * STRING_SPACING, XmNy, y, XmNwidth, 150, 0);
+		XmNx, 274 + 2 * STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
 	XtAddCallback (my form2Text, XmNactivateCallback, cb_limit, (XtPointer) me);
 }
 

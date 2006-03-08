@@ -246,7 +246,7 @@ static int waitWhileProgress (double progress, char *message, Widget dia, Widget
 	} else {
 		if (progress <= 0.0) progress = 0.0;
 		XtManageChild (dia);
-		XtVaSetValues (label, motif_argXmString (XmNlabelString, message), 0);
+		XtVaSetValues (label, motif_argXmString (XmNlabelString, message), NULL);
 		XmScaleSetValue (scale, floor (progress * 1000.0));
 		XmUpdateDisplay (dia);
 	}
@@ -283,7 +283,7 @@ int Melder_progress (double progress, const char *format, ...) {
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
 				label = XmCreateLabel (dia, "label", NULL, 0);
-				XtVaSetValues (label, XmNwidth, 400, 0);
+				XtVaSetValues (label, XmNwidth, 400, NULL);
 				XtManageChild (label);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
 				XtVaSetValues (scale, XmNy, 40, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
@@ -291,11 +291,11 @@ int Melder_progress (double progress, const char *format, ...) {
 					#if ! defined (macintosh)
 						XmNscaleHeight, 20,
 					#endif
-					0);
+					NULL);
 				XtManageChild (scale);
 				#if ! defined (macintosh)
 					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, 0);
+					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, NULL);
 					XtManageChild (cancelButton);
 				#endif
 			}
@@ -339,7 +339,7 @@ void * Melder_monitor (double progress, const char *format, ...) {
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
 				label = XmCreateLabel (dia, "label", NULL, 0);
-				XtVaSetValues (label, XmNwidth, 400, 0);
+				XtVaSetValues (label, XmNwidth, 400, NULL);
 				XtManageChild (label);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
 				XtVaSetValues (scale, XmNy, 40, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
@@ -347,16 +347,16 @@ void * Melder_monitor (double progress, const char *format, ...) {
 					#if ! defined (macintosh) && ! defined (_WIN32)
 						XmNscaleHeight, 20,
 					#endif
-					0);
+					NULL);
 				XtManageChild (scale);
 				#if ! defined (macintosh)
 					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, 0);
+					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, NULL);
 					XtManageChild (cancelButton);
 				#endif
 				drawingArea = XmCreateDrawingArea (dia, "drawingArea", NULL, 0);
 				XtVaSetValues (drawingArea, XmNy, 200, XmNwidth, 400, XmNheight, 200,
-					XmNmarginWidth, 10, XmNmarginHeight, 10, 0);
+					XmNmarginWidth, 10, XmNmarginHeight, 10, NULL);
 				XtManageChild (drawingArea);
 				XtManageChild (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
@@ -943,23 +943,23 @@ static int motif_pause (char *message) {
 		XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
 		rc = XmCreateRowColumn (dia, "rc", NULL, 0);
 		text = XmCreateLabel (rc, "text", NULL, 0);
-		XtVaSetValues (text, XmNwidth, 400, 0);
+		XtVaSetValues (text, XmNwidth, 400, NULL);
 		XtManageChild (text);
 		buttons = XmCreateRowColumn (rc, "rc", NULL, 0);
-		XtVaSetValues (buttons, XmNorientation, XmHORIZONTAL, 0);
+		XtVaSetValues (buttons, XmNorientation, XmHORIZONTAL, NULL);
 		continueButton = XmCreatePushButton (buttons, "Continue", NULL, 0);
-		XtVaSetValues (continueButton, XmNx, 10, XmNwidth, 300, 0);
+		XtVaSetValues (continueButton, XmNx, 10, XmNwidth, 300, NULL);
 		XtAddCallback (continueButton, XmNactivateCallback, pause_continue_cb, (XtPointer) dia);
 		XtManageChild (continueButton);
 		stopButton = XmCreatePushButton (buttons, "Stop", NULL, 0);
-		XtVaSetValues (stopButton, XmNx, 320, XmNwidth, 60, 0);
+		XtVaSetValues (stopButton, XmNx, 320, XmNwidth, 60, NULL);
 		XtAddCallback (stopButton, XmNactivateCallback, pause_stop_cb, (XtPointer) dia);
 		XtManageChild (stopButton);
 		XtManageChild (buttons);
 		XtManageChild (rc);
 	}
 	if (! message) message = "";
-	XtVaSetValues (text, motif_argXmString (XmNlabelString, message), 0);
+	XtVaSetValues (text, motif_argXmString (XmNlabelString, message), NULL);
 	XtManageChild (dia);
 	pause_continued = pause_stopped = FALSE;
 	do {

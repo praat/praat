@@ -403,7 +403,7 @@ void praat_updateSelection (void) {
 		 * after I had suggested him to insert this line in praat_init (), which did not suffice.
 		 */
 		#ifdef lesstif
-			XtVaSetValues (praatList_objects, XmNwidth, LIST_WIDTH - 14, 0);
+			XtVaSetValues (praatList_objects, XmNwidth, LIST_WIDTH - 14, NULL);
 		#endif
 		praat_show ();
 	}
@@ -1020,7 +1020,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		sprintf (objectWindowTitle, "%s objects", praatP.title);
 		XtVaSetValues (praat.topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
 		#if defined (macintosh) || defined (_WIN32)
-			XtVaSetValues (praat.topShell, XmNheight, WINDOW_HEIGHT, 0);
+			XtVaSetValues (praat.topShell, XmNheight, WINDOW_HEIGHT, NULL);
 		#endif
 		#if ! defined (sun4)
 		{
@@ -1046,7 +1046,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		Raam = XmCreateForm (praat.topShell, "raam", NULL, 0);
 #ifdef macintosh
-		XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, 0);
+		XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, NULL);
 		praatP.topBar = motif_addMenuBar (Raam);
 		XtManageChild (praatP.topBar);
 #endif
@@ -1054,7 +1054,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addMenus (praatP.menuBar);
 		XtManageChild (praatP.menuBar);
 		#ifndef UNIX
-			XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, 0);
+			XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, NULL);
 		#endif
 		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
 			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
@@ -1063,19 +1063,19 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		XtVaSetValues (praatList_objects,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 26,
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-			XmNx, -1, XmNwidth, LIST_WIDTH, 0);
+			XmNx, -1, XmNwidth, LIST_WIDTH, NULL);
 #else
 		listWindow = XmCreateScrolledWindow (Raam, "listWindow", NULL, 0);
 		#ifdef macintosh
 			XtVaSetValues (listWindow,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNx, -1, XmNwidth, LIST_WIDTH, 0);
+				XmNx, -1, XmNwidth, LIST_WIDTH, NULL);
 		#else
 			XtVaSetValues (listWindow,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 80,
-				XmNwidth, LIST_WIDTH, 0);
+				XmNwidth, LIST_WIDTH, NULL);
 		#endif
 		praatList_objects = XmCreateList (listWindow, "list", NULL, 0);
 #endif

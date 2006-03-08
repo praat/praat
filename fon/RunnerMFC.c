@@ -395,7 +395,7 @@ static void createChildren (I) {
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 		XmNbottomAttachment, XmATTACH_FORM,
-		0);
+		NULL);
 	XtManageChild (my drawingArea);
 }
 

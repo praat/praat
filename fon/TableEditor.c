@@ -91,7 +91,7 @@ static void createChildren (I) {
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
-		0);
+		NULL);
 
 	/***** Create text field. *****/
 
@@ -102,7 +102,7 @@ static void createChildren (I) {
 		XmNheight, Machine_getTextHeight (),
 		XmNwordWrap, False,
 		XmNeditMode, XmSINGLE_LINE_EDIT,
-		0);
+		NULL);
 	XtManageChild (my text);
 	#ifdef UNIX
 		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
@@ -116,7 +116,7 @@ static void createChildren (I) {
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth () + 9,
-		0);
+		NULL);
 	XtManageChild (my drawingArea);
 
 	/***** Create horizontal scroll bar. *****/
@@ -134,7 +134,7 @@ static void createChildren (I) {
 		XmNsliderSize, 1,
 		XmNincrement, 1,
 		XmNpageIncrement, 3,
-		0);
+		NULL);
 
 	/***** Create vertical scroll bar. *****/
 
@@ -151,7 +151,7 @@ static void createChildren (I) {
 		XmNsliderSize, 1,
 		XmNincrement, 1,
 		XmNpageIncrement, 5,
-		0);
+		NULL);
 
 	XtManageChild (form);
 }

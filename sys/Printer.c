@@ -359,7 +359,7 @@ int Printer_postScriptSettings (void) {
 				UiRadio_addButton (radio, "Landscape");
 			UiForm_addPositive (dia, "Magnification", "1.0");
 			UiForm_addLabel (dia, "label", "Print command:");
-			#ifdef linux
+			#if defined (linux)
 				UiForm_addText (dia, "printCommand", "lpr %s");
 			#else
 				UiForm_addText (dia, "printCommand", "lp -c %s");

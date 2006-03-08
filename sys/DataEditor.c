@@ -338,12 +338,12 @@ static void classDataSubEditor_createChildren (I) {
 
 	button = XtVaCreateManagedWidget
 		("Change", xmPushButtonWidgetClass, my dialog,
-		 XmNx, 30, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, 0);
+		 XmNx, 30, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_change, (XtPointer) me);
 
 	button = XtVaCreateManagedWidget
 		("Cancel", xmPushButtonWidgetClass, my dialog,
-		 XmNx, 170, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, 0);
+		 XmNx, 170, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_cancel, (XtPointer) me);
 
 	scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
@@ -351,7 +351,7 @@ static void classDataSubEditor_createChildren (I) {
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
 		XmNbottomAttachment, XmATTACH_FORM,
-		XmNleftAttachment, XmATTACH_FORM, 0);
+		XmNleftAttachment, XmATTACH_FORM, NULL);
 
 	my scrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 		xmScrollBarWidgetClass, scrolledWindow,
@@ -361,8 +361,8 @@ static void classDataSubEditor_createChildren (I) {
 		XmNvalue, 0,
 		XmNsliderSize, my numberOfFields < MAXNUM_ROWS ? my numberOfFields : MAXNUM_ROWS,
 		XmNincrement, 1, XmNpageIncrement, MAXNUM_ROWS - 1,
-		0);
-	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, 0);
+		NULL);
+	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
 	XtManageChild (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
 
@@ -370,11 +370,11 @@ static void classDataSubEditor_createChildren (I) {
 	for (i = 1; i <= MAXNUM_ROWS; i ++) {
 		int y = LIST_TOP_MARGIN + (i - 1) * ROW_HEIGHT;
 		my fieldData [i]. label = XtVaCreateWidget ("label", xmLabelWidgetClass, board,
-			XmNy, y, 0);   /* No fixed x value: sometimes indent. */
+			XmNy, y, NULL);   /* No fixed x value: sometimes indent. */
 		my fieldData [i]. button = XtVaCreateWidget ("Open", xmPushButtonWidgetClass, board,
-			XmNy, y, XmNx, BUTTON_X, 0);
+			XmNy, y, XmNx, BUTTON_X, NULL);
 		my fieldData [i]. text = XtVaCreateWidget ("text", xmTextWidgetClass, board,
-			XmNeditable, True, XmNy, y, XmNx, TEXT_X, 0);
+			XmNeditable, True, XmNy, y, XmNx, TEXT_X, NULL);
 		XtAddCallback (my fieldData [i]. button, XmNactivateCallback, cb_open, (XtPointer) me);
 	}
 	XtManageChild (board);
@@ -468,14 +468,14 @@ static void showStructMember (
 	sprintf (buffer, type == inheritwa ? "Class part \"%s\":" : rank == 0 ? "%s" :
 		rank == 1 || rank == 3 || rank < 0 ? "%s [ ]" : "%s [ ] [ ]", memberDescription -> name);
 	XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer),
-		XmNx, type == inheritwa ? 0 : NAME_X, 0);
+		XmNx, type == inheritwa ? 0 : NAME_X, NULL);
 	XtManageChild (fieldData -> label);
 
 	/* Show the value (for a single type) or a button (for a composite type). */
 
 	if (isSingleType) {
 		char *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, buffer);
-		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], 0);
+		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 		XmTextSetString (fieldData -> text, text);
 		XtManageChild (fieldData -> text);
 		fieldData -> address = memberAddress;
@@ -632,11 +632,11 @@ static void classVectorEditor_showMembers (I) {
 				sprintf (buffer, "%s [%s]", my description -> name, enum_string (my description -> max1, ielement));
 			else
 				sprintf (buffer, "%s [%ld]", my description -> name, ielement);
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, 0);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			text = singleTypeToText (elementAddress, type, my description -> tagType, buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], 0);
+			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 			XmTextSetString (fieldData -> text, text);
 			XtManageChild (fieldData -> text);
 			fieldData -> address = elementAddress;
@@ -655,7 +655,7 @@ static void classVectorEditor_showMembers (I) {
 				my irow --;
 			} else {
 				sprintf (buffer, "%s [%ld]: ---------------------------", my description -> name, ielement);
-				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, 0);
+				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, NULL);
 				XtManageChild (fieldData -> label);
 			}
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history);
@@ -668,7 +668,7 @@ static void classVectorEditor_showMembers (I) {
 			sprintf (history + strlen (history), "[%ld]", ielement);
 
 			sprintf (buffer, "%s [%ld]", my description -> name, ielement);
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, 0);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			if (object == NULL) return;   /* No button if no object. */
@@ -731,11 +731,11 @@ static void classMatrixEditor_showMembers (I) {
 		if (isSingleType) {
 			char *text;
 			sprintf (buffer, "%s [%ld] [%ld]", my description -> name, irow, icolumn);
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, 0);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, buffer), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			text = singleTypeToText (elementAddress, type, my description -> tagType, buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], 0);
+			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 			XmTextSetString (fieldData -> text, text);
 			XtManageChild (fieldData -> text);
 			fieldData -> address = elementAddress;

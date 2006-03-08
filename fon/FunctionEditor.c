@@ -853,29 +853,29 @@ static void createChildren (I) {
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
-		0);
+		NULL);
 
 	/***** Create zoom buttons. *****/
 
 	button = XtVaCreateManagedWidget ("all", xmPushButtonWidgetClass, form,
 		XmNx, x,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, 0);
+		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_showAll, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("in", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, 0);
+		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_zoomIn, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("out", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, 0);
+		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_zoomOut, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("sel", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, 0);
+		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_zoomToSelection, (XtPointer) me);
 
 	/***** Create scroll bar. *****/
@@ -891,14 +891,14 @@ static void createChildren (I) {
 		XmNmaximum, maximumScrollBarValue,
 		XmNvalue, 1,
 		XmNsliderSize, maximumScrollBarValue - 1,
-		0);
+		NULL);
 
 	/***** Create Group button. *****/
 
 	my groupButton = XtVaCreateManagedWidget ("Group", xmToggleButtonWidgetClass, form,
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 1, XmNwidth, 80, 0);
+		XmNheight, Machine_getScrollBarWidth () + 1, XmNwidth, 80, NULL);
 	XtAddCallback (my groupButton, XmNvalueChangedCallback, cb_group, (XtPointer) me);
 	XmToggleButtonSetState (my groupButton, group_equalDomain (my tmin, my tmax), False);
 
@@ -909,7 +909,7 @@ static void createChildren (I) {
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, our hasText ? TEXT_HEIGHT : 0,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth () + 9,
-		0);
+		NULL);
 	XtManageChild (my drawingArea);
 
 	/***** Create optional text field. *****/
@@ -922,7 +922,7 @@ static void createChildren (I) {
 			XmNheight, TEXT_HEIGHT,
 			XmNwordWrap, True,
 			XmNeditMode, XmMULTI_LINE_EDIT,   /* Otherwise, cannot wrap. */
-			0);
+			NULL);
 		XtManageChild (my text);
 		/*
 		 * X Toolkit 4:184,461 says: "you should never call XtSetKeyboardFocus",

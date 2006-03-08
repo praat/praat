@@ -970,7 +970,7 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 			XmNrightAttachment, XmATTACH_FORM,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, topOffset,
 			XmNbottomAttachment, XmATTACH_FORM,
-			0);
+			NULL);
 		XtVaSetValues (me, XmNeditable, editable, XmNeditMode, XmMULTI_LINE_EDIT,
 		#ifndef macintosh
 			XmNrows, 33, XmNcolumns, 90,
@@ -986,7 +986,7 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 			XmNrightAttachment, XmATTACH_FORM,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, topOffset,
 			XmNbottomAttachment, XmATTACH_FORM,
-			0);
+			NULL);
 		theScrolledHint = FALSE;
 	#endif
 	return me;

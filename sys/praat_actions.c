@@ -194,7 +194,7 @@ static void deleteDynamicMenu (void) {
 		XtDestroyWidget (praat_writeMenu);
 		praat_writeMenuSeparator = NULL;
 		praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
-		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, 0);
+		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 	}
 }
 
@@ -581,12 +581,12 @@ void praat_actions_show (void) {
 					Longchar_nativize (my title, Melder_buffer1, FALSE);
 					my button = XmCreatePushButton (parent, Melder_buffer1, NULL, 0);
 					#if defined (_WIN32)
-						XtVaSetValues (my button, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, 0);
+						XtVaSetValues (my button, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, NULL);
 					#elif defined (macintosh)
 						#if TARGET_API_MAC_CARBON
-							XtVaSetValues (my button, XmNx, 5, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 25, 0);
+							XtVaSetValues (my button, XmNx, 5, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 25, NULL);
 						#else
-							XtVaSetValues (my button, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 20, 0);
+							XtVaSetValues (my button, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 20, NULL);
 						#endif
 					#endif
 					if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand)
@@ -616,9 +616,9 @@ void praat_actions_show (void) {
 				if (! my button) {
 					my button = XmCreateLabelGadget (praat_dynamicMenu, MOTIF_CONST_CHAR_ARG (my title), NULL, 0);
 					#if defined (_WIN32)
-						XtVaSetValues (my button, XmNheight, 19, 0);
+						XtVaSetValues (my button, XmNheight, 19, NULL);
 					#elif defined (macintosh)
-						XtVaSetValues (my button, XmNheight, 15, 0);
+						XtVaSetValues (my button, XmNheight, 15, NULL);
 					#endif
 					XtManageChild (my button);
 				} else {
@@ -644,15 +644,15 @@ void praat_actions_show (void) {
 						my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
 						currentSubmenu1 = motif_addMenu2 (my button, my title, 0, & cascadeButton);
 						#if defined (_WIN32)
-							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, 0);
-							XtVaSetValues (my button, XmNheight, 21, XmNwidth, BUTTON_WIDTH - 20, 0);
+							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
+							XtVaSetValues (my button, XmNheight, 21, XmNwidth, BUTTON_WIDTH - 20, NULL);
 						#elif defined (macintosh)
 							#if TARGET_API_MAC_CARBON
-								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 29, 0);
-								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, 0);
+								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 29, NULL);
+								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, NULL);
 							#else
-								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, 0);
-								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 20, 0);
+								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
+								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 20, NULL);
 							#endif
 						#endif
 					} else {
@@ -691,14 +691,14 @@ void praat_actions_createDynamicMenu (Widget form, int leftOffset) {
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
 			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -1,
 			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, leftOffset,
-			0);
+			NULL);
 	#else
 		XtVaSetValues (praat_dynamicMenuWindow,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -3,
 			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -3,
 			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, leftOffset,
-			0);
+			NULL);
 	#endif
 	praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
 	XtManageChild (praat_dynamicMenu);

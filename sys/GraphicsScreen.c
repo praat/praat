@@ -262,7 +262,7 @@ MOTIF_CALLBACK (cb_move)
 	iam (GraphicsScreen);
 	Dimension width, height, marginWidth, marginHeight;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, 0);
+		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 
 	/* The four values returned are probably equal to the previous ones.
 	 * However, the following call forces a new computation of the device coordinates
@@ -288,7 +288,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), motif_getResolution (w));
 	#endif
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, 0);
+		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	Graphics_setWsViewport ((Graphics) me,
 		marginWidth, width - marginWidth, marginHeight, height - marginHeight);
 	#ifdef macintosh

@@ -229,19 +229,19 @@ static void createChildren (I) {
 	int height = Machine_getTextHeight (), width = BUTTON_WIDTH, x = 3, y = Machine_getMenuBarHeight () + 4;
 	inherited (ButtonEditor) createChildren (me);
 	my button1 = XtVaCreateManagedWidget ("Objects", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, 0);
+		XmNx, x, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
 	XtAddCallback (my button1, XmNvalueChangedCallback, cb_objects, (XtPointer) me);
 	my button2 = XtVaCreateManagedWidget ("Picture", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, 0);
+		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
 	XtAddCallback (my button2, XmNvalueChangedCallback, cb_picture, (XtPointer) me);
 	my button3 = XtVaCreateManagedWidget ("Editors", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, 0);
+		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
 	XtAddCallback (my button3, XmNvalueChangedCallback, cb_editors, (XtPointer) me);
 	my button4 = XtVaCreateManagedWidget ("Actions A-M", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, 0);
+		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
 	XtAddCallback (my button4, XmNvalueChangedCallback, cb_actionsAM, (XtPointer) me);
 	my button5 = XtVaCreateManagedWidget ("Actions N-Z", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 30, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, 0);
+		XmNx, x += width + 30, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
 	XtAddCallback (my button5, XmNvalueChangedCallback, cb_actionsNZ, (XtPointer) me);
 }
 

@@ -370,7 +370,7 @@ void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callba
 	else {
 		Widget button = my button = XmCreatePushButton (parent, MOTIF_CONST_CHAR_ARG (title), 0, 0);
 		XtVaSetValues (button, XmNbottomAttachment, XmATTACH_FORM,
-			XmNbottomOffset, fromBottom, XmNx, fromLeft, 0);
+			XmNbottomOffset, fromBottom, XmNx, fromLeft, NULL);
 		XtSetSensitive (button, False);
 		XtAddCallback (button, XmNactivateCallback, cb_menu, (XtPointer) callback);
 		XtManageChild (button);

@@ -36,13 +36,13 @@ Widget motif_addShell (Widget widget, long flags) {
 	#else
 		return XtAppCreateShell (NULL, "Praatwulg", applicationShellWidgetClass,
 			XtDisplay (widget), NULL, 0);
-		/*return XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, 0);*/
+		/*return XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, NULL);*/
 	#endif
 }
 
 Widget motif_addMenuBar (Widget form) {
 	Widget menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
-	XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, 0);
+	XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
 	return menuBar;
 }
 
@@ -51,11 +51,11 @@ Widget motif_addMenu (Widget bar, const char *title, long flags) {
 	Longchar_nativize (title, Melder_buffer1, TRUE);
 	menuTitle = XmCreateCascadeButton (bar, Melder_buffer1, NULL, 0);
 	if (strequ (title, "Help"))   /* BUG: Mac reacts to this title... */
-		XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, 0);   /* ...instead of to this resource. */
+		XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
 	menu = XmCreatePulldownMenu (bar, Melder_buffer1, NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
-	XtVaSetValues (menuTitle, XmNsubMenuId, menu, 0);
+	XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
 	XtManageChild (menuTitle);
 	return menu;
 }
@@ -65,11 +65,11 @@ Widget motif_addMenu2 (Widget bar, const char *title, long flags, Widget *menuTi
 	Longchar_nativize (title, Melder_buffer1, TRUE);
 	*menuTitle = XmCreateCascadeButton (bar, Melder_buffer1, NULL, 0);
 	if (strequ (title, "Help"))
-		XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, 0);
+		XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
 	menu = XmCreatePulldownMenu (bar, Melder_buffer1, NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
-	XtVaSetValues (*menuTitle, XmNsubMenuId, menu, 0);
+	XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
 	XtManageChild (*menuTitle);
 	return menu;
 }
@@ -82,7 +82,7 @@ Widget motif_addItem (Widget menu, const char *title, long flags,
 	int accelerator = flags & 127;
 	Longchar_nativize (title, Melder_buffer1, TRUE);
 	button = XtVaCreateManagedWidget (Melder_buffer1,
-		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, 0);
+		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (button, False);
 	if (flags & motif_CHECKED)
@@ -157,7 +157,7 @@ Widget motif_addItem (Widget menu, const char *title, long flags,
 }
 
 Widget motif_addSeparator (Widget menu) {
-	return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, 0);
+	return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
 }
 
 int motif_getResolution (Widget widget) {

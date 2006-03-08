@@ -24,6 +24,7 @@
  * pb 2004/04/20 the previous thing now done with backslashes rather than double quotes,
  *               because double quotes prevent the expansion of the wildcard asterisk
  * pb 2006/02/14 Strings_createAsDirectoryList
+ * pb 2006/03/08 allow 1,000,000 file names in Strings_createAsFileList
  */
 
 #include "Strings.h"
@@ -97,7 +98,7 @@ Strings Strings_createAsFileList (const char *path) {
 			#define LS_COMMAND "/usr/bin/ls "
 		#endif
 		char command [300], buf [300], *p;
-		my strings = NUMpvector (1, 10000); cherror
+		my strings = NUMpvector (1, 1000000); cherror
 		sprintf (command, LS_COMMAND "%s", path);
 		/*
 		 * Prepend all spaces with backslashes.
@@ -127,7 +128,7 @@ Strings Strings_createAsFileList (const char *path) {
 		WIN32_FIND_DATA findData;
 		char searchPath [300];
 		int len = strlen (path), hasAsterisk = strchr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
-		my strings = NUMpvector (1, 10000); cherror
+		my strings = NUMpvector (1, 1000000); cherror
 		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
 		searchHandle = FindFirstFile (searchPath, & findData);
 		if (searchHandle == INVALID_HANDLE_VALUE) { Melder_error ("Cannot find first file."); goto end; }
@@ -142,7 +143,7 @@ Strings Strings_createAsFileList (const char *path) {
 		char *asterisk, left [100], right [100], searchDirectory [256], *lastColon;
 		long i, leftLength, rightLength;
 		structMelderDir dir;
-		my strings = NUMpvector (1, 10000); cherror
+		my strings = NUMpvector (1, 1000000); cherror
 		/*
 		 * Parse the path.
 		 * Example: in "Macintosh HD:sounds:h*.aifc",
@@ -209,7 +210,7 @@ Strings Strings_createAsDirectoryList (const char *path) {
 		WIN32_FIND_DATA findData;
 		char searchPath [300];
 		int len = strlen (path), hasAsterisk = strchr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
-		my strings = NUMpvector (1, 10000); cherror
+		my strings = NUMpvector (1, 1000000); cherror
 		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
 		searchHandle = FindFirstFile (searchPath, & findData);
 		if (searchHandle == INVALID_HANDLE_VALUE) { Melder_error ("Cannot find first file."); goto end; }

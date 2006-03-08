@@ -9,20 +9,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>OTMulti</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>Praat multi-level OT grammar</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
 				<string>praat</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -107,10 +93,122 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>Sound</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat sound file</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Pitch</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat pitch curve</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Formant</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat formant curve</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>TextGrid</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat annotation</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ExperimentMFC</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat listening experiment</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Matrix</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat matrix</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>PointProcess</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat point process</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Table</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat table</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>TableOfReal</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat TableOfReal</string>
+			<string>Praat numeric table</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -135,10 +233,10 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>Matrix</string>
+				<string>OTMulti</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat Matrix</string>
+			<string>Praat multi-level OT grammar</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -152,7 +250,7 @@
 				<string>PairDistribution</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat PairDistribution</string>
+			<string>Praat distribution of string pairs</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>

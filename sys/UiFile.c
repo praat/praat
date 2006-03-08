@@ -560,17 +560,17 @@ UiFileSelector UiFileSelector_create (Widget parent, const char *label, int dire
 	if (parent) {
 		Widget form = XmCreateForm (parent, "UiFileSelector_hor", NULL, 0), dirScrolled, fileScrolled;
 		if (direction == 1) {
-			XtVaSetValues (form, XmNwidth, DIALOG_WIDTH + 200, 0);
+			XtVaSetValues (form, XmNwidth, DIALOG_WIDTH + 200, NULL);
 			my dirLabel = XtVaCreateManagedWidget (DIRECTORY_TERM, xmLabelWidgetClass, form,
 				XmNx, 0, XmNy, 0, XmNwidth, LABEL_WIDTH + 100,
-				XmNalignment, XmALIGNMENT_BEGINNING, 0);
+				XmNalignment, XmALIGNMENT_BEGINNING, NULL);
 			my fileLabel = XtVaCreateManagedWidget ("File:", xmLabelWidgetClass, form,
 				XmNx, FIELD_X + 100, XmNy, 0, XmNwidth, FIELD_WIDTH + 100,
-				XmNalignment, XmALIGNMENT_BEGINNING, 0);
+				XmNalignment, XmALIGNMENT_BEGINNING, NULL);
 		} else if (direction == 2) {
 			my dirLabel = XtVaCreateManagedWidget (DIRECTORY_TERM, xmLabelWidgetClass, form,
 				XmNx, 0, XmNy, 0, XmNwidth, 60,
-				XmNalignment, XmALIGNMENT_BEGINNING, 0);
+				XmNalignment, XmALIGNMENT_BEGINNING, NULL);
 		}
 		#if defined (macintosh)
 		if (direction == 1) {
@@ -618,8 +618,8 @@ UiFileSelector UiFileSelector_create (Widget parent, const char *label, int dire
 			my dirList = XmCreateList (dirScrolled, "UiFileOut_dirList", NULL, 0);
 		}
 		#elif defined (_WIN32)
-			/*my upButton = XtVaCreatedManagedWidget ("Up", xmPushButtonWidgetClass, form, XmNy, 30, 0);
-			my desktopButton = XtVaCreateManagedWidget ("Desktop", xmPushButtonWidgetClass, form, XmNy, 60, 0);*/
+			/*my upButton = XtVaCreatedManagedWidget ("Up", xmPushButtonWidgetClass, form, XmNy, 30, NULL);
+			my desktopButton = XtVaCreateManagedWidget ("Desktop", xmPushButtonWidgetClass, form, XmNy, 60, NULL);*/
 			my dirList = XmCreateList (form, "UiFileIn_dirList", NULL, 0);
 			XtVaSetValues (my dirList, XmNx, 0, XmNwidth, FIELD_WIDTH + 100,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 18,
@@ -648,7 +648,7 @@ UiFileSelector UiFileSelector_create (Widget parent, const char *label, int dire
 		if (direction == 2) {
 			Widget hor = XmCreateForm (parent, "UiFileOut_hor", NULL, 0);
 			XtVaSetValues (hor, XmNwidth, DIALOG_WIDTH, NULL);
-			XtVaCreateManagedWidget ("File:", xmLabelWidgetClass, hor, 0);
+			XtVaCreateManagedWidget ("File:", xmLabelWidgetClass, hor, NULL);
 			my fileText = XmCreateTextField (hor, "UiFileSelector_text", NULL, 0);
 			XtVaSetValues (my fileText,
 				XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 60,
@@ -763,12 +763,12 @@ static void UiFile_init (I, const char *title) {
 			Longchar_nativize (title, Melder_buffer1, TRUE);
 			XtVaSetValues (my dialog,
 				motif_argXmString (XmNdialogTitle, Melder_buffer1),
-				XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, 0);
-			XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, 0);
+				XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, NULL);
+			XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, NULL);
 			XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST),
-				XmNvisibleItemCount, 20, 0);
+				XmNvisibleItemCount, 20, NULL);
 			XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
-				XmNvisibleItemCount, 20, 0);
+				XmNvisibleItemCount, 20, NULL);
 			XtAddCallback (my dialog, XmNokCallback, UiFile_ok, (XtPointer) me);
 			XtAddCallback (my dialog, XmNcancelCallback, UiFile_cancel, (XtPointer) me);
 			XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
@@ -954,7 +954,7 @@ static void classUiOutfile_ok (I) {
 				motif_argXmString (XmNdialogTitle, "File exists"),
 				XmNautoUnmanage, True,
 				XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				motif_argXmString (XmNokLabelString, "Overwrite"), 0);
+				motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
 			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
 			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
 		}

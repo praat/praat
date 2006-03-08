@@ -298,7 +298,7 @@ static int Table_isCellNumeric (Table me, long irow, long icol) {
 	row = my rows -> item [irow];
 	cell = row -> cells [icol]. string;
 	if (cell == NULL) return TRUE;   /* The value --undefined-- */
-	if (cell [0] == '?' && cell [1] == '\0') return TRUE;   /* The value --undefined-- */
+	if (cell [0] == '?' && cell [1] == '\0' || strequ (cell, "--undefined--")) return TRUE;   /* The value --undefined-- */
 	return Melder_isStringNumeric (cell);
 }
 

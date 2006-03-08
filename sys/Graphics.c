@@ -46,7 +46,7 @@ static void widgetToWindowCoordinates (I) {
 				int shellX = 0, shellY = 0;
 				do {
 					int x, y;
-					XtVaGetValues (widget, XmNx, & x, XmNy, & y, 0);
+					XtVaGetValues (widget, XmNx, & x, XmNy, & y, NULL);
 					shellX += x;
 					shellY += y;
 					widget = XtParent (widget);

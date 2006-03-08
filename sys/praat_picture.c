@@ -1406,9 +1406,9 @@ void praat_picture_init (void) {
 			XmNdeleteResponse, XmUNMAP, XmNiconName, "Picture", XmNtitle, pictureWindowTitle,
 			XmNx, x, NULL);
 		dialog = XtVaCreateWidget ("picture", xmFormWidgetClass, shell,
-			XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, 0);
+			XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
 		#ifdef UNIX
-			XtVaSetValues (dialog, XmNhighlightThickness, 1, 0);
+			XtVaSetValues (dialog, XmNhighlightThickness, 1, NULL);
 		#endif
 		menuBar = motif_addMenuBar (dialog);
 	}
@@ -1582,12 +1582,12 @@ void praat_picture_init (void) {
 				XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
 				XmNrightAttachment, XmATTACH_FORM,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
-				XmNbottomAttachment, XmATTACH_FORM, 0);
+				XmNbottomAttachment, XmATTACH_FORM, NULL);
 			drawingArea = XmCreateDrawingArea (scrollWindow, "drawingArea", NULL, 0);
 			width = height = resolution * 12;
 			XtVaSetValues (drawingArea,
 				XmNwidth, width, XmNheight, height,
-				XmNmarginWidth, 0, XmNmarginHeight, 0, 0);
+				XmNmarginWidth, 0, XmNmarginHeight, 0, NULL);
 			XtManageChild (drawingArea);
 		#else
 			#if ! defined(sun4)
@@ -1595,7 +1595,7 @@ void praat_picture_init (void) {
 				"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
 				XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
 				XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), 0);
+				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
 			drawingArea = XmCreateDrawingArea (scrollWindow, "drawingArea", NULL, 0);
 			#else
 			drawingArea = XmCreateDrawingArea (dialog, "drawingArea", NULL, 0);
@@ -1610,7 +1610,7 @@ void praat_picture_init (void) {
 				#endif
 				XmNwidth, width, XmNheight, height,
 				XmNmarginWidth, 0, XmNmarginHeight, 0, XmNborderWidth, 1,
-				0);
+				NULL);
 			XtManageChild (drawingArea);
 		#endif
 		#if ! defined(sun4)

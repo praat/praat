@@ -139,57 +139,57 @@ static void createChildren (I) {
 	Widget button, scrolled;
 	int i;
 	XtVaCreateManagedWidget ("Targets:", xmLabelGadgetClass, my dialog,
-		XmNx, 40, XmNy, 3, XmNwidth, 60, 0);
+		XmNx, 40, XmNy, 3, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Times:", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 20, XmNwidth, 60, 0);
+		XmNx, 5, XmNy, 20, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
-		XmNx, 80, XmNy, 20, XmNwidth, 60, 0);
+		XmNx, 80, XmNy, 20, XmNwidth, 60, NULL);
 	scrolled = XmCreateScrolledWindow (my dialog, "listWindow", NULL, 0);
-	XtVaSetValues (scrolled, XmNy, 40, XmNwidth, 140, XmNheight, 300, 0);
+	XtVaSetValues (scrolled, XmNy, 40, XmNwidth, 140, XmNheight, 300, NULL);
 	my list = XtVaCreateManagedWidget
 		("list", xmListWidgetClass, scrolled,
 		 XmNvisibleItemCount, 20 /*Artword_maximumNumberOfTargets*/,
-		 XmNselectionPolicy, XmEXTENDED_SELECT, 0);
+		 XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
 	XtManageChild (scrolled);
 
 	button = XtVaCreateManagedWidget
 		("Remove target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 10, XmNy, 410, XmNwidth, 120, 0);
+		 XmNx, 10, XmNy, 410, XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_removeTarget, (XtPointer) me);
 
 	my drawingArea = XtVaCreateManagedWidget
 		("drawingArea", xmDrawingAreaWidgetClass, my dialog,
 		 XmNx, 170, XmNy, 10,
-		 XmNwidth, 300, XmNheight, 300, 0);
+		 XmNwidth, 300, XmNheight, 300, NULL);
 
 	XtVaCreateManagedWidget ("Time:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, 340, XmNwidth, 50, 0);
+		XmNx, 220, XmNy, 340, XmNwidth, 50, NULL);
 	my time = XtVaCreateManagedWidget
 		("Time", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, 340, XmNwidth, 100, 0);
+		 XmNx, 270, XmNy, 340, XmNwidth, 100, NULL);
 
 	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, 370, XmNwidth, 50, 0);
+		XmNx, 220, XmNy, 370, XmNwidth, 50, NULL);
 	my value = XtVaCreateManagedWidget
 		("Value", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, 370, XmNwidth, 100, 0);
+		 XmNx, 270, XmNy, 370, XmNwidth, 100, NULL);
 
 	button = XtVaCreateManagedWidget
 		("Add target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 240, XmNy, 410, XmNwidth, 120, 0);
+		 XmNx, 240, XmNy, 410, XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_addTarget, (XtPointer) me);
-	XtVaSetValues (my dialog, XmNdefaultButton, button, 0);
+	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
 
 	my radio = XtVaCreateManagedWidget
 		("radioBox", xmRowColumnWidgetClass, my dialog,
-		 XmNradioBehavior, True, XmNx, 470, 0);
+		 XmNradioBehavior, True, XmNx, 470, NULL);
 	for (i = 1; i <= enumlength (Art_MUSCLE); i ++) {
 		my button [i] = XtVaCreateManagedWidget
 			(enumstring (Art_MUSCLE, i), xmToggleButtonGadgetClass, my radio,
 			#if defined (_WIN32) || defined (macintosh)
 				XmNheight, 18,
 			#endif
-				XmNwidth, 160, 0);
+				XmNwidth, 160, NULL);
 		XtAddCallback (my button [i], XmNvalueChangedCallback, cb_toggle, (XtPointer) me);
 	}
 	my feature = 1;

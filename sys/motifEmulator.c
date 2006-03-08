@@ -1080,16 +1080,16 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 			my motif.messageBox.okButton = XtVaCreateManagedWidget ("OK", xmPushButtonWidgetClass, me,
-				XmNx, 10, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, 0);
+				XmNx, 10, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, NULL);
 			XtAddCallback (my motif.messageBox.okButton, XmNactivateCallback, cb_messageBox_ok, (XtPointer) me);
 			my motif.messageBox.cancelButton = XtVaCreateManagedWidget ("Cancel", xmPushButtonWidgetClass, me,
-				XmNx, 20 + MESSAGE_BOX_BUTTON_WIDTH, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, 0);
+				XmNx, 20 + MESSAGE_BOX_BUTTON_WIDTH, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, NULL);
 			XtAddCallback (my motif.messageBox.cancelButton, XmNactivateCallback, cb_messageBox_cancel, (XtPointer) me);
 			my motif.messageBox.helpButton = XtVaCreateManagedWidget ("Help", xmPushButtonWidgetClass, me,
-				XmNx, 30 + 2 * MESSAGE_BOX_BUTTON_WIDTH, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, 0);
+				XmNx, 30 + 2 * MESSAGE_BOX_BUTTON_WIDTH, XmNy, 105, XmNwidth, MESSAGE_BOX_BUTTON_WIDTH, NULL);
 			XtAddCallback (my motif.messageBox.helpButton, XmNactivateCallback, cb_messageBox_help, (XtPointer) me);
 			my messageText = XtVaCreateManagedWidget ("text", xmTextWidgetClass, me,
-				XmNwidth, 42 + 3 * MESSAGE_BOX_BUTTON_WIDTH, XmNheight, 100, 0);
+				XmNwidth, 42 + 3 * MESSAGE_BOX_BUTTON_WIDTH, XmNheight, 100, NULL);
 		} break;
 		case xmPulldownMenuWidgetClass: {
 			#if win
@@ -1338,18 +1338,18 @@ static void _GuiNativizeWidget (Widget me) {
 				XmNleftAttachment, XmATTACH_FORM, XmNbottomAttachment, XmATTACH_FORM,
 				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 15, XmNheight, 16,
 				XmNminimum, 0, XmNmaximum, 100, XmNsliderSize, 100,
-				XmNincrement, CELL_HEIGHT, XmNpageIncrement, 101 - CELL_HEIGHT, 0);
+				XmNincrement, CELL_HEIGHT, XmNpageIncrement, 101 - CELL_HEIGHT, NULL);
 			XtVaSetValues (my motif.scrolledWindow.verticalBar, XmNorientation, XmVERTICAL,
 				XmNtopAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 15, XmNwidth, 16,
 				XmNminimum, 0, XmNmaximum, 100, XmNsliderSize, 100,
-				XmNincrement, CELL_HEIGHT, XmNpageIncrement, 101 - CELL_HEIGHT, 0);
+				XmNincrement, CELL_HEIGHT, XmNpageIncrement, 101 - CELL_HEIGHT, NULL);
 			my motif.scrolledWindow.clipWindow = XmCreateBulletinBoard (me, "clipWindow", NULL, 0);
 			XtVaSetValues (my motif.scrolledWindow.clipWindow,
 				XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 1,   /* For border. */
 				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 16,   /* For scroll bar. */
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 1,   /* For border. */
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 16, 0);   /* For scroll bar. */
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 16, NULL);   /* For scroll bar. */
 			XtAddCallback (my motif.scrolledWindow.verticalBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
 			XtAddCallback (my motif.scrolledWindow.horizontalBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
 		} break;
@@ -1873,7 +1873,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			/* Make sure it is in the right position. */
 			XtVaSetValues (my motif.scrolledWindow.horizontalBar, XmNorientation, XmHORIZONTAL,
 				XmNleftAttachment, XmATTACH_FORM, XmNbottomAttachment, XmATTACH_FORM,
-				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 15, XmNheight, 16, 0);
+				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 15, XmNheight, 16, NULL);
 			/*
 			 * Note that we may now have a horizontal bar with application-defined scrolling policy,
 			 * and a vertical bar with automatic scrolling policy.
@@ -2084,7 +2084,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			/* Make sure it is in the right position. */
 			XtVaSetValues (my motif.scrolledWindow.verticalBar, XmNorientation, XmVERTICAL,
 				XmNtopAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 15, XmNwidth, 16, 0);
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 15, XmNwidth, 16, NULL);
 		} break;
 		case XmNvisibleItemCount: {
 			int height;
@@ -2092,9 +2092,9 @@ static void _motif_setValues (Widget me, va_list arg) {
 			my visibleItemCount = va_arg (arg, int);
 			height = my visibleItemCount * CELL_HEIGHT;
 			if (MEMBER (my parent, ScrolledWindow))
-				XtVaSetValues (my parent, XmNheight, height + 16, 0);
+				XtVaSetValues (my parent, XmNheight, height + 16, NULL);
 			else
-				XtVaSetValues (me, XmNheight, height, 0);
+				XtVaSetValues (me, XmNheight, height, NULL);
 		} break;
 		case XmNwidth:
 			my width = va_arg (arg, int);
@@ -2215,9 +2215,9 @@ static void _motif_manageScrolledWindow (Widget me) {
 	 */
 	if (workWindow == NULL || ! workWindow -> managed) {
 		if (horzAutomatic)
-			XtVaSetValues (horzBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, 0);
+			XtVaSetValues (horzBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, NULL);
 		if (vertAutomatic)
-			XtVaSetValues (vertBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, 0);
+			XtVaSetValues (vertBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, NULL);
 		return;
 	}
 	workWidth = workWindow -> width > 10 ? workWindow -> width : 10;
@@ -2238,7 +2238,7 @@ static void _motif_manageScrolledWindow (Widget me) {
 			Native_move (workWindow, horzBar -> value - value, 0);
 		}
 		XtVaSetValues (horzBar, XmNmaximum, maximum, XmNsliderSize, sliderSize, XmNvalue, value,
-			XmNpageIncrement, clipWindow -> width - (CELL_HEIGHT - 1), 0);
+			XmNpageIncrement, clipWindow -> width - (CELL_HEIGHT - 1), NULL);
 	}
 	if (vertAutomatic) {   /* Automatic? */
 		int maximum = workHeight;
@@ -2250,7 +2250,7 @@ static void _motif_manageScrolledWindow (Widget me) {
 			Native_move (workWindow, 0, vertBar -> value - value);
 		}
 		XtVaSetValues (vertBar, XmNmaximum, maximum, XmNsliderSize, sliderSize, XmNvalue, value,
-			XmNpageIncrement, clipWindow -> height - (CELL_HEIGHT - 1), 0);
+			XmNpageIncrement, clipWindow -> height - (CELL_HEIGHT - 1), NULL);
 	}
 }
 
@@ -3636,7 +3636,7 @@ Widget XmCreateRadioBox (Widget parent, const char *name, ArgList dum1, int dum2
 	Widget result = createWidget (xmRowColumnWidgetClass, parent, name);
 	(void) dum1;
 	(void) dum2;
-	XtVaSetValues (result, XmNradioBehavior, True, 0);
+	XtVaSetValues (result, XmNradioBehavior, True, NULL);
 	return result;
 }
 
@@ -3727,7 +3727,7 @@ void XmListAddItem (Widget me, XmString item, int position) {
 		LSetCell (item, (short) strlen (item), cell, my nat.list.handle);
 		(** my nat.list.handle). visible. bottom = n + 1;
 		_motif_clipOffInvalid (me);
-		XtVaSetValues (me, XmNheight, (n + 1) * CELL_HEIGHT, 0);
+		XtVaSetValues (me, XmNheight, (n + 1) * CELL_HEIGHT, NULL);
 	#endif
 }
 

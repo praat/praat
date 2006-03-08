@@ -397,30 +397,30 @@ static void createChildren (I) {
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (Manual) createChildren (me);
 	my homeButton = XtVaCreateManagedWidget ("Home", xmPushButtonWidgetClass, my dialog,
-		XmNx, 104, XmNy, y, XmNheight, height, XmNwidth, 64, 0);
+		XmNx, 104, XmNy, y, XmNheight, height, XmNwidth, 64, NULL);
 	XtAddCallback (my homeButton, XmNactivateCallback, cb_home, (XtPointer) me);
 	if (pages -> dynamic) {
 		XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
 		XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
 		my recordButton = XtVaCreateManagedWidget ("Record", xmPushButtonWidgetClass, my dialog,
-			XmNx, 4, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, 0);
+			XmNx, 4, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, NULL);
 		XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
 		my playButton = XtVaCreateManagedWidget ("Play", xmPushButtonWidgetClass, my dialog,
-			XmNx, 85, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, 0);
+			XmNx, 85, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, NULL);
 		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
 		my publishButton = XtVaCreateManagedWidget ("Copy last played to list", xmPushButtonWidgetClass, my dialog,
-			XmNx, 166, XmNy, y+height+8, XmNheight, height, XmNwidth, 175, 0);
+			XmNx, 166, XmNy, y+height+8, XmNheight, height, XmNwidth, 175, NULL);
 		XtAddCallback (my publishButton, XmNactivateCallback, cb_publish, (XtPointer) me);
 	}
 	button = XtVaCreateManagedWidget ("Search:", xmPushButtonWidgetClass, my dialog,
-		XmNx, 274, XmNy, y, XmNheight, height, XmNwidth, 63, 0);
+		XmNx, 274, XmNy, y, XmNheight, height, XmNwidth, 63, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_search, (XtPointer) me);
 	#ifdef _WIN32
 	/* BUG: activateCallback should work for texts. */
 	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
 	#endif
 	my searchText = XtVaCreateManagedWidget ("searchText", xmTextFieldWidgetClass, my dialog,
-		XmNx, 274+63 + STRING_SPACING, XmNy, y, XmNwidth, 452 - (274+63) - 2, 0);
+		XmNx, 274+63 + STRING_SPACING, XmNy, y, XmNwidth, 452 - (274+63) - 2, NULL);
 	XtAddCallback (my searchText, XmNactivateCallback, cb_search, (XtPointer) me);
 }
 

@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060224)
+MAN_BEGIN ("What's new?", "ppgb", 20060308)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.13# (March 8, 2006)")
+LIST_ITEM ("\\bu Table To TableOfReal: better handling of --undefined-- values (are now numeric).")
+LIST_ITEM ("\\bu MacOS X: TextGrid files can be double-clicked to open.")
+LIST_ITEM ("\\bu @@Create Strings as file list...@: now handles up to 1,000,000 files per directory.")
 NORMAL ("##4.4.12# (February 24, 2006)")
 LIST_ITEM ("\\bu TextGrid: removed a bug introduced in 4.4.10 that caused Praat to crash when converting an IntervalTier into a TextGrid.")
 NORMAL ("##4.4.11# (February 23, 2006)")

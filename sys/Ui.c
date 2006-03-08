@@ -159,7 +159,7 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 		UiOption b = my options -> item [i];
 		if (b -> toggle == w) {
 			Longchar_nativize (b -> name, Melder_buffer1, TRUE);
-			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), 0);
+			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
 				Melder_warning ("%d \"%s\"", i, b -> name);
@@ -203,7 +203,7 @@ static void UiField_setDefault (UiField me) {
 				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
 				if (i == my integerDefaultValue) {
 					Longchar_nativize (b -> name, Melder_buffer1, TRUE);
-					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), 0);
+					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
@@ -835,7 +835,7 @@ void UiForm_finish (I) {
 	}
 	dialogHeight += 2 * Gui_bottomDialogSpacing () + Gui_pushButtonHeight ();
 	my shell = XmCreateDialogShell (my parent, "UiForm", NULL, 0);
-	XtVaSetValues (my shell, XmNx, DIALOG_X, XmNy, DIALOG_Y, XmNwidth, dialogWidth, XmNheight, dialogHeight, 0);
+	XtVaSetValues (my shell, XmNx, DIALOG_X, XmNy, DIALOG_Y, XmNwidth, dialogWidth, XmNheight, dialogHeight, NULL);
 	my dialog = XmCreateBulletinBoard (my shell, MOTIF_CONST_CHAR_ARG (my name), NULL, 0);
 	Longchar_nativize (my name, Melder_buffer1, TRUE);
 	{
@@ -844,9 +844,9 @@ void UiForm_finish (I) {
 		XmAddWMProtocols (my shell, & atom, 1);
 		XmAddWMProtocolCallback (my shell, atom, UiForm_hide, (void *) me);
 	}
-	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_buffer1, XmNdeleteResponse, XmDO_NOTHING, 0);
+	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_buffer1, XmNdeleteResponse, XmDO_NOTHING, NULL);
 	XtVaSetValues (my dialog, XmNautoUnmanage, False,
-		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ 0);
+		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ NULL);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
 	for (ifield = 1; ifield <= size; ifield ++) {
@@ -870,7 +870,7 @@ void UiForm_finish (I) {
 							+ 3
 						#endif
 						, XmNwidth, labelWidth, XmNheight, textFieldHeight,
-						XmNalignment, XmALIGNMENT_END, 0);
+						XmNalignment, XmALIGNMENT_END, NULL);
 					field -> text = XmCreateTextField (my dialog, "UiLabelledRange_textLeft", NULL, 0);
 					XtVaSetValues (field -> text,
 						XmNx, fieldX, XmNy, y,
@@ -879,7 +879,7 @@ void UiForm_finish (I) {
 						#else
 							XmNwidth, halfFieldWidth,
 						#endif
-						XmNheight, textFieldHeight, 0);
+						XmNheight, textFieldHeight, NULL);
 					XtManageChild (field -> text);
 				} else if (strnequ (field -> name, "right ", 6)) {
 					field -> text = XmCreateTextField (my dialog, "UiLabelledRange_textRight", NULL, 0);
@@ -890,7 +890,7 @@ void UiForm_finish (I) {
 						#else
 							XmNwidth, halfFieldWidth,
 						#endif
-						XmNheight, textFieldHeight, 0);
+						XmNheight, textFieldHeight, NULL);
 					XtManageChild (field -> text);
 				} else {
 					Longchar_nativize (field -> formLabel, Melder_buffer1, TRUE);
@@ -901,7 +901,7 @@ void UiForm_finish (I) {
 							+ 3
 						#endif
 						, XmNwidth, labelWidth, XmNheight, textFieldHeight,
-						XmNalignment, XmALIGNMENT_END, 0);
+						XmNalignment, XmALIGNMENT_END, NULL);
 					field -> text = XmCreateTextField (my dialog, "UiLabelledText_text", NULL, 0);
 					XtVaSetValues (field -> text,
 						XmNx, fieldX, XmNy, y,
@@ -910,7 +910,7 @@ void UiForm_finish (I) {
 						#else
 							XmNwidth, fieldWidth,
 						#endif
-						XmNheight, textFieldHeight, 0);
+						XmNheight, textFieldHeight, NULL);
 					XtManageChild (field -> text);
 				}
 			} break;
@@ -918,14 +918,14 @@ void UiForm_finish (I) {
 			{
 				field -> text = XtVaCreateManagedWidget ("UiText_text", xmTextFieldWidgetClass, my dialog,
 					XmNx, x, XmNy, y, XmNwidth, dialogWidth - Gui_leftDialogSpacing () - Gui_rightDialogSpacing (),
-					XmNheight, textFieldHeight, 0);
+					XmNheight, textFieldHeight, NULL);
 			} break;
 			case UI_LABEL:
 			{
 				Longchar_nativize (field -> stringValue, Melder_buffer1, TRUE);
 				field -> text = XtVaCreateManagedWidget (Melder_buffer1, xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 5, XmNwidth, dialogWidth - Gui_leftDialogSpacing () - Gui_rightDialogSpacing (),
-					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_buffer1), 0);
+					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
 			} break;
 			case UI_RADIO:
 			{
@@ -937,14 +937,14 @@ void UiForm_finish (I) {
 						+ 1
 					#endif
 					, XmNwidth, labelWidth, XmNheight, Gui_radioButtonHeight (),
-					XmNalignment, XmALIGNMENT_END, 0);
+					XmNalignment, XmALIGNMENT_END, NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					Longchar_nativize (button -> name, Melder_buffer1, TRUE);
 					button -> toggle = XtVaCreateManagedWidget (Melder_buffer1, xmToggleButtonWidgetClass, my dialog,
 						XmNx, fieldX, XmNy, y + (ibutton - 1) * (Gui_radioButtonHeight () + Gui_radioButtonSpacing ()),
 						XmNwidth, fieldWidth, XmNheight, Gui_radioButtonHeight (),
-						XmNindicatorType, XmONE_OF_MANY, 0);
+						XmNindicatorType, XmONE_OF_MANY, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_radioChanged, (XtPointer) field);
 				}
 			} break; 
@@ -959,20 +959,20 @@ void UiForm_finish (I) {
 						+ 2
 					#endif
 					, XmNwidth, labelWidth, XmNheight, Gui_optionMenuHeight (),
-					XmNalignment, XmALIGNMENT_END, 0);
+					XmNalignment, XmALIGNMENT_END, NULL);
 				bar = XmCreateMenuBar (my dialog, "UiOptionMenu", NULL, 0);
 				XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
 					#if defined (macintosh)
 						- 1
 					#endif
-					, XmNwidth, fieldWidth + 8, XmNheight, Gui_optionMenuHeight () + 8, 0);
+					, XmNwidth, fieldWidth + 8, XmNheight, Gui_optionMenuHeight () + 8, NULL);
 				box = motif_addMenu2 (bar, "choice", 0, & field -> cascadeButton);
-				XtVaSetValues (bar, XmNwidth, fieldWidth + 8, 0);
-				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_optionMenuHeight (), 0);
+				XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
+				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_optionMenuHeight (), NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					Longchar_nativize (button -> name, Melder_buffer1, TRUE);
-					button -> toggle = XtVaCreateManagedWidget (Melder_buffer1, xmToggleButtonWidgetClass, box, 0);
+					button -> toggle = XtVaCreateManagedWidget (Melder_buffer1, xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 				}
 				XtManageChild (bar);
@@ -981,10 +981,10 @@ void UiForm_finish (I) {
 			{
 				/*XtVaCreateManagedWidget ("", xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y, XmNwidth, labelWidth, XmNheight, Gui_checkButtonHeight (),
-					XmNalignment, XmALIGNMENT_END, 0);*/
+					XmNalignment, XmALIGNMENT_END, NULL);*/
 				Longchar_nativize (field -> formLabel, Melder_buffer1, TRUE);
 				field -> toggle = XtVaCreateManagedWidget (Melder_buffer1, xmToggleButtonWidgetClass, my dialog,
-					XmNx, fieldX, XmNy, y, XmNheight, Gui_checkButtonHeight (), 0);
+					XmNx, fieldX, XmNy, y, XmNheight, Gui_checkButtonHeight (), NULL);
 			} break;
 			case UI_ENUM:
 			{
@@ -996,7 +996,7 @@ void UiForm_finish (I) {
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_buffer1, xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
-					XmNalignment, XmALIGNMENT_END, 0);
+					XmNalignment, XmALIGNMENT_END, NULL);
 				#ifdef _WIN32
 					field -> list = XtVaCreateWidget ("UiEnum_list", xmListWidgetClass, my dialog,
 						XmNselectionPolicy, XmBROWSE_SELECT, NULL);
@@ -1030,7 +1030,7 @@ void UiForm_finish (I) {
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_buffer1, xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
-					XmNalignment, XmALIGNMENT_END, 0);
+					XmNalignment, XmALIGNMENT_END, NULL);
 				#ifdef _WIN32
 					field -> list = XtVaCreateWidget ("UiList_list", xmListWidgetClass, my dialog,
 						XmNselectionPolicy, XmBROWSE_SELECT, NULL);
@@ -1062,14 +1062,14 @@ void UiForm_finish (I) {
 	if (my helpTitle) {
 		my helpButton = XmCreatePushButton (my dialog, "Help", NULL, 0);
 		XtVaSetValues (my helpButton,
-			XmNx, HELP_BUTTON_X, XmNy, y, XmNwidth, HELP_BUTTON_WIDTH, XmNheight, Gui_pushButtonHeight (), 0);
+			XmNx, HELP_BUTTON_X, XmNy, y, XmNwidth, HELP_BUTTON_WIDTH, XmNheight, Gui_pushButtonHeight (), NULL);
 		XtAddCallback (my helpButton, XmNactivateCallback, cb_help, (XtPointer) me);
 		XtManageChild (my helpButton);
 	}
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
 		my useStandards = XmCreatePushButton (my dialog, "Standards", NULL, 0);
 		XtVaSetValues (my useStandards,
-			XmNx, HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_horizontalDialogSpacing (), XmNy, y, XmNwidth, DEF_BUTTON_WIDTH, XmNheight, Gui_pushButtonHeight (), 0);
+			XmNx, HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_horizontalDialogSpacing (), XmNy, y, XmNwidth, DEF_BUTTON_WIDTH, XmNheight, Gui_pushButtonHeight (), NULL);
 		XtAddCallback (my useStandards, XmNactivateCallback, cb_useStandards, (XtPointer) me);
 		XtManageChild (my useStandards);
 	}
@@ -1077,7 +1077,7 @@ void UiForm_finish (I) {
 	x = dialogWidth - Gui_rightDialogSpacing () - Gui_okButtonWidth () - 2 * Gui_horizontalDialogSpacing ()
 		 - Gui_applyButtonWidth () - Gui_cancelButtonWidth ();
 	XtVaSetValues (my cancelButton,
-		XmNx, x, XmNy, y, XmNwidth, Gui_cancelButtonWidth (), XmNheight, Gui_pushButtonHeight (), 0);
+		XmNx, x, XmNy, y, XmNwidth, Gui_cancelButtonWidth (), XmNheight, Gui_pushButtonHeight (), NULL);
 	XtVaSetValues (my dialog, XmNcancelButton, my cancelButton, NULL);
 	XtAddCallback (my cancelButton, XmNactivateCallback, UiForm_hide, (XtPointer) me);
 	x = dialogWidth - Gui_rightDialogSpacing () - Gui_okButtonWidth ();
@@ -1087,13 +1087,13 @@ void UiForm_finish (I) {
 	x = dialogWidth - Gui_rightDialogSpacing () - Gui_okButtonWidth () - Gui_horizontalDialogSpacing () - Gui_applyButtonWidth ();
 	if (my applyButton) {
 		XtVaSetValues (my applyButton,
-			XmNx, x, XmNy, y, XmNwidth, Gui_applyButtonWidth (), XmNheight, Gui_pushButtonHeight (), 0);
+			XmNx, x, XmNy, y, XmNwidth, Gui_applyButtonWidth (), XmNheight, Gui_pushButtonHeight (), NULL);
 		XtAddCallback (my applyButton, XmNactivateCallback, UiForm_apply, (XtPointer) me);
 		XtManageChild (my applyButton);
 	}
 	x = dialogWidth - Gui_rightDialogSpacing () - Gui_okButtonWidth ();
 	my okButton = XmCreatePushButton (my dialog, "OK", NULL, 0);
-	XtVaSetValues (my okButton, XmNx, x, XmNy, y, XmNwidth, Gui_okButtonWidth (), XmNheight, Gui_pushButtonHeight (), 0);
+	XtVaSetValues (my okButton, XmNx, x, XmNy, y, XmNwidth, Gui_okButtonWidth (), XmNheight, Gui_pushButtonHeight (), NULL);
 	XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);
 	XtVaSetValues (my dialog, XmNdefaultButton, my okButton, NULL);
 	/*XtManageChild (separator);*/
@@ -1246,7 +1246,7 @@ void UiForm_setInteger (I, const char *fieldName, long value) {
 				XmToggleButtonSetState (b -> toggle, i == value, False);
 				if (field -> type == UI_OPTIONMENU && i == value) {
 					Longchar_nativize (b -> name, Melder_buffer1, TRUE);
-					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), 0);
+					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
@@ -1281,7 +1281,7 @@ void UiForm_setString (I, const char *fieldName, const char *value) {
 					found = TRUE;
 					if (field -> type == UI_OPTIONMENU) {
 						Longchar_nativize (value, Melder_buffer1, TRUE);
-						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), 0);
+						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
 					}
 				} else {
 					XmToggleButtonSetState (b -> toggle, False, False);

@@ -661,7 +661,7 @@ static void createVerticalScrollBar (HyperPage me, Widget parent) {
 		XmNminimum, 0, XmNmaximum, (int) (PAGE_HEIGHT * 5),
 		XmNsliderSize, 25, XmNvalue, 0,
 		XmNincrement, 1, XmNpageIncrement, 24,
-		0);
+		NULL);
 }
 
 static void updateVerticalScrollBar (HyperPage me)
@@ -838,18 +838,18 @@ static void createChildren (I) {
 
 	if (our hasHistory) {
 		button = XtVaCreateManagedWidget ("<", xmPushButtonWidgetClass, my dialog,
-			XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
+			XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
 		XtAddCallback (button, XmNactivateCallback, cb_backButton, (XtPointer) me);
 		button = XtVaCreateManagedWidget (">", xmPushButtonWidgetClass, my dialog,
-			XmNx, 54, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
+			XmNx, 54, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
 		XtAddCallback (button, XmNactivateCallback, cb_forthButton, (XtPointer) me);
 	}
 	if (our isOrdered) {
 		button = XtVaCreateManagedWidget ("< 1", xmPushButtonWidgetClass, my dialog,
-			XmNx, 174, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
+			XmNx, 174, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
 		XtAddCallback (button, XmNactivateCallback, cb_previousPage, (XtPointer) me);
 		button = XtVaCreateManagedWidget ("1 >", xmPushButtonWidgetClass, my dialog,
-			XmNx, 224, XmNy, y, XmNheight, height, XmNwidth, 44, 0);
+			XmNx, 224, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
 		XtAddCallback (button, XmNactivateCallback, cb_nextPage, (XtPointer) me);
 	}
 
@@ -866,7 +866,7 @@ static void createChildren (I) {
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + height + 8,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
 		XmNmarginWidth, 20, XmNborderWidth, 1,
-		0);
+		NULL);
 	XtManageChild (my drawingArea);
 }
 

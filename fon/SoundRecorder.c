@@ -1211,19 +1211,19 @@ static void createChildren (I) {
 	#endif
 
 	column = XmCreateRowColumn (my dialog, "column", NULL, 0);
-	XtVaSetValues (column, XmNorientation, XmVERTICAL, XmNspacing, 5, XmNy, Machine_getMenuBarHeight (), 0);
+	XtVaSetValues (column, XmNorientation, XmVERTICAL, XmNspacing, 5, XmNy, Machine_getMenuBarHeight (), NULL);
 
 	row = XmCreateRowColumn (column, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 22, 0);
+	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 22, NULL);
 
 	rcInput = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Input source:", xmLabelWidgetClass, rcInput, XmNy, 30, 0);
+	XtVaCreateManagedWidget ("Input source:", xmLabelWidgetClass, rcInput, XmNy, 30, NULL);
 	#if defined (_WIN32)
-		XtVaCreateManagedWidget ("(use Windows mixer", xmLabelWidgetClass, rcInput, XmNy, 60, 0);
-		XtVaCreateManagedWidget ("   without meters)", xmLabelWidgetClass, rcInput, XmNy, 85, 0);
+		XtVaCreateManagedWidget ("(use Windows mixer", xmLabelWidgetClass, rcInput, XmNy, 60, NULL);
+		XtVaCreateManagedWidget ("   without meters)", xmLabelWidgetClass, rcInput, XmNy, 85, NULL);
 	#else
 		input = XmCreateRadioBox (rcInput, "input", NULL, 0);
-		XtVaSetValues (input, XmNy, 55, 0);
+		XtVaSetValues (input, XmNy, 55, NULL);
 		#ifdef macintosh
 			if (my numberOfMacSources >= 1)
 				my microphoneButton = XmCreateToggleButton (input, my macSourceTitle [1], NULL, 0);
@@ -1271,15 +1271,15 @@ static void createChildren (I) {
 	XtManageChild (rcInput);
 
 	rcMeter = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Meter", xmLabelWidgetClass, rcMeter, 0);
+	XtVaCreateManagedWidget ("Meter", xmLabelWidgetClass, rcMeter, NULL);
 	rcMeters = XmCreateRowColumn (rcMeter, "rc", NULL, 0);
-	XtVaSetValues (rcMeters, XmNorientation, XmHORIZONTAL, XmNspacing, 12, 0);
+	XtVaSetValues (rcMeters, XmNorientation, XmHORIZONTAL, XmNspacing, 12, NULL);
 	my leftMeter = XmCreateDrawingArea (rcMeters, "meter", NULL, 0);
-	XtVaSetValues (my leftMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, 0);
+	XtVaSetValues (my leftMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, NULL);
 	XtManageChild (my leftMeter);
 	if (my numberOfChannels == 2) {
 		my rightMeter = XmCreateDrawingArea (rcMeters, "meter", NULL, 0);
-		XtVaSetValues (my rightMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, 0);
+		XtVaSetValues (my rightMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, NULL);
 		XtManageChild (my rightMeter);
 	}
 	XtManageChild (rcMeters);
@@ -1290,15 +1290,15 @@ static void createChildren (I) {
 		Widget rcG, rcGain, rcGains;
 		rcG = XmCreateRowColumn (row, "rcG", NULL, 0);
 		rcGain = XmCreateRowColumn (rcG, "rcGain", NULL, 0);
-		XtVaCreateManagedWidget ("Gain:", xmLabelWidgetClass, rcGain, 0);
+		XtVaCreateManagedWidget ("Gain:", xmLabelWidgetClass, rcGain, NULL);
 		rcGains = XmCreateRowColumn (rcGain, "rc", NULL, 0);
-		XtVaSetValues (rcGains, XmNorientation, XmHORIZONTAL, XmNspacing, 12, 0);
+		XtVaSetValues (rcGains, XmNorientation, XmHORIZONTAL, XmNspacing, 12, NULL);
 		my leftGainScale = XmCreateScale (rcGains, "gainScale", NULL, 0);
 		XtVaSetValues (my leftGainScale, XmNscaleHeight, 150, XmNy, 25,
 			#ifdef macintosh
 				XmNwidth, 16,
 			#endif
-			XmNminimum, 0, XmNmaximum, 255, 0);
+			XmNminimum, 0, XmNmaximum, 255, NULL);
 		XtAddCallback (my leftGainScale, XmNvalueChangedCallback, cb_leftGain, me);
 		XtAddCallback (my leftGainScale, XmNdragCallback, cb_leftGain, me);
 		XtManageChild (my leftGainScale);
@@ -1308,15 +1308,15 @@ static void createChildren (I) {
 				#ifdef macintosh
 					XmNwidth, 16,
 				#endif
-				XmNminimum, 0, XmNmaximum, 255, 0);
+				XmNminimum, 0, XmNmaximum, 255, NULL);
 			XtAddCallback (my rightGainScale, XmNvalueChangedCallback, cb_rightGain, me);
 			XtAddCallback (my rightGainScale, XmNdragCallback, cb_rightGain, me);
 			XtManageChild (my rightGainScale);
 		}
 		XtManageChild (rcGains);
 		if (my numberOfChannels == 2) {
-			my coupleButton = XtVaCreateManagedWidget ("Tied", xmToggleButtonWidgetClass, rcG, 0);
-			XtVaSetValues (my coupleButton, XmNwidth, 20, 0);
+			my coupleButton = XtVaCreateManagedWidget ("Tied", xmToggleButtonWidgetClass, rcG, NULL);
+			XtVaSetValues (my coupleButton, XmNwidth, 20, NULL);
 			XmToggleButtonSetState (my coupleButton, my coupled = theCouplePreference, False);
 			XtAddCallback (my coupleButton, XmNvalueChangedCallback, cb_couple, me);
 		}
@@ -1326,9 +1326,9 @@ static void createChildren (I) {
 	#endif
 
 	rcRate = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Sampling frequency:", xmLabelWidgetClass, rcRate, 0);
+	XtVaCreateManagedWidget ("Sampling frequency:", xmLabelWidgetClass, rcRate, NULL);
 	fsamp = XmCreateRadioBox (rcRate, "fsamp", NULL, 0);
-	XtVaSetValues (fsamp, XmNy, 25, 0);
+	XtVaSetValues (fsamp, XmNy, 25, NULL);
 	if (my can8000) {
 		my button8000 = XmCreateToggleButton (fsamp, "8000", NULL, 0);
 		XtAddCallback (my button8000, XmNvalueChangedCallback, cb_fsamp, me);
@@ -1400,31 +1400,31 @@ static void createChildren (I) {
 		#ifdef macintosh
 			XmNscaleWidth, 340,
 		#endif
-		0);
+		NULL);
 	XtManageChild (my progressScale);
 
 	form = XmCreateForm (column, "form", NULL, 0);
 
 	row = XmCreateRowColumn (form, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, 0);
+	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, NULL);
 
 	my recordButton = XmCreatePushButton (row, "Record", NULL, 0);
 	XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
 	#ifdef macintosh
-		XtVaSetValues (my recordButton, XmNx, 4, 0);
+		XtVaSetValues (my recordButton, XmNx, 4, NULL);
 	#endif
 	XtManageChild (my recordButton);
 	my stopButton = XmCreatePushButton (row, "Stop", NULL, 0);
 	XtAddCallback (my stopButton, XmNactivateCallback, cb_stop, (XtPointer) me);
 	#ifdef macintosh
-		XtVaSetValues (my stopButton, XmNx, 80, 0);
+		XtVaSetValues (my stopButton, XmNx, 80, NULL);
 	#endif
 	XtManageChild (my stopButton);
 	#if defined (sgi) || defined (_WIN32) || defined (macintosh)
 		my playButton = XmCreatePushButton (row, "Play", NULL, 0);
 		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
 		#ifdef macintosh
-			XtVaSetValues (my playButton, XmNx, 140, 0);
+			XtVaSetValues (my playButton, XmNx, 140, NULL);
 		#endif
 		XtManageChild (my playButton);
 	#endif
@@ -1437,7 +1437,7 @@ static void createChildren (I) {
 		#else
 			0,
 		#endif
-		0);
+		NULL);
 	XtManageChild (my closeButton);
 
 	XtManageChild (row);
@@ -1446,10 +1446,10 @@ static void createChildren (I) {
 	XtManageChild (XmCreateSeparator (column, "sep", NULL, 0));
 
 	row = XmCreateRowColumn (column, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, 0);
+	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, NULL);
 
 	rcLeft = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaSetValues (rcLeft, XmNorientation, XmVERTICAL, 0);
+	XtVaSetValues (rcLeft, XmNorientation, XmVERTICAL, NULL);
 	my publishLeftButton = XmCreatePushButton (rcLeft,
 		my numberOfChannels == 1 ? "Save to list:" : "Save left channel to list:", NULL, 0);
 	XtAddCallback (my publishLeftButton, XmNactivateCallback, cb_publishLeft, (XtPointer) me);
@@ -1460,14 +1460,14 @@ static void createChildren (I) {
 				XmNy, 32,
 			#endif
 		#endif
-		0);
+		NULL);
 	XtAddCallback (my leftName, XmNactivateCallback, cb_publishLeft, (XtPointer) me);
 	XmTextFieldSetString (my leftName, my numberOfChannels == 1 ? "sound" : "left");
 	XtManageChild (rcLeft);
 
 	if (my numberOfChannels == 2) {
 		rcRight = XmCreateRowColumn (row, "rc", NULL, 0);
-		XtVaSetValues (rcRight, XmNorientation, XmVERTICAL, 0);
+		XtVaSetValues (rcRight, XmNorientation, XmVERTICAL, NULL);
 		my publishRightButton = XmCreatePushButton (rcRight, "Save right channel to list:", NULL, 0);
 		XtAddCallback (my publishRightButton, XmNactivateCallback, cb_publishRight, (XtPointer) me);
 		XtManageChild (my publishRightButton);
@@ -1477,7 +1477,7 @@ static void createChildren (I) {
 					XmNy, 32,
 				#endif
 			#endif
-			0);
+			NULL);
 		XtAddCallback (my rightName, XmNactivateCallback, cb_publishRight, (XtPointer) me);
 		XmTextFieldSetString (my rightName, "right");
 		XtManageChild (rcRight);
