@@ -1,6 +1,6 @@
 /* CCA_and_Correlation.c
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 
 /*
  djmw 2001
- djmw 20020525 GPL header
+ djmw 20020525 GPL header.
+ djmw 20060323 Stewart-Love redundancy added.
  */
 
 #include "CCA_and_Correlation.h"
@@ -72,6 +73,90 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 		}
 	}
 	return him;
+}
+
+static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to, char *proc)
+{
+	if (my y -> dimension + my x -> dimension != thy numberOfColumns) return Melder_error
+		("%s: The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object", proc);
+	if (canonicalVariate_to < canonicalVariate_from) return Melder_error
+		("%s: The second value in the \"Canonical variate range\" must be equal or larger than the first.", proc);
+	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) return Melder_error
+		("%s: The \"Canonical variate range\" must be within the interval [1, %d]", proc, my numberOfCoefficients);
+	return 1;
+}
+
+double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
+{
+	long i, icv, ioffset, j, n;
+	double **evec, varianceFraction = 0;
+
+	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to,
+		"CCA_and_Correlation_getVarianceFraction")) return NUMundefined;
+
+	/* For the formulas see:
+		William W. Cooley & Paul R. Lohnes (1971), Multivariate data Analysis, John Wiley & Sons, pag 170-...
+		varianceFraction = s'.s / n,
+		where e.g. for the independent set x:
+			s = Rxx . c,
+		and Rxx is the correlation matrix of x,
+		c is the factor coefficient for x,
+		nx is the dimension of x,
+		The factor coefficient c is the eigenvector e for x scaled by the st.dev of the component,
+		i.e. c = e / sqrt (e'.R.e) (pag 32-33).
+		Therefore:
+		varianceFraction = s'.s / n = c'Rxx' Rxx c/n = (e'.Rxx' Rxx.e) /(e'.Rxx.e) * 1/n
+		(for one can. variate)
+	*/
+	
+	if (x_or_y == 1) /* y: dependent set */
+	{
+		n = my y -> dimension;
+		evec = my y -> eigenvectors;
+		ioffset = 0;
+	}
+	else
+	{
+		n = my x -> dimension;
+		evec = my x -> eigenvectors;
+		ioffset = my y -> dimension;
+	}
+	for (icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)
+	{
+		double variance = 0, varianceScaling = 0;
+
+		for (i = 1; i <= n; i++)
+		{
+			double si = 0;
+			for (j = 1; j <= n; j++)
+			{
+				si += thy data[ioffset+i][ioffset+j] * evec[icv][j]; /* Rxx.e */
+			}
+			variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
+			varianceScaling +=  evec[icv][i] * si; /* e'.Rxx.e*/
+		}
+		varianceFraction += (variance / varianceScaling) / n;
+	}
+	
+	return varianceFraction;
+}
+
+double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
+{
+	long icv;
+	double redundancy = 0;
+
+	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to,
+		"CCA_and_Correlation_getRedundancy_sl")) return NUMundefined;
+	
+	for (icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)
+	{
+		double varianceFraction = CCA_and_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
+		if (varianceFraction == NUMundefined) return NUMundefined;
+		redundancy += varianceFraction * my y -> eigenvalues[icv];
+	}
+		
+	return redundancy;
 }
 
 /* End of file CCA_and_Correlation.h */

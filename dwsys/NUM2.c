@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
  djmw 20040211 Modified NUMstrings_copyElements: if (form[i]==NULL) then {to[i]= NULL}.
  djmw 20040303 Added NUMstring_containsPrintableCharacter.
  djmw 20050406 NUMprocrutus->NUMprocrustes
+ djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
 */
 
 #include "SVD.h"
@@ -1247,12 +1248,14 @@ int NUMinverse_cholesky (double **a, long n, double *lnd)
 
 	/* Determinant from diagonal, restore diagonal */
 
-	for (*lnd = 0, i = 1; i <= n; i++)
+	if (lnd != NULL)
 	{
-		*lnd += log (a[i][i]);
+		for (*lnd = 0, i = 1; i <= n; i++)
+		{
+			*lnd += log (a[i][i]);
+		}
+		*lnd *= 2; /* because A = L . L' */
 	}
-	*lnd *= 2; /* because A = L . L' */
-
 	/* Get the inverse */
 	
 	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);

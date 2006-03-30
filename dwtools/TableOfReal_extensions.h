@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20050505 Latest modification
+ djmw 20060301 Latest modification
 */
 
 #ifndef _TableOfReal_h_
@@ -166,8 +166,9 @@ void TableOfReal_standardizeRows (I);
 
 TableOfReal TableOfReal_rankColumns (I);
 
-TableOfReal TableOfReal_meansByRowLabels (I, int expand);
+TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats);
 /*
+	stats == 0? averages : medians
 	For a table with n rows and m different labels (m <= n):
 	if (expand=1) { output has n rows, substitute each array by the average value for that row label}
 	else output a table with m rows, the averages for the m labels.

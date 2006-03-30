@@ -698,7 +698,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN ("Acknowledgments", "ppgb", 20050208)
+MAN_BEGIN ("Acknowledgments", "ppgb", 20060329)
 NORMAL ("For supplying source code:")
 LIST_ITEM ("GPL IPA fonts: Fukui Rei (XIPA) & Rafael Laboissi\\e`re (adaptation to Praat).")
 LIST_ITEM ("IPA fonts: Summer Institute of Linguistics (Doulos1989, until January 2005).")
@@ -710,9 +710,10 @@ LIST_ITEM ("Public domain LAPACK: Univ. of Tennessee, Univ. of California Berkel
 NORMAL ("For technical support and advice:")
 LIST_ITEM ("Ton Wempe.")
 NORMAL ("For their financial support during the development of Praat:")
-LIST_ITEM ("Netherlands Organization for Scientific Research (NWO).")
-LIST_ITEM ("Talkbank project, Carnegie Mellon / Linguistic Data Consortium.")
-LIST_ITEM ("Spoken Dutch Corpus (CGN).")
+LIST_ITEM ("Netherlands Organization for Scientific Research (NWO) (1996\\--1999).")
+LIST_ITEM ("Nederlandse Taalunie (2006\\--2008).")
+LIST_ITEM ("Talkbank project, Carnegie Mellon / Linguistic Data Consortium (2002\\--2003).")
+LIST_ITEM ("Spoken Dutch Corpus (CGN) (1999\\--2001).")
 LIST_ITEM ("Laboratorium Experimentele OtoRhinoLaryngologie, KU Leuven.")
 LIST_ITEM ("DFG-Projekt Dialektintonation, Universit\\a\"t Freiburg.")
 LIST_ITEM ("Department of Linguistics and Phonetics, Lund University.")

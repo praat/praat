@@ -24,6 +24,8 @@
  djmw 20020408 GPL 
  djmw 20020408 Modified 'createMenus'
  djmw 20060111 Replaced Resources.h with Preferences.h
+ djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
+ 	for 64-bit compatibility.
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -458,7 +460,7 @@ static void notifyOutOfView (I)
 		
 		XtVaGetValues (my list, XmNtopItemPosition, & topItemPosition,
 			XmNvisibleItemCount, & visibleItemCount, XmNitemCount, 
-			& itemCount, 0);
+			& itemCount, NULL);
 		bottom = topItemPosition + visibleItemCount - 1;
 		for (i = posCount - 1; i >= 0; i--)
 		{ 
@@ -471,7 +473,7 @@ static void notifyOutOfView (I)
 		}
 	}
 	outOfViewLabel = XmStringCreateSimple (tmp);
-	XtVaSetValues (my outOfView, XmNlabelString, outOfViewLabel, 0);
+	XtVaSetValues (my outOfView, XmNlabelString, outOfViewLabel, NULL);
 	XmStringFree (outOfViewLabel);
 }
 
@@ -493,7 +495,7 @@ static void update_dos (I)
 	
 	sprintf (tmp, "Undo `%.40s'", name);
 	commandName = XmStringCreateSimple (tmp); 
-	XtVaSetValues (my undo, XmNlabelString, commandName, 0);
+	XtVaSetValues (my undo, XmNlabelString, commandName, NULL);
 	XtSetSensitive (my undo, undoSense);
 	
 	/*
@@ -507,7 +509,7 @@ static void update_dos (I)
 	
 	sprintf (tmp, "Redo `%.40s'", name);
 	commandName = XmStringCreateSimple (tmp); 
-	XtVaSetValues (my redo, XmNlabelString, commandName, 0);
+	XtVaSetValues (my redo, XmNlabelString, commandName, NULL);
 	XtSetSensitive (my redo, redoSense);
 	XmStringFree (commandName);
 }
@@ -576,7 +578,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		
 		if (! (table = (XmString *) Melder_malloc ((to - from + 1) * 
 			sizeof (XmString *)))) return;
-		XtVaGetValues (my list, XmNitemCount, & itemCount, 0);
+		XtVaGetValues (my list, XmNitemCount, & itemCount, NULL);
 		for (k = 0, i = from; i <= to; i++)
 		{
 			char itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
@@ -649,7 +651,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	{
 		int top, visible, itemCount;
 		XtVaGetValues (my list, XmNtopItemPosition, & top,
-			XmNvisibleItemCount, & visible, XmNitemCount, & itemCount, 0);
+			XmNvisibleItemCount, & visible, XmNitemCount, & itemCount, NULL);
 		if (nSelect == 0)
 		{
 			top = my position - visible / 2;
@@ -845,9 +847,9 @@ static void createChildren (I)
 	int menuBarOffset = 40;
 	
 	XtVaCreateManagedWidget ("Positions:", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 3+menuBarOffset, XmNwidth, 95, 0);
+		XmNx, 5, XmNy, 3+menuBarOffset, XmNwidth, 95, NULL);
 	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
-		XmNx, 100, XmNy, 3+menuBarOffset, XmNwidth, 90, 0);
+		XmNx, 100, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
 	
 	scrolled = XmCreateScrolledWindow (my dialog, "listWindow", NULL, 0);
 	XtVaSetValues (scrolled, XmNy, 40+menuBarOffset, XmNwidth, 260,
@@ -856,10 +858,10 @@ static void createChildren (I)
 		#else
 			XmNheight, 100,
 		#endif
-		0);
+		NULL);
 	my list = XtVaCreateManagedWidget ("list", xmListWidgetClass, scrolled,
 		 XmNvisibleItemCount, 20, XmNlistSizePolicy, XmCONSTANT,
-		 XmNselectionPolicy, XmEXTENDED_SELECT, 0);
+		 XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
 	XtAddCallback (my list, XmNextendedSelectionCallback, cb_extended, 
 		(XtPointer) me);
 	XtAddCallback (my list, XmNdefaultActionCallback, cb_default, (XtPointer) me);
@@ -884,52 +886,52 @@ static void createChildren (I)
 		(XtPointer) me);
  			 
 	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
-		XmNx, 280, XmNy, 3+menuBarOffset, XmNwidth, 90, 0);
+		XmNx, 280, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
 	my text = XtVaCreateManagedWidget("Text", xmTextWidgetClass, my dialog,
-		 XmNx, 370, XmNy, 3+menuBarOffset, XmNwidth, 140, 0);
+		 XmNx, 370, XmNy, 3+menuBarOffset, XmNwidth, 140, NULL);
 	XmTextSetMaxLength (my text, CategoriesEditor_TEXTMAXLENGTH);
 	XmTextSetString (my text, CategoriesEditor_EMPTYLABEL);
 				 
 	my insert = XtVaCreateManagedWidget ("Insert", xmPushButtonGadgetClass, 
-		my dialog,  XmNx, 280, XmNy, 43+menuBarOffset, XmNwidth, 90, 0);
+		my dialog,  XmNx, 280, XmNy, 43+menuBarOffset, XmNwidth, 90, NULL);
 	XtAddCallback (my insert, XmNactivateCallback, cb_insert, (XtPointer) me);
 	
 	my replace = XtVaCreateManagedWidget ("Replace", xmPushButtonGadgetClass,
-		my dialog, XmNx, 380, XmNy, 43+menuBarOffset, XmNwidth, 90, 0);
+		my dialog, XmNx, 380, XmNy, 43+menuBarOffset, XmNwidth, 90, NULL);
 	XtAddCallback (my replace, XmNactivateCallback, cb_replace, (XtPointer) me);
 
 	my insertAtEnd = XtVaCreateManagedWidget ("Insert at end",
 		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 83+menuBarOffset, XmNwidth, 190, 0);
+		XmNx, 280, XmNy, 83+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my insertAtEnd, XmNactivateCallback, cb_insertAtEnd,
 		(XtPointer) me);
 
 	my undo = XtVaCreateManagedWidget ("Undo", xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 140+menuBarOffset, XmNwidth, 190, 0);
+		XmNx, 280, XmNy, 140+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my undo, XmNactivateCallback, cb_undo, (XtPointer) me);
 
 	my redo = XtVaCreateManagedWidget ("Redo", xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 180+menuBarOffset, XmNwidth, 190, 0);
+		XmNx, 280, XmNy, 180+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my redo, XmNactivateCallback, cb_redo, (XtPointer) me);
 
 	my remove = XtVaCreateManagedWidget ("Remove", xmPushButtonGadgetClass, 
-		my dialog, XmNx, 280, XmNy, 240+menuBarOffset, XmNwidth, 190, 0);
+		my dialog, XmNx, 280, XmNy, 240+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my remove, XmNactivateCallback, cb_remove, (XtPointer) me);
 		 	 
-	XtVaSetValues(my dialog, XmNdefaultButton, my insert, 0);
+	XtVaSetValues(my dialog, XmNdefaultButton, my insert, NULL);
 	
 	my moveUp = XtVaCreateManagedWidget ("Move selection up",
 		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 280+menuBarOffset, XmNwidth, 190, 0);
+		XmNx, 280, XmNy, 280+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my moveUp, XmNactivateCallback, cb_moveUp, (XtPointer) me);
 		
 	my moveDown = XtVaCreateManagedWidget ("Move selection down",
 		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 320+menuBarOffset, XmNwidth, 190, 0);
+		XmNx, 280, XmNy, 320+menuBarOffset, XmNwidth, 190, NULL);
 	XtAddCallback (my moveDown, XmNactivateCallback, cb_moveDown, (XtPointer) me);
 
 	my outOfView = XtVaCreateManagedWidget ("", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 450, XmNwidth, 200, 0);
+		XmNx, 5, XmNy, 450, XmNwidth, 200, NULL);
 }
 
 static void dataChanged (I)

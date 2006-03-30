@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@
  djmw 20050221 TableOfReal_meansByRowLabels, extra reduce parameter.
  djmw 20050222 TableOfReal_drawVectors didn't draw rowlabels.
  djmw 20050512 TableOfReal TableOfReal_meansByRowLabels crashed if first label in sorted was NULL.
- djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax 
+ djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
+ djmw 20060301 TableOfReal_meansByRowLabels extra medianize
 */
 
 #include <ctype.h>
@@ -1590,7 +1591,38 @@ TableOfReal TableOfReal_sortOnlyByRowLabels (I)
 	return thee;
 }
 
-TableOfReal TableOfReal_meansByRowLabels (I, int expand)
+static void NUMmedianizeColumns (double **a, long rb, long re, long cb, long ce)
+{
+	long i, j, k, n = re - rb + 1;
+	double *tmp, median;
+	
+	if (n < 2) return;
+	tmp = NUMdvector (1, n);
+	if (tmp == NULL) return;
+	for (j = cb; j <= ce; j++)
+	{
+		k = 1;
+		for (i = rb; i <= re; i++, k++) tmp[k]= a[i][j];
+		NUMsort_d (n, tmp);
+		median = NUMquantile_d (n, tmp, 0.5);
+		for (i = rb; i <= re; i++) a[i][j] = median;
+	}
+	NUMdvector_free (tmp, 1);
+}
+
+static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, int stats)
+{
+	if (stats == 0)
+	{
+		NUMaverageColumns (a, rb, re, cb, ce);
+	}
+	else
+	{
+		NUMmedianizeColumns (a, rb, re, cb, ce);
+	}
+}
+
+TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 {
 	iam (TableOfReal);
 	TableOfReal thee = NULL, sorted = NULL;
@@ -1609,7 +1641,8 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand)
 		char *li = sorted -> rowLabels[i];
 		if (li != NULL && li != label && (label == NULL || strcmp (li, label)))
 		{
-			NUMaverageColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns);
+			NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, stats);
+
 			if (expand == 0)
 			{
 				indexr++;
@@ -1619,7 +1652,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand)
 		}
 	}
 		
-	NUMaverageColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns);
+	NUMstatsColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns, stats);
 	
 	if (expand != 0)
 	{

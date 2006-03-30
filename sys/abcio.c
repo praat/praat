@@ -23,6 +23,7 @@
  * pb 2004/10/01 Melder_double instead of %.17g
  * pb 2006/02/17 support for Intel-based Macs
  * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
+ * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
  */
 
 #include "melder.h"
@@ -415,11 +416,11 @@ void ascputs4 (const char *s, FILE *f,
 /* On which machines is "short" a two's complement Big-Endian (MSB-first) 2-byte word? */
 
 #if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
-	#define binario_shortBE2 1
+	#define binario_shortBE2 (sizeof (short) == 2)
 	#define binario_shortLE2 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
 	#define binario_shortBE2 0
-	#define binario_shortLE2 1
+	#define binario_shortLE2 (sizeof (short) == 2)
 #else
 	#define binario_shortBE2 0
 	#define binario_shortLE2 0
@@ -428,11 +429,11 @@ void ascputs4 (const char *s, FILE *f,
 /* On which machines is "long" a two's complement Big-Endian (MSB-first) 4-byte word? */
 
 #if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
-	#define binario_longBE4 1
+	#define binario_longBE4 (sizeof (long) == 4)
 	#define binario_longLE4 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
 	#define binario_longBE4 0
-	#define binario_longLE4 1
+	#define binario_longLE4 (sizeof (long) == 4)
 #else
 	#define binario_longBE4 0
 	#define binario_longLE4 0
@@ -441,11 +442,11 @@ void ascputs4 (const char *s, FILE *f,
 /* On which machines is "float" IEEE, four bytes, Most Significant Bit first? */
 
 #if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
-	#define binario_floatIEEE4msb 1
+	#define binario_floatIEEE4msb (sizeof (float) == 4)
 	#define binario_floatIEEE4lsb 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
 	#define binario_floatIEEE4msb 0
-	#define binario_floatIEEE4lsb 1
+	#define binario_floatIEEE4lsb (sizeof (float) == 4)
 #else
 	#define binario_floatIEEE4msb 0
 	#define binario_floatIEEE4lsb 0
@@ -454,11 +455,11 @@ void ascputs4 (const char *s, FILE *f,
 /* On which machines is "double" IEEE, eight bytes, Most Significant Bit first? */
 
 #if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
-	#define binario_doubleIEEE8msb 1
+	#define binario_doubleIEEE8msb (sizeof (double) == 8)
 	#define binario_doubleIEEE8lsb 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
 	#define binario_doubleIEEE8msb 0
-	#define binario_doubleIEEE8lsb 1
+	#define binario_doubleIEEE8lsb (sizeof (double) == 8)
 #else
 	#define binario_doubleIEEE8msb 0
 	#define binario_doubleIEEE8lsb 0
@@ -1195,38 +1196,38 @@ macro_cacgetb (7)
 void cacgetb (CACHE *f) { (void) f; bitsInReadBuffer = 0; }
 
 int cacgeti2 (CACHE *f) {
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		short s;
 		START (s) READ READ
 		return s;   /* With sign extension if an int is 4 bytes. */
-	#else
+	} else {
 		unsigned char bytes [2];
 		START (bytes) READ READ
 		return (signed short) (((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1]);
-	#endif
+	}
 }
 
 unsigned int cacgetu2 (CACHE *f) {
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		unsigned short s;
 		START (s) READ READ
 		return s;   /* Without sign extension. */
-	#else
+	} else {
 		unsigned char bytes [2];
 		START (bytes) READ READ
 		return ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
-	#endif
+	}
 }
 
 int cacgete2 (CACHE *f, void *enumerated) {
 	signed short s;
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		START (s) READ READ
-	#else
+	} else {
 		unsigned char bytes [2];
 		START (bytes) READ READ
 		s = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
-	#endif
+	}
 	if (s < 0)
 		(void) Melder_error ("(cacgete2:) %d is not a value of enumerated type \"%s\".",
 			s, enum_type (enumerated));
@@ -1234,11 +1235,11 @@ int cacgete2 (CACHE *f, void *enumerated) {
 }
 
 long cacgeti4 (CACHE *f) {
-	#if binario_longBE4
+	if (binario_longBE4) {
 		long l;
 		START (l) READ READ READ READ
 		return l;
-	#else
+	} else {
 		unsigned char bytes [4];
 		START (bytes) READ READ READ READ
 		return
@@ -1246,15 +1247,15 @@ long cacgeti4 (CACHE *f) {
 			((unsigned long) bytes [1] << 16) |
 			((unsigned long) bytes [2] << 8) |
 			(unsigned long) bytes [3];
-	#endif
+	}
 }
 
 unsigned long cacgetu4 (CACHE *f) {
-	#if binario_longBE4
+	if (binario_longBE4) {
 		unsigned long l;
 		START (l) READ READ READ READ
 		return l;
-	#else
+	} else {
 		unsigned char bytes [4];
 		START (bytes) READ READ READ READ
 		return
@@ -1262,7 +1263,7 @@ unsigned long cacgetu4 (CACHE *f) {
 			((unsigned long) bytes [1] << 16) |
 			((unsigned long) bytes [2] << 8) |
 			(unsigned long) bytes [3];
-	#endif
+	}
 }
 
 int cacgeti2LE (CACHE *f) {
@@ -1294,11 +1295,11 @@ unsigned long cacgetu4LE (CACHE *f) {
 }
 
 double cacgetr4 (CACHE *f) {
-	#if binario_floatIEEE4msb
+	if (binario_floatIEEE4msb) {
 		float x;
 		START (x) READ READ READ READ
 		return x;
-	#else
+	} else {
 		unsigned char bytes [4];
 		double x;
 		long exponent;
@@ -1316,15 +1317,15 @@ double cacgetr4 (CACHE *f) {
 		else   /* Finite. */
 			x  = ldexp (UnsignedToFloat (mantissa | 0x00800000), exponent - 150);
 		return bytes [0] & 0x80 ? - x : x;
-	#endif
+	}
 }
 
 double cacgetr8 (CACHE *f) {
-	#if binario_doubleIEEE8msb
+	if (binario_doubleIEEE8msb) {
 		double x;
 		START (x) READ READ READ READ READ READ READ READ
 		return x;
-	#else
+	} else {
 		unsigned char bytes [8];
 		double x;
 		long exponent;
@@ -1346,7 +1347,7 @@ double cacgetr8 (CACHE *f) {
 			x = ldexp (UnsignedToFloat (highMantissa | 0x00100000), exponent - 1043) +
 				ldexp (UnsignedToFloat (lowMantissa), exponent - 1075);
 		return bytes [0] & 0x80 ? - x : x;
-	#endif
+	}
 }
 
 double cacgetr10 (CACHE *f) {
@@ -1391,66 +1392,66 @@ void cacputb (CACHE *f) {
 }
 
 void cacputi2 (int i, CACHE *f) {
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		short s = i;
 		START (s) WRITE WRITE
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = i >> 8;
 		bytes [1] = i;
 		{ START (bytes) WRITE WRITE }
-	#endif
+	}
 }
 
 void cacputu2 (unsigned int u, CACHE *f) {
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		unsigned short s = u;
 		START (s) WRITE WRITE
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = u >> 8;
 		bytes [1] = u;
 		{ START (bytes) WRITE WRITE }
-	#endif
+	}
 }
 
 void cacpute2 (int value, CACHE *f, void *enumerated) {
-	#if binario_shortBE2
+	if (binario_shortBE2) {
 		signed short s = value;
 		START (s) WRITE WRITE
-	#else
+	} else {
 		char bytes [2];
 		bytes [0] = value >> 8;
 		bytes [1] = value;
 		{ START (bytes) WRITE WRITE }
-	#endif
+	}
 	(void) enumerated;
 }
 
 void cacputi4 (long i, CACHE *f) {
-	#if binario_longBE4
+	if (binario_longBE4) {
 		START (i) WRITE WRITE WRITE WRITE
-	#else
+	} else {
 		char bytes [4];
 		bytes [0] = i >> 24;
 		bytes [1] = i >> 16;
 		bytes [2] = i >> 8;
 		bytes [3] = i;
 		{ START (bytes) WRITE WRITE WRITE WRITE }
-	#endif
+	}
 }
 
 void cacputu4 (unsigned long u, CACHE *f) {
-	#if binario_longBE4
+	if (binario_longBE4) {
 		START (u) WRITE WRITE WRITE WRITE
-	#else
+	} else {
 		char bytes [4];
 		bytes [0] = u >> 24;
 		bytes [1] = u >> 16;
 		bytes [2] = u >> 8;
 		bytes [3] = u;
 		{ START (bytes) WRITE WRITE WRITE WRITE }
-	#endif
+	}
 }
 
 void cacputi2LE (int i, CACHE *f) {
@@ -1486,10 +1487,10 @@ void cacputu4LE (unsigned long u, CACHE *f) {
 }
 
 void cacputr4 (double x, CACHE *f) {
-	#if binario_floatIEEE4msb
+	if (binario_floatIEEE4msb) {
 		float x4 = x;
 		START (x4) WRITE WRITE WRITE WRITE
-	#else
+	} else {
 		unsigned char bytes [4];
 		int sign, exponent;
 		double fMantissa, fsMantissa;
@@ -1518,13 +1519,13 @@ void cacputr4 (double x, CACHE *f) {
 		bytes [2] = mantissa >> 8;
 		bytes [3] = mantissa;
 		{ START (bytes) WRITE WRITE WRITE WRITE }
-	#endif
+	}
 }
 
 void cacputr8 (double x, CACHE *f) {
-	#if binario_doubleIEEE8msb
+	if (binario_doubleIEEE8msb) {
 		START (x) WRITE WRITE WRITE WRITE WRITE WRITE WRITE WRITE
-	#else
+	} else {
 		unsigned char bytes [8];
 		int sign, exponent;
 		double fMantissa, fsMantissa;
@@ -1560,7 +1561,7 @@ void cacputr8 (double x, CACHE *f) {
 		bytes [6] = lowMantissa >> 8;
 		bytes [7] = lowMantissa;
 		{ START (bytes) WRITE WRITE WRITE WRITE WRITE WRITE WRITE WRITE }
-#endif
+	}
 }
 
 void cacputr10 (double x, CACHE *f) {

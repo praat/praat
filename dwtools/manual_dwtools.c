@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  * 
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20051219 Latest modification
+ djmw 20060328 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -317,6 +317,17 @@ INTRO ("The bootstrap data points are a random sample of size %n "
 NORMAL ("More information can be found in @@Efron & Tibshirani (1993)@.")
 MAN_END
 
+MAN_BEGIN ("canonical variate", "djmw", 20060328)
+NORMAL ("A ##canonical variate# is a new variable (variate) formed by making a linear combination of two "
+	"or more variates (variables) from a data set. "
+	"A linear combination of variables is the same as a weighted sum of variables. "
+	"Because we can in infinitely many ways choose combinations of weights between variables in a data set, "
+	"there are also infinitely many canonical variates possible. ")
+NORMAL ("In general additional constraints must be satisfied by the weights to get a meaningful canonical variate. "
+	"For example, in @@Canonical correlation analysis|canonical correlation analyis@ a data set is split up into two parts, a %%dependent% and an %%independent% part. "
+	"In both parts we can form a canonical variate and we choose weights that maximize the correlation between these canonical variates "
+	"(there is an @@TableOfReal: To CCA...|algorithm@ that calculates these weights).")
+MAN_END
 
 MAN_BEGIN ("Categories", "djmw", 19960918)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}.")
@@ -427,6 +438,52 @@ INTRO ("Determine from the selected @CCA and @Correlation objects the correlatio
 	"coefficients%.")
 MAN_END
 
+MAN_BEGIN ("CCA & Correlation: Get variance fraction...", "djmw", 20060323)
+INTRO ("Determine from the selected @CCA and @Correlation objects the fraction of the variance "
+	"explained by the selected @@canonical variate@ range.")
+ENTRY ("Arguments")
+TAG ("%%X or Y")
+DEFINITION ("determines whether you select the dependent (y) or the independent (x) set.")
+TAG ("%%Canonical variate range")
+DEFINITION ("determines the canonical variates (or canonical variables).")
+ENTRY ("Remarks")
+NORMAL ("1. In general the variance fractions for a particular canonical variate in the "
+	"dependent and in the independent set are not the same.")
+NORMAL ("2. In general, the variance fractions for all canonical variates do not sum to 1.")
+ENTRY ("Algorithm")
+NORMAL ("The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
+NORMAL ("For example, the fraction of the variance explained by the %i^^th^ canonical "
+	"variable in the dependent set is:")
+FORMULA ("%%fractionVariance% = ((#y__i_\\'p #R__yy_\\'p #R__yy_ #y__i_) / (#y__i_\\'p #R__yy_ #y__i_)) / %n__%y_,")
+NORMAL ("where #y__%i_ is the eigenvector for dependent canonical variable %i and #R__%%yy%_ is the correlation matrix for the %n__%y_ variables in the dependent set.")
+MAN_END
+
+MAN_BEGIN ("CCA & Correlation: Get redundancy (sl)...", "djmw", 20060323)
+INTRO ("Determine from the selected @CCA and @Correlation objects the Stewart-Love redundancy for the "
+	"selected canonical variates.")
+NORMAL ("The Stewart-Love redundancy for a single @@canonical variate@ is the fraction of variance explained by the selected "
+	"canonical variate in a set times the fraction of shared variance between the corresponding canonical variates in the two sets.")
+NORMAL ("The Stewart-Love redundancy for a canonical variate range is the sum of the individual redundancies.")
+ENTRY ("Arguments")
+TAG ("%%X or Y")
+DEFINITION ("determines whether you select the dependent (y) or the independent (x) set.")
+TAG ("%%Canonical variate range")
+DEFINITION ("determines the canonical variates (or canonical variables).")
+ENTRY ("Algorithm")
+NORMAL ("The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
+NORMAL ("For example, the redundancy of the dependent set (y) given the independent set (x) for the %i^^%%th%^ canonical "
+	"variate can be expressed as:")
+FORMULA ("%R__%i_(y) = %%varianceFraction%__%i_(y) * \\ro__%i_^2, ")
+NORMAL ("where %%varianceFraction%__%i_(y) is the @@CCA & Correlation: Get variance fraction...|variance fraction@ explained "
+	"by the %i^^%%th%^ canonical variate of the dependent set, and \\ro__%i_ is the %i^^%%th%^ canonical correlation coefficient.")
+NORMAL ("The redundancy for the selected canonical variate in the dependent set shows what "
+	"fraction of the variance in the %%dependent% set is already \"explained\" by "
+	"the variance in the %%independent% set, i.e. this fraction could be considered as redundant.")
+NORMAL ("In the same way we can measure the redundancy of the independent (x) set giving the dependent set (y).")
+ENTRY ("Remark")
+NORMAL ("In general %R__%i_(y) \\=/ %R__%i_(x).")
+MAN_END
+
 MAN_BEGIN ("CCA & TableOfReal: To TableOfReal (loadings)", "djmw", 20020525)
 INTRO ("Determine from the selected @CCA and @TableOfReal objects the correlations "
 	"of the canonical variables with the original variables. These correlations are "
@@ -512,7 +569,7 @@ FORMULA ("\\ro(%u__1_, %v__1_) = maximum, \\ro(%u__2_, %v__2_) = submaximum, ")
 FORMULA ("\\ro(%u__2_, %u__1_) = \\ro (%u__2_, %v__1_) = \\ro (%v__2_, %v__1_) "
 	"= \\ro (%v__2_, %u__1_) = 0,")
 NORMAL ("where the \\ro(%u__i_, %v__i_) are the correlations between the "
-	"##canonical variates# %u__i_ and %v__i_ and the %y__%ij_'s and %x__%ij_'s are"
+	"@@canonical variate@s %u__i_ and %v__i_ and the %y__%ij_'s and %x__%ij_'s are"
 	" the ##canonical coefficients# for the dependent and the independent "
 	"variates, respectively.")
 ENTRY ("2. How to perform a canonical correlation analysis")
@@ -534,7 +591,7 @@ CODE ("cc2 = Get correlation... 2")
 CODE ("cc3 = Get correlation... 3")
 CODE ("printline cc1 = 'cc1', cc2 = 'cc2', cc3 = 'cc3'")
 ENTRY ("4. How to obtain canonical scores")
-NORMAL ("Canonical #scores, also named canonical variates, are the linear combinations:")
+NORMAL ("Canonical #scores, also named @@canonical variate@s, are the linear combinations:")
 FORMULA ("%u__%i_ = %y__%i1_%F__1_+%y__%i2_%F__2_ + %y__%i3_%F__3_, and,")
 FORMULA ("%v__%i_ = %x__%i1_%L__1_+%x__%i2_%L__2_ + %x__%i3_%L__3_,")
 NORMAL ("where the index %i runs from 1 to the number of correlation coefficients.")
@@ -3375,6 +3432,11 @@ MAN_BEGIN ("Boomsma (1977)", "djmw", 20020524)
 NORMAL ("A. Boomsma (1977), \"Comparing approximations of confidence intervals "
 	"for the product-moment correlation coefficient\", %%Statistica Neerlandica% "
 	"#31, 179-186.")
+MAN_END
+
+MAN_BEGIN ("Cooley & Lohnes (1971)", "djmw", 20060322)
+NORMAL ("W.W. Colley & P.R. Lohnes (1971), %%Multivariate data analysis%, "
+	"John Wiley & Sons.")
 MAN_END
 
 MAN_BEGIN ("Davis & Mermelstein (1980)", "djmw", 20010419)

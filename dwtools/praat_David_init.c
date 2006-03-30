@@ -45,6 +45,7 @@
  djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices must be positive numbers
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
+ djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
 */
 
 #include "praat.h"
@@ -453,6 +454,46 @@ DIRECT (CCA_and_Correlation_factorLoadings)
 	if (! praat_new (CCA_and_Correlation_factorLoadings (cca, 
 		ONLY (classCorrelation)), "%s_loadings", Thing_getName (cca))) return 0;
 END
+
+FORM (CCA_and_Correlation_getVarianceFraction, "CCA & Correlation: Get variance fraction",
+	"CCA & Correlation: Get variance fraction...")
+	LABEL ("", "Get the fraction of variance from the data in set...")
+	OPTIONMENU ("X or Y", 1)
+	OPTION ("y")
+	OPTION ("x")
+	LABEL ("", "extracted by...")
+	NATURAL ("left Canonical variate range", "1")
+	NATURAL ("right Canonical variate range", "1")
+	OK
+DO
+	int x_or_y = GET_INTEGER ("X or Y");
+	int cv_from = GET_INTEGER ("left Canonical variate range");
+	int cv_to = GET_INTEGER ("right Canonical variate range");
+	Melder_information ("%.17g (fraction variance from %s extracted by canonical variates %d to %d)",
+		CCA_and_Correlation_getVarianceFraction (ONLY (classCCA),
+		ONLY (classCorrelation), x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), cv_from, cv_to);
+END
+
+FORM (CCA_and_Correlation_getRedundancy_sl, "CCA & Correlation: Get Stewart-Love redundancy",
+	"CCA & Correlation: Get redundancy (sl)...")
+	LABEL ("", "Get the redundancy of the data in set...")
+	OPTIONMENU ("X or Y", 1)
+	OPTION ("y")
+	OPTION ("x")
+	LABEL ("", "extracted by...")
+	NATURAL ("left Canonical variate range", "1")
+	NATURAL ("right Canonical variate range", "1")
+	LABEL ("", "...given the availability of the data in the other set.")
+	OK
+DO
+	int x_or_y = GET_INTEGER ("X or Y");
+	int cv_from = GET_INTEGER ("left Canonical variate range");
+	int cv_to = GET_INTEGER ("right Canonical variate range");
+	Melder_information ("%.17g (redundancy from %s extracted by canonical variates %d to %d)",
+		CCA_and_Correlation_getRedundancy_sl (ONLY (classCCA), ONLY (classCorrelation),
+		x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), cv_from, cv_to);
+END
+
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
 	CCA cca = ONLY (classCCA);
@@ -3817,7 +3858,14 @@ FORM (TableOfReal_meansByRowLabels, "TableOfReal: Means by row labels", "TableOf
     BOOLEAN ("Expand", 0)
 	OK
 DO
-	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand")), "%s_byrowlabels", NAME))
+	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 0), "%s_byrowlabels", NAME))
+END
+
+FORM (TableOfReal_mediansByRowLabels, "TableOfReal: Medians by row labels", "TableOfReal: To TableOfReal (medians by row labels)...")
+    BOOLEAN ("Expand", 0)
+	OK
+DO
+	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 1), "%s_byrowlabels", NAME))
 END
 
 /***** TableOfReal and Matrix  *****/
@@ -4109,14 +4157,14 @@ void praat_uvafon_David_init (void)
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 	
     Thing_recognizeClassesByName (classActivation, classBarkFilter,
-		classCategories,
+		classCategories, classCCA,
 		classChebyshevSeries,classClassificationTable, classConfusion, 
     	classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitations, classFormantFilter, classPermutation,
 		classISpline, classLegendreSeries,
 		classMelFilter,
 		classMSpline, classPattern, classPCA, classPolynomial, classRoots,
-		classSimpleString, classSSCP, classSVD, NULL);
+		classSimpleString, classStringsIndex, classSSCP, classSVD, NULL);
 
     praat_addMenuCommand ("Objects", "Goodies", "Report floating point properties",
 		0, 0, DO_Praat_ReportFloatingPointProperties);
@@ -4223,6 +4271,10 @@ void praat_uvafon_David_init (void)
 		DO_CCA_and_TableOfReal_predict);
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, "To TableOfReal (loadings)", 
 		0, 0, DO_CCA_and_Correlation_factorLoadings);
+	praat_addAction2 (classCCA, 1, classCorrelation, 1, "Get variance fraction...",
+		0, 0, DO_CCA_and_Correlation_getVarianceFraction);
+	praat_addAction2 (classCCA, 1, classCorrelation, 1, "Get redundancy (sl)...",
+		0, 0, DO_CCA_and_Correlation_getRedundancy_sl);
     
 	praat_addAction1 (classConfusion, 0, "Confusion help", 0, 0,
 		DO_Confusion_help);
@@ -4300,7 +4352,7 @@ void praat_uvafon_David_init (void)
 		DO_Correlation_confidenceIntervals);
 	praat_addAction1 (classCorrelation, 0, "To PCA", 0, 0,
 		DO_Correlation_to_PCA);
-
+		
 	praat_addAction1 (classDiscriminant, 0, "Discriminant help", 0, 0,
 		DO_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, 0, 0, 0);
@@ -4764,6 +4816,8 @@ void praat_uvafon_David_init (void)
 		DO_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, "To TableOfReal (means by row labels)...", 0, 1,
 		DO_TableOfReal_meansByRowLabels);
+	praat_addAction1 (classTableOfReal, 0, "To TableOfReal (medians by row labels)...", 0, 1,
+		DO_TableOfReal_mediansByRowLabels);
 	
 	praat_addAction1 (classTableOfReal, 0, "-- configurations --", 0, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, "To Configuration (pca)...",

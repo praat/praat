@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020327 GPL
- djmw 20040219 latest modification
+ djmw 20060319 Latest modification
 */
 
 #ifndef _TableOfReal_extensions_h_
@@ -126,7 +126,7 @@ void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints,
 	double *chisq, double *probability);
 void Correlation_testDiagonality_bartlett (Correlation me, 
 	long numberOfContraints, double *chisq, double *probability);
-/* Test whether matrices are diagonal matrices, Morrison, page 118 */	
+/* Test whether matrices are diagonal matrices, Morrison, page 118 */
 	
 Correlation SSCP_to_Correlation (I);
 
