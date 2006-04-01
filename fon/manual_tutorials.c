@@ -23,9 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060308)
+MAN_BEGIN ("What's new?", "ppgb", 20060401)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.16# (April 1, 2006)")
+LIST_ITEM ("\\bu Spectrum window: dynamic range setting.")
+LIST_ITEM ("\\bu SoundRecorder: corrected a bug in the Intel Mac edition.")
+NORMAL ("##4.4.15# (March 30, 2006)")
+LIST_ITEM ("\\bu Source code even more compatible with 64-bit compilers.")
+NORMAL ("##4.4.14# (March 29, 2006)")
+LIST_ITEM ("\\bu Source code more compatible with 64-bit compilers.")
 NORMAL ("##4.4.13# (March 8, 2006)")
 LIST_ITEM ("\\bu Table To TableOfReal: better handling of --undefined-- values (are now numeric).")
 LIST_ITEM ("\\bu MacOS X: TextGrid files can be double-clicked to open.")

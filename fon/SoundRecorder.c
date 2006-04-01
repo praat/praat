@@ -1,6 +1,6 @@
 /* SoundRecorder.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2005/08/22 removed reference to Control menu from message
  * pb 2005/09/28 made 12 and 64 kHz available for Mac
  * pb 2005/10/13 edition for OpenBSD
+ * pb 2006/04/01 corrections for Intel Mac
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -900,6 +901,7 @@ static int open_mac (SoundRecorder me) {
 			Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
 			unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
 			switch (rate_ushort) {
+				case 0: my can44100 = TRUE, my can48000 = TRUE; break;   /* BUG */
 				case 8000: my can8000 = TRUE; break;
 				case 11025: my can11025 = TRUE; break;
 				case 12000: my can12000 = TRUE; break;
@@ -1742,7 +1744,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	 */
 	if (nmaxMB_pref < 1) nmaxMB_pref = 1;   /* Validate preferences. */
 	if (nmaxMB_pref > 1000) nmaxMB_pref = 1000;
-	#if defined (macintosh)
+	#if defined (macintosh) && ! defined (__MACH__)
 	{
 		OSErr err;
 		/*
@@ -1815,7 +1817,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 				Handle handle;
 				if (SPBGetDeviceInfo (my refNum, siInputSourceNames, & handle) == noErr) {
 					char *data = *handle, *plength;
-					int numberOfDeviceSources = data [0] * 256 + data [1], deviceSource;
+					int numberOfDeviceSources = * (short *) data, deviceSource;
 					/*HLock (handle);*/
 					plength = & data [2];
 					for (deviceSource = 1; deviceSource <= numberOfDeviceSources; deviceSource ++) {
@@ -1846,6 +1848,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	my can12000 = TRUE;
 	my can16000 = TRUE;
 	my can22050 = TRUE;
+	my can24000 = TRUE;
 	my can32000 = TRUE;
 	my can44100 = TRUE;
 	my can48000 = TRUE;

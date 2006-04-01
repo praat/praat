@@ -1,5 +1,59 @@
 // !$*UTF8*$!
 {
+	2312E5C509DC503300728109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 23E5CB0309A22901004E41D5 /* praat_menuCommands.c */;
+		name = "praat_menuCommands.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 705;
+		vrLoc = 0;
+	};
+	2312E5C609DC503300728109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 23E5CB6409A22902004E41D5 /* melder_audiofiles.c */;
+		name = macintosh;
+		rLen = 9;
+		rLoc = 27746;
+		rType = 0;
+		vrLen = 473;
+		vrLoc = 841;
+	};
+	2312E5C709DC503300728109 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 23E5CAE309A22901004E41D5 /* SoundRecorder.c */;
+	};
+	2312E5C809DC503300728109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 23E5CB0309A22901004E41D5 /* praat_menuCommands.c */;
+		name = "praat_menuCommands.c: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 705;
+		vrLoc = 0;
+	};
+	2312E5C909DC503300728109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 23E5CB6409A22902004E41D5 /* melder_audiofiles.c */;
+		name = macintosh;
+		rLen = 9;
+		rLoc = 27746;
+		rType = 0;
+		vrLen = 473;
+		vrLoc = 841;
+	};
+	2312E5CA09DC503300728109 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 23E5CAE309A22901004E41D5 /* SoundRecorder.c */;
+		name = "SoundRecorder.c: 1753";
+		rLen = 86;
+		rLoc = 70266;
+		rType = 0;
+		vrLen = 701;
+		vrLoc = 58154;
+	};
 	231FEEAA09D2FBFB00EB87F5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 23E5CAEC09A22901004E41D5 /* manual_tutorials.c */;
@@ -30,10 +84,6 @@
 		vrLen = 537;
 		vrLoc = 8793;
 	};
-	231FEECA09D868D700EB87F5 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 23E5CB0309A22901004E41D5 /* praat_menuCommands.c */;
-	};
 	231FEECB09D868D700EB87F5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 23E5CB2309A22901004E41D5 /* Printer.c */;
@@ -43,16 +93,6 @@
 		rType = 0;
 		vrLen = 537;
 		vrLoc = 8793;
-	};
-	231FEECC09D868D700EB87F5 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 23E5CB0309A22901004E41D5 /* praat_menuCommands.c */;
-		name = "praat_menuCommands.c: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 705;
-		vrLoc = 0;
 	};
 	2333572609AE381D003BA2A4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -497,16 +537,20 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 165104015;
-			PBXWorkspaceStateSaveDate = 165104015;
+			PBXPerProjectTemplateStateSaveDate = 165341560;
+			PBXWorkspaceStateSaveDate = 165341560;
 		};
 		perUserProjectItems = {
+			2312E5C509DC503300728109 /* PBXTextBookmark */ = 2312E5C509DC503300728109 /* PBXTextBookmark */;
+			2312E5C609DC503300728109 /* PBXTextBookmark */ = 2312E5C609DC503300728109 /* PBXTextBookmark */;
+			2312E5C709DC503300728109 /* PBXBookmark */ = 2312E5C709DC503300728109 /* PBXBookmark */;
+			2312E5C809DC503300728109 /* PBXTextBookmark */ = 2312E5C809DC503300728109 /* PBXTextBookmark */;
+			2312E5C909DC503300728109 /* PBXTextBookmark */ = 2312E5C909DC503300728109 /* PBXTextBookmark */;
+			2312E5CA09DC503300728109 /* PBXTextBookmark */ = 2312E5CA09DC503300728109 /* PBXTextBookmark */;
 			231FEEAA09D2FBFB00EB87F5 /* PBXTextBookmark */ = 231FEEAA09D2FBFB00EB87F5 /* PBXTextBookmark */;
 			231FEEB209D3191A00EB87F5 /* PBXTextBookmark */ = 231FEEB209D3191A00EB87F5 /* PBXTextBookmark */;
 			231FEEC909D868D700EB87F5 /* PBXTextBookmark */ = 231FEEC909D868D700EB87F5 /* PBXTextBookmark */;
-			231FEECA09D868D700EB87F5 /* PBXBookmark */ = 231FEECA09D868D700EB87F5 /* PBXBookmark */;
 			231FEECB09D868D700EB87F5 /* PBXTextBookmark */ = 231FEECB09D868D700EB87F5 /* PBXTextBookmark */;
-			231FEECC09D868D700EB87F5 /* PBXTextBookmark */ = 231FEECC09D868D700EB87F5 /* PBXTextBookmark */;
 			2333572609AE381D003BA2A4 /* PBXTextBookmark */ = 2333572609AE381D003BA2A4 /* PBXTextBookmark */;
 			2333572709AE381D003BA2A4 /* PBXTextBookmark */ = 2333572709AE381D003BA2A4 /* PBXTextBookmark */;
 			2333572809AE381D003BA2A4 /* PBXTextBookmark */ = 2333572809AE381D003BA2A4 /* PBXTextBookmark */;
@@ -1112,9 +1156,10 @@
 	};
 	23E5CAE309A22901004E41D5 /* SoundRecorder.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {950, 26586}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1260, 32300}}";
 			sepNavSelRange = "{70266, 86}";
-			sepNavVisRect = "{{0, 24599}, {735, 146}}";
+			sepNavVisRect = "{{0, 24599}, {610, 257}}";
+			sepNavWindowFrame = "{{30, 54}, {945, 692}}";
 		};
 	};
 	23E5CAE509A22901004E41D5 /* SpectrogramEditor.c */ = {
@@ -1497,9 +1542,9 @@
 	};
 	23E5CB6409A22902004E41D5 /* melder_audiofiles.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1016, 15498}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1348, 18819}}";
 			sepNavSelRange = "{27746, 9}";
-			sepNavVisRect = "{{0, 15150}, {711, 348}}";
+			sepNavVisRect = "{{0, 378}, {610, 257}}";
 			sepNavWindowFrame = "{{61, 24}, {885, 675}}";
 		};
 	};

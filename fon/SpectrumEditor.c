@@ -1,6 +1,6 @@
 /* SpectrumEditor.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1999/10/25
  * pb 2002/07/16 GPL
+ * pb 2006/04/01 dynamic range setting
  */
 
 #include "SpectrumEditor.h"
@@ -29,27 +29,31 @@
 
 #define SpectrumEditor_members FunctionEditor_members \
 	double minimum, maximum, cursorHeight; \
-	double bandSmoothing; \
+	double bandSmoothing, dynamicRange; \
 	Widget publishBandButton, publishSoundButton;
 #define SpectrumEditor_methods FunctionEditor_methods
 class_create_opaque (SpectrumEditor, FunctionEditor)
 
 static struct {
 	double bandSmoothing;
+	double dynamicRange;
 }
 	preferences = {
-		100   /* band smoothing */
+		100.0,   /* band smoothing */
+		60.0   /* dynamic range */
 	};
 
 void SpectrumEditor_prefs (void) {
 	Resources_addDouble ("SpectrumEditor.bandSmoothing", & preferences.bandSmoothing);
+	Resources_addDouble ("SpectrumEditor.dynamicRange", & preferences.dynamicRange);
 }
 
 static void updateRange (SpectrumEditor me) {
-	if (Spectrum_getPowerDensityRange (my data, & my minimum, & my maximum))
-		my minimum = my maximum - 60;
-	else
+	if (Spectrum_getPowerDensityRange (my data, & my minimum, & my maximum)) {
+		my minimum = my maximum - my dynamicRange;
+	} else {
 		my minimum = -1000, my maximum = 1000;
+	}
 }
 
 static void dataChanged (I) {
@@ -68,7 +72,6 @@ static void draw (I) {
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-
 	Spectrum_drawInside (spectrum, my graphics, my startWindow, my endWindow, my minimum, my maximum);
 	FunctionEditor_drawRangeMark (me, "%.1f dB", my maximum, Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, "%.1f dB", my minimum, Graphics_BOTTOM);
@@ -158,6 +161,16 @@ DO
 	Editor_broadcastChange (me);
 END
 
+FORM (SpectrumEditor, cb_setDynamicRange, "Set dynamic range", 0)
+	POSITIVE ("Dynamic range (dB)", "60.0")
+	OK
+SET_REAL ("Dynamic range", my dynamicRange)
+DO
+	preferences.dynamicRange = my dynamicRange = GET_REAL ("Dynamic range");
+	updateRange (me);
+	FunctionEditor_redraw (me);
+END
+
 DIRECT (SpectrumEditor, cb_help_SpectrumEditor) Melder_help ("SpectrumEditor"); END
 DIRECT (SpectrumEditor, cb_help_Spectrum) Melder_help ("Spectrum"); END
 
@@ -174,8 +187,15 @@ static void createMenus (I) {
 	Editor_addCommand (me, "Help", "Spectrum help", 0, cb_help_Spectrum);
 }
 
+static void viewMenuEntries (I) {
+	iam (SpectrumEditor);
+	Editor_addCommand (me, "View", "Set dynamic range...", 0, cb_setDynamicRange);
+	Editor_addCommand (me, "View", "-- view settings --", 0, 0);
+}
+
 class_methods (SpectrumEditor, FunctionEditor)
 	class_method (createMenus)
+	class_method (viewMenuEntries)
 	class_method (dataChanged)
 	class_method (draw)
 	us -> format_domain = "Frequency domain:";
@@ -192,9 +212,10 @@ class_methods_end
 SpectrumEditor SpectrumEditor_create (Widget parent, char *title, Any data) {
 	SpectrumEditor me = new (SpectrumEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
-	updateRange (me);
 	my cursorHeight = -1000;
 	my bandSmoothing = preferences.bandSmoothing;
+	my dynamicRange = preferences.dynamicRange;
+	updateRange (me);
 	return me;
 }
 

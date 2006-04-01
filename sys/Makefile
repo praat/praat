@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, January 6, 2005
+# Paul Boersma, January 6, 2006
 
 include ../makefile.defs
 CFLAGS = -I ../dwsys -I ../GSL
