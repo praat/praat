@@ -45,6 +45,7 @@ static void info (I) {
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
 	iam (Intensity);
+	(void) me;
 	(void) ilevel;
 	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   /* energy */
@@ -57,6 +58,7 @@ static double convertStandardToSpecialUnit (I, double value, long ilevel, int un
 static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
 	iam (Intensity);
 	(void) ilevel;
+	(void) me;
 	return
 		unit == 1 ?
 			10.0 * log10 (value) :   /* value = energy */

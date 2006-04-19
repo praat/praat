@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 	pb 2004/10/27 Melder_warningOff/On
 	pb 2005/06/16 no enums (because of compiler warnings)
 	pb 2005/11/18 URL support
+	pb 2006/04/16 tokens
  */
 
 #include <stdio.h>
@@ -138,11 +139,29 @@ const char * Melder_percent (double value, int precision);
 
 /********** STRING TO NUMBER CONVERSION **********/
 
+int Melder_isStringNumeric (const char *string);
 double Melder_atof (const char *string);
 	/*
 	 * "3.14e-3" -> 3.14e-3
 	 * "15.6%" -> 0.156
+	 * "fghfghj" -> NUMundefined
 	 */
+
+/********** STRING PARSING **********/
+
+/*
+	These functions regard a string as a sequence of tokens,
+	separated (and perhaps preceded and followed) by white space.
+	The tokens cannot contain spaces themselves (there are no escapes).
+	Typical use:
+		for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
+			... do something with the token ...
+		}
+*/
+
+long Melder_countTokens (const char *string);
+char *Melder_firstToken (const char *string);
+char *Melder_nextToken (void);
 
 /********** MESSAGING ROUTINES **********/
 

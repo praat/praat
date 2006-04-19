@@ -38,6 +38,7 @@ static void destroy (I) {
 
 static void clear (I) {
 	iam (TextEditor);
+	(void) me;
 	Melder_clearInfo ();
 }
 

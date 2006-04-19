@@ -1937,7 +1937,6 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 
 static int clickB (I, double t, double yWC) {
 	iam (TextGridEditor);
-	TextGrid grid = my data;
 	int itier;
 	double tmin, tmax;
 	double soundY = computeSoundY (me);
@@ -1964,7 +1963,6 @@ static int clickB (I, double t, double yWC) {
 
 static int clickE (I, double t, double yWC) {
 	iam (TextGridEditor);
-	TextGrid grid = my data;
 	int itier;
 	double tmin, tmax;
 	double soundY = computeSoundY (me);

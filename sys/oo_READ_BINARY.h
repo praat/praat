@@ -1,6 +1,6 @@
 /* oo_READ_BINARY.h
  *
- * Copyright (C) 1994-2003 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2001/08/04
  * pb 2002/03/07 GPL
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
+ * pb 2006/04/12 guard against too new versions
  */
 
 #include "oo_undef.h"
@@ -158,6 +158,8 @@
 	static int class##Class##_readBinary (I, FILE *f) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
+		if (localVersion > our version) \
+			return Melder_error ("The format of this file is too new. Download a newer version of Praat."); \
 		if (! inherited (Class) readBinary (me, f)) return 0;
 
 #define oo_END_CLASS(Class)  \

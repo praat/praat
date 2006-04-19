@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2006/02/24
+ * pb 2006/04/19
  */
 
-#define kBundleShortVersion "Praat (PowerPC only)"
+#define kBundleShortVersion "Praat 4.4.17 (PowerPC only)"
 #define kBundleGetInfo kBundleShortVersion ", © 1992-2006 by Paul Boersma and David Weenink"
 
 plist {

@@ -1,6 +1,6 @@
 /* TableOfReal.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2005/06/16 Melder_NUMBER and Melder_STRING as ints
  * pb 2005/07/19 TableOfReal_readFromHeaderlessSpreadsheetFile: allow 30k row and column labels
  * pb 2005/09/18 SILIPA versus XIPA widths
+ * pb 2006/04/17 getRowStr, getColStr
  */
 
 #include <ctype.h>
@@ -107,6 +108,16 @@ static void info (I) {
 
 static double getNrow (I) { iam (TableOfReal); return my numberOfRows; }
 static double getNcol (I) { iam (TableOfReal); return my numberOfColumns; }
+static char * getRowStr (I, long irow) {
+	iam (TableOfReal);
+	if (irow < 1 || irow > my numberOfRows) return NULL;
+	return my rowLabels [irow] ? my rowLabels [irow] : "";
+}
+static char * getColStr (I, long icol) {
+	iam (TableOfReal);
+	if (icol < 1 || icol > my numberOfColumns) return NULL;
+	return my columnLabels [icol] ? my columnLabels [icol] : "";
+}
 static double getMatrix (I, long irow, long icol) {
 	iam (TableOfReal);
 	if (irow < 1 || irow > my numberOfRows) return NUMundefined;
@@ -134,6 +145,8 @@ class_methods (TableOfReal, Data)
 	class_method (info)
 	class_method (getNrow)
 	class_method (getNcol)
+	class_method (getRowStr)
+	class_method (getColStr)
 	class_method (getMatrix)
 	class_method (getRowIndex)
 	class_method (getColumnIndex)

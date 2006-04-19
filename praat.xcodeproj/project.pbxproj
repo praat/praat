@@ -714,6 +714,9 @@
 		23E5D21D09A22AC1004E41D5 /* gsl_nan.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF4909A22A57004E41D5 /* gsl_nan.h */; };
 		23E5D21E09A22ACD004E41D5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23E5CF3509A22A55004E41D5 /* Carbon.framework */; };
 		23E5D22009A22ACD004E41D5 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23E5D21F09A22ACD004E41D5 /* QuickTime.framework */; };
+		23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C509F2E61200E660F9 /* melder_atof.c */; };
+		23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C709F2E62700E660F9 /* melder_ftoa.c */; };
+		23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C909F2E63900E660F9 /* melder_token.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -1459,6 +1462,9 @@
 		23E5CF4909A22A57004E41D5 /* gsl_nan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_nan.h; path = GSL/gsl_nan.h; sourceTree = SOURCE_ROOT; };
 		23E5D1A509A22A68004E41D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = file; name = Info.plist; path = /Praat.app/Contents/Info.plist; sourceTree = "<group>"; };
 		23E5D21F09A22ACD004E41D5 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
+		23EE67C509F2E61200E660F9 /* melder_atof.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_atof.c; path = sys/melder_atof.c; sourceTree = "<group>"; };
+		23EE67C709F2E62700E660F9 /* melder_ftoa.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_ftoa.c; path = sys/melder_ftoa.c; sourceTree = "<group>"; };
+		23EE67C909F2E63900E660F9 /* melder_token.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_token.c; path = sys/melder_token.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2178,6 +2184,9 @@
 			children = (
 				23E5CB6209A22902004E41D5 /* melder.h */,
 				23E5CB6109A22902004E41D5 /* melder.c */,
+				23EE67C909F2E63900E660F9 /* melder_token.c */,
+				23EE67C509F2E61200E660F9 /* melder_atof.c */,
+				23EE67C709F2E62700E660F9 /* melder_ftoa.c */,
 				23E5CB6309A22902004E41D5 /* melder_audio.c */,
 				23E5CB6409A22902004E41D5 /* melder_audiofiles.c */,
 				23E5CB6509A22902004E41D5 /* melder_debug.c */,
@@ -3182,6 +3191,9 @@
 				23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */,
 				23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */,
 				23AEE91809A286F9000D3DB7 /* main_Praat.c in Sources */,
+				23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */,
+				23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */,
+				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

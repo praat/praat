@@ -30,6 +30,9 @@
  * pb 2005/09/26 sorting by string now also works
  * pb 2006/01/24 getMatrixStr
  * pb 2006/01/26 Table_extractRowsWhereColumn_string
+ * pb 2006/04/16 Table_createWithColumnNames
+ * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
+ * pb 2006/04/17 getColStr
  */
 
 #include <ctype.h>
@@ -73,6 +76,11 @@ static void info (I) {
 
 static double getNrow (I) { iam (Table); return my rows -> size; }
 static double getNcol (I) { iam (Table); return my numberOfColumns; }
+static char * getColStr (I, long icol) {
+	iam (Table);
+	if (icol < 1 || icol > my numberOfColumns) return NULL;
+	return my columnHeaders [icol]. label ? my columnHeaders [icol]. label : "";
+}
 static double getMatrix (I, long irow, long icol) {
 	iam (Table);
 	char *stringValue;
@@ -106,6 +114,7 @@ class_methods (Table, Data) {
 	class_method (info)
 	class_method (getNrow)
 	class_method (getNcol)
+	class_method (getColStr)
 	class_method (getMatrix)
 	class_method (getMatrixStr)
 	class_method (getColumnIndex)
@@ -120,11 +129,11 @@ end:
 	return me;
 }
 
-int Table_init (I, long numberOfRows, long numberOfColumns) {
+int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
 	iam (Table);
 	long irow;
-	if (numberOfRows < 0 || numberOfColumns < 1)
-		return Melder_error ("(Table_init:) Cannot create cell-less table.");
+	if (numberOfColumns < 1)
+		return Melder_error ("Cannot create table without columns.");
 	my numberOfColumns = numberOfColumns;
 	if (! (my columnHeaders = NUMstructvector (TableColumnHeader, 1, numberOfColumns))) return 0;
 	if (! (my rows = Ordered_create ())) return 0;
@@ -134,9 +143,29 @@ int Table_init (I, long numberOfRows, long numberOfColumns) {
 	return 1;
 }
 
-Table Table_create (long numberOfRows, long numberOfColumns) {
+Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 	Table me = new (Table);
-	if (! me || ! Table_init (me, numberOfRows, numberOfColumns)) forget (me);
+	if (! me || ! Table_initWithoutColumnNames (me, numberOfRows, numberOfColumns)) forget (me);
+	return me;
+}
+
+int Table_initWithColumnNames (I, long numberOfRows, const char *columnNames) {
+	iam (Table);
+	char *columnName;
+	long icol = 0;
+	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames)); cherror
+	for (columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
+		icol ++;
+		Table_setColumnLabel (me, icol, columnName); cherror
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+Table Table_createWithColumnNames (long numberOfRows, const char *columnNames) {
+	Table me = new (Table);
+	if (! me || ! Table_initWithColumnNames (me, numberOfRows, columnNames)) forget (me);
 	return me;
 }
 
@@ -146,6 +175,33 @@ int Table_appendRow (Table me) {
 end:
 	iferror return 0;
 	return 1;
+}
+
+static char ** Melder_getTokens (const char *string, long *n) {
+	char **result = NULL, *token;
+	long itoken = 0;
+	*n = Melder_countTokens (string);
+	if (*n == 0) return NULL;
+	result = (char **) NUMpvector (1, *n); cherror
+	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
+		result [++ itoken] = Melder_strdup (token); cherror
+	}
+end:
+	iferror NUMpvector_free ((void **) result, 1);
+	return result;
+}
+
+static void Melder_freeTokens (char ***tokens) {
+	NUMpvector_free ((void **) *tokens, 1);
+	*tokens = NULL;
+}
+
+static long Melder_searchToken (const char *string, char **tokens, long n) {
+	long i;
+	for (i = 1; i <= n; i ++) {
+		if (strequ (string, tokens [i])) return i;
+	}
+	return 0;
 }
 
 int Table_appendColumn (Table me, const char *label) {
@@ -271,25 +327,6 @@ int Table_setNumericValue (Table me, long irow, long icol, double value) {
 	return 1;
 }
 
-static int Melder_isStringNumeric (const char *string) {
-	const char *p = & string [0];
-	if (*p == '+' || *p == '-') p ++;
-	if (*p < '0' || *p > '9') return FALSE;
-	p ++;
-	while (*p >= '0' && *p <= '9') p ++;
-	if (*p == '.') {
-		p ++;
-		while (*p >= '0' && *p <= '9') p ++;
-	}
-	if (*p == 'e' || *p == 'E') {
-		p ++;
-		if (*p == '+' || *p == '-') p ++;
-		while (*p >= '0' && *p <= '9') p ++;
-	}
-	if (*p == '\0') return TRUE;
-	return FALSE;
-}
-
 static int Table_isCellNumeric (Table me, long irow, long icol) {
 	TableRow row;
 	const char *cell;
@@ -297,7 +334,7 @@ static int Table_isCellNumeric (Table me, long irow, long icol) {
 	if (icol < 1 || icol > my numberOfColumns) return FALSE;
 	row = my rows -> item [irow];
 	cell = row -> cells [icol]. string;
-	if (cell == NULL) return TRUE;   /* The value --undefined-- */
+	if (cell == NULL || cell [0] == '\0') return TRUE;   /* The value --undefined-- */
 	if (cell [0] == '?' && cell [1] == '\0' || strequ (cell, "--undefined--")) return TRUE;   /* The value --undefined-- */
 	return Melder_isStringNumeric (cell);
 }
@@ -333,20 +370,22 @@ static int indexCompare (const void *first, const void *second) {
 	return 0;
 }
 
-static void sortRowsByIndex (Table me, long icol) {
-	Melder_assert (icol >= 1 && icol <= my numberOfColumns);
+static void sortRowsByIndex (Table me) {
 	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), indexCompare);
 }
 
-static int Table_numericize (Table me, long icol) {
+static void Table_numericize (Table me, long icol) {
 	long irow;
-	if (my columnHeaders [icol]. numericized) return 1;
+	Melder_assert (icol >= 1);
+	Melder_assert (icol <= my numberOfColumns);
+	if (my columnHeaders [icol]. numericized) return;
 	if (Table_isColumnNumeric (me, icol)) {
 		for (irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = my rows -> item [irow];
 			char *string = row -> cells [icol]. string;
-			if (string == NULL) return 0;
-			row -> cells [icol]. number = Melder_atof (string);
+			row -> cells [icol]. number =
+				string == NULL || string [0] == '\0' || string [0] == '?' && string [1] == '\0' ? NUMundefined :
+				Melder_atof (string);
 		}
 	} else {
 		long iunique = 0;
@@ -366,9 +405,23 @@ static int Table_numericize (Table me, long icol) {
 			row -> cells [icol]. number = iunique;
 			previousString = string;
 		}
-		sortRowsByIndex (me, icol);
+		sortRowsByIndex (me);
 	}
 	my columnHeaders [icol]. numericized = TRUE;
+}
+
+static int Table_numericize_checkDefined (Table me, long icol) {
+	long irow;
+	Table_numericize (me, icol);
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [icol]. number == NUMundefined) {
+			return Melder_error ("The cell in row %ld of column \"%s\" of Table \"%s\" is undefined.",
+				irow,
+				my columnHeaders [icol]. label ? my columnHeaders [icol]. label : Melder_integer (icol),
+				my name ? my name : "(noname)");
+		}
+	}
 	return 1;
 }
 
@@ -377,7 +430,7 @@ const char * Table_getStringValue (Table me, long irow, long icol) {
 	if (irow < 1 || irow > my rows -> size) return NULL;
 	if (icol < 1 || icol > my numberOfColumns) return NULL;
 	row = my rows -> item [irow];
-	return row -> cells [icol]. string;
+	return row -> cells [icol]. string ? row -> cells [icol]. string : "";
 }
 
 double Table_getNumericValue (Table me, long irow, long icol) {
@@ -396,7 +449,10 @@ double Table_getMean (Table me, long icol) {
 	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my rows -> size < 1) return NUMundefined;
-	if (! Table_numericize (me, icol)) return NUMundefined;
+	if (! Table_numericize_checkDefined (me, icol)) {
+		Melder_error ("Cannot compute mean.");
+		return NUMundefined;
+	}
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		sum += row -> cells [icol]. number;
@@ -436,8 +492,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Meld
 		}
 	}
 	if (thy rows -> size == 0) {
-		Melder_error ("No row matches criterion.");
-		goto end;
+		Melder_warning ("No row matches criterion.");
 	}
 end:
 	iferror {
@@ -465,8 +520,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Meld
 		}
 	}
 	if (thy rows -> size == 0) {
-		Melder_error ("No row matches criterion.");
-		goto end;
+		Melder_warning ("No row matches criterion.");
 	}
 end:
 	iferror {
@@ -476,36 +530,280 @@ end:
 	return thee;
 }
 
-static long cellCompare_column;
+static int _Table_columnsExist_check (Table me, char **columnNames, long n) {
+	long i;
+	for (i = 1; i <= n; i ++) {
+		if (Table_columnLabelToIndex (me, columnNames [i]) == 0) {
+			return Melder_error ("Column \"%s\" does not exist.", columnNames [i]);
+		}
+	}
+	return TRUE;
+}
+
+static int _columns_crossSectionIsEmpty_check (char **factors, long nfactors, char **vars, long nvars) {
+	long ifactor, ivar;
+	for (ifactor = 1; ifactor <= nfactors; ifactor ++) {
+		for (ivar = 1; ivar <= nvars; ivar ++) {
+			if (strequ (factors [ifactor], vars [ivar])) {
+				return Melder_error ("Factor \"%s\" is also used as dependent variable.", factors [ifactor]);
+			}
+		}
+	}
+	return TRUE;
+}
+
+Table Table_pool (Table me, const char *factors_string, const char *columnsToSum_string,
+	const char *columnsToAverage_string, const char *columnsToMedianize_string,
+	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string)
+{
+	Table thee = NULL;
+	char **factors = NULL, **columnsToSum = NULL,
+		**columnsToAverage = NULL, **columnsToMedianize = NULL,
+		**columnsToAverageLogarithmically = NULL, **columnsToMedianizeLogarithmically = NULL;
+	long numberOfFactors = 0, numberToSum = 0,
+		numberToAverage = 0, numberToMedianize = 0,
+		numberToAverageLogarithmically = 0, numberToMedianizeLogarithmically = 0;
+	long i, irow, icol, *columns = NULL;
+	double *sortingColumn = NULL;
+	Melder_assert (factors_string != NULL);
+	/*
+	 * Remember the present sorting of the original table.
+	 * (This is safe: the sorting index may change only vacuously when numericizing.)
+	 */
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		row -> sortingIndex = irow;
+	}
+	/*
+	 * Parse the six strings of tokens.
+	 */
+	factors = Melder_getTokens (factors_string, & numberOfFactors); cherror
+	if (numberOfFactors < 1) {
+		Melder_error ("In order to pool table data, you must supply at least one independent variable.");
+		goto end;
+	}
+	_Table_columnsExist_check (me, factors, numberOfFactors); cherror
+	if (columnsToSum_string) {
+		columnsToSum = Melder_getTokens (columnsToSum_string, & numberToSum); cherror
+		_Table_columnsExist_check (me, columnsToSum, numberToSum); cherror
+	}
+	if (columnsToAverage_string) {
+		columnsToAverage = Melder_getTokens (columnsToAverage_string, & numberToAverage); cherror
+		_Table_columnsExist_check (me, columnsToAverage, numberToAverage); cherror
+	}
+	if (columnsToMedianize_string) {
+		columnsToMedianize = Melder_getTokens (columnsToMedianize_string, & numberToMedianize); cherror
+		_Table_columnsExist_check (me, columnsToMedianize, numberToMedianize); cherror
+	}
+	if (columnsToAverageLogarithmically_string) {
+		columnsToAverageLogarithmically = Melder_getTokens (columnsToAverageLogarithmically_string, & numberToAverageLogarithmically); cherror
+		_Table_columnsExist_check (me, columnsToAverageLogarithmically, numberToAverageLogarithmically); cherror
+	}
+	if (columnsToMedianizeLogarithmically_string) {
+		columnsToMedianizeLogarithmically = Melder_getTokens (columnsToMedianizeLogarithmically_string, & numberToMedianizeLogarithmically); cherror
+		_Table_columnsExist_check (me, columnsToMedianizeLogarithmically, numberToMedianizeLogarithmically); cherror
+	}
+	_columns_crossSectionIsEmpty_check (factors, numberOfFactors, columnsToSum, numberToSum); cherror
+	_columns_crossSectionIsEmpty_check (factors, numberOfFactors, columnsToAverage, numberToAverage); cherror
+	_columns_crossSectionIsEmpty_check (factors, numberOfFactors, columnsToMedianize, numberToMedianize); cherror
+	_columns_crossSectionIsEmpty_check (factors, numberOfFactors, columnsToAverageLogarithmically, numberToAverageLogarithmically); cherror
+	_columns_crossSectionIsEmpty_check (factors, numberOfFactors, columnsToMedianizeLogarithmically, numberToMedianizeLogarithmically); cherror
+	thee = Table_createWithoutColumnNames (0, numberOfFactors + numberToSum + numberToAverage + numberToMedianize + numberToAverageLogarithmically + numberToMedianizeLogarithmically); cherror
+	Melder_assert (thy numberOfColumns > 0);
+	columns = NUMlvector (1, thy numberOfColumns); cherror
+	if (numberToMedianize > 0 || numberToMedianizeLogarithmically > 0) {
+		sortingColumn = NUMdvector (1, my rows -> size); cherror
+	}
+	/*
+	 * Set the column names. Within the dependent variables, the same name may occur more than once.
+	 */
+	icol = 0;
+	for (i = 1; i <= numberOfFactors; i ++) {
+		Table_setColumnLabel (thee, ++ icol, factors [i]);
+		columns [icol] = Table_columnLabelToIndex (me, factors [i]);
+	}
+	for (i = 1; i <= numberToSum; i ++) {
+		Table_setColumnLabel (thee, ++ icol, columnsToSum [i]);
+		columns [icol] = Table_columnLabelToIndex (me, columnsToSum [i]);
+	}
+	for (i = 1; i <= numberToAverage; i ++) {
+		Table_setColumnLabel (thee, ++ icol, columnsToAverage [i]);
+		columns [icol] = Table_columnLabelToIndex (me, columnsToAverage [i]);
+	}
+	for (i = 1; i <= numberToMedianize; i ++) {
+		Table_setColumnLabel (thee, ++ icol, columnsToMedianize [i]);
+		columns [icol] = Table_columnLabelToIndex (me, columnsToMedianize [i]);
+	}
+	for (i = 1; i <= numberToAverageLogarithmically; i ++) {
+		Table_setColumnLabel (thee, ++ icol, columnsToAverageLogarithmically [i]);
+		columns [icol] = Table_columnLabelToIndex (me, columnsToAverageLogarithmically [i]);
+	}
+	for (i = 1; i <= numberToMedianizeLogarithmically; i ++) {
+		Table_setColumnLabel (thee, ++ icol, columnsToMedianizeLogarithmically [i]);
+		columns [icol] = Table_columnLabelToIndex (me, columnsToMedianizeLogarithmically [i]);
+	}
+	Melder_assert (icol == thy numberOfColumns);
+	/*
+	 * Make sure that all the columns in the original table that we will use in the pooled table are defined.
+	 */
+	for (icol = 1; icol <= thy numberOfColumns; icol ++) {
+		Table_numericize_checkDefined (me, columns [icol]); cherror
+	}
+	/*
+	 * We will now sort the original table temporarily, by the factors (independent variables) only.
+	 */
+	Table_sortRows (me, columns, numberOfFactors);   /* This works only because the factors come first. */
+	/*
+	 * Find stretches of identical factors.
+	 */
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		long rowmin = irow, rowmax = irow;
+		for (;;) {
+			int identical = TRUE;
+			if (++ rowmax > my rows -> size) break;
+			for (icol = 1; icol <= numberOfFactors; icol ++) {
+				if (((TableRow) my rows -> item [rowmax]) -> cells [columns [icol]]. number !=
+				    ((TableRow) my rows -> item [rowmin]) -> cells [columns [icol]]. number)
+				{
+					identical = FALSE;
+					break;
+				}
+			}
+			if (! identical) break;
+		}
+		rowmax --;
+		/*
+		 * We have the stretch.
+		 */
+		Table_insertRow (thee, thy rows -> size + 1);
+		icol = 0;
+		for (i = 1; i <= numberOfFactors; i ++) {
+			++ icol;
+			Table_setStringValue (thee, thy rows -> size, icol,
+				((TableRow) my rows -> item [rowmin]) -> cells [columns [icol]]. string);
+		}
+		for (i = 1; i <= numberToSum; i ++) {
+			double sum = 0.0;
+			long jrow;
+			++ icol;
+			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
+				sum += ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
+			}
+			Table_setNumericValue (thee, thy rows -> size, icol, sum);
+		}
+		for (i = 1; i <= numberToAverage; i ++) {
+			double sum = 0.0;
+			long jrow;
+			++ icol;
+			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
+				sum += ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
+			}
+			Table_setNumericValue (thee, thy rows -> size, icol, sum / (rowmax - rowmin + 1));
+		}
+		for (i = 1; i <= numberToMedianize; i ++) {
+			double median;
+			long jrow;
+			++ icol;
+			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
+				sortingColumn [jrow] = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
+			}
+			NUMsort_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1);
+			median = NUMquantile_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
+			Table_setNumericValue (thee, thy rows -> size, icol, median);
+		}
+		for (i = 1; i <= numberToAverageLogarithmically; i ++) {
+			double sum = 0.0;
+			long jrow;
+			++ icol;
+			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
+				double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
+				if (value <= 0.0) {
+					Melder_error ("The cell in column \"%s\" of row %ld of Table \"%s\" is not positive.\n"
+						"Cannot average logarithmically.", columnsToAverageLogarithmically [i], jrow,
+						my name ? my name : "(untitled)");
+				}
+				sum += log (value);
+			}
+			Table_setNumericValue (thee, thy rows -> size, icol, exp (sum / (rowmax - rowmin + 1)));
+		}
+		for (i = 1; i <= numberToMedianizeLogarithmically; i ++) {
+			double median;
+			long jrow;
+			++ icol;
+			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
+				double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
+				if (value <= 0.0) {
+					Melder_error ("The cell in column \"%s\" of row %ld of Table \"%s\" is not positive.\n"
+						"Cannot medianize logarithmically.", columnsToMedianizeLogarithmically [i], jrow,
+						my name ? my name : "(untitled)");
+				}
+				sortingColumn [jrow] = log (value);
+			}
+			NUMsort_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1);
+			median = NUMquantile_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
+			Table_setNumericValue (thee, thy rows -> size, icol, exp (median));
+		}
+		irow = rowmax;
+	}
+end:
+	sortRowsByIndex (me);   /* Unsort the original table. */
+	Melder_freeTokens (& factors);
+	Melder_assert (factors == NULL);
+	Melder_freeTokens (& columnsToSum);
+	Melder_freeTokens (& columnsToAverage);
+	Melder_freeTokens (& columnsToMedianize);
+	Melder_freeTokens (& columnsToAverageLogarithmically);
+	Melder_freeTokens (& columnsToMedianizeLogarithmically);
+	NUMlvector_free (columns, 1);
+	NUMdvector_free (sortingColumn, 1);
+	iferror forget (thee);
+	return thee;
+}
+
+static long *cellCompare_columns, cellCompare_numberOfColumns;
 
 static int cellCompare (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	if (my cells [cellCompare_column]. number < thy cells [cellCompare_column]. number) return -1;
-	if (my cells [cellCompare_column]. number > thy cells [cellCompare_column]. number) return +1;
+	long icol;
+	for (icol = 1; icol <= cellCompare_numberOfColumns; icol ++) {
+		if (my cells [cellCompare_columns [icol]]. number < thy cells [cellCompare_columns [icol]]. number) return -1;
+		if (my cells [cellCompare_columns [icol]]. number > thy cells [cellCompare_columns [icol]]. number) return +1;
+	}
 	return 0;
 }
 
-void Table_sortRows (Table me, long column1, long column2) {
-	long imin, imax;
-	if (column1 >= 1 && column1 <= my numberOfColumns) {
-		Table_numericize (me, column1);
-		cellCompare_column = column1;
-		qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), cellCompare);
+void Table_sortRows (Table me, long *columns, long numberOfColumns) {
+	long icol;
+	for (icol = 1; icol <= numberOfColumns; icol ++) {
+		Melder_assert (columns [icol] >= 1 && columns [icol] <= my numberOfColumns);
+		Table_numericize (me, columns [icol]);
 	}
-	if (column2 >= 1 && column2 <= my numberOfColumns) {
-		Table_numericize (me, column2);
-		cellCompare_column = column2;
-		imin = 1;
-		while (imin <= my rows -> size) {
-			double value = ((TableRow) my rows -> item [imin]) -> cells [column1]. number;
-			for (imax = imin + 1; imax <= my rows -> size; imax ++) {
-				if (((TableRow) my rows -> item [imax]) -> cells [column1]. number != value)
-					break;
-			}
-			qsort (& my rows -> item [imin], (unsigned long) imax - imin, sizeof (TableRow), cellCompare);
-			imin = imax;
+	cellCompare_columns = columns;
+	cellCompare_numberOfColumns = numberOfColumns;
+	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), cellCompare);
+}
+
+int Table_sortRows_string (Table me, const char *columns_string) {
+	long numberOfColumns, icol, *columns = NULL;
+	char **columns_tokens = Melder_getTokens (columns_string, & numberOfColumns); cherror
+	if (numberOfColumns < 1) {
+		Melder_error ("Empty list of columns. Cannot sort.");
+		goto end;
+	}
+	columns = NUMlvector (1, numberOfColumns); cherror
+	for (icol = 1; icol <= numberOfColumns; icol ++) {
+		columns [icol] = Table_columnLabelToIndex (me, columns_tokens [icol]);
+		if (columns [icol] == 0) {
+			Melder_error ("Column \"%s\" does not exist.", columns_tokens [icol]);
+			goto end;
 		}
 	}
+	Table_sortRows (me, columns, numberOfColumns);
+end:
+	Melder_freeTokens (& columns_tokens);
+	NUMlvector_free (columns, 1);
+	iferror return 0;
+	return 1;
 }
 
 int Table_appendSumColumn (Table me, long column1, long column2, const char *label) {
@@ -579,11 +877,17 @@ end:
 int Table_formula (Table me, long icol, const char *expression) {
 	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return Melder_error ("No column %ld.", icol);
-	if (! Formula_compile (NULL, me, expression, FALSE, TRUE)) goto end;
+	if (! Formula_compile (NULL, me, expression, 2, TRUE)) goto end;
 	for (irow = 1; irow <= my rows -> size; irow ++) {
-		double result;
-		if (! Formula_run (irow, icol, & result, NULL)) goto end;
-		Table_setNumericValue (me, irow, icol, result);
+		double numericResult;
+		char *stringResult = NULL;
+		if (! Formula_run (irow, icol, & numericResult, & stringResult)) goto end;
+		if (stringResult) {
+			Table_setStringValue (me, irow, icol, stringResult);
+			Melder_free (stringResult);
+		} else {
+			Table_setNumericValue (me, irow, icol, numericResult);
+		}
 	}
 end:
 	iferror return 0;
@@ -691,6 +995,7 @@ double Table_getDifference_studentT (Table me, long column1, long column2, doubl
 	double mean1 = 0.0, mean2 = 0.0, var1 = 0.0, var2 = 0.0, covar = 0.0, standardError;
 	double difference;
 	long n = my rows -> size, irow;
+	if (out_t) *out_t = NUMundefined;
 	if (out_significance) *out_significance = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
@@ -722,6 +1027,38 @@ double Table_getDifference_studentT (Table me, long column1, long column2, doubl
 		if (out_upperLimit) *out_upperLimit = difference + standardError * NUMinvStudentQ (significanceLevel, n - 1);
 	}
 	return difference;
+}
+
+double Table_getMean_studentT (Table me, long column, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+{
+	double mean = 0.0, var = 0.0, standardError;
+	long n = my rows -> size, irow;
+	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
+	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
+	if (out_upperLimit) *out_upperLimit = NUMundefined;
+	if (n < 1) return NUMundefined;
+	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	Table_numericize (me, column);
+	for (irow = 1; irow <= n; irow ++) {
+		TableRow row = my rows -> item [irow];
+		mean += row -> cells [column]. number;
+	}
+	mean /= n;
+	if (n >= 2 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
+		for (irow = 1; irow <= n; irow ++) {
+			TableRow row = my rows -> item [irow];
+			double diff = row -> cells [column]. number - mean;
+			var += diff * diff;
+		}
+		standardError = sqrt (var / (n - 1) / n);
+		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
+		if (out_significanceFromZero) *out_significanceFromZero = standardError == 0.0 ? 0.0 : NUMstudentQ (mean / standardError, n - 1);
+		if (out_lowerLimit) *out_lowerLimit = mean - standardError * NUMinvStudentQ (significanceLevel, n - 1);
+		if (out_upperLimit) *out_upperLimit = mean + standardError * NUMinvStudentQ (significanceLevel, n - 1);
+	}
+	return mean;
 }
 
 Matrix Table_to_Matrix (Table me) {
@@ -838,352 +1175,6 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 			Graphics_textLeft (g, TRUE, my columnHeaders [ycolumn]. label);
 	}
 }
-
-#if 0
-static void NUMrationalize (double x, long *numerator, long *denominator) {
-	double epsilon = 1e-6;
-	*numerator = 1;
-	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
-		double numerator_d = x * *denominator, rounded = floor (numerator_d + 0.5);
-		if (fabs (rounded - numerator_d) < epsilon) {
-			*numerator = rounded;
-			return;
-		}
-	}
-	*denominator = 0;   /* Failure. */
-}
-
-static void print4 (char *buffer, double value, int iformat, int width, int precision) {
-	char formatString [40];
-	if (value == NUMundefined) strcpy (buffer, "undefined");
-	else if (iformat == 4) {
-		long numerator, denominator;
-		NUMrationalize (value, & numerator, & denominator);
-		if (numerator == 0)
-			sprintf (buffer, "0");
-		else if (denominator > 1)
-			sprintf (buffer, "%ld/%ld", numerator, denominator);
-		else
-			sprintf (buffer, "%.7g", value);
-	} else {
-		sprintf (formatString, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
-		sprintf (buffer, formatString, value);
-	}
-}
-
-Table Matrix_to_Table (I) {
-	iam (Matrix);
-	long i, j;
-	Table thee = Table_create (my ny, my nx); cherror
-	for (i = 1; i <= my ny; i ++) for (j = 1; j <= my nx; j ++)
-		thy data [i] [j] = my z [i] [j];
-end:
-	iferror return NULL;
-	return thee;
-}
-
-static void fixRows (Table me, long *rowmin, long *rowmax) {
-	if (*rowmax < *rowmin) { *rowmin = 1; *rowmax = my numberOfRows; }
-	else if (*rowmin < 1) *rowmin = 1;
-	else if (*rowmax > my numberOfRows) *rowmax = my numberOfRows;
-}
-static void fixColumns (Table me, long *colmin, long *colmax) {
-	if (*colmax < *colmin) { *colmin = 1; *colmax = my numberOfColumns; }
-	else if (*colmin < 1) *colmin = 1;
-	else if (*colmax > my numberOfColumns) *colmax = my numberOfColumns;
-}
-static double getMaxRowLabelWidth (Table me, Graphics g, long rowmin, long rowmax) {
-	double maxWidth = 0.0;
-	long row;
-	if (! my rowLabels) return 0.0;
-	fixRows (me, & rowmin, & rowmax);
-	for (row = rowmin; row <= rowmax; row ++) if (my rowLabels [row] && my rowLabels [row] [0]) {
-		double textWidth = Graphics_textWidth_ps (g, my rowLabels [row]);
-		if (textWidth > maxWidth) maxWidth = textWidth;
-	}
-	return maxWidth;
-}
-static double getLeftMargin (Graphics g) {
-	return Graphics_dxMMtoWC (g, 1);
-}
-static double getLineSpacing (Graphics g) {
-	return Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
-}
-static double getMaxColumnLabelHeight (Table me, Graphics g, long colmin, long colmax) {
-	double maxHeight = 0.0, lineSpacing = getLineSpacing (g);
-	long col;
-	if (! my columnLabels) return 0.0;
-	fixRows (me, & colmin, & colmax);
-	for (col = colmin; col <= colmax; col ++) if (my columnLabels [col] && my columnLabels [col] [0]) {
-		if (! maxHeight) maxHeight = lineSpacing;
-	}
-	return maxHeight;
-}
-
-void Table_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int iformat, int precision) {
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight;
-	long row, col;
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, 0.5, my numberOfColumns + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);   /* Not earlier! */
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-	for (col = 1; col <= my numberOfColumns; col ++) {
-		if (my columnLabels && my columnLabels [col] && my columnLabels [col] [0])
-			Graphics_text (g, col, 1, my columnLabels [col]);
-	}
-	for (row = rowmin; row <= rowmax; row ++) {
-		double y = 1 - lineSpacing * (row - rowmin + 0.6);
-		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
-		if (my rowLabels && my rowLabels [row] && my rowLabels [row] [0])
-			Graphics_text (g, 0.5 - leftMargin, y, my rowLabels [row]);
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		for (col = 1; col <= my numberOfColumns; col ++) {
-			char text [40];
-			print4 (text, my data [row] [col], iformat, 0, precision);
-			Graphics_text (g, col, y, text);
-		}
-	}
-	if (maxTextHeight) {
-		double left = 0.5;
-		if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
-		Graphics_line (g, left, 1, my numberOfColumns + 0.5, 1);
-	}
-	Graphics_unsetInner (g);
-}
-
-void Table_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
-	const char *conditionFormula)
-{
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight;
-	long row, col;
-	Matrix original = Table_to_Matrix (me), conditions = Data_copy (original);
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, 0.5, my numberOfColumns + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);   /* Not earlier! */
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-	if (! Matrix_formula (original, conditionFormula, 0, 0, 0, conditions))
-		{ forget (original); forget (conditions); Melder_flushError ("Numbers not drawn."); return; }
-
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-	for (col = 1; col <= my numberOfColumns; col ++) {
-		if (my columnLabels && my columnLabels [col] && my columnLabels [col] [0])
-			Graphics_text (g, col, 1, my columnLabels [col]);
-	}
-	for (row = rowmin; row <= rowmax; row ++) {
-		double y = 1 - lineSpacing * (row - rowmin + 0.6);
-		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
-		if (my rowLabels && my rowLabels [row] && my rowLabels [row] [0])
-			Graphics_text (g, 0.5 - leftMargin, y, my rowLabels [row]);
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		for (col = 1; col <= my numberOfColumns; col ++) if (conditions -> z [row] [col] != 0.0) {
-			char text [40];
-			print4 (text, my data [row] [col], iformat, 0, precision);
-			Graphics_text (g, col, y, text);
-		}
-	}
-	if (maxTextHeight) {
-		double left = 0.5;
-		if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
-		Graphics_line (g, left, 1, my numberOfColumns + 0.5, 1);
-	}
-	Graphics_unsetInner (g);
-	forget (original);
-	forget (conditions);
-}
-
-void Table_drawVerticalLines (I, Graphics g, long rowmin, long rowmax) {
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight;
-	long colmin = 1, colmax = my numberOfColumns, col;
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);   /* Not earlier! */
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-
-	if (maxTextWidth > 0.0) colmin -= 1;
-	for (col = colmin + 1; col <= colmax; col ++)
-		Graphics_line (g, col - 0.5, 1 + maxTextHeight, col - 0.5, 1 - lineSpacing * (rowmax - rowmin + 1));
-	Graphics_unsetInner (g);
-}
-
-void Table_drawLeftAndRightLines (I, Graphics g, long rowmin, long rowmax) {
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight, left, right, top, bottom;
-	long colmin = 1, colmax = my numberOfColumns;
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-
-	left = 0.5;
-	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
-	right = colmax + 0.5;
-	top = 1 + maxTextHeight;
-	bottom = 1 - lineSpacing * (rowmax - rowmin + 1);
-	Graphics_line (g, left, top, left, bottom);
-	Graphics_line (g, right, top, right, bottom);
-	Graphics_unsetInner (g);
-}
-
-void Table_drawHorizontalLines (I, Graphics g, long rowmin, long rowmax) {
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight, left, top, right;
-	long colmin = 1, colmax = my numberOfColumns, row;
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-
-	left = 0.5;
-	top = rowmin;
-	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
-	if (maxTextHeight > 0.0) rowmin -= 1;
-	right = colmax + 0.5;
-	for (row = rowmin; row < rowmax; row ++) {
-		double y = 1 - lineSpacing * (row - top + 1);
-		Graphics_line (g, left, y, right, y);
-	}
-	Graphics_unsetInner (g);
-}
-
-void Table_drawTopAndBottomLines (I, Graphics g, long rowmin, long rowmax) {
-	iam (Table);
-	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight, left, top, right, bottom;
-	long colmin = 1, colmax = my numberOfColumns;
-	fixRows (me, & rowmin, & rowmax);
-	Graphics_setInner (g);
-	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, 0, 1);
-	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);
-	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
-	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-
-	left = 0.5;
-	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * lineSpacing;
-	right = colmax + 0.5;
-	top = 1 + maxTextHeight;
-	bottom = 1 - lineSpacing * (rowmax - rowmin + 1);
-	Graphics_line (g, left, top, right, top);
-	Graphics_line (g, left, bottom, right, bottom);
-	Graphics_unsetInner (g);
-}
-
-void Table_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
-	long colmin, long colmax, int garnish)
-{
-	iam (Table);
-	double datamax, dx = 1, dy = 1;
-	long i, j;
-	int colour = Graphics_inqColour (g);
-	fixRows (me, & rowmin, & rowmax);
-	fixColumns (me, & colmin, & colmax);
-	
-	Graphics_setInner (g);
-	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5);
-	datamax = my data [rowmin] [colmin];
-	for (i = 1; i <= my numberOfRows; i ++) for (j = 1; j <= my numberOfColumns; j ++)
-		if (fabs (my data [i] [j]) > datamax) datamax = fabs (my data [i] [j]);
-	
-	for (i = rowmin; i <= rowmax; i ++) {
-		double y = rowmax + rowmin - i;
-		for (j = colmin; j <= colmax; j ++) {
-			double x = j;
-			/* two neighbouring squares should not touch -> 0.95 */
-			double d = 0.95 * sqrt (fabs (my data[i][j]) / datamax);
-			double x1WC = x - d * dx / 2, x2WC = x + d * dx / 2;
-			double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
-			Graphics_setGrey (g, my data[i][j] > 0.0 ? 1.0 : 0.0);
-			Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
-			Graphics_setColour (g, colour);
-			Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
-		}
-	}
-	Graphics_setGrey (g, 0.0);
-	Graphics_unsetInner (g);
-	if (garnish) {
-		for (i = rowmin; i <= rowmax; i ++) if (my rowLabels [i]) 
-			Graphics_markLeft (g, rowmax + rowmin - i, 0, 0, 0, my rowLabels [i]);
-		for (j = colmin; j <= colmax; j ++) if (my columnLabels [j])
-			Graphics_markTop (g, j, 0, 0, 0, my columnLabels [j]);
-	}
-}
-
-Any TablesOfReal_append (I, thou) {
-	iam (Table); thouart (Table);
-	Table him = NULL;
-	long irow, icol;
-	if (thy numberOfColumns != my numberOfColumns)
-		{ Melder_error ("Numbers of columns do not match."); goto end; }
-	him = Thing_new (my methods); cherror
-	Table_init (him, my numberOfRows + thy numberOfRows, my numberOfColumns); cherror
-	/* Unsafe: new attributes not initialized. */
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_setColumnLabel (him, icol, my columnLabels [icol]); cherror
-	}
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		Table_setRowLabel (him, irow, my rowLabels [irow]); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++)
-			his data [irow] [icol] = my data [irow] [icol];
-	}
-	for (irow = 1; irow <= thy numberOfRows; irow ++) {
-		long hisRow = irow + my numberOfRows;
-		Table_setRowLabel (him, hisRow, thy rowLabels [irow]); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++)
-			his data [hisRow] [icol] = thy data [irow] [icol];
-	}
-end:
-	iferror { forget (him); Melder_error ("(TablesOfReal_append:) Not performed."); }
-	return him;
-}
-
-Any TablesOfReal_appendMany (Collection me) {
-	Table him = NULL, thee;
-	long itab, irow, icol, nrow, ncol;
-	if (my size == 0) return Melder_errorp ("Cannot add zero tables.");
-	thee = my item [1];
-	nrow = thy numberOfRows;
-	ncol = thy numberOfColumns;
-	for (itab = 2; itab <= my size; itab ++) {
-		thee = my item [itab];
-		nrow += thy numberOfRows;
-		if (thy numberOfColumns != ncol)
-			{ Melder_error ("Numbers of columns do not match."); goto end; }
-	}
-	him = Thing_new (thy methods); cherror
-	Table_init (him, nrow, ncol); cherror
-	/* Unsafe: new attributes not initialized. */
-	for (icol = 1; icol <= ncol; icol ++) {
-		Table_setColumnLabel (him, icol, thy columnLabels [icol]); cherror
-	}
-	nrow = 0;
-	for (itab = 1; itab <= my size; itab ++) {
-		thee = my item [itab];
-		for (irow = 1; irow <= thy numberOfRows; irow ++) {
-			nrow ++;
-			Table_setRowLabel (him, nrow, thy rowLabels [irow]); cherror
-			for (icol = 1; icol <= ncol; icol ++)
-				his data [nrow] [icol] = thy data [irow] [icol];
-		}
-	}
-	Melder_assert (nrow == his numberOfRows);
-end:
-	iferror { forget (him); Melder_error ("(TablesOfReal_appendMany:) Not performed."); }
-	return him;
-}
-#endif
 
 int Table_writeToTableFile (Table me, MelderFile file) {
 	FILE *f = Melder_fopen (file, "w");

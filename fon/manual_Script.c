@@ -1,6 +1,6 @@
 /* manual_Script.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -941,7 +941,7 @@ CODE ("800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
 NORMAL ("evaluates to 800.")
 MAN_END
 
-MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20060127)
+MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20060418)
 NORMAL ("You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use the type and the name of the object, connected with an underscore. "
 	"Thus, $$Sound_hallo$ refers to an existing Sound object whose name is \"hallo\" "
@@ -975,6 +975,10 @@ TAG ("#ncol")
 DEFINITION ("the number of columns in a @Matrix, @TableOfReal, or @Table object.")
 TAG ("#nrow")
 DEFINITION ("the number of rows in a @Matrix, @TableOfReal, or @Table object.")
+TAG ("#col\\$  [%i]")
+DEFINITION ("the name of column %i in a @TableOfReal or @Table object.")
+TAG ("#row\\$  [%i]")
+DEFINITION ("the name of row %i in a @TableOfReal object.")
 TAG ("#nx")
 DEFINITION ("the number of samples in a Sound object; "
 	"the number of analysis frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object; "

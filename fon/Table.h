@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/26
+ * pb 2006/04/18
  */
 
 #ifndef _Collection_h_
@@ -47,8 +47,11 @@ oo_CLASS_CREATE (TableRow, Data)
 #define Table_methods Data_methods
 oo_CLASS_CREATE (Table, Data)
 
-int Table_init (I, long numberOfRows, long numberOfColumns);
-Table Table_create (long numberOfRows, long numberOfColumns);
+int Table_initWithColumnNames (I, long numberOfRows, const char *columnNames);
+Table Table_createWithColumnNames (long numberOfRows, const char *columnNames);
+int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
+Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
+#define Table_create Table_createWithoutColumnNames
 int Table_appendRow (Table me);
 int Table_appendColumn (Table me, const char *label);
 int Table_appendSumColumn (Table me, long column1, long column2, const char *label);
@@ -83,6 +86,8 @@ double Table_getCorrelation_pearsonR (Table me, long col1, long col2, double sig
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getCorrelation_kendallTau (Table me, long col1, long col2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
+double Table_getMean_studentT (Table me, long column, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getDifference_studentT (Table me, long col1, long col2, double significanceLevel,
 	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getVarianceRatio (Table me, long col1, long col2, double significanceLevel,
@@ -92,7 +97,9 @@ int Table_formula (Table me, long icol, const char *formula);
 
 Table Tables_append (I, thou);
 Table Tables_appendMany (Collection me);
-void Table_sortRows (Table me, long column1, long column2);
+
+void Table_sortRows (Table me, long *columns, long numberOfColumns);
+int Table_sortRows_string (Table me, const char *columns_string);
 
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const char *mark, int garnish);
@@ -103,6 +110,9 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator)
 
 Table Table_extractRowsWhereColumn_number (Table me, long icol, int which_Melder_NUMBER, double criterion);
 Table Table_extractRowsWhereColumn_string (Table me, long icol, int which_Melder_STRING, const char *criterion);
+Table Table_pool (Table me, const char *independentVariables_string, const char *columnsToSum_string,
+	const char *columnsToAverage_string, const char *columnsToMedianize_string,
+	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string);
 
 Matrix Table_to_Matrix (Table me);
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);

@@ -158,7 +158,6 @@ static void createChildren (I) {
 
 static void createMenus (I) {
 	iam (TableEditor);
-	EditorMenu menu;
 	inherited (TableEditor) createMenus (me);
 
 	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);

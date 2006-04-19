@@ -23,9 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060401)
+MAN_BEGIN ("What's new?", "ppgb", 20060419)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.17# (April 19, 2006)")
+LIST_ITEM ("\\bu Table: #Pool: computing averages and medians of dependent variables "
+	"for a selected combination of independent variables.")
+LIST_ITEM ("\\bu Table: #Formula accepts string expressions as well as numeric expressions.")
+LIST_ITEM ("\\bu Table: #Sort can sort by any number of columns.")
+LIST_ITEM ("\\bu Table: ##Create with column names#.")
+LIST_ITEM ("\\bu Formulas: @@Formulas 7. Attributes of objects|row\\$  and col\\$  attributes@.")
+LIST_ITEM ("\\bu Warning when trying to read data files whose format is newer than the Praat version.")
 NORMAL ("##4.4.16# (April 1, 2006)")
 LIST_ITEM ("\\bu Spectrum window: dynamic range setting.")
 LIST_ITEM ("\\bu SoundRecorder: corrected a bug in the Intel Mac edition.")

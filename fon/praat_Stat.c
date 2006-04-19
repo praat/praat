@@ -253,6 +253,32 @@ DO
 	}
 END
 
+FORM (Table_pool, "Table: Pool", 0)
+	LABEL ("", "Columns with factors (independent variables):")
+	TEXTFIELD ("independentVariables", "speaker dialect age vowel")
+	LABEL ("", "Columns to sum:")
+	TEXTFIELD ("columnsToSum", "number cost")
+	LABEL ("", "Columns to average:")
+	TEXTFIELD ("columnsToAverage", "price")
+	LABEL ("", "Columns to medianize:")
+	TEXTFIELD ("columnsToMedianize", "vot")
+	LABEL ("", "Columns to average logarithmically:")
+	TEXTFIELD ("columnsToAverageLogarithmically", "duration")
+	LABEL ("", "Columns to medianize logarithmically:")
+	TEXTFIELD ("columnsToMedianizeLogarithmically", "F0 F1 F2 F3")
+	LABEL ("", "Columns not mentioned above will be ignored.")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (Table_pool (OBJECT,
+			GET_STRING ("independentVariables"), GET_STRING ("columnsToSum"),
+			GET_STRING ("columnsToAverage"), GET_STRING ("columnsToMedianize"),
+			GET_STRING ("columnsToAverageLogarithmically"), GET_STRING ("columnsToMedianizeLogarithmically")),
+			"%s_pooled", NAME)) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
 FORM (Table_removeColumn, "Table: Remove column", 0)
 	WORD ("Column label", "")
 	OK
@@ -280,14 +306,6 @@ END
 
 static char formatBuffer [32] [40];
 static int formatIndex = 0;
-static char * Melder_messageReal (double value) {
-	if (NUMdefined (value)) {
-		if (++ formatIndex == 32) formatIndex = 0;
-		sprintf (formatBuffer [formatIndex], "%.17g", value);
-		return formatBuffer [formatIndex];
-	}
-	return "--undefined--";
-}
 static char * Table_messageColumn (Table me, long column) {
 	if (++ formatIndex == 32) formatIndex = 0;
 	if (my columnHeaders [column]. label != NULL && my columnHeaders [column]. label [0] != '\0')
@@ -318,10 +336,10 @@ DO
 		"   Lower limit = %s (lowest tau that cannot be rejected with p = %f)\n"
 		"   Upper limit = %s (highest tau that cannot be rejected with p = %f)\n",
 		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_messageReal (correlation), Melder_messageReal (significance),
+		Melder_double (correlation), Melder_double (significance),
 		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_messageReal (lowerLimit), significanceLevel,
-		Melder_messageReal (upperLimit), significanceLevel);
+		Melder_double (lowerLimit), significanceLevel,
+		Melder_double (upperLimit), significanceLevel);
 END
 
 FORM (Table_reportCorrelation_pearsonR, "Report correlation (Pearson r)", 0)
@@ -345,10 +363,10 @@ DO
 		"   Lower limit = %s (lowest r that cannot be rejected with p = %f)\n"
 		"   Upper limit = %s (highest r that cannot be rejected with p = %f)\n",
 		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_messageReal (correlation), Melder_messageReal (significance),
+		Melder_double (correlation), Melder_double (significance),
 		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_messageReal (lowerLimit), significanceLevel,
-		Melder_messageReal (upperLimit), significanceLevel);
+		Melder_double (lowerLimit), significanceLevel,
+		Melder_double (upperLimit), significanceLevel);
 END
 	
 FORM (Table_reportDifference_studentT, "Report difference (Student t)", 0)
@@ -373,10 +391,36 @@ DO
 		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
 		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
 		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_messageReal (difference), Melder_messageReal (t), Melder_messageReal (significance),
+		Melder_double (difference), Melder_double (t), Melder_double (significance),
 		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_messageReal (lowerLimit), significanceLevel,
-		Melder_messageReal (upperLimit), significanceLevel);
+		Melder_double (lowerLimit), significanceLevel,
+		Melder_double (upperLimit), significanceLevel);
+END
+	
+FORM (Table_reportMean_studentT, "Report mean (Student t)", 0)
+	WORD ("Column", "")
+	POSITIVE ("Significance level", "0.025")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	double significanceLevel = GET_REAL ("Significance level");
+	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	if (column == 0) return Melder_error ("No such column.");
+	mean = Table_getMean_studentT (me, column, significanceLevel,
+		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+	Melder_information ("Mean of column %s:\n"
+		"Mean = %s\n"
+		"Student's t from zero = %s\n"
+		"Significance from zero = %s (one-tailed)\n"
+		"Confidence interval (%f%%):\n"
+		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
+		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
+		Table_messageColumn (me, column),
+		Melder_double (mean), Melder_double (tFromZero), Melder_double (significanceFromZero),
+		100 * (1.0 - 2.0 * significanceLevel),
+		Melder_double (lowerLimit), significanceLevel,
+		Melder_double (upperLimit), significanceLevel);
 END
 	
 FORM (Table_scatterPlot_mark, "Scatter plot (marks)", 0)
@@ -466,16 +510,13 @@ DO
 END
 
 FORM (Table_sortRows, "Table: Sort rows", 0)
-	WORD ("Column label", "")
-	WORD ("Secondary column (optional)", "")
+	LABEL ("", "One or more column labels for sorting:")
+	TEXTFIELD ("columnLabels", "dialect gender name")
 	OK
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
-		long jcol = Table_columnLabelToIndex (me, GET_STRING ("Secondary column"));
-		if (icol == 0) return Melder_error ("No such column.");
-		Table_sortRows (OBJECT, icol, jcol);
+		if (! Table_sortRows_string (me, GET_STRING ("columnLabels"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -525,6 +566,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
 		praat_addAction1 (classTable, 1, "Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, "Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
+		praat_addAction1 (classTable, 1, "Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
 		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
 		praat_addAction1 (classTable, 1, "To linear regression", 0, 1, DO_Table_to_LinearRegression);
 		praat_addAction1 (classTable, 1, "To logistic regression", 0, 1, DO_Table_to_LogisticRegression);
@@ -552,6 +594,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, "Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
+		praat_addAction1 (classTable, 0, "Pool...", 0, 1, DO_Table_pool);
 	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
 	praat_addAction1 (classTable, 0, "Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
 }

@@ -1286,6 +1286,7 @@ static void unhighlightSelection (I, double left, double right, double bottom, d
 
 static double getBottomOfSoundAndAnalysisArea (I) {
 	iam (FunctionEditor);
+	(void) me;
 	return 0.0;
 }
 

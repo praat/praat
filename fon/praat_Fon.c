@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/02/14
+ * pb 2006/04/16
  */
 
 #include "praat.h"
@@ -3887,13 +3887,26 @@ END
 
 /***** TABLE, rest in praat_Stat.c *****/
 
-FORM (Table_create, "Create Table", 0)
+FORM (Table_createWithColumnNames, "Create Table with column names", 0)
 	WORD ("Name", "table")
-	NATURAL ("Number of rows", "10")
+	INTEGER ("Number of rows", "10")
+	LABEL ("", "Column names:")
+	TEXTFIELD ("columnNames", "speaker dialect age vowel F0 F1 F2")
+	OK
+DO
+	if (! praat_new (Table_createWithColumnNames
+		(GET_INTEGER ("Number of rows"), GET_STRING ("columnNames")),
+		GET_STRING ("Name"))) return 0;
+END
+
+FORM (Table_createWithoutColumnNames, "Create Table without column names", 0)
+	WORD ("Name", "table")
+	INTEGER ("Number of rows", "10")
 	NATURAL ("Number of columns", "3")
 	OK
 DO
-	if (! praat_new (Table_create (GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
+	if (! praat_new (Table_createWithoutColumnNames
+		(GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
 		GET_STRING ("Name"))) return 0;
 END
 
@@ -4696,7 +4709,9 @@ void praat_uvafon_init (void) {
 		praat_addMenuCommand ("Objects", "New", "Create Matrix...", 0, 1, DO_Matrix_create);
 		praat_addMenuCommand ("Objects", "New", "Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
 	praat_addMenuCommand ("Objects", "New", "Tables", 0, 0, 0);
-		praat_addMenuCommand ("Objects", "New", "Create Table...", 0, 1, DO_Table_create);
+		praat_addMenuCommand ("Objects", "New", "Create Table with column names...", 0, 1, DO_Table_createWithColumnNames);
+		praat_addMenuCommand ("Objects", "New", "Create Table without column names...", 0, 1, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand ("Objects", "New", "Create Table...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
 		praat_addMenuCommand ("Objects", "New", "Create TableOfReal...", 0, 1, DO_TableOfReal_create);
 	praat_addMenuCommand ("Objects", "New", "Tiers", 0, 0, 0);
 		praat_addMenuCommand ("Objects", "New", "Create empty PointProcess...", 0, 1, DO_PointProcess_createEmpty);

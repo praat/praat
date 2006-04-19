@@ -1271,7 +1271,7 @@ int Interpreter_run (Interpreter me, char *text) {
 					Melder_divertInfo (valueString);
 					praat_executeCommand (me, p);
 					Melder_divertInfo (NULL); cherror
-					value = strnequ (valueString, "--undefined--", 13) ? NUMundefined : Melder_atof (valueString);
+					value = Melder_atof (valueString);   /* Including --undefined-- */
 				} else {
 					/*
 					 * Get the value of the formula.

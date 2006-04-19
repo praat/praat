@@ -34,6 +34,7 @@
  * pb 2006/01/21 allow things like Object_137 [row, col]
  * pb 2006/01/29 run-time type checking
  * pb 2006/01/30 lexical analysis: binary rather than linear search for language names
+ * pb 2006/04/17 .row$, .col$
  */
 
 #include <ctype.h>
@@ -91,7 +92,7 @@ enum { GEENSYMBOOL_,
 		/* Attributes of objects. */
 		#define LOW_ATTRIBUTE  XMIN_
 			XMIN_, XMAX_, YMIN_, YMAX_, NX_, NY_, DX_, DY_,
-			ROW_, COL_, NROW_, NCOL_, Y_, X_,
+			ROW_, COL_, NROW_, NCOL_, ROWSTR_, COLSTR_, Y_, X_,
 		#define HIGH_ATTRIBUTE  X_
 	#define HIGH_VALUE  HIGH_ATTRIBUTE
 
@@ -178,7 +179,7 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"endif", "fi", ")", "]",
 	"_number", "pi", "e", "undefined",
 	"xmin", "xmax", "ymin", "ymax", "nx", "ny", "dx", "dy",
-	"row", "col", "nrow", "ncol", "y", "x",
+	"row", "col", "nrow", "ncol", "row$", "col$", "y", "x",
 	"self", "self$", "_matriks", "_matriks$",
 	"stopwatch",
 	"abs", "round", "floor", "ceiling", "sqrt", "sin", "cos", "tan", "arcsin", "arccos", "arctan",
@@ -761,13 +762,13 @@ static int parsePowerFactor (void) {
 				}
 			}
 		} else if (symbol == PERIOD_) {
-			nieuwontleed (NUMBER_);
 			switch (nieuwlees) {
 				case XMIN_:
 					if (your getXmin == NULL) {
 						formulefout ("Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getXmin (thee));
 						return 1;
 					}
@@ -776,6 +777,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getXmax (thee));
 						return 1;
 					}
@@ -784,6 +786,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getYmin (thee));
 						return 1;
 					}
@@ -792,6 +795,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getYmax (thee));
 						return 1;
 					}
@@ -800,6 +804,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getNx (thee));
 						return 1;
 					}
@@ -808,6 +813,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getNy (thee));
 						return 1;
 					}
@@ -816,6 +822,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getDx (thee));
 						return 1;
 					}
@@ -824,6 +831,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getDy (thee));
 						return 1;
 					}
@@ -832,6 +840,7 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getNcol (thee));
 						return 1;
 					}
@@ -840,7 +849,32 @@ static int parsePowerFactor (void) {
 						formulefout ("Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
+						nieuwontleed (NUMBER_);
 						parsenumber (your getNrow (thee));
+						return 1;
+					}
+				case ROWSTR_:
+					if (your getRowStr == NULL) {
+						formulefout ("Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
+						return 0;
+					} else {
+						if (! pas (RECHTEHAAKOPENEN_)) return 0;
+						if (! parseExpression ()) return 0;
+						nieuwontleed (ROWSTR_);
+						parse [iparse]. content.object = thee;
+						if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+						return 1;
+					}
+				case COLSTR_:
+					if (your getColStr == NULL) {
+						formulefout ("Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
+						return 0;
+					} else {
+						if (! pas (RECHTEHAAKOPENEN_)) return 0;
+						if (! parseExpression ()) return 0;
+						nieuwontleed (COLSTR_);
+						parse [iparse]. content.object = thee;
+						if (! pas (RECHTEHAAKSLUITEN_)) return 0;
 						return 1;
 					}
 				default: formulefout ("Unknown attribute.", lexan [ilexan]. position); return 0;
@@ -1453,9 +1487,16 @@ static void Formula_print (FormulaInstruction f) {
 			Melder_casual ("%d %s %s %s", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
 		else if (symbol == STRING_)
 			Melder_casual ("%d %s \"%s\"", i, instructionName, f [i]. content.string);
-		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_)
-			Melder_casual ("%d %s %ld %s", i, instructionName,
-				Thing_className (f [i]. content.object), ((Thing) f [i]. content.object) -> name);
+		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
+		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
+		{
+			Thing object = (Thing) f [i]. content.object;
+			if (object) {
+				Melder_casual ("%d %s %ld %s", i, instructionName, Thing_className (object), object -> name);
+			} else {
+				Melder_casual ("%d %s", i, instructionName);
+			}
+		}
 		else
 			Melder_casual ("%d %s", i, instructionName);
 	} while (symbol != END_);
@@ -2814,6 +2855,26 @@ static void do_funktie2 (void) {
 	}
 end: return;
 }
+static void do_rowStr (void) {
+	Data thee = parse [programPointer]. content.object;
+	char *string;
+	Stackel row = pop;
+	long irow = Stackel_getRowNumber (row, thee); cherror
+	string = Melder_strdup (your getRowStr (thee, irow));
+	if (string == NULL) Melder_error ("Row index out of bounds.");
+	pushString (string);
+end: return;
+}
+static void do_colStr (void) {
+	Data thee = parse [programPointer]. content.object;
+	char *string;
+	Stackel col = pop;
+	long icol = Stackel_getColumnNumber (col, thee); cherror
+	string = Melder_strdup (your getColStr (thee, icol));
+	if (string == NULL) Melder_error ("Column index out of bounds.");
+	pushString (string);
+end: return;
+}
 
 static double NUMarcsinh (double x) {
 	return log (x + sqrt (1.0 + x * x));
@@ -3001,6 +3062,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case FUNKTIE0_: { do_funktie0 (row, col);
 } break; case FUNKTIE1_: { do_funktie1 (row);
 } break; case FUNKTIE2_: { do_funktie2 ();
+} break; case ROWSTR_: { do_rowStr ();
+} break; case COLSTR_: { do_colStr ();
 } break; case SQR_: { do_sqr ();
 } break; case STRING_: {
 	char *result = Melder_strdup (f [programPointer]. content.string); cherror
@@ -3019,7 +3082,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 		cherror
 		programPointer ++;
 	} /* while */
-	Melder_assert (w == 1);
+	if (w != 1) Melder_fatal ("Formula: stackpointer ends at %ld instead of 1.", w);
 	if (theExpressionType == EXPRESSION_TYPE_NUMERIC) {
 		if (theStack [1]. which == Stackel_STRING) {
 			Melder_error ("Found a string expression instead of a numeric expression."); goto end;

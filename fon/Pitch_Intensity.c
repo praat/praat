@@ -52,7 +52,6 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	Graphics_setInner (g);
 	for (i = 1; i <= pitch -> nx; i ++) {
 		double t = Sampled_indexToX (pitch, i);
-		double index = Sampled_xToIndex (intensity, t);
 		double x = pitch -> frame [i]. candidate [1]. frequency;
 		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, Pitch_UNIT_HERTZ, TRUE);
 		if (x == 0) {

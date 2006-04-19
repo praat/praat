@@ -1,12 +1,13 @@
 # Makefile of the library "sys"
-# Paul Boersma, January 6, 2006
+# Paul Boersma, April 16, 2006
 
 include ../makefile.defs
 CFLAGS = -I ../dwsys -I ../GSL
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    enum.o abcio.o lispio.o longchar.o complex.o \
-   melder.o melder_files.o melder_audio.o melder_audiofiles.o melder_debug.o melder_sysenv.o \
+   melder.o melder_token.o melder_atof.o melder_ftoa.o \
+   melder_files.o melder_audio.o melder_audiofiles.o melder_debug.o melder_sysenv.o \
    Thing.o Data.o Simple.o Collection.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \
    Graphics_image.o Graphics_mouse.o Graphics_record.o \

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/24
+ * pb 2006/06/17
  */
 
 /* Data inherits from Thing. */
@@ -333,6 +333,8 @@ typedef struct structData_Description {
 	double (*getDy) (I); \
 	double (*getX) (I, long ix); \
 	double (*getY) (I, long iy); \
+	char * (*getRowStr) (I, long irow); \
+	char * (*getColStr) (I, long icol); \
 	double (*getCell) (I); \
 	double (*getVector) (I, long icol); \
 	char * (*getVectorStr) (I, long icol); \

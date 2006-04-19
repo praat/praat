@@ -459,6 +459,7 @@ static void createChildren (I) {
 
 static void clear (I) {
 	iam (TextEditor);
+	(void) me;
 }
 
 class_methods (TextEditor, Editor)
