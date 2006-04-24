@@ -258,8 +258,15 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
  		/* Parse command line into command and arguments. */
 		/* The separation is formed by the three dots. */
 
-		if ((arguments = strstr (command, "...")) == NULL || strlen (arguments) < 4) arguments = "";
-		else { arguments += 4; arguments [-1] = '\0'; /* New end of "command". */ }
+		if ((arguments = strstr (command, "...")) == NULL || strlen (arguments) < 4) {
+			arguments = "";
+		} else {
+			arguments += 4;
+			if (arguments [-1] != ' ' && arguments [-1] != '0') {
+				return Melder_error ("There should be a space after the three dots.");
+			}
+			arguments [-1] = '\0'; /* New end of "command". */
+		}
 
 		/* See if command exists and is available; ignore separators. */
 		/* First try loose commands, then fixed commands. */
@@ -273,17 +280,26 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {
 				UiInterpreter_set (NULL);
+				if (arguments [0] != '\0' && command [strlen (arguments) - 1] == ' ') {
+					return Melder_error ("It may be helpful to remove the trailing spaces.");
+				}
 				return 0;
 			}
 			if (! praat_doMenuCommand (command, arguments)) {
 				UiInterpreter_set (NULL);
 				if (Melder_hasError ()) {
+					if (arguments [0] != '\0' && command [strlen (arguments) - 1] == ' ') {
+						return Melder_error ("It may be helpful to remove the trailing spaces.");
+					}
 					return 0;
 				} else if (strnequ (command, "ARGS ", 5)) {
 					return Melder_error ("Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
 				} else if (strchr (command, '=')) {
 					return Melder_error ("Command \"%s\" not recognized.\n"
 						"Probable cause: you are trying to use a variable name that starts with a capital.", command);
+				} else if (command [0] != '\0' && command [strlen (command) - 1] == ' ') {
+					return Melder_error ("Command \"%s\" not available for current selection. "
+						"It may be helpful to remove the trailing spaces.", command);
 				} else {
 					return Melder_error ("Command \"%s\" not available for current selection.", command);
 				}

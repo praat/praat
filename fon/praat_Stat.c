@@ -423,6 +423,34 @@ DO
 		Melder_double (upperLimit), significanceLevel);
 END
 	
+FORM (Table_scatterPlot, "Scatter plot", 0)
+	WORD ("Horizontal column", "")
+	REAL ("left Horizontal range", "0.0")
+	REAL ("right Horizontal range", "0.0 (= auto)")
+	WORD ("Vertical column", "")
+	REAL ("left Vertical range", "0.0")
+	REAL ("right Vertical range", "0.0 (= auto)")
+	WORD ("Column with marks", "")
+	NATURAL ("Font size", "12")
+	BOOLEAN ("Garnish", 1)
+	OK
+DO
+	praat_picture_open ();
+	WHERE (SELECTED) {
+		Table me = ONLY_OBJECT;
+		long xcolumn = Table_columnLabelToIndex (me, GET_STRING ("Horizontal column"));
+		long ycolumn = Table_columnLabelToIndex (me, GET_STRING ("Vertical column"));
+		long markColumn = Table_columnLabelToIndex (me, GET_STRING ("Column with marks"));
+		if (xcolumn == 0 || ycolumn == 0 || markColumn == 0) return Melder_error ("No such column.");
+		Table_scatterPlot (OBJECT, GRAPHICS, xcolumn, ycolumn,
+			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
+			GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
+			markColumn, GET_INTEGER ("Font size"), GET_INTEGER ("Garnish"));
+	}
+	praat_picture_close ();
+	return 1;
+END
+
 FORM (Table_scatterPlot_mark, "Scatter plot (marks)", 0)
 	WORD ("Horizontal column", "")
 	REAL ("left Horizontal range", "0.0")
@@ -551,6 +579,7 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classTable, 1, "Write to table file...", 0, 0, DO_Table_writeToTableFile);
 	praat_addAction1 (classTable, 1, "Edit", 0, 0, DO_Table_edit);
 	praat_addAction1 (classTable, 0, "Draw -                ", 0, 0, 0);
+		praat_addAction1 (classTable, 0, "Scatter plot...", 0, 1, DO_Table_scatterPlot);
 		praat_addAction1 (classTable, 0, "Scatter plot (mark)...", 0, 1, DO_Table_scatterPlot_mark);
 	praat_addAction1 (classTable, 0, "Query -                ", 0, 0, 0);
 		praat_addAction1 (classTable, 1, "Get number of rows", 0, 1, DO_Table_getNumberOfRows);

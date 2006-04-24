@@ -588,7 +588,6 @@
 		23E5D19E09A22A57004E41D5 /* Sound_and_LPC_robust.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C97F09A228FD004E41D5 /* Sound_and_LPC_robust.c */; };
 		23E5D19F09A22A57004E41D5 /* Sound_and_LPC_robust.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C98009A228FD004E41D5 /* Sound_and_LPC_robust.h */; };
 		23E5D1A009A22A57004E41D5 /* praat_TextGrid_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA3F09A228FF004E41D5 /* praat_TextGrid_init.c */; };
-		23E5D1A109A22A57004E41D5 /* sendpraat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB2909A22901004E41D5 /* sendpraat.c */; };
 		23E5D1A209A22A57004E41D5 /* sendpraat.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEF809A22A50004E41D5 /* sendpraat.h */; };
 		23E5D1A309A22A57004E41D5 /* TableEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA3109A228FF004E41D5 /* TableEditor.c */; };
 		23E5D1A409A22A57004E41D5 /* TableEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA3209A228FF004E41D5 /* TableEditor.h */; };
@@ -717,6 +716,7 @@
 		23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C509F2E61200E660F9 /* melder_atof.c */; };
 		23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C709F2E62700E660F9 /* melder_ftoa.c */; };
 		23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C909F2E63900E660F9 /* melder_token.c */; };
+		23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23FDF6A309FCFF06001B23B7 /* sendpraat.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -1229,7 +1229,6 @@
 		23E5CB2609A22901004E41D5 /* Preferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = sys/Preferences.h; sourceTree = SOURCE_ROOT; };
 		23E5CB2709A22901004E41D5 /* Script.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Script.c; path = sys/Script.c; sourceTree = SOURCE_ROOT; };
 		23E5CB2809A22901004E41D5 /* Script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Script.h; path = sys/Script.h; sourceTree = SOURCE_ROOT; };
-		23E5CB2909A22901004E41D5 /* sendpraat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sendpraat.c; path = support/sendpraat/sendpraat.c; sourceTree = SOURCE_ROOT; };
 		23E5CB2A09A22901004E41D5 /* sendsocket.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sendsocket.c; path = sys/sendsocket.c; sourceTree = SOURCE_ROOT; };
 		23E5CB2B09A22901004E41D5 /* sendsocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sendsocket.h; path = sys/sendsocket.h; sourceTree = SOURCE_ROOT; };
 		23E5CB2C09A22902004E41D5 /* Simple.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Simple.c; path = sys/Simple.c; sourceTree = SOURCE_ROOT; };
@@ -1465,6 +1464,7 @@
 		23EE67C509F2E61200E660F9 /* melder_atof.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_atof.c; path = sys/melder_atof.c; sourceTree = "<group>"; };
 		23EE67C709F2E62700E660F9 /* melder_ftoa.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_ftoa.c; path = sys/melder_ftoa.c; sourceTree = "<group>"; };
 		23EE67C909F2E63900E660F9 /* melder_token.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_token.c; path = sys/melder_token.c; sourceTree = "<group>"; };
+		23FDF6A309FCFF06001B23B7 /* sendpraat.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = sendpraat.c; path = sys/sendpraat.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2096,7 +2096,7 @@
 				23E5CB2509A22901004E41D5 /* Preferences.c */,
 				23E5CB2809A22901004E41D5 /* Script.h */,
 				23E5CB2709A22901004E41D5 /* Script.c */,
-				23E5CB2909A22901004E41D5 /* sendpraat.c */,
+				23FDF6A309FCFF06001B23B7 /* sendpraat.c */,
 				23E5CB2B09A22901004E41D5 /* sendsocket.h */,
 				23E5CB2A09A22901004E41D5 /* sendsocket.c */,
 				23E5CB2D09A22902004E41D5 /* Simple.h */,
@@ -3185,7 +3185,6 @@
 				23E5D19C09A22A57004E41D5 /* Permutation_and_Index.c in Sources */,
 				23E5D19E09A22A57004E41D5 /* Sound_and_LPC_robust.c in Sources */,
 				23E5D1A009A22A57004E41D5 /* praat_TextGrid_init.c in Sources */,
-				23E5D1A109A22A57004E41D5 /* sendpraat.c in Sources */,
 				23E5D1A309A22A57004E41D5 /* TableEditor.c in Sources */,
 				23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */,
 				23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */,
@@ -3194,6 +3193,7 @@
 				23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */,
 				23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */,
 				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
+				23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,6 +19,7 @@
 
 /*
  * pb 2006/02/11 first version
+ * pb 2006/04/22 all cells visible
  */
 
 #include "TableEditor.h"
@@ -26,8 +27,9 @@
 #include "EditorM.h"
 
 #define TableEditor_members Editor_members \
-	long selectedRow, selectedColumn; \
+	long topRow, leftColumn, selectedRow, selectedColumn; \
 	Widget text, drawingArea, horizontalScrollBar, verticalScrollBar; \
+	double columnLeft [29], columnRight [29]; \
 	Graphics graphics;
 #define TableEditor_methods Editor_methods \
 	void (*draw) (I); \
@@ -38,13 +40,36 @@ class_create_opaque (TableEditor, Editor)
 
 static void destroy (I) {
 	iam (TableEditor);
+	forget (my graphics);
 	inherited (TableEditor) destroy (me);
+}
+
+static void updateVerticalScrollBar (TableEditor me) {
+	Table table = my data;
+	/*int value, slider, incr, pincr;
+	XmScrollBarGetValues (my verticalScrollBar, & value, & slider, & incr, & pincr);
+	XmScrollBarSetValues (my verticalScrollBar, my topRow, slider, incr, pincr, False);*/
+	XtVaSetValues (my verticalScrollBar,
+		XmNvalue, my topRow, XmNmaximum, table -> rows -> size + 1, NULL);
+}
+
+static void updateHorizontalScrollBar (TableEditor me) {
+	Table table = my data;
+	/*int value, slider, incr, pincr;
+	XmScrollBarGetValues (my horizontalScrollBar, & value, & slider, & incr, & pincr);
+	XmScrollBarSetValues (my horizontalScrollBar, my topRow, slider, incr, pincr, False);*/
+	XtVaSetValues (my horizontalScrollBar,
+		XmNvalue, my leftColumn, XmNmaximum, table -> numberOfColumns + 1, NULL);
 }
 
 static void dataChanged (I) {
 	iam (TableEditor);
 	Table table = my data;
-	inherited (TableEditor) dataChanged (me);   /* Does all the updating. */
+	if (my topRow > table -> rows -> size) my topRow = table -> rows -> size;
+	if (my leftColumn > table -> numberOfColumns) my leftColumn = table -> numberOfColumns;
+	updateVerticalScrollBar (me);
+	updateHorizontalScrollBar (me);
+	Graphics_updateWs (my graphics);
 }
 
 /********** FILE MENU **********/
@@ -115,7 +140,8 @@ static void createChildren (I) {
 	XtVaSetValues (my drawingArea,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth () + 9,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
 		NULL);
 	XtManageChild (my drawingArea);
 
@@ -146,11 +172,11 @@ static void createChildren (I) {
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
 		XmNwidth, Machine_getScrollBarWidth (),
 		XmNminimum, 1,
-		XmNmaximum, table -> rows -> size + 2,
+		XmNmaximum, table -> rows -> size + 1,
 		XmNvalue, 1,
 		XmNsliderSize, 1,
 		XmNincrement, 1,
-		XmNpageIncrement, 5,
+		XmNpageIncrement, 10,
 		NULL);
 
 	XtManageChild (form);
@@ -177,6 +203,79 @@ static void createMenus (I) {
 static void draw (I) {
 	iam (TableEditor);
 	Table table = my data;
+	double spacing = 2.0;   /* millimetres at both edges */
+	char numberBuffer [40];
+	double columnWidth, cellWidth;
+	long irow, icol;
+	long rowmin = my topRow, rowmax = rowmin + 197;
+	long colmin = my leftColumn, colmax = colmin + 28;
+	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
+	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
+	Graphics_clearWs (my graphics);
+	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setWindow (my graphics, 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
+	Graphics_setColour (my graphics, Graphics_SILVER);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, rowmin - 2.5, rowmin - 0.5);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_line (my graphics, 0.0, rowmin - 0.5, 1.0, rowmin - 0.5);
+	Graphics_setWindow (my graphics, 0.0, Graphics_dxWCtoMM (my graphics, 1.0), rowmin + 197.5, rowmin - 2.5);
+	/*
+	 * Determine the width of the column with the row numbers.
+	 */
+	columnWidth = Graphics_textWidth (my graphics, "row");
+	for (irow = rowmin; irow <= rowmax; irow ++) {
+		sprintf (numberBuffer, "%ld", irow);
+		cellWidth = Graphics_textWidth (my graphics, numberBuffer);
+		if (cellWidth > columnWidth) columnWidth = cellWidth;
+	}
+	my columnLeft [0] = columnWidth + 2 * spacing;
+	Graphics_setColour (my graphics, Graphics_SILVER);
+	Graphics_fillRectangle (my graphics, 0.0, my columnLeft [0], rowmin - 0.5, rowmin + 197.5);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_line (my graphics, my columnLeft [0], rowmin - 0.5, my columnLeft [0], rowmin + 197.5);
+	/*
+	 * Determine the width of the columns.
+	 */
+	for (icol = colmin; icol <= colmax; icol ++) {
+		const char *columnLabel = table -> columnHeaders [icol]. label;
+		sprintf (numberBuffer, "%ld", icol);
+		columnWidth = Graphics_textWidth (my graphics, numberBuffer);
+		if (columnLabel == NULL) columnLabel = "";
+		cellWidth = Graphics_textWidth (my graphics, columnLabel);
+		if (cellWidth > columnWidth) columnWidth = cellWidth;
+		for (irow = rowmin; irow <= rowmax; irow ++) {
+			const char *cell = Table_getStringValue (table, irow, icol);
+			Melder_assert (cell != NULL);
+			if (cell [0] == '\0') cell = "?";
+			cellWidth = Graphics_textWidth (my graphics, cell);
+			if (cellWidth > columnWidth) columnWidth = cellWidth;
+		}
+		my columnRight [icol - colmin] = my columnLeft [icol - colmin] + columnWidth + 2 * spacing;
+		if (icol < colmax) my columnLeft [icol - colmin + 1] = my columnRight [icol - colmin];
+	}
+	/*
+	 * Show the row numbers.
+	 */
+	Graphics_text (my graphics, my columnLeft [0] / 2, rowmin - 1, "row");
+	for (irow = rowmin; irow <= rowmax; irow ++) {
+		Graphics_printf (my graphics, my columnLeft [0] / 2, irow, "%ld", irow);
+	}
+	for (icol = colmin; icol <= colmax; icol ++) {
+		double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
+		const char *columnLabel = table -> columnHeaders [icol]. label;
+		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = "?";
+		Graphics_printf (my graphics, mid, rowmin - 2, "%ld", icol);
+		Graphics_printf (my graphics, mid, rowmin - 1, "%s", columnLabel);
+	}
+	for (irow = rowmin; irow <= rowmax; irow ++) {
+		for (icol = colmin; icol <= colmax; icol ++) {
+			double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
+			const char *cell = Table_getStringValue (table, irow, icol);
+			Melder_assert (cell != NULL);
+			if (cell [0] == '\0') cell = "?";
+			Graphics_printf (my graphics, mid, irow, "%s", cell);
+		}
+	}
 }
 
 static int click (I, double xclick, double yWC, int shiftKeyPressed) {
@@ -195,8 +294,19 @@ class_methods (TableEditor, Editor)
 class_methods_end
 
 MOTIF_CALLBACK (cb_horizontalScroll)
+	iam (TableEditor);
 	int value, slider, incr, pincr;
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	my leftColumn = value;
+	our draw (me);
+MOTIF_CALLBACK_END
+
+MOTIF_CALLBACK (cb_verticalScroll)
+	iam (TableEditor);
+	int value, slider, incr, pincr;
+	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	my topRow = value;
+	our draw (me);
 MOTIF_CALLBACK_END
 
 MOTIF_CALLBACK (cb_draw)
@@ -204,8 +314,7 @@ MOTIF_CALLBACK (cb_draw)
 #ifdef UNIX
 	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 #endif
-	/*if (my enableUpdates)
-		drawNow (me);*/
+	draw (me);
 MOTIF_CALLBACK_END
 
 MOTIF_CALLBACK (cb_input)
@@ -221,13 +330,22 @@ TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
 	Editor_init (me, parent, 0, 0, 700, 500, title, table); cherror
 	Melder_assert (XtWindow (my drawingArea));
+	my topRow = 1;
+	my leftColumn = 1;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setFontSize (my graphics, 10);
+	Graphics_setWsViewport (my graphics, 0, 3000, 0, 3000);
+	Graphics_setWsWindow (my graphics, 0, 3000, 0, 3000);
+	Graphics_setViewport (my graphics, 0, 3000, 0, 3000);
+	Graphics_setFont (my graphics, Graphics_COURIER);
+	Graphics_setFontSize (my graphics, 12);
+	Graphics_setAtSignIsLink (my graphics, TRUE);
 
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
 	XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, cb_horizontalScroll, (XtPointer) me);
 	XtAddCallback (my horizontalScrollBar, XmNdragCallback, cb_horizontalScroll, (XtPointer) me);
+	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, cb_verticalScroll, (XtPointer) me);
+	XtAddCallback (my verticalScrollBar, XmNdragCallback, cb_verticalScroll, (XtPointer) me);
 
 end:
 	iferror forget (me);

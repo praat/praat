@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/04/18
+ * pb 2006/04/24
  */
 
 #ifndef _Collection_h_
@@ -101,6 +101,8 @@ Table Tables_appendMany (Collection me);
 void Table_sortRows (Table me, long *columns, long numberOfColumns);
 int Table_sortRows_string (Table me, const char *columns_string);
 
+void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish);
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const char *mark, int garnish);
 

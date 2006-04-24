@@ -33,6 +33,7 @@
  * pb 2006/04/16 Table_createWithColumnNames
  * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
  * pb 2006/04/17 getColStr
+ * pb 2006/04/24 Table_scatterPlot ()
  */
 
 #include <ctype.h>
@@ -1164,6 +1165,46 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 		TableRow row = my rows -> item [irow];
 		Graphics_mark (g, row -> cells [xcolumn]. number, row -> cells [ycolumn]. number, markSize_mm, mark);
 	}
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		if (my columnHeaders [xcolumn]. label)
+			Graphics_textBottom (g, TRUE, my columnHeaders [xcolumn]. label);
+		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+		if (my columnHeaders [ycolumn]. label)
+			Graphics_textLeft (g, TRUE, my columnHeaders [ycolumn]. label);
+	}
+}
+
+void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish)
+{
+	long n = my rows -> size, irow;
+	int saveFontSize = Graphics_inqFontSize (g);
+	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+	Table_numericize (me, xcolumn);
+	Table_numericize (me, ycolumn);
+	if (xmin == xmax) {
+		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax)) return;
+		if (xmin == xmax) xmin -= 0.5, xmax += 0.5;
+	}
+	if (ymin == ymax) {
+		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
+		if (ymin == ymax) ymin -= 0.5, ymax += 0.5;
+	}
+	Graphics_setInner (g);
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	Graphics_setFontSize (g, fontSize);
+	for (irow = 1; irow <= n; irow ++) {
+		TableRow row = my rows -> item [irow];
+		const char *mark = row -> cells [markColumn]. string;
+		if (mark)
+			Graphics_text (g, row -> cells [xcolumn]. number, row -> cells [ycolumn]. number, mark);
+	}
+	Graphics_setFontSize (g, saveFontSize);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
