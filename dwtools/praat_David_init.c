@@ -350,7 +350,7 @@ FORM (CCs_to_DTW, "CC: To DTW", "CC: To DTW...")
 	REAL ("Log energy weight", "0.0")
 	REAL ("Regression weight", "0.0")
 	REAL ("Regression weight log energy", "0.0")
-	REAL ("Window for regression coefficients (s)", "0.056")
+	REAL ("Regression coefficients window (s)", "0.056")
 	LABEL("", "Boundary conditions for time warp")
 	BOOLEAN ("Match begin positions", 0)
 	BOOLEAN ("Match end positions", 0)
@@ -369,7 +369,7 @@ DO
 	NEW (CCs_to_DTW (c1, c2, GET_REAL ("Cepstral weight"),
 		GET_REAL ("Log energy weight"), GET_REAL ("Regression weight"),
 		GET_REAL ("Regression weight log energy"),
-		GET_REAL ("Window for regression coefficients"), 
+		GET_REAL ("Regression coefficients window"),
 		GET_INTEGER("Match begin positions"),
 		GET_INTEGER("Match end positions"),
 		GET_INTEGER("Slope constraints")))

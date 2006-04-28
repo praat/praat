@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  djmw 20020422 GPL + removed "C syntax" part of manpage
- djmw 20050615 Latest modification
+ djmw 20060428 Latest modification
 */
 
 #include "ManPagesM.h"

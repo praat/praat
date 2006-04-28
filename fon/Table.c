@@ -461,6 +461,27 @@ double Table_getMean (Table me, long icol) {
 	return sum / my rows -> size;
 }
 
+double Table_getQuantile (Table me, long icol, double quantile) {
+	double *sortingColumn = NULL;
+	double result = NUMundefined;
+	long irow;
+	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
+	if (my rows -> size < 1) return NUMundefined;
+	if (! Table_numericize_checkDefined (me, icol)) {
+		Melder_error ("Cannot compute quantile.");
+		return NUMundefined;
+	}
+	sortingColumn = NUMdvector (1, my rows -> size); cherror
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		sortingColumn [irow] = ((TableRow) my rows -> item [irow]) -> cells [icol]. number;
+	}
+	NUMsort_d (my rows -> size, sortingColumn);
+	result = NUMquantile_d (my rows -> size, sortingColumn, quantile);
+end:
+	NUMdvector_free (sortingColumn, 1);
+	return result;
+}
+
 double Table_getStdev (Table me, long icol) {
 	double mean = Table_getMean (me, icol), sum = 0.0;
 	long irow;

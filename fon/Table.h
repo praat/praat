@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/04/24
+ * pb 2006/04/29
  */
 
 #ifndef _Collection_h_
@@ -80,6 +80,7 @@ double Table_getNumericValue (Table me, long irow, long icol);
 int Table_setStringValue (Table me, long irow, long icol, const char *value);
 int Table_setNumericValue (Table me, long irow, long icol, double value);
 
+double Table_getQuantile (Table me, long icol, double quantile);
 double Table_getMean (Table me, long icol);
 double Table_getStdev (Table me, long icol);
 double Table_getCorrelation_pearsonR (Table me, long col1, long col2, double significanceLevel,

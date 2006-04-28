@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/02/12
+ * pb 2006/04/28
  */
 
 #include "praat.h"
@@ -26,6 +26,17 @@
 #include "Table.h"
 #include "TableEditor.h"
 #include "Regression.h"
+
+static char formatBuffer [32] [40];
+static int formatIndex = 0;
+static char * Table_messageColumn (Table me, long column) {
+	if (++ formatIndex == 32) formatIndex = 0;
+	if (my columnHeaders [column]. label != NULL && my columnHeaders [column]. label [0] != '\0')
+		sprintf (formatBuffer [formatIndex], "\"%.39s\"", my columnHeaders [column]. label);
+	else
+		sprintf (formatBuffer [formatIndex], "%ld", column);
+	return formatBuffer [formatIndex];
+}
 
 /***** TABLE *****/
 
@@ -141,7 +152,8 @@ DO
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ld_%ld", NAME, icol, (long) floor (value+0.5))) return 0;
+			"%s_%s_%ld", NAME, Table_messageColumn (OBJECT, icol),
+			(long) floor (value+0.5))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -160,7 +172,7 @@ DO
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_extractRowsWhereColumn_string (OBJECT,
 			icol, GET_INTEGER ("...") - 1 + Melder_STRING_min, value),
-			"%s_%ld_%s", NAME, icol, value)) return 0;
+			"%s_%s", NAME, value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -196,6 +208,40 @@ DO
 	Melder_information ("%s", my columnHeaders [icol]. label == NULL ? "" : my columnHeaders [icol]. label);
 END
 
+FORM (Table_getMean, "Table: Get mean", 0)
+	SENTENCE ("Column label", "")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	REQUIRE (icol > 0, "No such column.")
+	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	Melder_information ("%s", Melder_double (Table_getMean (ONLY_OBJECT, icol)));
+END
+	
+FORM (Table_getQuantile, "Table: Get quantile", 0)
+	SENTENCE ("Column label", "")
+	POSITIVE ("Quantile", "0.50 (= median)")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	REQUIRE (icol > 0, "No such column.")
+	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	Melder_information ("%s", Melder_double (Table_getQuantile (ONLY_OBJECT, icol, GET_REAL ("Quantile"))));
+END
+	
+FORM (Table_getStandardDeviation, "Table: Get standard deviation", 0)
+	SENTENCE ("Column label", "")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	REQUIRE (icol > 0, "No such column.")
+	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	Melder_information ("%s", Melder_double (Table_getStdev (ONLY_OBJECT, icol)));
+END
+	
 DIRECT (Table_to_LinearRegression)
 	EVERY_TO (Table_to_LinearRegression (OBJECT))
 END
@@ -303,17 +349,6 @@ DO
 		iferror return 0;
 	}
 END
-
-static char formatBuffer [32] [40];
-static int formatIndex = 0;
-static char * Table_messageColumn (Table me, long column) {
-	if (++ formatIndex == 32) formatIndex = 0;
-	if (my columnHeaders [column]. label != NULL && my columnHeaders [column]. label [0] != '\0')
-		sprintf (formatBuffer [formatIndex], "\"%.39s\"", my columnHeaders [column]. label);
-	else
-		sprintf (formatBuffer [formatIndex], "%ld", column);
-	return formatBuffer [formatIndex];
-}
 
 FORM (Table_reportCorrelation_kendallTau, "Report correlation (Kendall tau)", 0)
 	WORD ("left Columns", "")
@@ -591,12 +626,17 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "Get value...", 0, 1, DO_Table_getValue);
 	praat_addAction1 (classTable, 0, "Statistics -    ", 0, 0, 0);
 		praat_addAction1 (classTable, 1, "Statistics tutorial", 0, 1, DO_StatisticsTutorial);
-		/*praat_addAction1 (classTable, 1, "Report mean...", 0, 1, DO_Table_reportMean);
-		praat_addAction1 (classTable, 1, "Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
+		praat_addAction1 (classTable, 1, "-- get stats --", 0, 1, 0);
+		praat_addAction1 (classTable, 1, "Get quantile...", 0, 1, DO_Table_getQuantile);
+		praat_addAction1 (classTable, 1, "Get mean...", 0, 1, DO_Table_getMean);
+		praat_addAction1 (classTable, 1, "Get standard deviation...", 0, 1, DO_Table_getStandardDeviation);
+		praat_addAction1 (classTable, 1, "-- report stats --", 0, 1, 0);
+		praat_addAction1 (classTable, 1, "Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
+		/*praat_addAction1 (classTable, 1, "Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
+		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
 		praat_addAction1 (classTable, 1, "Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, "Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
-		praat_addAction1 (classTable, 1, "Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
-		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, "-- to regression --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "To linear regression", 0, 1, DO_Table_to_LinearRegression);
 		praat_addAction1 (classTable, 1, "To logistic regression", 0, 1, DO_Table_to_LogisticRegression);
 	praat_addAction1 (classTable, 0, "Modify -        ", 0, 0, 0);

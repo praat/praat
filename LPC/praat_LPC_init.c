@@ -1,6 +1,6 @@
 /* praat_LPC_init.c
  *
- * Copyright (C) 1994-2004 David Weenink
+ * Copyright (C) 1994-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  djmw 20030613 Latest modification
  djmw 20040414 Forms texts.
- djmw 20051012 Latest modification
+ djmw 20060428 Latest modification
 */
 
 #include <math.h>
@@ -423,7 +423,7 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classLPC, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_TimeFrameSampled_query_init (classLPC);
 	praat_addAction1 (classLPC, 1, "Get sampling interval", 0, 1, DO_LPC_getSamplingInterval);
-	praat_addAction1 (classLPC, 1, "Get  number of coefficients...", 0, 1, DO_LPC_getNumberOfCoefficients);
+	praat_addAction1 (classLPC, 1, "Get number of coefficients...", 0, 1, DO_LPC_getNumberOfCoefficients);
 	praat_addAction1 (classLPC, 0, "Extract", 0, 0, 0);
 	
 	praat_addAction1 (classLPC, 0, "To Spectrum (slice)...", 0, 0,

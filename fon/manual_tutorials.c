@@ -23,11 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060424)
+MAN_BEGIN ("What's new?", "ppgb", 20060428)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.19# (April 28, 2006)")
+LIST_ITEM ("\\bu Table: ##Get mean#, ##Get standard deviation#, ##Get quantile#.")
 NORMAL ("##4.4.18# (April 24, 2006)")
-LIST_ITEM ("\\bu Table: #Edit; view the contents of a table.")
+LIST_ITEM ("\\bu Table: #Edit: view the contents of a table.")
 LIST_ITEM ("\\bu Table: ##Scatter plot#.")
 LIST_ITEM ("\\bu Scripting: more warnings against missing or extra spaces.")
 NORMAL ("##4.4.17# (April 19, 2006)")
