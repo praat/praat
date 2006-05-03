@@ -46,6 +46,7 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
+ djmw 20060503 Latest modification.
 */
 
 #include "praat.h"
@@ -701,8 +702,8 @@ DO
 		GET_INTEGER ("Index1"), GET_INTEGER ("Index2"),
 		GET_REAL ("Value"), GET_INTEGER ("Paired"),
 		GET_INTEGER ("Equal variances"), &p, &t , &ndf);
-	Melder_information ("%.17g (=probability, based on t = %.17g and ndf = %.7g)",
-		p, t, ndf);
+	Melder_information ("%s (=probability, based on t = %s and ndf = %.7g)",
+		Melder_double (p), Melder_double (t), ndf);
 END
 
 FORM (Covariance_getSignificanceOfOneVariance, "Covariance: Get significance of one variance",

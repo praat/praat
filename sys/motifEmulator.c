@@ -187,14 +187,26 @@ void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call) {
  * so we put a reference to the widget in the appropriate RefCon field at window or control creation time.
  * Instead of RefCons, the menus are remembered here:
  */
-static Widget theMenus [256];   /* We can freely use and reuse the menu ids 1..255 */
+#if win
+	#define MAXIMUM_NUMBER_OF_MENUS  4000
+#elif mac
+	#if carbon
+		#define MAXIMUM_NUMBER_OF_MENUS  32767
+	#else
+		/* 255 is the general restriction pre-8.5 on NewMenu; it is also the general restriction on SetItemMark */
+		#define MAXIMUM_NUMBER_OF_MENUS  255
+	#endif
+#endif
+static Widget theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
 static int (*theOpenDocumentCallback) (MelderFile file);
 static int (*theQuitApplicationCallback) (void);
 #if win
 	static int theCommandShow = False;   /* Last argument of WinMain. */
 	static char theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
 	static int (*theUserMessageCallback) (void);
-	static short theMenuItems [10001];   /* We can freely use and reuse the item ids 1001..10000 */
+	#define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
+	#define MAXIMUM_MENU_ITEM_ID  32767
+	static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   /* We can freely use and reuse the item ids 4001..32767 */
 #elif mac
 	static Widget theMenuBar;   /* There is only one menu bar on the Macintosh. */
 	static int theHelpMenuOffset;   /* The number of items in the global help menu before we add the first item. */
@@ -202,19 +214,20 @@ static int (*theQuitApplicationCallback) (void);
 #endif
 
 static Widget theApplicationShell;   /* For global menus. */
-static Widget theShells [1000];   /* For XmUpdateDisplay and suspend events. */
+#define MAXIMUM_NUMBER_OF_SHELLS  1000
+static Widget theShells [MAXIMUM_NUMBER_OF_SHELLS];   /* For XmUpdateDisplay and suspend events. */
 static int theBackground = False;   /* Set by suspend and resume events; used by Motif-style activation methods. */
 static int theDialogHint = False;   /* Should the shell that is currently being created, have dialog or document looks? */
 long numberOfWidgets;
 
 static void _motif_addShell (Widget me) {
 	int i;
-	for (i = 0; i < 1000; i ++)
+	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
 		if (theShells [i] == NULL) { theShells [i] = me; break; }
 }
 static void _motif_removeShell (Widget me) {
 	int i;
-	for (i = 0; i < 1000; i ++)
+	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
 		if (theShells [i] == me) { theShells [i] = NULL; break; }
 }
 
@@ -942,11 +955,8 @@ static void _GuiNativizeWidget (Widget me) {
 	if (my inMenu) {
 		if (MEMBER (me, PulldownMenu)) {
 			#if win
-				/*
-				 * BUG: there cannot be more than 255 menus simultaneously.
-				 */
 				int id;
-				for (id = 1; id <= 255; id ++) if (! theMenus [id]) break;
+				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of UserData fields. */
 				/*
@@ -954,11 +964,8 @@ static void _GuiNativizeWidget (Widget me) {
 				 */
 				my nat.menu.handle = CreatePopupMenu ();
 			#elif mac
-				/*
-				 * BUG: there cannot be more than 255 menus simultaneously.
-				 */
 				int id;
-				for (id = 1; id <= 255; id ++) if (! theMenus [id]) break;
+				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of RefCon fields. */
 				/*
@@ -966,7 +973,7 @@ static void _GuiNativizeWidget (Widget me) {
 				 */
 				PfromCstr (mac_text, my name);
 				my nat.menu.handle = NewMenu (my nat.menu.id, mac_text);
-				InsertMenu (my nat.menu.handle, -1);   /* Submenu. */
+				InsertMenu (my nat.menu.handle, kInsertHierarchicalMenu);
 			#endif
 		} else {
 			/*
@@ -979,11 +986,11 @@ static void _GuiNativizeWidget (Widget me) {
 				 * A Windows menu item shall have a shell-unique ID,
 				 * which we can use to make changes and
 				 * which will be sent to us by the WM_COMMAND message.
-				 * This ID should be higher than 1000, in order to be different from the menu IDs.
+				 * This ID should be higher than 4000, in order to be different from the menu IDs.
 				 * In our implementation, item IDs are application-unique.
 				 */
 				int id;
-				for (id = 1001; id <= 10000; id ++) if (! theMenuItems [id]) break;
+				for (id = MINIMUM_MENU_ITEM_ID; id <= MAXIMUM_MENU_ITEM_ID; id ++) if (! theMenuItems [id]) break;
 				my nat.entry.id = id;   // install unique ID
 				theMenuItems [id] = TRUE;
 			}
@@ -1093,11 +1100,8 @@ static void _GuiNativizeWidget (Widget me) {
 		} break;
 		case xmPulldownMenuWidgetClass: {
 			#if win
-				/*
-				 * BUG: there cannot be more than 255 menus simultaneously.
-				 */
 				int id;
-				for (id = 1; id <= 255; id ++) if (! theMenus [id]) break;
+				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of UserData fields. */
 				if (MEMBER (my parent, MenuBar)) {
@@ -1133,11 +1137,8 @@ static void _GuiNativizeWidget (Widget me) {
 				}
 			#elif mac
 				Str255 title;
-				/*
-				 * BUG: there cannot be more than 255 menus simultaneously.
-				 */
 				int id;
-				for (id = 1; id <= 255; id ++) if (! theMenus [id]) break;
+				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of RefCon fields. */
 				PfromCstr (title, my name);
@@ -1153,11 +1154,11 @@ static void _GuiNativizeWidget (Widget me) {
 						#endif
 						theMenus [my nat.menu.id] = NULL;
 						my nat.menu.id = kHMHelpMenuID;
-						theMenus [255] = me;
+						theMenus [MAXIMUM_NUMBER_OF_MENUS] = me;
 					} else {
 						int beforeID = 0;
 						my nat.menu.handle = NewMenu (my nat.menu.id, title);
-						for (id = 1; id <= 255; id ++) {
+						for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) {
 							Widget menu = theMenus [id];
 							if (menu && strequ (menu -> name, "Help")) {
 								beforeID = id;
@@ -2020,8 +2021,12 @@ static void _motif_setValues (Widget me, va_list arg) {
 				#if win
 				#elif mac
 					if (my nat.entry.item) {
-						SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-						SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
+						#if carbon
+							SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
+						#else
+							SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
+							SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
+						#endif
 					}
 				#endif
 			} else {
@@ -2723,11 +2728,11 @@ Boolean XtIsShell (Widget me) {
 void XtMapWidget (Widget me) {
 	switch (my widgetClass) {
 		case xmShellWidgetClass:
-			#if mac
-				ShowWindow (my nat.window.ptr);
-			#elif win
+			#if win
 				ShowWindow (my window, me == theApplicationShell ? theCommandShow : theCommandShow);
 				//UpdateWindow (my window);
+			#elif mac
+				ShowWindow (my nat.window.ptr);
 			#endif
 			break;
 		default:
@@ -2798,8 +2803,14 @@ static void mapWidget (Widget me) {
 				if (mac_text [mac_text [0]] == ':')
 					SetItemStyle (my nat.entry.handle, my nat.entry.item, underline);
 				if (my widgetClass == xmCascadeButtonWidgetClass) {
-					if (my subMenuId) SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-					SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
+					if (my subMenuId) {
+						#if carbon
+							SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
+						#else
+							SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
+							SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
+						#endif
+					}
 				}
 				/*
 				 * All the items in the Apple Menu folder are added to the Apple menu.
@@ -2996,16 +3007,15 @@ void XtSetSensitive (Widget me, Boolean value) {
 		case xmCascadeButtonWidgetClass: {
 			if (my inMenu || my motif.cascadeButton.inBar) {
 				if (my subMenuId) {
-					if (value)
+					if (value) {
 						#if mac
-							EnableMenuItem (my subMenuId -> nat.menu.handle, 0)
+							EnableMenuItem (my subMenuId -> nat.menu.handle, 0);
 						#endif
-						;
-					else
+					} else {
 						#if mac
-							DisableMenuItem (my subMenuId -> nat.menu.handle, 0)
+							DisableMenuItem (my subMenuId -> nat.menu.handle, 0);
 						#endif
-						;
+					}
 					#if mac
 						DrawMenuBar ();
 					#endif
@@ -4319,7 +4329,7 @@ void XmUpdateDisplay (Widget displayDummy) {
 	 */
 	int i;
 	(void) displayDummy;
-	for (i = 0; i < 1000; i ++) {
+	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
 		Widget shell = theShells [i];
 		#if mac
 			if (shell && shell -> managed) {
@@ -4495,7 +4505,7 @@ static void _motif_processActivateEvent (EventRecord *event) {
 			 * Deactivate all other shells.
 			 */
 			int i;
-			for (i = 0; i < 1000; i ++) {
+			for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
 				Widget otherShell = theShells [i];
 				if (otherShell && otherShell -> managed && otherShell != shell) {
 					otherShell -> motif.shell.active = ! act;
@@ -4517,7 +4527,7 @@ static void _motif_processOsEvent (EventRecord *event) {
 		WindowPtr frontWindow = FrontWindow ();
 		int act = event -> message & resumeFlag ? true : false, i;
 		theBackground = ! act;
-		for (i = 0; i < 1000; i ++) {
+		for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
 			Widget shell = theShells [i];
 			if (! shell || ! shell -> managed) continue;
 			if (BACKGROUND_WINDOWS_ARE_ACTIVE) {
@@ -4587,7 +4597,7 @@ static int _motif_shell_processKeyboardEquivalent (Widget shell, unsigned char k
 			}
 		}
 	}
-	for (imenu = 1; imenu <= 255; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> macWindow == macWindow) {
+	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> macWindow == macWindow) {
 		Widget child;
 		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
 			if (child -> widgetClass == xmPushButtonWidgetClass &&
@@ -4814,7 +4824,7 @@ static void mac_processMenuChoice (long choice, EventRecord *event) {
 	int macMenuID = HiWord (choice), macMenuItem = LoWord (choice);
 	Widget menu, item;
 	if (macMenuID == 0) return;
-	menu = theMenus [macMenuID == kHMHelpMenuID ? 255 : macMenuID];
+	menu = theMenus [macMenuID == kHMHelpMenuID ? MAXIMUM_NUMBER_OF_MENUS : macMenuID];
 	if (menu == NULL) return;
 	#if ! carbon
 		if (menu -> name [0] == appleMark && macMenuItem > 1) {
@@ -5135,7 +5145,7 @@ void XtAppNextEvent (XtAppContext appContext, XEvent *xevent) {
 
 static int win_shell_processKeyboardEquivalent (Widget me, int kar, int modifiers) {
 	int imenu;
-	for (imenu = 1; imenu <= 255; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
+	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
 		Widget child;
 		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
 			if (child -> widgetClass == xmPushButtonWidgetClass &&

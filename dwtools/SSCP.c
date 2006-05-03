@@ -41,6 +41,8 @@
  djmw 20040617 SSCP(s)_drawConcentrationEllipse(s) draw with reverse axes possible.
  	(not yet supported by commands in Picture window like 'One mark bottom...' because of reversed axes)!
  djmw 20060202 Removed a bug in TableOfReal_to_SSCP that could crash Praat (if nrows < ncols).
+ djmw 20060503 Covariance_getSignificanceOfMeansDifference: set probability = 0 if
+ 	var_pooled = 0 and paired.
 */
 
 #include "SSCP.h"
@@ -1512,27 +1514,38 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	long index1, long index2, double mu, int paired, int equalVariances, 
 	double *probability, double *t, double *ndf)
 {
+	char *proc = "Covariance_getSignificanceOfMeansDifference";
 	long n = my numberOfObservations;
 	double df, var1, var2, var_pooled;
 
 	*probability = *t = NUMundefined;
 	*ndf = 2 * (n - 1);
 	
-	if (! checkTwoIndices (me, index1, index2,
-		"Covariance_getSignificanceOfTwoMeans")) return;
+	if (! checkTwoIndices (me, index1, index2, proc)) return;
 	
 	var1 = my data[index1][index1];
 	var2 = my data[index2][index2];	
 
-	
 	var_pooled = var1 + var2;
+	if (var_pooled == 0)
+	{
+		Melder_warning ("%s: The pooled variance turned out to be zero. "
+			"Check your data. ", proc);
+		return;
+	}
 	if (paired)
 	{
 		var_pooled -= 2 * my data[index1][index2];
 		*ndf /= 2;
 	}
 	
-	if (var_pooled == 0) return;
+	if (var_pooled == 0) 
+	{
+		Melder_warning ("%s: The pooled variance with the paired correction turned out "
+			"to be zero. ", proc);
+		*probability = 0;
+		return;
+	}
 	
 	*t = (my centroid[index1] - my centroid[index2] - mu) / sqrt (var_pooled/n);
 	
