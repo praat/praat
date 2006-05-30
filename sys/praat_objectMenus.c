@@ -270,6 +270,55 @@ DO
 	return Interpreter_numericOrStringExpression (NULL, GET_STRING ("expression"), NULL, NULL);
 END
 
+FORM (praat_reportDifferenceOfTwoProportions, "Report difference of two proportions", "Difference of two proportions")
+	INTEGER ("left Row 1", "71")
+	INTEGER ("right Row 1", "39")
+	INTEGER ("left Row 2", "93")
+	INTEGER ("right Row 2", "27")
+	OK
+DO
+	double a = GET_INTEGER ("left Row 1"), b = GET_INTEGER ("right Row 1");
+	double c = GET_INTEGER ("left Row 2"), d = GET_INTEGER ("right Row 2");
+	double n = a + b + c + d;
+	double aexp, bexp, cexp, dexp, crossDifference, x2;
+	REQUIRE (a >= 0 && b >= 0 && c >= 0 && d >= 0, "Numbers must not be negative.")
+	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), "Row totals must be positive.")
+	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), "Column totals must be positive.")
+	MelderInfo_open ();
+	MelderInfo_writeLine4 ("Observed row 1 =    ", Melder_integer (a), "    ", Melder_integer (b));
+	MelderInfo_writeLine4 ("Observed row 2 =    ", Melder_integer (c), "    ", Melder_integer (d));
+	aexp = (a + b) * (a + c) / n;
+	bexp = (a + b) * (b + d) / n;
+	cexp = (a + c) * (c + d) / n;
+	dexp = (b + d) * (c + d) / n;
+	MelderInfo_writeLine1 ("");
+	MelderInfo_writeLine4 ("Expected row 1 =    ", Melder_double (aexp), "    ", Melder_double (bexp));
+	MelderInfo_writeLine4 ("Expected row 2 =    ", Melder_double (cexp), "    ", Melder_double (dexp));
+	/*
+	 * Continuity correction:
+	 * bring the observed numbers closer to the expected numbers by 0.5 (if possible).
+	 */
+	if (a < aexp) { a += 0.5; if (a > aexp) a = aexp; }
+	else if (a > aexp) { a -= 0.5; if (a < aexp) a = aexp; }
+	if (b < bexp) { b += 0.5; if (b > bexp) b = bexp; }
+	else if (b > bexp) { b -= 0.5; if (b < bexp) b = bexp; }
+	if (c < cexp) { c += 0.5; if (c > cexp) c = cexp; }
+	else if (c > cexp) { c -= 0.5; if (c < cexp) c = cexp; }
+	if (d < dexp) { d += 0.5; if (d > dexp) d = dexp; }
+	else if (d > dexp) { d -= 0.5; if (d < dexp) d = dexp; }
+	MelderInfo_writeLine1 ("");
+	MelderInfo_writeLine4 ("Corrected observed row 1 =    ", Melder_double (a), "    ", Melder_double (b));
+	MelderInfo_writeLine4 ("Corrected observed row 2 =    ", Melder_double (c), "    ", Melder_double (d));
+	
+	n = a + b + c + d;
+	crossDifference = a * d - b * c;
+	x2 = n * crossDifference * crossDifference / (a + b) / (c + d) / (a + c) / (b + d);
+	MelderInfo_writeLine1 ("");
+	MelderInfo_writeLine2 ("Chi-square =    ", Melder_double (x2));
+	MelderInfo_writeLine2 ("Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
+	MelderInfo_close ();
+END
+
 /********** Callbacks of the Read menu. **********/
 
 static int readFromFile (MelderFile file) {
@@ -503,6 +552,7 @@ void praat_addMenus (Widget bar) {
 	button = praat_addMenuCommand ("Objects", "Praat", "Goodies", 0, praat_UNHIDABLE, 0);
 	if (button) XtVaGetValues (button, XmNsubMenuId, & goodiesMenu, NULL);
 	praat_addMenuCommand ("Objects", "Goodies", "Calculator...", 0, 'U', DO_praat_calculator);
+	praat_addMenuCommand ("Objects", "Goodies", "Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
 	button = praat_addMenuCommand ("Objects", "Praat", "Preferences", 0, praat_UNHIDABLE, 0);
 	if (button) XtVaGetValues (button, XmNsubMenuId, & preferencesMenu, NULL);
 	praat_addMenuCommand ("Objects", "Preferences", "Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */

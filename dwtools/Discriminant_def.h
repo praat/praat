@@ -1,6 +1,6 @@
 /* Discriminant_def.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@
 /*
  djmw 1998
  djmw 20020813 GPL header
+ djmw 20060529 Added object version numbers.
 */
 
 #define ooSTRUCT Discriminant
 oo_DEFINE_CLASS (Discriminant, Eigen)
 	
 	oo_LONG (numberOfGroups)
-	oo_OBJECT (SSCPs, groups)
-	oo_OBJECT (SSCP, total)
+	oo_OBJECT (SSCPs, 0, groups)
+	oo_OBJECT (SSCP, 0, total)
 	oo_DOUBLE_VECTOR (aprioriProbabilities, my numberOfGroups)
 	oo_DOUBLE_MATRIX (costs, my numberOfGroups, my numberOfGroups)
 

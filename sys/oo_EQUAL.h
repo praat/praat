@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2003 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2002/06/01
  * pb 2003/02/07 added oo_FILE and oo_DIR
  * pb 2003/06/11 made struct_equal global
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 #include "oo_undef.h"
@@ -139,10 +139,10 @@
 
 
 
-#define oo_OBJECT(type,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	if (! my x != ! thy x || my x && ! Data_equal (my x, thy x)) return 0;
 
-#define oo_COLLECTION(type,x,item_type)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (! my x != ! thy x || my x && ! Data_equal (my x, thy x)) return 0;
 
 #define oo_FILE(x)  \

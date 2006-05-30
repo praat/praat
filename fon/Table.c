@@ -1142,6 +1142,50 @@ end:
 	return thee;
 }
 
+/*
+Table TableOfReal_to_Table (TableOfReal me, char *) {
+	long irow, icol;
+	TableOfReal thee;
+	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
+	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		Table_numericize (me, icol);
+	}
+	if (labelColumn) {
+		for (icol = 1; icol < labelColumn; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol - 1, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			char *string = row -> cells [labelColumn]. string;
+			TableOfReal_setRowLabel (thee, irow, string ? string : "");
+			for (icol = 1; icol < labelColumn; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;
+			}
+			for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol - 1] = row -> cells [icol]. number;
+			}
+		}
+	} else {
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			for (icol = 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;
+			}
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
+}
+*/
+
 double Table_getFisherF (Table me, long col1, long col2);
 double Table_getOneWayAnovaSignificance (Table me, long col1, long col2);
 double Table_getFisherFLowerLimit (Table me, long col1, long col2, double significanceLevel);

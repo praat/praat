@@ -35,6 +35,7 @@
  * pb 2006/01/29 run-time type checking
  * pb 2006/01/30 lexical analysis: binary rather than linear search for language names
  * pb 2006/04/17 .row$, .col$
+ * pb 2006/05/30 replace_regex$
  */
 
 #include <ctype.h>
@@ -138,7 +139,7 @@ enum { GEENSYMBOOL_,
 	#define HIGH_FUNCTION_STRNUM  FILE_READABLE_
 		DATESTR_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENTSTR_, INDEX_, RINDEX_,
-		STARTS_WITH_, ENDS_WITH_, INDEX_REGEX_, RINDEX_REGEX_,
+		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
 		FIXEDSTR_, PERCENTSTR_,
@@ -199,7 +200,7 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"length", "fileReadable",
 	"date$",
 	"left$", "right$", "mid$", "environment$", "index", "rindex",
-	"startsWith", "endsWith", "index_regex", "rindex_regex",
+	"startsWith", "endsWith", "replace$", "index_regex", "rindex_regex", "replace_regex$",
 	"extractNumber", "extractWord$", "extractLine$",
 	"selected", "selected$", "numberOfSelected",
 	"fixed$", "percent$",
@@ -1024,6 +1025,16 @@ static int parsePowerFactor (void) {
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		} else if (symbol == REPLACESTR_ || symbol == REPLACE_REGEXSTR_) {
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (KOMMA_)) return 0;
 			if (! parseExpression ()) return 0;
 			if (! pas (KOMMA_)) return 0;
 			if (! parseExpression ()) return 0;
@@ -2302,6 +2313,35 @@ static void do_index_regex (int backward) {
 	}
 end: return;
 }
+static void do_replaceStr (void) {
+	Stackel x = pop, u = pop, t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+		long numberOfMatches;
+		char *result = str_replace_literal (s->content.string, t->content.string, u->content.string, x->content.number, & numberOfMatches); cherror
+		pushString (result);
+	} else {
+		Melder_error ("The function \"replace$\" requires three strings and a number."); goto end;
+	}
+end: return;
+}
+static void do_replace_regexStr (void) {
+	Stackel x = pop, u = pop, t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+		char *errorMessage;
+		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
+		if (compiled_regexp == NULL) {
+			char *result = Melder_strdup (""); cherror
+			pushString (result);
+		} else {
+			long numberOfMatches;
+			char *result = str_replace_regexp (s->content.string, compiled_regexp, u->content.string, x->content.number, & numberOfMatches); cherror
+			pushString (result);
+		}
+	} else {
+		Melder_error ("The function \"replace_regex$\" requires three strings and a number."); goto end;
+	}
+end: return;
+}
 static void do_extractNumber (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
@@ -3008,8 +3048,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RINDEX_: { do_rindex ();
 } break; case STARTS_WITH_: { do_stringMatchesCriterion (Melder_STRING_STARTS_WITH);
 } break; case ENDS_WITH_: { do_stringMatchesCriterion (Melder_STRING_ENDS_WITH);
+} break; case REPLACESTR_: { do_replaceStr ();
 } break; case INDEX_REGEX_: { do_index_regex (FALSE);
 } break; case RINDEX_REGEX_: { do_index_regex (TRUE);
+} break; case REPLACE_REGEXSTR_: { do_replace_regexStr ();
 } break; case EXTRACT_NUMBER_: { do_extractNumber ();
 } break; case EXTRACT_WORDSTR_: { do_extractTextStr (TRUE);
 } break; case EXTRACT_LINESTR_: { do_extractTextStr (FALSE);

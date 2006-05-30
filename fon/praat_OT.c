@@ -1,6 +1,6 @@
 /* praat_OT.c
  *
- * Copyright (C) 1997-2005 Paul Boersma
+ * Copyright (C) 1997-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/12/17
+ * pb 2006/05/17
  */
 
 #include "praat.h"
@@ -630,9 +630,11 @@ END
 FORM (OTMulti_drawTableau, "Draw tableau", "OT learning")
 	SENTENCE ("Partial form 1", "")
 	SENTENCE ("Partial form 2", "")
+	BOOLEAN ("Show disharmonies", 1)
 	OK
 DO
-	EVERY_DRAW (OTMulti_drawTableau (OBJECT, GRAPHICS, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2")))
+	EVERY_DRAW (OTMulti_drawTableau (OBJECT, GRAPHICS, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		GET_INTEGER ("Show disharmonies")))
 END
 
 DIRECT (OTMulti_edit)

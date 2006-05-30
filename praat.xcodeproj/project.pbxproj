@@ -719,23 +719,6 @@
 		23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23FDF6A309FCFF06001B23B7 /* sendpraat.c */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		23AEE89509A233A1000D3DB7 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		23AEE89609A233A1000D3DB7 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		23E5C92009A228FA004E41D5 /* Praat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Praat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E5C93009A228FB004E41D5 /* main_Praat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_Praat.c; path = main/main_Praat.c; sourceTree = SOURCE_ROOT; };
@@ -2780,20 +2763,11 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				PRODUCT_NAME = praat_macx;
-			};
 			dependencies = (
 			);
 			name = praat_macx;
 			productName = praat_macx;
 			productReference = 23E5C92009A228FA004E41D5 /* Praat.app */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict/>
-</plist>
-";
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -2802,12 +2776,6 @@
 		23E5C91309A228F8004E41D5 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 23E5C91409A228F8004E41D5 /* Build configuration list for PBXProject "praat" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				23AEE89509A233A1000D3DB7 /* Development */,
-				23AEE89609A233A1000D3DB7 /* Deployment */,
-			);
 			hasScannedForEncodings = 0;
 			mainGroup = 23E5C91109A228F6004E41D5;
 			productRefGroup = 23E5C92109A228FA004E41D5 /* Products */;

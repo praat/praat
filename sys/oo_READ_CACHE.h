@@ -1,6 +1,6 @@
 /* oo_READ_CACHE.h
  *
- * Copyright (C) 1994-2002 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2001/10/18
  * pb 2002/03/07 GPL
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 #include "oo_undef.h"
@@ -127,10 +128,10 @@
 			if (! Type##_readCache (& my x [i], f)) return 0; \
 	}
 
-#define oo_OBJECT(Class,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	if (cacgetex (f)) { if (! (my x = new (Class)) || ! Data_readCache (my x, f)) return 0; }
 
-#define oo_COLLECTION(Class,x,ItemClass)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
 		long n = cacgeti4 (f), i; \
 		if (! (my x = Class##_create ())) return 0; \

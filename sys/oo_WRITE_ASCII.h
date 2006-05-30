@@ -1,6 +1,6 @@
 /* oo_WRITE_ASCII.h
  *
- * Copyright (C) 1994-2003 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 1999/05/21
  * pb 2002/03/07 GPL
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 #include "oo_undef.h"
@@ -167,11 +167,11 @@
 	ascexdent ();
 
 
-#define oo_OBJECT(Class,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	ascputex (my x != NULL, f, #x); \
 	if (my x && ! Data_writeAscii (my x, f)) return 0;
 
-#define oo_COLLECTION(Class,x,ItemClass)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	ascputi4 (my x ? my x -> size : 0, f, #x ": size"); \
 	if (my x) { \
 		long i; \

@@ -1,6 +1,6 @@
 /* SpellingChecker_def.h
  *
- * Copyright (C) 1999-2002 Paul Boersma
+ * Copyright (C) 1999-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1999/05/28
- * pb 2002/07/16 GPL
+ * pb 2006/05/29
  */
 
 #define ooSTRUCT SpellingChecker
@@ -36,8 +35,8 @@ oo_DEFINE_CLASS (SpellingChecker, Data)           /* CGN: */
 	oo_STRING (allowAllWordsContaining)       /* * xxx */
 	oo_STRING (allowAllWordsStartingWith)     /* */
 	oo_STRING (allowAllWordsEndingIn)         /* - */
-	oo_OBJECT (WordList, wordList)
-	oo_COLLECTION (SortedSetOfString, userDictionary, SimpleString)
+	oo_OBJECT (WordList, 0, wordList)
+	oo_COLLECTION (SortedSetOfString, userDictionary, SimpleString, 0)
 oo_END_CLASS (SpellingChecker)
 #undef ooSTRUCT
 

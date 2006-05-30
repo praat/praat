@@ -1,6 +1,6 @@
 /* TextGrid_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1997/03/07
- * pb 2002/07/16 GPL
+ * pb 2006/05/29
  */
 
 
@@ -51,7 +50,7 @@ oo_END_CLASS (TextInterval)
 #define ooSTRUCT TextTier
 oo_DEFINE_CLASS (TextTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, points, TextPoint)
+	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
 
 oo_END_CLASS (TextTier)
 #undef ooSTRUCT
@@ -60,7 +59,7 @@ oo_END_CLASS (TextTier)
 #define ooSTRUCT IntervalTier
 oo_DEFINE_CLASS (IntervalTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval)
+	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
 
 oo_END_CLASS (IntervalTier)
 #undef ooSTRUCT
@@ -69,7 +68,7 @@ oo_END_CLASS (IntervalTier)
 #define ooSTRUCT TextGrid
 oo_DEFINE_CLASS (TextGrid, Function)
 
-	oo_OBJECT (Ordered, tiers)   /* TextTier and IntervalTier objects */
+	oo_OBJECT (Ordered, 0, tiers)   /* TextTier and IntervalTier objects */
 
 oo_END_CLASS (TextGrid)
 #undef ooSTRUCT

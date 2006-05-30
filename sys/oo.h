@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2004 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR
  * pb 2003/06/11 made structure functions global
  * pb 2004/10/16 C++ compatible structs
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 /*** Single types. ***/
@@ -278,8 +279,8 @@
 #define oo_WIDGET_SET(x,setType)  Widget x [1 + enumlength (setType)];
 #define oo_WIDGET_VECTOR_FROM(x,min,max)  Widget *x;
 
-#define oo_OBJECT(Type,x)  Type x;
-#define oo_COLLECTION(Type,x,ItemType)  Type x;
+#define oo_OBJECT(Class,version,x)  Class x;
+#define oo_COLLECTION(Class,x,ItemClass,version)  Class x;
 #define oo_FILE(x)  structMelderFile x;
 #define oo_DIR(x)  structMelderDir x;
 

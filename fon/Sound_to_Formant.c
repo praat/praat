@@ -1,6 +1,6 @@
 /* Sound_to_Formant.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
  */
 
 /*
- * pb 2000/05/07
  * pb 2002/07/16 GPL
  * pb 2003/05/15 replaced memcof with NUMburg
  * pb 2003/09/18 default time step is 4 times oversampling
+ * pb 2006/05/10 better handling of interruption in Sound_to_Formant
+ * pb 2006/05/10 better handling of NULL from Polynomial_to_Roots
  */
 
 #include "Sound_to_Formant.h"
@@ -50,6 +51,7 @@ static int burg (float sample [], long nsamp_window, float cof [], int nPoles,
 	 * Find the roots of the polynomial.
 	 */
 	roots = Polynomial_to_Roots (polynomial); cherror
+	if (roots == NULL) { Melder_error ("Cannot find roots."); goto end; }
 	Roots_fixIntoUnitCircle (roots);
 
 	Melder_assert (frame -> nFormants == 0 && frame -> formant == NULL);
@@ -322,8 +324,12 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 
 		if (which == 1 && ! burg (frame_f, endSample - startSample + 1, cof_f, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin) ||
 		    which == 2 && ! splitLevinson (frame_d, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx))
+		{
+			Melder_clearError ();
 			Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
-		Melder_progress ((double) iframe / (double) nFrames, "Formant analysis: frame %ld", iframe);
+		}
+		if (! Melder_progress ((double) iframe / (double) nFrames, "Formant analysis: frame %ld", iframe))
+			break;
 	}
 end:
 	Melder_progress (1.0, NULL);

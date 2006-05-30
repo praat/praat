@@ -243,7 +243,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			    (fontInfo = fontInfos [font] [size] [style] = loadFont (me, font, size, style)) == NULL) return;
 			charInfo = & fontInfo -> per_char [info -> xwinEncoding - fontInfo -> min_char_or_byte2];
 			lc -> width = charInfo -> width;
-			lc -> baseline = lc -> baseline < 0 ? - my fontSize / 4 : lc -> baseline > 0 ? my fontSize / 3 : 0;
+			lc -> baseline *= my fontSize * 0.01;
 			lc -> code = info -> xwinEncoding;
 			lc -> font.string = 0;
 			lc -> font.integer = (long) fontInfo -> fid;
@@ -303,8 +303,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				GetTextExtentPoint32 (my dc, (code = lc -> code, & code), 1, & extent);
 				lc -> width = extent. cx;
 			}
-			lc -> baseline = ( lc -> baseline < 0 ? - my fontSize / 4 : lc -> baseline > 0 ? my fontSize / 3 : 0 )
-				* my resolution / 72.0;
+			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
 			lc -> font.string = NULL;
 			lc -> font.integer = font;   // Graphics_HELVETICA .. Graphics_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
@@ -366,9 +365,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				TextSize (size);
 				lc -> width = CharWidth (lc -> code);
 			}
-			lc -> baseline = ! lc -> baseline ? 0 :
-				lc -> baseline < 0 ? - my fontSize * (double) my resolution / 72.0 / 3 :
-				my fontSize * (double) my resolution / 72.0 / 3;
+			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
 			lc -> font.string = NULL;
 			lc -> font.integer = font;
 			lc -> style = style;
@@ -477,8 +474,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 		/*
 		 * Convert size and baseline information to device coordinates.
 		 */
-		lc -> size = normalSize * lc -> size * 0.01;
-		lc -> baseline = lc -> baseline < 0 ? - normalSize / 4 : lc -> baseline > 0 ? normalSize / 3 : 0;
+		lc -> size *= normalSize * 0.01;
+		lc -> baseline *= normalSize * 0.01;
 
 		if (font == Graphics_COURIER) {
 			lc -> width = 600;   /* Courier. */
@@ -1311,8 +1308,12 @@ static void stringToWidechar (Graphics me, const char *txt, _Graphics_widechar w
 		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
 			(info -> first == '/' || info -> first == '|') && info -> second == ' ' ? Graphics_COURIER : my font;
 		out -> link = wordLink | globalLink;
-		out -> baseline = charSuperscript | globalSuperscript ? 30 : charSubscript | globalSubscript ? -20 : 0;
-		out -> size = globalSmall || out -> baseline != 0 ? 80 : info -> first == '/' && info -> second == ' ' ? 120 : 100;
+		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
+		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
+		if (info -> first == '/' && info -> second == ' ') {
+			out -> baseline -= out -> size / 12;
+			out -> size += out -> size / 10;
+		}
 		out -> code = out -> first;
 		charItalic = charBold = charSuperscript = charSubscript = 0;
 		out ++;

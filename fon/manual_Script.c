@@ -850,7 +850,7 @@ TAG ("##besselI (%n, %x)")
 TAG ("##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN ("Formulas 5. String functions", "ppgb", 20050901)
+MAN_BEGIN ("Formulas 5. String functions", "ppgb", 20060530)
 INTRO ("String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -889,14 +889,29 @@ TAG ("##endsWith (a\\$ , b\\$ )")
 DEFINITION ("determines whether the string %%a\\$ % ends with the string %%b\\$ %. After")
 CODE2 ("where = endsWith (\"internationalization\", \"nation\")")
 DEFINITION ("the variable %where contains the number 0 (false).")
-CODE2 ("##index_regex (a\\$ , b\\$ )")
+TAG ("##replace$ (a\\$ , b\\$ , c\\$ , n)")
+DEFINITION ("gives a string that is like %%a\\$ %, but where (at most %n) occurrences of %%b\\$ % are replaced with the string %%c\\$ %. After")
+CODE2 ("s\\$  = replace\\$  (\"hello\", \"l\", \"m\", 0)")
+DEFINITION ("the variable %%s\\$ % contains the string \"hemmo\". After")
+CODE2 ("s\\$  = replace\\$  (\"hello\", \"l\", \"m\", 1)")
+DEFINITION ("the variable %%s\\$ % contains the string \"hemlo\". The number %n determines the maximum number of occurrences of %%b\\$ % "
+	"that can be replaced. If %n is 0, all occurrences are replaced.")
+TAG ("##index_regex (a\\$ , b\\$ )")
 DEFINITION ("determines where the string %%a\\$ % first matches the @@regular expressions|regular expression@ %%b\\$ %. After")
-TAG ("where = index_regex (\"internationalization\", \"a.*n\")")
+CODE2 ("where = index_regex (\"internationalization\", \"a.*n\")")
 DEFINITION ("the variable %where contains the number 7. If there is no match, the outcome is 0.")
-CODE2 ("##rindex_regex (a\\$ , b\\$ )")
+TAG ("##rindex_regex (a\\$ , b\\$ )")
 DEFINITION ("determines where the string %%a\\$ % last matches the @@regular expressions|regular expression@ %%b\\$ %. After")
-TAG ("where = rindex_regex (\"internationalization\", \"a.*n\")")
+CODE2 ("where = rindex_regex (\"internationalization\", \"a.*n\")")
 DEFINITION ("the variable %where contains the number 16. If there is no match, the outcome is 0.")
+TAG ("##replace_regex$ (a\\$ , b\\$ , c\\$ , n)")
+DEFINITION ("gives a string that is like %%a\\$ %, but where (at most %n) substrings that match the @@regular expressions|regular expression@ %%b\\$ % "
+	"are replaced with the expression %%c\\$ %. After")
+CODE2 ("s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 0)")
+DEFINITION ("the variable %%s\\$ % contains the string \"hheelllloo\". If there is no match, the outcome is the empty string \"\". After")
+CODE2 ("s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 1)")
+DEFINITION ("the variable %%s\\$ % contains the string \"hhello\". The number %n determines the maximum number of text pieces "
+	"that can be replaced. If %n is 0, all matching text pieces are replaced.")
 TAG ("##fixed\\$  (number, precision)")
 DEFINITION ("formats a number as a string with %precision digits after the decimal point. Thus, $$fixed\\$  (72.65687, 3)$ "
 	"becomes the string $$72.657$, and $$fixed\\$  (72.65001, 3)$ becomes the string $$72.650$. "

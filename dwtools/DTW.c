@@ -1,6 +1,6 @@
 /* DTW.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20050302 Path finder modified with sakoe-chiba band
  djmw 20050305 DTW_to_Polygon
  djmw 20050306 DTW_swapAxes
+ djmw 20050530 Added Matrices_to_DTW
 */
 
 #include "DTW.h"
@@ -1022,7 +1023,102 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	NUMfvector_free (d, ixmin);
 }
 
+/*
+	metric = 1...n (sum (a_i^n))^(1/n)
+*/
+DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metric)
+{
+	iam (Matrix); thouart (Matrix);
+	DTW him = NULL;
+	long i, j, k;
+
+	if (thy ny != my ny) return Melder_errorp ("Matrices_to_DTW: Columns must have the same dimensions.");
+
+	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
+	if (him == NULL) return NULL;
+	
+	for (i = 1; i <= my nx; i++)
+	{
+		for (j = 1; j <= thy nx; j++)
+		{	/*
+				First divide distance by maximum to prevent overflow when metric
+				is a large number.
+				d = (x^n)^(1/n) may overflow if x>1 & n >>1 even if d would not overflow!
+			*/
+			double dmax = 0, d = 0, dtmp;
+			for (k = 1; k <= my ny; k++)
+			{
+				dtmp = fabs (my z[k][i] - thy z[k][j]);
+				if (dtmp > dmax) dmax = dtmp;
+			}
+			if (dmax > 0)
+			{
+				for (k = 1; k <= my ny; k++)
+				{
+					dtmp = fabs (my z[k][i] - thy z[k][j]) / dmax;
+					d +=  pow (dtmp, metric);
+				}
+			}
+			d = dmax * pow (d, 1.0 / metric);
+			his z[i][j] = d / my ny; /* == d * dy / ymax */
+		}
+		if ((i % 10) == 1 && ! Melder_progress (0.999 * i / my nx,
+			 "Calculate distances: column %ld from %ld", i, my nx)) goto end;
+	}
+	DTW_findPath (him, matchStart, matchEnd, slope);
+end:
+	Melder_progress (1.0, NULL);
+	if (Melder_hasError ()) forget (him);
+	return him;
+}
+
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
+	int matchEnd, int slope, int metric)
+{
+	Matrix m1 = NULL, m2 = NULL;
+	DTW him = NULL;
+	long i, j, k;
+	
+	if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny)
+	{
+		 return Melder_errorp("Spectrograms_to_DTW: #frequencies and/or "
+		 	"frequency ranges do not match.");
+	}
+	if (((m1 = Spectrogram_to_Matrix (me)) == NULL) ||
+		((m2 = Spectrogram_to_Matrix (thee)) == NULL) ||
+		((him = DTW_create (my xmin, my xmax, my nx, my dx, my x1,
+			thy xmin, thy xmax, thy nx, thy dx, thy x1)) == NULL)) goto end;
+			
+	/*
+		Take log10 for dB's (4e-10 scaling not necessary)
+	*/
+	
+	for (i = 1; i <= my ny; i++)
+	{
+		for (j = 1; j <= my nx; j++)
+		{
+			m1 -> z[i][j] = 10 * log10 (m1 -> z[i][j]);
+		}
+	}
+	for (i = 1; i <= thy ny; i++)
+	{
+		for (j = 1; j <= thy nx; j++)
+		{
+			m2 -> z[i][j] = 10 * log10 (m2 -> z[i][j]);
+		}
+	}
+	
+	him = Matrices_to_DTW (m1, m2, matchStart, matchEnd, slope, metric);
+	
+end:
+	forget (m1);
+	forget (m2);
+	if (Melder_hasError ()) forget (him);
+	return him;
+}
+
+
+static DTW Spectrograms_to_DTW_old (Spectrogram me, Spectrogram thee, int matchStart,
 	int matchEnd, int slope)
 {
 	Matrix m1 = NULL, m2 = NULL;

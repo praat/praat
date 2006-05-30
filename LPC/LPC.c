@@ -1,6 +1,6 @@
 /* LPC.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20020812 GPL header
  djmw 20030612 Removed LPC_Frame_free
+ djmw 20060510 LPC_drawPoles error cleared if something goes wrong.
 */
 
 #include "LPC_and_Polynomial.h"
@@ -123,11 +124,19 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
 {
-	Polynomial p = NULL; Roots r = NULL;
-	
-	if ((p = LPC_to_Polynomial (me, time)) &&
-		(r = Polynomial_to_Roots (p))) Roots_draw (r, g, -1, 1, -1, 1, "+", 12, garnish);
-	forget (p); forget (r);
+	Polynomial p = LPC_to_Polynomial (me, time);
+
+	if (p != NULL)
+	{
+		Roots r = Polynomial_to_Roots (p);
+		if (r != NULL)
+		{
+			Roots_draw (r, g, -1, 1, -1, 1, "+", 12, garnish);
+			forget (r);
+		}
+		forget (p);
+	}
+	Melder_clearError ();
 }
 
 /*

@@ -40,6 +40,8 @@
  djmw 20040303 Added NUMstring_containsPrintableCharacter.
  djmw 20050406 NUMprocrutus->NUMprocrustes
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
+ djmw 20060517 Added NUMregexp_compile
+ djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
 */
 
 #include "SVD.h"
@@ -311,8 +313,8 @@ char *strstr_regexp (const char *string, const char *search_regexp)
 	return charp;
 }
 
-char *str_replace_literal (char *string, const char *search, 
-	const char *replace, long maximumNumberOfReplaces, long *nmatches)
+char *str_replace_literal (char *string, const char *search, const char *replace,
+	long maximumNumberOfReplaces, long *nmatches)
 {
 	int len_replace, len_search, len_string, len_result;
 	int i, nchar, result_nchar = 0;
@@ -322,9 +324,12 @@ char *str_replace_literal (char *string, const char *search,
 	
 	if (string == NULL || search == NULL || replace == NULL) return NULL;
 	
-	len_search = strlen (search);
-	len_replace = strlen (replace);
 	
+	len_string = strlen (string);
+	if (len_string == 0) maximumNumberOfReplaces = 1;
+	len_search = strlen (search);
+	if (len_search == 0) maximumNumberOfReplaces = 1;
+
 	/*
 		To allocate memory for 'result' only once, we have to know how many
 		matches will occur.
@@ -332,13 +337,24 @@ char *str_replace_literal (char *string, const char *search,
 	
 	pos = string; *nmatches = 0;
 	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
-	while ((pos = strstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+
+	if (len_search == 0) /* Search is empty string... */
 	{
-		pos += len_search; 
-		(*nmatches)++;	
+		if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
+	}
+	else
+	{
+		if (len_string != 0) /* Because empty string always matches */
+		{
+			while ((pos = strstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+			{
+				pos += len_search; 
+				(*nmatches)++;
+			}
+		}
 	}
 	
-	len_string = strlen (string);
+	len_replace = strlen (replace);
 	len_result = len_string + *nmatches * (len_replace - len_search);
 	result = (char *) Melder_malloc (len_result + 1);
 	result[len_result] = '\0';
@@ -389,7 +405,7 @@ char *str_replace_literal (char *string, const char *search,
 char *str_replace_regexp (char *string, regexp *compiledSearchRE, 
 	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
-	long i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
+	long i;
 	int buf_size; 					/* inclusive nul-byte */
 	int buf_nchar = 0;				/* # characters in 'buf' */
 	int string_length;				/* exclusive 0-byte*/
@@ -400,10 +416,13 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	char *buf, *tbuf;
 
 	*nmatches = 0;	
-	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL)
+	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || strlen (replaceRE) == 0)
 		return NULL;
 		
 	string_length = strlen (string);
+	if (string_length == 0) maximumNumberOfReplaces = 1;
+
+	i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
 		  
 	/*
 		We do not know the size of the replaced string in advance,
@@ -418,7 +437,8 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		extra memory reallocation.
 	*/
 	  	
-	buf_size = 2 * string_length + 1;	
+	buf_size = 2 * string_length + 1;
+	buf_size = MAX (buf_size, 100);	
 	buf = (char *) Melder_malloc (buf_size);
 	if (buf == NULL) return 0;
 	
@@ -537,9 +557,10 @@ static char **strs_replace_literal (char **from, long lo, long hi,
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
-		if (from[i] == NULL) continue;
+		/* Treat a NULL as an empty string */
+		char *string = from[i] == NULL ? "" : from[i];
 
-		result[i] = str_replace_literal (from[i], search, replace, 
+		result[i] = str_replace_literal (string, search, replace,
 			maximumNumberOfReplaces, &nmatches_sub);
 		if (result[i] == NULL) goto end;
 		if (nmatches_sub > 0)
@@ -575,8 +596,9 @@ static char **strs_replace_regexp (char **from, long lo, long hi,
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
-		if (from[i] == NULL) continue;
-		result[i] = str_replace_regexp (from[i], compiledRE, replaceRE, 
+		/* Treat a NULL as an empty string */
+		char *string = from[i] == NULL ? "" : from[i];
+		result[i] = str_replace_regexp (string, compiledRE, replaceRE,
 			maximumNumberOfReplaces, &nmatches_sub);
 		if (result[i] == NULL) goto end;
 		if (nmatches_sub > 0)
@@ -593,9 +615,8 @@ end:
 	return result;	
 }
 
-char **strs_replace (char **from, long lo, long hi, 
-	const char *search, const char *replace, int maximumNumberOfReplaces,
-	long *nmatches, long *nstringmatches, int use_regexp)
+char **strs_replace (char **from, long lo, long hi, const char *search, const char *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp)
 {
 	if (use_regexp) return strs_replace_regexp (from, lo, hi, search,
 		replace, maximumNumberOfReplaces, nmatches, nstringmatches);

@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2002/03/10 removed MelderFile_length
  * pb 2002/07/16 GPL
  * pb 2003/09/12 MelderFile_checkSoundFile
  * pb 2004/10/17 test for NULL file pointer when closing in Sound_read(2)FromSoundFile
  * pb 2005/06/17 Mac headers
  * pb 2006/01/05 movies for Mac
+ * pb 2006/05/29 QuickTime inclusion made optional
  */
 
 #include "Sound.h"
@@ -72,15 +72,17 @@ static void Sound_alawDecode (Sound me) {
 	} *SndResourcePtr, **SndResourceHandle;
 #endif
 #if defined (__MACH__) || defined (_WIN32)
-	#if defined (__MACH__)
+	#if defined (__MACH__) && defined (__MWERKS__)
 		typedef unsigned char Boolean;
 	#endif
 	#if defined (_WIN32)
 		#define TARGET_API_MAC_CARBON  0
 	#endif
-	#include <QuickTime.h>
+	#if ! defined (DONT_INCLUDE_QUICKTIME)
+		#include <QuickTime.h>
+	#endif
 #endif
-#if defined (_WIN32)
+#if defined (_WIN32) && ! defined (DONT_INCLUDE_QUICKTIME)
 	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
 	static int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		FSSpec *fspec = (FSSpec *) void_fspec;
@@ -244,7 +246,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 
 Sound Sound_readFromMovieFile (MelderFile file) {
 	Sound me = NULL;
-#if defined (__MACH__) || defined (_WIN32)
+#if (defined (__MACH__) || defined (_WIN32)) && ! defined (DONT_INCLUDE_QUICKTIME)
 	int debug = 0;
 	FSSpec fspec;
 	short refNum = 0, resourceID = 0;
@@ -419,6 +421,8 @@ end:
 	if (soundConverter) SoundConverterClose (soundConverter);
 	if (refNum) CloseMovieFile (refNum);
 	iferror forget (me);
+#else
+	Melder_error ("This edition of Praat cannot handle movie files.");
 #endif
 	return me;
 }

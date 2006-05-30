@@ -37,7 +37,7 @@ oo_END_CLASS (PairProbability)
 #define ooSTRUCT PairDistribution
 oo_DEFINE_CLASS (PairDistribution, Data)
 
-	oo_COLLECTION (Ordered, pairs, PairProbability)
+	oo_COLLECTION (Ordered, pairs, PairProbability, 0)
 
 oo_END_CLASS (PairDistribution)
 #undef ooSTRUCT

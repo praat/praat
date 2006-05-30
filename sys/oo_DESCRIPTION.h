@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2004 Paul Boersma
+ * Copyright (C) 1994-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2004/10/16 replaced structType with theStructType, struct Type with struct structType
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 #include "oo_undef.h"
@@ -299,8 +300,8 @@
 #undef oo_WIDGET_VECTOR
 #define oo_WIDGET_VECTOR(Type,x,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 1, 0, #n },
 
-#define oo_OBJECT(Type,x)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (Type), #Type, & theStruct##Type },
-#define oo_COLLECTION(Type,x,ItemType)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##ItemType), #Type, & theStruct##Type, 0, (const char *) & theStruct##ItemType },
+#define oo_OBJECT(Type,version,x)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (Type), #Type, & theStruct##Type },
+#define oo_COLLECTION(Type,x,ItemType,version)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##ItemType), #Type, & theStruct##Type, 0, (const char *) & theStruct##ItemType },
 #define oo_FILE(x)
 #define oo_DIR(x)
 

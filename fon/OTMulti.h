@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/07/04
+ * pb 2006/05/17
  */
 
 #ifndef _Data_h_
@@ -66,7 +66,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise);
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char *form2);
+void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char *form2, int showDisharmonies);
 
 void OTMulti_reset (OTMulti me, double ranking);
 int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);

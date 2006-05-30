@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20020516 GPL header
+ djmw 20060517 Latest modification
 */
 
 #ifndef _TextGrid_h_
@@ -79,5 +80,12 @@ int TextGrid_extendTime (TextGrid me, double delta_time, int position);
 */
 
 int TextGrid_setTierName (TextGrid me, long itier, char *newName);
+
+int TextTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+
+int IntervalTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+
+int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+
 
 #endif /* _TextGrid_extensions_h_ */

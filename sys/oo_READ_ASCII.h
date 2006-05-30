@@ -22,6 +22,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2005/11/24 more informative error messages
  * pb 2006/04/12 guard against too new versions
+ * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  */
 
 #include "oo_undef.h"
@@ -134,16 +135,26 @@
 			if (! Type##_readAscii (& my x [i], f)) return 0; \
 	}
 
-#define oo_OBJECT(Class,x)  \
-	if (ascgetex (f)) { if (! (my x = new (Class)) || ! Data_readAscii (my x, f)) return 0; }
+#define oo_OBJECT(Class,version,x)  \
+	if (ascgetex (f)) { \
+		long saveVersion = Thing_version; \
+		if ((my x = new (Class)) == NULL) return 0; \
+		Thing_version = version; \
+		if (! Data_readAscii (my x, f)) return 0; \
+		Thing_version = saveVersion; \
+	}
 
-#define oo_COLLECTION(Class,x,ItemClass)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
 		long n = ascgeti4 (f), i; \
-		if (! (my x = Class##_create ())) return 0; \
+		if ((my x = Class##_create ()) == NULL) return 0; \
 		for (i = 1; i <= n; i ++) { \
+			long saveVersion = Thing_version; \
 			ItemClass item = new (ItemClass); \
-			if (! item || ! item -> methods -> readAscii (item, f)) return 0; \
+			if (item == NULL) return 0; \
+			Thing_version = version; \
+			if (! item -> methods -> readAscii (item, f)) return 0; \
+			Thing_version = saveVersion; \
 			if (! Collection_addItem (my x, item)) return 0; \
 		} \
 	}

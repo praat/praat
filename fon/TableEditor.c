@@ -20,16 +20,20 @@
 /*
  * pb 2006/02/11 first version
  * pb 2006/04/22 all cells visible
+ * pb 2006/05/11 raised maximum number of visible columns
+ * pb 2006/05/11 underscores are not subscripts
  */
 
 #include "TableEditor.h"
 #include "machine.h"
 #include "EditorM.h"
 
+#define MAXNUM_VISIBLE_COLUMNS  100
+
 #define TableEditor_members Editor_members \
 	long topRow, leftColumn, selectedRow, selectedColumn; \
 	Widget text, drawingArea, horizontalScrollBar, verticalScrollBar; \
-	double columnLeft [29], columnRight [29]; \
+	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS]; \
 	Graphics graphics;
 #define TableEditor_methods Editor_methods \
 	void (*draw) (I); \
@@ -208,7 +212,7 @@ static void draw (I) {
 	double columnWidth, cellWidth;
 	long irow, icol;
 	long rowmin = my topRow, rowmax = rowmin + 197;
-	long colmin = my leftColumn, colmax = colmin + 28;
+	long colmin = my leftColumn, colmax = colmin + (MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
 	Graphics_clearWs (my graphics);
@@ -322,8 +326,9 @@ MOTIF_CALLBACK (cb_input)
 	MotifEvent event = MotifEvent_fromCallData (call);
 	int shiftKeyPressed = MotifEvent_shiftKeyPressed (event);
 	double xWC, yWC;
-	Melder_assert (MotifEvent_isButtonPressedEvent (event));
-	Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
+	if (MotifEvent_isButtonPressedEvent (event)) {
+		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
+	}
 MOTIF_CALLBACK_END
 
 TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
@@ -338,6 +343,7 @@ TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
 	Graphics_setViewport (my graphics, 0, 3000, 0, 3000);
 	Graphics_setFont (my graphics, Graphics_COURIER);
 	Graphics_setFontSize (my graphics, 12);
+	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 	Graphics_setAtSignIsLink (my graphics, TRUE);
 
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);

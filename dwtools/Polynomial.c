@@ -1,6 +1,6 @@
 /* Polynomial.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 /*
  djmw 20020813 GPL header
  djmw 20030619 Added SVD_compute before SVD_solve
+ djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
+ 	In previous version a NULL pointer was returned. New error messages.
 */
 
 #include "Polynomial.h"
@@ -1382,13 +1384,14 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
 
 Roots Polynomial_to_Roots (Polynomial me)
 {
+	char *proc = "Polynomial_to_Roots";
 	Roots thee = NULL;
 	char job = 'E', compz = 'N';
 	double *hes = NULL, *wr, *wi, *work = NULL, *z = NULL, wt[1];
-    long i, np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
+    long i, np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n, nrootsfound = n, ioffset = 0;
 	long ihi = n, ilo = 1, ldh = n, ldz = n, lwork = -1, info;
 
-	if (n == 0) return NULL;
+	if (n < 1) return Melder_errorp ("%s: Cannot find roots of a constant function.", proc);
 
 	/*
     	Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
@@ -1416,7 +1419,12 @@ Roots Polynomial_to_Roots (Polynomial me)
 
 	(void) NUMlapack_dhseqr (&job, &compz, &n, &ilo, &ihi, &hes[1], &ldh,
 		&wr[1], &wi[1], z, &ldz, wt, &lwork, &info);
-	if (info != 0) goto end;
+	if (info != 0)
+	{
+		if (info < 0) (void) Melder_error ("%s: Programming error. Argument %d in NUMlapack_dhseqr has illegal value.", proc, info);
+		else { (void) Melder_error ("%s: Cannot occur here.", proc); }
+		goto end;
+	}
 	lwork = wt[0];
 	work = NUMdvector (1, lwork);
 	if (work == NULL) goto end;
@@ -1427,14 +1435,30 @@ Roots Polynomial_to_Roots (Polynomial me)
 
 	(void) NUMlapack_dhseqr (&job, &compz, &n, &ilo, &ihi, &hes[1], &ldh,
 		&wr[1], &wi[1], z, &ldz, &work[1], &lwork, &info);
-	if (info != 0) goto end;
-	thee = Roots_create (n);
+	nrootsfound = n;
+	ioffset = 0;
+	if (info > 0)
+	{
+		/* if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
+			WR and WI contain those eigenvalues which have been successfully computed */
+		nrootsfound -= info;
+		if (nrootsfound < 1) goto end;
+		Melder_warning ("%s: Calculated only % roots", proc, nrootsfound);
+		ioffset = info;
+	}
+	else if (info < 0)
+	{
+		(void) Melder_error ("%s: Programming error. Argument %d in NUMlapack_dhseqr has illegal value.", proc, info);
+		goto end;
+	}
+	
+	thee = Roots_create (nrootsfound);
 	if (thee != NULL)
 	{
-		for (i = 1; i <= n; i++)
+		for (i = 1; i <= nrootsfound; i++)
 		{
-			(thy v[i]).re = wr[i];
-			(thy v[i]).im = wi[i];
+			(thy v[i]).re = wr[ioffset + i];
+			(thy v[i]).im = wi[ioffset + i];
 		}
 	}
 	

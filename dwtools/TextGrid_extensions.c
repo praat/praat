@@ -1,6 +1,6 @@
 /* TextGrid_extensions.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@
  djmw 20020702 +TextGrid_extendTime
  djmw 20051215 Corrected a bug in TextGrid_readFromTIMITLabelFile that caused a crash when the first number in
  	a file was not 0 (in that case an empty interval was added as the first element in the tier).
+ djmw 20060517 Added (TextTier|IntervalTier|TextGrid)_changeLabels.
 */
 
 #include <ctype.h>
 #include "TextGrid_extensions.h"
+#include "NUM2.h"
 #include "praat.h"
 
 struct TIMIT_key {const char *timitLabel, *ipaLabel;} TIMIT_toIpaTable[] =
@@ -372,4 +374,106 @@ int TextGrid_setTierName (TextGrid me, long itier, char *newName)
 	Thing_setName (my tiers -> item [itier], newName);	
 	return 1;
 }
+
+int IntervalTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches)
+{
+	iam (IntervalTier);
+	char **labels, **newlabels = NULL;
+	long i, nlabels, maximumNumberOfReplaces = 0;
+
+	if (from == 0) from = 1;
+	if (to == 0) to = my intervals -> size;
+	if (from > to || from < 1 || to > my intervals -> size) return 0;
+	if (use_regexp && strlen (search) == 0) return Melder_error ("TextTier_changeLabels: The regex search string may not be empty.\n"
+		"You may search for an empty string with the expression \"^$\"");
+	
+	nlabels = to - from + 1;
+	labels = (char **) NUMpvector (1, nlabels);
+	if (labels == NULL) return 0;
+
+	for (i = from; i <= to; i++)
+	{
+		TextInterval interval = my intervals -> item[i];
+		labels[i - from + 1] = interval -> text;
+	}
+
+	newlabels = strs_replace (labels, 1, nlabels, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+
+	if (newlabels == NULL) goto end;
+	
+	for (i = from; i <= to; i++)
+	{
+		TextInterval interval = my intervals -> item[i];
+		Melder_free (interval -> text);
+		interval -> text = newlabels[i - from + 1];
+	}
+	
+end:
+	NUMpvector_free (newlabels, 1);
+	NUMpvector_free (labels, 1);
+	return ! Melder_hasError ();
+}
+
+int TextTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches)
+{
+	iam (TextTier);
+	char **marks, **newmarks = NULL;
+	long i, nmarks, maximumNumberOfReplaces = 0;
+
+	if (from == 0) from = 1;
+	if (to == 0) to = my points -> size;
+	if (from > to || from < 1 || to > my points -> size) return 0;
+	if (use_regexp && strlen (search) == 0) return Melder_error ("TextTier_changeLabels: The regex search string may not be empty.\n"
+		"You may search for an empty string with the expression \"^$\"");
+	
+	nmarks = to - from + 1;
+	marks = (char **) NUMpvector (1, nmarks);
+	if (marks == NULL) return 0;
+
+	for (i = from; i <= to; i++)
+	{
+		TextPoint point = my points -> item[i];
+		marks[i - from + 1] = point -> mark;
+	}
+
+	newmarks = strs_replace (marks, 1, nmarks, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+
+	if (newmarks == NULL) goto end;
+	
+	for (i = from; i <= to; i++)
+	{
+		TextPoint point = my points -> item[i];
+		Melder_free (point -> mark);
+		point -> mark = newmarks[i - from + 1];
+	}
+	
+end:
+	NUMpvector_free (newmarks, 1);
+	NUMpvector_free (marks, 1);
+	return ! Melder_hasError ();
+}
+
+int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches)
+{
+	Data anyTier;
+	int status;
+	long ntiers = my tiers -> size;
+	
+	if (tier < 1 || tier > ntiers) return Melder_error
+		("TextGrid_changeLabels: The tier number (%d) should not be "
+		"larger than the number of tiers (%d).", tier, ntiers);
+	if (use_regexp && strlen (search) == 0) return Melder_error ("TextGrid_changeLabels: The regex search string may not be empty.\n"
+		"You may search for an empty string with the expression \"^$\"");
+	anyTier = my tiers -> item [tier];
+	if (anyTier -> methods == (Data_Table) classIntervalTier)
+	{
+		status = IntervalTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
+	}
+	else
+	{
+		status = TextTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
+	}
+	return status;
+}
+
 /* End of file TextGrid_extensions.c */

@@ -515,6 +515,7 @@ static Boolean workProc (XtPointer void_me) {
 	if (my button16000) XmToggleButtonSetState (my button16000, theControlPanel. sampleRate == 16000, False);
 	if (my button22050) XmToggleButtonSetState (my button22050, theControlPanel. sampleRate == 22050, False);
 	if (my button22254) XmToggleButtonSetState (my button22254, theControlPanel. sampleRate == 22254.54545, False);
+	if (my button24000) XmToggleButtonSetState (my button24000, theControlPanel. sampleRate == 24000, False);
 	if (my button32000) XmToggleButtonSetState (my button32000, theControlPanel. sampleRate == 32000, False);
 	if (my button44100) XmToggleButtonSetState (my button44100, theControlPanel. sampleRate == 44100, False);
 	if (my button48000) XmToggleButtonSetState (my button48000, theControlPanel. sampleRate == 48000, False);
@@ -526,6 +527,7 @@ static Boolean workProc (XtPointer void_me) {
 	if (my button16000) XtSetSensitive (my button16000, ! my recording);
 	if (my button22050) XtSetSensitive (my button22050, ! my recording);
 	if (my button22254) XtSetSensitive (my button22254, ! my recording);
+	if (my button24000) XtSetSensitive (my button24000, ! my recording);
 	if (my button32000) XtSetSensitive (my button32000, ! my recording);
 	if (my button44100) XtSetSensitive (my button44100, ! my recording);
 	if (my button48000) XtSetSensitive (my button48000, ! my recording);
@@ -1156,6 +1158,7 @@ static void cb_fsamp (Widget w, XtPointer void_me, XtPointer call) {
 		w == my button16000 ? 16000 :
 		w == my button22050 ? 22050 :
 		w == my button22254 ? 22254.54545 :
+		w == my button24000 ? 24000 :
 		w == my button32000 ? 32000 :
 		w == my button44100 ? 44100 :
 		w == my button48000 ? 48000 :

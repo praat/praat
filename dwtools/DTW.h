@@ -2,7 +2,7 @@
 #define _DTW_h_
 /* DTW.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20050306 Latest modification.
+ djmw 20060530 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -100,8 +100,10 @@ Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adju
 Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy);
 	
 Matrix DTW_distancesToMatrix (DTW me);
-	
+
+DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metric);
+
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
-	int matchEnd, int slope);
+	int matchEnd, int slope, int metric);
  
 #endif /* _DTW_h_ */

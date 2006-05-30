@@ -136,13 +136,14 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
 		} else if (strnequ (command, "pause", 5)) {
+			int wasBackgrounding = Melder_backgrounding;
 			structMelderDir dir;
 			Melder_getDefaultDir (& dir);
 			if (praat.batch) return 1;
 			UiFile_hide ();
-			praat_foreground ();
+			if (wasBackgrounding) praat_foreground ();
 			if (! Melder_pause (command + 5)) return Melder_error ("You interrupted the script.");
-			praat_background ();
+			if (wasBackgrounding) praat_background ();
 			Melder_setDefaultDir (& dir);
 			/* BUG: should also restore praatP. editor. */
 		} else if (strnequ (command, "execute ", 8)) {

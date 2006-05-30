@@ -605,10 +605,23 @@ END
 
 DIRECT (StatisticsTutorial) Melder_help ("Statistics"); END
 
+static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
+	/*
+	 * A table is recognized if it has at least one tab symbol,
+	 * which must be before the first newline symbol (if any).
+	 */
+	const char *tab = strchr (header, '\t'), *newline = strchr (header, '\n');
+	if (newline == NULL) newline = strchr (header, '\r');
+	if (tab == NULL || newline != NULL && newline - tab < 0) return NULL;
+	return Table_readFromCharacterSeparatedTextFile (file, '\t');
+}
+
 void praat_uvafon_Stat_init (void);
 void praat_uvafon_Stat_init (void) {
 
 	Thing_recognizeClassesByName (classTable, classLinearRegression, classLogisticRegression, NULL);
+
+	Data_recognizeFileType (tabSeparatedFileRecognizer);
 
 	praat_addAction1 (classTable, 0, "Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, "Write to table file...", 0, 0, DO_Table_writeToTableFile);

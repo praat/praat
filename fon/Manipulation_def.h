@@ -1,6 +1,6 @@
 /* Manipulation_def.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,24 @@
  */
 
 /*
- * pb 2002/03/30
  * pb 2002/07/16 GPL
  * pb 2003/02/17 removed pitch analysis properties
+ * pb 2006/05/29 added versions to included objects
  */
 
 #define ooSTRUCT Manipulation
 oo_DEFINE_CLASS (Manipulation, Function)
 
-	oo_OBJECT (Sound, sound)
-	oo_OBJECT (PointProcess, pulses)
-	oo_OBJECT (PitchTier, pitch)
+	oo_OBJECT (Sound, 0, sound)
+	oo_OBJECT (PointProcess, 0, pulses)
+	oo_OBJECT (PitchTier, 0, pitch)
 
 	oo_FROM (1)
-		oo_OBJECT (IntensityTier, dummyIntensity)
+		oo_OBJECT (IntensityTier, 0, dummyIntensity)
 	oo_ENDFROM
 
 	oo_FROM (2)
-		oo_OBJECT (DurationTier, duration)
+		oo_OBJECT (DurationTier, 0, duration)
 	oo_ENDFROM
 
 	oo_FROM (3)
@@ -46,23 +46,23 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		#if oo_WRITING
 			{ Image save = my dummySpectrogram; my dummySpectrogram = NULL;
 		#endif
-		oo_OBJECT (Image, dummySpectrogram)
+		oo_OBJECT (Image, 0, dummySpectrogram)
 		#if oo_WRITING
 			my dummySpectrogram = save; }
 		#endif
-		oo_OBJECT (FormantTier, dummyFormantTier)
-		oo_OBJECT (Data, dummy1)
-		oo_OBJECT (Data, dummy2)
-		oo_OBJECT (Data, dummy3)
+		oo_OBJECT (FormantTier, 0, dummyFormantTier)
+		oo_OBJECT (Data, 0, dummy1)
+		oo_OBJECT (Data, 0, dummy2)
+		oo_OBJECT (Data, 0, dummy3)
 	oo_ENDFROM
 
 	oo_FROM (4)
 		oo_DOUBLE (dummy10)
-		oo_OBJECT (Pitch, dummyPitchAnalysis)
+		oo_OBJECT (Pitch, 0, dummyPitchAnalysis)
 		oo_DOUBLE (dummy11)
 		oo_DOUBLE (dummy12)
-		oo_OBJECT (Intensity, dummyIntensityAnalysis)
-		oo_VERSION (1) oo_OBJECT (Formant, dummyFormantAnalysis)
+		oo_OBJECT (Intensity, 0, dummyIntensityAnalysis)
+		oo_VERSION (1) oo_OBJECT (Formant, 1, dummyFormantAnalysis)
 		oo_INT (dummy4)
 		oo_DOUBLE (dummy5)
 		oo_DOUBLE (dummy6)
@@ -72,7 +72,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 	oo_ENDFROM
 
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (LPC, lpc)
+		oo_OBJECT (LPC, 0, lpc)
 	#endif
 
 oo_END_CLASS (Manipulation)

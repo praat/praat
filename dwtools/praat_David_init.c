@@ -110,6 +110,8 @@ extern void praat_TableOfReal_init (void *klas);
 void praat_TableOfReal_init2  (void *klas);
  
 void praat_CC_init (void *klas);
+void DTW_constraints_addCommonFields (void *dia);
+void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
 void praat_Matrixft_query_init (void *klas);
 int praat_Fon_formula (Any dia);
 
@@ -352,17 +354,13 @@ FORM (CCs_to_DTW, "CC: To DTW", "CC: To DTW...")
 	REAL ("Regression weight", "0.0")
 	REAL ("Regression weight log energy", "0.0")
 	REAL ("Regression coefficients window (s)", "0.056")
-	LABEL("", "Boundary conditions for time warp")
-	BOOLEAN ("Match begin positions", 0)
-	BOOLEAN ("Match end positions", 0)
-	RADIO ("Slope constraints", 1)
-	RADIOBUTTON ("no restriction")
-	RADIOBUTTON ("1/3 < slope < 3")
-	RADIOBUTTON ("1/2 < slope < 2")
-	RADIOBUTTON ("2/3 < slope < 3/2")
+	DTW_constraints_addCommonFields (dia);
 	OK
 DO
 	CC c1 = NULL, c2 = NULL;
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+
 	WHERE (SELECTED && Thing_member (OBJECT, classCC))
 	{
 		if (c1) c2 = OBJECT; else c1 = OBJECT;
@@ -370,10 +368,7 @@ DO
 	NEW (CCs_to_DTW (c1, c2, GET_REAL ("Cepstral weight"),
 		GET_REAL ("Log energy weight"), GET_REAL ("Regression weight"),
 		GET_REAL ("Regression weight log energy"),
-		GET_REAL ("Regression coefficients window"),
-		GET_INTEGER("Match begin positions"),
-		GET_INTEGER("Match end positions"),
-		GET_INTEGER("Slope constraints")))
+		GET_REAL ("Regression coefficients window"),begin, end, slope))
 
 END
 
@@ -1096,6 +1091,26 @@ END
 	
 /********************** DTW *******************************************/
 
+void DTW_constraints_addCommonFields (void *dia)
+{
+	Any radio;
+	LABEL("", "Boundary conditions")
+	BOOLEAN ("Match begin positions", 0)
+	BOOLEAN ("Match end positions", 0)
+	RADIO ("Slope constraints", 1)
+	RADIOBUTTON ("no restriction")
+	RADIOBUTTON ("1/3 < slope < 3")
+	RADIOBUTTON ("1/2 < slope < 2")
+	RADIOBUTTON ("2/3 < slope < 3/2")
+}
+
+void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope)
+{
+	*begin = GET_INTEGER ("Match begin positions");
+	*end = GET_INTEGER ("Match end positions");
+	*slope = GET_INTEGER ("Slope constraints");
+}
+
 DIRECT (DTW_help) Melder_help ("DTW"); END
 
 FORM (DTW_drawPath, "DTW: Draw path", 0)
@@ -1177,18 +1192,12 @@ DIRECT (DTW_getWeightedDistance)
 END
 
 FORM (DTW_findPath, "DTW: Find path", 0)
-	LABEL("", "Boundary conditions")
-	BOOLEAN ("Match begin positions", 0)
-	BOOLEAN ("Match end positions", 0)
-	RADIO ("Slope constraints", 1)
-	RADIOBUTTON ("no restriction")
-	RADIOBUTTON ("1/3 < slope < 3")
-	RADIOBUTTON ("1/2 < slope < 2")
-	RADIOBUTTON ("2/3 < slope < 3/2")
+	DTW_constraints_addCommonFields (dia);
 	OK
 DO
-	EVERY (DTW_findPath (OBJECT, GET_INTEGER("Match begin positions"),
-		GET_INTEGER("Match end positions"), GET_INTEGER("Slope constraints")))
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+	EVERY (DTW_findPath (OBJECT, begin, end, slope))
 END
 
 #ifdef INCLUDE_DTW_SLOPES
@@ -2102,6 +2111,23 @@ END
 
 DIRECT (Matrix_to_Activation)
 	EVERY_TO (Matrix_to_Activation (OBJECT))
+END
+
+FORM (Matrices_to_DTW, "Matrices: To DTW", "Matrix: To DTW...")
+	LABEL ("", "Distance  between cepstral coefficients")
+	REAL ("Distance metric", "2.0")
+	DTW_constraints_addCommonFields (dia);
+	OK
+DO
+	Matrix m1 = NULL, m2 = NULL;
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+	WHERE (SELECTED && Thing_member (OBJECT, classMatrix))
+	{
+		if (m1) m2 = OBJECT; else m1 = OBJECT;
+	}
+	NEW (Matrices_to_DTW (m1, m2, begin, end, slope, GET_REAL ("Distance metric")))
+
 END
 
 FORM (Matrix_to_Pattern, "Matrix: To Pattern", 0)
@@ -3242,23 +3268,17 @@ END
 /************ Spectrograms *********************************************/
 
 FORM (Spectrograms_to_DTW, "Spectrograms: To DTW", 0)
-	LABEL("", "Boundary conditions for time warp")
-	BOOLEAN ("Match begin positions", 0)
-	BOOLEAN ("Match end positions", 0)
-	RADIO ("Slope constraints", 1)
-	RADIOBUTTON ("no restriction")
-	RADIOBUTTON ("1/3 < slope < 3")
-	RADIOBUTTON ("1/2 < slope < 2")
-	RADIOBUTTON ("2/3 < slope < 3/2")
+	DTW_constraints_addCommonFields (dia);
 	OK
 DO
 	Spectrogram s1 = NULL, s2 = NULL;
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
 	WHERE (SELECTED && CLASS == classSpectrogram)
 	{
 		if (s1) s2 = OBJECT; else s1 = OBJECT;
 	}
-	NEW (Spectrograms_to_DTW (s1, s2, GET_INTEGER("Match begin positions"),
-		GET_INTEGER("Match end positions"), GET_INTEGER("Slope constraints")))
+	NEW (Spectrograms_to_DTW (s1, s2, begin, end, slope, 1))
 END
 
 /**************** Spectrum *******************************************/
@@ -3913,10 +3933,57 @@ FORM (TextGrid_extendTime, "TextGrid: Extend time", "TextGrid: Extend time...")
 DO
 	WHERE (SELECTED)
 	{
-		TextGrid_extendTime (OBJECT, GET_REAL ("Extend domain by"), 
-			GET_INTEGER ("At") - 1);
+		TextGrid_extendTime (OBJECT, GET_REAL ("Extend domain by"), GET_INTEGER ("At") - 1);
 		praat_dataChanged (OBJECT);
 	} 
+END
+
+FORM (TextGrid_replaceIntervalTexts, "TextGrid: Replace interval text", "TextGrid: Replace interval text...")
+	LABEL ("", "")
+	NATURAL ("Tier number", "1")
+	INTEGER ("left Interval range", "0")
+	INTEGER ("right Interval range", "0")
+	SENTENCE ("Search", "a")
+	SENTENCE ("Replace", "a")	
+	RADIO ("Search and replace strings are:", 1)
+	RADIOBUTTON ("Literals")
+	RADIOBUTTON ("Regular Expressions")	
+	OK	
+DO
+	long from = GET_INTEGER ("left Interval range");
+	long to = GET_INTEGER ("right Interval range");
+	int regexp = GET_INTEGER ("Search and replace strings are") - 1;
+	char *search = GET_STRING ("Search");
+	long nmatches, nstringmatches;
+	
+	WHERE (SELECTED)
+	{
+		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, search, GET_STRING ("Replace"),
+			regexp, &nmatches, &nstringmatches)) return 0;
+	}
+END
+
+
+FORM (TextGrid_replacePointTexts, "TextGrid: Replace point text", "TextGrid: Replace point text...")
+	LABEL ("", "")
+	NATURAL ("Tier number", "1")
+	INTEGER ("left Interval range", "0")
+	INTEGER ("right Interval range", "0")
+	SENTENCE ("Search", "a")
+	SENTENCE ("Replace", "a")	
+	RADIO ("Search and replace strings are:", 1)
+	RADIOBUTTON ("Literals")
+	RADIOBUTTON ("Regular Expressions")	
+	OK	
+DO
+	long from = GET_INTEGER ("left Interval range");
+	long to = GET_INTEGER ("right Interval range");
+	long nmatches, nstringmatches;
+	WHERE (SELECTED)
+	{
+		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, GET_STRING ("Search"), GET_STRING ("Replace"),
+			GET_INTEGER ("Search and replace strings are")-1, &nmatches, &nstringmatches)) return 0;
+	}
 END
 
 FORM (TextGrid_setTierName, "TextGrid: Set tier name", "TextGrid: Set tier name...")
@@ -4557,6 +4624,7 @@ void praat_uvafon_David_init (void)
 		DO_Matrix_to_Pattern);
 	praat_addAction1 (classMatrix, 0, "To Activation", "To Pattern...", 1,
 		DO_Matrix_to_Activation);
+	praat_addAction1 (classMatrix, 2, "To DTW...", "To ParamCurve", 1, DO_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, "To TableOfReal", 
 		0, 0, DO_Matrix_Categories_to_TableOfReal);
@@ -4861,11 +4929,11 @@ void praat_uvafon_David_init (void)
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, "Permute rows",
 		0, 0, DO_TableOfReal_and_Permutation_permuteRows);
 
-	praat_addAction1 (classTextGrid, 0, "Extend time...", 
-		"Scale times...", 2, DO_TextGrid_extendTime);
-	praat_addAction1 (classTextGrid, 1, "Set tier name...", 
-		"Remove tier...", 1, DO_TextGrid_setTierName);
-        
+	praat_addAction1 (classTextGrid, 0, "Extend time...", "Scale times...", 2, DO_TextGrid_extendTime);
+	praat_addAction1 (classTextGrid, 1, "Set tier name...", "Remove tier...", 1, DO_TextGrid_setTierName);
+			praat_addAction1 (classTextGrid, 0, "Replace interval text...", "Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
+			praat_addAction1 (classTextGrid, 0, "Replace point text...", "Set point text...", 2, DO_TextGrid_replacePointTexts);
+
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

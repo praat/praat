@@ -39,7 +39,7 @@ oo_END_CLASS (RegressionParameter)
 oo_DEFINE_CLASS (Regression, Data)
 
 	oo_DOUBLE (intercept)
-	oo_COLLECTION (Ordered, parameters, RegressionParameter)
+	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)
 
 oo_END_CLASS (Regression)
 #undef ooSTRUCT

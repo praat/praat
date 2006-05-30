@@ -1,6 +1,6 @@
 /* OTMulti.c
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 
 /*
  * pb 2005/06/11 the very beginning of computational bidirectional multi-level OT
+ * pb 2006/05/16 guarded against cells with many violations
+ * pb 2006/05/17 draw disharmonies above tableau
  */
 
 #include "OTMulti.h"
@@ -309,21 +311,26 @@ static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numb
 	return my numberOfConstraints;   /* Nothing grey. */
 }
 
-static double OTMulti_constraintWidth (Graphics g, const char *name) {
+static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int showDisharmony) {
 	char text [100], *newLine;
-	strcpy (text, name);
+	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth (g, Melder_fixed (constraint -> disharmony, 1)) : 0.0,
+		firstWidth, secondWidth;
+	strcpy (text, constraint -> name);
 	newLine = strchr (text, '\n');
 	if (newLine) {
-		double firstWidth, secondWidth;
 		*newLine = '\0';
 		firstWidth = Graphics_textWidth (g, text);
+		if (firstWidth > maximumWidth) maximumWidth = firstWidth;
 		secondWidth = Graphics_textWidth (g, newLine + 1);
-		return firstWidth > secondWidth ? firstWidth : secondWidth;
+		if (secondWidth > maximumWidth) maximumWidth = secondWidth;
+		return maximumWidth;
 	}
-	return Graphics_textWidth (g, text);
+	firstWidth = Graphics_textWidth (g, text);
+	if (firstWidth > maximumWidth) maximumWidth = firstWidth;
+	return maximumWidth;
 }
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char *form2) {
+void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char *form2, int showDisharmonies) {
 	long winner, winner1 = 0, winner2 = 0, icons, icand, numberOfMatchingCandidates;
 	long numberOfOptimalCandidates, numberOfOptimalCandidates1, numberOfOptimalCandidates2, imark;
 	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
@@ -358,7 +365,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
 		if (strchr (constraint -> name, '\n')) {
-			headerHeight *= 1.6;
+			headerHeight += 0.7 * rowHeight;
 			break;
 		}
 	}
@@ -395,7 +402,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	tableauWidth = candWidth + doubleLineDx;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		tableauWidth += OTMulti_constraintWidth (g, constraint -> name);
+		tableauWidth += OTMulti_constraintWidth (g, constraint, showDisharmonies);
 	}
 	tableauWidth += margin * 2 * my numberOfConstraints;
 	/*
@@ -403,6 +410,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	 */
 	x = doubleLineDx;   /* Left side of tableau. */
 	y = 1.0 - doubleLineDy;
+	if (showDisharmonies) y -= 0.6 * rowHeight;
 	Graphics_rectangle (g, x, x + tableauWidth,
 		y - headerHeight - numberOfMatchingCandidates * rowHeight - doubleLineDy, y);
 	/*
@@ -418,7 +426,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	x += candWidth + doubleLineDx;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [my index [icons]];
-		double width = OTMulti_constraintWidth (g, constraint -> name) + margin * 2;
+		double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 		if (strchr (constraint -> name, '\n')) {
 			char *newLine;
 			strcpy (text, constraint -> name);
@@ -431,6 +439,12 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 		} else {
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 			Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name);
+		}
+		if (showDisharmonies) {
+			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+			Graphics_setFontSize (g, 0.8 * fontSize);
+			Graphics_text (g, x + 0.5 * width, y + headerHeight, Melder_fixed (constraint -> disharmony, 1));
+			Graphics_setFontSize (g, fontSize);
 		}
 		Graphics_line (g, x, y, x, y + headerHeight);
 		Graphics_line (g, x, y, x + width, y);
@@ -492,7 +506,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int index = my index [icons];
 				OTConstraint constraint = & my constraints [index];
-				double width = OTMulti_constraintWidth (g, constraint -> name) + margin * 2;
+				double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 				if (icons > crucialCell)
 					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 				x += width;
@@ -507,7 +521,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int index = my index [icons];
 			OTConstraint constraint = & my constraints [index];
-			double width = OTMulti_constraintWidth (g, constraint -> name) + margin * 2;
+			double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 			char markString [40];
 			markString [0] = '\0';
 			if (bidirectional && my candidates [icand]. marks [index]) {
@@ -522,14 +536,26 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			 */
 			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal) {
 				int winnerMarks = my candidates [winner]. marks [index];
-				for (imark = 1; imark <= winnerMarks + 1; imark ++)
-					strcat (markString, "*");
+				if (winnerMarks + 1 > 5) {
+					strcat (markString, Melder_integer (winnerMarks + 1));
+				} else {
+					for (imark = 1; imark <= winnerMarks + 1; imark ++)
+						strcat (markString, "*");
+				}
 				strcat (markString, "!");
-				for (imark = winnerMarks + 2; imark <= my candidates [icand]. marks [index]; imark ++)
-					strcat (markString, "*");
+				if (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1 > 5) {
+					strcat (markString, Melder_integer (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1));
+				} else {
+					for (imark = winnerMarks + 2; imark <= my candidates [icand]. marks [index]; imark ++)
+						strcat (markString, "*");
+				}
 			} else {
-				for (imark = 1; imark <= my candidates [icand]. marks [index]; imark ++)
-					strcat (markString, "*");
+				if (my candidates [icand]. marks [index] > 5) {
+					strcat (markString, Melder_integer (my candidates [icand]. marks [index]));
+				} else {
+					for (imark = 1; imark <= my candidates [icand]. marks [index]; imark ++)
+						strcat (markString, "*");
+				}
 			}
 			if (bidirectional && my candidates [icand]. marks [index]) {
 				if (candidateIsOptimal && ! candidateIsOptimal1) {
@@ -551,6 +577,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	 */
 	x = doubleLineDx;   /* Left side of tableau. */
 	y = 1.0 - doubleLineDy;
+	if (showDisharmonies) y -= 0.6 * rowHeight;
 	Graphics_rectangle (g, x, x + tableauWidth,
 		y - headerHeight - numberOfMatchingCandidates * rowHeight - doubleLineDy, y);
 }

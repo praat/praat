@@ -372,8 +372,8 @@ int Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file) {
  * Larger pictures may show recursion at the right, and noise at the bottom.
  * A4 printing in QuickDraw is also 7.5x11 inches.
  */
-#define MAC_WIDTH  7.5
-#define MAC_HEIGHT  11
+#define MAC_WIDTH  /*7.5*/ 12
+#define MAC_HEIGHT  /*11*/ 12
 static PicHandle copyToPict (Picture me) {
 	PicHandle pict;
 	Rect rect;

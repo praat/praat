@@ -33,7 +33,7 @@ oo_END_CLASS (AnyPoint)
 #define ooSTRUCT AnyTier
 oo_DEFINE_CLASS (AnyTier, Function)
 
-	oo_COLLECTION (SortedSetOfDouble, points, AnyPoint)
+	oo_COLLECTION (SortedSetOfDouble, points, AnyPoint, 0)
 
 oo_END_CLASS (AnyTier)
 #undef ooSTRUCT

@@ -1,6 +1,6 @@
 /* CCA_def.h
  * 
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 2001
  djmw 20020423 GPL header
  djmw 20031214 Added x/yLabels
+ djmw 20060529 Added object version numbers.
  */
 
 #define ooSTRUCT CCA
@@ -28,10 +29,10 @@ oo_DEFINE_CLASS (CCA, Data)
 
 	oo_LONG (numberOfCoefficients)
 	oo_LONG (numberOfObservations)
-	oo_OBJECT (Strings, yLabels)
-	oo_OBJECT (Strings, xLabels)
-	oo_OBJECT(Eigen, y)
-	oo_OBJECT(Eigen, x)
+	oo_OBJECT (Strings, 0, yLabels)
+	oo_OBJECT (Strings, 0, xLabels)
+	oo_OBJECT(Eigen, 0, y)
+	oo_OBJECT(Eigen, 0, x)
 
 oo_END_CLASS (CCA)
 #undef ooSTRUCT

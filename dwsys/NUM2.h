@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2005 David Weenink
+ * Copyright (C) 1997-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20050406 latest modification.
+ djmw 20060517 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -60,6 +60,10 @@ int NUMstrings_setSequentialNumbering (char **s, long lo, long hi,
 */
 
 char **NUMstrings_copy (char **from, long lo, long hi);
+
+regexp *NUMregexp_compile (const char *regexp);
+/* Compiles a regular expression to a datastructure used by the regexp engine */
+
 
 char *strstr_regexp (const char *string, const char *search_regexp);
 /*

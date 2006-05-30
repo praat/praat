@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060503)
+MAN_BEGIN ("What's new?", "ppgb", 20060530)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.22# (May 30, 2006)")
+LIST_ITEM ("\\bu Scripting: replacing with regular expression. See @@Formulas 5. String functions@.")
+NORMAL ("##4.4.21# (May 29, 2006)")
+LIST_ITEM ("\\bu Made Manipulation objects readable again.")
 NORMAL ("##4.4.20# (May 3, 2006)")
 LIST_ITEM ("\\bu Removed limit on number of menus (Praat could crash if the number of open windows was high).")
 NORMAL ("##4.4.19# (April 28, 2006)")

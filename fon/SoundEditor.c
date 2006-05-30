@@ -1,6 +1,6 @@
 /* SoundEditor.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/02/15 highlight selection, but not the spectrogram
  * pb 2005/06/16 units
  * pb 2005/09/21 interface update
+ * pb 2006/05/10 repaired memory leak in do_write
  */
 
 #include "SoundEditor.h"
@@ -125,6 +126,7 @@ static int do_write (SoundEditor me, MelderFile file, int format) {
 		first -= nmargin;
 		last += nmargin;
 		if (numberOfSamples) {
+			int result;
 			Sound save = Sound_create (0.0, numberOfSamples * sound -> dx,
 							numberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			if (! save) return 0;
@@ -133,7 +135,9 @@ static int do_write (SoundEditor me, MelderFile file, int format) {
 			if (last > sound -> nx) last = sound -> nx;
 			for (i = first; i <= last; i ++)
 				save -> z [1] [i - offset] = sound -> z [1] [i];
-			return Sound_writeToAudioFile16 (save, NULL, file, format);
+			result = Sound_writeToAudioFile16 (save, NULL, file, format);
+			forget (save);
+			return result;
 		}
 	}
 	return 0;

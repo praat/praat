@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (Table, Data)
 
 	oo_LONG (numberOfColumns)
 	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, my numberOfColumns)
-	oo_COLLECTION (Ordered, rows, TableRow)
+	oo_COLLECTION (Ordered, rows, TableRow, 0)
 
 oo_END_CLASS (Table)
 #undef ooSTRUCT

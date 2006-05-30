@@ -551,7 +551,7 @@ INTRO ("One of the @Editors in P\\s{RAAT}, for viewing and manipulating a @Pitch
 	"which is optionally shown together with a @Sound object.")
 ENTRY ("Objects")
 NORMAL ("The editor shows:")
-LIST_ITEM ("\\bu The @Sound, if you selected a Sound object together with the PichTier object "
+LIST_ITEM ("\\bu The @Sound, if you selected a Sound object together with the PitchTier object "
 	"before you clicked #Edit.")
 LIST_ITEM ("\\bu The @PitchTier: blue points connected with blue lines.")
 ENTRY ("Playing")

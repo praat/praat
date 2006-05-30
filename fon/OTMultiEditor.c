@@ -1,6 +1,6 @@
-/* OTGrammarEditor.c
+/* OTMultiEditor.c
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /*
- * pb 2005/07/04
+ * pb 2005/07/04 created
+ * pb 2006/05/17 draw disharmonies on top of tableau
  */
 
 #include "OTMultiEditor.h"
@@ -182,7 +183,7 @@ static void createMenus (I) {
 static OTMulti drawTableau_grammar;
 static const char *drawTableau_form1, *drawTableau_form2;
 static void drawTableau (Graphics g) {
-	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2);
+	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, TRUE);
 }
 
 static void draw (I) {

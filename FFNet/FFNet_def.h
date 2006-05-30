@@ -1,6 +1,6 @@
 /* FFNet_def.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 19961104
  djmw 20020712 GPL header
+ djmw 20060529 Added version number to oo_Collection
 */
 
 #define ooSTRUCT FFNet
@@ -35,7 +36,7 @@ oo_DEFINE_CLASS (FFNet, Data)
 
 	oo_INT (costFunctionType)
 
-	oo_COLLECTION (Categories, outputCategories, SimpleString)
+	oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
 
 	oo_LONG (nWeights)	/* number of weights */
 
@@ -61,7 +62,7 @@ oo_DEFINE_CLASS (FFNet, Data)
 			float **inputPattern, **targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
-			oo_OBJECT (Minimizer, minimizer)
+			oo_OBJECT (Minimizer, 0, minimizer)
 		#endif
 
 		oo_DOUBLE_VECTOR (activity, my nNodes)
