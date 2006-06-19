@@ -210,11 +210,13 @@ int Table_appendColumn (Table me, const char *label) {
 }
 
 int Table_removeRow (Table me, long irow) {
+	long icol;
 	if (my rows -> size == 1)
 		{ Melder_error ("Cannot remove the only row."); goto end; }
 	if (irow < 1 || irow > my rows -> size)
 		{ Melder_error ("No row %ld.", irow); goto end; }
 	Collection_removeItem (my rows, irow);
+	for (icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
 	iferror return Melder_error ("(Table_removeRow:) Not performed.");
 	return 1;
@@ -243,10 +245,12 @@ end:
 }
 
 int Table_insertRow (Table me, long irow) {
+	long icol;
 	TableRow row = TableRow_create (my numberOfColumns); cherror
 	if (irow < 1 || irow > my rows -> size + 1)
 		{ Melder_error ("Cannot create row %ld.", irow); goto end; }
 	Ordered_addItemPos (my rows, row, irow);
+	for (icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
 	iferror return Melder_error ("(Table_insertRow:) Not performed.");
 	return 1;
@@ -335,8 +339,20 @@ static int Table_isCellNumeric (Table me, long irow, long icol) {
 	if (icol < 1 || icol > my numberOfColumns) return FALSE;
 	row = my rows -> item [irow];
 	cell = row -> cells [icol]. string;
-	if (cell == NULL || cell [0] == '\0') return TRUE;   /* The value --undefined-- */
-	if (cell [0] == '?' && cell [1] == '\0' || strequ (cell, "--undefined--")) return TRUE;   /* The value --undefined-- */
+	if (cell == NULL) return TRUE;   /* The value --undefined-- */
+	/*
+	 * Skip leading white space, in order to separately detect "?" and "--undefined--".
+	 */
+	while (*cell == ' ' || *cell == '\t' || *cell == '\n' || *cell == '\r') cell ++;
+	if (cell [0] == '\0') return TRUE;   /* Only white space: the value --undefined-- */
+	if (cell [0] == '?' || strnequ (cell, "--undefined--", 13)) {
+		/*
+		 * See whether there is anything else besides "?" or "--undefined--" and white space.
+		 */
+		cell += cell [0] == '?' ? 1 : 13;
+		while (*cell == ' ' || *cell == '\t' || *cell == '\n' || *cell == '\r') cell ++;
+		return *cell == '\0';   /* Only white space after the "?" or "--undefined--". */
+	}
 	return Melder_isStringNumeric (cell);
 }
 

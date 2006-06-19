@@ -528,7 +528,11 @@ FORM (Table_setColumnLabel_index, "Set column label", 0)
 	SENTENCE ("Label", "")
 	OK
 DO
-	EVERY (Table_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label")))
+	WHERE (SELECTED) {
+		Table_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label"));
+		praat_dataChanged (OBJECT);
+		iferror return 0;
+	}
 END
 
 FORM (Table_setColumnLabel_label, "Set column label", 0)
@@ -536,8 +540,11 @@ FORM (Table_setColumnLabel_label, "Set column label", 0)
 	SENTENCE ("New label", "")
 	OK
 DO
-	EVERY (Table_setColumnLabel (OBJECT, Table_columnLabelToIndex (OBJECT, GET_STRING ("Old label")),
-		GET_STRING ("New label")))
+	WHERE (SELECTED) {
+		Table_setColumnLabel (OBJECT, Table_columnLabelToIndex (OBJECT, GET_STRING ("Old label")), GET_STRING ("New label"));
+		praat_dataChanged (OBJECT);
+		iferror return 0;
+	}
 END
 
 FORM (Table_setNumericValue, "Table: Set numeric value", 0)
@@ -611,6 +618,7 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 	 * which must be before the first newline symbol (if any).
 	 */
 	const char *tab = strchr (header, '\t'), *newline = strchr (header, '\n');
+	(void) nread;
 	if (newline == NULL) newline = strchr (header, '\r');
 	if (tab == NULL || newline != NULL && newline - tab < 0) return NULL;
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');

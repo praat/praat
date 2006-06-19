@@ -783,7 +783,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 					Melder_assert (savePort == (CGrafPtr) my macPort);
 					if (! inited) {
 						SetRect (& rect, 0, 0, maxWidth, maxHeight);
-						NewGWorld (& offscreenWorld, 1, & rect, NULL, NULL, keepLocal);
+						NewGWorld (& offscreenWorld, 24, & rect, NULL, NULL, keepLocal | (1L << 8));
 						inited = 1;
 					}
 					SetGWorld (offscreenWorld, NULL);

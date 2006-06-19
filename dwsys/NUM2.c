@@ -42,6 +42,7 @@
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
  djmw 20060517 Added NUMregexp_compile
  djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
+ djmw 20060614 Accept empty replace string in str_replace_regexp
 */
 
 #include "SVD.h"
@@ -416,7 +417,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	char *buf, *tbuf;
 
 	*nmatches = 0;	
-	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || strlen (replaceRE) == 0)
+	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL)
 		return NULL;
 		
 	string_length = strlen (string);

@@ -36,6 +36,7 @@
  * pb 2006/01/30 lexical analysis: binary rather than linear search for language names
  * pb 2006/04/17 .row$, .col$
  * pb 2006/05/30 replace_regex$
+ * pb 2006/06/10 prevented replace_regex$ from returning null string (now empty string)
  */
 
 #include <ctype.h>
@@ -2335,6 +2336,7 @@ static void do_replace_regexStr (void) {
 		} else {
 			long numberOfMatches;
 			char *result = str_replace_regexp (s->content.string, compiled_regexp, u->content.string, x->content.number, & numberOfMatches); cherror
+			if (result == NULL) result = Melder_strdup (""); cherror
 			pushString (result);
 		}
 	} else {

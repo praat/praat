@@ -46,7 +46,7 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20060503 Latest modification.
+ djmw 20060530 Latest modification.
 */
 
 #include "praat.h"
@@ -3960,6 +3960,7 @@ DO
 	{
 		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, search, GET_STRING ("Replace"),
 			regexp, &nmatches, &nstringmatches)) return 0;
+		praat_dataChanged (OBJECT);
 	}
 END
 
@@ -3983,6 +3984,7 @@ DO
 	{
 		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, GET_STRING ("Search"), GET_STRING ("Replace"),
 			GET_INTEGER ("Search and replace strings are")-1, &nmatches, &nstringmatches)) return 0;
+		praat_dataChanged (OBJECT);
 	}
 END
 

@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060530)
+MAN_BEGIN ("What's new?", "ppgb", 20060619)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.24# (June 19, 2006)")
+LIST_ITEM ("\\bu Scripting: regular expressions allow replacement with empty string.")
+NORMAL ("##4.4.23# (June 1, 2006)")
+LIST_ITEM ("\\bu Table: ignore more white space.")
 NORMAL ("##4.4.22# (May 30, 2006)")
 LIST_ITEM ("\\bu Scripting: replacing with regular expression. See @@Formulas 5. String functions@.")
 NORMAL ("##4.4.21# (May 29, 2006)")
@@ -2180,7 +2184,7 @@ NORMAL ("The source-filter theory (@@Fant (1960)|Fant 1960@) hypothesizes that a
 	"or the constriction. The %%Klatt synthesizer% (@@Klatt & Klatt (1990)|Klatt & Klatt 1990@), for instance, "
 	"is based on this idea.")
 NORMAL ("In the Praat program, you can create a %source signal from scratch of from an existing "
-	"speech signal, and you can create a %filter from scrtach or extract it from an existing speech signal. "
+	"speech signal, and you can create a %filter from scratch or extract it from an existing speech signal. "
 	"You can manipulate (change, adapt) both the source and the filter before doing "
 	"the actual synthesis, which combines the two.")
 LIST_ITEM ("@@Source-filter synthesis 1. Creating a source from pitch targets")

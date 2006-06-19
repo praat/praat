@@ -313,19 +313,19 @@ static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numb
 
 static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int showDisharmony) {
 	char text [100], *newLine;
-	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth (g, Melder_fixed (constraint -> disharmony, 1)) : 0.0,
+	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), TRUE) : 0.0,
 		firstWidth, secondWidth;
 	strcpy (text, constraint -> name);
 	newLine = strchr (text, '\n');
 	if (newLine) {
 		*newLine = '\0';
-		firstWidth = Graphics_textWidth (g, text);
+		firstWidth = Graphics_textWidth_ps (g, text, TRUE);
 		if (firstWidth > maximumWidth) maximumWidth = firstWidth;
-		secondWidth = Graphics_textWidth (g, newLine + 1);
+		secondWidth = Graphics_textWidth_ps (g, newLine + 1, TRUE);
 		if (secondWidth > maximumWidth) maximumWidth = secondWidth;
 		return maximumWidth;
 	}
-	firstWidth = Graphics_textWidth (g, text);
+	firstWidth = Graphics_textWidth_ps (g, text, TRUE);
 	if (firstWidth > maximumWidth) maximumWidth = firstWidth;
 	return maximumWidth;
 }
@@ -373,7 +373,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	 * Compute longest candidate string.
 	 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
 	 */
-	candWidth = Graphics_textWidth (g, form1) + Graphics_textWidth (g, form2);
+	candWidth = Graphics_textWidth_ps (g, form1, TRUE) + Graphics_textWidth_ps (g, form2, TRUE);
 	numberOfMatchingCandidates = 0;
 	numberOfOptimalCandidates = numberOfOptimalCandidates1 = numberOfOptimalCandidates2 = 0;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
@@ -381,7 +381,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 		    form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, "") ||
 		    form1 [0] == '\0' && form2 [0] == '\0')
 		{
-			double width = Graphics_textWidth (g, my candidates [icand]. string);
+			double width = Graphics_textWidth_ps (g, my candidates [icand]. string, TRUE);
 			if (width > candWidth) candWidth = width;
 			numberOfMatchingCandidates ++;
 			if (OTMulti_compareCandidates (me, icand, winner) == 0) {
@@ -474,7 +474,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			Graphics_setFontSize (g, (int) ((bidirectional ? 1.2 : 1.5) * fontSize));
 			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
-			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, bidirectional ? "\\Vr" : "\\pf");
+			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, bidirectional ? "\\Vr" : "\\pf");
 			Graphics_setColour (g, Graphics_BLACK);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
@@ -482,7 +482,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates1 > 1) Graphics_setColour (g, Graphics_RED);
-			Graphics_text (g, x + margin + fingerWidth, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, "\\pf");
+			Graphics_text (g, x + margin + fingerWidth, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, "\\pf");
 			Graphics_setColour (g, Graphics_BLACK);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
@@ -491,7 +491,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates2 > 1) Graphics_setColour (g, Graphics_RED);
 			Graphics_setTextRotation (g, 180);
-			Graphics_text (g, x + margin + fingerWidth * 2, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, "\\pf");
+			Graphics_text (g, x + margin + fingerWidth * 2, y + descent - Graphics_dyMMtoWC (g, 0.0) * fontSize / 12.0, "\\pf");
 			Graphics_setTextRotation (g, 0);
 			Graphics_setColour (g, Graphics_BLACK);
 			Graphics_setFontSize (g, (int) fontSize);
