@@ -2300,7 +2300,7 @@ static void do_index_regex (int backward) {
 		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
-		} else if (ExecRE (compiled_regexp, NULL, s->content.string, NULL, backward, '\0', '\0', NULL)) {
+		} else if (ExecRE (compiled_regexp, NULL, s->content.string, NULL, backward, '\0', '\0', NULL, NULL)) {
 			char *place = compiled_regexp -> startp [0];
 			free (compiled_regexp);
 			pushNumber ((place - s->content.string) + 1);

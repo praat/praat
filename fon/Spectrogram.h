@@ -35,8 +35,8 @@
 class_create (Spectrogram, Matrix)
 
 /* Attributes:
-	xmin			// Starting time (seconds).
-	xmax		// Total duration (seconds).
+	xmin			// Start time (seconds).
+	xmax		// End time (seconds).
 	nx			// Number of time slices.
 	dx			// The time between two subsequent time slices.
 	x1			// The centre of the first time slice.

@@ -33,8 +33,8 @@
 class_create (Cochleagram, Matrix)
 
 /* Normally, the attributes will meet the following:
-	xmin;			// Starting time (seconds).
-	xmax;			// Total duration (seconds).
+	xmin;			// Start time (seconds).
+	xmax;			// End time (seconds).
 	nx;				// Number of time slices.
 	dx;				// Time step (seconds).
 	x1;				// Centre of first time sample (seconds).

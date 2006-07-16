@@ -450,7 +450,7 @@ int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, c
 		char *place = NULL, *errorMessage;
 		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;
-		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL))
+		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);
 		return place != NULL;

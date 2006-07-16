@@ -23,7 +23,7 @@
  */
 
 /* Attributes:
-	xmin			// Starting time (seconds).
+	xmin			// Start time (seconds).
 	xmax > xmin		// End time (seconds).
 	nx >= 1			// Number of time slices.
 	dx > 0.0		// Time step (seconds).

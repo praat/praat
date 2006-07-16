@@ -42,7 +42,7 @@
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
  djmw 20060517 Added NUMregexp_compile
  djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
- djmw 20060614 Accept empty replace string in str_replace_regexp
+ djmw 20060626 Extra NULL argument for ExecRE.
 */
 
 #include "SVD.h"
@@ -308,7 +308,7 @@ char *strstr_regexp (const char *string, const char *search_regexp)
 	
 	if (compiled_regexp == NULL) return Melder_errorp (compileMsg);
 	
-	if (ExecRE(compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL))
+	if (ExecRE(compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL))
 		charp = compiled_regexp -> startp[0];
 	free (compiled_regexp);
 	return charp;
@@ -417,7 +417,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	char *buf, *tbuf;
 
 	*nmatches = 0;	
-	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL)
+	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || strlen (replaceRE) == 0)
 		return NULL;
 		
 	string_length = strlen (string);
@@ -452,7 +452,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	
 	pos = posp = string;
 	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, 
-		pos == posp ? '\0' : pos[-1], '\0', NULL) && 
+		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL) && 
 		i++ < maximumNumberOfReplaces)
 	{
 		/*

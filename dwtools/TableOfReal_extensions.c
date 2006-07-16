@@ -34,6 +34,7 @@
  djmw 20050512 TableOfReal TableOfReal_meansByRowLabels crashed if first label in sorted was NULL.
  djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
+ djmw 20060626 Extra NULL argument for ExecRE.
 */
 
 #include <ctype.h>
@@ -1417,7 +1418,7 @@ long TableOfReal_getNumberOfLabelMatches (I, char *search, int columnLabels,
 		if (use_regexp)
 		{
 			if (ExecRE (compiled_regexp, NULL, labels[i], NULL, 0, 
-				'\0', '\0', NULL)) nmatches++;
+				'\0', '\0', NULL, NULL)) nmatches++;
 		}
 		else if (strequ (labels[i], search)) nmatches++;
 	}

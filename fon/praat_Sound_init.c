@@ -355,28 +355,28 @@ END
 
 FORM (Sound_create, "Create Sound", "Create Sound...")
 	WORD ("Name", "sineWithNoise")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	REAL ("Sampling frequency (Hz)", "22050")
 	LABEL ("", "Formula:")
 	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	Sound sound = NULL;
-	double startingTime = GET_REAL ("Starting time");
-	double finishingTime = GET_REAL ("Finishing time");
+	double startTime = GET_REAL ("Start time");
+	double endTime = GET_REAL ("End time");
 	double samplingFrequency = GET_REAL ("Sampling frequency");
-	double numberOfSamples_real = floor ((finishingTime - startingTime) * samplingFrequency + 0.5);
+	double numberOfSamples_real = floor ((endTime - startTime) * samplingFrequency + 0.5);
 	long numberOfSamples;
-	if (finishingTime <= startingTime) {
-		if (finishingTime == startingTime)
+	if (endTime <= startTime) {
+		if (endTime == startTime)
 			Melder_error ("A Sound cannot have a duration of zero.");
 		else
 			Melder_error ("A Sound cannot have a duration less than zero.");
-		if (startingTime == 0.0)
-			return Melder_error ("Please set the finishing time to something greater than 0 seconds.");
+		if (startTime == 0.0)
+			return Melder_error ("Please set the end time to something greater than 0 seconds.");
 		else
-			return Melder_error ("Please lower the starting time or raise the finishing time.");
+			return Melder_error ("Please lower the start time or raise the end time.");
 	}
 	if (samplingFrequency <= 0.0) {
 		Melder_error ("A Sound cannot have a negative sampling frequency.");
@@ -384,30 +384,30 @@ DO
 	}
 	if (numberOfSamples_real < 1.0) {
 		Melder_error ("A Sound cannot have zero samples.");
-		if (startingTime == 0.0)
-			return Melder_error ("Please raise the finishing time.");
+		if (startTime == 0.0)
+			return Melder_error ("Please raise the end time.");
 		else
-			return Melder_error ("Please lower the starting time or raise the finishing time.");
+			return Melder_error ("Please lower the start time or raise the end time.");
 	}
 	if (numberOfSamples_real > LONG_MAX) {
 		Melder_error ("A Sound cannot have %s samples; the maximum is %s samples "
 			"(or less, depending on your computer's memory).", Melder_bigInteger (numberOfSamples_real), Melder_bigInteger (LONG_MAX));
-		if (startingTime == 0.0)
-			return Melder_error ("Please lower the finishing time or the sampling frequency.");
+		if (startTime == 0.0)
+			return Melder_error ("Please lower the end time or the sampling frequency.");
 		else
-			return Melder_error ("Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
+			return Melder_error ("Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
-	sound = Sound_create (startingTime, finishingTime, numberOfSamples, 1.0 / samplingFrequency,
-		startingTime + 0.5 * (finishingTime - startingTime - (numberOfSamples - 1) / samplingFrequency));
+	sound = Sound_create (startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
+		startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	if (sound == NULL) {
 		if (strstr (Melder_getError (), "memory")) {
 			Melder_clearError ();
 			Melder_error ("There is not enough memory to create a Sound that contains %s samples.", Melder_bigInteger (numberOfSamples_real));
-			if (startingTime == 0.0)
-				return Melder_error ("You could lower the finishing time or the sampling frequency and try again.");
+			if (startTime == 0.0)
+				return Melder_error ("You could lower the end time or the sampling frequency and try again.");
 			else
-				return Melder_error ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
+				return Melder_error ("You could raise the start time or lower the end time or the sampling frequency, and try again.");
 		} else {
 			return 0;   /* Unexpected error. Wait for generic message. */
 		}
@@ -423,8 +423,8 @@ END
 
 FORM (Sound_createFromToneComplex, "Create Sound from tone complex", "Create Sound from tone complex...")
 	WORD ("Name", "toneComplex")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	POSITIVE ("Sampling frequency (Hz)", "22050")
 	RADIO ("Phase", 2)
 		RADIOBUTTON ("Sine")
@@ -435,7 +435,7 @@ FORM (Sound_createFromToneComplex, "Create Sound from tone complex", "Create Sou
 	INTEGER ("Number of components", "0 (= maximum)")
 	OK
 DO
-	if (! praat_new (Sound_createFromToneComplex (GET_REAL ("Starting time"), GET_REAL ("Finishing time"),
+	if (! praat_new (Sound_createFromToneComplex (GET_REAL ("Start time"), GET_REAL ("End time"),
 		GET_REAL ("Sampling frequency"), GET_INTEGER ("Phase") - 1, GET_REAL ("Frequency step"),
 		GET_REAL ("First frequency"), GET_REAL ("Ceiling"), GET_INTEGER ("Number of components")),
 		GET_STRING ("Name"))) return 0;

@@ -159,9 +159,9 @@ INTRO ("A command to create a @PointProcess object that represents a Poisson pro
 NORMAL ("A Poisson process is a stationary point process with a fixed density %\\la, "
 	"which means that there are, on the average, %\\la events per second.")
 ENTRY ("Settings")
-TAG ("%%Starting time% (seconds)")
+TAG ("%%Start time% (seconds)")
 DEFINITION ("%t__%min_, the beginning of the time domain.")
-TAG ("%%Finishing time% (seconds)")
+TAG ("%%End time% (seconds)")
 DEFINITION ("%t__%max_, the end of the time domain.")
 TAG ("%Density (Hertz)")
 DEFINITION ("the average number of points per second.")

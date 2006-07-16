@@ -45,8 +45,8 @@ static void info (I) {
 	classData -> info (me);
 	Melder_info (
 		"Time domain:\n"
-		"   Starting time: %s seconds\n"
-		"   Finishing time: %s seconds\n"
+		"   Start time: %s seconds\n"
+		"   End time: %s seconds\n"
 		"   Total duration: %s seconds",
 		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
 	Melder_info (

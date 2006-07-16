@@ -195,7 +195,7 @@ LIST_ITEM ("\\bu @@Pitch & TextTier: To PitchTier...@: interpolate values at spe
 ENTRY ("Inside a Pitch object")
 NORMAL ("With @Inspect, you will see the following attributes:")
 TAG ("%x__%min_")
-DEFINITION ("starting time, in seconds.")
+DEFINITION ("start time, in seconds.")
 TAG ("%x__%max_")
 DEFINITION ("end time, in seconds.")
 TAG ("%n__%x_")
@@ -265,8 +265,8 @@ MAN_BEGIN ("Pitch: Interpolate", "ppgb", 19990811)
 INTRO ("A command that converts every selected @Pitch object.")
 /*
 	myID = selected ("Pitch")
-	tmin = Get starting time
-	tmax = Get finishing time
+	tmin = Get start time
+	tmax = Get end time
 	numberOfFrames = Get number of frames
 	timeStep = Get time step
 	t1 = Get time of frame... 1

@@ -1,32 +1,30 @@
 #ifndef _regularExp_h_
 #define _regularExp_h_
-/* regularExp.h
- *
- * Copyright (C) 1994-2002 David Weenink
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/* $Id: regularExp.h,v 1.5 2001/04/06 09:49:56 amai Exp $ */
-/*----------------------------------------------------------------------*
- *  This is regularExp.h: NEdit Regular Expression Package Header File
- *----------------------------------------------------------------------*/
-
-/*
- djmw 20020812 GPL header
-*/
+/*******************************************************************************
+*                                                                              *
+* regularExp.h -- Nirvana Editor Regular Expression Package Header File        *
+*                                                                              *
+* Copyright 2002 The NEdit Developers                                          *
+*                                                                              *
+* This is free software; you can redistribute it and/or modify it under the    *
+* terms of the GNU General Public License as published by the Free Software    *
+* Foundation; either version 2 of the License, or (at your option) any later   *
+* version. In addition, you may distribute version of this program linked to   *
+* Motif or Open Motif. See README for details.                                 *
+*                                                                              *
+* This software is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or        *
+* FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License *
+* for more details.                                                            *
+*                                                                              *
+* You should have received a copy of the GNU General Public License along with *
+* software; if not, write to the Free Software Foundation, Inc., 59 Temple     *
+* Place, Suite 330, Boston, MA  02111-1307 USA                                 *
+*                                                                              *
+* Nirvana Text Editor                                                          *
+* July 31, 2001                                                                *
+*                                                                              *
+*******************************************************************************/
 
 /* Number of text capturing parentheses allowed. */
 
@@ -38,9 +36,14 @@
 typedef struct regexp {
    char *startp [NSUBEXP];  /* Captured text starting locations. */
    char *endp   [NSUBEXP];  /* Captured text ending locations. */
-   char *extentp;           /* Points to the maximum extent of text scanned by
+   char *extentpBW;         /* Points to the maximum extent of text scanned by
+                               ExecRE in front of the string to achieve a match
+                               (needed because of positive look-behind.) */
+   char *extentpFW;         /* Points to the maximum extent of text scanned by
                                ExecRE to achieve a match (needed because of
                                positive look-ahead.) */
+   int   top_branch;        /* Zero-based index of the top branch that matches.
+                               Used by syntax highlighting only. */
    char  match_start;       /* Internal use only. */
    char  anchor;            /* Internal use only. */
    char  program [1];       /* Unwarranted chumminess with compiler. */
@@ -78,7 +81,9 @@ int ExecRE (
                                    to '\n' or '\0' if true beginning of text. */
    char    succ_char,           /* Character immediately after `end'.  Set
                                    to '\n' or '\0' if true beginning of text. */
-   const char   *delimiters);         /* Word delimiters to use (NULL for default) */
+   const char   *delimiters,    /* Word delimiters to use (NULL for default) */
+   const char   *look_behind_to); /* Boundary for look-behind; defaults to
+                                    "string" if NULL */
 
 /* Perform substitutions after a `regexp' match. */
 

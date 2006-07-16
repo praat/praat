@@ -80,7 +80,7 @@ int Pitch_Frame_init (Pitch_Frame me, int nCandidates);
 		estimates of the mean and standard deviation of the distribution on a Hertz scale;
 		minimum and maximum values of the measured set.
 	Reading failures:
-		Finishing time should be greater than starting time.
+		End time should be greater than start time.
 		Number of frames should be positive.
 		Time step should be greater than 0.0.
 		Maximum number of candidates should be positive.

@@ -1,6 +1,5 @@
 /*------------------------------------------------------------------------*
- * static const char CVSID[] = "$Id: regularExp.c,v 1.12 2002/02/05 20:55:12 edg Exp $";
- *
+ * static const char CVSID[] = "$Id: regularExp.c,v 1.25 2004/08/20 16:37:30 edg Exp $";
  * `CompileRE', `ExecRE', and `substituteRE' -- regular expression parsing
  *
  * This is a HIGHLY ALTERED VERSION of Henry Spencer's `regcomp' and
@@ -27,6 +26,22 @@
  * |      be misrepresented as being the original software.            |
  * `-------------------------------------------------------------------'
  *
+ * This is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. In addition, you may distribute version of this program linked to
+ * Motif or Open Motif. See README for details.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * software; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ *
  * BEWARE that some of this code is subtly aware of the way operator
  * precedence is structured in regular expressions.  Serious changes in
  * regular-expression syntax might require a total rethink.
@@ -52,17 +67,18 @@
  *    regex comments: (?#...), added shortcut escapes: \d\D\l\L\s\S\w\W\y\Y.
  *    Added "not a word boundary" anchor \B.
  *
- ***************************************************************************
- *
- * RegularExp.c adapted by David Weenink for use in the Praat program.
+ * July, 2002, Eddy De Greef
+ *    Added look behind, both positive (?<=...) and negative (?<!...) for
+ *    bounded-length patterns.
+ */
+/* Adapted by David Weenink for use in the Praat program.
  * The following (minimal) changes have been made:
  *
- * 200209 djmw changed reg_error to call Melder_error
- * 20010718 djmw changed second argument from SubstituteRE to 'const char *'.
- *               #include "melder.h"
- *  20020917 changed to version v1.12
- * djmw 20040212 : Change in header file for MacOS 10.3
- * djmw 20040408 Change in header file for MacOS 10.3
+ * djmw 20060620 change from version 1.12 to 1.25
+ *		Changed reg_error to call Melder_error
+ *      #include "melder.h"
+ * 		Added #ifdef __MACH__ ... #endif for MacOS 10.3
+ *  New version:
  */
 
 #include <stdio.h>
@@ -78,6 +94,7 @@
 #include <limits.h>
 #include "regularExp.h"
 #include "melder.h"
+
 
 /* The first byte of the regexp internal `program' is a magic number to help
    gaurd against corrupted data; the compiled regex code really begins in the
@@ -181,11 +198,15 @@
 
 /* Various nodes used to implement parenthetical constructs. */
 
-#define POS_LOOK_OPEN     43  /* Begin positive look ahead */
-#define NEG_LOOK_OPEN     44  /* Begin negative look ahead */
+#define POS_AHEAD_OPEN    43  /* Begin positive look ahead */
+#define NEG_AHEAD_OPEN    44  /* Begin negative look ahead */
 #define LOOK_AHEAD_CLOSE  45  /* End positive or negative look ahead */
 
-#define OPEN              46  /* Open for capturing parentheses. */
+#define POS_BEHIND_OPEN   46  /* Begin positive look behind */
+#define NEG_BEHIND_OPEN   47  /* Begin negative look behind */
+#define LOOK_BEHIND_CLOSE 48  /* Close look behind */
+
+#define OPEN              49  /* Open for capturing parentheses. */
 
                               /*  OPEN+1 is number 1, etc. */
 #define CLOSE       (OPEN + NSUBEXP)  /* Close for capturing parentheses. */
@@ -196,6 +217,27 @@
 #error "Too many parentheses for storage in an unsigned char (LAST_PAREN too big.)"
 #endif
 
+/* The next_ptr () function can consume up to 30% of the time during matching
+   because it is called an immense number of times (an average of 25 
+   next_ptr() calls per match() call was witnessed for Perl syntax 
+   highlighting). Therefore it is well worth removing some of the function
+   call overhead by selectively inlining the next_ptr() calls. Moreover,
+   the inlined code can be simplified for matching because one of the tests, 
+   only necessary during compilation, can be left out.
+   The net result of using this inlined version at two critical places is 
+   a 25% speedup (again, witnesses on Perl syntax highlighting). */
+   
+#define NEXT_PTR(in_ptr, out_ptr)\
+   next_ptr_offset = GET_OFFSET (in_ptr);\
+   if (next_ptr_offset == 0)\
+       out_ptr = NULL;\
+   else {\
+       if (GET_OP_CODE (in_ptr) == BACK)\
+           out_ptr = in_ptr - next_ptr_offset;\
+       else \
+           out_ptr = in_ptr + next_ptr_offset;\
+   }
+   
 /* OPCODE NOTES:
    ------------
 
@@ -311,7 +353,7 @@
       parentheses of the separate regex passed to ExecRE. X_REGEX_BR_CI is case
       insensitive version.
 
-   POS_LOOK_OPEN, NEG_LOOK_OPEN, LOOK_AHEAD_CLOSE
+   POS_AHEAD_OPEN, NEG_AHEAD_OPEN, LOOK_AHEAD_CLOSE
 
       Operand(s): None
 
@@ -319,6 +361,17 @@
       that something is either there or not there.   Once this is determined the
       regex engine backtracks to where it was just before the look ahead was
       encountered, i.e. look ahead is a zero width assertion.
+
+   POS_BEHIND_OPEN, NEG_BEHIND_OPEN, LOOK_BEHIND_CLOSE
+
+      Operand(s): 2x2 bytes for OPEN (match boundaries), None for CLOSE
+
+      Implements positive and negative look behind.  Look behind is an assertion
+      that something is either there or not there in front of the current
+      position.  Look behind is a zero width assertion, with the additional
+      constraint that it must have a bounded length (for complexity and
+      efficiency reasons; note that most other implementation even impose
+      fixed length).
 
    OPEN, CLOSE
 
@@ -340,6 +393,7 @@
 #define OP_CODE_SIZE    1
 #define NEXT_PTR_SIZE   2
 #define INDEX_SIZE      1
+#define LENGTH_SIZE	4
 #define NODE_SIZE       (NEXT_PTR_SIZE + OP_CODE_SIZE)
 
 #define GET_OP_CODE(p)  (*(unsigned char *)(p))
@@ -347,6 +401,10 @@
 #define GET_OFFSET(p)   ((( *((p) + 1) & 0377) << 8) + (( *((p) + 2)) & 0377))
 #define PUT_OFFSET_L(v) (unsigned char)(((v) >> 8) & 0377)
 #define PUT_OFFSET_R(v) (unsigned char) ((v)       & 0377)
+#define GET_LOWER(p)    ((( *((p) + NODE_SIZE) & 0377) << 8) + \
+                         (( *((p) + NODE_SIZE+1)) & 0377))
+#define GET_UPPER(p)    ((( *((p) + NODE_SIZE+2) & 0377) << 8) + \
+                         (( *((p) + NODE_SIZE+3)) & 0377))
 
 /* Utility definitions. */
 
@@ -437,12 +495,14 @@ static unsigned char  Brace_Char;
 static unsigned char  Default_Meta_Char [] = "{.*+?[(|)^<>$";
 static unsigned char *Meta_Char;
 
+typedef struct { long lower; long upper; } len_range;
+
 /* Forward declarations for functions used by `CompileRE'. */
 
-static unsigned char * alternative     (int *flag_param);
+static unsigned char * alternative     (int *flag_param, len_range *range_param);
 static unsigned char * back_ref        (unsigned char *c, int *flag_param,
                                         int emit);
-static unsigned char * chunk           (int paren, int *flag_param);
+static unsigned char * chunk           (int paren, int *flag_param, len_range *range_param);
 static void            emit_byte       (unsigned char c);
 static void            emit_class_byte (unsigned char c);
 static unsigned char * emit_node       (int op_code);
@@ -451,7 +511,7 @@ static unsigned char * emit_special    (unsigned char op_code,
                                         int index);
 static unsigned char   literal_escape  (unsigned char c);
 static unsigned char   numeric_escape  (unsigned char c, unsigned char **parse);
-static unsigned char * atom            (int *flag_param);
+static unsigned char * atom            (int *flag_param, len_range *range_param);
 static void            reg_error       (char *str);
 static unsigned char * insert          (unsigned char op, unsigned char *opnd,
                                         long min, long max, int index);
@@ -460,7 +520,7 @@ static void            offset_tail     (unsigned char *ptr, int offset,
                                         unsigned char *val);
 static void            branch_tail     (unsigned char *ptr, int offset,
                                         unsigned char *val);
-static unsigned char * piece           (int *flag_param);
+static unsigned char * piece           (int *flag_param, len_range *range_param);
 static void            tail            (unsigned char *search_from,
                                         unsigned char *point_t);
 static unsigned char * shortcut_escape (unsigned char c, int *flag_param,
@@ -488,6 +548,7 @@ regexp * CompileRE (const char *exp, char **errorText, int defaultFlags) {
    register                regexp *comp_regex = NULL;
    register unsigned char *scan;
                      int   flags_local, pass;
+	 	     len_range range_local;
 
    if (Enable_Counting_Quantifier) {
       Brace_Char  = '{';
@@ -546,8 +607,8 @@ regexp * CompileRE (const char *exp, char **errorText, int defaultFlags) {
       emit_byte ('%');  /* Placeholder for num of capturing parentheses.    */
       emit_byte ('%');  /* Placeholder for num of general {m,n} constructs. */
 
-      if (chunk (NO_PAREN, &flags_local) == NULL) return (NULL); /* Something
-                                                                   went wrong */
+      if (chunk (NO_PAREN, &flags_local, &range_local) == NULL) 
+	  return (NULL); /* Something went wrong */
       if (pass == 1) {
          if (Reg_Size >= MAX_COMPILED_SIZE) {
             /* Too big for NEXT pointers NEXT_PTR_SIZE bytes long to span.
@@ -619,7 +680,8 @@ regexp * CompileRE (const char *exp, char **errorText, int defaultFlags) {
  * branches to what follows makes it hard to avoid.                     *
  *----------------------------------------------------------------------*/
 
-static unsigned char * chunk (int paren, int *flag_param) {
+static unsigned char * chunk (int paren, int *flag_param, 
+                              len_range *range_param) {
 
    register unsigned char *ret_val = NULL;
    register unsigned char *this_branch;
@@ -628,8 +690,14 @@ static unsigned char * chunk (int paren, int *flag_param) {
                      int   flags_local, first = 1, zero_width, i;
                      int   old_sensitive = Is_Case_Insensitive;
                      int   old_newline   = Match_Newline;
+		     len_range range_local;
+		     int   look_only = 0;
+            unsigned char *emit_look_behind_bounds = NULL;
+	             
 
    *flag_param = HAS_WIDTH;  /* Tentatively. */
+   range_param->lower = 0;   /* Idem */
+   range_param->upper = 0;
 
    /* Make an OPEN node, if parenthesized. */
 
@@ -641,9 +709,16 @@ static unsigned char * chunk (int paren, int *flag_param) {
 
       this_paren = Total_Paren; Total_Paren++;
       ret_val    = emit_node (OPEN + this_paren);
-   } else if (paren == POS_LOOK_OPEN || paren == NEG_LOOK_OPEN) {
+   } else if (paren == POS_AHEAD_OPEN || paren == NEG_AHEAD_OPEN) {
       *flag_param = WORST;  /* Look ahead is zero width. */
+      look_only   = 1;
       ret_val     = emit_node (paren);
+   } else if (paren == POS_BEHIND_OPEN || paren == NEG_BEHIND_OPEN) {
+      *flag_param = WORST;  /* Look behind is zero width. */
+      look_only   = 1;
+      /* We'll overwrite the zero length later on, so we save the ptr */
+      ret_val 	  = emit_special (paren, 0, 0);
+      emit_look_behind_bounds = ret_val + NODE_SIZE;
    } else if (paren == INSENSITIVE) {
       Is_Case_Insensitive = 1;
    } else if (paren == SENSITIVE) {
@@ -657,13 +732,24 @@ static unsigned char * chunk (int paren, int *flag_param) {
    /* Pick up the branches, linking them together. */
 
    do {
-      this_branch = alternative (&flags_local);
+      this_branch = alternative (&flags_local, &range_local);
 
       if (this_branch == NULL) return (NULL);
 
       if (first) {
          first = 0;
+	 *range_param = range_local;
          if (ret_val == NULL) ret_val = this_branch;
+      } else if (range_param->lower >= 0) {
+	  if (range_local.lower >= 0) {
+             if (range_local.lower < range_param->lower)
+                range_param->lower = range_local.lower;
+             if (range_local.upper > range_param->upper)
+                range_param->upper = range_local.upper;
+          } else {
+	      range_param->lower = -1; /* Branches have different lengths */
+	      range_param->upper = -1;
+	  }
       }
 
       tail (ret_val, this_branch);  /* Connect BRANCH -> BRANCH. */
@@ -688,8 +774,11 @@ static unsigned char * chunk (int paren, int *flag_param) {
    } else if (paren == NO_PAREN) {
       ender = emit_node (END);
 
-   } else if (paren == POS_LOOK_OPEN || paren == NEG_LOOK_OPEN) {
+   } else if (paren == POS_AHEAD_OPEN || paren == NEG_AHEAD_OPEN) {
       ender = emit_node (LOOK_AHEAD_CLOSE);
+
+   } else if (paren == POS_BEHIND_OPEN || paren == NEG_BEHIND_OPEN) {
+      ender = emit_node (LOOK_BEHIND_CLOSE);
 
    } else {
       ender = emit_node (NOTHING);
@@ -714,6 +803,29 @@ static unsigned char * chunk (int paren, int *flag_param) {
       } else {
          REG_FAIL ("junk on end");  /* "Can't happen" - NOTREACHED */
       }
+   }
+
+   /* Check whether look behind has a fixed size */
+
+   if (emit_look_behind_bounds) {
+       if (range_param->lower < 0) {
+	   REG_FAIL ("look-behind does not have a bounded size");
+       } 
+       if (range_param->upper > 65535L) {
+	   REG_FAIL ("max. look-behind size is too large (>65535)")
+       } 
+       if (Code_Emit_Ptr != &Compute_Size) {
+          *emit_look_behind_bounds++ = PUT_OFFSET_L (range_param->lower);
+          *emit_look_behind_bounds++ = PUT_OFFSET_R (range_param->lower);
+          *emit_look_behind_bounds++ = PUT_OFFSET_L (range_param->upper);
+          *emit_look_behind_bounds   = PUT_OFFSET_R (range_param->upper);
+       }
+   }
+
+   /* For look ahead/behind, the length must be set to zero again */
+   if (look_only) {
+       range_param->lower = 0;
+       range_param->upper = 0;
    }
 
    zero_width = 0;
@@ -769,14 +881,17 @@ static unsigned char * chunk (int paren, int *flag_param) {
  * pointers of each regex atom together sequentialy.
  *----------------------------------------------------------------------*/
 
-static unsigned char * alternative (int *flag_param) {
+static unsigned char * alternative (int *flag_param, len_range *range_param) {
 
    register unsigned char *ret_val;
    register unsigned char *chain;
    register unsigned char *latest;
                      int   flags_local;
+		     len_range range_local;
 
    *flag_param = WORST;  /* Tentatively. */
+   range_param->lower = 0; /* Idem */
+   range_param->upper = 0;
 
    ret_val = emit_node (BRANCH);
    chain   = NULL;
@@ -785,11 +900,19 @@ static unsigned char * alternative (int *flag_param) {
       of alternatives (end of parentheses), or the end of the regex. */
 
    while (*Reg_Parse != '|' && *Reg_Parse != ')' && *Reg_Parse != '\0') {
-      latest = piece (&flags_local);
+      latest = piece (&flags_local, &range_local);
 
       if (latest == NULL) return (NULL); /* Something went wrong. */
 
       *flag_param |= flags_local & HAS_WIDTH;
+      if (range_local.lower < 0) {
+	  /* Not a fixed length */
+	  range_param->lower = -1;
+	  range_param->upper = -1;
+      } else if (range_param->lower >= 0) {
+	  range_param->lower += range_local.lower;
+	  range_param->upper += range_local.upper;
+      }
 
       if (chain != NULL) { /* Connect the regex atoms together sequentialy. */
          tail (chain, latest);
@@ -815,7 +938,7 @@ static unsigned char * alternative (int *flag_param) {
  * dispensed with entirely, but the endmarker role is not redundant.
  *----------------------------------------------------------------------*/
 
-static unsigned char * piece (int *flag_param) {
+static unsigned char * piece (int *flag_param, len_range *range_param) {
 
    register unsigned char *ret_val;
    register unsigned char *next;
@@ -824,8 +947,9 @@ static unsigned char * piece (int *flag_param) {
             int            flags_local, i, brace_present = 0;
             int            lazy = 0, comma_present = 0;
             int            digit_present [2] = {0,0};
+	    len_range      range_local;
 
-   ret_val = atom (&flags_local);
+   ret_val = atom (&flags_local, &range_local);
 
    if (ret_val == NULL) return (NULL);  /* Something went wrong. */
 
@@ -833,7 +957,7 @@ static unsigned char * piece (int *flag_param) {
 
    if (!IS_QUANTIFIER (op_code)) {
       *flag_param = flags_local;
-
+      *range_param = range_local;
       return (ret_val);
    } else if (op_code == '{') { /* {n,m} quantifier present */
       brace_present++;
@@ -946,6 +1070,7 @@ static unsigned char * piece (int *flag_param) {
              regex with such nonsense. */
 
          *flag_param = flags_local;
+	 *range_param = range_local;
          return (ret_val);
       } else if (Num_Braces > (int)UCHAR_MAX) {
          sprintf (Error_Text, "number of {m,n} constructs > %d", UCHAR_MAX);
@@ -971,6 +1096,18 @@ static unsigned char * piece (int *flag_param) {
    }
 
    *flag_param = (min_max [0] > REG_ZERO) ? (WORST | HAS_WIDTH) : WORST;
+   if (range_local.lower >= 0) {
+       if (min_max[1] != REG_INFINITY) {
+	   range_param->lower = range_local.lower * min_max[0];
+	   range_param->upper = range_local.upper * min_max[1];
+       } else {
+	   range_param->lower = -1; /* Not a fixed-size length */
+	   range_param->upper = -1;
+       }
+   } else { 
+       range_param->lower = -1; /* Not a fixed-size length */
+       range_param->upper = -1;
+   }
 
    /*---------------------------------------------------------------------*
     *          Symbol  Legend  For  Node  Structure  Diagrams
@@ -1346,13 +1483,16 @@ static unsigned char * piece (int *flag_param) {
  * is smaller to store and faster to run.
  *----------------------------------------------------------------------*/
 
-static unsigned char * atom (int *flag_param) {
+static unsigned char * atom (int *flag_param, len_range *range_param) {
 
    register unsigned char *ret_val;
             unsigned char  test;
             int            flags_local;
+	    len_range      range_local;
 
    *flag_param = WORST;  /* Tentatively. */
+   range_param->lower = 0; /* Idem */
+   range_param->upper = 0;
 
    /* Process any regex comments, e.g. `(?# match next token->)'.  The
       terminating right parenthesis can not be escaped.  The comment stops at
@@ -1409,33 +1549,53 @@ static unsigned char * atom (int *flag_param) {
             ret_val = emit_node (ANY);
          }
 
-         *flag_param |= (HAS_WIDTH | SIMPLE); break;
+         *flag_param |= (HAS_WIDTH | SIMPLE); 
+	 range_param->lower = 1;
+	 range_param->upper = 1;
+	 break;
 
       case '(':
          if (*Reg_Parse == '?') {  /* Special parenthetical expression */
             Reg_Parse++;
+	    range_local.lower = 0; /* Make sure it is always used */
+	    range_local.upper = 0;
 
             if (*Reg_Parse == ':') {
                Reg_Parse++;
-               ret_val = chunk (NO_CAPTURE, &flags_local);
+               ret_val = chunk (NO_CAPTURE, &flags_local, &range_local);
             } else if (*Reg_Parse == '=') {
                Reg_Parse++;
-               ret_val = chunk (POS_LOOK_OPEN, &flags_local);
+               ret_val = chunk (POS_AHEAD_OPEN, &flags_local, &range_local);
             } else if (*Reg_Parse == '!') {
                Reg_Parse++;
-               ret_val = chunk (NEG_LOOK_OPEN, &flags_local);
+               ret_val = chunk (NEG_AHEAD_OPEN, &flags_local, &range_local);
             } else if (*Reg_Parse == 'i') {
                Reg_Parse++;
-               ret_val = chunk (INSENSITIVE, &flags_local);
+               ret_val = chunk (INSENSITIVE, &flags_local, &range_local);
             } else if (*Reg_Parse == 'I') {
                Reg_Parse++;
-               ret_val = chunk (SENSITIVE, &flags_local);
+               ret_val = chunk (SENSITIVE, &flags_local, &range_local);
             } else if (*Reg_Parse == 'n') {
                Reg_Parse++;
-               ret_val = chunk (NEWLINE, &flags_local);
+               ret_val = chunk (NEWLINE, &flags_local, &range_local);
             } else if (*Reg_Parse == 'N') {
                Reg_Parse++;
-               ret_val = chunk (NO_NEWLINE, &flags_local);
+               ret_val = chunk (NO_NEWLINE, &flags_local, &range_local);
+            } else if (*Reg_Parse == '<') {
+               Reg_Parse++;
+	       if (*Reg_Parse == '=') {
+	          Reg_Parse++;
+                  ret_val = chunk (POS_BEHIND_OPEN, &flags_local, &range_local);
+	       } else if (*Reg_Parse == '!') {
+	          Reg_Parse++;
+                  ret_val = chunk (NEG_BEHIND_OPEN, &flags_local, &range_local);
+	       } else {
+                  sprintf (Error_Text,
+                           "invalid look-behind syntax, \"(?<%c...)\"",
+                           *Reg_Parse);
+
+                  REG_FAIL (Error_Text);
+	       }
             } else {
                sprintf (Error_Text,
                         "invalid grouping syntax, \"(?%c...)\"",
@@ -1444,7 +1604,7 @@ static unsigned char * atom (int *flag_param) {
                REG_FAIL (Error_Text);
             }
          } else { /* Normal capturing parentheses */
-            ret_val = chunk (PAREN, &flags_local);
+            ret_val = chunk (PAREN, &flags_local, &range_local);
          }
 
          if (ret_val == NULL) return (NULL);  /* Something went wrong. */
@@ -1452,6 +1612,7 @@ static unsigned char * atom (int *flag_param) {
          /* Add HAS_WIDTH flag if it was set by call to chunk. */
 
          *flag_param |= flags_local & HAS_WIDTH;
+	 *range_param = range_local;
 
          break;
 
@@ -1473,6 +1634,8 @@ static unsigned char * atom (int *flag_param) {
             ret_val = emit_node (EXACTLY); /* Treat braces as literals. */
             emit_byte ('{');
             emit_byte ('\0');
+	    range_param->lower = 1;
+	    range_param->upper = 1;
          }
 
          break;
@@ -1651,7 +1814,10 @@ static unsigned char * atom (int *flag_param) {
                delimiter (']').  Because of this, it is always safe to assume
                that a class HAS_WIDTH. */
 
-            Reg_Parse++; *flag_param |= HAS_WIDTH | SIMPLE;
+            Reg_Parse++; 
+	    *flag_param |= HAS_WIDTH | SIMPLE;
+	    range_param->lower = 1;
+	    range_param->upper = 1;
          }
 
          break; /* End of character class code. */
@@ -1665,14 +1831,21 @@ static unsigned char * atom (int *flag_param) {
 
          if ((ret_val = shortcut_escape (*Reg_Parse, flag_param, EMIT_NODE))) {
 
-            Reg_Parse++; break;
+            Reg_Parse++; 
+	    range_param->lower = 1;
+	    range_param->upper = 1;
+            break;
 
          } else if ((ret_val = back_ref (Reg_Parse, flag_param, EMIT_NODE))) {
             /* Can't make any assumptions about a back-reference as to SIMPLE
                or HAS_WIDTH.  For example (^|<) is neither simple nor has
                width.  So we don't flip bits in flag_param here. */
 
-            Reg_Parse++; break;
+            Reg_Parse++; 
+            /* Back-references always have an unknown length */
+	    range_param->lower = -1;
+	    range_param->upper = -1;
+	    break;
          }
 
          if (strlen (Error_Text) > 0) REG_FAIL (Error_Text);
@@ -1781,6 +1954,9 @@ static unsigned char * atom (int *flag_param) {
             *flag_param |= HAS_WIDTH;
 
             if (len == 1) *flag_param |= SIMPLE;
+	    
+	    range_param->lower = len;
+	    range_param->upper = len;
 
             emit_byte ('\0');
          }
@@ -1875,6 +2051,12 @@ static unsigned char * emit_special (
 
    if (Code_Emit_Ptr == &Compute_Size) {
       switch (op_code) {
+	 case POS_BEHIND_OPEN:
+	 case NEG_BEHIND_OPEN:
+	    Reg_Size += LENGTH_SIZE;   /* Length of the look-behind match */
+	    Reg_Size += NODE_SIZE;     /* Make room for the node */
+	    break;
+	    
          case TEST_COUNT:
             Reg_Size += NEXT_PTR_SIZE; /* Make room for a test value. */
 
@@ -1895,6 +2077,11 @@ static unsigned char * emit_special (
             *ptr++ = PUT_OFFSET_L (test_val);
             *ptr++ = PUT_OFFSET_R (test_val);
          }
+      } else if (op_code == POS_BEHIND_OPEN || op_code == NEG_BEHIND_OPEN) {
+         *ptr++ = PUT_OFFSET_L (test_val);
+         *ptr++ = PUT_OFFSET_R (test_val);
+         *ptr++ = PUT_OFFSET_L (test_val);
+         *ptr++ = PUT_OFFSET_R (test_val);
       }
 
       Code_Emit_Ptr = ptr;
@@ -2426,14 +2613,29 @@ static unsigned char * back_ref (
 static unsigned char  *Reg_Input;           /* String-input pointer.         */
 static unsigned char  *Start_Of_String;     /* Beginning of input, for ^     */
                                             /* and < checks.                 */
+static unsigned char  *Look_Behind_To;      /* Position till were look behind
+                                               can safely check back         */
 static unsigned char **Start_Ptr_Ptr;       /* Pointer to `startp' array.    */
 static unsigned char **End_Ptr_Ptr;         /* Ditto for `endp'.             */
-static unsigned char  *Extent_Ptr;
+static unsigned char  *Extent_Ptr_FW;       /* Forward extent pointer        */
+static unsigned char  *Extent_Ptr_BW;       /* Backward extent pointer       */
 static unsigned char  *Back_Ref_Start [10]; /* Back_Ref_Start [0] and        */
 static unsigned char  *Back_Ref_End   [10]; /* Back_Ref_End [0] are not      */
                                             /* used. This simplifies         */
                                             /* indexing.                     */
-static regexp *Cross_Regex_Backref;
+/*
+ * Measured recursion limits:
+ *    Linux:      +/-  40 000 (up to 110 000)
+ *    Solaris:    +/-  85 000
+ *    HP-UX 11:   +/- 325 000 
+ *
+ * So 10 000 ought to be safe.
+ */
+#define REGEX_RECURSION_LIMIT 10000
+static int Recursion_Count;          /* Recursion counter */
+static int Recursion_Limit_Exceeded; /* Recursion limit exceeded flag */
+
+/* static regexp *Cross_Regex_Backref; */
 
 static int Prev_Is_BOL;
 static int Succ_Is_EOL;
@@ -2457,7 +2659,7 @@ static unsigned char *Current_Delimiters;  /* Current delimiter table */
 /* Forward declarations of functions used by `ExecRE' */
 
 static int             attempt            (regexp *, unsigned char *);
-static int             match              (unsigned char *);
+static int             match              (unsigned char *, int *);
 static unsigned long   greedy             (unsigned char *, long);
 static void            adjustcase         (unsigned char *, int, unsigned char);
 static unsigned char * makeDelimiterTable (unsigned char *, unsigned char *);
@@ -2475,7 +2677,11 @@ static unsigned char * makeDelimiterTable (unsigned char *, unsigned char *);
  * shouldn't be, in which case, this should be changed).  "delimit" (if
  * non-null) specifies a null-terminated string of characters to be considered
  * word delimiters matching "<" and ">".  if "delimit" is NULL, the default
- * delimiters (as set in SetREDefaultWordDelimiters) are used. */
+ * delimiters (as set in SetREDefaultWordDelimiters) are used. 
+ * Finally, look_behind_to indicates the position till where it is safe to
+ * perform look-behind matches. If set, it should be smaller than or equal
+ * to the start position of the search (pointed at by string). If it is NULL, 
+ * it defaults to the start position. */
 
 int ExecRE (
    regexp *prog,
@@ -2485,7 +2691,8 @@ int ExecRE (
    int     reverse,
    char    prev_char,
    char    succ_char,
-   const char   *delimiters) {
+   const char   *delimiters,
+   const char   *look_behind_to) {
 
    register unsigned char  *str;
             unsigned char **s_ptr;
@@ -2535,6 +2742,7 @@ int ExecRE (
    /* Remember the beginning of the string for matching BOL */
 
    Start_Of_String    = (unsigned char *) string;
+   Look_Behind_To     = (unsigned char *) (look_behind_to?look_behind_to:string);
 
    Prev_Is_BOL        = ((prev_char == '\n') || (prev_char == '\0') ? 1 : 0);
    Succ_Is_EOL        = ((succ_char == '\n') || (succ_char == '\0') ? 1 : 0);
@@ -2543,8 +2751,11 @@ int ExecRE (
 
    Total_Paren        = (int) (prog->program [1]);
    Num_Braces         = (int) (prog->program [2]);
+   
+   /* Reset the recursion detection flag */
+   Recursion_Limit_Exceeded = 0;
 
-   Cross_Regex_Backref = cross_regex_backref;
+/*   Cross_Regex_Backref = cross_regex_backref; */
 
    /* Allocate memory for {m,n} construct counting variables if need be. */
 
@@ -2581,7 +2792,7 @@ int ExecRE (
          }
 
          for (str = (unsigned char *) string;
-             *str != '\0' && str != (unsigned char *) end;
+             *str != '\0' && str != (unsigned char *) end && !Recursion_Limit_Exceeded;
               str++) {
 
             if (*str == '\n') {
@@ -2598,7 +2809,7 @@ int ExecRE (
          /* We know what char match must start with. */
 
          for (str = (unsigned char *) string;
-             *str != '\0' && str != (unsigned char *) end;
+             *str != '\0' && str != (unsigned char *) end && !Recursion_Limit_Exceeded;
               str++) {
 
             if (*str == (unsigned char)prog->match_start) {
@@ -2614,12 +2825,19 @@ int ExecRE (
          /* General case */
 
          for (str = (unsigned char *) string;
-             *str != '\0' && str != (unsigned char *) end;
+             *str != '\0' && str != (unsigned char *) end && !Recursion_Limit_Exceeded;
               str++) {
 
             if (attempt (prog, str)) {
                ret_val = 1;
                break;
+            }
+         }
+         
+         /* Beware of a single $ matching \0 */
+         if (!Recursion_Limit_Exceeded && !ret_val && *str == '\0' && str != (unsigned char *) end) {
+            if (attempt (prog, str)) {
+               ret_val = 1;
             }
          }
 
@@ -2631,7 +2849,7 @@ int ExecRE (
          /* Search is anchored at BOL */
 
          for (str = (unsigned char *)(end - 1);
-              str >= (unsigned char *) string;
+              str >= (unsigned char *) string && !Recursion_Limit_Exceeded;
               str--) {
 
             if (*str == '\n') {
@@ -2642,7 +2860,7 @@ int ExecRE (
             }
          }
 
-         if (attempt (prog, (unsigned char *) string)) {
+         if (!Recursion_Limit_Exceeded && attempt (prog, (unsigned char *) string)) {
             ret_val = 1;
             goto SINGLE_RETURN;
          }
@@ -2652,7 +2870,7 @@ int ExecRE (
          /* We know what char match must start with. */
 
          for (str =  (unsigned char *) end;
-              str >= (unsigned char *) string;
+              str >= (unsigned char *) string && !Recursion_Limit_Exceeded;
               str--) {
 
             if (*str == (unsigned char)prog->match_start) {
@@ -2668,7 +2886,7 @@ int ExecRE (
          /* General case */
 
          for (str =  (unsigned char *) end;
-              str >= (unsigned char *) string;
+              str >= (unsigned char *) string && !Recursion_Limit_Exceeded;
               str--) {
 
             if (attempt (prog, str)) {
@@ -2680,6 +2898,8 @@ int ExecRE (
    }
 
    SINGLE_RETURN: if (Brace) free (Brace);
+
+   if (Recursion_Limit_Exceeded) return (0);
 
    return (ret_val);
 }
@@ -2749,6 +2969,7 @@ static int attempt (regexp *prog, unsigned char *string) {
    register          int    i;
    register unsigned char **s_ptr;
    register unsigned char **e_ptr;
+   		     int    branch_index = 0; /* Must be set to zero ! */
 
    Reg_Input      = string;
    Start_Ptr_Ptr  = (unsigned char **) prog->startp;
@@ -2756,19 +2977,26 @@ static int attempt (regexp *prog, unsigned char *string) {
    s_ptr          = (unsigned char **) prog->startp;
    e_ptr          = (unsigned char **) prog->endp;
 
+   /* Reset the recursion counter. */
+   Recursion_Count = 0;
+
    /* Overhead due to capturing parentheses. */
 
-   Extent_Ptr = NULL;
+   Extent_Ptr_BW = string;
+   Extent_Ptr_FW = NULL;
 
    for (i = Total_Paren + 1; i > 0; i--) {
       *s_ptr++ = NULL;
       *e_ptr++ = NULL;
    }
 
-   if (match ((unsigned char *) (prog->program + REGEX_START_OFFSET))) {
+   if (match ((unsigned char *) (prog->program + REGEX_START_OFFSET),
+	&branch_index)) {
       prog->startp [0] = (char *) string;
-      prog->endp   [0] = (char *) Reg_Input;  /* <-- One char AFTER  */
-      prog->extentp    = (char *) Extent_Ptr; /*     matched string! */
+      prog->endp   [0] = (char *) Reg_Input;     /* <-- One char AFTER  */
+      prog->extentpBW  = (char *) Extent_Ptr_BW; /*     matched string! */
+      prog->extentpFW  = (char *) Extent_Ptr_FW;
+      prog->top_branch = branch_index;
 
       return (1);
    } else {
@@ -2786,21 +3014,35 @@ static int attempt (regexp *prog, unsigned char *string) {
  * (that don't need to know whether the rest of the match failed) by a
  * loop instead of by recursion.  Returns 0 failure, 1 success.
  *----------------------------------------------------------------------*/
-
-static int match (unsigned char *prog) {
+#define MATCH_RETURN(X)\
+ { --Recursion_Count; return (X); }
+#define CHECK_RECURSION_LIMIT\
+ if (Recursion_Limit_Exceeded) MATCH_RETURN (0);
+ 
+static int match (unsigned char *prog, int *branch_index_param) {
 
    register unsigned char *scan;  /* Current node. */
             unsigned char *next;  /* Next node. */
+   register int next_ptr_offset;  /* Used by the NEXT_PTR () macro */
+   
+   if (++Recursion_Count > REGEX_RECURSION_LIMIT) {
+       if (!Recursion_Limit_Exceeded) /* Prevent duplicate errors */
+           reg_error("recursion limit exceeded, please respecify expression");
+       Recursion_Limit_Exceeded = 1;
+       MATCH_RETURN (0);
+   }
+	    
 
    scan = prog;
 
    while (scan != NULL) {
-      next = next_ptr (scan);
+      NEXT_PTR (scan, next);
 
       switch (GET_OP_CODE (scan)) {
          case BRANCH:
             {
                register unsigned char *save;
+	       register int branch_index_local = 0;
 
                if (GET_OP_CODE (next) != BRANCH) {  /* No choice. */
                   next = OPERAND (scan);   /* Avoid recursion. */
@@ -2808,13 +3050,22 @@ static int match (unsigned char *prog) {
                   do {
                      save = Reg_Input;
 
-                     if (match (OPERAND (scan))) return (1);
+                     if (match (OPERAND (scan), NULL)) 
+		     {
+			if (branch_index_param)
+			   *branch_index_param = branch_index_local;
+  			MATCH_RETURN (1);
+		     }
+
+		     CHECK_RECURSION_LIMIT
+
+		     ++branch_index_local;
 
                      Reg_Input = save; /* Backtrack. */
-                     scan      = next_ptr (scan);
+                     NEXT_PTR (scan, scan);
                   } while (scan != NULL && GET_OP_CODE (scan) == BRANCH);
 
-                  return (0); /* NOT REACHED */
+                  MATCH_RETURN (0); /* NOT REACHED */
                }
             }
 
@@ -2829,14 +3080,14 @@ static int match (unsigned char *prog) {
 
                /* Inline the first character, for speed. */
 
-               if (*opnd != *Reg_Input) return (0);
+               if (*opnd != *Reg_Input) MATCH_RETURN (0);
 
                len = strlen ((char *) opnd);
 
                if (len > 1  &&
                    strncmp ((char *) opnd, (char *) Reg_Input, len) != 0) {
 
-                   return (0);
+                   MATCH_RETURN (0);
                }
 
                Reg_Input += len;
@@ -2855,7 +3106,7 @@ static int match (unsigned char *prog) {
                   regex compile. */
 
                while ((test = *opnd++) != '\0') {
-                  if (tolower (*Reg_Input++) != test) return (0);
+                  if (tolower (*Reg_Input++) != test) MATCH_RETURN (0);
                }
             }
 
@@ -2868,131 +3119,171 @@ static int match (unsigned char *prog) {
                break;
             }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case EOL: /* `$' anchor matches end of line and end of string */
             if (*Reg_Input == '\n' || (*Reg_Input == '\0' && Succ_Is_EOL)) {
                break;
             }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case BOWORD: /* `<' (beginning of word anchor) */
-            /* Check to see if preceding character is a delimiter. */
+            /* Check to see if the current character is not a delimiter
+               and the preceding character is. */
+            {
+	       int prev_is_delim;
+	       if (Reg_Input == Start_Of_String) {
+		   prev_is_delim = Prev_Is_Delim;
+	       } else {
+		   prev_is_delim = Current_Delimiters [ *(Reg_Input - 1) ];
+	       }
+	       if (prev_is_delim) {
+		   int current_is_delim;
+		   if (*Reg_Input == '\0') {
+		      current_is_delim = Succ_Is_Delim;
+		   } else {
+		      current_is_delim = Current_Delimiters [ *Reg_Input ];
+		   }
+		   if (!current_is_delim) break;
+	       }
+	    }
 
-            if (Reg_Input == Start_Of_String) {
-               if (Prev_Is_Delim) break;
-            } else if (Current_Delimiters [ *(Reg_Input - 1) ]) {
-               break;
-            }
-
-            return (0);
+            MATCH_RETURN (0);
 
          case EOWORD: /* `>' (end of word anchor) */
-            /* Check to see if current character is a delimiter. */
+            /* Check to see if the current character is a delimiter
+	       and the preceding character is not. */
+            {
+	       int prev_is_delim;
+	       if (Reg_Input == Start_Of_String) {
+		   prev_is_delim = Prev_Is_Delim;
+	       } else {
+		   prev_is_delim = Current_Delimiters [ *(Reg_Input-1) ];
+	       }
+	       if (!prev_is_delim) {
+		   int current_is_delim;
+		   if (*Reg_Input == '\0') {
+		      current_is_delim = Succ_Is_Delim;
+		   } else {
+		      current_is_delim = Current_Delimiters [ *Reg_Input ];
+		   }
+		   if (current_is_delim) break;
+	       }
+	    }
 
-            if (Current_Delimiters [ *(Reg_Input) ]) break;
-
-            return (0);
+            MATCH_RETURN (0);
 
          case NOT_BOUNDARY: /* \B (NOT a word boundary) */
-            if (Reg_Input == Start_Of_String) {
-               if (!(Prev_Is_Delim ^ Current_Delimiters [*Reg_Input])) break;
-            } else if (*Reg_Input == '\0') {
-               if (!((Current_Delimiters [ *(Reg_Input - 1) ]) ^
-                      Succ_Is_Delim)) break;
-            } else {
-               if (!(Current_Delimiters [ *(Reg_Input - 1) ] ^
-                         Current_Delimiters [*Reg_Input])) break;
-            }
+            {
+	       int prev_is_delim;
+	       int current_is_delim;
+	       if (Reg_Input == Start_Of_String) {
+		   prev_is_delim = Prev_Is_Delim;
+	       } else {
+		   prev_is_delim = Current_Delimiters [ *(Reg_Input-1) ]; 
+	       }
+	       if (*Reg_Input == '\0') {
+		  current_is_delim = Succ_Is_Delim;
+	       } else {
+		  current_is_delim = Current_Delimiters [ *Reg_Input ];
+	       }
+	       if (!(prev_is_delim ^ current_is_delim)) break;
+	    }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case IS_DELIM: /* \y (A word delimiter character.) */
             if (Current_Delimiters [ *Reg_Input ]) {
                Reg_Input++; break;
             }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case NOT_DELIM: /* \Y (NOT a word delimiter character.) */
             if (!Current_Delimiters [ *Reg_Input ]) {
                Reg_Input++; break;
             }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case WORD_CHAR: /* \w (word character; alpha-numeric or underscore) */
             if (isalnum ((int) *Reg_Input) || *Reg_Input == '_') {
                Reg_Input++; break;
             }
 
-            return (0);
+            MATCH_RETURN (0);
 
          case NOT_WORD_CHAR:/* \W (NOT a word character) */
             if (isalnum ((int) *Reg_Input) ||
                 *Reg_Input == '_' ||
-                *Reg_Input == '\n') return (0);
+                *Reg_Input == '\n' ||
+                *Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case ANY: /* `.' (matches any character EXCEPT newline) */
-            if (*Reg_Input == '\0' || *Reg_Input == '\n') return (0);
+            if (*Reg_Input == '\0' || *Reg_Input == '\n') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case EVERY: /* `.' (matches any character INCLUDING newline) */
-            if (*Reg_Input == '\0') return (0);
+            if (*Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case DIGIT: /* \d, same as [0123456789] */
-            if (!isdigit ((int) *Reg_Input)) return (0);
+            if (!isdigit ((int) *Reg_Input)) MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case NOT_DIGIT: /* \D, same as [^0123456789] */
-            if (isdigit ((int) *Reg_Input) || *Reg_Input == '\n') return (0);
+            if (isdigit ((int) *Reg_Input) || 
+                *Reg_Input == '\n' ||
+                *Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case LETTER: /* \l, same as [a-zA-Z] */
-            if (!isalpha ((int) *Reg_Input)) return (0);
+            if (!isalpha ((int) *Reg_Input)) MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case NOT_LETTER: /* \L, same as [^0123456789] */
-            if (isalpha ((int) *Reg_Input) || *Reg_Input == '\n') return (0);
+            if (isalpha ((int) *Reg_Input) || 
+                *Reg_Input == '\n' ||
+                *Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case SPACE: /* \s, same as [ \t\r\f\v] */
-            if (!isspace ((int) *Reg_Input) || *Reg_Input == '\n') return (0);
+            if (!isspace ((int) *Reg_Input) || *Reg_Input == '\n') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case SPACE_NL: /* \s, same as [\n \t\r\f\v] */
-            if (!isspace ((int) *Reg_Input)) return (0);
+            if (!isspace ((int) *Reg_Input)) MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case NOT_SPACE: /* \S, same as [^\n \t\r\f\v] */
-            if (isspace ((int) *Reg_Input)) return (0);
+            if (isspace ((int) *Reg_Input) || *Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case NOT_SPACE_NL: /* \S, same as [^ \t\r\f\v] */
-            if (isspace ((int) *Reg_Input) && *Reg_Input != '\n') return (0);
+            if ((isspace ((int) *Reg_Input) && *Reg_Input != '\n') ||
+                *Reg_Input == '\0') MATCH_RETURN (0);
 
             Reg_Input++; break;
 
          case ANY_OF:  /* [...] character class. */
-            if (*Reg_Input == '\0') return (0); /* Needed because strchr ()
-                                                   considers \0 as a member
-                                                   of the character set. */
+            if (*Reg_Input == '\0') MATCH_RETURN (0); /* Needed because strchr ()
+                                                         considers \0 as a member
+                                                         of the character set. */
 
             if (strchr ((char *) OPERAND (scan), (int) *Reg_Input) == NULL) {
-               return (0);
+               MATCH_RETURN (0);
             }
 
             Reg_Input++; break;
@@ -3001,10 +3292,10 @@ static int match (unsigned char *prog) {
                        match newline (\n added usually to operand at compile
                        time.) */
 
-            if (*Reg_Input == '\0') return (0); /* See comment for ANY_OF. */
+            if (*Reg_Input == '\0') MATCH_RETURN (0); /* See comment for ANY_OF. */
 
             if (strchr ((char *) OPERAND (scan), (int) *Reg_Input) != NULL) {
-               return (0);
+               MATCH_RETURN (0);
             }
 
             Reg_Input++; break;
@@ -3087,13 +3378,15 @@ static int match (unsigned char *prog) {
 
                while (min <= num_matched && num_matched <= max) {
                   if (next_char == '\0' || next_char == *Reg_Input) {
-                     if (match (next)) return (1);
+                     if (match (next, NULL)) MATCH_RETURN (1);
+                     
+                     CHECK_RECURSION_LIMIT
                   }
 
                   /* Couldn't or didn't match. */
 
                   if (lazy) {
-                     if (!greedy (next_op, 1)) return (0);
+                     if (!greedy (next_op, 1)) MATCH_RETURN (0);
 
                      num_matched++; /* Inch forward. */
                   } else if (num_matched > REG_ZERO) {
@@ -3105,17 +3398,17 @@ static int match (unsigned char *prog) {
                   Reg_Input = save + num_matched;
                }
 
-               return (0);
+               MATCH_RETURN (0);
             }
 
             break;
 
          case END:
-            if (Extent_Ptr == NULL || (Reg_Input - Extent_Ptr) > 0) {
-               Extent_Ptr = Reg_Input;
+            if (Extent_Ptr_FW == NULL || (Reg_Input - Extent_Ptr_FW) > 0) {
+               Extent_Ptr_FW = Reg_Input;
             }
 
-            return (1);  /* Success! */
+            MATCH_RETURN (1);  /* Success! */
 
             break;
 
@@ -3151,7 +3444,7 @@ static int match (unsigned char *prog) {
                /* if (GET_OP_CODE (scan) == X_REGEX_BR ||
                    GET_OP_CODE (scan) == X_REGEX_BR_CI) {
 
-                  if (Cross_Regex_Backref == NULL) return (0);
+                  if (Cross_Regex_Backref == NULL) MATCH_RETURN (0);
 
                   captured =
                      (unsigned char *) Cross_Regex_Backref->startp [paren_no];
@@ -3164,38 +3457,40 @@ static int match (unsigned char *prog) {
                /* } */
 
                if ((captured != NULL) && (finish != NULL)) {
-                  if (captured > finish) return (0);
+                  if (captured > finish) MATCH_RETURN (0);
 
                   if (GET_OP_CODE (scan) == BACK_REF_CI  /* ||
                       GET_OP_CODE (scan) == X_REGEX_BR_CI*/ ) {
 
                      while (captured < finish) {
                         if (tolower (*captured++) != tolower (*Reg_Input++)) {
-                           return (0);
+                           MATCH_RETURN (0);
                         }
                      }
                   } else {
                      while (captured < finish) {
-                        if (*captured++ != *Reg_Input++) return (0);
+                        if (*captured++ != *Reg_Input++) MATCH_RETURN (0);
                      }
                   }
 
                   break;
                } else {
-                  return (0);
+                  MATCH_RETURN (0);
                }
             }
 
-         case POS_LOOK_OPEN:
-         case NEG_LOOK_OPEN:
+         case POS_AHEAD_OPEN:
+         case NEG_AHEAD_OPEN:
             {
                register unsigned char *save;
                                  int   answer;
 
                save      = Reg_Input;
-               answer    = match (next); /* Does the look-ahead regex match? */
+               answer    = match (next, NULL); /* Does the look-ahead regex match? */
 
-               if ((GET_OP_CODE (scan) == POS_LOOK_OPEN) ? answer : !answer) {
+               CHECK_RECURSION_LIMIT
+
+               if ((GET_OP_CODE (scan) == POS_AHEAD_OPEN) ? answer : !answer) {
                   /* Remember the last (most to the right) character position
                      that we consume in the input for a successful match.  This
                      is info that may be needed should an attempt be made to
@@ -3204,8 +3499,8 @@ static int match (unsigned char *prog) {
                      may need more text than it matches to accomplish a
                      re-match. */
 
-                  if (Extent_Ptr == NULL || (Reg_Input - Extent_Ptr) > 0) {
-                     Extent_Ptr = Reg_Input;
+                  if (Extent_Ptr_FW == NULL || (Reg_Input - Extent_Ptr_FW) > 0) {
+                     Extent_Ptr_FW = Reg_Input;
                   }
 
                   Reg_Input = save; /* Backtrack to look-ahead start. */
@@ -3213,20 +3508,112 @@ static int match (unsigned char *prog) {
                   /* Jump to the node just after the (?=...) or (?!...)
                      Construct. */
 
-                  next = next_ptr (OPERAND (scan)); /* -> LOOK_AHEAD_CLOSE */
-                  next = next_ptr (next);
+                  next = next_ptr (OPERAND (scan)); /* Skip 1st branch */
+		  /* Skip the chain of branches inside the look-ahead */
+		  while(GET_OP_CODE(next) == BRANCH)
+		      next = next_ptr (next);
+                  next = next_ptr (next); /* Skip the LOOK_AHEAD_CLOSE */
                } else {
                   Reg_Input = save; /* Backtrack to look-ahead start. */
 
-                  return (0);
+                  MATCH_RETURN (0);
                }
             }
 
             break;
 
+         case POS_BEHIND_OPEN:
+         case NEG_BEHIND_OPEN:
+            {
+               register unsigned char *save;
+                                 int   answer;
+               register 	 int   offset, upper;
+                                 int   lower;
+                                 int   found = 0;
+                        unsigned char save_char;
+
+               save      = Reg_Input;
+               save_char = *Reg_Input;
+               
+               /* Prevent overshoot (greedy matching could end past the
+                  current position). This means that look-ahead at the end
+                  of a look-behind pattern won't work, but it is highly 
+                  unlikely that anyone ever needs this. It is documented as
+                  being not supported anyway. It is possible to lift this
+                  limitation, but only at the cost of increased complexity
+                  and an overall decrease in performance of the regex matching
+                  code, so it's probably not worth it. */
+               *Reg_Input = '\0';
+               
+               lower = GET_LOWER (scan);
+               upper = GET_UPPER (scan);
+
+               /* Start with the shortest match first. This is the most
+                  efficient direction in general.
+                  Note! Negative look behind is _very_ tricky when the length
+                  is not constant: we have to make sure the expression doesn't
+                  match for _any_ of the starting positions. */
+               for (offset = lower; offset <= upper; ++offset) {
+	          Reg_Input = save - offset;
+	          
+                  if (Reg_Input < Look_Behind_To) {
+                     /* No need to look any further */
+                     break;
+           	  }
+                  
+                  answer    = match (next, NULL); /* Does the look-behind regex match? */
+
+                  CHECK_RECURSION_LIMIT
+
+                  /* The match must have ended at the current position;
+                     otherwise it is invalid */
+                  if (answer && Reg_Input == save) {
+                     /* It matched, exactly far enough */
+                     found = 1;
+                     
+                     /* Remember the last (most to the left) character position
+                        that we consume in the input for a successful match.
+                        This is info that may be needed should an attempt be
+                        made to match the exact same text at the exact same
+                        place. Since look-behind backtracks, a regex with a
+                        leading look-behind may need more text than it matches
+                        to accomplish a re-match. */
+
+                     if (Extent_Ptr_BW == NULL || 
+                         (Extent_Ptr_BW - (save - offset)) > 0) {
+                        Extent_Ptr_BW = save - offset;
+                     }
+
+                     break;
+                  }
+               }
+               
+	       /* Always restore the position and repair the string */
+	       Reg_Input = save;
+               *Reg_Input = save_char;
+               
+               if ((GET_OP_CODE (scan) == POS_BEHIND_OPEN) ? found : !found) {
+                  /* The look-behind matches, so we must jump to the next
+                     node. The look-behind node is followed by a chain of
+                     branches (contents of the look-behind expression), and
+                     terminated by a look-behind-close node. */
+                  next = next_ptr (OPERAND (scan) + LENGTH_SIZE); /* 1st branch */
+                  /* Skip the chained branches inside the look-ahead */
+                  while (GET_OP_CODE (next) == BRANCH)
+                     next = next_ptr (next);
+                  next = next_ptr (next); /* Skip LOOK_BEHIND_CLOSE */
+               } else {
+                  /* Not a match */
+                  MATCH_RETURN (0);
+               }
+            }            
+            break;
+
          case LOOK_AHEAD_CLOSE:
-            return (1);  /* We have reached the end of the look-ahead which
-                            implies that we matched it, so return TRUE. */
+         case LOOK_BEHIND_CLOSE:
+            MATCH_RETURN (1);  /* We have reached the end of the look-ahead or
+	                    look-behind which implies that we matched it, 
+			    so return TRUE. */
          default:
             if ((GET_OP_CODE (scan) > OPEN) &&
                 (GET_OP_CODE (scan) < OPEN + NSUBEXP)) {
@@ -3242,15 +3629,15 @@ static int match (unsigned char *prog) {
                   Back_Ref_End   [no] = NULL;
                }
 
-               if (match (next)) {
+               if (match (next, NULL)) {
                   /* Do not set `Start_Ptr_Ptr' if some later invocation (think
                      recursion) of the same parentheses already has. */
 
                   if (Start_Ptr_Ptr [no] == NULL) Start_Ptr_Ptr [no] = save;
 
-                  return (1);
+                  MATCH_RETURN (1);
                } else {
-                  return (0);
+                  MATCH_RETURN (0);
                }
             } else if ((GET_OP_CODE (scan) > CLOSE) &&
                        (GET_OP_CODE (scan) < CLOSE + NSUBEXP)) {
@@ -3263,20 +3650,20 @@ static int match (unsigned char *prog) {
 
                if (no < 10) Back_Ref_End [no] = save;
 
-               if (match (next)) {
+               if (match (next, NULL)) {
                   /* Do not set `End_Ptr_Ptr' if some later invocation of the
                      same parentheses already has. */
 
                   if (End_Ptr_Ptr [no] == NULL) End_Ptr_Ptr [no] = save;
 
-                  return (1);
+                  MATCH_RETURN (1);
                } else {
-                  return (0);
+                  MATCH_RETURN (0);
                }
             } else {
                reg_error ("memory corruption, `match\'");
 
-               return (0);
+               MATCH_RETURN (0);
             }
 
             break;
@@ -3290,7 +3677,7 @@ static int match (unsigned char *prog) {
 
    reg_error ("corrupted pointers, `match\'");
 
-   return (0);
+   MATCH_RETURN (0);
 }
 
 /*----------------------------------------------------------------------*
@@ -3513,6 +3900,9 @@ static unsigned long greedy (unsigned char *p, long max) {
 
 /*----------------------------------------------------------------------*
  * next_ptr - compute the address of a node's "NEXT" pointer.
+ * Note: a simplified inline version is available via the NEXT_PTR() macro,
+ *       but that one is only to be used at time-critical places (see the
+ *       description of the macro).
  *----------------------------------------------------------------------*/
 
 static unsigned char * next_ptr (unsigned char *ptr) {
@@ -3611,6 +4001,7 @@ void SubstituteRE (
             c = *src++; /* Allow any escape sequence (This is  */
          }              /* INCONSISTENT with the `CompileRE'   */
       }                 /* mind set of issuing an error!       */
+
       if (paren_no < 0) { /* Ordinary character. */
          if (((char *) dst - (char *) dest) >= (max - 1)) {
             break;
@@ -3625,6 +4016,7 @@ void SubstituteRE (
          if (((char *) dst + len - (char *) dest) >= max-1) {
             len = max - ((char *) dst - (char *) dest) - 1;
          }
+
          (void) strncpy ((char *) dst, (char *) prog->startp [paren_no], len);
 
          if (chgcase != '\0') adjustcase (dst, len, chgcase);
@@ -3676,8 +4068,7 @@ static void adjustcase (unsigned char *str, int len, unsigned char chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (char *str) {
-
-   Melder_info ("Internal error processing regular expression (%s)\n", str);
+	Melder_info ("Internal error processing regular expression (%s)\n", str);
 }
 
 /*----------------------------------------------------------------------*

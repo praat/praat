@@ -71,6 +71,10 @@ ENTRY ("Usage in the Praat program")
 NORMAL ("Dragging is used for manipulating the time and value of one or more marks, targets, or boundaries:")
 MAN_END
 
+MAN_BEGIN ("end time", "ppgb", 20060714)
+INTRO ("- the end of the @@time domain@ (see there).")
+MAN_END
+
 MAN_BEGIN ("Fast Fourier Transform", "ppgb", 20041123)
 INTRO ("An algorithm for fast computation of the Fourier transform of a sampled signal. "
 	"It involves increasing the number of samples %N to the next-highest power of two, "
@@ -84,10 +88,6 @@ MAN_END
 
 MAN_BEGIN ("FFT", "ppgb", 20011121)
 INTRO ("An abbreviation for @@Fast Fourier Transform@.")
-MAN_END
-
-MAN_BEGIN ("finishing time", "ppgb", 20040420)
-INTRO ("- the end of the @@time domain@ (see there).")
 MAN_END
 
 MAN_BEGIN ("frequency", "ppgb", 20030314)
@@ -335,7 +335,7 @@ INTRO ("A representation (of a sound signal, for instance) as some sort of inten
 NORMAL ("For tutorial information, see @@Intro 3.1. Viewing a spectrogram@.")
 MAN_END
 
-MAN_BEGIN ("starting time", "ppgb", 20040420)
+MAN_BEGIN ("start time", "ppgb", 20060714)
 INTRO ("- the beginning of the @@time domain@ (see there).")
 MAN_END
 
@@ -366,8 +366,8 @@ NORMAL ("Besides sounds, many other types of objects in P\\s{RAAT} have a time s
 	"spectrograms, pitch contours, formant contours, point processes, and so on. None of these "
 	"are required to have a time domain that starts at 0 seconds. In the Sound editor window, for example, "
 	"you can select the part that runs from 1.4. to 1.7 seconds, and \"extract\" it to the Objects window "
-	"while \"preserving the times\". The resulting Sound object will have a starting time of 1.4 seconds "
-	"and a finishing time of 1.7 seconds, as you can see when you click #Edit. "
+	"while \"preserving the times\". The resulting Sound object will have a start time of 1.4 seconds "
+	"and an end time of 1.7 seconds, as you can see when you click #Edit. "
 	"Spectrograms and pitch contours that you create from this sound will also have a time domain "
 	"from 1.4 to 1.7 seconds. This time domain is preserved if you save these objects to a text file "
 	"or to a binary file and read them into P\\s{RAAT} again later. Only if you save the Sound object "
@@ -382,48 +382,48 @@ NORMAL ("On a clock, time runs around in circles. In P\\s{RAAT}'s editor windows
 	"To see another part, you %scroll backward or forward.")
 MAN_END
 
-MAN_BEGIN ("time domain", "ppgb", 20041121)
+MAN_BEGIN ("time domain", "ppgb", 20060714)
 INTRO ("This manual page assumes that you have read the @Intro.")
 NORMAL ("Many objects in Praat are %%functions of time%. Examples are: "
 	"@Sound, @Pitch, @Spectrogram, @Formant, @Intensity, @TextGrid, "
 	"@PitchTier, @DurationTier, @Harmonicity, @PointProcess.")
 NORMAL ("In Praat, these functions have a contiguous ##time domain#, i.e. "
-	"a single time stretch with a @@starting time@ and a @@finishing time@. "
-	"The @@total duration@ of such a function is the difference between the starting time "
-	"and the finishing time. There are up to five ways to see the time domain "
+	"a single time stretch with a @@start time@ and an @@end time@. "
+	"The @@total duration@ of such a function is the difference between the start time "
+	"and the end time. There are up to five ways to see the time domain "
 	"of an object.")
 ENTRY ("The time domain in editor windows")
 NORMAL ("If you select an object that is a function of time and click #Edit, an editor window "
-	"will appear on the screen. The rectangle at the bottom will show the starting time, "
-	"the finishing time, and the total duration.")
+	"will appear on the screen. The rectangle at the bottom will show the start time, "
+	"the end time, and the total duration.")
 ENTRY ("The time domain in the picture window")
 NORMAL ("If you select an object that is a function of time and choose one of the #Draw commands, "
 	"the settings window invites you to supply a time range. If you keep this time range "
 	"at its standard setting (from 0.0 to 0.0 seconds), Praat will draw the object for the whole time domain "
-	"and print the starting time and the finishing time below the horizontal axis (if #Garnish is on):")
+	"and print the start time and the end time below the horizontal axis (if #Garnish is on):")
 PICTURE (5, 2.5, draw_TimeDomain_Sound)
 PICTURE (5, 2.5, draw_TimeDomain_Pitch)
 ENTRY ("The time domain in the Info window")
 NORMAL ("If you select an object that is a function of time and click #Info, "
-	"the Info window will tell you the starting time, the finishing time, and the total duration (among other properties of the object).")
+	"the Info window will tell you the start time, the end time, and the total duration (among other properties of the object).")
 ENTRY ("Time domain query commands")
 NORMAL ("If you select an object that is a function of time, "
 	"the following three commands will become available in the #Query menu:")
-LIST_ITEM ("##Get starting time")
-LIST_ITEM ("##Get finishing time")
+LIST_ITEM ("##Get start time")
+LIST_ITEM ("##Get end time")
 LIST_ITEM ("##Get total duration")
 NORMAL ("If you choose one of these commands, the Info window will tell you the result, "
 	"expressed in seconds. These commands are most useful in a Praat script. Example:")
 CODE ("select Pitch hello")
-CODE ("startingTime = Get starting time")
-CODE ("finishingTime = Get finishing time")
-CODE ("centreTime = (startingTime + finishingTime) / 2")
-CODE ("echo This Pitch runs from 'startingTime' to 'finishingTime' seconds,")
+CODE ("startTime = Get start time")
+CODE ("endTime = Get end time")
+CODE ("centreTime = (startTime + endTime) / 2")
+CODE ("echo This Pitch runs from 'startTime' to 'endTime' seconds,")
 CODE ("printline and the centre of its time domain is at 'centreTime' seconds.")
 ENTRY ("Details for hackers")
 NORMAL ("If you select an object that is a function of time and you click @Inspect, "
 	"you can see how the time domain information is stored in the object: "
-	"the starting time is the object's #xmin attribute and the finishing time is its #xmax attribute. "
+	"the start time is the object's #xmin attribute and the end time is its #xmax attribute. "
 	"The total duration is not stored in the object, since it can easily be computed as #xmax minus #xmin.")
 MAN_END
 

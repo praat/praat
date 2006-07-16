@@ -373,7 +373,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	err = GetMediaSample (media,
 		inputBufferHandle, inputBufferSize,
 		& inputNumberOfBytes,
-		0,   /* Starting time. */
+		0,   /* Start time. */
 		& actualTime, & durationPerSample, NULL, NULL, numberOfMediaSamples*10, & actualNumberOfSamples, NULL);
 	if (err != noErr) {
 		Melder_error ("Cannot get media samples.");

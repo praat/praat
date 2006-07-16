@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060619)
+MAN_BEGIN ("What's new?", "ppgb", 20060725)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.25# (July 16, 2006)")
+LIST_ITEM ("\\bu TextGrid reading: don't set first boundary to zero for .wrd label files.")
 NORMAL ("##4.4.24# (June 19, 2006)")
 LIST_ITEM ("\\bu Scripting: regular expressions allow replacement with empty string.")
 NORMAL ("##4.4.23# (June 1, 2006)")

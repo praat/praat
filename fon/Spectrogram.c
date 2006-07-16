@@ -29,8 +29,8 @@
 
 static void info (I) {
 	iam (Spectrogram);
-	MelderInfo_writeLine3 ("Starting time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine5 ("Finishing time: ", Melder_double (my xmax), " seconds (duration: ",
+	MelderInfo_writeLine3 ("Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine5 ("End time: ", Melder_double (my xmax), " seconds (duration: ",
 		Melder_double (my xmax - my xmin), " seconds)");
 	MelderInfo_writeLine2 ("Number of time slices (frames): ", Melder_integer (my nx));
 	MelderInfo_writeLine3 ("Time step (frame distance): ", Melder_double (my dx), " seconds");

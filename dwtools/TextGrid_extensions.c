@@ -23,6 +23,7 @@
  djmw 20051215 Corrected a bug in TextGrid_readFromTIMITLabelFile that caused a crash when the first number in
  	a file was not 0 (in that case an empty interval was added as the first element in the tier).
  djmw 20060517 Added (TextTier|IntervalTier|TextGrid)_changeLabels.
+ djmw 20060712 TextGrid_readFromTIMITLabelFile: don't set first boundary to zero for .wrd files.
 */
 
 #include <ctype.h>
@@ -151,26 +152,33 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 
 static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const char *label)
 {
-	TextInterval interval, new = TextInterval_create (xmin, xmax, label);
+	TextInterval interval, new;
 	long i = IntervalTier_timeToIndex (me, xmin); /* xmin is in interval i */
 	double xmaxi; /* the  time at the right of interval i */
-	if (i < 1 || ! new) return 0;
-	interval = my intervals->item[i];
-	if (xmax > (xmaxi = interval->xmax)) return 0; /* we don't know what to do */
-	if (xmin == interval->xmin)
+
+	new = TextInterval_create (xmin, xmax, label);
+	if (i < 1 || new == NULL) return 0;
+	interval = my intervals -> item[i];
+	if (xmax > (xmaxi = interval -> xmax))
 	{
-		if (xmax == interval->xmax) /* interval already present */
+		forget (new);
+		return 0; /* we don't know what to do */
+	}
+	if (xmin == interval -> xmin)
+	{
+		if (xmax == interval -> xmax) /* interval already present */
 		{
-			forget (new); return TextInterval_setText (interval, label);
+			forget (new);
+			return TextInterval_setText (interval, label);
 		}
 		/* split interval */
-		interval->xmin = xmax;
+		interval -> xmin = xmax;
 		return Collection_addItem (my intervals, new);
 	}
-	interval->xmax = xmin;
+	interval -> xmax = xmin;
 	if (! Collection_addItem (my intervals, new)) return 0;
 	/* extra interval when xmax's are not the same */
-	if (xmax < xmaxi && (!(new = TextInterval_create (xmax, xmaxi, interval->text)) ||
+	if (xmax < xmaxi && (!(new = TextInterval_create (xmax, xmaxi, interval -> text)) ||
 		! Collection_addItem (my intervals, new))) return 0;
 	return 1;
 }
@@ -219,12 +227,12 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 			   Instead they start with "<number1> <number2> h#", where number1 > 0.
 			   We override number1 with 0. */
 			
-			if (xmin > 0) xmin = 0;
+			if (xmin > 0 && phnFile) xmin = 0;
 		}
 		interval = timit -> intervals -> item[ni];
 		if (xmin < interval -> xmax && linesRead > 1)
 		{
-			xmin = interval->xmax;
+			xmin = interval -> xmax;
 			Melder_warning("%s: file \"%s\":Start time set to previous end "
 				"time for label at line %ld", proc, MelderFile_messageName (file), linesRead);
 		}
@@ -234,6 +242,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	}
 	/*
 		Now correct the end times, based on last read interval.
+		(end time was set to large value!)
 	*/
 	if (timit -> intervals -> size < 2)
 	{
@@ -245,7 +254,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	tmax = interval -> xmax;
 	timit -> xmax = tmax; 
 	my xmax = xmax;
-	if (phnFile) /* Tier 2: IPA symbols */
+	if (phnFile) /* Create tier 2 with IPA symbols */
 	{
 		ipa = Data_copy (timit);
 		if (ipa == NULL || ! Collection_addItem (my tiers, ipa)) goto cleanup;

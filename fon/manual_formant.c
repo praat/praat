@@ -37,7 +37,7 @@ INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
 ENTRY ("Inside a Formant object")
 NORMAL ("With @Inspect, you will see the following attributes:")
 TAG ("%xmin")
-DEFINITION ("starting time, in seconds.")
+DEFINITION ("start time, in seconds.")
 TAG ("%xmax")
 DEFINITION ("end time, in seconds.")
 TAG ("%nx")

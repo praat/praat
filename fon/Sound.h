@@ -35,7 +35,7 @@
 class_create (Sound, Vector)
 
 /* Attributes:
-	xmin				// Starting time (seconds).
+	xmin				// Start time (seconds).
 	xmax			// End time (seconds).
 	nx				// Number of samples.
 	dx				// Sampling period (seconds).

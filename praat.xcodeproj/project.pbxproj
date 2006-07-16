@@ -1442,7 +1442,6 @@
 		23E5CF4509A22A56004E41D5 /* gsl_sys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sys.h; path = GSL/gsl_sys.h; sourceTree = SOURCE_ROOT; };
 		23E5CF4709A22A56004E41D5 /* gsl_machine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_machine.h; path = GSL/gsl_machine.h; sourceTree = SOURCE_ROOT; };
 		23E5CF4909A22A57004E41D5 /* gsl_nan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_nan.h; path = GSL/gsl_nan.h; sourceTree = SOURCE_ROOT; };
-		23E5D1A509A22A68004E41D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = file; name = Info.plist; path = /Praat.app/Contents/Info.plist; sourceTree = "<group>"; };
 		23E5D21F09A22ACD004E41D5 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		23EE67C509F2E61200E660F9 /* melder_atof.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_atof.c; path = sys/melder_atof.c; sourceTree = "<group>"; };
 		23EE67C709F2E62700E660F9 /* melder_ftoa.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_ftoa.c; path = sys/melder_ftoa.c; sourceTree = "<group>"; };
@@ -1488,7 +1487,6 @@
 				23E5CB6B09A22902004E41D5 /* gsl */,
 				23E5CE5509A22A28004E41D5 /* Imported Files */,
 				23E5CF3409A22A55004E41D5 /* Frameworks */,
-				23E5D1A509A22A68004E41D5 /* Info.plist */,
 				23E5C92109A228FA004E41D5 /* Products */,
 			);
 			sourceTree = "<group>";

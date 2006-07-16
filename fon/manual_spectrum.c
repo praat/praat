@@ -491,7 +491,7 @@ NORMAL ("A Spectrogram object represents  an acoustic time-frequency representat
 ENTRY ("Inside a Spectrogram")
 NORMAL ("With @Inspect, you will see the following attributes:")
 TAG ("%xmin")
-DEFINITION ("starting time, in seconds.")
+DEFINITION ("start time, in seconds.")
 TAG ("%xmax")
 DEFINITION ("end time, in seconds.")
 TAG ("%nx")

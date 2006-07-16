@@ -87,7 +87,7 @@ static void info (I) {
 		if (my z [1] [ix] != -200)
 			strengths [++ nSounding] = my z [1] [ix];
 	sprintf (info, "Harmonicity info:\n"
-		"Starting time: %.16g seconds\n"
+		"Start time: %.16g seconds\n"
 		"End time: %.16g seconds\n"
 		"Number of frames: %ld (%ld sounding)\n"
 		"Time step: %.16g seconds\n"

@@ -184,13 +184,13 @@ END
 
 FORM (AmplitudeTier_create, "Create empty AmplitudeTier", NULL)
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double startingTime = GET_REAL ("Starting time"), finishingTime = GET_REAL ("Finishing time");
-	REQUIRE (finishingTime > startingTime, "Finishing time must be greater than starting time.")
-	if (! praat_new (AmplitudeTier_create (startingTime, finishingTime), GET_STRING ("Name"))) return 0;
+	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
+	REQUIRE (endTime > startTime, "End time must be greater than start time.")
+	if (! praat_new (AmplitudeTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (AmplitudeTier_downto_PointProcess)
@@ -489,13 +489,13 @@ END
 
 FORM (DurationTier_create, "Create empty DurationTier", "Create DurationTier...")
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double startingTime = GET_REAL ("Starting time"), finishingTime = GET_REAL ("Finishing time");
-	REQUIRE (finishingTime > startingTime, "Finishing time must be greater than starting time.")
-	if (! praat_new (DurationTier_create (startingTime, finishingTime), GET_STRING ("Name"))) return 0;
+	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
+	REQUIRE (endTime > startTime, "End time must be greater than start time.")
+	if (! praat_new (DurationTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (DurationTier_downto_PointProcess)
@@ -921,13 +921,13 @@ END
 
 FORM (FormantTier_create, "Create empty FormantTier", NULL)
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double startingTime = GET_REAL ("Starting time"), finishingTime = GET_REAL ("Finishing time");
-	REQUIRE (finishingTime > startingTime, "Finishing time must be greater than starting time.")
-	if (! praat_new (FormantTier_create (startingTime, finishingTime), GET_STRING ("Name"))) return 0;
+	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
+	REQUIRE (endTime > startTime, "End time must be greater than start time.")
+	if (! praat_new (FormantTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
 END
 
 FORM (FormantTier_downto_TableOfReal, "Down to TableOfReal", 0)
@@ -1251,13 +1251,13 @@ END
 
 FORM (IntensityTier_create, "Create empty IntensityTier", NULL)
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double startingTime = GET_REAL ("Starting time"), finishingTime = GET_REAL ("Finishing time");
-	REQUIRE (finishingTime > startingTime, "Finishing time must be greater than starting time.")
-	if (! praat_new (IntensityTier_create (startingTime, finishingTime), GET_STRING ("Name"))) return 0;
+	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
+	REQUIRE (endTime > startTime, "End time must be greater than start time.")
+	if (! praat_new (IntensityTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (IntensityTier_downto_PointProcess)
@@ -2649,13 +2649,13 @@ END
 
 FORM (PitchTier_create, "Create empty PitchTier", NULL)
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double startingTime = GET_REAL ("Starting time"), finishingTime = GET_REAL ("Finishing time");
-	REQUIRE (finishingTime > startingTime, "Finishing time must be greater than starting time.")
-	if (! praat_new (PitchTier_create (startingTime, finishingTime), GET_STRING ("Name"))) return 0;
+	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
+	REQUIRE (endTime > startTime, "End time must be greater than start time.")
+	if (! praat_new (PitchTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (PitchTier_downto_PointProcess)
@@ -2912,26 +2912,26 @@ END
 
 FORM (PointProcess_createEmpty, "Create an empty PointProcess", "Create empty PointProcess...")
 	WORD ("Name", "empty")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	OK
 DO
-	double tmin = GET_REAL ("Starting time"), tmax = GET_REAL ("Finishing time");
+	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
 	if (tmax < tmin)
-		return Melder_error ("Finishing time (%.8g) should not be less than starting time (%.8g).", tmax, tmin);
+		return Melder_error ("End time (%.8g) should not be less than start time (%.8g).", tmax, tmin);
 	if (! praat_new (PointProcess_create (tmin, tmax, 0), GET_STRING ("Name"))) return 0;
 END
 
 FORM (PointProcess_createPoissonProcess, "Create Poisson process", "Create Poisson process...")
 	WORD ("Name", "poisson")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	POSITIVE ("Density (/s)", "100.0")
 	OK
 DO
-	double tmin = GET_REAL ("Starting time"), tmax = GET_REAL ("Finishing time");
+	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
 	if (tmax < tmin)
-		return Melder_error ("Finishing time (%.8g) should not be less than starting time (%.8g).", tmax, tmin);
+		return Melder_error ("End time (%.8g) should not be less than start time (%.8g).", tmax, tmin);
 	if (! praat_new (PointProcess_createPoissonProcess (tmin, tmax, GET_REAL ("Density")), GET_STRING ("Name"))) return 0;
 END
 
@@ -4354,14 +4354,14 @@ END
 FORM (TextGrid_create, "Create TextGrid", "Create TextGrid...")
 	LABEL ("", "Hint: to label or segment an existing Sound,")
 	LABEL ("", "select that Sound and choose \"To TextGrid...\".")
-	REAL ("Starting time (s)", "0.0")
-	REAL ("Finishing time (s)", "1.0")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
 	SENTENCE ("All tier names", "Mary John bell")
 	SENTENCE ("Which of these are point tiers?", "bell")
 	OK
 DO
-	double tmin = GET_REAL ("Starting time"), tmax = GET_REAL ("Finishing time");
-	REQUIRE (tmax > tmin, "Finishing time should be greater than starting time")
+	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
+	REQUIRE (tmax > tmin, "End time should be greater than start time")
 	if (! praat_new (TextGrid_create (tmin, tmax, GET_STRING ("All tier names"), GET_STRING ("Which of these are point tiers?")),
 		GET_STRING ("All tier names"))) return 0;
 END
@@ -4405,12 +4405,12 @@ DIRECT (TimeFunction_getDuration)
 	Melder_informationReal (my xmax - my xmin, "seconds");
 END
 
-DIRECT (TimeFunction_getFinishingTime)
+DIRECT (TimeFunction_getEndTime)
 	Function me = ONLY_OBJECT;
 	Melder_informationReal (my xmax, "seconds");
 END
 
-DIRECT (TimeFunction_getStartingTime)
+DIRECT (TimeFunction_getStartTime)
 	Function me = ONLY_OBJECT;
 	Melder_informationReal (my xmin, "seconds");
 END
@@ -4639,8 +4639,10 @@ void praat_TableOfReal_init (void *klas) {
 void praat_TimeFunction_query_init (void *klas);   /* Query buttons for time-based subclasses of Function. */
 void praat_TimeFunction_query_init (void *klas) {
 	praat_addAction1 (klas, 1, "Time domain", 0, 1, 0);
-	praat_addAction1 (klas, 1, "Get starting time", 0, 2, DO_TimeFunction_getStartingTime);
-	praat_addAction1 (klas, 1, "Get finishing time", 0, 2, DO_TimeFunction_getFinishingTime);
+	praat_addAction1 (klas, 1, "Get start time", 0, 2, DO_TimeFunction_getStartTime);
+						praat_addAction1 (klas, 1, "Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
+	praat_addAction1 (klas, 1, "Get end time", 0, 2, DO_TimeFunction_getEndTime);
+						praat_addAction1 (klas, 1, "Get finishing time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getEndTime);
 	praat_addAction1 (klas, 1, "Get total duration", 0, 2, DO_TimeFunction_getDuration);
 						praat_addAction1 (klas, 1, "Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
 }

@@ -144,6 +144,11 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 	}
 }
 
+#define doesUnitAllowNegativeValues(unit)  \
+	( (unit) == Pitch_UNIT_HERTZ_LOGARITHMIC || (unit) == Pitch_UNIT_LOG_HERTZ ||  \
+	  (unit) == Pitch_UNIT_SEMITONES_1 || (unit) == Pitch_UNIT_SEMITONES_100 ||  \
+	  (unit) == Pitch_UNIT_SEMITONES_200 || (unit) == Pitch_UNIT_SEMITONES_440 )
+
 static double getValueAtSample (I, long iframe, long ilevel, int unit) {
 	iam (Pitch);
 	double f = my frame [iframe]. candidate [1]. frequency;
@@ -181,10 +186,7 @@ double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit) {
 
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit) {
 	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, unit);
-	if (unit != Pitch_UNIT_HERTZ_LOGARITHMIC && unit != Pitch_UNIT_LOG_HERTZ &&
-	    unit != Pitch_UNIT_SEMITONES_1 && unit != Pitch_UNIT_SEMITONES_100 && unit != Pitch_UNIT_SEMITONES_440 &&
-	    value <= 0.0)
-	{
+	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit)) {
 		value = NUMundefined;
 	}
 	return value;
@@ -202,9 +204,7 @@ void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, int 
 	double *return_maximum, double *return_timeOfMaximum)
 {
 	Sampled_getMaximumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_maximum, return_timeOfMaximum);
-	if (unit != Pitch_UNIT_HERTZ_LOGARITHMIC && unit != Pitch_UNIT_LOG_HERTZ &&
-	    unit != Pitch_UNIT_SEMITONES_1 && unit != Pitch_UNIT_SEMITONES_100 && unit != Pitch_UNIT_SEMITONES_440 &&
-	    return_maximum && *return_maximum <= 0.0)
+	if (! doesUnitAllowNegativeValues (unit) && return_maximum && *return_maximum <= 0.0)
 	{
 		*return_maximum = NUMundefined;   /* Unlikely. */
 	}
@@ -226,9 +226,7 @@ void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, int 
 	double *return_minimum, double *return_timeOfMinimum)
 {
 	Sampled_getMinimumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_minimum, return_timeOfMinimum);
-	if (unit != Pitch_UNIT_HERTZ_LOGARITHMIC && unit != Pitch_UNIT_LOG_HERTZ &&
-	    unit != Pitch_UNIT_SEMITONES_1 && unit != Pitch_UNIT_SEMITONES_100 && unit != Pitch_UNIT_SEMITONES_440 &&
-	    return_minimum && *return_minimum <= 0.0)
+	if (! doesUnitAllowNegativeValues (unit) && return_minimum && *return_minimum <= 0.0)
 	{
 		*return_minimum = NUMundefined;   /* Not so unlikely. */
 	}
@@ -317,8 +315,8 @@ static void info (I) {
 	double *frequencies = Sampled_getSortedValues (me, Pitch_LEVEL_FREQUENCY, Pitch_UNIT_HERTZ, & nVoiced);
 	classData -> info (me);
 	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Starting time: ", Melder_double (my xmin), " s");
-	MelderInfo_writeLine3 ("   Finishing time: ", Melder_double (my xmax), " s");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " s");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " s");
 	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " s");
 	MelderInfo_writeLine1 ("Time sampling:");
 	MelderInfo_writeLine5 ("   Number of frames: ", Melder_integer (my nx), " (", Melder_integer (nVoiced), " voiced)");

@@ -2564,15 +2564,15 @@ NORMAL ("If you want to see this in a text file, you can copy and paste from the
 CODE ("fappendinfo out.txt")
 MAN_END
 
-MAN_BEGIN ("Script for listing time\\--F0\\--intensity", "ppgb", 20040222)
+MAN_BEGIN ("Script for listing time\\--F0\\--intensity", "ppgb", 20060714)
 INTRO ("\"I want a list of pitch and intensity values at the same times.\"")
 NORMAL ("Since @@Sound: To Pitch...@ and @@Sound: To Intensity...@ do not give values at the same times, "
 	"you create separate pitch and intensity contours with high time resolution, then interpolate. "
 	"In the following example, you get pitch and intensity values at steps of 0.01 seconds "
 	"by interpolating curves that have a time resolution of 0.001 seconds.")
 CODE (  "sound = selected (\"Sound\")")
-CODE (  "tmin = Get starting time")
-CODE (  "tmax = Get finishing time")
+CODE (  "tmin = Get start time")
+CODE (  "tmax = Get end time")
 CODE (  "To Pitch... 0.001 75 300")
 CODE (  "Rename... pitch")
 CODE (  "select sound")
@@ -2589,18 +2589,18 @@ CODE1 (    "printline 'time:2' 'pitch:3' 'intensity:3'")
 CODE (  "endfor")
 MAN_END
 
-MAN_BEGIN ("Script for listing F0 statistics", "ppgb", 20041005)
+MAN_BEGIN ("Script for listing F0 statistics", "ppgb", 20060714)
 INTRO ("\"I need to split the wave into 50 msec sections, and then for each of those sections "
 	"get the F0 statistics. That is, for each 50 msec section of speech I want to get the average F0, "
 	"min, max, and standard deviation.\"")
 NORMAL ("First you create the complete pitch contour, i.e., you select the Sound and choose "
 	"@@Sound: To Pitch...|To Pitch...@. You can then use the commands from the #Query menu in a loop:")
-CODE ("startingTime = Get starting time")
-CODE ("finishingTime = Get finishing time")
-CODE ("numberOfTimeSteps = (finishingTime - startingTime) / 0.05")
+CODE ("startTime = Get start time")
+CODE ("endTime = Get end time")
+CODE ("numberOfTimeSteps = (endTime - startTime) / 0.05")
 CODE ("echo   tmin     tmax    mean   fmin   fmax  stdev")
 CODE ("for step to numberOfTimeSteps")
-CODE1 ("tmin = startingTime + (step - 1) * 0.05")
+CODE1 ("tmin = startTime + (step - 1) * 0.05")
 CODE1 ("tmax = tmin + 0.05")
 CODE1 ("mean = Get mean... tmin tmax Hertz")
 CODE1 ("minimum = Get minimum... tmin tmax Hertz Parabolic")
