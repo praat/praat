@@ -1,6 +1,6 @@
 /* FormantTier.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2002/07/16 GPL
+ * pb 2006/07/21 made Sound_FormantTier_filter_inline () accurate for higher numbers of formants
  */
 
 #include "FormantTier.h"
@@ -265,6 +265,39 @@ end:
 }
 
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
+	long isamp, iformant;
+	double dt = my dx;
+	float *amp = my z [1];
+	if (formantTier -> points -> size) for (iformant = 1; iformant <= 10; iformant ++) {
+		for (isamp = 1; isamp <= my nx; isamp ++) {
+			double t = my x1 + (isamp - 1) * my dx;
+			/*
+			 * Compute LP coefficients.
+			 */
+			double formant, bandwidth, cosomdt, r;
+			formant = FormantTier_getValueAtTime (formantTier, iformant, t);
+			if (NUMdefined (formant)) {
+				bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
+				Melder_assert (bandwidth != NUMundefined);
+				cosomdt = cos (2 * NUMpi * formant * dt);
+				r = exp (- NUMpi * bandwidth * dt);
+				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
+				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
+					/* single pole: D(z) = 1 - r z^-1 */
+					if (isamp > 1) amp [isamp] += r * amp [isamp - 1];
+				} else {
+					/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
+					double p = - 2 * r * cosomdt;
+					double q = r * r;
+					if (isamp > 1) amp [isamp] -= p * amp [isamp - 1];
+					if (isamp > 2) amp [isamp] -= q * amp [isamp - 2];
+				}
+			}
+		}
+	}	
+}
+
+static void Sound_FormantTier_filter_inline_fastButVeryImprecise (Sound me, FormantTier formantTier) {
 	long isamp;
 	double dt = my dx, a [21];
 	float *amp = my z [1];
@@ -305,7 +338,12 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 		 * Filter.
 		 */
 		if (ncof >= isamp) ncof = isamp - 1;
-		for (icof = 1; icof <= ncof; icof ++) amp [isamp] -= a [icof] * amp [isamp - icof];
+		for (icof = 1; icof <= ncof; icof ++) {
+			Melder_assert (fabs (a [icof]) == 0.0 || fabs (a [icof]) > 1e-37);
+			Melder_assert (fabs (a [icof]) < 1e37);
+			amp [isamp] -= a [icof] * amp [isamp - icof];
+			Melder_assert (fabs (amp [isamp]) < 1e37);
+		}
 	}	
 }
 
