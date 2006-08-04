@@ -382,7 +382,7 @@ NORMAL ("On a clock, time runs around in circles. In P\\s{RAAT}'s editor windows
 	"To see another part, you %scroll backward or forward.")
 MAN_END
 
-MAN_BEGIN ("time domain", "ppgb", 20060714)
+MAN_BEGIN ("time domain", "ppgb", 20060726)
 INTRO ("This manual page assumes that you have read the @Intro.")
 NORMAL ("Many objects in Praat are %%functions of time%. Examples are: "
 	"@Sound, @Pitch, @Spectrogram, @Formant, @Intensity, @TextGrid, "
@@ -398,7 +398,7 @@ NORMAL ("If you select an object that is a function of time and click #Edit, an 
 	"the end time, and the total duration.")
 ENTRY ("The time domain in the picture window")
 NORMAL ("If you select an object that is a function of time and choose one of the #Draw commands, "
-	"the settings window invites you to supply a time range. If you keep this time range "
+	"the window that pops up will invite you to supply a time range. If you keep this time range "
 	"at its standard setting (from 0.0 to 0.0 seconds), Praat will draw the object for the whole time domain "
 	"and print the start time and the end time below the horizontal axis (if #Garnish is on):")
 PICTURE (5, 2.5, draw_TimeDomain_Sound)
@@ -424,7 +424,8 @@ ENTRY ("Details for hackers")
 NORMAL ("If you select an object that is a function of time and you click @Inspect, "
 	"you can see how the time domain information is stored in the object: "
 	"the start time is the object's #xmin attribute and the end time is its #xmax attribute. "
-	"The total duration is not stored in the object, since it can easily be computed as #xmax minus #xmin.")
+	"The total duration is not stored in the object, "
+	"because it can easily be computed as #xmax minus #xmin.")
 MAN_END
 
 MAN_BEGIN ("time selection", "ppgb", 20050924)

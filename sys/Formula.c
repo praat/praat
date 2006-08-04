@@ -107,7 +107,7 @@ enum { GEENSYMBOOL_,
 	#define LOW_FUNCTION_1  ABS_
 		ABS_, ROUND_, FLOOR_, CEILING_, SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_,
 		EXP_, SINH_, COSH_, TANH_, ARCSINH_, ARCCOSH_, ARCTANH_,
-		SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
+		SIGMOID_, INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_POISSON_, LOG2_, LN_, LOG10_, LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
@@ -186,7 +186,7 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"stopwatch",
 	"abs", "round", "floor", "ceiling", "sqrt", "sin", "cos", "tan", "arcsin", "arccos", "arctan",
 	"exp", "sinh", "cosh", "tanh", "arcsinh", "arccosh", "arctanh",
-	"sigmoid", "erf", "erfc", "gaussP", "gaussQ", "invGaussQ",
+	"sigmoid", "invSigmoid", "erf", "erfc", "gaussP", "gaussQ", "invGaussQ",
 	"randomPoisson", "log2", "ln", "log10", "lnGamma",
 	"hertzToBark", "barkToHertz", "phonToDifferenceLimens", "differenceLimensToPhon",
 	"hertzToMel", "melToHertz", "hertzToSemitones", "semitonesToHertz",
@@ -2989,6 +2989,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
 } break; case ARCTANH_: { do_function_n_n (NUMarctanh);
 } break; case SIGMOID_: { do_function_n_n (NUMsigmoid);
+} break; case INV_SIGMOID_: { do_function_n_n (NUMinvSigmoid);
 } break; case ERF_: { do_function_n_n (NUMerf);
 } break; case ERFC_: { do_function_n_n (NUMerfcc);
 } break; case GAUSS_P_: { do_function_n_n (NUMgaussP);

@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060724)
+MAN_BEGIN ("What's new?", "ppgb", 20060804)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.27# (August 4, 2006)")
+LIST_ITEM ("\\bu Table window: corrected vertical scroll bar (on Windows).")
+LIST_ITEM ("\\bu Formulas: invSigmoid.")
+LIST_ITEM ("\\bu Logging: added 'power' (and documented the 'freq' command).")
+LIST_ITEM ("\\bu Removed a bug that caused ##Read two Sounds from stereo file...# not to work in scripts.")
 NORMAL ("##4.4.26# (July 24, 2006)")
 LIST_ITEM ("\\bu ##Sound & FormantTier: Filter#: much more accurate.")
 NORMAL ("##4.4.25# (July 16, 2006)")

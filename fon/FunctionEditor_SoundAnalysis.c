@@ -1523,7 +1523,7 @@ static int cb_log (FunctionEditor me, int which) {
 			stringValue = my name;
 		} else if (strequ (varName, "f0")) {
 			if (! my pitch.show)
-				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
+				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 			if (! my pitch.data) {
 				return Melder_error ("No pitch contour available (out of memory?).");
 			}
@@ -1534,7 +1534,7 @@ static int cb_log (FunctionEditor me, int which) {
 			}
 		} else if (varName [0] == 'f' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formant\" from the View menu.");
+				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
 				return Melder_error ("No formant contour available (out of memory?).");
 			}
@@ -1545,14 +1545,14 @@ static int cb_log (FunctionEditor me, int which) {
 			}
 		} else if (varName [0] == 'b' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formant\" from the View menu.");
+				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
 				return Melder_error ("No formant contour available (out of memory?).");
 			}
 			value = Formant_getBandwidthAtTime (my formant.data, varName [1] - '0', 0.5 * (tmin + tmax), 0);
 		} else if (strequ (varName, "intensity")) {
 			if (! my intensity.show)
-				return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the View menu.");
+				return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 			if (! my intensity.data) {
 				return Melder_error ("No intensity contour available (out of memory?).");
 			}
@@ -1561,6 +1561,14 @@ static int cb_log (FunctionEditor me, int which) {
 			} else {
 				value = Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod);
 			}
+		} else if (strequ (varName, "power")) {
+			if (! my spectrogram.show)
+				return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+			if (! my spectrogram.data) {
+				return Melder_error ("No spectrogram available (out of memory?).");
+			}
+			if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
+			value = Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor);
 		}
 		if (NUMdefined (value)) {
 			int varlen = (q - p) - 1, headlen = p - format;

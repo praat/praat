@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/01/06
+ * pb 2006/08/04
  */
 
 #include "Editor.h"
@@ -269,16 +269,16 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (praat.topShell, title, DO_##proc, NULL, help); \
-		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; (void) IOBJECT; \
+		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (praat.topShell, title, DO_##proc, NULL, help); \
-		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; (void) IOBJECT; \
+		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 #endif
   
 /* Callbacks should return 1 if OK, and 0 if failure.

@@ -40,6 +40,7 @@
 	pb 2005/06/16 no enums (because of compiler warnings)
 	pb 2005/11/18 URL support
 	pb 2006/04/16 tokens
+	pb 2006/08/02 openForWriting
  */
 
 #include <stdio.h>
@@ -77,6 +78,7 @@
 		long parID;
 		char name [260];
 		FILE *filePointer;
+		int openForWriting;
 	} structMelderFile, *MelderFile;
 	typedef struct {
 		short vRefNum;
@@ -86,6 +88,7 @@
 	typedef struct {
 		char path [260];
 		FILE *filePointer;
+		int openForWriting;
 	} structMelderFile, *MelderFile;
 	typedef struct {
 		char path [260];

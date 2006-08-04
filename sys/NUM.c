@@ -1,6 +1,6 @@
 /* NUM.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/07/09 gsl
  * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return NUMundefined
  * pb 2005/07/08 NUMpow
+ * pb 2006/08/02 NUMinvSigmoid
  */
 
 #include "NUM.h"
@@ -284,6 +285,9 @@ double NUMbesselK (long n, double x) {
 
 double NUMsigmoid (double x)
 	{ return x > 0.0 ? 1 / (1 + exp (- x)) : 1 - 1 / (1 + exp (x)); }
+
+double NUMinvSigmoid (double x)
+	{ return x <= 0.0 || x >= 1.0 ? NUMundefined : log (x / (1.0 - x)); }
 
 double NUMerfcc (double x) {
 	gsl_sf_result result;

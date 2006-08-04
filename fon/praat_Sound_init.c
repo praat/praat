@@ -890,9 +890,6 @@ END
 
 FORM_READ (Sound_read2FromStereoFile, "Read two Sounds from stereo file", 0)
 	Sound left, right;
-	char name_left [300], name_right [300];
-	sprintf (name_left, "%.200s_left", MelderFile_name (file));
-	sprintf (name_right, "%.200s_right", MelderFile_name (file));
 	if (! Sound_read2FromSoundFile (file, & left, & right)) return 0;
 	if (! praat_new (left, "left")) return 0;
 	if (right) { if (! praat_new (right, "right")) return 0; }

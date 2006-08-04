@@ -692,7 +692,7 @@ NORMAL ("When mentioning the %%Option key%, this manual refers to the key immedi
 NORMAL ("On Macintosh, this key may be labelled #Option or #Alt. On SGI, this key is labelled #Ctrl. ")
 MAN_END
 
-MAN_BEGIN ("Log files", "ppgb", 20050818)
+MAN_BEGIN ("Log files", "ppgb", 20060804)
 INTRO ("With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and to a log file.")
@@ -752,12 +752,14 @@ LIST_ITEM ("\'time\': the time of the cursor, or the centre of the selection.")
 LIST_ITEM ("\'t1\': the start of the selection (\"B\").")
 LIST_ITEM ("\'t2\': the end of the selection (\"E\").")
 LIST_ITEM ("\'dur\': the duration of the selection.")
+LIST_ITEM ("\'freq\': the frequency at the frequency cursor.")
 LIST_ITEM ("\'f0\': the pitch at the cursor time, or the mean pitch in the selection.")
 LIST_ITEM ("\'f1\', \'f2\', \'f3\', \'f4\', \'f5\': the first/second/third/fourth/fifth formant at the cursor time, "
 	"or the mean first/second/third/fourth/fifth formant in the selection.")
 LIST_ITEM ("\'b1\', \'b2\', \'b3\', \'b4\', \'b5\': the bandwidth of the first/second/third/fourth/fifth formant "
 	"at the cursor time or at the centre of the selection.")
-LIST_ITEM ("\'intensity\': the intensity at the cursor time, or the mean intensity in the selection.")
+LIST_ITEM ("\'intensity\': the intensity at the cursor time, or the mean intensity in the selection, in dB.")
+LIST_ITEM ("\'power\': the spectral power at the cursor cross, in Pa^2/Hz.")
 LIST_ITEM ("\'tab\\$ \': the tab stop.")
 LIST_ITEM ("\'editor\\$ \': the title of the editor window (i.e. the name of the visible Sound or TextGrid).")
 ENTRY ("More flexibility in logging")

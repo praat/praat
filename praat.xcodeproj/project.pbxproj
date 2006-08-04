@@ -3166,6 +3166,60 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		232C44A30A8353EF0031A304 /* Configuration2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_CHAR_IS_UNSIGNED_CHAR = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_REUSE_STRINGS = YES;
+				GCC_SHORT_ENUMS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Developer/Headers/FlatCarbon;
+				INFOPLIST_FILE = main/praat_mac.plist;
+				INFOPLIST_PREFIX_HEADER = fon/praat_version.h;
+				INFOPLIST_PREPROCESS = YES;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				OTHER_CFLAGS = (
+					"-Dmacintosh",
+					"$(OTHER_CFLAGS)",
+				);
+				PREBINDING = YES;
+				PRODUCT_NAME = Praat;
+				REZ_SCRIPT_TYPE = Roman;
+				REZ_SUPPRESS_REDECLARED_RESOURCE_TYPE_WARNINGS = NO;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Configuration2;
+		};
+		232C44A40A8353EF0031A304 /* Configuration2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+			};
+			name = Configuration2;
+		};
 		23E5C91509A228F8004E41D5 /* Configuration1 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3230,6 +3284,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23E5C91509A228F8004E41D5 /* Configuration1 */,
+				232C44A40A8353EF0031A304 /* Configuration2 */,
 			);
 			defaultConfigurationIsVisible = 1;
 			defaultConfigurationName = Configuration1;
@@ -3238,6 +3293,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				23E5C92E09A228FB004E41D5 /* Configuration1 */,
+				232C44A30A8353EF0031A304 /* Configuration2 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Configuration1;

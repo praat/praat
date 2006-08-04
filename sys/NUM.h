@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/06/23 removed NUMbesselJ and NUMbesselY
  * pb 2004/10/16 replaced struct Type with struct structType
  * pb 2005/07/08 NUMpow
+ * pb 2006/08/02 NUMinvSigmoid
  */
 
 /* "NUM" = "NUMerics" */
@@ -247,6 +248,7 @@ double NUMbessel_k0_f (double x);
 double NUMbessel_k1_f (double x);
 double NUMbesselK_f (long n, double x);
 double NUMsigmoid (double x);   /* Correct also for large positive or negative x. */
+double NUMinvSigmoid (double x);
 double NUMerfcc (double x);
 double NUMgaussP (double z);
 double NUMgaussQ (double z);

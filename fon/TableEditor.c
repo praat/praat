@@ -22,6 +22,7 @@
  * pb 2006/04/22 all cells visible
  * pb 2006/05/11 raised maximum number of visible columns
  * pb 2006/05/11 underscores are not subscripts
+ * pb 2006/08/02 correct vertical scroll bar on Windows (has to be called "verticalScrollBar")
  */
 
 #include "TableEditor.h"
@@ -151,7 +152,7 @@ static void createChildren (I) {
 
 	/***** Create horizontal scroll bar. *****/
 
-	my horizontalScrollBar = XtVaCreateManagedWidget ("scrollBar",
+	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmHORIZONTAL,
 		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
@@ -168,7 +169,7 @@ static void createChildren (I) {
 
 	/***** Create vertical scroll bar. *****/
 
-	my verticalScrollBar = XtVaCreateManagedWidget ("scrollBar",
+	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmVERTICAL,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),

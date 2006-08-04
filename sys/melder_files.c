@@ -28,6 +28,7 @@
  * pb 2005/11/07 Windows: use %USERPROFILE% rather than %HOMESHARE%%HOMEPATH%
  * rvs&pb 2005/11/18 url support
  * pb 2006/01/21 MelderFile_writeText does not create temporary file
+ * pb 2006/08/03 openForWriting
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -858,19 +859,26 @@ unsigned long MelderFile_getMacType (MelderFile file) {
 }
 #endif
 
+#ifdef CURLPRESENT
 static int curl_initialized = 0;
 /* 
- * The user defined write function that handles storing the result of the
- * URL request on disc. This function can be platform dependent.
+ * The user-defined write function that handles storing of the result of the
+ * URL request on disk. This function can be platform-dependent.
  * ONLY for internal use.
  */
 static size_t write_URL_data_to_file (void *buffer, size_t size, size_t nmemb, void *userp) {
 	/* Just use the standard fwrite function (*userp == *stream) */
 	return fwrite (buffer, size, nmemb, userp);
 }
+static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, void *userp) {
+	/* Just use the standard fwrite function (*userp == *stream) */
+	return fread (buffer, size, nmemb, userp);
+}
+#endif
 
 FILE * Melder_fopen (MelderFile file, const char *type) {
 	FILE *f;
+	file -> openForWriting = type [0] == 'w' || type [0] == 'a' || strchr (type, '+');
 	#ifdef macintosh
 		/*
 		 * IM VI:25-7 tells us not to use HSetVol,
@@ -883,55 +891,61 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		 * Nevertheless, the following does seem to work:
 		 */
 		#if 0
+		{
 			structMelderDir defaultDir;
 			Melder_getDefaultDir (& defaultDir);
 			MelderFile_setDefaultDir (file);
 			f = fopen (file -> name, type);
 			Melder_setDefaultDir (& defaultDir);
+		}
 		#else
 		/* But we have an alternative (include Fsp_fopen.c in the project): */
+		{
 			FSSpec fspec;
 			if (! Melder_fileToMac (file, & fspec)) return NULL;
 			f = FSp_fopen (& fspec, type);
+		}
 		#endif
 	#else
-		if (strequ (file -> path, "<stdout>") && strchr (type, 'w')) {
+		if (strequ (file -> path, "<stdout>") && file -> openForWriting) {
 			f = stdout;
 		#ifdef CURLPRESENT
- 		} else if (strstr (file -> path, "://") && strchr (type, 'r')) {
+ 		} else if (strstr (file -> path, "://") && file -> openForWriting) {
+			Melder_assert (type [0] == 'w');   /* Reject "append" and "random" access. */
+			f = tmpfile ();   /* Open a temporary file for writing. */
+ 		} else if (strstr (file -> path, "://") && ! file -> openForWriting) {
 			CURLcode CURLreturn;
 			CURL *CURLhandle;
 			char errorbuffer [CURL_ERROR_SIZE] = "";
-			f = tmpfile ();   /* Open a temporary file for writing */
-			/* Start global init (necessary only ONCE)	*/
+			f = tmpfile ();   /* Open a temporary file for writing. */
 			if (! curl_initialized) {
 				CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
 				curl_initialized = 1;
 			};
-			CURLhandle = curl_easy_init ();   /* Initialize session */
+			CURLhandle = curl_easy_init ();   /* Initialize session. */
 			/* 
-			 * Set up the connection parameters	
+			 * Set up the connection parameters.
 			 */
 			/* Debugging: Verbose messages */
 			/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
 			/* Do not return Error pages, just fail. */
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 1);	
-			/* Store error messages in a buffer	*/
+			/* Store error messages in a buffer. */
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
-			/* The file stream to store the URL	*/
+			/* The file stream to store the URL. */
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FILE, f);
-			/* The function to write to the file, necessary for Win32	*/
+			/* The function to write to the file, necessary for Win32.	*/
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
-			/* The actual URL to handle	*/
+			/* The actual URL to handle.	*/
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
-			/* Get the URL and write it to the given file */
+			/* Get the URL and write it to the given file. */
 			CURLreturn = curl_easy_perform (CURLhandle);
-			/* Handle errors	*/
+			/* Handle errors. */
 			if (CURLreturn) {
 				Melder_error ("%s\n", errorbuffer);
 				f = NULL;
 			};
-			/* Clean up session */
+			/* Clean up session. */
 			curl_easy_cleanup (CURLhandle);
 			/* Do something with the file. Why? */
 			if (f) rewind (f);
@@ -960,6 +974,52 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 
 int Melder_fclose (MelderFile file, FILE *f) {
 	if (! f) return 1;
+	#if defined (CURLPRESENT)
+ 	if (strstr (file -> path, "://") && file -> openForWriting) {
+		/* Rewind the file. */
+		if (f) rewind (f);
+		CURLcode CURLreturn;
+		CURL *CURLhandle;
+		char errorbuffer [CURL_ERROR_SIZE] = "";
+		/* Start global init (necessary only ONCE). */
+		if (! curl_initialized) {
+			CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
+			curl_initialized = 1;
+		};
+		CURLhandle = curl_easy_init ();   /* Initialize session. */
+		/* 
+		 * Set up the connection parameters.
+		 */
+		/* Debugging: Verbose messages */
+		/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
+        /* Catch FILE: protocol errors. No solution yet */
+		if (strstr (file -> path, "file://") || strstr (file -> path, "FILE://")) {
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1);
+		}
+		/* Do not return Error pages, just fail. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 1);	
+		/* Store error messages in a buffer. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
+		/* Send header. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_HEADER, 1);
+		/* Upload. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_UPLOAD, 1);
+		/* The actual URL to handle. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
+		/* The function to write to the peer, necessary for Win32. */
+	    CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READFUNCTION, read_URL_data_from_file);
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READDATA, f);
+		/* Get the URL and write the file to it. */
+		CURLreturn = curl_easy_perform (CURLhandle);
+		/* Handle errors. */
+		if (CURLreturn) {
+			Melder_error ("%s\n", errorbuffer);
+			f = NULL;
+	    };
+		/* Clean up session */
+		curl_easy_cleanup (CURLhandle);
+    }
+	#endif
 	if (f != stdout && fclose (f) == EOF) {
 		#ifdef sgi
 			Melder_error ("%s", strerror (errno));
@@ -971,10 +1031,10 @@ int Melder_fclose (MelderFile file, FILE *f) {
 
 void Melder_files_cleanUp (void) {
 	#if defined (CURLPRESENT)
-	if (curl_initialized) {
-		curl_global_cleanup ();
-		curl_initialized = 0;
-	};
+		if (curl_initialized) {
+			curl_global_cleanup ();
+			curl_initialized = 0;
+		};
 	#endif
 }
 

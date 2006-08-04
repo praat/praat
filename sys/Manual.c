@@ -270,8 +270,11 @@ static float searchToken (ManPages me, long ipage, char *token) {
 	 */
 	strcpy (Melder_buffer1, page -> title);
 	for (p = & Melder_buffer1 [0]; *p != '\0'; p ++) *p = tolower (*p);
-	if (strstr (Melder_buffer1, token))
+	if (strstr (Melder_buffer1, token)) {
 		goodness += 300.0;   /* Lots of points for a match in the title! */
+		if (strequ (Melder_buffer1, token))
+			goodness += 10000.0;   /* Even more points for an exact match! */
+	}
 	/*
 	 * Try to find a match in the paragraphs, case-insensitively.
 	 */
