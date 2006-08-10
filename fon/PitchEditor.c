@@ -1,6 +1,6 @@
 /* PitchEditor.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/05/10 undefined pitch is NUMundefined rather than 0.0
  * pb 2004/10/16 struct PitchCandidate -> struct structPitchCandidate
  * pb 2005/06/16 units
+ * pb 2006/08/08 reduced compiler warnings
  */
 
 #include "Pitch_to_Sound.h"
@@ -328,8 +329,8 @@ static int click (I, double xWC, double yWC, int dummy) {
 		double distanceWC = (frequency - bestFrequency) / pitch -> ceiling * (1 - dyIntens - dyUnv);
 		double dx_mm = Graphics_dxWCtoMM (my graphics, xWC - tmid), dy_mm = Graphics_dyWCtoMM (my graphics, distanceWC);
 		if (bestFrequency < pitch -> ceiling &&   /* Above ceiling: ignore. */
-		    (bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0 ||   /* Voiceless: click within frame. */
-		     bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS))   /* Voiced: click within circle. */
+		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0) ||   /* Voiceless: click within frame. */
+		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   /* Voiced: click within circle. */
 		{
 			struct structPitch_Candidate help = bestFrame -> candidate [1];
 			Editor_save (me, "Change path");

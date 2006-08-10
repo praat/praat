@@ -53,7 +53,7 @@ static struct {
 		publish;
 }
 	preferences = {
-		enumi (Sound_WINDOW, Hanning), 1.0, TRUE   /* publish */
+		{ enumi (Sound_WINDOW, Hanning), 1.0, TRUE }   /* publish */
 	};
 
 void SoundEditor_prefs (void) {

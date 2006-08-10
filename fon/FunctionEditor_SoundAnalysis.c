@@ -154,8 +154,8 @@ static struct {
 		1.3, /* maximum period factor */
 		1.6 /* maximum amplitude factor */
 	}, {
-		TRUE, TRUE, LOG_1_FILE_NAME, LOG_1_FORMAT,
-		TRUE, TRUE, LOG_2_FILE_NAME, LOG_2_FORMAT,
+		{ TRUE, TRUE, LOG_1_FILE_NAME, LOG_1_FORMAT },
+		{ TRUE, TRUE, LOG_2_FILE_NAME, LOG_2_FORMAT }
 	},
 		LOG_3_FILE_NAME, LOG_4_FILE_NAME
 };

@@ -131,11 +131,11 @@ int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, 
 			memset (header, 0, 1024);
 			sprintf (header, "NIST_1A\n   1024\n"
 				"channel_count -i %d\n"
-				"sample_count -i %d\n"
+				"sample_count -i %ld\n"
 				"sample_n_bytes -i 2\n"
 				"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
 				"sample_coding -s3 pcm\n"
-				"sample_rate -i %d\n"
+				"sample_rate -i %ld\n"
 				"sample_min -i -32768\n"
 				"sample_max -i 32767\n"
 				"end_head\n", numberOfChannels, numberOfSamples, sampleRate);
@@ -456,7 +456,7 @@ static int Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodin
 	return 1;
 }
 
-static int nistGetValue (const char *header, const char *object, double *rval, const char *sval) {
+static int nistGetValue (const char *header, const char *object, double *rval, char *sval) {
 	char obj [30], type [10], *match = strstr (header, object);
 	if (! match) return 0;
 	if (sscanf (match, "%s%s%s", obj, type, sval) != 3) return 0;

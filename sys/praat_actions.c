@@ -424,7 +424,7 @@ static int allowExecutionHook (void *closure) {
 			if (my class3 && (sel3 = praat_selection (my class3)) == 0) continue;
 			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
 			if (sel1 + sel2 + sel3 + sel4 != praat.totalSelection) continue;
-			if (my n1 && sel1 != my n1 || my n2 && sel2 != my n2 || my n3 && sel3 != my n3 || my n4 && sel4 != my n4) continue;
+			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
 			return TRUE;   /* Found a matching action. */
 		}
 	}
@@ -542,7 +542,7 @@ void praat_actions_show (void) {
 		/* Match the actually selected objects with the selection required for this action. */
 
 		if (! theActions [i]. callback) continue;   /* Separators are not executable. */
-		if (n1 && sel1 != n1 || n2 && sel2 != n2 || n3 && sel3 != n3 || n4 && sel4 != n4) continue;
+		if ((n1 && sel1 != n1) || (n2 && sel2 != n2) || (n3 && sel3 != n3) || (n4 && sel4 != n4)) continue;
 		theActions [i]. executable = TRUE;
 	}
 

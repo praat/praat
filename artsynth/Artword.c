@@ -132,7 +132,7 @@ void Artword_removeTarget (Artword me, int feature, int iTarget) {
 }
 
 void Artword_intoArt (Artword me, Art art, double time) {
-	int feature;
+	unsigned int feature;
 	for (feature = 1; feature <= enumlength (Art_MUSCLE); feature ++) {
 		art -> art [feature] = Artword_getTarget (me, feature, time);
 	}

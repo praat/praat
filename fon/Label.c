@@ -52,7 +52,7 @@ class_methods_end
 Any Autosegment_create (double tmin, double tmax, const char *label) {
 	Autosegment me = new (Autosegment);
 	if (! me || ! Function_init (me, tmin, tmax) ||
-		 label != NULL && (Thing_setName (me, label), my name == NULL))
+		 (label != NULL && (Thing_setName (me, label), my name == NULL)))
 		forget (me);
 	return me;
 }

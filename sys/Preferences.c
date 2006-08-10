@@ -157,7 +157,7 @@ void Resources_write (MelderFile file) {
 			case charwa: fprintf (f, "%c\n", * (char *) resource -> value); break;
 			case floatwa: fprintf (f, "%.9g\n", * (float *) resource -> value); break;
 			case doublewa: fprintf (f, "%s\n", Melder_double (* (double *) resource -> value)); break;
-			case stringwa: fprintf (f, "%s\n", resource -> value); break;
+			case stringwa: fprintf (f, "%s\n", (char *) resource -> value); break;
 		}
 	}
 	fclose (f);

@@ -1,6 +1,6 @@
 /* TextEditor.c
  *
- * Copyright (C) 1997-2005 Paul Boersma
+ * Copyright (C) 1997-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/01/28 MacOS X: use trick for ensuring dirtiness callback
  * pb 2005/06/28 font size
  * pb 2005/09/01 Undo and Redo buttons
+ * pb 2006/08/09 guarded against closing when a file selector is open
  */
 
 #include "TextEditor.h"
@@ -310,7 +311,7 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 			#endif
 		}
 	}
-	Melder_assert (left <= strlen (text));
+	Melder_assert (left <= (XmTextPosition) strlen (text));
 	if (left == right) return FALSE;
 	*lastLine = *firstLine;
 	for (; i < right; i ++) {
@@ -321,7 +322,7 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 			#endif
 		}
 	}
-	Melder_assert (right <= strlen (text));
+	Melder_assert (right <= (XmTextPosition) strlen (text));
 	XtFree (text);
 	return TRUE;
 }
@@ -345,7 +346,8 @@ getSelectedLines (me, & firstLine, & lastLine);
 SET_INTEGER ("Line", firstLine);
 DO
 	char *text = XmTextGetString (my textWidget);
-	long lineToGo = GET_INTEGER ("Line"), currentLine = 1, left, right;
+	long lineToGo = GET_INTEGER ("Line"), currentLine = 1;
+	unsigned long left, right;
 	if (lineToGo == 1) {
 		left = 0;
 		for (right = left; text [right] != '\n' && text [right] != '\0'; right ++) { }

@@ -1,6 +1,6 @@
 /* praat.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2005/11/18 URL support
  * pb 2006/02/23 corrected callbacks in praat_installEditorN
+ * pb 2006/08/07 removed quotes from around file paths in openDocument message
  */
 
 #include "melder.h"
@@ -287,7 +288,10 @@ static void praat_cleanUpName (char *name) {
 	/*
 	 * Replaces spaces and special characters by underscores.
 	 */
-	for (; *name; name ++) if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
+	for (; *name; name ++) {
+		/* if (strchr (" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = '_'; FUTURE */
+		if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
+	}
 }
 
 /***** objects + commands *****/
@@ -997,7 +1001,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat.batchName = Melder_calloc (1000, 1);
 		#if defined (UNIX) || defined (__MACH__) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		{
-			int i;
+			unsigned int i;
 			for (i = 1; i < argc; i ++) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == 1 || i < argc - 1);
 				if (i > 1) strcat (praat.batchName, " ");
@@ -1245,7 +1249,16 @@ void praat_run (void) {
 		#if defined (_WIN32)
 			if (praat.batchName [0]) {
 				char text [500];
-				sprintf (text, "Read from file... %s", praat.batchName);
+				/*
+				 * The user dropped a file on the Praat icon, while Praat was not running yet.
+				 * Windows may have enclosed the path between quotes;
+				 * this is especially likely to happen if the path contains spaces,
+				 * which on Windows XP is very usual.
+				 */
+				sprintf (text, "Read from file... %s", praat.batchName [0] == '\"' ? praat.batchName + 1 : praat.batchName);
+				if (strlen (text) > 0 && text [strlen (text) - 1] == '\"') {
+					text [strlen (text) - 1] = '\0';
+				}
 				if (! praat_executeScriptFromText (text)) Melder_error (NULL);
 			}
 		#endif

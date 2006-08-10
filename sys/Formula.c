@@ -316,11 +316,11 @@ static int Formula_lexan (void) {
 			oudkar;
 			nieuwtok (NUMBER_)
 			tokgetal (Melder_atof (stok));
-		} else if (kar >= 'a' && kar <= 'z' || kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
-				&& (itok == 0 || lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)) {
+		} else if ((kar >= 'a' && kar <= 'z') || (kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
+				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
 			int tok, endsInDollarSign = FALSE;
 			stokaan;
-			do stokkar while (kar >= 'A' && kar <= 'Z' || kar >= 'a' && kar <= 'z' || kar >= '0' && kar <= '9' || kar == '_' || kar == '.');
+			do stokkar while ((kar >= 'A' && kar <= 'Z') || (kar >= 'a' && kar <= 'z') || (kar >= '0' && kar <= '9') || kar == '_' || kar == '.');
 			if (kar == '$') { stokkar endsInDollarSign = TRUE; }
 			stokuit;
 			oudkar;
@@ -1240,15 +1240,15 @@ static void Formula_optimizeFlow (void)
 /*    true   goto x  ->  goto y  /  __  ...  label x  iftrue y    */
 /*    false  goto x  ->  goto y  /  __  ...  label x  iffalse y   */
 
-			if (parse [i]. symbol == TRUE_ &&
+			if ((parse [i]. symbol == TRUE_ &&
 				 parse [i + 1]. symbol == GOTO_ &&
 				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
-							. symbol == IFTRUE_
+							. symbol == IFTRUE_)
 				 ||
-				 parse [i]. symbol == FALSE_ &&
-				 parse [i + 1]. symbol == GOTO_ &&
-				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
-							. symbol == IFFALSE_)
+				 (parse [i]. symbol == FALSE_ &&
+				  parse [i + 1]. symbol == GOTO_ &&
+				  parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+							. symbol == IFFALSE_))
 			{
 				 verbeterd = 1;
 				 parse [i]. symbol = GOTO_;
@@ -1261,15 +1261,15 @@ static void Formula_optimizeFlow (void)
 /*          goto z  ...  label x  iffalse y  label z   */
 /*    en analoog met false en iftrue. */
 
-			if (parse [i]. symbol == TRUE_ &&
+			if ((parse [i]. symbol == TRUE_ &&
 				 parse [i + 1]. symbol == GOTO_ &&
 				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
-							. symbol == IFFALSE_
+							. symbol == IFFALSE_)
 				 ||
-				 parse [i]. symbol == FALSE_ &&
-				 parse [i + 1]. symbol == GOTO_ &&
-				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
-							. symbol == IFTRUE_)
+				 (parse [i]. symbol == FALSE_ &&
+				  parse [i + 1]. symbol == GOTO_ &&
+				  parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+							. symbol == IFTRUE_))
 			{
 				verbeterd = 1;
 				parse [i]. symbol = GOTO_;
@@ -1335,11 +1335,8 @@ static void Formula_optimizeFlow (void)
 /*    true   iffalse x  ->  0  */
 /*    false  iftrue x   ->  0  */
 
-			if (parse [i]. symbol == TRUE_ &&
-				 parse [i + 1]. symbol == IFFALSE_
-				 ||
-				 parse [i]. symbol == FALSE_ &&
-				 parse [i + 1]. symbol == IFTRUE_)
+			if ((parse [i]. symbol == TRUE_ && parse [i + 1]. symbol == IFFALSE_)
+				|| (parse [i]. symbol == FALSE_ && parse [i + 1]. symbol == IFTRUE_))
 			{
 				verbeterd = 1;
 				schuif (i, 2);
@@ -1349,11 +1346,8 @@ static void Formula_optimizeFlow (void)
 /*    true   iftrue x   ->  goto x    */
 /*    false  iffalse x  ->  goto x    */
 			
-			if (parse [i]. symbol == TRUE_ &&
-				 parse [i + 1]. symbol == IFTRUE_
-				 ||
-				 parse [i]. symbol == FALSE_ &&
-				 parse [i + 1]. symbol == IFFALSE_)
+			if ((parse [i]. symbol == TRUE_ && parse [i + 1]. symbol == IFTRUE_)
+				|| (parse [i]. symbol == FALSE_ && parse [i + 1]. symbol == IFFALSE_))
 			{
 				verbeterd = 1;
 				parse [i]. symbol = GOTO_;
@@ -1365,10 +1359,8 @@ static void Formula_optimizeFlow (void)
 /*    iftrue x   ->  iftrue y   /  __  ...  label x  goto y   */
 /*    iffalse x  ->  iffalse y  /  __  ...  label x  goto y   */
 
-			if ((parse [i]. symbol == IFTRUE_ ||
-				  parse [i]. symbol == IFFALSE_) &&
-				 parse [volg = vindLabel (parse [i]. content.label) + 1]
-							. symbol == GOTO_)
+			if ((parse [i]. symbol == IFTRUE_ || parse [i]. symbol == IFFALSE_)
+				&& parse [volg = vindLabel (parse [i]. content.label) + 1]. symbol == GOTO_)
 			{
 				verbeterd = 1;
 				parse [i]. content.label = parse [volg]. content.label;
@@ -1377,8 +1369,7 @@ static void Formula_optimizeFlow (void)
 /* Optimalisatie 9a: */
 /*    not  iftrue x  ->  iffalse x   */
 
-			if (parse [i]. symbol == NOT_ &&
-				 parse [i + 1]. symbol == IFTRUE_)
+			if (parse [i]. symbol == NOT_ && parse [i + 1]. symbol == IFTRUE_)
 			{
 				verbeterd = 1;
 				parse [i]. symbol = IFFALSE_;
@@ -1389,8 +1380,7 @@ static void Formula_optimizeFlow (void)
 /* Optimalisatie 9b: */
 /*    not  iffalse x  ->  iftrue x   */
 
-			if (parse [i]. symbol == NOT_ &&
-				 parse [i + 1]. symbol == IFFALSE_)
+			if (parse [i]. symbol == NOT_ && parse [i + 1]. symbol == IFFALSE_)
 			{
 				verbeterd = 1;
 				parse [i]. symbol = IFTRUE_;
@@ -1411,10 +1401,8 @@ static void Formula_optimizeFlow (void)
 			{
 				int gevonden = 0;
 				for (j = 1; j < i; j ++)
-					if ((parse [j]. symbol == GOTO_ ||
-						  parse [j]. symbol == IFFALSE_ ||
-						  parse [j]. symbol == IFTRUE_) &&
-						  parse [i]. content.label == parse [j]. content.label)
+					if ((parse [j]. symbol == GOTO_ || parse [j]. symbol == IFFALSE_ || parse [j]. symbol == IFTRUE_)
+						&& parse [i]. content.label == parse [j]. content.label)
 						gevonden = 1;
 				if (! gevonden)
 				{

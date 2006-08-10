@@ -79,9 +79,9 @@ static void addCandidate (OTGrammarTableau me, long numberOfSyllables, int stres
 	strcat (output, "] \\-> /");
 	for (isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (isyll > 1) strcat (output, " ");
-		if (footedToTheRight [isyll] || ! footedToTheLeft [isyll] && stress [isyll] != 0) strcat (output, "(");
+		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) strcat (output, "(");
 		strcat (output, syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
-		if (footedToTheLeft [isyll] || ! footedToTheRight [isyll] && stress [isyll] != 0) strcat (output, ")");
+		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) strcat (output, ")");
 	}
 	strcat (output, "/");
 	my candidates [++ my numberOfCandidates]. output = Melder_strdup (output); cherror

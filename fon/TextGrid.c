@@ -209,7 +209,7 @@ long IntervalTier_hasTime (IntervalTier me, double t) {
 	long iinterval;
 	for (iinterval = 1; iinterval <= my intervals -> size; iinterval ++) {
 		TextInterval interval = my intervals -> item [iinterval];
-		if (interval -> xmin == t || iinterval == my intervals -> size && interval -> xmax == t) {
+		if (interval -> xmin == t || (iinterval == my intervals -> size && interval -> xmax == t)) {
 			return iinterval;   /* Time found. */
 		}
 	}
@@ -982,8 +982,8 @@ TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char *label)
 	long i, n = 0;
 	for (i = 1; i <= my intervals -> size; i ++) {
 		TextInterval interval = my intervals -> item [i];
-		if (label == NULL || label [0] == '\0' && ! interval -> text ||
-		    interval -> text && strequ (interval -> text, label))
+		if (label == NULL || (label [0] == '\0' && ! interval -> text) ||
+		    (interval -> text && strequ (interval -> text, label)))
 			n ++;
 	}
 	thee = TableOfReal_create (n, 3); cherror
@@ -992,8 +992,8 @@ TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char *label)
 	TableOfReal_setColumnLabel (thee, 3, "Duration");
 	for (i = 1, n = 0; i <= my intervals -> size; i ++) {
 		TextInterval interval = my intervals -> item [i];
-		if (label == NULL || label [0] == '\0' && ! interval -> text ||
-		    interval -> text && strequ (interval -> text, label))
+		if (label == NULL || (label [0] == '\0' && ! interval -> text) ||
+		    (interval -> text && strequ (interval -> text, label)))
 		{
 			n ++;
 			TableOfReal_setRowLabel (thee, n, interval -> text ? interval -> text : "");
@@ -1016,16 +1016,16 @@ TableOfReal TextTier_downto_TableOfReal (TextTier me, const char *label) {
 	long i, n = 0;
 	for (i = 1; i <= my points -> size; i ++) {
 		TextPoint point = my points -> item [i];
-		if (label == NULL || label [0] == '\0' && ! point -> mark ||
-		    point -> mark && strequ (point -> mark, label))
+		if (label == NULL || (label [0] == '\0' && ! point -> mark) ||
+		    (point -> mark && strequ (point -> mark, label)))
 			n ++;
 	}
 	thee = TableOfReal_create (n, 1); cherror
 	TableOfReal_setColumnLabel (thee, 1, "Time");
 	for (i = 1, n = 0; i <= my points -> size; i ++) {
 		TextPoint point = my points -> item [i];
-		if (label == NULL || label [0] == '\0' && ! point -> mark ||
-		    point -> mark && strequ (point -> mark, label))
+		if (label == NULL || (label [0] == '\0' && ! point -> mark) ||
+		    (point -> mark && strequ (point -> mark, label)))
 		{
 			n ++;
 			TableOfReal_setRowLabel (thee, n, point -> mark ? point -> mark : "");
@@ -1609,9 +1609,9 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 				for (ielement = 1; ielement <= tier -> intervals -> size; ielement ++) {
 					TextInterval interval = tier -> intervals -> item [ielement];
 					if ((interval -> xmin > sortingTime ||   /* Sort primarily by time. */
-					     interval -> xmin == sortingTime && itier > sortingTier) &&   /* Sort secondarily by tier number. */
+					     (interval -> xmin == sortingTime && itier > sortingTier)) &&   /* Sort secondarily by tier number. */
 					    (interval -> xmin < firstRemainingTime ||   /* Sort primarily by time. */
-					     interval -> xmin == firstRemainingTime && itier < firstRemainingTier))   /* Sort secondarily by tier number. */
+					     (interval -> xmin == firstRemainingTime && itier < firstRemainingTier)))   /* Sort secondarily by tier number. */
 					{
 						firstRemainingTime = interval -> xmin;
 						firstRemainingTier = itier;
@@ -1623,9 +1623,9 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 				for (ielement = 1; ielement <= tier -> points -> size; ielement ++) {
 					TextPoint point = tier -> points -> item [ielement];
 					if ((point -> time > sortingTime ||   /* Sort primarily by time. */
-					     point -> time == sortingTime && itier > sortingTier) &&   /* Sort secondarily by tier number. */
+					     (point -> time == sortingTime && itier > sortingTier)) &&   /* Sort secondarily by tier number. */
 					    (point -> time < firstRemainingTime ||   /* Sort primarily by time. */
-					     point -> time == firstRemainingTime && itier < firstRemainingTier))   /* Sort secondarily by tier number. */
+					     (point -> time == firstRemainingTime && itier < firstRemainingTier)))   /* Sort secondarily by tier number. */
 					{
 						firstRemainingTime = point -> time;
 						firstRemainingTier = itier;

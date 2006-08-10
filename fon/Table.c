@@ -401,7 +401,7 @@ static void Table_numericize (Table me, long icol) {
 			TableRow row = my rows -> item [irow];
 			char *string = row -> cells [icol]. string;
 			row -> cells [icol]. number =
-				string == NULL || string [0] == '\0' || string [0] == '?' && string [1] == '\0' ? NUMundefined :
+				string == NULL || string [0] == '\0' || (string [0] == '?' && string [1] == '\0') ? NUMundefined :
 				Melder_atof (string);
 		}
 	} else {

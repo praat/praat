@@ -56,14 +56,14 @@ static int writeAscii (I, FILE *f) {
 	fprintf (f, "\n%ld constraints", my numberOfConstraints);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		fprintf (f, "\n\t\"", icons);
+		fprintf (f, "\n\t\"");
 		for (p = & constraint -> name [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
 		fprintf (f, "\"   %.17g %.17g", constraint -> ranking, constraint -> disharmony);
 	}
 	fprintf (f, "\n\n%ld candidates", my numberOfCandidates);
 	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
-		fprintf (f, "\n\t\"", icand);
+		fprintf (f, "\n\t\"");
 		for (p = & candidate -> string [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
 		fprintf (f, "\"  ");
 		for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
@@ -377,9 +377,9 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	numberOfMatchingCandidates = 0;
 	numberOfOptimalCandidates = numberOfOptimalCandidates1 = numberOfOptimalCandidates2 = 0;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
-		if (form1 [0] != '\0' && OTMulti_candidateMatches (me, icand, form1, "") ||
-		    form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, "") ||
-		    form1 [0] == '\0' && form2 [0] == '\0')
+		if ((form1 [0] != '\0' && OTMulti_candidateMatches (me, icand, form1, "")) ||
+		    (form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, "")) ||
+		    (form1 [0] == '\0' && form2 [0] == '\0'))
 		{
 			double width = Graphics_textWidth_ps (g, my candidates [icand]. string, TRUE);
 			if (width > candWidth) candWidth = width;
@@ -455,9 +455,9 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 	 */
 	y -= doubleLineDy;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++)
-		if (form1 [0] != '\0' && OTMulti_candidateMatches (me, icand, form1, "") ||
-		    form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, "") ||
-		    form1 [0] == '\0' && form2 [0] == '\0')
+		if ((form1 [0] != '\0' && OTMulti_candidateMatches (me, icand, form1, "")) ||
+		    (form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, "")) ||
+		    (form1 [0] == '\0' && form2 [0] == '\0'))
 	{
 		long crucialCell = OTMulti_crucialCell (me, icand, winner, numberOfOptimalCandidates, form1, form2);
 		int candidateIsOptimal = OTMulti_compareCandidates (me, icand, winner) == 0;

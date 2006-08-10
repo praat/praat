@@ -308,7 +308,7 @@ Any Interpreter_createForm (Interpreter me, Widget parent, const char *path, int
 			case Interpreter_BOOLEAN:
 				UiForm_addBoolean (form, parameter, my arguments [ipar] [0] == '1' ||
 					my arguments [ipar] [0] == 'y' || my arguments [ipar] [0] == 'Y' ||
-					my arguments [ipar] [0] == 'o' && my arguments [ipar] [1] == 'n'); break;
+					(my arguments [ipar] [0] == 'o' && my arguments [ipar] [1] == 'n')); break;
 			case Interpreter_SENTENCE:
 				UiForm_addSentence (form, parameter, my arguments [ipar]); break;
 			case Interpreter_TEXT:
@@ -921,8 +921,8 @@ int Interpreter_run (Interpreter me, char *text) {
 									else depth --;
 								} else if (strnequ (lines [iline], "else", 4) && wordEnd (lines [iline] [4])) {
 									if (depth == 0) { lineNumber = iline; break; }   /* Go after 'else'. */
-								} else if (strnequ (lines [iline], "elsif", 5) && wordEnd (lines [iline] [5])
-									|| strnequ (lines [iline], "elif", 4) && wordEnd (lines [iline] [4])) {
+								} else if ((strnequ (lines [iline], "elsif", 5) && wordEnd (lines [iline] [5]))
+									|| (strnequ (lines [iline], "elif", 4) && wordEnd (lines [iline] [4]))) {
 									if (depth == 0) { lineNumber = iline - 1; fromif = TRUE; break; }   /* Go at next 'elsif' or 'elif'. */
 								} else if (strnequ (lines [iline], "if ", 3)) {
 									depth ++;
@@ -1232,7 +1232,7 @@ int Interpreter_run (Interpreter me, char *text) {
 					praat_executeCommand (me, command2); cherror
 					continue;
 				}
-				if (*p == '=' || (*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=') {
+				if (*p == '=' || ((*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=')) {
 					/*
 					 * This must be an assignment (though: "echo= ..." ???)
 					 */
@@ -1242,7 +1242,7 @@ int Interpreter_run (Interpreter me, char *text) {
 					char *endOfVariable = p;
 					p ++;
 					while (*p == ' ' || *p == '\t') p ++;
-					if (*p == '=' || (*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=') {
+					if (*p == '=' || ((*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=')) {
 						/*
 						 * This must be an assignment (though: "echo = ..." ???)
 						 */

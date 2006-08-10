@@ -515,10 +515,10 @@ void ascputs4 (const char *s, FILE *f,
  */
 
 # define FloatToUnsigned(f)  \
-	 ((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
+	 ((unsigned long)(((long)((f) - 2147483648.0)) + 2147483647L + 1))
 
 # define UnsignedToFloat(u)    \
-	  (((double)((long)(u - 2147483647L - 1))) + 2147483648.0)
+	  (((double)((long)((u) - 2147483647L - 1))) + 2147483648.0)
 
 /****************************************************************
  * Extended precision IEEE floating-point conversion routines.

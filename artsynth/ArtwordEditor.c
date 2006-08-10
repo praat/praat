@@ -137,7 +137,7 @@ static void dataChanged (I) {
 static void createChildren (I) {
 	iam (ArtwordEditor);
 	Widget button, scrolled;
-	int i;
+	unsigned int i;
 	XtVaCreateManagedWidget ("Targets:", xmLabelGadgetClass, my dialog,
 		XmNx, 40, XmNy, 3, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Times:", xmLabelGadgetClass, my dialog,

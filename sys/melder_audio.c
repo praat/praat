@@ -521,7 +521,7 @@ static void cancel (void) {
 
 #ifdef macintosh
 # define FloatToUnsigned(f)  \
-	 ((unsigned long)(((long)(f - 2147483648.0)) + 2147483647L + 1))
+	 ((unsigned long)(((long)((f) - 2147483648.0)) + 2147483647L + 1))
 static void double2real10 (double x, unsigned char *bytes) {
 	int sign, exponent;
 	double fMantissa, fsMantissa;
@@ -918,7 +918,8 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 					/*
 					 * Catch Escape and Command-period.
 					 */
-					if ((event. message & charCodeMask) == 27 || (event. modifiers & cmdKey) && (event. message & charCodeMask) == '.')
+					if ((event. message & charCodeMask) == 27 ||
+						((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
 						my explicit = Melder_EXPLICIT, interrupted = 1;
 				}
 				if (interrupted) {

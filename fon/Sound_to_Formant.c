@@ -122,13 +122,13 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 	double zeroes [])   /* In / out */
 {
 	static double cosa [7] [7] = {
-		 1,   0,   0,   0,   0,   0,   0,
-		 0,   2,   0,   0,   0,   0,   0,
-		-2,   0,   4,   0,   0,   0,   0,
-		 0,  -6,   0,   8,   0,   0,   0,
-		 2,   0, -16,   0,  16,   0,   0,
-		 0,  10,   0, -40,   0,  32,   0,
-		-2,   0,  36,   0, -96,   0,  64 };
+		{  1,   0,   0,   0,   0,   0,   0 },
+		{  0,   2,   0,   0,   0,   0,   0 },
+		{ -2,   0,   4,   0,   0,   0,   0 },
+		{  0,  -6,   0,   8,   0,   0,   0 },
+		{  2,   0, -16,   0,  16,   0,   0 },
+		{  0,  10,   0, -40,   0,  32,   0 },
+		{ -2,   0,  36,   0, -96,   0,  64 } };
 	double pp [33], newZeroes [33], px [33];
 	int pt, vt, i, half_degree = (degree + 1) / 2;
 	for (vt = 0; vt <= half_degree; vt ++) pp [vt] = ppORIG [vt];
@@ -322,8 +322,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		else for (j = 1, i = startSample; j <= nsamp_window; j ++)
 			frame_d [j] = my z [1] [i ++] * window [j];
 
-		if (which == 1 && ! burg (frame_f, endSample - startSample + 1, cof_f, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin) ||
-		    which == 2 && ! splitLevinson (frame_d, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx))
+		if ((which == 1 && ! burg (frame_f, endSample - startSample + 1, cof_f, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin)) ||
+		    (which == 2 && ! splitLevinson (frame_d, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)))
 		{
 			Melder_clearError ();
 			Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);

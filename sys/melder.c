@@ -403,12 +403,12 @@ const char * Melder_NUMBER_text_adjective (int which_Melder_NUMBER) {
 
 int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion) {
 	return
-		which_Melder_NUMBER == Melder_NUMBER_EQUAL_TO && value == criterion ||
-		which_Melder_NUMBER == Melder_NUMBER_NOT_EQUAL_TO && value != criterion ||
-		which_Melder_NUMBER == Melder_NUMBER_LESS_THAN && value < criterion ||
-		which_Melder_NUMBER == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion ||
-		which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN && value > criterion ||
-		which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion;
+		(which_Melder_NUMBER == Melder_NUMBER_EQUAL_TO && value == criterion) ||
+		(which_Melder_NUMBER == Melder_NUMBER_NOT_EQUAL_TO && value != criterion) ||
+		(which_Melder_NUMBER == Melder_NUMBER_LESS_THAN && value < criterion) ||
+		(which_Melder_NUMBER == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion) ||
+		(which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN && value > criterion) ||
+		(which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
 const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {

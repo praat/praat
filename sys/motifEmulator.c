@@ -1,6 +1,6 @@
 /* motifEmulator.c
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2004/02/28 MacOS X: used SetControlMaximum (32767) to work around MacOS X feature in setting popup control
  * pb 2004/11/24 separated labels from cascade buttons
  * pb 2005/09/01 assume that we have Appearance (i.e. System 8.5 or up)
+ * pb 2006/08/07 Windows: remove quotes from around path names when calling the openDocument callback
  */
 #ifndef UNIX
 
@@ -2855,7 +2856,7 @@ static void mapWidget (Widget me) {
 			#if win
 			if (! my window) {
 				my window = CreateWindow ("scrollbar", my name, WS_CHILD |
-					( my orientation == XmHORIZONTAL ? SBS_HORZ : SBS_VERT ) | WS_CLIPSIBLINGS,
+					( my orientation == XmHORIZONTAL ? SBS_HORZ : SBS_VERT) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				NativeScrollBar_set (me);
@@ -3211,11 +3212,27 @@ Widget XtInitialize (void *dum1, const char *name,
 		sprintf (theDrawingAreaClassName, "PraatDrawingArea%d %s", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
 		window = FindWindow (theWindowClassName, NULL);
 		if (window != NULL) {
+			/*
+			 * We are in the second instance of Praat.
+			 * The user double-clicked Praat while it was running,
+			 * or she dropped a file on the Praat icon,
+			 * or she double-clicked a Praat file.
+			 */
 			if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);
 			if (theOpenDocumentCallback && argv [3] [0]) {
 				structMelderFile file;
-				Melder_relativePathToFile (argv [3], & file);
+				/*
+				 * The user dropped a file on the Praat icon or double-clicked a Praat file
+				 * while Praat was already running.
+				 * Windows may have enclosed the path between quotes;
+				 * this is especially likely to happen if the path contains spaces,
+				 * which on Windows XP is very usual.
+				 */
+				Melder_relativePathToFile (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3], & file);
+				if (strlen (file. path) > 0 && file. path [strlen (file. path) - 1] == '\"') {
+					file. path [strlen (file. path) - 1] = '\0';
+				}
 				theOpenDocumentCallback (& file);
 			}
 			exit (0);   // possible problem

@@ -1,6 +1,6 @@
 /* UiFile.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
  */
 
 /*
-	pb 2002/01/25
 	pb 2002/03/07 GPL
-	pb 2002/10/04
+	pb 2006/08/10 Windows: turned file selector into a modal dialog box
  */
 
 #if defined (macintosh)
@@ -666,7 +665,7 @@ UiFileSelector UiFileSelector_create (Widget parent, const char *label, int dire
 
 #define UiFile_members Thing_members \
 	EditorCommand command; \
-	Widget dialog, warning; \
+	Widget parent, dialog, warning; \
 	structMelderFile file; \
 	const char *helpTitle; \
 	int (*okCallback) (Any sender, void *closure); \
@@ -756,9 +755,13 @@ static int isDirectory (const char *name) {
 }*/
 #endif
 
-static void UiFile_init (I, const char *title) {
+static void UiFile_init (I, Widget parent, const char *title) {
 	iam (UiFile);
+	my parent = parent;
 	#ifdef UNIX
+		if (my parent) {
+			my dialog = XmCreateFileSelectionDialog (my parent, "FSB dialog", NULL, 0);
+		}
 		if (my dialog) {
 			Longchar_nativize (title, Melder_buffer1, TRUE);
 			XtVaSetValues (my dialog,
@@ -827,14 +830,7 @@ Any UiInfile_create (Widget parent, const char *title,
 	my okCallback = okCallback;
 	my okClosure = okClosure;
 	my helpTitle = helpTitle;
-	#ifdef UNIX
-		if (parent) {
-			my dialog = XmCreateFileSelectionDialog (parent, "FSB dialog", NULL, 0);
-		}
-	#else
-		(void) parent;
-	#endif
-	UiFile_init (me, title);
+	UiFile_init (me, parent, title);
 	return me;
 }
 
@@ -887,7 +883,7 @@ void UiInfile_do (I) {
 	static TCHAR customFilter [100+2];
 	static TCHAR fullFileName [300+2];
 	openFileName. lStructSize = sizeof (OPENFILENAME);
-	openFileName. hwndOwner = NULL;
+	openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
 	openFileName. lpstrFilter = NULL;   /* like *.txt */
 	openFileName. lpstrCustomFilter = customFilter;
 	openFileName. nMaxCustFilter = 100;
@@ -992,13 +988,7 @@ Any UiOutfile_create (Widget parent, const char *title,
 	my okCallback = okCallback;
 	my okClosure = okClosure;
 	my helpTitle = helpTitle;
-	#ifdef UNIX
-		if (parent)
-			my dialog = XmCreateFileSelectionDialog (parent, "FSB dialog", NULL, 0);
-	#else
-		(void) parent;
-	#endif
-	UiFile_init (me, title);
+	UiFile_init (me, parent, title);
 	#ifdef UNIX
 		if (my dialog) {
 			XtUnmanageChild (XtParent (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST)));
@@ -1129,7 +1119,7 @@ void UiOutfile_do (I, const char *defaultName) {
 	static TCHAR fullFileName [300+2];
 	strcpy (fullFileName, defaultName);
 	openFileName. lStructSize = sizeof (OPENFILENAME);
-	openFileName. hwndOwner = NULL;
+	openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
 	openFileName. lpstrFilter = NULL;   /* like *.txt */
 	openFileName. lpstrCustomFilter = customFilter;
 	openFileName. nMaxCustFilter = 100;

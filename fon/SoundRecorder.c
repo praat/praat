@@ -33,6 +33,7 @@
  * pb 2005/09/28 made 12 and 64 kHz available for Mac
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/04/01 corrections for Intel Mac
+ * pb 2006/08/09 acknowledge the 67 MB buffer limit on Windows XP
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -1793,7 +1794,14 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 		/*
 		 * Third try: application memory.
 		 */
-		my nmax = nmaxMB_pref * 1000000 / (sizeof (short) * numberOfChannels);
+		long nmax_bytes_pref = nmaxMB_pref * 1000000;
+		long nmax_bytes =
+			#if defined (_WIN32)
+				66150000;   /* The maximum physical buffer on Windows XP; shorter than in Windows 98, alas. */
+			#else
+				nmax_bytes_pref;
+			#endif
+		my nmax = nmax_bytes / (sizeof (short) * numberOfChannels);
 		for (;;) {
 			my buffer = NUMsvector (0, my nmax * numberOfChannels - 1);
 			if (my buffer) break;   /* Success. */

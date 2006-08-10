@@ -142,11 +142,12 @@ static void draw (I) {
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
 			const char *text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text == NULL || text [0] == '\0' || text [strlen (text) - 1] != ':')
+			if (text == NULL || text [0] == '\0' || text [strlen (text) - 1] != ':') {
 				if (my printing && my suppressLinksHither)
 					goAhead = FALSE;
 				else
 					HyperPage_entry (me, "Links to this page");
+			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
 			long link = page -> linksHither [ilink];

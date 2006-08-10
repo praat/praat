@@ -43,6 +43,7 @@
  djmw 20060202 Removed a bug in TableOfReal_to_SSCP that could crash Praat (if nrows < ncols).
  djmw 20060503 Covariance_getSignificanceOfMeansDifference: set probability = 0 if
  	var_pooled = 0 and paired.
+ djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
 */
 
 #include "SSCP.h"
@@ -340,8 +341,8 @@ static TableOfReal SSCP_and_TableOfReal_to_MahalanobisDistances (I, thou, long r
 	if (him == NULL) return NULL;
 	
 	if (copyLabels && 
-		! NUMstrings_copyElements (&thy rowLabels[rowb], his rowLabels, 1, nrows) ||
-		! NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns))
+		(! NUMstrings_copyElements (&thy rowLabels[rowb], his rowLabels, 1, nrows) ||
+		! NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns)))
 		goto end;
 
 	linv = NUMdmatrix_copy (my data, 1, n, 1, n);

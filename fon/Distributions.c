@@ -95,7 +95,7 @@ static void unicize (Distributions me) {
 	long nrow = 0, ifrom = 1, ito, i, j, icol;
 	for (i = 1; i <= my numberOfRows; i ++) {
 		if (i == my numberOfRows || (my rowLabels [i] == NULL) != (my rowLabels [i + 1] == NULL) ||
-		    my rowLabels [i] != NULL && ! strequ (my rowLabels [i], my rowLabels [i + 1]))
+		    (my rowLabels [i] != NULL && ! strequ (my rowLabels [i], my rowLabels [i + 1])))
 		{
 			/*
 			 * Detected a change.

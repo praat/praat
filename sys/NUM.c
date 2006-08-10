@@ -257,9 +257,9 @@ double NUMbessel_k1_f (double x) {
 }
 
 double NUMbesselK_f (long n, double x) {
-	double twoByX, besselK_min2, besselK_min1, besselK;
+	double twoByX, besselK_min2, besselK_min1, besselK = NUMundefined;
 	long i;
-	Melder_assert (x > 0);
+	Melder_assert (n >= 0 && x > 0);
 	besselK_min2 = NUMbessel_k0_f (x);
 	if (n == 0) return besselK_min2;
 	besselK_min1 = NUMbessel_k1_f (x);
@@ -274,6 +274,7 @@ double NUMbesselK_f (long n, double x) {
 		besselK_min2 = besselK_min1;
 		besselK_min1 = besselK;
 	}
+	Melder_assert (NUMdefined (besselK));
 	return besselK;
 }
 
@@ -668,8 +669,9 @@ int NUMrotationsPointInPolygon (double x0, double y0, long n, float x [], float 
 	int upold = y [n] > y0, upnew;
 	for (i = 1; i <= n; i ++) if ((upnew = y [i] > y0) != upold) {
 		long j = i == 1 ? n : i - 1;
-		if (x0 < x [i] + (x [j] - x [i]) * (y0 - y [i]) / (y [j] - y [i]))
+		if (x0 < x [i] + (x [j] - x [i]) * (y0 - y [i]) / (y [j] - y [i])) {
 			if (upnew) nup ++; else nup --;
+		}
 		upold = upnew;
 	}
 	return nup;

@@ -620,7 +620,7 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 	const char *tab = strchr (header, '\t'), *newline = strchr (header, '\n');
 	(void) nread;
 	if (newline == NULL) newline = strchr (header, '\r');
-	if (tab == NULL || newline != NULL && newline - tab < 0) return NULL;
+	if (tab == NULL || (newline != NULL && newline - tab < 0)) return NULL;
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 

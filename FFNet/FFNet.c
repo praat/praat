@@ -26,6 +26,7 @@
  djmw 20040513 Info changes. 
  djmw 20040526 Adapted FFNet_drawCostHistory.
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
+ djmw 20060811 Changed %d to %ld in sprintf for longs.
 */
 
 #include "FFNet_Matrix.h"
@@ -80,11 +81,11 @@ static int FFNet_checkLayerNumber (FFNet me, long layer)
 
 void FFNet_createNameFromTopology (FFNet me, char *name)
 {
-	int nchars1 = sprintf (name, "%d-%d", my nUnitsInLayer[0], my nUnitsInLayer[1]);
+	int nchars1 = sprintf (name, "%ld-%ld", my nUnitsInLayer[0], my nUnitsInLayer[1]);
 	if (my nLayers > 1)
 	{
-		int nchars2 = sprintf (name + nchars1, "-%d", my nUnitsInLayer[2]);
-		if (my nLayers > 2) (void) sprintf (name + nchars1 + nchars2, "-%d", my nUnitsInLayer[3]);
+		int nchars2 = sprintf (name + nchars1, "-%ld", my nUnitsInLayer[2]);
+		if (my nLayers > 2) (void) sprintf (name + nchars1 + nchars2, "-%ld", my nUnitsInLayer[3]);
 	}
 }
 
@@ -630,10 +631,10 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
     {
     	double x1WC, x2WC, y1WC, y2WC; char text[30];
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
-		sprintf (text, "Units in layer %ld ->", layer);
+		sprintf (text, "Units in layer %d ->", layer);
 		Graphics_textBottom (g, 0, text);
 		if (layer == 1) strcpy (text, "Input units ->");
-		else sprintf (text, "Units in layer %ld ->", layer-1); 
+		else sprintf (text, "Units in layer %d ->", layer-1); 
 		Graphics_textLeft (g, 0, text);
 		/* how do I find out the current settings ??? */
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
@@ -723,13 +724,13 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer)
 	
 	for (i = 1; i <= numberOfUnitsFrom - 1; i++)
 	{
-		sprintf (label,"L%d-%d", layer-1, i);
+		sprintf (label,"L%ld-%ld", layer-1, i);
 		TableOfReal_setRowLabel (thee, i, label);	
 	}
 	TableOfReal_setRowLabel (thee, numberOfUnitsFrom, "Bias");
 	for (i = 1; i <= numberOfUnitsTo; i++)
 	{
-		sprintf (label,"L%d-%d", layer, i);
+		sprintf (label,"L%ld-%ld", layer, i);
 		TableOfReal_setColumnLabel (thee, i, label);	
 	}
 	

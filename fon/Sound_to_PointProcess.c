@@ -98,8 +98,8 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, int includeRaisers, int inc
 	 * Pass 2: compute and register the zeroes.
 	 */
 	for (i = 2; i <= my nx; i ++) {
-		if (includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0 ||
-		    includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0) {
+		if ((includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) ||
+		    (includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0)) {
 			double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   /* Linear. */
 			PointProcess_addPoint (thee, time);
 		}

@@ -1,6 +1,6 @@
 /* Collection.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2004/10/16 C++ compatible structs
+ * pb 2006/08/08 reduced compiler warnings
  */
 
 #include "Collection.h"
@@ -189,7 +190,7 @@ static int classCollection_readBinary (I, FILE *f) {
 		if (size < 0 || ! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
 			char klas [200], name [2000];
-			if (fscanf (f, "%s%s", & klas, & name) < 2 ||
+			if (fscanf (f, "%s%s", klas, name) < 2 ||
 				! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Thing_version = -1;   /* Override. */
 			my size ++;

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/01/25
+ * pb 2006/08/08
  */
 
 #include "praat.h"
@@ -37,8 +37,6 @@ int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 
 static const char *STRING_FROM_FREQUENCY_HZ = "left Frequency range (Hz)";
 static const char *STRING_TO_FREQUENCY_HZ = "right Frequency range (Hz)";
-static const char *STRING_FROM_FREQUENCY = "left Frequency range";
-static const char *STRING_TO_FREQUENCY = "right Frequency range";
 static const char *STRING_TIER_NUMBER = "Tier number";
 static const char *STRING_INTERVAL_NUMBER = "Interval number";
 static const char *STRING_POINT_NUMBER = "Point number";
@@ -595,7 +593,7 @@ DO
 	char *sentence = GET_STRING ("sentence"), *result;
 	int startingCharacter = GET_INTEGER ("Starting character");
 	REQUIRE (startingCharacter >= 0, "Starting character should be 0 or positive.")
-	REQUIRE (startingCharacter <= strlen (sentence), "Starting character should not exceed end of sentence.")
+	REQUIRE (startingCharacter <= (int) strlen (sentence), "Starting character should not exceed end of sentence.")
 	result = SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter);
 	Melder_information ("%s", result ? result : "");
 END

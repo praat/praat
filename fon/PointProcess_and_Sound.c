@@ -176,7 +176,6 @@ Sound PointProcess_to_Sound_phonation
 		if (flow > 0.0) {
 			double flowDerivative = amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
 			double ta = - flow / flowDerivative;
-			double ra = ta / period;
 			double factorPerSample = exp (- thy dx / ta);
 			double value = flowDerivative * factorPerSample;
 			long endSample = midSample + floor (20 * ta / thy dx);

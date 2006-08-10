@@ -40,10 +40,10 @@ void Graphics_printf (I, double xWC, double yWC, const char *format, ...) {
 	va_list arg;
 	va_start (arg, format);
 	vsprintf (buffer, format, arg);
-	if ((formatLength == 4 && format [0] == '%' && format [1] == '.' &&
-		 format [2] >= '1' && format [2] <= '9' && format [3] == 'g' ||
-	     formatLength == 5 && format [0] == '%' && format [1] == '.' &&
-		 format [2] >= '1' && format [2] <= '9' && format [3] == 'l' && format [4] == 'g')
+	if (((formatLength == 4 && format [0] == '%' && format [1] == '.' &&
+		 format [2] >= '1' && format [2] <= '9' && format [3] == 'g') ||
+	     (formatLength == 5 && format [0] == '%' && format [1] == '.' &&
+		 format [2] >= '1' && format [2] <= '9' && format [3] == 'l' && format [4] == 'g'))
 	     && strchr (buffer, 'e') != NULL)
 	{
 		char number [100], *n = number;

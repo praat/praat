@@ -39,7 +39,7 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	for (i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor) {
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
 			numberOfPeriods --;
@@ -60,7 +60,7 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 	for (i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor) {
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			sum += fabs (p1 - p2);
 		} else {
 			numberOfPeriods --;
@@ -81,8 +81,8 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	for (i = imin + 2; i < imax; i ++) {
 		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
-		    && intervalFactor1 <= maximumPeriodFactor && intervalFactor2 <= maximumPeriodFactor)
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
+		    && intervalFactor1 <= maximumPeriodFactor && intervalFactor2 <= maximumPeriodFactor))
 		{
 			sum += fabs (p2 - (p1 + p2 + p3) / 3.0);
 		} else {
@@ -113,9 +113,9 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 			f2 = p2 > p3 ? p2 / p3 : p3 / p2,
 			f3 = p3 > p4 ? p3 / p4 : p4 / p3,
 			f4 = p4 > p5 ? p4 / p5 : p5 / p4;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax &&
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax &&
 			p4 >= pmin && p4 <= pmax && p5 >= pmin && p5 <= pmax &&
-			f1 <= maximumPeriodFactor && f2 <= maximumPeriodFactor && f3 <= maximumPeriodFactor && f4 <= maximumPeriodFactor)
+			f1 <= maximumPeriodFactor && f2 <= maximumPeriodFactor && f3 <= maximumPeriodFactor && f4 <= maximumPeriodFactor))
 		{
 			sum += fabs (p3 - (p1 + p2 + p3 + p4 + p5) / 5.0);
 		} else {

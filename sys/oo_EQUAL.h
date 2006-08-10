@@ -21,6 +21,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR
  * pb 2003/06/11 made struct_equal global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
+ * pb 2006/08/08 reduced Lint warnings
  */
 
 #include "oo_undef.h"
@@ -44,11 +45,11 @@
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (! my x != ! thy x || \
-		my x && ! NUM##t##vector_equal (my x, thy x, min, max)) return 0;
+		(my x && ! NUM##t##vector_equal (my x, thy x, min, max))) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (! my x != ! thy x || \
-		my x && ! NUM##t##matrix_equal (my x, thy x, row1, row2, col1, col2)) return 0;
+		(my x && ! NUM##t##matrix_equal (my x, thy x, row1, row2, col1, col2))) return 0;
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	if (my x != thy x) return 0;
@@ -61,17 +62,17 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (! my x != ! thy x || \
-		my x && ! NUM##t##vector_equal (my x, thy x, min, max)) return 0;
+		(my x && ! NUM##t##vector_equal (my x, thy x, min, max))) return 0;
 
 #define oo_STRINGx(storage,x)  \
-	if (! my x != ! thy x || my x && ! strequ (my x, thy x)) return 0;
+	if (! my x != ! thy x || (my x && ! strequ (my x, thy x))) return 0;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
 		int i; \
 		for (i = 0; i < n; i ++) \
 			if (! my x [i] != ! thy x [i] || \
-			    my x [i] && ! strequ (my x [i], thy x [i])) return 0; \
+			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
@@ -79,7 +80,7 @@
 		int i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
 			if (! my x [i] != ! thy x [i] || \
-			    my x [i] && ! strequ (my x [i], thy x [i])) return 0; \
+			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -88,7 +89,7 @@
 		long i; \
 		for (i = min; i <= max; i ++) \
 			if (! my x [i] != ! thy x [i] || \
-			    my x [i] && ! strequ (my x [i], thy x [i])) return 0; \
+			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
 	}
 
 #define oo_STRUCT(Type,x)  \
@@ -140,10 +141,10 @@
 
 
 #define oo_OBJECT(Class,version,x)  \
-	if (! my x != ! thy x || my x && ! Data_equal (my x, thy x)) return 0;
+	if (! my x != ! thy x || (my x && ! Data_equal (my x, thy x))) return 0;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (! my x != ! thy x || my x && ! Data_equal (my x, thy x)) return 0;
+	if (! my x != ! thy x || (my x && ! Data_equal (my x, thy x))) return 0;
 
 #define oo_FILE(x)  \
 	if (! MelderFile_equal (& my x, & thy x)) return 0;

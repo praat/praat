@@ -610,22 +610,20 @@ void Pitch_difference (Pitch me, Pitch thee) {
 		if (myUnvoiced && ! thyUnvoiced) {
 			Melder_casual ("Frame %ld time %f: unvoiced to voiced.", i, t);
 			nuvtov ++;
-		}
-		else if (! myUnvoiced && thyUnvoiced) {
+		} else if (! myUnvoiced && thyUnvoiced) {
 			Melder_casual ("Frame %ld time %f: voiced to unvoiced.", i, t);
 			nvtouv ++;
-		}
-		else if (! myUnvoiced && ! thyUnvoiced)
+		} else if (! myUnvoiced && ! thyUnvoiced) {
 			if (myf > thyf) {
 				Melder_casual ("Frame %ld time %f: downward frequency jump "
 					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
 				ndfdown ++;
-			}
-			else if (myf < thyf) {
+			} else if (myf < thyf) {
 				Melder_casual ("Frame %ld time %f: upward frequency jump "
 					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
 				ndfup ++;
 			}
+		}
 	}
 	Melder_information ("Difference between two Pitches:\n\n"
 		"Unvoiced to voiced: %ld frames.\n"

@@ -331,11 +331,7 @@ DIRECT (Sounds_convolve)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
 	char name [200];
-	WHERE (SELECTED)
-		if (sound1)
-			{ sound2 = OBJECT; i2 = IOBJECT; }
-		else
-			{ sound1 = OBJECT; i1 = IOBJECT; }
+	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
 	sprintf (name, "%s_%s", strchr (praat.list [i1]. name, ' ') + 1, strchr (praat.list [i2]. name, ' ') + 1);
 	if (! praat_new (Sounds_convolve (sound1, sound2), name)) return 0;
@@ -348,7 +344,7 @@ FORM (Sounds_crossCorrelate, "Cross-correlate", 0)
 	OK
 DO
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	if (! praat_new (Sounds_crossCorrelate (s1, s2, GET_REAL ("From lag"), GET_REAL ("To lag"),
 		GET_INTEGER ("Normalize")), "cc_%s_%s", s1 -> name, s2 -> name)) return 0;
 END
@@ -1237,7 +1233,7 @@ END
 
 DIRECT (Sounds_to_ParamCurve)
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	if (! praat_new (ParamCurve_create (s1, s2), "%s_%s", s1 -> name, s2 -> name)) return 0;
 END
 
@@ -1494,35 +1490,35 @@ END
 
 FORM_WRITE (Sound_writeToStereoAifcFile, "Write to stereo AIFC file", 0, "aifc")
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
 	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_AIFC)) return 0;
 END
 
 FORM_WRITE (Sound_writeToStereoAiffFile, "Write to stereo AIFF file", 0, "aiff")
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
 	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_AIFF)) return 0;
 END
 
 FORM_WRITE (Sound_writeToStereoNextSunFile, "Write to stereo NeXT/Sun file", 0, "au")
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
 	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_NEXT_SUN)) return 0;
 END
 
 FORM_WRITE (Sound_writeToStereoNistFile, "Write to stereo NIST file", 0, "nist")
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
 	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_NIST)) return 0;
 END
 
 FORM_WRITE (Sound_writeToStereoWavFile, "Write to stereo WAV file", 0, "wav")
 	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
 	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_WAV)) return 0;
 END
@@ -1561,8 +1557,8 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 
 static Any soundFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 16) return NULL;
-	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3) ||
-	    strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4)) ||
+	if ((strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) ||
+	    (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) ||
 	    strnequ (header, ".snd", 4) ||
 	    strnequ (header, "NIST_1A", 7)
 	    #ifdef macintosh
@@ -1580,15 +1576,15 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
-	if (nread < 512 || ! strstr (fileName, ".mov") && ! strstr (fileName, ".MOV") &&
-	    ! strstr (fileName, ".avi") && ! strstr (fileName, ".AVI")) return NULL;
+	if (nread < 512 || (! strstr (fileName, ".mov") && ! strstr (fileName, ".MOV") &&
+	    ! strstr (fileName, ".avi") && ! strstr (fileName, ".AVI"))) return NULL;
 	return Sound_readFromMovieFile (file);
 }
 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
 	char *fileName = MelderFile_name (file);
 	(void) header;
-	if (nread < 512 || ! strstr (fileName, ".sdf") && ! strstr (fileName, ".SDF")) return NULL;
+	if (nread < 512 || (! strstr (fileName, ".sdf") && ! strstr (fileName, ".SDF"))) return NULL;
 	return Sound_readFromSesamFile (file);
 }
 

@@ -343,7 +343,7 @@ FORM (OTGrammar_learn, "OTGrammar: Learn", "OTGrammar & 2 Strings: Learn...")
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
 	Strings inputs = NULL, outputs = NULL;
-	WHERE (SELECTED && CLASS == classStrings) if (! inputs) inputs = OBJECT; else outputs = OBJECT;
+	WHERE (SELECTED && CLASS == classStrings) { if (! inputs) inputs = OBJECT; else outputs = OBJECT; }
 	OTGrammar_learn (grammar, inputs, outputs,
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"));

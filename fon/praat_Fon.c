@@ -335,8 +335,7 @@ FORM (Cochleagram_difference, "Cochleagram difference", 0)
 	OK
 DO
 	Data coch1 = NULL, coch2 = NULL;
-	WHERE (SELECTED && CLASS == classCochleagram)
-		if (coch1) coch2 = OBJECT; else coch1 = OBJECT;
+	WHERE (SELECTED && CLASS == classCochleagram) { if (coch1) coch2 = OBJECT; else coch1 = OBJECT; }
 	Melder_informationReal (Cochleagram_difference ((Cochleagram) coch1, (Cochleagram) coch2,
 			GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hertz (root-mean-square)");
 END
@@ -396,7 +395,7 @@ FORM (Distributionses_getMeanAbsoluteDifference, "Get mean difference", 0)
 	OK
 DO
 	Distributions me = NULL, thee = NULL;
-	WHERE (SELECTED) if (me) thee = OBJECT; else me = OBJECT;
+	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
 	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER ("Column number")), NULL);
 END
 
@@ -450,7 +449,7 @@ FORM (Distributions_to_Transition_noise, "To Transition (noise)", 0)
 	OK
 DO
 	Distributions underlying = NULL, surface = NULL;
-	WHERE (SELECTED) if (underlying) surface = OBJECT; else underlying = OBJECT;
+	WHERE (SELECTED) { if (underlying) surface = OBJECT; else underlying = OBJECT; }
 	if (! praat_new (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
 		NULL, GET_INTEGER ("Greedy")), NULL)) return 0;
 END
@@ -461,8 +460,7 @@ FORM (Distributions_to_Transition_noise_adj, "To Transition (noise)", 0)
 	OK
 DO
 	Distributions underlying = NULL, surface = NULL;
-	WHERE (SELECTED && CLASS == classDistributions)
-		if (underlying) surface = OBJECT; else underlying = OBJECT;
+	WHERE (SELECTED && CLASS == classDistributions) { if (underlying) surface = OBJECT; else underlying = OBJECT; }
 	if (! praat_new (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
 		ONLY (classTransition), GET_INTEGER ("Greedy")), NULL)) return 0;
 END
@@ -1795,7 +1793,7 @@ END
 
 DIRECT (Matrix_appendRows)
 	Matrix m1 = NULL, m2 = NULL;
-	WHERE (SELECTED) if (m1) m2 = OBJECT; else m1 = OBJECT;
+	WHERE (SELECTED) { if (m1) m2 = OBJECT; else m1 = OBJECT; }
 	if (! praat_new (Matrix_appendRows (m1, m2), "%s_%s", m1 -> name, m2 -> name)) return 0;
 END
 
@@ -2068,7 +2066,7 @@ END
 
 DIRECT (Matrix_to_ParamCurve)
 	Matrix m1 = NULL, m2 = NULL;
-	WHERE (SELECTED) if (m1) m2 = OBJECT; else m1 = OBJECT;
+	WHERE (SELECTED) { if (m1) m2 = OBJECT; else m1 = OBJECT; }
 	if (! praat_new (ParamCurve_create (m1, m2), "%s_%s", m1 -> name, m2 -> name)) return 0;
 END
 
@@ -2178,8 +2176,7 @@ END
 
 DIRECT (Pitch_difference)
 	Pitch pit1 = NULL, pit2 = NULL;
-	WHERE (SELECTED && CLASS == classPitch)
-		if (pit1) pit2 = OBJECT; else pit1 = OBJECT;
+	WHERE (SELECTED && CLASS == classPitch) { if (pit1) pit2 = OBJECT; else pit1 = OBJECT; }
 	Pitch_difference (pit1, pit2);
 END
 
@@ -2937,7 +2934,7 @@ END
 
 DIRECT (PointProcess_difference)
 	PointProcess point1 = NULL, point2 = NULL;
-	WHERE (SELECTED) if (point1) point2 = OBJECT; else point1 = OBJECT;
+	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
 	if (! praat_new (PointProcesses_difference (point1, point2), "difference")) return 0;
 END
 
@@ -3106,7 +3103,7 @@ END
 
 DIRECT (PointProcess_intersection)
 	PointProcess point1 = NULL, point2 = NULL;
-	WHERE (SELECTED) if (point1) point2 = OBJECT; else point1 = OBJECT;
+	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
 	if (! praat_new (PointProcesses_intersection (point1, point2), "intersection")) return 0;
 END
 
@@ -3226,7 +3223,7 @@ END
 
 DIRECT (PointProcess_union)
 	PointProcess point1 = NULL, point2 = NULL;
-	WHERE (SELECTED) if (point1) point2 = OBJECT; else point1 = OBJECT;
+	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
 	if (! praat_new (PointProcesses_union (point1, point2), "union")) return 0;
 END
 
@@ -3432,7 +3429,7 @@ FORM (Polygons_drawConnection, "Polygons: Draw connection", 0)
 	OK
 DO
 	Polygon polygon1 = NULL, polygon2 = NULL;
-	WHERE (SELECTED) if (polygon1) polygon2 = OBJECT; else polygon1 = OBJECT;
+	WHERE (SELECTED) { if (polygon1) polygon2 = OBJECT; else polygon1 = OBJECT; }
 	EVERY_DRAW (Polygons_drawConnection (polygon1, polygon2, GRAPHICS,
 		GET_REAL ("Xmin"), GET_REAL ("Xmax"), GET_REAL ("Ymin"), GET_REAL ("Ymax"),
 		GET_INTEGER ("Arrow"), GET_REAL ("Relative length")))
@@ -3827,7 +3824,7 @@ END
 
 DIRECT (Strings_equal)
 	Strings s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) if (s1) s2 = OBJECT; else s1 = OBJECT;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_information ("%d", Data_equal (s1, s2));
 END
 
@@ -4562,8 +4559,8 @@ DIRECT (SearchManual) Melder_search (); END
 static Any cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 57) return NULL;
 	if (! strnequ (& header [0], "<?xml version=\"1.0\"?>", 21) ||
-	    ! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
-	    ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35)) return NULL;
+	    (! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
+	     ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35))) return NULL;
 	return TextGrid_readFromCgnSyntaxFile (file);
 }
 

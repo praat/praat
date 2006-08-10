@@ -67,9 +67,9 @@ static int lookUpMatchingMenuCommand (const char *window, const char *menu, cons
 		const char *tryWindow = theCommands [i]. window;
 		const char *tryMenu = theCommands [i]. menu;
 		const char *tryTitle = theCommands [i]. title;
-		if ((window == tryWindow || window && tryWindow && strequ (window, tryWindow)) &&
-		    (menu == tryMenu || menu && tryMenu && strequ (menu, tryMenu)) &&
-		    (title == tryTitle || title && tryTitle && strequ (title, tryTitle))) return i;
+		if ((window == tryWindow || (window && tryWindow && strequ (window, tryWindow))) &&
+		    (menu == tryMenu || (menu && tryMenu && strequ (menu, tryMenu))) &&
+		    (title == tryTitle || (title && tryTitle && strequ (title, tryTitle)))) return i;
 	}
 	return 0;   /* Not found. */
 }
@@ -389,7 +389,7 @@ void praat_sensitivizeFixedButtonCommand (const char *title, int sensitive) {
 int praat_doMenuCommand (const char *command, const char *arguments) {
 	long i = 1;
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! strequ (theCommands [i]. title, command) ||
-		! strequ (theCommands [i]. window, "Objects") && ! strequ (theCommands [i]. window, "Picture"))) i ++;
+		(! strequ (theCommands [i]. window, "Objects") && ! strequ (theCommands [i]. window, "Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
 	if (! theCommands [i]. callback ((Any) arguments, NULL))
 		return 0;

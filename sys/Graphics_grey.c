@@ -348,8 +348,7 @@ static void smallGrey (void) {
 			int min = i, j;
 			for (j = i + 1; j <= numberOfEdgePoints; j ++)
 				if (edgePoints [min]. ori > edgePoints [j]. ori ||
-						edgePoints [min]. ori == edgePoints [j]. ori &&
-						edgePoints [min]. val > edgePoints [j]. val)
+					(edgePoints [min]. ori == edgePoints [j]. ori && edgePoints [min]. val > edgePoints [j]. val))
 					min = j;
 			p = edgePoints [i];
 			edgePoints [i] = edgePoints [min];

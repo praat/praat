@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060804)
+MAN_BEGIN ("What's new?", "ppgb", 20060810)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.28# (August 10, 2006)")
+LIST_ITEM ("\\bu Windows XP: Praat files can finally again be opened by double-clicking and by dragging them onto the Praat icon.")
+LIST_ITEM ("\\bu Scripting (Windows): removed a bug that caused Praat to crash if the script window was closed when a file selector window was open.")
 NORMAL ("##4.4.27# (August 4, 2006)")
 LIST_ITEM ("\\bu Table window: corrected vertical scroll bar (on Windows).")
 LIST_ITEM ("\\bu Formulas: invSigmoid.")

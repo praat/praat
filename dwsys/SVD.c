@@ -27,6 +27,7 @@
  djmw 20031101 Changed documentation in SVD_compute + bug correction in SVD_synthesize.
  djmw 20031111 Added GSVD_create_d.
  djmw 20051201 Adapt for numberOfRows < numberOfColumns
+ djmw 20060810 Removed #include praat.h
 */
 
 #include "SVD.h"
@@ -37,7 +38,6 @@
 #include "NUMcblas.h"
 
 #include "TableOfReal.h"
-#include "praat.h"
 
 #include "oo_DESTROY.h"
 #include "SVD_def.h"

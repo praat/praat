@@ -82,7 +82,7 @@ static int PointProcess_isVoiced_t (PointProcess me, double t, double maxT) {
 	tmid = my t [imid];
 	leftVoiced = imid > 1 && tmid - my t [imid - 1] <= maxT;
 	rightVoiced = imid < my nt && my t [imid + 1] - tmid <= maxT;
-	if (leftVoiced && t <= tmid || rightVoiced && t >= tmid) return 1;
+	if ((leftVoiced && t <= tmid) || (rightVoiced && t >= tmid)) return 1;
 	if (leftVoiced && t < 1.5 * tmid - 0.5 * my t [imid - 1]) return 1;
 	if (rightVoiced && t > 1.5 * tmid - 0.5 * my t [imid + 1]) return 1;
 	return 0;

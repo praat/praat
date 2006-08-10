@@ -263,8 +263,12 @@ END
 
 /********** Callbacks of the Goodies menu. **********/
 
-FORM (praat_calculator, "Calculator", "Calculator...")
+FORM (praat_calculator, "Calculator", "Calculator")
+	LABEL ("", "Type any numeric formula or string formula:")
 	TEXTFIELD ("expression", "5*5")
+	LABEL ("", "Note that you can include many special functions in your formula,")
+	LABEL ("", "including statistical functions and acoustics-auditory conversions.")
+	LABEL ("", "For details, click Help.")
 	OK
 DO
 	return Interpreter_numericOrStringExpression (NULL, GET_STRING ("expression"), NULL, NULL);
@@ -486,7 +490,7 @@ static char itemTitle_about [100];
 static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
 	char *name = MelderFile_name (file);
 	if (nread < 2) return NULL;
-	if (header [0] == '#' && header [1] == '!' || strstr (name, ".praat") == name + strlen (name) - 6
+	if ((header [0] == '#' && header [1] == '!') || strstr (name, ".praat") == name + strlen (name) - 6
 	    || strstr (name, ".html") == name + strlen (name) - 5)
 	{
 		return Script_createFromFile (file);

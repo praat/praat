@@ -91,7 +91,7 @@ int SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString
 }
 
 static int startsWithCapital (const char *word) {
-	return isupper (word [0]) || word [0] == '\\' && isupper (word [1]);
+	return isupper (word [0]) || (word [0] == '\\' && isupper (word [1]));
 }
 
 int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
@@ -232,14 +232,14 @@ char * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char *sente
 					p ++;
 				}
 			}
-		} else if (*p == ' ' || my separatingCharacters && stringContains (my separatingCharacters, *p)) {
+		} else if (*p == ' ' || (my separatingCharacters && stringContains (my separatingCharacters, *p))) {
 			p ++;
 		} else {
 			static char word [100];
 			char *q = & word [0];
 			*start = p - sentence;
 			for (;;) {
-				if (*p == '\0' || *p == ' ' || my separatingCharacters && stringContains (my separatingCharacters, *p)) {
+				if (*p == '\0' || *p == ' ' || (my separatingCharacters && stringContains (my separatingCharacters, *p))) {
 					*q ++ = '\0';
 					if (SpellingChecker_isWordAllowed (me, word)) {
 						/* Don't increment p (may contain a zero or a parenthesis). */

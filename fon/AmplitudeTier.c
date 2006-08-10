@@ -149,7 +149,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 	for (i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor) {
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 			double peak = Sound_getHannWindowedRms (thee, my t [i], 0.2 * p1, 0.2 * p2);
 			if (NUMdefined (peak) && peak > 0.0) RealTier_addPoint (him, my t [i], peak);
 		}
@@ -162,7 +162,7 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 	RealPoint *points = (RealPoint *) my points -> item;
 	for (i = 2; i <= my points -> size; i ++) {
 		double p = points [i] -> time - points [i - 1] -> time;
-		if (pmin == pmax || p >= pmin && p <= pmax) {
+		if (pmin == pmax || (p >= pmin && p <= pmax)) {
 			double a1 = points [i - 1] -> value, a2 = points [i] -> value;
 			double amplitudeFactor = a1 > a2 ? a1 / a2 : a2 / a1;
 			if (amplitudeFactor <= maximumAmplitudeFactor) {
@@ -188,7 +188,7 @@ double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double 
 	RealPoint *points = (RealPoint *) my points -> item;
 	for (i = 2; i <= my points -> size; i ++) {
 		double p = points [i] -> time - points [i - 1] -> time;
-		if (pmin == pmax || p >= pmin && p <= pmax) {
+		if (pmin == pmax || (p >= pmin && p <= pmax)) {
 			double a1 = points [i - 1] -> value, a2 = points [i] -> value;
 			double amplitudeFactor = a1 > a2 ? a1 / a2 : a2 / a1;
 			if (amplitudeFactor <= maximumAmplitudeFactor) {
@@ -209,7 +209,7 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 		double
 			p1 = points [i] -> time - points [i - 1] -> time,
 			p2 = points [i + 1] -> time - points [i] -> time;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax) {
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax)) {
 			double a1 = points [i - 1] -> value, a2 = points [i] -> value, a3 = points [i + 1] -> value;
 			double f1 = a1 > a2 ? a1 / a2 : a2 / a1, f2 = a2 > a3 ? a2 / a3 : a3 / a2;
 			if (f1 <= maximumAmplitudeFactor && f2 <= maximumAmplitudeFactor) {
@@ -240,8 +240,8 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 			p2 = points [i] -> time - points [i - 1] -> time,
 			p3 = points [i + 1] -> time - points [i] -> time,
 			p4 = points [i + 2] -> time - points [i + 1] -> time;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax
-			&& p3 >= pmin && p3 <= pmax && p4 >= pmin && p4 <= pmax)
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax
+			&& p3 >= pmin && p3 <= pmax && p4 >= pmin && p4 <= pmax))
 		{
 			double a1 = points [i - 2] -> value, a2 = points [i - 1] -> value, a3 = points [i] -> value,
 				a4 = points [i + 1] -> value, a5 = points [i + 2] -> value;
@@ -283,10 +283,10 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 			p8 = points [i + 3] -> time - points [i + 2] -> time,
 			p9 = points [i + 4] -> time - points [i + 3] -> time,
 			p10 = points [i + 5] -> time - points [i + 4] -> time;
-		if (pmin == pmax || p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax
+		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax
 			&& p3 >= pmin && p3 <= pmax && p4 >= pmin && p4 <= pmax && p5 >= pmin && p5 <= pmax
 			&& p6 >= pmin && p6 <= pmax && p7 >= pmin && p7 <= pmax && p8 >= pmin && p8 <= pmax
-			&& p9 >= pmin && p9 <= pmax && p10 >= pmin && p10 <= pmax)
+			&& p9 >= pmin && p9 <= pmax && p10 >= pmin && p10 <= pmax))
 		{
 			double a1 = points [i - 5] -> value, a2 = points [i - 4] -> value, a3 = points [i - 3] -> value,
 				a4 = points [i - 2] -> value, a5 = points [i - 1] -> value, a6 = points [i] -> value,

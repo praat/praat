@@ -487,13 +487,13 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs) {
 		const char *p = paragraph -> text;
 		int type = paragraph -> type, inTable;
 		int isListItem = type == enumi (ManPage_TYPE, list_item) ||
-			type >= enumi (ManPage_TYPE, list_item1) && type <= enumi (ManPage_TYPE, list_item3);
+			(type >= enumi (ManPage_TYPE, list_item1) && type <= enumi (ManPage_TYPE, list_item3));
 		int isTag = type == enumi (ManPage_TYPE, tag) ||
-			type >= enumi (ManPage_TYPE, tag1) && type <= enumi (ManPage_TYPE, tag3);
+			(type >= enumi (ManPage_TYPE, tag1) && type <= enumi (ManPage_TYPE, tag3));
 		int isDefinition = type == enumi (ManPage_TYPE, definition) ||
-			type >= enumi (ManPage_TYPE, definition1) && type <= enumi (ManPage_TYPE, definition3);
+			(type >= enumi (ManPage_TYPE, definition1) && type <= enumi (ManPage_TYPE, definition3));
 		/*int isCode = type == enumi (ManPage_TYPE, code) ||
-			type >= enumi (ManPage_TYPE, code1) && type <= enumi (ManPage_TYPE, code5);*/
+			(type >= enumi (ManPage_TYPE, code1) && type <= enumi (ManPage_TYPE, code5));*/
 
 		/*
 		 * We do not recognize pictures yet.

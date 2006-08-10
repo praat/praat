@@ -95,8 +95,9 @@ DO
 END
 
 DIRECT (ResultsMFC_removeUnsharedStimuli)
-	ResultsMFC res1 = NULL, res2;
-	WHERE (SELECTED) if (res1) res2 = OBJECT; else res1 = OBJECT;
+	ResultsMFC res1 = NULL, res2 = NULL;
+	WHERE (SELECTED) { if (res1) res2 = OBJECT; else res1 = OBJECT; }
+	Melder_assert (res1 && res2);
 	if (! praat_new (ResultsMFC_removeUnsharedStimuli (res1, res2), "%s_shared", res2 -> name)) return 0;
 END
 

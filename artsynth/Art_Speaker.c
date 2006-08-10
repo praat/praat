@@ -295,7 +295,7 @@ static int inside (double x, double y,
 {
 	int i, up = 0;
 	for (i = 1; i <= 16 - 1; i ++)
-		if (y > intY [i] != y > intY [i + 1]) {
+		if ((y > intY [i]) != (y > intY [i + 1])) {
 			double slope = (intX [i + 1] - intX [i]) / (intY [i + 1] - intY [i]);
 			if (x > intX [i] + (y - intY [i]) * slope)
 				up += ( y > intY [i] ? 1 : -1 );
