@@ -29,6 +29,8 @@
  * rvs&pb 2005/11/18 url support
  * pb 2006/01/21 MelderFile_writeText does not create temporary file
  * pb 2006/08/03 openForWriting
+ * rvs 2006/08/12 curl: do not fail on error
+ * pb 2006/08/12 check whether unicodeName exists
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -928,8 +930,8 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			 */
 			/* Debugging: Verbose messages */
 			/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
-			/* Do not return Error pages, just fail. */
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 1);	
+			/* Do not fail on error. */
+			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 0);	
 			/* Store error messages in a buffer. */
 			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
 			/* The file stream to store the URL. */
@@ -1102,8 +1104,12 @@ char * MelderFile_messageName (MelderFile file) {
 	#ifdef __MACH__
 		char romanName [260];
 		CFStringRef unicodeName = CFStringCreateWithCString (NULL, file -> path, kCFStringEncodingUTF8);
-		CFStringGetCString (unicodeName, romanName, 260, kCFStringEncodingMacRoman);
-		CFRelease (unicodeName);
+		if (unicodeName) {
+			CFStringGetCString (unicodeName, romanName, 260, kCFStringEncodingMacRoman);
+			CFRelease (unicodeName);
+		} else {
+			sprintf (romanName, "<<%s>>", Melder_asciiMessage (file -> path));
+		}
 		return Melder_asciiMessage (romanName);
 	#else
 		return Melder_asciiMessage (Melder_fileToPath (file));

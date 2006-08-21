@@ -1,6 +1,6 @@
 /* praat_objectMenus.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2005/07/06 repaired a memory leak in creating a script editor from a double click
  * pb 2005/08/22 renamed the Control menu to "Praat" on all systems (like on the Mac)
  * pb 2005/11/18 HTML files are considered scripts (this is just for testing)
+ * pb 2006/08/12 allowed renaming with European characters
  */
 
 #include <ctype.h>
@@ -37,10 +38,6 @@
 #include "site.h"
 
 #define EDITOR  praat.list [IOBJECT]. editors
-
-static void praat_cleanUpName (char *name)
-/* Replaces spaces and special characters by underscores. */
-	{ for (; *name; name ++) if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_'; }
 
 /********** Callbacks of the fixed buttons. **********/
 

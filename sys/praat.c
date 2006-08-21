@@ -284,13 +284,16 @@ static void praat_remove (int iobject) {
 	forget (praat.list [iobject]. object);
 }
 
-static void praat_cleanUpName (char *name) {
+void praat_cleanUpName (char *name) {
 	/*
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		/* if (strchr (" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = '_'; FUTURE */
-		if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
+		#if defined (_WIN32) || defined (__MACH__)
+			if (strchr (" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = '_';
+		#else
+			if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
+		#endif
 	}
 }
 
@@ -317,6 +320,15 @@ int praat_new (I, const char *format, ...) {
 	} else {
 		myName [0] = '\0';
 	}
+	#if defined (__MACH__)
+	{
+		CFStringRef unicodeName = CFStringCreateWithCString (NULL, myName, kCFStringEncodingUTF8);
+		if (unicodeName) {
+			CFStringGetCString (unicodeName, myName, 200, kCFStringEncodingMacRoman);
+			CFRelease (unicodeName);
+		}
+	}
+	#endif
 
 	if (me == NULL) return Melder_error ("No object was put into the list.");
 

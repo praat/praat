@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,7 @@
  */
 
 /*
- * pb 2002/03/07 GPL
- * pb 2003/10/03 praat_executeFromFile(AndArguments)
- * pb 2004/11/09 topBar
- * pb 2004/11/16 shorter praat_Command (with signed chars)
- * pb 2005/05/07 inManual
- * pb 2005/08/22
+ * pb 2006/08/12
  */
 
 #include "praat.h"
@@ -164,6 +159,7 @@ void praat_addFixedButtons (Widget form);
 void praat_addMenus (Widget bar);
 void praat_addMenus2 (void);
 
+void praat_cleanUpName (char *name);
 void praat_list_renameAndSelect (int position, const char *name);
 
 extern struct PraatP {

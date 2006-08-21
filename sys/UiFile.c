@@ -1031,16 +1031,13 @@ void UiOutfile_do (I, const char *defaultName) {
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
 		dialogOptions. windowTitle = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
 		dialogOptions. message = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
-		#ifdef __MACH__
-			dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingUTF8);
-		#else
-			dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingMacRoman);
-		#endif
+		/* dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingUTF8); */
+		dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingMacRoman);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
-		CFRelease (dialogOptions. windowTitle);
-		CFRelease (dialogOptions. message);
-		CFRelease (dialogOptions. saveFileName);
+		if (dialogOptions. windowTitle) CFRelease (dialogOptions. windowTitle);
+		if (dialogOptions. message) CFRelease (dialogOptions. message);
+		if (dialogOptions. saveFileName) CFRelease (dialogOptions. saveFileName);
 		if (err == noErr) {
 			NavReplyRecord reply;
 			NavDialogRun (dialogRef);
