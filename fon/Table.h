@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/04/29
+ * pb 2006/10/27
  */
 
 #ifndef _Collection_h_
@@ -106,6 +106,8 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish);
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const char *mark, int garnish);
+void Table_drawEllipse (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int garnish);
 
 int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);

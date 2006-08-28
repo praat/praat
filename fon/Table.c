@@ -34,12 +34,14 @@
  * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
  * pb 2006/04/17 getColStr
  * pb 2006/04/24 Table_scatterPlot ()
+ * pb 2006/08/27 Table_drawEllipse ()
  */
 
 #include <ctype.h>
 #include "Table.h"
 #include "NUM2.h"
 #include "Formula.h"
+#include "SSCP.h"
 
 #include "oo_DESTROY.h"
 #include "Table_def.h"
@@ -1296,6 +1298,32 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 		if (my columnHeaders [ycolumn]. label)
 			Graphics_textLeft (g, TRUE, my columnHeaders [ycolumn]. label);
 	}
+}
+
+void Table_drawEllipse (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int garnish)
+{
+	TableOfReal tableOfReal = NULL;
+	SSCP sscp = NULL;
+	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+	Table_numericize (me, xcolumn);
+	Table_numericize (me, ycolumn);
+	if (xmin == xmax) {
+		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax)) return;
+		if (xmin == xmax) xmin -= 0.5, xmax += 0.5;
+	}
+	if (ymin == ymax) {
+		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
+		if (ymin == ymax) ymin -= 0.5, ymax += 0.5;
+	}
+	tableOfReal = Table_to_TableOfReal (me, 0); cherror
+	sscp = TableOfReal_to_SSCP (tableOfReal, 0, 0, 0, 0); cherror
+	SSCP_drawConcentrationEllipse (sscp, g, numberOfSigmas, 0,
+		xcolumn, ycolumn, xmin, xmax, ymin, ymax, garnish);
+end:
+	forget (tableOfReal);
+	forget (sscp);
+	iferror Melder_clearError ();
 }
 
 int Table_writeToTableFile (Table me, MelderFile file) {

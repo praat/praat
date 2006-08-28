@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060821)
+MAN_BEGIN ("What's new?", "ppgb", 20060828)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.30# (August 28, 2006)")
+LIST_ITEM ("\\bu Table: Draw ellipse (standard deviation)...")
 NORMAL ("##4.4.29# (August 21, 2006)")
 LIST_ITEM ("\\bu Allowed \"European\" symbols in file names and object names.")
 NORMAL ("##4.4.28# (August 10, 2006)")
