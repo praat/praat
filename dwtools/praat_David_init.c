@@ -46,7 +46,7 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20060530 Latest modification.
+ djmw 20060906 Latest modification.
 */
 
 #include "praat.h"
@@ -92,6 +92,7 @@ extern machar_Table NUMfpp;
 #include "Cepstrum_and_Spectrum.h"
 #include "CCs_to_DTW.h"
 #include "Discriminant_Pattern_Categories.h"
+#include "DTW_and_TextGrid.h"
 #include "MelFilter_and_MFCC.h"
 #include "Permutation_and_Index.h"
 #include "Sound_and_FilterBank.h"
@@ -1161,15 +1162,9 @@ END
 FORM (DTW_getPathY, "DTW: Get time along path", 
 	"DTW: Get time along path...")
 	REAL ("Time (s)", "0.0")
-	RADIO ("In case of ambiguity choose:", 1)
-	RADIOBUTTON ("Highest")
-	RADIOBUTTON ("Lowest")
 	OK
 DO
-	int lowest = GET_INTEGER ("In case of ambiguity choose");
-	if (lowest != 2) lowest = 0;
-	Melder_informationReal (DTW_getPathY (ONLY_OBJECT, GET_REAL ("Time"),
-	 	lowest), NULL);	
+	Melder_informationReal (DTW_getPathY (ONLY_OBJECT, GET_REAL ("Time")), NULL);	
 END
 
 FORM (DTW_getMaximumConsecutiveSteps, "DTW: Get maximum consecutive steps", "DTW: Get maximum consecutive steps...")
@@ -1259,6 +1254,9 @@ DIRECT (DTW_swapAxes)
 	EVERY_TO (DTW_swapAxes (OBJECT))
 END
 
+DIRECT (DTW_and_TextGrid_to_TextGrid)
+	NEW (DTW_and_TextGrid_to_TextGrid (ONLY (classDTW), ONLY (classTextGrid)))
+END
 /******************** Eigen ********************************************/
 
 DIRECT (Eigen_drawEigenvalues_scree)
@@ -2086,6 +2084,8 @@ DIRECT (Matrix_Categories_to_TableOfReal)
 	NEW (Matrix_and_Categories_to_TableOfReal (ONLY_GENERIC (classMatrix),
 		ONLY (classCategories)))
 END
+
+
 
 FORM (Matrix_scatterPlot, "Matrix: Scatter plot", 0)
     NATURAL ("Column for X-axis", "1")
@@ -4542,6 +4542,9 @@ void praat_uvafon_David_init (void)
     praat_addAction1 (classDTW, 0, "To Matrix (distances)", 0, 0, DO_DTW_distancesToMatrix);
 	praat_addAction1 (classDTW, 0, "Swap axes", 0, 0, DO_DTW_swapAxes);
 
+	praat_addAction2 (classDTW, 1, classTextGrid, 1, "To TextGrid (warp times)", 0, 0,
+		DO_DTW_and_TextGrid_to_TextGrid);
+	
 	praat_Index_init (classStringsIndex);
     praat_addAction1 (classIndex, 0, "Index help", 0, 0, DO_Index_help);
 	praat_addAction1 (classStringsIndex, 1, "Get class label...", 0, 0, DO_StringsIndex_getClassLabel);
@@ -4607,8 +4610,6 @@ void praat_uvafon_David_init (void)
 		"Write to stereo WAV file...", 1, DO_LongSounds_writeToStereoNextSunFile);
 	praat_addAction1 (classLongSound, 2, "Write to stereo NIST file...", 
 		"Write to stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
-
-		
 
 	praat_addAction1 (classMatrix, 0, "Scatter plot...", "Paint cells...", 1,
 		DO_Matrix_scatterPlot);

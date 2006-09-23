@@ -261,7 +261,13 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 	theCommands [position]. depth = depth;
 	theCommands [position]. callback = strlen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
 	theCommands [position]. executable = strlen (script) != 0;
-	theCommands [position]. script = Melder_strdup (script);   /* Even empty string, which will be needed to signal origin. */
+	if (strlen (script) == 0) {
+		theCommands [position]. script = Melder_strdup ("");   /* Empty string, which will be needed to signal origin. */
+	} else {
+		structMelderFile file;
+		Melder_relativePathToFile (script, & file);
+		theCommands [position]. script = Melder_strdup (Melder_fileToPath (& file));
+	}
 	theCommands [position]. after = strlen (after) ? Melder_strdup (after) : NULL;
 	if (praatP.phase >= praat_READING_BUTTONS) {
 		static long uniqueID = 0;

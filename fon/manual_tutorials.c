@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060828)
+MAN_BEGIN ("What's new?", "ppgb", 20060923)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.31# (September 23, 2006)")
+LIST_ITEM ("\\bu Support for @@plug-ins@.")
+LIST_ITEM ("\\bu Split between @@Create Strings as file list...@ and @@Create Strings as directory list...@.")
 NORMAL ("##4.4.30# (August 28, 2006)")
 LIST_ITEM ("\\bu Table: Draw ellipse (standard deviation)...")
 NORMAL ("##4.4.29# (August 21, 2006)")
@@ -888,10 +891,35 @@ NORMAL ("Boersma, Paul (2001). Praat, a system for doing phonetics by computer. 
 	"%%Glot International% ##5:9/10#, 341-345.")
 MAN_END
 
-MAN_BEGIN ("FAQ: Pitch analysis", "ppgb", 20021219)
+MAN_BEGIN ("FAQ: Pitch analysis", "ppgb", 20060913)
 NORMAL ("#Question: what algorithm is used for pitch analysis?")
 NORMAL ("Answer: see @@Sound: To Pitch (ac)...@. The 1993 article is downloadable from "
 	"http://www.fon.hum.uva.nl/paul/")
+NORMAL ("#Question: why does Praat consider my sound voiceless while I hear it as voiced?")
+NORMAL ("There are at least five possibilities. Most of them can be checked by zooming in on the @waveform.")
+NORMAL ("The first possibility is that the pitch has fallen below the @@pitch floor@. For instance, "
+	"your pitch floor could be 75 Hz but the English speaker produces creak at the end of the utterance. "
+	"Or your pitch floor could be 75 Hz but the Chinese speaker is in the middle of a third tone. "
+	"If this happens, it may help to lower the pitch floor to e.g. 40 Hz (@@Pitch settings...@), "
+	"although that may also smooth the pitch curve too much in other places.")
+NORMAL ("The second possibility is that the pitch has moved too fast. This could happen at the end of a Chinese fourth tone, "
+	"which drops very fast. If this happens, it may help to use the \"optimize for voice analysis\" setting, "
+	"(@@Pitch settings...@), although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.")
+NORMAL ("The third possibility is that the periods are very irregular, as in some pathological voices. "
+	"If you want to see a pitch in those cases, it may help to use the \"optimize for voice analysis\" setting "
+	"(@@Pitch settings...@). Or it may help to lower the \"voicing threshold\" setting (@@Advanced pitch settings...@) "
+	"to 0.25 (instead of the standard 0.45) or so.")
+NORMAL ("The fourth possibility is that there is a lot of background noise, as in a recording on a busy street. "
+	"In such a case, it may help to lower the \"voicing threshold\" setting (@@Advanced pitch settings...@) "
+	"to 0.25 (instead of the standard 0.45) or so. The disadvantage of lowering this setting is that for non-noisy "
+	"recordings, Praat will become too eager to find voicing in some places that you would prefer to consider voiceless; "
+	"so make sure to set it back to 0.45 once you have finished analysing the noisy recordings.")
+NORMAL ("The fifth possibility is that the part analysed as voiceless is much less loud than the rest of the sound, "
+	"or that the sound contains a loud noise elsewhere. This can be checked by zooming in on the part analysed as voiceless: "
+	"if Praat suddenly considers it as voiced, this is a sign that this part is much quieter than the rest. "
+	"To make Praat analyse this part as voiced, you can lower the \"silence threshold\" setting to 0.01 "
+	"(instead of the standard 0.03) or so. The disadvantage of lowering this setting is that Praat may start to consider "
+	"some distant background sounds (and quiet echos, for instance) as voiced.")
 NORMAL ("#Question: why do I get different results for the maximum pitch if...?")
 NORMAL ("If you select a Sound and choose @@Sound: To Pitch...@, the time step will usually "
 	"be 0.01 seconds. The resulting @Pitch object will have values for times that are "

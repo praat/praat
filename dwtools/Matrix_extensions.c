@@ -1,6 +1,6 @@
 /* Matrix_extensions.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  djmw 20040226 Matrix_drawAsSquares: respect the colour environment (fill with current colour).
  djmw 20041110 Matrix_drawDistribution did't draw lowest bin correctly.
  djmw 20050221 Matrix_drawDistribution would draw outside window.
- djmw 20050405 Matrix_drawDistribution crashed if minimum > data minimum
+ djmw 20050405 Matrix_drawDistribution crashed if minimum > data minimum5
 */
 
 #include "Matrix_extensions.h"

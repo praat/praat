@@ -144,6 +144,12 @@ NORMAL ("When you select one or more objects, you can perform on them the action
 	"or in the @@Write menu@. You can choose hidden actions with the help of the @ButtonEditor.")
 MAN_END
 
+MAN_BEGIN ("pitch floor", "ppgb", 20060914)
+INTRO ("The pitch floor is the bottom of the pitch range in the Sound window (see the @Intro). "
+	"The standard setting is 75 Hertz; pitch values below this pitch floor will not be computed or shown by Praat.")
+NORMAL ("To change the pitch floor, choose @@Pitch settings...@.")
+MAN_END
+
 MAN_BEGIN ("power spectral density", "ppgb", 20041122)
 INTRO ("The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa^2/s.")
 ENTRY ("Mathematical definition")
@@ -582,6 +588,10 @@ NORMAL ("This method is appropriate for signals that result from sampling a cont
 LIST_ITEM ("@@Sound: Get value at time...")
 MAN_END
 
+MAN_BEGIN ("waveform", "ppgb", 20060914)
+INTRO ("The waveform is the sound pressure as a function of time, or: the microphone output as a function of time. "
+	"In Praat, the waveform is shown in the top half of the Sound window (see the @Intro).")
+MAN_END
 }
 
 /* End of file manual_TimeDomain.c */

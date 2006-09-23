@@ -269,13 +269,20 @@ int praat_addActionScript (const char *className1, int n1, const char *className
 	theActions [position]. callback = strlen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator. */
 	theActions [position]. button = NULL;
 	theActions [position]. script = strlen (script) ? Melder_strdup (script) : NULL;
+	if (strlen (script) == 0) {
+		theActions [position]. script = NULL;
+	} else {
+		structMelderFile file;
+		Melder_relativePathToFile (script, & file);
+		theActions [position]. script = Melder_strdup (Melder_fileToPath (& file));
+	}
 	theActions [position]. after = strlen (after) ? Melder_strdup (after) : NULL;
 	theActions [position]. phase = praatP.phase;
 	if (praatP.phase >= praat_READING_BUTTONS) {
 		static long uniqueID = 0;
 		theActions [position]. uniqueID = ++ uniqueID;
-		updateDynamicMenu ();
 	}
+	updateDynamicMenu ();
 	return 1;
 }
 

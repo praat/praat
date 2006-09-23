@@ -28,31 +28,29 @@ NORMAL ("These commands are only available if the right kinds of objects are sel
 	"or in the #Write menu if they start with \"Write to \" or \"Append to \".")
 MAN_END
 
-MAN_BEGIN ("Add action command...", "ppgb", 20050822)
+MAN_BEGIN ("Add action command...", "ppgb", 20060920)
 INTRO ("One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to the dynamic menu in the Object window.")
 ENTRY ("Arguments")
 NORMAL ("See @@Add to dynamic menu...@.")
 ENTRY ("Usage")
-NORMAL ("You can use this command in your @@Initialization script@, and you will see it in your @@Buttons file@ "
-	"after you have added an action button with this command or with the @ScriptEditor.")
+NORMAL ("You can use this command in your @@initialization script@ or in @@plug-ins@.")
 NORMAL ("Normally, however, if you want to add a command to the dynamic menu, "
 	"you would use the command @@Add to dynamic menu...@ of the @ScriptEditor instead.")
 MAN_END
 
-MAN_BEGIN ("Add menu command...", "ppgb", 20050822)
+MAN_BEGIN ("Add menu command...", "ppgb", 20060920)
 INTRO ("One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to any of the fixed menus in the Object or Picture window.")
 ENTRY ("Arguments")
 NORMAL ("See @@Add to fixed menu...@.")
 ENTRY ("Usage")
-NORMAL ("You can use this command in your @@Initialization script@, and you will see it in your @@Buttons file@ "
-	"after you have added a menu button with this command or with the @ScriptEditor.")
+NORMAL ("You can use this command in your @@initialization script@ or in @@plug-ins@.")
 NORMAL ("Normally, however, if you want to add a command to a fixed menu, "
 	"you would use the command @@Add to fixed menu...@ of the @ScriptEditor instead.")
 MAN_END
 
-MAN_BEGIN ("Add to dynamic menu...", "ppgb", 19980105)
+MAN_BEGIN ("Add to dynamic menu...", "ppgb", 20060920)
 INTRO ("A command in the File menu of the @ScriptEditor.")
 NORMAL ("With this command, you add a button to the dynamic menu in the @@Object window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
@@ -105,11 +103,11 @@ NORMAL ("Note that \"Filters -\" will be a submenu title, %because it is followe
 ENTRY ("Usage convention")
 NORMAL ("Please adhere to the convention that commands that take arguments, end in three dots (...).")
 ENTRY ("Using this command in a script")
-NORMAL ("To add a dynamic button from a script (perhaps your @@Initialization script@), "
+NORMAL ("To add a dynamic button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@), "
 	"use the hidden shell command @@Add action command...@ instead.")
 MAN_END
 
-MAN_BEGIN ("Add to fixed menu...", "ppgb", 20050822)
+MAN_BEGIN ("Add to fixed menu...", "ppgb", 20060920)
 INTRO ("A command in the File menu of the @ScriptEditor.")
 NORMAL ("With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
@@ -144,7 +142,7 @@ CODE ("Add to fixed menu... Objects New \"Lorenz...\" \"Demo\" 1 /u/praats/demo/
 ENTRY ("Usage convention")
 NORMAL ("Please adhere to the convention that commands that take arguments, end in three dots (...).")
 ENTRY ("Using this command in a script")
-NORMAL ("To add a fixed button from a script (perhaps your @@Initialization script@), "
+NORMAL ("To add a fixed button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@), "
 	"use the hidden shell command @@Add menu command...@ instead.")
 MAN_END
 
@@ -185,7 +183,7 @@ NORMAL ("We cannot conclude from this test that people have a preference for the
 	"Of course, we cannot conclude either that people do not have such a preference.")
 MAN_END
 
-MAN_BEGIN ("ButtonEditor", "ppgb", 20050822)
+MAN_BEGIN ("ButtonEditor", "ppgb", 20060920)
 INTRO ("An editor for viewing, hiding, showing, removing, and executing the commands "
 	"in the fixed and dynamic menus of the P\\s{RAAT} program. To open it, choose ##Buttons...# "
 	"from the #Praat menu of the @@Object window@.")
@@ -199,7 +197,7 @@ NORMAL ("Most built-in commands are visible by default, but some are hidden by d
 	"The button editor shows these commands as \"shown\" or \"hidden\", respectively. "
 	"You can change the visibility of a command by clicking on the blue \"shown\" or \"hidden\" text; "
 	"this text will then be replaced with \"HIDDEN\" or \"SHOWN\", with capitals to signal their non-standard settings. "
-	"These changes will be remembered in the @@Buttons file@ across sessions of your program. "
+	"These changes will be remembered in the @@buttons file@ across sessions of your program. "
 	"To return to the standard settings, click the blue \"HIDDEN\" or \"SHOWN\" texts again.")
 NORMAL ("Some built-in commands cannot be hidden. They are marked as \"unhidable\". "
 	"The most notable example is the ##Buttons...# button "
@@ -208,16 +206,16 @@ NORMAL ("Some built-in commands cannot be hidden. They are marked as \"unhidable
 ENTRY ("Added commands")
 NORMAL ("Commands that you have added to the fixed or dynamic menus (probably with @@Add to fixed menu...@ or "
 	"@@Add to dynamic menu...@ in the @ScriptEditor), "
-	"are marked as \"ADDED\". They are remembered in the @@Buttons file@. "
+	"are marked as \"ADDED\". They are remembered in the @@buttons file@. "
 	"You can change the availability of these commands by clicking on the blue \"ADDED\" text, which will then "
-	"be replaced with \"REMOVED\". After this, the added command will no longer be remembered in the @@Buttons file@. "
+	"be replaced with \"REMOVED\". After this, the added command will no longer be remembered in the @@buttons file@. "
 	"To make the command available again, click the blue \"REMOVED\" text again, before leaving the program.")
 ENTRY ("Start-up commands")
-NORMAL ("Commands that were added in an @@Initialization script@ (with @@Add menu command...@ or "
+NORMAL ("Commands that were added in an @@initialization script@ or @@plug-ins|plug-in@ (with @@Add menu command...@ or "
 	"@@Add action command...@) are marked as \"START-UP\". "
-	"They are %not remembered in the @@Buttons file@. "
+	"They are %not remembered in the @@buttons file@. "
 	"You can change the visibility of these commands by clicking on the blue \"START-UP\" text, which will then "
-	"be replaced with \"HIDDEN\". This setting %will be remembered in the @@Buttons file@. "
+	"be replaced with \"HIDDEN\". This setting %will be remembered in the @@buttons file@. "
 	"To make the command visible again, click the blue \"HIDDEN\" text again.")
 ENTRY ("Executing commands")
 NORMAL ("The button editor allows you to choose hidden commands without first making them visible in the fixed or dynamic menus.")
@@ -229,7 +227,7 @@ LIST_ITEM ("4. Those action commands that match the currently selected objects w
 NORMAL ("To execute any of these blue commands, just click on it.")
 MAN_END
 
-MAN_BEGIN ("Buttons file", "ppgb", 20021204)
+MAN_BEGIN ("buttons file", "ppgb", 20021204)
 NORMAL ("The file into which changes in the availability and visibility of commands in the fixed "
 	"and dynamic menus are recorded.")
 NORMAL ("The buttons file is written to disk when you leave Praat, "
@@ -1109,7 +1107,7 @@ CODE ("echo The sum of cells along the diagonal is 'sumDiagonal'.")
 NORMAL ("The first version, which accesses the contents directly, is not only three lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN ("Hidden commands", "ppgb", 20050822)
+MAN_BEGIN ("Hidden commands", "ppgb", 20060920)
 NORMAL ("Some commands in P\\s{RAAT}'s fixed and dynamic menus are hidden by default. "
 	"You can still call hidden commands from scripts, run them by clicking on them in a @ButtonEditor, "
 	"or make them visible with the help of the @ButtonEditor.")
@@ -1118,7 +1116,7 @@ ENTRY ("What commands are hidden by default?")
 NORMAL ("Commands that are expected to be of very limited use, are hidden by default. Examples are:")
 LIST_ITEM ("1. The commands @@Add menu command...@, ##Hide menu command...#, ##Show menu command...#, "
 	"@@Add action command...@, ##Hide action command...#, and ##Show action command...# in the #Praat menu "
-	"of the @@Object window@. These are used in the @@Buttons file@ and could be used by an @@Initialization script@ "
+	"of the @@Object window@. These are used in the @@buttons file@ and could be used by an @@initialization script@ or a @@plug-ins|plug-in@ "
 	"as well; in an interactive session, however, the functionality of these commands is part of the "
 	"@ScriptEditor and the @ButtonEditor.")
 LIST_ITEM ("2. The command ##Read from old Praat picture file...# in the #File menu of the @@Picture window@. "
@@ -1164,7 +1162,7 @@ NORMAL ("This macro mechanism is much more flexible than the usual opaque macro 
 	"See the @Scripting tutorial for all the things that you can do in scripts.")
 MAN_END
 
-MAN_BEGIN ("Initialization script", "ppgb", 20041229)
+MAN_BEGIN ("initialization script", "ppgb", 20060920)
 INTRO ("Your initialization script is a normal @@Praat script@ that is run as soon as you start Praat.")
 #if defined (UNIX) || defined (__MACH__)
 NORMAL ("On Unix or MacOS X, you create an initialization script by creating a file named \"praat-startUp\" "
@@ -1198,24 +1196,10 @@ CODE ("Play")
 CODE ("Remove")
 ENTRY ("What not to use an initialization script for")
 NORMAL ("You could set preferences like the default font in your initialization script, "
-	"but these will be automatically remembered between invocations of Praat anyway (in your @@Preferences file@), "
-	"so this would often be superfluous. Added and removed commands are also remembered across "
-	"Praat sessions (in your @@Buttons file@), but you may want to call a changeable list of them.")
-ENTRY ("Using an initialization script for site-wide customization")
-NORMAL ("If your research group shares a number of Praat scripts, these can be included in everybody's "
-	"version of the program in the following way:")
-LIST_ITEM ("1. Create a script that adds buttons to the fixed and dynamic menus, using the commands "
-	"@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone's "
-	"@@Buttons file@.")
-#ifdef UNIX
-LIST_ITEM ("2. Put this script in \"/usr/local/%%myProg%-startUp\", or have everyone call this script "
-	"from her own start-up file (with @@Run script...@).")
-#else
-LIST_ITEM ("2. Have everyone call this script "
-	"from her own start-up file (with @@Run script...@).")
-#endif
-NORMAL ("This procedure allows all members of the group to automatically enjoy all the later changes in the "
-	"custom command set.")
+	"but these will be automatically remembered between invocations of Praat anyway (in your @@preferences file@), "
+	"so this would often be superfluous.")
+NORMAL ("For installing sets of menu commands at start-up you will probably prefer to use @@plug-ins@ "
+	"rather than a single start-up file.")
 MAN_END
 
 MAN_BEGIN ("New Praat script", "ppgb", 20050822)
@@ -1262,12 +1246,73 @@ FORMULA ("(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
+MAN_BEGIN ("plug-ins", "ppgb", 20060920)
+INTRO ("Experienced Praat script writers can distribute their product as a plug-in to Praat.")
+ENTRY ("The Praat plug-in mechanism")
+NORMAL ("When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
+	"that reside in directories whose name starts with ##plugin_# and that themselves reside in "
+	"the Praat preferences directory (see @@preferences file@).")
+ENTRY ("How to write a Praat plug-in")
+NORMAL ("Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs, "
+	"and that these scripts are called ##analyseQueak.praat# and ##createQueak.praat# (\"queak\" is what guinea pigs tend to say). "
+	"With the @ScriptEditor, you have put the script ##analyseQueak.praat# in the dynamic menu that "
+	"appears if the user selects a Sound object, and you have put the script ##createQueak.praat# in the @@New menu@. "
+	"Only the latter script requires the user to supply some settings in a form, so the two menu commands "
+	"are ##Analyse queak# (without dots) and ##Create queak...# (with three dots), respectively. "
+	"Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.")
+NORMAL ("What you do is that you create a Praat script called ##setup.praat# (in the same directory as the two other scripts), "
+	"that contains the following two lines:")
+CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analyseQuiek.praat")
+CODE ("@@Add menu command...@ Objects New \"Create queak\" \"\" 0 createQuiek.praat")
+NORMAL ("(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@; "
+	"but you are now going to install them in a different way.)")
+NORMAL ("You now put the three scripts in a new directory called ##plugin_Queak#, "
+	"and put this directory in your Praat preferences directory. If you are on Windows, "
+	"you will now have a directory called something like ##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat#.")
+NORMAL ("If you now start up Praat, Praat will automatically execute the script "
+	"##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat\\bsplugin_Queak\\bssetup.praat# "
+	"and thereby install the two buttons. The two buttons will %not be remembered in the buttons file, "
+	"but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the ##plugin_Queak# directory.")
+NORMAL ("To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put "
+	"the ##plugin_Queak# directory into the user's Praat preferences directory; or you could ask those colleagues to move "
+	"the ##plugin_Queak# directory there by hand.")
+ENTRY ("The structure of your plug-in directory")
+NORMAL ("In the example ##setup.praat# file above, the names of the scripts ##analyseQuiek.praat# and ##createQuiek.praat# "
+	"occur without any directory information. This works because Praat regards these file names as being relative to the directory "
+	"where ##setup.praat# is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
+	"the ##plugin_Queak#. For instance, if you put ##analyseQuiek.praat# into the subdirectory ##analysis#, "
+	"your line in the ##setup.praat# script would look as follows:")
+CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analysis/analyseQuiek.praat")
+NORMAL ("The forward slash (\"/\") in this example makes your plug-in platform-independent: it will work unchanged "
+	"on Windows, Macintosh, and Unix.")
+NORMAL ("Nothing prevents you from adding data files to your plug-in. For instance, your ##plugin_Queak# directory "
+	"could contain a subdirectory #sounds full of guinea pig recordings, and you could make them available in the New or Read menu.")
+ENTRY ("Using a plug-in for site-wide customization")
+NORMAL ("If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody "
+	"in the following way:")
+LIST_ITEM ("1. Create a script that adds buttons to the fixed and dynamic menus, using the commands "
+	"@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone's "
+	"@@buttons file@.")
+LIST_ITEM ("2. Put this script where everybody can see it, "
+	"for instance in ##U:\\bsMaldenGuineaPigResearchButtons.praat#, where U is your shared computer.")
+LIST_ITEM ("3. Create a file ##setup.praat# that contains only the following line:")
+CODE1 ("execute U:\\bsMaldenGuineaPigResearchButtons.praat")
+LIST_ITEM ("4. Put the ##setup.praat# file in a new directory called ##plugin_MaldenGuineaPigResearch#, "
+	"and distribute this directory among your local colleagues.")
+NORMAL ("This procedure allows all members of the group to automatically enjoy all the later changes in your "
+	"custom command set.")
+MAN_END
+
+MAN_BEGIN ("plugins", "ppgb", 20060920)
+INTRO ("See @@plug-ins@.")
+MAN_END
+
 MAN_BEGIN ("Praat script", "ppgb", 19980824)
 INTRO ("An executable text that consists of menu commands and action commands.")
 NORMAL ("See the @Scripting tutorial.")
 MAN_END
 
-MAN_BEGIN ("Preferences file", "ppgb", 20030519)
+MAN_BEGIN ("preferences file", "ppgb", 20030519)
 NORMAL ("The file into which some of your preferences are saved across your sessions with P\\s{RAAT}. "
 	"For instance, if you change the font used by the Picture window to Palatino and leave P\\s{RAAT}, "
 	"the Picture-window font will still be Palatino when you enter P\\s{RAAT} again.")

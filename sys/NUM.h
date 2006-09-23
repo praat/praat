@@ -25,6 +25,7 @@
  * pb 2004/10/16 replaced struct Type with struct structType
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
+ * pb 2006/09/07
  */
 
 /* "NUM" = "NUMerics" */
@@ -236,7 +237,7 @@ FUNCTION (c, char)
 
 long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
-/********** Special functions (NUMfunctions.c) **********/
+/********** Special functions (NUM.c) **********/
 
 double NUMlnGamma (double x);
 double NUMbeta (double z, double w);
@@ -299,7 +300,7 @@ double NUMquantile_d (long n, double a [], double factor);
 	If your array has not been sorted, first sort it with NUMsort (n, a).
 */
 
-/********** Interpolation and optimization (NUM_interpol.c) **********/
+/********** Interpolation and optimization (NUM.c) **********/
 
 double NUM_interpolate_sinc_f (float  y [], long nx, double x, long maxDepth);
 double NUM_interpolate_sinc_d (double y [], long nx, double x, long maxDepth);
@@ -335,7 +336,7 @@ int NUM_viterbi_multi (
 	void (*putResult) (long iframe, long place, int itrack, void *closure),
 	void *closure);
 
-/********** Metrics (NUM_metrics.c) **********/
+/********** Metrics (NUM.c) **********/
 
 int NUMrotationsPointInPolygon
 	(double x0, double y0, long n, float x [], float y []);

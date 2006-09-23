@@ -55,6 +55,7 @@
  * pb 2005/06/16 units
  * pb 2005/08/18 editor name in log files
  * pb 2006/02/27 more helpful text when analyses are not shown
+ * pb 2006/09/12 better messages if analysis not available
  */
 
 #include <time.h>
@@ -69,6 +70,12 @@
 #include "Preferences.h"
 #include "EditorM.h"
 #include "praat_script.h"
+
+static const char * theMessage_Cannot_compute_spectrogram = "The spectrogram is not defined at the edge of the sound.";
+static const char * theMessage_Cannot_compute_pitch = "The pitch contour is not defined at the edge of the sound.";
+static const char * theMessage_Cannot_compute_formant = "The formants are not defined at the edge of the sound.";
+static const char * theMessage_Cannot_compute_intensity = "The intensity curve is not defined at the edge of the sound.";
+static const char * theMessage_Cannot_compute_pulses = "The pulses are not defined at the edge of the sound.";
 
 struct logInfo {
 	int toInfoWindow, toLogFile;
@@ -351,12 +358,13 @@ static void computePulses (FunctionEditor me) {
 	if (my pulses.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my pulses.data == NULL || my pulses.data -> xmin != my startWindow || my pulses.data -> xmax != my endWindow))
 	{
+		forget (my pulses.data);   /* 20060912 */
 		if (my pitch.data == NULL || my pitch.data -> xmin != my startWindow || my pitch.data -> xmax != my endWindow) {
 			computePitch_inside (me);
 		}
 		if (my pitch.data != NULL) {
 			Sound sound = NULL;
-			forget (my pulses.data);
+			/* forget (my pulses.data);   /* 20060912 */
 			sound = extractSound (me, my startWindow, my endWindow);
 			if (sound != NULL) {
 				my pulses.data = Sound_Pitch_to_PointProcess_cc (sound, my pitch.data);
@@ -541,7 +549,7 @@ DIRECT (FunctionEditor, cb_extractVisibleSpectrogram)
 		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error ("No spectrogram available (out of memory?).");
+		if (! my spectrogram.data) return Melder_error (theMessage_Cannot_compute_spectrogram);
 	}
 	publish = Data_copy (my spectrogram.data);
 	if (publish == NULL) return 0;
@@ -585,7 +593,7 @@ DIRECT (FunctionEditor, cb_getSpectralPowerAtCursorCross)
 		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error ("No spectrogram available (out of memory?).");
+		if (! my spectrogram.data) return Melder_error (theMessage_Cannot_compute_spectrogram);
 	}
 	if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
 	MelderInfo_open ();
@@ -690,7 +698,7 @@ DIRECT (FunctionEditor, cb_pitchListing)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine2 ("Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
@@ -719,7 +727,7 @@ DIRECT (FunctionEditor, cb_getPitch)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
@@ -742,7 +750,7 @@ DIRECT (FunctionEditor, cb_getMinimumPitch)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -758,7 +766,7 @@ DIRECT (FunctionEditor, cb_getMaximumPitch)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -773,7 +781,7 @@ DIRECT (FunctionEditor, cb_extractVisiblePitchContour)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	publish = Data_copy (my pitch.data);
 	if (! publish) return 0;
@@ -825,7 +833,7 @@ DIRECT (FunctionEditor, cb_extractVisibleIntensityContour)
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error ("No intensity contour available (out of memory?).");
+		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
 	}
 	publish = Data_copy (my intensity.data);
 	if (! publish) return 0;
@@ -840,7 +848,7 @@ DIRECT (FunctionEditor, cb_intensityListing)
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error ("No intensity contour available (out of memory?).");
+		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s   Intensity_dB");
@@ -867,7 +875,7 @@ DIRECT (FunctionEditor, cb_getIntensity)
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error ("No intensity contour available (out of memory?).");
+		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information ("%s dB (intensity at CURSOR)",
@@ -942,7 +950,7 @@ DIRECT (FunctionEditor, cb_extractVisibleFormantContour)
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error ("No formant contour available (out of memory?).");
+		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	publish = Data_copy (my formant.data);
 	if (! publish) return 0;
@@ -957,7 +965,7 @@ DIRECT (FunctionEditor, cb_formantListing)
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error ("No formant contour available (out of memory?).");
+		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
@@ -992,7 +1000,7 @@ static int getFormant (FunctionEditor me, int iformant) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error ("No formant contour available (out of memory?).");
+		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information ("%s Hertz (nearest F%d to CURSOR)",
@@ -1011,7 +1019,7 @@ static int getBandwidth (FunctionEditor me, int iformant) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error ("No formant contour available (out of memory?).");
+		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information ("%s Hertz (nearest B%d to CURSOR)",
@@ -1064,7 +1072,7 @@ DIRECT (FunctionEditor, cb_extractVisiblePulses)
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error ("No pulses available (out of memory?).");
+		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
 	}
 	publish = Data_copy (my pulses.data);
 	if (! publish) return 0;
@@ -1081,7 +1089,7 @@ DIRECT (FunctionEditor, cb_voiceReport)
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error ("No pulses available (out of memory?).");
+		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
 	}
 	sound = extractSound (me, tmin, tmax);
 	if (! sound) return Melder_error ("Selection too small (or out of memory).");
@@ -1105,7 +1113,7 @@ DIRECT (FunctionEditor, cb_pulseListing)
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error ("No pulses available (out of memory?).");
+		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s");
@@ -1126,7 +1134,7 @@ static int cb_getJitter_xx (FunctionEditor me, double (*PointProcess_getJitter_x
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error ("No pulses available (out of memory?).");
+		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
 		return Melder_error ("Make a selection first.");
@@ -1148,7 +1156,7 @@ static int cb_getShimmer_xx (FunctionEditor me, double (*PointProcess_Sound_getS
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error ("No pulses available (out of memory?).");
+		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
 		return Melder_error ("Make a selection first.");
@@ -1175,7 +1183,7 @@ DIRECT (FunctionEditor, cb_moveCursorToMinimumPitch)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
 		return Melder_error ("Empty selection.");
@@ -1195,7 +1203,7 @@ DIRECT (FunctionEditor, cb_moveCursorToMaximumPitch)
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error ("No pitch contour available (out of memory?).");
+		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
 		return Melder_error ("Empty selection.");
@@ -1525,7 +1533,7 @@ static int cb_log (FunctionEditor me, int which) {
 			if (! my pitch.show)
 				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 			if (! my pitch.data) {
-				return Melder_error ("No pitch contour available (out of memory?).");
+				return Melder_error (theMessage_Cannot_compute_pitch);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, 1);
@@ -1536,7 +1544,7 @@ static int cb_log (FunctionEditor me, int which) {
 			if (! my formant.show)
 				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error ("No formant contour available (out of memory?).");
+				return Melder_error (theMessage_Cannot_compute_formant);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Formant_getValueAtTime (my formant.data, varName [1] - '0', tmin, 0);
@@ -1547,14 +1555,14 @@ static int cb_log (FunctionEditor me, int which) {
 			if (! my formant.show)
 				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error ("No formant contour available (out of memory?).");
+				return Melder_error (theMessage_Cannot_compute_formant);
 			}
 			value = Formant_getBandwidthAtTime (my formant.data, varName [1] - '0', 0.5 * (tmin + tmax), 0);
 		} else if (strequ (varName, "intensity")) {
 			if (! my intensity.show)
 				return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 			if (! my intensity.data) {
-				return Melder_error ("No intensity contour available (out of memory?).");
+				return Melder_error (theMessage_Cannot_compute_intensity);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Vector_getValueAtX (my intensity.data, tmin, 1);
@@ -1565,7 +1573,7 @@ static int cb_log (FunctionEditor me, int which) {
 			if (! my spectrogram.show)
 				return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 			if (! my spectrogram.data) {
-				return Melder_error ("No spectrogram available (out of memory?).");
+				return Melder_error (theMessage_Cannot_compute_spectrogram);
 			}
 			if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
 			value = Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor);

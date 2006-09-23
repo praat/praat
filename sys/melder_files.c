@@ -381,28 +381,25 @@ int Melder_relativePathToFile (const char *path, MelderFile file) {
 		 *    LPT1:
 		 *    \\host\path
 		 */
-		if (strchr (path, ':') || path [0] == '\\' && path [1] == '\\' || strequ (path, "<stdout>") || strstr (path, "://")) {
+		if (strchr (path, '/') && ! strstr (path, "://")) {
+			char winPath [260];
+			strcpy (winPath, path);
+			for (;;) {
+				char *slash = strchr (winPath, '/');
+				if (slash == NULL) break;
+				*slash = '\\';
+			}
+			return Melder_relativePathToFile (winPath, file);
+		}
+		if (strchr (path, ':') || path [0] == '\\' && path [1] == '\\' || strequ (path, "<stdout>")) {
 			strcpy (file -> path, path);
 		} else {
 			structMelderDir dir;
-			char path2 [256];
-			if (strchr (path, '/') && ! strchr (path, ':') && ! strchr (path, '\\') && path [0] != '/') {
-				char winPath [256];
-				strcpy (winPath, path);
-				for (;;) {
-					char *slash = strchr (winPath, '/');
-					if (slash == NULL) break;
-					*slash = '\\';
-				}
-				return Melder_relativePathToFile (winPath, file);
-			}
-			strcpy (path2, path);
-			MelderFile_nativizePath (path2);
 			Melder_getDefaultDir (& dir);   /* BUG */
 			if (dir. path [0] != '\0' && dir. path [strlen (dir.path) - 1] == '\\')
-				sprintf (file -> path, "%s%s", dir. path, path2);
+				sprintf (file -> path, "%s%s", dir. path, path);
 			else
-				sprintf (file -> path, "%s\\%s", dir. path, path2);
+				sprintf (file -> path, "%s\\%s", dir. path, path);
 		}
 	#endif
 	return 1;

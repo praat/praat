@@ -9,13 +9,13 @@ assert sqrt (123456789^2) = 123456789
 assert abs (sqrt (2) ^ 2 - 2) < 1e-15
 
 printline exp
-# Paul Boersma, July 6, 2003
+# Paul Boersma, September 20, 2006
 assert exp (-10000) = 0
 assert exp (0) = 1
 assert exp (1) = e
 assert abs (1 - exp (100) / e ^ 100) < 1e-14
 assert abs (1 - exp (100) * exp (-100)) < 1e-17
-assert abs (1 - e ^ 100 * e ^ -100) < 1e-17
+assert abs (1 - e ^ 100 * e ^ -100) < 1e-14
 
 printline pow
 # Paul Boersma, August 27, 2003

@@ -76,7 +76,7 @@ static const char *extractLink (const char *text, const char *p, char *link) {
 	for (;;) {
 		p = strchr (p, '@');
 		if (! p) return NULL;   /* No more '@'. */
-		if (p - text <= 0 || p [-1] != '\\' && (p - text <= 1 || p [-2] != '\\')) break;
+		if (p - text <= 0 || (p [-1] != '\\' && (p - text <= 1 || p [-2] != '\\'))) break;
 		p ++;
 	}
 	Melder_assert (*p == '@');
@@ -330,7 +330,7 @@ static void grind (ManPages me) {
 			const char *text = page -> paragraphs [ipar]. text, *p;
 			char link [301];
 			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
-				if (link [0] == '\\' && (link [1] == 'F' && link [2] == 'I' || link [1] == 'S' && link [2] == 'C'))
+				if (link [0] == '\\' && ((link [1] == 'F' && link [2] == 'I') || (link [1] == 'S' && link [2] == 'C')))
 					continue;   /* Ignore "FILE" links. */
 				if ((jpage = lookUp_sorted (me, link)) != 0) {
 					page -> nlinksThither ++;
@@ -381,7 +381,7 @@ static void grind (ManPages me) {
 			const char *text = page -> paragraphs [ipar]. text, *p;
 			char link [301];
 			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
-				if (link [0] == '\\' && (link [1] == 'F' && link [2] == 'I' || link [1] == 'S' && link [2] == 'C'))
+				if (link [0] == '\\' && ((link [1] == 'F' && link [2] == 'I') || (link [1] == 'S' && link [2] == 'C')))
 					continue;   /* Ignore "FILE" links. */
 				if ((jpage = lookUp_sorted (me, link)) != 0) {
 					int ilink, alreadyPresent = FALSE;

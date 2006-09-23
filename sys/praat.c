@@ -51,6 +51,7 @@
 #include "machine.h"
 #include "Printer.h"
 #include "ScriptEditor.h"
+#include "Strings.h"
 
 #define EDITOR  praat.list [IOBJECT]. editors
 
@@ -1206,6 +1207,37 @@ void praat_run (void) {
 	#endif
 	#if defined (UNIX) || defined (__MACH__) || defined (_WIN32)
 		executeStartUpFile (& homeDir, "%s-user-startUp");
+	#endif
+	#if defined (UNIX) || defined (__MACH__) || defined (_WIN32)
+	/*
+	 * Plugins.
+	 * The Praat phase should remain praat_STARTING_UP,
+	 * because any added commands must not be included in the buttons file.
+	 */
+	{
+		structMelderFile searchPattern;
+		Strings directoryNames;
+		long i;
+		MelderDir_getFile (& praatDir, "plugin_*", & searchPattern);
+		directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
+		if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
+			for (i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+				structMelderDir pluginDir;
+				structMelderFile plugin;
+				FILE *f;
+				MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
+				MelderDir_getFile (& pluginDir, "setup.praat", & plugin);
+				if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
+					fclose (f);
+					if (! praat_executeScriptFromFile (& plugin, NULL))
+						Melder_flushError ("%s: plugin \"%s\" contains an error.", praatP.title, MelderFile_messageName (& plugin));
+				} else {
+					Melder_clearError ();
+				}
+			}
+		}
+		forget (directoryNames);
+	}
 	#endif
 
 	if (Melder_batch) {

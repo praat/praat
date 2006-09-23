@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20050713 Latest modification.
+#  djmw 20060906 Latest modification.
 
 
 include ../makefile.defs
@@ -38,7 +38,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	ClassificationTable.o Confusion.o \
 	Configuration.o Configuration_AffineTransform.o \
 	Configuration_and_Procrustes.o Distance.o \
-	DTW.o Discriminant.o  Discriminant_Pattern_Categories.o \
+	DTW.o DTW_and_TextGrid.o \
+	Discriminant.o  Discriminant_Pattern_Categories.o \
 	Eigen.o Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \

@@ -23,6 +23,7 @@
  djmw 20050305 DTW_to_Polygon
  djmw 20050306 DTW_swapAxes
  djmw 20050530 Added Matrices_to_DTW
+ djmw 20060909 DTW_getPathY linear behaviour outside domains.
 */
 
 #include "DTW.h"
@@ -47,7 +48,7 @@
 
 #define DTW_BIG 1e38
 /*
-	Two 'slope lines´, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
+	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
 	Two other lines, ru and rl, end in the upper-right corner. The upper/lower line have minimum/maximum slope.
 	1. the four lines with the two intersections determine a diamond
 		For vertical line at x we return the upper and lower y of the two intersections 
@@ -529,7 +530,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 	float slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
 	float relDuration = (my ymax - my ymin) / (my xmax - my xmin);
 
-	if (slope <1 || slope > 4) Melder_error ("DTW_findPath: Invalid slope constraint.");
+	if (slope < 1 || slope > 4) Melder_error ("DTW_findPath: Invalid slope constraint.");
 	
 	if (relDuration < 1)
 	{
@@ -766,35 +767,103 @@ end:
 	NUMlmatrix_free (psi, 1, 1);
 }
 
-
-double DTW_getPathY (DTW me, double t, int lowest)
+double DTW_getPathY (DTW me, double tx)
 {
-	long col, i, ifrom = 0, ito, row;
+	long ix, iy, i, ileft, iright, ibottom, itop, nxx, nyy;
+	double ty0, ty, boxx, boxy;
 
-	if (t < my xmin || t > my xmax) return t;
+	/* Assume linear behaviour outside domains 
+	   Other option: scale with x_domain/y_domain
+	*/
 	
-	col = Matrix_xToNearestColumn (me, t);
-
-	/*
-		Enforce that when xmin <= t <= xmax,
-		the output will be in [ymin, ymax]
+	if (tx < my xmin) return my ymin - (my xmin -tx);
+	if (tx > my xmax) return my ymax + (tx - my xmax);
+	
+	/* Find column in DTW matrix */
+	
+	ix = (tx - my x1) / my dx + 1;
+	if (ix < 1) ix = 1;
+	if (ix > my nx) ix = my nx;
+	
+	/* Find index in the path and the row number (iy) (*/
+	
+	i = ix + my path[1].x - 1;
+	while (i <= my pathLength && my path[i].x != ix) { i++;	}
+	if (i > my pathLength) return NUMundefined; 
+	iy = my path[i].y; /* row */
+	
+	/* 
+		We like to have a "continuous" interpretation of time for the quantized x and y times.
+		A time block is specified by lower left (x,y) and upper right (x+dx,y+dy).
+		The path is interpreted as piecewise linear.
+		Two special cases:
+		1. the local path is horizontal, i.e. two or more path elements with the same path.y value.
+			We calculate the y-time from the line that connects the lower-left position of the leftmost
+			horizontal time block to the upper-right position of the rightmost time horizontal block.
+			(lowest column number to highest column number)
+			For the first column and the last column we need to do something special if 
+		2. the local path is vertical, i.e. two or path elements with the same path.x value.
+			We calculate the y-time from the line that connects the lower-left position of the bottommost
+			vertical time block to the upper-right position of the topmost time horizontal block.
+			(lowest row number to highest row number)
 	*/
 
-	if (col > my nx) col = my nx;
-	if (col < 1) col = 1;
-
-	for (i=1; i <= my pathLength; i++)
+	/* Horizontal path? Find left and right positions. */
+		
+	ileft = i - 1;
+	while (ileft >= 1 && my path[ileft].y == iy) { ileft--; }
+	ileft++;
+	if (ileft == 1 && ix > 1 && my path[ileft].y > 1) ileft++;
+	
+	iright = i + 1;
+	while (iright <= my pathLength && my path[iright].y == iy) { iright++; }
+	iright--;
+	if (iright == my pathLength && ix < my nx && my path[iright].y < my ny) iright--;
+	
+	nxx = iright - ileft + 1;
+	
+	/* Vertical path? Only if not already horizontal. */
+	
+	ibottom = i;
+	itop = i;
+	
+	if (nxx == 1)
 	{
-		if (my path[i].x == col)
-		{
-			if (ifrom == 0) ifrom = i;
-			ito = i;
-		}
-		else if (ifrom != 0) break;
+		ibottom--;
+		while (ibottom >= 1 && my path[ibottom].x == ix) { ibottom--; }
+		ibottom++;
+		
+		itop++;
+		while (itop <= 1 && my path[itop].x == ix) { itop--; }
+		itop++;
 	}
-	if (ifrom == 0) return t;
-	row = my path[lowest ? ifrom : ito].y;
-	return Matrix_rowToY (me, row);
+		
+	nyy = itop - ibottom + 1;
+	
+	boxx = nxx * my dx;
+	boxy = nyy * my dy;
+	
+	/* Corrections at extreme left and right if path[1].x=1 && path[1].y>1 */
+	
+	if (ix == my nx)
+	{
+		boxx = my xmax -(my x1 + (ix - 1) * my dx - my dx / 2);
+		boxy = my ymax -(my y1 + (iy - 1) * my dy - my dy / 2);
+		ty = my ymax - (boxy - (boxx - (my xmax - tx)) * boxy / boxx); 
+	}
+	else if (ix == 1)
+	{
+		boxx = my x1 + my dx / 2 - my xmin;
+		boxy = my y1 + (itop - 1) * my dy + my dy / 2 - my ymin;
+		ty = (tx - my xmin) * boxy / boxx + my ymin;
+	}
+	else
+	{
+		/* Diagonal interpolation in a box with lower left (0,0) and upper right (nxx*dx, nyy*dy). */
+		ty0 = (tx - (my x1 + (my path[ileft].x - 1) * my dx - my dx / 2)) * boxy / boxx;
+		ty =  my y1 + (my path[ibottom].y - 1) * my dy - my dy / 2 + ty0;
+	}
+	return ty;
 }
 
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction)
@@ -1077,7 +1146,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 {
 	Matrix m1 = NULL, m2 = NULL;
 	DTW him = NULL;
-	long i, j, k;
+	long i, j;
 	
 	if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny)
 	{
@@ -1113,70 +1182,6 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 end:
 	forget (m1);
 	forget (m2);
-	if (Melder_hasError ()) forget (him);
-	return him;
-}
-
-
-static DTW Spectrograms_to_DTW_old (Spectrogram me, Spectrogram thee, int matchStart,
-	int matchEnd, int slope)
-{
-	Matrix m1 = NULL, m2 = NULL;
-	DTW him = NULL;
-	long i, j, k;
-	
-	if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny)
-	{
-		 return Melder_errorp("Spectrograms_to_DTW: #frequencies and/or "
-		 	"frequency ranges do not match.");
-	}
-	if (((m1 = Spectrogram_to_Matrix (me)) == NULL) ||
-		((m2 = Spectrogram_to_Matrix (thee)) == NULL) ||
-		((him = DTW_create (my xmin, my xmax, my nx, my dx, my x1,
-			thy xmin, thy xmax, thy nx, thy dx, thy x1)) == NULL)) goto end;
-			
-	/*
-		Take log10 for dB's (4e-10 scaling not necessary)
-	*/
-	
-	for (i = 1; i <= my ny; i++)
-	{
-		for (j = 1; j <= my nx; j++)
-		{
-			m1 -> z[i][j] = 10 * log10 (m1 -> z[i][j]);
-		}
-	}
-	for (i = 1; i <= thy ny; i++)
-	{
-		for (j = 1; j <= thy nx; j++)
-		{
-			m2 -> z[i][j] = 10 * log10 (m2 -> z[i][j]);
-		}
-	}
-	
-	Melder_progress (0.0, "");
-	
-	for (i = 1; i <= my nx; i++)
-	{
-		for (j = 1; j <= thy nx; j++)
-		{
-			double d = 0;
-			for (k = 1; k <= my ny; k++)
-			{
-				d += fabs (m1 -> z[k][i] - m2 -> z[k][j]);
-			}
-			his z[i][j] = d / my ny; /* == d * dy / ymax */
-		}
-		if ((i % 10) == 1 && ! Melder_progress (0.999 * i / my nx,
-			 "Calculate distances: column %ld from %ld", i, my nx)) goto end;
-	}
-	Melder_progress (1.0, NULL);
-	DTW_findPath (him, matchStart, matchEnd, slope);
-	
-end:
-
-	Melder_progress (1.0, NULL);
-	forget (m1); forget (m2);
 	if (Melder_hasError ()) forget (him);
 	return him;
 }

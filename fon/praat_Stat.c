@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/10/27
+ * pb 2006/09/23
  */
 
 #include "praat.h"
@@ -631,7 +631,7 @@ DO
 	}
 END
 
-FORM_WRITE (Table_writeToTableFile, "Write Table to table file", 0, "txt")
+FORM_WRITE (Table_writeToTableFile, "Write Table to table file", 0, "Table")
 	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
 END
 

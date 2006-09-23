@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/04/16
+ * pb 2006/09/18
  */
 
 #include "praat.h"
@@ -3769,7 +3769,7 @@ END
 FORM (Strings_createAsFileList, "Create Strings as file list", "Create Strings as file list...")
 	SENTENCE ("Name", "fileList")
 	LABEL ("", "Path:")
-	TEXTFIELD ("path", "/people/Miep/*.aifc")
+	TEXTFIELD ("path", "/people/Miep/*.wav")
 	OK
 static int inited;
 if (! inited) {
@@ -3778,14 +3778,14 @@ if (! inited) {
 	Melder_getDefaultDir (& defaultDir);
 	workingDirectory = Melder_dirToPath (& defaultDir);
 	#if defined (UNIX)
-		sprintf (path, "%s/*.aifc", workingDirectory);
+		sprintf (path, "%s/*.wav", workingDirectory);
 	#elif defined (_WIN32)
 	{
 		int len = strlen (workingDirectory);
 		sprintf (path, "%s%s*.wav", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? "\\" : "");
 	}
 	#else
-		sprintf (path, "%s*.aifc", workingDirectory);
+		sprintf (path, "%s*.wav", workingDirectory);
 	#endif
 	SET_STRING ("path", path);
 	inited = TRUE;
@@ -3794,7 +3794,7 @@ DO
 	if (! praat_new (Strings_createAsFileList (GET_STRING ("path")), GET_STRING ("Name"))) return 0;
 END
 
-FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create Strings as file list...")
+FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create Strings as directory list...")
 	SENTENCE ("Name", "directoryList")
 	LABEL ("", "Path:")
 	TEXTFIELD ("path", "/people/Miep/*")
@@ -4724,9 +4724,7 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand ("Objects", "New", "-- new textgrid --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "New", "Create TextGrid...", 0, 0, DO_TextGrid_create);
 	praat_addMenuCommand ("Objects", "New", "Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
-	#ifdef _WIN32
 	praat_addMenuCommand ("Objects", "New", "Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
-	#endif
 
 	praat_addMenuCommand ("Objects", "Read", "-- read raw --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "Read", "Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);

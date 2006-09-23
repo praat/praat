@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		232D545C0AB8B8FA0018C769 /* Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 232D545B0AB8B8FA0018C769 /* Strings.c */; };
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
 		23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7209A22902004E41D5 /* gsl_sf__bessel_amp_phase.c */; };
 		23AEE91809A286F9000D3DB7 /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
+		23E4918E0ABF529D00FA787E /* Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E4918D0ABF529D00FA787E /* Strings.h */; };
 		23E5CF4D09A22A57004E41D5 /* praat_Artsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93609A228FC004E41D5 /* praat_Artsynth.c */; };
 		23E5CF4E09A22A57004E41D5 /* manual_Artsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93509A228FC004E41D5 /* manual_Artsynth.c */; };
 		23E5CF4F09A22A57004E41D5 /* Articulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93D09A228FC004E41D5 /* Articulation.c */; };
@@ -291,8 +293,6 @@
 		23E5D06209A22A57004E41D5 /* Spectrum_to_Formant.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */; };
 		23E5D06309A22A57004E41D5 /* SpellingChecker.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CAB609A22900004E41D5 /* SpellingChecker.c */; };
 		23E5D06409A22A57004E41D5 /* SpellingChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAB709A22900004E41D5 /* SpellingChecker.h */; };
-		23E5D06509A22A57004E41D5 /* Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CAB809A22900004E41D5 /* Strings.c */; };
-		23E5D06609A22A57004E41D5 /* Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAB909A22900004E41D5 /* Strings.h */; };
 		23E5D06709A22A57004E41D5 /* TableOfReal.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CABA09A22900004E41D5 /* TableOfReal.c */; };
 		23E5D06809A22A57004E41D5 /* TableOfReal.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CABB09A22900004E41D5 /* TableOfReal.h */; };
 		23E5D06909A22A57004E41D5 /* TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CABC09A22900004E41D5 /* TextGrid.c */; };
@@ -720,6 +720,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		232D545B0AB8B8FA0018C769 /* Strings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Strings.c; path = sys/Strings.c; sourceTree = "<group>"; };
+		23E4918D0ABF529D00FA787E /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings.h; path = sys/Strings.h; sourceTree = "<group>"; };
 		23E5C92009A228FA004E41D5 /* Praat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Praat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E5C93009A228FB004E41D5 /* main_Praat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_Praat.c; path = main/main_Praat.c; sourceTree = SOURCE_ROOT; };
 		23E5C93109A228FC004E41D5 /* praat_mac.r */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.rez; name = praat_mac.r; path = main/praat_mac.r; sourceTree = SOURCE_ROOT; };
@@ -1102,8 +1104,6 @@
 		23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spectrum_to_Formant.h; path = fon/Spectrum_to_Formant.h; sourceTree = SOURCE_ROOT; };
 		23E5CAB609A22900004E41D5 /* SpellingChecker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = SpellingChecker.c; path = fon/SpellingChecker.c; sourceTree = SOURCE_ROOT; };
 		23E5CAB709A22900004E41D5 /* SpellingChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpellingChecker.h; path = fon/SpellingChecker.h; sourceTree = SOURCE_ROOT; };
-		23E5CAB809A22900004E41D5 /* Strings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Strings.c; path = fon/Strings.c; sourceTree = SOURCE_ROOT; };
-		23E5CAB909A22900004E41D5 /* Strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Strings.h; path = fon/Strings.h; sourceTree = SOURCE_ROOT; };
 		23E5CABA09A22900004E41D5 /* TableOfReal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TableOfReal.c; path = fon/TableOfReal.c; sourceTree = SOURCE_ROOT; };
 		23E5CABB09A22900004E41D5 /* TableOfReal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TableOfReal.h; path = fon/TableOfReal.h; sourceTree = SOURCE_ROOT; };
 		23E5CABC09A22900004E41D5 /* TextGrid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TextGrid.c; path = fon/TextGrid.c; sourceTree = SOURCE_ROOT; };
@@ -1946,8 +1946,6 @@
 				23E5CAB409A22900004E41D5 /* Spectrum_to_Formant.c */,
 				23E5CAB709A22900004E41D5 /* SpellingChecker.h */,
 				23E5CAB609A22900004E41D5 /* SpellingChecker.c */,
-				23E5CAB909A22900004E41D5 /* Strings.h */,
-				23E5CAB809A22900004E41D5 /* Strings.c */,
 				23E5CABB09A22900004E41D5 /* TableOfReal.h */,
 				23E5CABA09A22900004E41D5 /* TableOfReal.c */,
 				23E5CABD09A22900004E41D5 /* TextGrid.h */,
@@ -2084,6 +2082,8 @@
 				23E5CB2C09A22902004E41D5 /* Simple.c */,
 				23E5CB2F09A22902004E41D5 /* site.h */,
 				23E5CB2E09A22902004E41D5 /* site.c */,
+				23E4918D0ABF529D00FA787E /* Strings.h */,
+				232D545B0AB8B8FA0018C769 /* Strings.c */,
 				23E5CB3109A22902004E41D5 /* Thing.h */,
 				23E5CB3009A22902004E41D5 /* Thing.c */,
 				23E5CB3309A22902004E41D5 /* Ui.h */,
@@ -2516,7 +2516,6 @@
 				23E5D06009A22A57004E41D5 /* Spectrum_to_Excitation.h in Headers */,
 				23E5D06209A22A57004E41D5 /* Spectrum_to_Formant.h in Headers */,
 				23E5D06409A22A57004E41D5 /* SpellingChecker.h in Headers */,
-				23E5D06609A22A57004E41D5 /* Strings.h in Headers */,
 				23E5D06809A22A57004E41D5 /* TableOfReal.h in Headers */,
 				23E5D06A09A22A57004E41D5 /* TextGrid.h in Headers */,
 				23E5D06C09A22A57004E41D5 /* Transition.h in Headers */,
@@ -2743,6 +2742,7 @@
 				23E5D21B09A22AC0004E41D5 /* gsl_sys.h in Headers */,
 				23E5D21C09A22AC0004E41D5 /* gsl_machine.h in Headers */,
 				23E5D21D09A22AC1004E41D5 /* gsl_nan.h in Headers */,
+				23E4918E0ABF529D00FA787E /* Strings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2960,7 +2960,6 @@
 				23E5D05F09A22A57004E41D5 /* Spectrum_to_Excitation.c in Sources */,
 				23E5D06109A22A57004E41D5 /* Spectrum_to_Formant.c in Sources */,
 				23E5D06309A22A57004E41D5 /* SpellingChecker.c in Sources */,
-				23E5D06509A22A57004E41D5 /* Strings.c in Sources */,
 				23E5D06709A22A57004E41D5 /* TableOfReal.c in Sources */,
 				23E5D06909A22A57004E41D5 /* TextGrid.c in Sources */,
 				23E5D06B09A22A57004E41D5 /* Transition.c in Sources */,
@@ -3160,6 +3159,7 @@
 				23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */,
 				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
 				23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */,
+				232D545C0AB8B8FA0018C769 /* Strings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

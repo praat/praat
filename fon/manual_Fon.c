@@ -180,37 +180,56 @@ INTRO ("A command in the @@New menu@ to create a @Matrix with the specified numb
 	"filled with values from a formula (see @@Matrix: Formula...@).")
 MAN_END
 
-MAN_BEGIN ("Create Strings as file list...", "ppgb", 19980630)
-INTRO ("A command to create a @Strings object from a list of file in a given directory.")
-ENTRY ("Argument")
+MAN_BEGIN ("Create Strings as directory list...", "ppgb", 20060919)
+INTRO ("A command in the @@New menu@ to create a @Strings object containing a list of directories in a given parent directory. "
+	"It works completely analogously to @@Create Strings as file list...@.")
+MAN_END
+
+MAN_BEGIN ("Create Strings as file list...", "ppgb", 20060919)
+INTRO ("A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
+ENTRY ("Settings")
+TAG ("%%Name")
+DEFINITION ("the name of the resulting Strings object, usually \"fileList\".")
 TAG ("%%Path")
 DEFINITION ("the directory name, with an optional wildcard for selecting files.")
 ENTRY ("Behaviour")
 NORMAL ("The resulting Strings object will contain an alphabetical list of file names, "
-	"without any preceding directory names. In contrast with what the restrictions in Praat, "
-	"this object may contain zero strings.")
+	"without the preceding path through the directory structures. If there are not files that match %path, "
+	"the Strings object will contain no strings.")
 ENTRY ("Usage")
-NORMAL ("First, you could specify a directory name only. On Unix, you would type "
-	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#. On Windows, "
-	"##C:\\bsMiep\\bsSounds# or ##C:\\bsMiep\\bsSounds\\bs#. On Macintosh, "
-	"##Macintosh HD:Sounds# or ##Macintosh HD:Sounds:#. Any of these return "
+NORMAL ("There are two ways to specify the path.")
+NORMAL ("One way is to specify a directory name only. On Unix, you could type "
+	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#, for instance. On Windows, "
+	"##C:\\bsDocument and Settings\\bsMiep\\bsSounds# or ##C:\\bsDocument and Settings\\bsMiep\\bsSounds\\bs#. "
+	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these return "
 	"a list of all the files in the specified directory.")
-NORMAL ("Secondly, you could specify a wildcard (a single asterisk) for the file names. "
-	"To get a list of all the files whose names start with \"hal\" and end in \".aifc\", "
-	"type ##/usr/people/miep/sounds/hal*.aifc#, ##C:\\bsMiep\\bsSounds\\bshal*.aifc#, "
-	"or ##Macintosh HD:Sounds:hal*.aifc#.")
+NORMAL ("The other way is to specify a wildcard (a single asterisk) for the file names. "
+	"To get a list of all the files whose names start with \"hal\" and end in \".wav\", "
+	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsDocument and Settings\\bsMiep\\bsSounds\\bshal*.wav#, "
+	"or ##/Users/miep/Sounds/hal*.wav#.")
 ENTRY ("Script usage")
 NORMAL ("In a script, you can use this command to cycle through the files in a directory. "
 	"For instance, to read in all the sound files in a specified directory, "
 	"you could use the following script:")
 CODE ("directory\\$  = \"/usr/people/miep/sounds\"")
-CODE ("Create Strings as file list... list 'directory\\$ '/*.aifc")
+CODE ("Create Strings as file list... list 'directory\\$ '/*.wav")
 CODE ("numberOfFiles = Get number of strings")
 CODE ("for ifile to numberOfFiles")
 CODE ("   select Strings list")
 CODE ("   fileName\\$  = Get string... ifile")
 CODE ("   Read from file... 'directory\\$ '/'fileName\\$ '")
 CODE ("endfor")
+NORMAL ("If the script has been saved to a script file, you can use paths that are relative to the directory "
+	"where you saved the script. Thus, with")
+CODE ("Create Strings as file list... list *.wav")
+NORMAL ("you get a list of all the .wav files that are in the same directory as the script that contains this line. "
+	"And to get a list of all the .wav files in the directory Sounds that resides in the same directory as your script, "
+	"you can do")
+CODE ("Create Strings as file list... list Sounds/*.wav")
+NORMAL ("As is usual in Praat scripting, the forward slash (\"/\") in this example can be used on all platforms, including Windows. "
+	"This makes your script portable across platforms.")
+ENTRY ("See also")
+NORMAL ("To get a list of directories instead of files, use @@Create Strings as directory list...@.")
 MAN_END
 
 MAN_BEGIN ("Distributions", "ppgb", 20030316)

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20060530 Latest modification.
+ djmw 20060908 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -77,13 +77,9 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope);
 		for Spoken Word	recognition, IEEE Trans. on ASSP, vol 26, 43-49.
 */
 
-double DTW_getPathY (DTW me, double t, int lowest);
+double DTW_getPathY (DTW me, double tx);
 /*
 	Get the time Y-time that corresponds to time t (along X).
-	When the path goes "vertical", you can query the lowest/highest y-time.
-	lowest = 0 :get highest.
-	When t is outside the x-domain of the DTW-object, the value of t 
-	will be returned. 
 */
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 

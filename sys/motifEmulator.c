@@ -1213,7 +1213,7 @@ static void _GuiNativizeWidget (Widget me) {
 					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 				#elif mac
 					PfromCstr (mac_text, my name);
-					if (strstr (my name, " -") || my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5) {
+					if (strstr (my name, " -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
 						my nat.control.isBevel = true;
 					} else {
 						my nat.control.isPopup = true;
@@ -1470,7 +1470,7 @@ static void Native_move (Widget me, int dx, int dy) {
 	 * Native_move () calls itself with the same arguments for all the widget's children.
 	 */
 	Widget child;
-	if (dx == 0 && dy == 0 || MEMBER (me, MenuBar) || my parent && MEMBER (my parent, PulldownMenu)) return;
+	if ((dx == 0 && dy == 0) || MEMBER (me, MenuBar) || (my parent && MEMBER (my parent, PulldownMenu))) return;
 	if (! my isControl)
 		_Gui_invalidateWidget (me);   /* At old position. BUG: clipping may be wrong because parent may have moved;
 				however, parent will have been erased in that case, so we will not see it. */
@@ -1563,7 +1563,7 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 			if (MEMBER (me, DrawingArea) && my resizeCallback) my resizeCallback (me, my resizeClosure, NULL);
 		}
 	#elif mac
-		if (dx == 0 && dy == 0 && dw == 0 && dh == 0 || MEMBER (me, MenuBar) || my parent && MEMBER (my parent, PulldownMenu)) return;
+		if ((dx == 0 && dy == 0 && dw == 0 && dh == 0) || MEMBER (me, MenuBar) || (my parent && MEMBER (my parent, PulldownMenu))) return;
 		OffsetRect (& my rect, dx, dy);
 		my rect.right += dw;
 		my rect.bottom += dh;
@@ -1601,10 +1601,12 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 	for (child = my firstChild; child; child = child -> nextSibling) {
 		int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 		if (MEMBER (child, Shell)) continue;
-		if (child -> rightAttachment)
+		if (child -> rightAttachment) {
 			if (child -> leftAttachment) cdw = dw; else cdx = dw;
-		if (child -> bottomAttachment)
+		}
+		if (child -> bottomAttachment) {
 			if (child -> topAttachment) cdh = dh; else cdy = dh;
+		}
 		child -> x += cdx;
 		child -> y += cdy;
 		child -> width += cdw;
@@ -1627,7 +1629,7 @@ static void resizeWidget (Widget me, int dw, int dh) {
 		}
 	#elif mac
 	{
-		if (dw == 0 && dh == 0 || my parent && MEMBER (my parent, PulldownMenu)) return;
+		if ((dw == 0 && dh == 0) || (my parent && MEMBER (my parent, PulldownMenu))) return;
 		if (! my isControl) _Gui_invalidateWidget (me);   /* At old position. */
 		my rect.right += dw;
 		my rect.bottom += dh;
@@ -1654,10 +1656,12 @@ static void resizeWidget (Widget me, int dw, int dh) {
 		for (child = my firstChild; child; child = child -> nextSibling) {
 			int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 			if (child -> widgetClass == xmShellWidgetClass) continue;
-			if (child -> rightAttachment)
+			if (child -> rightAttachment) {
 				if (child -> leftAttachment) cdw = dw; else cdx = dw;
-			if (child -> bottomAttachment)
+			}
+			if (child -> bottomAttachment) {
 				if (child -> topAttachment) cdh = dh; else cdy = dh;
+			}
 			if (cdx || cdy) {
 				child -> x += cdx;
 				child -> y += cdy;
@@ -2381,9 +2385,10 @@ static void _motif_manage (Widget me) {
 
 	/* If I have grown, I have to notify my parent. */
 
-	if (! MEMBER (me, Shell))
+	if (! MEMBER (me, Shell)) {
 		if (MEMBER5 (my parent, RowColumn, Form, BulletinBoard, Shell, MessageBox)) _motif_manage (my parent);
 		else if (MEMBER (my parent, ScrolledWindow)) _motif_manageScrolledWindow (my parent);
+	}
 }
 
 /***** X TOOLKIT *****/
@@ -3081,9 +3086,10 @@ void XtUnmanageChild (Widget me) {
 
 	my managed = 0;
 
-	if (! MEMBER (me, Shell))
+	if (! MEMBER (me, Shell)) {
 		if (MEMBER5 (my parent, RowColumn, Form, BulletinBoard, Shell, MessageBox)) _motif_manage (my parent);
 		else if (MEMBER (my parent, ScrolledWindow)) _motif_manageScrolledWindow (my parent);
+	}
 }
 
 void XtUnmanageChildren (WidgetList children, Cardinal num_children) {

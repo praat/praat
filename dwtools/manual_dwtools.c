@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20060328 Latest modification
+ djmw 20060909 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1643,6 +1643,11 @@ MAN_END
 MAN_BEGIN ("DTW: To Polygon (slopes)...", "djmw", 20050307)
 INTRO ("A command to convert for a selected @DTW the slope constraints "
 	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
+MAN_END
+
+MAN_BEGIN ("DTW & TextGrid: To TextGrid (warp times)", "djmw", 20060909)
+INTRO ("Create a new TextGrid from the selected @DTW and @TextGrid by warping the "
+	"times from the selected textGrid to the newly created TextGrid.")
 MAN_END
 
 MAN_BEGIN ("Eigen", "djmw", 19981102)

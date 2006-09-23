@@ -952,8 +952,8 @@ static void charSizes (Graphics me, _Graphics_widechar string []) {
 			_Graphics_widechar *nextCharacter = character + 1;
 			if (nextCharacter -> first == '\0') {
 				character -> width += SLANT_CORRECTION / 72 * my fontSize * my resolution;
-			} else if ((nextCharacter -> style & Graphics_ITALIC) == 0 && nextCharacter -> baseline >= character -> baseline
-				|| character -> baseline == 0 && nextCharacter -> baseline > 0)
+			} else if (((nextCharacter -> style & Graphics_ITALIC) == 0 && nextCharacter -> baseline >= character -> baseline)
+				|| (character -> baseline == 0 && nextCharacter -> baseline > 0))
 			{
 				if ((nextCharacter -> first == '.' || nextCharacter -> first == ',') && nextCharacter -> second == ' ')
 					character -> width += SLANT_CORRECTION / 144 * my fontSize * my resolution;
@@ -1016,7 +1016,7 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 			if (next->first == '\0' || next->second == 1 || next->style != plc->style ||
 				next->baseline != plc->baseline || next->size != plc->size ||
 				next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
-				my screen && my resolution > 150)
+				(my screen && my resolution > 150))
 			{
 				double dy2 = dy + plc -> baseline;
 				double xr = cosa * xbegin - sina * dy2;
@@ -1302,11 +1302,11 @@ static void stringToWidechar (Graphics me, const char *txt, _Graphics_widechar w
 		out -> second = info -> second;
 		out -> style =
 			(wordLink | globalLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
-			(my fontStyle & Graphics_ITALIC | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
-			(my fontStyle & Graphics_BOLD | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
+			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
+			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = NULL;
 		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
-			(info -> first == '/' || info -> first == '|') && info -> second == ' ' ? Graphics_COURIER : my font;
+			((info -> first == '/' || info -> first == '|') && info -> second == ' ') ? Graphics_COURIER : my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
 		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
@@ -1467,8 +1467,8 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 			_Graphics_widechar *nextCharacter = character + 1;
 			if (nextCharacter -> first == '\0') {
 				textWidth += POSTSCRIPT_SLANT_CORRECTION;
-			} else if ((nextCharacter -> style & Graphics_ITALIC) == 0 && nextCharacter -> baseline >= character -> baseline
-				|| character -> baseline == 0 && nextCharacter -> baseline > 0)
+			} else if (((nextCharacter -> style & Graphics_ITALIC) == 0 && nextCharacter -> baseline >= character -> baseline)
+				|| (character -> baseline == 0 && nextCharacter -> baseline > 0))
 			{
 				if ((nextCharacter -> first == '.' || nextCharacter -> first == ',') && nextCharacter -> second == ' ')
 					textWidth += 0.5 * POSTSCRIPT_SLANT_CORRECTION;
