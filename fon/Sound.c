@@ -43,19 +43,15 @@ static void info (I) {
 	double minimum = amplitude [1], maximum = minimum;
 	double sum = 0.0, sumOfSquares = 0.0, mean, penergy, energy, power;
 	classData -> info (me);
-	Melder_info (
-		"Time domain:\n"
-		"   Start time: %s seconds\n"
-		"   End time: %s seconds\n"
-		"   Total duration: %s seconds",
-		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
-	Melder_info (
-		"Time sampling:\n"
-		"   Number of samples: %ld\n"
-		"   Sampling period: %s seconds\n"
-		"   Sampling frequency: %s Hz\n"
-		"   First sample centred at: %s seconds",
-		my nx, Melder_double (my dx), Melder_single (1 / my dx), Melder_double (my x1));
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine2 ("   Number of samples: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("   Sampling period: ", Melder_double (my dx), " seconds");
+	MelderInfo_writeLine3 ("   Sampling frequency: ", Melder_single (1.0 / my dx), " Hz");
+	MelderInfo_writeLine3 ("   First sample centred at: ", Melder_double (my x1), " seconds");
 	for (i = 1; i <= numberOfSamples; i ++) {
 		double value = amplitude [i];
 		sum += value;
@@ -74,16 +70,20 @@ static void info (I) {
 	MelderInfo_writeLine3 (" (energy in air: ", Melder_single (energy), " Joule/m^2)");
 	power = energy / (my dx * my nx);   /* kg s-3 = Watt/m2 */
 	MelderInfo_close ();
-	if (power) Melder_info ("Mean power (intensity) in air: %.8g Watt/m^2 = %.4g dB", power, 10 * log10 (power / 1e-12));
-	else Melder_info ("Mean power (intensity) in air: %.8g Watt/m^2", power);
+	MelderInfo_write3 ("Mean power (intensity) in air: ", Melder_single (power), " Watt/m^2");
+	if (power != 0.0) {
+		MelderInfo_writeLine3 (" = ", Melder_half (10 * log10 (power / 1e-12)), " dB");
+	} else {
+		MelderInfo_writeLine1 ("");
+	}
 	if (my nx > 1) {
-		double sd = 0.0;
+		double stdev = 0.0;
 		for (i = 1; i <= numberOfSamples; i ++) {
 			double value = amplitude [i] - mean;
-			sd += value * value;
+			stdev += value * value;
 		}
-		sd = sqrt (sd / (my nx - 1));
-		Melder_info ("Standard deviation: %.8g Pascal\n", sd);
+		stdev = sqrt (stdev / (my nx - 1));
+		MelderInfo_write3 ("Standard deviation: ", Melder_single (stdev), " Pascal\n");
 	}
 }
 

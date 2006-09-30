@@ -37,19 +37,15 @@
 static void info (I) {
 	iam (Spectrum);
 	classData -> info (me);
-	Melder_info (
-		"Frequency domain:\n"
-		"   Lowest frequency: %s Hz\n"
-		"   Highest frequency: %s Hz\n"
-		"   Total bandwidth: %s Hz",
-		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
-	Melder_info (
-		"Frequency sampling:\n"
-		"   Number of frequency bins: %s\n"
-		"   Bin width: %s Hz\n"
-		"   First bin centred at: %s Hz",
-		Melder_integer (my nx), Melder_double (my dx), Melder_double (my x1));
-	Melder_info ("Total energy: %s Pa2 sec", Melder_single (Spectrum_getBandEnergy (me, 0.0, 0.0)));
+	MelderInfo_writeLine1 ("Frequency domain:");
+	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my xmin), " Hz");
+	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my xmax), " Hz");
+	MelderInfo_writeLine3 ("   Total bandwidth: ", Melder_double (my xmax - my xmin), " Hz");
+	MelderInfo_writeLine1 ("Frequency sampling:");
+	MelderInfo_writeLine2 ("   Number of frequency bands (bins): ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("   Frequency step (bin width): ", Melder_double (my dx), " Hz");
+	MelderInfo_writeLine3 ("   First frequency band around (bin centre at): ", Melder_double (my x1), " Hz");
+	MelderInfo_writeLine3 ("Total energy: ", Melder_single (Spectrum_getBandEnergy (me, 0.0, 0.0)), " Pa2 sec");
 }
 
 static double getValueAtSample (I, long isamp, long which, int units) {

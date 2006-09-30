@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20060909 Latest modification
+ djmw 20060921 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1610,25 +1610,24 @@ MAN_END
 
 MAN_BEGIN ("DTW: Get time along path...", "djmw", 20040407)
 INTRO ("Queries the selected @DTW object for the time along the minimal path "
-	"given the time along the \"x-direction\". ")
-ENTRY ("Arguments")
+	"given the time along the \"%x-direction\". ")
+ENTRY ("Argument")
 TAG ("%Time")
-DEFINITION ("the time along the \"x-direction\".")
-TAG ("%%In case of ambiguity choose%,")
-DEFINITION ("determines which time to return when several possibilities exist. "
-	"Ambiguity arises when the path at chosen time frame has insertions "
-	"(a plot of the path will then show a line parallel to the y-direction in "
-	"this time frame). "
-	"The options %highest and %lowest return the "
-	"highest and lowest value of this parallell line. With no insertions "
-	"present, the returned times will be exactly equal for both options.")
+DEFINITION ("the time along the %x-direction.")
 ENTRY ("Behaviour")
 NORMAL ("When the %input time is in the interval [%xmin, %xmax], the %returned "
 	"time will be in the interval [%ymin, %ymax], where [%xmin, %xmax] and "
 	"[%ymin, %ymax] are the domains of the two \"objects\" from which the "
 	"DTW-object was constructed."
-	"For all other input times we assume that the two object are aligned. The "
-	"returned time value will therefore simply equal the input time." )
+	"For all other input times we assume that the two object are aligned.")
+NORMAL ("We like to have a \"continuous\" interpretation of time for the quantized times in the %x and "
+	"%y direction; we make the path piecewise linear. There are two special cases:")
+NORMAL ("1. The local path is horizontal. We calculate the %y-time from the line that connects the "
+	"lower-left position of the leftmost horizontal time block to the upper-right position of the "
+	"rightmost horizontal  time block.")
+NORMAL ("2. The local path is vertical. We calculate the %y-time from the line that connects the "
+	"lower-left position of the bottommost vertical time block to the upper-right position of the "
+	"topmost horizontal time block.")
 MAN_END
 
 MAN_BEGIN ("DTW: Swap axes", "djmw", 20050306)
@@ -2811,6 +2810,20 @@ LIST_ITEM ("1. We perform a pitch analysis (see @@Sound: To Pitch...@ for "
 LIST_ITEM ("2. We perform a filter bank analysis on a linear frequency scale. "
 	"The bandwidth of the filters depends on the measured pitch (see @@Sound & "
 	"Pitch: To FormantFilter...@ for details).")
+MAN_END
+
+MAN_BEGIN ("Sound: To IntervalTier (silence)...", "djmw", 20060921)
+INTRO ("A command that creates an @IntervalTier in which the silence intervals of the selected @Sound are marked.")
+ENTRY ("Arguments")
+TAG ("%%Silence threshold%")
+DEFINITION ("determines the maximum silence intensity value (as a fraction of the intensity range in dB). "
+	"If the local intensity is below this value the frame is considered as silence. "
+	"For example, if %imax and %imin are the maximum and minimum intensity of the sound then the maximum silence intensity "
+	"is calculated as %%imax - (1 - silenceThreshold) * (imax - imin)%.")
+TAG ("%%Minimum silence duration%")
+DEFINITION ("determines the minimum duration for an interval to be considered as silence. ")
+TAG ("%%Silence label%")
+DEFINITION ("determines the label for a silence interval in the IntervalTier.")
 MAN_END
 
 MAN_BEGIN ("Sound & Pitch: To FormantFilter...", "djmw", 20010404)

@@ -387,7 +387,6 @@ static void info (I) {
 		MelderInfo_writeLine4 (Melder_half (slopeSemitones), " semitones/s = ", Melder_half (slopeErb), " ERB/s");
 		MelderInfo_writeLine3 ("Mean absolute slope without octave jumps: ", Melder_half (slopeWithoutOctaveJumps), " semitones/s");
 	}
-	MelderInfo_close ();
 }
 
 class_methods (Pitch, Sampled)

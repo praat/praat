@@ -24,6 +24,7 @@
  	a file was not 0 (in that case an empty interval was added as the first element in the tier).
  djmw 20060517 Added (TextTier|IntervalTier|TextGrid)_changeLabels.
  djmw 20060712 TextGrid_readFromTIMITLabelFile: don't set first boundary to zero for .wrd files.
+ djmw 20060921 Added IntervalTier_removeBoundary_equalLabels, IntervalTier_removeBoundary_minimumDuration
 */
 
 #include <ctype.h>
@@ -382,6 +383,48 @@ int TextGrid_setTierName (TextGrid me, long itier, char *newName)
 		"larger than the number of tiers (%d).", itier, ntiers);
 	Thing_setName (my tiers -> item [itier], newName);	
 	return 1;
+}
+
+void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, char *label, double minimumDuration)
+{
+	long i = 1;
+	
+	while (i <= my intervals -> size)
+	{
+		TextInterval ti = my intervals -> item[i];
+		double xmax = ti -> xmax;
+		if (((label != NULL && (NUMstrcmp (ti -> text, label) == 0)) || label == NULL) && 
+			ti -> xmax - ti -> xmin < minimumDuration)
+		{
+			Collection_removeItem (my intervals, i);
+			ti -> xmax = xmax;
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+
+void IntervalTier_removeBoundary_equalLabels (IntervalTier me, char *label)
+{
+	long i = 1;
+	
+	while (i < my intervals -> size)
+	{
+		TextInterval ti = my intervals -> item[i], tip1 = my intervals -> item[i+1];
+		double xmax = tip1 -> xmax;
+		if (((label != NULL && (NUMstrcmp (ti -> text, label) == 0)) || label == NULL) && 
+			(NUMstrcmp (ti -> text, tip1 -> text) == 0))
+		{
+			Collection_removeItem (my intervals, i+1);
+			ti -> xmax = xmax;
+		}
+		else
+		{
+			i++;
+		}
+	}
 }
 
 int IntervalTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches)

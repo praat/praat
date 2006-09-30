@@ -65,7 +65,6 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	MelderInfo_writeLine2 ("     Jitter (rap): ", Melder_percent (jitter_rap, precision));
 	MelderInfo_writeLine2 ("     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
 	MelderInfo_writeLine2 ("     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
-	MelderInfo_close ();
 }
 
 static void info (I) {

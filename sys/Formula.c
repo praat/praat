@@ -131,7 +131,8 @@ enum { GEENSYMBOOL_,
 	/* Functions of a variable number of variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_N  MIN_
 		MIN_, MAX_, IMIN_, IMAX_,
-	#define HIGH_FUNCTION_N  IMAX_
+		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
+	#define HIGH_FUNCTION_N  NUMBER_OF_SELECTED_
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STRNUM
@@ -142,7 +143,6 @@ enum { GEENSYMBOOL_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
-		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
 		FIXEDSTR_, PERCENTSTR_,
 	#define HIGH_STRING_FUNCTION  PERCENTSTR_
 
@@ -166,7 +166,6 @@ enum { GEENSYMBOOL_,
 
 	STRING_,
 	NUMERIC_VARIABLE_, STRING_VARIABLE_,
-	SELECTED2_, SELECTEDSTR2_,
 	END_
 	#define hoogsteSymbool END_
 };
@@ -197,13 +196,15 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"soundPressureToPhon",
 	"fisherP", "fisherQ", "invFisherQ",
 	"binomialP", "binomialQ", "invBinomialP", "invBinomialQ",
+
 	"min", "max", "imin", "imax",
+	"selected", "selected$", "numberOfSelected",
+
 	"length", "fileReadable",
 	"date$",
 	"left$", "right$", "mid$", "environment$", "index", "rindex",
 	"startsWith", "endsWith", "replace$", "index_regex", "rindex_regex", "replace_regex$",
 	"extractNumber", "extractWord$", "extractLine$",
-	"selected", "selected$", "numberOfSelected",
 	"fixed$", "percent$",
 	".",
 	"_true", "_false", "_iftrue", "_iffalse", "_gaNaar", "_label",
@@ -214,7 +215,6 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"_square",
 	"_string",
 	"_numericVariable", "_stringVariable",
-	"_selected2", "_selected2$",
 	"_end"
 };
 
@@ -949,15 +949,19 @@ static int parsePowerFactor (void) {
 	}
 
 	if (symbol >= LOW_FUNCTION_N && symbol <= HIGH_FUNCTION_N) {
-		int n = 1;
+		int n = 0;
 		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseExpression ()) return 0;
-		while (nieuwlees == KOMMA_) {
+		if (nieuwlees != HAAKJESLUITEN_) {
+			oudlees;
 			if (! parseExpression ()) return 0;
 			n ++;
+			while (nieuwlees == KOMMA_) {
+				if (! parseExpression ()) return 0;
+				n ++;
+			}
+			oudlees;
+			if (! pas (HAAKJESLUITEN_)) return 0;
 		}
-		oudlees;
-		if (! pas (HAAKJESLUITEN_)) return 0;
 		nieuwontleed (NUMBER_); parsenumber (n);
 		nieuwontleed (symbol);
 		return 1;
@@ -975,18 +979,6 @@ static int parsePowerFactor (void) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			if (! parseExpression ()) return 0;
 			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == SELECTED_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
-				symbol = SELECTED2_;
-			} else oudlees;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == NUMBER_OF_SELECTED_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
 			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == DATESTR_) {
@@ -1015,14 +1007,6 @@ static int parsePowerFactor (void) {
 		} else if (symbol == ENVIRONMENTSTR_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == SELECTEDSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
-				symbol = SELECTEDSTR2_;
-			} else oudlees;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
@@ -2413,70 +2397,83 @@ static void do_extractTextStr (int singleWord) {
 end: return;
 }
 static void do_selected (void) {
-	Stackel s = pop;
-	if (s->which == Stackel_STRING) {
-		long result;
-		void *klas = Thing_classFromClassName (s->content.string); cherror
-		result = praat_getIdOfSelected (klas, 0); cherror
-		pushNumber (result);
+	Stackel n = pop;
+	long result;
+	if (n->content.number == 0) {
+		result = praat_getIdOfSelected (NULL, 0); cherror
+	} else if (n->content.number == 1) {
+		Stackel a = pop;
+		if (a->which == Stackel_STRING) {
+			void *klas = Thing_classFromClassName (a->content.string); cherror
+			result = praat_getIdOfSelected (klas, 0); cherror
+		} else if (a->which == Stackel_NUMBER) {
+			result = praat_getIdOfSelected (NULL, a->content.number); cherror
+		} else {
+			Melder_error ("The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
+		}
+	} else if (n->content.number == 2) {
+		Stackel x = pop, s = pop;
+		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+			void *klas = Thing_classFromClassName (s->content.string); cherror
+			result = praat_getIdOfSelected (klas, x->content.number); cherror
+		} else {
+			Melder_error ("The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
+		}
 	} else {
-		Melder_error ("The function \"selected\" requires a string (an object type name), not %s.",
-			Stackel_whichText (s)); goto end;
+		Melder_error ("The function \"selected\" requires 0, 1, or 2 arguments, not %s.", Melder_integer (n->content.number)); goto end;
 	}
-end: return;
-}
-static void do_selected2 (void) {
-	Stackel x = pop, s = pop;
-	if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		long result;
-		void *klas = Thing_classFromClassName (s->content.string); cherror
-		result = praat_getIdOfSelected (klas, x->content.number); cherror
-		pushNumber (result);
-	} else {
-		Melder_error ("The function \"selected\" requires a string (an object type name) and a number, not %s and %s.",
-			Stackel_whichText (s), Stackel_whichText (x)); goto end;
-	}
+	pushNumber (result);
 end: return;
 }
 static void do_selectedStr (void) {
-	Stackel s = pop;
-	if (s->which == Stackel_STRING) {
-		char *name, *result;
-		void *klas = Thing_classFromClassName (s->content.string); cherror
-		name = praat_getNameOfSelected (klas, 0); cherror
+	Stackel n = pop;
+	char *name, *result = NULL;
+	if (n->content.number == 0) {
+		name = praat_getNameOfSelected (NULL, 0); cherror
 		result = Melder_strdup (name); cherror
-		pushString (result);
-	} else {
-		Melder_error ("The function \"selected$\" requires a string (an object type name), not %s.",
-			Stackel_whichText (s)); goto end;
+	} else if (n->content.number == 1) {
+		Stackel a = pop;
+		if (a->which == Stackel_STRING) {
+			void *klas = Thing_classFromClassName (a->content.string); cherror
+			name = praat_getNameOfSelected (klas, 0); cherror
+			result = Melder_strdup (name); cherror
+		} else if (a->which == Stackel_NUMBER) {
+			name = praat_getNameOfSelected (NULL, a->content.number); cherror
+			result = Melder_strdup (name); cherror
+		} else {
+			Melder_error ("The function \"selected$\" requires a string (an object type name) and/or a number."); goto end;
+		}
+	} else if (n->content.number == 2) {
+		Stackel x = pop, s = pop;
+		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+			void *klas = Thing_classFromClassName (s->content.string); cherror
+			name = praat_getNameOfSelected (klas, x->content.number); cherror
+			result = Melder_strdup (name); cherror
+		} else {
+			Melder_error ("The function \"selected$\" requires 0, 1, or 2 arguments, not %s.", Melder_integer (n->content.number)); goto end;
+		}
 	}
-end: return;
-}
-static void do_selectedStr2 (void) {
-	Stackel x = pop, s = pop;
-	if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		char *name, *result;
-		void *klas = Thing_classFromClassName (s->content.string); cherror
-		name = praat_getNameOfSelected (klas, x->content.number); cherror
-		result = Melder_strdup (name); cherror
-		pushString (result);
-	} else {
-		Melder_error ("The function \"selected$\" requires a string (an object type name) and a number, not %s and %s.",
-			Stackel_whichText (s), Stackel_whichText (x)); goto end;
-	}
+	pushString (result);
 end: return;
 }
 static void do_numberOfSelected (void) {
-	Stackel s = pop;
-	if (s->which == Stackel_STRING) {
-		long result;
-		void *klas = Thing_classFromClassName (s->content.string); cherror
-		result = praat_selection (klas);
-		pushNumber (result);
+	Stackel n = pop;
+	long result;
+	if (n->content.number == 0) {
+		result = praat_selection (NULL);
+	} else if (n->content.number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			void *klas = Thing_classFromClassName (s->content.string); cherror
+			result = praat_selection (klas);
+		} else {
+			Melder_error ("The function \"numberOfSelected\" requires a string (an object type name), not %s.",
+				Stackel_whichText (s)); goto end;
+		}
 	} else {
-		Melder_error ("The function \"numberOfSelected\" requires a string (an object type name), not %s.",
-			Stackel_whichText (s)); goto end;
+		Melder_error ("The function \"numberOfSelected\" requires 0 or 1 arguments, not %s.", Melder_integer (n->content.number)); goto end;
 	}
+	pushNumber (result);
 end: return;
 }
 static void do_fixedStr (void) {
@@ -3108,8 +3105,6 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	InterpreterVariable var = f [programPointer]. content.variable;
 	char *result = Melder_strdup (var -> stringValue); cherror
 	pushString (result);
-} break; case SELECTED2_: { do_selected2 ();
-} break; case SELECTEDSTR2_: { do_selectedStr2 ();
 } break; default: return Melder_error ("Symbol \"%s\" without action.", Formula_instructionNames [parse [programPointer]. symbol]);
 		} /* switch */
 		cherror

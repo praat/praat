@@ -3153,6 +3153,16 @@ DO
 		GET_REAL ("Maximum pitch")))
 END
 
+FORM (Sound_to_IntervalTier_detectSilence, "Sound: To IntervalTier (silence)", "Sound: To IntervalTier (silence)...")
+	POSITIVE ("Silence threshold", "0.3")
+	POSITIVE ("Minimum silence duration", "0.100")
+	WORD ("Silence label", "#")	
+	OK
+DO
+	EVERY_TO (Sound_to_IntervalTier_detectSilence (OBJECT, GET_REAL ("Silence threshold"),
+		GET_REAL ("Minimum silence duration"), GET_STRING ("Silence label")))
+END
+
 FORM (Sound_to_MelFilter, "Sound: To MelFilter", 
 	"Sound: To MelFilter...")
 	POSITIVE ("Analysis window duration (s)", "0.015")
@@ -4786,6 +4796,10 @@ void praat_uvafon_David_init (void)
 		0, 0, DO_Sound_writeToRawFileBE);
 	praat_addAction1 (classSound, 1, "Write to raw 16-bit Little Endian "
 		"file...", 0, 0, DO_Sound_writeToRawFileLE);
+		
+	praat_addAction1 (classSound, 0, "To IntervalTier (silence)...", "To IntervalTier",
+		1, DO_Sound_to_IntervalTier_detectSilence);
+		
 	praat_addAction1 (classSound, 0, "To Pitch (shs)...", "To Pitch (cc)...",
 		1, DO_Sound_to_Pitch_shs);
 	praat_addAction1 (classSound, 0, "To Pitch (SPINET)...",

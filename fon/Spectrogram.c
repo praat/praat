@@ -29,18 +29,23 @@
 
 static void info (I) {
 	iam (Spectrogram);
-	MelderInfo_writeLine3 ("Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine5 ("End time: ", Melder_double (my xmax), " seconds (duration: ",
-		Melder_double (my xmax - my xmin), " seconds)");
-	MelderInfo_writeLine2 ("Number of time slices (frames): ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("Time step (frame distance): ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("First time slice (frame centre) at: ", Melder_double (my x1), " seconds");
-	MelderInfo_writeLine3 ("Minimum frequency: ", Melder_double (my ymin), " Hertz");
-	MelderInfo_writeLine3 ("Maximum frequency: ", Melder_double (my ymax), " Hertz");
-	MelderInfo_writeLine2 ("Number of frequency bands (bins): ", Melder_integer (my ny));
-	MelderInfo_writeLine3 ("Frequency step (bin width): ", Melder_double (my dy), " Hertz");
-	MelderInfo_writeLine3 ("First frequency band around (bin centre at): ", Melder_double (my y1), " Hertz");
-	MelderInfo_close ();
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine2 ("   Number of time slices (frames): ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("   Time step (frame distance): ", Melder_double (my dx), " seconds");
+	MelderInfo_writeLine3 ("   First time slice (frame centre) at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine1 ("Frequency domain:");
+	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my ymin), " Hz");
+	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my ymax), " Hz");
+	MelderInfo_writeLine3 ("   Total bandwidth: ", Melder_double (my xmax - my xmin), " Hz");
+	MelderInfo_writeLine1 ("Frequency sampling:");
+	MelderInfo_writeLine2 ("   Number of frequency bands (bins): ", Melder_integer (my ny));
+	MelderInfo_writeLine3 ("   Frequency step (bin width): ", Melder_double (my dy), " Hz");
+	MelderInfo_writeLine3 ("   First frequency band around (bin centre at): ", Melder_double (my y1), " Hz");
 }
 
 class_methods (Spectrogram, Matrix)

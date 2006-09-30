@@ -40,8 +40,9 @@
 
 static void info (I) {
 	iam (Polygon);
-	Melder_information ("Number of points: %ld\nPerimeter: %.8g",
-		my numberOfPoints, Polygon_perimeter (me));
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my numberOfPoints));
+	MelderInfo_writeLine2 ("Perimeter: ", Melder_single (Polygon_perimeter (me)));
 }
   
 static int writeAscii (I, FILE *f) {

@@ -37,8 +37,8 @@ static void info (I) {
 	iam (Thing);
 	time_t today = time (NULL);
 	char *name = my name ? my name : "<no name>";
-	Melder_info ("Object: %s %.200s", Thing_className (me), name);
-	Melder_info ("Date: %s", ctime (& today));   /* Includes a newline. */
+	MelderInfo_writeLine4 ("Object: ", Thing_className (me), " ", name);
+	MelderInfo_writeLine2 ("Date: ", ctime (& today));   /* Includes a newline. */
 }
 
 static void nameChanged (Any thing) {
@@ -177,7 +177,9 @@ void * _Thing_check (I, void *klas, const char *fileName, int line) {
 void Thing_info (I) {
 	iam (Thing);
 	Melder_clearInfo ();
-	our info (me);   /* This calls either a set of Melder_infos or a Melder_information. */
+	MelderInfo_open ();
+	our info (me);   /* This calls either a set of MelderInfo_write, a set of Melder_info, or a Melder_information. */
+	MelderInfo_close ();
 }
 
 char * Thing_getName (I) { iam (Thing); return my name; }

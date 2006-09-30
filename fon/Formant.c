@@ -44,9 +44,14 @@
 
 static void info (I) {
 	iam (Formant);
-	Melder_information ("Time domain: from %.15g to %.15g seconds.\n"
-		"Number of frames: %ld\nFrame duration: %.15g seconds\n"
-		"First frame around: %.15g seconds.", my xmin, my xmax, my nx, my dx, my x1);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
+	MelderInfo_writeLine3 ("   First frame at: ", Melder_double (my x1), " seconds");
 }
 
 static double getValueAtSample (I, long iframe, long which, int units) {

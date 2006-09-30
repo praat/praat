@@ -21,7 +21,7 @@
 
 /*
  djmw 20020516 GPL header
- djmw 20060517 Latest modification
+ djmw 20060921 Latest modification
 */
 
 #ifndef _TextGrid_h_
@@ -84,6 +84,9 @@ int TextGrid_setTierName (TextGrid me, long itier, char *newName);
 int TextTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 int IntervalTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+
+void IntervalTier_removeBoundary_equalLabels (IntervalTier me, char *label);
+void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, char *label, double minimumDuration);
 
 int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
 

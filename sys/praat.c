@@ -29,6 +29,7 @@
  * pb 2005/11/18 URL support
  * pb 2006/02/23 corrected callbacks in praat_installEditorN
  * pb 2006/08/07 removed quotes from around file paths in openDocument message
+ * pb 2006/09/30 praat_selection () can take NULL as an argument
  */
 
 #include "melder.h"
@@ -121,18 +122,19 @@ long praat_getIdOfSelected (void *voidklas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
-		WHERE (SELECTED && CLASS == klas) {
+		WHERE (SELECTED && (klas == NULL || CLASS == klas)) {
 			if (place == 1) return ID;
 			place --;
 		}
 	} else {
-		WHERE_DOWN (SELECTED && CLASS == klas) {
+		WHERE_DOWN (SELECTED && (klas == NULL || CLASS == klas)) {
 			if (place == -1) return ID;
 			place ++;
 		}
 	}
-	return inplace ? Melder_error ("No %s #%d selected.", klas -> _className, inplace) :
-		 Melder_error ("No %s selected.", klas -> _className);
+	return inplace ?
+		Melder_error ("No %s #%d selected.", klas ? klas -> _className : "object", inplace) :
+		Melder_error ("No %s selected.", klas ? klas -> _className : "object");
 }
 
 char * praat_getNameOfSelected (void *voidklas, int inplace) {
@@ -140,23 +142,24 @@ char * praat_getNameOfSelected (void *voidklas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
-		WHERE (SELECTED && CLASS == klas) {
-			if (place == 1) return NAME;
+		WHERE (SELECTED && (klas == NULL || CLASS == klas)) {
+			if (place == 1) return klas == NULL ? FULL_NAME : NAME;
 			place --;
 		}
 	} else {
-		WHERE_DOWN (SELECTED && CLASS == klas) {
-			if (place == -1) return NAME;
+		WHERE_DOWN (SELECTED && (klas == NULL || CLASS == klas)) {
+			if (place == -1) return klas == NULL ? FULL_NAME : NAME;
 			place ++;
 		}
 	}
-	return inplace ? Melder_errorp ("No %s #%d selected.", klas -> _className, inplace) :
-		 Melder_errorp ("No %s selected.", klas -> _className);
+	return inplace ?
+		Melder_errorp ("No %s #%d selected.", klas ? klas -> _className : "object", inplace) :
+		 Melder_errorp ("No %s selected.", klas ? klas -> _className : "object");
 }
 
 int praat_selection (void *klas) {
 	int result = 0, IOBJECT;
-	WHERE (SELECTED && CLASS == klas) result += 1;
+	WHERE (SELECTED && (klas == NULL || CLASS == klas)) result += 1;
 	return result;
 }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		231E5F980AC6D1C4004B07A8 /* DTW_and_TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */; };
+		231E5F990AC6D1C4004B07A8 /* DTW_and_TextGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */; };
 		232D545C0AB8B8FA0018C769 /* Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 232D545B0AB8B8FA0018C769 /* Strings.c */; };
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
@@ -720,6 +722,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = DTW_and_TextGrid.c; path = dwtools/DTW_and_TextGrid.c; sourceTree = "<group>"; };
+		231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DTW_and_TextGrid.h; path = dwtools/DTW_and_TextGrid.h; sourceTree = "<group>"; };
 		232D545B0AB8B8FA0018C769 /* Strings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Strings.c; path = sys/Strings.c; sourceTree = "<group>"; };
 		23E4918D0ABF529D00FA787E /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings.h; path = sys/Strings.h; sourceTree = "<group>"; };
 		23E5C92009A228FA004E41D5 /* Praat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Praat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1689,6 +1693,8 @@
 				23E5C9CB09A228FE004E41D5 /* Distance.c */,
 				23E5C9CE09A228FE004E41D5 /* DTW.h */,
 				23E5C9CD09A228FE004E41D5 /* DTW.c */,
+				231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */,
+				231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */,
 				23E5C9D009A228FE004E41D5 /* Eigen.h */,
 				23E5C9CF09A228FE004E41D5 /* Eigen.c */,
 				23E5C9D209A228FE004E41D5 /* Eigen_and_Matrix.h */,
@@ -2743,6 +2749,7 @@
 				23E5D21C09A22AC0004E41D5 /* gsl_machine.h in Headers */,
 				23E5D21D09A22AC1004E41D5 /* gsl_nan.h in Headers */,
 				23E4918E0ABF529D00FA787E /* Strings.h in Headers */,
+				231E5F990AC6D1C4004B07A8 /* DTW_and_TextGrid.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3160,6 +3167,7 @@
 				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
 				23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */,
 				232D545C0AB8B8FA0018C769 /* Strings.c in Sources */,
+				231E5F980AC6D1C4004B07A8 /* DTW_and_TextGrid.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

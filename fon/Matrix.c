@@ -79,13 +79,20 @@ static int readAscii (I, FILE *f) {
 static void info (I) {
 	iam (Matrix);
 	double minimum = 0, maximum = 0;
+	classData -> info (me);
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
-	Melder_information ("xmin = %.8g\nxmax = %.8g\nymin = %.8g\nymax = %.8g\n"
-		"Number of columns = %ld\nNumber of rows = %ld\n"
-		"dx = %.8g (-> sampling frequency %.8g)\ndy = %.8g (-> sampling frequency %.8g)\n"
-		"x1 = %.8g\ny1 = %.8g\nMinimum value = %.8g\nMaximum value = %.8g",
-		my xmin, my xmax, my ymin, my ymax, my nx, my ny,
-		my dx, 1 / my dx, my dy, 1 / my dy, my x1, my y1, minimum, maximum);
+	MelderInfo_writeLine2 ("xmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 ("xmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my nx));
+	MelderInfo_writeLine5 ("dx: ", Melder_double (my dx), " (-> sampling rate ", Melder_double (1.0 / my dx), " )");
+	MelderInfo_writeLine2 ("x1: ", Melder_double (my x1));
+	MelderInfo_writeLine2 ("ymin: ", Melder_double (my ymin));
+	MelderInfo_writeLine2 ("ymax: ", Melder_double (my ymax));
+	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my ny));
+	MelderInfo_writeLine5 ("dy: ", Melder_double (my dy), " (-> sampling rate ", Melder_double (1.0 / my dy), " )");
+	MelderInfo_writeLine2 ("y1: ", Melder_double (my y1));
+	MelderInfo_writeLine2 ("Minimum value: ", Melder_single (minimum));
+	MelderInfo_writeLine2 ("Maximum value: ", Melder_single (maximum));
 }
 
 static double getValueAtSample (I, long isamp, long ilevel, int unit) {

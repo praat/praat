@@ -1,6 +1,6 @@
 /* Sound_extensions.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +26,19 @@
  djmw 20041124 Changed call to Sound_to_Spectrum & Spectrum_to_Sound.
  djmw 20050620 Changed Pitch_HERTZ to Pitch_UNIT_HERTZ
  djmw 20050628 New and extended Sound_createShepardToneComplex that corrects incorrect amplitudes of tones in complex.
- 		(amplitudes were on linar instead of log scale)
+ 		(amplitudes were on linear instead of log scale)
+ djmw 20060921 Added Sound_to_IntervalTier_detectSilence
 */
 
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
+#include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
 #include "Vector.h"
 #include "Pitch_extensions.h"
 #include "Pitch_to_PitchTier.h"
 #include "Pitch_to_PointProcess.h"
+#include "TextGrid_extensions.h"
 #include "DurationTier.h"
 #include "Manipulation.h"
 #include "NUM2.h"
@@ -1790,5 +1793,105 @@ end:
 	return thee;
 }
 
+static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, char *leftLabel)
+{
+	TextInterval ti, ti_new;
+	if (time <= my xmin || time >= my xmax) return 0;
+	
+	/* Find interval to split */
+	if (iinterval <= 0) iinterval = IntervalTier_timeToLowIndex (me, time);
+	
+	/* Modify end time of left label */
+	ti = my intervals -> item[iinterval];
+	ti -> xmax = time;
+	if (! TextInterval_setText (ti, leftLabel)) return 0;
+	
+	ti_new = TextInterval_create (time, my xmax, "");
+	if (ti_new == NULL || ! Sorted_addItem_unsorted (my intervals, ti_new)) return 0;
+	return 1;
+}
+
+
+IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold, double minSilenceDuration, char *silenceLabel)
+{
+	Sound resampled = NULL, filtered = NULL;
+	IntervalTier thee = NULL;
+	Intensity intensity = NULL;
+	int inSilenceInterval = 1, subtractMean = 1, addBoundary; 
+	long i, iinterval = 1;
+	double duration = my xmax -my xmin, time;
+	double resamplingFrequency = 8000;
+	double minimumPitch = 50, timeStep = 0.01;
+	double intensity_max_db, intensity_min_db, intensity_dbRange, intensity_max_dbRange = 40;
+	double intensityThreshold, xOfMaximum, xOfMinimum;
+	
+	thee = IntervalTier_create (my xmin, my xmax);
+	if (thee == NULL) return NULL;
+	if (minSilenceDuration > duration) return thee;
+	
+	/* Pre-processing resampling and filtering */
+	resampled = Sound_resample (me, resamplingFrequency, 2); /* We don't need precision */
+	if (resampled == NULL) goto end;
+	filtered = Sound_filter_passHannBand (resampled, 100, 0.45*resamplingFrequency, 50);
+	if (filtered == NULL) goto end;
+	intensity = Sound_to_Intensity (filtered, minimumPitch, timeStep, subtractMean);
+	if (intensity == NULL) goto end;
+	Vector_getMaximumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC,	&intensity_max_db, &xOfMaximum);
+	
+	Vector_getMinimumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC,	&intensity_min_db, &xOfMinimum);
+	intensity_dbRange = intensity_max_db - intensity_min_db;
+	
+	if (intensity_dbRange < 10) Melder_warning ("The loudest part in your sound is only %lf dB from the softest part.", intensity_dbRange);
+	
+	if (intensity_dbRange > intensity_max_dbRange) intensity_dbRange = intensity_max_dbRange;
+	intensityThreshold = intensity_max_db - (1 - silenceThreshold) * intensity_dbRange;
+	
+	inSilenceInterval = intensity -> z[1][1] < intensityThreshold;
+	iinterval = 1;
+	for (i = 2; i <= intensity -> nx; i++)
+	{
+		char *label; 
+		addBoundary = 0;
+		if (intensity -> z[1][i] < intensityThreshold)
+		{
+			if (!inSilenceInterval) /* Start of silence */
+			{
+				addBoundary = 1;
+				inSilenceInterval = 1;
+				label = "";
+			}
+		}
+		else
+		{
+			if (inSilenceInterval) /* End of silence */
+			{
+				addBoundary = 1;
+				label = silenceLabel;
+				inSilenceInterval = 0;
+			}
+		}
+		
+		if (addBoundary)
+		{
+			time = intensity -> x1 + (i - 1) * intensity -> dx;
+			if (! IntervalTier_addBoundaryUnsorted (thee, iinterval, time, label)) goto end;
+			iinterval++;
+		}
+	}
+	
+	/* (re)label last interval */
+	
+	if (inSilenceInterval && 
+		! TextInterval_setText (thy intervals -> item[iinterval], silenceLabel)) goto end;
+	Sorted_sort (thee);
+	
+	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
+	IntervalTier_removeBoundary_equalLabels (thee, "");
+	
+end:
+	forget (intensity); forget (resampled); forget (filtered);
+	if (Melder_hasError ()) forget (thee);
+	return thee;
+}
 
 /* End of file Sound_extensions.c */

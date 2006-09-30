@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060923)
+MAN_BEGIN ("What's new?", "ppgb", 20060930)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.32# (September 30, 2006)")
+LIST_ITEM ("\\bu Scripting: more techniques for @@Scripting 4. Object selection|object selection@.")
+LIST_ITEM ("\\bu Scripting: more support for putting the results of the #Info command into a string variable.")
 NORMAL ("##4.4.31# (September 23, 2006)")
 LIST_ITEM ("\\bu Support for @@plug-ins@.")
 LIST_ITEM ("\\bu Split between @@Create Strings as file list...@ and @@Create Strings as directory list...@.")
