@@ -132,7 +132,13 @@ Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *i
 				motif_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd);
 			Collection_addItem (menu -> commands, cmd);
 			cmd -> commandCallback = Editor_scriptCallback;
-			cmd -> script = Melder_strdup (script);
+			if (strlen (script) == 0) {
+				cmd -> script = Melder_strdup ("");
+			} else {
+				structMelderFile file;
+				Melder_relativePathToFile (script, & file);
+				cmd -> script = Melder_strdup (Melder_fileToPath (& file));
+			}
 			return cmd -> itemWidget;
 		}
 	}

@@ -1240,6 +1240,7 @@ void praat_run (void) {
 			}
 		}
 		forget (directoryNames);
+		Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 	}
 	#endif
 

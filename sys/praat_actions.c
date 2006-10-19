@@ -268,7 +268,6 @@ int praat_addActionScript (const char *className1, int n1, const char *className
 	theActions [position]. depth = depth;
 	theActions [position]. callback = strlen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator. */
 	theActions [position]. button = NULL;
-	theActions [position]. script = strlen (script) ? Melder_strdup (script) : NULL;
 	if (strlen (script) == 0) {
 		theActions [position]. script = NULL;
 	} else {

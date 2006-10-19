@@ -131,6 +131,7 @@ enum { GEENSYMBOOL_,
 	/* Functions of a variable number of variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_N  MIN_
 		MIN_, MAX_, IMIN_, IMAX_,
+		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
 	#define HIGH_FUNCTION_N  NUMBER_OF_SELECTED_
 
@@ -140,7 +141,7 @@ enum { GEENSYMBOOL_,
 		LENGTH_, FILE_READABLE_,
 	#define HIGH_FUNCTION_STRNUM  FILE_READABLE_
 		DATESTR_,
-		LEFTSTR_, RIGHTSTR_, MIDSTR_, ENVIRONMENTSTR_, INDEX_, RINDEX_,
+		ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
 		FIXEDSTR_, PERCENTSTR_,
@@ -198,11 +199,12 @@ static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
 	"binomialP", "binomialQ", "invBinomialP", "invBinomialQ",
 
 	"min", "max", "imin", "imax",
+	"left$", "right$", "mid$",
 	"selected", "selected$", "numberOfSelected",
 
 	"length", "fileReadable",
 	"date$",
-	"left$", "right$", "mid$", "environment$", "index", "rindex",
+	"environment$", "index", "rindex",
 	"startsWith", "endsWith", "replace$", "index_regex", "rindex_regex", "replace_regex$",
 	"extractNumber", "extractWord$", "extractLine$",
 	"fixed$", "percent$",
@@ -983,20 +985,6 @@ static int parsePowerFactor (void) {
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == DATESTR_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == LEFTSTR_ || symbol == RIGHTSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
-		} else if (symbol == MIDSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else if (symbol == EXTRACT_WORDSTR_ || symbol == EXTRACT_LINESTR_) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
@@ -2153,57 +2141,72 @@ static void do_dateStr (void) {
 end: return;
 }
 static void do_leftStr (void) {
-	Stackel x = pop, s = pop;
-	if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		long newlength = x->content.number;
-		char *result;
-		long length = strlen (s->content.string);
-		if (newlength < 0) newlength = 0;
-		if (newlength > length) newlength = length;
-		result = Melder_malloc (newlength + 1); cherror
-		strncpy (result, s->content.string, newlength);
-		result [newlength] = '\0';
-		pushString (result);
+	Stackel narg = pop;
+	if (narg->content.number == 1 || narg->content.number == 2) {
+		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
+		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
+			long newlength = x ? x->content.number : 1;
+			char *result;
+			long length = strlen (s->content.string);
+			if (newlength < 0) newlength = 0;
+			if (newlength > length) newlength = length;
+			result = Melder_malloc (newlength + 1); cherror
+			strncpy (result, s->content.string, newlength);
+			result [newlength] = '\0';
+			pushString (result);
+		} else {
+			Melder_error ("The function \"left$\" requires a string, or a string and a number."); goto end;
+		}
 	} else {
-		Melder_error ("The function \"left$\" requires a string and a number."); goto end;
+		Melder_error ("The function \"left$\" requires one or two arguments."); goto end;
 	}
 end: return;
 }
 static void do_rightStr (void) {
-	Stackel x = pop, s = pop;
-	if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		long newlength = x->content.number;
-		char *result;
-		long length = strlen (s->content.string);
-		if (newlength < 0) newlength = 0;
-		if (newlength > length) newlength = length;
-		result = Melder_strdup (s->content.string + length - newlength); cherror
-		pushString (result);
+	Stackel narg = pop;
+	if (narg->content.number == 1 || narg->content.number == 2) {
+		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
+		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
+			long newlength = x ? x->content.number : 1;
+			char *result;
+			long length = strlen (s->content.string);
+			if (newlength < 0) newlength = 0;
+			if (newlength > length) newlength = length;
+			result = Melder_strdup (s->content.string + length - newlength); cherror
+			pushString (result);
+		} else {
+			Melder_error ("The function \"right$\" requires a string, or a string and a number."); goto end;
+		}
 	} else {
-		Melder_error ("The function \"right$\" requires a string and a number."); goto end;
+		Melder_error ("The function \"right$\" requires one or two arguments."); goto end;
 	}
 end: return;
 }
 static void do_midStr (void) {
-	Stackel y = pop, x = pop, s = pop;
-	if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long newlength = y->content.number;
-		long start = x->content.number;
-		long length = strlen (s->content.string), finish = start + newlength - 1;
-		char *result;
-		if (start < 1) start = 1;
-		if (finish > length) finish = length;
-		newlength = finish - start + 1;
-		if (newlength > 0) {
-			result = Melder_malloc (newlength + 1); cherror
-			strncpy (result, s->content.string + start - 1, newlength);
-			result [newlength] = '\0';
+	Stackel narg = pop;
+	if (narg->content.number == 2 || narg->content.number == 3) {
+		Stackel y = ( narg->content.number == 3 ? pop : NULL ), x = pop, s = pop;
+		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == NULL || y->which == Stackel_NUMBER)) {
+			long newlength = y ? y->content.number : 1;
+			long start = x->content.number;
+			long length = strlen (s->content.string), finish = start + newlength - 1;
+			char *result;
+			if (start < 1) start = 1;
+			if (finish > length) finish = length;
+			newlength = finish - start + 1;
+			if (newlength > 0) {
+				result = Melder_malloc (newlength + 1); cherror
+				strncpy (result, s->content.string + start - 1, newlength);
+				result [newlength] = '\0';
+			} else {
+				result = Melder_strdup (""); cherror
+			}
+			pushString (result);
 		} else {
-			result = Melder_strdup (""); cherror
+			Melder_error ("The function \"mid$\" requires a string and one or two numbers."); goto end;
 		}
-		pushString (result);
 	} else {
-		Melder_error ("The function \"mid$\" requires a string and two numbers."); goto end;
+		Melder_error ("The function \"mid$\" requires two or three arguments."); goto end;
 	}
 end: return;
 }

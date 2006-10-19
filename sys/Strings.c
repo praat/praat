@@ -20,12 +20,13 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/07/02 corrected Strings_randomize so that the first element can sometimes go to the first place
- * pb 2004/03/21 createAsFileList now accepts spaces in directory names on Unix and Mac
+ * pb 2004/03/21 Strings_createAsFileList now accepts spaces in directory names on Unix and Mac
  * pb 2004/04/20 the previous thing now done with backslashes rather than double quotes,
  *               because double quotes prevent the expansion of the wildcard asterisk
  * pb 2006/02/14 Strings_createAsDirectoryList for Windows
  * pb 2006/03/08 allow 1,000,000 file names in Strings_createAsFileList
  * pb 2006/09/19 Strings_createAsDirectoryList for Mac and Unix
+ * pb 2006/10/04 return fewer errors in Strings_createAsFileList and Strings_createAsDirectoryList
  */
 
 #include "Strings.h"
@@ -177,13 +178,14 @@ Strings Strings_createAsFileList (const char *path) {
 		my strings = NUMpvector (1, 1000000); cherror
 		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
 		searchHandle = FindFirstFile (searchPath, & findData);
-		if (searchHandle == INVALID_HANDLE_VALUE) { Melder_error ("Cannot find first file."); goto end; }
-		do {
-			if (! (findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-				my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
-			}
-		} while (FindNextFile (searchHandle, & findData));
-		FindClose (searchHandle);
+		if (searchHandle != INVALID_HANDLE_VALUE) {
+			do {
+				if (! (findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+					my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
+				}
+			} while (FindNextFile (searchHandle, & findData));
+			FindClose (searchHandle);
+		}
 	#elif defined (macintosh)
 		HFileParam pb;
 		char *asterisk, left [100], right [100], searchDirectory [256], *lastColon;
@@ -303,13 +305,14 @@ Strings Strings_createAsDirectoryList (const char *path) {
 		my strings = NUMpvector (1, 1000000); cherror
 		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
 		searchHandle = FindFirstFile (searchPath, & findData);
-		if (searchHandle == INVALID_HANDLE_VALUE) { Melder_error ("Cannot find first file."); goto end; }
-		do {
-			if ((findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-				my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
-			}
-		} while (FindNextFile (searchHandle, & findData));
-		FindClose (searchHandle);
+		if (searchHandle != INVALID_HANDLE_VALUE) {
+			do {
+				if ((findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+					my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
+				}
+			} while (FindNextFile (searchHandle, & findData));
+			FindClose (searchHandle);
+		}
 	#endif
 end:
 	iferror forget (me);

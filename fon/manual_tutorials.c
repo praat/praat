@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20060930)
+MAN_BEGIN ("What's new?", "ppgb", 20061019)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.4.34# (October 19, 2006)")
+LIST_ITEM ("\\bu Corrected a bug in the new @@Sound: To IntervalTier (silence)...@.")
+NORMAL ("##4.4.33# (October 4, 2006)")
+LIST_ITEM ("\\bu Windows: corrected a bug introduced in 4.4.31 that caused Praat to skip the first line of the Buttons file.")
 NORMAL ("##4.4.32# (September 30, 2006)")
 LIST_ITEM ("\\bu Scripting: more techniques for @@Scripting 4. Object selection|object selection@.")
 LIST_ITEM ("\\bu Scripting: more support for putting the results of the #Info command into a string variable.")

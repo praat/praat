@@ -622,6 +622,7 @@ static Boolean workProc (XtPointer void_me) {
 					& totalSamplesToRecord, & numberOfSamplesRecorded,
 					& totalMsecsToRecord, & numberOfMsecsRecorded);
 			if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
+			Melder_casual ("Meter level %ld", meterLevel);
 			if (meterLevel < 0) meterLevel = 0;   /* Should not occur. */
 			if (meterLevel > 255) meterLevel = 255;   /* Should not occur. */
 			leftMaximum = rightMaximum = 128 * meterLevel;

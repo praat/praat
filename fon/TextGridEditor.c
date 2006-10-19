@@ -48,18 +48,43 @@
 #define TextGridEditor_methods FunctionEditor_methods
 class_create_opaque (TextGridEditor, FunctionEditor)
 
+/*
+ * If you change any of the following, you may want to raise a version number in TextGridEditor_prefs ().
+ */
+#define TextGridEditor_DEFAULT_USE_TEXT_STYLES  FALSE
+#define TextGridEditor_DEFAULT_FONT_SIZE  18
+	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  "18"
+#define TextGridEditor_DEFAULT_ALIGNMENT  Graphics_CENTRE
+#define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  TRUE
+#define TextGridEditor_DEFAULT_SHOW_NUMBER_OF  2
+#define TextGridEditor_DEFAULT_GREEN_METHOD  Melder_STRING_EQUAL_TO
+#define TextGridEditor_DEFAULT_GREEN_STRING  "some text here for green paint"
+
 static struct {
-	int useTextStyles, fontSize, alignment, shiftDragMultiple, showNumberOf, greenMethod;
-	char greenString [Resources_STRING_BUFFER_SIZE];
+		int useTextStyles;
+			int fontSize;
+				int alignment;
+					int shiftDragMultiple;
+		int showNumberOf;
+			int greenMethod;
+				char greenString [Resources_STRING_BUFFER_SIZE];
 }
-	preferences = { FALSE, 12, Graphics_CENTRE, TRUE, 1, Melder_STRING_EQUAL_TO, "any matching string for green colouring" };
+	preferences = {
+		TextGridEditor_DEFAULT_USE_TEXT_STYLES,
+			TextGridEditor_DEFAULT_FONT_SIZE,
+				TextGridEditor_DEFAULT_ALIGNMENT,
+					TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE,
+		TextGridEditor_DEFAULT_SHOW_NUMBER_OF,
+			TextGridEditor_DEFAULT_GREEN_METHOD,
+				TextGridEditor_DEFAULT_GREEN_STRING
+	};
 
 void TextGridEditor_prefs (void) {
 	Resources_addInt ("TextGridEditor.useTextStyles", & preferences.useTextStyles);
-	Resources_addInt ("TextGridEditor.fontSize", & preferences.fontSize);
+	Resources_addInt ("TextGridEditor.fontSize2", & preferences.fontSize);
 	Resources_addInt ("TextGridEditor.alignment", & preferences.alignment);
 	Resources_addInt ("TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
-	Resources_addInt ("TextGridEditor.showNumberOf", & preferences.showNumberOf);
+	Resources_addInt ("TextGridEditor.showNumberOf2", & preferences.showNumberOf);
 	Resources_addInt ("TextGridEditor.greenMethod", & preferences.greenMethod);
 	Resources_addString ("TextGridEditor.greenString", & preferences.greenString [0]);
 }
@@ -271,24 +296,24 @@ static void dataChanged (I) {
 static void prefs_addFields (Any editor, EditorCommand cmd) {
 	Any radio;
 	(void) editor;
-	NATURAL ("Font size (points)", "18")
-	OPTIONMENU ("Text alignment in intervals", 2)
+	NATURAL ("Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
+	OPTIONMENU ("Text alignment in intervals", TextGridEditor_DEFAULT_ALIGNMENT + 1)
 		OPTION ("Left")
 		OPTION ("Centre")
 		OPTION ("Right")
-	OPTIONMENU ("The symbols %#_^ in labels", 1)
+	OPTIONMENU ("The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
 		OPTION ("are shown as typed")
 		OPTION ("mean italic/bold/sub/super")
-	OPTIONMENU ("With the shift key, you drag", 2)
+	OPTIONMENU ("With the shift key, you drag", TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE + 1)
 		OPTION ("a single boundary")
 		OPTION ("multiple boundaries")
-	OPTIONMENU ("Show number of", 1)
+	OPTIONMENU ("Show number of", TextGridEditor_DEFAULT_SHOW_NUMBER_OF)
 		OPTION ("nothing")
 		OPTION ("intervals or points")
 		OPTION ("non-empty intervals or points")
-	OPTIONMENU ("Paint intervals green whose label...", 1)
+	OPTIONMENU ("Paint intervals green whose label...", TextGridEditor_DEFAULT_GREEN_METHOD + 1 - Melder_STRING_min)
 	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
-	SENTENCE ("...the text", "some text here for green paint")
+	SENTENCE ("...the text", TextGridEditor_DEFAULT_GREEN_STRING)
 }
 static void prefs_setValues (I, EditorCommand cmd) {
 	iam (TextGridEditor);
@@ -1520,7 +1545,12 @@ static void draw (I) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
 			if (my showNumberOf == 2) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
-				Graphics_printf (my graphics, my endWindow, 0.5, "(%ld)", count);
+				long position = itier == my selectedTier ? ( isIntervalTier ? getSelectedInterval (me) : getSelectedPoint (me) ) : 0;
+				if (position) {
+					Graphics_printf (my graphics, my endWindow, 0.5, "(%ld/%ld)", position, count);
+				} else {
+					Graphics_printf (my graphics, my endWindow, 0.5, "(%ld)", count);
+				}
 			} else {
 				long count = 0;
 				if (isIntervalTier) {

@@ -28,6 +28,7 @@
  djmw 20050628 New and extended Sound_createShepardToneComplex that corrects incorrect amplitudes of tones in complex.
  		(amplitudes were on linear instead of log scale)
  djmw 20060921 Added Sound_to_IntervalTier_detectSilence
+ djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
 */
 
 #include "Sound_extensions.h"
@@ -1841,7 +1842,7 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	Vector_getMinimumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC,	&intensity_min_db, &xOfMinimum);
 	intensity_dbRange = intensity_max_db - intensity_min_db;
 	
-	if (intensity_dbRange < 10) Melder_warning ("The loudest part in your sound is only %lf dB from the softest part.", intensity_dbRange);
+	if (intensity_dbRange < 10) Melder_warning ("The loudest and softest part in your sound only differ by %lf dB.", intensity_dbRange);
 	
 	if (intensity_dbRange > intensity_max_dbRange) intensity_dbRange = intensity_max_dbRange;
 	intensityThreshold = intensity_max_db - (1 - silenceThreshold) * intensity_dbRange;
@@ -1883,7 +1884,7 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	
 	if (inSilenceInterval && 
 		! TextInterval_setText (thy intervals -> item[iinterval], silenceLabel)) goto end;
-	Sorted_sort (thee);
+	Sorted_sort (thy intervals);
 	
 	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
 	IntervalTier_removeBoundary_equalLabels (thee, "");
