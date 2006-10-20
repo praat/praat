@@ -1262,8 +1262,8 @@ NORMAL ("Suppose that you have a set of Praat scripts specialized in the analysi
 	"Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.")
 NORMAL ("What you do is that you create a Praat script called ##setup.praat# (in the same directory as the two other scripts), "
 	"that contains the following two lines:")
-CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analyseQuiek.praat")
-CODE ("@@Add menu command...@ Objects New \"Create queak...\" \"\" 0 createQuiek.praat")
+CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analyseQueak.praat")
+CODE ("@@Add menu command...@ Objects New \"Create queak...\" \"\" 0 createQueak.praat")
 NORMAL ("(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@; "
 	"but you are now going to install them in a different way.)")
 NORMAL ("You now put the three scripts in a new directory called ##plugin_Queak#, "
@@ -1277,12 +1277,12 @@ NORMAL ("To distribute the Queak plug-in among your colleague guinea pig researc
 	"the ##plugin_Queak# directory into the user's Praat preferences directory; or you could ask those colleagues to move "
 	"the ##plugin_Queak# directory there by hand.")
 ENTRY ("The structure of your plug-in directory")
-NORMAL ("In the example ##setup.praat# file above, the names of the scripts ##analyseQuiek.praat# and ##createQuiek.praat# "
+NORMAL ("In the example ##setup.praat# file above, the names of the scripts ##analyseQueak.praat# and ##createQueak.praat# "
 	"occur without any directory information. This works because Praat regards these file names as being relative to the directory "
 	"where ##setup.praat# is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
-	"the ##plugin_Queak#. For instance, if you put ##analyseQuiek.praat# into the subdirectory ##analysis#, "
+	"the ##plugin_Queak#. For instance, if you put ##analyseQueak.praat# into the subdirectory ##analysis#, "
 	"your line in the ##setup.praat# script would look as follows:")
-CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analysis/analyseQuiek.praat")
+CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analysis/analyseQueak.praat")
 NORMAL ("The forward slash (\"/\") in this example makes your plug-in platform-independent: it will work unchanged "
 	"on Windows, Macintosh, and Unix.")
 NORMAL ("Nothing prevents you from adding data files to your plug-in. For instance, your ##plugin_Queak# directory "

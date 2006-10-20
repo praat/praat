@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2006/10/20
  */
 
 #ifndef _Graphics_h_
@@ -42,7 +42,8 @@ typedef struct structManPage_Paragraph {
 	struct structManPage_Paragraph *paragraphs; \
 	long nlinksHither, nlinksThither; \
 	long *linksHither, *linksThither; \
-	double recordingTime;
+	double recordingTime; \
+	int hasEmbeddedScripts;
 #define ManPage_methods Thing_methods
 class_create (ManPage, Thing)
 

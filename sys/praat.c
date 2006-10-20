@@ -1132,7 +1132,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	#if defined (macintosh)
 		if (! Melder_batch)
-			praat_showLogo (TRUE);   /* Unix & Windows: earlier. */
+			/* praat_showLogo (TRUE);   /* Unix & Windows: earlier. */
 	#endif
 
 	/*

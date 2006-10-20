@@ -26,7 +26,7 @@
 void manual_Manual_init (ManPages me);
 void manual_Manual_init (ManPages me) {
 
-MAN_BEGIN ("Manual", "ppgb", 20040209)
+MAN_BEGIN ("Manual", "ppgb", 20061020)
 INTRO ("The documentation system for the P\\s{RAAT} program.")
 NORMAL ("You will get a manual window every time you choose anything from a #Help menu or press a #Help button.")
 ENTRY ("How to find what you are looking for")
@@ -53,16 +53,16 @@ NORMAL ("The search is case-insensitive. For instance, the search string \"$scri
 NORMAL ("#Background. The search algorithm uses the following heuristics:")
 LIST_ITEM ("\\bu A match in the page title is better than one in the rest of the text.")
 LIST_ITEM ("\\bu Pages with many matches are better than those with few.")
-ENTRY ("Your own man pages")
-NORMAL ("To create your own man pages, create @ManPages text files.")
+ENTRY ("Your own manual pages")
+NORMAL ("To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN ("ManPages", "ppgb", 20040208)
+MAN_BEGIN ("ManPages", "ppgb", 20061020)
 INTRO ("You can create a documentation or education system with files that you and others "
 	"can read into P\\s{RAAT} (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
 ENTRY ("Example 1: a single document")
-NORMAL ("If you create a single ManPages file, it will look like a manual with a single page. "
+NORMAL ("If you create a single ManPages text file, it will look like a manual with a single page. "
 	"Here is an example:")
 CODE ("ManPagesTextFile")
 CODE ("\"Welkom\" \"miep\" 19970820 0")
@@ -70,11 +70,11 @@ CODE ("<intro> \"Hallo allemaal!\"")
 CODE ("<entry> \"Belangrijk...\"")
 CODE ("<normal> \"Hoogge\\bse\\\" \\\" erd publiek!\"")
 CODE ("<normal> \"Einde.\"")
-NORMAL ("A ManPages file should start with the following information:")
+NORMAL ("A ManPages text file should start with the following information:")
 LIST_ITEM ("1. The word \"ManPagesTextFile\" on the first line.")
-LIST_ITEM ("2. The title of the man page, between double quotes. "
+LIST_ITEM ("2. The title of the manual page, between double quotes. "
 	"This will be drawn at the top of the page. "
-	"The name of the ManPages file should be derived from the title (see below).")
+	"The name of the ManPages text file should be derived from this title (see below).")
 LIST_ITEM ("3. The author of the man page, between double quotes. "
 	"This will be drawn at the bottom of the page.")
 LIST_ITEM ("4. The date you created or modified the page, "
@@ -96,15 +96,15 @@ ENTRY ("Example 2: multiple documents")
 NORMAL ("The above example with a single document is not very useful. "
 	"You will usually want to refer to other documents:")
 CODE ("ManPagesTextFile")
-CODE ("\"Welcome\" \"ppgb\" 19970820 1.0")
-CODE ("<intro> \"Welcome to our transcription course.\"")
+CODE ("\"Welcome\" \"Paul Boersma\" 19970820 1.0")
+CODE ("<intro> \"Welcome to Paul's transcription course.\"")
 CODE ("<entry> \"Groups of speech sounds\"")
 CODE ("<normal> \"You can listen to the following sounds")
 CODE ("from the languages of the world,")
 CODE ("pronounced by a single speaker (me):\\\"r")
 CODE ("<list_item> \"\\@ Vowels, quite problematic for Dutch students!\"")
 CODE ("<list_item> \"\\@ \\@ Dorsal fricatives\\@ , equally problematic!\"")
-NORMAL ("With the symbol `\\@ ', you create a %link to another ManPages file. "
+NORMAL ("With the symbol `\\@ ', you create a %link to another ManPages text file. "
 	"A link will be drawn in blue on your screen. "
 	"In this example, you have created links to the files ##Vowels.man# "
 	"and ##Dorsal_fricatives.man# in the same directory as the current file "
@@ -118,7 +118,7 @@ NORMAL ("In resolving the file name, the ManPages system replaces spaces "
 	"and converts any initial lower-case character by its upper-case variant. "
 	"For instance, if your link is \"\\@ \\@ back vowels\\@ \", "
 	"the file name will be ##Back_vowels.man#.")
-NORMAL ("The %title attribute of ##Back_vowels.man# must be equal to the link name, "
+NORMAL ("The title in the second line of ##Back_vowels.man# must be equal to the link name, "
 	"though capitalization of the first letter is allowed. "
 	"Thus, the title of ##Back_vowels.man# will probably be \"Back vowels\". "
 	"Likewise, the starting file with the title \"Welcome\" should have the name ##Welcome.man# "
@@ -142,6 +142,7 @@ NORMAL ("For a paragraph that should be connected with the following paragraph "
 	"without leaving a blank space "
 	"(probably a list item or a definition), you use the type <tag>.")
 NORMAL ("For a paragraph with a blank left margin, you use the type <definition>.")
+NORMAL ("For a paragraph with an embedded script (a picture), you use the type <script> (see below).")
 ENTRY ("Special symbols and styles")
 NORMAL ("You can use all of P\\s{RAAT}'s @@special symbols@ and @@text styles@, "
 	"except that some %single text-style symbols have different meanings:")
@@ -164,10 +165,55 @@ NORMAL ("The format of the sound link \"$$\\@ \\@ \\bsFIo.aifc|o\\@ $\" is to be
 	"as follows. The pipe symbol separates the link information (\\bsFIo.aifc) from the viewable "
 	"link text (o). The link information is introduced with a symbol (\\bsFI) that "
 	"tells the manual system that a sound file name follows. The manual system reads "
-	"this file, sees that it contains a sound, and plays that sound. "
-	"You can use relative path names, e.g., \\bsFIsounds/o.aifc refers to the file "
-	"##o.aifc# in the subdirectory #sounds, which must be contained in the same directory as the ##.man# files; "
-	"use the forward slash (/) if you want your man pages to run on all platforms (Windows, Macintosh, Unix).")
+	"this file, sees that it contains a sound, and plays that sound.")
+NORMAL ("You can use relative path names, e.g., \\bsFIsounds/o.aifc refers to the file "
+	"##o.aifc# in the subdirectory #sounds, which must be contained in the same directory "
+	"as the ##.man# files. To make sure that your man pages run on all platforms "
+	"(Windows, Macintosh, Unix), you will want to use the forward slash (/) to separate "
+	"the directory name(s) from the file name, as in this example "
+	"(i.e. you avoid the backslash (\\bs) that is usual on Windows computers).")
+ENTRY ("Pictures as embedded scripts")
+NORMAL ("Your text may contain Praat scripts. They typically draw a picture in your manual page. "
+	"The format is:")
+CODE ("<script> 4.5 4 \"")
+CODE1 ("Times")
+CODE1 ("12")
+CODE1 ("Draw inner box")
+CODE1 ("Axes... 0 100 0 100")
+CODE1 ("Text... 50 Centre 50 Half Hello!!")
+CODE ("\\\"r")
+NORMAL ("The two numbers after ##<script># are the width and the height of the picture "
+	"(the \"outer viewport\") in inches, if the font size of the manual is 12. "
+	"If the font size is larger, the viewport will be scaled up accordingly.")
+NORMAL ("Please note that the script is enclosed within double quotes. "
+	"Therefore, you will have to double any double quotes that occur in the script.")
+NORMAL ("A script like this can create objects in the list, if needed. However, you have to make sure "
+	"that you remove them after use and that you restore the original selection of objects:")
+CODE ("<script> 6 3 \"")
+CODE1 ("n = numberOfSelected ()")
+CODE1 ("for i to n")
+	CODE2 ("object'i' = selected (i)")
+CODE1 ("endfor")
+CODE1 ("Create Sound... sineWithNoise 0.0 1.0 22050 1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
+CODE1 ("To Spectrogram... 0.005 5000 0.002 20 Gaussian")
+CODE1 ("Paint... 0 0 0 0 100.0 yes 50.0 6.0 0.0 yes")
+CODE1 ("plus Sound sineWithNoise")
+CODE1 ("Remove")
+CODE1 ("if n > 0")
+	CODE2 ("select object1")
+	CODE2 ("for i from 2 to n")
+		CODE3 ("plus object'i'")
+	CODE2 ("endfor")
+CODE1 ("endif")
+CODE ("\\\"r")
+NORMAL ("Note that unlike the previous script, this script does not set the font and font size. "
+	"This means that the drawing will use the font and font size of the manual page, "
+	"which is usually what you want.")
+NORMAL ("For obvious safety reasons, the user will see a warning about "
+	"\"trusting the author of the manual pages\" if you include embedded scripts in your manual. "
+	"For the same reason it is impossible to include an embedded script "
+	"in the opening page of your manual. "
+	"If you try, the user will get a message that the manual pages cannot be opened.")
 ENTRY ("Script links")
 NORMAL ("Your text may contain links to Praat scripts. They are drawn in blue. "
 	"The format is:")
@@ -181,6 +227,8 @@ NORMAL ("If the script file name or any arguments except the last contain spaces
 	"within double quotes, which have to be doubled again in the ManPage code:")
 CODE ("<normal> \"Here is a script that \\@ \\@ \\bsSC\\\" \\\" my scripts/draw.praat\\\" \\\" |draws\\@  what you have selected.\"")
 CODE ("<normal> \"This script \\@ \\@ \\bsSC\\\" \\\" my scripts/load2files.praat\\\" \\\"  \\\" \\\" my sounds/hello.wav\\\" \\\"  my textgrids/hello.TextGrid|loads\\@  some files.\"")
+NORMAL ("For safety reasons, the user will see a warning about "
+	"\"trusting the author of the manual pages\" if you include script links in your manual.")
 ENTRY ("How to separate link information and link text")
 NORMAL ("The separation between link information and viewable link text, as seen "
 	"in the above description of sound and script links, is actually a general mechanism "
@@ -188,16 +236,16 @@ NORMAL ("The separation between link information and viewable link text, as seen
 	"in blue on your screen, and create a link from it to the page \"Dorsal fricatives\", "
 	"you specify the link as $$\\@ \\@ Dorsal fricatives|x\\@ $.")
 ENTRY ("Sound buttons")
-NORMAL ("If the %%Recording time% attribute is not 0, "
-	"three buttons will appear at the top of the page:")
-NORMAL ("1. The #%Rec button allows you to record a sound from the microphone.")
-NORMAL ("2. The #%Play button allows you to play this recorded sound. "
+NORMAL ("If the %%recording time% in the second line is not 0, "
+	"three buttons will appear near the top of the page:")
+NORMAL ("1. The #Record button allows you to record a sound from the microphone.")
+NORMAL ("2. The #Play button allows you to play this recorded sound. "
 	"In this way, you can compare your own utterances with the sounds "
 	"behind the sound links, for example.")
-NORMAL ("3. The #%Pub button copies the latest sound to the list of objects, "
+NORMAL ("3. The ##Copy last played to list# button copies the latest sound to the list of objects, "
 	"allowing you to perform analyses on it, save it to disk, et cetera. "
-	"The latest sound may be a sound that you recorded with the #%Rec button, "
-	"a sound that you played with the #%Play button, "
+	"The latest sound may be a sound that you recorded with the #Record button, "
+	"a sound that you played with the #Play button, "
 	"or a sound that you played by clicking on a sound link, "
 	"whichever occurred most recently.")
 MAN_END

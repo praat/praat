@@ -1,6 +1,6 @@
 /* Graphics_text.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2005/09/18 useSilipaPS, including bold
  * pb 2005/10/27 corrected character width for Symbol (should not depend on SILIPA setting)
  * pb 2005/11/11 Windows: font sizes up to 500
+ * pb 2006/10/20 links are recorded in DC (no longer WC)
  */
 
 #include <ctype.h>
@@ -1058,13 +1059,13 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 			if (plc -> link) {
 				if (! inLink) {
 					double descent = ( my screen ? -(0.3/72) : (0.3/72) ) * my fontSize * my resolution;
-					links [++ numberOfLinks]. x1 = (x - my deltaX) / my scaleX;
-					links [numberOfLinks]. y1 = (y - descent - my deltaY) / my scaleY;
-					links [numberOfLinks]. y2 = (y + 3 * descent - my deltaY) / my scaleY;
+					links [++ numberOfLinks]. x1 = x;
+					links [numberOfLinks]. y1 = y - descent;
+					links [numberOfLinks]. y2 = y + 3 * descent;
 					inLink = TRUE;
 				}
 			} else if (inLink) {
-				links [numberOfLinks]. x2 = (x - my deltaX) / my scaleX;
+				links [numberOfLinks]. x2 = x;
 				inLink = FALSE;
 			}
 			if (plc -> second == 1) {
@@ -1086,7 +1087,7 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 			}
 		}
 		if (inLink) {
-			links [numberOfLinks]. x2 = (x - my deltaX) / my scaleX;
+			links [numberOfLinks]. x2 = x;
 			inLink = FALSE;
 		}
 		my textX = (x - my deltaX) / my scaleX;

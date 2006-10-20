@@ -1,6 +1,6 @@
 /* Manual.c
  *
- * Copyright (C) 1996-2005 Paul Boersma
+ * Copyright (C) 1996-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,9 @@
  * pb 2003/11/26 use recording time from file
  * pb 2003/11/30 removed newline from date
  * pb 2004/02/08 allow arguments in scripts
- * pb 2005/05/08 script
+ * pb 2005/05/08 embedded scripts (for pictures)
  * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
+ * pb 2006/10/20 embedded scripts: not on opening page
  */
 
 #include <ctype.h>
@@ -546,11 +547,17 @@ int Manual_init (I, Widget parent, const char *title, Any data) {
 	ManPages manPages = data;
 	char windowTitle [101];
 	long i;
+	ManPage page;
 	ManPage_Paragraph par;
 	if (! (i = ManPages_lookUp (manPages, title)))
 		return Melder_error ("Page \"%s\" not found.", title);
 	my path = i;
-	my paragraphs = ((ManPage) manPages -> pages -> item [i]) -> paragraphs;
+	page = manPages -> pages -> item [i];
+	if (page -> hasEmbeddedScripts) {
+		return Melder_error ("This manual has an embedded script (a picture) on its opening page. "
+			"For safety reasons, Praat therefore cannot open this manual.");
+	}
+	my paragraphs = page -> paragraphs;
 	my numberOfParagraphs = 0;
 	par = my paragraphs;
 	while ((par ++) -> type) my numberOfParagraphs ++;

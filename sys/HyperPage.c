@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2005 Paul Boersma
+ * Copyright (C) 1996-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@
  * pb 2002/03/07 GPL
  * pb 2003/09/15 better positioning of buttons
  * pb 2004/11/23 made vertical spacing dependent on font size
- * pb 2005/05/07 script
+ * pb 2005/05/07 embedded scripts (for pictures)
  * pb 2005/07/19 moved "<1" and "1>" buttons to the top, removed horizontal scroll bar and page number
+ * pb 2006/10/20 embedded scripts allow links
  */
 
 #include <ctype.h>
@@ -56,11 +57,11 @@ void HyperPage_prefs (void) {
 class_methods (HyperLink, Data)
 class_methods_end
 
-HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, double y2) {
+HyperLink HyperLink_create (const char *name, double x1DC, double x2DC, double y1DC, double y2DC) {
 	HyperLink me = new (HyperLink);
 	if (! me) return NULL;
 	Thing_setName (me, name);
-	my x1 = x1, my x2 = x2, my y1 = y1, my y2 = y2;
+	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;
 	return me;
 }
 
@@ -421,6 +422,8 @@ int HyperPage_script (I, double width_inches, double height_inches, const char *
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
+	Graphics_Link *paragraphLinks;
+	int numberOfParagraphLinks, ilink;
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - 10) {
 		my y -= height_inches;
@@ -439,6 +442,13 @@ if (! my printing) {
 			praat_background ();
 			Interpreter_run (interpreter, text);
 			iferror Melder_clearError ();
+			numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+			if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+				HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
+					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
+					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
+				Collection_addItem (my links, link);
+			}
 			praat_foreground ();
 			praatP.inManual = FALSE;
 			praat.graphics = saveGraphics;
@@ -533,14 +543,12 @@ MOTIF_CALLBACK_END
 MOTIF_CALLBACK (cb_input)
 	iam (HyperPage);
 	MotifEvent event = MotifEvent_fromCallData (call);
-	int x = MotifEvent_x (event), y = MotifEvent_y (event), ilink;
-	double xWC, yWC;
+	int xDC = MotifEvent_x (event), yDC = MotifEvent_y (event), ilink;
 	if (! MotifEvent_isButtonPressedEvent (event)) return;
-	Graphics_DCtoWC (my g, x, y, & xWC, & yWC);
 	if (! my links) return;
 	for (ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = my links -> item [ilink];
-		if (yWC > link -> y1 && yWC < link -> y2 && xWC > link -> x1 && xWC < link -> x2) {
+		if (yDC > link -> y2DC && yDC < link -> y1DC && xDC > link -> x1DC && xDC < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
 			if (! HyperPage_goToPage (me, link -> name)) {
 				/* Allow for a returned 0 just to mean: 'do not jump'. */

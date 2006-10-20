@@ -1,6 +1,6 @@
 /* ManPages.c
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/09/27 corrected check for script files with arguments
  * pb 2004/10/16 C++ compatible structs
  * pb 2004/11/21 a link can have upper case while the man page has lower case
+ * pb 2006/10/20 embedded scripts
  */
 
 #include <ctype.h>
@@ -141,6 +142,12 @@ static int readOnePage (ManPages me, FILE *f) {
 			} else {
 				return 0;
 			}
+		}
+		if (par -> type == enumi (ManPage_TYPE, script)) {
+			page -> hasEmbeddedScripts = TRUE;
+			my executable = TRUE;
+			par -> width = ascgetr4 (f);
+			par -> height = ascgetr4 (f);
 		}
 		par -> text = ascgets2 (f);
 		if (! par -> text) return Melder_error ("Cannot find text.");

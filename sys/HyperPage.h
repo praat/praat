@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/07/19
+ * pb 2006/10/20
  */
 
 #ifndef _Editor_h_
@@ -34,7 +34,7 @@
 #endif
 
 #define HyperLink_members Data_members \
-	double x1, x2, y1, y2;
+	double x1DC, x2DC, y1DC, y2DC;
 #define HyperLink_methods Data_methods
 class_create (HyperLink, Data)
 

@@ -27,6 +27,7 @@
  * pb 2005/08/22 renamed the Control menu to "Praat" on all systems (like on the Mac)
  * pb 2005/11/18 HTML files are considered scripts (this is just for testing)
  * pb 2006/08/12 allowed renaming with European characters
+ * pb 2006/10/20 embedded scripts
  */
 
 #include <ctype.h>
@@ -330,7 +331,8 @@ static int readFromFile (MelderFile file) {
 		ManPage firstPage = pages -> pages -> item [1];
 		if (! Manual_create (praat.topShell, firstPage -> title, object)) return 0;
 		if (pages -> executable)
-			Melder_warning ("These pages contain links to executable scripts.\n"
+			Melder_warning ("These manual pages contain embedded scripts (pictures) "
+				"and/or links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return 1;
 	}
