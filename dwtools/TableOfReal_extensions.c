@@ -35,6 +35,7 @@
  djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
+ djmw 20061021 printf expects %ld for 'long int'
 */
 
 #include <ctype.h>
@@ -1032,7 +1033,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 				mark = my columnLabels[xcol];
 				if (! mark)
 				{
-					sprintf (label, "Column %d", xcol); mark = label;
+					sprintf (label, "Column %ld", xcol); mark = label;
 				}
 				Graphics_text (g, j - 0.5, n - i + 0.5, mark);
 			}

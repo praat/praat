@@ -1813,7 +1813,7 @@ static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, do
 }
 
 
-IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold, double minSilenceDuration, char *silenceLabel)
+IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold, double minSilenceDuration, double minNonSilenceDuration, char *silenceLabel)
 {
 	Sound resampled = NULL, filtered = NULL;
 	IntervalTier thee = NULL;
@@ -1822,7 +1822,7 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	long i, iinterval = 1;
 	double duration = my xmax -my xmin, time;
 	double resamplingFrequency = 8000;
-	double minimumPitch = 50, timeStep = 0.01;
+	double minimumPitch = 100, timeStep = 0.01;
 	double intensity_max_db, intensity_min_db, intensity_dbRange, intensity_max_dbRange = 40;
 	double intensityThreshold, xOfMaximum, xOfMinimum;
 	
@@ -1837,9 +1837,9 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	if (filtered == NULL) goto end;
 	intensity = Sound_to_Intensity (filtered, minimumPitch, timeStep, subtractMean);
 	if (intensity == NULL) goto end;
-	Vector_getMaximumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC,	&intensity_max_db, &xOfMaximum);
+	Vector_getMaximumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_max_db, &xOfMaximum);
 	
-	Vector_getMinimumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC,	&intensity_min_db, &xOfMinimum);
+	Vector_getMinimumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
 	intensity_dbRange = intensity_max_db - intensity_min_db;
 	
 	if (intensity_dbRange < 10) Melder_warning ("The loudest and softest part in your sound only differ by %lf dB.", intensity_dbRange);
@@ -1887,6 +1887,8 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	Sorted_sort (thy intervals);
 	
 	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
+	IntervalTier_removeBoundary_equalLabels (thee, "");
+	IntervalTier_removeBoundary_minimumDuration (thee, "", minNonSilenceDuration);
 	IntervalTier_removeBoundary_equalLabels (thee, "");
 	
 end:

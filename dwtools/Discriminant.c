@@ -27,6 +27,7 @@
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
  djmw 20050405 Modified column label: eigenvector->Eigenvector
+ djmw 20061021 printf expects %ld for 'long int'
 */
 
 #include "Discriminant.h"
@@ -460,10 +461,10 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 		char label[40];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-    	sprintf (label, "function %d", d2);
+    	sprintf (label, "function %ld", d2);
     	Graphics_textLeft (g, 1, label);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-    	sprintf (label, "function %d", d1);
+    	sprintf (label, "function %ld", d1);
 		Graphics_textBottom (g, 1, label);
 	}
 	

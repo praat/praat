@@ -22,6 +22,7 @@
  djmw 20030619 Added SVD_compute before SVD_solve
  djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
  	In previous version a NULL pointer was returned. New error messages.
+ djmw 20061021 printf expects %ld for 'long int'
 */
 
 #include "Polynomial.h"
@@ -2291,7 +2292,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 		{
     		if (order == 1) sprintf (ts, "t__1_");
 			else if (order == 2) sprintf (ts, "{t__1_, t__2_}");
-			else sprintf (ts, "{t__1_..t__%d_}", order);
+			else sprintf (ts, "{t__1_..t__%ld_}", order);
 		}
 		Graphics_markTop (g, my knots[1], 0, 1, 1, ts);
 	}
@@ -2299,7 +2300,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 	{
 		if (my knots[i] >= xmin && my knots[i] <= xmax)
 		{
-			if (garnish) sprintf (ts, "t__%d_", i + order - 1);
+			if (garnish) sprintf (ts, "t__%ld_", i + order - 1);
 			Graphics_markTop (g, my knots[i], 0, 1, 1, ts); 
 		}
 	}
@@ -2311,16 +2312,16 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 			long numberOfKnots = my numberOfKnots + 2 * (order - 1);
     		if (order == 1)
 			{
-				sprintf (ts, "t__%d_", numberOfKnots);
+				sprintf (ts, "t__%ld_", numberOfKnots);
 			}
 			else if (order == 2)
 			{
-				sprintf (ts, "{t__%d_, t__%d_}", numberOfKnots - 1,
+				sprintf (ts, "{t__%d_, t__%ld_}", numberOfKnots - 1,
 					numberOfKnots);
 			}
 			else
 			{
-				sprintf (ts, "{t__%d_..t__%d_}", numberOfKnots - order + 1,
+				sprintf (ts, "{t__%d_..t__%ld_}", numberOfKnots - order + 1,
 					numberOfKnots);
 			}
 		}

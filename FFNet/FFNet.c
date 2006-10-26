@@ -634,7 +634,7 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 		sprintf (text, "Units in layer %d ->", layer);
 		Graphics_textBottom (g, 0, text);
 		if (layer == 1) strcpy (text, "Input units ->");
-		else sprintf (text, "Units in layer %d ->", layer-1); 
+		else sprintf (text, "Units in layer %d ->", layer-1);
 		Graphics_textLeft (g, 0, text);
 		/* how do I find out the current settings ??? */
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);

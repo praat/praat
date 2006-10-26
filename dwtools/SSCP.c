@@ -44,6 +44,7 @@
  djmw 20060503 Covariance_getSignificanceOfMeansDifference: set probability = 0 if
  	var_pooled = 0 and paired.
  djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
+ djmw 20061021 printf expects %ld for 'long int'
 */
 
 #include "SSCP.h"
@@ -1241,10 +1242,10 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 		t = my item[1];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %d", d2);
+		sprintf (text, "Dimension %ld", d2);
     	Graphics_textLeft (g, 1, t -> rowLabels[d2] ? t -> rowLabels[d2] : text);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %d", d1);
+		sprintf (text, "Dimension %ld", d1);
 		Graphics_textBottom (g, 1, t -> rowLabels[d1] ? t -> rowLabels[d1] : text);
 	}	
 	forget (thee);
@@ -1298,10 +1299,10 @@ static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double sc
 		t = my item[1];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %d", d2);
+		sprintf (text, "Dimension %ld", d2);
     	Graphics_textLeft (g, 1, t -> rowLabels[d2] ? t -> rowLabels[d2] : text);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %d", d1);
+		sprintf (text, "Dimension %ld", d1);
 		Graphics_textBottom (g, 1, t -> rowLabels[d1] ? t -> rowLabels[d1] : text);
 	}	
 	forget (thee);

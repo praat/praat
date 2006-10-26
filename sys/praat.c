@@ -1120,7 +1120,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			Resources_read (& prefsFile);
 		#endif
 		#if ! defined (macintosh)
-			praat_showLogo (TRUE);   /* Mac: later. */
+			/* praat_showLogo (TRUE);   /* Mac: later. */
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
 			MelderMotif_create (praat.context, praat.topShell);   /* Mac: done this earlier. */
@@ -1131,8 +1131,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	praat.manPages = ManPages_create ();
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	#if defined (macintosh)
-		if (! Melder_batch)
+		if (! Melder_batch) {
 			/* praat_showLogo (TRUE);   /* Unix & Windows: earlier. */
+		}
 	#endif
 
 	/*

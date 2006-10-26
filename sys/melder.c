@@ -80,7 +80,7 @@ unsigned long Melder_systemVersion;
 
 static int defaultPause (char *message) {
 	int key;
-	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or anyother key to continue.\n", message);
+	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or any other key to continue.\n", message);
 	key = getc (stdin);
 	return key != 'q' && key != 'Q';
 }

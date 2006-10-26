@@ -145,7 +145,7 @@ NORMAL ("A table as above can be typed into a text file. The columns can be sepa
 	"The file can be read into Praat with ##Read Table from table file...#. "
 	"The command \"To logistic regression\" will become available in the #Statistics menu.")
 ENTRY ("What does it do?")
-SCRIPT (4.5, 4,
+/*SCRIPT (4.5, 4,
 	"Axes... 60 180 900 500\n"
 	"Marks bottom every... 1 30 yes yes no\n"
 	"Marks left every... 1 50 yes yes no\n"
@@ -162,7 +162,7 @@ SCRIPT (4.5, 4,
 	"Draw ellipse... mdur_ep-sdur mdur_ep+sdur mf1_ep-sf1 mf1_ep+sf1\n"
 	"Text... mdur_ep Centre mf1_ep Half /\\ep/\n"
 	"Draw inner box\n"
-)
+)*/
 NORMAL ("The logistic regression method will find values %\\al, %%\\be__F1_% and %%\\be__dur_% "
 	"that optimize")
 FORMULA ("%\\al + %%\\be__F1_% %F1__%k_ + %%\\be__dur_% %Dur__%k_ = ln (%p__%k_(/\\ep/)/%p__%k_(/\\ae/))")
@@ -174,7 +174,8 @@ NORMAL ("Praat will create an object of type #LogisticRegression in the list. "
 	"When you then click the #Info button, Praat will write the values of %\\al (the %intercept), "
 	"%%\\be__F1_% and %%\\be__dur_% into the Info window.")
 NORMAL ("The number of independent variables does not have to be 2; it can be 1 or more. "
-	"The number of dependent categories is always 2, and they should always be put in the last two columns of the table.")
+	"The number of dependent categories is always 2, and they should always be put in the last two columns of the table. "
+	"This will be made more flexible in a future version of Praat.")
 MAN_END
 
 }

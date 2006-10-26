@@ -2431,7 +2431,7 @@ CODE ("errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
 CODE ("if (errorMessage != NULL) fprintf (stderr, \"\\% s\", errorMessage);")
 NORMAL ("This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
 	"command in one of the menus of that program. "
-	"On Unix and Macintosh, sendpraat returns immediately; on Windows, you the %timeOut argument is ignored. "
+	"On Unix and Macintosh, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "
 	"The return value %errorMessage is a statically allocated string internal to sendpraat, "
 	"and is overwritten by the next call to sendpraat.")
 ENTRY ("Example 2: playing a sound file in reverse")
@@ -2440,7 +2440,7 @@ NORMAL ("Suppose you have a sound file whose name is in the variable $fileName, 
 	"to play this sound backwards.")
 CODE ("char message [1000], *errorMessage;")
 CODE ("sprintf (message, \"Read from file... \\% s\\bsnPlay reverse\\bsnRemove\", fileName);")
-CODE ("errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
+CODE ("errorMessage = #sendpraat (NULL, \"praat\", 1000, message);")
 NORMAL ("This will work because ##Play reverse# is an action command "
 	"that becomes available in the dynamic menu when a Sound is selected. "
 	"On Unix, sendpraat will allow #Praat at most 1000 seconds to perform this.")

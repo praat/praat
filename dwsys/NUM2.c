@@ -43,6 +43,7 @@
  djmw 20060517 Added NUMregexp_compile
  djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
  djmw 20060626 Extra NULL argument for ExecRE.
+ djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
 */
 
 #include "SVD.h"
@@ -177,7 +178,7 @@ static char *appendNumberToString (char *s, long number)
 	char buf[12], *new;
 	long ncharb, nchars = 0;
 	
-	ncharb = sprintf (buf, "%d", number);
+	ncharb = sprintf (buf, "%ld", number);
 	if (s != NULL) nchars = strlen (s);
 	new = Melder_malloc (nchars + ncharb + 1);
 	if (new == NULL) return NULL;

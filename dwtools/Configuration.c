@@ -25,6 +25,7 @@
  djmw 20040303 Moved containsPrintableCharacter to NUM2.c
  djmw 20041026 Removed non-used code.
  djmw 20050314 Configuration_draw crashed when rowlabel==NULL
+ djmw 20061021 printf expects %ld for 'long int'
  */
 
 #include <ctype.h>
@@ -564,7 +565,7 @@ Configuration Configuration_createLetterRExample (int choice)
 	for (i = 1; i <= 32; i++)
 	{
 		char s[20];
-		sprintf (s, "%d", i);
+		sprintf (s, "%ld", i);
 		TableOfReal_setRowLabel (me, i, s);
 		my data [i][1] = x[i];
 		my data [i][2] = y[i];

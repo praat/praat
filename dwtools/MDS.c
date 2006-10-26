@@ -1206,7 +1206,7 @@ void Salience_setDefaults (Salience me)
 	for (j = 1; j <= my numberOfColumns; j++)
 	{
 		char s[40];
-		sprintf (s,"dimension %d", j);
+		sprintf (s,"dimension %ld", j);
 		TableOfReal_setColumnLabel (me, j, s);
 	}
 }
@@ -4688,14 +4688,14 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
     	{
     		if (order == 1) sprintf (ts, "t__1_");
 			else if (order == 2) sprintf (ts, "{t__1_, t__2_}");
-			else sprintf (ts, "{t__1_..t__%d_}", order);
+			else sprintf (ts, "{t__1_..t__%ld_}", order);
 			Graphics_markBottom (g, low, 0, 0, 0, ts);
 		}
 		for (i = 1; i <= numberOfInteriorKnots; i++)
 		{
 			if (low <= knot[k+i] && knot[k+i] < high)
 			{
-				sprintf (ts, "t__%d_", order + i);
+				sprintf (ts, "t__%ld_", order + i);
 				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts); 
 				Graphics_markTop (g, knot[k+i], 1, 0, 0, 0);
 			}
@@ -4704,15 +4704,15 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		{
 			if (order ==1)
 			{
-				sprintf (ts, "t__%d_", lastKnot);
+				sprintf (ts, "t__%ld_", lastKnot);
 			}
 			else if (order == 2)
 			{
-				sprintf (ts, "{t__%d_, t__%d_}", lastKnot-1, lastKnot);
+				sprintf (ts, "{t__%ld_, t__%ld_}", lastKnot-1, lastKnot);
 			}
 			else 
 			{
-				sprintf (ts, "{t__%d_..t__%d_}", lastKnot-order+1, lastKnot);
+				sprintf (ts, "{t__%ld_..t__%ld_}", lastKnot-order+1, lastKnot);
 			}
 			Graphics_markBottom (g, high, 0, 0, 0, ts);
 		}

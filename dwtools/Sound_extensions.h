@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20060921 Latest modification
+ djmw 20061025 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -160,7 +160,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
 IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold,
-	double minSilenceDuration, char *silenceLabel);
+	double minSilenceDuration, double minNonSilenceDuration, char *silenceLabel);
 /*
 	Marks "silence" intervals in a sound.
 	silenceThreshold: silence-to-speech and speech-to-silence threshold as a fraction of the intensity

@@ -3155,12 +3155,14 @@ END
 
 FORM (Sound_to_IntervalTier_detectSilence, "Sound: To IntervalTier (silence)", "Sound: To IntervalTier (silence)...")
 	POSITIVE ("Silence threshold", "0.3")
-	POSITIVE ("Minimum silence duration", "0.100")
+	POSITIVE ("Minimum silence interval (s)", "0.100")
+	POSITIVE ("Minimum non-silence interval (s)", "0.100")
 	WORD ("Silence label", "#")	
 	OK
 DO
 	EVERY_TO (Sound_to_IntervalTier_detectSilence (OBJECT, GET_REAL ("Silence threshold"),
-		GET_REAL ("Minimum silence duration"), GET_STRING ("Silence label")))
+		GET_REAL ("Minimum silence interval"), GET_REAL ("Minimum non-silence interval"),
+		GET_STRING ("Silence label")))
 END
 
 FORM (Sound_to_MelFilter, "Sound: To MelFilter", 

@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20060921 Latest modification
+ djmw 20061025 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2819,9 +2819,13 @@ TAG ("%%Silence threshold%")
 DEFINITION ("determines the maximum silence intensity value (as a fraction of the intensity range in dB). "
 	"If the local intensity is below this value the frame is considered as silence. "
 	"For example, if %imax and %imin are the maximum and minimum intensity of the sound then the maximum silence intensity "
-	"is calculated as %%imax - (1 - silenceThreshold) * (imax - imin)%.")
-TAG ("%%Minimum silence duration%")
-DEFINITION ("determines the minimum duration for an interval to be considered as silence. ")
+	"is calculated as %%imin + silenceThreshold * (imax - imin)%.")
+TAG ("%%Minimum silence interval (s)%")
+DEFINITION ("determines the minimum duration for an interval to be considered as silence. "
+	"If you don't want the closure for a plosive to count as silence then use a large enough value. ")
+TAG ("%%Minimum non-silence interval (s)%")
+DEFINITION ("determines the minimum duration for an interval to be ##not# considered as silence. "
+	"This offers the possibility to filter out small intense bursts of relative short duration.")
 TAG ("%%Silence label%")
 DEFINITION ("determines the label for a silence interval in the IntervalTier.")
 MAN_END

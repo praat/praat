@@ -913,7 +913,17 @@ static void exitText (I) {
 }
 
 #define MAX_LINK_LENGTH  300
-#define MAX_NUM_WIDECHARS  30000
+
+static int Melder_growBuffer (void **buffer, long *bufferSize, int elementSize, long requestedSize) {
+	if (requestedSize > *bufferSize) {
+		requestedSize = (long) floor (1.618034 * requestedSize) + 31;
+		Melder_free (*buffer);
+		*buffer = Melder_calloc (requestedSize, elementSize);
+		if (*buffer == NULL) { *bufferSize = 0; return 0; }
+		*bufferSize = requestedSize;
+	}
+	return 1;
+}
 
 static long bufferSize;
 static _Graphics_widechar *widechar;
@@ -921,12 +931,14 @@ static char *charCodes;
 static int initBuffer (const char *txt) {
 	long sizeNeeded = strlen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
 	if (sizeNeeded > bufferSize) {
+		sizeNeeded += sizeNeeded / 2 + 100;
 		Melder_free (widechar);
 		Melder_free (charCodes);
 		if (! (widechar = Melder_calloc (sizeNeeded, sizeof (_Graphics_widechar))))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
 		if (! (charCodes = Melder_malloc (sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
+		bufferSize = sizeNeeded;
 	}
 	return 1;
 }

@@ -22,6 +22,7 @@
  djmw 20020315 GPL header
  djmw 20041027 Added AffineTransform_extractMatrix
  djmw 20050726 Added AffineTransform_extractTranslationVector
+ djmw 20061021 printf expects %ld for 'long int'
  */
 
 #include "AffineTransform.h"
@@ -148,7 +149,7 @@ TableOfReal AffineTransform_extractMatrix (I)
 	for (i = 1; i <= my n; i++)
 	{
 		char label[20];
-		(void) sprintf (label, "%d", i);
+		(void) sprintf (label, "%ld", i);
 		TableOfReal_setRowLabel (thee, i, label);
 		TableOfReal_setColumnLabel (thee, i, label);
 	}
