@@ -1,6 +1,6 @@
 /* manual_Voice.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 void manual_voice_init (ManPages me);
 void manual_voice_init (ManPages me) {
 
-MAN_BEGIN ("Voice", "ppgb", 20050930)
+MAN_BEGIN ("Voice", "ppgb", 20061028)
 INTRO ("This tutorial describes how you can do voice analysis with P\\s{RAAT}. "
 	"To understand this tutorial, you have to be familiar with the @Intro, "
 	"which describes the more general features of the @SoundEditor window.")
@@ -35,9 +35,12 @@ NORMAL ("Most of P\\s{RAAT}'s voice analysis methods start from the glottal puls
 NORMAL ("The Pulse menu contains the command @@Voice report@, which will show in the Info window "
 	"the results of many voice measurements for the visible part of the selection "
 	"(or for the visible part of the whole sound, if there is a cursor instead of a selection or if the selection is not visible).")
-NORMAL ("In general, you will want to be careful about the pitch range. The standard range is 75\\--600 Hertz, "
+ENTRY ("Pitch settings")
+NORMAL ("The results of the voice measurements will depend on your @@Pitch settings...|Pitch settings@. "
+	"In general, you will want to be careful about the pitch range. The standard range is 75\\--600 Hertz, "
 	"but take a range of e.g. 50\\--200 Hertz for pathological male voices if that is the typical range. "
-	"The `advanced' pitch settings like %%silence threshold% and %%octave jump cost% can stay at their standard values.")
+	"You may also want to choose ##Optimize for voice analysis#; otherwise, the voice report will complain about possible inaccuracies. "
+	"The `advanced' pitch settings like ##Silence threshold# and ##Octave jump cost# can stay at their standard values.")
 LIST_ITEM ("@@Voice 1. Voice breaks@")
 LIST_ITEM ("@@Voice 2. Jitter@")
 LIST_ITEM ("@@Voice 3. Shimmer@")
@@ -195,7 +198,7 @@ NORMAL ("The difference between Praat's and MDVP's jitter measures is due to a d
 	"averages away much of the influence of additive noise, whereas peak-picking is highly sensitive to additive noise.")
 MAN_END
 
-MAN_BEGIN ("Voice 6. Automating voice analysis with a script", "ppgb", 20050930)
+MAN_BEGIN ("Voice 6. Automating voice analysis with a script", "ppgb", 20061028)
 INTRO ("In a Praat script you usually do not want to raise a Sound window. "
 	"Instead, you probably want to work with objects in the Objects window only. "
 	"This page tells you how to do that for voice analysis.")
@@ -213,7 +216,9 @@ NORMAL ("Since the direct method of @@Sound: To PointProcess (periodic, cc)...@ 
 	"for computing the Pitch (which is optimal for intonation analysis), "
 	"you may prefer the two-step version if your goal is to do voice analysis. "
 	"In that case, you use @@Sound: To Pitch (cc)...@ as the first step, "
-	"and @@Sound & Pitch: To PointProcess (cc)@ as the second step.")
+	"and @@Sound & Pitch: To PointProcess (cc)@ as the second step. "
+	"This is also how the Sound window does it: if you choose ##Optimize for voice analysis# in the @@Pitch settings...|Pitch settings@, "
+	"Praat uses @@Sound: To Pitch (cc)...@ for pitch analysis.")
 NORMAL ("What you should %not do if you want to perform voice analysis is to create the PointProcess "
 	"by selecting a Pitch only and then choosing @@Pitch: To PointProcess@. In that way, "
 	"the resulting pulses would not be aligned to the periods in the Sound.")

@@ -1386,7 +1386,7 @@ FORM (old_Ltas_draw, "Ltas: Draw", 0)
 	OK
 DO
 	EVERY_DRAW (Ltas_draw (OBJECT, GRAPHICS, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
-		GET_REAL ("left Power range"), GET_REAL ("right Power range"), GET_INTEGER ("Garnish"), "bars"))
+		GET_REAL ("left Power range"), GET_REAL ("right Power range"), GET_INTEGER ("Garnish"), "Bars"))
 END
 
 FORM (Ltas_draw, "Ltas: Draw", 0)
@@ -1397,10 +1397,10 @@ FORM (Ltas_draw, "Ltas: Draw", 0)
 	BOOLEAN ("Garnish", 1)
 	LABEL ("", "")
 	OPTIONMENU ("Drawing method", 2)
-		OPTION ("curve")
-		OPTION ("bars")
-		OPTION ("poles")
-		OPTION ("speckles")
+		OPTION ("Curve")
+		OPTION ("Bars")
+		OPTION ("Poles")
+		OPTION ("Speckles")
 	OK
 DO_ALTERNATIVE (old_Ltas_draw)
 	EVERY_DRAW (Ltas_draw (OBJECT, GRAPHICS, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),

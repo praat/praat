@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061026)
+MAN_BEGIN ("What's new?", "ppgb", 20061028)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.01# (October 28, 2006)")
+LIST_ITEM ("\\bu Sound window: the pitch drawing method is #Curves, #Speckles, or #Automatic.")
+LIST_ITEM ("\\bu Corrected another bug in the new @@Sound: To IntervalTier (silence)...@.")
 NORMAL ("##4.5# (October 26, 2006)")
 NORMAL ("##4.4.35# (October 20, 2006)")
 LIST_ITEM ("\\bu In @ManPages you can now draw pictures.")

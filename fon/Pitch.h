@@ -71,23 +71,6 @@ int Pitch_Frame_init (Pitch_Frame me, int nCandidates);
 		my intensity == 0.0; // silent
 */
 
-/* Implemented methods:
-
-	Pitch::info (I)
-		gives statistical information about the periodic frames:
-		estimates of the 10%, 16%, 50%, 84%, and 90% points of the distribution;
-		estimates of the distances from the 50% point to the 16% and 84% points;
-		estimates of the mean and standard deviation of the distribution on a Hertz scale;
-		minimum and maximum values of the measured set.
-	Reading failures:
-		End time should be greater than start time.
-		Number of frames should be positive.
-		Time step should be greater than 0.0.
-		Maximum number of candidates should be positive.
-		Number of candidates at time 'x1+(frame-1)*dx' should be positive.
-		The number of frequency-strength pairs at time 'x1+(frame-1)*dx' should equal 'nCandidates [frame]'.
-*/
-
 int Pitch_isVoiced_i (Pitch me, long index);
 /*
 	Is the frame 'index' voiced?

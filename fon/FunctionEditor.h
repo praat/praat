@@ -93,6 +93,10 @@ struct FunctionEditor_pitch {
 	Pitch data; int show;
 	/* Pitch settings: */
 	double floor, ceiling; int unit;
+	#define FunctionEditor_pitch_DRAWING_METHOD_CURVE  1
+	#define FunctionEditor_pitch_DRAWING_METHOD_SPECKLE  2
+	#define FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC  3
+	int drawingMethod;
 	/* Advanced pitch settings: */
 	double viewFrom, viewTo;
 	int method, veryAccurate;

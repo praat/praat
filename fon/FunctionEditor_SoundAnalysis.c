@@ -139,7 +139,7 @@ static struct {
 	}, {
 		NULL, TRUE,
 		/* Pitch settings: */
-		75.0, 500.0, Pitch_UNIT_HERTZ,
+		75.0, 500.0, Pitch_UNIT_HERTZ, FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC,
 		/* Advanced pitch settings: */
 		0.0 /* auto view from */, 0.0 /* auto view to */,
 		1, FALSE,
@@ -189,6 +189,7 @@ void FunctionEditor_SoundAnalysis_prefs (void) {
 	Resources_addDouble ("FunctionEditor.pitch.floor", & preferences.pitch.floor);
 	Resources_addDouble ("FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling);
 	Resources_addInt ("FunctionEditor.pitch.unit", & preferences.pitch.unit);
+	Resources_addInt ("FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod);
 	Resources_addDouble ("FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom);
 	Resources_addDouble ("FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo);
 	Resources_addInt ("FunctionEditor.pitch.method", & preferences.pitch.method);
@@ -437,9 +438,9 @@ END
 
 FORM (FunctionEditor, cb_timeStepSettings, "Time step settings", "Time step settings...")
 	OPTIONMENU ("Time step strategy", 1)
-		OPTION ("Automatic")
-		OPTION ("Fixed")
-		OPTION ("View-dependent")
+		OPTION ("automatic")
+		OPTION ("fixed")
+		OPTION ("view-dependent")
 	LABEL ("", "")
 	LABEL ("", "If the time step strategy is \"fixed\":")
 	POSITIVE ("Fixed time step (s)", "0.01")
@@ -618,12 +619,17 @@ FORM (FunctionEditor, cb_pitchSettings, "Pitch settings", "Intro 4.2. Configurin
 	RADIO ("Optimize for", 1)
 		RADIOBUTTON ("Intonation (AC method)")
 		RADIOBUTTON ("Voice analysis (CC method)")
+	OPTIONMENU ("Drawing method", FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC)
+		OPTION ("curve")
+		OPTION ("speckles")
+		OPTION ("automatic")
 	LABEL ("note1", "")
 	LABEL ("note2", "")
 	OK
 SET_REAL ("left Pitch range", my pitch.floor)
 SET_REAL ("right Pitch range", my pitch.ceiling)
 SET_INTEGER ("Unit", my pitch.unit + 1 - Pitch_UNIT_min)
+SET_INTEGER ("Drawing method", my pitch.drawingMethod)
 SET_INTEGER ("Optimize for", my pitch.method)
 if (my pitch.viewFrom != 0.0 || my pitch.viewTo != 0.0 ||
     my pitch.veryAccurate != FALSE || my pitch.maximumNumberOfCandidates != 15 ||
@@ -644,6 +650,7 @@ DO
 	preferences.pitch.floor = my pitch.floor = GET_REAL ("left Pitch range");
 	preferences.pitch.ceiling = my pitch.ceiling = GET_REAL ("right Pitch range");
 	preferences.pitch.unit = my pitch.unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+	preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_INTEGER ("Drawing method");
 	preferences.pitch.method = my pitch.method = GET_INTEGER ("Optimize for");
 	forget (my pitch.data);
 	forget (my intensity.data);
@@ -1263,18 +1270,26 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		long numberOfVisiblePitchPoints = (long) ((my endWindow - my startWindow) / timeStep);
 		Graphics_setColour (my graphics, Graphics_CYAN);
 		Graphics_setLineWidth (my graphics, 3.0);
-		if (undersampled || numberOfVisiblePitchPoints < 101) {
+		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_SPECKLE)
+		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 2, my pitch.unit);
 		}
-		if (! undersampled) {
+		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && ! undersampled) ||
+		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_CURVE)
+		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
 		Graphics_setColour (my graphics, Graphics_BLUE);
 		Graphics_setLineWidth (my graphics, 1.0);
-		if (undersampled || numberOfVisiblePitchPoints < 101) {
+		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_SPECKLE)
+		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 1, my pitch.unit);
 		}
-		if (! undersampled) {
+		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && ! undersampled) ||
+		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_CURVE)
+		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);

@@ -1,6 +1,6 @@
 /* Vector.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/10/24 Sampled statistics
  * pb 2005/06/16 units
+ * pb 2006/10/28 Vector_draw case-insensitive
  */
 
 #include "Vector.h"
@@ -272,7 +273,7 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	 */
 	Graphics_setInner (g);
 	Graphics_setWindow (g, *pxmin, *pxmax, *pymin, *pymax);
-	if (strstr (method, "bars")) {
+	if (strstr (method, "bars") || strstr (method, "Bars")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			double y = my z [1] [ix];
@@ -284,19 +285,19 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 			Graphics_line (g, left, y, left, *pymin);
 			Graphics_line (g, right, y, right, *pymin);
 		}
-	} else if (strstr (method, "poles")) {
+	} else if (strstr (method, "poles") || strstr (method, "Poles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_line (g, x, 0, x, my z [1] [ix]);
 		}
-	} else if (strstr (method, "speckles")) {
+	} else if (strstr (method, "speckles") || strstr (method, "Speckles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_fillCircle_mm (g, x, my z [1] [ix], 1.0);
 		}
 	} else {
 		/*
-		 * The default default: draw as a curve.
+		 * The default: draw as a curve.
 		 */
 		Graphics_function (g, my z [1], ixmin, ixmax,
 			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
