@@ -1,6 +1,6 @@
 /* Sound_audio.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
  * pb 2005/06/16 removed previous change (System Preferences handles this)
  * pb 2005/10/13 edition for OpenBSD
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <errno.h>
@@ -43,6 +44,10 @@
 #if defined (sgi)
 	#include <audio.h>
 	#include <unistd.h>   /* sginap (): nap while waiting for a sound to finish playing. */
+#elif defined (macintosh)
+	#include "macport_on.h"
+	#include <Carbon/Carbon.h>
+	#include "macport_off.h"
 #elif defined (linux)
 	#include <fcntl.h>
 	#if defined (__OpenBSD__) || defined (__NetBSD__)
@@ -68,16 +73,6 @@
 	#include <sys/audio.h>
 	#include <sys/ioctl.h>
 	#include <sys/stat.h>
-#elif defined (macintosh)
-	#include "macport_on.h"
-	#include <Resources.h>
-	#include <MacMemory.h>
-	#include <Sound.h>
-	#if ! defined (__MACH__) || defined (__GNUC__)
-		#include <SoundInput.h>
-	#endif
-	#include <Gestalt.h>
-	#include "macport_off.h"
 #elif defined (_WIN32)
 	#include <windows.h>
 	#include <mmsystem.h>

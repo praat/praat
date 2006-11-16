@@ -40,7 +40,9 @@ static void logo (Graphics g) {
 		Graphics_text (g, 0.5, 0.66, "P\\s{RAAT}");
 	#endif
 	Graphics_setFontSize (g, 15);
-	Graphics_text (g, 0.5, 0.55, "%%doing phonetics by computer");
+	int i = 9;   // C99 test
+	bool b = true;   // C99 test
+	Graphics_text (g, 0.5, 0.55, "%%doing phonetics by computer");   // C99 test
 	#define xstr(s) str(s)
 	#define str(s) #s
 	Graphics_text (g, 0.5, 0.45, "version " xstr(PRAAT_VERSION));

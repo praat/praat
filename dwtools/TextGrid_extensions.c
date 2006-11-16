@@ -25,6 +25,8 @@
  djmw 20060517 Added (TextTier|IntervalTier|TextGrid)_changeLabels.
  djmw 20060712 TextGrid_readFromTIMITLabelFile: don't set first boundary to zero for .wrd files.
  djmw 20060921 Added IntervalTier_removeBoundary_equalLabels, IntervalTier_removeBoundary_minimumDuration
+ djmw 20061113 Reassign item in list after a deletion.
+ djmw 20061116 Added IntervalTier_removeInterval to correct a bug in IntervalTier_removeBoundary...
 */
 
 #include <ctype.h>
@@ -385,6 +387,42 @@ int TextGrid_setTierName (TextGrid me, long itier, char *newName)
 	return 1;
 }
 
+static void IntervalTier_removeInterval (IntervalTier me, long index, int extend_option)
+{
+	long size_pre = my intervals -> size;
+		
+	/* There always must be at least one interval */
+	if (size_pre == 1 || index > size_pre || index < 1) return;
+	
+	TextInterval ti = my intervals -> item[index];
+	double xmin = ti -> xmin;
+	double xmax = ti -> xmax;
+	Collection_removeItem (my intervals, index);
+	if (index == 1) // Change xmin of the new first interval.
+	{
+		ti = my intervals -> item[index];
+		ti -> xmin = xmin;
+	}
+	else if (index == size_pre) // Change xmax of the new last interval.
+	{
+		ti = my intervals -> item[my intervals -> size];
+		ti -> xmax = xmax;
+	}
+	else
+	{
+		if (extend_option == 0) // extend earlier interval to the right
+		{
+			ti = my intervals -> item[index -1];
+			ti -> xmax = xmax;
+		}
+		else // extend next interval to the left
+		{
+			ti = my intervals -> item[index];
+			ti -> xmin = xmin;
+		}
+	}
+}
+
 void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, char *label, double minimumDuration)
 {
 	long i = 1;
@@ -396,8 +434,7 @@ void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, char *label, 
 		if (((label != NULL && (NUMstrcmp (ti -> text, label) == 0)) || label == NULL) && 
 			ti -> xmax - ti -> xmin < minimumDuration)
 		{
-			Collection_removeItem (my intervals, i);
-			ti -> xmax = xmax;
+			IntervalTier_removeInterval (me, i, 0);
 		}
 		else
 		{
@@ -417,8 +454,8 @@ void IntervalTier_removeBoundary_equalLabels (IntervalTier me, char *label)
 		if (((label != NULL && (NUMstrcmp (ti -> text, label) == 0)) || label == NULL) && 
 			(NUMstrcmp (ti -> text, tip1 -> text) == 0))
 		{
-			Collection_removeItem (my intervals, i+1);
-			ti -> xmax = xmax;
+			
+			IntervalTier_removeInterval (me, i, 1);
 		}
 		else
 		{

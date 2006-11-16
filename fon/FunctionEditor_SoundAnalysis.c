@@ -56,6 +56,7 @@
  * pb 2005/08/18 editor name in log files
  * pb 2006/02/27 more helpful text when analyses are not shown
  * pb 2006/09/12 better messages if analysis not available
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <time.h>
@@ -83,17 +84,10 @@ struct logInfo {
 };
 
 #if defined (macintosh)
-	#if defined __MACH__
-		#define LOG_1_FILE_NAME "~/Desktop/Pitch Log"
-		#define LOG_2_FILE_NAME "~/Desktop/Formant Log"
-		#define LOG_3_FILE_NAME "~/Desktop/Log script 3"
-		#define LOG_4_FILE_NAME "~/Desktop/Log script 4"
-	#else
-		#define LOG_1_FILE_NAME "Macintosh HD:Desktop Folder:Pitch Log"
-		#define LOG_2_FILE_NAME "Macintosh HD:Desktop Folder:Formant Log"
-		#define LOG_3_FILE_NAME "Macintosh HD:Desktop Folder:Log script 3"
-		#define LOG_4_FILE_NAME "Macintosh HD:Desktop Folder:Log script 4"
-	#endif
+	#define LOG_1_FILE_NAME "~/Desktop/Pitch Log"
+	#define LOG_2_FILE_NAME "~/Desktop/Formant Log"
+	#define LOG_3_FILE_NAME "~/Desktop/Log script 3"
+	#define LOG_4_FILE_NAME "~/Desktop/Log script 4"
 #elif defined (WIN32)
 	#define LOG_1_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Pitch Log.txt"
 	#define LOG_2_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Formant Log.txt"

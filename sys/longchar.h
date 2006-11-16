@@ -110,8 +110,7 @@ typedef struct Longchar_Info {
 	unsigned short macEncoding;   /* The one-byte encoding for Macintosh (Mac for Roman; SILDoulosIPA 1993). */
 	unsigned short psEncoding;   /* The one-byte encoding for PostScript (Mac-Praat, TeX-xipa-Praat). */
 	unsigned short unicode;   /* The two-byte encoding for Unicode. */
-	const char *sgml;   /* The SGML name, max. 6 characters between ampersand and semicolon. */
-	const char *tex;   /* The TEX name, between backslash and space. */
+	unsigned short unicodeDecomposition [6];   /* Diacritics decoupled from the base character. */
 }
 	*Longchar_Info;
 

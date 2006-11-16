@@ -1,6 +1,6 @@
 /* ExperimentMFC.c
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  *     that caused Praat to crash if the carrier before was longer than the carrier after
  * pb 2005/11/21 added replay button; version 4
  * pb 2005/12/02 response sounds are read
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "ExperimentMFC.h"
@@ -70,13 +71,11 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 	structMelderFile file;
 	strcpy (fileNameBuffer, *name);
 	/*
-	 * The following conversions are needed when fileNameHead is an absolute path,
+	 * The following conversion is needed when fileNameHead is an absolute path,
 	 * and the stimulus names contain slashes for relative paths.
 	 * An ugly case, but allowed.
 	 */
-	#if defined (macintosh) && ! defined (__MACH__)
-		for (;;) { char *slash = strchr (fileNames, '/'); if (! slash) break; *slash = ':'; }
-	#elif defined (_WIN32)
+	#if defined (_WIN32)
 		for (;;) { char *slash = strchr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
 	#endif
 	forget (*sound);

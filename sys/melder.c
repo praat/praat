@@ -101,10 +101,6 @@ static void defaultWarning (char *message) {
 	fprintf (stderr, "Warning: %s\n", message);
 }
 
-static void defaultError (char *message) {
-	fprintf (stderr, strstr (message, "You interrupted") ? "User interrupt: %s\n" : "Error: %s\n", message);
-}
-
 static void defaultFatal (char *message) {
 	fprintf (stderr, "Fatal error: %s\n", message);
 }
@@ -140,7 +136,6 @@ static struct {
 	void (*help) (const char *query);
 	void (*search) (void);
 	void (*warning) (char *message);
-	void (*error) (char *message);
 	void (*fatal) (char *message);
 	int (*publish) (void *anything);
 	int (*record) (double duration);
@@ -151,7 +146,7 @@ static struct {
 }
 	theMelder = {
 		defaultPause, defaultInformation, defaultHelp, defaultSearch,
-		defaultWarning, defaultError, defaultFatal,
+		defaultWarning, defaultFatal,
 		defaultPublish,
 		defaultRecord, defaultRecordFromFile, defaultPlay, defaultPlayReverse, defaultPublishPlayed
 	};
@@ -676,62 +671,6 @@ void Melder_beep (void) {
 
 /*********** ERROR **********/
 
-static char errors [2001];   /* Safe in low-memory situations. */
-
-static void appendError (const char *message) {
-	int length = strlen (errors), messageLength = strlen (message);
-	if (length + messageLength > 2000 - 1) return;   /* 1 == length of "\n" */
-	strcpy (errors + length, message);
-	strcpy (errors + length + messageLength, "\n");
-}
-
-int Melder_error (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	vsprintf (Melder_buffer1, format, arg);
-	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-	appendError (Melder_buffer2);
-	va_end (arg);
-	return 0;
-}
-
-void * Melder_errorp (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	vsprintf (Melder_buffer1, format, arg);
-	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-	appendError (Melder_buffer2);
-	va_end (arg);
-	return NULL;
-}
-
-int Melder_hasError (void) { return errors [0] != '\0'; }
-
-void Melder_clearError (void) { errors [0] = '\0'; }
-
-char * Melder_getError (void) { return & errors [0]; }
-
-void Melder_flushError (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	if (format) {
-		vsprintf (Melder_buffer1, format, arg);
-		Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-		appendError (Melder_buffer2);
-	}
-	/*
-		"errors" has to be cleared *before* the message is put on the screen.
-		This is because on some platforms the message dialog is synchronous
-		(Melder_flushError will wait until the message dialog is closed),
-		and some operating systems may force an immediate redraw event as soon as
-		the message dialog is closed. We want "errors" to be empty when redrawing!
-	*/
-	strcpy (Melder_buffer1, errors);
-	Melder_clearError ();
-	theMelder. error (Melder_buffer1);
-	va_end (arg);
-}
-
 int Melder_fatal (const char *format, ...) {
 	const char *lead = strstr (format, "Praat cannot start up") ? "" :
 		"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n";
@@ -830,8 +769,7 @@ static void motif_fatal (char *message)
 	pmessage [0] = length;
 	strcpy ((char *) pmessage + 1, message);
 	for (i = 1; i <= length; i ++) if (pmessage [i] == '\n') pmessage [i] = '\r';
-	ParamText (pmessage, "\p", "\p", "\p");
-	Alert (129, NULL);
+	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
 	SysError (11);
 }
 static void motif_error (char *message) {
@@ -843,8 +781,7 @@ static void motif_error (char *message) {
 	pmessage [0] = length;
 	strncpy ((char *) pmessage + 1, message, 255);   /* Not strcpy! */
 	for (i = 1; i <= length; i ++) if (pmessage [i] == '\n') pmessage [i] = '\r';
-	ParamText (pmessage, "\p", "\p", "\p");
-	Alert (130, NULL);
+	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
 	XmUpdateDisplay (0);
 }
 #elif defined (_WIN32)
@@ -878,23 +815,6 @@ void MelderMotif_create (void *appContext, void *parent) {
 	Melder_setPauseProc (motif_pause);
 }
 
-#if defined(macintosh) && ! defined(__MACH__)
-	/* Divert the printf in Melder_casual. */
-	#ifndef __CONSOLE__
-	#include <console.h>
-	#endif
-	short InstallConsole (short fd) { (void) fd; return 0; }
-	void RemoveConsole (void) { }
-	long WriteCharsToConsole (char *buffer, long n) {
-		static char bufferWithZero [20000];
-		strncpy (bufferWithZero, buffer, n);
-		bufferWithZero [n] = '\0';
-		Melder_information ("%s", bufferWithZero);
-		return n;
-	}
-	long ReadCharsFromConsole (char *buffer, long n) { (void) buffer; (void) n; return 0; }
-	extern char * __ttyname (long fd) { return fd >= 0 && fd <= 2 ? "null device" : NULL; }
-#endif
 #endif
 
 int Melder_publish (void *anything) {
@@ -937,9 +857,6 @@ void Melder_setSearchProc (void (*search) (void))
 
 void Melder_setWarningProc (void (*warning) (char *))
 	{ theMelder. warning = warning ? warning : defaultWarning; }
-
-void Melder_setErrorProc (void (*error) (char *))
-	{ theMelder. error = error ? error : defaultError; }
 
 void Melder_setFatalProc (void (*fatal) (char *))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }

@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20061025 Latest modification
+ djmw 20061101 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2828,6 +2828,13 @@ DEFINITION ("determines the minimum duration for an interval to be ##not# consid
 	"This offers the possibility to filter out small intense bursts of relative short duration.")
 TAG ("%%Silence label%")
 DEFINITION ("determines the label for a silence interval in the IntervalTier.")
+ENTRY ("Algorithm")
+NORMAL ("First the intensity contour is evaluated and the intervals above and below the silence threshold are marked. "
+	"We then remove non-silence intervals with a duration smaller than the %%Minimum non-silence interval%. "
+	"This step is followed by a joining of the neighbouring silence intervals that resulted because of this removal."
+	"Finally we remove silence intervals with a duration smaller than the %%Minimum silence interval%. "
+	"this is followed by a joining of the neighbouring non-silence intervals that resulted because of this removal.")
+NORMAL ("Experience showed that first removing short intensity bursts instead of short silences gave better results than the other way around.")
 MAN_END
 
 MAN_BEGIN ("Sound & Pitch: To FormantFilter...", "djmw", 20010404)

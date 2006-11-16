@@ -19,6 +19,7 @@
 
 /*
  djmw 20060906
+ TODO: reverse x and y. Reference should always be vertical!
 */
 
 #include "DTW_and_TextGrid.h"
@@ -86,7 +87,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 	if (him == NULL) return NULL;
 	if (my xmin != thy xmin || my xmax != thy xmax)
 	{
-		(void) Melder_error ("%s: The domain of the TextGrid and the x-domain of the DTW must be equal.", proc);
+		(void) Melder_error ("%s: The domain of the TextGrid and the y-domain of the DTW must be equal.", proc);
 		goto end;
 	}
 	

@@ -1,5 +1,5 @@
 /* Printer.c
- * Copyright (C) 1998-2005 Paul Boersma
+ * Copyright (C) 1998-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,12 @@
  * pb 2004/09/25 use /tmp as temporary directory
  * pb 2005/05/19 preference to switch screen preview off
  * pb 2005/07/21 removed bug in previous change for Linux
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "melder.h"
 
-#if defined (macintosh)
-	#include "macport_on.h"
-	#include <MacMemory.h>
-	#if TARGET_API_MAC_CARBON
-		#define PM_USE_SESSION_APIS  1
-		#include <PMApplication.h>
-		#define carbon 1
-	#else
-		#include <Printing.h>
-		#define carbon 0
-	#endif
-	#include "macport_off.h"
-#elif defined (_WIN32)
+#if defined (_WIN32)
 	#include <windows.h>
 #endif
 
@@ -68,16 +57,11 @@ void Printer_prefs (void) {
 }
 
 #if defined (macintosh)
-	#if carbon
-		static PMPrintSession theMacPrintSession;
-		static PMPageFormat theMacPageFormat;
-		static PMPrintSettings theMacPrintSettings;
-		static GrafPtr theMacPort;
-		static PMRect paperSize;
-	#else
-		static THPrint theMacPrint;
-		static TPPrPort theMacPort;
-	#endif
+	static PMPrintSession theMacPrintSession;
+	static PMPageFormat theMacPageFormat;
+	static PMPrintSettings theMacPrintSettings;
+	static GrafPtr theMacPort;
+	static PMRect paperSize;
 	#define POSTSCRIPT_BEGIN  190
 	#define POSTSCRIPT_END  191
 	#define POSTSCRIPT_HANDLE  192
@@ -119,12 +103,8 @@ void Printer_prefs (void) {
 			length = strlen (*theLine);
 			if (length > 0 && (*theLine) [length - 1] == '\n')
 				(*theLine) [length - 1] = '\r';
-			#if carbon
-				SetPort (theMacPort);
-				PMSessionPostScriptData (theMacPrintSession, *theLine, strlen (*theLine));
-			#else
-				PicComment (POSTSCRIPT_HANDLE, strlen (*theLine), theLine);
-			#endif
+			SetPort (theMacPort);
+			PMSessionPostScriptData (theMacPrintSession, *theLine, strlen (*theLine));
 		#endif
 		va_end (args);
 		return 1;
@@ -172,11 +152,7 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		/*
 		 * Send direct PostScript commands.
 		 */
-		#if carbon
-			PMSessionPostScriptBegin (theMacPrintSession);
-		#else
-			PicComment (POSTSCRIPT_BEGIN, 0, NULL);
-		#endif
+		PMSessionPostScriptBegin (theMacPrintSession);
 		initPostScriptPage ();
 	}
 	static void closePostScript (void) {
@@ -185,66 +161,31 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		 */
 		SetPort ((GrafPtr) theMacPort);
 		exitPostScriptPage ();
-		#if carbon
-			PMSessionPostScriptEnd (theMacPrintSession);
-		#else
-			PicComment (POSTSCRIPT_END, 0, NULL);
-		#endif
+		PMSessionPostScriptEnd (theMacPrintSession);
 	}
 #endif
 
 #if defined (macintosh)
 	static void initPrinter (void) {
-		#if carbon
-			Boolean result;
-			PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
-			if (theMacPrintSettings == NULL) {   /* Once. */
-				PMCreateSession (& theMacPrintSession);   /* Initialize the Printing Manager. */
-				PMCreatePageFormat (& theMacPageFormat);
-				PMCreatePrintSettings (& theMacPrintSettings);
-				PMSessionDefaultPageFormat (theMacPrintSession, theMacPageFormat);
-				PMSessionDefaultPrintSettings (theMacPrintSession, theMacPrintSettings);
-			}
-			PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-			PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-			/*
-			 * BUG.
-			 * If we now ask for the available printer resolutions,
-			 * we may get the answer that there's only 300 dpi (perhaps PostScript drivers say so?).
-			 * So we don't rely on that and have a buggy assumption instead.
-			 */
-			PMSetResolution (theMacPageFormat, & res300);   /* Perhaps all printers have this... */
-			PMSetResolution (theMacPageFormat, & res600);   /* ... but this is preferred. */
-		#else
-			TGetRslBlk getResolution;
-			TSetRslBlk setResolution;
-			if (theMacPrint == NULL) {   /* Once. */
-				PrOpen ();   /* Initialize the Printing Manager. */
-				theMacPrint = (THPrint) NewHandle (sizeof (TPrint));
-				PrintDefault (theMacPrint);
-			}
-			/*
-			 * Set the printing record's resolution to
-			 * the printer's physical resolution,
-			 * instead of 72 x 72 dots per inch.
-			 */
-			getResolution. iOpCode = getRslDataOp;
-			PrGeneral ((Ptr) & getResolution);
-			setResolution. iOpCode = setRslOp;
-			setResolution. hPrint = theMacPrint;
-			/*
-			 * Try 600 dpi if possible, else the default resolution.
-			 */
-			if (getResolution. xRslRg.iMin <= 600 && getResolution. xRslRg.iMax >= 600 &&
-			    getResolution. yRslRg.iMin <= 600 && getResolution. yRslRg.iMax >= 600)
-			{
-				setResolution. iXRsl = setResolution. iYRsl = 600;
-			} else {
-				setResolution. iXRsl = getResolution. rgRslRec [0]. iXRsl;
-				setResolution. iYRsl = getResolution. rgRslRec [0]. iYRsl;
-			}
-			PrGeneral ((Ptr) & setResolution);
-		#endif
+		Boolean result;
+		PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
+		if (theMacPrintSettings == NULL) {   /* Once. */
+			PMCreateSession (& theMacPrintSession);   /* Initialize the Printing Manager. */
+			PMCreatePageFormat (& theMacPageFormat);
+			PMCreatePrintSettings (& theMacPrintSettings);
+			PMSessionDefaultPageFormat (theMacPrintSession, theMacPageFormat);
+			PMSessionDefaultPrintSettings (theMacPrintSession, theMacPrintSettings);
+		}
+		PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
+		PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
+		/*
+		 * BUG.
+		 * If we now ask for the available printer resolutions,
+		 * we may get the answer that there's only 300 dpi (perhaps PostScript drivers say so?).
+		 * So we don't rely on that and have a buggy assumption instead.
+		 */
+		PMSetResolution (theMacPageFormat, & res300);   /* Perhaps all printers have this... */
+		PMSetResolution (theMacPageFormat, & res600);   /* ... but this is preferred. */
 	}
 #endif
 #if defined (_WIN32)
@@ -265,16 +206,11 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 void Printer_nextPage (void) {
 	#if defined (macintosh)
 		if (thePrinter. postScript) closePostScript ();
-		#if carbon
-			PMSessionEndPage (theMacPrintSession);
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
-			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-			SetPort (theMacPort);
-			if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
-		#else
-			PrClosePage (theMacPort);
-			PrOpenPage (theMacPort, NULL);
-		#endif
+		PMSessionEndPage (theMacPrintSession);
+		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
+		SetPort (theMacPort);
+		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
 		if (thePrinter. postScript) openPostScript ();
 	#elif defined (_WIN32)
 		if (thePrinter. postScript) {
@@ -296,15 +232,9 @@ void Printer_nextPage (void) {
 
 int Printer_pageSetup (void) {
 	#if defined (macintosh)
+		Boolean accepted;
 		initPrinter ();
-		#if carbon
-		{
-			Boolean accepted;
-			PMSessionPageSetupDialog (theMacPrintSession, theMacPageFormat, & accepted);
-		}
-		#else
-			PrStlDialog (theMacPrint);
-		#endif
+		PMSessionPageSetupDialog (theMacPrintSession, theMacPageFormat, & accepted);
 	#endif
 	return 1;
 }
@@ -521,28 +451,16 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		EnableWindow ((HWND) XtWindow (praat.topShell), TRUE);
 		DeleteDC (theWinDC), theWinDC = NULL;
 	#elif defined (macintosh)
-		#if carbon
-			Boolean result;
-		#endif
+		Boolean result;
 		initPrinter ();
 		if (Melder_backgrounding) {
-			#if carbon
-				Boolean result;
-				PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-				PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-			#else
-				PrValidate (theMacPrint);
-			#endif
+			PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
+			PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
 		} else {
 			Boolean accepted;
-			#if carbon
-				PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
-			#else
-				accepted = PrJobDialog (theMacPrint);
-			#endif
+			PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
 			if (! accepted) return 1;   /* Normal cancelled return. */
 		}
-		#if carbon
 		{
 			Boolean isPostScriptDriver = FALSE;
 			PMResolution res;
@@ -563,60 +481,22 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			thePrinter. orientation = orientation == kPMLandscape ||
 				orientation == kPMReverseLandscape ? Graphics_LANDSCAPE : Graphics_PORTRAIT;
 		}
-		#else
-			thePrinter. resolution = (**theMacPrint). prInfo.iHRes;
-			thePrinter. paperWidth = (**theMacPrint). rPaper.right - (**theMacPrint). rPaper.left;
-			thePrinter. paperHeight = (**theMacPrint). rPaper.bottom - (**theMacPrint). rPaper.top;
-			thePrinter. postScript = thePrinter. allowDirectPostScript && (**theMacPrint). prStl.wDev / 256 == 3;
-			{
-				TGetRotnBlk getRotnBlk;
-				getRotnBlk. iOpCode = getRotnOp;
-				getRotnBlk. iError = 0;
-				getRotnBlk. lReserved = 0;
-				getRotnBlk. hPrint = theMacPrint;
-				getRotnBlk. fLandscape = false;
-				getRotnBlk. bXtra = 0;
-				PrGeneral ((Ptr) & getRotnBlk);
-				thePrinter. orientation = getRotnBlk. fLandscape ? Graphics_LANDSCAPE : Graphics_PORTRAIT;
-			}
-	/*Melder_information ("res %d, paper %d x %d\nshift: left %d, top %d\n%s",
-	thePrinter. resolution,thePrinter. paperWidth,thePrinter. paperHeight,
-	- (**theMacPrint). rPaper.left,- (**theMacPrint). rPaper.top,
-	thePrinter. orientation ? "landscape" : "portrait");*/
-		#endif
-		#if carbon
-			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
-		#else
-			theMacPort = PrOpenDoc (theMacPrint, NULL, NULL);
-			if (! theMacPort) return Melder_error ("Cannot open printer.");
-		#endif
-		#if carbon
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
-			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-			/*
-			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
-			 * On the screen, however, the point (0, 0) is the top left corner of the writable page.
-			 * Since we want paper-related margins, not writable-page-related margins,
-			 * we require that this point gets the coordinates (250, 258) or so,
-			 * so that the top left corner of the paper gets coordinates (0, 0).
-			 * The "left" and "top" attributes of rPaper are negative values (e.g. -250 and -258),
-			 * so multiply them by -1.
-			 *
-			 * Under Carbon, the port has to be set inside the page.
-			 */
-			SetPort (theMacPort);
-			if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
-		#else
-			/*
-			 * Under non-Carbon, the order has to be the reverse:
-			 * according to IM II-156, we must not do SetOrigin within a page.
-			 */
-			if (! thePrinter. postScript) {
-				SetPort ((GrafPtr) theMacPort);
-				SetOrigin (- (**theMacPrint). rPaper.left, - (**theMacPrint). rPaper.top);
-			}
-			PrOpenPage (theMacPort, NULL);
-		#endif
+		PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
+		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
+		/*
+		 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
+		 * On the screen, however, the point (0, 0) is the top left corner of the writable page.
+		 * Since we want paper-related margins, not writable-page-related margins,
+		 * we require that this point gets the coordinates (250, 258) or so,
+		 * so that the top left corner of the paper gets coordinates (0, 0).
+		 * The "left" and "top" attributes of rPaper are negative values (e.g. -250 and -258),
+		 * so multiply them by -1.
+		 *
+		 * Under Carbon, the port has to be set inside the page.
+		 */
+		SetPort (theMacPort);
+		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
 		if (thePrinter. postScript) {
 			openPostScript ();
 			thePrinter. graphics = Graphics_create_postscriptprinter ();
@@ -630,19 +510,11 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			forget (thePrinter. graphics);
 		}
 	end:
-		#if carbon
-			if (theMacPort) {
-				PMSessionEndPage (theMacPrintSession);
-				PMSessionEndDocument (theMacPrintSession);
-				theMacPort = NULL;
-			}
-		#else
-			if (theMacPort) {
-				PrClosePage (theMacPort);
-				PrCloseDoc (theMacPort);
-				theMacPort = NULL; /* Spooling ? */
-			}
-		#endif
+		if (theMacPort) {
+			PMSessionEndPage (theMacPrintSession);
+			PMSessionEndDocument (theMacPrintSession);
+			theMacPort = NULL;
+		}
 	#endif
 	iferror return 0;
 	return 1;

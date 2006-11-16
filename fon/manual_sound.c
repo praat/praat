@@ -1015,11 +1015,6 @@ NORMAL ("The size of the recording buffer determines how many seconds of sound y
 	"or 110 seconds in stereo (220 seconds in mono) at a sampling frequency of 44100 Hz. "
 	"You can change the size of the recording buffer "
 	"with ##Sound input prefs...# from the Preferences menu.")
-#if defined (macintosh) && ! defined (__MACH__)
-NORMAL ("On Macintosh System 8 or 9 with virtual memory switched off, however, "
-	"the buffer always fills the available temporary memory, i.e. the size of the largest unused block "
-	"reported by \"About this computer\" in the Finder; to maximize this, quit some applications other than P\\s{RAAT}.")
-#endif
 NORMAL ("If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
 	"In such a case, you can still write the sound to disk with one of the Write commands in the File menu. "
 	"You can then open such a long sound file in P\\s{RAAT} with @@Open long sound file...@ from the Read menu.")
@@ -1030,19 +1025,11 @@ NORMAL ("On SGI (Indigo, Indy, O2), you can record from microphone, line input, 
 	"you can also change the settings from the Audio Control Panel: the SoundRecorder window will follow suit.")
 #endif
 #ifdef macintosh
-#ifdef __MACH__
 ENTRY ("Recording sounds on MacOS X")
 NORMAL ("You can record from the combined microphone / line input. On some computers, these are separate.")
 NORMAL ("Note that in MacOS X you cannot record from the internal CD. This is because the system provides you with something better. "
 	"If you open the CD in the Finder, you will see the audio tracks as AIFC files! "
 	"To open these audio tracks in P\\s{RAAT}, use @@Read from file...@ or @@Open long sound file...@.")
-#else
-ENTRY ("Recording sounds on Macintosh")
-NORMAL ("You can record from the combined microphone / line input (on some computers, these are separate), "
-	"or from the internal CD. From MacOS 8.1 on, changes in your choice of input device are reflected "
-	"immediately in your Monitors & Sound control panel; "
-	"you can also change the settings from this control panel: the SoundRecorder window will follow suit.")
-#endif
 #endif
 #ifdef _WIN32
 ENTRY ("Recording sounds in Windows")

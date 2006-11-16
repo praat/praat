@@ -1,6 +1,6 @@
 /* sendsocket.c
  *
- * Copyright (C) 1999-2005 Paul Boersma
+ * Copyright (C) 1999-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
  * pb 2003/12/19 return NULL if no error
  * pb 2004/10/11 re-included windows.h include file (undoes fix of CW5 include-file bug)
  * pb 2004/10/11 user-readable error messages
- * pb 2005/09/01
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined (UNIX) || defined (__MACH__)
-	#if defined (__MACH__)
+#if defined (UNIX) || defined (macintosh)
+	#if defined (macintosh)
 		/* Prevent some warnings with MacOS X 10.4.2 / CodeWarrior 9.6 / Xcode 2.0 */
 		#define GATEWAY 0
 		#define SENDFILE 0
@@ -60,11 +60,6 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 		return "Cannot send to socket because a colon is missing.\nHost name and port should be in the format \"hostName:port\".";
 	*colon = '\0';
 	port = atoi (colon + 1);
-#if defined (macintosh) && ! defined (__MACH__)
-	(void) command;
-	sprintf (result, "Sendsocket not implemented on classic Macintosh. Upgrade to MacOS X.\n"
-		"No message sent to port %d on host %s.", port, hostName);
-#else
 {
 	struct hostent *host;
 	struct sockaddr_in his_addr;   /* Address of remote host. */
@@ -128,14 +123,13 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 	*/
 end:
 	if (sokket >= 0) {
-		#if defined (UNIX) || defined (__MACH__)
+		#if defined (UNIX) || defined (macintosh)
 			close (sokket);
 		#elif defined (_WIN32)
 			closesocket (sokket);
 		#endif
 	}
 }
-#endif
 	return result [0] == '\0' ? NULL: result;
 }
 

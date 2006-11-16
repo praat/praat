@@ -1,6 +1,6 @@
 /* GraphicsPostscript.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2002/11/17 removed showpage from Windows printing
  * pb 2004/03/15 updated version number to 4.2 (after introduction of flexible fonts)
  * pb 2005/09/18 useSilipaPS
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
@@ -200,7 +201,7 @@ Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots
 	return (Graphics) me;
 }
 
-#ifdef __MACH__
+#if defined (macintosh)
 static int Eps_postScript_printf (void *stream, const char *format, ... ) {
 	static char theLine [3002];
 	char *p;
@@ -221,7 +222,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, int spots,
 	int left, right, top, bottom;
 	my postScript = TRUE, my languageLevel = 2;
 	my job = FALSE, my eps = TRUE, my printer = FALSE;
-	#ifdef __MACH__
+	#if defined (macintosh)
 		/* Replace newlines with carriage returns to be compatible with MS Word 5.1. */
 		my printf = Eps_postScript_printf;
 	#else

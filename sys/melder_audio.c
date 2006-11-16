@@ -1,6 +1,6 @@
 /* melder_audio.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
  * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
  * pb 2005/10/13 edition for OpenBSD
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "melder.h"
@@ -52,24 +53,10 @@
 	#include <arpa/inet.h>
 	#include <errno.h>
 #elif defined (macintosh)
-	#include "macport_on.h"
-	#include <Sound.h>
-	#ifndef __MACH__
-		#include <SoundInput.h>
-	#endif
-	#ifdef __MACH__
-		#include <sys/time.h>
-	#else
-		#include <Timer.h>
-	#endif
-	#include <Gestalt.h>
-	#include "macport_off.h"
-	#if TARGET_API_MAC_CARBON
-		#define OSEventAvail  EventAvail
-		#define USE_COREAUDIO  0
-		#if USE_COREAUDIO
-			#include <AudioUnit.h>
-		#endif
+	#include <sys/time.h>
+	#define USE_COREAUDIO  0
+	#if USE_COREAUDIO
+		#include <AudioUnit.h>
 	#endif
 	#include <math.h>
 #elif defined (_WIN32)
@@ -214,10 +201,6 @@ static struct MelderPlay {
 	#elif defined (macintosh)
 		SndChannelPtr soundChannel;
 		/*static void channelCallback (SndChannelPtr channel, SndCommand cmd) {} */
-		#ifndef __MACH__
-			TMTask tmTask;
-			clock_t startingTime;
-		#endif
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		long status;
 		Audio *audio;
@@ -241,7 +224,7 @@ int Melder_stopWasExplicit (void) {
 	return thePlay. explicit;
 }
 
-#if defined (linux) || defined (sun) || defined (HPUX) || defined (__MACH__)
+#if defined (linux) || defined (sun) || defined (HPUX) || defined (macintosh)
 	static struct itimerval theTide;
 	static void Melder_startClock (void) {
 		theTide.it_value.tv_sec = 20000;
@@ -295,17 +278,9 @@ static Boolean flush (void) {
 	#elif defined (macintosh)
 		if (my asynchronicity == Melder_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
 			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
-			#ifdef __MACH__
-				my samplesPlayed = Melder_clock () * my sampleRate;
-			#else
-				RmvTime ((QElemPtr) & my tmTask);
-				/*if (my tmTask. tmCount > 0)
-					my samplesPlayed = ((80000000 - my tmTask. tmCount) / 1000.0) * my sampleRate;*/
-			#endif
+			my samplesPlayed = Melder_clock () * my sampleRate;
 		}
-		#ifdef __MACH__
-			Melder_stopClock ();
-		#endif
+		Melder_stopClock ();
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		if (my audio) {
 			AStopAudio (my audio, my xid, ASMThisTrans, NULL, & my status);
@@ -420,11 +395,7 @@ static Boolean workProc (XtPointer closure) {
 		SCStatus status;
 		SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
 		if (status. scChannelBusy) {
-			#ifdef __MACH__
-				my samplesPlayed = Melder_clock () * my sampleRate;
-			#else
-				my samplesPlayed = ((clock () - my startingTime) / (double) CLOCKS_PER_SEC) * my sampleRate;
-			#endif
+			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();
 		} else {
@@ -880,36 +851,21 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		cmd. cmd = bufferCmd;
 		cmd. param1 = 0;
 		cmd. param2 = (long) soundHeader;
-		#ifdef __MACH__
-			Melder_startClock ();
-		#else
-			my startingTime = clock ();
-			my tmTask. qLink = 0;
-			my tmTask. qType = 0;
-			my tmTask. tmAddr = NULL;
-			my tmTask. tmWakeUp = 0;
-			my tmTask. tmReserved = 0;
-			InsXTime ((QElemPtr) & my tmTask);
-			PrimeTime ((QElemPtr) & my tmTask, 80000000);
-		#endif
+		Melder_startClock ();
 		SndDoCommand (my soundChannel, & cmd, 0);
 		if (my asynchronicity <= Melder_INTERRUPTABLE) {
 			SCStatus status;
 			while (SndChannelStatus (my soundChannel, sizeof (SCStatus), & status), status. scChannelBusy) {
 				int interrupted = 0;
 				EventRecord event;
-				#ifdef __MACH__
-					my samplesPlayed = Melder_clock () * my sampleRate;
-				#else
-					my samplesPlayed = ((clock () - my startingTime) / (double) CLOCKS_PER_SEC) * my sampleRate;
-				#endif
+				my samplesPlayed = Melder_clock () * my sampleRate;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					interrupted = 1;
 				/*
 				 * Safe operation: only listen to key-down events.
 				 * Do this on the lowest level that will work.
 				 */
-				if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted && OSEventAvail (keyDownMask, & event)) {
+				if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
 					/*
 					 * Remove the event, even if it was a different key.
 					 * Otherwise, the key will block the future availability of the Escape key.
@@ -923,15 +879,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 						my explicit = Melder_EXPLICIT, interrupted = 1;
 				}
 				if (interrupted) {
-					#ifdef __MACH__
-						my samplesPlayed = Melder_clock () * my sampleRate;
-					#else
-						RmvTime ((QElemPtr) & my tmTask);
-						if (my tmTask. tmCount > 0)
-							my samplesPlayed = ((80000000 - my tmTask. tmCount) / 1000.0) * my sampleRate;
-						else
-							my samplesPlayed = my numberOfSamples;
-					#endif
+					my samplesPlayed = Melder_clock () * my sampleRate;
 					/*FlushEvents (everyEvent, 0);*/
 					SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
 					flush ();
@@ -939,9 +887,6 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				}
 			}
 			SndDisposeChannel (my soundChannel, 0), my soundChannel = NULL;
-			#ifndef __MACH__
-				RmvTime ((QElemPtr) & my tmTask);
-			#endif
 			my samplesPlayed = my numberOfSamples;
 		} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
 			my workProcId = XtAppAddWorkProc (0, workProc, 0);

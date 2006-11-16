@@ -1,6 +1,6 @@
 /* melder_sysenv.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2004/10/14 made Cygwin-compatible
  * Eric Carlson & Paul Boersma 2005/05/19 made MinGW-compatible
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 /*
@@ -35,18 +36,11 @@
 	#include <errno.h>
 	#include <stdlib.h>
 #endif
-#if defined (__MACH__)
-	#undef macintosh
-	#define UNIX
-#endif
 #include "melder.h"
 
 char * Melder_getenv (const char *variableName) {
-	#if defined (UNIX) || defined (MINGW)
+	#if defined (macintosh) || defined (UNIX) || defined (MINGW)
 		return getenv (variableName);
-	#elif defined (macintosh)
-		(void) variableName;
-		return NULL;
 	#elif defined (_WIN32)
 		char *env;
 		int length = strlen (variableName);
@@ -59,12 +53,9 @@ char * Melder_getenv (const char *variableName) {
 }
 
 int Melder_system (const char *command) {
-	#if defined (UNIX)
+	#if defined (macintosh) || defined (UNIX)
 		if (system (command) != 0) return Melder_error ("System command failed.");
 		return 1;
-	#elif defined (macintosh)
-		(void) command;
-		return Melder_error ("System command not implemented on classic MacOS. Upgrade to MacOS X.");
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;

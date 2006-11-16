@@ -24,6 +24,7 @@
  * pb 2005/06/28 font size
  * pb 2005/09/01 Undo and Redo buttons
  * pb 2006/08/09 guarded against closing when a file selector is open
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "TextEditor.h"
@@ -92,7 +93,7 @@ static int saveDocument (TextEditor me, MelderFile file) {
 	 * The following is a TRICK to make sure that MacOS X knows that any following
 	 * entered character will introduce a value change in the GuiText object.
 	 */
-	#if defined (macintosh) && defined (__MACH__)
+	#if defined (macintosh)
 		XmTextSetString (my textWidget, text);
 	#endif
 	XtFree (text);

@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/09/01
+ * pb 2006/10/28
  */
 
 #include "Gui.h"
@@ -44,58 +44,9 @@
 	#define mac 1
 #endif
 
-#if mac
-	#include "macport_on.h"
-	#include <Quickdraw.h>
-	#include <Appearance.h>
-	#include <AppleEvents.h>
-	#include <Controls.h>
-	#include <ControlDefinitions.h>
-	#include <MacWindows.h>
-	#include <TextEdit.h>
-	#include <MacTextEditor.h>
-	#include <Lists.h>
-	#include <Menus.h>
-	#include <Fonts.h>
-	#include <Dialogs.h>
-	#ifndef __MACH__
-		#include <Balloons.h>
-	#endif
-	#include <Scrap.h>
-	#include <ToolUtils.h>
-	#include <Devices.h>
-	#if ! TARGET_API_MAC_CARBON
-		#include <DiskInit.h>
-	#endif
-	#include <Gestalt.h>
-	#include <Sound.h>   /* SysBeep */
-	#ifdef __MACH__
-		#include <AEMach.h>
-		/*extern OSErr AEProcessAppleEvent (EventRecord *event);
-		extern OSErr AEInteractWithUser (SInt32 timeOutInTicks, void *nmReqPtr, void *idleProc);*/
-	#endif
-	#include "macport_off.h"
-#elif win
+#if win
 	#include <windows.h>
 	#include <commctrl.h>
-#endif
-#if mac
-	#if TARGET_API_MAC_CARBON
-		#define carbon 1
-		/* The following line is an optimization. The compiler will throw away most non-appearance code. */
-	#else
-		#define carbon 0
-		#define GetQDGlobalsScreenBits(bits)  (*(bits) = qd.screenBits, bits)
-		#define GetPortBounds(port,dum)  (& (port) -> portRect)
-		#define GetRegionBounds(rgn,rect)  (*(rect) = (**(rgn)). rgnBBox, rect)
-		#define InvalWindowRect(win,rect)  InvalRect (rect)
-		#define ValidWindowRect(win,rect)  ValidRect (rect)
-		#define IsControlVisible(control)  ((**(control)). contrlVis)
-		#define EnableMenuItem  EnableItem
-		#define DisableMenuItem  DisableItem
-		#define SetListSelectionFlags(list,flags)  (**(list)). selFlags = flags
-		#define SetControlPopupMenuHandle(control,menu)  (**(control)). dataHandle = menu;
-	#endif
 #endif
 
 #if win || mac

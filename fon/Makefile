@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, September 13, 2006
+# Paul Boersma, October 29, 2006
 
 include ../makefile.defs
 CFLAGS = -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
@@ -19,7 +19,7 @@ OBJECTS =   Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o 
    Spectrum.o Ltas.o Spectrogram.o \
    Formant.o Image.o Sound_to_Formant.o Sound_and_Spectrogram.o \
    Sound_and_Spectrum.o Spectrum_and_Spectrogram.o Spectrum_to_Formant.o \
-   FormantTier.o TextTier_Pitch.o TextGrid.o Label.o \
+   FormantTier.o TextGrid.o Label.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \

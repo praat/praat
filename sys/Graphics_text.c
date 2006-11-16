@@ -39,9 +39,6 @@
 #include "GraphicsP.h"
 #include "longchar.h"
 #include "Printer.h"
-#if defined (__MACH__)
-	#include <MacTextEditor.h>
-#endif
 
 extern char * ipaSerifRegularPS [];
 extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
@@ -644,7 +641,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 					TextFont (lc -> font.integer);
 					TextFace (lc -> style);
 					TextSize (lc -> size);
-					#define TRY_TXN_STRING  (defined (__MACH__) && 0)
+					#define TRY_TXN_STRING  (0)
 					#if TRY_TXN_STRING
 					{
 						UniChar unicodes [3000];

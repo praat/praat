@@ -24,16 +24,13 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2004/11/21 a link can have upper case while the man page has lower case
  * pb 2006/10/20 embedded scripts
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <ctype.h>
 #include "ManPages.h"
 #include "longchar.h"
-#if defined (macintosh) && ! defined (__MACH__)
-	#define LONGEST_FILE_NAME  25
-#else
-	#define LONGEST_FILE_NAME  55
-#endif
+#define LONGEST_FILE_NAME  55
 
 static int isAllowedFileNameCharacter (int c) {
 	return isalnum (c) || c == '_' || c == '-' || c == '+';

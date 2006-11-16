@@ -1,6 +1,6 @@
 /* GuiWindow.c
  *
- * Copyright (C) 1993-2004 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
  * pb 2004/01/07 this file separated from Gui.c
  * pb 2004/02/12 don't trust window modification feedback on MacOS 9
  * pb 2004/04/06 GuiWindow_drain separated from XmUpdateDisplay
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "GuiP.h"
 
 int GuiWindow_setDirty (Widget me, int dirty) {
-	#if mac && defined (__MACH__)
+	#if mac
 		SetWindowModified (my nat.window.ptr, dirty);
 		return 1;
 	#else
@@ -37,7 +38,7 @@ int GuiWindow_setDirty (Widget me, int dirty) {
 }
 
 void GuiWindow_drain (Widget me) {
-	#if mac && carbon
+	#if mac
 		QDFlushPortBuffer (GetWindowPort (my macWindow), NULL);
 		/*
 		 * The following TRICK cost me half a day to work out.

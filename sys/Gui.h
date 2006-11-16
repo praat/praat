@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/09/01
+ * pb 2006/10/28
  */
 
 #ifndef _melder_h_
@@ -68,7 +68,7 @@
 
 #if defined (macintosh)
 	#include "macport_on.h"
-	#include <Events.h>
+	#include <Carbon/Carbon.h>
 	#include "macport_off.h"
 #endif
 

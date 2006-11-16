@@ -1164,7 +1164,7 @@ MAN_END
 
 MAN_BEGIN ("initialization script", "ppgb", 20060920)
 INTRO ("Your initialization script is a normal @@Praat script@ that is run as soon as you start Praat.")
-#if defined (UNIX) || defined (__MACH__)
+#if defined (UNIX) || defined (macintosh)
 NORMAL ("On Unix or MacOS X, you create an initialization script by creating a file named \"praat-startUp\" "
 	"in the directory /usr/local, "
 	"or putting a file \".praat-user-startUp\" or \"praat-user-startUp\" in your home directory "
@@ -1175,20 +1175,16 @@ NORMAL ("On Windows NT or XP, you create an initialization script by creating a 
 	"\"praat-user-startUp\" in your home directory, "
 	"which on my Windows XP computer is C:\\bsDocuments and Settings\\bsPaul.")
 NORMAL ("If you have both of these files, they are run in the above order.")
-#elif defined (macintosh)
-NORMAL ("It only works on Unix, Windows, and MacOS X, unless you ask me to make it available for MacOS 7/8/9.")
 #endif
 ENTRY ("Example")
 NORMAL ("If you like to be greeted by your husband when Praat starts up, "
 	"you could put the following lines in your initialization script:")
 #if defined (UNIX)
 	CODE ("Read from file... /u/miep/helloMiep.wav")
-#elif defined (__MACH__)
+#elif defined (macintosh)
 	CODE ("Read from file... /Users/miep/helloMiep.wav")
 #elif defined (_WIN32)
 	CODE ("Read from file... C:\\bsDocuments and Settings\\bsMiep\\bshelloMiep.wav")
-#elif defined (macintosh)
-	CODE ("Read from file... Macintosh HD:helloMiep.wav")
 #else
 	#error Some audio file reading example should go here
 #endif
@@ -1479,7 +1475,7 @@ NORMAL ("The commands from the Read and Write menus, and several other commands 
 	NORMAL ("or just")
 	CODE ("Read from file... ~/sounds/animals/miauw.aifc")
 	NORMAL ("where \"~\" is the Unix way to refer to your home directory.")
-#elif defined (__MACH__)
+#elif defined (macintosh)
 	NORMAL ("In a script, you can supply the complete %path, including the directory (folder) hierarchy "
 	"and the name of the file. On MacOS X, it goes like this (if you are user \"miep\"):")
 	CODE ("Read from file... /Users/miep/Sounds/Animals/miauw.aifc")
@@ -1495,14 +1491,6 @@ NORMAL ("The commands from the Read and Write menus, and several other commands 
 	NORMAL ("In a script, you can supply the complete %path, including the directory (folder) hierarchy "
 	"and the name of the file. In Windows, it goes like this:")
 	CODE ("Read from file... D:\\bsSounds\\bsAnimals\\bsmiauw.aifc")
-#elif defined (macintosh)
-	NORMAL ("In a script, you can supply the complete %path, including the directory (folder) hierarchy "
-	"and the name of the file. On MacOS 7/8/9, it goes like this (supposing your hard drive is called \"Macintosh HD\"):")
-	CODE ("Read from file... Macintosh HD:Sounds:Animals:miauw.aifc")
-	NORMAL ("If your Sounds folder is on the desktop, it would be:")
-	CODE ("Read from file... Macintosh HD:Desktop Folder:Sounds:Animals:miauw.aifc")
-	NORMAL ("If your Sounds folder is on a USB drive called Miep, it would be:")
-	CODE ("Read from file... Miep:Sounds:Animals:miauw.aifc")
 #else
 	#error Supply an example complete path to a sound file
 #endif
@@ -1515,7 +1503,7 @@ NORMAL ("Instead of these complete path names, you can use %relative path names.
 	NORMAL ("Finally, your script may not be in a directory %above the directory from which you "
 		"like to read, but in a directory on the side, like /home/miep/scripts. The command would then read")
 	CODE ("Read from file... ../animals/miauw.aifc")
-#elif defined (__MACH__)
+#elif defined (macintosh)
 	NORMAL ("On MacOS X, a relative path name starts without a \"/\". So if your script is "
 		"%%/Users/miep/Sounds/analysis.praat%, the above line could be")
 	CODE ("Read from file... Animals/miauw.aifc")
@@ -1529,13 +1517,6 @@ NORMAL ("Instead of these complete path names, you can use %relative path names.
 	NORMAL ("Finally, your script may not be in a directory %above the directory from which you "
 		"like to read, but in a directory on the side, like D:\\bsScripts. The commands would then read")
 	CODE ("Read from file... ..\\bsAnimals\\bsmiauw.aifc")
-#elif defined (macintosh)
-	NORMAL ("On MacOS 7/8/9, a relative (%partial) path name starts with a colon. So if your script is "
-		"Macintosh HD:Sounds:Analysis.praat, the sound file is read by")
-	CODE ("Read from file... :Animals:miauw.aifc")
-	NORMAL ("Finally, your script may not be in a directory %above the directory from which you "
-		"like to read, but in a directory on the side, like Macintosh HD:Scripts. The command would then read")
-	CODE ("Read from file... ::Animals:miauw.aifc")
 #else
 	#error Supply an example partial path to a sound file
 #endif

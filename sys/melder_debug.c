@@ -44,9 +44,10 @@ the behaviour of that program changes in the following way:
 14: switches off the progress window in melder.c
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY
-1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 17: debugging on in Formula.c
 18: no endian assumptions in abcio.c
+19: show path name in UiOutfile_do
+1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)
 

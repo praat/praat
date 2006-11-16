@@ -30,13 +30,14 @@
  * pb 2004/11/24 separated labels from cascade buttons
  * pb 2005/09/01 assume that we have Appearance (i.e. System 8.5 or up)
  * pb 2006/08/07 Windows: remove quotes from around path names when calling the openDocument callback
+ * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/11/06 Carbon control creation functions
  */
 #ifndef UNIX
 
 /* The Motif emulator for Macintosh and Windows. */
 
 #define PRAAT_WINDOW_CLASS_NUMBER  1
-#define motif_mac_controlFont  (kControlUsesOwningWindowsFontVariant)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,11 +71,6 @@
 #define _motif_OPTION_MASK  4
 
 #if mac
-	static void motif_mac_menuTitleFont (void) {
-		TextFont (systemFont);
-		TextSize (0);
-		TextFace (0);
-	}
 	void motif_mac_defaultFont (void) {
 		TextFont (systemFont);
 		TextSize (12);
@@ -191,12 +187,7 @@ void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call) {
 #if win
 	#define MAXIMUM_NUMBER_OF_MENUS  4000
 #elif mac
-	#if carbon
-		#define MAXIMUM_NUMBER_OF_MENUS  32767
-	#else
-		/* 255 is the general restriction pre-8.5 on NewMenu; it is also the general restriction on SetItemMark */
-		#define MAXIMUM_NUMBER_OF_MENUS  255
-	#endif
+	#define MAXIMUM_NUMBER_OF_MENUS  32767
 #endif
 static Widget theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
 static int (*theOpenDocumentCallback) (MelderFile file);
@@ -269,7 +260,7 @@ static XtPointer theWorkProcClosures [10];
 static int theNumberOfTimeOuts;
 static XtTimerCallbackProc theTimeOutProcs [10];
 static XtPointer theTimeOutClosures [10];
-#ifdef __MACH__
+#if defined (macintosh)
 	static EventLoopTimerRef theTimers [10];
 #else
 	static clock_t theTimeOutStarts [10];
@@ -589,10 +580,8 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) 
 			if (parentRect -> top > clipRect. top) clipRect. top = parentRect -> top;
 			if (parentRect -> bottom < clipRect. bottom) clipRect. bottom = parentRect -> bottom;
 		}
-		#if carbon
-			/*if (MEMBER (me, PushButton) && me == my shell -> defaultButton)
-				clipRect. left -= 3, clipRect. right += 3, clipRect. top -= 3, clipRect. bottom += 3;*/
-		#endif
+		/*if (MEMBER (me, PushButton) && me == my shell -> defaultButton)
+			clipRect. left -= 3, clipRect. right += 3, clipRect. top -= 3, clipRect. bottom += 3;*/
 		SetPortWindowPort (my macWindow);
 		ClipRect (& clipRect);
 		_motif_clipRect = clipRect;
@@ -706,6 +695,19 @@ static char * motif_win_expandAmpersands (const char *title) {
 	char *to = & buffer [0];
 	while (*from) { if (*from == '&') * to ++ = '&'; * to ++ = * from ++; } * to = '\0';
 	return buffer;
+}
+
+static void NativeControl_setFont (Widget me, int size) {
+	#if win
+	#elif mac
+		ControlFontStyleRec fontStyle;
+		fontStyle. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
+		fontStyle. font = systemFont;
+		fontStyle. size = size;
+		fontStyle. just = my alignment == XmALIGNMENT_END ? teFlushRight :
+			my alignment == XmALIGNMENT_CENTER ? teCenter : teFlushLeft;
+		SetControlFontStyle (my nat.control.handle, & fontStyle);
+	#endif
 }
 
 static void NativeControl_setTitle (Widget me) {
@@ -1148,11 +1150,7 @@ static void _GuiNativizeWidget (Widget me) {
 					 * This will be a menu in the Macintosh menu bar.
 					 */
 					if (USE_QUESTION_MARK_HELP_MENU && strequ (my name, "Help")) {
-						#if carbon
-							HMGetHelpMenu (& my nat.menu.handle, NULL);
-						#else
-							HMGetHelpMenuHandle (& my nat.menu.handle);
-						#endif
+						HMGetHelpMenu (& my nat.menu.handle, NULL);
 						theMenus [my nat.menu.id] = NULL;
 						my nat.menu.id = kHMHelpMenuID;
 						theMenus [MAXIMUM_NUMBER_OF_MENUS] = me;
@@ -1188,19 +1186,11 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 			#elif mac
-				ControlFontStyleRec fontStyle;
-				fontStyle. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
-				fontStyle. font = systemFont;
-				fontStyle. size = 12;
-				fontStyle. just = my alignment == XmALIGNMENT_END ? teFlushRight :
-					my alignment == XmALIGNMENT_CENTER ? teCenter : teFlushLeft;
-				PfromCstr (mac_text, my name);
-				my nat.control.handle = NewControl (my macWindow, & my rect,
-					"\p", false, 0, 0, 0, kControlStaticTextProc, (long) me);
-				SetControlFontStyle (my nat.control.handle, & fontStyle);
-				SetControlData (my nat.control.handle, kControlEntireControl, kControlStaticTextTextTag, strlen (my name),
-					my name);
+				CreateStaticTextControl (my macWindow, & my rect, NULL, NULL, & my nat.control.handle);
+				SetControlReference (my nat.control.handle, (long) me);
 				my isControl = TRUE;
+				NativeControl_setFont (me, 12);
+				NativeControl_setTitle (me);
 			#endif
 		} break;
 		case xmCascadeButtonWidgetClass: {
@@ -1212,41 +1202,26 @@ static void _GuiNativizeWidget (Widget me) {
 					SetWindowLong (my window, GWL_USERDATA, (long) me);
 					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 				#elif mac
-					PfromCstr (mac_text, my name);
 					if (strstr (my name, " -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
 						my nat.control.isBevel = true;
+						CreateBevelButtonControl (my macWindow, & my rect, NULL, kControlBevelButtonSmallBevel,
+							kControlBehaviorPushbutton, NULL, 1, kControlBehaviorCommandMenu, 0, & my nat.control.handle);
+						Melder_assert (my nat.control.handle != NULL);
+						SetControlReference (my nat.control.handle, (long) me);
+						my isControl = TRUE;
+						NativeControl_setFont (me, 12);
+						NativeControl_setTitle (me);
 					} else {
 						my nat.control.isPopup = true;
-					}
-					if (my nat.control.isBevel) {
-						short dummy = kControlBevelButtonAlignTextFlushLeft;
-						my nat.control.handle = NewControl (my macWindow, & my rect,
-							mac_text, false,
-							/*
-							 * See ControlDefinitions.h for the following three arguments.
-							 */
-							1,   /* "value": some hopefully already existing dummy menu. */
-							kControlContentTextOnly | kControlBehaviorCommandMenu,   /* "min": content type & behaviour. */
-							0,   /* "max": resource ID. */
-							kControlBevelButtonSmallBevelProc + motif_mac_controlFont, (long) me);
-						/*SetControlData (my nat.control.handle, kControlEntireControl, kControlBevelButtonTextAlignTag, sizeof (short), & dummy);*/
-					} else if (my nat.control.isPopup) {
-						my nat.control.handle = NewControl (my macWindow, & my rect,
-							mac_text, false,
-							/*
-							 * See IM VI: 3-17 for the following three arguments.
-							 */
-							popupTitleLeftJust,   /* "value": title layout. */
-							1,   /* "min": some hopefully already existing dummy menu. */
-							0,   /* "max": title width. */
-							popupMenuProc, (long) me);
+						CreatePopupButtonControl (my macWindow, & my rect, NULL, 1, false,
+							0, teFlushLeft, 0, & my nat.control.handle);
+						Melder_assert (my nat.control.handle != NULL);
+						SetControlReference (my nat.control.handle, (long) me);
+						my isControl = TRUE;
+						NativeControl_setFont (me, 13);
+						NativeControl_setTitle (me);
 						SetControlMaximum (my nat.control.handle, 32767);   /* The default seems to be 9 on MacOS X. */
-					} else {
-						my nat.control.handle = NewControl (my macWindow, & my rect,
-							mac_text, false, 0, 0, 0, pushButProc + motif_mac_controlFont, (long) me);
 					}
-					Melder_assert (my nat.control.handle);
-					my isControl = TRUE;
 				#endif
 			}
 		} break;
@@ -1258,11 +1233,12 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 			#elif mac
-				PfromCstr (mac_text, my name);
-				my nat.control.handle = NewControl (my macWindow, & my rect,
-					mac_text, false, 0, 0, 0, pushButProc + motif_mac_controlFont, (long) me);
+				CreatePushButtonControl (my macWindow, & my rect, NULL, & my nat.control.handle);
 				Melder_assert (my nat.control.handle);
+				SetControlReference (my nat.control.handle, (long) me);
 				my isControl = TRUE;
+				NativeControl_setFont (me, 12);
+				NativeControl_setTitle (me);
 			#endif
 		} break;
 		case xmTextWidgetClass: {
@@ -1278,17 +1254,16 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 			#elif mac
-			{
-				/*
-				 * Create an invisible radio button or check box.
-				 */
-				int proc = my isRadioButton ? radioButProc : checkBoxProc;
-				PfromCstr (mac_text, my name);
-				my nat.control.handle = NewControl (my macWindow, & my rect,
-					mac_text, false, 0, 0, 1, proc + motif_mac_controlFont, (long) me);
+				if (my isRadioButton) {
+					CreateRadioButtonControl (my macWindow, & my rect, NULL, 0, 0, & my nat.control.handle);
+				} else {
+					CreateCheckBoxControl (my macWindow, & my rect, NULL, 0, 0, & my nat.control.handle);
+				}
 				Melder_assert (my nat.control.handle);
+				SetControlReference (my nat.control.handle, (long) me);
 				my isControl = TRUE;
-			}
+				NativeControl_setFont (me, 12);
+				NativeControl_setTitle (me);
 			#endif
 		} break;
 		case xmScaleWidgetClass: {
@@ -1376,11 +1351,7 @@ static void _GuiNativizeWidget (Widget me) {
 				if (theDialogHint) {
 					SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
 				} else {
-					#if carbon
-						SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
-					#else
-						SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDocumentWindowBackground, False);   /* otherwise too few grey values */
-					#endif
+					SetThemeWindowBackground (my nat.window.ptr, kThemeBrushDialogBackgroundActive, False);
 				}
 				my macWindow = my nat.window.ptr;   /* Associate drawing context; child widgets will inherit. */
 				my motif.shell.active = true;   /* Why? */
@@ -1816,11 +1787,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			my deleteResponse = va_arg (arg, int);
 			if (my deleteResponse == XmDO_NOTHING && ! my motif.shell.goAwayCallback) {
 				#if mac
-					#if carbon
-						ChangeWindowAttributes (my macWindow, 0, kWindowCloseBoxAttribute);
-					#else
-						((WindowPeek) my macWindow) -> goAwayFlag = 0;
-					#endif
+					ChangeWindowAttributes (my macWindow, 0, kWindowCloseBoxAttribute);
 				#endif
 			}
 			break;
@@ -2026,12 +1993,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 				#if win
 				#elif mac
 					if (my nat.entry.item) {
-						#if carbon
-							SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-						#else
-							SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-							SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
-						#endif
+						SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
 					}
 				#endif
 			} else {
@@ -2503,7 +2465,7 @@ void XtRemoveWorkProc (XtWorkProcId id) {
 	theNumberOfWorkProcs --;
 }
 
-#ifdef __MACH__
+#if defined (macintosh)
 static pascal void timerAction (EventLoopTimerRef timer, void *closure) {
 	long i = (int) closure;
 	(void) timer;
@@ -2518,7 +2480,7 @@ XtIntervalId XtAppAddTimeOut (XtAppContext appContext, unsigned long interval, X
 	while (i < 10 && theTimeOutProcs [i]) i ++;
 	Melder_assert (i < 10);
 	theTimeOutProcs [i] = proc;
-#ifdef __MACH__
+#if defined (macintosh)
 {
 	EventLoopRef mainLoop = GetMainEventLoop ();
 	static EventLoopTimerUPP timerUPP;
@@ -2537,7 +2499,7 @@ XtIntervalId XtAppAddTimeOut (XtAppContext appContext, unsigned long interval, X
 void XtRemoveTimeOut (XtIntervalId id) {
 	theTimeOutProcs [id] = NULL;
 	theNumberOfTimeOuts --;
-	#ifdef __MACH__
+	#if defined (macintosh)
 		RemoveEventLoopTimer (theTimers [id]);
 	#endif
 }
@@ -2810,12 +2772,7 @@ static void mapWidget (Widget me) {
 					SetItemStyle (my nat.entry.handle, my nat.entry.item, underline);
 				if (my widgetClass == xmCascadeButtonWidgetClass) {
 					if (my subMenuId) {
-						#if carbon
-							SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-						#else
-							SetItemMark (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
-							SetItemCmd (my nat.entry.handle, my nat.entry.item, '\033');
-						#endif
+						SetMenuItemHierarchicalID (my nat.entry.handle, my nat.entry.item, my subMenuId -> nat.menu.id);
 					}
 				}
 				/*
@@ -3103,9 +3060,7 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 		(void) reply;
 		(void) handlerRefCon;
 		return noErr;
-		#ifdef __MACH__
 		Melder_warning ("Open app event.");
-		#endif
 	}
 	static pascal OSErr _motif_processQuitApplicationMessage (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		/*
@@ -3133,25 +3088,14 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 			AEKeyword keyWord;
 			DescType typeCode;
 			Size actualSize;
-			#ifdef __MACH__
-				FSRef fsref;
-				err = AEGetNthPtr (& documentList, document, typeFSRef, & keyWord, & typeCode, & fsref, sizeof (fsref), & actualSize);
-				if (! err) {
-					structMelderFile file;
-					Melder_machToFile (& fsref, & file);
-					if (theOpenDocumentCallback)
-						theOpenDocumentCallback (& file);
-				}
-			#else
-				FSSpec fspec;
-				err = AEGetNthPtr (& documentList, document, typeFSS, & keyWord, & typeCode, & fspec, sizeof (fspec), & actualSize);
-				if (! err) {
-					structMelderFile file;
-					Melder_macToFile (& fspec, & file);
-					if (theOpenDocumentCallback)
-						theOpenDocumentCallback (& file);
-				}
-			#endif
+			FSRef fsref;
+			err = AEGetNthPtr (& documentList, document, typeFSRef, & keyWord, & typeCode, & fsref, sizeof (fsref), & actualSize);
+			if (! err) {
+				structMelderFile file;
+				Melder_machToFile (& fsref, & file);
+				if (theOpenDocumentCallback)
+					theOpenDocumentCallback (& file);
+			}
 		}
 		AEDisposeDesc (& documentList);
 		return noErr;
@@ -3188,18 +3132,7 @@ Widget XtInitialize (void *dum1, const char *name,
 	(void) argc;
 	#if mac
 		(void) argv;
-		#if ! carbon
-			MaxApplZone ();
-			InitGraf (& qd.thePort);
-			InitFonts ();
-			InitWindows ();
-			InitMenus ();
-		#endif
 		_GuiText_init ();
-		#if ! carbon
-			InitDialogs (0L);
-			LMSetFractEnable (0);
-		#endif
 		RegisterAppearanceClient ();
 		InitCursor ();
 		FlushEvents (everyEvent, 0);
@@ -3538,11 +3471,7 @@ void XmAddWMProtocolCallback (Widget me, Atom protocol, XtCallbackProc callback,
 		my motif.shell.goAwayCallback = callback;
 		my motif.shell.goAwayClosure = closure;
 		#if mac
-			#if carbon
-				ChangeWindowAttributes (my macWindow, kWindowCloseBoxAttribute, 0);
-			#else
-				((WindowPeek) my macWindow) -> goAwayFlag = 1;
-			#endif
+			ChangeWindowAttributes (my macWindow, kWindowCloseBoxAttribute, 0);
 		#endif
 	}
 }
@@ -4235,14 +4164,9 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			if (subview -> widgetClass != xmShellWidgetClass)   /* Only in same mac window. */
 				_motif_update (subview, event);
 		}
-		#if carbon
-			visRgn = NewRgn ();
-			GetPortVisibleRegion (GetWindowPort (my macWindow), visRgn);
-			if (! RectInRgn (& my rect, visRgn)) { DisposeRgn (visRgn); return; }
-		#else
-			visRgn = my macWindow -> visRgn;
-			if (! RectInRgn (& my rect, visRgn)) return;
-		#endif
+		visRgn = NewRgn ();
+		GetPortVisibleRegion (GetWindowPort (my macWindow), visRgn);
+		if (! RectInRgn (& my rect, visRgn)) { DisposeRgn (visRgn); return; }
 		SetPortWindowPort (my macWindow);
 		switch (my widgetClass) {
 			case xmPushButtonWidgetClass:
@@ -4286,7 +4210,7 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			} break;
 			case xmScrolledWindowWidgetClass: {
 				_GuiMac_clipOn (me);
-				/* if (! carbon) */ FrameRect (& my rect);
+				FrameRect (& my rect);
 				GuiMac_clipOff ();
 			} break;
 			case xmFrameWidgetClass: {
@@ -4313,9 +4237,7 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			} break;
 			default: break;
 		}
-		#if carbon
-			DisposeRgn (visRgn);
-		#endif
+		DisposeRgn (visRgn);
 	}
 #elif win
 	static void _motif_update (Widget me, void *event) { (void) me; (void) event; }
@@ -4357,11 +4279,7 @@ void XmUpdateDisplay (Widget displayDummy) {
 		#if mac
 			if (shell && shell -> managed) {
 				RgnHandle updateRegion = NewRgn ();
-				#if carbon
-					GetWindowRegion (shell -> nat.window.ptr, kWindowUpdateRgn, updateRegion);
-				#else
-					GetWindowUpdateRgn (shell -> nat.window.ptr, updateRegion);
-				#endif
+				GetWindowRegion (shell -> nat.window.ptr, kWindowUpdateRgn, updateRegion);
 				if (Melder_debug != 12 && ! EmptyRgn (updateRegion)) {
 					/*
 					 * Hack an update event and send it to me.
@@ -4370,14 +4288,12 @@ void XmUpdateDisplay (Widget displayDummy) {
 					event. message = (long) shell -> nat.window.ptr;
 					_motif_processUpdateEvent (& event);
 				}
-				#if carbonXXXXXX
+				#if 0
 					QDGetDirtyRegion (GetWindowPort (shell -> nat.window.ptr), updateRegion);
 					QDFlushPortBuffer (GetWindowPort (shell -> nat.window.ptr), updateRegion);
 				#endif
 				DisposeRgn (updateRegion);
-				#if carbon
-					GuiWindow_drain (shell);
-				#endif
+				GuiWindow_drain (shell);
 			}
 		#endif
 	}
@@ -4849,13 +4765,6 @@ static void mac_processMenuChoice (long choice, EventRecord *event) {
 	if (macMenuID == 0) return;
 	menu = theMenus [macMenuID == kHMHelpMenuID ? MAXIMUM_NUMBER_OF_MENUS : macMenuID];
 	if (menu == NULL) return;
-	#if ! carbon
-		if (menu -> name [0] == appleMark && macMenuItem > 1) {
-			GetMenuItemText (menu -> nat.menu.handle, macMenuItem, mac_text);
-			OpenDeskAcc (mac_text);
-			return;
-		}
-	#endif
 	item = menu -> firstChild;
 	if (macMenuID == kHMHelpMenuID) macMenuItem -= theHelpMenuOffset;
 	while (item && macMenuItem > 1) {
@@ -4882,9 +4791,6 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 			HiliteMenu (0);
 		} break;
 		case inSysWindow: {
-			#if ! carbon
-				SystemClick (event, macvenster);
-			#endif
 		} break;
 		case inDrag: {
 			RgnHandle greyRegion;
@@ -4965,15 +4871,16 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 			}
 			if (GetWindowKind (macvenster) == userKind) {
 				ControlHandle maccontrol;
+				ControlPartCode controlPart;
 				SetPortWindowPort (macvenster);
 				GlobalToLocal (& event -> where);
-				part = FindControl (event -> where, macvenster, & maccontrol);
+				maccontrol = FindControlUnderMouse (event -> where, macvenster, & controlPart);
 				if (maccontrol) {
 					Widget control = (Widget) GetControlReference (maccontrol);
 					if (! control) return;
-					if (carbon && control -> magicNumber != 15111959) goto LABEL_clickedOutsideControl;
-					event -> message = part;
-					switch (part) {
+					if (control -> magicNumber != 15111959) goto LABEL_clickedOutsideControl;
+					event -> message = controlPart;
+					switch (controlPart) {
 						case kControlButtonPart:
 						case kControlLabelPart: {
 							if (control -> widgetClass == xmPushButtonWidgetClass) {   /* Push button. */
@@ -5047,7 +4954,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						case kControlIndicatorPart: {
 							if (TrackControl (maccontrol, event -> where, NULL)) {
 								control -> value = GetControl32BitValue (maccontrol);
-								_Gui_callCallbacks (control, & control -> motif.scrollBar.valueChangedCallbacks, (XtPointer) (long) part);
+								_Gui_callCallbacks (control, & control -> motif.scrollBar.valueChangedCallbacks, (XtPointer) (long) controlPart);
 							}
 						} break;
 						case kControlEditTextPart: {
@@ -5132,7 +5039,7 @@ static void processWorkProcsAndTimeOuts (void) {
 	if (theNumberOfWorkProcs) for (i = 9; i >= 1; i --)
 		if (theWorkProcs [i])
 			if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
-	#ifndef __MACH__
+	#if ! defined (macintosh)
 		if (theNumberOfTimeOuts) {
 			clock_t now = clock ();
 			for (i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
@@ -5215,9 +5122,6 @@ void XtDispatchEvent (XEvent *xevent) {
 			case keyUp: break;
 			case autoKey: _motif_processKeyDownEvent (event); break;
 			case updateEvt: _motif_processUpdateEvent (event); break;
-			#if ! carbon
-			case diskEvt: if (HiWord (event -> message) != noErr) { Point p = { 100, 100 }; DIBadMount (p, event -> message); } break;
-			#endif
 			case activateEvt: _motif_processActivateEvent (event); break;
 			case osEvt: _motif_processOsEvent (event); break;
 			case kHighLevelEvent: _motif_processHighLevelEvent (event); break;

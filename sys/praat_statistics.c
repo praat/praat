@@ -1,6 +1,6 @@
 /* praat_statistics.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/03/09 OSX no mention of free memory
  * pb 2004/10/18 more big integers
  * pb 2005/03/02 pref string 260 bytes long
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <time.h>
@@ -58,22 +59,12 @@ void praat_statistics_exit (void) {
 	statistics.memory += Melder_allocationSize ();
 }
 
-#if defined (macintosh) && ! defined (__MACH__)
-	#include <Memory.h>
-#endif
 void praat_memoryInfo (void) {
 	MelderInfo_open ();
 	MelderInfo_writeLine2 ("Currently allocated: ", Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()));
 	MelderInfo_writeLine5 ("   Things: ", Melder_integer (Thing_getTotalNumberOfThings ()),
 		" (objects in list: ", Melder_integer (praat.n), ")");
 	MelderInfo_writeLine2 ("   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
-	#if defined (macintosh) && ! defined (__MACH__)
-	{
-		long grow;
-		MelderInfo_writeLine5 ("\nFree memory: ", Melder_bigInteger (FreeMem ()), " bytes (contiguous: ",
-			Melder_bigInteger (MaxMem (& grow)), " bytes)");
-	}
-	#endif
 	MelderInfo_writeLine5 (
 		"\nHistory of this session:\n"
 		"   Allocation: ", Melder_bigInteger (Melder_allocationCount ()), " (", Melder_bigInteger (Melder_allocationSize ()), " bytes)");

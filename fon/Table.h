@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/27
+ * pb 2006/10/29
  */
 
 #ifndef _Collection_h_
@@ -121,6 +121,7 @@ Table Table_pool (Table me, const char *independentVariables_string, const char 
 
 Matrix Table_to_Matrix (Table me);
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
+Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn);
 
 #endif
 /* End of file Table.h */

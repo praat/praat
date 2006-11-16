@@ -33,8 +33,9 @@
  * pb 2006/04/16 Table_createWithColumnNames
  * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
  * pb 2006/04/17 getColStr
- * pb 2006/04/24 Table_scatterPlot ()
- * pb 2006/08/27 Table_drawEllipse ()
+ * pb 2006/04/24 Table_scatterPlot
+ * pb 2006/08/27 Table_drawEllipse
+ * pb 2006/10/29 TableOfReal_to_Table
  */
 
 #include <ctype.h>
@@ -1160,49 +1161,27 @@ end:
 	return thee;
 }
 
-/*
-Table TableOfReal_to_Table (TableOfReal me, char *) {
+Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn) {
 	long irow, icol;
-	TableOfReal thee;
-	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
-	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
+	Table thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
+	Table_setColumnLabel (thee, 1, labelOfFirstColumn); cherror
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize (me, icol);
+		char *columnLabel = my columnLabels [icol];
+		thy columnHeaders [icol + 1]. label = Melder_strdup (columnLabel && columnLabel [0] ? columnLabel : "?"); cherror
 	}
-	if (labelColumn) {
-		for (icol = 1; icol < labelColumn; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
-		}
-		for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol - 1, my columnHeaders [icol]. label);
-		}
-		for (irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = my rows -> item [irow];
-			char *string = row -> cells [labelColumn]. string;
-			TableOfReal_setRowLabel (thee, irow, string ? string : "");
-			for (icol = 1; icol < labelColumn; icol ++) {
-				thy data [irow] [icol] = row -> cells [icol]. number;
-			}
-			for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				thy data [irow] [icol - 1] = row -> cells [icol]. number;
-			}
-		}
-	} else {
+	for (irow = 1; irow <= thy rows -> size; irow ++) {
+		char *stringValue = my rowLabels [irow];
+		TableRow row = thy rows -> item [irow];
+		row -> cells [1]. string = Melder_strdup (stringValue && stringValue [0] ? stringValue : "?"); cherror
 		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
-		}
-		for (irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = my rows -> item [irow];
-			for (icol = 1; icol <= my numberOfColumns; icol ++) {
-				thy data [irow] [icol] = row -> cells [icol]. number;
-			}
+			double numericValue = my data [irow] [icol];
+			row -> cells [icol + 1]. string = Melder_strdup (Melder_double (numericValue)); cherror
 		}
 	}
 end:
 	iferror return NULL;
 	return thee;
 }
-*/
 
 double Table_getFisherF (Table me, long col1, long col2);
 double Table_getOneWayAnovaSignificance (Table me, long col1, long col2);

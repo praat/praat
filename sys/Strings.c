@@ -27,6 +27,7 @@
  * pb 2006/03/08 allow 1,000,000 file names in Strings_createAsFileList
  * pb 2006/09/19 Strings_createAsDirectoryList for Mac and Unix
  * pb 2006/10/04 return fewer errors in Strings_createAsFileList and Strings_createAsDirectoryList
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "Strings.h"
@@ -93,7 +94,7 @@ class_methods_end
 
 Strings Strings_createAsFileList (const char *path) {
 	Strings me = new (Strings);
-	#if defined (__MACH__) || defined (UNIX)
+	#if defined (macintosh) || defined (UNIX)
 		char *asterisk, left [100], right [100], searchDirectory [256], *lastSlash;
 		long leftLength, rightLength;
 		my strings = NUMpvector (1, 1000000); cherror
@@ -124,6 +125,9 @@ Strings Strings_createAsFileList (const char *path) {
 			if (d == NULL) { forget (me); return Melder_errorp ("Cannot open directory %s.", searchDirectory); }
 			my strings = NUMpvector (1, 1000000); cherror
 			while ((entry = readdir (d)) != NULL) {
+				#ifndef DT_REG
+					#define DT_REG  8
+				#endif
 				if (entry -> d_type == DT_REG) {
 					char *fileName = entry -> d_name;
 					int length = strlen (fileName);
@@ -137,39 +141,6 @@ Strings Strings_createAsFileList (const char *path) {
 			}
 			closedir (d);
 		}
-	#elif defined (UNIX) || defined (__MACH__)
-		FILE *f;
-		#if defined (linux) || defined (__MACH__)
-			#define LS_COMMAND "/bin/ls "
-		#else
-			#define LS_COMMAND "/usr/bin/ls "
-		#endif
-		char command [300], buf [300], *p;
-		my strings = NUMpvector (1, 1000000); cherror
-		sprintf (command, LS_COMMAND "%s", path);
-		/*
-		 * Prepend all spaces with backslashes.
-		 */
-		for (p = command + strlen (LS_COMMAND); *p != '\0'; p ++) {
-			if (*p == ' ') {
-				char *q = command + strlen (command);
-				q [1] = '\0';
-				while (q - p > 0) { q [0] = q [-1]; q --; }
-				q [0] = '\\';
-				p ++;
-			}
-		}
-		if ((f = popen (command, "r")) == NULL) {
-			forget (me);
-			return Melder_errorp ("(Strings_fromFilePath:) Cannot open pipe.");
-		}
-		while (fgets (buf, 300, f) != NULL) {
-			char *newLine = strrchr (buf, '\n');
-			char *lastSlash = strrchr (buf, '/');
-			if (newLine) *newLine = '\0';
-			my strings [++ my numberOfStrings] = Melder_strdup (lastSlash ? lastSlash + 1 : buf); cherror
-		}
-		pclose (f);
 	#elif defined (_WIN32)
 		HANDLE searchHandle;
 		WIN32_FIND_DATA findData;
@@ -186,65 +157,6 @@ Strings Strings_createAsFileList (const char *path) {
 			} while (FindNextFile (searchHandle, & findData));
 			FindClose (searchHandle);
 		}
-	#elif defined (macintosh)
-		HFileParam pb;
-		char *asterisk, left [100], right [100], searchDirectory [256], *lastColon;
-		long i, leftLength, rightLength;
-		structMelderDir dir;
-		my strings = NUMpvector (1, 1000000); cherror
-		/*
-		 * Parse the path.
-		 * Example: in "Macintosh HD:sounds:h*.aifc",
-		 * the search directory is "Macintosh HD:sounds:",
-		 * the left environment is "h", and the right environment is ".aifc".
-		 */
-		strcpy (searchDirectory, path);
-		left [0] = right [0] = '\0';
-		asterisk = strrchr (searchDirectory, '*');
-		if (asterisk) {
-			lastColon = strrchr (searchDirectory, ':');
-			/*
-			 * Fix search directory.
-			 */
-			if (lastColon)
-				*lastColon = '\0';
-			else
-				searchDirectory [0] = '\0';
-			/*
-			 * Get left environment.
-			 */
-			*asterisk = '\0';
-			if (lastColon)
-				strcpy (left, lastColon + 1);
-			else
-				strcpy (left, searchDirectory);
-			/*
-			 * Get right environment.
-			 */
-			strcpy (right, asterisk + 1);
-		}
-		lastColon = strrchr (searchDirectory, ':');
-		if (lastColon != NULL && * (lastColon + 1) != '\0')
-			strcat (searchDirectory, ":");
-		leftLength = strlen (left), rightLength = strlen (right);
-		Melder_pathToDir (searchDirectory, & dir); cherror   /* BUG: should be relative */
-		pb. ioVRefNum = dir. vRefNum;
-		for (i = 1;; i ++) {
-			Str255 pFileName;
-			char *fileName;
-			int length;
-			pb. ioDirID = dir. dirID;
-			pb. ioFDirIndex = i;
-			pFileName [0] = 0;
-			pb. ioNamePtr = & pFileName [0];
-			if (PBHGetFInfoSync ((HParmBlkPtr) & pb) != noErr) break;
-			pFileName [pFileName [0] + 1] = '\0';   /* Add null byte at the end. */
-			fileName = (char *) & pFileName [1];   /* Pascal to C string. */
-			length = pFileName [0];
-			if ((leftLength == 0 || strnequ (fileName, left, leftLength)) &&
-					(rightLength == 0 || (length >= rightLength && strequ (fileName + (length - rightLength), right))))
-				my strings [++ my numberOfStrings] = Melder_strdup (fileName);
-		}
 	#endif
 end:
 	iferror forget (me);
@@ -253,7 +165,7 @@ end:
 
 Strings Strings_createAsDirectoryList (const char *path) {
 	Strings me = new (Strings);
-	#if defined (__MACH__) || defined (UNIX)
+	#if defined (macintosh) || defined (UNIX)
 		char *asterisk, left [100], right [100], searchDirectory [256], *lastSlash;
 		long leftLength, rightLength;
 		my strings = NUMpvector (1, 1000000); cherror
@@ -284,6 +196,9 @@ Strings Strings_createAsDirectoryList (const char *path) {
 			if (d == NULL) { forget (me); return Melder_errorp ("Cannot open directory %s.", searchDirectory); }
 			my strings = NUMpvector (1, 1000000); cherror
 			while ((entry = readdir (d)) != NULL) {
+				#ifndef DT_DIR
+					#define DT_DIR  4
+				#endif
 				if (entry -> d_type == DT_DIR) {
 					char *fileName = entry -> d_name;
 					int length = strlen (fileName);

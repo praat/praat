@@ -24,10 +24,8 @@
  * pb 2005/06/17 Mac headers
  * pb 2006/01/05 movies for Mac
  * pb 2006/05/29 QuickTime inclusion made optional
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
-
-#include "Sound.h"
-#include <time.h>
 
 /*
 static void Sound_ulawDecode (Sound me) {
@@ -52,15 +50,11 @@ static void Sound_alawDecode (Sound me) {
 	}
 }
 */
+#include <time.h>
+#include "Sound.h"
 
 #if defined (macintosh)
-	#include <Resources.h>
-	#include <MacMemory.h>
-	#include <Sound.h>
-	#if ! defined (__MACH__) || defined (__GNUC__)
-		#include <SoundInput.h>
-	#endif
-	#include <Script.h>
+	#include <Carbon/Carbon.h>
 	typedef struct SndResource {
 		short formatType; /* Always 1, because 2 is obsolete. */
 		short numberOfSynthesizers; /* 1, namely: */
@@ -71,11 +65,13 @@ static void Sound_alawDecode (Sound me) {
 		SoundHeader itsSndHeader;
 	} *SndResourcePtr, **SndResourceHandle;
 #endif
-#if defined (__MACH__) || defined (_WIN32)
-	#if defined (__MACH__) && defined (__MWERKS__)
+#if defined (macintosh) || defined (_WIN32)
+	#if defined (macintosh) && defined (__MWERKS__)
 		typedef unsigned char Boolean;
 	#endif
 	#if defined (_WIN32)
+		#undef false
+		#undef true
 		#define TARGET_API_MAC_CARBON  0
 	#endif
 	#if ! defined (DONT_INCLUDE_QUICKTIME)
@@ -246,7 +242,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 
 Sound Sound_readFromMovieFile (MelderFile file) {
 	Sound me = NULL;
-#if (defined (__MACH__) || defined (_WIN32)) && ! defined (DONT_INCLUDE_QUICKTIME)
+#if (defined (macintosh) || defined (_WIN32)) && ! defined (DONT_INCLUDE_QUICKTIME)
 	int debug = 0;
 	FSSpec fspec;
 	short refNum = 0, resourceID = 0;

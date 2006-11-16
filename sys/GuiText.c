@@ -1,6 +1,6 @@
 /* GuiText.c
  *
- * Copyright (C) 1993-2005 Paul Boersma
+ * Copyright (C) 1993-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,16 @@
  * pb 2004/01/01 MLTE
  * pb 2004/03/11 tried to make compatible with MacOS X 10.1.x
  * pb 2005/09/01 GuiText_undo and GuiText_redo
+ * pb 2006/10/29 erased MacOS 9 stuff
+ * pb 2006/11/10 comments
  */
 
 #include "GuiP.h"
 #ifndef UNIX
 
 #if mac
-	#define allowMLTE  1
-	#define haveMLTE  (carbon && allowMLTE)
 	#define isTextControl(w)  ((w) -> isControl != 0)
-	#define isTE(w)  ((w) -> nat.text.handle != NULL)
-	#define isMLTE(w)  (haveMLTE && (w) -> macMlteObject != NULL)
+	#define isMLTE(w)  ((w) -> macMlteObject != NULL)
 #endif
 
 static int theScrolledHint;
@@ -116,8 +115,6 @@ void _GuiMac_clearTheTextFocus (void) {
 		_GuiMac_clipOn (theGui.textFocus);
 		if (isTextControl (theGui.textFocus)) {
 			ClearKeyboardFocus (theGui.textFocus -> macWindow);
-		} else if (isTE (theGui.textFocus)) {
-			TEDeactivate (theGui.textFocus -> nat.text.handle);
 		} else if (isMLTE (theGui.textFocus)) {
 			TXNFocus (theGui.textFocus -> macMlteObject, 0);
 			TXNActivate (theGui.textFocus -> macMlteObject, theGui.textFocus -> macMlteFrameId, 0);
@@ -138,8 +135,6 @@ void _GuiText_setTheTextFocus (Widget me) {
 		_GuiMac_clipOn (me);
 		if (isTextControl (me)) {
 			SetKeyboardFocus (my macWindow, my nat.control.handle, kControlEditTextPart);
-		} else if (isTE (me)) {
-			TEActivate (my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNActivate (my macMlteObject, my macMlteFrameId, 1);
 			TXNFocus (my macMlteObject, 1);
@@ -190,22 +185,11 @@ void _GuiText_handleValueChanged (Widget me) {
 		}
 		return 0;   /* Not handled. */
 	}
-	static void motif_mac_textFont (void) {
-		static short font;
-		if (! font) GetFNum ("\pMonaco", & font);
-		TextFont (font);
-		TextSize (9);
-		TextFace (0);
-	}
 	int _GuiMacText_tryToHandleKey (Widget me, unsigned char keyCode, unsigned char charCode, EventRecord *event) {
 		if (me && my motif.text.editable) {
 			_GuiMac_clipOn (me);
 			if (isTextControl (me)) {
 				HandleControlKey (my nat.control.handle, keyCode, charCode, event -> modifiers);
-			} else if (isTE (me)) {
-				motif_mac_textFont ();
-				TEKey (charCode, my nat.text.handle);
-				motif_mac_defaultFont ();
 			} else if (isMLTE (me)) {
 				TXNKeyDown (my macMlteObject, event);
 			}
@@ -216,37 +200,11 @@ void _GuiText_handleValueChanged (Widget me) {
 		}
 		return 0;   /* Not handled. */
 	}
-	static void scrollScrolledText (Widget me, short dv) {
-		Widget scrollBar = my parent -> motif.scrolledWindow.verticalBar;
-		int min = 0, max = scrollBar -> maximum - scrollBar -> sliderSize;
-		int newValue = scrollBar -> value + dv;
-		if (newValue > max) newValue = max;
-		if (newValue < min) newValue = min;
-		TEScroll (0, scrollBar -> value - newValue, my nat.text.handle);
-		_GuiMac_clipOn (scrollBar);
-		XtVaSetValues (scrollBar, XmNvalue, newValue, NULL);
-		_GuiMac_clipOn (me);
-	}
-	static pascal unsigned char _motif_clickLoop (TEPtr pTE) {
-		Widget me = theGui.textFocus;
-		Point mouseLoc;
-		short top, bottom;
-		(void) pTE;
-		if (! MEMBER (my parent, ScrolledWindow)) return 1;
-		top = my parent -> motif.scrolledWindow.clipWindow -> rect. top;
-		bottom = my parent -> motif.scrolledWindow.clipWindow -> rect. bottom;
-		GetMouse (& mouseLoc);
-		if (mouseLoc. v > bottom) scrollScrolledText (me, +6);
-		if (mouseLoc. v < top) scrollScrolledText (me, -6);
-		return 1;
-	}
 	void _GuiMacText_handleClick (Widget me, EventRecord *event) {
 		_GuiText_setTheTextFocus (me);
 		_GuiMac_clipOn (me);
 		if (isTextControl (me)) {
 			HandleControlClick (my nat.control.handle, event -> where, event -> modifiers, NULL);
-		} else if (isTE (me)) {
-			TEClick (event -> where, (event -> modifiers & shiftKey) != 0, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			LocalToGlobal (& event -> where);
 			TXNClick (my macMlteObject, event);   /* Handles text selection and scrolling. */
@@ -266,12 +224,6 @@ void _GuiText_handleValueChanged (Widget me) {
 			_GuiMac_clipOn (me);
 			MoveControl (my nat.control.handle, my rect.left + 3, my rect.top + 3);
 			_GuiMac_clipOffValid (me);
-		} else if (isTE (me)) {
-			Rect r = my rect;
-			InsetRect (& r, 3, 3);   /* Smaller than my rect! */
-			(** my nat.text.handle). destRect = r;
-			(** my nat.text.handle). viewRect = r;
-			TECalText (my nat.text.handle);   /* IM I-390 */
 		} else if (isMLTE (me)) {
 			TXNSetFrameBounds (my macMlteObject, my rect. top, my rect. left, my rect. bottom, my rect. right, my macMlteFrameId);
 		}
@@ -287,17 +239,6 @@ void _GuiText_handleValueChanged (Widget me) {
 			/*
 			 * Control reshowing will explicitly be handled by caller.
 			 */
-		} else if (isTE (me)) {
-			Rect r = my rect;
-			InsetRect (& r, 3, 3);
-			(** my nat.text.handle). destRect = r;
-			(** my nat.text.handle). viewRect = r;
-			/*
-			 * Reshowing will implicitly occur because caller has called InvalWindowRect.
-			 * But MacOS has to be told explicitly that the soft line breaks have to be recalculated.
-			 * The test for this is the wrapping text widget in Praat's TextGrid editor.
-			 */
-			TECalText (my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNSetFrameBounds (my macMlteObject, my rect. top, my rect. left, my rect. bottom, my rect. right, my macMlteFrameId);
 		}
@@ -310,12 +251,6 @@ void _GuiText_handleValueChanged (Widget me) {
 			 * So in order not to make the control flash, we validate it.
 			 */
 			_Gui_validateWidget (me);
-		} else if (isTE (me)) {
-			Rect r = my rect;
-			InsetRect (& r, 3, 3);
-			(** my nat.text.handle). destRect = r;
-			(** my nat.text.handle). viewRect = r;
-			TECalText (my nat.text.handle);   /* IM I-390 */
 		} else if (isMLTE (me)) {
 			TXNSetFrameBounds (my macMlteObject, my rect. top, my rect. left, my rect. bottom, my rect. right, my macMlteFrameId);
 		}
@@ -334,9 +269,6 @@ void _GuiText_unmanage (Widget me) {
 		if (isTextControl (me)) {
 			if (me == theGui.textFocus) _GuiMac_clearTheTextFocus ();   /* Remove visible blinking cursor. */
 			_GuiNativeControl_hide (me);
-		} else if (isTE (me)) {
-			_Gui_invalidateWidget (me);   /* Make sure that the text object will be redrawn unmanaged. */
-			if (me == theGui.textFocus) _GuiMac_clearTheTextFocus ();   /* Remove visible blinking cursor. */
 		} else if (isMLTE (me)) {
 		}
 	#endif
@@ -353,11 +285,6 @@ void _GuiText_unmanage (Widget me) {
 	void _GuiMacText_map (Widget me) {
 		if (isTextControl (me)) {
 			_GuiNativeControl_show (me);
-		} else if (isTE (me)) {
-			_GuiMac_clipOn (me);
-			DrawThemeEditTextFrame (& my rect, kThemeStateActive);
-			TEUpdate (& my rect, my nat.text.handle);
-			_GuiMac_clipOffValid (me);
 		} else if (isMLTE (me)) {
 		}
 	}
@@ -365,10 +292,6 @@ void _GuiText_unmanage (Widget me) {
 		_GuiMac_clipOn (me);
 		if (isTextControl (me)) {
 			Draw1Control (my nat.control.handle);
-		} else if (isTE (me)) {
-			EraseRect (& my rect);
-			DrawThemeEditTextFrame (& my rect, kThemeStateActive);
-			TEUpdate (& my rect, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNDraw (my macMlteObject, NULL);
 		}
@@ -378,9 +301,6 @@ void _GuiText_unmanage (Widget me) {
 		if (theGui.textFocus) {
 		 	_GuiMac_clipOn (theGui.textFocus);
 			if (isTextControl (theGui.textFocus)) {
-				IdleControls (theGui.textFocus -> macWindow);
-			} else if (isTE (theGui.textFocus)) {
-				TEIdle (theGui.textFocus -> nat.text.handle);   /* Make caret blink. */
 			} else if (isMLTE (theGui.textFocus)) {
 				unsigned long changeCount = TXNGetChangeCount (theGui.textFocus -> macMlteObject);
 				if (changeCount != theGui.textFocus -> changeCount) {
@@ -411,17 +331,14 @@ void _GuiText_nativizeWidget (Widget me) {
 		/*
 		 * Determine whether the text object should be a control, a TextEdit object, or an MLTE object.
 		 */
-		if (haveMLTE && theScrolledHint) {
+		if (theScrolledHint) {
 			TXNLongRect destRect;
 			TXNMargins margins;
 			TXNControlData controlData;
 			TXNControlTag controlTag = kTXNMarginsTag;
 			TXNNewObject (NULL,   /* No file. */
 				my macWindow, & my rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
-					#if carbon
-						| kTXNMonostyledTextMask
-					#endif
-					| kTXNDrawGrowIconMask,
+					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
 				kTXNTextEditStyleFrameType, kTXNTextensionFile,
 				kTXNMacOSEncoding, & my macMlteObject, & my macMlteFrameId, me);
 			destRect. left = 0;
@@ -453,15 +370,7 @@ void _GuiText_nativizeWidget (Widget me) {
 			my motif.text.editable = True;
 			my isControl = TRUE;
 		} else {
-			Rect r = my rect;
-			static TEClickLoopUPP theTEClickLoopUPP;
-			InsetRect (& r, 3, 3);   /* BUG: this causes a border problem in autoscrolling. */
-			motif_mac_textFont ();
-			my nat.text.handle = TENew (& r, & r);   /* BUG: should clip on r, not my rect. */
-			motif_mac_defaultFont ();
-			my motif.text.editable = True;
-			if (! theTEClickLoopUPP) theTEClickLoopUPP = NewTEClickLoopUPP (_motif_clickLoop);
-			TESetClickLoop (theTEClickLoopUPP, my nat.text.handle);
+			Melder_fatal ("Old style TE record.");
 		}
 	}
 	#endif
@@ -498,11 +407,6 @@ void _GuiText_destroyWidget (Widget me) {
 	#elif mac
 		if (isTextControl (me)) {
 			_GuiNativeControl_destroy (me);
-		} else if (isTE (me)) {
-			_GuiMac_clipOn (me);
-			TEDispose (my nat.text.handle);
-			EraseRect (& my rect);
-			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
 			TXNDeleteObject (my macMlteObject);
 		}
@@ -518,11 +422,17 @@ static long NativeText_getLength (Widget me) {
 		return Edit_GetTextLength (my window);
 	#elif mac
 		long length = 0;
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			length = (** my nat.text.handle). teLength;
 		} else if (isMLTE (me)) {
 			#if 1
-				length = TXNDataSize (my macMlteObject) / 2;
+				/*
+				 * From the reference page of TXNDataSize:
+				 * "If you are using Unicode and you want to know the number of characters,
+				 * divide the returned ByteCount value by sizeof(UniChar) or 2,
+				 * since MLTE uses the 16-bit Unicode Transformation Format (UTF-16)."
+				 */
+				length = TXNDataSize (my macMlteObject) / sizeof (UniChar);
 			#else
 				long dataSize = TXNDataSize (my macMlteObject), irun;
 				ItemCount numberOfRuns;
@@ -552,7 +462,7 @@ static void NativeText_getText (Widget me, char *buffer, long length) {
 	#if win
 		Edit_GetText (my window, buffer, length + 1);
 	#elif mac
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			strncpy (buffer, (char *) *(** my nat.text.handle). hText, length);
 			buffer [length] = '\0';
 		} else if (isMLTE (me)) {
@@ -623,9 +533,6 @@ void XmTextSetString (Widget me, const char *text) {
 		for (i = 0; i < length; i ++) if (macText [i] == '\n') macText [i] = 13;
 		if (isTextControl (me)) {
 			SetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextTextTag, length, macText);
-		} else if (isTE (me)) {
-			if (length > 32000) { length = 32000; Melder_warning ("Text truncated to 32000 characters!!!!!\nDo not save!!!!!"); }
-			TESetText (macText, length, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNSetData (my macMlteObject, kTXNTextData, macText, length, 0, NativeText_getLength (me));
 		}
@@ -637,13 +544,6 @@ void XmTextSetString (Widget me, const char *text) {
 				if (isTextControl (me)) {
 					_GuiMac_clipOn (me);
 					Draw1Control (my nat.control.handle);
-					GuiMac_clipOff ();
-				} else if (isTE (me)) {
-					Rect r = my rect;
-					InsetRect (& r, 1, 1);
-					_GuiMac_clipOn (me);
-					EraseRect (& r);
-					TEUpdate (& my rect, my nat.text.handle);
 					GuiMac_clipOff ();
 				} else if (isMLTE (me)) {
 				}
@@ -689,7 +589,7 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		 * thus allowing ourselves to select [from_pos, to_pos] and use selection replacement.
 		 */
 		if (my managed) _GuiMac_clipOn (me);
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			TESetSelect (from_pos, to_pos, my nat.text.handle);
 			TEDelete (my nat.text.handle);
 			TEInsert (macText, length, my nat.text.handle);
@@ -700,12 +600,6 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		if (my managed) {
 			if (isTextControl (me)) {
 				Draw1Control (my nat.control.handle);
-			} else if (isTE (me)) {
-				Rect r = my rect;
-				SetPortWindowPort (my macWindow);
-				InsetRect (& r, 1, 1);
-				EraseRect (& r);
-				TEUpdate (& my rect, my nat.text.handle);
 			} else if (isMLTE (me)) {
 			}
 			GuiMac_clipOff ();
@@ -734,9 +628,6 @@ static int NativeText_getSelectionRange (Widget me, long *out_left, long *out_ri
 			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec, NULL);
 			left = rec.selStart;
 			right = rec. selEnd;
-		} else if (isTE (me)) {
-			left = (**my nat.text.handle). selStart;
-			right = (**my nat.text.handle). selEnd;
 		} else if (isMLTE (me)) {
 			TXNGetSelection (my macMlteObject, & left, & right);
 		}
@@ -789,7 +680,7 @@ void XmTextSetSelection (Widget me, XmTextPosition first, XmTextPosition last, l
 	#if win
 		Edit_SetSel (my window, first, last);
 	#elif mac
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			TESetSelect (first, last, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNSetSelection (my macMlteObject, first, last);
@@ -801,7 +692,7 @@ void XmTextSetInsertionPosition (Widget me, XmTextPosition position) {
 	#if win
 		Edit_SetSel (my window, position, position);
 	#elif mac
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			TESetSelect (position, position, my nat.text.handle);
 		} else if (isMLTE (me)) {
 			TXNSetSelection (my macMlteObject, position, position);
@@ -814,7 +705,7 @@ void XmTextShowPosition (Widget me, XmTextPosition position) {
 		(void) position;
 		Edit_ScrollCaret (my window);
 	#elif mac
-		if (isTextControl (me) || isTE (me)) {
+		if (isTextControl (me)) {
 			;
 		} else if (isMLTE (me)) {
 			TXNShowSelection (my macMlteObject, position);
@@ -836,19 +727,8 @@ Boolean XmTextCut (Widget me, long time) {
 			_GuiMac_clipOn (me);
 			HandleControlKey (my nat.control.handle, 0, 'X', cmdKey);
 			GuiMac_clipOff ();
-		} else if (isTE (me)) {
-			#if carbon
-				ClearCurrentScrap ();
-			#else
-				ZeroScrap ();
-			#endif
-			_GuiMac_clipOn (me);
-			TECut (my nat.text.handle);
-			GuiMac_clipOff ();
-			TEToScrap ();
 		} else if (isMLTE (me)) {
 			TXNCut (my macMlteObject);
-			TXNConvertToPublicScrap ();
 		}
 		_GuiText_handleValueChanged (me);
 	#endif
@@ -862,17 +742,8 @@ Boolean XmTextCopy (Widget me, long time) {
 	#elif mac
 		if (isTextControl (me)) {
 			HandleControlKey (my nat.control.handle, 0, 'C', cmdKey);
-		} else if (isTE (me)) {
-			#if carbon
-				ClearCurrentScrap ();
-			#else
-				ZeroScrap ();
-			#endif
-			TECopy (my nat.text.handle);
-			TEToScrap ();
 		} else if (isMLTE (me)) {
 			TXNCopy (my macMlteObject);
-			TXNConvertToPublicScrap ();
 		}
 	#endif
 	(void) time;
@@ -888,13 +759,7 @@ Boolean XmTextPaste (Widget me) {
 			_GuiMac_clipOn (me);
 			HandleControlKey (my nat.control.handle, 0, 'V', cmdKey);
 			GuiMac_clipOff ();
-		} else if (isTE (me)) {
-			TEFromScrap ();
-			_GuiMac_clipOn (me);
-			TEPaste (my nat.text.handle);
-			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
-			TXNConvertFromPublicScrap ();
 			TXNPaste (my macMlteObject);
 		}
 		_GuiText_handleValueChanged (me);
@@ -911,10 +776,6 @@ Boolean XmTextRemove (Widget me) {
 			_GuiMac_clipOn (me);
 			HandleControlKey (my nat.control.handle, 0, 8, 0);   /* Backspace key. */
 			GuiMac_clipOff ();
-		} else if (isTE (me)) {
-			_GuiMac_clipOn (me);
-			TEDelete (my nat.text.handle);
-			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
 			TXNClear (my macMlteObject);
 		}
@@ -929,28 +790,20 @@ Boolean XmTextRemove (Widget me) {
 
 void _GuiText_init (void) {
 	#if mac
-		#if carbon
-			#if haveMLTE
-				short font;
-				TXNMacOSPreferredFontDescription defaults;
-				GetFNum ("\pMonaco", & font);
-				defaults. fontID = font;
-				defaults. pointSize = 0x000B0000;
-				defaults. fontStyle = kTXNDefaultFontStyle;
-				defaults. encoding  = kTXNMacOSEncoding /*kTXNSystemDefaultEncoding*/;
-				TXNInitTextension (& defaults, 1, 0);
-			#endif
-		#else
-			TEInit ();
-		#endif
+		short font;
+		TXNMacOSPreferredFontDescription defaults;
+		GetFNum ("\pMonaco", & font);
+		defaults. fontID = font;
+		defaults. pointSize = 0x000B0000;
+		defaults. fontStyle = kTXNDefaultFontStyle;
+		defaults. encoding  = kTXNMacOSEncoding /*kTXNSystemDefaultEncoding*/;
+		TXNInitTextension (& defaults, 1, 0);
 	#endif
 }
 
 void _GuiText_exit (void) {
 	#if mac
-		#if haveMLTE
-			TXNTerminateTextension (); 
-		#endif
+		TXNTerminateTextension (); 
 	#endif
 }
 
@@ -958,7 +811,7 @@ void _GuiText_exit (void) {
 
 Widget GuiText_createScrolled (Widget parent, const char *name, int editable, int topOffset) {
 	Widget me;
-	#if defined (UNIX) || (mac && ! haveMLTE)
+	#if defined (UNIX)
 		Arg arg [4];
 		arg [0]. name = XmNscrollingPolicy; arg [0]. value = XmAUTOMATIC;
 		arg [1]. name = XmNscrollBarDisplayPolicy; arg [1]. value = XmAS_NEEDED;

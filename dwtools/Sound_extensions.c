@@ -1885,10 +1885,15 @@ IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThresh
 	if (inSilenceInterval && 
 		! TextInterval_setText (thy intervals -> item[iinterval], silenceLabel)) goto end;
 	Sorted_sort (thy intervals);
-	
-	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
-	IntervalTier_removeBoundary_equalLabels (thee, "");
+	/*
+		First remove short non-silence intervals in-between silence intervals and
+		then remove the remaining short silence intervals.
+		This works much better than first removing short silence intervals and 
+		then short non-silence intervals.
+	*/
 	IntervalTier_removeBoundary_minimumDuration (thee, "", minNonSilenceDuration);
+	IntervalTier_removeBoundary_equalLabels (thee, silenceLabel);
+	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
 	IntervalTier_removeBoundary_equalLabels (thee, "");
 	
 end:

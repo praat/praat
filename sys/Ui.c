@@ -1,6 +1,6 @@
 /* Ui.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2004/12/06 UiForm_getXXX_check
  * pb 2004/12/14 less space after LABEL unless its value is empty or ends in a period
  * pb 2005/03/06 guard against incorrect prefs files
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include <ctype.h>
@@ -933,7 +934,7 @@ void UiForm_finish (I) {
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_buffer1, xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y
-					#if defined (macintosh) && defined (__MACH__)
+					#if defined (macintosh)
 						+ 1
 					#endif
 					, XmNwidth, labelWidth, XmNheight, Gui_radioButtonHeight (),

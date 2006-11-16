@@ -743,7 +743,7 @@ NORMAL ("Note: when creating a PDF file on Windows if you have Acrobat, ##do not
 	"also, ##do not use \"Print to PDF\"# from your Microsoft Word File menu; otherwise, "
 	"your EPS files will not show in the PDF file.")
 #endif
-#ifdef __MACH__
+#ifdef macintosh
 NORMAL ("Note: when creating a PDF file on MacOS X, ##do not use \"Save as PDF...\"# in your printing dialog, "
 	"but choose Adobe PDF as your printer or save the document to a PostScript file and convert it with "
 	"Distiller or GhostView; otherwise, your EPS files will not show in the PDF file.")
@@ -822,13 +822,8 @@ ENTRY ("Purpose")
 NORMAL ("To determine where your next drawing will occur.")
 ENTRY ("The viewport")
 #ifdef macintosh
-#ifdef __MACH__
 NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
-#else
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
-	"You can set the colour of its margins with ##Control Panel \\-> Appearance \\-> Appearance \\-> Highlight Colour#. ")
-#endif
 #else
 NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")
@@ -846,13 +841,8 @@ ENTRY ("Purpose")
 NORMAL ("To determine where your next drawing will occur.")
 ENTRY ("The viewport")
 #ifdef macintosh
-#ifdef __MACH__
 NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
-#else
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
-	"You can set the colour of its margins with ##Control Panel \\-> Appearance \\-> Appearance \\-> Highlight Colour#. ")
-#endif
 #else
 NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")

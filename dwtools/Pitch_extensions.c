@@ -96,6 +96,63 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor)
 	return thee;
 }
 
+static double HertzToSpecial (double value, int pitchUnit)
+{
+	return	pitchUnit == Pitch_UNIT_HERTZ ? value :
+		pitchUnit == Pitch_UNIT_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == Pitch_UNIT_MEL ? NUMhertzToMel (value) :
+		pitchUnit == Pitch_UNIT_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == Pitch_UNIT_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
+		pitchUnit == Pitch_UNIT_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
+		pitchUnit == Pitch_UNIT_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
+		pitchUnit == Pitch_UNIT_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
+		pitchUnit == Pitch_UNIT_ERB ? NUMhertzToErb (value) :
+		NUMundefined;
+}
+
+static double SpecialToHertz (double value, int pitchUnit)
+{
+	return	pitchUnit == Pitch_UNIT_HERTZ ? value :
+		pitchUnit == Pitch_UNIT_HERTZ_LOGARITHMIC ? pow (10.0, value) :
+		pitchUnit == Pitch_UNIT_MEL ? NUMmelToHertz (value) :
+		pitchUnit == Pitch_UNIT_LOG_HERTZ ? pow (10.0, value) :
+		pitchUnit == Pitch_UNIT_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == Pitch_UNIT_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == Pitch_UNIT_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == Pitch_UNIT_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == Pitch_UNIT_ERB ? NUMerbToHertz (value) : NUMundefined;
+}
+
+PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, 
+	double pitchMin_Hz, double pitchMax_Hz, int pitchUnit)
+{
+	PitchTier thee;
+	long i;
+	double fmidr, factor, ranger, range;
+	double fminr = HertzToSpecial (pitchMin_ref_Hz, pitchUnit);
+	double fmaxr = HertzToSpecial (pitchMax_ref_Hz, pitchUnit);
+	double fmin = HertzToSpecial (pitchMin_Hz, pitchUnit);
+	double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
+	
+	if (fminr == NUMundefined || fmaxr == NUMundefined || fmin == NUMundefined || fmax == NUMundefined) return
+		Melder_errorp ("The conversion of a pitch value is not defined. ");
+	ranger = fmaxr - fminr; range = fmax - fmin;
+	if (ranger < 0.01 || range < 0.01) return Melder_errorp ("Pitch range too small.");
+	fmidr = fminr + ranger / 2;
+	factor = ranger / range;
+	thee = Data_copy (me);
+	if (thee == NULL) return NULL;
+	for (i = 1; i <= my points -> size; i ++)
+	{
+		RealPoint point = thy points -> item [i];
+		double f = HertzToSpecial (point -> value, pitchUnit);
+		f = factor * (f - fmidr);
+		f = SpecialToHertz (f, pitchUnit);
+		point -> value = f;
+	}
+	return thee;
+}
+
 void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double fmin,
 	double factor, double fmid)
 {

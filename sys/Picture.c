@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,29 +24,10 @@
  * pb 2004/09/05 inner selection
  * pb 2005/05/19 EPS files have the option to switch off the screen preview
  * pb 2005/09/18 useSilipaPS
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #include "melder.h"
-
-#if defined (macintosh)
-	#include "macport_on.h"
-	#include <Resources.h>
-	#include <Files.h>
-	#include <MacMemory.h>
-	#include <Scrap.h>
-	#include <Quickdraw.h>
-	#include <MacWindows.h>
-	#include <PictUtils.h>
-	#include <Script.h>
-	#if TARGET_API_MAC_CARBON
-		#define carbon 1
-	#else
-		#define carbon 0
-		#define GetPortVisibleRegion(port,region)  (region = (port) -> visRgn)
-	#endif
-	#include "macport_off.h"
-#endif
-
 #include "Gui.h"
 #include "Printer.h"
 #include "Picture.h"
@@ -151,12 +132,8 @@ MOTIF_CALLBACK (cb_draw)
 	Graphics_inqWsViewport (my selectionGraphics, & x1DC, & x2DC, & y1DC, & y2DC);
 	SetRect (& rect, x1DC, y1DC, x2DC, y2DC);
 	/* No clearing needed; macintosh clips to update region. */
-	#if carbon
-		if (visRgn == NULL) visRgn = NewRgn ();
-		GetPortVisibleRegion (GetWindowPort (window), visRgn);
-	#else
-		visRgn = window -> visRgn;
-	#endif
+	if (visRgn == NULL) visRgn = NewRgn ();
+	GetPortVisibleRegion (GetWindowPort (window), visRgn);
 	if (RectInRgn (& rect, visRgn)) {
 		drawMarkers (me);
 		Graphics_play (my graphics, my graphics);
@@ -432,11 +409,7 @@ static PicHandle copyToPict_screenImage (Picture me) {
 	 * For 1-bit previews, it will usually be smaller than 32k,
 	 * since Macintosh seems to use some sort of data compression.
 	 */
-	#if carbon
-		CopyBits (GetPortBitMapForCopyBits (offscreenPort), GetPortBitMapForCopyBits (offscreenPort),
-	#else
-		CopyBits (& offscreenPort -> portBits, & offscreenPort -> portBits,
-	#endif
+	CopyBits (GetPortBitMapForCopyBits (offscreenPort), GetPortBitMapForCopyBits (offscreenPort),
 			& rect, & rect, srcCopy, NULL);
 	ClosePicture ();
 	SetGWorld (savePort, saveDevice);
@@ -448,17 +421,12 @@ void Picture_copyToClipboard (Picture me) {
 	PicHandle pict = copyToPict (me);
 	if (! pict) Melder_flushError (NULL);
 	HLock ((Handle) pict);
-	#if carbon
 	{
 		ScrapRef scrap;
 		ClearCurrentScrap ();
 		GetCurrentScrap (& scrap);
 		PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
 	}
-	#else
-		ZeroScrap ();
-		PutScrap (GetHandleSize ((Handle) pict), 'PICT', (Ptr) *pict);
-	#endif
 	HUnlock ((Handle) pict);
 	KillPicture (pict);
 }
@@ -466,17 +434,12 @@ void Picture_copyToClipboard_screenImage (Picture me) {
 	PicHandle pict = copyToPict_screenImage (me);
 	if (! pict) Melder_flushError (NULL);
 	HLock ((Handle) pict);
-	#if carbon
 	{
 		ScrapRef scrap;
 		ClearCurrentScrap ();
 		GetCurrentScrap (& scrap);
 		PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
 	}
-	#else
-		ZeroScrap ();
-		PutScrap (GetHandleSize ((Handle) pict), 'PICT', (Ptr) *pict);
-	#endif
 	HUnlock ((Handle) pict);
 	KillPicture (pict);
 }

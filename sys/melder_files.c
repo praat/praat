@@ -31,6 +31,7 @@
  * pb 2006/08/03 openForWriting
  * rvs 2006/08/12 curl: do not fail on error
  * pb 2006/08/12 check whether unicodeName exists
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -50,15 +51,9 @@
 #ifdef _WIN32
 	#include <windows.h>
 #endif
-#ifdef macintosh
+#if defined (macintosh)
 	#include "macport_on.h"
 	#include <Folders.h>
-	#include <Files.h>
-	#include <MacErrors.h>
-	#include <Script.h>
-	#ifndef __MACH__
-		#include <FSp_fopen.h>
-	#endif
 	#include "macport_off.h"
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
@@ -66,9 +61,8 @@
 #include <errno.h>
 #include "melder.h"
 
-#if defined (__MACH__)
+#if defined (macintosh)
 	#include <sys/stat.h>
-	#undef macintosh
 	#define UNIX
 	#include <unistd.h>
 #endif
@@ -83,25 +77,7 @@ char * Melder_getShellDirectory (void) {
 	return & theShellDirectory [0];
 }
 
-#ifdef macintosh
-void Melder_macToFile (void *void_fspec, MelderFile file) {
-	FSSpec *fspec = (FSSpec *) void_fspec;
-	file -> vRefNum = fspec -> vRefNum;
-	file -> parID = fspec -> parID;
-	strcpy (file -> name, PtoCstr (fspec -> name));
-}
-int Melder_fileToMac (MelderFile file, void *void_fspec) {
-	FSSpec *fspec = (FSSpec *) void_fspec;
-	Str255 pname;
-	OSErr err;
-	PfromCstr (pname, file -> name);
-	err = FSMakeFSSpec (file -> vRefNum, file -> parID, & pname [0], fspec);
-	if (err != noErr && err != fnfErr)
-		return Melder_error ("Error #%d looking for file %s.", err, file -> name);
-	return 1;
-}
-#endif
-#ifdef __MACH__
+#if defined (macintosh)
 void Melder_machToFile (void *void_fsref, MelderFile file) {
 	FSRef *fsref = (FSRef *) void_fsref;
 	FSRefMakePath (fsref, (unsigned char *) file -> path, 259);
@@ -159,9 +135,7 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 #endif
 
 char * MelderFile_name (MelderFile file) {
-	#if defined (macintosh)
-		return file -> name;
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		char *slash = strrchr (file -> path, '/');
 		return slash ? slash + 1 : file -> path;
 	#elif defined (_WIN32)
@@ -171,18 +145,7 @@ char * MelderFile_name (MelderFile file) {
 }
 
 char * MelderDir_name (MelderDir dir) {
-	#if defined (macintosh)
-		CInfoPBRec catInfo;
-		static Str255 pdirName, qdirName;
-		static int cycle = 0;
-		catInfo. dirInfo.ioFDirIndex = -1;   /* Get directory info. */
-		catInfo. dirInfo.ioVRefNum = dir -> vRefNum;   /* In. */
-		catInfo. dirInfo.ioDrDirID = dir -> dirID;   /* In. */
-		catInfo. dirInfo.ioNamePtr = cycle ? qdirName : pdirName;   /* Out. */
-		PBGetCatInfoSync (& catInfo);
-		cycle = ! cycle;
-		return cycle ? PtoCstr (pdirName) : PtoCstr (qdirName);
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		char *slash = strrchr (dir -> path, '/');
 		return slash ? slash + 1 : dir -> path;
 	#elif defined (_WIN32)
@@ -192,101 +155,19 @@ char * MelderDir_name (MelderDir dir) {
 }
 
 int Melder_pathToDir (const char *path, MelderDir dir) {
-	#if defined (macintosh)
-		FSSpec fspec;
-		Str255 ppath;
-		OSErr err;
-		PfromCstr (ppath, path);
-		err = FSMakeFSSpec (0, 0, & ppath [0], & fspec);   /* Normalize. */
-		if (err != noErr && err != fnfErr) {
-			char *colon;
-			path = PtoCstr (ppath);
-			colon = strrchr (path, ':');
-			if (colon) *colon = '\0';
-			if (err == nsvErr) {
-				colon = strchr (path, ':');
-				if (colon) *colon = '\0';
-				Melder_error ("Volume \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty volume name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: volume name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: volume name ends in a space.");
-				return NULL;
-			} else if (err == dirNFErr) {
-				Melder_error ("Folder \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty folder name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: folder name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: folder name ends in a space.");
-				return NULL;
-			} else {
-				return Melder_error ("Error #%d looking for folder %s.", err, path);
-			}
-		}
-		/*
-		 * The parID in fspec is the dirID of the target directory's parent.
-		 * Therefore: look up by name.
-		 */
-		dir -> vRefNum = fspec. vRefNum;
-		dir -> dirID = fspec. parID;   /* Temporarily. */
-		if (! MelderDir_getSubdir (dir, PtoCstr (fspec. name), dir)) return 0;
-	#else
-		strcpy (dir -> path, path);
-	#endif
+	strcpy (dir -> path, path);
 	return 1;
 }
 
 int Melder_pathToFile (const char *path, MelderFile file) {
 	/*
 	 * This handles complete path names only.
-	 * Unlike Melder_relativePathToFile, this handles MacOS 7/8/9 or Windows file names with slashes in it.
+	 * Unlike Melder_relativePathToFile, this handles Windows file names with slashes in them.
 	 *
 	 * Used if we know for sure that we have a complete path name,
 	 * i.e. if the program determined the name (fileselector, printing, prefs).
 	 */
-	#if defined (macintosh)
-		FSSpec fspec;
-		Str255 ppath;
-		OSErr err;
-		PfromCstr (ppath, path);
-		err = FSMakeFSSpec (0, 0, & ppath [0], & fspec);   /* Normalize. */
-		if (err != noErr && err != fnfErr) {
-			char *colon;
-			path = PtoCstr (ppath);
-			colon = strrchr (path, ':');
-			if (colon) *colon = '\0';
-			if (err == nsvErr) {
-				colon = strchr (path, ':');
-				if (colon) *colon = '\0';
-				Melder_error ("Volume \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty volume name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: volume name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: volume name ends in a space.");
-				return NULL;
-			} else if (err == dirNFErr) {
-				Melder_error ("Folder \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty folder name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: folder name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: folder name ends in a space.");
-				return NULL;
-			} else {
-				return Melder_error ("Error #%d looking for folder %s.", err, path);
-			}
-		}
-		Melder_macToFile (& fspec, file);
-	#else
-		strcpy (file -> path, path);
-	#endif
+	strcpy (file -> path, path);
 	return 1;
 }
 
@@ -298,63 +179,7 @@ int Melder_relativePathToFile (const char *path, MelderFile file) {
 	 * Used if we do not know for sure that we have a complete path name,
 	 * i.e. if the user determined the name (scripting).
 	 */
-	#if defined (macintosh)
-		/*
-		 * MacOS 7/8/9 complete path names contain one or more colons, but not at the start:
-		 *    MacHD:Programs:Praats:Praat
-		 * Otherwise, paths are relative:
-		 *    Praat               (no colon)
-		 *    :Praats:Praat       (a colon at the start)
-		 */
-		FSSpec fspec;
-		Str255 ppath;
-		OSErr err;
-		char path2 [256];
-		if (strchr (path, '/') && ! strchr (path, ':') && path [0] != '/') {
-			char macPath [256];
-			sprintf (macPath, ":%s", path);
-			for (;;) {
-				char *slash = strchr (macPath, '/');
-				if (slash == NULL) break;
-				*slash = ':';
-			}
-			return Melder_relativePathToFile (macPath, file);
-		}
-		strcpy (path2, path);
-		MelderFile_nativizePath (path2);
-		PfromCstr (ppath, path2);
-		err = FSMakeFSSpec (0, 0, & ppath [0], & fspec);   /* Normalize. */
-		if (err != noErr && err != fnfErr) {
-			char *colon;
-			path = PtoCstr (ppath);
-			colon = strrchr (path, ':');
-			if (colon) *colon = '\0';
-			if (err == nsvErr) {
-				colon = strchr (path, ':');
-				if (colon) *colon = '\0';
-				Melder_error ("Volume \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty volume name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: volume name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: volume name ends in a space.");
-				return NULL;
-			} else if (err == dirNFErr) {
-				Melder_error ("Folder \"%s\" not found.", path);
-				if (path [0] == '\0')
-					Melder_error ("Hint: empty folder name.");
-				else if (path [0] == ' ')
-					Melder_error ("Hint: folder name begins with a space.");
-				else if (path [strlen (path) - 1] == ' ')
-					Melder_error ("Hint: folder name ends in a space.");
-				return NULL;
-			} else {
-				return Melder_error ("Error #%d looking for folder %s.", err, path);
-			}
-		}
-		Melder_macToFile (& fspec, file);
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		/*
 		 * We assume that Unix complete path names start with a slash.
 		 */
@@ -405,128 +230,48 @@ int Melder_relativePathToFile (const char *path, MelderFile file) {
 	return 1;
 }
 
-#ifdef macintosh
-	static int appendDirectoryPath (Str255 ppath, int vRefNum, long dirID) {
-		CInfoPBRec catInfo;
-		Str255 pdirName;
-		OSErr err;
-		catInfo. dirInfo.ioFDirIndex = -1;   /* Get directory info. */
-		catInfo. dirInfo.ioVRefNum = vRefNum;   /* In. */
-		catInfo. dirInfo.ioDrDirID = dirID;   /* In. */
-		catInfo. dirInfo.ioNamePtr = pdirName;   /* Out. */
-		err = PBGetCatInfoSync (& catInfo);
-		if (err != noErr) return 0;
-		if (dirID != 2) appendDirectoryPath (ppath, vRefNum, catInfo. dirInfo.ioDrParID);   /* Recurse. */
-		memcpy ((char *) & ppath [ppath [0] + 1], (const char *) & pdirName [1], pdirName [0]);
-		ppath [0] = ppath [0] + pdirName [0] + 1;
-		ppath [ppath [0]] = ':';
-		return 1;
-	}
-#endif
 char * Melder_dirToPath (MelderDir dir) {
-	#if defined (macintosh)
-		static Str255 ppath;
-		ppath [0] = 0;
-		if (! appendDirectoryPath (ppath, dir -> vRefNum, dir -> dirID)) {
-			return "";
-		}
-		return PtoCstr (ppath);
-	#else
-		return & dir -> path [0];
-	#endif
+	return & dir -> path [0];
 }
 
 char * Melder_fileToPath (MelderFile file) {
-	#if defined (macintosh)
-		static Str255 ppath;
-		char *path;
-		ppath [0] = 0;
-		if (! appendDirectoryPath (ppath, file -> vRefNum, file -> parID)) {
-			return file -> name;
-		}
-		path = PtoCstr (ppath);
-		strcat (path, file -> name);
-		return path;
-	#else
-		return & file -> path [0];
-	#endif
+	return & file -> path [0];
 }
 
 void MelderFile_copy (MelderFile file, MelderFile copy) {
-	#if defined (macintosh)
-		copy -> vRefNum = file -> vRefNum;
-		copy -> parID = file -> parID;
-		strcpy (copy -> name, file -> name);
-	#else
-		strcpy (copy -> path, file -> path);
-	#endif
+	strcpy (copy -> path, file -> path);
 }
 
 void MelderDir_copy (MelderDir dir, MelderDir copy) {
-	#if defined (macintosh)
-		copy -> vRefNum = dir -> vRefNum;
-		copy -> dirID = dir -> dirID;
-	#else
-		strcpy (copy -> path, dir -> path);
-	#endif
+	strcpy (copy -> path, dir -> path);
 }
 
 int MelderFile_equal (MelderFile file1, MelderFile file2) {
-	#if defined (macintosh)
-		return file1 -> vRefNum == file2 -> vRefNum &&
-			file1 -> parID == file2 -> parID && strequ (file1 -> name, file2 -> name);
-	#else
-		return strequ (file1 -> path, file2 -> path);
-	#endif
+	return strequ (file1 -> path, file2 -> path);
 }
 
 int MelderDir_equal (MelderDir dir1, MelderDir dir2) {
-	#if defined (macintosh)
-		return dir1 -> vRefNum == dir2 -> vRefNum && dir1 -> dirID == dir2 -> dirID;
-	#else
-		return strequ (dir1 -> path, dir2 -> path);
-	#endif
+	return strequ (dir1 -> path, dir2 -> path);
 }
 
 void MelderFile_setToNull (MelderFile file) {
-	#if defined (macintosh)
-		file -> name [0] = '\0';
-	#else
-		file -> path [0] = '\0';
-	#endif
+	file -> path [0] = '\0';
 }
 
 int MelderFile_isNull (MelderFile file) {
-	#if defined (macintosh)
-		return file -> name [0] == '\0';
-	#else
-		return file -> path [0] == '\0';
-	#endif
+	return file -> path [0] == '\0';
 }
 
 void MelderDir_setToNull (MelderDir dir) {
-	#if defined (macintosh)
-		dir -> vRefNum = 0;
-		dir -> dirID = 0;
-	#else
-		dir -> path [0] = '\0';
-	#endif
+	dir -> path [0] = '\0';
 }
 
 int MelderDir_isNull (MelderDir dir) {
-	#if defined (macintosh)
-		return dir -> vRefNum == 0 && dir -> dirID == 0;
-	#else
-		return dir -> path [0] == '\0';
-	#endif
+	return dir -> path [0] == '\0';
 }
 
 void MelderDir_getFile (MelderDir parent, const char *fileName, MelderFile file) {
-	#if defined (macintosh)
-		file -> vRefNum = parent -> vRefNum;
-		file -> parID = parent -> dirID;
-		strcpy (file -> name, fileName);
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		if (parent -> path [0] == '/' && parent -> path [1] == '\0') {
 			sprintf (file -> path, "/%s", fileName);
 		} else {
@@ -551,20 +296,12 @@ void MelderDir_relativePathToFile (MelderDir dir, const char *path, MelderFile f
 
 #ifndef UNIX
 static void Melder_getDesktop (MelderDir dir) {
-	#if defined (macintosh)
-		dir -> vRefNum = 0;
-		dir -> dirID = 0;
-	#else
-		dir -> path [0] = '\0';
-	#endif
+	dir -> path [0] = '\0';
 }
 #endif
 
 void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
-	#if defined (macintosh)
-		parent -> vRefNum = file -> vRefNum;
-		parent -> dirID = file -> parID;
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		/*
 		 * The parent of /usr/hello.txt is /usr.
 		 * The parent of /hello.txt is /.
@@ -614,30 +351,7 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 }
 
 void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
-	#if defined (macintosh)
-		if (dir -> dirID == 2) {
-			/*
-			 * This is the root directory on this volume.
-			 * The parent is the desktop.
-			 */
-			Melder_getDesktop (parent);
-		} else {
-			CInfoPBRec catInfo;
-			Str255 pdirName;
-			OSErr err;
-			catInfo. dirInfo.ioFDirIndex = -1;   /* Get directory info. */
-			catInfo. dirInfo.ioVRefNum = dir -> vRefNum;   /* In. */
-			catInfo. dirInfo.ioDrDirID = dir -> dirID;   /* In. */
-			catInfo. dirInfo.ioNamePtr = pdirName;   /* Out. */
-			err = PBGetCatInfoSync (& catInfo);
-			if (err != noErr) {
-				Melder_getDesktop (parent);
-			} else {
-				parent -> vRefNum = dir -> vRefNum;
-				parent -> dirID = catInfo. dirInfo.ioDrParID;
-			}
-		}
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		/*
 		 * The parent of /usr/local is /usr.
 		 * The parent of /usr is /.
@@ -706,31 +420,11 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 }
 
 int MelderDir_isDesktop (MelderDir dir) {
-	#if defined (macintosh)
-		return dir -> dirID == 0;
-	#elif defined (UNIX)
-		return dir -> path [0] == '\0';
-	#elif defined (_WIN32)
-		return dir -> path [0] == '\0';
-	#endif
+	return dir -> path [0] == '\0';
 }
 
 int MelderDir_getSubdir (MelderDir parent, const char *subdirName, MelderDir subdir) {
-	#if defined (macintosh)
-		Str255 psubdirName;
-		CInfoPBRec cpb;
-		OSErr err;
-		PfromCstr (psubdirName, subdirName);
-		cpb. dirInfo.ioNamePtr = & psubdirName [0];
-		cpb. dirInfo.ioVRefNum = parent -> vRefNum;
-		cpb. dirInfo.ioFDirIndex = 0;   /* IM IV-156 suggests that ioDrDirID will be ignored ?? */
-		cpb. dirInfo.ioDrDirID = parent -> dirID;
-		err = PBGetCatInfoSync (& cpb);
-		if (err != noErr) return 0;
-		if ((cpb. hFileInfo. ioFlAttrib & (1 << ioDirFlg)) == 0) return 0;
-		subdir -> vRefNum = parent -> vRefNum;
-		subdir -> dirID = cpb. dirInfo.ioDrDirID;
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		if (parent -> path [0] == '/' && parent -> path [1] == '\0') {
 			sprintf (subdir -> path, "/%s", subdirName);
 		} else {
@@ -749,9 +443,7 @@ int MelderDir_getSubdir (MelderDir parent, const char *subdirName, MelderDir sub
 }
 
 void Melder_getHomeDir (MelderDir homeDir) {
-	#if defined (macintosh)
-		MelderDir_setToNull (homeDir);   /* Classic Mac: alas. */
-	#elif defined (UNIX)
+	#if defined (UNIX)
 		char *home = getenv ("HOME");
 		strcpy (homeDir -> path, home ? home : "/");
 	#elif defined (_WIN32)
@@ -769,8 +461,6 @@ void Melder_getHomeDir (MelderDir homeDir) {
 
 void Melder_getPrefDir (MelderDir prefDir) {
 	#if defined (macintosh)
-		FindFolder (kOnSystemDisk, kPreferencesFolderType, kCreateFolder, & prefDir -> vRefNum, & prefDir -> dirID);
-	#elif defined (__MACH__)
 		short vRefNum;
 		long dirID;
 		FindFolder (kOnSystemDisk, kPreferencesFolderType, kCreateFolder, & vRefNum, & dirID);
@@ -794,8 +484,6 @@ void Melder_getPrefDir (MelderDir prefDir) {
 
 void Melder_getTempDir (MelderDir tempDir) {
 	#if defined (macintosh)
-		FindFolder (kOnSystemDisk, kTemporaryFolderType, kCreateFolder, & tempDir -> vRefNum, & tempDir -> dirID);
-	#elif defined (__MACH__)
 		short vRefNum;
 		long dirID;
 		FindFolder (kOnSystemDisk, kTemporaryFolderType, kCreateFolder, & vRefNum, & dirID);
@@ -805,55 +493,31 @@ void Melder_getTempDir (MelderDir tempDir) {
 	#endif
 }
 
-#if defined (macintosh) || defined (__MACH__)
+#if defined (macintosh)
 
 static long textCreator = 'PpgB';
 
 void MelderFile_setMacTypeAndCreator (MelderFile file, long fileType, long creator) {
-	#ifdef __MACH__
-		OSStatus err;
-		FSRef fsref;
-		FSCatalogInfo info;
-		Melder_fileToMach (file, & fsref);
-		err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
-		if (err == noErr) {
-			((FInfo *) & info. finderInfo) -> fdType = fileType;
-			((FInfo *) & info. finderInfo) -> fdCreator = creator ? creator : textCreator;
-			FSSetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info);
-		}
-  	#else
-  		OSErr err;
-		FSSpec fspec;
-		FInfo finderInfo;
-		Melder_fileToMac (file, & fspec);
-		err = FSpGetFInfo (& fspec, & finderInfo);
-		if (err == noErr) {
-			finderInfo. fdType = fileType;
-			finderInfo. fdCreator = creator ? creator : textCreator;
-			FSpSetFInfo (& fspec, & finderInfo);
-		}
-	#endif
+	OSStatus err;
+	FSRef fsref;
+	FSCatalogInfo info;
+	Melder_fileToMach (file, & fsref);
+	err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
+	if (err == noErr) {
+		((FInfo *) & info. finderInfo) -> fdType = fileType;
+		((FInfo *) & info. finderInfo) -> fdCreator = creator ? creator : textCreator;
+		FSSetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info);
+	}
 }
 unsigned long MelderFile_getMacType (MelderFile file) {
-	#ifdef __MACH__
-		OSStatus err;
-		FSRef fsref;
-		FSCatalogInfo info;
-		Melder_fileToMach (file, & fsref);
-		err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
-		if (err == noErr) {
-			return ((FInfo *) & info. finderInfo) -> fdType;
-		}
-  	#else
-  		OSErr err;
-		FSSpec fspec;
-		FInfo finderInfo;
-		Melder_fileToMac (file, & fspec);
-		err = FSpGetFInfo (& fspec, & finderInfo);
-		if (err == noErr) {
-			return finderInfo. fdType;
-		}
-	#endif
+	OSStatus err;
+	FSRef fsref;
+	FSCatalogInfo info;
+	Melder_fileToMach (file, & fsref);
+	err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
+	if (err == noErr) {
+		return ((FInfo *) & info. finderInfo) -> fdType;
+	}
 	return 0;
 }
 #endif
@@ -878,81 +542,52 @@ static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, 
 FILE * Melder_fopen (MelderFile file, const char *type) {
 	FILE *f;
 	file -> openForWriting = type [0] == 'w' || type [0] == 'a' || strchr (type, '+');
-	#ifdef macintosh
-		/*
-		 * IM VI:25-7 tells us not to use HSetVol,
-		 * i.e. the following should not be used:
-			err = HGetVol (NULL, & saveVRefNum, & saveDirID);
-			HSetVol (NULL, fspec. vRefNum, fspec. parID);
-			f = fopen (PtoCstr (fspec. name), type);
-			if (err == noErr) HSetVol (NULL, saveVRefNum, saveDirID);
-		 *
-		 * Nevertheless, the following does seem to work:
+	if (strequ (file -> path, "<stdout>") && file -> openForWriting) {
+		f = stdout;
+	#ifdef CURLPRESENT
+	} else if (strstr (file -> path, "://") && file -> openForWriting) {
+		Melder_assert (type [0] == 'w');   /* Reject "append" and "random" access. */
+		f = tmpfile ();   /* Open a temporary file for writing. */
+	} else if (strstr (file -> path, "://") && ! file -> openForWriting) {
+		CURLcode CURLreturn;
+		CURL *CURLhandle;
+		char errorbuffer [CURL_ERROR_SIZE] = "";
+		f = tmpfile ();   /* Open a temporary file for writing. */
+		if (! curl_initialized) {
+			CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
+			curl_initialized = 1;
+		};
+		CURLhandle = curl_easy_init ();   /* Initialize session. */
+		/* 
+		 * Set up the connection parameters.
 		 */
-		#if 0
-		{
-			structMelderDir defaultDir;
-			Melder_getDefaultDir (& defaultDir);
-			MelderFile_setDefaultDir (file);
-			f = fopen (file -> name, type);
-			Melder_setDefaultDir (& defaultDir);
-		}
-		#else
-		/* But we have an alternative (include Fsp_fopen.c in the project): */
-		{
-			FSSpec fspec;
-			if (! Melder_fileToMac (file, & fspec)) return NULL;
-			f = FSp_fopen (& fspec, type);
-		}
-		#endif
-	#else
-		if (strequ (file -> path, "<stdout>") && file -> openForWriting) {
-			f = stdout;
-		#ifdef CURLPRESENT
- 		} else if (strstr (file -> path, "://") && file -> openForWriting) {
-			Melder_assert (type [0] == 'w');   /* Reject "append" and "random" access. */
-			f = tmpfile ();   /* Open a temporary file for writing. */
- 		} else if (strstr (file -> path, "://") && ! file -> openForWriting) {
-			CURLcode CURLreturn;
-			CURL *CURLhandle;
-			char errorbuffer [CURL_ERROR_SIZE] = "";
-			f = tmpfile ();   /* Open a temporary file for writing. */
-			if (! curl_initialized) {
-				CURLreturn = curl_global_init (CURL_GLOBAL_ALL);
-				curl_initialized = 1;
-			};
-			CURLhandle = curl_easy_init ();   /* Initialize session. */
-			/* 
-			 * Set up the connection parameters.
-			 */
-			/* Debugging: Verbose messages */
-			/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
-			/* Do not fail on error. */
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 0);	
-			/* Store error messages in a buffer. */
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
-			/* The file stream to store the URL. */
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FILE, f);
-			/* The function to write to the file, necessary for Win32.	*/
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
-			/* The actual URL to handle.	*/
-			CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
-			/* Get the URL and write it to the given file. */
-			CURLreturn = curl_easy_perform (CURLhandle);
-			/* Handle errors. */
-			if (CURLreturn) {
-				Melder_error ("%s\n", errorbuffer);
-				f = NULL;
-			};
-			/* Clean up session. */
-			curl_easy_cleanup (CURLhandle);
-			/* Do something with the file. Why? */
-			if (f) rewind (f);
- 		#endif
-		} else {
-			f = fopen (file -> path, type);
-		}
+		/* Debugging: Verbose messages */
+		/* CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_VERBOSE, 1); */
+		/* Do not fail on error. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FAILONERROR, 0);	
+		/* Store error messages in a buffer. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_ERRORBUFFER, errorbuffer);
+		/* The file stream to store the URL. */
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_FILE, f);
+		/* The function to write to the file, necessary for Win32.	*/
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_WRITEFUNCTION, write_URL_data_to_file);
+		/* The actual URL to handle.	*/
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
+		/* Get the URL and write it to the given file. */
+		CURLreturn = curl_easy_perform (CURLhandle);
+		/* Handle errors. */
+		if (CURLreturn) {
+			Melder_error ("%s\n", errorbuffer);
+			f = NULL;
+		};
+		/* Clean up session. */
+		curl_easy_cleanup (CURLhandle);
+		/* Do something with the file. Why? */
+		if (f) rewind (f);
 	#endif
+	} else {
+		f = fopen (file -> path, type);
+	}
 	if (! f) {
 		char *path = Melder_fileToPath (file);
 		#ifdef sgi
@@ -1071,15 +706,8 @@ long MelderFile_length (MelderFile file) {
 }
 
 int MelderFile_delete (MelderFile file) {
-	#if defined (macintosh)
-		FSSpec fspec;
-		if (! file) return 1;
-		if (! Melder_fileToMac (file, & fspec)) return 0;
-		FSpDelete (& fspec);
-	#else
-		if (! file) return 1;
-		remove (file -> path);
-	#endif
+	if (! file) return 1;
+	remove (file -> path);
 	return 1;
 }
 
@@ -1098,7 +726,7 @@ char * Melder_asciiMessage (const char *message) {
 }
 
 char * MelderFile_messageName (MelderFile file) {
-	#ifdef __MACH__
+	#if defined (macintosh)
 		char romanName [260];
 		CFStringRef unicodeName = CFStringCreateWithCString (NULL, file -> path, kCFStringEncodingUTF8);
 		if (unicodeName) {
@@ -1164,43 +792,11 @@ int MelderFile_appendText (MelderFile fs, const char *text) {
 }
 
 void Melder_getDefaultDir (MelderDir dir) {
-	#if defined (macintosh)
-		WDPBRec wdpb;
-		OSErr err;
-		wdpb. ioNamePtr = NULL;
-		err = PBHGetVolSync (& wdpb);
-		if (err == noErr) {
-			dir -> vRefNum = wdpb. ioWDVRefNum;
-			/*
-			 * According to IM IV-132, vRefNum is now a volume reference number,
-			 * since we never call PBHSetVolSync with a working directory reference number.
-			 */
-			dir -> dirID = wdpb. ioWDDirID;
-		} else {
-			/*
-			 * There is no default directory.
-			 * Go to the root directory of the start-up disk.
-			 */
-			HSetVol (NULL, dir -> vRefNum = -1, dir -> dirID = 2);
-		}
-	#else
-		getcwd (dir -> path, 256);
-	#endif
+	getcwd (dir -> path, 256);
 }
 
 void Melder_setDefaultDir (MelderDir dir) {
-	#ifdef macintosh
-		structMelderDir defaultDir;
-		/*
-			A fix. In Mac OS X, HSetVol does not work early.
-			This caused relative file names in scripts not to work on first run.
-			Preceding it by PBHGetVolSync turns out to solve the problem.
-		*/
-		Melder_getDefaultDir (& defaultDir);
-		HSetVol (NULL, dir -> vRefNum, dir -> dirID);   /* Despite IM VI:25-7. */
-	#else
-		chdir (dir -> path);
-	#endif
+	chdir (dir -> path);
 }
 
 void MelderFile_setDefaultDir (MelderFile file) {
@@ -1210,45 +806,11 @@ void MelderFile_setDefaultDir (MelderFile file) {
 }
 
 void MelderFile_nativizePath (char *path) {
-	#ifdef macintosh
-		/*
-		 * myfile --> myfile
-		 * mydir/myfile --> :mydir:myfile
-		 */
-		char *p;
-		int relative = FALSE;
-		for (p = path; *p; p ++) {
-			if (*p == '/') {
-				*p = ':';
-				relative = TRUE;
-			}
-		}
-		if (relative) {   /* Prepend a colon. */
-			p [1] = '\0';
-			for (; p - path > 0; p --) p [0] = p [-1];
-			p [0] = ':';
-		}
-	#else
-		(void) path;
-	#endif
+	(void) path;
 }
 
 int Melder_createDirectory (MelderDir parent, const char *dirName, int mode) {
-#ifdef macintosh
-	FSSpec fss;
-	Str255 pdirName;
-	long subdirID = 0;
-	OSErr err;
-	(void) mode;
-	PfromCstr (pdirName, dirName);
-	err = FSMakeFSSpec (parent -> vRefNum, parent -> dirID, & pdirName [0], & fss);
-	if (err != noErr && err != fnfErr)
-		return Melder_error ("Error #%d looking for folder %s.", err, dirName);
-	err = FSpDirCreate (& fss, smSystemScript, & subdirID);
-	if (err != noErr && err != dupFNErr)   /* Ignore if directory already exists. */
-		{ errno = err; return Melder_error ("Cannot create directory \"%s\".", dirName); }
-	return 1;
-#elif defined (_WIN32)
+#if defined (_WIN32)
 	structMelderFile fs;
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
@@ -1340,7 +902,7 @@ char * MelderFile_readLine (MelderFile me) {
 void MelderFile_create (MelderFile me, const char *macType, const char *macCreator, const char *winExtension) {
 	my filePointer = Melder_fopen (me, "wb");
 	if (! my filePointer) return;
-	#if defined (macintosh) || defined (__MACH__)
+	#if defined (macintosh)
 		(void) winExtension;
 	{
 		unsigned long macType_int = macType == NULL && macType [0] == '\0' ? 0 :

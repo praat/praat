@@ -18,8 +18,9 @@
  */
 
 /*
-	pb 2002/03/07 GPL
-	pb 2006/08/10 Windows: turned file selector into a modal dialog box
+ * pb 2002/03/07 GPL
+ * pb 2006/08/10 Windows: turned file selector into a modal dialog box
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 #if defined (macintosh)
@@ -34,24 +35,6 @@
 	#define FIELD_WIDTH  200
 #endif
 
-#if defined (macintosh)
-	#include "macport_on.h"
-	#ifndef __MACH__
-		#include <CTBUtilities.h>
-	#endif
-	#include <Files.h>
-	#include <Folders.h>
-	#if TARGET_API_MAC_CARBON
-		#include <Navigation.h>
-		#define carbon 1
-	#else
-		#include <StandardFile.h>
-		#define carbon 0
-	#endif
-	#include "macport_off.h"
-	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
-	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
-#endif
 #if defined (UNIX)
 	#include <dirent.h>
 	#include <sys/stat.h>
@@ -111,18 +94,7 @@ class_create (SortedSetOfDrive, SortedSet)
 
 static int classSortedSetOfDrive_compare (I, thou) {
 	iam (SimpleDrive); thouart (SimpleDrive);
-	#if defined (macintosh) && ! defined (__MACH__)
-		/* vRefNum is a negative volume reference number. It is usually -1 for the start-up disk,
-		 * -2 for the next inserted disk, and so on. These numbers are reused as disks
-		 * are ejected and other disks are inserted again.
-		 * Drives are sorted by negative vRefNum, so that the start-up disk is on top.
-		 */
-		if (my dir. vRefNum > thy dir. vRefNum) return -1;
-		if (my dir. vRefNum < thy dir. vRefNum) return +1;
-		return 0;
-	#else
-		return strcmp (my name, thy name);
-	#endif
+	return strcmp (my name, thy name);
 }
 
 class_methods (SortedSetOfDrive, SortedSet)
@@ -137,21 +109,7 @@ class_create (SortedSetOfDir, SortedSet)
 
 static int classSortedSetOfDir_compare (I, thou) {
 	iam (SimpleDir); thouart (SimpleDir);
-	#if defined (macintosh) && ! defined (__MACH__)
-		/* On the desktop, multiple folders can have the same name,
-		 * if they are on different drives. We sort first by name,
-		 * then by negative volume reference number.
-		 */
-		int cmp = strcmp (my name, thy name);
-		if (cmp < 0) return -1;
-		if (cmp > 0) return +1;
-		/* If we arrive here, we must be on the desktop... */
-		if (my dir. vRefNum > thy dir. vRefNum) return -1;
-		if (my dir. vRefNum < thy dir. vRefNum) return +1;
-		return 0;
-	#else
-		return strcmp (my name, thy name);
-	#endif
+	return strcmp (my name, thy name);
 }
 
 class_methods (SortedSetOfDir, SortedSet)
@@ -166,21 +124,7 @@ class_create (SortedSetOfFile, SortedSet)
 
 static int classSortedSetOfFile_compare (I, thou) {
 	iam (SimpleFile); thouart (SimpleFile);
-	#if defined (macintosh) && ! defined (__MACH__)
-		/* On the desktop, multiple files can have the same name,
-		 * if they are on different drives. Again, we sort first by name,
-		 * then by negative volume reference number.
-		 */
-		int cmp = strcmp (MelderFile_name (& my file), MelderFile_name (& thy file));
-		if (cmp < 0) return -1;
-		if (cmp > 0) return +1;
-		/* If we arrive here, we must be on the desktop... */
-		if (my file. vRefNum > thy file. vRefNum) return -1;
-		if (my file. vRefNum < thy file. vRefNum) return +1;
-		return 0;
-	#else
-		return strcmp (MelderFile_name (& my file), MelderFile_name (& thy file));
-	#endif
+	return strcmp (MelderFile_name (& my file), MelderFile_name (& thy file));
 }
 
 class_methods (SortedSetOfFile, SortedSet)
@@ -236,11 +180,6 @@ static int classUiFileSelector_widgetToValue (I) { iam (UiFileSelector);
 		MelderDir_getFile (& my dir, fileName, & my value);
 		XtFree (fileName);
 		XtFree ((char *) selected);
-		#if defined (macintosh) && ! defined (__MACH__)
-			/* Normalize desktop. */
-			if (my value. vRefNum == 0 && my value. parID == 0)
-				FindFolder (kOnSystemDisk, kDesktopFolderType, kDontCreateFolder, & my value. vRefNum, & my value. parID);
-		#endif
 		if (MelderFile_exists (& my value)) return 2;   /* Special value. */
 	}
 	return 1;
@@ -278,12 +217,7 @@ static void classUiFileSelector_setString (I, const char *string) { iam (UiFileS
 }
 
 static void Melder_getDesktop (MelderDir dir) {
-	#if defined (macintosh) && ! defined (__MACH__)
-		dir -> vRefNum = 0;
-		dir -> dirID = 0;
-	#else
-		dir -> path [0] = '\0';
-	#endif
+	dir -> path [0] = '\0';
 }
 
 
@@ -347,78 +281,6 @@ if (! d) return;
 			dir = parent;
 		}
 	}
-	#elif defined (macintosh) && ! defined (__MACH__)
-	{
-		if (MelderDir_isDesktop (& my dir)) {
-			for (i = 1;; i ++) {
-				SimpleDrive simpleDrive;
-				HVolumeParam vpb;
-				Str255 pVolumeName;
-				vpb. ioVolIndex = i;   /* Positive, therefore: indexing. */
-				vpb. ioNamePtr = & pVolumeName [0];
-				if (PBHGetVInfoSync ((HParmBlkPtr) & vpb) != noErr) break;
-				simpleDrive = new (SimpleDrive);
-				simpleDrive -> dir. vRefNum = vpb. ioVRefNum;
-				simpleDrive -> dir. dirID = 2;
-				Thing_setName (simpleDrive, PtoCstr (pVolumeName));
-				Collection_addItem (my drives, simpleDrive);
-			}
-		} else {
-			structMelderDir dir, parent;
-			for (i = 1;; i ++) {
-				Str255 pFileName;
-				CInfoPBRec pb;
-				OSErr err;
-				pb. hFileInfo. ioVRefNum = my dir. vRefNum;
-				pb. hFileInfo. ioDirID = my dir. dirID;   /* IM IV-126: reset on each iteration (r/w). */
-				pFileName [0] = '\0';
-				pb. hFileInfo. ioNamePtr = & pFileName [0];
-				pb. hFileInfo. ioFDirIndex = i;
-				err = PBGetCatInfoSync (& pb);
-				if (err != noErr) {
-					if (err == fnfErr) {
-						break;   /* Normal end of iteration. */
-					} else {
-						Melder_getDesktop (& my dir);
-						getNames (me);   /* Recurse. */
-						return;
-					}
-				}
-				pFileName [pFileName [0] + 1] = '\0';   /* Convert to C string. */
-				if (pb. hFileInfo. ioFlAttrib & (1 << ioDirFlg)) {
-					long subdirID = pb. dirInfo. ioDrDirID;   /* Same storage as input dirID ! */
-					SimpleDir simpleDir = new (SimpleDir);
-					simpleDir -> dir. vRefNum = my dir. vRefNum;
-					simpleDir -> dir. dirID = subdirID;
-					Thing_setName (simpleDir, (char *) & pFileName [1]);
-					Collection_addItem (my dirs, simpleDir);
-				} else if (my direction == 1) {
-					SimpleFile simpleFile = new (SimpleFile);
-					simpleFile -> file. vRefNum = my dir. vRefNum;
-					simpleFile -> file. parID = my dir. dirID;
-					strcpy (simpleFile -> file. name, (char *) & pFileName [1]);
-					Collection_addItem (my files, simpleFile);
-				}
-			}
-			dir = my dir;
-			for (i = 1; i <= 30; i ++) {
-				SimpleDir simpleDir;
-				if (MelderDir_isDesktop (& dir)) break;
-				simpleDir = new (SimpleDir);
-				simpleDir -> dir. vRefNum = dir. vRefNum;
-				simpleDir -> dir. dirID = dir. dirID;
-				Thing_setName (simpleDir, MelderDir_name (& dir));
-				Collection_addItem (my hierarchy, simpleDir);
-				MelderDir_getParentDir (& dir, & parent);
-				dir = parent;
-			}
-			if (my hierarchy -> size == 0) {
-				Melder_getDesktop (& my dir);
-				getNames (me);   /* Recurse. */
-				return;
-			}
-		}
-	}
 	#endif
 	/*
 	 * The hierarchy is in reverse order. Fix.
@@ -441,7 +303,7 @@ static void doSearch (UiFileSelector me) {
 	XmListDeleteAllItems (my dirList);
 	XmUpdateDisplay (my dirList);
 	getNames (me);
-	#if defined (UNIX) || defined (__MACH__)
+	#if defined (UNIX) || defined (macintosh)
 	#else
 		s = XmStringCreateSimple ("Desktop");
 		XmListAddItem (my dirList, s, 0);
@@ -458,11 +320,9 @@ static void doSearch (UiFileSelector me) {
 	} else {
 		for (i = 1; i <= my hierarchy -> size; i ++) {
 			SimpleDir simpleDir = my hierarchy -> item [i];
-			#if defined (UNIX) || defined (__MACH__)
+			#if defined (UNIX) || defined (macintosh)
 				char *dirName = Thing_getName (simpleDir);
 				sprintf (name, "%.*s/%s", 3 * (i - 1), spaces, dirName [0] ? dirName : "");
-			#elif defined (macintosh)
-				sprintf (name, i == 1 ? "%.*s[ %s ]" : "%.*s:%s", 3 * i, spaces, Thing_getName (simpleDir));
 			#elif defined (_WIN32)
 				sprintf (name, i == 1 ? "%.*s[ %s ]" : "%.*s\\%s", 3 * i, spaces, Thing_getName (simpleDir));
 			#endif
@@ -472,10 +332,8 @@ static void doSearch (UiFileSelector me) {
 		}
 		for (i = 1; i <= my dirs -> size; i ++) {
 			SimpleDir simpleDir = my dirs -> item [i];
-			#if defined (UNIX) || defined (__MACH__)
+			#if defined (UNIX) || defined (macintosh)
 				sprintf (name, "%.*s/%s", 3 * my hierarchy -> size, spaces, Thing_getName (simpleDir));
-			#elif defined (macintosh)
-				sprintf (name, "%.*s:%s", 3 * (my hierarchy -> size + 1), spaces, Thing_getName (simpleDir));
 			#elif defined (_WIN32)
 				sprintf (name, "%.*s\\%s", 3 * (my hierarchy -> size + 1), spaces, Thing_getName (simpleDir));
 			#endif
@@ -484,7 +342,7 @@ static void doSearch (UiFileSelector me) {
 			XmStringFree (s);
 		}
 	}
-	#if defined (UNIX) || defined (__MACH__)
+	#if defined (UNIX) || defined (macintosh)
 		XmListSelectPos (my dirList, my hierarchy -> size, 0);
 	#else
 		XmListSelectPos (my dirList, my hierarchy -> size + 1, 0);
@@ -836,13 +694,12 @@ Any UiInfile_create (Widget parent, const char *title,
 
 void UiInfile_do (I) {
 	iam (UiInfile);
-#if defined (macintosh)
-	#if carbon
+	#if defined (macintosh)
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. optionFlags += kNavDontAutoTranslate;
+		dialogOptions. optionFlags |= kNavDontAutoTranslate;
 		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
 		if (err == noErr) {
 			NavReplyRecord reply;
@@ -852,15 +709,9 @@ void UiInfile_do (I) {
 				AEKeyword keyWord;
 				DescType typeCode;
 				Size actualSize = 0;
-				#ifdef __MACH__
-					FSRef machFile;
-					if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-						Melder_machToFile (& machFile, & my file);
-				#else
-					FSSpec macFile;
-					if ((err = AEGetNthPtr (& reply. selection, 1, typeFSS, & keyWord, & typeCode, & macFile, sizeof (FSSpec), & actualSize)) == noErr)
-						Melder_macToFile (& macFile, & my file);
-				#endif
+				FSRef machFile;
+				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
+					Melder_machToFile (& machFile, & my file);
 				if (! my okCallback (me, my okClosure))
 					Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 				UiHistory_write (" %s", Melder_fileToPath (& my file));
@@ -868,51 +719,41 @@ void UiInfile_do (I) {
 			}
 			NavDialogDispose (dialogRef);
 		}
-	#else
-		StandardFileReply reply;
-		StandardGetFile (NULL, 0, NULL, & reply);
-		if (reply. sfGood) {
-			Melder_macToFile (& reply. sfFile, & my file);
+	#elif defined (_WIN32)
+		OPENFILENAME openFileName;
+		static TCHAR customFilter [100+2];
+		static TCHAR fullFileName [300+2];
+		openFileName. lStructSize = sizeof (OPENFILENAME);
+		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
+		openFileName. lpstrFilter = NULL;   /* like *.txt */
+		openFileName. lpstrCustomFilter = customFilter;
+		openFileName. nMaxCustFilter = 100;
+		openFileName. lpstrFile = fullFileName;
+		openFileName. nMaxFile = 300;
+		openFileName. lpstrFileTitle = NULL;
+		openFileName. lpstrInitialDir = NULL;
+		openFileName. lpstrTitle = my name;
+		openFileName. Flags = OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+		openFileName. lpstrDefExt = NULL;
+		if (GetOpenFileName (& openFileName)) {
+			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure))
 				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
 		}
+	#else
+		#if 1
+			XmString dirMask;
+			if (inDirMask != NULL)
+				XtVaSetValues (my dialog, XmNdirMask, inDirMask, NULL);
+			XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
+			XmFileSelectionDoSearch (my dialog, dirMask);
+			XmStringFree (dirMask);
+		#endif
+		XtManageChild (my dialog);
+		XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
+		currentUiFile = (UiFile) me;
 	#endif
-#elif defined (_WIN32)
-	OPENFILENAME openFileName;
-	static TCHAR customFilter [100+2];
-	static TCHAR fullFileName [300+2];
-	openFileName. lStructSize = sizeof (OPENFILENAME);
-	openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-	openFileName. lpstrFilter = NULL;   /* like *.txt */
-	openFileName. lpstrCustomFilter = customFilter;
-	openFileName. nMaxCustFilter = 100;
-	openFileName. lpstrFile = fullFileName;
-	openFileName. nMaxFile = 300;
-	openFileName. lpstrFileTitle = NULL;
-	openFileName. lpstrInitialDir = NULL;
-	openFileName. lpstrTitle = my name;
-	openFileName. Flags = OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	openFileName. lpstrDefExt = NULL;
-	if (GetOpenFileName (& openFileName)) {
-		Melder_pathToFile (fullFileName, & my file);
-		if (! my okCallback (me, my okClosure))
-			Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
-		UiHistory_write (" %s", Melder_fileToPath (& my file));
-	}
-#else
-	#if 1
-		XmString dirMask;
-		if (inDirMask != NULL)
-			XtVaSetValues (my dialog, XmNdirMask, inDirMask, NULL);
-		XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
-		XmFileSelectionDoSearch (my dialog, dirMask);
-		XmStringFree (dirMask);
-	#endif
-	XtManageChild (my dialog);
-	XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
-	currentUiFile = (UiFile) me;
-#endif
 }
 
 /********** WRITING A FILE **********/
@@ -1022,17 +863,15 @@ Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTit
 
 void UiOutfile_do (I, const char *defaultName) {
 	iam (UiOutfile);
-#if defined (macintosh)
-	const char *lastColon = strrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
-	#if carbon
+	#if defined (macintosh)
+		const char *lastSlash = strrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
 		dialogOptions. windowTitle = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
 		dialogOptions. message = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
-		/* dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingUTF8); */
-		dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastColon ? lastColon + 1 : defaultName, kCFStringEncodingMacRoman);
+		dialogOptions. saveFileName = CFStringCreateWithCString (NULL, lastSlash ? lastSlash + 1 : defaultName, kCFStringEncodingMacRoman);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
 		if (dialogOptions. windowTitle) CFRelease (dialogOptions. windowTitle);
@@ -1050,7 +889,6 @@ void UiOutfile_do (I, const char *defaultName) {
 					According to Navigation.h, it is the case that in this fourth file selection API,
 					the reply record contains the DIRECTORY that the user has chosen.
 				*/
-				#ifdef __MACH__
 				FSRef machFile;
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
 					structMelderDir dir;
@@ -1059,37 +897,49 @@ void UiOutfile_do (I, const char *defaultName) {
 					if (dir. path [0] != '/' || dir. path [1] != '\0') strcat (dir. path, "/");
 					strcpy (my file. path, dir. path);
 					/*
-						The POSIX path name is stored in UTF8 encoding (cf. the non-Mach case).
+						The POSIX path name is stored in canonically decomposed UTF8 encoding.
+						The navigation dialog gives us precomposed Unicode.
+						So we first decompose, then convert to UTF-8.
 					*/
-					CFStringGetCString (fileName, & my file. path [strlen (my file. path)], 260 - strlen (my file. path), kCFStringEncodingUTF8);
+					if (Melder_debug == 19) {
+						int i;
+						for (i = 0; i < CFStringGetLength (fileName); i ++) {
+							Melder_casual ("UniCode %d %d", i, CFStringGetCharacterAtIndex (fileName, i));
+						}
+					}
+					#if defined (__i386__) && 0
+						/* System 10.4 and up. */
+						CFStringGetFileSystemRepresentation (fileName,
+							& my file. path [strlen (my file. path)],
+							260 - strlen (my file. path));
+					#else
+					{
+						CFMutableStringRef string = CFStringCreateMutableCopy (NULL, 0, fileName);
+						CFStringNormalize (string, kCFStringNormalizationFormD);
+						CFStringGetCString (string,
+							& my file. path [strlen (my file. path)],
+							260 - strlen (my file. path),
+							kCFStringEncodingUTF8);
+						CFRelease (string);
+					}
+					#endif
+					if (Melder_debug == 19) {
+						int i;
+						for (i = 0; i < strlen (my file. path); i ++) {
+							Melder_casual ("UTF-8 %d %d %c", i, (unsigned char) my file. path [i], my file. path [i]);
+						}
+					}
 					/* The sample code has fileName released, but the header file says we shall retain it if we want to keep it,
 					   so it does not seem to be ours. Since our code crashes if we release fileName, we believe the header file. */
 					/* From Navigation.h:
 					 *  Result:
-					 *    The save file name as a CFStringRef. The string is immutable. The
+					 *    The save file name is a CFStringRef. The string is immutable. The
 					 *    client should retain the string if the reference is to be held
 					 *    beyond the life of the dialog (standard CF retain/release
 					 *    semantics).
 					 */
 					/*CFRelease (fileName);*/
 				}
-				#else
-				FSSpec macFile;
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSS, & keyWord, & typeCode, & macFile, sizeof (FSSpec), & actualSize)) == noErr) {
-					structMelderDir dir;
-					CFStringRef fileName = NavDialogGetSaveFileName (dialogRef);
-					dir. vRefNum = macFile. vRefNum;
-					dir. dirID = macFile. parID;
-					MelderDir_getSubdir (& dir, PtoCstr (macFile. name), & dir);
-					my file. vRefNum = dir. vRefNum;
-					my file. parID = dir. dirID;
-					/*
-						The Mac file name is stored in MacRoman encoding (cf. the Mac case).
-					*/
-					CFStringGetCString (fileName, my file. name, 260, kCFStringEncodingMacRoman);
-					CFRelease (fileName);
-				}
-				#endif
 				if (! my okCallback (me, my okClosure))
 					Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 				UiHistory_write (" %s", Melder_fileToPath (& my file));
@@ -1097,73 +947,60 @@ void UiOutfile_do (I, const char *defaultName) {
 			}
 			NavDialogDispose (dialogRef);
 		}
-	#else
-		Str255 ptitle, pdefaultName;
-		StandardFileReply reply;
-		PfromCstr (ptitle, my name);
-		PfromCstr (pdefaultName, lastColon ? lastColon + 1 : defaultName);
-		StandardPutFile (ptitle, pdefaultName, & reply);
-		if (reply. sfGood) {
-			Melder_macToFile (& reply. sfFile, & my file);
+	#elif defined (_WIN32)
+		OPENFILENAME openFileName;
+		static TCHAR customFilter [100+2];
+		static TCHAR fullFileName [300+2];
+		strcpy (fullFileName, defaultName);
+		openFileName. lStructSize = sizeof (OPENFILENAME);
+		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
+		openFileName. lpstrFilter = NULL;   /* like *.txt */
+		openFileName. lpstrCustomFilter = customFilter;
+		openFileName. nMaxCustFilter = 100;
+		openFileName. lpstrFile = fullFileName;
+		openFileName. nMaxFile = 300;
+		openFileName. lpstrFileTitle = NULL;
+		openFileName. lpstrInitialDir = NULL;
+		openFileName. lpstrTitle = my name;
+		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
+		openFileName. lpstrDefExt = NULL;
+		if (GetSaveFileName (& openFileName)) {
+			if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
+				Melder_flushError ("Dialog `%s' cancelled.", my name);
+				return;
+			}
+			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure))
 				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
 		}
+	#else
+		XmString xmDirMask, xmDirSpec;
+		char *dirMask, *dirSpecc, dirSpec [1000];
+		int length;
+		#if 1
+			if (outDirMask)
+				XtVaSetValues (my dialog, XmNdirMask, outDirMask, NULL);
+		#endif
+		XtVaGetValues (my dialog, XmNdirMask, & xmDirMask, NULL);
+		XtVaGetValues (my dialog, XmNdirSpec, & xmDirSpec, NULL);
+		XmStringGetLtoR (xmDirMask, XmSTRING_DEFAULT_CHARSET, & dirMask);
+		XmStringGetLtoR (xmDirSpec, XmSTRING_DEFAULT_CHARSET, & dirSpecc);
+		#if 1
+			XmFileSelectionDoSearch (my dialog, xmDirMask);
+		#endif
+		strcpy (dirSpec, dirMask);
+		length = strlen (dirSpec);
+		if (dirSpec [length - 1] == '*') dirSpec [length - 1] = '\0';
+		strcat (dirSpec, defaultName);
+		XtVaSetValues (my dialog, motif_argXmString (XmNdirSpec, dirSpec), NULL);
+		XmStringFree (xmDirMask);
+		XtFree (dirMask);
+		XtFree (dirSpecc);
+		XtManageChild (my dialog);
+		XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
+		currentUiFile = (UiFile) me;
 	#endif
-#elif defined (_WIN32)
-	OPENFILENAME openFileName;
-	static TCHAR customFilter [100+2];
-	static TCHAR fullFileName [300+2];
-	strcpy (fullFileName, defaultName);
-	openFileName. lStructSize = sizeof (OPENFILENAME);
-	openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-	openFileName. lpstrFilter = NULL;   /* like *.txt */
-	openFileName. lpstrCustomFilter = customFilter;
-	openFileName. nMaxCustFilter = 100;
-	openFileName. lpstrFile = fullFileName;
-	openFileName. nMaxFile = 300;
-	openFileName. lpstrFileTitle = NULL;
-	openFileName. lpstrInitialDir = NULL;
-	openFileName. lpstrTitle = my name;
-	openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
-	openFileName. lpstrDefExt = NULL;
-	if (GetSaveFileName (& openFileName)) {
-		if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-			Melder_flushError ("Dialog `%s' cancelled.", my name);
-			return;
-		}
-		Melder_pathToFile (fullFileName, & my file);
-		if (! my okCallback (me, my okClosure))
-			Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
-		UiHistory_write (" %s", Melder_fileToPath (& my file));
-	}
-#else
-	XmString xmDirMask, xmDirSpec;
-	char *dirMask, *dirSpecc, dirSpec [1000];
-	int length;
-	#if 1
-		if (outDirMask)
-			XtVaSetValues (my dialog, XmNdirMask, outDirMask, NULL);
-	#endif
-	XtVaGetValues (my dialog, XmNdirMask, & xmDirMask, NULL);
-	XtVaGetValues (my dialog, XmNdirSpec, & xmDirSpec, NULL);
-	XmStringGetLtoR (xmDirMask, XmSTRING_DEFAULT_CHARSET, & dirMask);
-	XmStringGetLtoR (xmDirSpec, XmSTRING_DEFAULT_CHARSET, & dirSpecc);
-	#if 1
-		XmFileSelectionDoSearch (my dialog, xmDirMask);
-	#endif
-	strcpy (dirSpec, dirMask);
-	length = strlen (dirSpec);
-	if (dirSpec [length - 1] == '*') dirSpec [length - 1] = '\0';
-	strcat (dirSpec, defaultName);
-	XtVaSetValues (my dialog, motif_argXmString (XmNdirSpec, dirSpec), NULL);
-	XmStringFree (xmDirMask);
-	XtFree (dirMask);
-	XtFree (dirSpecc);
-	XtManageChild (my dialog);
-	XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
-	currentUiFile = (UiFile) me;
-#endif
 }
 
 /* End of file UiFile.c */

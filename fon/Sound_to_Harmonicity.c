@@ -36,14 +36,16 @@ Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 	if (! pitch) return NULL;
 	thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 		pitch -> dx, pitch -> x1);
-	if (thee)
-		for (i = 1; i <= thy nx; i ++)
+	if (thee) {
+		for (i = 1; i <= thy nx; i ++) {
 			if (pitch -> frame [i]. candidate [1]. frequency == 0)
 				thy z [1] [i] = -200;
 			else {
 				double r = pitch -> frame [i]. candidate [1]. strength;
 				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
 			}
+		}
+	}
 	forget (pitch);
 	return thee;
 }
@@ -58,14 +60,16 @@ Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 	if (! pitch) return NULL;
 	thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 		pitch -> dx, pitch -> x1);
-	if (thee)
-		for (i = 1; i <= thy nx; i ++)
+	if (thee) {
+		for (i = 1; i <= thy nx; i ++) {
 			if (pitch -> frame [i]. candidate [1]. frequency == 0)
 				thy z [1] [i] = -200;
 			else {
 				double r = pitch -> frame [i]. candidate [1]. strength;
 				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
 			}
+		}
+	}
 	forget (pitch);
 	return thee;
 }

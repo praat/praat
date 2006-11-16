@@ -30,6 +30,7 @@
  * pb 2006/02/23 corrected callbacks in praat_installEditorN
  * pb 2006/08/07 removed quotes from around file paths in openDocument message
  * pb 2006/09/30 praat_selection () can take NULL as an argument
+ * pb 2006/10/28 removed MacOS 9 stuff
  */
 
 #include "melder.h"
@@ -37,7 +38,7 @@
 #include "gsl_errno.h"
 #include <ctype.h>
 #include <stdarg.h>
-#if defined (UNIX) || defined (__MACH__)
+#if defined (UNIX) || defined (macintosh)
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <signal.h>
@@ -293,7 +294,7 @@ void praat_cleanUpName (char *name) {
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		#if defined (_WIN32) || defined (__MACH__)
+		#if defined (_WIN32) || defined (macintosh)
 			if (strchr (" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = '_';
 		#else
 			if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
@@ -324,7 +325,7 @@ int praat_new (I, const char *format, ...) {
 	} else {
 		myName [0] = '\0';
 	}
-	#if defined (__MACH__)
+	#if defined (macintosh)
 	{
 		CFStringRef unicodeName = CFStringCreateWithCString (NULL, myName, kCFStringEncodingUTF8);
 		if (unicodeName) {
@@ -850,9 +851,6 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 #endif
 	char *p;
 	#ifdef macintosh
-		#ifndef __MACH__
-			extern unsigned short Gestalt (unsigned long selector, long *response);
-		#endif
 		Gestalt ('sysv', (long *) & Melder_systemVersion);
 	#endif
 	/*
@@ -864,7 +862,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Remember the current directory. Only useful for scripts run from batch.
 	*/
 	Melder_rememberShellDirectory ();
-	#if defined (UNIX) || defined (__MACH__) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
+	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
 		 * or running PRAATCON.EXE from the MS-DOS prompt or the NT command line:
@@ -927,16 +925,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	/*
 	 * Get the program's private directory:
 	 *    "/u/miep/myProg-dir" (Unix)
-	 *    "Macintosh HD:System Folder:Preferences:MyProg Preferences" (Classic Macintosh)
-	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Mach)
+	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
 	 *    "C:\Windows\MyProg" (Windows 95)
 	 *    "C:\Documents and Settings\Miep\MyProg" (Windows XP)
 	 * and construct a preferences-file name and a script-buttons-file name like
 	 *    /u/miep/.myProg-dir/prefs   (Unix)
 	 *    /u/miep/.myProg-dir/script_buttons
-	 * or
-	 *    Harde schijf:Systeemmap:Voorkeuren:MyProg Preferences:Prefs
-	 *    Harde schijf:Systeemmap:Voorkeuren:MyProg Preferences:Buttons
 	 * or
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons
@@ -954,14 +948,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 */
 		#if defined (UNIX)
 			sprintf (name, ".%s-dir", programName);   /* For example .myProg-dir */
-		#elif defined (__MACH__)
-			sprintf (name, "%s Prefs", praatP.title);   /* For example MyProg Prefs */
 		#elif defined (macintosh)
-			sprintf (name, "%s Preferences", praatP.title);   /* For example MyProg Preferences */
+			sprintf (name, "%s Prefs", praatP.title);   /* For example MyProg Prefs */
 		#elif defined (_WIN32)
 			sprintf (name, "%s", praatP.title);   /* For example MyProg */
 		#endif
-		#if defined (UNIX) || defined (__MACH__)
+		#if defined (UNIX) || defined (macintosh)
 			Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		#else
 			Melder_createDirectory (& prefParentDir, name, 0);
@@ -1015,7 +1007,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 
 	if (Melder_batch) {
 		praat.batchName = Melder_calloc (1000, 1);
-		#if defined (UNIX) || defined (__MACH__) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
+		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		{
 			unsigned int i;
 			for (i = 1; i < argc; i ++) {
@@ -1199,20 +1191,20 @@ void praat_run (void) {
 
 	praatP.phase = praat_STARTING_UP;
 
-	#if defined (UNIX) || defined (__MACH__)
+	#if defined (UNIX) || defined (macintosh)
 	{
 		structMelderDir usrLocal;
 		Melder_pathToDir ("/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, "%s-startUp");
 	}
 	#endif
-	#if defined (UNIX) || defined (__MACH__)
+	#if defined (UNIX) || defined (macintosh)
 		executeStartUpFile (& homeDir, ".%s-user-startUp");   /* Not on Windows (empty file name error). */
 	#endif
-	#if defined (UNIX) || defined (__MACH__) || defined (_WIN32)
+	#if defined (UNIX) || defined (macintosh) || defined (_WIN32)
 		executeStartUpFile (& homeDir, "%s-user-startUp");
 	#endif
-	#if defined (UNIX) || defined (__MACH__) || defined (_WIN32)
+	#if defined (UNIX) || defined (macintosh) || defined (_WIN32)
 	/*
 	 * Plugins.
 	 * The Praat phase should remain praat_STARTING_UP,

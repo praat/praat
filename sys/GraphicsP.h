@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@
  */
 
 /*
- * pb 2002/11/17
- * pb 2004/01/11 added comments (numbers) to opcodes for debugging
- * pb 2004/02/02 metafile
+ * pb 2006/10/28
  */
 
 #ifndef _Graphics_h_
@@ -168,19 +166,6 @@ int Graphics_init (I);
 	#define mac 1
 	#define win 0
 	#define xwin 0
-	#if TARGET_API_MAC_CARBON
-		#define carbon 1
-	#else
-		#define carbon 0
-		#define GetQDGlobalsBlack(pat)  (*(pat) = qd.black, pat)
-		#define GetQDGlobalsWhite(pat)  (*(pat) = qd.white, pat)
-		#define GetQDGlobalsGray(pat)  (*(pat) = qd.gray, pat)
-		#define GetQDGlobalsDarkGray(pat)  (*(pat) = qd.dkGray, pat)
-		#define GetQDGlobalsLightGray(pat)  (*(pat) = qd.ltGray, pat)
-		#define GetPortPixMap(port)  ((port) -> portPixMap)
-		#define InvalWindowRect(win,rect)  InvalRect (rect)
-		#define ValidWindowRect(win,rect)  ValidRect (rect)
-	#endif
 #endif
 
 #define GraphicsScreen_methods Graphics_methods

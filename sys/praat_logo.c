@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/08/02
  * pb 2002/03/07 GPL
+ * pb 2006/11/05
  */
 
 #include "praatP.h"
@@ -38,7 +38,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, praatP.title);
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, "\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2004");
+	Graphics_text (g, 0.5, 0.25, "\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2006");
 }
 
 static struct {

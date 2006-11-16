@@ -331,11 +331,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			 * However, the example in Imaging:6-6 violates this, and dereferences the handle directly...
 			 */
 			CopyBits ((struct BitMap *) *offscreenPixMap,
-				#if carbon
-					(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my macPort),   /* BUG for 1-bit eps preview */
-				#else
-					& my macPort -> portBits,
-				#endif
+				(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my macPort),   /* BUG for 1-bit eps preview */
 				& rect, & destRect, srcCopy, NULL);
 		#endif
 		/*

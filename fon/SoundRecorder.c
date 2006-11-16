@@ -34,6 +34,7 @@
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/04/01 corrections for Intel Mac
  * pb 2006/08/09 acknowledge the 67 MB buffer limit on Windows XP
+ * pb 2006/10/28 erased MacOS 9 stuff
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -92,13 +93,6 @@
 	MMRESULT err; \
 	short buffertje1 [1000*2], buffertje2 [1000*2];
 #elif defined (macintosh)
-	#include "macport_on.h"
-	#include <Sound.h>
-	#ifndef __MACH__
-		#include <SoundInput.h>
-	#endif
-	#include <Gestalt.h>
-	#include "macport_off.h"
 	#define SoundRecorder_members CommonSoundRecorder_members \
 		Handle temporaryMemoryHandle; \
 		int numberOfMacSources; \
@@ -1749,48 +1743,6 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	 */
 	if (nmaxMB_pref < 1) nmaxMB_pref = 1;   /* Validate preferences. */
 	if (nmaxMB_pref > 1000) nmaxMB_pref = 1000;
-	#if defined (macintosh) && ! defined (__MACH__)
-	{
-		OSErr err;
-		/*
-		 * First try: if virtual memory is off,
-		 * we try to allocate most of the remaining physical temporary memory.
-		 */
-		long virtualMemoryResponse;
-		Gestalt (gestaltVMAttr, & virtualMemoryResponse);
-		if ((virtualMemoryResponse & (1 << gestaltVMPresent)) == 0) {
-			long max = (TempMaxMem (0) / 5) * 4 - 2000000;   /* Leave 80% plus 2 megabytes. */
-			if (max > 100000) {
-				my nmax = max / (sizeof (short) * numberOfChannels);
-				my temporaryMemoryHandle = TempNewHandle (my nmax * (sizeof (short) * numberOfChannels), & err);
-				if (err != noErr) { Melder_error ("Out of memory. Should not occur."); goto error; }
-				HLock (my temporaryMemoryHandle);
-				my buffer = (short *) * my temporaryMemoryHandle;
-			}
-		}
-		/*
-		 * If virtual memory is on, or if allocation has not succeeded,
-		 * we are limited by the "maximum buffer size" preference,
-		 * which is a user-settable trade-off between maximum memory use and maximum initialization speed.
-		 */
-		if (my buffer == NULL) {
-			/*
-			 * Second try: temporary memory.
-			 */
-			my nmax = nmaxMB_pref * 1000000 / (sizeof (short) * numberOfChannels);
-			for (;;) {
-				my temporaryMemoryHandle = TempNewHandle (my nmax * (sizeof (short) * numberOfChannels), & err);
-				if (err == noErr) {
-					HLock (my temporaryMemoryHandle);
-					my buffer = (short *) * my temporaryMemoryHandle;
-					break;   /* Success. */
-				}
-				if (my nmax < 500000) break;   /* Failure, without error message. */
-				my nmax /= 2;   /* Retry with less temporary memory. */
-			}
-		}
-	}
-	#endif
 	if (my buffer == NULL) {
 		/*
 		 * Third try: application memory.

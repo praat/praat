@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/08/08
+ * pb 2006/10/29
  */
 
 #include "praat.h"
@@ -28,7 +28,6 @@
 #include "SpellingChecker.h"
 #include "TextGridEditor.h"
 #include "TextGrid_extensions.h"
-#include "TextTier_Pitch.h"
 #include "WordList.h"
 
 void praat_dia_timeRange (Any dia);

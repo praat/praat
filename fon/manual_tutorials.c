@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061028)
+MAN_BEGIN ("What's new?", "ppgb", 20061116)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.02# (November 16, 2006)")
+LIST_ITEM ("\\bu Corrected yet another bug in the new @@Sound: To IntervalTier (silence)...@.")
 NORMAL ("##4.5.01# (October 28, 2006)")
 LIST_ITEM ("\\bu Sound window: the pitch drawing method is #Curves, #Speckles, or #Automatic.")
 LIST_ITEM ("\\bu Corrected another bug in the new @@Sound: To IntervalTier (silence)...@.")
@@ -1178,7 +1180,7 @@ LIST_ITEM ("@@Intro 1.3. Creating a sound from a formula")
 MAN_END
 
 MAN_BEGIN ("Intro 1.1. Recording a sound", "ppgb", 20041126)
-#ifdef __MACH__
+#ifdef macintosh
 	INTRO ("To record a speech sound into Praat, you need a computer with a microphone.")
 	NORMAL ("To record from the microphone, perform the following steps:")
 #else
@@ -1196,12 +1198,12 @@ LIST_ITEM ("1. Choose @@Record mono Sound...@ from the @@New menu@ in the @@Obje
 		"Once you see the Windows playing mixer, choose #Properties from the #Option menu, "
 		"then click #Recording, then #OK. You now see the %recording mixer, where you can select the microphone "
 		"(if you do not like this complicated operation, try Praat on Macintosh or Linux instead of Windows).")
-#elif defined (__MACH__)
+#elif defined (macintosh)
 	LIST_ITEM ("2. In the SoundRecorder window, choose the appropriate input device, e.g. choose ##Internal microphone#.")
 #else
 	LIST_ITEM ("2. In the SoundRecorder window, choose the appropriate input device, i.e. choose #Microphone (or #CD, or #Line).")
 #endif
-#ifdef __MACH__
+#ifdef macintosh
 	LIST_ITEM ("3. Use the #Record and #Stop buttons to record a few seconds of your speech.")
 #else
 	LIST_ITEM ("3. Use the #Record and #Stop buttons to record a few seconds of your speech "

@@ -4338,6 +4338,13 @@ DO
 	}
 END
 
+FORM (TableOfReal_to_Table, "TableOfReal: To Table", 0)
+	SENTENCE ("Label of first column", "rowLabel")
+	OK
+DO
+	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING ("Label of first column")))
+END
+
 DIRECT (TableOfReal_to_Matrix)
 	EVERY_TO (TableOfReal_to_Matrix (OBJECT))
 END
@@ -4630,6 +4637,7 @@ void praat_TableOfReal_init (void *klas) {
 		praat_addAction1 (klas, 0, "Extract row labels as Strings", 0, 1, DO_TableOfReal_extractRowLabelsAsStrings);
 		praat_addAction1 (klas, 0, "Extract column labels as Strings", 0, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
 	praat_addAction1 (klas, 0, "Convert -     ", 0, 0, 0);
+		praat_addAction1 (klas, 0, "To Table...", 0, 1, DO_TableOfReal_to_Table);
 		praat_addAction1 (klas, 0, "To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
 }
 
