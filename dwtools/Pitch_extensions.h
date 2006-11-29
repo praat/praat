@@ -2,7 +2,7 @@
 #define _Pitch_extensions_h_
 /* Pitch_extensions.h
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20061030 Latest modification
+ djmw 20061128 Latest modification
 */
 
 #ifndef _Pitch_h_
@@ -57,5 +57,9 @@ void PitchTier_modifyRange (PitchTier me, double tmin, double tmax,
 	f = f < fmin ? fmin : f;
 
 */
- 
+
+Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling);
+
+
+
 #endif /* _Pitch_extensions_h_ */

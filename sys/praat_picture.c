@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2004/09/05 allow selection of inner viewport
  * pb 2005/05/07 inManual
  * pb 2005/07/05 Draw function...
+ * pb 2006/11/22 after 14 years we renamed "Plain line" to "Solid line", which is the common term nowadays
  */
 
 #include "praatP.h"
@@ -258,13 +259,13 @@ static int praat_lineType = Graphics_DRAWN;
 static int praat_colour = Graphics_BLACK;
 static float praat_lineWidth = 1.0;
 
-static Widget praatButton_plainLine, praatButton_dottedLine, praatButton_dashedLine;
+static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
 static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime,
 	praatButton_navy, praatButton_teal, praatButton_purple, praatButton_olive, praatButton_silver, praatButton_grey;
 static void updatePenMenu (void) {
 	if (praat.batch) return;
-	XmToggleButtonGadgetSetState (praatButton_plainLine, praat_lineType == Graphics_DRAWN, 0);
+	XmToggleButtonGadgetSetState (praatButton_solidLine, praat_lineType == Graphics_DRAWN, 0);
 	XmToggleButtonGadgetSetState (praatButton_dottedLine, praat_lineType == Graphics_DOTTED, 0);
 	XmToggleButtonGadgetSetState (praatButton_dashedLine, praat_lineType == Graphics_DASHED, 0);
 	XmToggleButtonGadgetSetState (praatButton_black, praat_colour == Graphics_BLACK, 0);
@@ -293,7 +294,7 @@ static void setLineType (int lineType) {
 		updatePenMenu ();
 	}
 }
-DIRECT (Plain_line) setLineType (Graphics_DRAWN); END
+DIRECT (Solid_line) setLineType (Graphics_DRAWN); END
 DIRECT (Dotted_line) setLineType (Graphics_DOTTED); END
 DIRECT (Dashed_line) setLineType (Graphics_DASHED); END
 
@@ -1530,7 +1531,8 @@ void praat_picture_init (void) {
 	praat_addMenuCommand ("Picture", "Select", "-- viewport drawing --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "Select", "Viewport text...", 0, 0, DO_ViewportText);
 
-	praatButton_plainLine = praat_addMenuCommand ("Picture", "Pen", "Plain line", 0, praat_CHECKABLE, DO_Plain_line);
+	praatButton_solidLine = praat_addMenuCommand ("Picture", "Pen", "Solid line", 0, praat_CHECKABLE, DO_Solid_line);
+	praat_addMenuCommand ("Picture", "Pen", "Plain line", 0, praat_HIDDEN, DO_Solid_line);
 	praatButton_dottedLine = praat_addMenuCommand ("Picture", "Pen", "Dotted line", 0, praat_CHECKABLE, DO_Dotted_line);
 	praatButton_dashedLine = praat_addMenuCommand ("Picture", "Pen", "Dashed line", 0, praat_CHECKABLE, DO_Dashed_line);
 	praat_addMenuCommand ("Picture", "Pen", "-- line width --", 0, 0, 0);

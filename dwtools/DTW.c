@@ -1185,5 +1185,52 @@ end:
 	if (Melder_hasError ()) forget (him);
 	return him;
 }
+
+#define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
+#define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
+
+DTW Pitches_to_DTW (Pitch me, Pitch thee, int unit, int matchcenters)
+{
+	DTW him = NULL;
+	long i, j;
+	double *pitchx = NULL;
  
+ 	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
+ 	if (him == NULL) return NULL;
+ 	pitchx =  NUMdvector (1, thy nx);
+ 	if (pitchx == NULL) goto end;
+ 	for (i = 1; i <= thy nx; i++)
+ 	{
+ 		pitchx[i] = Sampled_getValueAtSample (thee, i, Pitch_LEVEL_FREQUENCY, unit);
+ 	}
+ 	
+ 	for (i = 1; i <= my nx; i++)
+ 	{
+ 		double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, unit);
+ 		for (j = 1; j <= thy nx; j++)
+ 		{
+ 			if (pitchy == NUMundefined)
+ 			{
+ 				if (pitchx[j] == NUMundefined)
+ 				{
+ 					his z[i][j] = 0;
+ 				}
+ 				// distance (voiced<->unvoiced) ??
+ 			}
+ 			else if (pitchx[j] == NUMundefined)
+ 			{
+ 			
+ 			}
+ 			else
+ 			{
+ 				his z[i][j] = fabs(pitchy - pitchx[j]);
+ 			}
+ 		}
+ 	}
+end:
+	NUMdvector_free (pitchx, 1);
+ 	if (Melder_hasError ()) forget (him);
+ 	return him;
+}
+
 /* End of file DTW.c */

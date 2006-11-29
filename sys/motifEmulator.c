@@ -4362,7 +4362,7 @@ static void _motif_activateControls (Widget me, Boolean act) {
 	for (icontrol = 1; icontrol <= numberOfControls; icontrol ++) {
 		GetIndexedSubControl (my nat.window.rootControl, icontrol, & macControl);
 		control = (Widget) GetControlReference (macControl);
-		if (control && control -> magicNumber == 15111959) {
+		if (control && control -> magicNumber == 15111959 && control -> managed) {
 			_GuiMac_clipOn (control);
 			HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
 			GuiMac_clipOff ();
@@ -4878,7 +4878,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 				if (maccontrol) {
 					Widget control = (Widget) GetControlReference (maccontrol);
 					if (! control) return;
-					if (control -> magicNumber != 15111959) goto LABEL_clickedOutsideControl;
+					if (control -> magicNumber != 15111959 || ! control -> managed) goto LABEL_clickedOutsideControl;
 					event -> message = controlPart;
 					switch (controlPart) {
 						case kControlButtonPart:

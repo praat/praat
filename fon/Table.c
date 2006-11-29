@@ -36,6 +36,7 @@
  * pb 2006/04/24 Table_scatterPlot
  * pb 2006/08/27 Table_drawEllipse
  * pb 2006/10/29 TableOfReal_to_Table
+ * pb 2006/11/25 Table_getGroupDifference_studentT
  */
 
 #include <ctype.h>
@@ -1033,41 +1034,40 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 double Table_getDifference_studentT (Table me, long column1, long column2, double significanceLevel,
 	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit)
 {
-	double mean1 = 0.0, mean2 = 0.0, var1 = 0.0, var2 = 0.0, covar = 0.0, standardError;
-	double difference;
-	long n = my rows -> size, irow;
 	if (out_t) *out_t = NUMundefined;
 	if (out_significance) *out_significance = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (n < 2) return NUMundefined;
+	long n = my rows -> size;
+	if (n < 1) return NUMundefined;
 	if (column1 < 1 || column1 > my numberOfColumns) return NUMundefined;
 	if (column2 < 1 || column2 > my numberOfColumns) return NUMundefined;
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
-	for (irow = 1; irow <= n; irow ++) {
+	double sum = 0.0;
+	for (long irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows -> item [irow];
-		mean1 += row -> cells [column1]. number;
-		mean2 += row -> cells [column2]. number;
+		sum += row -> cells [column1]. number - row -> cells [column2]. number;
 	}
-	mean1 /= n;
-	mean2 /= n;
-	difference = mean1 - mean2;
-	if ((out_t || out_significance || out_lowerLimit || out_upperLimit)) {
-		for (irow = 1; irow <= n; irow ++) {
+	double meanDifference = sum / n;
+	long degreesOfFreedom = n - 1;
+	if (degreesOfFreedom >= 1 && (out_t || out_significance || out_lowerLimit || out_upperLimit)) {
+		double sumOfSquares = 0.0;
+		for (long irow = 1; irow <= n; irow ++) {
 			TableRow row = my rows -> item [irow];
-			double diff1 = row -> cells [column1]. number - mean1, diff2 = row -> cells [column2]. number - mean2;
-			var1 += diff1 * diff1;
-			var2 += diff2 * diff2;
-			covar += diff1 * diff2;
+			double diff = (row -> cells [column1]. number - row -> cells [column2]. number) - meanDifference;
+			sumOfSquares += diff * diff;
 		}
-		standardError = sqrt ((var1 + var2 - 2.0 * covar) / (n - 1) / n);
-		if (out_t && standardError != 0.0 ) *out_t = difference / standardError;
-		if (out_significance) *out_significance = standardError == 0.0 ? 0.0 : NUMstudentQ (difference / standardError, n - 1);
-		if (out_lowerLimit) *out_lowerLimit = difference - standardError * NUMinvStudentQ (significanceLevel, n - 1);
-		if (out_upperLimit) *out_upperLimit = difference + standardError * NUMinvStudentQ (significanceLevel, n - 1);
+		double standardError = sqrt (sumOfSquares / degreesOfFreedom / n);
+		if (out_t && standardError != 0.0 ) *out_t = meanDifference / standardError;
+		if (out_significance) *out_significance =
+			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (meanDifference) / standardError, degreesOfFreedom);
+		if (out_lowerLimit) *out_lowerLimit =
+			meanDifference - standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
+		if (out_upperLimit) *out_upperLimit =
+			meanDifference + standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
 	}
-	return difference;
+	return meanDifference;
 }
 
 double Table_getMean_studentT (Table me, long column, double significanceLevel,
@@ -1095,11 +1095,69 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 		}
 		standardError = sqrt (var / (n - 1) / n);
 		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
-		if (out_significanceFromZero) *out_significanceFromZero = standardError == 0.0 ? 0.0 : NUMstudentQ (mean / standardError, n - 1);
-		if (out_lowerLimit) *out_lowerLimit = mean - standardError * NUMinvStudentQ (significanceLevel, n - 1);
-		if (out_upperLimit) *out_upperLimit = mean + standardError * NUMinvStudentQ (significanceLevel, n - 1);
+		if (out_significanceFromZero) *out_significanceFromZero =
+			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, n - 1);
+		if (out_lowerLimit) *out_lowerLimit =
+			mean - standardError * NUMinvStudentQ (significanceLevel, n - 1);
+		if (out_upperLimit) *out_upperLimit =
+			mean + standardError * NUMinvStudentQ (significanceLevel, n - 1);
 	}
 	return mean;
+}
+
+double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const char *group1, const char *group2, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+{
+	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
+	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
+	if (out_upperLimit) *out_upperLimit = NUMundefined;
+	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	if (groupColumn < 1 || groupColumn > my numberOfColumns) return NUMundefined;
+	Table_numericize (me, column);
+	long n1 = 0, n2 = 0;
+	double sum1 = 0.0, sum2 = 0.0;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [groupColumn]. string != NULL) {
+			if (strequ (row -> cells [groupColumn]. string, group1)) {
+				n1 ++;
+				sum1 += row -> cells [column]. number;
+			} else if (strequ (row -> cells [groupColumn]. string, group2)) {
+				n2 ++;
+				sum2 += row -> cells [column]. number;
+			}
+		}
+	}
+	if (n1 < 1 || n2 < 1) return NUMundefined;
+	double mean1 = sum1 / n1;
+	double mean2 = sum2 / n2;
+	double difference = mean1 - mean2;
+	long degreesOfFreedom = n1 + n2 - 2;
+	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
+		double sumOfSquares = 0.0;
+		for (long irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			if (row -> cells [groupColumn]. string != NULL) {
+				if (strequ (row -> cells [groupColumn]. string, group1)) {
+					double diff = row -> cells [column]. number - mean1;
+					sumOfSquares += diff * diff;
+				} else if (strequ (row -> cells [groupColumn]. string, group2)) {
+					double diff = row -> cells [column]. number - mean2;
+					sumOfSquares += diff * diff;
+				}
+			}
+		}
+		double standardError = sqrt (sumOfSquares / degreesOfFreedom * (1.0 / n1 + 1.0 / n2));
+		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = difference / standardError;
+		if (out_significanceFromZero) *out_significanceFromZero =
+			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (difference) / standardError, degreesOfFreedom);
+		if (out_lowerLimit) *out_lowerLimit =
+			difference - standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
+		if (out_upperLimit) *out_upperLimit =
+			difference + standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
+	}
+	return difference;
 }
 
 Matrix Table_to_Matrix (Table me) {
@@ -1424,25 +1482,24 @@ static char * MelderString_getSinglySeparatedToken (char **string, char separato
 
 Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator) {
 	Table me = NULL;
-	long nrow, ncol, irow, icol;
-	char *line;
 	MelderFile_open (file); cherror
 
 	/*
 	 * Count number of columns.
 	 */
-	line = MelderFile_readLine (file); cherror
+	char *line = MelderFile_readLine (file); cherror
 	if (line == NULL) {
 		Melder_error ("Empty file.");
 		goto end;
 	}
-	ncol = MelderString_countCharacters (line, separator) + 1;
+	long ncol = MelderString_countCharacters (line, separator) + 1;
 
 	/*
 	 * Count and check rows.
 	 */
-	for (nrow = 0;; nrow ++) {
-		line = MelderFile_readLine (file); cherror
+	long nrow = 0;
+	for (;; nrow ++) {
+		char *line = MelderFile_readLine (file); cherror
 		if (line == NULL) break;
 		if (MelderString_countCharacters (line, separator) + 1 != ncol) {
 			Melder_error ("Row %ld has wrong number of columns.", nrow + 1);
@@ -1461,7 +1518,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator)
 	 */
 	MelderFile_rewind (file);
 	line = MelderFile_readLine (file); cherror
-	for (icol = 1; icol <= ncol; icol ++) {
+	for (long icol = 1; icol <= ncol; icol ++) {
 		char *token = MelderString_getSinglySeparatedToken (& line, separator);
 		Table_setColumnLabel (me, icol, token);
 	}
@@ -1469,10 +1526,10 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator)
 	/*
 	 * Read cells.
 	 */
-	for (irow = 1; irow <= nrow; irow ++) {
+	for (long irow = 1; irow <= nrow; irow ++) {
 		TableRow row = my rows -> item [irow];
-		line = MelderFile_readLine (file); cherror
-		for (icol = 1; icol <= ncol; icol ++) {
+		char *line = MelderFile_readLine (file); cherror
+		for (long icol = 1; icol <= ncol; icol ++) {
 			char *token = MelderString_getSinglySeparatedToken (& line, separator);
 			row -> cells [icol]. string = Melder_strdup (token);
 		}

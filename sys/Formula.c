@@ -1171,6 +1171,7 @@ static int parseExpression (void) {
 
 static int Formula_parseExpression (void) {
 	ilabel = ilexan = iparse = 0;
+	if (lexan [1]. symbol == END_) return Melder_error ("Empty formula.");
 	if (! parseExpression () || ! pas (END_)) return 0;
 	nieuwontleed (END_);
 	numberOfInstructions = iparse;

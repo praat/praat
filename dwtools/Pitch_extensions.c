@@ -168,4 +168,30 @@ void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double fmin,
 	}
 }
 
+Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling)
+{
+	Pitch thee = NULL;
+	long i, nt;
+	double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2;
+	
+	if (my points -> size < 1) return Melder_errorp ("The PitchTier is empty.");
+	if (dt <= 0) return Melder_errorp ("The time step should be a positive number.");
+	if (pitchFloor >= pitchCeiling) return Melder_errorp ("The pitch ceiling must be a higher number than the pitch floor.");
+	nt = (tmax - tmin - t1) / dt;
+	if (t1 + nt * dt < tmax) nt++;
+	if (nt < 1) return Melder_errorp ("Duration is too short.");
+	thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
+	if (thee == NULL) return NULL;
+	for (i = 1; i <= nt; i++)
+	{
+		Pitch_Frame frame = & thy frame [i];
+		Pitch_Candidate candidate = & frame -> candidate [1];
+		double t = t1 + (i - 1) * dt;
+		double f = RealTier_getValueAtTime (me, t);
+		if (f < pitchFloor || f > pitchCeiling) f = 0;
+		candidate -> frequency = f;
+	}
+	return thee;
+}
+
 /* End of file Pitch_extensions.c */

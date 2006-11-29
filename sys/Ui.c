@@ -1155,7 +1155,7 @@ int UiForm_parseString (I, const char *arguments) {
 		}
 		stringValue [ichar] = '\0';   /* Trailing null byte. */
 		if (! UiField_stringToValue (my field [i], stringValue))
-			return Melder_error ("Wrong argument \"%s\".", stringValue);
+			return Melder_error ("Don't understand contents of field \"%s\".", my field [i] -> name);
 	}
 	/* The last item is handled separately, because it consists of the rest of the line.
 	 * Leading spaces are skipped, but trailing spaces are included.
@@ -1163,7 +1163,7 @@ int UiForm_parseString (I, const char *arguments) {
 	if (size > 0) {
 		while (*arguments == ' ' || *arguments == '\t') arguments ++;
 		if (! UiField_stringToValue (my field [size], arguments))
-			return Melder_error ("Wrong argument \"%s\".", arguments);
+			return Melder_error ("Don't understand contents of field \"%s\".", my field [size] -> name);
 	}
 	return my okCallback (me, my okClosure);
 }

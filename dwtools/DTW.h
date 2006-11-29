@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20060908 Latest modification.
+ djmw 20061127 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -32,6 +32,9 @@
 #endif
 #ifndef _Polygon_h
 	#include "Polygon.h"
+#endif
+#ifndef _Pitch_h
+	#include "Pitch.h"
 #endif
 
 #include "DTW_def.h"
@@ -101,5 +104,7 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 	int matchEnd, int slope, int metric);
- 
+
+DTW Pitches_to_DTW (Pitch me, Pitch thee, int unit, int matchcenters);
+
 #endif /* _DTW_h_ */

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061116)
+MAN_BEGIN ("What's new?", "ppgb", 20061129)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.03# (November 29, 2006)")
+LIST_ITEM ("\\bu Table: added independent-samples t-test.")
+LIST_ITEM ("\\bu Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.")
 NORMAL ("##4.5.02# (November 16, 2006)")
 LIST_ITEM ("\\bu Corrected yet another bug in the new @@Sound: To IntervalTier (silence)...@.")
 NORMAL ("##4.5.01# (October 28, 2006)")

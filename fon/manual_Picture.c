@@ -1,6 +1,6 @@
 /* manual_Picture.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -602,13 +602,13 @@ NORMAL ("If you draw a Sound to an amplitude range between -1 and 1, "
 	"will give you a horizontal mark \"0\" and a horizontal dotted line at a y position of 0.")
 MAN_END
 
-MAN_BEGIN ("Pen menu", "ppgb", 19961006)
+MAN_BEGIN ("Pen menu", "ppgb", 20061122)
 INTRO ("One of the menus of the @@Picture window@.")
 ENTRY ("Purpose")
-NORMAL ("To choose the default line type and colour "
+NORMAL ("To choose the line type and colour "
 	"to be used in subsequent drawing of lines and painted areas.")
 ENTRY ("Behaviour")
-NORMAL ("The line type used by @@Draw inner box@ (plain), "
+NORMAL ("The line type used by @@Draw inner box@ (solid), "
 	"and the line type of the dotted lines in the ##Mark...# commands "
 	"will not be affected.")
 NORMAL ("The commands in the @Margins menu will always draw in black.")

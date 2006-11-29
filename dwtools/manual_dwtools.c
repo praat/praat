@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20061101 Latest modification
+ djmw 20061128 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2187,6 +2187,10 @@ LIST_ITEM ("1. The TableOfReal is @@TableOfReal: To Covariance|converted@ to a "
 LIST_ITEM ("2. The Covariance object is @@PCA & Covariance: Project|projected@ on "
 	"the PCA eigenspace and the newly obtained projected Covariance object is "
 	"@@Covariance: Get fraction variance...|queried@ for the fraction variance.")
+MAN_END
+
+MAN_BEGIN ("PitchTier: To Pitch...", "djmw", 20061128)
+INTRO ("Synthesizes a new @Pitch from the selected @PitchTier.")
 MAN_END
 
 MAN_BEGIN ("Polynomial", "djmw", 19990608)

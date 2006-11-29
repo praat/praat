@@ -95,6 +95,7 @@ extern machar_Table NUMfpp;
 #include "DTW_and_TextGrid.h"
 #include "MelFilter_and_MFCC.h"
 #include "Permutation_and_Index.h"
+#include "Pitch_extensions.h"
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
 #include "TableOfReal_and_Matrix.h"
@@ -2653,7 +2654,17 @@ end:
 	}
 	if (! praat_new (thee, "multiply%d", np)) return 0;
 END
-	
+
+FORM (PitchTier_to_Pitch, "PitchTier: To Pitch", "PitchTier: To Pitch...")
+	POSITIVE ("Step size", "0.02")
+	POSITIVE ("Pitch floor", "60.0")	
+	POSITIVE ("Pitch ceiling", "400.0")
+	OK
+DO
+	EVERY_TO (PitchTier_to_Pitch (ONLY(classPitchTier), GET_REAL ("Step size"), 
+		GET_REAL ("Pitch floor"),GET_REAL ("Pitch ceiling")))
+END
+
 /******************* Polygon & Categories *************************************/
 
 FORM (Polygon_translate, "Polygon: Translate", 0)
@@ -3007,7 +3018,7 @@ FORM (Sound_and_Pitch_changeGender, "Sound & Pitch: Change gender", "Sound & Pit
 	POSITIVE ("Minimum pitch (Hz)", "75.0")
 	POSITIVE ("Formant shift ratio", "1.2")
 	REAL ("New pitch median (Hz)", "0.0 (=no change)")
-	REAL ("Pitch range factor", "1.0 (=no change)")
+	POSITIVE ("Pitch range factor", "1.0 (=no change)")
 	POSITIVE ("Duration factor", "1.0")
 	OK
 DO
@@ -3245,7 +3256,7 @@ FORM (Sound_changeGender, "Sound: Change gender", "Sound: Change gender...")
 	LABEL ("", "Modification parameters")
 	POSITIVE ("Formant shift ratio", "1.2")
 	REAL ("New pitch median (Hz)", "0.0 (=no change)")
-	REAL ("Pitch range factor", "1.0 (=no change)")
+	POSITIVE ("Pitch range factor", "1.0 (=no change)")
 	POSITIVE ("Duration factor", "1.0")
 	OK
 DO
@@ -4732,6 +4743,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classPermutation, 1, "Invert", 0, 0, DO_Permutation_invert);
 	praat_addAction1 (classPermutation, 0, "Multiply", 0, 0, DO_Permutations_multiply);
 
+	praat_addAction1 (classPitchTier, 0, "To Pitch...", "To Sound (sine)...", 1, DO_PitchTier_to_Pitch);
 	praat_addAction1 (classPolygon, 0, "Translate...", "Modify", 0,
 		DO_Polygon_translate);
 	praat_addAction1 (classPolygon, 0, "Rotate...", "Translate...", 0,

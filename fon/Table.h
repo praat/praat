@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/29
+ * pb 2006/11/25
  */
 
 #ifndef _Collection_h_
@@ -91,6 +91,8 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getDifference_studentT (Table me, long col1, long col2, double significanceLevel,
 	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit);
+double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const char *group1, const char *group2, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getVarianceRatio (Table me, long col1, long col2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 

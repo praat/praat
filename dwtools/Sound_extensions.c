@@ -1614,7 +1614,8 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double
 	
 	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
 		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
-
+	if (new_pitch < 0) return Melder_errorp ("%s: The new pitch median may not be negative.", proc);
+	
 	sound = Data_copy (me);
 	if (sound == NULL) return NULL;
 	

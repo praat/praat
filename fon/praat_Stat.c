@@ -474,15 +474,47 @@ DO
 		"Student's t from zero = %s\n"
 		"Significance from zero = %s (one-tailed)\n"
 		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
+		"   Lower limit = %s (lowest value that cannot be rejected with p = %f)\n"
+		"   Upper limit = %s (highest value that cannot be rejected with p = %f)\n",
 		Table_messageColumn (me, column),
 		Melder_double (mean), Melder_double (tFromZero), Melder_double (significanceFromZero),
 		100 * (1.0 - 2.0 * significanceLevel),
 		Melder_double (lowerLimit), significanceLevel,
 		Melder_double (upperLimit), significanceLevel);
 END
-	
+
+FORM (Table_reportGroupDifference_studentT, "Report group difference (Student t)", 0)
+	WORD ("Column", "salary")
+	WORD ("Group column", "gender")
+	SENTENCE ("Group 1", "F")
+	SENTENCE ("Group 2", "M")
+	POSITIVE ("Significance level", "0.025")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	if (column == 0) return Melder_error ("No such column.");
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	if (groupColumn == 0) return Melder_error ("No such column.");
+	double significanceLevel = GET_REAL ("Significance level");
+	char *group1 = GET_STRING ("Group 1"), *group2 = GET_STRING ("Group 2");
+	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, significanceLevel,
+		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+	Melder_information ("Difference in column %s between groups \"%s\" and \"%s\" of column %s:\n"
+		"Difference = %s\n"
+		"Student's t = %s\n"
+		"Significance from zero = %s (one-tailed)\n"
+		"Confidence interval (%f%%):\n"
+		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
+		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
+		Table_messageColumn (me, column), group1, group2, Table_messageColumn (me, groupColumn),
+		Melder_double (mean), Melder_double (tFromZero), Melder_double (significanceFromZero),
+		100 * (1.0 - 2.0 * significanceLevel),
+		Melder_double (lowerLimit), significanceLevel,
+		Melder_double (upperLimit), significanceLevel);
+END
+
 FORM (Table_scatterPlot, "Scatter plot", 0)
 	WORD ("Horizontal column", "")
 	REAL ("left Horizontal range", "0.0")
@@ -681,6 +713,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
 		/*praat_addAction1 (classTable, 1, "Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
 		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, "Report group difference (Student t)...", 0, 1, DO_Table_reportGroupDifference_studentT);
 		praat_addAction1 (classTable, 1, "Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, "Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
 		praat_addAction1 (classTable, 1, "-- to regression --", 0, 1, 0);
