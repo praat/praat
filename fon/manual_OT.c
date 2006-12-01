@@ -158,23 +158,11 @@ DEFINITION ("\"do not implement [advanced tongue root] if the vowel is mid; univ
 TAG ("*[atr / hi]")
 DEFINITION ("\"do not implement [advanced tongue root] if the vowel is high; universally ranked lower "
 	"than *[atr / mid].\"")
-NORMAL ("The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1997a)@). "
+NORMAL ("The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1998)@). "
 	"A learning algorithm may enforce this principle, e.g., if *[rtr / hi] falls down the ranking scale, "
 	"*[rtr / mid] may be pushed along.")
 NORMAL ("For information on learning these tongue-root grammars, see @@OT learning@ "
 	"and @@Boersma (2000)@.")
-MAN_END
-
-MAN_BEGIN ("Hayes & MacEachern (1998)", "ppgb", 19981219)
-NORMAL ("Bruce P. Hayes & Margaret MacEachern (1998): \"Quatrain form in English folk verse\", "
-	"%Language #74: 473\\--507.")
-MAN_END
-
-MAN_BEGIN ("McCarthy & Prince (1995)", "ppgb", 20021105)
-NORMAL ("John J. McCarthy & Alan Prince (1995): Faithfulness and reduplicative identity. "
-	"In Jill Beckman, Laura Walsh Dickey & Suzanne Urbanczyk (eds.), %%Papers in Optimality Theory%. "
-	"%%University of Massachusetts Occasional Papers% #18. Amherst, Mass.: Graduate Linguistic Student Association. "
-	"pp. 249Ð384. [Rutgers Optimality Archive #60, http://roa.rutgers.edu]")
 MAN_END
 
 MAN_BEGIN ("Optimality Theory", "ppgb", 20021105)
@@ -235,7 +223,7 @@ NORMAL ("Because only the ranking order of the constraints plays a role in evalu
 ENTRY ("Stochastic OT grammars")
 NORMAL ("The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it "
 	"is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves. "
-	"For these reasons, @@Boersma (1997b)@ / @@Boersma (1998)@ / @@Boersma (2000)@ "
+	"For these reasons, @@Boersma (1997)@ / @@Boersma (1998)@ / @@Boersma (2000)@ "
 	"proposed stochastic constraint grammars "
 	"in which every constraint has a %%##ranking value%# along a continuous ranking scale, "
 	"and a small amount of %#noise is added to this ranking value at evaluation time. "
@@ -1208,11 +1196,6 @@ NORMAL ("The menu command that you will probably use most often if you investiga
 NORMAL ("This command performs a new evaluation with the current ranking values. Some noise is added to the "
 	"ranking values, so that the %#disharmonies of the constraint will change. This may cause a change in the "
 	"ranking order of the constraints, which in its turn may cause a different candidate to win in some tableaus.")
-MAN_END
-
-MAN_BEGIN ("Prince & Smolensky (1993)", "ppgb", 19971021)
-NORMAL ("Alan Prince & Paul Smolensky (1993): %%Optimality Theory: Constraint Interaction in Generative Grammar.% "
-	"Rutgers University Center for Cognitive Science Technical Report #2.")
 MAN_END
 
 MAN_BEGIN ("Robust Interpretive Parsing", "ppgb", 20021105)

@@ -19,7 +19,9 @@
 
 /*
  djmw 1997
- djmw 20030217 Latest modification
+ djmw 20030217 Latest modification 
+ djmw 20061201 Interface change: removed minimumPitch parameter from PitchTier_modifyRange.
+
 */
 
 #include "Pitch_extensions.h"
@@ -153,8 +155,7 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 	return thee;
 }
 
-void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double fmin,
-	double factor, double fmid)
+void PitchTier_modifyRange (PitchTier me, double tmin, double tmax,	double factor, double fmid)
 {
 	long i;
 
@@ -164,7 +165,7 @@ void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double fmin,
 		double f = point -> value;
 		if (point -> time < tmin || point -> time > tmax) continue;
 		f = fmid + (f - fmid) * factor;
-		point -> value = f < fmin ? fmin : f;
+		point -> value = f < 0 ? 0 : f;
 	}
 }
 

@@ -29,6 +29,7 @@
  		(amplitudes were on linear instead of log scale)
  djmw 20060921 Added Sound_to_IntervalTier_detectSilence
  djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
+ djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
 */
 
 #include "Sound_extensions.h"
@@ -43,6 +44,8 @@
 #include "DurationTier.h"
 #include "Manipulation.h"
 #include "NUM2.h"
+
+#define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
 
 static void i1write (Sound me, FILE *f, long *nClip)
@@ -1600,7 +1603,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 	return thee;
 }
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double formantRatio, 
+Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
 	char *proc = "Sound_changeGender";
@@ -1646,8 +1649,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double
 		factor = new_pitch / median;
 		PitchTier_multiplyFrequencies (pitchTier, sound -> xmin, sound -> xmax, factor);
 
-		PitchTier_modifyRange (pitchTier, sound -> xmin, sound -> xmax,
-			fmin, pitchRangeFactor, new_pitch);
+		PitchTier_modifyRange (pitchTier, sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
 	}
 	else
 	{
@@ -1658,8 +1660,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double
 	if (! RealTier_addPoint (duration, (my xmin + my xmax) / 2,
 		formantRatio * durationFactor)) goto end;
 	
-	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, 
-		duration, 1.5 / fmin);
+	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration, MAX_T);
 	if (thee == NULL) goto end;
 	
 	/* Resample to the original sampling frequency */
@@ -1694,7 +1695,7 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 	pitch = Sound_to_Pitch (me, 0.8 / fmin, fmin, fmax);
 	if (pitch == NULL) return NULL;
 	
-	thee = Sound_and_Pitch_changeGender_old (me, pitch, fmin, formantRatio, 
+	thee = Sound_and_Pitch_changeGender_old (me, pitch, formantRatio, 
 		new_pitch, pitchRangeFactor, durationFactor);
 		
 	forget (pitch);
@@ -1711,7 +1712,7 @@ Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pit
 	pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
 	if (pitch == NULL) return NULL;
 	
-	thee = Sound_and_Pitch_changeGender (me, pitch, pitchMin, pitchRatio, 
+	thee = Sound_and_Pitch_changeGender (me, pitch, pitchRatio, 
 		formantFrequenciesRatio, durationRatio);
 		
 	forget (pitch);
@@ -1720,7 +1721,7 @@ Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pit
 }
 
 /* Sound_and_Pitch_changeGender was adapted from a script by Ton Wempe */
-Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchMin, double pitchRatio, 
+Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, 
 	double formantFrequenciesRatio, double durationRatio)
 {
 	char *proc = "Sound_changeGender";
@@ -1774,8 +1775,7 @@ Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchMin, double
 	if (! RealTier_addPoint (duration, (my xmin + my xmax) / 2,
 		formantFrequenciesRatio * durationRatio)) goto end;
 	
-	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, 
-		duration, 1.5 / pitchMin);
+	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration, MAX_T);
 	if (thee == NULL) goto end;
 	
 	/* Resample to the original sampling frequency */

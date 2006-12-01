@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20061128 Latest modification
+ djmw 20061201 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2722,9 +2722,7 @@ NORMAL ("With this command you can have finer grained control over the "
 	"Accurate pitch measurement determines the quality of the "
 	"@PSOLA synthesis." )
 ENTRY ("Arguments")
-NORMAL ("The settings are described in @@Sound: Change gender...@ "
-	"(except that we don't need the %%Maximum pitch% here, since it will be "
-	"determined from the selected Pitch.")
+NORMAL ("The settings are described in @@Sound: Change gender...@. ")
 MAN_END
 
 MAN_BEGIN ("Sound: Change gender...", "djmw", 20030205)

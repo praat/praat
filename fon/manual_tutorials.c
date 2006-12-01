@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061129)
+MAN_BEGIN ("What's new?", "ppgb", 20061201)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.04# (December 1, 2006)")
+LIST_ITEM ("\\bu @@Sound: Change gender...@: corrected a bug that often caused a female-to-male conversion to sound monotonous.")
 NORMAL ("##4.5.03# (November 29, 2006)")
 LIST_ITEM ("\\bu Table: added independent-samples t-test.")
 LIST_ITEM ("\\bu Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.")

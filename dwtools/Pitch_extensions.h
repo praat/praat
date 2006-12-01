@@ -22,7 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20061128 Latest modification
+ djmw 20061201 Latest modification
 */
 
 #ifndef _Pitch_h_
@@ -49,8 +49,7 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref, doub
 	double pitchMin, double pitchMax, int pitchUnit);
 /*	Modifies the pitches with respect to a global pitch range.*/
 
-void PitchTier_modifyRange (PitchTier me, double tmin, double tmax,
-	double fmin, double factor, double fmid);
+void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double factor, double fmid);
 /*
 	Scales the pitches in the interval (tmin, tmax) according to
 	f = fmid + (f - fmid) * factor;

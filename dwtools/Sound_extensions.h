@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20061025 Latest modification
+ djmw 20061201 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -135,13 +135,13 @@ void Sound_scale_dB (Sound me, double level_dB);
 
 Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, 
 	double formantFrequenciesRatio, double durationRatio);
-Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchMin, double pitchRatio, 
+Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, 
 	double formantFrequenciesRatio, double durationRatio);
 
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double formantRatio, 
+Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
 PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
@@ -156,7 +156,7 @@ int Sound_filter_part_formula (Sound me, double t1, double t2, const char *formu
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double fmin, double formantRatio, 
+Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
 IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold,

@@ -3015,16 +3015,14 @@ DO
 END
 
 FORM (Sound_and_Pitch_changeGender, "Sound & Pitch: Change gender", "Sound & Pitch: Change gender...")
-	POSITIVE ("Minimum pitch (Hz)", "75.0")
 	POSITIVE ("Formant shift ratio", "1.2")
 	REAL ("New pitch median (Hz)", "0.0 (=no change)")
 	POSITIVE ("Pitch range factor", "1.0 (=no change)")
 	POSITIVE ("Duration factor", "1.0")
 	OK
 DO
-	double minimumPitch = GET_REAL ("Minimum pitch");
 	if (! praat_new (Sound_and_Pitch_changeGender_old (ONLY(classSound), ONLY(classPitch),
-		minimumPitch, GET_REAL ("Formant shift ratio"), GET_REAL ("New pitch median"), 
+		GET_REAL ("Formant shift ratio"), GET_REAL ("New pitch median"), 
 		GET_REAL ("Pitch range factor"), GET_REAL ("Duration factor")), NULL)) return 0;
 END
 

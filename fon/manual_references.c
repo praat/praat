@@ -34,17 +34,10 @@ NORMAL ("Paul Boersma (1993): \"Accurate short-term analysis of the fundamental 
 NORMAL ("Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
 MAN_END
 
-MAN_BEGIN ("Boersma (1997a)", "ppgb", 19981219)
-NORMAL ("Paul Boersma (1997a): \"The elements of Functional Phonology.\" "
-	"Ms. University of Amsterdam.")
-NORMAL ("Available as Rutgers Optimality Archive #173, http://ruccs.rutgers.edu/roa.html")
-NORMAL ("Superseded by chapters 1 and 7 through 13 of @@Boersma (1998)@.")
-MAN_END
-
-MAN_BEGIN ("Boersma (1997b)", "ppgb", 19981219)
-NORMAL ("Paul Boersma (1997b): \"How we learn variation, optionality, and probability.\" "
+MAN_BEGIN ("Boersma (1997)", "ppgb", 19981219)
+NORMAL ("Paul Boersma (1997): \"How we learn variation, optionality, and probability.\" "
 	"%%Proceedings of the Institute of Phonetic Sciences% #21: 43\\--58. University of Amsterdam.")
-NORMAL ("Equals chapter 15 of @@Boersma (1998)@.")
+NORMAL ("Available from http://www.fon.hum.uva.nl/paul/. Equals chapter 15 of @@Boersma (1998)@.")
 NORMAL ("A less correct version (demoting and promoting a single pair of constraints, instead of them all) "
 	"is available as Rutgers Optimality Archive #221, http://ruccs.rutgers.edu/roa.html")
 MAN_END
@@ -69,10 +62,10 @@ NORMAL ("Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Lea
 	"%%Linguistic Inquiry% #32: 45\\--86.")
 MAN_END
 
-MAN_BEGIN ("Boersma & Kovacic (to appear)", "ppgb", 20051127)
-NORMAL ("Paul Boersma & Gordana Kovacic (to appear): "
+MAN_BEGIN ("Boersma & Kovacic (2006)", "ppgb", 20061203)
+NORMAL ("Paul Boersma & Gordana Kovacic (2006): "
 	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
-	"To appear in %%Journal of the Acoustical Society of America%.")
+	"%%Journal of the Acoustical Society of America% #119: 1805\\--1816.")
 MAN_END
 
 MAN_BEGIN ("Childers (1978)", "ppgb", 20030515)
@@ -103,6 +96,11 @@ NORMAL ("The authors show that if we model each vocal cord as a single mass-spri
 	"the vocal cords will vibrate passively as a result of the interaction with a glottal airflow.")
 MAN_END
 
+MAN_BEGIN ("Hayes & MacEachern (1998)", "ppgb", 19981219)
+NORMAL ("Bruce P. Hayes & Margaret MacEachern (1998): \"Quatrain form in English folk verse\", "
+	"%Language #74: 473\\--507.")
+MAN_END
+
 MAN_BEGIN ("Ishizaka & Flanagan (1972)", "ppgb", 19980201)
 NORMAL ("Kenzo Ishizaka & James L. Flanagan (1972): \"Synthesis of voiced sounds from a two-mass model "
 	"of the vocal cords\", %%Bell System Technical Journal% #51: 1233-1268. "
@@ -113,7 +111,6 @@ NORMAL ("The authors show that if we model each vocal cord as two coupled mass-s
 	"will show more realistic behaviour than with the one-mass model of @@Flanagan & Landgraf (1968)@, "
 	"at least for a male speaker.")
 MAN_END
-
 
 MAN_BEGIN ("Jesteadt, Wier & Green (1977)", "ppgb", 20021215)
 NORMAL ("W. Jesteadt, G.C. Wier, & D.M. Green (1977): \"Intensity discrimination as a function "
@@ -146,6 +143,13 @@ NORMAL ("An extensive reference source for the articulation and acoustics of `al
 NORMAL ("The book is not an introductory text. For that, see @@Ladefoged (2001)@ instead.")
 MAN_END
 
+MAN_BEGIN ("McCarthy & Prince (1995)", "ppgb", 20021105)
+NORMAL ("John J. McCarthy & Alan Prince (1995): Faithfulness and reduplicative identity. "
+	"In Jill Beckman, Laura Walsh Dickey & Suzanne Urbanczyk (eds.), %%Papers in Optimality Theory%. "
+	"%%University of Massachusetts Occasional Papers% #18. Amherst, Mass.: Graduate Linguistic Student Association. "
+	"pp. 249Ð384. [Rutgers Optimality Archive #60, http://roa.rutgers.edu]")
+MAN_END
+
 MAN_BEGIN ("Patterson & Wightman (1976)", "ppgb", 20021215)
 NORMAL ("R. Patterson & F. Wightman (1976): \"Residue pitch as a function of component spacing.\" "
 	"%%Journal of the Acoustical Society of America% #59: 1450\\--1459.")
@@ -154,6 +158,11 @@ MAN_END
 MAN_BEGIN ("Plomp (1967)", "ppgb", 20021215)
 NORMAL ("Reinier Plomp (1967): \"Frequencies dominant in the perception of pitch of complex sounds.\" "
 	"%%Journal of the Acoustical Society of America% #42: 191\\--198.")
+MAN_END
+
+MAN_BEGIN ("Prince & Smolensky (1993)", "ppgb", 19971021)
+NORMAL ("Alan Prince & Paul Smolensky (1993): %%Optimality Theory: Constraint Interaction in Generative Grammar.% "
+	"Rutgers University Center for Cognitive Science Technical Report #2.")
 MAN_END
 
 MAN_BEGIN ("Rosenberg (1971)", "ppgb", 20050712)

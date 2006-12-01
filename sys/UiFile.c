@@ -723,18 +723,16 @@ void UiInfile_do (I) {
 		OPENFILENAME openFileName;
 		static TCHAR customFilter [100+2];
 		static TCHAR fullFileName [300+2];
+		ZeroMemory (& openFileName, sizeof (OPENFILENAME));
 		openFileName. lStructSize = sizeof (OPENFILENAME);
 		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-		openFileName. lpstrFilter = NULL;   /* like *.txt */
 		openFileName. lpstrCustomFilter = customFilter;
 		openFileName. nMaxCustFilter = 100;
+		fullFileName [0] = '\0';
 		openFileName. lpstrFile = fullFileName;
 		openFileName. nMaxFile = 300;
-		openFileName. lpstrFileTitle = NULL;
-		openFileName. lpstrInitialDir = NULL;
 		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-		openFileName. lpstrDefExt = NULL;
 		if (GetOpenFileName (& openFileName)) {
 			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure))
