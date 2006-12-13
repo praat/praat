@@ -286,11 +286,10 @@ static int Formula_lexan (void) {
 #define tokgetal(g)  lexan [itok]. content.number = (g)
 #define tokmatriks(m)  lexan [itok]. content.object = (m)
 
-	static char stok [30000];   /* String to collect a symbol name in. */
-	int istok;   /* Length of "stok". */
-#define stokaan istok = 0
-#define stokkar { stok [istok ++] = kar; nieuwkar; }
-#define stokuit stok [istok] = '\0'
+	static MelderStringA token = { 0 };   /* String to collect a symbol name in. */
+#define stokaan MelderStringA_empty (& token);
+#define stokkar { MelderStringA_appendCharacter (& token, kar); nieuwkar; }
+#define stokuit (void) 0
 
 	ilexan = iparse = ilabel = numberOfStringConstants = 0;
 	do {
@@ -317,7 +316,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (NUMBER_)
-			tokgetal (Melder_atof (stok));
+			tokgetal (Melder_atof (token.string));
 		} else if ((kar >= 'a' && kar <= 'z') || (kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
 			int tok, endsInDollarSign = FALSE;
@@ -327,11 +326,11 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			/*
-			 * 'stok' now contains a word, possibly ending in a dollar sign;
+			 * 'token' now contains a word, possibly ending in a dollar sign;
 			 * it could be a variable name or a function name, or both!
 			 * Try a language or function name first.
 			 */
-			tok = Formula_hasLanguageName (stok);
+			tok = Formula_hasLanguageName (token.string);
 			if (tok) {
 				/*
 				 * We have a language name or function name. It MIGHT be meant to be a variable name, though,
@@ -370,7 +369,7 @@ static int Formula_lexan (void) {
 						/*
 						 * This could be a variable with the same name as a function.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, stok);
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (var == NULL) return formulefout ("Unknown variable, or function with missing arguments", ikar);
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
@@ -395,9 +394,9 @@ static int Formula_lexan (void) {
 						/*
 						 * Look for ambiguity.
 						 */
-						if (theInterpreter && Interpreter_hasVariable (theInterpreter, stok))
+						if (theInterpreter && Interpreter_hasVariable (theInterpreter, token.string))
 							return Melder_error ("\\<<%s\\>> is ambiguous: a variable or an attribute of the current object. "
-								"Change variable name.", stok);
+								"Change variable name.", token.string);
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							nieuwtok (tok)
 						} else {
@@ -410,32 +409,32 @@ static int Formula_lexan (void) {
 						/*
 						 * This must be a variable, since there is no "current object" here.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, stok);
-						if (var == NULL) return Melder_error ("Unknown variable \\<<%s\\>> in formula (no \"current object\" here).", stok);
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
+						if (var == NULL) return Melder_error ("Unknown variable \\<<%s\\>> in formula (no \"current object\" here).", token.string);
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
 					} else {
-						return Melder_error ("Unknown token \\<<%s\\>> in formula (no variables or current objects here).", stok);
+						return Melder_error ("Unknown token \\<<%s\\>> in formula (no variables or current objects here).", token.string);
 					}
 				} else {
 					nieuwtok (tok)   /* This must be a language name. */
 				}
 			} else if (theInterpreter) {
-				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, stok);
+				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 				if (var == NULL) {
 					int jkar;
 					jkar = ikar + 1;
 					while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
 					if (theExpression [jkar] == '(') {
-						return Melder_error ("Unknown function \\<<%s\\>> in formula", stok);
+						return Melder_error ("Unknown function \\<<%s\\>> in formula", token.string);
 					} else {
-						return Melder_error ("Unknown variable \\<<%s\\>> in formula", stok);
+						return Melder_error ("Unknown variable \\<<%s\\>> in formula", token.string);
 					}
 				}
 				if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 				lexan [itok]. content.variable = var;
 			} else {
-				return Melder_error ("Unknown function or attribute \\<<%s\\>> in formula.", stok);
+				return Melder_error ("Unknown function or attribute \\<<%s\\>> in formula.", token.string);
 			}
 		} else if (kar >= 'A' && kar <= 'Z') {
 			int endsInDollarSign = FALSE;
@@ -446,17 +445,17 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			/*
-			 * 'stok' now contains a word that could be an object name.
+			 * 'token' now contains a word that could be an object name.
 			 */
-			underscore = strchr (stok, '_');
-			if (strequ (stok, "Self")) {
+			underscore = strchr (token.string, '_');
+			if (strequ (token.string, "Self")) {
 				if (theSource == NULL) {
 					formulefout ("Cannot use \"Self\" if there is no current object.", ikar);
 					return 0;
 				}
 				nieuwtok (MATRIKS_)
 				tokmatriks (theSource);
-			} else if (strequ (stok, "Self$")) {
+			} else if (strequ (token.string, "Self$")) {
 				if (theSource == NULL) {
 					formulefout ("Cannot use \"Self$\" if there is no current object.", ikar);
 					return 0;
@@ -465,9 +464,9 @@ static int Formula_lexan (void) {
 				tokmatriks (theSource);
 			} else if (underscore == NULL) {
 				return Melder_error ("Unknown symbol \\<<%s\\>> in formula "
-					"(variables start with lower case; object names contain an underscore).", stok);
-			} else if (strnequ (stok, "Object_", 7)) {
-				long uniqueID = atol (stok + 7);
+					"(variables start with lower case; object names contain an underscore).", token.string);
+			} else if (strnequ (token.string, "Object_", 7)) {
+				long uniqueID = atol (token.string + 7);
 				int i = praat.n;
 				while (i > 0 && uniqueID != praat.list [i]. id)
 					i --;
@@ -480,8 +479,8 @@ static int Formula_lexan (void) {
 			} else {
 				int i = praat.n;
 				*underscore = ' ';
-				if (endsInDollarSign) stok [istok - 1] = '\0';
-				while (i > 0 && ! strequ (stok, praat.list [i]. name))
+				if (endsInDollarSign) token.string [-- token.length] = '\0';
+				while (i > 0 && ! strequ (token.string, praat.list [i]. name))
 					i --;
 				if (i == 0) {
 					formulefout ("No such object (note: variables start with lower case)", ikar);
@@ -578,7 +577,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (STRING_)
-			lexan [itok]. content.string = Melder_strdup (stok);
+			lexan [itok]. content.string = Melder_strdup (token.string);
 			numberOfStringConstants ++;
 		} else if (kar == '|') {
 			nieuwtok (OR_)   /* "|" = "or" */

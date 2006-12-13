@@ -23,7 +23,8 @@
  djme 20021008 removed SVD_sort
  djmw 20031023 Removed one argument from CCA_and_TableOfReal_scores
  djmw 20031106 Removed bug from CCA_and_TableOfReal_scores
- djmw 20031221 Removed bug: CCA_and_TableOfReal_scores (wrong dimensions to Eigen_project_into). 
+ djmw 20031221 Removed bug: CCA_and_TableOfReal_scores (wrong dimensions to Eigen_project_into).
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "CCA_and_Correlation.h"
@@ -54,12 +55,10 @@
 static void info (I)
 {
 	iam (CCA);
-	Melder_information("CCA info\nName: %s\n"
-		"Number of coefficients: %d\n"
-		"ny: %d\n"
-		"nx: %d\n",
-		Thing_getName (me), my numberOfCoefficients, 
-		my y -> dimension, my x -> dimension);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of coefficients: ", Melder_integer (my numberOfCoefficients));
+	MelderInfo_writeLine2 ("ny: ", Melder_integer (my y -> dimension));
+	MelderInfo_writeLine2 ("nx: ", Melder_integer (my x -> dimension));
 }
 
 class_methods (CCA, Data)

@@ -1,6 +1,6 @@
 /* Function.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/07/10 NUMbessel_i0_f
  * pb 2005/06/16 units
+ * pb 2006/12/08 info
  */
 
 #include "Function.h"
@@ -43,6 +44,14 @@
 /*
  * Methods for Function.
  */
+
+static void info (I) {
+	iam (Function);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Domain:");
+	MelderInfo_writeLine2 ("   xmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 ("   xmax: ", Melder_double (my xmax));
+}
 
 static double getXmin (I) {
 	iam (Function);
@@ -107,6 +116,7 @@ class_methods (Function, Data)
 	class_method_local (Function, writeBinary)
 	class_method_local (Function, readBinary)
 	class_method_local (Function, description)
+	class_method (info)
 	class_method (getXmin)
 	class_method (getXmax)
 	class_method (getMinimumUnit)

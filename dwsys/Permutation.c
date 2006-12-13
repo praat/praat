@@ -1,6 +1,6 @@
 /* Permutation.c
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20050706
  djmw 20050722 Latest modification.
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include <time.h>
@@ -69,7 +70,7 @@ static void info (I)
 {
 	iam (Permutation);
 	classData -> info (me);
-	Melder_info ("Number of elements: %d", my numberOfElements);
+	MelderInfo_writeLine2 ("Number of elements: ", Melder_integer (my numberOfElements));
 }
 
 static int readAscii (I, FILE *f)

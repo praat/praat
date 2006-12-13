@@ -37,6 +37,7 @@
  * pb 2006/08/27 Table_drawEllipse
  * pb 2006/10/29 TableOfReal_to_Table
  * pb 2006/11/25 Table_getGroupDifference_studentT
+ * pb 2006/12/10 MelderInfo
  */
 
 #include <ctype.h>
@@ -75,8 +76,9 @@ class_methods_end }
 
 static void info (I) {
 	iam (Table);
-	Melder_information ("Number of rows = %ld\nNumber of columns = %ld",
-		my rows -> size, my numberOfColumns);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my rows -> size));
+	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 static double getNrow (I) { iam (Table); return my rows -> size; }

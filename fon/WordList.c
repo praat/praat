@@ -1,6 +1,6 @@
 /* WordList.c
  *
- * Copyright (C) 1999-2002 Paul Boersma
+ * Copyright (C) 1999-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1999/06/04
  * pb 2002/07/16 GPL
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "WordList.h"
@@ -49,9 +50,11 @@ static long WordList_count (WordList me) {
 
 static void info (I) {
 	iam (WordList);
+	classData -> info (me);
 	long n = WordList_count (me);
 	if (! my length) my length = strlen (my string);
-	Melder_info ("%ld words\n%ld characters", n, my length - n);
+	MelderInfo_writeLine2 ("Number of words: ", Melder_integer (n));
+	MelderInfo_writeLine2 ("Number of characters: ", Melder_integer (my length - n));
 }
 
 static int readBinary (I, FILE *f) {

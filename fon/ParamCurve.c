@@ -1,6 +1,6 @@
 /* ParamCurve.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1997/04/27
  * pb 2002/07/16 GPL
+ * pb 2006/12/10
  */
 
 #include "ParamCurve.h"
@@ -45,14 +46,24 @@ static void info (I) {
 		if (value < ymin) ymin = value;
 		if (value > ymax) ymax = value;
 	}
-	Melder_information ("domain:\n   start: %.8g\n   end: %.8g\n"
-		"x:\n   minimum: %.8g\n   maximum: %.8g\n"
-		"   sampling: nx = %ld, dx = %.8g (rate %.8g), x1 = %.8g\n"
-		"y:\n   minimum: %.8g\n   maximum: %.8g\n"
-		"   sampling: ny = %ld, dy = %.8g (rate %.8g), y1 = %.8g",
-		my xmin, my xmax,
-		xmin, xmax, my x -> nx, my x -> dx, 1.0 / my x -> dx, my x -> x1,
-		ymin, ymax, my y -> nx, my y -> dx, 1.0 / my y -> dx, my y -> x1);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Domain:");
+	MelderInfo_writeLine2 ("   tmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 ("   tmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine1 ("x sampling:");
+	MelderInfo_writeLine2 ("   Number of values of t in x: ", Melder_double (my x -> nx));
+	MelderInfo_writeLine5 ("   t step in x: ", Melder_double (my x -> dx), " (sampling rate ", Melder_double (1.0 / my x -> dx), ")");
+	MelderInfo_writeLine2 ("   First t in x: ", Melder_double (my x -> x1));
+	MelderInfo_writeLine1 ("x values:");
+	MelderInfo_writeLine2 ("   Minimum x: ", Melder_double (xmin));
+	MelderInfo_writeLine2 ("   Maximum x: ", Melder_double (xmax));
+	MelderInfo_writeLine1 ("y sampling:");
+	MelderInfo_writeLine2 ("   Number of values of t in y: ", Melder_double (my y -> nx));
+	MelderInfo_writeLine5 ("   t step in y: ", Melder_double (my y -> dx), " (sampling rate ", Melder_double (1.0 / my y -> dx), ")");
+	MelderInfo_writeLine2 ("   First t in y: ", Melder_double (my y -> x1));
+	MelderInfo_writeLine1 ("y values:");
+	MelderInfo_writeLine2 ("   Minimum y: ", Melder_double (ymin));
+	MelderInfo_writeLine2 ("   Maximum y: ", Melder_double (ymax));
 }
 
 static int copy (I, thou) {

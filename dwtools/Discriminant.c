@@ -28,6 +28,7 @@
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "Discriminant.h"
@@ -61,13 +62,14 @@
 
 static void info (I) {
 	iam (Discriminant);
-	Melder_information ("Number of groups = %ld\n"
-		"Number of variables = %ld\n"
-		"Number of discriminant functions = %ld\n"
-		"Number of observations (total) = %ld",
-		my numberOfGroups, my dimension,
-		Discriminant_getNumberOfFunctions (me),
-		Discriminant_getNumberOfObservations (me, 0));
+	
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of groups: ", Melder_integer (my numberOfGroups));
+	MelderInfo_writeLine2 ("Number of variables: ", Melder_integer (my dimension));
+	MelderInfo_writeLine2 ("Number of discriminant functions: ", 
+		Melder_integer (Discriminant_getNumberOfFunctions (me)));
+	MelderInfo_writeLine2 ("Number of observations (total): ", 
+		Melder_integer (Discriminant_getNumberOfObservations (me, 0)));
 }
 
 class_methods (Discriminant, Eigen)

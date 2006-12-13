@@ -315,15 +315,14 @@ static void info (I) {
 	double *frequencies = Sampled_getSortedValues (me, Pitch_LEVEL_FREQUENCY, Pitch_UNIT_HERTZ, & nVoiced);
 	classData -> info (me);
 	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " s");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " s");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " s");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
 	MelderInfo_writeLine1 ("Time sampling:");
 	MelderInfo_writeLine5 ("   Number of frames: ", Melder_integer (my nx), " (", Melder_integer (nVoiced), " voiced)");
 	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First frame at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
 	MelderInfo_writeLine3 ("Ceiling at: ", Melder_double (my ceiling), " Hertz");
-	MelderInfo_close ();
 
 	if (nVoiced >= 1) {   /* Quantiles. */
 		double quantile10, quantile16, quantile50, quantile84, quantile90;

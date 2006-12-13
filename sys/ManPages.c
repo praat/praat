@@ -25,6 +25,7 @@
  * pb 2004/11/21 a link can have upper case while the man page has lower case
  * pb 2006/10/20 embedded scripts
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/10 MelderInfo
  */
 
 #include <ctype.h>
@@ -341,16 +342,17 @@ static void grind (ManPages me) {
 					((ManPage) my pages -> item [jpage]) -> nlinksHither ++;
 					grandNlinks ++;
 				} else {
-					Melder_info ("Page \"%s\" contains a dangling link to \"%s\".",
-						page -> title, link);
+					MelderInfo_writeLine5 ("Page \"", page -> title, "\" contains a dangling link to \"", link, "\".");
 					ndangle ++;
 				}
 			}
 			iferror Melder_flushError (NULL);
 		}
 	}
-	if (ndangle)
+	if (ndangle) {
+		MelderInfo_close ();
 		Melder_warning ("(ManPages::grind:) %ld dangling links encountered. See console window.", ndangle);
+	}
 
 	/*
 	 * Second pass: allocate memory: fill in linksHither and linksThither.

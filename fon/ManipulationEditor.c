@@ -23,6 +23,7 @@
  * pb 2003/11/20 PitchTier: Interpolate quadratically...
  * pb 2004/04/13 less flashing
  * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
+ * pb 2006/12/08 better NUMundefined pitch and duration range checking
  */
 
 #include "ManipulationEditor.h"
@@ -461,15 +462,15 @@ SET_REAL ("Maximum", my duration.maximum)
 DO
 	Manipulation ana = my data;
 	double minimum = GET_REAL ("Minimum"), maximum = GET_REAL ("Maximum");
-	double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : +1e300;
-	double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : -1e300;
+	double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
+	double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
 	if (minimum > 1) return Melder_error ("Minimum relative duration must not be greater than 1.");
 	if (maximum < 1) return Melder_error ("Maximum relative duration must not be less than 1.");
 	if (minimum >= maximum) return Melder_error ("Maximum relative duration must be greater than minimum.");
-	if (minimum > minimumValue)
+	if (NUMdefined (minimumValue) && minimum > minimumValue)
 		return Melder_error ("Minimum relative duration must not be greater than the minimum value present, "
 			"which is %.4g.", minimumValue);
-	if (maximum < maximumValue)
+	if (NUMdefined (maximumValue) && maximum < maximumValue)
 		return Melder_error ("Maximum relative duration must not be less than the maximum value present, "
 			"which is %.4g.", maximumValue);
 	prefs.duration.minimum = my duration.minimum = minimum;
@@ -1256,25 +1257,28 @@ ManipulationEditor ManipulationEditor_create (Widget parent, const char *title, 
 	if (prefs.pitchTier.units < 1 || prefs.pitchTier.units > UNITS_MAX) prefs.pitchTier.units = 1;
 	my pitchTier.draggingStrategy = prefs.pitchTier.draggingStrategy;
 	my pitchTier.units = prefs.pitchTier.units;
+	double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch);
 	if (my pitchTier.units == UNITS_HERTZ) {
 		my pitchTier.minimum = 25.0;
 		my pitchTier.minPeriodic = 50.0;
-		my pitchTier.maximum = RealTier_getMaximumValue (ana -> pitch);
+		my pitchTier.maximum = maximumPitchValue;
 		my pitchTier.cursor = my pitchTier.maximum * 0.8;
 		my pitchTier.maximum *= 1.2;
 	} else {
 		my pitchTier.minimum = -24.0;
 		my pitchTier.minPeriodic = -12.0;
-		my pitchTier.maximum = NUMhertzToSemitones (RealTier_getMaximumValue (ana -> pitch));
+		my pitchTier.maximum = NUMdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : NUMundefined;
 		my pitchTier.cursor = my pitchTier.maximum - 4.0;
 		my pitchTier.maximum += 3.0;
 	}
-	if (my pitchTier.maximum < prefs.pitchTier.maximum) my pitchTier.maximum = prefs.pitchTier.maximum;
+	if (my pitchTier.maximum == NUMundefined || my pitchTier.maximum < prefs.pitchTier.maximum) my pitchTier.maximum = prefs.pitchTier.maximum;
 
-	my duration.minimum = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : 1.0;
+	double minimumDurationValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
+	my duration.minimum = NUMdefined (minimumDurationValue) ? minimumDurationValue : 1.0;
 	if (prefs.duration.minimum > 1) prefs.duration.minimum = 0.25;
 	if (my duration.minimum > prefs.duration.minimum) my duration.minimum = prefs.duration.minimum;
-	my duration.maximum = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : 1.0;
+	double maximumDurationValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
+	my duration.maximum = NUMdefined (maximumDurationValue) ? maximumDurationValue : 1.0;
 	if (prefs.duration.maximum < 1) prefs.duration.maximum = 3.0;
 	if (prefs.duration.maximum <= prefs.duration.minimum) prefs.duration.minimum = 0.25, prefs.duration.maximum = 3.0;
 	if (my duration.maximum < prefs.duration.maximum) my duration.maximum = prefs.duration.maximum;

@@ -1,6 +1,6 @@
 /* SPINET.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "SPINET.h"
@@ -45,10 +46,14 @@
 static void info (I)
 {
 	iam (SPINET); double miny, maxy, mins, maxs;
+	
+	classData -> info (me);
  	if (! Sampled2_getWindowExtrema_d (me, my y, 1, my nx, 1, my ny, &miny, &maxy) ||
- 		! Sampled2_getWindowExtrema_d (me, my s, 1, my nx, 1, my ny, &mins, &maxs)) return;	
-	Melder_information ("Extrema\npower: %.8g %.8g\nrectified: %.8g %.8g",
-		miny, maxy, mins, maxs);
+ 		! Sampled2_getWindowExtrema_d (me, my s, 1, my nx, 1, my ny, &mins, &maxs)) return;
+	MelderInfo_writeLine2 ("Minimum power: ", Melder_double (miny));
+	MelderInfo_writeLine2 ("Maximum power: ", Melder_double (maxy));
+	MelderInfo_writeLine2 ("Minimum power rectified: ", Melder_double (mins));
+	MelderInfo_writeLine2 ("Maximum powerrectified: ", Melder_double (maxs));
 }
 
 class_methods (SPINET, Sampled2)

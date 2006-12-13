@@ -27,6 +27,7 @@
  djmw 20040526 Adapted FFNet_drawCostHistory.
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
  djmw 20060811 Changed %d to %ld in sprintf for longs.
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "FFNet_Matrix.h"
@@ -64,9 +65,9 @@ static int FFNet_checkLayerNumber (FFNet me, long layer)
 		else if (layer < 0)
 			(void) Melder_error ("A negative layer number is not allowed.");
 		else if (layer > my nLayers)
-			(void) Melder_error ("A layer number of %d is too big.");
+			(void) Melder_error ("A layer number of %ld is too big.", layer);
 			
-		(void) Melder_error ("This FFNet has %d layer%s.\n", layer, my nLayers, (my nLayers > 1 ? "s" : ""));
+		(void) Melder_error ("This FFNet has %ld layer%s.\n", layer, my nLayers, (my nLayers > 1 ? "s" : ""));
 		if (my nLayers == 1)
 			return Melder_error ("Please set the layer number equal to 1.");
 		else if (my nLayers == 2)
@@ -74,7 +75,7 @@ static int FFNet_checkLayerNumber (FFNet me, long layer)
 		else if (my nLayers == 3)
 			return Melder_error ("Please choose a layer number equal to 1, 2 or 3.");
 		else
-			return Melder_error ("Please choose a layer number in the range 1 to %d", my nLayers);
+			return Melder_error ("Please choose a layer number in the range 1 to %ld", my nLayers);
 	}
 	return 1;
 }
@@ -194,28 +195,22 @@ static int bookkeeping (FFNet me)
 
 static void info (I)
 {
-    iam (FFNet);
-	long i;
-	
+	iam (FFNet);
 	classData -> info (me);
-	
-    Melder_info ("I have %ld layer%s.\nA total of %ld units divided as:",
-    	my nLayers, my nLayers> 1 ? " (s)": "", FFNet_getNumberOfUnits (me));
-    Melder_info ("  %ld in layer %ld (output%s)", my nUnitsInLayer[my nLayers],
-    	my nLayers, my outputsAreLinear ? ", LINEAR" : "");
-		
-    for (i = my nLayers-1; i >= 1; i--)
+	MelderInfo_writeLine2 ("Number of layers: ", Melder_integer (my nLayers));
+	MelderInfo_writeLine2 ("Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (me)));
+	MelderInfo_writeLine4 ("   Number of units in layer ", Melder_integer (my nLayers), " (output): ",
+		Melder_integer (my nUnitsInLayer[my nLayers]));
+	for (int i = my nLayers-1; i >= 1; i--)
 	{
-    	Melder_info ("  %ld in layer %ld (hidden)", my nUnitsInLayer[i], i);
+		MelderInfo_writeLine4 ("   Number of units in layer ", Melder_integer (i), " (hidden): ",
+			Melder_integer (my nUnitsInLayer[i]));
 	}
-    Melder_info ("  %ld in layer 0 (input)", my nUnitsInLayer[0]);
-    Melder_info ("This net has %ld weights of which %ld are selected.",
-    	my nWeights, FFNet_dimensionOfSearchSpace (me));
-		/*
-    Melder_info ("\n\nnode  isbias nodeFirst nodeLast wFirst wLast");
-	for (i=1; i <= my nNodes; i++) Melder_info ("%5ld: %7ld %10ld %9ld %7ld %6ld", i, 
-        my isbias[i], my nodeFirst[i], my nodeLast[i], my wFirst[i], my wLast[i]);
-		*/
+	MelderInfo_writeLine2 ("   Number of units in layer 0 (input): ", Melder_integer (my nUnitsInLayer[0]));
+	MelderInfo_writeLine2 ("Outputs are linear: ", Melder_boolean (my outputsAreLinear));
+	MelderInfo_writeLine5 ("Number of weights: ", Melder_integer (my nWeights), " (", 
+		Melder_integer (FFNet_dimensionOfSearchSpace (me)), " selected)");
+	MelderInfo_writeLine2 ("Number of nodes: ", Melder_integer (my nNodes));
 } 
 
 
@@ -631,10 +626,10 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
     {
     	double x1WC, x2WC, y1WC, y2WC; char text[30];
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
-		sprintf (text, "Units in layer %d ->", layer);
+		sprintf (text, "Units in layer %ld ->", layer);
 		Graphics_textBottom (g, 0, text);
 		if (layer == 1) strcpy (text, "Input units ->");
-		else sprintf (text, "Units in layer %d ->", layer-1);
+		else sprintf (text, "Units in layer %ld ->", layer-1);
 		Graphics_textLeft (g, 0, text);
 		/* how do I find out the current settings ??? */
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
@@ -765,16 +760,16 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 		}
 		if (! rows[layer])
 			(void)  Melder_error ("The number of rows in the TableOfReal does not equal \n"
-				"the number of units in the layer that connect to layer %d.\n", layer);
+				"the number of units in the layer that connect to layer %ld.\n", layer);
 		else
 			(void)  Melder_error ("The number of columns in the TableOfReal does not equal \n"
-				"the number of units in layer %d.\n", layer);
+				"the number of units in layer %ld.\n", layer);
 		if (ok == 0)
 			return Melder_errorp ("Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
 		else
 		{
 			if (ok == 1)
-				return Melder_errorp ("Please try again with layer number %d.", (try[1] ? try[1] : (try[2] ? try[2] : try[3])));
+				return Melder_errorp ("Please try again with layer number %ld.", (try[1] ? try[1] : (try[2] ? try[2] : try[3])));
 			else
 				return Melder_errorp ("Please try again with one of the other two layer numbers.");
 		}

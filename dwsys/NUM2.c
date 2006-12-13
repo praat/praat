@@ -631,24 +631,26 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, char *name)
 	long i, j, k, npc = 5;
 	div_t n = div (nc, npc);
 
-	Melder_print ("%s=[", name);
+	MelderInfo_open ();
+	MelderInfo_write2 (name, "=[");
 	for (i = 1; i <= nr; i++)
 	{
 		for (j = 1; j <= n.quot; j++)
 		{
 			for (k = 1; k <= npc; k++)
 			{
-				Melder_print ("%.12g%s", m[i][(j-1)*npc+k], k < npc ? ", " : "");
+				MelderInfo_write2 (Melder_double (m[i][(j-1)*npc+k]), (k < npc ? ", " : ""));
 			}
-			Melder_print ("%s", j < n.quot ? ",\n" : "");
+			MelderInfo_write1 (j < n.quot ? ",\n" : "");
 		}
 
 		for (k = 1; k <= n.rem; k++)
 		{
-			Melder_print ("%.12g%s", m[i][n.quot*npc + k], k < n.rem ? ", " : "");
+			MelderInfo_write2 (Melder_double (m[i][n.quot*npc + k]), (k < n.rem ? ", " : ""));
 		}
-		Melder_print("%s", i < nr ? ";\n" : "];\n");
+		MelderInfo_write1 (i < nr ? ";\n" : "];\n");
 	}
+	MelderInfo_close ();
 }
 
 double **NUMdmatrix_transpose (double **m, long nr, long nc)

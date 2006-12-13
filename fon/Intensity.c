@@ -1,6 +1,6 @@
 /* Intensity.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2004/10/23 Intensity_getQuantile
  * pb 2004/10/24 Sampled statistics
  * pb 2004/11/21 corrected sones bug
+ * pb 2006/12/08 MelderInfo
  */
 
 #include "Intensity.h"
@@ -29,18 +30,14 @@
 static void info (I) {
 	iam (Intensity);
 	classData -> info (me);
-	Melder_info (
-		"Time domain:\n"
-		"   Start time: %s seconds\n"
-		"   End time: %s seconds\n"
-		"   Total duration: %s seconds",
-		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
-	Melder_info (
-		"Time sampling:\n"
-		"   Number of frames: %ld\n"
-		"   Time step: %s seconds\n"
-		"   First frame centred at: %s seconds",
-		my nx, Melder_double (my dx), Melder_double (my x1));
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine2 ("   Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
+	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
 }
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {

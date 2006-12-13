@@ -23,6 +23,7 @@
  * pb 2004/10/18 more big integers
  * pb 2005/03/02 pref string 260 bytes long
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/06 MelderString
  */
 
 #include <time.h>
@@ -61,14 +62,22 @@ void praat_statistics_exit (void) {
 
 void praat_memoryInfo (void) {
 	MelderInfo_open ();
-	MelderInfo_writeLine2 ("Currently allocated: ", Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()));
+	MelderInfo_writeLine2 ("Currently in use:\n"
+		"   Strings: ", Melder_integer (MelderString_allocationCount () - MelderString_deallocationCount ()));
+	MelderInfo_writeLine2 ("   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
 	MelderInfo_writeLine5 ("   Things: ", Melder_integer (Thing_getTotalNumberOfThings ()),
 		" (objects in list: ", Melder_integer (praat.n), ")");
-	MelderInfo_writeLine2 ("   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
+	MelderInfo_writeLine2 ("   Other: ",
+		Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()
+			- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
+			- (MelderString_allocationCount () - MelderString_deallocationCount ())));
 	MelderInfo_writeLine5 (
-		"\nHistory of this session:\n"
-		"   Allocation: ", Melder_bigInteger (Melder_allocationCount ()), " (", Melder_bigInteger (Melder_allocationSize ()), " bytes)");
-	MelderInfo_writeLine2 ("   Deallocation: ", Melder_bigInteger (Melder_deallocationCount ()));
+		"\nMemory history of this session:\n"
+		"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), " (", Melder_bigInteger (Melder_allocationSize ()), " bytes)");
+	MelderInfo_writeLine2 ("   Total deleted: ", Melder_bigInteger (Melder_deallocationCount ()));
+	MelderInfo_writeLine5 (
+		"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()), " (", Melder_bigInteger (MelderString_allocationSize ()), " bytes)");
+	MelderInfo_writeLine2 ("   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()));
 	MelderInfo_writeLine3 ("\nHistory of all sessions from ", statistics.dateOfFirstSession, " until today:");
 	MelderInfo_writeLine4 ("   Interactive sessions: ", Melder_integer (statistics.interactiveSessions),
 		" batch sessions: ", Melder_integer (statistics.batchSessions));

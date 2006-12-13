@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2004/05/14 some three-byte routines
+ * pb 2006/12/13 big-endian floating point
  */
 
 #ifndef _complex_h_
@@ -156,6 +157,7 @@ double bingetr4 (FILE *f);   void binputr4 (double x, FILE *f);
 	Denormalized: from 1.4e-45.
 	This is the native format of a 'float' on Macintosh and Silicon Graphics Iris.
 */
+double bingetr4LE (FILE *f);   void binputr4LE (double x, FILE *f);   // Least significant bit first.
 
 double bingetr8 (FILE *f);   void binputr8 (double x, FILE *f);
 /*

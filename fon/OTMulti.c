@@ -40,13 +40,14 @@
 
 static void classOTMulti_info (I) {
 	iam (OTMulti);
+	classData -> info (me);
 	long numberOfViolations = 0, icand, icons;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++)
 		for (icons = 1; icons <= my numberOfConstraints; icons ++)
 			numberOfViolations += my candidates [icand]. marks [icons];
-	Melder_info ("Number of constraints: %ld", my numberOfConstraints);
-	Melder_info ("Number of candidates: %ld", my numberOfCandidates);
-	Melder_info ("Number of violation marks: %ld", numberOfViolations);
+	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
+	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (my numberOfCandidates));
+	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
 static int writeAscii (I, FILE *f) {

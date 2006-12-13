@@ -1,6 +1,6 @@
 /* RealTierEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2001/08/15
  * pb 2002/07/16 GPL
  * pb 2002/10/06 improved visilibity of dragging
  * pb 2004/04/13 less flashing
+ * pb 2006/12/08 keyboard shortcuts
  */
 
 #include "RealTierEditor.h"
@@ -97,8 +97,8 @@ static void createMenus (I) {
 	Editor_addCommand (me, "View", our setRangeTitle, 0, cb_setRange);
 
 	Editor_addMenu (me, "Point", 0);
-	Editor_addCommand (me, "Point", "Remove point(s)", 0, cb_removePoints);
-	Editor_addCommand (me, "Point", "Add point at cursor", 0, cb_addPointAtCursor);
+	Editor_addCommand (me, "Point", "Remove point(s)", motif_OPTION + 'T', cb_removePoints);
+	Editor_addCommand (me, "Point", "Add point at cursor", 'T', cb_addPointAtCursor);
 	Editor_addCommand (me, "Point", "Add point at...", 0, cb_addPointAt);
 }
 

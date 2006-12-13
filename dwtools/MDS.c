@@ -3868,22 +3868,23 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 	
 	if (showProgress)
 	{
-		Melder_clearInfo ();
-		Melder_info ("**************** INDSCAL results on Distances "
-			"*******************\n\n"
-			"%s, number of object(s): %d\n", Thing_className (sp), nSources);
+		MelderInfo_open ();
+		MelderInfo_writeLine4 ("**************** INDSCAL results on Distances "
+			"*******************\n\n", Thing_className (sp), 
+			"number of objects: ",  Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{
-			Melder_info ("  %s", Thing_getName (sp -> item[i]));
+			MelderInfo_writeLine2 ("  ", Thing_getName (sp -> item[i]));
 		}
 		if (nZeros > 0)
 		{
-			Melder_info ("WARNING: %d zero weight%s!", nZeros, 
-				nZeros > 1 ? "s": "");
+			MelderInfo_writeLine5 ("WARNING: ", Melder_integer (nZeros),  " zero weight", 
+				(nZeros > 1 ? "s": ""), "!");
 		}
-		Melder_info ("\n\nVariance Accounted For = %.17g\n\nThe optimal "
-			"configuration was reached in %d iterations\n", *vaf, 
-			(iter > numberOfIterations ? numberOfIterations : iter));
+		MelderInfo_writeLine5 ("\n\nVariance Accounted For = ", Melder_double (*vaf), 
+			"\nThe optimal configuration was reached in ", 
+			Melder_integer ((iter > numberOfIterations ? numberOfIterations : iter)), " iterations.");
+		MelderInfo_close ();
 	}
 	
 end:

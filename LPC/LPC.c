@@ -21,6 +21,7 @@
  djmw 20020812 GPL header
  djmw 20030612 Removed LPC_Frame_free
  djmw 20060510 LPC_drawPoles error cleared if something goes wrong.
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "LPC_and_Polynomial.h"
@@ -46,14 +47,13 @@
 static void info (I)
 {
 	iam (LPC);
-	Melder_information("LPC info\nName: %s\n"
-		"Time domain: from %.8g to %.8g seconds.\n"
-		"Prediction order: %ld\n"
-		"Number of frames: %ld\n"
-		"Time step: %.8g seconds\n"
-		"First frame at: %.8g seconds\n",		
-		Thing_getName (me), my xmin, my xmax,
-		my maxnCoefficients, my nx, my dx, my x1);
+	classData -> info (me);
+	MelderInfo_writeLine5 ("Time domain: ", Melder_double (my xmin), " to ", Melder_double (my xmax),
+		" (s).");
+	MelderInfo_writeLine2 ("Prediction order: ", Melder_integer (my maxnCoefficients));
+	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
+	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
 }
 
 class_methods (LPC, Sampled)

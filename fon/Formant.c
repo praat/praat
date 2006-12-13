@@ -50,8 +50,9 @@ static void info (I) {
 	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
 	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
 	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine2 ("   Number of frames: ", Melder_integer (my nx));
 	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First frame at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
 }
 
 static double getValueAtSample (I, long iframe, long which, int units) {

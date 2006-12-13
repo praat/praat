@@ -2814,29 +2814,54 @@ LIST_ITEM ("2. We perform a filter bank analysis on a linear frequency scale. "
 	"Pitch: To FormantFilter...@ for details).")
 MAN_END
 
-MAN_BEGIN ("Sound: To IntervalTier (silence)...", "djmw", 20060921)
-INTRO ("A command that creates an @IntervalTier in which the silence intervals of the selected @Sound are marked.")
+#define xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP \
+TAG ("%%Silence threshold (dB)%") \
+DEFINITION ("determines the maximum silence intensity value in dB with respect to the maximum " \
+	"intensity. For example, if %imax is the maximum intensity in dB then the maximum silence " \
+	"intensity is calculated as %%imax - silenceThreshold%; intervals with an intensity smaller " \
+	"than this value are considered as silent intervals.") \
+TAG ("%%Minimum silent interval duration (s)%") \
+DEFINITION ("determines the minimum duration for an interval to be considered as silent. " \
+	"If you don't want the closure for a plosive to count as silent then use a large enough value.") \
+TAG ("%%Minimum sounding interval duration (s)%") \
+DEFINITION ("determines the minimum duration for an interval to be ##not# considered as silent. " \
+	"This offers the possibility to filter out small intense bursts of relatively short duration.") \
+TAG ("%%Silent interval label%") \
+DEFINITION ("determines the label for a silent interval in the TextGrid.") \
+TAG ("%%Sounding interval label%") \
+DEFINITION ("determines the label for a sounding interval in the TextGrid.")
+
+MAN_BEGIN ("Sound: To TextGrid (silences)...", "djmw", 20061205)
+INTRO ("A command that creates a @TextGrid in which the silent and sounding intervals of the selected @Sound are marked.")
 ENTRY ("Arguments")
-TAG ("%%Silence threshold%")
-DEFINITION ("determines the maximum silence intensity value (as a fraction of the intensity range in dB). "
-	"If the local intensity is below this value the frame is considered as silence. "
-	"For example, if %imax and %imin are the maximum and minimum intensity of the sound then the maximum silence intensity "
-	"is calculated as %%imin + silenceThreshold * (imax - imin)%.")
-TAG ("%%Minimum silence interval (s)%")
-DEFINITION ("determines the minimum duration for an interval to be considered as silence. "
-	"If you don't want the closure for a plosive to count as silence then use a large enough value. ")
-TAG ("%%Minimum non-silence interval (s)%")
-DEFINITION ("determines the minimum duration for an interval to be ##not# considered as silence. "
-	"This offers the possibility to filter out small intense bursts of relative short duration.")
-TAG ("%%Silence label%")
-DEFINITION ("determines the label for a silence interval in the IntervalTier.")
+xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP
 ENTRY ("Algorithm")
-NORMAL ("First the intensity contour is evaluated and the intervals above and below the silence threshold are marked. "
-	"We then remove non-silence intervals with a duration smaller than the %%Minimum non-silence interval%. "
-	"This step is followed by a joining of the neighbouring silence intervals that resulted because of this removal."
-	"Finally we remove silence intervals with a duration smaller than the %%Minimum silence interval%. "
-	"this is followed by a joining of the neighbouring non-silence intervals that resulted because of this removal.")
-NORMAL ("Experience showed that first removing short intensity bursts instead of short silences gave better results than the other way around.")
+NORMAL ("First the intensity is determined according to the @@Sound: To Intensity...@ command. "
+	"Next the silent and sounding intervas are determined as in the @@Intensity: To TextGrid (silences)...@ command.")
+MAN_END
+
+MAN_BEGIN ("Intensity: To TextGrid (silences)...", "djmw", 20061201)
+INTRO ("A command that creates a @TextGrid in which the silent and sounding intervals of the selected @Intensity are marked.")
+ENTRY ("Arguments")
+xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP
+ENTRY ("Algorithm")
+NORMAL ("First the intensity contour is evaluated and the intervals above and below the silence threshold are marked as "
+	"%sounding and %silent. "
+	"We then remove sounding intervals with a duration smaller than the %%Minimum sounding interval duration%. "
+	"This step is followed by joining the neighbouring silent intervals that resulted because of this removal. "
+	"Finally we remove silent intervals with a duration smaller than the %%Minimum silent interval duration%. "
+	"This is followed by joining the neighbouring sounding intervals that resulted because of this removal.")
+NORMAL ("Experience showed that first removing short intensity bursts instead of short silences gave better results than doing it the other way around.")
+ENTRY ("Important")
+NORMAL ("The effectiveness of the %%Minimum silent interval duration% and %%Minimum sounding interval duration% "
+	"depends on the effective analysis window duration that was used to determine the intensity contour. "
+	"For example, if you have chosen 100 Hz for the \"Minimum pitch\" parameter in the @@Sound: To Intensity...@ analysis, "
+	"the effective analysis window duration was 32 ms. Don't expect to find sounding "
+	"or silent intervals with a duration smaller than this effective analysis window duration.")
+MAN_END
+
+MAN_BEGIN ("Sound: To IntervalTier (silence)...", "djmw", 20061201)
+INTRO ("The new command as of praat version 4.5.05 is @@Sound: To TextGrid (silences)...@.")
 MAN_END
 
 MAN_BEGIN ("Sound & Pitch: To FormantFilter...", "djmw", 20010404)

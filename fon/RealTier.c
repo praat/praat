@@ -67,6 +67,14 @@ RealPoint RealPoint_create (double time, double value) {
 
 /********** class RealTier **********/
 
+static void info (I) {
+	iam (RealTier);
+	classFunction -> info (me);
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my points -> size));
+	MelderInfo_writeLine2 ("Minimum value: ", Melder_double (RealTier_getMinimumValue (me)));
+	MelderInfo_writeLine2 ("Maximum value: ", Melder_double (RealTier_getMaximumValue (me)));
+}
+
 static double getNx (I) { iam (RealTier); return my points -> size; }
 static double getX (I, long ix) { iam (RealTier); return ((RealPoint) my points -> item [ix]) -> time; }
 static double getNcol (I) { iam (RealTier); return my points -> size; }
@@ -82,6 +90,7 @@ class_methods (RealTier, Function)
 	class_method_local (RealTier, writeBinary)
 	class_method_local (RealTier, readBinary)
 	class_method_local (RealTier, description)
+	class_method (info)
 	class_method (getNx)
 	class_method (getX)
 	class_method (getNcol)
@@ -140,11 +149,11 @@ double RealTier_getValueAtTime (I, double t) {
 
 double RealTier_getMaximumValue (I) {
 	iam (RealTier);
-	double result = -1e300;
+	double result = NUMundefined;
 	long n = my points -> size, i;
 	for (i = 1; i <= n; i ++) {
 		RealPoint point = my points -> item [i];
-		if (point -> value > result)
+		if (result == NUMundefined || point -> value > result)
 			result = point -> value;
 	}
 	return result;
@@ -152,11 +161,11 @@ double RealTier_getMaximumValue (I) {
 
 double RealTier_getMinimumValue (I) {
 	iam (RealTier);
-	double result = +1e300;
+	double result = NUMundefined;
 	long n = my points -> size, i;
 	for (i = 1; i <= n; i ++) {
 		RealPoint point = my points -> item [i];
-		if (point -> value < result)
+		if (result == NUMundefined || point -> value < result)
 			result = point -> value;
 	}
 	return result;

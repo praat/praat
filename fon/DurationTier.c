@@ -20,11 +20,25 @@
 /*
  * pb 1997/04/08
  * pb 2002/07/16 GPL
+ * pb 2006/12/08 info
  */
 
 #include "DurationTier.h"
 
+static void info (I) {
+	iam (RealTier);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total original duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my points -> size));
+	MelderInfo_writeLine2 ("Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (me)));
+	MelderInfo_writeLine2 ("Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (me)));
+}
+
 class_methods (DurationTier, RealTier)
+	class_method (info)
 class_methods_end
 
 DurationTier DurationTier_create (double tmin, double tmax) {

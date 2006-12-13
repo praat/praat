@@ -1,6 +1,6 @@
 /* melder_atof.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 2003-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,10 @@
  */
 
 /*
+ * pb 2003/05/19 Melder_atof
  * pb 2006/04/16 moved Melder_atof from melder.c
  * pb 2006/04/16 moved Melder_isStringNumeric from Table.c
+ * pb 2006/12/08 guard against null strings
  */
 
 #include "melder.h"
@@ -87,6 +89,7 @@ static const char *findEndOfNumericString (const char *string) {
 }
 
 int Melder_isStringNumeric (const char *string) {
+	if (string == NULL) return false;
 	const char *p = findEndOfNumericString (string);
 	if (p == NULL) return FALSE;
 	/*
@@ -98,6 +101,7 @@ int Melder_isStringNumeric (const char *string) {
 }
 
 double Melder_atof (const char *string) {
+	if (string == NULL) return NUMundefined;
 	const char *p = findEndOfNumericString (string);
 	if (p == NULL) return NUMundefined;
 	Melder_assert (p - string > 0);

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20061201 Latest modification
+ djmw 20061204 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -152,25 +152,27 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 
 int Sound_filter_part_formula (Sound me, double t1, double t2, const char *formula);
 
+Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
+	double formantMultiplier, // > 0
+	double pitchMultiplier, // > 0
+	double pitchRangeMultiplier, // any number 
+	double durationMultiplier); // > 0
+
+Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, 
+	double formantMultiplier, // > 0
+	double pitchMultiplier, // > 0
+	double pitchRangeMultiplier, // any number 
+	double durationMultiplier); // > 0
+
 /* Outphased */
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
-
-IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold,
-	double minSilenceDuration, double minNonSilenceDuration, char *silenceLabel);
-/*
-	Marks "silence" intervals in a sound.
-	silenceThreshold: silence-to-speech and speech-to-silence threshold as a fraction of the intensity
-		range (dB's). 
-		We have speech if:
-			local_intensity >= max_intensity - (1-silenceThreshold)*(max_intensity-min_intensity).
-		Silence if:
-			local_intensity < max_intensity - (1-silenceThreshold)*(max_intensity-min_intensity).
-	If minSilenceDuration > 0 then only intervals with a duration > minSilenceDuration will be labelled
-	as silences in the IntervalTier.
 	
-*/
+TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, 
+	char *silentLabel, char *soundingLabel);
+
 #endif /* _Sound_extensions_h_ */

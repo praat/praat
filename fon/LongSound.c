@@ -1,6 +1,6 @@
 /* LongSound.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  * pb 2003/09/12 changed 5 to Melder_NUMBER_OF_AUDIO_FILE_TYPES
  * pb 2004/05/14 support for reading 24-bit and 32-bit audio files
  * pb 2004/11/24 made buffer length settable
+ * pb 2006/12/10 MelderInfo
+ * pb 2006/12/13 support for IEEE float 32-bit audio files
  */
 
 #include "LongSound.h"
@@ -59,14 +61,17 @@ static void info (I) {
 		"linear 16 bit big-endian", "linear 16 bit little-endian",
 		"linear 24 bit big-endian", "linear 24 bit little-endian",
 		"linear 32 bit big-endian", "linear 32 bit little-endian",
-		"mu-law", "A-law", "shorten", "polyphone" };
-	Melder_info ("Duration: %.17g seconds\nFile name: %s\nFile type: %s\nChannels: %s\nEncoding: %s"
-		"\nSample rate: %.17g Hz\nSize: %ld samples\nStart of sample data: %ld bytes from the start of the file.",
-		my xmax - my xmin, Melder_fileToPath (& my file),
-		my audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? "unknown" : Melder_audioFileTypeString (my audioFileType),
-		my numberOfChannels > 4 ? "unknown" : channelStrings [my numberOfChannels],
-		my encoding > 8 ? "unknown" : encodingStrings [my encoding] ,
-		my sampleRate, my nx, my startOfData);
+		"mu-law", "A-law", "shorten", "polyphone",
+		"IEEE float 32 bit big-endian", "IEEE float 32 bit little-endian" };
+	classData -> info (me);
+	MelderInfo_writeLine3 ("Duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine2 ("File name: ", Melder_fileToPath (& my file));
+	MelderInfo_writeLine2 ("File type: ", my audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? "unknown" : Melder_audioFileTypeString (my audioFileType));
+	MelderInfo_writeLine2 ("Channels: ", my numberOfChannels > 4 ? "unknown" : channelStrings [my numberOfChannels]);
+	MelderInfo_writeLine2 ("Encoding: ", my encoding > 14 ? "unknown" : encodingStrings [my encoding]);
+	MelderInfo_writeLine3 ("Sampling frequency: ", Melder_double (my sampleRate), " Hertz");
+	MelderInfo_writeLine3 ("Size: ", Melder_integer (my nx), " samples");
+	MelderInfo_writeLine3 ("Start of sample data: ", Melder_integer (my startOfData), " bytes from the start of the file");
 }
 
 static int LongSound_init (LongSound me, MelderFile file) {

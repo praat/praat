@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2002/03/11 replaced _I with void_me etc for compliance with new ctype.h
  * pb 2004/10/16 C++ compatible structs
  * pb 2004/10/25 C++ compatible assignments
+ * pb 2006/12/10 update on "info" documentation
  */
 
 /* The root class of all objects. */
@@ -288,7 +289,8 @@ class_create (Thing, Thing)   /* Root class: no parent. */
 
 	void info (I)
 		Message sent by Thing_info:
-			use Melder_information or a sequence of Melder_info to give some information about you.
+			use a sequence of MelderInfo_writeXXX to give some information about you;
+			these are often preceded by classData -> info (me).
 		Thing::info shows my class name.
 
 	void nameChanged (I)

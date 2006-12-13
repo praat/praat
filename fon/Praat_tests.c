@@ -1,5 +1,6 @@
 /* Praat_tests.c */
 /* Paul Boersma, August 2, 2001 */
+/* December 10, 2006: MelderInfo */
 
 #include "Praat_tests.h"
 #include "enum_c.h"
@@ -19,8 +20,7 @@ int Praat_tests (int itest, char *arg1, char *arg2, char *arg3, char *arg4) {
 			NUMrandomRestart (310952);
 			for (i = 1; i <= 1009 * 2009 - 100 + 1; i ++)
 				x = NUMrandomFraction ();
-			Melder_info ("%.20g", x);
-			return 1;
+			MelderInfo_writeLine1 (Melder_double (x));
 		} break;
 		case enumi (PraatTests, TimeRandomFraction): {
 			for (i = 1; i <= n; i ++)
@@ -37,7 +37,8 @@ int Praat_tests (int itest, char *arg1, char *arg2, char *arg3, char *arg4) {
 			NUMlvector_free (array, 1);
 		} break;
 	}
-	Melder_info ("%.6g nanoseconds", Melder_stopwatch () / n * 1e9);
+	MelderInfo_writeLine2 (Melder_single (Melder_stopwatch () / n * 1e9), " nanoseconds");
+	MelderInfo_close ();
 	return 1;
 }
 

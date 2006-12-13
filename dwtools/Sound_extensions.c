@@ -32,6 +32,7 @@
  djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
 */
 
+#include "Intensity_extensions.h"
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_to_Intensity.h"
@@ -47,6 +48,48 @@
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
+static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tmax, double multiplier, double fref_Hz)
+{
+	long i;
+	double fref_st;
+	
+	if (fref_Hz <= 0) return;
+	
+	fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
+	
+	for (i = 1; i <= my points -> size; i++)
+	{
+		RealPoint point = my points -> item [i];
+		double f = point -> value;
+		if (point -> time < tmin || point -> time > tmax) continue;
+		if (f > 0)
+		{
+			double f_st = fref_st + 12.0 * log2 (f / fref_Hz) * multiplier;
+			point -> value = 100.0 * exp (f_st * (NUMln2 / 12.0));
+		}
+	}
+}
+
+static void Pitch_scaleDuration (Pitch me, double multiplier)
+{
+	if (multiplier != 1)
+	{ // keep xmin at the same value
+		my dx *= multiplier;
+		my x1 = my xmin + (my x1 - my xmin) * multiplier;
+		my xmax = my xmin + (my xmax - my xmin) * multiplier;
+	}
+}
+
+static void Pitch_scalePitch (Pitch me, double multiplier)
+{
+	long i;
+	for (i = 1; i <= my nx; i++)
+	{
+		double f = my frame[i].candidate[1].frequency;
+		f *= multiplier;
+		if (f < my ceiling) my frame[i].candidate[1].frequency = f;
+	}
+}
 
 static void i1write (Sound me, FILE *f, long *nClip)
 {
@@ -904,16 +947,16 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 	
 	if (Melder_debug == -1)
 	{
-		Melder_info ("--gammatonefilter4--\nF = %s, B = %s, T = %s\nGain = %s", 
+		Melder_casual ("--gammatonefilter4--\nF = %s, B = %s, T = %s\nGain = %s", 
 			Melder_double (centre_frequency), Melder_double (bandwidth),
 			Melder_double (dt), Melder_double (gain));
 		for (i = 0; i <= 4; i++)
 		{
-			Melder_info ("a[%d] = %s", i, Melder_double (a[i]));
+			Melder_casual ("a[%d] = %s", i, Melder_double (a[i]));
 		}
 		for (i = 0; i <= 8; i++)
 		{
-			Melder_info ("b[%d] = %s", i, Melder_double (b[i]));
+			Melder_casual ("b[%d] = %s", i, Melder_double (b[i]));
 		}
 	}
 	/*
@@ -1603,6 +1646,161 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 	return thee;
 }
 
+/* Internal pitch representation in semitones */
+Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, 
+	double formantMultiplier, // > 0
+	double pitchMultiplier, // > 0
+	double pitchRangeMultiplier, // any number 
+	double durationMultiplier) // > 0
+{
+	char *proc = "Sound_changeGender";
+	Sound sound = NULL, thee = NULL; 
+	Pitch pitch = NULL;
+	PointProcess pulses = NULL;
+	PitchTier pitchTier = NULL;
+	DurationTier duration = NULL;
+	double samplingFrequency_old = 1 / my dx;
+	double median;
+	
+	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
+		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
+	
+	sound = Data_copy (me);
+	if (sound == NULL) return NULL;
+	
+	Vector_subtractMean (sound);
+		
+	if (formantMultiplier != 1) 
+	{
+		/* Shift all frequencies (inclusive pitch!) */
+		
+		Sound_overrideSamplingFrequency (sound, samplingFrequency_old * formantMultiplier);
+	}
+	
+	pitch = Data_copy (him);
+	if (pitch == NULL) goto end;
+	
+	Pitch_scaleDuration (pitch, 1 / formantMultiplier); // 
+	Pitch_scalePitch (pitch, formantMultiplier);
+
+	pulses = Sound_Pitch_to_PointProcess_cc (sound, pitch);
+	if (pulses == NULL) goto end;
+
+	pitchTier = Pitch_to_PitchTier (pitch);
+	if (pitchTier == NULL) goto end;
+		
+	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
+	if (median != 0 && median != NUMundefined)
+	{
+		/* Incorporate pitch shift from overriding the sampling frequency */
+		PitchTier_multiplyFrequencies (pitchTier, sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
+		PitchTier_modifyExcursionRange (pitchTier, sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
+	}
+	else
+	{
+		Melder_warning ("%s: There were no voiced segments found.", proc);	
+	}
+	duration = DurationTier_create (my xmin, my xmax);
+	if (duration == NULL) goto end;	
+	if (! RealTier_addPoint (duration, (my xmin + my xmax) / 2,
+		formantMultiplier * durationMultiplier)) goto end;
+	
+	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration, MAX_T);
+	if (thee == NULL) goto end;
+	
+	/* Resample to the original sampling frequency */
+	
+	if (formantMultiplier != 1)
+	{
+		Sound tmp = thee;			
+		thee = Sound_resample (tmp, samplingFrequency_old, 10);
+		forget (tmp);
+	}
+	
+end:
+
+	forget (sound); forget (pitch); forget (pulses);
+	forget (pitchTier); forget (duration);
+	
+	return thee;
+}
+
+Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
+	double formantMultiplier, // > 0
+	double pitchMultiplier, // > 0
+	double pitchRangeMultiplier, // any number 
+	double durationMultiplier) // > 0
+{
+	Pitch pitch = NULL;
+	Sound thee = NULL;
+	
+	pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
+	if (pitch == NULL) return NULL;
+	
+	thee = Sound_and_Pitch_changeSpeaker (me, pitch, formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
+		
+	forget (pitch);
+	
+	return thee;
+}
+
+TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, 
+	char *silentLabel, char *soundingLabel)
+{
+	Intensity thee = NULL;
+	TextGrid him = NULL;
+	int subtractMeanPressure = 1;
+	
+	thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
+	if (thee == NULL) return NULL;
+	him = Intensity_to_TextGrid_detectSilences (thee, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+
+	if (Melder_hasError ())
+	{ forget (thee); forget (him); }
+	return him;
+}
+
+/*  Compatibility with old Sound(&pitch)_changeGender  ***********************************/
+
+static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, double factor, double fmid)
+{
+	long i;
+
+	for (i = 1; i <= my points -> size; i ++)
+	{
+		RealPoint point = my points -> item [i];
+		double f = point -> value;
+		if (point -> time < tmin || point -> time > tmax) continue;
+		f = fmid + (f - fmid) * factor;
+		point -> value = f < 0 ? 0 : f;
+	}
+}
+
+static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
+{
+	Pitch thee = NULL;
+	long i;
+	double dx = my dx, x1 = my x1, xmax = my xmax;
+
+	if (scaleFactor != 1)
+	{
+		dx = my dx * scaleFactor;
+		x1 = my xmin + 0.5 * dx;
+		xmax = my xmin + my nx * dx;
+	}	
+	thee = Pitch_create (my xmin, xmax, my nx, dx, x1, my ceiling, 2);
+	if ( thee == NULL) return NULL;
+	for (i = 1; i <= my nx; i++)
+	{
+		double f = my frame[i].candidate[1].frequency;
+		thy frame[i].candidate[1].strength = my frame[i].candidate[1].strength;
+		f /= scaleFactor;
+		if (f < my ceiling) thy frame[i].candidate[1].frequency = f; 
+	}
+	return thee;
+}
+
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
@@ -1631,7 +1829,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		Sound_overrideSamplingFrequency (sound, samplingFrequency_old * formantRatio);
 	}
 	
-	pitch = Pitch_scaleTime (him, 1 / formantRatio);		
+	pitch = Pitch_scaleTime_old (him, 1 / formantRatio);		
 	if (pitch == NULL) goto end;
 
 	pulses = Sound_Pitch_to_PointProcess_cc (sound, pitch);
@@ -1649,7 +1847,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		factor = new_pitch / median;
 		PitchTier_multiplyFrequencies (pitchTier, sound -> xmin, sound -> xmax, factor);
 
-		PitchTier_modifyRange (pitchTier, sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
+		PitchTier_modifyRange_old (pitchTier, sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
 	}
 	else
 	{
@@ -1680,12 +1878,6 @@ end:
 	return thee;
 }
 
-/*
-To do: 
-	Remove the pitchRangeFactor parameter: We want a new command to change the pitch range,
-		'Change pitch dynamics...' or 'Change pitch excurions...' or ???
-	In the form we want better names: 'Formant frequencies ratio', 'Pitch ratio', 'Duration ratio' 
-*/
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
@@ -1703,204 +1895,6 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 	return thee;
 }
 
-Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, 
-	double formantFrequenciesRatio, double durationRatio)
-{
-	Pitch pitch = NULL;
-	Sound thee = NULL;
-	
-	pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
-	if (pitch == NULL) return NULL;
-	
-	thee = Sound_and_Pitch_changeGender (me, pitch, pitchRatio, 
-		formantFrequenciesRatio, durationRatio);
-		
-	forget (pitch);
-	
-	return thee;
-}
-
-/* Sound_and_Pitch_changeGender was adapted from a script by Ton Wempe */
-Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, 
-	double formantFrequenciesRatio, double durationRatio)
-{
-	char *proc = "Sound_changeGender";
-	Sound sound = NULL, thee = NULL; 
-	Pitch pitch = NULL;
-	PointProcess pulses = NULL;
-	PitchTier pitchTier = NULL;
-	DurationTier duration = NULL;
-	double samplingFrequency_old = 1 / my dx;
-	double median;
-	
-	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
-		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
-
-	sound = Data_copy (me);
-	if (sound == NULL) return NULL;
-	
-	Vector_subtractMean (sound);
-		
-	if (formantFrequenciesRatio != 1)
-	{
-		/* Shift all frequencies (inclusive pitch!) */
-		
-		Sound_overrideSamplingFrequency (sound, samplingFrequency_old * formantFrequenciesRatio);
-	}
-	
-	pitch = Pitch_scaleTime (him, 1 / formantFrequenciesRatio);		
-	if (pitch == NULL) goto end;
-
-	pulses = Sound_Pitch_to_PointProcess_cc (sound, pitch);
-	if (pulses == NULL) goto end;
-
-	pitchTier = Pitch_to_PitchTier (pitch);
-	if (pitchTier == NULL) goto end;
-		
-	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
-	if (median != 0 && median != NUMundefined)
-	{
-		/* Incorporate pitch shift from overriding the sampling frequency */
-			
-		pitchRatio /= formantFrequenciesRatio;
-		PitchTier_multiplyFrequencies (pitchTier, sound -> xmin, sound -> xmax, pitchRatio);
-
-	}
-	else
-	{
-		Melder_warning ("%s: There were no voiced segments found.", proc);	
-	}
-	duration = DurationTier_create (my xmin, my xmax);
-	if (duration == NULL) goto end;	
-	if (! RealTier_addPoint (duration, (my xmin + my xmax) / 2,
-		formantFrequenciesRatio * durationRatio)) goto end;
-	
-	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration, MAX_T);
-	if (thee == NULL) goto end;
-	
-	/* Resample to the original sampling frequency */
-	
-	if (formantFrequenciesRatio != 1)
-	{
-		Sound tmp = thee;			
-		thee = Sound_resample (tmp, samplingFrequency_old, 10);
-		forget (tmp);
-	}
-	
-end:
-
-	forget (sound); forget (pitch); forget (pulses);
-	forget (pitchTier); forget (duration);
-	
-	return thee;
-}
-
-static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, char *leftLabel)
-{
-	TextInterval ti, ti_new;
-	if (time <= my xmin || time >= my xmax) return 0;
-	
-	/* Find interval to split */
-	if (iinterval <= 0) iinterval = IntervalTier_timeToLowIndex (me, time);
-	
-	/* Modify end time of left label */
-	ti = my intervals -> item[iinterval];
-	ti -> xmax = time;
-	if (! TextInterval_setText (ti, leftLabel)) return 0;
-	
-	ti_new = TextInterval_create (time, my xmax, "");
-	if (ti_new == NULL || ! Sorted_addItem_unsorted (my intervals, ti_new)) return 0;
-	return 1;
-}
-
-
-IntervalTier Sound_to_IntervalTier_detectSilence (Sound me, double silenceThreshold, double minSilenceDuration, double minNonSilenceDuration, char *silenceLabel)
-{
-	Sound resampled = NULL, filtered = NULL;
-	IntervalTier thee = NULL;
-	Intensity intensity = NULL;
-	int inSilenceInterval = 1, subtractMean = 1, addBoundary; 
-	long i, iinterval = 1;
-	double duration = my xmax -my xmin, time;
-	double resamplingFrequency = 8000;
-	double minimumPitch = 100, timeStep = 0.01;
-	double intensity_max_db, intensity_min_db, intensity_dbRange, intensity_max_dbRange = 40;
-	double intensityThreshold, xOfMaximum, xOfMinimum;
-	
-	thee = IntervalTier_create (my xmin, my xmax);
-	if (thee == NULL) return NULL;
-	if (minSilenceDuration > duration) return thee;
-	
-	/* Pre-processing resampling and filtering */
-	resampled = Sound_resample (me, resamplingFrequency, 2); /* We don't need precision */
-	if (resampled == NULL) goto end;
-	filtered = Sound_filter_passHannBand (resampled, 100, 0.45*resamplingFrequency, 50);
-	if (filtered == NULL) goto end;
-	intensity = Sound_to_Intensity (filtered, minimumPitch, timeStep, subtractMean);
-	if (intensity == NULL) goto end;
-	Vector_getMaximumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_max_db, &xOfMaximum);
-	
-	Vector_getMinimumAndX (intensity, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
-	intensity_dbRange = intensity_max_db - intensity_min_db;
-	
-	if (intensity_dbRange < 10) Melder_warning ("The loudest and softest part in your sound only differ by %lf dB.", intensity_dbRange);
-	
-	if (intensity_dbRange > intensity_max_dbRange) intensity_dbRange = intensity_max_dbRange;
-	intensityThreshold = intensity_max_db - (1 - silenceThreshold) * intensity_dbRange;
-	
-	inSilenceInterval = intensity -> z[1][1] < intensityThreshold;
-	iinterval = 1;
-	for (i = 2; i <= intensity -> nx; i++)
-	{
-		char *label; 
-		addBoundary = 0;
-		if (intensity -> z[1][i] < intensityThreshold)
-		{
-			if (!inSilenceInterval) /* Start of silence */
-			{
-				addBoundary = 1;
-				inSilenceInterval = 1;
-				label = "";
-			}
-		}
-		else
-		{
-			if (inSilenceInterval) /* End of silence */
-			{
-				addBoundary = 1;
-				label = silenceLabel;
-				inSilenceInterval = 0;
-			}
-		}
-		
-		if (addBoundary)
-		{
-			time = intensity -> x1 + (i - 1) * intensity -> dx;
-			if (! IntervalTier_addBoundaryUnsorted (thee, iinterval, time, label)) goto end;
-			iinterval++;
-		}
-	}
-	
-	/* (re)label last interval */
-	
-	if (inSilenceInterval && 
-		! TextInterval_setText (thy intervals -> item[iinterval], silenceLabel)) goto end;
-	Sorted_sort (thy intervals);
-	/*
-		First remove short non-silence intervals in-between silence intervals and
-		then remove the remaining short silence intervals.
-		This works much better than first removing short silence intervals and 
-		then short non-silence intervals.
-	*/
-	IntervalTier_removeBoundary_minimumDuration (thee, "", minNonSilenceDuration);
-	IntervalTier_removeBoundary_equalLabels (thee, silenceLabel);
-	IntervalTier_removeBoundary_minimumDuration (thee, silenceLabel, minSilenceDuration);
-	IntervalTier_removeBoundary_equalLabels (thee, "");
-	
-end:
-	forget (intensity); forget (resampled); forget (filtered);
-	if (Melder_hasError ()) forget (thee);
-	return thee;
-}
+/*  End of compatibility with Sound_changeGender and Sound_and_Pitch_changeGender ***********************************/
 
 /* End of file Sound_extensions.c */

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20061127 Latest modification.
+ djmw 20061205 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -105,6 +105,6 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 	int matchEnd, int slope, int metric);
 
-DTW Pitches_to_DTW (Pitch me, Pitch thee, int unit, int matchcenters);
+DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
 
 #endif /* _DTW_h_ */

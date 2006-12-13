@@ -69,7 +69,6 @@ static void info (I) {
 	energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
 	MelderInfo_writeLine3 (" (energy in air: ", Melder_single (energy), " Joule/m^2)");
 	power = energy / (my dx * my nx);   /* kg s-3 = Watt/m2 */
-	MelderInfo_close ();
 	MelderInfo_write3 ("Mean power (intensity) in air: ", Melder_single (power), " Watt/m^2");
 	if (power != 0.0) {
 		MelderInfo_writeLine3 (" = ", Melder_half (10 * log10 (power / 1e-12)), " dB");

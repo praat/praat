@@ -4844,7 +4844,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 				newWidth = LoWord (newSize), newHeight = HiWord (newSize);
 				shell -> width = newWidth;
 				shell -> height = newHeight;
-				/*Melder_info ("%d %d %d %d",oldWidth,oldHeight,newWidth,newHeight);*/
+				/*Melder_casual ("%d %d %d %d",oldWidth,oldHeight,newWidth,newHeight);*/
 				shellResizeWidget (shell, 0, 0, newWidth - oldWidth, newHeight - oldHeight);
 			}
 		} break;

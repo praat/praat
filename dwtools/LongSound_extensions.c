@@ -133,14 +133,8 @@ end:
 static int MelderFile_truncate (MelderFile me, long size)
 {
 	char *proc = "MelderFile_truncate";
-	
-#if defined (macintosh) && ! defined (__MACH__)
-
-	(void) me;	
-	(void) size;
-	return 0;
-	
-#elif defined (_WIN32)
+		
+#if defined (_WIN32)
 
 	HANDLE hFile;
 	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
@@ -173,7 +167,7 @@ static int MelderFile_truncate (MelderFile me, long size)
 	SetEndOfFile (hFile);
 	CloseHandle (hFile);
 	
-#elif defined(linux)
+#elif defined(linux) || defined(macintosh)
 	
 	MelderFile_close (me);
 

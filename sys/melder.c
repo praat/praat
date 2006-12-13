@@ -20,15 +20,8 @@
 /*
 	pb 2002/03/07 GPL
 	pb 2002/03/13 Mach
-	pb 2002/11/30 Melder_fixed
-	pb 2002/12/01 Melder_single, Melder_half
 	pb 2002/12/11 MelderInfo
-	pb 2003/05/13 Melder_percent
-	pb 2003/05/19 Melder_atof
-	pb 2003/05/19 Melder_fixed: include a minimum precision of 1 digit
-	pb 2003/10/02 Melder_flushError: empty "errors" before showing the message
 	pb 2003/12/29 Melder_warning: added XMapRaised because delete response is UNMAP
-	pb 2004/04/04 Melder_bigInteger
 	pb 2004/04/06 motif_information drains text window only, i.e. no longer updates all windows
 	              (which used to cause up to seven seconds of delay in a 1-second sound window)
 	pb 2004/10/24 info buffer can grow
@@ -85,10 +78,6 @@ static int defaultPause (char *message) {
 	return key != 'q' && key != 'Q';
 }
 
-static void defaultInformation (char *message) {
-	printf ("%s", message);
-}
-
 static void defaultHelp (const char *query) {
 	Melder_flushError ("Do not know how to find help on \"%s\".", query);
 }
@@ -132,7 +121,6 @@ static int defaultPublishPlayed (void) {
 
 static struct {
 	int (*pause) (char *message);
-	void (*information) (char *message);
 	void (*help) (const char *query);
 	void (*search) (void);
 	void (*warning) (char *message);
@@ -145,7 +133,7 @@ static struct {
 	int (*publishPlayed) (void);
 }
 	theMelder = {
-		defaultPause, defaultInformation, defaultHelp, defaultSearch,
+		defaultPause, defaultHelp, defaultSearch,
 		defaultWarning, defaultFatal,
 		defaultPublish,
 		defaultRecord, defaultRecordFromFile, defaultPlay, defaultPlayReverse, defaultPublishPlayed
@@ -453,189 +441,6 @@ int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, c
 	return 0;   /* Should not occur. */
 }
 
-/***** INFO *****/
-
-static char *foregroundBuffer, *infos;
-static long foregroundBufferSize;
-
-static void initInfo (void) {
-	if (foregroundBuffer == NULL) {
-		foregroundBuffer = Melder_calloc (foregroundBufferSize = 10000, 1);
-		if (infos == NULL) {
-			infos = foregroundBuffer;
-		}
-	}
-	Melder_assert (foregroundBuffer != NULL && infos != NULL);
-}
-
-static void appendInfo (const char *message) {
-	long oldLength, newLength;
-	initInfo ();
-	oldLength = strlen (infos), newLength = oldLength + strlen (message);
-	if (infos == foregroundBuffer) {
-		if (newLength >= foregroundBufferSize - 2) {   /* Leave room for one newline symbol and one null byte. */
-			infos = foregroundBuffer = Melder_realloc (foregroundBuffer, foregroundBufferSize = newLength * 2 + 10000);
-		}
-		Melder_assert (infos != NULL);
-		strcpy (& infos [oldLength], message);
-	} else {
-		if (newLength >= 30000 - 1) {   /* Leave room for one newline symbol and one null byte. */
-			;   /* Unlikely to occur. */
-		} else {
-			strcpy (& infos [oldLength], message);
-		}
-	}
-}
-
-static void appendInfoLine (const char *message) {
-	appendInfo (message);
-	strcpy (infos + strlen (infos), "\n");
-}
-
-void MelderInfo_open (void) {
-	initInfo ();
-	infos [0] = '\0';
-}
-
-void MelderInfo_write1 (const char *s1) {
-	appendInfo (s1);
-}
-void MelderInfo_write2 (const char *s1, const char *s2) {
-	appendInfo (s1);
-	appendInfo (s2);
-}
-void MelderInfo_write3 (const char *s1, const char *s2, const char *s3) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfo (s3);
-}
-void MelderInfo_write4 (const char *s1, const char *s2, const char *s3, const char *s4) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfo (s3);
-	appendInfo (s4);
-}
-void MelderInfo_write5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfo (s3);
-	appendInfo (s4);
-	appendInfo (s5);
-}
-
-void MelderInfo_writeLine1 (const char *s1) {
-	appendInfoLine (s1);
-}
-void MelderInfo_writeLine2 (const char *s1, const char *s2) {
-	appendInfo (s1);
-	appendInfoLine (s2);
-}
-void MelderInfo_writeLine3 (const char *s1, const char *s2, const char *s3) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfoLine (s3);
-}
-void MelderInfo_writeLine4 (const char *s1, const char *s2, const char *s3, const char *s4) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfo (s3);
-	appendInfoLine (s4);
-}
-void MelderInfo_writeLine5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5) {
-	appendInfo (s1);
-	appendInfo (s2);
-	appendInfo (s3);
-	appendInfo (s4);
-	appendInfoLine (s5);
-}
-
-void MelderInfo_close (void) {
-	initInfo ();
-	if (infos == foregroundBuffer) {
-		theMelder. information (infos);
-	}
-}
-
-void Melder_information (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	initInfo ();
-	vsprintf (infos, format, arg);
-	/*
-		When writing to the Info window, we must add a newline symbol,
-		because a subsequent Melder_print call has to start on the next line.
-		When writing to a diverted string, we must *not* add a newline symbol,
-		because scripts expect returned strings without appended newlines!
-	*/
-	if (infos == foregroundBuffer)
-		strcat (infos, "\n");
-	MelderInfo_close ();
-	va_end (arg);
-}
-
-void Melder_informationReal (double value, const char *units) {
-	MelderInfo_open ();
-	if (value == NUMundefined)
-		MelderInfo_write1 ("--undefined--");
-	else if (units == NULL)
-		MelderInfo_write1 (Melder_double (value));
-	else
-		MelderInfo_write3 (Melder_double (value), " ", units);
-	if (infos == foregroundBuffer)
-		strcat (infos, "\n");
-	MelderInfo_close ();
-}
-
-void Melder_info (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	initInfo ();
-	vsprintf (Melder_buffer1, format, arg);
-	if (infos == foregroundBuffer) {
-		if (theMelder. information == defaultInformation) {
-			printf ("%s\n", Melder_buffer1);   /* Do not print the previous lines again. */
-		} else {
-			appendInfoLine (Melder_buffer1);
-			theMelder. information (infos);
-		}
-	} else {
-		strcpy (infos, Melder_buffer1);   /* Without newline! */
-	}
-	va_end (arg);
-}
-
-void Melder_divertInfo (char *buffer) {
-	initInfo ();
-	infos = buffer == NULL ? foregroundBuffer : buffer;
-}
-
-void Melder_print (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	initInfo ();
-	if (theMelder. information == defaultInformation) {
-		vprintf (format, arg);   /* Do not print the previous lines again. */
-	} else {
-		vsprintf (Melder_buffer1, format, arg);
-		appendInfo (Melder_buffer1);
-		theMelder. information (infos);
-	}
-	va_end (arg);
-}
-
-void Melder_clearInfo (void) {
-	initInfo ();
-	if (infos == foregroundBuffer) {
-		infos [0] = '\0';
-		theMelder. information (infos);
-	}
-}
-
-char * Melder_getInfo (void) {
-	initInfo ();
-	return infos;
-}
-
 void Melder_help (const char *query) {
 	theMelder. help (query);
 }
@@ -772,31 +577,46 @@ static void motif_fatal (char *message)
 	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
 	SysError (11);
 }
-static void motif_error (char *message) {
-	Str255 pmessage;
-	int length, i;
-	length = strlen (message);
-	if (length == 0) return;
-	if (length > 255) message [length = 255] = '\0';
-	pmessage [0] = length;
-	strncpy ((char *) pmessage + 1, message, 255);   /* Not strcpy! */
-	for (i = 1; i <= length; i ++) if (pmessage [i] == '\n') pmessage [i] = '\r';
-	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
+static void motif_error (wchar_t *messageW1) {
+	DialogRef dialog;
+	static UniChar messageU [2000+1];
+	static wchar_t messageW2 [2000+1];
+	Longchar_nativizeW (messageW1, messageW2, true);
+	int messageLength = wcslen (messageW2);
+	for (int i = 0; i < messageLength; i ++) {
+		messageU [i] = messageW2 [i];   // BUG: should convert to UTF16
+	}
+	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
+	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
+	CFRelease (messageCF);
+	RunStandardAlert (dialog, NULL, NULL);
 	XmUpdateDisplay (0);
 }
 #elif defined (_WIN32)
 static void motif_fatal (char *message) {
 	MessageBox (NULL, message, "Fatal error", MB_OK);
 }
-static void motif_error (char *message) {
-	MessageBox (NULL, message, "Message", MB_OK);
+static void motif_error (wchar_t *messageW) {
+	static char messageA1 [2000+1], messageA2 [2000+1];
+	int messageLength = wcslen (messageW);
+	for (int i = 0; i <= messageLength; i ++) {
+		messageA1 [i] = messageW [i];
+	}
+	Longchar_nativize (messageA1, messageA2, true);
+	MessageBox (NULL, messageA2, "Message", MB_OK);
 }
 #else
-static void motif_error (char *message) {
+static void motif_error (wchar_t *messageW) {
 	static Widget dia = NULL;
+	static char messageA1 [2000+1], messageA2 [2000+1];
+	int messageLength = wcslen (messageW);
 	if (dia == NULL)
 		dia = makeMessage (XmDIALOG_ERROR, "error", "Message");
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, message), NULL);
+	for (int i = 0; i <= messageLength; i ++) {
+		messageA1 [i] = messageW [i];
+	}
+	Longchar_nativize (messageA1, messageA2, true);
+	XtVaSetValues (dia, motif_argXmString (XmNmessageString, messageA2), NULL);
 	XtManageChild (dia);
 	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
 }
@@ -846,9 +666,6 @@ int Melder_publishPlayed (void) {
 void Melder_setPauseProc (int (*pause) (char *))
 	{ theMelder. pause = pause ? pause : defaultPause; }
 
-void Melder_setInformationProc (void (*information) (char *))
-	{ theMelder. information = information ? information : defaultInformation; }
-
 void Melder_setHelpProc (void (*help) (const char *query))
 	{ theMelder. help = help ? help : defaultHelp; }
 
@@ -878,107 +695,6 @@ void Melder_setPlayReverseProc (void (*playReverse) (void))
 
 void Melder_setPublishPlayedProc (int (*publishPlayed) (void))
 	{ theMelder. publishPlayed = publishPlayed ? publishPlayed : defaultPublishPlayed; }
-
-/********** Memory allocations. **********/
-
-static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize;
-
-#define TRACE_MALLOC  0
-
-void * Melder_malloc (long size) {
-	void *result;
-	if (size <= 0)
-		return Melder_errorp ("(Melder_malloc:) Can never allocate %ld bytes.", size);
-	result = malloc (size);
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room for another %ld bytes.", size);
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("malloc %ld", size);
-	#endif
-	return result;
-}
-
-void _Melder_free (void **ptr) {
-	if (*ptr == NULL) return;
-	free (*ptr);
-	*ptr = NULL;
-	totalNumberOfDeallocations += 1;
-	#if TRACE_MALLOC
-		Melder_casual ("free");
-	#endif
-}
-
-void * Melder_realloc (void *ptr, long size) {
-	void *result;
-	if (size <= 0)
-		return Melder_errorp ("(Melder_realloc:) Can never allocate %ld bytes.", size);
-	result = realloc (ptr, size);   /* Will not show in the statistics... */
-	if (result == NULL)
-		return Melder_errorp ("Out of memory. Could not extend room to %ld bytes.", size);
-	if (ptr == NULL) {   /* Is it like malloc? */
-		totalNumberOfAllocations += 1;
-		totalAllocationSize += size;
-	} else if (result != ptr) {   /* Did realloc do a malloc-and-free? */
-		totalNumberOfAllocations += 1;
-		totalAllocationSize += size;
-		totalNumberOfDeallocations += 1;
-	}
-	#if TRACE_MALLOC
-		Melder_casual ("realloc %ld", size);
-	#endif
-	return result;
-}
-
-void * Melder_calloc (long nelem, long elsize) {
-	void *result;
-	if (nelem <= 0)
-		return Melder_errorp ("(Melder_calloc:) "
-			"Can never allocate %ld elements.", nelem);
-	if (elsize <= 0)
-		return Melder_errorp ("(Melder_calloc:) "
-			"Can never allocate elements whose size is %ld bytes.", elsize);
-	result = calloc (nelem, elsize);
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: "
-			"there is not enough room for %ld more elements whose sizes are %ld bytes each.", nelem, elsize);
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += nelem * elsize;
-	#if TRACE_MALLOC
-		Melder_casual ("calloc %ld %ld", nelem, elsize);
-	#endif
-	return result;
-}
-
-char * Melder_strdup (const char *string) {
-	char *result;
-	long size;
-	if (! string) return NULL;
-	size = strlen (string) + 1;
-	result = malloc (size);
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
-	strcpy (result, string);
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("strdup %ld", size);
-	#endif
-	return result;
-}
-
-double Melder_allocationCount (void) {
-	return totalNumberOfAllocations;
-}
-
-double Melder_deallocationCount (void) {
-	return totalNumberOfDeallocations;
-}
-
-double Melder_allocationSize (void) {
-	return totalAllocationSize;
-}
 
 long Melder_killReturns_inline (char *text) {
 	const char *from;

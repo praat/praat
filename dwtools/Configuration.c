@@ -26,6 +26,7 @@
  djmw 20041026 Removed non-used code.
  djmw 20050314 Configuration_draw crashed when rowlabel==NULL
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
  */
 
 #include <ctype.h>
@@ -56,10 +57,10 @@
 static void classConfiguration_info (I)
 {
 	iam (Configuration);
-	Melder_information ("Number of points = %ld\n"
-		"Number of dimensions = %ld\n"
-		"Metric = %ld\n",
-		my numberOfRows, my numberOfColumns, my metric);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 ("Number of dimensions: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 ("Metric: ", Melder_integer (my metric));
 }
 
 class_methods (Configuration, TableOfReal)

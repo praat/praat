@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061201)
+MAN_BEGIN ("What's new?", "ppgb", 20061213)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.06# (December 13, 2006)")
+LIST_ITEM ("\\bu Support for 32-bit floating-point WAV files.")
+LIST_ITEM ("\\bu SSCP: Draw confidence ellipse: corrected a bug that would sometimes not draw the ellipse when %N was very large.")
+NORMAL ("##4.5.05# (December 5, 2006)")
+LIST_ITEM ("\\bu Macintosh scripting: European symbols such as \\o\" and \\e' and \\c, are now allowed in file names in scripts "
+	"and in MacRoman-encoded file names sent by other programs through the sendpraat subroutine.")
 NORMAL ("##4.5.04# (December 1, 2006)")
 LIST_ITEM ("\\bu @@Sound: Change gender...@: corrected a bug that often caused a female-to-male conversion to sound monotonous.")
 NORMAL ("##4.5.03# (November 29, 2006)")

@@ -22,7 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20061201 Latest modification
+ djmw 20061207 Latest modification
 */
 
 #ifndef _Pitch_h_
@@ -35,8 +35,7 @@
 
 void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates);
 void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *strength);
-void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength,
-	double unvoicedCriterium);
+void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium);
 	
 Pitch Pitch_scaleTime (Pitch me, double scaleFactor);
 /*  Scale time domain and pitches:
@@ -45,20 +44,6 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor);
 	pitch[i]' = pitch[i]/scaleFactor;
 */
 
-PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref, double pitchMax_ref, 
-	double pitchMin, double pitchMax, int pitchUnit);
-/*	Modifies the pitches with respect to a global pitch range.*/
-
-void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double factor, double fmid);
-/*
-	Scales the pitches in the interval (tmin, tmax) according to
-	f = fmid + (f - fmid) * factor;
-	f = f < fmin ? fmin : f;
-
-*/
-
 Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling);
-
-
 
 #endif /* _Pitch_extensions_h_ */

@@ -171,11 +171,11 @@ DO
 	long iframe = GET_INTEGER ("Frame number");
 	if (iframe > my nx)
 	{
-		(void) Melder_error ("Frame number is too large.\n\nPlease choose a number between 1 and %d.", my nx);
+		(void) Melder_error ("Frame number is too large.\n\nPlease choose a number between 1 and %ld.", my nx);
 		Melder_information ("-1 coefficients (frame number was not defined)");
 		return 0;
 	}
-	Melder_information ("%d coefficients", (my frame[iframe]).nCoefficients);
+	Melder_information ("%ld coefficients", (my frame[iframe]).nCoefficients);
 END
 
 FORM (LPC_drawPoles, "LPC: Draw poles", "LPC: Draw poles...")

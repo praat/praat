@@ -705,6 +705,30 @@ double bingetr4 (FILE *f) {
 	}
 }
 
+double bingetr4LE (FILE *f) {
+	if (binario_floatIEEE4lsb && Melder_debug != 18) {
+		float x; fread (& x, 4, 1, f); return x;
+	} else {
+		unsigned char bytes [4];
+		double x;
+		long exponent;
+		unsigned long mantissa;
+		fread (bytes, 1, 4, f);
+		exponent = ((unsigned long) (bytes [3] & 0x7F) << 1) |
+			((unsigned long) (bytes [2] & 0x80) >> 7);
+		mantissa = ((unsigned long) (bytes [2] & 0x7F) << 16) |
+			((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
+		if (exponent == 0)
+			if (mantissa == 0) x = 0.0;
+			else x = ldexp (UnsignedToFloat (mantissa), exponent - 149);   /* Denormalized. */
+		else if (exponent == 0x00FF)   /* Infinity or Not-a-Number. */
+			x = HUGE_VAL;
+		else   /* Finite. */
+			x  = ldexp (UnsignedToFloat (mantissa | 0x00800000), exponent - 150);
+		return bytes [3] & 0x80 ? - x : x;
+	}
+}
+
 double bingetr8 (FILE *f) {
 	if (binario_doubleIEEE8msb && Melder_debug != 18) {
 		double x; fread (& x, 8, 1, f); return x;
@@ -932,6 +956,41 @@ void binputr4 (double x, FILE *f) {
 		bytes [1] = (exponent << 7) | (mantissa >> 16);
 		bytes [2] = mantissa >> 8;
 		bytes [3] = mantissa;
+		fwrite (bytes, 1, 4, f);
+	}
+}
+
+void binputr4LE (double x, FILE *f) {
+	if (binario_floatIEEE4lsb && Melder_debug != 18) {
+		float x4 = x; fwrite (& x4, 4, 1, f);
+	} else {
+		unsigned char bytes [4];
+		int sign, exponent;
+		double fMantissa, fsMantissa;
+		unsigned long mantissa;
+		if (x < 0.0) { sign = 0x0100; x *= -1; }
+		else sign = 0;
+		if (x == 0.0) { exponent = 0; mantissa = 0; }
+		else {
+			fMantissa = frexp (x, & exponent);
+			if ((exponent > 128) || ! (fMantissa < 1))   /* Infinity or Not-a-Number. */
+				{ exponent = sign | 0x00FF; mantissa = 0; }   /* Infinity. */
+			else {   /* Finite. */
+				exponent += 126;   /* Add bias. */
+				if (exponent <= 0) {   /* Denormalized. */
+					fMantissa = ldexp (fMantissa, exponent - 1);
+					exponent = 0;
+				}
+				exponent |= sign;
+				fMantissa = ldexp (fMantissa, 24);          
+				fsMantissa = floor (fMantissa); 
+				mantissa = FloatToUnsigned (fsMantissa) & 0x007FFFFF;
+			}
+		}
+		bytes [3] = exponent >> 1;
+		bytes [2] = (exponent << 7) | (mantissa >> 16);
+		bytes [1] = mantissa >> 8;
+		bytes [0] = mantissa;
 		fwrite (bytes, 1, 4, f);
 	}
 }

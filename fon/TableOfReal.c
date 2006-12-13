@@ -28,6 +28,7 @@
  * pb 2005/07/19 TableOfReal_readFromHeaderlessSpreadsheetFile: allow 30k row and column labels
  * pb 2005/09/18 SILIPA versus XIPA widths
  * pb 2006/04/17 getRowStr, getColStr
+ * pb 2006/12/10 MelderInfo
  */
 
 #include <ctype.h>
@@ -102,8 +103,9 @@ static int readAscii (I, FILE *f) {
 
 static void info (I) {
 	iam (TableOfReal);
-	Melder_information ("Number of rows = %ld\nNumber of columns = %ld",
-		my numberOfRows, my numberOfColumns);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 static double getNrow (I) { iam (TableOfReal); return my numberOfRows; }

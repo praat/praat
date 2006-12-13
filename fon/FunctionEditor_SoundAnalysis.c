@@ -57,6 +57,7 @@
  * pb 2006/02/27 more helpful text when analyses are not shown
  * pb 2006/09/12 better messages if analysis not available
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/10 MelderInfo
  */
 
 #include <time.h>
@@ -1614,7 +1615,8 @@ static int cb_log (FunctionEditor me, int which) {
 		}
 	}
 	if (preferences.log[which].toInfoWindow) {
-		Melder_info ("%s", format);
+		MelderInfo_write1 (format);
+		MelderInfo_close ();
 	}
 	if (preferences.log[which].toLogFile) {
 		structMelderFile file;

@@ -852,7 +852,9 @@ FORM (TextGrid_getLabelOfInterval, "TextGrid: Get label of interval", 0)
 DO
 	TextInterval interval = pr_TextGrid_getInterval (dia);
 	if (! interval) return 0;
-	Melder_information (interval -> text ? "%s" : "", interval -> text);
+	MelderInfo_open ();
+	MelderInfo_write1 (interval -> text);
+	MelderInfo_close ();
 END
 	
 FORM (TextGrid_getNumberOfPoints, "TextGrid: Get number of points", 0)

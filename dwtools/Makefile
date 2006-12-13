@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20060906 Latest modification.
+#  djmw 20061204 Latest modification.
 
 
 include ../makefile.defs
@@ -44,6 +44,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o Formant_extensions.o \
+	Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	MelFilter_and_MFCC.o MFCC.o \
 	manual_dwtools.o manual_MDS.o manual_Permutation.o \

@@ -18,18 +18,18 @@
  */
 
 /*
- * pb 1999/09/08
  * pb 2002/07/16 GPL
  * pb 2003/07/28 Distributions_peek
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Distributions.h"
 
 static void info (I) {
 	iam (TableOfReal);
-	Melder_information ("Number of distributions = %ld\n"
-		"Number of values = %ld",
-		my numberOfColumns, my numberOfRows);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of distributions: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 ("Number of values: ", Melder_integer (my numberOfRows));
 }
 
 class_methods (Distributions, TableOfReal)

@@ -1,6 +1,6 @@
 /* Thing.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2001/08/02
  * pb 2002/03/07 GPL
  * pb 2004/05/08 less geekspeak in info ("class")
  * pb 2004/05/08 added date to info
  * pb 2004/10/16 structThing -> theStructThing etc.
+ * pb 2006/12/10 info method can contain only MelderInfo_writeXXX
  */
 
 #include <stdarg.h>
@@ -178,7 +178,7 @@ void Thing_info (I) {
 	iam (Thing);
 	Melder_clearInfo ();
 	MelderInfo_open ();
-	our info (me);   /* This calls either a set of MelderInfo_write, a set of Melder_info, or a Melder_information. */
+	our info (me);   /* This calls a set of MelderInfo_writeXXX. */
 	MelderInfo_close ();
 }
 

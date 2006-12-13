@@ -21,6 +21,7 @@
  * pb 1998/11/03
  * pb 2002/07/16 GPL
  * pb 2003/06/19 Eigen
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Transition.h"
@@ -59,7 +60,8 @@ static int writeAscii (I, FILE *f) {
 
 static void info (I) {
 	iam (Transition);
-	Melder_information ("Number of stetes = %ld", my numberOfStates);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of states: ", Melder_integer (my numberOfStates));
 }
 
 class_methods (Transition, Data)

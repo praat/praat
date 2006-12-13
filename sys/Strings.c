@@ -28,6 +28,7 @@
  * pb 2006/09/19 Strings_createAsDirectoryList for Mac and Unix
  * pb 2006/10/04 return fewer errors in Strings_createAsFileList and Strings_createAsDirectoryList
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Strings.h"
@@ -76,8 +77,10 @@ static long Strings_maximumLength (Strings me) {
 
 static void info (I) {
 	iam (Strings);
-	Melder_info ("%ld strings\nTotal length %ld\nMaximum length %ld",
-		my numberOfStrings, Strings_totalLength (me), Strings_maximumLength (me));
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of strings: ", Melder_integer (my numberOfStrings));
+	MelderInfo_writeLine3 ("Total length: ", Melder_integer (Strings_totalLength (me)), " characters");
+	MelderInfo_writeLine3 ("Longest string: ", Melder_integer (Strings_maximumLength (me)), " characters");
 }
 
 class_methods (Strings, Data)

@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,10 @@
  * pb 2002/03/11 nativize & genericize are each other's inverse and their second application is identity
  * pb 2004/12/02 differentiate between X11 and Windows encodings
  * pb 2005/03/08 added "PostScript" encodings (mostly Mac and Praat-IPA)
+ * pb 2006/11/17 Unicode
+ * pb 2006/12/05 first wchar support
  */
+#include <wchar.h>
 
 /********** NON-ASCII CHARACTERS **********/
 
@@ -79,6 +82,7 @@ char * Longchar_nativize (const char *generic, char *native, int educateQuotes);
 		For drawing text with mixed alphabets and mixed styles,
 		use Graphics_text instead.
 */
+wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes);
 
 char * Longchar_genericize (const char *native, char *generic);
 /*

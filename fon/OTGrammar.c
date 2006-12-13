@@ -42,6 +42,7 @@
  * pb 2006/01/05 new decision strategies: HarmonicGrammar and LinearOT
  * pb 2006/01/21 better procedure name
  * pb 2006/02/02 new decision strategy: ExponentialHG
+ * pb 2006/12/08 MelderInfo
  */
 
 #include "OTGrammar.h"
@@ -61,6 +62,7 @@
 
 static void classOTGrammar_info (I) {
 	iam (OTGrammar);
+	classData -> info (me);
 	long numberOfCandidates = 0, itab, numberOfViolations = 0, icand, icons;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		numberOfCandidates += my tableaus [itab]. numberOfCandidates;
@@ -68,11 +70,11 @@ static void classOTGrammar_info (I) {
 			for (icons = 1; icons <= my numberOfConstraints; icons ++)
 				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	Melder_info ("Decision strategy: %s",  enumstring (OTGrammar_DECISION, my decisionStrategy));
-	Melder_info ("Number of constraints: %ld", my numberOfConstraints);
-	Melder_info ("Number of tableaus: %ld", my numberOfTableaus);
-	Melder_info ("Number of candidates: %ld", numberOfCandidates);
-	Melder_info ("Number of violation marks: %ld", numberOfViolations);
+	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_DECISION, my decisionStrategy));
+	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
+	MelderInfo_writeLine2 ("Number of tableaus: ", Melder_integer (my numberOfTableaus));
+	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (numberOfCandidates));
+	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
 static int writeAscii (I, FILE *f) {

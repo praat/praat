@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20020418 Removed some causes for compiler warnings.
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into.
  djmw 20030324 Added PCA_and_TableOfReal_getFractionVariance.
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "PCA.h"
@@ -55,11 +56,11 @@
 
 static void info (I) {
 	iam (PCA);
-	Melder_information (
-		"Number of components = %d\n"
-		"Number of dimensions = %d\n"
-		"Number of observations = %d",
-		my numberOfEigenvalues, my dimension, my numberOfObservations);
+	
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of components: ", Melder_integer (my numberOfEigenvalues));
+	MelderInfo_writeLine2 ("Number of dimensions: ", Melder_integer (my dimension));
+	MelderInfo_writeLine2 ("Number of observations: ", Melder_integer (my numberOfObservations));
 }
 
 class_methods (PCA, Eigen)

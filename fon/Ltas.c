@@ -1,6 +1,6 @@
 /* Ltas.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2005/11/26 calibrated pitch-corrected Ltas
  * pb 2005/11/27 Sound_to_Ltas_pitchCorrected
  * pb 2005/12/10 Ltases_average
+ * pb 2006/12/08 MelderInfo
  */
 
 #include "Ltas.h"
@@ -39,22 +40,17 @@
 static void info (I) {
 	iam (Ltas);
 	double meanPowerDensity;
-	classThing -> info (me);
-	Melder_info (
-		"Frequency domain:\n"
-		"   Lowest frequency: %s Hz\n"
-		"   Highest frequency: %s Hz\n"
-		"   Total frequency domain: %s Hz",
-		Melder_double (my xmin), Melder_double (my xmax), Melder_double (my xmax - my xmin));
-	Melder_info (
-		"Frequency sampling:\n"
-		"   Number of frequency bands: %s\n"
-		"   Width of each band: %s Hz\n"
-		"   First band centred at: %s Hz",
-		Melder_integer (my nx), Melder_double (my dx), Melder_double (my x1));
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Frequency domain:");
+	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my xmin), " Hz");
+	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my xmax), " Hz");
+	MelderInfo_writeLine3 ("   Total frequency domain: ", Melder_double (my xmax - my xmin), " Hz");
+	MelderInfo_writeLine1 ("Frequency sampling:");
+	MelderInfo_writeLine2 ("   Number of frequency bands: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("   Width of each band: ", Melder_double (my dx), " Hz");
+	MelderInfo_writeLine3 ("   First band centred at: ", Melder_double (my x1), " Hz");
 	meanPowerDensity = Sampled_getMean (me, my xmin, my xmax, 0, 1, FALSE);
-	Melder_info ("Total SPL: %s dB",
-		Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin))));
+	MelderInfo_writeLine3 ("Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin)))," dB");
 }
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {

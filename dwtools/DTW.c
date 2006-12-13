@@ -24,6 +24,8 @@
  djmw 20050306 DTW_swapAxes
  djmw 20050530 Added Matrices_to_DTW
  djmw 20060909 DTW_getPathY linear behaviour outside domains.
+ djmw 20061205 Pitches_to_DTW
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "DTW.h"
@@ -137,20 +139,24 @@ static void get_ylimitsFromAdjustmentwindow (DTW me, double adjustment_window_du
 static void info (I)
 {
 	iam (DTW);
-	Melder_info ("DTW info\nName: %s\n"
-		"Domain prototype: from %.8g to %.8g\n"
-		"Domain candidate: from %.8g to %.8g\n"
-		"Number of frames prototype: %ld\n"
-		"Number of frames candidate: %ld\n"
-		"Path length %ld (frames)\n"
-		"Global warped distance: %.8g\n",
-		Thing_getName (me), my ymin, my ymax, my xmin, my xmax, my ny, my nx,
-		my pathLength, my weightedDistance);
+	
+	classData -> info (me);
+	MelderInfo_writeLine5 ("Domain prototype:", Melder_double (my ymin), " to ", 
+		Melder_double (my ymax), " (s).");
+	MelderInfo_writeLine5 ("Domain candidate:", Melder_double (my xmin), " to ", 
+		Melder_double (my xmax), " (s).");
+	MelderInfo_writeLine2 ("Number of frames prototype: ", Melder_integer (my ny));
+	MelderInfo_writeLine2 ("Number of frames candidate: ", Melder_integer (my nx));
+	MelderInfo_writeLine2 ("Path length (frames): ", Melder_integer (my pathLength));
+	MelderInfo_writeLine2 ("Global warped distance: ", Melder_double (my weightedDistance));
 	if (my nx == my ny)
 	{
 		double dd = 0; long i;
-		for (i=1; i <= my nx; i++) dd += my z[i][i];
-		Melder_info ("\n\nDistance along diagonal: %.8g\n", dd / my nx);
+		for (i=1; i <= my nx; i++)
+		{
+			dd += my z[i][i];
+		}
+		MelderInfo_writeLine2 ("Distance along diagonal: ", Melder_double (dd / my nx));
 	}
 }
 
@@ -338,7 +344,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 	{
 		if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end, 
 			nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) goto end;
-		/*Melder_info ("x, ylow yhigh: %5d %5d %5d", x, ylow, yhigh);*/
+		/*Melder_casual ("x, ylow yhigh: %5d %5d %5d", x, ylow, yhigh);*/
 		for (y = my ny; y > yhigh; y--) psi[y][x] = DTW_FORBIDDEN;
 		for (y = ylow - 1; y >= 1; y--) psi[y][x] = DTW_FORBIDDEN;
 		for (y = 1; y <= my ny; y++) delta[y][x] = DTW_BIG;
@@ -1189,44 +1195,53 @@ end:
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
 
-DTW Pitches_to_DTW (Pitch me, Pitch thee, int unit, int matchcenters)
+DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) // vuv_costs=24, time_weight=10 ?
 {
 	DTW him = NULL;
 	long i, j;
 	double *pitchx = NULL;
+	int unit = Pitch_UNIT_SEMITONES_100;
  
+ 	if (vuv_costs < 0) return Melder_errorp ("Voiced-unvoiced costs may not be negative.");
+ 	if (time_weight < 0) return Melder_errorp ("Time costs weight may not be negative.");
+
  	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
  	if (him == NULL) return NULL;
  	pitchx =  NUMdvector (1, thy nx);
  	if (pitchx == NULL) goto end;
- 	for (i = 1; i <= thy nx; i++)
+ 	for (j = 1; j <= thy nx; j++)
  	{
- 		pitchx[i] = Sampled_getValueAtSample (thee, i, Pitch_LEVEL_FREQUENCY, unit);
+ 		pitchx[j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, unit);
  	}
  	
  	for (i = 1; i <= my nx; i++)
  	{
  		double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, unit);
+ 		double t1 = my x1 + (i - 1) * my dx;
  		for (j = 1; j <= thy nx; j++)
  		{
+ 			double t2 = thy x1 + (j - 1) * thy dx;
+ 			double dist_f = 0; // based on pitch difference
+ 			double dist_t = fabs (t1 -t2);
  			if (pitchy == NUMundefined)
  			{
- 				if (pitchx[j] == NUMundefined)
+ 				if (pitchx[j] != NUMundefined)
  				{
- 					his z[i][j] = 0;
+ 					dist_f = vuv_costs;
  				}
- 				// distance (voiced<->unvoiced) ??
  			}
  			else if (pitchx[j] == NUMundefined)
  			{
- 			
+ 				dist_f = vuv_costs;
  			}
  			else
  			{
- 				his z[i][j] = fabs(pitchy - pitchx[j]);
+ 				dist_f = fabs(pitchy - pitchx[j]);
  			}
+ 			his z[i][j] = sqrt (dist_f * dist_f + time_weight * dist_t * dist_t);
  		}
  	}
+ 	DTW_findPath (him, matchStart, matchEnd, slope);
 end:
 	NUMdvector_free (pitchx, 1);
  	if (Melder_hasError ()) forget (him);

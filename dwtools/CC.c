@@ -1,6 +1,6 @@
 /* CC.c
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20011016 removed some causes for compiler warnings
  djmw 20020315 GPL header
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
  */
 
 #include "CC.h"
@@ -45,17 +46,15 @@
 static void info (I)
 {
 	iam (CC);
-	Melder_information("CC info\nName: %s\n"
-		"Time domain: from %.8g to %.8g seconds.\n"
-		"Number of frames: %ld\n"
-		"Time step: %.8g seconds\n"
-		"First frame at: %.8g seconds\n"		
-		"number of coefficients: %ld\n"
-		"minimum frequency %.8g\n"
-		"maximum frequency %.8g\n",
-		Thing_getName (me), my xmin, my xmax,
-		my nx, my dx, my x1,
-		my maximumNumberOfCoefficients, my fmin, my fmax);
+	classData -> info (me);
+	MelderInfo_writeLine5 ("Time domain:", Melder_double (my xmin), " to ", Melder_double (my xmax),
+		" seconds.");
+	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
+	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
+	MelderInfo_writeLine2 ("Number of coefficients: ", Melder_integer (my maximumNumberOfCoefficients));
+	MelderInfo_writeLine3 ("Minimum frequency: ", Melder_double (my fmin), " Hz.");
+	MelderInfo_writeLine3 ("Maximum frequency: ", Melder_double (my fmax), " Hz.");
 }
 
 class_methods (CC, Sampled)

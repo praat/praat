@@ -1,6 +1,6 @@
 /* Regression.c
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2005/05/01 created
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Regression.h"
@@ -55,13 +56,12 @@ class_methods_end
 static void classRegression_info (I) {
 	iam (Regression);
 	long ivar;
-	inherited (Regression) info (me);
+	classData -> info (me);
 	MelderInfo_writeLine2 ("Intercept: ", Melder_double (my intercept));
 	for (ivar = 1; ivar <= my parameters -> size; ivar ++) {
 		RegressionParameter parm = my parameters -> item [ivar];
 		MelderInfo_writeLine4 ("Coefficient of independent variable ", parm -> label, ": ", Melder_double (parm -> value));
 	}
-	MelderInfo_close ();
 }
 
 class_methods (Regression, Data)

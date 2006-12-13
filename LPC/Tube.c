@@ -19,6 +19,7 @@
 
 /*
  djmw 20030613 Creation
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "Tube.h"
@@ -44,14 +45,13 @@
 static void classTube_info (I)
 {
 	iam (Tube);
-	Melder_information("Tube info\nName: %s\n"
-		"Time domain: from %.8g to %.8g seconds.\n"
-		"Maximum number of segments: %ld\n"
-		"Number of frames: %ld\n"
-		"Time step: %.8g seconds\n"
-		"First frame at: %.8g seconds\n",		
-		Thing_getName (me), my xmin, my xmax,
-		my maxnSegments, my nx, my dx, my x1);
+	classData -> info (me);
+	MelderInfo_writeLine5 ("Time domain: ", Melder_double (my xmin), " to ", Melder_double (my xmax),
+		" (s).");
+	MelderInfo_writeLine2 ("maximum number of segments: ", Melder_integer (my maxnSegments));
+	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
+	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
 }
 
 class_methods (Tube, Sampled)

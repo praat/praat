@@ -20,14 +20,17 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2006/08/08 reduced compiler warnings
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "VocalTract.h"
 
 static void info (I) {
 	iam (VocalTract);
-	Melder_information ("Vocal tract length: %.7g metres\nNumber of sections: %ld\n"
-		"Section length: %.7g metres", my xmax, my nx, my dx);
+	classData -> info (me);
+	MelderInfo_writeLine3 ("Vocal tract length: ", Melder_single (my xmax), " metres");
+	MelderInfo_writeLine2 ("Number of sections: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 ("Section length: ", Melder_single (my dx), " metres");
 }
 
 class_methods (VocalTract, Vector)

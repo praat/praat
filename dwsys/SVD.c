@@ -28,6 +28,7 @@
  djmw 20031111 Added GSVD_create_d.
  djmw 20051201 Adapt for numberOfRows < numberOfColumns
  djmw 20060810 Removed #include praat.h
+ djmw 20061212 Changed info to Melder_writeLine<x> format.
 */
 
 #include "SVD.h"
@@ -79,9 +80,8 @@ static void SVD_transpose (I)
 static void classSVD_info (I)
 {
 	iam (SVD);
-	Melder_information ("Number of rows = %ld\n"
-		"Number of columns = %ld\n",
-		my numberOfRows, my numberOfColumns);
+	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 class_methods (SVD, Data)

@@ -90,7 +90,9 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			praat_deselect (IOBJECT);
 			praat_show ();
 		} else if (strnequ (command, "echo ", 5)) {
-			Melder_information ("%s", command + 5);
+			MelderInfo_open ();
+			MelderInfo_write1 (command + 5);
+			MelderInfo_close ();
 		} else if (strnequ (command, "clearinfo", 9)) {
 			Melder_clearInfo ();
 		} else if (strnequ (command, "print ", 6)) {

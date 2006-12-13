@@ -1,6 +1,6 @@
 /* PointProcess.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 /*
- * pb 2001/03/26
  * pb 2002/03/08 speed up creation of Poisson process
  * pb 2002/03/08 GPL
  * pb 2002/03/08 getMeanPeriod, getStdevPeriod
@@ -26,6 +25,7 @@
  * pb 2004/04/16 addPoint tests uncrashingly for undefined
  * pb 2004/04/16 added maximum period factor
  * pb 2004/07/09 better period counting
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "PointProcess.h"
@@ -69,16 +69,20 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 
 static void info (I) {
 	iam (PointProcess);
-	Melder_info ("Time domain: from %.15g to %.15g seconds.", my xmin, my xmax);
-	Melder_info ("Number of times: %ld", my nt);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine2 ("Number of times: ", Melder_integer (my nt));
 	if (my nt) {
-		Melder_info ("First time: %.15g seconds.", my t [1]);
-		Melder_info ("Last time: %.15g seconds.", my t [my nt]);
+		MelderInfo_writeLine3 ("First time: ", Melder_double (my t [1]), " seconds");
+		MelderInfo_writeLine3 ("Last time: ", Melder_double (my t [my nt]), " seconds");
 	}
-	Melder_info ("Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
-	Melder_info ("with a maximum \"period factor\" of 1.3:");
+	MelderInfo_writeLine1 ("Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
+	MelderInfo_writeLine1 ("with a maximum \"period factor\" of 1.3:");
 	infoPeriods (me, 1e-4, 20e-3, 1.3, 3);
-	Melder_info ("All periods:");
+	MelderInfo_writeLine1 ("All periods:");
 	infoPeriods (me, 0.0, 0.0, 1e300, 6);
 }
 

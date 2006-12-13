@@ -1,6 +1,6 @@
 /* PitchTier.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,26 @@
  * pb 2003/05/31 PointProcess_upto_RealTier
  * pb 2004/10/03 moved audio to PitchTier_to_Sound.c
  * pb 2005/06/16 units
+ * pb 2006/12/08 info
  */
 
 #include "PitchTier.h"
 #include "Pitch.h"
 
+static void info (I) {
+	iam (RealTier);
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my points -> size));
+	MelderInfo_writeLine3 ("Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), " Hertz");
+	MelderInfo_writeLine3 ("Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), " Hertz");
+}
+
 class_methods (PitchTier, RealTier)
+	class_method (info)
 class_methods_end
 
 PitchTier PitchTier_create (double tmin, double tmax) {

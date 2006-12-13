@@ -1,6 +1,6 @@
 /* EditorM.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/06/17
+ * pb 2006/12/05
  */
 
 #undef FORM
@@ -91,9 +91,9 @@
 	cmd -> dialog = UiOutfile_createE (cmd, title, helpTitle); \
 	} if (sender == NULL) { char defaultName [300]; defaultName [0] = '\0'; {
 #define DO_WRITE \
-	} UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; \
+	} UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2; \
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, name)

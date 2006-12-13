@@ -231,6 +231,7 @@ static void classTextGrid_info (I) {
 	iam (TextGrid);
 	long ntier = my tiers -> size;
 	long numberOfIntervalTiers = 0, numberOfPointTiers = 0, numberOfIntervals = 0, numberOfPoints = 0, itier;
+	classData -> info (me);
 	for (itier = 1; itier <= ntier; itier ++) {
 		Data anyTier = my tiers -> item [itier];
 		if (anyTier -> methods == (Data_Table) classIntervalTier) {
@@ -243,10 +244,10 @@ static void classTextGrid_info (I) {
 			numberOfPoints += tier -> points -> size;
 		}
 	}
-	Melder_info ("%ld interval tier%s", numberOfIntervalTiers, numberOfIntervalTiers == 1 ? "" : "s");
-	Melder_info ("%ld point tier%s", numberOfPointTiers, numberOfPointTiers == 1 ? "" : "s");
-	Melder_info ("%ld interval%s", numberOfIntervals, numberOfIntervals == 1 ? "" : "s");
-	Melder_info ("%ld point%s", numberOfPoints, numberOfPoints == 1 ? "" : "s");
+	MelderInfo_writeLine2 ("Number of interval tiers: ", Melder_integer (numberOfIntervalTiers));
+	MelderInfo_writeLine2 ("Number of point tiers: ", Melder_integer (numberOfPointTiers));
+	MelderInfo_writeLine2 ("Number of intervals: ", Melder_integer (numberOfIntervals));
+	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (numberOfPoints));
 }
 
 class_methods (TextGrid, Function)

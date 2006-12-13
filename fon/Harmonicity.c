@@ -1,6 +1,6 @@
 /* Harmonicity.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2002/06/04
  * pb 2002/07/16 GPL
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Graphics.h"
@@ -80,49 +80,45 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 
 static void info (I) {
 	iam (Harmonicity);
-	char info [1000], infootje [200];
-	long ix, nSounding = 0, i;
+	classData -> info (me);
+	MelderInfo_writeLine1 ("Time domain:");
+	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
+	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
+	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	long nSounding = 0;
 	double *strengths = NUMdvector (1, my nx);
-	for (ix = 1; ix <= my nx; ix ++)
+	for (long ix = 1; ix <= my nx; ix ++)
 		if (my z [1] [ix] != -200)
 			strengths [++ nSounding] = my z [1] [ix];
-	sprintf (info, "Harmonicity info:\n"
-		"Start time: %.16g seconds\n"
-		"End time: %.16g seconds\n"
-		"Number of frames: %ld (%ld sounding)\n"
-		"Time step: %.16g seconds\n"
-		"First frame at: %.16g seconds\n",
-		my xmin, my xmax, my nx, nSounding, my dx, my x1);
+	MelderInfo_writeLine1 ("Time sampling:");
+	MelderInfo_writeLine5 ("   Number of frames: ", Melder_integer (my nx), " (", Melder_integer (nSounding), " sounding)");
+	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
+	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
 	if (nSounding) {
 		double sum = 0, sumOfSquares = 0;
-		strcat (info, "\nPeriodicity-to-noise ratios of sounding frames:");
+		MelderInfo_writeLine1 ("Periodicity-to-noise ratios of sounding frames:");
 		NUMsort_d (nSounding, strengths);
-		sprintf (infootje, "\nMedian %.1f dB"
-								 "\n10 %% = %.1f dB   90 %% = %.1f dB"
-								 "\n16 %% = %.1f dB   84 %% = %.1f dB",
-			NUMquantile_d (nSounding, strengths, 0.5),
-			NUMquantile_d (nSounding, strengths, 0.1),
-			NUMquantile_d (nSounding, strengths, 0.9),
-			NUMquantile_d (nSounding, strengths, 0.16),
-			NUMquantile_d (nSounding, strengths, 0.84));
-		strcat (info, infootje);
-		for (i = 1; i <= nSounding; i ++) {
+		MelderInfo_writeLine3 ("   Median ", Melder_single (NUMquantile_d (nSounding, strengths, 0.50)), " dB");
+		MelderInfo_writeLine5 ("   10 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.10)), " dB   90 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.90)), " dB");
+		MelderInfo_writeLine5 ("   16 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.16)), " dB   84 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.84)), " dB");
+		MelderInfo_writeLine5 ("   25 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.25)), " dB   75 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.75)), " dB");
+		MelderInfo_writeLine3 ("Minimum: ", Melder_single (strengths [1]), " dB");
+		MelderInfo_writeLine3 ("Maximum: ", Melder_single (strengths [nSounding]), " dB");
+		for (long i = 1; i <= nSounding; i ++) {
 			double f = strengths [i];
 			sum += f;
 			sumOfSquares += f * f;
 		}
-		sprintf (infootje, "\nMinimum %.1f dB, maximum %.1f dB\nAverage %.1f dB",
-			strengths [1], strengths [nSounding], sum / nSounding);
-		strcat (info, infootje);
+		MelderInfo_writeLine3 ("Average: ", Melder_single (sum / nSounding), " dB");
 		if (nSounding > 1) {
 			double var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			sprintf (infootje, ", standard deviation %.1f dB",
-				var < 0.0 ? 0.0 : sqrt (var));
-			strcat (info, infootje);
+			MelderInfo_writeLine3 ("Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), " dB");
 		}
 	}
 	NUMdvector_free (strengths, 1);
-	Melder_information ("%s", info);
 }
 
 class_methods (Harmonicity, Vector)

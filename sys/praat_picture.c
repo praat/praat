@@ -365,10 +365,10 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 		DO_Picture_writeToEpsFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file;
+	} else { MelderFile file; structMelderFile file2;
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE); }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
 	return 1;
 }
@@ -383,10 +383,10 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file;
+	} else { MelderFile file; structMelderFile file2;
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE); }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
 	return 1;
 }
@@ -398,10 +398,10 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file;
+	} else { MelderFile file; structMelderFile file2;
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE); }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
 	return 1;
 }
@@ -413,10 +413,10 @@ static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.prapic");
-	} else { MelderFile file;
+	} else { MelderFile file; structMelderFile file2;
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-		return Picture_writeToPraatPictureFile (praat_picture, file); }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		return Picture_writeToPraatPictureFile (praat_picture, file);
 	}
 	return 1;
 }
@@ -443,10 +443,10 @@ END
 			DO_Picture_writeToMacPictFile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.pict");
-		} else { MelderFile file;
+		} else { MelderFile file; structMelderFile file2;
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-			return Picture_writeToMacPictFile (praat_picture, file); }
+			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			return Picture_writeToMacPictFile (praat_picture, file);
 		}
 		return 1;
 	}
@@ -459,10 +459,10 @@ END
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.emf");
-		} else { MelderFile file;
+		} else { MelderFile file; structMelderFile file2;
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-			return Picture_writeToWindowsMetafile (praat_picture, file); }
+			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			return Picture_writeToWindowsMetafile (praat_picture, file);
 		}
 		return 1;
 	}

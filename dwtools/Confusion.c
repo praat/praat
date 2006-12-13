@@ -40,27 +40,20 @@ static void info (I)
     Confusion_getEntropies (me, & h, & hx, & hy, & hygx, & hxgy, & uygx, 
 		& uxgy, & uxy);
     Confusion_getFractionCorrect (me, & frac, & nCorrect);
-    Melder_information("I have %ld rows and %ld columns.\n"
-    	"Entropies (y is row variable):\n"
-		"%.17g :total\n"
-		"%.17g :y\n"
-		"%.17g :x\n"
-		"%.17g :y given x\n"
-		"%.17g :x given y\n"
-		"%.17g :dependency of y on x\n"
-		"%.17g :dependency of x on y\n"
-		"%.17g :symmetrical dependency\n\n"
-    	"%d :total number of entries\n",
-		my numberOfRows, my numberOfColumns, h, hy, hx, hygx, hxgy, uygx, uxgy,
-			 uxy, Confusion_getNumberOfEntries (me));
-		if (frac == NUMundefined)
-		{
-			Melder_info ("-- undefined -- :fraction correct");
-		}
-		else
-		{
-			Melder_info ("%.17g :fraction correct", frac);
-		}
+    MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
+    MelderInfo_writeLine2 ("Number of colums: ", Melder_integer (my numberOfColumns));
+    MelderInfo_writeLine1 ("Entropies (y is row variable):");
+    MelderInfo_writeLine2 (Melder_double(h), " :total");
+    MelderInfo_writeLine2 (Melder_double(hy), " :y");
+    MelderInfo_writeLine2 (Melder_double(hx), " :x");
+    MelderInfo_writeLine2 (Melder_double(hygx), " :y given x");
+    MelderInfo_writeLine2 (Melder_double(hxgy), " :x given y");
+    MelderInfo_writeLine2 (Melder_double(uygx), " :dependency of y on x");
+    MelderInfo_writeLine2 (Melder_double(uxgy), " :dependency of x on y");
+    MelderInfo_writeLine2 (Melder_double(uxy), " :symmetrical dependency");
+    MelderInfo_writeLine2 (Melder_integer (Confusion_getNumberOfEntries (me)), 
+    	" :total number of entries");
+	MelderInfo_writeLine2 (Melder_double (frac), " :fraction correct");
 }
 
 class_methods (Confusion, TableOfReal)

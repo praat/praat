@@ -1,6 +1,6 @@
 /* melder_audiofiles.c
  *
- * Copyright (C) 1992-2004 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2006 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2002/05/28
  * pb 2002/09/28 corrected message
  * pb 2002/12/16 corrected bug for cases in which format chunk follows data chunk in WAV file
  * pb 2003/09/12 Sound Designer II files
  * pb 2004/05/14 support for reading 24-bit and 32-bit audio files
  * pb 2004/11/12 writeShortToAudio can write single channels of stereo signal
  * pb 2004/11/15 fast reading of 16-bit audio files
+ * pb 2006/12/13 32-bit IEEE float audio files
  */
 
 #include "melder.h"
@@ -41,6 +41,7 @@
 #ifndef WAVE_FORMAT_PCM
 	#define WAVE_FORMAT_PCM  0x0001
 #endif
+#define WAVE_FORMAT_IEEE_FLOAT  0x0003
 #define WAVE_FORMAT_ALAW  0x0006
 #define WAVE_FORMAT_MULAW  0x0007
 
@@ -179,7 +180,8 @@ int Melder_bytesPerSamplePoint (int encoding) {
 	return
 		encoding == Melder_LINEAR_16_BIG_ENDIAN || encoding == Melder_LINEAR_16_LITTLE_ENDIAN ? 2 :
 		encoding == Melder_LINEAR_24_BIG_ENDIAN || encoding == Melder_LINEAR_24_LITTLE_ENDIAN ? 3 :
-		encoding == Melder_LINEAR_32_BIG_ENDIAN || encoding == Melder_LINEAR_32_LITTLE_ENDIAN ? 4 :
+		encoding == Melder_LINEAR_32_BIG_ENDIAN || encoding == Melder_LINEAR_32_LITTLE_ENDIAN ||
+		encoding == Melder_IEEE_FLOAT_32_BIG_ENDIAN || encoding == Melder_IEEE_FLOAT_32_LITTLE_ENDIAN ? 4 :
 		1;
 }
 
@@ -382,6 +384,9 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 						numberOfBitsPerSamplePoint > 16 ? Melder_LINEAR_24_LITTLE_ENDIAN :
 						numberOfBitsPerSamplePoint > 8 ? Melder_LINEAR_16_LITTLE_ENDIAN :
 						Melder_LINEAR_8_UNSIGNED;
+					break;
+				case WAVE_FORMAT_IEEE_FLOAT:
+					*encoding = Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
 					break;
 				case WAVE_FORMAT_ALAW:
 					*encoding = Melder_ALAW;
@@ -766,6 +771,36 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 					leftBuffer [i] = (left + right) * (1.0f / 65536 / 65536);
 				}
 			break;
+		case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
+			if (numberOfChannels == 1)
+				for (i = 1; i <= numberOfSamples; i ++)
+					leftBuffer [i] = bingetr4 (f);
+			else if (rightBuffer)
+				for (i = 1; i <= numberOfSamples; i ++) {
+					leftBuffer [i] = bingetr4 (f);
+					rightBuffer [i] = bingetr4 (f);
+				}
+			else
+				for (i = 1; i <= numberOfSamples; i ++) {
+					double left = bingetr4 (f), right = bingetr4 (f);
+					leftBuffer [i] = (left + right) * 0.5;
+				}
+			break;
+		case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
+			if (numberOfChannels == 1)
+				for (i = 1; i <= numberOfSamples; i ++)
+					leftBuffer [i] = bingetr4LE (f);
+			else if (rightBuffer)
+				for (i = 1; i <= numberOfSamples; i ++) {
+					leftBuffer [i] = bingetr4LE (f);
+					rightBuffer [i] = bingetr4LE (f);
+				}
+			else
+				for (i = 1; i <= numberOfSamples; i ++) {
+					double left = bingetr4LE (f), right = bingetr4LE (f);
+					leftBuffer [i] = (left + right) * 0.5;
+				}
+			break;
 		case Melder_MULAW:
 			if (numberOfChannels == 1)
 				for (i = 1; i <= numberOfSamples; i ++)
@@ -854,6 +889,14 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 			for (i = 0; i < n; i ++)
 				buffer [i] = bingeti4LE (f) / 65536;   /* BUG: truncation; not ideal. */
 			break;
+		case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
+			for (i = 0; i < n; i ++)
+				buffer [i] = bingetr4 (f) * 32768;   /* BUG: truncation; not ideal. */
+			break;
+		case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
+			for (i = 0; i < n; i ++)
+				buffer [i] = bingetr4LE (f) * 32768;   /* BUG: truncation; not ideal. */
+			break;
 		case Melder_MULAW:
 			for (i = 0; i < n; i ++)
 				buffer [i] = ulaw2linear [bingetu1 (f)];
@@ -905,6 +948,12 @@ int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const
 		break; case Melder_LINEAR_32_LITTLE_ENDIAN:
 			for (i = start; i < n; i += step)
 				binputi4LE (buffer [i] << 16, f);
+		break; case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
+			for (i = start; i < n; i += step)
+				binputr4 (buffer [i] / 32768.0, f);
+		break; case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
+			for (i = start; i < n; i += step)
+				binputr4LE (buffer [i] / 32768.0, f);
 		break; case Melder_MULAW: case Melder_ALAW: default:
 			return Melder_error ("(Melder_writeShortToAudio:) Unknown encoding %d.", encoding);
 	}
@@ -1088,6 +1137,42 @@ int Melder_writeFloatToAudio (FILE *f, int encoding, const float *left, long nle
 						binputi4LE (value, f);
 					} else {
 						binputi4LE (0, f);
+					}
+				}
+			}
+			break;
+		case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
+			for (i = 0; i < n; i ++) {
+				if (i < nleft) {
+					double value = left [i];
+					binputr4 (value, f);
+				} else {
+					binputr4 (0, f);
+				}
+				if (right) {
+					if (i < nright) {
+						double value = right [i];
+						binputr4 (value, f);
+					} else {
+						binputr4 (0, f);
+					}
+				}
+			}
+			break;
+		case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
+			for (i = 0; i < n; i ++) {
+				if (i < nleft) {
+					double value = left [i];
+					binputr4LE (value, f);
+				} else {
+					binputr4LE (0, f);
+				}
+				if (right) {
+					if (i < nright) {
+						double value = right [i];
+						binputr4LE (value, f);
+					} else {
+						binputr4LE (0, f);
 					}
 				}
 			}

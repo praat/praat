@@ -1,6 +1,6 @@
 /* Excitation.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2002/06/04
  * pb 2002/07/16 GPL
  * pb 2004/02/11 Excitation_soundPressureToPhon: handle zero sound pressure correctly (thanks to James Keidel)
+ * pb 2006/12/10 MelderInfo
  */
 
 #include "Excitation.h"
@@ -67,14 +67,16 @@ static void info (I) {
 	iam (Excitation);
 	float *y = my z [1];
 	long i, numberOfMaxima = 0;
-	Melder_info ("Loudness %.2f sones.", (double) Excitation_getLoudness (me));
+	classData -> info (me);
+	MelderInfo_writeLine3 ("Loudness: ", Melder_half (Excitation_getLoudness (me)), " sones");
 	for (i = 2; i < my nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
 		strength = NUMimproveMaximum (my z [1], my nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		formant_bark = my x1 + (i_real - 1) * my dx;
-		Melder_info ("\nMaximum at %.2f Bark, %ld Hertz, %.1f phon.", formant_bark,
-			(long) NUMbarkToHertz (formant_bark), strength);
+		MelderInfo_write3 ("Peak at ", Melder_single (formant_bark), " Bark");
+		MelderInfo_write3 (", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), " Hertz");
+		MelderInfo_writeLine3 (", ", Melder_half (strength), " phon.");
 	}
 }
 

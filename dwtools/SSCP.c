@@ -1,6 +1,6 @@
 /* SSCP.c
  * 
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@
  	var_pooled = 0 and paired.
  djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20061214 Corrected possible integer overflow in ellipseScalefactor.
 */
 
 #include "SSCP.h"
@@ -102,7 +103,7 @@ static double ellipseScalefactor (SSCP me, double scale, int confidence)
 		if (n - p < 1) return -1;
 		/* D.E. Johnson (1998), Applied Multivariate methods, page 410 */
 		f = NUMinvFisherQ (1 - scale, p, n - p);
-		scale = 2 * sqrt (f * p * (n - 1) / (n * (n - p)));
+		scale = 2 * sqrt (f * p * (n - 1) / (((double) n) * (n - p)));
 	}
 	else
 	{

@@ -587,6 +587,21 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	#endif
 	} else {
 		f = fopen (file -> path, type);
+		#ifdef macintosh
+		if (f == NULL) {
+			/*
+			 * Perhaps the file name was sent by a script command.
+			 */
+			structMelderFile file2;
+			CFStringRef stringOfFile = CFStringCreateWithCString (NULL, file -> path, kCFStringEncodingMacRoman);
+			CFMutableStringRef mutableStringOfFile = CFStringCreateMutableCopy (NULL, 0, stringOfFile);
+			CFRelease (stringOfFile);
+			CFStringNormalize (mutableStringOfFile, kCFStringNormalizationFormD);
+			CFStringGetCString (mutableStringOfFile, file2. path, 260, kCFStringEncodingUTF8);
+			CFRelease (mutableStringOfFile);
+			f = fopen (file2. path, type);
+		}
+		#endif
 	}
 	if (! f) {
 		char *path = Melder_fileToPath (file);

@@ -46,7 +46,7 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20060906 Latest modification.
+ djmw 20061204 Latest modification.
 */
 
 #include "praat.h"
@@ -69,6 +69,7 @@ extern machar_Table NUMfpp;
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
 #include "Formula.h"
+#include "Intensity_extensions.h"
 #include "Matrix_Categories.h"
 #include "Matrix_extensions.h"
 #include "LongSound_extensions.h"
@@ -116,23 +117,6 @@ void DTW_constraints_addCommonFields (void *dia);
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
 void praat_Matrixft_query_init (void *klas);
 int praat_Fon_formula (Any dia);
-
-#ifdef UNIX_newFileSelector
-	#define FORM_APPEND(proc,title,help) \
-		FORM (proc, title, help) \
-			FILE_IN ("infile") \
-			OK \
-		DO \
-			MelderFile file = GET_FILE ("infile");
-#else
-	#define FORM_APPEND(proc,title,help) \
-	static int DO_##proc (Any sender, void *dummy) { \
-		static Any dia; (void) dummy; \
-		if (! dia) dia = UiInfile_create (praat.topShell, title, DO_##proc, NULL, help); \
-		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; (void) IOBJECT; \
-		if (sender == dia) file = UiFile_getFile (sender); \
-		else { structMelderFile file2; if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
-#endif
 
 #undef INCLUDE_DTW_SLOPES
 
@@ -250,7 +234,7 @@ DIRECT (Categories_getNumberOfDifferences)
 	NumberOfDifferences = OrderedOfString_getNumberOfDifferences (c1, c2);
 	if (NumberOfDifferences< 0) Melder_information ("-1 (undefined: number of elements differ!)");
 	else 
-		Melder_information ("%d differences", NumberOfDifferences);
+		Melder_information ("%s differences", Melder_integer (NumberOfDifferences));
 END
 
 DIRECT (Categories_getFractionDifferent)
@@ -271,7 +255,7 @@ DIRECT (Categories_difference)
    		if (l1) l2 = OBJECT; else l1 = OBJECT;
 	}
 	if (! OrderedOfString_difference (l1, l2, &n, &fraction)) return 0;
-	Melder_information ("%d differences", n);
+	Melder_information ("%s differences", Melder_integer (n));
 END
 
 DIRECT (Categories_selectUniqueItems)
@@ -443,8 +427,8 @@ DO
 	double p, chisq; long ndf;
 	CCA_getZeroCorrelationProbability (ONLY (classCCA), GET_INTEGER ("Coefficient number"),
 		&chisq, &ndf, &p);
-	Melder_information ("%.17g (=probability for chisq = %.17g and ndf = %d)",
-		p, chisq, ndf);
+	Melder_information ("%.17g (=probability for chisq = %.17g and ndf = %s)",
+		p, chisq, Melder_integer (ndf));
 END
 
 DIRECT (CCA_and_Correlation_factorLoadings)
@@ -467,9 +451,10 @@ DO
 	int x_or_y = GET_INTEGER ("X or Y");
 	int cv_from = GET_INTEGER ("left Canonical variate range");
 	int cv_to = GET_INTEGER ("right Canonical variate range");
-	Melder_information ("%.17g (fraction variance from %s extracted by canonical variates %d to %d)",
+	Melder_information ("%.17g (fraction variance from %s extracted by canonical variates %s to %s)",
 		CCA_and_Correlation_getVarianceFraction (ONLY (classCCA),
-		ONLY (classCorrelation), x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), cv_from, cv_to);
+		ONLY (classCorrelation), x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), 
+		Melder_integer (cv_from), Melder_integer (cv_to));
 END
 
 FORM (CCA_and_Correlation_getRedundancy_sl, "CCA & Correlation: Get Stewart-Love redundancy",
@@ -487,9 +472,10 @@ DO
 	int x_or_y = GET_INTEGER ("X or Y");
 	int cv_from = GET_INTEGER ("left Canonical variate range");
 	int cv_to = GET_INTEGER ("right Canonical variate range");
-	Melder_information ("%.17g (redundancy from %s extracted by canonical variates %d to %d)",
+	Melder_information ("%.17g (redundancy from %s extracted by canonical variates %s to %s)",
 		CCA_and_Correlation_getRedundancy_sl (ONLY (classCCA), ONLY (classCorrelation),
-		x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), cv_from, cv_to);
+		x_or_y, cv_from, cv_to), (x_or_y == 1 ? "y" : "x"), 
+		Melder_integer (cv_from), Melder_integer (cv_to));
 END
 
 
@@ -651,7 +637,7 @@ DO
 	Correlation me = ONLY_OBJECT;
 	Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
 	Melder_information ("%.17g (=probability, based on chisq = %.17g and "
-		"ndf = %d)", p, chisq, my numberOfRows * (my numberOfRows - 1) / 2);
+		"ndf = %s)", p, chisq, Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2));
 END
 
 DIRECT (Correlation_to_PCA)
@@ -676,8 +662,8 @@ DO
 	double t, p; double ndf;
 	Covariance_getSignificanceOfOneMean (ONLY_OBJECT, GET_INTEGER ("Index"),
 		GET_REAL ("Value"), &p, &t , &ndf);
-	Melder_information ("%.17g (=probability, based on t = %.17g and ndf = %d)",
-		p, t, ndf);
+	Melder_information ("%.17g (=probability, based on t = %.17g and ndf = %s)",
+		p, t, Melder_integer (ndf));
 END
 
 FORM (Covariance_getSignificanceOfMeansDifference, 
@@ -731,8 +717,8 @@ DO
 	Covariance_getSignificanceOfVariancesRatio (ONLY_OBJECT, 
 		GET_INTEGER ("Index1"), GET_INTEGER ("Index2"),
 		GET_REAL ("Hypothesized ratio"), &p, &f , &ndf);
-	Melder_information ("%.17g (=probability, based on F = %.17g, ndf1 = %d "
-		"and ndf2 = %d)", p, f, ndf, ndf);
+	Melder_information ("%.17g (=probability, based on F = %.17g, ndf1 = %s "
+		"and ndf2 = %s)", p, f, Melder_integer (ndf), Melder_integer (ndf));
 END
 
 FORM (Covariance_getFractionVariance, "Covariance: Get fraction variance", 
@@ -762,8 +748,8 @@ DIRECT (Covariance_difference)
 		if (c1) c2 = OBJECT; else c1 = OBJECT;
 	}
 	if (! Covariance_difference (c1, c2, &prob, &chisq, &df)) return 0;
-	Melder_information ("%.17g (=probability, based chisq = %.17g and ndf = %d",
-		prob, chisq, df); 
+	Melder_information ("%.17g (=probability, based chisq = %.17g and ndf = %s",
+		prob, chisq, Melder_integer (df)); 
 END
 
 DIRECT (Covariance_to_Correlation)
@@ -868,14 +854,14 @@ DO
 	REQUIRE (n >= 0, "Number of dimensions must be greater than or equal "
 		"to zero.")
 	Melder_information ("%.17g (=probability, based on chisq = %.17g and "
-		"ndf = %d)", p, chisq, ndf);
+		"ndf = %s)", p, chisq, Melder_integer (ndf));
 END
 
 DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	double chisq, p; long ndf; Discriminant thee = ONLY_OBJECT;
 	SSCPs_getHomegeneityOfCovariances_box (thy groups, &p, &chisq, &ndf);
 	Melder_information ("%.17g (=probability, based on chisq = %.17g and "
-		"ndf = %d)", p, chisq, ndf);
+		"ndf = %s)", p, chisq, Melder_integer (ndf));
 END
 
 FORM (Discriminant_getConcentrationEllipseArea,
@@ -1069,15 +1055,15 @@ DO
 END
 
 DIRECT (Discriminant_getNumberOfFunctions)
-	Melder_information ("%d", Discriminant_getNumberOfFunctions (ONLY_OBJECT));
+	Melder_information ("%s", Melder_integer (Discriminant_getNumberOfFunctions (ONLY_OBJECT)));
 END
 
 DIRECT (Discriminant_getDimensionOfFunctions)
-	Melder_information ("%d", Eigen_getDimensionOfComponents (ONLY_OBJECT));
+	Melder_information ("%s", Melder_integer (Eigen_getDimensionOfComponents (ONLY_OBJECT)));
 END
 
 DIRECT (Discriminant_getNumberOfGroups)
-	Melder_information ("%d", Discriminant_getNumberOfGroups (ONLY_OBJECT));
+	Melder_information ("%s", Melder_integer (Discriminant_getNumberOfGroups (ONLY_OBJECT)));
 END
 
 FORM (Discriminant_getNumberOfObservations, "Discriminant: Get number of observations", 
@@ -1087,7 +1073,7 @@ FORM (Discriminant_getNumberOfObservations, "Discriminant: Get number of observa
 DO
 	long n = Discriminant_getNumberOfObservations (ONLY_OBJECT, 
 		GET_INTEGER ("Group"));
-	Melder_information ("%d", n);
+	Melder_information ("%s", Melder_integer (n));
 END
 
 	
@@ -1178,8 +1164,8 @@ DO
 	int direction[] = {DTW_START, DTW_X, DTW_Y, DTW_XANDY};
 	char *string[] = {"", "x", "y", "diagonal"};
 	int d = GET_INTEGER ("Direction");
-	Melder_information ("%d (=maximum number of consecutive steps in %s direction)", 
-		DTW_getMaximumConsecutiveSteps (ONLY_OBJECT, direction[d]), string[d]);
+	Melder_information ("%s (=maximum number of consecutive steps in %s direction)", 
+		Melder_integer (DTW_getMaximumConsecutiveSteps (ONLY_OBJECT, direction[d])), string[d]);
 END
 
 DIRECT (DTW_getWeightedDistance)
@@ -1310,12 +1296,12 @@ END
 
 DIRECT (Eigen_getNumberOfEigenvalues)
 	Eigen me = ONLY_OBJECT;
-	Melder_information ("%d", my numberOfEigenvalues);
+	Melder_information ("%ld", my numberOfEigenvalues);
 END
 
 DIRECT (Eigen_getDimension)
 	Eigen me = ONLY_OBJECT;
-	Melder_information ("%d", my dimension);
+	Melder_information ("%ld", my dimension);
 END
 
 FORM (Eigen_getEigenvalue, "Eigen: Get eigenvalue", "Eigen: Get eigenvalue...")
@@ -1325,7 +1311,7 @@ DO
 	Eigen me = ONLY_OBJECT;
 	long number = GET_INTEGER ("Eigenvalue number");
 	if (number > my numberOfEigenvalues) return Melder_error
-		("DO_Eigen_getEigenvalue: Eigenvalue number must be smaller than %d",
+		("DO_Eigen_getEigenvalue: Eigenvalue number must be smaller than %ld",
 		my numberOfEigenvalues + 1);
 	Melder_informationReal (my eigenvalues[number], NULL);
 END
@@ -1391,7 +1377,7 @@ END
 
 DIRECT (Index_getNumberOfClasses)
 	Index thee = ONLY_OBJECT;
-	Melder_information ("%d", thy classes -> size);
+	Melder_information ("%ld", thy classes -> size);
 END
 
 FORM (StringsIndex_getClassLabel, "StringsIndex: Get class label", "StringsIndex: Get class label...")
@@ -1403,7 +1389,7 @@ DO
 	long numberOfClasses = thy classes -> size;
 	SimpleString ss;
 	if (class > numberOfClasses) return Melder_error
-		("Element index must be less than or equal %d.", numberOfClasses);
+		("Element index must be less than or equal %ld.", numberOfClasses);
 	ss = thy classes -> item[class];
 	Melder_information ("%s", ss -> string);
 END
@@ -1416,7 +1402,7 @@ DO
 	long class, index = GET_INTEGER ("Element index");
 	SimpleString ss;
 	if (index > thy numberOfElements) return Melder_error
-		("Element index must be less than or equal %d.", thy numberOfElements);
+		("Element index must be less than or equal %ld.", thy numberOfElements);
 	class = thy classIndex[index];
 	ss = thy classes -> item [class];	
 	Melder_information ("%s", ss -> string);
@@ -1429,8 +1415,8 @@ DO
 	Index thee = ONLY_OBJECT;
 	long index = GET_INTEGER ("Element index");
 	if (index > thy numberOfElements) return Melder_error
-		("Element index must be less than or equal %d.", thy numberOfElements);
-	Melder_information ("%d", thy classIndex[index]);
+		("Element index must be less than or equal %ld.", thy numberOfElements);
+	Melder_information ("%ld", thy classIndex[index]);
 END
 
 FORM (StringsIndex_getClassIndex, "StringsIndex: Get class index", "StringsIndex: Get class index...")
@@ -1440,7 +1426,7 @@ DO
 	StringsIndex thee = ONLY_OBJECT;
 	char *classLabel = GET_STRING ("Class label");
 	long index = StringsIndex_getClass (thee, classLabel);
-	Melder_information ("%d", index);
+	Melder_information ("%ld", index);
 END
 
 FORM (Index_extractPart, "Index: Extract part", "Index: Extract part...")
@@ -1816,7 +1802,7 @@ END
 
 DIRECT (FunctionTerms_getNumberOfCoefficients)
 	FunctionTerms f = ONLY_GENERIC (classFunctionTerms);
-	Melder_information ("%d", f -> numberOfCoefficients);
+	Melder_information ("%ld", f -> numberOfCoefficients);
 END
 
 FORM (FunctionTerms_getCoefficient, "FunctionTerms: Get coefficient", 0)
@@ -1832,7 +1818,7 @@ END
 	
 DIRECT (FunctionTerms_getDegree)
 	FunctionTerms f = ONLY_GENERIC (classFunctionTerms);
-	Melder_information ("%d", FunctionTerms_getDegree (f));
+	Melder_information ("%ld", FunctionTerms_getDegree (f));
 END
 
 FORM (FunctionTerms_getMaximum, "FunctionTerms: Get maximum", "Polynomial: Get maximum...")
@@ -1908,6 +1894,21 @@ DO
 	FunctionTerms_setDomain (f, xmin, xmax);
 END
 
+/***************** Intensity ***************************************************/
+
+FORM (Intensity_to_TextGrid_detectSilences, "Intensity: To TextGrid (silences)", "Intensity: To TextGrid (silences)...")
+	REAL ("Silence threshold (dB)", "-25.0")
+	POSITIVE ("Minimum silent interval duration (s)", "0.1")
+	POSITIVE ("Minimum sounding interval duration (s)", "0.1")
+	WORD ("Silent interval label", "silent")
+	WORD ("Sounding interval label", "sounding")
+	OK
+DO
+	EVERY_TO (Intensity_to_TextGrid_detectSilences (OBJECT, GET_REAL ("Silence threshold"),
+		GET_REAL ("Minimum silent interval duration"), GET_REAL ("Minimum sounding interval duration"),
+		GET_STRING ("Silent interval label"), GET_STRING ("Sounding interval label")))
+END
+
 /***************** ISpline ***************************************************/
 
 DIRECT (ISpline_help) Melder_help ("ISpline"); END
@@ -1961,7 +1962,7 @@ DIRECT (LegendreSeries_to_Polynomial)
 END
 /********************* LongSound **************************************/
 
-FORM_APPEND (LongSounds_appendToExistingSoundFile, "LongSound: Append to existing sound file", 0)
+FORM_READ (LongSounds_appendToExistingSoundFile, "LongSound: Append to existing sound file", 0)
 	if (! pr_LongSounds_appendToExistingSoundFile (file)) return 0;
 END
 
@@ -2413,7 +2414,7 @@ DO
 		GET_INTEGER ("right Eigenvalue range"), GET_INTEGER ("Conservative test"),
 		&p, &chisq, &ndf);
 	Melder_information ("%.17g (=probability, based on chisq = %.17g and "
-		"ndf = %d)", p, chisq, ndf);
+		"ndf = %ld)", p, chisq, ndf);
 END
 
 FORM (PCA_getNumberOfComponentsVAF, "PCA: Get number of components (VAF)",
@@ -2423,7 +2424,7 @@ FORM (PCA_getNumberOfComponentsVAF, "PCA: Get number of components (VAF)",
 DO
 	double f = GET_REAL ("Variance fraction");
 	REQUIRE (f > 0 && f <= 1, "The variance fraction must be in interval (0-1).")
-	Melder_information ("%d", Eigen_getDimensionOfFraction (ONLY_OBJECT, f));
+	Melder_information ("%ld", Eigen_getDimensionOfFraction (ONLY_OBJECT, f));
 END
 
 FORM (PCA_getFractionVAF, "PCA: Get fraction variance accounted for",
@@ -2498,7 +2499,7 @@ END
 
 DIRECT (Permutation_getNumberOfElements)
 	Permutation p = ONLY_OBJECT;
-	Melder_info ("%d", p -> numberOfElements);
+	Melder_information ("%s", Melder_integer (p -> numberOfElements));
 END
 
 FORM (Permutation_getValueAtIndex, "Permutation: Get value", "Permutation: Get value...")
@@ -2506,7 +2507,7 @@ FORM (Permutation_getValueAtIndex, "Permutation: Get value", "Permutation: Get v
 	OK
 DO
 	long index = GET_INTEGER ("Index");
-	Melder_info ("%d (value, at index=%d)", Permutation_getValueAtIndex (ONLY_OBJECT, index), index);
+	Melder_information ("%s (value, at index=%s)", Melder_integer (Permutation_getValueAtIndex (ONLY_OBJECT, index)), Melder_integer (index));
 END
 
 FORM (Permutation_getIndexAtValue, "Permutation: Get index", "Permutation: Get index...")
@@ -2514,7 +2515,7 @@ FORM (Permutation_getIndexAtValue, "Permutation: Get index", "Permutation: Get i
 	OK
 DO
 	long value = GET_INTEGER ("Value");
-	Melder_info ("%d (index, at value=%d)", Permutation_getIndexAtValue (ONLY_OBJECT, value), value);
+	Melder_information ("%s (index, at value=%s)", Melder_integer (Permutation_getIndexAtValue (ONLY_OBJECT, value)), Melder_integer (value));
 END
 
 DIRECT (Permutation_sort)
@@ -2565,7 +2566,7 @@ FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
 DO
 	Permutation p = ONLY_OBJECT;
 	long step = GET_INTEGER ("Step size");
-	if (! praat_new (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_rotate%d", Thing_getName (p),step)) return 0;
+	if (! praat_new (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_rotate%ld", Thing_getName (p),step)) return 0;
 END
 
 FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
@@ -2590,7 +2591,7 @@ DO
 	long blocksize = GET_INTEGER ("Block size");
 	if (! praat_new (Permutation_permuteBlocksRandomly (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
 		blocksize, GET_INTEGER ("Permute within blocks"), GET_INTEGER ("No doublets")),
-		"%s_blocks%d", Thing_getName (p), blocksize)) return 0;
+		"%s_blocks%ld", Thing_getName (p), blocksize)) return 0;
 END
 
 FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleave...")
@@ -2652,7 +2653,21 @@ end:
 	{
 		forget (thee); return 0;
 	}
-	if (! praat_new (thee, "multiply%d", np)) return 0;
+	if (! praat_new (thee, "multiply%ld", np)) return 0;
+END
+
+FORM (Pitches_to_DTW, "Pitches: To DTW", "Pitches: To DTW...")
+	REAL ("Voiced-unvoiced costs", "24.0")
+	REAL ("Time costs weight", "10.0")
+	DTW_constraints_addCommonFields (dia);
+	OK
+DO
+	Pitch p1 = NULL, p2 = NULL;
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
+	if (! praat_new (Pitches_to_DTW (p1, p2, GET_REAL ("Voiced-unvoiced costs"), GET_REAL ("Time costs weight"), begin, end, slope), "dtw_%s_%s", p1 -> name, p2 -> name)) return 0;
+
 END
 
 FORM (PitchTier_to_Pitch, "PitchTier: To Pitch", "PitchTier: To Pitch...")
@@ -2849,7 +2864,7 @@ DO
 END
 
 DIRECT (Roots_getNumberOfRoots)
-	Melder_information ("%d", Roots_getNumberOfRoots (ONLY (classRoots)));
+	Melder_information ("%s", Melder_integer (Roots_getNumberOfRoots (ONLY (classRoots))));
 END
 
 FORM (Roots_getRoot, "Roots: Get root", 0)
@@ -2860,8 +2875,8 @@ DO
 	if (z.re == NUMundefined || z.im == NUMundefined)
 		Melder_information ("--undefined--");
 	else
-		Melder_information ("%.17g %s %.17g i", z.re, (z.im < 0 ? "-" : "+"),
-			fabs(z.im));
+		Melder_information ("%s %s %s i", Melder_double (z.re), (z.im < 0 ? "-" : "+"),
+			 Melder_double (fabs(z.im)));
 END
 
 FORM (Roots_getRealPartOfRoot, "Roots: Get real part", 0)
@@ -2911,10 +2926,10 @@ DIRECT (Praat_ReportFloatingPointProperties)
 	if (! NUMfpp) NUMmachar ();
 	Melder_information ("Double precision floating point properties of this machine,\n"
 		"as calculated by algorithms from the Binary Linear Algebra System (BLAS)\n\n"
-		"Radix: %d\n"
-		"Number of digits in mantissa: %d\n"
-		"Smallest exponent before (gradual) underflow (expmin): %d\n"
-		"Largest exponent before overflow (expmax): %d\n"
+		"Radix: %ld\n"
+		"Number of digits in mantissa: %ld\n"
+		"Smallest exponent before (gradual) underflow (expmin): %ld\n"
+		"Largest exponent before overflow (expmax): %ld\n"
 		"Does rounding occur in addition: %s\n"
 		"Quantization step (d): %.17g\n"
 		"Quantization error (eps): %.17g (= d/2)\n"
@@ -3026,6 +3041,18 @@ DO
 		GET_REAL ("Pitch range factor"), GET_REAL ("Duration factor")), NULL)) return 0;
 END
 
+FORM (Sound_and_Pitch_changeSpeaker, "Sound & Pitch: Change speaker", "Sound & Pitch: Change speaker...")
+	POSITIVE ("Multiply formants by", "1.2")
+	POSITIVE ("Multiply pitch by", "1.0")
+	REAL ("Multiply pitch range by", "1.0 (=no change)")
+	POSITIVE ("Multiply duration", "1.0")
+	OK
+DO
+	if (! praat_new (Sound_and_Pitch_changeSpeaker (ONLY(classSound), ONLY(classPitch),
+		GET_REAL ("Multiply formants by"), GET_REAL ("Multiply pitch by"), 
+		GET_REAL ("Multiply pitch range by"), GET_REAL ("Multiply duration")), NULL)) return 0;
+END
+
 FORM (Sound_createFromGammaTone, "Create a gamma-tone",
 	"Create Sound from gamma-tone...")
 	WORD ("Name", "gammatone")
@@ -3126,6 +3153,27 @@ DO
 		! praat_new (sound, GET_STRING ("Name"))) return 0; 
 END
 */
+
+FORM (Sound_to_TextGrid_detectSilences, "Sound: To TextGrid (silences)", 
+	"Sound: To TextGrid (silences)...")
+	LABEL ("", "Parameters for the intensity analysis")
+	POSITIVE ("Minimum pitch (Hz)", "100")
+	REAL ("Time step (s)", "0.0 (= auto)")
+	LABEL ("","Silent intervals detection")
+	REAL ("Silence threshold (dB)", "-25.0")
+	POSITIVE ("Minimum silent interval duration (s)", "0.1")
+	POSITIVE ("Minimum sounding interval duration (s)", "0.1")
+	WORD ("Silent interval label", "silent")
+	WORD ("Sounding interval label", "sounding")
+	OK
+DO
+	EVERY_TO (Sound_to_TextGrid_detectSilences (OBJECT, GET_REAL ("Minimum pitch"), GET_REAL ("Time step"), 
+		GET_REAL ("Silence threshold"), GET_REAL ("Minimum silent interval duration"),
+		GET_REAL ("Minimum sounding interval duration"), GET_STRING ("Silent interval label"), 
+		GET_STRING ("Sounding interval label")))	
+
+END
+
 FORM (Sound_to_BarkFilter, "Sound: To BarkFilter", 
 	"Sound: To BarkFilter...")
 	POSITIVE ("Analysis window duration (s)", "0.015")
@@ -3160,18 +3208,6 @@ DO
 		GET_REAL ("Maximum frequency"), GET_REAL ("Distance between filters"),
 		GET_REAL ("Relative bandwidth"), GET_REAL ("Minimum pitch"),
 		GET_REAL ("Maximum pitch")))
-END
-
-FORM (Sound_to_IntervalTier_detectSilence, "Sound: To IntervalTier (silence)", "Sound: To IntervalTier (silence)...")
-	POSITIVE ("Silence threshold", "0.3")
-	POSITIVE ("Minimum silence interval (s)", "0.100")
-	POSITIVE ("Minimum non-silence interval (s)", "0.100")
-	WORD ("Silence label", "#")	
-	OK
-DO
-	EVERY_TO (Sound_to_IntervalTier_detectSilence (OBJECT, GET_REAL ("Silence threshold"),
-		GET_REAL ("Minimum silence interval"), GET_REAL ("Minimum non-silence interval"),
-		GET_STRING ("Silence label")))
 END
 
 FORM (Sound_to_MelFilter, "Sound: To MelFilter", 
@@ -3245,6 +3281,25 @@ FORM (Sound_filterByGammaToneFilter4, "Sound: Filter (gammatone)", "Sound: Filte
 DO
 	EVERY_TO (Sound_filterByGammaToneFilter4 (OBJECT,
 		GET_REAL ("Centre frequency"), GET_REAL ("Bandwidth")))
+END
+
+FORM (Sound_changeSpeaker, "Sound: Change speaker", "Sound: Change speaker...")
+	LABEL ("", "Pitch measurement parameters")
+	POSITIVE ("Pitch floor (Hz)", "75.0")
+	POSITIVE ("Pitch ceiling (Hz)", "600.0")
+	LABEL ("", "Modification parameters")
+	POSITIVE ("Multiply formants by", "1.2")
+	POSITIVE ("Multiply pitch by", "1.0")
+	REAL ("Multiply pitch range by", "1.0 (=no change)")
+	POSITIVE ("Multiply duration by", "1.0")
+	OK
+DO
+	double minimumPitch = GET_REAL ("Pitch floor");
+	double maximumPitch = GET_REAL ("Pitch ceiling");
+	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
+	EVERY_TO (Sound_changeSpeaker (OBJECT, minimumPitch, maximumPitch,
+		GET_REAL ("Multiply formants by"), GET_REAL ("Multiply pitch by"),
+		GET_REAL ("Multiply pitch range by"), GET_REAL ("Multiply duration by")))
 END
 
 FORM (Sound_changeGender, "Sound: Change gender", "Sound: Change gender...")
@@ -3361,7 +3416,7 @@ DO
 END
 
 DIRECT (Spline_getOrder)
-	Melder_information ("%d", Spline_getOrder (ONLY_OBJECT));
+	Melder_information ("%s", Melder_integer (Spline_getOrder (ONLY_OBJECT)));
 END
 
 FORM (Spline_scaleX, "Spline: Scale x", "Spline: Scale x...")
@@ -3431,8 +3486,7 @@ DO
 	double conf = GET_REAL ("Confidence level");
 	long d1 = GET_INTEGER ("Index for X-axis");
 	long d2 = GET_INTEGER ("Index for Y-axis");
-	Melder_informationReal (SSCP_getConcentrationEllipseArea (ONLY_OBJECT,
-		conf, 1, d1, d2), NULL);
+	Melder_informationReal (SSCP_getConcentrationEllipseArea (ONLY_OBJECT, conf, 1, d1, d2), NULL);
 END
 
 FORM (SSCP_getFractionVariation, "SSCP: Get fraction variation", 
@@ -3483,7 +3537,7 @@ DO
 	if (number < 1 || number > my numberOfColumns)
 	{
 		return Melder_error ("SSCP_getCentroidElement: "
-		"\"Number\" must be smaller than %d.", my numberOfColumns + 1);
+		"\"Number\" must be smaller than %ld.", my numberOfColumns + 1);
 	}
 	Melder_informationReal (my centroid[number], NULL);
 END
@@ -3501,8 +3555,8 @@ DO
 	long nc = GET_INTEGER ("Number of contraints");
 	SSCP me = ONLY_OBJECT;
 	SSCP_testDiagonality_bartlett (me, nc, &chisq, &p);
-	Melder_information ("%.17g (=probability, based on chisq= %.17g, ndf = %d)",
-		p, chisq, my numberOfRows * (my numberOfRows - 1) / 2);
+	Melder_information ("%.17g (=probability, based on chisq= %.17g, ndf = %s)",
+		p, chisq, Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2));
 END
  
 DIRECT (SSCP_to_Correlation)
@@ -3892,8 +3946,7 @@ DO
 END
 
 DIRECT (TableOfReal_getGrandSum)
-	Melder_informationReal (TableOfReal_getGrandSum 
-		(ONLY_GENERIC(classTableOfReal)), NULL);
+	Melder_informationReal (TableOfReal_getGrandSum (ONLY_GENERIC(classTableOfReal)), NULL);
 END
 
 FORM (TableOfReal_meansByRowLabels, "TableOfReal: Means by row labels", "TableOfReal: To TableOfReal (means by row labels)...")
@@ -4605,6 +4658,9 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classFormantFilter, 0, "Draw filter functions...", 
 		"Draw filters...", 1, DO_FormantFilter_drawFilterFunctions);
 
+	praat_addAction1 (classIntensity, 0, "To TextGrid (silences)...", "To IntensityTier (valleys)",
+		0, DO_Intensity_to_TextGrid_detectSilences);
+	
 	praat_addAction1 (classISpline, 0, "ISpline help", 0, 0, DO_ISpline_help);
 	praat_Spline_init (classISpline);
 
@@ -4741,6 +4797,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classPermutation, 1, "Invert", 0, 0, DO_Permutation_invert);
 	praat_addAction1 (classPermutation, 0, "Multiply", 0, 0, DO_Permutations_multiply);
 
+	praat_addAction1 (classPitch, 2, "To DTW...", "To PointProcess", praat_HIDDEN, DO_Pitches_to_DTW);
+
 	praat_addAction1 (classPitchTier, 0, "To Pitch...", "To Sound (sine)...", 1, DO_PitchTier_to_Pitch);
 	praat_addAction1 (classPolygon, 0, "Translate...", "Modify", 0,
 		DO_Polygon_translate);
@@ -4809,8 +4867,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSound, 1, "Write to raw 16-bit Little Endian "
 		"file...", 0, 0, DO_Sound_writeToRawFileLE);
 		
-	praat_addAction1 (classSound, 0, "To IntervalTier (silence)...", "To IntervalTier",
-		1, DO_Sound_to_IntervalTier_detectSilence);
+	praat_addAction1 (classSound, 0, "To TextGrid (silences)...", "To IntervalTier",
+		1, DO_Sound_to_TextGrid_detectSilences);
 		
 	praat_addAction1 (classSound, 0, "To Pitch (shs)...", "To Pitch (cc)...",
 		1, DO_Sound_to_Pitch_shs);
@@ -4831,12 +4889,17 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classSound, 0, "Change gender...",
 		"Deepen band modulation...", 1, DO_Sound_changeGender);
+	
+	praat_addAction1 (classSound, 0, "Change speaker...",
+		"Deepen band modulation...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_changeSpeaker);
 
 	praat_addAction2 (classSound, 1, classPitch, 1, "To FormantFilter...",
 		0, 0, DO_Sound_and_Pitch_to_FormantFilter);
 
 	praat_addAction2 (classSound, 1, classPitch, 1, "Change gender...",
 		0, 0, DO_Sound_and_Pitch_changeGender);
+	praat_addAction2 (classSound, 1, classPitch, 1, "Change speaker...",
+		0, praat_HIDDEN, DO_Sound_and_Pitch_changeSpeaker);
 
     praat_addAction1 (classSpectrogram, 2, "To DTW...", 
 		"To Spectrum (slice)...", 0, DO_Spectrograms_to_DTW);
