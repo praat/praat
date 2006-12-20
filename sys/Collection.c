@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2004/10/16 C++ compatible structs
  * pb 2006/08/08 reduced compiler warnings
+ * pb 2006/12/17 better info
  */
 
 #include "Collection.h"
@@ -36,7 +37,7 @@ static void classCollection_destroy (I) {
 
 static void classCollection_info (I) {
 	iam (Collection);
-	Melder_information ("%ld items", my size);
+	MelderInfo_writeLine2 (Melder_integer (my size), " items");
 }
 
 static int classCollection_copy (I, thou) {

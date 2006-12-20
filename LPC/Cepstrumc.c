@@ -19,6 +19,7 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20061218 Changed info to Melder_writeLine<x> format.
 */
 
 #include "Cepstrumc.h"
@@ -44,14 +45,13 @@
 static void info (I)
 {
 	iam (Cepstrumc);
-	Melder_information("Cepstrumc info\nName: %s\n"
-		"Time domain: from %.8g to %.8g seconds.\n"
-		"number of coefficients: %ld\n"
-		"Number of frames: %ld\n"
-		"Time step: %.8g seconds\n"
-		"First frame at: %.8g seconds\n",		
-		Thing_getName (me), my xmin, my xmax,
-		my maxnCoefficients, my nx, my dx, my x1);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("  Start time: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 ("  End time: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 ("  Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine2 ("  Time step: ", Melder_double (my dx));
+	MelderInfo_writeLine2 ("  First frame at: ", Melder_double (my x1));
+	MelderInfo_writeLine2 ("  Number of coefficients: ", Melder_integer (my maxnCoefficients));
 }
 
 class_methods (Cepstrumc, Sampled)

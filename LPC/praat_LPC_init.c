@@ -21,6 +21,7 @@
  djmw 20030613 Latest modification
  djmw 20040414 Forms texts.
  djmw 20060428 Latest modification
+ djmw 20061218 Changed to Melder_information<x> format.
 */
 
 #include <math.h>
@@ -160,7 +161,7 @@ END
 
 DIRECT (LPC_getSamplingInterval)
 	LPC me = ONLY (classLPC);
-	Melder_information ("%s seconds", Melder_double (my samplingPeriod));
+	Melder_information2 (Melder_double (my samplingPeriod), " seconds");
 END
 
 FORM (LPC_getNumberOfCoefficients, "LPC: Get number of coefficients", "LPC: Get number of coefficients...")
@@ -172,10 +173,10 @@ DO
 	if (iframe > my nx)
 	{
 		(void) Melder_error ("Frame number is too large.\n\nPlease choose a number between 1 and %ld.", my nx);
-		Melder_information ("-1 coefficients (frame number was not defined)");
+		Melder_information1 ("-1 coefficients (frame number was not defined)");
 		return 0;
 	}
-	Melder_information ("%ld coefficients", (my frame[iframe]).nCoefficients);
+	Melder_information2 (Melder_integer ((my frame[iframe]).nCoefficients), " coefficients");
 END
 
 FORM (LPC_drawPoles, "LPC: Draw poles", "LPC: Draw poles...")
@@ -353,7 +354,7 @@ DIRECT (VocalTract_getLength)
 	VocalTract v = ONLY_OBJECT;
     double length = v -> xmax - v -> xmin;
     if (length <= 0.02) length = NUMundefined;
-	Melder_informationReal (length, "m");
+	Melder_information2 (Melder_integer (length), " m");
 END
 
 /******************* LPC & Sound *************************************/

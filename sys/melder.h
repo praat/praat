@@ -20,7 +20,7 @@
  */
 
 /*
-	pb 2006/12/13
+	pb 2006/12/19
  */
 
 #include <stdio.h>
@@ -312,29 +312,45 @@ void Melder_casual (const char *format, ...);
 		Writes to stderr on Unix, otherwise to a special window.
 */
 
+/* Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string. */
+
 void MelderInfo_open (void);   /* Clear the Info window in the background. */
 void MelderInfo_write1 (const char *s1);   /* Write a string to the Info window in the background. */
 void MelderInfo_write2 (const char *s1, const char *s2);   /* Write two strings to the Info window in the background. */
 void MelderInfo_write3 (const char *s1, const char *s2, const char *s3);
 void MelderInfo_write4 (const char *s1, const char *s2, const char *s3, const char *s4);
 void MelderInfo_write5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5);
+void MelderInfo_write6 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6);
+void MelderInfo_write7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
+void MelderInfo_write8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
+void MelderInfo_write9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
 void MelderInfo_writeLine1 (const char *s1);   /* Write a string to the Info window in the background; add a new-line. */
 void MelderInfo_writeLine2 (const char *s1, const char *s2);
 void MelderInfo_writeLine3 (const char *s1, const char *s2, const char *s3);
 void MelderInfo_writeLine4 (const char *s1, const char *s2, const char *s3, const char *s4);
 void MelderInfo_writeLine5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5);
+void MelderInfo_writeLine6 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6);
+void MelderInfo_writeLine7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
+void MelderInfo_writeLine8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
+void MelderInfo_writeLine9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
 void MelderInfo_close (void);   /* Flush the background info to the Info window. */
 
-void Melder_information (const char *format, ...);   /* Clear the Info window and write formatted text to it. */
-void Melder_informationReal (double value, const char *units);   /* %.17g or --undefined--; units may be NULL */
-	/* Give information to stdout (batch) or to an "Info" window (interactive). */
+void Melder_information1 (const char *s1);
+void Melder_information2 (const char *s1, const char *s2);
+void Melder_information3 (const char *s1, const char *s2, const char *s3);
+void Melder_information4 (const char *s1, const char *s2, const char *s3, const char *s4);
+void Melder_information5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5);
+void Melder_information6 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6);
+void Melder_information7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
+void Melder_information8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
+void Melder_information9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
 
-void Melder_info (const char *format, ...);   /* Write formatted text to the Info window without clearing it; append a newline. */
+void Melder_informationReal (double value, const char *units);   /* %.17g or --undefined--; units may be NULL */
 
 void Melder_divertInfo (MelderStringA *buffer);   /* NULL = back to normal. */
 
-void Melder_print (const char *format, ...);
-	/* The same as Melder_info, but without adding a new-line symbol at the end. */
+void Melder_print (const char *s);
+	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
 
 void Melder_clearInfo (void);   /* Clear the Info window. */
 char * Melder_getInfo (void);

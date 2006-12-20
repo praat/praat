@@ -18,8 +18,9 @@
  */
 
 /*
- * pb 2001/08/02
+ * pb 2001/08/02 last change
  * pb 2002/07/16 GPL
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "Artword_Speaker_Sound.h"
@@ -59,7 +60,8 @@ void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound,
 		}
 		own = TRUE;
 	}
-	Sound_play (sound, playCallback, & info);
+	Sound_play (sound, NULL, playCallback, & info);
+	iferror Melder_clearError ();
 	if (own) {
 		forget (sound);
 	}

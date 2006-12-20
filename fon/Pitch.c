@@ -1,6 +1,6 @@
 /* Pitch.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2005/06/16 function units
  * pb 2005/08/31 semitones re 200 Hz
+ * pb 2006/12/17 Pitch_getMeanAbsoluteSlope returns NUMundefined instead of 0.0
+ * pb 2006/12/18 better info
  */
 
 #include "Pitch.h"
@@ -280,10 +282,11 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 		if (out_erb) *out_erb = slopeErb / span;
 		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = slopeRobust / span;
 	} else {
-		if (out_hertz) *out_hertz = 0.0;
-		if (out_mel) *out_mel = 0.0;
-		if (out_semitones) *out_semitones = 0.0;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = 0.0;
+		if (out_hertz) *out_hertz = NUMundefined;
+		if (out_mel) *out_mel = NUMundefined;
+		if (out_semitones) *out_semitones = NUMundefined;
+		if (out_erb) *out_erb = NUMundefined;
+		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = NUMundefined;
 	}
 	NUMdvector_free (frequencies, 1);
 	return nVoiced;
@@ -623,12 +626,13 @@ void Pitch_difference (Pitch me, Pitch thee) {
 			}
 		}
 	}
-	Melder_information ("Difference between two Pitches:\n\n"
-		"Unvoiced to voiced: %ld frames.\n"
-		"Voiced to unvoiced: %ld frames.\n"
-		"Downward frequency jump: %ld frames.\n"
-		"Upward frequency jump: %ld frames.",
-		nuvtov, nvtouv, ndfdown, ndfup);
+	MelderInfo_open ();
+	MelderInfo_writeLine1 ("Difference between two Pitches:");
+	MelderInfo_writeLine3 ("Unvoiced to voiced: ", Melder_integer (nuvtov), " frames.");
+	MelderInfo_writeLine3 ("Voiced to unvoiced: ", Melder_integer (nvtouv), " frames.");
+	MelderInfo_writeLine3 ("Downward frequency jump: ", Melder_integer (ndfdown), " frames.");
+	MelderInfo_writeLine3 ("Upward frequency jump: ", Melder_integer (ndfup), " frames.");
+	MelderInfo_close ();
 }
 
 Pitch Pitch_killOctaveJumps (Pitch me) {

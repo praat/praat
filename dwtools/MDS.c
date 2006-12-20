@@ -1,6 +1,6 @@
 /* MDS.c
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20020513 Applied TableOfReal_setSequential{Column/Row}Labels
  djmw 20030623 Modified calls to NUMeigensystem_d
  djmw 20040309 Extra tests for empty objects.
+ djmw 20061218 Changed to Melder_information<x> format.
 */
 
 #include "SVD.h"
@@ -580,29 +581,27 @@ end:
 static void classContingencyTable_info (I)
 {
 	iam (ContingencyTable); 
-	long df;
+	long ndf;
     double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
-    
+
     ContingencyTable_entropies (me, &h, &hx, &hy, &hygx, &hxgy, 
 		&uygx, &uxgy, &uxy);
-    ContingencyTable_chisq (me, &chisq, &df);
+    ContingencyTable_chisq (me, &chisq, &ndf);
 
-    Melder_information("Number of rows: %ld\nNumber of columns: %ld\n\n"
-    	"Entropies (y is row variable):\n"
-		"%.17g :total\n"
-		"%.17g :y\n"
-		"%.17g :x\n"
-		"%.17g :y given x\n"
-		"%.17g :x given y\n"
-		"%.17g :dependency of y on x\n"
-		"%.17g :dependency of x on y\n"
-		"%.17g :symmetrical dependency\n\n"
-		"%.17g :chi squared\n"
-		"%d :degrees of freedom\n"
-		"%.17g : probability",
-		my numberOfRows, my numberOfColumns, h, hy, hx, hygx, hxgy, uygx, 
-		uxgy, uxy, chisq, df, ContingencyTable_chisqProbability (me));
-	
+	Melder_information2 ("Number of rows: ", Melder_integer (my numberOfRows));
+	Melder_information2 ("Number of columns: ", Melder_integer (my numberOfColumns));
+	Melder_information1 ("Entropies (y is row variable):");
+	Melder_information2 ("  Total: ", Melder_double (h));
+	Melder_information2 ("  Y: ", Melder_double (hy));
+	Melder_information2 ("  X: ", Melder_double (hx));
+	Melder_information2 ("  Y given x: ", Melder_double (hygx));
+	Melder_information2 ("  X given y: ", Melder_double (hxgy));
+	Melder_information2 ("  Dependency of y on x: ", Melder_double (uygx));
+	Melder_information2 ("  Dependency of x on y: ", Melder_double (uxgy));
+	Melder_information2 ("  Symmetrical dependency: ", Melder_double (uxy));
+	Melder_information2 ("  Chi squared: ", Melder_double (chisq));
+	Melder_information2 ("  Degrees of freedom: ", Melder_integer (ndf));
+	Melder_information2 ("  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));	
 }
 
 class_methods (ContingencyTable, TableOfReal)
@@ -1842,10 +1841,7 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me,
 			x = NUMinvGaussQ (x);
 			y = NUMinvGaussQ (y);
 			d = x + y * exp ((y * y - x * x) / 2);
-			/*
-			Melder_info ("i, j, x, y, d: %d %d %.17g %.17g %.17g", 
-				i, j, x, y, d);
-			*/
+			/* Melder_info ("i, j, x, y, d: %d %d %.17g %.17g %.17g", i, j, x, y, d); */
 			thy data[i][j] = thy data [j][i] = d;
 		}
 	}
@@ -2352,7 +2348,7 @@ int ScalarProducts_to_Configuration_ytl (ScalarProducts me,
 			a[j][i] = a[i][j] =  NUMtrace2 (ci[i], ci[j], numberOfDimensions)
 				- NUMtrace (ci[i], numberOfDimensions) * 
 				NUMtrace (ci[j], numberOfDimensions) / numberOfDimensions;
-				Melder_info ("i, j, a[i][j] %ld %ld %g", i, j, a[i][j]);
+				/* Melder_info ("i, j, a[i][j] %ld %ld %g", i, j, a[i][j]); */
 		}
 	}
 	
@@ -3986,23 +3982,22 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	
 	if (showProgress)
 	{
-		Melder_clearInfo ();
-		Melder_info ("**************** INDSCAL with monotone regression "
-			"*******************\n\n %s, number of object(s): %d\n",
-			Thing_className (dissims), nSources);
+		MelderInfo_open ();
+		MelderInfo_writeLine1 ("**************** INDSCAL with monotone regression *******************");
+		MelderInfo_writeLine1  (Thing_className (dissims));
+		MelderInfo_writeLine2  ("Number of objects: ", Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{
-			Melder_info ("  %s", Thing_getName (dissims -> item[i]));
+			MelderInfo_writeLine2 ("  ", Thing_getName (dissims -> item[i]));
 		}
 		if (nZeros > 0)
 		{
-			Melder_info ("WARNING: %d zero weight%s!", nZeros, 
-				nZeros > 1 ? "s": "");
+			MelderInfo_writeLine4 ("WARNING: ", Melder_integer (nZeros), " zero weight", (nZeros > 1 ? "s": ""));
 		}
-		Melder_info ("\n\nVariance Accounted For = %.17g\n\nBased on "
-			"MONOTONE REGRESSION\n\nThe optimal configuration was reached "
-			"in %d iterations\n", *vaf, (i > numberOfIterations ? 
-				numberOfIterations : i));
+		MelderInfo_writeLine2  ("Variance Accounted For: ", Melder_double (*vaf));
+		MelderInfo_writeLine1 ("Based on MONOTONE REGRESSION");
+		MelderInfo_writeLine2  ("number of iterations: ", Melder_integer ((i > numberOfIterations ?	numberOfIterations : i)));
+		MelderInfo_close ();
 	}		
 	
 end:

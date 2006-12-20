@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20061204 Latest modification.
+#  djmw 20061222 Latest modification.
 
 
 include ../makefile.defs
@@ -40,7 +40,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Configuration_and_Procrustes.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_Pattern_Categories.o \
-	Eigen.o Eigen_and_Matrix.o Eigen_and_Procrustes.o \
+	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o Formant_extensions.o \
@@ -55,7 +55,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o \
-	Sampled_extensions.o Sampled2.o \
+	Sampled2.o \
 	Sound_and_FilterBank.o Sound_extensions.o \
 	Sound_to_MFCC.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \

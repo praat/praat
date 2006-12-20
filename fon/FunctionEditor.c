@@ -1,6 +1,6 @@
 /* FunctionEditor.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/09/23 interface update
  * pb 2005/12/07 scrollStep
+ * pb 2006/12/18 better info
+ * pb 2006/12/21 thicker moving cursor
  */
 
 #include "FunctionEditor.h"
@@ -525,12 +527,10 @@ DO
 	updateGroup (me);
 END
 
-DIRECT (FunctionEditor, cb_getCursor) Melder_information ("%.17g %s", 0.5 * (my startSelection + my endSelection), our format_units); END
-DIRECT (FunctionEditor, cb_getB) Melder_information ("%.17g %s", my startSelection, our format_units); END
-DIRECT (FunctionEditor, cb_getE) Melder_information ("%.17g %s", my endSelection, our format_units); END
-DIRECT (FunctionEditor, cb_getSelectionDuration)
-	Melder_information ("%.17g %s", my endSelection - my startSelection, our format_units);
-END
+DIRECT (FunctionEditor, cb_getCursor) Melder_informationReal (0.5 * (my startSelection + my endSelection), our format_units); END
+DIRECT (FunctionEditor, cb_getB) Melder_informationReal (my startSelection, our format_units); END
+DIRECT (FunctionEditor, cb_getE) Melder_informationReal (my endSelection, our format_units); END
+DIRECT (FunctionEditor, cb_getSelectionDuration) Melder_informationReal (my endSelection - my startSelection, our format_units); END
 
 void FunctionEditor_shift (I, double shift) {
 	iam (FunctionEditor);
@@ -1223,13 +1223,19 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 	 * Undraw the play cursor at its old location.
 	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
 	 */
-	if (phase != 1 && my playCursor >= my startWindow && my playCursor <= my endWindow)
+	if (phase != 1 && my playCursor >= my startWindow && my playCursor <= my endWindow) {
+		Graphics_setLineWidth (my graphics, 3.0);
 		Graphics_line (my graphics, my playCursor, 0, my playCursor, 1);
+		Graphics_setLineWidth (my graphics, 1.0);
+	}
 	/*
 	 * Draw the play cursor at its new location.
 	 */
-	if (phase != 3 && t >= my startWindow && t <= my endWindow)
+	if (phase != 3 && t >= my startWindow && t <= my endWindow) {
+		Graphics_setLineWidth (my graphics, 3.0);
 		Graphics_line (my graphics, t, 0, t, 1);
+		Graphics_setLineWidth (my graphics, 1.0);
+	}
 	Graphics_xorOff (my graphics);
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,

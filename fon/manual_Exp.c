@@ -1,6 +1,6 @@
 /* manual_Exp.c
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ NORMAL ("This experiment will play 4 different stimuli to the listener, each 3 t
 	"Thus, the listener is confronted with 12 trials.")
 MAN_END
 
-MAN_BEGIN ("ExperimentMFC 2.2. The stimuli", "ppgb", 20051205)
+MAN_BEGIN ("ExperimentMFC 2.2. The stimuli", "ppgb", 20061220)
 INTRO ("You can see that the @@ExperimentMFC 2.1. The experiment file|example experiment@ "
 	"contains four different stimuli: %heed, %hid, %hood, and %hud. "
 	"These are the %names of the four stimuli.")
@@ -144,7 +144,8 @@ LIST_ITEM ("Sounds/hood.wav")
 LIST_ITEM ("Sounds/hud.wav")
 NORMAL ("You need not use WAV files. You can also use AIFF files, "
 	"in which case %stimulusFileNameTail would probably be \".aiff\", or any other "
-	"type of sound file that Praat supports. But all sound files must have the same sampling frequency.")
+	"type of sound file that Praat supports. But all sound files must have the same number of channels "
+	"(i.e. all mono or all stereo) and the same sampling frequency.")
 NORMAL ("In this example, the experiment will look for the sound files in the directory #Sounds, "
 	"which has to be in the same directory as your experiment file. "
 	"In other words, \"Sounds/heed.wav\" is a %%relative file path%.")
@@ -483,7 +484,7 @@ INTRO ("The @@ExperimentMFC 2.1. The experiment file|example experiment@ contain
 CODE ("maximumNumberOfReplays = 0")
 CODE ("replayButton = 0 0 0 0 \"\" \"\"")
 NORMAL ("This means that that experiment did not have a replay button. "
-	"To add a replay button along the lower edge of the screen, you do something likw")
+	"To add a replay button along the lower edge of the screen, you do something like")
 CODE ("maximumNumberOfReplays = 1000")
 CODE ("replayButton = 0.3 0.7 0.01 0.07 \"Click here to play the last sound again\" \"\"")
 NORMAL ("If you supply a right edge (here 0.7) that is greater than the left edge (here 0.3), "
@@ -621,7 +622,7 @@ MAN_END
 
 MAN_BEGIN ("ExperimentMFC 6. Responses are sounds", "ppgb", 20051205)
 INTRO ("In the @@ExperimentMFC 2.1. The experiment file|example experiment@, "
-	"the stimuli were sounds, and the responses were categories wose labels appeared on buttons. "
+	"the stimuli were sounds, and the responses were categories whose labels appeared on buttons. "
 	"Sometimes you want it the other way around.")
 NORMAL ("An example is the %%/i/ prototype% task: the top of the screen just says \"Please choose the best %ee\", "
 	"and no stimulus sound is played. Instead, the participant can click repeatedly on an array of 40 buttons, "

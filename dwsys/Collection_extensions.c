@@ -21,6 +21,8 @@
  djmw 20020812 GPL header
  djmw 20040420 Fraction in OrderedOfString_difference must be double.
  djmw 20050511 Skip printing unique labels in OrderedOfString
+ djmw 20061214 
+ djmw 20061214 Changed info to Melder_writeLine<x> format.
 */
 
 #include "Collection_extensions.h"
@@ -81,11 +83,12 @@ static void info (I)
 	iam (OrderedOfString); 
 	OrderedOfString uStrings = NULL;
 	
-    Melder_info ("%ld strings.", my size);
+	classData -> info (me);
+	MelderInfo_writeLine2 ("Number of strings: ", Melder_integer (my size));
 	uStrings = OrderedOfString_selectUniqueItems (me, 1);
     if (uStrings != NULL)
 	{
-    	Melder_info ("%ld unique categories.", uStrings->size);
+		MelderInfo_writeLine2 ("Number of unique categories: ", Melder_integer (uStrings -> size));
 		forget (uStrings);
 	}
 }
@@ -236,8 +239,7 @@ int OrderedOfString_difference (I, thou, long *ndif, double *fraction)
 	*ndif = 0; *fraction = 1;
 	if (my size != thy size)
 	{
-		Melder_flushError 
-			("OrderedOfString_difference: the number of items differ");
+		Melder_flushError ("OrderedOfString_difference: the number of items differ");
 		return 0;
 	}
 	for (i = 1; i <= my size; i++)

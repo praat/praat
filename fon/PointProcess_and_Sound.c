@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/04/15 improved handling of edges in Sound_getRms
  * pb 2003/07/20 moved shimmer measurements to VoiceAnalysis.c
  * pb 2005/07/07 glottal source signals
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "PointProcess_and_Sound.h"
@@ -193,7 +194,7 @@ Sound PointProcess_to_Sound_phonation
 int PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
-	Sound_playPart (sound, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -210,7 +211,7 @@ int PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) return 0;
-	Sound_playPart (sound, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }

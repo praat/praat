@@ -358,7 +358,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		SetPort (my macPort);
 		RGBForeColor (& theBlackColour);
 	#endif
-	/*Melder_information("duration %ld",clock()-t);*/
+	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
 }
 
 #define INTERPOLATE_IN_POSTSCRIPT  TRUE

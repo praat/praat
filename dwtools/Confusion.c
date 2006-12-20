@@ -1,6 +1,6 @@
 /* Confusion.c
  *
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20010628
  djmw 20020813 GPL header
  djmw 20030116 Latest modification
+ djmw 20061214 Changed info to Melder_writeLine<x> format.
 */
 
 #include "Confusion.h"
@@ -43,17 +44,17 @@ static void info (I)
     MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
     MelderInfo_writeLine2 ("Number of colums: ", Melder_integer (my numberOfColumns));
     MelderInfo_writeLine1 ("Entropies (y is row variable):");
-    MelderInfo_writeLine2 (Melder_double(h), " :total");
-    MelderInfo_writeLine2 (Melder_double(hy), " :y");
-    MelderInfo_writeLine2 (Melder_double(hx), " :x");
-    MelderInfo_writeLine2 (Melder_double(hygx), " :y given x");
-    MelderInfo_writeLine2 (Melder_double(hxgy), " :x given y");
-    MelderInfo_writeLine2 (Melder_double(uygx), " :dependency of y on x");
-    MelderInfo_writeLine2 (Melder_double(uxgy), " :dependency of x on y");
-    MelderInfo_writeLine2 (Melder_double(uxy), " :symmetrical dependency");
-    MelderInfo_writeLine2 (Melder_integer (Confusion_getNumberOfEntries (me)), 
-    	" :total number of entries");
-	MelderInfo_writeLine2 (Melder_double (frac), " :fraction correct");
+    MelderInfo_writeLine2 ("  Total: ", Melder_double(h));
+    MelderInfo_writeLine2 ("  Y: ", Melder_double(hy));
+    MelderInfo_writeLine2 ("  X: ", Melder_double(hx));
+    MelderInfo_writeLine2 ("  Y given x: ", Melder_double(hygx));
+    MelderInfo_writeLine2 ("  X given y: ", Melder_double(hxgy));
+    MelderInfo_writeLine2 ("  Dependency of y on x; ", Melder_double(uygx));
+    MelderInfo_writeLine2 ("  Dependency of x on y: ", Melder_double(uxgy));
+    MelderInfo_writeLine2 ("  Symmetrical dependency: ", Melder_double(uxy));
+    MelderInfo_writeLine2 ("  Total number of entries: ", 
+    	Melder_integer (Confusion_getNumberOfEntries (me)));
+	MelderInfo_writeLine2 ("  raction correct: ", Melder_double (frac));
 }
 
 class_methods (Confusion, TableOfReal)

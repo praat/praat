@@ -1,6 +1,6 @@
 /* PointEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  */
 
 /*
- * pb 2002/03/08
  * pb 2002/07/16 GPL
  * pb 2003/05/17 more shimmer measurements
  * pb 2003/05/21 more jitter measurements
  * pb 2004/04/16 added a fixed maximum period factor of 1.3
  * pb 2004/04/21 less flashing
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "PointEditor.h"
@@ -197,7 +197,7 @@ static void draw (I) {
 static void play (I, double tmin, double tmax) {
 	iam (PointEditor);
 	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
 	} else {
 		if (! PointProcess_playPart (my data, tmin, tmax)) Melder_flushError (NULL);
 	}

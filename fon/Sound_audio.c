@@ -25,6 +25,7 @@
  * pb 2005/06/16 removed previous change (System Preferences handles this)
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
  */
 
 #include <errno.h>
@@ -654,7 +655,7 @@ static int melderPlayCallback (void *closure, long samplesPlayed) {
 		samplesPlayed >= my zeroPadding + my numberOfSamples ? my tmax :
 		my t1 + (my i1 - 1.5 + samplesPlayed - my zeroPadding) * my dt;
 	if (! Melder_isPlaying) {
-		NUMsvector_free (my buffer, my i1 - my zeroPadding), my buffer = 0;
+		NUMsvector_free (my buffer, 1), my buffer = 0;
 		phase = 3;
 	}
 	if (my callback)
@@ -662,48 +663,68 @@ static int melderPlayCallback (void *closure, long samplesPlayed) {
 	return 1;
 }
 
-void Sound_playPart (Sound me, double tmin, double tmax,
+int Sound_playPart (Sound left, Sound right, double tmin, double tmax,
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
 {
-	long ifsamp = floor (1.0 / my dx + 0.5), bestSampleRate = Melder_getBestSampleRate (ifsamp);
+	if (right != NULL) {
+		if (left -> xmin != right -> xmin || left -> xmax != right -> xmax || left -> nx != right -> nx ||
+		    left -> dx != right -> dx || left -> x1 != right -> x1)
+		{
+			return Melder_error ("The time samplings of the two sounds do not match.");
+		}
+	}
+	long ifsamp = floor (1.0 / left -> dx + 0.5), bestSampleRate = Melder_getBestSampleRate (ifsamp);
 	if (ifsamp == bestSampleRate) {
 		struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
-		float *from = my z [1];
-		short *to;
-		long i, i1, i2;
+		float *fromLeft = left -> z [1], *fromRight = right ? right -> z [1] : NULL;
 		Melder_stopPlaying (Melder_IMPLICIT);
-		if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;
+		long i1, i2;
+		if ((thy numberOfSamples = Matrix_getWindowSamplesX (left, tmin, tmax, & i1, & i2)) < 1) goto end;
 		thy tmin = tmin;
 		thy tmax = tmax;
-		thy dt = my dx;
-		thy t1 = my x1;
+		thy dt = left -> dx;
+		thy t1 = left -> x1;
 		thy callback = callback;
 		thy closure = closure;
 		thy zeroPadding = (long) (ifsamp * Melder_getZeroPadding ());
-		to = NUMsvector (i1 - thy zeroPadding, i2 + thy zeroPadding);
-		if (! to) { Melder_flushError (NULL); return; }
+		int numberOfChannels = right ? 2 : 1;
+		thy buffer = NUMsvector (1, (i2 - i1 + 1 + 2 * thy zeroPadding) * numberOfChannels); cherror
 		thy i1 = i1;
 		thy i2 = i2;
-		thy buffer = to;
-		for (i = i1; i <= i2; i ++) {
-			long value = floor (from [i] * 32768.0 + 0.5);
-			to [i] = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+		short *to = thy buffer;
+		if (numberOfChannels == 2) {
+			for (long i = i1; i <= i2; i ++) {
+				long valueLeft = (long) floor (fromLeft [i] * 32768.0 + 0.5);
+				* ++ to = valueLeft < -32768 ? -32768 : valueLeft > 32767 ? 32767 : valueLeft;
+				long valueRight = (long) floor (fromRight [i] * 32768.0 + 0.5);
+				* ++ to = valueRight < -32768 ? -32768 : valueRight > 32767 ? 32767 : valueRight;
+			}
+		} else {
+			for (long i = i1; i <= i2; i ++) {
+				long value = (long) floor (fromLeft [i] * 32768.0 + 0.5);
+				* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+			}
 		}
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
-		if (! Melder_play16 (thy buffer + i1 - thy zeroPadding, ifsamp,
-			thy zeroPadding + thy numberOfSamples + thy zeroPadding, 1, melderPlayCallback, thee))
+		if (! Melder_play16 (thy buffer + 1, ifsamp,
+			thy zeroPadding + thy numberOfSamples + thy zeroPadding, numberOfChannels, melderPlayCallback, thee))
 			Melder_flushError (NULL);
 	} else {
-		Sound resampled = Sound_resample (me, bestSampleRate, 1);
-		Sound_playPart (resampled, tmin, tmax, callback, closure);   /* Recursively. */
-		forget (resampled);
+		Sound resampledLeft = Sound_resample (left, bestSampleRate, 1);
+		Sound resampledRight = right ? Sound_resample (right, bestSampleRate, 1) : NULL;
+		Sound_playPart (resampledLeft, resampledRight, tmin, tmax, callback, closure);   /* Recursively. */
+		forget (resampledLeft);
+		forget (resampledRight);
 	}
+end:
+	iferror return 0;
+	return 1;
 }
 
-void Sound_play (Sound me,
+int Sound_play (Sound left, Sound right,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure)
 {
-	Sound_playPart (me, my xmin, my xmax, playCallback, playClosure);
+	return Sound_playPart (left, right, left -> xmin, left -> xmax, playCallback, playClosure);
 }
 
 /* End of file Sound_audio.c */

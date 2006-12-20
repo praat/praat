@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/01/05
+ * pb 2006/12/20
  */
 
 #include "praat.h"
@@ -100,7 +100,7 @@ END
 
 DIRECT (LongSound_getNumberOfSamples)
 	LongSound me = ONLY (classLongSound);
-	Melder_information ("%ld samples", my nx);
+	Melder_information2 (Melder_integer (my nx), " samples");
 END
 
 DIRECT (LongSound_help) Melder_help ("LongSound"); END
@@ -715,7 +715,7 @@ END
 
 DIRECT (Sound_getNumberOfSamples)
 	Sound me = ONLY (classSound);
-	Melder_information ("%ld samples", my nx);
+	Melder_information2 (Melder_integer (my nx), " samples");
 END
 
 FORM (Sound_getPower, "Sound: Get power", "Sound: Get power...")
@@ -865,10 +865,10 @@ DIRECT (Sound_play)
 	int n = 0;
 	EVERY (n ++)
 	if (n == 1 || Melder_getMaximumAsynchronicity () < Melder_ASYNCHRONOUS) {
-		EVERY (Sound_play (OBJECT, NULL, NULL))
+		EVERY (Sound_play (OBJECT, NULL, NULL, NULL))
 	} else {
 		Melder_setMaximumAsynchronicity (Melder_INTERRUPTABLE);
-		EVERY (Sound_play (OBJECT, NULL, NULL))
+		EVERY (Sound_play (OBJECT, NULL, NULL, NULL))
 		Melder_setMaximumAsynchronicity (Melder_ASYNCHRONOUS);
 	}
 END
@@ -1619,12 +1619,12 @@ static int recordFromFileProc (MelderFile file) {
 	if (! melderSoundFromFile) return 0;
 	if (! Thing_member (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
 	last = melderSoundFromFile;
-	Sound_play (melderSoundFromFile, NULL, NULL);
+	Sound_play (melderSoundFromFile, NULL, NULL, NULL);
 	return 1;
 }
 static void playProc (void) {
 	if (melderSound) {
-		Sound_play (melderSound, NULL, NULL);
+		Sound_play (melderSound, NULL, NULL, NULL);
 		last = melderSound;
 	}
 }

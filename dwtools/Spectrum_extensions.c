@@ -1,6 +1,6 @@
 /* Spectrum_extensions.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20031023 New: Spectra_multiply, Spectrum_conjugate
  djmw 20040506 Changed warning message in Spectrum_drawPhases.
  djmw 20041124 Changed call to Sound_to_Spectrum.
+ djmw 20061218 Introduction of Melder_information<12...9>
 */
 
 #include "Spectrum_extensions.h"
@@ -272,9 +273,8 @@ Matrix Spectrum_unwrap (Spectrum me)
 			thy z[2][i] -= phase * (i - 1);
 		}
 	}
-	
-	Melder_information ("Spectrum_unwrapPhases: %d spectral values "
-		"calculated. (iphase = %d).", tbs.count, iphase);	
+	Melder_information2 ("Number of spectral values: ", Melder_integer (tbs.count));
+	Melder_information2 (" iphase = ", Melder_integer (iphase));
 end:
 
 	Melder_progress (1.0, NULL);

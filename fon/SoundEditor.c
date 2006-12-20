@@ -24,6 +24,7 @@
  * pb 2005/06/16 units
  * pb 2005/09/21 interface update
  * pb 2006/05/10 repaired memory leak in do_write
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "SoundEditor.h"
@@ -592,7 +593,7 @@ static void play (I, double tmin, double tmax) {
 	if (my longSound.data)
 		LongSound_playPart (my data, tmin, tmax, our playCallback, me);
 	else
-		Sound_playPart (my data, tmin, tmax, our playCallback, me);
+		Sound_playPart (my data, NULL, tmin, tmax, our playCallback, me);
 }
 
 static void dataChanged (I) {

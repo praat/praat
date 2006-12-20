@@ -22,6 +22,7 @@
  * pb 2002/10/06 improved visilibity of dragging
  * pb 2004/04/13 less flashing
  * pb 2006/12/08 keyboard shortcuts
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "RealTierEditor.h"
@@ -348,7 +349,7 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 static void play (I, double tmin, double tmax) {
 	iam (RealTierEditor);
 	if (my sound.data)
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
 }
 
 class_methods (RealTierEditor, FunctionEditor)

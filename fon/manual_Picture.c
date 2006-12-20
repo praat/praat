@@ -135,7 +135,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
-MAN_BEGIN ("Special symbols", "ppgb", 20031102)
+MAN_BEGIN ("Special symbols", "ppgb", 20061214)
 INTRO ("When drawing text into the @@Picture window@ or into an editor, "
 	"you can use %%backslash sequences% to display various kinds of special symbols.")
 
@@ -176,7 +176,7 @@ LIST_ITEM ("\\ae \\bsae \\o/ \\bso/ \\ao \\bsao \\Ae \\bsAe \\O/ \\bsO/ \\Ao \\b
 	" \\th \\bsth \\Th \\bsTh")
 #endif
 LIST_ITEM ("\\!d \\bs!d \\?d \\bs?d")
-LIST_ITEM ("\\cu \\bscu (%currency), \\Lp \\bsLp (%sterling), \\Y= \\bsY= (%yen), "
+LIST_ITEM ("\\eu \\bseu (%euro), \\Lp \\bsLp (%sterling), \\Y= \\bsY= (%yen), "
 	"\\fd \\bsfd (Dutch %florin), \\c/ \\bsc/ (%cent)")
 LIST_ITEM ("\\SS \\bsSS (%section), \\|| \\bs|| (%paragraph)")
 LIST_ITEM ("\\co \\bsco (%copyright), \\re \\bsre (%registered), \\tm \\bstm (%trademark)")
@@ -291,12 +291,14 @@ NORMAL ("For most of the codes, the first letter tells you the most similar lett
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20050918)
+MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20061216)
 NORMAL ("To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
 NORMAL ("In line:")
 LIST_ITEM ("\\:f \\bs:f the phonetic length sign")
+LIST_ITEM ("\\\'1 \\bs\'1 primary stress")
+LIST_ITEM ("\\\'2 \\bs\'2 secondary stress")
 LIST_ITEM ("\\|f \\bs|f the phonetic stroke")
 LIST_ITEM ("t\\cn t\\bscn (%corner): unreleased plosive")
 NORMAL ("Understrikes:")

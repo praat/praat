@@ -96,12 +96,12 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		} else if (strnequ (command, "clearinfo", 9)) {
 			Melder_clearInfo ();
 		} else if (strnequ (command, "print ", 6)) {
-			Melder_print ("%s", command + 6);
+			Melder_print (command + 6);
 		} else if (strnequ (command, "printtab", 8)) {
 			Melder_print ("\t");
 		} else if (strnequ (command, "printline", 9)) {
-			if (command [9] == ' ') Melder_print ("%s\n", command + 10);
-			else Melder_print ("\n");
+			if (command [9] == ' ') Melder_print (command + 10);
+			Melder_print ("\n");
 		} else if (strnequ (command, "fappendinfo ", 12)) {
 			FILE *f;
 			structMelderFile file;

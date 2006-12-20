@@ -78,7 +78,7 @@
  *		Changed reg_error to call Melder_error
  *      #include "melder.h"
  * 		Added #ifdef __MACH__ ... #endif for MacOS 10.3
- *  New version:
+ *  djmw 20061218 To Melder_information<x> format
  */
 
 #include <stdio.h>
@@ -4068,7 +4068,7 @@ static void adjustcase (unsigned char *str, int len, unsigned char chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (char *str) {
-	Melder_info ("Internal error processing regular expression (%s)\n", str);
+	Melder_information2 ("Internal error processing regular expression: ", str);
 }
 
 /*----------------------------------------------------------------------*

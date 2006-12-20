@@ -1,6 +1,6 @@
 /* Pitch_extensions.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +126,8 @@ static double SpecialToHertz (double value, int pitchUnit)
 }
 
 PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, 
+	double pitchMin_Hz, double pitchMax_Hz, int pitchUnit);
+PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, 
 	double pitchMin_Hz, double pitchMax_Hz, int pitchUnit)
 {
 	PitchTier thee;
@@ -153,20 +155,6 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 		point -> value = f;
 	}
 	return thee;
-}
-
-void PitchTier_modifyRange (PitchTier me, double tmin, double tmax, double factor, double fmid)
-{
-	long i;
-
-	for (i = 1; i <= my points -> size; i ++)
-	{
-		RealPoint point = my points -> item [i];
-		double f = point -> value;
-		if (point -> time < tmin || point -> time > tmax) continue;
-		f = fmid + (f - fmid) * factor;
-		point -> value = f < 0 ? 0 : f;
-	}
 }
 
 Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling)

@@ -125,7 +125,7 @@ DIRECT (Label_Sound_to_TextGrid)
 END
 
 DIRECT (info_Label_Sound_to_TextGrid)
-	Melder_information ("This is an old-style Label object. To turn it into a TextGrid, "
+	Melder_information1 ("This is an old-style Label object. To turn it into a TextGrid, "
 		"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
 END
 
@@ -579,7 +579,7 @@ FORM (SpellingChecker_isWordAllowed, "Is word allowed?", "SpellingChecker")
 	SENTENCE ("Word", "")
 	OK
 DO
-	Melder_information (SpellingChecker_isWordAllowed (ONLY_OBJECT, GET_STRING ("Word")) ?
+	Melder_information1 (SpellingChecker_isWordAllowed (ONLY_OBJECT, GET_STRING ("Word")) ?
 		"1 (allowed)" : "0 (not allowed)");
 END
 
@@ -589,12 +589,11 @@ FORM (SpellingChecker_nextNotAllowedWord, "Next not allowed word?", "SpellingChe
 	INTEGER ("Starting character", "0")
 	OK
 DO
-	char *sentence = GET_STRING ("sentence"), *result;
+	char *sentence = GET_STRING ("sentence");
 	int startingCharacter = GET_INTEGER ("Starting character");
 	REQUIRE (startingCharacter >= 0, "Starting character should be 0 or positive.")
 	REQUIRE (startingCharacter <= (int) strlen (sentence), "Starting character should not exceed end of sentence.")
-	result = SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter);
-	Melder_information ("%s", result ? result : "");
+	Melder_information1 (SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter));
 END
 
 DIRECT (SpellingChecker_replaceWordList)
@@ -602,7 +601,7 @@ DIRECT (SpellingChecker_replaceWordList)
 END
 
 DIRECT (SpellingChecker_replaceWordList_help)
-	Melder_information ("To replace the checker's word list\nby the contents of a Strings object:\n"
+	Melder_information1 ("To replace the checker's word list\nby the contents of a Strings object:\n"
 		"1. select the Strings;\n2. convert to a WordList object;\n3. select the SpellingChecker and the WordList;\n"
 		"4. choose Replace.");
 END
@@ -618,8 +617,8 @@ FORM (TextGrid_countLabels, "Count labels", "TextGrid: Count labels...")
 	SENTENCE ("Label text", "a")
 	OK
 DO
-	Melder_information ("%ld", TextGrid_countLabels (ONLY (classTextGrid),
-		GET_INTEGER (STRING_TIER_NUMBER), GET_STRING ("Label text")));
+	Melder_information2 (Melder_integer (TextGrid_countLabels (ONLY (classTextGrid),
+		GET_INTEGER (STRING_TIER_NUMBER), GET_STRING ("Label text"))), " labels");
 END
 
 FORM (TextGrid_draw, "TextGrid: Draw", 0)
@@ -808,7 +807,7 @@ FORM (TextGrid_getIntervalAtTime, "TextGrid: Get interval at time", 0)
 DO
 	IntervalTier intervalTier = pr_TextGrid_getIntervalTier (dia);
 	if (! intervalTier) return 0;
-	Melder_information ("%ld", IntervalTier_timeToIndex (intervalTier, GET_REAL ("Time")));
+	Melder_information1 (Melder_integer (IntervalTier_timeToIndex (intervalTier, GET_REAL ("Time"))));
 END
 
 FORM (TextGrid_getNumberOfIntervals, "TextGrid: Get number of intervals", 0)
@@ -817,12 +816,12 @@ FORM (TextGrid_getNumberOfIntervals, "TextGrid: Get number of intervals", 0)
 DO
 	IntervalTier intervalTier = pr_TextGrid_getIntervalTier (dia);
 	if (! intervalTier) return 0;
-	Melder_information ("%ld", intervalTier -> intervals -> size);
+	Melder_information1 (Melder_integer (intervalTier -> intervals -> size));
 END
 
 DIRECT (TextGrid_getNumberOfTiers)
 	TextGrid grid = ONLY_OBJECT;
-	Melder_information ("%ld", grid -> tiers -> size);
+	Melder_information1 (Melder_integer (grid -> tiers -> size));
 END
 
 FORM (TextGrid_getStartingPoint, "TextGrid: Get starting point", 0)
@@ -863,7 +862,7 @@ FORM (TextGrid_getNumberOfPoints, "TextGrid: Get number of points", 0)
 DO
 	TextTier textTier = pr_TextGrid_getTextTier (dia);
 	if (! textTier) return 0;
-	Melder_information ("%ld", textTier -> points -> size);
+	Melder_information1 (Melder_integer (textTier -> points -> size));
 END
 	
 FORM (TextGrid_getTierName, "TextGrid: Get tier name", 0)
@@ -872,7 +871,7 @@ FORM (TextGrid_getTierName, "TextGrid: Get tier name", 0)
 DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
-	Melder_information ("%s", tier -> name);
+	Melder_information1 (tier -> name);
 END
 
 FORM (TextGrid_getTimeOfPoint, "TextGrid: Get time of point", 0)
@@ -892,7 +891,7 @@ FORM (TextGrid_getLabelOfPoint, "TextGrid: Get label of point", 0)
 DO
 	TextPoint point = pr_TextGrid_getPoint (dia);
 	if (! point) return 0;
-	Melder_information (point -> mark ? "%s" : "", point -> mark);
+	Melder_information1 (point -> mark);
 END
 	
 DIRECT (TextGrid_help) Melder_help ("TextGrid"); END
@@ -963,9 +962,11 @@ FORM (TextGrid_isIntervalTier, "TextGrid: Is interval tier?", 0)
 DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
-	Melder_information (tier -> methods == (Data_Table) classIntervalTier ?
-		"1 (yes, tier %ld is an interval tier)" : "0 (no, tier %ld is a point tier)",
-		GET_INTEGER (STRING_TIER_NUMBER));
+	if (tier -> methods == (Data_Table) classIntervalTier) {
+		Melder_information9 ("1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), " is an interval tier)", 0,0,0,0,0,0);
+	} else {
+		Melder_information9 ("0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), " is a point tier)", 0,0,0,0,0,0);
+	}
 END
 
 DIRECT (TextGrids_merge)
@@ -984,7 +985,7 @@ DIRECT (TextGrids_merge)
 END
 
 DIRECT (info_TextGrid_Pitch_draw)
-	Melder_information ("You can draw a TextGrid together with a Pitch after selecting them both.");
+	Melder_information1 ("You can draw a TextGrid together with a Pitch after selecting them both.");
 END
 
 FORM (TextGrid_removeBoundaryAtTime, "TextGrid: Remove boundary at time", 0)
@@ -1096,12 +1097,12 @@ DO
 END
 
 DIRECT (info_TextGrid_Sound_edit)
-	Melder_information ("To include a copy of a Sound in your TextGrid editor:\n"
+	Melder_information1 ("To include a copy of a Sound in your TextGrid editor:\n"
 		"   select a TextGrid and a Sound, and click \"Edit\".");
 END
 
 DIRECT (info_TextGrid_Sound_draw)
-	Melder_information ("You can draw a TextGrid together with a Sound after selecting them both.");
+	Melder_information1 ("You can draw a TextGrid together with a Sound after selecting them both.");
 END
 
 FORM (TextGrid_scaleTimes, "TextGrid: Scale times", 0)
@@ -1225,7 +1226,7 @@ FORM (WordList_hasWord, "Does word occur in list?", "WordList")
 	SENTENCE ("Word", "")
 	OK
 DO
-	Melder_information (WordList_hasWord (ONLY_OBJECT, GET_STRING ("Word")) ? "1" : "0");
+	Melder_information1 (WordList_hasWord (ONLY_OBJECT, GET_STRING ("Word")) ? "1" : "0");
 END
 
 DIRECT (WordList_to_Strings)

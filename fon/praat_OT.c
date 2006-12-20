@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/05/17
+ * pb 2006/12/18
  */
 
 #include "praat.h"
@@ -139,7 +139,7 @@ DO
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
 	tableau = & my tableaus [itab];
 	REQUIRE (icand <= tableau -> numberOfCandidates, "'Candidate' should not exceed number of candidates.")
-	Melder_information ("%s", tableau -> candidates [icand]. output);
+	Melder_information1 (tableau -> candidates [icand]. output);
 END
 
 FORM (OTGrammar_getConstraint, "Get constraint name", 0)
@@ -149,7 +149,7 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", my constraints [icons]. name);
+	Melder_information1 (my constraints [icons]. name);
 END
 
 FORM (OTGrammar_getDisharmony, "Get disharmony", 0)
@@ -159,7 +159,7 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", Melder_double (my constraints [icons]. disharmony));
+	Melder_information1 (Melder_double (my constraints [icons]. disharmony));
 END
 
 FORM (OTGrammar_getInput, "Get input", 0)
@@ -169,7 +169,7 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long itab = GET_INTEGER ("Tableau");
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
-	Melder_information ("%s", my tableaus [itab]. input);
+	Melder_information1 (my tableaus [itab]. input);
 END
 
 DIRECT (OTGrammar_getInputs)
@@ -185,8 +185,8 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long bestInput, bestOutput;
 	if (! OTGrammar_getInterpretiveParse (me, GET_STRING ("Partial output"), & bestInput, & bestOutput)) return 0;
-	Melder_information ("Best input = %ld: %s\nBest output = %ld: %s",
-		bestInput, my tableaus [bestInput]. input, bestOutput, my tableaus [bestInput]. candidates [bestOutput]. output);
+	Melder_information9 ("Best input = ", Melder_integer (bestInput), ": ", my tableaus [bestInput]. input,
+		"\nBest output = ", Melder_integer (bestOutput), ": ", my tableaus [bestInput]. candidates [bestOutput]. output, 0);
 END
 
 FORM (OTGrammar_getNumberOfCandidates, "Get number of candidates", 0)
@@ -196,12 +196,12 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long itab = GET_INTEGER ("Tableau");
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
-	Melder_information ("%ld", my tableaus [itab]. numberOfCandidates);
+	Melder_information1 (Melder_integer (my tableaus [itab]. numberOfCandidates));
 END
 
 DIRECT (OTGrammar_getNumberOfConstraints)
 	OTGrammar me = ONLY_OBJECT;
-	Melder_information ("%ld", my numberOfConstraints);
+	Melder_information1 (Melder_integer (my numberOfConstraints));
 END
 
 FORM (OTGrammar_getNumberOfOptimalCandidates, "Get number of optimal candidates", 0)
@@ -211,12 +211,12 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long itab = GET_INTEGER ("Tableau");
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
-	Melder_information ("%ld", OTGrammar_getNumberOfOptimalCandidates (me, itab));
+	Melder_information1 (Melder_integer (OTGrammar_getNumberOfOptimalCandidates (me, itab)));
 END
 
 DIRECT (OTGrammar_getNumberOfTableaus)
 	OTGrammar me = ONLY_OBJECT;
-	Melder_information ("%ld", my numberOfTableaus);
+	Melder_information1 (Melder_integer (my numberOfTableaus));
 END
 
 FORM (OTGrammar_getNumberOfViolations, "Get number of violations", 0)
@@ -230,7 +230,7 @@ DO
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau number' should not exceed number of tableaus.")
 	REQUIRE (icand <= my tableaus [itab]. numberOfCandidates, "'Candidate number' should not exceed number of candidates for this tableau.")
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%ld", my tableaus [itab]. candidates [icand]. marks [icons]);
+	Melder_information1 (Melder_integer (my tableaus [itab]. candidates [icand]. marks [icons]));
 END
 
 FORM (OTGrammar_getRankingValue, "Get ranking value", 0)
@@ -240,7 +240,7 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", Melder_double (my constraints [icons]. ranking));
+	Melder_information1 (Melder_double (my constraints [icons]. ranking));
 END
 
 FORM (OTGrammar_getWinner, "Get winner", 0)
@@ -250,7 +250,7 @@ DO
 	OTGrammar me = ONLY_OBJECT;
 	long itab = GET_INTEGER ("Tableau");
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
-	Melder_information ("%ld", OTGrammar_getWinner (me, itab));
+	Melder_information1 (Melder_integer (OTGrammar_getWinner (me, itab)));
 END
 
 FORM (OTGrammar_inputToOutput, "OTGrammar: Input to output", "OTGrammar: Input to output...")
@@ -260,7 +260,7 @@ FORM (OTGrammar_inputToOutput, "OTGrammar: Input to output", "OTGrammar: Input t
 DO
 	char output [100];
 	if (! OTGrammar_inputToOutput (ONLY_OBJECT, GET_STRING ("Input form"), output, GET_REAL ("Evaluation noise"))) return 0;
-	Melder_information ("%s", output);
+	Melder_information1 (output);
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -296,7 +296,7 @@ DO
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
 	icand = GET_INTEGER ("Candidate");
 	REQUIRE (icand <= my tableaus [itab]. numberOfCandidates, "'Candidate' should not exceed number of candidates.")
-	Melder_information ("%ld", OTGrammar_isCandidateGrammatical (me, itab, icand));
+	Melder_information1 (Melder_integer (OTGrammar_isCandidateGrammatical (me, itab, icand)));
 END
 
 FORM (OTGrammar_isCandidateSinglyGrammatical, "Is candidate singly grammatical?", 0)
@@ -309,21 +309,21 @@ DO
 	REQUIRE (itab <= my numberOfTableaus, "'Tableau' should not exceed number of tableaus.")
 	icand = GET_INTEGER ("Candidate");
 	REQUIRE (icand <= my tableaus [itab]. numberOfCandidates, "'Candidate' should not exceed number of candidates.")
-	Melder_information ("%ld", OTGrammar_isCandidateSinglyGrammatical (me, itab, icand));
+	Melder_information1 (Melder_integer (OTGrammar_isCandidateSinglyGrammatical (me, itab, icand)));
 END
 
 FORM (OTGrammar_isPartialOutputGrammatical, "Is partial output grammatical?", 0)
 	SENTENCE ("Partial output", "")
 	OK
 DO
-	Melder_information ("%ld", OTGrammar_isPartialOutputGrammatical (ONLY_OBJECT, GET_STRING ("Partial output")));
+	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputGrammatical (ONLY_OBJECT, GET_STRING ("Partial output"))));
 END
 
 FORM (OTGrammar_isPartialOutputSinglyGrammatical, "Is partial output singly grammatical?", 0)
 	SENTENCE ("Partial output", "")
 	OK
 DO
-	Melder_information ("%ld", OTGrammar_isPartialOutputSinglyGrammatical (ONLY_OBJECT, GET_STRING ("Partial output")));
+	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputSinglyGrammatical (ONLY_OBJECT, GET_STRING ("Partial output"))));
 END
 
 FORM (OTGrammar_learn, "OTGrammar: Learn", "OTGrammar & 2 Strings: Learn...")
@@ -655,7 +655,7 @@ DO
 	OTMulti me = ONLY_OBJECT;
 	long icand = GET_INTEGER ("Candidate");
 	REQUIRE (icand <= my numberOfCandidates, "'Candidate' should not exceed number of candidates.")
-	Melder_information ("%s", my candidates [icand]. string);
+	Melder_information1 (my candidates [icand]. string);
 END
 
 FORM (OTMulti_getConstraint, "Get constraint name", 0)
@@ -665,7 +665,7 @@ DO
 	OTMulti me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", my constraints [icons]. name);
+	Melder_information1 (my constraints [icons]. name);
 END
 
 FORM (OTMulti_getDisharmony, "Get disharmony", 0)
@@ -675,17 +675,17 @@ DO
 	OTMulti me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", Melder_double (my constraints [icons]. disharmony));
+	Melder_information1 (Melder_double (my constraints [icons]. disharmony));
 END
 
 DIRECT (OTMulti_getNumberOfCandidates)
 	OTMulti me = ONLY_OBJECT;
-	Melder_information ("%ld", my numberOfCandidates);
+	Melder_information1 (Melder_integer (my numberOfCandidates));
 END
 
 DIRECT (OTMulti_getNumberOfConstraints)
 	OTMulti me = ONLY_OBJECT;
-	Melder_information ("%ld", my numberOfConstraints);
+	Melder_information1 (Melder_integer (my numberOfConstraints));
 END
 
 FORM (OTMulti_getNumberOfViolations, "Get number of violations", 0)
@@ -697,7 +697,7 @@ DO
 	long icand = GET_INTEGER ("Candidate number"), icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icand <= my numberOfCandidates, "'Candidate number' should not exceed number of candidates.")
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%ld", my candidates [icand]. marks [icons]);
+	Melder_information1 (Melder_integer (my candidates [icand]. marks [icons]));
 END
 
 FORM (OTMulti_getRankingValue, "Get ranking value", 0)
@@ -707,7 +707,7 @@ DO
 	OTMulti me = ONLY_OBJECT;
 	long icons = GET_INTEGER ("Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, "'Constraint number' should not exceed number of constraints.")
-	Melder_information ("%s", Melder_double (my constraints [icons]. ranking));
+	Melder_information1 (Melder_double (my constraints [icons]. ranking));
 END
 
 FORM (OTMulti_getWinner, "OTMulti: Get winner", 0)
@@ -716,7 +716,7 @@ FORM (OTMulti_getWinner, "OTMulti: Get winner", 0)
 	OK
 DO
 	OTMulti me = ONLY_OBJECT;
-	Melder_information ("%ld", OTMulti_getWinner (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2")));
+	Melder_information1 (Melder_integer (OTMulti_getWinner (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"))));
 END
 
 FORM (OTMulti_generateOptimalForm, "OTMulti: Generate optimal form", 0)
@@ -728,7 +728,7 @@ DO
 	char output [100];
 	if (! OTMulti_generateOptimalForm (ONLY_OBJECT, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
 		output, GET_REAL ("Evaluation noise"))) return 0;
-	Melder_information ("%s", output);
+	Melder_information1 (output);
 	praat_dataChanged (ONLY_OBJECT);
 END
 

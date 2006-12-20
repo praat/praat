@@ -1,6 +1,6 @@
 /* praat_Artsynth.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
  */
 
 /*
- * pb 1999/05/12
- * pb 2002/03/25 option menus
- * pb 2002/07/16 GPL
+ * pb 2006/12/18
  */
 
 #include "Art_Speaker.h"
@@ -95,9 +93,9 @@ FORM (Artword_getTarget, "Get one Artword target", 0)
 	ENUM ("Muscle", Art_MUSCLE, enumi (Art_MUSCLE, Lungs))
 	OK
 DO
-	Melder_information
-		("%.16g", Artword_getTarget ((Artword) ONLY (classArtword), GET_INTEGER ("Muscle"),
-		GET_REAL ("Time")));
+	Melder_information1
+		(Melder_double (Artword_getTarget ((Artword) ONLY (classArtword), GET_INTEGER ("Muscle"),
+		GET_REAL ("Time"))));
 END
 
 DIRECT (Artword_help) Melder_help ("Artword"); END

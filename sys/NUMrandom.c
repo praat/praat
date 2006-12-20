@@ -1,6 +1,6 @@
 /* NUMrandom.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/07/03
  * pb 2002/03/04 GPL
+ * pb 2006/12/18 improved comment
  */
 
 /*
@@ -95,7 +95,7 @@
 		NUMrandomRestart (310952);
 		for (i = 1; i <= 1009 * 2009 - 100 + 1; i ++)
 			x = NUMrandomFraction ();
-		Melder_information ("%.20g", x);
+		Melder_information1 (Melder_double (x));
 
 	With QUALITY set to 100, this should give 0.27452626307394156768 (Knuth:603).
 	With QUALITY set to 1009, it should give 0.73203216867254750078.

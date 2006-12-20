@@ -26,6 +26,7 @@
  * pb 2005/03/08 added "PostScript" encodings (mostly Mac and Praat-IPA)
  * pb 2006/11/17 Unicode
  * pb 2006/12/05 first wchar support
+ * pb 2006/12/14
  */
 #include <wchar.h>
 
@@ -113,7 +114,7 @@ typedef struct Longchar_Info {
 	unsigned short winEncoding;   /* The one-byte encoding for Windows (ISO8859-1 for Roman; SILDoulosIPA 1993). */
 	unsigned short macEncoding;   /* The one-byte encoding for Macintosh (Mac for Roman; SILDoulosIPA 1993). */
 	unsigned short psEncoding;   /* The one-byte encoding for PostScript (Mac-Praat, TeX-xipa-Praat). */
-	unsigned short unicode;   /* The two-byte encoding for Unicode. */
+	unsigned long unicode;   /* The four-byte encoding for Unicode. */
 	unsigned short unicodeDecomposition [6];   /* Diacritics decoupled from the base character. */
 }
 	*Longchar_Info;

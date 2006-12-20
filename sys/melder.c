@@ -18,17 +18,17 @@
  */
 
 /*
-	pb 2002/03/07 GPL
-	pb 2002/03/13 Mach
-	pb 2002/12/11 MelderInfo
-	pb 2003/12/29 Melder_warning: added XMapRaised because delete response is UNMAP
-	pb 2004/04/06 motif_information drains text window only, i.e. no longer updates all windows
-	              (which used to cause up to seven seconds of delay in a 1-second sound window)
-	pb 2004/10/24 info buffer can grow
-	pb 2004/11/28 author notification in Melder_fatal
-	pb 2005/03/04 number and string comparisons, including regular expressions
-	pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
-	pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
+ * pb 2002/03/07 GPL
+ * pb 2002/03/13 Mach
+ * pb 2002/12/11 MelderInfo
+ * pb 2003/12/29 Melder_warning: added XMapRaised because delete response is UNMAP
+ * pb 2004/04/06 motif_information drains text window only, i.e. no longer updates all windows
+                 (which used to cause up to seven seconds of delay in a 1-second sound window)
+ * pb 2004/10/24 info buffer can grow
+ * pb 2004/11/28 author notification in Melder_fatal
+ * pb 2005/03/04 number and string comparisons, including regular expressions
+ * pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
+ * pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
  */
 
 #include <math.h>

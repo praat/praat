@@ -1,6 +1,6 @@
 /* TextGridEditor.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
  * pb 2005/05/05 show number of intervals
  * pb 2005/06/17 enums
  * pb 2005/09/23 interface update
+ * pb 2006/12/18 better info
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "TextGridEditor.h"
@@ -206,7 +208,7 @@ DIRECT (TextGridEditor, cb_getLabelOfInterval)
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		char *label = iinterval < 1 || iinterval > tier -> intervals -> size ? "" :
 			((TextInterval) tier -> intervals -> item [iinterval]) -> text;
-		Melder_information ("%s", label);
+		Melder_information1 (label);
 	} else {
 		return Melder_error ("The selected tier is not an interval tier.");
 	}
@@ -2022,7 +2024,7 @@ static void play (I, double tmin, double tmax) {
 	if (my longSound.data) {
 		LongSound_playPart (my longSound.data, tmin, tmax, our playCallback, me);
 	} else if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
 	}
 }
 

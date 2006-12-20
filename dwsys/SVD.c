@@ -1,6 +1,6 @@
 /* SVD.c
  *
- * Copyright (C) 1994-2006 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,8 +395,7 @@ int SVD_synthesize (I, long sv_from, long sv_to, double **m)
 static void classGSVD_info (I)
 {
 	iam (GSVD);
-	Melder_information ("Number of columns = %ld\n",
-		my numberOfColumns);
+	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 class_methods (GSVD, Data)

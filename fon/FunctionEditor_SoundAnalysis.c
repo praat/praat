@@ -58,6 +58,7 @@
  * pb 2006/09/12 better messages if analysis not available
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/10 MelderInfo
+ * pb 2006/12/18 better info
  */
 
 #include <time.h>
@@ -734,14 +735,13 @@ DIRECT (FunctionEditor, cb_getPitch)
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
 		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information ("%s %s (interpolated pitch at CURSOR)",
-			Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0));
+		Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+			" (interpolated pitch at CURSOR)", 0,0,0,0,0);
 	} else {
 		double f0 = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
 		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information ("%s %s (mean pitch %s)",
-			Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-			FunctionEditor_partString_locative (part));
+		Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+			" (mean pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
 	}
 END
 
@@ -756,9 +756,8 @@ DIRECT (FunctionEditor, cb_getMinimumPitch)
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information ("%s %s (minimum pitch %s)",
-		Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-		FunctionEditor_partString_locative (part));
+	Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		" (minimum pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
 END
 
 DIRECT (FunctionEditor, cb_getMaximumPitch)
@@ -772,9 +771,8 @@ DIRECT (FunctionEditor, cb_getMaximumPitch)
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information ("%s %s (maximum pitch %s)",
-		Melder_double (f0), ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-		FunctionEditor_partString_locative (part));
+	Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		" (maximum pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
 END
 
 DIRECT (FunctionEditor, cb_extractVisiblePitchContour)
@@ -880,13 +878,11 @@ DIRECT (FunctionEditor, cb_getIntensity)
 		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information ("%s dB (intensity at CURSOR)",
-			Melder_double (Vector_getValueAtX (my intensity.data, tmin, 1)));
+		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, 1)), " dB (intensity at CURSOR)");
 	} else {
 		static const char *methodString [] = { "median", "mean-energy", "mean-sones", "mean-dB" };
-		Melder_information ("%s dB (%s intensity %s)",
-			Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
-			methodString [my intensity.averagingMethod], FunctionEditor_partString_locative (part));
+		Melder_information9 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
+			" dB (", methodString [my intensity.averagingMethod], " intensity ", FunctionEditor_partString_locative (part), ")", 0,0,0);
 	}
 END
 
@@ -1005,12 +1001,11 @@ static int getFormant (FunctionEditor me, int iformant) {
 		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information ("%s Hertz (nearest F%d to CURSOR)",
-			Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)), iformant);
+		Melder_information9 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
+			" Hertz (nearest F", Melder_integer (iformant), " to CURSOR)", 0,0,0,0,0);
 	} else {
-		Melder_information ("%s Hertz (mean F%d %s)",
-			Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)), iformant,
-				FunctionEditor_partString_locative (part));
+		Melder_information9 (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
+			" Hertz (mean F", Melder_integer (iformant), " ", FunctionEditor_partString_locative (part), ")", 0,0,0);
 	}
 	return 1;
 }
@@ -1024,12 +1019,11 @@ static int getBandwidth (FunctionEditor me, int iformant) {
 		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information ("%s Hertz (nearest B%d to CURSOR)",
-			Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)), iformant);
+		Melder_information9 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
+			" Hertz (nearest B", Melder_integer (iformant), " to CURSOR)", 0,0,0,0,0);
 	} else {
-		Melder_information ("%s Hertz (B%d in centre of %s)",
-			Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)), iformant,
-				FunctionEditor_partString (part));
+		Melder_information9 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
+			" Hertz (B", Melder_integer (iformant), " in centre of ", FunctionEditor_partString (part), ")", 0,0,0);
 	}
 	return 1;
 }

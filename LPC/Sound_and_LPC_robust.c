@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.c
  *
- * Copyright (C) 1994-2005 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20030814 First version
+ djmw 20061218 To Melder_information<x> format
 */
 
 #include "Sound_and_LPC.h"
@@ -287,9 +288,8 @@ end:
 	huber_struct_destroy (&struct_huber);
 	if (Melder_hasError ()) forget (him);
 	
-	Melder_information ("%d iterations. Average %s per frame.", iter, 
-		Melder_double (iter/nFrames));
-
+	Melder_information2 ("Number of iterations: ", Melder_integer (iter));
+	Melder_information2 ("   Average per frame: ", Melder_double (((double) iter)/nFrames));
 	return him;
 }
 

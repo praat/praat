@@ -1,11 +1,11 @@
 # Makefile of the library "sys"
-# Paul Boersma, December 10, 2006
+# Paul Boersma, December 15, 2006
 
 include ../makefile.defs
-CFLAGS = -I ../dwsys -I ../GSL
+CFLAGS = -I ../dwsys -I ../GSL -I ../kar
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
-   enum.o abcio.o lispio.o longchar.o complex.o \
+   enum.o abcio.o lispio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
    melder_token.o melder_files.o melder_audio.o melder_audiofiles.o \
    melder_debug.o melder_sysenv.o melder_info.o \
@@ -30,4 +30,4 @@ libsys.a: $(OBJECTS)
 	ar cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../dwsys/*.h
+$(OBJECTS): *.h ../dwsys/*.h ../kar/*.h

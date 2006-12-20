@@ -36,7 +36,6 @@
 */
 
 #include "Eigen.h"
-#include "Configuration.h"
 #include "NUMmachar.h"
 #include "NUMlapack.h"
 #include "NUMclapack.h"

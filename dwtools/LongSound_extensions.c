@@ -1,6 +1,6 @@
 /* LongSound_extensions.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,25 @@
  djmw 20060206 Set errno = 0:  "An application that needs to examine the value
  	of errno to determine the error should set it to 0 before a function call,
  	then inspect it before a subsequent function call."
+ djmw 20061213 MelderFile_truncate also works for MacOS X
+ djmw 20061212 Header unistd.h for MacOS X added.
 */
 
-#include "LongSound_extensions.h"
-#include "NUM2.h"
+#include "LongSound_extensions.h" 
+
 #if defined (_WIN32)
-	#include <windows.h>
+  #include <windows.h>
 #elif defined(linux)
-	#include <unistd.h>
-	#include <sys/types.h>
-	#include <string.h>    
-#endif                            
-#include <errno.h>     
-                           
+  #include <unistd.h>
+  #include <sys/types.h>
+  #include <string.h>
+#elif defined (macintosh)
+  #include <unistd.h>
+#endif
+
+#include "NUM2.h"
+#include <errno.h>
+
 /*
   Precondition: size (my buffer) >= nbuf
 */ 
@@ -133,8 +139,8 @@ end:
 static int MelderFile_truncate (MelderFile me, long size)
 {
 	char *proc = "MelderFile_truncate";
-		
-#if defined (_WIN32)
+	
+#if defined(_WIN32)
 
 	HANDLE hFile;
 	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
@@ -144,22 +150,22 @@ static int MelderFile_truncate (MelderFile me, long size)
     LARGE_INTEGER fileSize;
 
 	MelderFile_close (me);
-  
+
   	hFile = CreateFile (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
         FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return Melder_error ("%s: "
         "Can't open file \"%s\".", proc, MelderFile_messageName (me));
-        
-    /*                       
+
+    /*
         Set current file pointer to position 'size'
     */
-    
+
     fileSize.LowPart = size;
     fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
 	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
 	if (fPos == 0xFFFFFFFF) return Melder_error ("%s: Can't set the position at "
 		"size %d for file \"%s\".", proc, size, MelderFile_messageName (me));
-  
+
 	/*
 		Limit the file size as the current position of the file pointer.
 	*/
@@ -172,7 +178,7 @@ static int MelderFile_truncate (MelderFile me, long size)
 	MelderFile_close (me);
 
     if (truncate (my path, size) == -1)
-    {   
+    {
 		return Melder_error ("%s: Truncating file \"%s\" failed: %s.", proc,
 			MelderFile_messageName (me), strerror (errno));
 	}
@@ -185,17 +191,21 @@ static int MelderFile_truncate (MelderFile me, long size)
 	return 1;
 }
 
-
 static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) {
 	long ibuffer, numberOfBuffers, numberOfSamplesInLastBuffer;
 	if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
 		{ Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file)); goto end; }
 	numberOfBuffers = (n - 1) / my nmax + 1;
 	numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
-	if (file -> filePointer) for (ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
-		long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
-		Melder_readAudioToShort (my f, my numberOfChannels, my encoding, my buffer, numberOfSamplesToCopy);
-		Melder_writeShortToAudio (file -> filePointer, my numberOfChannels, Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
+	if (file -> filePointer)
+	{
+		for (ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++)
+		{
+			long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
+			Melder_readAudioToShort (my f, my numberOfChannels, my encoding, my buffer, numberOfSamplesToCopy);
+			Melder_writeShortToAudio (file -> filePointer, my numberOfChannels, 
+				Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
+		}
 	}
 end:
 	/*
@@ -213,8 +223,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 	long i, startOfData, numberOfSamples, sampleRate, pre_append_endpos = 0;
 	double sampleRate_d;
 
-	if (my size < 1) return Melder_error ("%s: No Sound or LongSound objects "
-		"to append.", proc);
+	if (my size < 1) return Melder_error ("%s: No Sound or LongSound objects to append.", proc);
 
 	/*
 		We have to open with "r+" mode because this will position the stream

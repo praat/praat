@@ -23,6 +23,7 @@
  djmw 20030701 Removed non-GPL minimizations
  djmw 20040526 Removed bug in FFNet_drawCostHistory interface.
  djmw 20041123 Latest modification
+ djmw 20061218 Changed to Melder_information<x> format.
 */
 
 #include <math.h>
@@ -141,12 +142,12 @@ END
 
 DIRECT (FFNet_getNumberOfInputs)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information ("%d units", my nUnitsInLayer[0]);
+	Melder_information2 (Melder_integer (my nUnitsInLayer[0]), " units");
 END
 
 DIRECT (FFNet_getNumberOfOutputs)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information ("%d units", my nUnitsInLayer[my nLayers]);
+	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers]), " units");
 END
 
 FORM (FFNet_getNumberOfHiddenUnits, "FFNet: Get number of hidden units", "FFNet: Get number of hidden units...")
@@ -158,7 +159,7 @@ DO
 	long numberOfUnits = 0;
 	
 	if (layerNumber > 0 && layerNumber <= my nLayers - 1) numberOfUnits = my nUnitsInLayer[layerNumber];
-	Melder_information ("%d units", numberOfUnits);
+	Melder_information2 (Melder_integer (numberOfUnits), " units");
 END
 
 FORM (FFNet_getNumberOfHiddenWeights, "FFNet: Get number of hidden weights", 
@@ -173,12 +174,12 @@ DO
 	{
 		numberOfWeights = my nUnitsInLayer[layerNumber] * (my nUnitsInLayer[layerNumber - 1]+1);
 	}
-	Melder_information ("%d weights (inclusive biases)", numberOfWeights);
+	Melder_information2 (Melder_integer (numberOfWeights), " weights (including biases)");
 END
 
 DIRECT (FFNet_getNumberOfOutputWeights)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information ("%d weights", my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1]+1));
+	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1]+1)), " weights");
 END
 
 /**************** New Pattern ***************************/
@@ -207,7 +208,7 @@ DIRECT (FFNet_help)
 END
 
 DIRECT (FFNet_getMinimum)
-	Melder_information ("%s", Melder_double (FFNet_getMinimum (ONLY_OBJECT)));
+	Melder_information1 (Melder_double (FFNet_getMinimum (ONLY_OBJECT)));
 END
 
 FORM (FFNet_reset, "FFNet: Reset", "FFNet: Reset...")
@@ -393,12 +394,12 @@ DO
 END
 
 DIRECT (hint_FFNet_and_Pattern_classify)
-	Melder_information ("You can use the FFNet as a classifier by selecting a\n"
+	Melder_information1 ("You can use the FFNet as a classifier by selecting a\n"
 		"FFNet and a Pattern together and choosing \"To Categories...\".");
 END
 
 DIRECT (hint_FFNet_and_Pattern_and_Categories_learn)
-	Melder_information ("You can teach a FFNet to classify by selecting a\n"
+	Melder_information1 ("You can teach a FFNet to classify by selecting a\n"
 		"FFNet, a Pattern and a Categories together and choosing \"Learn...\".");
 END
 
@@ -423,8 +424,8 @@ FORM (FFNet_Pattern_Activation_getCosts_total, "FFNet & Pattern & Activation: Ge
 	RADIOBUTTON ("Minimum-cross-entropy")
 	OK
 DO
-	Melder_informationReal (FFNet_Pattern_Activation_getCosts_total (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classActivation), GET_INTEGER ("Cost function")), NULL);
+	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_total (ONLY (classFFNet), 
+		ONLY (classPattern), ONLY (classActivation), GET_INTEGER ("Cost function"))));
 END
 
 FORM (FFNet_Pattern_Activation_getCosts_average, "FFNet & Pattern & Activation: Get average costs", "FFNet & Pattern & Activation: Get average costs...")
@@ -433,8 +434,8 @@ FORM (FFNet_Pattern_Activation_getCosts_average, "FFNet & Pattern & Activation: 
 	RADIOBUTTON ("Minimum-cross-entropy")
 	OK
 DO
-	Melder_informationReal (FFNet_Pattern_Activation_getCosts_average (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classActivation), GET_INTEGER ("Cost function")), NULL);
+	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_average (ONLY (classFFNet), 
+		ONLY (classPattern), ONLY (classActivation), GET_INTEGER ("Cost function"))));
 END
 
 FORM (FFNet_Pattern_Activation_learnSD, "FFNet & Pattern & Activation: Learn slow", 0)
@@ -479,8 +480,8 @@ FORM (FFNet_Pattern_Categories_getCosts_total, "FFNet & Pattern & Categories: Ge
 	RADIOBUTTON ("Minimum-cross-entropy")
 	OK
 DO
-	Melder_informationReal (FFNet_Pattern_Categories_getCosts_total (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classCategories), GET_INTEGER ("Cost function")), NULL);
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_total (ONLY (classFFNet), 
+		ONLY (classPattern), ONLY (classCategories), GET_INTEGER ("Cost function"))));
 END
 
 FORM (FFNet_Pattern_Categories_getCosts_average, "FFNet & Pattern & Categories: Get average costs", "FFNet & Pattern & Categories: Get average costs...")
@@ -489,8 +490,8 @@ FORM (FFNet_Pattern_Categories_getCosts_average, "FFNet & Pattern & Categories: 
 	RADIOBUTTON ("Minimum-cross-entropy")
 	OK
 DO
-	Melder_informationReal (FFNet_Pattern_Categories_getCosts_average (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classCategories), GET_INTEGER ("Cost function")), NULL);
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_average (ONLY (classFFNet), 
+		ONLY (classPattern), ONLY (classCategories), GET_INTEGER ("Cost function"))));
 END
 
 FORM (Pattern_Categories_to_FFNet, "Pattern & Categories: To FFNet", 

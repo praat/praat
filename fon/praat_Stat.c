@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/09/23
+ * pb 2006/12/18
  */
 
 #include "praat.h"
@@ -220,7 +220,7 @@ FORM (Table_getColumnIndex, "Table: Get column index", 0)
 	SENTENCE ("Column label", "")
 	OK
 DO
-	Melder_information ("%ld", Table_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label")));
+	Melder_information1 (Melder_integer (Table_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label"))));
 END
 	
 FORM (Table_getColumnLabel, "Table: Get column label", 0)
@@ -230,7 +230,7 @@ DO
 	Table me = ONLY_OBJECT;
 	long icol = GET_INTEGER ("Column number");
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information ("%s", my columnHeaders [icol]. label == NULL ? "" : my columnHeaders [icol]. label);
+	Melder_information1 (my columnHeaders [icol]. label);
 END
 
 FORM (Table_getMean, "Table: Get mean", 0)
@@ -241,7 +241,7 @@ DO
 	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information ("%s", Melder_double (Table_getMean (ONLY_OBJECT, icol)));
+	Melder_information1 (Melder_double (Table_getMean (ONLY_OBJECT, icol)));
 END
 	
 FORM (Table_getQuantile, "Table: Get quantile", 0)
@@ -253,7 +253,7 @@ DO
 	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information ("%s", Melder_double (Table_getQuantile (ONLY_OBJECT, icol, GET_REAL ("Quantile"))));
+	Melder_information1 (Melder_double (Table_getQuantile (ONLY_OBJECT, icol, GET_REAL ("Quantile"))));
 END
 	
 FORM (Table_getStandardDeviation, "Table: Get standard deviation", 0)
@@ -264,7 +264,7 @@ DO
 	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information ("%s", Melder_double (Table_getStdev (ONLY_OBJECT, icol)));
+	Melder_information1 (Melder_double (Table_getStdev (ONLY_OBJECT, icol)));
 END
 	
 DIRECT (Table_to_LinearRegression)
@@ -276,11 +276,11 @@ DIRECT (Table_to_LogisticRegression)
 END
 
 DIRECT (Table_getNumberOfColumns)
-	Melder_information ("%ld", ((Table) ONLY_OBJECT) -> numberOfColumns);
+	Melder_information1 (Melder_integer (((Table) ONLY_OBJECT) -> numberOfColumns));
 END
 
 DIRECT (Table_getNumberOfRows)
-	Melder_information ("%ld", ((Table) ONLY_OBJECT) -> rows -> size);
+	Melder_information1 (Melder_integer (((Table) ONLY_OBJECT) -> rows -> size));
 END
 
 FORM (Table_getValue, "Table: Get value", 0)
@@ -291,12 +291,10 @@ DO
 	Table me = ONLY_OBJECT;
 	long irow = GET_INTEGER ("Row number");
 	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
-	char *value;
 	if (icol == 0) return Melder_error ("No such column.");
 	REQUIRE (irow >= 1 && irow <= my rows -> size, "Row number out of range.")
 	REQUIRE (icol >= 1 && icol <= my numberOfColumns, "Column number out of range.")
-	value = ((TableRow) my rows -> item [irow]) -> cells [icol]. string;
-	Melder_information ("%s", value == NULL ? "" : value);
+	Melder_information1 (((TableRow) my rows -> item [irow]) -> cells [icol]. string);
 END
 
 DIRECT (Table_help) Melder_help ("Table"); END
@@ -389,17 +387,17 @@ DO
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	correlation = Table_getCorrelation_kendallTau (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
-	Melder_information ("Correlation between column %s and column %s:\n"
-		"Correlation = %s (Kendall's tau-b)\n"
-		"Significance from zero = %s (one-tailed)\n"
-		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest tau that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest tau that cannot be rejected with p = %f)\n",
-		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_double (correlation), Melder_double (significance),
-		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_double (lowerLimit), significanceLevel,
-		Melder_double (upperLimit), significanceLevel);
+	MelderInfo_open ();
+	MelderInfo_writeLine5 ("Correlation between column ", Table_messageColumn (me, column1),
+		" and column ", Table_messageColumn (me, column2), ":");
+	MelderInfo_writeLine3 ("Correlation = ", Melder_double (correlation), " (Kendall's tau-b)");
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest tau that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest tau that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
 END
 
 FORM (Table_reportCorrelation_pearsonR, "Report correlation (Pearson r)", 0)
@@ -416,17 +414,17 @@ DO
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	correlation = Table_getCorrelation_pearsonR (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
-	Melder_information ("Correlation between column %s and column %s:\n"
-		"Correlation = %s (Pearson's r)\n"
-		"Significance from zero = %s (one-tailed)\n"
-		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest r that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest r that cannot be rejected with p = %f)\n",
-		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_double (correlation), Melder_double (significance),
-		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_double (lowerLimit), significanceLevel,
-		Melder_double (upperLimit), significanceLevel);
+	MelderInfo_open ();
+	MelderInfo_writeLine5 ("Correlation between column ", Table_messageColumn (me, column1),
+		" and column ", Table_messageColumn (me, column2), ":");
+	MelderInfo_writeLine3 ("Correlation = ", Melder_double (correlation), " (Pearson's r)");
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest r that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest r that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
 END
 	
 FORM (Table_reportDifference_studentT, "Report difference (Student t)", 0)
@@ -443,18 +441,18 @@ DO
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	difference = Table_getDifference_studentT (me, column1, column2, significanceLevel,
 		& t, & significance, & lowerLimit, & upperLimit);
-	Melder_information ("Difference between column %s and column %s:\n"
-		"Difference = %s\n"
-		"Student's t = %s\n"
-		"Significance from zero = %s (one-tailed)\n"
-		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
-		Table_messageColumn (me, column1), Table_messageColumn (me, column2),
-		Melder_double (difference), Melder_double (t), Melder_double (significance),
-		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_double (lowerLimit), significanceLevel,
-		Melder_double (upperLimit), significanceLevel);
+	MelderInfo_open ();
+	MelderInfo_writeLine5 ("Difference between column ", Table_messageColumn (me, column1),
+		" and column ", Table_messageColumn (me, column2), ":");
+	MelderInfo_writeLine2 ("Difference = ", Melder_double (difference));
+	MelderInfo_writeLine2 ("Student's t = ", Melder_double (t));
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest difference that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
 END
 	
 FORM (Table_reportMean_studentT, "Report mean (Student t)", 0)
@@ -469,18 +467,17 @@ DO
 	if (column == 0) return Melder_error ("No such column.");
 	mean = Table_getMean_studentT (me, column, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
-	Melder_information ("Mean of column %s:\n"
-		"Mean = %s\n"
-		"Student's t from zero = %s\n"
-		"Significance from zero = %s (one-tailed)\n"
-		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest value that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest value that cannot be rejected with p = %f)\n",
-		Table_messageColumn (me, column),
-		Melder_double (mean), Melder_double (tFromZero), Melder_double (significanceFromZero),
-		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_double (lowerLimit), significanceLevel,
-		Melder_double (upperLimit), significanceLevel);
+	MelderInfo_open ();
+	MelderInfo_writeLine3 ("Mean of column ", Table_messageColumn (me, column), ":");
+	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
+	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest value that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
 END
 
 FORM (Table_reportGroupDifference_studentT, "Report group difference (Student t)", 0)
@@ -501,18 +498,18 @@ DO
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
-	Melder_information ("Difference in column %s between groups \"%s\" and \"%s\" of column %s:\n"
-		"Difference = %s\n"
-		"Student's t = %s\n"
-		"Significance from zero = %s (one-tailed)\n"
-		"Confidence interval (%f%%):\n"
-		"   Lower limit = %s (lowest difference that cannot be rejected with p = %f)\n"
-		"   Upper limit = %s (highest difference that cannot be rejected with p = %f)\n",
-		Table_messageColumn (me, column), group1, group2, Table_messageColumn (me, groupColumn),
-		Melder_double (mean), Melder_double (tFromZero), Melder_double (significanceFromZero),
-		100 * (1.0 - 2.0 * significanceLevel),
-		Melder_double (lowerLimit), significanceLevel,
-		Melder_double (upperLimit), significanceLevel);
+	MelderInfo_open ();
+	MelderInfo_write4 ("Difference in column ", Table_messageColumn (me, column), " between groups ", group1);
+	MelderInfo_writeLine5 (" and ", group2, " of column ", Table_messageColumn (me, groupColumn), ":");
+	MelderInfo_writeLine2 ("Difference = ", Melder_double (mean));
+	MelderInfo_writeLine2 ("Student's t = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest difference that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
 END
 
 FORM (Table_scatterPlot, "Scatter plot", 0)
@@ -577,7 +574,7 @@ DO
 	Table me = ONLY_OBJECT;
 	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
 	if (icol == 0) return Melder_error ("No such column.");
-	Melder_information ("%ld", Table_searchColumn (me, icol, GET_STRING ("Value")));
+	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING ("Value"))));
 END
 	
 FORM (Table_setColumnLabel_index, "Set column label", 0)

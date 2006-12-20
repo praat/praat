@@ -1,6 +1,6 @@
 /* praat_Exp.c
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/12/08
+ * pb 2006/12/18
  */
 
 #include "praat.h"
@@ -69,7 +69,7 @@ END
 
 DIRECT (ResultsMFC_getNumberOfTrials)
 	ResultsMFC me = ONLY (classResultsMFC);
-	Melder_information ("%ld", my numberOfTrials);
+	Melder_information1 (Melder_integer (my numberOfTrials));
 END
 
 FORM (ResultsMFC_getResponse, "ResultsMFC: Get response", 0)
@@ -80,7 +80,7 @@ DO
 	long trial = GET_INTEGER ("Trial");
 	if (trial > my numberOfTrials) return Melder_error ("Trial %ld does not exist (maximum %ld).",
 		trial, my numberOfTrials);
-	Melder_information ("%s", my result [trial]. response);
+	Melder_information1 (my result [trial]. response);
 END
 
 FORM (ResultsMFC_getStimulus, "ResultsMFC: Get stimulus", 0)
@@ -91,7 +91,7 @@ DO
 	long trial = GET_INTEGER ("Trial");
 	if (trial > my numberOfTrials) return Melder_error ("Trial %ld does not exist (maximum %ld).",
 		trial, my numberOfTrials);
-	Melder_information ("%s", my result [trial]. stimulus);
+	Melder_information1 (my result [trial]. stimulus);
 END
 
 DIRECT (ResultsMFC_removeUnsharedStimuli)

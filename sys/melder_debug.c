@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2006/02/17
+ * pb 2006/12/16
  */
 
 #include "melder.h"
@@ -47,6 +47,7 @@ the behaviour of that program changes in the following way:
 17: debugging on in Formula.c
 18: no endian assumptions in abcio.c
 19: show path name in UiOutfile_do
+20: trace PortAudio
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

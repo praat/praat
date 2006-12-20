@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN ("Programming with Praat", "ppgb", 20050822)
+MAN_BEGIN ("Programming with Praat", "ppgb", 20061218)
 INTRO ("You can extend the functionality of the P\\s{RAAT} program "
 	"by adding modules written in C to it. All of P\\s{RAAT}'s source code "
 	"is available under the General Public Licence.")
@@ -33,10 +33,10 @@ NORMAL ("Before trying the task of learning how to write P\\s{RAAT} extensions i
 	"lives as P\\s{RAAT} scripts, and scripts are easier to write than extensions in C.")
 ENTRY ("2. Getting the existing source code")
 NORMAL ("You obtain the P\\s{RAAT} source code via ##www.praat.org#, in a file with a name like "
-	"##praat4301_sources.tar.gz# (depending on the P\\s{RAAT} version), and unpack this with #gunzip and ##tar xvf# "
+	"##praat4506_sources.tar.gz# (depending on the P\\s{RAAT} version), and unpack this with #gunzip and ##tar xvf# "
 	"(on Unix), or ##StuffIt^\\re Expander^\\tm# (on Macintosh), "
 	"or ##Aladdin^\\re Expander^\\tm# (on Windows). The result will be a set of directories "
-	"called #ipa, #GSL, #sys, #dwsys, #fon, #dwtools, #LPC, #FFNet, #artsynth, #main, and #makefiles, "
+	"called #kar, #GSL, #sys, #dwsys, #fon, #dwtools, #LPC, #FFNet, #artsynth, #main, and #makefiles, "
 	"plus a makefile and a Codewarrior project for Macintosh and Windows.")
 ENTRY ("3. Building P\\s{RAAT} on Unix")
 NORMAL ("To compile and link P\\s{RAAT} on Unix, you go to the directory that "
@@ -56,10 +56,7 @@ NORMAL ("P\\s{RAAT} is preferably linked with a real Motif version (Lesstif give
 	"on SGI, Solaris, and HPUX, Motif libraries are included with the system, "
 	"and the include directory comes with the development package.")
 ENTRY ("4. Building P\\s{RAAT} on Macintosh")
-NORMAL ("Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
-	"##praat_macx# (for MacOS X), ##praat_mac9# (for MacOS 8.5 to 9.2), and choose Make or Run. "
-	"You probably have to edit the prefix (Language Settings: C/C++ Preprocessor), "
-	"e.g. by changing \"\\# if 0\" to \"\\# if 1\".")
+NORMAL ("Open ##praat.xcodeproj# in Xcode and choose Build and Go.")
 ENTRY ("5. Building P\\s{RAAT} on Windows")
 NORMAL ("Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
 	"##praat_win#, and choose Make or Run.")
@@ -71,7 +68,7 @@ NORMAL ("You can edit ##main/main_Praat.c#. "
 CODE ("\\# include \"praat.h\"")
 CODE ("")
 CODE ("DIRECT (HelloFromJane)")
-CODE1 ("Melder_information (\"Hello, I am Jane.\");")
+CODE1 ("Melder_information1 (\"Hello, I am Jane.\");")
 CODE ("END")
 CODE ("")
 CODE ("void main (int argc, char **argv) {")
@@ -89,7 +86,7 @@ NORMAL ("To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Da
 	"##fon/praat_Fon.c#.")
 ENTRY ("8. Using the P\\s{RAAT} shell only")
 NORMAL ("For building the P\\s{RAAT} shell (the Objects and Picture windows) only, you need only the code in the four directories "
-	"#ipa, #GSL, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
+	"#kar, #GSL, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
 	"You will be able to build a P\\s{RAAT} shell, i.e. an Objects and a Picture window, "
 	"which has no knowledge of the world, i.e., which does not know any objects "
 	"that can be included in the list of objects. You could use this P\\s{RAAT} shell "

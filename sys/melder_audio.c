@@ -28,6 +28,7 @@
  * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
  */
 
 #include "melder.h"
@@ -36,6 +37,13 @@
 #include "NUM.h"
 #include <time.h>
 #define my  me ->
+
+#if defined (macintosh) && (! defined (USE_PORTAUDIO) || USE_PORTAUDIO == 1)
+	#include "portaudio.h"
+	#define USE_PORTAUDIO  1
+#else
+	#define USE_PORTAUDIO  0
+#endif
 
 #define Melder_HPUX_USE_AUDIO_SERVER
 
@@ -180,7 +188,7 @@ int Melder_isPlaying;
 
 static struct MelderPlay {
 	const short *buffer;
-	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
+	unsigned long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
 	int asynchronicity, numberOfChannels, explicit, fakeMono;
 	int (*callback) (void *closure, long samplesPlayed);
 	void *closure;
@@ -199,8 +207,12 @@ static struct MelderPlay {
 		MMRESULT status;
 		clock_t startingTime;
 	#elif defined (macintosh)
-		SndChannelPtr soundChannel;
-		/*static void channelCallback (SndChannelPtr channel, SndCommand cmd) {} */
+		#if USE_PORTAUDIO
+			PaStream *stream;
+		#else
+			SndChannelPtr soundChannel;
+			/*static void channelCallback (SndChannelPtr channel, SndCommand cmd) {} */
+		#endif
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		long status;
 		Audio *audio;
@@ -277,7 +289,11 @@ static Boolean flush (void) {
 		waveOutClose (my hWaveOut), my hWaveOut = 0;
 	#elif defined (macintosh)
 		if (my asynchronicity == Melder_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
-			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
+			#if USE_PORTAUDIO
+				Pa_CloseStream (my stream), my stream = NULL;
+			#else
+				SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
+			#endif
 			my samplesPlayed = Melder_clock () * my sampleRate;
 		}
 		Melder_stopClock ();
@@ -392,16 +408,27 @@ static Boolean workProc (XtPointer closure) {
 			}
   		}
 	#elif defined (macintosh)
-		SCStatus status;
-		SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
-		if (status. scChannelBusy) {
-			my samplesPlayed = Melder_clock () * my sampleRate;
-			if (my callback && ! my callback (my closure, my samplesPlayed))
+		#if USE_PORTAUDIO
+			if (Pa_IsStreamActive (my stream)) {
+				my samplesPlayed = Melder_clock () * my sampleRate;
+				if (my callback && ! my callback (my closure, my samplesPlayed))
+					return flush ();
+			} else {
+				my samplesPlayed = my numberOfSamples;
 				return flush ();
-		} else {
-			my samplesPlayed = my numberOfSamples;
-			return flush ();
-		}
+			}
+		#else
+			SCStatus status;
+			SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
+			if (status. scChannelBusy) {
+				my samplesPlayed = Melder_clock () * my sampleRate;
+				if (my callback && ! my callback (my closure, my samplesPlayed))
+					return flush ();
+			} else {
+				my samplesPlayed = my numberOfSamples;
+				return flush ();
+			}
+		#endif
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		AEvent audioEvent;
 		int eventAvailable = ACheckEvent (my audio, & audioEvent, & my status);
@@ -490,7 +517,7 @@ static void cancel (void) {
 }
 #endif
 
-#ifdef macintosh
+#if defined (macintosh) && ! USE_PORTAUDIO
 # define FloatToUnsigned(f)  \
 	 ((unsigned long)(((long)((f) - 2147483648.0)) + 2147483647L + 1))
 static void double2real10 (double x, unsigned char *bytes) {
@@ -529,6 +556,40 @@ static void double2real10 (double x, unsigned char *bytes) {
 	bytes [7] = lowMantissa >> 16;
 	bytes [8] = lowMantissa >> 8;
 	bytes [9] = lowMantissa;
+}
+#endif
+
+#if USE_PORTAUDIO
+static int thePaStreamCallback (const void *input, void *output,
+	unsigned long frameCount,
+	const PaStreamCallbackTimeInfo* timeInfo,
+	PaStreamCallbackFlags statusFlags,
+	void *userData)
+{
+	(void) input;
+	(void) timeInfo;
+	(void) userData;
+	struct MelderPlay *me = & thePlay;
+	if (statusFlags & paOutputUnderflow) {
+		if (Melder_debug == 20) Melder_casual ("output underflow");
+	}
+	if (statusFlags & paOutputOverflow) {
+		if (Melder_debug == 20) Melder_casual ("output overflow");
+	}
+	if (my samplesLeft > 0) {
+		unsigned long dsamples = my samplesLeft > frameCount ? frameCount : my samplesLeft;
+		if (Melder_debug == 20) Melder_casual ("play %s %s", Melder_integer (dsamples),
+			Melder_double (Pa_GetStreamCpuLoad (my stream)));
+		bzero (output, 2 * frameCount * my numberOfChannels);
+		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
+		my samplesLeft -= dsamples;
+		my samplesSent += dsamples;
+		my samplesPlayed = my samplesSent;
+	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
+		my samplesPlayed = my numberOfSamples;
+		return paComplete;
+	}
+	return paContinue;
 }
 #endif
 
@@ -804,6 +865,90 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	return 1;
 }
 #elif defined (macintosh)
+#if USE_PORTAUDIO
+	PaError err;
+	static bool paInitialized = false;
+	if (! paInitialized) {
+		err = Pa_Initialize ();
+		if (Melder_debug == 20) Melder_casual ("init %s", Pa_GetErrorText (err));
+		paInitialized = true;
+		if (Melder_debug == 20) {
+			PaHostApiIndex hostApiCount = Pa_GetHostApiCount ();
+			Melder_casual ("host API count %s", Melder_integer (hostApiCount));
+			for (PaHostApiIndex iHostApi = 0; iHostApi < hostApiCount; iHostApi ++) {
+				const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo (iHostApi);
+				PaHostApiTypeId type = hostApiInfo -> type;
+				Melder_casual ("host API %s: %s, \"%s\"", Melder_integer (iHostApi), Melder_integer (type), hostApiInfo -> name, Melder_integer (hostApiInfo -> deviceCount));
+			}
+			PaHostApiIndex defaultHostApi = Pa_GetDefaultHostApi ();
+			Melder_casual ("default host API %s", Melder_integer (defaultHostApi));
+			PaDeviceIndex deviceCount = Pa_GetDeviceCount ();
+			Melder_casual ("device count %s", Melder_integer (deviceCount));
+		}
+	}
+	PaStreamParameters outputParameters = { 0 };
+	outputParameters. device = Pa_GetDefaultOutputDevice ();
+	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+	if (Melder_debug == 20) {
+		Melder_casual ("default device %s", Melder_integer (outputParameters. device));
+		Melder_casual ("device \"%s\", host API %s, channels in %s out %s, latency in %s-%s out %s-%s, rate %s",
+			deviceInfo -> name, Melder_integer (deviceInfo -> hostApi),
+			Melder_integer (deviceInfo -> maxInputChannels), Melder_integer (deviceInfo -> maxOutputChannels),
+			Melder_double (deviceInfo -> defaultLowInputLatency), Melder_double (deviceInfo -> defaultHighInputLatency),
+			Melder_double (deviceInfo -> defaultLowOutputLatency), Melder_double (deviceInfo -> defaultHighOutputLatency),
+			Melder_double (deviceInfo -> defaultSampleRate));
+	}
+	outputParameters. channelCount = my numberOfChannels;
+	outputParameters. sampleFormat = paInt16;
+	outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
+	outputParameters. hostApiSpecificStreamInfo = NULL;
+	err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
+		paDitherOff, thePaStreamCallback, me);
+	if (err) return Melder_error ("open %s", Pa_GetErrorText (err));
+	Melder_startClock ();
+	err = Pa_StartStream (my stream);
+	if (err) return Melder_error ("start %s", Pa_GetErrorText (err));
+	if (my asynchronicity <= Melder_INTERRUPTABLE) {
+		while (Pa_IsStreamActive (my stream)) {
+			bool interrupted = false;
+			EventRecord event;
+			my samplesPlayed = Melder_clock () * my sampleRate;
+			if (my asynchronicity != Melder_SYNCHRONOUS && my callback && ! my callback (my closure, my samplesPlayed))
+				interrupted = true;
+			/*
+			 * Safe operation: only listen to key-down events.
+			 * Do this on the lowest level that will work.
+			 */
+			if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
+				/*
+				 * Remove the event, even if it was a different key.
+				 * Otherwise, the key will block the future availability of the Escape key.
+				 */
+				FlushEvents (keyDownMask, 0);
+				/*
+				 * Catch Escape and Command-period.
+				 */
+				if ((event. message & charCodeMask) == 27 ||
+					((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
+					my explicit = Melder_EXPLICIT, interrupted = 1;
+			}
+			if (interrupted) {
+				my samplesPlayed = Melder_clock () * my sampleRate;
+				/*FlushEvents (everyEvent, 0);*/
+				Pa_CloseStream (my stream), my stream = NULL;
+				flush ();
+				return 1;
+			}
+		}
+		Pa_CloseStream (my stream), my stream = NULL;
+		my samplesPlayed = my numberOfSamples;
+	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+		my workProcId = XtAppAddWorkProc (0, workProc, 0);
+		return 1;
+	}
+	flush ();
+	return 1;
+#else
 {
 	if (my asynchronicity == Melder_SYNCHRONOUS) {
 		static char listResource [500];
@@ -896,6 +1041,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	flush ();
 	return 1;
 }
+#endif
 #elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 {
 	AudioAttributes attributes;

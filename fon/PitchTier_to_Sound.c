@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2004/10/03 sine wave generation
  * pb 2005/07/08 PitchTier_to_Sound_phonation
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "PitchTier_to_Sound.h"
@@ -63,7 +64,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 int PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 	Sound sound = PitchTier_to_Sound_pulseTrain (me, 22050.0, 0.7, 0.05, 30, hum);
 	if (! sound) return 0;
-	Sound_playPart (sound, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -103,7 +104,7 @@ int PitchTier_playPart_sine (I, double tmin, double tmax) {
 	Sound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 22050.0);
 	if (! sound) return Melder_error ("PitchTier_play: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	Sound_playPart (sound, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }

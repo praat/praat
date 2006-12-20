@@ -23,11 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061213)
+MAN_BEGIN ("What's new?", "ppgb", 20061220)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.08# (December 20, 2006)")
+LIST_ITEM ("\\bu ExperimentMFC: can use stereo sounds.")
+NORMAL ("##4.5.07# (December 16, 2006)")
+LIST_ITEM ("\\bu Macintosh: now uses CoreAudio instead of SoundManager.")
+LIST_ITEM ("\\bu Phonetic symbols: \\\'1primary stress and \\\'1secon\\\'2dary stress.")
 NORMAL ("##4.5.06# (December 13, 2006)")
 LIST_ITEM ("\\bu Support for 32-bit floating-point WAV files.")
+LIST_ITEM ("\\bu Scripting: removed several kinds of restrictions on string length.")
 LIST_ITEM ("\\bu SSCP: Draw confidence ellipse: corrected a bug that would sometimes not draw the ellipse when %N was very large.")
 NORMAL ("##4.5.05# (December 5, 2006)")
 LIST_ITEM ("\\bu Macintosh scripting: European symbols such as \\o\" and \\e' and \\c, are now allowed in file names in scripts "
@@ -775,12 +781,13 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN ("Acknowledgments", "ppgb", 20060329)
+MAN_BEGIN ("Acknowledgments", "ppgb", 20061216)
 NORMAL ("For supplying source code:")
 LIST_ITEM ("GPL IPA fonts: Fukui Rei (XIPA) & Rafael Laboissi\\e`re (adaptation to Praat).")
 LIST_ITEM ("IPA fonts: Summer Institute of Linguistics (Doulos1989, until January 2005).")
 LIST_ITEM ("Linux audio: Darryl Purnell, Pretoria.")
 LIST_ITEM ("GPL Gnu Scientific Library: Gerard Jungman, Brian Gough.")
+LIST_ITEM ("PortAudio: Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
 LIST_ITEM ("Public domain Fourier transforms: Paul Swarztrauber (fftpack), Monty.")
 LIST_ITEM ("Public domain LAPACK: Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")

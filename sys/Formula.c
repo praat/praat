@@ -37,6 +37,7 @@
  * pb 2006/04/17 .row$, .col$
  * pb 2006/05/30 replace_regex$
  * pb 2006/06/10 prevented replace_regex$ from returning null string (now empty string)
+ * pb 2006/12/18 better info
  */
 
 #include <ctype.h>
@@ -3119,22 +3120,22 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			Melder_error ("Found a string expression instead of a numeric expression."); goto end;
 		}
 		if (numericResult) *numericResult = theStack [1]. content.number;
-		else Melder_information ("%s", Melder_double (theStack [1]. content.number));
+		else Melder_information1 (Melder_double (theStack [1]. content.number));
 	} else if (theExpressionType == EXPRESSION_TYPE_STRING) {
 		if (theStack [1]. which == Stackel_NUMBER) {
 			Melder_error ("Found a numeric expression instead of a string expression."); goto end;
 		}
 		if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
-		else Melder_information ("%s", theStack [1]. content.string);
+		else Melder_information1 (theStack [1]. content.string);
 	} else {
 		Melder_assert (theExpressionType == EXPRESSION_TYPE_UNKNOWN);
 		if (theStack [1]. which == Stackel_NUMBER) {
 			if (numericResult) *numericResult = theStack [1]. content.number;
-			else Melder_information ("%s", Melder_double (theStack [1]. content.number));
+			else Melder_information1 (Melder_double (theStack [1]. content.number));
 		} else {
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
-			else Melder_information ("%s", theStack [1]. content.string);
+			else Melder_information1 (theStack [1]. content.string);
 		}
 	}
 end:

@@ -2714,8 +2714,20 @@ DEFINITION ("is a real, nonnegative, and diagonal matrix. Its diagonal contains 
 NORMAL ("If %m < %n, the decomposition results in #U [%m \\xx %m] and #V [%n \\xx %m].")
 MAN_END
 
-MAN_BEGIN ("Sound & Pitch: Change gender...", "djmw", 20030208)
+MAN_BEGIN ("Sound & Pitch: Change speaker...", "djmw", 20030208)
 INTRO ("A command to create a new Sound object with manipulated characteristics "
+	"from the selected @Sound and @Pitch.")
+NORMAL ("With this command you can have finer grained control over the "
+	"pitch than with the @@Sound: Change speaker...@ command. "
+	"Accurate pitch measurement determines the quality of the "
+	"@PSOLA synthesis." )
+ENTRY ("Arguments")
+NORMAL ("The settings are described in @@Sound: Change speaker...@. ")
+MAN_END
+
+MAN_BEGIN ("Sound & Pitch: Change gender...", "djmw", 20030208)
+/* INTRO ("Deprecated: use @@Sound & Pitch: Change speaker...@") */
+NORMAL ("A command to create a new Sound object with manipulated characteristics "
 	"from the selected @Sound and @Pitch.")
 NORMAL ("With this command you can have finer grained control over the "
 	"pitch than with the @@Sound: Change gender...@ command. "
@@ -2726,7 +2738,8 @@ NORMAL ("The settings are described in @@Sound: Change gender...@. ")
 MAN_END
 
 MAN_BEGIN ("Sound: Change gender...", "djmw", 20030205)
-INTRO ("A command to create a new @Sound with manipulated characteristics.")
+/* INTRO ("Deprecated: use @@Sound: Change speaker...@") */
+NORMAL ("A command to create a new @Sound with manipulated characteristics.")
 ENTRY ("Arguments")
 NORMAL ("The quality of the @@PSOLA|manipulation@ depends on the pitch measurement.")
 NORMAL ("The arguments that control the pitch measurement are:")
@@ -2738,9 +2751,9 @@ NORMAL ("The arguments that control the manipulation are:")
 TAG ("%%Formant shift ratio%")
 DEFINITION ("determines the frequencies of the formants in the newly created "
 	"Sound. If this ratio equals 1 no frequency shift will occur and "
-	"the formant frequencies will not change. A ratio of 1.2 will change "
+	"the formant frequencies will not change. A ratio of 1.1 will change "
 	"a male voice to a voice with approximate female formant characteristics. "
-	"A ratio of 1/1.2 will change a female voice to a voice with approximate male formant "
+	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
 	"characteristics.")
 TAG ("%%New pitch median% (default 0.0 Hz: same as original)")
 DEFINITION ("determines what the median pitch of the new Sound will be. "
@@ -2772,6 +2785,43 @@ NORMAL ("Subsequently, the pitch range scale factor determines the final pitch v
 FORMULA ("%finalPitch = %newPitchMedian + (%newPitch \\-- %newPitchMedian) * %pitchRangeScaleFactor")
 NORMAL ("Hence, it follows that no further scaling occurs if %pitchRangeScaleFactor "
 	"equals 1.0.")
+MAN_END
+
+
+MAN_BEGIN ("Sound: Change speaker...", "djmw", 20061215)
+INTRO ("A command to create a new @Sound with manipulated characteristics.")
+ENTRY ("Arguments")
+NORMAL ("The quality of the @@PSOLA|manipulation@ depends on the pitch measurement.")
+NORMAL ("The arguments that control the pitch measurement are:")
+TAG ("%%Pitch floor% (default 75 Hz)")
+DEFINITION ("pitch candidates below this frequency will not be considered.")
+TAG ("%%Pitch ceiling% (default 600 Hz)")
+DEFINITION ("pitch candidates above this frequency will be ignored.")
+NORMAL ("The arguments that control the manipulation are:")
+TAG ("%%Multiply formants by%")
+DEFINITION ("determines the formant frequencies of the newly created sound. "
+	"The formant frequency of the new sound will equal the formant frequencies of the selected sound multiplied by this number. "
+	"If this number equals 1, formant frequencies will not change. A number of 1.1 will change "
+	"a male voice to a voice with approximate female formant characteristics. "
+	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
+	"characteristics.")
+TAG ("%%Multiply pitch by%")
+DEFINITION ("determines what the pitch of the new Sound will be. "
+	"The pitch values of the new sound will equal the pitch values of the selected sound multiplied by this number. A value of 1.8 will  approximately change a male's pitch to a female's pitch.")
+TAG ("%%Multiply pitch range by% (default 1.0)")
+DEFINITION ("determines the pitch range of the newly created sound. "
+	"A factor of 1.0 means that no additional pitch modification will occur "
+	"(except the obvious one described above). A factor of 0.0 monotonizes the new "
+	"sound to the new pitch median. A negative number inverses the pitch range with respect to the median.")
+TAG ("%%Multiply duration by% (default 1.0)")
+DEFINITION ("determines how to modify the duration of the newly created sound. "
+	"A value of 1.0 means that the new sound will have the same duration as the selected sound. "
+	"A value less than 1.0 will result in a shortened new sound. A value larger than 2.5 will not work.")
+NORMAL ("If you want more control over the synthesis you can supply your own "
+	"Pitch object and use the @@Sound & Pitch: Change speaker...@ command. ")
+ENTRY ("Algorithm")
+NORMAL ("The shifting of formant frequencies is done via manipulation of the sampling frequency. "
+	"Pitch and duration changes are generated with @PSOLA synthesis.")
 MAN_END
 
 MAN_BEGIN ("Sound: Filter (gammatone)...", "djmw", 19980712)

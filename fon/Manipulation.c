@@ -1,6 +1,6 @@
 /* Manipulation.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
- * pb 2005/07/07
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "Manipulation.h"
@@ -158,12 +158,12 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		amp = played -> z [1];
 		for (imin = 1; imin <= played -> nx; imin ++) if (amp [imin] != 0.0) break;
 		for (imax = played -> nx; imax >= 1; imax --) if (amp [imax] != 0.0) break;
-		Sound_playPart (played, played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, NULL, 0);
+		Sound_playPart (played, NULL, played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, NULL, 0);
 		forget (played);
 	} else {
 		Sound sound = Manipulation_to_Sound (me, method);
 		if (! sound) return 0;
-		Sound_playPart (sound, tmin, tmax, NULL, 0);
+		Sound_playPart (sound, NULL, tmin, tmax, NULL, 0);
 		forget (sound);
 	}
 	return 1;
@@ -172,7 +172,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 int Manipulation_play (Manipulation me, int method) {
 	Sound sound = Manipulation_to_Sound (me, method);
 	if (! sound) return 0;
-	Sound_play (sound, NULL, NULL);
+	Sound_play (sound, NULL, NULL, NULL);
 	forget (sound);
 	return 1;
 }

@@ -28,6 +28,7 @@
  * pb 2005/11/21 added replay button; version 4
  * pb 2005/12/02 response sounds are read
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/20 stereo
  */
 
 #include "ExperimentMFC.h"
@@ -65,7 +66,7 @@ class_methods_end
 #include "Experiment_enums.h"
 
 static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fileNameTail,
-	double medialSilenceDuration, char **name, Sound *sound)
+	double medialSilenceDuration, char **name, Sound *soundLeft, Sound *soundRight)
 {
 	char fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
 	structMelderFile file;
@@ -78,13 +79,13 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 	#if defined (_WIN32)
 		for (;;) { char *slash = strchr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
 	#endif
-	forget (*sound);
+	forget (*soundLeft);
+	forget (*soundRight);
 	/*
 	 * 'fileNames' can contain commas, which separate partial file names.
 	 * The separate files should be concatenated.
 	 */
 	for (;;) {
-		Sound substimulus;
 		/*
 		 * Determine partial file name.
 		 */
@@ -112,19 +113,28 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 		/*
 		 * Read the substimulus.
 		 */
-		substimulus = Data_readFromFile (& file); cherror
-		if (substimulus -> methods != classSound) {
-			forget (substimulus);
-			Melder_error ("No sound in file \"%s\".", MelderFile_messageName (& file));
+		Sound substimulusLeft, substimulusRight;
+		Sound_read2FromSoundFile (& file, & substimulusLeft, & substimulusRight); cherror
+		/*
+		 * Check whether all sounds have the same number of channels.
+		 */
+		if (my numberOfChannels == 0) {
+			my numberOfChannels = substimulusRight ? 2 : 1;
+		} else if ((substimulusRight != NULL) != (my numberOfChannels == 2)) {
+			forget (substimulusLeft);
+			if (my numberOfChannels == 2) forget (substimulusRight);
+			Melder_error ("The sound in file \"%s\" has a different number of channels than some other sound.",
+				MelderFile_messageName (& file));
 			goto end;
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
 		 */
 		if (my samplePeriod == 0.0) {
-			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
-		} else if (substimulus -> dx != my samplePeriod) {
-			forget (substimulus);
+			my samplePeriod = substimulusLeft -> dx;   /* This must be the first sound read. */
+		} else if (substimulusLeft -> dx != my samplePeriod) {
+			forget (substimulusLeft);
+			if (my numberOfChannels == 2) forget (substimulusRight);
 			Melder_error ("The sound in file \"%s\" has a different sampling frequency than some other sound.",
 				MelderFile_messageName (& file));
 			goto end;
@@ -132,15 +142,26 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 		/*
 		 * Append the substimuli, perhaps with silent intervals.
 		 */
-		if (*sound == NULL) {
-			*sound = substimulus;
+		if (*soundLeft == NULL) {
+			*soundLeft = substimulusLeft;
+			if (my numberOfChannels == 2) {
+				*soundRight = substimulusRight;
+			}
 		} else {
-			Sound newStimulus = Sounds_append (*sound, medialSilenceDuration, substimulus);
-			forget (substimulus);
+			Sound newStimulusLeft = Sounds_append (*soundLeft, medialSilenceDuration, substimulusLeft);
+			forget (substimulusLeft);
 			iferror goto end;
-			Melder_assert (sound == & (*sound));
-			forget (*sound);
-			*sound = newStimulus;
+			Melder_assert (soundLeft == & (*soundLeft));
+			forget (*soundLeft);
+			*soundLeft = newStimulusLeft;
+			if (my numberOfChannels == 2) {
+				Sound newStimulusRight = Sounds_append (*soundRight, medialSilenceDuration, substimulusRight);
+				forget (substimulusRight);
+				iferror goto end;
+				Melder_assert (soundRight == & (*soundRight));
+				forget (*soundRight);
+				*soundRight = newStimulusRight;
+			}
 		}
 		/*
 		 * Cycle.
@@ -173,50 +194,52 @@ int ExperimentMFC_start (ExperimentMFC me) {
 	NUMlvector_free (my stimuli, 1);
 	NUMlvector_free (my responses, 1);
 	NUMdvector_free (my goodnesses, 1);
-	forget (my playBuffer);
+	forget (my playBufferLeft);
+	forget (my playBufferRight);
 	my pausing = FALSE;
 	my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 	my stimuli = NUMlvector (1, my numberOfTrials); cherror
 	my responses = NUMlvector (1, my numberOfTrials); cherror
 	my goodnesses = NUMdvector (1, my numberOfTrials); cherror
 	/*
-	 * Read all the sounds. They must all have the same sampling frequency.
+	 * Read all the sounds. They must all have the same sampling frequency and number of channels.
 	 */
 	my samplePeriod = 0.0;
+	my numberOfChannels = 0;
 	if (my stimuliAreSounds) {
 		if (my stimulusCarrierBefore. name && my stimulusCarrierBefore. name [0]) {
 			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulusCarrierBefore. name, & my stimulusCarrierBefore. sound); cherror
-			stimulusCarrierBeforeSamples = my stimulusCarrierBefore. sound -> nx;
+				& my stimulusCarrierBefore. name, & my stimulusCarrierBefore. soundLeft, & my stimulusCarrierBefore. soundRight); cherror
+			stimulusCarrierBeforeSamples = my stimulusCarrierBefore. soundLeft -> nx;
 		}
 		if (my stimulusCarrierAfter. name && my stimulusCarrierAfter. name [0]) {
 			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulusCarrierAfter. name, & my stimulusCarrierAfter. sound); cherror
-			stimulusCarrierAfterSamples = my stimulusCarrierAfter. sound -> nx;
+				& my stimulusCarrierAfter. name, & my stimulusCarrierAfter. soundLeft, & my stimulusCarrierAfter. soundRight); cherror
+			stimulusCarrierAfterSamples = my stimulusCarrierAfter. soundLeft -> nx;
 		}
 		for (istim = 1; istim <= my numberOfDifferentStimuli; istim ++) {
 			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulus [istim]. name, & my stimulus [istim]. sound); cherror
-			if (my stimulus [istim]. sound -> nx > maximumStimulusSamples)
-				maximumStimulusSamples = my stimulus [istim]. sound -> nx;
+				& my stimulus [istim]. name, & my stimulus [istim]. soundLeft, & my stimulus [istim]. soundRight); cherror
+			if (my stimulus [istim]. soundLeft -> nx > maximumStimulusSamples)
+				maximumStimulusSamples = my stimulus [istim]. soundLeft -> nx;
 		}
 	}
 	if (my responsesAreSounds) {
 		if (my responseCarrierBefore. name && my responseCarrierBefore. name [0]) {
 			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my responseCarrierBefore. name, & my responseCarrierBefore. sound); cherror
-			responseCarrierBeforeSamples = my responseCarrierBefore. sound -> nx;
+				& my responseCarrierBefore. name, & my responseCarrierBefore. soundLeft, & my responseCarrierBefore. soundRight); cherror
+			responseCarrierBeforeSamples = my responseCarrierBefore. soundLeft -> nx;
 		}
 		if (my responseCarrierAfter. name && my responseCarrierAfter. name [0]) {
 			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my responseCarrierAfter. name, & my responseCarrierAfter. sound); cherror
-			responseCarrierAfterSamples = my responseCarrierAfter. sound -> nx;
+				& my responseCarrierAfter. name, & my responseCarrierAfter. soundLeft, & my responseCarrierAfter. soundRight); cherror
+			responseCarrierAfterSamples = my responseCarrierAfter. soundLeft -> nx;
 		}
 		for (iresp = 1; iresp <= my numberOfDifferentResponses; iresp ++) {
 			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my response [iresp]. name, & my response [iresp]. sound); cherror
-			if (my response [iresp]. sound -> nx > maximumResponseSamples)
-				maximumResponseSamples = my response [iresp]. sound -> nx;
+				& my response [iresp]. name, & my response [iresp]. soundLeft, & my response [iresp]. soundRight); cherror
+			if (my response [iresp]. soundLeft -> nx > maximumResponseSamples)
+				maximumResponseSamples = my response [iresp]. soundLeft -> nx;
 		}
 	}
 	/*
@@ -227,7 +250,9 @@ int ExperimentMFC_start (ExperimentMFC me) {
 	maximumResponsePlaySamples = floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
 		+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 1;
 	maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
-	my playBuffer = Sound_create (0.0, maximumPlaySamples * my samplePeriod,
+	my playBufferLeft = Sound_create (0.0, maximumPlaySamples * my samplePeriod,
+		maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod); cherror
+	my playBufferRight = Sound_create (0.0, maximumPlaySamples * my samplePeriod,
 		maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod); cherror
 	/*
 	 * Determine the order in which the stimuli will be presented to the subject.
@@ -269,34 +294,56 @@ end:
 	return 1;
 }
 
-static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound carrierAfter, double initialSilenceDuration) {
+static void playSound (ExperimentMFC me,
+	Sound soundLeft, Sound soundRight,
+	Sound carrierBeforeLeft, Sound carrierBeforeRight,
+	Sound carrierAfterLeft, Sound carrierAfterRight,
+	double initialSilenceDuration)
+{
 	long i, initialSilenceSamples = floor (initialSilenceDuration / my samplePeriod + 0.5);
-	long carrierBeforeSamples = carrierBefore ? carrierBefore -> nx : 0;
-	long soundSamples = sound ? sound -> nx : 0;
-	long carrierAfterSamples = carrierAfter ? carrierAfter -> nx : 0;
-	for (i = 1; i <= initialSilenceSamples; i ++)
-		my playBuffer -> z [1] [i] = 0.0;
-	if (carrierBefore)
-		NUMfvector_copyElements (carrierBefore -> z [1],
-			my playBuffer -> z [1] + initialSilenceSamples, 1, carrierBeforeSamples);
-	if (sound)
-		NUMfvector_copyElements (sound -> z [1],
-			my playBuffer -> z [1] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
-	if (carrierAfter)
-		NUMfvector_copyElements (carrierAfter -> z [1],
-			my playBuffer -> z [1] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
-	Sound_playPart (my playBuffer, 0.0,
+	long carrierBeforeSamples = carrierBeforeLeft ? carrierBeforeLeft -> nx : 0;
+	long soundSamples = soundLeft ? soundLeft -> nx : 0;
+	long carrierAfterSamples = carrierAfterLeft ? carrierAfterLeft -> nx : 0;
+	for (i = 1; i <= initialSilenceSamples; i ++) {
+		my playBufferLeft -> z [1] [i] = 0.0;
+		if (my numberOfChannels == 2) my playBufferRight -> z [1] [i] = 0.0;
+	}
+	if (carrierBeforeLeft) {
+		NUMfvector_copyElements (carrierBeforeLeft -> z [1],
+			my playBufferLeft -> z [1] + initialSilenceSamples, 1, carrierBeforeSamples);
+		if (my numberOfChannels == 2) NUMfvector_copyElements (carrierBeforeRight -> z [1],
+			my playBufferRight -> z [1] + initialSilenceSamples, 1, carrierBeforeSamples);
+	}
+	if (soundLeft) {
+		NUMfvector_copyElements (soundLeft -> z [1],
+			my playBufferLeft -> z [1] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
+		if (my numberOfChannels == 2) NUMfvector_copyElements (soundRight -> z [1],
+			my playBufferRight -> z [1] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
+	}
+	if (carrierAfterLeft) {
+		NUMfvector_copyElements (carrierAfterLeft -> z [1],
+			my playBufferLeft -> z [1] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
+		if (my numberOfChannels == 2) NUMfvector_copyElements (carrierAfterRight -> z [1],
+			my playBufferRight -> z [1] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
+	}
+	Sound_playPart (my playBufferLeft, my playBufferRight, 0.0,
 		(initialSilenceSamples + carrierBeforeSamples + soundSamples + carrierAfterSamples) * my samplePeriod,
 		0, NULL);
 }
 
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim) {
-	playSound (me, my stimulus [istim]. sound, my stimulusCarrierBefore. sound, my stimulusCarrierAfter. sound,
+	playSound (me,
+		my stimulus [istim]. soundLeft, my stimulus [istim]. soundRight,
+		my stimulusCarrierBefore. soundLeft, my stimulusCarrierBefore. soundRight,
+		my stimulusCarrierAfter. soundLeft, my stimulusCarrierAfter. soundRight,
 		my stimulusInitialSilenceDuration);
 }
 
 void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
-	playSound (me, my response [iresp]. sound, my responseCarrierBefore. sound, my responseCarrierAfter. sound,
+	playSound (me,
+		my response [iresp]. soundLeft, my response [iresp]. soundRight,
+		my responseCarrierBefore. soundLeft, my responseCarrierBefore. soundRight,
+		my responseCarrierAfter. soundLeft, my responseCarrierAfter. soundRight,
 		my responseInitialSilenceDuration);
 }
 

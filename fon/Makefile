@@ -1,10 +1,10 @@
 # Makefile of the library "fon"
-# Paul Boersma, October 29, 2006
+# Paul Boersma, December 15, 2006
 
 include ../makefile.defs
-CFLAGS = -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
+CFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon
 
-OBJECTS =   Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
+OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
    TableOfReal.o \
    Distributions.o Transition.o Distributions_and_Transition.o \
    Distributions_and_Strings.o PairDistribution.o \
@@ -49,4 +49,4 @@ libfon.a: $(OBJECTS)
 	ar cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
-$(OBJECTS): *.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../LPC/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../LPC/*.h

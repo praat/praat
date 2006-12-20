@@ -29,9 +29,7 @@
 #include <ctype.h>
 #include "HyperPage.h"
 #include "Printer.h"
-#include "longchar.h"
 #include "Preferences.h"
-#include "site.h"
 #include "machine.h"
 
 #include "praatP.h"

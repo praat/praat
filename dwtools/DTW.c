@@ -25,7 +25,7 @@
  djmw 20050530 Added Matrices_to_DTW
  djmw 20060909 DTW_getPathY linear behaviour outside domains.
  djmw 20061205 Pitches_to_DTW
- djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20061214 Changed info to Melder_writeLine<x> format.
 */
 
 #include "DTW.h"
@@ -420,7 +420,11 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 			if (direction == DTW_UNREACHABLE) /* Point near the borders */
 			{
 				nodirection_assigned++;
-				if (nodirection_assigned < 100) Melder_info ("direction == DTW_UNREACHABLE, x %d, y %d", x, y);
+				if (Melder_debug != 0)
+				{
+					if (nodirection_assigned == 1) MelderInfo_open ();
+					MelderInfo_writeLine4 (Melder_integer (x), " ",  Melder_integer (y), " (x,y) unreachable.");
+				}
 			}
 			delta[y][x] = minimum;
 			psi[y][x] = direction;
@@ -434,7 +438,12 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 
 		Find minimum at end of path and trace back.
 	*/
-	if (nodirection_assigned > 0) Melder_info ("%d cells from %d had no valid direction assigned.", nodirection_assigned, numberOfCells);
+	if (Melder_debug != 0 && nodirection_assigned > 0)
+	{
+		MelderInfo_writeLine4 (Melder_integer (nodirection_assigned), " cells from ", Melder_integer (numberOfCells), " had no valid direction assigned.");
+		MelderInfo_close ();
+		
+	}
 	minimum = delta[ypos = my ny][xpos = my nx];
 	if (choice == DTW_SLOPES)
 	{
@@ -1194,6 +1203,78 @@ end:
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
+
+static int Pitch_findFirstAndLastVoicedFrame (Pitch me, long *first, long *last)
+{
+	*first = 1;
+	while (*first <= my nx && ! Pitch_isVoiced_i (me, *first)) (*first)++;
+	*last = my nx;
+	while (*last >= *first && ! Pitch_isVoiced_i (me, *last)) (*last)--;
+	return *first <= my nx && *last >= 1;
+}
+
+DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) // vuv_costs=24, time_weight=10 ?
+{
+	DTW him = NULL;
+	long i, j, myfirst, mylast, thyfirst, thylast;
+	double *pitchx = NULL;
+	int unit = Pitch_UNIT_SEMITONES_100;
+ 
+ 	if (vuv_costs < 0) return Melder_errorp ("Voiced-unvoiced costs may not be negative.");
+ 	if (time_weight < 0) return Melder_errorp ("Time costs weight may not be negative.");
+
+	if (! Pitch_findFirstAndLastVoicedFrame (me, &myfirst, &mylast) ||
+		! Pitch_findFirstAndLastVoicedFrame (thee, &thyfirst, &thylast)) return Melder_errorp 
+			("No voiced frames.");
+	/*
+		We do not want the silences before the first voiced frame and after the last voiced frame 
+		to determine the distances.
+		We create paths from (1,1)...(thyfirst,myfirst) and (thylast,mylast)...(thy nx,my nx)
+		by making the other cell's distances very large.
+	*/
+ 	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
+ 	if (him == NULL) return NULL;
+ 	pitchx =  NUMdvector (1, thy nx);
+ 	if (pitchx == NULL) goto end;
+ 	for (j = 1; j <= thy nx; j++)
+ 	{
+ 		pitchx[j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, unit);
+ 	}
+ 	
+ 	for (i = 1; i <= my nx; i++)
+ 	{
+ 		double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, unit);
+ 		double t1 = my x1 + (i - 1) * my dx;
+ 		for (j = 1; j <= thy nx; j++)
+ 		{
+ 			double t2 = thy x1 + (j - 1) * thy dx;
+ 			double dist_f = 0; // based on pitch difference
+ 			double dist_t = fabs (t1 -t2);
+ 			if (pitchy == NUMundefined)
+ 			{
+ 				if (pitchx[j] != NUMundefined)
+ 				{
+ 					dist_f = vuv_costs;
+ 				}
+ 			}
+ 			else if (pitchx[j] == NUMundefined)
+ 			{
+ 				dist_f = vuv_costs;
+ 			}
+ 			else
+ 			{
+ 				dist_f = fabs(pitchy - pitchx[j]);
+ 			}
+ 			his z[i][j] = sqrt (dist_f * dist_f + time_weight * dist_t * dist_t);
+ 		}
+ 	}
+ 	DTW_findPath (him, matchStart, matchEnd, slope);
+end:
+	NUMdvector_free (pitchx, 1);
+ 	if (Melder_hasError ()) forget (him);
+ 	return him;
+}
 
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope) // vuv_costs=24, time_weight=10 ?
 {

@@ -59,7 +59,8 @@ static void info (I) {
 		if (value < minimum) minimum = value;
 		if (value > maximum) maximum = value;
 	}
-	MelderInfo_writeLine3 ("Amplitude:\n   Minimum: ", Melder_single (minimum), " Pascal");
+	MelderInfo_writeLine1 ("Amplitude:");
+	MelderInfo_writeLine3 ("   Minimum: ", Melder_single (minimum), " Pascal");
 	MelderInfo_writeLine3 ("   Maximum: ", Melder_single (maximum), " Pascal");
 	mean = sum / my nx;
 	MelderInfo_writeLine3 ("   Mean: ", Melder_single (mean), " Pascal");

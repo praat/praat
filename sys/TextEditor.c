@@ -25,6 +25,7 @@
  * pb 2005/09/01 Undo and Redo buttons
  * pb 2006/08/09 guarded against closing when a file selector is open
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/18 improved info
  */
 
 #include "TextEditor.h"
@@ -331,11 +332,12 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 DIRECT (TextEditor, cb_whereAmI)
 	long numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
-		Melder_information ("The cursor is on line %ld.", numberOfLinesLeft);
+		Melder_information9 ("The cursor is on line ", Melder_integer (numberOfLinesLeft), ".", 0,0,0,0,0,0);
 	} else if (numberOfLinesLeft == numberOfLinesRight) {
-		Melder_information ("The selection is on line %ld.", numberOfLinesLeft);
+		Melder_information9 ("The selection is on line ", Melder_integer (numberOfLinesLeft), ".", 0,0,0,0,0,0);
 	} else {
-		Melder_information ("The selection runs from line %ld to line %ld.", numberOfLinesLeft, numberOfLinesRight);
+		Melder_information9 ("The selection runs from line ", Melder_integer (numberOfLinesLeft),
+			" to line ", Melder_integer (numberOfLinesRight), ".", 0,0,0,0);
 	}
 END
 

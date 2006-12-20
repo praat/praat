@@ -1193,7 +1193,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g", wc);
+	Melder_informationReal (wc, "(world coordinates)");
 END
 
 FORM (dxWCtoMM, "Compute horizontal distance in millimetres", 0)
@@ -1206,7 +1206,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g mm", mm);
+	Melder_informationReal (mm, "mm");
 END
 
 FORM (dyMMtoWC, "Compute vertical distance in world coordinates", 0)
@@ -1219,7 +1219,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g", wc);
+	Melder_informationReal (wc, "(world coordinates)");
 END
 
 FORM (dyWCtoMM, "Compute vertical distance in millimetres", 0)
@@ -1232,7 +1232,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g mm", mm);
+	Melder_informationReal (mm, "mm");
 END
 
 FORM (textWidth_wc, "Text width in world coordinates", 0)
@@ -1246,7 +1246,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_textWidth (GRAPHICS, GET_STRING ("text"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g", wc);
+	Melder_informationReal (wc, "(world coordinates)");
 END
 
 FORM (textWidth_mm, "Text width in millimetres", 0)
@@ -1260,7 +1260,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING ("text")));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g mm", mm);
+	Melder_informationReal (mm, "mm");
 END
 
 FORM (textWidth_ps_wc, "PostScript text width in world coordinates", 0)
@@ -1277,7 +1277,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g", wc);
+	Melder_informationReal (wc, "(world coordinates)");
 END
 
 FORM (textWidth_ps_mm, "PostScript text width in millimetres", 0)
@@ -1294,7 +1294,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
-	Melder_information ("%.17g mm", mm);
+	Melder_informationReal (mm, "mm");
 END
 
 DIRECT (SearchManual) Melder_search (); END

@@ -30,6 +30,7 @@
  djmw 20060921 Added Sound_to_IntervalTier_detectSilence
  djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
  djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
+ djmw 20061214 Sound_and_Pitch_changeSpeaker removed warning.
 */
 
 #include "Intensity_extensions.h"
@@ -237,213 +238,13 @@ static long fileLengthBytes (FILE *f)
 	return end - begin;
 }
 
-/* precondition: -1 <= my z[1][i] <= 1 */
-static void Sound_ulawDecode (Sound me)
-{
-	long i; double mu = 100, lnu1 = log (1 + mu);
-	for (i=1; i <= my nx; i++)
-	{
-		double zabs = (exp (fabs (my z[1][i]) * lnu1) - 1.0) / mu;
-		my z[1][i] = my z[1][i] < 0 ? -zabs : zabs;
-	} 
-}
-
-/* precondition: -1 <= my z[1][i] <= 1 */
-static void Sound_alawDecode (Sound me)
-{
-	double a = 87.6, lna1 = 1.0+log(a); long i;
-	for (i=1; i <= my nx; i++)
-	{
-		double zabs = fabs (my z[1][i]);
-		if (zabs <= 1.0 / lna1) my z[1][i] *= lna1 / a;
-		else
-		{
-			double t = exp (lna1 * zabs - 1.0) / a;
-			my z[1][i] = my z[1][i] > 0 ? t : -t;
-		}
-	}
-}
-
-static int nistGetValue (const char *header, const char *object, double *rval, const char *sval)
-{
-	char obj[30], type[10], *match = strstr (header, object);
-	if (! match) return 0;
-	if (sscanf (match, "%s%s%s", obj, type, sval) != 3) return 0;
-	if (strequ (type, "-i") || strequ (type, "-r")) *rval = atof (sval);
-	else if (strncmp (type, "-s", 2)) return 0;
-	return 1;
-}
-/* pcm mono & embedded-shorten signals read (e.g.TIMIT data base, Groningen corpus) */	
-#if 0
-static Sound Sound_readFromNistAudioFile (MelderFile file)
-{
-	Sound me = NULL; FILE *f; int littleEndian = 0, alaw = 0, ulaw = 0;
-	char header[1024], sval[100], *end_head;
- 	long nSamples, nBytesPerSample, nChannels;
- 	double fsamp, rval;
-	
-	if (! (f = Melder_fopen (file, "rb"))) return NULL;
-	if (fread (header, 1, 1024, f) != 1024)
-	{
-		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: cannot read header.");
-	}
-	if (strncmp (header, "NIST_1A\n   1024\n", 16))
-	{
-		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: not a NIST sound file.");
-	}
-	if (! nistGetValue (header, "sample_count", & rval, sval) || rval < 1)
-	{
-		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: incorrect number of samples.");
-	}
-	nSamples = rval;
-	if (! nistGetValue (header, "sample_n_bytes", & rval, sval) || rval < 1 || rval > 2)
-	{
-		Melder_fclose (fileName, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: incorrect number of bytes per sample.");
-	}
-	nBytesPerSample = rval;
-	if (! nistGetValue (header, "channel_count", & rval, sval) || rval < 1)
-	{
-		Melder_fclose (fileName, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: incorrect number of channels.");
-	}
-	nChannels = rval;
-	if (nChannels > 1)
-	{
-		Melder_fclose (fileName, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: multichannel, we cannot read it.");
-	}
-	if (! nistGetValue (header, "sample_rate", & fsamp, sval) || fsamp < 1)
-	{
-		Melder_fclose (fileName, f);
-		return Melder_errorp ("Sound_readFromNistAudioFile: incorrect sample frequency.");
-	}
-	/* big or little endian, we (sgi) are big */
-	if (nistGetValue (header, "sample_byte_format", & rval, sval) &&
-		strequ (sval, "01")) littleEndian = 1;
-	if (! (me = Sound_createSimple (nSamples/fsamp, fsamp))) goto error;
-	/* display the header */
-	if (end_head = strstr (header, "end_head"))
-	{
-		header[end_head - header + 8] = '\0'; 
-		Melder_casual ("NIST header from file: %s\n%s\n", Melder_FILENAME (fileName), header);
-	}
-	/* check for compression */
-	if (nistGetValue (header, "sample_coding", & rval, sval) && (strnequ (sval, "pcm", 3) ||
-		(ulaw = strnequ (sval, "ulaw", 4)) ||
-		(alaw = strnequ (sval, "alaw", 4))) &&
-		strstr (sval, "embedded-shorten-v"))
-	{
-		/* FIX:
-		The SPEX POLYPHONE-NL database is encoded as alaw,embedded-shorten-v1.09.
-		SPEX has extended Shorten version 1.09 with alaw encoding. The characterization
-		in the encoded file is TYPE_ALAW (an enumerated type with value 7).
-		In Shorten version 2.1 enumerated type value 7 is used for lossy ulaw.
-		*/
-		int isSpexPolyphone = nistGetValue (header, "database_id", &rval, sval) && strequ (sval,"POLYPHONE-NL");
-		Melder_fclose (fileName, f);
-		if (! unshorten (fileName, 1024, isSpexPolyphone, & me))
-		{
-			Melder_error ("Sound_readFromNistAudioFile: cannot unshorten.");
-			goto error;
-		}
-		return me;
-	}
-	
-	/* read the samples from the file */
-	if (nBytesPerSample == 1)
-	{
-		long i = 1; float *s = my z[1]; int c;	
-		if (ulaw)
-		{
-			while (i <= my nx && (c = getc (f)) != EOF)
-			{
-				float tmp = Sulaw2linear (c);
-				s[i++] = tmp / 32768.0;
-			}
-		}
-		else if (alaw)
-		{
-			while (i <= my nx && (c = getc (f)) != EOF)
-			{
-				float tmp = Salaw2linear (c);
-				s[i++] = tmp / 32768.0;
-			}
-		}
-		else
-		{
-			for (i=1; i <= my nx; i++)
-			{
-				float tmp = bingeti1 (f);
-				s[i] = tmp / 128.0;
-			}
-		}
-	}
-	else if (nBytesPerSample == 2) i2read (me, f, littleEndian);	
-	if (feof (f) || ferror (f))
-	{
-		Melder_error ("Sound_readFromNistAudioFile: not completed.");
-		goto error;
-	}
-	Melder_fclose (fileName, f);
-	return me;
-error:
-	forget (me);
-	Melder_fclose (fileName, f);
-	return Melder_errorp("Sound_readFromNistfile: reading from file \"%s\" not performed", Melder_FILENAME (fileName));
-}
-#endif
 static void warning (char *p, long nClip, long nSamp)
 {
 	Melder_warning ("%s: %ld from %ld samples have been clipped.\n"
 		"Advice: you could scale the amplitudes or write to a binary file.",  
 		p, nClip, nSamp);
 }
-#if 0
-int Sound_writeToNistAudioFile (Sound me, const char *name)
-{
-	char header[1024]; long nClip, i, samplingFrequency = (1.0 / my dx);
-	int littleEndian = 1; short i2min, i2max;
-	FILE *f; float max, min; 
-	if (! (f = Melder_fopen (name, "wb"))) return 0;
-	/*
-		Put 0-bytes in header
-	*/
-	memset (header, 0, 1024);
-	/*
-		Find extrema
-	*/
-	max = min = my z[1][1];
-	for (i=2; i <= my nx; i++)
-	{
-		float val = my z[1][i];
-		if (val > max) max = val; else if (val < min) min = val;
-	}
-	max = floor (max * 32768 + 0.5);
-	if (max > 32767) max = 32767;
-	min = floor (min * 32768 + 0.5);
-	if (min < -32768) min = -32767;
-	i2max = max; i2min = min;
-	sprintf (header, "NIST_1A\n   1024\n"
-		"channel_count -i 1\n"
-		"sample_count -i %d\n"
-		"sample_n_bytes -i 2\n"
-		"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
-		"sample_coding -s3 pcm\n"
-		"sample_rate -i %d\n"
-		"sample_min -i %d\n"
-		"sample_max -i %d\n"
-		"end_head\n", my nx, samplingFrequency, i2min, i2max);
-	fwrite (header, 1, 1024, f);
-	i2write (me, f, littleEndian, & nClip);
-	if (nClip > 0) warning ("Sound_writeToNistAudioFile", nClip, my nx);
-	Melder_fclose (name, f);
-	return 1;
-}
-#endif
+
 /* Old TIMIT sound-file format */
 Sound Sound_readFromCmuAudioFile (MelderFile file)
 {
@@ -756,21 +557,6 @@ static Sound Sound_create2 (double minimumTime, double maximumTime, double sampl
 {
 	return Sound_create (minimumTime, maximumTime, floor ((maximumTime - minimumTime) * samplingFrequency + 0.5),
 		1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
-}
-
-static Sound Sound_createSimpleTone (double minimumTime, double maximumTime,
-	double samplingFrequency, double frequency, double amplitude,
-	double initialPhase)
-{
-	Sound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
-	double w = 2 * NUMpi * frequency; long i;
-	if (! me) return NULL;
-	for (i=1; i <= my nx; i++)
-	{
-		double t = my x1 + (i - 1) * my dx; /* Sampled_indexToX */
-		my z[1][i] = amplitude * sin (w * t + initialPhase);
-	}
-	return me;
 }
 
 /*
@@ -1663,7 +1449,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	double median;
 	
 	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
-		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
+		("%s: The Pitch and the Sound object must have the same start and end times.", proc);
 	
 	sound = Data_copy (me);
 	if (sound == NULL) return NULL;
@@ -1696,9 +1482,9 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 		PitchTier_multiplyFrequencies (pitchTier, sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
 		PitchTier_modifyExcursionRange (pitchTier, sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
 	}
-	else
+	else if (pitchMultiplier != 1)
 	{
-		Melder_warning ("%s: There were no voiced segments found.", proc);	
+		Melder_warning ("%s: Pitch has not been changed because the sound was entirely voiceless.", proc);	
 	}
 	duration = DurationTier_create (my xmin, my xmax);
 	if (duration == NULL) goto end;	
@@ -1815,7 +1601,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	
 	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
 		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
-	if (new_pitch < 0) return Melder_errorp ("%s: The new pitch median may not be negative.", proc);
+	if (new_pitch < 0) return Melder_errorp ("%s: The new pitch median must not be negative.", proc);
 	
 	sound = Data_copy (me);
 	if (sound == NULL) return NULL;

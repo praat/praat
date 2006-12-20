@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/05
+ * pb 2006/12/20
  */
 
 /* Sound inherits from Vector */
@@ -224,7 +224,7 @@ Sound Sound_recordFixedTime (int inputSource,
 			and wait for the publishCallback.
 	*/
 
-void Sound_playPart (Sound me, double tmin, double tmax,
+int Sound_playPart (Sound left, Sound right /* can be NULL */, double tmin, double tmax,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
@@ -259,7 +259,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
  *
  * Sound_playPart () usually runs asynchronously, and kills an already playing sound.
  */
-void Sound_play (Sound me,
+int Sound_play (Sound left, Sound right /* can be NULL */,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playClosure); */
 

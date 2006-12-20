@@ -1,6 +1,6 @@
 /* praat_MDS_init.c
  *
- * Copyright (C) 1992-2005 David Weenink
+ * Copyright (C) 1992-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  djmw 20050406 classProcrustus -> classProcrustes.
  djmw 20050426 Removed "Procrustus.h"
  djmw 20050630 Better name of Procrustes object after Configurations_to_Procrustes.
+ djmw 20061218 Introduction of Melder_information<12...9>
 */
 
 #include <math.h>
@@ -180,7 +181,7 @@ DO
 	long column = GET_INTEGER ("Column number");
 	REQUIRE (row <= my n, "Row number must not exceed number of rows.")
 	REQUIRE (column <= my n, "Column number must not exceed number of columns.")
-	Melder_informationReal (my r [row] [column], NULL);
+	Melder_information1 (Melder_double (my r [row] [column]));
 END
 
 FORM (AffineTransform_getTranslationElement, "AffineTransform: Get translation element", "Procrustes")
@@ -190,7 +191,7 @@ DO
 	AffineTransform me = ONLY_OBJECT;
 	long number = GET_INTEGER ("Index");
 	REQUIRE (number <= my n, "Index must not exceed number of elements.")
-	Melder_informationReal (my t [number], NULL);
+	Melder_information1 (Melder_double (my t [number]));
 END
 
 DIRECT (AffineTransform_extractMatrix)
@@ -469,15 +470,15 @@ DO
 END
 
 DIRECT (ContingencyTable_chisqProbability)
-	Melder_information ("%.17g", ContingencyTable_chisqProbability (ONLY_OBJECT));
+	Melder_information1 (Melder_double (ContingencyTable_chisqProbability (ONLY_OBJECT)));
 END
 
 DIRECT (ContingencyTable_cramersStatistic)
-	Melder_information ("%.17g", ContingencyTable_cramersStatistic (ONLY_OBJECT));
+	Melder_information1 (Melder_double (ContingencyTable_cramersStatistic (ONLY_OBJECT)));
 END
 
 DIRECT (ContingencyTable_contingencyCoefficient)
-	Melder_information ("%.17g", ContingencyTable_contingencyCoefficient (ONLY_OBJECT));
+	Melder_information1 (Melder_double (ContingencyTable_contingencyCoefficient (ONLY_OBJECT)));
 END
 
 /************************* Correlation ***********************************/
@@ -542,7 +543,7 @@ END
 DIRECT (Dissimilarity_getAdditiveConstant)
 	double c;
 	Dissimilarity_getAdditiveConstant(ONLY_OBJECT, &c);
-	Melder_information ("%.17g", c);
+	Melder_information1 (Melder_double (c));
 END
 
 FORM (Dissimilarity_Configuration_kruskal, "Dissimilarity & Configuration: To Configuration (kruskal)", 
@@ -743,9 +744,9 @@ FORM (Dissimilarity_Configuration_getStress, "Dissimilarity & Configuration: Get
 		"SUM((dist[k]-dbar)^2))")
 	OK
 DO
-	Melder_information ("%.17g", Dissimilarity_Configuration_getStress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_getStress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), 
-		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress calculation")));
+		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress calculation"))));
 END
 
 FORM (Dissimilarity_Configuration_absolute_stress, 
@@ -754,10 +755,9 @@ FORM (Dissimilarity_Configuration_absolute_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_absolute_stress
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_absolute_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_ratio_stress, "Dissimilarity & Configuration: Get stress (ratio mds)",
@@ -765,9 +765,9 @@ FORM (Dissimilarity_Configuration_ratio_stress, "Dissimilarity & Configuration: 
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", Dissimilarity_Configuration_Weight_ratio_stress
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ratio_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_interval_stress, 
@@ -776,10 +776,9 @@ FORM (Dissimilarity_Configuration_interval_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_interval_stress
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_interval_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_monotone_stress, 
@@ -791,10 +790,9 @@ FORM (Dissimilarity_Configuration_monotone_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_monotone_stress
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_monotone_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
-		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress measure"))));
 END
 
 
@@ -806,12 +804,11 @@ FORM (Dissimilarity_Configuration_ispline_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_ispline_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER ("Number of interior knots"), 
 		GET_INTEGER ("Order of I-spline"), 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_Weight_absolute_stress, 
@@ -820,10 +817,9 @@ FORM (Dissimilarity_Configuration_Weight_absolute_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_absolute_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_absolute_stress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), 
-		ONLY (classWeight), GET_INTEGER ("Stress measure")));
+		ONLY (classWeight), GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_Weight_ratio_stress, 
@@ -832,9 +828,9 @@ FORM (Dissimilarity_Configuration_Weight_ratio_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", Dissimilarity_Configuration_Weight_ratio_stress
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ratio_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), 
-		ONLY (classWeight), GET_INTEGER ("Stress measure")));
+		ONLY (classWeight), GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_Weight_interval_stress, 
@@ -843,10 +839,9 @@ FORM (Dissimilarity_Configuration_Weight_interval_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_interval_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_interval_stress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), 
-		ONLY (classWeight), GET_INTEGER ("Stress measure")));
+		ONLY (classWeight), GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_Weight_monotone_stress, 
@@ -858,11 +853,10 @@ FORM (Dissimilarity_Configuration_Weight_monotone_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_monotone_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_monotone_stress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), 
 		ONLY (classWeight), GET_INTEGER ("Handling of ties"), 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 
@@ -874,12 +868,11 @@ FORM (Dissimilarity_Configuration_Weight_ispline_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information ("%.17g", 
-		Dissimilarity_Configuration_Weight_ispline_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress 
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER ("Number of interior knots"), 
 		GET_INTEGER ("Order of I-spline"), 
-		GET_INTEGER ("Stress measure")));
+		GET_INTEGER ("Stress measure"))));
 END
 
 FORM (Dissimilarity_Configuration_drawShepardDiagram, "Dissimilarity & Configuration: Draw Shepard diagram", 	
@@ -1310,7 +1303,7 @@ DO
 		GET_INTEGER ("Normalize scalar products"), &vaf);
 	distances -> size = 0;
 	forget (distances);
-	Melder_information ("%.17g", vaf);
+	Melder_information1 (Melder_double (vaf));
 END
 
 FORM (Distance_Configuration_Salience_vaf, "Distance & Configuration & Salience: Get VAF", 
@@ -1329,7 +1322,7 @@ DO
 	}
 	Distances_Configuration_Salience_vaf (distances, ONLY (classConfiguration),
 		ONLY (classSalience), GET_INTEGER ("Normalize scalar products"), &vaf);
-	Melder_information ("%.17g", vaf);
+	Melder_information1 (Melder_double (vaf));
 	distances -> size = 0; 
 	forget (distances);
 END
@@ -1355,7 +1348,7 @@ DO
 		ONLY (classConfiguration),
 		ONLY (classSalience), GET_INTEGER ("Handling of ties"),
 		GET_INTEGER ("Normalize scalar products"), &vaf);
-	Melder_information ("%.17g", vaf);
+	Melder_information1 (Melder_double (vaf));
 	dissimilarities -> size = 0; 
 	forget (dissimilarities);
 END
@@ -1484,7 +1477,7 @@ END
 
 DIRECT (Procrustes_getScale)
 	Procrustes me = ONLY_OBJECT;
-	Melder_informationReal (my s, NULL);
+	Melder_information1 (Melder_double (my s));
 END
 
 /********* Casts from & to TableOfReal ***************************/
@@ -1524,7 +1517,7 @@ END
 /********************** TableOfReal ***************************************/
 
 DIRECT (TableOfReal_getTableNorm)
-	Melder_information ("%.17g", TableOfReal_getTableNorm (ONLY_OBJECT));
+	Melder_information1 (Melder_double (TableOfReal_getTableNorm (ONLY_OBJECT)));
 END
 
 FORM (TableOfReal_normalizeTable, "TableOfReal: Normalize table", 

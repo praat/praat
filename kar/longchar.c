@@ -28,6 +28,7 @@
  * pb 2005/09/18 SILIPA93 widths for fontless EPS files, including bold
  * pb 2006/11/17 Unicode
  * pb 2006/12/05 first wchar support
+ * pb 2006/12/15 stress marks
  */
 
 #include "longchar.h"
@@ -379,8 +380,8 @@ static struct Longchar_Info Longchar_database [] = {
 { 'a', 'b', 2, { "/ascriptturn",    500, 0,   520, 578,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   }, 129, 129, 129, 129, UNICODE_LATIN_SMALL_LETTER_TURNED_ALPHA }, // Am. pot
 { 'a', 'y', 2, { "/ascriptturn",    500, 0,   520, 578,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   }, 129, 129, 129, 129, UNICODE_LATIN_SMALL_LETTER_TURNED_ALPHA }, // Am. pot
 { 'b', '^', 2, { "/bhooktop",       475, 0,   510, 580,  475, 0,   0,   0,    475, 0,    475, 0,   0,   0   }, 186, 186, 186, 186, UNICODE_LATIN_SMALL_LETTER_B_WITH_HOOK },
-{ '[', 'f', 2, { "/bracketleft",    333, 0,   346, 356,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   },  91,  91,  91,  91 },
-{ ']', 'f', 2, { "/bracketright",   333, 0,   346, 356,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   },  93,  93,  93,  93 },
+{ '[', 'f', 2, { "/bracketleft",    333, 0,   346, 356,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   },  91,  91,  91,  91, UNICODE_LEFT_SQUARE_BRACKET }, // second version
+{ ']', 'f', 2, { "/bracketright",   333, 0,   346, 356,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   },  93,  93,  93,  93, UNICODE_RIGHT_SQUARE_BRACKET }, // second version
 { 'b', 'c', 2, { "/bcap",           513, 0,   539, 572,  513, 0,   0,   0,    513, 0,    513, 0,   0,   0   }, 245, 245, 245, 245, UNICODE_LATIN_LETTER_SMALL_CAPITAL_B }, // bilabial trill
 { 'c', 't', 2, { "/cturn",          444, 0,   452, 462,  444, 0,   0,   0,    444, 0,    444, 0,   0,   0   }, 141, 141, 141, 141, UNICODE_LATIN_SMALL_LETTER_OPEN_O },
 { 'c', 'c', 2, { "/ccurl",          444, 0,   462, 462,  444, 0,   0,   0,    444, 0,    444, 0,   0,   0   }, 254, 254, 254, 254, UNICODE_LATIN_SMALL_LETTER_C_WITH_CURL },
@@ -423,7 +424,7 @@ static struct Longchar_Info Longchar_database [] = {
 { '|', '1', 2, { "/pipe",           278, 0,   221, 221,  278, 0,   0,   0,    278, 0,    278, 0,   0,   0   }, 142, 142, 142, 142, UNICODE_LATIN_LETTER_DENTAL_CLICK },
 { '|', '2', 2, { "/pipedouble",     444, 0,   221, 221,  444, 0,   0,   0,    444, 0,    444, 0,   0,   0   }, 146, 146, 146, 146, UNICODE_LATIN_LETTER_LATERAL_CLICK },
 { '|', '-', 2, { "/pipedoublebar",  500, 0,   435, 435,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   }, 156, 156, 156, 156, UNICODE_LATIN_LETTER_ALVEOLAR_CLICK },
-{ '|', 'f', 2, { "/stroke",         278, 0,   208, 229,  278, 0,   0,   0,    278, 0,    278, 0,   0,   0   }, 150, 150, 150, 150 },
+{ '|', 'f', 2, { "/stroke",         278, 0,   208, 229,  278, 0,   0,   0,    278, 0,    278, 0,   0,   0   }, 150, 150, 150, 150, UNICODE_VERTICAL_LINE }, // second version
 { 'f', 'f', 2, { "/phiphonetic",    550, 0,   549, 616,  550, 0,   0,   0,    550, 0,    550, 0,   0,   0   }, 184, 184, 184, 184, UNICODE_LATIN_SMALL_LETTER_PHI },
 { 'r', 't', 2, { "/rturn",          333, 0,   356, 462,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   }, 168, 168, 168, 168, UNICODE_LATIN_SMALL_LETTER_TURNED_R },
 { 'r', 'l', 2, { "/rturnleg",       333, 0,   356, 462,  333, 0,   0,   0,    333, 0,    333, 0,   0,   0   }, 228, 228, 228, 228, UNICODE_LATIN_SMALL_LETTER_TURNED_R_WITH_LONG_LEG },
@@ -475,9 +476,12 @@ static struct Longchar_Info Longchar_database [] = {
 { '~', '<', 2, { "/tildethrough",     0, 0,   0,   0,      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, { "/halfringright",    0, 0,   0,   0,      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
 { 'l', 'i', 2, { "/ligature",         0, 0,   0,   0,      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_CHARACTER_TIE },
-{ 'b', 'f', 2, { "/betaphonetic",   500, 0,   520, 597,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  66,  66,  66,  66 },
-{ 't', 'f', 2, { "/thetaphonetic",  444, 0,   520, 585,  444, 0,   0,   0,    444, 0,    444, 0,   0,   0   },  84,  84,  84,  84 },
-{ 'c', 'f', 2, { "/chiphonetic",    500, 0,   572, 610,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  88,  88,  88,  88 },
+{ 'b', 'f', 2, { "/betaphonetic",   500, 0,   520, 597,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  66,  66,  66,  66, UNICODE_GREEK_SMALL_LETTER_BETA }, // second version
+{ 't', 'f', 2, { "/thetaphonetic",  444, 0,   520, 585,  444, 0,   0,   0,    444, 0,    444, 0,   0,   0   },  84,  84,  84,  84, UNICODE_GREEK_SMALL_LETTER_THETA }, // second version
+{ 'c', 'f', 2, { "/chiphonetic",    500, 0,   572, 610,  500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  88,  88,  88,  88, UNICODE_GREEK_SMALL_LETTER_CHI }, // second version
+
+{ '\'','1', 2, { "/stress1",        200, 0,   222, 222,  200, 0,   0,   0,    200, 0,    200, 0,   0,   0   }, 200, 200, 200, 200, UNICODE_MODIFIER_LETTER_VERTICAL_LINE },
+{ '\'','2', 2, { "/stress2",        200, 0,   222, 222,  200, 0,   0,   0,    200, 0,    200, 0,   0,   0   }, 199, 199, 199, 199, UNICODE_MODIFIER_LETTER_LOW_VERTICAL_LINE },
 
 /* Dingbats. */
 /*fir  sec  al    ps                tim  b    i    bi    cen  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */

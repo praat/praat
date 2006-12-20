@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.c
  *
- * Copyright (C) 2003 Paul Boersma
+ * Copyright (C) 2003-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2003/05/31 created
+ * pb 2006/12/20 new Sound_play API
  */
 
 #include "AmplitudeTierEditor.h"
@@ -41,7 +42,7 @@ static void createMenus (I) {
 static void play (I, double tmin, double tmax) {
 	iam (AmplitudeTierEditor);
 	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
 	} else {
 		/*if (! AmplitudeTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
 	}
