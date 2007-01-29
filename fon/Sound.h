@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/01
+ * pb 2007/01/27
  */
 
 /* Sound inherits from Vector */
@@ -93,6 +93,7 @@ Sound Sound_createSimple (long numberOfChannels, double duration, double samplin
 
 Sound Sound_convertToMono (Sound me);
 Sound Sound_convertToStereo (Sound me);
+Sound Sound_extractChannel (Sound me, long channel);
 Sound Sound_extractLeftChannel (Sound me);
 Sound Sound_extractRightChannel (Sound me);
 Sound Sounds_combineToStereo (Sound me, Sound thee);
@@ -147,11 +148,14 @@ Sound Sounds_convolve (Sound me, Sound thee);
 */
 Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize);
 
+double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
+double Sound_getEnergy (Sound me, double xmin, double xmax);
+double Sound_getPower (Sound me, double xmin, double xmax);
 double Sound_getEnergyInAir (Sound me);
 double Sound_getPowerInAir (Sound me);
 double Sound_getIntensity_dB (Sound me);
 
-double Sound_getNearestZeroCrossing (Sound me, double position);
+double Sound_getNearestZeroCrossing (Sound me, double position, long channel);
 void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing);
 
 Sound Sound_createFromToneComplex (double startingTime, double endTime,

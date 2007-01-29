@@ -1,6 +1,6 @@
 /* praat.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2006/09/30 praat_selection () can take NULL as an argument
  * pb 2006/10/28 removed MacOS 9 stuff
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/01/25 width of object list is 50 procent
  */
 
 #include "melder.h"
@@ -58,18 +59,8 @@
 
 #define EDITOR  theCurrentPraat -> list [IOBJECT]. editors
 
-#if defined (_WIN32)
-	#define LIST_WIDTH 220
-	#define BUTTON_WIDTH 190
-	#define WINDOW_HEIGHT 560
-#elif defined (macintosh)
-	#define LIST_WIDTH 220
-	#define BUTTON_WIDTH 190
-	#define WINDOW_HEIGHT 560
-#else
-	#define LIST_WIDTH 229
-	#define BUTTON_WIDTH 120
-#endif
+#define WINDOW_WIDTH 430
+#define WINDOW_HEIGHT 560
 
 structPraat theForegroundPraat;
 Praat theCurrentPraat = & theForegroundPraat;
@@ -418,16 +409,6 @@ void praat_updateSelection (void) {
 			theCurrentPraat -> list [IOBJECT]. _beingCreated = FALSE;
 		}
 		theCurrentPraat -> totalBeingCreated = 0;
-		/*
-		 * The following is a workaround for a bug in LessTif (the free Motif implementation for Linux),
-		 * suggested by Stefan Werner of Joensuu on January 26, 1999,
-		 * after I had suggested him to insert this line in praat_init (), which did not suffice.
-		 */
-		#ifdef lesstif
-			if (! theCurrentPraat -> batch) {
-				XtVaSetValues (praatList_objects, XmNwidth, LIST_WIDTH - 14, NULL);
-			}
-		#endif
 		praat_show ();
 	}
 }
@@ -1058,54 +1039,56 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (NULL);
 	} else {
 		Widget Raam = NULL;
-#ifndef _WIN32
-		Widget listWindow;
-#endif
+		#ifndef _WIN32
+			Widget listWindow;
+		#endif
 		#ifdef macintosh
-		MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
+			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
-#ifdef macintosh
-		XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, NULL);
-		praatP.topBar = motif_addMenuBar (Raam);
-		XtManageChild (praatP.topBar);
-#endif
+		#ifdef macintosh
+			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
+			praatP.topBar = motif_addMenuBar (Raam);
+			XtManageChild (praatP.topBar);
+		#endif
 		praatP.menuBar = motif_addMenuBar (Raam);
 		praat_addMenus (praatP.menuBar);
 		XtManageChild (praatP.menuBar);
 		#ifndef UNIX
-			XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, NULL);
+			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
 		#endif
 		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
 			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
-#ifdef _WIN32
-		praatList_objects = XmCreateList (Raam, "list", NULL, 0);
-		XtVaSetValues (praatList_objects,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 26,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-			XmNx, -1, XmNwidth, LIST_WIDTH, NULL);
-#else
-		listWindow = XmCreateScrolledWindow (Raam, "listWindow", NULL, 0);
-		#ifdef macintosh
+		#if defined (_WIN32)
+			praatList_objects = XmCreateList (Raam, "list", NULL, 0);
+			XtVaSetValues (praatList_objects,
+				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
+				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 200, NULL);
+		#elif defined (UNIX)
+			praatList_objects = XmCreateScrolledList (Raam, "list", NULL, 0);
+			listWindow = XtParent (praatList_objects);
 			XtVaSetValues (listWindow,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNx, -1, XmNwidth, LIST_WIDTH, NULL);
-		#else
+				XmNleftAttachment, XmATTACH_POSITION, XmNleftPosition, 0,
+				XmNrightAttachment, XmATTACH_POSITION, XmNrightPosition, 50, NULL);
+		#elif defined (macintosh)
+			listWindow = XmCreateScrolledWindow (Raam, "listWindow", NULL, 0);
 			XtVaSetValues (listWindow,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 80,
-				XmNwidth, LIST_WIDTH, NULL);
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
+				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 200, NULL);
+			praatList_objects = XmCreateList (listWindow, "list", NULL, 0);
+			XtVaSetValues (praatList_objects, XmNwidth, 500, NULL);
 		#endif
-		praatList_objects = XmCreateList (listWindow, "list", NULL, 0);
-#endif
 		XtAddCallback (praatList_objects, XmNextendedSelectionCallback, cb_list, 0);
 		XtManageChild (praatList_objects);
-#ifndef _WIN32
-		XtManageChild (listWindow);
-#endif
+		#if ! defined (_WIN32)
+			XtManageChild (listWindow);
+		#endif
 		praat_addFixedButtons (Raam);
-		praat_actions_createDynamicMenu (Raam, LIST_WIDTH - 1);
+		praat_actions_createDynamicMenu (Raam, 200);
 		XtManageChild (Raam);
 		XtRealizeWidget (theCurrentPraat -> topShell);
 		#ifdef UNIX

@@ -1,6 +1,6 @@
 /* AmplitudeTier.c
  *
- * Copyright (C) 2003-2006 Paul Boersma
+ * Copyright (C) 2003-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2003/06/10
  * pb 2004/07/14 maximum amplitude factor
  * pb 2006/12/30 new Sound_create API
+ * pb 2007/01/27 compatible with stereo Sounds
  */
 
 #include "AmplitudeTier.h"
@@ -78,11 +79,13 @@ TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
 }
 
 void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
-	long isamp; float *amp = my z [1];
 	if (amplitude -> points -> size == 0) return;
-	for (isamp = 1; isamp <= my nx; isamp ++) {
+	for (long isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
-		amp [isamp] *= RealTier_getValueAtTime (amplitude, t);
+		double factor = RealTier_getValueAtTime (amplitude, t);
+		for (long channel = 1; channel <= my ny; channel ++) {
+			my z [channel] [isamp] *= factor;
+		}
 	}
 }
 
@@ -100,14 +103,15 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound 
 	if (numberOfPeaks < 3) return NULL;
 	him = AmplitudeTier_create (my xmin, my xmax);
 	for (i = imin; i <= imax; i ++) {
-		double value = Vector_getValueAtX (thee, my t [i], 700);
+		double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
 		if (NUMdefined (value)) RealTier_addPoint (him, my t [i], value);
 	}
 	return him;
 }
-static double Sound_getPeak (Sound me, double tmin, double tmax) {
+/*
+static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
 	double minimum, timeOfMinimum, maximum, timeOfMaximum;
-	float *y = my z [1];
+	float *y = my z [channel];
 	long i, imin, imax, sampleOfMinimum, sampleOfMaximum;
 	if (Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax) < 3) return NUMundefined;
 	maximum = minimum = y [imin];
@@ -122,9 +126,9 @@ static double Sound_getPeak (Sound me, double tmin, double tmax) {
 	Vector_getMaximumAndX (me, timeOfMaximum - my dx, timeOfMaximum + my dx, NUM_PEAK_INTERPOLATE_SINC70, & maximum, & timeOfMaximum);
 	return maximum - minimum;
 }
+*/
 static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft, double widthRight) {
 	double sumOfSquares = 0.0, windowSumOfSquares = 0.0;
-	float *y = my z [1];
 	long i, imin, imax;
 	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3) return NUMundefined;
 	for (i = imin; i <= imax; i ++) {
@@ -132,7 +136,7 @@ static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft,
 		double width = t < tmid ? widthLeft : widthRight;
 		double windowPhase = (t - tmid) / width;   /* in [-1 .. 1] */
 		double window = 0.5 + 0.5 * cos (NUMpi * windowPhase);   /* Hann */
-		double windowedValue = y [i] * window;
+		double windowedValue = ( my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]) ) * window;
 		sumOfSquares += windowedValue * windowedValue;
 		windowSumOfSquares += window * window;
 	}

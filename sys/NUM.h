@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * pb 2004/10/16 replaced struct Type with struct structType
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
- * pb 2006/09/07
+ * pb 2007/01/27
  */
 
 /* "NUM" = "NUMerics" */
@@ -302,8 +302,15 @@ double NUMquantile_d (long n, double a [], double factor);
 
 /********** Interpolation and optimization (NUM.c) **********/
 
-double NUM_interpolate_sinc_f (float  y [], long nx, double x, long maxDepth);
-double NUM_interpolate_sinc_d (double y [], long nx, double x, long maxDepth);
+// Special values for interpolationDepth:
+#define NUM_VALUE_INTERPOLATE_NEAREST  0
+#define NUM_VALUE_INTERPOLATE_LINEAR  1
+#define NUM_VALUE_INTERPOLATE_CUBIC  2
+// Higher values than 2 yield a true sinc interpolation. Here are some examples:
+#define NUM_VALUE_INTERPOLATE_SINC70  70
+#define NUM_VALUE_INTERPOLATE_SINC700  700
+double NUM_interpolate_sinc_f (float  y [], long nx, double x, long interpolationDepth);
+double NUM_interpolate_sinc_d (double y [], long nx, double x, long interpolationDepth);
 #define NUM_interpolate_sinc NUM_interpolate_sinc_f
 
 #define NUM_PEAK_INTERPOLATE_NONE  0

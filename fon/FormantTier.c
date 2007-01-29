@@ -1,6 +1,6 @@
 /* FormantTier.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2006/07/21 made Sound_FormantTier_filter_inline () accurate for higher numbers of formants
+ * pb 2007/01/27 made compatible with stereo sounds
  */
 
 #include "FormantTier.h"
@@ -267,7 +268,6 @@ end:
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 	long isamp, iformant;
 	double dt = my dx;
-	float *amp = my z [1];
 	if (formantTier -> points -> size) for (iformant = 1; iformant <= 10; iformant ++) {
 		for (isamp = 1; isamp <= my nx; isamp ++) {
 			double t = my x1 + (isamp - 1) * my dx;
@@ -284,67 +284,21 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
 					/* single pole: D(z) = 1 - r z^-1 */
-					if (isamp > 1) amp [isamp] += r * amp [isamp - 1];
+					for (long channel = 1; channel <= my ny; channel ++) {
+						if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];
+					}
 				} else {
 					/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
 					double p = - 2 * r * cosomdt;
 					double q = r * r;
-					if (isamp > 1) amp [isamp] -= p * amp [isamp - 1];
-					if (isamp > 2) amp [isamp] -= q * amp [isamp - 2];
+					for (long channel = 1; channel <= my ny; channel ++) {
+						if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
+						if (isamp > 2) my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
+					}
 				}
 			}
 		}
-	}	
-}
-
-static void Sound_FormantTier_filter_inline_fastButVeryImprecise (Sound me, FormantTier formantTier) {
-	long isamp;
-	double dt = my dx, a [21];
-	float *amp = my z [1];
-	if (formantTier -> points -> size) for (isamp = 1; isamp <= my nx; isamp ++) {
-		double t = my x1 + (isamp - 1) * my dx;
-		int iformant, icof, ncof;
-		/*
-		 * Initialize LP coefficients.
-		 */
-		for (icof = 1; icof <= 20; icof ++) a [icof] = 0.0;
-		/*
-		 * Compute LP coefficients.
-		 */
-		for (iformant = 1; iformant <= 10; iformant ++) {
-			double formant, bandwidth, cosomdt, r;
-			formant = FormantTier_getValueAtTime (formantTier, iformant, t);
-			if (formant == NUMundefined) break;
-			bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
-			Melder_assert (bandwidth != NUMundefined);
-			cosomdt = cos (2 * NUMpi * formant * dt);
-			r = exp (- NUMpi * bandwidth * dt);
-			/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
-			if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
-				/* single pole: D(z) = 1 - r z^-1 */
-				for (icof = iformant + iformant; icof > 1; icof --) a [icof] -= r * a [icof - 1];
-				a [1] -= r;
-			} else {
-				/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
-				double p = - 2 * r * cosomdt;
-				double q = r * r;
-				for (icof = iformant + iformant; icof > 2; icof --) a [icof] += p * a [icof - 1] + q * a [icof - 2];
-				a [2] += p * a [1] + q;
-				a [1] += p;
-			}
-		}
-		ncof = (iformant - 1) * 2;
-		/*
-		 * Filter.
-		 */
-		if (ncof >= isamp) ncof = isamp - 1;
-		for (icof = 1; icof <= ncof; icof ++) {
-			Melder_assert (fabs (a [icof]) == 0.0 || fabs (a [icof]) > 1e-37);
-			Melder_assert (fabs (a [icof]) < 1e37);
-			amp [isamp] -= a [icof] * amp [isamp - icof];
-			Melder_assert (fabs (amp [isamp]) < 1e37);
-		}
-	}	
+	}
 }
 
 Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {

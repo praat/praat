@@ -61,9 +61,9 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	if (! TextInterval_setText (it -> intervals -> item[1], soundingLabel)) goto end;
 	if (minSilenceDuration > duration) return thee;
 	
-	Vector_getMaximumAndX (me, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_max_db, &xOfMaximum);
+	Vector_getMaximumAndX (me, 0, 0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_max_db, &xOfMaximum);
 	
-	Vector_getMinimumAndX (me, 0, 0, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
+	Vector_getMinimumAndX (me, 0, 0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
 	intensity_dbRange = intensity_max_db - intensity_min_db;
 	
 	if (intensity_dbRange < 10) Melder_warning ("The loudest and softest part in your sound only differ by %lf dB.", intensity_dbRange);

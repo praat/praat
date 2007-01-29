@@ -27,6 +27,8 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/30 stereo
  * pb 2006/01/01 more stereo
+ * pb 2007/01/28 removed a warning
+ * pb 2007/01/28 made readFromMovieFile compatible with stereo
  */
 
 /*
@@ -210,7 +212,6 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 		CloseResFile (path);
 		return Melder_errorp ("(Sound_readFromMacSoundFile:) Sound too large.");
 	}
-	HNoPurge (han);   /* Resources in general, 'snd ' in particular, are often purgeable. */
 	DetachResource (han);   /* Release the sound's binding with the Resource Map. */
 	CloseResFile (path);   /* Remove the Resource Map; the sound is ours now. */
 	{
@@ -258,7 +259,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	SoundDescriptionHandle hSoundDescription = NULL;   /* Not NewHandle yet (on Windows, initialize QuickTime first). */
 	Handle extension = NULL;
 	AudioFormatAtomPtr decompressionAtom = NULL;
-	short numberOfChannels, sampleSize;
+	short numberOfChannels, sampleSize, *buffer = NULL;
 	double samplingFrequency;
 	unsigned long inputBufferSize, outputBufferSize;
 	unsigned long numberOfInputFrames, numberOfOutputFrames, numberOfOutputBytes;
@@ -320,7 +321,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	numberOfChannels = (*hSoundDescription) -> numChannels;
 	sampleSize = (*hSoundDescription) -> sampleSize;
 	samplingFrequency = (double) (*hSoundDescription) -> sampleRate / 65536.0;
-	me = Sound_createSimple (1, duration, samplingFrequency); cherror   // STEREO BUG
+	me = Sound_createSimple (numberOfChannels, duration, samplingFrequency); cherror
 	numberOfSamplesPerMediaSample = my nx / numberOfMediaSamples;
 	if (my nx % numberOfMediaSamples != 0) {
 		Melder_error ("Media samples not equally long: %ld / %ld gives a remainder.", my nx, numberOfMediaSamples);
@@ -388,9 +389,10 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		goto end;
 	}
 	HLock (inputBufferHandle);
+	buffer = NUMsvector (0, numberOfChannels * my nx);
 	err = SoundConverterConvertBuffer (soundConverter,
 		*inputBufferHandle, numberOfInputFrames,
-		& my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
+		buffer, & numberOfOutputFrames, & numberOfOutputBytes);
 	HUnlock (inputBufferHandle);
 	if (err != noErr) {
 		Melder_error ("Cannot convert sound. Error #%ld. "
@@ -407,8 +409,10 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		Melder_error ("Promised %ld samples, but got %ld after conversion.", my nx, numberOfOutputBytes / 2);
 		goto end;
 	}
-	for (isamp = my nx; isamp > 0; isamp --) {
-		my z [1] [isamp] = ((short *) & my z [1] [1]) [isamp - 1] / 32768.0;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		for (isamp = my nx; isamp > 0; isamp --) {
+			my z [channel] [isamp] = buffer [(isamp - 1) * numberOfChannels + channel - 1] / 32768.0;
+		}
 	}
 end:
 	if (extension) DisposeHandle (extension);
@@ -418,6 +422,7 @@ end:
 	if (decompressionAtom) DisposePtr ((Ptr) decompressionAtom);
 	if (soundConverter) SoundConverterClose (soundConverter);
 	if (refNum) CloseMovieFile (refNum);
+	NUMsvector_free (buffer, 0);
 	iferror forget (me);
 #else
 	Melder_error ("This edition of Praat cannot handle movie files.");
@@ -607,7 +612,6 @@ int Sound_writeToSesamFile (Sound me, MelderFile file) {
 	/* Sesam header. */
 		header [126] = floor (1 / my dx + 0.5);   /* Sampling frequency, rounded to n Hz. */
 		header [127] = my nx;   /* Number of samples. */
-	Melder_warning ("Sound_writeToSesamFile: writing %ld samples at %g Hz", my nx, 1 / my dx);
 	for (i = 1; i <= 128; i ++) binputi4LE (header [i], f);
 	for (i = 1; i <= my nx; i ++) binputi2LE (floor (my z [1] [i] * 2048 + 0.5), f);
 	tail = 256 - my nx % 256;

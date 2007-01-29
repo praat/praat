@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2002/08/26 correct handling of zero forwardMaskingTime (bug found by djmw)
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2006/12/30 new Sound_create API
+ * pb 2007/01/28 made compatible with stereo sounds
  */
 
 #include "Sound_to_Cochleagram.h"
@@ -73,7 +74,8 @@ Cochleagram Sound_to_Cochleagram (I, double dt, double df, double dt_window,
 
 		/* Copy a window to a frame. */
 		for (i = 1; i <= nsamp_window; i ++)
-			window -> z [1] [i] = my z [1] [i + startSample - 1] *
+			window -> z [1] [i] =
+				( my ny == 1 ? my z[1][i+startSample-1] : 0.5 * (my z[1][i+startSample-1] + my z[2][i+startSample-1]) ) *
 				(0.5 - 0.5 * cos (2 * NUMpi * i / (nsamp_window + 1)));
 		if (! (spec = Sound_to_Spectrum (window, TRUE)) || ! (excitation = Spectrum_to_Excitation (spec, df))) {
 			forget (spec);

@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,12 @@
  */
 
 /*
- * pb 2004/05/05
+ * pb 2007/01/27
  */
 
 /* Vector inherits from Matrix */
-/* A Vector is a Matrix with a single row. */
+/* A Vector is horizontal Matrix. */
+/* The rows are 'channels'. There will often be only one channel, but e.g. a stereo sound has two. */
 #ifndef _Matrix_h_
 	#include "Matrix.h"
 #endif
@@ -33,23 +34,34 @@
 #define Vector_methods  Matrix_methods
 class_create (Vector, Matrix)
 
-double Vector_getValueAtX (I, double x, int interpolationDepth);
+#define Vector_CHANNEL_AVERAGE  0
+#define Vector_CHANNEL_1  1
+#define Vector_CHANNEL_2  2
+#define Vector_VALUE_INTERPOLATION_NEAREST  0
+#define Vector_VALUE_INTERPOLATION_LINEAR  1
+#define Vector_VALUE_INTERPOLATION_CUBIC  2
+#define Vector_VALUE_INTERPOLATION_SINC70  3
+#define Vector_VALUE_INTERPOLATION_SINC700  4
+double Vector_getValueAtX (I, double x, long channel, int interpolation);
 
-void Vector_getMinimumAndX (I, double xmin, double xmax, int interpolation,
+void Vector_getMinimumAndX (I, double xmin, double xmax, long channel, int interpolation,
 	double *return_minimum, double *return_xOfMinimum);
-void Vector_getMaximumAndX (I, double xmin, double xmax, int interpolation,
-	double *return_minimum, double *return_xOfMinimum);
+void Vector_getMinimumAndXAndChannel (I, double xmin, double xmax, int interpolation,
+	double *return_minimum, double *return_xOfMinimum, long *return_channelOfMinimum);
+void Vector_getMaximumAndX (I, double xmin, double xmax, long channel, int interpolation,
+	double *return_maximum, double *return_xOfMaximum);
+void Vector_getMaximumAndXAndChannel (I, double xmin, double xmax, int interpolation,
+	double *return_maximum, double *return_xOfMaximum, long *return_channelOfMaximum);
 double Vector_getMinimum (I, double xmin, double xmax, int interpolation);
 double Vector_getMaximum (I, double xmin, double xmax, int interpolation);
 double Vector_getAbsoluteExtremum (I, double xmin, double xmax, int interpolation);
 double Vector_getXOfMinimum (I, double xmin, double xmax, int interpolation);
 double Vector_getXOfMaximum (I, double xmin, double xmax, int interpolation);
+long Vector_getChannelOfMinimum (I, double xmin, double xmax, int interpolation);
+long Vector_getChannelOfMaximum (I, double xmin, double xmax, int interpolation);
 
-double Vector_getMean (I, double xmin, double xmax);
-double Vector_getRootMeanSquare (I, double xmin, double xmax);
-double Vector_getStandardDeviation (I, double xmin, double xmax);
-double Vector_getEnergy (I, double xmin, double xmax);
-double Vector_getPower (I, double xmin, double xmax);
+double Vector_getMean (I, double xmin, double xmax, long channel);
+double Vector_getStandardDeviation (I, double xmin, double xmax, long channel);
 
 void Vector_addScalar (I, double scalar);
 void Vector_subtractMean (I);

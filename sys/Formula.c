@@ -1,6 +1,6 @@
 /* Formula.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
  * pb 2006/06/10 prevented replace_regex$ from returning null string (now empty string)
  * pb 2006/12/18 better info
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/01/28 made compatible with multi-channelled vectors
  */
 
 #include <ctype.h>
@@ -2545,7 +2546,7 @@ static void do_self0 (long irow, long icol) {
 				"Try using the [column] index explicitly.", Thing_className (me));
 			goto end;
 		} else {
-			pushNumber (our getVector (me, icol));
+			pushNumber (our getVector (me, irow, icol));
 		}
 	} else if (our getMatrix) {
 		if (irow == 0) {
@@ -2580,7 +2581,7 @@ static void do_matriks0 (long irow, long icol) {
 				"Try using the [column] index explicitly.", Thing_className (thee));
 			goto end;
 		} else {
-			pushNumber (your getVector (thee, icol));
+			pushNumber (your getVector (thee, irow, icol));
 		}
 	} else if (your getMatrix) {
 		if (irow == 0) {
@@ -2611,7 +2612,7 @@ static void do_selfMatriks1 (long irow) {
 	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getVector) {
-		pushNumber (our getVector (me, icol));
+		pushNumber (our getVector (me, irow, icol));
 	} else if (our getMatrix) {
 		if (irow == 0) {
 			Melder_error ("We are not in a loop,\n"
@@ -2657,7 +2658,7 @@ static void do_matriks1 (long irow) {
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getVector) {
-		pushNumber (your getVector (thee, icol));
+		pushNumber (your getVector (thee, irow, icol));
 	} else if (your getMatrix) {
 		if (irow == 0) {
 			Melder_error ("We are not in a loop,\n"
@@ -2770,7 +2771,7 @@ static void do_funktie0 (long irow, long icol) {
 			goto end;
 		} else {
 			double x = our getX (me, icol);
-			pushNumber (your getFunction1 (thee, x));
+			pushNumber (your getFunction1 (thee, irow, x));
 		}
 	} else if (your getFunction2) {
 		Data me = theSource;
@@ -2808,7 +2809,7 @@ static void do_selfFunktie1 (long irow) {
 	if (x->which == Stackel_NUMBER) {
 		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 		if (our getFunction1) {
-			pushNumber (our getFunction1 (me, x->content.number));
+			pushNumber (our getFunction1 (me, irow, x->content.number));
 		} else if (our getFunction2) {
 			if (our getY == NULL) {
 				Melder_error ("The current %s object (self) accepts no implicit y values.\n"
@@ -2832,7 +2833,7 @@ static void do_funktie1 (long irow) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (your getFunction1) {
-			pushNumber (your getFunction1 (thee, x->content.number));
+			pushNumber (your getFunction1 (thee, irow, x->content.number));
 		} else if (your getFunction2) {
 			Data me = theSource;
 			if (me == NULL) {

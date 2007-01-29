@@ -1,6 +1,6 @@
 /* praat_actions.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/03/18 Mach
  * pb 2004/04/01 second-level menus
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/01/25 width of button list is 50 procent
  */
 
 #include "praatP.h"
@@ -29,9 +30,7 @@
 #include "longchar.h"
 #include "machine.h"
 
-#if defined (_WIN32)
-	#define BUTTON_WIDTH  190
-#elif defined (macintosh)
+#if defined (_WIN32) || defined (macintosh)
 	#define BUTTON_WIDTH  190
 #endif
 
@@ -592,13 +591,12 @@ void praat_actions_show (void) {
 					Longchar_nativize (my title, Melder_buffer1, FALSE);
 					my button = XmCreatePushButton (parent, Melder_buffer1, NULL, 0);
 					#if defined (_WIN32)
-						XtVaSetValues (my button, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, NULL);
+						XtVaSetValues (my button, XmNx, 4, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, NULL);
 					#elif defined (macintosh)
-						#if TARGET_API_MAC_CARBON
-							XtVaSetValues (my button, XmNx, 5, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 25, NULL);
-						#else
-							XtVaSetValues (my button, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 20, NULL);
-						#endif
+						/*
+						 * Keep 5 pixels distance on both sides for shadow.
+						 */
+						XtVaSetValues (my button, XmNx, 9, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 25, NULL);
 					#endif
 					if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand)
 						XtAddCallback (my button, XmNactivateCallback, cb_menu, (void *) my script);
@@ -658,13 +656,8 @@ void praat_actions_show (void) {
 							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
 							XtVaSetValues (my button, XmNheight, 21, XmNwidth, BUTTON_WIDTH - 20, NULL);
 						#elif defined (macintosh)
-							#if TARGET_API_MAC_CARBON
-								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 29, NULL);
-								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, NULL);
-							#else
-								XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
-								XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 20, NULL);
-							#endif
+							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 29, NULL);
+							XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, NULL);
 						#endif
 					} else {
 						currentSubmenu2 = motif_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
@@ -693,22 +686,30 @@ void praat_actions_init (void) {
 	theActions = Melder_calloc (praat_MAXNUM_LOOSE_COMMANDS + 1, sizeof (struct structPraat_Command));
 }
 
-void praat_actions_createDynamicMenu (Widget form, int leftOffset) {
+void praat_actions_createDynamicMenu (Widget form, int width) {
 	if (theCurrentPraat -> batch) return;
 	praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
-	#ifdef macintosh
+	#if defined (macintosh)
 		XtVaSetValues (praat_dynamicMenuWindow,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
 			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -1,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, leftOffset,
+			XmNwidth, width,
+			NULL);
+	#elif defined (UNIX)
+		(void) width;
+		XtVaSetValues (praat_dynamicMenuWindow,
+			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
+			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
+			XmNleftAttachment, XmATTACH_POSITION, XmNleftPosition, 50,
+			XmNrightAttachment, XmATTACH_POSITION, XmNrightPosition, 100,
 			NULL);
 	#else
 		XtVaSetValues (praat_dynamicMenuWindow,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -3,
 			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -3,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, leftOffset,
+			XmNwidth, width,
 			NULL);
 	#endif
 	praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/01/07
+ * pb 2007/01/27
  */
 
 #include "praat.h"
@@ -375,28 +375,9 @@ DIRECT (Sounds_convolve)
 	if (! praat_new (Sounds_convolve (sound1, sound2), name)) return 0;
 END
 
-FORM (Sounds_crossCorrelate, "Cross-correlate", 0)
-	REAL ("From lag (s)", "-0.1")
-	REAL ("To lag (s)", "0.1")
-	BOOLEAN ("Normalize", 1)
-	OK
-DO
-	Sound s1 = NULL, s2 = NULL;
-	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
-	if (! praat_new (Sounds_crossCorrelate (s1, s2, GET_REAL ("From lag"), GET_REAL ("To lag"),
-		GET_INTEGER ("Normalize")), "cc_%s_%s", s1 -> name, s2 -> name)) return 0;
-END
-
-FORM (Sound_create, "Create mono Sound", "Create Sound...")
-	WORD ("Name", "sineWithNoise")
-	REAL ("Start time (s)", "0.0")
-	REAL ("End time (s)", "1.0")
-	REAL ("Sampling frequency (Hz)", "44100")
-	LABEL ("", "Formula:")
-	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
-	OK
-DO
+static int common_Sound_create (void *dia, bool allowStereo) {
 	Sound sound = NULL;
+	long channels = allowStereo ? GET_INTEGER ("Channels") : 1;
 	double startTime = GET_REAL ("Start time");
 	double endTime = GET_REAL ("End time");
 	double samplingFrequency = GET_REAL ("Sampling frequency");
@@ -432,7 +413,7 @@ DO
 			return Melder_error ("Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
-	sound = Sound_create (1, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
+	sound = Sound_create (channels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
 		startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	if (sound == NULL) {
 		if (strstr (Melder_getError (), "memory")) {
@@ -452,7 +433,35 @@ DO
 		return Melder_error ("Please correct the formula.");
 	}
 	if (! praat_new (sound, GET_STRING ("Name"))) return 0;
-	praat_updateSelection ();
+	//praat_updateSelection ();
+	return 1;
+}
+
+FORM (Sound_create, "Create mono Sound", "Create Sound...")
+	WORD ("Name", "sineWithNoise")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
+	REAL ("Sampling frequency (Hz)", "44100")
+	LABEL ("", "Formula:")
+	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	OK
+DO
+	if (! common_Sound_create (dia, false)) return 0;
+END
+
+FORM (Sound_createFromFormula, "Create Sound from formula", "Create Sound from formula...")
+	WORD ("Name", "sineWithNoise")
+	OPTIONMENU ("Channels", 1)
+		OPTION ("Mono")
+		OPTION ("Stereo")
+	REAL ("Start time (s)", "0.0")
+	REAL ("End time (s)", "1.0")
+	REAL ("Sampling frequency (Hz)", "44100")
+	LABEL ("", "Formula:")
+	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	OK
+DO
+	if (! common_Sound_create (dia, true)) return 0;
 END
 
 FORM (Sound_createFromToneComplex, "Create Sound from tone complex", "Create Sound from tone complex...")
@@ -473,6 +482,18 @@ DO
 		GET_REAL ("Sampling frequency"), GET_INTEGER ("Phase") - 1, GET_REAL ("Frequency step"),
 		GET_REAL ("First frequency"), GET_REAL ("Ceiling"), GET_INTEGER ("Number of components")),
 		GET_STRING ("Name"))) return 0;
+END
+
+FORM (Sounds_crossCorrelate, "Cross-correlate", 0)
+	REAL ("From lag (s)", "-0.1")
+	REAL ("To lag (s)", "0.1")
+	BOOLEAN ("Normalize", 1)
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
+	if (! praat_new (Sounds_crossCorrelate (s1, s2, GET_REAL ("From lag"), GET_REAL ("To lag"),
+		GET_INTEGER ("Normalize")), "cc_%s_%s", s1 -> name, s2 -> name)) return 0;
 END
 
 FORM (Sound_deemphasizeInline, "Sound: De-emphasize (in-line)", "Sound: De-emphasize (in-line)...")
@@ -702,7 +723,7 @@ FORM (Sound_getEnergy, "Sound: Get energy", "Sound: Get energy...")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Vector_getEnergy (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2 sec");
+	Melder_informationReal (Sound_getEnergy (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2 sec");
 END
 
 DIRECT (Sound_getEnergyInAir)
@@ -735,12 +756,28 @@ DO
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "Pascal");
 END
 
-FORM (Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
+FORM (old_Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Vector_getMean (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pascal");
+	Melder_informationReal (Vector_getMean (ONLY (classSound),
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), "Pascal");
+END
+
+FORM (Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
+	OPTIONMENU ("Channel", 1)
+		OPTION ("All")
+		OPTION ("Left")
+		OPTION ("Right")
+	REAL ("left Time range (s)", "0.0")
+	REAL ("right Time range (s)", "0.0 (= all)")
+	OK
+DO_ALTERNATIVE (old_Sound_getMean)
+	Sound me = ONLY (classSound);
+	long channel = GET_INTEGER ("Channel") - 1;
+	if (channel > my ny) channel = 1;
+	Melder_informationReal (Vector_getMean (me, GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), "Pascal");
 END
 
 FORM (Sound_getMinimum, "Sound: Get minimum", "Sound: Get minimum...")
@@ -758,11 +795,25 @@ DO
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "Pascal");
 END
 
-FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
+FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
 	REAL ("Time (s)", "0.5")
 	OK
 DO
-	Melder_informationReal (Sound_getNearestZeroCrossing (ONLY (classSound), GET_REAL ("Time")), "seconds");
+	Sound me = ONLY (classSound);
+	if (my ny > 1) return Melder_error ("Cannot determine a zero crossing for a stereo sound.");
+END
+
+FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Left")
+		OPTION ("Right")
+	REAL ("Time (s)", "0.5")
+	OK
+DO_ALTERNATIVE (Sound_getNearestZeroCrossing)
+	Sound me = ONLY (classSound);
+	long channel = GET_INTEGER ("Channel");
+	if (channel > my ny) channel = 1;
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), channel), "seconds");
 END
 
 DIRECT (Sound_getNumberOfChannels)
@@ -780,7 +831,7 @@ FORM (Sound_getPower, "Sound: Get power", "Sound: Get power...")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Vector_getPower (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2");
+	Melder_informationReal (Sound_getPower (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2");
 END
 
 DIRECT (Sound_getPowerInAir)
@@ -792,7 +843,7 @@ FORM (Sound_getRootMeanSquare, "Sound: Get root-mean-square", "Sound: Get root-m
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Vector_getRootMeanSquare (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pascal");
+	Melder_informationReal (Sound_getRootMeanSquare (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pascal");
 END
 
 DIRECT (Sound_getSamplePeriod)
@@ -805,12 +856,29 @@ DIRECT (Sound_getSampleRate)
 	Melder_informationReal (1 / my dx, "Hertz");
 END
 
-FORM (Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
+FORM (old_Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Vector_getStandardDeviation (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pascal");
+	Melder_informationReal (Vector_getStandardDeviation (ONLY (classSound),
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), "Pascal");
+END
+
+FORM (Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Average")
+		OPTION ("Left")
+		OPTION ("Right")
+	REAL ("left Time range (s)", "0.0")
+	REAL ("right Time range (s)", "0.0 (= all)")
+	OK
+DO_ALTERNATIVE (old_Sound_getStandardDeviation)
+	Sound me = ONLY (classSound);
+	long channel = GET_INTEGER ("Channel") - 1;
+	if (channel > my ny) channel = 1;
+	Melder_informationReal (Vector_getStandardDeviation (me,
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), "Pascal");
 END
 
 FORM (Sound_getTimeFromIndex, "Get time from sample number", "Get time from sample number...")
@@ -824,11 +892,11 @@ FORM (Sound_getTimeOfMaximum, "Sound: Get time of maximum", "Sound: Get time of 
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+		RADIOBUTTON ("None")
+		RADIOBUTTON ("Parabolic")
+		RADIOBUTTON ("Cubic")
+		RADIOBUTTON ("Sinc70")
+		RADIOBUTTON ("Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classSound),
@@ -850,26 +918,65 @@ DO
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
 END
 
-FORM (Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
+FORM (old_Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
 	INTEGER ("Sample number", "100")
 	OK
 DO
 	Sound me = ONLY (classSound);
 	long sampleIndex = GET_INTEGER ("Sample number");
-	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined : my z [1] [sampleIndex], "Pascal");
+	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
+		my ny == 1 ? my z [1] [sampleIndex] : 0.5 * (my z [1] [sampleIndex] + my z [2] [sampleIndex]), "Pascal");
+END
+
+FORM (Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Average")
+		OPTION ("Left")
+		OPTION ("Right")
+	INTEGER ("Sample number", "100")
+	OK
+DO_ALTERNATIVE (old_Sound_getValueAtIndex)
+	Sound me = ONLY (classSound);
+	long sampleIndex = GET_INTEGER ("Sample number");
+	long channel = GET_INTEGER ("Channel") - 1;
+	if (channel > my ny) channel = 1;
+	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
+		Sampled_getValueAtSample (me, sampleIndex, channel, 0), "Pascal");
+END
+
+FORM (old_Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
+	REAL ("Time (s)", "0.5")
+	RADIO ("Interpolation", 4)
+		RADIOBUTTON ("Nearest")
+		RADIOBUTTON ("Linear")
+		RADIOBUTTON ("Cubic")
+		RADIOBUTTON ("Sinc70")
+		RADIOBUTTON ("Sinc700")
+	OK
+DO
+	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
+		Vector_CHANNEL_AVERAGE, GET_INTEGER ("Interpolation") - 1), "Pascal");
 END
 
 FORM (Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Average")
+		OPTION ("Left")
+		OPTION ("Right")
 	REAL ("Time (s)", "0.5")
 	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("Nearest")
-	RADIOBUTTON ("Linear")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+		RADIOBUTTON ("Nearest")
+		RADIOBUTTON ("Linear")
+		RADIOBUTTON ("Cubic")
+		RADIOBUTTON ("Sinc70")
+		RADIOBUTTON ("Sinc700")
 	OK
-DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"), GET_INTEGER ("Interpolation") - 1), "Pascal");
+DO_ALTERNATIVE (old_Sound_getValueAtTime)
+	Sound me = ONLY (classSound);
+	long channel = GET_INTEGER ("Channel") - 1;
+	if (channel > my ny) channel = 1;
+	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
+		channel, GET_INTEGER ("Interpolation") - 1), "Pascal");
 END
 
 DIRECT (Sound_help) Melder_help ("Sound"); END
@@ -1089,7 +1196,7 @@ DO
 	}
 END
 
-FORM (Sound_setValueAtIndex, "Sound: Set value at sample number", "Sound: Set value at sample number...")
+FORM (old_Sound_setValueAtIndex, "Sound: Set value at sample number", "Sound: Set value at sample number...")
 	NATURAL ("Sample number", "100")
 	REAL ("New value", "0")
 	OK
@@ -1099,7 +1206,35 @@ DO
 		long index = GET_INTEGER ("Sample number");
 		if (index > my nx)
 			return Melder_error ("The sample number should not exceed the number of samples, which is %ld.", my nx);
-		my z [1] [index] = GET_REAL ("New value");
+		for (long channel = 1; channel <= my ny; channel ++)
+			my z [channel] [index] = GET_REAL ("New value");
+		praat_dataChanged (me);
+	}
+END
+
+FORM (Sound_setValueAtIndex, "Sound: Set value at sample number", "Sound: Set value at sample number...")
+	OPTIONMENU ("Channel", 2)
+		OPTION ("Both")
+		OPTION ("Left")
+		OPTION ("Right")
+	NATURAL ("Sample number", "100")
+	REAL ("New value", "0")
+	OK
+DO_ALTERNATIVE (old_Sound_setValueAtIndex)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		long index = GET_INTEGER ("Sample number");
+		if (index > my nx)
+			return Melder_error ("The sample number should not exceed the number of samples, which is %ld.", my nx);
+		long channel = GET_INTEGER ("Channel") - 1;
+		if (channel > my ny) channel = 1;
+		if (channel > 0) {
+			my z [channel] [index] = GET_REAL ("New value");
+		} else {
+			for (channel = 1; channel <= my ny; channel ++) {
+				my z [channel] [index] = GET_REAL ("New value");
+			}
+		}
 		praat_dataChanged (me);
 	}
 END
@@ -1356,6 +1491,9 @@ DO
 END
 
 FORM (Sound_to_PointProcess_extrema, "Sound: To PointProcess (extrema)", 0)
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Left")
+		OPTION ("Right")
 	BOOLEAN ("Include maxima", 1)
 	BOOLEAN ("Include minima", 0)
 	RADIO ("Interpolation", 4)
@@ -1366,7 +1504,8 @@ FORM (Sound_to_PointProcess_extrema, "Sound: To PointProcess (extrema)", 0)
 	RADIOBUTTON ("Sinc700")
 	OK
 DO
-	EVERY_TO (Sound_to_PointProcess_extrema (OBJECT, GET_INTEGER ("Interpolation") - 1,
+	long channel = GET_INTEGER ("Channel");
+	EVERY_TO (Sound_to_PointProcess_extrema (OBJECT, channel > ((Sound) OBJECT) -> ny ? 1 : channel, GET_INTEGER ("Interpolation") - 1,
 		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")))
 END
 
@@ -1393,11 +1532,15 @@ DO
 END
 
 FORM (Sound_to_PointProcess_zeroes, "Get zeroes", 0)
+	OPTIONMENU ("Channel", 1)
+		OPTION ("Left")
+		OPTION ("Right")
 	BOOLEAN ("Include raisers", 1)
 	BOOLEAN ("Include fallers", 0)
 	OK
 DO
-	EVERY_TO (Sound_to_PointProcess_zeroes (OBJECT,
+	long channel = GET_INTEGER ("Channel");
+	EVERY_TO (Sound_to_PointProcess_zeroes (OBJECT, channel > ((Sound) OBJECT) -> ny ? 1 : channel,
 		GET_INTEGER ("Include raisers"), GET_INTEGER ("Include fallers")))
 END
 
@@ -1735,7 +1878,8 @@ void praat_uvafon_Sound_init (void) {
 	praat_addMenuCommand ("Objects", "New", "Record stereo Sound...", 0, 0, DO_Sound_record_stereo);
 	praat_addMenuCommand ("Objects", "New", "Record Sound (fixed time)...", 0, praat_HIDDEN, DO_Sound_recordFixedTime);
 	praat_addMenuCommand ("Objects", "New", "Sound", 0, 0, 0);
-		praat_addMenuCommand ("Objects", "New", "Create Sound...", 0, 1, DO_Sound_create);
+		praat_addMenuCommand ("Objects", "New", "Create Sound...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_create);
+		praat_addMenuCommand ("Objects", "New", "Create Sound from formula...", 0, 1, DO_Sound_createFromFormula);
 		praat_addMenuCommand ("Objects", "New", "Create Sound from tone complex...", 0, 1, DO_Sound_createFromToneComplex);
 
 	praat_addMenuCommand ("Objects", "Read", "-- read sound --", 0, 0, 0);

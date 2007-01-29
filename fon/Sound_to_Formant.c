@@ -1,6 +1,6 @@
 /* Sound_to_Formant.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/09/18 default time step is 4 times oversampling
  * pb 2006/05/10 better handling of interruption in Sound_to_Formant
  * pb 2006/05/10 better handling of NULL from Polynomial_to_Roots
+ * pb 2007/01/26 made compatible with stereo Sounds
  */
 
 #include "Sound_to_Formant.h"
@@ -229,9 +230,11 @@ loopEnd:
 }
 
 static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
-	long i; float *s = my z [1]; 
 	double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
-	for (i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
+	for (long channel = 1; channel <= my ny; channel ++) {
+		float *s = my z [channel]; 
+		for (long i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
+	}
 }
 
 void Formant_sort (Formant me) {
@@ -309,18 +312,22 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		double maximumIntensity = 0.0;
 		if (startSample < 1) startSample = 1;
 		if (endSample > my nx) endSample = my nx;
-		for (i = startSample; i <= endSample; i ++)
-			if (my z [1] [i] * my z [1] [i] > maximumIntensity)
-				maximumIntensity = my z [1] [i] * my z [1] [i];
+		for (i = startSample; i <= endSample; i ++) {
+			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+			if (value * value > maximumIntensity) {
+				maximumIntensity = value * value;
+			}
+		}
 		if (maximumIntensity == HUGE_VAL) { Melder_error ("Sound contains infinities."); goto end; }
 		thy frame [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   /* Burg cannot stand all zeroes. */
 
 		/* Copy a pre-emphasized window to a frame. */
-		if (which == 1) for (j = 1, i = startSample; i <= endSample; j ++)
-			frame_f [j] = my z [1] [i ++] * window [j];
-		else for (j = 1, i = startSample; j <= nsamp_window; j ++)
-			frame_d [j] = my z [1] [i ++] * window [j];
+		if (which == 1) for (j = 1, i = startSample; i <= endSample; j ++) {
+			frame_f [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
+		} else for (j = 1, i = startSample; j <= nsamp_window; j ++) {
+			frame_d [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
+		}
 
 		if ((which == 1 && ! burg (frame_f, endSample - startSample + 1, cof_f, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin)) ||
 		    (which == 2 && ! splitLevinson (frame_d, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)))

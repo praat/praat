@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/28
+ * pb 2007/01/26
  */
 
 #include "Gui.h"
@@ -155,6 +155,7 @@ struct structWidget {
 		extendedSelectionClosure, inputClosure, resizeClosure;
 	int leftAttachment, rightAttachment, topAttachment, bottomAttachment;
 	int leftOffset, rightOffset, topOffset, bottomOffset;
+	int leftPosition, rightPosition, topPosition, bottomPosition;
 	int deleteResponse;   /* For shells. */
 
 	#if mac

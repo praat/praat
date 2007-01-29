@@ -1,6 +1,6 @@
 /* praat_menuCommands.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/03/18 Mach
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/01/26 buttons along top
  */
 
 #include "praatP.h"
@@ -364,20 +365,18 @@ void praat_saveMenuCommands (FILE *f) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callback) (Any, void *),
-	int fromLeft, int fromBottom)
-{
+void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callback) (Any, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_strdup ("Objects");
 	my title = title;
 	my callback = callback;
 	my unhidable = TRUE;
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraat -> batch) {
 		my button = NULL;
-	else {
+	} else {
 		Widget button = my button = XmCreatePushButton (parent, MOTIF_CONST_CHAR_ARG (title), 0, 0);
-		XtVaSetValues (button, XmNbottomAttachment, XmATTACH_FORM,
-			XmNbottomOffset, fromBottom, XmNx, fromLeft, NULL);
+		XtVaSetValues (button, XmNx, x,
+			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y, XmNwidth, 76, NULL);
 		XtSetSensitive (button, False);
 		XtAddCallback (button, XmNactivateCallback, cb_menu, (XtPointer) callback);
 		XtManageChild (button);

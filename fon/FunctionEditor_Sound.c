@@ -1,6 +1,6 @@
 /* FunctionEditor_Sound.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2001/05/15
  * pb 2002/07/16 GPL
  * pb 2002/11/19 pulses
+ * pb 2007/01/27 accept stereo Sounds
  */
 
 #include "FunctionEditor_Sound.h"
@@ -50,9 +50,10 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 	LongSound longSound = my longSound.data;
 	long first, last;
 	int fits = sound ? TRUE : LongSound_haveWindow (longSound, my startWindow, my endWindow);
-	int nchan = sound ? 1 : longSound -> numberOfChannels, ichan;
+	int nchan = sound ? sound -> ny : longSound -> numberOfChannels, ichan;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
-	double cursorFunctionValue = longSound ? 0.0 : Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), 70);
+	double cursorFunctionValue = longSound ? 0.0 :
+		Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), Vector_CHANNEL_AVERAGE, 70);
 	double tfirst, tlast;
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	iferror {
@@ -89,7 +90,7 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
 			else
-				Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
+				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
 		}
 		if (minimum == maximum) { horizontal = 1; value = minimum; minimum -= 1; maximum += 1;}
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
@@ -140,7 +141,7 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 			if (cursorVisible)
 				FunctionEditor_drawCursorFunctionValue (me, "%.4g", cursorFunctionValue);
 			Graphics_setColour (my graphics, Graphics_BLACK);
-			Graphics_function (my graphics, sound -> z [1], first, last,
+			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum * 32768, maximum * 32768);

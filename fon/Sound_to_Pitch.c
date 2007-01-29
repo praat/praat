@@ -245,7 +245,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		Melder_assert (endSample <= my nx);
 		if (method >= FCC_NORMAL) {
 			for (j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = (Sampled_getValueAtSample (me, i ++ , Sound_LEVEL_MONO, 0) - localMean);
+				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean);
 		} else {
 			for (j = 1, i = startSample; j <= nsamp_window; j ++)
 				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean) * window [j];

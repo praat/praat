@@ -26,6 +26,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/13 support for IEEE float 32-bit audio files
  * pb 2007/01/01 compatible with stereo sounds
+ * pb 2007/01/27 more compatible with stereo sounds
  */
 
 #include "LongSound.h"
@@ -138,11 +139,11 @@ Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserv
 	if (tmax > my xmax) tmax = my xmax;
 	n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) { Melder_error ("Less than 1 sample in window."); goto end; }
-	thee = Sound_create (1, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx); cherror   // STEREO BUG
+	thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx); cherror
 	if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
 	if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
 		{ Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file)); goto end; }
-	Melder_readAudioToFloat (my f, my numberOfChannels, my encoding, thy z [1], NULL, n); cherror
+	Melder_readAudioToFloat (my f, my numberOfChannels, my encoding, thy z [1], thy ny == 1 ? NULL : thy z [2], n); cherror
 end:
 	iferror { forget (thee); Melder_error ("Sound not extracted from LongSound."); }
 	return thee;

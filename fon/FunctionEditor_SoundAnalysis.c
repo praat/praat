@@ -1,6 +1,6 @@
 /* FunctionEditor_SoundAnalysis.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/18 better info
+ * pb 2007/01/27 changed Vector API
  */
 
 #include <time.h>
@@ -853,14 +854,14 @@ DIRECT (FunctionEditor, cb_intensityListing)
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s   Intensity_dB");
 	if (part == FunctionEditor_PART_CURSOR) {
-		double intensity = Vector_getValueAtX (my intensity.data, tmin, 1);
+		double intensity = Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
 		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), "   ", Melder_fixed (intensity, 6));
 	} else {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my intensity.data, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my intensity.data, i);
-			double intensity = Vector_getValueAtX (my intensity.data, t, 0);
+			double intensity = Vector_getValueAtX (my intensity.data, t, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_NEAREST);
 			MelderInfo_writeLine3 (Melder_fixed (t, 6), "   ", Melder_fixed (intensity, 6));
 		}
 	}
@@ -878,7 +879,7 @@ DIRECT (FunctionEditor, cb_getIntensity)
 		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, 1)), " dB (intensity at CURSOR)");
+		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), " dB (intensity at CURSOR)");
 	} else {
 		static const char *methodString [] = { "median", "mean-energy", "mean-sones", "mean-dB" };
 		Melder_information9 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
@@ -1350,7 +1351,7 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, my intensity.viewFrom, my intensity.viewTo);
 		if (my intensity.data) {
 			if (my startSelection == my endSelection) {
-				intensityCursor = Vector_getValueAtX (my intensity.data, my startSelection, 1);
+				intensityCursor = Vector_getValueAtX (my intensity.data, my startSelection, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
 			} else {
 				intensityCursor = Intensity_getAverage (my intensity.data, my startSelection, my endSelection, my intensity.averagingMethod);
 			}
@@ -1569,7 +1570,7 @@ static int cb_log (FunctionEditor me, int which) {
 				return Melder_error (theMessage_Cannot_compute_intensity);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
-				value = Vector_getValueAtX (my intensity.data, tmin, 1);
+				value = Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
 			} else {
 				value = Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod);
 			}

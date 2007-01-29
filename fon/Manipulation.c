@@ -1,6 +1,6 @@
 /* Manipulation.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
  * pb 2006/12/30 new Sound_create API
+ * pb 2007/01/27 made compatible with stereo sounds (by converting them to mono)
  */
 
 #include "Manipulation.h"
@@ -73,7 +74,7 @@ Manipulation Manipulation_create (double tmin, double tmax) {
 
 int Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 	forget (my sound);
-	if (! (my sound = Data_copy (sound))) return 0;
+	if (! (my sound = Sound_convertToMono (sound))) return 0;
 	Vector_subtractMean (my sound);
 	forget (my lpc);
 	return 1;
@@ -100,7 +101,7 @@ int Manipulation_replaceDurationTier (Manipulation me, DurationTier duration) {
 Manipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
 	Pitch pitch = NULL;
 	Manipulation thee = Manipulation_create (my xmin, my xmax); cherror
-	thy sound = Data_copy (me); cherror
+	thy sound = Sound_convertToMono (me); cherror
 	Vector_subtractMean (thy sound);
 	pitch = Sound_to_Pitch (thy sound, timeStep, minimumPitch, maximumPitch); cherror
 	thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound, pitch); cherror
@@ -115,7 +116,7 @@ end:
 Manipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch) {
 	Manipulation me;
 	if (! (me = Manipulation_create (sound -> xmin, sound -> xmax))) return NULL;
-	if (! (my sound = Data_copy (sound))) goto error;
+	if (! (my sound = Sound_convertToMono (sound))) goto error;
 	Vector_subtractMean (my sound);
 	if (! (my pulses = Sound_Pitch_to_PointProcess_cc (my sound, pitch))) goto error;
 	if (! (my pitch = Pitch_to_PitchTier (pitch))) goto error;
@@ -128,7 +129,7 @@ error:
 Manipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess point) {
 	Manipulation me;
 	if (! (me = Manipulation_create (sound -> xmin, sound -> xmax))) return NULL;
-	if (! (my sound = Data_copy (sound))) goto error;
+	if (! (my sound = Sound_convertToMono (sound))) goto error;
 	Vector_subtractMean (my sound);
 	if (! (my pulses = Data_copy (point))) goto error;
 	if (! (my pitch = PointProcess_to_PitchTier (point, MAX_T))) goto error;

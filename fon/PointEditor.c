@@ -1,6 +1,6 @@
 /* PointEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/05/21 more jitter measurements
  * pb 2004/04/16 added a fixed maximum period factor of 1.3
  * pb 2004/04/21 less flashing
+ * pb 2007/01/28 made compatible with stereo sounds (by converting them to mono)
  */
 
 #include "PointEditor.h"
@@ -209,13 +210,10 @@ class_methods (PointEditor, FunctionEditor)
 	class_method (play)
 class_methods_end
 
-PointEditor PointEditor_create (Widget parent, const char *title, PointProcess point, Sound sound, int ownSound) {
+PointEditor PointEditor_create (Widget parent, const char *title, PointProcess point, Sound sound) {
 	PointEditor me = new (PointEditor); cherror
-	my ownSound = ownSound;
-	if (sound && ownSound) {
-		my sound.data = Data_copy (sound); cherror   /* Deep copy; ownership transferred. */
-	} else {
-		my sound.data = sound;   /* Reference copy; ownership not transferred. */
+	if (sound) {
+		my sound.data = Sound_convertToMono (sound); cherror   /* Deep copy; ownership transferred. */
 	}
 	FunctionEditor_init (me, parent, title, point); cherror
 	updateMenus (me);

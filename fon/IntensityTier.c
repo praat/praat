@@ -1,6 +1,6 @@
 /* IntensityTier.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/05/31 use PointProcess_upto_RealTier
  * pb 2005/05/26 switch for scaling in multiply
+ * pb 2007/01/27 made compatible with stereo sounds
  */
 
 #include "IntensityTier.h"
@@ -48,21 +49,21 @@ IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity
 }
 
 IntensityTier Intensity_downto_IntensityTier (Intensity me) {
-	IntensityTier thee = (IntensityTier) Vector_to_RealTier (me);
+	IntensityTier thee = (IntensityTier) Vector_to_RealTier (me, 1);
 	if (! thee) return NULL;
 	Thing_overrideClass (thee, classIntensityTier);
 	return thee;
 }
 
 IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
-	IntensityTier thee = (IntensityTier) Vector_to_RealTier_peaks (me);
+	IntensityTier thee = (IntensityTier) Vector_to_RealTier_peaks (me, 1);
 	if (! thee) return NULL;
 	Thing_overrideClass (thee, classIntensityTier);
 	return thee;
 }
 
 IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
-	IntensityTier thee = (IntensityTier) Vector_to_RealTier_valleys (me);
+	IntensityTier thee = (IntensityTier) Vector_to_RealTier_valleys (me, 1);
 	if (! thee) return NULL;
 	Thing_overrideClass (thee, classIntensityTier);
 	return thee;
@@ -98,11 +99,13 @@ TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
 }
 
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
-	long isamp; float *amp = my z [1];
 	if (intensity -> points -> size == 0) return;
-	for (isamp = 1; isamp <= my nx; isamp ++) {
+	for (long isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
-		amp [isamp] *= pow (10, RealTier_getValueAtTime (intensity, t) / 20);
+		double factor = pow (10, RealTier_getValueAtTime (intensity, t) / 20);
+		for (long channel = 1; channel <= my ny; channel ++) {
+			my z [channel] [isamp] *= factor;
+		}
 	}
 }
 

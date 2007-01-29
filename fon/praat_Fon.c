@@ -1,6 +1,6 @@
 /* praat_Fon.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/26
+ * pb 2007/01/27
  */
 
 #include "praat.h"
@@ -1052,7 +1052,7 @@ FORM (Harmonicity_getValueAtTime, "Harmonicity: Get value", "Harmonicity: Get va
 	dia_Vector_getValue (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classHarmonicity), GET_REAL ("Time"), GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classHarmonicity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
 END
 	
 FORM (Harmonicity_getValueInFrame, "Get value in frame", "Harmonicity: Get value in frame...")
@@ -1149,7 +1149,7 @@ FORM (Intensity_getStandardDeviation, "Intensity: Get standard deviation", "Inte
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getStandardDeviation (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "dB");
+	Melder_informationReal (Vector_getStandardDeviation (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"), 1), "dB");
 END
 
 FORM (Intensity_getTimeOfMaximum, "Intensity: Get time of maximum", "Intensity: Get time of maximum...")
@@ -1172,7 +1172,7 @@ FORM (Intensity_getValueAtTime, "Intensity: Get value", "Intensity: Get value at
 	dia_Vector_getValue (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classIntensity), GET_REAL ("Time"), GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classIntensity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
 END
 	
 FORM (Intensity_getValueInFrame, "Get value in frame", "Intensity: Get value in frame...")
@@ -1465,11 +1465,6 @@ DO
 		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), "Hertz");
 END
 
-DIRECT (Ltas_getFrequencyRange)
-	Ltas me = ONLY (classLtas);
-	Melder_informationReal (my xmax - my xmin, "Hertz");
-END
-
 DIRECT (Ltas_getHighestFrequency)
 	Ltas me = ONLY (classLtas);
 	Melder_informationReal (my xmax, "Hertz");
@@ -1586,7 +1581,7 @@ FORM (Ltas_getValueAtFrequency, "Ltas: Get value", "Ltas: Get value at frequency
 	RADIOBUTTON ("Sinc700")
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classLtas), GET_REAL ("Frequency"), GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classLtas), GET_REAL ("Frequency"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
 END
 	
 FORM (Ltas_getValueInBin, "Get value in bin", "Ltas: Get value in bin...")
@@ -2958,7 +2953,7 @@ DIRECT (PointProcess_edit)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPointProcess)
 			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, FULL_NAME,
-				OBJECT, sound, TRUE), IOBJECT)) return 0;
+				OBJECT, sound), IOBJECT)) return 0;
 	}
 END
 

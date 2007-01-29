@@ -1,6 +1,6 @@
 /* RealTier.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
  * pb 2003/05/31 RealTier_formula
  * pb 2003/11/20 interpolate quadratically
  * pb 2005/03/02 RealTier_multiplyPart
+ * pb 2007/01/27 Vector_to_RealTier_peaks finds peaks only within channel
+ * pb 2007/01/28 made compatible with new getVector and getFunction1 API
  */
 
 #include "RealTier.h"
@@ -78,8 +80,8 @@ static void info (I) {
 static double getNx (I) { iam (RealTier); return my points -> size; }
 static double getX (I, long ix) { iam (RealTier); return ((RealPoint) my points -> item [ix]) -> time; }
 static double getNcol (I) { iam (RealTier); return my points -> size; }
-static double getVector (I, long icol) { iam (RealTier); return RealTier_getValueAtIndex (me, icol); }
-static double getFunction1 (I, double x) { iam (RealTier); return RealTier_getValueAtTime (me, x); }
+static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
+static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
 
 class_methods (RealTier, Function)
 	class_method_local (RealTier, destroy)
@@ -394,30 +396,29 @@ end:
 	return 1;
 }
 
-RealTier Vector_to_RealTier (I) {
+RealTier Vector_to_RealTier (I, long channel) {
 	iam (Vector);
 	RealTier thee = RealTier_create (my xmin, my xmax);
 	long i;
 	if (! thee) return NULL;
 	for (i = 1; i <= my nx; i ++) {
-		if (! RealTier_addPoint (thee, Sampled_indexToX (me, i), my z [1] [i]))
+		if (! RealTier_addPoint (thee, Sampled_indexToX (me, i), my z [channel] [i]))
 			{ forget (thee); return NULL; }
 	}
 	return thee;
 }
 
-RealTier Vector_to_RealTier_peaks (I) {
+RealTier Vector_to_RealTier_peaks (I, long channel) {
 	iam (Vector);
 	RealTier thee = RealTier_create (my xmin, my xmax);
 	long i;
 	if (! thee) return NULL;
 	for (i = 2; i < my nx; i ++) {
-		double left = my z [1] [i - 1], centre = my z [1] [i], right = my z [1] [i + 1];
+		double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 		if (left <= centre && right < centre) {
 			double x, maximum;
-			Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx,
-				my x1 + (i + 0.5) * my dx, NUM_PEAK_INTERPOLATE_PARABOLIC,
-				& maximum, & x);
+			Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
+				channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & maximum, & x);
 			if (! RealTier_addPoint (thee, x, maximum))
 				{ forget (thee); return NULL; }
 		}
@@ -425,18 +426,17 @@ RealTier Vector_to_RealTier_peaks (I) {
 	return thee;
 }
 
-RealTier Vector_to_RealTier_valleys (I) {
+RealTier Vector_to_RealTier_valleys (I, long channel) {
 	iam (Vector);
 	RealTier thee = RealTier_create (my xmin, my xmax);
 	long i;
 	if (! thee) return NULL;
 	for (i = 2; i < my nx; i ++) {
-		double left = my z [1] [i - 1], centre = my z [1] [i], right = my z [1] [i + 1];
+		double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 		if (left >= centre && right > centre) {
 			double x, minimum;
-			Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx,
-				my x1 + (i + 0.5) * my dx, NUM_PEAK_INTERPOLATE_PARABOLIC,
-				& minimum, & x);
+			Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
+				channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & minimum, & x);
 			if (! RealTier_addPoint (thee, x, minimum))
 				{ forget (thee); return NULL; }
 		}

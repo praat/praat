@@ -23,16 +23,18 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070106)
+MAN_BEGIN ("What's new?", "ppgb", 20070129)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL ("##4.5.09# (January 6, 2007)")
+NORMAL ("##4.5.11# (January 29, 2007)")
 LIST_ITEM ("\\bu Sound objects can be stereo, for better playback quality "
-	"(all analyses will still regard the sound as mono).")
+	"(most analyses will work on the averaged mono signal).")
 LIST_ITEM ("\\bu Macintosh: recording a sound now uses CoreAudio instead of SoundManager, "	
 	"for more compatibility with modern recording devices, "
 	"and the possibility to record with a sampling frequency of 96 kHz.")
 LIST_ITEM ("\\bu @ManPages allow picture scripts with separate object lists.")
+LIST_ITEM ("\\bu Linux: better scroll bars in object list for Lesstif (Debian).")
+LIST_ITEM ("\\bu Linux: made @@Create Strings as file list...@ work on Reiser.")
 LIST_ITEM ("\\bu @sendpraat scripts correctly wait until sounds have played.")
 NORMAL ("##4.5.08# (December 20, 2006)")
 LIST_ITEM ("\\bu ExperimentMFC: can use stereo sounds.")

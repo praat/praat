@@ -517,7 +517,7 @@ TextGrid Label_Function_to_TextGrid (Label me, Any function) {
 }
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
-	int showBoundaries, int useTextStyles, int garnish)
+	int showBoundaries, int useTextStyles, int garnish)   // STEREO BUG
 {
 	long first, last;
 	int itier, ntier = my tiers -> size;

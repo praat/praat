@@ -2,7 +2,7 @@
 #define _Ltas_h_
 /* Ltas.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/12/10
+ * pb 2007/01/26
  */
 
 #ifndef _Spectrum_h_
@@ -28,6 +28,9 @@
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+#ifndef _Vector_h_
+	#include "Vector.h"
 #endif
 #ifndef _PointProcess_h_
 	#include "PointProcess.h"

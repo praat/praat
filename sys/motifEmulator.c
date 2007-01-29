@@ -1,6 +1,6 @@
 /* motifEmulator.c
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2006/08/07 Windows: remove quotes from around path names when calling the openDocument callback
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/11/06 Carbon control creation functions
+ * pb 2007/01/25 explicit XmATTACH_FORM
  */
 #ifndef UNIX
 
@@ -1572,11 +1573,23 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 	for (child = my firstChild; child; child = child -> nextSibling) {
 		int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 		if (MEMBER (child, Shell)) continue;
-		if (child -> rightAttachment) {
-			if (child -> leftAttachment) cdw = dw; else cdx = dw;
+		if (child -> rightAttachment == XmATTACH_FORM) {
+			if (child -> leftAttachment == XmATTACH_FORM) cdw = dw; else cdx = dw;
 		}
-		if (child -> bottomAttachment) {
-			if (child -> topAttachment) cdh = dh; else cdy = dh;
+		if (child -> leftAttachment == XmATTACH_POSITION && child -> rightAttachment == XmATTACH_POSITION) {
+			int xLeft = my width * (child -> leftPosition / 100.0);
+			int xRight = my width * (child -> rightPosition / 100.0);
+			cdx = xLeft - child -> x;
+			cdw = (xRight - xLeft) - child -> width;
+		}
+		if (child -> bottomAttachment == XmATTACH_FORM) {
+			if (child -> topAttachment == XmATTACH_FORM) cdh = dh; else cdy = dh;
+		}
+		if (child -> topAttachment == XmATTACH_POSITION && child -> bottomAttachment == XmATTACH_POSITION) {
+			int yTop = my height * (child -> topPosition / 100.0);
+			int yBottom = my height * (child -> bottomPosition / 100.0);
+			cdy = yTop - child -> y;
+			cdh = (yBottom - yTop) - child -> height;
 		}
 		child -> x += cdx;
 		child -> y += cdy;
@@ -1627,11 +1640,23 @@ static void resizeWidget (Widget me, int dw, int dh) {
 		for (child = my firstChild; child; child = child -> nextSibling) {
 			int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 			if (child -> widgetClass == xmShellWidgetClass) continue;
-			if (child -> rightAttachment) {
-				if (child -> leftAttachment) cdw = dw; else cdx = dw;
+			if (child -> rightAttachment == XmATTACH_FORM) {
+				if (child -> leftAttachment == XmATTACH_FORM) cdw = dw; else cdx = dw;
 			}
-			if (child -> bottomAttachment) {
-				if (child -> topAttachment) cdh = dh; else cdy = dh;
+			if (child -> leftAttachment == XmATTACH_POSITION && child -> rightAttachment == XmATTACH_POSITION) {
+				int xLeft = my width * (child -> leftPosition / 100.0);
+				int xRight = my width * (child -> rightPosition / 100.0);
+				cdx = xLeft - child -> x;
+				cdw = (xRight - xLeft) - child -> width;
+			}
+			if (child -> bottomAttachment == XmATTACH_FORM) {
+				if (child -> topAttachment == XmATTACH_FORM) cdh = dh; else cdy = dh;
+			}
+			if (child -> topAttachment == XmATTACH_POSITION && child -> bottomAttachment == XmATTACH_POSITION) {
+				int yTop = my height * (child -> topPosition / 100.0);
+				int yBottom = my height * (child -> bottomPosition / 100.0);
+				cdy = yTop - child -> y;
+				cdh = (yBottom - yTop) - child -> height;
 			}
 			if (cdx || cdy) {
 				child -> x += cdx;
@@ -1752,6 +1777,9 @@ static void _motif_setValues (Widget me, va_list arg) {
 			break;
 		case XmNbottomOffset:
 			my bottomOffset = va_arg (arg, int);
+			attach = True;
+			break;
+		case XmNbottomPosition: my bottomPosition = va_arg (arg, int);
 			attach = True;
 			break;
 		case XmNcancelButton:
@@ -1902,6 +1930,9 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNleftOffset: my leftOffset = va_arg (arg, int);
 			attach = True;
 			break;
+		case XmNleftPosition: my leftPosition = va_arg (arg, int);
+			attach = True;
+			break;
 		case XmNlistSizePolicy: (void) va_arg (arg, int); break;
 		case XmNmarginHeight: (void) va_arg (arg, int); break;
 		case XmNmarginWidth: (void) va_arg (arg, int); break;
@@ -1950,6 +1981,9 @@ static void _motif_setValues (Widget me, va_list arg) {
 			break;
 		case XmNrightOffset:
 			my rightOffset = va_arg (arg, int);
+			attach = True;
+			break;
+		case XmNrightPosition: my rightPosition = va_arg (arg, int);
 			attach = True;
 			break;
 		case XmNrowColumnType:
@@ -2034,6 +2068,9 @@ static void _motif_setValues (Widget me, va_list arg) {
 			my topOffset = va_arg (arg, int);
 			attach = True;
 			break;
+		case XmNtopPosition: my topPosition = va_arg (arg, int);
+			attach = True;
+			break;
 		case XmNtraversalOn:
 			(void) va_arg (arg, int);
 			break;
@@ -2102,27 +2139,39 @@ static void _motif_setValues (Widget me, va_list arg) {
 
 	if (attach) {
 		Melder_assert (MEMBER2 (my parent, Form, ScrolledWindow));
-		if (my leftAttachment) {
+		if (my leftAttachment == XmATTACH_FORM) {
 			my x = my leftOffset;
 			move = True;
-			if (my rightAttachment) {
+			if (my rightAttachment == XmATTACH_FORM) {
 				my width = my parent -> width - my leftOffset - my rightOffset;
 				resize = True;
 			}
-		} else if (my rightAttachment) {
+		} else if (my rightAttachment == XmATTACH_FORM) {
 			my x = my parent -> width - my width - my rightOffset;
 			move = True;
 		}
-		if (my topAttachment) {
+		if (my leftAttachment == XmATTACH_POSITION && my rightAttachment == XmATTACH_POSITION) {
+			my x = my parent -> width * (my leftPosition / 100.0);
+			int xRight = my parent -> width * (my rightPosition / 100.0);
+			my width = xRight - my x;
+			resize = True;
+		}
+		if (my topAttachment == XmATTACH_FORM) {
 			my y = my topOffset;
 			move = True;
-			if (my bottomAttachment) {
+			if (my bottomAttachment == XmATTACH_FORM) {
 				my height = my parent -> height - my topOffset - my bottomOffset;
 				resize = True;
 			}
-		} else if (my bottomAttachment) {
+		} else if (my bottomAttachment == XmATTACH_FORM) {
 			my y = my parent -> height - my height - my bottomOffset;
 			move = True;
+		}
+		if (my topAttachment == XmATTACH_POSITION && my bottomAttachment == XmATTACH_POSITION) {
+			my y = my parent -> height * (my topPosition / 100.0);
+			int yBottom = my parent -> height * (my bottomPosition / 100.0);
+			my height = yBottom - my y;
+			resize = True;
 		}
 	}
 	if (move) {
@@ -2308,10 +2357,10 @@ static void _motif_manage (Widget me) {
 				for (child2 = my firstChild; child2; child2 = child2 -> nextSibling) if (child2 != child && child2 -> managed) {
 					int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 					if (child2 -> widgetClass == xmShellWidgetClass) continue;
-					if (child2 -> rightAttachment)
-						if (child2 -> leftAttachment) cdw = dw; else cdx = dw;
-					if (child2 -> bottomAttachment)
-						if (child2 -> topAttachment) cdh = dh; else cdy = dh;
+					if (child2 -> rightAttachment == XmATTACH_FORM)
+						if (child2 -> leftAttachment == XmATTACH_FORM) cdw = dw; else cdx = dw;
+					if (child2 -> bottomAttachment == XmATTACH_FORM)
+						if (child2 -> topAttachment == XmATTACH_FORM) cdh = dh; else cdy = dh;
 					if (cdx || cdy) {
 						child2 -> x += cdx;
 						child2 -> y += cdy;
@@ -4896,7 +4945,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 									Point pos;
 									long choice = 0;
 									_GuiMac_clipOn (control);
-									HiliteControl (maccontrol, 1);
+									HiliteControl (maccontrol, 10);
 									GuiMac_clipOff ();
 									SetPt (& pos, control -> rect.left + 2, control -> rect.bottom);
 									LocalToGlobal (& pos);

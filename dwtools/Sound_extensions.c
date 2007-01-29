@@ -1607,6 +1607,8 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
+	if (my ny > 1)
+		return Melder_errorp ("Change Gender works only on mono sounds.");
 	char *proc = "Sound_changeGender";
 	Sound sound = NULL, thee = NULL; 
 	Pitch pitch = NULL;

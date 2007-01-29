@@ -147,18 +147,14 @@ end:
 }
 
 Sound Sound_filter_formula (Sound me, const char *formula) {
-	Sound filtered = NULL, result = NULL;
+	Sound result = NULL;
 	Spectrum spec;
-	long i;
 	spec = Sound_to_Spectrum (me, TRUE); cherror
 	Matrix_formula ((Matrix) spec, formula, 0); cherror
-	filtered = Spectrum_to_Sound (spec); cherror
-	/* The filtered signal may be much longer than the original, so: */
-	result = Data_copy (me); cherror
-	for (i = 1; i <= my nx; i ++)
-		result -> z [1] [i] = filtered -> z [1] [i];
+	result = Spectrum_to_Sound (spec); cherror
+	/* The filtered signal may be longer than the original, so: */
+	result -> nx = my nx;
 end:
-	forget (filtered);
 	forget (spec);
 	iferror forget (result);
 	return result;
@@ -166,11 +162,24 @@ end:
 
 Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth) {
 	Spectrum spec = NULL;
-	Sound thee = Data_copy (me), him;
-	spec = Sound_to_Spectrum (me, TRUE); cherror
-	Spectrum_passHannBand (spec, fmin, fmax, smooth);
-	him = Spectrum_to_Sound (spec); cherror
-	NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+	Sound thee = Data_copy (me), him = NULL; cherror
+	if (my ny == 1) {
+		spec = Sound_to_Spectrum (me, TRUE); cherror
+		Spectrum_passHannBand (spec, fmin, fmax, smooth);
+		him = Spectrum_to_Sound (spec); cherror
+		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+	} else {
+		for (long channel = 1; channel <= my ny; channel ++) {
+			forget (him);
+			him = Sound_extractChannel (me, channel); cherror
+			forget (spec);
+			spec = Sound_to_Spectrum (him, TRUE); cherror
+			Spectrum_passHannBand (spec, fmin, fmax, smooth);
+			forget (him);
+			him = Spectrum_to_Sound (spec); cherror
+			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+		}
+	}
 end:
 	forget (spec);
 	forget (him);
@@ -180,12 +189,25 @@ end:
 
 Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth) {
 	Spectrum spec = NULL;
-	Sound thee = Data_copy (me), him;
-	spec = Sound_to_Spectrum (me, TRUE); cherror
-	Spectrum_stopHannBand (spec, fmin, fmax, smooth);
-	him = Spectrum_to_Sound (spec); cherror
+	Sound thee = Data_copy (me), him = NULL; cherror
+	if (my ny == 1) {
+		spec = Sound_to_Spectrum (me, TRUE); cherror
+		Spectrum_stopHannBand (spec, fmin, fmax, smooth);
+		him = Spectrum_to_Sound (spec); cherror
+		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+	} else {
+		for (long channel = 1; channel <= my ny; channel ++) {
+			forget (him);
+			him = Sound_extractChannel (me, channel); cherror
+			forget (spec);
+			spec = Sound_to_Spectrum (him, TRUE); cherror
+			Spectrum_stopHannBand (spec, fmin, fmax, smooth);
+			forget (him);
+			him = Spectrum_to_Sound (spec); cherror
+			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+		}
+	}
 end:
-	NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	forget (spec);
 	forget (him);
 	iferror forget (thee);

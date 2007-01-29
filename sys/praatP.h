@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/08/12
+ * pb 2007/01/26
  */
 
 #include "praat.h"
@@ -50,8 +50,7 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 int praat_hideMenuCommand (const char *window, const char *menu, const char *title);
 int praat_showMenuCommand (const char *window, const char *menu, const char *title);
 void praat_saveMenuCommands (FILE *f);
-void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callback) (Any, void *),
-	int fromLeft, int fromBottom);
+void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callback) (Any, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char *title, int sensitive);
 void praat_sortMenuCommands (void);
 

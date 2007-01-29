@@ -1,6 +1,6 @@
 /* NUM.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return NUMundefined
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
+ * pb 2007/01/27 use #defines for value interpolation
  */
 
 #include "NUM.h"
@@ -343,9 +344,9 @@ double NUMcombinations (long n, long k) {
 	/* 1 < x < nx && x not integer: interpolate. */ \
 	if (maxDepth > midright - 1) maxDepth = midright - 1; \
 	if (maxDepth > nx - midleft) maxDepth = nx - midleft; \
-	if (maxDepth <= 0) return y [(long) floor (x + 0.5)]; \
-	if (maxDepth == 1) return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
-	if (maxDepth == 2) { \
+	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(long) floor (x + 0.5)]; \
+	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR) return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
+	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) { \
 		double yl = y [midleft], yr = y [midright]; \
 		double dyl = 0.5 * (yr - y [midleft - 1]), dyr = 0.5 * (y [midright + 1] - yl); \
 		double fil = x - midleft, fir = midright - x; \

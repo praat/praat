@@ -583,7 +583,7 @@ static void motif_error (wchar_t *messageW1) {
 	static wchar_t messageW2 [2000+1];
 	Longchar_nativizeW (messageW1, messageW2, true);
 	int messageLength = wcslen (messageW2);
-	//wcscpy (messageW2, L"\U00000252abc");   // For testing.
+	//wcscpy (messageW2, L"\u0252abc");   // For testing.
 	for (int i = 0; i < messageLength; i ++) {
 		messageU [i] = messageW2 [i];   // BUG: should convert to UTF16
 	}

@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/06/17
+ * pb 2007/01/28
  */
 
 /* Data inherits from Thing. */
@@ -336,12 +336,12 @@ typedef struct structData_Description {
 	char * (*getRowStr) (I, long irow); \
 	char * (*getColStr) (I, long icol); \
 	double (*getCell) (I); \
-	double (*getVector) (I, long icol); \
+	double (*getVector) (I, long irow, long icol); \
 	char * (*getVectorStr) (I, long icol); \
 	double (*getMatrix) (I, long irow, long icol); \
 	char * (*getMatrixStr) (I, long irow, long icol); \
 	double (*getFunction0) (I); \
-	double (*getFunction1) (I, double x); \
+	double (*getFunction1) (I, long irow, double x); \
 	double (*getFunction2) (I, double x, double y); \
 	double (*getRowIndex) (I, const char *rowLabel); \
 	double (*getColumnIndex) (I, const char *columnLabel);

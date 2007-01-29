@@ -567,7 +567,7 @@ END
 /********** B MENU **********/
 
 DIRECT (TextGridEditor, cb_moveBtoZero)
-	double zero = Sound_getNearestZeroCrossing (my sound.data, my startSelection);
+	double zero = Sound_getNearestZeroCrossing (my sound.data, my startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -582,7 +582,7 @@ END
 /********** C MENU **********/
 
 DIRECT (TextGridEditor, cb_moveCursorToZero)
-	double zero = Sound_getNearestZeroCrossing (my sound.data, 0.5 * (my startSelection + my endSelection));
+	double zero = Sound_getNearestZeroCrossing (my sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me);
@@ -592,7 +592,7 @@ END
 /********** E MENU **********/
 
 DIRECT (TextGridEditor, cb_moveEtoZero)
-	double zero = Sound_getNearestZeroCrossing (my sound.data, my endSelection);
+	double zero = Sound_getNearestZeroCrossing (my sound.data, my endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my endSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -742,7 +742,7 @@ static int cb_movePointOrBoundary (TextGridEditor me, int where) {
 		left = tier -> intervals -> item [selectedLeftBoundary - 1];
 		right = tier -> intervals -> item [selectedLeftBoundary];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
-			Sound_getNearestZeroCrossing (my sound.data, left -> xmax);
+			Sound_getNearestZeroCrossing (my sound.data, left -> xmax, 1);   // STEREO BUG
 		if (position == NUMundefined) return 1;
 		if (position <= left -> xmin || position >= right -> xmax)
 			{ Melder_beep (); return 0; }
@@ -758,7 +758,7 @@ static int cb_movePointOrBoundary (TextGridEditor me, int where) {
 		if (! selectedPoint) return Melder_error ("To move a point, first click on it.");
 		point = tier -> points -> item [selectedPoint];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
-			Sound_getNearestZeroCrossing (my sound.data, point -> time);
+			Sound_getNearestZeroCrossing (my sound.data, point -> time, 1);   // STEREO BUG
 		if (position == NUMundefined) return 1;
 
 		Editor_save (me, pointSaveText [where]);

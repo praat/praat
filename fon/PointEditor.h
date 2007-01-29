@@ -2,7 +2,7 @@
 #define _PointEditor_h_
 /* PointEditor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/01/28
  */
 
 #ifndef _FunctionEditor_h_
@@ -36,7 +36,7 @@
 typedef struct structPointEditor *PointEditor;
 
 PointEditor PointEditor_create (Widget parent, const char *title,
-	PointProcess point, Sound sound, int ownSound);
+	PointProcess point, Sound sound);
 /*
 	'sound' may be NULL.
 */

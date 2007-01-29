@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2004/11/28 repaired memory leak in Pitch_to_PointProcess
  * pb 2004/11/28 truncated tleft in Pitch_getVoicedIntervalAfter to my xmin (otherwise, getValue can crash)
  * pb 2005/06/16 units
+ * pb 2007/01/26 compatible with stereo sounds
  */
 
 #include "Pitch_to_PointProcess.h"
@@ -69,7 +70,8 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 	return 1;
 }
 
-static double findExtremum_3 (float *x, long n, int includeMaxima, int includeMinima) {
+static double findExtremum_3 (float *channel1_base, float *channel2_base, long d, long n, int includeMaxima, int includeMinima) {
+	float *channel1 = channel1_base + d, *channel2 = channel2_base ? channel2_base + d : NULL;
 	int includeAll = includeMaxima == includeMinima;
 	long imin = 1, imax = 1, i, iextr;
 	double minimum, maximum;
@@ -77,17 +79,20 @@ static double findExtremum_3 (float *x, long n, int includeMaxima, int includeMi
 		if (n <= 0) return 0.0;   /* Outside. */
 		else if (n == 1) return 1.0;
 		else {   /* n == 2 */
-			double xleft = includeAll ? fabs (x [1]) : includeMaxima ? x [1] : - x [1];
-			double xright = includeAll ? fabs (x [2]) : includeMaxima ? x [2] : - x [2];
+			double x1 = channel2 ? 0.5 * (channel1 [1] + channel2 [1]) : channel1 [1];
+			double x2 = channel2 ? 0.5 * (channel1 [2] + channel2 [2]) : channel1 [2];
+			double xleft = includeAll ? fabs (x1) : includeMaxima ? x1 : - x1;
+			double xright = includeAll ? fabs (x2) : includeMaxima ? x2 : - x2;
 			if (xleft > xright) return 1.0;
 			else if (xleft < xright) return 2.0;
 			else return 1.5;
 		}
 	}
-	minimum = maximum = x [1];
+	minimum = maximum = channel2 ? 0.5 * (channel1 [1] + channel2 [1]) : channel1 [1];
 	for (i = 2; i <= n; i ++) {
-		if (x [i] < minimum) { minimum = x [i]; imin = i; }
-		if (x [i] > maximum) { maximum = x [i]; imax = i; }
+		double value = channel2 ? 0.5 * (channel1 [i] + channel2 [i]) : channel1 [i];
+		if (value < minimum) { minimum = value; imin = i; }
+		if (value > maximum) { maximum = value; imax = i; }
 	}
 	if (minimum == maximum) {
 		return 0.5 * (n + 1.0);   /* All equal. */
@@ -97,7 +102,10 @@ static double findExtremum_3 (float *x, long n, int includeMaxima, int includeMi
 	if (iextr == n) return (double) n;
 	/* Parabolic interpolation. */
 	/* We do NOT need fabs here: we look for a genuine extremum. */
-	return iextr + 0.5 * (x [iextr + 1] - x [iextr - 1]) / (2 * x [iextr] - x [iextr - 1] - x [iextr + 1]);
+	double valueMid = channel2 ? 0.5 * (channel1 [iextr] + channel2 [iextr]) : channel1 [iextr];
+	double valueLeft = channel2 ? 0.5 * (channel1 [iextr - 1] + channel2 [iextr - 1]) : channel1 [iextr - 1];
+	double valueRight = channel2 ? 0.5 * (channel1 [iextr + 1] + channel2 [iextr + 1]) : channel1 [iextr + 1];
+	return iextr + 0.5 * (valueRight - valueLeft) / (2 * valueMid - valueLeft - valueRight);
 }
 
 static double Sound_findExtremum (Sound me, double tmin, double tmax, int includeMaxima, int includeMinima) {
@@ -107,7 +115,7 @@ static double Sound_findExtremum (Sound me, double tmin, double tmax, int includ
 	Melder_assert (NUMdefined (tmax));
 	if (imin < 1) imin = 1;
 	if (imax > my nx) imax = my nx;
-	iextremum = findExtremum_3 (my z [1] + imin - 1, imax - imin + 1, includeMaxima, includeMinima);
+	iextremum = findExtremum_3 (my z [1], my ny > 1 ? my z [2] : NULL, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
 	if (iextremum)
 		return my x1 + (imin - 1 + iextremum - 1) * my dx;
 	else
@@ -122,17 +130,29 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 	long iright1 = Sampled_xToNearestIndex ((Sampled) me, t1 + halfWindowLength);
 	long ileft2min = Sampled_xToLowIndex ((Sampled) me, tmin2 - halfWindowLength);
 	long ileft2max = Sampled_xToHighIndex ((Sampled) me, tmax2 - halfWindowLength);
-	float *amp = my z [1];
 	*peak = 0.0;   /* Default. */
 	for (ileft2 = ileft2min; ileft2 <= ileft2max; ileft2 ++) {
 		double norm1 = 0.0, norm2 = 0.0, product = 0.0, localPeak = 0.0;
-		for (i1 = ileft1, i2 = ileft2; i1 <= iright1; i1 ++, i2 ++) {
-			if (i1 < 1 || i1 > my nx || i2 < 1 || i2 > my nx) continue;
-			norm1 += amp [i1] * amp [i1];
-			norm2 += amp [i2] * amp [i2];
-			product += amp [i1] * amp [i2];
-			if (fabs (amp [i2]) > localPeak)
-				localPeak = fabs (amp [i2]);
+		if (my ny == 1) {
+			for (i1 = ileft1, i2 = ileft2; i1 <= iright1; i1 ++, i2 ++) {
+				if (i1 < 1 || i1 > my nx || i2 < 1 || i2 > my nx) continue;
+				double amp1 = my z [1] [i1], amp2 = my z [1] [i2];
+				norm1 += amp1 * amp1;
+				norm2 += amp2 * amp2;
+				product += amp1 * amp2;
+				if (fabs (amp2) > localPeak)
+					localPeak = fabs (amp2);
+			}
+		} else {
+			for (i1 = ileft1, i2 = ileft2; i1 <= iright1; i1 ++, i2 ++) {
+				if (i1 < 1 || i1 > my nx || i2 < 1 || i2 > my nx) continue;
+				double amp1 = 0.5 * (my z [1] [i1] + my z [2] [i1]), amp2 = 0.5 * (my z [1] [i2] + my z [2] [i2]);
+				norm1 += amp1 * amp1;
+				norm2 += amp2 * amp2;
+				product += amp1 * amp2;
+				if (fabs (amp2) > localPeak)
+					localPeak = fabs (amp2);
+			}
 		}
 		r1 = r2;
 		r2 = r3;

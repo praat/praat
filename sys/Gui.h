@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/28
+ * pb 2007/01/25
  */
 
 #ifndef _melder_h_
@@ -196,7 +196,7 @@ enum { /* resource names */
 enum /* dialog styles */ { XmDIALOG_MODELESS = 1, XmDIALOG_FULL_APPLICATION_MODAL };
 enum /* orientation */ { XmVERTICAL = 1, XmHORIZONTAL };
 enum /* packing */ { XmPACK_TIGHT = 1, XmPACK_COLUMN, XmPACK_NONE };
-enum /* attachment */ { XmATTACH_NONE = 1, XmATTACH_FORM, XmATTACH_WIDGET };
+enum /* attachment */ { XmATTACH_NONE = 1, XmATTACH_FORM, XmATTACH_POSITION };
 enum /* rowColumn types */ { XmWORK_AREA = 1, XmMENU_BAR };
 enum /* edit modes */ { XmSINGLE_LINE_EDIT = 1, XmMULTI_LINE_EDIT };
 enum /* scroll bar display policies */ { XmAS_NEEDED = 1, XmSTATIC };

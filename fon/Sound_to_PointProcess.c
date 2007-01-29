@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,19 @@
  */
 
 /*
- * pb 1999/05/25
  * pb 2002/07/16 GPL
  * pb 2003/02/26 Sound_to_PointProcess_peaks
  * pb 2004/07/11 default time steps in Sound_to_Pitch
+ * pb 2007/01/28 made compatible with stereo sounds
  */
 
 #include "Sound_to_PointProcess.h"
 #include "Sound_to_Pitch.h"
 #include "Pitch_to_PointProcess.h"
 
-PointProcess Sound_to_PointProcess_extrema (Sound me, int interpolation, int includeMaxima, int includeMinima) {
+PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, int includeMaxima, int includeMinima) {
 	PointProcess thee = NULL;
-	float *y = my z [1];
+	float *y = my z [channel];
 	long numberOfMaxima, numberOfMinima, i;
 
 	/*
@@ -67,16 +67,16 @@ PointProcess Sound_to_PointProcess_extrema (Sound me, int interpolation, int inc
 	return thee;
 }
 
-PointProcess Sound_to_PointProcess_maxima (Sound me, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, interpolation, TRUE, FALSE); }
-PointProcess Sound_to_PointProcess_minima (Sound me, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, interpolation, FALSE, TRUE); }
-PointProcess Sound_to_PointProcess_allExtrema (Sound me, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, interpolation, TRUE, TRUE); }
+PointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation)
+	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, TRUE, FALSE); }
+PointProcess Sound_to_PointProcess_minima (Sound me, long channel, int interpolation)
+	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, FALSE, TRUE); }
+PointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int interpolation)
+	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, TRUE, TRUE); }
 
-PointProcess Sound_to_PointProcess_zeroes (Sound me, int includeRaisers, int includeFallers) {
+PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, int includeRaisers, int includeFallers) {
 	PointProcess thee = NULL;
-	float *y = my z [1];
+	float *y = my z [channel];
 	long numberOfRaisers, numberOfFallers, i;
 
 	/*

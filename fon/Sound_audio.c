@@ -44,7 +44,7 @@
 #include "Sound.h"
 #include "Preferences.h"
 
-#define USE_PORTAUDIO  1
+//#define USE_PORTAUDIO  1
 #ifndef USE_PORTAUDIO
 	#if defined (macintosh)
 		#define USE_PORTAUDIO  1

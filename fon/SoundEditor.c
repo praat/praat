@@ -1,6 +1,6 @@
 /* SoundEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * pb 2005/09/21 interface update
  * pb 2006/05/10 repaired memory leak in do_write
  * pb 2006/12/30 new Sound_create API
- * pb 2007/01/01 compatible with stereo sounds
+ * pb 2007/01/27 compatible with stereo sounds
  */
 
 #include "SoundEditor.h"
@@ -122,22 +122,23 @@ static int do_write (SoundEditor me, MelderFile file, int format) {
 		Sound sound = my data;
 		double margin = 0.0;
 		long nmargin = margin / sound -> dx;
-		long first, last, numberOfSamples, i, offset;
-		numberOfSamples = Sampled_getWindowSamples (sound,
+		long first, last, numberOfSamples = Sampled_getWindowSamples (sound,
 			my startSelection, my endSelection, & first, & last) + nmargin * 2;
 		first -= nmargin;
 		last += nmargin;
 		if (numberOfSamples) {
-			int result;
-			Sound save = Sound_create (1, 0.0, numberOfSamples * sound -> dx,
+			Sound save = Sound_create (sound -> ny, 0.0, numberOfSamples * sound -> dx,
 							numberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			if (! save) return 0;
-			offset = first - 1;
+			long offset = first - 1;
 			if (first < 1) first = 1;
 			if (last > sound -> nx) last = sound -> nx;
-			for (i = first; i <= last; i ++)
-				save -> z [1] [i - offset] = sound -> z [1] [i];
-			result = Sound_writeToAudioFile16 (save, file, format);
+			for (long channel = 1; channel <= sound -> ny; channel ++) {
+				for (long i = first; i <= last; i ++) {
+					save -> z [channel] [i - offset] = sound -> z [channel] [i];
+				}
+			}
+			int result = Sound_writeToAudioFile16 (save, file, format);
 			forget (save);
 			return result;
 		}
@@ -187,8 +188,7 @@ END
 
 DIRECT (SoundEditor, cb_cut)
 	Sound sound = my data;
-	long i, j, first, last;
-	long selectionNumberOfSamples = Sampled_getWindowSamples (sound,
+	long first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
 		my startSelection, my endSelection, & first, & last);
 	long oldNumberOfSamples = sound -> nx;
 	long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
@@ -197,21 +197,27 @@ DIRECT (SoundEditor, cb_cut)
 			"because you cannot create a Sound with 0 samples.\n"
 			"You could consider using Copy instead.");
 	if (selectionNumberOfSamples) {
-		float **newData, **oldData = sound -> z, *amp;
+		float **newData, **oldData = sound -> z;
 		forget (Sound_clipboard);
-		Sound_clipboard = Sound_create (1, 0.0, selectionNumberOfSamples * sound -> dx,
+		Sound_clipboard = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
 						selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
 		if (! Sound_clipboard) return 0;
-		j = 0;
-		amp = Sound_clipboard -> z [1];
-		for (i = first; i <= last; i ++)
-			amp [++ j] = oldData [1] [i];
-		newData = NUMfmatrix (1, 1, 1, newNumberOfSamples);
-		j = 0;
-		for (i = 1; i < first; i ++)
-			newData [1] [++ j] = oldData [1] [i];
-		for (i = last + 1; i <= oldNumberOfSamples; i ++)
-			newData [1] [++ j] = oldData [1] [i];
+		for (long channel = 1; channel <= sound -> ny; channel ++) {
+			long j = 0;
+			for (long i = first; i <= last; i ++) {
+				Sound_clipboard -> z [channel] [++ j] = oldData [channel] [i];
+			}
+		}
+		newData = NUMfmatrix (1, sound -> ny, 1, newNumberOfSamples);
+		for (long channel = 1; channel <= sound -> ny; channel ++) {
+			long j = 0;
+			for (long i = 1; i < first; i ++) {
+				newData [channel] [++ j] = oldData [channel] [i];
+			}
+			for (long i = last + 1; i <= oldNumberOfSamples; i ++) {
+				newData [channel] [++ j] = oldData [channel] [i];
+			}
+		}
 		Editor_save (me, "Cut");
 		NUMfmatrix_free (oldData, 1, 1);
 		sound -> xmin = 0.0;
@@ -261,7 +267,7 @@ DIRECT (SoundEditor, cb_cut)
 
 		/* Force FunctionEditor to show changes. */
 
-		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, 1, & my minimum, & my maximum);
+		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
 		FunctionEditor_SoundAnalysis_forget (me);
 		FunctionEditor_ungroup (me);
 		FunctionEditor_marksChanged (me);
@@ -274,12 +280,16 @@ END
 DIRECT (SoundEditor, cb_paste)
 	Sound sound = my data;
 	long leftSample = Sampled_xToLowIndex (sound, my endSelection);
-	long oldNumberOfSamples = sound -> nx, newNumberOfSamples, i, j, n;
-	float **newData, **oldData = sound -> z, *amp;
+	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
+	float **newData, **oldData = sound -> z;
 	if (! Sound_clipboard) {
 		Melder_warning ("(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
 		return 1;
 	}
+	if (Sound_clipboard -> ny != sound -> ny)
+		return Melder_error ("(SoundEditor_paste:) Cannot paste because\n"
+ 			"number of channels of clipboard does not match\n"
+			"number of channels of edited sound.");
 	if (Sound_clipboard -> dx != sound -> dx)
 		return Melder_error ("(SoundEditor_paste:) Cannot paste because\n"
  			"sampling frequency of clipboard does not match\n"
@@ -287,15 +297,19 @@ DIRECT (SoundEditor, cb_paste)
 	if (leftSample < 0) leftSample = 0;
 	if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
 	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
-	if (! (newData = NUMfmatrix (1, 1, 1, newNumberOfSamples))) return 0;
-	j = 0;
-	for (i = 1; i <= leftSample; i ++) newData [1] [++ j] = oldData [1] [i];
-	n = Sound_clipboard -> nx;
-	amp = Sound_clipboard -> z [1];
-	for (i = 1; i <= n; i ++)
-		newData [1] [++ j] = amp [i];
-	for (i = leftSample + 1; i <= oldNumberOfSamples; i ++)
-		newData [1] [++ j] = oldData [1] [i];
+	if (! (newData = NUMfmatrix (1, sound -> ny, 1, newNumberOfSamples))) return 0;
+	for (long channel = 1; channel <= sound -> ny; channel ++) {
+		long j = 0;
+		for (long i = 1; i <= leftSample; i ++) {
+			newData [channel] [++ j] = oldData [channel] [i];
+		}
+		for (long i = 1; i <= Sound_clipboard -> nx; i ++) {
+			newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
+		}
+		for (long i = leftSample + 1; i <= oldNumberOfSamples; i ++) {
+			newData [channel] [++ j] = oldData [channel] [i];
+		}
+	}
 	Editor_save (me, "Paste");
 	NUMfmatrix_free (oldData, 1, 1);
 	sound -> xmin = 0.0;
@@ -313,7 +327,7 @@ DIRECT (SoundEditor, cb_paste)
 
 	/* Force FunctionEditor to show changes. */
 
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, 1, & my minimum, & my maximum);
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
 	FunctionEditor_SoundAnalysis_forget (me);
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
@@ -322,11 +336,14 @@ END
 
 DIRECT (SoundEditor, cb_setSelectionToZero)
 	Sound sound = my data;
-	long first, last, i;
+	long first, last;
 	Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
 	Editor_save (me, "Set to zero");
-	for (i = first; i <= last; i ++)
-		sound -> z [1] [i] = 0.0;
+	for (long channel = 1; channel <= sound -> ny; channel ++) {
+		for (long i = first; i <= last; i ++) {
+			sound -> z [channel] [i] = 0.0;
+		}
+	}
 	FunctionEditor_SoundAnalysis_forget (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -413,14 +430,14 @@ END
 /***** SELECT MENU *****/
 
 DIRECT (SoundEditor, cb_moveCursorToZero)
-	double zero = Sound_getNearestZeroCrossing (my data, 0.5 * (my startSelection + my endSelection));
+	double zero = Sound_getNearestZeroCrossing (my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me);
 	}
 END
 DIRECT (SoundEditor, cb_moveBtoZero)
-	double zero = Sound_getNearestZeroCrossing (my data, my startSelection);
+	double zero = Sound_getNearestZeroCrossing (my data, my startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -432,7 +449,7 @@ DIRECT (SoundEditor, cb_moveBtoZero)
 	}
 END
 DIRECT (SoundEditor, cb_moveEtoZero)
-	double zero = Sound_getNearestZeroCrossing (my data, my endSelection);
+	double zero = Sound_getNearestZeroCrossing (my data, my endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my endSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -601,7 +618,7 @@ static void dataChanged (I) {
 	iam (SoundEditor);
 	Sound sound = my data;
 	Melder_assert (sound != NULL);   /* LongSound objects should not get dataChanged messages. */
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, 1, & my minimum, & my maximum);
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
 	FunctionEditor_SoundAnalysis_forget (me);
 	inherited (SoundEditor) dataChanged (me);
 }
@@ -661,7 +678,7 @@ SoundEditor SoundEditor_create (Widget parent, const char *title, Any data) {
 	if (my longSound.data)
 		my minimum = -1, my maximum = 1;
 	else
-		Matrix_getWindowExtrema (data, 1, my sound.data -> nx, 1, 1, & my minimum, & my maximum);
+		Matrix_getWindowExtrema (data, 1, my sound.data -> nx, 1, my sound.data -> ny, & my minimum, & my maximum);
 	FunctionEditor_Sound_init (me);
 	FunctionEditor_SoundAnalysis_init (me);
 	my publish.windowType = preferences.publish.windowType;

@@ -39,7 +39,7 @@
 #include <time.h>
 #define my  me ->
 
-#define USE_PORTAUDIO  1
+//#define USE_PORTAUDIO  1
 #ifndef USE_PORTAUDIO
 	#if defined (macintosh)
 		#define USE_PORTAUDIO  1
@@ -48,11 +48,16 @@
 	#endif
 #endif
 
-#ifdef macintosh
+#if defined (macintosh)
 	#include <sys/time.h>
+#elif defined (linux)
+	#include <sys/time.h>
+	#include <signal.h>
 #endif
 
 #if USE_PORTAUDIO
+	#include <sys/time.h>
+	#include <signal.h>
 	#include "portaudio.h"
 #elif defined (sgi)
 	/* For local audio: */
@@ -99,8 +104,6 @@
 		#include <sys/soundcard.h>
 	#endif
 	#include <errno.h>
-	#include <sys/time.h>
-	#include <signal.h>
 #elif defined (_WIN32)
 	#include <windows.h>
 	#include <math.h>

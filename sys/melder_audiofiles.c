@@ -1,6 +1,6 @@
 /* melder_audiofiles.c
  *
- * Copyright (C) 1992-2006 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2007 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2002/09/28 corrected message
  * pb 2002/12/16 corrected bug for cases in which format chunk follows data chunk in WAV file
  * pb 2003/09/12 Sound Designer II files
  * pb 2004/05/14 support for reading 24-bit and 32-bit audio files
  * pb 2004/11/12 writeShortToAudio can write single channels of stereo signal
  * pb 2004/11/15 fast reading of 16-bit audio files
  * pb 2006/12/13 32-bit IEEE float audio files
+ * pb 2007/01/24 better error message for DVI ADPCM
  */
 
 #include "melder.h"
@@ -44,6 +44,7 @@
 #define WAVE_FORMAT_IEEE_FLOAT  0x0003
 #define WAVE_FORMAT_ALAW  0x0006
 #define WAVE_FORMAT_MULAW  0x0007
+#define WAVE_FORMAT_DVI_ADPCM 0x0011
 
 int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
 	switch (audioFileType) {
@@ -394,6 +395,11 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				case WAVE_FORMAT_MULAW:
 					*encoding = Melder_MULAW;
 					break;
+				case WAVE_FORMAT_DVI_ADPCM:
+					return Melder_error ("Cannot read lossy compressed audio files (this one is DVI ADPCM).\n"
+						"Please use uncompressed audio files. If you must open this file,\n"
+						"please use an audio converter program to convert it first to normal (PCM) WAV format\n"
+						"(Praat may have difficulty analysing the poor recording, though).");
 				default:
 					return Melder_error ("Unsupported Windows audio encoding %d.", winEncoding);
 			}

@@ -1,6 +1,6 @@
 /* praat_objectMenus.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2006/08/12 allowed renaming with European characters
  * pb 2006/10/20 embedded scripts
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/01/26 layout objects window
  */
 
 #include <ctype.h>
@@ -458,25 +459,11 @@ void praat_show (void) {
 /********** Menu descriptions. **********/
 
 void praat_addFixedButtons (Widget form) {
-	#if defined (macintosh)
-	praat_addFixedButtonCommand (form, "Rename...", DO_Rename, 5, 70);
-	praat_addFixedButtonCommand (form, "Copy...", DO_Copy, 110, 70);
-	praat_addFixedButtonCommand (form, "Info", DO_Info, 75, 40);
-	praat_addFixedButtonCommand (form, "Remove", DO_Remove, 15, 10);
-	praat_addFixedButtonCommand (form, "Inspect", DO_Inspect, 110, 10);
-	#elif defined (_WIN32)
-	praat_addFixedButtonCommand (form, "Rename...", DO_Rename, 5, 70);
-	praat_addFixedButtonCommand (form, "Copy...", DO_Copy, 110, 70);
-	praat_addFixedButtonCommand (form, "Info", DO_Info, 75, 40);
-	praat_addFixedButtonCommand (form, "Remove", DO_Remove, 15, 10);
-	praat_addFixedButtonCommand (form, "Inspect", DO_Inspect, 110, 10);
-	#else
-	praat_addFixedButtonCommand (form, "Rename...", DO_Rename, 10, 44);
-	praat_addFixedButtonCommand (form, "Info", DO_Info, 103, 44);
-	praat_addFixedButtonCommand (form, "Copy...", DO_Copy, 162, 44);
-	praat_addFixedButtonCommand (form, "Remove", DO_Remove, 10, 4);
-	praat_addFixedButtonCommand (form, "Inspect", DO_Inspect, 130, 4);
-	#endif
+	praat_addFixedButtonCommand (form, "Rename...", DO_Rename, 8, 70);
+	praat_addFixedButtonCommand (form, "Copy...", DO_Copy, 92, 70);
+	praat_addFixedButtonCommand (form, "Inspect", DO_Inspect, 8, 40);
+	praat_addFixedButtonCommand (form, "Info", DO_Info, 92, 40);
+	praat_addFixedButtonCommand (form, "Remove", DO_Remove, 8, 10);
 }
 
 static void searchProc (void) {

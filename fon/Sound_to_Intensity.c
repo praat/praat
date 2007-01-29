@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2003/12/15 removed bug introduced by previous change
  * pb 2004/10/27 subtractMean
  * pb 2006/12/31 compatible with stereo sounds
+ * pb 2007/01/27 for stereo sounds, add channel energies
  */
 
 #include "Sound_to_Intensity.h"
@@ -67,28 +68,24 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 		if (leftSample < 1) leftSample = 1;
 		if (rightSample > my nx) rightSample = my nx;
 
-		if (my ny == 1) {
+		for (long channel = 1; channel <= my ny; channel ++) {
 			for (i = leftSample; i <= rightSample; i ++) {
-				amplitude [i - midSample] = my z [1] [i];
+				amplitude [i - midSample] = my z [channel] [i];
 			}
-		} else {
+			if (subtractMeanPressure) {
+				double sum = 0.0;
+				for (i = leftSample; i <= rightSample; i ++) {
+					sum += amplitude [i - midSample];
+				}
+				double mean = sum / (rightSample - leftSample + 1);
+				for (i = leftSample; i <= rightSample; i ++) {
+					amplitude [i - midSample] -= mean;
+				}
+			}
 			for (i = leftSample; i <= rightSample; i ++) {
-				amplitude [i - midSample] = 0.5 * (my z [1] [i] + my z [2] [i]);
+				sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
+				sumw += window [i - midSample];
 			}
-		}
-		if (subtractMeanPressure) {
-			double sum = 0.0, mean;
-			for (i = leftSample; i <= rightSample; i ++) {
-				sum += amplitude [i - midSample];
-			}
-			mean = sum / (rightSample - leftSample + 1);
-			for (i = leftSample; i <= rightSample; i ++) {
-				amplitude [i - midSample] -= mean;
-			}
-		}
-		for (i = leftSample; i <= rightSample; i ++) {
-			sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
-			sumw += window [i - midSample];
 		}
 		intensity = sumxw / sumw;
 		if (intensity != 0.0) intensity /= 4e-10;

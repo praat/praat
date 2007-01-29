@@ -61,7 +61,7 @@
 #include "EditorM.h"
 #include "Preferences.h"
 
-#define USE_PORTAUDIO  1
+//#define USE_PORTAUDIO  1
 #ifndef USE_PORTAUDIO
 	// Default: use PortAudio on Mac only.
 	#if defined (macintosh)

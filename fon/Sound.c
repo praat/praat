@@ -1,6 +1,6 @@
 /* Sound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,9 @@
  * pb 2004/05/05 Vector_draw
  * pb 2005/02/09 Sound_setZero
  * pb 2006/12/31 stereo
+ * pb 2007/01/26 more stereo
+ * pb 2007/01/28 corrected a bug in Sound_extractChannel
+ * pb 2007/01/28 more stereo
  */
 
 #include "Sound.h"
@@ -39,10 +42,8 @@ Sound Sound_clipboard;
 static void info (I) {
 	iam (Sound);
 	const double rho_c = 400;   /* rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1 */
-	long i, numberOfSamples = my nx;
-	float *amplitude = my z [1];
-	double minimum = amplitude [1], maximum = minimum;
-	double sum = 0.0, sumOfSquares = 0.0, mean, penergy, energy, power;
+	long numberOfSamples = my nx;
+	double minimum = my z [1] [1], maximum = minimum;
 	classData -> info (me);
 	MelderInfo_writeLine3 ("Number of channels: ", Melder_integer (my ny),
 		my ny == 1 ? " (mono)" : my ny == 2 ? " (stereo)" : "");
@@ -55,24 +56,28 @@ static void info (I) {
 	MelderInfo_writeLine3 ("   Sampling period: ", Melder_double (my dx), " seconds");
 	MelderInfo_writeLine3 ("   Sampling frequency: ", Melder_single (1.0 / my dx), " Hz");
 	MelderInfo_writeLine3 ("   First sample centred at: ", Melder_double (my x1), " seconds");
-	for (i = 1; i <= numberOfSamples; i ++) {
-		double value = amplitude [i];
-		sum += value;
-		sumOfSquares += value * value;
-		if (value < minimum) minimum = value;
-		if (value > maximum) maximum = value;
+	double sum = 0.0, sumOfSquares = 0.0;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		float *amplitude = my z [channel];
+		for (long i = 1; i <= numberOfSamples; i ++) {
+			double value = amplitude [i];
+			sum += value;
+			sumOfSquares += value * value;
+			if (value < minimum) minimum = value;
+			if (value > maximum) maximum = value;
+		}
 	}
 	MelderInfo_writeLine1 ("Amplitude:");
 	MelderInfo_writeLine3 ("   Minimum: ", Melder_single (minimum), " Pascal");
 	MelderInfo_writeLine3 ("   Maximum: ", Melder_single (maximum), " Pascal");
-	mean = sum / my nx;
+	double mean = sum / (my nx * my ny);
 	MelderInfo_writeLine3 ("   Mean: ", Melder_single (mean), " Pascal");
-	MelderInfo_writeLine3 ("   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / my nx)), " Pascal");
-	penergy = sumOfSquares * my dx;   /* Pa2 s = kg2 m-2 s-3 */
+	MelderInfo_writeLine3 ("   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (my nx * my ny))), " Pascal");
+	double penergy = sumOfSquares * my dx / my ny;   /* Pa2 s = kg2 m-2 s-3 */
 	MelderInfo_write3 ("Total energy: ", Melder_single (penergy), " Pascal^2 sec");
-	energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
+	double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
 	MelderInfo_writeLine3 (" (energy in air: ", Melder_single (energy), " Joule/m^2)");
-	power = energy / (my dx * my nx);   /* kg s-3 = Watt/m2 */
+	double power = energy / (my dx * my nx);   /* kg s-3 = Watt/m2 */
 	MelderInfo_write3 ("Mean power (intensity) in air: ", Melder_single (power), " Watt/m^2");
 	if (power != 0.0) {
 		MelderInfo_writeLine3 (" = ", Melder_half (10 * log10 (power / 1e-12)), " dB");
@@ -80,35 +85,54 @@ static void info (I) {
 		MelderInfo_writeLine1 ("");
 	}
 	if (my nx > 1) {
-		double stdev = 0.0;
-		for (i = 1; i <= numberOfSamples; i ++) {
-			double value = amplitude [i] - mean;
-			stdev += value * value;
+		for (long channel = 1; channel <= my ny; channel ++) {
+			float *amplitude = my z [channel];
+			double sum = 0.0;
+			for (long i = 1; i <= numberOfSamples; i ++) {
+				double value = amplitude [i];
+				sum += value;
+			}
+			double mean = sum / my nx, stdev = 0.0;
+			for (long i = 1; i <= numberOfSamples; i ++) {
+				double value = amplitude [i] - mean;
+				stdev += value * value;
+			}
+			stdev = sqrt (stdev / (my nx - 1));
+			MelderInfo_writeLine5 ("Standard deviation in channel ", Melder_integer (channel), ": ", Melder_single (stdev), " Pascal");
 		}
-		stdev = sqrt (stdev / (my nx - 1));
-		MelderInfo_write3 ("Standard deviation: ", Melder_single (stdev), " Pascal\n");
 	}
 }
 
-static double getValueAtSample (I, long isamp, long ilevel, int unit) {
+static double getMatrix (I, long irow, long icol) {
 	iam (Sound);
-	(void) ilevel;
-	(void) unit;   // Always Pascal.
-	if (my ny == 1) return my z [1] [isamp];   // Optimization.
-	if (ilevel == Sound_LEVEL_MONO) {
-		double sum = 0.0;
-		for (long channel = 1; channel <= my ny; channel ++) {
-			sum += my z [channel] [isamp];
+	if (irow < 1 || irow > my ny) {
+		if (irow == 0) {
+			if (icol < 1 || icol > my nx) return 0.0;
+			if (my ny == 1) return my z [1] [icol];   // Optimization.
+			if (my ny == 2) return 0.5 * (my z [1] [icol] + my z [2] [icol]);   // Optimization.
+			double sum = 0.0;
+			for (long channel = 1; channel <= my ny; channel ++) {
+				sum += my z [channel] [icol];
+			}
+			return sum / my ny;
 		}
-		return sum / my ny;
+		return 0.0;
 	}
-	if (ilevel < 1 || ilevel > my ny) return NUMundefined;
-	return my z [ilevel] [isamp];
+	if (icol < 1 || icol > my nx) return 0.0;
+	return my z [irow] [icol];
+}
+
+static double getFunction2 (I, double x, double y) {
+	iam (Sound);
+	long channel = (long) floor (y);
+	if (channel < 0 || channel > my ny || y != (double) channel) return 0.0;
+	return our getFunction1 (me, channel, x);
 }
 
 class_methods (Sound, Vector)
 	class_method (info)
-	class_method (getValueAtSample)
+	class_method (getMatrix)
+	class_method (getFunction2)
 class_methods_end
 
 Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
@@ -176,6 +200,17 @@ end:
 	return him;
 }
 
+Sound Sound_extractChannel (Sound me, long channel) {
+	if (channel <= 0 || channel > my ny) return Melder_errorp ("Cannot extract channel %s.", Melder_integer (my ny));
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		thy z [1] [i] = my z [channel] [i];
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
 Sound Sound_extractLeftChannel (Sound me) {
 	if (my ny != 2) return Melder_errorp ("Sound not stereo. Left channel not extracted.");
 	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
@@ -198,37 +233,56 @@ end:
 	return thee;
 }
 
-double Sound_getEnergyInAir (Sound me) {
-	long i, n = my nx;
+static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
+	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	long imin, imax;
+	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
+	if (*n < 1) return NUMundefined;
 	double sum2 = 0.0;
-	for (i = 1; i <= n; i ++) {
-		double value = Sampled_getValueAtSample (me, i, 0, 0);
-		if (value == NUMundefined) return NUMundefined;
-		sum2 += value * value;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		float *amplitude = my z [channel];
+		for (long i = imin; i <= imax; i ++) {
+			double value = amplitude [i];
+			sum2 += value * value;
+		}
 	}
-	return sum2 * my dx / 400;
+	return sum2;
+}
+
+double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
+	long n;
+	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
+	return NUMdefined (sum2) ? sqrt (sum2 / (n * my ny)) : NUMundefined;
+}
+
+double Sound_getEnergy (Sound me, double xmin, double xmax) {
+	long n;
+	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
+	return NUMdefined (sum2) ? sum2 * my dx / my ny : NUMundefined;
+}
+
+double Sound_getPower (Sound me, double xmin, double xmax) {
+	long n;
+	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
+	return NUMdefined (sum2) ? sum2 / (n * my ny) : NUMundefined;
+}
+
+double Sound_getEnergyInAir (Sound me) {
+	long n;
+	double sum2 = getSumOfSquares (me, 0, 0, & n);
+	return NUMdefined (sum2) ? sum2 * my dx / (400 * my ny) : NUMundefined;
 }
 
 double Sound_getIntensity_dB (Sound me) {
-	long i, n = my nx;
-	double sum2 = 0.0;
-	for (i = 1; i <= n; i ++) {
-		double value = Sampled_getValueAtSample (me, i, 0, 0);
-		if (value == NUMundefined) return NUMundefined;
-		sum2 += value * value;
-	}
-	return sum2 == 0.0 ? NUMundefined : 10 * log10 (sum2 / n / 4.0e-10);
+	long n;
+	double sum2 = getSumOfSquares (me, 0, 0, & n);
+	return NUMdefined (sum2) && sum2 != 0.0 ? 10 * log10 (sum2 / (n * my ny) / 4.0e-10) : NUMundefined;
 }
 
 double Sound_getPowerInAir (Sound me) {
-	long i, n = my nx;
-	double sum2 = 0.0;
-	for (i = 1; i <= n; i ++) {
-		double value = Sampled_getValueAtSample (me, i, 0, 0);
-		if (value == NUMundefined) return NUMundefined;
-		sum2 += value * value;
-	}
-	return sum2 / n / 400;
+	long n;
+	double sum2 = getSumOfSquares (me, 0, 0, & n);
+	return NUMdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined;
 }
 
 Sound Matrix_to_Sound_mono (Matrix me, long row) {
@@ -351,35 +405,40 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	return him;
 }
 
-Sound Sounds_convolve (Sound me, Sound thee) {   // STEREO BUG
+Sound Sounds_convolve (Sound me, Sound thee) {
 	Sound him = NULL;
+	long numberOfChannels = my ny == 1 && thy ny == 1 ? 1 : 2;
 	long n1 = my nx, n2 = thy nx;
 	long n3 = n1 + n2 - 1, nfft = 1, i;
-	float *data1 = NULL, *data2 = NULL, *a, scale;
+	float *data1 = NULL, *data2 = NULL, scale;
 	if (my dx != thy dx)
 		return Melder_errorp ("Sounds_convolve: sampling frequencies do not match.");
 	while (nfft < n3) nfft *= 2;
 	data1 = NUMfvector (1, nfft); cherror
 	data2 = NUMfvector (1, nfft); cherror
-	him = Sound_create (1, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
-	a = my z [1];
-	for (i = n1; i > 0; i --) data1 [i] = a [i];
-	a = thy z [1];
-	for (i = n2; i > 0; i --) data2 [i] = a [i];
-	NUMrealft (data1, nfft, 1); cherror
-	NUMrealft (data2, nfft, 1); cherror
-	data2 [1] *= data1 [1];
-	data2 [2] *= data1 [2];
-	for (i = 3; i <= nfft; i += 2) {
-		float temp = data1 [i] * data2 [i] - data1 [i + 1] * data2 [i + 1];
-		data2 [i + 1] = data1 [i] * data2 [i + 1] + data1 [i + 1] * data2 [i];
-		data2 [i] = temp;
+	him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
+	for (long channel = 1; channel <= numberOfChannels; channel ++) {
+		float *a = my z [my ny == 1 ? 1 : channel];
+		for (i = n1; i > 0; i --) data1 [i] = a [i];
+		if (channel > 1) for (i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
+		a = thy z [thy ny == 1 ? 1 : channel];
+		for (i = n2; i > 0; i --) data2 [i] = a [i];
+		if (channel > 1) for (i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
+		NUMrealft (data1, nfft, 1); cherror
+		NUMrealft (data2, nfft, 1); cherror
+		data2 [1] *= data1 [1];
+		data2 [2] *= data1 [2];
+		for (i = 3; i <= nfft; i += 2) {
+			float temp = data1 [i] * data2 [i] - data1 [i + 1] * data2 [i + 1];
+			data2 [i + 1] = data1 [i] * data2 [i + 1] + data1 [i + 1] * data2 [i];
+			data2 [i] = temp;
+		}
+		NUMrealft (data2, nfft, -1); cherror
+		scale = 1.0 / nfft;
+		a = him -> z [channel];
+		for (i = 1; i <= n3; i ++)
+			a [i] = data2 [i] * scale;
 	}
-	NUMrealft (data2, nfft, -1); cherror
-	scale = 1.0 / nfft;
-	a = him -> z [1];
-	for (i = 1; i <= n3; i ++)
-		a [i] = data2 [i] * scale;
 end:
 	NUMfvector_free (data1, 1);
 	NUMfvector_free (data2, 1);
@@ -390,28 +449,100 @@ end:
 void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, int garnish, const char *method)
 {
-	Vector_draw (me, g, & tmin, & tmax, & minimum, & maximum, 0.5, method);   // STEREO BUG
+	long ixmin, ixmax, ix;
+	/*
+	 * Automatic domain.
+	 */
+	if (tmin == tmax) {
+		tmin = my xmin;
+		tmax = my xmax;
+	}
+	/*
+	 * Domain expressed in sample numbers.
+	 */
+	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
+	/*
+	 * Automatic vertical range.
+	 */
+	if (minimum == maximum) {
+		Matrix_getWindowExtrema (me, ixmin, ixmax, 1, my ny, & minimum, & maximum);
+		if (minimum == maximum) {
+			minimum -= 1.0;
+			maximum += 1.0;
+		}
+	}
+	/*
+	 * Set coordinates for drawing.
+	 */
+	Graphics_setInner (g);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		Graphics_setWindow (g, tmin, tmax,
+			minimum - (my ny - channel) * (maximum - minimum),
+			maximum + (channel - 1) * (maximum - minimum));
+		if (strstr (method, "bars") || strstr (method, "Bars")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				double x = Sampled_indexToX (me, ix);
+				double y = my z [channel] [ix];
+				double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
+				if (y > maximum) y = maximum;
+				if (left < minimum) left = minimum;
+				if (right > maximum) right = maximum;
+				Graphics_line (g, left, y, right, y);
+				Graphics_line (g, left, y, left, minimum);
+				Graphics_line (g, right, y, right, minimum);
+			}
+		} else if (strstr (method, "poles") || strstr (method, "Poles")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				double x = Sampled_indexToX (me, ix);
+				Graphics_line (g, x, 0, x, my z [channel] [ix]);
+			}
+		} else if (strstr (method, "speckles") || strstr (method, "Speckles")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				double x = Sampled_indexToX (me, ix);
+				Graphics_fillCircle_mm (g, x, my z [channel] [ix], 1.0);
+			}
+		} else {
+			/*
+			 * The default: draw as a curve.
+			 */
+			Graphics_function (g, my z [channel], ixmin, ixmax,
+				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
+		}
+	}
+	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, 1, "Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
+		Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
+		Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
 		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
 			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+		}
+		if (my ny == 2) {
+			Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
+			Graphics_markRight (g, minimum, 1, 1, 0, NULL);
+			Graphics_markRight (g, maximum, 1, 1, 0, NULL);
+			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
+				Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+			}
 		}
 	}
 }
 
-static double interpolate (Sound me, long i1)
+static double interpolate (Sound me, long i1, long channel)
 /* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
 {
 	long i2 = i1 + 1;
 	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
-	double y1 = my z [1] [i1], y2 = my z [1] [i2];   // STEREO BUG
+	double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
 	return x1 + (x2 - x1) * y1 / (y1 - y2);   /* Linear. */
 }
-double Sound_getNearestZeroCrossing (Sound me, double position) {   // STEREO BUG
-	float *amplitude = my z [1];
+double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
+	float *amplitude = my z [channel];
 	long leftSample = Sampled_xToLowIndex (me, position);
 	long rightSample = leftSample + 1, ileft, iright;
 	double leftZero, rightZero;
@@ -420,14 +551,14 @@ double Sound_getNearestZeroCrossing (Sound me, double position) {   // STEREO BU
 		(amplitude [leftSample] >= 0.0) !=
 		(amplitude [rightSample] >= 0.0))
 	{
-		return interpolate (me, leftSample);
+		return interpolate (me, leftSample, channel);
 	}
 	/* Search to the left. */
 	if (leftSample > my nx) return NUMundefined;
 	for (ileft = leftSample - 1; ileft >= 1; ileft --)
 		if ((amplitude [ileft] >= 0.0) != (amplitude [ileft + 1] >= 0.0))
 		{
-			leftZero = interpolate (me, ileft);
+			leftZero = interpolate (me, ileft, channel);
 			break;
 		}
 	/* Search to the right. */
@@ -435,7 +566,7 @@ double Sound_getNearestZeroCrossing (Sound me, double position) {   // STEREO BU
 	for (iright = rightSample + 1; iright <= my nx; iright ++)
 		if ((amplitude [iright] >= 0.0) != (amplitude [iright - 1] >= 0.0))
 		{
-			rightZero = interpolate (me, iright - 1);
+			rightZero = interpolate (me, iright - 1, channel);
 			break;
 		}
 	if (ileft < 1 && iright > my nx) return NUMundefined;
@@ -443,19 +574,22 @@ double Sound_getNearestZeroCrossing (Sound me, double position) {   // STEREO BU
 		position - leftZero < rightZero - position ? leftZero : rightZero;
 }
 
-void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing) {   // STEREO BUG
-	long imin, imax, i;
-	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	Function_intersectRangeWithDomain (me, & tmin, & tmax);
-	if (roundTimesToNearestZeroCrossing) {
-		if (tmin > my xmin) tmin = Sound_getNearestZeroCrossing (me, tmin);
-		if (tmax < my xmax) tmax = Sound_getNearestZeroCrossing (me, tmax);
-	}
-	if (tmin == NUMundefined) tmin = my xmin;
-	if (tmax == NUMundefined) tmax = my xmax;
-	Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	for (i = imin; i <= imax; i ++) {
-		my z [1] [i] = 0.0;
+void Sound_setZero (Sound me, double tmin_in, double tmax_in, int roundTimesToNearestZeroCrossing) {
+	Function_unidirectionalAutowindow (me, & tmin_in, & tmax_in);
+	Function_intersectRangeWithDomain (me, & tmin_in, & tmax_in);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		double tmin = tmin_in, tmax = tmax_in;
+		if (roundTimesToNearestZeroCrossing) {
+			if (tmin > my xmin) tmin = Sound_getNearestZeroCrossing (me, tmin_in, channel);
+			if (tmax < my xmax) tmax = Sound_getNearestZeroCrossing (me, tmax_in, channel);
+		}
+		if (tmin == NUMundefined) tmin = my xmin;
+		if (tmax == NUMundefined) tmax = my xmax;
+		long imin, imax;
+		Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		for (long i = imin; i <= imax; i ++) {
+			my z [channel] [i] = 0.0;
+		}
 	}
 }
 
@@ -705,12 +839,14 @@ void Sound_reverse (Sound me, double tmin, double tmax) {
 	}
 }
 
-Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize) {   // STEREO BUG
+Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize) {
 	Sound him = NULL;
 	double dt, dphase, t1;
 	long i1, i2, nt, i;
 	if (my dx != thy dx)
 		return Melder_errorp ("(Sounds_crossCorrelation:) Sampling frequencies do not match.");
+	if (my ny != thy ny)
+		return Melder_errorp ("(Sounds_crossCorrelation:) Numbers of channels do not match.");
 	dt = my dx;
 	dphase = (thy x1 - my x1) / dt;
 	dphase -= floor (dphase);   /* A number between 0 and 1. */
@@ -727,27 +863,34 @@ Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int
 		for (ime = 1; ime <= my nx; ime ++) {
 			if (ime + di < 1) continue;
 			if (ime + di > thy nx) break;
-			his z [1] [i] += my z [1] [ime] * thy z [1] [ime + di];
+			for (long channel = 1; channel <= my ny; channel ++) {
+				his z [1] [i] += my z [channel] [ime] * thy z [channel] [ime + di];
+			}
 		}
 	}
 	if (normalize) {
 		double mypower = 0.0, thypower = 0.0;
-		for (i = 1; i <= my nx; i ++) {
-			double value = my z [1] [i];
-			mypower += value * value;
-		}
-		for (i = 1; i <= thy nx; i ++) {
-			double value = thy z [1] [i];
-			thypower += value * value;
+		for (long channel = 1; channel <= my ny; channel ++) {
+			for (i = 1; i <= my nx; i ++) {
+				double value = my z [channel] [i];
+				mypower += value * value;
+			}
+			for (i = 1; i <= thy nx; i ++) {
+				double value = thy z [channel] [i];
+				thypower += value * value;
+			}
 		}
 		if (mypower != 0.0 && thypower != 0.0) {
 			double factor = 1.0 / (sqrt (mypower) * sqrt (thypower));
-			for (i = 1; i <= nt; i ++)
+			for (i = 1; i <= nt; i ++) {
 				his z [1] [i] *= factor;
+			}
 		}
 	} else {
-		for (i = 1; i <= nt; i ++)
-			his z [1] [i] *= dt;
+		double factor = dt / my ny;
+		for (i = 1; i <= nt; i ++) {
+			his z [1] [i] *= factor;
+		}
 	}
 	return him;
 }
