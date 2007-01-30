@@ -2,7 +2,7 @@
 #define _DTW_h_
 /* DTW.h
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20061205 Latest modification.
+ djmw 20070129 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -35,6 +35,9 @@
 #endif
 #ifndef _Pitch_h
 	#include "Pitch.h"
+#endif
+#ifndef _DurationTier_h
+	#include "DurationTier.h"
 #endif
 
 #include "DTW_def.h"
@@ -106,5 +109,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 	int matchEnd, int slope, int metric);
 
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+
+DurationTier DTW_to_DurationTier (DTW me);
 
 #endif /* _DTW_h_ */

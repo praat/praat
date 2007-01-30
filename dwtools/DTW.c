@@ -1329,4 +1329,11 @@ end:
  	return him;
 }
 
+DurationTier DTW_to_DurationTier (DTW me)
+{
+
+
+
+}
+
 /* End of file DTW.c */

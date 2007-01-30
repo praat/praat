@@ -1,6 +1,6 @@
 /* Intensity_extensions.c
  *
- * Copyright (C) 2006 David Weenink
+ * Copyright (C) 2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20061204 Initial version
+ djmw 20070129 Extra argument for Vector_get<Maximum/Minimum>AndX
 */
 
 #include "Intensity_extensions.h"

@@ -1,8 +1,61 @@
 # pitch.praat
-# Paul Boersma, November 15, 2004
+# Paul Boersma, January 30, 2007
 # Tests "Sound: To Pitch..."
 
 echo Pitch test
+
+method$ = "cc"
+
+for freq from 76.1 to 106
+	call sineTest freq 0.1
+endfor
+for freq from 106.1 to 226
+	call sineTest freq 0.01
+endfor
+for i from 2 to 20
+	call sineTest i*100+77 0.02
+endfor
+for i from 21 to 29
+	call sineTest i*100+77 0.1
+endfor
+for i from 30 to 35
+	call sineTest i*100+77 1.0
+endfor
+for i from 36 to 60
+	call sineTest i*100+77 5.0
+endfor
+for i from 61 to 107
+	call sineTest i*100+77 10.0
+endfor
+for i from 1080 to 1095
+	call sineTest i*10-0.1 10.0
+endfor
+
+for freq from 76.1 to 136
+	call pulseTest freq 0.1
+endfor
+for freq from 136.1 to 226
+	call pulseTest freq 0.2
+endfor
+for i from 2 to 13
+	call pulseTest i*100+77 1
+endfor
+for i from 14 to 20
+	call pulseTest i*100+77 2
+endfor
+for i from 210 to 219
+	call pulseTest i*10+77 10
+endfor
+for i from 22 to 30
+	call pulseTest i*100+77 2
+endfor
+for i from 31 to 53
+	call pulseTest i*100+77 5
+endfor
+call pulseTest 219 1
+call pulseTest 220 1
+
+method$ = "ac"
 
 for freq from 75.1 to 106
 	call sineTest freq 0.1
@@ -55,7 +108,7 @@ endproc
 
 procedure analyse precision
 	;To Pitch... 0.09457464735 75 11025
-	To Pitch (ac)... 0.09457464735 75 15 no 0.03 0.45 0.03 0.35 0.14 11025
+	To Pitch ('method$')... 0.09457464735 75 15 no 0.03 0.45 0.03 0.35 0.14 11025
 	minPitch = Get minimum... 0 0 Hertz None
 	maxPitch = Get maximum... 0 0 Hertz None
 	diff1 = minPitch - pitch

@@ -32,6 +32,7 @@
  djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
  djmw 20061214 Sound_and_Pitch_changeSpeaker removed warning.
  djmw 20070103 Sound interface changes
+ djmw 20070129 Warning added in changeGender_old.
 */
 
 #include "Intensity_extensions.h"
@@ -1607,8 +1608,6 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
-	if (my ny > 1)
-		return Melder_errorp ("Change Gender works only on mono sounds.");
 	char *proc = "Sound_changeGender";
 	Sound sound = NULL, thee = NULL; 
 	Pitch pitch = NULL;
@@ -1617,7 +1616,9 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	DurationTier duration = NULL;
 	double samplingFrequency_old = 1 / my dx;
 	double median, factor;
-	
+ 
+ 	if (my ny > 1) return Melder_errorp ("Change Gender works only on mono sounds.");
+ 		
 	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
 		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
 	if (new_pitch < 0) return Melder_errorp ("%s: The new pitch median must not be negative.", proc);

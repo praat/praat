@@ -572,8 +572,9 @@ static void cb_Editor_dataChanged (I, void *closure, Any data) {
 			 */
 			for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = theCurrentPraat -> list [iobject]. editors [ieditor];
-				if (otherEditor != NULL && otherEditor != me)
+				if (otherEditor != NULL && otherEditor != me) {
 					Editor_dataChanged (otherEditor, data);
+				}
 			}
 		}
 	}

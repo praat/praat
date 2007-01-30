@@ -25,6 +25,7 @@
  	then inspect it before a subsequent function call."
  djmw 20061213 MelderFile_truncate also works for MacOS X
  djmw 20061212 Header unistd.h for MacOS X added.
+ djmw 20070129 Sounds may be multichannel
 */
 
 #include "LongSound_extensions.h" 
@@ -191,10 +192,14 @@ static int MelderFile_truncate (MelderFile me, long size)
 	return 1;
 }
 
-static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) {
+static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) 
+{
 	long ibuffer, numberOfBuffers, numberOfSamplesInLastBuffer;
 	if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
-		{ Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file)); goto end; }
+	{ 
+		Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file));
+		goto end;
+	}
 	numberOfBuffers = (n - 1) / my nmax + 1;
 	numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer)
@@ -261,7 +266,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 		{
 			Sound sound = (Sound) data;
 			sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
-			numbersOfChannelsMatch = 1 == numberOfChannels;
+			numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 			numberOfSamples += sound -> nx;
 		}
 		else
@@ -303,7 +308,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 			if (file -> filePointer)
 			{
 				Melder_writeFloatToAudio (file -> filePointer, Melder_defaultAudioFileEncoding16 (audioFileType),
-					& sound -> z [1] [1], sound -> nx, NULL, 0, TRUE);
+					& sound -> z[1][1], sound -> nx, sound -> ny == 1 ? NULL : & sound -> z[2][1], sound -> nx, TRUE);
 			}
 		}
 		else

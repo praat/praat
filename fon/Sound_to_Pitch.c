@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2004/10/18 auto maxnCandidates
  * pb 2004/10/18 use of constant FFT tables speeds up AC method by a factor of 1.9
  * pb 2006/12/31 compatible with stereo sounds
+ * pb 2007/01/30 loop split for stereo speeds up CC method by a factor of 6
  */
 
 #include "Sound_to_Pitch.h"
@@ -140,25 +141,29 @@ Pitch Sound_to_Pitch_any (Sound me,
 	 */
 	thee = Pitch_create (my xmin, my xmax, nFrames, dt, t1, ceiling, maxnCandidates); cherror
 
-	/* Step 1: compute global absolute peak for determination of silence threshold. */
-	{
+	/*
+	 * Compute the global absolute peak for determination of silence threshold.
+	 */
+	globalPeak = 0.0;
+	for (long channel = 1; channel <= my ny; channel ++) {
 		double mean = 0.0;
-		globalPeak = 0;
-		for (i = 1; i <= my nx; i ++) mean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+		for (i = 1; i <= my nx; i ++) {
+			mean += my z [channel] [i];
+		}
 		mean /= my nx;
 		for (i = 1; i <= my nx; i ++) {
-			double damp = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0) - mean;
-			if (fabs (damp) > globalPeak) globalPeak = fabs (damp);
+			double damp = fabs (my z [channel] [i] - mean);
+			if (damp > globalPeak) globalPeak = damp;
 		}
-		if (globalPeak == 0.0) { Melder_progress (1.0, NULL); return thee; }
 	}
+	if (globalPeak == 0.0) { Melder_progress (1.0, NULL); return thee; }
 
 	if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
 		/*
 		* Create buffer for cross-correlation analysis.
 		*/
-		frame = NUMdvector (1, nsamp_window); cherror
+		//frame = NUMdvector (1, nsamp_window); cherror
 
 		brent_ixmax = nsamp_window * interpolation_depth;
 
@@ -218,7 +223,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 
 	for (iframe = 1; iframe <= nFrames; iframe ++) {
 		Pitch_Frame pitchFrame = & thy frame [iframe];
-		double t = Sampled_indexToX (thee, iframe), localMean, localPeak;
+		double t = Sampled_indexToX (thee, iframe), localPeak;
 		long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 		long startSample, endSample;
 		if (! Melder_progress (0.1 + (0.8 * iframe) / (nFrames + 1),
@@ -227,12 +232,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Compute the local mean; look one longest period to both sides.
 		 */
-		localMean = 0.0;
 		startSample = rightSample - nsamp_period;
 		endSample = leftSample + nsamp_period;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
-		for (i = startSample; i <= endSample; i ++) localMean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+		double localMean = 0.0;
+		for (i = startSample; i <= endSample; i ++) {
+			localMean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+		}
 		localMean /= 2 * nsamp_period;
 
 		/*
@@ -243,10 +250,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		endSample = leftSample + halfnsamp_window;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
-		if (method >= FCC_NORMAL) {
-			for (j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean);
-		} else {
+		if (method < FCC_NORMAL) {
 			for (j = 1, i = startSample; j <= nsamp_window; j ++)
 				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean) * window [j];
 			for (j = nsamp_window + 1; j <= nsampFFT; j ++)
@@ -256,39 +260,59 @@ Pitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Compute the local peak; look half a longest period to both sides.
 		 */
-		localPeak = 0;
-		if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
-		if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
-		for (j = startSample; j <= endSample; j ++)
-			if (fabs (frame [j]) > localPeak) localPeak = fabs (frame [j]);
-		pitchFrame->intensity = localPeak > globalPeak ? 1 : localPeak / globalPeak;
+		localPeak = 0.0;
+		if (method >= FCC_NORMAL) {
+			startSample = rightSample - halfnsamp_period;
+			endSample = leftSample + halfnsamp_period;
+			if (startSample < 1) startSample = 1;
+			if (endSample > my nx) endSample = my nx;
+			for (long channel = 1; channel <= my ny; channel ++) {
+				for (j = startSample; j <= endSample; j ++) {
+					double value = fabs (my z [channel] [j] - localMean);
+					if (value > localPeak) localPeak = value;
+				}
+			}
+		} else {
+			if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
+			if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
+			for (j = startSample; j <= endSample; j ++) {
+				if (fabs (frame [j]) > localPeak) localPeak = fabs (frame [j]);
+			}
+		}
+		pitchFrame->intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
 
 		/*
 		 * Compute the correlation into the array 'r'.
 		 */
 		if (method >= FCC_NORMAL) {
-			double startTime = t - (1 / minimumPitch + dt_window) / 2;
-			double sumx2 = 0, sumy2 = 0;   /* Sum of squares. */
+			double startTime = t - 0.5 * (1.0 / minimumPitch + dt_window);
 			long localSpan = maximumLag + nsamp_window, localMaximumLag, offset;
 			if ((startSample = Sampled_xToLowIndex (me, startTime)) < 1) startSample = 1;
 			if (localSpan > my nx + 1 - startSample) localSpan = my nx + 1 - startSample;
 			localMaximumLag = localSpan - nsamp_window;
 			offset = startSample - 1;
-			for (i = 1; i <= nsamp_window; i ++) {
-				double x = Sampled_getValueAtSample (me, offset + i, Sound_LEVEL_MONO, 0);
-				sumx2 += x * x;
+			double sumx2 = 0;   /* Sum of squares. */
+			for (long channel = 1; channel <= my ny; channel ++) {
+				float *amp = my z [channel] + offset;
+				for (i = 1; i <= nsamp_window; i ++) {
+					double x = amp [i] - localMean;
+					sumx2 += x * x;
+				}
 			}
-			sumy2 = sumx2;   /* At zero lag, these are still equal. */
+			double sumy2 = sumx2;   /* At zero lag, these are still equal. */
 			r [0] = 1.0;
 			for (i = 1; i <= localMaximumLag; i ++) {
 				double product = 0.0;
-				double y0 = Sampled_getValueAtSample (me, offset + i, Sound_LEVEL_MONO, 0);
-				double yZ = Sampled_getValueAtSample (me, offset + i + nsamp_window, Sound_LEVEL_MONO, 0);
-				sumy2 += yZ * yZ - y0 * y0;
-				for (j = 1; j <= nsamp_window; j ++) {
-					double x = Sampled_getValueAtSample (me, offset + j, Sound_LEVEL_MONO, 0);
-					double y = Sampled_getValueAtSample (me, offset + i + j, Sound_LEVEL_MONO, 0);
-					product += x * y;
+				for (long channel = 1; channel <= my ny; channel ++) {
+					float *amp = my z [channel] + offset;
+					double y0 = amp [i] - localMean;
+					double yZ = amp [i + nsamp_window] - localMean;
+					sumy2 += yZ * yZ - y0 * y0;
+					for (j = 1; j <= nsamp_window; j ++) {
+						double x = amp [j] - localMean;
+						double y = amp [i + j] - localMean;
+						product += x * y;
+					}
 				}
 				r [- i] = r [i] = product / sqrt (sumx2 * sumy2);
 			}

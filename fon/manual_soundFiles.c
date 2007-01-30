@@ -260,12 +260,6 @@ INTRO ("With this command, you write one or more selected @Sound and/or @LongSou
 	"to a single 16-bit little-endian NIST audio file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN ("Write to stereo WAV file...", "ppgb", 20051218)
-INTRO ("With this command, you write two selected @Sound objects "
-	"to a single 16-bit little-endian stereo WAV file on disk. "
-	"The top one will become the left channel, the bottom one the right channel.")
-MAN_END
-
 MAN_BEGIN ("NIST files", "ppgb", 19960911)
 INTRO ("A way for storing a @Sound object on disk.")
 ENTRY ("File format")
@@ -275,7 +269,6 @@ NORMAL ("With @@Read from file...@.")
 ENTRY ("Writing")
 NORMAL ("With ##Write to NIST audio file...#.")
 MAN_END
-
 
 MAN_BEGIN ("How to concatenate sound files", "ppgb", 20000123)
 INTRO ("You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, and "

@@ -227,11 +227,11 @@ LIST_ITEM ("4. Those action commands that match the currently selected objects w
 NORMAL ("To execute any of these blue commands, just click on it.")
 MAN_END
 
-MAN_BEGIN ("buttons file", "ppgb", 20021204)
+MAN_BEGIN ("buttons file", "ppgb", 20070129)
 NORMAL ("The file into which changes in the availability and visibility of commands in the fixed "
 	"and dynamic menus are recorded.")
-NORMAL ("The buttons file is written to disk when you leave Praat, "
-	"and it is read again when you enter Praat the next time. It is a simple @@Praat script@ that you can read "
+NORMAL ("The buttons file is written to disk when you quit Praat, "
+	"and it is read again when you start Praat the next time. It is a simple @@Praat script@ that you can read "
 	"(but should not edit) with any text editor.")
 ENTRY ("Adding buttons")
 NORMAL ("To add a command to a fixed or dynamic menu, you typically use the @ScriptEditor.")
@@ -240,20 +240,14 @@ NORMAL ("To remove an added command from a fixed or dynamic menu, you typically 
 ENTRY ("Hiding and showing buttons")
 NORMAL ("To hide a built-in command from a fixed or dynamic menu, or to make a hidden command visible, "
 	"you typically use the @ButtonEditor.")
-ENTRY ("Unix")
-NORMAL ("If your home directory is /people/miep, the buttons file is /people/miep/.praat-dir/buttons. "
-	"If the directory .praat-dir does not exist, it is created when you enter Praat. If you rename Praat, "
-	"the name of the directory will also be different.")
-ENTRY ("MacOS X")
-NORMAL ("If you are Miep, the buttons file will be /Users/Miep/Library/Preferences/Praat Prefs/Buttons.")
-ENTRY ("Classic Macintosh")
-NORMAL ("The buttons file, which is called \"Buttons\", "
-	"will be in a folder named \"Praat Preferences\" in the Preferences folder in your System Folder. "
-	"If your hard disk is called \"H\\ael' sji'f\", and you have a Dutch system, "
-	"the complete path to your preferences file is:")
-CODE ("H\\ael' sji'f:Systeemmap:Voorkeuren:Praat Preferences:Buttons")
-ENTRY ("Windows")
-NORMAL ("The buttons file may be C:\\bsWINDOWS\\bsPraat\\bsButtons.ini.")
+ENTRY ("Where is the buttons file?")
+NORMAL ("The buttons file is in your Praat @@preferences directory@.")
+NORMAL ("On Unix the file is called #buttons, "
+	"for instance ##/people/miep/.praat-dir/buttons#.")
+NORMAL ("On Macintosh it is called #Buttons, "
+	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons#.")
+NORMAL ("On Windows it is called ##Buttons.ini#, "
+	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsButtons.ini#.")
 MAN_END
 
 MAN_BEGIN ("Calculator", "ppgb", 20021201)
@@ -1242,12 +1236,12 @@ FORMULA ("(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
-MAN_BEGIN ("plug-ins", "ppgb", 20070106)
+MAN_BEGIN ("plug-ins", "ppgb", 20070129)
 INTRO ("Experienced Praat script writers can distribute their product as a plug-in to Praat.")
 ENTRY ("The Praat plug-in mechanism")
 NORMAL ("When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
 	"that reside in directories whose name starts with ##plugin_# and that themselves reside in "
-	"the Praat preferences directory (see @@preferences file@).")
+	"your Praat @@preferences directory@.")
 ENTRY ("How to write a Praat plug-in")
 NORMAL ("Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs, "
 	"and that these scripts are called ##analyseQueak.praat# and ##createQueak.praat# (\"queak\" is what guinea pigs tend to say). "
@@ -1308,31 +1302,33 @@ INTRO ("An executable text that consists of menu commands and action commands.")
 NORMAL ("See the @Scripting tutorial.")
 MAN_END
 
-MAN_BEGIN ("preferences file", "ppgb", 20030519)
-NORMAL ("The file into which some of your preferences are saved across your sessions with P\\s{RAAT}. "
-	"For instance, if you change the font used by the Picture window to Palatino and leave P\\s{RAAT}, "
-	"the Picture-window font will still be Palatino when you enter P\\s{RAAT} again.")
-NORMAL ("The preferences file is written to disk when you leave P\\s{RAAT}, "
-	"and it is read when you enter P\\s{RAAT}. It is a simple text file that you can read "
-	"(but should not edit) with any text editor.")
+MAN_BEGIN ("preferences directory", "ppgb", 20070129)
+INTRO ("The Praat preferences directory is the directory where Praat saves the @@preferences file@ and the @@buttons file@, "
+	"and where you can install @@plug-ins@. "
+	"If the preferences directory does not exist, it will automatically be created when you start Praat.")
 ENTRY ("Unix")
-NORMAL ("If your home directory is /people/miep "
-	"the preferences file is /people/miep/.praat-dir/prefs. "
-	"If the directory .praat-dir does not exist, it is created when you enter P\\s{RAAT}.")
+NORMAL ("If your home directory is ##/people/miep/#, your Praat preferences directory will be ##/people/miep/.praat-dir/#.")
 ENTRY ("Macintosh")
-NORMAL ("In MacOS X, the preferences file is called %Prefs, and it will be in the folder %%Praat Prefs% "
-	"in the %Preferences folder of your personal %Library folder. On my iBook, the preferences file is "
-	"##/Users/pboersma/Library/Preferences/Praat Prefs/Prefs#.")
-NORMAL ("In MacOS 7, 8, or 9, the preferences file is also called %Prefs, and it will be in the folder "
-	"%%Praat Preferences% in the Preferences folder in your System Folder. "
-	"If your hard disk is called \"H\\ael' sji'f\", and you have a Dutch system, "
-	"the complete path to your preferences file is:")
-CODE ("H\\ael' sji'f:Systeemmap:Voorkeuren:Praat Preferences:Prefs")
+NORMAL ("If you are user #miep, your Praat preferences directory will be ##/Users/miep/Library/Preferences/Praat Prefs/#.")
 ENTRY ("Windows")
-NORMAL ("The preferences file is called %%Preferences.ini%, and it will be in the directory %Praat "
-	"in your Windows directory, or in the directory %Praat in your home directory if you work on "
-	"a shared computer. On my Virtual PC Windows XP Home Edition computer, "
-	"the preferences file is ##C:\\bsDocuments and Settings\\bsPaul Boersma\\bsPraat\\bsPreferences.ini#.")
+NORMAL ("If you are user #Miep, your Praat preferences directory will be ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bs#.")
+MAN_END
+
+MAN_BEGIN ("preferences file", "ppgb", 20070129)
+NORMAL ("The file into which some of your preferences are saved across your sessions with Praat. "
+	"For instance, if you change the font used by the Picture window to Palatino and quit Praat, "
+	"the Picture-window font will still be Palatino when you start Praat again.")
+NORMAL ("The preferences file is written to disk when you quit Praat, "
+	"and it is read when you start Praat. It is a simple text file that you can read "
+	"(but should not edit) with any text editor.")
+ENTRY ("Where is the preferences file?")
+NORMAL ("The preferences file is in your Praat @@preferences directory@.")
+NORMAL ("On Unix the file is called #prefs, "
+	"for instance ##/people/miep/.praat-dir/prefs#.")
+NORMAL ("On Macintosh it is called #Prefs, "
+	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Prefs#.")
+NORMAL ("On Windows it is called ##Preferences.ini#, "
+	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences.ini#.")
 MAN_END
 
 MAN_BEGIN ("Run script...", "ppgb", 20050822)

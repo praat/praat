@@ -77,6 +77,14 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 void manual_sound_init (ManPages me);
 void manual_sound_init (ManPages me) {
 
+MAN_BEGIN ("Combine to stereo", "ppgb", 20070129)
+INTRO ("To combine two mono @Sound objects into one single stereo Sound, "
+	"select the two Sounds in the list and choose ##Combine to stereo# from the ##Combine sounds# menu. "
+	"A new stereo Sound will appear in the list.")
+NORMAL ("Of the two original mono Sounds, the one that is higher in the list will become the left channel "
+	"of the new stereo Sound, and the one that is lower in the list will become the right channel of the new Sound.")
+MAN_END
+
 MAN_BEGIN ("Create Sound...", "ppgb", 20040331)
 INTRO ("A command in the @@New menu@ to create a @Sound with a specified duration and sampling frequency, "
 	"filled with values from a formula.")
@@ -173,6 +181,28 @@ CODE ("Formula... self + self [row - 1, col]")
 CODE ("\\#  Publish last row:")
 CODE ("To Sound (slice)... number_of_components")
 CODE ("Scale amplitudes... 0.99")
+MAN_END
+
+MAN_BEGIN ("Extract left channel", "ppgb", 20070129)
+INTRO ("To extract the left channel of an existing stereo @Sound as a new mono Sound, "
+	"select that stereo Sound in the list and choose ##Extract left channel# from the #Convert menu. "
+	"A new mono Sound will appear in the list.")
+ENTRY ("Details")
+NORMAL ("The name of the new mono Sound will be based on the name of the original stereo Sound. "
+	"For instance, if the original Sound is called #hello, the new Sound will be called #hello_left.")
+NORMAL ("This command also works if you select more than one stereo Sound. "
+	"For each of them, Praat creates a new mono Sound.")
+MAN_END
+
+MAN_BEGIN ("Extract right channel", "ppgb", 20070129)
+INTRO ("To extract the right channel of an existing stereo @Sound as a new mono Sound, "
+	"select that stereo Sound in the list and choose ##Extract right channel# from the #Convert menu. "
+	"A new mono Sound will appear in the list.")
+ENTRY ("Details")
+NORMAL ("The name of the new mono Sound will be based on the name of the original stereo Sound. "
+	"For instance, if the original Sound is called #hello, the new Sound will be called #hello_right.")
+NORMAL ("This command also works if you select more than one stereo Sound. "
+	"For each of them, Praat creates a new mono Sound.")
 MAN_END
 
 MAN_BEGIN ("Read two sounds from stereo file...", "ppgb", 20051218)
@@ -654,7 +684,7 @@ DEFINITION ("the interpolation method (None, Parabolic, Sinc) of the @@vector pe
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get energy...", "ppgb", 20041107)
+MAN_BEGIN ("Sound: Get energy...", "ppgb", 20070129)
 INTRO ("A @query to the selected @Sound object.")
 ENTRY ("Return value")
 NORMAL ("the energy. If the unit of sound amplitude is Pa (Pascal), the unit of energy will be Pa^2\\.cs.")
@@ -665,13 +695,16 @@ DEFINITION ("the time range (%t__1_, %t__2_). Values outside this range are igno
 ENTRY ("Algorithm")
 NORMAL ("The energy is defined as")
 FORMULA ("\\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
-NORMAL ("where %x(%t) is the amplitude of the sound.")
+NORMAL ("where %x(%t) is the amplitude of the sound. For stereo sounds, it is")
+FORMULA ("\\in__%%t%1_^^%%t%2^ (%x__1_^2(%t) + %x__2_^2(%t))/2 %dt")
+NORMAL ("where %x__1_(%t) and %x__2_(%t) are the two channels; this definition ensures that "
+	"if you convert a mono sound to a stereo sound, the energy will stay the same.")
 ENTRY ("See also")
 NORMAL ("For an interpretation of the energy as the sound energy in air, see @@Sound: Get energy in air@. "
 	"For the power, see @@Sound: Get power...@.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get energy in air", "ppgb", 20041107)
+MAN_BEGIN ("Sound: Get energy in air", "ppgb", 20070129)
 INTRO ("A @query to the selected @Sound object.")
 ENTRY ("Return value")
 NORMAL ("The energy in air, expressed in Joule/m^2.")
@@ -679,13 +712,14 @@ ENTRY ("Algorithm")
 NORMAL ("The energy of a sound in air is defined as")
 FORMULA ("1 / (%\\roc) \\in %x^2(%t) %dt")
 NORMAL ("where %x(%t) is the sound pressure in units of Pa (Pascal), %\\ro is the air density "
-	"(apx. 1.14 kg/m^3), and %c is the velocity of sound in air (apx. 353 m/s).")
+	"(apx. 1.14 kg/m^3), and %c is the velocity of sound in air (apx. 353 m/s). "
+	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 ENTRY ("See also")
 NORMAL ("For an air-independent interpretation of the energy, see @@Sound: Get energy...@. "
 	"For the power, see @@Sound: Get power in air@.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get intensity (dB)", "ppgb", 20041107)
+MAN_BEGIN ("Sound: Get intensity (dB)", "ppgb", 20070129)
 INTRO ("A @query to the selected @Sound object.")
 ENTRY ("Return value")
 NORMAL ("the intensity in air, expressed in dB relative to the auditory threshold.")
@@ -693,7 +727,8 @@ ENTRY ("Algorithm")
 NORMAL ("The intensity of a sound in air is defined as")
 FORMULA ("10 log__10_ { 1 / (%T %P__0_^2) \\in%dt %x^2(%t) }")
 NORMAL ("where %x(%t) is the sound pressure in units of Pa (Pascal), %T is the duration of the sound, "
-	"and %P__0_ = 2\\.c10^^-5^ Pa is the auditory threshold pressure.")
+	"and %P__0_ = 2\\.c10^^-5^ Pa is the auditory threshold pressure. "
+	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 ENTRY ("See also")
 NORMAL ("For the intensity in Watt/m^2, see @@Sound: Get power in air@. For an auditory intensity, "
 	"see @@Excitation: Get loudness@.")
@@ -748,7 +783,7 @@ TAG ("%Time (s)")
 DEFINITION ("the time for which you want to get the time of the nearest zero crossing.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get power...", "ppgb", 20041123)
+MAN_BEGIN ("Sound: Get power...", "ppgb", 20070129)
 INTRO ("A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the power within a specified time window. "
 	"If the unit of sound amplitude is Pa (Pascal), the unit of power will be Pa^2.")
@@ -759,26 +794,28 @@ DEFINITION ("the time range (%t__1_, %t__2_). Values outside this range are igno
 ENTRY ("Mathematical definition")
 NORMAL ("The power is defined as")
 FORMULA ("1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
-NORMAL ("where %x(%t) is the amplitude of the sound.")
+NORMAL ("where %x(%t) is the amplitude of the sound. "
+	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 ENTRY ("See also")
 NORMAL ("For an interpretation of the power as the sound power in air, see @@Sound: Get power in air@. "
 	"For the total energy, see @@Sound: Get energy...@.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get power in air", "ppgb", 20041107)
+MAN_BEGIN ("Sound: Get power in air", "ppgb", 20070129)
 INTRO ("A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the power in air, expressed in Watt/m^2.")
 ENTRY ("Mathematical definition")
 NORMAL ("The power of a sound in air is defined as")
 FORMULA ("1 / (%\\rocT) \\in %x^2(%t) %dt")
 NORMAL ("where %x(%t) is the sound pressure in units of Pa (Pascal), %\\ro is the air density "
-	"(apx. 1.14 kg/m^3), %c is the velocity of sound in air (apx. 353 m/s), and %T is the duration of the sound.")
+	"(apx. 1.14 kg/m^3), %c is the velocity of sound in air (apx. 353 m/s), and %T is the duration of the sound. "
+	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 NORMAL ("For an air-independent interpretation of the power, see @@Sound: Get power...@. "
 	"For the energy, see @@Sound: Get energy in air@. For the intensity in dB, "
 	"see @@Sound: Get intensity (dB)@.")
 MAN_END
 
-MAN_BEGIN ("Sound: Get root-mean-square...", "ppgb", 20041123)
+MAN_BEGIN ("Sound: Get root-mean-square...", "ppgb", 20070129)
 INTRO ("A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the root-mean-square (rms) value of the sound pressure, expressed in Pascal.")
 ENTRY ("Setting")
@@ -788,7 +825,8 @@ DEFINITION ("the time range (%t__1_, %t__2_). Values outside this range are igno
 ENTRY ("Mathematical definition")
 NORMAL ("The root-mean-square value is defined as")
 FORMULA ("\\Vr { 1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt }")
-NORMAL ("where %x(%t) is the amplitude of the sound.")
+NORMAL ("where %x(%t) is the amplitude of the sound. "
+	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 MAN_END
 
 MAN_BEGIN ("Sound: Get standard deviation...", "ppgb", 20041123)

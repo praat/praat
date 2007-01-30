@@ -1,11 +1,11 @@
 echo Stereo formulas
-# Paul Boersma, January 28, 2007
+# Paul Boersma, January 30, 2007
 Create Sound from formula... test Stereo 0 1.5 44100 randomUniform (-1, 1)
-a = Get value at sample number... 100 Average
+a = Get value at sample number... Average 100
 printline 'a'
-b = Get value at sample number... 100 Left
+b = Get value at sample number... Left 100
 printline 'b'
-c = Get value at sample number... 100 Right
+c = Get value at sample number... Right 100
 printline 'c'
 d = Sound_test [100]
 printline 'd'
@@ -19,11 +19,11 @@ assert a = d
 assert b = ee
 assert c = f
 assert d = dd
-a = Get value at time... 0.5 Average Linear
+a = Get value at time... Average 0.5 Linear
 printline 'a'
-b = Get value at time... 0.5 Left Linear
+b = Get value at time... Left 0.5 Linear
 printline 'b'
-c = Get value at time... 0.5 Right Linear
+c = Get value at time... Right 0.5 Linear
 printline 'c'
 d = Sound_test (0.5)
 printline 'd'

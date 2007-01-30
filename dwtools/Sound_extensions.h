@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20061204 Latest modification
+ djmw 20070129 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -166,9 +166,6 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 
 /* Outphased */
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
-	double new_pitch, double pitchRangeFactor, double durationFactor);
-
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 	
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 

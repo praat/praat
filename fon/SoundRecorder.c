@@ -449,8 +449,10 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	#ifndef _WIN32
+		Graphics_setColour (my graphics, Graphics_WHITE);
+		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	#endif
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	if (nsamp < 1) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070129)
+MAN_BEGIN ("What's new?", "ppgb", 20070130)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.12# (January 30, 2007)")
+LIST_ITEM ("\\bu Made cross-correlation pitch analysis as fast as it used to be before 4.5.11.")
 NORMAL ("##4.5.11# (January 29, 2007)")
 LIST_ITEM ("\\bu Sound objects can be stereo, for better playback quality "
 	"(most analyses will work on the averaged mono signal).")
