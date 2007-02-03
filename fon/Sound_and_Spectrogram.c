@@ -59,7 +59,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 
 	long nsamp_window, halfnsamp_window, numberOfTimes, numberOfFreqs, nsampFFT = 1, half_nsampFFT;
 	long iframe, iband, i, j;
-	float *frame = NULL, *window = NULL, oneByBinWidth;
+	float *frame = NULL, *spec = NULL, *window = NULL, oneByBinWidth;
 	long binWidth_samples;
 	double duration = my dx * (double) my nx, t1, windowssq = 0.0, binWidth_hertz;
 
@@ -104,6 +104,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 			0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz)); cherror
 
 	frame = NUMfvector (1, nsampFFT); cherror
+	spec = NUMfvector (1, nsampFFT); cherror
 	window = NUMfvector (1, nsamp_window); cherror
 	NUMfft_Table_init_f (& fftTable, nsampFFT); cherror
 
@@ -145,43 +146,45 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		long endSample = leftSample + halfnsamp_window;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
-		if (my ny == 1) {
-			for (j = 1, i = startSample; j <= nsamp_window; j ++) {
-				frame [j] = my z [1] [i ++] * window [j];
-			}
-		} else {
-			for (j = 1, i = startSample; j <= nsamp_window; j ++) {
-				frame [j] = 0.5 * (my z [1] [i] + my z [2] [i]) * window [j];
-				i ++;
-			}
+		for (i = 1; i <= half_nsampFFT; i ++) {
+			spec [i] = 0.0;
 		}
-		for (j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
+		for (long channel = 1; channel <= my ny; channel ++) {
+			for (j = 1, i = startSample; j <= nsamp_window; j ++) {
+				frame [j] = my z [channel] [i ++] * window [j];
+			}
+			for (j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
 
-		Melder_progress (iframe / (numberOfTimes + 1.0),
-			"Sound to Spectrogram: analysis of frame %ld out of %ld", iframe, numberOfTimes); cherror
+			Melder_progress (iframe / (numberOfTimes + 1.0),
+				"Sound to Spectrogram: analysis of frame %ld out of %ld", iframe, numberOfTimes); cherror
 
-		/* Compute Fast Fourier Transform of the frame. */
+			/* Compute Fast Fourier Transform of the frame. */
 
-		NUMfft_forward_f (& fftTable, frame);   /* Complex spectrum. */
+			NUMfft_forward_f (& fftTable, frame);   /* Complex spectrum. */
 
-		/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
+			/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
 
-		frame [1] *= frame [1];   /* DC component. */
-		for (i = 2; i <= half_nsampFFT; i ++)
-			frame [i] = frame [i + i - 2] * frame [i + i - 2] + frame [i + i - 1] * frame [i + i - 1];
-		frame [half_nsampFFT + 1] = frame [nsampFFT] * frame [nsampFFT];   /* Nyquist frequency. Correct?? */
+			spec [1] += frame [1] * frame [1];   /* DC component. */
+			for (i = 2; i <= half_nsampFFT; i ++)
+				spec [i] += frame [i + i - 2] * frame [i + i - 2] + frame [i + i - 1] * frame [i + i - 1];
+			spec [half_nsampFFT + 1] += frame [nsampFFT] * frame [nsampFFT];   /* Nyquist frequency. Correct?? */
+		}
+		if (my ny > 1 ) for (i = 1; i <= half_nsampFFT; i ++) {
+			spec [i] /= my ny;
+		}
 
 		/* Bin into frame [1..nBands]. */
 		for (iband = 1; iband <= numberOfFreqs; iband ++) {
 			long leftsample = (iband - 1) * binWidth_samples + 1, rightsample = leftsample + binWidth_samples;
 			float power = 0.0f;
-			for (i = leftsample; i < rightsample; i ++) power += frame [i];
+			for (i = leftsample; i < rightsample; i ++) power += spec [i];
 			thy z [iband] [iframe] = power * oneByBinWidth;
 		}
 	}
 end:
 	Melder_progress (1.0, NULL);
 	NUMfvector_free (frame, 1);
+	NUMfvector_free (spec, 1);
 	NUMfvector_free (window, 1);
 	NUMfft_Table_free_f (& fftTable);
 	iferror forget (thee);

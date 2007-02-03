@@ -32,11 +32,13 @@
  * pb 2006/08/07 Windows: remove quotes from around path names when calling the openDocument callback
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/11/06 Carbon control creation functions
- * pb 2007/01/25 explicit XmATTACH_FORM
+ * pb 2007/01/25 XmATTACH_POSITION
  */
 #ifndef UNIX
 
 /* The Motif emulator for Macintosh and Windows. */
+
+#define USE_LISTBOX_CONTROL  0
 
 #define PRAAT_WINDOW_CLASS_NUMBER  1
 
@@ -1044,11 +1046,20 @@ static void _GuiNativizeWidget (Widget me) {
 					my parent -> motif.scrolledWindow.verticalBar = NULL;
 				}*/
 			#elif mac
-				Rect dataBounds = { 0, 0, 0, 1 };
-				Point cSize;
-				SetPt (& cSize, my rect.right - my rect.left + 1, CELL_HEIGHT);
-				my nat.list.handle = LNew (& my rect, & dataBounds, cSize, 0,
-					my macWindow, false, false, false, false);
+				#if USE_LISTBOX_CONTROL
+					CreateListBoxControl (my macWindow, & my rect, false, 1000, 1, true, true, CELL_HEIGHT, 400, false, NULL, & my nat.control.handle);
+					GetControlData (my nat.control.handle, kControlEntireControl, kControlListBoxListHandleTag,
+						sizeof (my nat.list.handle), & my nat.list.handle, NULL);
+					SetControlReference (my nat.control.handle, (long) me);
+					my isControl = TRUE;
+					NativeControl_setFont (me, 12);
+				#else
+					Rect dataBounds = { 0, 0, 0, 1 };
+					Point cSize;
+					SetPt (& cSize, my rect.right - my rect.left + 1, CELL_HEIGHT);
+					my nat.list.handle = LNew (& my rect, & dataBounds, cSize, 0,
+						my macWindow, false, false, false, false);
+				#endif
 				if (my selectionPolicy != XmSINGLE_SELECT && my selectionPolicy != XmBROWSE_SELECT)
 					SetListSelectionFlags (my nat.list.handle, lExtendDrag | lNoRect);
 			#endif
@@ -1546,6 +1557,10 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 			/*if (my managed) HideControl (c);*/
 			if (dx || dy) MoveControl (c, my rect.left, my rect.top);
 			if (dw || dh) SizeControl (c, my width, my height);
+			//if (MEMBER (me, List)) {
+			//	(** my nat.list.handle). rView = my rect;
+			//	(** my nat.list.handle). cellSize. h = my width;
+			//}
 		} else if (MEMBER (me, List)) {
 			(** my nat.list.handle). rView = my rect;
 			(** my nat.list.handle). cellSize. h = my width;
@@ -2626,9 +2641,13 @@ void XtDestroyWidget (Widget me) {
 			#if win
 				DestroyWindow (my window);
 			#elif mac
-				_GuiMac_clipOn (me);
-				LDispose (my nat.list.handle);
-				GuiMac_clipOff ();
+				if (my isControl) {
+					_GuiNativeControl_destroy (me);
+				} else {
+					_GuiMac_clipOn (me);
+					LDispose (my nat.list.handle);
+					GuiMac_clipOff ();
+				}
 			#endif
 		} break;
 		case xmDrawingAreaWidgetClass:
@@ -2903,9 +2922,17 @@ static void mapWidget (Widget me) {
 			#if win
 				ShowWindow (my window, SW_SHOW);
 			#elif mac
-				_GuiMac_clipOn (me);
-				LSetDrawingMode (true, my nat.list.handle);
-				_motif_clipOffInvalid (me);
+				if (my isControl) {
+					_GuiNativeControl_show (me);
+					Melder_casual ("showing a list");
+					//_GuiMac_clipOn (me);
+					//LSetDrawingMode (true, my nat.list.handle);
+					//_motif_clipOffInvalid (me);
+				} else {
+					_GuiMac_clipOn (me);
+					LSetDrawingMode (true, my nat.list.handle);
+					_motif_clipOffInvalid (me);
+				}
 			#endif
 		} break;
 		default:
@@ -4227,7 +4254,11 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			} break;
 			case xmListWidgetClass: {
 				_GuiMac_clipOn (me);
-				LUpdate (visRgn, my nat.list.handle);
+				if (my isControl) {
+					Draw1Control (my nat.control.handle);
+				} else {
+					LUpdate (visRgn, my nat.list.handle);
+				}
 				GuiMac_clipOff ();
 			} break;
 			case xmDrawingAreaWidgetClass: {
@@ -4930,6 +4961,15 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 					if (control -> magicNumber != 15111959 || ! control -> managed) goto LABEL_clickedOutsideControl;
 					event -> message = controlPart;
 					switch (controlPart) {
+						case kControlListBoxPart: {
+							if (control -> widgetClass == xmListWidgetClass) {
+								_GuiMac_clipOn (control);
+								bool pushed = TrackControl (maccontrol, event -> where, NULL);
+								GuiMac_clipOff ();
+								if (pushed && control -> extendedSelectionCallback)
+									control -> extendedSelectionCallback (control, control -> extendedSelectionClosure, (XtPointer) event);
+							}
+						} break;
 						case kControlButtonPart:
 						case kControlLabelPart: {
 							if (control -> widgetClass == xmPushButtonWidgetClass) {   /* Push button. */
@@ -5039,7 +5079,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						} else if (clicked -> widgetClass == xmDrawingAreaWidgetClass) {
 							if (clicked -> inputCallback)
 								clicked -> inputCallback (clicked, clicked -> inputClosure, (XtPointer) event);
-						} else if (clicked -> widgetClass == xmCascadeButtonWidgetClass) {
+						} else if (clicked -> widgetClass == xmCascadeButtonWidgetClass && 0) {
 							Widget menu = clicked -> subMenuId;
 							if (menu && ! clicked -> insensitive) {
 								Point pos;

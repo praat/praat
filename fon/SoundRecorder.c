@@ -385,6 +385,9 @@ static void stopRecording (SoundRecorder me) {
 end:
 	iferror Melder_flushError ("Cannot stop recording.");
 #endif
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 }
 
 static void destroy (I) {
@@ -449,10 +452,10 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	#ifndef _WIN32
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	#endif
+	//#ifndef _WIN32
+	//	Graphics_setColour (my graphics, Graphics_WHITE);
+	//	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	//#endif
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	if (nsamp < 1) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
@@ -779,6 +782,9 @@ static void cb_record (Widget w, XtPointer void_me, XtPointer call) {
 		#endif
 	}
 end:
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 	iferror { my recording = FALSE; Melder_flushError ("Cannot record."); }
 }
 
@@ -1763,6 +1769,9 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	Melder_assert (XtWindow (my meter));
 	my graphics = Graphics_create_xmdrawingarea (my meter);
 	Melder_assert (my graphics);
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 	XtAddCallback (my meter, XmNresizeCallback, cb_resize, (XtPointer) me);
 cb_resize (my meter, (XtPointer) me, 0);
 	my workProcId = XtAppAddWorkProc (context, workProc, (XtPointer) me);

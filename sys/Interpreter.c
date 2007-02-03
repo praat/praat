@@ -720,7 +720,7 @@ int Interpreter_run (Interpreter me, char *text) {
 			InterpreterVariable var = Interpreter_hasVariable (me, varName);
 			if (var) {
 				/*
-				 * Found a variable. Substitute.
+				 * Found a variable (p points to the left quote, q to the right quote). Substitute.
 				 */
 				int varlen = (q - p) - 1, headlen = p - command2.string;
 				int arglen;
@@ -731,9 +731,9 @@ int Interpreter_run (Interpreter me, char *text) {
 				arglen = strlen (string);
 				MelderStringA_ncopyA (& buffer, command2.string, headlen);
 				MelderStringA_appendA (& buffer, string);
-				MelderStringA_appendA (& buffer, p + varlen + 2);
-				MelderStringA_copyA (& command2, buffer.string);
-				p += arglen - 1;
+				MelderStringA_appendA (& buffer, q + 1);
+				MelderStringA_copyA (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
+				p = command2.string + headlen + arglen - 1;
 			} else {
 				p = q - 1;   /* Go to before next quote. */
 			}

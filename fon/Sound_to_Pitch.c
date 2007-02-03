@@ -38,6 +38,7 @@
 #define FCC_ACCURATE  3
 #define SCC_NORMAL  4
 #define SCC_ACCURATE  5
+#define MAXIMUM_NUMBER_OF_CHANNELS  2
 
 Pitch Sound_to_Pitch_any (Sound me,
 	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates,
@@ -45,6 +46,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
 {
+	if (my ny > MAXIMUM_NUMBER_OF_CHANNELS)
+		return Melder_errorp ("Pitch analysis cannot yet work with more than two channels.");
 	double duration, t1;
 	Pitch thee = NULL;
 	long i, j;
@@ -52,7 +55,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	long nsamp_window, halfnsamp_window;   /* Number of samples per window. */
 	long nFrames, minimumLag, maximumLag;
 	long iframe, nsampFFT, *imax = NULL;
-	double *frame = NULL, *r = NULL, *window = NULL, *windowR = NULL, globalPeak;
+	double **frame = NULL, *ac = NULL, *r = NULL, *window = NULL, *windowR = NULL, globalPeak;
 	double interpolation_depth;
 	long nsamp_period, halfnsamp_period;   /* Number of samples in longest period. */
 	long brent_ixmax, brent_depth;
@@ -152,8 +155,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 		}
 		mean /= my nx;
 		for (i = 1; i <= my nx; i ++) {
-			double damp = fabs (my z [channel] [i] - mean);
-			if (damp > globalPeak) globalPeak = damp;
+			double value = fabs (my z [channel] [i] - mean);
+			if (value > globalPeak) globalPeak = value;
 		}
 	}
 	if (globalPeak == 0.0) { Melder_progress (1.0, NULL); return thee; }
@@ -163,7 +166,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		/*
 		* Create buffer for cross-correlation analysis.
 		*/
-		//frame = NUMdvector (1, nsamp_window); cherror
+		frame = NUMdmatrix (1, my ny, 1, nsamp_window); cherror
 
 		brent_ixmax = nsamp_window * interpolation_depth;
 
@@ -180,10 +183,11 @@ Pitch Sound_to_Pitch_any (Sound me,
 		/*
 		* Create buffers for autocorrelation analysis.
 		*/
-		frame = NUMdvector (1, nsampFFT); cherror
+		frame = NUMdmatrix (1, my ny, 1, nsampFFT); cherror
 		windowR = NUMdvector (1, nsampFFT); cherror
 		window = NUMdvector (1, nsamp_window); cherror
 		NUMfft_Table_init_d (& fftTable, nsampFFT); cherror
+		ac = NUMdvector (1, nsampFFT); cherror
 
 		/*
 		* A Gaussian or Hanning window is applied against phase effects.
@@ -229,54 +233,50 @@ Pitch Sound_to_Pitch_any (Sound me,
 		if (! Melder_progress (0.1 + (0.8 * iframe) / (nFrames + 1),
 			"Sound to Pitch: analysis of frame %ld out of %ld", iframe, nFrames)) { forget (thee); goto end; }
 
-		/*
-		 * Compute the local mean; look one longest period to both sides.
-		 */
-		startSample = rightSample - nsamp_period;
-		endSample = leftSample + nsamp_period;
-		Melder_assert (startSample >= 1);
-		Melder_assert (endSample <= my nx);
-		double localMean = 0.0;
-		for (i = startSample; i <= endSample; i ++) {
-			localMean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
-		}
-		localMean /= 2 * nsamp_period;
+		double localMean [1+MAXIMUM_NUMBER_OF_CHANNELS];
+		for (long channel = 1; channel <= my ny; channel ++) {
+			/*
+			 * Compute the local mean; look one longest period to both sides.
+			 */
+			startSample = rightSample - nsamp_period;
+			endSample = leftSample + nsamp_period;
+			Melder_assert (startSample >= 1);
+			Melder_assert (endSample <= my nx);
+			localMean [channel] = 0.0;
+			for (i = startSample; i <= endSample; i ++) {
+				localMean [channel] += my z [channel] [i];
+			}
+			localMean [channel] /= 2 * nsamp_period;
 
-		/*
-		 * Copy a window to a frame and subtract the local mean.
-		 * We are going to kill the DC component before windowing.
-		 */
-		startSample = rightSample - halfnsamp_window;
-		endSample = leftSample + halfnsamp_window;
-		Melder_assert (startSample >= 1);
-		Melder_assert (endSample <= my nx);
-		if (method < FCC_NORMAL) {
-			for (j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean) * window [j];
-			for (j = nsamp_window + 1; j <= nsampFFT; j ++)
-				frame [j] = 0.0;
+			/*
+			 * Copy a window to a frame and subtract the local mean.
+			 * We are going to kill the DC component before windowing.
+			 */
+			startSample = rightSample - halfnsamp_window;
+			endSample = leftSample + halfnsamp_window;
+			Melder_assert (startSample >= 1);
+			Melder_assert (endSample <= my nx);
+			if (method < FCC_NORMAL) {
+				for (j = 1, i = startSample; j <= nsamp_window; j ++)
+					frame [channel] [j] = (my z [channel] [i ++] - localMean [channel]) * window [j];
+				for (j = nsamp_window + 1; j <= nsampFFT; j ++)
+					frame [channel] [j] = 0.0;
+			} else {
+				for (j = 1, i = startSample; j <= nsamp_window; j ++)
+					frame [channel] [j] = my z [channel] [i ++] - localMean [channel];
+			}
 		}
 
 		/*
 		 * Compute the local peak; look half a longest period to both sides.
 		 */
 		localPeak = 0.0;
-		if (method >= FCC_NORMAL) {
-			startSample = rightSample - halfnsamp_period;
-			endSample = leftSample + halfnsamp_period;
-			if (startSample < 1) startSample = 1;
-			if (endSample > my nx) endSample = my nx;
-			for (long channel = 1; channel <= my ny; channel ++) {
-				for (j = startSample; j <= endSample; j ++) {
-					double value = fabs (my z [channel] [j] - localMean);
-					if (value > localPeak) localPeak = value;
-				}
-			}
-		} else {
-			if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
-			if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
+		if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
+		if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
+		for (long channel = 1; channel <= my ny; channel ++) {
 			for (j = startSample; j <= endSample; j ++) {
-				if (fabs (frame [j]) > localPeak) localPeak = fabs (frame [j]);
+				double value = fabs (frame [channel] [j]);
+				if (value > localPeak) localPeak = value;
 			}
 		}
 		pitchFrame->intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
@@ -295,7 +295,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			for (long channel = 1; channel <= my ny; channel ++) {
 				float *amp = my z [channel] + offset;
 				for (i = 1; i <= nsamp_window; i ++) {
-					double x = amp [i] - localMean;
+					double x = amp [i] - localMean [channel];
 					sumx2 += x * x;
 				}
 			}
@@ -305,12 +305,12 @@ Pitch Sound_to_Pitch_any (Sound me,
 				double product = 0.0;
 				for (long channel = 1; channel <= my ny; channel ++) {
 					float *amp = my z [channel] + offset;
-					double y0 = amp [i] - localMean;
-					double yZ = amp [i + nsamp_window] - localMean;
+					double y0 = amp [i] - localMean [channel];
+					double yZ = amp [i + nsamp_window] - localMean [channel];
 					sumy2 += yZ * yZ - y0 * y0;
 					for (j = 1; j <= nsamp_window; j ++) {
-						double x = amp [j] - localMean;
-						double y = amp [i + j] - localMean;
+						double x = amp [j] - localMean [channel];
+						double y = amp [i + j] - localMean [channel];
 						product += x * y;
 					}
 				}
@@ -321,14 +321,18 @@ Pitch Sound_to_Pitch_any (Sound me,
 			/*
 			 * The FFT of the autocorrelation is the power spectrum.
 			 */
-			NUMfft_forward_d (& fftTable, frame);   /* Complex spectrum. */
-			frame [1] *= frame [1];   /* DC component? */
-			for (i = 2; i < nsampFFT; i += 2) {
-				frame [i] = frame [i] * frame [i] + frame [i+1] * frame [i+1];
-				frame [i + 1] = 0.0;   /* Power spectrum: square and zero. */
+			for (i = 1; i <= nsampFFT; i ++) {
+				ac [i] = 0.0;
 			}
-			frame [nsampFFT] *= frame [nsampFFT];   /* Nyquist frequency. */
-			NUMfft_backward_d (& fftTable, frame);   /* Autocorrelation. */
+			for (long channel = 1; channel <= my ny; channel ++) {
+				NUMfft_forward_d (& fftTable, frame [channel]);   /* Complex spectrum. */
+				ac [1] += frame [channel] [1] * frame [channel] [1];   /* DC component. */
+				for (i = 2; i < nsampFFT; i += 2) {
+					ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1]; /* Power spectrum. */
+				}
+				ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   /* Nyquist frequency. */
+			}
+			NUMfft_backward_d (& fftTable, ac);   /* Autocorrelation. */
 
 			/*
 			 * Normalize the autocorrelation to the value with zero lag,
@@ -336,7 +340,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			 */
 			r [0] = 1.0;
 			for (i = 1; i <= brent_ixmax; i ++)
-				r [- i] = r [i] = frame [i + 1] / (frame [1] * windowR [i + 1]);
+				r [- i] = r [i] = ac [i + 1] / (ac [1] * windowR [i + 1]);
 		}
 
 		/*
@@ -431,7 +435,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 
 end:
 	Melder_progress (1.0, NULL);   /* Done. */
-	NUMdvector_free (frame, 1);
+	NUMdmatrix_free (frame, 1, 1);
+	NUMdvector_free (ac, 1);
 	NUMdvector_free (window, 1);
 	NUMdvector_free (windowR, 1);
 	NUMdvector_free (r, - nsamp_window);

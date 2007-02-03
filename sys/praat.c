@@ -1041,7 +1041,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	} else {
 		Widget Raam = NULL;
 		#ifndef _WIN32
-			Widget listWindow;
+			Widget listWindow = 0;
 		#endif
 		#ifdef macintosh
 			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
@@ -1060,7 +1060,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
 			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
-		#if defined (_WIN32)
+		#if defined (_WIN32) || defined (macintoshXXX)
 			praatList_objects = XmCreateList (Raam, "list", NULL, 0);
 			XtVaSetValues (praatList_objects,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
@@ -1086,7 +1086,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		XtAddCallback (praatList_objects, XmNextendedSelectionCallback, cb_list, 0);
 		XtManageChild (praatList_objects);
 		#if ! defined (_WIN32)
-			XtManageChild (listWindow);
+			if (listWindow) XtManageChild (listWindow);
 		#endif
 		praat_addFixedButtons (Raam);
 		praat_actions_createDynamicMenu (Raam, 200);

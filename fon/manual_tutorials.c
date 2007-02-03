@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070130)
+MAN_BEGIN ("What's new?", "ppgb", 20070203)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.13# (February 3, 2007)")
+LIST_ITEM ("\\bu For stereo sounds, pitch analysis is based on correlations pooled over channels "
+	"(rather than on correlations of the channel average).")
+LIST_ITEM ("\\bu For stereo sounds, spectrogram analysis is based on power density averaged across channels "
+	"(rather than on the power density of the channel average).")
+LIST_ITEM ("\\bu Scripting: removed a bug introduced in 4.5.06 that caused some variables not to be substituted.")
 NORMAL ("##4.5.12# (January 30, 2007)")
 LIST_ITEM ("\\bu Made cross-correlation pitch analysis as fast as it used to be before 4.5.11.")
 NORMAL ("##4.5.11# (January 29, 2007)")
