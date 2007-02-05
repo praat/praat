@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070203)
+MAN_BEGIN ("What's new?", "ppgb", 20070205)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.14# (February 5, 2007)")
+LIST_ITEM ("\\bu Scripting: some new predefined string variables like preferencesDirectory\\$ .")
 NORMAL ("##4.5.13# (February 3, 2007)")
 LIST_ITEM ("\\bu For stereo sounds, pitch analysis is based on correlations pooled over channels "
 	"(rather than on correlations of the channel average).")

@@ -1664,7 +1664,7 @@ LIST_ITEM ("@@Scripting 5.7. Including other scripts@")
 LIST_ITEM ("@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN ("Scripting 5.1. Variables", "ppgb", 20040414)
+MAN_BEGIN ("Scripting 5.1. Variables", "ppgb", 20070205)
 INTRO ("In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY ("Numeric variables")
 NORMAL ("Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
@@ -1709,9 +1709,11 @@ CODE ("jitter = 0.000000156789")
 CODE ("echo The jitter is 'jitter:3\\% '.")
 NORMAL ("This will write the following text to the Info window:")
 CODE ("The jitter is 0.00002\\% .")
-NORMAL ("##Predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
+NORMAL ("Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
 	"The last one specifies the directory that was the default directory when Praat started up; "
-	"you can use it in scripts that run from the Unix or DOS command line.")
+	"you can use it in scripts that run from the Unix or DOS command line. "
+	"Likewise, there exist the predefined string variables $$homeDirectory\\$ $, "
+	"$$preferencesDirectory\\$ $, and $$temporaryDirectory\\$ $.")
 MAN_END
 /*
 form Convert from WAV to AIFF

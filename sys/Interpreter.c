@@ -33,11 +33,13 @@
  * pb 2005/01/01 there can be spaces before the "form" statement
  * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
  * pb 2006/01/11 local variables
+ * pb 2007/02/05 preferencesDirectory$, homeDirectory$, temporaryDirectory$
  */
 
 #include <ctype.h>
 #include "Interpreter.h"
 #include "praatP.h"
+extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 
@@ -685,6 +687,11 @@ int Interpreter_run (Interpreter me, char *text) {
 	Interpreter_addStringVariable (me, "shellDirectory$", Melder_getShellDirectory ());
 	structMelderDir dir; Melder_getDefaultDir (& dir);
 	Interpreter_addStringVariable (me, "defaultDirectory$", Melder_dirToPath (& dir));
+	Interpreter_addStringVariable (me, "preferencesDirectory$", Melder_dirToPath (& praatDir));
+	Melder_getHomeDir (& dir);
+	Interpreter_addStringVariable (me, "homeDirectory$", Melder_dirToPath (& dir));
+	Melder_getTempDir (& dir);
+	Interpreter_addStringVariable (me, "temporaryDirectory$", Melder_dirToPath (& dir));
 	/*
 	 * Execute commands.
 	 */

@@ -77,7 +77,8 @@ static structMelderDir homeDir;
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences
  */
-static structMelderDir praatDir;
+extern structMelderDir praatDir;
+structMelderDir praatDir;
 /*
  * prefsFileName: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs

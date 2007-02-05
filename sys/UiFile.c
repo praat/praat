@@ -733,6 +733,7 @@ void UiInfile_do (I) {
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+		//openFileName. pvReserved = NULL;
 		if (GetOpenFileName (& openFileName)) {
 			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure))
