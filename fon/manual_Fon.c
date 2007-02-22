@@ -1566,7 +1566,7 @@ NORMAL ("A @Sound is created with the algorithm described at @@PointProcess: To 
 	"This sound is then run through a sequence of second-order filters that represent five formants.")
 MAN_END
 
-MAN_BEGIN ("PointProcess: To Sound (phonation)...", "ppgb", 20050712)
+MAN_BEGIN ("PointProcess: To Sound (phonation)...", "ppgb", 20070225)
 INTRO ("A command to convert every selected @PointProcess into a @Sound.")
 ENTRY ("Algorithm")
 NORMAL ("A glottal waveform is generated at every point in the point process. "
@@ -1699,7 +1699,7 @@ NORMAL ("These curves have moved 2.646 percent of a period to the right. At time
 	"and the derivative still has its minimum there.")
 ENTRY ("Arguments")
 TAG ("%%Sampling frequency")
-DEFINITION ("the sampling frequency of the resulting Sound object, e.g. 22050 Hertz.")
+DEFINITION ("the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
 TAG ("%%Adaptation factor")
 DEFINITION ("the factor by which a pulse height will be multiplied if the pulse time is not within "
 	"%maximumPeriod from the previous pulse, and by which a pulse height will again be multiplied "
@@ -1712,14 +1712,14 @@ DEFINITION ("the minimal period that will be considered a silence, e.g. 0.05 sec
 	"will be multiplied by 0.36 and 0.6, respectively.")
 MAN_END
 
-MAN_BEGIN ("PointProcess: To Sound (pulse train)...", "ppgb", 20040331)
+MAN_BEGIN ("PointProcess: To Sound (pulse train)...", "ppgb", 20070225)
 INTRO ("A command to convert every selected @PointProcess into a @Sound.")
 ENTRY ("Algorithm")
 NORMAL ("A pulse is generated at every point in the point process. This pulse is filtered at the Nyquist frequency "
 	"of the resulting #Sound by converting it into a sampled #sinc function.")
 ENTRY ("Arguments")
 TAG ("%%Sampling frequency")
-DEFINITION ("the sampling frequency of the resulting Sound object, e.g. 22050 Hertz.")
+DEFINITION ("the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
 TAG ("%%Adaptation factor")
 DEFINITION ("the factor by which a pulse height will be multiplied if the pulse time is not within "
 	"%adaptationTime from the pre-previous pulse, and by which a pulse height will again be multiplied "

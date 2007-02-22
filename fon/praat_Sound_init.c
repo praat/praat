@@ -437,7 +437,7 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 	return 1;
 }
 
-FORM (Sound_create, "Create mono Sound", "Create Sound...")
+FORM (Sound_create, "Create mono Sound", "Create Sound from formula...")
 	WORD ("Name", "sineWithNoise")
 	REAL ("Start time (s)", "0.0")
 	REAL ("End time (s)", "1.0")

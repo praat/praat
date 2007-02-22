@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/26
+ * pb 2007/02/17
  */
 
 #include "Editor.h"
@@ -249,8 +249,10 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define DO  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (char *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
-	if (! UiForm_parseString (dia, (char *) sender)) { Melder_clearError (); \
-	return DO_##alternative (sender, modified); } } else { int IOBJECT = 0; (void) IOBJECT; {
+	if (! UiForm_parseString (dia, (char *) sender)) { char *parkedError = Melder_strdup (Melder_getError ()); Melder_clearError (); \
+	int result = DO_##alternative (sender, modified); \
+	if (result == 0 && parkedError) { Melder_clearError (); Melder_error ("%s", parkedError); Melder_free (parkedError); } return result; \
+	} } else { int IOBJECT = 0; (void) IOBJECT; {
 #define END  } } praat_updateSelection (); return 1; }
 #define DIRECT(proc)  static int DO_##proc (Any dummy1, void *dummy2) { \
 	(void) dummy1; (void) dummy2; { int IOBJECT = 0; (void) IOBJECT; {

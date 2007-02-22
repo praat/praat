@@ -57,7 +57,7 @@ ENTRY ("Your own manual pages")
 NORMAL ("To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN ("ManPages", "ppgb", 20061228)
+MAN_BEGIN ("ManPages", "ppgb", 20070225)
 INTRO ("You can create a documentation or education system with files that you and others "
 	"can read into P\\s{RAAT} (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -190,7 +190,7 @@ NORMAL ("Please note that the script is enclosed within double quotes. "
 NORMAL ("If needed, a script like this can create objects in the object list of the manual. "
 	"However, you have to make sure that you remove them after use:")
 CODE ("<script> 6 3 \"")
-CODE1 ("Create Sound... sineWithNoise 0.0 1.0 22050 1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
+CODE1 ("Create Sound from formula... sineWithNoise Mono 0.0 1.0 44100 1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
 CODE1 ("To Spectrogram... 0.005 5000 0.002 20 Gaussian")
 CODE1 ("Paint... 0 0 0 0 100.0 yes 50.0 6.0 0.0 yes")
 CODE1 ("plus Sound sineWithNoise")

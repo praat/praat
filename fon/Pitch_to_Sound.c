@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2005/02/09 Pitch_to_Sound_sine
+ * pb 2007/02/25 changed default sampling frequency to 44100 Hz
  */
 
 #include "Pitch_to_PointProcess.h"
@@ -37,7 +38,7 @@ Sound Pitch_to_Sound (I, double tmin, double tmax, int hum) {
 	PointProcess point = NULL;
 	Sound sound = NULL;
 	if (! (point = Pitch_to_PointProcess (me))) goto error;
-	if (! (sound = PointProcess_to_Sound_pulseTrain (point, 22050, 0.7, 0.05, 30))) goto error;
+	if (! (sound = PointProcess_to_Sound_pulseTrain (point, 44100, 0.7, 0.05, 30))) goto error;
 	if (hum && ! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) goto error;
 	forget (point);
 	return sound;

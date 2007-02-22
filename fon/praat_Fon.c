@@ -5214,7 +5214,7 @@ praat_addAction1 (classPointProcess, 0, "Analyse", 0, 0, 0);
 praat_addAction1 (classPointProcess, 0, "Synthesize", 0, 0, 0);
 	praat_addAction1 (classPointProcess, 0, "To Sound (pulse train)...", 0, 0, DO_PointProcess_to_Sound_pulseTrain);
 	praat_addAction1 (classPointProcess, 0, "To Sound (phonation)...", 0, 0, DO_PointProcess_to_Sound_phonation);
-	praat_addAction1 (classPointProcess, 0, "To Sound (hum)...", 0, 0, DO_PointProcess_to_Sound_hum);
+	praat_addAction1 (classPointProcess, 0, "To Sound (hum)", 0, 0, DO_PointProcess_to_Sound_hum);
 praat_addAction1 (classPointProcess, 0, "Convert", 0, 0, 0);
 	praat_addAction1 (classPointProcess, 0, "To Matrix", 0, 0, DO_PointProcess_to_Matrix);
 	praat_addAction1 (classPointProcess, 0, "Up to TextTier...", 0, 0, DO_PointProcess_upto_TextTier);

@@ -26,20 +26,42 @@
  * pb 2004/10/27 subtractMean
  * pb 2006/12/31 compatible with stereo sounds
  * pb 2007/01/27 for stereo sounds, add channel energies
+ * pb 2007/02/14 honoured precondition of Sampled_shortTermAnalysis (by checking whether minimumPitch is defined)
  */
 
 #include "Sound_to_Intensity.h"
 
 Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
+	/*
+	 * init
+	 */
 	int veryAccurate = FALSE;
 	Sound save_me = me;
 	Intensity smooth = NULL;
+	float *amplitude = NULL, *window = NULL;
+
+	/*
+	 * Soft preconditions.
+	 */
+	if (! NUMdefined (minimumPitch)) { Melder_error ("(Sound-to-Intensity:) Minimum pitch undefined."); goto end; }
+	if (! NUMdefined (timeStep)) { Melder_error ("(Sound-to-Intensity:) Time step undefined."); goto end; }
+	/*
+	 * Hard preconditions.
+	 */
+	Melder_assert (my dx > 0.0);
+	Melder_assert (minimumPitch > 0.0);
+	/*
+	 * Defaults.
+	 */
+	if (timeStep <= 0.0) timeStep = 0.8 / minimumPitch;   /* Default: four times oversampling Hanning-wise. */
+	
 	long i, iframe, numberOfFrames;
 	double windowDuration = 6.4 / minimumPitch, thyFirstTime;
+	Melder_assert (windowDuration > 0.0);
 	double halfWindowDuration = 0.5 * windowDuration;
 	long halfWindowSamples = halfWindowDuration / my dx;
-	float *amplitude = NUMfvector (- halfWindowSamples, halfWindowSamples);
-	float *window = NUMfvector (- halfWindowSamples, halfWindowSamples); cherror
+	amplitude = NUMfvector (- halfWindowSamples, halfWindowSamples); cherror
+	window = NUMfvector (- halfWindowSamples, halfWindowSamples); cherror
 
 	for (i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
 		double x = i * my dx / halfWindowDuration, root = 1 - x * x;
@@ -53,10 +75,8 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 	}
 
 	/* Step 2: smooth and resample. */
-	Melder_assert (minimumPitch > 0.0);
-	if (timeStep <= 0.0) timeStep = 0.8 / minimumPitch;   /* Default: four times oversampling Hanning-wise. */
 	if (! Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime)) {
-		Melder_error ("Sound should be at least 6.4 / minimumPitch long.");
+		Melder_error ("Sound-to-Intensity: the duration of the sound should be at least 6.4 divided by the minimum pitch.");
 		goto end;
 	}
 	smooth = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime); cherror
@@ -100,7 +120,7 @@ end:
 	}
 	NUMfvector_free (amplitude, - halfWindowSamples);
 	NUMfvector_free (window, - halfWindowSamples);
-	iferror return Melder_errorp ("Intensity analysis not performed.");
+	iferror return Melder_errorp ("(Sound-to-Intensity:) Analysis not performed.");
 	return smooth;
 }
 

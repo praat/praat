@@ -439,23 +439,23 @@ NORMAL ("into the calculator, the outcome will be")
 CODE ("I asked: \"how are you doing?\"")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.6. Formulas in settings windows", "ppgb", 20040414)
+MAN_BEGIN ("Formulas 1.6. Formulas in settings windows", "ppgb", 20070225)
 INTRO ("Into numeric fields in settings windows you usually simply type a number. "
 	"However, you can use any numeric expression instead.")
 NORMAL ("For instance, suppose you want to create a Sound that contains exactly 10000 samples. "
-	"If the sampling frequency is 22050 Hz, the duration will be 10000/22050 seconds. "
-	"You can create such a Sound by choosing @@Create Sound...@ from the @@New menu@, "
+	"If the sampling frequency is 44100 Hz, the duration will be 10000/44100 seconds. "
+	"You can create such a Sound by choosing @@Create Sound from formula...@ from the @@New menu@, "
 	"then typing")
-CODE ("10000/22050")
+CODE ("10000/44100")
 NORMAL ("into the ##%%Finishing time#% field.")
 NORMAL ("Into text fields in settings windows, you can only type text directly; there is no way "
 	"to use string expressions (except if you use scripts; see @@Formulas 1.9. Formulas in scripts@).")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.7. Formulas for creation", "ppgb", 20030316)
+MAN_BEGIN ("Formulas 1.7. Formulas for creation", "ppgb", 20070225)
 INTRO ("With some commands in the @@New menu@, you can supply a formula that Praat will apply to all elements of the new object.")
 ENTRY ("Creating a Sound from a formula")
-NORMAL ("Choose @@Create Sound...@ and type the following into the #%Formula field:")
+NORMAL ("Choose @@Create Sound from formula...@ and type the following into the #%Formula field:")
 CODE ("1/2 * sin (2 * pi * 377 * x)")
 NORMAL ("When you click OK, a new @Sound object will appear in the list. "
 	"After you click #%Edit and zoom in a couple of times, you will see that the sound is a sine wave "
@@ -543,7 +543,7 @@ TAG ("\\bu ##self (%%x-expression%)")
 DEFINITION ("the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN ("Formulas 1.9. Formulas in scripts", "ppgb", 20050822)
+MAN_BEGIN ("Formulas 1.9. Formulas in scripts", "ppgb", 20070225)
 INTRO ("In scripts, you can assign numeric expressions to numeric variables, "
 	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
 ENTRY ("Example: report a square")
@@ -572,11 +572,11 @@ NORMAL ("This script assigns the results of four string expressions to the four 
 NORMAL ("To see what the new name of the capital will be, choose #%Run.")
 ENTRY ("Example: numeric expressions in settings in scripts")
 NORMAL ("As in real settings windows, you can use numeric expressions in all numeric fields. "
-	"The example of the previous page becomes:")
-CODE ("Create Sound... sine 0 10000/22050 22050   0.9 * sin (2*pi*377*x)")
+	"The example of two pages back becomes:")
+CODE ("Create Sound from formula... sine Mono 0 10000/44100 44100   0.9 * sin (2*pi*377*x)")
 NORMAL ("If the numeric field is not the last field of the settings window, "
 	"you will want to write the formula without any spaces, "
-	"e.g. as 10000/22050, since spaces are used to separate the fields.")
+	"e.g. as 10000/44100, since spaces are used to separate the fields.")
 ENTRY ("Example: string expressions in settings in scripts")
 NORMAL ("As in real settings windows, you cannot use string expressions in text fields directly, "
 	"but you can still use the trick of variable substitution with single quotes (see @@Scripting 5.1. Variables@):")
@@ -586,7 +586,7 @@ CODE ("Read from file... 'fileName\\$ '")
 ENTRY ("Example: numeric expressions in creation in scripts")
 NORMAL ("Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
 CODE ("frequency = 377")
-CODE ("Create Sound... sine 0 1 22050   0.9 * sin (2*pi*frequency*x)")
+CODE ("Create Sound from formula... sine Mono 0 1 44100   0.9 * sin (2*pi*frequency*x)")
 NORMAL ("In this example, Praat will protest if %x is a variable as well, because that would be ambiguous "
 	"with the %x that refers to the time in the sound (see @@Formulas 1.8. Formulas for modification@).")
 MAN_END
@@ -950,7 +950,7 @@ CODE ("800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
 NORMAL ("evaluates to 800.")
 MAN_END
 
-MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20060418)
+MAN_BEGIN ("Formulas 7. Attributes of objects", "ppgb", 20070225)
 NORMAL ("You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use the type and the name of the object, connected with an underscore. "
 	"Thus, $$Sound_hallo$ refers to an existing Sound object whose name is \"hallo\" "
@@ -1018,7 +1018,7 @@ DEFINITION ("the distance between adjacent frequency bands in a Spectrogram obje
 ENTRY ("Attributes in a creation formula")
 NORMAL ("In formulas for creating a new object, you can refer to the attributes of any object, "
 	"but you will often want to refer to the attributes of the object that is just being created. You can do that in two ways.")
-NORMAL ("The first way is to use the name of the object, as above. Choose @@Create Sound...@, supply %hello for its name, "
+NORMAL ("The first way is to use the name of the object, as above. Choose @@Create Sound from formula...@, supply %hello for its name, "
 	"supply arbitrary values for the starting and finishing time, and type the following formula:")
 CODE ("(x - Sound_hello.xmin) / (Sound_hello.xmax - Sound_hello.xmin)")
 NORMAL ("When you edit this sound, you can see that it creates a straight line that rises from 0 to 1 within the time domain.")
@@ -1525,7 +1525,7 @@ NORMAL ("If you dislike manually copying arguments from settings windows into yo
 	"appears in a the ScriptEditor. You can build a new script on the basis of this line.")
 MAN_END
 
-MAN_BEGIN ("Scripting 3. Layout", "ppgb", 20020624)
+MAN_BEGIN ("Scripting 3. Layout", "ppgb", 20070225)
 INTRO ("This chapter handles the way you use white space, comments, "
 	"and continuation lines in a Praat script.")
 ENTRY ("White space")
@@ -1542,8 +1542,8 @@ NORMAL ("Lines that are empty or consist solely of white space, are also ignored
 ENTRY ("Comments")
 NORMAL ("Comments are lines that start with !, \\# , or ;. These lines are ignored when your script is running:")
 CODE ("\\#  Create 1 second of a sine wave with a frequency of 100 Hertz,")
-CODE ("\\#  sampled at 22050 Hz:")
-CODE ("Create Sound... sine 0 1 22050 sin (2*pi*100*x)")
+CODE ("\\#  sampled at 44100 Hz:")
+CODE ("Create Sound from formula... sine Mono 0 1 44100 sin (2*pi*100*x)")
 ENTRY ("Continuation lines")
 NORMAL ("There is normally one line per command, and one command per line.")
 NORMAL ("But you can chop up long lines by using continuaton lines that start with three dots (\"...\"). "
@@ -1555,7 +1555,7 @@ CODE ("   ...gogerychwyrndrobwllllantysiliogogogoch,")
 CODE ("   ... unless you start from Tyddyn-y-felin.")
 MAN_END
 
-MAN_BEGIN ("Scripting 4. Object selection", "ppgb", 20061019)
+MAN_BEGIN ("Scripting 4. Object selection", "ppgb", 20070225)
 INTRO ("This chapter is about how to select objects from your script, "
 	"and how to find out what objects are currently selected.")
 ENTRY ("Selecting objects")
@@ -1578,7 +1578,7 @@ CODE1 ("Remove")
 NORMAL ("In the Praat shell, newly created objects are automatically selected. "
 	"This is also true in scripts:")
 CODE ("! Generate a sine wave, play it, and draw its spectrum.")
-CODE ("Create Sound... sine377  0 1 10000   0.9 * sin (2*pi*377*x)")
+CODE ("Create Sound from formula... sine377 Mono 0 1 44100   0.9 * sin (2*pi*377*x)")
 CODE ("Play")
 CODE ("To Spectrum")
 CODE ("! Draw the Spectrum:")
@@ -1765,7 +1765,7 @@ CODE ("#endif")
 NORMAL ("A variant spelling for #elsif is #elif.")
 MAN_END
 
-MAN_BEGIN ("Scripting 5.4. Loops", "ppgb", 20040414)
+MAN_BEGIN ("Scripting 5.4. Loops", "ppgb", 20070225)
 ENTRY ("\"For\" loops")
 TAG ("#for %variable #from %expression__1_ #to %expression__2_")
 TAG ("#for %variable #to %expression")
@@ -1775,7 +1775,7 @@ DEFINITION ("the statements between the #for line and the matching #endfor will 
 NORMAL ("The following script plays nine sine waves, with frequencies of 200, 300, ..., 1000 Hz:")
 CODE ("#for i #from 2 #to 10")
 CODE ("   frequency = i * 100")
-CODE ("   Create Sound... tone 0 0.3 22050 0.9*sin(2*pi*frequency*x)")
+CODE ("   Create Sound from formula... tone Mono 0 0.3 44100 0.9*sin(2*pi*frequency*x)")
 CODE ("   Play")
 CODE ("   Remove")
 CODE ("#endfor")
@@ -1811,7 +1811,7 @@ NORMAL ("If the expression evaluates to zero or %false to begin with, the statem
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN ("Scripting 5.5. Procedures", "ppgb", 20021201)
+MAN_BEGIN ("Scripting 5.5. Procedures", "ppgb", 20070225)
 NORMAL ("In a Praat script, you can define and call %procedures (subroutines).")
 TAG ("#call %procedureName [%argument1 [%argument2 [...]]]")
 DEFINITION ("the execution of the script jumps to the line after the matching #procedure line, "
@@ -1825,7 +1825,7 @@ NORMAL ("The following script plays three notes:")
 CODE ("#call play_note 440")
 CODE ("#call play_note 400")
 CODE ("#procedure play_note frequency")
-CODE ("   Create Sound... note 0 0.3 22050 0.9 * sin (2*pi*'frequency'*x)")
+CODE ("   Create Sound from formula... note Mono 0 0.3 44100 0.9 * sin (2*pi*'frequency'*x)")
 CODE ("   Play")
 CODE ("   Remove")
 CODE ("#endproc")
@@ -1919,13 +1919,13 @@ LIST_ITEM ("@@Scripting 6.8. Messages to the user@ (exit, assert, nowarn, nochec
 LIST_ITEM ("@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN ("Scripting 6.1. Arguments to the script", "ppgb", 20040414)
+MAN_BEGIN ("Scripting 6.1. Arguments to the script", "ppgb", 20070225)
 NORMAL ("You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
 CODE ("#form Play a sine wave")
 CODE ("   #positive Sine_frequency_(Hz) 377")
 CODE ("   #positive Gain_(0..1) 0.3 (= not too loud)")
 CODE ("#endform")
-CODE ("Create Sound... sine'sine_frequency'  0 1 10000   'gain' * sin (2*pi*'sine_frequency'*x)")
+CODE ("Create Sound from formula... sine'sine_frequency' Mono 0 1 44100   'gain' * sin (2*pi*'sine_frequency'*x)")
 CODE ("Play")
 CODE ("Remove")
 NORMAL ("When running this script, the interpreter puts a settings window (%form) on your screen, "
@@ -2051,7 +2051,7 @@ DEFINITION ("returns the value of an environment variable under Unix, e.g.")
 CODE ("   homeDirectory\\$  = ##environment\\$ # (\"HOME\")")
 MAN_END
 
-MAN_BEGIN ("Scripting 6.3. Writing to the Info window", "ppgb", 20000302)
+MAN_BEGIN ("Scripting 6.3. Writing to the Info window", "ppgb", 20070225)
 NORMAL ("With the @Info button and several commands in the #Query menus, "
 	"you write to the @@Info window@. If your program is run from batch (on Unix or Windows), "
 	"the text goes to %stdout.")
@@ -2073,7 +2073,7 @@ DEFINITION ("causes the following text in the Info window to begin at a new line
 NORMAL ("The following script builds a table with statistics about a pitch contour:")
 CODE ("#clearinfo")
 CODE ("#printline  Minimum   Maximum")
-CODE ("Create Sound... sin 0 0.1 10000 sin(2*pi*377*x)")
+CODE ("Create Sound from formula... sin Mono 0 0.1 44100 sin(2*pi*377*x)")
 CODE ("To Pitch... 0.01 75 600")
 CODE ("minimum = Get minimum... 0 0 Hertz Parabolic")
 CODE ("#print 'minimum'")
@@ -2482,7 +2482,7 @@ CODE ("...'newline\\$ ' Remove")
 NORMAL ("The first $$newline\\$ $ is superfluous, but this format seems to read nicely.")
 MAN_END
 
-MAN_BEGIN ("ScriptEditor", "ppgb", 20050822)
+MAN_BEGIN ("ScriptEditor", "ppgb", 20070225)
 INTRO ("An aid to @@scripting@.")
 NORMAL ("The #ScriptEditor is a text editor that allows you to edit, save, and run "
 	"any @@Praat script@. You could type such a script from scratch, "
@@ -2496,13 +2496,13 @@ NORMAL ("In this example, we create a fixed button that will play a 1-second sin
 NORMAL ("First, we create a ScriptEditor by choosing @@New Praat script@ from the @@Praat menu@. "
 	"Then, we choose @@Clear history@ from the Edit menu in the ScriptEditor. "
 	"We then perform some actions that will create a sine wave, play it, and remove it:")
-LIST_ITEM ("1. Choose ##Create Sound...# from the @@New menu@ and type the formula of a sine wave (i.e. "
+LIST_ITEM ("1. Choose ##Create Sound from formula...# from the @@New menu@ and type the formula of a sine wave (i.e. "
 	"remove the \"randomGauss\" term).")
 LIST_ITEM ("2. Click #Play in the dynamic menu.")
 LIST_ITEM ("3. Click the fixed #Remove button.")
 NORMAL ("We then choose @@Paste history@ from the Edit menu in the ScriptEditor (or type Command-H). "
 	"The text will now contain at least the following lines (delete any other lines):")
-CODE ("Create Sound... sine 0 1 22050 1/2*sin(2*pi*377*x)")
+CODE ("Create Sound from formula... sine Mono 0 1 44100 1/2*sin(2*pi*377*x)")
 CODE ("Play")
 CODE ("Remove")
 NORMAL ("We can run this script again by choosing #Run from the #Run menu (or typing Command-R). "
@@ -2511,7 +2511,7 @@ NORMAL ("We can run this script again by choosing #Run from the #Run menu (or ty
 CODE ("#form Play a sine wave")
 CODE ("   #positive Frequency")
 CODE ("#endform")
-CODE ("Create Sound... sine'frequency' 0 1 22050 1/2*sin(2*pi*frequency*x)")
+CODE ("Create Sound from formula... sine'frequency' Mono 0 1 44100 1/2*sin(2*pi*frequency*x)")
 CODE ("Play")
 CODE ("Remove")
 NORMAL ("When we choose #Run, the ScriptEditor will ask us to supply a value for the \"Frequency\" variable. "
@@ -2524,19 +2524,19 @@ CODE ("#form Play a sine wave")
 CODE ("   #positive Frequency 440")
 CODE ("   #positive Duration 1")
 CODE ("#endform")
-CODE ("Create Sound... sine'frequency' 0 'Duration' 22050 0.9*sin(2*pi*frequency*x)")
+CODE ("Create Sound from formula... sine'frequency' Mono 0 'Duration' 44100 0.9*sin(2*pi*frequency*x)")
 CODE ("Play")
 CODE ("Remove")
 NORMAL ("When you run this script, the ScriptEditor will ask you to supply values for the two variables, "
 	"but the values \"440\" and \"1\" are already visible in the form window, "
 	"so that you will get a sensible result if you just click #OK.")
 NORMAL ("If this script is useful to you, you may want to put a button for it in the @@New menu@, "
-	"in the ##Create Sound# submenu:")
+	"in the ##Sound# submenu:")
 LIST_ITEM ("1. Save the script to a file, with #Save from the #File menu. The file name that you supply, will "
 	"be shown in the title bar of the ScriptEditor window.")
 LIST_ITEM ("2. Choose @@Add to fixed menu...@ from the #%File menu. Supply #Objects for the %window, "
 	"#New for the %menu, \"Play sine wave...\" for the %command, "
-	"##Create Sound...# for %%after command%, and \"1\" for the depth (because it is supposed to be in a submenu); "
+	"##Create Sound from formula...# for %%after command%, and \"1\" for the depth (because it is supposed to be in a submenu); "
 	"the %script argument has already been set to the file name that you supplied in step 1.")
 LIST_ITEM ("3. Click #OK and ensure that the button has been added in the @@New menu@. This button will still be there "
 	"after you leave the program and enter it again; to remove it from the menu, use the @ButtonEditor.")
@@ -2677,11 +2677,11 @@ CODE1 ("fileappend ~/results/out.txt 'tmin:6' 'tmax:6' 'mean:2'")
 CODE1 ("... 'minimum:2' 'maximum:2' 'stdev:2''newline\\$ '")
 MAN_END
 
-MAN_BEGIN ("Script for creating a frequency sweep", "ppgb", 20041005)
+MAN_BEGIN ("Script for creating a frequency sweep", "ppgb", 20070225)
 INTRO ("\"I have to find a formula for a sinewave that sweeps from 1 kHz to 12 kHz in "
 	"60 seconds while ramping the amplitude from 1 to 12 volts in the same amount of time.\"")
 NORMAL ("The absolute amplitude in volts cannot be handled, of course, but linear crescendo is easy:")
-CODE ("Create Sound... sweep 0 60 44100")
+CODE ("Create Sound from formula... sweep Mono 0 60 44100")
 CODE ("... 0.05 * (1 + 11 * x/60) * sin (2*pi * (1000 + 11000/2 * x/60) * x)")
 NORMAL ("Note the \"/2\" in this formula. Here is the derivation of the formula:")
 FORMULA ("%frequency (%t) = 1000 + 11000 %t / 60")

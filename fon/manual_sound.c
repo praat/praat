@@ -85,12 +85,12 @@ NORMAL ("Of the two original mono Sounds, the one that is higher in the list wil
 	"of the new stereo Sound, and the one that is lower in the list will become the right channel of the new Sound.")
 MAN_END
 
-MAN_BEGIN ("Create Sound...", "ppgb", 20040331)
+MAN_BEGIN ("Create Sound from formula...", "ppgb", 20070225)
 INTRO ("A command in the @@New menu@ to create a @Sound with a specified duration and sampling frequency, "
 	"filled with values from a formula.")
 NORMAL ("See the @Formulas tutorial for explanations and examples.")
 /*
-Create Sound... blok 0 1 22050 if round(x*377*2) mod 2 then 0.9 else -0.9 fi
+Create Sound from formula... blok Mono 0 1 44100 if round(x*377*2) mod 2 then 0.9 else -0.9 fi
 
 Je kunt dus heel veel maken met een scriptje:
 
@@ -102,8 +102,8 @@ form Blokgolf
    positive Frequentie_(Hz) 377
    real Amplitude 0.9
 endform
-Create Sound... 'Naam' Begintijd Eindtijd Samplefrequentie
-   ... if round(x*'Frequentie'*2) mod 2 then 'Amplitude' else -'Amplitude' fi
+Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
+   ... if round(x*frequentie*2) mod 2 then amplitude else -amplitude fi
 */
 MAN_END
 
@@ -221,13 +221,13 @@ MAN_BEGIN ("Record stereo Sound...", "ppgb", 20021212)
 INTRO ("A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window.")
 MAN_END
 
-MAN_BEGIN ("Sound", "ppgb", 20041123)
+MAN_BEGIN ("Sound", "ppgb", 20070225)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}. For tutorial information, see all of the @Intro.")
 ENTRY ("Commands")
 NORMAL ("Creation:")
 LIST_ITEM ("\\bu @@Record mono Sound...@ (from microphone or line input, with the @SoundRecorder)")
 LIST_ITEM ("\\bu @@Record stereo Sound...@")
-LIST_ITEM ("\\bu @@Create Sound...@ (from a formula)")
+LIST_ITEM ("\\bu @@Create Sound from formula...@")
 LIST_ITEM ("\\bu @@Create Sound from tone complex...")
 LIST_ITEM ("\\bu @@Create Sound from gamma-tone...")
 LIST_ITEM ("\\bu @@Create Sound from Shepard tone...")
@@ -1031,7 +1031,7 @@ NORMAL ("To synchronize a SoundEditor window with other windows that show a time
 	"You cannot Cut from or Paste into a synchronized SoundEditor window.")
 MAN_END
 
-MAN_BEGIN ("SoundRecorder", "ppgb", 20050822)
+MAN_BEGIN ("SoundRecorder", "ppgb", 20070209)
 INTRO ("With the Praat SoundRecorder window you can record a mono or stereo sound "
 	"for subsequent viewing and analysis in Praat. "
 	"The SoundRecorder appears on your screen if you choose @@Record mono Sound...@ or @@Record stereo Sound...@ "
@@ -1079,8 +1079,8 @@ NORMAL ("In Windows, you can choose your input device with the help of the recor
 NORMAL ("You can watch the input level only while recording.")
 #endif
 ENTRY ("The File menu")
-NORMAL ("A very long recorded sound can be too big to copy it to the list of objects. "
-	"Fortunately, the File menu contains commands to save the recording (or just the left or right channel) "
+NORMAL ("If your computer has little memory, a very long recorded sound can be too big to be copied to the list of objects. "
+	"Fortunately, the File menu contains commands to save the recording "
 	"to a sound file on disk, so that you will never have to lose your recording.")
 ENTRY ("Sound pressure calibration")
 NORMAL ("Your computer's sound-recording software returns integer values between -32768 and 32767. "

@@ -33,6 +33,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/11/06 Carbon control creation functions
  * pb 2007/01/25 XmATTACH_POSITION
+ * pb 2007/02/13 Win: removed Ctrl-. as meaning Escape
  */
 #ifndef UNIX
 
@@ -5256,6 +5257,7 @@ modifiers & _motif_OPTION_MASK ? " alt" : "",
 modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN ? "keydown" : "syskeydown", kar);*/
 			if (me && my shell) {
 				unsigned long acc = my shell -> motif.shell.lowAccelerators [modifiers];
+				//if (kar != VK_CONTROL) Melder_casual ("%d %d", acc, kar);
 				if (kar < 48) {
 					if (kar == VK_BACK) {   /* Shortcut or text. */
 						if (acc & 1 << motif_BACKSPACE) { win_processKeyboardEquivalent (my shell, motif_BACKSPACE, modifiers); return; }
@@ -5322,7 +5324,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 						    kar == 187 && win_processKeyboardEquivalent (my shell, shift ? '+' : '=', modifiers) ||
 						    kar == 188 && win_processKeyboardEquivalent (my shell, shift ? '<' : ',', modifiers) ||
 						    kar == 189 && win_processKeyboardEquivalent (my shell, shift ? '_' : '-', modifiers) ||
-						    kar == 190 && win_processKeyboardEquivalent (my shell, shift ? '>' : motif_ESCAPE, shift ? modifiers : 0) ||   /* Command-period */
+						    kar == 190 && win_processKeyboardEquivalent (my shell, shift ? '>' : '.', modifiers) ||
 						    kar == 191 && win_processKeyboardEquivalent (my shell, shift ? '?' : '/', modifiers) ||
 						    kar == 192 && win_processKeyboardEquivalent (my shell, shift ? '~' : '`', modifiers) ||
 						    kar == 219 && win_processKeyboardEquivalent (my shell, shift ? '{' : '[', modifiers) ||   /* Alt-GR-ringel-s is here. */

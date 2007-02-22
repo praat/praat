@@ -1,6 +1,6 @@
 /* praat_script.c
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2006/01/11 local variables
  * pb 2006/12/28 theCurrentPraat
+ * pb 2007/02/17 corrected the messages about trailing spaces
  */
 
 #include <ctype.h>
@@ -312,16 +313,16 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {
 				UiInterpreter_set (NULL);
-				if (arguments [0] != '\0' && command [strlen (arguments) - 1] == ' ') {
-					return Melder_error ("It may be helpful to remove the trailing spaces.");
+				if (arguments [0] != '\0' && arguments [strlen (arguments) - 1] == ' ') {
+					return Melder_error ("It may be helpful to remove the trailing spaces in \"%s\".", arguments);
 				}
 				return 0;
 			}
 			if (! praat_doMenuCommand (command, arguments)) {
 				UiInterpreter_set (NULL);
 				if (Melder_hasError ()) {
-					if (arguments [0] != '\0' && command [strlen (arguments) - 1] == ' ') {
-						return Melder_error ("It may be helpful to remove the trailing spaces.");
+					if (arguments [0] != '\0' && arguments [strlen (arguments) - 1] == ' ') {
+						return Melder_error ("It may be helpful to remove the trailing spaces in \"%s\".", arguments);
 					}
 					return 0;
 				} else if (strnequ (command, "ARGS ", 5)) {

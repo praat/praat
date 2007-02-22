@@ -1,6 +1,6 @@
 /* TextEditor.c
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2006/08/09 guarded against closing when a file selector is open
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/18 improved info
+ * pb 2007/02/15 GuiText_updateChangeCountAfterSave
  */
 
 #include "TextEditor.h"
@@ -90,14 +91,8 @@ static void newDocument (TextEditor me) {
 static int saveDocument (TextEditor me, MelderFile file) {
 	char *text = XmTextGetString (my textWidget);
 	if (! MelderFile_writeText (file, text)) { XtFree (text); return 0; }
-	/*
-	 * The following is a TRICK to make sure that MacOS X knows that any following
-	 * entered character will introduce a value change in the GuiText object.
-	 */
-	#if defined (macintosh)
-		XmTextSetString (my textWidget, text);
-	#endif
 	XtFree (text);
+	GuiText_updateChangeCountAfterSave (my textWidget);   // TRICK to make sure that MacOS X knows that any following entered character will introduce a value change in the GuiText object.
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));

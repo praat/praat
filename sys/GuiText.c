@@ -1,6 +1,6 @@
 /* GuiText.c
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2005/09/01 GuiText_undo and GuiText_redo
  * pb 2006/10/29 erased MacOS 9 stuff
  * pb 2006/11/10 comments
+ * pb 2007/02/15 GuiText_updateChangeCountAfterSave
  */
 
 #include "GuiP.h"
@@ -191,7 +192,8 @@ void _GuiText_handleValueChanged (Widget me) {
 			if (isTextControl (me)) {
 				HandleControlKey (my nat.control.handle, keyCode, charCode, event -> modifiers);
 			} else if (isMLTE (me)) {
-				TXNKeyDown (my macMlteObject, event);
+				//static long key = 0; Melder_casual ("key %ld", ++key);
+				TXNKeyDown (my macMlteObject, event);   // Tends never to be called.
 			}
 			GuiMac_clipOff ();
 			if (charCode > 31 || charCode < 28)   /* Arrows do not change the value of the text. */
@@ -302,7 +304,7 @@ void _GuiText_unmanage (Widget me) {
 		 	_GuiMac_clipOn (theGui.textFocus);
 			if (isTextControl (theGui.textFocus)) {
 			} else if (isMLTE (theGui.textFocus)) {
-				unsigned long changeCount = TXNGetChangeCount (theGui.textFocus -> macMlteObject);
+				unsigned long changeCount = TXNGetChangeCount (theGui.textFocus -> macMlteObject);   // COSTLY: pooling.
 				if (changeCount != theGui.textFocus -> changeCount) {
 					_GuiText_handleValueChanged (theGui.textFocus);
 				}
@@ -872,6 +874,36 @@ void GuiText_redo (Widget me) {
 			TXNRedo (my macMlteObject);
 		}
 		_GuiText_handleValueChanged (me);
+	#endif
+}
+
+void GuiText_updateChangeCountAfterSave (Widget me) {
+	#if mac
+		if (isMLTE (me)) {
+			/*
+			 * HACK.
+			 * Method: replace the selection with itself.
+			 * Side effect: the selection is scrolled into view if it is outside the visible area (not so bad; perhaps even good).
+			 */
+			unsigned long length = NativeText_getLength (me);
+			TXNOffset start = 0, finish = 0;
+			TXNGetSelection (my macMlteObject, & start, & finish);
+			TXNOffset startMinus1 = start;
+			TXNOffset finishPlus1 = finish;
+			if (finish - start == 0) {   // If the selection is just a cursor...
+				if (start > 0) startMinus1 = start - 1;   // ... extend it a bit; otherwise, TXNSetData will not update the change count.
+				else if (finish < length) finishPlus1 = finish + 1;
+			}
+			Handle han;
+			TXNGetData (my macMlteObject, startMinus1, finishPlus1, & han);
+			Melder_assert (han != NULL);
+			TXNSetData (my macMlteObject, kTXNUnicodeTextData, *han, (finishPlus1 - startMinus1) * 2, startMinus1, finishPlus1);
+			DisposeHandle (han);
+			TXNSetSelection (my macMlteObject, start, finish);
+		}
+		_GuiText_handleValueChanged (me);
+	#else
+		(void) me;
 	#endif
 }
 

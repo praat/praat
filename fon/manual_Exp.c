@@ -462,13 +462,13 @@ NORMAL ("In this example, the subject has to click 300 times. She sees four butt
 	"In your ResultsMFC object, you will only see the responses %2 and %3.")
 MAN_END
 
-MAN_BEGIN ("ExperimentMFC 3.4. Variable inter-stimulus intervals", "ppgb", 20051205)
+MAN_BEGIN ("ExperimentMFC 3.4. Variable inter-stimulus intervals", "ppgb", 20070225)
 NORMAL ("Praat only supports a fixed inter-stimulus interval, but sometimes you may want to test "
 	"discrimination as a function of the inter-stimulus interval itself. You can achieve this by "
 	"supplying an %interStimulusInterval of 0 and using sound files with various silences:")
 CODE1 ("\"300,silence0.5,320\"  \"300,silence1.5,320\"  \"300,silence4.5,320\"")
 NORMAL ("In this example, you have to supply the sound files ##silence0.5.wav# and so on. You can "
-	"create them with the help of @@Create Sound...@ (supply a %formula of 0).")
+	"create them with the help of @@Create Sound from formula...@ (supply a %formula of 0).")
 MAN_END
 
 MAN_BEGIN ("ExperimentMFC 4. Special buttons", "ppgb", 20051205)

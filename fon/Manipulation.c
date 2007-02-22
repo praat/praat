@@ -22,6 +22,7 @@
  * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 made compatible with stereo sounds (by converting them to mono)
+ * pb 2007/02/25 changed default sampling frequency to 44100 Hz
  */
 
 #include "Manipulation.h"
@@ -474,7 +475,7 @@ static Sound synthesize_psola (Manipulation me) {
 
 static Sound synthesize_pulses (Manipulation me) {
 	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
-	return PointProcess_to_Sound_pulseTrain (my pulses, 22050, 0.7, 0.05, 30);
+	return PointProcess_to_Sound_pulseTrain (my pulses, 44100, 0.7, 0.05, 30);
 }
 
 static Sound synthesize_pulses_hum (Manipulation me) {
@@ -488,7 +489,7 @@ static Sound synthesize_pitch (Manipulation me) {
 	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch manipulation.");
 	temp = PitchTier_to_PointProcess (my pitch);
 	if (! temp) return NULL;
-	thee = PointProcess_to_Sound_pulseTrain (temp, 22050, 0.7, 0.05, 30);
+	thee = PointProcess_to_Sound_pulseTrain (temp, 44100, 0.7, 0.05, 30);
 	if (! thee) { forget (temp); return NULL; }
 	forget (temp);
 	return thee;
@@ -513,7 +514,7 @@ static Sound synthesize_pulses_pitch (Manipulation me) {
 	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch manipulation.");
 	temp = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 	if (! temp) return NULL;
-	thee = PointProcess_to_Sound_pulseTrain (temp, 22050, 0.7, 0.05, 30);
+	thee = PointProcess_to_Sound_pulseTrain (temp, 44100, 0.7, 0.05, 30);
 	if (! thee) { forget (temp); return NULL; }
 	forget (temp);
 	return thee;
@@ -545,7 +546,7 @@ static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 	PointProcess temp = NULL;
 	if (! my pulses) return Melder_errorp ("Cannot synthesize this without pulses analysis.");
 	if (! my formant) return Melder_errorp ("Cannot synthesize this without formant information.");
-	thee = PointProcess_to_Sound (my pulses, 22050.0, 0.7, 0.05, 30);
+	thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
 	if (! thee) return Melder_errorp ("Manipulation_to_Sound: not performed.");
 	Sound_Formant_Intensity_filter (thee, my formant, useIntensity ? my intensity : NULL);
 	return thee;

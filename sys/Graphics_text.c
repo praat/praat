@@ -121,7 +121,7 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 		style == Graphics_BOLD_ITALIC ?
 			font == Graphics_NEWCENTURYSCHOOLBOOK || font == Graphics_TIMES ||
 			font == Graphics_PALATINO ? "bold-i" : "bold-o" : "medium-r",
-		size == 0 ? 10 : size == 1 ? 11 : size == 2 ? 14 : size == 3 ? 18 : 24,
+		size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
 		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
 		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
 		"*" /*font == Graphics_COURIER ? "m" : "p"*/,

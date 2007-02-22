@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/07/20 moved shimmer measurements to VoiceAnalysis.c
  * pb 2005/07/07 glottal source signals
  * pb 2006/12/30 new Sound_create API
+ * pb 2007/02/25 changed default sampling frequency to 44100 Hz
  */
 
 #include "PointProcess_and_Sound.h"
@@ -192,7 +193,7 @@ Sound PointProcess_to_Sound_phonation
 }
 
 int PointProcess_playPart (PointProcess me, double tmin, double tmax) {
-	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
@@ -208,7 +209,7 @@ int PointProcess_hum (PointProcess me, double tmin, double tmax) {
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static float bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
-	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) return 0;
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
@@ -221,7 +222,7 @@ Sound PointProcess_to_Sound_hum (PointProcess me) {
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static float bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
-	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
+	Sound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, my xmin, my xmax, 6, formant, bandwidth)) return 0;
 	return sound;

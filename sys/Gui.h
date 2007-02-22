@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/25
+ * pb 2007/02/15
  */
 
 #ifndef _melder_h_
@@ -415,6 +415,7 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 void GuiText_setFontSize (Widget me, int size);
 void GuiText_undo (Widget me);
 void GuiText_redo (Widget me);
+void GuiText_updateChangeCountAfterSave (Widget me);
 
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*

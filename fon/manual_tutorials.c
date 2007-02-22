@@ -23,9 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070205)
+MAN_BEGIN ("What's new?", "ppgb", 20070222)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.16# (February 22, 2007)")
+LIST_ITEM ("\\bu Sound-to-Intensity: made resistant against undefined settings.")
+LIST_ITEM ("\\bu Windows: made Ctrl-. available as a shortcut.")
+LIST_ITEM ("\\bu Linux: made it more likely to find the correct fonts.")
+NORMAL ("##4.5.15# (February 12, 2007)")
+LIST_ITEM ("\\bu Windows XP: worked around a bug in Windows XP that could cause Praat to crash "
+	"when the user moved the mouse pointer over a file in the Desktop in the file selector. "
+	"The workaround is to temporarily disable file info tips when the file selector window is on the screen.")
 NORMAL ("##4.5.14# (February 5, 2007)")
 LIST_ITEM ("\\bu Scripting: some new predefined string variables like preferencesDirectory\\$ .")
 NORMAL ("##4.5.13# (February 3, 2007)")
@@ -1269,9 +1277,9 @@ NORMAL ("If you do not have a sound file on your disk, you can download a WAV fi
 	"then read that file into Praat with ##Read from file...#.")
 MAN_END
 
-MAN_BEGIN ("Intro 1.3. Creating a sound from a formula", "ppgb", 20041126)
+MAN_BEGIN ("Intro 1.3. Creating a sound from a formula", "ppgb", 20070225)
 INTRO ("If you have no microphone, no sound files on disk, and no access to the Internet, "
-	"you could still create a sound from a formula with @@Create Sound...@ from the @@New menu@.")
+	"you could still create a sound with @@Create Sound from formula...@ from the @@New menu@.")
 MAN_END
 
 MAN_BEGIN ("Intro 2. What to do with a sound", "ppgb", 20041126)
@@ -1379,7 +1387,7 @@ NORMAL ("The darkness of the spectrogram will also change when you scroll, becau
 	"will turn darker. The next section will describe a way to switch this off.")
 MAN_END
 
-MAN_BEGIN ("Intro 3.2. Configuring the spectrogram", "ppgb", 20030917)
+MAN_BEGIN ("Intro 3.2. Configuring the spectrogram", "ppgb", 20070225)
 NORMAL ("With @@Spectrogram settings...@ from the #Spectrogram menu, "
 	"you can determine how the spectrogram is computed and how it is displayed. "
 	"These settings will be remembered across Praat sessions. "
@@ -1412,7 +1420,7 @@ DEFINITION ("All values that are more than %%Dynamic range% dB below the maximum
 	"in various shades of grey.")
 ENTRY ("The bandwidth")
 NORMAL ("To see how the window length influences the bandwidth, "
-	"first create a 1000-Hz sine wave with @@Create Sound...@ "
+	"first create a 1000-Hz sine wave with @@Create Sound from formula...@ "
 	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click #Edit. "
 	"The spectrogram will show a horizontal black line. "
 	"You can now vary the window length in the spectrogram settings and see how the thickness "
@@ -1434,7 +1442,7 @@ ENTRY ("Advanced settings")
 NORMAL ("The Spectrum menu also contains @@Advanced spectrogram settings...@.")
 MAN_END
 
-MAN_BEGIN ("Advanced spectrogram settings...", "ppgb", 20030917)
+MAN_BEGIN ("Advanced spectrogram settings...", "ppgb", 20070225)
 ENTRY ("Optimization")
 TAG ("%%Number of time steps%")
 DEFINITION ("the maximum number of points along the time window for which P\\s{RAAT} has to compute "
@@ -1468,7 +1476,7 @@ DEFINITION ("the shape of the analysis window. To compute the spectrum at, say, 
 	"because the analysis is actually performed on twice as many samples per frame.")
 ENTRY ("Sidelobes; anybody wants to win a cake?")
 NORMAL ("The Gaussian window is the only shape that we can consider seriously as a candidate for "
-	"the analysis window. To see this, create a 1000-Hz sine wave with @@Create Sound...@ "
+	"the analysis window. To see this, create a 1000-Hz sine wave with @@Create Sound from formula...@ "
 	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click #Edit. "
 	"If the window shape is Gaussian, the spectrogram will show a horizontal black line. "
 	"If the window shape is anything else, the spectrogram will show many horizontal grey lines (%sidelobes), "
@@ -2070,12 +2078,12 @@ NORMAL ("In the Praat shell, the user-controllability of window sizes and fonts,
 	"the changes made by the user while the application is running.")
 MAN_END
 
-MAN_BEGIN ("New menu", "ppgb", 20021212)
+MAN_BEGIN ("New menu", "ppgb", 20070225)
 INTRO ("The ##New menu# is one of the menus in the @@Object window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
 LIST_ITEM ("\\bu @@Record mono Sound...@")
 LIST_ITEM ("\\bu @@Record stereo Sound...@")
-LIST_ITEM ("\\bu @@Create Sound...@ (from a formula)")
+LIST_ITEM ("\\bu @@Create Sound from formula...@")
 LIST_ITEM ("\\bu @@Create Sound from tone complex...")
 LIST_ITEM ("\\bu @@Create Sound from gamma-tone...")
 LIST_ITEM ("\\bu @@Create Sound from Shepard tone...")

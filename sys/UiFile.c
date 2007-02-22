@@ -1,6 +1,6 @@
 /* UiFile.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
  * pb 2002/03/07 GPL
  * pb 2006/08/10 Windows: turned file selector into a modal dialog box
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2007/02/12 worked around a bug in Windows XP that caused Praat to crash
+                 when the user moved the mouse pointer over a file in the Desktop of the second file selector
+                 that was raised in Praat. The workaround is to temporarily disable file info tips.
  */
 
 #if defined (macintosh)
@@ -38,6 +41,10 @@
 #if defined (UNIX)
 	#include <dirent.h>
 	#include <sys/stat.h>
+#endif
+
+#if defined (_WIN32)
+	#include <shlobj.h>
 #endif
 
 #include <ctype.h>
@@ -720,25 +727,38 @@ void UiInfile_do (I) {
 			NavDialogDispose (dialogRef);
 		}
 	#elif defined (_WIN32)
-		OPENFILENAME openFileName;
-		static TCHAR customFilter [100+2];
-		static TCHAR fullFileName [300+2];
+		static OPENFILENAME openFileName, dummy;
+		static TCHAR fullFileName [3000+2];
 		ZeroMemory (& openFileName, sizeof (OPENFILENAME));
 		openFileName. lStructSize = sizeof (OPENFILENAME);
 		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-		openFileName. lpstrCustomFilter = customFilter;
-		openFileName. nMaxCustFilter = 100;
-		fullFileName [0] = '\0';
+		openFileName. lpstrFilter = "All Files\0*.*\0";
+		ZeroMemory (fullFileName, 3000+2);
 		openFileName. lpstrFile = fullFileName;
-		openFileName. nMaxFile = 300;
+		openFileName. nMaxFile = 3000;
 		openFileName. lpstrTitle = my name;
-		openFileName. Flags = OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-		//openFileName. pvReserved = NULL;
+		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+		SHELLFLAGSTATE settings;
+		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
+		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
+		bool extensionsWereVisible = settings. fShowExtensions != 0;
+		if (infoTipsWereVisible | ! extensionsWereVisible) {
+			SHELLSTATE state = { 0 };
+			state. fShowInfoTip = 0;
+			state. fShowExtensions = /*1*/ extensionsWereVisible;
+			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
+		}
 		if (GetOpenFileName (& openFileName)) {
 			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure))
 				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
+		}
+		if (infoTipsWereVisible | ! extensionsWereVisible) {
+			SHELLSTATE state = { 0 };
+			state. fShowInfoTip = infoTipsWereVisible;
+			state. fShowExtensions = extensionsWereVisible;
+			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
 		}
 	#else
 		#if 1
@@ -963,6 +983,16 @@ void UiOutfile_do (I, const char *defaultName) {
 		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
+		SHELLFLAGSTATE settings;
+		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
+		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
+		bool extensionsWereVisible = settings. fShowExtensions != 0;
+		if (infoTipsWereVisible | ! extensionsWereVisible) {
+			SHELLSTATE state = { 0 };
+			state. fShowInfoTip = 0;
+			state. fShowExtensions = /*1*/ extensionsWereVisible;
+			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
+		}
 		if (GetSaveFileName (& openFileName)) {
 			if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 				Melder_flushError ("Dialog `%s' cancelled.", my name);
@@ -972,6 +1002,12 @@ void UiOutfile_do (I, const char *defaultName) {
 			if (! my okCallback (me, my okClosure))
 				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
+		}
+		if (infoTipsWereVisible | ! extensionsWereVisible) {
+			SHELLSTATE state = { 0 };
+			state. fShowInfoTip = infoTipsWereVisible;
+			state. fShowExtensions = extensionsWereVisible;
+			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
 		}
 	#else
 		XmString xmDirMask, xmDirSpec;
