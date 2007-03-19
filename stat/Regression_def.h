@@ -1,8 +1,6 @@
-#ifndef _Strings_h_
-#define _Strings_h_
-/* Strings.h
+/* Regression_def.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +18,31 @@
  */
 
 /*
- * pb 2006/02/14
+ * pb 2005/05/01
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#include "Strings_def.h"
 
-#define Strings_methods Data_methods
-oo_CLASS_CREATE (Strings, Data)
+#define ooSTRUCT RegressionParameter
+oo_DEFINE_CLASS (RegressionParameter, Data)
 
-Strings Strings_createAsFileList (const char *path);
-Strings Strings_createAsDirectoryList (const char *path);
-Strings Strings_readFromRawTextFile (MelderFile fs);
-int Strings_writeToRawTextFile (Strings me, MelderFile fs);
+	oo_STRING (label)
+	oo_DOUBLE (value)
+	#if oo_DECLARING || oo_COPYING
+		oo_LONG (tableColumnIndex)
+	#endif
 
-void Strings_randomize (Strings me);
-int Strings_genericize (Strings me);
-void Strings_sort (Strings me);
+oo_END_CLASS (RegressionParameter)
+#undef ooSTRUCT
 
-/* End of file Strings.h */
-#endif
+
+#define ooSTRUCT Regression
+oo_DEFINE_CLASS (Regression, Data)
+
+	oo_DOUBLE (intercept)
+	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)
+
+oo_END_CLASS (Regression)
+#undef ooSTRUCT
+
+
+/* End of file Regression_def.h */

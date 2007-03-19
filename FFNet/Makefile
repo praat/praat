@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CFLAGS =  -I ../dwtools -I ../fon -I ../sys -I ../dwsys
+CFLAGS =  -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 all: libFFNet.a
 
@@ -17,7 +17,7 @@ OBJECTS = FFNet.o \
 	FFNet_Pattern_Categories.o \
 	praat_FFNet_init.o manual_FFNet.o
 
-$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h
+$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
 
 libFFNet.a: $(OBJECTS)
 	touch libFFNet.a

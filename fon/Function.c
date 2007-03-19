@@ -1,6 +1,6 @@
 /* Function.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/07/10 NUMbessel_i0_f
  * pb 2005/06/16 units
  * pb 2006/12/08 info
+ * pb 2007/03/17 domain texts
  */
 
 #include "Function.h"
@@ -119,6 +120,7 @@ class_methods (Function, Data)
 	class_method (info)
 	class_method (getXmin)
 	class_method (getXmax)
+	us -> domainQuantity = 0;
 	class_method (getMinimumUnit)
 	class_method (getMaximumUnit)
 	class_method (getUnitText)
@@ -144,6 +146,12 @@ int ClassFunction_getMaximumUnit (I, long ilevel) {
 	iam (Function_Table);
 	if (! my destroy) my _initialize (me);
 	return my getMaximumUnit (me, ilevel);
+}
+
+int ClassFunction_getDomainQuantity (I) {
+	iam (Function_Table);
+	if (! my destroy) my _initialize (me);
+	return my domainQuantity;
 }
 
 const char * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {

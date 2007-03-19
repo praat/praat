@@ -1034,7 +1034,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		}
 		#endif
 	}
-	Thing_recognizeClassesByName (classCollection, classManPages, classSortedSetOfString, NULL);
+	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
 		Melder_backgrounding = TRUE;
 		praat_addMenus (NULL);

@@ -22,11 +22,13 @@
  * pb 2003/05/31 use PointProcess_upto_RealTier
  * pb 2005/05/26 switch for scaling in multiply
  * pb 2007/01/27 made compatible with stereo sounds
+ * pb 2007/03/17 domain quantity
  */
 
 #include "IntensityTier.h"
 
 class_methods (IntensityTier, RealTier)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 IntensityTier IntensityTier_create (double tmin, double tmax) {

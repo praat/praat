@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +90,7 @@ TableOfReal RealTier_downto_TableOfReal (I, const char *timeLabel, const char *v
 
 int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically);
 
+Table RealTier_downto_Table (I, const char *timeText, const char *valueText);
 RealTier Vector_to_RealTier (I, long channel);
 RealTier Vector_to_RealTier_peaks (I, long channel);
 RealTier Vector_to_RealTier_valleys (I, long channel);

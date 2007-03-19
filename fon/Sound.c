@@ -28,6 +28,7 @@
  * pb 2007/01/26 more stereo
  * pb 2007/01/28 corrected a bug in Sound_extractChannel
  * pb 2007/01/28 more stereo
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Sound.h"
@@ -133,6 +134,7 @@ class_methods (Sound, Vector)
 	class_method (info)
 	class_method (getMatrix)
 	class_method (getFunction2)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {

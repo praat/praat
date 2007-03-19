@@ -85,10 +85,10 @@ static void draw_SpectrumStopHann_decompose (Graphics g) {
 void manual_spectrum_init (ManPages me);
 void manual_spectrum_init (ManPages me) {
 
-MAN_BEGIN ("Ltas", "ppgb", 20041122)
+MAN_BEGIN ("Ltas", "ppgb", 20070320)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
 	"#Ltas is short for Long-Term Average Spectrum.")
-NORMAL ("An object of class Ltas represents the power spectral density as a function of frequency, "
+NORMAL ("An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency, "
 	"expressed in dB/Hz relative to 2\\.c10^^-5^ Pa. ")
 ENTRY ("Inside an Ltas object")
 NORMAL ("With @Inspect, you will see the following attributes:")
@@ -104,7 +104,7 @@ TAG ("%x__1_")
 DEFINITION ("the frequency associated with the first bin, in Hertz. "
 	"Usually equals %dx / 2, because the first bin tends to start at 0 Hertz.")
 TAG ("%z__1%i_, %i = 1 ... %n__%x_")
-DEFINITION ("the power spectrum, expressed in dB. ")
+DEFINITION ("the power spectral density, expressed in dB. ")
 MAN_END
 
 MAN_BEGIN ("Ltas: Get bin number from frequency...", "ppgb", 20041122)
@@ -482,10 +482,10 @@ it removes the contour. I tested it. It works.
 */
 MAN_END
 
-MAN_BEGIN ("Spectrogram", "ppgb", 20030316)
+MAN_BEGIN ("Spectrogram", "ppgb", 20070321)
 INTRO ("One of the @@types of objects@ in P\\s{RAAT}. For tutorial information, see @@Intro 3. Spectral analysis@.")
 NORMAL ("A Spectrogram object represents  an acoustic time-frequency representation of a sound: "
-	"the power spectral density %P (%f, %t), expressed in Pa^2/Hz. "
+	"the @@power spectral density@ %PSD (%f, %t), expressed in Pa^2/Hz. "
 	"It is sampled into a number of points centred around equally spaced times %t__%i_ "
 	"and frequencies %f__%j_.")
 ENTRY ("Inside a Spectrogram")

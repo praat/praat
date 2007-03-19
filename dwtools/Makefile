@@ -24,7 +24,7 @@
 
 include ../makefile.defs
 
-CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys
+CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 all: libdwtools.a
 
@@ -66,7 +66,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TextGrid_extensions.o \
 	praat_MDS_init.o praat_David_init.o
 
-$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h
+$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
 
 
 libdwtools.a: $(OBJECTS)

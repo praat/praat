@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2006 Paul Boersma
+ * Copyright (C) 2002-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
  * pb 2006/10/29 TableOfReal_to_Table
  * pb 2006/11/25 Table_getGroupDifference_studentT
  * pb 2006/12/10 MelderInfo
+ * pb 2007/03/17 exported Table_numericize for optimizers
  */
 
 #include <ctype.h>
@@ -397,7 +398,7 @@ static void sortRowsByIndex (Table me) {
 	qsort (& my rows -> item [1], (unsigned long) my rows -> size, sizeof (TableRow), indexCompare);
 }
 
-static void Table_numericize (Table me, long icol) {
+void Table_numericize (Table me, long icol) {
 	long irow;
 	Melder_assert (icol >= 1);
 	Melder_assert (icol <= my numberOfColumns);
@@ -1162,87 +1163,6 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 	return difference;
 }
 
-Matrix Table_to_Matrix (Table me) {
-	long irow, icol;
-	Matrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize (me, icol);
-	}
-	for (irow = 1; irow <= my rows -> size; irow ++) {
-		TableRow row = my rows -> item [irow];
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy z [irow] [icol] = (float) row -> cells [icol]. number;
-		}
-	}
-end:
-	iferror return NULL;
-	return thee;
-}
-
-TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
-	long irow, icol;
-	TableOfReal thee;
-	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
-	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize (me, icol);
-	}
-	if (labelColumn) {
-		for (icol = 1; icol < labelColumn; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
-		}
-		for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol - 1, my columnHeaders [icol]. label);
-		}
-		for (irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = my rows -> item [irow];
-			char *string = row -> cells [labelColumn]. string;
-			TableOfReal_setRowLabel (thee, irow, string ? string : "");
-			for (icol = 1; icol < labelColumn; icol ++) {
-				thy data [irow] [icol] = row -> cells [icol]. number;
-			}
-			for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				thy data [irow] [icol - 1] = row -> cells [icol]. number;
-			}
-		}
-	} else {
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
-		}
-		for (irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = my rows -> item [irow];
-			for (icol = 1; icol <= my numberOfColumns; icol ++) {
-				thy data [irow] [icol] = row -> cells [icol]. number;
-			}
-		}
-	}
-end:
-	iferror return NULL;
-	return thee;
-}
-
-Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn) {
-	long irow, icol;
-	Table thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
-	Table_setColumnLabel (thee, 1, labelOfFirstColumn); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		char *columnLabel = my columnLabels [icol];
-		thy columnHeaders [icol + 1]. label = Melder_strdup (columnLabel && columnLabel [0] ? columnLabel : "?"); cherror
-	}
-	for (irow = 1; irow <= thy rows -> size; irow ++) {
-		char *stringValue = my rowLabels [irow];
-		TableRow row = thy rows -> item [irow];
-		row -> cells [1]. string = Melder_strdup (stringValue && stringValue [0] ? stringValue : "?"); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			double numericValue = my data [irow] [icol];
-			row -> cells [icol + 1]. string = Melder_strdup (Melder_double (numericValue)); cherror
-		}
-	}
-end:
-	iferror return NULL;
-	return thee;
-}
-
 double Table_getFisherF (Table me, long col1, long col2);
 double Table_getOneWayAnovaSignificance (Table me, long col1, long col2);
 double Table_getFisherFLowerLimit (Table me, long col1, long col2, double significanceLevel);
@@ -1363,6 +1283,36 @@ end:
 	forget (tableOfReal);
 	forget (sscp);
 	iferror Melder_clearError ();
+}
+
+static const char *visibleString (const char *s) {
+	return s != NULL && s [0] != '\0' ? s : "?";
+}
+
+void Table_list (Table me, bool includeRowNumbers) {
+	MelderInfo_open ();
+	if (includeRowNumbers) {
+		MelderInfo_write1 ("row");
+		if (my numberOfColumns > 0) MelderInfo_write1 ("\t");
+	}
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		if (icol > 1) MelderInfo_write1 ("\t");
+		MelderInfo_write1 (visibleString (my columnHeaders [icol]. label));
+	}
+	MelderInfo_write1 ("\n");
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		if (includeRowNumbers) {
+			MelderInfo_write1 (Melder_integer (irow));
+			if (my numberOfColumns > 0) MelderInfo_write1 ("\t");
+		}
+		TableRow row = my rows -> item [irow];
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			if (icol > 1) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (visibleString (row -> cells [icol]. string));
+		}
+		MelderInfo_write1 ("\n");
+	}
+	MelderInfo_close ();
 }
 
 int Table_writeToTableFile (Table me, MelderFile file) {

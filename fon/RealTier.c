@@ -24,6 +24,7 @@
  * pb 2005/03/02 RealTier_multiplyPart
  * pb 2007/01/27 Vector_to_RealTier_peaks finds peaks only within channel
  * pb 2007/01/28 made compatible with new getVector and getFunction1 API
+ * pb 2007
  */
 
 #include "RealTier.h"
@@ -83,6 +84,14 @@ static double getNcol (I) { iam (RealTier); return my points -> size; }
 static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
 static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
 
+static const char * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	(void) flags;
+	return "Time (s)";
+}
+
 class_methods (RealTier, Function)
 	class_method_local (RealTier, destroy)
 	class_method_local (RealTier, copy)
@@ -98,6 +107,7 @@ class_methods (RealTier, Function)
 	class_method (getNcol)
 	class_method (getVector)
 	class_method (getFunction1)
+	class_method (getUnitText)
 class_methods_end
 
 int RealTier_init (I, double tmin, double tmax) {
@@ -394,6 +404,21 @@ end:
 	Thing_swap (me, thee);
 	forget (thee);
 	return 1;
+}
+
+Table RealTier_downto_Table (I, const char *timeText, const char *valueText) {
+	iam (RealTier);
+	Table thee = Table_createWithoutColumnNames (my points -> size, 2); cherror
+	Table_setColumnLabel (thee, 1, timeText);
+	Table_setColumnLabel (thee, 2, valueText);
+	for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
+		RealPoint point = my points -> item [ipoint];
+		Table_setNumericValue (thee, ipoint, 1, point -> time); cherror
+		Table_setNumericValue (thee, ipoint, 2, point -> value); cherror
+	}
+end:
+	iferror forget (thee);
+	return thee;
 }
 
 RealTier Vector_to_RealTier (I, long channel) {

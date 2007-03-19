@@ -1,6 +1,6 @@
 /* Ltas.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2005/11/27 Sound_to_Ltas_pitchCorrected
  * pb 2005/12/10 Ltases_average
  * pb 2006/12/08 MelderInfo
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Ltas.h"
@@ -77,6 +78,7 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 
 class_methods (Ltas, Vector)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
 class_methods_end

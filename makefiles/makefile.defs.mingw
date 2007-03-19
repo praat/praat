@@ -1,9 +1,9 @@
 # File: makefile.defs.mingw
 
 # System: MinGW
-# Eric Carlson & Paul Boersma, May 19, 2005
+# Eric Carlson & Paul Boersma, March 20, 2007
 
-CC = gcc -D_WIN32 -DMINGW -Dmain=wingwmain -mwindows -O2
+CC = mingw32-gcc -D_WIN32 -DMINGW -std=gnu99 -DDONT_INCLUDE_QUICKTIME -Dmain=wingwmain -mwindows -O2
 
 LIBS = -lwinmm -lwsock32 -lcomctl32
 

@@ -1,6 +1,6 @@
 /* Excitation.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/02/11 Excitation_soundPressureToPhon: handle zero sound pressure correctly (thanks to James Keidel)
  * pb 2006/12/10 MelderInfo
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Excitation.h"
@@ -82,6 +83,7 @@ static void info (I) {
 
 class_methods (Excitation, Vector)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_FREQUENCY_BARK;
 class_methods_end
 
 Excitation Excitation_create (double df, long nf) {

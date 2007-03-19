@@ -1,6 +1,6 @@
 /* TextGrid.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2006/01/29 IntervalTier_readFromXwaves more forgiving
  * pb 2006/02/20 TextGrid_create guards against zero tiers
  * pb 2006/02/24 split TextGrid_create into TextGrid_createWithTiers and TextGrid_createWithoutTiers
+ * pb 2007/03/17 domain quantity
  */
 
 #include "TextGrid.h"
@@ -101,6 +102,7 @@ class_methods (TextInterval, Function)
 	class_method_local (TextInterval, writeBinary)
 	class_method_local (TextInterval, readBinary)
 	class_method_local (TextInterval, description)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 TextInterval TextInterval_create (double tmin, double tmax, const char *text) {
@@ -139,6 +141,7 @@ class_methods (TextTier, Function)
 	class_method_local (TextTier, writeBinary)
 	class_method_local (TextTier, readBinary)
 	class_method_local (TextTier, description)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 TextTier TextTier_create (double tmin, double tmax) {
@@ -165,6 +168,7 @@ class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, writeBinary)
 	class_method_local (IntervalTier, readBinary)
 	class_method_local (IntervalTier, description)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 IntervalTier IntervalTier_create (double tmin, double tmax) {
@@ -260,6 +264,7 @@ class_methods (TextGrid, Function)
 	class_method_local (TextGrid, readBinary)
 	class_method_local (TextGrid, description)
 	class_method_local (TextGrid, info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {

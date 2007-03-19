@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,18 @@
  */
 
 /*
- * pb 2005/06/16
+ * pb 2007/03/18
  */
 
-
 /* TableOfReal inherits from Data */
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
 #ifndef _Collection_h_
 	#include "Collection.h"
 #endif
 #ifndef _Strings_h_
 	#include "Strings.h"
+#endif
+#ifndef _Table_h_
+	#include "Table.h"
 #endif
 
 /* For the inheritors. */
@@ -56,8 +55,8 @@ long TableOfReal_columnLabelToIndex (I, const char *label);
 double TableOfReal_getColumnMean (I, long icol);
 double TableOfReal_getColumnStdev (I, long icol);
 
-Matrix TableOfReal_to_Matrix (I);
-TableOfReal Matrix_to_TableOfReal (I);
+TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
+Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn);
 int TableOfReal_formula (I, const char *expression, Any /* TableOfReal */ target);
 void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int iformat, int precision);
 void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,

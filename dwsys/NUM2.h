@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2006 David Weenink
+ * Copyright (C) 1997-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20060517 Latest modification.
+ djmw 20070302 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -877,6 +877,14 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 /* Get the intersection points of the line through the points (x1,y1) and (x2,y2) with the
 	rectangle with corners (xmin, ymin) and (xmax,ymax).
 	The returned value is the number of intersections found and is either 0 or 1 or 2.
+*/
+
+int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, 
+	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2);
+/*	
+	Returns in (xo1, yo1) and (xo2, yo2) the coordinates of that piece of the line (xl1, yl1)..(xl2, yl2)
+	that can be drawn within the rectangle with lowerleft corner (xr1, yr1) and upperright (xr2, yr2).
+	Returns 0 if there is nothing to be drawn inside.
 */
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi,

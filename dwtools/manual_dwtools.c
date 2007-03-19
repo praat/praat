@@ -1630,6 +1630,43 @@ NORMAL ("2. The local path is vertical. We calculate the %y-time from the line t
 	"topmost horizontal time block.")
 MAN_END
 
+MAN_BEGIN ("DTW: Get y time...", "djmw", 20070305)
+INTRO ("Queries the selected @DTW object for the time along the %y-direction "
+	"given the time along the \"%x-direction\". ")
+ENTRY ("Argument")
+TAG ("%Time")
+DEFINITION ("the time along the %x-direction.")
+ENTRY ("Behaviour")
+NORMAL ("When the %input time is in the interval [%xmin, %xmax], the %returned "
+	"time will be in the interval [%ymin, %ymax], where [%xmin, %xmax] and "
+	"[%ymin, %ymax] are the domains of the two \"objects\" from which the "
+	"DTW-object was constructed."
+	"For input times outside the domain we assume that the two object were aligned.")
+NORMAL ("We like to have a \"continuous\" interpretation of time for the quantized times in the %x and "
+	"%y direction; we make the path a piecewise linear monotonically increasing function. "
+	"There are special cases:")
+NORMAL ("1. The local path is in the %x-direction only. We calculate the %y-time from the line "
+	"that connects the lower-left position of the begin cell of this path to the "
+	"upper-right position of the last cell.")
+NORMAL ("2. The local path is in the x-direction only. We calculate the %y-time from the line "
+	"that connects the lower-left position of lowest cell to the upper-right position of the "
+	"highest cell.")
+NORMAL ("3. A cell is both part of a path in the %x- and the %y-direction. "
+	"We then calculate the intersection point of the paths in the %x- and the %y-directions. "
+	"The %y-times in this cell are now calculated from the two line segments that originate "
+	"from this intersection point.")
+MAN_END
+
+MAN_BEGIN ("DTW: Get x time...", "djmw", 20070305)
+INTRO ("Queries the selected @DTW object for the time along the %x-direction "
+	"given the time along the \"%y-direction\". ")
+ENTRY ("Argument")
+TAG ("%Time")
+DEFINITION ("the time along the %y-direction.")
+ENTRY ("Behaviour")
+NORMAL ("The behaviour is like @@DTW: Get y time...@")
+MAN_END
+
 MAN_BEGIN ("DTW: Swap axes", "djmw", 20050306)
 INTRO ("Swap the x and y-axes of the selected @DTW.")
 MAN_END
@@ -1644,9 +1681,14 @@ INTRO ("A command to convert for a selected @DTW the slope constraints "
 	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
 MAN_END
 
-MAN_BEGIN ("DTW & TextGrid: To TextGrid (warp times)", "djmw", 20060909)
+MAN_BEGIN ("DTW & TextGrid: To TextGrid (warp times)", "djmw", 20070306)
 INTRO ("Create a new TextGrid from the selected @DTW and @TextGrid by warping the "
-	"times from the selected textGrid to the newly created TextGrid.")
+	"times from the selected TextGrid to the newly created TextGrid.")
+ENTRY ("Algorithm")
+NORMAL ("First we check whether the y-domain of the DTW and the domain of the TextGrid are "
+	"equal. If they are, a new TextGrid is created by copying the selected one. "
+	"We then change its domain and make it equal to the x-domain of the DTW. "
+	"Then for each tier we change the domain and @@DTW: Get x time...|calculate new times@ by using the path.")
 MAN_END
 
 MAN_BEGIN ("Eigen", "djmw", 19981102)

@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2006/07/21 made Sound_FormantTier_filter_inline () accurate for higher numbers of formants
  * pb 2007/01/27 made compatible with stereo sounds
+ * pb 2007/03/17 domain quantity
  */
 
 #include "FormantTier.h"

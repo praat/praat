@@ -1,6 +1,6 @@
 /* Formant.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/10/05 allow reverse axes in scatter plot (and remove special routine for those)
  * pb 2005/12/08 Formant_getQuantileOfBandwidth
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Formant.h"
@@ -88,6 +89,7 @@ class_methods (Formant, Sampled)
 	class_method_local (Formant, writeBinary)
 	class_method_local (Formant, readBinary)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (getValueAtSample)
 class_methods_end
 

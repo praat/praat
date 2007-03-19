@@ -27,6 +27,7 @@
  * pb 2006/12/13 support for IEEE float 32-bit audio files
  * pb 2007/01/01 compatible with stereo sounds
  * pb 2007/01/27 more compatible with stereo sounds
+ * pb 2007/03/17 domain quantity
  */
 
 #include "LongSound.h"
@@ -123,6 +124,7 @@ class_methods (LongSound, Sampled)
 	class_method (copy);
 	us -> writeAscii = classData -> writeAscii;
 	us -> writeBinary = classData -> writeBinary;
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 LongSound LongSound_open (MelderFile fs) {

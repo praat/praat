@@ -20,37 +20,52 @@
 /*
  djmw 19981207
  djmw 20020813 GPL header
+ djmw 20070216 Latest modification
 */
 
-#define ooSTRUCT DTW_State
-oo_DEFINE_STRUCT (DTW_State)
+#define ooSTRUCT DTW_Path
+oo_DEFINE_STRUCT (DTW_Path)
 	oo_LONG (x)
 	oo_LONG (y)
-oo_END_STRUCT (DTW_State) 
+oo_END_STRUCT (DTW_Path) 
+#undef ooSTRUCT
+
+#define ooSTRUCT DTW_Path_Index
+oo_DEFINE_STRUCT (DTW_Path_Index)
+	oo_LONG (ibegin)
+	oo_LONG (iend)
+oo_END_STRUCT (DTW_Path_Index)
+#undef ooSTRUCT
+
+#define ooSTRUCT DTW_Path_xytime
+oo_DEFINE_STRUCT (DTW_Path_xytime)
+	oo_DOUBLE (x)
+	oo_DOUBLE (y)
+oo_END_STRUCT (DTW_Path_xytime) 
+#undef ooSTRUCT
+
+#define ooSTRUCT DTW_Path_Query
+oo_DEFINE_STRUCT (DTW_Path_Query)
+	oo_LONG (nx)
+	oo_LONG (ny)
+	oo_LONG (nxy)
+	oo_STRUCT_VECTOR (DTW_Path_xytime, xytimes, my nxy)
+	oo_STRUCT_VECTOR (DTW_Path_Index, xindex, my nx)
+	oo_STRUCT_VECTOR (DTW_Path_Index, yindex, my ny)
+oo_END_STRUCT (DTW_Path_Query) 
 #undef ooSTRUCT
 
 #define ooSTRUCT DTW
 oo_DEFINE_CLASS (DTW, Matrix)
 	oo_DOUBLE (weightedDistance)
 	oo_LONG (pathLength)
-	#if oo_WRITING || oo_DESCRIBING || oo_EQUALLING || oo_COMPARING
-		oo_STRUCT_VECTOR (DTW_State, path, my pathLength)
-	#elif oo_READING_ASCII
-		{
-		long i;
-		if (! (my path = NUMstructvector (DTW_State, 1, my nx + my ny - 1))) return 0;
-		for (i = 1; i <= my pathLength; i ++)
-			if (! DTW_State_readAscii (& my path [i], f)) return 0;
-		}
-	#elif oo_READING_BINARY	
-		{
-		long i;
-		if (! (my path = NUMstructvector (DTW_State, 1, my nx + my ny - 1))) return 0;
-		for (i = 1; i <= my pathLength; i ++)
-			if (! DTW_State_readBinary (& my path [i], f)) return 0;
-		}
-	#else
-		oo_STRUCT_VECTOR (DTW_State, path, my nx + my ny - 1)
+	oo_STRUCT_VECTOR (DTW_Path, path, my pathLength)
+	#if ! oo_READING && ! oo_WRITING
+		oo_STRUCT (DTW_Path_Query, pathQuery)
+	#endif
+	#if oo_READING
+		if (! DTW_Path_Query_init (& my pathQuery, my ny, my nx)) return 0;
+		DTW_Path_recode (me);
 	#endif
 oo_END_CLASS (DTW)
 #undef ooSTRUCT

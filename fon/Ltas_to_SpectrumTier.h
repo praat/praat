@@ -1,6 +1,6 @@
-/* Strings_def.h
+/* Ltas_to_SpectrumTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,17 @@
  */
 
 /*
- * pb 1997/10/19
- * pb 2002/07/16 GPL
+ * pb 2007/03/17
  */
 
+#ifndef _Ltas_h_
+	#include "Ltas.h"
+#endif
 
-#define ooSTRUCT Strings
-oo_DEFINE_CLASS (Strings, Data)
+#ifndef _SpectrumTier_h_
+	#include "SpectrumTier.h"
+#endif
 
-	oo_LONG (numberOfStrings)
-	oo_STRING_VECTOR (strings, my numberOfStrings)
+SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me);
 
-oo_END_CLASS (Strings)
-#undef ooSTRUCT
-
-
-/* End of file Strings_def.h */
+/* End of file Ltas_to_SpectrumTier.h */

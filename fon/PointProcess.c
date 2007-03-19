@@ -1,6 +1,6 @@
 /* PointProcess.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2004/04/16 added maximum period factor
  * pb 2004/07/09 better period counting
  * pb 2006/12/10 MelderInfo
+ * pb 2007/03/17 domain quantity
  */
 
 #include "PointProcess.h"
@@ -96,6 +97,7 @@ class_methods (PointProcess, Function)
 	class_method_local (PointProcess, readAscii)
 	class_method_local (PointProcess, writeBinary)
 	class_method_local (PointProcess, readBinary)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 int PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {

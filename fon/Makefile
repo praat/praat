@@ -1,13 +1,10 @@
 # Makefile of the library "fon"
-# Paul Boersma, January 8, 2007
+# Paul Boersma, March 18, 2007
 
 include ../makefile.defs
-CFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../LPC -I ../fon -I ../audio
+CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon
 
-OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
-   TableOfReal.o \
-   Distributions.o Transition.o Distributions_and_Transition.o \
-   Distributions_and_Strings.o PairDistribution.o \
+OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o Matrix.o Vector.o Polygon.o PointProcess.o \
    Matrix_and_PointProcess.o Matrix_and_Polygon.o AnyTier.o RealTier.o \
    Sound.o LongSound.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o ParamCurve.o \
@@ -16,7 +13,7 @@ OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
    Pitch_to_PointProcess.o Pitch_to_Sound.o Pitch_Intensity.o \
    PitchTier.o Pitch_to_PitchTier.o PitchTier_to_PointProcess.o PitchTier_to_Sound.o Manipulation.o \
    Pitch_AnyTier_to_PitchTier.o IntensityTier.o DurationTier.o AmplitudeTier.o \
-   Spectrum.o Ltas.o Spectrogram.o \
+   Spectrum.o Ltas.o Spectrogram.o SpectrumTier.o Ltas_to_SpectrumTier.o \
    Formant.o Image.o Sound_to_Formant.o Sound_and_Spectrogram.o \
    Sound_and_Spectrum.o Spectrum_and_Spectrogram.o Spectrum_to_Formant.o \
    FormantTier.o TextGrid.o Label.o \
@@ -49,4 +46,4 @@ libfon.a: $(OBJECTS)
 	ar cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
-$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../LPC/*.h
+$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h

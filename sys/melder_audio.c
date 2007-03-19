@@ -56,8 +56,6 @@
 #endif
 
 #if USE_PORTAUDIO
-	#include <sys/time.h>
-	#include <signal.h>
 	#include "portaudio.h"
 #elif defined (sgi)
 	/* For local audio: */
@@ -246,7 +244,11 @@ int Melder_stopWasExplicit (void) {
 		theTide = GetTickCount ();
 	}
 	static double Melder_clock (void) {
-		return (GetTickCount () - theTide) / 1000.0;
+		long ticks = GetTickCount ();
+		double elapsedTime = (ticks - theTide) / 1000.0;
+		//MelderInfo_writeLine5 (Melder_integer (theTide), "  ", Melder_integer (ticks), "  ", Melder_double (elapsedTime));
+		//MelderInfo_close ();
+		return elapsedTime;
 	}
 	static void Melder_stopClock (void) {
 	}
@@ -377,7 +379,7 @@ static Boolean workProc (XtPointer closure) {
 		if (Pa_IsStreamActive (my stream)) {
 			// my samplesPlayed has been set at interrupt time.
 			if (my callback && ! my callback (my closure,
-					//my samplesPlayed
+					//my samplesPlayed)
 					//(Pa_GetStreamTime (my stream) - my startingTime) * my sampleRate)
 					Melder_clock () * my sampleRate)
 				)
@@ -653,7 +655,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	Melder_startClock ();
 	err = Pa_StartStream (my stream);
 	if (err) return Melder_error ("PortAudio cannot start sound output: %s", Pa_GetErrorText (err));
-	//my startingTime = Pa_GetStreamTime (my stream);
+	my startingTime = Pa_GetStreamTime (my stream);
 	if (my asynchronicity <= Melder_INTERRUPTABLE) {
 		while (Pa_IsStreamActive (my stream)) {
 			bool interrupted = false;

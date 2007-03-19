@@ -1,6 +1,6 @@
 /* Spectrogram.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2000/09/25
  * pb 2002/07/16 GPL
  * pb 2003/03/08 more info
  * pb 2003/05/27 autoscaling
+ * pb 2007/03/17 domain quantity
  */
 
 #include <time.h>
@@ -50,6 +50,7 @@ static void info (I) {
 
 class_methods (Spectrogram, Matrix)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 Any Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,

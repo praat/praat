@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/28
+ * pb 2007/03/14
  */
 
 #ifndef _Graphics_h_
@@ -90,7 +90,7 @@ typedef struct {
 		/* Current coordinate transformation. */ \
 	/* Graphics state. */ \
 	int lineType, colour; \
-	float lineWidth; \
+	float lineWidth, arrowSize; \
 	int horizontalTextAlignment, verticalTextAlignment; \
 	float textRotation, wrapWidth, secondIndent, textX, textY; \
 	int font, fontSize, fontStyle; \
@@ -207,7 +207,8 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 	/* 144 */ SET_CIRCUMFLEX_IS_SUPERSCRIPT, SET_UNDERSCORE_IS_SUBSCRIPT,
 	/* 146 */ SET_DOLLAR_SIGN_IS_CODE, SET_AT_SIGN_IS_LINK,
 	/* 148 */ BUTTON, ROUNDED_RECTANGLE, FILL_ROUNDED_RECTANGLE, FILL_ARC,
-	/* 152 */ INNER_RECTANGLE, CELL_ARRAY8, IMAGE, HIGHLIGHT2, UNHIGHLIGHT2
+	/* 152 */ INNER_RECTANGLE, CELL_ARRAY8, IMAGE, HIGHLIGHT2, UNHIGHLIGHT2,
+	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW
 };
 
 void _Graphics_text_init (I);

@@ -1,6 +1,6 @@
 /* TableOfReal.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2005/09/18 SILIPA versus XIPA widths
  * pb 2006/04/17 getRowStr, getColStr
  * pb 2006/12/10 MelderInfo
+ * pb 2007/03/17 moved Table stuff here
  */
 
 #include <ctype.h>
@@ -750,28 +751,6 @@ end:
 	return thee;	
 }
 
-Matrix TableOfReal_to_Matrix (I) {
-	iam (TableOfReal);
-	long i, j;
-	Matrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns); cherror
-	for (i = 1; i <= my numberOfRows; i ++) for (j = 1; j <= my numberOfColumns; j ++)
-		thy z [i] [j] = my data [i] [j];
-end:
-	iferror return NULL;
-	return thee;
-}
-
-TableOfReal Matrix_to_TableOfReal (I) {
-	iam (Matrix);
-	long i, j;
-	TableOfReal thee = TableOfReal_create (my ny, my nx); cherror
-	for (i = 1; i <= my ny; i ++) for (j = 1; j <= my nx; j ++)
-		thy data [i] [j] = my z [i] [j];
-end:
-	iferror return NULL;
-	return thee;
-}
-
 /***** DRAW *****/
 
 static void NUMrationalize (double x, long *numerator, long *denominator) {
@@ -1156,6 +1135,73 @@ void TableOfReal_sortByLabel (I, long column1, long column2) {
 void TableOfReal_sortByColumn (I, long column1, long column2) {
 	iam (TableOfReal);
 	TableOfReal_sort (me, FALSE, column1, column2);
+}
+
+TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
+	long irow, icol;
+	TableOfReal thee;
+	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
+	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		Table_numericize (me, icol);
+	}
+	if (labelColumn) {
+		for (icol = 1; icol < labelColumn; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol - 1, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			char *string = row -> cells [labelColumn]. string;
+			TableOfReal_setRowLabel (thee, irow, string ? string : "");
+			for (icol = 1; icol < labelColumn; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
+				//thy data [irow] [icol] = Table_getNumericValue (me, irow, icol);
+			}
+			for (icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol - 1] = row -> cells [icol]. number;   // Optimization.
+				//thy data [irow] [icol - 1] = Table_getNumericValue (me, irow, icol);
+			}
+		}
+	} else {
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			TableOfReal_setColumnLabel (thee, icol, my columnHeaders [icol]. label);
+		}
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			for (icol = 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
+				//thy data [irow] [icol] = Table_getNumericValue (me, irow, icol);
+			}
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
+}
+
+Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn) {
+	long irow, icol;
+	Table thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
+	Table_setColumnLabel (thee, 1, labelOfFirstColumn); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		char *columnLabel = my columnLabels [icol];
+		thy columnHeaders [icol + 1]. label = Melder_strdup (columnLabel && columnLabel [0] ? columnLabel : "?"); cherror
+	}
+	for (irow = 1; irow <= thy rows -> size; irow ++) {
+		char *stringValue = my rowLabels [irow];
+		TableRow row = thy rows -> item [irow];
+		row -> cells [1]. string = Melder_strdup (stringValue && stringValue [0] ? stringValue : "?"); cherror
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			double numericValue = my data [irow] [icol];
+			row -> cells [icol + 1]. string = Melder_strdup (Melder_double (numericValue)); cherror
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
 }
 
 int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {

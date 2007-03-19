@@ -1,6 +1,6 @@
 /* Graphics.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/08/02
  * pb 2002/03/07 GPL
+ * pb 2007/03/14 arrowSize
  */
 
 #include <stdarg.h>
@@ -99,6 +99,7 @@ int Graphics_init (I) {
 	widgetToWindowCoordinates (me);
 	computeTrafo (me);
 	my lineWidth = 1.0;
+	my arrowSize = 1.0;
 	my font = Graphics_HELVETICA;
 	my fontSize = 10;
 	my fontStyle = Graphics_NORMAL;

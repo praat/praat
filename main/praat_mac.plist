@@ -222,7 +222,7 @@
 				<string>OTGrammar</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat OT grammar</string>
+			<string>Praat Optimality-Theoretic grammar</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -237,6 +237,20 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Praat multi-level OT grammar</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Distributions</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat distribution table</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>

@@ -1,6 +1,6 @@
 /* Cochleagram.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,14 @@
 /*
  * pb 1995/07/24
  * pb 2002/07/16 GPL
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Graphics.h"
 #include "Cochleagram.h"
 
 class_methods (Cochleagram, Matrix)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,

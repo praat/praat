@@ -1,6 +1,6 @@
 /* Intensity.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/10/24 Sampled statistics
  * pb 2004/11/21 corrected sones bug
  * pb 2006/12/08 MelderInfo
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Intensity.h"
@@ -66,6 +67,7 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 
 class_methods (Intensity, Vector)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
 class_methods_end

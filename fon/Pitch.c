@@ -30,6 +30,7 @@
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/12 guard path finder against weird settings
  * pb 2007/01/12 commented out Melder_casual in Pitch_difference
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Pitch.h"
@@ -404,6 +405,7 @@ class_methods (Pitch, Sampled)
 	class_method_local (Pitch, writeBinary)
 	class_method_local (Pitch, readBinary)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (getMinimumUnit)
 	class_method (getMaximumUnit)
 	class_method (getUnitText)

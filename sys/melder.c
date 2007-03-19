@@ -43,7 +43,7 @@
 #endif
 #if defined (macintosh)
 	#include "macport_on.h"
-	#include <Sound.h>
+	//#include <Sound.h>
 	#include "macport_off.h"
 #endif
 #ifndef CONSOLE_APPLICATION
@@ -51,7 +51,7 @@
 	#include "machine.h"
 	#ifdef macintosh
 		#include "macport_on.h"
-		#include <Events.h>
+		//#include <Events.h>
 		#include <Dialogs.h>
 		#include <MacErrors.h>
 		#include "macport_off.h"

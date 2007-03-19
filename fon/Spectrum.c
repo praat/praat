@@ -1,6 +1,6 @@
 /* Spectrum.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/10/31 Sampled statistics
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2006/02/06 better cepstral smoothing
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Sound_and_Spectrum.h"
@@ -79,6 +80,7 @@ class_methods (Spectrum, Matrix)
 	class_method (info)
 	class_method_local (Spectrum, readAscii)
 	class_method_local (Spectrum, readBinary)
+	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
 	class_method (getValueAtSample)
 class_methods_end
 
@@ -197,6 +199,51 @@ end:
 	NUMfvector_free (xWC, ifmin);
 	NUMfvector_free (yWC, ifmin);
 	Melder_clearError ();
+}
+
+void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
+{
+	MelderInfo_open ();
+	bool on = false;
+	if (includeBinNumbers) { MelderInfo_write1 ("bin"); on = true; }
+	if (includeFrequency) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("freq(Hz)"); on = true; }
+	if (includeRealPart) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("re(Pa/Hz)"); on = true; }
+	if (includeImaginaryPart) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("im(Pa/Hz)"); on = true; }
+	if (includeEnergyDensity) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("energy(Pa^2/Hz^2)"); on = true; }
+	if (includePowerDensity) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("pow(dB/Hz)"); on = true; }
+	MelderInfo_write1 ("\n");
+	for (long ibin = 1; ibin <= my nx; ibin ++) {
+		bool on = false;
+		if (includeBinNumbers) { MelderInfo_write1 (Melder_integer (ibin)); on = true; }
+		if (includeFrequency) { 
+			if (on) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (Melder_double (my x1 + (ibin - 1) * my dx));
+			on = true;
+		}
+		if (includeRealPart) { 
+			if (on) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (Melder_double (my z [1] [ibin]));
+			on = true;
+		}
+		if (includeImaginaryPart) { 
+			if (on) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (Melder_double (my z [2] [ibin]));
+			on = true;
+		}
+		if (includeEnergyDensity) { 
+			if (on) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (Melder_double (Sampled_getValueAtSample (me, ibin, 0, 1)));
+			on = true;
+		}
+		if (includePowerDensity) { 
+			if (on) MelderInfo_write1 ("\t");
+			MelderInfo_write1 (Melder_double (Sampled_getValueAtSample (me, ibin, 0, 2)));
+			on = true;
+		}
+		MelderInfo_write1 ("\n");
+	}
+	MelderInfo_close ();
 }
 
 Spectrum Matrix_to_Spectrum (Matrix me) {
@@ -323,9 +370,9 @@ double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax) {
 	 * This happens almost always for the first bin,
 	 * which is usually centred at f=0, hence has a width of 0.5 * my dx,
 	 * and quite often for the last bin as well (namely if the original sound had an even number of samples),
-	 * which is then centred at f=nyquist, hence a width of of 0.5 * my dx.
+	 * which is then centred at f=nyquist, hence has a width of 0.5 * my dx.
 	 *
-	 * All this truncation is automatically done by Sampled_getMean ().
+	 * All this truncation is automatically performed by Sampled_getMean ().
 	 */
 	return Sampled_getIntegral (me, fmin, fmax, 0, 1, FALSE);
 }

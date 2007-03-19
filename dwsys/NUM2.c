@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@
  djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
+ djmw 20070302 NUMclipLineWithinRectangle
 */
 
 #include "SVD.h"
@@ -3194,6 +3195,150 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 		yi[ni] = y[i] + t * (y[i+1] - y[i]);
 	}
 	return ni;
+}
+
+
+int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, 
+	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2)
+{
+	int hline, vline, ncrossings = 0, xswap, yswap;
+	double a, b, x, y, t, xc[5], yc[5], xmin, xmax, ymin, ymax;
+	
+	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
+	
+	// This test first because we expect the majority of the tested segments to be 
+	// within the rectangle
+	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 && 
+		xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) return 1;
+
+	// All lines that are completely outside the rectangle
+	if ((xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
+		(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) return 0;
+	
+	// At least line spans (part of) the rectangle.
+	// Get extremes in x and y of the line for easy testing further on.
+	if (xl1 < xl2)
+	{
+		xmin = xl1; xmax = xl2; xswap = 0;
+	}
+	else
+	{
+		xmin = xl2; xmax = xl1; xswap = 1;
+	}
+	if (yl1 < yl2)
+	{
+		ymin = yl1; ymax = yl2; yswap = 0;
+	}
+	else
+	{
+		ymin = yl2; ymax = yl1; yswap = 1;
+	}
+	
+	if (hline = yl1 == yl2)
+	{
+		if (xmin < xr1) *xo1 = xr1;
+		if (xmax > xr2) *xo2 = xr2;
+		if (xswap)
+		{
+			t = *xo1; *xo1 = *xo2; *xo2 = t;
+		}
+		return 1;
+	}
+	if (vline = xl1 == xl2)
+	{
+		if (ymin < yr1) *yo1 = yr1;
+		if (ymax > yr2) *yo2 = yr2;
+		if (yswap)
+		{
+			t = *yo1; *yo1 = *yo2; *yo2 = t;
+		}
+		return 1;
+	}
+	
+	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
+	// Parametrize it as y = ax + b
+	
+	a = (yl1 -yl2) / (xl1 - xl2);
+	b = yl1 - a * xl1;
+	
+		
+	//	To determine the crossings we have to avoid counting the crossings in a corner twice.
+	//	Therefore we test the corners inclusive (..<=..<=..) on the vertical borders of the rectangle
+	//	and exclusive (..<..<) at the horizontal borders.
+	
+	
+	y = a * xr1 + b; // Crossing at y with left border: x = xr1
+	
+	if (y >= yr1 && y <= yr2 && xmin < xr1) // Within vertical range?
+	{
+		ncrossings++;
+		xc[ncrossings] = xr1; yc[ncrossings] = y;
+		xc[2] = xmax;
+		yc[2] = xl1 > xl2 ? yl1 : yl2;
+	}
+	
+	x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
+	
+	if (x > xr1 && x < xr2 && ymax > yr2) // Within horizontal range?
+	{
+		ncrossings++;
+		xc[ncrossings] = x; yc[ncrossings] = yr2;
+		if (ncrossings == 1)
+		{
+			yc[2] = ymin;
+			xc[2] = yl1 < yl2 ? xl1 : xl2;
+		}
+	}
+	
+	y = a * xr2 + b; // Crossing at y with right border: x = xr2
+	
+	if (y >= yr1 && y <= yr2 && xmax > xr2) // Within vertical range?
+	{
+		ncrossings++;
+		xc[ncrossings] = xr2; yc[ncrossings] = y;
+		if (ncrossings == 1)
+		{
+			xc[2] = xmin;
+			yc[2] = xl1 < xl2 ? yl1 : yl2;
+		}
+	}
+	
+	x = (yr1 - b) / a; // Crossing at x with bottom border: y = yr1
+	
+	if (x > xr1 && x < xr2 && ymin < yr1) 
+	{
+		ncrossings++;
+		xc[ncrossings] = x; yc[ncrossings] = yr1;
+		if (ncrossings == 1)
+		{
+			yc[2] = ymax;
+			xc[2] = yl1 > yl2 ? xl1 : xl2;
+		}
+	}
+	if (ncrossings == 0)
+	{
+		return 0;
+	}
+	if (ncrossings == 1 || ncrossings == 2)
+	{
+		// if start and endpoint of line are outside rectangle and ncrossings == 1,
+		// than the line only touches.
+		if (ncrossings == 1 &&
+			(xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
+			(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) return 0;
+			
+		if ((xc[1] > xc[2] && ! xswap) || (xc[1] < xc[2] && xswap))
+		{
+			t = xc[1]; xc[1] = xc[2]; xc[2] = t;	
+			t = yc[1]; yc[1] = yc[2]; yc[2] = t;	
+		}
+		*xo1 = xc[1]; *yo1 = yc[1]; *xo2 = xc[2]; *yo2 = yc[2];
+	}
+	else
+	{
+		return Melder_error ("Too many crossings found.");
+	}
+	return 1;
 }
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi, 

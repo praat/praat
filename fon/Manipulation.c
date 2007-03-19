@@ -23,6 +23,7 @@
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 made compatible with stereo sounds (by converting them to mono)
  * pb 2007/02/25 changed default sampling frequency to 44100 Hz
+ * pb 2007/03/17 domain quantity
  */
 
 #include "Manipulation.h"
@@ -63,6 +64,7 @@ class_methods (Manipulation, Function)
 	class_method_local (Manipulation, readAscii)
 	class_method_local (Manipulation, writeBinary)
 	class_method_local (Manipulation, readBinary)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 Manipulation Manipulation_create (double tmin, double tmax) {

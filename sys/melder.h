@@ -717,6 +717,19 @@ int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const
 
 void Melder_audioTrigger (void);
 
+/********** QUANTITY **********/
+
+#define MelderQuantity_NONE  0
+#define MelderQuantity_TIME_SECONDS  1
+#define MelderQuantity_FREQUENCY_HERTZ  2
+#define MelderQuantity_FREQUENCY_BARK  3
+#define MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES  4
+#define MelderQuantity_NUMBER_OF_QUANTITIES  4
+const char * MelderQuantity_getText (int quantity);   // e.g. "Time"
+const char * MelderQuantity_getWithUnitText (int quantity);   // e.g. "Time (s)"
+const char * MelderQuantity_getLongUnitText (int quantity);   // e.g. "seconds"
+const char * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
+
 /********** MISCELLANEOUS **********/
 
 char * Melder_getenv (const char *variableName);

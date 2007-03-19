@@ -22,11 +22,13 @@
  * pb 2004/07/14 maximum amplitude factor
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 compatible with stereo Sounds
+ * pb 2007/03/17 domain quantity
  */
 
 #include "AmplitudeTier.h"
 
 class_methods (AmplitudeTier, RealTier)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {

@@ -1,6 +1,6 @@
 /* Matrix.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/06/19 Eigen
  * pb 2003/08/28 Matrix_writeToHeaderlessSpreadsheetFile
  * pb 2005/06/16 units
+ * pb 2007/03/18 moved table stuff here
  */
 
 #include "Matrix.h"
@@ -711,6 +712,45 @@ void Matrix_scaleAbsoluteExtremum (I, double scale) { iam (Matrix);
 			}
 		}
 	}
+}
+
+Matrix TableOfReal_to_Matrix (I) {
+	iam (TableOfReal);
+	long i, j;
+	Matrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns); cherror
+	for (i = 1; i <= my numberOfRows; i ++) for (j = 1; j <= my numberOfColumns; j ++)
+		thy z [i] [j] = my data [i] [j];
+end:
+	iferror return NULL;
+	return thee;
+}
+
+TableOfReal Matrix_to_TableOfReal (I) {
+	iam (Matrix);
+	long i, j;
+	TableOfReal thee = TableOfReal_create (my ny, my nx); cherror
+	for (i = 1; i <= my ny; i ++) for (j = 1; j <= my nx; j ++)
+		thy data [i] [j] = my z [i] [j];
+end:
+	iferror return NULL;
+	return thee;
+}
+
+Matrix Table_to_Matrix (Table me) {
+	long irow, icol;
+	Matrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns); cherror
+	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		Table_numericize (me, icol);
+	}
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+			thy z [irow] [icol] = (float) row -> cells [icol]. number;
+		}
+	}
+end:
+	iferror return NULL;
+	return thee;
 }
 
 /* End of file Matrix.c */

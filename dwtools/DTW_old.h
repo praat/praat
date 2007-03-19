@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070304 Latest modification.
+ djmw 20070129 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -54,9 +54,7 @@ oo_CLASS_CREATE (DTW, Matrix)
 #define DTW_X 4
 #define DTW_Y 6
 
-int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
 
-/* Prototype on y-axis and test on x-axis */
 Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c);
 	
@@ -85,15 +83,10 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope);
 		for Spoken Word	recognition, IEEE Trans. on ASSP, vol 26, 43-49.
 */
 
-void DTW_Path_recode (DTW me);
-
 double DTW_getPathY (DTW me, double tx);
 /*
 	Get the time Y-time that corresponds to time t (along X).
 */
-double DTW_getYTime (DTW me, double tx);
-double DTW_getXTime (DTW me, double ty);
-
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
 void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,

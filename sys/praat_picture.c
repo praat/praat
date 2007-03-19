@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2005/07/05 Draw function...
  * pb 2006/11/22 after 14 years we renamed "Plain line" to "Solid line", which is the common term nowadays
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/03/14 arrowSize
  */
 
 #include "praatP.h"
@@ -264,7 +265,7 @@ END
 
 static int praat_lineType = Graphics_DRAWN;
 static int praat_colour = Graphics_BLACK;
-static float praat_lineWidth = 1.0;
+static float praat_lineWidth = 1.0, praat_arrowSize = 1.0;
 
 static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
 static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
@@ -317,6 +318,20 @@ DO
 	praat_picture_close ();
 	if (theCurrentPraat == & theForegroundPraat) {
 		praat_lineWidth = lineWidth;
+	}
+END
+
+FORM (Arrow_size, "Praat picture: Arrow size", 0)
+	POSITIVE ("Arrow size", "1.0")
+	OK
+SET_REAL ("Arrow size", praat_arrowSize);
+DO
+	double arrowSize = GET_REAL ("Arrow size");
+	praat_picture_open ();
+	Graphics_setArrowSize (GRAPHICS, arrowSize);
+	praat_picture_close ();
+	if (theCurrentPraat == & theForegroundPraat) {
+		praat_arrowSize = arrowSize;
 	}
 END
 
@@ -613,10 +628,8 @@ FORM (DrawDoubleArrow, "Praat picture: Draw double arrow", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_arrow (GRAPHICS, GET_REAL ("From x"), GET_REAL ("From y"), GET_REAL ("To x"),
+	Graphics_doubleArrow (GRAPHICS, GET_REAL ("From x"), GET_REAL ("From y"), GET_REAL ("To x"),
 		GET_REAL ("To y"));
-	Graphics_arrow (GRAPHICS, GET_REAL ("To x"), GET_REAL ("To y"), GET_REAL ("From x"),
-		GET_REAL ("From y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -1374,6 +1387,7 @@ void praat_picture_open (void) {
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setLineType (GRAPHICS, praat_lineType);
 	Graphics_setLineWidth (GRAPHICS, praat_lineWidth);
+	Graphics_setArrowSize (GRAPHICS, praat_arrowSize);
 	Graphics_setColour (GRAPHICS, praat_colour);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
@@ -1545,6 +1559,7 @@ void praat_picture_init (void) {
 	praatButton_dashedLine = praat_addMenuCommand ("Picture", "Pen", "Dashed line", 0, praat_CHECKABLE, DO_Dashed_line);
 	praat_addMenuCommand ("Picture", "Pen", "-- line width --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "Pen", "Line width...", 0, 0, DO_Line_width);
+	praat_addMenuCommand ("Picture", "Pen", "Arrow size...", 0, 0, DO_Arrow_size);
 	praat_addMenuCommand ("Picture", "Pen", "-- colour --", 0, 0, 0);
 	praatButton_black = praat_addMenuCommand ("Picture", "Pen", "Black", 0, praat_CHECKABLE, DO_Black);
 	praatButton_white = praat_addMenuCommand ("Picture", "Pen", "White", 0, praat_CHECKABLE, DO_White);

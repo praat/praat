@@ -52,10 +52,43 @@
 		2339E3B20B2759FA00B6B6A7 /* Intensity_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2339E3B00B2759FA00B6B6A7 /* Intensity_extensions.h */; };
 		2339E4AE0B29EBFC00B6B6A7 /* melder_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */; };
 		2339E6FD0B2C77CC00B6B6A7 /* melder_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2339E6FC0B2C77CB00B6B6A7 /* melder_alloc.c */; };
+		233B13EC0BB2AC5B004440C3 /* gsl_sf__bessel_In.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B13EB0BB2AC5B004440C3 /* gsl_sf__bessel_In.c */; };
+		233B13EF0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B13EE0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c */; };
+		233B13F20BB2AC91004440C3 /* gsl_sf__bessel_I1.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B13F10BB2AC91004440C3 /* gsl_sf__bessel_I1.c */; };
+		233B13FD0BB2AD70004440C3 /* gsl_sf__bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B13FC0BB2AD70004440C3 /* gsl_sf__bessel.c */; };
+		233B14000BB2AD8E004440C3 /* gsl_sf__bessel_temme.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B13FF0BB2AD8E004440C3 /* gsl_sf__bessel_temme.c */; };
+		233B14030BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B14020BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c */; };
+		233B14060BB2ADBB004440C3 /* gsl_sf__bessel_K0.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */; };
+		233B14090BB2ADC9004440C3 /* gsl_sf__bessel_K1.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */; };
+		233B140C0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B140B0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c */; };
+		2343BF800BAC1526003D66E8 /* melder_quantity.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343BF7F0BAC1526003D66E8 /* melder_quantity.c */; };
+		2343BFBF0BAC2001003D66E8 /* SpectrumTier.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343BFBD0BAC2001003D66E8 /* SpectrumTier.c */; };
+		2343BFC00BAC2001003D66E8 /* SpectrumTier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343BFBE0BAC2001003D66E8 /* SpectrumTier.h */; };
+		2343BFD80BAC23B3003D66E8 /* Ltas_to_SpectrumTier.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343BFD60BAC23B3003D66E8 /* Ltas_to_SpectrumTier.c */; };
+		2343BFD90BAC23B3003D66E8 /* Ltas_to_SpectrumTier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343BFD70BAC23B3003D66E8 /* Ltas_to_SpectrumTier.h */; };
+		2343C07A0BAC3066003D66E8 /* manual_statistics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C0700BAC3066003D66E8 /* manual_statistics.c */; };
+		2343C07B0BAC3066003D66E8 /* praat_Stat.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C0710BAC3066003D66E8 /* praat_Stat.c */; };
+		2343C07C0BAC3066003D66E8 /* Regression_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C0720BAC3066003D66E8 /* Regression_def.h */; };
+		2343C07D0BAC3066003D66E8 /* Regression.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C0730BAC3066003D66E8 /* Regression.c */; };
+		2343C07E0BAC3066003D66E8 /* Regression.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C0740BAC3066003D66E8 /* Regression.h */; };
+		2343C07F0BAC3066003D66E8 /* Table_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C0750BAC3066003D66E8 /* Table_def.h */; };
+		2343C0800BAC3066003D66E8 /* Table.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C0760BAC3066003D66E8 /* Table.c */; };
+		2343C0810BAC3066003D66E8 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C0770BAC3066003D66E8 /* Table.h */; };
+		2343C0820BAC3066003D66E8 /* TableEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C0780BAC3066003D66E8 /* TableEditor.c */; };
+		2343C0830BAC3066003D66E8 /* TableEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C0790BAC3066003D66E8 /* TableEditor.h */; };
+		2343C20D0BAE14FE003D66E8 /* Distributions_and_Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C20C0BAE14FE003D66E8 /* Distributions_and_Strings.c */; };
+		2343C20F0BAE1504003D66E8 /* Distributions_and_Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C20E0BAE1504003D66E8 /* Distributions_and_Strings.h */; };
+		2343C2130BAE1511003D66E8 /* TableOfReal_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2100BAE1511003D66E8 /* TableOfReal_def.h */; };
+		2343C2140BAE1511003D66E8 /* TableOfReal.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C2110BAE1511003D66E8 /* TableOfReal.c */; };
+		2343C2150BAE1511003D66E8 /* TableOfReal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2120BAE1511003D66E8 /* TableOfReal.h */; };
+		2343C2360BAE1567003D66E8 /* Distributions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C2340BAE1567003D66E8 /* Distributions.c */; };
+		2343C2370BAE1567003D66E8 /* Distributions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2350BAE1567003D66E8 /* Distributions.h */; };
+		2343C2B40BAE20C1003D66E8 /* PairDistribution_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2B10BAE20C1003D66E8 /* PairDistribution_def.h */; };
+		2343C2B50BAE20C1003D66E8 /* PairDistribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C2B20BAE20C1003D66E8 /* PairDistribution.c */; };
+		2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2B30BAE20C1003D66E8 /* PairDistribution.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
-		23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7209A22902004E41D5 /* gsl_sf__bessel_amp_phase.c */; };
 		23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
 		23D87E860B3C929700AD716D /* Eigen_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D87E830B3C929700AD716D /* Eigen_def.h */; };
 		23D87E870B3C929700AD716D /* Eigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D87E840B3C929700AD716D /* Eigen.c */; };
@@ -235,10 +268,6 @@
 		23E5CFFA09A22A57004E41D5 /* Cochleagram.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA4709A228FF004E41D5 /* Cochleagram.h */; };
 		23E5CFFB09A22A57004E41D5 /* Cochleagram_and_Excitation.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA4809A228FF004E41D5 /* Cochleagram_and_Excitation.c */; };
 		23E5CFFC09A22A57004E41D5 /* Cochleagram_and_Excitation.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA4909A228FF004E41D5 /* Cochleagram_and_Excitation.h */; };
-		23E5CFFD09A22A57004E41D5 /* Distributions.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA4A09A228FF004E41D5 /* Distributions.c */; };
-		23E5CFFE09A22A57004E41D5 /* Distributions.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA4B09A228FF004E41D5 /* Distributions.h */; };
-		23E5CFFF09A22A57004E41D5 /* Distributions_and_Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA4C09A228FF004E41D5 /* Distributions_and_Strings.c */; };
-		23E5D00009A22A57004E41D5 /* Distributions_and_Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA4D09A228FF004E41D5 /* Distributions_and_Strings.h */; };
 		23E5D00109A22A57004E41D5 /* Distributions_and_Transition.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA4E09A228FF004E41D5 /* Distributions_and_Transition.c */; };
 		23E5D00209A22A57004E41D5 /* Distributions_and_Transition.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA4F09A228FF004E41D5 /* Distributions_and_Transition.h */; };
 		23E5D00309A22A57004E41D5 /* DurationTier.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA5009A228FF004E41D5 /* DurationTier.c */; };
@@ -275,8 +304,6 @@
 		23E5D02209A22A57004E41D5 /* Matrix_and_PointProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA7309A228FF004E41D5 /* Matrix_and_PointProcess.h */; };
 		23E5D02309A22A57004E41D5 /* Matrix_and_Polygon.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA7409A228FF004E41D5 /* Matrix_and_Polygon.c */; };
 		23E5D02409A22A57004E41D5 /* Matrix_and_Polygon.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA7509A228FF004E41D5 /* Matrix_and_Polygon.h */; };
-		23E5D02509A22A57004E41D5 /* PairDistribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA7609A228FF004E41D5 /* PairDistribution.c */; };
-		23E5D02609A22A57004E41D5 /* PairDistribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA7709A22900004E41D5 /* PairDistribution.h */; };
 		23E5D02709A22A57004E41D5 /* ParamCurve.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA7809A22900004E41D5 /* ParamCurve.c */; };
 		23E5D02809A22A57004E41D5 /* ParamCurve.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA7909A22900004E41D5 /* ParamCurve.h */; };
 		23E5D02909A22A57004E41D5 /* Pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA7A09A22900004E41D5 /* Pitch.c */; };
@@ -339,8 +366,6 @@
 		23E5D06209A22A57004E41D5 /* Spectrum_to_Formant.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */; };
 		23E5D06309A22A57004E41D5 /* SpellingChecker.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CAB609A22900004E41D5 /* SpellingChecker.c */; };
 		23E5D06409A22A57004E41D5 /* SpellingChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAB709A22900004E41D5 /* SpellingChecker.h */; };
-		23E5D06709A22A57004E41D5 /* TableOfReal.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CABA09A22900004E41D5 /* TableOfReal.c */; };
-		23E5D06809A22A57004E41D5 /* TableOfReal.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CABB09A22900004E41D5 /* TableOfReal.h */; };
 		23E5D06909A22A57004E41D5 /* TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CABC09A22900004E41D5 /* TextGrid.c */; };
 		23E5D06A09A22A57004E41D5 /* TextGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CABD09A22900004E41D5 /* TextGrid.h */; };
 		23E5D06B09A22A57004E41D5 /* Transition.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CABE09A22900004E41D5 /* Transition.c */; };
@@ -513,10 +538,6 @@
 		23E5D11609A22A57004E41D5 /* FujisakiPitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA5B09A228FF004E41D5 /* FujisakiPitch.h */; };
 		23E5D11709A22A57004E41D5 /* Sound_and_Cepstrum.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C97B09A228FD004E41D5 /* Sound_and_Cepstrum.c */; };
 		23E5D11809A22A57004E41D5 /* Sound_and_Cepstrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C97C09A228FD004E41D5 /* Sound_and_Cepstrum.h */; };
-		23E5D11909A22A57004E41D5 /* manual_statistics.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2D09A228FF004E41D5 /* manual_statistics.c */; };
-		23E5D11A09A22A57004E41D5 /* Table.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA3309A228FF004E41D5 /* Table.c */; };
-		23E5D11B09A22A57004E41D5 /* Table.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA3409A228FF004E41D5 /* Table.h */; };
-		23E5D11C09A22A57004E41D5 /* praat_Stat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2E09A228FF004E41D5 /* praat_Stat.c */; };
 		23E5D11D09A22A57004E41D5 /* Formula.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB1309A22901004E41D5 /* Formula.c */; };
 		23E5D11E09A22A57004E41D5 /* Formula.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB1409A22901004E41D5 /* Formula.h */; };
 		23E5D11F09A22A57004E41D5 /* CCA.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9B709A228FD004E41D5 /* CCA.c */; };
@@ -556,11 +577,6 @@
 		23E5D14109A22A57004E41D5 /* Tube.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C98209A228FD004E41D5 /* Tube.h */; };
 		23E5D14209A22A57004E41D5 /* NUMfft_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C99209A228FD004E41D5 /* NUMfft_d.c */; };
 		23E5D14309A22A57004E41D5 /* NUMfft_f.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C99309A228FD004E41D5 /* NUMfft_f.c */; };
-		23E5D14709A22A57004E41D5 /* gsl_sf__bessel_temme.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8309A22903004E41D5 /* gsl_sf__bessel_temme.c */; };
-		23E5D14809A22A57004E41D5 /* gsl_sf__bessel_temme.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB8409A22903004E41D5 /* gsl_sf__bessel_temme.h */; };
-		23E5D14A09A22A57004E41D5 /* gsl_sf__bessel_Kn.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8109A22903004E41D5 /* gsl_sf__bessel_Kn.c */; };
-		23E5D14B09A22A57004E41D5 /* gsl_sf__bessel_K1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8009A22903004E41D5 /* gsl_sf__bessel_K1.c */; };
-		23E5D14C09A22A57004E41D5 /* gsl_sf__bessel_K0.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7F09A22903004E41D5 /* gsl_sf__bessel_K0.c */; };
 		23E5D14E09A22A57004E41D5 /* gsl_sf__trig.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9709A22903004E41D5 /* gsl_sf__trig.c */; };
 		23E5D15209A22A57004E41D5 /* gsl_err__error.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6C09A22902004E41D5 /* gsl_err__error.c */; };
 		23E5D15309A22A57004E41D5 /* gsl_sys__pow_int.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9C09A22903004E41D5 /* gsl_sys__pow_int.c */; };
@@ -579,11 +595,6 @@
 		23E5D16109A22A57004E41D5 /* gsl_sf__elementary.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8D09A22903004E41D5 /* gsl_sf__elementary.c */; };
 		23E5D16209A22A57004E41D5 /* gsl_sf__beta_inc.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8C09A22903004E41D5 /* gsl_sf__beta_inc.c */; };
 		23E5D16309A22A57004E41D5 /* gsl_sf__beta.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB8B09A22903004E41D5 /* gsl_sf__beta.c */; };
-		23E5D16A09A22A57004E41D5 /* gsl_sf__bessel_In.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7709A22903004E41D5 /* gsl_sf__bessel_In.c */; };
-		23E5D16B09A22A57004E41D5 /* gsl_sf__bessel_I1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7609A22903004E41D5 /* gsl_sf__bessel_I1.c */; };
-		23E5D16C09A22A57004E41D5 /* gsl_sf__bessel_I0.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7509A22903004E41D5 /* gsl_sf__bessel_I0.c */; };
-		23E5D16F09A22A57004E41D5 /* gsl_sf__bessel_amp_phase.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB7309A22902004E41D5 /* gsl_sf__bessel_amp_phase.h */; };
-		23E5D17009A22A57004E41D5 /* gsl_sf__bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7009A22902004E41D5 /* gsl_sf__bessel.c */; };
 		23E5D17109A22A57004E41D5 /* gsl_sf__bessel.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB7109A22902004E41D5 /* gsl_sf__bessel.h */; };
 		23E5D17309A22A57004E41D5 /* gsl_poly__zsolve.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6E09A22902004E41D5 /* gsl_poly__zsolve.c */; };
 		23E5D17409A22A57004E41D5 /* gsl_sys__infnan.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9B09A22903004E41D5 /* gsl_sys__infnan.c */; };
@@ -611,8 +622,6 @@
 		23E5D18C09A22A57004E41D5 /* Configuration_and_Procrustes.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9C409A228FD004E41D5 /* Configuration_and_Procrustes.h */; };
 		23E5D18D09A22A57004E41D5 /* Eigen_and_Procrustes.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9D309A228FE004E41D5 /* Eigen_and_Procrustes.c */; };
 		23E5D18E09A22A57004E41D5 /* Eigen_and_Procrustes.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9D409A228FE004E41D5 /* Eigen_and_Procrustes.h */; };
-		23E5D18F09A22A57004E41D5 /* Regression.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2F09A228FF004E41D5 /* Regression.c */; };
-		23E5D19009A22A57004E41D5 /* Regression.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA3009A228FF004E41D5 /* Regression.h */; };
 		23E5D19109A22A57004E41D5 /* OTMulti.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2009A228FF004E41D5 /* OTMulti.c */; };
 		23E5D19209A22A57004E41D5 /* OTMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA2109A228FF004E41D5 /* OTMulti.h */; };
 		23E5D19309A22A57004E41D5 /* OTMultiEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2209A228FF004E41D5 /* OTMultiEditor.c */; };
@@ -630,8 +639,6 @@
 		23E5D19F09A22A57004E41D5 /* Sound_and_LPC_robust.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C98009A228FD004E41D5 /* Sound_and_LPC_robust.h */; };
 		23E5D1A009A22A57004E41D5 /* praat_TextGrid_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA3F09A228FF004E41D5 /* praat_TextGrid_init.c */; };
 		23E5D1A209A22A57004E41D5 /* sendpraat.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEF809A22A50004E41D5 /* sendpraat.h */; };
-		23E5D1A309A22A57004E41D5 /* TableEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA3109A228FF004E41D5 /* TableEditor.c */; };
-		23E5D1A409A22A57004E41D5 /* TableEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CA3209A228FF004E41D5 /* TableEditor.h */; };
 		23E5D1A609A22AA6004E41D5 /* Articulation_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE5609A22A2B004E41D5 /* Articulation_enums.h */; };
 		23E5D1A709A22AA6004E41D5 /* Articulation_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE5809A22A2B004E41D5 /* Articulation_def.h */; };
 		23E5D1A809A22AA6004E41D5 /* Artword_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE5A09A22A2B004E41D5 /* Artword_def.h */; };
@@ -647,7 +654,6 @@
 		23E5D1B209A22AAB004E41D5 /* AnyTier_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE6E09A22A36004E41D5 /* AnyTier_def.h */; };
 		23E5D1B309A22AAB004E41D5 /* Formant_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7009A22A37004E41D5 /* Formant_def.h */; };
 		23E5D1B409A22AAB004E41D5 /* FormantTier_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7209A22A37004E41D5 /* FormantTier_def.h */; };
-		23E5D1B509A22AAB004E41D5 /* PairDistribution_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7409A22A37004E41D5 /* PairDistribution_def.h */; };
 		23E5D1B609A22AAB004E41D5 /* Pitch_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7609A22A37004E41D5 /* Pitch_def.h */; };
 		23E5D1B709A22AAB004E41D5 /* Sound_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7809A22A37004E41D5 /* Sound_enums.h */; };
 		23E5D1B809A22AAB004E41D5 /* Spectrum_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE7A09A22A37004E41D5 /* Spectrum_def.h */; };
@@ -669,12 +675,10 @@
 		23E5D1C909A22AB0004E41D5 /* Experiment_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE9C09A22A3E004E41D5 /* Experiment_enums.h */; };
 		23E5D1CA09A22AB0004E41D5 /* ExperimentMFC_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE9E09A22A3E004E41D5 /* ExperimentMFC_def.h */; };
 		23E5D1CB09A22AB0004E41D5 /* FujisakiPitch_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA009A22A3E004E41D5 /* FujisakiPitch_def.h */; };
-		23E5D1CC09A22AB0004E41D5 /* Table_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA209A22A3E004E41D5 /* Table_def.h */; };
 		23E5D1CD09A22AB0004E41D5 /* Praat_tests_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA409A22A3E004E41D5 /* Praat_tests_enums.h */; };
 		23E5D1CE09A22AB0004E41D5 /* Tube_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA609A22A3E004E41D5 /* Tube_def.h */; };
 		23E5D1CF09A22AB0004E41D5 /* gsl_sf_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA809A22A3F004E41D5 /* gsl_sf_result.h */; };
 		23E5D1D009A22AB0004E41D5 /* gsl_sf__chebyshev.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEAA09A22A3F004E41D5 /* gsl_sf__chebyshev.h */; };
-		23E5D1D109A22AB0004E41D5 /* Regression_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEAC09A22A3F004E41D5 /* Regression_def.h */; };
 		23E5D1D209A22AB0004E41D5 /* OTMulti_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEAE09A22A3F004E41D5 /* OTMulti_def.h */; };
 		23E5D1D309A22AB0004E41D5 /* praat_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB009A22A3F004E41D5 /* praat_version.h */; };
 		23E5D1D409A22AB1004E41D5 /* ManPagesM.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB209A22A3F004E41D5 /* ManPagesM.h */; };
@@ -701,7 +705,6 @@
 		23E5D1EA09A22AB6004E41D5 /* Polygon_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEDE09A22A4A004E41D5 /* Polygon_def.h */; };
 		23E5D1EB09A22AB6004E41D5 /* RealTier_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEE009A22A4A004E41D5 /* RealTier_def.h */; };
 		23E5D1EC09A22AB6004E41D5 /* Sampled_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEE209A22A4A004E41D5 /* Sampled_def.h */; };
-		23E5D1ED09A22AB6004E41D5 /* TableOfReal_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEE409A22A4A004E41D5 /* TableOfReal_def.h */; };
 		23E5D1EE09A22AB7004E41D5 /* Transition_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEE609A22A4A004E41D5 /* Transition_def.h */; };
 		23E5D1EF09A22AB7004E41D5 /* praatP.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEE809A22A4B004E41D5 /* praatP.h */; };
 		23E5D1F009A22AB7004E41D5 /* GraphicsP.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEEA09A22A4B004E41D5 /* GraphicsP.h */; };
@@ -722,7 +725,6 @@
 		23E5D20009A22ABC004E41D5 /* gsl_sf__cheb_eval.c in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF0C09A22A52004E41D5 /* gsl_sf__cheb_eval.c */; };
 		23E5D20109A22ABC004E41D5 /* gsl_sf__eval.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF0E09A22A52004E41D5 /* gsl_sf__eval.h */; };
 		23E5D20209A22ABD004E41D5 /* gsl_sf_pow_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF1009A22A52004E41D5 /* gsl_sf_pow_int.h */; };
-		23E5D20309A22ABD004E41D5 /* gsl_sf__bessel_olver.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF1209A22A53004E41D5 /* gsl_sf__bessel_olver.h */; };
 		23E5D20409A22ABD004E41D5 /* gsl_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF1409A22A53004E41D5 /* gsl_mode.h */; };
 		23E5D20509A22ABD004E41D5 /* gsl_sf_exp.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF1609A22A53004E41D5 /* gsl_sf_exp.h */; };
 		23E5D20609A22ABD004E41D5 /* gsl_sf_psi.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CF1809A22A53004E41D5 /* gsl_sf_psi.h */; };
@@ -802,6 +804,40 @@
 		2339E3B00B2759FA00B6B6A7 /* Intensity_extensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Intensity_extensions.h; path = dwtools/Intensity_extensions.h; sourceTree = "<group>"; };
 		2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_info.c; path = sys/melder_info.c; sourceTree = "<group>"; };
 		2339E6FC0B2C77CB00B6B6A7 /* melder_alloc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_alloc.c; path = sys/melder_alloc.c; sourceTree = "<group>"; };
+		233B13EB0BB2AC5B004440C3 /* gsl_sf__bessel_In.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_In.c; path = GSL/gsl_sf__bessel_In.c; sourceTree = "<group>"; };
+		233B13EE0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_I0.c; path = GSL/gsl_sf__bessel_I0.c; sourceTree = "<group>"; };
+		233B13F10BB2AC91004440C3 /* gsl_sf__bessel_I1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_I1.c; path = GSL/gsl_sf__bessel_I1.c; sourceTree = "<group>"; };
+		233B13FC0BB2AD70004440C3 /* gsl_sf__bessel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel.c; path = GSL/gsl_sf__bessel.c; sourceTree = "<group>"; };
+		233B13FF0BB2AD8E004440C3 /* gsl_sf__bessel_temme.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_temme.c; path = GSL/gsl_sf__bessel_temme.c; sourceTree = "<group>"; };
+		233B14020BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Kn.c; path = GSL/gsl_sf__bessel_Kn.c; sourceTree = "<group>"; };
+		233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K0.c; path = GSL/gsl_sf__bessel_K0.c; sourceTree = "<group>"; };
+		233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K1.c; path = GSL/gsl_sf__bessel_K1.c; sourceTree = "<group>"; };
+		233B140B0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_amp_phase.c; path = GSL/gsl_sf__bessel_amp_phase.c; sourceTree = "<group>"; };
+		2343BF7F0BAC1526003D66E8 /* melder_quantity.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_quantity.c; path = sys/melder_quantity.c; sourceTree = "<group>"; };
+		2343BFBD0BAC2001003D66E8 /* SpectrumTier.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SpectrumTier.c; path = fon/SpectrumTier.c; sourceTree = "<group>"; };
+		2343BFBE0BAC2001003D66E8 /* SpectrumTier.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SpectrumTier.h; path = fon/SpectrumTier.h; sourceTree = "<group>"; };
+		2343BFD60BAC23B3003D66E8 /* Ltas_to_SpectrumTier.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Ltas_to_SpectrumTier.c; path = fon/Ltas_to_SpectrumTier.c; sourceTree = "<group>"; };
+		2343BFD70BAC23B3003D66E8 /* Ltas_to_SpectrumTier.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Ltas_to_SpectrumTier.h; path = fon/Ltas_to_SpectrumTier.h; sourceTree = "<group>"; };
+		2343C0700BAC3066003D66E8 /* manual_statistics.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = manual_statistics.c; path = stat/manual_statistics.c; sourceTree = "<group>"; };
+		2343C0710BAC3066003D66E8 /* praat_Stat.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = praat_Stat.c; path = stat/praat_Stat.c; sourceTree = "<group>"; };
+		2343C0720BAC3066003D66E8 /* Regression_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Regression_def.h; path = stat/Regression_def.h; sourceTree = "<group>"; };
+		2343C0730BAC3066003D66E8 /* Regression.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Regression.c; path = stat/Regression.c; sourceTree = "<group>"; };
+		2343C0740BAC3066003D66E8 /* Regression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = stat/Regression.h; sourceTree = "<group>"; };
+		2343C0750BAC3066003D66E8 /* Table_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Table_def.h; path = stat/Table_def.h; sourceTree = "<group>"; };
+		2343C0760BAC3066003D66E8 /* Table.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Table.c; path = stat/Table.c; sourceTree = "<group>"; };
+		2343C0770BAC3066003D66E8 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Table.h; path = stat/Table.h; sourceTree = "<group>"; };
+		2343C0780BAC3066003D66E8 /* TableEditor.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = TableEditor.c; path = stat/TableEditor.c; sourceTree = "<group>"; };
+		2343C0790BAC3066003D66E8 /* TableEditor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TableEditor.h; path = stat/TableEditor.h; sourceTree = "<group>"; };
+		2343C20C0BAE14FE003D66E8 /* Distributions_and_Strings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Distributions_and_Strings.c; path = stat/Distributions_and_Strings.c; sourceTree = "<group>"; };
+		2343C20E0BAE1504003D66E8 /* Distributions_and_Strings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Distributions_and_Strings.h; path = stat/Distributions_and_Strings.h; sourceTree = "<group>"; };
+		2343C2100BAE1511003D66E8 /* TableOfReal_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TableOfReal_def.h; path = stat/TableOfReal_def.h; sourceTree = "<group>"; };
+		2343C2110BAE1511003D66E8 /* TableOfReal.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = TableOfReal.c; path = stat/TableOfReal.c; sourceTree = "<group>"; };
+		2343C2120BAE1511003D66E8 /* TableOfReal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TableOfReal.h; path = stat/TableOfReal.h; sourceTree = "<group>"; };
+		2343C2340BAE1567003D66E8 /* Distributions.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Distributions.c; path = stat/Distributions.c; sourceTree = "<group>"; };
+		2343C2350BAE1567003D66E8 /* Distributions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Distributions.h; path = stat/Distributions.h; sourceTree = "<group>"; };
+		2343C2B10BAE20C1003D66E8 /* PairDistribution_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PairDistribution_def.h; path = stat/PairDistribution_def.h; sourceTree = "<group>"; };
+		2343C2B20BAE20C1003D66E8 /* PairDistribution.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = PairDistribution.c; path = stat/PairDistribution.c; sourceTree = "<group>"; };
+		2343C2B30BAE20C1003D66E8 /* PairDistribution.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PairDistribution.h; path = stat/PairDistribution.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
 		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
 		23D87E840B3C929700AD716D /* Eigen.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwsys/Eigen.c; sourceTree = "<group>"; };
@@ -1049,14 +1085,6 @@
 		23E5CA2909A228FF004E41D5 /* OTGrammar_ex_tongueRoot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = OTGrammar_ex_tongueRoot.c; path = fon/OTGrammar_ex_tongueRoot.c; sourceTree = SOURCE_ROOT; };
 		23E5CA2A09A228FF004E41D5 /* OTGrammarEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = OTGrammarEditor.c; path = fon/OTGrammarEditor.c; sourceTree = SOURCE_ROOT; };
 		23E5CA2B09A228FF004E41D5 /* OTGrammarEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OTGrammarEditor.h; path = fon/OTGrammarEditor.h; sourceTree = SOURCE_ROOT; };
-		23E5CA2D09A228FF004E41D5 /* manual_statistics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_statistics.c; path = fon/manual_statistics.c; sourceTree = SOURCE_ROOT; };
-		23E5CA2E09A228FF004E41D5 /* praat_Stat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = praat_Stat.c; path = fon/praat_Stat.c; sourceTree = SOURCE_ROOT; };
-		23E5CA2F09A228FF004E41D5 /* Regression.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Regression.c; path = fon/Regression.c; sourceTree = SOURCE_ROOT; };
-		23E5CA3009A228FF004E41D5 /* Regression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = fon/Regression.h; sourceTree = SOURCE_ROOT; };
-		23E5CA3109A228FF004E41D5 /* TableEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TableEditor.c; path = fon/TableEditor.c; sourceTree = SOURCE_ROOT; };
-		23E5CA3209A228FF004E41D5 /* TableEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TableEditor.h; path = fon/TableEditor.h; sourceTree = SOURCE_ROOT; };
-		23E5CA3309A228FF004E41D5 /* Table.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Table.c; path = fon/Table.c; sourceTree = SOURCE_ROOT; };
-		23E5CA3409A228FF004E41D5 /* Table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Table.h; path = fon/Table.h; sourceTree = SOURCE_ROOT; };
 		23E5CA3609A228FF004E41D5 /* manual_Exp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_Exp.c; path = fon/manual_Exp.c; sourceTree = SOURCE_ROOT; };
 		23E5CA3709A228FF004E41D5 /* praat_Exp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = praat_Exp.c; path = fon/praat_Exp.c; sourceTree = SOURCE_ROOT; };
 		23E5CA3809A228FF004E41D5 /* ExperimentMFC.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ExperimentMFC.c; path = fon/ExperimentMFC.c; sourceTree = SOURCE_ROOT; };
@@ -1076,10 +1104,6 @@
 		23E5CA4709A228FF004E41D5 /* Cochleagram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Cochleagram.h; path = fon/Cochleagram.h; sourceTree = SOURCE_ROOT; };
 		23E5CA4809A228FF004E41D5 /* Cochleagram_and_Excitation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Cochleagram_and_Excitation.c; path = fon/Cochleagram_and_Excitation.c; sourceTree = SOURCE_ROOT; };
 		23E5CA4909A228FF004E41D5 /* Cochleagram_and_Excitation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Cochleagram_and_Excitation.h; path = fon/Cochleagram_and_Excitation.h; sourceTree = SOURCE_ROOT; };
-		23E5CA4A09A228FF004E41D5 /* Distributions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Distributions.c; path = fon/Distributions.c; sourceTree = SOURCE_ROOT; };
-		23E5CA4B09A228FF004E41D5 /* Distributions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Distributions.h; path = fon/Distributions.h; sourceTree = SOURCE_ROOT; };
-		23E5CA4C09A228FF004E41D5 /* Distributions_and_Strings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Distributions_and_Strings.c; path = fon/Distributions_and_Strings.c; sourceTree = SOURCE_ROOT; };
-		23E5CA4D09A228FF004E41D5 /* Distributions_and_Strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Distributions_and_Strings.h; path = fon/Distributions_and_Strings.h; sourceTree = SOURCE_ROOT; };
 		23E5CA4E09A228FF004E41D5 /* Distributions_and_Transition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Distributions_and_Transition.c; path = fon/Distributions_and_Transition.c; sourceTree = SOURCE_ROOT; };
 		23E5CA4F09A228FF004E41D5 /* Distributions_and_Transition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Distributions_and_Transition.h; path = fon/Distributions_and_Transition.h; sourceTree = SOURCE_ROOT; };
 		23E5CA5009A228FF004E41D5 /* DurationTier.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DurationTier.c; path = fon/DurationTier.c; sourceTree = SOURCE_ROOT; };
@@ -1120,8 +1144,6 @@
 		23E5CA7309A228FF004E41D5 /* Matrix_and_PointProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Matrix_and_PointProcess.h; path = fon/Matrix_and_PointProcess.h; sourceTree = SOURCE_ROOT; };
 		23E5CA7409A228FF004E41D5 /* Matrix_and_Polygon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Matrix_and_Polygon.c; path = fon/Matrix_and_Polygon.c; sourceTree = SOURCE_ROOT; };
 		23E5CA7509A228FF004E41D5 /* Matrix_and_Polygon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Matrix_and_Polygon.h; path = fon/Matrix_and_Polygon.h; sourceTree = SOURCE_ROOT; };
-		23E5CA7609A228FF004E41D5 /* PairDistribution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = PairDistribution.c; path = fon/PairDistribution.c; sourceTree = SOURCE_ROOT; };
-		23E5CA7709A22900004E41D5 /* PairDistribution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PairDistribution.h; path = fon/PairDistribution.h; sourceTree = SOURCE_ROOT; };
 		23E5CA7809A22900004E41D5 /* ParamCurve.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ParamCurve.c; path = fon/ParamCurve.c; sourceTree = SOURCE_ROOT; };
 		23E5CA7909A22900004E41D5 /* ParamCurve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ParamCurve.h; path = fon/ParamCurve.h; sourceTree = SOURCE_ROOT; };
 		23E5CA7A09A22900004E41D5 /* Pitch.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Pitch.c; path = fon/Pitch.c; sourceTree = SOURCE_ROOT; };
@@ -1186,8 +1208,6 @@
 		23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spectrum_to_Formant.h; path = fon/Spectrum_to_Formant.h; sourceTree = SOURCE_ROOT; };
 		23E5CAB609A22900004E41D5 /* SpellingChecker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = SpellingChecker.c; path = fon/SpellingChecker.c; sourceTree = SOURCE_ROOT; };
 		23E5CAB709A22900004E41D5 /* SpellingChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpellingChecker.h; path = fon/SpellingChecker.h; sourceTree = SOURCE_ROOT; };
-		23E5CABA09A22900004E41D5 /* TableOfReal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TableOfReal.c; path = fon/TableOfReal.c; sourceTree = SOURCE_ROOT; };
-		23E5CABB09A22900004E41D5 /* TableOfReal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TableOfReal.h; path = fon/TableOfReal.h; sourceTree = SOURCE_ROOT; };
 		23E5CABC09A22900004E41D5 /* TextGrid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TextGrid.c; path = fon/TextGrid.c; sourceTree = SOURCE_ROOT; };
 		23E5CABD09A22900004E41D5 /* TextGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextGrid.h; path = fon/TextGrid.h; sourceTree = SOURCE_ROOT; };
 		23E5CABE09A22900004E41D5 /* Transition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Transition.c; path = fon/Transition.c; sourceTree = SOURCE_ROOT; };
@@ -1353,33 +1373,7 @@
 		23E5CB6D09A22902004E41D5 /* gsl_err__stream.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_err__stream.c; path = GSL/gsl_err__stream.c; sourceTree = SOURCE_ROOT; };
 		23E5CB6E09A22902004E41D5 /* gsl_poly__zsolve.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_poly__zsolve.c; path = GSL/gsl_poly__zsolve.c; sourceTree = SOURCE_ROOT; };
 		23E5CB6F09A22902004E41D5 /* gsl_sf__airy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__airy.c; path = GSL/gsl_sf__airy.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7009A22902004E41D5 /* gsl_sf__bessel.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel.c; path = GSL/gsl_sf__bessel.c; sourceTree = SOURCE_ROOT; };
 		23E5CB7109A22902004E41D5 /* gsl_sf__bessel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__bessel.h; path = GSL/gsl_sf__bessel.h; sourceTree = SOURCE_ROOT; };
-		23E5CB7209A22902004E41D5 /* gsl_sf__bessel_amp_phase.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_amp_phase.c; path = GSL/gsl_sf__bessel_amp_phase.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7309A22902004E41D5 /* gsl_sf__bessel_amp_phase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__bessel_amp_phase.h; path = GSL/gsl_sf__bessel_amp_phase.h; sourceTree = SOURCE_ROOT; };
-		23E5CB7409A22903004E41D5 /* gsl_sf__bessel_i.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_i.c; path = GSL/gsl_sf__bessel_i.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7509A22903004E41D5 /* gsl_sf__bessel_I0.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_I0.c; path = GSL/gsl_sf__bessel_I0.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7609A22903004E41D5 /* gsl_sf__bessel_I1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_I1.c; path = GSL/gsl_sf__bessel_I1.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7709A22903004E41D5 /* gsl_sf__bessel_In.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_In.c; path = GSL/gsl_sf__bessel_In.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7809A22903004E41D5 /* gsl_sf__bessel_Inu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Inu.c; path = GSL/gsl_sf__bessel_Inu.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7909A22903004E41D5 /* gsl_sf__bessel_j.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_j.c; path = GSL/gsl_sf__bessel_j.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7A09A22903004E41D5 /* gsl_sf__bessel_J0.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_J0.c; path = GSL/gsl_sf__bessel_J0.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7B09A22903004E41D5 /* gsl_sf__bessel_J1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_J1.c; path = GSL/gsl_sf__bessel_J1.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7C09A22903004E41D5 /* gsl_sf__bessel_Jn.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Jn.c; path = GSL/gsl_sf__bessel_Jn.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7D09A22903004E41D5 /* gsl_sf__bessel_Jnu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Jnu.c; path = GSL/gsl_sf__bessel_Jnu.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7E09A22903004E41D5 /* gsl_sf__bessel_k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_k.c; path = GSL/gsl_sf__bessel_k.c; sourceTree = SOURCE_ROOT; };
-		23E5CB7F09A22903004E41D5 /* gsl_sf__bessel_K0.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K0.c; path = GSL/gsl_sf__bessel_K0.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8009A22903004E41D5 /* gsl_sf__bessel_K1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K1.c; path = GSL/gsl_sf__bessel_K1.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8109A22903004E41D5 /* gsl_sf__bessel_Kn.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Kn.c; path = GSL/gsl_sf__bessel_Kn.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8209A22903004E41D5 /* gsl_sf__bessel_Knu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Knu.c; path = GSL/gsl_sf__bessel_Knu.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8309A22903004E41D5 /* gsl_sf__bessel_temme.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_temme.c; path = GSL/gsl_sf__bessel_temme.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8409A22903004E41D5 /* gsl_sf__bessel_temme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__bessel_temme.h; path = GSL/gsl_sf__bessel_temme.h; sourceTree = SOURCE_ROOT; };
-		23E5CB8509A22903004E41D5 /* gsl_sf__bessel_y.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_y.c; path = GSL/gsl_sf__bessel_y.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8609A22903004E41D5 /* gsl_sf__bessel_Y0.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Y0.c; path = GSL/gsl_sf__bessel_Y0.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8709A22903004E41D5 /* gsl_sf__bessel_Y1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Y1.c; path = GSL/gsl_sf__bessel_Y1.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8809A22903004E41D5 /* gsl_sf__bessel_Yn.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Yn.c; path = GSL/gsl_sf__bessel_Yn.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8909A22903004E41D5 /* gsl_sf__bessel_Ynu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Ynu.c; path = GSL/gsl_sf__bessel_Ynu.c; sourceTree = SOURCE_ROOT; };
-		23E5CB8A09A22903004E41D5 /* gsl_sf__bessel_zero.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_zero.c; path = GSL/gsl_sf__bessel_zero.c; sourceTree = SOURCE_ROOT; };
 		23E5CB8B09A22903004E41D5 /* gsl_sf__beta.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__beta.c; path = GSL/gsl_sf__beta.c; sourceTree = SOURCE_ROOT; };
 		23E5CB8C09A22903004E41D5 /* gsl_sf__beta_inc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__beta_inc.c; path = GSL/gsl_sf__beta_inc.c; sourceTree = SOURCE_ROOT; };
 		23E5CB8D09A22903004E41D5 /* gsl_sf__elementary.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__elementary.c; path = GSL/gsl_sf__elementary.c; sourceTree = SOURCE_ROOT; };
@@ -1413,7 +1407,6 @@
 		23E5CE6E09A22A36004E41D5 /* AnyTier_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnyTier_def.h; path = fon/AnyTier_def.h; sourceTree = "<group>"; };
 		23E5CE7009A22A37004E41D5 /* Formant_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Formant_def.h; path = fon/Formant_def.h; sourceTree = "<group>"; };
 		23E5CE7209A22A37004E41D5 /* FormantTier_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FormantTier_def.h; path = fon/FormantTier_def.h; sourceTree = "<group>"; };
-		23E5CE7409A22A37004E41D5 /* PairDistribution_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PairDistribution_def.h; path = fon/PairDistribution_def.h; sourceTree = "<group>"; };
 		23E5CE7609A22A37004E41D5 /* Pitch_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Pitch_def.h; path = fon/Pitch_def.h; sourceTree = "<group>"; };
 		23E5CE7809A22A37004E41D5 /* Sound_enums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Sound_enums.h; path = fon/Sound_enums.h; sourceTree = "<group>"; };
 		23E5CE7A09A22A37004E41D5 /* Spectrum_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spectrum_def.h; path = fon/Spectrum_def.h; sourceTree = "<group>"; };
@@ -1435,12 +1428,10 @@
 		23E5CE9C09A22A3E004E41D5 /* Experiment_enums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Experiment_enums.h; path = fon/Experiment_enums.h; sourceTree = "<group>"; };
 		23E5CE9E09A22A3E004E41D5 /* ExperimentMFC_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExperimentMFC_def.h; path = fon/ExperimentMFC_def.h; sourceTree = "<group>"; };
 		23E5CEA009A22A3E004E41D5 /* FujisakiPitch_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FujisakiPitch_def.h; path = fon/FujisakiPitch_def.h; sourceTree = "<group>"; };
-		23E5CEA209A22A3E004E41D5 /* Table_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Table_def.h; path = fon/Table_def.h; sourceTree = "<group>"; };
 		23E5CEA409A22A3E004E41D5 /* Praat_tests_enums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Praat_tests_enums.h; path = fon/Praat_tests_enums.h; sourceTree = "<group>"; };
 		23E5CEA609A22A3E004E41D5 /* Tube_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tube_def.h; path = LPC/Tube_def.h; sourceTree = "<group>"; };
 		23E5CEA809A22A3F004E41D5 /* gsl_sf_result.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf_result.h; path = GSL/gsl_sf_result.h; sourceTree = "<group>"; };
 		23E5CEAA09A22A3F004E41D5 /* gsl_sf__chebyshev.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__chebyshev.h; path = GSL/gsl_sf__chebyshev.h; sourceTree = "<group>"; };
-		23E5CEAC09A22A3F004E41D5 /* Regression_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Regression_def.h; path = fon/Regression_def.h; sourceTree = "<group>"; };
 		23E5CEAE09A22A3F004E41D5 /* OTMulti_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OTMulti_def.h; path = fon/OTMulti_def.h; sourceTree = "<group>"; };
 		23E5CEB009A22A3F004E41D5 /* praat_version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = praat_version.h; path = fon/praat_version.h; sourceTree = "<group>"; };
 		23E5CEB209A22A3F004E41D5 /* ManPagesM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ManPagesM.h; path = sys/ManPagesM.h; sourceTree = "<group>"; };
@@ -1467,7 +1458,6 @@
 		23E5CEDE09A22A4A004E41D5 /* Polygon_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Polygon_def.h; path = fon/Polygon_def.h; sourceTree = "<group>"; };
 		23E5CEE009A22A4A004E41D5 /* RealTier_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RealTier_def.h; path = fon/RealTier_def.h; sourceTree = "<group>"; };
 		23E5CEE209A22A4A004E41D5 /* Sampled_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Sampled_def.h; path = fon/Sampled_def.h; sourceTree = "<group>"; };
-		23E5CEE409A22A4A004E41D5 /* TableOfReal_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TableOfReal_def.h; path = fon/TableOfReal_def.h; sourceTree = "<group>"; };
 		23E5CEE609A22A4A004E41D5 /* Transition_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Transition_def.h; path = fon/Transition_def.h; sourceTree = "<group>"; };
 		23E5CEE809A22A4B004E41D5 /* praatP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = praatP.h; path = sys/praatP.h; sourceTree = "<group>"; };
 		23E5CEEA09A22A4B004E41D5 /* GraphicsP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GraphicsP.h; path = sys/GraphicsP.h; sourceTree = "<group>"; };
@@ -1489,7 +1479,6 @@
 		23E5CF0C09A22A52004E41D5 /* gsl_sf__cheb_eval.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gsl_sf__cheb_eval.c; path = GSL/gsl_sf__cheb_eval.c; sourceTree = "<group>"; };
 		23E5CF0E09A22A52004E41D5 /* gsl_sf__eval.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__eval.h; path = GSL/gsl_sf__eval.h; sourceTree = "<group>"; };
 		23E5CF1009A22A52004E41D5 /* gsl_sf_pow_int.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf_pow_int.h; path = GSL/gsl_sf_pow_int.h; sourceTree = "<group>"; };
-		23E5CF1209A22A53004E41D5 /* gsl_sf__bessel_olver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf__bessel_olver.h; path = GSL/gsl_sf__bessel_olver.h; sourceTree = "<group>"; };
 		23E5CF1409A22A53004E41D5 /* gsl_mode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_mode.h; path = GSL/gsl_mode.h; sourceTree = "<group>"; };
 		23E5CF1609A22A53004E41D5 /* gsl_sf_exp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf_exp.h; path = GSL/gsl_sf_exp.h; sourceTree = "<group>"; };
 		23E5CF1809A22A53004E41D5 /* gsl_sf_psi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_sf_psi.h; path = GSL/gsl_sf_psi.h; sourceTree = "<group>"; };
@@ -1584,11 +1573,11 @@
 				23E5C98309A228FD004E41D5 /* dwsys */,
 				23E5C9A509A228FD004E41D5 /* dwtools */,
 				23E5CA1D09A228FE004E41D5 /* fon OT */,
-				23E5CA2C09A228FF004E41D5 /* fon Stat */,
 				23E5CA3509A228FF004E41D5 /* fon Exp */,
 				23E5CA3C09A228FF004E41D5 /* fon */,
 				23E5CACA09A22900004E41D5 /* fon editors */,
 				23E5CAEB09A22901004E41D5 /* manuals */,
+				23E5CA2C09A228FF004E41D5 /* stat */,
 				23E5CAFE09A22901004E41D5 /* sys */,
 				23E5CB3509A22902004E41D5 /* sys editors */,
 				23E5CB4509A22902004E41D5 /* sys/Graphics */,
@@ -1937,21 +1926,31 @@
 			name = "fon OT";
 			sourceTree = "<group>";
 		};
-		23E5CA2C09A228FF004E41D5 /* fon Stat */ = {
+		23E5CA2C09A228FF004E41D5 /* stat */ = {
 			isa = PBXGroup;
 			children = (
-				23E5CA2D09A228FF004E41D5 /* manual_statistics.c */,
-				23E5CA2E09A228FF004E41D5 /* praat_Stat.c */,
-				23E5CEAC09A22A3F004E41D5 /* Regression_def.h */,
-				23E5CA3009A228FF004E41D5 /* Regression.h */,
-				23E5CA2F09A228FF004E41D5 /* Regression.c */,
-				23E5CEA209A22A3E004E41D5 /* Table_def.h */,
-				23E5CA3409A228FF004E41D5 /* Table.h */,
-				23E5CA3309A228FF004E41D5 /* Table.c */,
-				23E5CA3209A228FF004E41D5 /* TableEditor.h */,
-				23E5CA3109A228FF004E41D5 /* TableEditor.c */,
+				2343C0700BAC3066003D66E8 /* manual_statistics.c */,
+				2343C0710BAC3066003D66E8 /* praat_Stat.c */,
+				2343C2350BAE1567003D66E8 /* Distributions.h */,
+				2343C2340BAE1567003D66E8 /* Distributions.c */,
+				2343C20E0BAE1504003D66E8 /* Distributions_and_Strings.h */,
+				2343C20C0BAE14FE003D66E8 /* Distributions_and_Strings.c */,
+				2343C2B10BAE20C1003D66E8 /* PairDistribution_def.h */,
+				2343C2B30BAE20C1003D66E8 /* PairDistribution.h */,
+				2343C2B20BAE20C1003D66E8 /* PairDistribution.c */,
+				2343C0720BAC3066003D66E8 /* Regression_def.h */,
+				2343C0740BAC3066003D66E8 /* Regression.h */,
+				2343C0730BAC3066003D66E8 /* Regression.c */,
+				2343C0750BAC3066003D66E8 /* Table_def.h */,
+				2343C0770BAC3066003D66E8 /* Table.h */,
+				2343C0760BAC3066003D66E8 /* Table.c */,
+				2343C0790BAC3066003D66E8 /* TableEditor.h */,
+				2343C0780BAC3066003D66E8 /* TableEditor.c */,
+				2343C2100BAE1511003D66E8 /* TableOfReal_def.h */,
+				2343C2120BAE1511003D66E8 /* TableOfReal.h */,
+				2343C2110BAE1511003D66E8 /* TableOfReal.c */,
 			);
-			name = "fon Stat";
+			name = stat;
 			sourceTree = "<group>";
 		};
 		23E5CA3509A228FF004E41D5 /* fon Exp */ = {
@@ -1988,10 +1987,6 @@
 				23E5CA4609A228FF004E41D5 /* Cochleagram.c */,
 				23E5CA4909A228FF004E41D5 /* Cochleagram_and_Excitation.h */,
 				23E5CA4809A228FF004E41D5 /* Cochleagram_and_Excitation.c */,
-				23E5CA4B09A228FF004E41D5 /* Distributions.h */,
-				23E5CA4A09A228FF004E41D5 /* Distributions.c */,
-				23E5CA4D09A228FF004E41D5 /* Distributions_and_Strings.h */,
-				23E5CA4C09A228FF004E41D5 /* Distributions_and_Strings.c */,
 				23E5CA4F09A228FF004E41D5 /* Distributions_and_Transition.h */,
 				23E5CA4E09A228FF004E41D5 /* Distributions_and_Transition.c */,
 				23E5CA5109A228FF004E41D5 /* DurationTier.h */,
@@ -2027,6 +2022,8 @@
 				23E5CA6809A228FF004E41D5 /* LongSound.c */,
 				23E5CA6B09A228FF004E41D5 /* Ltas.h */,
 				23E5CA6A09A228FF004E41D5 /* Ltas.c */,
+				2343BFD70BAC23B3003D66E8 /* Ltas_to_SpectrumTier.h */,
+				2343BFD60BAC23B3003D66E8 /* Ltas_to_SpectrumTier.c */,
 				23E5CE6C09A22A36004E41D5 /* Manipulation_def.h */,
 				23E5CA6D09A228FF004E41D5 /* Manipulation.h */,
 				23E5CA6C09A228FF004E41D5 /* Manipulation.c */,
@@ -2039,9 +2036,6 @@
 				23E5CA7209A228FF004E41D5 /* Matrix_and_PointProcess.c */,
 				23E5CA7509A228FF004E41D5 /* Matrix_and_Polygon.h */,
 				23E5CA7409A228FF004E41D5 /* Matrix_and_Polygon.c */,
-				23E5CE7409A22A37004E41D5 /* PairDistribution_def.h */,
-				23E5CA7709A22900004E41D5 /* PairDistribution.h */,
-				23E5CA7609A228FF004E41D5 /* PairDistribution.c */,
 				23E5CA7909A22900004E41D5 /* ParamCurve.h */,
 				23E5CA7809A22900004E41D5 /* ParamCurve.c */,
 				23E5CE7609A22A37004E41D5 /* Pitch_def.h */,
@@ -2111,12 +2105,11 @@
 				23E5CAB209A22900004E41D5 /* Spectrum_to_Excitation.c */,
 				23E5CAB509A22900004E41D5 /* Spectrum_to_Formant.h */,
 				23E5CAB409A22900004E41D5 /* Spectrum_to_Formant.c */,
+				2343BFBE0BAC2001003D66E8 /* SpectrumTier.h */,
+				2343BFBD0BAC2001003D66E8 /* SpectrumTier.c */,
 				23E5CE7C09A22A37004E41D5 /* SpellingChecker_def.h */,
 				23E5CAB709A22900004E41D5 /* SpellingChecker.h */,
 				23E5CAB609A22900004E41D5 /* SpellingChecker.c */,
-				23E5CEE409A22A4A004E41D5 /* TableOfReal_def.h */,
-				23E5CABB09A22900004E41D5 /* TableOfReal.h */,
-				23E5CABA09A22900004E41D5 /* TableOfReal.c */,
 				23E5CE8009A22A38004E41D5 /* TextGrid_def.h */,
 				23E5CABD09A22900004E41D5 /* TextGrid.h */,
 				23E5CABC09A22900004E41D5 /* TextGrid.c */,
@@ -2374,6 +2367,7 @@
 				23E5CB6609A22902004E41D5 /* melder_files.c */,
 				23E5CB6709A22902004E41D5 /* melder_sysenv.c */,
 				23EE67C909F2E63900E660F9 /* melder_token.c */,
+				2343BF7F0BAC1526003D66E8 /* melder_quantity.c */,
 			);
 			name = sys/melder;
 			sourceTree = "<group>";
@@ -2415,33 +2409,15 @@
 				23E5CB6F09A22902004E41D5 /* gsl_sf__airy.c */,
 				23E5CEF409A22A4F004E41D5 /* gsl_sf_bessel.h */,
 				23E5CB7109A22902004E41D5 /* gsl_sf__bessel.h */,
-				23E5CB7009A22902004E41D5 /* gsl_sf__bessel.c */,
-				23E5CB7309A22902004E41D5 /* gsl_sf__bessel_amp_phase.h */,
-				23E5CB7209A22902004E41D5 /* gsl_sf__bessel_amp_phase.c */,
-				23E5CB7409A22903004E41D5 /* gsl_sf__bessel_i.c */,
-				23E5CB7509A22903004E41D5 /* gsl_sf__bessel_I0.c */,
-				23E5CB7609A22903004E41D5 /* gsl_sf__bessel_I1.c */,
-				23E5CB7709A22903004E41D5 /* gsl_sf__bessel_In.c */,
-				23E5CB7809A22903004E41D5 /* gsl_sf__bessel_Inu.c */,
-				23E5CB7909A22903004E41D5 /* gsl_sf__bessel_j.c */,
-				23E5CB7A09A22903004E41D5 /* gsl_sf__bessel_J0.c */,
-				23E5CB7B09A22903004E41D5 /* gsl_sf__bessel_J1.c */,
-				23E5CB7C09A22903004E41D5 /* gsl_sf__bessel_Jn.c */,
-				23E5CB7D09A22903004E41D5 /* gsl_sf__bessel_Jnu.c */,
-				23E5CB7E09A22903004E41D5 /* gsl_sf__bessel_k.c */,
-				23E5CB7F09A22903004E41D5 /* gsl_sf__bessel_K0.c */,
-				23E5CB8009A22903004E41D5 /* gsl_sf__bessel_K1.c */,
-				23E5CB8109A22903004E41D5 /* gsl_sf__bessel_Kn.c */,
-				23E5CB8209A22903004E41D5 /* gsl_sf__bessel_Knu.c */,
-				23E5CF1209A22A53004E41D5 /* gsl_sf__bessel_olver.h */,
-				23E5CB8409A22903004E41D5 /* gsl_sf__bessel_temme.h */,
-				23E5CB8309A22903004E41D5 /* gsl_sf__bessel_temme.c */,
-				23E5CB8509A22903004E41D5 /* gsl_sf__bessel_y.c */,
-				23E5CB8609A22903004E41D5 /* gsl_sf__bessel_Y0.c */,
-				23E5CB8709A22903004E41D5 /* gsl_sf__bessel_Y1.c */,
-				23E5CB8809A22903004E41D5 /* gsl_sf__bessel_Yn.c */,
-				23E5CB8909A22903004E41D5 /* gsl_sf__bessel_Ynu.c */,
-				23E5CB8A09A22903004E41D5 /* gsl_sf__bessel_zero.c */,
+				233B13FC0BB2AD70004440C3 /* gsl_sf__bessel.c */,
+				233B140B0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c */,
+				233B13EE0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c */,
+				233B13F10BB2AC91004440C3 /* gsl_sf__bessel_I1.c */,
+				233B13EB0BB2AC5B004440C3 /* gsl_sf__bessel_In.c */,
+				233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */,
+				233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */,
+				233B14020BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c */,
+				233B13FF0BB2AD8E004440C3 /* gsl_sf__bessel_temme.c */,
 				23E5CB8B09A22903004E41D5 /* gsl_sf__beta.c */,
 				23E5CB8C09A22903004E41D5 /* gsl_sf__beta_inc.c */,
 				23E5CEAA09A22A3F004E41D5 /* gsl_sf__chebyshev.h */,
@@ -2579,8 +2555,6 @@
 				23E5CFF809A22A57004E41D5 /* AnyTier.h in Headers */,
 				23E5CFFA09A22A57004E41D5 /* Cochleagram.h in Headers */,
 				23E5CFFC09A22A57004E41D5 /* Cochleagram_and_Excitation.h in Headers */,
-				23E5CFFE09A22A57004E41D5 /* Distributions.h in Headers */,
-				23E5D00009A22A57004E41D5 /* Distributions_and_Strings.h in Headers */,
 				23E5D00209A22A57004E41D5 /* Distributions_and_Transition.h in Headers */,
 				23E5D00409A22A57004E41D5 /* DurationTier.h in Headers */,
 				23E5D00609A22A57004E41D5 /* Excitation.h in Headers */,
@@ -2599,7 +2573,6 @@
 				23E5D02009A22A57004E41D5 /* Matrix_and_Pitch.h in Headers */,
 				23E5D02209A22A57004E41D5 /* Matrix_and_PointProcess.h in Headers */,
 				23E5D02409A22A57004E41D5 /* Matrix_and_Polygon.h in Headers */,
-				23E5D02609A22A57004E41D5 /* PairDistribution.h in Headers */,
 				23E5D02809A22A57004E41D5 /* ParamCurve.h in Headers */,
 				23E5D02A09A22A57004E41D5 /* Pitch.h in Headers */,
 				23E5D02C09A22A57004E41D5 /* PitchTier.h in Headers */,
@@ -2629,7 +2602,6 @@
 				23E5D06009A22A57004E41D5 /* Spectrum_to_Excitation.h in Headers */,
 				23E5D06209A22A57004E41D5 /* Spectrum_to_Formant.h in Headers */,
 				23E5D06409A22A57004E41D5 /* SpellingChecker.h in Headers */,
-				23E5D06809A22A57004E41D5 /* TableOfReal.h in Headers */,
 				23E5D06A09A22A57004E41D5 /* TextGrid.h in Headers */,
 				23E5D06C09A22A57004E41D5 /* Transition.h in Headers */,
 				23E5D06E09A22A57004E41D5 /* Vector.h in Headers */,
@@ -2698,7 +2670,6 @@
 				23E5D11409A22A57004E41D5 /* Eigen_and_Matrix.h in Headers */,
 				23E5D11609A22A57004E41D5 /* FujisakiPitch.h in Headers */,
 				23E5D11809A22A57004E41D5 /* Sound_and_Cepstrum.h in Headers */,
-				23E5D11B09A22A57004E41D5 /* Table.h in Headers */,
 				23E5D11E09A22A57004E41D5 /* Formula.h in Headers */,
 				23E5D12009A22A57004E41D5 /* CCA.h in Headers */,
 				23E5D12209A22A57004E41D5 /* CCA_and_Correlation.h in Headers */,
@@ -2714,8 +2685,6 @@
 				23E5D13D09A22A57004E41D5 /* AmplitudeTierEditor.h in Headers */,
 				23E5D13F09A22A57004E41D5 /* LPC_and_Tube.h in Headers */,
 				23E5D14109A22A57004E41D5 /* Tube.h in Headers */,
-				23E5D14809A22A57004E41D5 /* gsl_sf__bessel_temme.h in Headers */,
-				23E5D16F09A22A57004E41D5 /* gsl_sf__bessel_amp_phase.h in Headers */,
 				23E5D17109A22A57004E41D5 /* gsl_sf__bessel.h in Headers */,
 				23E5D17609A22A57004E41D5 /* VoiceAnalysis.h in Headers */,
 				23E5D17C09A22A57004E41D5 /* Discriminant_Pattern_Categories.h in Headers */,
@@ -2724,7 +2693,6 @@
 				23E5D18A09A22A57004E41D5 /* Procrustes.h in Headers */,
 				23E5D18C09A22A57004E41D5 /* Configuration_and_Procrustes.h in Headers */,
 				23E5D18E09A22A57004E41D5 /* Eigen_and_Procrustes.h in Headers */,
-				23E5D19009A22A57004E41D5 /* Regression.h in Headers */,
 				23E5D19209A22A57004E41D5 /* OTMulti.h in Headers */,
 				23E5D19409A22A57004E41D5 /* OTMultiEditor.h in Headers */,
 				23E5D19609A22A57004E41D5 /* Permutation.h in Headers */,
@@ -2733,7 +2701,6 @@
 				23E5D19D09A22A57004E41D5 /* Permutation_and_Index.h in Headers */,
 				23E5D19F09A22A57004E41D5 /* Sound_and_LPC_robust.h in Headers */,
 				23E5D1A209A22A57004E41D5 /* sendpraat.h in Headers */,
-				23E5D1A409A22A57004E41D5 /* TableEditor.h in Headers */,
 				23E5D1A609A22AA6004E41D5 /* Articulation_enums.h in Headers */,
 				23E5D1A709A22AA6004E41D5 /* Articulation_def.h in Headers */,
 				23E5D1A809A22AA6004E41D5 /* Artword_def.h in Headers */,
@@ -2749,7 +2716,6 @@
 				23E5D1B209A22AAB004E41D5 /* AnyTier_def.h in Headers */,
 				23E5D1B309A22AAB004E41D5 /* Formant_def.h in Headers */,
 				23E5D1B409A22AAB004E41D5 /* FormantTier_def.h in Headers */,
-				23E5D1B509A22AAB004E41D5 /* PairDistribution_def.h in Headers */,
 				23E5D1B609A22AAB004E41D5 /* Pitch_def.h in Headers */,
 				23E5D1B709A22AAB004E41D5 /* Sound_enums.h in Headers */,
 				23E5D1B809A22AAB004E41D5 /* Spectrum_def.h in Headers */,
@@ -2771,12 +2737,10 @@
 				23E5D1C909A22AB0004E41D5 /* Experiment_enums.h in Headers */,
 				23E5D1CA09A22AB0004E41D5 /* ExperimentMFC_def.h in Headers */,
 				23E5D1CB09A22AB0004E41D5 /* FujisakiPitch_def.h in Headers */,
-				23E5D1CC09A22AB0004E41D5 /* Table_def.h in Headers */,
 				23E5D1CD09A22AB0004E41D5 /* Praat_tests_enums.h in Headers */,
 				23E5D1CE09A22AB0004E41D5 /* Tube_def.h in Headers */,
 				23E5D1CF09A22AB0004E41D5 /* gsl_sf_result.h in Headers */,
 				23E5D1D009A22AB0004E41D5 /* gsl_sf__chebyshev.h in Headers */,
-				23E5D1D109A22AB0004E41D5 /* Regression_def.h in Headers */,
 				23E5D1D209A22AB0004E41D5 /* OTMulti_def.h in Headers */,
 				23E5D1D309A22AB0004E41D5 /* praat_version.h in Headers */,
 				23E5D1D409A22AB1004E41D5 /* ManPagesM.h in Headers */,
@@ -2803,7 +2767,6 @@
 				23E5D1EA09A22AB6004E41D5 /* Polygon_def.h in Headers */,
 				23E5D1EB09A22AB6004E41D5 /* RealTier_def.h in Headers */,
 				23E5D1EC09A22AB6004E41D5 /* Sampled_def.h in Headers */,
-				23E5D1ED09A22AB6004E41D5 /* TableOfReal_def.h in Headers */,
 				23E5D1EE09A22AB7004E41D5 /* Transition_def.h in Headers */,
 				23E5D1EF09A22AB7004E41D5 /* praatP.h in Headers */,
 				23E5D1F009A22AB7004E41D5 /* GraphicsP.h in Headers */,
@@ -2824,7 +2787,6 @@
 				23E5D20009A22ABC004E41D5 /* gsl_sf__cheb_eval.c in Headers */,
 				23E5D20109A22ABC004E41D5 /* gsl_sf__eval.h in Headers */,
 				23E5D20209A22ABD004E41D5 /* gsl_sf_pow_int.h in Headers */,
-				23E5D20309A22ABD004E41D5 /* gsl_sf__bessel_olver.h in Headers */,
 				23E5D20409A22ABD004E41D5 /* gsl_mode.h in Headers */,
 				23E5D20509A22ABD004E41D5 /* gsl_sf_exp.h in Headers */,
 				23E5D20609A22ABD004E41D5 /* gsl_sf_psi.h in Headers */,
@@ -2874,6 +2836,19 @@
 				230026EB0B34E03200A7FE19 /* pa_mac_util.h in Headers */,
 				23D87E860B3C929700AD716D /* Eigen_def.h in Headers */,
 				23D87E880B3C929700AD716D /* Eigen.h in Headers */,
+				2343BFC00BAC2001003D66E8 /* SpectrumTier.h in Headers */,
+				2343BFD90BAC23B3003D66E8 /* Ltas_to_SpectrumTier.h in Headers */,
+				2343C07C0BAC3066003D66E8 /* Regression_def.h in Headers */,
+				2343C07E0BAC3066003D66E8 /* Regression.h in Headers */,
+				2343C07F0BAC3066003D66E8 /* Table_def.h in Headers */,
+				2343C0810BAC3066003D66E8 /* Table.h in Headers */,
+				2343C0830BAC3066003D66E8 /* TableEditor.h in Headers */,
+				2343C20F0BAE1504003D66E8 /* Distributions_and_Strings.h in Headers */,
+				2343C2130BAE1511003D66E8 /* TableOfReal_def.h in Headers */,
+				2343C2150BAE1511003D66E8 /* TableOfReal.h in Headers */,
+				2343C2370BAE1567003D66E8 /* Distributions.h in Headers */,
+				2343C2B40BAE20C1003D66E8 /* PairDistribution_def.h in Headers */,
+				2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3035,8 +3010,6 @@
 				23E5CFF709A22A57004E41D5 /* AnyTier.c in Sources */,
 				23E5CFF909A22A57004E41D5 /* Cochleagram.c in Sources */,
 				23E5CFFB09A22A57004E41D5 /* Cochleagram_and_Excitation.c in Sources */,
-				23E5CFFD09A22A57004E41D5 /* Distributions.c in Sources */,
-				23E5CFFF09A22A57004E41D5 /* Distributions_and_Strings.c in Sources */,
 				23E5D00109A22A57004E41D5 /* Distributions_and_Transition.c in Sources */,
 				23E5D00309A22A57004E41D5 /* DurationTier.c in Sources */,
 				23E5D00509A22A57004E41D5 /* Excitation.c in Sources */,
@@ -3055,7 +3028,6 @@
 				23E5D01F09A22A57004E41D5 /* Matrix_and_Pitch.c in Sources */,
 				23E5D02109A22A57004E41D5 /* Matrix_and_PointProcess.c in Sources */,
 				23E5D02309A22A57004E41D5 /* Matrix_and_Polygon.c in Sources */,
-				23E5D02509A22A57004E41D5 /* PairDistribution.c in Sources */,
 				23E5D02709A22A57004E41D5 /* ParamCurve.c in Sources */,
 				23E5D02909A22A57004E41D5 /* Pitch.c in Sources */,
 				23E5D02B09A22A57004E41D5 /* PitchTier.c in Sources */,
@@ -3089,7 +3061,6 @@
 				23E5D05F09A22A57004E41D5 /* Spectrum_to_Excitation.c in Sources */,
 				23E5D06109A22A57004E41D5 /* Spectrum_to_Formant.c in Sources */,
 				23E5D06309A22A57004E41D5 /* SpellingChecker.c in Sources */,
-				23E5D06709A22A57004E41D5 /* TableOfReal.c in Sources */,
 				23E5D06909A22A57004E41D5 /* TextGrid.c in Sources */,
 				23E5D06B09A22A57004E41D5 /* Transition.c in Sources */,
 				23E5D06D09A22A57004E41D5 /* Vector.c in Sources */,
@@ -3194,9 +3165,6 @@
 				23E5D11309A22A57004E41D5 /* Eigen_and_Matrix.c in Sources */,
 				23E5D11509A22A57004E41D5 /* FujisakiPitch.c in Sources */,
 				23E5D11709A22A57004E41D5 /* Sound_and_Cepstrum.c in Sources */,
-				23E5D11909A22A57004E41D5 /* manual_statistics.c in Sources */,
-				23E5D11A09A22A57004E41D5 /* Table.c in Sources */,
-				23E5D11C09A22A57004E41D5 /* praat_Stat.c in Sources */,
 				23E5D11D09A22A57004E41D5 /* Formula.c in Sources */,
 				23E5D11F09A22A57004E41D5 /* CCA.c in Sources */,
 				23E5D12109A22A57004E41D5 /* CCA_and_Correlation.c in Sources */,
@@ -3221,10 +3189,6 @@
 				23E5D14009A22A57004E41D5 /* Tube.c in Sources */,
 				23E5D14209A22A57004E41D5 /* NUMfft_d.c in Sources */,
 				23E5D14309A22A57004E41D5 /* NUMfft_f.c in Sources */,
-				23E5D14709A22A57004E41D5 /* gsl_sf__bessel_temme.c in Sources */,
-				23E5D14A09A22A57004E41D5 /* gsl_sf__bessel_Kn.c in Sources */,
-				23E5D14B09A22A57004E41D5 /* gsl_sf__bessel_K1.c in Sources */,
-				23E5D14C09A22A57004E41D5 /* gsl_sf__bessel_K0.c in Sources */,
 				23E5D14E09A22A57004E41D5 /* gsl_sf__trig.c in Sources */,
 				23E5D15209A22A57004E41D5 /* gsl_err__error.c in Sources */,
 				23E5D15309A22A57004E41D5 /* gsl_sys__pow_int.c in Sources */,
@@ -3243,10 +3207,6 @@
 				23E5D16109A22A57004E41D5 /* gsl_sf__elementary.c in Sources */,
 				23E5D16209A22A57004E41D5 /* gsl_sf__beta_inc.c in Sources */,
 				23E5D16309A22A57004E41D5 /* gsl_sf__beta.c in Sources */,
-				23E5D16A09A22A57004E41D5 /* gsl_sf__bessel_In.c in Sources */,
-				23E5D16B09A22A57004E41D5 /* gsl_sf__bessel_I1.c in Sources */,
-				23E5D16C09A22A57004E41D5 /* gsl_sf__bessel_I0.c in Sources */,
-				23E5D17009A22A57004E41D5 /* gsl_sf__bessel.c in Sources */,
 				23E5D17309A22A57004E41D5 /* gsl_poly__zsolve.c in Sources */,
 				23E5D17409A22A57004E41D5 /* gsl_sys__infnan.c in Sources */,
 				23E5D17509A22A57004E41D5 /* VoiceAnalysis.c in Sources */,
@@ -3266,7 +3226,6 @@
 				23E5D18909A22A57004E41D5 /* Procrustes.c in Sources */,
 				23E5D18B09A22A57004E41D5 /* Configuration_and_Procrustes.c in Sources */,
 				23E5D18D09A22A57004E41D5 /* Eigen_and_Procrustes.c in Sources */,
-				23E5D18F09A22A57004E41D5 /* Regression.c in Sources */,
 				23E5D19109A22A57004E41D5 /* OTMulti.c in Sources */,
 				23E5D19309A22A57004E41D5 /* OTMultiEditor.c in Sources */,
 				23E5D19509A22A57004E41D5 /* Permutation.c in Sources */,
@@ -3276,10 +3235,8 @@
 				23E5D19C09A22A57004E41D5 /* Permutation_and_Index.c in Sources */,
 				23E5D19E09A22A57004E41D5 /* Sound_and_LPC_robust.c in Sources */,
 				23E5D1A009A22A57004E41D5 /* praat_TextGrid_init.c in Sources */,
-				23E5D1A309A22A57004E41D5 /* TableEditor.c in Sources */,
 				23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */,
 				23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */,
-				23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */,
 				23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */,
 				23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */,
 				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
@@ -3308,6 +3265,27 @@
 				230022270B33458700A7FE19 /* pa_mac_core_utilities.c in Sources */,
 				23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */,
 				23D87E870B3C929700AD716D /* Eigen.c in Sources */,
+				2343BF800BAC1526003D66E8 /* melder_quantity.c in Sources */,
+				2343BFBF0BAC2001003D66E8 /* SpectrumTier.c in Sources */,
+				2343BFD80BAC23B3003D66E8 /* Ltas_to_SpectrumTier.c in Sources */,
+				2343C07A0BAC3066003D66E8 /* manual_statistics.c in Sources */,
+				2343C07B0BAC3066003D66E8 /* praat_Stat.c in Sources */,
+				2343C07D0BAC3066003D66E8 /* Regression.c in Sources */,
+				2343C0800BAC3066003D66E8 /* Table.c in Sources */,
+				2343C0820BAC3066003D66E8 /* TableEditor.c in Sources */,
+				2343C20D0BAE14FE003D66E8 /* Distributions_and_Strings.c in Sources */,
+				2343C2140BAE1511003D66E8 /* TableOfReal.c in Sources */,
+				2343C2360BAE1567003D66E8 /* Distributions.c in Sources */,
+				2343C2B50BAE20C1003D66E8 /* PairDistribution.c in Sources */,
+				233B13EC0BB2AC5B004440C3 /* gsl_sf__bessel_In.c in Sources */,
+				233B13EF0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c in Sources */,
+				233B13F20BB2AC91004440C3 /* gsl_sf__bessel_I1.c in Sources */,
+				233B13FD0BB2AD70004440C3 /* gsl_sf__bessel.c in Sources */,
+				233B14000BB2AD8E004440C3 /* gsl_sf__bessel_temme.c in Sources */,
+				233B14030BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c in Sources */,
+				233B14060BB2ADBB004440C3 /* gsl_sf__bessel_K0.c in Sources */,
+				233B14090BB2ADC9004440C3 /* gsl_sf__bessel_K1.c in Sources */,
+				233B140C0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

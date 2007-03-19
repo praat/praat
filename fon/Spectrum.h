@@ -2,7 +2,7 @@
 #define _Spectrum_h_
 /* Spectrum.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2002/05/22
- * pb 2002/07/16 GPL
+ * pb 2007/03/19
  */
 
 /* Complex spectrum. */
@@ -93,6 +92,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 		[minimum, maximum]: power in dB/Hertz; y range of drawing.
 */
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
+
+void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 
 Spectrum Matrix_to_Spectrum (Matrix me);
 

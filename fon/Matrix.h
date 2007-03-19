@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/12/30
+ * pb 2007/03/18
  */
 
 /* Matrix inherits from Sampled */
@@ -29,6 +29,12 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+#ifndef _Table_h_
+	#include "Table.h"
+#endif
+#ifndef _TableOfReal_h_
+	#include "TableOfReal.h"
 #endif
 
 #define Matrix_members Sampled_members \
@@ -263,10 +269,14 @@ Matrix Matrix_appendRows (I, thou);
 int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
 Matrix Matrix_power (I, long power);
 
+void Matrix_scaleAbsoluteExtremum (I, double scale);
+
+Matrix Table_to_Matrix (Table me);
 int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
 int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 
-void Matrix_scaleAbsoluteExtremum (I, double scale);
+Matrix TableOfReal_to_Matrix (I);
+TableOfReal Matrix_to_TableOfReal (I);
 
 #endif
 /* End of file Matrix.h */

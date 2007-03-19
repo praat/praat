@@ -29,6 +29,7 @@
  * pb 2006/01/01 more stereo
  * pb 2007/01/28 removed a warning
  * pb 2007/01/28 made readFromMovieFile compatible with stereo
+ * pb 2007/03/17 resistant against conflicting declarations of Collection
  */
 
 /*
@@ -58,7 +59,9 @@ static void Sound_alawDecode (Sound me) {
 #include "Sound.h"
 
 #if defined (macintosh)
+	#include "macport_on.h"
 	#include <Carbon/Carbon.h>
+	#include "macport_off.h"
 	typedef struct SndResource {
 		short formatType; /* Always 1, because 2 is obsolete. */
 		short numberOfSynthesizers; /* 1, namely: */
@@ -70,16 +73,18 @@ static void Sound_alawDecode (Sound me) {
 	} *SndResourcePtr, **SndResourceHandle;
 #endif
 #if defined (macintosh) || defined (_WIN32)
-	#if defined (macintosh) && defined (__MWERKS__)
-		typedef unsigned char Boolean;
-	#endif
 	#if defined (_WIN32)
 		#undef false
 		#undef true
 		#define TARGET_API_MAC_CARBON  0
 	#endif
 	#if ! defined (DONT_INCLUDE_QUICKTIME)
+		#include "macport_on.h"
+		#if defined (macintosh) && defined (__MWERKS__)
+			typedef unsigned char Boolean;
+		#endif
 		#include <QuickTime.h>
+		#include "macport_off.h"
 	#endif
 #endif
 #if defined (_WIN32) && ! defined (DONT_INCLUDE_QUICKTIME)
@@ -251,7 +256,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	short refNum = 0, resourceID = 0;
 	OSErr err = noErr;
 	Movie movie = 0;
-	Boolean wasChanged;
+	MacintoshBoolean wasChanged;
 	Track track;
 	Media media = NULL;
 	long numberOfMediaSamples, numberOfSamplesPerMediaSample;

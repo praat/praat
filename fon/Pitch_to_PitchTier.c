@@ -126,7 +126,7 @@ Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	Pitch thee = NULL;
 	if (tier -> points -> size == 0) return Melder_errorp ("No pitch points.");
 	thee = Data_copy (me);
-		for (iframe = 1; iframe <= my nx; iframe ++) {
+	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & thy frame [iframe];
 		Pitch_Candidate cand = & frame -> candidate [1];
 		if (cand -> frequency > 0.0 && cand -> frequency <= my ceiling)

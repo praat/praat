@@ -150,17 +150,20 @@ INTRO ("The pitch floor is the bottom of the pitch range in the Sound window (se
 NORMAL ("To change the pitch floor, choose @@Pitch settings...@.")
 MAN_END
 
-MAN_BEGIN ("power spectral density", "ppgb", 20041122)
+MAN_BEGIN ("power spectral density", "ppgb", 20070320)
 INTRO ("The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa^2/s.")
 ENTRY ("Mathematical definition")
 NORMAL ("The %%complex spectrum% of a sound %x(%t) in the time range (%t__1_, %t__2_) is")
 FORMULA ("%X(%f) \\=3 \\in__%%t%1_^^%%t%2^ %x(%t) e^^-2%\\pi%ift^ %dt")
 NORMAL ("for any frequency %f in the two-sided frequency domain (-%F, +%F). "
 	"If %x(%t) is expressed in units of Pascal, %X(%f) is expressed in units of Pa/Hz. "
-	"From the complex spectrum we can compute the %%one-sided power spectral density% in Pa^2/Hz as")
+	"In Praat, this complex spectrum is the quantity stored in a @Spectrum.")
+NORMAL ("From the complex spectrum we can compute the %%one-sided power spectral density% in Pa^2/Hz as")
 FORMULA ("PSD(%f) \\=3 2|%X(%f)|^2 / (%t__2_ - %t__1_)")
 NORMAL ("where the factor 2 is due to adding the contributions from positive and negative frequencies. "
-	"The PSD divides up the total power of the sound. To see this, we integrate it over its entire one-sided frequency domain (0, %F):")
+	"In Praat, this power spectral density is the quantity stored in a @Spectrogram.")
+NORMAL ("The PSD divides up the total power of the sound. "
+	"To see this, we integrate it over its entire one-sided frequency domain (0, %F):")
 FORMULA ("\\in__0_^^%F^ PSD(%f) %df = \\in__0_^^%F^ 2|%X(%f)|^2/(%t__2_-%t__1_) %df =")
 FORMULA ("= 1/(%t__2_-%t__1_) \\in__-%F_^^+%F^ |%X(%f)|^2 %df = 1/(%t__2_-%t__1_) \\in__%%t%1_^^%%t%2^ |%x(%t)|^2 %dt")
 NORMAL ("where the last step uses %%Parceval's theorem%. "
@@ -169,8 +172,8 @@ ENTRY ("The logarithmic power spectral density")
 NORMAL ("It is often useful to express the power spectral density in dB relative to %%P__ref_% = 2\\.c10^^-5^ Pa:")
 FORMULA ("PSD__dB_(%f) = 10 log__10_ { PSD(%f) / %%P__ref_%^2 }")
 NORMAL ("Since the argument of the logarithm is in units of Hz^^-1^, this spectral measure can loosely be said "
-	"to be in units of `dB/Hz'. P\\s{RAAT} shows this spectral measure in pictures of a @Spectrum; "
-	"it is also the units in which an @Ltas and a @Spectrogram are expressed.")
+	"to be in units of `dB/Hz'. In Praat, this logarithmic power spectral density is the quantity stored in an @Ltas; "
+	"it is also the quantity shown in pictures of a @Spectrum and a @Spectrogram.")
 MAN_END
 
 MAN_BEGIN ("PSOLA", "ppgb", 20010330)

@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/09/18
+ * pb 2007/03/14
  */
 
 #ifndef _Thing_h_
@@ -101,6 +101,7 @@ void Graphics_fillArc (I, double x, double y, double r, double fromAngle, double
 void Graphics_ellipse (I, double x1, double x2, double y1, double y2);
 void Graphics_fillEllipse (I, double x1, double x2, double y1, double y2);
 void Graphics_arrow (I, double x1, double y1, double x2, double y2);
+void Graphics_doubleArrow (I, double x1, double y1, double x2, double y2);
 void Graphics_arcArrow (I, double x, double y, double r, double fromAngle, double toAngle, int arrowAtStart, int arrowAtEnd);
 void Graphics_mark (I, double x, double y, double size_mm, const char *markString);
 void Graphics_button (I, double x1, double x2, double y1, double y2);
@@ -162,6 +163,7 @@ void Graphics_setLineType (I, int lineType);
 #define Graphics_DOTTED  1
 #define Graphics_DASHED  2
 void Graphics_setLineWidth (I, double lineWidth);
+void Graphics_setArrowSize (I, double arrorSize);
 
 void Graphics_setColour (I, int colour);
 #define Graphics_setColor  Graphics_setColour
@@ -191,6 +193,7 @@ int Graphics_inqFontSize (I);
 int Graphics_inqFontStyle (I);
 int Graphics_inqLineType (I);
 float Graphics_inqLineWidth (I);
+float Graphics_inqArrowSize (I);
 int Graphics_inqColour (I);
 
 void Graphics_printf (I, double xWC, double yWC, const char *format, ...);

@@ -46,7 +46,8 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20061229 Latest modification.
+ djmw 20070206 Sound_changeGender: pitch range factor must be >= 0
+ djmw 20070304 Latest modification.
 */
 
 #include "praat.h"
@@ -1146,12 +1147,25 @@ DO
 		GET_INTEGER("Garnish")))
 END
 
-FORM (DTW_getPathY, "DTW: Get time along path", 
-	"DTW: Get time along path...")
+FORM (DTW_getPathY, "DTW: Get time along path", "DTW: Get time along path...")
 	REAL ("Time (s)", "0.0")
 	OK
 DO
 	Melder_information1 (Melder_double (DTW_getPathY (ONLY_OBJECT, GET_REAL ("Time"))));	
+END
+
+FORM (DTW_getYTime, "DTW: Get y time", "DTW: Get y time...")
+	REAL ("Time at x (s)", "0.0")
+	OK
+DO
+	Melder_information1 (Melder_double (DTW_getYTime (ONLY_OBJECT, GET_REAL ("Time at x"))));	
+END
+
+FORM (DTW_getXTime, "DTW: Get x time", "DTW: Get x time...")
+	REAL ("Time at y (s)", "0.0")
+	OK
+DO
+	Melder_information1 (Melder_double (DTW_getXTime (ONLY_OBJECT, GET_REAL ("Time at y"))));	
 END
 
 FORM (DTW_getMaximumConsecutiveSteps, "DTW: Get maximum consecutive steps", "DTW: Get maximum consecutive steps...")
@@ -3303,16 +3317,18 @@ FORM (Sound_changeGender, "Sound: Change gender", "Sound: Change gender...")
 	LABEL ("", "Modification parameters")
 	POSITIVE ("Formant shift ratio", "1.2")
 	REAL ("New pitch median (Hz)", "0.0 (=no change)")
-	POSITIVE ("Pitch range factor", "1.0 (=no change)")
+	REAL ("Pitch range factor", "1.0 (=no change)")
 	POSITIVE ("Duration factor", "1.0")
 	OK
 DO
 	double minimumPitch = GET_REAL ("Pitch floor");
 	double maximumPitch = GET_REAL ("Pitch ceiling");
+	double pitchrf = GET_REAL ("Pitch range factor");
 	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
+	REQUIRE (pitchrf >= 0, "Pitch range factor may not be negative")
 	EVERY_TO (Sound_changeGender_old (OBJECT, minimumPitch, maximumPitch,
 		GET_REAL ("Formant shift ratio"), GET_REAL ("New pitch median"),
-		GET_REAL ("Pitch range factor"), GET_REAL ("Duration factor")))
+		pitchrf, GET_REAL ("Duration factor")))
 END
 
 FORM_READ (Sound_readFromRawFileLE, "Read Sound from raw Little Endian file", 0)
@@ -4594,7 +4610,9 @@ void praat_uvafon_David_init (void)
     praat_addAction1 (classDTW, 0, QUERY_BUTTON, 0, 0, 0);
     praat_addAction1 (classDTW, 1, "Get distance (weighted)", 0, 1, DO_DTW_getWeightedDistance);
 	praat_addAction1 (classDTW, 1, "Get maximum consecutive steps...", 0, 1, DO_DTW_getMaximumConsecutiveSteps);
-    praat_addAction1 (classDTW, 1, "Get time along path...", 0, 1, DO_DTW_getPathY);
+    praat_addAction1 (classDTW, 1, "Get time along path...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_DTW_getPathY);
+    praat_addAction1 (classDTW, 1, "Get y time...", 0, 1, DO_DTW_getYTime);
+    praat_addAction1 (classDTW, 1, "Get x time...", 0, 1, DO_DTW_getXTime);
 		
 
     praat_addAction1 (classDTW, 0, "Analyse", 0, 0, 0);

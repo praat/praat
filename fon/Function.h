@@ -1,6 +1,6 @@
 /* Function.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/06/16
+ * pb 2007/03/17
  */
 
 #ifndef _Function_h_
@@ -32,6 +32,7 @@
 #define Function_members  Data_members \
 	double xmin, xmax;
 #define Function_methods  Data_methods \
+	int domainQuantity; \
 	int (*getMinimumUnit) (void *klas, long ilevel); \
 	int (*getMaximumUnit) (void *klas, long ilevel); \
 	const char * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
@@ -55,6 +56,8 @@ int Function_init (I, double xmin, double xmax);
 		result -> xmin == xmin;
 		result -> xmax == xmax;
 */
+
+int ClassFunction_getDomainQuantity (I);   // as input for MelderQuantity_getXXX
 
 /*
  * A function value is often expressed in some unit, such as:

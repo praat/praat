@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070222)
+MAN_BEGIN ("What's new?", "ppgb", 20070321)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.17# (March 19, 2007)")
+LIST_ITEM ("\\bu Picture window: can change arrow size.")
+LIST_ITEM ("\\bu Several #List commands.")
+LIST_ITEM ("\\bu Spectrum: To SpectrumTier (peaks).")
 NORMAL ("##4.5.16# (February 22, 2007)")
 LIST_ITEM ("\\bu Sound-to-Intensity: made resistant against undefined settings.")
 LIST_ITEM ("\\bu Windows: made Ctrl-. available as a shortcut.")

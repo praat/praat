@@ -1,6 +1,6 @@
 /* DurationTier.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 1997/04/08
  * pb 2002/07/16 GPL
  * pb 2006/12/08 info
+ * pb 2007/03/17 domain quantity
  */
 
 #include "DurationTier.h"
@@ -39,6 +39,7 @@ static void info (I) {
 
 class_methods (DurationTier, RealTier)
 	class_method (info)
+	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end
 
 DurationTier DurationTier_create (double tmin, double tmax) {

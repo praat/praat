@@ -1,6 +1,6 @@
 /* DTW.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2006 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 
 #include "DTW.h"
 #include "NUM2.h"
-#include "NUMmachar.h"
 
 #include "oo_DESTROY.h"
 #include "DTW_def.h"
@@ -50,9 +49,6 @@
 #include "DTW_def.h"
 
 #define DTW_BIG 1e38
-
-extern machar_Table NUMfpp;
-
 /*
 	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
 	Two other lines, ru and rl, end in the upper-right corner. The upper/lower line have minimum/maximum slope.
@@ -62,289 +58,28 @@ extern machar_Table NUMfpp;
 */
 
 
-/* 
+/* Remove redundancies by keeping only positions where path changes horizontally or vertically.
    The path can then be calculated as follows:
-   In the distance matrix we have cells of dx by dy.
+   In the distancematrix we have cells of dx by dy.
    The optimal path connects cells with one another.
-   In a diagonal path, i.e. cells have no side in common, the path runs from the lowerleft corner
+   In a diagonal path, i.e. cells have no side in coomon, the path runs from the lowerleft corner
    to the upperright corner.
    If a path segment is horizontal or vertical the path also runs from lowerleft to upperright.
-   It is only when a horizontal and a vertical segment have a cell in common that we have to make
-   some adjustments to the path in the common cell.
+   It is only wken a horizontal and a vertical segment have a side in common that we have to make
+   some adjustments to the path in the cell that both segments have in common.
    Let nx and ny be the number of horizontal and vertical cells in this path segment.
    The path will always start at the lowerleft of the leftmost block and end
    at the upperright of the rightmost block.
    In the common cell there is an extra point in the path at (x1,y1)
    This point is at the intersection of the line in the horizontal segment with the line in
-   the vertical segment. Let the lowerleft and upperright point of the common cell be (0,0) and (dx,dy).
-   We have two lines y = a1*x+b1 and y = a2*x+b2 with intersection:
-      (x,y) = (b2-b1, a1*b2-a2*b1)/(a1-a2)
-	If we substitute for a hv segment:
-		a1 = dy/(nx*dx),   a2 = ny*dy/dx
-		b1 = dy*(nx-1)/nx, b2 = 0
-	Then:
-		(x,y) = (dx, dy*ny ) * (nx-1)/(nx*ny-1)
-
-	If we substitute for a vh segment
-		a1 = ny*dy/dx,   a2 = dy/(nx*dx)
-		b1 = -(ny-1)*dy   b2 = 0
-	Then:
-		(x,y) = (nx*dx, dy) * (ny-1)/(nx*ny-1)
+   the vertical segment. Let the lowerleft and upperright point of the common cell be (0,0) and (dx,dy)
+   then these two lines can be described as:
+      y = ny*dy/dx * x
+      y = dy/(nx*dx) * x + (nx-1)/nx * dy
+   The coordinates of the intersection will be
+      x1 = (nx-1)/(nx*ny-1) * dx, 
+      y1 = (ny*(nx-1)/(nx*ny-1) * dy)
 */
-
-/* DTW_getXTime (DTW me, (DTW_getYTime (DTW me, double tx)) == tx */
-double DTW_getYTime (DTW me, double tx)
-{
-	DTW_Path_Query thee = & my pathQuery;
-	long ix, ib, ie;
-	double a, b, eps;
-	
-	if (tx < my xmin) return my ymin - (my xmin - tx);
-	if (tx > my xmax) return my ymax + (tx - my xmax);
-	
-	if (! NUMfpp) NUMmachar ();
-	eps = 3 * NUMfpp -> eps;
-	
-	/* Find in which column is tx */
-	
-	ix = (long) floor((tx - my x1) / my dx + 1.5);
-	if (ix < 1)
-	{
-		ib = 1; ie = 2;
-	}
-	else if (ix > my nx)
-	{
-		ib = thy nxy - 1; ie = thy nxy;
-	}
-	else
-	{
-		ib = thy xindex[ix].ibegin; ie = thy xindex[ix].iend;
-	}
-	if (ie - ib > 1)
-	{
-		long it = ib + 1;
-		while (tx - thy xytimes[it].x > eps)
-		{
-			it++;
-		}
-		ie = it; ib = it -1;
-	}
-	a = (thy xytimes[ib].y - thy xytimes[ie].y) / (thy xytimes[ib].x - thy xytimes[ie].x);
-	b = thy xytimes[ib].y - a * thy xytimes[ib].x;
-	return a * tx + b;
-}
-
-double DTW_getXTime (DTW me, double ty)
-{
-	DTW_Path_Query thee = & my pathQuery;
-	long iy, ib, ie;
-	double a, b, eps;
-	
-	if (ty < my ymin) return my ymin - (my ymin -ty);
-	if (ty > my ymax) return my ymax + (ty - my ymax);
-	
-	if (! NUMfpp) NUMmachar ();
-	eps = 3 * NUMfpp -> eps;
-	
-	/* Find in which column is ty */
-	
-	iy = (long) floor ((ty - my y1) / my dy + 1.5);
-	if (iy < 1)
-	{
-		ib = 1; ie = 2;
-	}
-	else if (iy > my ny)
-	{
-		ib = thy nxy - 1; ie = thy nxy;
-	}
-	else
-	{
-		ib = thy yindex[iy].ibegin; ie = thy yindex[iy].iend;
-	}
-	if (ie - ib > 1)
-	{
-		long it = ib + 1;
-		while (ty - thy xytimes[it].y > eps)
-		{
-			it++;
-		}
-		ie = it; ib = it -1;
-	}	
-	a = (thy xytimes[ib].y - thy xytimes[ie].y) / (thy xytimes[ib].x - thy xytimes[ie].x);
-	b = thy xytimes[ib].y - a * thy xytimes[ib].x;
-	return (ty - b) / a;
-}
-
-int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx)
-{
-	Melder_assert (ny > 0 && nx > 0);
-	my ny = ny;
-	my nx = nx;
-	my nxy = 2 * (ny > nx ? ny : nx) + 1; // maximum number of points
-	if ((my xytimes = NUMstructvector (DTW_Path_xytime, 1, my nxy)) == NULL) return 0;
-	if ((my yindex = NUMstructvector (DTW_Path_Index, 1, my ny)) == NULL) return 0;
-	if ((my xindex = NUMstructvector (DTW_Path_Index, 1, my nx)) == NULL) return 0;
-	return 1;
-}
-
-static void DTW_Path_makeIndex (DTW me, int xory)
-{
-	DTW_Path_Query thee = & my pathQuery;
-	DTW_Path_Index index;
-	double eps, x1, dx, xlow, xhigh, xy_x2;
-	long i, j, nx;
-	
-	if (! NUMfpp) NUMmachar ();
-	eps = 3 * NUMfpp -> eps;
-	
-	if (xory == DTW_X)
-	{
-		index = thy xindex;
-		nx = my nx;
-		x1 = my x1;
-		dx = my dx;
-	}
-	else
-	{
-		index = thy yindex;
-		nx = my ny;
-		x1 = my y1;
-		dx = my dy;
-	}
-	xy_x2 = xory == DTW_X ? thy xytimes[3].x : thy xytimes[3].y;
-	i = 3;
-	for (j = 1; j <= nx; j++)
-	{
-		xlow = x1 + (j - 1 - 0.5) * dx;
-		xhigh = xlow + dx;
-		
-		if (xlow - xy_x2 > -eps) // i.e. xlow >= xy_x2
-		{
-			i++;
-			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
-		}
-		
-		index[j].ibegin = i - 1;
-		
-		while (xhigh - xy_x2 > eps) // i.e. xhigh > xy_x2
-		{
-			i++;
-			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
-		}
-		
-		index[j].iend = i;
-	}
-}
-
-void DTW_Path_recode (DTW me)
-{
-	DTW_Path_Query thee = & my pathQuery;
-	long j, nxy, nx = 1, ny = 1, nd = 0, ixp = 0, iyp = 0;
-	int isv = 0, ish = 0;
-	
-	/* two pass algorithm
-		1: get all the points in the path
-		2. get the x and y indices 
-	*/
-	
-	/* 1. Starting point always at origin */
-	thy xytimes[1].x = my xmin;
-	thy xytimes[1].y = my ymin;
-	nx = my path[1].x;
-	ixp = nx - 1;
-	thy xytimes[2].x = my x1 + (nx - 1 - 0.5) * my dx;
-	ny = my path[1].y;
-	iyp = ny - 1;
-	thy xytimes[2].y = my y1 + (ny - 1 - 0.5) * my dy;
-	// implicit: my x1 - 0.5 * my dx > my xmin && my y1 - 0.5 * my dy > my ymin
-	nxy = 2;
-	for (j = 1; j <= my pathLength; j++)
-	{
-		long index, ix = my path[j].x, iy = my path[j].y;
-		double xright = my x1 + (ix - 1 + 0.5) * my dx;
-		double x, y, f, ytop = my y1 + (iy - 1 + 0.5) * my dy;
-		
-		if (iy == iyp) // horizontal path?
-		{
-			ish = 1;
-			if (isv) // we came from vertical direction
-			{
-				nx = 1; isv = 0;
-			}
-			nx++;
-			
-			if (ny > 1 || nd > 1) // When previous was not diagonal modify intersection
-			{
-				// The vh intersection (x,y) = (nx*dx, dy) * (ny-1)/(nx*ny-1)
-				f = (ny - 1.0) / (nx * ny - 1);
-				x = xright - nx * my dx + nx * my dx * f;
-				y = ytop - my dy + my dy * f;
-				index = nxy - 1;
-				if (nx == 2)
-				{
-					index = nxy;
-					nxy++;
-				}
-				thy xytimes[index].x = x;
-				thy xytimes[index].y = y;
-			}
-			nd = 0;
-		}
-		else if (ix == ixp) // vertical
-		{
-			isv = 1;
-			if (ish)
-			{
-				ny = 1; ish = 0;
-			}
-			ny++;
-			
-			if (nx > 1 || nd > 1)
-			{
-				// The hv intersection (x,y) = (dx, dy*ny ) * (nx-1)/(nx*ny-1)
-				f = (nx - 1.0) / (nx * ny - 1);
-				x = xright - my dx + my dx * f;
-				y = ytop - ny * my dy + ny * my dy * f;
-				if (ny == 2) 
-				{
-					index = nxy;
-					nxy++;
-				}
-				thy xytimes[index].x = x;
-				thy xytimes[index].y = y;
-			}
-			nd = 0;
-		}
-		else if (ix == (ixp + 1) && iy == (iyp + 1)) // diagonal
-		{
-			nd++;
-			if (nd == 1)
-			{
-				nxy++;
-			}
-			nx = ny = 1;
-		}
-		else
-		{
-			(void) Melder_error ("The path goes back in time");
-			return;
-		}
-		// update 
-		thy xytimes[nxy].x = xright;
-		thy xytimes[nxy].y = ytop;
-		ixp = ix; iyp = iy;
-	}
-	
-	nxy++;
-	thy xytimes[nxy].x = my xmax;
-	thy xytimes[nxy].y = my ymax;
-	Melder_assert (nxy <= thy nxy);
-	thy nxy = nxy;
-	
-	DTW_Path_makeIndex (me, DTW_X);
-	DTW_Path_makeIndex (me, DTW_Y);
-}
-
 void DTW_pathRemoveRedundantNodes (DTW me)
 {
 	long i = 1, j, skip = 0;
@@ -373,6 +108,16 @@ void DTW_pathRemoveRedundantNodes (DTW me)
 	}
 	if (skip > 0) my path[++i] = my path[my pathLength];
 	my pathLength = i;
+}
+
+void DTW_pathQueryRecode (DTW me)
+{
+	long i;
+	for (i = 1; i <= my pathLength; i++)
+	{
+		
+	
+	}
 }
 
 static int get_ylimitsFromConstraints (long nsteps_xory, long nsteps_xandy, long nx, long ny, long x, long *ylow, long *yhigh)
@@ -490,18 +235,14 @@ class_methods (DTW, Matrix)
 	class_method_local (DTW, description)
 class_methods_end
 
-/* Prototype must be on y-axis and test on x-axis */
-
 Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c)
 {
 	DTW me = new (DTW);
-	if (me == NULL) return NULL;
-	if (! Matrix_init (me, tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p)) goto end;
-	if ((my path = NUMstructvector (DTW_Path, 1, ntc + ntp - 1)) == NULL) goto end;
-	(void) DTW_Path_Query_init (& my pathQuery, ntp, ntc);
-end:
-	if (Melder_hasError()) forget (me);
+	if (me == NULL || ! Matrix_init (me, tminc, tmaxc, ntc, dtc, t1c,
+			tminp, tmaxp, ntp, dtp, t1p) ||
+		((my path = NUMstructvector (DTW_Path, 1, ntc + ntp - 1)) == NULL))
+			forget (me);
 	return me;
 }
 
@@ -1097,7 +838,7 @@ s3:			{
 		}
 	}
 	
-	DTW_Path_recode (me);
+	DTW_pathRemoveRedundantNodes (me);
 	
 end:
 
@@ -1308,7 +1049,6 @@ Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
 		_DTW_to_Polygon (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy) : NULL;
 }
 
-/*
 void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 	double ymax, int garnish)
 {
@@ -1348,45 +1088,6 @@ void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 		y1 = y2;
 	}
 	
-	Graphics_unsetInner (g);
-	if (garnish)
-	{
-		Graphics_drawInnerBox(g);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-	}
-}
-*/
-
-void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
-	double ymax, int garnish)
-{
-	DTW_Path_Query thee = & my pathQuery;
-	long i;
-	
-	if (xmin >= xmax)
-	{
-		xmin = my xmin; xmax = my xmax;
-	}
-	if (ymin >= ymax)
-	{
-		ymin = my ymin; ymax = my ymax;
-	}
-
-	Graphics_setInner (g);
-	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-
-	for (i = 1; i < thy nxy; i++)
-	{
-		double x1, y1, x2, y2;
-		if (NUMclipLineWithinRectangle (thy xytimes[i].x, thy xytimes[i].y, 
-			thy xytimes[i+1].x, thy xytimes[i+1].y,
-			xmin, ymin, xmax, ymax, &x1, &y1, &x2, &y2))
-		{
-			Graphics_line (g, x1, y1, x2, y2);
-		}
-	}
-
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
@@ -1698,9 +1399,9 @@ end:
 
 DurationTier DTW_to_DurationTier (DTW me)
 {
-	(void) me;
-	DurationTier thee = NULL;
-	return thee;
+
+
+
 }
 
 /* End of file DTW.c */

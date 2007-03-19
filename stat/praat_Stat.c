@@ -18,11 +18,14 @@
  */
 
 /*
- * pb 2006/12/26
+ * pb 2007/03/18
  */
 
 #include "praat.h"
 
+#include "Distributions_and_Strings.h"
+#include "Matrix.h"
+#include "PairDistribution.h"
 #include "Table.h"
 #include "TableEditor.h"
 #include "Regression.h"
@@ -37,6 +40,94 @@ static char * Table_messageColumn (Table me, long column) {
 		sprintf (formatBuffer [formatIndex], "%ld", column);
 	return formatBuffer [formatIndex];
 }
+
+/***** DISTRIBUTIONS *****/
+
+DIRECT (Distributionses_add)
+	Collection me = Collection_create (classDistributions, 10);
+	if (! me) return 0;
+	WHERE (SELECTED)
+		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
+	if (! praat_new (Distributions_addMany (me), "added")) {
+		my size = 0; forget (me); return 0;
+	}
+	my size = 0; forget (me);
+END
+
+FORM (Distributionses_getMeanAbsoluteDifference, "Get mean difference", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	Distributions me = NULL, thee = NULL;
+	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
+	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER ("Column number")), NULL);
+END
+
+FORM (Distributions_getProbability, "Get probability", 0)
+	NATURAL ("Column number", "1")
+	SENTENCE ("String", "")
+	OK
+DO
+	Melder_informationReal (Distributions_getProbability (ONLY_OBJECT,
+		GET_STRING ("String"), GET_INTEGER ("Column number")), NULL);
+END
+
+DIRECT (Distributions_help) Melder_help ("Distributions"); END
+
+FORM (Distributions_to_Strings, "To Strings", 0)
+	NATURAL ("Column number", "1")
+	NATURAL ("Number of strings", "1000")
+	OK
+DO
+	EVERY_TO (Distributions_to_Strings (OBJECT, GET_INTEGER ("Column number"), GET_INTEGER ("Number of strings")))
+END
+
+FORM (Distributions_to_Strings_exact, "To Strings (exact)", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	EVERY_TO (Distributions_to_Strings_exact (OBJECT, GET_INTEGER ("Column number")))
+END
+
+/***** PAIRDISTRIBUTION *****/
+
+DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
+	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood (ONLY_OBJECT), NULL);
+	iferror return 0;
+END
+
+DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
+	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching (ONLY_OBJECT), NULL);
+	iferror return 0;
+END
+
+DIRECT (PairDistribution_help) Melder_help ("PairDistribution"); END
+
+DIRECT (PairDistribution_removeZeroWeights)
+	EVERY (PairDistribution_removeZeroWeights (OBJECT))
+END
+
+FORM (PairDistribution_to_Stringses, "Generate two Strings objects", 0)
+	NATURAL ("Number", "1000")
+	SENTENCE ("Name of first Strings", "input")
+	SENTENCE ("Name of second Strings", "output")
+	OK
+DO
+	Strings strings1, strings2;
+	if (! PairDistribution_to_Stringses (ONLY (classPairDistribution), GET_INTEGER ("Number"), & strings1, & strings2)) return 0;
+	if (! praat_new (strings1, "%s", GET_STRING ("Name of first Strings"))) { forget (strings2); return 0; }
+	if (! praat_new (strings2, "%s", GET_STRING ("Name of second Strings"))) return 0;
+END
+	
+/***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
+
+FORM (PairDistribution_Distributions_getFractionCorrect, "PairDistribution & Distributions: Get fraction correct", 0)
+	NATURAL ("Column", "1")
+	OK
+DO
+	Melder_informationReal (PairDistribution_Distributions_getFractionCorrect
+		(ONLY (classPairDistribution), ONLY (classDistributions), GET_INTEGER ("Column")), NULL);
+END
 
 /***** TABLE *****/
 
@@ -125,6 +216,29 @@ DIRECT (Table_appendRow)
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
+END
+
+FORM (Table_createWithColumnNames, "Create Table with column names", 0)
+	WORD ("Name", "table")
+	INTEGER ("Number of rows", "10")
+	LABEL ("", "Column names:")
+	TEXTFIELD ("columnNames", "speaker dialect age vowel F0 F1 F2")
+	OK
+DO
+	if (! praat_new (Table_createWithColumnNames
+		(GET_INTEGER ("Number of rows"), GET_STRING ("columnNames")),
+		GET_STRING ("Name"))) return 0;
+END
+
+FORM (Table_createWithoutColumnNames, "Create Table without column names", 0)
+	WORD ("Name", "table")
+	INTEGER ("Number of rows", "10")
+	NATURAL ("Number of columns", "3")
+	OK
+DO
+	if (! praat_new (Table_createWithoutColumnNames
+		(GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
+		GET_STRING ("Name"))) return 0;
 END
 
 FORM (Table_drawEllipse, "Draw ellipse (standard deviation)", 0)
@@ -322,6 +436,15 @@ DO
 	}
 END
 
+FORM (Table_list, "Table: List", 0)
+	BOOLEAN ("Include row numbers", true)
+	OK
+DO
+	WHERE (SELECTED) {
+		Table_list (OBJECT, GET_INTEGER ("Include row numbers"));
+	}
+END
+
 FORM (Table_pool, "Table: Pool", 0)
 	LABEL ("", "Columns with factors (independent variables):")
 	TEXTFIELD ("independentVariables", "speaker dialect age vowel")
@@ -346,6 +469,18 @@ DO
 			"%s_pooled", NAME)) return 0;
 		praat_dataChanged (OBJECT);
 	}
+END
+
+FORM_READ (Table_readFromTableFile, "Read Table from table file", 0)
+	if (! praat_new (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
+END
+
+FORM_READ (Table_readFromCommaSeparatedFile, "Read Table from comma-separated file", 0)
+	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
+END
+
+FORM_READ (Table_readFromTabSeparatedFile, "Read Table from tab-separated file", 0)
+	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
 END
 
 FORM (Table_removeColumn, "Table: Remove column", 0)
@@ -645,10 +780,6 @@ DO
 	}
 END
 
-DIRECT (Table_to_Matrix)
-	EVERY_TO (Table_to_Matrix (OBJECT))
-END
-
 FORM (Table_to_TableOfReal, "Table: Down to TableOfReal", 0)
 	WORD ("Column for row labels", "")
 	OK
@@ -664,6 +795,439 @@ FORM_WRITE (Table_writeToTableFile, "Write Table to table file", 0, "Table")
 	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
 END
 
+/***** TABLEOFREAL *****/
+
+DIRECT (TablesOfReal_append)
+	Collection me = Collection_create (classTableOfReal, 10);
+	if (! me) return 0;
+	WHERE (SELECTED)
+		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
+	if (! praat_new (TablesOfReal_appendMany (me), "appended")) {
+		my size = 0; forget (me); return 0;
+	}
+	my size = 0; forget (me);
+END
+
+FORM (TableOfReal_create, "Create TableOfReal", 0)
+	WORD ("Name", "table")
+	NATURAL ("Number of rows", "10")
+	NATURAL ("Number of columns", "3")
+	OK
+DO
+	if (! praat_new (TableOfReal_create (GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
+		GET_STRING ("Name"))) return 0;
+END
+
+FORM (TableOfReal_drawAsNumbers, "Draw as numbers", 0)
+	NATURAL ("From row", "1")
+	INTEGER ("To row", "0 (= all)")
+	RADIO ("Format", 3)
+	RADIOBUTTON ("decimal")
+	RADIOBUTTON ("exponential")
+	RADIOBUTTON ("free")
+	RADIOBUTTON ("rational")
+	NATURAL ("Precision", "5")
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawAsNumbers (OBJECT, GRAPHICS,
+		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
+		GET_INTEGER ("Format"), GET_INTEGER ("Precision")))
+END
+
+FORM (TableOfReal_drawAsNumbers_if, "Draw as numbers if...", 0)
+	NATURAL ("From row", "1")
+	INTEGER ("To row", "0 (= all)")
+	RADIO ("Format", 3)
+	RADIOBUTTON ("decimal")
+	RADIOBUTTON ("exponential")
+	RADIOBUTTON ("free")
+	RADIOBUTTON ("rational")
+	NATURAL ("Precision", "5")
+	LABEL ("", "Condition:")
+	TEXTFIELD ("condition", "self <> 0")
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawAsNumbers_if (OBJECT, GRAPHICS,
+		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
+		GET_INTEGER ("Format"), GET_INTEGER ("Precision"), GET_STRING ("condition")))
+END
+
+FORM (TableOfReal_drawAsSquares, "Draw table as squares", 0)
+	INTEGER ("From row", "1")
+	INTEGER ("To row", "0")
+	INTEGER ("From column", "1")
+	INTEGER ("To column", "0")
+	BOOLEAN ("Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawAsSquares (OBJECT, GRAPHICS, 
+		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
+		GET_INTEGER ("From column"), GET_INTEGER ("To column"),
+		GET_INTEGER ("Garnish")))
+END
+
+FORM (TableOfReal_drawHorizontalLines, "Draw horizontal lines", 0)
+	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
+	EVERY_DRAW (TableOfReal_drawHorizontalLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
+FORM (TableOfReal_drawLeftAndRightLines, "Draw left and right lines", 0)
+	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
+	EVERY_DRAW (TableOfReal_drawLeftAndRightLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
+FORM (TableOfReal_drawTopAndBottomLines, "Draw top and bottom lines", 0)
+	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
+	EVERY_DRAW (TableOfReal_drawTopAndBottomLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
+FORM (TableOfReal_drawVerticalLines, "Draw vertical lines", 0)
+	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
+	EVERY_DRAW (TableOfReal_drawVerticalLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
+
+DIRECT (TableOfReal_extractColumnLabelsAsStrings)
+	EVERY_TO (TableOfReal_extractColumnLabelsAsStrings (OBJECT))
+END
+
+FORM (TableOfReal_extractColumnRanges, "Extract column ranges", 0)
+	LABEL ("", "Create a new TableOfReal from the following columns:")
+	TEXTFIELD ("ranges", "1 2")
+	LABEL ("", "To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractColumnRanges (OBJECT, GET_STRING ("ranges")), "%s_cols", NAME)) return 0;
+	}
+END
+
+FORM (TableOfReal_extractColumnsWhere, "Extract columns where", 0)
+	LABEL ("", "Extract all columns with at least one cell where:")
+	TEXTFIELD ("condition", "col mod 3 = 0 ; this example extracts every third column")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING ("condition")), "%s_cols", NAME)) return 0;
+	}
+END
+
+FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
+	OPTIONMENU ("Extract all columns whose label...", 1)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	SENTENCE ("...the text", "a")
+	OK
+DO
+	const char *text = GET_STRING ("...the text");
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT,
+			GET_INTEGER ("Extract all columns whose label...") - 1 + Melder_STRING_min, text),
+			"%s_%s", NAME, text)) return 0;
+	}
+END
+
+FORM (TableOfReal_extractColumnsWhereRow, "Extract columns where row", 0)
+	NATURAL ("Extract all columns where row...", "1")
+	OPTIONMENU ("...is...", 1)
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	REAL ("...the value", "0.0")
+	OK
+DO
+	long row = GET_INTEGER ("Extract all columns where row...");
+	double value = GET_REAL ("...the value");
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractColumnsWhereRow (OBJECT,
+			row, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
+			"%s_%ld_%ld", NAME, row, (long) floor (value+0.5))) return 0;
+	}
+END
+
+DIRECT (TableOfReal_extractRowLabelsAsStrings)
+	EVERY_TO (TableOfReal_extractRowLabelsAsStrings (OBJECT))
+END
+
+FORM (TableOfReal_extractRowRanges, "Extract row ranges", 0)
+	LABEL ("", "Create a new TableOfReal from the following rows:")
+	TEXTFIELD ("ranges", "1 2")
+	LABEL ("", "To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractRowRanges (OBJECT, GET_STRING ("ranges")), "%s_rows", NAME)) return 0;
+	}
+END
+
+FORM (TableOfReal_extractRowsWhere, "Extract rows where", 0)
+	LABEL ("", "Extract all rows with at least one cell where:")
+	TEXTFIELD ("condition", "row mod 3 = 0 ; this example extracts every third row")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractRowsWhere (OBJECT, GET_STRING ("condition")), "%s_rows", NAME)) return 0;
+	}
+END
+
+FORM (TableOfReal_extractRowsWhereColumn, "Extract rows where column", 0)
+	NATURAL ("Extract all rows where column...", "1")
+	OPTIONMENU ("...is...", 1)
+	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	REAL ("...the value", "0.0")
+	OK
+DO
+	long column = GET_INTEGER ("Extract all rows where column...");
+	double value = GET_REAL ("...the value");
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractRowsWhereColumn (OBJECT,
+			column, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
+			"%s_%ld_%ld", NAME, column, (long) floor (value+0.5))) return 0;
+	}
+END
+
+FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
+	OPTIONMENU ("Extract all rows whose label...", 1)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	SENTENCE ("...the text", "a")
+	OK
+DO
+	const char *text = GET_STRING ("...the text");
+	WHERE (SELECTED) {
+		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT,
+			GET_INTEGER ("Extract all rows whose label...") - 1 + Melder_STRING_min, text),
+			"%s_%s", NAME, text)) return 0;
+	}
+END
+
+FORM (TableOfReal_formula, "TableOfReal: Formula", "Formula...")
+	LABEL ("", "for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
+	TEXTFIELD ("formula", "if col = 5 then self + self [6] else self fi")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TableOfReal_formula (OBJECT, GET_STRING ("formula"), NULL)) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_getColumnIndex, "Get column index", 0)
+	SENTENCE ("Column label", "")
+	OK
+DO
+	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label"))));
+END
+	
+FORM (TableOfReal_getColumnLabel, "Get column label", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	TableOfReal table = ONLY_OBJECT;
+	long columnNumber = GET_INTEGER ("Column number");
+	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
+	Melder_information1 (table -> columnLabels == NULL ? "" : table -> columnLabels [columnNumber]);
+END
+	
+FORM (TableOfReal_getColumnMean_index, "Get column mean", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	TableOfReal table = ONLY_OBJECT;
+	long columnNumber = GET_INTEGER ("Column number");
+	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
+	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
+END
+	
+FORM (TableOfReal_getColumnMean_label, "Get column mean", 0)
+	SENTENCE ("Column label", "")
+	OK
+DO
+	TableOfReal table = ONLY_OBJECT;
+	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
+	REQUIRE (columnNumber > 0, "Column label does not exist.")
+	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
+END
+	
+FORM (TableOfReal_getColumnStdev_index, "Get column standard deviation", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	Melder_informationReal (TableOfReal_getColumnStdev (ONLY_OBJECT, GET_INTEGER ("Column number")), NULL);
+END
+	
+FORM (TableOfReal_getColumnStdev_label, "Get column standard deviation", 0)
+	SENTENCE ("Column label", "1")
+	OK
+DO
+	TableOfReal table = ONLY_OBJECT;
+	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
+	REQUIRE (columnNumber > 0, "Column label does not exist.")
+	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
+END
+
+DIRECT (TableOfReal_getNumberOfColumns) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfColumns)); END
+DIRECT (TableOfReal_getNumberOfRows) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfRows)); END
+
+FORM (TableOfReal_getRowIndex, "Get row index", 0)
+	SENTENCE ("Row label", "")
+	OK
+DO
+	Melder_information1 (Melder_integer (TableOfReal_rowLabelToIndex (ONLY_OBJECT, GET_STRING ("Row label"))));
+END
+	
+FORM (TableOfReal_getRowLabel, "Get row label", 0)
+	NATURAL ("Row number", "1")
+	OK
+DO
+	TableOfReal table = ONLY_OBJECT;
+	long rowNumber = GET_INTEGER ("Row number");
+	REQUIRE (rowNumber <= table -> numberOfRows, "Row number must not be greater than number of rows.")
+	Melder_information1 (table -> rowLabels == NULL ? "" : table -> rowLabels [rowNumber]);
+END
+
+FORM (TableOfReal_getValue, "Get value", 0)
+	NATURAL ("Row number", "1") NATURAL ("Column number", "1") OK DO TableOfReal me = ONLY_OBJECT;
+	long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
+	REQUIRE (row <= my numberOfRows, "Row number must not exceed number of rows.")
+	REQUIRE (column <= my numberOfColumns, "Column number must not exceed number of columns.")
+	Melder_informationReal (my data [row] [column], NULL); END
+
+DIRECT (TableOfReal_help) Melder_help ("TableOfReal"); END
+
+FORM (TableOfReal_insertColumn, "Insert column", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TableOfReal_insertColumn (OBJECT, GET_INTEGER ("Column number"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_insertRow, "Insert row", 0)
+	NATURAL ("Row number", "1")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TableOfReal_insertRow (OBJECT, GET_INTEGER ("Row number"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, "Read TableOfReal from headerless spreadsheet file", 0)
+	if (! praat_new (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
+END
+
+FORM (TableOfReal_removeColumn, "Remove column", 0)
+	NATURAL ("Column number", "1")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TableOfReal_removeColumn (OBJECT, GET_INTEGER ("Column number"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_removeRow, "Remove row", 0)
+	NATURAL ("Row number", "1")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! TableOfReal_removeRow (OBJECT, GET_INTEGER ("Row number"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_setColumnLabel_index, "Set column label", 0)
+	NATURAL ("Column number", "1")
+	SENTENCE ("Label", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_setColumnLabel_label, "Set column label", 0)
+	SENTENCE ("Old label", "")
+	SENTENCE ("New label", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_setColumnLabel (OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING ("Old label")),
+			GET_STRING ("New label"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_setRowLabel_index, "Set row label", 0)
+	NATURAL ("Row number", "1")
+	SENTENCE ("Label", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_setRowLabel (OBJECT, GET_INTEGER ("Row number"), GET_STRING ("Label"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_setValue, "Set value", "TableOfReal: Set value...")
+	NATURAL ("Row number", "1")
+	NATURAL ("Column number", "1")
+	REAL ("New value", "0.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal me = OBJECT;
+		long irow = GET_INTEGER ("Row number"), icol = GET_INTEGER ("Column number");
+		REQUIRE (irow <= my numberOfRows, "Row number too large.")
+		REQUIRE (icol <= my numberOfColumns, "Column number too large.")
+		my data [irow] [icol] = GET_REAL ("New value");
+		praat_dataChanged (me);
+	}
+END
+
+FORM (TableOfReal_setRowLabel_label, "Set row label", 0)
+	SENTENCE ("Old label", "")
+	SENTENCE ("New label", "")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_setRowLabel (OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING ("Old label")),
+			GET_STRING ("New label"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_sortByColumn, "Sort rows by column", 0)
+	INTEGER ("Column", "1")
+	INTEGER ("Secondary column", "0")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_sortByColumn (OBJECT, GET_INTEGER ("Column"), GET_INTEGER ("Secondary column"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TableOfReal_sortByLabel, "Sort rows by label", 0)
+	LABEL ("", "Secondary sorting keys:")
+	INTEGER ("Column1", "1")
+	INTEGER ("Column2", "0")
+	OK
+DO
+	WHERE (SELECTED) {
+		TableOfReal_sortByLabel (OBJECT, GET_INTEGER ("Column1"), GET_INTEGER ("Column2"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+DIRECT (TableOfReal_to_Matrix)
+	EVERY_TO (TableOfReal_to_Matrix (OBJECT))
+END
+
+FORM (TableOfReal_to_Table, "TableOfReal: To Table", 0)
+	SENTENCE ("Label of first column", "rowLabel")
+	OK
+DO
+	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING ("Label of first column")))
+END
+
+FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, "Write TableOfReal to spreadsheet", 0, "txt")
+	if (! TableOfReal_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
+END
+
+
 DIRECT (StatisticsTutorial) Melder_help ("Statistics"); END
 
 static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
@@ -678,12 +1242,105 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 
+void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
+void praat_TableOfReal_init (void *klas) {
+	praat_addAction1 (klas, 1, "Write to headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 0, "Draw -                 ", 0, 0, 0);
+		praat_addAction1 (klas, 0, "Draw as numbers...", 0, 1, DO_TableOfReal_drawAsNumbers);
+		praat_addAction1 (klas, 0, "Draw as numbers if...", 0, 1, DO_TableOfReal_drawAsNumbers_if);
+		praat_addAction1 (klas, 0, "Draw as squares...", 0, 1, DO_TableOfReal_drawAsSquares);	
+		praat_addAction1 (klas, 0, "-- draw lines --", 0, 1, 0);
+		praat_addAction1 (klas, 0, "Draw vertical lines...", 0, 1, DO_TableOfReal_drawVerticalLines);
+		praat_addAction1 (klas, 0, "Draw horizontal lines...", 0, 1, DO_TableOfReal_drawHorizontalLines);
+		praat_addAction1 (klas, 0, "Draw left and right lines...", 0, 1, DO_TableOfReal_drawLeftAndRightLines);
+		praat_addAction1 (klas, 0, "Draw top and bottom lines...", 0, 1, DO_TableOfReal_drawTopAndBottomLines);
+	praat_addAction1 (klas, 0, "Query -                ", 0, 0, 0);
+		praat_addAction1 (klas, 1, "Get number of rows", 0, 1, DO_TableOfReal_getNumberOfRows);
+		praat_addAction1 (klas, 1, "Get number of columns", 0, 1, DO_TableOfReal_getNumberOfColumns);
+		praat_addAction1 (klas, 1, "Get row label...", 0, 1, DO_TableOfReal_getRowLabel);
+		praat_addAction1 (klas, 1, "Get column label...", 0, 1, DO_TableOfReal_getColumnLabel);
+		praat_addAction1 (klas, 1, "Get row index...", 0, 1, DO_TableOfReal_getRowIndex);
+		praat_addAction1 (klas, 1, "Get column index...", 0, 1, DO_TableOfReal_getColumnIndex);
+		praat_addAction1 (klas, 1, "-- get value --", 0, 1, 0);
+		praat_addAction1 (klas, 1, "Get value...", 0, 1, DO_TableOfReal_getValue);
+		if (klas == classTableOfReal) {
+			praat_addAction1 (klas, 1, "-- get statistics --", 0, 1, 0);
+			praat_addAction1 (klas, 1, "Get column mean (index)...", 0, 1, DO_TableOfReal_getColumnMean_index);
+			praat_addAction1 (klas, 1, "Get column mean (label)...", 0, 1, DO_TableOfReal_getColumnMean_label);
+			praat_addAction1 (klas, 1, "Get column stdev (index)...", 0, 1, DO_TableOfReal_getColumnStdev_index);
+			praat_addAction1 (klas, 1, "Get column stdev (label)...", 0, 1, DO_TableOfReal_getColumnStdev_label);
+		}
+	praat_addAction1 (klas, 0, "Modify -               ", 0, 0, 0);
+		praat_addAction1 (klas, 0, "Formula...", 0, 1, DO_TableOfReal_formula);
+		praat_addAction1 (klas, 0, "Set value...", 0, 1, DO_TableOfReal_setValue);
+		praat_addAction1 (klas, 0, "Sort by label...", 0, 1, DO_TableOfReal_sortByLabel);
+		praat_addAction1 (klas, 0, "Sort by column...", 0, 1, DO_TableOfReal_sortByColumn);
+		praat_addAction1 (klas, 0, "-- structure --", 0, 1, 0);
+		praat_addAction1 (klas, 0, "Remove row (index)...", 0, 1, DO_TableOfReal_removeRow);
+		praat_addAction1 (klas, 0, "Remove column (index)...", 0, 1, DO_TableOfReal_removeColumn);
+		praat_addAction1 (klas, 0, "Insert row (index)...", 0, 1, DO_TableOfReal_insertRow);
+		praat_addAction1 (klas, 0, "Insert column (index)...", 0, 1, DO_TableOfReal_insertColumn);
+		praat_addAction1 (klas, 0, "-- set --", 0, 1, 0);
+		praat_addAction1 (klas, 0, "Set row label (index)...", 0, 1, DO_TableOfReal_setRowLabel_index);
+		praat_addAction1 (klas, 0, "Set row label (label)...", 0, 1, DO_TableOfReal_setRowLabel_label);
+		praat_addAction1 (klas, 0, "Set column label (index)...", 0, 1, DO_TableOfReal_setColumnLabel_index);
+		praat_addAction1 (klas, 0, "Set column label (label)...", 0, 1, DO_TableOfReal_setColumnLabel_label);
+	praat_addAction1 (klas, 0, "Synthesize -     ", 0, 0, 0);
+		praat_addAction1 (klas, 0, "Append", 0, 1, DO_TablesOfReal_append);
+	praat_addAction1 (klas, 0, "Extract part -", 0, 0, 0);
+		praat_addAction1 (klas, 0, "Extract row ranges...", 0, 1, DO_TableOfReal_extractRowRanges);
+		praat_addAction1 (klas, 0, "Extract rows where column...", 0, 1, DO_TableOfReal_extractRowsWhereColumn);
+		praat_addAction1 (klas, 0, "Extract rows where label...", 0, 1, DO_TableOfReal_extractRowsWhereLabel);
+		praat_addAction1 (klas, 0, "Extract rows where...", 0, 1, DO_TableOfReal_extractRowsWhere);
+		praat_addAction1 (klas, 0, "Extract column ranges...", 0, 1, DO_TableOfReal_extractColumnRanges);
+		praat_addAction1 (klas, 0, "Extract columns where row...", 0, 1, DO_TableOfReal_extractColumnsWhereRow);
+		praat_addAction1 (klas, 0, "Extract columns where label...", 0, 1, DO_TableOfReal_extractColumnsWhereLabel);
+		praat_addAction1 (klas, 0, "Extract columns where...", 0, 1, DO_TableOfReal_extractColumnsWhere);
+	praat_addAction1 (klas, 0, "Extract -", 0, 0, 0);
+		praat_addAction1 (klas, 0, "Extract row labels as Strings", 0, 1, DO_TableOfReal_extractRowLabelsAsStrings);
+		praat_addAction1 (klas, 0, "Extract column labels as Strings", 0, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
+	praat_addAction1 (klas, 0, "Convert -     ", 0, 0, 0);
+		praat_addAction1 (klas, 0, "To Table...", 0, 1, DO_TableOfReal_to_Table);
+		praat_addAction1 (klas, 0, "To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
+}
+
 void praat_uvafon_Stat_init (void);
 void praat_uvafon_Stat_init (void) {
 
-	Thing_recognizeClassesByName (classTable, classLinearRegression, classLogisticRegression, NULL);
+	Thing_recognizeClassesByName (classTableOfReal, classDistributions, classPairDistribution,
+		classTable, classLinearRegression, classLogisticRegression, NULL);
 
 	Data_recognizeFileType (tabSeparatedFileRecognizer);
+
+	praat_addMenuCommand ("Objects", "New", "Tables", 0, 0, 0);
+		praat_addMenuCommand ("Objects", "New", "Create Table with column names...", 0, 1, DO_Table_createWithColumnNames);
+		praat_addMenuCommand ("Objects", "New", "Create Table without column names...", 0, 1, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand ("Objects", "New", "Create Table...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand ("Objects", "New", "Create TableOfReal...", 0, 1, DO_TableOfReal_create);
+
+	praat_addMenuCommand ("Objects", "Read", "Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
+
+	praat_addAction1 (classDistributions, 0, "Distributions help", 0, 0, DO_Distributions_help);
+	praat_TableOfReal_init (classDistributions);
+	praat_addAction1 (classDistributions, 1, "Get probability (label)...", "Get value...", 1, DO_Distributions_getProbability);
+	praat_addAction1 (classDistributions, 0, "-- get from two --", "Get probability (label)...", 1, 0);
+	praat_addAction1 (classDistributions, 2, "Get mean absolute difference...", "-- get from two --", 1, DO_Distributionses_getMeanAbsoluteDifference);
+	praat_addAction1 (classDistributions, 0, "-- add --", "Append", 1, 0);
+	praat_addAction1 (classDistributions, 0, "Add", "-- add --", 1, DO_Distributionses_add);
+	praat_addAction1 (classDistributions, 0, "Generate", 0, 0, 0);
+		praat_addAction1 (classDistributions, 0, "To Strings...", 0, 0, DO_Distributions_to_Strings);
+		praat_addAction1 (classDistributions, 0, "To Strings (exact)...", 0, 0, DO_Distributions_to_Strings_exact);
+
+	praat_addAction1 (classPairDistribution, 0, "PairDistribution help", 0, 0, DO_PairDistribution_help);
+	praat_addAction1 (classPairDistribution, 1, "To Stringses...", 0, 0, DO_PairDistribution_to_Stringses);
+	praat_addAction1 (classPairDistribution, 0, "Query -          ", 0, 0, 0);
+	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
+	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
+	praat_addAction1 (classPairDistribution, 0, "Modify -          ", 0, 0, 0);
+	praat_addAction1 (classPairDistribution, 1, "Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classTable, 0, "Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, "Write to table file...", 0, 0, DO_Table_writeToTableFile);
@@ -693,13 +1350,15 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Scatter plot (mark)...", 0, 1, DO_Table_scatterPlot_mark);
 		praat_addAction1 (classTable, 0, "Draw ellipse (standard deviation)...", 0, 1, DO_Table_drawEllipse);
 	praat_addAction1 (classTable, 0, "Query -                ", 0, 0, 0);
+		praat_addAction1 (classTable, 1, "List...", 0, 1, DO_Table_list);
+		praat_addAction1 (classTable, 1, "-- get structure --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Get number of rows", 0, 1, DO_Table_getNumberOfRows);
 		praat_addAction1 (classTable, 1, "Get number of columns", 0, 1, DO_Table_getNumberOfColumns);
 		praat_addAction1 (classTable, 1, "Get column label...", 0, 1, DO_Table_getColumnLabel);
 		praat_addAction1 (classTable, 1, "Get column index...", 0, 1, DO_Table_getColumnIndex);
-		praat_addAction1 (classTable, 1, "Search column...", 0, 1, DO_Table_searchColumn);
 		praat_addAction1 (classTable, 1, "-- get value --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Get value...", 0, 1, DO_Table_getValue);
+		praat_addAction1 (classTable, 1, "Search column...", 0, 1, DO_Table_searchColumn);
 	praat_addAction1 (classTable, 0, "Statistics -    ", 0, 0, 0);
 		praat_addAction1 (classTable, 1, "Statistics tutorial", 0, 1, DO_StatisticsTutorial);
 		praat_addAction1 (classTable, 1, "-- get stats --", 0, 1, 0);
@@ -741,8 +1400,12 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, "Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
 		praat_addAction1 (classTable, 0, "Pool...", 0, 1, DO_Table_pool);
-	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
 	praat_addAction1 (classTable, 0, "Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
+
+	praat_addAction1 (classTableOfReal, 0, "TableOfReal help", 0, 0, DO_TableOfReal_help);
+	praat_TableOfReal_init (classTableOfReal);
+
+	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, "Get fraction correct...", 0, 0, DO_PairDistribution_Distributions_getFractionCorrect);
 }
 
 /* End of file praat_Stat.c */

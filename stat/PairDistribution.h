@@ -2,7 +2,7 @@
 #define _PairDistribution_h_
 /* PairDistribution.h
  *
- * Copyright (C) 1997-2005 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,9 @@
  */
 
 /*
- * pb 2005/12/15
+ * pb 2007/03/18
  */
 
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
 #ifndef _Strings_h_
 	#include "Strings.h"
 #endif
@@ -58,7 +55,6 @@ double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution m
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me);
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, long column);
 
-Vector PairDistribution_to_Vector (PairDistribution me);
 int PairDistribution_formula (PairDistribution me, const char *formula);
 void PairDistribution_drawAsNumbers (PairDistribution me, Graphics g, int iformat, int precision);
 void PairDistribution_drawAsNumbers_if (PairDistribution me, Graphics g, int iformat, int precision, const char *conditionFormula);

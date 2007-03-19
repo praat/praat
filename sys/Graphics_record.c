@@ -1,6 +1,6 @@
 /* Graphics_record.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2004/02/15 highlight2
+ * pb 2007/03/14 arrowSize
  */
 
 #include "GraphicsP.h"
@@ -271,6 +272,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case UNHIGHLIGHT2:
 			{  float x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_unhighlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
+			}  break;
+			case SET_ARROW_SIZE: Graphics_setArrowSize (thee, (double) get); break;
+			case DOUBLE_ARROW:
+			{  float x1 = get, y1 = get, x2 = get, y2 = get;
+				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
 			default:
 				my recording = wasRecording;

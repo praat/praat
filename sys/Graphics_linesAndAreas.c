@@ -23,6 +23,7 @@
  * pb 2004/02/11 ORDER_DC: ellipses and rectangles handle reversed axes better
  * pb 2005/07/31 better arrowheads
  * pb 2007/01/06 made ORDER_DC compatible with PostScript
+ * pb 2007/03/14 arrowSize
  */
 
 #include "GraphicsP.h"
@@ -1126,7 +1127,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 		iam (GraphicsScreen);
 		#if xwin
 			XPoint p [3];
-			double size = 10.0 * my resolution / 75.0;
+			double size = 10.0 * my resolution * my arrowSize / 75.0;
 			p [0]. x = xDC + cos ((angle + 160.0) * NUMpi / 180.0) * size;
 			p [0]. y = yDC - sin ((angle + 160.0) * NUMpi / 180.0) * size;
 			p [1]. x = xDC;
@@ -1135,7 +1136,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 			p [2]. y = yDC - sin ((angle - 160.0) * NUMpi / 180.0) * size;
 			XFillPolygon (my display, my window, my gc, p, 3, Complex, CoordModeOrigin);
 		#elif win
-			double size = 10.0 * my resolution / 72.0;
+			double size = 10.0 * my resolution * my arrowSize / 72.0;
 			MY_BRUSH
 			BeginPath (my dc);
 			MoveToEx (my dc, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size, NULL);
@@ -1145,7 +1146,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 			FillPath (my dc);
 			DEFAULT
 		#elif mac
-			double size = 10.0 * my resolution / 72.0;
+			double size = 10.0 * my resolution * my arrowSize / 72.0;
 			PolyHandle macpolygon;
 			MacintoshPattern pattern;
 			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
@@ -1166,7 +1167,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
-		int length = my resolution / 10, radius = my resolution / 30;
+		int length = my resolution * my arrowSize / 10, radius = my resolution * my arrowSize / 30;
 		my printf (my file, "gsave %d %d translate %f rotate\n"
 			"N 0 0 M -%d 0 %d -60 60 arc closepath fill grestore\n", xDC, yDC, angle, length, radius);
 	}
@@ -1176,11 +1177,11 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
 	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	#if xwin
-		double size = my screen ? 10.0 * my resolution / 75.0 :
+		double size = my screen ? 10.0 * my resolution * my arrowSize / 75.0 :
 	#else
-		double size = my screen ? 10.0 * my resolution / 72.0 :
+		double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 :
 	#endif
-		my resolution / 10;
+		my resolution * my arrowSize / 10;
 	short xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
@@ -1189,6 +1190,27 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	polyline (me, 2, xyDC);
 	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);
 	if (my recording) { op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
+}
+
+void Graphics_doubleArrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
+	iam (Graphics);
+	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC));
+	#if xwin
+		double size = my screen ? 10.0 * my resolution * my arrowSize / 75.0 :
+	#else
+		double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 :
+	#endif
+		my resolution * my arrowSize / 10;
+	short xyDC [4];
+	xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180) * size;
+	xyDC [1] = wdy (y1WC) + (my screen ? -0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
+	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
+	xyDC [3] = wdy (y2WC) + (my screen ? -0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
+	polyline (me, 2, xyDC);
+	arrowHead (me, wdx (x1WC), wdy (y1WC), angle + 180);
+	//polyline (me, 2, xyDC);
+	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);
+	if (my recording) { op (DOUBLE_ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
 void Graphics_arcArrow (I, double xWC, double yWC, double rWC,
@@ -1221,9 +1243,16 @@ void Graphics_setLineWidth (I, double lineWidth) {
 	if (my recording) { op (SET_LINE_WIDTH, 1); put (lineWidth); }
 }
 
+void Graphics_setArrowSize (I, double arrowSize) {
+	iam (Graphics);
+	my arrowSize = arrowSize;
+	if (my recording) { op (SET_ARROW_SIZE, 1); put (arrowSize); }
+}
+
 /* Inquiries. */
 
 int Graphics_inqLineType (I) { iam (Graphics); return my lineType; }
 float Graphics_inqLineWidth (I) { iam (Graphics); return my lineWidth; }
+float Graphics_inqArrowSize (I) { iam (Graphics); return my arrowSize; }
 
 /* End of file Graphics_linesAndAreas.c */

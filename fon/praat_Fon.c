@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/01/27
+ * pb 2007/03/18
  */
 
 #include "praat.h"
@@ -35,12 +35,11 @@
 #include "IntensityTier.h"
 #include "IntensityTierEditor.h"
 #include "LongSound.h"
-#include "Ltas.h"
+#include "Ltas_to_SpectrumTier.h"
 #include "ManipulationEditor.h"
 #include "Matrix_and_Pitch.h"
 #include "Matrix_and_PointProcess.h"
 #include "Matrix_and_Polygon.h"
-#include "PairDistribution.h"
 #include "ParamCurve.h"
 #include "Pitch_Intensity.h"
 #include "Pitch_to_PitchTier.h"
@@ -378,52 +377,6 @@ DIRECT (Cochleagram_to_Matrix)
 END
 
 /***** DISTRIBUTIONS *****/
-
-DIRECT (Distributionses_add)
-	Collection me = Collection_create (classDistributions, 10);
-	if (! me) return 0;
-	WHERE (SELECTED)
-		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new (Distributions_addMany (me), "added")) {
-		my size = 0; forget (me); return 0;
-	}
-	my size = 0; forget (me);
-END
-
-FORM (Distributionses_getMeanAbsoluteDifference, "Get mean difference", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	Distributions me = NULL, thee = NULL;
-	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
-	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER ("Column number")), NULL);
-END
-
-FORM (Distributions_getProbability, "Get probability", 0)
-	NATURAL ("Column number", "1")
-	SENTENCE ("String", "")
-	OK
-DO
-	Melder_informationReal (Distributions_getProbability (ONLY_OBJECT,
-		GET_STRING ("String"), GET_INTEGER ("Column number")), NULL);
-END
-
-DIRECT (Distributions_help) Melder_help ("Distributions"); END
-
-FORM (Distributions_to_Strings, "To Strings", 0)
-	NATURAL ("Column number", "1")
-	NATURAL ("Number of strings", "1000")
-	OK
-DO
-	EVERY_TO (Distributions_to_Strings (OBJECT, GET_INTEGER ("Column number"), GET_INTEGER ("Number of strings")))
-END
-
-FORM (Distributions_to_Strings_exact, "To Strings (exact)", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	EVERY_TO (Distributions_to_Strings_exact (OBJECT, GET_INTEGER ("Column number")))
-END
 
 FORM (Distributions_to_Transition, "To Transition", 0)
 	NATURAL ("Environment", "1")
@@ -1625,6 +1578,10 @@ DIRECT (Ltas_to_Matrix)
 	EVERY_TO (Ltas_to_Matrix (OBJECT))
 END
 
+DIRECT (Ltas_to_SpectrumTier_peaks)
+	EVERY_TO (Ltas_to_SpectrumTier_peaks (OBJECT))
+END
+
 /***** MANIPULATION *****/
 
 static void cb_ManipulationEditor_publish (Any editor, void *closure, Any publish) {
@@ -1907,6 +1864,20 @@ DIRECT (Matrix_getColumnDistance) Matrix me = ONLY_OBJECT; Melder_informationRea
 DIRECT (Matrix_getRowDistance) Matrix me = ONLY_OBJECT; Melder_informationReal (my dy, NULL); END
 DIRECT (Matrix_getSum) Matrix me = ONLY_OBJECT; Melder_informationReal (Matrix_getSum (me), NULL); END
 
+DIRECT (Matrix_getMaximum)
+	Matrix me = ONLY_OBJECT;
+	double minimum = NUMundefined, maximum = NUMundefined;
+	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+	Melder_informationReal (maximum, NULL);
+END
+
+DIRECT (Matrix_getMinimum)
+	Matrix me = ONLY_OBJECT;
+	double minimum = NUMundefined, maximum = NUMundefined;
+	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+	Melder_informationReal (minimum, NULL);
+END
+
 FORM (Matrix_getValueAtXY, "Matrix: Get value at xy", 0)
 	REAL ("X", "0")
 	REAL ("Y", "0")
@@ -2097,46 +2068,6 @@ END
 
 FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, "Write Matrix to spreadsheet", 0, "txt")
 	if (! Matrix_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
-END
-
-/***** PAIRDISTRIBUTION *****/
-
-DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
-	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood (ONLY_OBJECT), NULL);
-	iferror return 0;
-END
-
-DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
-	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching (ONLY_OBJECT), NULL);
-	iferror return 0;
-END
-
-DIRECT (PairDistribution_help) Melder_help ("PairDistribution"); END
-
-DIRECT (PairDistribution_removeZeroWeights)
-	EVERY (PairDistribution_removeZeroWeights (OBJECT))
-END
-
-FORM (PairDistribution_to_Stringses, "Generate two Strings objects", 0)
-	NATURAL ("Number", "1000")
-	SENTENCE ("Name of first Strings", "input")
-	SENTENCE ("Name of second Strings", "output")
-	OK
-DO
-	Strings strings1, strings2;
-	if (! PairDistribution_to_Stringses (ONLY (classPairDistribution), GET_INTEGER ("Number"), & strings1, & strings2)) return 0;
-	if (! praat_new (strings1, "%s", GET_STRING ("Name of first Strings"))) { forget (strings2); return 0; }
-	if (! praat_new (strings2, "%s", GET_STRING ("Name of second Strings"))) return 0;
-END
-	
-/***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
-
-FORM (PairDistribution_Distributions_getFractionCorrect, "PairDistribution & Distributions: Get fraction correct", 0)
-	NATURAL ("Column", "1")
-	OK
-DO
-	Melder_informationReal (PairDistribution_Distributions_getFractionCorrect
-		(ONLY (classPairDistribution), ONLY (classDistributions), GET_INTEGER ("Column")), NULL);
 END
 
 /***** PARAMCURVE *****/
@@ -3697,6 +3628,20 @@ FORM (Spectrum_getStandardDeviation, "Spectrum: Get standard deviation", "Spectr
 
 DIRECT (Spectrum_help) Melder_help ("Spectrum"); END
 
+FORM (Spectrum_list, "Spectrum: List", 0)
+	BOOLEAN ("Include bin number", false)
+	BOOLEAN ("Include frequency", true)
+	BOOLEAN ("Include real part", false)
+	BOOLEAN ("Include imaginary part", false)
+	BOOLEAN ("Include energy density", false)
+	BOOLEAN ("Include power density", true)
+	OK
+DO
+	EVERY (Spectrum_list (OBJECT, GET_INTEGER ("Include bin number"), GET_INTEGER ("Include frequency"),
+		GET_INTEGER ("Include real part"), GET_INTEGER ("Include imaginary part"),
+		GET_INTEGER ("Include energy density"), GET_INTEGER ("Include power density")))
+END
+
 FORM (Spectrum_lpcSmoothing, "Spectrum: LPC smoothing", 0)
 	NATURAL ("Number of peaks", "5")
 	POSITIVE ("Pre-emphasis from (Hz)", "50.0")
@@ -3759,6 +3704,40 @@ END
 
 DIRECT (Spectrum_to_Spectrogram)
 	EVERY_TO (Spectrum_to_Spectrogram (OBJECT))
+END
+
+DIRECT (Spectrum_to_SpectrumTier_peaks)
+	EVERY_TO (Spectrum_to_SpectrumTier_peaks (OBJECT))
+END
+
+/***** SPECTRUMTIER *****/
+
+DIRECT (SpectrumTier_downto_Table)
+	EVERY_TO (SpectrumTier_downto_Table (OBJECT))
+END
+
+FORM (SpectrumTier_draw, "SpectrumTier: Draw", 0)
+	REAL ("left Frequency range (Hz)", "0.0")
+	REAL ("right Frequency range (Hz)", "10000.0")
+	REAL ("left Power range (dB)", "20.0")
+	REAL ("right Power range (dB)", "80.0")
+	BOOLEAN ("Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (SpectrumTier_draw (OBJECT, GRAPHICS,
+		GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
+		GET_REAL ("left Power range"), GET_REAL ("right Power range"),
+		GET_INTEGER ("Garnish")))
+END
+
+FORM (SpectrumTier_list, "SpectrumTier: List", 0)
+	BOOLEAN ("Include indexes", true)
+	BOOLEAN ("Include frequency", true)
+	BOOLEAN ("Include power density", true)
+	OK
+DO
+	EVERY (SpectrumTier_list (OBJECT, GET_INTEGER ("Include indexes"), GET_INTEGER ("Include frequency"),
+		GET_INTEGER ("Include power density")))
 END
 
 /***** STRINGS *****/
@@ -3881,471 +3860,8 @@ END
 
 /***** TABLE, rest in praat_Stat.c *****/
 
-FORM (Table_createWithColumnNames, "Create Table with column names", 0)
-	WORD ("Name", "table")
-	INTEGER ("Number of rows", "10")
-	LABEL ("", "Column names:")
-	TEXTFIELD ("columnNames", "speaker dialect age vowel F0 F1 F2")
-	OK
-DO
-	if (! praat_new (Table_createWithColumnNames
-		(GET_INTEGER ("Number of rows"), GET_STRING ("columnNames")),
-		GET_STRING ("Name"))) return 0;
-END
-
-FORM (Table_createWithoutColumnNames, "Create Table without column names", 0)
-	WORD ("Name", "table")
-	INTEGER ("Number of rows", "10")
-	NATURAL ("Number of columns", "3")
-	OK
-DO
-	if (! praat_new (Table_createWithoutColumnNames
-		(GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
-		GET_STRING ("Name"))) return 0;
-END
-
-FORM_READ (Table_readFromTableFile, "Read Table from table file", 0)
-	if (! praat_new (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
-END
-
-FORM_READ (Table_readFromCommaSeparatedFile, "Read Table from comma-separated file", 0)
-	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
-END
-
-FORM_READ (Table_readFromTabSeparatedFile, "Read Table from tab-separated file", 0)
-	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
-END
-
-/***** TABLEOFREAL *****/
-
-DIRECT (TablesOfReal_append)
-	Collection me = Collection_create (classTableOfReal, 10);
-	if (! me) return 0;
-	WHERE (SELECTED)
-		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new (TablesOfReal_appendMany (me), "appended")) {
-		my size = 0; forget (me); return 0;
-	}
-	my size = 0; forget (me);
-END
-
-FORM (TableOfReal_create, "Create TableOfReal", 0)
-	WORD ("Name", "table")
-	NATURAL ("Number of rows", "10")
-	NATURAL ("Number of columns", "3")
-	OK
-DO
-	if (! praat_new (TableOfReal_create (GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
-		GET_STRING ("Name"))) return 0;
-END
-
-FORM (TableOfReal_drawAsNumbers, "Draw as numbers", 0)
-	NATURAL ("From row", "1")
-	INTEGER ("To row", "0 (= all)")
-	RADIO ("Format", 3)
-	RADIOBUTTON ("decimal")
-	RADIOBUTTON ("exponential")
-	RADIOBUTTON ("free")
-	RADIOBUTTON ("rational")
-	NATURAL ("Precision", "5")
-	OK
-DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers (OBJECT, GRAPHICS,
-		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
-		GET_INTEGER ("Format"), GET_INTEGER ("Precision")))
-END
-
-FORM (TableOfReal_drawAsNumbers_if, "Draw as numbers if...", 0)
-	NATURAL ("From row", "1")
-	INTEGER ("To row", "0 (= all)")
-	RADIO ("Format", 3)
-	RADIOBUTTON ("decimal")
-	RADIOBUTTON ("exponential")
-	RADIOBUTTON ("free")
-	RADIOBUTTON ("rational")
-	NATURAL ("Precision", "5")
-	LABEL ("", "Condition:")
-	TEXTFIELD ("condition", "self <> 0")
-	OK
-DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers_if (OBJECT, GRAPHICS,
-		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
-		GET_INTEGER ("Format"), GET_INTEGER ("Precision"), GET_STRING ("condition")))
-END
-
-FORM (TableOfReal_drawAsSquares, "Draw table as squares", 0)
-	INTEGER ("From row", "1")
-	INTEGER ("To row", "0")
-	INTEGER ("From column", "1")
-	INTEGER ("To column", "0")
-	BOOLEAN ("Garnish", 1)
-	OK
-DO
-	EVERY_DRAW (TableOfReal_drawAsSquares (OBJECT, GRAPHICS, 
-		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
-		GET_INTEGER ("From column"), GET_INTEGER ("To column"),
-		GET_INTEGER ("Garnish")))
-END
-
-FORM (TableOfReal_drawHorizontalLines, "Draw horizontal lines", 0)
-	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawHorizontalLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
-FORM (TableOfReal_drawLeftAndRightLines, "Draw left and right lines", 0)
-	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawLeftAndRightLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
-FORM (TableOfReal_drawTopAndBottomLines, "Draw top and bottom lines", 0)
-	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawTopAndBottomLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
-FORM (TableOfReal_drawVerticalLines, "Draw vertical lines", 0)
-	NATURAL ("From row", "1") INTEGER ("To row", "0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawVerticalLines (OBJECT, GRAPHICS, GET_INTEGER ("From row"), GET_INTEGER ("To row"))) END
-
-DIRECT (TableOfReal_extractColumnLabelsAsStrings)
-	EVERY_TO (TableOfReal_extractColumnLabelsAsStrings (OBJECT))
-END
-
-FORM (TableOfReal_extractColumnRanges, "Extract column ranges", 0)
-	LABEL ("", "Create a new TableOfReal from the following columns:")
-	TEXTFIELD ("ranges", "1 2")
-	LABEL ("", "To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnRanges (OBJECT, GET_STRING ("ranges")), "%s_cols", NAME)) return 0;
-	}
-END
-
-FORM (TableOfReal_extractColumnsWhere, "Extract columns where", 0)
-	LABEL ("", "Extract all columns with at least one cell where:")
-	TEXTFIELD ("condition", "col mod 3 = 0 ; this example extracts every third column")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING ("condition")), "%s_cols", NAME)) return 0;
-	}
-END
-
-FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
-	OPTIONMENU ("Extract all columns whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
-	SENTENCE ("...the text", "a")
-	OK
-DO
-	const char *text = GET_STRING ("...the text");
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT,
-			GET_INTEGER ("Extract all columns whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%s", NAME, text)) return 0;
-	}
-END
-
-FORM (TableOfReal_extractColumnsWhereRow, "Extract columns where row", 0)
-	NATURAL ("Extract all columns where row...", "1")
-	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
-	REAL ("...the value", "0.0")
-	OK
-DO
-	long row = GET_INTEGER ("Extract all columns where row...");
-	double value = GET_REAL ("...the value");
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhereRow (OBJECT,
-			row, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ld_%ld", NAME, row, (long) floor (value+0.5))) return 0;
-	}
-END
-
-DIRECT (TableOfReal_extractRowLabelsAsStrings)
-	EVERY_TO (TableOfReal_extractRowLabelsAsStrings (OBJECT))
-END
-
-FORM (TableOfReal_extractRowRanges, "Extract row ranges", 0)
-	LABEL ("", "Create a new TableOfReal from the following rows:")
-	TEXTFIELD ("ranges", "1 2")
-	LABEL ("", "To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowRanges (OBJECT, GET_STRING ("ranges")), "%s_rows", NAME)) return 0;
-	}
-END
-
-FORM (TableOfReal_extractRowsWhere, "Extract rows where", 0)
-	LABEL ("", "Extract all rows with at least one cell where:")
-	TEXTFIELD ("condition", "row mod 3 = 0 ; this example extracts every third row")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhere (OBJECT, GET_STRING ("condition")), "%s_rows", NAME)) return 0;
-	}
-END
-
-FORM (TableOfReal_extractRowsWhereColumn, "Extract rows where column", 0)
-	NATURAL ("Extract all rows where column...", "1")
-	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
-	REAL ("...the value", "0.0")
-	OK
-DO
-	long column = GET_INTEGER ("Extract all rows where column...");
-	double value = GET_REAL ("...the value");
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhereColumn (OBJECT,
-			column, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ld_%ld", NAME, column, (long) floor (value+0.5))) return 0;
-	}
-END
-
-FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
-	OPTIONMENU ("Extract all rows whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
-	SENTENCE ("...the text", "a")
-	OK
-DO
-	const char *text = GET_STRING ("...the text");
-	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT,
-			GET_INTEGER ("Extract all rows whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%s", NAME, text)) return 0;
-	}
-END
-
-FORM (TableOfReal_formula, "TableOfReal: Formula", "Formula...")
-	LABEL ("", "for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
-	TEXTFIELD ("formula", "if col = 5 then self + self [6] else self fi")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! TableOfReal_formula (OBJECT, GET_STRING ("formula"), NULL)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_getColumnIndex, "Get column index", 0)
-	SENTENCE ("Column label", "")
-	OK
-DO
-	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label"))));
-END
-	
-FORM (TableOfReal_getColumnLabel, "Get column label", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = GET_INTEGER ("Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information1 (table -> columnLabels == NULL ? "" : table -> columnLabels [columnNumber]);
-END
-	
-FORM (TableOfReal_getColumnMean_index, "Get column mean", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = GET_INTEGER ("Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
-END
-	
-FORM (TableOfReal_getColumnMean_label, "Get column mean", 0)
-	SENTENCE ("Column label", "")
-	OK
-DO
-	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
-	REQUIRE (columnNumber > 0, "Column label does not exist.")
-	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
-END
-	
-FORM (TableOfReal_getColumnStdev_index, "Get column standard deviation", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	Melder_informationReal (TableOfReal_getColumnStdev (ONLY_OBJECT, GET_INTEGER ("Column number")), NULL);
-END
-	
-FORM (TableOfReal_getColumnStdev_label, "Get column standard deviation", 0)
-	SENTENCE ("Column label", "1")
-	OK
-DO
-	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
-	REQUIRE (columnNumber > 0, "Column label does not exist.")
-	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
-END
-
-DIRECT (TableOfReal_getNumberOfColumns) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfColumns)); END
-DIRECT (TableOfReal_getNumberOfRows) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfRows)); END
-
-FORM (TableOfReal_getRowIndex, "Get row index", 0)
-	SENTENCE ("Row label", "")
-	OK
-DO
-	Melder_information1 (Melder_integer (TableOfReal_rowLabelToIndex (ONLY_OBJECT, GET_STRING ("Row label"))));
-END
-	
-FORM (TableOfReal_getRowLabel, "Get row label", 0)
-	NATURAL ("Row number", "1")
-	OK
-DO
-	TableOfReal table = ONLY_OBJECT;
-	long rowNumber = GET_INTEGER ("Row number");
-	REQUIRE (rowNumber <= table -> numberOfRows, "Row number must not be greater than number of rows.")
-	Melder_information1 (table -> rowLabels == NULL ? "" : table -> rowLabels [rowNumber]);
-END
-
-FORM (TableOfReal_getValue, "Get value", 0)
-	NATURAL ("Row number", "1") NATURAL ("Column number", "1") OK DO TableOfReal me = ONLY_OBJECT;
-	long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
-	REQUIRE (row <= my numberOfRows, "Row number must not exceed number of rows.")
-	REQUIRE (column <= my numberOfColumns, "Column number must not exceed number of columns.")
-	Melder_informationReal (my data [row] [column], NULL); END
-
-DIRECT (TableOfReal_help) Melder_help ("TableOfReal"); END
-
-FORM (TableOfReal_insertColumn, "Insert column", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! TableOfReal_insertColumn (OBJECT, GET_INTEGER ("Column number"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_insertRow, "Insert row", 0)
-	NATURAL ("Row number", "1")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! TableOfReal_insertRow (OBJECT, GET_INTEGER ("Row number"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, "Read TableOfReal from headerless spreadsheet file", 0)
-	if (! praat_new (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
-END
-
-FORM (TableOfReal_removeColumn, "Remove column", 0)
-	NATURAL ("Column number", "1")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! TableOfReal_removeColumn (OBJECT, GET_INTEGER ("Column number"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_removeRow, "Remove row", 0)
-	NATURAL ("Row number", "1")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! TableOfReal_removeRow (OBJECT, GET_INTEGER ("Row number"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_setColumnLabel_index, "Set column label", 0)
-	NATURAL ("Column number", "1")
-	SENTENCE ("Label", "")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_setColumnLabel_label, "Set column label", 0)
-	SENTENCE ("Old label", "")
-	SENTENCE ("New label", "")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING ("Old label")),
-			GET_STRING ("New label"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_setRowLabel_index, "Set row label", 0)
-	NATURAL ("Row number", "1")
-	SENTENCE ("Label", "")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, GET_INTEGER ("Row number"), GET_STRING ("Label"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_setValue, "Set value", "TableOfReal: Set value...")
-	NATURAL ("Row number", "1")
-	NATURAL ("Column number", "1")
-	REAL ("New value", "0.0")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal me = OBJECT;
-		long irow = GET_INTEGER ("Row number"), icol = GET_INTEGER ("Column number");
-		REQUIRE (irow <= my numberOfRows, "Row number too large.")
-		REQUIRE (icol <= my numberOfColumns, "Column number too large.")
-		my data [irow] [icol] = GET_REAL ("New value");
-		praat_dataChanged (me);
-	}
-END
-
-FORM (TableOfReal_setRowLabel_label, "Set row label", 0)
-	SENTENCE ("Old label", "")
-	SENTENCE ("New label", "")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING ("Old label")),
-			GET_STRING ("New label"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_sortByColumn, "Sort rows by column", 0)
-	INTEGER ("Column", "1")
-	INTEGER ("Secondary column", "0")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_sortByColumn (OBJECT, GET_INTEGER ("Column"), GET_INTEGER ("Secondary column"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_sortByLabel, "Sort rows by label", 0)
-	LABEL ("", "Secondary sorting keys:")
-	INTEGER ("Column1", "1")
-	INTEGER ("Column2", "0")
-	OK
-DO
-	WHERE (SELECTED) {
-		TableOfReal_sortByLabel (OBJECT, GET_INTEGER ("Column1"), GET_INTEGER ("Column2"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (TableOfReal_to_Table, "TableOfReal: To Table", 0)
-	SENTENCE ("Label of first column", "rowLabel")
-	OK
-DO
-	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING ("Label of first column")))
-END
-
-DIRECT (TableOfReal_to_Matrix)
-	EVERY_TO (TableOfReal_to_Matrix (OBJECT))
-END
-
-FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, "Write TableOfReal to spreadsheet", 0, "txt")
-	if (! TableOfReal_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
+DIRECT (Table_to_Matrix)
+	EVERY_TO (Table_to_Matrix (OBJECT))
 END
 
 /***** TEXTGRID, rest in praat_TextGrid_init.c *****/
@@ -4552,7 +4068,6 @@ DIRECT (FrequentlyAskedQuestions) Melder_help ("FAQ (Frequently Asked Questions)
 DIRECT (Acknowledgments) Melder_help ("Acknowledgments"); END
 DIRECT (FormulasTutorial) Melder_help ("Formulas"); END
 DIRECT (ScriptingTutorial) Melder_help ("Scripting"); END
-DIRECT (StatisticsTutorial) Melder_help ("Statistics"); END
 DIRECT (Programming) Melder_help ("Programming with Praat"); END
 DIRECT (SearchManual) Melder_search (); END
 
@@ -4575,66 +4090,6 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 /***** buttons *****/
 
 void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
-void praat_TableOfReal_init (void *klas) {
-	praat_addAction1 (klas, 1, "Write to headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 0, "Draw -                 ", 0, 0, 0);
-		praat_addAction1 (klas, 0, "Draw as numbers...", 0, 1, DO_TableOfReal_drawAsNumbers);
-		praat_addAction1 (klas, 0, "Draw as numbers if...", 0, 1, DO_TableOfReal_drawAsNumbers_if);
-		praat_addAction1 (klas, 0, "Draw as squares...", 0, 1, DO_TableOfReal_drawAsSquares);	
-		praat_addAction1 (klas, 0, "-- draw lines --", 0, 1, 0);
-		praat_addAction1 (klas, 0, "Draw vertical lines...", 0, 1, DO_TableOfReal_drawVerticalLines);
-		praat_addAction1 (klas, 0, "Draw horizontal lines...", 0, 1, DO_TableOfReal_drawHorizontalLines);
-		praat_addAction1 (klas, 0, "Draw left and right lines...", 0, 1, DO_TableOfReal_drawLeftAndRightLines);
-		praat_addAction1 (klas, 0, "Draw top and bottom lines...", 0, 1, DO_TableOfReal_drawTopAndBottomLines);
-	praat_addAction1 (klas, 0, "Query -                ", 0, 0, 0);
-		praat_addAction1 (klas, 1, "Get number of rows", 0, 1, DO_TableOfReal_getNumberOfRows);
-		praat_addAction1 (klas, 1, "Get number of columns", 0, 1, DO_TableOfReal_getNumberOfColumns);
-		praat_addAction1 (klas, 1, "Get row label...", 0, 1, DO_TableOfReal_getRowLabel);
-		praat_addAction1 (klas, 1, "Get column label...", 0, 1, DO_TableOfReal_getColumnLabel);
-		praat_addAction1 (klas, 1, "Get row index...", 0, 1, DO_TableOfReal_getRowIndex);
-		praat_addAction1 (klas, 1, "Get column index...", 0, 1, DO_TableOfReal_getColumnIndex);
-		praat_addAction1 (klas, 1, "-- get value --", 0, 1, 0);
-		praat_addAction1 (klas, 1, "Get value...", 0, 1, DO_TableOfReal_getValue);
-		if (klas == classTableOfReal) {
-			praat_addAction1 (klas, 1, "-- get statistics --", 0, 1, 0);
-			praat_addAction1 (klas, 1, "Get column mean (index)...", 0, 1, DO_TableOfReal_getColumnMean_index);
-			praat_addAction1 (klas, 1, "Get column mean (label)...", 0, 1, DO_TableOfReal_getColumnMean_label);
-			praat_addAction1 (klas, 1, "Get column stdev (index)...", 0, 1, DO_TableOfReal_getColumnStdev_index);
-			praat_addAction1 (klas, 1, "Get column stdev (label)...", 0, 1, DO_TableOfReal_getColumnStdev_label);
-		}
-	praat_addAction1 (klas, 0, "Modify -               ", 0, 0, 0);
-		praat_addAction1 (klas, 0, "Formula...", 0, 1, DO_TableOfReal_formula);
-		praat_addAction1 (klas, 0, "Set value...", 0, 1, DO_TableOfReal_setValue);
-		praat_addAction1 (klas, 0, "Sort by label...", 0, 1, DO_TableOfReal_sortByLabel);
-		praat_addAction1 (klas, 0, "Sort by column...", 0, 1, DO_TableOfReal_sortByColumn);
-		praat_addAction1 (klas, 0, "-- structure --", 0, 1, 0);
-		praat_addAction1 (klas, 0, "Remove row (index)...", 0, 1, DO_TableOfReal_removeRow);
-		praat_addAction1 (klas, 0, "Remove column (index)...", 0, 1, DO_TableOfReal_removeColumn);
-		praat_addAction1 (klas, 0, "Insert row (index)...", 0, 1, DO_TableOfReal_insertRow);
-		praat_addAction1 (klas, 0, "Insert column (index)...", 0, 1, DO_TableOfReal_insertColumn);
-		praat_addAction1 (klas, 0, "-- set --", 0, 1, 0);
-		praat_addAction1 (klas, 0, "Set row label (index)...", 0, 1, DO_TableOfReal_setRowLabel_index);
-		praat_addAction1 (klas, 0, "Set row label (label)...", 0, 1, DO_TableOfReal_setRowLabel_label);
-		praat_addAction1 (klas, 0, "Set column label (index)...", 0, 1, DO_TableOfReal_setColumnLabel_index);
-		praat_addAction1 (klas, 0, "Set column label (label)...", 0, 1, DO_TableOfReal_setColumnLabel_label);
-	praat_addAction1 (klas, 0, "Synthesize -     ", 0, 0, 0);
-		praat_addAction1 (klas, 0, "Append", 0, 1, DO_TablesOfReal_append);
-	praat_addAction1 (klas, 0, "Extract part -", 0, 0, 0);
-		praat_addAction1 (klas, 0, "Extract row ranges...", 0, 1, DO_TableOfReal_extractRowRanges);
-		praat_addAction1 (klas, 0, "Extract rows where column...", 0, 1, DO_TableOfReal_extractRowsWhereColumn);
-		praat_addAction1 (klas, 0, "Extract rows where label...", 0, 1, DO_TableOfReal_extractRowsWhereLabel);
-		praat_addAction1 (klas, 0, "Extract rows where...", 0, 1, DO_TableOfReal_extractRowsWhere);
-		praat_addAction1 (klas, 0, "Extract column ranges...", 0, 1, DO_TableOfReal_extractColumnRanges);
-		praat_addAction1 (klas, 0, "Extract columns where row...", 0, 1, DO_TableOfReal_extractColumnsWhereRow);
-		praat_addAction1 (klas, 0, "Extract columns where label...", 0, 1, DO_TableOfReal_extractColumnsWhereLabel);
-		praat_addAction1 (klas, 0, "Extract columns where...", 0, 1, DO_TableOfReal_extractColumnsWhere);
-	praat_addAction1 (klas, 0, "Extract -", 0, 0, 0);
-		praat_addAction1 (klas, 0, "Extract row labels as Strings", 0, 1, DO_TableOfReal_extractRowLabelsAsStrings);
-		praat_addAction1 (klas, 0, "Extract column labels as Strings", 0, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
-	praat_addAction1 (klas, 0, "Convert -     ", 0, 0, 0);
-		praat_addAction1 (klas, 0, "To Table...", 0, 1, DO_TableOfReal_to_Table);
-		praat_addAction1 (klas, 0, "To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
-}
 
 void praat_TimeFunction_query_init (void *klas);   /* Query buttons for time-based subclasses of Function. */
 void praat_TimeFunction_query_init (void *klas) {
@@ -4685,9 +4140,8 @@ void praat_uvafon_init (void) {
 		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier,
 		classLabel, classTier, classAutosegment,   /* Three obsolete classes. */
 		classIntensity, classPitch, classHarmonicity,
-		classStrings,
-		classTableOfReal, classDistributions, classTransition, classPairDistribution,
-		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier,
+		classTransition,
+		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier, classSpectrumTier,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
 		classIntervalTier, classTextGrid, classLongSound, classWordList, classSpellingChecker,
 		NULL);
@@ -4710,11 +4164,13 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand ("Objects", "New", "Matrix", 0, 0, 0);
 		praat_addMenuCommand ("Objects", "New", "Create Matrix...", 0, 1, DO_Matrix_create);
 		praat_addMenuCommand ("Objects", "New", "Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
-	praat_addMenuCommand ("Objects", "New", "Tables", 0, 0, 0);
-		praat_addMenuCommand ("Objects", "New", "Create Table with column names...", 0, 1, DO_Table_createWithColumnNames);
-		praat_addMenuCommand ("Objects", "New", "Create Table without column names...", 0, 1, DO_Table_createWithoutColumnNames);
-		praat_addMenuCommand ("Objects", "New", "Create Table...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
-		praat_addMenuCommand ("Objects", "New", "Create TableOfReal...", 0, 1, DO_TableOfReal_create);
+	praat_addMenuCommand ("Objects", "Read", "-- read raw --", 0, 0, 0);
+	praat_addMenuCommand ("Objects", "Read", "Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
+	praat_addMenuCommand ("Objects", "Read", "Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
+	praat_addMenuCommand ("Objects", "Read", "Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
+
+	INCLUDE_LIBRARY (praat_uvafon_Stat_init)
+
 	praat_addMenuCommand ("Objects", "New", "Tiers", 0, 0, 0);
 		praat_addMenuCommand ("Objects", "New", "Create empty PointProcess...", 0, 1, DO_PointProcess_createEmpty);
 		praat_addMenuCommand ("Objects", "New", "Create Poisson process...", 0, 1, DO_PointProcess_createPoissonProcess);
@@ -4728,15 +4184,6 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand ("Objects", "New", "Create TextGrid...", 0, 0, DO_TextGrid_create);
 	praat_addMenuCommand ("Objects", "New", "Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
 	praat_addMenuCommand ("Objects", "New", "Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
-
-	praat_addMenuCommand ("Objects", "Read", "-- read raw --", 0, 0, 0);
-	praat_addMenuCommand ("Objects", "Read", "Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
-	praat_addMenuCommand ("Objects", "Read", "Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
-	praat_addMenuCommand ("Objects", "Read", "Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
-	praat_addMenuCommand ("Objects", "Read", "Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
-	praat_addMenuCommand ("Objects", "Read", "Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand ("Objects", "Read", "Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
-	praat_addMenuCommand ("Objects", "Read", "Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
 
 	praat_addMenuCommand ("Objects", "Read", "-- read tier --", 0, 0, 0);
 	praat_addMenuCommand ("Objects", "Read", "Read from special tier file...", 0, 0, 0);
@@ -4798,16 +4245,6 @@ praat_addAction1 (classCochleagram, 0, "Analyse", 0, 0, 0);
 praat_addAction1 (classCochleagram, 0, "Hack", 0, 0, 0);
 	praat_addAction1 (classCochleagram, 0, "To Matrix", 0, 0, DO_Cochleagram_to_Matrix);
 
-	praat_addAction1 (classDistributions, 0, "Distributions help", 0, 0, DO_Distributions_help);
-	praat_TableOfReal_init (classDistributions);
-	praat_addAction1 (classDistributions, 1, "Get probability (label)...", "Get value...", 1, DO_Distributions_getProbability);
-	praat_addAction1 (classDistributions, 0, "-- get from two --", "Get probability (label)...", 1, 0);
-	praat_addAction1 (classDistributions, 2, "Get mean absolute difference...", "-- get from two --", 1, DO_Distributionses_getMeanAbsoluteDifference);
-	praat_addAction1 (classDistributions, 0, "-- add --", "Append", 1, 0);
-	praat_addAction1 (classDistributions, 0, "Add", "-- add --", 1, DO_Distributionses_add);
-praat_addAction1 (classDistributions, 0, "Generate", 0, 0, 0);
-	praat_addAction1 (classDistributions, 0, "To Strings...", 0, 0, DO_Distributions_to_Strings);
-	praat_addAction1 (classDistributions, 0, "To Strings (exact)...", 0, 0, DO_Distributions_to_Strings_exact);
 praat_addAction1 (classDistributions, 0, "Learn", 0, 0, 0);
 	praat_addAction1 (classDistributions, 1, "To Transition...", 0, 0, DO_Distributions_to_Transition);
 	praat_addAction1 (classDistributions, 2, "To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise);
@@ -4977,6 +4414,8 @@ praat_addAction1 (classIntensityTier, 0, "Convert", 0, 0, 0);
 		praat_addAction1 (classLtas, 1, "Get standard deviation...", 0, 1, DO_Ltas_getStandardDeviation);
 	praat_addAction1 (classLtas, 0, "Modify", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, "Formula...", 0, 0, DO_Ltas_formula);
+	praat_addAction1 (classLtas, 0, "Analyse", 0, 0, 0);
+	praat_addAction1 (classLtas, 0, "To SpectrumTier (peaks)", 0, 0, DO_Ltas_to_SpectrumTier_peaks);
 	praat_addAction1 (classLtas, 0, "Convert", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, "Compute trend line...", 0, 0, DO_Ltas_computeTrendLine);
 	praat_addAction1 (classLtas, 0, "Subtract trend line...", 0, 0, DO_Ltas_subtractTrendLine);
@@ -5028,6 +4467,8 @@ praat_addAction1 (classIntensityTier, 0, "Convert", 0, 0, 0);
 		praat_addAction1 (classMatrix, 1, "-- get value --", 0, 1, 0);
 		praat_addAction1 (classMatrix, 1, "Get value in cell...", 0, 1, DO_Matrix_getValueInCell);
 		praat_addAction1 (classMatrix, 1, "Get value at xy...", 0, 1, DO_Matrix_getValueAtXY);
+		praat_addAction1 (classMatrix, 1, "Get minimum", 0, 1, DO_Matrix_getMinimum);
+		praat_addAction1 (classMatrix, 1, "Get maximum", 0, 1, DO_Matrix_getMaximum);
 		praat_addAction1 (classMatrix, 1, "Get sum", 0, 1, DO_Matrix_getSum);
 	praat_addAction1 (classMatrix, 0, "Modify -          ", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, "Formula...", 0, 1, DO_Matrix_formula);
@@ -5054,14 +4495,6 @@ praat_addAction1 (classMatrix, 0, "Analyse", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, "To Spectrum", 0, 1, DO_Matrix_to_Spectrum);
 		praat_addAction1 (classMatrix, 0, "To Transition", 0, 1, DO_Matrix_to_Transition);
 		praat_addAction1 (classMatrix, 0, "To VocalTract", 0, 1, DO_Matrix_to_VocalTract);
-
-	praat_addAction1 (classPairDistribution, 0, "PairDistribution help", 0, 0, DO_PairDistribution_help);
-	praat_addAction1 (classPairDistribution, 1, "To Stringses...", 0, 0, DO_PairDistribution_to_Stringses);
-	praat_addAction1 (classPairDistribution, 0, "Query -          ", 0, 0, 0);
-	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
-	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
-	praat_addAction1 (classPairDistribution, 0, "Modify -          ", 0, 0, 0);
-	praat_addAction1 (classPairDistribution, 1, "Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classParamCurve, 0, "ParamCurve help", 0, 0, DO_ParamCurve_help);
 	praat_addAction1 (classParamCurve, 0, "Draw", 0, 0, 0);
@@ -5256,6 +4689,7 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 	praat_addAction1 (classSpectrum, 0, "Draw -          ", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 0, "Draw...", 0, 1, DO_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, "Draw (log freq)...", 0, 1, DO_Spectrum_drawLogFreq);
+	praat_addAction1 (classSpectrum, 0, "List...", 0, 0, DO_Spectrum_list);
 	praat_addAction1 (classSpectrum, 1, "Query -          ", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 1, "Frequency domain", 0, 1, 0);
 			praat_addAction1 (classSpectrum, 1, "Get lowest frequency", 0, 2, DO_Spectrum_getLowestFrequency);
@@ -5287,6 +4721,7 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 0, "Filter (stop Hann band)...", 0, 1, DO_Spectrum_stopHannBand);
 	praat_addAction1 (classSpectrum, 0, "Analyse", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 0, "To Excitation...", 0, 0, DO_Spectrum_to_Excitation);
+		praat_addAction1 (classSpectrum, 0, "To SpectrumTier (peaks)", 0, 0, DO_Spectrum_to_SpectrumTier_peaks);
 		praat_addAction1 (classSpectrum, 0, "To Formant (peaks)...", 0, 0, DO_Spectrum_to_Formant_peaks);
 		praat_addAction1 (classSpectrum, 0, "To Ltas...", 0, 0, DO_Spectrum_to_Ltas);
 		praat_addAction1 (classSpectrum, 0, "To Ltas (1-to-1)", 0, 0, DO_Spectrum_to_Ltas_1to1);
@@ -5299,6 +4734,10 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 						praat_addAction1 (classSpectrum, 0, "To Sound (fft)", 0, praat_HIDDEN, DO_Spectrum_to_Sound);
 	praat_addAction1 (classSpectrum, 0, "Hack", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 0, "To Matrix", 0, 0, DO_Spectrum_to_Matrix);
+
+	praat_addAction1 (classSpectrumTier, 0, "Draw...", 0, 0, DO_SpectrumTier_draw);
+	praat_addAction1 (classSpectrumTier, 0, "List...", 0, 0, DO_SpectrumTier_list);
+	praat_addAction1 (classSpectrumTier, 0, "Down to Table", 0, 0, DO_SpectrumTier_downto_Table);
 
 	praat_addAction1 (classStrings, 0, "Strings help", 0, 0, DO_Strings_help);
 	praat_addAction1 (classStrings, 1, "Write to raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
@@ -5315,8 +4754,7 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 	praat_addAction1 (classStrings, 0, "Synthesize", 0, 0, 0);
 		praat_addAction1 (classStrings, 0, "To WordList", 0, 0, DO_Strings_to_WordList);
 
-	praat_addAction1 (classTableOfReal, 0, "TableOfReal help", 0, 0, DO_TableOfReal_help);
-	praat_TableOfReal_init (classTableOfReal);
+	praat_addAction1 (classTable, 0, "Down to Matrix", 0, 0, DO_Table_to_Matrix);
 
 	praat_addAction1 (classTransition, 0, "Transition help", 0, 0, DO_Transition_help);
 praat_addAction1 (classTransition, 0, "Draw", 0, 0, 0);
@@ -5354,7 +4792,6 @@ praat_addAction1 (classTransition, 0, "Cast", 0, 0, 0);
 	praat_addAction2 (classManipulation, 1, classDurationTier, 1, "Replace duration tier", 0, 0, DO_Manipulation_replaceDurationTier);
 	praat_addAction2 (classManipulation, 1, classTextTier, 1, "To Manipulation", 0, 0, DO_Manipulation_TextTier_to_Manipulation);
 	praat_addAction2 (classMatrix, 1, classSound, 1, "To ParamCurve", 0, 0, DO_Matrix_to_ParamCurve);
-	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, "Get fraction correct...", 0, 0, DO_PairDistribution_Distributions_getFractionCorrect);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, "Draw...", 0, 0, DO_PitchTier_Pitch_draw);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, "To Pitch", 0, 0, DO_Pitch_PitchTier_to_Pitch);
 	praat_addAction2 (classPitch, 1, classPointProcess, 1, "To PitchTier", 0, 0, DO_Pitch_PointProcess_to_PitchTier);
@@ -5403,7 +4840,6 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, "Analyse", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_David_init)
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)
-	INCLUDE_LIBRARY (praat_uvafon_Stat_init)
 	INCLUDE_LIBRARY (praat_uvafon_Exp_init)
 }
 

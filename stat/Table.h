@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2006 Paul Boersma
+ * Copyright (C) 2002-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,11 @@
  */
 
 /*
- * pb 2006/11/25
+ * pb 2007/03/19
  */
 
 #ifndef _Collection_h_
 	#include "Collection.h"
-#endif
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
@@ -80,6 +74,9 @@ double Table_getNumericValue (Table me, long irow, long icol);
 int Table_setStringValue (Table me, long irow, long icol, const char *value);
 int Table_setNumericValue (Table me, long irow, long icol, double value);
 
+/* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
+void Table_numericize (Table me, long icol);
+
 double Table_getQuantile (Table me, long icol, double quantile);
 double Table_getMean (Table me, long icol);
 double Table_getStdev (Table me, long icol);
@@ -111,6 +108,7 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 void Table_drawEllipse (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int garnish);
 
+void Table_list (Table me, bool includeRowNumbers);
 int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator);
@@ -120,10 +118,6 @@ Table Table_extractRowsWhereColumn_string (Table me, long icol, int which_Melder
 Table Table_pool (Table me, const char *independentVariables_string, const char *columnsToSum_string,
 	const char *columnsToAverage_string, const char *columnsToMedianize_string,
 	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string);
-
-Matrix Table_to_Matrix (Table me);
-TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
-Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn);
 
 #endif
 /* End of file Table.h */
