@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/27
+ * pb 2007/03/30
  */
 
 #ifndef _AnyTier_h_
@@ -90,7 +90,7 @@ TableOfReal RealTier_downto_TableOfReal (I, const char *timeLabel, const char *v
 
 int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically);
 
-Table RealTier_downto_Table (I, const char *timeText, const char *valueText);
+Table RealTier_downto_Table (I, const char *indexText, const char *timeText, const char *valueText);
 RealTier Vector_to_RealTier (I, long channel);
 RealTier Vector_to_RealTier_peaks (I, long channel);
 RealTier Vector_to_RealTier_valleys (I, long channel);
@@ -98,6 +98,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value);
 
 int RealTier_formula (I, const char *expression, thou);
 void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
+void RealTier_removePointsBelow (RealTier me, double level);
 
 /* End of file RealTier.h */
 #endif

@@ -3713,7 +3713,7 @@ END
 /***** SPECTRUMTIER *****/
 
 DIRECT (SpectrumTier_downto_Table)
-	EVERY_TO (SpectrumTier_downto_Table (OBJECT))
+	EVERY_TO (SpectrumTier_downto_Table (OBJECT, true, true, true))
 END
 
 FORM (SpectrumTier_draw, "SpectrumTier: Draw", 0)
@@ -3738,6 +3738,16 @@ FORM (SpectrumTier_list, "SpectrumTier: List", 0)
 DO
 	EVERY (SpectrumTier_list (OBJECT, GET_INTEGER ("Include indexes"), GET_INTEGER ("Include frequency"),
 		GET_INTEGER ("Include power density")))
+END
+
+FORM (SpectrumTier_removePointsBelow, "SpectrumTier: Remove points below", 0)
+	REAL ("Remove all points below (dB)", "40.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		RealTier_removePointsBelow (OBJECT, GET_REAL ("Remove all points below"));
+		praat_dataChanged (OBJECT);
+	}
 END
 
 /***** STRINGS *****/
@@ -4738,6 +4748,7 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 	praat_addAction1 (classSpectrumTier, 0, "Draw...", 0, 0, DO_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, "List...", 0, 0, DO_SpectrumTier_list);
 	praat_addAction1 (classSpectrumTier, 0, "Down to Table", 0, 0, DO_SpectrumTier_downto_Table);
+	praat_addAction1 (classSpectrumTier, 0, "Remove points below...", 0, 0, DO_SpectrumTier_removePointsBelow);
 
 	praat_addAction1 (classStrings, 0, "Strings help", 0, 0, DO_Strings_help);
 	praat_addAction1 (classStrings, 1, "Write to raw text file...", 0, 0, DO_Strings_writeToRawTextFile);

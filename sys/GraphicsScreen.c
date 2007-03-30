@@ -241,10 +241,10 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
 		/*
 		 * Map page coordinates to paper coordinates.
 		 */
-		my x1DC -=  GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
-		my x2DC -=  GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
-		my y1DC -=  GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
-		my y2DC -=  GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
+		my x1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
+		my x2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
+		my y1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
+		my y2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
 	#endif
 	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	GraphicsScreen_init (me, display, window, thePrinter. resolution);

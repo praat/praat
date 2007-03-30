@@ -39,9 +39,10 @@ static void classEditorCommand_destroy (I) {
 	inherited (EditorCommand) destroy (me);
 }
 
-class_methods (EditorCommand, Thing)
+class_methods (EditorCommand, Thing) {
 	class_method_local (EditorCommand, destroy)
-class_methods_end
+	class_methods_end
+}
 
 /********** class EditorMenu **********/
 
@@ -51,7 +52,7 @@ class_methods_end
 	Widget menuWidget; \
 	Ordered commands;
 #define EditorMenu_methods Thing_methods
-class_create_opaque (EditorMenu, Thing)
+class_create_opaque (EditorMenu, Thing);
 
 static void classEditorMenu_destroy (I) {
 	iam (EditorMenu);
@@ -60,21 +61,22 @@ static void classEditorMenu_destroy (I) {
 	inherited (EditorCommand) destroy (me);
 }
 
-class_methods (EditorMenu, Thing)
+class_methods (EditorMenu, Thing) {
 	class_method_local (EditorMenu, destroy)
-class_methods_end
+	class_methods_end
+}
 
 /********** functions **********/
 
-MOTIF_CALLBACK (commonCallback)
-	iam (EditorCommand);
+static void commonCallback (GUI_ARGS) {
+	GUI_IAM (EditorCommand);
 	if (my editor && ((Editor) my editor) -> methods -> scriptable)
 		UiHistory_write ("\n%s", my itemTitle);
-	if (! my commandCallback (me, NULL)) Melder_flushError (NULL);
-MOTIF_CALLBACK_END
+	if (! my commandCallback (my editor, me, NULL)) Melder_flushError (NULL);
+}
 
 Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags,
-	int (*commandCallback) (EditorCommand cmd, Any sender))
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
 {
 	EditorCommand me = new (EditorCommand);
 	my editor = menu -> editor;
@@ -104,7 +106,7 @@ EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags) {
 /*Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
 Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
-	int (*commandCallback) (EditorCommand, Any))
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
 {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
@@ -114,6 +116,12 @@ Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTit
 			return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 	}
 	return Melder_errorp ("(Editor_addCommand:) No menu \"%s\". Cannot insert command.", menuTitle);
+}
+
+static int Editor_scriptCallback (I, EditorCommand cmd, Any sender) {
+	iam (Editor);
+	(void) sender;
+	return DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
 Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *itemTitle, long flags,
@@ -183,7 +191,7 @@ int Editor_doMenuCommand (Any editor, const char *commandTitle, const char *argu
 		for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands -> item [icommand];
 			if (strequ (commandTitle, command -> itemTitle)) {
-				if (! command -> commandCallback (command, (Any) arguments))
+				if (! command -> commandCallback (me, command, (Any) arguments))
 					return 0;
 				return 1;
 			}
@@ -232,11 +240,6 @@ static void restore (I) {
 	iam (Editor);
 	if (my data && my previousData)   /* Swap contents of my data and my previousData. */
 		Thing_swap (my data, my previousData);
-}
-
-int Editor_scriptCallback (EditorCommand cmd, Any sender) {
-	(void) sender;
-	return DO_RunTheScriptFromAnyAddedEditorCommand (cmd -> editor, cmd -> script);
 }
 
 DIRECT (Editor, cb_close) our goAway (me); END

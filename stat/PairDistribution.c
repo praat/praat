@@ -1,6 +1,6 @@
 /* PairDistribution.c
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/09/03 PairDistribution_Distributions_getFractionCorrect
+ * pb 2007/03/29 PairDistribution_to_Table
  */
 
 #include "PairDistribution.h"
@@ -52,6 +53,12 @@ class_methods (PairProbability, Data)
 	class_method_local (PairProbability, description)
 class_methods_end
 
+static void info (I) {
+	iam (PairDistribution);
+	inherited (PairDistribution) info (me);
+	MelderInfo_writeLine2 ("Number of pairs: ", Melder_integer (my pairs -> size));
+}
+
 class_methods (PairDistribution, Data)
 	class_method_local (PairDistribution, destroy)
 	class_method_local (PairDistribution, copy)
@@ -61,6 +68,7 @@ class_methods (PairDistribution, Data)
 	class_method_local (PairDistribution, writeBinary)
 	class_method_local (PairDistribution, readBinary)
 	class_method_local (PairDistribution, description)
+	class_method (info)
 class_methods_end
 
 PairProbability PairProbability_create (const char *string1, const char *string2, double weight) {
@@ -270,6 +278,19 @@ end:
 	forget (thee);
 	iferror { Melder_flushError ("(PairDistribution_Distributions_getFractionCorrect:) Not computed."); return NUMundefined; }
 	return correct;
+}
+
+Table PairDistribution_to_Table (PairDistribution me) {
+	Table thee = Table_createWithColumnNames (my pairs -> size, "string1 string2 weight"); cherror
+	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
+		PairProbability prob = my pairs -> item [ipair];
+		Table_setStringValue (thee, ipair, 1, prob -> string1); cherror
+		Table_setStringValue (thee, ipair, 2, prob -> string2); cherror
+		Table_setNumericValue (thee, ipair, 3, prob -> weight); cherror
+	}
+end:
+	iferror forget (thee);
+	return thee;
 }
 
 /* End of file PairDistribution.c */

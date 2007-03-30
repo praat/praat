@@ -26,6 +26,7 @@
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2006/02/06 better cepstral smoothing
  * pb 2007/03/17 domain quantity
+ * pb 2007/03/30 Spectrum_downto_Table
  */
 
 #include "Sound_and_Spectrum.h"
@@ -201,49 +202,41 @@ end:
 	Melder_clearError ();
 }
 
+Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
+{
+	Table thee = Table_createWithoutColumnNames (my nx,
+		includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity); cherror
+	long icol = 0;
+	if (includeBinNumbers) { Table_setColumnLabel (thee, ++ icol, "bin"); cherror }
+	if (includeFrequency) { Table_setColumnLabel (thee, ++ icol, "freq(Hz)"); cherror }
+	if (includeRealPart) { Table_setColumnLabel (thee, ++ icol, "re(Pa/Hz)"); cherror }
+	if (includeImaginaryPart) { Table_setColumnLabel (thee, ++ icol, "im(Pa/Hz)"); cherror }
+	if (includeEnergyDensity) { Table_setColumnLabel (thee, ++ icol, "energy(Pa^2/Hz^2)"); cherror }
+	if (includePowerDensity) { Table_setColumnLabel (thee, ++ icol, "pow(dB/Hz)"); cherror }
+	for (long ibin = 1; ibin <= my nx; ibin ++) {
+		icol = 0;
+		if (includeBinNumbers) { Table_setNumericValue (thee, ibin, ++ icol, ibin); cherror }
+		if (includeFrequency) { Table_setNumericValue (thee, ibin, ++ icol, my x1 + (ibin - 1) * my dx); cherror }
+		if (includeRealPart) { Table_setNumericValue (thee, ibin, ++ icol, my z [1] [ibin]); cherror }
+		if (includeImaginaryPart) { Table_setNumericValue (thee, ibin, ++ icol, my z [2] [ibin]); cherror }
+		if (includeEnergyDensity) { Table_setNumericValue (thee, ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1)); cherror }
+		if (includePowerDensity) { Table_setNumericValue (thee, ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2)); cherror }
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
 void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity)
 {
-	MelderInfo_open ();
-	bool on = false;
-	if (includeBinNumbers) { MelderInfo_write1 ("bin"); on = true; }
-	if (includeFrequency) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("freq(Hz)"); on = true; }
-	if (includeRealPart) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("re(Pa/Hz)"); on = true; }
-	if (includeImaginaryPart) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("im(Pa/Hz)"); on = true; }
-	if (includeEnergyDensity) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("energy(Pa^2/Hz^2)"); on = true; }
-	if (includePowerDensity) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("pow(dB/Hz)"); on = true; }
-	MelderInfo_write1 ("\n");
-	for (long ibin = 1; ibin <= my nx; ibin ++) {
-		bool on = false;
-		if (includeBinNumbers) { MelderInfo_write1 (Melder_integer (ibin)); on = true; }
-		if (includeFrequency) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (my x1 + (ibin - 1) * my dx));
-			on = true;
-		}
-		if (includeRealPart) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (my z [1] [ibin]));
-			on = true;
-		}
-		if (includeImaginaryPart) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (my z [2] [ibin]));
-			on = true;
-		}
-		if (includeEnergyDensity) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (Sampled_getValueAtSample (me, ibin, 0, 1)));
-			on = true;
-		}
-		if (includePowerDensity) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (Sampled_getValueAtSample (me, ibin, 0, 2)));
-			on = true;
-		}
-		MelderInfo_write1 ("\n");
-	}
-	MelderInfo_close ();
+	Table table = Spectrum_downto_Table (me, includeBinNumbers, includeFrequency,
+		includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity); cherror
+	Table_list (table, false);
+end:
+	iferror { Melder_clearError (); Melder_information1 ("Nothing to list."); }
+	forget (table);
 }
 
 Spectrum Matrix_to_Spectrum (Matrix me) {

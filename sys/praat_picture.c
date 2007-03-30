@@ -1473,7 +1473,7 @@ void praat_picture_init (void) {
 
 	praat_addMenuCommand ("Picture", "Edit", "Undo", 0, 'Z', DO_Undo);
 	praat_addMenuCommand ("Picture", "Edit", "-- erase --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Edit", "Erase all", 0, 0, DO_Erase_all);
+	praat_addMenuCommand ("Picture", "Edit", "Erase all", 0, 'E', DO_Erase_all);
 
 	praat_addMenuCommand ("Picture", "Margins", "Draw inner box", 0, 0, DO_DrawInnerBox);
 	praat_addMenuCommand ("Picture", "Margins", "-- text --", 0, 0, 0);

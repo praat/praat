@@ -24,7 +24,7 @@
  * pb 2005/03/02 RealTier_multiplyPart
  * pb 2007/01/27 Vector_to_RealTier_peaks finds peaks only within channel
  * pb 2007/01/28 made compatible with new getVector and getFunction1 API
- * pb 2007
+ * pb 2007/03/30 RealTier_downto_Table: include point numbers
  */
 
 #include "RealTier.h"
@@ -406,15 +406,20 @@ end:
 	return 1;
 }
 
-Table RealTier_downto_Table (I, const char *timeText, const char *valueText) {
+Table RealTier_downto_Table (I, const char *indexText, const char *timeText, const char *valueText) {
 	iam (RealTier);
-	Table thee = Table_createWithoutColumnNames (my points -> size, 2); cherror
-	Table_setColumnLabel (thee, 1, timeText);
-	Table_setColumnLabel (thee, 2, valueText);
+	Table thee = Table_createWithoutColumnNames (my points -> size,
+		(indexText != NULL) + (timeText != NULL) + (valueText != NULL)); cherror
+	long icol = 0;
+	if (indexText != NULL) { Table_setColumnLabel (thee, ++ icol, indexText); cherror }
+	if (timeText != NULL) { Table_setColumnLabel (thee, ++ icol, timeText); cherror }
+	if (valueText != NULL) { Table_setColumnLabel (thee, ++ icol, valueText); cherror }
 	for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 		RealPoint point = my points -> item [ipoint];
-		Table_setNumericValue (thee, ipoint, 1, point -> time); cherror
-		Table_setNumericValue (thee, ipoint, 2, point -> value); cherror
+		icol = 0;
+		if (indexText != NULL) { Table_setNumericValue (thee, ipoint, ++ icol, ipoint); cherror }
+		if (timeText != NULL) { Table_setNumericValue (thee, ipoint, ++ icol, point -> time); cherror }
+		if (valueText != NULL) { Table_setNumericValue (thee, ipoint, ++ icol, point -> value); cherror }
 	}
 end:
 	iferror forget (thee);
@@ -490,6 +495,15 @@ int RealTier_formula (I, const char *expression, thou) {
 		((RealPoint) thy points -> item [icol]) -> value = result;
 	}
 	return 1;
+}
+
+void RealTier_removePointsBelow (RealTier me, double level) {
+	for (long ipoint = my points -> size; ipoint > 0; ipoint --) {
+		RealPoint point = my points -> item [ipoint];
+		if (point -> value < level) {
+			AnyTier_removePoint (me, ipoint);
+		}
+	}
 }
 
 /* End of file RealTier.c */

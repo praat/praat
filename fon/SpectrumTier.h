@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/19
+ * pb 2007/03/30
  */
 
 #ifndef _RealTier_h_
@@ -52,7 +52,7 @@ void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
-Table SpectrumTier_downto_Table (SpectrumTier me);
+Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
 SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
 

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/19
+ * pb 2007/03/30
  */
 
 /* Complex spectrum. */
@@ -93,6 +93,8 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 */
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 
+Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFrequency,
+	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
 

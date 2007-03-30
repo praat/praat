@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070321)
+MAN_BEGIN ("What's new?", "ppgb", 20070330)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.18# (March 30, 2007)")
+LIST_ITEM ("\\bu Macintosh: better image drawing (more grey values).")
+LIST_ITEM ("\\bu More tabulation commands.")
+LIST_ITEM ("\\bu More SpectrumTier commands.")
+LIST_ITEM ("\\bu Picture window: keyboard shortcut for ##Erase all#.")
 NORMAL ("##4.5.17# (March 19, 2007)")
 LIST_ITEM ("\\bu Picture window: can change arrow size.")
 LIST_ITEM ("\\bu Several #List commands.")

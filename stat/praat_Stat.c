@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/03/18
+ * pb 2007/03/29
  */
 
 #include "praat.h"
@@ -101,6 +101,53 @@ DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
 	iferror return 0;
 END
 
+DIRECT (PairDistribution_getNumberOfPairs)
+	PairDistribution me = ONLY_OBJECT;
+	Melder_information1 (Melder_integer (my pairs -> size));
+END
+
+FORM (PairDistribution_getString1, "Get string1", 0)
+	NATURAL ("Pair number", "1")
+	OK
+DO
+	PairDistribution me = ONLY_OBJECT;
+	long ipair = GET_INTEGER ("Pair number");
+	if (ipair > my pairs -> size) {
+		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
+			Melder_integer (ipair), Melder_integer (my pairs -> size));
+	}
+	PairProbability prob = my pairs -> item [ipair];
+	Melder_information1 (prob -> string1);
+END
+
+FORM (PairDistribution_getString2, "Get string2", 0)
+	NATURAL ("Pair number", "1")
+	OK
+DO
+	PairDistribution me = ONLY_OBJECT;
+	long ipair = GET_INTEGER ("Pair number");
+	if (ipair > my pairs -> size) {
+		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
+			Melder_integer (ipair), Melder_integer (my pairs -> size));
+	}
+	PairProbability prob = my pairs -> item [ipair];
+	Melder_information1 (prob -> string2);
+END
+
+FORM (PairDistribution_getWeight, "Get weight", 0)
+	NATURAL ("Pair number", "1")
+	OK
+DO
+	PairDistribution me = ONLY_OBJECT;
+	long ipair = GET_INTEGER ("Pair number");
+	if (ipair > my pairs -> size) {
+		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
+			Melder_integer (ipair), Melder_integer (my pairs -> size));
+	}
+	PairProbability prob = my pairs -> item [ipair];
+	Melder_information1 (Melder_double (prob -> weight));
+END
+
 DIRECT (PairDistribution_help) Melder_help ("PairDistribution"); END
 
 DIRECT (PairDistribution_removeZeroWeights)
@@ -118,7 +165,11 @@ DO
 	if (! praat_new (strings1, "%s", GET_STRING ("Name of first Strings"))) { forget (strings2); return 0; }
 	if (! praat_new (strings2, "%s", GET_STRING ("Name of second Strings"))) return 0;
 END
-	
+
+DIRECT (PairDistribution_to_Table)
+	EVERY_TO (PairDistribution_to_Table (OBJECT))
+END
+
 /***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
 
 FORM (PairDistribution_Distributions_getFractionCorrect, "PairDistribution & Distributions: Get fraction correct", 0)
@@ -1335,10 +1386,16 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classDistributions, 0, "To Strings (exact)...", 0, 0, DO_Distributions_to_Strings_exact);
 
 	praat_addAction1 (classPairDistribution, 0, "PairDistribution help", 0, 0, DO_PairDistribution_help);
+	praat_addAction1 (classPairDistribution, 0, "To Table", 0, 0, DO_PairDistribution_to_Table);
 	praat_addAction1 (classPairDistribution, 1, "To Stringses...", 0, 0, DO_PairDistribution_to_Stringses);
 	praat_addAction1 (classPairDistribution, 0, "Query -          ", 0, 0, 0);
-	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
-	praat_addAction1 (classPairDistribution, 1, "Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
+		praat_addAction1 (classPairDistribution, 1, "Get number of pairs", 0, 1, DO_PairDistribution_getNumberOfPairs);
+		praat_addAction1 (classPairDistribution, 1, "Get string1...", 0, 1, DO_PairDistribution_getString1);
+		praat_addAction1 (classPairDistribution, 1, "Get string2...", 0, 1, DO_PairDistribution_getString2);
+		praat_addAction1 (classPairDistribution, 1, "Get weight...", 0, 1, DO_PairDistribution_getWeight);
+		praat_addAction1 (classPairDistribution, 1, "-- get fraction correct --", 0, 1, 0);
+		praat_addAction1 (classPairDistribution, 1, "Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
+		praat_addAction1 (classPairDistribution, 1, "Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
 	praat_addAction1 (classPairDistribution, 0, "Modify -          ", 0, 0, 0);
 	praat_addAction1 (classPairDistribution, 1, "Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 

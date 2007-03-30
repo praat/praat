@@ -24,6 +24,7 @@
  * pb 2006/05/10 better handling of interruption in Sound_to_Formant
  * pb 2006/05/10 better handling of NULL from Polynomial_to_Roots
  * pb 2007/01/26 made compatible with stereo Sounds
+ * pb 2007/03/30 changed float to double (against compiler warnings)
  */
 
 #include "Sound_to_Formant.h"
@@ -270,8 +271,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
 	double dt_window = 2 * halfdt_window;
-	long nFrames = 1 + floor ((duration - dt_window) / dt);
-	long nsamp_window = floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
+	long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
+	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 	long iframe, i, j;
 
 	if (nsamp_window < numberOfPoles + 1)
@@ -366,13 +367,13 @@ Formant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double max
 	return thee;
 }
 
-Formant Sound_to_Formant_burg (Sound me, double dt, float nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, 2 * nFormants, maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0); }
+Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
+	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0); }
 
-Formant Sound_to_Formant_keepAll (Sound me, double dt, float nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, 2 * nFormants, maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0); }
+Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
+	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0); }
 
-Formant Sound_to_Formant_willems (Sound me, double dt, float nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, 2 * nFormants, maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0); }
+Formant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
+	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0); }
 
 /* End of file Sound_to_Formant.c */

@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/08/09
+ * pb 2007/03/23
  */
 
 #ifndef _Collection_h_
@@ -37,7 +37,7 @@
 	Any editor, menu; \
 	const char *itemTitle; \
 	Widget itemWidget; \
-	int (*commandCallback) (EditorCommand cmd, Any sender); \
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender); \
 	const char *script; \
 	Any dialog;
 #define EditorCommand_methods Thing_methods
@@ -47,7 +47,7 @@ typedef struct structEditorMenu *EditorMenu;
 typedef struct structEditor *Editor;
 
 Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags,
-	int (*commandCallback) (EditorCommand, Any));
+	int (*commandCallback) (Any editor_me, EditorCommand, Any));
 Widget EditorCommand_getItemWidget (EditorCommand me);
 
 EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags);
@@ -79,7 +79,7 @@ class_create_opaque (Editor, Thing)
 
 #define Editor_HIDDEN  (1 << 11)
 Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
-	int (*commandCallback) (EditorCommand cmd, Any sender));
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender));
 Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *itemTitle, long flags,
 	const char *script);
 void Editor_setMenuSensitive (Any editor, const char *menu, int sensitive);
@@ -170,7 +170,6 @@ Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTit
 
 EditorCommand Editor_getMenuCommand (I, const char *menuTitle, const char *itemTitle);
 int Editor_doMenuCommand (Any editor, const char *command, const char *arguments);
-int Editor_scriptCallback (EditorCommand cmd, Any sender);
 
 #endif
 /* End of file Editor.h */

@@ -192,7 +192,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			GetGWorld (& savePort, & saveDevice);
 			SetRect (& rect, 0, 0, clipx2 - clipx1, clipy1 - clipy2);
 			if (NewGWorld (& offscreenWorld,
-				8, /* We're drawing in 8 bit, and copying it to 8, 16, or 24 bit. */
+				32, /* We're drawing in 32 bit, and copying it to 8, 16, 24, or 32 bit. */
 				& rect,
 				NULL,   /* BUG: we should use a colour table with 256 shades of grey !!! */
 				NULL,
@@ -226,17 +226,26 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		 * Draw into the bitmap.
 		 */
 		#if xwin
-			#define ROW_START_ADDRESS  (unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line
+			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \
 				if (mayOptimize) *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]; \
 				else XPutPixel (image, xDC - clipx1, yDC - clipy2, \
 					grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]);
 		#elif win
-			#define ROW_START_ADDRESS  bits + (clipy1 - 1 - yDC) * scanLineLength;
+			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
-			#define ROW_START_ADDRESS  offscreenPixels + (yDC - clipy2) * offscreenRowBytes;
-			#define PUT_PIXEL  *pixelAddress ++ = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];
+			#define ROW_START_ADDRESS  (offscreenPixels + (yDC - clipy2) * offscreenRowBytes)
+			#if TARGET_RT_LITTLE_ENDIAN == 1
+				#define PUT_PIXEL  *pixelAddress = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
+					*pixelAddress ++ = ((*pixelAddress) >> 24) + (((*pixelAddress) & 0xff0000) >> 8) \
+					+ (((*pixelAddress) & 0xff00) << 8) + (((*pixelAddress) & 0xff) << 24);   // 32 bit
+				//#define PUT_PIXEL  *pixelAddress = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
+				//	*pixelAddress ++ = ((*pixelAddress) >> 8) + (((*pixelAddress) & 0xff) << 8);   // 16 bit
+				//#define PUT_PIXEL  *pixelAddress ++ = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];   // 8 bit
+			#else
+				#define PUT_PIXEL  *pixelAddress ++ = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];
+			#endif
 		#endif
 		if (interpolate) {
 			long *ileft = NUMlvector (clipx1, clipx2), *iright = NUMlvector (clipx1, clipx2);
@@ -253,7 +262,12 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
 				long itop = ceil (iy_real), ibottom = itop - 1;
 				double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
-				unsigned char *pixelAddress = ROW_START_ADDRESS;
+				#if mac
+					Melder_assert (sizeof (unsigned long) == 4);
+					unsigned long *pixelAddress = (unsigned long *) ROW_START_ADDRESS;
+				#else
+					unsigned char *pixelAddress = ROW_START_ADDRESS;
+				#endif
 				if (itop > iy2) itop = iy2;
 				if (ibottom < iy1) ibottom = iy1;
 				if (z_float) {
@@ -292,7 +306,11 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				ix [xDC] = floor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
 			for (yDC = clipy2; yDC < clipy1; yDC ++) {
 				long iy = ceil (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
-				unsigned char *pixelAddress = ROW_START_ADDRESS;
+				#if mac
+					unsigned long *pixelAddress = (unsigned long *) ROW_START_ADDRESS;
+				#else
+					unsigned char *pixelAddress = ROW_START_ADDRESS;
+				#endif
 				Melder_assert (iy >= iy1 && iy <= iy2);
 				if (z_float) {
 					float *ziy = z_float [iy];

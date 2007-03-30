@@ -1,6 +1,6 @@
 /* Ui.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2004/12/14 less space after LABEL unless its value is empty or ends in a period
  * pb 2005/03/06 guard against incorrect prefs files
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2007/03/23 new Editor API
  */
 
 #include <ctype.h>
@@ -632,7 +633,7 @@ Any UiForm_create (Widget parent, const char *title,
 static int commonOkCallback (Any dia, void *closure) {
 	EditorCommand cmd = (EditorCommand) closure;
 	(void) dia;
-	return cmd -> commandCallback (cmd, cmd -> dialog);
+	return cmd -> commandCallback (cmd -> editor, cmd, cmd -> dialog);
 }
 
 Any UiForm_createE (EditorCommand cmd, const char *title, const char *helpTitle) {

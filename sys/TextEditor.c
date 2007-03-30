@@ -27,6 +27,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/18 improved info
  * pb 2007/02/15 GuiText_updateChangeCountAfterSave
+ * pb 2007/03/23 Go to line: guarded against uninitialized 'right'
  */
 
 #include "TextEditor.h"
@@ -140,7 +141,7 @@ MOTIF_CALLBACK (cb_saveAndOpen)
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		cb_showOpen (cmd, NULL);
 	} else {
-		cb_saveAs (cmd, NULL);
+		cb_saveAs (me, cmd, NULL);
 	}
 MOTIF_CALLBACK_END
 
@@ -178,7 +179,7 @@ MOTIF_CALLBACK (cb_saveAndNew)
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		newDocument (me);
 	} else {
-		cb_saveAs (cmd, NULL);
+		cb_saveAs (me, cmd, NULL);
 	}
 MOTIF_CALLBACK_END
 
@@ -217,7 +218,7 @@ DIRECT (TextEditor, cb_save)
 	if (my name) {
 		if (! saveDocument (me, & my file)) return 0;
 	} else {
-		cb_saveAs (cmd, NULL);
+		cb_saveAs (me, cmd, NULL);
 	}
 END
 
@@ -227,7 +228,7 @@ MOTIF_CALLBACK (cb_saveAndClose)
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		cb_saveAs (Editor_getMenuCommand (me, "File", "Save as..."), NULL);
+		cb_saveAs (me, Editor_getMenuCommand (me, "File", "Save as..."), NULL);
 	}
 MOTIF_CALLBACK_END
 
@@ -345,12 +346,11 @@ SET_INTEGER ("Line", firstLine);
 DO
 	char *text = XmTextGetString (my textWidget);
 	long lineToGo = GET_INTEGER ("Line"), currentLine = 1;
-	unsigned long left, right;
+	unsigned long left = 0, right = 0;
 	if (lineToGo == 1) {
-		left = 0;
-		for (right = left; text [right] != '\n' && text [right] != '\0'; right ++) { }
+		for (; text [right] != '\n' && text [right] != '\0'; right ++) { }
 	} else {
-		for (left = 0; text [left] != '\0'; left ++) {
+		for (; text [left] != '\0'; left ++) {
 			if (text [left] == '\n') {
 				currentLine ++;
 				if (currentLine == lineToGo) {

@@ -1155,7 +1155,7 @@ FORM (Sound_recordFixedTime, "Record Sound", 0)
 DO
 	NEW (Sound_recordFixedTime (GET_INTEGER ("Input source"),
 		GET_REAL ("Gain"), GET_REAL ("Balance"),
-		atol (GET_STRING ("Sampling frequency")), GET_REAL ("Duration")));
+		atof (GET_STRING ("Sampling frequency")), GET_REAL ("Duration")));
 END
 
 FORM (Sound_resample, "Sound: Resample", "Sound: Resample...")
@@ -1301,40 +1301,40 @@ END
 
 FORM (Sound_to_Formant_burg, "Sound: To Formant (Burg method)", "Sound: To Formant (burg)...")
 	REAL ("Time step (s)", "0.0 (= auto)")
-	NATURAL ("Max. number of formants", "5")
+	POSITIVE ("Max. number of formants", "5")
 	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
 	POSITIVE ("Window length (s)", "0.025")
 	POSITIVE ("Pre-emphasis from (Hz)", "50")
 	OK
 DO
 	EVERY_TO (Sound_to_Formant_burg (OBJECT, GET_REAL ("Time step"),
-		GET_INTEGER ("Max. number of formants"), GET_REAL ("Maximum formant"),
+		GET_REAL ("Max. number of formants"), GET_REAL ("Maximum formant"),
 		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
 END
 
 FORM (Sound_to_Formant_keepAll, "Sound: To Formant (keep all)", "Sound: To Formant (keep all)...")
 	REAL ("Time step (s)", "0.0 (= auto)")
-	NATURAL ("Max. number of formants", "5")
+	POSITIVE ("Max. number of formants", "5")
 	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
 	POSITIVE ("Window length (s)", "0.025")
 	POSITIVE ("Pre-emphasis from (Hz)", "50")
 	OK
 DO
 	EVERY_TO (Sound_to_Formant_keepAll (OBJECT, GET_REAL ("Time step"),
-		GET_INTEGER ("Max. number of formants"), GET_REAL ("Maximum formant"),
+		GET_REAL ("Max. number of formants"), GET_REAL ("Maximum formant"),
 		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
 END
 
 FORM (Sound_to_Formant_willems, "Sound: To Formant (split Levinson (Willems))", "Sound: To Formant (sl)...")
 	REAL ("Time step (s)", "0.0 (= auto)")
-	NATURAL ("Number of formants", "5")
+	POSITIVE ("Number of formants", "5")
 	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
 	POSITIVE ("Window length (s)", "0.025")
 	POSITIVE ("Pre-emphasis from (Hz)", "50")
 	OK
 DO
 	EVERY_TO (Sound_to_Formant_willems (OBJECT, GET_REAL ("Time step"),
-		GET_INTEGER ("Number of formants"), GET_REAL ("Maximum formant"),
+		GET_REAL ("Number of formants"), GET_REAL ("Maximum formant"),
 		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
 END
 

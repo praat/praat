@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/02/15
+ * pb 2007/03/22
  */
 
 #ifndef _melder_h_
@@ -485,6 +485,10 @@ void motif_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 #define MOTIF_CALLBACK(f)  static void f (Widget w, XtPointer void_me, XtPointer call) { \
 	(void) w; (void) void_me; (void) call; {
 #define MOTIF_CALLBACK_END  } }
+
+#define GUI_CALLBACK  static void
+#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
+#define GUI_IAM(klas)  (void) w; (void) void_me; (void) call; iam (klas);
 
 /* End of file Gui.h */
 #endif

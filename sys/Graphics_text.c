@@ -151,12 +151,16 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 					fontInfo -> per_char [ichar - 33]. width = strlen (ipaSerifRegular24 [ichar - 32] [0]);
 			}
 		} else {
-			Melder_casual ("Font \"%s\" not found. Using Courier instead.", name);
+			Melder_casual ("Font \"%s\" not found. Trying Courier instead.", name);
 			sprintf (name, "-*-courier-medium-r-normal--*-%d0-%d-%d-*-*-iso8859-1",
 				size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
 				my resolution < 100 ? 75 : 100, my resolution < 100 ? 75 : 100);
 			fontInfo = XLoadQueryFont (my display, name);
-			if (! fontInfo) return NULL;
+			if (! fontInfo) {
+				Melder_casual ("Praat requires the Adobe fonts Times, Helvetica, Courier and Symbol.");
+				Melder_casual ("Praat may now crash.");
+				return NULL;
+			}
 		}
 	}
 	fontInfos [font] [size] [style] = fontInfo;
@@ -774,7 +778,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 					static GWorldPtr offscreenWorld;
 					CGrafPtr savePort;
 					GDHandle saveDevice;
-					PixMapHandle offscreenPixMap;
+					//PixMapHandle offscreenPixMap;
 					/*unsigned char *offscreenPixels;*/
 					SetPort (my macPort);
 					GetGWorld (& savePort, & saveDevice);
@@ -785,8 +789,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 						inited = 1;
 					}
 					SetGWorld (offscreenWorld, NULL);
-					offscreenPixMap = GetGWorldPixMap (offscreenWorld);
-					LockPixels (offscreenPixMap);
+					//offscreenPixMap = GetGWorldPixMap (offscreenWorld);
+					//LockPixels (offscreenPixMap);
 					/*offscreenPixels = (unsigned char *) GetPixBaseAddr (offscreenPixMap);*/
 				#endif
 				width += 4;   /* Leave room for slant. */
@@ -863,7 +867,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 				}
 				#if mac
 					SetGWorld (savePort, saveDevice);
-					UnlockPixels (offscreenPixMap);
+					//UnlockPixels (offscreenPixMap);
 					/*DisposeGWorld (offscreenWorld);*/
 				end:
 					SetPort (my macPort);   /* Superfluous? */

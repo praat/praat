@@ -20,17 +20,14 @@
  */
 
 /*
- * pb 2007/03/18
+ * pb 2007/03/29
  */
 
 #ifndef _Strings_h_
 	#include "Strings.h"
 #endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#ifndef _Table_h_
+	#include "Table.h"
 #endif
 #ifndef _Distributions_h_
 	#include "Distributions.h"
@@ -59,6 +56,8 @@ int PairDistribution_formula (PairDistribution me, const char *formula);
 void PairDistribution_drawAsNumbers (PairDistribution me, Graphics g, int iformat, int precision);
 void PairDistribution_drawAsNumbers_if (PairDistribution me, Graphics g, int iformat, int precision, const char *conditionFormula);
 PairDistribution PairDistribution_append (PairDistribution me, PairDistribution thee);
+
+Table PairDistribution_to_Table (PairDistribution me);
 
 #endif
 

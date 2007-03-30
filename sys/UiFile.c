@@ -24,6 +24,7 @@
  * pb 2007/02/12 worked around a bug in Windows XP that caused Praat to crash
                  when the user moved the mouse pointer over a file in the Desktop of the second file selector
                  that was raised in Praat. The workaround is to temporarily disable file info tips.
+ * pb 2007/03/23 new Editor API
  */
 
 #if defined (macintosh)
@@ -870,7 +871,7 @@ Any UiOutfile_create (Widget parent, const char *title,
 
 static int commonOutfileCallback (Any dia, void *closure) {
 	EditorCommand command = (EditorCommand) closure;
-	return command -> commandCallback (command, dia);
+	return command -> commandCallback (command -> editor, command, dia);
 }
 
 Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTitle) {
@@ -943,8 +944,7 @@ void UiOutfile_do (I, const char *defaultName) {
 					}
 					#endif
 					if (Melder_debug == 19) {
-						int i;
-						for (i = 0; i < strlen (my file. path); i ++) {
+						for (unsigned long i = 0; i < strlen (my file. path); i ++) {
 							Melder_casual ("UTF-8 %d %d %c", i, (unsigned char) my file. path [i], my file. path [i]);
 						}
 					}

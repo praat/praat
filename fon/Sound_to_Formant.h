@@ -1,6 +1,6 @@
 /* Sound_to_Formant.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 2001/03/25
- * pb 2002/07/16 GPL
+ * pb 2007/03/30
  */
 
 #ifndef _Sound_h_
@@ -36,15 +35,15 @@ Formant Sound_to_Formant_any (Sound me, double timeStep, int numberOfPoles, doub
 	Which = 2: Split-Levinson
 */
 
-Formant Sound_to_Formant_burg (Sound me, double timeStep, float maximumNumberOfFormants,
+Formant Sound_to_Formant_burg (Sound me, double timeStep, double maximumNumberOfFormants,
 	double maximumFormantFrequency, double windowLength, double preemphasisFrequency);
 /* Throws away all formants below 50 Hz and above Nyquist minus 50 Hz. */
 
-Formant Sound_to_Formant_keepAll (Sound me, double timeStep, float maximumNumberOfFormants,
+Formant Sound_to_Formant_keepAll (Sound me, double timeStep, double maximumNumberOfFormants,
 	double maximumFormantFrequency, double windowLength, double preemphasisFrequency);
 /* Same as previous, but keeps all formants. Good for resynthesis. */
 
-Formant Sound_to_Formant_willems (Sound me, double timeStep, float numberOfFormants,
+Formant Sound_to_Formant_willems (Sound me, double timeStep, double numberOfFormants,
 	double maximumFormantFrequency, double windowLength, double preemphasisFrequency);
 
 /* End of file Sound_to_Formant.h */

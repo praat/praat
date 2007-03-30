@@ -27,7 +27,8 @@
 #include "melder.h"
 #include "Graphics.h"
 
-#define MAXGREYSIDE  12
+//#define MAXGREYSIDE  12
+#define MAXGREYSIDE  1000
 #define MAXGREYPATH  (2 * MAXGREYSIDE * (MAXGREYSIDE - 1) + 2)
 #define MAXGREYEDGECONTOURS  (2 * (MAXGREYSIDE - 1))
 #define MAXGREYCLOSEDCONTOURS  (MAXGREYPATH / 4 + 1)

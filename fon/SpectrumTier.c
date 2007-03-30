@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/03/19
+ * pb 2007/03/29
  */
 
 #include "Ltas_to_SpectrumTier.h"
@@ -53,33 +53,18 @@ void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
 }
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
-	MelderInfo_open ();
-	bool on = false;
-	if (includeIndexes) { MelderInfo_write1 ("point"); on = true; }
-	if (includeFrequency) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("freq(Hz)"); on = true; }
-	if (includePowerDensity) { if (on) MelderInfo_write1 ("\t"); MelderInfo_write1 ("pow(dB/Hz)"); on = true; }
-	MelderInfo_write1 ("\n");
-	for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
-		bool on = false;
-		if (includeIndexes) { MelderInfo_write1 (Melder_integer (ipoint)); on = true; }
-		RealPoint point = my points -> item [ipoint];
-		if (includeFrequency) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (point -> time));
-			on = true;
-		}
-		if (includePowerDensity) { 
-			if (on) MelderInfo_write1 ("\t");
-			MelderInfo_write1 (Melder_double (point -> value));
-			on = true;
-		}
-		MelderInfo_write1 ("\n");
-	}
-	MelderInfo_close ();
+	Table table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity); cherror
+	Table_list (table, false);
+end:
+	iferror { Melder_clearError (); Melder_information1 ("Nothing to list."); }
+	forget (table);
 }
 
-Table SpectrumTier_downto_Table (SpectrumTier me) {
-	return RealTier_downto_Table (me, "freq(Hz)", "power(dB)");
+Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
+	return RealTier_downto_Table (me,
+		includeIndexes ? "index" : NULL,
+		includeFrequency ? "freq(Hz)" : NULL,
+		includePowerDensity ? "pow(dB/Hz)" : NULL);
 }
 
 SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
@@ -93,4 +78,4 @@ end:
 	return thee;
 }
 
-/* End of file PitchTier.c */
+/* End of file SpectrumTier.c */

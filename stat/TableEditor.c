@@ -39,9 +39,9 @@
 #define TableEditor_methods Editor_methods \
 	void (*draw) (I); \
 	int (*click) (I, double xWC, double yWC, int shiftKeyPressed);
-class_create_opaque (TableEditor, Editor)
+class_create_opaque (TableEditor, Editor);
 
-/********** FUNCTIONEDITOR METHODS **********/
+/********** EDITOR METHODS **********/
 
 static void destroy (I) {
 	iam (TableEditor);
@@ -82,33 +82,45 @@ static void dataChanged (I) {
 
 /********** EDIT MENU **********/
 
-DIRECT (TableEditor, cb_cut)
+static int menu_cb_Cut (EDITOR_ARGS) {
+	EDITOR_IAM (TableEditor);
 	XmTextCut (my text, 0);
-END
+	return 1;
+}
 
-DIRECT (TableEditor, cb_copy)
+static int menu_cb_Copy (EDITOR_ARGS) {
+	EDITOR_IAM (TableEditor);
 	XmTextCopy (my text, 0);
-END
+	return 1;
+}
 
-DIRECT (TableEditor, cb_paste)
+static int menu_cb_Paste (EDITOR_ARGS) {
+	EDITOR_IAM (TableEditor);
 	XmTextPaste (my text);
-END
+	return 1;
+}
 
-DIRECT (TableEditor, cb_erase)
+static int menu_cb_Erase (EDITOR_ARGS) {
+	EDITOR_IAM (TableEditor);
 	XmTextRemove (my text);
-END
+	return 1;
+}
 
 /********** VIEW MENU **********/
 
 /********** HELP MENU **********/
 
-DIRECT (TableEditor, cb_TableEditorHelp) Melder_help ("TableEditor"); END
+static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
+	EDITOR_IAM (TableEditor);
+	Melder_help ("TableEditor");
+	return 1;
+}
 
-MOTIF_CALLBACK (cb_textChanged)
-	iam (TableEditor);
+static void cb_textChanged (GUI_ARGS) {
+	GUI_IAM (TableEditor);
 	Table table = my data;
 	Editor_broadcastChange (me);
-MOTIF_CALLBACK_END
+}
 
 static void createChildren (I) {
 	iam (TableEditor);
@@ -192,15 +204,15 @@ static void createMenus (I) {
 	inherited (TableEditor) createMenus (me);
 
 	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Cut text", 'X', cb_cut);
-	Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, cb_cut);
-	Editor_addCommand (me, "Edit", "Copy text", 'C', cb_copy);
-	Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, cb_copy);
-	Editor_addCommand (me, "Edit", "Paste text", 'V', cb_paste);
-	Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, cb_paste);
-	Editor_addCommand (me, "Edit", "Erase text", 0, cb_erase);
-	Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, cb_erase);
-	Editor_addCommand (me, "Help", "TableEditor help", '?', cb_TableEditorHelp);
+	Editor_addCommand (me, "Edit", "Cut text", 'X', menu_cb_Cut);
+	Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, menu_cb_Cut);
+	Editor_addCommand (me, "Edit", "Copy text", 'C', menu_cb_Copy);
+	Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, menu_cb_Copy);
+	Editor_addCommand (me, "Edit", "Paste text", 'V', menu_cb_Paste);
+	Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, menu_cb_Paste);
+	Editor_addCommand (me, "Edit", "Erase text", 0, menu_cb_Erase);
+	Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, menu_cb_Erase);
+	Editor_addCommand (me, "Help", "TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -289,48 +301,48 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 	return 1;
 }
 
-class_methods (TableEditor, Editor)
+class_methods (TableEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenus)
 	class_method (draw)
 	class_method (click)
-class_methods_end
+class_methods_end }
 
-MOTIF_CALLBACK (cb_horizontalScroll)
-	iam (TableEditor);
+static void gui_cb_horizontalScroll (GUI_ARGS) {
+	GUI_IAM (TableEditor);
 	int value, slider, incr, pincr;
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
 	my leftColumn = value;
 	our draw (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_verticalScroll)
-	iam (TableEditor);
+static void gui_cb_verticalScroll (GUI_ARGS) {
+	GUI_IAM (TableEditor);
 	int value, slider, incr, pincr;
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
 	my topRow = value;
 	our draw (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_draw)
-	iam (TableEditor);
+static void gui_cb_draw (GUI_ARGS) {
+	GUI_IAM (TableEditor);
 #ifdef UNIX
 	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 #endif
 	draw (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_input)
-	iam (TableEditor);
+static void gui_cb_input (GUI_ARGS) {
+	GUI_IAM (TableEditor);
 	MotifEvent event = MotifEvent_fromCallData (call);
 	int shiftKeyPressed = MotifEvent_shiftKeyPressed (event);
 	double xWC, yWC;
 	if (MotifEvent_isButtonPressedEvent (event)) {
 		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
 	}
-MOTIF_CALLBACK_END
+}
 
 TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
@@ -338,6 +350,8 @@ TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
 	Melder_assert (XtWindow (my drawingArea));
 	my topRow = 1;
 	my leftColumn = 1;
+	my selectedColumn = 1;
+	my selectedRow = 1;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setWsViewport (my graphics, 0, 3000, 0, 3000);
 	Graphics_setWsWindow (my graphics, 0, 3000, 0, 3000);
@@ -347,12 +361,12 @@ TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
 	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 	Graphics_setAtSignIsLink (my graphics, TRUE);
 
-	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
-	XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, cb_horizontalScroll, (XtPointer) me);
-	XtAddCallback (my horizontalScrollBar, XmNdragCallback, cb_horizontalScroll, (XtPointer) me);
-	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, cb_verticalScroll, (XtPointer) me);
-	XtAddCallback (my verticalScrollBar, XmNdragCallback, cb_verticalScroll, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
+	XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, gui_cb_horizontalScroll, (XtPointer) me);
+	XtAddCallback (my horizontalScrollBar, XmNdragCallback, gui_cb_horizontalScroll, (XtPointer) me);
+	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
+	XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
 
 end:
 	iferror forget (me);
