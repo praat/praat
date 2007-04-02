@@ -1,6 +1,6 @@
 /* Interpreter.c
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
  * pb 2006/01/11 local variables
  * pb 2007/02/05 preferencesDirectory$, homeDirectory$, temporaryDirectory$
+ * pb 2007/04/02 allow comments (with '#' or ';') in forms
  */
 
 #include <ctype.h>
@@ -220,6 +221,12 @@ int Interpreter_readParameters (Interpreter me, char *text) {
 			char *line = newLine + 1, *p;
 			int type = 0;
 			while (*line == ' ' || *line == '\t') line ++;
+			while (*line == '#' || *line == ';' || *line == '\n') {
+				newLine = strchr (line, '\n');
+				if (newLine == NULL) return Melder_error ("Unfinished form.");
+				line = newLine + 1;
+				while (*line == ' ' || *line == '\t') line ++;
+			}
 			if (strnequ (line, "endform", 7)) break;
 			if (strnequ (line, "word ", 5)) { type = Interpreter_WORD; p = line + 5; }
 			else if (strnequ (line, "real ", 5)) { type = Interpreter_REAL; p = line + 5; }
@@ -729,13 +736,12 @@ int Interpreter_run (Interpreter me, char *text) {
 				/*
 				 * Found a variable (p points to the left quote, q to the right quote). Substitute.
 				 */
-				int varlen = (q - p) - 1, headlen = p - command2.string;
-				int arglen;
+				int headlen = p - command2.string;
 				const char *string = var -> stringValue ? var -> stringValue :
 					percent ? Melder_percent (var -> numericValue, precision) :
 					precision >= 0 ?  Melder_fixed (var -> numericValue, precision) :
 					Melder_double (var -> numericValue);
-				arglen = strlen (string);
+				int arglen = strlen (string);
 				MelderStringA_ncopyA (& buffer, command2.string, headlen);
 				MelderStringA_appendA (& buffer, string);
 				MelderStringA_appendA (& buffer, q + 1);

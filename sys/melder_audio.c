@@ -501,6 +501,7 @@ static Boolean workProc (XtPointer closure) {
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					return flush ();
 			}
+			Sleep (10);
   		}
 	#endif
 	(void) closure;
@@ -1324,11 +1325,12 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 
 	Melder_startClock ();
 	if (my asynchronicity == Melder_SYNCHRONOUS) {
-		while (! (my waveHeader. dwFlags & WHDR_DONE)) { (void) clock (); }
+		while (! (my waveHeader. dwFlags & WHDR_DONE)) { Sleep (10); }
 		my samplesPlayed = my numberOfSamples;
   	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
   		while (! (my waveHeader. dwFlags & WHDR_DONE)) {
 			MSG event;
+			Sleep (10);
 			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				break;
