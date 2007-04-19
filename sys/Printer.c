@@ -153,7 +153,8 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		/*
 		 * Send direct PostScript commands.
 		 */
-		PMSessionPostScriptBegin (theMacPrintSession);
+		if (PMSessionPostScriptBegin (theMacPrintSession))
+			Melder_fatal ("Cannot begin PostScript.");
 		initPostScriptPage ();
 	}
 	static void closePostScript (void) {

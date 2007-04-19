@@ -25,6 +25,7 @@
  * pb 2007/01/27 Vector_to_RealTier_peaks finds peaks only within channel
  * pb 2007/01/28 made compatible with new getVector and getFunction1 API
  * pb 2007/03/30 RealTier_downto_Table: include point numbers
+ * pb 2007/04/19 RealTier_formula: defence against undefined values
  */
 
 #include "RealTier.h"
@@ -492,6 +493,9 @@ int RealTier_formula (I, const char *expression, thou) {
 	for (icol = 1; icol <= my points -> size; icol ++) {
 		double result;
 		if (! Formula_run (0, icol, & result, NULL)) return 0;
+		if (result == NUMundefined) {
+			return Melder_error ("Cannot put an undefined value into the tier.\nFormula not finished.");
+		}
 		((RealPoint) thy points -> item [icol]) -> value = result;
 	}
 	return 1;

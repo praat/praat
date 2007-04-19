@@ -1525,7 +1525,7 @@ NORMAL ("If you dislike manually copying arguments from settings windows into yo
 	"appears in a the ScriptEditor. You can build a new script on the basis of this line.")
 MAN_END
 
-MAN_BEGIN ("Scripting 3. Layout", "ppgb", 20070225)
+MAN_BEGIN ("Scripting 3. Layout", "ppgb", 20070419)
 INTRO ("This chapter handles the way you use white space, comments, "
 	"and continuation lines in a Praat script.")
 ENTRY ("White space")
@@ -1546,8 +1546,10 @@ CODE ("\\#  sampled at 44100 Hz:")
 CODE ("Create Sound from formula... sine Mono 0 1 44100 sin (2*pi*100*x)")
 ENTRY ("Continuation lines")
 NORMAL ("There is normally one line per command, and one command per line.")
-NORMAL ("But you can chop up long lines by using continuaton lines that start with three dots (\"...\"). "
-	"You will normally want to follow this %ellipsis with a space, unless you want to concatenate "
+NORMAL ("But you can chop up long lines by using continuaton lines that start with three dots:")
+CODE ("Create Sound from formula... windowedSine Mono 0 1 44100")
+CODE ("   ... 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
+NORMAL ("You will normally want to follow such an %ellipsis with a space, unless you want to concatenate "
 	"the parts of a long word:")
 CODE ("Viewport... 0 10 0 4")
 CODE ("Text top... yes It's a long way to Llanfairpwllgwyngyll")
@@ -1555,7 +1557,7 @@ CODE ("   ...gogerychwyrndrobwllllantysiliogogogoch,")
 CODE ("   ... unless you start from Tyddyn-y-felin.")
 MAN_END
 
-MAN_BEGIN ("Scripting 4. Object selection", "ppgb", 20070225)
+MAN_BEGIN ("Scripting 4. Object selection", "ppgb", 20070419)
 INTRO ("This chapter is about how to select objects from your script, "
 	"and how to find out what objects are currently selected.")
 ENTRY ("Selecting objects")
@@ -1648,6 +1650,18 @@ CODE1 ("for i from 2 to n")
 CODE2 ("plus sound'i'")
 CODE1 ("endfor")
 CODE ("endif")
+ENTRY ("A shortcut")
+NORMAL ("Instead of")
+CODE ("Create Sound from formula... sine Mono 0 1 44100 0.5*sin(2*pi*1000*x)")
+CODE ("sound = selected (\"Sound\")")
+NORMAL ("you can just write")
+CODE ("sound = Create Sound from formula... sine Mono 0 1 44100 0.5*sin(2*pi*1000*x)")
+NORMAL ("and instead of")
+CODE ("To Pitch... 0.0 75 600")
+CODE ("pitch = selected (\"Pitch\")")
+NORMAL ("you can write")
+CODE ("pitch = To Pitch... 0.0 75 600")
+NORMAL ("This only works if the command creates a single object.")
 MAN_END
 
 MAN_BEGIN ("Scripting 5. Language elements", "ppgb", 20021218)

@@ -34,7 +34,8 @@
  * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
  * pb 2006/01/11 local variables
  * pb 2007/02/05 preferencesDirectory$, homeDirectory$, temporaryDirectory$
- * pb 2007/04/02 allow comments (with '#' or ';') in forms
+ * pb 2007/04/02 allow comments (with '#' or ';' or empty lines) in forms
+ * pb 2007/04/19 allow comments with '!' in forms
  */
 
 #include <ctype.h>
@@ -221,7 +222,7 @@ int Interpreter_readParameters (Interpreter me, char *text) {
 			char *line = newLine + 1, *p;
 			int type = 0;
 			while (*line == ' ' || *line == '\t') line ++;
-			while (*line == '#' || *line == ';' || *line == '\n') {
+			while (*line == '#' || *line == ';' || *line == '!' || *line == '\n') {
 				newLine = strchr (line, '\n');
 				if (newLine == NULL) return Melder_error ("Unfinished form.");
 				line = newLine + 1;
@@ -1281,9 +1282,10 @@ int Interpreter_run (Interpreter me, char *text) {
 				while (*p == ' ' || *p == '\t') p ++;			
 				if (*p == '\0') { Melder_error ("Missing expression after variable %s.", command2.string); goto end; }
 				/*
-				 * Two classes of assignments:
+				 * Three classes of assignments:
 				 *    var = formula
 				 *    var = Query
+				 *    var = Object creation
 				 */
 				if (isupper (*p) && ! isAnObjectName (p)) {
 					/*
@@ -1291,9 +1293,22 @@ int Interpreter_run (Interpreter me, char *text) {
 					 */
 					MelderStringA_empty (& valueString);
 					Melder_divertInfo (& valueString);
+					MelderStringA_appendCharacter (& valueString, 1);
 					praat_executeCommand (me, p);
+					if (valueString.string [0] == 1) {
+						int IOBJECT, result = 0, found = 0;
+						WHERE (SELECTED) { result = IOBJECT; found += 1; }
+						if (found > 1) {
+							Melder_error ("Multiple objects selected. Cannot assign ID to variable."); goto end;
+						} else if (found == 0) {
+							Melder_error ("No objects selected. Cannot assign ID to variable."); goto end;
+						} else {
+							value = theCurrentPraat -> list [result]. id;
+						}
+					} else {
+						value = Melder_atof (valueString.string);   /* Including --undefined-- */
+					}
 					Melder_divertInfo (NULL); cherror
-					value = Melder_atof (valueString.string);   /* Including --undefined-- */
 				} else {
 					/*
 					 * Get the value of the formula.

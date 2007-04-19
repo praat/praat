@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070415)
+MAN_BEGIN ("What's new?", "ppgb", 20070419)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.20# (April 19, 2007)")
+LIST_ITEM ("\\bu Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")
+LIST_ITEM ("\\bu PitchTier Formula: guard against undefined values.")
 NORMAL ("##4.5.19# (April 2, 2007)")
 LIST_ITEM ("\\bu Scripting: allow comments with \"\\# \" and \";\" in forms.")
 LIST_ITEM ("\\bu Windows audio playing: attempt at more compatibility with Vista.")
