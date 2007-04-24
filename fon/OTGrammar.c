@@ -1,6 +1,6 @@
 /* OTGrammar.c
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@
  * pb 2006/01/21 better procedure name
  * pb 2006/02/02 new decision strategy: ExponentialHG
  * pb 2006/12/08 MelderInfo
+ * pb 2007/04/22 multiply learning step by number of violations (for HarmonicGrammar and LinearOT)
+ * pb 2007/04/24 renamed decisionStrategy to harmonyComputationMethod
  */
 
 #include "OTGrammar.h"
@@ -70,7 +72,7 @@ static void classOTGrammar_info (I) {
 			for (icons = 1; icons <= my numberOfConstraints; icons ++)
 				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_DECISION, my decisionStrategy));
+	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_HARMONY_COMPUTATION, my harmonyComputationMethod));
 	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
 	MelderInfo_writeLine2 ("Number of tableaus: ", Melder_integer (my numberOfTableaus));
 	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (numberOfCandidates));
@@ -81,7 +83,7 @@ static int writeAscii (I, FILE *f) {
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
 	const char *p;
-	fprintf (f, "\n<%s>", enumstring (OTGrammar_DECISION, my decisionStrategy));
+	fprintf (f, "\n<%s>", enumstring (OTGrammar_HARMONY_COMPUTATION, my harmonyComputationMethod));
 	fprintf (f, "\n%ld constraints", my numberOfConstraints);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
@@ -132,7 +134,7 @@ static int readAscii (I, FILE *f) {
 	long icons, irank, itab, icand;
 	if (! inherited (OTGrammar) readAscii (me, f)) return 0;
 	if (localVersion >= 1) {
-		if ((my decisionStrategy = ascgete1 (f, & enum_OTGrammar_DECISION)) < 0) return 0;
+		if ((my harmonyComputationMethod = ascgete1 (f, & enum_OTGrammar_HARMONY_COMPUTATION)) < 0) return 0;
 	}
 	if ((my numberOfConstraints = ascgeti4 (f)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
@@ -245,7 +247,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
 	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
 	long icons;
-	if (my decisionStrategy == enumi (OTGrammar_DECISION, OptimalityTheory)) {
+	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) {
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int numberOfMarks1 = marks1 [my index [icons]];
 			int numberOfMarks2 = marks2 [my index [icons]];
@@ -262,7 +264,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		/* If we arrive here, None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 		return 0;
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, HarmonicGrammar)) {
+	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
@@ -270,7 +272,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, LinearOT)) {
+	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			if (my constraints [icons]. disharmony > 0.0) {
@@ -280,7 +282,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION, ExponentialHG)) {
+	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, ExponentialHG)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
@@ -429,7 +431,7 @@ static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwin
 	int icons;
 	OTGrammarTableau tableau = & my tableaus [itab];
 	if (tableau -> numberOfCandidates < 2) return 0;   /* If there is only one candidate, all cells can be greyed. */
-	if (my decisionStrategy != enumi (OTGrammar_DECISION, OptimalityTheory)) return my numberOfConstraints;   /* Nothing grey. */
+	if (my harmonyComputationMethod != enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) return my numberOfConstraints;   /* Nothing grey. */
 	if (OTGrammar_compareCandidates (me, itab, icand, itab, iwinner) == 0) {   /* Candidate equally good as winner? */
 		if (numberOfOptimalCandidates > 1) {
 			/* All cells are important. */
@@ -622,7 +624,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 			char markString [40];
 			markString [0] = '\0';
-			if (my decisionStrategy == enumi (OTGrammar_DECISION, OptimalityTheory)) {
+			if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) {
 				/*
 				 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
 				 * 1. the candidate is not optimal;
@@ -904,11 +906,11 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 	return thee;
 }
 
-static double demotionStep (double mean, double relativeSpreading) {
+static double learningStep (double mean, double relativeSpreading) {
 	return relativeSpreading == 0.0 ? mean : NUMrandomGauss (mean, relativeSpreading * mean);
 }
 
-static void OTGrammar_honourLocalRankings (OTGrammar me, double demotionMean, double relativeDemotionSpreading, int *grammarHasChanged) {
+static void OTGrammar_honourLocalRankings (OTGrammar me, double meanLearningStep, double relativeStdevLearningStep, int *grammarHasChanged) {
 	int improved;
 	do {
 		long irank;
@@ -917,7 +919,7 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double demotionMean, do
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
 			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
 			while (higher -> ranking <= lower -> ranking) {
-				lower -> ranking -= demotionStep (demotionMean, relativeDemotionSpreading);
+				lower -> ranking -= learningStep (meanLearningStep, relativeStdevLearningStep);
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 				improved = TRUE;
 			}
@@ -927,77 +929,84 @@ static void OTGrammar_honourLocalRankings (OTGrammar me, double demotionMean, do
 
 static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long iloser,
 	int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, int warnIfStalled, int *grammarHasChanged)
+	double meanLearningStep, double relativeStdevLearningStep, int warnIfStalled, int *grammarHasChanged)
 {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	OTGrammarCandidate winner = & tableau -> candidates [iwinner], loser = & tableau -> candidates [iloser];
-	long icons;
+	double step = learningStep (meanLearningStep, relativeStdevLearningStep);
+	bool multiplyStepByNumberOfViolations =
+		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar) ||
+		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT);
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
-		int icons = NUMrandomInteger (1, my numberOfConstraints);
+		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		int winnerMarks = winner -> marks [icons];
 		int loserMarks = loser -> marks [icons];
-		double step = demotionStep (demotionMean, relativeDemotionSpreading);
 		if (loserMarks > winnerMarks) {
-			my constraints [icons]. ranking -= step;
+			my constraints [icons]. ranking -=
+				multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step : step;
 			if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 		}
 		if (winnerMarks > loserMarks) {
-			my constraints [icons]. ranking += step;
+			my constraints [icons]. ranking +=
+				multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step : step;
 			if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 		}
 	} else if (strategy == OTGrammar_SYMMETRIC_ALL) {
-		double step = demotionStep (demotionMean, relativeDemotionSpreading);
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) {
-				my constraints [icons]. ranking -= step;
+				my constraints [icons]. ranking -=
+					multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step : step;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 			if (winnerMarks > loserMarks) {
-				my constraints [icons]. ranking += step;
+				my constraints [icons]. ranking +=
+					multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step : step;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 		}
 	} else if (strategy == OTGrammar_WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
-		double step = demotionStep (demotionMean, relativeDemotionSpreading);
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) losingConstraints ++;
 			if (winnerMarks > loserMarks) winningConstraints ++;
 		}
-		if (winningConstraints != 0) for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		if (winningConstraints != 0) for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) {
-				my constraints [icons]. ranking -= step / losingConstraints;
+				my constraints [icons]. ranking -=
+					multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step / losingConstraints : step / losingConstraints;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 			if (winnerMarks > loserMarks) {
-				my constraints [icons]. ranking += step / winningConstraints;
+				my constraints [icons]. ranking +=
+					multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step / winningConstraints : step / winningConstraints;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 		}
 	} else if (strategy == OTGrammar_WEIGHTED_ALL) {
 		int winningConstraints = 0, losingConstraints = 0;
-		double step = demotionStep (demotionMean, relativeDemotionSpreading);
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (loserMarks > 0) losingConstraints ++;
 			if (winnerMarks > 0) winningConstraints ++;
 		}
-		if (winningConstraints != 0) for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		if (winningConstraints != 0) for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (loserMarks > 0) {
-				my constraints [icons]. ranking -= step / losingConstraints;
+				my constraints [icons]. ranking -=
+					multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step / losingConstraints : step / losingConstraints;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 			if (winnerMarks > 0) {
-				my constraints [icons]. ranking += step / winningConstraints;
+				my constraints [icons]. ranking +=
+					multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step / winningConstraints : step / winningConstraints;
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 		}
@@ -1005,8 +1014,9 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		/*
 		 * Determine the crucial winner mark.
 		 */
-		double pivotRanking, step;
+		double pivotRanking;
 		int equivalent = TRUE;
+		long icons;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
@@ -1023,7 +1033,6 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		 * Determine the stratum into which some constraints will be demoted.
 		 */
 		pivotRanking = my constraints [my index [icons]]. ranking;
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
 		/*
 		 * Demote all the uniquely violated constraints in the loser
 		 * that have rankings not lower than the pivot.
@@ -1044,8 +1053,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		 * Determine the crucial loser mark.
 		 */
 		long crucialLoserMark;
-		double step;
 		OTGrammarConstraint offendingConstraint;
+		long icons;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
@@ -1060,12 +1069,11 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		 * Demote the highest uniquely violated constraint in the loser.
 		 */
 		offendingConstraint = & my constraints [my index [crucialLoserMark]];
-		step = demotionStep (demotionMean, relativeDemotionSpreading);
 		offendingConstraint -> ranking -= step;
 		if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 	}
 	if (honourLocalRankings && my numberOfFixedRankings) {
-		OTGrammar_honourLocalRankings (me, demotionMean, relativeDemotionSpreading, grammarHasChanged);
+		OTGrammar_honourLocalRankings (me, meanLearningStep, relativeStdevLearningStep, grammarHasChanged);
 	}
 end:
 	iferror return 0;
@@ -1074,7 +1082,7 @@ end:
 
 int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *adultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
+	double meanLearningStep, double relativeStdevLearningStep, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
 {
 	long itab, iwinner, iloser;
 	OTGrammarTableau tableau;
@@ -1116,7 +1124,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 	 * The grammar will have to change.
 	 */
 	OTGrammar_modifyRankings (me, itab, iwinner, iloser, strategy, honourLocalRankings,
-		demotionMean, relativeDemotionSpreading, warnIfStalled, grammarHasChanged); cherror
+		meanLearningStep, relativeStdevLearningStep, warnIfStalled, grammarHasChanged); cherror
 
 end:
 	iferror return 0;
@@ -1125,7 +1133,7 @@ end:
 
 int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews)
+	double meanLearningStep, double relativeStdevLearningStep, long numberOfChews)
 {
 	long n = inputs -> numberOfStrings, i, ichew;
 	if (! inputs) inputs = outputs;
@@ -1135,7 +1143,7 @@ int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 		for (ichew = 1; ichew <= numberOfChews; ichew ++)
 			if (! OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],
 				rankingSpreading, strategy, honourLocalRankings,
-				demotionMean, relativeDemotionSpreading, TRUE, TRUE, NULL)) return 0;
+				meanLearningStep, relativeStdevLearningStep, TRUE, TRUE, NULL)) return 0;
 end:
 	iferror return Melder_error ("(OTGrammar_learn:) Not completed.");
 	return 1;
@@ -1248,7 +1256,7 @@ static void OTGrammar_restore (OTGrammar me) {
 
 int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews, int warnIfStalled)
+	double meanLearningStep, double relativeStdevLearningStep, long numberOfChews, int warnIfStalled)
 {
 	long ichew, assumedAdultInputTableau, assumedAdultCandidate;
 	OTGrammar_newDisharmonies (me, rankingSpreading);
@@ -1263,7 +1271,7 @@ int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultO
 			my tableaus [assumedAdultInputTableau]. input,
 			my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
 			rankingSpreading, strategy, honourLocalRankings,
-			demotionMean, relativeDemotionSpreading, FALSE, warnIfStalled, & grammarHasChanged); cherror
+			meanLearningStep, relativeStdevLearningStep, FALSE, warnIfStalled, & grammarHasChanged); cherror
 		if (! grammarHasChanged) goto end;
 	}
 	if (numberOfChews > 1 && strategy == OTGrammar_EDCD && ichew > numberOfChews) {
@@ -1335,7 +1343,7 @@ end:
 
 int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	double rankingSpreading, int strategy, int honourLocalRankings,
-	double demotionMean, double relativeDemotionSpreading, long numberOfChews,
+	double meanLearningStep, double relativeStdevLearningStep, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out)
 {
 	long idatum = 0;
@@ -1346,7 +1354,7 @@ int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	for (idatum = 1; idatum <= partialOutputs -> numberOfStrings; idatum ++) {
 		OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum],
 			rankingSpreading, strategy, honourLocalRankings,
-			demotionMean, relativeDemotionSpreading, numberOfChews, FALSE);   /* Delay error check till after we save current state. */
+			meanLearningStep, relativeStdevLearningStep, numberOfChews, FALSE);   /* Delay error check till after we save current state. */
 		if (history) {
 			OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
 		}

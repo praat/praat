@@ -418,6 +418,7 @@ static const char *objectString (int number) {
 }
 static int allowExecutionHook (void *closure) {
 	int (*callback) (Any, void *) = (int (*) (Any, void *)) closure;
+	Melder_assert (sizeof (callback) == sizeof (void *));
 	long i, numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];

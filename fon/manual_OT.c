@@ -179,11 +179,11 @@ MAN_BEGIN ("OT", "ppgb", 20021105)
 INTRO ("An abbreviation for @@Optimality Theory@.")
 MAN_END
 
-MAN_BEGIN ("OT learning", "ppgb", 20030316)
-INTRO ("This tutorial describes how you can draw Optimality-Theoretic tableaus and "
-	"simulate Optimality-Theoretic learning with P\\s{RAAT}.")
+MAN_BEGIN ("OT learning", "ppgb", 20070423)
+INTRO ("This tutorial describes how you can draw Optimality-Theoretic and Harmonic-Grammar tableaus and "
+	"simulate Optimality-Theoretic and Harmonic-Grammar learning with P\\s{RAAT}.")
 NORMAL ("You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
-LIST_ITEM ("1. @@OT learning 1. Kinds of OT grammars|Kinds of OT grammars@ (ordinal and stochastic, @OTGrammar)")
+LIST_ITEM ("1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)")
 LIST_ITEM ("2. @@OT learning 2. The grammar|The grammar@")
 LIST_ITEM1 ("2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\\s{O}C\\s{ODA} example, @OTGrammarEditor)")
 LIST_ITEM1 ("2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)")
@@ -199,24 +199,32 @@ LIST_ITEM1 ("3.1. @@OT learning 3.1. Data from a pair distribution|Data from a p
 LIST_ITEM1 ("3.2. @@OT learning 3.2. Data from another grammar|Data from another grammar@ (tongue-root-harmony example)")
 LIST_ITEM ("4. @@OT learning 4. Learning an ordinal grammar|Learning an ordinal grammar@")
 LIST_ITEM ("5. @@OT learning 5. Learning a stochastic grammar|Learning a stochastic grammar@")
-LIST_ITEM ("6. @@OT learning 6. Shortcut to OT learning|Shortcut to OT learning@")
+LIST_ITEM ("6. @@OT learning 6. Shortcut to grammar learning|Shortcut to grammar learning@")
 LIST_ITEM ("7. @@OT learning 7. Learning from overt forms|Learning from overt forms@")
 MAN_END
 
-MAN_BEGIN ("OT learning 1. Kinds of OT grammars", "ppgb", 20041110)
+MAN_BEGIN ("OT learning 1. Kinds of grammars", "ppgb", 20070424)
 INTRO ("This is chapter 1 of the @@OT learning@ tutorial.")
 NORMAL ("According to @@Prince & Smolensky (1993)@, an @@Optimality Theory|Optimality-Theoretic@ (@OT) grammar "
 	"consists of a number of ranked @constraints. "
 	"For every possible input (usually an underlying form), GEN (the generator) generates a (possibly very large) number of "
-	"%%##output candidates%#, and the ranking order of the constraints determines the winning candidate, "
+	"%%output candidates%, and the ranking order of the constraints determines the winning candidate, "
 	"which becomes the single optimal output.")
-NORMAL ("In OT, ranking is %#strict, i.e., if a constraint %A is ranked higher than the constraints %B, %C, and %D, "
+NORMAL ("According to @@Prince & Smolensky (1993)@ and @@Smolensky & Legendre (2006)@, a Harmonic Grammar (HG) "
+	"consists of a number of weighted @constraints. "
+	"The winning candidate, which becomes the single optimal output, is the one with the greatest %harmony, which "
+	"is a measure of goodness determined by the weights of the constraints violated by each candidate.")
+NORMAL ("In OT, ranking is %strict, i.e., if a constraint %A is ranked higher than the constraints %B, %C, and %D, "
 	"a candidate that violates only constraint %A will always be beaten by any candidate that respects %A "
 	"(and any higher constraints), even if it violates %B, %C, and %D.")
+NORMAL ("In HG, weighting is %additive, i.e., a candidate that only violates a constraint %A with a weight of 100 "
+	"has a harmony of -100 and will therefore beat a candidate that violates both a constraint %B with a weight of 70 "
+	"and a constraint %C with a weight of 40 and therefore has a harmony of only -110. Also, two violations of constraint %B "
+	"(harmony 2 * -70 = -140) are worse than one violation of constraint %A (harmony -100).")
 ENTRY ("Ordinal OT grammars")
 NORMAL ("Because only the ranking order of the constraints plays a role in evaluating the output candidates, "
-	"Prince & Smolensky took the grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation "
-	"between the constraint rankings. For such a grammar, @@Tesar & Smolensky (1998)@ devised a learning algorithm "
+	"Prince & Smolensky took an OT grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation "
+	"between the constraint rankings. For such a grammar, @@Tesar & Smolensky (1998)@ devised an on-line learning algorithm "
 	"(Error-Driven Constraint Demotion, EDCD) that changes the ranking order "
 	"whenever the form produced by the learner is different from the adult form. Such a learning step "
 	"can sometimes lead to a large change in the behaviour of the grammar.")
@@ -224,16 +232,25 @@ ENTRY ("Stochastic OT grammars")
 NORMAL ("The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it "
 	"is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves. "
 	"For these reasons, @@Boersma (1997)@ / @@Boersma (1998)@ / @@Boersma (2000)@ "
-	"proposed stochastic constraint grammars "
-	"in which every constraint has a %%##ranking value%# along a continuous ranking scale, "
-	"and a small amount of %#noise is added to this ranking value at evaluation time. "
-	"The associated error-driven learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the "
+	"proposed stochastic OT grammars "
+	"in which every constraint has a %%ranking value% along a continuous ranking scale, "
+	"and a small amount of %noise is added to this ranking value at evaluation time. "
+	"The associated error-driven on-line learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the "
 	"ranking values of the constraints with every learning step. An added virtue of the GLA is that it can learn "
 	"languages with optionality and variation, which was something that EDCD could not do.")
 NORMAL ("Ordinal OT grammars can be seen as a special case of the more general stochastic OT grammars: "
-	"they have integer ranking values (%#strata) and zero evaluation noise. "
-	"In P\\s{RAAT}, therefore, every constraint is taken to have a ranking value, "
+	"they have integer ranking values (%strata) and zero evaluation noise. "
+	"In Praat, therefore, every constraint is taken to have a ranking value, "
 	"so that you can do stochastic as well as ordinal OT.")
+ENTRY ("Harmonic Grammars")
+NORMAL ("@@J\\a\"ger (2003)@ devised an on-line learning algorithm for Harmonic (or MaxEnt = Maximum Entropy) Grammars, "
+	"by applying Stochastic Gradient Ascent to MaxEnt grammars. This algorithm is convergent. "
+	"It effects small changes in the weights of the constraints with every learning step. "
+	"As EDCD, it is guaranteed to converge upon a correct grammar (if there exists one that handles the data), "
+	"and as the GLA, it can learn languages with optionality and variation. "
+	"The only drawback is that HG has little support among phonologists, "
+	"because many think that human grammars work with strict ranking.")
+ENTRY ("The OTGrammar object")
 NORMAL ("An OT grammar is implemented as an @OTGrammar object. "
 	"In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.")
 MAN_END
@@ -252,7 +269,7 @@ LIST_ITEM ("2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
 LIST_ITEM ("2.9. @@OT learning 2.9. Output distributions|Output distributions@")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.1. Viewing a grammar", "ppgb", 20021204)
+MAN_BEGIN ("OT learning 2.1. Viewing a grammar", "ppgb", 20070423)
 NORMAL ("Consider a language where the underlying form /pat/ leads to the surface form [pa], "
 	"presumably because the structural constraint N\\s{O}C\\s{ODA} outranks the faithfulness constraint P\\s{ARSE}.")
 NORMAL ("To create such a grammar in P\\s{RAAT}, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
@@ -272,17 +289,18 @@ NORMAL ("From the first tableau, we see that the underlying form /pat/ will surf
 	"which only violates P\\s{ARSE}, which has a lower disharmony.")
 NORMAL ("Note the standard OT tableau layout: asterisks (*) showing violations, exclamation marks (!) showing crucial violations, "
 	"greying of cells that do not contribute to determining the winning candidate, and a finger (\\pf) pointing to the winner "
-	"(this may look like a plus sign (+) if you don't have the Zapf Dingbats font installed on your computer or printer).")
+	"(this may look like a plus sign (+) if you don't have the Zapf Dingbats font installed on your computer or printer). "
+	"An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.")
 NORMAL ("The second tableau shows that /pa/ always surfaces as [pa], which is no wonder since this is "
 	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20060202)
+MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20070424)
 NORMAL ("You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the Write menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE ("File type = \"ooTextFile\"")
 CODE ("Object class = \"OTGrammar 1\"")
-CODE ("decisionStrategy = <OptimalityTheory>")
+CODE ("harmonyComputationMethod = <OptimalityTheory>")
 CODE ("2 constraints")
 CODE ("constraint [1]: \"N\\bss{O}C\\bss{ODA}\" 100 100 ! NOCODA")
 CODE ("constraint [2]: \"P\\bss{ARSE}\" 90 90 ! PARSE")
@@ -301,7 +319,7 @@ NORMAL ("To understand more about this data structure, consult the @OTGrammar cl
 NORMAL ("You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20060105)
+MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070424)
 NORMAL ("By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
 NORMAL ("As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
@@ -340,12 +358,12 @@ CODE1 ("\"pa\"  0 0")
 CODE ("\"pat\" 2")
 CODE1 ("\"pat\" 0 1")
 CODE1 ("\"pa\"  1 0")
-NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
+NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%harmony computation method%. "
 	"In this tutorial I assume OT's strict ranking throughout, "
 	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint rankings represent addable, "
 	"possibly negative weights), or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
-	"that there are no negative weights), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), combining "
-	"the continuity advantage of Harmonic Grammar with the positive-definiteness advantage of Linear OT).")
+	"that negative weights do not count), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
+	"between Harmonic Grammar and Linear OT). To do a \"MaxEnt\" (maximum entropy) grammar, just choose $$<HarmonicGrammar>$.")
 MAN_END
 
 MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20021105)
@@ -393,7 +411,7 @@ LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      98.711")
 NORMAL ("In the last case, the order of the constraints has been reversed. "
 	"You will see that [pat] has become the winning candidate:")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
-NORMAL ("However, in the remaining part of this tutorial, we wil stick with a noise "
+NORMAL ("However, in the remaining part of this tutorial, we will stick with a noise "
 	"with a standard deviation of 2.0. This specific number ensures that we can "
 	"model fairly rigid rankings by giving the constraints a ranking difference of 10, a nice round number. "
 	"Also, the learning algorithm will separate many constraints in such a way that "
@@ -421,7 +439,7 @@ LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      80.000\t      81.581")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
-MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20060105)
+MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20070424)
 NORMAL ("Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
@@ -446,7 +464,7 @@ NORMAL ("As a more functionally oriented example, we consider nasal place assimi
 	"ranked at a short distance above *R\\s{EPLACE} (n, m):")
 CODE ("\"ooTextFile\"")
 CODE ("\"OTGrammar 1\"")
-CODE ("decisionStrategy = <OptimalityTheory>")
+CODE ("harmonyComputationMethod = <OptimalityTheory>")
 CODE ("3 constraints")
 CODE ("\"*G\\bss{ESTURE}\"          102.7 0")
 CODE ("\"*R\\bss{EPLACE} (n, m)\"   100.0 0")
@@ -478,6 +496,11 @@ PICTURE (4.0, 1.0, draw_NPA_faithful_atma)
 NORMAL ("We see that /at+ma/ always surfaces at [atma], because *R\\s{EPLACE} (t, p) is ranked much higher "
 	"than the other two, and that the output of /an+pa/ is variable because of the close rankings "
 	"of *G\\s{ESTURE} and *R\\s{EPLACE} (n, m).")
+NORMAL ("If you try this with a Harmonic Grammar or in Linear OT, you will see the same kind of variation. "
+	"Although in HG, e.g. in @@Smolensky & Legendre (2006)@, the variation is usually obtained at the candidate level, "
+	"namely by giving each candidate a probability proportional to exp(%harmony/%temperature), "
+	"in our version of HG the variation comes about at the constraint level, "
+	"namely by the noise that is temporarily added to the ranking of each constraint at evaluation time.")
 MAN_END
 
 MAN_BEGIN ("OT learning 2.7. Tableau pictures", "ppgb", 20001010)
@@ -779,7 +802,24 @@ NORMAL ("With this grammar, all the error rates are below 0.2 percent. We see th
 	"will become separated after a while by a gap of about 10 along the ranking scale.")
 NORMAL ("If we have three constraints obligatorily ranked as A >> B >> C in the adult grammar, with ranking differences of 8 between "
 	"A and B and between B and C in the learner's grammar (giving an error rate of 0.2\\% ), the ranking A >> C has a chance of less than 1 in 100 million "
-	"to be reversed at evaluation time. This relativity of error rates is an empirical prediction of our stochastic grammar model.")
+	"to be reversed at evaluation time. This relativity of error rates is an empirical prediction of our stochastic OT grammar model.")
+NORMAL ("Our Harmonic Grammars with constraint noise are slightly different in that respect, "
+	"but are capable of learning a constraint ranking for any language that can be generated from an ordinal ranking; "
+	"although this has not been proved yet, the algorithm by @@J\\a\"ger (2003)@ turns out to learn all 10,000 languages "
+	"that I generated from 11 constraints, 11 tableaus, 11 candidates per tableau, and between 0 and 3 violations per cell "
+	"(randomly distributed). Under the same conditions, the GLA failed to converge on 1.5 percent of the languages "
+	"(failures of the GLA on ordinal grammars were discovered first by Joe Pater). "
+	"The algorithm for HG is the same as the GLA described above, except that the learning step of each constraint is multiplied by "
+	"the difference of the number of violations of this constraint between the correct form and the incorrect winner; "
+	"this multiplication is crucial (without it, stochastic gradient ascent is not guaranteed to converge), "
+	"as was noted by J\\a\"ger. The same procedure for updating weights occurs "
+	"in @@Soderstrom, Mathis & Smolensky (2006)@, who propose "
+	"an incremental version (formulas 21 and 35d) of the harmony version (formulas 14 and 18) "
+	"of the learning equation for Boltzmann machines (formula 13). "
+	"The differences between the three implementations is that in Praat the evaluation noise (or %temperature) is in the constraint rankings, "
+	"in MaxEnt it is in the candidate probabilities, and in Boltzmann machines it is in the activities (i.e. the constraint violations). "
+	"The upate procedure is also similar to that of the %perceptron, a neural network invented by @@Rosenblatt (1962)@ "
+	"for classifying continuous inputs.")
 MAN_END
 
 MAN_BEGIN ("OT learning 5. Learning a stochastic grammar", "ppgb", 20011120)
@@ -830,7 +870,7 @@ NORMAL ("So besides learning obligatory rankings like a child does, "
 	"This means that a GLA learner can learn stochastic grammars.")
 MAN_END
 
-MAN_BEGIN ("OT learning 6. Shortcut to OT learning", "ppgb", 20030916)
+MAN_BEGIN ("OT learning 6. Shortcut to grammar learning", "ppgb", 20070423)
 INTRO ("Once you have mastered the tedious procedures of making Praat learn stochastic grammars, "
 	"as described in the previous chapters of this tutorial, you can try a faster procedure, "
 	"which simply involves selecting an @OTGrammar object together with a @PairDistribution object, "
@@ -868,7 +908,9 @@ DEFINITION ("these four arguments determine the %%learning scheme%, i.e. the num
 	"receive data at a certain plasticity. With the standard values, there will be 100000 data while the plasticity is 1.0 "
 	"(the initial plasticity), 100000 data while the plasticity is 0.1, 100000 data while the plasticity is 0.01, "
 	"and 100000 data while the plasticity is 0.001. If you want learning at a constant plasticity, set the "
-	"%%number of plasticities% to 1.")
+	"%%number of plasticities% to 1. Note that for the harmony computation methods of HarmonicGrammar and LinearOT "
+	"the learning step for a constraint equals the plasticity multiplied by the difference between the "
+	"numbers of violations of this constraint in the adult output and in the learner's output.")
 TAG ("%%Rel. plasticity spreading% (standard value: 0.1)")
 DEFINITION ("if this is not 0, the size of the learning step will vary randomly. For instance, if the plasticity is set to 0.01, "
 	"and the relative plasticity spreading is 0.1, you will get actual learning steps that could be anywhere between 0.007 "

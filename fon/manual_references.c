@@ -104,12 +104,19 @@ MAN_END
 MAN_BEGIN ("Ishizaka & Flanagan (1972)", "ppgb", 19980201)
 NORMAL ("Kenzo Ishizaka & James L. Flanagan (1972): \"Synthesis of voiced sounds from a two-mass model "
 	"of the vocal cords\", %%Bell System Technical Journal% #51: 1233-1268. "
-	"Reprinted in: James L. Flanagan & Lawrence R.ÊRabiner (eds.) (1973): "
+	"Reprinted in: James L. Flanagan & Lawrence R. Rabiner (eds.) (1973): "
 	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
 NORMAL ("The authors show that if we model each vocal cord as two coupled mass-spring systems, "
 	"the passive vibration that results from the interaction with a glottal airflow "
 	"will show more realistic behaviour than with the one-mass model of @@Flanagan & Landgraf (1968)@, "
 	"at least for a male speaker.")
+MAN_END
+
+MAN_BEGIN ("J\\a\"ger (2003)", "ppgb", 20070423)
+NORMAL ("Gerhard J\\a\"ger (2003): \"Maximum Entropy Models and Stochastic Optimality Theory.\" "
+	"To appear in Jane Grimshaw, Joan Maling, Chris Manning, Jane Simpson, and Annie Zaenen (eds.): "
+	"%%Architectures, rules, and preferences: A Festschrift for Joan Bresnan%, "
+	"CSLI Publications, Stanford.")
 MAN_END
 
 MAN_BEGIN ("Jesteadt, Wier & Green (1977)", "ppgb", 20021215)
@@ -168,6 +175,25 @@ MAN_END
 MAN_BEGIN ("Rosenberg (1971)", "ppgb", 20050712)
 NORMAL ("A. Rosenberg (1971): \"Effect of glottal pulse shape on the quality of natural vowels.\" "
 	"%%Journal of the Acoustical Society of America% #49: 583\\--590.")
+MAN_END
+
+MAN_BEGIN ("Rosenblatt (1962)", "ppgb", 20070423)
+NORMAL ("Frank Rosenblatt (1962): "
+	"%%Principles of neurodynamics; perceptrons and the theory of brain mechanisms%. Washington: Spartan Books.")
+MAN_END
+
+MAN_BEGIN ("Smolensky & Legendre (2006)", "ppgb", 20070423)
+NORMAL ("Paul Smolensky & G\\e'raldine Legendre (1993): %%The harmonic mind.% "
+	"MIT Press.")
+NORMAL ("These two books contain all material on connectionism by Smolensky and colleagues from the late eighties on, "
+	"with extensive editing to make it into a conherent work, plus much new material.")
+NORMAL ("This book can be seen in many respects as the predecessor of @@Prince & Smolensky (1993)@.")
+MAN_END
+
+MAN_BEGIN ("Soderstrom, Mathis & Smolensky (2006)", "ppgb", 20070423)
+NORMAL ("Melanie Soderstrom, Donald Mathis & Paul Smolensky (2006): "
+	"\"Abstract genomic encoding of Universl Grammar in Optimality Theory\". "
+	"In @@Smolensky & Legendre (2006)@, pp. 403\\--471.")
 MAN_END
 
 MAN_BEGIN ("Tesar & Smolensky (1998)", "ppgb", 19991019)

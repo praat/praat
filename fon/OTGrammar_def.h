@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
  */
 
 /*
- * pb 1998/12/30
- * pb 2002/07/16 GPL
- * pb 2003/10/19
+ * pb 2007/04/24
  */
 
 
@@ -75,7 +73,7 @@ oo_END_STRUCT (OTGrammarTableau)
 oo_DEFINE_CLASS (OTGrammar, Data)
 
 	oo_FROM (1)
-		oo_ENUM (OTGrammar_DECISION, decisionStrategy)
+		oo_ENUM (OTGrammar_HARMONY_COMPUTATION, harmonyComputationMethod)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)

@@ -30,6 +30,8 @@
  * pb 2005/03/06 guard against incorrect prefs files
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/03/23 new Editor API
+ * pb 2007/04/23 moved allowExecutionHook installation from UiForm_finish to UiForm_do,
+ *   so that scripts cannot prevent this hook from working
  */
 
 #include <ctype.h>
@@ -849,8 +851,6 @@ void UiForm_finish (I) {
 	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_buffer1, XmNdeleteResponse, XmDO_NOTHING, NULL);
 	XtVaSetValues (my dialog, XmNautoUnmanage, False,
 		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ NULL);
-	my allowExecutionHook = theAllowExecutionHookHint;
-	my allowExecutionClosure = theAllowExecutionClosureHint;
 	for (ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
@@ -1110,6 +1110,8 @@ void UiForm_destroyWhenUnmanaged (I) {
 
 void UiForm_do (I, int modified) {
 	iam (UiForm);
+	my allowExecutionHook = theAllowExecutionHookHint;
+	my allowExecutionClosure = theAllowExecutionClosureHint;
 	/* Prevent double callbacks: */
 	/*XtRemoveCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	/* This is the only place where this callback is installed. Moved from UiForm_close ppgb950613. */

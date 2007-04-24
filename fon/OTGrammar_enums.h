@@ -1,6 +1,6 @@
 /* OTGrammar_enums.h
  *
- * Copyright (C) 2006 Paul Boersma
+ * Copyright (C) 2006-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2006/02/02
+ * pb 2007/04/24
  */
 
-enum_begin (OTGrammar_DECISION, OptimalityTheory)   /* This cannot be called "None" !!! */
+enum_begin (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)   /* This cannot be called "None" !!! */
 	enum (HarmonicGrammar)
 	enum (LinearOT)
 	enum (ExponentialHG)
-enum_end (OTGrammar_DECISION)
+enum_end (OTGrammar_HARMONY_COMPUTATION)
 
 /* End of file Experiment_enums.h */

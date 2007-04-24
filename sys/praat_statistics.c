@@ -83,6 +83,7 @@ void praat_memoryInfo (void) {
 	MelderInfo_writeLine4 ("   Interactive sessions: ", Melder_integer (statistics.interactiveSessions),
 		" batch sessions: ", Melder_integer (statistics.batchSessions));
 	MelderInfo_writeLine3 ("   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), " bytes");
+	MelderInfo_writeLine2 ("\nNumber of actions: ", Melder_integer (praat_getNumberOfActions ()));
 	MelderInfo_close ();
 }
 

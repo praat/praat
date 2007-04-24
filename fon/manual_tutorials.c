@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070419)
+MAN_BEGIN ("What's new?", "ppgb", 20070424)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.21# (April 24, 2007)")
+LIST_ITEM ("\\bu OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure "
+	"to the stochastic gradient ascent method applied by @@J\\a\"ger (2003)@ to MaxEnt grammars.")
+LIST_ITEM ("\\bu Scripting: removed a bug that could make selection checking (in dialog windows) unreliable after a script was run.")
 NORMAL ("##4.5.20# (April 19, 2007)")
 LIST_ITEM ("\\bu Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")
 LIST_ITEM ("\\bu PitchTier Formula: guard against undefined values.")
