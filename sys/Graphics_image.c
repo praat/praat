@@ -1,6 +1,6 @@
 /* Graphics_image.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2002/01/27
  * pb 2002/03/07 GPL
+ * pb 2007/04/25 better image drawing on the Mac
  */
 
 #include "GraphicsP.h"
@@ -128,6 +128,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		NUMsvector_free (lefts, ix1);
 	} else {
 		short xDC, yDC;
+		long undersampling = 1;
 		/*
 		 * Prepare for off-screen bitmap drawing.
 		 */
@@ -188,9 +189,10 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			unsigned char *offscreenPixels;
 			Rect rect, destRect;
 			int igrey;
-			long pixel [256];
+			unsigned long pixel [256];
 			GetGWorld (& savePort, & saveDevice);
-			SetRect (& rect, 0, 0, clipx2 - clipx1, clipy1 - clipy2);
+			if (my resolution > 150) undersampling = 4;
+			SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling + 1, (clipy1 - clipy2) / undersampling + 1);
 			if (NewGWorld (& offscreenWorld,
 				32, /* We're drawing in 32 bit, and copying it to 8, 16, 24, or 32 bit. */
 				& rect,
@@ -212,7 +214,8 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				SetGWorld (savePort, saveDevice);
 				goto cleanUp;
 			}
-			offscreenRowBytes = (*offscreenPixMap) -> rowBytes & 0x1FFF;
+			offscreenRowBytes = (*offscreenPixMap) -> rowBytes & 0x3FFF;
+			//Melder_fatal ("%d %d %d",clipx1,clipx2,offscreenRowBytes);   // 45 393 352
 			offscreenPixels = (unsigned char *) GetPixBaseAddr (offscreenPixMap);
 			EraseRect (& rect);
 			for (igrey = 0; igrey <= 255; igrey ++) {
@@ -235,44 +238,35 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
-			#define ROW_START_ADDRESS  (offscreenPixels + (yDC - clipy2) * offscreenRowBytes)
-			#if TARGET_RT_LITTLE_ENDIAN == 1
-				#define PUT_PIXEL  *pixelAddress = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
-					*pixelAddress ++ = ((*pixelAddress) >> 24) + (((*pixelAddress) & 0xff0000) >> 8) \
-					+ (((*pixelAddress) & 0xff00) << 8) + (((*pixelAddress) & 0xff) << 24);   // 32 bit
-				//#define PUT_PIXEL  *pixelAddress = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
-				//	*pixelAddress ++ = ((*pixelAddress) >> 8) + (((*pixelAddress) & 0xff) << 8);   // 16 bit
-				//#define PUT_PIXEL  *pixelAddress ++ = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];   // 8 bit
-			#else
-				#define PUT_PIXEL  *pixelAddress ++ = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];
-			#endif
+			#define ROW_START_ADDRESS  (offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling)
+			#define PUT_PIXEL \
+				unsigned long pixelValue = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
+				*pixelAddress ++ = pixelValue >> 24; \
+				*pixelAddress ++ = (pixelValue & 0xff0000) >> 16; \
+				*pixelAddress ++ = (pixelValue & 0xff00) >> 8; \
+				*pixelAddress ++ = pixelValue & 0xff;
 		#endif
 		if (interpolate) {
 			long *ileft = NUMlvector (clipx1, clipx2), *iright = NUMlvector (clipx1, clipx2);
 			float *rightWeight = NUMfvector (clipx1, clipx2), *leftWeight = NUMfvector (clipx1, clipx2);
 			if (! ileft || ! iright || ! rightWeight || ! leftWeight) goto ready1;
-			for (xDC = clipx1; xDC < clipx2; xDC ++) {
+			for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 				double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
 				ileft [xDC] = floor (ix_real), iright [xDC] = ileft [xDC] + 1;
 				rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
 				if (ileft [xDC] < ix1) ileft [xDC] = ix1;
 				if (iright [xDC] > ix2) iright [xDC] = ix2;
 			}
-			for (yDC = clipy2; yDC < clipy1; yDC ++) {
+			for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
 				double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
 				long itop = ceil (iy_real), ibottom = itop - 1;
 				double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
-				#if mac
-					Melder_assert (sizeof (unsigned long) == 4);
-					unsigned long *pixelAddress = (unsigned long *) ROW_START_ADDRESS;
-				#else
-					unsigned char *pixelAddress = ROW_START_ADDRESS;
-				#endif
+				unsigned char *pixelAddress = ROW_START_ADDRESS;
 				if (itop > iy2) itop = iy2;
 				if (ibottom < iy1) ibottom = iy1;
 				if (z_float) {
 					float *ztop = z_float [itop], *zbottom = z_float [ibottom];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
+					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double interpol =
 							rightWeight [xDC] *
 								(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
@@ -283,7 +277,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 					}
 				} else {
 					unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
+					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double interpol =
 							rightWeight [xDC] *
 								(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
@@ -302,25 +296,21 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		} else {
 			long *ix = NUMlvector (clipx1, clipx2);
 			if (! ix) goto ready2;
-			for (xDC = clipx1; xDC < clipx2; xDC ++)
+			for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
 				ix [xDC] = floor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
-			for (yDC = clipy2; yDC < clipy1; yDC ++) {
+			for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
 				long iy = ceil (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
-				#if mac
-					unsigned long *pixelAddress = (unsigned long *) ROW_START_ADDRESS;
-				#else
-					unsigned char *pixelAddress = ROW_START_ADDRESS;
-				#endif
+				unsigned char *pixelAddress = ROW_START_ADDRESS;
 				Melder_assert (iy >= iy1 && iy <= iy2);
 				if (z_float) {
 					float *ziy = z_float [iy];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
+					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double value = offset - scale * ziy [ix [xDC]];
 						PUT_PIXEL
 					}
 				} else {
 					unsigned char *ziy = z_byte [iy];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
+					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double value = offset - scale * ziy [ix [xDC]];
 						PUT_PIXEL
 					}
@@ -343,6 +333,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			 * Before calling CopyBits, make sure that the foreground colour is black.
 			 */
 			RGBForeColor (& theBlackColour);
+			SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling, (clipy1 - clipy2) / undersampling);
 			SetRect (& destRect, clipx1, clipy2, clipx2, clipy1);
 			/*
 			 * According to IM VI:21-19, the first argument to CopyBits should be the PixMap returned from GetGWorldPixMap.

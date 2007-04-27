@@ -45,6 +45,7 @@
  * pb 2006/12/08 MelderInfo
  * pb 2007/04/22 multiply learning step by number of violations (for HarmonicGrammar and LinearOT)
  * pb 2007/04/24 renamed decisionStrategy to harmonyComputationMethod
+ * pb 2006/02/02 new decision strategy: MaximumEntropy
  */
 
 #include "OTGrammar.h"
@@ -264,7 +265,9 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		/* If we arrive here, None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 		return 0;
-	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar)) {
+	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar) ||
+		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy))
+	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
@@ -294,20 +297,41 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	return 0;   /* The two total disharmonies are equal. */
 }
 
+static double candidateProbability (OTGrammar me, long itab, long icand) {
+	int *marks = my tableaus [itab]. candidates [icand]. marks;
+	double disharmony = 0.0;
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		disharmony += my constraints [icons]. disharmony * marks [icons];
+	}
+	return exp (- disharmony);
+}
+
 long OTGrammar_getWinner (OTGrammar me, long itab) {
-	long icand_best = 1, icand, numberOfBestCandidates = 1;
-	for (icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
-		int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
-		if (comparison == -1) {
-			icand_best = icand;   /* The current candidate is the best candidate found so far. */
-			numberOfBestCandidates = 1;
-		} else if (comparison == 0) {
-			numberOfBestCandidates += 1;   /* The current candidate is equally good as the best found before. */
-			/*
-			 * Give all candidates that are equally good an equal chance to become the winner.
-			 */
-			if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+	long icand_best = 1;
+	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy)) {
+		double sumOfProbabilities = candidateProbability (me, itab, 1);
+		for (long icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
+			double probability = candidateProbability (me, itab, icand);
+			sumOfProbabilities += probability;
+			if (NUMrandomUniform (0.0, sumOfProbabilities) < probability) {
 				icand_best = icand;
+			}
+		}
+	} else {
+		long numberOfBestCandidates = 1;
+		for (long icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
+			int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
+			if (comparison == -1) {
+				icand_best = icand;   /* The current candidate is the best candidate found so far. */
+				numberOfBestCandidates = 1;
+			} else if (comparison == 0) {
+				numberOfBestCandidates += 1;   /* The current candidate is equally good as the best found before. */
+				/*
+				 * Give all candidates that are equally good an equal chance to become the winner.
+				 */
+				if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+					icand_best = icand;
+				}
 			}
 		}
 	}
@@ -315,6 +339,7 @@ long OTGrammar_getWinner (OTGrammar me, long itab) {
 }
 
 long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab) {
+	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy)) return 1;
 	long icand_best = 1, icand, numberOfBestCandidates = 1;
 	for (icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
 		int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
@@ -936,7 +961,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 	double step = learningStep (meanLearningStep, relativeStdevLearningStep);
 	bool multiplyStepByNumberOfViolations =
 		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar) ||
-		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT);
+		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT) ||
+		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy);
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		int winnerMarks = winner -> marks [icons];

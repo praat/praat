@@ -23,9 +23,19 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070424)
+MAN_BEGIN ("What's new?", "ppgb", 20070427)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.24# (April 27, 2007)")
+LIST_ITEM ("\\bu OT learning: added decision strategy MaximumEntropy; "
+	"this has the same harmony determination method as Harmonic Grammar (include the additive constraint noise), "
+	"but there is some more variability, in that every candidate gets a relative probability of exp(harmony).")
+NORMAL ("##4.5.23# (April 26, 2007)")
+LIST_ITEM ("\\bu Macintosh: much smaller sizes (in kilobytes) of spectrograms for printing and clipboard; "
+	"this improves the compatibility with other programs such as Microsoft Word for large spectrograms.")
+NORMAL ("##4.5.22# (April 25, 2007)")
+LIST_ITEM ("\\bu Macintosh: improved drawing of spectrograms for printing and clipboard "
+	"(this was crippled in 4.5.18, but now it is better than before 4.5.18).")
 NORMAL ("##4.5.21# (April 24, 2007)")
 LIST_ITEM ("\\bu OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure "
 	"to the stochastic gradient ascent method applied by @@J\\a\"ger (2003)@ to MaxEnt grammars.")

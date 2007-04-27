@@ -390,7 +390,7 @@ static PicHandle copyToPict_screenImage (Picture me) {
 	Rect rect;
 	GetGWorld (& savePort, & saveDevice);
 	SetRect (& rect, 0, 0, MAC_WIDTH * 72, MAC_HEIGHT * 72);
-	NewGWorld (& offscreenWorld, 8, & rect, NULL, NULL, keepLocal);
+	NewGWorld (& offscreenWorld, 16, & rect, NULL, NULL, keepLocal);
 	SetGWorld (offscreenWorld, NULL);
 	EraseRect (& rect);
 	GetGWorld ((CGrafPtr *) & offscreenPort, & offscreenDevice);

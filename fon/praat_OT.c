@@ -898,7 +898,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTGrammar, 0, "Learn one...", 0, 0, DO_OTGrammar_learnOne);
 	praat_addAction1 (classOTGrammar, 0, "Learn one from partial output...", 0, 0, DO_OTGrammar_learnOneFromPartialOutput);
 	praat_addAction1 (classOTGrammar, 0, "Modify behaviour -", 0, 0, 0);
-	praat_addAction1 (classOTGrammar, 1, "Set harmony computation method...", 0, 1, DO_OTGrammar_setHarmonyComputationMethod);
+	praat_addAction1 (classOTGrammar, 1, "Set harmony computation method...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_OTGrammar_setHarmonyComputationMethod);
+	praat_addAction1 (classOTGrammar, 1, "Set decision strategy...", 0, 1, DO_OTGrammar_setHarmonyComputationMethod);
 	praat_addAction1 (classOTGrammar, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 0, "Remove constraint...", 0, 1, DO_OTGrammar_removeConstraint);
 	praat_addAction1 (classOTGrammar, 0, "Remove harmonically bounded candidates...", 0, 1, DO_OTGrammar_removeHarmonicallyBoundedCandidates);
