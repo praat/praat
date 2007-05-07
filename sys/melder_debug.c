@@ -1,6 +1,6 @@
 /* melder_debug.c
  *
- * Copyright (C) 2000-2006 Paul Boersma
+ * Copyright (C) 2000-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2006/12/16
+ * pb 2007/04/28
  */
 
 #include "melder.h"
@@ -48,6 +48,7 @@ the behaviour of that program changes in the following way:
 18: no endian assumptions in abcio.c
 19: show path name in UiOutfile_do
 20: trace PortAudio
+21: Mac: list supported document formats when printing
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

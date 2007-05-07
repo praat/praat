@@ -44,8 +44,8 @@
  * pb 2006/02/02 new decision strategy: ExponentialHG
  * pb 2006/12/08 MelderInfo
  * pb 2007/04/22 multiply learning step by number of violations (for HarmonicGrammar and LinearOT)
- * pb 2007/04/24 renamed decisionStrategy to harmonyComputationMethod
- * pb 2006/02/02 new decision strategy: MaximumEntropy
+ * pb 2007/04/25 new decision strategy: MaximumEntropy
+ * pb 2007/04/30 many improvements
  */
 
 #include "OTGrammar.h"
@@ -73,7 +73,7 @@ static void classOTGrammar_info (I) {
 			for (icons = 1; icons <= my numberOfConstraints; icons ++)
 				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_HARMONY_COMPUTATION, my harmonyComputationMethod));
+	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
 	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
 	MelderInfo_writeLine2 ("Number of tableaus: ", Melder_integer (my numberOfTableaus));
 	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (numberOfCandidates));
@@ -84,7 +84,7 @@ static int writeAscii (I, FILE *f) {
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
 	const char *p;
-	fprintf (f, "\n<%s>", enumstring (OTGrammar_HARMONY_COMPUTATION, my harmonyComputationMethod));
+	fprintf (f, "\n<%s>", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
 	fprintf (f, "\n%ld constraints", my numberOfConstraints);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
@@ -135,7 +135,7 @@ static int readAscii (I, FILE *f) {
 	long icons, irank, itab, icand;
 	if (! inherited (OTGrammar) readAscii (me, f)) return 0;
 	if (localVersion >= 1) {
-		if ((my harmonyComputationMethod = ascgete1 (f, & enum_OTGrammar_HARMONY_COMPUTATION)) < 0) return 0;
+		if ((my decisionStrategy = ascgete1 (f, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return 0;
 	}
 	if ((my numberOfConstraints = ascgeti4 (f)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
@@ -244,11 +244,41 @@ long OTGrammar_getTableau (OTGrammar me, const char *input) {
 	return Melder_error ("Input \"%s\" not in list of tableaus.", input);
 }
 
+static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) return;
+	OTGrammarTableau tableau = & my tableaus [itab];
+	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		OTGrammarCandidate candidate = & tableau -> candidates [icand];
+		int *marks = candidate -> marks;
+		double disharmony = 0.0;
+		if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
+			my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy))
+		{
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				disharmony += my constraints [icons]. disharmony * marks [icons];
+			}
+		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				disharmony += exp (my constraints [icons]. disharmony) * marks [icons];
+			}
+		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT)) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				if (my constraints [icons]. disharmony > 0.0) {
+					disharmony += my constraints [icons]. disharmony * marks [icons];
+				}
+			}
+		} else {
+			Melder_fatal ("_OTGrammar_fillInHarmonies: unimplemented decision strategy.");
+		}
+		candidate -> harmony = - disharmony;
+	}
+}
+
 int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) {
 	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
 	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
 	long icons;
-	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) {
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int numberOfMarks1 = marks1 [my index [icons]];
 			int numberOfMarks2 = marks2 [my index [icons]];
@@ -265,8 +295,8 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		/* If we arrive here, None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 		return 0;
-	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar) ||
-		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy))
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy))
 	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -275,7 +305,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT)) {
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			if (my constraints [icons]. disharmony > 0.0) {
@@ -285,7 +315,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, ExponentialHG)) {
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
@@ -297,24 +327,44 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	return 0;   /* The two total disharmonies are equal. */
 }
 
-static double candidateProbability (OTGrammar me, long itab, long icand) {
-	int *marks = my tableaus [itab]. candidates [icand]. marks;
-	double disharmony = 0.0;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		disharmony += my constraints [icons]. disharmony * marks [icons];
+static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
+	OTGrammarTableau tableau = & my tableaus [itab];
+	double maximumHarmony = tableau -> candidates [1]. harmony;
+	for (long icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
+		OTGrammarCandidate candidate = & tableau -> candidates [icand];
+		if (candidate -> harmony > maximumHarmony) {
+			maximumHarmony = candidate -> harmony;
+		}
 	}
-	return exp (- disharmony);
+	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		OTGrammarCandidate candidate = & tableau -> candidates [icand];
+		candidate -> probability = exp (candidate -> harmony - maximumHarmony);
+		Melder_assert (candidate -> probability >= 0.0 && candidate -> probability <= 1.0);
+	}
+	double sumOfProbabilities = 0.0;
+	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		OTGrammarCandidate candidate = & tableau -> candidates [icand];
+		sumOfProbabilities += candidate -> probability;
+	}
+	Melder_assert (sumOfProbabilities > 0.0);   // Because at least one of them is 1.0.
+	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		OTGrammarCandidate candidate = & tableau -> candidates [icand];
+		candidate -> probability /= sumOfProbabilities;
+	}
 }
 
 long OTGrammar_getWinner (OTGrammar me, long itab) {
 	long icand_best = 1;
-	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy)) {
-		double sumOfProbabilities = candidateProbability (me, itab, 1);
-		for (long icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
-			double probability = candidateProbability (me, itab, icand);
-			sumOfProbabilities += probability;
-			if (NUMrandomUniform (0.0, sumOfProbabilities) < probability) {
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy)) {
+		_OTGrammar_fillInHarmonies (me, itab);
+		_OTGrammar_fillInProbabilities (me, itab);
+		double cutOff = NUMrandomUniform (0.0, 1.0);
+		double sumOfProbabilities = 0.0;
+		for (long icand = 1; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
+			sumOfProbabilities += my tableaus [itab]. candidates [icand]. probability;
+			if (sumOfProbabilities > cutOff) {
 				icand_best = icand;
+				break;
 			}
 		}
 	} else {
@@ -339,7 +389,7 @@ long OTGrammar_getWinner (OTGrammar me, long itab) {
 }
 
 long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab) {
-	if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy)) return 1;
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy)) return 1;
 	long icand_best = 1, icand, numberOfBestCandidates = 1;
 	for (icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
 		int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
@@ -456,7 +506,7 @@ static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwin
 	int icons;
 	OTGrammarTableau tableau = & my tableaus [itab];
 	if (tableau -> numberOfCandidates < 2) return 0;   /* If there is only one candidate, all cells can be greyed. */
-	if (my harmonyComputationMethod != enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) return my numberOfConstraints;   /* Nothing grey. */
+	if (my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) return my numberOfConstraints;   /* Nothing grey. */
 	if (OTGrammar_compareCandidates (me, itab, icand, itab, iwinner) == 0) {   /* Candidate equally good as winner? */
 		if (numberOfOptimalCandidates > 1) {
 			/* All cells are important. */
@@ -515,6 +565,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 	char text [200];
 	itab = OTGrammar_getTableau (me, input);
 	if (! itab) { Melder_flushError ("This grammar accepts no input \"%s\".", input); return; }
+	_OTGrammar_fillInHarmonies (me, itab);
 	winner = OTGrammar_getWinner (me, itab);
 	
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
@@ -649,7 +700,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 			char markString [40];
 			markString [0] = '\0';
-			if (my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)) {
+			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
 				/*
 				 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
 				 * 1. the candidate is not optimal;
@@ -684,6 +735,17 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			Graphics_setLineType (g, Graphics_DRAWN);
 			Graphics_line (g, x, y + rowHeight, x + width, y + rowHeight);
 			x += width;
+		}
+		/*
+		 * Draw harmony.
+		 */
+		if (my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
+			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+			double value = tableau -> candidates [icand]. harmony;
+			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+				value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
+			}
+			Graphics_printf (g, x, y + descent, "%s", Melder_fixedA (value, 3));
 		}
 	}
 	/*
@@ -960,9 +1022,9 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 	OTGrammarCandidate winner = & tableau -> candidates [iwinner], loser = & tableau -> candidates [iloser];
 	double step = learningStep (meanLearningStep, relativeStdevLearningStep);
 	bool multiplyStepByNumberOfViolations =
-		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, HarmonicGrammar) ||
-		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, LinearOT) ||
-		my harmonyComputationMethod == enumi (OTGrammar_HARMONY_COMPUTATION, MaximumEntropy);
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy);
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		int winnerMarks = winner -> marks [icons];
@@ -1074,7 +1136,7 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 				}
 			}
 		}
-	} else {
+	} else { Melder_assert (strategy == OTGrammar_DEMOTION_ONLY);
 		/*
 		 * Determine the crucial loser mark.
 		 */
@@ -1084,8 +1146,10 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
+			if (my constraints [my index [icons]]. tiedToTheRight)
+				{ Melder_error ("Demotion-only learning cannot handle tied constraints."); goto end; }
 			if (loserMarks < winnerMarks)
-				{ Melder_error ("(OTGrammar_step:) Loser wins! Can never happen."); goto end; }
+				{ Melder_error ("Demotion-only learning step: Loser wins! Should never happen."); goto end; }
 			if (loserMarks > winnerMarks) break;
 		}
 		if (icons > my numberOfConstraints)   /* Completed the loop? */

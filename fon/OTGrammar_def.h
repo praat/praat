@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/04/24
+ * pb 2007/04/30
  */
 
 
@@ -53,6 +53,10 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 	oo_STRING (output)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, my numberOfConstraints)
+	#if !oo_READING && !oo_WRITING
+		oo_DOUBLE (harmony)
+		oo_DOUBLE (probability)
+	#endif
 
 oo_END_STRUCT (OTGrammarCandidate)
 #undef ooSTRUCT
@@ -73,7 +77,7 @@ oo_END_STRUCT (OTGrammarTableau)
 oo_DEFINE_CLASS (OTGrammar, Data)
 
 	oo_FROM (1)
-		oo_ENUM (OTGrammar_HARMONY_COMPUTATION, harmonyComputationMethod)
+		oo_ENUM (OTGrammar_DECISION_STRATEGY, decisionStrategy)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)

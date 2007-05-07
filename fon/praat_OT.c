@@ -464,14 +464,14 @@ DO
 	}
 END
 
-FORM (OTGrammar_setHarmonyComputationMethod, "OTGrammar: Set harmony computation method", 0)
-	ENUM ("Harmony computation method", OTGrammar_HARMONY_COMPUTATION, 0)
+FORM (OTGrammar_setDecisionStrategy, "OTGrammar: Set decision strategy", 0)
+	ENUM ("Decision strategy", OTGrammar_DECISION_STRATEGY, 0)
 	OK
 OTGrammar me = ONLY_OBJECT;
-SET_INTEGER ("Harmony computation method", my harmonyComputationMethod);
+SET_INTEGER ("Decision strategy", my decisionStrategy);
 DO
 	OTGrammar me = ONLY_OBJECT;
-	my harmonyComputationMethod = GET_INTEGER ("Harmony computation method");
+	my decisionStrategy = GET_INTEGER ("Decision strategy");
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -898,8 +898,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTGrammar, 0, "Learn one...", 0, 0, DO_OTGrammar_learnOne);
 	praat_addAction1 (classOTGrammar, 0, "Learn one from partial output...", 0, 0, DO_OTGrammar_learnOneFromPartialOutput);
 	praat_addAction1 (classOTGrammar, 0, "Modify behaviour -", 0, 0, 0);
-	praat_addAction1 (classOTGrammar, 1, "Set harmony computation method...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_OTGrammar_setHarmonyComputationMethod);
-	praat_addAction1 (classOTGrammar, 1, "Set decision strategy...", 0, 1, DO_OTGrammar_setHarmonyComputationMethod);
+	praat_addAction1 (classOTGrammar, 1, "Set harmony computation method...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_OTGrammar_setDecisionStrategy);
+	praat_addAction1 (classOTGrammar, 1, "Set decision strategy...", 0, 1, DO_OTGrammar_setDecisionStrategy);
 	praat_addAction1 (classOTGrammar, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 0, "Remove constraint...", 0, 1, DO_OTGrammar_removeConstraint);
 	praat_addAction1 (classOTGrammar, 0, "Remove harmonically bounded candidates...", 0, 1, DO_OTGrammar_removeHarmonicallyBoundedCandidates);

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/19
+ * pb 2007/05/07
  */
 
 #ifndef _Collection_h_
@@ -94,6 +94,7 @@ double Table_getVarianceRatio (Table me, long col1, long col2, double significan
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 
 int Table_formula (Table me, long icol, const char *formula);
+int Table_formula_columnRange (Table me, long icol1, long icol2, const char *expression);
 
 Table Tables_append (I, thou);
 Table Tables_appendMany (Collection me);
@@ -115,9 +116,10 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator)
 
 Table Table_extractRowsWhereColumn_number (Table me, long icol, int which_Melder_NUMBER, double criterion);
 Table Table_extractRowsWhereColumn_string (Table me, long icol, int which_Melder_STRING, const char *criterion);
-Table Table_pool (Table me, const char *independentVariables_string, const char *columnsToSum_string,
+Table Table_collapseRows (Table me, const char *factors_string, const char *columnsToSum_string,
 	const char *columnsToAverage_string, const char *columnsToMedianize_string,
 	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string);
+Table Table_rowsToColumns (Table me, const char *factors_string, long columnToTranspose, const char *columnsToExpand_string);
 
 #endif
 /* End of file Table.h */

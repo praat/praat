@@ -1,5 +1,5 @@
 /* Printer.c
- * Copyright (C) 1998-2006 Paul Boersma
+ * Copyright (C) 1998-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2005/07/21 removed bug in previous change for Linux
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/28 theCurrentPraat
+ * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
  */
 
 #include "melder.h"
@@ -140,7 +141,7 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 #endif
 
 #if defined (macintosh)
-	static void openPostScript (void) {
+	static bool openPostScript (void) {
 		PenState pen;
 		/*
 		 * Flush GrafPort state.
@@ -153,9 +154,11 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		/*
 		 * Send direct PostScript commands.
 		 */
-		if (PMSessionPostScriptBegin (theMacPrintSession))
-			Melder_fatal ("Cannot begin PostScript.");
+		if (PMSessionPostScriptBegin (theMacPrintSession)) {
+			return Melder_error ("Cannot begin PostScript.");
+		}
 		initPostScriptPage ();
+		return true;
 	}
 	static void closePostScript (void) {
 		/*
@@ -463,26 +466,52 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
 			if (! accepted) return 1;   /* Normal cancelled return. */
 		}
-		{
-			Boolean isPostScriptDriver = FALSE;
-			PMResolution res;
-			PMOrientation orientation;
-			PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-			PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-			PMGetResolution (theMacPageFormat, & res);
-			thePrinter. resolution = res. hRes;
-			PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
-			thePrinter. paperWidth = paperSize. right - paperSize. left;
-			thePrinter. paperHeight = paperSize. bottom - paperSize. top;
-			PMSessionIsDocumentFormatSupported (theMacPrintSession,
-				kPMDocumentFormatPICTPS, & isPostScriptDriver);
-			thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
-			if (thePrinter. postScript)
-				PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, 0, 0);
-			PMGetOrientation (theMacPageFormat, & orientation);
-			thePrinter. orientation = orientation == kPMLandscape ||
-				orientation == kPMReverseLandscape ? Graphics_LANDSCAPE : Graphics_PORTRAIT;
+		PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
+		PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
+		PMResolution res;
+		PMGetResolution (theMacPageFormat, & res);
+		thePrinter. resolution = res. hRes;
+		PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
+		thePrinter. paperWidth = paperSize. right - paperSize. left;
+		thePrinter. paperHeight = paperSize. bottom - paperSize. top;
+		Boolean isPostScriptDriver = FALSE;
+		//PMSessionIsDocumentFormatSupported (theMacPrintSession,
+		//	kPMDocumentFormatPICTPS, & isPostScriptDriver);
+		CFArrayRef supportedFormats;
+		PMSessionGetDocumentFormatGeneration (theMacPrintSession, & supportedFormats);
+		CFIndex numberOfSupportedFormats = CFArrayGetCount (supportedFormats);
+		if (Melder_debug == 21) {
+			MelderInfo_open ();
+			MelderInfo_writeLine1 ("Supported document formats:");
 		}
+		for (CFIndex i = 0; i < numberOfSupportedFormats; i ++) {
+			CFStringRef supportedFormat = CFArrayGetValueAtIndex (supportedFormats, i);
+			if (CFStringCompare (supportedFormat, kPMDocumentFormatPICTPS, 0) == 0) {
+				isPostScriptDriver = TRUE;
+			}
+			if (Melder_debug == 21) {
+				MelderInfo_writeLine3 (Melder_integer (i), ": ", CFStringGetCStringPtr (supportedFormat, kCFStringEncodingMacRoman));
+			}
+		}
+		if (Melder_debug == 21) {
+			MelderInfo_close ();
+		}
+		CFRelease (supportedFormats);
+		thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
+		if (thePrinter. postScript) {
+			CFStringRef strings [1];
+			strings [0] = kPMGraphicsContextQuickdraw;
+			CFArrayRef array = CFArrayCreate (kCFAllocatorDefault, (const void **) strings, 1, & kCFTypeArrayCallBacks);
+			OSStatus err = PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, array, NULL);
+			CFRelease (array);
+			if (err != 0) {
+				return Melder_error ("PMSessionSetDocumentFormatGeneration: error %d", err);
+			}
+		}
+		PMOrientation orientation;
+		PMGetOrientation (theMacPageFormat, & orientation);
+		thePrinter. orientation = orientation == kPMLandscape ||
+			orientation == kPMReverseLandscape ? Graphics_LANDSCAPE : Graphics_PORTRAIT;
 		PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
 		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
 		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
@@ -500,7 +529,9 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		SetPort (theMacPort);
 		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
 		if (thePrinter. postScript) {
-			openPostScript ();
+			if (! openPostScript ()) {
+				Melder_error ("Cannot print PostScript."); goto end;
+			}
 			thePrinter. graphics = Graphics_create_postscriptprinter ();
 			if (! thePrinter. graphics) goto end;
 			draw (boss, thePrinter. graphics);

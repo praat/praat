@@ -581,9 +581,23 @@ static long lookupLabel (Interpreter me, const char *labelName) {
 	return Melder_error ("Unknown label \"%s\".", labelName);
 }
 
-static int isAnObjectName (const char *p) {
+static bool isCommand (const char *p) {
+	/*
+	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
+	 */
+	if (p [0] == 'n' && p [1] == 'o' &&
+		(strnequ (p + 2, "warn ", 5) || strnequ (p + 2, "progress ", 9) || strnequ (p + 2, "check ", 6))) return true;
+	/*
+	 * Otherwise, things that start with lower case are formulas.
+	 */
+	if (! isupper (*p)) return false;
+	/*
+	 * The remaining possibility is things that start with upper case.
+	 * If they contain an underscore, they are object names, hence we must have a formula.
+	 * Otherwise, we have a command.
+	 */
 	while (isalnum (*p)) p ++;
-	return *p == '_';
+	return *p != '_';
 }
 
 static void parameterToVariable (Interpreter me, int type, const char *in_parameter, int ipar) {
@@ -1216,7 +1230,7 @@ int Interpreter_run (Interpreter me, char *text) {
 						if (! var) { Melder_error ("Variable %s undefined.", command2.string); goto end; }
 						MelderFile_writeText (& file, var -> stringValue); cherror
 					}
-				} else if (isupper (*p) && ! isAnObjectName (p)) {
+				} else if (isCommand (p)) {
 					/*
 					 * Example: name$ = Get name
 					 */
@@ -1287,7 +1301,7 @@ int Interpreter_run (Interpreter me, char *text) {
 				 *    var = Query
 				 *    var = Object creation
 				 */
-				if (isupper (*p) && ! isAnObjectName (p)) {
+				if (isCommand (p)) {
 					/*
 					 * Get the value of the query.
 					 */

@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2007/04/26
+ * pb 2007/04/30
  */
 
-enum_begin (OTGrammar_HARMONY_COMPUTATION, OptimalityTheory)   /* This cannot be called "None" !!! */
+enum_begin (OTGrammar_DECISION_STRATEGY, OptimalityTheory)   /* This cannot be called "None" !!! */
 	enum (HarmonicGrammar)
 	enum (LinearOT)
 	enum (ExponentialHG)
 	enum (MaximumEntropy)
-enum_end (OTGrammar_HARMONY_COMPUTATION)
+enum_end (OTGrammar_DECISION_STRATEGY)
 
 /* End of file Experiment_enums.h */

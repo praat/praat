@@ -33,12 +33,15 @@
  * pb 2006/04/16 Table_createWithColumnNames
  * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
  * pb 2006/04/17 getColStr
+ * pb 2007/04/19 Table_pool
  * pb 2006/04/24 Table_scatterPlot
  * pb 2006/08/27 Table_drawEllipse
  * pb 2006/10/29 TableOfReal_to_Table
  * pb 2006/11/25 Table_getGroupDifference_studentT
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 exported Table_numericize for optimizers
+ * pb 2007/05/07 renamed Table_pool to Table_collapseRows
+ * pb 2007/05/07 Table_rowsToColumns
  */
 
 #include <ctype.h>
@@ -597,7 +600,7 @@ static int _columns_crossSectionIsEmpty_check (char **factors, long nfactors, ch
 	return TRUE;
 }
 
-Table Table_pool (Table me, const char *factors_string, const char *columnsToSum_string,
+Table Table_collapseRows (Table me, const char *factors_string, const char *columnsToSum_string,
 	const char *columnsToAverage_string, const char *columnsToMedianize_string,
 	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string)
 {
@@ -805,6 +808,173 @@ end:
 	return thee;
 }
 
+static char ** _Table_getLevels (Table me, long column, long *numberOfLevels) {
+	char **result = NULL;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		row -> sortingIndex = irow;
+	}
+	long columns [2] = { 0, column };
+	Table_sortRows (me, columns, 1);
+	*numberOfLevels = 0;
+	long irow = 1;
+	while (irow <= my rows -> size) {
+		double value = ((TableRow) my rows -> item [irow]) -> cells [column]. number;
+		(*numberOfLevels) ++;
+		while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
+	}
+	result = (char **) NUMpvector (1, *numberOfLevels); cherror
+	*numberOfLevels = 0;
+	irow = 1;
+	while (irow <= my rows -> size) {
+		double value = ((TableRow) my rows -> item [irow]) -> cells [column]. number;
+		result [++ *numberOfLevels] = Melder_strdup (Table_getStringValue (me, irow, column)); cherror
+		while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
+	}
+	sortRowsByIndex (me);   /* Unsort the original table. */
+end:
+	iferror NUMpvector_free ((void **) result, 1);
+	return result;
+}
+
+Table Table_rowsToColumns (Table me, const char *factors_string, long columnToTranspose, const char *columnsToExpand_string) {
+	Table thee = NULL;
+	char **factors_names = NULL, **columnsToExpand_names = NULL, **levels_names = NULL;
+	long numberOfFactors = 0, numberToExpand = 0, numberOfLevels;
+	long *factorColumns = NULL, *columnsToExpand = NULL;
+	double *sortingColumn = NULL;
+	MelderStringA columnLabel = { 0 };
+	bool warned = false;
+	Melder_assert (factors_string != NULL);
+	/*
+	 * Remember the present sorting of the original table.
+	 * (This is safe: the sorting index may change only vacuously when numericizing.)
+	 */
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		row -> sortingIndex = irow;
+	}
+	/*
+	 * Parse the two strings of tokens.
+	 */
+	factors_names = Melder_getTokens (factors_string, & numberOfFactors); cherror
+	if (numberOfFactors < 1) {
+		Melder_error ("In order to nest table data, you must supply at least one independent variable.");
+		goto end;
+	}
+	_Table_columnsExist_check (me, factors_names, numberOfFactors); cherror
+	columnsToExpand_names = Melder_getTokens (columnsToExpand_string, & numberToExpand); cherror
+	if (numberToExpand < 1) {
+		Melder_error ("In order to nest table data, you must supply at least one dependent variable (to expand).");
+		goto end;
+	}
+	_Table_columnsExist_check (me, columnsToExpand_names, numberToExpand); cherror
+	_columns_crossSectionIsEmpty_check (factors_names, numberOfFactors, columnsToExpand_names, numberToExpand); cherror
+	levels_names = _Table_getLevels (me, columnToTranspose, & numberOfLevels); cherror
+	/*
+	 * Get the column numbers for the factors.
+	 */
+	factorColumns = NUMlvector (1, numberOfFactors); cherror
+	for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
+		factorColumns [ifactor] = Table_columnLabelToIndex (me, factors_names [ifactor]);
+		/*
+		 * Make sure that all the columns in the original table that we will use in the nested table are defined.
+		 */
+		Table_numericize_checkDefined (me, factorColumns [ifactor]); cherror
+	}
+	/*
+	 * Get the column numbers for the expandable variables.
+	 */
+	columnsToExpand = NUMlvector (1, numberToExpand); cherror
+	for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
+		columnsToExpand [iexpand] = Table_columnLabelToIndex (me, columnsToExpand_names [iexpand]);
+		Table_numericize_checkDefined (me, columnsToExpand [iexpand]); cherror
+	}
+	/*
+	 * Create the new table, with column names.
+	 */
+	thee = Table_createWithoutColumnNames (0, numberOfFactors + (numberOfLevels * numberToExpand)); cherror
+	Melder_assert (thy numberOfColumns > 0);
+	for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
+		Table_setColumnLabel (thee, ifactor, factors_names [ifactor]);
+	}
+	for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
+		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
+			MelderStringA_copyA (& columnLabel, columnsToExpand_names [iexpand]);
+			MelderStringA_appendCharacter (& columnLabel, '.');
+			MelderStringA_appendA (& columnLabel, levels_names [ilevel]);
+			Table_setColumnLabel (thee, numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel, columnLabel.string);
+		}
+	}
+	/*
+	 * We will now sort the original table temporarily, by the factors (independent variables) only.
+	 */
+	Table_sortRows (me, factorColumns, numberOfFactors);
+	/*
+	 * Find stretches of identical factors.
+	 */
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		long rowmin = irow, rowmax = irow;
+		for (;;) {
+			int identical = TRUE;
+			if (++ rowmax > my rows -> size) break;
+			for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
+				if (((TableRow) my rows -> item [rowmax]) -> cells [factorColumns [ifactor]]. number !=
+				    ((TableRow) my rows -> item [rowmin]) -> cells [factorColumns [ifactor]]. number)
+				{
+					identical = FALSE;
+					break;
+				}
+			}
+			if (! identical) break;
+		}
+		#if 0
+		if (rowmax - rowmin > numberOfLevels && ! warned) {
+			Melder_warning ("Some rows of the original table have not been included in the new table. "
+				"You could perhaps add more factors.");
+			warned = true;
+		}
+		#endif
+		rowmax --;
+		/*
+		 * We have the stretch.
+		 */
+		Table_insertRow (thee, thy rows -> size + 1);
+		TableRow thyRow = thy rows -> item [thy rows -> size];
+		for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
+			Table_setStringValue (thee, thy rows -> size, ifactor,
+				((TableRow) my rows -> item [rowmin]) -> cells [factorColumns [ifactor]]. string);
+		}
+		for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
+			for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
+				TableRow myRow = my rows -> item [jrow];
+				double value = myRow -> cells [columnsToExpand [iexpand]]. number;
+				long level = myRow -> cells [columnToTranspose]. number;
+				long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
+				if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
+					Melder_warning ("Some information from the original table has not been included in the new table. "
+						"You could perhaps add more factors.");
+					warned = true;
+				}
+				Table_setNumericValue (thee, thy rows -> size, thyColumn, value);
+			}
+		}
+		irow = rowmax;
+	}
+end:
+	sortRowsByIndex (me);   /* Unsort the original table. */
+	Melder_freeTokens (& factors_names);
+	Melder_assert (factors_names == NULL);
+	Melder_freeTokens (& columnsToExpand_names);
+	MelderStringA_free (& columnLabel);
+	NUMpvector_free ((void **) levels_names, 1);
+	NUMlvector_free (factorColumns, 1);
+	NUMlvector_free (columnsToExpand, 1);
+	NUMdvector_free (sortingColumn, 1);
+	iferror forget (thee);
+	return thee;
+}
+
 static long *cellCompare_columns, cellCompare_numberOfColumns;
 
 static int cellCompare (const void *first, const void *second) {
@@ -919,24 +1089,30 @@ end:
 	return 1;
 }
 
-int Table_formula (Table me, long icol, const char *expression) {
-	long irow;
-	if (icol < 1 || icol > my numberOfColumns) return Melder_error ("No column %ld.", icol);
+int Table_formula_columnRange (Table me, long icol1, long icol2, const char *expression) {
+	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error ("No column %ld.", icol1);
+	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error ("No column %ld.", icol2);
 	if (! Formula_compile (NULL, me, expression, 2, TRUE)) goto end;
-	for (irow = 1; irow <= my rows -> size; irow ++) {
-		double numericResult;
-		char *stringResult = NULL;
-		if (! Formula_run (irow, icol, & numericResult, & stringResult)) goto end;
-		if (stringResult) {
-			Table_setStringValue (me, irow, icol, stringResult);
-			Melder_free (stringResult);
-		} else {
-			Table_setNumericValue (me, irow, icol, numericResult);
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		for (long icol = icol1; icol <= icol2; icol ++) {
+			double numericResult;
+			char *stringResult = NULL;
+			if (! Formula_run (irow, icol, & numericResult, & stringResult)) goto end;
+			if (stringResult) {
+				Table_setStringValue (me, irow, icol, stringResult);
+				Melder_free (stringResult);
+			} else {
+				Table_setNumericValue (me, irow, icol, numericResult);
+			}
 		}
 	}
 end:
 	iferror return 0;
 	return 1;
+}
+
+int Table_formula (Table me, long icol, const char *expression) {
+	return Table_formula_columnRange (me, icol, icol, expression);
 }
 
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,

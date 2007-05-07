@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/03/29
+ * pb 2007/05/07
  */
 
 #include "praat.h"
@@ -269,6 +269,32 @@ DIRECT (Table_appendRow)
 	}
 END
 
+FORM (Table_collapseRows, "Table: Collapse rows", 0)
+	LABEL ("", "Columns with factors (independent variables):")
+	TEXTFIELD ("factors", "speaker dialect age vowel")
+	LABEL ("", "Columns to sum:")
+	TEXTFIELD ("columnsToSum", "number cost")
+	LABEL ("", "Columns to average:")
+	TEXTFIELD ("columnsToAverage", "price")
+	LABEL ("", "Columns to medianize:")
+	TEXTFIELD ("columnsToMedianize", "vot")
+	LABEL ("", "Columns to average logarithmically:")
+	TEXTFIELD ("columnsToAverageLogarithmically", "duration")
+	LABEL ("", "Columns to medianize logarithmically:")
+	TEXTFIELD ("columnsToMedianizeLogarithmically", "F0 F1 F2 F3")
+	LABEL ("", "Columns not mentioned above will be ignored.")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! praat_new (Table_collapseRows (OBJECT,
+			GET_STRING ("factors"), GET_STRING ("columnsToSum"),
+			GET_STRING ("columnsToAverage"), GET_STRING ("columnsToMedianize"),
+			GET_STRING ("columnsToAverageLogarithmically"), GET_STRING ("columnsToMedianizeLogarithmically")),
+			"%s_pooled", NAME)) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
 FORM (Table_createWithColumnNames, "Create Table with column names", 0)
 	WORD ("Name", "table")
 	INTEGER ("Number of rows", "10")
@@ -377,6 +403,23 @@ DO
 		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! Table_formula (OBJECT, icol, GET_STRING ("formula"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (Table_formula_columnRange, "Table: Formula (column range)", "Table: Formula...")
+	WORD ("From column label", "")
+	WORD ("To column label", "")
+	TEXTFIELD ("formula", "log10 (self)")
+	OK
+DO
+	WHERE (SELECTED) {
+		Table me = OBJECT;
+		long icol1 = Table_columnLabelToIndex (me, GET_STRING ("From column label"));
+		if (icol1 == 0) return Melder_error ("No such column.");
+		long icol2 = Table_columnLabelToIndex (me, GET_STRING ("To column label"));
+		if (icol2 == 0) return Melder_error ("No such column.");
+		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRING ("formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -493,32 +536,6 @@ FORM (Table_list, "Table: List", 0)
 DO
 	WHERE (SELECTED) {
 		Table_list (OBJECT, GET_INTEGER ("Include row numbers"));
-	}
-END
-
-FORM (Table_pool, "Table: Pool", 0)
-	LABEL ("", "Columns with factors (independent variables):")
-	TEXTFIELD ("independentVariables", "speaker dialect age vowel")
-	LABEL ("", "Columns to sum:")
-	TEXTFIELD ("columnsToSum", "number cost")
-	LABEL ("", "Columns to average:")
-	TEXTFIELD ("columnsToAverage", "price")
-	LABEL ("", "Columns to medianize:")
-	TEXTFIELD ("columnsToMedianize", "vot")
-	LABEL ("", "Columns to average logarithmically:")
-	TEXTFIELD ("columnsToAverageLogarithmically", "duration")
-	LABEL ("", "Columns to medianize logarithmically:")
-	TEXTFIELD ("columnsToMedianizeLogarithmically", "F0 F1 F2 F3")
-	LABEL ("", "Columns not mentioned above will be ignored.")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! praat_new (Table_pool (OBJECT,
-			GET_STRING ("independentVariables"), GET_STRING ("columnsToSum"),
-			GET_STRING ("columnsToAverage"), GET_STRING ("columnsToMedianize"),
-			GET_STRING ("columnsToAverageLogarithmically"), GET_STRING ("columnsToMedianizeLogarithmically")),
-			"%s_pooled", NAME)) return 0;
-		praat_dataChanged (OBJECT);
 	}
 END
 
@@ -696,6 +713,27 @@ DO
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
 		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
+END
+
+FORM (Table_rowsToColumns, "Table: Rows to columns", 0)
+	LABEL ("", "Columns with factors (independent variables):")
+	TEXTFIELD ("factors", "dialect gender speaker")
+	WORD ("Column to transpose", "vowel")
+	LABEL ("", "Columns to expand:")
+	TEXTFIELD ("columnsToExpand", "duration F0 F1 F2 F3")
+	LABEL ("", "Columns not mentioned above will be ignored.")
+	OK
+DO
+	const char *columnLabel = GET_STRING ("Column to transpose");
+	WHERE (SELECTED) {
+		Table me = OBJECT;
+		long icol = Table_columnLabelToIndex (me, columnLabel);
+		if (icol == 0) return Melder_error ("No such column: %s.", columnLabel);
+		if (! praat_new (Table_rowsToColumns (OBJECT,
+			GET_STRING ("factors"), icol, GET_STRING ("columnsToExpand")),
+			"%s_nested", NAME)) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
 FORM (Table_scatterPlot, "Scatter plot", 0)
@@ -1416,7 +1454,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "-- get value --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Get value...", 0, 1, DO_Table_getValue);
 		praat_addAction1 (classTable, 1, "Search column...", 0, 1, DO_Table_searchColumn);
-	praat_addAction1 (classTable, 0, "Statistics -    ", 0, 0, 0);
+		praat_addAction1 (classTable, 1, "-- statistics --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Statistics tutorial", 0, 1, DO_StatisticsTutorial);
 		praat_addAction1 (classTable, 1, "-- get stats --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Get quantile...", 0, 1, DO_Table_getQuantile);
@@ -1436,6 +1474,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Set string value...", 0, 1, DO_Table_setStringValue);
 		praat_addAction1 (classTable, 0, "Set numeric value...", 0, 1, DO_Table_setNumericValue);
 		praat_addAction1 (classTable, 0, "Formula...", 0, 1, DO_Table_formula);
+		praat_addAction1 (classTable, 0, "Formula (column range)...", 0, 1, DO_Table_formula_columnRange);
 		praat_addAction1 (classTable, 0, "Sort rows...", 0, 1, DO_Table_sortRows);
 		praat_addAction1 (classTable, 0, "-- structure --", 0, 1, 0);
 		praat_addAction1 (classTable, 0, "Append row", 0, 1, DO_Table_appendRow);
@@ -1456,7 +1495,8 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, "Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, "Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, "Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
-		praat_addAction1 (classTable, 0, "Pool...", 0, 1, DO_Table_pool);
+		praat_addAction1 (classTable, 0, "Collapse rows...", 0, 1, DO_Table_collapseRows);
+		praat_addAction1 (classTable, 0, "Rows to columns...", 0, 1, DO_Table_rowsToColumns);
 	praat_addAction1 (classTable, 0, "Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);
 
 	praat_addAction1 (classTableOfReal, 0, "TableOfReal help", 0, 0, DO_TableOfReal_help);

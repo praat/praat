@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070427)
+MAN_BEGIN ("What's new?", "ppgb", 20070507)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.25# (May 7, 2007)")
+LIST_ITEM ("\\bu Table: Rows to columns...")
+LIST_ITEM ("\\bu Table: Collapse rows... (renamed from Pool).")
+LIST_ITEM ("\\bu Table: Formula (column range)...")
+LIST_ITEM ("\\bu OT learning: OTGrammar window shows harmonies.")
 NORMAL ("##4.5.24# (April 27, 2007)")
 LIST_ITEM ("\\bu OT learning: added decision strategy MaximumEntropy; "
 	"this has the same harmony determination method as Harmonic Grammar (include the additive constraint noise), "

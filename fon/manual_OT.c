@@ -300,7 +300,7 @@ NORMAL ("You can write an @OTGrammar grammar into a text file by choosing @@Writ
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE ("File type = \"ooTextFile\"")
 CODE ("Object class = \"OTGrammar 1\"")
-CODE ("harmonyComputationMethod = <OptimalityTheory>")
+CODE ("decisionStrategy = <OptimalityTheory>")
 CODE ("2 constraints")
 CODE ("constraint [1]: \"N\\bss{O}C\\bss{ODA}\" 100 100 ! NOCODA")
 CODE ("constraint [2]: \"P\\bss{ARSE}\" 90 90 ! PARSE")
@@ -319,7 +319,7 @@ NORMAL ("To understand more about this data structure, consult the @OTGrammar cl
 NORMAL ("You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070424)
+MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070430)
 NORMAL ("By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
 NORMAL ("As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
@@ -358,7 +358,7 @@ CODE1 ("\"pa\"  0 0")
 CODE ("\"pat\" 2")
 CODE1 ("\"pat\" 0 1")
 CODE1 ("\"pa\"  1 0")
-NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%harmony computation method%. "
+NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
 	"In this tutorial I assume OT's strict ranking throughout, "
 	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint rankings represent addable, "
 	"possibly negative weights), or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
@@ -439,7 +439,7 @@ LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      80.000\t      81.581")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
-MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20070424)
+MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20070430)
 NORMAL ("Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
@@ -464,7 +464,7 @@ NORMAL ("As a more functionally oriented example, we consider nasal place assimi
 	"ranked at a short distance above *R\\s{EPLACE} (n, m):")
 CODE ("\"ooTextFile\"")
 CODE ("\"OTGrammar 1\"")
-CODE ("harmonyComputationMethod = <OptimalityTheory>")
+CODE ("decisionStrategy = <OptimalityTheory>")
 CODE ("3 constraints")
 CODE ("\"*G\\bss{ESTURE}\"          102.7 0")
 CODE ("\"*R\\bss{EPLACE} (n, m)\"   100.0 0")
@@ -870,7 +870,7 @@ NORMAL ("So besides learning obligatory rankings like a child does, "
 	"This means that a GLA learner can learn stochastic grammars.")
 MAN_END
 
-MAN_BEGIN ("OT learning 6. Shortcut to grammar learning", "ppgb", 20070423)
+MAN_BEGIN ("OT learning 6. Shortcut to grammar learning", "ppgb", 20070430)
 INTRO ("Once you have mastered the tedious procedures of making Praat learn stochastic grammars, "
 	"as described in the previous chapters of this tutorial, you can try a faster procedure, "
 	"which simply involves selecting an @OTGrammar object together with a @PairDistribution object, "
@@ -908,7 +908,7 @@ DEFINITION ("these four arguments determine the %%learning scheme%, i.e. the num
 	"receive data at a certain plasticity. With the standard values, there will be 100000 data while the plasticity is 1.0 "
 	"(the initial plasticity), 100000 data while the plasticity is 0.1, 100000 data while the plasticity is 0.01, "
 	"and 100000 data while the plasticity is 0.001. If you want learning at a constant plasticity, set the "
-	"%%number of plasticities% to 1. Note that for the harmony computation methods of HarmonicGrammar and LinearOT "
+	"%%number of plasticities% to 1. Note that for the decision strategies of HarmonicGrammar and LinearOT "
 	"the learning step for a constraint equals the plasticity multiplied by the difference between the "
 	"numbers of violations of this constraint in the adult output and in the learner's output.")
 TAG ("%%Rel. plasticity spreading% (standard value: 0.1)")
