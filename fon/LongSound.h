@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2004 Paul Boersma, 2007 Erez Volk (for FLAC)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/11/24
+ * pb 2007/05/08
  */
 
 #ifndef _Sound_h_
@@ -29,6 +29,12 @@
 #ifndef _Collection_h_
 	#include "Collection.h"
 #endif
+#ifndef FLAC__STREAM_DECODER_H
+	#include "flac_FLAC_stream_decoder.h"
+#endif
+
+#define FLAC_MODE_READ_FLOAT 0
+#define FLAC_MODE_READ_SHORT 1
 
 #define LongSound_members Sampled_members \
 	structMelderFile file; \
@@ -38,7 +44,12 @@
 	long startOfData; \
 	double bufferLength; \
 	short *buffer; \
-	long imin, imax, nmax;
+	long imin, imax, nmax; \
+	FLAC__StreamDecoder *flacDecoder; \
+	int flacMode; \
+	long flacSamplesLeft; \
+	float *flacFloats [2]; \
+	short *flacShorts;
 #define LongSound_methods Sampled_methods
 class_create (LongSound, Sampled)
 
@@ -58,6 +69,9 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 
 int LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file);
 int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int channel, MelderFile file);
+
+int LongSound_readAudioToFloat (LongSound me, float *leftBuffer, float *rightBuffer, long firstSample, long numberOfSamples);
+int LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
 
 int LongSound_concatenate (Ordered collection, MelderFile file, int audioFileType);
 /* Concatenate a collection of Sound and LongSound objects. */

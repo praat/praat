@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/01/27
+ * pb 2007/05/08
  */
 
 #include "praat.h"
@@ -1773,7 +1773,8 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 	if ((strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) ||
 	    (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) ||
 	    strnequ (header, ".snd", 4) ||
-	    strnequ (header, "NIST_1A", 7)
+	    strnequ (header, "NIST_1A", 7) ||
+	    strnequ (header, "fLaC", 4)   // Erez Volk, March 2007
 	    #ifdef macintosh
 	    	|| MelderFile_getMacType (file) == 'Sd2f'
 	    #endif

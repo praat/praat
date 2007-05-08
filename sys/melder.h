@@ -672,7 +672,8 @@ double Melder_getZeroPadding (void);
 #define Melder_NEXT_SUN  4
 #define Melder_NIST  5
 #define Melder_SOUND_DESIGNER_TWO  6
-#define Melder_NUMBER_OF_AUDIO_FILE_TYPES  6
+#define Melder_FLAC 7
+#define Melder_NUMBER_OF_AUDIO_FILE_TYPES  7
 char * Melder_audioFileTypeString (int audioFileType);   /* "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II" */
 char * Melder_macAudioFileType (int audioFileType);   /* "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f" */
 char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2" */
@@ -691,6 +692,7 @@ char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", 
 #define Melder_POLYPHONE  12
 #define Melder_IEEE_FLOAT_32_BIG_ENDIAN  13
 #define Melder_IEEE_FLOAT_32_LITTLE_ENDIAN  14
+#define Melder_FLAC_COMPRESSION 15
 int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
 int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);

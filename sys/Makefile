@@ -2,7 +2,7 @@
 # Paul Boersma, March 18, 2007
 
 include ../makefile.defs
-CFLAGS = -I ../dwsys -I ../GSL -I ../kar -I ../audio
+CFLAGS = -I ../dwsys -I ../GSL -I ../kar -I ../audio -I ../FLAC
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    enum.o abcio.o lispio.o complex.o \

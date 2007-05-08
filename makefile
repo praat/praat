@@ -13,6 +13,7 @@ include makefile.defs
 all:
 	cd kar; make
 	cd GSL; make
+	cd FLAC; make
 	cd sys; make
 	cd stat; make
 	cd fon; make
@@ -25,4 +26,4 @@ all:
 	$(CC) -o praat main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		LPC/libLPC.a FFNet/libFFNet.a dwtools/libdwtools.a \
 		artsynth/libartsynth.a fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
-		sys/libsys.a GSL/libgsl.a kar/libkar.a $(LIBS)
+		sys/libsys.a GSL/libgsl.a kar/libkar.a FLAC/libFLAC.a $(LIBS)

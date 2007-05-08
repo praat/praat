@@ -755,6 +755,51 @@
 		23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C509F2E61200E660F9 /* melder_atof.c */; };
 		23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C709F2E62700E660F9 /* melder_ftoa.c */; };
 		23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C909F2E63900E660F9 /* melder_token.c */; };
+		23F8A8CE0BF103B2000ED19D /* flac_bitmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A00BF103B2000ED19D /* flac_bitmath.c */; };
+		23F8A8CF0BF103B2000ED19D /* flac_bitreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A10BF103B2000ED19D /* flac_bitreader.c */; };
+		23F8A8D00BF103B2000ED19D /* flac_bitwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A20BF103B2000ED19D /* flac_bitwriter.c */; };
+		23F8A8D10BF103B2000ED19D /* flac_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A30BF103B2000ED19D /* flac_cpu.c */; };
+		23F8A8D20BF103B2000ED19D /* flac_crc.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A40BF103B2000ED19D /* flac_crc.c */; };
+		23F8A8D30BF103B2000ED19D /* flac_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A50BF103B2000ED19D /* flac_fixed.c */; };
+		23F8A8D40BF103B2000ED19D /* flac_FLAC_all.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8A60BF103B2000ED19D /* flac_FLAC_all.h */; };
+		23F8A8D50BF103B2000ED19D /* flac_FLAC_assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8A70BF103B2000ED19D /* flac_FLAC_assert.h */; };
+		23F8A8D60BF103B2000ED19D /* flac_FLAC_callback.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8A80BF103B2000ED19D /* flac_FLAC_callback.h */; };
+		23F8A8D70BF103B2000ED19D /* flac_FLAC_export.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8A90BF103B2000ED19D /* flac_FLAC_export.h */; };
+		23F8A8D80BF103B2000ED19D /* flac_FLAC_format.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8AA0BF103B2000ED19D /* flac_FLAC_format.h */; };
+		23F8A8D90BF103B2000ED19D /* flac_FLAC_metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8AB0BF103B2000ED19D /* flac_FLAC_metadata.h */; };
+		23F8A8DA0BF103B2000ED19D /* flac_FLAC_ordinals.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8AC0BF103B2000ED19D /* flac_FLAC_ordinals.h */; };
+		23F8A8DB0BF103B2000ED19D /* flac_FLAC_stream_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8AD0BF103B2000ED19D /* flac_FLAC_stream_decoder.h */; };
+		23F8A8DC0BF103B2000ED19D /* flac_FLAC_stream_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8AE0BF103B2000ED19D /* flac_FLAC_stream_encoder.h */; };
+		23F8A8DD0BF103B2000ED19D /* flac_float.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8AF0BF103B2000ED19D /* flac_float.c */; };
+		23F8A8DE0BF103B2000ED19D /* flac_format.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B00BF103B2000ED19D /* flac_format.c */; };
+		23F8A8DF0BF103B2000ED19D /* flac_lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B10BF103B2000ED19D /* flac_lpc.c */; };
+		23F8A8E00BF103B2000ED19D /* flac_md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B20BF103B2000ED19D /* flac_md5.c */; };
+		23F8A8E10BF103B2000ED19D /* flac_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B30BF103B2000ED19D /* flac_memory.c */; };
+		23F8A8E20BF103B2000ED19D /* flac_metadata_iterators.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B40BF103B2000ED19D /* flac_metadata_iterators.c */; };
+		23F8A8E30BF103B2000ED19D /* flac_metadata_object.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8B50BF103B2000ED19D /* flac_metadata_object.c */; };
+		23F8A8E40BF103B2000ED19D /* flac_private_all.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8B60BF103B2000ED19D /* flac_private_all.h */; };
+		23F8A8E50BF103B2000ED19D /* flac_private_autocpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8B70BF103B2000ED19D /* flac_private_autocpu.h */; };
+		23F8A8E60BF103B2000ED19D /* flac_private_bitmath.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8B80BF103B2000ED19D /* flac_private_bitmath.h */; };
+		23F8A8E70BF103B2000ED19D /* flac_private_bitreader.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8B90BF103B2000ED19D /* flac_private_bitreader.h */; };
+		23F8A8E80BF103B2000ED19D /* flac_private_bitwriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BA0BF103B2000ED19D /* flac_private_bitwriter.h */; };
+		23F8A8E90BF103B2000ED19D /* flac_private_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BB0BF103B2000ED19D /* flac_private_cpu.h */; };
+		23F8A8EA0BF103B2000ED19D /* flac_private_crc.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BC0BF103B2000ED19D /* flac_private_crc.h */; };
+		23F8A8EB0BF103B2000ED19D /* flac_private_fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BD0BF103B2000ED19D /* flac_private_fixed.h */; };
+		23F8A8EC0BF103B2000ED19D /* flac_private_float.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BE0BF103B2000ED19D /* flac_private_float.h */; };
+		23F8A8ED0BF103B2000ED19D /* flac_private_format.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8BF0BF103B2000ED19D /* flac_private_format.h */; };
+		23F8A8EE0BF103B2000ED19D /* flac_private_lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C00BF103B2000ED19D /* flac_private_lpc.h */; };
+		23F8A8EF0BF103B2000ED19D /* flac_private_md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C10BF103B2000ED19D /* flac_private_md5.h */; };
+		23F8A8F00BF103B2000ED19D /* flac_private_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C20BF103B2000ED19D /* flac_private_memory.h */; };
+		23F8A8F10BF103B2000ED19D /* flac_private_metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C30BF103B2000ED19D /* flac_private_metadata.h */; };
+		23F8A8F20BF103B2000ED19D /* flac_private_stream_encoder_framing.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C40BF103B2000ED19D /* flac_private_stream_encoder_framing.h */; };
+		23F8A8F30BF103B2000ED19D /* flac_private_window.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C50BF103B2000ED19D /* flac_private_window.h */; };
+		23F8A8F40BF103B2000ED19D /* flac_protected_all.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C60BF103B2000ED19D /* flac_protected_all.h */; };
+		23F8A8F50BF103B2000ED19D /* flac_protected_stream_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C70BF103B2000ED19D /* flac_protected_stream_decoder.h */; };
+		23F8A8F60BF103B2000ED19D /* flac_protected_stream_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 23F8A8C80BF103B2000ED19D /* flac_protected_stream_encoder.h */; };
+		23F8A8F70BF103B2000ED19D /* flac_stream_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8C90BF103B2000ED19D /* flac_stream_decoder.c */; };
+		23F8A8F80BF103B2000ED19D /* flac_stream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8CA0BF103B2000ED19D /* flac_stream_encoder.c */; };
+		23F8A8F90BF103B2000ED19D /* flac_stream_encoder_framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8CB0BF103B2000ED19D /* flac_stream_encoder_framing.c */; };
+		23F8A8FA0BF103B2000ED19D /* flac_window.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8CC0BF103B2000ED19D /* flac_window.c */; };
 		23FDF6A409FCFF06001B23B7 /* sendpraat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23FDF6A309FCFF06001B23B7 /* sendpraat.c */; };
 /* End PBXBuildFile section */
 
@@ -1509,6 +1554,51 @@
 		23EE67C509F2E61200E660F9 /* melder_atof.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_atof.c; path = sys/melder_atof.c; sourceTree = "<group>"; };
 		23EE67C709F2E62700E660F9 /* melder_ftoa.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_ftoa.c; path = sys/melder_ftoa.c; sourceTree = "<group>"; };
 		23EE67C909F2E63900E660F9 /* melder_token.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_token.c; path = sys/melder_token.c; sourceTree = "<group>"; };
+		23F8A8A00BF103B2000ED19D /* flac_bitmath.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitmath.c; sourceTree = "<group>"; };
+		23F8A8A10BF103B2000ED19D /* flac_bitreader.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitreader.c; sourceTree = "<group>"; };
+		23F8A8A20BF103B2000ED19D /* flac_bitwriter.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitwriter.c; sourceTree = "<group>"; };
+		23F8A8A30BF103B2000ED19D /* flac_cpu.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_cpu.c; sourceTree = "<group>"; };
+		23F8A8A40BF103B2000ED19D /* flac_crc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_crc.c; sourceTree = "<group>"; };
+		23F8A8A50BF103B2000ED19D /* flac_fixed.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_fixed.c; sourceTree = "<group>"; };
+		23F8A8A60BF103B2000ED19D /* flac_FLAC_all.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_all.h; sourceTree = "<group>"; };
+		23F8A8A70BF103B2000ED19D /* flac_FLAC_assert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_assert.h; sourceTree = "<group>"; };
+		23F8A8A80BF103B2000ED19D /* flac_FLAC_callback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_callback.h; sourceTree = "<group>"; };
+		23F8A8A90BF103B2000ED19D /* flac_FLAC_export.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_export.h; sourceTree = "<group>"; };
+		23F8A8AA0BF103B2000ED19D /* flac_FLAC_format.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_format.h; sourceTree = "<group>"; };
+		23F8A8AB0BF103B2000ED19D /* flac_FLAC_metadata.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_metadata.h; sourceTree = "<group>"; };
+		23F8A8AC0BF103B2000ED19D /* flac_FLAC_ordinals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_ordinals.h; sourceTree = "<group>"; };
+		23F8A8AD0BF103B2000ED19D /* flac_FLAC_stream_decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_stream_decoder.h; sourceTree = "<group>"; };
+		23F8A8AE0BF103B2000ED19D /* flac_FLAC_stream_encoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_FLAC_stream_encoder.h; sourceTree = "<group>"; };
+		23F8A8AF0BF103B2000ED19D /* flac_float.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_float.c; sourceTree = "<group>"; };
+		23F8A8B00BF103B2000ED19D /* flac_format.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_format.c; sourceTree = "<group>"; };
+		23F8A8B10BF103B2000ED19D /* flac_lpc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_lpc.c; sourceTree = "<group>"; };
+		23F8A8B20BF103B2000ED19D /* flac_md5.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_md5.c; sourceTree = "<group>"; };
+		23F8A8B30BF103B2000ED19D /* flac_memory.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_memory.c; sourceTree = "<group>"; };
+		23F8A8B40BF103B2000ED19D /* flac_metadata_iterators.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_metadata_iterators.c; sourceTree = "<group>"; };
+		23F8A8B50BF103B2000ED19D /* flac_metadata_object.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_metadata_object.c; sourceTree = "<group>"; };
+		23F8A8B60BF103B2000ED19D /* flac_private_all.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_all.h; sourceTree = "<group>"; };
+		23F8A8B70BF103B2000ED19D /* flac_private_autocpu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_autocpu.h; sourceTree = "<group>"; };
+		23F8A8B80BF103B2000ED19D /* flac_private_bitmath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_bitmath.h; sourceTree = "<group>"; };
+		23F8A8B90BF103B2000ED19D /* flac_private_bitreader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_bitreader.h; sourceTree = "<group>"; };
+		23F8A8BA0BF103B2000ED19D /* flac_private_bitwriter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_bitwriter.h; sourceTree = "<group>"; };
+		23F8A8BB0BF103B2000ED19D /* flac_private_cpu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_cpu.h; sourceTree = "<group>"; };
+		23F8A8BC0BF103B2000ED19D /* flac_private_crc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_crc.h; sourceTree = "<group>"; };
+		23F8A8BD0BF103B2000ED19D /* flac_private_fixed.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_fixed.h; sourceTree = "<group>"; };
+		23F8A8BE0BF103B2000ED19D /* flac_private_float.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_float.h; sourceTree = "<group>"; };
+		23F8A8BF0BF103B2000ED19D /* flac_private_format.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_format.h; sourceTree = "<group>"; };
+		23F8A8C00BF103B2000ED19D /* flac_private_lpc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_lpc.h; sourceTree = "<group>"; };
+		23F8A8C10BF103B2000ED19D /* flac_private_md5.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_md5.h; sourceTree = "<group>"; };
+		23F8A8C20BF103B2000ED19D /* flac_private_memory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_memory.h; sourceTree = "<group>"; };
+		23F8A8C30BF103B2000ED19D /* flac_private_metadata.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_metadata.h; sourceTree = "<group>"; };
+		23F8A8C40BF103B2000ED19D /* flac_private_stream_encoder_framing.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_stream_encoder_framing.h; sourceTree = "<group>"; };
+		23F8A8C50BF103B2000ED19D /* flac_private_window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_private_window.h; sourceTree = "<group>"; };
+		23F8A8C60BF103B2000ED19D /* flac_protected_all.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_protected_all.h; sourceTree = "<group>"; };
+		23F8A8C70BF103B2000ED19D /* flac_protected_stream_decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_protected_stream_decoder.h; sourceTree = "<group>"; };
+		23F8A8C80BF103B2000ED19D /* flac_protected_stream_encoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = flac_protected_stream_encoder.h; sourceTree = "<group>"; };
+		23F8A8C90BF103B2000ED19D /* flac_stream_decoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_stream_decoder.c; sourceTree = "<group>"; };
+		23F8A8CA0BF103B2000ED19D /* flac_stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_stream_encoder.c; sourceTree = "<group>"; };
+		23F8A8CB0BF103B2000ED19D /* flac_stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_stream_encoder_framing.c; sourceTree = "<group>"; };
+		23F8A8CC0BF103B2000ED19D /* flac_window.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_window.c; sourceTree = "<group>"; };
 		23FDF6A309FCFF06001B23B7 /* sendpraat.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = sendpraat.c; path = sys/sendpraat.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1586,6 +1676,7 @@
 				23E5CB6009A22902004E41D5 /* sys/melder */,
 				23E5CB6809A22902004E41D5 /* kar */,
 				230021240B32FC7200A7FE19 /* audio */,
+				23F8A89F0BF103B2000ED19D /* FLAC */,
 				23E5CB6B09A22902004E41D5 /* gsl */,
 				23E5CF3409A22A55004E41D5 /* Frameworks */,
 				23E5C92109A228FA004E41D5 /* Products */,
@@ -2469,6 +2560,58 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		23F8A89F0BF103B2000ED19D /* FLAC */ = {
+			isa = PBXGroup;
+			children = (
+				23F8A8A00BF103B2000ED19D /* flac_bitmath.c */,
+				23F8A8A10BF103B2000ED19D /* flac_bitreader.c */,
+				23F8A8A20BF103B2000ED19D /* flac_bitwriter.c */,
+				23F8A8A30BF103B2000ED19D /* flac_cpu.c */,
+				23F8A8A40BF103B2000ED19D /* flac_crc.c */,
+				23F8A8A50BF103B2000ED19D /* flac_fixed.c */,
+				23F8A8A60BF103B2000ED19D /* flac_FLAC_all.h */,
+				23F8A8A70BF103B2000ED19D /* flac_FLAC_assert.h */,
+				23F8A8A80BF103B2000ED19D /* flac_FLAC_callback.h */,
+				23F8A8A90BF103B2000ED19D /* flac_FLAC_export.h */,
+				23F8A8AA0BF103B2000ED19D /* flac_FLAC_format.h */,
+				23F8A8AB0BF103B2000ED19D /* flac_FLAC_metadata.h */,
+				23F8A8AC0BF103B2000ED19D /* flac_FLAC_ordinals.h */,
+				23F8A8AD0BF103B2000ED19D /* flac_FLAC_stream_decoder.h */,
+				23F8A8AE0BF103B2000ED19D /* flac_FLAC_stream_encoder.h */,
+				23F8A8AF0BF103B2000ED19D /* flac_float.c */,
+				23F8A8B00BF103B2000ED19D /* flac_format.c */,
+				23F8A8B10BF103B2000ED19D /* flac_lpc.c */,
+				23F8A8B20BF103B2000ED19D /* flac_md5.c */,
+				23F8A8B30BF103B2000ED19D /* flac_memory.c */,
+				23F8A8B40BF103B2000ED19D /* flac_metadata_iterators.c */,
+				23F8A8B50BF103B2000ED19D /* flac_metadata_object.c */,
+				23F8A8B60BF103B2000ED19D /* flac_private_all.h */,
+				23F8A8B70BF103B2000ED19D /* flac_private_autocpu.h */,
+				23F8A8B80BF103B2000ED19D /* flac_private_bitmath.h */,
+				23F8A8B90BF103B2000ED19D /* flac_private_bitreader.h */,
+				23F8A8BA0BF103B2000ED19D /* flac_private_bitwriter.h */,
+				23F8A8BB0BF103B2000ED19D /* flac_private_cpu.h */,
+				23F8A8BC0BF103B2000ED19D /* flac_private_crc.h */,
+				23F8A8BD0BF103B2000ED19D /* flac_private_fixed.h */,
+				23F8A8BE0BF103B2000ED19D /* flac_private_float.h */,
+				23F8A8BF0BF103B2000ED19D /* flac_private_format.h */,
+				23F8A8C00BF103B2000ED19D /* flac_private_lpc.h */,
+				23F8A8C10BF103B2000ED19D /* flac_private_md5.h */,
+				23F8A8C20BF103B2000ED19D /* flac_private_memory.h */,
+				23F8A8C30BF103B2000ED19D /* flac_private_metadata.h */,
+				23F8A8C40BF103B2000ED19D /* flac_private_stream_encoder_framing.h */,
+				23F8A8C50BF103B2000ED19D /* flac_private_window.h */,
+				23F8A8C60BF103B2000ED19D /* flac_protected_all.h */,
+				23F8A8C70BF103B2000ED19D /* flac_protected_stream_decoder.h */,
+				23F8A8C80BF103B2000ED19D /* flac_protected_stream_encoder.h */,
+				23F8A8C90BF103B2000ED19D /* flac_stream_decoder.c */,
+				23F8A8CA0BF103B2000ED19D /* flac_stream_encoder.c */,
+				23F8A8CB0BF103B2000ED19D /* flac_stream_encoder_framing.c */,
+				23F8A8CC0BF103B2000ED19D /* flac_window.c */,
+			);
+			path = FLAC;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2849,6 +2992,34 @@
 				2343C2370BAE1567003D66E8 /* Distributions.h in Headers */,
 				2343C2B40BAE20C1003D66E8 /* PairDistribution_def.h in Headers */,
 				2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */,
+				23F8A8D40BF103B2000ED19D /* flac_FLAC_all.h in Headers */,
+				23F8A8D50BF103B2000ED19D /* flac_FLAC_assert.h in Headers */,
+				23F8A8D60BF103B2000ED19D /* flac_FLAC_callback.h in Headers */,
+				23F8A8D70BF103B2000ED19D /* flac_FLAC_export.h in Headers */,
+				23F8A8D80BF103B2000ED19D /* flac_FLAC_format.h in Headers */,
+				23F8A8D90BF103B2000ED19D /* flac_FLAC_metadata.h in Headers */,
+				23F8A8DA0BF103B2000ED19D /* flac_FLAC_ordinals.h in Headers */,
+				23F8A8DB0BF103B2000ED19D /* flac_FLAC_stream_decoder.h in Headers */,
+				23F8A8DC0BF103B2000ED19D /* flac_FLAC_stream_encoder.h in Headers */,
+				23F8A8E40BF103B2000ED19D /* flac_private_all.h in Headers */,
+				23F8A8E50BF103B2000ED19D /* flac_private_autocpu.h in Headers */,
+				23F8A8E60BF103B2000ED19D /* flac_private_bitmath.h in Headers */,
+				23F8A8E70BF103B2000ED19D /* flac_private_bitreader.h in Headers */,
+				23F8A8E80BF103B2000ED19D /* flac_private_bitwriter.h in Headers */,
+				23F8A8E90BF103B2000ED19D /* flac_private_cpu.h in Headers */,
+				23F8A8EA0BF103B2000ED19D /* flac_private_crc.h in Headers */,
+				23F8A8EB0BF103B2000ED19D /* flac_private_fixed.h in Headers */,
+				23F8A8EC0BF103B2000ED19D /* flac_private_float.h in Headers */,
+				23F8A8ED0BF103B2000ED19D /* flac_private_format.h in Headers */,
+				23F8A8EE0BF103B2000ED19D /* flac_private_lpc.h in Headers */,
+				23F8A8EF0BF103B2000ED19D /* flac_private_md5.h in Headers */,
+				23F8A8F00BF103B2000ED19D /* flac_private_memory.h in Headers */,
+				23F8A8F10BF103B2000ED19D /* flac_private_metadata.h in Headers */,
+				23F8A8F20BF103B2000ED19D /* flac_private_stream_encoder_framing.h in Headers */,
+				23F8A8F30BF103B2000ED19D /* flac_private_window.h in Headers */,
+				23F8A8F40BF103B2000ED19D /* flac_protected_all.h in Headers */,
+				23F8A8F50BF103B2000ED19D /* flac_protected_stream_decoder.h in Headers */,
+				23F8A8F60BF103B2000ED19D /* flac_protected_stream_encoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3286,6 +3457,23 @@
 				233B14060BB2ADBB004440C3 /* gsl_sf__bessel_K0.c in Sources */,
 				233B14090BB2ADC9004440C3 /* gsl_sf__bessel_K1.c in Sources */,
 				233B140C0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c in Sources */,
+				23F8A8CE0BF103B2000ED19D /* flac_bitmath.c in Sources */,
+				23F8A8CF0BF103B2000ED19D /* flac_bitreader.c in Sources */,
+				23F8A8D00BF103B2000ED19D /* flac_bitwriter.c in Sources */,
+				23F8A8D10BF103B2000ED19D /* flac_cpu.c in Sources */,
+				23F8A8D20BF103B2000ED19D /* flac_crc.c in Sources */,
+				23F8A8D30BF103B2000ED19D /* flac_fixed.c in Sources */,
+				23F8A8DD0BF103B2000ED19D /* flac_float.c in Sources */,
+				23F8A8DE0BF103B2000ED19D /* flac_format.c in Sources */,
+				23F8A8DF0BF103B2000ED19D /* flac_lpc.c in Sources */,
+				23F8A8E00BF103B2000ED19D /* flac_md5.c in Sources */,
+				23F8A8E10BF103B2000ED19D /* flac_memory.c in Sources */,
+				23F8A8E20BF103B2000ED19D /* flac_metadata_iterators.c in Sources */,
+				23F8A8E30BF103B2000ED19D /* flac_metadata_object.c in Sources */,
+				23F8A8F70BF103B2000ED19D /* flac_stream_decoder.c in Sources */,
+				23F8A8F80BF103B2000ED19D /* flac_stream_encoder.c in Sources */,
+				23F8A8F90BF103B2000ED19D /* flac_stream_encoder_framing.c in Sources */,
+				23F8A8FA0BF103B2000ED19D /* flac_window.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

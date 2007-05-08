@@ -56,14 +56,8 @@ static int _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long 
 	{
 		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
 		imin = (ibuf - 1) * nbuf + 1;
-		if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * 
-			my numberOfBytesPerSamplePoint, SEEK_SET))
-		{
-			return Melder_error ("Cannot seek in file %s.", 
-				MelderFile_messageName (& my file));
-		}
-		Melder_readAudioToShort (my f, my numberOfChannels, my encoding, my buffer, 
-			n_to_read);
+		if (! LongSound_readAudioToShort (me, my buffer, imin, n_to_read))
+			return 0;
 		
 		for (i = 1; i <= n_to_read; i++)
 		{
@@ -194,12 +188,8 @@ static int MelderFile_truncate (MelderFile me, long size)
 
 static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) 
 {
-	long ibuffer, numberOfBuffers, numberOfSamplesInLastBuffer;
-	if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
-	{ 
-		Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file));
-		goto end;
-	}
+	long ibuffer, offset, numberOfBuffers, numberOfSamplesInLastBuffer;
+	offset = imin;
 	numberOfBuffers = (n - 1) / my nmax + 1;
 	numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer)
@@ -207,7 +197,8 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 		for (ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++)
 		{
 			long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
-			Melder_readAudioToShort (my f, my numberOfChannels, my encoding, my buffer, numberOfSamplesToCopy);
+			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
+			offset += numberOfSamplesToCopy;
 			Melder_writeShortToAudio (file -> filePointer, my numberOfChannels, 
 				Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
 		}

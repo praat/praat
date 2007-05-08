@@ -30,6 +30,7 @@
  * pb 2007/01/28 removed a warning
  * pb 2007/01/28 made readFromMovieFile compatible with stereo
  * pb 2007/03/17 resistant against conflicting declarations of Collection
+ * pb 2007/05/08 removed warning about stereo sounds
  */
 
 /*
@@ -115,7 +116,6 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 	f = file -> filePointer;
 	fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples); cherror
 	if (fileType == 0) { Melder_error ("Not an audio file."); goto end; }
-	if (numberOfChannels == 2) Melder_warning ("This is a stereo sound. It will be played as stereo but analysed as mono.");
 	if (fseek (f, startOfData, SEEK_SET) == EOF)   /* Start from beginning of Data Chunk. */
 		{ Melder_error ("No data in audio file."); goto end; }
 	me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate); cherror

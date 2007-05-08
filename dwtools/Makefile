@@ -24,7 +24,7 @@
 
 include ../makefile.defs
 
-CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat
+CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat -I ../FLAC
 
 all: libdwtools.a
 
