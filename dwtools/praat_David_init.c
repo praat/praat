@@ -100,7 +100,6 @@ extern machar_Table NUMfpp;
 #include "Pitch_extensions.h"
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
-#include "TableOfReal_and_Matrix.h"
 #include "TableOfReal_and_SVD.h"
 
 static char *QUERY_BUTTON   = "Query -                ";
@@ -3971,39 +3970,7 @@ DO
 	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 1), "%s_byrowlabels", NAME))
 END
 
-/***** TableOfReal and Matrix  *****/
-
-FORM (TableOfReal_matrixColumnsIntoRows,
-	"TableOfReal & Matrix: Copy Matrix-columns into TableOfReal-rows", "")
-	NATURAL ("Begin column", "1");
-	NATURAL ("End column", "1");
-	LABEL ("", "Into TableOfReal")
-	NATURAL ("Begin row", "1")
-	NATURAL ("Start column", "1")
-	OK
-DO
-	if (! TableOfReal_matrixColumnsIntoRows (ONLY_GENERIC (classTableOfReal),
-		ONLY_GENERIC (classMatrix), GET_INTEGER ("Begin column"), 
-		GET_INTEGER ("End column"), GET_INTEGER ("Begin row"), 
-		GET_INTEGER ("Start column"))) return 0;	
-END
-
 /***** TableOfReal and FilterBank  *****/
-
-FORM (TableOfReal_filterbankFramesIntoRows,
-	"TableOfReal &FilterBank: Copy frames into rows", "")
-	NATURAL ("Begin frame", "1");
-	NATURAL ("End frame", "1");
-	LABEL ("", "Into TableOfReal")
-	NATURAL ("Begin row", "1")
-	NATURAL ("Start column", "1")
-	OK
-DO
-	if (! TableOfReal_matrixColumnsIntoRows (ONLY_GENERIC (classTableOfReal),
-		ONLY_GENERIC (classMatrix), GET_INTEGER ("Begin frame"), 
-		GET_INTEGER ("End frame"), GET_INTEGER ("Begin row"), 
-		GET_INTEGER ("Start column"))) return 0;	
-END
 
 FORM (TextGrid_extendTime, "TextGrid: Extend time", "TextGrid: Extend time...")
 	LABEL ("", "")
@@ -4190,9 +4157,6 @@ static void praat_FilterBank_all_init (void *klas)
 		0, 0, DO_FilterBank_to_Intensity); 	
 	praat_addAction1 (klas, 0, "To Matrix", 
 		0, 0, DO_FilterBank_to_Matrix);
-	praat_addAction2 (classTableOfReal, 1, klas, 1, 
-		"Copy frames into rows...", 
-		0, 0, DO_TableOfReal_filterbankFramesIntoRows);
 }
 
 static void praat_FunctionTerms_init (void *klas)
@@ -5026,8 +4990,6 @@ void praat_uvafon_David_init (void)
 	praat_addAction2 (classStrings, 1, classPermutation, 1, "Permute strings",
 		0, 0, DO_Strings_and_Permutation_permuteStrings);
 
-	praat_addAction2 (classTableOfReal, 1, classMatrix, 1, "Copy columns into rows...",
-		0, 0, DO_TableOfReal_matrixColumnsIntoRows);
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, "Permute rows",
 		0, 0, DO_TableOfReal_and_Permutation_permuteRows);
 

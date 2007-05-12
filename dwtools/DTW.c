@@ -180,7 +180,7 @@ int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx)
 	Melder_assert (ny > 0 && nx > 0);
 	my ny = ny;
 	my nx = nx;
-	my nxy = 2 * (ny > nx ? ny : nx) + 1; // maximum number of points
+	my nxy = 2 * (ny > nx ? ny : nx) + 2; // maximum number of points
 	if ((my xytimes = NUMstructvector (DTW_Path_xytime, 1, my nxy)) == NULL) return 0;
 	if ((my yindex = NUMstructvector (DTW_Path_Index, 1, my ny)) == NULL) return 0;
 	if ((my xindex = NUMstructvector (DTW_Path_Index, 1, my nx)) == NULL) return 0;
@@ -338,7 +338,7 @@ void DTW_Path_recode (DTW me)
 	nxy++;
 	thy xytimes[nxy].x = my xmax;
 	thy xytimes[nxy].y = my ymax;
-	Melder_assert (nxy <= thy nxy);
+	Melder_assert (nxy <= 2 * (my ny > my nx ? my ny : my nx) + 2);
 	thy nxy = nxy;
 	
 	DTW_Path_makeIndex (me, DTW_X);

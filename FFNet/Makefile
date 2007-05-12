@@ -17,7 +17,7 @@ OBJECTS = FFNet.o \
 	FFNet_Pattern_Categories.o \
 	praat_FFNet_init.o manual_FFNet.o
 
-$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h
 
 libFFNet.a: $(OBJECTS)
 	touch libFFNet.a

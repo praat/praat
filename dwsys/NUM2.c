@@ -2113,8 +2113,8 @@ int NUMmspline (double knot[], long nKnots, long order, long i,
 	{
 		if (x < knot[j]) break;
 	}
-	if (j < i || j > i + order || j == order ||
-		j > nKnots - order + 1) return 1;
+	if (j < i || (j > i + order) || j == order ||
+		j > (nKnots - order + 1)) return 1;
 	
 	if (! (m = NUMdvector (i, ito))) return 0;
 	

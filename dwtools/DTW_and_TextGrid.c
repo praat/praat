@@ -57,8 +57,8 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 	double xmin, xmax;
 	long i;
 	
-	if (my ymin != thy xmin || my ymax != thy xmax) return Melder_errorp 
-		("The domain of the TextTier and y-domain of the DTW must be equal.");
+	if ((my ymin != thy xmin) || my ymax != thy xmax) return Melder_errorp 
+		("The domain of the IntervalTier and the y-domain of the DTW must be equal.");
 	
 	him = Data_copy (thee);
 	if (him == NULL) return NULL;
@@ -85,7 +85,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 	long i;
 
 	if (him == NULL) return NULL;
-	if (my ymin != thy xmin || my ymax != thy xmax)
+	if ((my ymin != thy xmin) || my ymax != thy xmax)
 	{
 		(void) Melder_error ("%s: The domain of the TextGrid and the y-domain of the DTW must be equal.", proc);
 		goto end;
@@ -130,7 +130,7 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee)
 	TextTier him;
 	long i;
 	
-	if (my xmin != thy xmin || my xmax != thy xmax) return Melder_errorp 
+	if ((my xmin != thy xmin) || my xmax != thy xmax) return Melder_errorp 
 		("The domain of the TextTier and the DTW must be equal.");
 		
 	him = Data_copy (thee);
@@ -156,8 +156,8 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 	double xmin, xmax;
 	long i;
 	
-	if (my xmin != thy xmin || my xmax != thy xmax) return Melder_errorp 
-		("The domain of the TextTier and the DTW must be equal.");
+	if ((my xmin != thy xmin) || my xmax != thy xmax) return Melder_errorp 
+		("The domain of the IntervalTier and the DTW must be equal.");
 	
 	him = Data_copy (thee);
 	if (him == NULL) return NULL;

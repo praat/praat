@@ -1361,7 +1361,7 @@
 		23E5CB2B09A22901004E41D5 /* sendsocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sendsocket.h; path = sys/sendsocket.h; sourceTree = SOURCE_ROOT; };
 		23E5CB2C09A22902004E41D5 /* Simple.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Simple.c; path = sys/Simple.c; sourceTree = SOURCE_ROOT; };
 		23E5CB2D09A22902004E41D5 /* Simple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Simple.h; path = sys/Simple.h; sourceTree = SOURCE_ROOT; };
-		23E5CB2E09A22902004E41D5 /* site.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = site.c; path = sys/site.c; sourceTree = SOURCE_ROOT; };
+		23E5CB2E09A22902004E41D5 /* site.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = site.c; path = sys/site.c; sourceTree = SOURCE_ROOT; };
 		23E5CB2F09A22902004E41D5 /* site.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = site.h; path = sys/site.h; sourceTree = SOURCE_ROOT; };
 		23E5CB3009A22902004E41D5 /* Thing.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Thing.c; path = sys/Thing.c; sourceTree = SOURCE_ROOT; };
 		23E5CB3109A22902004E41D5 /* Thing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Thing.h; path = sys/Thing.h; sourceTree = SOURCE_ROOT; };

@@ -54,7 +54,7 @@ static void info (I)
     MelderInfo_writeLine2 ("  Symmetrical dependency: ", Melder_double(uxy));
     MelderInfo_writeLine2 ("  Total number of entries: ", 
     	Melder_integer (Confusion_getNumberOfEntries (me)));
-	MelderInfo_writeLine2 ("  raction correct: ", Melder_double (frac));
+	MelderInfo_writeLine2 (" Fraction correct: ", Melder_double (frac));
 }
 
 class_methods (Confusion, TableOfReal)

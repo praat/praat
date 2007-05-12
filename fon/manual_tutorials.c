@@ -23,9 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070508)
+MAN_BEGIN ("What's new?", "ppgb", 20070512)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6# (May 12, 2007)")
 NORMAL ("##4.5.26# (May 8, 2007)")
 LIST_ITEM ("\\bu Sound files: FLAC support (implemented by Erez Volk).")
 NORMAL ("##4.5.25# (May 7, 2007)")
