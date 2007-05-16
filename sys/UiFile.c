@@ -739,7 +739,7 @@ void UiInfile_do (I) {
 		openFileName. nMaxFile = 3000;
 		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-		SHELLFLAGSTATE settings;
+		SHELLFLAGSTATE settings = { 0 };
 		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
 		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
 		bool extensionsWereVisible = settings. fShowExtensions != 0;
@@ -983,7 +983,7 @@ void UiOutfile_do (I, const char *defaultName) {
 		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
-		SHELLFLAGSTATE settings;
+		SHELLFLAGSTATE settings = { 0 };
 		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
 		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
 		bool extensionsWereVisible = settings. fShowExtensions != 0;

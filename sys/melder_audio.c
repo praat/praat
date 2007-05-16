@@ -30,6 +30,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
  * pb 2007/01/03 best sample rate can be over 64 kHz
+ * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Koninck)
  */
 
 #include "melder.h"
@@ -648,7 +649,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
 	outputParameters. channelCount = my numberOfChannels;
 	outputParameters. sampleFormat = paInt16;
-	outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
+	if (deviceInfo != NULL) outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
 	outputParameters. hostApiSpecificStreamInfo = NULL;
 	err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 		paDitherOff, thePaStreamCallback, me);

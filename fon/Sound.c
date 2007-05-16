@@ -349,6 +349,9 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 		data = NUMfvector (1, nfft); cherror
 		filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1); cherror
 		for (long channel = 1; channel <= my ny; channel ++) {
+			for (long i = 1; i <= nfft; i ++) {
+				data [i] = 0;
+			}
 			NUMfvector_copyElements (my z [channel], data + antiTurnAround, 1, my nx);
 			NUMrealft (data, nfft, 1); cherror   /* Go to the frequency domain. */
 			for (long i = floor (upfactor * nfft); i <= nfft; i ++) {
