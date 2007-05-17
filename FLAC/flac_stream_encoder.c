@@ -52,6 +52,10 @@
 #define ftello ftell
 #endif
 #endif
+#if defined __GLIBC__ && !defined __USE_LARGEFILE
+#   define fseeko fseek
+#   define ftello ftell
+#endif /* GLIBC without f(seek|tell)o */
 #include "flac_FLAC_assert.h"
 #include "flac_FLAC_stream_decoder.h"
 #include "flac_protected_stream_encoder.h"

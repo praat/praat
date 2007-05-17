@@ -52,6 +52,11 @@
 #define ftello ftell
 #endif
 #endif
+/* Erez Volk 2007-05-15: Avoid the mess above */
+#if defined __GLIBC__ && !defined __USE_LARGEFILE
+#   define fseeko fseek
+#   define ftello ftell
+#endif /* GLIBC without f(seek|tell)o */
 #include "flac_FLAC_assert.h"
 #include "flac_protected_stream_decoder.h"
 #include "flac_private_autocpu.h"
@@ -1835,13 +1840,17 @@ FLAC__bool read_metadata_cuesheet_(FLAC__StreamDecoder *decoder, FLAC__StreamMet
 
 FLAC__bool read_metadata_picture_(FLAC__StreamDecoder *decoder, FLAC__StreamMetadata_Picture *obj)
 {
+    FLAC__uint32 type;
 	FLAC__uint32 len;
 
 	FLAC__ASSERT(FLAC__bitreader_is_consumed_byte_aligned(decoder->private_->input));
 
 	/* read type */
-	if(!FLAC__bitreader_read_raw_uint32(decoder->private_->input, (unsigned long *) &obj->type, FLAC__STREAM_METADATA_PICTURE_TYPE_LEN))
+    /* Erez Volk 2007-05-13: Read and then cast */
+	if(!FLAC__bitreader_read_raw_uint32(decoder->private_->input, &type, FLAC__STREAM_METADATA_PICTURE_TYPE_LEN))
 		return false; /* read_callback_ sets the state for us */
+
+    obj->type = (FLAC__StreamMetadata_Picture_Type)type;
 
 	/* read MIME type */
 	if(!FLAC__bitreader_read_raw_uint32(decoder->private_->input, &len, FLAC__STREAM_METADATA_PICTURE_MIME_TYPE_LENGTH_LEN))
@@ -2676,7 +2685,7 @@ FLAC__bool read_subframe_verbatim_(FLAC__StreamDecoder *decoder, unsigned channe
 FLAC__bool read_residual_partitioned_rice_(FLAC__StreamDecoder *decoder, unsigned predictor_order, unsigned partition_order, FLAC__EntropyCodingMethod_PartitionedRiceContents *partitioned_rice_contents, FLAC__int32 *residual)
 {
 	FLAC__uint32 rice_parameter;
-	long i;
+	FLAC__int32 i;
 	unsigned partition, sample, u;
 	const unsigned partitions = 1u << partition_order;
 	const unsigned partition_samples = partition_order > 0? decoder->private_->frame.header.blocksize >> partition_order : decoder->private_->frame.header.blocksize - predictor_order;

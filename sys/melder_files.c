@@ -1,6 +1,6 @@
 /* melder_files.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * rvs 2006/08/12 curl: do not fail on error
  * pb 2006/08/12 check whether unicodeName exists
  * pb 2006/10/28 erased MacOS 9 stuff
+ * Erez Volk 2007/05/14 FLAC support
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -60,6 +61,7 @@
 #endif
 #include <errno.h>
 #include "melder.h"
+#include "flac_FLAC_stream_encoder.h"
 
 #if defined (macintosh)
 	#include <sys/stat.h>
@@ -965,9 +967,16 @@ void MelderFile_rewind (MelderFile me) {
 }
 
 void MelderFile_close (MelderFile me) {
-	if (! my filePointer) return;
-	Melder_fclose (me, my filePointer);
+	if (my flacMagic == Melder_FLAC_MAGIC) {
+	       if (my flacEncoder) {
+		       FLAC__stream_encoder_finish (my flacEncoder);
+		       FLAC__stream_encoder_delete (my flacEncoder);
+	       }
+	}
+	else if (my filePointer) Melder_fclose (me, my filePointer);
 	my filePointer = NULL;
+	my flacEncoder = NULL;
+	my flacMagic = 0;
 }
 
 /* End of file melder_files.c */

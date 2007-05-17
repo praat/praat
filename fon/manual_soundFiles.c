@@ -39,6 +39,7 @@ LIST_ITEM1 ("2.2. @@Sound files 2.2. AIFF files|AIFF files@")
 LIST_ITEM1 ("2.3. @@Sound files 2.3. AIFC files|AIFC files@")
 LIST_ITEM1 ("2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@")
 LIST_ITEM1 ("2.5. @@Sound files 2.5. NIST files|NIST files@")
+LIST_ITEM1 ("2.6. @@Sound files 2.6. FLAC files|FLAC files@")
 LIST_ITEM ("3. @@Sound files 3. Files that Praat can read|Files that Praat can read@")
 LIST_ITEM ("4. @@Sound files 4. Files that Praat can write|Files that Praat can write@")
 MAN_END
@@ -84,7 +85,7 @@ MAN_BEGIN ("Sound files 1.4. The header", "ppgb", 20040223)
 NORMAL ("The bulk of most sound files is formed by the samples. "
 	"The sample part is usually preceded by a header, which contains "
 	"information about:")
-LIST_ITEM ("1. The type of file (WAV, AIFF, AIFC, NeXT/Sun, NIST, Kay,...).")
+LIST_ITEM ("1. The type of file (WAV, AIFF, AIFC, NeXT/Sun, NIST, Kay, FLAC...).")
 LIST_ITEM ("2. The sampling frequency (@@Sound files 1.1. Sampling|\\SS1.1@).")
 LIST_ITEM ("3. The encoding (linear, 8 or 16 bit, byte order, \\mu-law, A-law, see @@Sound files 1.2. Quantization|\\SS1.2@).")
 LIST_ITEM ("4. The number of channels (mono, stereo, see @@Sound files 1.3. Channels|\\SS1.3@).")
@@ -108,7 +109,8 @@ MAN_BEGIN ("Sound files 1.6. Compression", "ppgb", 20030308)
 NORMAL ("Praat used to be able to read some compressed sound file formats (shortened NIST, Polyphone), "
 	"but because of licensing problems (Praat went open source, Shorten did not), "
 	"you now need to use other (freely available) programs to do the conversion before reading them into Praat. "
-	"For MP3-encoded audio files, one can e.g. use iTunes\\re on the Macintosh.")
+	"For MP3-encoded audio files, one can e.g. use iTunes\\re on the Macintosh. "
+	"Praat fully supports FLAC compressed files.")
 MAN_END
 
 MAN_BEGIN ("Sound files 2. File types", "ppgb", 20040223)
@@ -117,6 +119,7 @@ LIST_ITEM ("2.2. @@Sound files 2.2. AIFF files|AIFF files@")
 LIST_ITEM ("2.3. @@Sound files 2.3. AIFC files|AIFC files@")
 LIST_ITEM ("2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@")
 LIST_ITEM ("2.5. @@Sound files 2.5. NIST files|NIST files@")
+LIST_ITEM ("2.6. @@Sound files 2.6. FLAC files|FLAC files@")
 MAN_END
 
 MAN_BEGIN ("Sound files 2.1. WAV files", "ppgb", 20040223)
@@ -163,6 +166,12 @@ NORMAL ("An audio file type used by speech researchers. Used, for instance, in t
 	"(see @@Sound files 1.6. Compression|\\SS1.6@)")
 MAN_END
 
+MAN_BEGIN ("Sound files 2.6. FLAC files", "ev", 20070514)
+NORMAL ("A lossless compressed audio format (see ##http://flac.sourceforge.net##). "
+	"Praat reads FLAC files in all bitrate/frequency settings "
+	"(see also @@Sound files 1.6. Compression|\\SS1.6@)")
+MAN_END
+
 MAN_BEGIN ("Sound files 3. Files that Praat can read", "ppgb", 20041108)
 INTRO ("Praat can read five types of standard sound files in several formats, "
 	"and a number of proprietary types of sound files as well.")
@@ -198,6 +207,9 @@ LIST_ITEM1 ("\\bu linear 16-bit big-endian")
 LIST_ITEM1 ("\\bu 8-bit \\mu-law")
 LIST_ITEM1 ("\\bu 8-bit A-law")
 LIST_ITEM1 ("\\bu linear 8-bit signed")
+LIST_ITEM ("\\bu FLAC:")
+LIST_ITEM1 ("\\bu 8-bit, 16-bit, 24-bit or 32-bit")
+LIST_ITEM1 ("\\bu all sampling frequencies")
 MAN_END
 
 MAN_BEGIN ("Sound files 4. Files that Praat can write", "ppgb", 20040223)
@@ -208,6 +220,7 @@ LIST_ITEM ("\\bu @@Write to AIFF file...@ (16-bit big-endian)")
 LIST_ITEM ("\\bu @@Write to AIFC file...@ (16-bit big-endian)")
 LIST_ITEM ("\\bu @@Write to NeXT/Sun file...@ (16-bit big-endian)")
 LIST_ITEM ("\\bu @@Write to NIST file...@ (16-bit little-endian)")
+LIST_ITEM ("\\bu @@Write to FLAC file...@ (16-bit)")
 MAN_END
 
 MAN_BEGIN ("AIFF and AIFC files", "ppgb", 19970526)
@@ -260,7 +273,12 @@ INTRO ("With this command, you write one or more selected @Sound and/or @LongSou
 	"to a single 16-bit little-endian NIST audio file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN ("NIST files", "ppgb", 19960911)
+MAN_BEGIN ("Write to FLAC file...", "ppgb", 20000126)
+INTRO ("With this command, you write one or more selected @Sound and/or @LongSound objects "
+	"to a single 16-bit FLAC audio file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_END
+
+MAN_BEGIN ("NIST files", "ev", 20070514)
 INTRO ("A way for storing a @Sound object on disk.")
 ENTRY ("File format")
 NORMAL ("The compressed sound files of the Timit database, and the Groningen speech corpus.")
@@ -270,9 +288,19 @@ ENTRY ("Writing")
 NORMAL ("With ##Write to NIST audio file...#.")
 MAN_END
 
+MAN_BEGIN ("FLAC files", "ev", 20070514)
+INTRO ("A way for storing a @Sound object on disk.")
+ENTRY ("File format")
+NORMAL ("A lossless compressed audio file format.")
+ENTRY ("Reading")
+NORMAL ("With @@Read from file...@.")
+ENTRY ("Writing")
+NORMAL ("With ##Write to FLAC audio file...#.")
+MAN_END
+
 MAN_BEGIN ("How to concatenate sound files", "ppgb", 20000123)
-INTRO ("You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, and "
-	"NIST audio files, and other files that you have read into memory.")
+INTRO ("You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, NIST "
+	"and FLAC audio files, and other files that you have read into memory.")
 NORMAL ("For instance, if you want to concatenate a 30-minute AIFF file, "
 	"a 4-minute Kay sound file, and a 60-minute Next/Sun file, "
 	"by writing them into a 94-minute WAV file, "
@@ -299,6 +327,7 @@ LIST_ITEM ("\\bu @@Write to AIFF file...@ (big-endian)")
 LIST_ITEM ("\\bu @@Write to AIFC file...@ (big-endian)")
 LIST_ITEM ("\\bu @@Write to NeXT/Sun file...@ (big-endian)")
 LIST_ITEM ("\\bu @@Write to NIST file...@ (little-endian)")
+LIST_ITEM ("\\bu @@Write to FLAC file...@")
 MAN_END
 
 MAN_BEGIN ("LongSound", "ppgb", 20040113)
@@ -310,7 +339,7 @@ ENTRY ("How to create a LongSound object")
 NORMAL ("You create a LongSound object with @@Open long sound file...@ from the @@Read menu@.")
 ENTRY ("What you can do with a LongSound object")
 NORMAL ("You can write a LongSound object to a new sound file, "
-	"perhaps in a different format (AIFF, AIFC, WAV, NeXT/Sun, NIST) "
+	"perhaps in a different format (AIFF, AIFC, WAV, NeXT/Sun, NIST, FLAC) "
 	"with the commands in the Write menu. You can also concatenate several "
 	"LongSound objects in this way. See @@How to concatenate sound files@.")
 ENTRY ("How to view and edit a LongSound object")

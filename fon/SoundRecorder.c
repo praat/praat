@@ -1519,7 +1519,7 @@ static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType)
 		long nsamp = my nsamp / 2;
 		MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
 		if (file -> filePointer) {
-			Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, theControlPanel. sampleRate, nsamp, 1);
+			MelderFile_writeAudioFileHeader16 (file, audioFileType, theControlPanel. sampleRate, nsamp, 1);
 			if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
 				for (long i = 0; i < nsamp; i ++)
 					binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);

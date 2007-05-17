@@ -26,6 +26,7 @@
  * pb 2006/05/10 repaired memory leak in do_write
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 compatible with stereo sounds
+ * Erez Volk 2007/05/14 FLAC support
  */
 
 #include "SoundEditor.h"
@@ -38,7 +39,7 @@
 
 #define SoundEditor_members FunctionEditor_members \
 	Widget publishButton, publishPreserveButton, publishWindowButton; \
-	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton; \
+	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton; \
 	Widget cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
 	double minimum, maximum; \
 	struct { int windowType; double relativeWidth; int preserveTimes; } publish; \
@@ -204,6 +205,15 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 		sprintf (defaultName, "%s.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_NIST)) return 0;
+	EDITOR_END
+}
+
+static int menu_cb_WriteFlac (EDITOR_ARGS) {
+	EDITOR_IAM (SoundEditor);
+	EDITOR_FORM_WRITE ("Write selection to FLAC file", 0)
+		sprintf (defaultName, "%s.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
+	EDITOR_DO_WRITE
+		if (! do_write (me, file, Melder_FLAC)) return 0;
 	EDITOR_END
 }
 
@@ -542,6 +552,7 @@ static void createMenus (I) {
 	my writeNextSunButton = Editor_addCommand (me, "File", "Write sound selection to Next/Sun file...", 0, menu_cb_WriteNextSun);
 	Editor_addCommand (me, "File", "Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 	my writeNistButton = Editor_addCommand (me, "File", "Write sound selection to NIST file...", 0, menu_cb_WriteNist);
+	my writeFlacButton = Editor_addCommand (me, "File", "Write sound selection to FLAC file...", 0, menu_cb_WriteFlac);
 	Editor_addCommand (me, "File", "Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 	Editor_addCommand (me, "File", "-- close --", 0, NULL);
 
@@ -649,6 +660,7 @@ static void draw (I) {
 	XtSetSensitive (my writeWavButton, selectedSamples != 0);
 	XtSetSensitive (my writeNextSunButton, selectedSamples != 0);
 	XtSetSensitive (my writeNistButton, selectedSamples != 0);
+	XtSetSensitive (my writeFlacButton, selectedSamples != 0);
 	if (my sound.data) {
 		XtSetSensitive (my cutButton, selectedSamples != 0 && selectedSamples < my sound.data -> nx);
 		XtSetSensitive (my copyButton, selectedSamples != 0);

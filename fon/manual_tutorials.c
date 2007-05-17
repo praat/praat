@@ -23,15 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070516)
+MAN_BEGIN ("What's new?", "ppgb", 20070517)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.02# (May 17, 2007)")
+LIST_ITEM ("\\bu Sound files: writing FLAC audio files (implemented by Erez Volk).")
 NORMAL ("##4.6.01# (May 16, 2007)")
 LIST_ITEM ("\\bu Removed a bug that caused downsampling (and therefore formant measurements) "
 	"to be incorrect for stereo sounds.")
 NORMAL ("##4.6# (May 12, 2007)")
 NORMAL ("##4.5.26# (May 8, 2007)")
-LIST_ITEM ("\\bu Sound files: FLAC support (implemented by Erez Volk).")
+LIST_ITEM ("\\bu Sound files: reading FLAC audio files (implemented by Erez Volk).")
 NORMAL ("##4.5.25# (May 7, 2007)")
 LIST_ITEM ("\\bu Table: Rows to columns...")
 LIST_ITEM ("\\bu Table: Collapse rows... (renamed from Pool).")

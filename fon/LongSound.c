@@ -28,11 +28,13 @@
  * pb 2007/01/01 compatible with stereo sounds
  * pb 2007/01/27 more compatible with stereo sounds
  * pb 2007/03/17 domain quantity
- * Erez Volk 2007/03 FLAC support
+ * Erez Volk 2007/03 FLAC reading
+ * Erez Volk 2007/05/14 FLAC writing
  */
 
 #include "LongSound.h"
 #include "Preferences.h"
+#include "flac_FLAC_stream_decoder.h"
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
@@ -295,7 +297,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 		long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
 		LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 		offset += numberOfSamplesToCopy;
-		Melder_writeShortToAudio (file -> filePointer, numberOfChannels_override ? numberOfChannels_override : my numberOfChannels, Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
+		MelderFile_writeShortToAudio (file, numberOfChannels_override ? numberOfChannels_override : my numberOfChannels, Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
 	}
 end:
 	/*
@@ -314,7 +316,7 @@ int LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double tm
 	if (n < 1) return Melder_error ("Less than 1 sample selected.");
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer)
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, my sampleRate, n, my numberOfChannels);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, n, my numberOfChannels);
 	writePartToOpenFile16 (me, audioFileType, imin, n, file, 0);
 	MelderFile_close (file);
 	iferror return Melder_error ("Sound file not written.");
@@ -326,7 +328,7 @@ int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int ch
 		return Melder_error ("This audio file is not a stereo file. It does not have a %s channel.", channel == 0 ? "left" : "right");
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer)
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, my sampleRate, my nx, 1);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, my nx, 1);
 	writePartToOpenFile16 (me, audioFileType, 1, my nx, file, channel == 0 ? -1 : -2);
 	MelderFile_close (file);
 	iferror return Melder_error ("Sound file not written.");
@@ -584,13 +586,13 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 	 */
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer)
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, sampleRate, n, numberOfChannels);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, n, numberOfChannels);
 	for (i = 1; i <= my size; i ++) {
 		data = my item [i];
 		if (data -> methods == (Data_Table) classSound) {
 			Sound sound = (Sound) data;
 			if (file -> filePointer)
-				Melder_writeFloatToAudio (file -> filePointer, Melder_defaultAudioFileEncoding16 (audioFileType),
+				MelderFile_writeFloatToAudio (file, Melder_defaultAudioFileEncoding16 (audioFileType),
 					& sound -> z [1] [1], sound -> nx,
 					sound -> ny > 1 ? & sound -> z [2] [1] : NULL, sound -> ny > 1 ? sound -> nx : 0, TRUE);
 		} else {

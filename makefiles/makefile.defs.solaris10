@@ -1,0 +1,12 @@
+# File: makefile.defs.solaris10
+
+# System: Solaris 10
+# Erez Volk, May 13, 2007
+
+CC = gcc -std=gnu99 -DUNIX -Dsun -I /usr/X11R6/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
+
+LIBS = -L /usr/X11R6/lib -lXm -lXt -lX11 -lm -lsocket -lnsl
+
+RANLIB = ls
+ICON =
+MAIN_ICON =

@@ -28,6 +28,7 @@
  * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
  * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
  * pb 2007/01/07 PortAudio
+ * Erez Volk
  */
 
 #include <errno.h>
@@ -629,7 +630,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			numberOfSamples = floor (sampleRate * duration + 0.5);
 			Melder_casual ("Recording with mulaw encoding at sampling frequency %f.", sampleRate);
 			forget (me);
-			me = Sound_createSimple (numberOfSamples / sampleRate, sampleRate);
+			me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 		}
 		AUDIO_INITINFO (& info);
 		info. record. pause = 0;   /* Resume. */

@@ -1998,6 +1998,10 @@ FORM_WRITE (LongSounds_writeToStereoNistFile, "LongSound: Write to NIST file", 0
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_NIST)) return 0;
 END
 	   
+FORM_WRITE (LongSounds_writeToStereoFlacFile, "LongSound: Write to FLAC file", 0, "flac")
+	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_FLAC)) return 0;
+END
+	   
 /******************* Matrix **************************************************/
 
 FORM (Matrix_drawAsSquares,"Matrix: Draw as squares", "Matrix: Draw as squares...")
@@ -4661,6 +4665,8 @@ void praat_uvafon_David_init (void)
 		"Write to stereo WAV file...", 1, DO_LongSounds_writeToStereoNextSunFile);
 	praat_addAction1 (classLongSound, 2, "Write to stereo NIST file...", 
 		"Write to stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, "Write to stereo FLAC file...", 
+		"Write to stereo NIST file...", 1, DO_LongSounds_writeToStereoFlacFile);
 
 	praat_addAction1 (classMatrix, 0, "Scatter plot...", "Paint cells...", 1,
 		DO_Matrix_scatterPlot);

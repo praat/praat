@@ -24,6 +24,13 @@ procedure do
 	filedelete test2.aiff
 	assert energyInAir2 = energyInAir
 
+	Write to FLAC file... test2.flac
+	Remove
+	Read from file... test2.flac
+	energyInAir2 = Get energy in air
+	filedelete test2.flac
+	assert energyInAir2 = energyInAir
+
 	Write to binary file... test2.bin
 	Remove
 	Read from file... test2.bin
@@ -56,7 +63,10 @@ procedure do
 		stopwatch
 		Write to binary file... kanweg.Sound
 		t3 = stopwatch
-		printline 't1:2' 't2:2' 't3:2'
+		stopwatch
+		Write to FLAC file... kanweg.Sound
+		t4 = stopwatch
+		printline 't1:2' 't2:2' 't3:2' 't4:2'
 	endfor
 	filedelete kanweg.Sound
 

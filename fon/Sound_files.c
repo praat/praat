@@ -589,8 +589,8 @@ end:
 int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer) {
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
-		Melder_writeFloatToAudio (file -> filePointer, Melder_defaultAudioFileEncoding16 (audioFileType),
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
+		MelderFile_writeFloatToAudio (file, Melder_defaultAudioFileEncoding16 (audioFileType),
 			& my z [1] [1], my nx, my ny > 1 ? & my z [2] [1] : NULL, my ny > 1 ? my nx : 0, TRUE);
 	}
 	MelderFile_close (file);
@@ -684,12 +684,14 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 #endif
 
 int Sound_writeToKayFile (Sound me, MelderFile file) {
+	FILE *previous = file -> filePointer;
 	FILE *f = Melder_fopen (file, "wb");
 	long i;
 	time_t today = time (NULL);
 	char date [100];
 	int maximum = 0;
 	if (! f) return 0;
+	file -> filePointer = f;
 	MelderFile_setMacTypeAndCreator (file, 'BINA', 'PpgB');
 
 	/* Form Chunk: contains all other chunks. */
@@ -713,22 +715,26 @@ int Sound_writeToKayFile (Sound me, MelderFile file) {
 	fwrite ("SDA_", 1, 4, f);
 	binputi4LE (my nx * 2, f);   /* Chunk size. */
 
-	Melder_writeFloatToAudio (f, Melder_LINEAR_16_LITTLE_ENDIAN,
+	MelderFile_writeFloatToAudio (file, Melder_LINEAR_16_LITTLE_ENDIAN,
 		& my z [1] [1], my nx, NULL, 0, TRUE); cherror
 end:
 	Melder_fclose (file, f);
+	file -> filePointer = previous;
 	iferror return 0;
 	return 1;
 }
 
 int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
+	FILE *previous = file -> filePointer;
 	FILE *f = Melder_fopen (file, "wb");
 	if (! f) return 0;
+	file -> filePointer = f;
 	MelderFile_setMacTypeAndCreator (file, 'BINA', 'PpgB');
-	Melder_writeFloatToAudio (f, encoding,
+	MelderFile_writeFloatToAudio (file, encoding,
 		& my z [1] [1], my nx, my ny > 1 ? & my z [2] [1] : NULL, my ny > 1 ? my nx : 0, TRUE); cherror
 end:
 	Melder_fclose (file, f);
+	file -> filePointer = previous;
 	iferror return 0;
 	return 1;
 }

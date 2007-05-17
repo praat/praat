@@ -25,7 +25,9 @@
  * pb 2004/11/15 fast reading of 16-bit audio files
  * pb 2006/12/13 32-bit IEEE float audio files
  * pb 2007/01/24 better error message for DVI ADPCM
- * Erez Volk 2007/03 FLAC support
+ * Erez Volk 2007/03 FLAC reading
+ * Erez Volk 2007/05/14 FLAC writing
+ * pb 2007/05/17 corrected stereo FLAC writing
  */
 
 #include "melder.h"
@@ -33,6 +35,7 @@
 #include "math.h"
 #include "flac_FLAC_metadata.h"
 #include "flac_FLAC_stream_decoder.h"
+#include "flac_FLAC_stream_encoder.h"
 #if defined (macintosh)
 	#include <Resources.h>
 #endif
@@ -49,7 +52,28 @@
 #define WAVE_FORMAT_MULAW  0x0007
 #define WAVE_FORMAT_DVI_ADPCM 0x0011
 
-int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
+static int MelderFile_createFlacFile (MelderFile file, long sampleRate, long numberOfSamples, int numberOfChannels) {
+	FLAC__StreamEncoder *encoder;
+
+	if ((encoder = FLAC__stream_encoder_new ()) == NULL)
+		return Melder_error ("Error creating FLAC stream encoder");
+	FLAC__stream_encoder_set_bits_per_sample (encoder, 16);
+	FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
+	FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
+	FLAC__stream_encoder_set_total_samples_estimate (encoder, numberOfSamples);
+
+	if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
+		FLAC__stream_encoder_delete (encoder);
+		return Melder_error ("Error creating FLAC stream encoder");
+	}
+
+	file -> flacEncoder = encoder;
+	file -> flacMagic = Melder_FLAC_MAGIC;
+	return 1;
+}
+
+int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
+	FILE *f = file -> filePointer;
 	switch (audioFileType) {
 		case Melder_AIFF: {
 			long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
@@ -150,7 +174,7 @@ int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, 
 			return Melder_error ("Cannot yet write Sound Designer II files.");
 		} break;
 		case Melder_FLAC: {
-			return Melder_error ("Cannot yet write FLAC files.");
+			return MelderFile_createFlacFile (file, sampleRate, numberOfSamples, numberOfChannels);
 		} break;
 		default: return Melder_error ("Unknown audio file type %d.", audioFileType);
 	}
@@ -174,11 +198,11 @@ int Melder_defaultAudioFileEncoding16 (int audioFileType) { return defaultAudioF
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels) {
 	MelderFile_create (file, macAudioFileType [audioFileType], "PpgB", winAudioFileExtension [audioFileType]);
 	if (file -> filePointer) {
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
-		Melder_writeShortToAudio (file -> filePointer, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
+		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
 	}
 	MelderFile_close (file);
-	iferror return Melder_error ("(Melder_writeAudioFile16:) File not written.");
+	iferror return Melder_error ("(MelderFile_writeAudioFile16:) File not written.");
 	return 1;
 }
 
@@ -668,10 +692,9 @@ static FLAC__StreamDecoderReadStatus Melder_DecodeFlac_read (const FLAC__StreamD
 	*bytes = fread (buffer, sizeof (FLAC__byte), *bytes, c -> file);
 	if (ferror (c -> file))
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
-	else if (*bytes == 0)
+	if (*bytes == 0)
 		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-	else
-		return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+	return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
 
 static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const buffer[], void *client_data)
@@ -696,9 +719,8 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 	for (i = 0; i < c -> numberOfChannels; ++ i) {
 		input = buffer [i];
 		output = c -> channels [i];
-		for (j = 0; j < count; ++ j) {
-			output [j] = (long) input [j] * multiplier;
-		}
+		for (j = 0; j < count; ++ j)
+			output [j] = ((long) input [j]) * multiplier;
 		c -> channels [i] += count;
 	}
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
@@ -721,7 +743,7 @@ static int Melder_readFlacFile (FILE *f, int numberOfChannels, float *leftBuffer
 	c.channels [1] = rightBuffer + 1;
 	c.numberOfSamples = numberOfSamples;
 
-	if ((decoder = FLAC__stream_decoder_new()) == NULL)
+	if ((decoder = FLAC__stream_decoder_new ()) == NULL)
 		goto end;
 	if (FLAC__stream_decoder_init_stream (decoder,
 				Melder_DecodeFlac_read,
@@ -1045,7 +1067,8 @@ end:
 	return 1;
 }
 
-int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples) {
+int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples) {
+	FILE *f = file -> filePointer;
 	long n = numberOfSamples * numberOfChannels, start = 0, step = 1, i;
 	if (numberOfChannels < 0) {
 		n = numberOfSamples * 2;   /* stereo */
@@ -1053,6 +1076,7 @@ int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const
 		if (numberOfChannels == -2) {
 			start = 1;   /* Right channel. */
 		}
+		numberOfChannels = 1;
 	}
 	switch (encoding) {
 		case Melder_LINEAR_8_SIGNED:
@@ -1085,15 +1109,27 @@ int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const
 		break; case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 			for (i = start; i < n; i += step)
 				binputr4LE (buffer [i] / 32768.0, f);
+		break; case Melder_FLAC_COMPRESSION:
+			if (! file -> flacEncoder)
+				return Melder_error ("(MelderFile_writeShortToAudio:) FLAC encoder not initialized.");
+			for (i = start; i < n; i += step * numberOfChannels) {
+				FLAC__int32 samples [2];
+				samples [0] = buffer [i];
+				if (numberOfChannels > 1)
+					samples [1] = buffer [i + 1];
+				if (! FLAC__stream_encoder_process_interleaved (file -> flacEncoder, samples, 1))
+					return Melder_error ("(MelderFile_writeShortToAudio:) Error encoding FLAC stream.");
+			}
 		break; case Melder_MULAW: case Melder_ALAW: default:
-			return Melder_error ("(Melder_writeShortToAudio:) Unknown encoding %d.", encoding);
+			return Melder_error ("(MelderFile_writeShortToAudio:) Unknown encoding %d.", encoding);
 	}
-	if (feof (f)) return Melder_error ("(Melder_writeShortToAudio:) Early end of audio file.");
-	if (ferror (f)) return Melder_error ("(Melder_writeShortToAudio:) Error writing audio samples to file.");
+	if (feof (f)) return Melder_error ("(MelderFile_writeShortToAudio:) Early end of audio file.");
+	if (ferror (f)) return Melder_error ("(MelderFile_writeShortToAudio:) Error writing audio samples to file.");
 	return 1;
 }
 
-int Melder_writeFloatToAudio (FILE *f, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped) {
+int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped) {
+	FILE *f = file -> filePointer;
 	long n = nleft > nright ? nleft : nright, i, nclipped = 0;
 	switch (encoding) {
 		case Melder_LINEAR_8_SIGNED:
@@ -1308,13 +1344,40 @@ int Melder_writeFloatToAudio (FILE *f, int encoding, const float *left, long nle
 				}
 			}
 			break;
+		case Melder_FLAC_COMPRESSION:
+			if (! file -> flacEncoder)
+				return Melder_error ("(MelderFile_writeFloatToAudio:) FLAC encoder not initialized.");
+			for (i = 0; i < n; i ++) {
+				FLAC__int32 samples [2];
+				if (i < nleft) {
+					long value = floor (left [i] * 32768 + 0.5);
+					if (value < -32768) { value = -32768; nclipped ++; }
+					if (value > 32767) { value = 32767; nclipped ++; }
+					samples [0] = (FLAC__int32) value;
+				}
+				else
+					samples [0] = 0;
+				if (right) {
+					if (i < nright) {
+						long value = floor (right [i] * 32768 + 0.5);
+						if (value < -32768) { value = -32768; nclipped ++; }
+						if (value > 32767) { value = 32767; nclipped ++; }
+						samples [1] = (FLAC__int32) value;
+					}
+					else
+						samples [1] = 0;
+				}
+				if (! FLAC__stream_encoder_process_interleaved (file -> flacEncoder, samples, 1))
+					return Melder_error ("(MelderFile_writeFloatToAudio:) Error encoding FLAC stream.");
+			}
+			break;
 		case Melder_MULAW:
 		case Melder_ALAW:
 		default:
-			return Melder_error ("(Melder_writeFloatToAudio:) Unknown format.");
+			return Melder_error ("(MelderFile_writeFloatToAudio:) Unknown format.");
 	}
 	if (nclipped > 0 && warnIfClipped)
-		Melder_warning ("(Melder_writeFloatToAudio:) %ld out of %ld samples have been clipped.\n"
+		Melder_warning ("(MelderFile_writeFloatToAudio:) %ld out of %ld samples have been clipped.\n"
 			"Advice: you could scale the amplitudes or write to a binary file.", nclipped, n);
 	return 1;
 }

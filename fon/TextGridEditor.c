@@ -28,6 +28,7 @@
  * pb 2005/09/23 interface update
  * pb 2006/12/18 better info
  * pb 2007/03/23 new Editor API
+ * Erez Volk & pb 2007/05/17 FLAC support
  */
 
 #include "TextGridEditor.h"
@@ -44,7 +45,7 @@
 	long selectedTier; \
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
 	Widget publishButton, publishPreserveButton; \
-	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton; \
+	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton, writeFlacButton; \
 	char *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
 #define TextGridEditor_methods FunctionEditor_methods
@@ -311,6 +312,16 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 			sprintf (defaultName, "%s.nist", my longSound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_NIST)) return 0;
+	EDITOR_END
+}
+
+static int menu_cb_WriteFlac (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORM_WRITE ("Write selection to FLAC file", 0)
+		if (my longSound.data)
+			sprintf (defaultName, "%s.flac", my longSound.data -> name);
+	EDITOR_DO_WRITE
+		if (! do_writeAny (me, file, Melder_FLAC)) return 0;
 	EDITOR_END
 }
 
@@ -1184,6 +1195,8 @@ static void createMenus (I) {
 		Editor_addCommand (me, "File", "Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 		my writeNistButton = Editor_addCommand (me, "File", "Write sound selection to NIST file...", 0, menu_cb_WriteNist);
 		Editor_addCommand (me, "File", "Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
+		my writeFlacButton = Editor_addCommand (me, "File", "Write sound selection to FLAC file...", 0, menu_cb_WriteFlac);
+		Editor_addCommand (me, "File", "Write selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 	}
 	Editor_addCommand (me, "File", "-- close --", 0, NULL);
 
@@ -1655,6 +1668,7 @@ static void draw (I) {
 		XtSetSensitive (my writeAifcButton, selectedSamples != 0);
 		XtSetSensitive (my writeNextSunButton, selectedSamples != 0);
 		XtSetSensitive (my writeNistButton, selectedSamples != 0);
+		XtSetSensitive (my writeFlacButton, selectedSamples != 0);
 	}
 }
 

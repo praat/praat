@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
-	pb 2006/12/19
+ * pb 2007/05/17
  */
 
 #include <stdio.h>
@@ -239,11 +239,17 @@ double MelderString_allocationSize (void);
 	#define Melder_DIRECTORY_SEPARATOR  '/'
 #endif
 
+struct FLAC__StreamDecoder;
+struct FLAC__StreamEncoder;
+#define Melder_FLAC_MAGIC 0x464C4143
+
 typedef struct {
 	char path [260];
 	wchar_t wpath [260];
 	FILE *filePointer;
 	int openForWriting;
+	struct FLAC__StreamEncoder *flacEncoder;
+	int flacMagic;
 } structMelderFile, *MelderFile;
 typedef struct {
 	char path [260];
@@ -694,7 +700,7 @@ char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", 
 #define Melder_IEEE_FLOAT_32_LITTLE_ENDIAN  14
 #define Melder_FLAC_COMPRESSION 15
 int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
-int Melder_writeAudioFileHeader16 (FILE *f, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
+int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
@@ -714,8 +720,8 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-int Melder_writeFloatToAudio (FILE *f, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped);
-int Melder_writeShortToAudio (FILE *f, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
+int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped);
+int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
 
 void Melder_audioTrigger (void);
 

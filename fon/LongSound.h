@@ -29,12 +29,12 @@
 #ifndef _Collection_h_
 	#include "Collection.h"
 #endif
-#ifndef FLAC__STREAM_DECODER_H
-	#include "flac_FLAC_stream_decoder.h"
-#endif
 
 #define FLAC_MODE_READ_FLOAT 0
 #define FLAC_MODE_READ_SHORT 1
+
+struct FLAC__StreamDecoder;
+struct FLAC__StreamEncoder;
 
 #define LongSound_members Sampled_members \
 	structMelderFile file; \
@@ -45,7 +45,7 @@
 	double bufferLength; \
 	short *buffer; \
 	long imin, imax, nmax; \
-	FLAC__StreamDecoder *flacDecoder; \
+	struct FLAC__StreamDecoder *flacDecoder; \
 	int flacMode; \
 	long flacSamplesLeft; \
 	float *flacFloats [2]; \

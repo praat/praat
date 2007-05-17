@@ -57,6 +57,12 @@
 #endif
 #include <sys/stat.h> /* for stat(), maybe chmod() */
 
+/* Erez Volk 2007-05-15: Avoid the mess above */
+#if defined __GLIBC__ && !defined __USE_LARGEFILE
+#   define fseeko fseek
+#   define ftello ftell
+#endif /* GLIBC without f(seek|tell)o */
+
 #include "flac_private_metadata.h"
 
 #include "flac_FLAC_assert.h"
