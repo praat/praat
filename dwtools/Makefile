@@ -66,7 +66,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TextGrid_extensions.o \
 	praat_MDS_init.o praat_David_init.o
 
-$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h
 
 
 libdwtools.a: $(OBJECTS)

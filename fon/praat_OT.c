@@ -784,6 +784,17 @@ DO
 	}
 END
 
+FORM (OTMulti_setDecisionStrategy, "OTMulti: Set decision strategy", 0)
+	ENUM ("Decision strategy", OTGrammar_DECISION_STRATEGY, 0)
+	OK
+OTMulti me = ONLY_OBJECT;
+SET_INTEGER ("Decision strategy", my decisionStrategy);
+DO
+	OTMulti me = ONLY_OBJECT;
+	my decisionStrategy = GET_INTEGER ("Decision strategy");
+	praat_dataChanged (ONLY_OBJECT);
+END
+
 FORM (OTMulti_setRanking, "OTMulti: Set ranking", 0)
 	NATURAL ("Constraint", "1")
 	REAL ("Ranking", "100.0")
@@ -926,6 +937,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTMulti, 0, "Set ranking...", 0, 0, DO_OTMulti_setRanking);
 	praat_addAction1 (classOTMulti, 0, "Reset all rankings...", 0, 0, DO_OTMulti_resetAllRankings);
 	praat_addAction1 (classOTMulti, 0, "Learn one...", 0, 0, DO_OTMulti_learnOne);
+	praat_addAction1 (classOTMulti, 0, "Modify behaviour -", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 1, "Set decision strategy...", 0, 1, DO_OTMulti_setDecisionStrategy);
 	praat_addAction1 (classOTMulti, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 0, "Remove constraint...", 0, 1, DO_OTMulti_removeConstraint);
 

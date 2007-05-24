@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/06/11
+ * pb 2007/05/19
  */
 
 #define ooSTRUCT OTConstraint
@@ -46,6 +46,9 @@ oo_END_STRUCT (OTCandidate)
 #define ooSTRUCT OTMulti
 oo_DEFINE_CLASS (OTMulti, Data)
 
+	oo_FROM (1)
+		oo_ENUM (OTGrammar_DECISION_STRATEGY, decisionStrategy)
+	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTConstraint, constraints, my numberOfConstraints)
 	oo_LONG_VECTOR (index, my numberOfConstraints)

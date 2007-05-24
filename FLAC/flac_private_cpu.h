@@ -76,7 +76,7 @@ typedef struct {
 	FLAC__CPUInfo_Type type;
 	union {
 		FLAC__CPUInfo_IA32 ia32;
-		FLAC__CPUInfo_PPC ppc;
+		FLAC__CPUInfo_PPC ppc_;
 	} data;
 } FLAC__CPUInfo;
 

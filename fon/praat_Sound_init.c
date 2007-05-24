@@ -574,7 +574,7 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	(void) closure;
 	if (! praat_new (publish, NULL)) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
-	if (Thing_member (publish, classSpectrum) && strequ (Thing_getName (publish), "slice")) {
+	if (Thing_member (publish, classSpectrum)) {
 		int IOBJECT;
 		WHERE (SELECTED) {
 			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);

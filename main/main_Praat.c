@@ -25,7 +25,7 @@
 #include "praat_version.h"
 
 static void logo (Graphics g) {
-	Graphics_setWindow (g, 0, 1, -0.14, 0.80);
+	Graphics_setWindow (g, 0, 1, -0.20, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (g, Graphics_TIMES);
 	Graphics_setFontSize (g, 45);
@@ -53,10 +53,11 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.04, "PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
 	Graphics_text (g, 0.5, -0.02, "GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
 	Graphics_text (g, 0.5, -0.08, "PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");
+	Graphics_text (g, 0.5, -0.14, "Free Lossless Audio Codec:  \\co 2000-2007 Josh Coalson & Erez Volk");
 }
 
 int main (int argc, char *argv []) {
-	praat_setLogo (130, 130*0.70, logo);
+	praat_setLogo (130, 100, logo);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
 	praat_run ();

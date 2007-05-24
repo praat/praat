@@ -597,6 +597,7 @@ static void motif_error (wchar_t *messageW1) {
 static void motif_fatal (char *message) {
 	MessageBox (NULL, message, "Fatal error", MB_OK);
 }
+/*
 static void motif_error (wchar_t *messageW) {
 	static char messageA1 [2000+1], messageA2 [2000+1];
 	int messageLength = wcslen (messageW);
@@ -606,14 +607,13 @@ static void motif_error (wchar_t *messageW) {
 	Longchar_nativize (messageA1, messageA2, true);
 	MessageBox (NULL, messageA2, "Message", MB_OK);
 }
-/*
-static void motif_errorW (wchar_t *messageW) {
+*/
+static void motif_error (wchar_t *messageW) {
 	static wchar_t messageW2 [2000+1];
 	Longchar_nativizeW (messageW, messageW2, true);
 	//wcscpy (messageW2, L"\U00000252abc");   // For testing.
 	MessageBoxW (NULL, messageW2, L"Message", MB_OK);
 }
-*/
 #else
 static void motif_error (wchar_t *messageW) {
 	static Widget dia = NULL;

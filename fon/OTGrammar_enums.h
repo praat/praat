@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/04/30
+ * pb 2007/05/19
  */
 
 enum_begin (OTGrammar_DECISION_STRATEGY, OptimalityTheory)   /* This cannot be called "None" !!! */
@@ -26,6 +26,7 @@ enum_begin (OTGrammar_DECISION_STRATEGY, OptimalityTheory)   /* This cannot be c
 	enum (LinearOT)
 	enum (ExponentialHG)
 	enum (MaximumEntropy)
+	enum (PositiveHG)
 enum_end (OTGrammar_DECISION_STRATEGY)
 
 /* End of file Experiment_enums.h */

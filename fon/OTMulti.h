@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2006 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/05/17
+ * pb 2007/05/19
  */
 
 #ifndef _Data_h_
@@ -34,6 +34,9 @@
 #endif
 #ifndef _Distributions_h_
 	#include "Distributions.h"
+#endif
+#ifndef _OTGrammar_h_
+	#include "OTGrammar.h"
 #endif
 
 #include "OTMulti_def.h"

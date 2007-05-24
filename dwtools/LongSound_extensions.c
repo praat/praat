@@ -244,12 +244,6 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 		goto end;
 	}
 	
-	if (audioFileType == Melder_FLAC)
-	{
-		(void) Melder_error ("%s: Cannot append to FLAC file", proc);
-		goto end;
-	}
-	
 	/*
 		Check whether all the sample rates and channels match.
 	*/

@@ -20,7 +20,7 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	Sound_and_Cepstrum.o Tube.o \
 	praat_LPC_init.o manual_LPC.o
 
-$(OBJECTS): *.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h
+$(OBJECTS): *.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
 
 libLPC.a: $(OBJECTS)
 	touch libLPC.a

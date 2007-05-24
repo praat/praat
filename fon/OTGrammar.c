@@ -323,6 +323,15 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
+			disharmony1 += constraintDisharmony * marks1 [icons];
+			disharmony2 += constraintDisharmony * marks2 [icons];
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
 	} else Melder_fatal ("Unimplemented decision strategy.");
 	return 0;   /* The two total disharmonies are equal. */
 }
@@ -1024,7 +1033,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 	bool multiplyStepByNumberOfViolations =
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy);
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG);
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		int winnerMarks = winner -> marks [icons];

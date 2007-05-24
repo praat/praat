@@ -74,6 +74,9 @@ static void Sound_alawDecode (Sound me) {
 	} *SndResourcePtr, **SndResourceHandle;
 #endif
 #if defined (macintosh) || defined (_WIN32)
+	#if defined (macintosh) && defined (__MWERKS__)
+		#define DONT_INCLUDE_QUICKTIME
+	#endif
 	#if defined (_WIN32)
 		#undef false
 		#undef true

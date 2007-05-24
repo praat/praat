@@ -1,6 +1,6 @@
 /* OTMulti.c
  *
- * Copyright (C) 2005-2006 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2005/06/11 the very beginning of computational bidirectional multi-level OT
  * pb 2006/05/16 guarded against cells with many violations
  * pb 2006/05/17 draw disharmonies above tableau
+ * pb 2007/05/19 decision strategies
  */
 
 #include "OTMulti.h"
@@ -45,6 +46,7 @@ static void classOTMulti_info (I) {
 	for (icand = 1; icand <= my numberOfCandidates; icand ++)
 		for (icons = 1; icons <= my numberOfConstraints; icons ++)
 			numberOfViolations += my candidates [icand]. marks [icons];
+	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
 	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
 	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (my numberOfCandidates));
 	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
@@ -108,6 +110,7 @@ static int readAscii (I, FILE *f) {
 }
 
 class_methods (OTMulti, Data)
+	us -> version = 1;
 	class_method_local (OTMulti, destroy)
 	class_method_local (OTMulti, info)
 	class_method_local (OTMulti, description)
@@ -153,12 +156,51 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 	int *marks1 = my candidates [icand1]. marks;
 	int *marks2 = my candidates [icand2]. marks;
 	long icons;
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-		int numberOfMarks1 = marks1 [my index [icons]];
-		int numberOfMarks2 = marks2 [my index [icons]];
-		if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
-		if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
-	}
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int numberOfMarks1 = marks1 [my index [icons]];
+			int numberOfMarks2 = marks2 [my index [icons]];
+			if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
+			if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
+		}
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy))
+	{
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
+			disharmony2 += my constraints [icons]. disharmony * marks2 [icons];
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			if (my constraints [icons]. disharmony > 0.0) {
+				disharmony1 += my constraints [icons]. disharmony * marks1 [icons];
+				disharmony2 += my constraints [icons]. disharmony * marks2 [icons];
+			}
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
+			disharmony2 += exp (my constraints [icons]. disharmony) * marks2 [icons];
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG)) {
+		double disharmony1 = 0.0, disharmony2 = 0.0;
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
+			disharmony1 += constraintDisharmony * marks1 [icons];
+			disharmony2 += constraintDisharmony * marks2 [icons];
+		}
+		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
+		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
+	} else Melder_fatal ("Unimplemented decision strategy.");
 	return 0;   /* None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 }
 
@@ -204,14 +246,21 @@ static int OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	long icons;
 	double step = relativePlasticityNoise == 0.0 ? plasticity :
 		NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
+	bool multiplyStepByNumberOfViolations =
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		int winnerMarks = winner -> marks [icons];
 		int loserMarks = loser -> marks [icons];
 		if (loserMarks > winnerMarks) {
-			my constraints [icons]. ranking -= step;
+			my constraints [icons]. ranking -=
+				multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step : step;
 		}
 		if (winnerMarks > loserMarks) {
-			my constraints [icons]. ranking += step;
+			my constraints [icons]. ranking +=
+				multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step : step;
 		}
 	}
 end:
@@ -501,7 +550,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 		/*
 		 * Draw grey cell backgrounds.
 		 */
-		if (! bidirectional) {
+		if (! bidirectional && my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -535,7 +584,9 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char 
 			 * 1. the candidate is not optimal;
 			 * 2. this is the crucial cell, i.e. the cells after it are drawn in grey.
 			 */
-			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal) {
+			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal &&
+			    my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory))
+			{
 				int winnerMarks = my candidates [winner]. marks [index];
 				if (winnerMarks + 1 > 5) {
 					strcat (markString, Melder_integer (winnerMarks + 1));

@@ -319,7 +319,7 @@ NORMAL ("To understand more about this data structure, consult the @OTGrammar cl
 NORMAL ("You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070430)
+MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070523)
 NORMAL ("By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
 NORMAL ("As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
@@ -359,11 +359,13 @@ CODE ("\"pat\" 2")
 CODE1 ("\"pat\" 0 1")
 CODE1 ("\"pa\"  1 0")
 NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
-	"In this tutorial I assume OT's strict ranking throughout, "
-	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint rankings represent addable, "
+	"In this tutorial I mostly assume OT's strict ranking, "
+	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
 	"possibly negative weights), or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
-	"that negative weights do not count), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
-	"between Harmonic Grammar and Linear OT). To do a \"MaxEnt\" (maximum entropy) grammar, just choose $$<HarmonicGrammar>$.")
+	"that negative disharmonies do not count), or with $$<PositiveHG>$ (like Harmonic Grammar, but with the restriction "
+	"that disharmonies below 1.0 have weight 1.0), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
+	"between Harmonic Grammar and Linear OT), or with a $$<MaximumEntropy>$ grammar "
+	"(where the probability that a candidate is chosen is proportional to exp(-disharmony)).")
 MAN_END
 
 MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20021105)
@@ -870,7 +872,7 @@ NORMAL ("So besides learning obligatory rankings like a child does, "
 	"This means that a GLA learner can learn stochastic grammars.")
 MAN_END
 
-MAN_BEGIN ("OT learning 6. Shortcut to grammar learning", "ppgb", 20070430)
+MAN_BEGIN ("OT learning 6. Shortcut to grammar learning", "ppgb", 20070523)
 INTRO ("Once you have mastered the tedious procedures of making Praat learn stochastic grammars, "
 	"as described in the previous chapters of this tutorial, you can try a faster procedure, "
 	"which simply involves selecting an @OTGrammar object together with a @PairDistribution object, "
@@ -908,7 +910,7 @@ DEFINITION ("these four arguments determine the %%learning scheme%, i.e. the num
 	"receive data at a certain plasticity. With the standard values, there will be 100000 data while the plasticity is 1.0 "
 	"(the initial plasticity), 100000 data while the plasticity is 0.1, 100000 data while the plasticity is 0.01, "
 	"and 100000 data while the plasticity is 0.001. If you want learning at a constant plasticity, set the "
-	"%%number of plasticities% to 1. Note that for the decision strategies of HarmonicGrammar and LinearOT "
+	"%%number of plasticities% to 1. Note that for the decision strategies of HarmonicGrammar, LinearOT, PositiveHG or MaximumEntropy "
 	"the learning step for a constraint equals the plasticity multiplied by the difference between the "
 	"numbers of violations of this constraint in the adult output and in the learner's output.")
 TAG ("%%Rel. plasticity spreading% (standard value: 0.1)")
