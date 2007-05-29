@@ -143,7 +143,7 @@ Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *i
 			if (strlen (script) == 0) {
 				cmd -> script = Melder_strdup ("");
 			} else {
-				structMelderFile file;
+				structMelderFile file = { { 0 } };
 				Melder_relativePathToFile (script, & file);
 				cmd -> script = Melder_strdup (Melder_fileToPath (& file));
 			}

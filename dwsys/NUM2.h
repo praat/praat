@@ -90,6 +90,8 @@ char **strs_replace (char **from, long lo, long hi, const char *search,
 
 char *str_replace_literal (char *string, const char *search, 
 	const char *replace, long maximumNumberOfReplaces, long *nmatches);
+wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, 
+	const wchar_t *replace, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
@@ -97,6 +99,8 @@ char *str_replace_literal (char *string, const char *search,
 
 char *str_replace_regexp (char *string, regexp *search_compiled, 
 	const char *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
+wchar_t *str_replace_regexpW (wchar_t *string, regexpW *search_compiled, 
+	const wchar_t *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on 
 	the basis of regular expressions (RE). 

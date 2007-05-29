@@ -72,7 +72,7 @@ static void nameChanged (I) {
 
 static int args_ok (Any dia, I) {
 	iam (ScriptEditor);
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	char *text = XmTextGetString (my textWidget);
 	if (my name) {
 		Melder_pathToFile (my name, & file);
@@ -92,7 +92,7 @@ static int args_ok (Any dia, I) {
 }
 
 static void run (ScriptEditor me, char **text) {
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	int npar;
 	if (my name) {
 		Melder_pathToFile (my name, & file);

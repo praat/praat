@@ -155,7 +155,7 @@ static int readOnePage (ManPages me, FILE *f) {
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
 			 */
-			structMelderFile file;
+			structMelderFile file = { { 0 } };
 			if (link [0] == '\\' && link [1] == 'F' && link [2] == 'I') {
 				/*
 				 * A link to a sound file: see if it exists.
@@ -741,7 +741,6 @@ int ManPages_writeAllToHtmlDir (ManPages me, const char *dirPath) {
 	for (ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = my pages -> item [ipage];
 		char fileName [256], *p, *oldText;
-		structMelderFile file;
 		strcpy (fileName, page -> title);
 		for (p = fileName; *p; p ++) if (! isAllowedFileNameCharacter (*p)) *p = '_';
 		if (fileName [0] == '\0') strcpy (fileName, "_");   /* Otherwise Mac problems and Unix invisibility. */
@@ -750,6 +749,7 @@ int ManPages_writeAllToHtmlDir (ManPages me, const char *dirPath) {
 		memrewind (theCache);
 		writePageAsHtml (me, ipage);
 		memwrite ("", 1, 1, theCache);   /* Closing null byte. */
+		structMelderFile file = { { 0 } };
 		MelderDir_getFile (& dir, fileName, & file);
 		oldText = MelderFile_readText (& file);
 		Melder_clearError ();

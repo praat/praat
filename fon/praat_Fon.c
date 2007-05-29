@@ -3759,7 +3759,7 @@ FORM (Strings_createAsFileList, "Create Strings as file list", "Create Strings a
 	OK
 static int inited;
 if (! inited) {
-	structMelderDir defaultDir;
+	structMelderDir defaultDir = { { 0 } };
 	char *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
 	workingDirectory = Melder_dirToPath (& defaultDir);
@@ -3787,7 +3787,7 @@ FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create
 	OK
 static int inited;
 if (! inited) {
-	structMelderDir defaultDir;
+	structMelderDir defaultDir = { { 0 } };
 	char *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
 	workingDirectory = Melder_dirToPath (& defaultDir);

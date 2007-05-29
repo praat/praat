@@ -1,6 +1,6 @@
 /* melder_error.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/10/02 Melder_flushError: empty "errors" before showing the message
  * pb 2006/11/14 separated from melder.c
  * pb 2006/12/08 turned wchar
+ * pb 2007/05/28 Melder_error1-9
  */
 
 #include "melder.h"
@@ -71,12 +72,86 @@ int Melder_error (const char *format, ...) {
 
 static void appendErrorW (const wchar_t *message) {
 	int length = wcslen (errors), messageLength = wcslen (message);
-	if (length + messageLength > 2000 - 1) return;   /* 1 == length of "\n" */
+	if (length + messageLength > 2000) return;
 	wcscpy (errors + length, message);
-	wcscpy (errors + length + messageLength, L"\n");
+	//wcscpy (errors + length + messageLength, L"\n");
 }
 
-bool Melder_errorW9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+bool Melder_error1 (const wchar_t *s1) {
+	if (s1) appendErrorW (s1);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error2 (const wchar_t *s1, const wchar_t *s2) {
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
 	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
 {
 	if (s1) appendErrorW (s1);
@@ -88,6 +163,7 @@ bool Melder_errorW9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, co
 	if (s7) appendErrorW (s7);
 	if (s8) appendErrorW (s8);
 	if (s9) appendErrorW (s9);
+	appendErrorW (L"\n");
 	return false;
 }
 

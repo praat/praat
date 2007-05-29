@@ -26,46 +26,50 @@
 #include "melder.h"
 #include "NUM.h"
 
-static void defaultInformation (char *message) {
-	if (message) printf ("%s", message);
+static void defaultInformation (wchar_t *message) {
+	if (message) {
+		static MelderStringA messageA = { 0 };
+		MelderStringA_copyW (& messageA, message);
+		printf ("%s", messageA.string);
+	}
 }
 
-static void (*theInformation) (char *) = defaultInformation;
+static void (*theInformation) (wchar_t *) = defaultInformation;
 
-void Melder_setInformationProc (void (*information) (char *)) {
+void Melder_setInformationProc (void (*information) (wchar_t *)) {
 	theInformation = information ? information : defaultInformation;
 }
 
-static MelderStringA theForegroundBuffer, *theInfos = & theForegroundBuffer;
+static MelderStringW theForegroundBuffer, *theInfos = & theForegroundBuffer;
 
 void MelderInfo_open (void) {
-	MelderStringA_empty (theInfos);
+	MelderStringW_empty (theInfos);
 }
 
 void MelderInfo_write1 (const char *s1) {
-	MelderStringA_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s1);
 }
 void MelderInfo_write2 (const char *s1, const char *s2) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
 }
 void MelderInfo_write3 (const char *s1, const char *s2, const char *s3) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
 }
 void MelderInfo_write4 (const char *s1, const char *s2, const char *s3, const char *s4) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
 }
 void MelderInfo_write5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
-	MelderStringA_appendA (theInfos, s5);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
+	MelderStringW_appendA (theInfos, s5);
 }
 void MelderInfo_write6 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6) {
 	MelderInfo_write9 (s1, s2, s3, s4, s5, s6, NULL, NULL, NULL);
@@ -79,46 +83,94 @@ void MelderInfo_write8 (const char *s1, const char *s2, const char *s3, const ch
 void MelderInfo_write9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5,
 	const char *s6, const char *s7, const char *s8, const char *s9)
 {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
-	MelderStringA_appendA (theInfos, s5);
-	MelderStringA_appendA (theInfos, s6);
-	MelderStringA_appendA (theInfos, s7);
-	MelderStringA_appendA (theInfos, s8);
-	MelderStringA_appendA (theInfos, s9);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
+	MelderStringW_appendA (theInfos, s5);
+	MelderStringW_appendA (theInfos, s6);
+	MelderStringW_appendA (theInfos, s7);
+	MelderStringW_appendA (theInfos, s8);
+	MelderStringW_appendA (theInfos, s9);
+}
+
+void MelderInfo_write1W (const wchar_t *s1) {
+	MelderStringW_appendW (theInfos, s1);
+}
+void MelderInfo_write2W (const wchar_t *s1, const wchar_t *s2) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+}
+void MelderInfo_write3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+}
+void MelderInfo_write4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+}
+void MelderInfo_write5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+	MelderStringW_appendW (theInfos, s5);
+}
+void MelderInfo_write6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	MelderInfo_write9W (s1, s2, s3, s4, s5, s6, NULL, NULL, NULL);
+}
+void MelderInfo_write7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	MelderInfo_write9W (s1, s2, s3, s4, s5, s6, s7, NULL, NULL);
+}
+void MelderInfo_write8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	MelderInfo_write9W (s1, s2, s3, s4, s5, s6, s7, s8, NULL);
+}
+void MelderInfo_write9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
+{
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+	MelderStringW_appendW (theInfos, s5);
+	MelderStringW_appendW (theInfos, s6);
+	MelderStringW_appendW (theInfos, s7);
+	MelderStringW_appendW (theInfos, s8);
+	MelderStringW_appendW (theInfos, s9);
 }
 
 void MelderInfo_writeLine1 (const char *s1) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 void MelderInfo_writeLine2 (const char *s1, const char *s2) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 void MelderInfo_writeLine3 (const char *s1, const char *s2, const char *s3) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 void MelderInfo_writeLine4 (const char *s1, const char *s2, const char *s3, const char *s4) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 void MelderInfo_writeLine5 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5) {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
-	MelderStringA_appendA (theInfos, s5);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
+	MelderStringW_appendA (theInfos, s5);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 void MelderInfo_writeLine6 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6) {
 	MelderInfo_writeLine9 (s1, s2, s3, s4, s5, s6, NULL, NULL, NULL);
@@ -132,16 +184,70 @@ void MelderInfo_writeLine8 (const char *s1, const char *s2, const char *s3, cons
 void MelderInfo_writeLine9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5,
 	const char *s6, const char *s7, const char *s8, const char *s9)
 {
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
-	MelderStringA_appendA (theInfos, s3);
-	MelderStringA_appendA (theInfos, s4);
-	MelderStringA_appendA (theInfos, s5);
-	MelderStringA_appendA (theInfos, s6);
-	MelderStringA_appendA (theInfos, s7);
-	MelderStringA_appendA (theInfos, s8);
-	MelderStringA_appendA (theInfos, s9);
-	MelderStringA_appendCharacter (theInfos, '\n');
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
+	MelderStringW_appendA (theInfos, s3);
+	MelderStringW_appendA (theInfos, s4);
+	MelderStringW_appendA (theInfos, s5);
+	MelderStringW_appendA (theInfos, s6);
+	MelderStringW_appendA (theInfos, s7);
+	MelderStringW_appendA (theInfos, s8);
+	MelderStringW_appendA (theInfos, s9);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+
+void MelderInfo_writeLine1W (const wchar_t *s1) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+void MelderInfo_writeLine2W (const wchar_t *s1, const wchar_t *s2) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+void MelderInfo_writeLine3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+void MelderInfo_writeLine4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+void MelderInfo_writeLine5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+	MelderStringW_appendW (theInfos, s5);
+	MelderStringW_appendCharacter (theInfos, '\n');
+}
+void MelderInfo_writeLine6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	MelderInfo_writeLine9W (s1, s2, s3, s4, s5, s6, NULL, NULL, NULL);
+}
+void MelderInfo_writeLine7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	MelderInfo_writeLine9W (s1, s2, s3, s4, s5, s6, s7, NULL, NULL);
+}
+void MelderInfo_writeLine8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	MelderInfo_writeLine9W (s1, s2, s3, s4, s5, s6, s7, s8, NULL);
+}
+void MelderInfo_writeLine9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
+{
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderStringW_appendW (theInfos, s3);
+	MelderStringW_appendW (theInfos, s4);
+	MelderStringW_appendW (theInfos, s5);
+	MelderStringW_appendW (theInfos, s6);
+	MelderStringW_appendW (theInfos, s7);
+	MelderStringW_appendW (theInfos, s8);
+	MelderStringW_appendW (theInfos, s9);
+	MelderStringW_appendCharacter (theInfos, '\n');
 }
 
 void MelderInfo_close (void) {
@@ -153,9 +259,9 @@ void MelderInfo_close (void) {
 			because scripts expect returned strings without appended newlines!
 		*/
 		if (theInfos -> length == 0 || theInfos -> string [theInfos -> length - 1] != '\n') {   // Only if no newline there yet.
-			MelderStringA_appendCharacter (theInfos, '\n');
+			MelderStringW_appendCharacter (theInfos, '\n');
 		}
-		theInformation (theInfos -> string ? theInfos -> string : "");
+		theInformation (theInfos -> string ? theInfos -> string : L"");
 	}
 }
 
@@ -170,19 +276,19 @@ void Melder_informationReal (double value, const char *units) {
 	MelderInfo_close ();
 }
 
-void Melder_divertInfo (MelderStringA *buffer) {
+void Melder_divertInfo (MelderStringW *buffer) {
 	theInfos = buffer == NULL ? & theForegroundBuffer : buffer;
 }
 
 void Melder_clearInfo (void) {
 	if (theInfos == & theForegroundBuffer) {
-		MelderStringA_empty (theInfos);
-		theInformation ("");
+		MelderStringW_empty (theInfos);
+		theInformation (L"");
 	}
 }
 
-char * Melder_getInfo (void) {
-	return theInfos -> string ? theInfos -> string : "";
+wchar_t * Melder_getInfo (void) {
+	return theInfos -> string ? theInfos -> string : L"";
 }
 
 void Melder_print (const char *s) {
@@ -190,21 +296,21 @@ void Melder_print (const char *s) {
 	if (theInformation == defaultInformation) {
 		printf ("%s", s);   // Do not print the previous lines again.
 	} else {
-		MelderStringA_appendA (theInfos, s);
+		MelderStringW_appendA (theInfos, s);
 		theInformation (theInfos -> string);
 	}
 }
 
 void Melder_information1 (const char *s1) {
-	MelderStringA_empty (theInfos);
-	MelderStringA_appendA (theInfos, s1);
+	MelderStringW_empty (theInfos);
+	MelderStringW_appendA (theInfos, s1);
 	MelderInfo_close ();
 }
 
 void Melder_information2 (const char *s1, const char *s2) {
-	MelderStringA_empty (theInfos);
-	MelderStringA_appendA (theInfos, s1);
-	MelderStringA_appendA (theInfos, s2);
+	MelderStringW_empty (theInfos);
+	MelderStringW_appendA (theInfos, s1);
+	MelderStringW_appendA (theInfos, s2);
 	MelderInfo_close ();
 }
 
@@ -235,16 +341,69 @@ void Melder_information8 (const char *s1, const char *s2, const char *s3, const 
 void Melder_information9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5,
 	const char *s6, const char *s7, const char *s8, const char *s9)
 {
-	MelderStringA_empty (theInfos);
-	if (s1) MelderStringA_appendA (theInfos, s1);   // Checking for a null s1 is an optimization.
-	if (s2) MelderStringA_appendA (theInfos, s2);
-	if (s3) MelderStringA_appendA (theInfos, s3);
-	if (s4) MelderStringA_appendA (theInfos, s4);
-	if (s5) MelderStringA_appendA (theInfos, s5);
-	if (s6) MelderStringA_appendA (theInfos, s6);
-	if (s7) MelderStringA_appendA (theInfos, s7);
-	if (s8) MelderStringA_appendA (theInfos, s8);
-	if (s9) MelderStringA_appendA (theInfos, s9);
+	MelderStringW_empty (theInfos);
+	if (s1) MelderStringW_appendA (theInfos, s1);   // Checking for a null s1 is an optimization.
+	if (s2) MelderStringW_appendA (theInfos, s2);
+	if (s3) MelderStringW_appendA (theInfos, s3);
+	if (s4) MelderStringW_appendA (theInfos, s4);
+	if (s5) MelderStringW_appendA (theInfos, s5);
+	if (s6) MelderStringW_appendA (theInfos, s6);
+	if (s7) MelderStringW_appendA (theInfos, s7);
+	if (s8) MelderStringW_appendA (theInfos, s8);
+	if (s9) MelderStringW_appendA (theInfos, s9);
+	MelderInfo_close ();
+}
+
+void Melder_information1W (const wchar_t *s1) {
+	MelderStringW_empty (theInfos);
+	MelderStringW_appendW (theInfos, s1);
+	MelderInfo_close ();
+}
+
+void Melder_information2W (const wchar_t *s1, const wchar_t *s2) {
+	MelderStringW_empty (theInfos);
+	MelderStringW_appendW (theInfos, s1);
+	MelderStringW_appendW (theInfos, s2);
+	MelderInfo_close ();
+}
+
+void Melder_information3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	Melder_information9W (s1, s2, s3, NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+void Melder_information4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	Melder_information9W (s1, s2, s3, s4, NULL, NULL, NULL, NULL, NULL);
+}
+
+void Melder_information5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	Melder_information9W (s1, s2, s3, s4, s5, NULL, NULL, NULL, NULL);
+}
+
+void Melder_information6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	Melder_information9W (s1, s2, s3, s4, s5, s6, NULL, NULL, NULL);
+}
+
+void Melder_information7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	Melder_information9W (s1, s2, s3, s4, s5, s6, s7, NULL, NULL);
+}
+
+void Melder_information8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	Melder_information9W (s1, s2, s3, s4, s5, s6, s7, s8, NULL);
+}
+
+void Melder_information9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
+{
+	MelderStringW_empty (theInfos);
+	if (s1) MelderStringW_appendW (theInfos, s1);   // Checking for a null s1 is an optimization.
+	if (s2) MelderStringW_appendW (theInfos, s2);
+	if (s3) MelderStringW_appendW (theInfos, s3);
+	if (s4) MelderStringW_appendW (theInfos, s4);
+	if (s5) MelderStringW_appendW (theInfos, s5);
+	if (s6) MelderStringW_appendW (theInfos, s6);
+	if (s7) MelderStringW_appendW (theInfos, s7);
+	if (s8) MelderStringW_appendW (theInfos, s8);
+	if (s9) MelderStringW_appendW (theInfos, s9);
 	MelderInfo_close ();
 }
 

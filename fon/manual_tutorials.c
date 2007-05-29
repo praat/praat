@@ -23,12 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070524)
+MAN_BEGIN ("What's new?", "ppgb", 20070529)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.04# (May 29, 2007)")
+LIST_ITEM ("\\bu OT learning: added decision strategy PositiveHG.")
 NORMAL ("##4.6.03# (May 24, 2007)")
 LIST_ITEM ("\\bu Spectral slices have better names.")
-LIST_ITEM ("\\bu OT learning: added decision strategy PositiveHG.")
 NORMAL ("##4.6.02# (May 17, 2007)")
 LIST_ITEM ("\\bu Sound files: writing FLAC audio files (implemented by Erez Volk).")
 NORMAL ("##4.6.01# (May 16, 2007)")

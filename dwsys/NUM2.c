@@ -404,6 +404,94 @@ char *str_replace_literal (char *string, const char *search, const char *replace
 	return result; 
 }
 
+wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, const wchar_t *replace,
+	long maximumNumberOfReplaces, long *nmatches)
+{
+	int len_replace, len_search, len_string, len_result;
+	int i, nchar, result_nchar = 0;
+	wchar_t *pos; 	/* current position / start of current match */
+	wchar_t *posp; /* end of previous match */
+	wchar_t *result;
+	
+	if (string == NULL || search == NULL || replace == NULL) return NULL;
+	
+	
+	len_string = wcslen (string);
+	if (len_string == 0) maximumNumberOfReplaces = 1;
+	len_search = wcslen (search);
+	if (len_search == 0) maximumNumberOfReplaces = 1;
+
+	/*
+		To allocate memory for 'result' only once, we have to know how many
+		matches will occur.
+	*/
+	
+	pos = string; *nmatches = 0;
+	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
+
+	if (len_search == 0) /* Search is empty string... */
+	{
+		if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
+	}
+	else
+	{
+		if (len_string != 0) /* Because empty string always matches */
+		{
+			while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+			{
+				pos += len_search; 
+				(*nmatches)++;
+			}
+		}
+	}
+	
+	len_replace = wcslen (replace);
+	len_result = len_string + *nmatches * (len_replace - len_search);
+	result = (wchar_t *) Melder_malloc ((len_result + 1) * sizeof (wchar_t));
+	result[len_result] = '\0';
+	if (result == NULL) return NULL;
+	
+	pos = posp = string;
+	for (i=1; i <= *nmatches; i++)
+	{
+		pos = wcsstr (pos, search);
+		
+		/* 
+			Copy gap between end of previous match and start of current.
+		*/
+		
+		nchar = (pos - posp);
+		if (nchar > 0)
+		{
+			wcsncpy (result + result_nchar, posp, nchar);
+			result_nchar += nchar;
+		}
+		
+		/*
+			Insert the replace string in result.
+		*/
+		
+		wcsncpy (result + result_nchar, replace, len_replace);
+		result_nchar += len_replace;
+		
+		/*
+			Next search starts after the match.
+		*/
+		
+		pos += len_search;
+		posp = pos;
+	}
+	
+	/*
+		Copy gap between end of match and end of string.
+	*/
+	
+	pos = string + len_string;
+	nchar = pos - posp;
+	if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
+	return result; 
+}
+
 
 char *str_replace_regexp (char *string, regexp *compiledSearchRE, 
 	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
@@ -537,6 +625,146 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	*/
 	
 	strncpy (buf + buf_nchar, posp, nchar);
+	buf[buf_size] = '\0';
+	
+end:
+
+	if (Melder_hasError ()) Melder_free (buf);
+	return buf;
+}
+
+wchar_t *str_replace_regexpW (wchar_t *string, regexpW *compiledSearchRE, 
+	const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches)
+{
+	long i;
+	int buf_size; 					/* inclusive nul-byte */
+	int buf_nchar = 0;				/* # characters in 'buf' */
+	int string_length;				/* exclusive 0-byte*/
+	int gap_copied = 0;
+	int nchar, reverse = 0;
+	wchar_t *pos; 	/* current position in 'string' / start of current match */
+	wchar_t *posp; /* end of previous match */
+	wchar_t *buf, *tbuf;
+
+	*nmatches = 0;	
+	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || wcslen (replaceRE) == 0)
+		return NULL;
+		
+	string_length = wcslen (string);
+	if (string_length == 0) maximumNumberOfReplaces = 1;
+
+	i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
+		  
+	/*
+		We do not know the size of the replaced string in advance,
+		therefor, we allocate a replace buffer twice the size of the 
+		original string. After all replaces have taken place we do a
+		final realloc to the then exactly known size. 
+		If during the replace, the size of the buffer happens to be too
+		small (this is signalled when the last byte in the buffer equals 
+		'\0' after the replace), we double its size and restart the replace.
+		We cannot detect, however, whether the buffer was exactly filled up
+		or it was too small. In the former case we are penalized by one 
+		extra memory reallocation.
+	*/
+	  	
+	buf_size = 2 * string_length + 1;
+	buf_size = MAX (buf_size, 100);	
+	buf = (wchar_t *) Melder_malloc (buf_size * sizeof (wchar_t));
+	if (buf == NULL) return 0;
+	
+	/*
+		The last byte of 'buf' is our buffer_full test.
+		Make sure it is not '\0'.
+	*/
+	
+	buf[buf_size - 1] = 'a';
+	
+	pos = posp = string;
+	while (ExecREW(compiledSearchRE, NULL, pos, NULL, reverse, 
+		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL) && 
+		i++ < maximumNumberOfReplaces)
+	{
+		/*
+			Copy gap between the end of the previous match and the start
+			of the current match.
+			Check buffer overflow. 
+		*/
+		
+		pos = compiledSearchRE -> startp[0];
+		nchar = pos - posp;
+		if (nchar > 0 && ! gap_copied)
+		{
+			if (buf_nchar + nchar > buf_size - 1)
+			{
+				buf_size *= 2;
+				tbuf = (wchar_t *) Melder_realloc (buf, buf_size * sizeof (wchar_t));
+				if (tbuf == NULL) goto end;
+				buf = tbuf;
+				buf[buf_size - 1] = 'a';
+			}
+			wcsncpy (buf + buf_nchar, posp, nchar);
+			buf_nchar += nchar;
+		}
+		
+		gap_copied = 1;
+		
+		/*
+			Do the substitution. We can only check afterwards for buffer
+			overflow. SubstituteRE puts null byte at last replaced position.
+		*/
+		
+		SubstituteREW (compiledSearchRE, replaceRE, buf + buf_nchar,
+			buf_size - buf_nchar);
+		
+		/*
+			Check buffer overflow; 
+		*/
+		
+		if (buf[buf_size - 1] == '\0')
+		{
+			buf_size *= 2;
+			tbuf = (wchar_t *) Melder_realloc (buf, buf_size * sizeof (wchar_t));
+			if (tbuf == NULL) goto end;
+			buf = tbuf;
+			buf[buf_size - 1] = 'a';
+			/* redo */
+			i--;
+			continue;
+		}
+		
+		/*
+			Buffer is not full, get number of characters added;
+		*/
+		
+		nchar = wcslen (buf + buf_nchar);
+		buf_nchar += nchar;
+		
+		/*
+			Update next start position in search string.
+		*/
+		
+		pos = posp = compiledSearchRE -> endp[0];
+		gap_copied = 0;
+		(*nmatches)++;
+	}
+	
+	/*
+		Were done, final allocation to exact size
+	*/
+	
+	pos = string + string_length;
+	nchar = pos - posp;
+	buf_size = buf_nchar + nchar;
+	tbuf = (wchar_t *) Melder_realloc (buf, (buf_size + 1) * sizeof (wchar_t));
+	if (tbuf == NULL) goto end;
+	buf = tbuf;
+	
+	/*
+		Copy the last part of 'string'.
+	*/
+	
+	wcsncpy (buf + buf_nchar, posp, nchar);
 	buf[buf_size] = '\0';
 	
 end:

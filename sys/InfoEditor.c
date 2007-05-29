@@ -1,6 +1,6 @@
 /* InfoEditor.c
  *
- * Copyright (C) 2004 Paul Boersma
+ * Copyright (C) 2004-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2004/09/13
  * pb 2004/10/21 clear method also clears the info buffer, not just the visible text
+ * pb 2007/05/24 wchar_t
  */
 
 #include "TextEditor.h"
@@ -49,14 +50,16 @@ class_methods (InfoEditor, TextEditor)
 	class_method (clear)
 class_methods_end
 
-void motif_information (char *message);
-void motif_information (char *message) {
+void motif_information (wchar_t *message);
+void motif_information (wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = new (InfoEditor);
 		TextEditor_init (theInfoEditor, Melder_topShell, "");
 		Thing_setName (theInfoEditor, "Praat: Info");
 	}
-	XmTextSetString (theInfoEditor -> textWidget, message);
+	static MelderStringA messageA = { 0 };
+	MelderStringA_copyW (& messageA, message);
+	XmTextSetString (theInfoEditor -> textWidget, messageA.string);
 	XMapRaised (XtDisplay (theInfoEditor -> shell), XtWindow (theInfoEditor -> shell));
 	GuiWindow_drain (theInfoEditor -> shell);
 }

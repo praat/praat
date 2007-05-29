@@ -67,7 +67,7 @@ Praat theCurrentPraat = & theForegroundPraat;
 struct PraatP praatP;
 static int doingCommandLineInterface;
 static char programName [64];
-static structMelderDir homeDir;
+static structMelderDir homeDir = { { 0 } };
 /*
  * praatDirectory: preferences and buttons files.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
@@ -78,7 +78,7 @@ static structMelderDir homeDir;
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences
  */
 extern structMelderDir praatDir;
-structMelderDir praatDir;
+structMelderDir praatDir = { { 0 } };
 /*
  * prefsFileName: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs
@@ -88,7 +88,7 @@ structMelderDir praatDir;
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Prefs
  */
-static structMelderFile prefsFile;
+static structMelderFile prefsFile = { { 0 } };
 /*
  * buttonsFileName: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
@@ -98,12 +98,12 @@ static structMelderFile prefsFile;
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Buttons
  */
-static structMelderFile buttonsFile;
+static structMelderFile buttonsFile = { { 0 } };
 #if defined (UNIX)
-	static structMelderFile pidFile;   /* Like /u/miep/.myProg-dir/pid */
-	static structMelderFile messageFile;   /* Like /u/miep/.myProg-dir/message */
+	static structMelderFile pidFile = { { 0 } };   /* Like /u/miep/.myProg-dir/pid */
+	static structMelderFile messageFile = { { 0 } };   /* Like /u/miep/.myProg-dir/message */
 #elif defined (_WIN32)
-	static structMelderFile messageFile;   /* Like C:\Windows\myProg\Message.txt */
+	static structMelderFile messageFile = { { 0 } };   /* Like C:\Windows\myProg\Message.txt */
 #endif
 
 static Widget praatList_objects;
@@ -931,7 +931,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 * On Unix, also create names for process-id and message files.
 	 */
 	{
-		structMelderDir prefParentDir;   /* Directory under which to store our preferences directory. */
+		structMelderDir prefParentDir = { { 0 } };   /* Directory under which to store our preferences directory. */
 		char name [256];
 		Melder_getPrefDir (& prefParentDir);
 		/*
@@ -1138,7 +1138,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char *fileName
 	char name [256];
 	sprintf (name, fileNameTemplate, programName);
 	if (! MelderDir_isNull (startUpDirectory)) {   /* Home directory can be null on Windows 95/98. */
-		structMelderFile startUp;
+		structMelderFile startUp = { { 0 } };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
 		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
 			fclose (f);
@@ -1186,7 +1186,7 @@ void praat_run (void) {
 
 	#if defined (UNIX) || defined (macintosh)
 	{
-		structMelderDir usrLocal;
+		structMelderDir usrLocal = { { 0 } };
 		Melder_pathToDir ("/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, "%s-startUp");
 	}
@@ -1204,15 +1204,15 @@ void praat_run (void) {
 	 * because any added commands must not be included in the buttons file.
 	 */
 	{
-		structMelderFile searchPattern;
+		structMelderFile searchPattern = { { 0 } };
 		Strings directoryNames;
 		long i;
 		MelderDir_getFile (& praatDir, "plugin_*", & searchPattern);
 		directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 		if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
 			for (i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-				structMelderDir pluginDir;
-				structMelderFile plugin;
+				structMelderDir pluginDir = { { 0 } };
+				structMelderFile plugin = { { 0 } };
 				FILE *f;
 				MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 				MelderDir_getFile (& pluginDir, "setup.praat", & plugin);
@@ -1242,7 +1242,7 @@ void praat_run (void) {
 			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraat -> batchName)) {
 				praat_exit (0);
 			} else {
-				structMelderFile batchFile;
+				structMelderFile batchFile = { { 0 } };
 				if (! Melder_relativePathToFile (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);

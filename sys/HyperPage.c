@@ -439,7 +439,7 @@ if (! my printing) {
 			theCurrentPraat -> batch = true;
 			Melder_progressOff ();
 			Melder_warningOff ();
-			structMelderDir saveDir;
+			structMelderDir saveDir = { { 0 } };
 			Melder_getDefaultDir (& saveDir);
 			if (! MelderDir_isNull (& my rootDirectory)) Melder_setDefaultDir (& my rootDirectory);
 			Interpreter_run (interpreter, text);

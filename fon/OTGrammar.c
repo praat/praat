@@ -46,6 +46,7 @@
  * pb 2007/04/22 multiply learning step by number of violations (for HarmonicGrammar and LinearOT)
  * pb 2007/04/25 new decision strategy: MaximumEntropy
  * pb 2007/04/30 many improvements
+ * pb 2007/05/20 new decision strategy: PositiveHG
  */
 
 #include "OTGrammar.h"
@@ -266,6 +267,11 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
 				if (my constraints [icons]. disharmony > 0.0) {
 					disharmony += my constraints [icons]. disharmony * marks [icons];
 				}
+			}
+		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG)) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
+				disharmony += my constraints [icons]. disharmony * marks [icons];
 			}
 		} else {
 			Melder_fatal ("_OTGrammar_fillInHarmonies: unimplemented decision strategy.");

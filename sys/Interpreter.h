@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/11
+ * pb 2007/05/26
  */
 
 #ifndef _Collection_h_
@@ -34,7 +34,7 @@
 	char *key, *stringValue; \
 	double numericValue;
 #define InterpreterVariable_methods Thing_methods
-class_create (InterpreterVariable, Thing)
+class_create (InterpreterVariable, Thing);
 
 #define Interpreter_MAXNUM_PARAMETERS  400
 #define Interpreter_MAXNUM_LABELS  30
@@ -53,7 +53,7 @@ class_create (InterpreterVariable, Thing)
 	char dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
 	SortedSetOfString variables;
 #define Interpreter_methods Thing_methods
-class_create (Interpreter, Thing)
+class_create (Interpreter, Thing);
 
 Interpreter Interpreter_create (char *environmentName, Any editorClass);
 Interpreter Interpreter_createFromEnvironment (Any editor);

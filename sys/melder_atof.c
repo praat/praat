@@ -108,4 +108,85 @@ double Melder_atof (const char *string) {
 	return p [-1] == '%' ? 0.01 * atof (string) : atof (string);
 }
 
+static const wchar_t *findEndOfNumericStringW (const wchar_t *string) {
+	const wchar_t *p = & string [0];
+	/*
+	 * Leading white space is OK.
+	 */
+	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
+		p ++;
+	/*
+	 * Next we accept an optional leading plus or minus.
+	 */
+	if (*p == '+' || *p == '-') p ++;
+	/*
+	 * The next character must be a decimal digit.
+	 * So we don't allow things like ".5".
+	 */
+	if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+	p ++;
+	/*
+	 * Then we accept any number of decimal digits.
+	 */
+	while (*p >= '0' && *p <= '9') p ++;
+	/*
+	 * Next we accept an optional decimal point.
+	 */
+	if (*p == '.') {
+		p ++;
+		/*
+		 * We accept any number of (even zero) decimal digits after the decimal point.
+		 */
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	/*
+	 * Next we accept an optional exponential E or e.
+	 */
+	if (*p == 'e' || *p == 'E') {
+		p ++;
+		/*
+		 * In the exponent we accept an optional leading plus or minus.
+		 */
+		if (*p == '+' || *p == '-') p ++;
+		/*
+		 * The exponent must contain a decimal digit.
+		 * So we don't allow things like "+2.1E".
+		 */
+		if (*p < '0' || *p > '9') return NULL;   /* String is not numeric. */
+		p ++;
+		/*
+		 * Then we accept any number of decimal digits.
+		 */
+		while (*p >= '0' && *p <= '9') p ++;
+	}
+	/*
+	 * Next we accept an optional percent sign.
+	 */
+	if (*p == '%') p ++;
+	/*
+	 * We have found the end of the numeric string.
+	 */
+	return p;
+}
+
+int Melder_isStringNumericW (const wchar_t *string) {
+	if (string == NULL) return false;
+	const wchar_t *p = findEndOfNumericStringW (string);
+	if (p == NULL) return FALSE;
+	/*
+	 * We accept only white space after the numeric string.
+	 */
+	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
+		p ++;
+	return *p == '\0';
+}
+
+double Melder_atofW (const wchar_t *string) {
+	if (string == NULL) return NUMundefined;
+	const wchar_t *p = findEndOfNumericStringW (string);
+	if (p == NULL) return NUMundefined;
+	Melder_assert (p - string > 0);
+	return p [-1] == '%' ? 0.01 * wcstod (string, NULL) : wcstod (string, NULL);
+}
+
 /* End of file melder_atof.c */

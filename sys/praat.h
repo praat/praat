@@ -251,7 +251,7 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (char *) sender)) { char *parkedError = Melder_strdup (Melder_getError ()); Melder_clearError (); \
 	int result = DO_##alternative (sender, modified); \
-	if (result == 0 && parkedError) { Melder_clearError (); Melder_error ("%s", parkedError); Melder_free (parkedError); } return result; \
+	if (result == 0 && parkedError) { Melder_clearError (); Melder_error ("%s", parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
 #define END  } } praat_updateSelection (); return 1; }
 #define DIRECT(proc)  static int DO_##proc (Any dummy1, void *dummy2) { \
@@ -275,14 +275,14 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
-		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
+		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
-		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
+		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 #endif

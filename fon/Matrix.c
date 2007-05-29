@@ -24,6 +24,7 @@
  * pb 2003/08/28 Matrix_writeToHeaderlessSpreadsheetFile
  * pb 2005/06/16 units
  * pb 2007/03/18 moved table stuff here
+ * pb 2007/05/26 wchar_t
  */
 
 #include "Matrix.h"
@@ -681,17 +682,21 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
 	return 1;
 }
 
-int Matrix_formula (Matrix me, const char *expression, Matrix target) {
+int Matrix_formula (Matrix me, const char *expressionA, Matrix target) {
 	long irow, icol;
-	if (! Formula_compile (NULL, me, expression, FALSE, TRUE)) return 0;
+	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
+	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (target == NULL) target = me;
 	for (irow = 1; irow <= my ny; irow ++) {
 		for (icol = 1; icol <= my nx; icol ++) {
 			double result;
-			if (! Formula_run (irow, icol, & result, NULL)) return 0;
+			Formula_run (irow, icol, & result, NULL); cherror
 			target -> z [irow] [icol] = result;
 		}
 	}
+end:
+	Melder_free (expression);
+	iferror return 0;
 	return 1;
 }
 

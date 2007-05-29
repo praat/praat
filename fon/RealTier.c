@@ -484,20 +484,24 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
 	return thee;
 }
 
-int RealTier_formula (I, const char *expression, thou) {
+int RealTier_formula (I, const char *expressionA, thou) {
 	iam (RealTier);
 	thouart (RealTier);
 	long icol;
-	if (! Formula_compile (NULL, me, expression, FALSE, TRUE)) return 0;
+	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
+	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (icol = 1; icol <= my points -> size; icol ++) {
 		double result;
-		if (! Formula_run (0, icol, & result, NULL)) return 0;
+		Formula_run (0, icol, & result, NULL); cherror
 		if (result == NUMundefined) {
-			return Melder_error ("Cannot put an undefined value into the tier.\nFormula not finished.");
+			Melder_error ("Cannot put an undefined value into the tier.\nFormula not finished."); goto end;
 		}
 		((RealPoint) thy points -> item [icol]) -> value = result;
 	}
+end:
+	Melder_free (expression);
+	iferror return 0;
 	return 1;
 }
 

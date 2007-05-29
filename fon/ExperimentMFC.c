@@ -69,7 +69,7 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 	double medialSilenceDuration, char **name, Sound *sound)
 {
 	char fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	strcpy (fileNameBuffer, *name);
 	/*
 	 * The following conversion is needed when fileNameHead is an absolute path,

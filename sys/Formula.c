@@ -40,6 +40,7 @@
  * pb 2006/12/18 better info
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/28 made compatible with multi-channelled vectors
+ * pb 2007/05/26 wchar_t
  */
 
 #include <ctype.h>
@@ -54,7 +55,7 @@
 
 static Interpreter theInterpreter;
 static Data theSource;
-static const char *theExpression;
+static const wchar_t *theExpression;
 static int theExpressionType, theOptimize;
 #define EXPRESSION_TYPE_NUMERIC  0
 #define EXPRESSION_TYPE_STRING  1
@@ -66,7 +67,7 @@ typedef struct FormulaInstruction {
 	union {
 		double number;
 		int label;
-		char *string;
+		wchar_t *string;
 		Any object;
 		InterpreterVariable variable;
 	} content;
@@ -177,69 +178,71 @@ enum { GEENSYMBOOL_,
 /* The names that start with an underscore (_) do not occur in the formula text: */
 /* they are used in error messages and in debugging (see Formula_print). */
 
-static char *Formula_instructionNames [1 + hoogsteSymbool] = { "",
-	"if", "then", "else", "(", "[", ",",
-	"or", "and", "not", "=", "<>", "<=", "<", ">=", ">",
-	"+", "-", "*", "/", "div", "mod", "^", "_neg",
-	"endif", "fi", ")", "]",
-	"_number", "pi", "e", "undefined",
-	"xmin", "xmax", "ymin", "ymax", "nx", "ny", "dx", "dy",
-	"row", "col", "nrow", "ncol", "row$", "col$", "y", "x",
-	"self", "self$", "_matriks", "_matriks$",
-	"stopwatch",
-	"abs", "round", "floor", "ceiling", "sqrt", "sin", "cos", "tan", "arcsin", "arccos", "arctan",
-	"exp", "sinh", "cosh", "tanh", "arcsinh", "arccosh", "arctanh",
-	"sigmoid", "invSigmoid", "erf", "erfc", "gaussP", "gaussQ", "invGaussQ",
-	"randomPoisson", "log2", "ln", "log10", "lnGamma",
-	"hertzToBark", "barkToHertz", "phonToDifferenceLimens", "differenceLimensToPhon",
-	"hertzToMel", "melToHertz", "hertzToSemitones", "semitonesToHertz",
-	"erb", "hertzToErb", "erbToHertz",
-	"arctan2", "randomUniform", "randomInteger", "randomGauss",
-	"chiSquareP", "chiSquareQ", "invChiSquareQ", "studentP", "studentQ", "invStudentQ",
-	"beta", "besselI", "besselK",
-	"soundPressureToPhon",
-	"fisherP", "fisherQ", "invFisherQ",
-	"binomialP", "binomialQ", "invBinomialP", "invBinomialQ",
+static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
+	L"if", L"then", L"else", L"(", L"[", L",",
+	L"or", L"and", L"not", L"=", L"<>", L"<=", L"<", L">=", L">",
+	L"+", L"-", L"*", L"/", L"div", L"mod", L"^", L"_neg",
+	L"endif", L"fi", L")", L"]",
+	L"_number", L"pi", L"e", L"undefined",
+	L"xmin", L"xmax", L"ymin", L"ymax", L"nx", L"ny", L"dx", L"dy",
+	L"row", L"col", L"nrow", L"ncol", L"row$", L"col$", L"y", L"x",
+	L"self", L"self$", L"_matriks", L"_matriks$",
+	L"stopwatch",
+	L"abs", L"round", L"floor", L"ceiling", L"sqrt", L"sin", L"cos", L"tan", L"arcsin", L"arccos", L"arctan",
+	L"exp", L"sinh", L"cosh", L"tanh", L"arcsinh", L"arccosh", L"arctanh",
+	L"sigmoid", L"invSigmoid", L"erf", L"erfc", L"gaussP", L"gaussQ", L"invGaussQ",
+	L"randomPoisson", L"log2", L"ln", L"log10", L"lnGamma",
+	L"hertzToBark", L"barkToHertz", L"phonToDifferenceLimens", L"differenceLimensToPhon",
+	L"hertzToMel", L"melToHertz", L"hertzToSemitones", L"semitonesToHertz",
+	L"erb", L"hertzToErb", L"erbToHertz",
+	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss",
+	L"chiSquareP", L"chiSquareQ", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
+	L"beta", L"besselI", L"besselK",
+	L"soundPressureToPhon",
+	L"fisherP", L"fisherQ", L"invFisherQ",
+	L"binomialP", L"binomialQ", L"invBinomialP", L"invBinomialQ",
 
-	"min", "max", "imin", "imax",
-	"left$", "right$", "mid$",
-	"selected", "selected$", "numberOfSelected",
+	L"min", L"max", L"imin", L"imax",
+	L"left$", L"right$", L"mid$",
+	L"selected", L"selected$", L"numberOfSelected",
 
-	"length", "fileReadable",
-	"date$",
-	"environment$", "index", "rindex",
-	"startsWith", "endsWith", "replace$", "index_regex", "rindex_regex", "replace_regex$",
-	"extractNumber", "extractWord$", "extractLine$",
-	"fixed$", "percent$",
-	".",
-	"_true", "_false", "_iftrue", "_iffalse", "_gaNaar", "_label",
-	"_self0", "_self0$", "_selfmatriks1", "_selfmatriks1$", "_selfmatriks2", "_selfmatriks2$",
-	"_selffunktie1", "_selffunktie1$", "_selffunktie2", "_selffunktie2$",
-	"_matriks0", "_matriks0$", "_matriks1", "_matriks1$", "_matriks2", "_matriks2$",
-	"_funktie0", "_funktie0$", "_funktie1", "_funktie1$", "_funktie2", "_funktie2$",
-	"_square",
-	"_string",
-	"_numericVariable", "_stringVariable",
-	"_end"
+	L"length", L"fileReadable",
+	L"date$",
+	L"environment$", L"index", L"rindex",
+	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
+	L"extractNumber", L"extractWord$", L"extractLine$",
+	L"fixed$", L"percent$",
+	L".",
+	L"_true", L"_false", L"_iftrue", L"_iffalse", L"_gaNaar", L"_label",
+	L"_self0", L"_self0$", L"_selfmatriks1", L"_selfmatriks1$", L"_selfmatriks2", L"_selfmatriks2$",
+	L"_selffunktie1", L"_selffunktie1$", L"_selffunktie2", L"_selffunktie2$",
+	L"_matriks0", L"_matriks0$", L"_matriks1", L"_matriks1$", L"_matriks2", L"_matriks2$",
+	L"_funktie0", L"_funktie0$", L"_funktie1", L"_funktie1$", L"_funktie2", L"_funktie2$",
+	L"_square",
+	L"_string",
+	L"_numericVariable", L"_stringVariable",
+	L"_end"
 };
 
 #define nieuwlabel (-- ilabel)
 #define nieuwlees (lexan [++ ilexan]. symbol)
 #define oudlees  (-- ilexan)
 
-static int formulefout (char *message, int position) {
-	return Melder_error ("%s:\n\\>> %.*s", message, position + 1, theExpression);
+static int formulefout (wchar_t *message, int position) {
+	static MelderStringW truncatedExpression = { 0 };
+	MelderStringW_ncopyW (& truncatedExpression, theExpression, position + 1);
+	return Melder_error3 (message, L":\n\\>> ", truncatedExpression.string);
 }
 
-static const char *languageNameCompare_searchString;
+static const wchar_t *languageNameCompare_searchString;
 
 static int languageNameCompare (const void *first, const void *second) {
 	int i = * (int *) first, j = * (int *) second;
-	return strcmp (i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
+	return wcscmp (i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
 		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]);
 }
 
-static int Formula_hasLanguageName (const char *f) {
+static int Formula_hasLanguageName (const wchar_t *f) {
 	static int *index;
 	int tok;
 	if (index == NULL) {
@@ -251,7 +254,7 @@ static int Formula_hasLanguageName (const char *f) {
 	}
 	if (index == NULL) {   /* Linear search. */
 		for (tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
-			if (strequ (f, Formula_instructionNames [tok])) return tok;
+			if (wcsequ (f, Formula_instructionNames [tok])) return tok;
 		}
 	} else {   /* Binary search. */
 		int dummy = 0, *found;
@@ -269,9 +272,9 @@ static int Formula_lexan (void) {
 	Return:
 		0 in case of error, otherwise 1.
 	Postcondition:
-		if result != 0, then the last symbol is "END_".
+		if result != 0, then the last symbol is L"END_".
 	Example:
-		the text "x*7" yields 5 symbols:
+		the text L"x*7" yields 5 symbols:
 			lexan [0] is empty;
 			lexan [1]. symbol = X_;
 			lexan [2]. symbol = MUL_;
@@ -289,9 +292,9 @@ static int Formula_lexan (void) {
 #define tokgetal(g)  lexan [itok]. content.number = (g)
 #define tokmatriks(m)  lexan [itok]. content.object = (m)
 
-	static MelderStringA token = { 0 };   /* String to collect a symbol name in. */
-#define stokaan MelderStringA_empty (& token);
-#define stokkar { MelderStringA_appendCharacter (& token, kar); nieuwkar; }
+	static MelderStringW token = { 0 };   /* String to collect a symbol name in. */
+#define stokaan MelderStringW_empty (& token);
+#define stokkar { MelderStringW_appendCharacter (& token, kar); nieuwkar; }
 #define stokuit (void) 0
 
 	ilexan = iparse = ilabel = numberOfStringConstants = 0;
@@ -310,7 +313,7 @@ static int Formula_lexan (void) {
 				if (kar == '-') stokkar
 				else if (kar == '+') nieuwkar;
 				if (! (kar >= '0' && kar <= '9')) {
-					formulefout ("Missing exponent", ikar);
+					formulefout (L"Missing exponent", ikar);
 					return 0;
 				}
 				do stokkar while (kar >= '0' && kar <= '9');
@@ -319,7 +322,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (NUMBER_)
-			tokgetal (Melder_atof (token.string));
+			tokgetal (Melder_atofW (token.string));
 		} else if ((kar >= 'a' && kar <= 'z') || (kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
 			int tok, endsInDollarSign = FALSE;
@@ -372,12 +375,12 @@ static int Formula_lexan (void) {
 						/*
 						 * This could be a variable with the same name as a function.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) return formulefout ("Unknown variable, or function with missing arguments", ikar);
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
+						if (var == NULL) return formulefout (L"Unknown variable, or function with missing arguments", ikar);
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
 					} else {
-						return formulefout ("Function with missing arguments", ikar);
+						return formulefout (L"Function with missing arguments", ikar);
 					}
 				/*
 				 * Not a function name.
@@ -397,9 +400,10 @@ static int Formula_lexan (void) {
 						/*
 						 * Look for ambiguity.
 						 */
-						if (theInterpreter && Interpreter_hasVariable (theInterpreter, token.string))
-							return Melder_error ("\\<<%s\\>> is ambiguous: a variable or an attribute of the current object. "
-								"Change variable name.", token.string);
+						if (theInterpreter && Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string)))
+							return Melder_error3 (L"\\<<", token.string,
+								L"\\>> is ambiguous: a variable or an attribute of the current object. "
+								"Please change variable name.");
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							nieuwtok (tok)
 						} else {
@@ -412,36 +416,37 @@ static int Formula_lexan (void) {
 						/*
 						 * This must be a variable, since there is no "current object" here.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) return Melder_error ("Unknown variable \\<<%s\\>> in formula (no \"current object\" here).", token.string);
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
+						if (var == NULL) return Melder_error3 (L"Unknown variable \\<<", token.string,
+							L"\\>> in formula (no \"current object\" here).");
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
 					} else {
-						return Melder_error ("Unknown token \\<<%s\\>> in formula (no variables or current objects here).", token.string);
+						return Melder_error3 (L"Unknown token \\<<", token.string, L"\\>> in formula (no variables or current objects here).");
 					}
 				} else {
 					nieuwtok (tok)   /* This must be a language name. */
 				}
 			} else if (theInterpreter) {
-				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
+				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
 				if (var == NULL) {
 					int jkar;
 					jkar = ikar + 1;
 					while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
 					if (theExpression [jkar] == '(') {
-						return Melder_error ("Unknown function \\<<%s\\>> in formula", token.string);
+						return Melder_error3 (L"Unknown function \\<<", token.string, L"\\>> in formula.");
 					} else {
-						return Melder_error ("Unknown variable \\<<%s\\>> in formula", token.string);
+						return Melder_error3 (L"Unknown variable \\<<", token.string, L"\\>> in formula.");
 					}
 				}
 				if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 				lexan [itok]. content.variable = var;
 			} else {
-				return Melder_error ("Unknown function or attribute \\<<%s\\>> in formula.", token.string);
+				return Melder_error3 (L"Unknown function or attribute \\<<", token.string, L"\\>> in formula.");
 			}
 		} else if (kar >= 'A' && kar <= 'Z') {
 			int endsInDollarSign = FALSE;
-			char *underscore;
+			wchar_t *underscore;
 			stokaan;
 			do stokkar while (isalnum (kar) || kar == '_');
 			if (kar == '$') { stokkar endsInDollarSign = TRUE; }
@@ -450,31 +455,31 @@ static int Formula_lexan (void) {
 			/*
 			 * 'token' now contains a word that could be an object name.
 			 */
-			underscore = strchr (token.string, '_');
-			if (strequ (token.string, "Self")) {
+			underscore = wcschr (token.string, '_');
+			if (wcsequ (token.string, L"Self")) {
 				if (theSource == NULL) {
-					formulefout ("Cannot use \"Self\" if there is no current object.", ikar);
+					formulefout (L"Cannot use \"Self\" if there is no current object.", ikar);
 					return 0;
 				}
 				nieuwtok (MATRIKS_)
 				tokmatriks (theSource);
-			} else if (strequ (token.string, "Self$")) {
+			} else if (wcsequ (token.string, L"Self$")) {
 				if (theSource == NULL) {
-					formulefout ("Cannot use \"Self$\" if there is no current object.", ikar);
+					formulefout (L"Cannot use \"Self$\" if there is no current object.", ikar);
 					return 0;
 				}
 				nieuwtok (MATRIKSSTR_)
 				tokmatriks (theSource);
 			} else if (underscore == NULL) {
-				return Melder_error ("Unknown symbol \\<<%s\\>> in formula "
-					"(variables start with lower case; object names contain an underscore).", token.string);
-			} else if (strnequ (token.string, "Object_", 7)) {
-				long uniqueID = atol (token.string + 7);
+				return Melder_error3 (L"Unknown symbol \\<<", token.string, L"\\>> in formula "
+					"(variables start with lower case; object names contain an underscore).");
+			} else if (wcsnequ (token.string, L"Object_", 7)) {
+				long uniqueID = wcstol (token.string + 7, NULL, 10);
 				int i = theCurrentPraat -> n;
 				while (i > 0 && uniqueID != theCurrentPraat -> list [i]. id)
 					i --;
 				if (i == 0) {
-					formulefout ("No such object (note: variables start with lower case)", ikar);
+					formulefout (L"No such object (note: variables start with lower case)", ikar);
 					return 0;
 				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
@@ -483,10 +488,10 @@ static int Formula_lexan (void) {
 				int i = theCurrentPraat -> n;
 				*underscore = ' ';
 				if (endsInDollarSign) token.string [-- token.length] = '\0';
-				while (i > 0 && ! strequ (token.string, theCurrentPraat -> list [i]. name))
+				while (i > 0 && ! wcsequ (token.string, Melder_peekAsciiToWcs (theCurrentPraat -> list [i]. name)))
 					i --;
 				if (i == 0) {
-					formulefout ("No such object (note: variables start with lower case)", ikar);
+					formulefout (L"No such object (note: variables start with lower case)", ikar);
 					return 0;
 				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
@@ -566,7 +571,7 @@ static int Formula_lexan (void) {
 			stokaan;
 			for (;;) {
 				if (kar == '\0') {
-					formulefout ("No closing quote in string constant", ikar);
+					formulefout (L"No closing quote in string constant", ikar);
 					return 0;
 				}
 				if (kar == '\"') {
@@ -580,7 +585,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (STRING_)
-			lexan [itok]. content.string = Melder_strdup (token.string);
+			lexan [itok]. content.string = Melder_wcsdup (token.string);
 			numberOfStringConstants ++;
 		} else if (kar == '|') {
 			nieuwtok (OR_)   /* "|" = "or" */
@@ -601,7 +606,7 @@ static int Formula_lexan (void) {
 		} else if (kar == '.') {
 			nieuwtok (PERIOD_)
 		} else {
-			formulefout ("Unknown symbol", ikar);
+			formulefout (L"Unknown symbol", ikar);
 			return 0;
 		}
 	} while (lexan [itok]. symbol != END_);
@@ -609,13 +614,16 @@ static int Formula_lexan (void) {
 }
 
 static int pas (int symbol) {
-	if (symbol == nieuwlees)
+	if (symbol == nieuwlees) {
 		return 1;
-	else {
-		char melding [100];
-		sprintf (melding, "Expected \"%s\", but found \"%s\"",
-			Formula_instructionNames [symbol], Formula_instructionNames [lexan [ilexan]. symbol]);
-		return formulefout (melding, lexan [ilexan]. position);
+	} else {
+		static MelderStringW melding = { 0 };
+		MelderStringW_copyW (& melding, L"Expected \"");
+		MelderStringW_appendW (& melding, Formula_instructionNames [symbol]);
+		MelderStringW_appendW (& melding, L"\", but found \"");
+		MelderStringW_appendW (& melding, Formula_instructionNames [lexan [ilexan]. symbol]);
+		MelderStringW_appendW (& melding, L"\"");
+		return formulefout (melding.string, lexan [ilexan]. position);
 	}
 }
 
@@ -771,7 +779,7 @@ static int parsePowerFactor (void) {
 			switch (nieuwlees) {
 				case XMIN_:
 					if (your getXmin == NULL) {
-						formulefout ("Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -780,7 +788,7 @@ static int parsePowerFactor (void) {
 					}
 				case XMAX_:
 					if (your getXmax == NULL) {
-						formulefout ("Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -789,7 +797,7 @@ static int parsePowerFactor (void) {
 					}
 				case YMIN_:
 					if (your getYmin == NULL) {
-						formulefout ("Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -798,7 +806,7 @@ static int parsePowerFactor (void) {
 					}
 				case YMAX_:
 					if (your getYmax == NULL) {
-						formulefout ("Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -807,7 +815,7 @@ static int parsePowerFactor (void) {
 					}
 				case NX_:
 					if (your getNx == NULL) {
-						formulefout ("Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -816,7 +824,7 @@ static int parsePowerFactor (void) {
 					}
 				case NY_:
 					if (your getNy == NULL) {
-						formulefout ("Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -825,7 +833,7 @@ static int parsePowerFactor (void) {
 					}
 				case DX_:
 					if (your getDx == NULL) {
-						formulefout ("Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -834,7 +842,7 @@ static int parsePowerFactor (void) {
 					}
 				case DY_:
 					if (your getDy == NULL) {
-						formulefout ("Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -843,7 +851,7 @@ static int parsePowerFactor (void) {
 					}
 				case NCOL_:
 					if (your getNcol == NULL) {
-						formulefout ("Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -852,7 +860,7 @@ static int parsePowerFactor (void) {
 					}
 				case NROW_:
 					if (your getNrow == NULL) {
-						formulefout ("Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
@@ -861,7 +869,7 @@ static int parsePowerFactor (void) {
 					}
 				case ROWSTR_:
 					if (your getRowStr == NULL) {
-						formulefout ("Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						if (! pas (RECHTEHAAKOPENEN_)) return 0;
@@ -873,7 +881,7 @@ static int parsePowerFactor (void) {
 					}
 				case COLSTR_:
 					if (your getColStr == NULL) {
-						formulefout ("Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
+						formulefout (L"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
 						return 0;
 					} else {
 						if (! pas (RECHTEHAAKOPENEN_)) return 0;
@@ -883,10 +891,10 @@ static int parsePowerFactor (void) {
 						if (! pas (RECHTEHAAKSLUITEN_)) return 0;
 						return 1;
 					}
-				default: formulefout ("Unknown attribute.", lexan [ilexan]. position); return 0;
+				default: formulefout (L"Unknown attribute.", lexan [ilexan]. position); return 0;
 			}
 		} else {
-			formulefout ("After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
+			formulefout (L"After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
 			return 0;
 		}
 		return 1;
@@ -916,7 +924,7 @@ static int parsePowerFactor (void) {
 				}
 			}
 		} else {
-			formulefout ("After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
+			formulefout (L"After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
 			return 0;
 		}
 		return 1;
@@ -1015,7 +1023,7 @@ static int parsePowerFactor (void) {
 			if (! parseExpression ()) return 0;
 			if (! pas (HAAKJESLUITEN_)) return 0;
 		} else {
-			formulefout ("Function expected", lexan [ilexan]. position);
+			formulefout (L"Function expected", lexan [ilexan]. position);
 			oudlees;
 			return 0;
 		}
@@ -1028,7 +1036,7 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
-	formulefout ("Symbol misplaced", lexan [ilexan]. position);
+	formulefout (L"Symbol misplaced", lexan [ilexan]. position);
 	oudlees;   /* Needed for retry if we are going to be in a string comparison. */
 	return 0;
 }
@@ -1038,7 +1046,7 @@ static int parseFactor (void);
 static int parsePowerFactors (void) {
 	if (nieuwlees == POWER_) {
 		if (ilexan > 2 && lexan [ilexan - 2]. symbol == MINUS_ && lexan [ilexan - 1]. symbol == NUMBER_) {
-			formulefout ("Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan]. position);
+			formulefout (L"Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan]. position);
 			oudlees;
 			return 0;
 		}
@@ -1449,7 +1457,7 @@ static void Formula_removeLabels (void) {
 static void Formula_print (FormulaInstruction f) {
 	int i = 0, symbol;
 	do {
-		char *instructionName;
+		wchar_t *instructionName;
 		symbol = f [++ i]. symbol;
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
@@ -1477,7 +1485,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-int Formula_compile (Any interpreter, Any data, const char *expression, int expressionType, int optimize) {
+int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize) {
 	theInterpreter = interpreter ? interpreter : UiInterpreter_get ();
 	theSource = data;
 	theExpression = expression;
@@ -1533,7 +1541,7 @@ typedef struct Stackel {
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
-		char *string;
+		wchar_t *string;
 	} content;
 } *Stackel;
 
@@ -1550,16 +1558,16 @@ static void pushNumber (double x) {
 	if (stackel -> which > 0) Stackel_cleanUp (stackel); if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMBER; stackel -> content.number = x;
 }
-static void pushString (char *x) {
+static void pushString (wchar_t *x) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > 0) Stackel_cleanUp (stackel); if (w > wmax) wmax ++;
 	stackel -> which = Stackel_STRING; stackel -> content.string = x;
 }
-static char *Stackel_whichText (Stackel me) {
+static wchar_t *Stackel_whichText (Stackel me) {
 	return
-		my which == Stackel_NUMBER ? "a number" :
-		my which == Stackel_STRING ? "a string" :
-		"???";
+		my which == Stackel_NUMBER ? L"a number" :
+		my which == Stackel_STRING ? L"a string" :
+		L"???";
 }
 
 static void do_not (void) {
@@ -1567,7 +1575,7 @@ static void do_not (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : x->content.number == 0.0 ? 1.0 : 0.0);
 	} else {
-		Melder_error ("Cannot negate (\"not\") %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot negate (\"not\") ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1576,10 +1584,10 @@ static void do_eq (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == y->content.number ? 1.0 : 0.0);   /* Even if undefined. */
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strequ (x->content.string, y->content.string) ? 1.0 : 0.0;
+		double result = wcsequ (x->content.string, y->content.string) ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (=) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (=) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1588,10 +1596,10 @@ static void do_ne (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (x->content.number != y->content.number ? 1.0 : 0.0);   /* Even if undefined. */
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strequ (x->content.string, y->content.string) ? 0.0 : 1.0;
+		double result = wcsequ (x->content.string, y->content.string) ? 0.0 : 1.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (<>) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (<>) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1601,10 +1609,10 @@ static void do_le (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number <= y->content.number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strcmp (x->content.string, y->content.string) <= 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->content.string, y->content.string) <= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (<=) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (<=) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1614,10 +1622,10 @@ static void do_lt (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number < y->content.number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strcmp (x->content.string, y->content.string) < 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->content.string, y->content.string) < 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (<) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (<) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1627,10 +1635,10 @@ static void do_ge (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number >= y->content.number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strcmp (x->content.string, y->content.string) >= 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->content.string, y->content.string) >= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (>=) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (>=) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1640,10 +1648,10 @@ static void do_gt (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number > y->content.number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = strcmp (x->content.string, y->content.string) > 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->content.string, y->content.string) > 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
-		Melder_error ("Cannot compare (>) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot compare (>) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1653,13 +1661,13 @@ static void do_add (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number + y->content.number);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		long length1 = strlen (x->content.string), length2 = strlen (y->content.string);
-		char *result = Melder_malloc (length1 + length2 + 1); cherror
-		strcpy (result, x->content.string);
-		strcpy (result + length1, y->content.string);
+		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string);
+		wchar_t *result = Melder_malloc ((length1 + length2 + 1) * sizeof (wchar_t)); cherror
+		wcscpy (result, x->content.string);
+		wcscpy (result + length1, y->content.string);
 		pushString (result);
 	} else {
-		Melder_error ("Cannot add (+) %s to %s.", Stackel_whichText (y), Stackel_whichText (x)); goto end;
+		Melder_error5 (L"Cannot add ", Stackel_whichText (y), L" to ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1669,18 +1677,18 @@ static void do_sub (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number - y->content.number);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		long length1 = strlen (x->content.string), length2 = strlen (y->content.string), newlength = length1 - length2;
-		char *result;
-		if (newlength >= 0 && strnequ (x->content.string + newlength, y->content.string, length2)) {
-			result = Melder_malloc (newlength + 1); cherror
-			strncpy (result, x->content.string, newlength);
+		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string), newlength = length1 - length2;
+		wchar_t *result;
+		if (newlength >= 0 && wcsnequ (x->content.string + newlength, y->content.string, length2)) {
+			result = Melder_malloc ((newlength + 1) * sizeof (wchar_t)); cherror
+			wcsncpy (result, x->content.string, newlength);
 			result [newlength] = '\0';
 		} else {
-			result = Melder_strdup (x->content.string); cherror
+			result = Melder_wcsdup (x->content.string); cherror
 		}
 		pushString (result);
 	} else {
-		Melder_error ("Cannot subtract (-) %s from %s.", Stackel_whichText (y), Stackel_whichText (x)); goto end;
+		Melder_error5 (L"Cannot subtract (-) ", Stackel_whichText (y), L" from ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1690,7 +1698,7 @@ static void do_mul (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			x->content.number * y->content.number);
 	} else {
-		Melder_error ("Cannot multiply (*) %s by %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot multiply (*) ", Stackel_whichText (x), L" by ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1701,7 +1709,7 @@ static void do_rdiv (void) {
 			y->content.number == 0.0 ? NUMundefined :
 			x->content.number / y->content.number);
 	} else {
-		Melder_error ("Cannot divide (/) %s by %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot divide (/) ", Stackel_whichText (x), L" by ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1712,7 +1720,7 @@ static void do_idiv (void) {
 			y->content.number == 0.0 ? NUMundefined :
 			floor (x->content.number / y->content.number));
 	} else {
-		Melder_error ("Cannot divide (\"div\") %s by %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot divide (\"div\") ", Stackel_whichText (x), L" by ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1723,7 +1731,7 @@ static void do_mod (void) {
 			y->content.number == 0.0 ? NUMundefined :
 			x->content.number - floor (x->content.number / y->content.number) * y->content.number);
 	} else {
-		Melder_error ("Cannot divide (\"mod\") %s by %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot divide (\"mod\") ", Stackel_whichText (x), L" by ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1732,7 +1740,7 @@ static void do_minus (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : - x->content.number);
 	} else {
-		Melder_error ("Cannot take the opposite (-) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the opposite (-) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1742,7 +1750,7 @@ static void do_power (void) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			pow (x->content.number, y->content.number));
 	} else {
-		Melder_error ("Cannot exponentiate (^) %s to %s.", Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error5 (L"Cannot exponentiate (^) ", Stackel_whichText (x), L" to ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1751,7 +1759,7 @@ static void do_sqr (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : x->content.number * x->content.number);
 	} else {
-		Melder_error ("Cannot take the square (^ 2) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the square (^ 2) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1760,8 +1768,8 @@ static void do_function_n_n (double (*f) (double)) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : f (x->content.number));
 	} else {
-		Melder_error ("The function %s requires a numeric argument, not %s.",
-			Formula_instructionNames [parse [programPointer]. symbol], Stackel_whichText (x)); goto end;
+		Melder_error5 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires a numeric argument, not ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1770,7 +1778,7 @@ static void do_abs (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : fabs (x->content.number));
 	} else {
-		Melder_error ("Cannot take the absolute value (abs) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the absolute value (abs) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1779,7 +1787,7 @@ static void do_round (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : floor (x->content.number + 0.5));
 	} else {
-		Melder_error ("Cannot round %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot round ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1788,7 +1796,7 @@ static void do_floor (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : floor (x->content.number));
 	} else {
-		Melder_error ("Cannot round down (floor) %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot round down (floor) ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1797,7 +1805,7 @@ static void do_ceiling (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : ceil (x->content.number));
 	} else {
-		Melder_error ("Cannot round up (ceiling) %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot round up (ceiling) ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1807,7 +1815,7 @@ static void do_sqrt (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			x->content.number < 0.0 ? NUMundefined : sqrt (x->content.number));
 	} else {
-		Melder_error ("Cannot take the square root (sqrt) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the square root (sqrt) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1816,7 +1824,7 @@ static void do_sin (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : sin (x->content.number));
 	} else {
-		Melder_error ("Cannot take the sine (sin) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the sine (sin) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1825,7 +1833,7 @@ static void do_cos (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : cos (x->content.number));
 	} else {
-		Melder_error ("Cannot take the cosine (cos) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the cosine (cos) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1834,7 +1842,7 @@ static void do_tan (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : tan (x->content.number));
 	} else {
-		Melder_error ("Cannot take the tangent (tan) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the tangent (tan) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1844,7 +1852,7 @@ static void do_arcsin (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			fabs (x->content.number) > 1.0 ? NUMundefined : asin (x->content.number));
 	} else {
-		Melder_error ("Cannot take the arcsine (arcsin) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the arcsine (arcsin) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1854,7 +1862,7 @@ static void do_arccos (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			fabs (x->content.number) > 1.0 ? NUMundefined : acos (x->content.number));
 	} else {
-		Melder_error ("Cannot take the arccosine (arccos) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the arccosine (arccos) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1863,7 +1871,7 @@ static void do_arctan (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : atan (x->content.number));
 	} else {
-		Melder_error ("Cannot take the arctangent (arctan) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the arctangent (arctan) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1872,7 +1880,7 @@ static void do_exp (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : exp (x->content.number));
 	} else {
-		Melder_error ("Cannot exponentiate (exp) %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot exponentiate (exp) ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1881,7 +1889,7 @@ static void do_sinh (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : sinh (x->content.number));
 	} else {
-		Melder_error ("Cannot take the hyperbolic sine (sinh) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the hyperbolic sine (sinh) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1890,7 +1898,7 @@ static void do_cosh (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : cosh (x->content.number));
 	} else {
-		Melder_error ("Cannot take the hyperbolic cosine (cosh) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the hyperbolic cosine (cosh) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1899,7 +1907,7 @@ static void do_tanh (void) {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined : tanh (x->content.number));
 	} else {
-		Melder_error ("Cannot take the hyperbolic tangent (tanh) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the hyperbolic tangent (tanh) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1909,7 +1917,7 @@ static void do_log2 (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			x->content.number <= 0.0 ? NUMundefined : log (x->content.number) * NUMlog2e);
 	} else {
-		Melder_error ("Cannot take the base-2 logarithm (log2) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the base-2 logarithm (log2) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1919,7 +1927,7 @@ static void do_ln (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			x->content.number <= 0.0 ? NUMundefined : log (x->content.number));
 	} else {
-		Melder_error ("Cannot take the natural logarithm (ln) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the natural logarithm (ln) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1929,7 +1937,7 @@ static void do_log10 (void) {
 		pushNumber (x->content.number == NUMundefined ? NUMundefined :
 			x->content.number <= 0.0 ? NUMundefined : log10 (x->content.number));
 	} else {
-		Melder_error ("Cannot take the base-10 logarithm (log10) of %s.", Stackel_whichText (x)); goto end;
+		Melder_error3 (L"Cannot take the base-10 logarithm (log10) of ", Stackel_whichText (x), L"."); goto end;
 	}
 end: return;
 }
@@ -1939,9 +1947,9 @@ static void do_function_dd_d (double (*f) (double, double)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number));
 	} else {
-		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error7 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires two numeric arguments, not ",
+			Stackel_whichText (x), L" and ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1951,9 +1959,9 @@ static void do_function_dl_d (double (*f) (double, long)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number));
 	} else {
-		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error7 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires two numeric arguments, not ",
+			Stackel_whichText (x), L" and ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1963,9 +1971,9 @@ static void do_function_ld_d (double (*f) (long, double)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number));
 	} else {
-		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error7 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires two numeric arguments, not ",
+			Stackel_whichText (x), L" and ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1975,9 +1983,9 @@ static void do_function_ll_l (long (*f) (long, long)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number));
 	} else {
-		Melder_error ("The function %s requires two numeric arguments, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y)); goto end;
+		Melder_error7 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires two numeric arguments, not ",
+			Stackel_whichText (x), L" and ", Stackel_whichText (y), L"."); goto end;
 	}
 end: return;
 }
@@ -1987,9 +1995,9 @@ static void do_function_ddd_d (double (*f) (double, double, double)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined || z->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number, z->content.number));
 	} else {
-		Melder_error ("The function %s requires three numeric arguments, not %s, %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y), Stackel_whichText (z)); goto end;
+		Melder_error9 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires three numeric arguments, not ", Stackel_whichText (x), L", ",
+			Stackel_whichText (y), L", and ", Stackel_whichText (z), L"."); goto end;
 	}
 end: return;
 }
@@ -1999,9 +2007,9 @@ static void do_function_dll_d (double (*f) (double, long, long)) {
 		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined || z->content.number == NUMundefined ? NUMundefined :
 			f (x->content.number, y->content.number, z->content.number));
 	} else {
-		Melder_error ("The function %s requires three numeric arguments, not %s, %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (x), Stackel_whichText (y), Stackel_whichText (z)); goto end;
+		Melder_error9 (L"The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			L" requires three numeric arguments, not ", Stackel_whichText (x), L", ",
+			Stackel_whichText (y), L", and ", Stackel_whichText (z), L"."); goto end;
 	}
 end: return;
 }
@@ -2011,17 +2019,17 @@ static void do_min (void) {
 	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) {
-		Melder_error ("The function \"min\" requires at least one argument."); goto end;
+		Melder_error1 (L"The function \"min\" requires at least one argument."); goto end;
 	}
 	last = pop;
 	if (last->which != Stackel_NUMBER) {
-		Melder_error ("The function \"min\" can only have numeric arguments, not %s.", Stackel_whichText (last)); goto end;
+		Melder_error3 (L"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (last), L"."); goto end;
 	}
 	result = last->content.number;
 	for (j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) {
-			Melder_error ("The function \"min\" can only have numeric arguments, not %s.", Stackel_whichText (previous)); goto end;
+			Melder_error3 (L"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (previous), L"."); goto end;
 		}
 		result = result == NUMundefined || previous->content.number == NUMundefined ? NUMundefined :
 			result < previous->content.number ? result : previous->content.number;
@@ -2035,17 +2043,17 @@ static void do_max (void) {
 	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) {
-		Melder_error ("The function \"max\" requires at least one argument."); goto end;
+		Melder_error1 (L"The function \"max\" requires at least one argument."); goto end;
 	}
 	last = pop;
 	if (last->which != Stackel_NUMBER) {
-		Melder_error ("The function \"max\" can only have numeric arguments, not %s.", Stackel_whichText (last)); goto end;
+		Melder_error3 (L"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (last), L"."); goto end;
 	}
 	result = last->content.number;
 	for (j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) {
-			Melder_error ("The function \"max\" can only have numeric arguments, not %s.", Stackel_whichText (previous)); goto end;
+			Melder_error3 (L"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (previous), L"."); goto end;
 		}
 		result = result == NUMundefined || previous->content.number == NUMundefined ? NUMundefined :
 			result > previous->content.number ? result : previous->content.number;
@@ -2059,18 +2067,18 @@ static void do_imin (void) {
 	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) {
-		Melder_error ("The function \"imin\" requires at least one argument."); goto end;
+		Melder_error1 (L"The function \"imin\" requires at least one argument."); goto end;
 	}
 	last = pop;
 	if (last->which != Stackel_NUMBER) {
-		Melder_error ("The function \"imin\" can only have numeric arguments, not %s.", Stackel_whichText (last)); goto end;
+		Melder_error3 (L"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (last), L"."); goto end;
 	}
 	minimum = last->content.number;
 	result = n->content.number;
 	for (j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) {
-			Melder_error ("The function \"imin\" can only have numeric arguments, not %s.", Stackel_whichText (previous)); goto end;
+			Melder_error3 (L"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (previous), L"."); goto end;
 		}
 		if (minimum == NUMundefined || previous->content.number == NUMundefined) {
 			minimum = NUMundefined;
@@ -2089,18 +2097,18 @@ static void do_imax (void) {
 	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) {
-		Melder_error ("The function \"imax\" requires at least one argument."); goto end;
+		Melder_error1 (L"The function \"imax\" requires at least one argument."); goto end;
 	}
 	last = pop;
 	if (last->which != Stackel_NUMBER) {
-		Melder_error ("The function \"imax\" can only have numeric arguments, not %s.", Stackel_whichText (last)); goto end;
+		Melder_error3 (L"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (last), L"."); goto end;
 	}
 	maximum = last->content.number;
 	result = n->content.number;
 	for (j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) {
-			Melder_error ("The function \"imax\" can only have numeric arguments, not %s.", Stackel_whichText (previous)); goto end;
+			Melder_error3 (L"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (previous), L"."); goto end;
 		}
 		if (maximum == NUMundefined || previous->content.number == NUMundefined) {
 			maximum = NUMundefined;
@@ -2116,29 +2124,29 @@ end: return;
 static void do_length (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		double result = strlen (s->content.string);
+		double result = wcslen (s->content.string);
 		pushNumber (result);
 	} else {
-		Melder_error ("The function \"length\" requires a string, not %s.", Stackel_whichText (s)); goto end;
+		Melder_error3 (L"The function \"length\" requires a string, not ", Stackel_whichText (s), L"."); goto end;
 	}
 end: return;
 }
 static void do_fileReadable (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		structMelderFile file;
-		Melder_relativePathToFile (s->content.string, & file); cherror
+		structMelderFile file = { { 0 } };
+		Melder_relativePathToFile (Melder_peekWcsToAscii (s->content.string), & file); cherror
 		pushNumber (MelderFile_readable (& file));
 	} else {
-		Melder_error ("The function \"fileReadable\" requires a string, not %s.", Stackel_whichText (s)); goto end;
+		Melder_error3 (L"The function \"fileReadable\" requires a string, not ", Stackel_whichText (s), L"."); goto end;
 	}
 end: return;
 }
 static void do_dateStr (void) {
 	time_t today = time (NULL);
-	char *date, *newline;
-	date = Melder_strdup (ctime (& today)); cherror
-	newline = strchr (date, '\n');
+	wchar_t *date, *newline;
+	date = Melder_asciiToWcs (ctime (& today)); cherror
+	newline = wcschr (date, '\n');
 	if (newline) *newline = '\0';
 	pushString (date);
 end: return;
@@ -2149,19 +2157,19 @@ static void do_leftStr (void) {
 		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
 		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
 			long newlength = x ? x->content.number : 1;
-			char *result;
-			long length = strlen (s->content.string);
+			wchar_t *result;
+			long length = wcslen (s->content.string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			result = Melder_malloc (newlength + 1); cherror
-			strncpy (result, s->content.string, newlength);
+			result = Melder_malloc ((newlength + 1) * sizeof (wchar_t)); cherror
+			wcsncpy (result, s->content.string, newlength);
 			result [newlength] = '\0';
 			pushString (result);
 		} else {
-			Melder_error ("The function \"left$\" requires a string, or a string and a number."); goto end;
+			Melder_error1 (L"The function \"left$\" requires a string, or a string and a number."); goto end;
 		}
 	} else {
-		Melder_error ("The function \"left$\" requires one or two arguments."); goto end;
+		Melder_error1 (L"The function \"left$\" requires one or two arguments."); goto end;
 	}
 end: return;
 }
@@ -2171,17 +2179,17 @@ static void do_rightStr (void) {
 		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
 		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
 			long newlength = x ? x->content.number : 1;
-			char *result;
-			long length = strlen (s->content.string);
+			wchar_t *result;
+			long length = wcslen (s->content.string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			result = Melder_strdup (s->content.string + length - newlength); cherror
+			result = Melder_wcsdup (s->content.string + length - newlength); cherror
 			pushString (result);
 		} else {
-			Melder_error ("The function \"right$\" requires a string, or a string and a number."); goto end;
+			Melder_error1 (L"The function \"right$\" requires a string, or a string and a number."); goto end;
 		}
 	} else {
-		Melder_error ("The function \"right$\" requires one or two arguments."); goto end;
+		Melder_error1 (L"The function \"right$\" requires one or two arguments."); goto end;
 	}
 end: return;
 }
@@ -2192,60 +2200,60 @@ static void do_midStr (void) {
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == NULL || y->which == Stackel_NUMBER)) {
 			long newlength = y ? y->content.number : 1;
 			long start = x->content.number;
-			long length = strlen (s->content.string), finish = start + newlength - 1;
-			char *result;
+			long length = wcslen (s->content.string), finish = start + newlength - 1;
+			wchar_t *result;
 			if (start < 1) start = 1;
 			if (finish > length) finish = length;
 			newlength = finish - start + 1;
 			if (newlength > 0) {
-				result = Melder_malloc (newlength + 1); cherror
-				strncpy (result, s->content.string + start - 1, newlength);
+				result = Melder_malloc ((newlength + 1) * sizeof (wchar_t)); cherror
+				wcsncpy (result, s->content.string + start - 1, newlength);
 				result [newlength] = '\0';
 			} else {
-				result = Melder_strdup (""); cherror
+				result = Melder_wcsdup (L""); cherror
 			}
 			pushString (result);
 		} else {
-			Melder_error ("The function \"mid$\" requires a string and one or two numbers."); goto end;
+			Melder_error1 (L"The function \"mid$\" requires a string and one or two numbers."); goto end;
 		}
 	} else {
-		Melder_error ("The function \"mid$\" requires two or three arguments."); goto end;
+		Melder_error1 (L"The function \"mid$\" requires two or three arguments."); goto end;
 	}
 end: return;
 }
 static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		char *value = Melder_getenv (s->content.string);
-		char *result = Melder_strdup (value != NULL ? value : ""); cherror
+		wchar_t *value = Melder_peekAsciiToWcs (Melder_getenv (Melder_peekWcsToAscii (s->content.string)));
+		wchar_t *result = Melder_wcsdup (value != NULL ? value : L""); cherror
 		pushString (result);
 	} else {
-		Melder_error ("The function \"environment$\" requires a string, not %s.", Stackel_whichText (s)); goto end;
+		Melder_error3 (L"The function \"environment$\" requires a string, not ", Stackel_whichText (s), L"."); goto end;
 	}
 end: return;
 }
 static void do_index (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *substring = strstr (s->content.string, t->content.string);
+		wchar_t *substring = wcsstr (s->content.string, t->content.string);
 		long result = substring ? substring - s->content.string + 1 : 0;
 		pushNumber (result);
 	} else {
-		Melder_error ("The function \"index\" requires two strings, not %s and %s.",
-			Stackel_whichText (s), Stackel_whichText (t)); goto end;
+		Melder_error5 (L"The function \"index\" requires two strings, not ",
+			Stackel_whichText (s), L" and ", Stackel_whichText (t), L"."); goto end;
 	}
 end: return;
 }
 static void do_rindex (void) {
 	Stackel part = pop, whole = pop;
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
-		char *lastSubstring = strstr (whole->content.string, part->content.string);
+		wchar_t *lastSubstring = wcsstr (whole->content.string, part->content.string);
 		if (part->content.string [0] == '\0') {
-			long result = strlen (whole->content.string);
+			long result = wcslen (whole->content.string);
 			pushNumber (result);
 		} else if (lastSubstring) {
 			for (;;) {
-				char *substring = strstr (lastSubstring + 1, part->content.string);
+				wchar_t *substring = wcsstr (lastSubstring + 1, part->content.string);
 				if (substring == NULL) break;
 				lastSubstring = substring;
 			}
@@ -2254,41 +2262,42 @@ static void do_rindex (void) {
 			pushNumber (0);
 		}
 	} else {
-		Melder_error ("The function \"rindex\" requires two strings, not %s and %s.",
-			Stackel_whichText (whole), Stackel_whichText (part)); goto end;
+		Melder_error5 (L"The function \"rindex\" requires two strings, not ",
+			Stackel_whichText (whole), L" and ", Stackel_whichText (part), L"."); goto end;
 	}
 end: return;
 }
 static void do_stringMatchesCriterion (int criterion) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		int result = Melder_stringMatchesCriterion (s->content.string, criterion, t->content.string);
+		int result = Melder_stringMatchesCriterionW (s->content.string, criterion, t->content.string);
 		pushNumber (result);
 	} else {
-		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (s), Stackel_whichText (t)); goto end;
+		Melder_error7 (L"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
+			L"\" requires two strings, not ", Stackel_whichText (s), L" and ", Stackel_whichText (t), L"."); goto end;
 	}
 end: return;
 }
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
+		char *sA = Melder_wcsToAscii (s->content.string), *tA = Melder_wcsToAscii (t->content.string);
 		char *errorMessage;
-		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
-		} else if (ExecRE (compiled_regexp, NULL, s->content.string, NULL, backward, '\0', '\0', NULL, NULL)) {
+		} else if (ExecRE (compiled_regexp, NULL, sA, NULL, backward, '\0', '\0', NULL, NULL)) {
 			char *place = compiled_regexp -> startp [0];
 			free (compiled_regexp);
-			pushNumber ((place - s->content.string) + 1);
+			pushNumber ((place - sA) + 1);
 		} else {
 			pushNumber (FALSE);
 		}
+		Melder_free (sA);
+		Melder_free (tA);
 	} else {
-		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (s), Stackel_whichText (t)); goto end;
+		Melder_error7 (L"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
+			L"\" requires two strings, not ", Stackel_whichText (s), L" and ", Stackel_whichText (t), L"."); goto end;
 	}
 end: return;
 }
@@ -2296,47 +2305,52 @@ static void do_replaceStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		long numberOfMatches;
-		char *result = str_replace_literal (s->content.string, t->content.string, u->content.string, x->content.number, & numberOfMatches); cherror
+		wchar_t *result = str_replace_literalW (s->content.string, t->content.string, u->content.string, x->content.number, & numberOfMatches); cherror
 		pushString (result);
 	} else {
-		Melder_error ("The function \"replace$\" requires three strings and a number."); goto end;
+		Melder_error1 (L"The function \"replace$\" requires three strings and a number."); goto end;
 	}
 end: return;
 }
 static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+		char *sA = Melder_wcsToAscii (s->content.string), *tA = Melder_wcsToAscii (t->content.string), *uA = Melder_wcsToAscii (u->content.string);
 		char *errorMessage;
-		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			char *result = Melder_strdup (""); cherror
+			wchar_t *result = Melder_wcsdup (L""); cherror
 			pushString (result);
 		} else {
 			long numberOfMatches;
-			char *result = str_replace_regexp (s->content.string, compiled_regexp, u->content.string, x->content.number, & numberOfMatches); cherror
-			if (result == NULL) result = Melder_strdup (""); cherror
+			char *resultA = str_replace_regexp (sA, compiled_regexp, uA, x->content.number, & numberOfMatches); cherror
+			wchar_t *result = Melder_asciiToWcs (resultA ? resultA : ""); cherror
+			free (resultA);
 			pushString (result);
 		}
+		Melder_free (sA);
+		Melder_free (tA);
+		Melder_free (uA);
 	} else {
-		Melder_error ("The function \"replace_regex$\" requires three strings and a number."); goto end;
+		Melder_error1 (L"The function \"replace_regex$\" requires three strings and a number."); goto end;
 	}
 end: return;
 }
 static void do_extractNumber (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *substring = strstr (s->content.string, t->content.string);
+		wchar_t *substring = wcsstr (s->content.string, t->content.string);
 		if (substring == NULL) {
 			pushNumber (NUMundefined);
 		} else {
 			/* Skip the prompt. */
-			substring += strlen (t->content.string);
+			substring += wcslen (t->content.string);
 			/* Skip white space. */
 			while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
-			if (substring [0] == '\0' || strnequ (substring, "--undefined--", 13)) {
+			if (substring [0] == '\0' || wcsnequ (substring, L"--undefined--", 13)) {
 				pushNumber (NUMundefined);
 			} else {
-				char buffer [101], *slash;
+				wchar_t buffer [101], *slash;
 				int i;
 				for (i = 0; i < 100; i ++) {
 					buffer [i] = *substring;
@@ -2345,38 +2359,37 @@ static void do_extractNumber (void) {
 				}
 				if (i >= 100) {
 					buffer [100] = '\0';
-					pushNumber (Melder_atof (buffer));
+					pushNumber (Melder_atofW (buffer));
 				} else {
 					buffer [i + 1] = '\0';
-					slash = strchr (buffer, '/');
+					slash = wcschr (buffer, '/');
 					if (slash) {
 						double numerator, denominator;
 						*slash = '\0';
-						numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
+						numerator = Melder_atofW (buffer), denominator = Melder_atofW (slash + 1);
 						pushNumber (numerator / denominator);
 					} else {
-						pushNumber (Melder_atof (buffer));
+						pushNumber (Melder_atofW (buffer));
 					}
 				}
 			}
 		}
 	} else {
-		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (s), Stackel_whichText (t)); goto end;
+		Melder_error7 (L"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
+			L"\" requires two strings, not ", Stackel_whichText (s), L" and ", Stackel_whichText (t), L"."); goto end;
 	}
 end: return;
 }
 static void do_extractTextStr (int singleWord) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *substring = strstr (s->content.string, t->content.string), *result, *p;
+		wchar_t *substring = wcsstr (s->content.string, t->content.string), *result, *p;
 		if (substring == NULL) {
-			result = Melder_strdup (""); cherror
+			result = Melder_wcsdup (L""); cherror
 		} else {
 			long length;
 			/* Skip the prompt. */
-			substring += strlen (t->content.string);
+			substring += wcslen (t->content.string);
 			if (singleWord) {
 				/* Skip white space. */
 				while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
@@ -2390,15 +2403,14 @@ static void do_extractTextStr (int singleWord) {
 				while (*p != '\0' && *p != '\n' && *p != '\r') p ++;
 			}
 			length = p - substring;
-			result = Melder_malloc (length + 1); cherror
-			strncpy (result, substring, length);
+			result = Melder_malloc ((length + 1) * sizeof (wchar_t)); cherror
+			wcsncpy (result, substring, length);
 			result [length] = '\0';
 		}
 		pushString (result);
 	} else {
-		Melder_error ("The function \"%s\" requires two strings, not %s and %s.",
-			Formula_instructionNames [parse [programPointer]. symbol],
-			Stackel_whichText (s), Stackel_whichText (t)); goto end;
+		Melder_error7 (L"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
+			L"\" requires two strings, not ", Stackel_whichText (s), L" and ", Stackel_whichText (t), L"."); goto end;
 	}
 end: return;
 }
@@ -2410,53 +2422,53 @@ static void do_selected (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (a->content.string); cherror
+			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (a->content.string)); cherror
 			result = praat_getIdOfSelected (klas, 0); cherror
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_getIdOfSelected (NULL, a->content.number); cherror
 		} else {
-			Melder_error ("The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
+			Melder_error1 (L"The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
 		}
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (s->content.string); cherror
+			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
 			result = praat_getIdOfSelected (klas, x->content.number); cherror
 		} else {
-			Melder_error ("The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
+			Melder_error1 (L"The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
 		}
 	} else {
-		Melder_error ("The function \"selected\" requires 0, 1, or 2 arguments, not %s.", Melder_integer (n->content.number)); goto end;
+		Melder_error3 (L"The function \"selected\" requires 0, 1, or 2 arguments, not ", Melder_integerW (n->content.number), L"."); goto end;
 	}
 	pushNumber (result);
 end: return;
 }
 static void do_selectedStr (void) {
 	Stackel n = pop;
-	char *name, *result = NULL;
+	wchar_t *name, *result = NULL;
 	if (n->content.number == 0) {
-		name = praat_getNameOfSelected (NULL, 0); cherror
-		result = Melder_strdup (name); cherror
+		name = Melder_peekAsciiToWcs (praat_getNameOfSelected (NULL, 0)); cherror
+		result = Melder_wcsdup (name); cherror
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (a->content.string); cherror
-			name = praat_getNameOfSelected (klas, 0); cherror
-			result = Melder_strdup (name); cherror
+			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (a->content.string)); cherror
+			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (klas, 0)); cherror
+			result = Melder_wcsdup (name); cherror
 		} else if (a->which == Stackel_NUMBER) {
-			name = praat_getNameOfSelected (NULL, a->content.number); cherror
-			result = Melder_strdup (name); cherror
+			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (NULL, a->content.number)); cherror
+			result = Melder_wcsdup (name); cherror
 		} else {
-			Melder_error ("The function \"selected$\" requires a string (an object type name) and/or a number."); goto end;
+			Melder_error1 (L"The function \"selected$\" requires a string (an object type name) and/or a number."); goto end;
 		}
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (s->content.string); cherror
-			name = praat_getNameOfSelected (klas, x->content.number); cherror
-			result = Melder_strdup (name); cherror
+			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
+			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (klas, x->content.number)); cherror
+			result = Melder_wcsdup (name); cherror
 		} else {
-			Melder_error ("The function \"selected$\" requires 0, 1, or 2 arguments, not %s.", Melder_integer (n->content.number)); goto end;
+			Melder_error3 (L"The function \"selected$\" requires 0, 1, or 2 arguments, not ", Melder_integerW (n->content.number), L"."); goto end;
 		}
 	}
 	pushString (result);
@@ -2470,14 +2482,15 @@ static void do_numberOfSelected (void) {
 	} else if (n->content.number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (s->content.string); cherror
+			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
 			result = praat_selection (klas);
 		} else {
-			Melder_error ("The function \"numberOfSelected\" requires a string (an object type name), not %s.",
-				Stackel_whichText (s)); goto end;
+			Melder_error3 (L"The function \"numberOfSelected\" requires a string (an object type name), not ",
+				Stackel_whichText (s), L"."); goto end;
 		}
 	} else {
-		Melder_error ("The function \"numberOfSelected\" requires 0 or 1 arguments, not %s.", Melder_integer (n->content.number)); goto end;
+		Melder_error3 (L"The function \"numberOfSelected\" requires 0 or 1 arguments, not ",
+			Melder_integerW (n->content.number), L"."); goto end;
 	}
 	pushNumber (result);
 end: return;
@@ -2485,22 +2498,22 @@ end: return;
 static void do_fixedStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		char *result = Melder_strdup (Melder_fixed (value->content.number, precision->content.number));
+		wchar_t *result = Melder_wcsdup (Melder_fixedW (value->content.number, precision->content.number));
 		pushString (result);
 	} else {
-		Melder_error ("The function \"fixed$\" requires two numbers, not %s and %s.",
-			Stackel_whichText (value), Stackel_whichText (precision)); goto end;
+		Melder_error5 (L"The function \"fixed$\" requires two numbers, not ",
+			Stackel_whichText (value), L" and ", Stackel_whichText (precision), L"."); goto end;
 	}
 end: return;
 }
 static void do_percentStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		char *result = Melder_strdup (Melder_percent (value->content.number, precision->content.number));
+		wchar_t *result = Melder_wcsdup (Melder_percentW (value->content.number, precision->content.number));
 		pushString (result);
 	} else {
-		Melder_error ("The function \"percent$\" requires two numbers, not %s and %s.",
-			Stackel_whichText (value), Stackel_whichText (precision)); goto end;
+		Melder_error5 (L"The function \"percent$\" requires two numbers, not ",
+			Stackel_whichText (value), L" and ", Stackel_whichText (precision), L"."); goto end;
 	}
 end: return;
 }
@@ -2510,12 +2523,14 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 		result = floor (row->content.number + 0.5);   /* Round. */
 	} else if (row->which == Stackel_STRING) {
 		if (your getRowIndex == NULL)
-			return Melder_error ("Objects of type %s do not have row labels, so row indexes have to be numbers.", Thing_className (thee));
-		result = your getRowIndex (thee, row->content.string);
+			return Melder_error3 (L"Objects of type ", Melder_peekAsciiToWcs (Thing_className (thee)),
+				L" do not have row labels, so row indexes have to be numbers.");
+		result = your getRowIndex (thee, Melder_peekWcsToAscii (row->content.string));
 		if (result == 0)
-			return Melder_error ("Object \"%s\" has no row labelled \"%s\".", thy name, row->content.string);
+			return Melder_error5 (L"Object \"", Melder_peekAsciiToWcs (thy name),
+				L"\" has no row labelled \"", row->content.string, L"\".");
 	} else {
-		return Melder_error ("A row index should be a number or a string, not a %s.", Stackel_whichText (row));
+		return Melder_error3 (L"A row index should be a number or a string, not ", Stackel_whichText (row), L".");
 	}
 	return result;
 }
@@ -2525,25 +2540,27 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 		result = floor (column->content.number + 0.5);   /* Round. */
 	} else if (column->which == Stackel_STRING) {
 		if (your getColumnIndex == NULL)
-			return Melder_error ("Objects of type %s do not have column labels, so column indexes have to be numbers.", Thing_className (thee));
-		result = your getColumnIndex (thee, column->content.string);
+			return Melder_error3 (L"Objects of type ", Melder_peekAsciiToWcs (Thing_className (thee)),
+				L" do not have column labels, so column indexes have to be numbers.");
+		result = your getColumnIndex (thee, Melder_peekWcsToAscii (column->content.string));
 		if (result == 0)
-			return Melder_error ("Object \"%s\" has no column labelled \"%s\".", thy name, column->content.string);
+			return Melder_error5 (L"Object \"", Melder_peekAsciiToWcs (thy name),
+				L"\" has no column labelled \"", column->content.string, L"\".");
 	} else {
-		return Melder_error ("A column index should be a number or a string, not a %s.", Stackel_whichText (column));
+		return Melder_error3 (L"A column index should be a number or a string, not ", Stackel_whichText (column), L".");
 	}
 	return result;
 }
 static void do_self0 (long irow, long icol) {
 	Data me = theSource;
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	if (me == NULL) { Melder_error1 (L"The name \"self\" is restricted to formulas for objects."); goto end; }
 	if (our getCell) {
 		pushNumber (our getCell (me));
 	} else if (our getVector) {
 		if (icol == 0) {
-			Melder_error ("We are not in a loop, "
-				"hence no implicit column index for the current %s object (self).\n"
-				"Try using the [column] index explicitly.", Thing_className (me));
+			Melder_error3 (L"We are not in a loop, hence no implicit column index for the current ",
+				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+				"Try using the [column] index explicitly.");
 			goto end;
 		} else {
 			pushNumber (our getVector (me, irow, icol));
@@ -2551,21 +2568,23 @@ static void do_self0 (long irow, long icol) {
 	} else if (our getMatrix) {
 		if (irow == 0) {
 			if (icol == 0) {
-				Melder_error ("We are not in a loop over rows and columns,\n"
-					"hence no implicit row and column indexing for the current %s object (self).\n"
-					"Try using both [row, column] indexes explicitly.", Thing_className (me));
+				Melder_error3 (L"We are not in a loop over rows and columns,\n"
+					"hence no implicit row and column indexing for the current ",
+					Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+					"Try using both [row, column] indexes explicitly.");
 				goto end;
 			} else {
-				Melder_error ("We are not in a loop over columns only,\n"
-					"hence no implicit row index for the current %s object (self).\n"
-					"Try using the [row] index explicitly.", Thing_className (me));
+				Melder_error3 (L"We are not in a loop over columns only,\n"
+					"hence no implicit row index for the current ",
+					Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+					"Try using the [row] index explicitly.");
 				goto end;
 			}
 		} else {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		Melder_error ("%s objects (like self) accept no [] indexing.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [] indexing.");
 		goto end;
 	}
 end: return;
@@ -2576,9 +2595,10 @@ static void do_matriks0 (long irow, long icol) {
 		pushNumber (your getCell (thee));
 	} else if (your getVector) {
 		if (icol == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit column index for this %s object.\n"
-				"Try using the [column] index explicitly.", Thing_className (thee));
+			Melder_error3 (L"We are not in a loop,\n"
+				"hence no implicit column index for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using the [column] index explicitly.");
 			goto end;
 		} else {
 			pushNumber (your getVector (thee, irow, icol));
@@ -2586,21 +2606,23 @@ static void do_matriks0 (long irow, long icol) {
 	} else if (your getMatrix) {
 		if (irow == 0) {
 			if (icol == 0) {
-				Melder_error ("We are not in a loop over rows and columns,\n"
-					"hence no implicit row and column indexing for this %s object.\n"
-					"Try using both [row, column] indexes explicitly.", Thing_className (thee));
+				Melder_error3 (L"We are not in a loop over rows and columns,\n"
+					"hence no implicit row and column indexing for this ",
+					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"Try using both [row, column] indexes explicitly.");
 				goto end;
 			} else {
-				Melder_error ("We are not in a loop over columns only,\n"
-					"hence no implicit row index for this %s object.\n"
-					"Try using the [row] index explicitly.", Thing_className (thee));
+				Melder_error3 (L"We are not in a loop over columns only,\n"
+					"hence no implicit row index for this ",
+					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"Try using the [row] index explicitly.");
 				goto end;
 			}
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		Melder_error ("%s objects accept no [] indexing.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [] indexing.");
 		goto end;
 	}
 end: return;
@@ -2609,21 +2631,22 @@ static void do_selfMatriks1 (long irow) {
 	Data me = theSource;
 	Stackel column = pop;
 	long icol;
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	if (me == NULL) { Melder_error1 (L"The name \"self\" is restricted to formulas for objects."); goto end; }
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getVector) {
 		pushNumber (our getVector (me, irow, icol));
 	} else if (our getMatrix) {
 		if (irow == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for the current %s object (self).\n"
-				"Try using both [row, column] indexes instead.", Thing_className (me));
+			Melder_error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for the current ",
+				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2632,23 +2655,24 @@ static void do_selfMatriksStr1 (long irow) {
 	Data me = theSource;
 	Stackel column = pop;
 	long icol;
-	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
+	if (me == NULL) { Melder_error1 (L"The name \"self$\" is restricted to formulas for objects."); goto end; }
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getVectorStr) {
-		char *result = Melder_strdup (our getVectorStr (me, icol)); cherror
+		wchar_t *result = Melder_wcsdup (Melder_peekAsciiToWcs (our getVectorStr (me, icol))); cherror
 		pushString (result);
 	} else if (our getMatrixStr) {
 		if (irow == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for the current %s object (self).\n"
-				"Try using both [row, column] indexes instead.", Thing_className (me));
+			Melder_error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for the current ",
+				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
-			char *result = Melder_strdup (our getMatrixStr (me, irow, icol)); cherror
+			wchar_t *result = Melder_wcsdup (Melder_peekAsciiToWcs (our getMatrixStr (me, irow, icol))); cherror
 			pushString (result);
 		}
 	} else {
-		Melder_error ("%s objects (like self) accept no [column] indexes.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2661,15 +2685,16 @@ static void do_matriks1 (long irow) {
 		pushNumber (your getVector (thee, irow, icol));
 	} else if (your getMatrix) {
 		if (irow == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for this %s object.\n"
-				"Try using both [row, column] indexes instead.", Thing_className (thee));
+			Melder_error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		Melder_error ("%s objects accept no [column] indexes.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2679,18 +2704,19 @@ static void do_matrixStr1 (long irow) {
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getVectorStr) {
-		pushString (Melder_strdup (your getVectorStr (thee, icol)));
+		pushString (Melder_wcsdup (Melder_peekAsciiToWcs (your getVectorStr (thee, icol))));
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
-			Melder_error ("We are not in a loop,\n"
-				"hence no implicit row index for this %s object.\n"
-				"Try using both [row, column] indexes instead.", Thing_className (thee));
+			Melder_error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
-			pushString (Melder_strdup (your getMatrixStr (thee, irow, icol)));
+			pushString (Melder_wcsdup (Melder_peekAsciiToWcs (your getMatrixStr (thee, irow, icol))));
 		}
 	} else {
-		Melder_error ("%s objects accept no [column] indexes for string cells.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [column] indexes for string cells.");
 		goto end;
 	}
 end: return;
@@ -2699,11 +2725,11 @@ static void do_selfMatriks2 (void) {
 	Data me = theSource;
 	Stackel column = pop, row = pop;
 	long irow, icol;
-	if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+	if (me == NULL) { Melder_error1 (L"The name \"self\" is restricted to formulas for objects."); goto end; }
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getMatrix == NULL) {
-		Melder_error ("%s objects like \"self\" accept no [row, column] indexing.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no [row, column] indexing.");
 		goto end;
 	}
 	pushNumber (our getMatrix (me, irow, icol));
@@ -2712,16 +2738,16 @@ end: return;
 static void do_selfMatriksStr2 (void) {
 	Data me = theSource;
 	Stackel column = pop, row = pop;
-	char *result;
+	wchar_t *result;
 	long irow, icol;
-	if (me == NULL) { Melder_error ("The name \"self$\" is restricted to formulas for objects."); goto end; }
+	if (me == NULL) { Melder_error1 (L"The name \"self$\" is restricted to formulas for objects."); goto end; }
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getMatrixStr == NULL) {
-		Melder_error ("%s objects like \"self$\" accept no [row, column] indexing for string cells.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self$\" accept no [row, column] indexing for string cells.");
 		goto end;
 	}
-	result = Melder_strdup (our getMatrixStr (me, irow, icol)); cherror
+	result = Melder_wcsdup (Melder_peekAsciiToWcs (our getMatrixStr (me, irow, icol))); cherror
 	pushString (result);
 end: return;
 }
@@ -2732,7 +2758,7 @@ static void do_matriks2 (void) {
 	irow = Stackel_getRowNumber (row, thee); cherror
 	icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrix == NULL) {
-		Melder_error ("%s objects accept no [row, column] indexing.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [row, column] indexing.");
 		goto end;
 	}
 	pushNumber (your getMatrix (thee, irow, icol));
@@ -2741,15 +2767,15 @@ end: return;
 static void do_matriksStr2 (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
-	char *result;
+	wchar_t *result;
 	long irow, icol;
 	irow = Stackel_getRowNumber (row, thee); cherror
 	icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrixStr == NULL) {
-		Melder_error ("%s objects accept no [row, column] indexing for string cells.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [row, column] indexing for string cells.");
 		goto end;
 	}
-	result = Melder_strdup (your getMatrixStr (thee, irow, icol)); cherror
+	result = Melder_wcsdup (Melder_peekAsciiToWcs (your getMatrixStr (thee, irow, icol))); cherror
 	pushString (result);
 end: return;
 }
@@ -2760,14 +2786,16 @@ static void do_funktie0 (long irow, long icol) {
 	} else if (your getFunction1) {
 		Data me = theSource;
 		if (me == NULL) {
-			Melder_error ("No current object (we are not in a Formula command),\n"
-				"hence no implicit x value for this %s object.\n"
-				"Try using the (x) argument explicitly.", Thing_className (thee));
+			Melder_error3 (L"No current object (we are not in a Formula command),\n"
+				"hence no implicit x value for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using the (x) argument explicitly.");
 			goto end;
 		} else if (our getX == NULL) {
-			Melder_error ("The current %s object gives no implicit x values,\n"
-				"hence no implicit x value for this %s object.\n"
-				"Try using the (x) argument explicitly.", Thing_className (me), Thing_className (thee));
+			Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)),
+				L" object gives no implicit x values,\nhence no implicit x value for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using the (x) argument explicitly.");
 			goto end;
 		} else {
 			double x = our getX (me, icol);
@@ -2776,21 +2804,22 @@ static void do_funktie0 (long irow, long icol) {
 	} else if (your getFunction2) {
 		Data me = theSource;
 		if (me == NULL) {
-			Melder_error ("No current object (we are not in a Formula command),\n"
-				"hence no implicit x or y values for this %s object.\n"
-				"Try using both (x, y) arguments explicitly.", Thing_className (thee));
+			Melder_error3 (L"No current object (we are not in a Formula command),\n"
+				"hence no implicit x or y values for this ",
+				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using both (x, y) arguments explicitly.");
 			goto end;
 		} else if (our getX == NULL) {
-			Melder_error ("The current %s object gives no implicit x values,\n"
-				"hence no implicit x value for this %s object.\n"
-				"Try using both (x, y) arguments explicitly.", Thing_className (me), Thing_className (thee));
+			Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit x values,\n"
+				"hence no implicit x value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"Try using both (x, y) arguments explicitly.");
 			goto end;
 		} else {
 			double x = our getX (me, icol);
 			if (our getY == NULL) {
-				Melder_error ("The current %s object gives no implicit y values,\n"
-					"hence no implicit y value for this %s object.\n"
-					"Try using the (y) argument explicitly.", Thing_className (me), Thing_className (thee));
+				Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"Try using the (y) argument explicitly.");
 				goto end;
 			} else {
 				double y = our getY (me, irow);
@@ -2798,7 +2827,7 @@ static void do_funktie0 (long irow, long icol) {
 			}
 		}
 	} else {
-		Melder_error ("%s objects accept no () values.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no () values.");
 		goto end;
 	}
 end: return;
@@ -2807,24 +2836,24 @@ static void do_selfFunktie1 (long irow) {
 	Data me = theSource;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
+		if (me == NULL) { Melder_error1 (L"The name \"self\" is restricted to formulas for objects."); goto end; }
 		if (our getFunction1) {
 			pushNumber (our getFunction1 (me, irow, x->content.number));
 		} else if (our getFunction2) {
 			if (our getY == NULL) {
-				Melder_error ("The current %s object (self) accepts no implicit y values.\n"
-					"Try using both (x, y) arguments instead.", Thing_className (me));
+				Melder_error3 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object (self) accepts no implicit y values.\n"
+					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else {
 				double y = our getY (me, irow);
 				pushNumber (our getFunction2 (me, x->content.number, y));
 			}
 		} else {
-			Melder_error ("%s objects like \"self\" accept no (x) values.", Thing_className (me));
+			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no (x) values.");
 			goto end;
 		}
 	} else {
-		Melder_error ("%s objects like \"self\" accept only numeric x values.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept only numeric x values.");
 	}
 end: return;
 }
@@ -2837,25 +2866,26 @@ static void do_funktie1 (long irow) {
 		} else if (your getFunction2) {
 			Data me = theSource;
 			if (me == NULL) {
-				Melder_error ("No current object (we are not in a Formula command),\n"
-					"hence no implicit y value for this %s object.\n"
-					"Try using both (x, y) arguments instead.", Thing_className (thee));
+				Melder_error3 (L"No current object (we are not in a Formula command),\n"
+					"hence no implicit y value for this ",
+					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else if (our getY == NULL) {
-				Melder_error ("The current %s object gives no implicit y values,\n"
-					"hence no implicit y value for this %s object.\n"
-					"Try using both (x, y) arguments instead.", Thing_className (me), Thing_className (thee));
+				Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else {
 				double y = our getY (me, irow);
 				pushNumber (your getFunction2 (thee, x->content.number, y));
 			}
 		} else {
-			Melder_error ("%s objects accept no (x) values.", Thing_className (thee));
+			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no (x) values.");
 			goto end;
 		}
 	} else {
-		Melder_error ("%s objects accept only numeric x values.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept only numeric x values.");
 	}
 end: return;
 }
@@ -2865,12 +2895,12 @@ static void do_selfFunktie2 (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 		if (our getFunction2 == NULL) {
-			Melder_error ("%s objects like \"self\" accept no (x, y) values.", Thing_className (me));
+			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no (x, y) values.");
 			goto end;
 		}
 		pushNumber (our getFunction2 (me, x->content.number, y->content.number));
 	} else {
-		Melder_error ("%s objects accept only numeric x values.", Thing_className (me));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects accept only numeric x values.");
 	}
 end: return;
 }
@@ -2879,32 +2909,32 @@ static void do_funktie2 (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (your getFunction2 == NULL) {
-			Melder_error ("%s objects accept no (x, y) values.", Thing_className (thee));
+			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no (x, y) values.");
 			goto end;
 		}
 		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
 	} else {
-		Melder_error ("%s objects accept only numeric x values.", Thing_className (thee));
+		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept only numeric x values.");
 	}
 end: return;
 }
 static void do_rowStr (void) {
 	Data thee = parse [programPointer]. content.object;
-	char *string;
+	wchar_t *string;
 	Stackel row = pop;
 	long irow = Stackel_getRowNumber (row, thee); cherror
-	string = Melder_strdup (your getRowStr (thee, irow));
-	if (string == NULL) Melder_error ("Row index out of bounds.");
+	string = Melder_wcsdup (Melder_peekAsciiToWcs (your getRowStr (thee, irow)));
+	if (string == NULL) Melder_error1 (L"Row index out of bounds.");
 	pushString (string);
 end: return;
 }
 static void do_colStr (void) {
 	Data thee = parse [programPointer]. content.object;
-	char *string;
+	wchar_t *string;
 	Stackel col = pop;
 	long icol = Stackel_getColumnNumber (col, thee); cherror
-	string = Melder_strdup (your getColStr (thee, icol));
-	if (string == NULL) Melder_error ("Column index out of bounds.");
+	string = Melder_wcsdup (Melder_peekAsciiToWcs (your getColStr (thee, icol)));
+	if (string == NULL) Melder_error1 (L"Column index out of bounds.");
 	pushString (string);
 end: return;
 }
@@ -2922,12 +2952,12 @@ static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
 
-int Formula_run (long row, long col, double *numericResult, char **stringResult) {
+int Formula_run (long row, long col, double *numericResult, wchar_t **stringResult) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   /* First symbol of the program. */
 	if (theStack == NULL) theStack = (Stackel) Melder_calloc (10000, sizeof (theStack));
 	if (theStack == NULL)
-		return Melder_error ("Out of memory during formula computation.");
+		return Melder_error1 (L"Out of memory during formula computation.");
 	w = 0, wmax = 0;   /* start new stack. */
 	while (programPointer <= numberOfInstructions) {
 		int symbol;
@@ -2939,11 +2969,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COL_: { pushNumber (col);
 } break; case X_: {
 	Data me = theSource;
-	if (our getX == NULL) { Melder_error ("No values for \"x\" for this object."); goto end; }
+	if (our getX == NULL) { Melder_error1 (L"No values for \"x\" for this object."); goto end; }
 	pushNumber (our getX (me, col));
 } break; case Y_: {
 	Data me = theSource;
-	if (our getY == NULL) { Melder_error ("No values for \"y\" for this object."); goto end; }
+	if (our getY == NULL) { Melder_error1 (L"No values for \"y\" for this object."); goto end; }
 	pushNumber (our getY (me, row));
 } break; case NOT_: { do_not ();
 } break; case EQ_: { do_eq ();
@@ -3068,7 +3098,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_error ("A condition between \"if\" and \"then\" has to be a number, not %s.", Stackel_whichText (condition));
+		Melder_error3 (L"A condition between \"if\" and \"then\" has to be a number, not ",
+			Stackel_whichText (condition), L".");
 	}
 } break; case IFFALSE_: {
 	Stackel condition = pop;
@@ -3077,7 +3108,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_error ("A condition between \"if\" and \"then\" has to be a number, not %s.", Stackel_whichText (condition));
+		Melder_error3 (L"A condition between \"if\" and \"then\" has to be a number, not ",
+			Stackel_whichText (condition), L".");
 	}
 } break; case GOTO_: {
 	programPointer = f [programPointer]. content.label - theOptimize;
@@ -3102,16 +3134,17 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COLSTR_: { do_colStr ();
 } break; case SQR_: { do_sqr ();
 } break; case STRING_: {
-	char *result = Melder_strdup (f [programPointer]. content.string); cherror
+	wchar_t *result = Melder_wcsdup (f [programPointer]. content.string); cherror
 	pushString (result);
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	char *result = Melder_strdup (var -> stringValue); cherror
+	wchar_t *result = Melder_wcsdup (Melder_peekAsciiToWcs (var -> stringValue)); cherror
 	pushString (result);
-} break; default: return Melder_error ("Symbol \"%s\" without action.", Formula_instructionNames [parse [programPointer]. symbol]);
+} break; default: return Melder_error3
+			(L"Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], L"\" without action.");
 		} /* switch */
 		cherror
 		programPointer ++;
@@ -3128,16 +3161,16 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			Melder_error ("Found a numeric expression instead of a string expression."); goto end;
 		}
 		if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
-		else Melder_information1 (theStack [1]. content.string);
+		else Melder_information1W (theStack [1]. content.string);
 	} else {
 		Melder_assert (theExpressionType == EXPRESSION_TYPE_UNKNOWN);
 		if (theStack [1]. which == Stackel_NUMBER) {
 			if (numericResult) *numericResult = theStack [1]. content.number;
-			else Melder_information1 (Melder_double (theStack [1]. content.number));
+			else Melder_information1W (Melder_doubleW (theStack [1]. content.number));
 		} else {
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			if (stringResult) { *stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL; }   /* Undangle. */
-			else Melder_information1 (theStack [1]. content.string);
+			else Melder_information1W (theStack [1]. content.string);
 		}
 	}
 end:

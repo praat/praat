@@ -34,7 +34,7 @@ procedure invFisherQ df1 df2 precision
       assert f <> undefined ; 'q' 'df1' 'df2'
       assert abs (fisherQ (f, 'df1', 'df2') - 'q') < 'q'*'precision'*10 ; 'f'
    endfor
-   for power from 151 to 309
+   for power from 151 to 307
       q = 10 ^ -power
       f = invFisherQ (q, df1, df2)
       assert f = undefined or abs (fisherQ (f, 'df1', 'df2') - 'q') < 'q'*'precision'*30 ; 'f'

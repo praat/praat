@@ -273,7 +273,7 @@ int praat_addActionScript (const char *className1, int n1, const char *className
 	if (strlen (script) == 0) {
 		theActions [position]. script = NULL;
 	} else {
-		structMelderFile file;
+		structMelderFile file = { { 0 } };
 		Melder_relativePathToFile (script, & file);
 		theActions [position]. script = Melder_strdup (Melder_fileToPath (& file));
 	}

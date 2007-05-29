@@ -26,7 +26,7 @@
 
 #include "Collection.h"
 
-structMelderFile Data_fileBeingRead;
+structMelderFile Data_fileBeingRead = { { 0 } };
 
 static int copy (Any data1, Any data2) {
 	(void) data1;

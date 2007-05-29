@@ -388,7 +388,7 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 		DO_Picture_writeToEpsFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file; structMelderFile file2;
+	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
@@ -406,7 +406,7 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file; structMelderFile file2;
+	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
@@ -421,7 +421,7 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
-	} else { MelderFile file; structMelderFile file2;
+	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
@@ -436,7 +436,7 @@ static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.prapic");
-	} else { MelderFile file; structMelderFile file2;
+	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToPraatPictureFile (praat_picture, file);
@@ -466,7 +466,7 @@ END
 			DO_Picture_writeToMacPictFile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.pict");
-		} else { MelderFile file; structMelderFile file2;
+		} else { MelderFile file; structMelderFile file2 = { { 0 } };
 			if (sender == dia) file = UiFile_getFile (sender);
 			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToMacPictFile (praat_picture, file);
@@ -482,7 +482,7 @@ END
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.emf");
-		} else { MelderFile file; structMelderFile file2;
+		} else { MelderFile file; structMelderFile file2 = { { 0 } };
 			if (sender == dia) file = UiFile_getFile (sender);
 			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToWindowsMetafile (praat_picture, file);
@@ -667,6 +667,7 @@ DO
 	long n = GET_INTEGER ("Number of horizontal steps"), i;
 	float *y = NULL;
 	PraatPictureFunction function = NULL;
+	wchar_t *formula = Melder_asciiToWcs (GET_STRING ("formula"));
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
@@ -677,10 +678,10 @@ DO
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	if (! Formula_compile (NULL, function, GET_STRING ("formula"), FALSE, TRUE)) return 0;
+	Formula_compile (NULL, function, formula, FALSE, TRUE); cherror
 	for (i = 1; i <= n; i ++) {
 		double result;
-		if (! Formula_run (1, i, & result, NULL)) return 0;
+		Formula_run (1, i, & result, NULL); cherror
 		y [i] = result;
 	}
 	praat_picture_open ();
@@ -689,6 +690,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 end:
+	Melder_free (formula);
 	NUMfvector_free (y, 1);
 	forget (function);
 	iferror return 0;

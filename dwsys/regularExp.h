@@ -24,9 +24,13 @@
 * Nirvana Text Editor                                                          *
 * July 31, 2001                                                                *
 *                                                                              *
+* Paul Boersma added wchar_t version on May 24, 2007                           *
+*                                                                              *
 *******************************************************************************/
 
 /* Number of text capturing parentheses allowed. */
+
+#include <wchar.h>
 
 #define NSUBEXP 50
 
@@ -49,6 +53,22 @@ typedef struct regexp {
    char  program [1];       /* Unwarranted chumminess with compiler. */
 } regexp;
 
+typedef struct regexpW {
+   wchar_t *startp [NSUBEXP];  /* Captured text starting locations. */
+   wchar_t *endp   [NSUBEXP];  /* Captured text ending locations. */
+   wchar_t *extentpBW;         /* Points to the maximum extent of text scanned by
+                               ExecRE in front of the string to achieve a match
+                               (needed because of positive look-behind.) */
+   wchar_t *extentpFW;         /* Points to the maximum extent of text scanned by
+                               ExecRE to achieve a match (needed because of
+                               positive look-ahead.) */
+   int   top_branch;        /* Zero-based index of the top branch that matches.
+                               Used by syntax highlighting only. */
+   wchar_t  match_start;       /* Internal use only. */
+   wchar_t  anchor;            /* Internal use only. */
+   wchar_t  program [1];       /* Unwarranted chumminess with compiler. */
+} regexpW;
+
 /* Flags for CompileRE default settings (Markus Schwarzenberg) */
 
 typedef enum {
@@ -62,6 +82,11 @@ typedef enum {
 regexp * CompileRE (
    const char  *exp,         /* String containing the regex specification. */
    char **errorText,   /* Text of any error message produced. */
+   int  defaultFlags); /* Flags for default RE-operation */
+
+regexpW * CompileREW (
+   const wchar_t  *exp,         /* String containing the regex specification. */
+   wchar_t **errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
 /* Match a `regexp' structure against a string. */
@@ -85,12 +110,37 @@ int ExecRE (
    const char   *look_behind_to); /* Boundary for look-behind; defaults to
                                     "string" if NULL */
 
+int ExecREW (
+   regexpW *prog,                /* Compiled regex. */
+   regexpW *cross_regex_backref, /* Pointer to a `regexp' that was used in a
+                                   previous execution of ExecRE.  Used to
+                                   implement back references across regular
+                                   expressions for use in syntax
+                                   highlighting.*/
+   const wchar_t   *string,              /* Text to search within. */
+   const wchar_t   *end,                 /* Pointer to the end of `string'.  If NULL will
+                                   scan from `string' until '\0' is found. */
+   int     reverse,             /* Backward search. */
+   wchar_t    prev_char,           /* Character immediately prior to `string'.  Set
+                                   to '\n' or '\0' if true beginning of text. */
+   wchar_t    succ_char,           /* Character immediately after `end'.  Set
+                                   to '\n' or '\0' if true beginning of text. */
+   const wchar_t   *delimiters,    /* Word delimiters to use (NULL for default) */
+   const wchar_t   *look_behind_to); /* Boundary for look-behind; defaults to
+                                    "string" if NULL */
+
 /* Perform substitutions after a `regexp' match. */
 
 void SubstituteRE (
    regexp *prog,
    const char   *source,
    char   *dest,
+   int     max);
+
+void SubstituteREW (
+   regexpW *prog,
+   const wchar_t   *source,
+   wchar_t   *dest,
    int     max);
 
 /* Builds a default delimiter table that persists across `ExecRE' calls that
@@ -100,8 +150,12 @@ void SubstituteRE (
 void SetREDefaultWordDelimiters (
    char *delimiters);
 
+void SetREDefaultWordDelimitersW (
+   wchar_t *delimiters);
+
 /* Enable (or disable) brace counting quantifiers, e.g. `(foo){0,3}'. */
 
 void EnableCountingQuantifier (int is_enabled);
+void EnableCountingQuantifierW (int is_enabled);
 
 #endif /* _regularExp_h_ */

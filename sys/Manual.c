@@ -59,7 +59,7 @@ FORM (Manual, cb_writeAllToHtmlDir, "Write all pages as HTML files", 0)
 	LABEL ("", "Type a directory name:")
 	TEXTFIELD ("directory", "")
 	OK
-structMelderDir currentDirectory;
+structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
 DO
@@ -503,12 +503,12 @@ static int goToPage (I, const char *title) {
 	iam (Manual);
 	ManPages manPages = my data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
-		structMelderFile file;
+		structMelderFile file = { { 0 } };
 		MelderDir_relativePathToFile (& manPages -> rootDirectory, title + 3, & file);
 		Melder_recordFromFile (& file);
 		return -1;
 	} else if (title [0] == '\\' && title [1] == 'S' && title [2] == 'C') {
-		structMelderDir saveDir;
+		structMelderDir saveDir = { { 0 } };
 		Melder_getDefaultDir (& saveDir);
 		Melder_setDefaultDir (& manPages -> rootDirectory);
 		if (! praat_executeScriptFromFileNameWithArguments (title + 3)) {

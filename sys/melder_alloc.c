@@ -1,6 +1,6 @@
 /* melder_alloc.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2006/12/10 separated from melder.c
+ * pb 2007/05/24 wcsdup, wcsToAscii, asciiToWcs
  */
 
 #include "melder.h"
@@ -99,7 +100,7 @@ char * Melder_strdup (const char *string) {
 	long size;
 	if (! string) return NULL;
 	size = strlen (string) + 1;
-	result = malloc (size);
+	result = malloc (size * sizeof (char));
 	if (result == NULL)
 		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
 	strcpy (result, string);
@@ -107,6 +108,61 @@ char * Melder_strdup (const char *string) {
 	totalAllocationSize += size;
 	#if TRACE_MALLOC
 		Melder_casual ("strdup %ld", size);
+	#endif
+	return result;
+}
+
+wchar_t * Melder_wcsdup (const wchar_t *string) {
+	wchar_t *result;
+	long size;
+	if (! string) return NULL;
+	size = wcslen (string) + 1;
+	result = malloc (size * sizeof (wchar_t));
+	if (result == NULL)
+		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
+	wcscpy (result, string);
+	totalNumberOfAllocations += 1;
+	totalAllocationSize += size;
+	#if TRACE_MALLOC
+		Melder_casual ("wcsdup %ld", size);
+	#endif
+	return result;
+}
+
+wchar_t * Melder_asciiToWcs (const char *string) {
+	wchar_t *result;
+	long size;
+	if (! string) return NULL;
+	size = strlen (string) + 1;
+	result = malloc (size * sizeof (wchar_t));
+	if (result == NULL)
+		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
+	const char *from = & string [0];
+	wchar_t *to = & result [0];
+	for (; *from != '\0'; from ++, to ++) { *to = (unsigned char) *from; } *to = L'\0';
+	totalNumberOfAllocations += 1;
+	totalAllocationSize += size;
+	#if TRACE_MALLOC
+		Melder_casual ("asciitowcs %ld", size);
+	#endif
+	return result;
+}
+
+char * Melder_wcsToAscii (const wchar_t *string) {
+	char *result;
+	long size;
+	if (! string) return NULL;
+	size = wcslen (string) + 1;
+	result = malloc (size * sizeof (char));
+	if (result == NULL)
+		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
+	const wchar_t *from = & string [0];
+	char *to = & result [0];
+	for (; *from != L'\0'; from ++, to ++) { *to = *from; /* Truncate */ } *to = '\0';
+	totalNumberOfAllocations += 1;
+	totalAllocationSize += size;
+	#if TRACE_MALLOC
+		Melder_casual ("wcstoascii %ld", size);
 	#endif
 	return result;
 }

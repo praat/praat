@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/17
+ * pb 2007/05/28
  */
 
 #include <stdio.h>
@@ -28,6 +28,8 @@
 #include <string.h>
 	#define strequ  ! strcmp
 	#define strnequ  ! strncmp
+	#define wcsequ  ! wcscmp
+	#define wcsnequ  ! wcsncmp
 	#define Melder_strequ  ! Melder_strcmp
 	#define Melder_strnequ  ! Melder_strncmp
 #include <stdarg.h>
@@ -84,7 +86,9 @@ const wchar_t * Melder_percentW (double value, int precision);
 /********** STRING TO NUMBER CONVERSION **********/
 
 int Melder_isStringNumeric (const char *string);
+int Melder_isStringNumericW (const wchar_t *string);
 double Melder_atof (const char *string);
+double Melder_atofW (const wchar_t *string);
 	/*
 	 * "3.14e-3" -> 3.14e-3
 	 * "15.6%" -> 0.156
@@ -93,11 +97,16 @@ double Melder_atof (const char *string);
 
 /********** ERROR **********/
 
-int Melder_error (const char *format, ...);   /* "Queue error" */
-bool Melder_errorA9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5,
-	const char *s6, const char *s7, const char *s8, const char *s9);   /* "Queue error" */
-bool Melder_errorW9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);   /* "Queue error" */
+int Melder_error (const char *format, ...);
+bool Melder_error1 (const wchar_t *s1);
+bool Melder_error2 (const wchar_t *s1, const wchar_t *s2);
+bool Melder_error3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+bool Melder_error4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+bool Melder_error5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+bool Melder_error6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+bool Melder_error7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+bool Melder_error8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+bool Melder_error9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 	/* Generate, but do not yet show, an error message, return 0. */
 
 void * Melder_errorp (const char *format, ...);
@@ -164,6 +173,8 @@ char * Melder_wcsToAscii (const wchar_t *string);
 char * Melder_wcsToUtf8 (const wchar_t *string);
 char * Melder_wcsToIsolatin1 (const wchar_t *string);
 char * Melder_wcsToMacroman (const wchar_t *string);
+wchar_t * Melder_peekAsciiToWcs (const char *string);
+char * Melder_peekWcsToAscii (const wchar_t *string);
 
 #define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
 void _Melder_free (void **pointer);
@@ -267,6 +278,7 @@ typedef struct {
 #define Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO  6
 #define Melder_NUMBER_max  6
 const char * Melder_NUMBER_text_adjective (int which_Melder_NUMBER);
+const wchar_t * Melder_NUMBER_text_adjectiveW (int which_Melder_NUMBER);
 int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion);
 
 #define Melder_STRING_min  1
@@ -281,7 +293,9 @@ int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double
 #define Melder_STRING_MATCH_REGEXP  9
 #define Melder_STRING_max  9
 const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING);
+const wchar_t * Melder_STRING_text_finiteVerbW (int which_Melder_STRING);
 int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, const char *criterion);
+int Melder_stringMatchesCriterionW (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion);
 
 /********** STRING PARSING **********/
 
@@ -330,6 +344,15 @@ void MelderInfo_write6 (const char *s1, const char *s2, const char *s3, const ch
 void MelderInfo_write7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
 void MelderInfo_write8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
 void MelderInfo_write9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
+void MelderInfo_write1W (const wchar_t *s1);   /* Write a string to the Info window in the background. */
+void MelderInfo_write2W (const wchar_t *s1, const wchar_t *s2);   /* Write two strings to the Info window in the background. */
+void MelderInfo_write3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void MelderInfo_write4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void MelderInfo_write5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void MelderInfo_write6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void MelderInfo_write7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void MelderInfo_write8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void MelderInfo_write9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void MelderInfo_writeLine1 (const char *s1);   /* Write a string to the Info window in the background; add a new-line. */
 void MelderInfo_writeLine2 (const char *s1, const char *s2);
 void MelderInfo_writeLine3 (const char *s1, const char *s2, const char *s3);
@@ -339,6 +362,15 @@ void MelderInfo_writeLine6 (const char *s1, const char *s2, const char *s3, cons
 void MelderInfo_writeLine7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
 void MelderInfo_writeLine8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
 void MelderInfo_writeLine9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
+void MelderInfo_writeLine1W (const wchar_t *s1);   /* Write a string to the Info window in the background; add a new-line. */
+void MelderInfo_writeLine2W (const wchar_t *s1, const wchar_t *s2);
+void MelderInfo_writeLine3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void MelderInfo_writeLine4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void MelderInfo_writeLine5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void MelderInfo_writeLine6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void MelderInfo_writeLine7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void MelderInfo_writeLine8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void MelderInfo_writeLine9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void MelderInfo_close (void);   /* Flush the background info to the Info window. */
 
 void Melder_information1 (const char *s1);
@@ -350,16 +382,25 @@ void Melder_information6 (const char *s1, const char *s2, const char *s3, const 
 void Melder_information7 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7);
 void Melder_information8 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8);
 void Melder_information9 (const char *s1, const char *s2, const char *s3, const char *s4, const char *s5, const char *s6, const char *s7, const char *s8, const char *s9);
+void Melder_information1W (const wchar_t *s1);
+void Melder_information2W (const wchar_t *s1, const wchar_t *s2);
+void Melder_information3W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void Melder_information4W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void Melder_information5W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void Melder_information6W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void Melder_information7W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void Melder_information8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void Melder_information9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 
 void Melder_informationReal (double value, const char *units);   /* %.17g or --undefined--; units may be NULL */
 
-void Melder_divertInfo (MelderStringA *buffer);   /* NULL = back to normal. */
+void Melder_divertInfo (MelderStringW *buffer);   /* NULL = back to normal. */
 
 void Melder_print (const char *s);
 	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
 
 void Melder_clearInfo (void);   /* Clear the Info window. */
-char * Melder_getInfo (void);
+wchar_t * Melder_getInfo (void);
 void Melder_help (const char *query);
 
 void Melder_search (void);
@@ -525,7 +566,7 @@ void Melder_setCasualProc (void (*casualProc) (char *message));
 void Melder_setProgressProc (int (*progressProc) (double progress, char *message));
 void Melder_setMonitorProc (void * (*monitorProc) (double progress, char *message));
 void Melder_setPauseProc (int (*pauseProc) (char *message));
-void Melder_setInformationProc (void (*informationProc) (char *message));
+void Melder_setInformationProc (void (*informationProc) (wchar_t *message));
 void Melder_setHelpProc (void (*help) (const char *query));
 void Melder_setSearchProc (void (*search) (void));
 void Melder_setWarningProc (void (*warningProc) (char *message));
@@ -549,6 +590,7 @@ char * MelderFile_name (MelderFile file);
 char * MelderDir_name (MelderDir dir);
 int Melder_pathToDir (const char *path, MelderDir dir);
 int Melder_pathToFile (const char *path, MelderFile file);
+int Melder_pathToFileW (const wchar_t *path, MelderFile file);
 int Melder_relativePathToFile (const char *path, MelderFile file);
 char * Melder_dirToPath (MelderDir dir);
 	/* Returns a one-time static string like "HardDisk:Paul:Praats:"
@@ -625,14 +667,14 @@ void Melder_setDefaultDir (MelderDir dir);
 void MelderFile_setDefaultDir (MelderFile file);
 void MelderFile_nativizePath (char *path);   /* Convert from Unix-style slashes. */
 
-/* Use the following function to pass unchanged text or file names to Melder_* functions. */
+/* Use the following functions to pass unchanged text or file names to Melder_* functions. */
 /* Backslashes are replaced by "\bs". */
 /* The trick is that Melder_asciiMessage returns one of 11 cyclically used static strings, */
 /* so you can use up to 11 strings in a single Melder_* call. */
 char * Melder_asciiMessage (const char *message);
-/* The following calls Melder_asciiMessage (). */
-/* On Macintosh, any directory information is stripped off. */
-char * MelderFile_messageName (MelderFile file);
+wchar_t * Melder_peekExpandBackslashes (const wchar_t *message);
+char * MelderFile_messageName (MelderFile file);   // Calls Melder_asciiMessage ().
+wchar_t * MelderFile_messageNameW (MelderFile file);   // Calls Melder_peekExpandBackslashes ().
 
 double Melder_stopwatch (void);
 

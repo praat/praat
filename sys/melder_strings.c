@@ -254,5 +254,21 @@ double MelderString_allocationSize (void) {
 	return totalAllocationSize;
 }
 
+wchar_t * Melder_peekAsciiToWcs (const char *textA) {
+	static MelderStringW buffers [11] = { { 0 } };
+	static int ibuffer = 0;
+	if (++ ibuffer == 11) ibuffer = 0;
+	MelderStringW_copyA (& buffers [ibuffer], textA);
+	return buffers [ibuffer]. string;
+}
+
+char * Melder_peekWcsToAscii (const wchar_t *textW) {
+	static MelderStringA buffers [11] = { { 0 } };
+	static int ibuffer = 0;
+	if (++ ibuffer == 11) ibuffer = 0;
+	MelderStringA_copyW (& buffers [ibuffer], textW);
+	return buffers [ibuffer]. string;
+}
+
 /* End of file melder_strings.c */
 

@@ -1,6 +1,6 @@
 /* melder.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
  * pb 2005/03/04 number and string comparisons, including regular expressions
  * pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
  * pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
+ * pb 2007/05/24 more wchar_t
+ * pb 2007/05/26 Melder_stringMatchesCriterionW
  */
 
 #include <math.h>
@@ -441,6 +443,42 @@ int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, c
 	return 0;   /* Should not occur. */
 }
 
+int Melder_stringMatchesCriterionW (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion) {
+	if (value == NULL) {
+		value = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
+	}
+	if (criterion == NULL) {
+		criterion = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
+	}
+	if (which_Melder_STRING <= Melder_STRING_NOT_EQUAL_TO) {
+		int matchPositiveCriterion = wcsequ (value, criterion);
+		return (which_Melder_STRING == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
+	}
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_CONTAIN) {
+		int matchPositiveCriterion = wcsstr (value, criterion) != NULL;
+		return (which_Melder_STRING == Melder_STRING_CONTAINS) == matchPositiveCriterion;
+	}
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_START_WITH) {
+		int matchPositiveCriterion = wcsnequ (value, criterion, wcslen (criterion));
+		return (which_Melder_STRING == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
+	}
+	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_END_WITH) {
+		int criterionLength = wcslen (criterion), valueLength = wcslen (value);
+		int matchPositiveCriterion = criterionLength <= valueLength && wcsequ (value + valueLength - criterionLength, criterion);
+		return (which_Melder_STRING == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
+	}
+	if (which_Melder_STRING == Melder_STRING_MATCH_REGEXP) {
+		wchar_t *place = NULL, *errorMessage;
+		regexpW *compiled_regexp = CompileREW (criterion, & errorMessage, 0);
+		if (compiled_regexp == NULL) return FALSE;
+		if (ExecREW (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL))
+			place = compiled_regexp -> startp [0];
+		free (compiled_regexp);
+		return place != NULL;
+	}
+	return 0;   /* Should not occur. */
+}
+
 void Melder_help (const char *query) {
 	theMelder. help (query);
 }
@@ -632,7 +670,7 @@ static void motif_error (wchar_t *messageW) {
 #endif
 
 void MelderMotif_create (void *appContext, void *parent) {
-	extern void motif_information (char *);
+	extern void motif_information (wchar_t *);
 	Melder_appContext = appContext;
 	Melder_topShell = (Widget) parent;
 	Melder_setInformationProc (motif_information);

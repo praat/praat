@@ -1089,17 +1089,18 @@ end:
 	return 1;
 }
 
-int Table_formula_columnRange (Table me, long icol1, long icol2, const char *expression) {
+int Table_formula_columnRange (Table me, long icol1, long icol2, const char *expressionA) {
 	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error ("No column %ld.", icol1);
 	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error ("No column %ld.", icol2);
-	if (! Formula_compile (NULL, me, expression, 2, TRUE)) goto end;
+	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
+	Formula_compile (NULL, me, expression, 2, TRUE); cherror
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		for (long icol = icol1; icol <= icol2; icol ++) {
 			double numericResult;
-			char *stringResult = NULL;
-			if (! Formula_run (irow, icol, & numericResult, & stringResult)) goto end;
+			wchar_t *stringResult = NULL;
+			Formula_run (irow, icol, & numericResult, & stringResult); cherror
 			if (stringResult) {
-				Table_setStringValue (me, irow, icol, stringResult);
+				Table_setStringValue (me, irow, icol, Melder_peekWcsToAscii (stringResult));
 				Melder_free (stringResult);
 			} else {
 				Table_setNumericValue (me, irow, icol, numericResult);
@@ -1107,6 +1108,7 @@ int Table_formula_columnRange (Table me, long icol1, long icol2, const char *exp
 		}
 	}
 end:
+	Melder_free (expression);
 	iferror return 0;
 	return 1;
 }

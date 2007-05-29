@@ -331,19 +331,23 @@ void TableOfReal_setColumnLabel (I, long icol, const char *label) {
 	my columnLabels [icol] = Melder_strdup (label);
 }
 
-int TableOfReal_formula (I, const char *expression, thou) {
+int TableOfReal_formula (I, const char *expressionA, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
 	long irow, icol;
-	if (! Formula_compile (NULL, me, expression, FALSE, TRUE)) return 0;
+	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
+	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
 		for (icol = 1; icol <= my numberOfColumns; icol ++) {
 			double result;
-			if (! Formula_run (irow, icol, & result, NULL)) return 0;
+			Formula_run (irow, icol, & result, NULL); cherror
 			thy data [irow] [icol] = result;
 		}
 	}
+end:
+	Melder_free (expression);
+	iferror return 0;
 	return 1;
 }
 
@@ -627,10 +631,11 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhere (I, const char *condition) {
+TableOfReal TableOfReal_extractRowsWhere (I, const char *conditionA) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
+	wchar_t *condition = Melder_asciiToWcs (conditionA); cherror
 	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
 	/*
 	 * Count the new number of rows.
@@ -670,14 +675,16 @@ TableOfReal TableOfReal_extractRowsWhere (I, const char *condition) {
 		}
 	}
 end:
+	Melder_free (condition);
 	iferror forget (thee);
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhere (I, const char *condition) {
+TableOfReal TableOfReal_extractColumnsWhere (I, const char *conditionA) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
+	wchar_t *condition = Melder_asciiToWcs (conditionA); cherror
 	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
 	/*
 	 * Count the new number of columns.
@@ -717,6 +724,7 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const char *condition) {
 		}
 	}
 end:
+	Melder_free (condition);
 	iferror forget (thee);
 	return thee;
 }

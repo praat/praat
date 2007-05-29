@@ -793,12 +793,12 @@ Boolean XmTextRemove (Widget me) {
 void _GuiText_init (void) {
 	#if mac
 		short font;
-		TXNMacOSPreferredFontDescription defaults;
-		GetFNum ("\pMonaco", & font);
-		defaults. fontID = font;
+		TXNMacOSPreferredFontDescription defaults = { 0 };
+		//GetFNum ("\pMonaco", & font);
+		//defaults. fontID = font;
 		defaults. pointSize = 0x000B0000;
 		defaults. fontStyle = kTXNDefaultFontStyle;
-		defaults. encoding  = kTXNMacOSEncoding /*kTXNSystemDefaultEncoding*/;
+		defaults. encoding  = /*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding;
 		TXNInitTextension (& defaults, 1, 0);
 	#endif
 }

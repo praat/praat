@@ -1,6 +1,6 @@
 /* Formula.h
  *
- * Copyright (C) 1990-2003 Paul Boersma
+ * Copyright (C) 1990-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 /*
- * pb 2003/03/09
+ * pb 2007/05/26
  */
 
 #ifndef _Thing_h_
 	#include "Thing.h"
 #endif
 
-int Formula_compile (Any interpreter, Any data, const char *expression, int isStringExpression, int optimize);
+int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int isStringExpression, int optimize);
 
-int Formula_run (long row, long col, double *numericResult, char **stringResult);
+int Formula_run (long row, long col, double *numericResult, wchar_t **stringResult);
 
 /* End of file Formula.h */

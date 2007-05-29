@@ -433,7 +433,7 @@ FORM (WriteManualToHtmlDirectory, "Write all pages as HTML files", 0)
 	LABEL ("", "Type a directory name:")
 	TEXTFIELD ("directory", "")
 	OK
-structMelderDir currentDirectory;
+structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
 DO

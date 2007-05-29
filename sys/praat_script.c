@@ -108,11 +108,13 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error ("The script command \"fappendinfo\" is not available inside pictures.");
 			FILE *f;
-			structMelderFile file;
+			structMelderFile file = { { 0 } };
 			if (! Melder_relativePathToFile (command + 12, & file)) return 0;
 			f = Melder_fopen (& file, "a");
 			if (! f) return 0;
-			fprintf (f, "%s", Melder_getInfo ());
+			static MelderStringA bufferA = { 0 };
+			MelderStringA_copyW (& bufferA, Melder_getInfo ());
+			fprintf (f, "%s", bufferA.string);
 			fclose (f);
 		} else if (strnequ (command, "unix ", 5)) {
 			if (theCurrentPraat != & theForegroundPraat)
@@ -151,7 +153,7 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			Melder_clearError ();
 		} else if (strnequ (command, "pause", 5)) {
 			int wasBackgrounding = Melder_backgrounding;
-			structMelderDir dir;
+			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);
 			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
@@ -221,7 +223,7 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error ("The script command \"filedelete\" is not available inside pictures.");
 			const char *p = command + 11;
-			structMelderFile file;
+			structMelderFile file = { { 0 } };
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error ("Missing file name after `filedelete'.");
@@ -252,7 +254,7 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			}
 			*q = '\0';
 			if (*p == ' ' || *p == '\t') {
-				structMelderFile file;
+				structMelderFile file = { { 0 } };
 				if (! Melder_relativePathToFile (path, & file)) return 0;
 				if (! MelderFile_appendText (& file, p + 1)) return 0;
 			}
@@ -361,7 +363,7 @@ int praat_executeCommandFromStandardInput (const char *programName) {
 int praat_executeScriptFromFile (MelderFile file, const char *arguments) {
 	char *text = NULL;
 	Interpreter interpreter = NULL;
-	structMelderDir saveDir;
+	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);   /* Before the first cherror! */
 
 	text = MelderFile_readText (file); cherror
@@ -384,7 +386,7 @@ end:
 int praat_executeScriptFromFileNameWithArguments (const char *nameAndArguments) {
 	char path [256];
 	const char *p, *arguments;
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	/*
 	 * Split into file name and arguments.
 	 */
@@ -414,9 +416,9 @@ int praat_executeScriptFromText (char *text) {
 
 int praat_executeScriptFromDialog (Any dia) {
 	Interpreter interpreter = NULL;
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	char *text = NULL, *path = UiForm_getString (dia, "$file");
-	structMelderDir saveDir;
+	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
 	Melder_pathToFile (path, & file); cherror
@@ -445,7 +447,7 @@ static int secondPassThroughScript (Any dia, void *dummy) {
 static int firstPassThroughScript (MelderFile file) {
 	char *text = NULL;
 	Interpreter interpreter = NULL;
-	structMelderDir saveDir;
+	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
 	text = MelderFile_readText (file); cherror
@@ -499,7 +501,7 @@ int DO_praat_runScript (Any sender, void *dummy) {
 }
 
 int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
-	structMelderFile file;
+	structMelderFile file = { { 0 } };
 	(void) dummy;
 	if (! Melder_relativePathToFile ((char *) scriptPath, & file)) return 0;
 	return firstPassThroughScript (& file);

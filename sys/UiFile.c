@@ -250,15 +250,15 @@ static void getNames (UiFileSelector me) {
 	}
 	#if defined (UNIX)
 	{
-		structMelderDir dir, parent;
+		structMelderDir dir = { { 0 } }, parent = { { 0 } };
 		DIR *d = opendir (my dir. path);
 		int i;
 if (! d) return;
 		for (;;) {
-			structMelderFile file;
 			struct stat statBuf;
 			struct dirent *entry = readdir (d);
 			if (entry == NULL) break;
+			structMelderFile file = { { 0 } };
 			MelderDir_getFile (& my dir, entry -> d_name, & file);
 			stat (file. path, & statBuf);
 			if (S_ISDIR (statBuf. st_mode)) {
@@ -589,7 +589,7 @@ static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
 		XmFileSelectionDoSearch (my dialog, dirMask);
 		XmStringFree (dirMask);
 	} else {
-		strcpy (my file. path, fileName);
+		Melder_pathToFile (fileName, & my file);
 		our ok (me);
 	}
 	XtFree (fileName);
@@ -720,24 +720,26 @@ void UiInfile_do (I) {
 				FSRef machFile;
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 					Melder_machToFile (& machFile, & my file);
-				if (! my okCallback (me, my okClosure))
-					Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+				if (! my okCallback (me, my okClosure)) {
+					Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+					Melder_flushError (NULL);
+				}
 				UiHistory_write (" %s", Melder_fileToPath (& my file));
 				NavDisposeReply (& reply);
 			}
 			NavDialogDispose (dialogRef);
 		}
 	#elif defined (_WIN32)
-		static OPENFILENAME openFileName, dummy;
-		static TCHAR fullFileName [3000+2];
-		ZeroMemory (& openFileName, sizeof (OPENFILENAME));
-		openFileName. lStructSize = sizeof (OPENFILENAME);
+		static OPENFILENAMEW openFileName, dummy;
+		static wchar_t fullFileName [3000+2];
+		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
+		openFileName. lStructSize = sizeof (OPENFILENAMEW);
 		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-		openFileName. lpstrFilter = "All Files\0*.*\0";
-		ZeroMemory (fullFileName, 3000+2);
+		openFileName. lpstrFilter = L"All Files\0*.*\0";
+		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
 		openFileName. lpstrFile = fullFileName;
 		openFileName. nMaxFile = 3000;
-		openFileName. lpstrTitle = my name;
+		openFileName. lpstrTitle = Melder_peekAsciiToWcs (my name);
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		OSVERSIONINFO osVersionInfo;
 		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
@@ -756,10 +758,23 @@ void UiInfile_do (I) {
 				SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
 			}
 		}
-		if (GetOpenFileName (& openFileName)) {
-			Melder_pathToFile (fullFileName, & my file);
-			if (! my okCallback (me, my okClosure))
-				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+		if (GetOpenFileNameW (& openFileName)) {
+			#if 0
+				MelderInfo_open ();
+				for (int i = 0; i < strlen (fullFileName); i ++) {
+					char buffer [2];
+					buffer [0] = fullFileName [i];
+					buffer [1] = 0;
+					MelderInfo_writeLine3 (Melder_integer (fullFileName [i]), " ", buffer);
+				}
+				MelderInfo_close ();
+			#endif
+			Melder_pathToFileW (fullFileName, & my file);
+			if (! my okCallback (me, my okClosure)) {
+				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+				Melder_flushError (NULL);
+				//Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+			}
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
 		}
 		if (hasFileInfoTipsBug) {
@@ -890,6 +905,54 @@ Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTit
 	return dia;
 }
 
+static void copyPathToWpath (const char *path, wchar_t *wpath) {
+	int n = strlen (path), i, j;
+	for (i = 0, j = 0; i < n; i ++) {
+		#if defined (_WIN32)
+			wpath [j ++] = path [i];
+		#else
+			unsigned char kar = path [i];
+			if (kar <= 0x7F) {
+				wpath [j ++] = kar;
+			} else if (kar <= 0xC1) {
+				wpath [j ++] = '?';   // A mistake.
+			} else if (kar <= 0xDF) {
+				unsigned char kar2 = path [++ i];
+				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
+				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
+				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				wpath [j ++] = ((kar & 0x3F) << 6) | (kar2 & 0x3F);
+			} else if (kar <= 0xEF) {
+				unsigned char kar2 = path [++ i];
+				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
+				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
+				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				unsigned char kar3 = path [++ i];
+				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
+				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
+				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				wpath [j ++] = ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
+			} else if (kar <= 0xF4) {
+				unsigned char kar2 = path [++ i];
+				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
+				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
+				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				unsigned char kar3 = path [++ i];
+				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
+				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
+				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				unsigned char kar4 = path [++ i];
+				if (kar4 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
+				if (! (kar4 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar4; }
+				if (kar4 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
+				wpath [j ++] = ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
+			} else {
+				wpath [j ++] = '?';   // A mistake.
+			}
+		#endif
+	}
+	wpath [j] = '\0';	
+}
 void UiOutfile_do (I, const char *defaultName) {
 	iam (UiOutfile);
 	#if defined (macintosh)
@@ -910,6 +973,9 @@ void UiOutfile_do (I, const char *defaultName) {
 			NavReplyRecord reply;
 			NavDialogRun (dialogRef);
 			err = NavDialogGetReply (dialogRef, & reply);
+			if (Melder_debug == 19) {
+				Melder_casual ("err %d %d", err, reply. validRecord);
+			}
 			if (err == noErr && reply. validRecord) {
 				AEKeyword keyWord;
 				DescType typeCode;
@@ -920,7 +986,7 @@ void UiOutfile_do (I, const char *defaultName) {
 				*/
 				FSRef machFile;
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					structMelderDir dir;
+					structMelderDir dir = { { 0 } };
 					CFStringRef fileName = NavDialogGetSaveFileName (dialogRef);
 					FSRefMakePath (& machFile, (unsigned char *) dir. path, 259);
 					if (dir. path [0] != '/' || dir. path [1] != '\0') strcat (dir. path, "/");
@@ -931,8 +997,8 @@ void UiOutfile_do (I, const char *defaultName) {
 						So we first decompose, then convert to UTF-8.
 					*/
 					if (Melder_debug == 19) {
-						int i;
-						for (i = 0; i < CFStringGetLength (fileName); i ++) {
+						Melder_casual ("%d", CFStringGetLength (fileName));
+						for (int i = 0; i < CFStringGetLength (fileName); i ++) {
 							Melder_casual ("UniCode %d %d", i, CFStringGetCharacterAtIndex (fileName, i));
 						}
 					}
@@ -967,9 +1033,12 @@ void UiOutfile_do (I, const char *defaultName) {
 					 *    semantics).
 					 */
 					/*CFRelease (fileName);*/
+					copyPathToWpath (my file. path, my file. wpath);
 				}
-				if (! my okCallback (me, my okClosure))
-					Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+				if (! my okCallback (me, my okClosure)) {
+					Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+					Melder_flushError (NULL);
+				}
 				UiHistory_write (" %s", Melder_fileToPath (& my file));
 				NavDisposeReply (& reply);
 			}

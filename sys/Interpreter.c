@@ -36,6 +36,7 @@
  * pb 2007/02/05 preferencesDirectory$, homeDirectory$, temporaryDirectory$
  * pb 2007/04/02 allow comments (with '#' or ';' or empty lines) in forms
  * pb 2007/04/19 allow comments with '!' in forms
+ * pb 2007/05/24 some wchar_t
  */
 
 #include <ctype.h>
@@ -120,7 +121,6 @@ int Melder_includeIncludeFiles (char **text, int allocationMethod) {
 		if (depth > 10)
 			return Melder_error ("Include files nested too deep. Probably cyclic.");
 		for (;;) {
-			structMelderFile includeFile;
 			char *includeLocation, *includeFileName, *includeText, *tail, *newText;
 			long headLength, includeTextLength, newLength;
 			/*
@@ -148,6 +148,7 @@ int Melder_includeIncludeFiles (char **text, int allocationMethod) {
 			/*
 				Get the contents of the include file.
 			 */
+			structMelderFile includeFile = { { 0 } };
 			if (! Melder_relativePathToFile (includeFileName, & includeFile)) return 0;
 			includeText = MelderFile_readText (& includeFile);
 			if (! includeText) {
@@ -619,7 +620,7 @@ static void parameterToVariable (Interpreter me, int type, const char *in_parame
 }
 
 int Interpreter_run (Interpreter me, char *text) {
-	static MelderStringA valueString;   /* To divert the info. */
+	static MelderStringW valueString;   /* To divert the info. */
 	char *command = text;
 	MelderStringA command2 = { 0 }, buffer = { 0 };
 	char **lines = NULL;
@@ -707,7 +708,7 @@ int Interpreter_run (Interpreter me, char *text) {
 	Interpreter_addStringVariable (me, "newline$", "\n");
 	Interpreter_addStringVariable (me, "tab$", "\t");
 	Interpreter_addStringVariable (me, "shellDirectory$", Melder_getShellDirectory ());
-	structMelderDir dir; Melder_getDefaultDir (& dir);
+	structMelderDir dir = { { 0 } }; Melder_getDefaultDir (& dir);
 	Interpreter_addStringVariable (me, "defaultDirectory$", Melder_dirToPath (& dir));
 	Interpreter_addStringVariable (me, "preferencesDirectory$", Melder_dirToPath (& praatDir));
 	Melder_getHomeDir (& dir);
@@ -1206,7 +1207,7 @@ int Interpreter_run (Interpreter me, char *text) {
 						{ Melder_error ("Missing expression after variable %s.", command2.string); goto end; }
 				}
 				if (withFile) {
-					structMelderFile file;
+					structMelderFile file = { { 0 } };
 					Melder_relativePathToFile (p, & file); cherror
 					if (withFile == 1) {
 						value = MelderFile_readText (& file); cherror
@@ -1234,13 +1235,13 @@ int Interpreter_run (Interpreter me, char *text) {
 					/*
 					 * Example: name$ = Get name
 					 */
-					MelderStringA_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
+					MelderStringW_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 					Melder_divertInfo (& valueString);
 					praat_executeCommand (me, p);
 					Melder_divertInfo (NULL); cherror
 					InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); cherror
 					Melder_free (var -> stringValue);
-					var -> stringValue = Melder_strdup (valueString.string); cherror   /* var becomes owner */
+					var -> stringValue = Melder_wcsToAscii (valueString.string); cherror   /* var becomes owner */
 				} else {
 					/*
 					 * Evaluate a string expression and assign the result to the variable.
@@ -1305,9 +1306,9 @@ int Interpreter_run (Interpreter me, char *text) {
 					/*
 					 * Get the value of the query.
 					 */
-					MelderStringA_empty (& valueString);
+					MelderStringW_empty (& valueString);
 					Melder_divertInfo (& valueString);
-					MelderStringA_appendCharacter (& valueString, 1);
+					MelderStringW_appendCharacter (& valueString, 1);
 					praat_executeCommand (me, p);
 					if (valueString.string [0] == 1) {
 						int IOBJECT, result = 0, found = 0;
@@ -1320,7 +1321,7 @@ int Interpreter_run (Interpreter me, char *text) {
 							value = theCurrentPraat -> list [result]. id;
 						}
 					} else {
-						value = Melder_atof (valueString.string);   /* Including --undefined-- */
+						value = Melder_atofW (valueString.string);   /* Including --undefined-- */
 					}
 					Melder_divertInfo (NULL); cherror
 				} else {
@@ -1394,21 +1395,43 @@ end:
 }
 */
 
-int Interpreter_numericExpression (Interpreter me, const char *expression, double *result) {
+int Interpreter_numericExpression (Interpreter me, const char *expressionA, double *result) {
 	Melder_assert (result != NULL);
-	if (strstr (expression, "(=")) { *result = Melder_atof (expression); return 1; }
-	if (! Formula_compile (me, NULL, expression, 0, FALSE)) return 0;
-	return Formula_run (0, 0, result, NULL);
+	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
+	if (wcsstr (expression, L"(=")) {
+		*result = Melder_atofW (expression);
+	} else {
+		Formula_compile (me, NULL, expression, 0, FALSE); cherror
+		Formula_run (0, 0, result, NULL); cherror
+	}
+end:
+	Melder_free (expression);
+	iferror return 0;
+	return 1;
 }
 
-int Interpreter_stringExpression (Interpreter me, const char *expression, char **result) {
-	if (! Formula_compile (me, NULL, expression, 1, FALSE)) return 0;
-	return Formula_run (0, 0, NULL, result);
+int Interpreter_stringExpression (Interpreter me, const char *expressionA, char **resultA) {
+	wchar_t *expression = Melder_asciiToWcs (expressionA), *result = NULL; cherror
+	Formula_compile (me, NULL, expression, 1, FALSE); cherror
+	Formula_run (0, 0, NULL, & result); cherror
+	*resultA = Melder_wcsToAscii (result);
+	Melder_free (result);
+end:
+	Melder_free (expression);
+	iferror return 0;
+	return 1;
 }
 
-int Interpreter_numericOrStringExpression (Interpreter me, const char *expression, double *numericResult, char **stringResult) {
-	if (! Formula_compile (me, NULL, expression, 2, FALSE)) return 0;
-	return Formula_run (0, 0, numericResult, stringResult);
+int Interpreter_numericOrStringExpression (Interpreter me, const char *expressionA, double *numericResult, char **stringResultA) {
+	wchar_t *expression = Melder_asciiToWcs (expressionA), *stringResult = NULL; cherror
+	Formula_compile (me, NULL, expression, 2, FALSE); cherror
+	Formula_run (0, 0, numericResult, & stringResult); cherror
+	if (stringResult) *stringResultA = Melder_wcsToAscii (stringResult);
+	Melder_free (stringResult);
+end:
+	Melder_free (expression);
+	iferror return 0;
+	return 1;
 }
 
 /* End of file Interpreter.c */
