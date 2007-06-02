@@ -1200,15 +1200,17 @@ static void createMenus (I) {
 	}
 	Editor_addCommand (me, "File", "-- close --", 0, NULL);
 
-	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (me, "Edit", "Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (me, "Edit", "Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (me, "Edit", "Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, menu_cb_Erase);
+	#ifndef macintosh
+		Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
+		Editor_addCommand (me, "Edit", "Cut text", 'X', menu_cb_Cut);
+		Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, menu_cb_Cut);
+		Editor_addCommand (me, "Edit", "Copy text", 'C', menu_cb_Copy);
+		Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, menu_cb_Copy);
+		Editor_addCommand (me, "Edit", "Paste text", 'V', menu_cb_Paste);
+		Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, menu_cb_Paste);
+		Editor_addCommand (me, "Edit", "Erase text", 0, menu_cb_Erase);
+		Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, menu_cb_Erase);
+	#endif
 	Editor_addCommand (me, "Edit", "-- encoding --", 0, NULL);
 	Editor_addCommand (me, "Edit", "Genericize entire TextGrid", 0, menu_cb_Genericize);
 	Editor_addCommand (me, "Edit", "Genericize", Editor_HIDDEN, menu_cb_Genericize);

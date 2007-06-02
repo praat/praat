@@ -28,6 +28,7 @@
  * pb 2006/12/18 improved info
  * pb 2007/02/15 GuiText_updateChangeCountAfterSave
  * pb 2007/03/23 Go to line: guarded against uninitialized 'right'
+ * pb 2007/05/30 save Unicode
  */
 
 #include "TextEditor.h"
@@ -69,9 +70,13 @@ static void nameChanged (I) {
 }
 
 static int openDocument (TextEditor me, MelderFile file) {
-	char *text = MelderFile_readText (file);
+	//char *text = MelderFile_readText (file);
+	//if (! text) return 0;
+	//XmTextSetString (my textWidget, text);
+	//Melder_free (text);
+	wchar_t *text = MelderFile_readTextW (file);
 	if (! text) return 0;
-	XmTextSetString (my textWidget, text);
+	GuiText_setStringW (my textWidget, text);
 	Melder_free (text);
 	/*
 	 * XmTextSetString has invoked the XmNvalueChangedCallback,
@@ -90,10 +95,13 @@ static void newDocument (TextEditor me) {
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
-	char *text = XmTextGetString (my textWidget);
-	if (! MelderFile_writeText (file, text)) { XtFree (text); return 0; }
-	XtFree (text);
-	GuiText_updateChangeCountAfterSave (my textWidget);   // TRICK to make sure that MacOS X knows that any following entered character will introduce a value change in the GuiText object.
+	//char *text = XmTextGetString (my textWidget);
+	//if (! MelderFile_writeText (file, text)) { XtFree (text); return 0; }
+	//XtFree (text);
+	wchar_t *text = GuiText_getStringW (my textWidget);
+	if (! MelderFile_writeTextW (file, text)) { Melder_free (text); return 0; }
+	Melder_free (text);
+	//GuiText_updateChangeCountAfterSave (my textWidget);   // TRICK to make sure that MacOS X knows that any following entered character will introduce a value change in the GuiText object.
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));

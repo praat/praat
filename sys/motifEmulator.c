@@ -266,6 +266,7 @@ static XtTimerCallbackProc theTimeOutProcs [10];
 static XtPointer theTimeOutClosures [10];
 #if defined (macintosh)
 	static EventLoopTimerRef theTimers [10];
+	static EventTargetRef theUserFocusEventTarget;
 #else
 	static clock_t theTimeOutStarts [10];
 	static unsigned long theTimeOutIntervals [10];
@@ -3218,6 +3219,7 @@ Widget XtInitialize (void *dum1, const char *name,
 		AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments, NewAEEventHandlerUPP (_motif_processOpenDocumentsMessage), 0, false);
 		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignal), 0, false);
 		if (Melder_systemVersion >= 0x0800) USE_QUESTION_MARK_HELP_MENU = 1;
+		theUserFocusEventTarget = GetUserFocusEventTarget ();
 	#elif win
 	{
 		HWND window;
@@ -4542,8 +4544,10 @@ static void _motif_processActivateEvent (EventRecord *event) {
 static void _motif_processOsEvent (EventRecord *event) {
 	unsigned char messageKind = ((unsigned long) event -> message & 0xFF000000) >> 24;
 	if (messageKind == mouseMovedMessage) {
+		Melder_fatal ("_motif_processOsEvent -- mouseMovedMessage");
 		Point location = event -> where;
-	} else if (messageKind == suspendResumeMessage) {
+	} else if (messageKind == suspendResumeMessage && 0) {
+		//Melder_fatal ("_motif_processOsEvent -- suspendResumeMessage");
 		WindowPtr frontWindow = FrontWindow ();
 		int act = event -> message & resumeFlag ? true : false, i;
 		theBackground = ! act;
@@ -4640,13 +4644,18 @@ static void _motif_processKeyboardEquivalent (unsigned char kar, int modifiers, 
 		_motif_shell_processKeyboardEquivalent (theApplicationShell, kar, modifiers, event);
 }
 
-static void _motif_processKeyDownEvent (EventRecord *event) {
+static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRef eventRef, EventRecord *event) {
 	/*
 	 * This routine determines whether a key-down message is a menu shortcut or is meant to go to a text widget.
 	 * It has to find this out fast, so it cannot go through all the menu structures for each key-down.
 	 * Therefore, every shell maintains a bit list of which of the lower accelerators are used.
 	 */
 	Widget shell = (Widget) GetWRefCon (FrontWindow ());
+	if (shell == NULL) {
+		// Probably a system window such as an error dialog or file selection dialog.
+		//CallNextEventHandler (nextHandler, eventRef);
+		return false;
+	}
 	Widget text = theGui.textFocus;
 	unsigned char charCode = event -> message & charCodeMask, keyCode = (event -> message & keyCodeMask) >> 8;
 	int modifiers = 0;
@@ -4660,7 +4669,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_ENTER)) {
 				_motif_processKeyboardEquivalent (motif_ENTER, modifiers, event);
-				return;
+				return true;
 			}
 			/*
 			 * Then look for default button in active window.
@@ -4669,7 +4678,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 				Widget defaultButton = shell -> defaultButton;
 				if (defaultButton -> activateCallback) {
 					defaultButton -> activateCallback (defaultButton, defaultButton -> activateClosure, (XtPointer) event);
-					return;
+					return true;
 				}
 				/*
 				 * Otherwise, hand it to a text widget.
@@ -4678,7 +4687,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 			/*
 			 * Then look for a text widget with an activate callback.
 			 */
-			if (_GuiMacText_tryToHandleReturnKey (text, event)) return;
+			if (_GuiMacText_tryToHandleReturnKey (nextHandler, eventRef, text, event)) return true;
 			/*
 			 * Otherwise, hand it to a text widget.
 			 */
@@ -4688,7 +4697,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_ESCAPE)) {
 				_motif_processKeyboardEquivalent (motif_ESCAPE, modifiers, event);
-				return;
+				return true;
 			}
 			/*
 			 * Then look for cancel button in active window.
@@ -4697,24 +4706,24 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 				Widget cancelButton = shell -> cancelButton;
 				if (cancelButton -> activateCallback) {
 					cancelButton -> activateCallback (cancelButton, cancelButton -> activateClosure, (XtPointer) event);
-					return;
+					return true;
 				}
 				/*
 				 * Do not hand it to a text widget.
 				 */
-				return;
+				return true;
 			}
 			/*
 			 * Do not hand it to a text widget.
 			 */
-			return;
+			return true;
 		} else if (charCode == 9) {   /* User pressed Tab. */
 			/*
 			 * First test for keyboard shortcut.
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_TAB)) {
 				_motif_processKeyboardEquivalent (motif_TAB, modifiers, event);
-				return;
+				return true;
 			}
 			/*
 			 * Otherwise, hand it to a text widget.
@@ -4725,14 +4734,14 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_BACKSPACE)) {
 				_motif_processKeyboardEquivalent (motif_BACKSPACE, modifiers, event);
-				return;
+				return true;
 			}
 			/*
 			 * Otherwise, hand it to a text widget.
 			 */
 		} else if (charCode == 5) {   /* Help button. Simulate Command-?. */
 			_motif_processKeyboardEquivalent ('?', _motif_COMMAND_MASK | _motif_SHIFT_MASK, event);
-			return;
+			return true;
 		} else if (charCode == 16) {   /* F1... F12 */
 			int fkey =
 				keyCode == 0x7A ? 1 : keyCode == 0x78 ? 2 : keyCode == 0x63 ? 3 : keyCode == 0x76 ? 4 :
@@ -4740,26 +4749,26 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 				keyCode == 0x65 ? 9 : keyCode == 0x6D ? 10 : keyCode == 0x67 ? 11 : keyCode == 0x6F ? 12 : 0;
 			if (fkey)
 				_motif_processKeyboardEquivalent (motif_F1 - 1 + fkey, modifiers, event);
-			return;
+			return true;
 		} else if (charCode == 11) {
 			_motif_processKeyboardEquivalent (motif_PAGE_UP, modifiers, event);
-			return;   /* BUG: we should implement a scroll up in the text widget (IM V-193). */
+			return true;   /* BUG: we should implement a scroll up in the text widget (IM V-193). */
 		} else if (charCode == 12) {
 			_motif_processKeyboardEquivalent (motif_PAGE_DOWN, modifiers, event);
-			return;   /* BUG: we should implement a scroll down in the text widget (IM V-193). */
+			return true;   /* BUG: we should implement a scroll down in the text widget (IM V-193). */
 		} else if (charCode == 1) {
 			_motif_processKeyboardEquivalent (motif_HOME, modifiers, event);
-			return;   /* BUG: we should implement a top left scroll in the text widget (IM V-192). */
+			return true;   /* BUG: we should implement a top left scroll in the text widget (IM V-192). */
 		} else if (charCode == 4) {
 			_motif_processKeyboardEquivalent (motif_END, modifiers, event);
-			return;   /* BUG: we should implement a bottom right scroll in the text widget (IM V-193). */
+			return true;   /* BUG: we should implement a bottom right scroll in the text widget (IM V-193). */
 		} else if (charCode == 28) {
 			/*
 			 * First test for keyboard shortcut.
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_LEFT_ARROW)) {
 				_motif_processKeyboardEquivalent (motif_LEFT_ARROW, modifiers, event);
-				return;
+				return true;
 			}
 			/*
 			 * Otherwise, hand it to a text widget.
@@ -4767,25 +4776,25 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 		} else if (charCode == 29) {
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_RIGHT_ARROW)) {
 				_motif_processKeyboardEquivalent (motif_RIGHT_ARROW, modifiers, event);
-				return;
+				return true;
 			}
 		} else if (charCode == 30) {
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_UP_ARROW)) {
 				_motif_processKeyboardEquivalent (motif_UP_ARROW, modifiers, event);
-				return;
+				return true;
 			}
 		} else if (charCode == 31) {
 			if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_DOWN_ARROW)) {
 				_motif_processKeyboardEquivalent (motif_DOWN_ARROW, modifiers, event);
-				return;
+				return true;
 			}
 		}
 	} else if (charCode == 127) {
 		if (shell && (shell -> motif.shell.lowAccelerators [modifiers] & 1 << motif_DELETE)) {
 			_motif_processKeyboardEquivalent (motif_DELETE, modifiers, event);
-			return;
+			return true;
 		}
-		return;   /* BUG: we should implement a forward delete (or selection removal) in the text widget (IM V-192). */
+		return true;   /* BUG: we should implement a forward delete (or selection removal) in the text widget (IM V-192). */
 	}
 	/*
 	 * If the Command key is pressed with a printable character, this is always a menu shortcut.
@@ -4800,7 +4809,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 		 * The existence of a text widget forces Command-C to mean 'Copy'.
 		 * The existence of an editable text widget forces Command-X to mean 'Cut' and Command-V to mean 'Paste'.
 		 */
-		if (_GuiMacText_tryToHandleClipboardShortcut (text, kar, event)) return;
+		if (_GuiMacText_tryToHandleClipboardShortcut (nextHandler, eventRef, text, kar, event)) return true;
 		#define USE_COMMAND_PERIOD_AS_CANCEL  0
 		if (USE_COMMAND_PERIOD_AS_CANCEL && kar == '.') {
 			/*
@@ -4808,7 +4817,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 			 */
 			if (shell && (shell -> motif.shell.lowAccelerators [0] & 1 << motif_ESCAPE)) {
 				_motif_processKeyboardEquivalent (motif_ESCAPE, 0, event);
-				return;
+				return true;
 			}
 			/*
 			 * Then look for cancel button in active window.
@@ -4817,7 +4826,7 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 				Widget cancelButton = shell -> cancelButton;
 				if (cancelButton -> activateCallback) {
 					cancelButton -> activateCallback (cancelButton, cancelButton -> activateClosure, (XtPointer) event);
-					return;
+					return true;
 				}
 			}
 		}
@@ -4828,16 +4837,19 @@ static void _motif_processKeyDownEvent (EventRecord *event) {
 		/*
 		 * After executing a menu shortcut, do not send the key to a text widget as well.
 		 */
-		return;
+		return true;
 	}
-	if (_GuiMacText_tryToHandleKey (text, keyCode, charCode, event)) return;
+	if (_GuiMacText_tryToHandleKey (nextHandler, eventRef, text, keyCode, charCode, event)) return true;
 
 	/* Last chance: try drawingArea. */
 	if (shell) {
 		Widget drawingArea = _motif_findDrawingArea (shell);
-		if (drawingArea && drawingArea -> inputCallback)
+		if (drawingArea && drawingArea -> inputCallback) {
 			drawingArea -> inputCallback (drawingArea, drawingArea -> inputClosure, (XtPointer) event);
+			return true;
+		}
 	}
+	return false;
 }
 
 static void mac_processMenuChoice (long choice, EventRecord *event) {
@@ -5108,13 +5120,49 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 		default: break;
 	}
 }
+
+static pascal OSStatus keyDownEventHandler (EventHandlerCallRef nextHandler, EventRef eventRef, void *userData) {
+	(void) nextHandler;
+	(void) userData;
+	EventRecord eventRecord;
+	ConvertEventRefToEventRecord (eventRef, & eventRecord);
+	#if 0
+		switch (eventRecord. what) {
+			case nullEvent: break;
+			case mouseDown: _motif_processMouseDownEvent (& eventRecord); break;
+			case mouseUp: break;
+			case keyDown: _motif_processKeyDownEvent (nextHandler, eventRef, & eventRecord); break;
+			case keyUp: break;
+			case autoKey: _motif_processKeyDownEvent (nextHandler, eventRef, & eventRecord); break;
+			case updateEvt: _motif_processUpdateEvent (& eventRecord); break;
+			case activateEvt: _motif_processActivateEvent (& eventRecord); break;
+			case osEvt: _motif_processOsEvent (& eventRecord); break;
+			case kHighLevelEvent: _motif_processHighLevelEvent (& eventRecord); break;
+			default: break;
+		}
+		return noErr;
+	#else
+		if (_motif_processKeyDownEvent (nextHandler, eventRef, & eventRecord)) return noErr;
+	#endif
+	return eventNotHandledErr;
+}
+
 #endif
 
 void XtNextEvent (XEvent *xevent) {
 	#if win
 		GetMessage (xevent, NULL, 0, 0);
 	#elif mac
-		_GuiMac_makeTextCaretBlink ();
+		static EventHandlerUPP keyDownEventHandlerUPP;
+		if (keyDownEventHandlerUPP == NULL) {
+			keyDownEventHandlerUPP = NewEventHandlerUPP (keyDownEventHandler);
+			EventTypeSpec keyDownEventTypeSpecs [2] = {
+				{ kEventClassKeyboard, kEventRawKeyDown },
+				{ kEventClassKeyboard, kEventRawKeyRepeat }
+			};
+			//InstallEventHandler (theUserFocusEventTarget, keyDownEventHandlerUPP, 2, keyDownEventTypeSpecs, NULL, NULL);
+			InstallApplicationEventHandler (keyDownEventHandlerUPP, 2, keyDownEventTypeSpecs, NULL, NULL);
+		}
 		/*
 		 * The waiting time should be short enough to allow Melder_progress to wait for an event.
 		 * Therefore we take 1 clock tick, so that if Melder_progress updates every 15 clock ticks,
@@ -5208,9 +5256,9 @@ void XtDispatchEvent (XEvent *xevent) {
 			case nullEvent: break;
 			case mouseDown: _motif_processMouseDownEvent (event); break;
 			case mouseUp: break;
-			case keyDown: _motif_processKeyDownEvent (event); break;
+			//case keyDown: _motif_processKeyDownEvent (event); break;
 			case keyUp: break;
-			case autoKey: _motif_processKeyDownEvent (event); break;
+			//case autoKey: _motif_processKeyDownEvent (event); break;
 			case updateEvt: _motif_processUpdateEvent (event); break;
 			case activateEvt: _motif_processActivateEvent (event); break;
 			case osEvt: _motif_processOsEvent (event); break;

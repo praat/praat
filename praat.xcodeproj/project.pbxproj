@@ -61,6 +61,32 @@
 		233B14060BB2ADBB004440C3 /* gsl_sf__bessel_K0.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */; };
 		233B14090BB2ADC9004440C3 /* gsl_sf__bessel_K1.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */; };
 		233B140C0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c in Sources */ = {isa = PBXBuildFile; fileRef = 233B140B0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c */; };
+		233FEC770C1345F8003E27FB /* mad_bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC560C1345F8003E27FB /* mad_bit.c */; };
+		233FEC780C1345F8003E27FB /* mad_bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC570C1345F8003E27FB /* mad_bit.h */; };
+		233FEC790C1345F8003E27FB /* mad_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC580C1345F8003E27FB /* mad_config.h */; };
+		233FEC7B0C1345F8003E27FB /* mad_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC5A0C1345F8003E27FB /* mad_decoder.c */; };
+		233FEC7C0C1345F8003E27FB /* mad_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC5B0C1345F8003E27FB /* mad_decoder.h */; };
+		233FEC7D0C1345F8003E27FB /* mad_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC5C0C1345F8003E27FB /* mad_fixed.c */; };
+		233FEC7E0C1345F8003E27FB /* mad_fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC5D0C1345F8003E27FB /* mad_fixed.h */; };
+		233FEC7F0C1345F8003E27FB /* mad_frame.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC5E0C1345F8003E27FB /* mad_frame.c */; };
+		233FEC800C1345F8003E27FB /* mad_frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC5F0C1345F8003E27FB /* mad_frame.h */; };
+		233FEC810C1345F8003E27FB /* mad_global.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC600C1345F8003E27FB /* mad_global.h */; };
+		233FEC820C1345F8003E27FB /* mad_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC610C1345F8003E27FB /* mad_huffman.c */; };
+		233FEC830C1345F8003E27FB /* mad_huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC620C1345F8003E27FB /* mad_huffman.h */; };
+		233FEC850C1345F8003E27FB /* mad_layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC640C1345F8003E27FB /* mad_layer3.c */; };
+		233FEC860C1345F8003E27FB /* mad_layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC650C1345F8003E27FB /* mad_layer3.h */; };
+		233FEC870C1345F8003E27FB /* mad_layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC660C1345F8003E27FB /* mad_layer12.c */; };
+		233FEC880C1345F8003E27FB /* mad_layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC670C1345F8003E27FB /* mad_layer12.h */; };
+		233FEC8C0C1345F8003E27FB /* mad_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC6B0C1345F8003E27FB /* mad_stream.c */; };
+		233FEC8D0C1345F8003E27FB /* mad_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC6C0C1345F8003E27FB /* mad_stream.h */; };
+		233FEC8E0C1345F8003E27FB /* mad_synth.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC6D0C1345F8003E27FB /* mad_synth.c */; };
+		233FEC8F0C1345F8003E27FB /* mad_synth.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC6E0C1345F8003E27FB /* mad_synth.h */; };
+		233FEC900C1345F8003E27FB /* mad_timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC6F0C1345F8003E27FB /* mad_timer.c */; };
+		233FEC910C1345F8003E27FB /* mad_timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC700C1345F8003E27FB /* mad_timer.h */; };
+		233FEC920C1345F8003E27FB /* mad_version.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC710C1345F8003E27FB /* mad_version.c */; };
+		233FEC930C1345F8003E27FB /* mad_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC720C1345F8003E27FB /* mad_version.h */; };
+		233FEC950C1345F8003E27FB /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 233FEC740C1345F8003E27FB /* mp3.c */; };
+		233FEC960C1345F8003E27FB /* mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 233FEC750C1345F8003E27FB /* mp3.h */; };
 		2343BF800BAC1526003D66E8 /* melder_quantity.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343BF7F0BAC1526003D66E8 /* melder_quantity.c */; };
 		2343BFBF0BAC2001003D66E8 /* SpectrumTier.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343BFBD0BAC2001003D66E8 /* SpectrumTier.c */; };
 		2343BFC00BAC2001003D66E8 /* SpectrumTier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343BFBE0BAC2001003D66E8 /* SpectrumTier.h */; };
@@ -859,6 +885,32 @@
 		233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K0.c; path = GSL/gsl_sf__bessel_K0.c; sourceTree = "<group>"; };
 		233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_K1.c; path = GSL/gsl_sf__bessel_K1.c; sourceTree = "<group>"; };
 		233B140B0BB2AE12004440C3 /* gsl_sf__bessel_amp_phase.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_amp_phase.c; path = GSL/gsl_sf__bessel_amp_phase.c; sourceTree = "<group>"; };
+		233FEC560C1345F8003E27FB /* mad_bit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_bit.c; path = mp3/mad_bit.c; sourceTree = "<group>"; };
+		233FEC570C1345F8003E27FB /* mad_bit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_bit.h; path = mp3/mad_bit.h; sourceTree = "<group>"; };
+		233FEC580C1345F8003E27FB /* mad_config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_config.h; path = mp3/mad_config.h; sourceTree = "<group>"; };
+		233FEC5A0C1345F8003E27FB /* mad_decoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_decoder.c; path = mp3/mad_decoder.c; sourceTree = "<group>"; };
+		233FEC5B0C1345F8003E27FB /* mad_decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_decoder.h; path = mp3/mad_decoder.h; sourceTree = "<group>"; };
+		233FEC5C0C1345F8003E27FB /* mad_fixed.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_fixed.c; path = mp3/mad_fixed.c; sourceTree = "<group>"; };
+		233FEC5D0C1345F8003E27FB /* mad_fixed.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_fixed.h; path = mp3/mad_fixed.h; sourceTree = "<group>"; };
+		233FEC5E0C1345F8003E27FB /* mad_frame.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_frame.c; path = mp3/mad_frame.c; sourceTree = "<group>"; };
+		233FEC5F0C1345F8003E27FB /* mad_frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_frame.h; path = mp3/mad_frame.h; sourceTree = "<group>"; };
+		233FEC600C1345F8003E27FB /* mad_global.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_global.h; path = mp3/mad_global.h; sourceTree = "<group>"; };
+		233FEC610C1345F8003E27FB /* mad_huffman.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_huffman.c; path = mp3/mad_huffman.c; sourceTree = "<group>"; };
+		233FEC620C1345F8003E27FB /* mad_huffman.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_huffman.h; path = mp3/mad_huffman.h; sourceTree = "<group>"; };
+		233FEC640C1345F8003E27FB /* mad_layer3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_layer3.c; path = mp3/mad_layer3.c; sourceTree = "<group>"; };
+		233FEC650C1345F8003E27FB /* mad_layer3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_layer3.h; path = mp3/mad_layer3.h; sourceTree = "<group>"; };
+		233FEC660C1345F8003E27FB /* mad_layer12.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_layer12.c; path = mp3/mad_layer12.c; sourceTree = "<group>"; };
+		233FEC670C1345F8003E27FB /* mad_layer12.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_layer12.h; path = mp3/mad_layer12.h; sourceTree = "<group>"; };
+		233FEC6B0C1345F8003E27FB /* mad_stream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_stream.c; path = mp3/mad_stream.c; sourceTree = "<group>"; };
+		233FEC6C0C1345F8003E27FB /* mad_stream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_stream.h; path = mp3/mad_stream.h; sourceTree = "<group>"; };
+		233FEC6D0C1345F8003E27FB /* mad_synth.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_synth.c; path = mp3/mad_synth.c; sourceTree = "<group>"; };
+		233FEC6E0C1345F8003E27FB /* mad_synth.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_synth.h; path = mp3/mad_synth.h; sourceTree = "<group>"; };
+		233FEC6F0C1345F8003E27FB /* mad_timer.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_timer.c; path = mp3/mad_timer.c; sourceTree = "<group>"; };
+		233FEC700C1345F8003E27FB /* mad_timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_timer.h; path = mp3/mad_timer.h; sourceTree = "<group>"; };
+		233FEC710C1345F8003E27FB /* mad_version.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mad_version.c; path = mp3/mad_version.c; sourceTree = "<group>"; };
+		233FEC720C1345F8003E27FB /* mad_version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mad_version.h; path = mp3/mad_version.h; sourceTree = "<group>"; };
+		233FEC740C1345F8003E27FB /* mp3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mp3.c; path = mp3/mp3.c; sourceTree = "<group>"; };
+		233FEC750C1345F8003E27FB /* mp3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mp3.h; path = mp3/mp3.h; sourceTree = "<group>"; };
 		2343BF7F0BAC1526003D66E8 /* melder_quantity.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_quantity.c; path = sys/melder_quantity.c; sourceTree = "<group>"; };
 		2343BFBD0BAC2001003D66E8 /* SpectrumTier.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SpectrumTier.c; path = fon/SpectrumTier.c; sourceTree = "<group>"; };
 		2343BFBE0BAC2001003D66E8 /* SpectrumTier.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SpectrumTier.h; path = fon/SpectrumTier.h; sourceTree = "<group>"; };
@@ -1655,6 +1707,39 @@
 			name = audio;
 			sourceTree = "<group>";
 		};
+		233FEC540C1345C7003E27FB /* mp3 */ = {
+			isa = PBXGroup;
+			children = (
+				233FEC560C1345F8003E27FB /* mad_bit.c */,
+				233FEC570C1345F8003E27FB /* mad_bit.h */,
+				233FEC580C1345F8003E27FB /* mad_config.h */,
+				233FEC5A0C1345F8003E27FB /* mad_decoder.c */,
+				233FEC5B0C1345F8003E27FB /* mad_decoder.h */,
+				233FEC5C0C1345F8003E27FB /* mad_fixed.c */,
+				233FEC5D0C1345F8003E27FB /* mad_fixed.h */,
+				233FEC5E0C1345F8003E27FB /* mad_frame.c */,
+				233FEC5F0C1345F8003E27FB /* mad_frame.h */,
+				233FEC600C1345F8003E27FB /* mad_global.h */,
+				233FEC610C1345F8003E27FB /* mad_huffman.c */,
+				233FEC620C1345F8003E27FB /* mad_huffman.h */,
+				233FEC640C1345F8003E27FB /* mad_layer3.c */,
+				233FEC650C1345F8003E27FB /* mad_layer3.h */,
+				233FEC660C1345F8003E27FB /* mad_layer12.c */,
+				233FEC670C1345F8003E27FB /* mad_layer12.h */,
+				233FEC6B0C1345F8003E27FB /* mad_stream.c */,
+				233FEC6C0C1345F8003E27FB /* mad_stream.h */,
+				233FEC6D0C1345F8003E27FB /* mad_synth.c */,
+				233FEC6E0C1345F8003E27FB /* mad_synth.h */,
+				233FEC6F0C1345F8003E27FB /* mad_timer.c */,
+				233FEC700C1345F8003E27FB /* mad_timer.h */,
+				233FEC710C1345F8003E27FB /* mad_version.c */,
+				233FEC720C1345F8003E27FB /* mad_version.h */,
+				233FEC740C1345F8003E27FB /* mp3.c */,
+				233FEC750C1345F8003E27FB /* mp3.h */,
+			);
+			name = mp3;
+			sourceTree = "<group>";
+		};
 		23E5C91109A228F6004E41D5 = {
 			isa = PBXGroup;
 			children = (
@@ -1679,6 +1764,7 @@
 				23E5CB6809A22902004E41D5 /* kar */,
 				230021240B32FC7200A7FE19 /* audio */,
 				23F8A89F0BF103B2000ED19D /* FLAC */,
+				233FEC540C1345C7003E27FB /* mp3 */,
 				23E5CB6B09A22902004E41D5 /* gsl */,
 				23E5CF3409A22A55004E41D5 /* Frameworks */,
 				23E5C92109A228FA004E41D5 /* Products */,
@@ -3023,6 +3109,20 @@
 				23F8A8F40BF103B2000ED19D /* flac_protected_all.h in Headers */,
 				23F8A8F50BF103B2000ED19D /* flac_protected_stream_decoder.h in Headers */,
 				23F8A8F60BF103B2000ED19D /* flac_protected_stream_encoder.h in Headers */,
+				233FEC780C1345F8003E27FB /* mad_bit.h in Headers */,
+				233FEC790C1345F8003E27FB /* mad_config.h in Headers */,
+				233FEC7C0C1345F8003E27FB /* mad_decoder.h in Headers */,
+				233FEC7E0C1345F8003E27FB /* mad_fixed.h in Headers */,
+				233FEC800C1345F8003E27FB /* mad_frame.h in Headers */,
+				233FEC810C1345F8003E27FB /* mad_global.h in Headers */,
+				233FEC830C1345F8003E27FB /* mad_huffman.h in Headers */,
+				233FEC860C1345F8003E27FB /* mad_layer3.h in Headers */,
+				233FEC880C1345F8003E27FB /* mad_layer12.h in Headers */,
+				233FEC8D0C1345F8003E27FB /* mad_stream.h in Headers */,
+				233FEC8F0C1345F8003E27FB /* mad_synth.h in Headers */,
+				233FEC910C1345F8003E27FB /* mad_timer.h in Headers */,
+				233FEC930C1345F8003E27FB /* mad_version.h in Headers */,
+				233FEC960C1345F8003E27FB /* mp3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3478,6 +3578,18 @@
 				23F8A8F90BF103B2000ED19D /* flac_stream_encoder_framing.c in Sources */,
 				23F8A8FA0BF103B2000ED19D /* flac_window.c in Sources */,
 				23B6C16D0C0633CB0090DBBB /* regularExp.c in Sources */,
+				233FEC770C1345F8003E27FB /* mad_bit.c in Sources */,
+				233FEC7B0C1345F8003E27FB /* mad_decoder.c in Sources */,
+				233FEC7D0C1345F8003E27FB /* mad_fixed.c in Sources */,
+				233FEC7F0C1345F8003E27FB /* mad_frame.c in Sources */,
+				233FEC820C1345F8003E27FB /* mad_huffman.c in Sources */,
+				233FEC850C1345F8003E27FB /* mad_layer3.c in Sources */,
+				233FEC870C1345F8003E27FB /* mad_layer12.c in Sources */,
+				233FEC8C0C1345F8003E27FB /* mad_stream.c in Sources */,
+				233FEC8E0C1345F8003E27FB /* mad_synth.c in Sources */,
+				233FEC900C1345F8003E27FB /* mad_timer.c in Sources */,
+				233FEC920C1345F8003E27FB /* mad_version.c in Sources */,
+				233FEC950C1345F8003E27FB /* mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

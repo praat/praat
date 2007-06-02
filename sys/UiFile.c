@@ -25,6 +25,7 @@
                  when the user moved the mouse pointer over a file in the Desktop of the second file selector
                  that was raised in Praat. The workaround is to temporarily disable file info tips.
  * pb 2007/03/23 new Editor API
+ * pb 2007/05/30 wchar_t
  */
 
 #if defined (macintosh)
@@ -905,54 +906,6 @@ Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTit
 	return dia;
 }
 
-static void copyPathToWpath (const char *path, wchar_t *wpath) {
-	int n = strlen (path), i, j;
-	for (i = 0, j = 0; i < n; i ++) {
-		#if defined (_WIN32)
-			wpath [j ++] = path [i];
-		#else
-			unsigned char kar = path [i];
-			if (kar <= 0x7F) {
-				wpath [j ++] = kar;
-			} else if (kar <= 0xC1) {
-				wpath [j ++] = '?';   // A mistake.
-			} else if (kar <= 0xDF) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 6) | (kar2 & 0x3F);
-			} else if (kar <= 0xEF) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar3 = path [++ i];
-				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
-				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
-			} else if (kar <= 0xF4) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar3 = path [++ i];
-				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
-				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar4 = path [++ i];
-				if (kar4 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar4 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar4; }
-				if (kar4 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
-			} else {
-				wpath [j ++] = '?';   // A mistake.
-			}
-		#endif
-	}
-	wpath [j] = '\0';	
-}
 void UiOutfile_do (I, const char *defaultName) {
 	iam (UiOutfile);
 	#if defined (macintosh)
@@ -1033,7 +986,7 @@ void UiOutfile_do (I, const char *defaultName) {
 					 *    semantics).
 					 */
 					/*CFRelease (fileName);*/
-					copyPathToWpath (my file. path, my file. wpath);
+					Melder_utf8ToWcs_inline (my file. path, my file. wpath);
 				}
 				if (! my okCallback (me, my okClosure)) {
 					Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
@@ -1045,11 +998,14 @@ void UiOutfile_do (I, const char *defaultName) {
 			NavDialogDispose (dialogRef);
 		}
 	#elif defined (_WIN32)
-		OPENFILENAME openFileName;
-		static TCHAR customFilter [100+2];
-		static TCHAR fullFileName [300+2];
-		strcpy (fullFileName, defaultName);
-		openFileName. lStructSize = sizeof (OPENFILENAME);
+		OPENFILENAMEW openFileName;
+		static wchar_t customFilter [100+2];
+		static wchar_t fullFileName [300+2];
+		long n = strlen (defaultName);
+		for (long i = 0; i <= n; i ++) {
+			fullFileName [i] = defaultName [i];
+		}
+		openFileName. lStructSize = sizeof (OPENFILENAMEW);
 		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
 		openFileName. lpstrFilter = NULL;   /* like *.txt */
 		openFileName. lpstrCustomFilter = customFilter;
@@ -1058,7 +1014,7 @@ void UiOutfile_do (I, const char *defaultName) {
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrFileTitle = NULL;
 		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = my name;
+		openFileName. lpstrTitle = Melder_peekAsciiToWcs (my name);
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
 		SHELLFLAGSTATE settings = { 0 };
@@ -1071,14 +1027,16 @@ void UiOutfile_do (I, const char *defaultName) {
 			state. fShowExtensions = /*1*/ extensionsWereVisible;
 			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
 		}
-		if (GetSaveFileName (& openFileName)) {
+		if (GetSaveFileNameW (& openFileName)) {
 			if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 				Melder_flushError ("Dialog `%s' cancelled.", my name);
 				return;
 			}
-			Melder_pathToFile (fullFileName, & my file);
-			if (! my okCallback (me, my okClosure))
-				Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+			Melder_pathToFileW (fullFileName, & my file);
+			if (! my okCallback (me, my okClosure)) {
+				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+				Melder_flushError (NULL);
+			}
 			UiHistory_write (" %s", Melder_fileToPath (& my file));
 		}
 		if (infoTipsWereVisible | ! extensionsWereVisible) {

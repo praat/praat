@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/26
+ * pb 2007/06/01
  */
 
 #include "Gui.h"
@@ -108,9 +108,6 @@ struct structWidget {
 			/* XmPulldownMenu: */
 			struct { MenuHandle handle; int item /* if cascading */; int id; } menu;
 
-			/* XmText: */
-			struct { TEHandle handle; } text;
-
 			/* XmList: */
 			struct { ListHandle handle; } list;
 		} nat;
@@ -161,7 +158,6 @@ struct structWidget {
 	#if mac
 		TXNObject macMlteObject;
 		TXNFrameID macMlteFrameId;
-		unsigned long changeCount;
 	#endif
 };
 
@@ -212,9 +208,9 @@ void _GuiText_unmanage (Widget me);
 	void _GuiMacText_resize (Widget me);
 	void _GuiMacText_map (Widget me);
 	void _GuiMacText_update (Widget me);
-	int _GuiMacText_tryToHandleKey (Widget me, unsigned char keyCode, unsigned char charCode, EventRecord *event);
-	int _GuiMacText_tryToHandleReturnKey (Widget me, EventRecord *event);
-	int _GuiMacText_tryToHandleClipboardShortcut (Widget me, unsigned char charCode, EventRecord *event);
+	int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, unsigned char keyCode, unsigned char charCode, EventRecord *event);
+	int _GuiMacText_tryToHandleReturnKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, EventRecord *event);
+	int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, unsigned char charCode, EventRecord *event);
 	void _GuiMacText_handleClick (Widget me, EventRecord *event);
 	void _GuiMac_makeTextCaretBlink (void);
 #endif

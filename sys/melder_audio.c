@@ -239,7 +239,23 @@ int Melder_stopWasExplicit (void) {
 	return thePlay. explicit;
 }
 
-#if defined (_WIN32)
+#if defined (macintosh) || defined (UNIX)
+	static double theTide;
+	static void Melder_startClock (void) {
+		struct timeval timeVal;
+		struct timezone timeZone;
+		gettimeofday (& timeVal, & timeZone);
+		theTide = timeVal. tv_sec + 1e-6 * timeVal. tv_usec;
+	}
+	static double Melder_clock (void) {
+		struct timeval timeVal;
+		struct timezone timeZone;
+		gettimeofday (& timeVal, & timeZone);
+		return (timeVal. tv_sec + 1e-6 * timeVal. tv_usec) - theTide;
+	}
+	static void Melder_stopClock (void) {
+	}
+#elif defined (_WIN32)
 	static long theTide;
 	static void Melder_startClock (void) {
 		theTide = GetTickCount ();
@@ -389,6 +405,7 @@ static Boolean workProc (XtPointer closure) {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
 		}
+		Pa_Sleep (10);
 	#elif defined (sgi)
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) {
@@ -700,6 +717,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				flush ();
 				return 1;
 			}
+			Pa_Sleep (10);
 		}
 		if (my samplesPlayed != my numberOfSamples) {
 			Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);

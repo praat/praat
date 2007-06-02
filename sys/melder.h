@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/28
+ * pb 2007/06/02
  */
 
 #include <stdio.h>
@@ -32,6 +32,8 @@
 	#define wcsnequ  ! wcsncmp
 	#define Melder_strequ  ! Melder_strcmp
 	#define Melder_strnequ  ! Melder_strncmp
+	#define Melder_wcsequ  ! Melder_wcscmp
+	#define Melder_wcsnequ  ! Melder_wcsncmp
 #include <stdarg.h>
 #include <stddef.h>
 #include <wchar.h>
@@ -156,9 +158,11 @@ void * Melder_malloc (unsigned long size);
 void * Melder_realloc (void *pointer, long size);
 void * Melder_calloc (long numberOfElements, long elementSize);
 char * Melder_strdup (const char *string);
-int Melder_strcmp (const char *string1, const char *string2);   // regards null string as empty string
-int Melder_strncmp (const char *string1, const char *string2, unsigned long n);
 wchar_t * Melder_wcsdup (const wchar_t *string);
+int Melder_strcmp (const char *string1, const char *string2);   // regards null string as empty string
+int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2);   // regards null string as empty string
+int Melder_strncmp (const char *string1, const char *string2, unsigned long n);
+int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, unsigned long n);
 wchar_t * Melder_wcsdecompose (const wchar_t *string);
 wchar_t * Melder_wcsprecompose (const wchar_t *string);
 wchar_t * Melder_wcsExpandBackslashSequences (const wchar_t *string);
@@ -167,10 +171,12 @@ void Melder_wcsReduceBackslashSequences_inline (const wchar_t *string);
 int Melder_isValidUtf8 (const char *string);
 wchar_t * Melder_asciiToWcs (const char *string);
 wchar_t * Melder_utf8ToWcs (const char *string);
+void Melder_utf8ToWcs_inline (const char *utf8, wchar_t *wcs);
 wchar_t * Melder_isolatin1ToWcs (const char *string);
 wchar_t * Melder_macromanToWcs (const char *string);
 char * Melder_wcsToAscii (const wchar_t *string);
 char * Melder_wcsToUtf8 (const wchar_t *string);
+void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8);
 char * Melder_wcsToIsolatin1 (const wchar_t *string);
 char * Melder_wcsToMacroman (const wchar_t *string);
 wchar_t * Melder_peekAsciiToWcs (const char *string);
@@ -252,15 +258,15 @@ double MelderString_allocationSize (void);
 
 struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
-#define Melder_FLAC_MAGIC 0x464C4143
+#define Melder_FILETYPE_FLAC 0x464C4143
 
 typedef struct {
 	char path [260];
 	wchar_t wpath [260];
 	FILE *filePointer;
-	int openForWriting;
+	bool openForWriting;
 	struct FLAC__StreamEncoder *flacEncoder;
-	int flacMagic;
+	unsigned long type;
 } structMelderFile, *MelderFile;
 typedef struct {
 	char path [260];
@@ -587,15 +593,20 @@ void Melder_setPublishPlayedProc (int (*publishPlayed) (void));
 	int Melder_fileToMac (MelderFile file, void *void_fspec);
 #endif
 char * MelderFile_name (MelderFile file);
+wchar_t * MelderFile_nameW (MelderFile file);
 char * MelderDir_name (MelderDir dir);
+wchar_t * MelderDir_nameW (MelderDir dir);
 int Melder_pathToDir (const char *path, MelderDir dir);
+int Melder_pathToDirW (const wchar_t *path, MelderDir dir);
 int Melder_pathToFile (const char *path, MelderFile file);
 int Melder_pathToFileW (const wchar_t *path, MelderFile file);
 int Melder_relativePathToFile (const char *path, MelderFile file);
+int Melder_relativePathToFileW (const wchar_t *path, MelderFile file);
 char * Melder_dirToPath (MelderDir dir);
-	/* Returns a one-time static string like "HardDisk:Paul:Praats:"
-	    or an pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
+wchar_t * Melder_dirToPathW (MelderDir dir);
+	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
 char * Melder_fileToPath (MelderFile file);
+wchar_t * Melder_fileToPathW (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
 int MelderFile_equal (MelderFile file1, MelderFile file2);
@@ -605,13 +616,17 @@ int MelderFile_isNull (MelderFile file);
 void MelderDir_setToNull (MelderDir dir);
 int MelderDir_isNull (MelderDir dir);
 void MelderDir_getFile (MelderDir parent, const char *fileName, MelderFile file);
+void MelderDir_getFileW (MelderDir parent, const wchar_t *fileName, MelderFile file);
 void MelderDir_relativePathToFile (MelderDir dir, const char *path, MelderFile file);
+void MelderDir_relativePathToFileW (MelderDir dir, const wchar_t *path, MelderFile file);
 void MelderFile_getParentDir (MelderFile file, MelderDir parent);
 void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 int MelderDir_isDesktop (MelderDir dir);
 int MelderDir_getSubdir (MelderDir parent, const char *subdirName, MelderDir subdir);
+int MelderDir_getSubdirW (MelderDir parent, const wchar_t *subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory (void);
 char * Melder_getShellDirectory (void);
+wchar_t * Melder_getShellDirectoryW (void);
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
@@ -623,6 +638,7 @@ int MelderFile_delete (MelderFile file);
 
 /* The following two should be combined with each other and with Windows extension setting: */
 FILE * Melder_fopen (MelderFile file, const char *type);
+FILE * Melder_fopenW (MelderFile file, const wchar_t *type);
 #if defined (macintosh)
 	void MelderFile_setMacTypeAndCreator (MelderFile file, long fileType, long creator);
 	unsigned long MelderFile_getMacType (MelderFile file);
@@ -636,10 +652,13 @@ void Melder_files_cleanUp (void);
 void MelderFile_open (MelderFile file);
 void MelderFile_append (MelderFile file);
 void MelderFile_create (MelderFile file, const char *macType, const char *macCreator, const char *winExtension);
+void MelderFile_createW (MelderFile file, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension);
 void * MelderFile_read (MelderFile file, long nbytes);
 char * MelderFile_readLine (MelderFile file);
-void MelderFile_write (MelderFile file, char *buffer, long nbytes);
+void MelderFile_write (MelderFile file, char *buffer, long nchars);
+void MelderFile_writeW (MelderFile file, wchar_t *buffer, long nchars);
 void MelderFile_writeLine (MelderFile file, char *buffer);
+void MelderFile_writeLineW (MelderFile file, wchar_t *buffer);
 void MelderFile_rewind (MelderFile file);
 void MelderFile_seek (MelderFile file, long position, int direction);
 long MelderFile_tell (MelderFile file);
@@ -657,15 +676,20 @@ void MelderFile_setLineSeparator (int systemType);
 
 /* Read and write whole text files. */
 char * MelderFile_readText (MelderFile file);
+wchar_t * MelderFile_readTextW (MelderFile file);
 int MelderFile_writeText (MelderFile file, const char *text);
+int MelderFile_writeTextW (MelderFile file, const wchar_t *text);
 int MelderFile_appendText (MelderFile file, const char *text);
+int MelderFile_appendTextW (MelderFile file, const wchar_t *text);
 
 int Melder_createDirectory (MelderDir parent, const char *subdirName, int mode);
+int Melder_createDirectoryW (MelderDir parent, const wchar_t *subdirName, int mode);
 
 void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);
 void MelderFile_setDefaultDir (MelderFile file);
 void MelderFile_nativizePath (char *path);   /* Convert from Unix-style slashes. */
+void MelderFile_nativizePathW (wchar_t *path);   /* Convert from Unix-style slashes. */
 
 /* Use the following functions to pass unchanged text or file names to Melder_* functions. */
 /* Backslashes are replaced by "\bs". */
@@ -721,10 +745,11 @@ double Melder_getZeroPadding (void);
 #define Melder_NIST  5
 #define Melder_SOUND_DESIGNER_TWO  6
 #define Melder_FLAC 7
-#define Melder_NUMBER_OF_AUDIO_FILE_TYPES  7
-char * Melder_audioFileTypeString (int audioFileType);   /* "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II" */
-char * Melder_macAudioFileType (int audioFileType);   /* "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f" */
-char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2" */
+#define Melder_MP3 8
+#define Melder_NUMBER_OF_AUDIO_FILE_TYPES  8
+char * Melder_audioFileTypeString (int audioFileType);   /* "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II", "FLAC", "MP3" */
+char * Melder_macAudioFileType (int audioFileType);   /* "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f", "FLAC", "MP3" */
+char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2", ".flac", ".mp3" */
 /* Audio encodings. */
 #define Melder_LINEAR_8_SIGNED  1
 #define Melder_LINEAR_8_UNSIGNED  2
@@ -741,6 +766,7 @@ char * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", 
 #define Melder_IEEE_FLOAT_32_BIG_ENDIAN  13
 #define Melder_IEEE_FLOAT_32_LITTLE_ENDIAN  14
 #define Melder_FLAC_COMPRESSION 15
+#define Melder_MPEG_COMPRESSION 16
 int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
 int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);

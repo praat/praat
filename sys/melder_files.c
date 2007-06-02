@@ -63,6 +63,7 @@
 #include <errno.h>
 #include "melder.h"
 #include "flac_FLAC_stream_encoder.h"
+#include "abcio.h"
 
 #if defined (macintosh)
 	#include <sys/stat.h>
@@ -81,79 +82,27 @@ char * Melder_getShellDirectory (void) {
 }
 
 static void copyPathToWpath (const char *path, wchar_t *wpath) {
-	int n = strlen (path), i, j;
-	for (i = 0, j = 0; i < n; i ++) {
-		#if defined (_WIN32)
+	#if defined (_WIN32)
+		int n = strlen (path), i, j;
+		for (i = 0, j = 0; i < n; i ++) {
 			wpath [j ++] = path [i];
-		#else
-			unsigned char kar = path [i];
-			if (kar <= 0x7F) {
-				wpath [j ++] = kar;
-			} else if (kar <= 0xC1) {
-				wpath [j ++] = '?';   // A mistake.
-			} else if (kar <= 0xDF) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 6) | (kar2 & 0x3F);
-			} else if (kar <= 0xEF) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar3 = path [++ i];
-				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
-				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
-			} else if (kar <= 0xF4) {
-				unsigned char kar2 = path [++ i];
-				if (kar2 == '\0') { wpath [j ++] = '?'; break; }
-				if (! (kar2 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = kar2; }
-				if (kar2 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar3 = path [++ i];
-				if (kar3 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar3 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar3; }
-				if (kar3 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				unsigned char kar4 = path [++ i];
-				if (kar4 == '\0') { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; break; }
-				if (! (kar4 & 0x80)) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = kar4; }
-				if (kar4 & 0x40) { wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; wpath [j ++] = '?'; }
-				wpath [j ++] = ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
-			} else {
-				wpath [j ++] = '?';   // A mistake.
-			}
-		#endif
-	}
-	wpath [j] = '\0';	
+		}
+		wpath [j] = '\0';	
+	#else
+		Melder_utf8ToWcs_inline (path, wpath);
+	#endif
 }
 
 static void copyWpathToPath (const wchar_t *wpath, char *path) {
-	int n = wcslen (wpath), i, j;
-	for (i = 0, j = 0; i < n; i ++) {
-		#ifdef _WIN32
+	#ifdef _WIN32
+		int n = wcslen (wpath), i, j;
+		for (i = 0, j = 0; i < n; i ++) {
 			path [j ++] = wpath [i] <= 255 ? wpath [i] : '?';   // The usual replacement on Windows.
-		#else
-			wchar_t kar = wpath [i];
-			if (kar <= 0x00007F) {
-				path [j ++] = kar;
-			} else if (kar <= 0x0007FF) {
-				path [j ++] = 0xC0 | (kar >> 6);
-				path [j ++] = 0x80 | (kar & 0x00003F);
-			} else if (kar <= 0x00FFFF) {
-				path [j ++] = 0xE0 | (kar >> 12);
-				path [j ++] = 0x80 | ((kar & 0x000FC0) >> 6);
-				path [j ++] = 0x80 | (kar & 0x00003F);
-			} else {
-				path [j ++] = 0xF0 | (kar >> 18);
-				path [j ++] = 0x80 | ((kar & 0x03F000) >> 12);
-				path [j ++] = 0x80 | ((kar & 0x000FC0) >> 6);
-				path [j ++] = 0x80 | (kar & 0x00003F);
-			}
-		#endif
-	}
-	path [j] = '\0';	
+		}
+		path [j] = '\0';	
+	#else
+		Melder_wcsToUtf8_inline (wpath, path);
+	#endif
 }
 
 #if defined (macintosh)
@@ -924,11 +873,66 @@ char * MelderFile_readText (MelderFile file) {
 	return text;
 }
 
+wchar_t * MelderFile_readTextW (MelderFile file) {
+	int type = 0;   // 8-bit
+	wchar_t *text = NULL;
+	FILE *f = Melder_fopen (file, "rb");
+	if (f == NULL) return NULL;
+ 	fseek (f, 0, SEEK_END);
+ 	unsigned long length = ftell (f);
+ 	rewind (f);
+	if (length >= 2) {
+		int firstByte = fgetc (f), secondByte = fgetc (f);
+		if (firstByte == 0xfe && secondByte == 0xff) {
+			type = 1;   // big-endian 16-bit
+		} else if (firstByte == 0xff && secondByte == 0xfe) {
+			type = 2;   // little-endian 16-bit
+		}
+	}
+	if (type == 0) {
+		rewind (f);   // length and type already set correctly.
+		char *textA = Melder_malloc (length + 1);
+		if (! textA) { Melder_fclose (file, f); return NULL; }
+		fread (textA, sizeof (char), length, f);
+		if (! Melder_fclose (file, f)) {
+			Melder_free (textA);
+			return Melder_errorp ("Error reading file \"%s\".", MelderFile_messageName (file));
+		}
+		textA [length] = '\0';
+		/*
+		 * Convert Mac and DOS files to Unix text.
+		 */
+		(void) Melder_killReturns_inline (textA);
+		text = Melder_asciiToWcs (textA);
+		Melder_free (textA);
+	} else {
+		length = length / 2 - 1;
+		text = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		if (! text) { Melder_fclose (file, f); return NULL; }
+		if (type == 1) {
+			for (unsigned long i = 0; i < length; i ++) {
+				text [i] = bingetu2 (f);
+			}
+		} else {
+			for (unsigned long i = 0; i < length; i ++) {
+				text [i] = bingetu2LE (f);
+			}
+		}
+		if (! Melder_fclose (file, f)) {
+			Melder_free (text);
+			return Melder_errorp ("Error reading file \"%s\".", MelderFile_messageName (file));
+		}
+		text [length] = '\0';
+
+	}
+	return text;
+}
+
 /* BUG: the following two routines should be made system-independent,
    so that we can write DOS files from Unix etc., as determined by a user preference. */
 
-int MelderFile_writeText (MelderFile fs, const char *text) {
-	FILE *f = Melder_fopen (fs, "w");
+int MelderFile_writeText (MelderFile file, const char *text) {
+	FILE *f = Melder_fopen (file, "w");
 	if (! f) return 0;
 	/*
 	 * On all systems, the number of bytes written (i.e. the return value of fwrite) equals strlen (text).
@@ -936,8 +940,35 @@ int MelderFile_writeText (MelderFile fs, const char *text) {
 	 */
 	fwrite (text, sizeof (char), strlen (text), f);   /* Not trailing null byte. */
 	if (fclose (f))
-		return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (fs));
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
+		return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (file));
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	return 1;
+}
+
+static bool Melder_isValidAscii (const wchar_t *text) {
+	for (; *text != '\0'; text ++) {
+		if (*text > 127) return false;
+	}
+	return true;
+}
+
+int MelderFile_writeTextW (MelderFile file, const wchar_t *text) {
+	FILE *f = Melder_fopen (file, "w");
+	if (! f) return 0;
+	if (Melder_isValidAscii (text)) {
+		fwrite (Melder_peekWcsToAscii (text), sizeof (char), wcslen (text), f);   /* Not trailing null byte. */
+	} else {
+		binputu2 (0xfeff, f);
+		long n = wcslen (text);
+		for (long i = 0; i < n; i ++) {
+			binputu2 (text [i], f);
+		}
+	}
+	if (fclose (f)) {
+		Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+		return 0;
+	}
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }
 
@@ -1111,17 +1142,18 @@ void MelderFile_rewind (MelderFile me) {
 }
 
 void MelderFile_close (MelderFile me) {
-	if (my flacMagic == Melder_FLAC_MAGIC) {
-	       if (my flacEncoder) {
-		       FLAC__stream_encoder_finish (my flacEncoder);
-		       FLAC__stream_encoder_delete (my flacEncoder);
-	       }
+	if (my type == Melder_FILETYPE_FLAC) {
+	   if (my flacEncoder) {
+		   FLAC__stream_encoder_finish (my flacEncoder);
+		   FLAC__stream_encoder_delete (my flacEncoder);
+	   }
 	}
 	else if (my filePointer) Melder_fclose (me, my filePointer);
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */
 	my filePointer = NULL;
+	my openForWriting = false;
 	my flacEncoder = NULL;
-	my flacMagic = 0;
+	my type = 0;
 }
 
 /* End of file melder_files.c */

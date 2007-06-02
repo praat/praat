@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/05/17
+ * pb 2007/06/02
  */
 
 #include "praat.h"
@@ -42,6 +42,7 @@
 #include "SoundRecorder.h"
 #include "SpectrumEditor.h"
 #include "TextGrid.h"
+#include "mp3.h"
 
 #ifndef LONG_MAX
 	#define LONG_MAX  2147483647
@@ -1803,7 +1804,8 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 	    (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) ||
 	    strnequ (header, ".snd", 4) ||
 	    strnequ (header, "NIST_1A", 7) ||
-	    strnequ (header, "fLaC", 4)   // Erez Volk, March 2007
+	    strnequ (header, "fLaC", 4) || /* Erez Volk, March 2007 */
+	    mp3_recognize (nread, header) /* Erez Volk, May 2007 */
 	    #ifdef macintosh
 	    	|| MelderFile_getMacType (file) == 'Sd2f'
 	    #endif

@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2004 Paul Boersma, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2004 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,12 @@
 	#include "Collection.h"
 #endif
 
-#define FLAC_MODE_READ_FLOAT 0
-#define FLAC_MODE_READ_SHORT 1
+#define COMPRESSED_MODE_READ_FLOAT 0
+#define COMPRESSED_MODE_READ_SHORT 1
 
 struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
+struct _MP3_FILE;
 
 #define LongSound_members Sampled_members \
 	structMelderFile file; \
@@ -46,10 +47,11 @@ struct FLAC__StreamEncoder;
 	short *buffer; \
 	long imin, imax, nmax; \
 	struct FLAC__StreamDecoder *flacDecoder; \
-	int flacMode; \
-	long flacSamplesLeft; \
-	float *flacFloats [2]; \
-	short *flacShorts;
+	struct _MP3_FILE *mp3f; \
+	int compressedMode; \
+	long compressedSamplesLeft; \
+	float *compressedFloats [2]; \
+	short *compressedShorts;
 #define LongSound_methods Sampled_methods
 class_create (LongSound, Sampled)
 

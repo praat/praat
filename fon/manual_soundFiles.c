@@ -22,7 +22,7 @@
 void manual_soundFiles_init (ManPages me);
 void manual_soundFiles_init (ManPages me) {
 
-MAN_BEGIN ("Sound files", "ppgb", 20040223)
+MAN_BEGIN ("Sound files", "ppgb", 20070602)
 INTRO ("This tutorial describes the sound files that you can read "
 	"and write with P\\s{RAAT}. It assumes you are familiar with the @Intro.")
 NORMAL ("You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
@@ -40,6 +40,7 @@ LIST_ITEM1 ("2.3. @@Sound files 2.3. AIFC files|AIFC files@")
 LIST_ITEM1 ("2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@")
 LIST_ITEM1 ("2.5. @@Sound files 2.5. NIST files|NIST files@")
 LIST_ITEM1 ("2.6. @@Sound files 2.6. FLAC files|FLAC files@")
+LIST_ITEM1 ("2.7. @@Sound files 2.7. MP3 files|MP3 files@")
 LIST_ITEM ("3. @@Sound files 3. Files that Praat can read|Files that Praat can read@")
 LIST_ITEM ("4. @@Sound files 4. Files that Praat can write|Files that Praat can write@")
 MAN_END
@@ -105,21 +106,22 @@ FORMULA ("28 + 1 * 3.0 * 8000 * 1 = 24028 bytes")
 NORMAL ("The first example is typical of CD quality, the second of telephone speech.")
 MAN_END
 
-MAN_BEGIN ("Sound files 1.6. Compression", "ppgb", 20030308)
+MAN_BEGIN ("Sound files 1.6. Compression", "ppgb", 20040602)
 NORMAL ("Praat used to be able to read some compressed sound file formats (shortened NIST, Polyphone), "
 	"but because of licensing problems (Praat went open source, Shorten did not), "
 	"you now need to use other (freely available) programs to do the conversion before reading them into Praat. "
-	"For MP3-encoded audio files, one can e.g. use iTunes\\re on the Macintosh. "
+	"Praat can decode (but not create) MP3 files. "
 	"Praat fully supports FLAC compressed files.")
 MAN_END
 
-MAN_BEGIN ("Sound files 2. File types", "ppgb", 20040223)
+MAN_BEGIN ("Sound files 2. File types", "ppgb", 20070602)
 LIST_ITEM ("2.1. @@Sound files 2.1. WAV files|WAV files@")
 LIST_ITEM ("2.2. @@Sound files 2.2. AIFF files|AIFF files@")
 LIST_ITEM ("2.3. @@Sound files 2.3. AIFC files|AIFC files@")
 LIST_ITEM ("2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@")
 LIST_ITEM ("2.5. @@Sound files 2.5. NIST files|NIST files@")
 LIST_ITEM ("2.6. @@Sound files 2.6. FLAC files|FLAC files@")
+LIST_ITEM ("2.7. @@Sound files 2.7. MP3 files|MP3 files@")
 MAN_END
 
 MAN_BEGIN ("Sound files 2.1. WAV files", "ppgb", 20040223)
@@ -172,7 +174,7 @@ NORMAL ("A lossless compressed audio format (see ##http://flac.sourceforge.net##
 	"(see also @@Sound files 1.6. Compression|\\SS1.6@)")
 MAN_END
 
-MAN_BEGIN ("Sound files 3. Files that Praat can read", "ppgb", 20041108)
+MAN_BEGIN ("Sound files 3. Files that Praat can read", "ppgb", 20070602)
 INTRO ("Praat can read five types of standard sound files in several formats, "
 	"and a number of proprietary types of sound files as well.")
 ENTRY ("Standard sound files")
@@ -210,6 +212,8 @@ LIST_ITEM1 ("\\bu linear 8-bit signed")
 LIST_ITEM ("\\bu FLAC:")
 LIST_ITEM1 ("\\bu 8-bit, 16-bit, 24-bit or 32-bit")
 LIST_ITEM1 ("\\bu all sampling frequencies")
+LIST_ITEM ("\\bu MP3:")
+LIST_ITEM1 ("\\bu all constant or variable bitrates")
 MAN_END
 
 MAN_BEGIN ("Sound files 4. Files that Praat can write", "ppgb", 20040223)
@@ -276,6 +280,13 @@ MAN_END
 MAN_BEGIN ("Write to FLAC file...", "ppgb", 20000126)
 INTRO ("With this command, you write one or more selected @Sound and/or @LongSound objects "
 	"to a single 16-bit FLAC audio file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_END
+
+MAN_BEGIN ("Sound files 2.7. MP3 files", "ev", 20070601)
+NORMAL ("A ubiquituous lossy audio compression format. "
+	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
+	"##http://www.underbit.com/products/mad/##. "
+	"(see also @@Sound files 1.6. Compression|\\SS1.6@)")
 MAN_END
 
 MAN_BEGIN ("NIST files", "ev", 20070514)

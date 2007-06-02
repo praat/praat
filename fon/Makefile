@@ -1,8 +1,8 @@
 # Makefile of the library "fon"
-# Paul Boersma, March 18, 2007
+# Paul Boersma, June 2, 2007
 
 include ../makefile.defs
-CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../FLAC
+CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../FLAC -I ../mp3
 
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o Matrix.o Vector.o Polygon.o PointProcess.o \
@@ -46,4 +46,4 @@ libfon.a: $(OBJECTS)
 	ar cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
-$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../FLAC/*.h
+$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../FLAC/*.h ../mp3/mp3.h
