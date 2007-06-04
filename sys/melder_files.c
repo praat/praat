@@ -953,7 +953,7 @@ static bool Melder_isValidAscii (const wchar_t *text) {
 }
 
 int MelderFile_writeTextW (MelderFile file, const wchar_t *text) {
-	FILE *f = Melder_fopen (file, "w");
+	FILE *f = Melder_fopen (file, "wb");
 	if (! f) return 0;
 	if (Melder_isValidAscii (text)) {
 		fwrite (Melder_peekWcsToAscii (text), sizeof (char), wcslen (text), f);   /* Not trailing null byte. */

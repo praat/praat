@@ -1,6 +1,6 @@
 /* melder_strings.c
  *
- * Copyright (C) 2006 Paul Boersma
+ * Copyright (C) 2006-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2006/12/10
+ * pb 2007/06/02 utf8 <-> wcs
  */
 
 #include "melder.h"

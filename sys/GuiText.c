@@ -512,7 +512,7 @@ static void NativeText_getTextW (Widget me, wchar_t *buffer, long length) {
 		char *bufferA = Melder_malloc (length + 1);
 		Edit_GetText (my window, bufferA, length + 1);
 		for (long i = 0; i <= length; i ++) {
-			buffer [i] = bufferA [i];
+			buffer [i] = (unsigned char) bufferA [i];
 		}
 		Melder_free (bufferA);
 	#elif mac
@@ -944,7 +944,7 @@ void GuiText_setStringW (Widget me, wchar_t *text) {
 		Melder_free (textUtf8);
 	#elif win
 		const wchar_t *from;
-		char *winText = Melder_malloc (2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
+		char *winText = Melder_malloc (4 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
 		if (! winText) return;
 		/*
 		 * Replace all LF with CR/LF.
