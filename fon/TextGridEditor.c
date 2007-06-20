@@ -29,6 +29,7 @@
  * pb 2006/12/18 better info
  * pb 2007/03/23 new Editor API
  * Erez Volk & pb 2007/05/17 FLAC support
+ * pb 2007/06/10 wchar_t
  */
 
 #include "TextGridEditor.h"
@@ -155,10 +156,10 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 	if (*tmax > my tmax) *tmax = my tmax;
 }
 
-static int checkTierSelection (TextGridEditor me, const char *verbPhrase) {
+static int checkTierSelection (TextGridEditor me, const wchar_t *verbPhrase) {
 	TextGrid grid = my data;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers -> size)
-		return Melder_error ("To %s, first select a tier by clicking anywhere inside it.", verbPhrase);
+		return Melder_error3 (L"To ", verbPhrase, L", first select a tier by clicking anywhere inside it.");
 	return 1;
 }
 
@@ -218,8 +219,8 @@ static void destroy (I) {
 
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write to TextGrid text file", 0)
-		sprintf (defaultName, "%s.TextGrid", ((Thing) my data) -> name);
+	EDITOR_FORM_WRITE (L"Write to TextGrid text file", 0)
+		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> nameW);
 	EDITOR_DO_WRITE
 		if (! Data_writeToTextFile (my data, file)) return 0;
 	EDITOR_END
@@ -267,9 +268,9 @@ static int do_writeAny (TextGridEditor me, MelderFile file, int audioFileType) {
 
 static int menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to WAV file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to WAV file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.wav", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.wav", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_WAV)) return 0;
 	EDITOR_END
@@ -277,9 +278,9 @@ static int menu_cb_WriteWav (EDITOR_ARGS) {
 
 static int menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to AIFF file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to AIFF file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.aiff", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.aiff", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_AIFF)) return 0;
 	EDITOR_END
@@ -287,9 +288,9 @@ static int menu_cb_WriteAiff (EDITOR_ARGS) {
 
 static int menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to AIFC file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to AIFC file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.aifc", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.aifc", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_AIFC)) return 0;
 	EDITOR_END
@@ -297,9 +298,9 @@ static int menu_cb_WriteAifc (EDITOR_ARGS) {
 
 static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to NeXT/Sun file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to NeXT/Sun file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.au", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.au", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_NEXT_SUN)) return 0;
 	EDITOR_END
@@ -307,9 +308,9 @@ static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 
 static int menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to NIST file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to NIST file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.nist", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.nist", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_NIST)) return 0;
 	EDITOR_END
@@ -317,9 +318,9 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 
 static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE ("Write selection to FLAC file", 0)
+	EDITOR_FORM_WRITE (L"Write selection to FLAC file", 0)
 		if (my longSound.data)
-			sprintf (defaultName, "%s.flac", my longSound.data -> name);
+			swprintf (defaultName, 300, L"%ls.flac", my longSound.data -> nameW);
 	EDITOR_DO_WRITE
 		if (! do_writeAny (me, file, Melder_FLAC)) return 0;
 	EDITOR_END
@@ -327,33 +328,32 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 
 /***** EDIT MENU *****/
 
+#ifndef macintosh
 static int menu_cb_Cut (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	XmTextCut (my text, 0);
 	return 1;
 }
-
 static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	XmTextCopy (my text, 0);
 	return 1;
 }
-
 static int menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	XmTextPaste (my text);
 	return 1;
 }
-
 static int menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	XmTextRemove (my text);
 	return 1;
 }
+#endif
 
 static int menu_cb_Genericize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, "Genericize");
+	Editor_save (me, L"Genericize");
 	TextGrid_genericize (my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
@@ -363,7 +363,7 @@ static int menu_cb_Genericize (EDITOR_ARGS) {
 
 static int menu_cb_Nativize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, "Nativize");
+	Editor_save (me, L"Nativize");
 	TextGrid_nativize (my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
@@ -377,7 +377,7 @@ static int menu_cb_GetStartingPointOfInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "query the starting point of an interval")) return 0;
+	if (! checkTierSelection (me, L"query the starting point of an interval")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
@@ -386,7 +386,7 @@ static int menu_cb_GetStartingPointOfInterval (EDITOR_ARGS) {
 			((TextInterval) tier -> intervals -> item [iinterval]) -> xmin;
 		Melder_informationReal (time, "seconds");
 	} else {
-		return Melder_error ("The selected tier is not an interval tier.");
+		return Melder_error1 (L"The selected tier is not an interval tier.");
 	}
 	return 1;
 }
@@ -395,7 +395,7 @@ static int menu_cb_GetEndPointOfInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "query the end point of an interval")) return 0;
+	if (! checkTierSelection (me, L"query the end point of an interval")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
@@ -404,7 +404,7 @@ static int menu_cb_GetEndPointOfInterval (EDITOR_ARGS) {
 			((TextInterval) tier -> intervals -> item [iinterval]) -> xmax;
 		Melder_informationReal (time, "seconds");
 	} else {
-		return Melder_error ("The selected tier is not an interval tier.");
+		return Melder_error1 (L"The selected tier is not an interval tier.");
 	}
 	return 1;
 }
@@ -413,7 +413,7 @@ static int menu_cb_GetLabelOfInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "query the label of an interval")) return 0;
+	if (! checkTierSelection (me, L"query the label of an interval")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
@@ -422,7 +422,7 @@ static int menu_cb_GetLabelOfInterval (EDITOR_ARGS) {
 			((TextInterval) tier -> intervals -> item [iinterval]) -> text;
 		Melder_information1 (label);
 	} else {
-		return Melder_error ("The selected tier is not an interval tier.");
+		return Melder_error1 (L"The selected tier is not an interval tier.");
 	}
 	return 1;
 }
@@ -607,7 +607,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			return 0;   /* Clicked outside time domain of intervals. */
 		}
 
-		Editor_save (me, "Add boundary");
+		Editor_save (me, L"Add boundary");
 
 		if (itier == my selectedTier) {
 			/*
@@ -652,7 +652,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			return 0;
 		} 
 
-		Editor_save (me, "Add point");
+		Editor_save (me, L"Add point");
 
 		newPoint = TextPoint_create (t, "");
 		Collection_addItem (textTier -> points, newPoint);
@@ -683,21 +683,21 @@ static int menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "remove a point or boundary")) return 0;
+	if (! checkTierSelection (me, L"remove a point or boundary")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary) return Melder_error ("To remove a boundary, first click on it.");
 
-		Editor_save (me, "Remove boundary");
+		Editor_save (me, L"Remove boundary");
 		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary); iferror return 0;
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		long selectedPoint = getSelectedPoint (me);
 		if (! selectedPoint) return Melder_error ("To remove a point, first click on it.");
 
-		Editor_save (me, "Remove point");
+		Editor_save (me, L"Remove point");
 		Collection_removeItem (tier -> points, selectedPoint);
 	}
 	FunctionEditor_updateText (me);
@@ -711,11 +711,11 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 	TextGrid grid = my data;
 	Data anyTier;
 	if (where == 0 && my sound.data == NULL) return 1;
-	if (! checkTierSelection (me, "move a point or boundary")) return 0;
+	if (! checkTierSelection (me, L"move a point or boundary")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		static char *boundarySaveText [3] = { "Move boundary to zero crossing", "Move boundary to B", "Move boundary to E" };
+		static wchar_t *boundarySaveText [3] = { L"Move boundary to zero crossing", L"Move boundary to B", L"Move boundary to E" };
 		TextInterval left, right;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary) return Melder_error ("To move a boundary, first click on it.");
@@ -732,7 +732,7 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 		left -> xmax = right -> xmin = my startSelection = my endSelection = position;
 	} else {
 		TextTier tier = (TextTier) anyTier;
-		static char *pointSaveText [3] = { "Move point to zero crossing", "Move point to B", "Move point to E" };
+		static wchar_t *pointSaveText [3] = { L"Move point to zero crossing", L"Move point to B", L"Move point to E" };
 		TextPoint point;
 		long selectedPoint = getSelectedPoint (me);
 		if (! selectedPoint) return Melder_error ("To move a point, first click on it.");
@@ -806,7 +806,7 @@ static int menu_cb_InsertOnAllTiers (EDITOR_ARGS) {
 static int findInTier (TextGridEditor me) {
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "find a text")) return 0;
+	if (! checkTierSelection (me, L"find a text")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
@@ -887,7 +887,7 @@ static int menu_cb_FindAgain (EDITOR_ARGS) {
 static int checkSpellingInTier (TextGridEditor me) {
 	TextGrid grid = my data;
 	Data anyTier;
-	if (! checkTierSelection (me, "check spelling")) return 0;
+	if (! checkTierSelection (me, L"check spelling")) return 0;
 	anyTier = grid -> tiers -> item [my selectedTier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
@@ -994,17 +994,17 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 	EDITOR_OK
 		TextGrid grid = my data;
 		Data tier;
-		if (! checkTierSelection (me, "rename a tier")) return 0;
+		if (! checkTierSelection (me, L"rename a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
 		SET_STRING ("Name", tier -> name ? tier -> name : "")
 	EDITOR_DO
 		char *newName = GET_STRING ("Name");
 		TextGrid grid = my data;
 		Data tier;
-		if (! checkTierSelection (me, "rename a tier")) return 0;
+		if (! checkTierSelection (me, L"rename a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
 
-		Editor_save (me, "Rename tier");
+		Editor_save (me, L"Rename tier");
 
 		Thing_setName (tier, newName);
 
@@ -1016,7 +1016,7 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 static int menu_cb_PublishTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
-	if (! checkTierSelection (me, "publish a tier")) return 0;
+	if (! checkTierSelection (me, L"publish a tier")) return 0;
 
 	if (my publishCallback) {
 		Data anyTier = grid -> tiers -> item [my selectedTier], copy = Data_copy (anyTier);
@@ -1032,10 +1032,10 @@ static int menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
 	TextGrid grid = my data;
 	IntervalTier intervalTier;
 	TextTier textTier;
-	if (! checkTierSelection (me, "remove all text from a tier")) return 0;
+	if (! checkTierSelection (me, L"remove all text from a tier")) return 0;
 	_AnyTier_identifyClass (grid -> tiers -> item [my selectedTier], & intervalTier, & textTier);
 
-	Editor_save (me, "Remove text from tier");
+	Editor_save (me, L"Remove text from tier");
 	if (intervalTier) {
 		IntervalTier_removeText (intervalTier);
 	} else {
@@ -1054,9 +1054,9 @@ static int menu_cb_RemoveTier (EDITOR_ARGS) {
 	if (grid -> tiers -> size <= 1) {
 		return Melder_error ("Sorry, I refuse to remove the last tier.");
 	}
-	if (! checkTierSelection (me, "remove a tier")) return 0;
+	if (! checkTierSelection (me, L"remove a tier")) return 0;
 
-	Editor_save (me, "Remove tier");
+	Editor_save (me, L"Remove tier");
 	Collection_removeItem (grid -> tiers, my selectedTier);
 
 	my selectedTier = 1;
@@ -1086,7 +1086,7 @@ static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (tier, name);
 
-		Editor_save (me, "Add interval tier");
+		Editor_save (me, L"Add interval tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
 
 		my selectedTier = position;
@@ -1116,7 +1116,7 @@ static int menu_cb_AddPointTier (EDITOR_ARGS) {
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (tier, name);
 
-		Editor_save (me, "Add point tier");
+		Editor_save (me, L"Add point tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
 
 		my selectedTier = position;
@@ -1144,14 +1144,14 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 		int position = GET_INTEGER ("Position");
 		char *name = GET_STRING ("Name");
 		AnyTier tier, newTier;
-		if (! checkTierSelection (me, "duplicate a tier")) return 0;
+		if (! checkTierSelection (me, L"duplicate a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
 		newTier = Data_copy (tier);
 		if (! newTier) return 0;
 			if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (newTier, name);
 
-		Editor_save (me, "Duplicate tier");
+		Editor_save (me, L"Duplicate tier");
 		Ordered_addItemPos (grid -> tiers, newTier, position);
 
 		my selectedTier = position;
@@ -1174,121 +1174,121 @@ static void createMenus (I) {
 	inherited (TextGridEditor) createMenus (me);
 
 	if (my sound.data || my longSound.data) {
-		Editor_addCommand (me, "File", "Copy to list of objects:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
-		my publishPreserveButton = Editor_addCommand (me, "File", "Extract sound selection (preserve times)", 0, menu_cb_PublishPreserve);
-		Editor_addCommand (me, "File", "Extract selection (preserve times)", Editor_HIDDEN, menu_cb_PublishPreserve);
-		my publishButton = Editor_addCommand (me, "File", "Extract sound selection (time from 0)", 0, menu_cb_Publish);
-		Editor_addCommand (me, "File", "Extract selection (time from 0)", Editor_HIDDEN, menu_cb_Publish);
-		Editor_addCommand (me, "File", "Extract selection", Editor_HIDDEN, menu_cb_Publish);
-		Editor_addCommand (me, "File", "-- write --", 0, NULL);
-		Editor_addCommand (me, "File", "Copy to disk:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+		Editor_addCommand (me, L"File", L"Copy to list of objects:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+		my publishPreserveButton = Editor_addCommand (me, L"File", L"Extract sound selection (preserve times)", 0, menu_cb_PublishPreserve);
+		Editor_addCommand (me, L"File", L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_PublishPreserve);
+		my publishButton = Editor_addCommand (me, L"File", L"Extract sound selection (time from 0)", 0, menu_cb_Publish);
+		Editor_addCommand (me, L"File", L"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_Publish);
+		Editor_addCommand (me, L"File", L"Extract selection", Editor_HIDDEN, menu_cb_Publish);
+		Editor_addCommand (me, L"File", L"-- write --", 0, NULL);
+		Editor_addCommand (me, L"File", L"Copy to disk:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
 	}
-	Editor_addCommand (me, "File", "Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
+	Editor_addCommand (me, L"File", L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
 	if (my longSound.data) {
-		my writeWavButton = Editor_addCommand (me, "File", "Write sound selection to WAV file...", 0, menu_cb_WriteWav);
-		Editor_addCommand (me, "File", "Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		my writeAiffButton = Editor_addCommand (me, "File", "Write sound selection to AIFF file...", 0, menu_cb_WriteAiff);
-		Editor_addCommand (me, "File", "Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-		my writeAifcButton = Editor_addCommand (me, "File", "Write sound selection to AIFC file...", 0, menu_cb_WriteAifc);
-		Editor_addCommand (me, "File", "Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		my writeNextSunButton = Editor_addCommand (me, "File", "Write sound selection to Next/Sun file...", 0, menu_cb_WriteNextSun);
-		Editor_addCommand (me, "File", "Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-		my writeNistButton = Editor_addCommand (me, "File", "Write sound selection to NIST file...", 0, menu_cb_WriteNist);
-		Editor_addCommand (me, "File", "Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-		my writeFlacButton = Editor_addCommand (me, "File", "Write sound selection to FLAC file...", 0, menu_cb_WriteFlac);
-		Editor_addCommand (me, "File", "Write selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
+		my writeWavButton = Editor_addCommand (me, L"File", L"Write sound selection to WAV file...", 0, menu_cb_WriteWav);
+		Editor_addCommand (me, L"File", L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
+		my writeAiffButton = Editor_addCommand (me, L"File", L"Write sound selection to AIFF file...", 0, menu_cb_WriteAiff);
+		Editor_addCommand (me, L"File", L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
+		my writeAifcButton = Editor_addCommand (me, L"File", L"Write sound selection to AIFC file...", 0, menu_cb_WriteAifc);
+		Editor_addCommand (me, L"File", L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
+		my writeNextSunButton = Editor_addCommand (me, L"File", L"Write sound selection to Next/Sun file...", 0, menu_cb_WriteNextSun);
+		Editor_addCommand (me, L"File", L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+		my writeNistButton = Editor_addCommand (me, L"File", L"Write sound selection to NIST file...", 0, menu_cb_WriteNist);
+		Editor_addCommand (me, L"File", L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
+		my writeFlacButton = Editor_addCommand (me, L"File", L"Write sound selection to FLAC file...", 0, menu_cb_WriteFlac);
+		Editor_addCommand (me, L"File", L"Write selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 	}
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
 	#ifndef macintosh
-		Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-		Editor_addCommand (me, "Edit", "Cut text", 'X', menu_cb_Cut);
-		Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, menu_cb_Cut);
-		Editor_addCommand (me, "Edit", "Copy text", 'C', menu_cb_Copy);
-		Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, menu_cb_Copy);
-		Editor_addCommand (me, "Edit", "Paste text", 'V', menu_cb_Paste);
-		Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, menu_cb_Paste);
-		Editor_addCommand (me, "Edit", "Erase text", 0, menu_cb_Erase);
-		Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, menu_cb_Erase);
+		Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
+		Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
+		Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
+		Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
+		Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
+		Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
+		Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
+		Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
+		Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
-	Editor_addCommand (me, "Edit", "-- encoding --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Genericize entire TextGrid", 0, menu_cb_Genericize);
-	Editor_addCommand (me, "Edit", "Genericize", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (me, "Edit", "Nativize entire TextGrid", 0, menu_cb_Nativize);
-	Editor_addCommand (me, "Edit", "Nativize", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (me, "Edit", "-- search --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Find...", 'F', menu_cb_Find);
-	Editor_addCommand (me, "Edit", "Find again", 'G', menu_cb_FindAgain);
+	Editor_addCommand (me, L"Edit", L"-- encoding --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Genericize entire TextGrid", 0, menu_cb_Genericize);
+	Editor_addCommand (me, L"Edit", L"Genericize", Editor_HIDDEN, menu_cb_Genericize);
+	Editor_addCommand (me, L"Edit", L"Nativize entire TextGrid", 0, menu_cb_Nativize);
+	Editor_addCommand (me, L"Edit", L"Nativize", Editor_HIDDEN, menu_cb_Nativize);
+	Editor_addCommand (me, L"Edit", L"-- search --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Find...", 'F', menu_cb_Find);
+	Editor_addCommand (me, L"Edit", L"Find again", 'G', menu_cb_FindAgain);
 
 	if (my sound.data) {
-		Editor_addCommand (me, "Select", "-- move to zero --", 0, 0);
-		Editor_addCommand (me, "Select", "Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (me, "Select", "Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (me, "Select", "Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (me, "Select", "Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
+		Editor_addCommand (me, L"Select", L"-- move to zero --", 0, 0);
+		Editor_addCommand (me, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
+		Editor_addCommand (me, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
+		Editor_addCommand (me, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
+		Editor_addCommand (me, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	Editor_addCommand (me, "Query", "-- query interval --", 0, NULL);
-	Editor_addCommand (me, "Query", "Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
-	Editor_addCommand (me, "Query", "Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
-	Editor_addCommand (me, "Query", "Get label of interval", 0, menu_cb_GetLabelOfInterval);
+	Editor_addCommand (me, L"Query", L"-- query interval --", 0, NULL);
+	Editor_addCommand (me, L"Query", L"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
+	Editor_addCommand (me, L"Query", L"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
+	Editor_addCommand (me, L"Query", L"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
-	menu = Editor_addMenu (me, "Interval", 0);
-	EditorMenu_addCommand (menu, "Add interval on tier 1", motif_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
-	EditorMenu_addCommand (menu, "Add interval on tier 2", motif_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
-	EditorMenu_addCommand (menu, "Add interval on tier 3", motif_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
-	EditorMenu_addCommand (menu, "Add interval on tier 4", motif_COMMAND | '4', menu_cb_InsertIntervalOnTier4);
-	EditorMenu_addCommand (menu, "Add interval on tier 5", motif_COMMAND | '5', menu_cb_InsertIntervalOnTier5);
-	EditorMenu_addCommand (menu, "Add interval on tier 6", motif_COMMAND | '6', menu_cb_InsertIntervalOnTier6);
-	EditorMenu_addCommand (menu, "Add interval on tier 7", motif_COMMAND | '7', menu_cb_InsertIntervalOnTier7);
-	EditorMenu_addCommand (menu, "Add interval on tier 8", motif_COMMAND | '8', menu_cb_InsertIntervalOnTier8);
+	menu = Editor_addMenu (me, L"Interval", 0);
+	EditorMenu_addCommand (menu, L"Add interval on tier 1", motif_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
+	EditorMenu_addCommand (menu, L"Add interval on tier 2", motif_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
+	EditorMenu_addCommand (menu, L"Add interval on tier 3", motif_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
+	EditorMenu_addCommand (menu, L"Add interval on tier 4", motif_COMMAND | '4', menu_cb_InsertIntervalOnTier4);
+	EditorMenu_addCommand (menu, L"Add interval on tier 5", motif_COMMAND | '5', menu_cb_InsertIntervalOnTier5);
+	EditorMenu_addCommand (menu, L"Add interval on tier 6", motif_COMMAND | '6', menu_cb_InsertIntervalOnTier6);
+	EditorMenu_addCommand (menu, L"Add interval on tier 7", motif_COMMAND | '7', menu_cb_InsertIntervalOnTier7);
+	EditorMenu_addCommand (menu, L"Add interval on tier 8", motif_COMMAND | '8', menu_cb_InsertIntervalOnTier8);
 
-	menu = Editor_addMenu (me, "Boundary", 0);
-	/*EditorMenu_addCommand (menu, "Move to B", 0, menu_cb_MoveToB);
-	EditorMenu_addCommand (menu, "Move to E", 0, menu_cb_MoveToE);*/
+	menu = Editor_addMenu (me, L"Boundary", 0);
+	/*EditorMenu_addCommand (menu, L"Move to B", 0, menu_cb_MoveToB);
+	EditorMenu_addCommand (menu, L"Move to E", 0, menu_cb_MoveToE);*/
 	if (my sound.data)
-		EditorMenu_addCommand (menu, "Move to nearest zero crossing", 0, menu_cb_MoveToZero);
-	EditorMenu_addCommand (menu, "-- insert boundary --", 0, NULL);
-	EditorMenu_addCommand (menu, "Add on selected tier", motif_ENTER, menu_cb_InsertOnSelectedTier);
-	EditorMenu_addCommand (menu, "Add on tier 1", motif_COMMAND | motif_F1, menu_cb_InsertOnTier1);
-	EditorMenu_addCommand (menu, "Add on tier 2", motif_COMMAND | motif_F2, menu_cb_InsertOnTier2);
-	EditorMenu_addCommand (menu, "Add on tier 3", motif_COMMAND | motif_F3, menu_cb_InsertOnTier3);
-	EditorMenu_addCommand (menu, "Add on tier 4", motif_COMMAND | motif_F4, menu_cb_InsertOnTier4);
-	EditorMenu_addCommand (menu, "Add on tier 5", motif_COMMAND | motif_F5, menu_cb_InsertOnTier5);
-	EditorMenu_addCommand (menu, "Add on tier 6", motif_COMMAND | motif_F6, menu_cb_InsertOnTier6);
-	EditorMenu_addCommand (menu, "Add on tier 7", motif_COMMAND | motif_F7, menu_cb_InsertOnTier7);
-	EditorMenu_addCommand (menu, "Add on tier 8", motif_COMMAND | motif_F8, menu_cb_InsertOnTier8);
-	EditorMenu_addCommand (menu, "Add on all tiers", motif_COMMAND | motif_F9, menu_cb_InsertOnAllTiers);
-	EditorMenu_addCommand (menu, "-- remove mark --", 0, NULL);
-	EditorMenu_addCommand (menu, "Remove", motif_OPTION | motif_BACKSPACE, menu_cb_RemovePointOrBoundary);
+		EditorMenu_addCommand (menu, L"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
+	EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Add on selected tier", motif_ENTER, menu_cb_InsertOnSelectedTier);
+	EditorMenu_addCommand (menu, L"Add on tier 1", motif_COMMAND | motif_F1, menu_cb_InsertOnTier1);
+	EditorMenu_addCommand (menu, L"Add on tier 2", motif_COMMAND | motif_F2, menu_cb_InsertOnTier2);
+	EditorMenu_addCommand (menu, L"Add on tier 3", motif_COMMAND | motif_F3, menu_cb_InsertOnTier3);
+	EditorMenu_addCommand (menu, L"Add on tier 4", motif_COMMAND | motif_F4, menu_cb_InsertOnTier4);
+	EditorMenu_addCommand (menu, L"Add on tier 5", motif_COMMAND | motif_F5, menu_cb_InsertOnTier5);
+	EditorMenu_addCommand (menu, L"Add on tier 6", motif_COMMAND | motif_F6, menu_cb_InsertOnTier6);
+	EditorMenu_addCommand (menu, L"Add on tier 7", motif_COMMAND | motif_F7, menu_cb_InsertOnTier7);
+	EditorMenu_addCommand (menu, L"Add on tier 8", motif_COMMAND | motif_F8, menu_cb_InsertOnTier8);
+	EditorMenu_addCommand (menu, L"Add on all tiers", motif_COMMAND | motif_F9, menu_cb_InsertOnAllTiers);
+	EditorMenu_addCommand (menu, L"-- remove mark --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Remove", motif_OPTION | motif_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
-	menu = Editor_addMenu (me, "Tier", 0);
-	EditorMenu_addCommand (menu, "Copy tier to list of objects", 0, menu_cb_PublishTier);
-	EditorMenu_addCommand (menu, "-- add tier --", 0, NULL);
-	EditorMenu_addCommand (menu, "Add interval tier...", 0, menu_cb_AddIntervalTier);
-	EditorMenu_addCommand (menu, "Add point tier...", 0, menu_cb_AddPointTier);
-	EditorMenu_addCommand (menu, "Duplicate tier...", 0, menu_cb_DuplicateTier);
-	EditorMenu_addCommand (menu, "Rename tier...", 0, menu_cb_RenameTier);
-	EditorMenu_addCommand (menu, "-- remove tier --", 0, NULL);
-	EditorMenu_addCommand (menu, "Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
-	EditorMenu_addCommand (menu, "Remove entire tier", 0, menu_cb_RemoveTier);
+	menu = Editor_addMenu (me, L"Tier", 0);
+	EditorMenu_addCommand (menu, L"Copy tier to list of objects", 0, menu_cb_PublishTier);
+	EditorMenu_addCommand (menu, L"-- add tier --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Add interval tier...", 0, menu_cb_AddIntervalTier);
+	EditorMenu_addCommand (menu, L"Add point tier...", 0, menu_cb_AddPointTier);
+	EditorMenu_addCommand (menu, L"Duplicate tier...", 0, menu_cb_DuplicateTier);
+	EditorMenu_addCommand (menu, L"Rename tier...", 0, menu_cb_RenameTier);
+	EditorMenu_addCommand (menu, L"-- remove tier --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
+	EditorMenu_addCommand (menu, L"Remove entire tier", 0, menu_cb_RemoveTier);
 
 	if (my spellingChecker) {
-		menu = Editor_addMenu (me, "Spell", 0);
-		EditorMenu_addCommand (menu, "Check spelling in tier", 'N', menu_cb_CheckSpelling);
-		EditorMenu_addCommand (menu, "Check spelling in interval", 0, menu_cb_CheckSpellingInInterval);
-		EditorMenu_addCommand (menu, "-- edit lexicon --", 0, NULL);
-		EditorMenu_addCommand (menu, "Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
+		menu = Editor_addMenu (me, L"Spell", 0);
+		EditorMenu_addCommand (menu, L"Check spelling in tier", 'N', menu_cb_CheckSpelling);
+		EditorMenu_addCommand (menu, L"Check spelling in interval", 0, menu_cb_CheckSpellingInInterval);
+		EditorMenu_addCommand (menu, L"-- edit lexicon --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
 
 	if (my sound.data || my longSound.data) {
 		FunctionEditor_SoundAnalysis_addMenus (me);
 	}
 
-	Editor_addCommand (me, "Help", "TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
-	Editor_addCommand (me, "Help", "About special symbols", 0, menu_cb_AboutSpecialSymbols);
-	Editor_addCommand (me, "Help", "Phonetic symbols", 0, menu_cb_PhoneticSymbols);
-	Editor_addCommand (me, "Help", "About text styles", 0, menu_cb_AboutTextStyles);
+	Editor_addCommand (me, L"Help", L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
+	Editor_addCommand (me, L"Help", L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
+	Editor_addCommand (me, L"Help", L"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
+	Editor_addCommand (me, L"Help", L"About text styles", 0, menu_cb_AboutTextStyles);
 }
 
 /***** CHILDREN *****/
@@ -1805,7 +1805,7 @@ static void dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, in
 		return;
 	}
 
-	Editor_save (me, "Drag");
+	Editor_save (me, L"Drag");
 
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		IntervalTier intervalTier;
@@ -2150,13 +2150,13 @@ static void viewMenuEntries (I) {
 		FunctionEditor_Sound_createMenus (me);
 		FunctionEditor_SoundAnalysis_viewMenus (me);
 	}
-	Editor_addCommand (me, "View", "Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
-	Editor_addCommand (me, "View", "Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
-	Editor_addCommand (me, "View", "Select previous interval", motif_OPTION | motif_LEFT_ARROW, menu_cb_SelectPreviousInterval);
-	Editor_addCommand (me, "View", "Select next interval", motif_OPTION | motif_RIGHT_ARROW, menu_cb_SelectNextInterval);
-	Editor_addCommand (me, "View", "Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
-	Editor_addCommand (me, "View", "Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
-	Editor_addCommand (me, "View", "-- select interval --", 0, 0);
+	Editor_addCommand (me, L"View", L"Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
+	Editor_addCommand (me, L"View", L"Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
+	Editor_addCommand (me, L"View", L"Select previous interval", motif_OPTION | motif_LEFT_ARROW, menu_cb_SelectPreviousInterval);
+	Editor_addCommand (me, L"View", L"Select next interval", motif_OPTION | motif_RIGHT_ARROW, menu_cb_SelectNextInterval);
+	Editor_addCommand (me, L"View", L"Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
+	Editor_addCommand (me, L"View", L"Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
+	Editor_addCommand (me, L"View", L"-- select interval --", 0, 0);
 	if (my sound.data || my longSound.data) {
 		FunctionEditor_SoundAnalysis_selectionQueries (me);
 	}
@@ -2217,7 +2217,7 @@ class_methods (TextGridEditor, FunctionEditor) {
 
 /********** EXPORTED **********/
 
-TextGridEditor TextGridEditor_create (Widget parent, const char *title, TextGrid grid, Any sound, Any spellingChecker) {
+TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextGrid grid, Any sound, Any spellingChecker) {
 	TextGridEditor me = new (TextGridEditor); cherror
 
 	/*

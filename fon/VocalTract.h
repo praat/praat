@@ -33,7 +33,7 @@
 
 #define VocalTract_members  Vector_members
 #define VocalTract_methods  Vector_methods
-class_create (VocalTract, Vector)
+class_create (VocalTract, Vector);
 
 /*
 	Attributes:

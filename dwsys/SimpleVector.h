@@ -31,7 +31,7 @@
 	long min, max;	\
 	double *v;
 #define DoubleVector_methods Data_methods
-class_create (DoubleVector, Data)
+class_create (DoubleVector, Data);
 
 int DoubleVector_init (I, long min, long max);
 DoubleVector DoubleVector_create (long min, long max);
@@ -40,7 +40,7 @@ DoubleVector DoubleVector_create (long min, long max);
 	long min, max;	\
 	dcomplex *v;
 #define ComplexVector_methods Data_methods
-class_create (ComplexVector, Data)
+class_create (ComplexVector, Data);
 
 int ComplexVector_init (I, long min, long max);
 ComplexVector ComplexVector_create (long min, long max);

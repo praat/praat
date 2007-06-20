@@ -42,7 +42,7 @@
 #define ParamCurve_members Function_members \
 	Sound x, y;
 #define ParamCurve_methods Function_methods
-class_create (ParamCurve, Function)
+class_create (ParamCurve, Function);
 
 int ParamCurve_init (I, Any x, Any y);
 

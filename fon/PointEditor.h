@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/28
+ * pb 2007/06/10
  */
 
 #ifndef _FunctionEditor_h_
@@ -35,7 +35,7 @@
 
 typedef struct structPointEditor *PointEditor;
 
-PointEditor PointEditor_create (Widget parent, const char *title,
+PointEditor PointEditor_create (Widget parent, const wchar_t *title,
 	PointProcess point, Sound sound);
 /*
 	'sound' may be NULL.

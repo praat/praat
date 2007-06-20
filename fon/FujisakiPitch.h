@@ -34,12 +34,12 @@
 #include "FujisakiPitch_def.h"
 
 #define FujisakiCommand_methods Function_methods
-oo_CLASS_CREATE (FujisakiCommand, Function)
+oo_CLASS_CREATE (FujisakiCommand, Function);
 
 FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude);
 
 #define FujisakiPitch_methods Function_methods
-oo_CLASS_CREATE (FujisakiPitch, Function)
+oo_CLASS_CREATE (FujisakiPitch, Function);
 
 FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma);

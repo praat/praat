@@ -28,6 +28,8 @@
  * pb 2007/05/30 GuiText_getStringW
  * pb 2007/05/31 Mac: CreateEditUnicodeTextControl
  * pb 2007/06/01 Mac: erased TextEdit stuff as well as changeCount
+ * pb 2007/06/11 GuiText_getSelectionW, GuiText_replaceW
+ * pb 2007/06/12 let command-key combinations pass through
  */
 
 #include "GuiP.h"
@@ -170,9 +172,11 @@ void _GuiText_handleValueChanged (Widget me) {
 	int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, unsigned char charCode, EventRecord *event) {
 		if (me) {
 			if (isTextControl (me)) {
-				CallNextEventHandler (eventHandlerCallRef, eventRef);
-				_GuiText_handleValueChanged (me);
-				return 1;
+				if (charCode == 'X' || charCode == 'C' || charCode == 'V') {
+					CallNextEventHandler (eventHandlerCallRef, eventRef);
+					_GuiText_handleValueChanged (me);
+					return 1;
+				}
 			} else if (isMLTE (me)) {
 				if (charCode == 'X' && my motif.text.editable) {
 					if (event -> what != autoKey) XmTextCut (me, 0);
@@ -313,11 +317,13 @@ void _GuiText_nativizeWidget (Widget me) {
 	 *    install pointers back and forth.
 	 */
 	#if win
-		my window = CreateWindow ("edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS
+		my window = CreateWindowW (L"edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS
 			| ( theScrolledHint ? WS_HSCROLL | WS_VSCROLL : 0 ),
 			my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 		SetWindowLong (my window, GWL_USERDATA, (long) me);
-		SetWindowFont (my window, GetStockFont (theScrolledHint ? ANSI_FIXED_FONT : ANSI_VAR_FONT), FALSE);
+		static HFONT font;
+		if (! font) font = CreateFontW (0, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH | FF_MODERN, L"Courier New");
+		SetWindowFont (my window, theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT), FALSE);
 		my motif.text.editable = TRUE;
 		Edit_LimitText (my window, 0);
 	#elif mac
@@ -334,7 +340,7 @@ void _GuiText_nativizeWidget (Widget me) {
 				my macWindow, & my rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
 					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
 				kTXNTextEditStyleFrameType, kTXNTextensionFile,
-				kTXNMacOSEncoding, & my macMlteObject, & my macMlteFrameId, me);
+				/*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding, & my macMlteObject, & my macMlteFrameId, me);
 			destRect. left = 0;
 			destRect. top = 0;
 			destRect. right = 10000;
@@ -347,14 +353,7 @@ void _GuiText_nativizeWidget (Widget me) {
 			controlData. marginsPtr = & margins;
 			TXNSetTXNObjectControls (my macMlteObject, FALSE, 1, & controlTag, & controlData);
 		} else if (my parent -> widgetClass != xmScrolledWindowWidgetClass) {
-			//static short font;
 			Rect r = my rect;
-			//Size actualSize;
-			//ControlFontStyleRec fontStyle;
-			//if (! font) GetFNum ("\pMonaco", & font);
-			//fontStyle. flags = kControlUseFontMask | kControlUseSizeMask;
-			//fontStyle. font = font;
-			//fontStyle. size = 9;
 			InsetRect (& r, 3, 3);
 			CreateEditUnicodeTextControl (my macWindow, & r, NULL, false, NULL, & my nat.control.handle);
 			SetControlReference (my nat.control.handle, (long) me);
@@ -457,7 +456,10 @@ static long NativeText_getLengthW (Widget me) {
 	#elif mac
 		if (isTextControl (me)) {
 			Size size;
-			GetControlDataSize (my nat.control.handle, kControlEntireControl, kControlEditTextTextTag, & size);
+			CFStringRef cfString;
+			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, NULL);
+			size = CFStringGetLength (cfString);
+			CFRelease (cfString);
 			return size;
 		} else if (isMLTE (me)) {
 			return TXNDataSize (my macMlteObject) / sizeof (UniChar);
@@ -468,7 +470,7 @@ static long NativeText_getLengthW (Widget me) {
 
 static void NativeText_getText (Widget me, char *buffer, long length) {
 	#if win
-		Edit_GetText (my window, buffer, length + 1);
+		GetWindowTextA (my window, buffer, length + 1);
 	#elif mac
 		if (isTextControl (me)) {
 			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextTextTag, length, buffer, NULL);
@@ -509,12 +511,7 @@ static void NativeText_getText (Widget me, char *buffer, long length) {
 
 static void NativeText_getTextW (Widget me, wchar_t *buffer, long length) {
 	#if win
-		char *bufferA = Melder_malloc (length + 1);
-		Edit_GetText (my window, bufferA, length + 1);
-		for (long i = 0; i <= length; i ++) {
-			buffer [i] = (unsigned char) bufferA [i];
-		}
-		Melder_free (bufferA);
+		GetWindowTextW (my window, buffer, length + 1);
 	#elif mac
 		if (isTextControl (me)) {
 			CFStringRef cfString;
@@ -522,10 +519,12 @@ static void NativeText_getTextW (Widget me, wchar_t *buffer, long length) {
 			UniChar *macText = Melder_malloc ((length + 1) * sizeof (UniChar));
 			CFRange range = { 0, length };
 			CFStringGetCharacters (cfString, range, macText);
+			CFRelease (cfString);
 			for (long i = 0; i < length; i ++) {
 				buffer [i] = macText [i];
 			}
 			buffer [length] = '\0';
+			Melder_free (macText);
 		} else if (isMLTE (me)) {
 			Handle han;
 			TXNGetDataEncoded (my macMlteObject, 0, length, & han, kTXNUnicodeTextData);
@@ -925,26 +924,30 @@ void GuiText_redo (Widget me) {
 wchar_t *GuiText_getStringW (Widget me) {
 	#if defined (UNIX)
 		char *textUtf8 = XmTextGetString (me);
-		wchar_t *result = Melder_utf8ToWcs (textUtf8);
+		wchar_t *result = Melder_asciiToWcs (textUtf8);
 		XtFree (textUtf8);
 		return result;
 	#else
 		long length = NativeText_getLengthW (me);
 		wchar_t *result = Melder_malloc ((1 + length) * sizeof (wchar_t));
 		NativeText_getTextW (me, result, length);
-		//Melder_killReturns_inline (result);
+		Melder_killReturns_inlineW (result);
 		return result;
 	#endif
 }
 
-void GuiText_setStringW (Widget me, wchar_t *text) {
+void GuiText_setStringW (Widget me, const wchar_t *text) {
 	#if defined (UNIX)
-		char *textUtf8 = Melder_wcsToUtf8 (text);
-		XmTextSetString (me, textUtf8);
-		Melder_free (textUtf8);
+		char *textIsoLatin1 = Melder_wcsToAscii (text);
+		XmTextSetString (me, textIsoLatin1);
+		Melder_free (textIsoLatin1);
+		/*
+		 * At some point to be replaced with:
+		 */
+		//XmTextSetStringWcs (me, (wchar_t *) text);
 	#elif win
 		const wchar_t *from;
-		char *winText = Melder_malloc (4 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
+		wchar_t *winText = Melder_malloc ((2 * wcslen (text) + 1) * sizeof (wchar_t)), *to;   /* All new lines plus one null byte. */
 		if (! winText) return;
 		/*
 		 * Replace all LF with CR/LF.
@@ -952,7 +955,7 @@ void GuiText_setStringW (Widget me, wchar_t *text) {
 		for (from = text, to = winText; *from != '\0'; from ++, to ++)
 			if (*from == '\n') { *to = 13; * ++ to = '\n'; } else *to = *from;
 		*to = '\0';
-		Edit_SetText (my window, winText);
+		SetWindowTextW (my window, winText);
 		Melder_free (winText);
 	#elif mac
 		long length = wcslen (text), i;
@@ -987,6 +990,39 @@ void GuiText_setStringW (Widget me, wchar_t *text) {
 		}
 		_GuiText_handleValueChanged (me);
 	#endif
+}
+
+wchar_t * GuiText_getSelectionW (Widget me) {
+	#if defined (UNIX)
+		char *selectionUtf8 = XmTextGetSelection (me);
+		wchar_t *selection = Melder_utf8ToWcs (selectionUtf8);
+		XtFree (selectionUtf8);
+		return selection;
+	#else
+		long length, start, end;
+		wchar_t *result;
+		NativeText_getSelectionRange (me, & start, & end);
+		if (end <= start) return NULL;
+		/*
+		 * Get all text.
+		 */
+		length = NativeText_getLengthW (me);
+		result = Melder_malloc ((1 + length) * sizeof (wchar_t));
+		NativeText_getTextW (me, result, length);
+		/*
+		 * Zoom in on selection.
+		 */
+		length = end - start;
+		memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
+		result [length] = '\0';
+		result = Melder_realloc (result, (length + 1) * sizeof (wchar_t));   /* Optional. */
+		Melder_killReturns_inlineW (result);   /* AFTER zooming! */
+		return result;
+	#endif
+}
+
+void GuiText_replaceW (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, const wchar_t *text) {
+	XmTextReplace (me, from_pos, to_pos, Melder_peekWcsToAscii (text));
 }
 
 /* End of file GuiText.c */

@@ -97,7 +97,7 @@
 
 #define Weight_members TableOfReal_members
 #define Weight_methods TableOfReal_methods
-class_create (Weight, TableOfReal)
+class_create (Weight, TableOfReal);
 
 Weight Weight_create (long numberOfPoints);
 
@@ -105,7 +105,7 @@ Weight Weight_create (long numberOfPoints);
 
 #define Salience_members TableOfReal_members
 #define Salience_methods TableOfReal_methods
-class_create (Salience, TableOfReal)
+class_create (Salience, TableOfReal);
 
 Salience Salience_create (long numberOfSources, long numberOfDimensions);
 
@@ -123,7 +123,7 @@ void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension,
 	double *proximity;				\
 	long *iPoint, *jPoint;
 #define MDSVec_methods Data_methods
-class_create (MDSVec, Data)
+class_create (MDSVec, Data);
 
 MDSVec MDSVec_create (long nObjects);
 
@@ -131,7 +131,7 @@ MDSVec MDSVec_create (long nObjects);
 
 #define MDSVecs_members Ordered_members
 #define MDSVecs_methods Ordered_methods
-class_create (MDSVecs, Ordered)
+class_create (MDSVecs, Ordered);
 
 MDSVecs MDSVecs_create (void);
 
@@ -140,7 +140,7 @@ MDSVecs MDSVecs_create (void);
 
 #define Preference_members TableOfReal_members
 #define Preference_methods TableOfReal_methods
-class_create (Preference, TableOfReal)
+class_create (Preference, TableOfReal);
 
 Preference Preference_create (long numberOfRows, long numberOfColumns);
 
@@ -150,7 +150,7 @@ Preference Preference_create (long numberOfRows, long numberOfColumns);
 
 #define ContingencyTable_members TableOfReal_members
 #define ContingencyTable_methods TableOfReal_methods
-class_create (ContingencyTable, TableOfReal)
+class_create (ContingencyTable, TableOfReal);
 
 /* entries must be nonnegative numbers */
 
@@ -178,7 +178,7 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me);
 
 #define Proximities_members TablesOfReal_members
 #define Proximities_methods TablesOfReal_methods
-class_create (Proximities, TablesOfReal)
+class_create (Proximities, TablesOfReal);
 
 int Proximities_init (I, void *klas);
 
@@ -188,7 +188,7 @@ Proximities Proximities_create (void);
 
 #define Confusions_members Proximities_members
 #define Confusions_methods Proximities_methods
-class_create (Confusions, Proximities)
+class_create (Confusions, Proximities);
 
 Confusions Confusions_create (void);
 
@@ -198,7 +198,7 @@ Confusion Confusions_sum (Confusions me);
 
 #define Distances_members Proximities_members
 #define Distances_methods Proximities_methods
-class_create (Distances, Proximities)
+class_create (Distances, Proximities);
 
 Distances Distances_create (void);
 
@@ -207,7 +207,7 @@ Distances Distances_create (void);
 
 #define ScalarProduct_members TableOfReal_members
 #define ScalarProduct_methods TableOfReal_methods
-class_create (ScalarProduct, TableOfReal)
+class_create (ScalarProduct, TableOfReal);
 
 ScalarProduct ScalarProduct_create (long numberOfPoints);
 
@@ -216,7 +216,7 @@ ScalarProduct ScalarProduct_create (long numberOfPoints);
 
 #define ScalarProducts_members TablesOfReal_members
 #define ScalarProducts_methods TablesOfReal_methods
-class_create (ScalarProducts, TablesOfReal)
+class_create (ScalarProducts, TablesOfReal);
 
 ScalarProducts ScalarProducts_create (void);
 
@@ -225,7 +225,7 @@ ScalarProducts ScalarProducts_create (void);
 
 #define Dissimilarity_members Proximity_members
 #define Dissimilarity_methods Proximity_methods
-class_create (Dissimilarity, Proximity)
+class_create (Dissimilarity, Proximity);
 
 Dissimilarity Dissimilarity_create (long numberOfPoints);
 
@@ -245,7 +245,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c);
 	int normalization;
 #define Transformator_methods Thing_methods	\
 	Distance (*transform) (I, MDSVec vec, Distance dist, Weight w);
-class_create (Transformator, Thing)
+class_create (Transformator, Thing);
 
 int Transformator_init (I, long numberOfPoints);
 
@@ -259,7 +259,7 @@ Distance Transformator_transform (I, MDSVec vec, Distance dist, Weight w);
 	long numberOfInteriorKnots, order, numberOfParameters;	\
 	double **m, *b, *knot;
 #define ISplineTransformator_methods Transformator_methods
-class_create (ISplineTransformator, Transformator)
+class_create (ISplineTransformator, Transformator);
 
 ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots,
 	long order);
@@ -267,14 +267,14 @@ ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numb
 #define RatioTransformator_members Transformator_members \
 	double ratio;
 #define RatioTransformator_methods Transformator_methods
-class_create (RatioTransformator, Transformator)
+class_create (RatioTransformator, Transformator);
 
 RatioTransformator RatioTransformator_create (long numberOfPoints);
 
 #define MonotoneTransformator_members Transformator_members \
 	int tiesProcessing;
 #define MonotoneTransformator_methods Transformator_methods
-class_create (MonotoneTransformator, Transformator)
+class_create (MonotoneTransformator, Transformator);
 
 MonotoneTransformator MonotoneTransformator_create (long numberPoints);
 
@@ -287,7 +287,7 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 
 #define Dissimilarities_members Proximities_members
 #define Dissimilarities_methods Proximities_methods
-class_create (Dissimilarities, Proximities)
+class_create (Dissimilarities, Proximities);
 
 Dissimilarities Dissimilarities_create (void);
 
@@ -295,7 +295,7 @@ Dissimilarities Dissimilarities_create (void);
 
 #define Similarity_members Proximity_members
 #define Similarity_methods Proximity_methods
-class_create (Similarity, Proximity)
+class_create (Similarity, Proximity);
 
 Similarity Similarity_create (long numberOfPoints);
 
@@ -313,7 +313,7 @@ Similarity Similarity_create (long numberOfPoints);
 	double **dx;						\
 	Minimizer minimizer;
 #define Kruskal_methods Thing_methods
-class_create (Kruskal, Thing)
+class_create (Kruskal, Thing);
 
 Kruskal Kruskal_create (long numberOfpoints, long numberOfDimensions);
 

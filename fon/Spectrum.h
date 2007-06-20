@@ -35,7 +35,7 @@
 
 #include "Spectrum_def.h"
 #define Spectrum_methods  Matrix_methods
-oo_CLASS_CREATE (Spectrum, Matrix)
+oo_CLASS_CREATE (Spectrum, Matrix);
 
 /*
 	xmin			// Lowest frequency (Hertz).

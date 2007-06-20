@@ -378,6 +378,9 @@ static char *motifFonts [] = {
 	"*XmLabelGadget.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
 	"*information*text*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso8859-1",
 0 };
+static char *linuxFonts [] = {
+	"*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso10646-1",
+0 };
 static char *solarisFonts [] = {
 	"*fontList: -b&h-lucida sans-medium-r-normal-sans-*-120-*-*-p-*-iso8859-1",
 	"*information*fontList: -b&h-lucida sans-medium-r-normal-sans-*-120-*-*-p-*-iso8859-1",
@@ -439,6 +442,7 @@ char **Machine_getXresources (void) {
 			break;
 		case LookAndFeel_LINUX:
 			appendResources (kdeResources);
+			//appendResources (linuxFonts);
 			break;
 	}
 	return & xresources [0];

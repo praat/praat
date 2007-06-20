@@ -32,7 +32,7 @@
 
 #include "Pitch_def.h"
 #define Pitch_methods Sampled_methods
-oo_CLASS_CREATE (Pitch, Sampled)
+oo_CLASS_CREATE (Pitch, Sampled);
 
 Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates);

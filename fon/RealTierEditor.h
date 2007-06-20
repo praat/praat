@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2001/03/08
- * pb 2002/07/16 GPL
+ * pb 2007/06/10
  */
 
 #ifndef _FunctionEditor_h_
@@ -39,11 +38,11 @@
 	double ymin, ymax, ycursor;
 #define RealTierEditor_methods FunctionEditor_methods \
 	int zeroIsMinimum; \
-	const char *quantityText, *quantityKey, *leftTickFormat, *rightTickFormat; \
+	const wchar_t *quantityText, *quantityKey, *leftTickFormat, *rightTickFormat; \
 	double defaultYmin, defaultYmax; \
-	const char *setRangeTitle, *defaultYminText, *defaultYmaxText; \
-	const char *yminText, *ymaxText, *yminKey, *ymaxKey;
-class_create (RealTierEditor, FunctionEditor)
+	const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
+	const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
+class_create (RealTierEditor, FunctionEditor);
 
 void RealTierEditor_updateScaling (I);
 /*
@@ -51,7 +50,7 @@ void RealTierEditor_updateScaling (I);
 	Call after every change in the data.
 */
 
-int RealTierEditor_init (I, Widget parent, const char *title, RealTier data, Sound sound, int ownSound);
+int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
 /*
 	'Sound' may be NULL;
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,

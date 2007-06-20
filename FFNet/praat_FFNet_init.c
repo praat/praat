@@ -309,10 +309,10 @@ FORM (FFNet_Activation_to_Categories, "FFNet & Activation: To Categories", 0)
 	RADIOBUTTON ("Stochastic")
 	OK
 DO
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classFFNet, classActivation);
-	if (! praat_new (FFNet_Activation_to_Categories (ONLY (classFFNet), ONLY (classActivation),
-		GET_INTEGER ("Kind of labeling")), name)) return 0;
+	if (! praat_new9 (FFNet_Activation_to_Categories (ONLY (classFFNet), ONLY (classActivation),
+		GET_INTEGER ("Kind of labeling")), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 /******************* FFNet && Eigen ******************************************/
@@ -387,10 +387,10 @@ FORM (FFNet_Pattern_to_Activation, "To activations in layer", 0)
 	NATURAL ("Layer", "1")
 	OK
 DO
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classFFNet, classPattern);
-	NEW (FFNet_Pattern_to_Activation (ONLY (classFFNet),
-		ONLY (classPattern), GET_INTEGER ("Layer")))
+	if (! praat_new9 (FFNet_Pattern_to_Activation (ONLY (classFFNet),
+		ONLY (classPattern), GET_INTEGER ("Layer")), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 DIRECT (hint_FFNet_and_Pattern_classify)
@@ -410,10 +410,10 @@ FORM (FFNet_Pattern_to_Categories, "FFNet & Pattern: To Categories",
 	RADIOBUTTON ("Stochastic")
 	OK
 DO
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classFFNet, classPattern);
-	if (! praat_new (FFNet_Pattern_to_Categories (ONLY (classFFNet),
-		ONLY (classPattern), GET_INTEGER ("Determine output category as")), name)) return 0;
+	if (! praat_new9 (FFNet_Pattern_to_Categories (ONLY (classFFNet),
+		ONLY (classPattern), GET_INTEGER ("Determine output category as")), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 /*********** FFNet Pattern Activation **********************************/

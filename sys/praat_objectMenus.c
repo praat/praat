@@ -30,6 +30,7 @@
  * pb 2006/10/20 embedded scripts
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/26 layout objects window
+ * pb 2007/06/10 wchar_t
  */
 
 #include <ctype.h>
@@ -56,7 +57,7 @@ FORM (Rename, "Rename object", "Rename...")
 	OK
 { int IOBJECT; WHERE (SELECTED) SET_STRING ("newName", NAME) }
 DO
-	char fullName [200], *string = GET_STRING ("newName");
+	wchar_t fullName [200], *string = GET_STRINGW (L"newName");
 	int ieditor;
 	if (theCurrentPraat -> totalSelection == 0)
 		return Melder_error ("Selection changed!\nNo object selected. Cannot rename.");
@@ -64,13 +65,13 @@ DO
 		return Melder_error ("Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
-	sprintf (fullName, "%s %s", Thing_className (OBJECT), string);
-	if (! strequ (fullName, FULL_NAME)) {
-		Melder_free (FULL_NAME), FULL_NAME = Melder_strdup (fullName);
+	swprintf (fullName, 200, L"%ls %ls", Thing_classNameW (OBJECT), string);
+	if (! wcsequ (fullName, FULL_NAMEW)) {
+		Melder_free (FULL_NAMEW), FULL_NAMEW = Melder_wcsdup (fullName);
 		praat_list_renameAndSelect (IOBJECT, fullName);
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName);
-		Thing_setName (OBJECT, string);
+			if (EDITOR [ieditor]) Thing_setNameW (EDITOR [ieditor], fullName);
+		Thing_setNameW (OBJECT, string);
 	}
 END
 
@@ -105,7 +106,7 @@ DIRECT (Inspect)
 		return Melder_error ("Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED)
-			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
 	}
 END
 
@@ -113,23 +114,23 @@ END
 
 static Widget appleMenu, praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
 
-Widget praat_objects_resolveMenu (const char *menu) {
+Widget praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		#ifdef macintosh
-		strequ (menu, "Praat") || strequ (menu, "Control") ? ( Melder_systemVersion >= 0x0A00 ? appleMenu : praatMenu ) :
+		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? ( Melder_systemVersion >= 0x0A00 ? appleMenu : praatMenu ) :
 		#else
-		strequ (menu, "Praat") || strequ (menu, "Control") ? praatMenu :
+		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
 		#endif
-		strequ (menu, "New") || strequ (menu, "Create") ? newMenu :
-		strequ (menu, "Read") ? readMenu :
-		strequ (menu, "Help") ? helpMenu :
-		strequ (menu, "Goodies") ? goodiesMenu :
-		strequ (menu, "Preferences") ? preferencesMenu :
+		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
+		wcsequ (menu, L"Read") ? readMenu :
+		wcsequ (menu, L"Help") ? helpMenu :
+		wcsequ (menu, L"Goodies") ? goodiesMenu :
+		wcsequ (menu, L"Preferences") ? preferencesMenu :
 		#ifdef macintosh
-		strequ (menu, "Apple") ? appleMenu :
-		strequ (menu, "ApplicationHelp") ? applicationHelpMenu :
+		wcsequ (menu, L"Apple") ? appleMenu :
+		wcsequ (menu, L"ApplicationHelp") ? applicationHelpMenu :
 		#else
-		strequ (menu, "ApplicationHelp") ? helpMenu :
+		wcsequ (menu, L"ApplicationHelp") ? helpMenu :
 		#endif
 		newMenu;   /* Default. */
 }
@@ -194,9 +195,9 @@ FORM (praat_addMenuCommand, "Add menu command", "Add menu command...")
 	TEXTFIELD ("Script", "/u/miep/hallo.praat")
 	OK
 DO
-	if (! praat_addMenuCommandScript (GET_STRING ("Window"), GET_STRING ("Menu"),
-		GET_STRING ("Command"), GET_STRING ("After command"),
-		GET_INTEGER ("Depth"), GET_STRING ("Script"))) return 0;
+	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"), GET_STRINGW (L"Menu"),
+		GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
+		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
 END
 
 FORM (praat_hideMenuCommand, "Hide menu command", "Hide menu command...")
@@ -205,8 +206,8 @@ FORM (praat_hideMenuCommand, "Hide menu command", "Hide menu command...")
 	SENTENCE ("Command", "Hallo...")
 	OK
 DO
-	if (! praat_hideMenuCommand (GET_STRING ("Window"), GET_STRING ("Menu"),
-		GET_STRING ("Command"))) return 0;
+	if (! praat_hideMenuCommand (GET_STRINGW (L"Window"), GET_STRINGW (L"Menu"),
+		GET_STRINGW (L"Command"))) return 0;
 END
 
 FORM (praat_showMenuCommand, "Show menu command", "Show menu command...")
@@ -215,8 +216,8 @@ FORM (praat_showMenuCommand, "Show menu command", "Show menu command...")
 	SENTENCE ("Command", "Hallo...")
 	OK
 DO
-	if (! praat_showMenuCommand (GET_STRING ("Window"), GET_STRING ("Menu"),
-		GET_STRING ("Command"))) return 0;
+	if (! praat_showMenuCommand (GET_STRINGW (L"Window"), GET_STRINGW (L"Menu"),
+		GET_STRINGW (L"Command"))) return 0;
 END
 
 FORM (praat_addAction, "Add action command", "Add action command...")
@@ -233,10 +234,10 @@ FORM (praat_addAction, "Add action command", "Add action command...")
 	TEXTFIELD ("Script", "/u/miep/playReverse.praat")
 	OK
 DO
-	if (! praat_addActionScript (GET_STRING ("Class 1"), GET_INTEGER ("Number 1"),
-		GET_STRING ("Class 2"), GET_INTEGER ("Number 2"), GET_STRING ("Class 3"),
-		GET_INTEGER ("Number 3"), GET_STRING ("Command"), GET_STRING ("After command"),
-		GET_INTEGER ("Depth"), GET_STRING ("Script"))) return 0;
+	if (! praat_addActionScript (GET_STRINGW (L"Class 1"), GET_INTEGER ("Number 1"),
+		GET_STRINGW (L"Class 2"), GET_INTEGER ("Number 2"), GET_STRINGW (L"Class 3"),
+		GET_INTEGER ("Number 3"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
+		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
 END
 
 FORM (praat_hideAction, "Hide action command", "Hide action command...")
@@ -246,8 +247,8 @@ FORM (praat_hideAction, "Hide action command", "Hide action command...")
 	SENTENCE ("Command", "Play")
 	OK
 DO
-	if (! praat_hideAction_classNames (GET_STRING ("Class 1"),
-		GET_STRING ("Class 2"), GET_STRING ("Class 3"), GET_STRING ("Command"))) return 0;
+	if (! praat_hideAction_classNames (GET_STRINGW (L"Class 1"),
+		GET_STRINGW (L"Class 2"), GET_STRINGW (L"Class 3"), GET_STRINGW (L"Command"))) return 0;
 END
 
 FORM (praat_showAction, "Show action command", "Show action command...")
@@ -257,21 +258,55 @@ FORM (praat_showAction, "Show action command", "Show action command...")
 	SENTENCE ("Command", "Play")
 	OK
 DO
-	if (! praat_showAction_classNames (GET_STRING ("Class 1"),
-		GET_STRING ("Class 2"), GET_STRING ("Class 3"), GET_STRING ("Command"))) return 0;
+	if (! praat_showAction_classNames (GET_STRINGW (L"Class 1"),
+		GET_STRINGW (L"Class 2"), GET_STRINGW (L"Class 3"), GET_STRINGW (L"Command"))) return 0;
+END
+
+/********** Callbacks of the Preferences menu. **********/
+
+FORM (TextInputEncodingSettings, "Text reading preferences", "Text reading preferences")
+	#if defined (macintosh)
+	RADIO ("Input encoding", 6)
+	#elif defined (_WIN32)
+	RADIO ("Input encoding", 4)
+	#else
+	RADIO ("Input encoding", 2)
+	#endif
+		OPTION ("UTF-8")
+		OPTION ("Try UTF-8, then ISO Latin-1")
+		OPTION ("ISO Latin-1")
+		OPTION ("Try UTF-8, then Windows Latin-1")
+		OPTION ("Windows Latin-1")
+		OPTION ("Try UTF-8, then MacRoman")
+		OPTION ("MacRoman")
+	OK
+SET_INTEGER ("Input encoding", Melder_getInputEncoding ())
+DO
+	Melder_setInputEncoding (GET_INTEGER ("Input encoding"));
+END
+
+FORM (TextOutputEncodingSettings, "Text writing preferences", "Text writing preferences")
+	RADIO ("Output encoding", 3)
+		OPTION ("UTF-8")
+		OPTION ("UTF-16")
+		OPTION ("Try ASCII, then UTF-16")
+	OK
+SET_INTEGER ("Output encoding", Melder_getOutputEncoding ())
+DO
+	Melder_setOutputEncoding (GET_INTEGER ("Output encoding"));
 END
 
 /********** Callbacks of the Goodies menu. **********/
 
-FORM (praat_calculator, "Calculator", "Calculator")
-	LABEL ("", "Type any numeric formula or string formula:")
-	TEXTFIELD ("expression", "5*5")
-	LABEL ("", "Note that you can include many special functions in your formula,")
-	LABEL ("", "including statistical functions and acoustics-auditory conversions.")
-	LABEL ("", "For details, click Help.")
+FORMW (praat_calculator, L"Calculator", L"Calculator")
+	LABELW (L"", L"Type any numeric formula or string formula:")
+	TEXTFIELDW (L"expression", L"5*5")
+	LABELW (L"", L"Note that you can include many special functions in your formula,")
+	LABELW (L"", L"including statistical functions and acoustics-auditory conversions.")
+	LABELW (L"", L"For details, click Help.")
 	OK
 DO
-	return Interpreter_numericOrStringExpression (NULL, GET_STRING ("expression"), NULL, NULL);
+	return Interpreter_numericOrStringExpression (NULL, GET_STRINGW (L"expression"), NULL, NULL);
 END
 
 FORM (praat_reportDifferenceOfTwoProportions, "Report difference of two proportions", "Difference of two proportions")
@@ -418,7 +453,7 @@ END
 
 FORM (GoToManualPage, "Go to manual page", 0)
 	{long numberOfPages;
-	const char **pages = ManPages_getTitles (theCurrentPraat -> manPages, & numberOfPages);
+	const wchar_t **pages = ManPages_getTitles (theCurrentPraat -> manPages, & numberOfPages);
 	LIST ("Page", numberOfPages, pages, 1)}
 	OK
 DO
@@ -437,7 +472,7 @@ structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
 DO
-	char *directory = GET_STRING ("directory");
+	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (theCurrentPraat -> manPages, directory)) return 0;
 END
 
@@ -447,11 +482,11 @@ void praat_show (void) {
 	/*
 	 * (De)sensitivize the fixed buttons as appropriate for the current selection.
 	 */
-	praat_sensitivizeFixedButtonCommand ("Remove", theCurrentPraat -> totalSelection != 0);
-	praat_sensitivizeFixedButtonCommand ("Rename...", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand ("Copy...", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand ("Info", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand ("Inspect", theCurrentPraat -> totalSelection != 0);
+	praat_sensitivizeFixedButtonCommand (L"Remove", theCurrentPraat -> totalSelection != 0);
+	praat_sensitivizeFixedButtonCommand (L"Rename...", theCurrentPraat -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Copy...", theCurrentPraat -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraat -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraat -> totalSelection != 0);
 	praat_actions_show ();
 	if (theCurrentPraat == & theForegroundPraat && theButtonEditor) Editor_dataChanged (theButtonEditor, NULL);
 }
@@ -459,11 +494,11 @@ void praat_show (void) {
 /********** Menu descriptions. **********/
 
 void praat_addFixedButtons (Widget form) {
-	praat_addFixedButtonCommand (form, "Rename...", DO_Rename, 8, 70);
-	praat_addFixedButtonCommand (form, "Copy...", DO_Copy, 92, 70);
-	praat_addFixedButtonCommand (form, "Inspect", DO_Inspect, 8, 40);
-	praat_addFixedButtonCommand (form, "Info", DO_Info, 92, 40);
-	praat_addFixedButtonCommand (form, "Remove", DO_Remove, 8, 10);
+	praat_addFixedButtonCommand (form, L"Rename...", DO_Rename, 8, 70);
+	praat_addFixedButtonCommand (form, L"Copy...", DO_Copy, 92, 70);
+	praat_addFixedButtonCommand (form, L"Inspect", DO_Inspect, 8, 40);
+	praat_addFixedButtonCommand (form, L"Info", DO_Info, 92, 40);
+	praat_addFixedButtonCommand (form, L"Remove", DO_Remove, 8, 10);
 }
 
 static void searchProc (void) {
@@ -473,10 +508,10 @@ static void searchProc (void) {
 static char itemTitle_about [100];
 
 static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
-	char *name = MelderFile_name (file);
+	wchar_t *name = MelderFile_nameW (file);
 	if (nread < 2) return NULL;
-	if ((header [0] == '#' && header [1] == '!') || strstr (name, ".praat") == name + strlen (name) - 6
-	    || strstr (name, ".html") == name + strlen (name) - 5)
+	if ((header [0] == '#' && header [1] == '!') || wcsstr (name, L".praat") == name + wcslen (name) - 6
+	    || wcsstr (name, L".html") == name + wcslen (name) - 5)
 	{
 		return Script_createFromFile (file);
 	}
@@ -501,20 +536,20 @@ void praat_addMenus (Widget bar) {
 	 */
 	if (! theCurrentPraat -> batch) {
 		#ifdef macintosh
-			appleMenu = motif_addMenu (bar ? praatP.topBar : NULL, "\024", 0); /* Apple icon. */
+			appleMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
 		#endif
 		#ifdef macintosh
-			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, praatP.title, 0);
+			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, Melder_peekAsciiToWcs (praatP.title), 0);
 		#else
-			praatMenu = motif_addMenu (bar, "Praat", 0);
+			praatMenu = motif_addMenu (bar, L"Praat", 0);
 		#endif
-		newMenu = motif_addMenu (bar, "New", 0);
-		readMenu = motif_addMenu (bar, "Read", 0);
+		newMenu = motif_addMenu (bar, L"New", 0);
+		readMenu = motif_addMenu (bar, L"Read", 0);
 		praat_actions_createWriteMenu (bar);
 		#ifdef macintosh
-			applicationHelpMenu = motif_addMenu (bar ? praatP.topBar : NULL, "Help", 0);
+			applicationHelpMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"Help", 0);
 		#endif
-		helpMenu = motif_addMenu (bar, "Help", 0);
+		helpMenu = motif_addMenu (bar, L"Help", 0);
 	}
 		
 	sprintf (itemTitle_about, "About %s...", praatP.title);
@@ -545,6 +580,9 @@ void praat_addMenus (Widget bar) {
 	button = praat_addMenuCommand ("Objects", "Praat", "Preferences", 0, praat_UNHIDABLE, 0);
 	if (button) XtVaGetValues (button, XmNsubMenuId, & preferencesMenu, NULL);
 	praat_addMenuCommand ("Objects", "Preferences", "Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
+	praat_addMenuCommand ("Objects", "Preferences", "-- encoding prefs --", 0, 0, 0);
+	praat_addMenuCommand ("Objects", "Preferences", "Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
+	praat_addMenuCommand ("Objects", "Preferences", "Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
 
 	praat_addMenuCommand ("Objects", "Read", "Read from file...", 0, 'O', DO_Data_readFromFile);
 

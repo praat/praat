@@ -38,7 +38,7 @@
 #define Excitations_members Ordered_members
 #define Excitations_methods Ordered_methods
 
-class_create (Excitations, Ordered)
+class_create (Excitations, Ordered);
 
 /* Excitations is a collection of objects of the same class Excitation */
 

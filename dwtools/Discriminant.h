@@ -49,7 +49,7 @@
 	double **costs;
 
 #define Discriminant_methods Eigen_methods
-class_create (Discriminant, Eigen)
+class_create (Discriminant, Eigen);
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
 

@@ -29,6 +29,7 @@
  * pb 2007/02/15 GuiText_updateChangeCountAfterSave
  * pb 2007/03/23 Go to line: guarded against uninitialized 'right'
  * pb 2007/05/30 save Unicode
+ * pb 2007/06/12 more wchar_t
  */
 
 #include "TextEditor.h"
@@ -36,6 +37,7 @@
 #include "longchar.h"
 #include "EditorM.h"
 #include "Preferences.h"
+#include "UnicodeData.h"
 
 /***** TextEditor methods *****/
 
@@ -52,12 +54,19 @@ static void nameChanged (I) {
 	iam (TextEditor);
 	if (our fileBased) {
 		int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
-		if (my name == NULL)
-			sprintf (Melder_buffer1, "(untitled%s)", my dirty && ! dirtinessAlreadyShown ? ", modified" : "");
-		else
-			sprintf (Melder_buffer1, "File \\\"l%s\\\"r%s", MelderFile_messageName (& my file), my dirty && ! dirtinessAlreadyShown ? " (modified)" : "");
-		Longchar_nativize (Melder_buffer1, Melder_buffer2, TRUE);
-		XtVaSetValues (my shell, XmNtitle, Melder_buffer2, NULL);
+		static MelderStringW windowTitle = { 0 };
+		MelderStringW_empty (& windowTitle);
+		if (my name == NULL) {
+			MelderStringW_appendW (& windowTitle, L"(untitled");
+			if (my dirty && ! dirtinessAlreadyShown) MelderStringW_appendW (& windowTitle, L", modified");
+			MelderStringW_appendW (& windowTitle, L")");
+		} else {
+			MelderStringW_appendW (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK);
+			MelderStringW_appendW (& windowTitle, MelderFile_messageNameW (& my file));
+			MelderStringW_appendW (& windowTitle, UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+			if (my dirty && ! dirtinessAlreadyShown) MelderStringW_appendW (& windowTitle, L" (modified)");
+		}
+		GuiWindow_setTitleW (my shell, windowTitle.string);
 		if (my name == NULL)
 			sprintf (Melder_buffer1, "%s(untitled)", my dirty && ! dirtinessAlreadyShown ? "*" : "");
 		else
@@ -70,24 +79,17 @@ static void nameChanged (I) {
 }
 
 static int openDocument (TextEditor me, MelderFile file) {
-	#if defined (macintosh)
-		wchar_t *text = MelderFile_readTextW (file);
-		if (! text) return 0;
-		GuiText_setStringW (my textWidget, text);
-		Melder_free (text);
-	#else
-		char *text = MelderFile_readText (file);
-		if (! text) return 0;
-		XmTextSetString (my textWidget, text);
-		Melder_free (text);
-	#endif
+	wchar_t *text = MelderFile_readTextW (file);
+	if (! text) return 0;
+	GuiText_setStringW (my textWidget, text);
+	Melder_free (text);
 	/*
 	 * XmTextSetString has invoked the XmNvalueChangedCallback,
 	 * which has set 'my dirty' to TRUE. Fix this.
 	 */
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	Thing_setName (me, Melder_fileToPath (file));
+	Thing_setNameW (me, Melder_fileToPathW (file));
 	return 1;
 }
 
@@ -98,18 +100,12 @@ static void newDocument (TextEditor me) {
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
-	#if defined (macintosh)
-		wchar_t *text = GuiText_getStringW (my textWidget);
-		if (! MelderFile_writeTextW (file, text)) { Melder_free (text); return 0; }
-		Melder_free (text);
-	#else
-		char *text = XmTextGetString (my textWidget);
-		if (! MelderFile_writeText (file, text)) { XtFree (text); return 0; }
-		XtFree (text);
-	#endif
+	wchar_t *text = GuiText_getStringW (my textWidget);
+	if (! MelderFile_writeTextW (file, text)) { Melder_free (text); return 0; }
+	Melder_free (text);
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));
+	if (our fileBased) Thing_setNameW (me, Melder_fileToPathW (file));
 	return 1;
 }
 
@@ -128,7 +124,7 @@ static void cb_showOpen (EditorCommand cmd, Any sender) {
 	TextEditor me = (TextEditor) cmd -> editor;
 	(void) sender;
 	if (! my openDialog)
-		my openDialog = UiInfile_create (my dialog, "Open", cb_open_ok, me, 0);
+		my openDialog = UiInfile_create (my dialog, L"Open", cb_open_ok, me, 0);
 	UiInfile_do (my openDialog);
 }
 
@@ -140,10 +136,10 @@ static int cb_saveAs_ok (Any sender, I) {
 }
 
 DIRECT (TextEditor, cb_saveAs)
-	char defaultName [300];
+	wchar_t defaultName [300];
 	if (! my saveDialog)
-		my saveDialog = UiOutfile_create (my dialog, "Save", cb_saveAs_ok, me, 0);
-	sprintf (defaultName, ! our fileBased ? "info.txt" : my name ? MelderFile_name (& my file) : "");
+		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, 0);
+	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my nameW ? MelderFile_nameW (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 END
 
@@ -241,7 +237,7 @@ MOTIF_CALLBACK (cb_saveAndClose)
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		cb_saveAs (me, Editor_getMenuCommand (me, "File", "Save as..."), NULL);
+		cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL);
 	}
 MOTIF_CALLBACK_END
 
@@ -421,37 +417,37 @@ static void createMenus (I) {
 	iam (TextEditor);
 	inherited (TextEditor) createMenus (me);
 	if (our fileBased) {
-		Editor_addCommand (me, "File", "New", 'N', cb_new);
-		Editor_addCommand (me, "File", "Open...", 'O', cb_open);
+		Editor_addCommand (me, L"File", L"New", 'N', cb_new);
+		Editor_addCommand (me, L"File", L"Open...", 'O', cb_open);
 	} else {
-		Editor_addCommand (me, "File", "Clear", 'N', cb_clear);
+		Editor_addCommand (me, L"File", L"Clear", 'N', cb_clear);
 	}
-	Editor_addCommand (me, "File", "-- save --", 0, NULL);
+	Editor_addCommand (me, L"File", L"-- save --", 0, NULL);
 	if (our fileBased) {
-		Editor_addCommand (me, "File", "Save", 'S', cb_save);
-		Editor_addCommand (me, "File", "Save as...", 0, cb_saveAs);
+		Editor_addCommand (me, L"File", L"Save", 'S', cb_save);
+		Editor_addCommand (me, L"File", L"Save as...", 0, cb_saveAs);
 	} else {
-		Editor_addCommand (me, "File", "Save as...", 'S', cb_saveAs);
+		Editor_addCommand (me, L"File", L"Save as...", 'S', cb_saveAs);
 	}
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Undo", 'Z', cb_undo);
-	Editor_addCommand (me, "Edit", "Redo", 'Y', cb_redo);
-	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Cut", 'X', cb_cut);
-	Editor_addCommand (me, "Edit", "Copy", 'C', cb_copy);
-	Editor_addCommand (me, "Edit", "Paste", 'V', cb_paste);
-	Editor_addCommand (me, "Edit", "Erase", 0, cb_erase);
-	Editor_addMenu (me, "Search", 0);
-	if (our fileBased) Editor_addCommand (me, "Search", "Where am I?", 0, cb_whereAmI);
-	Editor_addCommand (me, "Search", "Go to line...", 'L', cb_goToLine);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Undo", 'Z', cb_undo);
+	Editor_addCommand (me, L"Edit", L"Redo", 'Y', cb_redo);
+	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Cut", 'X', cb_cut);
+	Editor_addCommand (me, L"Edit", L"Copy", 'C', cb_copy);
+	Editor_addCommand (me, L"Edit", L"Paste", 'V', cb_paste);
+	Editor_addCommand (me, L"Edit", L"Erase", 0, cb_erase);
+	Editor_addMenu (me, L"Search", 0);
+	if (our fileBased) Editor_addCommand (me, L"Search", L"Where am I?", 0, cb_whereAmI);
+	Editor_addCommand (me, L"Search", L"Go to line...", 'L', cb_goToLine);
 	#ifdef macintosh
-		Editor_addMenu (me, "Font", 0);
-		my fontSizeButton_10 = Editor_addCommand (me, "Font", "10", motif_CHECKABLE, cb_10);
-		my fontSizeButton_12 = Editor_addCommand (me, "Font", "12", motif_CHECKABLE, cb_12);
-		my fontSizeButton_14 = Editor_addCommand (me, "Font", "14", motif_CHECKABLE, cb_14);
-		my fontSizeButton_18 = Editor_addCommand (me, "Font", "18", motif_CHECKABLE, cb_18);
-		my fontSizeButton_24 = Editor_addCommand (me, "Font", "24", motif_CHECKABLE, cb_24);
-		Editor_addCommand (me, "Font", "Font size...", 0, cb_fontSize);
+		Editor_addMenu (me, L"Font", 0);
+		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", motif_CHECKABLE, cb_10);
+		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", motif_CHECKABLE, cb_12);
+		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", motif_CHECKABLE, cb_14);
+		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", motif_CHECKABLE, cb_18);
+		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", motif_CHECKABLE, cb_24);
+		Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
 	#endif
 }
 
@@ -485,19 +481,19 @@ class_methods (TextEditor, Editor)
 	class_method (clear)
 class_methods_end
 
-int TextEditor_init (I, Widget parent, const char *initialText) {
+int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
 	iam (TextEditor);
 	if (! Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL)) return 0;
 	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
-		XmTextSetString (my textWidget, MOTIF_CONST_CHAR_ARG (initialText));
+		GuiText_setStringW (my textWidget, initialText);
 		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
-		Thing_setName (me, NULL);
+		Thing_setNameW (me, NULL);
 	}
 	return 1;
 }
 
-TextEditor TextEditor_create (Widget parent, const char *initialText) {
+TextEditor TextEditor_create (Widget parent, const wchar_t *initialText) {
 	TextEditor me = new (TextEditor);
 	if (! me || ! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
 	return me;
@@ -505,7 +501,7 @@ TextEditor TextEditor_create (Widget parent, const char *initialText) {
 
 void TextEditor_showOpen (I) {
 	iam (TextEditor);
-	cb_showOpen (Editor_getMenuCommand (me, "File", "Open..."), NULL);
+	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL);
 }
 
 void TextEditor_prefs (void) {

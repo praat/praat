@@ -60,7 +60,7 @@ struct structDelta_Tube
 	int numberOfTubes; \
 	struct structDelta_Tube *tube;
 #define Delta_methods Thing_methods
-class_create (Delta, Thing)
+class_create (Delta, Thing);
 
 /*
 	Members:

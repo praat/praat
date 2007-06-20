@@ -1753,7 +1753,7 @@ int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
 #define OTGrammar_List4_members Data_members \
 	long hi1, lo1, hi2, lo2;
 #define OTGrammar_List4_methods Data_methods
-class_create (OTGrammar_List4, Data)
+class_create (OTGrammar_List4, Data);
 
 class_methods (OTGrammar_List4, Data)
 class_methods_end

@@ -42,7 +42,7 @@
 	double time; \
 	double value;
 #define RealPoint_methods Data_methods
-class_create (RealPoint, Data)
+class_create (RealPoint, Data);
 
 RealPoint RealPoint_create (double time, double value);
 /*
@@ -56,7 +56,7 @@ RealPoint RealPoint_create (double time, double value);
 #define RealTier_members Function_members \
 	SortedSetOfDouble points;
 #define RealTier_methods Function_methods
-class_create (RealTier, Function)
+class_create (RealTier, Function);
 
 int RealTier_init (I, double tmin, double tmax);
 RealTier RealTier_create (double tmin, double tmax);

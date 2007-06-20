@@ -36,10 +36,10 @@
 #include "PairDistribution_def.h"
 
 #define PairProbability_methods Data_methods
-oo_CLASS_CREATE (PairProbability, Data)
+oo_CLASS_CREATE (PairProbability, Data);
 
 #define PairDistribution_methods Data_methods
-oo_CLASS_CREATE (PairDistribution, Data)
+oo_CLASS_CREATE (PairDistribution, Data);
 
 PairProbability PairProbability_create (const char *string1, const char *string2, double weight);
 PairDistribution PairDistribution_create (void);

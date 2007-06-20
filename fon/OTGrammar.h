@@ -43,11 +43,11 @@
 #include "OTGrammar_def.h"
 
 #define OTGrammar_methods Data_methods
-oo_CLASS_CREATE (OTGrammar, Data)
+oo_CLASS_CREATE (OTGrammar, Data);
 
 #define OTHistory_members  TableOfReal_members
 #define OTHistory_methods  TableOfReal_methods
-class_create (OTHistory, TableOfReal)
+class_create (OTHistory, TableOfReal);
 
 void OTGrammar_sort (OTGrammar me);
 /* Low level: meant to maintain the invariant

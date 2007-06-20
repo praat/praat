@@ -27,7 +27,7 @@ typedef int MP3F_SAMPLE;
 
 typedef void (*MP3F_CALLBACK) (
 		const MP3F_SAMPLE *channels[MP3F_MAX_CHANNELS],
-		unsigned num_samples,
+		long num_samples,
 		void *context);
 
 MP3_FILE mp3f_new (void);

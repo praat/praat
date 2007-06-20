@@ -39,9 +39,9 @@
 
 #include "FormantTier_def.h"
 #define FormantPoint_methods Data_methods
-oo_CLASS_CREATE (FormantPoint, Data)
+oo_CLASS_CREATE (FormantPoint, Data);
 #define FormantTier_methods Function_methods
-oo_CLASS_CREATE (FormantTier, Function)
+oo_CLASS_CREATE (FormantTier, Function);
 
 FormantPoint FormantPoint_create (double time);
 FormantTier FormantTier_create (double tmin, double tmax);

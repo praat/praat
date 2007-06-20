@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1999/05/07
- * pb 2002/03/07 GPL
+ * pb 2007/06/09
  */
 
 /* Collections contain a number of items whose class is a subclass of Data.
@@ -60,7 +59,7 @@
 	Any *item;
 #define Collection_methods Data_methods \
 	long (*position) (I, Any data);
-class_create (Collection, Data)
+class_create (Collection, Data);
 
 /*
 	An object of type Collection is a collection of items of any class.
@@ -183,7 +182,7 @@ int _Collection_insertItem (I, Any item, long position);
 
 #define Ordered_members Collection_members
 #define Ordered_methods Collection_methods
-class_create (Ordered, Collection)
+class_create (Ordered, Collection);
 
 Any Ordered_create (void);
 int Ordered_init (I, void *itemClass, long initialCapacity);
@@ -206,7 +205,7 @@ int Ordered_addItemPos (I, Any data, long position);
 #define Sorted_members Collection_members
 #define Sorted_methods Collection_methods \
 	int (*compare) (I, thou);
-class_create (Sorted, Collection)
+class_create (Sorted, Collection);
 
 int Sorted_init (I, void *itemClass, long initialCapacity);
 
@@ -239,7 +238,7 @@ void Sorted_sort (I);
 
 #define SortedSet_members Sorted_members
 #define SortedSet_methods Sorted_methods
-class_create (SortedSet, Sorted)
+class_create (SortedSet, Sorted);
 
 int SortedSet_init (I, void *itemClass, long initialCapacity);
 
@@ -255,7 +254,7 @@ int SortedSet_hasItem (I, Any item);
 
 #define SortedSetOfInt_members SortedSet_members
 #define SortedSetOfInt_methods SortedSet_methods
-class_create (SortedSetOfInt, SortedSet)
+class_create (SortedSetOfInt, SortedSet);
 
 int SortedSetOfInt_init (I);
 SortedSetOfInt SortedSetOfInt_create (void);
@@ -264,7 +263,7 @@ SortedSetOfInt SortedSetOfInt_create (void);
 
 #define SortedSetOfShort_members SortedSet_members
 #define SortedSetOfShort_methods SortedSet_methods
-class_create (SortedSetOfShort, SortedSet)
+class_create (SortedSetOfShort, SortedSet);
 
 int SortedSetOfShort_init (I);
 SortedSetOfShort SortedSetOfShort_create (void);
@@ -273,7 +272,7 @@ SortedSetOfShort SortedSetOfShort_create (void);
 
 #define SortedSetOfLong_members SortedSet_members
 #define SortedSetOfLong_methods SortedSet_methods
-class_create (SortedSetOfLong, SortedSet)
+class_create (SortedSetOfLong, SortedSet);
 
 int SortedSetOfLong_init (I);
 SortedSetOfLong SortedSetOfLong_create (void);
@@ -282,7 +281,7 @@ SortedSetOfLong SortedSetOfLong_create (void);
 
 #define SortedSetOfFloat_members SortedSet_members
 #define SortedSetOfFloat_methods SortedSet_methods
-class_create (SortedSetOfFloat, SortedSet)
+class_create (SortedSetOfFloat, SortedSet);
 
 int SortedSetOfFloat_init (I);
 SortedSetOfFloat SortedSetOfFloat_create (void);
@@ -291,7 +290,7 @@ SortedSetOfFloat SortedSetOfFloat_create (void);
 
 #define SortedSetOfDouble_members SortedSet_members
 #define SortedSetOfDouble_methods SortedSet_methods
-class_create (SortedSetOfDouble, SortedSet)
+class_create (SortedSetOfDouble, SortedSet);
 
 int SortedSetOfDouble_init (I);
 SortedSetOfDouble SortedSetOfDouble_create (void);
@@ -300,19 +299,30 @@ SortedSetOfDouble SortedSetOfDouble_create (void);
 
 #define SortedSetOfString_members SortedSet_members
 #define SortedSetOfString_methods SortedSet_methods
-class_create (SortedSetOfString, SortedSet)
+class_create (SortedSetOfString, SortedSet);
 
 int SortedSetOfString_init (I);
 SortedSetOfString SortedSetOfString_create (void);
 long SortedSetOfString_lookUp (SortedSetOfString me, const char *string);
 int SortedSetOfString_add (SortedSetOfString me, const char *string);
 
+/********** class SortedSetOfStringW **********/
+
+#define SortedSetOfStringW_members SortedSet_members
+#define SortedSetOfStringW_methods SortedSet_methods
+class_create (SortedSetOfStringW, SortedSet);
+
+int SortedSetOfStringW_init (I);
+SortedSetOfStringW SortedSetOfStringW_create (void);
+long SortedSetOfStringW_lookUp (SortedSetOfStringW me, const wchar_t *string);
+int SortedSetOfStringW_add (SortedSetOfStringW me, const wchar_t *string);
+
 /********** class Cyclic **********/
 
 #define Cyclic_members Collection_members
 #define Cyclic_methods Collection_methods \
 	int (*compare) (I, thou);   /* virtual */
-class_create (Cyclic, Collection)
+class_create (Cyclic, Collection);
 
 int Cyclic_init (I, void *itemClass, long initialCapacity);
 

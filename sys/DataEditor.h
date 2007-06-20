@@ -2,7 +2,7 @@
 #define _DataEditor_h
 /* DataEditor.h
  *
- * Copyright (C) 1995-2004 Paul Boersma
+ * Copyright (C) 1995-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/09
  */
 
 #ifndef _Editor_h_
@@ -29,7 +29,7 @@
 
 typedef struct structDataEditor *DataEditor;
 
-DataEditor DataEditor_create (Widget parent, const char *title, Any data);
+DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data);
 
 /* End of file DataEditor.h */
 #endif

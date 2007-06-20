@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,14 @@
  * pb 2002/03/07 GPL
  * pb 2004/05/14 some three-byte routines
  * pb 2006/12/13 big-endian floating point
+ * pb 2007/06/10 *w4
  */
 
 #ifndef _complex_h_
 	#include "complex.h"
+#endif
+#ifndef _melder_h_
+	#include "melder.h"
 #endif
 
 /* Numeric ASCII input and output. */
@@ -51,6 +55,7 @@ short ascgetex (FILE *f);
 char *ascgets1 (FILE *f);
 char *ascgets2 (FILE *f);
 char *ascgets4 (FILE *f);
+wchar_t *ascgetw4 (FILE *f);
 
 void ascindent (void);
 void ascexdent (void);
@@ -77,6 +82,7 @@ void ascputex (int i, FILE *f, const char *format, ...);
 void ascputs1 (const char *s, FILE *f, const char *format, ...);
 void ascputs2 (const char *s, FILE *f, const char *format, ...);
 void ascputs4 (const char *s, FILE *f, const char *format, ...);
+void ascputw4 (const wchar_t *s, FILE *f, const char *format, ...);
 
 void ascio_verbose (int verbose);
 
@@ -198,6 +204,7 @@ char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..429
 	or NULL if out of memory.
 	binputsxxx expects a null-terminated C string whose 'strlen' fits in 1, 2, or 4 bytes.
 */
+wchar_t * bingetw4 (FILE *f);   void binputw4 (const wchar_t *s, FILE *f);
 
 /********** cache I/O **********/
 

@@ -37,7 +37,7 @@
 	double dx, x1;
 #define Sampled_methods Function_methods \
 	double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
-class_create (Sampled, Function)
+class_create (Sampled, Function);
 
 /* A Sampled is a Function that is sampled at nx points [1..nx], */
 /* which are spaced apart by a constant distance dx. */

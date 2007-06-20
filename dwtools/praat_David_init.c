@@ -220,7 +220,7 @@ DIRECT (Categories_edit)
 		return Melder_error ("Cannot edit a Categories from batch.");
 	else
 		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraat -> topShell,
-			FULL_NAME, OBJECT), IOBJECT)) return 0;
+			FULL_NAMEW, OBJECT), IOBJECT)) return 0;
 END
 
 DIRECT (Categories_getNumberOfDifferences)
@@ -264,7 +264,7 @@ END
 DIRECT (Categories_to_Confusion)
 	Categories c1 = NULL, c2 = NULL;
 	int i1 = 0, i2 = 0;
-	char name [200];
+	wchar_t name [200];
 	WHERE (SELECTED)
 	{
 		if (c1)
@@ -277,9 +277,9 @@ DIRECT (Categories_to_Confusion)
 		}
 	}
 	Melder_assert (c1 && c2);
-	(void) sprintf (name, "%s_%s", strchr (theCurrentPraat -> list[i1].name, ' ') + 1,
-		strchr (theCurrentPraat -> list[i2].name, ' ') + 1);
-	if (! praat_new (Categories_to_Confusion (c1, c2), name)) return 0;
+	(void) swprintf (name, 200, L"%s_%s", wcschr (theCurrentPraat -> list[i1].name, ' ') + 1,
+		wcschr (theCurrentPraat -> list[i2].name, ' ') + 1);
+	if (! praat_new9 (Categories_to_Confusion (c1, c2), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 DIRECT (Categories_to_Strings)
@@ -4891,7 +4891,7 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classSSCP, 0, "SSCP help", 0, 0, DO_SSCP_help);
 	praat_TableOfReal_init2 (classSSCP);
-	praat_removeAction (classSSCP, NULL, NULL, "Append");
+	praat_removeAction (classSSCP, NULL, NULL, L"Append");
 	praat_addAction1 (classSSCP, 0, "Draw sigma ellipse...",
 		DRAW_BUTTON, 1, DO_SSCP_drawSigmaEllipse);
 	praat_addAction1 (classSSCP, 0, "Draw confidence ellipse...", 

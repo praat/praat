@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2004 Paul Boersma
+ * Copyright (C) 2003-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _RealTierEditor_h_
@@ -35,7 +35,7 @@
 
 typedef struct structAmplitudeTierEditor *AmplitudeTierEditor;
 
-AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const char *title,
+AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const wchar_t *title,
 	AmplitudeTier amplitude, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

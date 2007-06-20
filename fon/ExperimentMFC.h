@@ -36,10 +36,10 @@
 
 #include "ExperimentMFC_def.h"
 #define ExperimentMFC_methods Data_methods
-oo_CLASS_CREATE (ExperimentMFC, Data)
+oo_CLASS_CREATE (ExperimentMFC, Data);
 
 #define ResultsMFC_methods Data_methods
-oo_CLASS_CREATE (ResultsMFC, Data)
+oo_CLASS_CREATE (ResultsMFC, Data);
 
 int ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);

@@ -30,7 +30,7 @@
 
 #define Harmonicity_members  Vector_members
 #define Harmonicity_methods  Vector_methods
-class_create (Harmonicity, Vector)
+class_create (Harmonicity, Vector);
 
 /* Attributes:
 		xmin				// Start time (seconds).

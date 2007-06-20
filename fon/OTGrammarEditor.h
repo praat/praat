@@ -2,7 +2,7 @@
 #define _OTGrammarEditor_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _HyperPage_h_
@@ -32,7 +32,7 @@
 
 typedef struct structOTGrammarEditor *OTGrammarEditor;
 
-OTGrammarEditor OTGrammarEditor_create (Widget parent, const char *title, OTGrammar ot);
+OTGrammarEditor OTGrammarEditor_create (Widget parent, const wchar_t *title, OTGrammar ot);
 
 /* End of file OTGrammarEditor.h */
 #endif

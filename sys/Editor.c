@@ -1,6 +1,6 @@
 /* Editor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/22 Editor_setPublish2Callback
  * pb 2005/09/01 do not add a "(cannot) undo" button if there is no data to save
+ * pb 2007/06/10 wchar_t
  */
 
 #include "ScriptEditor.h"
@@ -48,7 +49,7 @@ class_methods (EditorCommand, Thing) {
 
 #define EditorMenu_members Thing_members \
 	Any editor; \
-	const char *menuTitle; \
+	const wchar_t *menuTitle; \
 	Widget menuWidget; \
 	Ordered commands;
 #define EditorMenu_methods Thing_methods
@@ -70,18 +71,20 @@ class_methods (EditorMenu, Thing) {
 
 static void commonCallback (GUI_ARGS) {
 	GUI_IAM (EditorCommand);
-	if (my editor && ((Editor) my editor) -> methods -> scriptable)
-		UiHistory_write ("\n%s", my itemTitle);
+	if (my editor && ((Editor) my editor) -> methods -> scriptable) {
+		UiHistory_write (L"\n");
+		UiHistory_write (my itemTitle);
+	}
 	if (! my commandCallback (my editor, me, NULL)) Melder_flushError (NULL);
 }
 
-Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags,
+Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
 {
 	EditorCommand me = new (EditorCommand);
 	my editor = menu -> editor;
 	my menu = menu;
-	if (! (my itemTitle = Melder_strdup (itemTitle))) { forget (me); return NULL; }
+	if (! (my itemTitle = Melder_wcsdup (itemTitle))) { forget (me); return NULL; }
 	my itemWidget =
 		commandCallback == NULL ? motif_addSeparator (menu -> menuWidget) :
 		flags & Editor_HIDDEN ? NULL :
@@ -93,10 +96,10 @@ Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags
 
 /*Widget EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
-EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags) {
+EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 	EditorMenu me = new (EditorMenu);
 	my editor = editor;
-	if (! (my menuTitle = Melder_strdup (menuTitle))) { forget (me); return NULL; }
+	if (! (my menuTitle = Melder_wcsdup (menuTitle))) { forget (me); return NULL; }
 	my menuWidget = motif_addMenu (((Editor) editor) -> menuBar, menuTitle, flags);
 	Collection_addItem (((Editor) editor) -> menus, me);
 	my commands = Ordered_create ();
@@ -105,17 +108,18 @@ EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags) {
 
 /*Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
+Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
 {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
-		if (strequ (menuTitle, menu -> menuTitle))
+		if (wcsequ (menuTitle, menu -> menuTitle))
 			return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 	}
-	return Melder_errorp ("(Editor_addCommand:) No menu \"%s\". Cannot insert command.", menuTitle);
+	Melder_error3 (L"(Editor_addCommand:) No menu \"", menuTitle, L"\". Cannot insert command.");
+	return NULL;
 }
 
 static int Editor_scriptCallback (I, EditorCommand cmd, Any sender) {
@@ -124,65 +128,67 @@ static int Editor_scriptCallback (I, EditorCommand cmd, Any sender) {
 	return DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
-Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *itemTitle, long flags,
-	const char *script)
+Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
+	const wchar_t *script)
 {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
-		if (strequ (menuTitle, menu -> menuTitle)) {
+		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			EditorCommand cmd = new (EditorCommand);
 			cmd -> editor = me;
 			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_strdup (itemTitle);
+			cmd -> itemTitle = Melder_wcsdup (itemTitle);
 			cmd -> itemWidget = script == NULL ? motif_addSeparator (menu -> menuWidget) :
 				motif_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd);
 			Collection_addItem (menu -> commands, cmd);
 			cmd -> commandCallback = Editor_scriptCallback;
-			if (strlen (script) == 0) {
-				cmd -> script = Melder_strdup ("");
+			if (wcslen (script) == 0) {
+				cmd -> script = Melder_wcsdup (L"");
 			} else {
 				structMelderFile file = { { 0 } };
-				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_strdup (Melder_fileToPath (& file));
+				Melder_relativePathToFileW (script, & file);
+				cmd -> script = Melder_wcsdup (Melder_fileToPathW (& file));
 			}
 			return cmd -> itemWidget;
 		}
 	}
-	return Melder_errorp ("(Editor_addCommand:) No menu \"%s\". Cannot insert command.", menuTitle);
+	Melder_error3 (L"(Editor_addCommand:) No menu \"", menuTitle, L"\". Cannot insert command.");
+	return NULL;
 }
 
-void Editor_setMenuSensitive (Any editor, const char *menuTitle, int sensitive) {
+void Editor_setMenuSensitive (Any editor, const wchar_t *menuTitle, int sensitive) {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
-		if (strequ (menuTitle, menu -> menuTitle)) {
+		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			XtSetSensitive (menu -> menuWidget, sensitive);
 			return;
 		}
 	}
 }
 
-EditorCommand Editor_getMenuCommand (Any editor, const char *menuTitle, const char *itemTitle) {
+EditorCommand Editor_getMenuCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle) {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
-		if (strequ (menuTitle, menu -> menuTitle)) {
+		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			int numberOfCommands = menu -> commands -> size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 				EditorCommand command = menu -> commands -> item [icommand];
-				if (strequ (itemTitle, command -> itemTitle))
+				if (wcsequ (itemTitle, command -> itemTitle))
 					return command;
 			}
 		}
 	}
-	return Melder_errorp ("(Editor_getMenuCommand:) No menu \"%s\" with item \"%s\".", menuTitle, itemTitle);
+	Melder_error5 (L"(Editor_getMenuCommand:) No menu \"", menuTitle, L"\" with item \"", itemTitle, L"\".");
+	return NULL;
 }
 
-int Editor_doMenuCommand (Any editor, const char *commandTitle, const char *arguments) {
+int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t *arguments) {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
@@ -190,14 +196,14 @@ int Editor_doMenuCommand (Any editor, const char *commandTitle, const char *argu
 		int numberOfCommands = menu -> commands -> size, icommand;
 		for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands -> item [icommand];
-			if (strequ (commandTitle, command -> itemTitle)) {
+			if (wcsequ (commandTitle, command -> itemTitle)) {
 				if (! command -> commandCallback (me, command, (Any) arguments))
 					return 0;
 				return 1;
 			}
 		}
 	}
-	return Melder_error ("Command not available in %s.", our _className);
+	return Melder_error3 (L"Command not available in ", our _classNameW, L".");
 }
 
 /********** class Editor **********/
@@ -223,8 +229,8 @@ static void destroy (I) {
 
 static void nameChanged (I) {
 	iam (Editor);
-	XtVaSetValues (my shell, XmNtitle, my name ? my name : "",
-		XmNiconName, my name ? my name : "", NULL);
+	if (my nameW)
+		GuiWindow_setTitleW (my shell, my nameW);
 }
 
 static void goAway (I) { iam (Editor); forget (me); }
@@ -246,10 +252,10 @@ DIRECT (Editor, cb_close) our goAway (me); END
 
 DIRECT (Editor, cb_undo)
 	our restore (me);
-	if (strnequ (my undoText, "Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
-	else if (strnequ (my undoText, "Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
-	else strcpy (my undoText, "Undo?");
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, my undoText), NULL);
+	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
+	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
+	else wcscpy (my undoText, L"Undo?");
+	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (my undoText)), NULL);
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
 	 */
@@ -275,11 +281,11 @@ END
 
 static void createMenus (I) {
 	iam (Editor);
-	Editor_addMenu (me, "File", 0);
+	Editor_addMenu (me, L"File", 0);
 	if (our editable) {
-		Editor_addMenu (me, "Edit", 0);
+		Editor_addMenu (me, L"Edit", 0);
 		if (my data)
-			my undoButton = Editor_addCommand (me, "Edit", "Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
+			my undoButton = Editor_addCommand (me, L"Edit", L"Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
 	}
 }
 
@@ -316,7 +322,7 @@ MOTIF_CALLBACK (cb_goAway)
 MOTIF_CALLBACK_END
 
 extern void praat_addCommandsToEditor (Editor me);
-int Editor_init (I, Widget parent, int x, int y, int width, int height, const char *title, Any data) {
+int Editor_init (I, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	iam (Editor);
 	int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
 	int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
@@ -357,7 +363,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const ch
 		XmNx, left, XmNy, top, XmNwidth, right - left, XmNheight, bottom - top, NULL);
 	/*if (width != 0) XtVaSetValues (my shell, XmNwidth, right - left, NULL);
 	if (height != 0) XtVaSetValues (my shell, XmNheight, bottom - top, NULL);*/
-	Thing_setName (me, title);
+	Thing_setNameW (me, title);
 	my dialog = XtVaCreateWidget ("editor", xmFormWidgetClass, my shell,
 		XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
 	if (! my dialog) return 0;
@@ -367,22 +373,22 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const ch
 
 	my menus = Ordered_create ();
 	my menuBar = motif_addMenuBar (my dialog);
-	Editor_addMenu (me, "Help", 0);
+	Editor_addMenu (me, L"Help", 0);
 	our createMenus (me);
 	Melder_clearError ();   /* TEMPORARY: to protect against CategoriesEditor */
-	Editor_addCommand (me, "Help", "-- search --", 0, NULL);
-	my searchButton = Editor_addCommand (me, "Help", "Search manual...", 'M', cb_searchManual);
+	Editor_addCommand (me, L"Help", L"-- search --", 0, NULL);
+	my searchButton = Editor_addCommand (me, L"Help", L"Search manual...", 'M', cb_searchManual);
 	if (our scriptable) {
-		Editor_addCommand (me, "File", "New editor script", 0, cb_newScript);
-		Editor_addCommand (me, "File", "Open editor script...", 0, cb_openScript);
-		Editor_addCommand (me, "File", "-- script --", 0, 0);
+		Editor_addCommand (me, L"File", L"New editor script", 0, cb_newScript);
+		Editor_addCommand (me, L"File", L"Open editor script...", 0, cb_openScript);
+		Editor_addCommand (me, L"File", L"-- script --", 0, 0);
 	}
 	/*
 	 * Add the scripted commands.
 	 */
 	praat_addCommandsToEditor (me);
 
-	Editor_addCommand (me, "File", "Close", 'W', cb_close);
+	Editor_addCommand (me, L"File", L"Close", 'W', cb_close);
 	XtManageChild (my menuBar);
 
 	our createChildren (me);
@@ -438,13 +444,13 @@ void Editor_setPublish2Callback (I, void (*cb) (I, void *closure, Any publish1, 
 	my publish2Closure = closure;
 }
 
-void Editor_save (I, const char *text) {
+void Editor_save (I, const wchar_t *text) {
 	iam (Editor);
 	our save (me);
 	if (! my undoButton) return;
 	XtSetSensitive (my undoButton, True);
-	sprintf (my undoText, "Undo %s", text);
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, my undoText), NULL);
+	swprintf (my undoText, 100, L"Undo %ls", text);
+	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (my undoText)), NULL);
 }
 
 /* End of file Editor.c */

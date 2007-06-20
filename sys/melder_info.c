@@ -1,6 +1,6 @@
 /* melder_info.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2006/12/08 separated from melder.c
  * pb 2006/12/17 removed Melder_info and made Melder_print safe
  * pb 2006/12/19 all functions number 1 through 9
+ * pb 2007/06/11 wchar_t
  */
 
 #include "melder.h"
@@ -276,6 +277,17 @@ void Melder_informationReal (double value, const char *units) {
 	MelderInfo_close ();
 }
 
+void Melder_informationRealW (double value, const wchar_t *units) {
+	MelderInfo_open ();
+	if (value == NUMundefined)
+		MelderInfo_write1W (L"--undefined--");
+	else if (units == NULL)
+		MelderInfo_write1W (Melder_doubleW (value));
+	else
+		MelderInfo_write3W (Melder_doubleW (value), L" ", units);
+	MelderInfo_close ();
+}
+
 void Melder_divertInfo (MelderStringW *buffer) {
 	theInfos = buffer == NULL ? & theForegroundBuffer : buffer;
 }
@@ -291,12 +303,12 @@ wchar_t * Melder_getInfo (void) {
 	return theInfos -> string ? theInfos -> string : L"";
 }
 
-void Melder_print (const char *s) {
+void Melder_print (const wchar_t *s) {
 	Melder_assert (theInfos == & theForegroundBuffer);   // Never diverted.
 	if (theInformation == defaultInformation) {
-		printf ("%s", s);   // Do not print the previous lines again.
+		printf ("%s", Melder_peekWcsToAscii (s));   // Do not print the previous lines again.
 	} else {
-		MelderStringW_appendA (theInfos, s);
+		MelderStringW_appendW (theInfos, s);
 		theInformation (theInfos -> string);
 	}
 }

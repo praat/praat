@@ -31,20 +31,20 @@
 #include "Regression_def.h"
 
 #define RegressionParameter_methods  Data_methods
-oo_CLASS_CREATE (RegressionParameter, Data)
+oo_CLASS_CREATE (RegressionParameter, Data);
 
 #define Regression_members  Data_members \
 	double intercept; \
 	Ordered parameters;
 #define Regression_methods  Data_methods
-oo_CLASS_CREATE (Regression, Data)
+oo_CLASS_CREATE (Regression, Data);
 
 int Regression_init (I);
 int Regression_addParameter (I, const char *label, double value);
 
 #define LinearRegression_members  Regression_members
 #define LinearRegression_methods  Regression_methods
-class_create (LinearRegression, Regression)
+class_create (LinearRegression, Regression);
 
 LinearRegression LinearRegression_create (void);
 
@@ -52,7 +52,7 @@ LinearRegression Table_to_LinearRegression (Table me);
 
 #define LogisticRegression_members  Regression_members
 #define LogisticRegression_methods  Regression_methods
-class_create (LogisticRegression, Regression)
+class_create (LogisticRegression, Regression);
 
 LogisticRegression LogisticRegression_create (void);
 

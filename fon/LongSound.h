@@ -53,7 +53,7 @@ struct _MP3_FILE;
 	float *compressedFloats [2]; \
 	short *compressedShorts;
 #define LongSound_methods Sampled_methods
-class_create (LongSound, Sampled)
+class_create (LongSound, Sampled);
 
 LongSound LongSound_open (MelderFile fs);
 

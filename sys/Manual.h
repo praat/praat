@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2005 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/07/19
+ * pb 2007/06/10
  */
 
 #ifndef _HyperPage_h_
@@ -40,7 +40,7 @@
 	int suppressLinksHither; \
 	char *printPagesStartingWith;
 #define Manual_methods HyperPage_methods
-class_create (Manual, HyperPage)
+class_create (Manual, HyperPage);
 
 int Manual_init (I, Widget parent, const char *title, Any data);
 Manual Manual_create (Widget parent, const char *title, Any data);

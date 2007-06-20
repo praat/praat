@@ -1,6 +1,6 @@
 /* OTGrammarEditor.c
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2001/08/21
  * pb 2002/07/16 GPL
  * pb 2003/03/31 removeConstraint
  * pb 2003/05/27 learnOne and learnOneFromPartialOutput
  * pb 2004/03/16 Evaluate (tiny noise)
+ * pb 2007/06/10 wchar_t
  */
 
 #include "OTGrammarEditor.h"
@@ -31,34 +31,34 @@
 #define OTGrammarEditor_members HyperPage_members \
 	long selected;
 #define OTGrammarEditor_methods HyperPage_methods
-class_create_opaque (OTGrammarEditor, HyperPage)
+class_create_opaque (OTGrammarEditor, HyperPage);
 
 FORM (OTGrammarEditor, cb_evaluate, "Evaluate", 0)
 	REAL ("Noise", "2.0")
 	OK
 DO
-	Editor_save (me, "Evaluate");
+	Editor_save (me, L"Evaluate");
 	OTGrammar_newDisharmonies (my data, GET_REAL ("Noise"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
 DIRECT (OTGrammarEditor, cb_evaluate_noise_2_0)
-	Editor_save (me, "Evaluate (noise 2.0)");
+	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTGrammar_newDisharmonies (my data, 2.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
 DIRECT (OTGrammarEditor, cb_evaluate_tinyNoise)
-	Editor_save (me, "Evaluate (tiny noise)");
+	Editor_save (me, L"Evaluate (tiny noise)");
 	OTGrammar_newDisharmonies (my data, 1e-9);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
 DIRECT (OTGrammarEditor, cb_evaluate_zeroNoise)
-	Editor_save (me, "Evaluate (zero noise)");
+	Editor_save (me, L"Evaluate (zero noise)");
 	OTGrammar_newDisharmonies (my data, 0.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -79,7 +79,7 @@ SET_REAL ("Disharmony", constraint -> disharmony)
 DO
 	OTGrammar ot = my data;
 	OTGrammarConstraint constraint = & ot -> constraints [ot -> index [my selected]];
-	Editor_save (me, "Edit ranking");
+	Editor_save (me, L"Edit ranking");
 	constraint -> ranking = GET_REAL ("Ranking value");
 	constraint -> disharmony = GET_REAL ("Disharmony");
 	OTGrammar_sort (ot);
@@ -105,7 +105,7 @@ FORM (OTGrammarEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
 	BOOLEAN ("Honour local rankings", 1)
 	OK
 DO
-	Editor_save (me, "Learn one");
+	Editor_save (me, L"Learn one");
 	OTGrammar_learnOne (my data, GET_STRING ("Input string"), GET_STRING ("Output string"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), TRUE, TRUE, NULL);
@@ -131,7 +131,7 @@ FORM (OTGrammarEditor, cb_learnOneFromPartialOutput, "Learn one from partial adu
 	NATURAL ("Number of chews", "1")
 	OK
 DO
-	Editor_save (me, "Learn one from partial output");
+	Editor_save (me, L"Learn one from partial output");
 	OTGrammar_learnOneFromPartialOutput (my data, GET_STRING ("Partial output"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"), TRUE);
@@ -145,7 +145,7 @@ DIRECT (OTGrammarEditor, cb_removeConstraint)
 	OTGrammarConstraint constraint;
 	if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error ("Select a constraint first.");
 	constraint = & ot -> constraints [ot -> index [my selected]];
-	Editor_save (me, "Remove constraint");
+	Editor_save (me, L"Remove constraint");
 	OTGrammar_removeConstraint (ot, constraint -> name);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -155,7 +155,7 @@ FORM (OTGrammarEditor, cb_resetAllRankings, "Reset all rankings", 0)
 	REAL ("Ranking", "100.0")
 	OK
 DO
-	Editor_save (me, "Reset all rankings");
+	Editor_save (me, L"Reset all rankings");
 	OTGrammar_reset (my data, GET_REAL ("Ranking"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -170,20 +170,20 @@ DIRECT (OTGrammarEditor, cb_OTLearningTutorial) Melder_help ("OT learning"); END
 static void createMenus (I) {
 	iam (OTGrammarEditor);
 	inherited (OTGrammarEditor) createMenus (me);
-	Editor_addCommand (me, "Edit", "-- edit ot --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Evaluate...", 0, cb_evaluate);
-	Editor_addCommand (me, "Edit", "Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
-	Editor_addCommand (me, "Edit", "Evaluate (zero noise)", '0', cb_evaluate_zeroNoise);
-	Editor_addCommand (me, "Edit", "Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
-	Editor_addCommand (me, "Edit", "Edit ranking...", 'E', cb_editRanking);
-	Editor_addCommand (me, "Edit", "Reset all rankings...", 'R', cb_resetAllRankings);
-	Editor_addCommand (me, "Edit", "Learn one...", 0, cb_learnOne);
-	Editor_addCommand (me, "Edit", "Learn one from partial output...", '1', cb_learnOneFromPartialOutput);
-	Editor_addCommand (me, "Edit", "-- remove ot --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Remove constraint", 0, cb_removeConstraint);
-	Editor_addCommand (me, "Help", "OTGrammarEditor help", '?', cb_OTGrammarEditor_help);
-	Editor_addCommand (me, "Help", "OTGrammar help", 0, cb_OTGrammar_help);
-	Editor_addCommand (me, "Help", "OT learning tutorial", 0, cb_OTLearningTutorial);
+	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, cb_evaluate);
+	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
+	Editor_addCommand (me, L"Edit", L"Evaluate (zero noise)", '0', cb_evaluate_zeroNoise);
+	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
+	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', cb_editRanking);
+	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', cb_resetAllRankings);
+	Editor_addCommand (me, L"Edit", L"Learn one...", 0, cb_learnOne);
+	Editor_addCommand (me, L"Edit", L"Learn one from partial output...", '1', cb_learnOneFromPartialOutput);
+	Editor_addCommand (me, L"Edit", L"-- remove ot --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, cb_removeConstraint);
+	Editor_addCommand (me, L"Help", L"OTGrammarEditor help", '?', cb_OTGrammarEditor_help);
+	Editor_addCommand (me, L"Help", L"OTGrammar help", 0, cb_OTGrammar_help);
+	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, cb_OTLearningTutorial);
 }
 
 static OTGrammar drawTableau_ot;
@@ -231,7 +231,7 @@ class_methods (OTGrammarEditor, HyperPage)
 	class_method (goToPage)
 class_methods_end
 
-OTGrammarEditor OTGrammarEditor_create (Widget parent, const char *title, OTGrammar ot) {
+OTGrammarEditor OTGrammarEditor_create (Widget parent, const wchar_t *title, OTGrammar ot) {
 	OTGrammarEditor me = new (OTGrammarEditor);
 	my data = ot;
 	if (! HyperPage_init (me, parent, title, ot))

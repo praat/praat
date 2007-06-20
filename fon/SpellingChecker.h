@@ -34,7 +34,7 @@
 #include "SpellingChecker_def.h"
 
 #define SpellingChecker_methods Data_methods
-oo_CLASS_CREATE (SpellingChecker, Data)
+oo_CLASS_CREATE (SpellingChecker, Data);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me);
 WordList SpellingChecker_extractWordList (SpellingChecker me);

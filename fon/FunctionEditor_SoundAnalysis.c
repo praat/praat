@@ -60,6 +60,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/18 better info
  * pb 2007/01/27 changed Vector API
+ * pb 2007/06/11 wchar_t
  */
 
 #include <time.h>
@@ -75,11 +76,11 @@
 #include "EditorM.h"
 #include "praat_script.h"
 
-static const char * theMessage_Cannot_compute_spectrogram = "The spectrogram is not defined at the edge of the sound.";
-static const char * theMessage_Cannot_compute_pitch = "The pitch contour is not defined at the edge of the sound.";
-static const char * theMessage_Cannot_compute_formant = "The formants are not defined at the edge of the sound.";
-static const char * theMessage_Cannot_compute_intensity = "The intensity curve is not defined at the edge of the sound.";
-static const char * theMessage_Cannot_compute_pulses = "The pulses are not defined at the edge of the sound.";
+static const wchar_t * theMessage_Cannot_compute_spectrogram = L"The spectrogram is not defined at the edge of the sound.";
+static const wchar_t * theMessage_Cannot_compute_pitch = L"The pitch contour is not defined at the edge of the sound.";
+static const wchar_t * theMessage_Cannot_compute_formant = L"The formants are not defined at the edge of the sound.";
+static const wchar_t * theMessage_Cannot_compute_intensity = L"The intensity curve is not defined at the edge of the sound.";
+static const wchar_t * theMessage_Cannot_compute_pulses = L"The pulses are not defined at the edge of the sound.";
 
 struct logInfo {
 	int toInfoWindow, toLogFile;
@@ -559,10 +560,10 @@ static int menu_cb_extractVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Spectrogram publish;
 	if (! my spectrogram.show)
-		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error (theMessage_Cannot_compute_spectrogram);
+		if (! my spectrogram.data) return Melder_error1 (theMessage_Cannot_compute_spectrogram);
 	}
 	publish = Data_copy (my spectrogram.data);
 	if (publish == NULL) return 0;
@@ -616,7 +617,7 @@ static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 		return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error (theMessage_Cannot_compute_spectrogram);
+		if (! my spectrogram.data) return Melder_error1 (theMessage_Cannot_compute_spectrogram);
 	}
 	if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
 	MelderInfo_open ();
@@ -737,7 +738,7 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine2 ("Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
@@ -767,7 +768,7 @@ static int menu_cb_getPitch (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
@@ -791,7 +792,7 @@ static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -808,7 +809,7 @@ static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -824,7 +825,7 @@ static int menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	publish = Data_copy (my pitch.data);
 	if (! publish) return 0;
@@ -883,7 +884,7 @@ static int menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
 	}
 	publish = Data_copy (my intensity.data);
 	if (! publish) return 0;
@@ -900,7 +901,7 @@ static int menu_cb_intensityListing (EDITOR_ARGS) {
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s   Intensity_dB");
@@ -928,7 +929,7 @@ static int menu_cb_getIntensity (EDITOR_ARGS) {
 		return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		computeIntensity (me);
-		if (! my intensity.data) return Melder_error (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), " dB (intensity at CURSOR)");
@@ -1011,7 +1012,7 @@ static int menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
+		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	publish = Data_copy (my formant.data);
 	if (! publish) return 0;
@@ -1028,7 +1029,7 @@ static int menu_cb_formantListing (EDITOR_ARGS) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
+		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
@@ -1063,7 +1064,7 @@ static int do_getFormant (FunctionEditor me, int iformant) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
+		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information9 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
@@ -1081,7 +1082,7 @@ static int do_getBandwidth (FunctionEditor me, int iformant) {
 		return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		computeFormants (me);
-		if (! my formant.data) return Melder_error (theMessage_Cannot_compute_formant);
+		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information9 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
@@ -1161,7 +1162,7 @@ static int menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
 	}
 	publish = Data_copy (my pulses.data);
 	if (! publish) return 0;
@@ -1180,7 +1181,7 @@ static int menu_cb_voiceReport (EDITOR_ARGS) {
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
 	}
 	sound = extractSound (me, tmin, tmax);
 	if (! sound) return Melder_error ("Selection too small (or out of memory).");
@@ -1206,7 +1207,7 @@ static int menu_cb_pulseListing (EDITOR_ARGS) {
 		return Melder_error ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 ("Time_s");
@@ -1277,7 +1278,7 @@ static int menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
 		return Melder_error ("Empty selection.");
@@ -1299,16 +1300,16 @@ static int menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 		return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		computePitch (me);
-		if (! my pitch.data) return Melder_error (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
-		return Melder_error ("Empty selection.");
+		return Melder_error1 (L"Empty selection.");
 	} else {
 		double time;
 		Pitch_getMaximumAndTime (my pitch.data, my startSelection, my endSelection,
 			my pitch.unit, 1, NULL, & time);
 		if (! NUMdefined (time))
-			return Melder_error ("Selection is voiceless.");
+			return Melder_error1 (L"Selection is voiceless.");
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me);
 	}
@@ -1641,7 +1642,7 @@ static int do_log (FunctionEditor me, int which) {
 			if (! my pitch.show)
 				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 			if (! my pitch.data) {
-				return Melder_error (theMessage_Cannot_compute_pitch);
+				return Melder_error1 (theMessage_Cannot_compute_pitch);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, 1);
@@ -1650,9 +1651,9 @@ static int do_log (FunctionEditor me, int which) {
 			}
 		} else if (varName [0] == 'f' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+				return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error (theMessage_Cannot_compute_formant);
+				return Melder_error1 (theMessage_Cannot_compute_formant);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Formant_getValueAtTime (my formant.data, varName [1] - '0', tmin, 0);
@@ -1661,16 +1662,16 @@ static int do_log (FunctionEditor me, int which) {
 			}
 		} else if (varName [0] == 'b' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+				return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error (theMessage_Cannot_compute_formant);
+				return Melder_error1 (theMessage_Cannot_compute_formant);
 			}
 			value = Formant_getBandwidthAtTime (my formant.data, varName [1] - '0', 0.5 * (tmin + tmax), 0);
 		} else if (strequ (varName, "intensity")) {
 			if (! my intensity.show)
-				return Melder_error ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+				return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 			if (! my intensity.data) {
-				return Melder_error (theMessage_Cannot_compute_intensity);
+				return Melder_error1 (theMessage_Cannot_compute_intensity);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
@@ -1679,11 +1680,11 @@ static int do_log (FunctionEditor me, int which) {
 			}
 		} else if (strequ (varName, "power")) {
 			if (! my spectrogram.show)
-				return Melder_error ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+				return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 			if (! my spectrogram.data) {
-				return Melder_error (theMessage_Cannot_compute_spectrogram);
+				return Melder_error1 (theMessage_Cannot_compute_spectrogram);
 			}
-			if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
+			if (part != FunctionEditor_PART_CURSOR) return Melder_error1 (L"Click inside the spectrogram first.");
 			value = Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor);
 		}
 		if (NUMdefined (value)) {
@@ -1719,8 +1720,8 @@ static int do_log (FunctionEditor me, int which) {
 	if (preferences.log[which].toLogFile) {
 		structMelderFile file = { { 0 } };
 		strcat (format, "\n");
-		if (! Melder_relativePathToFile (preferences.log[which].fileName, & file)) return 0;
-		if (! MelderFile_appendText (& file, format)) return 0;
+		if (! Melder_relativePathToFileW (Melder_peekAsciiToWcs (preferences.log[which].fileName), & file)) return 0;
+		if (! MelderFile_appendTextW (& file, Melder_peekAsciiToWcs (format))) return 0;
 	}
 	return 1;
 }
@@ -1728,113 +1729,123 @@ static int do_log (FunctionEditor me, int which) {
 static int menu_cb_log1 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return do_log (me, 0); }
 static int menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return do_log (me, 1); }
 
-static int menu_cb_logScript3 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript3); }
-static int menu_cb_logScript4 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript4); }
+static int menu_cb_logScript3 (EDITOR_ARGS) {
+	EDITOR_IAM (FunctionEditor);
+	static MelderStringW buffer = { 0 };
+	MelderStringW_copyA (& buffer, preferences.logScript3);
+	return DO_RunTheScriptFromAnyAddedEditorCommand (me, buffer.string);
+}
+static int menu_cb_logScript4 (EDITOR_ARGS) {
+	EDITOR_IAM (FunctionEditor);
+	static MelderStringW buffer = { 0 };
+	MelderStringW_copyA (& buffer, preferences.logScript4);
+	return DO_RunTheScriptFromAnyAddedEditorCommand (me, buffer.string);
+}
 
 void FunctionEditor_SoundAnalysis_viewMenus (I) {
 	iam (FunctionEditor);
-	Editor_addCommand (me, "View", "Analysis window:", motif_INSENSITIVE, menu_cb_showAnalyses);
-	Editor_addCommand (me, "View", "Show analyses...", 0, menu_cb_showAnalyses);
-	Editor_addCommand (me, "View", "Time step settings...", 0, menu_cb_timeStepSettings);
-	Editor_addCommand (me, "View", "-- sound analysis --", 0, 0);
+	Editor_addCommand (me, L"View", L"Analysis window:", motif_INSENSITIVE, menu_cb_showAnalyses);
+	Editor_addCommand (me, L"View", L"Show analyses...", 0, menu_cb_showAnalyses);
+	Editor_addCommand (me, L"View", L"Time step settings...", 0, menu_cb_timeStepSettings);
+	Editor_addCommand (me, L"View", L"-- sound analysis --", 0, 0);
 }
 
 void FunctionEditor_SoundAnalysis_selectionQueries (I) {
 	iam (FunctionEditor);
-	Editor_addCommand (me, "Query", "-- query log --", 0, NULL);
-	Editor_addCommand (me, "Query", "Log settings...", 0, menu_cb_logSettings);
-	Editor_addCommand (me, "Query", "Delete log file 1", 0, menu_cb_deleteLogFile1);
-	Editor_addCommand (me, "Query", "Delete log file 2", 0, menu_cb_deleteLogFile2);
-	Editor_addCommand (me, "Query", "Log 1", motif_F12, menu_cb_log1);
-	Editor_addCommand (me, "Query", "Log 2", motif_F12 + motif_SHIFT, menu_cb_log2);
-	Editor_addCommand (me, "Query", "Log script 3 (...)", motif_F12 + motif_OPTION, menu_cb_logScript3);
-	Editor_addCommand (me, "Query", "Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
+	Editor_addCommand (me, L"Query", L"-- query log --", 0, NULL);
+	Editor_addCommand (me, L"Query", L"Log settings...", 0, menu_cb_logSettings);
+	Editor_addCommand (me, L"Query", L"Delete log file 1", 0, menu_cb_deleteLogFile1);
+	Editor_addCommand (me, L"Query", L"Delete log file 2", 0, menu_cb_deleteLogFile2);
+	Editor_addCommand (me, L"Query", L"Log 1", motif_F12, menu_cb_log1);
+	Editor_addCommand (me, L"Query", L"Log 2", motif_F12 + motif_SHIFT, menu_cb_log2);
+	Editor_addCommand (me, L"Query", L"Log script 3 (...)", motif_F12 + motif_OPTION, menu_cb_logScript3);
+	Editor_addCommand (me, L"Query", L"Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
 }
 
 void FunctionEditor_SoundAnalysis_addMenus (I) {
 	iam (FunctionEditor);
 	EditorMenu menu;
 
-	menu = Editor_addMenu (me, "Spectrum", 0);
-	my spectrogramToggle = EditorMenu_addCommand (menu, "Show spectrogram",
+	menu = Editor_addMenu (me, L"Spectrum", 0);
+	my spectrogramToggle = EditorMenu_addCommand (menu, L"Show spectrogram",
 		motif_CHECKABLE | (preferences.spectrogram.show ? motif_CHECKED : 0), menu_cb_showSpectrogram);
-	EditorMenu_addCommand (menu, "Spectrogram settings...", 0, menu_cb_spectrogramSettings);
-	EditorMenu_addCommand (menu, "Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
-	EditorMenu_addCommand (menu, "Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
-	EditorMenu_addCommand (menu, "View spectral slice", 'L', menu_cb_viewSpectralSlice);
-	EditorMenu_addCommand (menu, "-- query spectrogram --", 0, NULL);
-	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Get frequency at frequency cursor", 0, menu_cb_getFrequency);
-	EditorMenu_addCommand (menu, "Get spectral power at cursor cross", motif_F7, menu_cb_getSpectralPowerAtCursorCross);
+	EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
+	EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
+	EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
+	EditorMenu_addCommand (menu, L"View spectral slice", 'L', menu_cb_viewSpectralSlice);
+	EditorMenu_addCommand (menu, L"-- query spectrogram --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
+	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", motif_F7, menu_cb_getSpectralPowerAtCursorCross);
 
-	menu = Editor_addMenu (me, "Pitch", 0);
-	my pitchToggle = EditorMenu_addCommand (menu, "Show pitch",
+	menu = Editor_addMenu (me, L"Pitch", 0);
+	my pitchToggle = EditorMenu_addCommand (menu, L"Show pitch",
 		motif_CHECKABLE | (preferences.pitch.show ? motif_CHECKED : 0), menu_cb_showPitch);
-	EditorMenu_addCommand (menu, "Pitch settings...", 0, menu_cb_pitchSettings);
-	EditorMenu_addCommand (menu, "Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
-	EditorMenu_addCommand (menu, "Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
-	EditorMenu_addCommand (menu, "-- query pitch --", 0, NULL);
-	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Pitch listing", 0, menu_cb_pitchListing);
-	EditorMenu_addCommand (menu, "Get pitch", motif_F5, menu_cb_getPitch);
-	EditorMenu_addCommand (menu, "Get minimum pitch", motif_F5 + motif_COMMAND, menu_cb_getMinimumPitch);
-	EditorMenu_addCommand (menu, "Get maximum pitch", motif_F5 + motif_SHIFT, menu_cb_getMaximumPitch);
-	EditorMenu_addCommand (menu, "-- select pitch --", 0, NULL);
-	EditorMenu_addCommand (menu, "Select:", motif_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
-	EditorMenu_addCommand (menu, "Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
-	EditorMenu_addCommand (menu, "Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
+	EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
+	EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
+	EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
+	EditorMenu_addCommand (menu, L"-- query pitch --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Pitch listing", 0, menu_cb_pitchListing);
+	EditorMenu_addCommand (menu, L"Get pitch", motif_F5, menu_cb_getPitch);
+	EditorMenu_addCommand (menu, L"Get minimum pitch", motif_F5 + motif_COMMAND, menu_cb_getMinimumPitch);
+	EditorMenu_addCommand (menu, L"Get maximum pitch", motif_F5 + motif_SHIFT, menu_cb_getMaximumPitch);
+	EditorMenu_addCommand (menu, L"-- select pitch --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Select:", motif_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
+	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
+	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
 
-	menu = Editor_addMenu (me, "Intensity", 0);
-	my intensityToggle = EditorMenu_addCommand (menu, "Show intensity",
+	menu = Editor_addMenu (me, L"Intensity", 0);
+	my intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
 		motif_CHECKABLE | (preferences.intensity.show ? motif_CHECKED : 0), menu_cb_showIntensity);
-	EditorMenu_addCommand (menu, "Intensity settings...", 0, menu_cb_intensitySettings);
-	EditorMenu_addCommand (menu, "Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
-	EditorMenu_addCommand (menu, "-- query intensity --", 0, NULL);
-	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Intensity listing", 0, menu_cb_intensityListing);
-	EditorMenu_addCommand (menu, "Get intensity", motif_F8, menu_cb_getIntensity);
+	EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
+	EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
+	EditorMenu_addCommand (menu, L"-- query intensity --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
+	EditorMenu_addCommand (menu, L"Get intensity", motif_F8, menu_cb_getIntensity);
 
-	menu = Editor_addMenu (me, "Formant", 0);
-	my formantToggle = EditorMenu_addCommand (menu, "Show formants",
+	menu = Editor_addMenu (me, L"Formant", 0);
+	my formantToggle = EditorMenu_addCommand (menu, L"Show formants",
 		motif_CHECKABLE | (preferences.formant.show ? motif_CHECKED : 0), menu_cb_showFormants);
-	EditorMenu_addCommand (menu, "Formant settings...", 0, menu_cb_formantSettings);
-	EditorMenu_addCommand (menu, "Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-	EditorMenu_addCommand (menu, "Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
-	EditorMenu_addCommand (menu, "-- query formants --", 0, NULL);
-	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Formant listing", 0, menu_cb_formantListing);
-	EditorMenu_addCommand (menu, "Get first formant", motif_F1, menu_cb_getFirstFormant);
-	EditorMenu_addCommand (menu, "Get first bandwidth", 0, menu_cb_getFirstBandwidth);
-	EditorMenu_addCommand (menu, "Get second formant", motif_F2, menu_cb_getSecondFormant);
-	EditorMenu_addCommand (menu, "Get second bandwidth", 0, menu_cb_getSecondBandwidth);
-	EditorMenu_addCommand (menu, "Get third formant", motif_F3, menu_cb_getThirdFormant);
-	EditorMenu_addCommand (menu, "Get third bandwidth", 0, menu_cb_getThirdBandwidth);
-	EditorMenu_addCommand (menu, "Get fourth formant", motif_F4, menu_cb_getFourthFormant);
-	EditorMenu_addCommand (menu, "Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
-	EditorMenu_addCommand (menu, "Get formant...", 0, menu_cb_getFormant);
-	EditorMenu_addCommand (menu, "Get bandwidth...", 0, menu_cb_getBandwidth);
+	EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
+	EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
+	EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
+	EditorMenu_addCommand (menu, L"-- query formants --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Formant listing", 0, menu_cb_formantListing);
+	EditorMenu_addCommand (menu, L"Get first formant", motif_F1, menu_cb_getFirstFormant);
+	EditorMenu_addCommand (menu, L"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
+	EditorMenu_addCommand (menu, L"Get second formant", motif_F2, menu_cb_getSecondFormant);
+	EditorMenu_addCommand (menu, L"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
+	EditorMenu_addCommand (menu, L"Get third formant", motif_F3, menu_cb_getThirdFormant);
+	EditorMenu_addCommand (menu, L"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
+	EditorMenu_addCommand (menu, L"Get fourth formant", motif_F4, menu_cb_getFourthFormant);
+	EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
+	EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
+	EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
 
-	menu = Editor_addMenu (me, "Pulses", 0);
-	my pulsesToggle = EditorMenu_addCommand (menu, "Show pulses",
+	menu = Editor_addMenu (me, L"Pulses", 0);
+	my pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
 		motif_CHECKABLE | (preferences.pulses.show ? motif_CHECKED : 0), menu_cb_showPulses);
-	EditorMenu_addCommand (menu, "Extract visible pulses", 0, menu_cb_extractVisiblePulses);
-	EditorMenu_addCommand (menu, "Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
-	EditorMenu_addCommand (menu, "-- query pulses --", 0, NULL);
-	EditorMenu_addCommand (menu, "Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, "Voice report", 0, menu_cb_voiceReport);
-	EditorMenu_addCommand (menu, "Pulse listing", 0, menu_cb_pulseListing);
+	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
+	EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
+	EditorMenu_addCommand (menu, L"-- query pulses --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Voice report", 0, menu_cb_voiceReport);
+	EditorMenu_addCommand (menu, L"Pulse listing", 0, menu_cb_pulseListing);
 	/*
-	EditorMenu_addCommand (menu, "Get jitter (local)", 0, cb_getJitter_local);
-	EditorMenu_addCommand (menu, "Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
-	EditorMenu_addCommand (menu, "Get jitter (rap)", 0, cb_getJitter_rap);
-	EditorMenu_addCommand (menu, "Get jitter (ppq5)", 0, cb_getJitter_ppq5);
-	EditorMenu_addCommand (menu, "Get jitter (ddp)", 0, cb_getJitter_ddp);
-	EditorMenu_addCommand (menu, "Get shimmer (local)", 0, cb_getShimmer_local);
-	EditorMenu_addCommand (menu, "Get shimmer (local_dB)", 0, cb_getShimmer_local_dB);
-	EditorMenu_addCommand (menu, "Get shimmer (apq3)", 0, cb_getShimmer_apq3);
-	EditorMenu_addCommand (menu, "Get shimmer (apq5)", 0, cb_getShimmer_apq5);
-	EditorMenu_addCommand (menu, "Get shimmer (apq11)", 0, cb_getShimmer_apq11);
-	EditorMenu_addCommand (menu, "Get shimmer (dda)", 0, cb_getShimmer_dda);
+	EditorMenu_addCommand (menu, L"Get jitter (local)", 0, cb_getJitter_local);
+	EditorMenu_addCommand (menu, L"Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
+	EditorMenu_addCommand (menu, L"Get jitter (rap)", 0, cb_getJitter_rap);
+	EditorMenu_addCommand (menu, L"Get jitter (ppq5)", 0, cb_getJitter_ppq5);
+	EditorMenu_addCommand (menu, L"Get jitter (ddp)", 0, cb_getJitter_ddp);
+	EditorMenu_addCommand (menu, L"Get shimmer (local)", 0, cb_getShimmer_local);
+	EditorMenu_addCommand (menu, L"Get shimmer (local_dB)", 0, cb_getShimmer_local_dB);
+	EditorMenu_addCommand (menu, L"Get shimmer (apq3)", 0, cb_getShimmer_apq3);
+	EditorMenu_addCommand (menu, L"Get shimmer (apq5)", 0, cb_getShimmer_apq5);
+	EditorMenu_addCommand (menu, L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
+	EditorMenu_addCommand (menu, L"Get shimmer (dda)", 0, cb_getShimmer_dda);
 	*/
 }
 

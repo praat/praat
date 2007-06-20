@@ -42,7 +42,7 @@
 
 #include "DTW_def.h"
 #define DTW_methods Matrix_methods
-oo_CLASS_CREATE (DTW, Matrix)
+oo_CLASS_CREATE (DTW, Matrix);
 
 #define DTW_SAKOECHIBA 1
 #define DTW_SLOPES 2

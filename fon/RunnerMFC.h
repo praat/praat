@@ -32,7 +32,7 @@
 
 typedef struct structRunnerMFC *RunnerMFC;
 
-RunnerMFC RunnerMFC_create (Widget parent, const char *title, Ordered experiments);
+RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experiments);
 
 /* End of file RunnerMFC.h */
 #endif

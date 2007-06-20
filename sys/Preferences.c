@@ -37,7 +37,7 @@
 	int type; \
 	void *value;
 #define Resource_methods Data_methods
-class_create (Resource, Data)
+class_create (Resource, Data);
 
 /* Warning: copy methods etc. not implemented. */
 

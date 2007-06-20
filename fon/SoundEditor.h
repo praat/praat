@@ -2,7 +2,7 @@
 #define _SoundEditor_h_
 /* SoundEditor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _FunctionEditor_h_
@@ -32,7 +32,7 @@
 
 typedef struct structSoundEditor *SoundEditor;
 
-SoundEditor SoundEditor_create (Widget parent, const char *title, Any data);
+SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data);
 
 void SoundEditor_prefs (void);
 

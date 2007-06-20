@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2006 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2005/05/07 embedded scripts (for pictures)
  * pb 2005/07/19 moved "<1" and "1>" buttons to the top, removed horizontal scroll bar and page number
  * pb 2006/10/20 embedded scripts allow links
+ * pb 2007/06/10 wchar_t
  */
 
 #include <ctype.h>
@@ -412,7 +413,7 @@ if (! my printing) {
 
 int HyperPage_script (I, double width_inches, double height_inches, const char *script) {
 	iam (HyperPage);
-	char *text = Melder_strdup (script);
+	wchar_t *text = Melder_asciiToWcs (script);
 	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	int font = my font, size = my fontSize;
@@ -809,31 +810,31 @@ static void createMenus (I) {
 	iam (HyperPage);
 	inherited (HyperPage) createMenus (me);
 
-	Editor_addCommand (me, "File", "PostScript settings...", 0, cb_postScriptSettings);
+	Editor_addCommand (me, L"File", L"PostScript settings...", 0, cb_postScriptSettings);
 	#ifdef macintosh
-		Editor_addCommand (me, "File", "Page setup...", 0, cb_pageSetup);
+		Editor_addCommand (me, L"File", L"Page setup...", 0, cb_pageSetup);
 	#endif
-	Editor_addCommand (me, "File", "Print page...", 'P', cb_print);
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
+	Editor_addCommand (me, L"File", L"Print page...", 'P', cb_print);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
 	if (our hasHistory) {
-		Editor_addMenu (me, "Go to", 0);
-		Editor_addCommand (me, "Go to", "Search for page...", 0, cb_searchForPage);
-		Editor_addCommand (me, "Go to", "Back", motif_OPTION | motif_LEFT_ARROW, cb_back);
-		Editor_addCommand (me, "Go to", "Forward", motif_OPTION | motif_RIGHT_ARROW, cb_forth);
-		Editor_addCommand (me, "Go to", "-- page --", 0, NULL);
-		Editor_addCommand (me, "Go to", "Page up", motif_PAGE_UP, cb_pageUp);
-		Editor_addCommand (me, "Go to", "Page down", motif_PAGE_DOWN, cb_pageDown);
+		Editor_addMenu (me, L"Go to", 0);
+		Editor_addCommand (me, L"Go to", L"Search for page...", 0, cb_searchForPage);
+		Editor_addCommand (me, L"Go to", L"Back", motif_OPTION | motif_LEFT_ARROW, cb_back);
+		Editor_addCommand (me, L"Go to", L"Forward", motif_OPTION | motif_RIGHT_ARROW, cb_forth);
+		Editor_addCommand (me, L"Go to", L"-- page --", 0, NULL);
+		Editor_addCommand (me, L"Go to", L"Page up", motif_PAGE_UP, cb_pageUp);
+		Editor_addCommand (me, L"Go to", L"Page down", motif_PAGE_DOWN, cb_pageDown);
 	}
 
-	Editor_addMenu (me, "Font", 0);
-	my fontSizeButton_10 = Editor_addCommand (me, "Font", "10", motif_CHECKABLE, cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, "Font", "12", motif_CHECKABLE, cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, "Font", "14", motif_CHECKABLE, cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, "Font", "18", motif_CHECKABLE, cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, "Font", "24", motif_CHECKABLE, cb_24);
-	Editor_addCommand (me, "Font", "Font size...", 0, cb_fontSize);
-	Editor_addCommand (me, "Font", "Font...", 0, cb_font);
+	Editor_addMenu (me, L"Font", 0);
+	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", motif_CHECKABLE, cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", motif_CHECKABLE, cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", motif_CHECKABLE, cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", motif_CHECKABLE, cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", motif_CHECKABLE, cb_24);
+	Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
+	Editor_addCommand (me, L"Font", L"Font...", 0, cb_font);
 }
 
 /********** **********/
@@ -905,7 +906,7 @@ static void createChildren (I) {
 	XtManageChild (my drawingArea);
 }
 
-int HyperPage_init (I, Widget parent, const char *title, Any data) {
+int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (HyperPage);
 	#if defined (UNIX)
 		Display *display = XtDisplay (parent);

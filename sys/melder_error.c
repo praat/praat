@@ -21,8 +21,9 @@
  * pb 2002/03/07 GPL
  * pb 2003/10/02 Melder_flushError: empty "errors" before showing the message
  * pb 2006/11/14 separated from melder.c
- * pb 2006/12/08 turned wchar
+ * pb 2006/12/08 turned wchar_t
  * pb 2007/05/28 Melder_error1-9
+ * pb 2007/06/14 more wchar_t
  */
 
 #include "melder.h"
@@ -32,14 +33,11 @@
 
 static void defaultError (wchar_t *message) {
 	#if CONSOLE_SUPPORTS_WCHAR
-		fwprintf (stderr, wcsstr (message, L"You interrupted") ? L"User interrupt: %s\n" : L"Error: %s\n", message);
+		fwprintf (stderr, wcsstr (message, L"You interrupted") ? L"User interrupt: %ls\n" : L"Error: %ls\n", message);
 	#else
-		static char messageA [12000+1];   /* Safe in low-memory situations. */
-		int messageLength = wcslen (message);
-		for (int i = 0; i <= messageLength; i ++) {
-			messageA [i] = message [i];   // BUG: should convert to UTF8
-		}
-		fprintf (stderr, strstr (messageA, "You interrupted") ? "User interrupt: %s\n" : "Error: %s\n", messageA);
+		fprintf (stderr, wcsstr (message, L"You interrupted") ? "User interrupt: " : "Error: ");
+		Melder_fwriteWcsAsUtf8 (message, wcslen (message), stderr);
+		fprintf (stderr, "\n");
 	#endif
 }
 

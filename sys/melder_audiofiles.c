@@ -613,7 +613,7 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
-	if (! FLAC__metadata_get_streaminfo (file -> path, & metadata))
+	if (! FLAC__metadata_get_streaminfo (Melder_fileToPath (file), & metadata))   // BUG: not Unicode-compatible on Windows.
 		return Melder_error ("Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;
@@ -761,7 +761,7 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], unsigned count, void *context) {
+static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long count, void *context) {
 	MelderDecodeMp3Context *c = (MelderDecodeMp3Context *) context;
 	const MP3F_SAMPLE *input;
 	float *output;

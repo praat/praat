@@ -34,10 +34,10 @@
 #include "AnyTier_def.h"
 
 #define AnyPoint_methods Data_methods
-oo_CLASS_CREATE (AnyPoint, Data)
+oo_CLASS_CREATE (AnyPoint, Data);
 
 #define AnyTier_methods Function_methods
-oo_CLASS_CREATE (AnyTier, Function)
+oo_CLASS_CREATE (AnyTier, Function);
 
 long AnyTier_timeToLowIndex (I, double time);
 long AnyTier_timeToHighIndex (I, double time);

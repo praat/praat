@@ -45,20 +45,20 @@
 #include "TextGrid_def.h"
 
 #define TextPoint_methods AnyPoint_methods
-oo_CLASS_CREATE (TextPoint, AnyPoint)
+oo_CLASS_CREATE (TextPoint, AnyPoint);
 TextPoint TextPoint_create (double time, const char *mark);
 
 int TextPoint_setText (TextPoint me, const char *text);
 
 #define TextInterval_methods Function_methods
-oo_CLASS_CREATE (TextInterval, Function)
+oo_CLASS_CREATE (TextInterval, Function);
 TextInterval TextInterval_create (double tmin, double tmax, const char *text);
 
 long TextGrid_countLabels (TextGrid me, long itier, const char *text);
 int TextInterval_setText (TextInterval me, const char *text);
 
 #define TextTier_methods Function_methods
-oo_CLASS_CREATE (TextTier, Function)
+oo_CLASS_CREATE (TextTier, Function);
 TextTier TextTier_create (double tmin, double tmax);
 
 int TextTier_addPoint (TextTier me, double time, const char *mark);
@@ -66,7 +66,7 @@ TextTier TextTier_readFromXwaves (MelderFile file);
 PointProcess TextTier_getPoints (TextTier me, const char *text);
 
 #define IntervalTier_methods Function_methods
-oo_CLASS_CREATE (IntervalTier, Function)
+oo_CLASS_CREATE (IntervalTier, Function);
 IntervalTier IntervalTier_create (double tmin, double tmax);
 IntervalTier IntervalTier_readFromXwaves (MelderFile file);
 int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
@@ -86,7 +86,7 @@ int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
 void TextTier_removePoint (TextTier me, long ipoint);
 
 #define TextGrid_methods Function_methods
-oo_CLASS_CREATE (TextGrid, Function)
+oo_CLASS_CREATE (TextGrid, Function);
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const char *pointTiers);
 

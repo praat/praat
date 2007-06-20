@@ -32,7 +32,7 @@
 
 #define Distance_members Proximity_members
 #define Distance_methods Proximity_methods
-class_create (Distance, Proximity)
+class_create (Distance, Proximity);
 
 Distance Distance_create (long numberOfPoints);
 

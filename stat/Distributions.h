@@ -30,7 +30,7 @@
 
 #define Distributions_members TableOfReal_members
 #define Distributions_methods TableOfReal_methods
-class_create (Distributions, TableOfReal)
+class_create (Distributions, TableOfReal);
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns);
 

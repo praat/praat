@@ -1,6 +1,6 @@
 /* Thing.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/05/08 added date to info
  * pb 2004/10/16 structThing -> theStructThing etc.
  * pb 2006/12/10 info method can contain only MelderInfo_writeXXX
+ * pb 2007/06/11 wchar_t
  */
 
 #include <stdarg.h>
@@ -31,7 +32,7 @@
 
 static long theTotalNumberOfThings;
 
-static void destroy (I) { iam (Thing); Melder_free (my name); }
+static void destroy (I) { iam (Thing); Melder_free (my name); Melder_free (my nameW); }
 
 static void info (I) {
 	iam (Thing);
@@ -48,7 +49,7 @@ static void nameChanged (Any thing) {
 /* Because Thing has no parent, we cannot use the macro `class_methods': */
 static void _Thing_initialize (void *table);
 struct structThing_Table theStructThing =
-	{ _Thing_initialize, "Thing", NULL, sizeof (struct structThing) };
+	{ _Thing_initialize, "Thing", L"Thing", NULL, sizeof (struct structThing) };
 Thing_Table classThing = & theStructThing;
 static void _Thing_initialize (void *table) {
 	Thing_Table us = table;
@@ -58,6 +59,7 @@ static void _Thing_initialize (void *table) {
 }
 
 char * Thing_className (I) { iam (Thing); return our _className; }
+wchar_t * Thing_classNameW (I) { iam (Thing); return our _classNameW; }
 
 Any Thing_new (void *table) {
 	Thing_Table us = table;
@@ -66,6 +68,7 @@ Any Thing_new (void *table) {
 	theTotalNumberOfThings += 1;
 	my methods = us;
 	my name = NULL;
+	my nameW = NULL;
 	if (! us -> destroy)   /* Table not initialized? */
 		us -> _initialize (us);
 	return me;
@@ -134,9 +137,17 @@ void *Thing_classFromClassName (const char *klas) {
 
 	return Melder_errorp ("(Thing_classFromClassName:) Class \"%s\" not recognized.", buffer);
 }
+void *Thing_classFromClassNameW (const wchar_t *klas) {
+	return Thing_classFromClassName (Melder_peekWcsToAscii (klas));
+}
 
 Any Thing_newFromClassName (const char *className) {
 	void *table = Thing_classFromClassName (className);
+	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
+	return Thing_new (table);
+}
+Any Thing_newFromClassNameW (const wchar_t *className) {
+	void *table = Thing_classFromClassNameW (className);
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
 	return Thing_new (table);
 }
@@ -183,12 +194,23 @@ void Thing_info (I) {
 }
 
 char * Thing_getName (I) { iam (Thing); return my name; }
+wchar_t * Thing_getNameW (I) { iam (Thing); return my nameW; }
 
 void Thing_setName (I, const char *name) {
 	iam (Thing);
 	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
 		Melder_free (my name);
 		my name = Melder_strdup (name);
+		my nameW = Melder_asciiToWcs (name);
+	}
+	our nameChanged (me);
+}
+void Thing_setNameW (I, const wchar_t *name) {
+	iam (Thing);
+	if (name != my nameW) {   /* Pointer comparison! So that Thing_setNameW (me, my nameW) does not fail. */
+		Melder_free (my nameW);
+		my nameW = Melder_wcsdup (name);
+		my name = Melder_wcsToAscii (name);
 	}
 	our nameChanged (me);
 }

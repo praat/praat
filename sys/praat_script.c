@@ -29,6 +29,7 @@
  * pb 2006/01/11 local variables
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/02/17 corrected the messages about trailing spaces
+ * pb 2007/06/11 wchar_t
  */
 
 #include <ctype.h>
@@ -37,15 +38,15 @@
 #include "sendpraat.h"
 #include "sendsocket.h"
 
-static int praat_findObjectFromString (Interpreter interpreter, const char *string) {
+static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *string) {
 	int IOBJECT;
 	while (*string == ' ') string ++;
 	if (*string >= 'A' && *string <= 'Z') {
-		char className [30], givenName [200];
-		if (sscanf (string, "%s %s", className, givenName) < 2) goto end;
+		wchar_t className [30], givenName [200];
+		if (swscanf (string, L"%ls %ls", className, givenName) < 2) goto end;
 		WHERE_DOWN (1) {
 			Data object = OBJECT;
-			if (strequ (className, Thing_className (OBJECT)) && strequ (givenName, object -> name))
+			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, Melder_peekAsciiToWcs (object -> name)))
 				return IOBJECT;
 		}
 	} else {
@@ -57,10 +58,10 @@ static int praat_findObjectFromString (Interpreter interpreter, const char *stri
 		goto end;
 	}
 end:
-	return Melder_error ("Object \"%s\" does not exist.", string);
+	return Melder_error3 (L"Object \"", string, L"\" does not exist.");
 }
 
-int praat_executeCommand (Interpreter interpreter, const char *command) {
+int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 	if (command [0] == '\0' || command [0] == '#' || command [0] == '!' || command [0] == ';')
 		/* Skip empty lines and comments. */;
 	else if ((command [0] == '.' || command [0] == '+' || command [0] == '-') && isupper (command [1])) {   /* Selection? */
@@ -70,8 +71,8 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		if (command [0] == '-') praat_deselect (IOBJECT); else praat_select (IOBJECT); 
 		praat_show ();
 	} else if (islower (command [0])) {   /* All directives start with a lower-case letter. */
-		if (strnequ (command, "select ", 7)) {
-			if (strnequ (command + 7, "all", 3)) {
+		if (wcsnequ (command, L"select ", 7)) {
+			if (wcsnequ (command + 7, L"all", 3)) {
 				praat_selectAll ();
 				praat_show ();
 			} else {
@@ -81,133 +82,134 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 				praat_select (IOBJECT);
 				praat_show ();
 			}
-		} else if (strnequ (command, "plus ", 5)) {
+		} else if (wcsnequ (command, L"plus ", 5)) {
 			int IOBJECT = praat_findObjectFromString (interpreter, command + 5);
 			if (! IOBJECT) return 0;
 			praat_select (IOBJECT);
 			praat_show ();
-		} else if (strnequ (command, "minus ", 6)) {
+		} else if (wcsnequ (command, L"minus ", 6)) {
 			int IOBJECT = praat_findObjectFromString (interpreter, command + 6);
 			if (! IOBJECT) return 0;
 			praat_deselect (IOBJECT);
 			praat_show ();
-		} else if (strnequ (command, "echo ", 5)) {
+		} else if (wcsnequ (command, L"echo ", 5)) {
 			MelderInfo_open ();
-			MelderInfo_write1 (command + 5);
+			MelderInfo_write1W (command + 5);
 			MelderInfo_close ();
-		} else if (strnequ (command, "clearinfo", 9)) {
+		} else if (wcsnequ (command, L"clearinfo", 9)) {
 			Melder_clearInfo ();
-		} else if (strnequ (command, "print ", 6)) {
+		} else if (wcsnequ (command, L"print ", 6)) {
 			Melder_print (command + 6);
-		} else if (strnequ (command, "printtab", 8)) {
-			Melder_print ("\t");
-		} else if (strnequ (command, "printline", 9)) {
+		} else if (wcsnequ (command, L"printtab", 8)) {
+			Melder_print (L"\t");
+		} else if (wcsnequ (command, L"printline", 9)) {
 			if (command [9] == ' ') Melder_print (command + 10);
-			Melder_print ("\n");
-		} else if (strnequ (command, "fappendinfo ", 12)) {
+			Melder_print (L"\n");
+		} else if (wcsnequ (command, L"fappendinfo ", 12)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"fappendinfo\" is not available inside pictures.");
+				return Melder_error1 (L"The script command \"fappendinfo\" is not available inside pictures.");
 			FILE *f;
 			structMelderFile file = { { 0 } };
-			if (! Melder_relativePathToFile (command + 12, & file)) return 0;
+			if (! Melder_relativePathToFileW (command + 12, & file)) return 0;
 			f = Melder_fopen (& file, "a");
 			if (! f) return 0;
 			static MelderStringA bufferA = { 0 };
 			MelderStringA_copyW (& bufferA, Melder_getInfo ());
 			fprintf (f, "%s", bufferA.string);
 			fclose (f);
-		} else if (strnequ (command, "unix ", 5)) {
+		} else if (wcsnequ (command, L"unix ", 5)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"unix\" is not available inside pictures.");
-			if (! Melder_system (command + 5))
-				return Melder_error ("Unix command \"%s\" returned error status;\n"
-					"if you want to ignore this, use `unix_nocheck' instead of `unix'.", command + 5);
-		} else if (strnequ (command, "unix_nocheck ", 13)) {
+				return Melder_error1 (L"The script command \"unix\" is not available inside pictures.");
+			if (! Melder_system (Melder_peekWcsToAscii (command + 5)))
+				return Melder_error3 (L"Unix command \"", command + 5, L"\" returned error status;\n"
+					"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
+		} else if (wcsnequ (command, L"unix_nocheck ", 13)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"unix_nocheck\" is not available inside pictures.");
-			(void) Melder_system (command + 13); Melder_clearError ();
-		} else if (strnequ (command, "system ", 7)) {
+				return Melder_error1 (L"The script command \"unix_nocheck\" is not available inside pictures.");
+			(void) Melder_system (Melder_peekWcsToAscii (command + 13)); Melder_clearError ();
+		} else if (wcsnequ (command, L"system ", 7)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"system\" is not available inside pictures.");
-			if (! Melder_system (command + 7))
-				return Melder_error ("System command \"%s\" returned error status;\n"
-					"if you want to ignore this, use `system_nocheck' instead of `system'.", command + 7);
-		} else if (strnequ (command, "system_nocheck ", 15)) {
+				return Melder_error1 (L"The script command \"system\" is not available inside pictures.");
+			if (! Melder_system (Melder_peekWcsToAscii (command + 7)))
+				return Melder_error3 (L"System command \"", command + 7, L"\" returned error status;\n"
+					"if you want to ignore this, use `system_nocheck' instead of `system'.");
+		} else if (wcsnequ (command, L"system_nocheck ", 15)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"system_nocheck\" is not available inside pictures.");
-			(void) Melder_system (command + 15); Melder_clearError ();
-		} else if (strnequ (command, "nowarn ", 7)) {
+				return Melder_error1 (L"The script command \"system_nocheck\" is not available inside pictures.");
+			(void) Melder_system (Melder_peekWcsToAscii (command + 15)); Melder_clearError ();
+		} else if (wcsnequ (command, L"nowarn ", 7)) {
 			int result;
 			Melder_warningOff ();
 			result = praat_executeCommand (interpreter, command + 7);
 			Melder_warningOn ();
 			return result;
-		} else if (strnequ (command, "noprogress ", 11)) {
+		} else if (wcsnequ (command, L"noprogress ", 11)) {
 			int result;
 			Melder_progressOff ();
 			result = praat_executeCommand (interpreter, command + 11);
 			Melder_progressOn ();
 			return result;
-		} else if (strnequ (command, "nocheck ", 8)) {
+		} else if (wcsnequ (command, L"nocheck ", 8)) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
-		} else if (strnequ (command, "pause", 5)) {
+		} else if (wcsnequ (command, L"pause", 5)) {
 			int wasBackgrounding = Melder_backgrounding;
 			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);
 			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
 			if (wasBackgrounding) praat_foreground ();
-			if (! Melder_pause (command + 5)) return Melder_error ("You interrupted the script.");
+			if (! Melder_pause (Melder_peekWcsToAscii (command + 5))) return Melder_error1 (L"You interrupted the script.");
 			if (wasBackgrounding) praat_background ();
 			Melder_setDefaultDir (& dir);
 			/* BUG: should also restore praatP. editor. */
-		} else if (strnequ (command, "execute ", 8)) {
+		} else if (wcsnequ (command, L"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
-		} else if (strnequ (command, "editor", 6)) {
+		} else if (wcsnequ (command, L"editor", 6)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"editor\" is not available inside pictures.");
+				return Melder_error1 (L"The script command \"editor\" is not available inside pictures.");
 			if (command [6] == ' ' && isalpha (command [7])) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 				if (praatP. editor == NULL)
-					return Melder_error ("Editor \"%s\" does not exist.", command + 7);
+					return Melder_error3 (L"Editor \"", command + 7, L"\" does not exist.");
 			} else if (interpreter && interpreter -> editorClass) {
 				praatP. editor = praat_findEditorFromString (interpreter -> environmentName);
 				if (praatP. editor == NULL)
-					return Melder_error ("Editor \"%s\" does not exist.", interpreter -> environmentName);
+					return Melder_error3 (L"Editor \"", interpreter -> environmentName, L"\" does not exist.");
 			} else {
-				return Melder_error ("No editor specified.");
+				return Melder_error1 (L"No editor specified.");
 			}
-		} else if (strnequ (command, "endeditor", 9)) {
+		} else if (wcsnequ (command, L"endeditor", 9)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error ("The script command \"endeditor\" is not available inside pictures.");
 			praatP. editor = NULL;
-		} else if (strnequ (command, "sendpraat ", 10)) {
+		} else if (wcsnequ (command, L"sendpraat ", 10)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"sendpraat\" is not available inside pictures.");
-			char programName [41], *q = & programName [0], *result;
+				return Melder_error1 (L"The script command \"sendpraat\" is not available inside pictures.");
+			wchar_t programName [41], *q = & programName [0];
 			#ifdef macintosh
 				#define SENDPRAAT_TIMEOUT  10
 			#else
 				#define SENDPRAAT_TIMEOUT  0
 			#endif
-			const char *p = command + 10;
+			const wchar_t *p = command + 10;
 			while (*p == ' ' || *p == '\t') p ++;
 			while (*p != '\0' && *p != ' ' && *p != '\t' && q < programName + 39) *q ++ = *p ++;
 			*q = '\0';
 			if (q == programName)
-				return Melder_error ("Missing program name after `sendpraat'.");
+				return Melder_error1 (L"Missing program name after `sendpraat'.");
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
-				return Melder_error ("Missing command after `sendpraat'.");
-			result = sendpraat (XtDisplay (theCurrentPraat -> topShell), programName, SENDPRAAT_TIMEOUT, p);
+				return Melder_error1 (L"Missing command after `sendpraat'.");
+			char *result = sendpraat (XtDisplay (theCurrentPraat -> topShell), Melder_peekWcsToAscii (programName),
+				SENDPRAAT_TIMEOUT, Melder_peekWcsToAscii (p));
 			if (result)
-				return Melder_error ("%s\nMessage to %s not completed.", result, programName);
-		} else if (strnequ (command, "sendsocket ", 11)) {
+				return Melder_error4 (Melder_peekAsciiToWcs (result), L"\nMessage to ", programName, L" not completed.");
+		} else if (wcsnequ (command, L"sendsocket ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"sendsocket\" is not available inside pictures.");
-			char hostName [61], *q = & hostName [0], *result;
-			const char *p = command + 11;
+				return Melder_error1 (L"The script command \"sendsocket\" is not available inside pictures.");
+			wchar_t hostName [61], *q = & hostName [0];
+			const wchar_t *p = command + 11;
 			while (*p == ' ' || *p == '\t') p ++;
 			while (*p != '\0' && *p != ' ' && *p != '\t' && q < hostName + 59) *q ++ = *p ++;
 			*q = '\0';
@@ -216,27 +218,27 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error ("Missing command after `sendsocket'.");
-			result = sendsocket (hostName, p);
+			char *result = sendsocket (Melder_peekWcsToAscii (hostName), Melder_peekWcsToAscii (p));
 			if (result)
-				return Melder_error ("%s\nMessage to %s not completed.", result, hostName);
-		} else if (strnequ (command, "filedelete ", 11)) {
+				return Melder_error4 (Melder_peekAsciiToWcs (result), L"\nMessage to ", hostName, L" not completed.");
+		} else if (wcsnequ (command, L"filedelete ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"filedelete\" is not available inside pictures.");
-			const char *p = command + 11;
+				return Melder_error1 (L"The script command \"filedelete\" is not available inside pictures.");
+			const wchar_t *p = command + 11;
 			structMelderFile file = { { 0 } };
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
-				return Melder_error ("Missing file name after `filedelete'.");
-			if (! Melder_relativePathToFile (p, & file)) return 0;
+				return Melder_error1 (L"Missing file name after `filedelete'.");
+			if (! Melder_relativePathToFileW (p, & file)) return 0;
 			MelderFile_delete (& file);
-		} else if (strnequ (command, "fileappend ", 11)) {
+		} else if (wcsnequ (command, L"fileappend ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"fileappend\" is not available inside pictures.");
-			const char *p = command + 11;
-			char path [256], *q = & path [0];
+				return Melder_error1 (L"The script command \"fileappend\" is not available inside pictures.");
+			const wchar_t *p = command + 11;
+			wchar_t path [256], *q = & path [0];
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
-				return Melder_error ("Missing file name after `fileappend'.");
+				return Melder_error1 (L"Missing file name after `fileappend'.");
 			if (*p == '\"') {
 				for (;;) {
 					int kar = * ++ p;
@@ -255,44 +257,44 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			*q = '\0';
 			if (*p == ' ' || *p == '\t') {
 				structMelderFile file = { { 0 } };
-				if (! Melder_relativePathToFile (path, & file)) return 0;
-				if (! MelderFile_appendText (& file, p + 1)) return 0;
+				if (! Melder_relativePathToFileW (path, & file)) return 0;
+				if (! MelderFile_appendTextW (& file, p + 1)) return 0;
 			}
 		} else {
-			if (strnequ (command, "getinfostring ", 14))
+			if (wcsnequ (command, L"getinfostring ", 14))
 				return Melder_error ("Command \"getinfostring\" no longer supported. Consult scripting tutorial or the author.");
-			if (strnequ (command, "getinfonumber ", 14))
+			if (wcsnequ (command, L"getinfonumber ", 14))
 				return Melder_error ("Command \"getinfonumber\" no longer supported. Consult scripting tutorial or the author.");
-			if (strnequ (command, "getnameofselected ", 18))
+			if (wcsnequ (command, L"getnameofselected ", 18))
 				return Melder_error ("Command \"getnameofselected\" no longer supported. Instead use things like: name$ = selected$ (\"Sound\")");
-			if (strnequ (command, "getidofselected ", 16))
+			if (wcsnequ (command, L"getidofselected ", 16))
 				return Melder_error ("Command \"getidofselected\" no longer supported. Instead use things like: id = selected (\"Sound\")");
-			if (strnequ (command, "getnumberofselected ", 20))
+			if (wcsnequ (command, L"getnumberofselected ", 20))
 				return Melder_error ("Command \"getnumberofselected\" no longer supported. Instead use things like: n = numberOfSelected (\"Sound\")");
-			if (strnequ (command, "getnumber ", 10))
+			if (wcsnequ (command, L"getnumber ", 10))
 				return Melder_error ("Command \"getnumber\" no longer supported. Instead use things like: \"variable = Menu command\".");
-			if (strnequ (command, "getstring ", 10))
+			if (wcsnequ (command, L"getstring ", 10))
 				return Melder_error ("Command \"getstring\" no longer supported. Instead use things like: \"variable$ = Menu command\".");
-			if (strnequ (command, "let ", 4))
+			if (wcsnequ (command, L"let ", 4))
 				return Melder_error ("Command \"let\" no longer supported. Instead use things like: \"variable = numeric-formula\" or \"variable$ = string-formula\".");
-			if (strnequ (command, "proc ", 5))
+			if (wcsnequ (command, L"proc ", 5))
 				return Melder_error ("Command \"proc\" no longer supported. Instead use \"procedure\", and distinguish between numeric variables and string variables.");
-			if (strnequ (command, "copy ", 5))
+			if (wcsnequ (command, L"copy ", 5))
 				return Melder_error ("Command \"copy x y\" no longer supported. Instead use normal assignments, i.e. y = x.");
-			return Melder_error ("Unknown command: %s", command);
+			return Melder_error2 (L"Unknown command: ", command);
 		}
 	} else {   /* Simulate menu choice. */
-		char *arguments;
+		wchar_t *arguments;
 
  		/* Parse command line into command and arguments. */
 		/* The separation is formed by the three dots. */
 
-		if ((arguments = strstr (command, "...")) == NULL || strlen (arguments) < 4) {
-			arguments = "";
+		if ((arguments = wcsstr (command, L"...")) == NULL || wcslen (arguments) < 4) {
+			arguments = L"";
 		} else {
 			arguments += 4;
 			if (arguments [-1] != ' ' && arguments [-1] != '0') {
-				return Melder_error ("There should be a space after the three dots.");
+				return Melder_error1 (L"There should be a space after the three dots.");
 			}
 			arguments [-1] = '\0'; /* New end of "command". */
 		}
@@ -307,36 +309,36 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 				return 0;
 			}
 		} else if (theCurrentPraat != & theForegroundPraat &&
-		    (strnequ (command, "Write ", 6) ||
-			 strnequ (command, "Append ", 7) ||
-			 strequ (command, "Quit")))
+		    (wcsnequ (command, L"Write ", 6) ||
+			 wcsnequ (command, L"Append ", 7) ||
+			 wcsequ (command, L"Quit")))
 		{
 			return Melder_error ("Commands that write files (including Quit) are not available inside pictures.");
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {
 				UiInterpreter_set (NULL);
-				if (arguments [0] != '\0' && arguments [strlen (arguments) - 1] == ' ') {
-					return Melder_error ("It may be helpful to remove the trailing spaces in \"%s\".", arguments);
+				if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
+					return Melder_error3 (L"It may be helpful to remove the trailing spaces in \"", arguments, L"\".");
 				}
 				return 0;
 			}
 			if (! praat_doMenuCommand (command, arguments)) {
 				UiInterpreter_set (NULL);
 				if (Melder_hasError ()) {
-					if (arguments [0] != '\0' && arguments [strlen (arguments) - 1] == ' ') {
-						return Melder_error ("It may be helpful to remove the trailing spaces in \"%s\".", arguments);
+					if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
+						return Melder_error3 (L"It may be helpful to remove the trailing spaces in \"", arguments, L"\".");
 					}
 					return 0;
-				} else if (strnequ (command, "ARGS ", 5)) {
-					return Melder_error ("Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
-				} else if (strchr (command, '=')) {
-					return Melder_error ("Command \"%s\" not recognized.\n"
-						"Probable cause: you are trying to use a variable name that starts with a capital.", command);
-				} else if (command [0] != '\0' && command [strlen (command) - 1] == ' ') {
-					return Melder_error ("Command \"%s\" not available for current selection. "
-						"It may be helpful to remove the trailing spaces.", command);
+				} else if (wcsnequ (command, L"ARGS ", 5)) {
+					return Melder_error1 (L"Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
+				} else if (wcschr (command, '=')) {
+					return Melder_error3 (L"Command \"", command, L"\" not recognized.\n"
+						"Probable cause: you are trying to use a variable name that starts with a capital.");
+				} else if (command [0] != '\0' && command [wcslen (command) - 1] == ' ') {
+					return Melder_error3 (L"Command \"", command, L"\" not available for current selection. "
+						"It may be helpful to remove the trailing spaces.");
 				} else {
-					return Melder_error ("Command \"%s\" not available for current selection.", command);
+					return Melder_error3 (L"Command \"", command, L"\" not available for current selection.");
 				}
 			}
 		}
@@ -354,21 +356,23 @@ int praat_executeCommandFromStandardInput (const char *programName) {
 		if (! fgets (command, 999, stdin)) return 0;
 		newLine = strchr (command, '\n');
 		if (newLine) *newLine = '\0';
-		if (! praat_executeCommand (NULL, command))
+		wchar_t *commandW = Melder_asciiToWcs (command);
+		if (! praat_executeCommand (NULL, commandW))
 			Melder_flushError ("%s: command \"%s\" not executed.", programName, command);
+		Melder_free (commandW);
 	}
 	return 1;
 }
 
-int praat_executeScriptFromFile (MelderFile file, const char *arguments) {
-	char *text = NULL;
+int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
+	wchar_t *text = NULL;
 	Interpreter interpreter = NULL;
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);   /* Before the first cherror! */
 
-	text = MelderFile_readText (file); cherror
+	text = MelderFile_readTextW (file); cherror
 	MelderFile_setDefaultDir (file);   /* So that relative file names can be used inside the script. */
-	Melder_includeIncludeFiles (& text, 1); cherror
+	Melder_includeIncludeFiles (& text); cherror
 	interpreter = Interpreter_createFromEnvironment (praatP.editor); cherror
 	if (arguments) {
 		Interpreter_readParameters (interpreter, text); cherror
@@ -379,13 +383,13 @@ end:
 	Melder_setDefaultDir (& saveDir);
 	Melder_free (text);
 	forget (interpreter);
-	iferror return Melder_error ("Script \"%s\" not completed.", MelderFile_messageName (file));
+	iferror return Melder_error3 (L"Script \"", MelderFile_messageNameW (file), L"\" not completed.");
 	return 1;
 }
 
-int praat_executeScriptFromFileNameWithArguments (const char *nameAndArguments) {
-	char path [256];
-	const char *p, *arguments;
+int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments) {
+	wchar_t path [256];
+	const wchar_t *p, *arguments;
 	structMelderFile file = { { 0 } };
 	/*
 	 * Split into file name and arguments.
@@ -393,20 +397,22 @@ int praat_executeScriptFromFileNameWithArguments (const char *nameAndArguments) 
 	p = nameAndArguments;
 	while (*p == ' ' || *p == '\t') p ++;
 	if (*p == '\"') {
-		char *q = path;
+		wchar_t *q = path;
 		p ++;
 		while (*p != '\"' && *p != '\0') * q ++ = * p ++;
 		*q = '\0';
 		arguments = p; if (*p) arguments ++;
 	} else {
-		sscanf (p, "%s", path);
-		arguments = p + strlen (path);
+		wcscpy (path, p);
+		wchar_t *space = wcschr (path, ' ');
+		if (space) *space = '\0';
+		arguments = p + wcslen (path);
 	}
-	if (! Melder_relativePathToFile (path, & file)) return 0;
+	if (! Melder_relativePathToFileW (path, & file)) return 0;
 	return praat_executeScriptFromFile (& file, arguments);
 }
 
-int praat_executeScriptFromText (char *text) {
+int praat_executeScriptFromText (wchar_t *text) {
 	Interpreter interpreter = Interpreter_create (NULL, NULL);
 	Interpreter_run (interpreter, text);
 	forget (interpreter);
@@ -417,14 +423,14 @@ int praat_executeScriptFromText (char *text) {
 int praat_executeScriptFromDialog (Any dia) {
 	Interpreter interpreter = NULL;
 	structMelderFile file = { { 0 } };
-	char *text = NULL, *path = UiForm_getString (dia, "$file");
+	wchar_t *text = NULL, *path = UiForm_getString (dia, L"$file");
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
-	Melder_pathToFile (path, & file); cherror
-	text = MelderFile_readText (& file); cherror
+	Melder_pathToFileW (path, & file); cherror
+	text = MelderFile_readTextW (& file); cherror
 	MelderFile_setDefaultDir (& file);
-	Melder_includeIncludeFiles (& text, 1); cherror
+	Melder_includeIncludeFiles (& text); cherror
 	interpreter = Interpreter_createFromEnvironment (praatP.editor); cherror
 	Interpreter_readParameters (interpreter, text); cherror
 	Interpreter_getArgumentsFromDialog (interpreter, dia); cherror
@@ -445,18 +451,18 @@ static int secondPassThroughScript (Any dia, void *dummy) {
 }
 
 static int firstPassThroughScript (MelderFile file) {
-	char *text = NULL;
+	wchar_t *text = NULL;
 	Interpreter interpreter = NULL;
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
-	text = MelderFile_readText (file); cherror
+	text = MelderFile_readTextW (file); cherror
 	MelderFile_setDefaultDir (file);
-	Melder_includeIncludeFiles (& text, 1); cherror
+	Melder_includeIncludeFiles (& text); cherror
 	Melder_setDefaultDir (& saveDir);
 	interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	if (Interpreter_readParameters (interpreter, text) > 0) {
-		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPath (file), secondPassThroughScript, NULL);
+		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPathW (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
 		UiForm_do (form, 0);
 	} else {
@@ -489,7 +495,7 @@ int DO_praat_runScript (Any sender, void *dummy) {
 		 */
 		static Any file_dialog;
 		if (! file_dialog)
-			file_dialog = UiInfile_create (theCurrentPraat -> topShell, "Praat: run script", fileSelectorOkCallback, NULL, 0);
+			file_dialog = UiInfile_create (theCurrentPraat -> topShell, L"Praat: run script", fileSelectorOkCallback, NULL, 0);
 		UiInfile_do (file_dialog);
 	} else {
 		/*
@@ -503,11 +509,11 @@ int DO_praat_runScript (Any sender, void *dummy) {
 int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
 	structMelderFile file = { { 0 } };
 	(void) dummy;
-	if (! Melder_relativePathToFile ((char *) scriptPath, & file)) return 0;
+	if (! Melder_relativePathToFileW ((wchar_t *) scriptPath, & file)) return 0;
 	return firstPassThroughScript (& file);
 }
 
-int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const char *script) {
+int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar_t *script) {
 	praatP.editor = editor;
 	DO_RunTheScriptFromAnyAddedMenuCommand ((Any) script, NULL);
 	/*praatP.editor = NULL;*/

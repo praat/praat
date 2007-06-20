@@ -32,7 +32,7 @@
 
 #define Spectrogram_members  Matrix_members
 #define Spectrogram_methods  Matrix_methods
-class_create (Spectrogram, Matrix)
+class_create (Spectrogram, Matrix);
 
 /* Attributes:
 	xmin			// Start time (seconds).

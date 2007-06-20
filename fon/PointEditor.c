@@ -24,6 +24,7 @@
  * pb 2004/04/16 added a fixed maximum period factor of 1.3
  * pb 2004/04/21 less flashing
  * pb 2007/01/28 made compatible with stereo sounds (by converting them to mono)
+ * pb 2007/06/10 wchar_t
  */
 
 #include "PointEditor.h"
@@ -35,10 +36,10 @@
 	int ownSound; \
 	Widget addPointAtDialog;
 #define PointEditor_methods FunctionEditor_methods
-class_create_opaque (PointEditor, FunctionEditor)
+class_create_opaque (PointEditor, FunctionEditor);
 
 static void updateMenus (PointEditor me) {
-	Editor_setMenuSensitive (me, "Selection", my endSelection > my startSelection);
+	Editor_setMenuSensitive (me, L"Selection", my endSelection > my startSelection);
 }
 
 /********** DESTRUCTION **********/
@@ -107,7 +108,7 @@ DIRECT (PointEditor, cb_getShimmer_dda)
 END
 
 DIRECT (PointEditor, cb_removePoints)
-	Editor_save (me, "Remove point(s)");
+	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
 		PointProcess_removePointNear (my data, my startSelection);
 	else
@@ -117,7 +118,7 @@ DIRECT (PointEditor, cb_removePoints)
 END
 
 DIRECT (PointEditor, cb_addPointAtCursor)
-	Editor_save (me, "Add point");
+	Editor_save (me, L"Add point");
 	PointProcess_addPoint (my data, 0.5 * (my startSelection + my endSelection));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -128,7 +129,7 @@ FORM (PointEditor, cb_addPointAt, "Add point", 0);
 	OK
 SET_REAL ("Position", 0.5 * (my startSelection + my endSelection));
 DO
-	Editor_save (me, "Add point");
+	Editor_save (me, L"Add point");
 	PointProcess_addPoint (my data, GET_REAL ("Position"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -140,29 +141,29 @@ static void createMenus (I) {
 	iam (PointEditor);
 	inherited (PointEditor) createMenus (me);
 
-	Editor_addCommand (me, "Query", "-- query jitter --", 0, NULL);
-	Editor_addCommand (me, "Query", "Get jitter (local)", 0, cb_getJitter_local);
-	Editor_addCommand (me, "Query", "Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
-	Editor_addCommand (me, "Query", "Get jitter (rap)", 0, cb_getJitter_rap);
-	Editor_addCommand (me, "Query", "Get jitter (ppq5)", 0, cb_getJitter_ppq5);
-	Editor_addCommand (me, "Query", "Get jitter (ddp)", 0, cb_getJitter_ddp);
+	Editor_addCommand (me, L"Query", L"-- query jitter --", 0, NULL);
+	Editor_addCommand (me, L"Query", L"Get jitter (local)", 0, cb_getJitter_local);
+	Editor_addCommand (me, L"Query", L"Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
+	Editor_addCommand (me, L"Query", L"Get jitter (rap)", 0, cb_getJitter_rap);
+	Editor_addCommand (me, L"Query", L"Get jitter (ppq5)", 0, cb_getJitter_ppq5);
+	Editor_addCommand (me, L"Query", L"Get jitter (ddp)", 0, cb_getJitter_ddp);
 	if (my sound.data) {
-		Editor_addCommand (me, "Query", "-- query shimmer --", 0, NULL);
-		Editor_addCommand (me, "Query", "Get shimmer (local)", 0, cb_getShimmer_local);
-		Editor_addCommand (me, "Query", "Get shimmer (local, dB)", 0, cb_getShimmer_local_dB);
-		Editor_addCommand (me, "Query", "Get shimmer (apq3)", 0, cb_getShimmer_apq3);
-		Editor_addCommand (me, "Query", "Get shimmer (apq5)", 0, cb_getShimmer_apq5);
-		Editor_addCommand (me, "Query", "Get shimmer (apq11)", 0, cb_getShimmer_apq11);
-		Editor_addCommand (me, "Query", "Get shimmer (dda)", 0, cb_getShimmer_dda);
+		Editor_addCommand (me, L"Query", L"-- query shimmer --", 0, NULL);
+		Editor_addCommand (me, L"Query", L"Get shimmer (local)", 0, cb_getShimmer_local);
+		Editor_addCommand (me, L"Query", L"Get shimmer (local, dB)", 0, cb_getShimmer_local_dB);
+		Editor_addCommand (me, L"Query", L"Get shimmer (apq3)", 0, cb_getShimmer_apq3);
+		Editor_addCommand (me, L"Query", L"Get shimmer (apq5)", 0, cb_getShimmer_apq5);
+		Editor_addCommand (me, L"Query", L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
+		Editor_addCommand (me, L"Query", L"Get shimmer (dda)", 0, cb_getShimmer_dda);
 	}
 
-	Editor_addMenu (me, "Point", 0);
-	Editor_addCommand (me, "Point", "Add point at cursor", 'P', cb_addPointAtCursor);
-	Editor_addCommand (me, "Point", "Add point at...", 0, cb_addPointAt);
-	Editor_addCommand (me, "Point", "-- remove point --", 0, NULL);
-	Editor_addCommand (me, "Point", "Remove point(s)", motif_OPTION + 'P', cb_removePoints);
+	Editor_addMenu (me, L"Point", 0);
+	Editor_addCommand (me, L"Point", L"Add point at cursor", 'P', cb_addPointAtCursor);
+	Editor_addCommand (me, L"Point", L"Add point at...", 0, cb_addPointAt);
+	Editor_addCommand (me, L"Point", L"-- remove point --", 0, NULL);
+	Editor_addCommand (me, L"Point", L"Remove point(s)", motif_OPTION + 'P', cb_removePoints);
 
-	Editor_addCommand (me, "Help", "PointEditor help", '?', cb_PointEditorHelp);
+	Editor_addCommand (me, L"Help", L"PointEditor help", '?', cb_PointEditorHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -210,7 +211,7 @@ class_methods (PointEditor, FunctionEditor)
 	class_method (play)
 class_methods_end
 
-PointEditor PointEditor_create (Widget parent, const char *title, PointProcess point, Sound sound) {
+PointEditor PointEditor_create (Widget parent, const wchar_t *title, PointProcess point, Sound sound) {
 	PointEditor me = new (PointEditor); cherror
 	if (sound) {
 		my sound.data = Sound_convertToMono (sound); cherror   /* Deep copy; ownership transferred. */

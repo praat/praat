@@ -38,7 +38,7 @@
 
 #define ClassificationTable_members TableOfReal_members
 #define ClassificationTable_methods TableOfReal_methods
-class_create (ClassificationTable, TableOfReal)
+class_create (ClassificationTable, TableOfReal);
 
 ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
 

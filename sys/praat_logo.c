@@ -1,6 +1,6 @@
 /* praat_logo.c
  *
- * Copyright (C) 1996-2006 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2006/12/28 theCurrentPraat
+ * pb 2007/06/10 wchar_t
  */
 
 #include "praatP.h"

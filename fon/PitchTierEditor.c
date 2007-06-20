@@ -1,6 +1,6 @@
 /* PitchTierEditor.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
+ * pb 2007/06/10 wchar_t
  */
 
 #include "PitchTierEditor.h"
@@ -27,7 +28,7 @@
 
 #define PitchTierEditor_members RealTierEditor_members
 #define PitchTierEditor_methods RealTierEditor_methods
-class_create_opaque (PitchTierEditor, RealTierEditor)
+class_create_opaque (PitchTierEditor, RealTierEditor);
 
 DIRECT (PitchTierEditor, cb_PitchTierEditorHelp) Melder_help ("PitchTierEditor"); END
 DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help ("PitchTier"); END
@@ -35,8 +36,8 @@ DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help ("PitchTier"); END
 static void createMenus (I) {
 	iam (PitchTierEditor);
 	inherited (PitchTierEditor) createMenus (me);
-	Editor_addCommand (me, "Help", "PitchTierEditor help", 0, cb_PitchTierEditorHelp);
-	Editor_addCommand (me, "Help", "PitchTier help", 0, cb_PitchTierHelp);
+	Editor_addCommand (me, L"Help", L"PitchTierEditor help", 0, cb_PitchTierEditorHelp);
+	Editor_addCommand (me, L"Help", L"PitchTier help", 0, cb_PitchTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -49,16 +50,16 @@ class_methods (PitchTierEditor, RealTierEditor)
 	class_method (createMenus)
 	class_method (play)
 	us -> zeroIsMinimum = TRUE;
-	us -> quantityText = "Frequency (Hz)", us -> quantityKey = "Frequency";
-	us -> leftTickFormat = "%5g", us -> rightTickFormat = "%5g Hz";
+	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";
+	us -> leftTickFormat = L"%5g", us -> rightTickFormat = L"%5g Hz";
 	us -> defaultYmin = 50.0, us -> defaultYmax = 600.0;
-	us -> setRangeTitle = "Set frequency range...";
-	us -> defaultYminText = "50.0", us -> defaultYmaxText = "600.0";
-	us -> yminText = "Minimum frequency (Hz)", us -> ymaxText = "Maximum frequency (Hz)";
-	us -> yminKey = "Minimum frequency", us -> ymaxKey = "Maximum frequency";
+	us -> setRangeTitle = L"Set frequency range...";
+	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"600.0";
+	us -> yminText = L"Minimum frequency (Hz)", us -> ymaxText = L"Maximum frequency (Hz)";
+	us -> yminKey = L"Minimum frequency", us -> ymaxKey = L"Maximum frequency";
 class_methods_end
 
-PitchTierEditor PitchTierEditor_create (Widget parent, const char *title, PitchTier pitch, Sound sound, int ownSound) {
+PitchTierEditor PitchTierEditor_create (Widget parent, const wchar_t *title, PitchTier pitch, Sound sound, int ownSound) {
 	PitchTierEditor me = new (PitchTierEditor);
 	if (! me || ! RealTierEditor_init (me, parent, title, (RealTier) pitch, sound, ownSound))
 		{ forget (me); return NULL; }

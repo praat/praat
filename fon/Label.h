@@ -33,7 +33,7 @@
 
 #define Autosegment_members Function_members
 #define Autosegment_methods Function_methods
-class_create (Autosegment, Function)
+class_create (Autosegment, Function);
 
 Any Autosegment_create (double tmin, double tmax, const char *label);
 /*
@@ -55,7 +55,7 @@ Any Autosegment_create (double tmin, double tmax, const char *label);
 
 #define Tier_members Sorted_members
 #define Tier_methods Sorted_methods
-class_create (Tier, Sorted)
+class_create (Tier, Sorted);
 
 Tier Tier_create (long initialCapacity);
 /*
@@ -83,7 +83,7 @@ int Tier_init (I, long initialCapacity);
 
 #define Label_members Ordered_members
 #define Label_methods Ordered_methods
-class_create (Label, Ordered)
+class_create (Label, Ordered);
 
 Label Label_create (long initialNumberOfTiers);
 

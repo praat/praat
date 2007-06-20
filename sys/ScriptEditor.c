@@ -1,6 +1,6 @@
 /* ScriptEditor.c
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,14 @@
  * pb 2002/10/14 added scripting examples to Help menu
  * pb 2002/12/05 include
  * pb 2004/01/07 use GuiWindow_setDirty
+ * pb 2007/06/12 wchar_t
  */
 
 #include "ScriptEditor.h"
 #include "longchar.h"
 #include "praatP.h"
 #include "EditorM.h"
+#include "UnicodeData.h"
 
 static Collection theScriptEditors;
 
@@ -53,32 +55,33 @@ static void destroy (I) {
 static void nameChanged (I) {
 	iam (ScriptEditor);
 	int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
-	strcpy (Melder_buffer1, my name ? "Script" : "untitled script");
+	static MelderStringW buffer = { 0 };
+	MelderStringW_copyW (& buffer, my nameW ? L"Script" : L"untitled script");
 	if (my editorClass) {
-		strcat (Melder_buffer1, " [");
-		strcat (Melder_buffer1, my environmentName);
-		strcat (Melder_buffer1, "]");
+		MelderStringW_appendW (& buffer, L" [");
+		MelderStringW_appendW (& buffer, my environmentName);
+		MelderStringW_appendW (& buffer, L"]");
 	}
-	if (my name) {
-		strcat (Melder_buffer1, " \\\"l");
-		strcat (Melder_buffer1, MelderFile_messageName (& my file));
-		strcat (Melder_buffer1, "\\\"r");
+	if (my nameW) {
+		MelderStringW_appendW (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK);
+		MelderStringW_appendW (& buffer, MelderFile_messageNameW (& my file));
+		MelderStringW_appendW (& buffer, UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 	}
 	if (my dirty && ! dirtinessAlreadyShown)
-		strcat (Melder_buffer1, " (modified)");
-	Longchar_nativize (Melder_buffer1, Melder_buffer2, TRUE);
-	XtVaSetValues (my shell, XmNtitle, Melder_buffer2, XmNiconName, "Script", NULL);
+		MelderStringW_appendW (& buffer, L" (modified)");
+	GuiWindow_setTitleW (my shell, buffer.string);
+	XtVaSetValues (my shell, XmNiconName, "Script", NULL);
 }
 
 static int args_ok (Any dia, I) {
 	iam (ScriptEditor);
 	structMelderFile file = { { 0 } };
-	char *text = XmTextGetString (my textWidget);
-	if (my name) {
-		Melder_pathToFile (my name, & file);
+	wchar_t *text = GuiText_getStringW (my textWidget);
+	if (my nameW) {
+		Melder_pathToFileW (my nameW, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (& text, 2);
+	Melder_includeIncludeFiles (& text);
 
 	Interpreter_getArgumentsFromDialog (my interpreter, dia);
 
@@ -86,19 +89,19 @@ static int args_ok (Any dia, I) {
 	if (my name) MelderFile_setDefaultDir (& file);   /* BUG if two disks have the same name (on Mac). */
 	Interpreter_run (my interpreter, text);
 	praat_foreground ();
-	XtFree (text);
+	Melder_free (text);
 	iferror return 0;
 	return 1;
 }
 
-static void run (ScriptEditor me, char **text) {
+static void run (ScriptEditor me, wchar_t **text) {
 	structMelderFile file = { { 0 } };
 	int npar;
-	if (my name) {
-		Melder_pathToFile (my name, & file);
+	if (my nameW) {
+		Melder_pathToFileW (my nameW, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (text, 2);
+	Melder_includeIncludeFiles (text);
 	iferror { Melder_flushError (NULL); return; }
 	npar = Interpreter_readParameters (my interpreter, *text);
 	iferror { Melder_flushError (NULL); return; }
@@ -119,19 +122,19 @@ static void run (ScriptEditor me, char **text) {
 }
 
 DIRECT (ScriptEditor, cb_go)
-	char *text = XmTextGetString (my textWidget);
+	wchar_t *text = GuiText_getStringW (my textWidget);
 	run (me, & text);
-	XtFree (text);
+	Melder_free (text);
 END
 
 DIRECT (ScriptEditor, cb_runSelection)
-	char *text = XmTextGetSelection (my textWidget);
+	wchar_t *text = GuiText_getSelectionW (my textWidget);
 	if (! text) {
-		XtFree (text);
-		return Melder_error ("No text selected.");
+		Melder_free (text);
+		return Melder_error1 (L"No text selected.");
 	}
 	run (me, & text);
-	XtFree (text);
+	Melder_free (text);
 END
 
 FORM (ScriptEditor, cb_addToMenu, "Add to menu", "Add to fixed menu...");
@@ -149,9 +152,9 @@ if (my name)
 else
 	SET_STRING ("Script", "(please save your script first)")
 DO
-	if (! praat_addMenuCommandScript (GET_STRING ("Window"),
-		GET_STRING ("Menu"), GET_STRING ("Command"), GET_STRING ("After command"),
-		GET_INTEGER ("Depth"), GET_STRING ("Script"))) return 0;
+	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
+		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
+		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
 	praat_show ();
 END
 
@@ -171,9 +174,9 @@ if (my name)
 else
 	SET_STRING ("Script", "(please save your script first)")
 DO
-	if (! praat_addMenuCommandScript (GET_STRING ("Window"),
-		GET_STRING ("Menu"), GET_STRING ("Command"), GET_STRING ("After command"),
-		GET_INTEGER ("Depth"), GET_STRING ("Script"))) return 0;
+	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
+		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
+		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
 	praat_show ();
 END
 
@@ -195,10 +198,10 @@ if (my name)
 else
 	SET_STRING ("Script", "(please save your script first)")
 DO
-	if (! praat_addActionScript (GET_STRING ("Class 1"), GET_INTEGER ("Number 1"),
-		GET_STRING ("Class 2"), GET_INTEGER ("Number 2"), GET_STRING ("Class 3"),
-		GET_INTEGER ("Number 3"), GET_STRING ("Command"), GET_STRING ("After command"),
-		GET_INTEGER ("Depth"), GET_STRING ("Script"))) return 0;
+	if (! praat_addActionScript (GET_STRINGW (L"Class 1"), GET_INTEGER ("Number 1"),
+		GET_STRINGW (L"Class 2"), GET_INTEGER ("Number 2"), GET_STRINGW (L"Class 3"),
+		GET_INTEGER ("Number 3"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
+		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
 	praat_show ();
 END
 
@@ -208,15 +211,15 @@ END
 
 DIRECT (ScriptEditor, cb_viewHistory)
 	XmTextPosition first = 0, last = 0;
-	char *history = UiHistory_get ();
+	wchar_t *history = UiHistory_get ();
 	long length;
 	if (! history || history [0] == '\0')
-		return Melder_error ("No history.");
-	length = strlen (history);
+		return Melder_error1 (L"No history.");
+	length = wcslen (history);
 	if (history [length - 1] != '\n') {
-		UiHistory_write ("\n");
+		UiHistory_write (L"\n");
 		history = UiHistory_get ();
-		length = strlen (history);
+		length = wcslen (history);
 	}
 	if (history [0] == '\n') {
 		history ++;
@@ -224,7 +227,7 @@ DIRECT (ScriptEditor, cb_viewHistory)
 	}
 	if (! XmTextGetSelectionPosition (my textWidget, & first, & last))
 		first = last = XmTextGetInsertionPosition (my textWidget);
-	XmTextReplace (my textWidget, first, last, history);
+	GuiText_replaceW (my textWidget, first, last, history);
 	#if defined (UNIX) || defined (macintosh)
 		XmTextSetSelection (my textWidget, first, first + length, 0);
 	#endif
@@ -244,29 +247,29 @@ static void createMenus (I) {
 	iam (ScriptEditor);
 	inherited (ScriptEditor) createMenus (me);
 	if (my editorClass) {
-		Editor_addCommand (me, "File", "Add to menu...", 0, cb_addToMenu);
+		Editor_addCommand (me, L"File", L"Add to menu...", 0, cb_addToMenu);
 	} else {
-		Editor_addCommand (me, "File", "Add to fixed menu...", 0, cb_addToFixedMenu);
-		Editor_addCommand (me, "File", "Add to dynamic menu...", 0, cb_addToDynamicMenu);
+		Editor_addCommand (me, L"File", L"Add to fixed menu...", 0, cb_addToFixedMenu);
+		Editor_addCommand (me, L"File", L"Add to dynamic menu...", 0, cb_addToDynamicMenu);
 	}
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
-	Editor_addCommand (me, "Edit", "-- history --", 0, 0);
-	Editor_addCommand (me, "Edit", "Clear history", 0, cb_clearHistory);
-	Editor_addCommand (me, "Edit", "Paste history", 'H', cb_viewHistory);
-	Editor_addCommand (me, "Help", "About ScriptEditor", '?', cb_AboutScriptEditor);
-	Editor_addCommand (me, "Help", "Scripting tutorial", 0, cb_ScriptingTutorial);
-	Editor_addCommand (me, "Help", "Scripting examples", 0, cb_ScriptingExamples);
-	Editor_addCommand (me, "Help", "Praat script", 0, cb_PraatScript);
-	Editor_addCommand (me, "Help", "Formulas tutorial", 0, cb_FormulasTutorial);
-	Editor_addCommand (me, "Help", "-- help history --", 0, NULL);
-	Editor_addCommand (me, "Help", "The History mechanism", 0, cb_TheHistoryMechanism);
-	Editor_addCommand (me, "Help", "Initialization scripts", 0, cb_InitializationScripts);
-	Editor_addCommand (me, "Help", "-- help add --", 0, NULL);
-	Editor_addCommand (me, "Help", "Adding to a fixed menu", 0, cb_AddingToAFixedMenu);
-	Editor_addCommand (me, "Help", "Adding to a dynamic menu", 0, cb_AddingToADynamicMenu);
-	Editor_addMenu (me, "Run", 0);
-	Editor_addCommand (me, "Run", "Run", 'R', cb_go);
-	Editor_addCommand (me, "Run", "Run selection", 0, cb_runSelection);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"-- history --", 0, 0);
+	Editor_addCommand (me, L"Edit", L"Clear history", 0, cb_clearHistory);
+	Editor_addCommand (me, L"Edit", L"Paste history", 'H', cb_viewHistory);
+	Editor_addCommand (me, L"Help", L"About ScriptEditor", '?', cb_AboutScriptEditor);
+	Editor_addCommand (me, L"Help", L"Scripting tutorial", 0, cb_ScriptingTutorial);
+	Editor_addCommand (me, L"Help", L"Scripting examples", 0, cb_ScriptingExamples);
+	Editor_addCommand (me, L"Help", L"Praat script", 0, cb_PraatScript);
+	Editor_addCommand (me, L"Help", L"Formulas tutorial", 0, cb_FormulasTutorial);
+	Editor_addCommand (me, L"Help", L"-- help history --", 0, NULL);
+	Editor_addCommand (me, L"Help", L"The History mechanism", 0, cb_TheHistoryMechanism);
+	Editor_addCommand (me, L"Help", L"Initialization scripts", 0, cb_InitializationScripts);
+	Editor_addCommand (me, L"Help", L"-- help add --", 0, NULL);
+	Editor_addCommand (me, L"Help", L"Adding to a fixed menu", 0, cb_AddingToAFixedMenu);
+	Editor_addCommand (me, L"Help", L"Adding to a dynamic menu", 0, cb_AddingToADynamicMenu);
+	Editor_addMenu (me, L"Run", 0);
+	Editor_addCommand (me, L"Run", L"Run", 'R', cb_go);
+	Editor_addCommand (me, L"Run", L"Run selection", 0, cb_runSelection);
 }
 
 class_methods (ScriptEditor, TextEditor)
@@ -276,12 +279,12 @@ class_methods (ScriptEditor, TextEditor)
 	us -> scriptable = FALSE;
 class_methods_end
 
-ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const char *initialText) {
+ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const wchar_t *initialText) {
 	Editor editor = (Editor) voidEditor;
 	ScriptEditor me = new (ScriptEditor);
 	if (! me) return NULL;
 	if (editor) {
-		my environmentName = Melder_strdup (editor -> name);
+		my environmentName = Melder_wcsdup (editor -> nameW);
 		my editorClass = editor -> methods;
 	}
 	if (! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
@@ -293,13 +296,13 @@ ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const c
 
 ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script) {
 	ScriptEditor me;
-	char *text = MelderFile_readText (& script -> file);
+	wchar_t *text = MelderFile_readTextW (& script -> file);
 	if (! text) return NULL;
 	me = ScriptEditor_createFromText (parent, voidEditor, text);
 	Melder_free (text);
 	if (! me) return NULL;
 	MelderFile_copy (& script -> file, & my file);
-	Thing_setName (me, Melder_fileToPath (& script -> file));
+	Thing_setNameW (me, Melder_fileToPathW (& script -> file));
 	return me;
 }
 

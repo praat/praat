@@ -1,6 +1,6 @@
 /* IntensityTierEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
+ * pb 2007/06/10 wchar_t
  */
 
 #include "IntensityTierEditor.h"
@@ -26,7 +27,7 @@
 
 #define IntensityTierEditor_members RealTierEditor_members
 #define IntensityTierEditor_methods RealTierEditor_methods
-class_create_opaque (IntensityTierEditor, RealTierEditor)
+class_create_opaque (IntensityTierEditor, RealTierEditor);
 
 /*DIRECT (IntensityTierEditor, cb_IntensityTierEditorHelp) Melder_help ("IntensityTierEditor"); END*/
 DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help ("IntensityTier"); END
@@ -34,8 +35,8 @@ DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help ("IntensityTier")
 static void createMenus (I) {
 	iam (IntensityTierEditor);
 	inherited (IntensityTierEditor) createMenus (me);
-	/*Editor_addCommand (me, "Help", "IntensityTierEditor help", 0, cb_IntensityTierEditorHelp);*/
-	Editor_addCommand (me, "Help", "IntensityTier help", 0, cb_IntensityTierHelp);
+	/*Editor_addCommand (me, L"Help", L"IntensityTierEditor help", 0, cb_IntensityTierEditorHelp);*/
+	Editor_addCommand (me, L"Help", L"IntensityTier help", 0, cb_IntensityTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -51,16 +52,16 @@ class_methods (IntensityTierEditor, RealTierEditor)
 	class_method (createMenus)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
-	us -> quantityText = "Intensity (dB)", us -> quantityKey = "Intensity";
-	us -> leftTickFormat = "%4g", us -> rightTickFormat = "%4g dB";
+	us -> quantityText = L"Intensity (dB)", us -> quantityKey = L"Intensity";
+	us -> leftTickFormat = L"%4g", us -> rightTickFormat = L"%4g dB";
 	us -> defaultYmin = 50.0, us -> defaultYmax = 100.0;
-	us -> setRangeTitle = "Set intensity range...";
-	us -> defaultYminText = "50.0", us -> defaultYmaxText = "100.0";
-	us -> yminText = "Minimum intensity (dB)", us -> ymaxText = "Maximum intensity (dB)";
-	us -> yminKey = "Minimum intensity", us -> ymaxKey = "Maximum intensity";
+	us -> setRangeTitle = L"Set intensity range...";
+	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"100.0";
+	us -> yminText = L"Minimum intensity (dB)", us -> ymaxText = L"Maximum intensity (dB)";
+	us -> yminKey = L"Minimum intensity", us -> ymaxKey = L"Maximum intensity";
 class_methods_end
 
-IntensityTierEditor IntensityTierEditor_create (Widget parent, const char *title, IntensityTier intensity, Sound sound, int ownSound) {
+IntensityTierEditor IntensityTierEditor_create (Widget parent, const wchar_t *title, IntensityTier intensity, Sound sound, int ownSound) {
 	IntensityTierEditor me = new (IntensityTierEditor);
 	if (! me || ! RealTierEditor_init (me, parent, title, (RealTier) intensity, sound, ownSound))
 		{ forget (me); return NULL; }

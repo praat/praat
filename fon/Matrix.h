@@ -43,7 +43,7 @@
 	double dy, y1; \
 	float **z;
 #define Matrix_methods Sampled_methods
-class_create (Matrix, Sampled)
+class_create (Matrix, Sampled);
 
 int Matrix_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,

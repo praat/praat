@@ -42,7 +42,7 @@
 #include "OTMulti_def.h"
 
 #define OTMulti_methods Data_methods
-oo_CLASS_CREATE (OTMulti, Data)
+oo_CLASS_CREATE (OTMulti, Data);
 
 void OTMulti_checkIndex (OTMulti me);
 

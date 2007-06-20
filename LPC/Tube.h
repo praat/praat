@@ -33,7 +33,7 @@
 	Tube_Frame frame;
 
 #define Tube_methods Sampled_methods
-oo_CLASS_CREATE (Tube, Sampled)
+oo_CLASS_CREATE (Tube, Sampled);
 
 /*
 	Tube's as a function of time.
@@ -53,7 +53,7 @@ int Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 
 #define Area_members Tube_members
 #define Area_methods Tube_methods
-class_create (Area, Tube)
+class_create (Area, Tube);
 
 /*
 	Areas as a function of time.
@@ -69,7 +69,7 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 
 #define RC_members Tube_members
 #define RC_methods Tube_methods
-class_create (RC, Tube)
+class_create (RC, Tube);
 
 /*
 	Reflection Coefficients as a function of time.

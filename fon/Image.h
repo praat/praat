@@ -39,7 +39,7 @@
 	double dy, y1; \
 	unsigned char **z;
 #define Image_methods Sampled_methods
-class_create (Image, Sampled)
+class_create (Image, Sampled);
 
 /*
 	An object of type Image represents a quantized function z (x, y)

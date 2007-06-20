@@ -195,7 +195,7 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
 
 #define TablesOfReal_members Ordered_members
 #define TablesOfReal_methods Ordered_methods
-class_create (TablesOfReal, Ordered)
+class_create (TablesOfReal, Ordered);
 
 int TablesOfReal_init (I, void *klas);
 

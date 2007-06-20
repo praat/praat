@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/23
+ * pb 2007/06/10
  */
 
 #ifndef _Collection_h_
@@ -35,29 +35,29 @@
 
 #define EditorCommand_members Thing_members \
 	Any editor, menu; \
-	const char *itemTitle; \
+	const wchar_t *itemTitle; \
 	Widget itemWidget; \
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender); \
-	const char *script; \
+	const wchar_t *script; \
 	Any dialog;
 #define EditorCommand_methods Thing_methods
-class_create (EditorCommand, Thing)
+class_create (EditorCommand, Thing);
 
 typedef struct structEditorMenu *EditorMenu;
 typedef struct structEditor *Editor;
 
-Widget EditorMenu_addCommand (EditorMenu menu, const char *itemTitle, long flags,
+Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand, Any));
 Widget EditorCommand_getItemWidget (EditorCommand me);
 
-EditorMenu Editor_addMenu (Any editor, const char *menuTitle, long flags);
+EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags);
 Widget EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_members Thing_members \
 	Widget parent, shell, dialog, menuBar, undoButton, searchButton; \
 	Ordered menus; \
 	Any data, previousData;   /* The data that can be displayed and edited. */ \
-	char undoText [100]; \
+	wchar_t undoText [100]; \
 	void (*destroyCallback) (I, void *closure); \
 	void *destroyClosure; \
 	void (*dataChangedCallback) (I, void *closure, Any data); \
@@ -75,14 +75,14 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void (*save) (I); \
 	void (*restore) (I); \
 	void (*clipboardChanged) (I, Any data);
-class_create_opaque (Editor, Thing)
+class_create_opaque (Editor, Thing);
 
 #define Editor_HIDDEN  (1 << 11)
-Widget Editor_addCommand (Any editor, const char *menuTitle, const char *itemTitle, long flags,
+Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender));
-Widget Editor_addCommandScript (Any editor, const char *menuTitle, const char *itemTitle, long flags,
-	const char *script);
-void Editor_setMenuSensitive (Any editor, const char *menu, int sensitive);
+Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
+	const wchar_t *script);
+void Editor_setMenuSensitive (Any editor, const wchar_t *menu, int sensitive);
 
 /***** Public. *****/
 
@@ -130,7 +130,7 @@ void Editor_setPublish2Callback (I, void (*cb) (I, void *closure, Any publish1, 
 /***** For inheritors. *****/
 
 int Editor_init (I, Widget parent, int x, int y , int width, int height,
-	const char *title, Any data);
+	const wchar_t *title, Any data);
 /*
 	This creates my shell and my dialog,
 	calls the createMenus and createChildren methods,
@@ -162,14 +162,14 @@ int Editor_init (I, Widget parent, int x, int y , int width, int height,
 	by sending them an Editor_dataChanged () message.
 */
 
-void Editor_save (I, const char *text);   /* For Undo. */
+void Editor_save (I, const wchar_t *text);   /* For Undo. */
 
-Any UiForm_createE (EditorCommand cmd, const char *title, const char *helpTitle);
-int UiForm_parseStringE (EditorCommand cmd, const char *arguments);
-Any UiOutfile_createE (EditorCommand cmd, const char *title, const char *helpTitle);
+Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle);
+int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments);
+Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle);
 
-EditorCommand Editor_getMenuCommand (I, const char *menuTitle, const char *itemTitle);
-int Editor_doMenuCommand (Any editor, const char *command, const char *arguments);
+EditorCommand Editor_getMenuCommand (I, const wchar_t *menuTitle, const wchar_t *itemTitle);
+int Editor_doMenuCommand (Any editor, const wchar_t *command, const wchar_t *arguments);
 
 #endif
 /* End of file Editor.h */

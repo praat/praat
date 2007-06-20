@@ -32,7 +32,7 @@
 
 #define MFCC_members CC_members
 #define MFCC_methods CC_methods
-class_create (MFCC, CC)
+class_create (MFCC, CC);
 
 /*
 	Interpretatation:

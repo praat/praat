@@ -30,7 +30,7 @@
 
 #define Cochleagram_members  Matrix_members
 #define Cochleagram_methods  Matrix_methods
-class_create (Cochleagram, Matrix)
+class_create (Cochleagram, Matrix);
 
 /* Normally, the attributes will meet the following:
 	xmin;			// Start time (seconds).

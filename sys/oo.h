@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2006 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
  * pb 2003/06/11 made structure functions global
  * pb 2004/10/16 C++ compatible structs
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
+ * pb 2007/06/09 oo_WCHAR, oo_STRINGW
+ * pb 2007/06/10 corrections
  */
 
 /*** Single types. ***/
@@ -42,6 +44,7 @@
 /*    c8: store real and imaginary part as r4. */
 /*    c16: store real and imaginary part as r4. */
 /*    c1: store as 1-byte character. */
+/*    c2: store as 2-byte character. */
 /* For text format, there are no restrictions for the integer types, */
 /* and the real numbers are written with a precision of 8, 17, or 20 characters. */
 
@@ -60,6 +63,7 @@
 #define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c8, x)
 #define oo_DCOMPLEX(x)  oo_SIMPLE (dcomplex, c16, x)
 #define oo_CHAR(x)  oo_SIMPLE (char, c1, x)
+#define oo_WCHAR(x)  oo_SIMPLE (wchar_t, c2, x)
 #define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
 
 /* Arrays with compile-time allocation of capacity. Declarations like: int x [cap]; */
@@ -81,6 +85,7 @@
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c8, x, cap, n)
 #define oo_DCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c16, x, cap, n)
 #define oo_CHAR_ARRAY(x,cap,n)  oo_ARRAY (char, c1, x, cap, n)
+#define oo_WCHAR_ARRAY(x,cap,n)  oo_ARRAY (wchar_t, c2, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
 /* Sets with compile-time allocation of capacity. Declarations like: int x [1 + enumlength (Type)]; */
@@ -99,6 +104,7 @@
 #define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c8, x, setType)
 #define oo_DCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c16, x, setType)
 #define oo_CHAR_SET(x,setType)  oo_SET (char, c1, x, setType)
+#define oo_WCHAR_SET(x,setType)  oo_SET (wchar_t, c2, x, setType)
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
 
 /* Arrays with run-time allocation of size. Declarations like: int *x; */
@@ -118,22 +124,24 @@
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, fc, c8, x, min, max)
 #define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, dc, c16, x, min, max)
 #define oo_CHAR_VECTOR_FROM(x,min,max)  oo_VECTOR (char, c, c1, x, min, max)
+#define oo_WCHAR_VECTOR_FROM(x,min,max)  oo_VECTOR (wchar_t, c, c2, x, min, max)
 #define oo_POINTER_VECTOR_FROM(x,min,max)  oo_VECTOR (void *, p, dummy, x, min, max)
 
-#define oo_BYTE_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (signed char, b, i1, x, r1, r2, c1, c2)
-#define oo_SHORT_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (short, s, i2, x, r1, r2, c1, c2)
-#define oo_INT_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (int, i, i2, x, r1, r2, c1, c2)
-#define oo_LONG_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (long, l, i4, x, r1, r2, c1, c2)
-#define oo_UBYTE_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (unsigned char, ub, u1, x, r1, r2, c1, c2)
-#define oo_USHORT_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (unsigned short, us, u2, x, r1, r2, c1, c2)
-#define oo_UINT_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (unsigned int, ui, u2, x, r1, r2, c1, c2)
-#define oo_ULONG_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (unsigned long, ul, u4, x, r1, r2, c1, c2)
-#define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (float, f, r4, x, r1, r2, c1, c2)
-#define oo_DOUBLE_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (double, d, r8, x, r1, r2, c1, c2)
-#define oo_FCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (fcomplex, fc, c8, x, r1, r2, c1, c2)
-#define oo_DCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (dcomplex, dc, c16, x, r1, r2, c1, c2)
-#define oo_CHAR_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (char, c, c1, x, r1, r2, c1, c2)
-#define oo_POINTER_MATRIX_FROM(x,r1,r2,c1,c2)  oo_MATRIX (void *, p, dummy, x, r1, r2, c1, c2)
+#define oo_BYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (signed char, b, i1, x, row1, row2, col1, col2)
+#define oo_SHORT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (short, s, i2, x, row1, row2, col1, col2)
+#define oo_INT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (int, i, i2, x, row1, row2, col1, col2)
+#define oo_LONG_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (long, l, i4, x, row1, row2, col1, col2)
+#define oo_UBYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, ub, u1, x, row1, row2, col1, col2)
+#define oo_USHORT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned short, us, u2, x, row1, row2, col1, col2)
+#define oo_UINT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned int, ui, u2, x, row1, row2, col1, col2)
+#define oo_ULONG_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned long, ul, u4, x, row1, row2, col1, col2)
+#define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (float, f, r4, x, row1, row2, col1, col2)
+#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, d, r8, x, row1, row2, col1, col2)
+#define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, fc, c8, x, row1, row2, col1, col2)
+#define oo_DCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, dc, c16, x, row1, row2, col1, col2)
+#define oo_CHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (char, c, c1, x, row1, row2, col1, col2)
+#define oo_WCHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (wchar_t, c, c2, x, row1, row2, col1, col2)
+#define oo_POINTER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (void *, p, dummy, x, row1, row2, col1, col2)
 
 /* The same arrays, with the first index fixed at 1. */
 
@@ -150,6 +158,7 @@
 #define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, fc, c8, x, 1, n)
 #define oo_DCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, dc, c16, x, 1, n)
 #define oo_CHAR_VECTOR(x,n)  oo_VECTOR (char, c, c1, x, 1, n)
+#define oo_WCHAR_VECTOR(x,n)  oo_VECTOR (wchar_t, c, c2, x, 1, n)
 #define oo_POINTER_VECTOR(x,n)  oo_VECTOR (void *, p, dummy, x, 1, n)
 
 #define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, b, i1, x, 1, nrow, 1, ncol)
@@ -165,6 +174,7 @@
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, fc, c8, x, 1, nrow, 1, ncol)
 #define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, dc, c16, x, 1, nrow, 1, ncol)
 #define oo_CHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (char, c, c1, x, 1, nrow, 1, ncol)
+#define oo_WCHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (char, c, c2, x, 1, nrow, 1, ncol)
 #define oo_POINTER_MATRIX(x,nrow,ncol)  oo_MATRIX (void *, p, dummy, x, 1, nrow, 1, ncol)
 
 
@@ -204,23 +214,29 @@
 /* The possible storage types give these binary formats: */
 /*    s1: store as sequence of bytes, preceded with 1 byte (u1) to denote length. */
 /*    s2: store as sequence of bytes, preceded with 2 bytes (u2) to denote length. */
-/*    s4: store as sequence of bytes, preceded with 4 byte (u4) to denote length. */
+/*    s4: store as sequence of bytes, preceded with 4 bytes (u4) to denote length. */
+/*    w4: store as sequence of characters (u2), preceded with 4 bytes (u4) to denote length. */
 
 #define oo_SSTRING(x)  oo_STRINGx (s1, x)
 #define oo_STRING(x)  oo_STRINGx (s2, x)
 #define oo_LSTRING(x)  oo_STRINGx (s4, x)
+#define oo_STRINGW(x)  oo_STRINGWx (w4, x)
 #define oo_SSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s1, x, cap, n)
 #define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s2, x, cap, n)
 #define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s4, x, cap, n)
+#define oo_STRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w4, x, cap, n)
 #define oo_SSTRING_SET(x,setType)  oo_STRINGx_SET (s1, x, setType)
 #define oo_STRING_SET(x,setType)  oo_STRINGx_SET (s2, x, setType)
 #define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (s4, x, setType)
+#define oo_STRINGW_SET(x,setType)  oo_STRINGWx_SET (w4, x, setType)
 #define oo_SSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s1, x, min, max)
 #define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s2, x, min, max)
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s4, x, min, max)
+#define oo_STRINGW_VECTOR_FROM(x,min,max)  oo_STRINGWx_VECTOR (w4, x, min, max)
 #define oo_SSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s1, x, 1, n)
 #define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s2, x, 1, n)
 #define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s4, x, 1, n)
+#define oo_STRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w4, x, 1, n)
 
 /*** Structs. ***/
 
@@ -237,12 +253,13 @@
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
 		char *_className; \
+		wchar_t *_classNameW; \
 		parent##_Table _parent; \
 		long _size; \
 		klas##_methods \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas; \
-	extern klas##_Table class##klas;
+	extern klas##_Table class##klas
 
 
 
@@ -267,6 +284,11 @@
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  char *x [cap];
 #define oo_STRINGx_SET(storage,x,setType)  char *x [1 + enumlength (setType)];
 #define oo_STRINGx_VECTOR(storage,x,min,max)  char **x;
+
+#define oo_STRINGWx(storage,x)  wchar_t *x;
+#define oo_STRINGWx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];
+#define oo_STRINGWx_SET(storage,x,setType)  wchar_t *x [1 + enumlength (setType)];
+#define oo_STRINGWx_VECTOR(storage,x,min,max)  wchar_t **x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];

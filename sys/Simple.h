@@ -2,7 +2,7 @@
 #define _Simple_h_
 /* Simple.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1996/07/24
- * pb 2002/03/07 GPL
+ * pb 2007/06/09
  */
 
 #ifndef _Data_h_
@@ -31,22 +30,25 @@
 #include "Simple_def.h"
 
 #define SimpleInt_methods Data_methods
-oo_CLASS_CREATE (SimpleInt, Data)
+oo_CLASS_CREATE (SimpleInt, Data);
 
 #define SimpleShort_methods Data_methods
-oo_CLASS_CREATE (SimpleShort, Data)
+oo_CLASS_CREATE (SimpleShort, Data);
 
 #define SimpleLong_methods Data_methods
-oo_CLASS_CREATE (SimpleLong, Data)
+oo_CLASS_CREATE (SimpleLong, Data);
 
 #define SimpleFloat_methods Data_methods
-oo_CLASS_CREATE (SimpleFloat, Data)
+oo_CLASS_CREATE (SimpleFloat, Data);
 
 #define SimpleDouble_methods Data_methods
-oo_CLASS_CREATE (SimpleDouble, Data)
+oo_CLASS_CREATE (SimpleDouble, Data);
 
 #define SimpleString_methods Data_methods
-oo_CLASS_CREATE (SimpleString, Data)
+oo_CLASS_CREATE (SimpleString, Data);
+
+#define SimpleStringW_methods Data_methods
+oo_CLASS_CREATE (SimpleStringW, Data);
 
 SimpleInt SimpleInt_create (int number);
 SimpleShort SimpleShort_create (short number);
@@ -54,5 +56,6 @@ SimpleLong SimpleLong_create (long number);
 SimpleFloat SimpleFloat_create (float number);
 SimpleDouble SimpleDouble_create (double number);
 SimpleString SimpleString_create (const char *string);
+SimpleStringW SimpleStringW_create (const wchar_t *string);
 
 #endif

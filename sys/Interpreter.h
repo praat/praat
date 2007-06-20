@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/26
+ * pb 2007/06/09
  */
 
 #ifndef _Collection_h_
@@ -31,7 +31,7 @@
 #endif
 
 #define InterpreterVariable_members Thing_members \
-	char *key, *stringValue; \
+	wchar_t *key, *stringValue; \
 	double numericValue;
 #define InterpreterVariable_methods Thing_methods
 class_create (InterpreterVariable, Thing);
@@ -41,37 +41,36 @@ class_create (InterpreterVariable, Thing);
 #define Interpreter_MAX_CALL_DEPTH  50
 
 #define Interpreter_members Thing_members \
-	char *environmentName; \
+	wchar_t *environmentName; \
 	Any editorClass; \
 	int numberOfParameters, numberOfLabels, callDepth; \
-	char parameters [1+Interpreter_MAXNUM_PARAMETERS] [50]; \
+	wchar_t parameters [1+Interpreter_MAXNUM_PARAMETERS] [50]; \
 	unsigned char types [1+Interpreter_MAXNUM_PARAMETERS]; \
-	char *arguments [1+Interpreter_MAXNUM_PARAMETERS]; \
-	char choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100]; \
-	char labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
+	wchar_t *arguments [1+Interpreter_MAXNUM_PARAMETERS]; \
+	wchar_t choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100]; \
+	wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
-	char dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
-	SortedSetOfString variables;
+	wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
+	SortedSetOfStringW variables;
 #define Interpreter_methods Thing_methods
 class_create (Interpreter, Thing);
 
-Interpreter Interpreter_create (char *environmentName, Any editorClass);
+Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass);
 Interpreter Interpreter_createFromEnvironment (Any editor);
 
-int Melder_includeIncludeFiles (char **text, int allocationMethod);
-	/* text can be reallocated; methods: 1 = Melder_alloc, 2 = XtAlloc */
-int Interpreter_readParameters (Interpreter me, char *text);
-Any Interpreter_createForm (Interpreter me, Widget parent, const char *fileName,
+int Melder_includeIncludeFiles (wchar_t **text);
+int Interpreter_readParameters (Interpreter me, wchar_t *text);
+Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *fileName,
 	int (*okCallback) (Any dia, void *closure), void *okClosure);
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
-int Interpreter_getArgumentsFromString (Interpreter me, const char *arguments);
-int Interpreter_run (Interpreter me, char *text);   /* Destroys 'text'. */
-int Interpreter_numericExpression (Interpreter me, const char *expression, double *result);
-int Interpreter_stringExpression (Interpreter me, const char *expression, char **result);
-int Interpreter_numericOrStringExpression (Interpreter me, const char *expression, double *numericResult, char **stringResult);
+int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
+int Interpreter_run (Interpreter me, wchar_t *text);   /* Destroys 'text'. */
+int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *result);
+int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **result);
+int Interpreter_numericOrStringExpression (Interpreter me, const wchar_t *expression, double *numericResult, wchar_t **stringResult);
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const char *key);
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char *key);
+InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key);
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key);
 
 /* End of file Interpreter.h */
 #endif

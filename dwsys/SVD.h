@@ -35,7 +35,7 @@
 	double **v; /* row vectors */ \
 	double *d; /* decreasing singular values */
 #define SVD_methods Data_methods
-class_create (SVD, Data)
+class_create (SVD, Data);
 
 #define GSVD_members Data_members		\
 	double tolerance; \
@@ -43,7 +43,7 @@ class_create (SVD, Data)
 	double **q, **r; \
 	double *d1, *d2;
 #define GSVD_methods Data_methods
-class_create (GSVD, Data)
+class_create (GSVD, Data);
 
 int SVD_init (I, long numberOfRows, long numberOfColumns);
 

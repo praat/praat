@@ -40,7 +40,7 @@
 	Graphics graphics; \
 	long numberOfReplays;
 #define RunnerMFC_methods Editor_methods
-class_create_opaque (RunnerMFC, Editor)
+class_create_opaque (RunnerMFC, Editor);
 
 static void destroy (I) {
 	iam (RunnerMFC);
@@ -407,7 +407,7 @@ class_methods (RunnerMFC, Editor)
 	us -> scriptable = FALSE;
 class_methods_end
 
-RunnerMFC RunnerMFC_create (Widget parent, const char *title, Ordered experiments) {
+RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experiments) {
 	RunnerMFC me = new (RunnerMFC);
 	if (! me || ! Editor_init (me, parent, 0, 0, 2000, 2000, title, NULL)) { forget (me); return 0; }
 	my experiments = experiments;

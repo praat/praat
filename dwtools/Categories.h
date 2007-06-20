@@ -38,7 +38,7 @@
 
 #define Categories_members OrderedOfString_members
 #define Categories_methods OrderedOfString_methods
-class_create (Categories, OrderedOfString)
+class_create (Categories, OrderedOfString);
 
 int Categories_init (Categories me, long size);
 

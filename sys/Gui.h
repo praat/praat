@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/30
+ * pb 2007/06/10
  */
 
 #ifndef _melder_h_
@@ -348,7 +348,8 @@ void XmUpdateDisplay (Widget dummy);
 	void GuiMacDrawingArea_clipOn (Widget widget);   /* Clip to the inner area of a drawingArea (for drawing);
 		used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
 	void GuiMac_clipOff (void);
-	void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char *message));
+	void motif_mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message));
+	void motif_mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message));
 #elif defined (_WIN32)
 	#define motif_argXmString(r,t)  r, t
 	int motif_win_mouseStillDown (void);
@@ -399,11 +400,11 @@ void XmUpdateDisplay (Widget dummy);
 
 Widget motif_addShell (Widget widget, long flags);
 Widget motif_addMenuBar (Widget form);
-Widget motif_addMenu (Widget bar, const char *title, long flags);
-Widget motif_addMenu2 (Widget bar, const char *title, long flags, Widget *menuTitle);
+Widget motif_addMenu (Widget bar, const wchar_t *title, long flags);
+Widget motif_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle);
 /* Flags is a combination of the above defines. */
 
-Widget motif_addItem (Widget menu, const char *title, long flags,
+Widget motif_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure);
 /* Flags is a combination of the above defines. */
 
@@ -417,8 +418,11 @@ void GuiText_undo (Widget me);
 void GuiText_redo (Widget me);
 void GuiText_updateChangeCountAfterSave (Widget me);
 wchar_t *GuiText_getStringW (Widget me);
-void GuiText_setStringW (Widget me, wchar_t *text);
+void GuiText_setStringW (Widget me, const wchar_t *text);
+wchar_t * GuiText_getSelectionW (Widget widget);
+void GuiText_replaceW (Widget widget, XmTextPosition from_pos, XmTextPosition to_pos, const wchar_t *value);
 
+void GuiWindow_setTitleW (Widget me, const wchar_t *titleW);
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*
 	Purpose: like on MacOSX you get this little dot in the red close button,

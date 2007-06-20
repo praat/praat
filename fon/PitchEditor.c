@@ -1,6 +1,6 @@
 /* PitchEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/10/16 struct PitchCandidate -> struct structPitchCandidate
  * pb 2005/06/16 units
  * pb 2006/08/08 reduced compiler warnings
+ * pb 2007/06/10 wchar_t
  */
 
 #include "Pitch_to_Sound.h"
@@ -36,7 +37,7 @@
 
 #define PitchEditor_members FunctionEditor_members
 #define PitchEditor_methods FunctionEditor_methods
-class_create_opaque (PitchEditor, FunctionEditor)
+class_create_opaque (PitchEditor, FunctionEditor);
 
 /********** MENU COMMANDS **********/
 
@@ -47,7 +48,7 @@ Pitch pitch = my data;
 SET_REAL ("Ceiling", pitch -> ceiling)
 DO
 	Pitch pitch = my data;
-	Editor_save (me, "Change ceiling");
+	Editor_save (me, L"Change ceiling");
 	Pitch_setCeiling (pitch, GET_REAL ("Ceiling"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -66,7 +67,7 @@ Pitch pitch = my data;
 SET_REAL ("Ceiling", pitch -> ceiling)
 DO
 	Pitch pitch = my data;
-	Editor_save (me, "Path finder");
+	Editor_save (me, L"Path finder");
 	Pitch_pathFinder (pitch,
 		GET_REAL ("Silence threshold"), GET_REAL ("Voicing threshold"),
 		GET_REAL ("Octave cost"), GET_REAL ("Octave-jump cost"),
@@ -85,7 +86,7 @@ END
 
 DIRECT (PitchEditor, cb_octaveUp)
 	Pitch pitch = my data;
-	Editor_save (me, "Octave up");
+	Editor_save (me, L"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -93,7 +94,7 @@ END
 
 DIRECT (PitchEditor, cb_fifthUp)
 	Pitch pitch = my data;
-	Editor_save (me, "Fifth up");
+	Editor_save (me, L"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -101,7 +102,7 @@ END
 
 DIRECT (PitchEditor, cb_fifthDown)
 	Pitch pitch = my data;
-	Editor_save (me, "Fifth down");
+	Editor_save (me, L"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -109,7 +110,7 @@ END
 
 DIRECT (PitchEditor, cb_octaveDown)
 	Pitch pitch = my data;
-	Editor_save (me, "Octave down");
+	Editor_save (me, L"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -121,7 +122,7 @@ DIRECT (PitchEditor, cb_voiceless)
 	long iright = Sampled_xToLowIndex (pitch, my endSelection);
 	if (ileft < 1) ileft = 1;
 	if (iright > pitch -> nx) iright = pitch -> nx;
-	Editor_save (me, "Unvoice");
+	Editor_save (me, L"Unvoice");
 	for (i = ileft; i <= iright; i ++) {
 		Pitch_Frame frame = & pitch -> frame [i];
 		for (cand = 1; cand <= frame -> nCandidates; cand ++) {
@@ -143,22 +144,22 @@ static void createMenus (I) {
 	iam (PitchEditor);
 	inherited (PitchEditor) createMenus (me);
 
-	Editor_addCommand (me, "Edit", "Change ceiling...", 0, cb_setCeiling);
-	Editor_addCommand (me, "Edit", "Path finder...", 0, cb_pathFinder);
+	Editor_addCommand (me, L"Edit", L"Change ceiling...", 0, cb_setCeiling);
+	Editor_addCommand (me, L"Edit", L"Path finder...", 0, cb_pathFinder);
 
-	Editor_addCommand (me, "Query", "-- pitch --", 0, NULL);
-	Editor_addCommand (me, "Query", "Get pitch", motif_F10, cb_getPitch);
+	Editor_addCommand (me, L"Query", L"-- pitch --", 0, NULL);
+	Editor_addCommand (me, L"Query", L"Get pitch", motif_F10, cb_getPitch);
 
-	Editor_addMenu (me, "Selection", 0);
-	Editor_addCommand (me, "Selection", "Unvoice", 0, cb_voiceless);
-	Editor_addCommand (me, "Selection", "-- up and down --", 0, NULL);
-	Editor_addCommand (me, "Selection", "Octave up", 0, cb_octaveUp);
-	Editor_addCommand (me, "Selection", "Fifth up", 0, cb_fifthUp);
-	Editor_addCommand (me, "Selection", "Fifth down", 0, cb_fifthDown);
-	Editor_addCommand (me, "Selection", "Octave down", 0, cb_octaveDown);
+	Editor_addMenu (me, L"Selection", 0);
+	Editor_addCommand (me, L"Selection", L"Unvoice", 0, cb_voiceless);
+	Editor_addCommand (me, L"Selection", L"-- up and down --", 0, NULL);
+	Editor_addCommand (me, L"Selection", L"Octave up", 0, cb_octaveUp);
+	Editor_addCommand (me, L"Selection", L"Fifth up", 0, cb_fifthUp);
+	Editor_addCommand (me, L"Selection", L"Fifth down", 0, cb_fifthDown);
+	Editor_addCommand (me, L"Selection", L"Octave down", 0, cb_octaveDown);
 
-	Editor_addCommand (me, "Help", "PitchEditor help", '?', cb_PitchEditorHelp);
-	Editor_addCommand (me, "Help", "Pitch help", 0, cb_PitchHelp);
+	Editor_addCommand (me, L"Help", L"PitchEditor help", '?', cb_PitchEditorHelp);
+	Editor_addCommand (me, L"Help", L"Pitch help", 0, cb_PitchHelp);
 }
 	
 /********** DRAWING AREA **********/
@@ -333,7 +334,7 @@ static int click (I, double xWC, double yWC, int dummy) {
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   /* Voiced: click within circle. */
 		{
 			struct structPitch_Candidate help = bestFrame -> candidate [1];
-			Editor_save (me, "Change path");
+			Editor_save (me, L"Change path");
 			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
 			bestFrame -> candidate [bestCandidate] = help;
 			FunctionEditor_redraw (me);
@@ -354,7 +355,7 @@ class_methods (PitchEditor, FunctionEditor)
 	class_method (click)
 class_methods_end
 
-PitchEditor PitchEditor_create (Widget parent, const char *title, Pitch pitch) {
+PitchEditor PitchEditor_create (Widget parent, const wchar_t *title, Pitch pitch) {
 	PitchEditor me = new (PitchEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, pitch))
 		return NULL;

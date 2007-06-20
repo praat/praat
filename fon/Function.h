@@ -39,7 +39,7 @@
 	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
 	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
 	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit);
-class_create (Function, Data)
+class_create (Function, Data);
 
 /*
 	An object of type Function represents a function f (x, ...) on the domain [xmin, xmax] * ....

@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/08/09
+ * pb 2007/06/09
  */
 
 #ifndef _Editor_h_
@@ -37,10 +37,10 @@
 #define TextEditor_methods Editor_methods \
 	int fileBased; \
 	void (*clear) (I);
-class_create (TextEditor, Editor)
+class_create (TextEditor, Editor);
 
-int TextEditor_init (I, Widget parent, const char *initialText);
-TextEditor TextEditor_create (Widget parent, const char *initialText);
+int TextEditor_init (I, Widget parent, const wchar_t *initialText);
+TextEditor TextEditor_create (Widget parent, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */
 void TextEditor_showOpen (I);
 

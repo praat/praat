@@ -2,7 +2,7 @@
 #define _IntensityTierEditor_h_
 /* IntensityTierEditor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _RealTierEditor_h_
@@ -35,7 +35,7 @@
 
 typedef struct structIntensityTierEditor *IntensityTierEditor;
 
-IntensityTierEditor IntensityTierEditor_create (Widget parent, const char *title,
+IntensityTierEditor IntensityTierEditor_create (Widget parent, const wchar_t *title,
 	IntensityTier intensity, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

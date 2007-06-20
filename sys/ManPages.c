@@ -1,6 +1,6 @@
 /* ManPages.c
  *
- * Copyright (C) 1996-2006 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/15 turned HTML special symbols into Unicode (and removed glyph pictures)
  * pb 2006/12/28 repaired a memory leak
+ * pb 2007/06/11 wchar_t
  */
 
 #include <ctype.h>
@@ -46,8 +47,7 @@ static long lookUp_unsorted (ManPages me, const char *title);
 
 static void classManPages_destroy (I) { iam (ManPages);
 	if (my dynamic && my pages) {
-		long ipage;
-		for (ipage = 1; ipage <= my pages -> size; ipage ++) {
+		for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 			ManPage page = my pages -> item [ipage];
 			Melder_free (page -> title);
 			Melder_free (page -> author);
@@ -63,6 +63,10 @@ static void classManPages_destroy (I) { iam (ManPages);
 			}
 		}
 	}
+	if (my pages && my titles)
+		for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
+			Melder_free (my titles [ipage]);
+		}
 	forget (my pages);
 	NUMpvector_free ((void **) my titles, 1);
 	inherited (ManPages) destroy (me);
@@ -197,7 +201,7 @@ static int readOnePage (ManPages me, FILE *f) {
 				for (q = link; *q; q ++) if (! isAllowedFileNameCharacter (*q)) *q = '_';
 				strcpy (fileName, link);
 				strcat (fileName, ".man");
-				MelderDir_getFile (& my rootDirectory, fileName, & file);
+				MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file);
 				f = Melder_fopen (& file, "r");
 				if (f) {
 					if (! readOnePage (me, f)) { fclose (f); return Melder_error ("File \"%s\".", MelderFile_messageName (& file)); }
@@ -209,7 +213,7 @@ static int readOnePage (ManPages me, FILE *f) {
 					link [0] = toupper (link [0]);
 					strcpy (fileName, link);
 					strcat (fileName, ".man");
-					MelderDir_getFile (& my rootDirectory, fileName, & file);
+					MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file);
 					if ((f = Melder_fopen (& file, "r")) == NULL) return 0;
 					if (! readOnePage (me, f)) { fclose (f); return Melder_error ("File \"%s\".", MelderFile_messageName (& file)); }
 				}
@@ -438,14 +442,13 @@ static long ManPages_lookUp_caseSensitive (ManPages me, const char *title) {
 	return 0;
 }
 
-const char **ManPages_getTitles (ManPages me, long *numberOfTitles) {
+const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles) {
 	if (! my ground) grind (me);
 	if (! my titles) {
-		int i;
-		my titles = (const char **) NUMpvector (1, my pages -> size);
-		for (i = 1; i <= my pages -> size; i ++) {
+		my titles = (const wchar_t **) NUMpvector (1, my pages -> size);
+		for (long i = 1; i <= my pages -> size; i ++) {
 			ManPage page = my pages -> item [i];
-			my titles [i] = page -> title;
+			my titles [i] = Melder_asciiToWcs (page -> title);
 		}
 	}
 	*numberOfTitles = my pages -> size;
@@ -732,12 +735,12 @@ int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	return 1;
 }
 
-int ManPages_writeAllToHtmlDir (ManPages me, const char *dirPath) {
+int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 	structMelderDir dir;
 	long ipage;
 	if (! theCache) theCache = memopen (100000);
 	if (! theCache) return 0;
-	Melder_pathToDir (dirPath, & dir);
+	Melder_pathToDirW (dirPath, & dir);
 	for (ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = my pages -> item [ipage];
 		char fileName [256], *p, *oldText;
@@ -750,7 +753,7 @@ int ManPages_writeAllToHtmlDir (ManPages me, const char *dirPath) {
 		writePageAsHtml (me, ipage);
 		memwrite ("", 1, 1, theCache);   /* Closing null byte. */
 		structMelderFile file = { { 0 } };
-		MelderDir_getFile (& dir, fileName, & file);
+		MelderDir_getFileW (& dir, Melder_peekAsciiToWcs (fileName), & file);
 		oldText = MelderFile_readText (& file);
 		Melder_clearError ();
 		if (oldText == NULL || strncmp ((char *) theCache -> base, oldText, memtell (theCache))) {

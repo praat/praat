@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/02/17
+ * pb 2007/06/09
  */
 
 #include "Editor.h"
@@ -114,7 +114,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
-int praat_removeAction (void *class1, void *class2, void *class3, const char *title);
+int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title);
 	/* 'class2' and 'class3' may be NULL. */
 	/* 'title' may be NULL; reference-copied. */
 
@@ -127,7 +127,7 @@ Widget praat_addMenuCommand (const char *window, const char *menu, const char *t
 typedef struct {
 	void *klas;   /* The class. */
 	Any object;   /* The instance. */
-	char *name;   /* The name of the object as it appears in the List. */
+	wchar_t *name;   /* The name of the object as it appears in the List. */
 	long id;   /* The unique number of the object. */
 	int selected;   /* Is the name of the object inverted in the list? */
 	Any editors [praat_MAXNUM_EDITORS];   /* Are there editors open with this Object in it? */
@@ -139,7 +139,7 @@ typedef struct {
 typedef struct {   /* Readonly */
 	int n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
-	char *batchName;   /* The name of the command file when called from batch. */
+	wchar_t *batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
 	int totalSelection;   /* The total number of selected objects, <= n. */
 	int totalBeingCreated;
@@ -157,10 +157,12 @@ Any praat_onlyObject (void *klas);
 Any praat_onlyObject_generic (void *klas);
 	/* Returns a selected Data of class 'klas' or a subclass. */
 praat_Object praat_onlyScreenObject (void);
-char *praat_name (int iobject);
-void praat_write_do (Any dia, const char *extension);
+wchar_t *praat_name (int iobject);
+void praat_write_do (Any dia, const wchar_t *extension);
+int praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 int praat_new (Any data, const char *myName, ...);
-void praat_name2 (char *name, void *klas1, void *klas2);
+void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 
 /* Macros for description of forms (dialog boxes).
 	FORM prompts the user for arguments to DO_proc.
@@ -221,37 +223,64 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define FORM(proc,name,helpTitle) \
 	static int DO_##proc (Any sender, void *modified) \
 	{ static Any dia; if (dia == NULL) { Any radio = 0; (void) radio; \
+	dia = UiForm_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (name), DO_##proc, NULL, Melder_peekAsciiToWcs (helpTitle));
+#define FORMW(proc,name,helpTitle) \
+	static int DO_##proc (Any sender, void *modified) \
+	{ static Any dia; if (dia == NULL) { Any radio = 0; (void) radio; \
 	dia = UiForm_create (theCurrentPraat -> topShell, name, DO_##proc, NULL, helpTitle);
-#define REAL(label,def)		UiForm_addReal (dia, label, def);
-#define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
-#define INTEGER(label,def)	UiForm_addInteger (dia, label, def);
-#define NATURAL(label,def)	UiForm_addNatural (dia, label, def);
-#define WORD(label,def)		UiForm_addWord (dia, label, def);
-#define SENTENCE(label,def)	UiForm_addSentence (dia, label, def);
-#define BOOLEAN(label,def)	UiForm_addBoolean (dia, label, def);
-#define LABEL(name,label)	UiForm_addLabel (dia, name, label);
-#define TEXTFIELD(name,def)	UiForm_addText (dia, name, def);
-#define RADIO(label,def)	radio = UiForm_addRadio (dia, label, def);
-#define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
-#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
-#define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define ENUM(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
+#define REAL(label,def)		UiForm_addReal (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define POSITIVE(label,def)	UiForm_addPositive (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define INTEGER(label,def)	UiForm_addInteger (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define NATURAL(label,def)	UiForm_addNatural (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define WORD(label,def)		UiForm_addWord (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define SENTENCE(label,def)	UiForm_addSentence (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define BOOLEAN(label,def)	UiForm_addBoolean (dia, Melder_peekAsciiToWcs (label), def);
+#define LABEL(name,label)	UiForm_addLabel (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (label));
+#define TEXTFIELD(name,def)	UiForm_addText (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (def));
+#define RADIO(label,def)	radio = UiForm_addRadio (dia, Melder_peekAsciiToWcs (label), def);
+#define RADIOBUTTON(label)	UiRadio_addButton (radio, Melder_peekAsciiToWcs (label));
+#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, Melder_peekAsciiToWcs (label), def);
+#define OPTION(label)	UiOptionMenu_addButton (radio, Melder_peekAsciiToWcs (label));
+#define ENUM(label,type,def)	UiForm_addEnum (dia, Melder_peekAsciiToWcs (label), & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
-#define LIST(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
-#define FILE_IN(label)		UiForm_addFileIn (dia, label);
-#define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
-#define COLOUR(label,def)	UiForm_addColour (dia, label, def);
+#define LIST(label,n,str,def)	UiForm_addList (dia, Melder_peekAsciiToWcs (label), n, str, def);
+#define FILE_IN(label)		UiForm_addFileIn (dia, Melder_peekAsciiToWcs (label));
+#define FILE_OUT(label,def)	UiForm_addFileOut (dia, Melder_peekAsciiToWcs (label), def);
+#define COLOUR(label,def)	UiForm_addColour (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define REALW(label,def)		UiForm_addReal (dia, label, def);
+#define POSITIVEW(label,def)	UiForm_addPositive (dia, label, def);
+#define INTEGERW(label,def)	UiForm_addInteger (dia, label, def);
+#define NATURALW(label,def)	UiForm_addNatural (dia, label, def);
+#define WORDW(label,def)		UiForm_addWord (dia, label, def);
+#define SENTENCEW(label,def)	UiForm_addSentence (dia, label, def);
+#define BOOLEANW(label,def)	UiForm_addBoolean (dia, label, def);
+#define LABELW(name,label)	UiForm_addLabel (dia, name, label);
+#define TEXTFIELDW(name,def)	UiForm_addText (dia, name, def);
+#define RADIOW(label,def)	radio = UiForm_addRadio (dia, label, def);
+#define RADIOBUTTONW(label)	UiRadio_addButton (radio, label);
+#define OPTIONMENUW(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
+#define OPTIONW(label)	UiOptionMenu_addButton (radio, label);
+#define ENUMW(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
+#define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
+#define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define LISTW(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
+#define FILE_INW(label)		UiForm_addFileIn (dia, label);
+#define FILE_OUTW(label,def)	UiForm_addFileOut (dia, label, def);
+#define COLOURW(label,def)	UiForm_addColour (dia, label, def);
 #define OK UiForm_finish (dia); } if (sender == NULL) {
-#define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
-#define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
-#define SET_STRING(name,value)	UiForm_setString (dia, name, value);
+#define SET_REAL(name,value)	UiForm_setReal (dia, Melder_peekAsciiToWcs (name), value);
+#define SET_INTEGER(name,value)	UiForm_setInteger (dia, Melder_peekAsciiToWcs (name), value);
+#define SET_STRING(name,value)	UiForm_setString (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (value));
+#define SET_REALW(name,value)	UiForm_setReal (dia, name, value);
+#define SET_INTEGERW(name,value)	UiForm_setInteger (dia, name, value);
+#define SET_STRINGW(name,value)	UiForm_setString (dia, name, value);
 #define DO  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
-	if (! UiForm_parseString (dia, (char *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
+	if (! UiForm_parseString (dia, (wchar_t *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
-	if (! UiForm_parseString (dia, (char *) sender)) { char *parkedError = Melder_strdup (Melder_getError ()); Melder_clearError (); \
+	if (! UiForm_parseString (dia, (wchar_t *) sender)) { wchar_t *parkedError = Melder_wcsdup (Melder_getErrorW ()); Melder_clearError (); \
 	int result = DO_##alternative (sender, modified); \
-	if (result == 0 && parkedError) { Melder_clearError (); Melder_error ("%s", parkedError); } Melder_free (parkedError); return result; \
+	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
 #define END  } } praat_updateSelection (); return 1; }
 #define DIRECT(proc)  static int DO_##proc (Any dummy1, void *dummy2) { \
@@ -274,17 +303,31 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 	#define FORM_READ(proc,title,help) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
+		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
+		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (sender == dia) file = UiFile_getFile (sender); \
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+	#define FORM_READW(proc,title,help) \
+	static int DO_##proc (Any sender, void *dummy) { \
+		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
+	static int DO_##proc (Any sender, void *dummy) { \
+		static Any dia; (void) dummy; \
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
+		if (! sender) praat_write_do (dia, Melder_peekAsciiToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (sender == dia) file = UiFile_getFile (sender); \
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+	#define FORM_WRITEW(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 #endif
   
 /* Callbacks should return 1 if OK, and 0 if failure.
@@ -299,10 +342,14 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 		returns 1 if function returned a new object;
 		returns 0 if function returned a NULL object.
 */
-#define GET_REAL(name)  UiForm_getReal (dia, name)
-#define GET_INTEGER(name)  UiForm_getInteger (dia, name)
-#define GET_STRING(name)  UiForm_getString (dia, name)
-#define GET_FILE(name)  UiForm_getFile (dia, name)
+#define GET_REAL(name)  UiForm_getReal (dia, Melder_peekAsciiToWcs (name))
+#define GET_INTEGER(name)  UiForm_getInteger (dia, Melder_peekAsciiToWcs (name))
+#define GET_STRING(name)  UiForm_getStringA (dia, name)
+#define GET_FILE(name)  UiForm_getFile (dia, Melder_peekAsciiToWcs (name))
+#define GET_REALW(name)  UiForm_getReal (dia, name)
+#define GET_INTEGERW(name)  UiForm_getInteger (dia, name)
+#define GET_STRINGW(name)  UiForm_getString (dia, name)
+#define GET_FILEW(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) return Melder_error ("%s", t);
 #define NEW(proc)  if (! praat_new (proc, NULL)) return 0;
 
@@ -312,10 +359,13 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define CLASS  (theCurrentPraat -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraat -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraat -> graphics
-#define FULL_NAME  (theCurrentPraat -> list [IOBJECT]. name)
+#define FULL_NAME  (Melder_peekWcsToAscii (theCurrentPraat -> list [IOBJECT]. name))
+#define FULL_NAMEW  (theCurrentPraat -> list [IOBJECT]. name)
 #define ID  (theCurrentPraat -> list [IOBJECT]. id)
-#define NAME  praat_name (IOBJECT)
-#define FILENAME  (theCurrentPraat -> list [IOBJECT]. file)
+#define NAME  Melder_peekWcsToAscii (praat_name (IOBJECT))
+#define NAMEW  praat_name (IOBJECT)
+#define FILENAME  (Melder_peekWcsToAscii (theCurrentPraat -> list [IOBJECT]. file))
+#define FILENAMEW  (theCurrentPraat -> list [IOBJECT]. file)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
 #define EVERY_TO(proc)  EVERY_CHECK (praat_new (proc, NAME))

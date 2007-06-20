@@ -618,6 +618,62 @@ int SortedSetOfString_add (SortedSetOfString me, const char *string) {
 	return 1;   /* OK: added new string. */
 }
 
+/********** class SortedSetOfStringW **********/
+
+static int classSortedSetOfStringW_compare (I, thou) {
+	iam (SimpleStringW); thouart (SimpleStringW);
+	return wcscmp (my string, thy string);
+}
+
+class_methods (SortedSetOfStringW, SortedSet)
+	class_method_local (SortedSetOfStringW, compare)
+class_methods_end
+
+int SortedSetOfStringW_init (I) { iam (SortedSetOfStringW); return SortedSet_init (me, classSimpleStringW, 10); }
+
+SortedSetOfStringW SortedSetOfStringW_create (void) {
+	SortedSetOfStringW me = new (SortedSetOfStringW);
+	if (! me || ! SortedSetOfStringW_init (me)) { forget (me); return NULL; }
+	return me;
+}
+
+long SortedSetOfStringW_lookUp (SortedSetOfStringW me, const wchar_t *string) {
+	SimpleStringW *items = (SimpleStringW *) my item;
+	long numberOfItems = my size;
+	long left = 1, right = numberOfItems;
+	int atStart, atEnd;
+	if (numberOfItems == 0) return 0;
+
+	atEnd = wcscmp (string, items [numberOfItems] -> string);
+	if (atEnd > 0) return 0;
+	if (atEnd == 0) return numberOfItems;
+
+	atStart = wcscmp (string, items [1] -> string);
+	if (atStart < 0) return 0;
+	if (atStart == 0) return 1;
+
+	while (left < right - 1) {
+		long mid = (left + right) / 2;
+		int here = wcscmp (string, items [mid] -> string);
+		if (here == 0) return mid;
+		if (here > 0) left = mid; else right = mid;
+	}
+	Melder_assert (right == left + 1);
+	return 0;
+}
+
+int SortedSetOfStringW_add (SortedSetOfStringW me, const wchar_t *string) {
+	static SimpleStringW simp;
+	long index;
+	SimpleStringW newSimp;
+	if (! simp) { simp = SimpleStringW_create (L""); Melder_free (simp -> string); }
+	simp -> string = (wchar_t *) string;
+	if ((index = our position (me, simp)) == 0) return 1;   /* OK: already there: do not add. */
+	newSimp = SimpleStringW_create (string);
+	if (! newSimp || ! _Collection_insertItem (me, newSimp, index)) return 0;   /* Must be out of memory. */
+	return 1;   /* OK: added new string. */
+}
+
 /********** class Cyclic **********/
 
 static int classCyclic_compare (I, thou) {

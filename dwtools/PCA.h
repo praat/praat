@@ -48,7 +48,7 @@
 	char **labels;						\
 	double *centroid;
 #define PCA_methods Eigen_methods
-class_create (PCA, Eigen)
+class_create (PCA, Eigen);
 
 PCA PCA_create (long numberOfComponents, long dimension);
 

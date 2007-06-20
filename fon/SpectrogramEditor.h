@@ -2,7 +2,7 @@
 #define _SpectrogramEditor_h_
 /* SpectrogramEditor.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1995/06/04
- * pb 2002/07/16 GPL
+ * pb 2007/06/10
  */
 
 #ifndef _FunctionEditor_h_
@@ -34,9 +33,9 @@
 #define SpectrogramEditor_members FunctionEditor_members \
 	double maximum;
 #define SpectrogramEditor_methods FunctionEditor_methods
-class_create (SpectrogramEditor, FunctionEditor)
+class_create (SpectrogramEditor, FunctionEditor);
 
-Any SpectrogramEditor_create (Widget parent, char *title, Any data);
+Any SpectrogramEditor_create (Widget parent, wchar_t *title, Any data);
 
 /* End of file SpectrogramEditor.h */
 #endif

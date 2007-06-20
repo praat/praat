@@ -67,12 +67,12 @@
 #define FilterBank_members Matrix_members
 #define FilterBank_methods Matrix_methods \
 	int (*getFrequencyScale) (I);
-class_create (FilterBank, Matrix)
+class_create (FilterBank, Matrix);
 
 
 #define BarkFilter_members FilterBank_members
 #define BarkFilter_methods FilterBank_methods
-class_create (BarkFilter, FilterBank)
+class_create (BarkFilter, FilterBank);
 
 /*
 Interpretation:
@@ -107,7 +107,7 @@ BarkFilter Matrix_to_BarkFilter (I);
 
 #define MelFilter_members FilterBank_members
 #define MelFilter_methods FilterBank_methods
-class_create (MelFilter, FilterBank)
+class_create (MelFilter, FilterBank);
 
 /*
 Interpretation:
@@ -132,7 +132,7 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 #define FormantFilter_members FilterBank_members
 #define FormantFilter_methods FilterBank_methods \
 	void (*drawFilterFunction) (I, int from, int to, void *dwrawclosure);
-class_create (FormantFilter, FilterBank)
+class_create (FormantFilter, FilterBank);
 
 FormantFilter FormantFilter_create (double tmin, double tmax, long nt, 
 	double dt, double t1, double fmin, double fmax, long nf, double df, 

@@ -31,6 +31,7 @@
  * pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
  * pb 2007/05/24 more wchar_t
  * pb 2007/05/26 Melder_stringMatchesCriterionW
+ * pb 2007/06/19 removed some
  */
 
 #include <math.h>
@@ -615,15 +616,12 @@ static void motif_fatal (char *message)
 	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
 	SysError (11);
 }
-static void motif_error (wchar_t *messageW1) {
+static void motif_error (wchar_t *messageW) {
 	DialogRef dialog;
 	static UniChar messageU [2000+1];
-	static wchar_t messageW2 [2000+1];
-	Longchar_nativizeW (messageW1, messageW2, true);
-	int messageLength = wcslen (messageW2);
-	//wcscpy (messageW2, L"\u0252abc");   // For testing.
+	int messageLength = wcslen (messageW);
 	for (int i = 0; i < messageLength; i ++) {
-		messageU [i] = messageW2 [i];   // BUG: should convert to UTF16
+		messageU [i] = messageW [i];   // BUG: should convert to UTF16
 	}
 	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
 	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
@@ -635,35 +633,20 @@ static void motif_error (wchar_t *messageW1) {
 static void motif_fatal (char *message) {
 	MessageBox (NULL, message, "Fatal error", MB_OK);
 }
-/*
 static void motif_error (wchar_t *messageW) {
-	static char messageA1 [2000+1], messageA2 [2000+1];
-	int messageLength = wcslen (messageW);
-	for (int i = 0; i <= messageLength; i ++) {
-		messageA1 [i] = messageW [i];
-	}
-	Longchar_nativize (messageA1, messageA2, true);
-	MessageBox (NULL, messageA2, "Message", MB_OK);
-}
-*/
-static void motif_error (wchar_t *messageW) {
-	static wchar_t messageW2 [2000+1];
-	Longchar_nativizeW (messageW, messageW2, true);
-	//wcscpy (messageW2, L"\U00000252abc");   // For testing.
-	MessageBoxW (NULL, messageW2, L"Message", MB_OK);
+	MessageBoxW (NULL, messageW, L"Message", MB_OK);
 }
 #else
 static void motif_error (wchar_t *messageW) {
 	static Widget dia = NULL;
-	static char messageA1 [2000+1], messageA2 [2000+1];
+	static char messageA [2000+1];
 	int messageLength = wcslen (messageW);
 	if (dia == NULL)
 		dia = makeMessage (XmDIALOG_ERROR, "error", "Message");
 	for (int i = 0; i <= messageLength; i ++) {
-		messageA1 [i] = messageW [i];
+		messageA [i] = messageW [i];
 	}
-	Longchar_nativize (messageA1, messageA2, true);
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, messageA2), NULL);
+	XtVaSetValues (dia, motif_argXmString (XmNmessageString, messageA), NULL);
 	XtManageChild (dia);
 	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
 }
@@ -742,96 +725,5 @@ void Melder_setPlayReverseProc (void (*playReverse) (void))
 
 void Melder_setPublishPlayedProc (int (*publishPlayed) (void))
 	{ theMelder. publishPlayed = publishPlayed ? publishPlayed : defaultPublishPlayed; }
-
-long Melder_killReturns_inline (char *text) {
-	const char *from;
-	char *to;
-	for (from = text, to = text; *from != '\0'; from ++, to ++) {
-		if (*from == 13) {   /* Carriage return? */
-			if (from [1] == '\n') {   /* Followed by linefeed? Must be a Windows text. */
-				from ++;   /* Ignore carriage return. */
-				*to = '\n';   /* Copy linefeed. */
-			} else {   /* Bare carriage return? Must be a Macintosh text. */
-				*to = '\n';   /* Change to linefeed. */
-			}
-		} else {
-			*to = *from;
-		}
-	}
-	*to = '\0';   /* Closing null byte. */
-	return to - text;
-}
-
-#if 0
-/********** NEWLINE CONVERSION ROUTINES **********/
-
-char * Melder_linefeedsToWin (const char *text);
-/*
-	 Replaces all bare linefeeds (generic = Unix) or bare returns (Mac) with return / linefeed sequences (Win).
-	 Remove with Melder_free.
-*/
-void Melder_linefeedsUnixToMac_inline (char *text);
-/*
-	 Replaces all bare linefeeds (generic = Unix) with bare returns (Mac).
-	 Lengths of new and old strings are equal.
-*/
-long Melder_linefeedsToMac_inline (char *text);
-/*
-	 Replaces all bare linefeeds (generic = Unix) or return / linefeed sequences (Win) with bare returns (Mac).
-	 Returns new length of string (equal to or less than old length).
-*/
-
-char * Melder_linefeedsToWin (const char *text) {
-	const char *from;
-	char *result = Melder_malloc (2 * strlen (text) + 1), *to;   /* All new lines plus one null byte. */
-	if (! result) return NULL;
-	for (from = text, to = result; *from != '\0'; from ++, to ++) {
-		if (*from == 13) {   /* Carriage return? */
-			*to = 13;   /* Copy carriage return. */
-			if (from [1] == '\n') {   /* Followed by linefeed? Must be a Windows text. */
-				from ++, to ++;
-				*to = '\n';   /* Copy linefeed. */
-			} else {   /* Bare carriage return? Must be a Macintosh text. */
-				* ++ to = '\n';   /* Insert linefeed. */
-			}
-		} else if (*from == '\n') {   /* Bare linefeed? Must be generic (Unix). */
-			*to = 13;   /* Insert carriage return. */
-			* ++ to = '\n';   /* Copy linefeed. */
-		} else {
-			*to = *from;
-		}
-	}
-	*to = '\0';
-	return result;
-}
-
-void Melder_linefeedsUnixToMac_inline (char *text) {
-	char *p;
-	for (p = text; *p != '\0'; p ++)
-		if (*p == '\n')   /* Linefeed? */
-			*p = 13;   /* Change to carriage return. */
-}
-
-long Melder_linefeedsToMac_inline (char *text) {
-	const char *from;
-	char *to;
-	for (from = text, to = text; *from != '\0'; from ++, to ++) {
-		if (*from == 13) {   /* Carriage return? */
-			if (from [1] == '\n') {   /* Followed by linefeed? Must be a Windows text. */
-				*to = 13;   /* Copy carriage return. */
-				from ++;   /* Ignore linefeed. */
-			} else {   /* Bare carriage return? Must be a Macintosh text. */
-				*to = 13;   /* Copy carriage return. */
-			}
-		} else if (*from == '\n') {   /* Bare linefeed? Must be generic (Unix). */
-			*to = 13;   /* Change to carriage return. */
-		} else {
-			*to = *from;
-		}
-	}
-	*to = '\0';   /* Closing null byte. */
-	return to - text;
-}
-#endif
 
 /* End of file melder.c */

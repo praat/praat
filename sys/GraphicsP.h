@@ -104,7 +104,7 @@ typedef struct {
 	double paperWidth, paperHeight;
 
 #define Graphics_methods Thing_methods
-class_create_opaque (Graphics, Thing)
+class_create_opaque (Graphics, Thing);
 
 int Graphics_init (I);
 /*
@@ -169,7 +169,7 @@ int Graphics_init (I);
 #endif
 
 #define GraphicsScreen_methods Graphics_methods
-class_create (GraphicsScreen, Graphics)
+class_create (GraphicsScreen, Graphics);
 
 #define GraphicsPostscript_members Graphics_members \
 	FILE *file;	 \
@@ -181,7 +181,7 @@ class_create (GraphicsScreen, Graphics)
 	const char *lastFid; \
 	int job, eps, pageNumber, lastSize;
 #define GraphicsPostscript_methods Graphics_methods
-class_create (GraphicsPostscript, Graphics)
+class_create (GraphicsPostscript, Graphics);
 
 /* Opcodes for recording. */
 

@@ -39,7 +39,7 @@
         long maximumNumberOfCoefficients; \
         CC_Frame frame;
 #define CC_methods Sampled_methods
-oo_CLASS_CREATE (CC, Sampled)
+oo_CLASS_CREATE (CC, Sampled);
 
 int CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax);

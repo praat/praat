@@ -40,7 +40,7 @@ Collection Collection_permuteItems(Collection me);
 
 #define OrderedOfString_members Ordered_members
 #define OrderedOfString_methods Ordered_methods
-class_create (OrderedOfString, Ordered)
+class_create (OrderedOfString, Ordered);
 
 Any OrderedOfString_create (void);
 int OrderedOfString_init (I, long initialCapacity);

@@ -37,7 +37,7 @@
 
 #define PitchTier_members RealTier_members
 #define PitchTier_methods RealTier_methods
-class_create (PitchTier, RealTier)
+class_create (PitchTier, RealTier);
 
 PitchTier PitchTier_create (double tmin, double tmax);
 /*

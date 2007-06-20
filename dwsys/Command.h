@@ -32,7 +32,7 @@
 	int (*execute) (I);				\
 	int (*undo) (I);
 #define Command_methods Thing_methods
-class_create (Command, Thing)
+class_create (Command, Thing);
 
 int Command_init (I, char *name, Any data, int (*execute)(Any), int (*undo)(Any));
 	
@@ -44,7 +44,7 @@ int Command_undo (I);
 #define CommandHistory_members Ordered_members	\
 	long current;
 #define CommandHistory_methods Ordered_methods
-class_create (CommandHistory, Ordered)
+class_create (CommandHistory, Ordered);
 
 /* Active data structure. 'current' is position of the cursor in the list */
 /* Queries and insertions are at the current position */

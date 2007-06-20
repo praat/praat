@@ -1,6 +1,6 @@
 /* SpectrumEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2006/04/01 dynamic range setting
+ * pb 2007/06/10 wchar_t
  */
 
 #include "SpectrumEditor.h"
@@ -32,7 +33,7 @@
 	double bandSmoothing, dynamicRange; \
 	Widget publishBandButton, publishSoundButton;
 #define SpectrumEditor_methods FunctionEditor_methods
-class_create_opaque (SpectrumEditor, FunctionEditor)
+class_create_opaque (SpectrumEditor, FunctionEditor);
 
 static struct {
 	double bandSmoothing;
@@ -73,10 +74,10 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Spectrum_drawInside (spectrum, my graphics, my startWindow, my endWindow, my minimum, my maximum);
-	FunctionEditor_drawRangeMark (me, "%.1f dB", my maximum, Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, "%.1f dB", my minimum, Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, L"%.1f dB", my maximum, Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, L"%.1f dB", my minimum, Graphics_BOTTOM);
 	if (my cursorHeight > my minimum && my cursorHeight < my maximum)
-		FunctionEditor_drawHorizontalHair (me, "%.1f dB", my cursorHeight);
+		FunctionEditor_drawHorizontalHair (me, L"%.1f dB", my cursorHeight);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 
 	/* Update buttons. */
@@ -142,7 +143,7 @@ SET_REAL ("Band smoothing", my bandSmoothing)
 DO
 	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
 	if (my endSelection <= my startSelection) return Melder_error ("To apply band-pass filter, first make a selection.");
-	Editor_save (me, "Pass band");
+	Editor_save (me, L"Pass band");
 	Spectrum_passHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -155,7 +156,7 @@ SET_REAL ("Band smoothing", my bandSmoothing)
 DO
 	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
 	if (my endSelection <= my startSelection) return Melder_error ("To apply band-stop filter, first make a selection.");
-	Editor_save (me, "Stop band");
+	Editor_save (me, L"Stop band");
 	Spectrum_stopHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -177,20 +178,20 @@ DIRECT (SpectrumEditor, cb_help_Spectrum) Melder_help ("Spectrum"); END
 static void createMenus (I) {
 	iam (SpectrumEditor);
 	inherited (SpectrumEditor) createMenus (me);
-	my publishBandButton = Editor_addCommand (me, "File", "Publish band", 0, cb_publishBand);
-	my publishSoundButton = Editor_addCommand (me, "File", "Publish band-filtered sound", 0, cb_publishSound);
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
-	Editor_addCommand (me, "Edit", "-- edit band --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Pass band...", 0, cb_passBand);
-	Editor_addCommand (me, "Edit", "Stop band...", 0, cb_stopBand);
-	Editor_addCommand (me, "Help", "SpectrumEditor help", '?', cb_help_SpectrumEditor);
-	Editor_addCommand (me, "Help", "Spectrum help", 0, cb_help_Spectrum);
+	my publishBandButton = Editor_addCommand (me, L"File", L"Publish band", 0, cb_publishBand);
+	my publishSoundButton = Editor_addCommand (me, L"File", L"Publish band-filtered sound", 0, cb_publishSound);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"-- edit band --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Pass band...", 0, cb_passBand);
+	Editor_addCommand (me, L"Edit", L"Stop band...", 0, cb_stopBand);
+	Editor_addCommand (me, L"Help", L"SpectrumEditor help", '?', cb_help_SpectrumEditor);
+	Editor_addCommand (me, L"Help", L"Spectrum help", 0, cb_help_Spectrum);
 }
 
 static void viewMenuEntries (I) {
 	iam (SpectrumEditor);
-	Editor_addCommand (me, "View", "Set dynamic range...", 0, cb_setDynamicRange);
-	Editor_addCommand (me, "View", "-- view settings --", 0, 0);
+	Editor_addCommand (me, L"View", L"Set dynamic range...", 0, cb_setDynamicRange);
+	Editor_addCommand (me, L"View", L"-- view settings --", 0, 0);
 }
 
 class_methods (SpectrumEditor, FunctionEditor)
@@ -198,18 +199,18 @@ class_methods (SpectrumEditor, FunctionEditor)
 	class_method (viewMenuEntries)
 	class_method (dataChanged)
 	class_method (draw)
-	us -> format_domain = "Frequency domain:";
-	us -> format_short = "%.0f";
-	us -> format_long = "%.2f";
-	us -> format_units = "Hertz";
-	us -> format_totalDuration = "Total bandwidth %.2f Hertz";
-	us -> format_window = "Window %.2f Hertz";
-	us -> format_selection = "%.2f Hz";
+	us -> format_domain = L"Frequency domain:";
+	us -> format_short = L"%.0f";
+	us -> format_long = L"%.2f";
+	us -> format_units = L"Hertz";
+	us -> format_totalDuration = L"Total bandwidth %.2f Hertz";
+	us -> format_window = L"Window %.2f Hertz";
+	us -> format_selection = L"%.2f Hz";
 	class_method (click)
 	class_method (play)
 class_methods_end
 
-SpectrumEditor SpectrumEditor_create (Widget parent, char *title, Any data) {
+SpectrumEditor SpectrumEditor_create (Widget parent, wchar_t *title, Any data) {
 	SpectrumEditor me = new (SpectrumEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
 	my cursorHeight = -1000;

@@ -40,7 +40,7 @@
 #define AffineTransform_methods Data_methods \
 	void (*transform) (I, double **in, long nrows, double **out); \
 	Any (*invert) (I);
-class_create (AffineTransform, Data)
+class_create (AffineTransform, Data);
 
 int AffineTransform_init (I, long n);
 

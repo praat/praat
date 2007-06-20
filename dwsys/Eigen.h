@@ -42,7 +42,7 @@
 	double *eigenvalues;	\
 	double **eigenvectors; /* eigenvectors stored in row */
 #define Eigen_methods Data_methods
-class_create (Eigen, Data)
+class_create (Eigen, Data);
 
 Eigen Eigen_create (long numberOfEigenvalues, long dimension);
 

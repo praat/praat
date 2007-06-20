@@ -21,13 +21,14 @@
  * pb 2004/09/13
  * pb 2004/10/21 clear method also clears the info buffer, not just the visible text
  * pb 2007/05/24 wchar_t
+ * pb 2007/06/09 more wchar_t
  */
 
 #include "TextEditor.h"
 
 #define InfoEditor_members TextEditor_members
 #define InfoEditor_methods TextEditor_methods
-class_create (InfoEditor, TextEditor)
+class_create (InfoEditor, TextEditor);
 
 static InfoEditor theInfoEditor;
 
@@ -54,12 +55,10 @@ void motif_information (wchar_t *message);
 void motif_information (wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = new (InfoEditor);
-		TextEditor_init (theInfoEditor, Melder_topShell, "");
-		Thing_setName (theInfoEditor, "Praat: Info");
+		TextEditor_init (theInfoEditor, Melder_topShell, L"");
+		Thing_setNameW (theInfoEditor, L"Praat: Info");
 	}
-	static MelderStringA messageA = { 0 };
-	MelderStringA_copyW (& messageA, message);
-	XmTextSetString (theInfoEditor -> textWidget, messageA.string);
+	GuiText_setStringW (theInfoEditor -> textWidget, message);
 	XMapRaised (XtDisplay (theInfoEditor -> shell), XtWindow (theInfoEditor -> shell));
 	GuiWindow_drain (theInfoEditor -> shell);
 }

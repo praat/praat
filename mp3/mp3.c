@@ -86,6 +86,7 @@ struct _MP3_FILE
 
 	MP3F_OFFSET next_read_position;
 	MP3F_OFFSET read_amount;
+	MP3F_OFFSET first_offset;
 	unsigned skip_amount;
 	int need_seek;
 };
@@ -149,6 +150,7 @@ void mp3f_set_file (MP3_FILE mp3f, FILE *f)
 	mp3f -> need_seek = 0;
 	mp3f -> delay = MP3F_DECODER_DELAY + MP3F_ENCODER_DELAY;
 	mp3f -> skip_amount = mp3f -> delay;
+	mp3f -> first_offset = 0;
 }
 
 int mp3f_analyze (MP3_FILE mp3f)
@@ -284,7 +286,7 @@ void mp3f_set_callback (MP3_FILE mp3f,
 
 int mp3f_seek (MP3_FILE mp3f, MP3F_OFFSET sample)
 {
-	MP3F_OFFSET frame, location, base;
+	MP3F_OFFSET frame, location, base, offset;
 
 	if (! mp3f || ! mp3f -> f)
 		return 0;
@@ -298,15 +300,21 @@ int mp3f_seek (MP3_FILE mp3f, MP3F_OFFSET sample)
 
 	/* Calculate where we need to seek */
 	frame = sample / mp3f -> samples_per_frame;
+	if ( frame ) /* libMAD can skip the first frame... */
+		-- frame; 
+	if ( frame ) /* ...and the first frame it decodes is useless */
+		-- frame; 
 	location = frame / mp3f -> frames_per_location;
 	if (location >= mp3f -> num_locations)
 		location = mp3f -> num_locations - 1;
 	frame = location * mp3f -> frames_per_location;
 	base = frame * mp3f -> samples_per_frame;
 
-	if (fseek (mp3f -> f, mp3f -> locations [location], SEEK_SET) < 0)
+	offset = mp3f -> locations [location];
+	if (fseek (mp3f -> f, offset, SEEK_SET) < 0)
 		return 0;
 
+	mp3f -> first_offset = offset;
 	mp3f -> skip_amount = sample - base;
 	mp3f -> need_seek = 0;
 
@@ -316,7 +324,7 @@ int mp3f_seek (MP3_FILE mp3f, MP3F_OFFSET sample)
 		       	mp3f -> delay,
 			(unsigned long)frame, 
 			(unsigned long)location, 
-			(unsigned long)mp3f -> locations [location],
+			(unsigned long)offset,
 			(unsigned long)base,
 		       	mp3f -> skip_amount));
 
@@ -358,10 +366,18 @@ static enum mad_flow mp3f_mad_report_samples (void *context, struct mad_header c
 	MP3_FILE mp3f = (MP3_FILE) context;
 	const int *channels [] = { pcm -> samples [0], pcm -> samples [1] };
 	unsigned length = pcm -> length;
-	(void) header;
 
 	if (! mp3f || ! mp3f -> callback)
 		return MAD_FLOW_BREAK;
+	
+	if (mp3f -> first_offset) {
+		/* libMAD can decide to skip the first frame */
+		if (header -> offset > mp3f -> first_offset) {
+			MP3_DPRINTF (("Skip %u of %lu\n", length, mp3f -> skip_amount));
+			mp3f -> skip_amount -= length;
+		}
+		mp3f -> first_offset = 0;
+	}
 
 	if (mp3f -> skip_amount >= length) {
 		mp3f -> skip_amount -= length;

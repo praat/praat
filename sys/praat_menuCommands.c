@@ -23,6 +23,7 @@
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/26 buttons along top
+ * pb 2007/06/09 wchar_t
  */
 
 #include "praatP.h"
@@ -41,12 +42,12 @@ static int compareMenuCommands (const void *void_me, const void *void_thee) {
 	int compare;
 	if (my window) {
 		if (! thy window) return 1;
-		compare = strcmp (my window, thy window);
+		compare = wcscmp (my window, thy window);
 		if (compare) return compare;
 	} else if (thy window) return -1;
 	if (my menu) {
 		if (! thy menu) return 1;
-		compare = strcmp (my menu, thy menu);
+		compare = wcscmp (my menu, thy menu);
 		if (compare) return compare;
 	} else if (thy menu) return -1;
 	if (my sortingTail < thy sortingTail) return -1;
@@ -60,18 +61,18 @@ void praat_sortMenuCommands (void) {
 	qsort (& theCommands [1], theNumberOfCommands, sizeof (struct structPraat_Command), compareMenuCommands);
 }
 
-static int lookUpMatchingMenuCommand (const char *window, const char *menu, const char *title) {
+static int lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 /*
  * A menu command is fully specified by its environment (window + menu) and its title.
  */
 	int i;
 	for (i = 1; i <= theNumberOfCommands; i ++) {
-		const char *tryWindow = theCommands [i]. window;
-		const char *tryMenu = theCommands [i]. menu;
-		const char *tryTitle = theCommands [i]. title;
-		if ((window == tryWindow || (window && tryWindow && strequ (window, tryWindow))) &&
-		    (menu == tryMenu || (menu && tryMenu && strequ (menu, tryMenu))) &&
-		    (title == tryTitle || (title && tryTitle && strequ (title, tryTitle)))) return i;
+		const wchar_t *tryWindow = theCommands [i]. window;
+		const wchar_t *tryMenu = theCommands [i]. menu;
+		const wchar_t *tryTitle = theCommands [i]. title;
+		if ((window == tryWindow || (window && tryWindow && wcsequ (window, tryWindow))) &&
+		    (menu == tryMenu || (menu && tryMenu && wcsequ (menu, tryMenu))) &&
+		    (title == tryTitle || (title && tryTitle && wcsequ (title, tryTitle)))) return i;
 	}
 	return 0;   /* Not found. */
 }
@@ -100,30 +101,33 @@ MOTIF_CALLBACK (cb_menu)
 	for (i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my callback == callback) {
-			if (my title && ! strequ (my title, "History to script..."))
-					UiHistory_write ("\n%s", my title);
+			if (my title && ! wcsequ (my title, L"History to script...")) {
+				UiHistory_write (L"\n");
+				UiHistory_write (my title);
+			}
 			if (! callback (NULL, (XtPointer) modified))
 				Melder_flushError ("Command not executed.");
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			UiHistory_write ("\nexecute");
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand ((char *) my script, NULL))
+			UiHistory_write (L"\nexecute");
+			if (! DO_RunTheScriptFromAnyAddedMenuCommand ((wchar_t *) my script, NULL))
 				Melder_flushError ("Script not executed.");
 			praat_updateSelection (); return;
 		}
 	}
 MOTIF_CALLBACK_END
 
-static Widget windowMenuToWidget (const char *window, const char *menu) {
+static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 	return
-		strequ (window, "Picture") ? praat_picture_resolveMenu (menu) :
-		strequ (window, "Objects") ? praat_objects_resolveMenu (menu) : NULL;
+		wcsequ (window, L"Picture") ? praat_picture_resolveMenu (menu) :
+		wcsequ (window, L"Objects") ? praat_objects_resolveMenu (menu) : NULL;
 }
 
-Widget praat_addMenuCommand (const char *window, const char *menu, const char *title,
-	const char *after, unsigned long flags, int (*callback) (Any, void *))
+Widget praat_addMenuCommand (const char *windowA, const char *menuA, const char *titleA,
+	const char *afterA, unsigned long flags, int (*callback) (Any, void *))
 {
+	wchar_t *window = Melder_asciiToWcs (windowA), *menu = Melder_asciiToWcs (menuA), *title = Melder_asciiToWcs (titleA), *after = Melder_asciiToWcs (afterA);
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
@@ -135,8 +139,8 @@ Widget praat_addMenuCommand (const char *window, const char *menu, const char *t
 		motifFlags = key ? flags & 0x006007FF : flags & 0x00000700;
 	}
 	if (callback && ! title) {
-		Melder_flushError ("praat_addMenuCommand: command with callback has no title. Window \"%s\", menu \"%s\".",
-			window, menu);
+		Melder_error5 (L"praat_addMenuCommand: command with callback has no title. Window \"", window, L"\", menu \"", menu, L"\".");
+		Melder_flushError (NULL);
 		return NULL;
 	}
 
@@ -147,14 +151,16 @@ Widget praat_addMenuCommand (const char *window, const char *menu, const char *t
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
-			Melder_flushError ("praat_addMenuCommand: the command \"%s\" cannot be put after \"%s\",\n"
-				"in the menu \"%s\" in the window \"%s\"\n"
-				"because the latter command does not exist.", title, after, menu, window);
+			Melder_error9 (L"praat_addMenuCommand: the command \"", title, L"\" cannot be put after \"", after, L"\",\n"
+				"in the menu \"", menu, L"\" in the window \"", window, L"\"\n"
+				"because the latter command does not exist.");
+			Melder_flushError (NULL);
 			return NULL;
 		}
 	} else {
 		position = theNumberOfCommands + 1;   /* At end. */
 	}
+	Melder_free (after);
 
 	/* Increment the command area.
 	 */
@@ -218,19 +224,18 @@ if (! parent) return NULL;
 	return theCommands [position]. button;
 }
 
-int praat_addMenuCommandScript (const char *window, const char *menu, const char *title,
-	const char *after, int depth, const char *script)
+int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+	const wchar_t *after, int depth, const wchar_t *script)
 {
 	int i, position;
 
 	Melder_assert (window && menu && title && after && script);
-	if (strlen (script) && ! strlen (title))
-		return Melder_error ("praat_addMenuCommand: command with script has no title. Window \"%s\", menu \"%s\".",
-			window, menu);
+	if (wcslen (script) && ! wcslen (title))
+		return Melder_error5 (L"praat_addMenuCommand: command with script has no title. Window \"", window, L"\", menu \"", menu, L"\".");
 
 	/* Determine the position of the new command.
 	 */
-	if (strlen (after)) {   /* Search for existing command with same selection. */
+	if (wcslen (after)) {   /* Search for existing command with same selection. */
 		int found = lookUpMatchingMenuCommand (window, menu, after);
 		if (found) {
 			position = found + 1;   /* After 'after'. */
@@ -257,20 +262,20 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 
 	/* Insert new command.
 	 */
-	theCommands [position]. window = Melder_strdup (window);
-	theCommands [position]. menu = Melder_strdup (menu);
-	theCommands [position]. title = strlen (title) ? Melder_strdup (title) : NULL;   /* Allow old-fashioned untitled separators. */
+	theCommands [position]. window = Melder_wcsdup (window);
+	theCommands [position]. menu = Melder_wcsdup (menu);
+	theCommands [position]. title = wcslen (title) ? Melder_wcsdup (title) : NULL;   /* Allow old-fashioned untitled separators. */
 	theCommands [position]. depth = depth;
-	theCommands [position]. callback = strlen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
-	theCommands [position]. executable = strlen (script) != 0;
-	if (strlen (script) == 0) {
-		theCommands [position]. script = Melder_strdup ("");   /* Empty string, which will be needed to signal origin. */
+	theCommands [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
+	theCommands [position]. executable = wcslen (script) != 0;
+	if (wcslen (script) == 0) {
+		theCommands [position]. script = Melder_wcsdup (L"");   /* Empty string, which will be needed to signal origin. */
 	} else {
 		structMelderFile file = { { 0 } };
-		Melder_relativePathToFile (script, & file);
-		theCommands [position]. script = Melder_strdup (Melder_fileToPath (& file));
+		Melder_relativePathToFileW (script, & file);
+		theCommands [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
 	}
-	theCommands [position]. after = strlen (after) ? Melder_strdup (after) : NULL;
+	theCommands [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
 	if (praatP.phase >= praat_READING_BUTTONS) {
 		static long uniqueID = 0;
 		theCommands [position]. uniqueID = ++ uniqueID;
@@ -313,7 +318,7 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 	return 1;
 }
 
-int praat_hideMenuCommand (const char *window, const char *menu, const char *title) {
+int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 	int found;
 	praat_Command command;
 	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
@@ -328,7 +333,7 @@ int praat_hideMenuCommand (const char *window, const char *menu, const char *tit
 	return 1;
 }
 
-int praat_showMenuCommand (const char *window, const char *menu, const char *title) {
+int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 	int found;
 	praat_Command command;
 	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
@@ -350,31 +355,31 @@ void praat_saveMenuCommands (FILE *f) {
 		for (i = 1; i <= theNumberOfCommands; i ++) {
 			praat_Command me = & theCommands [i];
 			if (my uniqueID == id && ! my hidden && my window && my menu && my title) {
-				fprintf (f, "Add menu command... \"%s\" \"%s\" \"%s\" \"%s\" %d %s\n",
-					my window, my menu, my title, my after ? my after : "", my depth, my script ? my script : "");
+				fwprintf (f, L"Add menu command... \"%ls\" \"%ls\" \"%ls\" \"%ls\" %d %ls\n",
+					my window, my menu, my title, my after ? my after : L"", my depth, my script ? my script : L"");
 				break;
 			}
 		}
 	for (i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
-			fprintf (f, "%s menu command... \"%s\" \"%s\" %s\n",
-				my hidden ? "Hide" : "Show", my window, my menu, my title);
+			fwprintf (f, L"%ls menu command... \"%ls\" \"%ls\" %ls\n",
+				my hidden ? L"Hide" : L"Show", my window, my menu, my title);
 	}
 }
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callback) (Any, void *), int x, int y) {
+void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (Any, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
-	my window = Melder_strdup ("Objects");
+	my window = Melder_wcsdup (L"Objects");
 	my title = title;
 	my callback = callback;
 	my unhidable = TRUE;
 	if (theCurrentPraat -> batch) {
 		my button = NULL;
 	} else {
-		Widget button = my button = XmCreatePushButton (parent, MOTIF_CONST_CHAR_ARG (title), 0, 0);
+		Widget button = my button = XmCreatePushButton (parent, Melder_peekWcsToAscii (title), 0, 0);
 		XtVaSetValues (button, XmNx, x,
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y, XmNwidth, 76, NULL);
 		XtSetSensitive (button, False);
@@ -384,18 +389,18 @@ void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callba
 	my executable = False;
 }
 
-void praat_sensitivizeFixedButtonCommand (const char *title, int sensitive) {
+void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
 	int i;
 	for (i = 1; i <= theNumberOfCommands; i ++)
-		if (strequ (theCommands [i]. title, title)) break;   /* Search. */
+		if (wcsequ (theCommands [i]. title, title)) break;   /* Search. */
 	theCommands [i]. executable = sensitive;
 	if (! theCurrentPraat -> batch && ! Melder_backgrounding) XtSetSensitive (theCommands [i]. button, sensitive);
 }
 
-int praat_doMenuCommand (const char *command, const char *arguments) {
+int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments) {
 	long i = 1;
-	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! strequ (theCommands [i]. title, command) ||
-		(! strequ (theCommands [i]. window, "Objects") && ! strequ (theCommands [i]. window, "Picture")))) i ++;
+	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
+		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
 	if (! theCommands [i]. callback ((Any) arguments, NULL))
 		return 0;
@@ -408,9 +413,9 @@ praat_Command praat_getMenuCommand (long i)
 	{ return i < 1 || i > theNumberOfCommands ? NULL : & theCommands [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	const char *windowName = our _className;
+	const wchar_t *windowName = our _classNameW;
 	long i;
-	for (i = 1; i <= theNumberOfCommands; i ++) if (strequ (theCommands [i]. window, windowName)) {
+	for (i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
 		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
 			Melder_flushError ("To fix this, go to Praat:Preferences:Buttons:Editors, "
 				"and remove the script from this menu.\n"

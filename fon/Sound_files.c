@@ -97,13 +97,15 @@ static void Sound_alawDecode (Sound me) {
 		FSSpec *fspec = (FSSpec *) void_fspec;
 		Str255 pname;
 		OSErr err;
-		PfromCstr (pname, file -> path);
+		unsigned char path [1000];
+		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
+		PfromCstr (pname, (char *) path);
 		err = FSMakeFSSpec (0, 0, & pname [0], fspec);
 		if (err != noErr && err != fnfErr) {
 			if (err == -2095) {
 				return Melder_error ("To open this movie file, you have to install QuickTime first (www.apple.com).");
 			}
-			return Melder_error ("Error #%d looking for file %s.", err, file -> path);
+			return Melder_error ("Error #%d looking for file %s.", err, path);
 		}
 		return 1;
 	}

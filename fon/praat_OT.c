@@ -1,6 +1,6 @@
 /* praat_OT.c
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/26
+ * pb 2007/06/11
  */
 
 #include "praat.h"
@@ -102,7 +102,7 @@ DIRECT (OTGrammar_edit)
 		return Melder_error ("Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -121,8 +121,7 @@ FORM (OTGrammar_generateInputs, "Generate inputs", "OTGrammar: Generate inputs..
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new (OTGrammar_generateInputs (OBJECT, GET_INTEGER ("Number of trials")),
-			"%s_in", NAME);
+		int status = praat_new9 (OTGrammar_generateInputs (OBJECT, GET_INTEGER ("Number of trials")), NAMEW, L"_in", 0,0,0,0,0,0,0);
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -174,7 +173,7 @@ END
 
 DIRECT (OTGrammar_getInputs)
 	WHERE (SELECTED) {
-		if (! praat_new (OTGrammar_getInputs (OBJECT), "%s_in", NAME)) return 0;
+		if (! praat_new9 (OTGrammar_getInputs (OBJECT), NAMEW, L"_in", 0,0,0,0,0,0,0)) return 0;
 	}
 END
 
@@ -271,8 +270,8 @@ FORM (OTGrammar_inputToOutputs, "OTGrammar: Input to outputs", "OTGrammar: Input
 	OK
 DO
 	OTGrammar ot = ONLY (classOTGrammar);
-	if (! praat_new (OTGrammar_inputToOutputs (ot,
-		GET_STRING ("Input form"), GET_INTEGER ("Trials"), GET_REAL ("Evaluation noise")), "%s_out", ot -> name)) return 0;
+	if (! praat_new9 (OTGrammar_inputToOutputs (ot, GET_STRING ("Input form"), GET_INTEGER ("Trials"), GET_REAL ("Evaluation noise")),
+		ot -> nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (ot);
 END
 
@@ -281,8 +280,8 @@ FORM (OTGrammar_inputsToOutputs, "OTGrammar: Inputs to outputs", "OTGrammar: Inp
 	OK
 DO
 	OTGrammar ot = ONLY (classOTGrammar);
-	if (! praat_new (OTGrammar_inputsToOutputs (ot,
-		ONLY (classStrings), GET_REAL ("Evaluation noise")), "%s_out", ot -> name)) return 0;
+	if (! praat_new9 (OTGrammar_inputsToOutputs (ot, ONLY (classStrings), GET_REAL ("Evaluation noise")),
+		ot -> nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (ot);
 END
 
@@ -374,7 +373,7 @@ DO
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"),
 		GET_INTEGER ("Store history every"), & history);
 	praat_dataChanged (grammar);
-	if (history) praat_new (history, "%s", grammar -> name);
+	if (history) praat_new9 (history, grammar -> nameW, 0,0,0,0,0,0,0,0);
 	iferror {
 		if (history) praat_updateSelection ();
 		return 0;
@@ -531,7 +530,7 @@ DO
 		GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"),
 		GET_INTEGER ("Store history every"), & history);
 	praat_dataChanged (grammar);
-	if (history) praat_new (history, "%s", grammar -> name);
+	if (history) praat_new9 (history, grammar -> nameW, 0,0,0,0,0,0,0,0);
 	iferror {
 		if (history) praat_updateSelection ();
 		return 0;
@@ -597,7 +596,8 @@ FORM (OTGrammar_to_Distributions, "OTGrammar: Compute output distributions", "OT
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new (OTGrammar_to_Distribution (OBJECT, GET_INTEGER ("Trials per input"), GET_REAL ("Evaluation noise")), "%s_out", NAME);
+		int status = praat_new9 (OTGrammar_to_Distribution (OBJECT, GET_INTEGER ("Trials per input"), GET_REAL ("Evaluation noise")),
+			NAMEW, L"_out", 0,0,0,0,0,0,0);
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -609,7 +609,8 @@ FORM (OTGrammar_to_PairDistribution, "OTGrammar: Compute output distributions", 
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new (OTGrammar_to_PairDistribution (OBJECT, GET_INTEGER ("Trials per input"), GET_REAL ("Evaluation noise")), "%s_out", NAME);
+		int status = praat_new9 (OTGrammar_to_PairDistribution (OBJECT, GET_INTEGER ("Trials per input"), GET_REAL ("Evaluation noise")),
+			NAMEW, L"_out", 0,0,0,0,0,0,0);
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -642,7 +643,7 @@ DIRECT (OTMulti_edit)
 		return Melder_error ("Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -740,8 +741,8 @@ FORM (OTMulti_generateOptimalForms, "OTMulti: Generate optimal forms", 0)
 	OK
 DO
 	OTMulti me = ONLY (classOTMulti);
-	if (! praat_new (OTMulti_generateOptimalForms (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
-		GET_REAL ("Evaluation noise"), GET_INTEGER ("Trials")), "%s_out", my name)) return 0;
+	if (! praat_new9 (OTMulti_generateOptimalForms (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		GET_REAL ("Evaluation noise"), GET_INTEGER ("Trials")), my nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (me);
 END
 
@@ -815,8 +816,8 @@ FORM (OTMulti_to_Distribution, "OTMulti: Compute output distribution", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new (OTMulti_to_Distribution (OBJECT,  GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
-		GET_INTEGER ("Number of trials"), GET_REAL ("Evaluation noise")), "%s_out", NAME);
+		int status = praat_new9 (OTMulti_to_Distribution (OBJECT,  GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+			GET_INTEGER ("Number of trials"), GET_REAL ("Evaluation noise")), NAMEW, L"_out", 0,0,0,0,0,0,0);
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -850,8 +851,8 @@ FORM (OTMulti_Strings_generateOptimalForms, "OTGrammar: Inputs to outputs", "OTG
 	OK
 DO
 	OTMulti me = ONLY (classOTMulti);
-	if (! praat_new (OTMulti_Strings_generateOptimalForms (me,
-		ONLY (classStrings), GET_REAL ("Evaluation noise")), "%s_out", my name)) return 0;
+	if (! praat_new9 (OTMulti_Strings_generateOptimalForms (me,
+		ONLY (classStrings), GET_REAL ("Evaluation noise")), my nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (me);
 END
 

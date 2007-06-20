@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/03/18
+ * pb 2007/06/10
  */
 
 #include "praat.h"
@@ -208,7 +208,7 @@ DIRECT (AmplitudeTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classAmplitudeTier)
-			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -324,7 +324,7 @@ END
 
 DIRECT (Sound_AmplitudeTier_multiply)
 	Sound sound = ONLY (classSound);
-	if (! praat_new (Sound_AmplitudeTier_multiply (sound, ONLY (classAmplitudeTier)), "%s_amp", sound -> name)) return 0;
+	if (! praat_new9 (Sound_AmplitudeTier_multiply (sound, ONLY (classAmplitudeTier)), sound -> nameW, L"_amp", 0,0,0,0,0,0,0)) return 0;
 END
 
 /***** COCHLEAGRAM *****/
@@ -461,7 +461,7 @@ DIRECT (DurationTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classDurationTier)
-			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -829,8 +829,8 @@ END
 DIRECT (Formant_PointProcess_to_FormantTier)
 	Formant formant = ONLY (classFormant);
 	PointProcess point = ONLY (classPointProcess);
-	if (! praat_new (Formant_PointProcess_to_FormantTier (formant, point),
-		"%s %s", formant -> name, point -> name)) return 0;
+	if (! praat_new9 (Formant_PointProcess_to_FormantTier (formant, point),
+		formant -> nameW, L"_", point -> nameW, 0,0,0,0,0,0)) return 0;
 END
 
 /***** FORMANT & SOUND *****/
@@ -1227,7 +1227,7 @@ DIRECT (IntensityTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classIntensityTier)
-			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1595,7 +1595,7 @@ DIRECT (Manipulation_edit)
 		return Melder_error ("Cannot edit a Manipulation from batch.");
 	} else {
 		WHERE (SELECTED) {
-			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_ManipulationEditor_publish, NULL);
 		}
@@ -2175,7 +2175,7 @@ DIRECT (Pitch_edit)
 		return Melder_error ("Cannot edit a Pitch from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -2543,9 +2543,9 @@ DIRECT (Sound_Pitch_to_Manipulation)
 END
 
 DIRECT (Sound_Pitch_to_PointProcess_cc)
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classSound, classPitch);
-	if (! praat_new (Sound_Pitch_to_PointProcess_cc (ONLY (classSound), ONLY (classPitch)), name)) return 0;
+	if (! praat_new9 (Sound_Pitch_to_PointProcess_cc (ONLY (classSound), ONLY (classPitch)), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 FORM (Sound_Pitch_to_PointProcess_peaks, "Sound & Pitch: To PointProcess (peaks)", 0)
@@ -2553,10 +2553,10 @@ FORM (Sound_Pitch_to_PointProcess_peaks, "Sound & Pitch: To PointProcess (peaks)
 	BOOLEAN ("Include minima", 0)
 	OK
 DO
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classSound, classPitch);
-	if (! praat_new (Sound_Pitch_to_PointProcess_peaks (ONLY (classSound), ONLY (classPitch),
-		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")), name)) return 0;
+	if (! praat_new9 (Sound_Pitch_to_PointProcess_peaks (ONLY (classSound), ONLY (classPitch),
+		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 /***** PITCHTIER *****/
@@ -2620,7 +2620,7 @@ DIRECT (PitchTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPitchTier)
-			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -2883,7 +2883,7 @@ DIRECT (PointProcess_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPointProcess)
-			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
 				OBJECT, sound), IOBJECT)) return 0;
 	}
 END
@@ -3513,7 +3513,7 @@ DIRECT (Spectrogram_view)
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+				(SpectrogramEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT))
 					return 0;
 END
 
@@ -3555,7 +3555,7 @@ END
 DIRECT (Spectrum_edit)
 	if (theCurrentPraat -> batch) return Melder_error ("Cannot edit a Spectrum from batch.");
 	else WHERE (SELECTED)
-		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Spectrum_formula, "Spectrum: Formula", "Spectrum: Formula...")

@@ -40,7 +40,7 @@
 
 #define IntensityTier_members RealTier_members
 #define IntensityTier_methods RealTier_methods
-class_create (IntensityTier, RealTier)
+class_create (IntensityTier, RealTier);
 
 IntensityTier IntensityTier_create (double tmin, double tmax);
 

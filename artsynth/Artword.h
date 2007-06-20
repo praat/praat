@@ -36,7 +36,7 @@
 #include "Artword_def.h"
 
 #define Artword_methods  Data_methods
-oo_CLASS_CREATE (Artword, Data)
+oo_CLASS_CREATE (Artword, Data);
 
 Artword Artword_create (double totalTime);
 

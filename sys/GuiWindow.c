@@ -22,9 +22,34 @@
  * pb 2004/02/12 don't trust window modification feedback on MacOS 9
  * pb 2004/04/06 GuiWindow_drain separated from XmUpdateDisplay
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2007/06/19 wchar_t
  */
 
 #include "GuiP.h"
+#include "UnicodeData.h"
+
+void GuiWindow_setTitleW (Widget me, const wchar_t *titleW) {
+	#if mac
+		unsigned long length = wcslen (titleW);
+		UniChar *titleUtf16 = Melder_calloc (wcslen (titleW), sizeof (UniChar));
+		for (unsigned long i = 0; i < length; i ++)
+			titleUtf16 [i] = titleW [i];
+		CFStringRef titleCF = CFStringCreateWithCharacters (NULL, titleUtf16, length);
+		Melder_free (titleUtf16);
+		SetWindowTitleWithCFString (my nat.window.ptr, titleCF);
+		CFRelease (titleCF);
+	#elif win
+		SetWindowTextW (my window, titleW);
+	#else
+		char *titleA = Melder_peekWcsToAscii (titleW);   // BANDAID
+		unsigned long length = strlen (titleA);
+		for (unsigned long i = 0; i < length; i ++) {   // BANDAID
+			if (titleW [i] == UNICODE_LEFT_DOUBLE_QUOTATION_MARK || titleW [i] == UNICODE_RIGHT_DOUBLE_QUOTATION_MARK)
+			    titleA [i] = '\"';
+		}
+		XtVaSetValues (me, XmNtitle, titleA, XmNiconName, titleA, NULL);
+	#endif
+}
 
 int GuiWindow_setDirty (Widget me, int dirty) {
 	#if mac

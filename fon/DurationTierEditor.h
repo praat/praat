@@ -2,7 +2,7 @@
 #define _DurationTierEditor_h_
 /* DurationTierEditor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _RealTierEditor_h_
@@ -35,7 +35,7 @@
 
 typedef struct structDurationTierEditor *DurationTierEditor;
 
-DurationTierEditor DurationTierEditor_create (Widget parent, const char *title,
+DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title,
 	DurationTier duration, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

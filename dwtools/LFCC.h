@@ -32,7 +32,7 @@
 
 #define LFCC_members CC_members
 #define LFCC_methods CC_methods
-class_create (LFCC, CC)
+class_create (LFCC, CC);
 
 LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax);

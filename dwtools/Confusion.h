@@ -39,7 +39,7 @@
 
 #define Confusion_members TableOfReal_members
 #define Confusion_methods TableOfReal_methods
-class_create (Confusion, TableOfReal)
+class_create (Confusion, TableOfReal);
 
 /*
 	A Confusion matrix has both row and column labels.

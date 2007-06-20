@@ -1,6 +1,6 @@
 /* DataEditor.c
  *
- * Copyright (C) 1995-2005 Paul Boersma
+ * Copyright (C) 1995-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 1999/06/21 removed BUG: dcomplex read %lf
  * pb 2003/05/19 Melder_atof
  * pb 2005/12/04 wider names
+ * pb 2007/06/10 wchar_t
  */
 
 #define NAME_X  30
@@ -47,10 +48,10 @@
 
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong",
-	"float", "double", "fcomplex", "dcomplex", "char",
-	"enum", "lenum", "boolean", "question", "sstring", "string", "lstring",
+	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
+	"enum", "lenum", "boolean", "question", "sstring", "string", "lstring", "wstring",
 	"struct", "widget", "object", "collection" };*/
-static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 33, 33, 8, 6, 60, 60, 60 };
+static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 6, 33, 33, 8, 6, 60, 60, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
 	Widget label, button, text;
@@ -71,40 +72,40 @@ typedef struct structDataSubEditor_FieldData {
 #define DataSubEditor_methods Editor_methods \
 	long (*countFields) (I); \
 	void (*showMembers) (I);
-class_create (DataSubEditor, Editor)
+class_create (DataSubEditor, Editor);
 
 #define VectorEditor_members DataSubEditor_members \
 	long minimum, maximum;
 #define VectorEditor_methods DataSubEditor_methods
-class_create (VectorEditor, DataSubEditor)
+class_create (VectorEditor, DataSubEditor);
 
-static VectorEditor VectorEditor_create (DataEditor root, const char *title, void *address,
+static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
 #define MatrixEditor_members DataSubEditor_members \
 	long minimum, maximum, min2, max2;
 #define MatrixEditor_methods DataSubEditor_methods
-class_create (MatrixEditor, DataSubEditor)
+class_create (MatrixEditor, DataSubEditor);
 
-static MatrixEditor MatrixEditor_create (DataEditor root, const char *title, void *address,
+static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2);
 
 #define StructEditor_members DataSubEditor_members
 #define StructEditor_methods DataSubEditor_methods
-class_create (StructEditor, DataSubEditor)
+class_create (StructEditor, DataSubEditor);
 
-static StructEditor StructEditor_create (DataEditor root, const char *title, void *address, Data_Description description);
+static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
 #define ClassEditor_members StructEditor_members
 #define ClassEditor_methods StructEditor_methods
-class_create (ClassEditor, StructEditor)
+class_create (ClassEditor, StructEditor);
 
-static ClassEditor ClassEditor_create (DataEditor root, const char *title, void *address, Data_Description description);
+static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
 #define DataEditor_members ClassEditor_members \
 	Collection children;
 #define DataEditor_methods ClassEditor_methods
-class_create_opaque (DataEditor, ClassEditor)
+class_create_opaque (DataEditor, ClassEditor);
 
 /********** DataSubEditor **********/
 
@@ -305,23 +306,23 @@ MOTIF_CALLBACK (cb_open)
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
 		sprintf (name, "%s. %s [%ld..%ld]", fieldData -> history, fieldData -> description -> name,
 			fieldData -> minimum, fieldData -> maximum);
-		if (! VectorEditor_create (my root, name, fieldData -> address,
+		if (! VectorEditor_create (my root, Melder_peekAsciiToWcs (name), fieldData -> address,
 			fieldData -> description, fieldData -> minimum, fieldData -> maximum)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> rank == 2) {
 		sprintf (name, "%s. %s [%ld..%ld] [%ld..%ld]", fieldData -> history, fieldData -> description -> name,
 			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2);
-		if (! MatrixEditor_create (my root, name, fieldData -> address, fieldData -> description,
+		if (! MatrixEditor_create (my root, Melder_peekAsciiToWcs (name), fieldData -> address, fieldData -> description,
 			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> type == structwa) {
 		sprintf (name, "%s. %s", fieldData -> history, fieldData -> description -> name);
-		if (! StructEditor_create (my root, name, fieldData -> address,
+		if (! StructEditor_create (my root, Melder_peekAsciiToWcs (name), fieldData -> address,
 			(Data_Description) fieldData -> description -> tagType)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> type == objectwa || fieldData -> description -> type == collectionwa) {
 		sprintf (name, "%s. %s", fieldData -> history, fieldData -> description -> name);
-		if (! ClassEditor_create (my root, name, fieldData -> address,
+		if (! ClassEditor_create (my root, Melder_peekAsciiToWcs (name), fieldData -> address,
 			((Data_Table) fieldData -> description -> tagType) -> description)) Melder_flushError (NULL);
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
-		if (! ClassEditor_create (my root, fieldData -> history, fieldData -> address,
+		if (! ClassEditor_create (my root, Melder_peekAsciiToWcs (fieldData -> history), fieldData -> address,
 			fieldData -> description)) Melder_flushError (NULL);
 /*	} else {
 		Melder_casual ("Strange editor \"%s\" required (type %d, rank %d).",
@@ -385,7 +386,7 @@ DIRECT (DataSubEditor, cb_help) Melder_help ("Inspect"); END
 static void classDataSubEditor_createMenus (I) {
 	iam (DataSubEditor);
 	inherited (DataSubEditor) createMenus (me);
-	Editor_addCommand (me, "Help", "DataEditor help", '?', cb_help);
+	Editor_addCommand (me, L"Help", L"DataEditor help", '?', cb_help);
 }
 
 static long classDataSubEditor_countFields (I) { iam (DataSubEditor); (void) me; return 0; }
@@ -401,7 +402,7 @@ class_methods (DataSubEditor, Editor)
 	us -> scriptable = FALSE;
 class_methods_end
 
-static int DataSubEditor_init (I, DataEditor root, const char *title, void *address, Data_Description description) {
+static int DataSubEditor_init (I, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	iam (DataSubEditor);
 	my root = root;
 	if (me != (DataSubEditor) root) Collection_addItem (root -> children, me);
@@ -585,14 +586,14 @@ class_methods (StructEditor, DataSubEditor)
 	class_method_local (StructEditor, showMembers)
 class_methods_end
 
-static int StructEditor_init (I, DataEditor root, const char *title, void *address, Data_Description description) {
+static int StructEditor_init (I, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	iam (StructEditor);
 	if (! DataSubEditor_init (me, root, title, address, description))
 		return 0;
 	return 1;
 }
 
-static StructEditor StructEditor_create (DataEditor root, const char *title, void *address, Data_Description description) {
+static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	StructEditor me = new (StructEditor);
 	if (! me || ! StructEditor_init (me, root, title, address, description)) return NULL;
 	return me;
@@ -687,7 +688,7 @@ class_methods (VectorEditor, DataSubEditor)
 	class_method_local (VectorEditor, showMembers)
 class_methods_end
 
-static VectorEditor VectorEditor_create (DataEditor root, const char *title, void *address,
+static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum)
 {
 	VectorEditor me = new (VectorEditor);
@@ -749,7 +750,7 @@ class_methods (MatrixEditor, DataSubEditor)
 	class_method_local (MatrixEditor, showMembers)
 class_methods_end
 
-static MatrixEditor MatrixEditor_create (DataEditor root, const char *title, void *address,
+static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2)
 {
 	MatrixEditor me = new (MatrixEditor);
@@ -786,7 +787,7 @@ class_methods (ClassEditor, StructEditor)
 	class_method_local (ClassEditor, showMembers)
 class_methods_end
 
-static int ClassEditor_init (I, DataEditor root, const char *title, void *address, Data_Description description) {
+static int ClassEditor_init (I, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	iam (ClassEditor);
 	if (! description) return Melder_error
 		("(ClassEditor_init:) Class \"%s\" cannot be inspected.", Thing_className (address));
@@ -795,7 +796,7 @@ static int ClassEditor_init (I, DataEditor root, const char *title, void *addres
 	return 1;
 }
 
-static ClassEditor ClassEditor_create (DataEditor root, const char *title, void *address, Data_Description description) {
+static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	ClassEditor me = new (ClassEditor);
 	if (! me || ! ClassEditor_init (me, root, title, address, description)) { forget (me); return NULL; }
 	return me;
@@ -842,7 +843,7 @@ class_methods (DataEditor, ClassEditor)
 	class_method_local (DataEditor, dataChanged)
 class_methods_end
 
-DataEditor DataEditor_create (Widget parent, const char *title, Any data) {
+DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data) {
 	DataEditor me;
 	Data_Table klas = ((Data) data) -> methods;
 	if (! klas -> description) return Melder_errorp

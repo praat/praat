@@ -336,6 +336,7 @@ short ascgetex (FILE *f) { return getEnum (f, & enum_ascio_Existence); }
 char *ascgets1 (FILE *f) { return getString (f); }
 char *ascgets2 (FILE *f) { return getString (f); }
 char *ascgets4 (FILE *f) { return getString (f); }
+wchar_t *ascgetw4 (FILE *f) { return NULL; }
 
 static int indent = 0;
 void ascindent (void) { indent += 4; }
@@ -408,6 +409,8 @@ void ascputs4 (const char *s, FILE *f,
 	PUTIN fprintf (f, verbose ? " = \"" : "\"");
 	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, f); if (c == '\"') fputc (c, f); } }
 	      fprintf (f, verbose ? "\" " : "\""); PUTOUT
+void ascputw4 (const wchar_t *s, FILE *f,
+	PUTIN PUTOUT
 
 /********** machine-independent binary I/O **********/
 
@@ -1131,6 +1134,30 @@ char * bingets4 (FILE *f) {
 	return result;
 }
 
+wchar_t * bingetw4 (FILE *f) {
+	wchar_t *result = NULL;
+	unsigned long length = bingetu4 (f);
+	if (length == 0xffffffff) {
+		length = bingetu4 (f);
+		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		if (! result)
+			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned long i = 0; i < length; i ++) {
+			result [i] = bingetu2 (f);
+		}
+	} else {
+		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		if (! result)
+			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned long i = 0; i < length; i ++) {
+			result [i] = bingetu1 (f);
+		}
+	}
+	if (feof (f)) { Melder_free (result); return NULL; }
+	result [length] = 0;   /* Trailing null byte. */
+	return result;
+}
+
 void binputs1 (const char *s, FILE *f) {
 	unsigned int length = s ? strlen (s) : 0; if (length > 255) length = 255;
 	binputu1 (length, f); if (s) fwrite (s, 1, length, f);
@@ -1144,6 +1171,26 @@ void binputs2 (const char *s, FILE *f) {
 void binputs4 (const char *s, FILE *f) {
 	unsigned long length = s ? strlen (s) : 0;
 	binputu4 (length, f); if (s) fwrite (s, 1, length, f);
+}
+
+void binputw4 (const wchar_t *s, FILE *f) {
+	unsigned long length = s ? wcslen (s) : 0;
+	if (Melder_isValidAscii (s)) {
+		binputu4 (length, f);
+		if (s != NULL) {
+			for (unsigned long i = 1; i < length; i ++) {
+				binputu1 (s [i], f);
+			}
+		}
+	} else {
+		binputu4 (0xffffffff, f);
+		binputu4 (length, f);
+		if (s != NULL) {
+			for (unsigned long i = 1; i < length; i ++) {
+				binputu2 (s [i], f);
+			}
+		}
+	}
 }
 
 /********** machine-independent cache I/O **********/

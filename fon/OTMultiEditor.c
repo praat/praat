@@ -1,6 +1,6 @@
 /* OTMultiEditor.c
  *
- * Copyright (C) 2005-2006 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2005/07/04 created
  * pb 2006/05/17 draw disharmonies on top of tableau
+ * pb 2007/06/10 wchar_t
  */
 
 #include "OTMultiEditor.h"
@@ -31,27 +32,27 @@
 	Widget form1Text, form2Text; \
 	long selectedConstraint;
 #define OTMultiEditor_methods HyperPage_methods
-class_create_opaque (OTMultiEditor, HyperPage)
+class_create_opaque (OTMultiEditor, HyperPage);
 
 FORM (OTMultiEditor, cb_evaluate, "Evaluate", 0)
 	REAL ("Evaluation noise", "2.0")
 	OK
 DO
-	Editor_save (me, "Evaluate");
+	Editor_save (me, L"Evaluate");
 	OTMulti_newDisharmonies (my data, GET_REAL ("Evaluation noise"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
 DIRECT (OTMultiEditor, cb_evaluate_noise_2_0)
-	Editor_save (me, "Evaluate (noise 2.0)");
+	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies (my data, 2.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
 DIRECT (OTMultiEditor, cb_evaluate_tinyNoise)
-	Editor_save (me, "Evaluate (tiny noise)");
+	Editor_save (me, L"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies (my data, 1e-9);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -72,7 +73,7 @@ SET_REAL ("Disharmony", constraint -> disharmony)
 DO
 	OTMulti grammar = my data;
 	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-	Editor_save (me, "Edit ranking");
+	Editor_save (me, L"Edit ranking");
 	constraint -> ranking = GET_REAL ("Ranking value");
 	constraint -> disharmony = GET_REAL ("Disharmony");
 	OTMulti_sort (grammar);
@@ -90,7 +91,7 @@ FORM (OTMultiEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
 	OK
 DO
 	char *form1 = XmTextFieldGetString (my form1Text), *form2 = XmTextFieldGetString (my form2Text);
-	Editor_save (me, "Learn one");
+	Editor_save (me, L"Learn one");
 	Melder_free (my form1);
 	Melder_free (my form2);
 	my form1 = Melder_strdup (form1);
@@ -110,7 +111,7 @@ DIRECT (OTMultiEditor, cb_removeConstraint)
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
 		return Melder_error ("Select a constraint first.");
 	constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-	Editor_save (me, "Remove constraint");
+	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -120,7 +121,7 @@ FORM (OTMultiEditor, cb_resetAllRankings, "Reset all rankings", 0)
 	REAL ("Ranking", "100.0")
 	OK
 DO
-	Editor_save (me, "Reset all rankings");
+	Editor_save (me, L"Reset all rankings");
 	OTMulti_reset (my data, GET_REAL ("Ranking"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -168,16 +169,16 @@ static void createChildren (I) {
 static void createMenus (I) {
 	iam (OTMultiEditor);
 	inherited (OTMultiEditor) createMenus (me);
-	Editor_addCommand (me, "Edit", "-- edit ot --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Evaluate...", 0, cb_evaluate);
-	Editor_addCommand (me, "Edit", "Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
-	Editor_addCommand (me, "Edit", "Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
-	Editor_addCommand (me, "Edit", "Edit ranking...", 'E', cb_editRanking);
-	Editor_addCommand (me, "Edit", "Reset all rankings...", 'R', cb_resetAllRankings);
-	Editor_addCommand (me, "Edit", "Learn one...", '1', cb_learnOne);
-	Editor_addCommand (me, "Edit", "-- remove --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Remove constraint", 0, cb_removeConstraint);
-	Editor_addCommand (me, "Help", "OT learning tutorial", 0, cb_OTLearningTutorial);
+	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, cb_evaluate);
+	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
+	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
+	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', cb_editRanking);
+	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', cb_resetAllRankings);
+	Editor_addCommand (me, L"Edit", L"Learn one...", '1', cb_learnOne);
+	Editor_addCommand (me, L"Edit", L"-- remove --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, cb_removeConstraint);
+	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, cb_OTLearningTutorial);
 }
 
 static OTMulti drawTableau_grammar;
@@ -228,7 +229,7 @@ class_methods (OTMultiEditor, HyperPage)
 	class_method (goToPage)
 class_methods_end
 
-OTMultiEditor OTMultiEditor_create (Widget parent, const char *title, OTMulti grammar) {
+OTMultiEditor OTMultiEditor_create (Widget parent, const wchar_t *title, OTMulti grammar) {
 	OTMultiEditor me = new (OTMultiEditor);
 	my data = grammar;
 	my form1 = Melder_strdup ("");

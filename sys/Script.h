@@ -30,7 +30,7 @@
 #define Script_members Data_members \
 	structMelderFile file;
 #define Script_methods Data_methods
-class_create (Script, Data)
+class_create (Script, Data);
 
 Script Script_createFromFile (MelderFile fs);
 

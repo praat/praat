@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/11
  */
 
 #ifndef _ManPage_h_
@@ -32,11 +32,11 @@
 
 #define ManPages_members Data_members \
 	Ordered pages; \
-	const char **titles; \
+	const wchar_t **titles; \
 	int ground, dynamic, executable; \
 	structMelderDir rootDirectory;
 #define ManPages_methods Data_methods
-class_create (ManPages, Data)
+class_create (ManPages, Data);
 
 ManPages ManPages_create (void);
 
@@ -50,10 +50,10 @@ int ManPages_addPage (ManPages me, const char *title, const char *author, long d
 long ManPages_lookUp (ManPages me, const char *title);
 
 int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
-int ManPages_writeAllToHtmlDir (ManPages me, const char *dirPath);
+int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
 
 long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const char **ManPages_getTitles (ManPages me, long *numberOfTitles);
+const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

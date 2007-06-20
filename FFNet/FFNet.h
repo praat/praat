@@ -43,7 +43,7 @@
 
 #include "FFNet_def.h"
 #define FFNet_methods Data_methods
-oo_CLASS_CREATE (FFNet, Data)
+oo_CLASS_CREATE (FFNet, Data);
 
 /* Parameters:
  *  long nLayers	    : the #layers in the net (exclusive the inputs)

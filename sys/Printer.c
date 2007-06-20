@@ -247,11 +247,11 @@ int Printer_pageSetup (void) {
 static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 	(void) dummy;
 	#if defined (_WIN32) || defined (macintosh)
-		thePrinter. allowDirectPostScript = UiForm_getInteger (dia, "Allow direct PostScript");
+		thePrinter. allowDirectPostScript = UiForm_getInteger (dia, L"Allow direct PostScript");
 	#endif
-	thePrinter. spots = UiForm_getInteger (dia, "Grey resolution") - 1;
+	thePrinter. spots = UiForm_getInteger (dia, L"Grey resolution") - 1;
 	#if defined (UNIX)
-		thePrinter. paperSize = UiForm_getInteger (dia, "Paper size") - 1;
+		thePrinter. paperSize = UiForm_getInteger (dia, L"Paper size") - 1;
 	 	if (thePrinter. paperSize == Graphics_A3) {
 	 		thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
 	 		thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
@@ -262,13 +262,13 @@ static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 			thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
 			thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
 		}
-		thePrinter. orientation = UiForm_getInteger (dia, "Orientation") - 1;
-		thePrinter. magnification = UiForm_getReal (dia, "Magnification");
-		Site_setPrintCommand (UiForm_getString (dia, "printCommand"));
+		thePrinter. orientation = UiForm_getInteger (dia, L"Orientation") - 1;
+		thePrinter. magnification = UiForm_getReal (dia, L"Magnification");
+		Site_setPrintCommand (UiForm_getStringA (dia, "printCommand"));
 	#endif
-	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, "Font choice strategy") - 1;
+	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, L"Font choice strategy") - 1;
 	#if defined (macintosh)
-		thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, "EPS files include preview");
+		thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, L"EPS files include preview");
 	#endif
 	return 1;
 }
@@ -277,52 +277,52 @@ int Printer_postScriptSettings (void) {
 	static Any dia;
 	if (dia == NULL) {
 		Any radio;
-		dia = UiForm_create (theCurrentPraat -> topShell, "PostScript settings", DO_Printer_postScriptSettings, NULL, "PostScript settings...");
+		dia = UiForm_create (theCurrentPraat -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...");
 		#if defined (_WIN32) || defined (macintosh)
-			UiForm_addBoolean (dia, "Allow direct PostScript", TRUE);
+			UiForm_addBoolean (dia, L"Allow direct PostScript", TRUE);
 		#endif
-		radio = UiForm_addRadio (dia, "Grey resolution", 1);
-			UiRadio_addButton (radio, "Finest");
-			UiRadio_addButton (radio, "Photocopyable");
+		radio = UiForm_addRadio (dia, L"Grey resolution", 1);
+			UiRadio_addButton (radio, L"Finest");
+			UiRadio_addButton (radio, L"Photocopyable");
 		#if defined (UNIX)
-			radio = UiForm_addRadio (dia, "Paper size", 1);
-				UiRadio_addButton (radio, "A4");
-				UiRadio_addButton (radio, "A3");
-				UiRadio_addButton (radio, "US Letter");
-			radio = UiForm_addRadio (dia, "Orientation", 1);
-				UiRadio_addButton (radio, "Portrait");
-				UiRadio_addButton (radio, "Landscape");
-			UiForm_addPositive (dia, "Magnification", "1.0");
-			UiForm_addLabel (dia, "label", "Print command:");
+			radio = UiForm_addRadio (dia, L"Paper size", 1);
+				UiRadio_addButton (radio, L"A4");
+				UiRadio_addButton (radio, L"A3");
+				UiRadio_addButton (radio, L"US Letter");
+			radio = UiForm_addRadio (dia, L"Orientation", 1);
+				UiRadio_addButton (radio, L"Portrait");
+				UiRadio_addButton (radio, L"Landscape");
+			UiForm_addPositive (dia, L"Magnification", "1.0");
+			UiForm_addLabel (dia, L"label", L"Print command:");
 			#if defined (linux)
-				UiForm_addText (dia, "printCommand", "lpr %s");
+				UiForm_addText (dia, L"printCommand", L"lpr %s");
 			#else
-				UiForm_addText (dia, "printCommand", "lp -c %s");
+				UiForm_addText (dia, L"printCommand", L"lp -c %s");
 			#endif
 		#endif
-		radio = UiForm_addOptionMenu (dia, "Font choice strategy", 1);
-			UiOptionMenu_addButton (radio, "Automatic");
-			UiOptionMenu_addButton (radio, "Linotype");
-			UiOptionMenu_addButton (radio, "Monotype");
-			UiOptionMenu_addButton (radio, "PS Monotype");
+		radio = UiForm_addOptionMenu (dia, L"Font choice strategy", 1);
+			UiOptionMenu_addButton (radio, L"Automatic");
+			UiOptionMenu_addButton (radio, L"Linotype");
+			UiOptionMenu_addButton (radio, L"Monotype");
+			UiOptionMenu_addButton (radio, L"PS Monotype");
 		#if defined (macintosh)
-			UiForm_addBoolean (dia, "EPS files include preview", TRUE);
+			UiForm_addBoolean (dia, L"EPS files include preview", TRUE);
 		#endif
 		UiForm_finish (dia);
 	}
 	#if defined (_WIN32) || defined (macintosh)
-		UiForm_setInteger (dia, "Allow direct PostScript", thePrinter. allowDirectPostScript);
+		UiForm_setInteger (dia, L"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
-	UiForm_setInteger (dia, "Grey resolution", thePrinter. spots + 1);
+	UiForm_setInteger (dia, L"Grey resolution", thePrinter. spots + 1);
 	#if defined (UNIX)
-		UiForm_setInteger (dia, "Paper size", thePrinter. paperSize + 1);
-		UiForm_setInteger (dia, "Orientation", thePrinter. orientation + 1);
-		UiForm_setReal (dia, "Magnification", thePrinter. magnification);
-		UiForm_setString (dia, "printCommand", Site_getPrintCommand ());
+		UiForm_setInteger (dia, L"Paper size", thePrinter. paperSize + 1);
+		UiForm_setInteger (dia, L"Orientation", thePrinter. orientation + 1);
+		UiForm_setReal (dia, L"Magnification", thePrinter. magnification);
+		UiForm_setString (dia, L"printCommand", Site_getPrintCommand ());
 	#endif
-	UiForm_setInteger (dia, "Font choice strategy", thePrinter. fontChoiceStrategy + 1);
+	UiForm_setInteger (dia, L"Font choice strategy", thePrinter. fontChoiceStrategy + 1);
 	#if defined (macintosh)
-		UiForm_setInteger (dia, "EPS files include preview", thePrinter. epsFilesHavePreview);
+		UiForm_setInteger (dia, L"EPS files include preview", thePrinter. epsFilesHavePreview);
 	#endif
 	UiForm_do (dia, FALSE);
 	return 1;

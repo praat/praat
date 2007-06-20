@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/02
+ * pb 2007/06/10
  */
 
 #include <stdio.h>
@@ -168,19 +168,47 @@ wchar_t * Melder_wcsprecompose (const wchar_t *string);
 wchar_t * Melder_wcsExpandBackslashSequences (const wchar_t *string);
 wchar_t * Melder_wcsReduceBackslashSequences (const wchar_t *string);
 void Melder_wcsReduceBackslashSequences_inline (const wchar_t *string);
-int Melder_isValidUtf8 (const char *string);
+
+void Melder_textEncoding_prefs (void);
+#define Melder_INPUT_ENCODING_UTF8  1
+#define Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1  2
+#define Melder_INPUT_ENCODING_ISO_LATIN1  3
+#define Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1  4
+#define Melder_INPUT_ENCODING_WINDOWS_LATIN1  5
+#define Melder_INPUT_ENCODING_UTF8_THEN_MACROMAN  6
+#define Melder_INPUT_ENCODING_MACROMAN  7
+void Melder_setInputEncoding (int encoding);
+int Melder_getInputEncoding (void);
+#define Melder_OUTPUT_ENCODING_UTF8  1
+#define Melder_OUTPUT_ENCODING_UTF16  2
+#define Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16  3
+void Melder_setOutputEncoding (int encoding);
+int Melder_getOutputEncoding (void);
+
+bool Melder_isValidAscii (const wchar_t *string);
+bool Melder_isValidUtf8 (const unsigned char *string);
+
+long Melder_killReturns_inlineW (wchar_t *text);
+
+int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inputEncoding);
+wchar_t * Melder_8bitToWcs (const unsigned char *string, int inputEncoding);
+wchar_t * Melder_utf8ToWcs (const unsigned char *string);
+int Melder_wcsTo8bit_inline (const wchar_t *wcs, unsigned char *string, int outputEncoding);
+char * Melder_wcsTo8bit (const wchar_t *string, int outputEncoding);
+
 wchar_t * Melder_asciiToWcs (const char *string);
-wchar_t * Melder_utf8ToWcs (const char *string);
-void Melder_utf8ToWcs_inline (const char *utf8, wchar_t *wcs);
-wchar_t * Melder_isolatin1ToWcs (const char *string);
-wchar_t * Melder_macromanToWcs (const char *string);
+void Melder_asciiToWcs_inline (const char *ascii, wchar_t *wcs);
 char * Melder_wcsToAscii (const wchar_t *string);
+void Melder_wcsToAscii_inline (const wchar_t *wcs, char *ascii);
 char * Melder_wcsToUtf8 (const wchar_t *string);
-void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8);
-char * Melder_wcsToIsolatin1 (const wchar_t *string);
-char * Melder_wcsToMacroman (const wchar_t *string);
+void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8);
+void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, unsigned char *utf8);
+void Melder_8bitFileRepresentationToWcs_inline (const unsigned char *utf8, wchar_t *wcs);
 wchar_t * Melder_peekAsciiToWcs (const char *string);
+wchar_t * Melder_peekUtf8ToWcs (const unsigned char *string);
 char * Melder_peekWcsToAscii (const wchar_t *string);
+char * Melder_peekWcsToUtf8 (const wchar_t *string);
+void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f);
 
 #define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
 void _Melder_free (void **pointer);
@@ -261,7 +289,6 @@ struct FLAC__StreamEncoder;
 #define Melder_FILETYPE_FLAC 0x464C4143
 
 typedef struct {
-	char path [260];
 	wchar_t wpath [260];
 	FILE *filePointer;
 	bool openForWriting;
@@ -269,7 +296,6 @@ typedef struct {
 	unsigned long type;
 } structMelderFile, *MelderFile;
 typedef struct {
-	char path [260];
 	wchar_t wpath [260];
 } structMelderDir, *MelderDir;
 
@@ -399,10 +425,11 @@ void Melder_information8W (const wchar_t *s1, const wchar_t *s2, const wchar_t *
 void Melder_information9W (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 
 void Melder_informationReal (double value, const char *units);   /* %.17g or --undefined--; units may be NULL */
+void Melder_informationRealW (double value, const wchar_t *units);   /* %.17g or --undefined--; units may be NULL */
 
 void Melder_divertInfo (MelderStringW *buffer);   /* NULL = back to normal. */
 
-void Melder_print (const char *s);
+void Melder_print (const wchar_t *s);
 	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
 
 void Melder_clearInfo (void);   /* Clear the Info window. */
@@ -615,18 +642,15 @@ void MelderFile_setToNull (MelderFile file);
 int MelderFile_isNull (MelderFile file);
 void MelderDir_setToNull (MelderDir dir);
 int MelderDir_isNull (MelderDir dir);
-void MelderDir_getFile (MelderDir parent, const char *fileName, MelderFile file);
 void MelderDir_getFileW (MelderDir parent, const wchar_t *fileName, MelderFile file);
 void MelderDir_relativePathToFile (MelderDir dir, const char *path, MelderFile file);
 void MelderDir_relativePathToFileW (MelderDir dir, const wchar_t *path, MelderFile file);
 void MelderFile_getParentDir (MelderFile file, MelderDir parent);
 void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 int MelderDir_isDesktop (MelderDir dir);
-int MelderDir_getSubdir (MelderDir parent, const char *subdirName, MelderDir subdir);
 int MelderDir_getSubdirW (MelderDir parent, const wchar_t *subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory (void);
-char * Melder_getShellDirectory (void);
-wchar_t * Melder_getShellDirectoryW (void);
+wchar_t * Melder_getShellDirectory (void);
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);

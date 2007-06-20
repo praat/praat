@@ -33,7 +33,7 @@
 
 #include "LPC_def.h"
 #define LPC_methods Sampled_methods
-oo_CLASS_CREATE (LPC, Sampled)
+oo_CLASS_CREATE (LPC, Sampled);
 
 /*
 	From Sampled:

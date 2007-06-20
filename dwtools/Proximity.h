@@ -29,7 +29,7 @@
 
 #define Proximity_members TableOfReal_members
 #define Proximity_methods TableOfReal_methods
-class_create (Proximity, TableOfReal)
+class_create (Proximity, TableOfReal);
 
 int Proximity_init (I, long numberOfPoints);
 

@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, June 2, 2007
+# Paul Boersma, June 14, 2007
 
 include ../makefile.defs
 CFLAGS = -I ../dwsys -I ../GSL -I ../kar -I ../audio -I ../FLAC -I ../mp3
@@ -9,6 +9,7 @@ OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
    melder_token.o melder_files.o melder_audio.o melder_audiofiles.o \
    melder_debug.o melder_sysenv.o melder_info.o melder_quantity.o \
+   melder_encodings.o \
    Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \
    Graphics_image.o Graphics_mouse.o Graphics_record.o \

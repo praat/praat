@@ -2,7 +2,7 @@
 #define _ArtwordEditor_h
 /* ArtwordEditor.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1995/11/04
- * pb 2002/07/16 GPL
+ * pb 2007/06/10
  */
 
 #ifndef _Editor_h_
@@ -40,9 +39,9 @@
 	Widget list, drawingArea, radio, time, value; \
 	Widget button [1 + enumlength (Art_MUSCLE)];
 #define ArtwordEditor_methods Editor_methods
-class_create (ArtwordEditor, Editor)
+class_create (ArtwordEditor, Editor);
 
-ArtwordEditor ArtwordEditor_create (Widget parent, const char *title, Artword data);
+ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data);
 
 /* End of file ArtwordEditor.h */
 #endif

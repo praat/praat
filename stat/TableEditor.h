@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006 Paul Boersma
+ * Copyright (C) 2006-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/02/11
+ * pb 2007/06/10
  */
 
 #ifndef _Editor_h_
@@ -32,7 +32,7 @@
 
 typedef struct structTableEditor *TableEditor;
 
-TableEditor TableEditor_create (Widget parent, const char *title, Table table);
+TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table);
 
 /* End of file TableEditor.h */
 #endif

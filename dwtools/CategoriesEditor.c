@@ -145,7 +145,7 @@ static void Ordered_moveItem (I, long from, long to)
 	Categories categories;  							\
 	long *selection; long nSelected, newPos;
 #define CategoriesEditorCommand_methods Command_methods
-class_create (CategoriesEditorCommand, Command)
+class_create (CategoriesEditorCommand, Command);
 
 static void classCategoriesEditorCommand_destroy (I)
 {
@@ -175,7 +175,7 @@ class_methods_end
 
 #define CategoriesEditorInsert_members CategoriesEditorCommand_members
 #define CategoriesEditorInsert_methods CategoriesEditorCommand_methods
-class_create (CategoriesEditorInsert, CategoriesEditorCommand)
+class_create (CategoriesEditorInsert, CategoriesEditorCommand);
 
 static int CategoriesEditorInsert_execute (I)
 {
@@ -220,7 +220,7 @@ class_methods_end
 
 #define CategoriesEditorRemove_members CategoriesEditorCommand_members
 #define CategoriesEditorRemove_methods CategoriesEditorCommand_methods
-class_create (CategoriesEditorRemove, CategoriesEditorCommand)
+class_create (CategoriesEditorRemove, CategoriesEditorCommand);
 
 static int CategoriesEditorRemove_execute (I)
 {
@@ -274,7 +274,7 @@ class_methods_end
 		
 #define CategoriesEditorReplace_members CategoriesEditorCommand_members
 #define CategoriesEditorReplace_methods CategoriesEditorCommand_methods
-class_create (CategoriesEditorReplace, CategoriesEditorCommand)
+class_create (CategoriesEditorReplace, CategoriesEditorCommand);
 
 static int CategoriesEditorReplace_execute (I)
 {
@@ -334,7 +334,7 @@ class_methods_end
 		
 #define CategoriesEditorMoveUp_members CategoriesEditorCommand_members
 #define CategoriesEditorMoveUp_methods CategoriesEditorCommand_methods
-class_create (CategoriesEditorMoveUp, CategoriesEditorCommand)
+class_create (CategoriesEditorMoveUp, CategoriesEditorCommand);
 
 static int CategoriesEditorMoveUp_execute (I)
 {
@@ -392,7 +392,7 @@ class_methods_end
 
 #define CategoriesEditorMoveDown_members CategoriesEditorCommand_members
 #define CategoriesEditorMoveDown_methods CategoriesEditorCommand_methods
-class_create (CategoriesEditorMoveDown, CategoriesEditorCommand)
+class_create (CategoriesEditorMoveDown, CategoriesEditorCommand);
 
 static int CategoriesEditorMoveDown_execute (I)
 {
@@ -837,7 +837,7 @@ static void createMenus (I)
 {
 	iam (CategoriesEditor);
 	inherited (CategoriesEditor) createMenus (me);
-	Editor_addCommand (me, "Help", "CategoriesEditor help", '?', cb_help);
+	Editor_addCommand (me, L"Help", L"CategoriesEditor help", '?', cb_help);
 }
 
 static void createChildren (I)
@@ -948,7 +948,7 @@ class_methods (CategoriesEditor, Editor)
 	class_method (createMenus)
 class_methods_end
 
-Any CategoriesEditor_create (Widget parent, char *title, Any data)
+Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data)
 {
 	CategoriesEditor me = new (CategoriesEditor);
 	if (me && Editor_init (me, parent, 20, 40, 600, 600, title, data) &&

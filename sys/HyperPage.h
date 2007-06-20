@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/12/28
+ * pb 2007/06/09
  */
 
 #ifndef _Editor_h_
@@ -36,7 +36,7 @@
 #define HyperLink_members Data_members \
 	double x1DC, x2DC, y1DC, y2DC;
 #define HyperLink_methods Data_methods
-class_create (HyperLink, Data)
+class_create (HyperLink, Data);
 
 HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, double y2);
 
@@ -66,7 +66,7 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	int (*goToPage_i) (I, long ipage); \
 	void (*defaultHeaders) (EditorCommand cmd); \
 	int hasHistory, isOrdered;
-class_create (HyperPage, Editor)
+class_create (HyperPage, Editor);
 
 void HyperPage_clear (HyperPage me);
 
@@ -106,7 +106,7 @@ int HyperPage_script (I, double width_inches, double height_inches, const char *
 int HyperPage_goToPage (I, const char *title);
 int HyperPage_goToPage_i (I, long i);
 
-int HyperPage_init (I, Widget parent, const char *title, Any data);
+int HyperPage_init (I, Widget parent, const wchar_t *title, Any data);
 
 void HyperPage_prefs (void);
 void HyperPage_setEntryHint (I, const char *entry);

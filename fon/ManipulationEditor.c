@@ -1,6 +1,6 @@
 /* ManipulationEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/04/13 less flashing
  * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
  * pb 2006/12/08 better NUMundefined pitch and duration range checking
+ * pb 2007/06/10 wchar_t
  */
 
 #include "ManipulationEditor.h"
@@ -60,7 +61,7 @@
 	struct { double minimum, maximum, cursor;  } duration; \
 	Graphics_Viewport inset;
 #define ManipulationEditor_methods FunctionEditor_methods
-class_create_opaque (ManipulationEditor, FunctionEditor)
+class_create_opaque (ManipulationEditor, FunctionEditor);
 
 #define SCALING_FIXED  1
 #define SCALING_GLOBAL  2
@@ -75,7 +76,7 @@ class_create_opaque (ManipulationEditor, FunctionEditor)
 #define UNITS_HERTZ  1
 #define UNITS_SEMITONES  2
 #define UNITS_MAX  UNITS_SEMITONES
-static const char *units_strings [] = { 0, "Hz", "st" };
+static const wchar_t *units_strings [] = { 0, L"Hz", L"st" };
 
 static struct {
 	struct {
@@ -217,7 +218,7 @@ static void restore (I) {
 DIRECT (ManipulationEditor, cb_removePulses)
 	Manipulation ana = my data;
 	if (! ana -> pulses) return 0;
-	Editor_save (me, "Remove pulse(s)");
+	Editor_save (me, L"Remove pulse(s)");
 	if (my startSelection == my endSelection)
 		PointProcess_removePointNear (ana -> pulses, my startSelection);
 	else
@@ -229,7 +230,7 @@ END
 DIRECT (ManipulationEditor, cb_addPulseAtCursor)
 	Manipulation ana = my data;
 	if (! ana -> pulses) return 0;
-	Editor_save (me, "Add pulse");
+	Editor_save (me, L"Add pulse");
 	PointProcess_addPoint (ana -> pulses, 0.5 * (my startSelection + my endSelection));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -242,7 +243,7 @@ SET_REAL ("Position", 0.5 * (my startSelection + my endSelection))
 DO
 	Manipulation ana = my data;
 	if (! ana -> pulses) return 0;
-	Editor_save (me, "Add pulse");
+	Editor_save (me, L"Add pulse");
 	PointProcess_addPoint (ana -> pulses, GET_REAL ("Position"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -253,7 +254,7 @@ END
 DIRECT (ManipulationEditor, cb_removePitchPoints)
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Remove pitch point(s)");
+	Editor_save (me, L"Remove pitch point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (ana -> pitch, my startSelection);
 	else
@@ -265,7 +266,7 @@ END
 DIRECT (ManipulationEditor, cb_addPitchPointAtCursor)
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Add pitch point");
+	Editor_save (me, L"Add pitch point");
 	RealTier_addPoint (ana -> pitch, 0.5 * (my startSelection + my endSelection), YLININV (my pitchTier.cursor));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -276,11 +277,11 @@ DIRECT (ManipulationEditor, cb_addPitchPointAtSlice)
 	PointProcess pulses = ana -> pulses;
 	long ileft, iright, nt;
 	double *t, f;
-	if (! pulses) return Melder_error ("There are no pulses.");
+	if (! pulses) return Melder_error1 (L"There are no pulses.");
 	if (! ana -> pitch) return 0;
 	ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
 	t = pulses -> t, f = my pitchTier.cursor;   /* Default. */
-	Editor_save (me, "Add pitch point");
+	Editor_save (me, L"Add pitch point");
 	if (nt <= 1) {
 		/* Ignore. */
 	} else if (ileft <= 0) {
@@ -318,7 +319,7 @@ SET_REAL ("Frequency", my pitchTier.cursor)
 DO
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Add pitch point");
+	Editor_save (me, L"Add pitch point");
 	RealTier_addPoint (ana -> pitch, GET_REAL ("Time"), YLININV (GET_REAL ("Frequency")));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -335,7 +336,7 @@ SET_INTEGER ("Units", prefs.pitchTier.stylize.useSemitones + 1)   /* Once. */
 DO
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Stylize pitch");
+	Editor_save (me, L"Stylize pitch");
 	PitchTier_stylize (ana -> pitch, prefs.pitchTier.stylize.frequencyResolution = GET_REAL ("Frequency resolution"),
 		prefs.pitchTier.stylize.useSemitones = GET_INTEGER ("Units") - 1);
 	FunctionEditor_redraw (me);
@@ -345,7 +346,7 @@ END
 DIRECT (ManipulationEditor, cb_stylizePitch_2st)
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Stylize pitch");
+	Editor_save (me, L"Stylize pitch");
 	PitchTier_stylize (ana -> pitch, 2.0, TRUE);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -358,7 +359,7 @@ SET_INTEGER ("Number of points per parabola", prefs.pitchTier.interpolateQuadrat
 DO
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Interpolate quadratically");
+	Editor_save (me, L"Interpolate quadratically");
 	RealTier_interpolateQuadratically (ana -> pitch,
 		prefs.pitchTier.interpolateQuadratically.numberOfPointsPerParabola = GET_INTEGER ("Number of points per parabola"),
 		my pitchTier.units == UNITS_SEMITONES);
@@ -369,7 +370,7 @@ END
 DIRECT (ManipulationEditor, cb_interpolateQuadratically_4pts)
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Interpolate quadratically");
+	Editor_save (me, L"Interpolate quadratically");
 	RealTier_interpolateQuadratically (ana -> pitch, 4, my pitchTier.units == UNITS_SEMITONES);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -394,7 +395,7 @@ DO
 		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
 		Pitch_UNIT_ERB;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Shift pitch frequencies");
+	Editor_save (me, L"Shift pitch frequencies");
 	PitchTier_shiftFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL ("Frequency shift"), unit);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -408,7 +409,7 @@ FORM (ManipulationEditor, cb_multiplyPitchFrequencies, "Multiply pitch frequenci
 DO
 	Manipulation ana = my data;
 	if (! ana -> pitch) return 0;
-	Editor_save (me, "Multiply pitch frequencies");
+	Editor_save (me, L"Multiply pitch frequencies");
 	PitchTier_multiplyFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL ("Factor"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -422,7 +423,7 @@ SET_REAL ("Maximum", my pitchTier.maximum)
 DO
 	double maximum = GET_REAL ("Maximum");
 	if (maximum <= my pitchTier.minPeriodic)
-		return Melder_error ("Maximum pitch must be greater than %.4g %s.", my pitchTier.minPeriodic, units_strings [my pitchTier.units]);
+		return Melder_error5 (L"Maximum pitch must be greater than ", Melder_halfW (my pitchTier.minPeriodic), L" ", units_strings [my pitchTier.units], L".");
 	prefs.pitchTier.maximum = my pitchTier.maximum = maximum;
 	FunctionEditor_redraw (me);
 END
@@ -464,15 +465,15 @@ DO
 	double minimum = GET_REAL ("Minimum"), maximum = GET_REAL ("Maximum");
 	double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
 	double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
-	if (minimum > 1) return Melder_error ("Minimum relative duration must not be greater than 1.");
-	if (maximum < 1) return Melder_error ("Maximum relative duration must not be less than 1.");
-	if (minimum >= maximum) return Melder_error ("Maximum relative duration must be greater than minimum.");
+	if (minimum > 1) return Melder_error1 (L"Minimum relative duration must not be greater than 1.");
+	if (maximum < 1) return Melder_error1 (L"Maximum relative duration must not be less than 1.");
+	if (minimum >= maximum) return Melder_error1 (L"Maximum relative duration must be greater than minimum.");
 	if (NUMdefined (minimumValue) && minimum > minimumValue)
-		return Melder_error ("Minimum relative duration must not be greater than the minimum value present, "
-			"which is %.4g.", minimumValue);
+		return Melder_error3 (L"Minimum relative duration must not be greater than the minimum value present, "
+			"which is ", Melder_halfW (minimumValue), L".");
 	if (NUMdefined (maximumValue) && maximum < maximumValue)
-		return Melder_error ("Maximum relative duration must not be less than the maximum value present, "
-			"which is %.4g.", maximumValue);
+		return Melder_error3 (L"Maximum relative duration must not be less than the maximum value present, "
+			"which is ", Melder_halfW (maximumValue), L".");
 	prefs.duration.minimum = my duration.minimum = minimum;
 	prefs.duration.maximum = my duration.maximum = maximum;
 	FunctionEditor_redraw (me);
@@ -493,7 +494,7 @@ END
 DIRECT (ManipulationEditor, cb_removeDurationPoints)
 	Manipulation ana = my data;
 	if (! ana -> duration) return 0;
-	Editor_save (me, "Remove duration point(s)");
+	Editor_save (me, L"Remove duration point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (ana -> duration, 0.5 * (my startSelection + my endSelection));
 	else
@@ -505,7 +506,7 @@ END
 DIRECT (ManipulationEditor, cb_addDurationPointAtCursor)
 	Manipulation ana = my data;
 	if (! ana -> duration) return 0;
-	Editor_save (me, "Add duration point");
+	Editor_save (me, L"Add duration point");
 	RealTier_addPoint (ana -> duration, 0.5 * (my startSelection + my endSelection), my duration.cursor);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -519,7 +520,7 @@ SET_REAL ("Time", 0.5 * (my startSelection + my endSelection))
 DO
 	Manipulation ana = my data;
 	if (! ana -> duration) return 0;
-	Editor_save (me, "Add duration point");
+	Editor_save (me, L"Add duration point");
 	RealTier_addPoint (ana -> duration, GET_REAL ("Time"), GET_REAL ("Relative duration"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
@@ -527,7 +528,7 @@ END
 
 DIRECT (ManipulationEditor, cb_newDuration)
 	Manipulation ana = my data;
-	Editor_save (me, "New duration");
+	Editor_save (me, L"New duration");
 	forget (ana -> duration);
 	ana -> duration = DurationTier_create (ana -> xmin, ana -> xmax);
 	FunctionEditor_redraw (me);
@@ -565,65 +566,65 @@ static void createMenus (I) {
 	iam (ManipulationEditor);
 	inherited (ManipulationEditor) createMenus (me);
 
-	Editor_addCommand (me, "File", "Extract original sound", 0, cb_extractOriginalSound);
-	Editor_addCommand (me, "File", "Extract pulses", 0, cb_extractPulses);
-	Editor_addCommand (me, "File", "Extract pitch tier", 0, cb_extractPitchTier);
-	Editor_addCommand (me, "File", "Extract duration tier", 0, cb_extractDurationTier);
-	Editor_addCommand (me, "File", "Publish resynthesis", 0, cb_extractManipulatedSound);
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
+	Editor_addCommand (me, L"File", L"Extract original sound", 0, cb_extractOriginalSound);
+	Editor_addCommand (me, L"File", L"Extract pulses", 0, cb_extractPulses);
+	Editor_addCommand (me, L"File", L"Extract pitch tier", 0, cb_extractPitchTier);
+	Editor_addCommand (me, L"File", L"Extract duration tier", 0, cb_extractDurationTier);
+	Editor_addCommand (me, L"File", L"Publish resynthesis", 0, cb_extractManipulatedSound);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
-	Editor_addMenu (me, "Pulse", 0);
-	Editor_addCommand (me, "Pulse", "Add pulse at cursor", 'P', cb_addPulseAtCursor);
-	Editor_addCommand (me, "Pulse", "Add pulse at...", 0, cb_addPulseAt);
-	Editor_addCommand (me, "Pulse", "-- remove pulses --", 0, NULL);
-	Editor_addCommand (me, "Pulse", "Remove pulse(s)", motif_OPTION + 'P', cb_removePulses);
+	Editor_addMenu (me, L"Pulse", 0);
+	Editor_addCommand (me, L"Pulse", L"Add pulse at cursor", 'P', cb_addPulseAtCursor);
+	Editor_addCommand (me, L"Pulse", L"Add pulse at...", 0, cb_addPulseAt);
+	Editor_addCommand (me, L"Pulse", L"-- remove pulses --", 0, NULL);
+	Editor_addCommand (me, L"Pulse", L"Remove pulse(s)", motif_OPTION + 'P', cb_removePulses);
 
-	Editor_addMenu (me, "Pitch", 0);
-	Editor_addCommand (me, "Pitch", "Add pitch point at cursor", 'T', cb_addPitchPointAtCursor);
-	Editor_addCommand (me, "Pitch", "Add pitch point at time slice", 0, cb_addPitchPointAtSlice);
-	Editor_addCommand (me, "Pitch", "Add pitch point at...", 0, cb_addPitchPointAt);
-	Editor_addCommand (me, "Pitch", "-- remove pitch --", 0, NULL);
-	Editor_addCommand (me, "Pitch", "Remove pitch point(s)", motif_OPTION + 'T', cb_removePitchPoints);
-	Editor_addCommand (me, "Pitch", "-- pitch prefs --", 0, NULL);
-	Editor_addCommand (me, "Pitch", "Set pitch range...", 0, cb_setPitchRange);
-	Editor_addCommand (me, "Pitch", "Set pitch units...", 0, cb_setPitchUnits);
-	Editor_addCommand (me, "Pitch", "Set pitch dragging strategy...", 0, cb_setDraggingStrategy);
-	Editor_addCommand (me, "Pitch", "-- modify pitch --", 0, NULL);
-	Editor_addCommand (me, "Pitch", "Shift pitch frequencies...", 0, cb_shiftPitchFrequencies);
-	Editor_addCommand (me, "Pitch", "Multiply pitch frequencies...", 0, cb_multiplyPitchFrequencies);
-	Editor_addCommand (me, "Pitch", "All:", motif_INSENSITIVE, cb_stylizePitch);
-	Editor_addCommand (me, "Pitch", "Stylize pitch...", 0, cb_stylizePitch);
-	Editor_addCommand (me, "Pitch", "Stylize pitch (2 st)", '2', cb_stylizePitch_2st);
-	Editor_addCommand (me, "Pitch", "Interpolate quadratically...", 0, cb_interpolateQuadratically);
-	Editor_addCommand (me, "Pitch", "Interpolate quadratically (4 pts)", '4', cb_interpolateQuadratically_4pts);
+	Editor_addMenu (me, L"Pitch", 0);
+	Editor_addCommand (me, L"Pitch", L"Add pitch point at cursor", 'T', cb_addPitchPointAtCursor);
+	Editor_addCommand (me, L"Pitch", L"Add pitch point at time slice", 0, cb_addPitchPointAtSlice);
+	Editor_addCommand (me, L"Pitch", L"Add pitch point at...", 0, cb_addPitchPointAt);
+	Editor_addCommand (me, L"Pitch", L"-- remove pitch --", 0, NULL);
+	Editor_addCommand (me, L"Pitch", L"Remove pitch point(s)", motif_OPTION + 'T', cb_removePitchPoints);
+	Editor_addCommand (me, L"Pitch", L"-- pitch prefs --", 0, NULL);
+	Editor_addCommand (me, L"Pitch", L"Set pitch range...", 0, cb_setPitchRange);
+	Editor_addCommand (me, L"Pitch", L"Set pitch units...", 0, cb_setPitchUnits);
+	Editor_addCommand (me, L"Pitch", L"Set pitch dragging strategy...", 0, cb_setDraggingStrategy);
+	Editor_addCommand (me, L"Pitch", L"-- modify pitch --", 0, NULL);
+	Editor_addCommand (me, L"Pitch", L"Shift pitch frequencies...", 0, cb_shiftPitchFrequencies);
+	Editor_addCommand (me, L"Pitch", L"Multiply pitch frequencies...", 0, cb_multiplyPitchFrequencies);
+	Editor_addCommand (me, L"Pitch", L"All:", motif_INSENSITIVE, cb_stylizePitch);
+	Editor_addCommand (me, L"Pitch", L"Stylize pitch...", 0, cb_stylizePitch);
+	Editor_addCommand (me, L"Pitch", L"Stylize pitch (2 st)", '2', cb_stylizePitch_2st);
+	Editor_addCommand (me, L"Pitch", L"Interpolate quadratically...", 0, cb_interpolateQuadratically);
+	Editor_addCommand (me, L"Pitch", L"Interpolate quadratically (4 pts)", '4', cb_interpolateQuadratically_4pts);
 
-	Editor_addMenu (me, "Dur", 0);
-	Editor_addCommand (me, "Dur", "Add duration point at cursor", 'D', cb_addDurationPointAtCursor);
-	Editor_addCommand (me, "Dur", "Add duration point at...", 0, cb_addDurationPointAt);
-	Editor_addCommand (me, "Dur", "-- remove duration --", 0, NULL);
-	Editor_addCommand (me, "Dur", "Remove duration point(s)", motif_OPTION + 'D', cb_removeDurationPoints);
-	Editor_addCommand (me, "Dur", "-- duration prefs --", 0, NULL);
-	Editor_addCommand (me, "Dur", "Set duration range...", 0, cb_setDurationRange);
-	Editor_addCommand (me, "Dur", "-- refresh duration --", 0, NULL);
-	Editor_addCommand (me, "Dur", "New duration", 0, cb_newDuration);
-	Editor_addCommand (me, "Dur", "Forget duration", 0, cb_forgetDuration);
+	Editor_addMenu (me, L"Dur", 0);
+	Editor_addCommand (me, L"Dur", L"Add duration point at cursor", 'D', cb_addDurationPointAtCursor);
+	Editor_addCommand (me, L"Dur", L"Add duration point at...", 0, cb_addDurationPointAt);
+	Editor_addCommand (me, L"Dur", L"-- remove duration --", 0, NULL);
+	Editor_addCommand (me, L"Dur", L"Remove duration point(s)", motif_OPTION + 'D', cb_removeDurationPoints);
+	Editor_addCommand (me, L"Dur", L"-- duration prefs --", 0, NULL);
+	Editor_addCommand (me, L"Dur", L"Set duration range...", 0, cb_setDurationRange);
+	Editor_addCommand (me, L"Dur", L"-- refresh duration --", 0, NULL);
+	Editor_addCommand (me, L"Dur", L"New duration", 0, cb_newDuration);
+	Editor_addCommand (me, L"Dur", L"Forget duration", 0, cb_forgetDuration);
 
-	Editor_addMenu (me, "Synth", 0);
-	my synthPulsesButton = Editor_addCommand (me, "Synth", "Pulses --", motif_CHECKABLE, cb_Synth_Pulses);
-	my synthPulsesHumButton = Editor_addCommand (me, "Synth", "Pulses (hum) --", motif_CHECKABLE, cb_Synth_Pulses_hum);
+	Editor_addMenu (me, L"Synth", 0);
+	my synthPulsesButton = Editor_addCommand (me, L"Synth", L"Pulses --", motif_CHECKABLE, cb_Synth_Pulses);
+	my synthPulsesHumButton = Editor_addCommand (me, L"Synth", L"Pulses (hum) --", motif_CHECKABLE, cb_Synth_Pulses_hum);
 
-	my synthPulsesLpcButton = Editor_addCommand (me, "Synth", "Pulses & LPC -- (\"LPC resynthesis\")", motif_CHECKABLE, cb_Synth_Pulses_Lpc);
-	Editor_addCommand (me, "Synth", "-- pitch resynth --", 0, NULL);
-	my synthPitchButton = Editor_addCommand (me, "Synth", " -- Pitch", motif_CHECKABLE, cb_Synth_Pitch);
-	my synthPitchHumButton = Editor_addCommand (me, "Synth", " -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pitch_hum);
-	my synthPulsesPitchButton = Editor_addCommand (me, "Synth", "Pulses -- Pitch", motif_CHECKABLE, cb_Synth_Pulses_Pitch);
-	my synthPulsesPitchHumButton = Editor_addCommand (me, "Synth", "Pulses -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
-	Editor_addCommand (me, "Synth", "-- full resynth --", 0, NULL);
-	my synthPsolaButton = Editor_addCommand (me, "Synth", "Sound & Pulses -- Pitch & Duration  (\"PSOLA manipulation\")", motif_CHECKED, cb_Synth_Psola);
-	my synthPitchLpcButton = Editor_addCommand (me, "Synth", "LPC -- Pitch  (\"LPC pitch manipulation\")", motif_CHECKABLE, cb_Synth_Pitch_Lpc);
+	my synthPulsesLpcButton = Editor_addCommand (me, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", motif_CHECKABLE, cb_Synth_Pulses_Lpc);
+	Editor_addCommand (me, L"Synth", L"-- pitch resynth --", 0, NULL);
+	my synthPitchButton = Editor_addCommand (me, L"Synth", L" -- Pitch", motif_CHECKABLE, cb_Synth_Pitch);
+	my synthPitchHumButton = Editor_addCommand (me, L"Synth", L" -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pitch_hum);
+	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", motif_CHECKABLE, cb_Synth_Pulses_Pitch);
+	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
+	Editor_addCommand (me, L"Synth", L"-- full resynth --", 0, NULL);
+	my synthPsolaButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"PSOLA manipulation\")", motif_CHECKED, cb_Synth_Psola);
+	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", motif_CHECKABLE, cb_Synth_Pitch_Lpc);
 
-	Editor_addCommand (me, "Help", "ManipulationEditor help", '?', cb_ManipulationEditorHelp);
-	Editor_addCommand (me, "Help", "Manipulation help", 0, cb_ManipulationHelp);
+	Editor_addCommand (me, L"Help", L"ManipulationEditor help", '?', cb_ManipulationEditorHelp);
+	Editor_addCommand (me, L"Help", L"Manipulation help", 0, cb_ManipulationHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -673,8 +674,8 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		scaleMin = 0.83 * minimum + 0.17 * my soundmin;
 		scaleMax = 0.83 * maximum + 0.17 * my soundmax;
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, scaleMin, scaleMax);
-		FunctionEditor_drawRangeMark (me, "%.4g", scaleMin, Graphics_BOTTOM);
-		FunctionEditor_drawRangeMark (me, "%.4g", scaleMax, Graphics_TOP);
+		FunctionEditor_drawRangeMark (me, L"%.4g", scaleMin, Graphics_BOTTOM);
+		FunctionEditor_drawRangeMark (me, L"%.4g", scaleMax, Graphics_TOP);
 
 		/*
 		 * Draw dotted zero line.
@@ -704,7 +705,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points -> size : 0, imin, imax, i;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	double minimumFrequency = YLIN (50);
-	char *rangeFormats [] = { "", "%.1f Hz", "%.2f st" };
+	wchar_t *rangeFormats [] = { L"", L"%.1f Hz", L"%.2f st" };
 
 	/*
 	 * Pitch contours.
@@ -824,12 +825,12 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
-	FunctionEditor_drawRangeMark (me, "%.3f", my duration.maximum, Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, "%.3f", my duration.minimum, Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, L"%.3f", my duration.maximum, Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, L"%.3f", my duration.minimum, Graphics_BOTTOM);
 	if (my startSelection == my endSelection && my duration.cursor >= my duration.minimum && my duration.cursor <= my duration.maximum)
-		FunctionEditor_drawHorizontalHair (me, "%.3f", my duration.cursor);
+		FunctionEditor_drawHorizontalHair (me, L"%.3f", my duration.cursor);
 	if (cursorVisible && n > 0)
-		FunctionEditor_insertCursorFunctionValue (me, "%.3f",
+		FunctionEditor_insertCursorFunctionValue (me, L"%.3f",
 			RealTier_getValueAtTime (duration, my startSelection), my duration.minimum, my duration.maximum);
 
 	/*
@@ -985,10 +986,10 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, int shiftK
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
-		Editor_save (me, "Drag pitch points");
+		Editor_save (me, L"Drag pitch points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (me, "Drag pitch point");
+		Editor_save (me, L"Drag pitch point");
 	}
 
 	/*
@@ -1139,10 +1140,10 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (duration, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (duration, my endSelection);
-		Editor_save (me, "Drag duration points");
+		Editor_save (me, L"Drag duration points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (me, "Drag duration point");
+		Editor_save (me, L"Drag duration point");
 	}
 
 	/*
@@ -1249,7 +1250,7 @@ class_methods (ManipulationEditor, FunctionEditor)
 	class_method (play)
 class_methods_end
 
-ManipulationEditor ManipulationEditor_create (Widget parent, const char *title, Manipulation ana) {
+ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana) {
 	ManipulationEditor me = new (ManipulationEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, ana)) return NULL;
 

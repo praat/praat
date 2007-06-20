@@ -31,7 +31,7 @@
 #include "Cepstrumc_def.h"
 
 #define Cepstrumc_methods Sampled_methods
-oo_CLASS_CREATE (Cepstrumc, Sampled)
+oo_CLASS_CREATE (Cepstrumc, Sampled);
 
 int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);

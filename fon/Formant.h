@@ -29,7 +29,7 @@
 
 #include "Formant_def.h"
 #define Formant_methods Sampled_methods
-oo_CLASS_CREATE (Formant, Sampled)
+oo_CLASS_CREATE (Formant, Sampled);
 
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
 /*

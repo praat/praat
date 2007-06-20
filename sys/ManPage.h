@@ -44,7 +44,7 @@ typedef struct structManPage_Paragraph {
 	long *linksHither, *linksThither; \
 	double recordingTime;
 #define ManPage_methods Thing_methods
-class_create (ManPage, Thing)
+class_create (ManPage, Thing);
 
 /* End of file ManPage.h */
 #endif

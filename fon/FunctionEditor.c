@@ -1,6 +1,6 @@
 /* FunctionEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2005/12/07 scrollStep
  * pb 2006/12/18 better info
  * pb 2006/12/21 thicker moving cursor
+ * pb 2007/06/10 wchar_t
  */
 
 #include "FunctionEditor.h"
@@ -124,7 +125,7 @@ static void drawNow (FunctionEditor me) {
 	int selection = my endSelection > my startSelection;
 	int beginVisible, endVisible;
 	double verticalCorrection, bottom;
-	char text [100];
+	wchar_t text [100];
 
 	/* Update selection. */
 
@@ -241,8 +242,8 @@ static void drawNow (FunctionEditor me) {
 		double left = my rect [i]. left, right = my rect [i]. right;
 		double bottom = my rect [i]. bottom, top = my rect [i]. top;
 		if (left < right) {
-			const char *format = our format_long;
-			double value, inverseValue = 0.0;
+			const wchar_t *format = our format_long;
+			double value = NUMundefined, inverseValue = 0.0;
 			switch (i) {
 				case 0: format = our format_totalDuration, value = my tmax - my tmin; break;
 				case 1: format = our format_window, value = my endWindow - my startWindow;
@@ -251,9 +252,9 @@ static void drawNow (FunctionEditor me) {
 					 */	
 					Graphics_setColour (my graphics, Graphics_BLUE);
 					Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-					Graphics_printf (my graphics, left, 0.5 * (bottom + top) - verticalCorrection, our format_long, my startWindow);
+					Graphics_printfW (my graphics, left, 0.5 * (bottom + top) - verticalCorrection, our format_long, my startWindow);
 					Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-					Graphics_printf (my graphics, right, 0.5 * (bottom + top) - verticalCorrection, our format_long, my endWindow);
+					Graphics_printfW (my graphics, right, 0.5 * (bottom + top) - verticalCorrection, our format_long, my endWindow);
 					Graphics_setColour (my graphics, Graphics_BLACK);
 					Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 				break;
@@ -264,21 +265,21 @@ static void drawNow (FunctionEditor me) {
 				case 6: value = my marker [3] - my marker [2]; break;
 				case 7: format = our format_selection, value = my endSelection - my startSelection, inverseValue = 1 / value; break;
 			}
-			sprintf (text, format, value, inverseValue);
-			if (Graphics_textWidth (my graphics, text) < right - left) {
-				Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
+			swprintf (text, 100, format, value, inverseValue);
+			if (Graphics_textWidthW (my graphics, text) < right - left) {
+				Graphics_textW (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
 			} else if (format == our format_long) {
-				sprintf (text, our format_short, value);
-				if (Graphics_textWidth (my graphics, text) < right - left)
-					Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
+				swprintf (text, 100, our format_short, value);
+				if (Graphics_textWidthW (my graphics, text) < right - left)
+					Graphics_textW (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
 			} else {
-				sprintf (text, our format_long, value);
-				if (Graphics_textWidth (my graphics, text) < right - left) {
-						Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
+				swprintf (text, 100, our format_long, value);
+				if (Graphics_textWidthW (my graphics, text) < right - left) {
+						Graphics_textW (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
 				} else {
-					sprintf (text, our format_short, my endSelection - my startSelection);
-					if (Graphics_textWidth (my graphics, text) < right - left)
-						Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
+					swprintf (text, 100, our format_short, my endSelection - my startSelection);
+					if (Graphics_textWidthW (my graphics, text) < right - left)
+						Graphics_textW (my graphics, 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text);
 				}
 			}
 		}
@@ -297,15 +298,15 @@ static void drawNow (FunctionEditor me) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	if (cursorVisible) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, our format_long, my startSelection);
+		Graphics_printfW (my graphics, my startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, our format_long, my startSelection);
 	}
 	if (beginVisible && selection) {
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my graphics, my startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my startSelection);
+		Graphics_printfW (my graphics, my startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my startSelection);
 	}
 	if (endVisible && selection) {
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_printf (my graphics, my endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my endSelection);
+		Graphics_printfW (my graphics, my endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my endSelection);
 	}
 	Graphics_setColour (my graphics, Graphics_BLACK);
 
@@ -527,10 +528,10 @@ DO
 	updateGroup (me);
 END
 
-DIRECT (FunctionEditor, cb_getCursor) Melder_informationReal (0.5 * (my startSelection + my endSelection), our format_units); END
-DIRECT (FunctionEditor, cb_getB) Melder_informationReal (my startSelection, our format_units); END
-DIRECT (FunctionEditor, cb_getE) Melder_informationReal (my endSelection, our format_units); END
-DIRECT (FunctionEditor, cb_getSelectionDuration) Melder_informationReal (my endSelection - my startSelection, our format_units); END
+DIRECT (FunctionEditor, cb_getCursor) Melder_informationRealW (0.5 * (my startSelection + my endSelection), our format_units); END
+DIRECT (FunctionEditor, cb_getB) Melder_informationRealW (my startSelection, our format_units); END
+DIRECT (FunctionEditor, cb_getE) Melder_informationRealW (my endSelection, our format_units); END
+DIRECT (FunctionEditor, cb_getSelectionDuration) Melder_informationRealW (my endSelection - my startSelection, our format_units); END
 
 void FunctionEditor_shift (I, double shift) {
 	iam (FunctionEditor);
@@ -792,54 +793,54 @@ static void createMenus (I) {
 	iam (FunctionEditor);
 	inherited (FunctionEditor) createMenus (me);
 
-	Editor_addCommand (me, "File", "Preferences...", 0, cb_prefs);
-	Editor_addCommand (me, "File", "-- after prefs --", 0, 0);
+	Editor_addCommand (me, L"File", L"Preferences...", 0, cb_prefs);
+	Editor_addCommand (me, L"File", L"-- after prefs --", 0, 0);
 
-	Editor_addMenu (me, "Query", 0);
-	Editor_addCommand (me, "Query", "Get start of selection", 0, cb_getB);
-	Editor_addCommand (me, "Query", "Get begin of selection", Editor_HIDDEN, cb_getB);
-	Editor_addCommand (me, "Query", "Get cursor", motif_F6, cb_getCursor);
-	Editor_addCommand (me, "Query", "Get end of selection", 0, cb_getE);
-	Editor_addCommand (me, "Query", "Get selection length", 0, cb_getSelectionDuration);
+	Editor_addMenu (me, L"Query", 0);
+	Editor_addCommand (me, L"Query", L"Get start of selection", 0, cb_getB);
+	Editor_addCommand (me, L"Query", L"Get begin of selection", Editor_HIDDEN, cb_getB);
+	Editor_addCommand (me, L"Query", L"Get cursor", motif_F6, cb_getCursor);
+	Editor_addCommand (me, L"Query", L"Get end of selection", 0, cb_getE);
+	Editor_addCommand (me, L"Query", L"Get selection length", 0, cb_getSelectionDuration);
 
-	Editor_addMenu (me, "View", 0);
+	Editor_addMenu (me, L"View", 0);
 	our viewMenuEntries (me);
-	Editor_addCommand (me, "View", our format_domain, motif_INSENSITIVE, cb_prefs /* dummy */);
-	Editor_addCommand (me, "View", "Zoom...", 0, cb_zoom);
-	Editor_addCommand (me, "View", "Show all", 'A', DO_showAll);
-	Editor_addCommand (me, "View", "Zoom in", 'I', DO_zoomIn);
-	Editor_addCommand (me, "View", "Zoom out", 'O', DO_zoomOut);
-	Editor_addCommand (me, "View", "Zoom to selection", 'N', DO_zoomToSelection);
-	Editor_addCommand (me, "View", "Scroll page back", motif_PAGE_UP, cb_pageUp);
-	Editor_addCommand (me, "View", "Scroll page forward", motif_PAGE_DOWN, cb_pageDown);
-	Editor_addCommand (me, "View", "-- play --", 0, 0);
-	Editor_addCommand (me, "View", "Audio:", motif_INSENSITIVE, cb_prefs /* dummy */);
-	Editor_addCommand (me, "View", "Play...", 0, cb_play);
-	Editor_addCommand (me, "View", "Play or stop", motif_TAB, cb_playOrStop);
-	Editor_addCommand (me, "View", "Play window", motif_SHIFT + motif_TAB, cb_playWindow);
-	Editor_addCommand (me, "View", "Interrupt playing", motif_ESCAPE, cb_interruptPlaying);
+	Editor_addCommand (me, L"View", our format_domain, motif_INSENSITIVE, cb_prefs /* dummy */);
+	Editor_addCommand (me, L"View", L"Zoom...", 0, cb_zoom);
+	Editor_addCommand (me, L"View", L"Show all", 'A', DO_showAll);
+	Editor_addCommand (me, L"View", L"Zoom in", 'I', DO_zoomIn);
+	Editor_addCommand (me, L"View", L"Zoom out", 'O', DO_zoomOut);
+	Editor_addCommand (me, L"View", L"Zoom to selection", 'N', DO_zoomToSelection);
+	Editor_addCommand (me, L"View", L"Scroll page back", motif_PAGE_UP, cb_pageUp);
+	Editor_addCommand (me, L"View", L"Scroll page forward", motif_PAGE_DOWN, cb_pageDown);
+	Editor_addCommand (me, L"View", L"-- play --", 0, 0);
+	Editor_addCommand (me, L"View", L"Audio:", motif_INSENSITIVE, cb_prefs /* dummy */);
+	Editor_addCommand (me, L"View", L"Play...", 0, cb_play);
+	Editor_addCommand (me, L"View", L"Play or stop", motif_TAB, cb_playOrStop);
+	Editor_addCommand (me, L"View", L"Play window", motif_SHIFT + motif_TAB, cb_playWindow);
+	Editor_addCommand (me, L"View", L"Interrupt playing", motif_ESCAPE, cb_interruptPlaying);
 
-	Editor_addMenu (me, "Select", 0);
-	Editor_addCommand (me, "Select", "Select...", 0, cb_select);
-	Editor_addCommand (me, "Select", "Move cursor to start of selection", 0, cb_moveCursorToB);
-	Editor_addCommand (me, "Select", "Move cursor to begin of selection", Editor_HIDDEN, cb_moveCursorToB);
-	Editor_addCommand (me, "Select", "Move cursor to end of selection", 0, cb_moveCursorToE);
-	Editor_addCommand (me, "Select", "Move cursor to...", 0, cb_moveCursorTo);
-	Editor_addCommand (me, "Select", "Move cursor by...", 0, cb_moveCursorBy);
-	Editor_addCommand (me, "Select", "Move start of selection by...", 0, cb_moveBby);
-	Editor_addCommand (me, "Select", "Move begin of selection by...", Editor_HIDDEN, cb_moveBby);
-	Editor_addCommand (me, "Select", "Move end of selection by...", 0, cb_moveEby);
-	/*Editor_addCommand (me, "Select", "Move cursor back by half a second", motif_, cb_moveCursorBy);*/
-	Editor_addCommand (me, "Select", "Select earlier", motif_UP_ARROW, cb_selectEarlier);
-	Editor_addCommand (me, "Select", "Select later", motif_DOWN_ARROW, cb_selectLater);
-	Editor_addCommand (me, "Select", "Move start of selection left", motif_SHIFT + motif_UP_ARROW, cb_moveBleft);
-	Editor_addCommand (me, "Select", "Move begin of selection left", Editor_HIDDEN, cb_moveBleft);
-	Editor_addCommand (me, "Select", "Move start of selection right", motif_SHIFT + motif_DOWN_ARROW, cb_moveBright);
-	Editor_addCommand (me, "Select", "Move begin of selection right", Editor_HIDDEN, cb_moveBright);
-	Editor_addCommand (me, "Select", "Move end of selection left", motif_COMMAND + motif_UP_ARROW, cb_moveEleft);
-	Editor_addCommand (me, "Select", "Move end of selection right", motif_COMMAND + motif_DOWN_ARROW, cb_moveEright);
+	Editor_addMenu (me, L"Select", 0);
+	Editor_addCommand (me, L"Select", L"Select...", 0, cb_select);
+	Editor_addCommand (me, L"Select", L"Move cursor to start of selection", 0, cb_moveCursorToB);
+	Editor_addCommand (me, L"Select", L"Move cursor to begin of selection", Editor_HIDDEN, cb_moveCursorToB);
+	Editor_addCommand (me, L"Select", L"Move cursor to end of selection", 0, cb_moveCursorToE);
+	Editor_addCommand (me, L"Select", L"Move cursor to...", 0, cb_moveCursorTo);
+	Editor_addCommand (me, L"Select", L"Move cursor by...", 0, cb_moveCursorBy);
+	Editor_addCommand (me, L"Select", L"Move start of selection by...", 0, cb_moveBby);
+	Editor_addCommand (me, L"Select", L"Move begin of selection by...", Editor_HIDDEN, cb_moveBby);
+	Editor_addCommand (me, L"Select", L"Move end of selection by...", 0, cb_moveEby);
+	/*Editor_addCommand (me, L"Select", L"Move cursor back by half a second", motif_, cb_moveCursorBy);*/
+	Editor_addCommand (me, L"Select", L"Select earlier", motif_UP_ARROW, cb_selectEarlier);
+	Editor_addCommand (me, L"Select", L"Select later", motif_DOWN_ARROW, cb_selectLater);
+	Editor_addCommand (me, L"Select", L"Move start of selection left", motif_SHIFT + motif_UP_ARROW, cb_moveBleft);
+	Editor_addCommand (me, L"Select", L"Move begin of selection left", Editor_HIDDEN, cb_moveBleft);
+	Editor_addCommand (me, L"Select", L"Move start of selection right", motif_SHIFT + motif_DOWN_ARROW, cb_moveBright);
+	Editor_addCommand (me, L"Select", L"Move begin of selection right", Editor_HIDDEN, cb_moveBright);
+	Editor_addCommand (me, L"Select", L"Move end of selection left", motif_COMMAND + motif_UP_ARROW, cb_moveEleft);
+	Editor_addCommand (me, L"Select", L"Move end of selection right", motif_COMMAND + motif_DOWN_ARROW, cb_moveEright);
 
-	Editor_addCommand (me, "Help", "Intro", 0, DO_intro);
+	Editor_addCommand (me, L"Help", L"Intro", 0, DO_intro);
 }
 
 static void createChildren (I) {
@@ -1304,13 +1305,13 @@ class_methods (FunctionEditor, Editor)
 	class_method (draw)
 	class_method (prepareDraw)
 	us -> hasText = FALSE;
-	us -> format_domain = "Time domain:";
-	us -> format_short = "%.3f";
-	us -> format_long = "%f";
-	us -> format_units = "seconds";
-	us -> format_totalDuration = "Total duration %f seconds";
-	us -> format_window = "Visible part %f seconds";
-	us -> format_selection = "%f (%.3f / s)";
+	us -> format_domain = L"Time domain:";
+	us -> format_short = L"%.3f";
+	us -> format_long = L"%f";
+	us -> format_units = L"seconds";
+	us -> format_totalDuration = L"Total duration %f seconds";
+	us -> format_window = L"Visible part %f seconds";
+	us -> format_selection = L"%f (%.3f / s)";
 	class_method (play)
 	class_method (click)
 	class_method (clickB)
@@ -1422,7 +1423,7 @@ MOTIF_CALLBACK (cb_input)
 		cb_keyPress (me, event);
 MOTIF_CALLBACK_END
 
-int FunctionEditor_init (I, Widget parent, const char *title, Any data) {
+int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (FunctionEditor);
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
 	my tmax = ((Function) data) -> xmax;
@@ -1493,32 +1494,32 @@ void FunctionEditor_prefs (void) {
 	Resources_addDouble ("FunctionEditor.arrowScrollStep", & prefs.arrowScrollStep);
 }
 
-void FunctionEditor_drawRangeMark (I, const char *format, double yWC, int verticalAlignment) {
+void FunctionEditor_drawRangeMark (I, const wchar_t *format, double yWC, int verticalAlignment) {
 	iam (FunctionEditor);
-	char text [100];
+	wchar_t text [100];
 	double textWidth;
-	sprintf (text, format, yWC);
-	textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
+	swprintf (text, 100, format, yWC);
+	textWidth = Graphics_textWidthW (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_line (my graphics, my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, verticalAlignment);
 	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my graphics, 0.5);
-	Graphics_text (my graphics, my endWindow, yWC, text);
+	Graphics_textW (my graphics, my endWindow, yWC, text);
 }
 
-void FunctionEditor_drawCursorFunctionValue (I, const char *format, double yWC) {
+void FunctionEditor_drawCursorFunctionValue (I, const wchar_t *format, double yWC) {
 	iam (FunctionEditor);
 	Graphics_setColour (my graphics, Graphics_CYAN);
 	Graphics_line (my graphics, my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics, 0.5 * (my startSelection + my endSelection), yWC, 1.5);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, yWC, format, yWC);
+	Graphics_printfW (my graphics, my startWindow, yWC, format, yWC);
 }
 
-void FunctionEditor_insertCursorFunctionValue (I, const char *format, double yWC, double minimum, double maximum) {
+void FunctionEditor_insertCursorFunctionValue (I, const wchar_t *format, double yWC, double minimum, double maximum) {
 	iam (FunctionEditor);
-	char text [100];
+	wchar_t text [100];
 	double textX = my endWindow, textY = yWC, textWidth;
 	int tooHigh = Graphics_dyWCtoMM (my graphics, maximum - textY) < 5.0;
 	int tooLow = Graphics_dyWCtoMM (my graphics, textY - minimum) < 5.0;
@@ -1532,20 +1533,20 @@ void FunctionEditor_insertCursorFunctionValue (I, const char *format, double yWC
 	} else if (tooLow) {
 		textY = minimum + Graphics_dyMMtoWC (my graphics, 5.0);
 	}
-	sprintf (text, format, yWC);
-	textWidth = Graphics_textWidth (my graphics, text);
+	swprintf (text, 100, format, yWC);
+	textWidth = Graphics_textWidthW (my graphics, text);
 	Graphics_fillCircle_mm (my graphics, my endWindow + textWidth + Graphics_dxMMtoWC (my graphics, 1.5), textY, 1.5);
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my graphics, textX, textY, text);
+	Graphics_textW (my graphics, textX, textY, text);
 }
 
-void FunctionEditor_drawHorizontalHair (I, const char *format, double yWC) {
+void FunctionEditor_drawHorizontalHair (I, const wchar_t *format, double yWC) {
 	iam (FunctionEditor);
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, yWC, format, yWC);
+	Graphics_printfW (my graphics, my startWindow, yWC, format, yWC);
 }
 
 void FunctionEditor_drawGridLine (I, double yWC) {

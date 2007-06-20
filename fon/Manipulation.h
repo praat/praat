@@ -62,7 +62,7 @@
 
 #include "Manipulation_def.h"
 #define Manipulation_methods Function_methods
-oo_CLASS_CREATE (Manipulation, Function)
+oo_CLASS_CREATE (Manipulation, Function);
 
 /* How to create an Manipulation. */
 

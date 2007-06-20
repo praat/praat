@@ -35,7 +35,7 @@
 	long numberOfPoints; \
 	float *x, *y;
 #define Polygon_methods  Data_methods
-class_create (Polygon, Data)
+class_create (Polygon, Data);
 
 Polygon Polygon_create (long numberOfPoints);
 /*

@@ -38,7 +38,7 @@
 	double **y, **s;
 
 #define SPINET_methods Sampled2_methods
-class_create (SPINET, Sampled2)
+class_create (SPINET, Sampled2);
 
 SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,

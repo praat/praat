@@ -28,7 +28,7 @@
 
 #define Activation_members Matrix_members
 #define Activation_methods Matrix_methods
-class_create (Activation, Matrix)
+class_create (Activation, Matrix);
 
 /* Attributes:
    xmin				:1

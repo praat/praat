@@ -11,12 +11,17 @@
  * Erez Volk 2007-05-30
  */
 
+static void dump_file( const char *filename );
 static void test_file( const char *filename );
 static void test_mad( FILE *f );
 static void test_mp3f( FILE *f );
 
+static void get_offsets( FILE *f );
+
 static enum mad_flow cb_input( void *context, struct mad_stream *stream );
 static enum mad_flow cb_header( void *context, struct mad_header const *header );
+static enum mad_flow cb_accept_header( void *context, struct mad_header const *header );
+static enum mad_flow cb_dump( void *context, struct mad_header const *header, struct mad_pcm *pcm );
 
 static void cb_samples( const int *channels[MP3F_MAX_CHANNELS],
 		unsigned num_samples,
@@ -39,10 +44,58 @@ int main( int argc, char *argv[] )
 		return -1;
 	}
 
-	for ( i = 1; i < argc; ++ i )
+	if ( argc > 2 && !strcmp( argv[1], "-dump" ) )
+		dump_file( argv[2] );
+	else for ( i = 1; i < argc; ++ i )
 		test_file( argv[i] );
 
 	return 0;
+}
+
+typedef struct {
+	FILE *f;
+	unsigned done;
+	unsigned left;
+	FILE *f2;
+} DUMP_CONTEXT;
+
+static void dump_file( const char *filename )
+{
+	enum { MAX_FRAMES = 16 };
+	FILE *f;
+	unsigned i;
+
+	printf( "Dumping file: \"%s\"...\n", filename );
+	if ( (f = fopen( filename, "rb" )) == NULL ) {
+		printf( "  Cannot open file.\n" );
+		return;
+	}
+
+	get_offsets( f );
+
+	printf( "  Header offsets: %lu, %lu, %lu, %lu, ... %lu\n",
+		offsets[0], offsets[1], offsets[2], offsets[3],
+		offsets[num_offsets - 1] );
+
+	for ( i = 0; i < MAX_FRAMES; ++ i )
+	{
+		char dumpname[128];
+		struct mad_decoder d;
+		DUMP_CONTEXT c = { f, i, MAX_FRAMES - i };
+
+		sprintf( dumpname, "%02u.dump", i );
+		printf( "  Creating %s...\n", dumpname );
+		c.f2 = fopen( dumpname, "w" );
+
+		fseek( f, offsets[i], SEEK_SET );
+		mad_decoder_init( &d, &c, cb_input, cb_accept_header, NULL, cb_dump, NULL, NULL );
+		mad_decoder_run( &d, MAD_DECODER_MODE_SYNC );
+		mad_decoder_finish( &d );
+
+		fclose( c.f2 );
+	}
+
+	fclose( f );
 }
 
 static void test_file( const char *filename )
@@ -65,22 +118,9 @@ static void test_file( const char *filename )
 static void test_mad( FILE *f )
 {
 	enum { MAX_BAD = 16 };
-	struct mad_decoder d;
 	unsigned i, bad;
 
-	/* Make sure there are no leftovers */
-	memset( &d, time(NULL), sizeof(d) );
-
-	num_offsets = 0;
-
-	mad_decoder_init( &d, f, cb_input, cb_header, NULL, NULL, NULL, NULL );
-	if ( mad_decoder_run( &d, MAD_DECODER_MODE_SYNC ) != 0 )
-	{
-		printf( "  Error scanning file.\n" );
-		return;
-	}
-
-	mad_decoder_finish( &d );
+	get_offsets( f );
 
 	if ( num_offsets >= MAX_OFFSETS )
 		printf( "  Reached maximum number of headers (%u)\n", MAX_OFFSETS );
@@ -112,9 +152,28 @@ static void test_mad( FILE *f )
 		printf( "  All offsets have valid MP3 headers\n" );
 }
 
+static void get_offsets( FILE *f )
+{
+	struct mad_decoder d;
+
+	/* Make sure there are no leftovers */
+	memset( &d, time(NULL), sizeof(d) );
+
+	num_offsets = 0;
+
+	mad_decoder_init( &d, &f, cb_input, cb_header, NULL, NULL, NULL, NULL );
+	if ( mad_decoder_run( &d, MAD_DECODER_MODE_SYNC ) != 0 )
+	{
+		printf( "  Error scanning file.\n" );
+		return;
+	}
+
+	mad_decoder_finish( &d );
+}
+
 static enum mad_flow cb_input( void *context, struct mad_stream *stream )
 {
-	FILE *f = (FILE *)context;
+	FILE *f = *(FILE **)context;
 	unsigned char *data = NULL;
 	unsigned nthrown = 0, ncopied = 0, size = 0;
 	unsigned offset;
@@ -143,7 +202,7 @@ static enum mad_flow cb_input( void *context, struct mad_stream *stream )
 
 static enum mad_flow cb_header( void *context, struct mad_header const *header )
 {
-	FILE *f = (FILE *)context;
+	FILE *f = *(FILE **)context;
 	unsigned long foff = ftell( f );
 	if ( foff > header->offset + BUFFER_SIZE )
 		printf( "  ??? %lu <-> %lu\n", foff, header->offset );
@@ -153,10 +212,39 @@ static enum mad_flow cb_header( void *context, struct mad_header const *header )
 	return MAD_FLOW_CONTINUE;
 }
 
+static enum mad_flow cb_accept_header( void *context, struct mad_header const *header )
+{
+	(void)context;
+	(void)header;
+	return MAD_FLOW_CONTINUE;
+}
+
+static enum mad_flow cb_dump( void *context, struct mad_header const *header, struct mad_pcm *pcm )
+{
+	DUMP_CONTEXT *c = (DUMP_CONTEXT *)context;
+	FILE *f = c->f2;
+	unsigned i, j, length = pcm->length;
+	const mad_fixed_t *samples = pcm->samples[0];
+	(void)header;
+
+	fprintf( f, "FRAME %u, OFFSET %lu (expected %lu)\n",
+		       	c->done, header->offset, offsets[c->done] );
+	for ( i = 0; i < length; i += 8 ) {
+		for ( j = i; i < length && j < i + 8; ++ j )
+			fprintf( f, "%9i ", samples[j] );
+		fprintf( f, "\n" );
+	}
+	fprintf( f, "\n" );
+
+	++ c->done;
+	-- c->left;
+	return c->left == 0 ? MAD_FLOW_STOP : MAD_FLOW_CONTINUE;
+}
+
 static void test_mp3f( FILE *f )
 {
-	enum { FIRST = 1500, SECOND = 2000, TOTAL = FIRST + SECOND };
-	enum { MID_OFFSET = 1700, MID_SIZE = 800 };
+	enum { FIRST = 15000, SECOND = 2000, TOTAL = FIRST + SECOND };
+	enum { MID_OFFSET = 16000, MID_SIZE = 800 };
 	static int x[TOTAL], y[TOTAL], z[MID_SIZE];
 	int *p;
 	MP3_FILE mp3f = mp3f_new();

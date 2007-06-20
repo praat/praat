@@ -64,7 +64,7 @@
 	void (*getExtrema) (I, double x1, double x2, double *xmin, double *ymin, \
 			double *xmax, double *ymax);	\
 	long (*getDegree) (I);
-class_create (FunctionTerms, Function)	
+class_create (FunctionTerms, Function);
 
 int FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
 
@@ -113,11 +113,11 @@ void FunctionTerms_drawBasisFunction (I, Graphics g, long index, double xmin, do
 
 #define Polynomial_members FunctionTerms_members
 #define Polynomial_methods FunctionTerms_methods
-class_create (Polynomial, FunctionTerms)
+class_create (Polynomial, FunctionTerms);
 
 #define Roots_members ComplexVector_members
 #define Roots_methods ComplexVector_methods
-class_create (Roots, ComplexVector)
+class_create (Roots, ComplexVector);
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree);
 
@@ -151,7 +151,7 @@ int Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomia
 
 #define LegendreSeries_members FunctionTerms_members
 #define LegendreSeries_methods FunctionTerms_methods
-class_create (LegendreSeries, FunctionTerms)
+class_create (LegendreSeries, FunctionTerms);
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -210,7 +210,7 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 */	
 #define ChebyshevSeries_members FunctionTerms_members
 #define ChebyshevSeries_methods FunctionTerms_methods
-class_create (ChebyshevSeries, FunctionTerms)
+class_create (ChebyshevSeries, FunctionTerms);
 	
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -223,7 +223,7 @@ Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 	double *knots;
 #define Spline_methods FunctionTerms_methods \
 	long (*getOrder) (I);
-class_create (Spline, FunctionTerms)
+class_create (Spline, FunctionTerms);
 
 int Spline_init (I, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
 
@@ -236,7 +236,7 @@ Spline Spline_scaleX (I, double xmin, double xmax);
 
 #define MSpline_members Spline_members
 #define MSpline_methods Spline_methods
-class_create (MSpline, Spline)
+class_create (MSpline, Spline);
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 
@@ -244,7 +244,7 @@ MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, char *
 
 #define ISpline_members Spline_members
 #define ISpline_methods Spline_methods
-class_create (ISpline, Spline)
+class_create (ISpline, Spline);
 
 ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, char *coef, char *interiorKnots);

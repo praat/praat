@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070604)
+MAN_BEGIN ("What's new?", "ppgb", 20070620)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.07# (June 20, 2007)")
+LIST_ITEM ("\\bu Sound files: MP3 as LongSound (implemented by Erez Volk).")
+LIST_ITEM ("\\bu Scripting: Unicode support for strings and script window (Mac and Windows only).")
 NORMAL ("##4.6.06# (June 4, 2007)")
 LIST_ITEM ("\\bu Script window: corrected a bug introduced in 4.6.05 that could cause incorrect symbols in saved files.")
 NORMAL ("##4.6.05# (June 2, 2007)")

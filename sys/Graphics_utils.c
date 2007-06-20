@@ -1,6 +1,6 @@
 /* Graphics_utils.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2004/06/18 allow reversed linear axes
  * pb 2005/12/20 allow reversed logarithmic axes
+ * pb 2007/06/10 wchar_t
  */
 
 #include <math.h>
@@ -60,6 +61,36 @@ void Graphics_printf (I, double xWC, double yWC, const char *format, ...) {
 		while (*n) *(b++) = *(n++); *b = '\0';
 	}
 	Graphics_text (me, xWC, yWC, buffer);
+	va_end (arg);
+}
+
+void Graphics_printfW (I, double xWC, double yWC, const wchar_t *format, ...) {
+	iam (Graphics);
+	wchar_t buffer [1000], *b = buffer;
+	int formatLength = wcslen (format);
+	va_list arg;
+	va_start (arg, format);
+	vswprintf (buffer, 1000, format, arg);
+	if (((formatLength == 4 && format [0] == '%' && format [1] == '.' &&
+		 format [2] >= '1' && format [2] <= '9' && format [3] == 'g') ||
+	     (formatLength == 5 && format [0] == '%' && format [1] == '.' &&
+		 format [2] >= '1' && format [2] <= '9' && format [3] == 'l' && format [4] == 'g'))
+	     && wcschr (buffer, 'e') != NULL)
+	{
+		wchar_t number [100], *n = number;
+		wcscpy (number, buffer);
+		while (*n != 'e') *(b++) = *(n++); *b = '\0';
+		if (number [0] == '1' && number [1] == 'e') {
+			wcscpy (buffer, L"10^^"); b = buffer + 4;
+		} else {
+			wcscat (buffer, L"\\.c10^^"); b += 7;
+		}
+		if (*++n == '+') n ++;   /* Ignore leading plus sign in exponent. */
+		if (*n == '-') *(b++) = *(n++);   /* Copy sign of negative exponent. */
+		while (*n == '0') n ++;   /* Ignore leading zeroes in exponent. */
+		while (*n) *(b++) = *(n++); *b = '\0';
+	}
+	Graphics_textW (me, xWC, yWC, buffer);
 	va_end (arg);
 }
 

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/02
+ * pb 2007/06/10
  */
 
 #include "praat.h"
@@ -138,7 +138,7 @@ FORM (LongSound_writePartToAudioFile, "LongSound: Write part to audio file", 0)
 	OK
 DO
 	structMelderFile file = { { 0 } };
-	if (! Melder_relativePathToFile (GET_STRING ("Audio file"), & file)) return 0;
+	if (! Melder_relativePathToFileW (GET_STRINGW (L"Audio file"), & file)) return 0;
 	if (! LongSound_writePartToAudioFile16 (ONLY (classLongSound), GET_INTEGER ("Type"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), & file)) return 0;
 END
@@ -157,7 +157,7 @@ DIRECT (LongSound_view)
 		return Melder_error ("Cannot view a LongSound from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -288,11 +288,11 @@ END
 DIRECT (Sounds_combineToStereo)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
-	char name [200];
+	wchar_t name [200];
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	sprintf (name, "%s_%s", strchr (theCurrentPraat -> list [i1]. name, ' ') + 1, strchr (theCurrentPraat -> list [i2]. name, ' ') + 1);
-	if (! praat_new (Sounds_combineToStereo (sound1, sound2), name)) return 0;
+	swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1);
+	if (! praat_new9 (Sounds_combineToStereo (sound1, sound2), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 DIRECT (Sounds_concatenate)
@@ -385,11 +385,11 @@ END
 DIRECT (Sounds_convolve)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
-	char name [200];
+	wchar_t name [200];
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	sprintf (name, "%s_%s", strchr (theCurrentPraat -> list [i1]. name, ' ') + 1, strchr (theCurrentPraat -> list [i2]. name, ' ') + 1);
-	if (! praat_new (Sounds_convolve (sound1, sound2), name)) return 0;
+	swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1);
+	if (! praat_new9 (Sounds_convolve (sound1, sound2), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 static int common_Sound_create (void *dia, bool allowStereo) {
@@ -578,7 +578,7 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	if (Thing_member (publish, classSpectrum)) {
 		int IOBJECT;
 		WHERE (SELECTED) {
-			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
 			if (! editor2) return;
 			if (! praat_installEditor (editor2, IOBJECT)) Melder_flushError (NULL);
 		}
@@ -589,7 +589,7 @@ DIRECT (Sound_edit)
 		return Melder_error ("Cannot edit a Sound from batch.");
 	} else {
 		WHERE (SELECTED) {
-			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_SoundEditor_publish, NULL);
@@ -1607,7 +1607,7 @@ DIRECT (Sound_to_TextTier)
 	EVERY_TO (TextTier_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax))
 END
 
-FORM (SoundInputPrefs, "Sound input preferences", "SoundRecorder")
+FORM (SoundInputPrefs, "Sound recording preferences", "SoundRecorder")
 	NATURAL ("Buffer size (MB)", "20")
 	OK
 SET_INTEGER ("Buffer size", SoundRecorder_getBufferSizePref_MB ())
@@ -1617,7 +1617,7 @@ DO
 	SoundRecorder_setBufferSizePref_MB (size);
 END
 
-FORM (SoundOutputPrefs, "Sound output preferences", 0)
+FORM (SoundOutputPrefs, "Sound playing preferences", 0)
 	#if defined (sun) || defined (HPUX)
 		RADIO ("Internal speaker", 1)
 		RADIOBUTTON ("On")
@@ -1682,7 +1682,7 @@ FORM (Sound_writeToRawSoundFile, "Write to raw sound file", 0)
 	OK
 DO
 	structMelderFile file = { { 0 } };
-	Melder_relativePathToFile (GET_STRING ("Raw binary file"), & file);
+	Melder_relativePathToFileW (GET_STRINGW (L"Raw binary file"), & file);
 	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGER ("Encoding"))) return 0;
 END
 
@@ -1922,9 +1922,9 @@ void praat_uvafon_Sound_init (void) {
 
 	praat_addMenuCommand ("Objects", "Goodies", "Stop playing sound", 0, motif_ESCAPE, DO_stopPlayingSound);
 	praat_addMenuCommand ("Objects", "Preferences", "-- sound prefs --", 0, 0, 0);
-	praat_addMenuCommand ("Objects", "Preferences", "Sound input prefs...", 0, 0, DO_SoundInputPrefs);
-	praat_addMenuCommand ("Objects", "Preferences", "Sound output prefs...", 0, 0, DO_SoundOutputPrefs);
-	praat_addMenuCommand ("Objects", "Preferences", "LongSound prefs...", 0, 0, DO_LongSoundPrefs);
+	praat_addMenuCommand ("Objects", "Preferences", "Sound recording preferences...", 0, 0, DO_SoundInputPrefs);
+	praat_addMenuCommand ("Objects", "Preferences", "Sound playing preferences...", 0, 0, DO_SoundOutputPrefs);
+	praat_addMenuCommand ("Objects", "Preferences", "LongSound preferences...", 0, 0, DO_LongSoundPrefs);
 
 	praat_addAction1 (classLongSound, 0, "LongSound help", 0, 0, DO_LongSound_help);
 	praat_addAction1 (classLongSound, 1, "View", 0, 0, DO_LongSound_view);

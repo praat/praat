@@ -41,7 +41,7 @@
 
 #define Ltas_members  Vector_members
 #define Ltas_methods  Vector_methods
-class_create (Ltas, Vector)
+class_create (Ltas, Vector);
 
 /*
 	Attributes:

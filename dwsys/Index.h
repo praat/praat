@@ -37,12 +37,12 @@
 	long *classIndex;
 
 #define Index_methods Data_methods
-class_create (Index, Data)
+class_create (Index, Data);
 
 #define StringsIndex_members Index_members
 
 #define StringsIndex_methods Index_methods
-class_create (StringsIndex, Index)
+class_create (StringsIndex, Index);
 
 
 int Index_init (I, long numberOfElements);

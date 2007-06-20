@@ -1,6 +1,6 @@
 /* praat_Artsynth.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/26
+ * pb 2007/06/10
  */
 
 #include "Art_Speaker.h"
@@ -85,7 +85,7 @@ DIRECT (Artword_edit)
 		return Melder_error ("Cannot edit an Artword from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Artword_getTarget, "Get one Artword target", 0)
@@ -109,8 +109,7 @@ DO
 	double tim = GET_REAL ("Time");
 	if (tim < 0.0) return Melder_error ("'Time' must not be less than 0.");
 	WHERE (SELECTED) {
-		Artword_setTarget (OBJECT, GET_INTEGER ("Muscle"),
-		tim, GET_REAL ("Target value"));
+		Artword_setTarget (OBJECT, GET_INTEGER ("Muscle"), tim, GET_REAL ("Target value"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -143,9 +142,9 @@ DIRECT (Art_Speaker_drawMesh)
 END
 
 DIRECT (Art_Speaker_to_VocalTract)
-	char name [200];
+	wchar_t name [200];
 	praat_name2 (name, classArt, classSpeaker);
-	if (! praat_new (Art_Speaker_to_VocalTract (ONLY (classArt), ONLY (classSpeaker)), name)) return 0;
+	if (! praat_new9 (Art_Speaker_to_VocalTract (ONLY (classArt), ONLY (classSpeaker)), name, 0,0,0,0,0,0,0,0)) return 0;
 END
 
 /***** ARTWORD & SPEAKER *****/
@@ -180,25 +179,25 @@ DO
 	int ip2 = GET_INTEGER ("Pressure 2"), ip3 = GET_INTEGER ("Pressure 3");
 	int iv1 = GET_INTEGER ("Velocity 1"), iv2 = GET_INTEGER ("Velocity 2");
 	int iv3 = GET_INTEGER ("Velocity 3");
-	char name [200];
+	wchar_t name [200];
 	int result;
 	praat_name2 (name, classArtword, classSpeaker);
-	result = praat_new (
+	result = praat_new9 (
 		Artword_Speaker_to_Sound (ONLY (classArtword), ONLY (classSpeaker),
 			GET_REAL ("Sampling frequency"), GET_INTEGER ("Oversampling factor"),
 			& w1, iw1, & w2, iw2, & w3, iw3,
 			& p1, ip1, & p2, ip2, & p3, ip3,
 			& v1, iv1, & v2, iv2, & v3, iv3),
-		name);
-	if (iw1) { sprintf (name, "width%d", iw1); praat_new (w1, name); }
-	if (iw2) { sprintf (name, "width%d", iw2); praat_new (w2, name); }
-	if (iw3) { sprintf (name, "width%d", iw3); praat_new (w3, name); }
-	if (ip1) { sprintf (name, "pressure%d", ip1); praat_new (p1, name); }
-	if (ip2) { sprintf (name, "pressure%d", ip2); praat_new (p2, name); }
-	if (ip3) { sprintf (name, "pressure%d", ip3); praat_new (p3, name); }
-	if (iv1) { sprintf (name, "velocity%d", iv1); praat_new (v1, name); }
-	if (iv2) { sprintf (name, "velocity%d", iv2); praat_new (v2, name); }
-	if (iv3) { sprintf (name, "velocity%d", iv3); praat_new (v3, name); }
+		name, 0,0,0,0,0,0,0,0);
+	if (iw1) { swprintf (name, 200, L"width%d", iw1); praat_new9 (w1, name, 0,0,0,0,0,0,0,0); }
+	if (iw2) { swprintf (name, 200, L"width%d", iw2); praat_new9 (w2, name, 0,0,0,0,0,0,0,0); }
+	if (iw3) { swprintf (name, 200, L"width%d", iw3); praat_new9 (w3, name, 0,0,0,0,0,0,0,0); }
+	if (ip1) { swprintf (name, 200, L"pressure%d", ip1); praat_new9 (p1, name, 0,0,0,0,0,0,0,0); }
+	if (ip2) { swprintf (name, 200, L"pressure%d", ip2); praat_new9 (p2, name, 0,0,0,0,0,0,0,0); }
+	if (ip3) { swprintf (name, 200, L"pressure%d", ip3); praat_new9 (p3, name, 0,0,0,0,0,0,0,0); }
+	if (iv1) { swprintf (name, 200, L"velocity%d", iv1); praat_new9 (v1, name, 0,0,0,0,0,0,0,0); }
+	if (iv2) { swprintf (name, 200, L"velocity%d", iv2); praat_new9 (v2, name, 0,0,0,0,0,0,0,0); }
+	if (iv3) { swprintf (name, 200, L"velocity%d", iv3); praat_new9 (v3, name, 0,0,0,0,0,0,0,0); }
 	if (! result) return 0;
 END
 

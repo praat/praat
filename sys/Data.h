@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/28
+ * pb 2007/06/09
  */
 
 /* Data inherits from Thing. */
@@ -345,7 +345,7 @@ typedef struct structData_Description {
 	double (*getFunction2) (I, double x, double y); \
 	double (*getRowIndex) (I, const char *rowLabel); \
 	double (*getColumnIndex) (I, const char *columnLabel);
-class_create (Data, Thing)
+class_create (Data, Thing);
 
 /*
 	Methods. For the examples, we assume the following class definition:
@@ -552,18 +552,20 @@ class_create (Data, Thing)
 #define fcomplexwa  11
 #define dcomplexwa  12
 #define charwa  13
-#define enumwa  14
-#define lenumwa  15
-#define booleanwa  16
-#define questionwa  17
-#define sstringwa  18
-#define stringwa  19
-#define lstringwa  20
-#define structwa  21
-#define widgetwa  22
-#define objectwa  23
-#define collectionwa  24
-#define inheritwa  25
+#define wcharwa  14
+#define enumwa  15
+#define lenumwa  16
+#define booleanwa  17
+#define questionwa  18
+#define sstringwa  19
+#define stringwa  20
+#define lstringwa  21
+#define wstringwa  22
+#define structwa  23
+#define widgetwa  24
+#define objectwa  25
+#define collectionwa  26
+#define inheritwa  27
 
 /* Recursive routines for working with struct members. */
 

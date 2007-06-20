@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/05/07
+ * pb 2007/06/10
  */
 
 #include "praat.h"
@@ -348,7 +348,7 @@ DIRECT (Table_edit)
 		return Melder_error ("Cannot edit a Table from batch.");
 	} else {
 		WHERE (SELECTED) {
-			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, FULL_NAME, ONLY_OBJECT);
+			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, ONLY_OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 		}
 	}

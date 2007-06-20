@@ -32,7 +32,7 @@
 
 #define Vector_members  Matrix_members
 #define Vector_methods  Matrix_methods
-class_create (Vector, Matrix)
+class_create (Vector, Matrix);
 
 #define Vector_CHANNEL_AVERAGE  0
 #define Vector_CHANNEL_1  1

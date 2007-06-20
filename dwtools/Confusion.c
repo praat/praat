@@ -205,7 +205,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 
 #define Pointer_members Polygon_members
 #define Pointer_methods Polygon_methods
-class_create (Pointer, Polygon)
+class_create (Pointer, Polygon);
 class_methods (Pointer, Polygon)
 class_methods_end
 

@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2004/10/25 C++ compatible assignments
  * pb 2006/12/10 update on "info" documentation
+ * pb 2007/06/11 wchar_t
  */
 
 /* The root class of all objects. */
@@ -76,6 +77,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 /* All functions with 'I' as the first argument assume that it is not NULL. */
 
 char * Thing_className (I);
+wchar_t * Thing_classNameW (I);
 /* Return your class name. */
 
 int Thing_member (I, void *klas);
@@ -135,6 +137,7 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 void Thing_recognizeClassByOtherName (void *readableClass, const char *otherName);
 
 Any Thing_newFromClassName (const char *className);
+Any Thing_newFromClassNameW (const wchar_t *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -147,6 +150,7 @@ Any Thing_newFromClassName (const char *className);
 */
 
 void *Thing_classFromClassName (const char *className);
+void *Thing_classFromClassNameW (const wchar_t *className);
 /*
 	Function:
 		Return the class table of class 'className', or NULL if it is not recognized.
@@ -161,14 +165,16 @@ void *Thing_classFromClassName (const char *className);
 */
 
 char * Thing_getName (I);
+wchar_t * Thing_getNameW (I);
 /* Return a pointer to your internal name (which can be NULL). */
 
 void Thing_setName (I, const char *name);
+void Thing_setNameW (I, const wchar_t *name);
 /*
 	Function:
 		remember that you are called 'name'.
 	Postconditions:
-		my name is a copy of 'name'.
+		my name *and* my nameW are copies of 'name'.
 */
 
 void Thing_overrideClass (I, void *klas);
@@ -217,15 +223,12 @@ void Thing_swap (I, thou);
 /*    and use class_create_opaque in the klasP.h header file */
 /*    (or in klas.c if there will not be any inheritors). */
 
-#define class_create(klas,parentKlas) \
-	typedef struct struct##klas *klas; \
-	class_create_opaque (klas, parentKlas)
-
 #define class_create_opaque(klas,parentKlas) \
 	typedef struct struct##klas##_Table *klas##_Table; \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
 		char *_className; \
+		wchar_t *_classNameW; \
 		parentKlas##_Table	_parent; \
 		long _size; \
 		klas##_methods \
@@ -235,14 +238,18 @@ void Thing_swap (I, thou);
 		klas##_members \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas; \
-	extern klas##_Table class##klas;
+	extern klas##_Table class##klas
+
+#define class_create(klas,parentKlas) \
+	typedef struct struct##klas *klas; \
+	class_create_opaque (klas, parentKlas)
 
 /* For klas.c, after the definitions of the methods. */
 
 #define class_methods(klas,parentKlas) \
 	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
 	struct struct##klas##_Table theStruct##klas = { \
-		_##klas##_initialize, #klas,   /* Partial initialization because init and */ \
+		_##klas##_initialize, #klas, L"" #klas,   /* Partial initialization because init and */ \
 		& theStruct##parentKlas, sizeof (struct struct##klas) };   /* parent must be known. */ \
 	klas##_Table class##klas = & theStruct##klas; \
 	static void _##klas##_initialize (void *table) { \
@@ -257,13 +264,14 @@ void Thing_swap (I, thou);
 /* For the inheritors. */
 
 #define Thing_members \
-	char *name;
+	char *name; \
+	wchar_t *nameW;
 #define Thing_methods \
 	long version; \
 	void (*destroy) (I); \
 	void (*info) (I); \
 	void (*nameChanged) (I);
-class_create (Thing, Thing)   /* Root class: no parent. */
+class_create (Thing, Thing);   /* Root class: no parent. */
 
 /*
 	Methods:

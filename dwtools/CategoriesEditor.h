@@ -36,8 +36,8 @@
 	Widget remove, insert, insertAtEnd, replace, moveUp, moveDown;
 	
 #define CategoriesEditor_methods Editor_methods
-class_create (CategoriesEditor, Editor)
+class_create (CategoriesEditor, Editor);
 
-Any CategoriesEditor_create (Widget parent, char *title, Any data);
+Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data);
 
 #endif /* _CategoriesEditor_h_ */

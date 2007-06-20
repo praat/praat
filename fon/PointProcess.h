@@ -34,7 +34,7 @@
 	long maxnt, nt; \
 	double *t;
 #define PointProcess_methods  Function_methods
-class_create (PointProcess, Function)
+class_create (PointProcess, Function);
 
 PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
 PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);

@@ -30,7 +30,7 @@
 
 #include "Speaker_def.h"
 #define Speaker_methods Data_methods
-oo_CLASS_CREATE (Speaker, Data)
+oo_CLASS_CREATE (Speaker, Data);
 
 Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses);
 	/* Preconditions:								*/

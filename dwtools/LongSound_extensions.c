@@ -146,7 +146,7 @@ static int MelderFile_truncate (MelderFile me, long size)
 
 	MelderFile_close (me);
 
-  	hFile = CreateFile (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
+  	hFile = CreateFileW (my wpath, fdwAccess, fdwShareMode, lpsa, fdwCreate,
         FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return Melder_error ("%s: "
         "Can't open file \"%s\".", proc, MelderFile_messageName (me));
@@ -172,7 +172,7 @@ static int MelderFile_truncate (MelderFile me, long size)
 	
 	MelderFile_close (me);
 
-    if (truncate (my path, size) == -1)
+    if (truncate (Melder_peekWcsToUtf8 (my wpath), size) == -1)
     {
 		return Melder_error ("%s: Truncating file \"%s\" failed: %s.", proc,
 			MelderFile_messageName (me), strerror (errno));

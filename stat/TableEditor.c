@@ -1,6 +1,6 @@
 /* TableEditor.c
  *
- * Copyright (C) 2006 Paul Boersma
+ * Copyright (C) 2006-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2006/05/11 raised maximum number of visible columns
  * pb 2006/05/11 underscores are not subscripts
  * pb 2006/08/02 correct vertical scroll bar on Windows (has to be called "verticalScrollBar")
+ * pb 2007/06/10 wchar_t
  */
 
 #include "TableEditor.h"
@@ -82,29 +83,28 @@ static void dataChanged (I) {
 
 /********** EDIT MENU **********/
 
+#ifndef macintosh
 static int menu_cb_Cut (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	XmTextCut (my text, 0);
 	return 1;
 }
-
 static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	XmTextCopy (my text, 0);
 	return 1;
 }
-
 static int menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	XmTextPaste (my text);
 	return 1;
 }
-
 static int menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	XmTextRemove (my text);
 	return 1;
 }
+#endif
 
 /********** VIEW MENU **********/
 
@@ -203,16 +203,18 @@ static void createMenus (I) {
 	iam (TableEditor);
 	inherited (TableEditor) createMenus (me);
 
-	Editor_addCommand (me, "Edit", "-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, "Edit", "Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (me, "Edit", "Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (me, "Edit", "Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (me, "Edit", "Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (me, "Edit", "Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (me, "Edit", "Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (me, "Edit", "Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (me, "Edit", "Erase", Editor_HIDDEN, menu_cb_Erase);
-	Editor_addCommand (me, "Help", "TableEditor help", '?', menu_cb_TableEditorHelp);
+	#ifndef macintosh
+	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
+	Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
+	Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
+	Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
+	Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
+	Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
+	Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
+	Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
+	#endif
+	Editor_addCommand (me, L"Help", L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -344,7 +346,7 @@ static void gui_cb_input (GUI_ARGS) {
 	}
 }
 
-TableEditor TableEditor_create (Widget parent, const char *title, Table table) {
+TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
 	Editor_init (me, parent, 0, 0, 700, 500, title, table); cherror
 	Melder_assert (XtWindow (my drawingArea));

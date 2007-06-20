@@ -1,6 +1,6 @@
 /* Manual.c
  *
- * Copyright (C) 1996-2006 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2005/05/08 embedded scripts (for pictures)
  * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
  * pb 2006/10/20 embedded scripts: not on opening page
+ * pb 2007/06/10 wchar_t
  */
 
 #include <ctype.h>
@@ -47,10 +48,10 @@ static const char *month [] =
 
 FORM_WRITE (Manual, cb_writeOneToHtmlFile, "Write to HTML file", 0)
 	ManPages manPages = my data;
-	char *p = defaultName;
-	strcpy (defaultName, ((ManPage) manPages -> pages -> item [my path]) -> title);
+	wchar_t *p = defaultName;
+	Melder_8bitToWcs_inline ((unsigned char *) ((ManPage) manPages -> pages -> item [my path]) -> title, defaultName, Melder_INPUT_ENCODING_UTF8);
 	while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
-	strcat (defaultName, ".html");
+	wcscat (defaultName, L".html");
 DO_WRITE
 	if (! ManPages_writeOneToHtmlFile (my data, my path, file)) return 0;
 END
@@ -63,14 +64,14 @@ structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
 DO
-	char *directory = GET_STRING ("directory");
+	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;
 END
 
 FORM (Manual, cb_searchForPageList, "Search for page", 0)
 	{ ManPages manPages = my data;
 	long numberOfPages;
-	const char **pages = ManPages_getTitles (manPages, & numberOfPages);
+	const wchar_t **pages = ManPages_getTitles (manPages, & numberOfPages);
 	LIST ("Page", manPages -> pages -> size, pages, 1) }
 	OK
 DO
@@ -437,14 +438,14 @@ static void createMenus (I) {
 	iam (Manual);
 	inherited (Manual) createMenus (me);
 
-	Editor_addCommand (me, "File", "Print manual...", 0, cb_printRange);
-	Editor_addCommand (me, "File", "Write page to HTML file...", 0, cb_writeOneToHtmlFile);
-	Editor_addCommand (me, "File", "Write manual to HTML directory...", 0, cb_writeAllToHtmlDir);
-	Editor_addCommand (me, "File", "-- close --", 0, NULL);
+	Editor_addCommand (me, L"File", L"Print manual...", 0, cb_printRange);
+	Editor_addCommand (me, L"File", L"Write page to HTML file...", 0, cb_writeOneToHtmlFile);
+	Editor_addCommand (me, L"File", L"Write manual to HTML directory...", 0, cb_writeAllToHtmlDir);
+	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
-	Editor_addCommand (me, "Go to", "Search for page (list)...", 0, cb_searchForPageList);
+	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, cb_searchForPageList);
 
-	Editor_addCommand (me, "Help", "Manual help", '?', cb_help);
+	Editor_addCommand (me, L"Help", L"Manual help", '?', cb_help);
 }
 
 static void defaultHeaders (EditorCommand cmd) {
@@ -511,7 +512,9 @@ static int goToPage (I, const char *title) {
 		structMelderDir saveDir = { { 0 } };
 		Melder_getDefaultDir (& saveDir);
 		Melder_setDefaultDir (& manPages -> rootDirectory);
-		if (! praat_executeScriptFromFileNameWithArguments (title + 3)) {
+		static MelderStringW titleW = { 0 };
+		MelderStringW_copyA (& titleW, title);
+		if (! praat_executeScriptFromFileNameWithArguments (titleW.string + 3)) {
 			Melder_flushError (NULL);
 		}
 		Melder_setDefaultDir (& saveDir);
@@ -564,7 +567,9 @@ int Manual_init (I, Widget parent, const char *title, Any data) {
 	} else {
 		strcpy (windowTitle, "Manual");
 	}
-	if (! HyperPage_init (me, parent, windowTitle, data)) { forget (me); return 0; }
+	static MelderStringW windowTitleW = { 0 };
+	MelderStringW_copyA (& windowTitleW, windowTitle);
+	if (! HyperPage_init (me, parent, windowTitleW.string, data)) { forget (me); return 0; }
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_strdup (title);   /* BAD */
 	return 1;

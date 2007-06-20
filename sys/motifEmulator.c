@@ -206,7 +206,8 @@ static int (*theQuitApplicationCallback) (void);
 #elif mac
 	static Widget theMenuBar;   /* There is only one menu bar on the Macintosh. */
 	static int theHelpMenuOffset;   /* The number of items in the global help menu before we add the first item. */
-	static int (*theUserMessageCallback) (char *message);
+	static int (*theUserMessageCallbackA) (char *message);
+	static int (*theUserMessageCallbackW) (wchar_t *message);
 #endif
 
 static Widget theApplicationShell;   /* For global menus. */
@@ -3178,7 +3179,7 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 		AEDisposeDesc (& documentList);
 		return noErr;
 	}
-	static pascal OSErr _motif_processSignal (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+	static pascal OSErr _motif_processSignalA (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		static int duringAppleEvent = FALSE;
 		(void) reply;
 		(void) handlerRefCon;
@@ -3190,8 +3191,27 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, NULL, 0, & actualSize);
 			buffer = malloc (actualSize);
 			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, & buffer [0], actualSize, NULL);
-			if (theUserMessageCallback)
-				theUserMessageCallback (buffer);
+			if (theUserMessageCallbackA)
+				theUserMessageCallbackA (buffer);
+			free (buffer);
+			duringAppleEvent = FALSE;
+		}
+		return noErr;
+	}
+	static pascal OSErr _motif_processSignalW (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+		static int duringAppleEvent = FALSE;
+		(void) reply;
+		(void) handlerRefCon;
+		if (! duringAppleEvent) {
+			wchar_t *buffer;
+			long actualSize;
+			duringAppleEvent = TRUE;
+			AEInteractWithUser (kNoTimeOut, NULL, NULL);
+			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, NULL, 0, & actualSize);
+			buffer = malloc (actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallbackW)
+				theUserMessageCallbackW (buffer);
 			free (buffer);
 			duringAppleEvent = FALSE;
 		}
@@ -3217,7 +3237,8 @@ Widget XtInitialize (void *dum1, const char *name,
 		AEInstallEventHandler (kCoreEventClass, kAEOpenApplication, NewAEEventHandlerUPP (_motif_processOpenApplicationMessage), 0, false);
 		AEInstallEventHandler (kCoreEventClass, kAEQuitApplication, NewAEEventHandlerUPP (_motif_processQuitApplicationMessage), 0, false);
 		AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments, NewAEEventHandlerUPP (_motif_processOpenDocumentsMessage), 0, false);
-		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignal), 0, false);
+		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignalA), 0, false);
+		AEInstallEventHandler (758934756, 0, NewAEEventHandlerUPP (_motif_processSignalW), 0, false);
 		if (Melder_systemVersion >= 0x0800) USE_QUESTION_MARK_HELP_MENU = 1;
 		theUserFocusEventTarget = GetUserFocusEventTarget ();
 	#elif win
@@ -3247,9 +3268,9 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				Melder_relativePathToFile (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3], & file);
-				if (strlen (file. path) > 0 && file. path [strlen (file. path) - 1] == '\"') {
-					file. path [strlen (file. path) - 1] = '\0';
+				Melder_relativePathToFileW (Melder_peekAsciiToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
+				if (wcslen (file. wpath) > 0 && file. wpath [wcslen (file. wpath) - 1] == '\"') {
+					file. wpath [wcslen (file. wpath) - 1] = '\0';
 				}
 				theOpenDocumentCallback (& file);
 			}
@@ -5727,8 +5748,11 @@ void XtAppMainLoop (XtAppContext appctxt) {
 	}
 #endif
 #if mac
-	void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char *message)) {
-		theUserMessageCallback = userMessageCallback;
+	void motif_mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message)) {
+		theUserMessageCallbackA = userMessageCallback;
+	}
+	void motif_mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message)) {
+		theUserMessageCallbackW = userMessageCallback;
 	}
 #endif
 void motif_setOpenDocumentCallback (int (*openDocumentCallback) (MelderFile file)) {

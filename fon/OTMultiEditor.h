@@ -2,7 +2,7 @@
 #define _OTMultiEditor_h_
 /* OTMultiEditor.h
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/07/01
+ * pb 2007/06/10
  */
 
 #ifndef _HyperPage_h_
@@ -32,7 +32,7 @@
 
 typedef struct structOTMultiEditor *OTMultiEditor;
 
-OTMultiEditor OTMultiEditor_create (Widget parent, const char *title, OTMulti grammar);
+OTMultiEditor OTMultiEditor_create (Widget parent, const wchar_t *title, OTMulti grammar);
 
 /* End of file OTMultiEditor.h */
 #endif

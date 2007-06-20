@@ -45,7 +45,7 @@
 	Eigen y; \
 	Eigen x;
 #define CCA_methods Data_methods
-class_create (CCA, Data)
+class_create (CCA, Data);
 
 /*
 	Class CCA represents the Canonical Correlation Analysis of two datasets

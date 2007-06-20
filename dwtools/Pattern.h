@@ -30,7 +30,7 @@
 
 #define Pattern_members Matrix_members
 #define Pattern_methods Matrix_methods
-class_create (Pattern, Matrix)
+class_create (Pattern, Matrix);
 
 /* Attributes:
    xmin				:index of first input node.

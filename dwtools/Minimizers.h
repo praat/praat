@@ -52,7 +52,7 @@
     void (*reset) (I); /* reset the minimizer */	\
     void (*setParameters) (I, Any parameters);
 
-class_create (Minimizer, Thing)
+class_create (Minimizer, Thing);
  
 int Minimizer_init (I, long nParameters, Any object);
 /*
@@ -110,7 +110,7 @@ double Minimizer_getMinimum (I);
     double *ptry;		/* point in search direction */
 #define LineMinimizer_methods Minimizer_methods \
     void (*linmin) (I, double p[], double fp, double direction[], double *fret);	/* line minimization */
-class_create (LineMinimizer, Minimizer)
+class_create (LineMinimizer, Minimizer);
 
 int LineMinimizer_init (I, long nParameters, Any object, double (*func) 
 	(Any object, const double p[]));
@@ -128,7 +128,7 @@ typedef struct structSteepestDescentMinimizer_parameters {
     void  (*dfunc) (Any object, const double p[], double dp[]);	
 	/* calculates gradient at position p */
 #define SteepestDescentMinimizer_methods Minimizer_methods
-class_create (SteepestDescentMinimizer, Minimizer)
+class_create (SteepestDescentMinimizer, Minimizer);
 
 Any SteepestDescentMinimizer_create (long nParameters, Any object, double (*func) 
 	(Any object, const double p[]), void (*dfunc) (Any object, const double p[],
@@ -160,7 +160,7 @@ typedef struct structVDSmagtMinimizer_parameters {
     long lineSearch_iteration, flag, again, one_up, restart;		    	\
     long restart_flag;
 #define VDSmagtMinimizer_methods Minimizer_methods
-class_create (VDSmagtMinimizer, Minimizer)
+class_create (VDSmagtMinimizer, Minimizer);
 
 Any VDSmagtMinimizer_create (long dimension, void *object, double (*func) 
 	(Any object, const double p[]), void (*dfunc) (Any object, const double p[],

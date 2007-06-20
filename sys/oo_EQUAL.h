@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2006 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/06/11 made struct_equal global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2006/08/08 reduced Lint warnings
+ * pb 2007/06/09 wchar_t
  */
 
 #include "oo_undef.h"
@@ -90,6 +91,34 @@
 		for (i = min; i <= max; i ++) \
 			if (! my x [i] != ! thy x [i] || \
 			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
+	}
+
+#define oo_STRINGWx(storage,x)  \
+	if (! my x != ! thy x || (my x && ! wcsequ (my x, thy x))) return 0;
+
+#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+	{ \
+		int i; \
+		for (i = 0; i < n; i ++) \
+			if (! my x [i] != ! thy x [i] || \
+			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
+	}
+
+#define oo_STRINGWx_SET(storage,x,setType)  \
+	{ \
+		int i; \
+		for (i = 0; i <= enumlength (setType); i ++) \
+			if (! my x [i] != ! thy x [i] || \
+			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
+	}
+
+#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+	if (! my x != ! thy x) return 0; \
+	if (my x) { \
+		long i; \
+		for (i = min; i <= max; i ++) \
+			if (! my x [i] != ! thy x [i] || \
+			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
 	}
 
 #define oo_STRUCT(Type,x)  \

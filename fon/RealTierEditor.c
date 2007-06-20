@@ -1,6 +1,6 @@
 /* RealTierEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/10/06 improved visilibity of dragging
  * pb 2004/04/13 less flashing
  * pb 2006/12/08 keyboard shortcuts
+ * pb 2007/06/10 wchar_t
  */
 
 #include "RealTierEditor.h"
@@ -42,7 +43,7 @@ static void destroy (I) {
 /********** MENU COMMANDS **********/
 
 DIRECT (RealTierEditor, cb_removePoints)
-	Editor_save (me, "Remove point(s)");
+	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (my data, my startSelection);
 	else
@@ -53,7 +54,7 @@ DIRECT (RealTierEditor, cb_removePoints)
 END
 
 DIRECT (RealTierEditor, cb_addPointAtCursor)
-	Editor_save (me, "Add point");
+	Editor_save (me, L"Add point");
 	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -61,28 +62,28 @@ DIRECT (RealTierEditor, cb_addPointAtCursor)
 END
 
 FORM (RealTierEditor, cb_addPointAt, "Add point", 0);
-	REAL ("Time (s)", "0.0")
-	REAL (our quantityText, "0.0")
+	REALW (L"Time (s)", L"0.0")
+	REALW (our quantityText, L"0.0")
 	OK
-SET_REAL ("Time", 0.5 * (my startSelection + my endSelection))
-SET_REAL (our quantityKey, my ycursor)
+SET_REALW (L"Time", 0.5 * (my startSelection + my endSelection))
+SET_REALW (our quantityKey, my ycursor)
 DO
-	Editor_save (me, "Add point");
-	RealTier_addPoint (my data, GET_REAL ("Time"), GET_REAL (our quantityKey));
+	Editor_save (me, L"Add point");
+	RealTier_addPoint (my data, GET_REALW (L"Time"), GET_REALW (our quantityKey));
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 END
 
-FORM (RealTierEditor, cb_setRange, our setRangeTitle, 0);
-	REAL (our yminText, our defaultYminText)
-	REAL (our ymaxText, our defaultYmaxText)
+FORMW (RealTierEditor, cb_setRange, our setRangeTitle, 0);
+	REALW (our yminText, our defaultYminText)
+	REALW (our ymaxText, our defaultYmaxText)
 	OK
-SET_REAL (our yminKey, my ymin)
-SET_REAL (our ymaxKey, my ymax)
+SET_REALW (our yminKey, my ymin)
+SET_REALW (our ymaxKey, my ymax)
 DO
-	my ymin = GET_REAL (our yminKey);
-	my ymax = GET_REAL (our ymaxKey);
+	my ymin = GET_REALW (our yminKey);
+	my ymax = GET_REALW (our ymaxKey);
 	if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 END
@@ -93,13 +94,13 @@ static void createMenus (I) {
 
 	if (my sound.data) FunctionEditor_Sound_createMenus (me);
 
-	Editor_addCommand (me, "View", "-- view/realtier --", 0, 0);
-	Editor_addCommand (me, "View", our setRangeTitle, 0, cb_setRange);
+	Editor_addCommand (me, L"View", L"-- view/realtier --", 0, 0);
+	Editor_addCommand (me, L"View", our setRangeTitle, 0, cb_setRange);
 
-	Editor_addMenu (me, "Point", 0);
-	Editor_addCommand (me, "Point", "Remove point(s)", motif_OPTION + 'T', cb_removePoints);
-	Editor_addCommand (me, "Point", "Add point at cursor", 'T', cb_addPointAtCursor);
-	Editor_addCommand (me, "Point", "Add point at...", 0, cb_addPointAt);
+	Editor_addMenu (me, L"Point", 0);
+	Editor_addCommand (me, L"Point", L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
+	Editor_addCommand (me, L"Point", L"Add point at cursor", 'T', cb_addPointAtCursor);
+	Editor_addCommand (me, L"Point", L"Add point at...", 0, cb_addPointAt);
 }
 
 void RealTierEditor_updateScaling (I) {
@@ -150,12 +151,12 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, my ycursor, my endWindow, my ycursor);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, my ycursor, our leftTickFormat, my ycursor);
+	Graphics_printfW (my graphics, my startWindow, my ycursor, our leftTickFormat, my ycursor);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_printf (my graphics, my endWindow, my ymax, our rightTickFormat, my ymax);
+	Graphics_printfW (my graphics, my endWindow, my ymax, our rightTickFormat, my ymax);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_printf (my graphics, my endWindow, my ymin, our rightTickFormat, my ymin);
+	Graphics_printfW (my graphics, my endWindow, my ymin, our rightTickFormat, my ymin);
 	ifirstSelected = AnyTier_timeToHighIndex (data, my startSelection);
 	ilastSelected = AnyTier_timeToLowIndex (data, my endSelection);
 	imin = AnyTier_timeToHighIndex (data, my startWindow);
@@ -270,10 +271,10 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
-		Editor_save (me, "Drag points");
+		Editor_save (me, L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (me, "Drag point");
+		Editor_save (me, L"Drag point");
 	}
 
 	/*
@@ -359,22 +360,22 @@ class_methods (RealTierEditor, FunctionEditor)
 	class_method (click)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
-	us -> quantityText = "Y";   /* Normally includes units. */
-	us -> quantityKey = "Y";   /* Without units. */
-	us -> leftTickFormat = "%5g";   /* Often without units (so that number does not run off screen). */
-	us -> rightTickFormat = "%5g";   /* Often with units (units may run off screen). */
+	us -> quantityText = L"Y";   /* Normally includes units. */
+	us -> quantityKey = L"Y";   /* Without units. */
+	us -> leftTickFormat = L"%5g";   /* Often without units (so that number does not run off screen). */
+	us -> rightTickFormat = L"%5g";   /* Often with units (units may run off screen). */
 	us -> defaultYmin = 0.0;
 	us -> defaultYmax = 1.0;
-	us -> setRangeTitle = "Set range...";
-	us -> defaultYminText = "0.0";
-	us -> defaultYmaxText = "1.0";
-	us -> yminText = "Minimum";   /* Normally includes units. */
-	us -> ymaxText = "Maximum";   /* Normally includes units. */
-	us -> yminKey = "Minimum";   /* Without units. */
-	us -> ymaxKey = "Maximum";   /* Without units. */
+	us -> setRangeTitle = L"Set range...";
+	us -> defaultYminText = L"0.0";
+	us -> defaultYmaxText = L"1.0";
+	us -> yminText = L"Minimum";   /* Normally includes units. */
+	us -> ymaxText = L"Maximum";   /* Normally includes units. */
+	us -> yminKey = L"Minimum";   /* Without units. */
+	us -> ymaxKey = L"Maximum";   /* Without units. */
 class_methods_end
 
-int RealTierEditor_init (I, Widget parent, const char *title, RealTier data, Sound sound, int ownSound) {
+int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
 	iam (RealTierEditor);
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));

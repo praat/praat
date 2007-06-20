@@ -129,44 +129,6 @@ wchar_t * Melder_wcsdup (const wchar_t *string) {
 	return result;
 }
 
-wchar_t * Melder_asciiToWcs (const char *string) {
-	wchar_t *result;
-	long size;
-	if (! string) return NULL;
-	size = strlen (string) + 1;
-	result = malloc (size * sizeof (wchar_t));
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
-	const char *from = & string [0];
-	wchar_t *to = & result [0];
-	for (; *from != '\0'; from ++, to ++) { *to = (unsigned char) *from; } *to = L'\0';
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("asciitowcs %ld", size);
-	#endif
-	return result;
-}
-
-char * Melder_wcsToAscii (const wchar_t *string) {
-	char *result;
-	long size;
-	if (! string) return NULL;
-	size = wcslen (string) + 1;
-	result = malloc (size * sizeof (char));
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
-	const wchar_t *from = & string [0];
-	char *to = & result [0];
-	for (; *from != L'\0'; from ++, to ++) { *to = *from; /* Truncate */ } *to = '\0';
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("wcstoascii %ld", size);
-	#endif
-	return result;
-}
-
 double Melder_allocationCount (void) {
 	return totalNumberOfAllocations;
 }
@@ -189,6 +151,18 @@ int Melder_strncmp (const char *string1, const char *string2, unsigned long n) {
 	if (string1 == NULL) string1 = "";
 	if (string2 == NULL) string2 = "";
 	return strncmp (string1, string2, n);
+}
+
+int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2) {
+	if (string1 == NULL) string1 = L"";
+	if (string2 == NULL) string2 = L"";
+	return wcscmp (string1, string2);
+}
+
+int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, unsigned long n) {
+	if (string1 == NULL) string1 = L"";
+	if (string2 == NULL) string2 = L"";
+	return wcsncmp (string1, string2, n);
 }
 
 /* End of file melder_alloc.c */

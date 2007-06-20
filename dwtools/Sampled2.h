@@ -36,7 +36,7 @@
 	long ny;							\
 	double dy, y1;
 #define Sampled2_methods Data_methods
-class_create (Sampled2, Data)
+class_create (Sampled2, Data);
 
 int Sampled2_init (I, double xmin, double xmax, long nx, double dx, double x1,
 		double ymin, double ymax, long ny, double dy, double y1);

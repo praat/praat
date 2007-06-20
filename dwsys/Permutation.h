@@ -32,7 +32,7 @@
 	long *p;
 
 #define Permutation_methods Data_methods
-class_create (Permutation, Data)
+class_create (Permutation, Data);
 
 /*
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.

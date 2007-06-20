@@ -39,7 +39,7 @@
 
 #define Intensity_members Vector_members
 #define Intensity_methods Vector_methods
-class_create (Intensity, Vector)
+class_create (Intensity, Vector);
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 

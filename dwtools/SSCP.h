@@ -38,15 +38,15 @@
 	double numberOfObservations;	\
 	double *centroid;
 #define SSCP_methods TableOfReal_methods
-class_create (SSCP, TableOfReal)
+class_create (SSCP, TableOfReal);
 
 #define Covariance_members SSCP_members
 #define Covariance_methods SSCP_methods
-class_create (Covariance, SSCP)
+class_create (Covariance, SSCP);
 
 #define Correlation_members SSCP_members
 #define Correlation_methods SSCP_methods
-class_create (Correlation, SSCP)
+class_create (Correlation, SSCP);
 
 /*
 	Ordered collection of SSCP's
@@ -54,7 +54,7 @@ class_create (Correlation, SSCP)
 */
 #define SSCPs_members Ordered_members
 #define SSCPs_methods Ordered_methods
-class_create (SSCPs, Ordered)
+class_create (SSCPs, Ordered);
 
 int SSCP_init (I, long dimension);
 

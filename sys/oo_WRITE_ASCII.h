@@ -1,6 +1,6 @@
 /* oo_WRITE_ASCII.h
  *
- * Copyright (C) 1994-2006 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
+ * pb 2007/06/09
  */
 
 #include "oo_undef.h"
@@ -88,11 +89,6 @@
 
 
 
-
-
-
-
-
 #define oo_STRINGx(storage,x)  \
 	ascput##storage (my x, f, #x);
 
@@ -115,6 +111,38 @@
 	ascexdent ();
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	ascputintro (f, #x " []: %s", max >= min ? "" : "(empty)"); \
+	{ \
+		long i; \
+		for (i = min; i <= max; i ++) \
+			ascput##storage (my x [i], f, #x " [%ld]", i); \
+	} \
+	ascexdent ();
+
+
+
+#define oo_STRINGWx(storage,x)  \
+	ascput##storage (my x, f, #x);
+
+#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+	ascputintro (f, #x " []: %s", n ? "" : "(empty)"); \
+	{ \
+		int i; \
+		for (i = 0; i < n; i ++) \
+			ascput##storage (my x [i], f, #x " [%d]", i); \
+	} \
+	ascexdent ();
+
+#define oo_STRINGWx_SET(storage,x,setType)  \
+	ascputintro (f, #x " []:"); \
+	{ \
+		int i; \
+		for (i = 0; i <= enumlength (setType); i ++) \
+			ascput##storage (my x [i], f, #x " [%s]", enumstring (setType, i)); \
+	} \
+	ascexdent ();
+
+#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	ascputintro (f, #x " []: %s", max >= min ? "" : "(empty)"); \
 	{ \
 		long i; \

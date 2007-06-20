@@ -43,7 +43,7 @@
 
 #define Cepstrum_members  Matrix_members
 #define Cepstrum_methods  Matrix_methods
-class_create (Cepstrum, Matrix)
+class_create (Cepstrum, Matrix);
 
 /*
 	xmin		// Lowest quefrency.

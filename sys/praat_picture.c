@@ -28,6 +28,7 @@
  * pb 2006/11/22 after 14 years we renamed "Plain line" to "Solid line", which is the common term nowadays
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/03/14 arrowSize
+ * pb 2007/06/10 wchar_t
  */
 
 #include "praatP.h"
@@ -384,13 +385,13 @@ END
 static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to EPS file",
 		DO_Picture_writeToEpsFile, NULL, NULL);
 	if (! sender) {
-		UiOutfile_do (dia, "praat.eps");
+		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
 	return 1;
@@ -402,13 +403,13 @@ END*/
 static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (! sender) {
-		UiOutfile_do (dia, "praat.eps");
+		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
 	return 1;
@@ -417,13 +418,13 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
 	if (! sender) {
-		UiOutfile_do (dia, "praat.eps");
+		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
 	return 1;
@@ -432,13 +433,13 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Praat picture file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Praat picture file",
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
 	if (! sender) {
-		UiOutfile_do (dia, "praat.prapic");
+		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { { 0 } };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToPraatPictureFile (praat_picture, file);
 	}
 	return 1;
@@ -462,13 +463,13 @@ END
 	static int DO_Picture_writeToMacPictFile (Any sender, void *dummy) {
 		static Any dia;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Mac PICT file",
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Mac PICT file",
 			DO_Picture_writeToMacPictFile, NULL, NULL);
 		if (! sender) {
-			UiOutfile_do (dia, "praat.pict");
+			UiOutfile_do (dia, L"praat.pict");
 		} else { MelderFile file; structMelderFile file2 = { { 0 } };
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToMacPictFile (praat_picture, file);
 		}
 		return 1;
@@ -478,13 +479,13 @@ END
 	static int DO_Picture_writeToWindowsMetafile (Any sender, void *dummy) {
 		static Any dia;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Windows metafile",
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Windows metafile",
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
 		if (! sender) {
-			UiOutfile_do (dia, "praat.emf");
+			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { { 0 } };
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToWindowsMetafile (praat_picture, file);
 		}
 		return 1;
@@ -638,7 +639,7 @@ END
 	double xmin, xmax, dx, x1; \
 	long nx;
 #define PraatPictureFunction_methods Data_methods
-class_create (PraatPictureFunction, Data)
+class_create (PraatPictureFunction, Data);
 
 static double getXmin (I) { iam (PraatPictureFunction); return my xmin; }
 static double getXmax (I) { iam (PraatPictureFunction); return my xmax; }
@@ -1343,9 +1344,23 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 		if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
 		if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
-		UiHistory_write ("\nSelect inner viewport... %g %g %g %g", x1NDC + xmargin, x2NDC - xmargin, 12-y2NDC + ymargin, 12-y1NDC - ymargin);
+		UiHistory_write (L"\nSelect inner viewport... ");
+		UiHistory_write (Melder_singleW (x1NDC + xmargin));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (x2NDC - xmargin));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (12-y2NDC + ymargin));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (12-y1NDC - ymargin));
 	} else {
-		UiHistory_write ("\nSelect outer viewport... %g %g %g %g", x1NDC, x2NDC, 12-y2NDC, 12-y1NDC);
+		UiHistory_write (L"\nSelect outer viewport... ");
+		UiHistory_write (Melder_singleW (x1NDC));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (x2NDC));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (12-y2NDC));
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_singleW (12-y1NDC));
 	}
 }
 
@@ -1353,16 +1368,16 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 
 static Widget shell, fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
 
-Widget praat_picture_resolveMenu (const char *menu) {
+Widget praat_picture_resolveMenu (const wchar_t *menu) {
 	return
-		strequ (menu, "File") ? fileMenu :
-		strequ (menu, "Edit") ? editMenu :
-		strequ (menu, "Margins") ? marginsMenu :
-		strequ (menu, "World") ? worldMenu :
-		strequ (menu, "Select") ? selectMenu :
-		strequ (menu, "Font") ? fontMenu :
-		strequ (menu, "Pen") ? penMenu :
-		strequ (menu, "Help") ? helpMenu :
+		wcsequ (menu, L"File") ? fileMenu :
+		wcsequ (menu, L"Edit") ? editMenu :
+		wcsequ (menu, L"Margins") ? marginsMenu :
+		wcsequ (menu, L"World") ? worldMenu :
+		wcsequ (menu, L"Select") ? selectMenu :
+		wcsequ (menu, L"Font") ? fontMenu :
+		wcsequ (menu, L"Pen") ? penMenu :
+		wcsequ (menu, L"Help") ? helpMenu :
 		editMenu;   /* Default. */
 }
 
@@ -1438,14 +1453,14 @@ void praat_picture_init (void) {
 		menuBar = motif_addMenuBar (dialog);
 	}
 	if (! theCurrentPraat -> batch) {
-		fileMenu = motif_addMenu (menuBar, "File", 0);
-		editMenu = motif_addMenu (menuBar, "Edit", 0);
-		marginsMenu = motif_addMenu (menuBar, "Margins", 0);
-		worldMenu = motif_addMenu (menuBar, "World", 0);
-		selectMenu = motif_addMenu (menuBar, "Select", 0);
-		penMenu = motif_addMenu (menuBar, "Pen", 0);
-		fontMenu = motif_addMenu (menuBar, "Font", 0);
-		helpMenu = motif_addMenu (menuBar, "Help", 0);
+		fileMenu = motif_addMenu (menuBar, L"File", 0);
+		editMenu = motif_addMenu (menuBar, L"Edit", 0);
+		marginsMenu = motif_addMenu (menuBar, L"Margins", 0);
+		worldMenu = motif_addMenu (menuBar, L"World", 0);
+		selectMenu = motif_addMenu (menuBar, L"Select", 0);
+		penMenu = motif_addMenu (menuBar, L"Pen", 0);
+		fontMenu = motif_addMenu (menuBar, L"Font", 0);
+		helpMenu = motif_addMenu (menuBar, L"Help", 0);
 	}
 
 	praat_addMenuCommand ("Picture", "File", "Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);

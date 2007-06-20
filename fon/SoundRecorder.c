@@ -19,6 +19,7 @@
 /* Linux code originally by Darryl Purnell, Pretoria */
 
 /*
+ * pb 2002/07/16 GPL
  * pb 2003/02/09 better layout on MacOS X
  * pb 2003/04/07 larger default buffer
  * pb 2003/08/22 use getenv ("AUDIODEV") on Sun (thanks to Michel Scheffers)
@@ -38,6 +39,7 @@
  * pb 2006/12/30 stereo
  * pb 2007/01/03 CoreAudio (PortAudio)
  * pb 2007/01/03 flexible drawing area
+ * pb 2007/06/10 wchar_t
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -191,7 +193,7 @@ struct SoundRecorder_Fsamp {
 #endif
 
 #define SoundRecorder_methods Editor_methods
-class_create_opaque (SoundRecorder, Editor)
+class_create_opaque (SoundRecorder, Editor);
 
 static int theCouplePreference = 1;
 static int nmaxMB_pref = 4;
@@ -1537,33 +1539,33 @@ static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType)
 }
 
 FORM_WRITE (SoundRecorder, cb_writeWav, "Write to WAV file", 0)
-	char *name = XmTextFieldGetString (my soundName);
-	sprintf (defaultName, "%s.wav", name);
-	XtFree (name);
+	wchar_t *name = GuiText_getStringW (my soundName);
+	swprintf (defaultName, 300, L"%ls.wav", name);
+	Melder_free (name);
 DO_WRITE
 	if (! writeAudioFile (me, file, Melder_WAV)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeAifc, "Write to AIFC file", 0)
-	char *name = XmTextFieldGetString (my soundName);
-	sprintf (defaultName, "%s.aifc", name);
-	XtFree (name);
+	wchar_t *name = GuiText_getStringW (my soundName);
+	swprintf (defaultName, 300, L"%ls.aifc", name);
+	Melder_free (name);
 DO_WRITE
 	if (! writeAudioFile (me, file, Melder_AIFC)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNextSun, "Write to NeXT/Sun file", 0)
-	char *name = XmTextFieldGetString (my soundName);
-	sprintf (defaultName, "%s.au", name);
-	XtFree (name);
+	wchar_t *name = GuiText_getStringW (my soundName);
+	swprintf (defaultName, 300, L"%ls.au", name);
+	Melder_free (name);
 DO_WRITE
 	if (! writeAudioFile (me, file, Melder_NEXT_SUN)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNist, "Write to NIST file", 0)
-	char *name = XmTextFieldGetString (my soundName);
-	sprintf (defaultName, "%s.nist", name);
-	XtFree (name);
+	wchar_t *name = GuiText_getStringW (my soundName);
+	swprintf (defaultName, 300, L"%ls.nist", name);
+	Melder_free (name);
 DO_WRITE
 	if (! writeAudioFile (me, file, Melder_NIST)) return 0;
 END
@@ -1573,12 +1575,12 @@ DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help ("SoundRecorder"); END
 static void createMenus (I) {
 	iam (SoundRecorder);
 	inherited (SoundRecorder) createMenus (me);
-	Editor_addCommand (me, "File", "Write to WAV file...", 0, cb_writeWav);
-	Editor_addCommand (me, "File", "Write to AIFC file...", 0, cb_writeAifc);
-	Editor_addCommand (me, "File", "Write to NeXT/Sun file...", 0, cb_writeNextSun);
-	Editor_addCommand (me, "File", "Write to NIST file...", 0, cb_writeNist);
-	Editor_addCommand (me, "File", "-- write --", 0, 0);
-	Editor_addCommand (me, "Help", "SoundRecorder help", '?', cb_SoundRecorder_help);
+	Editor_addCommand (me, L"File", L"Write to WAV file...", 0, cb_writeWav);
+	Editor_addCommand (me, L"File", L"Write to AIFC file...", 0, cb_writeAifc);
+	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, cb_writeNextSun);
+	Editor_addCommand (me, L"File", L"Write to NIST file...", 0, cb_writeNist);
+	Editor_addCommand (me, L"File", L"-- write --", 0, 0);
+	Editor_addCommand (me, L"Help", L"SoundRecorder help", '?', cb_SoundRecorder_help);
 }
 
 class_methods (SoundRecorder, Editor)
@@ -1765,7 +1767,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	 */
 	if (! initialize (me)) goto error;
 
-	if (! Editor_init (me, parent, 100, 100, 600, 500, "SoundRecorder", NULL)) goto error;
+	if (! Editor_init (me, parent, 100, 100, 600, 500, L"SoundRecorder", NULL)) goto error;
 	Melder_assert (XtWindow (my meter));
 	my graphics = Graphics_create_xmdrawingarea (my meter);
 	Melder_assert (my graphics);

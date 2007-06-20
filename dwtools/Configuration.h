@@ -39,7 +39,7 @@
 
 #include "Configuration_def.h"
 #define Configuration_methods TableOfReal_methods
-oo_CLASS_CREATE (Configuration, TableOfReal)
+oo_CLASS_CREATE (Configuration, TableOfReal);
 
 Configuration Configuration_create (long numberOfPoints, long numberOfDimensions);
  
@@ -132,7 +132,7 @@ Configuration Configuration_createCarrollWishExample (void);
 
 #define Configurations_members Ordered_members
 #define Configurations_methods Ordered_methods
-class_create (Configurations, Ordered)
+class_create (Configurations, Ordered);
 
 Configurations Configurations_create (void);
 

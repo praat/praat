@@ -41,6 +41,7 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/28 made compatible with multi-channelled vectors
  * pb 2007/05/26 wchar_t
+ * pb 2007/06/09 wchar_t for Interpreter
  */
 
 #include <ctype.h>
@@ -375,7 +376,7 @@ static int Formula_lexan (void) {
 						/*
 						 * This could be a variable with the same name as a function.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (var == NULL) return formulefout (L"Unknown variable, or function with missing arguments", ikar);
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
@@ -400,7 +401,7 @@ static int Formula_lexan (void) {
 						/*
 						 * Look for ambiguity.
 						 */
-						if (theInterpreter && Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string)))
+						if (theInterpreter && Interpreter_hasVariable (theInterpreter, token.string))
 							return Melder_error3 (L"\\<<", token.string,
 								L"\\>> is ambiguous: a variable or an attribute of the current object. "
 								"Please change variable name.");
@@ -416,7 +417,7 @@ static int Formula_lexan (void) {
 						/*
 						 * This must be a variable, since there is no "current object" here.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
+						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (var == NULL) return Melder_error3 (L"Unknown variable \\<<", token.string,
 							L"\\>> in formula (no \"current object\" here).");
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
@@ -428,7 +429,7 @@ static int Formula_lexan (void) {
 					nieuwtok (tok)   /* This must be a language name. */
 				}
 			} else if (theInterpreter) {
-				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, Melder_peekWcsToAscii (token.string));
+				InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 				if (var == NULL) {
 					int jkar;
 					jkar = ikar + 1;
@@ -488,7 +489,7 @@ static int Formula_lexan (void) {
 				int i = theCurrentPraat -> n;
 				*underscore = ' ';
 				if (endsInDollarSign) token.string [-- token.length] = '\0';
-				while (i > 0 && ! wcsequ (token.string, Melder_peekAsciiToWcs (theCurrentPraat -> list [i]. name)))
+				while (i > 0 && ! wcsequ (token.string, theCurrentPraat -> list [i]. name))
 					i --;
 				if (i == 0) {
 					formulefout (L"No such object (note: variables start with lower case)", ikar);
@@ -2135,7 +2136,7 @@ static void do_fileReadable (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file = { { 0 } };
-		Melder_relativePathToFile (Melder_peekWcsToAscii (s->content.string), & file); cherror
+		Melder_relativePathToFileW (s->content.string, & file); cherror
 		pushNumber (MelderFile_readable (& file));
 	} else {
 		Melder_error3 (L"The function \"fileReadable\" requires a string, not ", Stackel_whichText (s), L"."); goto end;
@@ -2422,7 +2423,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (a->content.string)); cherror
+			void *klas = Thing_classFromClassNameW (a->content.string); cherror
 			result = praat_getIdOfSelected (klas, 0); cherror
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_getIdOfSelected (NULL, a->content.number); cherror
@@ -2432,7 +2433,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
+			void *klas = Thing_classFromClassNameW (s->content.string); cherror
 			result = praat_getIdOfSelected (klas, x->content.number); cherror
 		} else {
 			Melder_error1 (L"The function \"selected\" requires a string (an object type name) and/or a number."); goto end;
@@ -2447,16 +2448,16 @@ static void do_selectedStr (void) {
 	Stackel n = pop;
 	wchar_t *name, *result = NULL;
 	if (n->content.number == 0) {
-		name = Melder_peekAsciiToWcs (praat_getNameOfSelected (NULL, 0)); cherror
+		name = praat_getNameOfSelected (NULL, 0); cherror
 		result = Melder_wcsdup (name); cherror
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (a->content.string)); cherror
-			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (klas, 0)); cherror
+			void *klas = Thing_classFromClassNameW (a->content.string); cherror
+			name = praat_getNameOfSelected (klas, 0); cherror
 			result = Melder_wcsdup (name); cherror
 		} else if (a->which == Stackel_NUMBER) {
-			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (NULL, a->content.number)); cherror
+			name = praat_getNameOfSelected (NULL, a->content.number); cherror
 			result = Melder_wcsdup (name); cherror
 		} else {
 			Melder_error1 (L"The function \"selected$\" requires a string (an object type name) and/or a number."); goto end;
@@ -2464,8 +2465,8 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
-			name = Melder_peekAsciiToWcs (praat_getNameOfSelected (klas, x->content.number)); cherror
+			void *klas = Thing_classFromClassNameW (s->content.string); cherror
+			name = praat_getNameOfSelected (klas, x->content.number); cherror
 			result = Melder_wcsdup (name); cherror
 		} else {
 			Melder_error3 (L"The function \"selected$\" requires 0, 1, or 2 arguments, not ", Melder_integerW (n->content.number), L"."); goto end;
@@ -2482,7 +2483,7 @@ static void do_numberOfSelected (void) {
 	} else if (n->content.number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (Melder_peekWcsToAscii (s->content.string)); cherror
+			void *klas = Thing_classFromClassNameW (s->content.string); cherror
 			result = praat_selection (klas);
 		} else {
 			Melder_error3 (L"The function \"numberOfSelected\" requires a string (an object type name), not ",
@@ -2523,11 +2524,11 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 		result = floor (row->content.number + 0.5);   /* Round. */
 	} else if (row->which == Stackel_STRING) {
 		if (your getRowIndex == NULL)
-			return Melder_error3 (L"Objects of type ", Melder_peekAsciiToWcs (Thing_className (thee)),
+			return Melder_error3 (L"Objects of type ", Thing_classNameW (thee),
 				L" do not have row labels, so row indexes have to be numbers.");
 		result = your getRowIndex (thee, Melder_peekWcsToAscii (row->content.string));
 		if (result == 0)
-			return Melder_error5 (L"Object \"", Melder_peekAsciiToWcs (thy name),
+			return Melder_error5 (L"Object \"", thy nameW,
 				L"\" has no row labelled \"", row->content.string, L"\".");
 	} else {
 		return Melder_error3 (L"A row index should be a number or a string, not ", Stackel_whichText (row), L".");
@@ -2540,11 +2541,11 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 		result = floor (column->content.number + 0.5);   /* Round. */
 	} else if (column->which == Stackel_STRING) {
 		if (your getColumnIndex == NULL)
-			return Melder_error3 (L"Objects of type ", Melder_peekAsciiToWcs (Thing_className (thee)),
+			return Melder_error3 (L"Objects of type ", Thing_classNameW (thee),
 				L" do not have column labels, so column indexes have to be numbers.");
 		result = your getColumnIndex (thee, Melder_peekWcsToAscii (column->content.string));
 		if (result == 0)
-			return Melder_error5 (L"Object \"", Melder_peekAsciiToWcs (thy name),
+			return Melder_error5 (L"Object \"", thy nameW,
 				L"\" has no column labelled \"", column->content.string, L"\".");
 	} else {
 		return Melder_error3 (L"A column index should be a number or a string, not ", Stackel_whichText (column), L".");
@@ -2559,8 +2560,7 @@ static void do_self0 (long irow, long icol) {
 	} else if (our getVector) {
 		if (icol == 0) {
 			Melder_error3 (L"We are not in a loop, hence no implicit column index for the current ",
-				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
-				"Try using the [column] index explicitly.");
+				Thing_classNameW (me), L" object (self).\nTry using the [column] index explicitly.");
 			goto end;
 		} else {
 			pushNumber (our getVector (me, irow, icol));
@@ -2570,13 +2570,13 @@ static void do_self0 (long irow, long icol) {
 			if (icol == 0) {
 				Melder_error3 (L"We are not in a loop over rows and columns,\n"
 					"hence no implicit row and column indexing for the current ",
-					Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+					Thing_classNameW (me), L" object (self).\n"
 					"Try using both [row, column] indexes explicitly.");
 				goto end;
 			} else {
 				Melder_error3 (L"We are not in a loop over columns only,\n"
 					"hence no implicit row index for the current ",
-					Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+					Thing_classNameW (me), L" object (self).\n"
 					"Try using the [row] index explicitly.");
 				goto end;
 			}
@@ -2584,7 +2584,7 @@ static void do_self0 (long irow, long icol) {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [] indexing.");
+		Melder_error2 (Thing_classNameW (me), L" objects (like self) accept no [] indexing.");
 		goto end;
 	}
 end: return;
@@ -2596,8 +2596,7 @@ static void do_matriks0 (long irow, long icol) {
 	} else if (your getVector) {
 		if (icol == 0) {
 			Melder_error3 (L"We are not in a loop,\n"
-				"hence no implicit column index for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"hence no implicit column index for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using the [column] index explicitly.");
 			goto end;
 		} else {
@@ -2607,14 +2606,12 @@ static void do_matriks0 (long irow, long icol) {
 		if (irow == 0) {
 			if (icol == 0) {
 				Melder_error3 (L"We are not in a loop over rows and columns,\n"
-					"hence no implicit row and column indexing for this ",
-					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"hence no implicit row and column indexing for this ", Thing_classNameW (thee), L" object.\n"
 					"Try using both [row, column] indexes explicitly.");
 				goto end;
 			} else {
 				Melder_error3 (L"We are not in a loop over columns only,\n"
-					"hence no implicit row index for this ",
-					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
 					"Try using the [row] index explicitly.");
 				goto end;
 			}
@@ -2622,7 +2619,7 @@ static void do_matriks0 (long irow, long icol) {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [] indexing.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no [] indexing.");
 		goto end;
 	}
 end: return;
@@ -2638,15 +2635,14 @@ static void do_selfMatriks1 (long irow) {
 	} else if (our getMatrix) {
 		if (irow == 0) {
 			Melder_error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for the current ",
-				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+				"hence no implicit row index for the current ", Thing_classNameW (me), L" object (self).\n"
 				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [column] indexes.");
+		Melder_error2 (Thing_classNameW (me), L" objects (like self) accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2663,8 +2659,7 @@ static void do_selfMatriksStr1 (long irow) {
 	} else if (our getMatrixStr) {
 		if (irow == 0) {
 			Melder_error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for the current ",
-				Melder_peekAsciiToWcs (Thing_className (me)), L" object (self).\n"
+				"hence no implicit row index for the current ", Thing_classNameW (me), L" object (self).\n"
 				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
@@ -2672,7 +2667,7 @@ static void do_selfMatriksStr1 (long irow) {
 			pushString (result);
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects (like self) accept no [column] indexes.");
+		Melder_error2 (Thing_classNameW (me), L" objects (like self) accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2686,15 +2681,14 @@ static void do_matriks1 (long irow) {
 	} else if (your getMatrix) {
 		if (irow == 0) {
 			Melder_error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [column] indexes.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no [column] indexes.");
 		goto end;
 	}
 end: return;
@@ -2708,15 +2702,14 @@ static void do_matrixStr1 (long irow) {
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
 			Melder_error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using both [row, column] indexes instead.");
 			goto end;
 		} else {
 			pushString (Melder_wcsdup (Melder_peekAsciiToWcs (your getMatrixStr (thee, irow, icol))));
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [column] indexes for string cells.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no [column] indexes for string cells.");
 		goto end;
 	}
 end: return;
@@ -2729,7 +2722,7 @@ static void do_selfMatriks2 (void) {
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getMatrix == NULL) {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no [row, column] indexing.");
+		Melder_error2 (Thing_classNameW (me), L" objects like \"self\" accept no [row, column] indexing.");
 		goto end;
 	}
 	pushNumber (our getMatrix (me, irow, icol));
@@ -2744,7 +2737,7 @@ static void do_selfMatriksStr2 (void) {
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getMatrixStr == NULL) {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self$\" accept no [row, column] indexing for string cells.");
+		Melder_error2 (Thing_classNameW (me), L" objects like \"self$\" accept no [row, column] indexing for string cells.");
 		goto end;
 	}
 	result = Melder_wcsdup (Melder_peekAsciiToWcs (our getMatrixStr (me, irow, icol))); cherror
@@ -2758,7 +2751,7 @@ static void do_matriks2 (void) {
 	irow = Stackel_getRowNumber (row, thee); cherror
 	icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrix == NULL) {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [row, column] indexing.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing.");
 		goto end;
 	}
 	pushNumber (your getMatrix (thee, irow, icol));
@@ -2772,7 +2765,7 @@ static void do_matriksStr2 (void) {
 	irow = Stackel_getRowNumber (row, thee); cherror
 	icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrixStr == NULL) {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no [row, column] indexing for string cells.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing for string cells.");
 		goto end;
 	}
 	result = Melder_wcsdup (Melder_peekAsciiToWcs (your getMatrixStr (thee, irow, icol))); cherror
@@ -2787,14 +2780,13 @@ static void do_funktie0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL) {
 			Melder_error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x value for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using the (x) argument explicitly.");
 			goto end;
 		} else if (our getX == NULL) {
-			Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)),
+			Melder_error5 (L"The current ", Thing_classNameW (me),
 				L" object gives no implicit x values,\nhence no implicit x value for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				Thing_classNameW (thee), L" object.\n"
 				"Try using the (x) argument explicitly.");
 			goto end;
 		} else {
@@ -2805,20 +2797,19 @@ static void do_funktie0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL) {
 			Melder_error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x or y values for this ",
-				Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				"hence no implicit x or y values for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using both (x, y) arguments explicitly.");
 			goto end;
 		} else if (our getX == NULL) {
-			Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit x values,\n"
-				"hence no implicit x value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+			Melder_error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit x values,\n"
+				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
 				"Try using both (x, y) arguments explicitly.");
 			goto end;
 		} else {
 			double x = our getX (me, icol);
 			if (our getY == NULL) {
-				Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				Melder_error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
 					"Try using the (y) argument explicitly.");
 				goto end;
 			} else {
@@ -2827,7 +2818,7 @@ static void do_funktie0 (long irow, long icol) {
 			}
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no () values.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept no () values.");
 		goto end;
 	}
 end: return;
@@ -2841,7 +2832,7 @@ static void do_selfFunktie1 (long irow) {
 			pushNumber (our getFunction1 (me, irow, x->content.number));
 		} else if (our getFunction2) {
 			if (our getY == NULL) {
-				Melder_error3 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object (self) accepts no implicit y values.\n"
+				Melder_error3 (L"The current ", Thing_classNameW (me), L" object (self) accepts no implicit y values.\n"
 					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else {
@@ -2849,11 +2840,11 @@ static void do_selfFunktie1 (long irow) {
 				pushNumber (our getFunction2 (me, x->content.number, y));
 			}
 		} else {
-			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no (x) values.");
+			Melder_error2 (Thing_classNameW (me), L" objects like \"self\" accept no (x) values.");
 			goto end;
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept only numeric x values.");
+		Melder_error2 (Thing_classNameW (me), L" objects like \"self\" accept only numeric x values.");
 	}
 end: return;
 }
@@ -2867,13 +2858,12 @@ static void do_funktie1 (long irow) {
 			Data me = theSource;
 			if (me == NULL) {
 				Melder_error3 (L"No current object (we are not in a Formula command),\n"
-					"hence no implicit y value for this ",
-					Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
 					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else if (our getY == NULL) {
-				Melder_error5 (L"The current ", Melder_peekAsciiToWcs (Thing_className (me)), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Melder_peekAsciiToWcs (Thing_className (thee)), L" object.\n"
+				Melder_error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
 					"Try using both (x, y) arguments instead.");
 				goto end;
 			} else {
@@ -2881,11 +2871,11 @@ static void do_funktie1 (long irow) {
 				pushNumber (your getFunction2 (thee, x->content.number, y));
 			}
 		} else {
-			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no (x) values.");
+			Melder_error2 (Thing_classNameW (thee), L" objects accept no (x) values.");
 			goto end;
 		}
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept only numeric x values.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept only numeric x values.");
 	}
 end: return;
 }
@@ -2895,12 +2885,12 @@ static void do_selfFunktie2 (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (me == NULL) { Melder_error ("The name \"self\" is restricted to formulas for objects."); goto end; }
 		if (our getFunction2 == NULL) {
-			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects like \"self\" accept no (x, y) values.");
+			Melder_error2 (Thing_classNameW (me), L" objects like \"self\" accept no (x, y) values.");
 			goto end;
 		}
 		pushNumber (our getFunction2 (me, x->content.number, y->content.number));
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (me)), L" objects accept only numeric x values.");
+		Melder_error2 (Thing_classNameW (me), L" objects accept only numeric x values.");
 	}
 end: return;
 }
@@ -2909,12 +2899,12 @@ static void do_funktie2 (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (your getFunction2 == NULL) {
-			Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept no (x, y) values.");
+			Melder_error2 (Thing_classNameW (thee), L" objects accept no (x, y) values.");
 			goto end;
 		}
 		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
 	} else {
-		Melder_error2 (Melder_peekAsciiToWcs (Thing_className (thee)), L" objects accept only numeric x values.");
+		Melder_error2 (Thing_classNameW (thee), L" objects accept only numeric x values.");
 	}
 end: return;
 }
@@ -3141,7 +3131,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushNumber (var -> numericValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	wchar_t *result = Melder_wcsdup (Melder_peekAsciiToWcs (var -> stringValue)); cherror
+	wchar_t *result = Melder_wcsdup (var -> stringValue); cherror
 	pushString (result);
 } break; default: return Melder_error3
 			(L"Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], L"\" without action.");

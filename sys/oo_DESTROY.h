@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2006 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR
  * pb 2003/06/11 made struct_destroy global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
+ * pb 2007/06/09 wchar_t
  */
 
 #include "oo_undef.h"
@@ -70,6 +71,33 @@
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	if (my x) { \
+		long i; \
+		for (i = min; i <= max; i ++) \
+			Melder_free (my x [i]); \
+		NUMvector_free (sizeof (char *), my x, min); \
+	}
+
+
+
+#define oo_STRINGWx(storage,x)  \
+	Melder_free (my x);
+
+#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+	{ \
+		int i; \
+		for (i = 0; i < n; i ++) \
+			Melder_free (my x [i]); \
+	}
+
+#define oo_STRINGWx_SET(storage,x,setType)  \
+	{ \
+		int i; \
+		for (i = 0; i <= enumlength (setType); i ++) \
+			Melder_free (my x [i]); \
+	}
+
+#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		long i; \
 		for (i = min; i <= max; i ++) \

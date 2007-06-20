@@ -31,7 +31,7 @@
 #include "WordList_def.h"
 
 #define WordList_methods Data_methods
-oo_CLASS_CREATE (WordList, Data)
+oo_CLASS_CREATE (WordList, Data);
 
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);

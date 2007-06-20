@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2000/09/21
- * pb 2002/03/07 GPL
+ * pb 2007/06/09
  */
 
 #ifndef _Script_h_
@@ -35,14 +34,14 @@
 #endif
 
 #define ScriptEditor_members TextEditor_members \
-	char *environmentName; \
+	wchar_t *environmentName; \
 	Editor_Table editorClass; \
 	Interpreter interpreter; \
 	Any argsDialog;
 #define ScriptEditor_methods TextEditor_methods
-class_create (ScriptEditor, TextEditor)
+class_create (ScriptEditor, TextEditor);
 
-ScriptEditor ScriptEditor_createFromText (Widget parent, Any editor, const char *initialText);
+ScriptEditor ScriptEditor_createFromText (Widget parent, Any editor, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */
 ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script);
 

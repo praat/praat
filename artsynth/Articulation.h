@@ -35,7 +35,7 @@
 
 #include "Articulation_def.h"
 #define Art_methods  Data_methods
-oo_CLASS_CREATE (Art, Data)
+oo_CLASS_CREATE (Art, Data);
 
 Art Art_create (void);
 /*

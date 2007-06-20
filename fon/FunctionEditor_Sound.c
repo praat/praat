@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2002/11/19 pulses
  * pb 2007/01/27 accept stereo Sounds
+ * pb 2007/06/10 wchar_t
  */
 
 #include "FunctionEditor_Sound.h"
@@ -139,7 +140,7 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, "%.4g", cursorFunctionValue);
+				FunctionEditor_drawCursorFunctionValue (me, L"%.4g", cursorFunctionValue);
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
@@ -156,8 +157,8 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 
 void FunctionEditor_Sound_createMenus (I) {
 	iam (FunctionEditor);
-	Editor_addCommand (me, "View", "Sound autoscaling", motif_CHECKABLE | (preferences.autoscaling ? motif_CHECKED : 0), cb_autoscaling);
-	Editor_addCommand (me, "View", "-- sound view --", 0, 0);
+	Editor_addCommand (me, L"View", L"Sound autoscaling", motif_CHECKABLE | (preferences.autoscaling ? motif_CHECKED : 0), cb_autoscaling);
+	Editor_addCommand (me, L"View", L"-- sound view --", 0, 0);
 }
 
 void FunctionEditor_Sound_init (I) {

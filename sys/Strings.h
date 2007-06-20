@@ -29,7 +29,7 @@
 #include "Strings_def.h"
 
 #define Strings_methods Data_methods
-oo_CLASS_CREATE (Strings, Data)
+oo_CLASS_CREATE (Strings, Data);
 
 Strings Strings_createAsFileList (const char *path);
 Strings Strings_createAsDirectoryList (const char *path);

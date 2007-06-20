@@ -2,7 +2,7 @@
 #define _ManipulationEditor_h_
 /* ManipulationEditor.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2007/06/10
  */
 
 #ifndef _FunctionEditor_h_
@@ -32,7 +32,7 @@
 
 typedef struct structManipulationEditor *ManipulationEditor;
 
-ManipulationEditor ManipulationEditor_create (Widget parent, const char *title, Manipulation ana);
+ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana);
 
 void ManipulationEditor_prefs (void);
 

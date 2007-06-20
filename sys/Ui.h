@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/12/06
+ * pb 2007/06/10
  */
 
 #include "Thing.h"
@@ -55,8 +55,8 @@
 		UiForm_addSentence (dia, "Favourite greeting",	"Good morning");
 		UiForm_finish (dia);
 	}
-	UiForm_setReal (dia, "Length", myLength);
-	UiForm_setInteger (dia, "Number of birth marks", 30);
+	UiForm_setReal (dia, L"Length", myLength);
+	UiForm_setInteger (dia, L"Number of birth marks", 30);
 	UiForm_do (dia, 0);   			// Show dialog box.
 }
 	Real, Positive, Integer, Natural, Word, and Sentence
@@ -73,25 +73,25 @@
 */
 
 /* The following routines work on the screen and from batch. */
-Any UiForm_create (Widget parent, const char *title,
+Any UiForm_create (Widget parent, const wchar_t *title,
 	int (*okCallback) (Any dia, void *closure), void *okClosure,
-	const char *helpTitle);
-Any UiForm_addReal (I, const char *label, const char *defaultValue);
-Any UiForm_addPositive (I, const char *label, const char *defaultValue);
-Any UiForm_addInteger (I, const char *label, const char *defaultValue);
-Any UiForm_addNatural (I, const char *label, const char *defaultValue);
-Any UiForm_addWord (I, const char *label, const char *defaultValue);
-Any UiForm_addSentence (I, const char *label, const char *defaultValue);
-Any UiForm_addLabel (I, const char *name, const char *label);
-Any UiForm_addBoolean (I, const char *label, int defaultValue);
-Any UiForm_addText (I, const char *name, const char *defaultValue);
-Any UiForm_addRadio (I, const char *label, int defaultValue);
-	Any UiRadio_addButton (I, const char *label);
-Any UiForm_addOptionMenu (I, const char *label, int defaultValue);
-	Any UiOptionMenu_addButton (I, const char *label);
-Any UiForm_addEnum (I, const char *label, void *enumerated, int defaultValue);
-Any UiForm_addList (I, const char *label, long numberOfStrings, const char **strings, long defaultValue);
-Any UiForm_addColour (I, const char *label, const char *defaultValue);
+	const wchar_t *helpTitle);
+Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addInteger (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addNatural (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addWord (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addSentence (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addLabel (I, const wchar_t *name, const wchar_t *label);
+Any UiForm_addBoolean (I, const wchar_t *label, int defaultValue);
+Any UiForm_addText (I, const wchar_t *name, const wchar_t *defaultValue);
+Any UiForm_addRadio (I, const wchar_t *label, int defaultValue);
+	Any UiRadio_addButton (I, const wchar_t *label);
+Any UiForm_addOptionMenu (I, const wchar_t *label, int defaultValue);
+	Any UiOptionMenu_addButton (I, const wchar_t *label);
+Any UiForm_addEnum (I, const wchar_t *label, void *enumerated, int defaultValue);
+Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t **strings, long defaultValue);
+Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue);
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
 
@@ -99,11 +99,11 @@ void UiForm_destroyWhenUnmanaged (I);
 /* Do not call from batch. */
 /* 'fieldName' is name from UiForm_addXXXXXX (), */
 /* without anything from and including the first " (" or ":". */
-void UiForm_setString (I, const char *fieldName, const char *text);
+void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *text);
 	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, Enum, List. */
-void UiForm_setReal (I, const char *fieldName, double value);
+void UiForm_setReal (I, const wchar_t *fieldName, double value);
 	/* Real, Positive. */
-void UiForm_setInteger (I, const char *fieldName, long value);
+void UiForm_setInteger (I, const wchar_t *fieldName, long value);
 	/* Integer, Natural, Boolean, Radio, Enum, List. */
 
 void UiForm_do (I, int modified);
@@ -136,28 +136,30 @@ void UiForm_do (I, int modified);
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (I, const char *fieldName);	/* Real, Positive. */
-long UiForm_getInteger (I, const char *fieldName);	/* Integer, Natural, Boolean, Radio, Enum, List. */
-char * UiForm_getString (I, const char *fieldName);	/* Word, Sentence, Text, Radio, Enum, List. */
-MelderFile UiForm_getFile (I, const char *fieldName); /* FileIn, FileOut */
+double UiForm_getReal (I, const wchar_t *fieldName);	/* Real, Positive. */
+long UiForm_getInteger (I, const wchar_t *fieldName);	/* Integer, Natural, Boolean, Radio, Enum, List. */
+char * UiForm_getStringA (I, const char *fieldName);	/* Word, Sentence, Text, Radio, Enum, List. */
+wchar_t * UiForm_getString (I, const wchar_t *fieldName);	/* Word, Sentence, Text, Radio, Enum, List. */
+MelderFile UiForm_getFile (I, const wchar_t *fieldName); /* FileIn, FileOut */
 
-double UiForm_getReal_check (I, const char *fieldName);
-long UiForm_getInteger_check (I, const char *fieldName);
-char * UiForm_getString_check (I, const char *fieldName);
+double UiForm_getReal_check (I, const wchar_t *fieldName);
+long UiForm_getInteger_check (I, const wchar_t *fieldName);
+char * UiForm_getStringA_check (I, const char *fieldName);
+wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
 
-int UiForm_parseString (I, const char *arguments);
+int UiForm_parseString (I, const wchar_t *arguments);
 
-Any UiInfile_create (Widget parent, const char *title,
+Any UiInfile_create (Widget parent, const wchar_t *title,
   int (*okCallback) (Any dia, void *closure), void *okClosure,
-  const char *helpTitle);
+  const wchar_t *helpTitle);
 
-Any UiOutfile_create (Widget parent, const char *title,
+Any UiOutfile_create (Widget parent, const wchar_t *title,
   int (*okCallback) (Any dia, void *closure), void *okClosure,
-  const char *helpTitle);
+  const wchar_t *helpTitle);
 
 void UiInfile_do (Any dia);
 
-void UiOutfile_do (Any dia, const char *defaultName);
+void UiOutfile_do (Any dia, const wchar_t *defaultName);
 
 MelderFile UiFile_getFile (Any dia);
 
@@ -172,8 +174,8 @@ void UiFile_hide (void);
 	UiFile_hide () before Melder_pause ().
 */
 
-void UiHistory_write (const char *format, ...);
-char *UiHistory_get (void);
+void UiHistory_write (const wchar_t *string);
+wchar_t *UiHistory_get (void);
 void UiHistory_clear (void);
 
 void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *allowExecutionClosure);

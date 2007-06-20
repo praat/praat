@@ -39,7 +39,7 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark);
 
 #define Excitation_members  Vector_members
 #define Excitation_methods  Vector_methods
-class_create (Excitation, Vector)
+class_create (Excitation, Vector);
 
 Excitation Excitation_create (double df, long nf);
 double Excitation_getDistance (Excitation me, Excitation thee);

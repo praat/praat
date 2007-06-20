@@ -1,6 +1,6 @@
 /* SpectrogramEditor.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 /*
- * pb 2003/05/27
+ * pb 2002/07/16 GPL
  * pb 2004/04/13 less flashing
+ * pb 2007/06/10 wchar_t
  */
 
 #include "SpectrogramEditor.h"
@@ -83,7 +84,7 @@ class_methods (SpectrogramEditor, FunctionEditor)
 	class_method (click)
 class_methods_end
 
-Any SpectrogramEditor_create (Widget parent, char *title, Any data) {
+Any SpectrogramEditor_create (Widget parent, wchar_t *title, Any data) {
 	SpectrogramEditor me = new (SpectrogramEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
 	my maximum = 10000;

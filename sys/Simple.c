@@ -34,14 +34,14 @@
 #include "Simple_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Simple_def.h"
-#include "oo_WRITE_CACHE.h"
-#include "Simple_def.h"
+//#include "oo_WRITE_CACHE.h"
+//#include "Simple_def.h"
 #include "oo_READ_ASCII.h"
 #include "Simple_def.h"
 #include "oo_READ_BINARY.h"
 #include "Simple_def.h"
-#include "oo_READ_CACHE.h"
-#include "Simple_def.h"
+//#include "oo_READ_CACHE.h"
+//#include "Simple_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Simple_def.h"
 
@@ -52,10 +52,10 @@ class_methods (SimpleInt, Data)
 	class_method_local (SimpleInt, equal)
 	class_method_local (SimpleInt, writeAscii)
 	class_method_local (SimpleInt, writeBinary)
-	class_method_local (SimpleInt, writeCache)
+	//class_method_local (SimpleInt, writeCache)
 	class_method_local (SimpleInt, readAscii)
 	class_method_local (SimpleInt, readBinary)
-	class_method_local (SimpleInt, readCache)
+	//class_method_local (SimpleInt, readCache)
 class_methods_end
 
 SimpleInt SimpleInt_create (int number) {
@@ -72,10 +72,10 @@ class_methods (SimpleShort, Data)
 	class_method_local (SimpleShort, equal)
 	class_method_local (SimpleShort, writeAscii)
 	class_method_local (SimpleShort, writeBinary)
-	class_method_local (SimpleShort, writeCache)
+	//class_method_local (SimpleShort, writeCache)
 	class_method_local (SimpleShort, readAscii)
 	class_method_local (SimpleShort, readBinary)
-	class_method_local (SimpleShort, readCache)
+	//class_method_local (SimpleShort, readCache)
 class_methods_end
 
 SimpleShort SimpleShort_create (short number) {
@@ -92,10 +92,10 @@ class_methods (SimpleLong, Data)
 	class_method_local (SimpleLong, equal)
 	class_method_local (SimpleLong, writeAscii)
 	class_method_local (SimpleLong, writeBinary)
-	class_method_local (SimpleLong, writeCache)
+	//class_method_local (SimpleLong, writeCache)
 	class_method_local (SimpleLong, readAscii)
 	class_method_local (SimpleLong, readBinary)
-	class_method_local (SimpleLong, readCache)
+	//class_method_local (SimpleLong, readCache)
 class_methods_end
 
 SimpleLong SimpleLong_create (long number) {
@@ -112,10 +112,10 @@ class_methods (SimpleFloat, Data)
 	class_method_local (SimpleFloat, equal)
 	class_method_local (SimpleFloat, writeAscii)
 	class_method_local (SimpleFloat, writeBinary)
-	class_method_local (SimpleFloat, writeCache)
+	//class_method_local (SimpleFloat, writeCache)
 	class_method_local (SimpleFloat, readAscii)
 	class_method_local (SimpleFloat, readBinary)
-	class_method_local (SimpleFloat, readCache)
+	//class_method_local (SimpleFloat, readCache)
 class_methods_end
 
 SimpleFloat SimpleFloat_create (float number) {
@@ -132,10 +132,10 @@ class_methods (SimpleDouble, Data)
 	class_method_local (SimpleDouble, equal)
 	class_method_local (SimpleDouble, writeAscii)
 	class_method_local (SimpleDouble, writeBinary)
-	class_method_local (SimpleDouble, writeCache)
+	//class_method_local (SimpleDouble, writeCache)
 	class_method_local (SimpleDouble, readAscii)
 	class_method_local (SimpleDouble, readBinary)
-	class_method_local (SimpleDouble, readCache)
+	//class_method_local (SimpleDouble, readCache)
 class_methods_end
 
 SimpleDouble SimpleDouble_create (double number) {
@@ -152,15 +152,35 @@ class_methods (SimpleString, Data)
 	class_method_local (SimpleString, equal)
 	class_method_local (SimpleString, writeAscii)
 	class_method_local (SimpleString, writeBinary)
-	class_method_local (SimpleString, writeCache)
+	//class_method_local (SimpleString, writeCache)
 	class_method_local (SimpleString, readAscii)
 	class_method_local (SimpleString, readBinary)
-	class_method_local (SimpleString, readCache)
+	//class_method_local (SimpleString, readCache)
 class_methods_end
 
 SimpleString SimpleString_create (const char *string) {
 	SimpleString me = new (SimpleString);
 	if (! me || ! (my string = Melder_strdup (string)))
+		{ forget (me); return NULL; }
+	return me;
+}
+
+class_methods (SimpleStringW, Data)
+	class_method_local (SimpleStringW, description)
+	class_method_local (SimpleStringW, destroy)
+	class_method_local (SimpleStringW, copy)
+	class_method_local (SimpleStringW, equal)
+	class_method_local (SimpleStringW, writeAscii)
+	class_method_local (SimpleStringW, writeBinary)
+	//class_method_local (SimpleStringW, writeCache)
+	class_method_local (SimpleStringW, readAscii)
+	class_method_local (SimpleStringW, readBinary)
+	//class_method_local (SimpleStringW, readCache)
+class_methods_end
+
+SimpleStringW SimpleStringW_create (const wchar_t *string) {
+	SimpleStringW me = new (SimpleStringW);
+	if (! me || ! (my string = Melder_wcsdup (string)))
 		{ forget (me); return NULL; }
 	return me;
 }

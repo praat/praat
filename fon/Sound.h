@@ -32,7 +32,7 @@
 
 #define Sound_members  Vector_members
 #define Sound_methods  Vector_methods
-class_create (Sound, Vector)
+class_create (Sound, Vector);
 
 /* Attributes:
 	xmin              // Start time (seconds).

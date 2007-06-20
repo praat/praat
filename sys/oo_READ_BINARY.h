@@ -1,6 +1,6 @@
 /* oo_READ_BINARY.h
  *
- * Copyright (C) 1994-2006 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2006/04/12 guard against too new versions
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
+ * pb 2007/06/09 wchar_t
  */
 
 #include "oo_undef.h"
@@ -99,6 +100,32 @@
 	if (max >= min) { \
 		long i; \
 		if (! (my x = NUMvector (sizeof (char *), min, max))) return 0; \
+		for (i = min; i <= max; i ++) \
+			if (! (my x [i] = binget##storage (f))) return 0; \
+	}
+
+#define oo_STRINGWx(storage,x)  \
+	if (! (my x = binget##storage (f))) return 0;
+
+#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
+	{ \
+		long i; \
+		for (i = 0; i < n; i ++) \
+			if (! (my x [i] = binget##storage (f))) return 0; \
+	}
+
+#define oo_STRINGWx_SET(storage,x,setType)  \
+	{ \
+		long i; \
+		for (i = 0; i <= enumlength (setType); i ++) \
+			if (! (my x [i] = binget##storage (f))) return 0; \
+	}
+
+#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+	if (max >= min) { \
+		long i; \
+		if (! (my x = NUMvector (sizeof (wchar_t *), min, max))) return 0; \
 		for (i = min; i <= max; i ++) \
 			if (! (my x [i] = binget##storage (f))) return 0; \
 	}

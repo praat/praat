@@ -32,7 +32,7 @@
 	double s;
 
 #define Procrustes_methods AffineTransform_methods
-class_create (Procrustes, AffineTransform)
+class_create (Procrustes, AffineTransform);
 
 Procrustes Procrustes_create (long n);
 

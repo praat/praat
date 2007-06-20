@@ -38,7 +38,7 @@
 	char **stateLabels; \
 	double **data;
 #define Transition_methods Data_methods
-class_create (Transition, Data)
+class_create (Transition, Data);
 
 int Transition_init (I, long numberOfStates);
 Transition Transition_create (long numberOfStates);

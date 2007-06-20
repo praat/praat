@@ -1,6 +1,6 @@
 /* Graphics_text.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2005/10/27 corrected character width for Symbol (should not depend on SILIPA setting)
  * pb 2005/11/11 Windows: font sizes up to 500
  * pb 2006/10/20 links are recorded in DC (no longer WC)
+ * pb 2007/06/11 wchar_t
  */
 
 #include <ctype.h>
@@ -1347,6 +1348,8 @@ double Graphics_textWidth (I, const char *txt) {
 	return width / my scaleX;
 }
 
+double Graphics_textWidthW (I, const wchar_t *txt) { return Graphics_textWidth (void_me, Melder_peekWcsToAscii (txt)); }
+
 void Graphics_textRect (I, double x1, double x2, double y1, double y2, const char *txt) {
 	iam (Graphics);
 	_Graphics_widechar *plc, *startOfLine;
@@ -1417,6 +1420,8 @@ void Graphics_text (I, double xWC, double yWC, const char *txt) {
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt, length)
 	}
 }
+
+void Graphics_textW (I, double xWC, double yWC, const wchar_t *txt) { Graphics_text (void_me, xWC, yWC, Melder_peekWcsToAscii (txt)); }
 
 float Graphics_inqTextX (I) { iam (Graphics); return my textX; }
 float Graphics_inqTextY (I) { iam (Graphics); return my textY; }

@@ -37,7 +37,7 @@
 
 #define AmplitudeTier_members RealTier_members
 #define AmplitudeTier_methods RealTier_methods
-class_create (AmplitudeTier, RealTier)
+class_create (AmplitudeTier, RealTier);
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 

@@ -35,7 +35,7 @@
 
 #define DurationTier_members RealTier_members
 #define DurationTier_methods RealTier_methods
-class_create (DurationTier, RealTier)
+class_create (DurationTier, RealTier);
 
 DurationTier DurationTier_create (double tmin, double tmax);
 

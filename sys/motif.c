@@ -1,6 +1,6 @@
 /* motif.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/11 Mach
  * pb 2004/10/21 on Unix, Ctrl becomes the command key
+ * pb 2007/06/09 wchar_t
  */
 
 #include "Gui.h"
@@ -46,13 +47,12 @@ Widget motif_addMenuBar (Widget form) {
 	return menuBar;
 }
 
-Widget motif_addMenu (Widget bar, const char *title, long flags) {
+Widget motif_addMenu (Widget bar, const wchar_t *title, long flags) {
 	Widget menuTitle, menu;
-	Longchar_nativize (title, Melder_buffer1, TRUE);
-	menuTitle = XmCreateCascadeButton (bar, Melder_buffer1, NULL, 0);
-	if (strequ (title, "Help"))   /* BUG: Mac reacts to this title... */
+	menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	if (wcsequ (title, L"Help"))   /* BUG: Mac reacts to this title... */
 		XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
-	menu = XmCreatePulldownMenu (bar, Melder_buffer1, NULL, 0);
+	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToAscii (title), NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
 	XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
@@ -60,13 +60,12 @@ Widget motif_addMenu (Widget bar, const char *title, long flags) {
 	return menu;
 }
 
-Widget motif_addMenu2 (Widget bar, const char *title, long flags, Widget *menuTitle) {
+Widget motif_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle) {
 	Widget menu;
-	Longchar_nativize (title, Melder_buffer1, TRUE);
-	*menuTitle = XmCreateCascadeButton (bar, Melder_buffer1, NULL, 0);
-	if (strequ (title, "Help"))
+	*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	if (wcsequ (title, L"Help"))
 		XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
-	menu = XmCreatePulldownMenu (bar, Melder_buffer1, NULL, 0);
+	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToAscii (title), NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
 	XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
@@ -74,14 +73,13 @@ Widget motif_addMenu2 (Widget bar, const char *title, long flags, Widget *menuTi
 	return menu;
 }
 
-Widget motif_addItem (Widget menu, const char *title, long flags,
+Widget motif_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure)
 {
 	Boolean toggle = flags & (motif_CHECKABLE | motif_CHECKED) ? True : False;
 	Widget button;
 	int accelerator = flags & 127;
-	Longchar_nativize (title, Melder_buffer1, TRUE);
-	button = XtVaCreateManagedWidget (Melder_buffer1,
+	button = XtVaCreateManagedWidget (Melder_peekWcsToAscii (title),
 		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (button, False);

@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/06/16 units
  * pb 2005/12/07 arrowScrollStep
+ * pb 2007/06/10 wchar_t
  */
 
 #ifndef _Editor_h_
@@ -166,7 +167,7 @@ struct FunctionEditor_pulses {
 #define FunctionEditor_methods Editor_methods \
 	void (*draw) (I); \
 	void (*prepareDraw) (I);   /* For less flashing. */ \
-	const char *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
+	const wchar_t *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
 	int hasText; \
 	void (*play) (I, double tmin, double tmax); \
 	int (*click) (I, double xWC, double yWC, int shiftKeyPressed); \
@@ -183,7 +184,7 @@ struct FunctionEditor_pulses {
 	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
 	double (*getBottomOfSoundAndAnalysisArea) (I);
 
-class_create (FunctionEditor, Editor)
+class_create (FunctionEditor, Editor);
 
 /*
 	Attributes:
@@ -231,7 +232,7 @@ class_create (FunctionEditor, Editor)
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-int FunctionEditor_init (I, Widget parent, const char *title, Any data);
+int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
@@ -333,10 +334,10 @@ void FunctionEditor_prefs (void);
 /* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */
 /* Preconditions: default line type, default line width. */
 /* Postconditions: default line type, default line width, undefined colour, undefined text alignment. */
-void FunctionEditor_drawRangeMark (I, const char *format, double yWC, int verticalAlignment);
-void FunctionEditor_drawCursorFunctionValue (I, const char *format, double yWC);
-void FunctionEditor_insertCursorFunctionValue (I, const char *format, double yWC, double minimum, double maximum);
-void FunctionEditor_drawHorizontalHair (I, const char *format, double yWC);
+void FunctionEditor_drawRangeMark (I, const wchar_t *format, double yWC, int verticalAlignment);
+void FunctionEditor_drawCursorFunctionValue (I, const wchar_t *format, double yWC);
+void FunctionEditor_insertCursorFunctionValue (I, const wchar_t *format, double yWC, double minimum, double maximum);
+void FunctionEditor_drawHorizontalHair (I, const wchar_t *format, double yWC);
 void FunctionEditor_drawGridLine (I, double yWC);
 
 void FunctionEditor_insetViewport (I);

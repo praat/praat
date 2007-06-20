@@ -37,7 +37,7 @@
 
 #define SpectrumTier_members RealTier_members
 #define SpectrumTier_methods RealTier_methods
-class_create (SpectrumTier, RealTier)
+class_create (SpectrumTier, RealTier);
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax);
 /*

@@ -33,13 +33,13 @@
 /* For the inheritors. */
 #include "Table_def.h"
 #define TableRow_methods Data_methods
-oo_CLASS_CREATE (TableRow, Data)
+oo_CLASS_CREATE (TableRow, Data);
 #define Table_members Data_members \
 	long numberOfColumns; \
 	struct TableColumnHeader *columnHeaders; \
 	Ordered rows;
 #define Table_methods Data_methods
-oo_CLASS_CREATE (Table, Data)
+oo_CLASS_CREATE (Table, Data);
 
 int Table_initWithColumnNames (I, long numberOfRows, const char *columnNames);
 Table Table_createWithColumnNames (long numberOfRows, const char *columnNames);

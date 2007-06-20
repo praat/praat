@@ -40,7 +40,7 @@
 	char **rowLabels, **columnLabels; \
 	double **data;
 #define TableOfReal_methods Data_methods
-class_create (TableOfReal, Data)
+class_create (TableOfReal, Data);
 
 int TableOfReal_init (I, long numberOfRows, long numberOfColumns);
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);
