@@ -43,9 +43,9 @@
 #include "PCA_def.h"
 #include "oo_EQUAL.h"
 #include "PCA_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "PCA_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "PCA_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "PCA_def.h"
@@ -68,8 +68,8 @@ class_methods (PCA, Eigen)
 	class_method_local (PCA, description)
 	class_method_local (PCA, copy)
 	class_method_local (PCA, equal)
-	class_method_local (PCA, writeAscii)
-	class_method_local (PCA, readAscii)
+	class_method_local (PCA, writeText)
+	class_method_local (PCA, readText)
 	class_method_local (PCA, writeBinary)
 	class_method_local (PCA, readBinary)
 	class_method (info)

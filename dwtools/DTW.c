@@ -38,11 +38,11 @@
 #include "DTW_def.h"
 #include "oo_EQUAL.h"
 #include "DTW_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "DTW_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "DTW_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "DTW_def.h"
 #include "oo_READ_BINARY.h"
 #include "DTW_def.h"
@@ -483,9 +483,9 @@ class_methods (DTW, Matrix)
 	class_method_local (DTW, equal)
 	class_method_local (DTW, copy)
 	class_method (info)
-	class_method_local (DTW, readAscii)
+	class_method_local (DTW, readText)
 	class_method_local (DTW, readBinary)
-	class_method_local (DTW, writeAscii)
+	class_method_local (DTW, writeText)
 	class_method_local (DTW, writeBinary)
 	class_method_local (DTW, description)
 class_methods_end

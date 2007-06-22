@@ -3170,7 +3170,7 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 			FSRef fsref;
 			err = AEGetNthPtr (& documentList, document, typeFSRef, & keyWord, & typeCode, & fsref, sizeof (fsref), & actualSize);
 			if (! err) {
-				structMelderFile file = { { 0 } };
+				structMelderFile file = { 0 };
 				Melder_machToFile (& fsref, & file);
 				if (theOpenDocumentCallback)
 					theOpenDocumentCallback (& file);
@@ -3260,7 +3260,7 @@ Widget XtInitialize (void *dum1, const char *name,
 			if (IsIconic (window)) ShowWindow (window, SW_RESTORE);
 			SetForegroundWindow (window);
 			if (theOpenDocumentCallback && argv [3] [0]) {
-				structMelderFile file = { { 0 } };
+				structMelderFile file = { 0 };
 				/*
 				 * The user dropped a file on the Praat icon or double-clicked a Praat file
 				 * while Praat was already running.

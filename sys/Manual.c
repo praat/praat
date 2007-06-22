@@ -504,7 +504,7 @@ static int goToPage (I, const char *title) {
 	iam (Manual);
 	ManPages manPages = my data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		MelderDir_relativePathToFile (& manPages -> rootDirectory, title + 3, & file);
 		Melder_recordFromFile (& file);
 		return -1;

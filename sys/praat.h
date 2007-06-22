@@ -304,28 +304,28 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
-		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_READW(proc,title,help) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
-		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
-		if (! sender) praat_write_do (dia, Melder_peekAsciiToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (! sender) praat_write_do (dia, Melder_peekAsciiToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITEW(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
-		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { { 0 } }; (void) IOBJECT; \
+		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 #endif

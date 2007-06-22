@@ -62,7 +62,7 @@ static int classCollection_copy (I, thou) {
 	return 1;
 }
 
-static int classCollection_equal (I, thou) {
+static bool classCollection_equal (I, thou) {
 	iam (Collection); thouart (Collection);
 	long i;
 	if (! inherited (Collection) equal (me, thee)) return 0;
@@ -79,11 +79,11 @@ static int classCollection_equal (I, thou) {
 	return 1;
 }
 
-static int classCollection_writeAscii (I, FILE *f) {
+static int classCollection_writeText (I, MelderFile file) {
 	iam (Collection);
 	long i;
-	ascputi4 (my size, f, "size");
-	ascputintro (f, "item []: %s", my size >= 1 ? "" : "(empty)");
+	texputi4 (my size, file, "size");
+	texputintro (file, "item []: %s", my size >= 1 ? "" : "(empty)");
 	for (i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
@@ -92,47 +92,47 @@ static int classCollection_writeAscii (I, FILE *f) {
 			sprintf (className, "%s %ld", table -> _className, table -> version);
 		else
 			strcpy (className, table -> _className);
-		ascputintro (f, "item [%ld]:", i);
-		if (! Thing_member (thing, classData) || ! Data_canWriteAscii (thing))
-			return Melder_error ("(Collection::writeAscii:) "
+		texputintro (file, "item [%ld]:", i);
+		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
+			return Melder_error ("(Collection::writeText:) "
 				"Objects of class %s cannot be written.", table -> _className);
-		ascputs1 (className, f, "class");
-		ascputs2 (thing -> name, f, "name");
-		if (! Data_writeAscii (thing, f)) return 0;
-		ascexdent ();
+		texputs1 (className, file, "class");
+		texputs2 (thing -> name, file, "name");
+		if (! Data_writeText (thing, file)) return 0;
+		texexdent (file);
 	}
-	ascexdent ();
+	texexdent (file);
 	return 1;
 }
 
-static int classCollection_readAscii (I, FILE *f) {
+static int classCollection_readText (I, MelderFile file) {
 	iam (Collection);
 	if (Thing_version < 0) {
 		long i, size;
 		char line [2000];
-		if (! fgets (line, 200, f) || ! sscanf (line, "%ld", & size) || size < 0)
-			return Melder_error ("Collection::readAscii: cannot read size.");
+		if (! fgets (line, 200, file -> filePointer) || ! sscanf (line, "%ld", & size) || size < 0)
+			return Melder_error ("Collection::readText: cannot read size.");
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
-			do { fgets (line, 1999, f); if (feof (f)) return 0; }
+			do { fgets (line, 1999, file -> filePointer); if (feof (file -> filePointer)) return 0; }
 			while (strncmp (line, "Object ", 7));
 			stringsRead = sscanf (line, "Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
-				return Melder_error ("Collection::readAscii: cannot read header of object %ld.", i);
+				return Melder_error ("Collection::readText: cannot read header of object %ld.", i);
 			if (itemNumberRead != i)
-				return Melder_error ("Collection::readAscii: read item number %ld while expecting %ld.", itemNumberRead, i);
+				return Melder_error ("Collection::readText: read item number %ld while expecting %ld.", itemNumberRead, i);
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
-				return Melder_error ("Collection::readAscii: wrong header at object %ld.", i);
+				return Melder_error ("Collection::readText: wrong header at object %ld.", i);
 			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Thing_version = -1;   /* Override. */
 			my size ++;
-			if (! Thing_member (my item [i], classData) || ! Data_canReadAscii (my item [i]))
-				return Melder_error ("Collection::readAscii: "
+			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
+				return Melder_error ("Collection::readText: "
 					"cannot read item of class %s.", Thing_className (my item [i]));
-			if (! Data_readAscii (my item [i], f)) return 0;
+			if (! Data_readText (my item [i], file)) return 0;
 			if (stringsRead == 3) {
 				if (line [n] == ' ') n ++;   /* Skip space character. */
 				length = strlen (line+n);
@@ -142,20 +142,20 @@ static int classCollection_readAscii (I, FILE *f) {
 		}
 	} else {
 		long i, size;
-		size = ascgeti4 (f);
+		size = texgeti4 (file);
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
 			char *klas;
 			long saveVersion = Thing_version;   /* The version of the Collection... */
-			klas = ascgets1 (f);
+			klas = texgets2 (file);
 			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Melder_free (klas);
 			my size ++;
-			if (! Thing_member (my item [i], classData) || ! Data_canReadAscii (my item [i]))
-				return Melder_error ("(Collection::readAscii:) "
+			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
+				return Melder_error ("(Collection::readText:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
-			((Data) my item [i]) -> name = ascgets2 (f);
-			if (! Data_readAscii (my item [i], f)) return 0;
+			((Data) my item [i]) -> name = texgets2 (file);
+			if (! Data_readText (my item [i], file)) return 0;
 			Thing_version = saveVersion;
 		}
 	}
@@ -239,9 +239,9 @@ class_methods (Collection, Data)
 	class_method_local (Collection, info)
 	class_method_local (Collection, copy)
 	class_method_local (Collection, equal)
-	class_method_local (Collection, writeAscii)
+	class_method_local (Collection, writeText)
 	class_method_local (Collection, writeBinary)
-	class_method_local (Collection, readAscii)
+	class_method_local (Collection, readText)
 	class_method_local (Collection, readBinary)
 	class_method_local (Collection, description)
 	class_method_local (Collection, position)

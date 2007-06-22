@@ -26,6 +26,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 oo_WCHAR, oo_STRINGW
  * pb 2007/06/10 corrections
+ * pb 2007/06/21 oo_LSTRINGW; removed oo_SSTRINGxxx
  */
 
 /*** Single types. ***/
@@ -212,31 +213,35 @@
 /*** Strings. ***/
 
 /* The possible storage types give these binary formats: */
-/*    s1: store as sequence of bytes, preceded with 1 byte (u1) to denote length. */
 /*    s2: store as sequence of bytes, preceded with 2 bytes (u2) to denote length. */
+/*    w2: store as sequence of characters (u2), preceded with 2 bytes (u2) to denote length. */
 /*    s4: store as sequence of bytes, preceded with 4 bytes (u4) to denote length. */
 /*    w4: store as sequence of characters (u2), preceded with 4 bytes (u4) to denote length. */
 
-#define oo_SSTRING(x)  oo_STRINGx (s1, x)
 #define oo_STRING(x)  oo_STRINGx (s2, x)
+#define oo_STRINGW(x)  oo_STRINGWx (w2, x)
 #define oo_LSTRING(x)  oo_STRINGx (s4, x)
-#define oo_STRINGW(x)  oo_STRINGWx (w4, x)
-#define oo_SSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s1, x, cap, n)
+#define oo_LSTRINGW(x)  oo_STRINGWx (w4, x)
+
 #define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s2, x, cap, n)
+#define oo_STRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w2, x, cap, n)
 #define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s4, x, cap, n)
-#define oo_STRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w4, x, cap, n)
-#define oo_SSTRING_SET(x,setType)  oo_STRINGx_SET (s1, x, setType)
+#define oo_LSTRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w4, x, cap, n)
+
 #define oo_STRING_SET(x,setType)  oo_STRINGx_SET (s2, x, setType)
+#define oo_STRINGW_SET(x,setType)  oo_STRINGWx_SET (w2, x, setType)
 #define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (s4, x, setType)
-#define oo_STRINGW_SET(x,setType)  oo_STRINGWx_SET (w4, x, setType)
-#define oo_SSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s1, x, min, max)
+#define oo_LSTRINGW_SET(x,setType)  oo_STRINGWx_SET (w4, x, setType)
+
 #define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s2, x, min, max)
+#define oo_STRINGW_VECTOR_FROM(x,min,max)  oo_STRINGWx_VECTOR (w2, x, min, max)
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s4, x, min, max)
-#define oo_STRINGW_VECTOR_FROM(x,min,max)  oo_STRINGWx_VECTOR (w4, x, min, max)
-#define oo_SSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s1, x, 1, n)
+#define oo_LSTRINGW_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w4, x, min, max)
+
 #define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s2, x, 1, n)
+#define oo_STRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w2, x, 1, n)
 #define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s4, x, 1, n)
-#define oo_STRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w4, x, 1, n)
+#define oo_LSTRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w4, x, 1, n)
 
 /*** Structs. ***/
 
@@ -265,7 +270,7 @@
 
 /********** Definitions for header files only. **********/
 /* These are undef'ed and redefined in the header files that implement methods, */
-/* like oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_ASCII.h, etc. */
+/* like oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
 
 /* Types. */
 
@@ -312,7 +317,7 @@
 #define oo_END_STRUCT(Type)  } *Type; \
 	void Type##_destroy (Type me); \
 	int Type##_copy (Type me, Type thee); \
-	int Type##_equal (Type me, Type thee);
+	bool Type##_equal (Type me, Type thee);
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	typedef struct struct##Class##_Table *Class##_Table; \
@@ -355,13 +360,14 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
+#define oo_VALIDATING_ASCII  0
 #define oo_READING  0
-#define oo_READING_ASCII  0
+#define oo_READING_TEXT  0
 #define oo_READING_BINARY  0
 #define oo_READING_CACHE  0
 #define oo_READING_LISP  0
 #define oo_WRITING  0
-#define oo_WRITING_ASCII  0
+#define oo_WRITING_TEXT  0
 #define oo_WRITING_BINARY  0
 #define oo_WRITING_CACHE  0
 #define oo_WRITING_LISP  0

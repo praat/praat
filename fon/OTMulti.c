@@ -52,25 +52,38 @@ static void classOTMulti_info (I) {
 	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (OTMulti);
-	long icons, icand;
-	const char *p;
-	fprintf (f, "\n%ld constraints", my numberOfConstraints);
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	texput (file, "\n");
+	texput (file, Melder_integer (my numberOfConstraints));
+	texput (file, " constraints");
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		fprintf (f, "\n\t\"");
-		for (p = & constraint -> name [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
-		fprintf (f, "\"   %.17g %.17g", constraint -> ranking, constraint -> disharmony);
+		texput (file, "\n\t\"");
+		for (const char *p = & constraint -> name [0]; *p; p ++) {
+			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
+			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+		}
+		texput (file, "\"   ");
+		texput (file, Melder_double (constraint -> ranking));
+		texput (file, " ");
+		texput (file, Melder_double (constraint -> disharmony));
 	}
-	fprintf (f, "\n\n%ld candidates", my numberOfCandidates);
-	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
+	texput (file, "\n\n");
+	texput (file, Melder_integer (my numberOfCandidates));
+	texput (file, " candidates");
+	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
-		fprintf (f, "\n\t\"");
-		for (p = & candidate -> string [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
-		fprintf (f, "\"  ");
-		for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-			fprintf (f, " %d", candidate -> marks [icons]);
+		texput (file, "\n\t\"");
+		for (const char *p = & candidate -> string [0]; *p; p ++) {
+			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
+			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+		}
+		texput (file, "\"  ");
+		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
+			texput (file, " ");
+			texput (file, Melder_integer (candidate -> marks [icons]));
+		}
 	}
 	return 1;
 }
@@ -83,27 +96,27 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (OTMulti);
 	long icons, icand;
-	if (! inherited (OTMulti) readAscii (me, f)) return 0;
-	if ((my numberOfConstraints = ascgeti4 (f)) < 1) return Melder_error ("No constraints.");
+	if (! inherited (OTMulti) readText (me, file)) return 0;
+	if ((my numberOfConstraints = texgeti4 (file)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTConstraint, 1, my numberOfConstraints))) return 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		if (! (constraint -> name = ascgets2 (f))) return 0;
-		constraint -> ranking = ascgetr8 (f);
-		constraint -> disharmony = ascgetr8 (f);
+		if (! (constraint -> name = texgets2 (file))) return 0;
+		constraint -> ranking = texgetr8 (file);
+		constraint -> disharmony = texgetr8 (file);
 	}
-	if ((my numberOfCandidates = ascgeti4 (f)) < 1) return Melder_error ("No candidates.");
+	if ((my numberOfCandidates = texgeti4 (file)) < 1) return Melder_error ("No candidates.");
 	if (! (my candidates = NUMstructvector (OTCandidate, 1, my numberOfCandidates))) return 0;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
-		if (! (candidate -> string = ascgets2 (f))) return 0;
+		if (! (candidate -> string = texgets2 (file))) return 0;
 		candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 		if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 		for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-			candidate -> marks [icons] = ascgeti2 (f);
+			candidate -> marks [icons] = texgeti2 (file);
 	}
 	OTMulti_checkIndex (me);
 	return 1;
@@ -116,8 +129,8 @@ class_methods (OTMulti, Data)
 	class_method_local (OTMulti, description)
 	class_method_local (OTMulti, copy)
 	class_method_local (OTMulti, equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method_local (OTMulti, writeBinary)
 	class_method_local (OTMulti, readBinary)
 class_methods_end

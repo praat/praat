@@ -30,9 +30,9 @@
 #include "Artword_def.h"
 #include "oo_EQUAL.h"
 #include "Artword_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Artword_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Artword_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Artword_def.h"
@@ -46,8 +46,8 @@ class_methods (Artword, Data)
 	class_method_local (Artword, description)
 	class_method_local (Artword, copy)
 	class_method_local (Artword, equal)
-	class_method_local (Artword, writeAscii)
-	class_method_local (Artword, readAscii)
+	class_method_local (Artword, writeText)
+	class_method_local (Artword, readText)
 	class_method_local (Artword, writeBinary)
 	class_method_local (Artword, readBinary)
 class_methods_end

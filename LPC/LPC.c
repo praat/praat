@@ -33,11 +33,11 @@
 #include "LPC_def.h"
 #include "oo_EQUAL.h"
 #include "LPC_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "LPC_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "LPC_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "LPC_def.h"
 #include "oo_READ_BINARY.h"
 #include "LPC_def.h"
@@ -61,9 +61,9 @@ class_methods (LPC, Sampled)
 	class_method_local (LPC, equal)
 	class_method_local (LPC, copy)
 	class_method (info)
-	class_method_local (LPC, readAscii)
+	class_method_local (LPC, readText)
 	class_method_local (LPC, readBinary)
-	class_method_local (LPC, writeAscii)
+	class_method_local (LPC, writeText)
 	class_method_local (LPC, writeBinary)
 	class_method_local (LPC, description)
 class_methods_end

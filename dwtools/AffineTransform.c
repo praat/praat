@@ -83,11 +83,11 @@ static Any classAffineTransform_invert (I)
 #include "AffineTransform_def.h"
 #include "oo_EQUAL.h"
 #include "AffineTransform_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "AffineTransform_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "AffineTransform_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "AffineTransform_def.h"
 #include "oo_READ_BINARY.h"
 #include "AffineTransform_def.h"
@@ -98,9 +98,9 @@ class_methods (AffineTransform, Data)
 	class_method_local (AffineTransform, destroy)
 	class_method_local (AffineTransform, copy)
 	class_method_local (AffineTransform, equal)
-	class_method_local (AffineTransform, writeAscii)
+	class_method_local (AffineTransform, writeText)
 	class_method_local (AffineTransform, writeBinary)
-	class_method_local (AffineTransform, readAscii)
+	class_method_local (AffineTransform, readText)
 	class_method_local (AffineTransform, readBinary)
 	class_method_local (AffineTransform, description)
 	class_method_local (AffineTransform, transform)

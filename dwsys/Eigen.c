@@ -48,9 +48,9 @@
 #include "Eigen_def.h"
 #include "oo_EQUAL.h"
 #include "Eigen_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Eigen_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Eigen_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Eigen_def.h"
@@ -102,8 +102,8 @@ class_methods (Eigen, Data)
 	class_method_local (Eigen, description)
 	class_method_local (Eigen, copy)
 	class_method_local (Eigen, equal)
-	class_method_local (Eigen, writeAscii)
-	class_method_local (Eigen, readAscii)
+	class_method_local (Eigen, writeText)
+	class_method_local (Eigen, readText)
 	class_method_local (Eigen, writeBinary)
 	class_method_local (Eigen, readBinary)
 class_methods_end

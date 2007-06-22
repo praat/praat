@@ -25,6 +25,7 @@
  * pb 2005/06/16 units
  * pb 2007/03/18 moved table stuff here
  * pb 2007/05/26 wchar_t
+ * pb 2007/06/21 tex
  */
 
 #include "Matrix.h"
@@ -38,7 +39,7 @@
 #include "Matrix_def.h"
 #include "oo_EQUAL.h"
 #include "Matrix_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Matrix_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Matrix_def.h"
@@ -47,34 +48,34 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (Matrix);
 	if (Thing_version < 0) {
-		my xmin = ascgetr8 (f);
-		my xmax = ascgetr8 (f);
-		my ymin = ascgetr8 (f);
-		my ymax = ascgetr8 (f);
-		my nx = ascgeti4 (f);
-		my ny = ascgeti4 (f);
-		my dx = ascgetr8 (f);
-		my dy = ascgetr8 (f);
-		my x1 = ascgetr8 (f);
-		my y1 = ascgetr8 (f);
+		my xmin = texgetr8 (file);
+		my xmax = texgetr8 (file);
+		my ymin = texgetr8 (file);
+		my ymax = texgetr8 (file);
+		my nx = texgeti4 (file);
+		my ny = texgeti4 (file);
+		my dx = texgetr8 (file);
+		my dy = texgetr8 (file);
+		my x1 = texgetr8 (file);
+		my y1 = texgetr8 (file);
 	} else {
-		inherited (Matrix) readAscii (me, f);
-		my ymin = ascgetr8 (f);
-		my ymax = ascgetr8 (f);
-		my ny = ascgeti4 (f);
-		my dy = ascgetr8 (f);
-		my y1 = ascgetr8 (f);
+		inherited (Matrix) readText (me, file);
+		my ymin = texgetr8 (file);
+		my ymax = texgetr8 (file);
+		my ny = texgeti4 (file);
+		my dy = texgetr8 (file);
+		my y1 = texgetr8 (file);
 	}
 	if (my xmin > my xmax || my ymin > my ymax)
-		return Melder_error ("(Matrix::readAscii:) xmin should <= xmax and ymin <= ymax.");
+		return Melder_error1 (L"(Matrix::readText:) xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		return Melder_error ("(Matrix::readAscii:) nx should >= 1 and ny >= 1.");
+		return Melder_error1 (L"(Matrix::readText:) nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		return Melder_error ("(Matrix::readAscii:) dx should > 0 and dy > 0.");
-	if (! (my z = NUMfmatrix_readAscii (1, my ny, 1, my nx, f, "z"))) return 0;
+		return Melder_error1 (L"(Matrix::readText:) dx should > 0 and dy > 0.");
+	if (! (my z = NUMfmatrix_readText (1, my ny, 1, my nx, file, "z"))) return 0;
 	return 1;
 }
 
@@ -136,8 +137,8 @@ class_methods (Matrix, Sampled)
 	class_method_local (Matrix, description)
 	class_method_local (Matrix, copy)
 	class_method_local (Matrix, equal)
-	class_method_local (Matrix, writeAscii)
-	class_method (readAscii)
+	class_method_local (Matrix, writeText)
+	class_method (readText)
 	class_method_local (Matrix, writeBinary)
 	class_method_local (Matrix, readBinary)
 	class_method (info)

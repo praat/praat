@@ -39,9 +39,9 @@
 #include "ExperimentMFC_def.h"
 #include "oo_EQUAL.h"
 #include "ExperimentMFC_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "ExperimentMFC_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "ExperimentMFC_def.h"
 #include "oo_READ_BINARY.h"
 #include "ExperimentMFC_def.h"
@@ -56,8 +56,8 @@ class_methods (ExperimentMFC, Data)
 	class_method_local (ExperimentMFC, description)
 	class_method_local (ExperimentMFC, copy)
 	class_method_local (ExperimentMFC, equal)
-	class_method_local (ExperimentMFC, writeAscii)
-	class_method_local (ExperimentMFC, readAscii)
+	class_method_local (ExperimentMFC, writeText)
+	class_method_local (ExperimentMFC, readText)
 	class_method_local (ExperimentMFC, writeBinary)
 	class_method_local (ExperimentMFC, readBinary)
 class_methods_end
@@ -69,7 +69,7 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 	double medialSilenceDuration, char **name, Sound *sound)
 {
 	char fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	strcpy (fileNameBuffer, *name);
 	/*
 	 * The following conversion is needed when fileNameHead is an absolute path,
@@ -325,8 +325,8 @@ class_methods (ResultsMFC, Data)
 	class_method_local (ResultsMFC, description)
 	class_method_local (ResultsMFC, copy)
 	class_method_local (ResultsMFC, equal)
-	class_method_local (ResultsMFC, writeAscii)
-	class_method_local (ResultsMFC, readAscii)
+	class_method_local (ResultsMFC, writeText)
+	class_method_local (ResultsMFC, readText)
 	class_method_local (ResultsMFC, writeBinary)
 	class_method_local (ResultsMFC, readBinary)
 class_methods_end

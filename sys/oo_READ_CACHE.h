@@ -22,6 +22,7 @@
  * pb 2002/03/07 GPL
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
+ * pb 2007/06/21
  */
 
 #include "oo_undef.h"
@@ -207,13 +208,14 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
+#define oo_VALIDATING_ASCII  0
 #define oo_READING  1
-#define oo_READING_ASCII  0
+#define oo_READING_TEXT  0
 #define oo_READING_BINARY  0
 #define oo_READING_CACHE  1
 #define oo_READING_LISP  0
 #define oo_WRITING  0
-#define oo_WRITING_ASCII  0
+#define oo_WRITING_TEXT  0
 #define oo_WRITING_BINARY  0
 #define oo_WRITING_CACHE  0
 #define oo_WRITING_LISP  0

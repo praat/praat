@@ -45,11 +45,11 @@ static int bookkeeping (FFNet me);
 #include "FFNet_def.h"
 #include "oo_EQUAL.h"
 #include "FFNet_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "FFNet_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "FFNet_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "FFNet_def.h"
 #include "oo_READ_BINARY.h"
 #include "FFNet_def.h"
@@ -159,7 +159,7 @@ static int bookkeeping (FFNet me)
     }
     if (my nWeights > 0 && my nWeights != nWeights) return 0;
     my nWeights = nWeights;
-    /* FFNet_readAscii already fills my w */ 
+    /* FFNet_readText already fills my w */ 
 	if ( (! my w && ! (my w = NUMdvector (1, my nWeights))) ||
         ! (my activity     = NUMdvector (1, my nNodes)) ||
         ! (my isbias       = NUMlvector (1, my nNodes)) ||
@@ -218,9 +218,9 @@ class_methods (FFNet, Data)
 	class_method_local (FFNet, destroy)
 	class_method_local (FFNet, copy)
 	class_method_local (FFNet, equal)
-	class_method_local (FFNet, writeAscii)
+	class_method_local (FFNet, writeText)
 	class_method_local (FFNet, writeBinary)
-	class_method_local (FFNet, readAscii)
+	class_method_local (FFNet, readText)
 	class_method_local (FFNet, readBinary)
 	class_method_local (FFNet, description)
     class_method (info)

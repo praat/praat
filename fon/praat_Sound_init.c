@@ -137,7 +137,7 @@ FORM (LongSound_writePartToAudioFile, "LongSound: Write part to audio file", 0)
 	REAL ("right Time range (s)", "10.0")
 	OK
 DO
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	if (! Melder_relativePathToFileW (GET_STRINGW (L"Audio file"), & file)) return 0;
 	if (! LongSound_writePartToAudioFile16 (ONLY (classLongSound), GET_INTEGER ("Type"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), & file)) return 0;
@@ -1681,7 +1681,7 @@ FORM (Sound_writeToRawSoundFile, "Write to raw sound file", 0)
 		RADIOBUTTON ("Linear 16-bit little-endian")
 	OK
 DO
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	Melder_relativePathToFileW (GET_STRINGW (L"Raw binary file"), & file);
 	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGER ("Encoding"))) return 0;
 END

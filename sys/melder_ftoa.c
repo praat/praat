@@ -170,14 +170,14 @@ const wchar_t * Melder_doubleW (double value) {
 const char * Melder_singleA (double value) {
 	if (value == NUMundefined) return "--undefined--";
 	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	sprintf (buffersA [ibufferA], "%.8g", value);
+	sprintf (buffersA [ibufferA], "%.9g", value);
 	return buffersA [ibufferA];
 }
 
 const wchar_t * Melder_singleW (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.8g", value);
+	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.9g", value);
 	return buffersW [ibufferW];
 }
 

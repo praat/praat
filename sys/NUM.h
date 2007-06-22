@@ -25,7 +25,7 @@
  * pb 2004/10/16 replaced struct Type with struct structType
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
- * pb 2007/01/27
+ * pb 2007/06/21 readText and writeText API change
  */
 
 /* "NUM" = "NUMerics" */
@@ -386,16 +386,16 @@ void NUMautoscale (float x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(t,type)  \
-	int NUM##t##vector_writeAscii (const type *v, long lo, long hi, FILE *f, const char *name); \
+	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const char *name); \
 	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f); \
 	int NUM##t##vector_writeCache (const type *v, long lo, long hi, CACHE *f); \
-	type * NUM##t##vector_readAscii (long lo, long hi, FILE *f, const char *name); \
+	type * NUM##t##vector_readText (long lo, long hi, MelderFile file, const char *name); \
 	type * NUM##t##vector_readBinary (long lo, long hi, FILE *f); \
 	type * NUM##t##vector_readCache (long lo, long hi, CACHE *f); \
-	int NUM##t##matrix_writeAscii (type **v, long r1, long r2, long c1, long c2, FILE *f, const char *name); \
+	int NUM##t##matrix_writeText (type **v, long r1, long r2, long c1, long c2, MelderFile file, const char *name); \
 	int NUM##t##matrix_writeBinary (type **v, long r1, long r2, long c1, long c2, FILE *f); \
 	int NUM##t##matrix_writeCache (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
-	type ** NUM##t##matrix_readAscii (long r1, long r2, long c1, long c2, FILE *f, const char *name); \
+	type ** NUM##t##matrix_readText (long r1, long r2, long c1, long c2, MelderFile file, const char *name); \
 	type ** NUM##t##matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f); \
 	type ** NUM##t##matrix_readCache (long r1, long r2, long c1, long c2, CACHE *f);
 FUNCTION (b, signed char)
@@ -419,19 +419,19 @@ int NUMfvector_writeBinary (const float *v, long lo, long hi, FILE *f);   // etc
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The vectors need not have been created by NUM...vector.
-float * NUMfvector_readAscii (long lo, long hi, FILE *f, const char *name);   // etc
+float * NUMfvector_readText (long lo, long hi, MelderFile file, const char *name);   // etc
 	create and read a vector as text from the stream f.
 	Queue an error message and return NULL if something went wrong.
 	Every element is supposed to be on the beginning of a line.
 float * NUMfvector_readBinary (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Queue an error message and return NULL if something went wrong.
-int NUMfvector_writeAscii (const float *v, long lo, long hi, FILE *f, const char *name);   // etc
+int NUMfvector_writeText (const float *v, long lo, long hi, MelderFile file, const char *name);   // etc
 	write the vector elements v [lo..hi] as text to the stream f,
 	each element on its own line, preceded by "name [index]: ".
 	Return 0 if something went wrong, else return 1.
 	The vectors need not have been created by NUMvector.
-int NUMfmatrix_writeAscii (float **m, long r1, long r2, long c1, long c2, FILE *f, const char *name);   // etc
+int NUMfmatrix_writeText (float **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
@@ -440,7 +440,7 @@ int NUMfmatrix_writeBinary (float **m, long r1, long r2, long c1, long c2, FILE 
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-float ** NUMfmatrix_readAscii (long r1, long r2, long c1, long c2, FILE *f, const char *name);   // etc
+float ** NUMfmatrix_readText (long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
 	create and read a matrix as text from the stream f.
 	Give an error message and return NULL if something went wrong.
 float ** NUMfmatrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc

@@ -180,6 +180,8 @@ static int waitWhileProgress (double progress, char *message, Widget dia, Widget
 	{
 		EventRecord event;
 		(void) cancelButton;
+		// BUG: key events are handled somewhat earlier nowadays, so the next trick does not really ignore key events (and menu commands).
+		// Dangerous!
 		while (GetNextEvent (keyDownMask, & event)) {
 			if ((event.modifiers & cmdKey) && (event.message & charCodeMask) == '.') {
 				FlushEvents (everyEvent, 0);

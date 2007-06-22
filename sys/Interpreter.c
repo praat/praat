@@ -147,7 +147,7 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 			/*
 				Get the contents of the include file.
 			 */
-			structMelderFile includeFile = { { 0 } };
+			structMelderFile includeFile = { 0 };
 			if (! Melder_relativePathToFileW (includeFileName, & includeFile)) return 0;
 			includeText = MelderFile_readTextW (& includeFile);
 			if (! includeText) {
@@ -1211,7 +1211,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						{ Melder_error3 (L"Missing expression after variable ", command2.string, L"."); goto end; }
 				}
 				if (withFile) {
-					structMelderFile file = { { 0 } };
+					structMelderFile file = { 0 };
 					Melder_relativePathToFileW (p, & file); cherror
 					if (withFile == 1) {
 						value = MelderFile_readTextW (& file); cherror

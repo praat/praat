@@ -59,9 +59,9 @@
 #include "Strings_def.h"
 #include "oo_EQUAL.h"
 #include "Strings_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Strings_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Strings_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Strings_def.h"
@@ -102,8 +102,8 @@ class_methods (Strings, Data)
 	class_method_local (Strings, description)
 	class_method_local (Strings, copy)
 	class_method_local (Strings, equal)
-	class_method_local (Strings, writeAscii)
-	class_method_local (Strings, readAscii)
+	class_method_local (Strings, writeText)
+	class_method_local (Strings, readText)
 	class_method_local (Strings, writeBinary)
 	class_method_local (Strings, readBinary)
 	class_method (info)

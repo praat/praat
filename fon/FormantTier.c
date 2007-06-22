@@ -32,9 +32,9 @@
 #include "FormantTier_def.h"
 #include "oo_EQUAL.h"
 #include "FormantTier_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "FormantTier_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "FormantTier_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "FormantTier_def.h"
@@ -47,8 +47,8 @@ class_methods (FormantPoint, Data)
 	class_method_local (FormantPoint, destroy)
 	class_method_local (FormantPoint, copy)
 	class_method_local (FormantPoint, equal)
-	class_method_local (FormantPoint, writeAscii)
-	class_method_local (FormantPoint, readAscii)
+	class_method_local (FormantPoint, writeText)
+	class_method_local (FormantPoint, readText)
 	class_method_local (FormantPoint, writeBinary)
 	class_method_local (FormantPoint, readBinary)
 	class_method_local (FormantPoint, description)
@@ -65,8 +65,8 @@ class_methods (FormantTier, Function)
 	class_method_local (FormantTier, destroy)
 	class_method_local (FormantTier, copy)
 	class_method_local (FormantTier, equal)
-	class_method_local (FormantTier, writeAscii)
-	class_method_local (FormantTier, readAscii)
+	class_method_local (FormantTier, writeText)
+	class_method_local (FormantTier, readText)
 	class_method_local (FormantTier, writeBinary)
 	class_method_local (FormantTier, readBinary)
 	class_method_local (FormantTier, description)

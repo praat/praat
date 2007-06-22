@@ -389,8 +389,6 @@ END
 
 /********** Callbacks of the Write menu. **********/
 
-DIRECT (Data_writeToConsole) return Data_writeToConsole (ONLY_OBJECT); END
-
 FORM_WRITE (Data_writeToTextFile, "Write Object(s) to text file", 0, 0)
 	if (theCurrentPraat -> totalSelection == 1) {
 		return Data_writeToTextFile (ONLY_OBJECT, file);
@@ -586,13 +584,6 @@ void praat_addMenus (Widget bar) {
 
 	praat_addMenuCommand ("Objects", "Read", "Read from file...", 0, 'O', DO_Data_readFromFile);
 
-	praat_addAction1 (classData, 1, "Write to console", 0,
-	#ifdef UNIX
-		0,
-	#else
-		praat_HIDDEN,
-	#endif
-		DO_Data_writeToConsole);
 	praat_addAction1 (classData, 0, "Write to text file...", 0, 0, DO_Data_writeToTextFile);
 	praat_addAction1 (classData, 0, "Write to short text file...", 0, 0, DO_Data_writeToShortTextFile);
 	praat_addAction1 (classData, 0, "Write to binary file...", 0, 0, DO_Data_writeToBinaryFile);

@@ -304,12 +304,22 @@ wchar_t * Melder_getInfo (void) {
 }
 
 void Melder_print (const wchar_t *s) {
-	Melder_assert (theInfos == & theForegroundBuffer);   // Never diverted.
+	//Melder_assert (theInfos == & theForegroundBuffer);   // Never diverted.
+	/*
+	 * This procedure is always called from a script; therefore, this is unlikely to be called when the info is diverted.
+	 * Unlikely, but not impossible!
+	 * The small possibility occurs when the script, having diverted the info through an assignment command,
+	 * causes the progress bar to move. If the user chooses Run while the progress bar moves,
+	 * the script will start to run and may call print:
+	 *    pitch = To Pitch... 0 75 600
+	 * Therefore, we write into the Info window explicitly. The results will still be strange,
+	 * and a better solution would be to disallow the script from running (BUG: accept fewer events in waitWhileProgress).
+	 */
 	if (theInformation == defaultInformation) {
 		printf ("%s", Melder_peekWcsToAscii (s));   // Do not print the previous lines again.
 	} else {
-		MelderStringW_appendW (theInfos, s);
-		theInformation (theInfos -> string);
+		MelderStringW_appendW (& theForegroundBuffer, s);
+		theInformation (theForegroundBuffer. string);
 	}
 }
 

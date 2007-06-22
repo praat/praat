@@ -61,9 +61,9 @@
 #include "SSCP_def.h"
 #include "oo_EQUAL.h"
 #include "SSCP_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "SSCP_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "SSCP_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "SSCP_def.h"
@@ -81,8 +81,8 @@ class_methods (SSCP, TableOfReal)
 	class_method_local (SSCP, description)
 	class_method_local (SSCP, copy)
 	class_method_local (SSCP, equal)
-	class_method_local (SSCP, writeAscii)
-	class_method_local (SSCP, readAscii)
+	class_method_local (SSCP, writeText)
+	class_method_local (SSCP, readText)
 	class_method_local (SSCP, writeBinary)
 	class_method_local (SSCP, readBinary)
 class_methods_end

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/06/21
  */
 
 /* Data inherits from Thing. */
@@ -37,7 +37,7 @@ Any Data_copy (I);
 		result -> name == NULL;	// The only attribute NOT copied.
 */
 
-int Data_equal (Any data1, Any data2);
+bool Data_equal (Any data1, Any data2);
 /*
 	Message:
 		"return 1 if the shallow or deep attributes of 'data1' and 'data2' are equal;
@@ -46,38 +46,34 @@ int Data_equal (Any data1, Any data2);
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */
 
-int Data_canWriteAscii (I);
+bool Data_canWriteAsAscii (I);
+/*
+	Message:
+		"Can you write yourself as ASCII text?"
+	The answer depends on whether all members can be written as ASCII text.
+*/
+
+bool Data_canWriteText (I);
 /*
 	Message:
 		"Can you write yourself as text?"
-	The answer depends on whether the subclass defines the 'writeAscii' method.
+	The answer depends on whether the subclass defines the 'writeText' method.
 */
 
-int Data_writeAscii (I, FILE *f);
+int Data_writeText (I, MelderFile openFile);
 /*
 	Message:
-		"try to write yourself as text to the stream <f>."
+		"try to write yourself as text to an open file."
 	Return value:
 		1 if OK, 0 in case of failure.
 	Failures:
 		I/O error.
 		Disk full.
 	Description:
-		The format depends on the 'writeAscii' method defined by the subclass.
+		The format depends on the 'writeText' method defined by the subclass.
 */
 
-int Data_writeToConsole (I);
-/*
-	Message:
-		"try to write yourself as text to the standard output."
-	Return value:
-		1 if OK, 0 in case of failure.
-	Description:
-		The format is the same as in Data_writeAscii.
-		The standard output will most often be a window named "Console".
-*/
-
-int Data_writeToTextFile (I, MelderFile fs);
+int Data_writeToTextFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -85,10 +81,10 @@ int Data_writeToTextFile (I, MelderFile fs);
 		The first line is 'File type = "ooTextFile"'.
 		Your class name is written in the second line,
 		e.g., if you are a Person, the second line will be 'Object class = "Person"'.
-		The format of the lines after the second line is the same as in Data_writeAscii.
+		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-int Data_writeToShortTextFile (I, MelderFile fs);
+int Data_writeToShortTextFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -96,10 +92,10 @@ int Data_writeToShortTextFile (I, MelderFile fs);
 		The first line is 'File type = "ooTextFile short"'.
 		Your class name is written in the second line,
 		e.g., if you are a Person, the second line will be '"Person"'.
-		The format of the lines after the second line is the same as in Data_writeAscii.
+		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-int Data_canWriteBinary (I);
+bool Data_canWriteBinary (I);
 /*
 	Message:
 		"Can you write yourself as binary data?"
@@ -109,7 +105,7 @@ int Data_canWriteBinary (I);
 int Data_writeBinary (I, FILE *f);
 /*
 	Message:
-		"try to write yourself as binary data to the stream <f>."
+		"try to write yourself as binary data to an open file."
 	Return value:
 		1 if OK, 0 in case of failure.
 	Failures:
@@ -121,7 +117,7 @@ int Data_writeBinary (I, FILE *f);
 		and IEEE floating-point format.
 */
 
-int Data_writeToBinaryFile (I, MelderFile fs);
+int Data_writeToBinaryFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as binary data to a file".
@@ -131,7 +127,7 @@ int Data_writeToBinaryFile (I, MelderFile fs);
 		The format of the file after this is the same as in Data_writeBinary.
 */
 
-int Data_canWriteLisp (I);
+bool Data_canWriteLisp (I);
 /*
 	Message:
 		"Can you write yourself as a sequece of LISP objects?"
@@ -178,46 +174,46 @@ int Data_writeToLispFile (I, MelderFile fs);
 	that you want to read by name. This call is best placed in the beginning of main ().
 */
 
-int Data_canReadAscii (I);
+bool Data_canReadText (I);
 /*
 	Message:
 		"Can you read yourself as text?"
-	The answer depends on whether the subclass defines a 'readAscii' method,
-	but is preferably the same as the answer from Data_canWriteAscii.
+	The answer depends on whether the subclass defines a 'readText' method,
+	but is preferably the same as the answer from Data_canWriteText.
 */
 
-int Data_readAscii (I, FILE *f);
+int Data_readText (I, MelderFile openFile);
 /*
 	Message:
-		"try to read yourself as text from the stream <f>."
+		"try to read yourself as text from an open file."
 	Return value:
 		1 if OK, 0 in case of failure.
 	Failures:
-		The 'readAscii' method of the subclass failed (returned 0).
+		The 'readText' method of the subclass failed (returned 0).
 		I/O error.
 		Early end of file detected.
 	Description:
-		The format depends on the 'readAscii' method defined by the subclass,
-		but is preferably the same as the format produced by the 'writeAscii' method.
+		The format depends on the 'readText' method defined by the subclass,
+		but is preferably the same as the format produced by the 'writeText' method.
 */
 
-Any Data_readFromTextFile (MelderFile fs);
+Any Data_readFromTextFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as text from a file".
 	Description:
 		The Data's class name is read from the first line,
 		e.g., if the first line is "PersonTextFile", the Data will be a Person.
-		The format of the lines after the first line is the same as in Data_readAscii.
+		The format of the lines after the first line is the same as in Data_readText.
 	Return value:
 		the new object if OK, or NULL in case of failure.
 	Failures:
 		Error opening file <fileName>.
 		The file <fileName> does not contain an object.
-		(plus those from Data_readAscii)
+		(plus those from Data_readText)
 */
 
-int Data_canReadBinary (I);
+bool Data_canReadBinary (I);
 /*
 	Message:
 		"Can you read yourself as binary data?"
@@ -256,7 +252,7 @@ Any Data_readFromBinaryFile (MelderFile fs);
 		(plus those from Data_readBinary)
 */
 
-int Data_canReadLisp (I);
+bool Data_canReadLisp (I);
 /*
 	Message:
 		"Can you read yourself from a sequence of LISP objects?"
@@ -311,9 +307,10 @@ typedef struct structData_Description {
 #define Data_methods Thing_methods \
 	struct structData_Description *description; \
 	int (*copy) (Any data_from, Any data_to); \
-	int (*equal) (Any data1, Any data2); \
-	int (*writeAscii) (I, FILE *f); \
-	int (*readAscii) (I, FILE *f); \
+	bool (*equal) (Any data1, Any data2); \
+	bool (*canWriteAsAscii) (I); \
+	int (*writeText) (I, MelderFile openFile); \
+	int (*readText) (I, MelderFile openFile); \
 	int (*writeBinary) (I, FILE *f); \
 	int (*readBinary) (I, FILE *f); \
 	int (*writeCache) (I, CACHE *f); \
@@ -424,8 +421,8 @@ class_create (Data, Thing);
 			#include "oo_EQUAL.h"
 			#include "Miep_def.h"
 
-	int writeAscii (I, FILE *f)
-		Message sent by Data_writeAscii:
+	int writeText (I, FILE *f)
+		Message sent by Data_writeText:
 			write all of my members as text to the stream f.
 		Inheritor:
 			You can either entirely override this method,
@@ -435,22 +432,22 @@ class_create (Data, Thing);
 			for I/O errors, this will be rare.
 		Example:
 			iam (Miep);
-			inherited (Miep) writeAscii (me, f);   // Olie's members.
+			inherited (Miep) writeText (me, f);   // Olie's members.
 			ascputr8 (my xmin, f, "xmin");
 			ascputr8 (my xmax, f, "xmax");
 			ascputi4 (my length, f, "length");
-			NUMfvector_writeAscii (my array, 1, my length, f, "array");
-			Data_writeAscii (my object, f);
+			NUMfvector_writeText (my array, 1, my length, f, "array");
+			Data_writeText (my object, f);
 			return 1;
 		After exit:
 			if you returned 0, or if there is an error on the stream (like disk full),
-			Data_writeAscii queues an error message and returns 0.
-		YOU WOULD NORMALLY USE oo_WRITE_ASCII.h INSTEAD OF IMPLEMENTING THIS ROUTINE BY YOURSELF:
-			#include "oo_WRITE_ASCII.h"
+			Data_writeText queues an error message and returns 0.
+		YOU WOULD NORMALLY USE oo_WRITE_TEXT.h INSTEAD OF IMPLEMENTING THIS ROUTINE BY YOURSELF:
+			#include "oo_WRITE_TEXT.h"
 			#include "Miep_def.h"
 
-	int readAscii (I, FILE *f)
-		Message sent by Data_readAscii:
+	int readText (I, FILE *f)
+		Message sent by Data_readText:
 			read all of my members as text from the stream f.
 		Inheritor:
 			You can either entirely override this method,
@@ -461,23 +458,23 @@ class_create (Data, Thing);
 		Example:
 			iam (Miep);
 			char line [200];
-			if (! inherited (Miep) readAscii (me, f)) return 0;
+			if (! inherited (Miep) readText (me, f)) return 0;
 			my xmin = ascgetr8 (f);
 			my xmax = ascgetr8 (f);
 			if (my xmax <= my xmin)
-				return Melder_error ("Miep::readAscii: xmax must be greater than xmin.");
+				return Melder_error ("Miep::readText: xmax must be greater than xmin.");
 			my length = ascgeti4 (f);
 			if (my length < 1)
-				return Melder_error ("Miep::readAscii: length must be positive, not %ld.", my length);
-			if (! (my array = NUMfvector_readAscii (1, my length, f))) return 0;
+				return Melder_error ("Miep::readText: length must be positive, not %ld.", my length);
+			if (! (my array = NUMfvector_readText (1, my length, f))) return 0;
 			if (! (my object = new (Theo))) return 0;   // Out of memory.
-			if (! Data_readAscii (my object, f))   // Recursion.
+			if (! Data_readText (my object, f))   // Recursion.
 				return 0;
 			return 1;
 		After exit:
-			if you returned 0, Data_readAscii relays your error message and returns 0.
-		YOU WOULD NORMALLY USE oo_READ_ASCII.h INSTEAD OF IMPLEMENTING THIS ROUTINE BY YOURSELF:
-			#include "oo_READ_ASCII.h"
+			if you returned 0, Data_readText relays your error message and returns 0.
+		YOU WOULD NORMALLY USE oo_READ_TEXT.h INSTEAD OF IMPLEMENTING THIS ROUTINE BY YOURSELF:
+			#include "oo_READ_TEXT.h"
 			#include "Miep_def.h"
 
 	int writeBinary (I, FILE *f)
@@ -557,10 +554,10 @@ class_create (Data, Thing);
 #define lenumwa  16
 #define booleanwa  17
 #define questionwa  18
-#define sstringwa  19
-#define stringwa  20
+#define stringwa  19
+#define stringwwa  20
 #define lstringwa  21
-#define wstringwa  22
+#define lstringwwa  22
 #define structwa  23
 #define widgetwa  24
 #define objectwa  25
@@ -655,7 +652,7 @@ Behaviour:
 	If this also fails, Data_readFromFile returns NULL.
 */
 
-extern structMelderFile Data_fileBeingRead;
+extern structMelderDir Data_directoryBeingRead;
 
 /* End of file Data.h */
 #endif

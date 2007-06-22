@@ -30,9 +30,9 @@
 #include "AnyTier_def.h"
 #include "oo_EQUAL.h"
 #include "AnyTier_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "AnyTier_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "AnyTier_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "AnyTier_def.h"
@@ -45,8 +45,8 @@ class_methods (AnyPoint, Data)
 	class_method_local (AnyPoint, destroy)
 	class_method_local (AnyPoint, copy)
 	class_method_local (AnyPoint, equal)
-	class_method_local (AnyPoint, writeAscii)
-	class_method_local (AnyPoint, readAscii)
+	class_method_local (AnyPoint, writeText)
+	class_method_local (AnyPoint, readText)
 	class_method_local (AnyPoint, writeBinary)
 	class_method_local (AnyPoint, readBinary)
 	class_method_local (AnyPoint, description)
@@ -56,8 +56,8 @@ class_methods (AnyTier, Function)
 	class_method_local (AnyTier, destroy)
 	class_method_local (AnyTier, copy)
 	class_method_local (AnyTier, equal)
-	class_method_local (AnyTier, writeAscii)
-	class_method_local (AnyTier, readAscii)
+	class_method_local (AnyTier, writeText)
+	class_method_local (AnyTier, readText)
 	class_method_local (AnyTier, writeBinary)
 	class_method_local (AnyTier, readBinary)
 	class_method_local (AnyTier, description)

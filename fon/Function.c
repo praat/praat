@@ -31,9 +31,9 @@
 #include "Function_def.h"
 #include "oo_EQUAL.h"
 #include "Function_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Function_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Function_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Function_def.h"
@@ -112,8 +112,8 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 class_methods (Function, Data)
 	class_method_local (Function, copy)
 	class_method_local (Function, equal)
-	class_method_local (Function, writeAscii)
-	class_method_local (Function, readAscii)
+	class_method_local (Function, writeText)
+	class_method_local (Function, readText)
 	class_method_local (Function, writeBinary)
 	class_method_local (Function, readBinary)
 	class_method_local (Function, description)

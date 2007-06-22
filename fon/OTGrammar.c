@@ -47,6 +47,8 @@
  * pb 2007/04/25 new decision strategy: MaximumEntropy
  * pb 2007/04/30 many improvements
  * pb 2007/05/20 new decision strategy: PositiveHG
+ * pb 2007/06/21 corrected PositiveHG
+ * pb 2007/06/21 made spreadsheet file readable as Table
  */
 
 #include "OTGrammar.h"
@@ -81,42 +83,72 @@ static void classOTGrammar_info (I) {
 	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (OTGrammar);
-	long icons, irank, itab, icand;
-	const char *p;
-	fprintf (f, "\n<%s>", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
-	fprintf (f, "\n%ld constraints", my numberOfConstraints);
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	texput (file, "\n<");
+	texput (file, enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
+	texput (file, ">\n");
+	texput (file, Melder_integer (my numberOfConstraints));
+	texput (file, " constraints");
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		fprintf (f, "\nconstraint [%ld]: \"", icons);
-		for (p = & constraint -> name [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
-		fprintf (f, "\" %.17g %.17g ! ", constraint -> ranking, constraint -> disharmony);
-		for (p = & constraint -> name [0]; *p; p ++) {
-			if (*p == '\n') fputc (' ', f);
+		texput (file, "\nconstraint [");
+		texput (file, Melder_integer (icons));
+		texput (file, "]: \"");
+		for (const char *p = & constraint -> name [0]; *p; p ++) {
+			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
+			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+		}
+		texput (file, "\" ");
+		texput (file, Melder_double (constraint -> ranking));
+		texput (file, " ");
+		texput (file, Melder_double (constraint -> disharmony));
+		texput (file, " ! ");
+		for (const char *p = & constraint -> name [0]; *p; p ++) {
+			if (*p == '\n') fputc (' ', file -> filePointer);   // BUG: this is DATA.
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
 			else if (*p == '}') { }
-			else fputc (*p, f);
+			else fputc (*p, file -> filePointer);
 		}
 	}
-	fprintf (f, "\n\n%ld fixed rankings", my numberOfFixedRankings);
-	for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
+	texput (file, "\n\n");
+	texput (file, Melder_integer (my numberOfFixedRankings));
+	texput (file, " fixed rankings");
+	for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 		OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-		fprintf (f, "\n   %ld %ld", fixedRanking -> higher, fixedRanking -> lower);
+		texput (file, "\n   ");
+		texput (file, Melder_integer (fixedRanking -> higher));
+		texput (file, " %");
+		texput (file, Melder_integer (fixedRanking -> lower));
 	}
-	fprintf (f, "\n\n%ld tableaus", my numberOfTableaus);
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+	texput (file, "\n\n");
+	texput (file, Melder_integer (my numberOfTableaus));
+	texput (file, " tableaus");
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		fprintf (f, "\ninput [%ld]: \"", itab);
-		for (p = & tableau -> input [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
-		fprintf (f, "\" %ld", tableau -> numberOfCandidates);
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		texput (file, "\ninput [");
+		texput (file, Melder_integer (itab));
+		texput (file, "]: \"");
+		for (const char *p = & tableau -> input [0]; *p; p ++) {
+			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
+			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+		}
+		texput (file, "\" ");
+		texput (file, Melder_integer (tableau -> numberOfCandidates));
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			fprintf (f, "\n   candidate [%ld]: \"", icand);
-			for (p = & candidate -> output [0]; *p; p ++) { if (*p =='\"') fputc (*p, f); fputc (*p, f); }
-			fprintf (f, "\"");
-			for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-				fprintf (f, " %d", candidate -> marks [icons]);
+			texput (file, "\n   candidate [");
+			texput (file, Melder_integer (icand));
+			texput (file, "]: \"");
+			for (const char *p = & candidate -> output [0]; *p; p ++) {
+				if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
+				fputc (*p, file -> filePointer);   // BUG: this is DATA.
+			}
+			texput (file, "\"");
+			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
+				texput (file, " ");
+				texput (file, Melder_integer (candidate -> marks [icons]));
+			}
 		}
 	}
 	return 1;
@@ -130,44 +162,44 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	int localVersion = Thing_version;
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
-	if (! inherited (OTGrammar) readAscii (me, f)) return 0;
+	if (! inherited (OTGrammar) readText (me, file)) return 0;
 	if (localVersion >= 1) {
-		if ((my decisionStrategy = ascgete1 (f, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return 0;
+		if ((my decisionStrategy = texgete1 (file, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return 0;
 	}
-	if ((my numberOfConstraints = ascgeti4 (f)) < 1) return Melder_error ("No constraints.");
+	if ((my numberOfConstraints = texgeti4 (file)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		if (! (constraint -> name = ascgets2 (f))) return 0;
-		constraint -> ranking = ascgetr8 (f);
-		constraint -> disharmony = ascgetr8 (f);
+		if (! (constraint -> name = texgets2 (file))) return 0;
+		constraint -> ranking = texgetr8 (file);
+		constraint -> disharmony = texgetr8 (file);
 	}
-	if ((my numberOfFixedRankings = ascgeti4 (f)) >= 1) {
+	if ((my numberOfFixedRankings = texgeti4 (file)) >= 1) {
 		if (! (my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings))) return 0;
 		for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-			fixedRanking -> higher = ascgeti4 (f);
-			fixedRanking -> lower = ascgeti4 (f);
+			fixedRanking -> higher = texgeti4 (file);
+			fixedRanking -> lower = texgeti4 (file);
 		}
 	}
-	if ((my numberOfTableaus = ascgeti4 (f)) < 1) return Melder_error ("No tableaus.");
+	if ((my numberOfTableaus = texgeti4 (file)) < 1) return Melder_error ("No tableaus.");
 	if (! (my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus))) return 0;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! (tableau -> input = ascgets2 (f))) return 0;
-		if ((tableau -> numberOfCandidates = ascgeti4 (f)) < 1) return Melder_error ("No candidates in tableau %ld.", itab);
+		if (! (tableau -> input = texgets2 (file))) return 0;
+		if ((tableau -> numberOfCandidates = texgeti4 (file)) < 1) return Melder_error ("No candidates in tableau %ld.", itab);
 		if (! (tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates))) return 0;
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			if (! (candidate -> output = ascgets2 (f))) return 0;
+			if (! (candidate -> output = texgets2 (file))) return 0;
 			candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 			if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 			for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-				candidate -> marks [icons] = ascgeti2 (f);
+				candidate -> marks [icons] = texgeti2 (file);
 		}
 	}
 	OTGrammar_checkIndex (me);
@@ -181,8 +213,8 @@ class_methods (OTGrammar, Data)
 	class_method_local (OTGrammar, description)
 	class_method_local (OTGrammar, copy)
 	class_method_local (OTGrammar, equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method_local (OTGrammar, writeBinary)
 	class_method_local (OTGrammar, readBinary)
 class_methods_end
@@ -271,7 +303,7 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
 		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG)) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
-				disharmony += my constraints [icons]. disharmony * marks [icons];
+				disharmony += constraintDisharmony * marks [icons];
 			}
 		} else {
 			Melder_fatal ("_OTGrammar_fillInHarmonies: unimplemented decision strategy.");
@@ -2075,7 +2107,7 @@ int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		long winner = OTGrammar_getWinner (me, itab), icand, numberOfOptimalCandidates = 0;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
 			fprintf (f, "\t");
 		}
 		fprintf (f, "\nINPUT\t%s", tableau -> input);

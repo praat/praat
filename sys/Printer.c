@@ -352,7 +352,7 @@ int Printer_postScriptSettings (void) {
 
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	#if defined (UNIX)
-		structMelderFile tempFile = { { 0 } };
+		structMelderFile tempFile = { 0 };
 		char tempPath [200], command [500];
 		strcpy (tempPath, "/tmp/picXXXXXX");
 		mktemp (tempPath);

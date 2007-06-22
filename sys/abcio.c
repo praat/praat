@@ -37,7 +37,8 @@
 
 /********** ASCII I/O **********/
 
-static long getInteger (FILE *f) {
+static long getInteger (MelderFile file) {
+	FILE *f = file -> filePointer;
 	int c, i;
 	char buffer [41];
 	for (c = fgetc (f); c != '-' && ! isdigit (c) && c != '+'; c = fgetc (f)) {
@@ -81,7 +82,8 @@ static long getInteger (FILE *f) {
 	return atol (buffer);
 }
 
-static unsigned long getUnsigned (FILE *f) {
+static unsigned long getUnsigned (MelderFile file) {
+	FILE *f = file -> filePointer;
 	unsigned long result;
 	int c, i;
 	char buffer [41];
@@ -131,7 +133,8 @@ static unsigned long getUnsigned (FILE *f) {
 	return result;
 }
 
-static double getReal (FILE *f) {
+static double getReal (MelderFile file) {
+	FILE *f = file -> filePointer;
 	int c, i;
 	char buffer [41], *slash;
 	do {
@@ -186,7 +189,8 @@ static double getReal (FILE *f) {
 	return Melder_atof (buffer);
 }
 
-static short getEnum (FILE *f, void *enumerated) {
+static short getEnum (MelderFile file, void *enumerated) {
+	FILE *f = file -> filePointer;
 	int c, i;
 	char buffer [41];
 	for (c = fgetc (f); c != '<'; c = fgetc (f)) {
@@ -238,7 +242,8 @@ static short getEnum (FILE *f, void *enumerated) {
 	return enum_search (enumerated, buffer);
 }
 
-static char * getString (FILE *f) {
+static char * getString (MelderFile file) {
+	FILE *f = file -> filePointer;
 	int c, i;
 	static char *buffer;
 	static long capacity;
@@ -316,100 +321,115 @@ enum_begin (ascio_Existence, absent)
 	enum (exists)
 enum_end (ascio_Existence)
 
-int ascgeti1 (FILE *f) { return getInteger (f); }   /* There should be out-of-bound checks here... */
-int ascgeti2 (FILE *f) { return getInteger (f); }
-long ascgeti4 (FILE *f) { return getInteger (f); }
-unsigned int ascgetu1 (FILE *f) { return getInteger (f); }
-unsigned int ascgetu2 (FILE *f) { return getUnsigned (f); }
-unsigned long ascgetu4 (FILE *f) { return getUnsigned (f); }
-double ascgetr4 (FILE *f) { return getReal (f); }
-double ascgetr8 (FILE *f) { return getReal (f); }
-double ascgetr10 (FILE *f) { return getReal (f); }
-fcomplex ascgetc8 (FILE *f) { fcomplex z; z.re = getReal (f); z.im = getReal (f); return z; }
-dcomplex ascgetc16 (FILE *f) { dcomplex z; z.re = getReal (f); z.im = getReal (f); return z; }
-char ascgetc1 (FILE *f) { return getInteger (f); }
-short ascgete1 (FILE *f, void *enumerated) { return getEnum (f, enumerated); }
-short ascgete2 (FILE *f, void *enumerated) { return getEnum (f, enumerated); }
-short ascgeteb (FILE *f) { return getEnum (f, & enum_ascio_Boolean); }
-short ascgeteq (FILE *f) { return getEnum (f, & enum_ascio_Question); }
-short ascgetex (FILE *f) { return getEnum (f, & enum_ascio_Existence); }
-char *ascgets1 (FILE *f) { return getString (f); }
-char *ascgets2 (FILE *f) { return getString (f); }
-char *ascgets4 (FILE *f) { return getString (f); }
-wchar_t *ascgetw4 (FILE *f) { return NULL; }
+int texgeti1 (MelderFile file) { return getInteger (file); }   /* There should be out-of-bound checks here... */
+int texgeti2 (MelderFile file) { return getInteger (file); }
+long texgeti4 (MelderFile file) { return getInteger (file); }
+unsigned int texgetu1 (MelderFile file) { return getInteger (file); }
+unsigned int texgetu2 (MelderFile file) { return getUnsigned (file); }
+unsigned long texgetu4 (MelderFile file) { return getUnsigned (file); }
+double texgetr4 (MelderFile file) { return getReal (file); }
+double texgetr8 (MelderFile file) { return getReal (file); }
+double texgetr10 (MelderFile file) { return getReal (file); }
+fcomplex texgetc8 (MelderFile file) { fcomplex z; z.re = getReal (file); z.im = getReal (file); return z; }
+dcomplex texgetc16 (MelderFile file) { dcomplex z; z.re = getReal (file); z.im = getReal (file); return z; }
+char texgetc1 (MelderFile file) { return getInteger (file); }
+short texgete1 (MelderFile file, void *enumerated) { return getEnum (file, enumerated); }
+short texgete2 (MelderFile file, void *enumerated) { return getEnum (file, enumerated); }
+short texgeteb (MelderFile file) { return getEnum (file, & enum_ascio_Boolean); }
+short texgeteq (MelderFile file) { return getEnum (file, & enum_ascio_Question); }
+short texgetex (MelderFile file) { return getEnum (file, & enum_ascio_Existence); }
+char *texgets2 (MelderFile file) { return getString (file); }
+char *texgets4 (MelderFile file) { return getString (file); }
+wchar_t *texgetw2 (MelderFile file) { return 0/*getStringW (file)*/; }
+wchar_t *texgetw4 (MelderFile file) { return 0/*getStringW (file)*/; }
 
-static int indent = 0;
-void ascindent (void) { indent += 4; }
-void ascexdent (void) { indent -= 4; }
-void ascresetindent (void) { indent = 0; }
+void texindent (MelderFile file) { file -> indent += 4; }
+void texexdent (MelderFile file) { file -> indent -= 4; }
+void texresetindent (MelderFile file) { file -> indent = 0; }
 
-static int verbose = 1;
-
-void ascio_verbose (int v) { verbose = v; }
-
-#define PUTIN  const char *format, ...) { \
-	va_list arg; int iindent; va_start (arg, format); fputc ('\n', f); \
-	if (verbose) { for (iindent = 1; iindent <= indent; iindent ++) fputc (' ', f); \
-	vfprintf (f, format, arg); }
-#define PUTOUT  va_end (arg); }
-
-void ascputintro (FILE *f, const char *format, ...) {
-	if (verbose) {
-		va_list arg; int iindent; va_start (arg, format); fputc ('\n', f);
-		for (iindent = 1; iindent <= indent; iindent ++) fputc (' ', f);
-		vfprintf (f, format, arg);
-		va_end (arg);
+void texput (MelderFile file, const char *text) {
+	unsigned long n = strlen (text);
+	for (unsigned i = 0; i < n; i ++) {
+		if (text [i] == '\n' && file -> requiresCRLF) fputc (13, file -> filePointer);
+		fputc (text [i], file -> filePointer);
 	}
-	indent += 4;
 }
 
-void ascputi1 (int i, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %d " : "%d", i); PUTOUT
-void ascputi2 (int i, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %d " : "%d", i); PUTOUT
-void ascputi4 (long i, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %ld " : "%ld", i); PUTOUT
-void ascputu1 (unsigned int u, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %u " : "%u", u); PUTOUT
-void ascputu2 (unsigned int u, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %u " : "%u", u); PUTOUT
-void ascputu4 (unsigned long u, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %lu " : "%lu", u); PUTOUT
-void ascputr4 (double x, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %s " : "%s", Melder_single (x)); PUTOUT
-void ascputr8 (double x, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %s " : "%s", Melder_double (x)); PUTOUT
-void ascputr10 (double x, FILE *f,
-	PUTIN fprintf (f, x == HUGE_VAL ? verbose ? " = --undefined-- " : "--undefined--" : verbose ? " = %.20g " : "%.20g", x); PUTOUT
-void ascputc8 (fcomplex z, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %.8g + %.8g i " : "%.8g %.8g", z.re, z.im); PUTOUT
-void ascputc16 (dcomplex z, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %.17g + %.17g i " : "%.17g %.17g", z.re, z.im); PUTOUT
-void ascputc1 (int i, FILE *f,
-	PUTIN fprintf (f, verbose ? " = %d " : "%d", i); PUTOUT
-void ascpute1 (int i, FILE *f, void *enumerated,
-	PUTIN fprintf (f, verbose ? " = <%s> " : "<%s>", enum_string (enumerated, i)); PUTOUT
-void ascpute2 (int i, FILE *f, void *enumerated,
-	PUTIN fprintf (f, verbose ? " = <%s> " : "<%s>", enum_string (enumerated, i)); PUTOUT
-void ascputeb (int i, FILE *f,
-	PUTIN fprintf (f, i ? (verbose ? " = <true> " : "<true>") : (verbose ? " = <false> " : "<false>")); PUTOUT
-void ascputeq (int i, FILE *f,
-	PUTIN fprintf (f, i ? (verbose ? "? <yes> " : "<yes>") : (verbose ? "? <no> " : "<no>")); PUTOUT
-void ascputex (int i, FILE *f,
-	PUTIN fprintf (f, i ? (verbose ? "? <exists> " : "<exists>") : (verbose ? "? <absent> " : "<absent>")); PUTOUT
-void ascputs1 (const char *s, FILE *f,
-	PUTIN fprintf (f, verbose ? " = \"" : "\"");
-	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, f); if (c == '\"') fputc (c, f); } }
-	      fprintf (f, verbose ? "\" " : "\""); PUTOUT
-void ascputs2 (const char *s, FILE *f,
-	PUTIN fprintf (f, verbose ? " = \"" : "\"");
-	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, f); if (c == '\"') fputc (c, f); } }
-	      fprintf (f, verbose ? "\" " : "\""); PUTOUT
-void ascputs4 (const char *s, FILE *f,
-	PUTIN fprintf (f, verbose ? " = \"" : "\"");
-	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, f); if (c == '\"') fputc (c, f); } }
-	      fprintf (f, verbose ? "\" " : "\""); PUTOUT
-void ascputw4 (const wchar_t *s, FILE *f,
+#define PUTIN  const char *format, ...) { \
+	va_list arg; \
+	va_start (arg, format); \
+	texput (file, "\n"); \
+	if (file -> verbose) { \
+		for (int iindent = 1; iindent <= file -> indent; iindent ++) { \
+			texput (file, " "); \
+		} \
+		vfprintf (file -> filePointer, format, arg); \
+	}
+#define PUTOUT  va_end (arg); }
+
+void texputintro (MelderFile file, const char *format, ...) {
+	if (file -> verbose) {
+		va_list arg;
+		va_start (arg, format);
+		texput (file, "\n");
+		for (int iindent = 1; iindent <= file -> indent; iindent ++) {
+			texput (file, " ");
+		}
+		vfprintf (file -> filePointer, format, arg);
+		va_end (arg);
+	}
+	file -> indent += 4;
+}
+
+void texputi1 (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %d " : "%d", i); PUTOUT
+void texputi2 (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %d " : "%d", i); PUTOUT
+void texputi4 (long i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %ld " : "%ld", i); PUTOUT
+void texputu1 (unsigned int u, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %u " : "%u", u); PUTOUT
+void texputu2 (unsigned int u, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %u " : "%u", u); PUTOUT
+void texputu4 (unsigned long u, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %lu " : "%lu", u); PUTOUT
+void texputr4 (double x, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %s " : "%s", Melder_single (x)); PUTOUT
+void texputr8 (double x, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %s " : "%s", Melder_double (x)); PUTOUT
+void texputr10 (double x, MelderFile file,
+	PUTIN fprintf (file -> filePointer, x == HUGE_VAL ? file -> verbose ? " = --undefined-- " : "--undefined--" : file -> verbose ? " = %.20g " : "%.20g", x); PUTOUT
+void texputc8 (fcomplex z, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %.8g + %.8g i " : "%.8g %.8g", z.re, z.im); PUTOUT
+void texputc16 (dcomplex z, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %.17g + %.17g i " : "%.17g %.17g", z.re, z.im); PUTOUT
+void texputc1 (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = %d " : "%d", i); PUTOUT
+void texpute1 (int i, MelderFile file, void *enumerated,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = <%s> " : "<%s>", enum_string (enumerated, i)); PUTOUT
+void texpute2 (int i, MelderFile file, void *enumerated,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = <%s> " : "<%s>", enum_string (enumerated, i)); PUTOUT
+void texputeb (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, i ? (file -> verbose ? " = <true> " : "<true>") : (file -> verbose ? " = <false> " : "<false>")); PUTOUT
+void texputeq (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, i ? (file -> verbose ? "? <yes> " : "<yes>") : (file -> verbose ? "? <no> " : "<no>")); PUTOUT
+void texputex (int i, MelderFile file,
+	PUTIN fprintf (file -> filePointer, i ? (file -> verbose ? "? <exists> " : "<exists>") : (file -> verbose ? "? <absent> " : "<absent>")); PUTOUT
+void texputs1 (const char *s, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = \"" : "\"");
+	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, file -> filePointer); if (c == '\"') fputc (c, file -> filePointer); } }
+	      fprintf (file -> filePointer, file -> verbose ? "\" " : "\""); PUTOUT
+void texputs2 (const char *s, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = \"" : "\"");
+	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, file -> filePointer); if (c == '\"') fputc (c, file -> filePointer); } }
+	      fprintf (file -> filePointer, file -> verbose ? "\" " : "\""); PUTOUT
+void texputs4 (const char *s, MelderFile file,
+	PUTIN fprintf (file -> filePointer, file -> verbose ? " = \"" : "\"");
+	      if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, file -> filePointer); if (c == '\"') fputc (c, file -> filePointer); } }
+	      fprintf (file -> filePointer, file -> verbose ? "\" " : "\""); PUTOUT
+void texputw2 (const wchar_t *s, MelderFile file,
+	PUTIN PUTOUT
+void texputw4 (const wchar_t *s, MelderFile file,
 	PUTIN PUTOUT
 
 /********** machine-independent binary I/O **********/
@@ -1134,6 +1154,30 @@ char * bingets4 (FILE *f) {
 	return result;
 }
 
+wchar_t * bingetw2 (FILE *f) {
+	wchar_t *result = NULL;
+	unsigned short length = bingetu2 (f);
+	if (length == 0xffff) {
+		length = bingetu2 (f);
+		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		if (! result)
+			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned short i = 0; i < length; i ++) {
+			result [i] = bingetu2 (f);
+		}
+	} else {
+		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		if (! result)
+			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned short i = 0; i < length; i ++) {
+			result [i] = bingetu1 (f);
+		}
+	}
+	if (feof (f)) { Melder_free (result); return NULL; }
+	result [length] = 0;   /* Trailing null byte. */
+	return result;
+}
+
 wchar_t * bingetw4 (FILE *f) {
 	wchar_t *result = NULL;
 	unsigned long length = bingetu4 (f);
@@ -1171,6 +1215,26 @@ void binputs2 (const char *s, FILE *f) {
 void binputs4 (const char *s, FILE *f) {
 	unsigned long length = s ? strlen (s) : 0;
 	binputu4 (length, f); if (s) fwrite (s, 1, length, f);
+}
+
+void binputw2 (const wchar_t *s, FILE *f) {
+	unsigned long length = s ? wcslen (s) : 0; if (length > 65534) length = 65534;
+	if (Melder_isValidAscii (s)) {
+		binputu2 (length, f);
+		if (s != NULL) {
+			for (unsigned long i = 1; i < length; i ++) {
+				binputu1 (s [i], f);
+			}
+		}
+	} else {
+		binputu2 (0xffff, f);
+		binputu2 (length, f);
+		if (s != NULL) {
+			for (unsigned long i = 1; i < length; i ++) {
+				binputu2 (s [i], f);
+			}
+		}
+	}
 }
 
 void binputw4 (const wchar_t *s, FILE *f) {
@@ -1780,4 +1844,3 @@ void cacputs4 (const char *s, CACHE *f) {
 }
 
 /* End of file abcio.c */
-

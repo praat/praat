@@ -1,6 +1,6 @@
 /* SpellingChecker.c
  *
- * Copyright (C) 1999-2002 Paul Boersma
+ * Copyright (C) 1999-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2002/03/12
  * pb 2002/07/16 GPL
+ * pb 2007/06/21 tex
  */
 
 #include "SpellingChecker.h"
@@ -31,11 +31,11 @@
 #include "SpellingChecker_def.h"
 #include "oo_EQUAL.h"
 #include "SpellingChecker_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "SpellingChecker_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "SpellingChecker_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "SpellingChecker_def.h"
 #include "oo_READ_BINARY.h"
 #include "SpellingChecker_def.h"
@@ -49,9 +49,9 @@ class_methods (SpellingChecker, Data)
 	class_method_local (SpellingChecker, destroy)
 	class_method_local (SpellingChecker, copy)
 	class_method_local (SpellingChecker, equal)
-	class_method_local (SpellingChecker, writeAscii)
+	class_method_local (SpellingChecker, writeText)
 	class_method_local (SpellingChecker, writeBinary)
-	class_method_local (SpellingChecker, readAscii)
+	class_method_local (SpellingChecker, readText)
 	class_method_local (SpellingChecker, readBinary)
 class_methods_end
 

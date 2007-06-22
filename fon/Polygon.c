@@ -1,6 +1,6 @@
 /* Polygon.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/01/27 paint with colours
  * pb 2004/06/15 allow reversed axes
+ * pb 2007/06/21 tex
  */
 
 #include "Polygon.h"
@@ -45,28 +46,26 @@ static void info (I) {
 	MelderInfo_writeLine2 ("Perimeter: ", Melder_single (Polygon_perimeter (me)));
 }
   
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (Polygon);
-	long i;
-	ascputi4 (my numberOfPoints, f, "numberOfPoints");
-	for (i = 1; i <= my numberOfPoints; i ++) {
-		ascputr4 (my x [i], f, "x [%ld]", i);
-		ascputr4 (my y [i], f, "y [%ld]", i);
+	texputi4 (my numberOfPoints, file, "numberOfPoints");
+	for (long i = 1; i <= my numberOfPoints; i ++) {
+		texputr4 (my x [i], file, "x [%ld]", i);
+		texputr4 (my y [i], file, "y [%ld]", i);
 	}
 	return 1;
 }
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (Polygon);
-	long i;
-	my numberOfPoints = ascgeti4 (f);
+	my numberOfPoints = texgeti4 (file);
 	if (my numberOfPoints < 1)
-		return Melder_error ("(Polygon::readAscii:) Cannot read 'number of points' < 1.");
+		return Melder_error3 (L"Cannot read a Polygon with only ", Melder_integerW (my numberOfPoints), L" points.");
 	if (! (my x = NUMfvector (1, my numberOfPoints)) || ! (my y = NUMfvector (1, my numberOfPoints)))
 		return 0;
-	for (i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] = ascgetr4 (f);
-		my y [i] = ascgetr4 (f);
+	for (long i = 1; i <= my numberOfPoints; i ++) {
+		my x [i] = texgetr4 (file);
+		my y [i] = texgetr4 (file);
 	}
 	return 1;
 }
@@ -77,8 +76,8 @@ class_methods (Polygon, Data)
 	class_method_local (Polygon, description)
 	class_method_local (Polygon, copy)
 	class_method_local (Polygon, equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method_local (Polygon, writeBinary)
 	class_method_local (Polygon, readBinary)
 class_methods_end

@@ -169,6 +169,9 @@ wchar_t * Melder_wcsExpandBackslashSequences (const wchar_t *string);
 wchar_t * Melder_wcsReduceBackslashSequences (const wchar_t *string);
 void Melder_wcsReduceBackslashSequences_inline (const wchar_t *string);
 
+/*
+ * Text encodings.
+ */
 void Melder_textEncoding_prefs (void);
 #define Melder_INPUT_ENCODING_UTF8  1
 #define Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1  2
@@ -184,6 +187,14 @@ int Melder_getInputEncoding (void);
 #define Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16  3
 void Melder_setOutputEncoding (int encoding);
 int Melder_getOutputEncoding (void);
+
+/*
+ * Non-text encodings. Although not used in the above set/get functions,
+ * these constants should stay separate from the text encoding constants
+ * because they occur in the same fields of struct MelderFile.
+ */
+#define Melder_INPUT_ENCODING_FLAC  0x464C4143
+#define Melder_OUTPUT_ENCODING_FLAC  0x464C4143
 
 bool Melder_isValidAscii (const wchar_t *string);
 bool Melder_isValidUtf8 (const unsigned char *string);
@@ -209,6 +220,16 @@ wchar_t * Melder_peekUtf8ToWcs (const unsigned char *string);
 char * Melder_peekWcsToAscii (const wchar_t *string);
 char * Melder_peekWcsToUtf8 (const wchar_t *string);
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f);
+
+/*
+ * Some often used characters.
+ */
+#define L_LEFT_SINGLE_QUOTE  L"\u2018"
+#define L_RIGHT_SINGLE_QUOTE  L"\u2019"
+#define L_LEFT_DOUBLE_QUOTE  L"\u201c"
+#define L_RIGHT_DOUBLE_QUOTE  L"\u201d"
+#define L_LEFT_GUILLEMET  L"\u00ab"
+#define L_RIGHT_GUILLEMET  L"\u00bb"
 
 #define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
 void _Melder_free (void **pointer);
@@ -286,14 +307,14 @@ double MelderString_allocationSize (void);
 
 struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
-#define Melder_FILETYPE_FLAC 0x464C4143
 
 typedef struct {
-	wchar_t wpath [260];
 	FILE *filePointer;
-	bool openForWriting;
+	wchar_t wpath [260];
+	bool openForReading, openForWriting, verbose, requiresCRLF;
+	unsigned long inputEncoding, outputEncoding;
+	int indent;
 	struct FLAC__StreamEncoder *flacEncoder;
-	unsigned long type;
 } structMelderFile, *MelderFile;
 typedef struct {
 	wchar_t wpath [260];

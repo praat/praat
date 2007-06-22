@@ -260,7 +260,7 @@ class_methods (LongSound, Sampled)
 	class_method (destroy)
 	class_method (info)
 	class_method (copy);
-	us -> writeAscii = classData -> writeAscii;
+	us -> writeText = classData -> writeText;
 	us -> writeBinary = classData -> writeBinary;
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 class_methods_end

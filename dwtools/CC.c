@@ -32,11 +32,11 @@
 #include "CC_def.h"
 #include "oo_EQUAL.h"
 #include "CC_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "CC_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "CC_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "CC_def.h"
 #include "oo_READ_BINARY.h"
 #include "CC_def.h"
@@ -62,9 +62,9 @@ class_methods (CC, Sampled)
 	class_method_local (CC, equal)
 	class_method_local (CC, copy)
 	class_method (info)
-	class_method_local (CC, readAscii)
+	class_method_local (CC, readText)
 	class_method_local (CC, readBinary)
-	class_method_local (CC, writeAscii)
+	class_method_local (CC, writeText)
 	class_method_local (CC, writeBinary)
 	class_method_local (CC, description)
 class_methods_end

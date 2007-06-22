@@ -70,7 +70,7 @@ static int MelderFile_createFlacFile (MelderFile file, long sampleRate, long num
 	}
 
 	file -> flacEncoder = encoder;
-	file -> type = Melder_FILETYPE_FLAC;
+	file -> outputEncoding = Melder_OUTPUT_ENCODING_FLAC;
 	return 1;
 }
 

@@ -596,6 +596,7 @@ void Melder_getTempDir (MelderDir tempDir) {
 static long textCreator = 'PpgB';
 
 void MelderFile_setMacTypeAndCreator (MelderFile file, long fileType, long creator) {
+	if (wcsequ (file -> wpath, L"<stdout>")) return;
 	OSStatus err;
 	FSRef fsref;
 	FSCatalogInfo info;
@@ -710,7 +711,9 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 int Melder_fclose (MelderFile file, FILE *f) {
 	if (! f) return 1;
 	#if defined (CURLPRESENT)
- 	if (strstr (file -> path, "://") && file -> openForWriting) {
+ 	if (wcsstr (file -> wpath, L"://") && file -> openForWriting) {
+		unsigned char utf8path [1000];
+		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, utf8path);
 		/* Rewind the file. */
 		if (f) rewind (f);
 		CURLcode CURLreturn;
@@ -740,7 +743,7 @@ int Melder_fclose (MelderFile file, FILE *f) {
 		/* Upload. */
 		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_UPLOAD, 1);
 		/* The actual URL to handle. */
-		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, file -> path);
+		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_URL, utf8path);
 		/* The function to write to the peer, necessary for Win32. */
 	    CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READFUNCTION, read_URL_data_from_file);
 		CURLreturn = curl_easy_setopt (CURLhandle, CURLOPT_READDATA, f);
@@ -759,7 +762,7 @@ int Melder_fclose (MelderFile file, FILE *f) {
 		#ifdef sgi
 			Melder_error ("%s", strerror (errno));
 		#endif
-		return Melder_error ("Error closing file \"%.200s\".", MelderFile_messageName (file));
+		return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
 	}
 	return 1;
 }
@@ -872,7 +875,7 @@ void MelderFile_setDefaultDir (MelderFile file) {
 
 int Melder_createDirectoryW (MelderDir parent, const wchar_t *dirName, int mode) {
 #if defined (_WIN32)
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
@@ -883,7 +886,7 @@ int Melder_createDirectoryW (MelderDir parent, const wchar_t *dirName, int mode)
 		return Melder_error3 (L"Cannot create directory \"", MelderFile_messageNameW (& file), L"\".");
 	return 1;
 #else
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	if (parent -> wpath [0] == '/' && parent -> wpath [1] == '\0') {
 		swprintf (file. wpath, 260, L"/%ls", dirName);
 	} else {
@@ -905,6 +908,8 @@ int Melder_createDirectoryW (MelderDir parent, const wchar_t *dirName, int mode)
 
 void MelderFile_open (MelderFile me) {
 	my filePointer = Melder_fopen (me, "rb");
+	if (my filePointer == NULL) return;
+	my openForReading = true;
 }
 
 char * MelderFile_readLine (MelderFile me) {
@@ -965,13 +970,15 @@ char * MelderFile_readLine (MelderFile me) {
 void MelderFile_create (MelderFile me, const char *macType, const char *macCreator, const char *winExtension) {
 	my filePointer = Melder_fopen (me, "wb");
 	if (! my filePointer) return;
+	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).
+	if (my filePointer == stdout) return;
 	#if defined (macintosh)
 		(void) winExtension;
 	{
-		unsigned long macType_int = macType == NULL && macType [0] == '\0' ? 0 :
+		unsigned long macType_int = macType == NULL || macType [0] == '\0' ? 0 :
 			((unsigned int) macType [0] << 24) | ((unsigned int) macType [1] << 16) |
 			((unsigned int) macType [2] << 8) | (unsigned int) macType [3];
-		unsigned long macCreator_int = macCreator == NULL && macCreator [0] == '\0' ? 0 :
+		unsigned long macCreator_int = macCreator == NULL || macCreator [0] == '\0' ? 0 :
 			((unsigned int) macCreator [0] << 24) | ((unsigned int) macCreator [1] << 16) |
 			((unsigned int) macCreator [2] << 8) | (unsigned int) macCreator [3];
 		MelderFile_setMacTypeAndCreator (me, macType_int, macCreator_int);
@@ -1013,18 +1020,19 @@ void MelderFile_rewind (MelderFile me) {
 }
 
 void MelderFile_close (MelderFile me) {
-	if (my type == Melder_FILETYPE_FLAC) {
-	   if (my flacEncoder) {
-		   FLAC__stream_encoder_finish (my flacEncoder);
-		   FLAC__stream_encoder_delete (my flacEncoder);
-	   }
+	if (my outputEncoding == Melder_OUTPUT_ENCODING_FLAC) {
+		if (my flacEncoder) {
+			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
+			FLAC__stream_encoder_delete (my flacEncoder);
+		}
+	} else if (my filePointer) {
+		Melder_fclose (me, my filePointer);
 	}
-	else if (my filePointer) Melder_fclose (me, my filePointer);
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */
 	my filePointer = NULL;
-	my openForWriting = false;
+	my openForWriting = my openForReading = false;
+	my indent = 0;
 	my flacEncoder = NULL;
-	my type = 0;
 }
 
 /* End of file melder_files.c */

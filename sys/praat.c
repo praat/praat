@@ -91,7 +91,7 @@ structMelderDir praatDir = { { 0 } };
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Prefs
  */
-static structMelderFile prefsFile = { { 0 } };
+static structMelderFile prefsFile = { 0 };
 /*
  * buttonsFileName: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
@@ -101,12 +101,12 @@ static structMelderFile prefsFile = { { 0 } };
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons
  *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Buttons
  */
-static structMelderFile buttonsFile = { { 0 } };
+static structMelderFile buttonsFile = { 0 };
 #if defined (UNIX)
-	static structMelderFile pidFile = { { 0 } };   /* Like /u/miep/.myProg-dir/pid */
-	static structMelderFile messageFile = { { 0 } };   /* Like /u/miep/.myProg-dir/message */
+	static structMelderFile pidFile = { 0 };   /* Like /u/miep/.myProg-dir/pid */
+	static structMelderFile messageFile = { 0 };   /* Like /u/miep/.myProg-dir/message */
 #elif defined (_WIN32)
-	static structMelderFile messageFile = { { 0 } };   /* Like C:\Windows\myProg\Message.txt */
+	static structMelderFile messageFile = { 0 };   /* Like C:\Windows\myProg\Message.txt */
 #endif
 
 static Widget praatList_objects;
@@ -544,7 +544,7 @@ static void praat_exit (int exit_code) {
 	 * Save the script buttons.
 	 */
 	if (! theCurrentPraat -> batch) {
-		FILE *f = Melder_fopen (& buttonsFile, "w");
+		FILE *f = Melder_fopen (& buttonsFile, "wb");
 		if (f) {
 			MelderFile_setMacTypeAndCreator (& buttonsFile, 'pref', 'PpgB');
 			fwprintf (f, L"\ufeff# Buttons (1).\n");
@@ -857,7 +857,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
 		praat_background ();
-		wchar_t *message = Melder_8bitToWcs (messageA, 0);
+		wchar_t *message = Melder_8bitToWcs ((unsigned char *) messageA, 0);
 		if (! praat_executeScriptFromText (message)) {
 			Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
 			goto end;
@@ -1204,7 +1204,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 	wchar_t name [256];
 	swprintf (name, 256, fileNameTemplate, Melder_peekAsciiToWcs (programName));
 	if (! MelderDir_isNull (startUpDirectory)) {   // Should not occur on modern systems.
-		structMelderFile startUp = { { 0 } };
+		structMelderFile startUp = { 0 };
 		MelderDir_getFileW (startUpDirectory, name, & startUp);
 		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
 			fclose (f);
@@ -1261,7 +1261,7 @@ void praat_run (void) {
 	 * because any added commands must not be included in the buttons file.
 	 */
 	{
-		structMelderFile searchPattern = { { 0 } };
+		structMelderFile searchPattern = { 0 };
 		Strings directoryNames;
 		long i;
 		MelderDir_getFileW (& praatDir, L"plugin_*", & searchPattern);
@@ -1269,7 +1269,7 @@ void praat_run (void) {
 		if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
 			for (i = 1; i <= directoryNames -> numberOfStrings; i ++) {
 				structMelderDir pluginDir = { { 0 } };
-				structMelderFile plugin = { { 0 } };
+				structMelderFile plugin = { 0 };
 				MelderDir_getSubdirW (& praatDir, Melder_peekAsciiToWcs (directoryNames -> strings [i]), & pluginDir);
 				MelderDir_getFileW (& pluginDir, L"setup.praat", & plugin);
 				if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
@@ -1297,7 +1297,7 @@ void praat_run (void) {
 			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraat -> batchName)) {
 				praat_exit (0);
 			} else {
-				structMelderFile batchFile = { { 0 } };
+				structMelderFile batchFile = { 0 };
 				if (! Melder_relativePathToFileW (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);

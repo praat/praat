@@ -77,20 +77,20 @@ static int copy (I, thou) {
 	return 1;
 }
 
-static int equal (I, thou) {
+static bool equal (I, thou) {
 	iam (ParamCurve); thouart (ParamCurve);
 	return inherited (ParamCurve) equal (me, thee) && Data_equal (my x, thy x) && Data_equal (my y, thy y);
 }
 
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (ParamCurve);
-	return Data_writeAscii (my x, f) && Data_writeAscii (my y, f);
+	return Data_writeText (my x, file) && Data_writeText (my y, file);
 }
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (ParamCurve);
 	return (my x = new (Sound)) != NULL && (my y = new (Sound)) != NULL &&
-		Data_readAscii (my x, f) && Data_readAscii (my y, f);
+		Data_readText (my x, file) && Data_readText (my y, file);
 }
 
 static int writeBinary (I, FILE *f) {
@@ -109,8 +109,8 @@ class_methods (ParamCurve, Function)
 	class_method (info)
 	class_method (copy)
 	class_method (equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method (writeBinary)
 	class_method (readBinary)
 class_methods_end

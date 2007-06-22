@@ -144,13 +144,12 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
-	int NUM##t##vector_writeAscii (const type *v, long lo, long hi, FILE *f, const char *name) { \
-		long i; \
-		ascputintro (f, "%s []: %s", name, hi >= lo ? "" : "(empty)"); \
-		for (i = lo; i <= hi; i ++) \
-			ascput##storage (v [i], f, "%s [%ld]", name, i); \
-		ascexdent (); \
-		if (feof (f) || ferror (f)) return 0; \
+	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const char *name) { \
+		texputintro (file, "%s []: %s", name, hi >= lo ? "" : "(empty)"); \
+		for (long i = lo; i <= hi; i ++) \
+			texput##storage (v [i], file, "%s [%ld]", name, i); \
+		texexdent (file); \
+		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
 	} \
 	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f) { \
@@ -166,15 +165,14 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 			cacput##storage (v [i], f); \
 		return 1; \
 	} \
-	type * NUM##t##vector_readAscii (long lo, long hi, FILE *f, const char *name) { \
-		long i; \
+	type * NUM##t##vector_readText (long lo, long hi, MelderFile file, const char *name) { \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
-		for (i = lo; i <= hi; i ++) { \
-			result [i] = ascget##storage (f); \
+		for (long i = lo; i <= hi; i ++) { \
+			result [i] = texget##storage (file); \
 			if (Melder_hasError ()) { \
 				NUM##t##vector_free (result, lo); \
-				return Melder_errorp ("(NUM" #t "vector_readAscii:) Could not read %s [%ld].", name, i); \
+				return Melder_errorp ("(NUM" #t "vector_readText:) Could not read %s [%ld].", name, i); \
 			} \
 		} \
 		return result; \
@@ -211,19 +209,19 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMmatrix_copyElements (sizeof (type), m, to, row1, row2, col1, col2); } \
 	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
 		{ return NUMmatrix_equal (sizeof (type), m1, m2, row1, row2, col1, col2); } \
-	int NUM##t##matrix_writeAscii (type **m, long row1, long row2, long col1, long col2, FILE *f, const char *name) { \
-		ascputintro (f, "%s [] []: %s", name, row2 >= row1 ? "" : "(empty)"); \
+	int NUM##t##matrix_writeText (type **m, long row1, long row2, long col1, long col2, MelderFile file, const char *name) { \
+		texputintro (file, "%s [] []: %s", name, row2 >= row1 ? "" : "(empty)"); \
 		if (row2 >= row1) { \
 			long row, col; \
 			for (row = row1; row <= row2; row ++) { \
-				ascputintro (f, "%s [%ld]:", name, row); \
+				texputintro (file, "%s [%ld]:", name, row); \
 				for (col = col1; col <= col2; col ++) \
-					ascput##storage (m [row] [col], f, "%s [%ld] [%ld]", name, row, col); \
-				ascexdent (); \
+					texput##storage (m [row] [col], file, "%s [%ld] [%ld]", name, row, col); \
+				texexdent (file); \
 			} \
 		} \
-		ascexdent (); \
-		if (feof (f) || ferror (f)) return 0; \
+		texexdent (file); \
+		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
 	} \
 	int NUM##t##matrix_writeBinary (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
@@ -247,15 +245,14 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return 1; \
 	} \
-	type ** NUM##t##matrix_readAscii (long row1, long row2, long col1, long col2, FILE *f, const char *name) { \
-		long i, j; \
+	type ** NUM##t##matrix_readText (long row1, long row2, long col1, long col2, MelderFile file, const char *name) { \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
-		for (i = row1; i <= row2; i ++) for (j = col1; j <= col2; j ++) { \
-			result [i] [j] = ascget##storage (f); \
+		for (long i = row1; i <= row2; i ++) for (long j = col1; j <= col2; j ++) { \
+			result [i] [j] = texget##storage (file); \
 			if (Melder_hasError ()) { \
 				NUM##t##matrix_free (result, row1, col1); \
-				return Melder_errorp ("(NUM" #t "matrix_readAscii:) " \
+				return Melder_errorp ("(NUM" #t "matrix_readText:) " \
 					"Could not read %s [%ld] [%ld].", name, i, j); \
 			} \
 		} \

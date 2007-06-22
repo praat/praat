@@ -105,10 +105,10 @@ static const char *extractLink (const char *text, const char *p, char *link) {
 	return p;
 }
 
-static int readOnePage (ManPages me, FILE *f) {
+static int readOnePage (ManPages me, MelderFile file) {
 	ManPage page;
 	ManPage_Paragraph par;
-	char *title = ascgets2 (f);
+	char *title = texgets2 (file);
 	if (! title) return Melder_error ("Cannot find page title.");
 
 	/*
@@ -127,21 +127,21 @@ static int readOnePage (ManPages me, FILE *f) {
 	 */
 	if (! Collection_addItem (my pages, page)) return 0;
 
-	page -> author = ascgets2 (f);
+	page -> author = texgets2 (file);
 	if (! page -> author) return Melder_error ("Cannot find author.");
-	page -> date = ascgetu4 (f);
+	page -> date = texgetu4 (file);
 	iferror return Melder_error ("Cannot find date.");
-	page -> recordingTime = ascgetr8 (f);
+	page -> recordingTime = texgetr8 (file);
 	iferror return Melder_error ("Cannot find recording time.");
 	page -> paragraphs = NUMvector (sizeof (struct structManPage_Paragraph), 0, 500);
 	if (! page -> paragraphs) return 0;
 	for (par = page -> paragraphs;; par ++) {
 		char link [501], fileName [256];
 		const char *p;
-		par -> type = ascgete1 (f, & enum_ManPage_TYPE);
+		par -> type = texgete1 (file, & enum_ManPage_TYPE);
 		if (Melder_hasError ()) {
 			if (strstr (Melder_buffer1, "end of file")) {
-				clearerr (f);
+				clearerr (file -> filePointer);
 				Melder_clearError ();
 				break;
 			} else {
@@ -149,27 +149,27 @@ static int readOnePage (ManPages me, FILE *f) {
 			}
 		}
 		if (par -> type == enumi (ManPage_TYPE, script)) {
-			par -> width = ascgetr4 (f);
-			par -> height = ascgetr4 (f);
+			par -> width = texgetr4 (file);
+			par -> height = texgetr4 (file);
 		}
-		par -> text = ascgets2 (f);
+		par -> text = texgets2 (file);
 		if (! par -> text) return Melder_error ("Cannot find text.");
 		for (p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
 			 */
-			structMelderFile file = { { 0 } };
+			structMelderFile file2 = { 0 };
 			if (link [0] == '\\' && link [1] == 'F' && link [2] == 'I') {
 				/*
 				 * A link to a sound file: see if it exists.
 				 */
-				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file);
+				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
 					Melder_warning ("Cannot find sound file \"%s\".", link + 3);
-				} else if (! MelderFile_exists (& file)) {
-					Melder_warning ("Cannot find sound file \"%s\".", MelderFile_messageName (& file));
+				} else if (! MelderFile_exists (& file2)) {
+					Melder_warning ("Cannot find sound file \"%s\".", MelderFile_messageName (& file2));
 				}
 			} else if (link [0] == '\\' && link [1] == 'S' && link [2] == 'C') {
 				/*
@@ -184,16 +184,15 @@ static int readOnePage (ManPages me, FILE *f) {
 				} else {
 					sscanf (p, "%s", fileName);   /* One word, up to the next space. */
 				}
-				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file);
+				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
 					Melder_warning ("Cannot find script \"%s\".", fileName);
-				} else if (! MelderFile_exists (& file)) {
-					Melder_warning ("Cannot find script \"%s\".", MelderFile_messageName (& file));
+				} else if (! MelderFile_exists (& file2)) {
+					Melder_warning ("Cannot find script \"%s\".", MelderFile_messageName (& file2));
 				}
 				my executable = TRUE;
 			} else {
-				FILE *f;
 				char *q;
 				/*
 				 * A link to another page: follow it.
@@ -201,10 +200,10 @@ static int readOnePage (ManPages me, FILE *f) {
 				for (q = link; *q; q ++) if (! isAllowedFileNameCharacter (*q)) *q = '_';
 				strcpy (fileName, link);
 				strcat (fileName, ".man");
-				MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file);
-				f = Melder_fopen (& file, "r");
-				if (f) {
-					if (! readOnePage (me, f)) { fclose (f); return Melder_error ("File \"%s\".", MelderFile_messageName (& file)); }
+				MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
+				MelderFile_open (& file2);
+				if (file2. filePointer) {
+					if (! readOnePage (me, & file2)) { MelderFile_close (& file2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
 				} else {
 					/*
 					 * Second try: with upper case.
@@ -213,11 +212,12 @@ static int readOnePage (ManPages me, FILE *f) {
 					link [0] = toupper (link [0]);
 					strcpy (fileName, link);
 					strcat (fileName, ".man");
-					MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file);
-					if ((f = Melder_fopen (& file, "r")) == NULL) return 0;
-					if (! readOnePage (me, f)) { fclose (f); return Melder_error ("File \"%s\".", MelderFile_messageName (& file)); }
+					MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
+					MelderFile_open (& file2);
+					if (file -> filePointer == NULL) return 0;
+					if (! readOnePage (me, & file2)) { MelderFile_close (& file2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
 				}
-				fclose (f);
+				MelderFile_close (& file2);
 			}
 		}
 		iferror return 0;
@@ -226,26 +226,17 @@ static int readOnePage (ManPages me, FILE *f) {
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }
-static int readOnePageFromFile (ManPages me, MelderFile file) {
-	FILE *f = Melder_fopen (file, "r");
-	if (! f) return 0;
-	if (! readOnePage (me, f)) {
-		Melder_error ("File \"%s\".", MelderFile_messageName (file));
-		Melder_fclose (file, f);
-		return 0;
-	}
-	return Melder_fclose (file, f);
-}
-static int classManPages_readAscii (I, FILE *f) { iam (ManPages);
+static int classManPages_readText (I, MelderFile file) {
+	iam (ManPages);
 	my dynamic = TRUE;
 	my pages = Ordered_create ();
-	MelderFile_getParentDir (& Data_fileBeingRead, & my rootDirectory);
-	return readOnePage (me, f);
+	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
+	return readOnePage (me, file);
 }
 
 class_methods (ManPages, Data)
 	class_method_local (ManPages, destroy)
-	class_method_local (ManPages, readAscii)
+	class_method_local (ManPages, readText)
 class_methods_end
 
 ManPages ManPages_create (void) {
@@ -752,7 +743,7 @@ int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 		memrewind (theCache);
 		writePageAsHtml (me, ipage);
 		memwrite ("", 1, 1, theCache);   /* Closing null byte. */
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		MelderDir_getFileW (& dir, Melder_peekAsciiToWcs (fileName), & file);
 		oldText = MelderFile_readText (& file);
 		Melder_clearError ();

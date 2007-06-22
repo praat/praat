@@ -1,6 +1,6 @@
 /* Data.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
  * pb 2003/07/02 Data_copy returns NULL if argument is NULL
  * pb 2003/09/14 old ClassTextFile formant readable across systems
  * pb 2004/10/16 C++ compatible struct tags
+ * pb 2007/06/21 wchar_t
  */
 
 #include "Collection.h"
 
-structMelderFile Data_fileBeingRead = { { 0 } };
+structMelderDir Data_directoryBeingRead = { { 0 } };
 
 static int copy (Any data1, Any data2) {
 	(void) data1;
@@ -34,21 +35,26 @@ static int copy (Any data1, Any data2) {
 	return 1;
 }
 
-static int equal (Any data1, Any data2) {
+static bool equal (Any data1, Any data2) {
 	(void) data1;
 	(void) data2;
 	return 1;
 }   /* Names may be different. */
 
-static int writeAscii (Any data, FILE *f) {
+static bool canWriteAsAscii (Any data) {
 	(void) data;
-	(void) f;
 	return 1;
 }
 
-static int readAscii (Any data, FILE *f) {
+static int writeText (Any data, MelderFile openFile) {
 	(void) data;
-	(void) f;
+	(void) openFile;
+	return 1;
+}
+
+static int readText (Any data, MelderFile openFile) {
+	(void) data;
+	(void) openFile;
 	return 1;
 }
 
@@ -91,8 +97,9 @@ static int readLisp (Any data, FILE *f) {
 class_methods (Data, Thing)
 	class_method (copy)
 	class_method (equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (canWriteAsAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method (writeBinary)
 	class_method (readBinary)
 	class_method (writeCache)
@@ -116,7 +123,7 @@ Any Data_copy (I) {
 	return thee;
 }
 
-int Data_equal (I, thou) {
+bool Data_equal (I, thou) {
 	iam (Data); thouart (Data);
 	int offset;
 	if (my methods != thy methods) return 0;   /* Different class: not equal. */
@@ -126,74 +133,73 @@ int Data_equal (I, thou) {
 	return our equal (me, thee);
 }
 
-int Data_canWriteAscii (I) {
+bool Data_canWriteAsAscii (I) {
 	iam (Data);
-	return our writeAscii != classData -> writeAscii;
+	return our canWriteAsAscii (me);
 }
 
-int Data_writeAscii (I, FILE *f) {
+bool Data_canWriteText (I) {
 	iam (Data);
-	if (! our writeAscii (me, f)) return 0;
-	if (ferror (f)) return Melder_error ("(Data_writeAscii:) I/O error.");
+	return our writeText != classData -> writeText;
+}
+
+int Data_writeText (I, MelderFile openFile) {
+	iam (Data);
+	if (! our writeText (me, openFile)) return 0;
+	if (ferror (openFile -> filePointer)) return Melder_error ("(Data_writeText:) I/O error.");
 	return 1;
 }
 
-int Data_writeToConsole (I) {
+static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	int result;
-	if (! Data_canWriteAscii (me)) return Melder_error ("(Data_writeToConsole:) Class %s cannot be written.", our _className);
-	printf ("Write to console: class %s,  name \"%s\".\n",
-		Thing_className (me), my name ? my name : "<none>");
-	result = Data_writeAscii (me, stdout);
-	putchar ('\n');
-	return result;
-}
-
-int Data_writeToTextFile (I, MelderFile fs) {
-	iam (Data);
-	char className [100];
-	FILE *f;
-	if (! Data_canWriteAscii (me)) return Melder_error ("(Data_writeToTextFile:) Objects of class %s cannot be written to a text file.", our _className);
-	if ((f = Melder_fopen (fs, "w")) == NULL) return 0;
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
-	if (our version)
-		sprintf (className, "%s %ld", our _className, our version);
-	else
-		strcpy (className, our _className);
-	if (fprintf (f, "File type = \"ooTextFile\"\nObject class = \"%s\"\n", className) == EOF || ! Data_writeAscii (me, f)) {
-		fclose (f);
-		return Melder_error ("(Data_writeToTextFile:) Cannot write file \"%.200s\".", MelderFile_messageName (fs));
+	if (! Data_canWriteText (me)) {
+		Melder_error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.");
+		goto end;
 	}
-	putc ('\n', f);
-	fclose (f);
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
-	return 1;
-}
-
-int Data_writeToShortTextFile (I, MelderFile fs) {
-	iam (Data);
-	char className [100];
-	FILE *f;
-	if (! Data_canWriteAscii (me)) return Melder_error ("(Data_writeToShortTextFile:) Objects of class %s cannot be written to a text file.", our _className);
-	if ((f = Melder_fopen (fs, "w")) == NULL) return 0;
-	if (our version)
-		sprintf (className, "%s %ld", our _className, our version);
-	else
-		strcpy (className, our _className);
-	ascio_verbose (FALSE);
-	if (fprintf (f, "File type = \"ooTextFile short\"\n\"%s\"\n", className) == EOF || ! Data_writeAscii (me, f)) {
-		fclose (f);
-		ascio_verbose (TRUE);
-		return Melder_error ("(Data_writeToShortTextFile:) Cannot write file \"%.200s\".", MelderFile_messageName (fs));
+	MelderFile_create (file, "TEXT", 0, "txt"); cherror
+	#if defined (_WIN32)
+		file -> requiresCRLF = true;
+	#endif
+	file -> verbose = verbose;
+	file -> outputEncoding = Melder_getOutputEncoding ();
+	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+		texput (file, "File type = \"ooUtf8TextFile\"\nObject class = \"");
+	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16) {
+		if (Data_canWriteAsAscii (me)) {
+			texput (file, "File type = \"ooTextFile\"\nObject class = \"");
+		} else {
+			file -> outputEncoding = Melder_OUTPUT_ENCODING_UTF16;
+			texput (file, "File type = \"ooTextFile\"\nObject class = \"");
+		}
+	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF16) {
+		texput (file, "File type = \"ooTextFile\"\nObject class = \"");
 	}
-	putc ('\n', f);
-	fclose (f);
-	ascio_verbose (TRUE);
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
+	char className [100];
+	if (our version > 0) {
+		sprintf (className, "%s %ld", our _className, our version);
+	} else {
+		strcpy (className, our _className);
+	}
+	texput (file, className);
+	texput (file, "\"\n");
+	Data_writeText (me, file); cherror
+	texput (file, "\n");
+end:
+	MelderFile_close (file);
+	iferror return Melder_error5 (L"Cannot write ", our _classNameW, L"to file \"", MelderFile_messageNameW (file), L"\".");
+	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	return 1;
 }
 
-int Data_canWriteBinary (I) {
+int Data_writeToTextFile (I, MelderFile file) {
+	return _Data_writeToTextFile (void_me, file, true);
+}
+
+int Data_writeToShortTextFile (I, MelderFile file) {
+	return _Data_writeToTextFile (void_me, file, false);
+}
+
+bool Data_canWriteBinary (I) {
 	iam (Data);
 	return our writeBinary != classData -> writeBinary;
 }
@@ -201,32 +207,36 @@ int Data_canWriteBinary (I) {
 int Data_writeBinary (I, FILE *f) {
 	iam (Data);
 	if (! our writeBinary (me, f)) return 0;
-	if (ferror (f)) return Melder_error ("I/O error.");
+	if (ferror (f)) return Melder_error1 (L"I/O error.");
 	return 1;
 }
 
-int Data_writeToBinaryFile (I, MelderFile fs) {
+int Data_writeToBinaryFile (I, MelderFile file) {
 	iam (Data);
+	if (! Data_canWriteBinary (me)) {
+		return Melder_error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _classNameW, L" cannot be written to a generic binary file.");
+		goto end;
+	}
+	MelderFile_create (file, 0, 0, 0); cherror
+	if (fprintf (file -> filePointer, "ooBinaryFile") < 0) {
+		Melder_error1 (L"Cannot write first bytes of file.");
+		goto end;
+	}
 	char className [100];
-	FILE *f;
-	if (! Data_canWriteBinary (me)) return Melder_error ("(Data_writeToBinaryFile:) Objects of class %s cannot be written to a generic binary file.", our _className);
-	if ((f = Melder_fopen (fs, "wb")) == NULL) return 0;
-	if (fprintf (f, "ooBinaryFile") < 0) goto error;
 	if (our version)
 		sprintf (className, "%s %ld", our _className, our version);
 	else
 		strcpy (className, our _className);
-	binputs1 (className, f);
-	if (! Data_writeBinary (me, f)) goto error;
-	fclose (f);
-	MelderFile_setMacTypeAndCreator (fs, 'BINA', 0);
+	binputs1 (className, file -> filePointer);
+	if (! Data_writeBinary (me, file -> filePointer)) goto end;
+end:
+	MelderFile_close (file);
+	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file \"", MelderFile_messageNameW (file), L"\".");
+	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	return 1;
-error:
-	fclose (f);
-	return Melder_error ("(Data_writeToBinaryFile:) Cannot write file \"%.200s\".", MelderFile_messageName (fs));
 }
 
-int Data_canWriteLisp (I) {
+bool Data_canWriteLisp (I) {
 	iam (Data);
 	return our writeLisp != classData -> writeLisp;
 }
@@ -260,51 +270,53 @@ int Data_writeToLispFile (I, MelderFile fs) {
 	return 1;
 }
 
-int Data_canReadAscii (I) {
+bool Data_canReadText (I) {
 	iam (Data);
-	return our readAscii != classData -> readAscii;
+	return our readText != classData -> readText;
 }
 
-int Data_readAscii (I, FILE *f) {
+int Data_readText (I, MelderFile openFile) {
 	iam (Data);
-	if (! our readAscii (me, f) || Melder_hasError ())
-		return Melder_error ("(Data_readAscii:) %s not read.", Thing_className (me));
-	if (feof (f))
-		return Melder_error ("(Data_readAscii:) Early end of file. %s not read.", Thing_className (me));
-	if (ferror (f))
-		return Melder_error ("(Data_readAscii:) I/O error. %s not read.", Thing_className (me));
+	if (! our readText (me, openFile) || Melder_hasError ())
+		return Melder_error2 (Thing_classNameW (me), L" not read.");
+	if (feof (openFile -> filePointer))
+		return Melder_error3 (L"Early end of file. ", Thing_classNameW (me), L" not read.");
+	if (ferror (openFile -> filePointer))
+		return Melder_error3 (L"Read error. ", Thing_classNameW (me), L" not read.");
 	return 1;
 }
 
 Any Data_readFromTextFile (MelderFile file) {
 	Data me;
-	FILE *f;
-	char line [200], *end;
-	if ((f = Melder_fopen (file, "r")) == NULL) return NULL;
-	fgets (line, 199, f);
+	char line [200], *end, *klas = NULL;
+	MelderFile_open (file); cherror
+	fgets (line, 199, file -> filePointer);
 	end = strstr (line, "ooTextFile");   /* oo format? */
 	if (end) {
-		char *klas;
-		fseek (f, (end - line) + 11, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
-		klas = ascgets1 (f);
-		if (! klas || ! (me = Thing_newFromClassName (klas))) { fclose (f); return 0; }
-		Melder_free (klas);
+		fseek (file -> filePointer, (end - line) + 11, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
+		klas = texgets2 (file); cherror
+		me = Thing_newFromClassName (klas); cherror
 	} else {
 		end = strstr (line, "TextFile");
-		fseek (f, (end - line) + 8, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
-		if (! end || ! (*end = '\0', me = Thing_newFromClassName (line))) {
-			fclose (f);
-			return NULL;
+		if (end == NULL) {
+			Melder_error1 (L"Not an old-type text file; should not occur.");
+			goto end;
 		}
+		fseek (file -> filePointer, (end - line) + 8, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
+		*end = '\0';
+		me = Thing_newFromClassName (line); cherror
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */
 	}
-	MelderFile_copy (file, & Data_fileBeingRead);
-	if (! Data_readAscii (me, f)) forget (me);
-	fclose (f);
+	MelderFile_getParentDir (file, & Data_directoryBeingRead);
+	Data_readText (me, file); cherror
+end:
+	Melder_free (klas);
+	MelderFile_close (file);
+	iferror forget (me);
 	return me;
 }
 
-int Data_canReadBinary (I) {
+bool Data_canReadBinary (I) {
 	iam (Data);
 	return our readBinary != classData -> readBinary;
 }
@@ -342,13 +354,13 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		rewind (f);
 		fread (line, 1, end - line + strlen ("BinaryFile"), f);
 	}
-	MelderFile_copy (file, & Data_fileBeingRead);
+	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	if (! Data_readBinary (me, f)) forget (me);
 	fclose (f);
 	return me;
 }
 
-int Data_canReadLisp (I) {
+bool Data_canReadLisp (I) {
 	iam (Data);
 	return our readLisp != classData -> readLisp;
 }
@@ -372,7 +384,7 @@ Any Data_readFromLispFile (MelderFile file) {
 		fclose (f);
 		return Melder_errorp ("(Data_readFromLispFile:) File \"%.200s\" is not a Data LISP file.", MelderFile_messageName (file));
 	}
-	MelderFile_copy (file, & Data_fileBeingRead);
+	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	if (! Data_readLisp (me, f)) forget (me);
 	fclose (f);
 	return me;
@@ -422,7 +434,7 @@ Any Data_readFromFile (MelderFile file) {
 
 	/***** 4. Is this file of a type for which a recognizer has been installed? *****/
 
-	MelderFile_copy (file, & Data_fileBeingRead);
+	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
 		Data object = fileTypeRecognizers [i] (nread, header, file);
 		if (Melder_hasError ()) return NULL;

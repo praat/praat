@@ -31,11 +31,11 @@
 #include "Regression_def.h"
 #include "oo_EQUAL.h"
 #include "Regression_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Regression_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Regression_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Regression_def.h"
 #include "oo_READ_BINARY.h"
 #include "Regression_def.h"
@@ -47,9 +47,9 @@ class_methods (RegressionParameter, Data)
 	class_method_local (RegressionParameter, description)
 	class_method_local (RegressionParameter, copy)
 	class_method_local (RegressionParameter, equal)
-	class_method_local (RegressionParameter, writeAscii)
+	class_method_local (RegressionParameter, writeText)
 	class_method_local (RegressionParameter, writeBinary)
-	class_method_local (RegressionParameter, readAscii)
+	class_method_local (RegressionParameter, readText)
 	class_method_local (RegressionParameter, readBinary)
 class_methods_end
 
@@ -69,9 +69,9 @@ class_methods (Regression, Data)
 	class_method_local (Regression, description)
 	class_method_local (Regression, copy)
 	class_method_local (Regression, equal)
-	class_method_local (Regression, writeAscii)
+	class_method_local (Regression, writeText)
 	class_method_local (Regression, writeBinary)
-	class_method_local (Regression, readAscii)
+	class_method_local (Regression, readText)
 	class_method_local (Regression, readBinary)
 	class_method_local (Regression, info)
 class_methods_end

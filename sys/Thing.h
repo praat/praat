@@ -131,7 +131,7 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 	Usage:
 		you should call this routine for all classes that you want to read by name,
 		e.g., with Data_readFromTextFile () or Data_readFromBinaryFile (),
-		or with Data_readAscii () or Data_readBinary () if the object is a Collection.
+		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
 void Thing_recognizeClassByOtherName (void *readableClass, const char *otherName);

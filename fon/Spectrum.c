@@ -31,7 +31,7 @@
 
 #include "Sound_and_Spectrum.h"
 
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Spectrum_def.h"
 #include "oo_READ_BINARY.h"
 #include "Spectrum_def.h"
@@ -79,7 +79,7 @@ static double getValueAtSample (I, long isamp, long which, int units) {
 class_methods (Spectrum, Matrix)
 	us -> version = 1;   /* Changed sign of imaginary part. */
 	class_method (info)
-	class_method_local (Spectrum, readAscii)
+	class_method_local (Spectrum, readText)
 	class_method_local (Spectrum, readBinary)
 	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
 	class_method (getValueAtSample)

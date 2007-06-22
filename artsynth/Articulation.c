@@ -31,13 +31,13 @@
 #include "Articulation_def.h"
 #include "oo_EQUAL.h"
 #include "Articulation_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Articulation_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Articulation_def.h"
 #include "oo_WRITE_CACHE.h"
 #include "Articulation_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Articulation_def.h"
 #include "oo_READ_BINARY.h"
 #include "Articulation_def.h"
@@ -50,10 +50,10 @@ class_methods (Art, Data)
 	class_method_local (Art, destroy)
 	class_method_local (Art, copy)
 	class_method_local (Art, equal)
-	class_method_local (Art, writeAscii)
+	class_method_local (Art, writeText)
 	class_method_local (Art, writeBinary)
 	class_method_local (Art, writeCache)
-	class_method_local (Art, readAscii)
+	class_method_local (Art, readText)
 	class_method_local (Art, readBinary)
 	class_method_local (Art, readCache)
 	class_method_local (Art, description)

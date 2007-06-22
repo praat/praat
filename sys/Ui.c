@@ -541,7 +541,7 @@ static void UiForm_okOrApply (Widget w, XtPointer void_me, XtPointer call, int h
 	}
 	for (ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		if (! UiField_widgetToValue (my field [ifield])) {
-			Melder_error3 (L"Please correct dialog `", my nameW, L"' or cancel.");
+			Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my nameW, L_RIGHT_SINGLE_QUOTE L" or cancel.");
 			Melder_flushError (NULL);
 			return;
 		}

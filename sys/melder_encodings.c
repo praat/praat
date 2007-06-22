@@ -339,7 +339,7 @@ wchar_t * Melder_utf8ToWcs (const unsigned char *string) {
 void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8) {
 	long n = wcslen (wcs), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
-		wchar_t kar = wcs [i];
+		unsigned long kar = wcs [i];
 		if (kar <= 0x00007F) {
 			#ifdef _WIN32
 				if (kar == '\n') utf8 [j ++] = 13;
@@ -414,7 +414,7 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	MelderStringA_empty (& buffers [ibuffer]);
 	unsigned long n = wcslen (text);
 	for (unsigned long i = 0; i <= n; i ++) {
-		wchar_t kar = text [i];
+		unsigned long kar = text [i];
 		if (kar <= 0x00007F) {
 			#ifdef _WIN32
 				if (kar == '\n') MelderStringA_appendCharacter (& buffers [ibuffer], 13);
@@ -439,7 +439,7 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	for (size_t i = 0; i < n; i ++) {
-		wchar_t kar = ptr [i];
+		unsigned long kar = ptr [i];
 		if (kar <= 0x00007F) {
 			#ifdef _WIN32
 				if (kar == '\n') fputc (13, f);

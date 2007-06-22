@@ -31,11 +31,11 @@
 #include "Tube_def.h"
 #include "oo_EQUAL.h"
 #include "Tube_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Tube_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Tube_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Tube_def.h"
 #include "oo_READ_BINARY.h"
 #include "Tube_def.h"
@@ -59,9 +59,9 @@ class_methods (Tube, Sampled)
 	class_method_local (Tube, equal)
 	class_method_local (Tube, copy)
 	class_method_local (Tube, info)
-	class_method_local (Tube, readAscii)
+	class_method_local (Tube, readText)
 	class_method_local (Tube, readBinary)
-	class_method_local (Tube, writeAscii)
+	class_method_local (Tube, writeText)
 	class_method_local (Tube, writeBinary)
 	class_method_local (Tube, description)
 class_methods_end

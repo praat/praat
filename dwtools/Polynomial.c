@@ -37,11 +37,11 @@
 #include "Polynomial_def.h"
 #include "oo_EQUAL.h"
 #include "Polynomial_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Polynomial_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Polynomial_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Polynomial_def.h"
 #include "oo_READ_BINARY.h"
 #include "Polynomial_def.h"
@@ -460,9 +460,9 @@ class_methods (FunctionTerms, Function)
 	class_method_local (FunctionTerms, destroy)
 	class_method_local (FunctionTerms, equal)
 	class_method_local (FunctionTerms, copy)
-	class_method_local (FunctionTerms, readAscii)
+	class_method_local (FunctionTerms, readText)
 	class_method_local (FunctionTerms, readBinary)
-	class_method_local (FunctionTerms, writeAscii)
+	class_method_local (FunctionTerms, writeText)
 	class_method_local (FunctionTerms, writeBinary)
 	class_method_local (FunctionTerms, description)
 	class_method_local (FunctionTerms, evaluate)
@@ -2183,9 +2183,9 @@ class_methods (Spline, FunctionTerms)
 	class_method_local (Spline, destroy)
 	class_method_local (Spline, equal)
 	class_method_local (Spline, copy)
-	class_method_local (Spline, readAscii)
+	class_method_local (Spline, readText)
 	class_method_local (Spline, readBinary)
-	class_method_local (Spline, writeAscii)
+	class_method_local (Spline, writeText)
 	class_method_local (Spline, writeBinary)
 	class_method_local (Spline, description)
 	class_method_local (Spline, evaluate)

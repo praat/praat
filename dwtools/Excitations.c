@@ -24,11 +24,11 @@
 #include "Excitations.h"
 
 /*
-static int readAscii (I, FILE *f)
+static int readText (I, FILE *f)
 {
 	iam (Excitations);
 	my itemClass =  classExcitation;
-	return inherited (Ordered) readAscii (me, f);
+	return inherited (Ordered) readText (me, f);
 }
 
 static int readBinary (I, FILE *f)

@@ -32,11 +32,11 @@
 #include "SPINET_def.h"
 #include "oo_EQUAL.h"
 #include "SPINET_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "SPINET_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "SPINET_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "SPINET_def.h"
 #include "oo_READ_BINARY.h"
 #include "SPINET_def.h"
@@ -60,9 +60,9 @@ class_methods (SPINET, Sampled2)
 	class_method_local (SPINET, destroy)
 	class_method_local (SPINET, equal)
 	class_method_local (SPINET, copy)
-	class_method_local (SPINET, readAscii)
+	class_method_local (SPINET, readText)
 	class_method_local (SPINET, readBinary)
-	class_method_local (SPINET, writeAscii)
+	class_method_local (SPINET, writeText)
 	class_method_local (SPINET, writeBinary)
 	class_method_local (SPINET, description)
 	class_method (info)

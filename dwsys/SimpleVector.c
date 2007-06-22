@@ -29,11 +29,11 @@
 #include "SimpleVector_def.h"
 #include "oo_EQUAL.h"
 #include "SimpleVector_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "SimpleVector_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "SimpleVector_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "SimpleVector_def.h"
 #include "oo_READ_BINARY.h"
 #include "SimpleVector_def.h"
@@ -44,9 +44,9 @@ class_methods (DoubleVector, Data)
 	class_method_local (DoubleVector, destroy)
 	class_method_local (DoubleVector, equal)
 	class_method_local (DoubleVector, copy)
-	class_method_local (DoubleVector, readAscii)
+	class_method_local (DoubleVector, readText)
 	class_method_local (DoubleVector, readBinary)
-	class_method_local (DoubleVector, writeAscii)
+	class_method_local (DoubleVector, writeText)
 	class_method_local (DoubleVector, writeBinary)
 	class_method_local (DoubleVector, description)
 class_methods_end
@@ -70,9 +70,9 @@ class_methods (ComplexVector, Data)
 	class_method_local (ComplexVector, destroy)
 	class_method_local (ComplexVector, equal)
 	class_method_local (ComplexVector, copy)
-	class_method_local (ComplexVector, readAscii)
+	class_method_local (ComplexVector, readText)
 	class_method_local (ComplexVector, readBinary)
-	class_method_local (ComplexVector, writeAscii)
+	class_method_local (ComplexVector, writeText)
 	class_method_local (ComplexVector, writeBinary)
 	class_method_local (ComplexVector, description)
 class_methods_end

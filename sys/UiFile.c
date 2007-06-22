@@ -472,7 +472,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 					 * machFile contains the directory as e.g. "/" or "/Users/jane"; in the latter (most usual) case, append a slash.
 					 */
 					unsigned char directoryPath [1000];
-					FSRefMakePath (& machFile, (char *) directoryPath, 999);
+					FSRefMakePath (& machFile, directoryPath, 999);
 					if (! (directoryPath [0] == '/' && directoryPath [1] == '\0'))
 						strcat ((char *) directoryPath, "/");
 					Melder_8bitToWcs_inline (directoryPath, my file. wpath, Melder_INPUT_ENCODING_UTF8);

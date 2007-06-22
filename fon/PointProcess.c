@@ -38,9 +38,9 @@
 #include "PointProcess_def.h"
 #include "oo_EQUAL.h"
 #include "PointProcess_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "PointProcess_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "PointProcess_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "PointProcess_def.h"
@@ -93,8 +93,8 @@ class_methods (PointProcess, Function)
 	class_method_local (PointProcess, description)
 	class_method_local (PointProcess, copy)
 	class_method_local (PointProcess, equal)
-	class_method_local (PointProcess, writeAscii)
-	class_method_local (PointProcess, readAscii)
+	class_method_local (PointProcess, writeText)
+	class_method_local (PointProcess, readText)
 	class_method_local (PointProcess, writeBinary)
 	class_method_local (PointProcess, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;

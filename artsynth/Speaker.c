@@ -30,9 +30,9 @@
 #include "Speaker_def.h"
 #include "oo_EQUAL.h"
 #include "Speaker_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Speaker_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Speaker_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Speaker_def.h"
@@ -46,8 +46,8 @@ class_methods (Speaker, Data)
 	class_method_local (Speaker, description)
 	class_method_local (Speaker, copy)
 	class_method_local (Speaker, equal)
-	class_method_local (Speaker, writeAscii)
-	class_method_local (Speaker, readAscii)
+	class_method_local (Speaker, writeText)
+	class_method_local (Speaker, readText)
 	class_method_local (Speaker, writeBinary)
 	class_method_local (Speaker, readBinary)
 class_methods_end

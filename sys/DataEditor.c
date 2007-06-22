@@ -49,7 +49,7 @@
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong",
 	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
-	"enum", "lenum", "boolean", "question", "sstring", "string", "lstring", "wstring",
+	"enum", "lenum", "boolean", "question", "string", "stringw", "lstring", "lstringw",
 	"struct", "widget", "object", "collection" };*/
 static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 6, 33, 33, 8, 6, 60, 60, 60, 60 };
 
@@ -244,9 +244,10 @@ MOTIF_CALLBACK (cb_change)
 				if (value < 0) goto error;
 				* (signed char *) my fieldData [i]. address = value;
 			} break;
-			case sstringwa:
 			case stringwa:
-			case lstringwa: {
+			case stringwwa:
+			case lstringwa:
+			case lstringwwa: {
 				char *old = * (char **) my fieldData [i]. address;
 				Melder_free (old);
 				* (char **) my fieldData [i]. address = Melder_strdup (text);
@@ -443,9 +444,10 @@ static char * singleTypeToText (void *address, int type, void *tagType, char *bu
 		case lenumwa: sprintf (buffer, "<%s>", enum_string (tagType, * (signed short *) address)); break;
 		case booleanwa: sprintf (buffer, * (signed char *) address ? "<true>" : "<false>"); break;
 		case questionwa:  sprintf (buffer, * (signed char *) address ? "<yes>" : "<no>"); break;
-		case sstringwa:
 		case stringwa:
-		case lstringwa: {
+		case stringwwa:
+		case lstringwa:
+		case lstringwwa: {
 			char *string = * (char **) address;
 			if (string == NULL) { buffer [0] = '\0'; return buffer; }   /* Convert NULL string to empty string. */
 			return string;   /* May be much longer than 'buffer'. */

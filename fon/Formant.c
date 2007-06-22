@@ -32,9 +32,9 @@
 #include "Formant_def.h"
 #include "oo_EQUAL.h"
 #include "Formant_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Formant_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Formant_def.h"
 #include "oo_READ_BINARY.h"
 #include "Formant_def.h"
@@ -84,8 +84,8 @@ class_methods (Formant, Sampled)
 	class_method_local (Formant, description)
 	class_method_local (Formant, copy)
 	class_method_local (Formant, equal)
-	class_method_local (Formant, writeAscii)
-	class_method_local (Formant, readAscii)
+	class_method_local (Formant, writeText)
+	class_method_local (Formant, readText)
 	class_method_local (Formant, writeBinary)
 	class_method_local (Formant, readBinary)
 	class_method (info)

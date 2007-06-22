@@ -322,14 +322,14 @@ void _GuiText_nativizeWidget (Widget me) {
 			my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 		SetWindowLong (my window, GWL_USERDATA, (long) me);
 		static HFONT font;
-		if (! font) font = CreateFontW (0, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH | FF_MODERN, L"Courier New");
+		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, L"Courier New");
 		SetWindowFont (my window, theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT), FALSE);
 		my motif.text.editable = TRUE;
 		Edit_LimitText (my window, 0);
 	#elif mac
 	{
 		/*
-		 * Determine whether the text object should be a control, a TextEdit object, or an MLTE object.
+		 * Determine whether the text object should be a control or an MLTE object.
 		 */
 		if (theScrolledHint) {
 			TXNLongRect destRect;

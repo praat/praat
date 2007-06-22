@@ -271,7 +271,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	if (wcslen (script) == 0) {
 		theCommands [position]. script = Melder_wcsdup (L"");   /* Empty string, which will be needed to signal origin. */
 	} else {
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		Melder_relativePathToFileW (script, & file);
 		theCommands [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
 	}

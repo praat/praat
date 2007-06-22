@@ -46,9 +46,9 @@
 #include "Discriminant_def.h"
 #include "oo_EQUAL.h"
 #include "Discriminant_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Discriminant_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Discriminant_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Discriminant_def.h"
@@ -77,8 +77,8 @@ class_methods (Discriminant, Eigen)
 	class_method_local (Discriminant, description)
 	class_method_local (Discriminant, copy)
 	class_method_local (Discriminant, equal)
-	class_method_local (Discriminant, writeAscii)
-	class_method_local (Discriminant, readAscii)
+	class_method_local (Discriminant, writeText)
+	class_method_local (Discriminant, readText)
 	class_method_local (Discriminant, writeBinary)
 	class_method_local (Discriminant, readBinary)
 	class_method (info)

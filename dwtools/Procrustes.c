@@ -91,11 +91,11 @@ static Any classProcrustes_invert (I)
 #include "Procrustes_def.h"
 #include "oo_EQUAL.h"
 #include "Procrustes_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Procrustes_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Procrustes_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Procrustes_def.h"
 #include "oo_READ_BINARY.h"
 #include "Procrustes_def.h"
@@ -106,9 +106,9 @@ class_methods (Procrustes, AffineTransform)
 	class_method_local (Procrustes, destroy)
 	class_method_local (Procrustes, copy)
 	class_method_local (Procrustes, equal)
-	class_method_local (Procrustes, writeAscii)
+	class_method_local (Procrustes, writeText)
 	class_method_local (Procrustes, writeBinary)
-	class_method_local (Procrustes, readAscii)
+	class_method_local (Procrustes, readText)
 	class_method_local (Procrustes, readBinary)
 	class_method_local (Procrustes, description)
 	class_method_local (Procrustes, transform)

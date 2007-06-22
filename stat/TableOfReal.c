@@ -30,6 +30,7 @@
  * pb 2006/04/17 getRowStr, getColStr
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 moved Table stuff here
+ * pb 2007/06/21 tex
  */
 
 #include <ctype.h>
@@ -57,46 +58,49 @@ static void fprintquotedstring (FILE *f, const char *s) {
 	fputc ('\"', f);
 }
 
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (TableOfReal);
-	long i, j;
-	ascputi4 (my numberOfColumns, f, "numberOfColumns");
-	fprintf (f, "\ncolumnLabels []: %s\n", my numberOfColumns >= 1 ? "" : "(empty)");
-	for (i = 1; i <= my numberOfColumns; i ++) {
-		fprintquotedstring (f, my columnLabels [i]);
-		fputc ('\t', f);
+	texputi4 (my numberOfColumns, file, "numberOfColumns");
+	texput (file, "\ncolumnLabels []: ");
+	if (my numberOfColumns < 1) texput (file, "(empty)");
+	texput (file, "\n");
+	for (long i = 1; i <= my numberOfColumns; i ++) {
+		fprintquotedstring (file -> filePointer, my columnLabels [i]);
+		fputc ('\t', file -> filePointer);
 	}
-	ascputi4 (my numberOfRows, f, "numberOfRows");
-	for (i = 1; i <= my numberOfRows; i ++) {
-		fprintf (f, "\nrow [%ld]: ", i);
-		fprintquotedstring (f, my rowLabels [i]);
-		for (j = 1; j <= my numberOfColumns; j ++) {
+	texputi4 (my numberOfRows, file, "numberOfRows");
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		texput (file, "\nrow [");
+		texput (file, Melder_integer (i));
+		texput (file, "]: ");
+		fprintquotedstring (file -> filePointer, my rowLabels [i]);
+		for (long j = 1; j <= my numberOfColumns; j ++) {
 			double x = my data [i] [j];
-			fprintf (f, "\t%s", Melder_double (x));
+			texput (file, "\t");
+			texput (file, Melder_double (x));
 		}
 	}
 	return 1;
 }
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (TableOfReal);
-	long i, j;
-	my numberOfColumns = ascgeti4 (f);
+	my numberOfColumns = texgeti4 (file);
 	if (my numberOfColumns >= 1) {
 		if (! (my columnLabels = NUMvector (sizeof (char *), 1, my numberOfColumns))) return 0;
-		for (i = 1; i <= my numberOfColumns; i ++)
-			if (! (my columnLabels [i] = ascgets2 (f))) return 0;
+		for (long i = 1; i <= my numberOfColumns; i ++)
+			if (! (my columnLabels [i] = texgets2 (file))) return 0;
 	}
-	my numberOfRows = ascgeti4 (f);
+	my numberOfRows = texgeti4 (file);
 	if (my numberOfRows >= 1) {
 		if (! (my rowLabels = NUMvector (sizeof (char *), 1, my numberOfRows))) return 0;
 	}
 	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
 		if (! (my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns))) return 0;
-		for (i = 1; i <= my numberOfRows; i ++) {
-			if (! (my rowLabels [i] = ascgets2 (f))) return 0;
-			for (j = 1; j <= my numberOfColumns; j ++)
-				my data [i] [j] = ascgetr8 (f);
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			if (! (my rowLabels [i] = texgets2 (file))) return 0;
+			for (long j = 1; j <= my numberOfColumns; j ++)
+				my data [i] [j] = texgetr8 (file);
 		}
 	}
 	return 1;
@@ -141,8 +145,8 @@ class_methods (TableOfReal, Data)
 	class_method_local (TableOfReal, description)
 	class_method_local (TableOfReal, copy)
 	class_method_local (TableOfReal, equal)
-	class_method (writeAscii)
-	class_method (readAscii)
+	class_method (writeText)
+	class_method (readText)
 	class_method_local (TableOfReal, writeBinary)
 	class_method_local (TableOfReal, readBinary)
 	class_method (info)

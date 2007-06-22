@@ -53,6 +53,7 @@
 #include "Interpreter.h"
 #include "Ui.h"
 #include "praatP.h"
+#include "UnicodeData.h"
 
 static Interpreter theInterpreter;
 static Data theSource;
@@ -124,8 +125,8 @@ enum { GEENSYMBOOL_,
 		ARCTAN2_, RANDOM_UNIFORM_, RANDOM_INTEGER_, RANDOM_GAUSS_,
 		CHI_SQUARE_P_, CHI_SQUARE_Q_, INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BESSEL_I_, BESSEL_K_,
-		SOUND_PRESSURE_TO_PHON_,
-	#define HIGH_FUNCTION_2  SOUND_PRESSURE_TO_PHON_
+		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
+	#define HIGH_FUNCTION_2  OBJECTS_ARE_IDENTICAL_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_3  FISHER_P_
@@ -199,7 +200,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss",
 	L"chiSquareP", L"chiSquareQ", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
 	L"beta", L"besselI", L"besselK",
-	L"soundPressureToPhon",
+	L"soundPressureToPhon", L"objectsAreIdentical",
 	L"fisherP", L"fisherQ", L"invFisherQ",
 	L"binomialP", L"binomialQ", L"invBinomialP", L"invBinomialQ",
 
@@ -232,7 +233,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 static int formulefout (wchar_t *message, int position) {
 	static MelderStringW truncatedExpression = { 0 };
 	MelderStringW_ncopyW (& truncatedExpression, theExpression, position + 1);
-	return Melder_error3 (message, L":\n\\>> ", truncatedExpression.string);
+	return Melder_error3 (message, L":\n" L_LEFT_GUILLEMET L" ", truncatedExpression.string);
 }
 
 static const wchar_t *languageNameCompare_searchString;
@@ -402,9 +403,10 @@ static int Formula_lexan (void) {
 						 * Look for ambiguity.
 						 */
 						if (theInterpreter && Interpreter_hasVariable (theInterpreter, token.string))
-							return Melder_error3 (L"\\<<", token.string,
-								L"\\>> is ambiguous: a variable or an attribute of the current object. "
-								"Please change variable name.");
+							return Melder_error3 (
+								L_LEFT_GUILLEMET, token.string,
+								L_RIGHT_GUILLEMET L" is ambiguous: a variable or an attribute of the current object. "
+								L"Please change variable name.");
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							nieuwtok (tok)
 						} else {
@@ -418,12 +420,15 @@ static int Formula_lexan (void) {
 						 * This must be a variable, since there is no "current object" here.
 						 */
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) return Melder_error3 (L"Unknown variable \\<<", token.string,
-							L"\\>> in formula (no \"current object\" here).");
+						if (var == NULL) return Melder_error3 (
+							L"Unknown variable " L_LEFT_GUILLEMET, token.string,
+							L_RIGHT_GUILLEMET L" in formula (no \"current object\" here).");
 						if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 						lexan [itok]. content.variable = var;
 					} else {
-						return Melder_error3 (L"Unknown token \\<<", token.string, L"\\>> in formula (no variables or current objects here).");
+						return Melder_error3 (
+							L"Unknown token " L_LEFT_GUILLEMET, token.string,
+							L_RIGHT_GUILLEMET L" in formula (no variables or current objects here).");
 					}
 				} else {
 					nieuwtok (tok)   /* This must be a language name. */
@@ -435,15 +440,21 @@ static int Formula_lexan (void) {
 					jkar = ikar + 1;
 					while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
 					if (theExpression [jkar] == '(') {
-						return Melder_error3 (L"Unknown function \\<<", token.string, L"\\>> in formula.");
+						return Melder_error3 (
+							L"Unknown function " L_LEFT_GUILLEMET, token.string,
+							L_RIGHT_GUILLEMET L" in formula.");
 					} else {
-						return Melder_error3 (L"Unknown variable \\<<", token.string, L"\\>> in formula.");
+						return Melder_error3 (
+							L"Unknown variable " L_LEFT_GUILLEMET, token.string,
+							L_RIGHT_GUILLEMET L" in formula.");
 					}
 				}
 				if (endsInDollarSign) nieuwtok (STRING_VARIABLE_) else nieuwtok (NUMERIC_VARIABLE_)
 				lexan [itok]. content.variable = var;
 			} else {
-				return Melder_error3 (L"Unknown function or attribute \\<<", token.string, L"\\>> in formula.");
+				return Melder_error3 (
+					L"Unknown function or attribute " L_LEFT_GUILLEMET, token.string,
+						L_RIGHT_GUILLEMET L" in formula.");
 			}
 		} else if (kar >= 'A' && kar <= 'Z') {
 			int endsInDollarSign = FALSE;
@@ -472,8 +483,10 @@ static int Formula_lexan (void) {
 				nieuwtok (MATRIKSSTR_)
 				tokmatriks (theSource);
 			} else if (underscore == NULL) {
-				return Melder_error3 (L"Unknown symbol \\<<", token.string, L"\\>> in formula "
-					"(variables start with lower case; object names contain an underscore).");
+				return Melder_error3 (
+					L"Unknown symbol " L_LEFT_GUILLEMET , token.string,
+					L_RIGHT_GUILLEMET L" in formula "
+					L"(variables start with lower case; object names contain an underscore).");
 			} else if (wcsnequ (token.string, L"Object_", 7)) {
 				long uniqueID = wcstol (token.string + 7, NULL, 10);
 				int i = theCurrentPraat -> n;
@@ -1990,6 +2003,32 @@ static void do_function_ll_l (long (*f) (long, long)) {
 	}
 end: return;
 }
+static void do_objects_are_identical (void) {
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+		int id1 = x->content.number, id2 = y->content.number;
+		int i = theCurrentPraat -> n;
+		while (i > 0 && id1 != theCurrentPraat -> list [i]. id) i --;
+		if (i == 0) {
+			Melder_error3 (L"Object #", Melder_integerW (id1), L" does not exist in function objectsAreIdentical.");
+			goto end;
+		}
+		Data object1 = theCurrentPraat -> list [i]. object;
+		i = theCurrentPraat -> n;
+		while (i > 0 && id2 != theCurrentPraat -> list [i]. id) i --;
+		if (i == 0) {
+			Melder_error3 (L"Object #", Melder_integerW (id2), L" does not exist in function objectsAreIdentical.");
+			goto end;
+		}
+		Data object2 = theCurrentPraat -> list [i]. object;
+		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
+			Data_equal (object1, object2));
+	} else {
+		Melder_error5 (L"The function objectsAreIdentical requires two numeric arguments (object IDs), not ",
+			Stackel_whichText (x), L" and ", Stackel_whichText (y), L"."); goto end;
+	}
+end: return;
+}
 static void do_function_ddd_d (double (*f) (double, double, double)) {
 	Stackel z = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER && z->which == Stackel_NUMBER) {
@@ -2135,7 +2174,7 @@ end: return;
 static void do_fileReadable (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		Melder_relativePathToFileW (s->content.string, & file); cherror
 		pushNumber (MelderFile_readable (& file));
 	} else {
@@ -3037,6 +3076,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case BESSEL_I_: { do_function_ld_d (NUMbesselI);
 } break; case BESSEL_K_: { do_function_ld_d (NUMbesselK);
 } break; case SOUND_PRESSURE_TO_PHON_: { do_function_dd_d (NUMsoundPressureToPhon);
+} break; case OBJECTS_ARE_IDENTICAL_: { do_objects_are_identical ();
 /********** Functions of 3 numerical variables: **********/
 } break; case FISHER_P_: { do_function_dll_d (NUMfisherP);
 } break; case FISHER_Q_: { do_function_dll_d (NUMfisherQ);

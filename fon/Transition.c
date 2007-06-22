@@ -36,24 +36,32 @@
 #include "Transition_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Transition_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Transition_def.h"
 #include "oo_READ_BINARY.h"
 #include "Transition_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Transition_def.h"
 
-static int writeAscii (I, FILE *f) {
+static int writeText (I, MelderFile file) {
 	iam (Transition);
-	long i, j;
-	ascputi4 (my numberOfStates, f, "numberOfStates");
-	fprintf (f, "\nstateLabels []: %s\n", my numberOfStates >= 1 ? "" : "(empty)");
-	for (i = 1; i <= my numberOfStates; i ++)
-		fprintf (f, "\"%s\"\t", my stateLabels [i] ? my stateLabels [i] : "");
-	for (i = 1; i <= my numberOfStates; i ++) {
-		fprintf (f, "\nstate [%ld]:", i);
-		for (j = 1; j <= my numberOfStates; j ++)
-			fprintf (f, "\t%.17g", my data [i] [j]);
+	texputi4 (my numberOfStates, file, "numberOfStates");
+	texput (file, "\nstateLabels []: ");
+	if (my numberOfStates < 1) texput (file, "(empty)");
+	texput (file, "\n");
+	for (long i = 1; i <= my numberOfStates; i ++) {
+		texput (file, "\"");
+		if (my stateLabels [i] != NULL) texput (file, my stateLabels [i]);
+		texput (file, "\"\t");
+	}
+	for (long i = 1; i <= my numberOfStates; i ++) {
+		texput (file, "\nstate [");
+		texput (file, Melder_integer (i));
+		texput (file, "]:");
+		for (long j = 1; j <= my numberOfStates; j ++) {
+			texput (file, "\t");
+			texput (file, Melder_double (my data [i] [j]));
+		}
 	}
 	return 1;
 }
@@ -69,8 +77,8 @@ class_methods (Transition, Data)
 	class_method_local (Transition, description)
 	class_method_local (Transition, copy)
 	class_method_local (Transition, equal)
-	class_method (writeAscii)
-	class_method_local (Transition, readAscii)
+	class_method (writeText)
+	class_method_local (Transition, readText)
 	class_method_local (Transition, writeBinary)
 	class_method_local (Transition, readBinary)
 	class_method (info)

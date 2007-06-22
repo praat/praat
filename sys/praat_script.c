@@ -109,7 +109,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"fappendinfo\" is not available inside pictures.");
 			FILE *f;
-			structMelderFile file = { { 0 } };
+			structMelderFile file = { 0 };
 			if (! Melder_relativePathToFileW (command + 12, & file)) return 0;
 			f = Melder_fopen (& file, "a");
 			if (! f) return 0;
@@ -225,7 +225,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"filedelete\" is not available inside pictures.");
 			const wchar_t *p = command + 11;
-			structMelderFile file = { { 0 } };
+			structMelderFile file = { 0 };
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error1 (L"Missing file name after `filedelete'.");
@@ -256,7 +256,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			}
 			*q = '\0';
 			if (*p == ' ' || *p == '\t') {
-				structMelderFile file = { { 0 } };
+				structMelderFile file = { 0 };
 				if (! Melder_relativePathToFileW (path, & file)) return 0;
 				if (! MelderFile_appendTextW (& file, p + 1)) return 0;
 			}
@@ -390,7 +390,7 @@ end:
 int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments) {
 	wchar_t path [256];
 	const wchar_t *p, *arguments;
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	/*
 	 * Split into file name and arguments.
 	 */
@@ -422,7 +422,7 @@ int praat_executeScriptFromText (wchar_t *text) {
 
 int praat_executeScriptFromDialog (Any dia) {
 	Interpreter interpreter = NULL;
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	wchar_t *text = NULL, *path = UiForm_getString (dia, L"$file");
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
@@ -507,7 +507,7 @@ int DO_praat_runScript (Any sender, void *dummy) {
 }
 
 int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	(void) dummy;
 	if (! Melder_relativePathToFileW ((wchar_t *) scriptPath, & file)) return 0;
 	return firstPassThroughScript (& file);

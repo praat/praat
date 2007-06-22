@@ -37,9 +37,9 @@
 #include "RealTier_def.h"
 #include "oo_EQUAL.h"
 #include "RealTier_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "RealTier_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "RealTier_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "RealTier_def.h"
@@ -54,8 +54,8 @@ class_methods (RealPoint, Data)
 	class_method_local (RealPoint, destroy)
 	class_method_local (RealPoint, copy)
 	class_method_local (RealPoint, equal)
-	class_method_local (RealPoint, writeAscii)
-	class_method_local (RealPoint, readAscii)
+	class_method_local (RealPoint, writeText)
+	class_method_local (RealPoint, readText)
 	class_method_local (RealPoint, writeBinary)
 	class_method_local (RealPoint, readBinary)
 	class_method_local (RealPoint, description)
@@ -97,8 +97,8 @@ class_methods (RealTier, Function)
 	class_method_local (RealTier, destroy)
 	class_method_local (RealTier, copy)
 	class_method_local (RealTier, equal)
-	class_method_local (RealTier, writeAscii)
-	class_method_local (RealTier, readAscii)
+	class_method_local (RealTier, writeText)
+	class_method_local (RealTier, readText)
 	class_method_local (RealTier, writeBinary)
 	class_method_local (RealTier, readBinary)
 	class_method_local (RealTier, description)

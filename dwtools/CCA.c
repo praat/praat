@@ -41,11 +41,11 @@
 #include "CCA_def.h"
 #include "oo_EQUAL.h"
 #include "CCA_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "CCA_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "CCA_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "CCA_def.h"
 #include "oo_READ_BINARY.h"
 #include "CCA_def.h"
@@ -66,9 +66,9 @@ class_methods (CCA, Data)
 	class_method_local (CCA, equal)
 	class_method_local (CCA, copy)
 	class_method (info)
-	class_method_local (CCA, readAscii)
+	class_method_local (CCA, readText)
 	class_method_local (CCA, readBinary)
-	class_method_local (CCA, writeAscii)
+	class_method_local (CCA, writeText)
 	class_method_local (CCA, writeBinary)
 	class_method_local (CCA, description)
 class_methods_end

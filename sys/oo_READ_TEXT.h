@@ -1,4 +1,4 @@
-/* oo_READ_BINARY.h
+/* oo_READ_TEXT.h
  *
  * Copyright (C) 1994-2007 Paul Boersma
  *
@@ -20,55 +20,59 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
+ * pb 2005/11/24 more informative error messages
  * pb 2006/04/12 guard against too new versions
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
+ * pb 2007/06/21 asc -> tex
  */
 
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	my x = binget##storage (f);
+	my x = texget##storage (file); \
+	iferror return Melder_error3 (L"Trying to read \"", L"" #x, L"\".");
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
-		for (i = 0; i < n; i ++) \
-			my x [i] = binget##storage (f); \
+		for (i = 0; i < n; i ++) { \
+			my x [i] = texget##storage (file); \
+			iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
+		} \
 	}
 
 #define oo_SET(type,storage,x,setType)  \
 	{ \
 		long i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
-			my x [i] = binget##storage (f); \
+			my x [i] = texget##storage (file); \
 	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readBinary (min, max, f))) return 0;
+	if (max >= min && ! (my x = NUM##t##vector_readText (min, max, file, #x))) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readBinary (row1, row2, col1, col2, f))) return 0;
+	    ! (my x = NUM##t##matrix_readText (row1, row2, col1, col2, file, #x))) return 0;
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	if ((my x = binget##storage (f, & enum_##Type)) < 0) return 0;
+	if ((my x = texget##storage (file, & enum_##Type)) < 0) return 0;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
 		for (i = 0; i < n; i ++) \
-			if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0; \
+			if ((my x [i] = texget##storage (file, & enum_##Type)) < 0) return 0; \
 	}
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	{ \
 		long i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
-			if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0; \
+			if ((my x [i] = texget##storage (file, & enum_##Type)) < 0) return 0; \
 	}
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
@@ -76,77 +80,81 @@
 		long i; \
 		if (! (my x = NUM##t##vector (min, max))) return 0; \
 		for (i = min; i <= max; i ++) \
-			if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0; \
+			if ((my x [i] = texget##storage (file, & enum_##Type)) < 0) return 0; \
 	}
 
 #define oo_STRINGx(storage,x)  \
-	if (! (my x = binget##storage (f))) return 0;
+	if (! (my x = texget##storage (file))) return Melder_error ("Trying to read \"%s\".", #x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
 		for (i = 0; i < n; i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+			if (! (my x [i] = texget##storage (file))) return 0; \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	{ \
 		long i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+			if (! (my x [i] = texget##storage (file))) return 0; \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		long i; \
 		if (! (my x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+		for (i = min; i <= max; i ++) { \
+			if (! (my x [i] = texget##storage (file))) \
+				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+		} \
 	}
 
 #define oo_STRINGWx(storage,x)  \
-	if (! (my x = binget##storage (f))) return 0;
+	if (! (my x = texget##storage (file))) return Melder_error ("Trying to read \"%s\".", #x);
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
 		for (i = 0; i < n; i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+			if (! (my x [i] = texget##storage (file))) return 0; \
 	}
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
 	{ \
 		long i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+			if (! (my x [i] = texget##storage (file))) return 0; \
 	}
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		long i; \
 		if (! (my x = NUMvector (sizeof (wchar_t *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+		for (i = min; i <= max; i ++) { \
+			if (! (my x [i] = texget##storage (file))) \
+				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_readBinary (& my x, f)) return 0;
+	if (! Type##_readText (& my x, file)) return 0;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	{ \
 		long i; \
 		for (i = 0; i < n; i ++) \
-			if (! Type##_readBinary (& my x [i], f)) return 0; \
+			if (! Type##_readText (& my x [i], file)) return 0; \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	{ \
 		long i; \
 		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! Type##_readBinary (& my x [i], f)) return 0; \
+			if (! Type##_readText (& my x [i], file)) return 0; \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
@@ -154,28 +162,28 @@
 		long i; \
 		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
 		for (i = min; i <= max; i ++) \
-			if (! Type##_readBinary (& my x [i], f)) return 0; \
+			if (! Type##_readText (& my x [i], file)) return 0; \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (bingetex (f)) { \
+	if (texgetex (file)) { \
 		long saveVersion = Thing_version; \
 		if ((my x = new (Class)) == NULL) return 0; \
 		Thing_version = version; \
-		if (! Data_readBinary (my x, f)) return 0; \
+		if (! Data_readText (my x, file)) return 0; \
 		Thing_version = saveVersion; \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = bingeti4 (f), i; \
+		long n = texgeti4 (file), i; \
 		if ((my x = Class##_create ()) == NULL) return 0; \
 		for (i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
 			ItemClass item = new (ItemClass); \
 			if (item == NULL) return 0; \
 			Thing_version = version; \
-			if (! item -> methods -> readBinary (item, f)) return 0; \
+			if (! item -> methods -> readText (item, file)) return 0; \
 			Thing_version = saveVersion; \
 			if (! Collection_addItem (my x, item)) return 0; \
 		} \
@@ -186,7 +194,7 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_readBinary (Type me, FILE *f) { \
+	static int Type##_readText (Type me, MelderFile file) { \
 		int localVersion = Thing_version; (void) localVersion;
 
 #define oo_END_STRUCT(Type)  \
@@ -194,12 +202,12 @@
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_readBinary (I, FILE *f) { \
+	static int class##Class##_readText (I, MelderFile file) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > our version) \
 			return Melder_error ("The format of this file is too new. Download a newer version of Praat."); \
-		if (! inherited (Class) readBinary (me, f)) return 0;
+		if (! inherited (Class) readText (me, file)) return 0;
 
 #define oo_END_CLASS(Class)  \
 		return 1; \
@@ -227,8 +235,8 @@
 #define oo_COMPARING  0
 #define oo_VALIDATING_ASCII  0
 #define oo_READING  1
-#define oo_READING_TEXT  0
-#define oo_READING_BINARY  1
+#define oo_READING_TEXT  1
+#define oo_READING_BINARY  0
 #define oo_READING_CACHE  0
 #define oo_READING_LISP  0
 #define oo_WRITING  0
@@ -238,4 +246,4 @@
 #define oo_WRITING_LISP  0
 #define oo_DESCRIBING  0
 
-/* End of file oo_READ_BINARY.h */
+/* End of file oo_READ_TEXT.h */

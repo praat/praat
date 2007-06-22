@@ -28,8 +28,8 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 	oo_STRING (mark)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
-	#if oo_READING_ASCII
-		if (Thing_version == 1) (void) ascgets2 (f);
+	#if oo_READING_TEXT
+		if (Thing_version == 1) (void) texgets2 (file);
 	#elif oo_READING_BINARY
 		if (Thing_version == 1) (void) bingets2 (f);
 	#endif

@@ -277,7 +277,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	if (wcslen (script) == 0) {
 		theActions [position]. script = NULL;
 	} else {
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		Melder_relativePathToFileW (script, & file);
 		theActions [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
 	}

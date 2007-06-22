@@ -31,11 +31,11 @@
 #include "Cepstrumc_def.h"
 #include "oo_EQUAL.h"
 #include "Cepstrumc_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Cepstrumc_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Cepstrumc_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Cepstrumc_def.h"
 #include "oo_READ_BINARY.h"
 #include "Cepstrumc_def.h"
@@ -59,9 +59,9 @@ class_methods (Cepstrumc, Sampled)
 	class_method_local (Cepstrumc, equal)
 	class_method_local (Cepstrumc, copy)
 	class_method ( info)
-	class_method_local (Cepstrumc, readAscii)
+	class_method_local (Cepstrumc, readText)
 	class_method_local (Cepstrumc, readBinary)
-	class_method_local (Cepstrumc, writeAscii)
+	class_method_local (Cepstrumc, writeText)
 	class_method_local (Cepstrumc, writeBinary)
 	class_method_local (Cepstrumc, description)
 class_methods_end

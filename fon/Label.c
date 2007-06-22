@@ -30,7 +30,7 @@ static int copy (I, thou) {
 	return my name == NULL || (Thing_setName (thee, my name), my name != NULL);
 }
 
-static int equal (I, thou) {
+static bool equal (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
 	if (! inherited (Autosegment) equal (me, thee)) return 0;
 	if (my name == NULL && thy name == NULL) return 1;   /* Shortcut: no names. */

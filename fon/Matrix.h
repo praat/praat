@@ -95,7 +95,7 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 
 /* Implemented methods
 
-	int Matrix::writeAscii (I, FILE *f);
+	int Matrix::writeText (I, FILE *f);
 		writes a Matrix as text to the stream f.
 		A sample of the format follows (see example 3 above):
 			0 5000 1 2   ! xmin xmax ymin ymax
@@ -113,10 +113,10 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 			things written after the "!" are mere comments:
 			you cannot use them to change the meaning or order of the data.
 
-	int Matrix::readAscii (I, FILE *f)
+	int Matrix::readText (I, FILE *f)
 		reads a Matrix as text from the stream f.
 		The requested format is the same as the format produced by
-		Matrix::writeAscii, though any comments may be left out.
+		Matrix::writeText, though any comments may be left out.
 		Failures:
 			Wrong text input: this line should start with xmin, xmax, ymin, and ymax.
 			Wrong text input: this line should start with nx >= 1 and ny >= 1.

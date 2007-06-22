@@ -30,9 +30,9 @@
 #include "FujisakiPitch_def.h"
 #include "oo_EQUAL.h"
 #include "FujisakiPitch_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "FujisakiPitch_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "FujisakiPitch_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "FujisakiPitch_def.h"
@@ -45,8 +45,8 @@ class_methods (FujisakiCommand, Function)
 	class_method_local (FujisakiCommand, destroy)
 	class_method_local (FujisakiCommand, copy)
 	class_method_local (FujisakiCommand, equal)
-	class_method_local (FujisakiCommand, writeAscii)
-	class_method_local (FujisakiCommand, readAscii)
+	class_method_local (FujisakiCommand, writeText)
+	class_method_local (FujisakiCommand, readText)
 	class_method_local (FujisakiCommand, writeBinary)
 	class_method_local (FujisakiCommand, readBinary)
 	class_method_local (FujisakiCommand, description)
@@ -64,8 +64,8 @@ class_methods (FujisakiPitch, Function)
 	class_method_local (FujisakiPitch, destroy)
 	class_method_local (FujisakiPitch, copy)
 	class_method_local (FujisakiPitch, equal)
-	class_method_local (FujisakiPitch, writeAscii)
-	class_method_local (FujisakiPitch, readAscii)
+	class_method_local (FujisakiPitch, writeText)
+	class_method_local (FujisakiPitch, readText)
 	class_method_local (FujisakiPitch, writeBinary)
 	class_method_local (FujisakiPitch, readBinary)
 	class_method_local (FujisakiPitch, description)

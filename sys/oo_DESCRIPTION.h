@@ -22,6 +22,7 @@
  * pb 2004/10/16 replaced structType with theStructType, struct Type with struct structType
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
+ * pb 2007/06/21 oo_LSTRINGW
  */
 
 #include "oo_undef.h"
@@ -270,63 +271,67 @@
 #undef oo_QUESTION_VECTOR
 #define oo_QUESTION_VECTOR(x,n)  { #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, #n },
 
-#undef oo_SSTRING
-#define oo_SSTRING(x)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
 #undef oo_STRING
-#define oo_STRING(x)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
+#define oo_STRING(x)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
+#undef oo_STRINGW
+#define oo_STRINGW(x)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
 #undef oo_LSTRING
 #define oo_LSTRING(x)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
-#undef oo_STRINGW
-#define oo_STRINGW(x)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
-#undef oo_SSTRING_ARRAY
-#define oo_SSTRING_ARRAY(x,cap,n)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, #n },
+#undef oo_LSTRINGW
+#define oo_LSTRINGW(x)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
+
 #undef oo_STRING_ARRAY
-#define oo_STRING_ARRAY(x,cap,n)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, #n },
+#define oo_STRING_ARRAY(x,cap,n)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, #n },
+#undef oo_STRINGW_ARRAY
+#define oo_STRINGW_ARRAY(x,cap,n)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, #n },
 #undef oo_LSTRING_ARRAY
 #define oo_LSTRING_ARRAY(x,cap,n)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, #n },
-#undef oo_STRINGW_ARRAY
-#define oo_STRINGW_ARRAY(x,cap,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, #n },
-#undef oo_SSTRING_SET
-#define oo_SSTRING_SET(x,setType)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (char *) & enum_##setType },
+#undef oo_LSTRINGW_ARRAY
+#define oo_LSTRINGW_ARRAY(x,cap,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, #n },
+
 #undef oo_STRING_SET
-#define oo_STRING_SET(x,setType)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (char *) & enum_##setType },
+#define oo_STRING_SET(x,setType)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (char *) & enum_##setType },
+#undef oo_STRINGW_SET
+#define oo_STRINGW_SET(x,setType)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (char *) & enum_##setType },
 #undef oo_LSTRING_SET
 #define oo_LSTRING_SET(x,setType)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (char *) & enum_##setType },
-#undef oo_STRINGW_SET
-#define oo_STRINGW_SET(x,setType)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (char *) & enum_##setType },
-#undef oo_SSTRING_VECTOR_FROM
-#define oo_SSTRING_VECTOR_FROM(x,min,max)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, #min, #max },
+#undef oo_LSTRINGW_SET
+#define oo_LSTRINGW_SET(x,setType)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (char *) & enum_##setType },
+
 #undef oo_STRING_VECTOR_FROM
-#define oo_STRING_VECTOR_FROM(x,min,max)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, #min, #max },
+#define oo_STRING_VECTOR_FROM(x,min,max)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, #min, #max },
+#undef oo_STRINGW_VECTOR_FROM
+#define oo_STRINGW_VECTOR_FROM(x,min,max)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, #min, #max },
 #undef oo_LSTRING_VECTOR_FROM
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, #min, #max },
-#undef oo_STRINGW_VECTOR_FROM
-#define oo_STRINGW_VECTOR_FROM(x,min,max)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, #min, #max },
-#undef oo_SSTRING_VECTOR
-#define oo_SSTRING_VECTOR(x,n)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, #n },
+#undef oo_LSTRINGW_VECTOR_FROM
+#define oo_LSTRINGW_VECTOR_FROM(x,min,max)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, #min, #max },
+
 #undef oo_STRING_VECTOR
-#define oo_STRING_VECTOR(x,n)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, #n },
+#define oo_STRING_VECTOR(x,n)  { #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, #n },
+#undef oo_STRINGW_VECTOR
+#define oo_STRINGW_VECTOR(x,n)  { #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, #n },
 #undef oo_LSTRING_VECTOR
 #define oo_LSTRING_VECTOR(x,n)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, #n },
-#undef oo_STRINGW_VECTOR
-#define oo_STRINGW_VECTOR(x,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, #n },
+#undef oo_LSTRINGW_VECTOR
+#define oo_LSTRINGW_VECTOR(x,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, #n },
 
-#define oo_STRUCT(Type,x)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description },
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, - cap, 0, #n },
-#define oo_STRUCT_SET(Type,x,setType)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 3, 0, (char *) & enum_##setType },
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 1, #min, #max },
+#define oo_STRUCT(Type,x)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description },
+#define oo_STRUCT_ARRAY(Type,x,cap,n)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, - cap, 0, #n },
+#define oo_STRUCT_SET(Type,x,setType)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 3, 0, (char *) & enum_##setType },
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 1, #min, #max },
 #undef oo_STRUCT_VECTOR
-#define oo_STRUCT_VECTOR(Type,x,n)  { #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 1, 0, #n },
+#define oo_STRUCT_VECTOR(Type,x,n)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), #Type, Type##_description, 1, 0, #n },
 
-#define oo_WIDGET(x)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget) },
-#define oo_WIDGET_ARRAY(x,cap,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, - cap, 0, #n },
-#define oo_WIDGET_SET(x,setType)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 3, 0, (char *) & enum_##setType },
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 1, #min, #max },
+#define oo_WIDGET(x)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget) },
+#define oo_WIDGET_ARRAY(x,cap,n)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, - cap, 0, #n },
+#define oo_WIDGET_SET(x,setType)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 3, 0, (char *) & enum_##setType },
+#define oo_WIDGET_VECTOR_FROM(x,min,max)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 1, #min, #max },
 #undef oo_WIDGET_VECTOR
-#define oo_WIDGET_VECTOR(Type,x,n)  { #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 1, 0, #n },
+#define oo_WIDGET_VECTOR(Type,x,n)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (Widget), 0, 0, 1, 0, #n },
 
-#define oo_OBJECT(Type,version,x)  { #x, 23, (int) & ((ooSTRUCT) 0) -> x, sizeof (Type), #Type, & theStruct##Type },
-#define oo_COLLECTION(Type,x,ItemType,version)  { #x, 24, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##ItemType), #Type, & theStruct##Type, 0, (const char *) & theStruct##ItemType },
+#define oo_OBJECT(Type,version,x)  { #x, 25, (int) & ((ooSTRUCT) 0) -> x, sizeof (Type), #Type, & theStruct##Type },
+#define oo_COLLECTION(Type,x,ItemType,version)  { #x, 26, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##ItemType), #Type, & theStruct##Type, 0, (const char *) & theStruct##ItemType },
 #define oo_FILE(x)
 #define oo_DIR(x)
 
@@ -350,13 +355,14 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
+#define oo_VALIDATING_ASCII  0
 #define oo_READING  0
-#define oo_READING_ASCII  0
+#define oo_READING_TEXT  0
 #define oo_READING_BINARY  0
 #define oo_READING_CACHE  0
 #define oo_READING_LISP  0
 #define oo_WRITING  0
-#define oo_WRITING_ASCII  0
+#define oo_WRITING_TEXT  0
 #define oo_WRITING_BINARY  0
 #define oo_WRITING_CACHE  0
 #define oo_WRITING_LISP  0

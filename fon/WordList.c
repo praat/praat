@@ -32,9 +32,9 @@
 #include "WordList_def.h"
 #include "oo_EQUAL.h"
 #include "WordList_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "WordList_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "WordList_def.h"
 #include "oo_DESCRIPTION.h"
 #include "WordList_def.h"
@@ -141,9 +141,9 @@ class_methods (WordList, Data)
 	class_method_local (WordList, destroy)
 	class_method_local (WordList, copy)
 	class_method_local (WordList, equal)
-	class_method_local (WordList, writeAscii)
+	class_method_local (WordList, writeText)
 	class_method (writeBinary)
-	class_method_local (WordList, readAscii)
+	class_method_local (WordList, readText)
 	class_method (readBinary)
 class_methods_end
 

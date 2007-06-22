@@ -31,9 +31,9 @@
 #include "PairDistribution_def.h"
 #include "oo_EQUAL.h"
 #include "PairDistribution_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "PairDistribution_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "PairDistribution_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "PairDistribution_def.h"
@@ -46,8 +46,8 @@ class_methods (PairProbability, Data)
 	class_method_local (PairProbability, destroy)
 	class_method_local (PairProbability, copy)
 	class_method_local (PairProbability, equal)
-	class_method_local (PairProbability, writeAscii)
-	class_method_local (PairProbability, readAscii)
+	class_method_local (PairProbability, writeText)
+	class_method_local (PairProbability, readText)
 	class_method_local (PairProbability, writeBinary)
 	class_method_local (PairProbability, readBinary)
 	class_method_local (PairProbability, description)
@@ -63,8 +63,8 @@ class_methods (PairDistribution, Data)
 	class_method_local (PairDistribution, destroy)
 	class_method_local (PairDistribution, copy)
 	class_method_local (PairDistribution, equal)
-	class_method_local (PairDistribution, writeAscii)
-	class_method_local (PairDistribution, readAscii)
+	class_method_local (PairDistribution, writeText)
+	class_method_local (PairDistribution, readText)
 	class_method_local (PairDistribution, writeBinary)
 	class_method_local (PairDistribution, readBinary)
 	class_method_local (PairDistribution, description)

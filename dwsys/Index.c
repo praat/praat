@@ -33,7 +33,7 @@
 #include "Index_def.h"
 #include "oo_EQUAL.h"
 #include "Index_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Index_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Index_def.h"
@@ -55,7 +55,7 @@ class_methods (Index, Data)
 	class_method_local (Index, destroy)
 	class_method_local (Index, copy)
 	class_method_local (Index, equal)
-	class_method_local (Index, writeAscii)
+	class_method_local (Index, writeText)
 	class_method_local (Index, writeBinary)
 	class_method (info)
 	class_method_local (Index, readBinary)
@@ -101,7 +101,7 @@ class_methods (StringsIndex, Index)
 	class_method_local (StringsIndex, destroy)
 	class_method_local (StringsIndex, copy)
 	class_method_local (StringsIndex, equal)
-	class_method_local (StringsIndex, writeAscii)
+	class_method_local (StringsIndex, writeText)
 	class_method_local (StringsIndex, writeBinary)
 	class_method_local (StringsIndex, readBinary)
 	class_method_local (StringsIndex, description)

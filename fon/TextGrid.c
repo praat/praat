@@ -33,6 +33,7 @@
  * pb 2006/02/20 TextGrid_create guards against zero tiers
  * pb 2006/02/24 split TextGrid_create into TextGrid_createWithTiers and TextGrid_createWithoutTiers
  * pb 2007/03/17 domain quantity
+ * pb 2007/06/21 tex
  */
 
 #include "TextGrid.h"
@@ -45,9 +46,9 @@
 #include "TextGrid_def.h"
 #include "oo_EQUAL.h"
 #include "TextGrid_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "TextGrid_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "TextGrid_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "TextGrid_def.h"
@@ -60,8 +61,8 @@ class_methods (TextPoint, AnyPoint)
 	class_method_local (TextPoint, destroy)
 	class_method_local (TextPoint, copy)
 	class_method_local (TextPoint, equal)
-	class_method_local (TextPoint, writeAscii)
-	class_method_local (TextPoint, readAscii)
+	class_method_local (TextPoint, writeText)
+	class_method_local (TextPoint, readText)
 	class_method_local (TextPoint, writeBinary)
 	class_method_local (TextPoint, readBinary)
 	class_method_local (TextPoint, description)
@@ -97,8 +98,8 @@ class_methods (TextInterval, Function)
 	class_method_local (TextInterval, destroy)
 	class_method_local (TextInterval, copy)
 	class_method_local (TextInterval, equal)
-	class_method_local (TextInterval, writeAscii)
-	class_method_local (TextInterval, readAscii)
+	class_method_local (TextInterval, writeText)
+	class_method_local (TextInterval, readText)
 	class_method_local (TextInterval, writeBinary)
 	class_method_local (TextInterval, readBinary)
 	class_method_local (TextInterval, description)
@@ -136,8 +137,8 @@ class_methods (TextTier, Function)
 	class_method_local (TextTier, destroy)
 	class_method_local (TextTier, copy)
 	class_method_local (TextTier, equal)
-	class_method_local (TextTier, writeAscii)
-	class_method_local (TextTier, readAscii)
+	class_method_local (TextTier, writeText)
+	class_method_local (TextTier, readText)
 	class_method_local (TextTier, writeBinary)
 	class_method_local (TextTier, readBinary)
 	class_method_local (TextTier, description)
@@ -163,8 +164,8 @@ class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, destroy)
 	class_method_local (IntervalTier, copy)
 	class_method_local (IntervalTier, equal)
-	class_method_local (IntervalTier, writeAscii)
-	class_method_local (IntervalTier, readAscii)
+	class_method_local (IntervalTier, writeText)
+	class_method_local (IntervalTier, readText)
 	class_method_local (IntervalTier, writeBinary)
 	class_method_local (IntervalTier, readBinary)
 	class_method_local (IntervalTier, description)
@@ -258,8 +259,8 @@ class_methods (TextGrid, Function)
 	class_method_local (TextGrid, destroy)
 	class_method_local (TextGrid, copy)
 	class_method_local (TextGrid, equal)
-	class_method_local (TextGrid, writeAscii)
-	class_method_local (TextGrid, readAscii)
+	class_method_local (TextGrid, writeText)
+	class_method_local (TextGrid, readText)
 	class_method_local (TextGrid, writeBinary)
 	class_method_local (TextGrid, readBinary)
 	class_method_local (TextGrid, description)
@@ -1515,29 +1516,29 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	TextGrid me = NULL;
 	long itier, numberOfTiers;
 	char *tag = NULL;
-	FILE *f = Melder_fopen (file, "r"); cherror
-	tag = ascgets1 (f); cherror
+	MelderFile_open (file); cherror
+	tag = texgets2 (file); cherror
 	if (! strequ (tag, "Praat chronological TextGrid text file")) {
 		Melder_error ("Not a chronological TextGrid text file.");
 		goto end;
 	}
 	me = new (TextGrid); cherror
-	classFunction -> readAscii (me, f); cherror
+	classFunction -> readText (me, file); cherror
 	my tiers = Ordered_create (); cherror
-	numberOfTiers = ascgeti4 (f); cherror
+	numberOfTiers = texgeti4 (file); cherror
 	for (itier = 1; itier <= numberOfTiers; itier ++) {
-		char *klas = ascgets1 (f); cherror
+		char *klas = texgets2 (file); cherror
 		if (strequ (klas, "IntervalTier")) {
 			IntervalTier tier = new (IntervalTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> name = ascgets1 (f); cherror
-			classFunction -> readAscii (tier, f); cherror
+			tier -> name = texgets2 (file); cherror
+			classFunction -> readText (tier, file); cherror
 			tier -> intervals = SortedSetOfDouble_create (); cherror
 		} else if (strequ (klas, "TextTier")) {
 			TextTier tier = new (TextTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> name = ascgets1 (f); cherror
-			classFunction -> readAscii (tier, f); cherror
+			tier -> name = texgets2 (file); cherror
+			classFunction -> readText (tier, file); cherror
 			tier -> points = SortedSetOfDouble_create (); cherror
 		} else {
 			Melder_error ("Unknown tier class \"%s\".", klas);
@@ -1546,7 +1547,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		Melder_free (klas);
 	}
 	for (;;) {
-		long itier = ascgeti4 (f);
+		long itier = texgeti4 (file);
 		iferror {
 			if (strstr (Melder_getError (), "Early end of file")) {
 				Melder_clearError ();
@@ -1562,48 +1563,54 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		if (((Data) my tiers -> item [itier]) -> methods == (Data_Table) classIntervalTier) {
 			IntervalTier tier = my tiers -> item [itier];
 			TextInterval interval = new (TextInterval); cherror
-			classTextInterval -> readAscii (interval, f); cherror
+			classTextInterval -> readText (interval, file); cherror
 			Collection_addItem (tier -> intervals, interval); cherror   /* Not earlier: sorting depends on contents of interval. */
 		} else {
 			TextTier tier = my tiers -> item [itier];
 			TextPoint point = new (TextPoint); cherror
-			classTextPoint -> readAscii (point, f); cherror
+			classTextPoint -> readText (point, file); cherror
 			Collection_addItem (tier -> points, point); cherror   /* Not earlier: sorting depends on contents of point. */
 		}
 	}
 end:
-	Melder_fclose (file, f);
+	MelderFile_close (file);
 	Melder_free (tag);
 	iferror { Melder_error ("(TextGrid_readFromChronologicalTextFile:) File %s not read.", MelderFile_messageName (file)); forget (me); }
 	return me;
 }
 
-static void writeQuotedString (FILE *f, const char *string) {
-	fputc ('\"', f);
-	if (string) { char kar; while ((kar = *string ++) != '\0') { fputc (kar, f); if (kar == '\"') fputc (kar, f); } }
-	fputc ('\"', f);
+static void writeQuotedString (MelderFile file, const char *string) {
+	fputc ('\"', file -> filePointer);
+	if (string) { char kar; while ((kar = *string ++) != '\0') { fputc (kar, file -> filePointer); if (kar == '\"') fputc (kar, file -> filePointer); } }   // BUG.
+	fputc ('\"', file -> filePointer);
 }
 
 int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
-	FILE *f = Melder_fopen (file, "w");
+	MelderFile_create (file, 0, 0, 0); cherror
 	/*
 	 * The "elements" (intervals and points) are sorted primarily by time and secondarily by tier.
 	 */
 	double sortingTime = -1e308;
 	long sortingTier = 0, itier, ielement;
-	if (! f) return 0;
-	ascio_verbose (FALSE);
-	ascindent ();
-	fprintf (f, "\"Praat chronological TextGrid text file\"");
-	fprintf (f, "\n%s %s   ! Time domain.", Melder_double (my xmin), Melder_double (my xmax));
-	fprintf (f, "\n%ld   ! Number of tiers.", my tiers -> size);
+	file -> verbose = false;
+	texindent (file);
+	texput (file, "\"Praat chronological TextGrid text file\"\n");
+	texput (file, Melder_double (my xmin));
+	texput (file, " ");
+	texput (file, Melder_double (my xmax));
+	texput (file, "   ! Time domain.\n");
+	texput (file, Melder_integer (my tiers -> size));
+	texput (file, "   ! Number of tiers.");
 	for (itier = 1; itier <= my tiers -> size; itier ++) {
 		Function anyTier = (Function) my tiers -> item [itier];
-		fputc ('\n', f);
-		writeQuotedString (f, Thing_className (anyTier));
-		fputc (' ', f);
-		writeQuotedString (f, anyTier -> name);
-		fprintf (f, " %s %s", Melder_double (anyTier -> xmin), Melder_double (anyTier -> xmax));
+		texput (file, "\n");
+		writeQuotedString (file, Thing_className (anyTier));
+		texput (file, " ");
+		writeQuotedString (file, anyTier -> name);
+		texput (file, " ");
+		texput (file, Melder_double (anyTier -> xmin));
+		texput (file, " ");
+		texput (file, Melder_double (anyTier -> xmax));
 	}
 	for (;;) {
 		double firstRemainingTime = +1e308;
@@ -1647,20 +1654,31 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			if (anyTier -> methods == (Data_Table) classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				TextInterval interval = tier -> intervals -> item [firstRemainingElement];
-				fprintf (f, "\n%ld %s %s ", firstRemainingTier, Melder_double (interval -> xmin), Melder_double (interval -> xmax));
-				ascputs4 (interval -> text, f, "");
+				texput (file, "\n");
+				texput (file, Melder_integer (firstRemainingTier));
+				texput (file, " ");
+				texput (file, Melder_double (interval -> xmin));
+				texput (file, " ");
+				texput (file, Melder_double (interval -> xmax));
+				texputs4 (interval -> text, file, "");
 			} else {
 				TextTier tier = (TextTier) anyTier;
 				TextPoint point = tier -> points -> item [firstRemainingElement];
-				fprintf (f, "\n%ld %s ", firstRemainingTier, Melder_double (point -> time));
-				ascputs4 (point -> mark, f, "");
+				texput (file, "\n");
+				texput (file, Melder_integer (firstRemainingTier));
+				texput (file, " ");
+				texput (file, Melder_double (point -> time));
+				texput (file, " ");
+				texputs4 (point -> mark, file, "");
 			}
 			sortingTime = firstRemainingTime;
 			sortingTier = firstRemainingTier;
 		}
 	}
-	ascexdent ();
-	if (! Melder_fclose (file, f)) return 0;
+	texexdent (file);
+end:
+	MelderFile_close (file);
+	iferror return 0;
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }

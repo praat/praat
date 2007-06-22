@@ -114,6 +114,8 @@
 		2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2B30BAE20C1003D66E8 /* PairDistribution.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
 		23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23AC02E90C2195F300990540 /* melder_encodings.c */; };
+		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
+		23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */; };
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
 		23B6C16D0C0633CB0090DBBB /* regularExp.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B6C16C0C0633CB0090DBBB /* regularExp.c */; };
@@ -690,8 +692,6 @@
 		23E5D1BC09A22AAC004E41D5 /* WordList_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8209A22A38004E41D5 /* WordList_def.h */; };
 		23E5D1BD09A22AAC004E41D5 /* oo_COPY.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8409A22A38004E41D5 /* oo_COPY.h */; };
 		23E5D1BE09A22AAC004E41D5 /* oo_EQUAL.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8609A22A38004E41D5 /* oo_EQUAL.h */; };
-		23E5D1BF09A22AAC004E41D5 /* oo_WRITE_ASCII.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8809A22A38004E41D5 /* oo_WRITE_ASCII.h */; };
-		23E5D1C009A22AAC004E41D5 /* oo_READ_ASCII.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8A09A22A38004E41D5 /* oo_READ_ASCII.h */; };
 		23E5D1C109A22AAC004E41D5 /* oo_WRITE_BINARY.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8C09A22A38004E41D5 /* oo_WRITE_BINARY.h */; };
 		23E5D1C209A22AAC004E41D5 /* oo_READ_BINARY.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE8E09A22A38004E41D5 /* oo_READ_BINARY.h */; };
 		23E5D1C309A22AAC004E41D5 /* enum_c.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CE9009A22A38004E41D5 /* enum_c.h */; };
@@ -939,6 +939,8 @@
 		2343C2B30BAE20C1003D66E8 /* PairDistribution.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PairDistribution.h; path = stat/PairDistribution.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
+		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
+		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 7; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
 		23B6C16C0C0633CB0090DBBB /* regularExp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = regularExp.c; path = dwsys/regularExp.c; sourceTree = "<group>"; };
 		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
 		23D87E840B3C929700AD716D /* Eigen.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwsys/Eigen.c; sourceTree = "<group>"; };
@@ -1516,8 +1518,6 @@
 		23E5CE8209A22A38004E41D5 /* WordList_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WordList_def.h; path = fon/WordList_def.h; sourceTree = "<group>"; };
 		23E5CE8409A22A38004E41D5 /* oo_COPY.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_COPY.h; path = sys/oo_COPY.h; sourceTree = "<group>"; };
 		23E5CE8609A22A38004E41D5 /* oo_EQUAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_EQUAL.h; path = sys/oo_EQUAL.h; sourceTree = "<group>"; };
-		23E5CE8809A22A38004E41D5 /* oo_WRITE_ASCII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_ASCII.h; path = sys/oo_WRITE_ASCII.h; sourceTree = "<group>"; };
-		23E5CE8A09A22A38004E41D5 /* oo_READ_ASCII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_READ_ASCII.h; path = sys/oo_READ_ASCII.h; sourceTree = "<group>"; };
 		23E5CE8C09A22A38004E41D5 /* oo_WRITE_BINARY.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_BINARY.h; path = sys/oo_WRITE_BINARY.h; sourceTree = "<group>"; };
 		23E5CE8E09A22A38004E41D5 /* oo_READ_BINARY.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_READ_BINARY.h; path = sys/oo_READ_BINARY.h; sourceTree = "<group>"; };
 		23E5CE9009A22A38004E41D5 /* enum_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = enum_c.h; path = sys/enum_c.h; sourceTree = "<group>"; };
@@ -2423,13 +2423,13 @@
 				23E5CEBA09A22A40004E41D5 /* oo_DESCRIPTION.h */,
 				23E5CEB409A22A40004E41D5 /* oo_DESTROY.h */,
 				23E5CE8609A22A38004E41D5 /* oo_EQUAL.h */,
-				23E5CE8A09A22A38004E41D5 /* oo_READ_ASCII.h */,
 				23E5CE8E09A22A38004E41D5 /* oo_READ_BINARY.h */,
 				23E5CEB809A22A40004E41D5 /* oo_READ_CACHE.h */,
+				23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */,
 				23E5CF3F09A22A56004E41D5 /* oo_undef.h */,
-				23E5CE8809A22A38004E41D5 /* oo_WRITE_ASCII.h */,
 				23E5CE8C09A22A38004E41D5 /* oo_WRITE_BINARY.h */,
 				23E5CEB609A22A40004E41D5 /* oo_WRITE_CACHE.h */,
+				23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */,
 				23E5CB2209A22901004E41D5 /* Picture.h */,
 				23E5CB2109A22901004E41D5 /* Picture.c */,
 				23E5CB2609A22901004E41D5 /* Preferences.h */,
@@ -2959,8 +2959,6 @@
 				23E5D1BC09A22AAC004E41D5 /* WordList_def.h in Headers */,
 				23E5D1BD09A22AAC004E41D5 /* oo_COPY.h in Headers */,
 				23E5D1BE09A22AAC004E41D5 /* oo_EQUAL.h in Headers */,
-				23E5D1BF09A22AAC004E41D5 /* oo_WRITE_ASCII.h in Headers */,
-				23E5D1C009A22AAC004E41D5 /* oo_READ_ASCII.h in Headers */,
 				23E5D1C109A22AAC004E41D5 /* oo_WRITE_BINARY.h in Headers */,
 				23E5D1C209A22AAC004E41D5 /* oo_READ_BINARY.h in Headers */,
 				23E5D1C309A22AAC004E41D5 /* enum_c.h in Headers */,
@@ -3126,6 +3124,8 @@
 				233FEC910C1345F8003E27FB /* mad_timer.h in Headers */,
 				233FEC930C1345F8003E27FB /* mad_version.h in Headers */,
 				233FEC960C1345F8003E27FB /* mp3.h in Headers */,
+				23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */,
+				23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

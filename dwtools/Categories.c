@@ -23,9 +23,9 @@
 
 #include "Categories.h"
 
-static int readAscii (I, FILE *f)
+static int readText (I, MelderFile file)
 {
-    iam (Categories); long size = ascgeti4 (f), i;
+    iam (Categories); long size = texgeti4 (file), i;
 	if (size == 0)
 	{
 		if (! OrderedOfString_init (me, 1)) return 0;
@@ -36,29 +36,29 @@ static int readAscii (I, FILE *f)
 	for (i=1; i <= size; i++)
 	{
 		SimpleString item = Thing_new (classSimpleString);
-		if (! item || ! item -> methods -> readAscii (item, f) ||
+		if (! item || ! item -> methods -> readText (item, file) ||
 			! Ordered_addItemPos (me, item, i)) return 0;
 	}
 	return 1;
 } 
 
-static int writeAscii (I, FILE *f)
+static int writeText (I, MelderFile file)
 {
     iam (Categories); long i;
-	ascputi4 (my size, f, "size");
+	texputi4 (my size, file, "size");
 	for (i = 1; i <= my size; i++)
 	{
 			SimpleString data = my item [i];
-			ascputintro (f, "item" " [%ld]:", i);
-			if (! classSimpleString->writeAscii (data, f)) return 0;
-			ascexdent ();
+			texputintro (file, "item" " [%ld]:", i);
+			if (! classSimpleString->writeText (data, file)) return 0;
+			texexdent (file);
 	}
     return 1;
 }
 
 class_methods (Categories, OrderedOfString)
-    class_method (readAscii)
-    class_method (writeAscii)
+    class_method (readText)
+    class_method (writeText)
 class_methods_end
 
 int Categories_init (Categories me, long size)

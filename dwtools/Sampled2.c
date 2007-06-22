@@ -31,7 +31,7 @@
 #include "Sampled2_def.h"
 #include "oo_EQUAL.h"
 #include "Sampled2_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Sampled2_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Sampled2_def.h"
@@ -40,24 +40,24 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled2_def.h"
 
-static int readAscii (I, FILE *f) {
+static int readText (I, MelderFile file) {
 	iam (Sampled2);
-	my xmin = ascgetr8 (f);
-	my xmax = ascgetr8 (f);
-	my nx = ascgeti4 (f);
-	my dx = ascgetr8 (f);
-	my x1 = ascgetr8 (f);
-	my ymin = ascgetr8 (f);
-	my ymax = ascgetr8 (f);
-	my ny = ascgeti4 (f);
-	my dy = ascgetr8 (f);
-	my y1 = ascgetr8 (f);
+	my xmin = texgetr8 (file);
+	my xmax = texgetr8 (file);
+	my nx = texgeti4 (file);
+	my dx = texgetr8 (file);
+	my x1 = texgetr8 (file);
+	my ymin = texgetr8 (file);
+	my ymax = texgetr8 (file);
+	my ny = texgeti4 (file);
+	my dy = texgetr8 (file);
+	my y1 = texgetr8 (file);
 	if (my xmin > my xmax || my ymin > my ymax)
-		return Melder_error ("(Sampled2::readAscii:) xmin should <= xmax and ymin <= ymax.");
+		return Melder_error ("(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		return Melder_error ("(Sampled2::readAscii:) nx should >= 1 and ny >= 1.");
+		return Melder_error ("(Sampled2::readText:) nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		return Melder_error ("(Sampled2::readAscii:) dx should > 0 and dy > 0.");
+		return Melder_error ("(Sampled2::readText:) dx should > 0 and dy > 0.");
 	return 1;
 }
 
@@ -66,8 +66,8 @@ class_methods (Sampled2, Data)
 	class_method_local (Sampled2, description)
 	class_method_local (Sampled2, copy)
 	class_method_local (Sampled2, equal)
-	class_method_local (Sampled2, writeAscii)
-	class_method (readAscii)
+	class_method_local (Sampled2, writeText)
+	class_method (readText)
 	class_method_local (Sampled2, writeBinary)
 	class_method_local (Sampled2, readBinary)
 class_methods_end

@@ -75,7 +75,7 @@ static void nameChanged (I) {
 
 static int args_ok (Any dia, I) {
 	iam (ScriptEditor);
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	wchar_t *text = GuiText_getStringW (my textWidget);
 	if (my nameW) {
 		Melder_pathToFileW (my nameW, & file);
@@ -95,7 +95,7 @@ static int args_ok (Any dia, I) {
 }
 
 static void run (ScriptEditor me, wchar_t **text) {
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	int npar;
 	if (my nameW) {
 		Melder_pathToFileW (my nameW, & file);

@@ -43,11 +43,11 @@
 #include "Configuration_def.h"
 #include "oo_EQUAL.h"
 #include "Configuration_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Configuration_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Configuration_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Configuration_def.h"
 #include "oo_READ_BINARY.h"
 #include "Configuration_def.h"
@@ -67,9 +67,9 @@ class_methods (Configuration, TableOfReal)
 	class_method_local (Configuration, destroy)
 	class_method_local (Configuration, equal)
 	class_method_local (Configuration, copy)
-	class_method_local (Configuration, readAscii)
+	class_method_local (Configuration, readText)
 	class_method_local (Configuration, readBinary)
-	class_method_local (Configuration, writeAscii)
+	class_method_local (Configuration, writeText)
 	class_method_local (Configuration, writeBinary)
 	class_method_local (Configuration, description)
 	class_method_local (Configuration, info)

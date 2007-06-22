@@ -36,9 +36,9 @@
 #include "Sampled_def.h"
 #include "oo_EQUAL.h"
 #include "Sampled_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Sampled_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Sampled_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Sampled_def.h"
@@ -65,8 +65,8 @@ class_methods (Sampled, Function)
 	class_method_local (Sampled, equal)
 	class_method_local (Sampled, writeBinary)
 	class_method_local (Sampled, readBinary)
-	class_method_local (Sampled, writeAscii)
-	class_method_local (Sampled, readAscii)
+	class_method_local (Sampled, writeText)
+	class_method_local (Sampled, readText)
 	class_method_local (Sampled, description)
 	class_method (getNx)
 	class_method (getDx)

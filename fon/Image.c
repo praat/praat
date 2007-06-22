@@ -32,9 +32,9 @@
 #include "Image_def.h"
 #include "oo_EQUAL.h"
 #include "Image_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Image_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Image_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Image_def.h"
@@ -47,8 +47,8 @@ class_methods (Image, Sampled)
 	class_method_local (Image, destroy)
 	class_method_local (Image, copy)
 	class_method_local (Image, equal)
-	class_method_local (Image, writeAscii)
-	class_method_local (Image, readAscii)
+	class_method_local (Image, writeText)
+	class_method_local (Image, readText)
 	class_method_local (Image, writeBinary)
 	class_method_local (Image, readBinary)
 	class_method_local (Image, description)

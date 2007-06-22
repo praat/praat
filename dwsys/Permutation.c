@@ -32,7 +32,7 @@
 #include "Permutation_def.h"
 #include "oo_EQUAL.h"
 #include "Permutation_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Permutation_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Permutation_def.h"
@@ -73,14 +73,14 @@ static void info (I)
 	MelderInfo_writeLine2 ("Number of elements: ", Melder_integer (my numberOfElements));
 }
 
-static int readAscii (I, FILE *f)
+static int readText (I, MelderFile file)
 {
 	iam (Permutation);
-	my numberOfElements = ascgeti4 (f);
-	if (my numberOfElements < 1) return Melder_error ("(Permutation::readAscii:) Number of elements must be >= 1.");
-	if (! (my p = NUMlvector_readAscii (1, my numberOfElements, f, "p"))) return 0;
+	my numberOfElements = texgeti4 (file);
+	if (my numberOfElements < 1) return Melder_error ("(Permutation::readText:) Number of elements must be >= 1.");
+	if (! (my p = NUMlvector_readText (1, my numberOfElements, file, "p"))) return 0;
 	if (! Permutation_checkInvariant (me)) return Melder_error
-		("(Permutation::readAscii:) All values must be unique and in the [1, %d] range.", my numberOfElements);
+		("(Permutation::readText:) All values must be unique and in the [1, %d] range.", my numberOfElements);
 	return 1;
 }
 
@@ -88,9 +88,9 @@ class_methods (Permutation, Data)
 	class_method_local (Permutation, destroy)
 	class_method_local (Permutation, copy)
 	class_method_local (Permutation, equal)
-	class_method_local (Permutation, writeAscii)
+	class_method_local (Permutation, writeText)
 	class_method_local (Permutation, writeBinary)
-	class_method (readAscii)
+	class_method (readText)
 	class_method (info)
 	class_method_local (Permutation, readBinary)
 	class_method_local (Permutation, description)

@@ -44,9 +44,9 @@
 #include "Pitch_def.h"
 #include "oo_EQUAL.h"
 #include "Pitch_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Pitch_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Pitch_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Pitch_def.h"
@@ -400,8 +400,8 @@ class_methods (Pitch, Sampled)
 	class_method_local (Pitch, description)
 	class_method_local (Pitch, copy)
 	class_method_local (Pitch, equal)
-	class_method_local (Pitch, writeAscii)
-	class_method_local (Pitch, readAscii)
+	class_method_local (Pitch, writeText)
+	class_method_local (Pitch, readText)
 	class_method_local (Pitch, writeBinary)
 	class_method_local (Pitch, readBinary)
 	class_method (info)

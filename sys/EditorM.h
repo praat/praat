@@ -155,7 +155,7 @@
 	cmd -> dialog = UiOutfile_createE (cmd, title, helpTitle); \
 	} if (sender == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0'; {
 #define DO_WRITE \
-	} UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { { 0 } }; \
+	} UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
 
@@ -164,7 +164,7 @@
 		cmd -> dialog = UiOutfile_createE (cmd, title, helpTitle); \
 		} if (sender == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
-	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { { 0 } }; \
+	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
 

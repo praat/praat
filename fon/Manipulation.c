@@ -43,9 +43,9 @@
 #include "Manipulation_def.h"
 #include "oo_EQUAL.h"
 #include "Manipulation_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Manipulation_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Manipulation_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Manipulation_def.h"
@@ -60,8 +60,8 @@ class_methods (Manipulation, Function)
 	class_method_local (Manipulation, description)
 	class_method_local (Manipulation, copy)
 	class_method_local (Manipulation, equal)
-	class_method_local (Manipulation, writeAscii)
-	class_method_local (Manipulation, readAscii)
+	class_method_local (Manipulation, writeText)
+	class_method_local (Manipulation, readText)
 	class_method_local (Manipulation, writeBinary)
 	class_method_local (Manipulation, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;

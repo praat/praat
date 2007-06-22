@@ -1589,7 +1589,7 @@ static int menu_cb_logSettings (EDITOR_ARGS) {
 }
 
 static int do_deleteLogFile (FunctionEditor me, int which) {
-	structMelderFile file = { { 0 } };
+	structMelderFile file = { 0 };
 	(void) me;
 	if (! Melder_pathToFile (preferences.log[which].fileName, & file)) return 0;
 	MelderFile_delete (& file);
@@ -1718,7 +1718,7 @@ static int do_log (FunctionEditor me, int which) {
 		MelderInfo_close ();
 	}
 	if (preferences.log[which].toLogFile) {
-		structMelderFile file = { { 0 } };
+		structMelderFile file = { 0 };
 		strcat (format, "\n");
 		if (! Melder_relativePathToFileW (Melder_peekAsciiToWcs (preferences.log[which].fileName), & file)) return 0;
 		if (! MelderFile_appendTextW (& file, Melder_peekAsciiToWcs (format))) return 0;

@@ -56,11 +56,11 @@
 #include "Table_def.h"
 #include "oo_EQUAL.h"
 #include "Table_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "Table_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Table_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "Table_def.h"
 #include "oo_READ_BINARY.h"
 #include "Table_def.h"
@@ -72,9 +72,9 @@ class_methods (TableRow, Data) {
 	class_method_local (TableRow, description)
 	class_method_local (TableRow, copy)
 	class_method_local (TableRow, equal)
-	class_method_local (TableRow, writeAscii)
+	class_method_local (TableRow, writeText)
 	class_method_local (TableRow, writeBinary)
-	class_method_local (TableRow, readAscii)
+	class_method_local (TableRow, readText)
 	class_method_local (TableRow, readBinary)
 class_methods_end }
 
@@ -118,9 +118,9 @@ class_methods (Table, Data) {
 	class_method_local (Table, description)
 	class_method_local (Table, copy)
 	class_method_local (Table, equal)
-	class_method_local (Table, writeAscii)
+	class_method_local (Table, writeText)
 	class_method_local (Table, writeBinary)
-	class_method_local (Table, readAscii)
+	class_method_local (Table, readText)
 	class_method_local (Table, readBinary)
 	class_method (info)
 	class_method (getNrow)

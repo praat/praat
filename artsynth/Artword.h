@@ -81,7 +81,7 @@ void Artword_removeTarget (Artword me, int feature, int iTarget);
 /*
 	Implemented methods:
 
-		int Artword::writeAscii (I, FILE *f)
+		int Artword::writeText (I, FILE *f)
 			writes an Artword as text to the stream f.
 
 */

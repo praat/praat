@@ -185,7 +185,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	#endif
 	oo_DIR (rootDirectory)
 	#if oo_READING
-		MelderFile_getParentDir (& Data_fileBeingRead, & my rootDirectory);
+		MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
 		if (localVersion < 4) my stimuliAreSounds = TRUE;
 	#endif
 

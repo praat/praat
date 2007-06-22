@@ -45,11 +45,11 @@
 #include "SVD_def.h"
 #include "oo_EQUAL.h"
 #include "SVD_def.h"
-#include "oo_WRITE_ASCII.h"
+#include "oo_WRITE_TEXT.h"
 #include "SVD_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "SVD_def.h"
-#include "oo_READ_ASCII.h"
+#include "oo_READ_TEXT.h"
 #include "SVD_def.h"
 #include "oo_READ_BINARY.h"
 #include "SVD_def.h"
@@ -87,9 +87,9 @@ class_methods (SVD, Data)
 	class_method_local (SVD, destroy)
 	class_method_local (SVD, equal)
 	class_method_local (SVD, copy)
-	class_method_local (SVD, readAscii)
+	class_method_local (SVD, readText)
 	class_method_local (SVD, readBinary)
-	class_method_local (SVD, writeAscii)
+	class_method_local (SVD, writeText)
 	class_method_local (SVD, writeBinary)
 	class_method_local (SVD, description)
 	class_method_local (SVD, info)
@@ -401,9 +401,9 @@ class_methods (GSVD, Data)
 	class_method_local (GSVD, destroy)
 	class_method_local (GSVD, equal)
 	class_method_local (GSVD, copy)
-	class_method_local (GSVD, readAscii)
+	class_method_local (GSVD, readText)
 	class_method_local (GSVD, readBinary)
-	class_method_local (GSVD, writeAscii)
+	class_method_local (GSVD, writeText)
 	class_method_local (GSVD, writeBinary)
 	class_method_local (GSVD, description)
 	class_method_local (GSVD, info)

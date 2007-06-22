@@ -23,6 +23,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2006/08/08 reduced Lint warnings
  * pb 2007/06/09 wchar_t
+ * pb 2007/06/21
  */
 
 #include "oo_undef.h"
@@ -31,18 +32,12 @@
 	if (my x != thy x) return 0;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (my x [i] != thy x [i]) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (my x [i] != thy x [i]) return 0; \
 
 #define oo_SET(type,storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (my x [i] != thy x [i]) return 0; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (my x [i] != thy x [i]) return 0; \
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (! my x != ! thy x || \
@@ -56,10 +51,10 @@
 	if (my x != thy x) return 0;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	{ int i; for (i = 0; i < n; i ++) if (my x [i] != thy x [i]) return 0; }
+	for (int i = 0; i < n; i ++) if (my x [i] != thy x [i]) return 0;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	{ int i; for (i = 0; i <= enumlength (setType); i ++) if (my x [i] != thy x [i]) return 0; }
+	for (int i = 0; i <= enumlength (setType); i ++) if (my x [i] != thy x [i]) return 0;
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (! my x != ! thy x || \
@@ -69,26 +64,19 @@
 	if (! my x != ! thy x || (my x && ! strequ (my x, thy x))) return 0;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (! my x [i] != ! thy x [i] || \
+			(my x [i] && ! strequ (my x [i], thy x [i]))) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (! my x [i] != ! thy x [i] || \
+			(my x [i] && ! strequ (my x [i], thy x [i]))) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (! my x [i] != ! thy x [i] || \
 			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
 	}
@@ -99,24 +87,20 @@
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
 	{ \
 		int i; \
-		for (i = 0; i < n; i ++) \
+		for (int i = 0; i < n; i ++) \
 			if (! my x [i] != ! thy x [i] || \
 			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
 	}
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (! my x [i] != ! thy x [i] || \
+			(my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (! my x [i] != ! thy x [i] || \
 			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
 	}
@@ -125,33 +109,25 @@
 	if (! Type##_equal (& my x, & thy x)) return 0;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (! Type##_equal (& my x [i], & thy x [i])) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (! Type##_equal (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! Type##_equal (& my x [i], & thy x [i])) return 0; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (! Type##_equal (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (! Type##_equal (& my x [i], & thy x [i])) return 0; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
-		long i, j; \
-		for (i = row1; i <= row2; i ++) \
-			for (j = col1; j <= col2; j ++) \
+		for (long i = row1; i <= row2; i ++) \
+			for (long j = col1; j <= col2; j ++) \
 				if (! Type##_equal (& my x [i] [j], & thy x [i] [j])) return 0; \
 	}
 
@@ -184,7 +160,7 @@
 
 
 #define oo_DEFINE_STRUCT(Type)  \
-	int Type##_equal (Type me, Type thee) {
+	bool Type##_equal (Type me, Type thee) {
 
 #define oo_END_STRUCT(Type)  \
 		return 1; \
@@ -193,7 +169,7 @@
 
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_equal (I, thou) { \
+	static bool class##Class##_equal (I, thou) { \
 		iam (Class); \
 		thouart (Class); \
 		if (! inherited (Class) equal (me, thee)) return 0;
@@ -227,13 +203,14 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  1
 #define oo_COMPARING  1
+#define oo_VALIDATING_ASCII  0
 #define oo_READING  0
-#define oo_READING_ASCII  0
+#define oo_READING_TEXT  0
 #define oo_READING_BINARY  0
 #define oo_READING_CACHE  0
 #define oo_READING_LISP  0
 #define oo_WRITING  0
-#define oo_WRITING_ASCII  0
+#define oo_WRITING_TEXT  0
 #define oo_WRITING_BINARY  0
 #define oo_WRITING_CACHE  0
 #define oo_WRITING_LISP  0

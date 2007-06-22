@@ -24,6 +24,7 @@
  * pb 2004/05/14 some three-byte routines
  * pb 2006/12/13 big-endian floating point
  * pb 2007/06/10 *w4
+ * pb 2007/06/21 *w2
  */
 
 #ifndef _complex_h_
@@ -33,58 +34,58 @@
 	#include "melder.h"
 #endif
 
-/* Numeric ASCII input and output. */
+/* Numeric text input and output. */
 
-int ascgeti1 (FILE *f);
-int ascgeti2 (FILE *f);
-long ascgeti4 (FILE *f);
-unsigned int ascgetu1 (FILE *f);
-unsigned int ascgetu2 (FILE *f);
-unsigned long ascgetu4 (FILE *f);
-double ascgetr4 (FILE *f);
-double ascgetr8 (FILE *f);
-double ascgetr10 (FILE *f);
-fcomplex ascgetc8 (FILE *f);
-dcomplex ascgetc16 (FILE *f);
-char ascgetc1 (FILE *f);
-short ascgete1 (FILE *f, void *enumerated);
-short ascgete2 (FILE *f, void *enumerated);
-short ascgeteb (FILE *f);
-short ascgeteq (FILE *f);
-short ascgetex (FILE *f);
-char *ascgets1 (FILE *f);
-char *ascgets2 (FILE *f);
-char *ascgets4 (FILE *f);
-wchar_t *ascgetw4 (FILE *f);
+int texgeti1 (MelderFile file);
+int texgeti2 (MelderFile file);
+long texgeti4 (MelderFile file);
+unsigned int texgetu1 (MelderFile file);
+unsigned int texgetu2 (MelderFile file);
+unsigned long texgetu4 (MelderFile file);
+double texgetr4 (MelderFile file);
+double texgetr8 (MelderFile file);
+double texgetr10 (MelderFile file);
+fcomplex texgetc8 (MelderFile file);
+dcomplex texgetc16 (MelderFile file);
+char texgetc1 (MelderFile file);
+short texgete1 (MelderFile file, void *enumerated);
+short texgete2 (MelderFile file, void *enumerated);
+short texgeteb (MelderFile file);
+short texgeteq (MelderFile file);
+short texgetex (MelderFile file);
+char *texgets2 (MelderFile file);
+char *texgets4 (MelderFile file);
+wchar_t *texgetw2 (MelderFile file);
+wchar_t *texgetw4 (MelderFile file);
 
-void ascindent (void);
-void ascexdent (void);
-void ascresetindent (void);
-void ascputintro (FILE *f, const char *format, ...);
+void texindent (MelderFile file);
+void texexdent (MelderFile file);
+void texresetindent (MelderFile file);
+void texputintro (MelderFile file, const char *format, ...);
 
-void ascputi1 (int i, FILE *f, const char *format, ...);
-void ascputi2 (int i, FILE *f, const char *format, ...);
-void ascputi4 (long i, FILE *f, const char *format, ...);
-void ascputu1 (unsigned int u, FILE *f, const char *format, ...);
-void ascputu2 (unsigned int u, FILE *f, const char *format, ...);
-void ascputu4 (unsigned long u, FILE *f, const char *format, ...);
-void ascputr4 (double x, FILE *f, const char *format, ...);
-void ascputr8 (double x, FILE *f, const char *format, ...);
-void ascputr10 (double x, FILE *f, const char *format, ...);
-void ascputc8 (fcomplex z, FILE *f, const char *format, ...);
-void ascputc16 (dcomplex z, FILE *f, const char *format, ...);
-void ascputc1 (int i, FILE *f, const char *format, ...);
-void ascpute1 (int i, FILE *f, void *enumerated, const char *format, ...);
-void ascpute2 (int i, FILE *f, void *enumerated, const char *format, ...);
-void ascputeb (int i, FILE *f, const char *format, ...);
-void ascputeq (int i, FILE *f, const char *format, ...);
-void ascputex (int i, FILE *f, const char *format, ...);
-void ascputs1 (const char *s, FILE *f, const char *format, ...);
-void ascputs2 (const char *s, FILE *f, const char *format, ...);
-void ascputs4 (const char *s, FILE *f, const char *format, ...);
-void ascputw4 (const wchar_t *s, FILE *f, const char *format, ...);
-
-void ascio_verbose (int verbose);
+void texput (MelderFile file, const char *asciiCompatibleComment);
+void texputi1 (int i, MelderFile file, const char *format, ...);
+void texputi2 (int i, MelderFile file, const char *format, ...);
+void texputi4 (long i, MelderFile file, const char *format, ...);
+void texputu1 (unsigned int u, MelderFile file, const char *format, ...);
+void texputu2 (unsigned int u, MelderFile file, const char *format, ...);
+void texputu4 (unsigned long u, MelderFile file, const char *format, ...);
+void texputr4 (double x, MelderFile file, const char *format, ...);
+void texputr8 (double x, MelderFile file, const char *format, ...);
+void texputr10 (double x, MelderFile file, const char *format, ...);
+void texputc8 (fcomplex z, MelderFile file, const char *format, ...);
+void texputc16 (dcomplex z, MelderFile file, const char *format, ...);
+void texputc1 (int i, MelderFile file, const char *format, ...);
+void texpute1 (int i, MelderFile file, void *enumerated, const char *format, ...);
+void texpute2 (int i, MelderFile file, void *enumerated, const char *format, ...);
+void texputeb (int i, MelderFile file, const char *format, ...);
+void texputeq (int i, MelderFile file, const char *format, ...);
+void texputex (int i, MelderFile file, const char *format, ...);
+void texputs1 (const char *s, MelderFile file, const char *format, ...);
+void texputs2 (const char *s, MelderFile file, const char *format, ...);
+void texputs4 (const char *s, MelderFile file, const char *format, ...);
+void texputw2 (const wchar_t *s, MelderFile file, const char *format, ...);
+void texputw4 (const wchar_t *s, MelderFile file, const char *format, ...);
 
 /* Portable device-independent binary input and output. */
 /* Works on all machines with 8-bit bytes and chars, and 2's complement integers. */
@@ -204,6 +205,7 @@ char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..429
 	or NULL if out of memory.
 	binputsxxx expects a null-terminated C string whose 'strlen' fits in 1, 2, or 4 bytes.
 */
+wchar_t * bingetw2 (FILE *f);   void binputw2 (const wchar_t *s, FILE *f);
 wchar_t * bingetw4 (FILE *f);   void binputw4 (const wchar_t *s, FILE *f);
 
 /********** cache I/O **********/
