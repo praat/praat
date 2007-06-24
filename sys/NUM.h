@@ -55,6 +55,7 @@
 	#undef jn
 #endif
 #include <stdio.h>
+#include <wchar.h>
 #ifndef _abcio_h_
 	#include "abcio.h"
 #endif
@@ -386,13 +387,13 @@ void NUMautoscale (float x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(t,type)  \
-	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const char *name); \
+	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
 	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f); \
 	int NUM##t##vector_writeCache (const type *v, long lo, long hi, CACHE *f); \
 	type * NUM##t##vector_readText (long lo, long hi, MelderFile file, const char *name); \
 	type * NUM##t##vector_readBinary (long lo, long hi, FILE *f); \
 	type * NUM##t##vector_readCache (long lo, long hi, CACHE *f); \
-	int NUM##t##matrix_writeText (type **v, long r1, long r2, long c1, long c2, MelderFile file, const char *name); \
+	int NUM##t##matrix_writeText (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
 	int NUM##t##matrix_writeBinary (type **v, long r1, long r2, long c1, long c2, FILE *f); \
 	int NUM##t##matrix_writeCache (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
 	type ** NUM##t##matrix_readText (long r1, long r2, long c1, long c2, MelderFile file, const char *name); \

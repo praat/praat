@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070622)
+MAN_BEGIN ("What's new?", "ppgb", 20070624)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.09# (June 24, 2007)")
+LIST_ITEM ("\\bu Corrected a bug introduced in 4.6.07 that caused a crash when reading Collections.")
+LIST_ITEM ("\\bu Corrected a bug introduced in 4.6.07 that caused incorrect Open buttons in Inspect.")
+LIST_ITEM ("\\bu How come 4.6.07 introduced those bugs? Because of large changes in the Praat source code as a result of the transition to Unicode.")
 NORMAL ("##4.6.08# (June 22, 2007)")
 LIST_ITEM ("\\bu Windows: worked around a `feature' of the C library that caused 3-byte line-breaks in the buttons file.")
 LIST_ITEM ("\\bu Windows: returned to smaller font in script window.")

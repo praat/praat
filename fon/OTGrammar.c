@@ -85,69 +85,47 @@ static void classOTGrammar_info (I) {
 
 static int writeText (I, MelderFile file) {
 	iam (OTGrammar);
-	texput (file, "\n<");
-	texput (file, enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
-	texput (file, ">\n");
-	texput (file, Melder_integer (my numberOfConstraints));
-	texput (file, " constraints");
+	MelderFile_write5 (file, L"\n<", Melder_peekAsciiToWcs (enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy)),
+		L">\n", Melder_integerW (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		texput (file, "\nconstraint [");
-		texput (file, Melder_integer (icons));
-		texput (file, "]: \"");
+		MelderFile_write3 (file, L"\nconstraint [", Melder_integerW (icons), L"]: \"");
 		for (const char *p = & constraint -> name [0]; *p; p ++) {
-			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
-			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			MelderFile_writeCharacter (file, *p);
 		}
-		texput (file, "\" ");
-		texput (file, Melder_double (constraint -> ranking));
-		texput (file, " ");
-		texput (file, Melder_double (constraint -> disharmony));
-		texput (file, " ! ");
+		MelderFile_write5 (file, L"\" ", Melder_doubleW (constraint -> ranking), L" ", Melder_doubleW (constraint -> disharmony), L" ! ");
 		for (const char *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == '\n') fputc (' ', file -> filePointer);   // BUG: this is DATA.
+			if (*p == '\n') MelderFile_writeCharacter (file, ' ');
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
 			else if (*p == '}') { }
-			else fputc (*p, file -> filePointer);
+			else MelderFile_writeCharacter (file, *p);
 		}
 	}
-	texput (file, "\n\n");
-	texput (file, Melder_integer (my numberOfFixedRankings));
-	texput (file, " fixed rankings");
+	MelderFile_write3 (file, L"\n\n", Melder_integerW (my numberOfFixedRankings), L" fixed rankings");
 	for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 		OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-		texput (file, "\n   ");
-		texput (file, Melder_integer (fixedRanking -> higher));
-		texput (file, " %");
-		texput (file, Melder_integer (fixedRanking -> lower));
+		MelderFile_write4 (file, L"\n   ", Melder_integerW (fixedRanking -> higher), L" ", Melder_integerW (fixedRanking -> lower));
 	}
-	texput (file, "\n\n");
-	texput (file, Melder_integer (my numberOfTableaus));
-	texput (file, " tableaus");
+	MelderFile_write3 (file, L"\n\n", Melder_integerW (my numberOfTableaus), L" tableaus");
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		texput (file, "\ninput [");
-		texput (file, Melder_integer (itab));
-		texput (file, "]: \"");
+		MelderFile_write3 (file, L"\ninput [", Melder_integerW (itab), L"]: \"");
 		for (const char *p = & tableau -> input [0]; *p; p ++) {
-			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
-			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			MelderFile_writeCharacter (file, *p);
 		}
-		texput (file, "\" ");
-		texput (file, Melder_integer (tableau -> numberOfCandidates));
+		MelderFile_write2 (file, L"\" ", Melder_integerW (tableau -> numberOfCandidates));
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			texput (file, "\n   candidate [");
-			texput (file, Melder_integer (icand));
-			texput (file, "]: \"");
+			MelderFile_write3 (file, L"\n   candidate [", Melder_integerW (icand), L"]: \"");
 			for (const char *p = & candidate -> output [0]; *p; p ++) {
-				if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
-				fputc (*p, file -> filePointer);   // BUG: this is DATA.
+				if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+				MelderFile_writeCharacter (file, *p);
 			}
-			texput (file, "\"");
+			MelderFile_writeCharacter (file, '\"');
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				texput (file, " ");
-				texput (file, Melder_integer (candidate -> marks [icons]));
+				MelderFile_write2 (file, L" ", Melder_integerW (candidate -> marks [icons]));
 			}
 		}
 	}

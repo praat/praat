@@ -1,6 +1,6 @@
 /* Collection.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2006/08/08 reduced compiler warnings
  * pb 2006/12/17 better info
+ * pb 2007/06/24 wchar_t
  */
 
 #include "Collection.h"
@@ -82,22 +83,22 @@ static bool classCollection_equal (I, thou) {
 static int classCollection_writeText (I, MelderFile file) {
 	iam (Collection);
 	long i;
-	texputi4 (my size, file, "size");
-	texputintro (file, "item []: %s", my size >= 1 ? "" : "(empty)");
+	texputi4 (file, my size, L"size", 0,0,0,0,0);
+	texputintro (file, L"item []: ", my size ? NULL : L"(empty)", 0,0,0,0);
 	for (i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
+		texputintro (file, L"item [", Melder_integerW (i), L"]:", 0,0,0);
+		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
+			return Melder_error ("(Collection::writeText:) "
+				"Objects of class %s cannot be written.", table -> _className);
 		char className [100];
 		if (table -> version)
 			sprintf (className, "%s %ld", table -> _className, table -> version);
 		else
 			strcpy (className, table -> _className);
-		texputintro (file, "item [%ld]:", i);
-		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
-			return Melder_error ("(Collection::writeText:) "
-				"Objects of class %s cannot be written.", table -> _className);
-		texputs1 (className, file, "class");
-		texputs2 (thing -> name, file, "name");
+		texputs1 (file, className, L"class", 0,0,0,0,0);
+		texputs2 (file, thing -> name, L"name", 0,0,0,0,0);
 		if (! Data_writeText (thing, file)) return 0;
 		texexdent (file);
 	}
@@ -145,16 +146,17 @@ static int classCollection_readText (I, MelderFile file) {
 		size = texgeti4 (file);
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
-			char *klas;
 			long saveVersion = Thing_version;   /* The version of the Collection... */
-			klas = texgets2 (file);
+			char *klas = texgets2 (file);
 			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Melder_free (klas);
 			my size ++;
 			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
 				return Melder_error ("(Collection::readText:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
-			((Data) my item [i]) -> name = texgets2 (file);
+			char *name = texgets2 (file);
+			Thing_setName (my item [i], name);
+			Melder_free (name);
 			if (! Data_readText (my item [i], file)) return 0;
 			Thing_version = saveVersion;
 		}
@@ -206,16 +208,17 @@ static int classCollection_readBinary (I, FILE *f) {
 		size = bingeti4 (f);
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
-			char *klas;
 			long saveVersion = Thing_version;   /* The version of the Collection... */
-			klas = bingets1 (f);
+			char *klas = bingets1 (f);
 			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Melder_free (klas);
 			my size ++;
 			if (! Thing_member (my item [i], classData) || ! Data_canReadBinary (my item [i]))
 				return Melder_error ("(Collection::readBinary:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
-			((Data) my item [i]) -> name = bingets2 (f);
+			char *name = bingets2 (f);
+			Thing_setName (my item [i], name);
+			Melder_free (name);
 			if (! Data_readBinary (my item [i], f)) return 0;
 			Thing_version = saveVersion;
 		}

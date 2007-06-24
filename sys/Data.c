@@ -162,32 +162,19 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	#endif
 	file -> verbose = verbose;
 	file -> outputEncoding = Melder_getOutputEncoding ();
-	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
-		texput (file, "File type = \"ooUtf8TextFile\"\nObject class = \"");
-	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16) {
-		if (Data_canWriteAsAscii (me)) {
-			texput (file, "File type = \"ooTextFile\"\nObject class = \"");
-		} else {
-			file -> outputEncoding = Melder_OUTPUT_ENCODING_UTF16;
-			texput (file, "File type = \"ooTextFile\"\nObject class = \"");
-		}
-	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF16) {
-		texput (file, "File type = \"ooTextFile\"\nObject class = \"");
-	}
-	char className [100];
-	if (our version > 0) {
-		sprintf (className, "%s %ld", our _className, our version);
-	} else {
-		strcpy (className, our _className);
-	}
-	texput (file, className);
-	texput (file, "\"\n");
+	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsAscii (me) ? Melder_OUTPUT_ENCODING_ASCII : Melder_OUTPUT_ENCODING_UTF16;
+	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF16)
+		binputu2 (0xfeff, file -> filePointer);
+	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _classNameW);
+	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integerW (our version));
+	MelderFile_write1 (file, L"\"\n");
 	Data_writeText (me, file); cherror
-	texput (file, "\n");
+	MelderFile_writeCharacter (file, '\n');
 end:
 	MelderFile_close (file);
 	iferror return Melder_error5 (L"Cannot write ", our _classNameW, L"to file \"", MelderFile_messageNameW (file), L"\".");
-	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }
 

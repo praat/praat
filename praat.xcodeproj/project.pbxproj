@@ -113,6 +113,7 @@
 		2343C2B50BAE20C1003D66E8 /* PairDistribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C2B20BAE20C1003D66E8 /* PairDistribution.c */; };
 		2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2B30BAE20C1003D66E8 /* PairDistribution.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
+		238CA5E90C2EF517001B3AC4 /* oo_CAN_WRITE_AS_ASCII.h in Headers */ = {isa = PBXBuildFile; fileRef = 238CA5E80C2EF517001B3AC4 /* oo_CAN_WRITE_AS_ASCII.h */; };
 		23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23AC02E90C2195F300990540 /* melder_encodings.c */; };
 		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
 		23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */; };
@@ -938,6 +939,7 @@
 		2343C2B20BAE20C1003D66E8 /* PairDistribution.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = PairDistribution.c; path = stat/PairDistribution.c; sourceTree = "<group>"; };
 		2343C2B30BAE20C1003D66E8 /* PairDistribution.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PairDistribution.h; path = stat/PairDistribution.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
+		238CA5E80C2EF517001B3AC4 /* oo_CAN_WRITE_AS_ASCII.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_CAN_WRITE_AS_ASCII.h; path = sys/oo_CAN_WRITE_AS_ASCII.h; sourceTree = "<group>"; };
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 7; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
@@ -2419,6 +2421,7 @@
 				23E5CEB209A22A3F004E41D5 /* ManPagesM.h */,
 				23E5CB1F09A22901004E41D5 /* ManPages.c */,
 				23E5CE9609A22A3C004E41D5 /* oo.h */,
+				238CA5E80C2EF517001B3AC4 /* oo_CAN_WRITE_AS_ASCII.h */,
 				23E5CE8409A22A38004E41D5 /* oo_COPY.h */,
 				23E5CEBA09A22A40004E41D5 /* oo_DESCRIPTION.h */,
 				23E5CEB409A22A40004E41D5 /* oo_DESTROY.h */,
@@ -3126,6 +3129,7 @@
 				233FEC960C1345F8003E27FB /* mp3.h in Headers */,
 				23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */,
 				23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */,
+				238CA5E90C2EF517001B3AC4 /* oo_CAN_WRITE_AS_ASCII.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -292,7 +292,7 @@ int Printer_postScriptSettings (void) {
 			radio = UiForm_addRadio (dia, L"Orientation", 1);
 				UiRadio_addButton (radio, L"Portrait");
 				UiRadio_addButton (radio, L"Landscape");
-			UiForm_addPositive (dia, L"Magnification", "1.0");
+			UiForm_addPositive (dia, L"Magnification", L"1.0");
 			UiForm_addLabel (dia, L"label", L"Print command:");
 			#if defined (linux)
 				UiForm_addText (dia, L"printCommand", L"lpr %s");
@@ -318,7 +318,7 @@ int Printer_postScriptSettings (void) {
 		UiForm_setInteger (dia, L"Paper size", thePrinter. paperSize + 1);
 		UiForm_setInteger (dia, L"Orientation", thePrinter. orientation + 1);
 		UiForm_setReal (dia, L"Magnification", thePrinter. magnification);
-		UiForm_setString (dia, L"printCommand", Site_getPrintCommand ());
+		UiForm_setString (dia, L"printCommand", Melder_peekAsciiToWcs (Site_getPrintCommand ()));
 	#endif
 	UiForm_setInteger (dia, L"Font choice strategy", thePrinter. fontChoiceStrategy + 1);
 	#if defined (macintosh)

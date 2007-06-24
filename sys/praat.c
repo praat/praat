@@ -316,6 +316,7 @@ static int _praat_new (Data me, wchar_t *myName) {
 		int idata, result = 1;
 		for (idata = 1; idata <= list -> size; idata ++) {
 			Data object = list -> item [idata];
+			Melder_assert (object -> nameW != NULL);
 			result &= _praat_new (object, object -> nameW) ? 1 : 0;   /* Recurse. */
 		}
 		list -> size = 0;   /* Disown. */

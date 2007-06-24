@@ -677,4 +677,155 @@ int MelderFile_appendTextW (MelderFile file, const wchar_t *text) {
 	return 1;
 }
 
+static void _MelderFile_write (MelderFile file, const wchar_t *string) {
+	if (string == NULL) return;
+	unsigned long length = wcslen (string);
+	FILE *f = file -> filePointer;
+	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII) {
+		for (unsigned long i = 0; i < length; i ++) {
+			char kar = string [i];
+			if (kar == '\n' && file -> requiresCRLF) putc (13, f);
+			putc (kar, f);
+		}
+	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+		for (unsigned long i = 0; i < length; i ++) {
+			unsigned long kar = string [i];
+			if (kar <= 0x00007F) {
+				if (kar == '\n' && file -> requiresCRLF) putc (13, f);
+				putc (kar, f);
+			} else if (kar <= 0x0007FF) {
+				putc (0xC0 | (kar >> 6), f);
+				putc (0x80 | (kar & 0x00003F), f);
+			} else if (kar <= 0x00FFFF) {
+				putc (0xE0 | (kar >> 12), f);
+				putc (0x80 | ((kar >> 6) & 0x00003F), f);
+				putc (0x80 | (kar & 0x00003F), f);
+			} else {
+				putc (0xF0 | (kar >> 18), f);
+				putc (0x80 | ((kar >> 12) & 0x00003F), f);
+				putc (0x80 | ((kar >> 6) & 0x00003F), f);
+				putc (0x80 | (kar & 0x00003F), f);
+			}
+		}
+	} else {
+		for (unsigned long i = 0; i < length; i ++) {
+			unsigned long kar = string [i];
+			if (kar == '\n' && file -> requiresCRLF) binputu2 (13, f);
+			binputu2 (kar, f);
+		}
+	}
+}
+
+void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
+	FILE *f = file -> filePointer;
+	unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) character : character;
+	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII) {
+		if (kar == '\n' && file -> requiresCRLF) putc (13, f);
+		putc (kar, f);
+	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+		if (kar <= 0x00007F) {
+			if (kar == '\n' && file -> requiresCRLF) putc (13, f);
+			putc (kar, f);
+		} else if (kar <= 0x0007FF) {
+			putc (0xC0 | (kar >> 6), f);
+			putc (0x80 | (kar & 0x00003F), f);
+		} else if (kar <= 0x00FFFF) {
+			putc (0xE0 | (kar >> 12), f);
+			putc (0x80 | ((kar >> 6) & 0x00003F), f);
+			putc (0x80 | (kar & 0x00003F), f);
+		} else {
+			putc (0xF0 | (kar >> 18), f);
+			putc (0x80 | ((kar >> 12) & 0x00003F), f);
+			putc (0x80 | ((kar >> 6) & 0x00003F), f);
+			putc (0x80 | (kar & 0x00003F), f);
+		}
+	} else {
+		if (kar == '\n' && file -> requiresCRLF) binputu2 (13, f);
+		binputu2 (kar, f);
+	}
+}
+
+void MelderFile_write1 (MelderFile file, const wchar_t *s1) {
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+}
+void MelderFile_write2 (MelderFile file, const wchar_t *s1, const wchar_t *s2) {
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+}
+void MelderFile_write3 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+}
+void MelderFile_write4 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+}
+void MelderFile_write5 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5)
+{
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+	_MelderFile_write (file, s5);
+}
+void MelderFile_write6 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6)
+{
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+	_MelderFile_write (file, s5);
+	_MelderFile_write (file, s6);
+}
+void MelderFile_write7 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7)
+{
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+	_MelderFile_write (file, s5);
+	_MelderFile_write (file, s6);
+	_MelderFile_write (file, s7);
+}
+void MelderFile_write8 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
+{
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+	_MelderFile_write (file, s5);
+	_MelderFile_write (file, s6);
+	_MelderFile_write (file, s7);
+	_MelderFile_write (file, s8);
+}
+void MelderFile_write9 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
+{
+	if (file -> filePointer == NULL) return;
+	_MelderFile_write (file, s1);
+	_MelderFile_write (file, s2);
+	_MelderFile_write (file, s3);
+	_MelderFile_write (file, s4);
+	_MelderFile_write (file, s5);
+	_MelderFile_write (file, s6);
+	_MelderFile_write (file, s7);
+	_MelderFile_write (file, s8);
+	_MelderFile_write (file, s9);
+}
+
 /* End of file melder_encodings.c */

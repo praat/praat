@@ -45,22 +45,19 @@
 
 static int writeText (I, MelderFile file) {
 	iam (Transition);
-	texputi4 (my numberOfStates, file, "numberOfStates");
-	texput (file, "\nstateLabels []: ");
-	if (my numberOfStates < 1) texput (file, "(empty)");
-	texput (file, "\n");
+	texputi4 (file, my numberOfStates, L"numberOfStates", 0,0,0,0,0);
+	MelderFile_write1 (file, L"\nstateLabels []: ");
+	if (my numberOfStates < 1) MelderFile_write1 (file, L"(empty)");
+	MelderFile_write1 (file, L"\n");
 	for (long i = 1; i <= my numberOfStates; i ++) {
-		texput (file, "\"");
-		if (my stateLabels [i] != NULL) texput (file, my stateLabels [i]);
-		texput (file, "\"\t");
+		MelderFile_write1 (file, L"\"");
+		if (my stateLabels [i] != NULL) MelderFile_write1 (file, Melder_peekAsciiToWcs (my stateLabels [i]));
+		MelderFile_write1 (file, L"\"\t");
 	}
 	for (long i = 1; i <= my numberOfStates; i ++) {
-		texput (file, "\nstate [");
-		texput (file, Melder_integer (i));
-		texput (file, "]:");
+		MelderFile_write3 (file, L"\nstate [", Melder_integerW (i), L"]:");
 		for (long j = 1; j <= my numberOfStates; j ++) {
-			texput (file, "\t");
-			texput (file, Melder_double (my data [i] [j]));
+			MelderFile_write2 (file, L"\t", Melder_doubleW (my data [i] [j]));
 		}
 	}
 	return 1;

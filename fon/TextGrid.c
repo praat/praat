@@ -34,6 +34,7 @@
  * pb 2006/02/24 split TextGrid_create into TextGrid_createWithTiers and TextGrid_createWithoutTiers
  * pb 2007/03/17 domain quantity
  * pb 2007/06/21 tex
+ * pb 2007/06/24 canWriteAsAscii
  */
 
 #include "TextGrid.h"
@@ -45,6 +46,8 @@
 #include "oo_COPY.h"
 #include "TextGrid_def.h"
 #include "oo_EQUAL.h"
+#include "TextGrid_def.h"
+#include "oo_CAN_WRITE_AS_ASCII.h"
 #include "TextGrid_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "TextGrid_def.h"
@@ -61,6 +64,7 @@ class_methods (TextPoint, AnyPoint)
 	class_method_local (TextPoint, destroy)
 	class_method_local (TextPoint, copy)
 	class_method_local (TextPoint, equal)
+	class_method_local (TextPoint, canWriteAsAscii)
 	class_method_local (TextPoint, writeText)
 	class_method_local (TextPoint, readText)
 	class_method_local (TextPoint, writeBinary)
@@ -98,6 +102,7 @@ class_methods (TextInterval, Function)
 	class_method_local (TextInterval, destroy)
 	class_method_local (TextInterval, copy)
 	class_method_local (TextInterval, equal)
+	class_method_local (TextInterval, canWriteAsAscii)
 	class_method_local (TextInterval, writeText)
 	class_method_local (TextInterval, readText)
 	class_method_local (TextInterval, writeBinary)
@@ -137,6 +142,7 @@ class_methods (TextTier, Function)
 	class_method_local (TextTier, destroy)
 	class_method_local (TextTier, copy)
 	class_method_local (TextTier, equal)
+	class_method_local (TextTier, canWriteAsAscii)
 	class_method_local (TextTier, writeText)
 	class_method_local (TextTier, readText)
 	class_method_local (TextTier, writeBinary)
@@ -164,6 +170,7 @@ class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, destroy)
 	class_method_local (IntervalTier, copy)
 	class_method_local (IntervalTier, equal)
+	class_method_local (IntervalTier, canWriteAsAscii)
 	class_method_local (IntervalTier, writeText)
 	class_method_local (IntervalTier, readText)
 	class_method_local (IntervalTier, writeBinary)
@@ -259,6 +266,7 @@ class_methods (TextGrid, Function)
 	class_method_local (TextGrid, destroy)
 	class_method_local (TextGrid, copy)
 	class_method_local (TextGrid, equal)
+	class_method_local (TextGrid, canWriteAsAscii)
 	class_method_local (TextGrid, writeText)
 	class_method_local (TextGrid, readText)
 	class_method_local (TextGrid, writeBinary)
@@ -1580,9 +1588,9 @@ end:
 }
 
 static void writeQuotedString (MelderFile file, const char *string) {
-	fputc ('\"', file -> filePointer);
-	if (string) { char kar; while ((kar = *string ++) != '\0') { fputc (kar, file -> filePointer); if (kar == '\"') fputc (kar, file -> filePointer); } }   // BUG.
-	fputc ('\"', file -> filePointer);
+	MelderFile_writeCharacter (file, '\"');
+	if (string) { char kar; while ((kar = *string ++) != '\0') { MelderFile_writeCharacter (file, kar); if (kar == '\"') MelderFile_writeCharacter (file, kar); } }   // BUG
+	MelderFile_writeCharacter (file, '\"');
 }
 
 int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
@@ -1594,23 +1602,15 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 	long sortingTier = 0, itier, ielement;
 	file -> verbose = false;
 	texindent (file);
-	texput (file, "\"Praat chronological TextGrid text file\"\n");
-	texput (file, Melder_double (my xmin));
-	texput (file, " ");
-	texput (file, Melder_double (my xmax));
-	texput (file, "   ! Time domain.\n");
-	texput (file, Melder_integer (my tiers -> size));
-	texput (file, "   ! Number of tiers.");
+	MelderFile_write7 (file, L"\"Praat chronological TextGrid text file\"\n", Melder_doubleW (my xmin), L" ", Melder_doubleW (my xmax),
+		L"   ! Time domain.\n", Melder_integerW (my tiers -> size), L"   ! Number of tiers.");
 	for (itier = 1; itier <= my tiers -> size; itier ++) {
 		Function anyTier = (Function) my tiers -> item [itier];
-		texput (file, "\n");
+		MelderFile_write1 (file, L"\n");
 		writeQuotedString (file, Thing_className (anyTier));
-		texput (file, " ");
+		MelderFile_write1 (file, L" ");
 		writeQuotedString (file, anyTier -> name);
-		texput (file, " ");
-		texput (file, Melder_double (anyTier -> xmin));
-		texput (file, " ");
-		texput (file, Melder_double (anyTier -> xmax));
+		MelderFile_write4 (file, L" ", Melder_doubleW (anyTier -> xmin), L" ", Melder_doubleW (anyTier -> xmax));
 	}
 	for (;;) {
 		double firstRemainingTime = +1e308;
@@ -1654,22 +1654,14 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			if (anyTier -> methods == (Data_Table) classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				TextInterval interval = tier -> intervals -> item [firstRemainingElement];
-				texput (file, "\n");
-				texput (file, Melder_integer (firstRemainingTier));
-				texput (file, " ");
-				texput (file, Melder_double (interval -> xmin));
-				texput (file, " ");
-				texput (file, Melder_double (interval -> xmax));
-				texputs4 (interval -> text, file, "");
+				MelderFile_write6 (file, L"\n", Melder_integerW (firstRemainingTier), L" ", Melder_doubleW (interval -> xmin), L" ",
+					Melder_doubleW (interval -> xmax));
+				texputs4 (file, interval -> text, L"", 0,0,0,0,0);
 			} else {
 				TextTier tier = (TextTier) anyTier;
 				TextPoint point = tier -> points -> item [firstRemainingElement];
-				texput (file, "\n");
-				texput (file, Melder_integer (firstRemainingTier));
-				texput (file, " ");
-				texput (file, Melder_double (point -> time));
-				texput (file, " ");
-				texputs4 (point -> mark, file, "");
+				MelderFile_write5 (file, L"\n", Melder_integerW (firstRemainingTier), L" ", Melder_doubleW (point -> time), L" ");
+				texputs4 (file, point -> mark, L"", 0,0,0,0,0);
 			}
 			sortingTime = firstRemainingTime;
 			sortingTier = firstRemainingTier;

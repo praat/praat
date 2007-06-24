@@ -175,10 +175,272 @@ end:
 	return true;
 }
 
+bool MelderStringW_append1 (MelderStringW *me, const wchar_t *s1) {
+	if (s1 == NULL) s1 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long sizeNeeded = my length + length1 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append2 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2) {
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long sizeNeeded = my length + length1 + length2 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append3 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append4 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append5 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5)
+{
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	if (s5 == NULL) s5 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long length5 = wcslen (s5);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+	wcscpy (my string + my length, s5);
+	my length += length5;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append6 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6)
+{
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	if (s5 == NULL) s5 = L"";
+	if (s6 == NULL) s6 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long length5 = wcslen (s5);
+	unsigned long length6 = wcslen (s6);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+	wcscpy (my string + my length, s5);
+	my length += length5;
+	wcscpy (my string + my length, s6);
+	my length += length6;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append7 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7)
+{
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	if (s5 == NULL) s5 = L"";
+	if (s6 == NULL) s6 = L"";
+	if (s7 == NULL) s7 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long length5 = wcslen (s5);
+	unsigned long length6 = wcslen (s6);
+	unsigned long length7 = wcslen (s7);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+	wcscpy (my string + my length, s5);
+	my length += length5;
+	wcscpy (my string + my length, s6);
+	my length += length6;
+	wcscpy (my string + my length, s7);
+	my length += length7;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append8 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
+{
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	if (s5 == NULL) s5 = L"";
+	if (s6 == NULL) s6 = L"";
+	if (s7 == NULL) s7 = L"";
+	if (s8 == NULL) s8 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long length5 = wcslen (s5);
+	unsigned long length6 = wcslen (s6);
+	unsigned long length7 = wcslen (s7);
+	unsigned long length8 = wcslen (s8);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+	wcscpy (my string + my length, s5);
+	my length += length5;
+	wcscpy (my string + my length, s6);
+	my length += length6;
+	wcscpy (my string + my length, s7);
+	my length += length7;
+	wcscpy (my string + my length, s8);
+	my length += length8;
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderStringW_append9 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
+{
+	if (s1 == NULL) s1 = L"";
+	if (s2 == NULL) s2 = L"";
+	if (s3 == NULL) s3 = L"";
+	if (s4 == NULL) s4 = L"";
+	if (s5 == NULL) s5 = L"";
+	if (s6 == NULL) s6 = L"";
+	if (s7 == NULL) s7 = L"";
+	if (s8 == NULL) s8 = L"";
+	if (s9 == NULL) s9 = L"";
+	unsigned long length1 = wcslen (s1);
+	unsigned long length2 = wcslen (s2);
+	unsigned long length3 = wcslen (s3);
+	unsigned long length4 = wcslen (s4);
+	unsigned long length5 = wcslen (s5);
+	unsigned long length6 = wcslen (s6);
+	unsigned long length7 = wcslen (s7);
+	unsigned long length8 = wcslen (s8);
+	unsigned long length9 = wcslen (s9);
+	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9 + 1;
+	expandIfNecessary (wchar_t)
+	wcscpy (my string + my length, s1);
+	my length += length1;
+	wcscpy (my string + my length, s2);
+	my length += length2;
+	wcscpy (my string + my length, s3);
+	my length += length3;
+	wcscpy (my string + my length, s4);
+	my length += length4;
+	wcscpy (my string + my length, s5);
+	my length += length5;
+	wcscpy (my string + my length, s6);
+	my length += length6;
+	wcscpy (my string + my length, s7);
+	my length += length7;
+	wcscpy (my string + my length, s8);
+	my length += length8;
+	wcscpy (my string + my length, s9);
+	my length += length9;
+end:
+	iferror return false;
+	return true;
+}
+
 bool MelderStringA_appendCharacter (MelderStringA *me, char character) {
 	unsigned long sizeNeeded = my length + 1;
 	expandIfNecessary (char)
-	my string [my length] = character;
+	my string [my length] = (unsigned char) character;   // Prevent negative extension.
 	my length ++;
 	my string [my length] = '\0';
 end:
@@ -189,7 +451,7 @@ end:
 bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 1;
 	expandIfNecessary (wchar_t)
-	my string [my length] = character;
+	my string [my length] = (unsigned char) character;   // Prevent negative extension.
 	my length ++;
 	my string [my length] = L'\0';
 end:

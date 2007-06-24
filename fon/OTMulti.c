@@ -54,35 +54,27 @@ static void classOTMulti_info (I) {
 
 static int writeText (I, MelderFile file) {
 	iam (OTMulti);
-	texput (file, "\n");
-	texput (file, Melder_integer (my numberOfConstraints));
-	texput (file, " constraints");
+	MelderFile_write3 (file, L"\n", Melder_integerW (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		texput (file, "\n\t\"");
+		MelderFile_write1 (file, L"\n\t\"");
 		for (const char *p = & constraint -> name [0]; *p; p ++) {
-			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
-			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			MelderFile_writeCharacter (file, *p);
 		}
-		texput (file, "\"   ");
-		texput (file, Melder_double (constraint -> ranking));
-		texput (file, " ");
-		texput (file, Melder_double (constraint -> disharmony));
+		MelderFile_write4 (file, L"\"   ", Melder_doubleW (constraint -> ranking), L" ", Melder_doubleW (constraint -> disharmony));
 	}
-	texput (file, "\n\n");
-	texput (file, Melder_integer (my numberOfCandidates));
-	texput (file, " candidates");
+	MelderFile_write3 (file, L"\n\n", Melder_integerW (my numberOfCandidates), L" candidates");
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
-		texput (file, "\n\t\"");
+		MelderFile_write1 (file, L"\n\t\"");
 		for (const char *p = & candidate -> string [0]; *p; p ++) {
-			if (*p =='\"') texput (file, "\"");   // Double any quotes within quotes.
-			fputc (*p, file -> filePointer);   // BUG: this is DATA.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			MelderFile_writeCharacter (file, *p);
 		}
-		texput (file, "\"  ");
+		MelderFile_write1 (file, L"\"  ");
 		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-			texput (file, " ");
-			texput (file, Melder_integer (candidate -> marks [icons]));
+			MelderFile_write2 (file, L" ", Melder_integerW (candidate -> marks [icons]));
 		}
 	}
 	return 1;

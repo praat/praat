@@ -144,10 +144,10 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
-	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const char *name) { \
-		texputintro (file, "%s []: %s", name, hi >= lo ? "" : "(empty)"); \
+	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
+		texputintro (file, name, L" []: ", hi >= lo ? NULL : L"(empty)", 0,0,0); \
 		for (long i = lo; i <= hi; i ++) \
-			texput##storage (v [i], file, "%s [%ld]", name, i); \
+			texput##storage (file, v [i], name, L" [", Melder_integerW (i), L"]", 0,0); \
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
@@ -209,14 +209,15 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMmatrix_copyElements (sizeof (type), m, to, row1, row2, col1, col2); } \
 	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
 		{ return NUMmatrix_equal (sizeof (type), m1, m2, row1, row2, col1, col2); } \
-	int NUM##t##matrix_writeText (type **m, long row1, long row2, long col1, long col2, MelderFile file, const char *name) { \
-		texputintro (file, "%s [] []: %s", name, row2 >= row1 ? "" : "(empty)"); \
+	int NUM##t##matrix_writeText (type **m, long row1, long row2, long col1, long col2, MelderFile file, const wchar_t *name) { \
+		texputintro (file, name, L" [] []: ", row2 >= row1 ? NULL : L"(empty)", 0,0,0); \
 		if (row2 >= row1) { \
 			long row, col; \
 			for (row = row1; row <= row2; row ++) { \
-				texputintro (file, "%s [%ld]:", name, row); \
-				for (col = col1; col <= col2; col ++) \
-					texput##storage (m [row] [col], file, "%s [%ld] [%ld]", name, row, col); \
+				texputintro (file, name, L" [", Melder_integerW (row), L"]:", 0,0); \
+				for (col = col1; col <= col2; col ++) { \
+					texput##storage (file, m [row] [col], name, L" [", Melder_integerW (row), L"] [", Melder_integerW (col), L"]"); \
+				} \
 				texexdent (file); \
 			} \
 		} \

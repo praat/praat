@@ -45,11 +45,11 @@ static int readText (I, MelderFile file)
 static int writeText (I, MelderFile file)
 {
     iam (Categories); long i;
-	texputi4 (my size, file, "size");
+	texputi4 (file, my size, L"size", 0,0,0,0,0);
 	for (i = 1; i <= my size; i++)
 	{
 			SimpleString data = my item [i];
-			texputintro (file, "item" " [%ld]:", i);
+			texputintro (file, L"item" " [", Melder_integerW (i), L"]:", 0,0,0);
 			if (! classSimpleString->writeText (data, file)) return 0;
 			texexdent (file);
 	}

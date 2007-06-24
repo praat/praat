@@ -52,32 +52,29 @@
 #include "oo_DESCRIPTION.h"
 #include "TableOfReal_def.h"
 
-static void fprintquotedstring (FILE *f, const char *s) {
-	fputc ('\"', f);
-	if (s) { char c; while ((c = *s ++) != '\0') { fputc (c, f); if (c == '\"') fputc (c, f); } }
-	fputc ('\"', f);
+static void fprintquotedstring (MelderFile file, const char *s) {
+	MelderFile_writeCharacter (file, '\"');
+	if (s) { char c; while ((c = *s ++) != '\0') { MelderFile_writeCharacter (file, c); if (c == '\"') MelderFile_writeCharacter (file, c); } }
+	MelderFile_writeCharacter (file, '\"');
 }
 
 static int writeText (I, MelderFile file) {
 	iam (TableOfReal);
-	texputi4 (my numberOfColumns, file, "numberOfColumns");
-	texput (file, "\ncolumnLabels []: ");
-	if (my numberOfColumns < 1) texput (file, "(empty)");
-	texput (file, "\n");
+	texputi4 (file, my numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
+	MelderFile_write1 (file, L"\ncolumnLabels []: ");
+	if (my numberOfColumns < 1) MelderFile_write1 (file, L"(empty)");
+	MelderFile_write1 (file, L"\n");
 	for (long i = 1; i <= my numberOfColumns; i ++) {
-		fprintquotedstring (file -> filePointer, my columnLabels [i]);
-		fputc ('\t', file -> filePointer);
+		fprintquotedstring (file, my columnLabels [i]);
+		MelderFile_writeCharacter (file, '\t');
 	}
-	texputi4 (my numberOfRows, file, "numberOfRows");
+	texputi4 (file, my numberOfRows, L"numberOfRows", 0,0,0,0,0);
 	for (long i = 1; i <= my numberOfRows; i ++) {
-		texput (file, "\nrow [");
-		texput (file, Melder_integer (i));
-		texput (file, "]: ");
-		fprintquotedstring (file -> filePointer, my rowLabels [i]);
+		MelderFile_write3 (file, L"\nrow [", Melder_integerW (i), L"]: ");
+		fprintquotedstring (file, my rowLabels [i]);
 		for (long j = 1; j <= my numberOfColumns; j ++) {
 			double x = my data [i] [j];
-			texput (file, "\t");
-			texput (file, Melder_double (x));
+			MelderFile_write2 (file, L"\t", Melder_doubleW (x));
 		}
 	}
 	return 1;

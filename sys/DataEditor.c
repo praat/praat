@@ -51,7 +51,10 @@
 	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
 	"enum", "lenum", "boolean", "question", "string", "stringw", "lstring", "lstringw",
 	"struct", "widget", "object", "collection" };*/
-static int stringLengths [] = { 0, 4, 6, 6, 11, 3, 5, 5, 10, 15, 27, 35, 59, 4, 6, 33, 33, 8, 6, 60, 60, 60, 60 };
+static int stringLengths [] = { 0,
+	4, 6, 6, 11, 3, 5, 5, 10,
+	15, 27, 35, 59, 4, 6,
+	33, 33, 8, 6, 60, 60, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
 	Widget label, button, text;
@@ -464,7 +467,7 @@ static void showStructMember (
 	DataSubEditor_FieldData fieldData,   /* The widgets in which to show the info about the current member. */
 	char *history)
 {
-	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= 20 && rank == 0;
+	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= 22 && rank == 0;
 	char *memberAddress = (char *) structAddress + memberDescription -> offset;
 	char buffer [100];
 
@@ -615,7 +618,7 @@ static long classVectorEditor_countFields (I) {
 static void classVectorEditor_showMembers (I) {
 	iam (VectorEditor);
 	long firstElement, ielement;
-	int type = my description -> type, isSingleType = type <= 20;
+	int type = my description -> type, isSingleType = type <= 22;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (my description -> tagType) + 1 : 1;
 	firstElement = my minimum + (my topField - 1) / elementSize;
@@ -715,7 +718,7 @@ static long classMatrixEditor_countFields (I) {
 static void classMatrixEditor_showMembers (I) {
 	iam (MatrixEditor);
 	long firstRow, firstColumn, irow, icolumn;
-	int type = my description -> type, isSingleType = type <= 20;
+	int type = my description -> type, isSingleType = type <= 22;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (my description -> tagType) + 1 : 1;
 	int rowSize = elementSize * (my max2 - my min2 + 1);

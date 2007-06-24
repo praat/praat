@@ -48,10 +48,10 @@ static void info (I) {
   
 static int writeText (I, MelderFile file) {
 	iam (Polygon);
-	texputi4 (my numberOfPoints, file, "numberOfPoints");
+	texputi4 (file, my numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
 	for (long i = 1; i <= my numberOfPoints; i ++) {
-		texputr4 (my x [i], file, "x [%ld]", i);
-		texputr4 (my y [i], file, "y [%ld]", i);
+		texputr4 (file, my x [i], L"x [", Melder_integerW (i), L"]", 0,0,0);
+		texputr4 (file, my y [i], L"y [", Melder_integerW (i), L"]", 0,0,0);
 	}
 	return 1;
 }
