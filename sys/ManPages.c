@@ -105,10 +105,10 @@ static const char *extractLink (const char *text, const char *p, char *link) {
 	return p;
 }
 
-static int readOnePage (ManPages me, MelderFile file) {
+static int readOnePage (ManPages me, MelderReadString *text) {
 	ManPage page;
 	ManPage_Paragraph par;
-	char *title = texgets2 (file);
+	char *title = texgets2 (text);
 	if (! title) return Melder_error ("Cannot find page title.");
 
 	/*
@@ -127,21 +127,20 @@ static int readOnePage (ManPages me, MelderFile file) {
 	 */
 	if (! Collection_addItem (my pages, page)) return 0;
 
-	page -> author = texgets2 (file);
+	page -> author = texgets2 (text);
 	if (! page -> author) return Melder_error ("Cannot find author.");
-	page -> date = texgetu4 (file);
+	page -> date = texgetu4 (text);
 	iferror return Melder_error ("Cannot find date.");
-	page -> recordingTime = texgetr8 (file);
+	page -> recordingTime = texgetr8 (text);
 	iferror return Melder_error ("Cannot find recording time.");
 	page -> paragraphs = NUMvector (sizeof (struct structManPage_Paragraph), 0, 500);
 	if (! page -> paragraphs) return 0;
 	for (par = page -> paragraphs;; par ++) {
 		char link [501], fileName [256];
 		const char *p;
-		par -> type = texgete1 (file, & enum_ManPage_TYPE);
+		par -> type = texgete1 (text, & enum_ManPage_TYPE);
 		if (Melder_hasError ()) {
-			if (strstr (Melder_buffer1, "end of file")) {
-				clearerr (file -> filePointer);
+			if (wcsstr (Melder_getErrorW (), L"end of text")) {
 				Melder_clearError ();
 				break;
 			} else {
@@ -149,10 +148,10 @@ static int readOnePage (ManPages me, MelderFile file) {
 			}
 		}
 		if (par -> type == enumi (ManPage_TYPE, script)) {
-			par -> width = texgetr4 (file);
-			par -> height = texgetr4 (file);
+			par -> width = texgetr4 (text);
+			par -> height = texgetr4 (text);
 		}
-		par -> text = texgets2 (file);
+		par -> text = texgets2 (text);
 		if (! par -> text) return Melder_error ("Cannot find text.");
 		for (p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
@@ -201,9 +200,10 @@ static int readOnePage (ManPages me, MelderFile file) {
 				strcpy (fileName, link);
 				strcat (fileName, ".man");
 				MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
-				MelderFile_open (& file2);
-				if (file2. filePointer) {
-					if (! readOnePage (me, & file2)) { MelderFile_close (& file2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
+				wchar_t *string2 = MelderFile_readTextW (& file2);
+				if (string2 != NULL) {
+					MelderReadString text2 = { string2, string2 };
+					if (! readOnePage (me, & text2)) { Melder_free (string2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
 				} else {
 					/*
 					 * Second try: with upper case.
@@ -213,11 +213,12 @@ static int readOnePage (ManPages me, MelderFile file) {
 					strcpy (fileName, link);
 					strcat (fileName, ".man");
 					MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
-					MelderFile_open (& file2);
-					if (file -> filePointer == NULL) return 0;
-					if (! readOnePage (me, & file2)) { MelderFile_close (& file2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
+					string2 = MelderFile_readTextW (& file2);
+					if (string2 == NULL) return 0;
+					MelderReadString text2 = { string2, string2 };
+					if (! readOnePage (me, & text2)) { Melder_free (string2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
 				}
-				MelderFile_close (& file2);
+				Melder_free (string2);
 			}
 		}
 		iferror return 0;
@@ -226,12 +227,12 @@ static int readOnePage (ManPages me, MelderFile file) {
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }
-static int classManPages_readText (I, MelderFile file) {
+static int classManPages_readText (I, MelderReadString *text) {
 	iam (ManPages);
 	my dynamic = TRUE;
 	my pages = Ordered_create ();
 	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
-	return readOnePage (me, file);
+	return readOnePage (me, text);
 }
 
 class_methods (ManPages, Data)

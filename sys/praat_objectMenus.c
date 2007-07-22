@@ -290,6 +290,7 @@ FORM (TextOutputEncodingSettings, "Text writing preferences", "Text writing pref
 		OPTION ("UTF-8")
 		OPTION ("UTF-16")
 		OPTION ("Try ASCII, then UTF-16")
+		OPTION ("Try ISO Latin-1, then UTF-16")
 	OK
 SET_INTEGER ("Output encoding", Melder_getOutputEncoding ())
 DO

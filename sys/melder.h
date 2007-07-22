@@ -185,6 +185,7 @@ int Melder_getInputEncoding (void);
 #define Melder_OUTPUT_ENCODING_UTF8  1
 #define Melder_OUTPUT_ENCODING_UTF16  2
 #define Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16  3
+#define Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16  4
 void Melder_setOutputEncoding (int encoding);
 int Melder_getOutputEncoding (void);
 
@@ -195,10 +196,12 @@ int Melder_getOutputEncoding (void);
  */
 #define Melder_INPUT_ENCODING_FLAC  0x464C4143
 #define Melder_OUTPUT_ENCODING_ASCII  0x41534349
+#define Melder_OUTPUT_ENCODING_ISO_LATIN1  0x4C415401
 #define Melder_OUTPUT_ENCODING_FLAC  0x464C4143
 
 bool Melder_isValidAscii (const wchar_t *string);
 bool Melder_isValidUtf8 (const unsigned char *string);
+bool Melder_isEncodable (const wchar_t *string, int outputEncoding);
 
 long Melder_killReturns_inlineW (wchar_t *text);
 
@@ -275,6 +278,9 @@ typedef struct {
 	unsigned long bufferSize;
 	wchar_t *string;   // a growing buffer, never shrunk (can only be freed by MelderStringW_free)
 } MelderStringW;
+typedef struct {
+	wchar_t *string, *readPointer;
+} MelderReadString;
 
 void MelderStringA_free (MelderStringA *me);   // frees the "string" attribute only (and sets other attributes to zero)
 void MelderStringW_free (MelderStringW *me);   // frees the "string" attribute only (and sets other attributes to zero)
@@ -311,6 +317,7 @@ bool MelderStringW_getW (MelderStringW *me, wchar_t *destination);   // performs
 double MelderString_allocationCount (void);
 double MelderString_deallocationCount (void);
 double MelderString_allocationSize (void);
+wchar_t * MelderReadString_readLine (MelderReadString *text);
 
 /********** FILES **********/
 

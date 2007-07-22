@@ -317,12 +317,12 @@ double NUMincompleteGammaQ (double a, double x) {
 	return status == GSL_SUCCESS ? result. val : NUMundefined;
 }
 
-double NUMchiSquareP (double chiSquare, long degreesOfFreedom) {
+double NUMchiSquareP (double chiSquare, double degreesOfFreedom) {
 	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
 	return NUMincompleteGammaP (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
-double NUMchiSquareQ (double chiSquare, long degreesOfFreedom) {
+double NUMchiSquareQ (double chiSquare, double degreesOfFreedom) {
 	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
 	return NUMincompleteGammaQ (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }

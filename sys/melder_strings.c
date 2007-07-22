@@ -63,9 +63,15 @@ void MelderStringW_empty (MelderStringW *me) {
 
 #define expandIfNecessary(type) \
 	if (sizeNeeded > my bufferSize) { \
+		Melder_assert (my bufferSize >= 0); \
+		Melder_assert (sizeNeeded >= 0); \
 		sizeNeeded = 1.618034 * sizeNeeded + 100; \
+		Melder_assert (sizeNeeded > 0); \
 		if (my string) totalNumberOfDeallocations += 1; \
-		my string = Melder_realloc (my string, sizeNeeded * sizeof (type)); cherror \
+		long bytesNeeded = sizeNeeded * sizeof (type); \
+		Melder_assert (bytesNeeded > 0); \
+		my string = Melder_realloc (my string, bytesNeeded); \
+		if (my string == NULL) { my bufferSize = 0; goto end; } \
 		totalNumberOfAllocations += 1; \
 		totalAllocationSize += (sizeNeeded - my bufferSize) * sizeof (type); \
 		my bufferSize = sizeNeeded; \
@@ -517,5 +523,21 @@ double MelderString_allocationSize (void) {
 	return totalAllocationSize;
 }
 
-/* End of file melder_strings.c */
+wchar_t * MelderReadString_readLine (MelderReadString *text) {
+	if (text -> readPointer == NULL) return NULL;
+	if (*text -> readPointer == '\0') {   // Tried to read past end of file.
+		text -> readPointer = NULL;
+		return NULL;
+	}
+	wchar_t *result = text -> readPointer;
+	wchar_t *newline = wcschr (result, '\n');
+	if (newline != NULL) {
+		*newline = '\0';
+		text -> readPointer = newline + 1;
+	} else {
+		text -> readPointer += wcslen (result);
+	}
+	return result;
+}
 
+/* End of file melder_strings.c */

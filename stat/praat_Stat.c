@@ -441,6 +441,20 @@ DO
 	Melder_information1 (my columnHeaders [icol]. label);
 END
 
+FORM (Table_getGroupMean, "Table: Get group mean", 0)
+	WORD ("Column label", "salary")
+	WORD ("Group column", "gender")
+	SENTENCE ("Group", "F")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	if (column == 0) return Melder_error ("No such column.");
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	if (groupColumn == 0) return Melder_error ("No such column.");
+	Melder_information1 (Melder_double (Table_getGroupMean (ONLY_OBJECT, column, groupColumn, GET_STRING ("Group"))));
+END
+
 FORM (Table_getMean, "Table: Get mean", 0)
 	SENTENCE ("Column label", "")
 	OK
@@ -658,31 +672,6 @@ DO
 	MelderInfo_close ();
 END
 	
-FORM (Table_reportMean_studentT, "Report mean (Student t)", 0)
-	WORD ("Column", "")
-	POSITIVE ("Significance level", "0.025")
-	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
-	double significanceLevel = GET_REAL ("Significance level");
-	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
-	if (column == 0) return Melder_error ("No such column.");
-	mean = Table_getMean_studentT (me, column, significanceLevel,
-		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_writeLine3 ("Mean of column ", Table_messageColumn (me, column), ":");
-	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
-	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_close ();
-END
-
 FORM (Table_reportGroupDifference_studentT, "Report group difference (Student t)", 0)
 	WORD ("Column", "salary")
 	WORD ("Group column", "gender")
@@ -712,6 +701,62 @@ DO
 		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
 		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
+END
+
+FORM (Table_reportGroupMean_studentT, "Report group mean (Student t)", 0)
+	WORD ("Column", "salary")
+	WORD ("Group column", "gender")
+	SENTENCE ("Group", "F")
+	POSITIVE ("Significance level", "0.025")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	if (column == 0) return Melder_error ("No such column.");
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	if (groupColumn == 0) return Melder_error ("No such column.");
+	double significanceLevel = GET_REAL ("Significance level");
+	char *group = GET_STRING ("Group");
+	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, significanceLevel,
+		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+	MelderInfo_open ();
+	MelderInfo_write4 ("Mean in column ", Table_messageColumn (me, column), " of group ", group);
+	MelderInfo_writeLine3 (" of column ", Table_messageColumn (me, groupColumn), ":");
+	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
+	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_close ();
+END
+
+FORM (Table_reportMean_studentT, "Report mean (Student t)", 0)
+	WORD ("Column", "")
+	POSITIVE ("Significance level", "0.025")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	double significanceLevel = GET_REAL ("Significance level");
+	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	if (column == 0) return Melder_error ("No such column.");
+	mean = Table_getMean_studentT (me, column, significanceLevel,
+		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+	MelderInfo_open ();
+	MelderInfo_writeLine3 ("Mean of column ", Table_messageColumn (me, column), ":");
+	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
+	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
+	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
+	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
+		" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
+		" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 
@@ -1459,11 +1504,13 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, "-- get stats --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Get quantile...", 0, 1, DO_Table_getQuantile);
 		praat_addAction1 (classTable, 1, "Get mean...", 0, 1, DO_Table_getMean);
+		praat_addAction1 (classTable, 1, "Get group mean...", 0, 1, DO_Table_getGroupMean);
 		praat_addAction1 (classTable, 1, "Get standard deviation...", 0, 1, DO_Table_getStandardDeviation);
 		praat_addAction1 (classTable, 1, "-- report stats --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, "Report mean (Student t)...", 0, 1, DO_Table_reportMean_studentT);
 		/*praat_addAction1 (classTable, 1, "Report standard deviation...", 0, 1, DO_Table_reportStandardDeviation);*/
 		praat_addAction1 (classTable, 1, "Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, "Report group mean (Student t)...", 0, 1, DO_Table_reportGroupMean_studentT);
 		praat_addAction1 (classTable, 1, "Report group difference (Student t)...", 0, 1, DO_Table_reportGroupDifference_studentT);
 		praat_addAction1 (classTable, 1, "Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, "Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);

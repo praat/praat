@@ -88,27 +88,27 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-static int readText (I, MelderFile file) {
+static int readText (I, MelderReadString *text) {
 	iam (OTMulti);
 	long icons, icand;
-	if (! inherited (OTMulti) readText (me, file)) return 0;
-	if ((my numberOfConstraints = texgeti4 (file)) < 1) return Melder_error ("No constraints.");
+	if (! inherited (OTMulti) readText (me, text)) return 0;
+	if ((my numberOfConstraints = texgeti4 (text)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTConstraint, 1, my numberOfConstraints))) return 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
-		if (! (constraint -> name = texgets2 (file))) return 0;
-		constraint -> ranking = texgetr8 (file);
-		constraint -> disharmony = texgetr8 (file);
+		if (! (constraint -> name = texgets2 (text))) return 0;
+		constraint -> ranking = texgetr8 (text);
+		constraint -> disharmony = texgetr8 (text);
 	}
-	if ((my numberOfCandidates = texgeti4 (file)) < 1) return Melder_error ("No candidates.");
+	if ((my numberOfCandidates = texgeti4 (text)) < 1) return Melder_error ("No candidates.");
 	if (! (my candidates = NUMstructvector (OTCandidate, 1, my numberOfCandidates))) return 0;
 	for (icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
-		if (! (candidate -> string = texgets2 (file))) return 0;
+		if (! (candidate -> string = texgets2 (text))) return 0;
 		candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 		if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 		for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-			candidate -> marks [icons] = texgeti2 (file);
+			candidate -> marks [icons] = texgeti2 (text);
 	}
 	OTMulti_checkIndex (me);
 	return 1;

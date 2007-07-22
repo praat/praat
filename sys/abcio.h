@@ -25,6 +25,7 @@
  * pb 2006/12/13 big-endian floating point
  * pb 2007/06/10 *w4
  * pb 2007/06/21 *w2
+ * pb 2007/07/21 MelderReadString
  */
 
 #ifndef _complex_h_
@@ -36,27 +37,27 @@
 
 /* Numeric text input and output. */
 
-int texgeti1 (MelderFile file);
-int texgeti2 (MelderFile file);
-long texgeti4 (MelderFile file);
-unsigned int texgetu1 (MelderFile file);
-unsigned int texgetu2 (MelderFile file);
-unsigned long texgetu4 (MelderFile file);
-double texgetr4 (MelderFile file);
-double texgetr8 (MelderFile file);
-double texgetr10 (MelderFile file);
-fcomplex texgetc8 (MelderFile file);
-dcomplex texgetc16 (MelderFile file);
-char texgetc1 (MelderFile file);
-short texgete1 (MelderFile file, void *enumerated);
-short texgete2 (MelderFile file, void *enumerated);
-short texgeteb (MelderFile file);
-short texgeteq (MelderFile file);
-short texgetex (MelderFile file);
-char *texgets2 (MelderFile file);
-char *texgets4 (MelderFile file);
-wchar_t *texgetw2 (MelderFile file);
-wchar_t *texgetw4 (MelderFile file);
+int texgeti1 (MelderReadString *text);
+int texgeti2 (MelderReadString *text);
+long texgeti4 (MelderReadString *text);
+unsigned int texgetu1 (MelderReadString *text);
+unsigned int texgetu2 (MelderReadString *text);
+unsigned long texgetu4 (MelderReadString *text);
+double texgetr4 (MelderReadString *text);
+double texgetr8 (MelderReadString *text);
+double texgetr10 (MelderReadString *text);
+fcomplex texgetc8 (MelderReadString *text);
+dcomplex texgetc16 (MelderReadString *text);
+char texgetc1 (MelderReadString *text);
+short texgete1 (MelderReadString *text, void *enumerated);
+short texgete2 (MelderReadString *text, void *enumerated);
+short texgeteb (MelderReadString *text);
+short texgeteq (MelderReadString *text);
+short texgetex (MelderReadString *text);
+char *texgets2 (MelderReadString *text);
+char *texgets4 (MelderReadString *text);
+wchar_t *texgetw2 (MelderReadString *text);
+wchar_t *texgetw4 (MelderReadString *text);
 
 void texindent (MelderFile file);
 void texexdent (MelderFile file);

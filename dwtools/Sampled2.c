@@ -40,18 +40,18 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled2_def.h"
 
-static int readText (I, MelderFile file) {
+static int readText (I, MelderReadString *text) {
 	iam (Sampled2);
-	my xmin = texgetr8 (file);
-	my xmax = texgetr8 (file);
-	my nx = texgeti4 (file);
-	my dx = texgetr8 (file);
-	my x1 = texgetr8 (file);
-	my ymin = texgetr8 (file);
-	my ymax = texgetr8 (file);
-	my ny = texgeti4 (file);
-	my dy = texgetr8 (file);
-	my y1 = texgetr8 (file);
+	my xmin = texgetr8 (text);
+	my xmax = texgetr8 (text);
+	my nx = texgeti4 (text);
+	my dx = texgetr8 (text);
+	my x1 = texgetr8 (text);
+	my ymin = texgetr8 (text);
+	my ymax = texgetr8 (text);
+	my ny = texgeti4 (text);
+	my dy = texgetr8 (text);
+	my y1 = texgetr8 (text);
 	if (my xmin > my xmax || my ymin > my ymax)
 		return Melder_error ("(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)

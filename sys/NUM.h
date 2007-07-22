@@ -26,6 +26,8 @@
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2007/06/21 readText and writeText API change
+ * pb 2007/06/28 double degreesOfFreedom
+ * pb 2007/07/21 readText API change
  */
 
 /* "NUM" = "NUMerics" */
@@ -256,8 +258,8 @@ double NUMgaussP (double z);
 double NUMgaussQ (double z);
 double NUMincompleteGammaP (double a, double x);
 double NUMincompleteGammaQ (double a, double x);
-double NUMchiSquareP (double chiSquare, long degreesOfFreedom);
-double NUMchiSquareQ (double chiSquare, long degreesOfFreedom);
+double NUMchiSquareP (double chiSquare, double degreesOfFreedom);
+double NUMchiSquareQ (double chiSquare, double degreesOfFreedom);
 double NUMcombinations (long n, long k);
 double NUMincompleteBeta (double a, double b, double x);
 double NUMbinomialP (double p, double k, double n);
@@ -390,13 +392,13 @@ void NUMautoscale (float x [], long n, double scale);
 	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
 	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f); \
 	int NUM##t##vector_writeCache (const type *v, long lo, long hi, CACHE *f); \
-	type * NUM##t##vector_readText (long lo, long hi, MelderFile file, const char *name); \
+	type * NUM##t##vector_readText (long lo, long hi, MelderReadString *text, const char *name); \
 	type * NUM##t##vector_readBinary (long lo, long hi, FILE *f); \
 	type * NUM##t##vector_readCache (long lo, long hi, CACHE *f); \
 	int NUM##t##matrix_writeText (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
 	int NUM##t##matrix_writeBinary (type **v, long r1, long r2, long c1, long c2, FILE *f); \
 	int NUM##t##matrix_writeCache (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
-	type ** NUM##t##matrix_readText (long r1, long r2, long c1, long c2, MelderFile file, const char *name); \
+	type ** NUM##t##matrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name); \
 	type ** NUM##t##matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f); \
 	type ** NUM##t##matrix_readCache (long r1, long r2, long c1, long c2, CACHE *f);
 FUNCTION (b, signed char)
@@ -420,8 +422,8 @@ int NUMfvector_writeBinary (const float *v, long lo, long hi, FILE *f);   // etc
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The vectors need not have been created by NUM...vector.
-float * NUMfvector_readText (long lo, long hi, MelderFile file, const char *name);   // etc
-	create and read a vector as text from the stream f.
+float * NUMfvector_readText (long lo, long hi, MelderReadString *text, const char *name);   // etc
+	create and read a vector as text.
 	Queue an error message and return NULL if something went wrong.
 	Every element is supposed to be on the beginning of a line.
 float * NUMfvector_readBinary (long lo, long hi, FILE *f);   // etc
@@ -441,8 +443,8 @@ int NUMfmatrix_writeBinary (float **m, long r1, long r2, long c1, long c2, FILE 
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-float ** NUMfmatrix_readText (long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
-	create and read a matrix as text from the stream f.
+float ** NUMfmatrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
+	create and read a matrix as text.
 	Give an error message and return NULL if something went wrong.
 float ** NUMfmatrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.

@@ -593,7 +593,7 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	publish = Sound_to_Spectrum (sound, TRUE);
 	forget (sound);
 	if (! publish) return 0;
-	static MelderStringA sliceName;
+	static MelderStringA sliceName = { 0 };
 	MelderStringA_copyA (& sliceName, my data == NULL ? "untitled" : ((Data) my data) -> name);
 	MelderStringA_appendCharacter (& sliceName, '_');
 	MelderStringA_appendA (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/07
+ * pb 2007/06/28
  */
 
 #ifndef _Collection_h_
@@ -52,49 +52,52 @@ int Table_appendSumColumn (Table me, long column1, long column2, const char *lab
 int Table_appendDifferenceColumn (Table me, long column1, long column2, const char *label);
 int Table_appendProductColumn (Table me, long column1, long column2, const char *label);
 int Table_appendQuotientColumn (Table me, long column1, long column2, const char *label);
-int Table_removeRow (Table me, long irow);
-int Table_removeColumn (Table me, long icol);
-int Table_insertRow (Table me, long irow);
-int Table_insertColumn (Table me, long icol, const char *label);
-void Table_setColumnLabel (Table me, long icol, const char *label);
+int Table_removeRow (Table me, long row);
+int Table_removeColumn (Table me, long column);
+int Table_insertRow (Table me, long row);
+int Table_insertColumn (Table me, long column, const char *label);
+void Table_setColumnLabel (Table me, long column, const char *label);
 long Table_columnLabelToIndex (Table me, const char *label);
-long Table_searchColumn (Table me, long icol, const char *value);
+long Table_searchColumn (Table me, long column, const char *value);
 
 /*
  * Procedure for reading strings or numbers from table cells:
  * use the following two calls exclusively.
  */
-const char * Table_getStringValue (Table me, long irow, long icol);
-double Table_getNumericValue (Table me, long irow, long icol);
+const char * Table_getStringValue (Table me, long row, long column);
+double Table_getNumericValue (Table me, long row, long column);
 
 /*
  * Procedure for writing strings or numbers into table cells:
  * use the following two calls exclusively.
  */
-int Table_setStringValue (Table me, long irow, long icol, const char *value);
-int Table_setNumericValue (Table me, long irow, long icol, double value);
+int Table_setStringValue (Table me, long row, long column, const char *value);
+int Table_setNumericValue (Table me, long row, long column, double value);
 
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
-void Table_numericize (Table me, long icol);
+void Table_numericize (Table me, long column);
 
-double Table_getQuantile (Table me, long icol, double quantile);
-double Table_getMean (Table me, long icol);
-double Table_getStdev (Table me, long icol);
-double Table_getCorrelation_pearsonR (Table me, long col1, long col2, double significanceLevel,
+double Table_getQuantile (Table me, long column, double quantile);
+double Table_getMean (Table me, long column);
+double Table_getGroupMean (Table me, long column, long groupColumn, const char *group);
+double Table_getStdev (Table me, long column);
+double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
-double Table_getCorrelation_kendallTau (Table me, long col1, long col2, double significanceLevel,
+double Table_getCorrelation_kendallTau (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getMean_studentT (Table me, long column, double significanceLevel,
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
-double Table_getDifference_studentT (Table me, long col1, long col2, double significanceLevel,
+double Table_getDifference_studentT (Table me, long column1, long column2, double significanceLevel,
 	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit);
+double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const char *group1, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const char *group1, const char *group2, double significanceLevel,
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
-double Table_getVarianceRatio (Table me, long col1, long col2, double significanceLevel,
+double Table_getVarianceRatio (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 
-int Table_formula (Table me, long icol, const char *formula);
-int Table_formula_columnRange (Table me, long icol1, long icol2, const char *expression);
+int Table_formula (Table me, long column, const char *formula);
+int Table_formula_columnRange (Table me, long column1, long column2, const char *expression);
 
 Table Tables_append (I, thou);
 Table Tables_appendMany (Collection me);
@@ -114,8 +117,8 @@ int Table_writeToTableFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 Table Table_readFromCharacterSeparatedTextFile (MelderFile file, char separator);
 
-Table Table_extractRowsWhereColumn_number (Table me, long icol, int which_Melder_NUMBER, double criterion);
-Table Table_extractRowsWhereColumn_string (Table me, long icol, int which_Melder_STRING, const char *criterion);
+Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion);
+Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const char *criterion);
 Table Table_collapseRows (Table me, const char *factors_string, const char *columnsToSum_string,
 	const char *columnsToAverage_string, const char *columnsToMedianize_string,
 	const char *columnsToAverageLogarithmically_string, const char *columnsToMedianizeLogarithmically_string);

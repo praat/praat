@@ -23,6 +23,7 @@
  * pb 2003/09/14 old ClassTextFile formant readable across systems
  * pb 2004/10/16 C++ compatible struct tags
  * pb 2007/06/21 wchar_t
+ * pb 2007/07/21 Data_canWriteAsEncoding
  */
 
 #include "Collection.h"
@@ -41,8 +42,9 @@ static bool equal (Any data1, Any data2) {
 	return 1;
 }   /* Names may be different. */
 
-static bool canWriteAsAscii (Any data) {
+static bool canWriteAsEncoding (Any data, int encoding) {
 	(void) data;
+	(void) encoding;
 	return 1;
 }
 
@@ -52,9 +54,9 @@ static int writeText (Any data, MelderFile openFile) {
 	return 1;
 }
 
-static int readText (Any data, MelderFile openFile) {
+static int readText (Any data, MelderReadString *text) {
 	(void) data;
-	(void) openFile;
+	(void) text;
 	return 1;
 }
 
@@ -97,7 +99,7 @@ static int readLisp (Any data, FILE *f) {
 class_methods (Data, Thing)
 	class_method (copy)
 	class_method (equal)
-	class_method (canWriteAsAscii)
+	class_method (canWriteAsEncoding)
 	class_method (writeText)
 	class_method (readText)
 	class_method (writeBinary)
@@ -133,9 +135,9 @@ bool Data_equal (I, thou) {
 	return our equal (me, thee);
 }
 
-bool Data_canWriteAsAscii (I) {
+bool Data_canWriteAsEncoding (I, int encoding) {
 	iam (Data);
-	return our canWriteAsAscii (me);
+	return our canWriteAsEncoding (me, encoding);
 }
 
 bool Data_canWriteText (I) {
@@ -150,12 +152,8 @@ int Data_writeText (I, MelderFile openFile) {
 	return 1;
 }
 
-static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
+int Data_createTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	if (! Data_canWriteText (me)) {
-		Melder_error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.");
-		goto end;
-	}
 	MelderFile_create (file, "TEXT", 0, "txt"); cherror
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
@@ -163,9 +161,23 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	file -> verbose = verbose;
 	file -> outputEncoding = Melder_getOutputEncoding ();
 	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16)
-		file -> outputEncoding = Data_canWriteAsAscii (me) ? Melder_OUTPUT_ENCODING_ASCII : Melder_OUTPUT_ENCODING_UTF16;
+		file -> outputEncoding = Data_canWriteAsEncoding (me, Melder_OUTPUT_ENCODING_ASCII) ? Melder_OUTPUT_ENCODING_ASCII : Melder_OUTPUT_ENCODING_UTF16;
+	else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsEncoding (me, Melder_OUTPUT_ENCODING_ISO_LATIN1) ? Melder_OUTPUT_ENCODING_ISO_LATIN1 : Melder_OUTPUT_ENCODING_UTF16;
 	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF16)
 		binputu2 (0xfeff, file -> filePointer);
+end:
+	iferror return 0;
+	return 1;
+}
+
+static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
+	iam (Data);
+	if (! Data_canWriteText (me)) {
+		Melder_error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.");
+		goto end;
+	}
+	Data_createTextFile (me, file, verbose); cherror
 	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _classNameW);
 	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integerW (our version));
 	MelderFile_write1 (file, L"\"\n");
@@ -262,43 +274,40 @@ bool Data_canReadText (I) {
 	return our readText != classData -> readText;
 }
 
-int Data_readText (I, MelderFile openFile) {
+int Data_readText (I, MelderReadString *text) {
 	iam (Data);
-	if (! our readText (me, openFile) || Melder_hasError ())
+	if (! our readText (me, text) || Melder_hasError ())
 		return Melder_error2 (Thing_classNameW (me), L" not read.");
-	if (feof (openFile -> filePointer))
+	if (text -> readPointer == NULL)
 		return Melder_error3 (L"Early end of file. ", Thing_classNameW (me), L" not read.");
-	if (ferror (openFile -> filePointer))
-		return Melder_error3 (L"Read error. ", Thing_classNameW (me), L" not read.");
 	return 1;
 }
 
 Any Data_readFromTextFile (MelderFile file) {
 	Data me;
-	char line [200], *end, *klas = NULL;
-	MelderFile_open (file); cherror
-	fgets (line, 199, file -> filePointer);
-	end = strstr (line, "ooTextFile");   /* oo format? */
+	wchar_t *klas = NULL, *string = NULL;
+	string = MelderFile_readTextW (file); cherror
+	MelderReadString text = { string, string };
+	wchar_t *line = MelderReadString_readLine (& text);
+	wchar_t *end = wcsstr (line, L"ooTextFile");   /* oo format? */
 	if (end) {
-		fseek (file -> filePointer, (end - line) + 11, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
-		klas = texgets2 (file); cherror
-		me = Thing_newFromClassName (klas); cherror
+		klas = texgetw2 (& text); cherror
+		me = Thing_newFromClassNameW (klas); cherror
 	} else {
-		end = strstr (line, "TextFile");
+		end = wcsstr (line, L"TextFile");
 		if (end == NULL) {
 			Melder_error1 (L"Not an old-type text file; should not occur.");
 			goto end;
 		}
-		fseek (file -> filePointer, (end - line) + 8, SEEK_SET);   /* HACK: in order to be able to read classic Mac text files on Windows, Unix, or MacOS X. */
 		*end = '\0';
-		me = Thing_newFromClassName (line); cherror
+		me = Thing_newFromClassNameW (line); cherror
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */
 	}
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
-	Data_readText (me, file); cherror
+	Data_readText (me, & text); cherror
 end:
 	Melder_free (klas);
-	MelderFile_close (file);
+	Melder_free (string);
 	iferror forget (me);
 	return me;
 }
@@ -400,6 +409,15 @@ Any Data_readFromFile (MelderFile file) {
 	if (nread > 11) {
 		char *p = strstr (header, "TextFile");
 		if (p != NULL && p - header < nread - 8 && p - header < 40)
+			return Data_readFromTextFile (file);
+	}
+	if (nread > 22) {
+		char headerCopy [513];
+		memcpy (headerCopy, header, 100);
+		for (i = 0; i < 512; i ++)
+			if (header [i] == '\0') header [i] = '\001';
+		char *p = strstr (header, "T\001e\001x\001t\001F\001i\001l\001e");
+		if (p != NULL && p - header < nread - 15 && p - header < 80)
 			return Data_readFromTextFile (file);
 	}
 

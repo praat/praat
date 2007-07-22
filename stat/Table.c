@@ -42,6 +42,7 @@
  * pb 2007/03/17 exported Table_numericize for optimizers
  * pb 2007/05/07 renamed Table_pool to Table_collapseRows
  * pb 2007/05/07 Table_rowsToColumns
+ * pb 2007/06/28 Table_getGroupMean_studentT, Table_getGroupMean
  */
 
 #include <ctype.h>
@@ -485,6 +486,25 @@ double Table_getMean (Table me, long icol) {
 		sum += row -> cells [icol]. number;
 	}
 	return sum / my rows -> size;
+}
+
+double Table_getGroupMean (Table me, long column, long groupColumn, const char *group) {
+	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	Table_numericize (me, column);
+	long n = 0;
+	double sum = 0.0;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [groupColumn]. string != NULL) {
+			if (strequ (row -> cells [groupColumn]. string, group)) {
+				n += 1;
+				sum += row -> cells [column]. number;
+			}
+		}
+	}
+	if (n < 1) return NUMundefined;
+	double mean = sum / n;
+	return mean;
 }
 
 double Table_getQuantile (Table me, long icol, double quantile) {
@@ -1282,6 +1302,52 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 			mean - standardError * NUMinvStudentQ (significanceLevel, n - 1);
 		if (out_upperLimit) *out_upperLimit =
 			mean + standardError * NUMinvStudentQ (significanceLevel, n - 1);
+	}
+	return mean;
+}
+
+double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const char *group, double significanceLevel,
+	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+{
+	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
+	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
+	if (out_upperLimit) *out_upperLimit = NUMundefined;
+	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	Table_numericize (me, column);
+	long n = 0;
+	double sum = 0.0;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [groupColumn]. string != NULL) {
+			if (strequ (row -> cells [groupColumn]. string, group)) {
+				n += 1;
+				sum += row -> cells [column]. number;
+			}
+		}
+	}
+	if (n < 1) return NUMundefined;
+	double mean = sum / n;
+	long degreesOfFreedom = n - 1;
+	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
+		double sumOfSquares = 0.0;
+		for (long irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			if (row -> cells [groupColumn]. string != NULL) {
+				if (strequ (row -> cells [groupColumn]. string, group)) {
+					double diff = row -> cells [column]. number - mean;
+					sumOfSquares += diff * diff;
+				}
+			}
+		}
+		double standardError = sqrt (sumOfSquares / degreesOfFreedom / n);
+		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
+		if (out_significanceFromZero) *out_significanceFromZero =
+			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, degreesOfFreedom);
+		if (out_lowerLimit) *out_lowerLimit =
+			mean - standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
+		if (out_upperLimit) *out_upperLimit =
+			mean + standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
 	}
 	return mean;
 }

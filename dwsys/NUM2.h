@@ -639,25 +639,25 @@ double NUMfactln (int n);
 
 /***** STATISTICS: PROBABILITY DENSITY FUNCTIONS ********************/
 
-double NUMstudentP (double t, long df);
+double NUMstudentP (double t, double df);
 /*
 	The area under the student T-distribution from -infinity to t.
 	Precondition: df > 0
 */
 
-double NUMstudentQ (double t, long df);
+double NUMstudentQ (double t, double df);
 /*
 	The area under the student T distribution from t to +infinity.
 	Precondition: df > 0
 */
 
-double NUMfisherP (double f, long df1, long df2);
+double NUMfisherP (double f, double df1, double df2);
 /*
 	The area under Fisher's F-distribution from 0 to f
 	Preconditions: f >= 0, df1 > 0, df2 > 0
 */
 
-double NUMfisherQ (double f, long df1, long df2);
+double NUMfisherQ (double f, double df1, double df2);
 /*
 	The area under Fisher's F-distribution from f to +infinity
 	Preconditions: f >= 0, df1 > 0, df2 > 0
@@ -671,19 +671,19 @@ double NUMinvGaussQ (double p);
 	Precision: |eps(p)| < 4.5 10^-4
 */
 
-double NUMinvChiSquareQ (double p, long df);
+double NUMinvChiSquareQ (double p, double df);
 /*
 	Solves NUMchiSquareQ (chiSquare, df) == p for chiSquare, given p, df.
 	Preconditions: 0 < p < 1, df > 0
 */
 
-double NUMinvStudentQ (double p, long df);
+double NUMinvStudentQ (double p, double df);
 /*
 	Solves NUMstudentQ (t, df) == p for t, given p, df.
 	Preconditions: 0 < p < 1, df > 0
 */
 
-double NUMinvFisherQ (double p, long df1, long df2);
+double NUMinvFisherQ (double p, double df1, double df2);
 /*
 	Solves NUMfisherQ (f, df1, df2) == p for f, given p, df1, df2
 	Precondition: 0 < p < 1

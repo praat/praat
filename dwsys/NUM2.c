@@ -67,8 +67,8 @@
  
 extern machar_Table NUMfpp;
 
-struct pdf1_struct { double p; long df; };
-struct pdf2_struct { double p; long df1; long df2; };
+struct pdf1_struct { double p; double df; };
+struct pdf2_struct { double p; double df1; double df2; };
 
 static double NUMgauss (double x)
 {
@@ -2658,7 +2658,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	return root;
 }
 
-double NUMstudentP (double t, long df)
+double NUMstudentP (double t, double df)
 {
 	double ib;
 	if (df < 1) return NUMundefined;
@@ -2668,7 +2668,7 @@ double NUMstudentP (double t, long df)
 	return t < 0 ? ib : 1 - ib;
 }
 
-double NUMstudentQ (double t, long df)
+double NUMstudentQ (double t, double df)
 {
 	double ib;
 	if (df < 1) return NUMundefined;
@@ -2678,7 +2678,7 @@ double NUMstudentQ (double t, long df)
 	return t > 0 ? ib : 1 - ib;
 }
 
-double NUMfisherP (double f, long df1, long df2)
+double NUMfisherP (double f, double df1, double df2)
 {
 	double ib;
 	if (f < 0 || df1 < 1 || df2 < 1) return NUMundefined;
@@ -2687,7 +2687,7 @@ double NUMfisherP (double f, long df1, long df2)
 	return 1 - ib;
 }
 
-double NUMfisherQ (double f, long df1, long df2)
+double NUMfisherQ (double f, double df1, double df2)
 {
 	if (f < 0 || df1 < 1 || df2 < 1) return NUMundefined;
 	return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
@@ -2711,7 +2711,7 @@ static double studentQ_func (double x, void *voidParams)
 	return q == NUMundefined ? NUMundefined : q - params -> p;
 }
 
-double NUMinvStudentQ (double p, long df)
+double NUMinvStudentQ (double p, double df)
 {
 	struct pdf1_struct params;      
 	double pc = p > 0.5 ? 1 - p : p, xmin, xmax = 1, x;
@@ -2749,7 +2749,7 @@ static double chiSquareQ_func (double x, void *voidParams)
 	return q == NUMundefined ? NUMundefined : q - params -> p;
 }
 
-double NUMinvChiSquareQ (double p, long df)
+double NUMinvChiSquareQ (double p, double df)
 {
 	struct pdf1_struct params;      
 	double xmin, xmax = 1;
@@ -2783,7 +2783,7 @@ static double fisherQ_func (double x, void *voidParams)
 	return q == NUMundefined ? NUMundefined : q - params -> p;
 }
 
-double NUMinvFisherQ (double p, long df1, long df2)
+double NUMinvFisherQ (double p, double df1, double df2)
 {
 	struct pdf2_struct params;
 	double top = 1000.0;
@@ -3462,7 +3462,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		ymin = yl2; ymax = yl1; yswap = 1;
 	}
 	
-	if (hline = yl1 == yl2)
+	if (hline = (yl1 == yl2))
 	{
 		if (xmin < xr1) *xo1 = xr1;
 		if (xmax > xr2) *xo2 = xr2;
@@ -3472,7 +3472,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		}
 		return 1;
 	}
-	if (vline = xl1 == xl2)
+	if (vline = (xl1 == xl2))
 	{
 		if (ymin < yr1) *yo1 = yr1;
 		if (ymax > yr2) *yo2 = yr2;

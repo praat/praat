@@ -56,16 +56,16 @@ static int writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int readText (I, MelderFile file) {
+static int readText (I, MelderReadString *text) {
 	iam (Polygon);
-	my numberOfPoints = texgeti4 (file);
+	my numberOfPoints = texgeti4 (text);
 	if (my numberOfPoints < 1)
 		return Melder_error3 (L"Cannot read a Polygon with only ", Melder_integerW (my numberOfPoints), L" points.");
 	if (! (my x = NUMfvector (1, my numberOfPoints)) || ! (my y = NUMfvector (1, my numberOfPoints)))
 		return 0;
 	for (long i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] = texgetr4 (file);
-		my y [i] = texgetr4 (file);
+		my x [i] = texgetr4 (text);
+		my y [i] = texgetr4 (text);
 	}
 	return 1;
 }

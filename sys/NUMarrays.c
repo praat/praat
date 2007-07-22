@@ -1,6 +1,6 @@
 /* NUMarrays.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/06/26
  * pb 2002/03/07 GPL
+ * pb 2007/07/21 readText and writeText API changes
  */
 
 #include "NUM.h"
@@ -165,11 +165,11 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 			cacput##storage (v [i], f); \
 		return 1; \
 	} \
-	type * NUM##t##vector_readText (long lo, long hi, MelderFile file, const char *name) { \
+	type * NUM##t##vector_readText (long lo, long hi, MelderReadString *text, const char *name) { \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
 		for (long i = lo; i <= hi; i ++) { \
-			result [i] = texget##storage (file); \
+			result [i] = texget##storage (text); \
 			if (Melder_hasError ()) { \
 				NUM##t##vector_free (result, lo); \
 				return Melder_errorp ("(NUM" #t "vector_readText:) Could not read %s [%ld].", name, i); \
@@ -246,11 +246,11 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return 1; \
 	} \
-	type ** NUM##t##matrix_readText (long row1, long row2, long col1, long col2, MelderFile file, const char *name) { \
+	type ** NUM##t##matrix_readText (long row1, long row2, long col1, long col2, MelderReadString *text, const char *name) { \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
 		for (long i = row1; i <= row2; i ++) for (long j = col1; j <= col2; j ++) { \
-			result [i] [j] = texget##storage (file); \
+			result [i] [j] = texget##storage (text); \
 			if (Melder_hasError ()) { \
 				NUM##t##matrix_free (result, row1, col1); \
 				return Melder_errorp ("(NUM" #t "matrix_readText:) " \

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/21
+ * pb 2007/07/21
  */
 
 /* Data inherits from Thing. */
@@ -46,11 +46,11 @@ bool Data_equal (Any data1, Any data2);
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */
 
-bool Data_canWriteAsAscii (I);
+bool Data_canWriteAsEncoding (I, int outputEncoding);
 /*
 	Message:
-		"Can you write yourself as ASCII text?"
-	The answer depends on whether all members can be written as ASCII text.
+		"Can you write yourself in that encoding?"
+	The answer depends on whether all members can be written in that encoding.
 */
 
 bool Data_canWriteText (I);
@@ -59,6 +59,8 @@ bool Data_canWriteText (I);
 		"Can you write yourself as text?"
 	The answer depends on whether the subclass defines the 'writeText' method.
 */
+
+int Data_createTextFile (I, MelderFile file, bool verbose);
 
 int Data_writeText (I, MelderFile openFile);
 /*
@@ -182,10 +184,10 @@ bool Data_canReadText (I);
 	but is preferably the same as the answer from Data_canWriteText.
 */
 
-int Data_readText (I, MelderFile openFile);
+int Data_readText (I, MelderReadString *text);
 /*
 	Message:
-		"try to read yourself as text from an open file."
+		"try to read yourself as text from a string."
 	Return value:
 		1 if OK, 0 in case of failure.
 	Failures:
@@ -308,9 +310,9 @@ typedef struct structData_Description {
 	struct structData_Description *description; \
 	int (*copy) (Any data_from, Any data_to); \
 	bool (*equal) (Any data1, Any data2); \
-	bool (*canWriteAsAscii) (I); \
+	bool (*canWriteAsEncoding) (I, int outputEncoding); \
 	int (*writeText) (I, MelderFile openFile); \
-	int (*readText) (I, MelderFile openFile); \
+	int (*readText) (I, MelderReadString *text); \
 	int (*writeBinary) (I, FILE *f); \
 	int (*readBinary) (I, FILE *f); \
 	int (*writeCache) (I, CACHE *f); \

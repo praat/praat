@@ -620,11 +620,12 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 }
 
 int Interpreter_run (Interpreter me, wchar_t *text) {
-	static MelderStringW valueString;   /* To divert the info. */
+	static MelderStringW valueString = { 0 };   /* To divert the info. */
+	static MelderStringW assertErrorString = { 0 };
 	wchar_t *command = text;
 	MelderStringW command2 = { 0 }, buffer = { 0 };
 	wchar_t **lines = NULL;
-	long lineNumber = 0, numberOfLines = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
+	long lineNumber = 0, numberOfLines = 0, assertErrorLineNumber = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
 	int atLastLine = FALSE, fromif = FALSE, fromendfor = FALSE, callDepth = 0, chopped = 0, ipar, assertionFailed = FALSE;
 	my callDepth = 0;
 	/*
@@ -724,6 +725,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		wchar_t *p;
 		MelderStringW_copyW (& command2, lines [lineNumber]);
 		c0 = command2. string [0];
+		if (c0 == '\0') continue;
 		/*
 		 * Substitute variables.
 		 */
@@ -787,6 +789,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 							L" (", value ? L"undefined" : L"false", L"):\n   ", command2.string + 7);
 						goto end;
 					}
+				} else if (wcsnequ (command2.string, L"asserterror ", 12)) {
+					MelderStringW_copyW (& assertErrorString, command2.string + 12);
+					assertErrorLineNumber = lineNumber;
 				} else fail = TRUE;
 				break;
 			case 'b':
@@ -1271,7 +1276,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					 * Command ends here: it may be a PraatShell command.
 					 */
 					praat_executeCommand (me, command2.string); cherror
-					continue;
+					goto end;
 				}
 				if (*p == '=' || ((*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=')) {
 					/*
@@ -1294,7 +1299,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
 						 */
 						praat_executeCommand (me, command2.string); cherror
-						continue;
+						goto end;
 					}
 				}
 				p += typeOfAssignment == 0 ? 1 : 2;
@@ -1318,8 +1323,10 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						int IOBJECT, result = 0, found = 0;
 						WHERE (SELECTED) { result = IOBJECT; found += 1; }
 						if (found > 1) {
+							Melder_divertInfo (NULL);
 							Melder_error1 (L"Multiple objects selected. Cannot assign ID to variable."); goto end;
 						} else if (found == 0) {
+							Melder_divertInfo (NULL);
 							Melder_error1 (L"No objects selected. Cannot assign ID to variable."); goto end;
 						} else {
 							value = theCurrentPraat -> list [result]. id;
@@ -1367,16 +1374,38 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					}
 				}
 			}
-		}
-	}
+		} // endif fail
 end:
+		if (assertErrorLineNumber == 0) {
+			iferror goto end2;
+		} else if (assertErrorLineNumber != lineNumber) {
+			if (/*assertErrorLineNumber != lineNumber - 1 ||*/ ! Melder_hasError ()) {
+				Melder_error5 (L"Script assertion fails in line ", Melder_integerW (assertErrorLineNumber),
+					L": error " L_LEFT_GUILLEMET L" ", assertErrorString.string, L" " L_RIGHT_GUILLEMET L" not raised. Instead: no error.");
+				goto end2;
+			}
+			if (wcsstr (Melder_getErrorW (), assertErrorString.string)) {
+				Melder_clearError ();
+				assertErrorLineNumber = 0;
+			} else {
+				wchar_t *errorCopy = Melder_wcsdup (Melder_getErrorW ());
+				Melder_clearError ();
+				Melder_error6 (L"Script assertion fails in line ", Melder_integerW (assertErrorLineNumber),
+					L": error " L_LEFT_GUILLEMET L" ", assertErrorString.string, L" " L_RIGHT_GUILLEMET L" not raised. Instead:\n",
+					errorCopy);
+				goto end2;
+			}
+		}
+	} // endfor lineNumber
+end2:
 	iferror {
 		if (! wcsnequ (lines [lineNumber], L"exit ", 5) && ! assertionFailed) {   /* Don't show the message twice! */
 			while (lines [lineNumber] [0] == '\0') {   /* Did this use to be a continuation line? */
 				lineNumber --;
 				Melder_assert (lineNumber > 0);   /* Originally empty lines that stayed empty should not generate errors. */
 			}
-			Melder_error5 (L"Script line ", Melder_integerW (lineNumber), L" not performed or completed:\n\\<< ", lines [lineNumber], L" \\>>");
+			Melder_error5 (L"Script line ", Melder_integerW (lineNumber), L" not performed or completed:\n" L_LEFT_GUILLEMET L" ",
+				lines [lineNumber], L" " L_RIGHT_GUILLEMET);
 		}
 	}
 	NUMpvector_free (lines, 1);

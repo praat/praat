@@ -1678,7 +1678,7 @@ LIST_ITEM ("@@Scripting 5.7. Including other scripts@")
 LIST_ITEM ("@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN ("Scripting 5.1. Variables", "ppgb", 20070508)
+MAN_BEGIN ("Scripting 5.1. Variables", "ppgb", 20070722)
 INTRO ("In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY ("Numeric variables")
 NORMAL ("Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
@@ -1729,7 +1729,8 @@ NORMAL ("Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, an
 	"Likewise, there exist the predefined string variables $$homeDirectory\\$ $, "
 	"$$preferencesDirectory\\$ $, and $$temporaryDirectory\\$ $. These three refer to your home directory "
 	"(which is where you log in), the Praat @@preferences directory@, and a directory for saving temporary files; "
-	"if you want to know what they are on your computer, try to #echo them in a script window.")
+	"if you want to know what they are on your computer, try to #echo them in a script window. "
+	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file.")
 MAN_END
 /*
 form Convert from WAV to AIFF

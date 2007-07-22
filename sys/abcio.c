@@ -1,6 +1,6 @@
 /* abcio.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,11 @@
  * pb 2006/02/17 support for Intel-based Macs
  * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
  * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
+ * pb 2007/07/21 MelderReadString
  */
 
 #include "melder.h"
-#include <math.h>
+#include "NUM.h"
 #include <ctype.h>
 #ifdef macintosh
 	#include <TargetConditionals.h>
@@ -37,197 +38,219 @@
 
 /********** ASCII I/O **********/
 
-static long getInteger (MelderFile file) {
-	FILE *f = file -> filePointer;
-	int c, i;
-	char buffer [41];
-	for (c = fgetc (f); c != '-' && ! isdigit (c) && c != '+'; c = fgetc (f)) {
-		if (feof (f)) {
-			(void) Melder_error ("(ascio/getInteger:) Early end of file detected.");
+#define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xffff : 0xffffffff)
+
+static wchar_t getChar (MelderReadString *text) {
+	if (*text -> readPointer == '\0') {
+		return 0;
+	}
+	return * text -> readPointer ++;
+}
+
+static const wchar_t * lineNumber (MelderReadString *text) {
+	wchar_t *p = text -> string;
+	long result = 1;
+	while (text -> readPointer - p > 0) {
+		if (*p == '\0' || *p == '\n') result ++;
+		p ++;
+	}
+	return Melder_integerW (result);
+}
+
+static long getInteger (MelderReadString *text) {
+	if (text -> readPointer == NULL) return 0;
+	int i;
+	wchar_t buffer [41], c;
+	/*
+	 * Look for the first numeric character.
+	 */
+	for (c = getChar (text); c != '-' && ! isdigit (c) && c != '+'; c = getChar (text)) {
+		if (c == 0) {
+			Melder_error3 (L"Early end of text detected while looking for an integer (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = fgetc (f)) != '\n' && c != '\r') if (feof (f)) {
-				(void) Melder_error ("(ascio/getInteger:) Early end of file detected in comment.");
+			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an integer (line ", lineNumber (text), L").");
 				return 0;
 			}
 		}
 		if (c == '\"') {
-			(void) Melder_error ("(ascio/getInteger:) Found a string while searching for an integer.");
+			Melder_error3 (L"Found a string while looking for an integer in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '<') {
-			(void) Melder_error ("(ascio/getInteger:) Found an enumerated value while searching for an integer.");
+			Melder_error3 (L"Found an enumerated value while looking for an integer in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (feof (f)) {
-				(void) Melder_error ("(ascio/getInteger:) Early end of file detected in comment.");
+			if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment (line ", lineNumber (text), L").");
 				return 0;
 			}
-			c = fgetc (f);
+			c = getChar (text);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
 		buffer [i] = c;
-		c = fgetc (f);
-		if (feof (f)) { clearerr (f); break; }   /* This may well be OK here. */
+		c = getChar (text);
+		if (c == 0) { break; }   /* This may well be OK here. */
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
 	if (i >= 40) {
-		(void) Melder_error ("(ascio/getInteger:) Found strange text while searching for an integer.");
+		Melder_error3 (L"Found strange text while looking for an integer in text (line ", lineNumber (text), L").");
 		return 0;
 	}
 	buffer [i + 1] = '\0';
-	return atol (buffer);
+	return wcstol (buffer, NULL, 10);
 }
 
-static unsigned long getUnsigned (MelderFile file) {
-	FILE *f = file -> filePointer;
+static unsigned long getUnsigned (MelderReadString *text) {
+	if (text -> readPointer == NULL) return 0;
 	unsigned long result;
-	int c, i;
-	char buffer [41];
-	for (c = fgetc (f); ! isdigit (c) && c != '+'; c = fgetc (f)) {
-		if (feof (f)) {
-			(void) Melder_error ("(ascio/getUnsigned:) Early end of file detected.");
+	int i;
+	wchar_t buffer [41], c;
+	for (c = getChar (text); ! isdigit (c) && c != '+'; c = getChar (text)) {
+		if (c == 0) {
+			Melder_error3 (L"Early end of text detected while looking for an unsigned integer (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = fgetc (f)) != '\n' && c != '\r') if (feof (f)) {
-				(void) Melder_error ("(ascio/getUnsigned:) Early end of file detected in comment.");
+			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an unsigned integer (line ", lineNumber (text), L").");
 				return 0;
 			}
 		}
 		if (c == '\"') {
-			(void) Melder_error ("(ascio/getUnsigned:) Found a string while searching for an unsigned integer.");
+			Melder_error3 (L"Found a string while looking for an unsigned integer in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '<') {
-			(void) Melder_error ("(ascio/getUnsigned:) Found an enumerated value while searching for an unsigned integer.");
+			Melder_error3 (L"Found an enumerated value while looking for an unsigned integer in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '-') {
-			(void) Melder_error ("(ascio/getUnsigned:) Found a negative value while searching for an unsigned integer.");
+			Melder_error3 (L"Found a negative value while looking for an unsigned integer in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (feof (f)) {
-				(void) Melder_error ("(ascio/getUnsigned:) Early end of file detected in comment.");
+			if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment (line ", lineNumber (text), L").");
 				return 0;
 			}
-			c = fgetc (f);
+			c = getChar (text);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
 		buffer [i] = c;
-		c = fgetc (f);
-		if (feof (f)) { clearerr (f); break; }   /* This may well be OK here. */
+		c = getChar (text);
+		if (c == 0) { break; }   /* This may well be OK here. */
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
 	if (i >= 40) {
-		(void) Melder_error ("(ascio/getUnsigned:) Found strange text while searching for an unsigned integer.");
+		Melder_error3 (L"Found strange text while searching for an unsigned integer in text (line ", lineNumber (text), L").");
 		return 0;
 	}
 	buffer [i + 1] = '\0';
-	sscanf (buffer, "%lu", & result);
+	swscanf (buffer, L"%lu", & result);
 	return result;
 }
 
-static double getReal (MelderFile file) {
-	FILE *f = file -> filePointer;
-	int c, i;
-	char buffer [41], *slash;
+static double getReal (MelderReadString *text) {
+	if (text -> readPointer == NULL) return NUMundefined;
+	int i;
+	wchar_t buffer [41], c, *slash;
 	do {
-		for (c = fgetc (f); c != '-' && ! isdigit (c) && c != '+'; c = fgetc (f)) {
-			if (feof (f)) {
-				(void) Melder_error ("(ascio/getReal:) Early end of file detected.");
+		for (c = getChar (text); c != '-' && ! isdigit (c) && c != '+'; c = getChar (text)) {
+			if (c == 0) {
+				Melder_error3 (L"Early end of text detected while looking for a real number (line ", lineNumber (text), L").");
 				return 0;
 			}
 			if (c == '!') {   /* End-of-line comment? */
-				while ((c = fgetc (f)) != '\n' && c != '\r') if (feof (f)) {
-					(void) Melder_error ("(ascio/getReal:) Early end of file detected in comment.");
+				while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
+					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", lineNumber (text), L").");
 					return 0;
 				}
 			}
 			if (c == '\"') {
-				(void) Melder_error ("(ascio/getReal:) Found a string while searching for a real number.");
+				Melder_error3 (L"Found a string while looking for a real number in text (line ", lineNumber (text), L").");
 				return 0;
 			}
 			if (c == '<') {
-				(void) Melder_error ("(ascio/getReal:) Found an enumerated value while searching for a real number.");
+				Melder_error3 (L"Found an enumerated value while looking for a real number in text (line ", lineNumber (text), L").");
 				return 0;
 			}
 			while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-				if (feof (f)) {
-					(void) Melder_error ("(ascio/getReal:) Early end of file detected in comment.");
+				if (c == 0) {
+					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", lineNumber (text), L").");
 					return 0;
 				}
-				c = fgetc (f);
+				c = getChar (text);
 			}
 		}
 		for (i = 0; i < 40; i ++) {
 			buffer [i] = c;
-			c = fgetc (f);
-			if (feof (f)) { clearerr (f); break; }   /* This may well be OK here. */
+			c = getChar (text);
+			if (c == 0) { break; }   /* This may well be OK here. */
 			if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 		}
 		if (i >= 40) {
-			(void) Melder_error ("(ascio/getReal:) Found strange text while searching for a real number.");
+			Melder_error3 (L"Found strange text while searching for a real number in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 	} while (i == 0 && buffer [0] == '+');   /* Guard against single '+' symbols, which occur in complex numbers. */
 	buffer [i + 1] = '\0';
-	slash = strchr (buffer, '/');
+	slash = wcschr (buffer, '/');
 	if (slash) {
 		double numerator, denominator;
 		*slash = '\0';
-		numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
+		numerator = Melder_atofW (buffer), denominator = Melder_atofW (slash + 1);
 		if (numerator == HUGE_VAL || denominator == HUGE_VAL || denominator == 0.0)
 			return HUGE_VAL;
 		return numerator / denominator;
 	}
-	return Melder_atof (buffer);
+	return Melder_atofW (buffer);
 }
 
-static short getEnum (MelderFile file, void *enumerated) {
-	FILE *f = file -> filePointer;
-	int c, i;
-	char buffer [41];
-	for (c = fgetc (f); c != '<'; c = fgetc (f)) {
-		if (feof (f)) {
-			(void) Melder_error ("(ascio/getEnum:) Early end of file detected.");
+static short getEnum (MelderReadString *text, void *enumerated) {
+	if (text -> readPointer == NULL) return -1;
+	int i;
+	wchar_t buffer [41], c;
+	for (c = getChar (text); c != '<'; c = getChar (text)) {
+		if (c == 0) {
+			(void) Melder_error3 (L"Early end of text detected while looking for an enumerated value (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = fgetc (f)) != '\n' && c != '\r') if (feof (f)) {
-				(void) Melder_error ("(ascio/getEnum:) Early end of file detected in comment.");
+			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", lineNumber (text), L").");
 				return 0;
 			}
 		}
 		if (c == '-' || isdigit (c) || c == '+') {
-			(void) Melder_error ("(ascio/getEnum:) Found an integer while searching for an enumerated value.");
+			Melder_error3 (L"Found a number while looking for an enumerated value in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '\"') {
-			(void) Melder_error ("(ascio/getEnum:) Found a string while searching for an enumerated value.");
+			Melder_error3 (L"Found a string while looking for an enumerated value in text (line ", lineNumber (text), L").");
 			return 0;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (feof (f)) {
-				(void) Melder_error ("(ascio/getEnum:) Early end of file detected in comment.");
+			if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", lineNumber (text), L").");
 				return 0;
 			}
-			c = fgetc (f);
+			c = getChar (text);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
-		c = fgetc (f);   /* Read past first '<'. */
-		if (feof (f)) {
-			(void) Melder_error ("(ascio/getEnum:) Early end of file detected.");
+		c = getChar (text);   /* Read past first '<'. */
+		if (c == 0) {
+			Melder_error3 (L"Early end of text detected while reading an enumerated value (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
-			(void) Melder_error ("(ascio/getEnum:) No matching '>'.");
+			Melder_error3 (L"No matching '>' while reading an enumerated value (line ", lineNumber (text), L").");
 			return 0;
 		}
 		if (c == '>')
@@ -235,113 +258,121 @@ static short getEnum (MelderFile file, void *enumerated) {
 		buffer [i] = c;
 	}
 	if (i >= 40) {
-		(void) Melder_error ("(ascio/getEnum:) Found strange text while searching for an enumerated value.");
+		Melder_error3 (L"Found strange text while reading an enumerated value in text (line ", lineNumber (text), L").");
 		return 0;
 	}
 	buffer [i] = '\0';
-	return enum_search (enumerated, buffer);
+	return enum_search (enumerated, Melder_peekWcsToAscii (buffer));
 }
 
-static char * getString (MelderFile file) {
-	FILE *f = file -> filePointer;
-	int c, i;
-	static char *buffer;
-	static long capacity;
-	if (! buffer) buffer = Melder_malloc (capacity = 100);
-	for (c = fgetc (f); c != '\"'; c = fgetc (f)) {
-		if (feof (f))
-			return Melder_errorp ("(ascio/getString:) Early end of file detected.");
-		if (c == '!') {   /* End-of-line comment? */
-			while ((c = fgetc (f)) != '\n' && c != '\r') if (feof (f))
-				return Melder_errorp ("(ascio/getString:) Early end of file detected in comment.");
+static wchar_t * getString (MelderReadString *text) {
+	if (text -> readPointer == NULL) return NULL;
+	int i;
+	wchar_t c;
+	static MelderStringW buffer = { 0 };
+	MelderStringW_empty (& buffer);
+	for (c = getChar (text); c != '\"'; c = getChar (text)) {
+		if (c == 0) {
+			Melder_error3 (L"Early end of text detected while looking for a string (line ", lineNumber (text), L").");
+			return NULL;
 		}
-		if (c == '-' || isdigit (c) || c == '+')
-			return Melder_errorp ("(ascio/getString:) Found a number while searching for a string.");
-		if (c == '<')
-			return Melder_errorp ("(ascio/getString:) Found an enumerated value while searching for a string.");
-		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (feof (f)) {
-				(void) Melder_error ("(ascio/getString:) Early end of file detected in comment.");
-				return 0;
+		if (c == '!') {   /* End-of-line comment? */
+			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", lineNumber (text), L").");
+				return NULL;
 			}
-			c = fgetc (f);
+		}
+		if (c == '-' || isdigit (c) || c == '+') {
+			Melder_error3 (L"Found a number while looking for a string in text (line ", lineNumber (text), L").");
+			return NULL;
+		}
+		if (c == '<') {
+			Melder_error3 (L"Found an enumerated value while looking for a string in text (line ", lineNumber (text), L").");
+			return NULL;
+		}
+		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
+			if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", lineNumber (text), L")");
+				return NULL;
+			}
+			c = getChar (text);
 		}
 	}
 	for (i = 0; 1; i ++) {
-		if (i >= capacity && ! (buffer = Melder_realloc (buffer, capacity *= 2)))
-			return Melder_errorp ("(ascio/getString:) No memory to extend string buffer by %ld bytes.",
-				capacity /= 2);
-		c = fgetc (f);   /* Read past first '"'. */
-		if (feof (f))
-			return Melder_errorp ("(ascio/getString:) Early end of file detected.");
+		c = getChar (text);   /* Read past first '"'. */
+		if (c == 0) {
+			Melder_error3 (L"Early end of text detected while reading a string (line ", lineNumber (text), L").");
+			return NULL;
+		}
 		if (c == '\"') {
-			int next = fgetc (f);
-			if (feof (f)) { clearerr (f); break; }   /* Closing quote is last character in file: OK. */
+			wchar_t next = getChar (text);
+			if (next == 0) { break; }   /* Closing quote is last character in file: OK. */
 			if (next != '\"') {
-				if (next == ' ' || next == '\n' || next == '\t' || next == '\r')
-					ungetc (next, f);   /* Put it back on the stream. */
-				else
-					return Melder_errorp ("(ascio/getString:) Character '%c' following quote. "
-						"End of string or undoubled quote?", next);
+				if (next == ' ' || next == '\n' || next == '\t' || next == '\r') {
+					text -> readPointer --;   /* Put it back on the stream. */
+				} else {
+					wchar_t kar2 [2] = { next, '\0' };
+					Melder_error5 (L"Character ", kar2, L" following quote (line ", lineNumber (text), L"). End of string or undoubled quote?");
+					return NULL;
+				}
 				break;   /* The expected closing double quote; not added to the buffer. */
 			} /* Else: add only one of the two quotes to the buffer. */
 		}
-		buffer [i] = c;
+		MelderStringW_appendCharacter (& buffer, c);
 	}
-	buffer [i] = '\0';
-	return Melder_strdup (buffer);
+	return buffer. string;
 }
 
 #undef false
 #undef true
 
-enum_begin (ascio_Boolean, false)
+enum_begin (Boolean, false)
 	enum (true)
-enum_end (ascio_Boolean)
+enum_end (Boolean)
 
-enum_begin (ascio_Question, no)
+enum_begin (Question, no)
 	enum (yes)
-enum_end (ascio_Question)
+enum_end (Question)
 
-enum_begin (ascio_Existence, absent)
+enum_begin (Existence, absent)
 	enum (exists)
-enum_end (ascio_Existence)
+enum_end (Existence)
 
 #include "enum_c.h"
 
-enum_begin (ascio_Boolean, false)
+enum_begin (Boolean, false)
 	enum (true)
-enum_end (ascio_Boolean)
+enum_end (Boolean)
 
-enum_begin (ascio_Question, no)
+enum_begin (Question, no)
 	enum (yes)
-enum_end (ascio_Question)
+enum_end (Question)
 
-enum_begin (ascio_Existence, absent)
+enum_begin (Existence, absent)
 	enum (exists)
-enum_end (ascio_Existence)
+enum_end (Existence)
 
-int texgeti1 (MelderFile file) { return getInteger (file); }   /* There should be out-of-bound checks here... */
-int texgeti2 (MelderFile file) { return getInteger (file); }
-long texgeti4 (MelderFile file) { return getInteger (file); }
-unsigned int texgetu1 (MelderFile file) { return getInteger (file); }
-unsigned int texgetu2 (MelderFile file) { return getUnsigned (file); }
-unsigned long texgetu4 (MelderFile file) { return getUnsigned (file); }
-double texgetr4 (MelderFile file) { return getReal (file); }
-double texgetr8 (MelderFile file) { return getReal (file); }
-double texgetr10 (MelderFile file) { return getReal (file); }
-fcomplex texgetc8 (MelderFile file) { fcomplex z; z.re = getReal (file); z.im = getReal (file); return z; }
-dcomplex texgetc16 (MelderFile file) { dcomplex z; z.re = getReal (file); z.im = getReal (file); return z; }
-char texgetc1 (MelderFile file) { return getInteger (file); }
-short texgete1 (MelderFile file, void *enumerated) { return getEnum (file, enumerated); }
-short texgete2 (MelderFile file, void *enumerated) { return getEnum (file, enumerated); }
-short texgeteb (MelderFile file) { return getEnum (file, & enum_ascio_Boolean); }
-short texgeteq (MelderFile file) { return getEnum (file, & enum_ascio_Question); }
-short texgetex (MelderFile file) { return getEnum (file, & enum_ascio_Existence); }
-char *texgets2 (MelderFile file) { return getString (file); }
-char *texgets4 (MelderFile file) { return getString (file); }
-wchar_t *texgetw2 (MelderFile file) { return 0/*getStringW (file)*/; }
-wchar_t *texgetw4 (MelderFile file) { return 0/*getStringW (file)*/; }
+int texgeti1 (MelderReadString *text) { return getInteger (text); }   /* There should be out-of-bound checks here... */
+int texgeti2 (MelderReadString *text) { return getInteger (text); }
+long texgeti4 (MelderReadString *text) { return getInteger (text); }
+unsigned int texgetu1 (MelderReadString *text) { return getInteger (text); }
+unsigned int texgetu2 (MelderReadString *text) { return getUnsigned (text); }
+unsigned long texgetu4 (MelderReadString *text) { return getUnsigned (text); }
+double texgetr4 (MelderReadString *text) { return getReal (text); }
+double texgetr8 (MelderReadString *text) { return getReal (text); }
+double texgetr10 (MelderReadString *text) { return getReal (text); }
+fcomplex texgetc8 (MelderReadString *text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+dcomplex texgetc16 (MelderReadString *text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+char texgetc1 (MelderReadString *text) { return getInteger (text); }
+short texgete1 (MelderReadString *text, void *enumerated) { return getEnum (text, enumerated); }
+short texgete2 (MelderReadString *text, void *enumerated) { return getEnum (text, enumerated); }
+short texgeteb (MelderReadString *text) { return getEnum (text, & enum_Boolean); }
+short texgeteq (MelderReadString *text) { return getEnum (text, & enum_Question); }
+short texgetex (MelderReadString *text) { return getEnum (text, & enum_Existence); }
+char *texgets2 (MelderReadString *text) { return Melder_wcsToAscii (getString (text)); }
+char *texgets4 (MelderReadString *text) { return Melder_wcsToAscii (getString (text)); }
+wchar_t *texgetw2 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
+wchar_t *texgetw4 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }

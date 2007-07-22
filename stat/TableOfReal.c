@@ -80,24 +80,24 @@ static int writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int readText (I, MelderFile file) {
+static int readText (I, MelderReadString *text) {
 	iam (TableOfReal);
-	my numberOfColumns = texgeti4 (file);
+	my numberOfColumns = texgeti4 (text);
 	if (my numberOfColumns >= 1) {
 		if (! (my columnLabels = NUMvector (sizeof (char *), 1, my numberOfColumns))) return 0;
 		for (long i = 1; i <= my numberOfColumns; i ++)
-			if (! (my columnLabels [i] = texgets2 (file))) return 0;
+			if (! (my columnLabels [i] = texgets2 (text))) return 0;
 	}
-	my numberOfRows = texgeti4 (file);
+	my numberOfRows = texgeti4 (text);
 	if (my numberOfRows >= 1) {
 		if (! (my rowLabels = NUMvector (sizeof (char *), 1, my numberOfRows))) return 0;
 	}
 	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
 		if (! (my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns))) return 0;
 		for (long i = 1; i <= my numberOfRows; i ++) {
-			if (! (my rowLabels [i] = texgets2 (file))) return 0;
+			if (! (my rowLabels [i] = texgets2 (text))) return 0;
 			for (long j = 1; j <= my numberOfColumns; j ++)
-				my data [i] [j] = texgetr8 (file);
+				my data [i] [j] = texgetr8 (text);
 		}
 	}
 	return 1;

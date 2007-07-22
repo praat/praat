@@ -23,9 +23,9 @@
 
 #include "Categories.h"
 
-static int readText (I, MelderFile file)
+static int readText (I, MelderReadString *text)
 {
-    iam (Categories); long size = texgeti4 (file), i;
+    iam (Categories); long size = texgeti4 (text), i;
 	if (size == 0)
 	{
 		if (! OrderedOfString_init (me, 1)) return 0;
@@ -36,7 +36,7 @@ static int readText (I, MelderFile file)
 	for (i=1; i <= size; i++)
 	{
 		SimpleString item = Thing_new (classSimpleString);
-		if (! item || ! item -> methods -> readText (item, file) ||
+		if (! item || ! item -> methods -> readText (item, text) ||
 			! Ordered_addItemPos (me, item, i)) return 0;
 	}
 	return 1;

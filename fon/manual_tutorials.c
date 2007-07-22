@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070624)
+MAN_BEGIN ("What's new?", "ppgb", 20070722)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.10# (July 22, 2007)")
+LIST_ITEM ("\\bu Improved reading of UTF-16 data files.")
+LIST_ITEM ("\\bu Improved error messages when reading text files (line numbers are mentioned).")
+LIST_ITEM ("\\bu Table: Get group mean (Student t)...")
 NORMAL ("##4.6.09# (June 24, 2007)")
 LIST_ITEM ("\\bu Corrected a bug introduced in 4.6.07 that caused a crash when reading Collections.")
 LIST_ITEM ("\\bu Corrected a bug introduced in 4.6.07 that caused incorrect Open buttons in Inspect.")

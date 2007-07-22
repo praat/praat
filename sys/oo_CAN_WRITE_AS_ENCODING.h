@@ -1,4 +1,4 @@
-/* oo_CAN_WRITE_AS_ASCII.h
+/* oo_CAN_WRITE_AS_ENCODING.h
  *
  * Copyright (C) 2007 Paul Boersma
  *
@@ -18,7 +18,8 @@
  */
 
 /*
- * pb 2007/06/24 created
+ * pb 2007/06/24 created as oo_CAN_WRITE_AS_ASCII.h
+ * pb 2007/07/03 renamed to oo_CAN_WRITE_AS_ENCODING.h
  */
 
 #include "oo_undef.h"
@@ -67,27 +68,27 @@
 	}
 
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_canWriteAsAscii (& my x)) return false;
+	if (! Type##_canWriteAsEncoding (& my x, encoding)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! Type##_canWriteAsAscii (& my x [i])) return false;
+		if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		if (! Type##_canWriteAsAscii (& my x [i])) return false;
+		if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! Type##_canWriteAsAscii (& my x [i])) return false; \
+			if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				if (! Type##_canWriteAsAscii (& my x [i] [j])) return false; \
+				if (! Type##_canWriteAsEncoding (& my x [i] [j], encoding)) return false; \
 	}
 
 #define oo_WIDGET(x)  \
@@ -105,21 +106,21 @@
 
 
 #define oo_OBJECT(Class,version,x)  \
-	if (my x && ! Data_canWriteAsAscii (my x)) return false;
+	if (my x && ! Data_canWriteAsEncoding (my x, encoding)) return false;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (my x && ! Data_canWriteAsAscii (my x)) return false;
+	if (my x && ! Data_canWriteAsEncoding (my x, encoding)) return false;
 
 #define oo_FILE(x)  \
-	if (! Melder_isValidAscii (my x -> wpath)) return false;
+	if (! Melder_isEncodable (my x -> wpath, encoding)) return false;
 
 #define oo_DIR(x)  \
-	if (! Melder_isValidAscii (my x -> wpath)) return false;
+	if (! Melder_isEncodable (my x -> wpath, encoding)) return false;
 
 
 
 #define oo_DEFINE_STRUCT(Type)  \
-	bool Type##_canWriteAsAscii (Type me) {
+	bool Type##_canWriteAsEncoding (Type me, int encoding) {
 
 #define oo_END_STRUCT(Type)  \
 		return true; \
@@ -128,9 +129,9 @@
 
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static bool class##Class##_canWriteAsAscii (I) { \
+	static bool class##Class##_canWriteAsEncoding (I, int encoding) { \
 		iam (Class); \
-		if (! inherited (Class) canWriteAsAscii (me)) return false;
+		if (! inherited (Class) canWriteAsEncoding (me, encoding)) return false;
 
 #define oo_END_CLASS(Class)  \
 		return true; \
@@ -174,4 +175,4 @@
 #define oo_WRITING_LISP  0
 #define oo_DESCRIBING  0
 
-/* End of file oo_CAN_WRITE_AS_ASCII.h */
+/* End of file oo_CAN_WRITE_AS_ENCODING.h */

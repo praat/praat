@@ -140,44 +140,44 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-static int readText (I, MelderFile file) {
+static int readText (I, MelderReadString *text) {
 	int localVersion = Thing_version;
 	iam (OTGrammar);
 	long icons, irank, itab, icand;
-	if (! inherited (OTGrammar) readText (me, file)) return 0;
+	if (! inherited (OTGrammar) readText (me, text)) return 0;
 	if (localVersion >= 1) {
-		if ((my decisionStrategy = texgete1 (file, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return 0;
+		if ((my decisionStrategy = texgete1 (text, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return 0;
 	}
-	if ((my numberOfConstraints = texgeti4 (file)) < 1) return Melder_error ("No constraints.");
+	if ((my numberOfConstraints = texgeti4 (text)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		if (! (constraint -> name = texgets2 (file))) return 0;
-		constraint -> ranking = texgetr8 (file);
-		constraint -> disharmony = texgetr8 (file);
+		if (! (constraint -> name = texgets2 (text))) return 0;
+		constraint -> ranking = texgetr8 (text);
+		constraint -> disharmony = texgetr8 (text);
 	}
-	if ((my numberOfFixedRankings = texgeti4 (file)) >= 1) {
+	if ((my numberOfFixedRankings = texgeti4 (text)) >= 1) {
 		if (! (my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings))) return 0;
 		for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-			fixedRanking -> higher = texgeti4 (file);
-			fixedRanking -> lower = texgeti4 (file);
+			fixedRanking -> higher = texgeti4 (text);
+			fixedRanking -> lower = texgeti4 (text);
 		}
 	}
-	if ((my numberOfTableaus = texgeti4 (file)) < 1) return Melder_error ("No tableaus.");
+	if ((my numberOfTableaus = texgeti4 (text)) < 1) return Melder_error ("No tableaus.");
 	if (! (my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus))) return 0;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! (tableau -> input = texgets2 (file))) return 0;
-		if ((tableau -> numberOfCandidates = texgeti4 (file)) < 1) return Melder_error ("No candidates in tableau %ld.", itab);
+		if (! (tableau -> input = texgets2 (text))) return 0;
+		if ((tableau -> numberOfCandidates = texgeti4 (text)) < 1) return Melder_error ("No candidates in tableau %ld.", itab);
 		if (! (tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates))) return 0;
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			if (! (candidate -> output = texgets2 (file))) return 0;
+			if (! (candidate -> output = texgets2 (text))) return 0;
 			candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 			if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 			for (icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
-				candidate -> marks [icons] = texgeti2 (file);
+				candidate -> marks [icons] = texgeti2 (text);
 		}
 	}
 	OTGrammar_checkIndex (me);

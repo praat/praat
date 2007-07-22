@@ -818,6 +818,7 @@ FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sou
 DO
 	Sound me = ONLY (classSound);
 	if (my ny > 1) return Melder_error ("Cannot determine a zero crossing for a stereo sound.");
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), 1), "seconds");
 END
 
 FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
@@ -826,7 +827,7 @@ FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: 
 		OPTION ("Right")
 	REAL ("Time (s)", "0.5")
 	OK
-DO_ALTERNATIVE (Sound_getNearestZeroCrossing)
+DO_ALTERNATIVE (old_Sound_getNearestZeroCrossing)
 	Sound me = ONLY (classSound);
 	long channel = GET_INTEGER ("Channel");
 	if (channel > my ny) channel = 1;

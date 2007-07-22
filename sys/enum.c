@@ -1,6 +1,6 @@
 /* enum.c
  *
- * Copyright (C) 1994-2002 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 /*
- * pb 1995/07/12
+ * pb 1995/07/12 latest version
  * pb 2002/03/07 GPL
+ * pb 2007/07/22 message changed
  */
 
 #include "melder.h"
@@ -32,7 +33,7 @@ int enum_search (void *void_enumerated, const char *string) {
 	for (i = 0; strings [i] != NULL; i ++)
 		if (strequ (strings [i], string))
 			return i;
-	(void) Melder_error ("(_enum_search:) \"%s\" is not a value of enumerated type \"%s\".",
+	(void) Melder_error ("\"%s\" is not a value of enumerated type \"%s\".",
 		string, enumerated -> _type);
 	return -1;   /* "<eof>" */
 }

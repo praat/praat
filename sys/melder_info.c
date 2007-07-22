@@ -41,7 +41,7 @@ void Melder_setInformationProc (void (*information) (wchar_t *)) {
 	theInformation = information ? information : defaultInformation;
 }
 
-static MelderStringW theForegroundBuffer, *theInfos = & theForegroundBuffer;
+static MelderStringW theForegroundBuffer = { 0 }, *theInfos = & theForegroundBuffer;
 
 void MelderInfo_open (void) {
 	MelderStringW_empty (theInfos);

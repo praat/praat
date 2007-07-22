@@ -106,21 +106,21 @@ static int classCollection_writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int classCollection_readText (I, MelderFile file) {
+static int classCollection_readText (I, MelderReadString *text) {
 	iam (Collection);
 	if (Thing_version < 0) {
 		long i, size;
-		char line [2000];
-		if (! fgets (line, 200, file -> filePointer) || ! sscanf (line, "%ld", & size) || size < 0)
+		wchar_t *line = MelderReadString_readLine (text);
+		if (line == NULL || ! swscanf (line, L"%ld", & size) || size < 0)
 			return Melder_error ("Collection::readText: cannot read size.");
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
-			do { fgets (line, 1999, file -> filePointer); if (feof (file -> filePointer)) return 0; }
-			while (strncmp (line, "Object ", 7));
-			stringsRead = sscanf (line, "Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
+			do { line = MelderReadString_readLine (text); if (line == NULL) return 0; }
+			while (wcsncmp (line, L"Object ", 7));
+			stringsRead = swscanf (line, L"Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
 				return Melder_error ("Collection::readText: cannot read header of object %ld.", i);
 			if (itemNumberRead != i)
@@ -133,31 +133,32 @@ static int classCollection_readText (I, MelderFile file) {
 			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
 				return Melder_error ("Collection::readText: "
 					"cannot read item of class %s.", Thing_className (my item [i]));
-			if (! Data_readText (my item [i], file)) return 0;
+			if (! Data_readText (my item [i], text)) return 0;
 			if (stringsRead == 3) {
 				if (line [n] == ' ') n ++;   /* Skip space character. */
-				length = strlen (line+n);
+				length = wcslen (line+n);
 				if (length > 0 && (line+n) [length - 1] == '\n') (line+n) [length - 1] = '\0';
-				Thing_setName (my item [i], line+n);
+				Thing_setNameW (my item [i], line+n);
 			}
 		}
 	} else {
 		long i, size;
-		size = texgeti4 (file);
+		size = texgeti4 (text);
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (i = 1; i <= size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
-			char *klas = texgets2 (file);
+			char *klas = texgets2 (text);
+			if (klas == NULL) return 0;
 			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
 			Melder_free (klas);
 			my size ++;
 			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
 				return Melder_error ("(Collection::readText:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
-			char *name = texgets2 (file);
-			Thing_setName (my item [i], name);
+			wchar_t *name = texgetw2 (text);
+			Thing_setNameW (my item [i], name);
 			Melder_free (name);
-			if (! Data_readText (my item [i], file)) return 0;
+			if (! Data_readText (my item [i], text)) return 0;
 			Thing_version = saveVersion;
 		}
 	}
