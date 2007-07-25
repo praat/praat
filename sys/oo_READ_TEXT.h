@@ -37,19 +37,15 @@
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	{ \
-		long i; \
-		for (i = 0; i < n; i ++) { \
-			my x [i] = texget##storage (text); \
-			iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
-		} \
+	for (long i = 0; i < n; i ++) { \
+		my x [i] = texget##storage (text); \
+		iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
 	}
 
 #define oo_SET(type,storage,x,setType)  \
-	{ \
-		long i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			my x [i] = texget##storage (text); \
+	for (long i = 0; i <= enumlength (setType); i ++) { \
+		my x [i] = texget##storage (text); \
+		iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
 	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \

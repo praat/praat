@@ -20,9 +20,7 @@
  */
 
 /*
- * pb 2001/03/30
- * pb 2002/07/16 GPL
- * pb 2003/02/17 removed Spectrogram8
+ * pb 2007/07/22
  */
 
 #ifndef _Sound_h_
@@ -80,14 +78,14 @@ Manipulation Manipulation_AnyTier_to_Manipulation (Manipulation manip, AnyTier t
 
 /* Resynthesis. */
 
-#define Manipulation_PSOLA  1
+#define Manipulation_OVERLAPADD  1
 #define Manipulation_PULSES  2
 #define Manipulation_PULSES_HUM  3
 #define Manipulation_PITCH  4
 #define Manipulation_PITCH_HUM  5
 #define Manipulation_PULSES_PITCH  6
 #define Manipulation_PULSES_PITCH_HUM  7
-#define Manipulation_PSOLA_NODUR  8
+#define Manipulation_OVERLAPADD_NODUR  8
 #define Manipulation_PULSES_FORMANT  9
 #define Manipulation_PULSES_FORMANT_INTENSITY  10
 #define Manipulation_PULSES_LPC  11

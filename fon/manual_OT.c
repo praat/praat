@@ -269,7 +269,7 @@ LIST_ITEM ("2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
 LIST_ITEM ("2.9. @@OT learning 2.9. Output distributions|Output distributions@")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.1. Viewing a grammar", "ppgb", 20070423)
+MAN_BEGIN ("OT learning 2.1. Viewing a grammar", "ppgb", 20070725)
 NORMAL ("Consider a language where the underlying form /pat/ leads to the surface form [pa], "
 	"presumably because the structural constraint N\\s{O}C\\s{ODA} outranks the faithfulness constraint P\\s{ARSE}.")
 NORMAL ("To create such a grammar in P\\s{RAAT}, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
@@ -277,9 +277,9 @@ NORMAL ("To create such a grammar in P\\s{RAAT}, choose ##Create NoCoda grammar#
 	"If you click Edit, an @OTGrammarEditor will show up, containing:")
 LIST_ITEM ("1. the constraint list, sorted by %#disharmony (= ranking value + noise):")
 LIST_ITEM1 (" ")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.000")
+LIST_ITEM1 ("\t\t      %%ranking value%\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.000\t       1.000")
 LIST_ITEM1 (" ")
 LIST_ITEM ("2. the tableaus for the two possible inputs /pat/ and /pa/:")
 PICTURE (3.0, 1.0, draw_NoCoda_pat)
@@ -295,15 +295,16 @@ NORMAL ("The second tableau shows that /pa/ always surfaces as [pa], which is no
 	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20070424)
+MAN_BEGIN ("OT learning 2.2. Inside the grammar", "ppgb", 20070725)
 NORMAL ("You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the Write menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE ("File type = \"ooTextFile\"")
-CODE ("Object class = \"OTGrammar 1\"")
+CODE ("Object class = \"OTGrammar 2\"")
 CODE ("decisionStrategy = <OptimalityTheory>")
+CODE ("leak = 0")
 CODE ("2 constraints")
-CODE ("constraint [1]: \"N\\bss{O}C\\bss{ODA}\" 100 100 ! NOCODA")
-CODE ("constraint [2]: \"P\\bss{ARSE}\" 90 90 ! PARSE")
+CODE ("constraint [1]: \"N\\bss{O}C\\bss{ODA}\" 100 100 1 ! NOCODA")
+CODE ("constraint [2]: \"P\\bss{ARSE}\" 90 90 1 ! PARSE")
 CODE (" ")
 CODE ("0 fixed rankings")
 CODE (" ")
@@ -319,18 +320,19 @@ NORMAL ("To understand more about this data structure, consult the @OTGrammar cl
 NORMAL ("You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070523)
+MAN_BEGIN ("OT learning 2.3. Defining your own grammar", "ppgb", 20070725)
 NORMAL ("By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
 NORMAL ("As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
 	"across the lines, add all kinds of comments, or leave the comments out. "
 	"For the N\\s{O}C\\s{ODA} example, the text file could also have looked like:")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar 1\"")
+CODE ("\"OTGrammar 2\"")
 CODE ("<OptimalityTheory>")
-CODE ("2")
-CODE ("\"N\\bss{O}C\\bss{ODA}\" 100 100")
-CODE ("\"P\\bss{ARSE}\"       90  90")
+CODE ("0.0   ! leak")
+CODE ("2   ! number of constraints")
+CODE ("\"N\\bss{O}C\\bss{ODA}\" 100 100  1")
+CODE ("\"P\\bss{ARSE}\"       90  90  1")
 CODE ("0   ! number of fixed rankings")
 CODE ("2   ! number of accepted inputs")
 CODE ("\"pat\" 2      ! input form with number of output candidates")
@@ -346,8 +348,8 @@ NORMAL ("To define your own grammar, you just provide a number of constraints an
 	"and, you could also have reversed the order of the candidates within the /pat/ tableau, "
 	"as long as the violations follow the output forms. Thus, you could just as well have written:")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar 1\"")
-CODE ("<OptimalityTheory>")
+CODE ("\"OTGrammar 2\"")
+CODE ("<OptimalityTheory> 0.0")
 CODE ("2")
 CODE ("\"P\\bss{ARSE}\"       90  90")
 CODE ("\"N\\bss{O}C\\bss{ODA}\" 100 100")
@@ -366,32 +368,34 @@ NORMAL ("The $$<OptimalityTheory>$ thing in the above refers to the %%decision s
 	"that disharmonies below 1.0 have weight 1.0), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
 	"between Harmonic Grammar and Linear OT), or with a $$<MaximumEntropy>$ grammar "
 	"(where the probability that a candidate is chosen is proportional to exp(-disharmony)).")
+NORMAL ("The $$leak$ thing in the above refers to the amount to which constraint weights (especially in Harmonic Grammar) "
+	"can leak while learning.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20021105)
+MAN_BEGIN ("OT learning 2.4. Evaluation", "ppgb", 20070725)
 NORMAL ("In an Optimality-Theoretic model of grammar, %#evaluation refers to the determination "
 	"of the winning candidate on the basis of the constraint ranking.")
 NORMAL ("In an ordinal OT model of grammar, repeated evaluations will yield the same winner again and again. "
 	"We can simulate this behaviour with our N\\s{O}C\\s{ODA} example. "
 	"In the editor, you can choose ##Evaluate (zero noise)# or use its keyboard shortcut Command-0 (= Command-zero). "
 	"Repeated evaluations (keep Command-0 pressed) will always yield the following grammar:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.000")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.000\t       1.000")
 NORMAL ("In a stochastic OT model of grammar, repeated evaluations will yield different disharmonies each time. "
 	"To see this, choose ##Evaluate (noise 2.0)# or use its keyboard shortcut Command-2. "
 	"Repeated evaluations will yield grammars like the following:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.427")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      87.502")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.427\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      87.502\t       1.000")
 NORMAL ("and")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      101.041")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.930")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      101.041\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.930\t       1.000")
 NORMAL ("and")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      96.398")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      89.482")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      96.398\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      89.482\t       1.000")
 NORMAL ("The disharmonies vary around the ranking values, "
 	"according to a Gaussian distribution with a standard deviation of 2.0. "
 	"The winner will still be [pa] in almost all cases, because the probability of bridging "
@@ -399,17 +403,17 @@ NORMAL ("The disharmonies vary around the ranking values, "
 	"to @@Boersma (1998)@, page 332.")
 NORMAL ("With a noise much higher than 2.0, the chances of P\\s{ARSE} outranking N\\s{O}C\\s{ODA} will rise. "
 	"To see this, choose ##Evaluate...# and supply 5.0 for the noise. Typical outcomes are:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      92.634")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      86.931")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      92.634\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      86.931\t       1.000")
 NORMAL ("and")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      101.162")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      85.311")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      101.162\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      85.311\t       1.000")
 NORMAL ("and")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      99.778")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      98.711")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      99.778\t       1.000")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      100.000\t      98.711\t       1.000")
 NORMAL ("In the last case, the order of the constraints has been reversed. "
 	"You will see that [pat] has become the winning candidate:")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
@@ -420,7 +424,7 @@ NORMAL ("However, in the remaining part of this tutorial, we will stick with a n
 	"the differences between their ranking values are in the vicinity of 10.")
 MAN_END
 
-MAN_BEGIN ("OT learning 2.5. Editing a grammar", "ppgb", 20000202)
+MAN_BEGIN ("OT learning 2.5. Editing a grammar", "ppgb", 20070725)
 NORMAL ("In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /pat/ was always [pa].")
 NORMAL ("To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
 	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
@@ -428,20 +432,20 @@ NORMAL ("To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked low
 	"and choose ##Edit ranking...# from the Edit menu, or use the keyboard shortcut Command-E.")
 NORMAL ("In the resulting dialog, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will see in the editor:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t\\sp ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      88.083")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t\\sp ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      88.083\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_pat)
 NORMAL ("Nothing has happened to the tableau, because the disharmonies still have their old values. So choose "
 	"##Evaluate (noise 2.0)# (Command-2) or ##Evaluate (zero noise)# (Command-0). The new disharmonies "
 	"will centre around the new ranking values, and we see that [pat] becomes the new winner:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.743")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      80.000\t      81.581")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      90.000\t      90.743\t       1.000")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      80.000\t      81.581\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
-MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20070430)
+MAN_BEGIN ("OT learning 2.6. Variable output", "ppgb", 20070725)
 NORMAL ("Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
@@ -449,14 +453,14 @@ NORMAL ("So starting from the N\\s{O}C\\s{ODA} example, we edit the rankings of 
 	"setting the ranking value of P\\s{ARSE} to 88 and that of N\\s{O}C\\s{ODA} to 85. If we now press Command-2 "
 	"repeatedly, we will get [pat] in most of the cases, "
 	"but we will see the finger pointing at [pa] in 14 percent of the cases:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      88.000\t      87.421")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      85.000\t      85.585")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      88.000\t      87.421\t       1.000")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      85.000\t      85.585\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 NORMAL ("but")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      85.000\t      87.128")
-LIST_ITEM1 ("\t##P\\s{ARSE}#\t      88.000\t      85.076")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##N\\s{O}C\\s{ODA}#\t      85.000\t      87.128\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE}#\t      88.000\t      85.076\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_pat)
 NORMAL ("As a more functionally oriented example, we consider nasal place assimilation. "
 	"Suppose that the underlying sequence /an+pa/ surfaces as the assimilated [ampa] "
@@ -465,12 +469,13 @@ NORMAL ("As a more functionally oriented example, we consider nasal place assimi
 	"This can be achieved by having the articulatory constraint *G\\s{ESTURE} "
 	"ranked at a short distance above *R\\s{EPLACE} (n, m):")
 CODE ("\"ooTextFile\"")
-CODE ("\"OTGrammar 1\"")
+CODE ("\"OTGrammar 2\"")
 CODE ("decisionStrategy = <OptimalityTheory>")
+CODE ("leak = 0.0")
 CODE ("3 constraints")
-CODE ("\"*G\\bss{ESTURE}\"          102.7 0")
-CODE ("\"*R\\bss{EPLACE} (n, m)\"   100.0 0")
-CODE ("\"*R\\bss{EPLACE} (t, p)\"   112.0 0")
+CODE ("\"*G\\bss{ESTURE}\"          102.7 0 1")
+CODE ("\"*R\\bss{EPLACE} (n, m)\"   100.0 0 1")
+CODE ("\"*R\\bss{EPLACE} (t, p)\"   112.0 0 1")
 CODE ("0 fixed rankings")
 CODE ("2 tableaus")
 CODE ("\"an+pa\" 2")
@@ -481,18 +486,18 @@ CODE1 ("\"atma\"  1 0 0")
 CODE1 ("\"apma\"  0 0 1")
 NORMAL ("You can create this grammar with ##Create place assimilation grammar# from the @@New menu@. "
 	"In the editor, it will often look like follows:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      112.000\t      109.806")
-LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      102.700\t      102.742")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      101.044")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      112.000\t      109.806\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      102.700\t      102.742\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      101.044\t       1.000")
 PICTURE (4.0, 1.0, draw_NPA_assimilate_anpa)
 PICTURE (4.0, 1.0, draw_NPA_assimilate_atma)
 NORMAL ("If you keep the Command-2 keys pressed, however, you will see that the tableaus change "
 	"into something like the following in approximately 20 percent of the cases:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      112.000\t      113.395")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      103.324")
-LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      102.700\t      101.722")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      112.000\t      113.395\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      103.324\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      102.700\t      101.722\t       1.000")
 PICTURE (4.0, 1.0, draw_NPA_faithful_anpa)
 PICTURE (4.0, 1.0, draw_NPA_faithful_atma)
 NORMAL ("We see that /at+ma/ always surfaces at [atma], because *R\\s{EPLACE} (t, p) is ranked much higher "
@@ -627,7 +632,7 @@ NORMAL ("These two Strings objects are sufficient to help an @OTGrammar grammar 
 	"in the language data. See @@OT learning 5. Learning a stochastic grammar|\\SS5@.")
 MAN_END
 
-MAN_BEGIN ("OT learning 3.2. Data from another grammar", "ppgb", 20021204)
+MAN_BEGIN ("OT learning 3.2. Data from another grammar", "ppgb", 20070725)
 NORMAL ("Instead of generating input-output pairs directly from a @PairDistribution object, "
 	"you can also generate input forms and their winning outputs from an @OTGrammar grammar. Of course, "
 	"that's what the language data presented to real children comes from. Our example will be "
@@ -636,12 +641,12 @@ NORMAL ("Choose @@Create tongue-root grammar...@ from the Optimality Theory subm
 	"Set %%Constraint set% to \"Five\", and %Ranking to \"Wolof\". Click OK. An object called "
 	"\"OTGrammar Wolof\" will appear in the list. Click #Edit. You will see the following grammar "
 	"appear in the @OTGrammarEditor:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.000\t      100.000")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      50.000\t      50.000")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      30.000\t      30.000")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      20.000\t      20.000")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      10.000\t      10.000")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.000\t      100.000\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      50.000\t      50.000\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      30.000\t      30.000\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      20.000\t      20.000\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      10.000\t      10.000\t       1.000")
 NORMAL ("This simplified Wolof grammar, with five constraints with clearly different rankings, is equivalent "
 	"to the traditional OT ranking")
 FORMULA ("*[rtr / hi] >> P\\s{ARSE} (rtr) >> *G\\s{ESTURE} (contour) >> P\\s{ARSE} (atr) >> *[atr / lo]")
@@ -695,7 +700,7 @@ NORMAL ("In this way, we have created two Strings objects, which together form a
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END
 
-MAN_BEGIN ("OT learning 4. Learning an ordinal grammar", "ppgb", 20011120)
+MAN_BEGIN ("OT learning 4. Learning an ordinal grammar", "ppgb", 20070725)
 NORMAL ("With the data from a tongue-root-harmony language with five completely ranked constraints, "
 	"we can have a throw at learning this language, starting with a grammar in which all the constraints "
 	"are ranked at the same height, or randomly ranked, or with articulatory constraints outranking "
@@ -703,12 +708,12 @@ NORMAL ("With the data from a tongue-root-harmony language with five completely 
 NORMAL ("Let's try the third of these. Create an infant tongue-root grammar by choosing "
 	"@@Create tongue-root grammar...@ and specifying \"Five\" for the constraint set "
 	"and \"Infant\" for the ranking. The result after a single evaluation will be like:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      100.000\t      100.631")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      100.000\t      100.244")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.000\t      97.086")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      50.000\t      51.736")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      50.000\t      46.959")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      100.000\t      100.631\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      100.000\t      100.244\t       1.000")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.000\t      97.086\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      50.000\t      51.736\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      50.000\t      46.959\t       1.000")
 NORMAL ("Such a grammar produces all kinds of non-adult results. For instance, the input /\\swt\\ic/ "
 	"will surface as [at\\ic]:")
 PICTURE (4.0, 1.5, draw_Infant_swtI)
@@ -735,12 +740,12 @@ LIST_ITEM ("2. and to move the constraints violated in the adult form, namely *[
 	"down along the ranking scale, thus increasing the probability that the adult form will be the learner's "
 	"winner the next time.")
 NORMAL ("If the small reranking step (the %#plasticity) is 0.1, the grammar will become:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      100.000\t      100.631")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      99.900\t      100.244")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.100\t      97.086")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      49.900\t      51.736")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      50.100\t      46.959")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      100.000\t      100.631\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      99.900\t      100.244\t       1.000")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.100\t      97.086\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      49.900\t      51.736\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      50.100\t      46.959\t       1.000")
 NORMAL ("The disharmonies, of course, will be different at the next evaluation, with a probability slightly higher "
 	"than 50\\%  that *[rtr / hi] will outrank *[atr / lo]. Thus the relative rankings of these two grounding "
 	"constraints have moved into the direction of the adult grammar, in which they are ranked at opposite "
@@ -754,52 +759,57 @@ NORMAL ("We are now going to simulate the infant who learns simplified Wolof. Ta
 	"Now select the infant @OTGrammar and both @Strings objects, and choose @@OTGrammar & 2 Strings: Learn...|Learn...@. "
 	"After you click OK, the learner processes each of the 1000 input-output pairs in succession, "
 	"gradually changing the constraint ranking in case of a mismatch. The resulting grammar may look like:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      98.644")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      89.728\t      94.774")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      89.544\t      86.442")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      66.123\t      65.010")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      63.553\t      64.622")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      98.644\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      89.728\t      94.774\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      89.544\t      86.442\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      66.123\t      65.010\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      63.553\t      64.622\t       1.000")
 NORMAL ("We already see some features of the target grammar, namely the top ranking of *[rtr / hi] "
 	"and RTR dominance (the mutual ranking of the P\\s{ARSE} constraints). The steps have not been exactly 0.1, "
-	"because we also specified a relative plasticity spreading of 0.1, thus giving steps typically in the range of 0.7 to 1.3.")
+	"because we also specified a relative plasticity spreading of 0.1, thus giving steps typically in the range of 0.7 to 1.3. "
+	"The step is also multiplied by the %%constraint plasticity%, which is simply 1.000 in all examples in this tutorial; "
+	"you could set it to 0.0 to prevent a constraint from moving up or down at all. "
+	"The %leak is the part of the constraint weight (especially in Harmonic Grammar) that is thrown away whenever a constraint is reranked; "
+	"e.g if the leak is 0.01 and the step is 0.11, the constraint weight is multiplied by (1 \\-- 0.01\\.c0.11) = 0.9989 before "
+	"the learning step is taken; in this way you could implement forgetful learning of correlations.")
 NORMAL ("After learning once more with the same data, the result is:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      104.320")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      81.429\t      82.684")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      79.966\t      78.764")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      81.316\t      78.166")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      77.991\t      77.875")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      104.320\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      81.429\t      82.684\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      79.966\t      78.764\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      81.316\t      78.166\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      77.991\t      77.875\t       1.000")
 NORMAL ("This grammar now sometimes produces faithful disharmonic utterances, because the P\\s{ARSE} now often "
 	"outrank the gestural constraints at evaluation time. But there is still a lot of variation produced. "
 	"Learning once more with the same data gives:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      100.835")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      86.392\t      82.937")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      81.855\t      81.018")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      78.447\t      78.457")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      79.409\t      76.853")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      100.835\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      86.392\t      82.937\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      81.855\t      81.018\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      78.447\t      78.457\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      79.409\t      76.853\t       1.000")
 NORMAL ("By inspecting the first column, you can see that the ranking values are already in the same order as in the target grammar, "
 	"so that the learner will produce 100 percent correct adult utterances if her evaluation noise is zero. However, "
 	"with a noise of 2.0, there will still be variation. For instance, the disharmonies above will "
 	"produce [ata] instead of [\\swt\\sw] for underlying /\\swt\\sw/. Learning seven times more "
 	"with the same data gives a reasonable proficiency:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      99.167")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      91.580\t      93.388")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      85.487\t      86.925")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      80.369\t      78.290")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      75.407\t      74.594")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      100.800\t      99.167\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      91.580\t      93.388\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      85.487\t      86.925\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      80.369\t      78.290\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      75.407\t      74.594\t       1.000")
 NORMAL ("No input forms have error rates above 4 percent now, so the child has learned a lot with only 10,000 data, "
 	"which may be on the order of the number of input data she receives every day.")
 NORMAL ("We could have sped up the learning process appreciably by using a plasticity of 1.0 instead of 0.1. "
 	"This would have given a comparable grammar after only 1000 data. After 10,000 data, we would have")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*[rtr / hi]#\t      107.013\t      104.362")
-LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      97.924\t      99.984")
-LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      89.679\t      89.473")
-LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      81.479\t      83.510")
-LIST_ITEM1 ("\t##*[atr / lo]#\t      73.067\t      72.633")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*[rtr / hi]#\t      107.013\t      104.362\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (rtr)#\t      97.924\t      99.984\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE} (contour)#\t      89.679\t      89.473\t       1.000")
+LIST_ITEM1 ("\t##P\\s{ARSE} (atr)#\t      81.479\t      83.510\t       1.000")
+LIST_ITEM1 ("\t##*[atr / lo]#\t      73.067\t      72.633\t       1.000")
 NORMAL ("With this grammar, all the error rates are below 0.2 percent. We see that crucially ranked constraints "
 	"will become separated after a while by a gap of about 10 along the ranking scale.")
 NORMAL ("If we have three constraints obligatorily ranked as A >> B >> C in the adult grammar, with ranking differences of 8 between "
@@ -824,20 +834,20 @@ NORMAL ("Our Harmonic Grammars with constraint noise are slightly different in t
 	"for classifying continuous inputs.")
 MAN_END
 
-MAN_BEGIN ("OT learning 5. Learning a stochastic grammar", "ppgb", 20011120)
+MAN_BEGIN ("OT learning 5. Learning a stochastic grammar", "ppgb", 20070725)
 NORMAL ("Having shown that the algorithm can learn deep obligatory rankings, we will now see "
 	"that it also performs well in replicating the variation in the language environment.")
 NORMAL ("Create a place assimilation grammar as described in @@OT learning 2.6. Variable output|\\SS2.6@, "
 	"and set all its rankings to 100.000:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      100.000\t      100.000")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      100.000\t      100.000")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      100.000")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      100.000\t      100.000\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      100.000\t      100.000\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      100.000\t       1.000")
 NORMAL ("Create a place assimilation distribution and generate 1000 string pairs (@@OT learning 3.1. Data from a pair distribution|\\SS3.1@). "
 	"Select the grammar and the two @Strings objects, and learn with a plasticity of 0.1:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      104.540\t      103.140")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      96.214\t      99.321")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      104.540\t      103.140\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      96.214\t      99.321\t       1.000")
 LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      99.246\t      97.861")
 NORMAL ("The output distributions are now (using @@OTGrammar: To output Distributions...@, see @@OT learning 2.9. Output distributions|\\SS2.9@):")
 LIST_ITEM1 ("\t/an+pa/ \\-> anpa\t14.3\\% ")
@@ -845,10 +855,10 @@ LIST_ITEM1 ("\t/an+pa/ \\-> ampa\t85.7\\% ")
 LIST_ITEM1 ("\t/at+ma/ \\-> atma\t96.9\\% ")
 LIST_ITEM1 ("\t/at+ma/ \\-> apma\t3.1\\% ")
 NORMAL ("After another 10,000 new string pairs, we have:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      106.764\t      107.154")
-LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      97.899\t      97.161")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      95.337\t      96.848")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      106.764\t      107.154\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      97.899\t      97.161\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      95.337\t      96.848\t       1.000")
 NORMAL ("With the following output distributions (measured with a million draws):")
 LIST_ITEM1 ("\t/an+pa/ \\-> anpa\t18.31\\% ")
 LIST_ITEM1 ("\t/an+pa/ \\-> ampa\t81.69\\% ")
@@ -858,10 +868,10 @@ NORMAL ("The error rate is acceptably low, but the accuracy in reproducing the 8
 	"distribution could be better. This is because the relatively high plasticity of 0.1 "
 	"can only give a coarse approximation. So we lower the plasticity to 0.001, "
 	"and supply 100,000 new data:")
-LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      106.810\t      107.184")
-LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      97.782\t      99.682")
-LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      95.407\t      98.760")
+LIST_ITEM1 ("\t\t      %%ranking value\t      %disharmony\t      %plasticity")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (t, p)#\t      106.810\t      107.184\t       1.000")
+LIST_ITEM1 ("\t##*G\\s{ESTURE}#\t      97.782\t      99.682\t       1.000")
+LIST_ITEM1 ("\t##*R\\s{EPLACE} (n, m)#\t      95.407\t      98.760\t       1.000")
 NORMAL ("With the following output distributions:")
 LIST_ITEM1 ("\t/an+pa/ \\-> anpa\t20.08\\% ")
 LIST_ITEM1 ("\t/an+pa/ \\-> ampa\t79.92\\% ")

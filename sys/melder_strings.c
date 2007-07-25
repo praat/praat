@@ -540,4 +540,14 @@ wchar_t * MelderReadString_readLine (MelderReadString *text) {
 	return result;
 }
 
+const wchar_t * MelderReadString_getLineNumber (MelderReadString *text) {
+	wchar_t *p = text -> string;
+	long result = 1;
+	while (text -> readPointer - p > 0) {
+		if (*p == '\0' || *p == '\n') result ++;
+		p ++;
+	}
+	return Melder_integerW (result);
+}
+
 /* End of file melder_strings.c */

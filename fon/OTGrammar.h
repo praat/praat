@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/05
+ * pb 2007/07/23
  */
 
 #ifndef _Strings_h_
@@ -152,6 +152,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 
 void OTGrammar_reset (OTGrammar me, double ranking);
 int OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double disharmony);
+int OTGrammar_setConstraintPlasticity (OTGrammar me, long constraint, double plasticity);
 
 int OTGrammar_removeConstraint (OTGrammar me, const char *constraintName);
 int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly);

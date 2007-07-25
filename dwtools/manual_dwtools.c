@@ -2756,25 +2756,25 @@ DEFINITION ("is a real, nonnegative, and diagonal matrix. Its diagonal contains 
 NORMAL ("If %m < %n, the decomposition results in #U [%m \\xx %m] and #V [%n \\xx %m].")
 MAN_END
 
-MAN_BEGIN ("Sound & Pitch: Change speaker...", "djmw", 20030208)
+MAN_BEGIN ("Sound & Pitch: Change speaker...", "djmw", 20070722)
 INTRO ("A command to create a new Sound object with manipulated characteristics "
 	"from the selected @Sound and @Pitch.")
 NORMAL ("With this command you can have finer grained control over the "
 	"pitch than with the @@Sound: Change speaker...@ command. "
 	"Accurate pitch measurement determines the quality of the "
-	"@PSOLA synthesis." )
+	"@@overlap-add@ synthesis." )
 ENTRY ("Arguments")
 NORMAL ("The settings are described in @@Sound: Change speaker...@. ")
 MAN_END
 
-MAN_BEGIN ("Sound & Pitch: Change gender...", "djmw", 20030208)
+MAN_BEGIN ("Sound & Pitch: Change gender...", "djmw", 20070722)
 /* INTRO ("Deprecated: use @@Sound & Pitch: Change speaker...@") */
 NORMAL ("A command to create a new Sound object with manipulated characteristics "
 	"from the selected @Sound and @Pitch.")
 NORMAL ("With this command you can have finer grained control over the "
 	"pitch than with the @@Sound: Change gender...@ command. "
 	"Accurate pitch measurement determines the quality of the "
-	"@PSOLA synthesis." )
+	"@@overlap-add@ synthesis." )
 ENTRY ("Arguments")
 NORMAL ("The settings are described in @@Sound: Change gender...@. ")
 MAN_END
@@ -2783,7 +2783,7 @@ MAN_BEGIN ("Sound: Change gender...", "djmw", 20030205)
 /* INTRO ("Deprecated: use @@Sound: Change speaker...@") */
 NORMAL ("A command to create a new @Sound with manipulated characteristics.")
 ENTRY ("Arguments")
-NORMAL ("The quality of the @@PSOLA|manipulation@ depends on the pitch measurement.")
+NORMAL ("The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL ("The arguments that control the pitch measurement are:")
 TAG ("%%Minimum pitch% (default 75 Hz)")
 DEFINITION ("pitch candidates below this frequency will not be considered.")
@@ -2816,7 +2816,7 @@ NORMAL ("If you want more control over the synthesis you can supply your own "
 	"Pitch object and use the @@Sound & Pitch: Change gender...@ command. ")
 ENTRY ("Algorithm")
 NORMAL ("The shifting of frequencies is done via manipulation of the sampling frequency. "
-	"Pitch and duration changes are generated with @PSOLA synthesis.")
+	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 NORMAL ("The new pitch values are calculated in a two step process. We first multiply all "
 	"the pitches with the factor %%newPitchMedian / oldPitchMedian% according to:")
 FORMULA ("%newPitch = %pitch * %newPitchMedian  / %oldPitchMedian.")
@@ -2833,7 +2833,7 @@ MAN_END
 MAN_BEGIN ("Sound: Change speaker...", "djmw", 20061215)
 INTRO ("A command to create a new @Sound with manipulated characteristics.")
 ENTRY ("Arguments")
-NORMAL ("The quality of the @@PSOLA|manipulation@ depends on the pitch measurement.")
+NORMAL ("The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL ("The arguments that control the pitch measurement are:")
 TAG ("%%Pitch floor% (default 75 Hz)")
 DEFINITION ("pitch candidates below this frequency will not be considered.")
@@ -2863,7 +2863,7 @@ NORMAL ("If you want more control over the synthesis you can supply your own "
 	"Pitch object and use the @@Sound & Pitch: Change speaker...@ command. ")
 ENTRY ("Algorithm")
 NORMAL ("The shifting of formant frequencies is done via manipulation of the sampling frequency. "
-	"Pitch and duration changes are generated with @PSOLA synthesis.")
+	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 MAN_END
 
 MAN_BEGIN ("Sound: Filter (gammatone)...", "djmw", 19980712)

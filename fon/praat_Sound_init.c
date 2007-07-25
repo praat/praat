@@ -999,7 +999,7 @@ END
 
 DIRECT (Sound_help) Melder_help ("Sound"); END
 
-FORM (Sound_lengthen_psola, "Sound: Lengthen (PSOLA)", "Sound: Lengthen (PSOLA)...")
+FORM (Sound_lengthen_overlapAdd, "Sound: Lengthen (overlap-add)", "Sound: Lengthen (overlap-add)...")
 	POSITIVE ("Minimum pitch (Hz)", "75")
 	POSITIVE ("Maximum pitch (Hz)", "600")
 	POSITIVE ("Factor", "1.5")
@@ -1009,7 +1009,7 @@ DO
 	double factor = GET_REAL ("Factor");
 	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
 	WHERE (SELECTED)
-		if (! praat_new (Sound_lengthen_psola (OBJECT, minimumPitch, maximumPitch, factor),
+		if (! praat_new (Sound_lengthen_overlapAdd (OBJECT, minimumPitch, maximumPitch, factor),
 			"%s_%.2f", NAME, factor)) return 0;
 END
 
@@ -2106,7 +2106,8 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, "Extract part...", 0, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, "Resample...", 0, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, "-- enhance --", 0, 1, 0);
-		praat_addAction1 (classSound, 0, "Lengthen (PSOLA)...", 0, 1, DO_Sound_lengthen_psola);
+		praat_addAction1 (classSound, 0, "Lengthen (overlap-add)...", 0, 1, DO_Sound_lengthen_overlapAdd);
+		praat_addAction1 (classSound, 0, "Lengthen (PSOLA)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_lengthen_overlapAdd);
 		praat_addAction1 (classSound, 0, "Deepen band modulation...", 0, 1, DO_Sound_deepenBandModulation);
 		praat_addAction1 (classSound, 0, "-- cast --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, "Down to Matrix", 0, 1, DO_Sound_to_Matrix);

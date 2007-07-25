@@ -837,7 +837,7 @@ LIST_ITEM ("3. The pitch contour is converted to a pitch tier with many points (
 LIST_ITEM ("4. An empty @DurationTier is created.")
 ENTRY ("Resynthesis")
 TAG ("A Manipulation object can produce Sound input. This Sound can be computed in several ways:")
-LIST_ITEM ("\\bu @PSOLA: from original sound + pulses + pitch tier + duration tier;")
+LIST_ITEM ("\\bu @@overlap-add@: from original sound + pulses + pitch tier + duration tier;")
 LIST_ITEM ("\\bu #LPC: from LPC (from original sound) + pulses + pitch tier;")
 LIST_ITEM ("\\bu from the pulses only, as a pulse train or hummed;")
 LIST_ITEM ("\\bu from the pitch tier only, as a pulse train or hummed.")
@@ -859,12 +859,12 @@ MAN_BEGIN ("Manipulation: Extract pulses", "ppgb", 20010330)
 INTRO ("A command to extract a copy of the vocal-pulse information in each selected @Manipulation object into a new @PointProcess object.")
 MAN_END
 
-MAN_BEGIN ("Manipulation: Play (PSOLA)", "ppgb", 20010330)
-INTRO ("A command to play each selected @Manipulation object, resynthesized with the @PSOLA method.")
+MAN_BEGIN ("Manipulation: Play (overlap-add)", "ppgb", 20070722)
+INTRO ("A command to play each selected @Manipulation object, resynthesized with the @@overlap-add@ method.")
 MAN_END
 
-MAN_BEGIN ("Manipulation: Get resynthesis (PSOLA)", "ppgb", 20010330)
-INTRO ("A command to extract the sound from each selected @Manipulation object, resynthesized with the @PSOLA method.")
+MAN_BEGIN ("Manipulation: Get resynthesis (overlap-add)", "ppgb", 20070722)
+INTRO ("A command to extract the sound from each selected @Manipulation object, resynthesized with the @@overlap-add@ method.")
 MAN_END
 
 MAN_BEGIN ("Manipulation: Replace duration tier", "ppgb", 20030216)
@@ -905,7 +905,7 @@ ENTRY ("Objects")
 	LIST_ITEM ("\\bu A @DurationTier for manipulating the relative durations of the voiced parts of the sound.")
 ENTRY ("Playing")
 	NORMAL ("To play (a part of) the %resynthesized sound (by any of the methods shown in the #Synth menu, "
-		"like @PSOLA and #LPC), @click on any of the 1 to 8 buttons below and above the drawing area "
+		"like @@overlap-add@ and #LPC), @click on any of the 1 to 8 buttons below and above the drawing area "
 		"or use the Play commands from the View menu.")
 	NORMAL ("To play the %original sound instead, use ##Shift-click#.")
 ENTRY ("Pulses")

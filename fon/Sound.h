@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/27
+ * pb 2007/07/22
  */
 
 /* Sound inherits from Vector */
@@ -336,7 +336,7 @@ int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 
 /********** Sound_enhance.c **********/
 
-Sound Sound_lengthen_psola (Sound me, double fmin, double fmax, double factor);
+Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
 Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
 

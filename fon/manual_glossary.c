@@ -176,10 +176,12 @@ NORMAL ("Since the argument of the logarithm is in units of Hz^^-1^, this spectr
 	"it is also the quantity shown in pictures of a @Spectrum and a @Spectrogram.")
 MAN_END
 
-MAN_BEGIN ("PSOLA", "ppgb", 20010330)
-INTRO ("Pitch-Synchronous Overlap and Add, a method "
-	"for manipulating the pitch and duration of an acoustic speech signal.")
-ENTRY ("PSOLA synthesis")
+MAN_BEGIN ("overlap-add", "ppgb", 20070723)
+INTRO ("A method for manipulating the pitch and duration of an acoustic speech signal. "
+	"This method was realized by @@Moulines & Charpentier (1990)@, "
+	"who called it Time-Domain Pitch-Synchronous Overlap-and-Add (TD-PSOLA). "
+	"Nowadays, PSOLA\\tm and TD-PSOLA\\tm are trademarks owned by France Telecom^\\re.")
+ENTRY ("Overlap-add synthesis")
 NORMAL ("When a @Sound is created from a @Manipulation object, the following steps are performed:")
 LIST_ITEM ("1. From the @PitchTier, new points are generated along the entire time domain, "
 	"with the method of @@PitchTier: To PointProcess@.")

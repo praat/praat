@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2007/01/28 made compatible with stereo sounds (by rejecting them)
+ * pb 2007/07/22 renamed the overlap-add method in such a way that it does not sound like a trademark for diphone concatenation
  */
 
 #include "Manipulation.h"
@@ -29,9 +30,9 @@
 #include "Pitch_to_PointProcess.h"
 #include "Sound_and_Spectrum.h"
 
-Sound Sound_lengthen_psola (Sound me, double fmin, double fmax, double factor) {
+Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor) {
 	if (my ny > 1)
-		return Melder_errorp ("PSOLA works only on mono sounds.");
+		return Melder_errorp ("Overlap-add works only on mono sounds.");
 	Sound sound = NULL, thee = NULL;
 	Pitch pitch = NULL;
 	PointProcess pulses = NULL;

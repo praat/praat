@@ -1646,22 +1646,22 @@ DIRECT (Manipulation_extractPulses)
 	}
 END
 
-DIRECT (Manipulation_getResynthesis_psola)
-	EVERY_TO (Manipulation_to_Sound (OBJECT, Manipulation_PSOLA))
-END
-
 DIRECT (Manipulation_getResynthesis_lpc)
 	EVERY_TO (Manipulation_to_Sound (OBJECT, Manipulation_PITCH_LPC))
 END
 
-DIRECT (Manipulation_help) Melder_help ("Manipulation"); END
-
-DIRECT (Manipulation_play_psola)
-	EVERY_CHECK (Manipulation_play (OBJECT, Manipulation_PSOLA))
+DIRECT (Manipulation_getResynthesis_overlapAdd)
+	EVERY_TO (Manipulation_to_Sound (OBJECT, Manipulation_OVERLAPADD))
 END
+
+DIRECT (Manipulation_help) Melder_help ("Manipulation"); END
 
 DIRECT (Manipulation_play_lpc)
 	EVERY_CHECK (Manipulation_play (OBJECT, Manipulation_PITCH_LPC))
+END
+
+DIRECT (Manipulation_play_overlapAdd)
+	EVERY_CHECK (Manipulation_play (OBJECT, Manipulation_OVERLAPADD))
 END
 
 DIRECT (Manipulation_removeDuration)
@@ -4437,9 +4437,11 @@ praat_addAction1 (classIntensityTier, 0, "Convert", 0, 0, 0);
 
 	praat_addAction1 (classManipulation, 0, "Manipulation help", 0, 0, DO_Manipulation_help);
 	praat_addAction1 (classManipulation, 1, "Edit", 0, 0, DO_Manipulation_edit);
-	praat_addAction1 (classManipulation, 0, "Play (PSOLA)", 0, 0, DO_Manipulation_play_psola);
+	praat_addAction1 (classManipulation, 0, "Play (overlap-add)", 0, 0, DO_Manipulation_play_overlapAdd);
+	praat_addAction1 (classManipulation, 0, "Play (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, "Play (LPC)", 0, 0, DO_Manipulation_play_lpc);
-	praat_addAction1 (classManipulation, 0, "Get resynthesis (PSOLA)", 0, 0, DO_Manipulation_getResynthesis_psola);
+	praat_addAction1 (classManipulation, 0, "Get resynthesis (overlap-add)", 0, 0, DO_Manipulation_getResynthesis_overlapAdd);
+	praat_addAction1 (classManipulation, 0, "Get resynthesis (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_getResynthesis_overlapAdd);
 	praat_addAction1 (classManipulation, 0, "Get resynthesis (LPC)", 0, 0, DO_Manipulation_getResynthesis_lpc);
 	praat_addAction1 (classManipulation, 0, "Extract original sound", 0, 0, DO_Manipulation_extractOriginalSound);
 	praat_addAction1 (classManipulation, 0, "Extract pulses", 0, 0, DO_Manipulation_extractPulses);

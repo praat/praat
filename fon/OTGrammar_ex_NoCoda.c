@@ -1,6 +1,6 @@
 /* OTGrammar_ex_NoCoda.c
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/08/19
  * pb 2002/07/16 GPL
+ * pb 2007/07/23 constraint plasticity
  */
 
 #include "OTGrammar.h"
@@ -33,9 +33,11 @@ OTGrammar OTGrammar_create_NoCoda_grammar (void) {
 	constraint = & my constraints [1];
 		constraint -> name = Melder_strdup ("N\\s{O}C\\s{ODA}"); cherror
 		constraint -> ranking = 100.0;
+		constraint -> plasticity = 1.0;
 	constraint = & my constraints [2];
 		constraint -> name = Melder_strdup ("P\\s{ARSE}"); cherror
 		constraint -> ranking = 90.0;
+		constraint -> plasticity = 1.0;
 	my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus = 2); cherror
 	tableau = & my tableaus [1];
 		tableau -> input = Melder_strdup ("pat"); cherror

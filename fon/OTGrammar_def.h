@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/04/30
+ * pb 2007/07/23
  */
 
 
@@ -28,6 +28,14 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 	oo_STRING (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
+	oo_FROM (2)
+		oo_DOUBLE (plasticity)
+	oo_ENDFROM
+	#if OO_READING
+		if (localVersion < 2) {
+			my plasticity = 1.0;
+		}
+	#endif
 	#if !oo_READING && !oo_WRITING
 		oo_INT (tiedToTheLeft)
 		oo_INT (tiedToTheRight)
@@ -78,6 +86,9 @@ oo_DEFINE_CLASS (OTGrammar, Data)
 
 	oo_FROM (1)
 		oo_ENUM (OTGrammar_DECISION_STRATEGY, decisionStrategy)
+	oo_ENDFROM
+	oo_FROM (2)
+		oo_DOUBLE (leak)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)

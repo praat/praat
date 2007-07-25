@@ -154,7 +154,12 @@ MAN_BEGIN ("McCarthy & Prince (1995)", "ppgb", 20021105)
 NORMAL ("John J. McCarthy & Alan Prince (1995): Faithfulness and reduplicative identity. "
 	"In Jill Beckman, Laura Walsh Dickey & Suzanne Urbanczyk (eds.), %%Papers in Optimality Theory%. "
 	"%%University of Massachusetts Occasional Papers% #18. Amherst, Mass.: Graduate Linguistic Student Association. "
-	"pp. 249Ð384. [Rutgers Optimality Archive #60, http://roa.rutgers.edu]")
+	"pp. 249\\--384. [Rutgers Optimality Archive #60, http://roa.rutgers.edu]")
+MAN_END
+
+MAN_BEGIN ("Moulines & Charpentier (1990)", "ppgb", 20070722)
+NORMAL ("Eric Moulines & Francis Charpentier (1990): Pitch-synchronous waveform processing techniques for text-to-speech synthesis using diphones. "
+	"%%Speech Communication% #9: 453\\--467.")
 MAN_END
 
 MAN_BEGIN ("Patterson & Wightman (1976)", "ppgb", 20021215)

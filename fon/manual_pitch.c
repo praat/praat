@@ -415,7 +415,7 @@ LIST_ITEM ("\\bu @ManipulationEditor")
 NORMAL ("Conversion:")
 LIST_ITEM ("\\bu @@PitchTier: Down to PointProcess@: copy the times.")
 NORMAL ("Synthesis:")
-LIST_ITEM ("\\bu @@PitchTier: To PointProcess@: area-1 pulse generation (used in @PSOLA).")
+LIST_ITEM ("\\bu @@PitchTier: To PointProcess@: area-1 pulse generation (used in @@overlap-add@).")
 LIST_ITEM ("\\bu @@Manipulation: Replace pitch tier@")
 NORMAL ("Queries:")
 LIST_ITEM ("\\bu @@time domain")
@@ -761,7 +761,7 @@ LIST_ITEM ("4. Though the voiced/unvoiced decision is initially taken by the #Pi
 	"if its correlation value is greater than 0.7.")
 MAN_END
 
-MAN_BEGIN ("Sound & Pitch: To PointProcess (peaks)...", "ppgb", 20030309)
+MAN_BEGIN ("Sound & Pitch: To PointProcess (peaks)...", "ppgb", 20070722)
 INTRO ("A command to create a @PointProcess from the selected @Sound and @Pitch objects.")
 ENTRY ("Purpose")
 NORMAL ("to interpret an acoustic periodicity contour as the frequency of an underlying point process "
@@ -779,7 +779,7 @@ LIST_ITEM ("2. From this point, we recursively search for points %t__%i_ to the 
 	"%t__%i\\--1_ \\-- 1.2 %T__0_(%t__%i\\--1_) and %t__%i\\--1_ \\-- 0.8 %T__0_(%t__%i\\--1_).")
 LIST_ITEM ("3. The same is done to the right of %t__1_.")
 NORMAL ("The periods that are found in this way are much more variable than those found by "
-	"@@Sound & Pitch: To PointProcess (cc)@, and therefore less useful for PSOLA analysis.")
+	"@@Sound & Pitch: To PointProcess (cc)@, and therefore less useful for analysis and subsequent @@overlap-add@ synthesis.")
 MAN_END
 
 }

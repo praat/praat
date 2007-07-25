@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.c
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/08/19
  * pb 2002/07/16 GPL
+ * pb 2007/07/23 constraint plasticity
  */
 
 #include "OTGrammar.h"
@@ -149,7 +149,10 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 	}
 	OTGrammar_checkIndex (me);
 	OTGrammar_newDisharmonies (me, 0.0);
-end:	iferror forget (me);
+	for (icons = 1; icons <= my numberOfConstraints; icons ++)
+		my constraints [icons]. plasticity = 1.0;
+end:
+	iferror forget (me);
 	return me;
 }
 

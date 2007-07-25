@@ -55,7 +55,7 @@
 	Widget synthPulsesLpcButton; \
 	Widget synthPitchButton, synthPitchHumButton; \
 	Widget synthPulsesPitchButton, synthPulsesPitchHumButton; \
-	Widget synthPsolaNodurButton, synthPsolaButton; \
+	Widget synthOverlapAddNodurButton, synthOverlapAddButton; \
 	Widget synthPitchLpcButton; \
 	struct { int units, draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
 	struct { double minimum, maximum, cursor;  } duration; \
@@ -96,7 +96,7 @@ static struct {
 	{ 0.25, 3.0 }
 };
 
-static int prefs_synthesisMethod = Manipulation_PSOLA;   /* Remembered across editor creations, not across Praat sessions. */
+static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
 /* BUG: 25 should be fmin */
 #define YLIN(freq)  (my pitchTier.units == UNITS_HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
@@ -124,7 +124,7 @@ static void updateMenus (ManipulationEditor me) {
 	XmToggleButtonSetState (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM, False);
 	XmToggleButtonSetState (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH, False);
 	XmToggleButtonSetState (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM, False);
-	XmToggleButtonSetState (my synthPsolaButton, my synthesisMethod == Manipulation_PSOLA, False);
+	XmToggleButtonSetState (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD, False);
 	XmToggleButtonSetState (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC, False);
 }
 
@@ -558,8 +558,8 @@ cb_Synth_common (cb_Synth_Pitch, Manipulation_PITCH)
 cb_Synth_common (cb_Synth_Pitch_hum, Manipulation_PITCH_HUM)
 cb_Synth_common (cb_Synth_Pulses_Pitch, Manipulation_PULSES_PITCH)
 cb_Synth_common (cb_Synth_Pulses_Pitch_hum, Manipulation_PULSES_PITCH_HUM)
-cb_Synth_common (cb_Synth_Psola_nodur, Manipulation_PSOLA_NODUR)
-cb_Synth_common (cb_Synth_Psola, Manipulation_PSOLA)
+cb_Synth_common (cb_Synth_OverlapAdd_nodur, Manipulation_OVERLAPADD_NODUR)
+cb_Synth_common (cb_Synth_OverlapAdd, Manipulation_OVERLAPADD)
 cb_Synth_common (cb_Synth_Pitch_Lpc, Manipulation_PITCH_LPC)
 
 static void createMenus (I) {
@@ -620,7 +620,7 @@ static void createMenus (I) {
 	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", motif_CHECKABLE, cb_Synth_Pulses_Pitch);
 	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
 	Editor_addCommand (me, L"Synth", L"-- full resynth --", 0, NULL);
-	my synthPsolaButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"PSOLA manipulation\")", motif_CHECKED, cb_Synth_Psola);
+	my synthOverlapAddButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", motif_CHECKED, cb_Synth_OverlapAdd);
 	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", motif_CHECKABLE, cb_Synth_Pitch_Lpc);
 
 	Editor_addCommand (me, L"Help", L"ManipulationEditor help", '?', cb_ManipulationEditorHelp);

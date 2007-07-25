@@ -24,6 +24,7 @@
  * pb 2007/01/27 made compatible with stereo sounds (by converting them to mono)
  * pb 2007/02/25 changed default sampling frequency to 44100 Hz
  * pb 2007/03/17 domain quantity
+ * pb 2007/07/22 changed names of overlap-add method in such a way that it does not sound like an existing trademark of a diphone concatenation method
  */
 
 #include "Manipulation.h"
@@ -143,11 +144,11 @@ error:
 }
 
 int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method) {
-	if (method == Manipulation_PSOLA) {
+	if (method == Manipulation_OVERLAPADD) {
 		Sound part, saved = my sound, played;
 		long i, imin, imax;
 		float *amp;
-		if (! my sound) return Melder_error ("Cannot synthesize PSOLA without a sound.");
+		if (! my sound) return Melder_error ("Cannot synthesize overlap-add without a sound.");
 		part = Data_copy (my sound);
 		if (! part) return 0;
 		imin = Sampled_xToLowIndex (part, tmin), imax = Sampled_xToHighIndex (part, tmax);
@@ -155,7 +156,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		for (i = 1; i <= imin; i ++) amp [i] = 0.0;
 		for (i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
 		my sound = part;
-		played = Manipulation_to_Sound (me, Manipulation_PSOLA);
+		played = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
 		my sound = saved;
 		forget (part);
 		if (! played) return 0;
@@ -449,12 +450,12 @@ Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 	return thee;
 }
 
-static Sound synthesize_psola_nodur (Manipulation me) {
+static Sound synthesize_overlapAdd_nodur (Manipulation me) {
 	PointProcess targetPulses = NULL;
 	Sound thee = NULL;
-	if (! my sound) return Melder_errorp ("Cannot synthesize PSOLA without original sound.");
-	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
-	if (! my pitch) return Melder_errorp ("Cannot synthesize PSOLA without pitch manipulation.");
+	if (! my sound) return Melder_errorp ("Cannot synthesize overlap-add without original sound.");
+	if (! my pulses) return Melder_errorp ("Cannot synthesize overlap-add without pulses analysis.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize overlap-add without pitch manipulation.");
 	if ((targetPulses = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T)) != NULL)
 		thee = Sound_Point_Point_to_Sound (my sound, my pulses, targetPulses, MAX_T);
 	forget (targetPulses);
@@ -463,12 +464,12 @@ static Sound synthesize_psola_nodur (Manipulation me) {
 	return thee;
 }
 
-static Sound synthesize_psola (Manipulation me) {
+static Sound synthesize_overlapAdd (Manipulation me) {
 	Sound thee = NULL;
-	if (! my duration || my duration -> points -> size == 0) return synthesize_psola_nodur (me);
-	if (! my sound) return Melder_errorp ("Cannot synthesize PSOLA without original sound.");
-	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
-	if (! my pitch) return Melder_errorp ("Cannot synthesize PSOLA without pitch manipulation.");
+	if (! my duration || my duration -> points -> size == 0) return synthesize_overlapAdd_nodur (me);
+	if (! my sound) return Melder_errorp ("Cannot synthesize overlap-add without original sound.");
+	if (! my pulses) return Melder_errorp ("Cannot synthesize overlap-add without pulses analysis.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize overlap-add without pitch manipulation.");
 	if (! (thee = Sound_Point_Pitch_Duration_to_Sound (my sound, my pulses, my pitch, my duration, MAX_T))) return NULL;
 	if (Melder_hasError ())
 		{ forget (thee); return Melder_errorp ("(Manipulation_to_Sound:) Not performed."); }
@@ -476,19 +477,19 @@ static Sound synthesize_psola (Manipulation me) {
 }
 
 static Sound synthesize_pulses (Manipulation me) {
-	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
+	if (! my pulses) return Melder_errorp ("Cannot synthesize overlap-add without pulses analysis.");
 	return PointProcess_to_Sound_pulseTrain (my pulses, 44100, 0.7, 0.05, 30);
 }
 
 static Sound synthesize_pulses_hum (Manipulation me) {
-	if (! my pulses) return Melder_errorp ("Cannot synthesize PSOLA without pulses analysis.");
+	if (! my pulses) return Melder_errorp ("Cannot synthesize overlap-add without pulses analysis.");
 	return PointProcess_to_Sound_hum (my pulses);
 }
 
 static Sound synthesize_pitch (Manipulation me) {
 	Sound thee = NULL;
 	PointProcess temp = NULL;
-	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch manipulation.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch tier.");
 	temp = PitchTier_to_PointProcess (my pitch);
 	if (! temp) return NULL;
 	thee = PointProcess_to_Sound_pulseTrain (temp, 44100, 0.7, 0.05, 30);
@@ -500,7 +501,7 @@ static Sound synthesize_pitch (Manipulation me) {
 static Sound synthesize_pitch_hum (Manipulation me) {
 	Sound thee = NULL;
 	PointProcess temp = NULL;
-	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch manipulation.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize pitch manipulation without pitch tier.");
 	temp = PitchTier_to_PointProcess (my pitch);
 	if (! temp) return NULL;
 	thee = PointProcess_to_Sound_hum (temp);
@@ -513,7 +514,7 @@ static Sound synthesize_pulses_pitch (Manipulation me) {
 	Sound thee = NULL;
 	PointProcess temp = NULL;
 	if (! my pulses) return Melder_errorp ("Cannot synthesize this without pulses analysis.");
-	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch manipulation.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch tier.");
 	temp = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 	if (! temp) return NULL;
 	thee = PointProcess_to_Sound_pulseTrain (temp, 44100, 0.7, 0.05, 30);
@@ -526,7 +527,7 @@ static Sound synthesize_pulses_pitch_hum (Manipulation me) {
 	Sound thee = NULL;
 	PointProcess temp = NULL;
 	if (! my pulses) return Melder_errorp ("Cannot synthesize this without pulses analysis.");
-	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch manipulation.");
+	if (! my pitch) return Melder_errorp ("Cannot synthesize this without pitch tier.");
 	temp = PitchTier_Point_to_PointProcess (my pitch, my pulses, MAX_T);
 	if (! temp) return NULL;
 	thee = PointProcess_to_Sound_hum (temp);
@@ -640,21 +641,21 @@ static Sound synthesize_pitch_lpc (Manipulation me) {
 
 Sound Manipulation_to_Sound (Manipulation me, int method) {
 	switch (method) {
-		case Manipulation_PSOLA: return synthesize_psola (me);
+		case Manipulation_OVERLAPADD: return synthesize_overlapAdd (me);
 		case Manipulation_PULSES: return synthesize_pulses (me);
 		case Manipulation_PULSES_HUM: return synthesize_pulses_hum (me);
 		case Manipulation_PITCH: return synthesize_pitch (me);
 		case Manipulation_PITCH_HUM: return synthesize_pitch_hum (me);
 		case Manipulation_PULSES_PITCH: return synthesize_pulses_pitch (me);
 		case Manipulation_PULSES_PITCH_HUM: return synthesize_pulses_pitch_hum (me);
-		case Manipulation_PSOLA_NODUR: return synthesize_psola_nodur (me);
+		case Manipulation_OVERLAPADD_NODUR: return synthesize_overlapAdd_nodur (me);
 		case Manipulation_PULSES_FORMANT: return 0;
 		case Manipulation_PULSES_FORMANT_INTENSITY: return 0;
 		case Manipulation_PULSES_LPC: return synthesize_pulses_lpc (me);
 		case Manipulation_PULSES_LPC_INTENSITY: return 0;
 		case Manipulation_PITCH_LPC: return synthesize_pitch_lpc (me);
 		case Manipulation_PITCH_LPC_INTENSITY: return 0;
-		default: return synthesize_psola (me);
+		default: return synthesize_overlapAdd (me);
 	}
 }
 

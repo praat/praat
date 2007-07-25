@@ -64,10 +64,11 @@ DIRECT (OTGrammarEditor, cb_evaluate_zeroNoise)
 	Editor_broadcastChange (me);
 END
 
-FORM (OTGrammarEditor, cb_editRanking, "Edit ranking", 0)
+FORM (OTGrammarEditor, cb_editConstraint, "Edit constraint", 0)
 	LABEL ("constraint", "");
 	REAL ("Ranking value", "100.0");
 	REAL ("Disharmony", "100.0");
+	REAL ("Plasticity", "1.0");
 	OK
 OTGrammar ot = my data;
 OTGrammarConstraint constraint;
@@ -76,12 +77,14 @@ constraint = & ot -> constraints [ot -> index [my selected]];
 SET_STRING ("constraint", constraint -> name)
 SET_REAL ("Ranking value", constraint -> ranking)
 SET_REAL ("Disharmony", constraint -> disharmony)
+SET_REAL ("Plasticity", constraint -> plasticity)
 DO
 	OTGrammar ot = my data;
 	OTGrammarConstraint constraint = & ot -> constraints [ot -> index [my selected]];
-	Editor_save (me, L"Edit ranking");
+	Editor_save (me, L"Edit constraint");
 	constraint -> ranking = GET_REAL ("Ranking value");
 	constraint -> disharmony = GET_REAL ("Disharmony");
+	constraint -> plasticity = GET_REAL ("Plasticity");
 	OTGrammar_sort (ot);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -175,7 +178,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
 	Editor_addCommand (me, L"Edit", L"Evaluate (zero noise)", '0', cb_evaluate_zeroNoise);
 	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
-	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', cb_editRanking);
+	Editor_addCommand (me, L"Edit", L"Edit constraint...", 'E', cb_editConstraint);
 	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', cb_resetAllRankings);
 	Editor_addCommand (me, L"Edit", L"Learn one...", 0, cb_learnOne);
 	Editor_addCommand (me, L"Edit", L"Learn one from partial output...", '1', cb_learnOneFromPartialOutput);
@@ -198,11 +201,11 @@ static void draw (I) {
 	static char text [1000];
 	long icons, itab;
 	Graphics_clearWs (my g);
-	HyperPage_listItem (me, "\t\t      %%ranking value\t      %disharmony");
+	HyperPage_listItem (me, "\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		sprintf (text, "\t%s@@%ld|%s@\t      %.3f\t      %.3f", icons == my selected ? "\\sp " : "   ", icons,
-			constraint -> name, constraint -> ranking, constraint -> disharmony);
+		sprintf (text, "\t%s@@%ld|%s@\t      %.3f\t      %.3f\t      %.6f", icons == my selected ? "\\sp " : "   ", icons,
+			constraint -> name, constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
 		HyperPage_listItem (me, text);
 	}
 	Graphics_setAtSignIsLink (my g, FALSE);

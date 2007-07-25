@@ -164,6 +164,221 @@ bool Melder_error9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, con
 	appendErrorW (L"\n");
 	return false;
 }
+bool Melder_error10 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error11 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error12 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error13 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error14 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error15 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	if (s15) appendErrorW (s15);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error16 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	if (s15) appendErrorW (s15);
+	if (s16) appendErrorW (s16);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error17 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	if (s15) appendErrorW (s15);
+	if (s16) appendErrorW (s16);
+	if (s17) appendErrorW (s17);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error18 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17,
+	const wchar_t *s18)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	if (s15) appendErrorW (s15);
+	if (s16) appendErrorW (s16);
+	if (s17) appendErrorW (s17);
+	if (s18) appendErrorW (s18);
+	appendErrorW (L"\n");
+	return false;
+}
+bool Melder_error19 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17,
+	const wchar_t *s18, const wchar_t *s19)
+{
+	if (s1) appendErrorW (s1);
+	if (s2) appendErrorW (s2);
+	if (s3) appendErrorW (s3);
+	if (s4) appendErrorW (s4);
+	if (s5) appendErrorW (s5);
+	if (s6) appendErrorW (s6);
+	if (s7) appendErrorW (s7);
+	if (s8) appendErrorW (s8);
+	if (s9) appendErrorW (s9);
+	if (s10) appendErrorW (s10);
+	if (s11) appendErrorW (s11);
+	if (s12) appendErrorW (s12);
+	if (s13) appendErrorW (s13);
+	if (s14) appendErrorW (s14);
+	if (s15) appendErrorW (s15);
+	if (s16) appendErrorW (s16);
+	if (s17) appendErrorW (s17);
+	if (s18) appendErrorW (s18);
+	if (s19) appendErrorW (s19);
+	appendErrorW (L"\n");
+	return false;
+}
 
 void * Melder_errorp (const char *format, ...) {
 	va_list arg;

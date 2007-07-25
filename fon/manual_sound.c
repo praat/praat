@@ -316,14 +316,14 @@ LIST_ITEM ("\\bu @@Sound & FormantTier: Filter")
 NORMAL ("Conversion:")
 LIST_ITEM ("\\bu @@Sound: Resample...")
 NORMAL ("Enhancement:")
-LIST_ITEM ("\\bu @@Sound: Lengthen (PSOLA)...@: lengthen by a constant factor")
+LIST_ITEM ("\\bu @@Sound: Lengthen (overlap-add)...@: lengthen by a constant factor")
 LIST_ITEM ("\\bu @@Sound: Deepen band modulation...@: strenghten intensity modulations in each critical band")
 NORMAL ("Combination:")
 LIST_ITEM ("\\bu @@Sounds: Convolve")
 LIST_ITEM ("\\bu @@Sounds: Concatenate")
 NORMAL ("Synthesis")
 LIST_ITEM ("\\bu @@Source-filter synthesis@ tutorial")
-LIST_ITEM ("\\bu @Manipulation (@PSOLA etc.)")
+LIST_ITEM ("\\bu @Manipulation (@@overlap-add@ etc.)")
 LIST_ITEM ("\\bu @@Spectrum: To Sound")
 LIST_ITEM ("\\bu ##Pitch: To Sound...")
 LIST_ITEM ("\\bu @@PointProcess: To Sound (pulse train)...")
@@ -895,20 +895,19 @@ DEFINITION ("the interpolation method, see @@vector value interpolation@. "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN ("Sound: Lengthen (PSOLA)...", "ppgb", 20030916)
+MAN_BEGIN ("Sound: Lengthen (overlap-add)...", "ppgb", 20030916)
 INTRO ("A command to convert each selected @Sound object into a longer new @Sound object.")
 ENTRY ("Arguments")
 TAG ("%%Minimum frequency% (Hz)")
 DEFINITION ("the minimum pitch used in the periodicity analysis. The standard value is 75 Hz. For the voice of a young child, set this to 150 Hz."
-	"The shortest voiceless interval in the PSOLA decomposition is taken as "
-	"1.5 divided by %%minimum frequency%.")
+	"The shortest voiceless interval in the decomposition is taken as 1.5 divided by %%minimum frequency%.")
 TAG ("%%Maximum frequency% (Hz)")
 DEFINITION ("the maximum pitch used in the periodicity analysis. The standard value is 600 Hz. For an adult male voice, set this to 300 Hz.")
 TAG ("%Factor")
 DEFINITION ("the factor with which the sound will be lengthened. The standard value is 1.5. If you take a value less than 1, "
 	"the resulting sound will be shorter than the original. A value larger than 3 will not work.")
 ENTRY ("Algorithm")
-NORMAL ("Pitch-synchronous overlap-and-add.")
+NORMAL ("@@overlap-add@.")
 MAN_END
 
 MAN_BEGIN ("audio control panel", "ppgb", 20050822)

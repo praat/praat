@@ -1,6 +1,6 @@
 /* OTGrammar_ex_metrics.c
  *
- * Copyright (C) 2001-2004 Paul Boersma
+ * Copyright (C) 2001-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/07/27 added Clash and Lapse
  * pb 2004/08/11 complete rewrite in order to include WeightByPosition and *MoraicConsonant
  * pb 2004/12/03 corrected *Lapse
+ * pb 2007/07/23 constraint plasticity
  */
 
 #include "OTGrammar.h"
@@ -459,6 +460,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 		OTGrammarConstraint constraint = & my constraints [icons];
 		constraint -> name = Melder_strdup (constraintNames [icons]); cherror
 		constraint -> ranking = 100.0;
+		constraint -> plasticity = 1.0;
 	}
 	if (equal_footForm_wsp >= 2) {
 		/* Foot form constraints high. */
