@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/07/24
+ * pb 2007/07/27
  */
 
 #include <stdio.h>
@@ -352,6 +352,7 @@ bool MelderStringW_getW (MelderStringW *me, wchar_t *destination);   // performs
 double MelderString_allocationCount (void);
 double MelderString_deallocationCount (void);
 double MelderString_allocationSize (void);
+double MelderString_deallocationSize (void);
 wchar_t * MelderReadString_readLine (MelderReadString *text);
 const wchar_t * MelderReadString_getLineNumber (MelderReadString *text);
 

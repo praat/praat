@@ -24,13 +24,15 @@
 
 #include "melder.h"
 #define my  me ->
+#define FREE_THRESHOLD_BYTES 10000
 
-static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0;
+static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
 void MelderStringA_free (MelderStringA *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
 	totalNumberOfDeallocations += 1;
+	totalDeallocationSize += my bufferSize * sizeof (char);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -39,12 +41,15 @@ void MelderStringW_free (MelderStringW *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
 	totalNumberOfDeallocations += 1;
+	totalDeallocationSize += my bufferSize * sizeof (wchar_t);
 	my bufferSize = 0;
 	my length = 0;
 }
 
 void MelderStringA_empty (MelderStringA *me) {
-	if (my string) {
+	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES) {
+		MelderStringA_free (me);
+	} else if (my string) {
 		my string [0] = '\0';   // Optimization.
 		my length = 0;
 	} else {
@@ -53,7 +58,9 @@ void MelderStringA_empty (MelderStringA *me) {
 }
 
 void MelderStringW_empty (MelderStringW *me) {
-	if (my string) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
+		MelderStringW_free (me);
+	} else if (my string) {
 		my string [0] = L'\0';   // Optimization.
 		my length = 0;
 	} else {
@@ -67,17 +74,22 @@ void MelderStringW_empty (MelderStringW *me) {
 		Melder_assert (sizeNeeded >= 0); \
 		sizeNeeded = 1.618034 * sizeNeeded + 100; \
 		Melder_assert (sizeNeeded > 0); \
-		if (my string) totalNumberOfDeallocations += 1; \
+		if (my string) { \
+			totalNumberOfDeallocations += 1; \
+			totalDeallocationSize += my bufferSize * sizeof (type); \
+		} \
 		long bytesNeeded = sizeNeeded * sizeof (type); \
 		Melder_assert (bytesNeeded > 0); \
 		my string = Melder_realloc (my string, bytesNeeded); \
 		if (my string == NULL) { my bufferSize = 0; goto end; } \
 		totalNumberOfAllocations += 1; \
-		totalAllocationSize += (sizeNeeded - my bufferSize) * sizeof (type); \
+		totalAllocationSize += bytesNeeded; \
 		my bufferSize = sizeNeeded; \
 	}
 
 bool MelderStringA_copyA (MelderStringA *me, const char *source) {
+	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
+		MelderStringA_free (me);
 	if (source == NULL) source = "";
 	unsigned long length = strlen (source);
 	unsigned long sizeNeeded = length + 1;
@@ -90,6 +102,8 @@ end:
 }
 
 bool MelderStringW_copyA (MelderStringW *me, const char *source) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
+		MelderStringW_free (me);
 	if (source == NULL) source = "";
 	unsigned long length = strlen (source);
 	unsigned long sizeNeeded = length + 1;
@@ -104,6 +118,8 @@ end:
 }
 
 bool MelderStringA_copyW (MelderStringA *me, const wchar_t *source) {
+	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
+		MelderStringA_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	unsigned long sizeNeeded = length + 1;
@@ -118,6 +134,8 @@ end:
 }
 
 bool MelderStringW_copyW (MelderStringW *me, const wchar_t *source) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
+		MelderStringW_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	unsigned long sizeNeeded = length + 1;
@@ -130,6 +148,8 @@ end:
 }
 
 bool MelderStringA_ncopyA (MelderStringA *me, const char *source, unsigned long n) {
+	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
+		MelderStringA_free (me);
 	if (source == NULL) source = "";
 	unsigned long length = strlen (source);
 	if (length > n) length = n;
@@ -144,6 +164,8 @@ end:
 }
 
 bool MelderStringW_ncopyW (MelderStringW *me, const wchar_t *source, unsigned long n) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
+		MelderStringW_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	if (length > n) length = n;
@@ -521,6 +543,10 @@ double MelderString_deallocationCount (void) {
 
 double MelderString_allocationSize (void) {
 	return totalAllocationSize;
+}
+
+double MelderString_deallocationSize (void) {
+	return totalDeallocationSize;
 }
 
 wchar_t * MelderReadString_readLine (MelderReadString *text) {

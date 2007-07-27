@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20070725)
+MAN_BEGIN ("What's new?", "ppgb", 20070727)
 INTRO ("Latest changes in Praat.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.6.12# (July 27, 2007)")
+LIST_ITEM ("\\bu OTGrammar bug fix: leak and constraint plasticity correctly written into OTGrammar text files.")
 NORMAL ("##4.6.11# (July 25, 2007)")
 LIST_ITEM ("\\bu OTGrammar: introduced %%constraint plasticity% for slowing down or halting the speed with which constraints are reranked.")
 LIST_ITEM ("\\bu OTGrammar: introduced %%leak% for implementing forgetful learning of correlations.")

@@ -1,6 +1,6 @@
 /* praat_statistics.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/06 MelderString
  * pb 2006/12/26 theCurrentPraat
+ * pb 2007/07/27 string deallocation size
  */
 
 #include <time.h>
@@ -78,7 +79,8 @@ void praat_memoryInfo (void) {
 	MelderInfo_writeLine2 ("   Total deleted: ", Melder_bigInteger (Melder_deallocationCount ()));
 	MelderInfo_writeLine5 (
 		"   Strings created: ", Melder_bigInteger (MelderString_allocationCount ()), " (", Melder_bigInteger (MelderString_allocationSize ()), " bytes)");
-	MelderInfo_writeLine2 ("   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()));
+	MelderInfo_writeLine5 (
+		"   Strings deleted: ", Melder_bigInteger (MelderString_deallocationCount ()), " (", Melder_bigInteger (MelderString_deallocationSize ()), " bytes)");
 	MelderInfo_writeLine3 ("\nHistory of all sessions from ", statistics.dateOfFirstSession, " until today:");
 	MelderInfo_writeLine4 ("   Interactive sessions: ", Melder_integer (statistics.interactiveSessions),
 		" batch sessions: ", Melder_integer (statistics.batchSessions));

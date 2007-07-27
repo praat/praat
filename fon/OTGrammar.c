@@ -49,6 +49,8 @@
  * pb 2007/05/20 new decision strategy: PositiveHG
  * pb 2007/06/21 corrected PositiveHG
  * pb 2007/06/21 made spreadsheet file readable as Table
+ * pb 2007/07/24 leak and constraint plasticity
+ * pb 2007/07/27 leak and constraint plasticity also written...
  */
 
 #include "OTGrammar.h"
@@ -85,8 +87,8 @@ static void classOTGrammar_info (I) {
 
 static int writeText (I, MelderFile file) {
 	iam (OTGrammar);
-	MelderFile_write5 (file, L"\n<", Melder_peekAsciiToWcs (enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy)),
-		L">\n", Melder_integerW (my numberOfConstraints), L" constraints");
+	MelderFile_write7 (file, L"\n<", Melder_peekAsciiToWcs (enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy)),
+		L">\n", Melder_doubleW (my leak), L" ! leak\n", Melder_integerW (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
 		MelderFile_write3 (file, L"\nconstraint [", Melder_integerW (icons), L"]: \"");
@@ -94,7 +96,8 @@ static int writeText (I, MelderFile file) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write5 (file, L"\" ", Melder_doubleW (constraint -> ranking), L" ", Melder_doubleW (constraint -> disharmony), L" ! ");
+		MelderFile_write7 (file, L"\" ", Melder_doubleW (constraint -> ranking),
+			L" ", Melder_doubleW (constraint -> disharmony), L" ", Melder_doubleW (constraint -> plasticity), L" ! ");
 		for (const char *p = & constraint -> name [0]; *p; p ++) {
 			if (*p == '\n') MelderFile_writeCharacter (file, ' ');
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
