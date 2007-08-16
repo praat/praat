@@ -26,6 +26,7 @@
  * pb 2007/01/28 made compatible with new getVector and getFunction1 API
  * pb 2007/03/30 RealTier_downto_Table: include point numbers
  * pb 2007/04/19 RealTier_formula: defence against undefined values
+ * pb 2007/08/12 wchar_t
  */
 
 #include "RealTier.h"
@@ -74,9 +75,9 @@ RealPoint RealPoint_create (double time, double value) {
 static void info (I) {
 	iam (RealTier);
 	classFunction -> info (me);
-	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine2 ("Minimum value: ", Melder_double (RealTier_getMinimumValue (me)));
-	MelderInfo_writeLine2 ("Maximum value: ", Melder_double (RealTier_getMaximumValue (me)));
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
+	MelderInfo_writeLine2 (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (me)));
+	MelderInfo_writeLine2 (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (me)));
 }
 
 static double getNx (I) { iam (RealTier); return my points -> size; }
@@ -85,12 +86,12 @@ static double getNcol (I) { iam (RealTier); return my points -> size; }
 static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
 static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
 
-static const char * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	(void) ilevel;
 	(void) unit;
 	(void) flags;
-	return "Time (s)";
+	return L"Time (s)";
 }
 
 class_methods (RealTier, Function)
@@ -305,7 +306,7 @@ void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
 }
 
 void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int garnish, const char *quantity)
+	int garnish, const wchar_t *quantity)
 {
 	iam (RealTier);
 	long n = my points -> size, imin, imax, i;
@@ -339,14 +340,14 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, "Time (s)");
+		Graphics_textBottom (g, TRUE, L"Time (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
 		if (quantity) Graphics_textLeft (g, TRUE, quantity);
 	}
 }
 
-TableOfReal RealTier_downto_TableOfReal (I, const char *timeLabel, const char *valueLabel) {
+TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wchar_t *valueLabel) {
 	iam (RealTier);
 	TableOfReal thee = NULL;
 	long i;
@@ -407,7 +408,7 @@ end:
 	return 1;
 }
 
-Table RealTier_downto_Table (I, const char *indexText, const char *timeText, const char *valueText) {
+Table RealTier_downto_Table (I, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText) {
 	iam (RealTier);
 	Table thee = Table_createWithoutColumnNames (my points -> size,
 		(indexText != NULL) + (timeText != NULL) + (valueText != NULL)); cherror
@@ -484,14 +485,12 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
 	return thee;
 }
 
-int RealTier_formula (I, const char *expressionA, thou) {
+int RealTier_formula (I, const wchar_t *expression, thou) {
 	iam (RealTier);
 	thouart (RealTier);
-	long icol;
-	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
 	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (thee == NULL) thee = me;
-	for (icol = 1; icol <= my points -> size; icol ++) {
+	for (long icol = 1; icol <= my points -> size; icol ++) {
 		double result;
 		Formula_run (0, icol, & result, NULL); cherror
 		if (result == NUMundefined) {
@@ -500,7 +499,6 @@ int RealTier_formula (I, const char *expressionA, thou) {
 		((RealPoint) thy points -> item [icol]) -> value = result;
 	}
 end:
-	Melder_free (expression);
 	iferror return 0;
 	return 1;
 }

@@ -289,8 +289,8 @@ end:
 	huber_struct_destroy (&struct_huber);
 	if (Melder_hasError ()) forget (him);
 	
-	Melder_information2 ("Number of iterations: ", Melder_integer (iter));
-	Melder_information2 ("   Average per frame: ", Melder_double (((double) iter)/nFrames));
+	Melder_information2 (L"Number of iterations: ", Melder_integer (iter));
+	Melder_information2 (L"   Average per frame: ", Melder_double (((double) iter)/nFrames));
 	return him;
 }
 

@@ -51,7 +51,7 @@ Index Index_extractPart (I, long from, long to);
 
 StringsIndex StringsIndex_create (long numberOfElements);
 
-int StringsIndex_getClass (StringsIndex me, char *classLabel);
+int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel);
 
 
 #endif /* _Index_h_ */

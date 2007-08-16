@@ -37,9 +37,9 @@ static void destroy (I) { iam (Thing); Melder_free (my name); Melder_free (my na
 static void info (I) {
 	iam (Thing);
 	time_t today = time (NULL);
-	char *name = my name ? my name : "<no name>";
-	MelderInfo_writeLine4 ("Object: ", Thing_className (me), " ", name);
-	MelderInfo_writeLine2 ("Date: ", ctime (& today));   /* Includes a newline. */
+	wchar_t *name = my nameW ? my nameW : L"<no name>";
+	MelderInfo_writeLine4 (L"Object: ", Thing_classNameW (me), L" ", name);
+	MelderInfo_writeLine2 (L"Date: ", Melder_peekAsciiToWcs (ctime (& today)));   /* Includes a newline. */
 }
 
 static void nameChanged (Any thing) {
@@ -63,7 +63,7 @@ wchar_t * Thing_classNameW (I) { iam (Thing); return our _classNameW; }
 
 Any Thing_new (void *table) {
 	Thing_Table us = table;
-	Thing me = (Thing) Melder_calloc (1, us -> _size);
+	Thing me = (Thing) _Melder_calloc (1, us -> _size);
 	if (! me) return Melder_errorp ("(Thing_new:) Out of memory.");
 	theTotalNumberOfThings += 1;
 	my methods = us;

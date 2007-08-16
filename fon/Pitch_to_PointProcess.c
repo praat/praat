@@ -204,7 +204,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		 * Our first point is near this middle.
 		 */
 		if (f0middle == NUMundefined) {
-			Melder_fatal ("Sound_Pitch_to_PointProcess_cc: tleft %s, tright %s, f0middle %s",
+			Melder_fatal ("Sound_Pitch_to_PointProcess_cc: tleft %ls, tright %ls, f0middle %ls",
 				Melder_double (tleft), Melder_double (tright), Melder_double (f0middle));
 		}
 		tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, TRUE, TRUE);

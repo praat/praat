@@ -64,12 +64,12 @@ static double scaleFrequency (double f, int scale_from, int scale_to)
 	return f;
 }
 
-static char *GetFreqScaleText (int scale)
+static wchar_t *GetFreqScaleText (int scale)
 {
-	char *hertz = "Frequency (Hz)";
-	char *bark = "Frequency (Bark)";
-	char *mel = "Frequency (mel)";
-	char *error = "Frequency (undefined)";
+	wchar_t *hertz = L"Frequency (Hz)";
+	wchar_t *bark = L"Frequency (Bark)";
+	wchar_t *mel = L"Frequency (mel)";
+	wchar_t *error = L"Frequency (undefined)";
 	if (scale == FilterBank_HERTZ)
 	{
 		return hertz;
@@ -352,7 +352,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	if (garnish)
 	{
 		double distance = dbScale ? 10 : 1;
-		char *ytext = dbScale ? "Amplitude (dB)" : "Amplitude";
+		wchar_t *ytext = dbScale ? L"Amplitude (dB)" : L"Amplitude";
 		Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
@@ -396,7 +396,7 @@ void FilterBank_drawFilters (I, Graphics g, long fromf, long tof,
 }*/
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, 
-	double fmax, double min, double max, char *xlabel, int garnish)
+	double fmax, double min, double max, wchar_t *xlabel, int garnish)
 {
 	iam (Matrix);
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
@@ -470,7 +470,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 	if (garnish)
 	{
 		double distance = dbScale ? 10 : 1;
-		char *ytext = dbScale ? "Amplitude (dB)" : "Amplitude";
+		wchar_t *ytext = dbScale ? L"Amplitude (dB)" : L"Amplitude";
 		Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);
@@ -627,7 +627,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	if (garnish)
 	{
 		double distance = dbScale ? 10 : 1;
-		char *ytext = dbScale ? "Amplitude (dB)" : "Amplitude";
+		wchar_t *ytext = dbScale ? L"Amplitude (dB)" : L"Amplitude";
 		Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeftEvery (g, 1, distance, 1, 1, 0);

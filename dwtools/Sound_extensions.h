@@ -150,7 +150,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 	within time dt
 */
 
-int Sound_filter_part_formula (Sound me, double t1, double t2, const char *formula);
+int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula);
 
 Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0
@@ -170,6 +170,6 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 	
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, 
-	char *silentLabel, char *soundingLabel);
+	wchar_t *silentLabel, wchar_t *soundingLabel);
 
 #endif /* _Sound_extensions_h_ */

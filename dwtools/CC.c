@@ -47,14 +47,13 @@ static void info (I)
 {
 	iam (CC);
 	classData -> info (me);
-	MelderInfo_writeLine5 ("Time domain:", Melder_double (my xmin), " to ", Melder_double (my xmax),
-		" seconds.");
-	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
-	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
-	MelderInfo_writeLine2 ("Number of coefficients: ", Melder_integer (my maximumNumberOfCoefficients));
-	MelderInfo_writeLine3 ("Minimum frequency: ", Melder_double (my fmin), " Hz.");
-	MelderInfo_writeLine3 ("Maximum frequency: ", Melder_double (my fmax), " Hz.");
+	MelderInfo_writeLine5 (L"Time domain:", Melder_double (my xmin), L" to ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"Time step: ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (my x1), L" seconds");
+	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (my maximumNumberOfCoefficients));
+	MelderInfo_writeLine3 (L"Minimum frequency: ", Melder_double (my fmin), L" Hz");
+	MelderInfo_writeLine3 (L"Maximum frequency: ", Melder_double (my fmax), L" Hz");
 }
 
 class_methods (CC, Sampled)
@@ -121,9 +120,9 @@ void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 	if (garnish)
 	{
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Coefficients");
+		Graphics_textLeft (g, 1, L"Coefficients");
 	}
 	
 	forget (thee);

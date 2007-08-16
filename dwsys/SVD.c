@@ -79,8 +79,8 @@ static void SVD_transpose (I)
 static void classSVD_info (I)
 {
 	iam (SVD);
-	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 class_methods (SVD, Data)
@@ -394,7 +394,7 @@ int SVD_synthesize (I, long sv_from, long sv_to, double **m)
 static void classGSVD_info (I)
 {
 	iam (GSVD);
-	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 class_methods (GSVD, Data)

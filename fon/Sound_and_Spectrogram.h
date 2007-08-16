@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2003/11/30
+ * pb 2007/08/13
  */
 
 #ifndef _Sound_h_
@@ -35,7 +35,7 @@
 #define Sound_to_Spectrogram_WINDOW_SHAPE_HANNING  4
 #define Sound_to_Spectrogram_WINDOW_SHAPE_GAUSSIAN  5
 
-const char * Sound_to_Spectrogram_windowShapeText (int windowShape);
+const wchar_t * Sound_to_Spectrogram_windowShapeText (int windowShape);
 
 Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
 	double minimumTimeStep1, double minimumFreqStep1, int windowShape,

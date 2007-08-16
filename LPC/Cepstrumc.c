@@ -46,12 +46,12 @@ static void info (I)
 {
 	iam (Cepstrumc);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("  Start time: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 ("  End time: ", Melder_double (my xmax));
-	MelderInfo_writeLine2 ("  Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine2 ("  Time step: ", Melder_double (my dx));
-	MelderInfo_writeLine2 ("  First frame at: ", Melder_double (my x1));
-	MelderInfo_writeLine2 ("  Number of coefficients: ", Melder_integer (my maxnCoefficients));
+	MelderInfo_writeLine2 (L"  Start time: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 (L"  End time: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 (L"  Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine2 (L"  Time step: ", Melder_double (my dx));
+	MelderInfo_writeLine2 (L"  First frame at: ", Melder_double (my x1));
+	MelderInfo_writeLine2 (L"  Number of coefficients: ", Melder_integer (my maxnCoefficients));
 }
 
 class_methods (Cepstrumc, Sampled)

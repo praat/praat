@@ -739,16 +739,16 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 	
 	if (Melder_debug == -1)
 	{
-		Melder_casual ("--gammatonefilter4--\nF = %s, B = %s, T = %s\nGain = %s", 
+		Melder_casual ("--gammatonefilter4--\nF = %ls, B = %ls, T = %ls\nGain = %ls", 
 			Melder_double (centre_frequency), Melder_double (bandwidth),
 			Melder_double (dt), Melder_double (gain));
 		for (i = 0; i <= 4; i++)
 		{
-			Melder_casual ("a[%d] = %s", i, Melder_double (a[i]));
+			Melder_casual ("a[%d] = %ls", i, Melder_double (a[i]));
 		}
 		for (i = 0; i <= 8; i++)
 		{
-			Melder_casual ("b[%d] = %s", i, Melder_double (b[i]));
+			Melder_casual ("b[%d] = %ls", i, Melder_double (b[i]));
 		}
 	}
 	/*
@@ -1383,7 +1383,7 @@ int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	return 1;
 }
 
-int Sound_filter_part_formula (Sound me, double t1, double t2, const char *formula)
+int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula)
 {
 	Sound part = NULL, filtered = NULL;
 	Spectrum spec = NULL;
@@ -1550,7 +1550,7 @@ Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, 
-	char *silentLabel, char *soundingLabel)
+	wchar_t *silentLabel, wchar_t *soundingLabel)
 {
 	Intensity thee = NULL;
 	TextGrid him = NULL;

@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2006/12/10 separated from melder.c
  * pb 2007/05/24 wcsdup, wcsToAscii, asciiToWcs
+ * pb 2007/08/14 underscores for names _Melder_malloc and _Melder_calloc
  */
 
 #include "melder.h"
@@ -29,7 +30,7 @@ static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, tota
 
 #define TRACE_MALLOC  0
 
-void * Melder_malloc (unsigned long size) {
+void * _Melder_malloc (unsigned long size) {
 	void *result;
 	if (size <= 0)
 		return Melder_errorp ("(Melder_malloc:) Can never allocate %ld bytes.", size);
@@ -75,7 +76,7 @@ void * Melder_realloc (void *ptr, long size) {
 	return result;
 }
 
-void * Melder_calloc (long nelem, long elsize) {
+void * _Melder_calloc (long nelem, long elsize) {
 	void *result;
 	if (nelem <= 0)
 		return Melder_errorp ("(Melder_calloc:) "

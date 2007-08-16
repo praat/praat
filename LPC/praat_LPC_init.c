@@ -55,7 +55,7 @@ extern void praat_TimeFrameSampled_query_init (void *klas);
 
 
 DIRECT (Cepstrum_help)
-	Melder_help ("Cepstrum");
+	Melder_help (L"Cepstrum");
 END
 
 FORM (Cepstrum_draw, "Cepstrum: Draw", "Cepstrum: Draw...")
@@ -104,7 +104,7 @@ FORM (Cepstrumc_to_DTW, "Cepstrumc: To DTW", "Cepstrumc: To DTW...")
 	OK
 DO
 	Cepstrumc c1 = NULL, c2 = NULL;
-	WHERE (SELECTED && CLASS == classCepstrumc) if (c1) c2 = OBJECT; else c1 = OBJECT;
+	WHERE (SELECTED && CLASS == classCepstrumc) { if (c1) c2 = OBJECT; else c1 = OBJECT; }
 	NEW (Cepstrumc_to_DTW (c1, c2, GET_REAL ("Cepstral weight"),
 		GET_REAL ("Log energy weight"), GET_REAL ("Regression weight"),
 		GET_REAL ("Regression weight log energy"),
@@ -129,7 +129,7 @@ END
 /********************LFCC ********************************************/
 
 DIRECT (LFCC_help)
-	Melder_help ("LFCC");
+	Melder_help (L"LFCC");
 END
 
 FORM (LFCC_to_LPC, "LFCC: To LPC", "LFCC: To LPC...")
@@ -143,7 +143,7 @@ END
 
 /********************LPC ********************************************/
 
-DIRECT (LPC_help) Melder_help ("LPC"); END
+DIRECT (LPC_help) Melder_help (L"LPC"); END
 
 FORM (LPC_drawGain, "LPC: Draw gain", "LPC: Draw gain...")
     REAL ("From time (seconds)", "0.0")
@@ -161,7 +161,7 @@ END
 
 DIRECT (LPC_getSamplingInterval)
 	LPC me = ONLY (classLPC);
-	Melder_information2 (Melder_double (my samplingPeriod), " seconds");
+	Melder_information2 (Melder_double (my samplingPeriod), L" seconds");
 END
 
 FORM (LPC_getNumberOfCoefficients, "LPC: Get number of coefficients", "LPC: Get number of coefficients...")
@@ -173,10 +173,10 @@ DO
 	if (iframe > my nx)
 	{
 		(void) Melder_error ("Frame number is too large.\n\nPlease choose a number between 1 and %ld.", my nx);
-		Melder_information1 ("-1 coefficients (frame number was not defined)");
+		Melder_information1 (L"-1 coefficients (frame number was not defined)");
 		return 0;
 	}
-	Melder_information2 (Melder_integer ((my frame[iframe]).nCoefficients), " coefficients");
+	Melder_information2 (Melder_integer ((my frame[iframe]).nCoefficients), L" coefficients");
 END
 
 FORM (LPC_drawPoles, "LPC: Draw poles", "LPC: Draw poles...")
@@ -354,7 +354,7 @@ DIRECT (VocalTract_getLength)
 	VocalTract v = ONLY_OBJECT;
     double length = v -> xmax - v -> xmin;
     if (length <= 0.02) length = NUMundefined;
-	Melder_information2 (Melder_integer (length), " m");
+	Melder_information2 (Melder_integer (length), L" m");
 END
 
 /******************* LPC & Sound *************************************/

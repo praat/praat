@@ -1,6 +1,6 @@
 /* Regression.c
  *
- * Copyright (C) 2005-2006 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2005/05/01 created
  * pb 2006/12/10 MelderInfo
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Regression.h"
@@ -57,10 +58,10 @@ static void classRegression_info (I) {
 	iam (Regression);
 	long ivar;
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Intercept: ", Melder_double (my intercept));
+	MelderInfo_writeLine2 (L"Intercept: ", Melder_double (my intercept));
 	for (ivar = 1; ivar <= my parameters -> size; ivar ++) {
 		RegressionParameter parm = my parameters -> item [ivar];
-		MelderInfo_writeLine4 ("Coefficient of independent variable ", parm -> label, ": ", Melder_double (parm -> value));
+		MelderInfo_writeLine4 (L"Coefficient of independent variable ", parm -> label, L": ", Melder_double (parm -> value));
 	}
 }
 
@@ -84,10 +85,10 @@ end:
 	return 1;
 }
 
-int Regression_addParameter (I, const char *label, double value) {
+int Regression_addParameter (I, const wchar_t *label, double value) {
 	iam (Regression);
 	RegressionParameter thee = new (RegressionParameter); cherror
-	thy label = Melder_strdup (label); cherror
+	thy label = Melder_wcsdup (label); cherror
 	thy value = value;
 	Collection_addItem (my parameters, thee); cherror
 end:
@@ -199,11 +200,11 @@ LogisticRegression Table_to_LogisticRegression (Table me) {
 		goto end;
 	}
 	if (numberOfY0 == 0) {
-		Melder_error ("No data in class %s. Cannot determine result.", my columnHeaders [numberOfIndependentVariables + 1]. label);
+		Melder_error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 1]. label, L". Cannot determine result.");
 		goto end;
 	}
 	if (numberOfY1 == 0) {
-		Melder_error ("No data in class %s. Cannot determine result.", my columnHeaders [numberOfIndependentVariables + 2]. label);
+		Melder_error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 2]. label, L". Cannot determine result.");
 		goto end;
 	}
 	/*

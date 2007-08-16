@@ -28,6 +28,7 @@
  * pb 2007/01/27 compatible with stereo sounds
  * Erez Volk 2007/05/14 FLAC support
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "SoundEditor.h"
@@ -63,9 +64,9 @@ static struct {
 	};
 
 void SoundEditor_prefs (void) {
-	Resources_addInt ("SoundEditor.publish.windowType", & preferences.publish.windowType);
-	Resources_addDouble ("SoundEditor.publish.relativeWidth", & preferences.publish.relativeWidth);
-	Resources_addInt ("SoundEditor.publish.preserveTimes", & preferences.publish.preserveTimes);
+	Resources_addInt (L"SoundEditor.publish.windowType", & preferences.publish.windowType);
+	Resources_addDouble (L"SoundEditor.publish.relativeWidth", & preferences.publish.relativeWidth);
+	Resources_addInt (L"SoundEditor.publish.preserveTimes", & preferences.publish.preserveTimes);
 }
 
 /********** METHODS **********/
@@ -414,69 +415,69 @@ static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 static int menu_cb_SettingsReport (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	MelderInfo_open ();
-	MelderInfo_writeLine2 ("Data class: ", ((Thing) my data) -> methods -> _className);
-	MelderInfo_writeLine2 ("Data name: ", ((Thing) my data) -> name);
-	MelderInfo_writeLine3 ("Editor start: ", Melder_double (my tmin), " seconds");
-	MelderInfo_writeLine3 ("Editor end: ", Melder_double (my tmax), " seconds");
-	MelderInfo_writeLine3 ("Window start: ", Melder_double (my startWindow), " seconds");
-	MelderInfo_writeLine3 ("Window end: ", Melder_double (my endWindow), " seconds");
-	MelderInfo_writeLine3 ("Selection start: ", Melder_double (my startSelection), " seconds");
-	MelderInfo_writeLine3 ("Selection end: ", Melder_double (my endSelection), " seconds");
+	MelderInfo_writeLine2 (L"Data class: ", ((Thing) my data) -> methods -> _classNameW);
+	MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> nameW);
+	MelderInfo_writeLine3 (L"Editor start: ", Melder_double (my tmin), L" seconds");
+	MelderInfo_writeLine3 (L"Editor end: ", Melder_double (my tmax), L" seconds");
+	MelderInfo_writeLine3 (L"Window start: ", Melder_double (my startWindow), L" seconds");
+	MelderInfo_writeLine3 (L"Window end: ", Melder_double (my endWindow), L" seconds");
+	MelderInfo_writeLine3 (L"Selection start: ", Melder_double (my startSelection), L" seconds");
+	MelderInfo_writeLine3 (L"Selection end: ", Melder_double (my endSelection), L" seconds");
 	/* Sound flag: */
-	MelderInfo_writeLine2 ("Sound autoscaling: ", Melder_boolean (my sound.autoscaling));
+	MelderInfo_writeLine2 (L"Sound autoscaling: ", Melder_boolean (my sound.autoscaling));
 	/* Spectrogram flag: */
-	MelderInfo_writeLine2 ("Spectrogram show: ", Melder_boolean (my spectrogram.show));
+	MelderInfo_writeLine2 (L"Spectrogram show: ", Melder_boolean (my spectrogram.show));
 	/* Spectrogram settings: */
-	MelderInfo_writeLine3 ("Spectrogram view from: ", Melder_double (my spectrogram.viewFrom), " Hertz");
-	MelderInfo_writeLine3 ("Spectrogram view to: ", Melder_double (my spectrogram.viewTo), " Hertz");
-	MelderInfo_writeLine3 ("Spectrogram window length: ", Melder_double (my spectrogram.windowLength), " seconds");
-	MelderInfo_writeLine3 ("Spectrogram dynamic range: ", Melder_double (my spectrogram.dynamicRange), " dB");
+	MelderInfo_writeLine3 (L"Spectrogram view from: ", Melder_double (my spectrogram.viewFrom), L" Hertz");
+	MelderInfo_writeLine3 (L"Spectrogram view to: ", Melder_double (my spectrogram.viewTo), L" Hertz");
+	MelderInfo_writeLine3 (L"Spectrogram window length: ", Melder_double (my spectrogram.windowLength), L" seconds");
+	MelderInfo_writeLine3 (L"Spectrogram dynamic range: ", Melder_double (my spectrogram.dynamicRange), L" dB");
 	/* Advanced spectrogram settings: */
-	MelderInfo_writeLine2 ("Spectrogram number of time steps: ", Melder_integer (my spectrogram.timeSteps));
-	MelderInfo_writeLine2 ("Spectrogram number of frequency steps: ", Melder_integer (my spectrogram.frequencySteps));
-	MelderInfo_writeLine2 ("Spectrogram method: ", "Fourier");
-	MelderInfo_writeLine2 ("Spectrogram window shape: ", Sound_to_Spectrogram_windowShapeText (my spectrogram.windowShape));
-	MelderInfo_writeLine2 ("Spectrogram autoscaling: ", Melder_boolean (my spectrogram.autoscaling));
-	MelderInfo_writeLine3 ("Spectrogram maximum: ", Melder_double (my spectrogram.maximum), " dB/Hz");
-	MelderInfo_writeLine3 ("Spectrogram pre-emphasis: ", Melder_integer (my spectrogram.preemphasis), " dB/octave");
-	MelderInfo_writeLine2 ("Spectrogram dynamicCompression: ", Melder_integer (my spectrogram.dynamicCompression));
+	MelderInfo_writeLine2 (L"Spectrogram number of time steps: ", Melder_integer (my spectrogram.timeSteps));
+	MelderInfo_writeLine2 (L"Spectrogram number of frequency steps: ", Melder_integer (my spectrogram.frequencySteps));
+	MelderInfo_writeLine2 (L"Spectrogram method: ", L"Fourier");
+	MelderInfo_writeLine2 (L"Spectrogram window shape: ", Sound_to_Spectrogram_windowShapeText (my spectrogram.windowShape));
+	MelderInfo_writeLine2 (L"Spectrogram autoscaling: ", Melder_boolean (my spectrogram.autoscaling));
+	MelderInfo_writeLine3 (L"Spectrogram maximum: ", Melder_double (my spectrogram.maximum), L" dB/Hz");
+	MelderInfo_writeLine3 (L"Spectrogram pre-emphasis: ", Melder_integer (my spectrogram.preemphasis), L" dB/octave");
+	MelderInfo_writeLine2 (L"Spectrogram dynamicCompression: ", Melder_integer (my spectrogram.dynamicCompression));
 	/* Dynamic information: */
-	MelderInfo_writeLine3 ("Spectrogram cursor frequency: ", Melder_double (my spectrogram.cursor), " Hertz");
+	MelderInfo_writeLine3 (L"Spectrogram cursor frequency: ", Melder_double (my spectrogram.cursor), L" Hertz");
 	/* Pitch flag: */
-	MelderInfo_writeLine2 ("Pitch show: ", Melder_boolean (my pitch.show));
+	MelderInfo_writeLine2 (L"Pitch show: ", Melder_boolean (my pitch.show));
 	/* Pitch settings: */
-	MelderInfo_writeLine3 ("Pitch floor: ", Melder_double (my pitch.floor), " Hertz");
-	MelderInfo_writeLine3 ("Pitch ceiling: ", Melder_double (my pitch.ceiling), " Hertz");
-	MelderInfo_writeLine2 ("Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine3 (L"Pitch floor: ", Melder_double (my pitch.floor), L" Hertz");
+	MelderInfo_writeLine3 (L"Pitch ceiling: ", Melder_double (my pitch.ceiling), L" Hertz");
+	MelderInfo_writeLine2 (L"Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
 	/* Advanced pitch settings: */
-	MelderInfo_writeLine4 ("Pitch view from: ", Melder_double (my pitch.viewFrom), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine4 ("Pitch view to: ", Melder_double (my pitch.viewTo), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine2 ("Pitch method: ", my pitch.method == 1 ? "Autocorrelation" : "Forward cross-correlation");
-	MelderInfo_writeLine2 ("Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
-	MelderInfo_writeLine2 ("Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));
-	MelderInfo_writeLine3 ("Pitch silence threshold: ", Melder_double (my pitch.silenceThreshold), " of global peak");
-	MelderInfo_writeLine3 ("Pitch voicing threshold: ", Melder_double (my pitch.voicingThreshold), " (periodic power / total power)");
-	MelderInfo_writeLine3 ("Pitch octave cost: ", Melder_double (my pitch.octaveCost), " per octave");
-	MelderInfo_writeLine3 ("Pitch octave jump cost: ", Melder_double (my pitch.octaveJumpCost), " per octave");
-	MelderInfo_writeLine3 ("Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost), " Hertz");
+	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (my pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (my pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine2 (L"Pitch method: ", my pitch.method == 1 ? L"Autocorrelation" : L"Forward cross-correlation");
+	MelderInfo_writeLine2 (L"Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
+	MelderInfo_writeLine2 (L"Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));
+	MelderInfo_writeLine3 (L"Pitch silence threshold: ", Melder_double (my pitch.silenceThreshold), L" of global peak");
+	MelderInfo_writeLine3 (L"Pitch voicing threshold: ", Melder_double (my pitch.voicingThreshold), L" (periodic power / total power)");
+	MelderInfo_writeLine3 (L"Pitch octave cost: ", Melder_double (my pitch.octaveCost), L" per octave");
+	MelderInfo_writeLine3 (L"Pitch octave jump cost: ", Melder_double (my pitch.octaveJumpCost), L" per octave");
+	MelderInfo_writeLine3 (L"Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost), L" Hertz");
 	/* Intensity flag: */
-	MelderInfo_writeLine2 ("Intensity show: ", Melder_boolean (my intensity.show));
+	MelderInfo_writeLine2 (L"Intensity show: ", Melder_boolean (my intensity.show));
 	/* Intensity settings: */
-	MelderInfo_writeLine3 ("Intensity view from: ", Melder_double (my intensity.viewFrom), " dB");
-	MelderInfo_writeLine3 ("Intensity view to: ", Melder_double (my intensity.viewTo), " dB");
+	MelderInfo_writeLine3 (L"Intensity view from: ", Melder_double (my intensity.viewFrom), L" dB");
+	MelderInfo_writeLine3 (L"Intensity view to: ", Melder_double (my intensity.viewTo), L" dB");
 	/* Formant flag: */
-	MelderInfo_writeLine2 ("Formant show: ", Melder_boolean (my formant.show));
+	MelderInfo_writeLine2 (L"Formant show: ", Melder_boolean (my formant.show));
 	/* Formant settings: */
-	MelderInfo_writeLine3 ("Formant maximum formant: ", Melder_double (my formant.maximumFormant), " Hertz");
-	MelderInfo_writeLine2 ("Formant number of poles: ", Melder_integer (my formant.numberOfPoles));
-	MelderInfo_writeLine3 ("Formant window length: ", Melder_double (my formant.windowLength), " seconds");
-	MelderInfo_writeLine3 ("Formant dynamic range: ", Melder_double (my formant.dynamicRange), " dB");
-	MelderInfo_writeLine3 ("Formant dot size: ", Melder_double (my formant.dotSize), " mm");
+	MelderInfo_writeLine3 (L"Formant maximum formant: ", Melder_double (my formant.maximumFormant), L" Hertz");
+	MelderInfo_writeLine2 (L"Formant number of poles: ", Melder_integer (my formant.numberOfPoles));
+	MelderInfo_writeLine3 (L"Formant window length: ", Melder_double (my formant.windowLength), L" seconds");
+	MelderInfo_writeLine3 (L"Formant dynamic range: ", Melder_double (my formant.dynamicRange), L" dB");
+	MelderInfo_writeLine3 (L"Formant dot size: ", Melder_double (my formant.dotSize), L" mm");
 	/* Advanced formant settings: */
-	MelderInfo_writeLine2 ("Formant method: ", "Burg");
-	MelderInfo_writeLine3 ("Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), " Hertz");
+	MelderInfo_writeLine2 (L"Formant method: ", L"Burg");
+	MelderInfo_writeLine3 (L"Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), L" Hertz");
 	/* Pulses flag: */
-	MelderInfo_writeLine2 ("Pulses show: ", Melder_boolean (my pulses.show));
+	MelderInfo_writeLine2 (L"Pulses show: ", Melder_boolean (my pulses.show));
 	MelderInfo_close ();
 	return 1;
 }
@@ -525,8 +526,8 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static int menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help ("SoundEditor"); return 1; }
-static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help ("LongSoundEditor"); return 1; }
+static int menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); return 1; }
+static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); return 1; }
 
 static void createMenus (I) {
 	iam (SoundEditor);
@@ -610,9 +611,9 @@ static void draw (I) {
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my graphics, 0.5, 0.5, "(window longer than %.7g seconds)", my longSound.data -> bufferLength);
+		Graphics_printf (my graphics, 0.5, 0.5, L"(window longer than %.7g seconds)", my longSound.data -> bufferLength);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_printf (my graphics, 0.5, 0.5, "(zoom in to see the samples)");
+		Graphics_printf (my graphics, 0.5, 0.5, L"(zoom in to see the samples)");
 		return;
 	}
 

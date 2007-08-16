@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "PitchTierEditor.h"
@@ -30,8 +31,8 @@
 #define PitchTierEditor_methods RealTierEditor_methods
 class_create_opaque (PitchTierEditor, RealTierEditor);
 
-DIRECT (PitchTierEditor, cb_PitchTierEditorHelp) Melder_help ("PitchTierEditor"); END
-DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help ("PitchTier"); END
+DIRECT (PitchTierEditor, cb_PitchTierEditorHelp) Melder_help (L"PitchTierEditor"); END
+DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help (L"PitchTier"); END
 
 static void createMenus (I) {
 	iam (PitchTierEditor);

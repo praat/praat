@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/07/21
+ * pb 2007/08/10
  */
 
 /* Data inherits from Thing. */
@@ -160,7 +160,7 @@ int Data_writeLispToConsole (I);
 		The standard output will most often be a window named "Console".
 */
 
-int Data_writeToLispFile (I, MelderFile fs);
+int Data_writeToLispFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to a file".
@@ -238,7 +238,7 @@ int Data_readBinary (I, FILE *f);
 		but is preferably the same as the format produced by the 'writeBinary' method.
 */
 
-Any Data_readFromBinaryFile (MelderFile fs);
+Any Data_readFromBinaryFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as binary data from a file".
@@ -294,15 +294,15 @@ Any Data_readFromLispFile (MelderFile fs);
 */
 
 typedef struct structData_Description {
-	const char *name;   /* The name of this field. */
+	const wchar_t *name;   /* The name of this field. */
 	int type;   /* bytewa..inheritwa, see below */
 	int offset;   /* The offset of this field in the enveloping struct. */
 	int size;   /* The size of this field if it is in an array. */
-	const char *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
+	const wchar_t *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
 	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
 	int rank;   /* 0 = single, 1 = vector, 2 = matrix, -1 = array. */
-	const char *min1, *max1;   /* For vectors and matrices. */
-	const char *min2, *max2;   /* For matrices. */
+	const wchar_t *min1, *max1;   /* For vectors and matrices. */
+	const wchar_t *min2, *max2;   /* For matrices. */
 } *Data_Description;
 
 #define Data_members Thing_members
@@ -332,18 +332,18 @@ typedef struct structData_Description {
 	double (*getDy) (I); \
 	double (*getX) (I, long ix); \
 	double (*getY) (I, long iy); \
-	char * (*getRowStr) (I, long irow); \
-	char * (*getColStr) (I, long icol); \
+	wchar_t * (*getRowStr) (I, long irow); \
+	wchar_t * (*getColStr) (I, long icol); \
 	double (*getCell) (I); \
 	double (*getVector) (I, long irow, long icol); \
-	char * (*getVectorStr) (I, long icol); \
+	wchar_t * (*getVectorStr) (I, long icol); \
 	double (*getMatrix) (I, long irow, long icol); \
-	char * (*getMatrixStr) (I, long irow, long icol); \
+	wchar_t * (*getMatrixStr) (I, long irow, long icol); \
 	double (*getFunction0) (I); \
 	double (*getFunction1) (I, long irow, double x); \
 	double (*getFunction2) (I, double x, double y); \
-	double (*getRowIndex) (I, const char *rowLabel); \
-	double (*getColumnIndex) (I, const char *columnLabel);
+	double (*getRowIndex) (I, const wchar_t *rowLabel); \
+	double (*getColumnIndex) (I, const wchar_t *columnLabel);
 class_create (Data, Thing);
 
 /*
@@ -571,11 +571,11 @@ class_create (Data, Thing);
 int Data_Description_countMembers (Data_Description structDescription);
 /* Including inherited members. */
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const char *member);
+Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
 /* Find the location of member 'member' in a struct. */
 /* If 'structDescription' describes a class, the ancestor classes are also searched. */
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char *string);
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
 /* Find the first member that uses member 'string' in its size description (max1 or max2 fields). */
 
 /* Retrieving data from object + description. */
@@ -584,7 +584,7 @@ long Data_Description_integer (void *structAddress, Data_Description description
 /* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char *formula, long *result);
+	const wchar_t *formula, long *result);
 /*
  * Translates a string like '100' or 'my numberOfHorses' or 'my numberOfCows - 1' to an integer.
  * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.
@@ -638,7 +638,7 @@ Registering a file-type recognizer:
 	After this, Data_readFromFile is able to read Sun audio files.
 */
 
-Any Data_readFromFile (MelderFile fs);
+Any Data_readFromFile (MelderFile file);
 /*
 Purpose:
 	to read a file with data of any kind.

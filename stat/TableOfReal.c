@@ -52,9 +52,9 @@
 #include "oo_DESCRIPTION.h"
 #include "TableOfReal_def.h"
 
-static void fprintquotedstring (MelderFile file, const char *s) {
+static void fprintquotedstring (MelderFile file, const wchar_t *s) {
 	MelderFile_writeCharacter (file, '\"');
-	if (s) { char c; while ((c = *s ++) != '\0') { MelderFile_writeCharacter (file, c); if (c == '\"') MelderFile_writeCharacter (file, c); } }
+	if (s) { wchar_t c; while ((c = *s ++) != '\0') { MelderFile_writeCharacter (file, c); if (c == '\"') MelderFile_writeCharacter (file, c); } }
 	MelderFile_writeCharacter (file, '\"');
 }
 
@@ -70,11 +70,11 @@ static int writeText (I, MelderFile file) {
 	}
 	texputi4 (file, my numberOfRows, L"numberOfRows", 0,0,0,0,0);
 	for (long i = 1; i <= my numberOfRows; i ++) {
-		MelderFile_write3 (file, L"\nrow [", Melder_integerW (i), L"]: ");
+		MelderFile_write3 (file, L"\nrow [", Melder_integer (i), L"]: ");
 		fprintquotedstring (file, my rowLabels [i]);
 		for (long j = 1; j <= my numberOfColumns; j ++) {
 			double x = my data [i] [j];
-			MelderFile_write2 (file, L"\t", Melder_doubleW (x));
+			MelderFile_write2 (file, L"\t", Melder_double (x));
 		}
 	}
 	return 1;
@@ -84,18 +84,18 @@ static int readText (I, MelderReadString *text) {
 	iam (TableOfReal);
 	my numberOfColumns = texgeti4 (text);
 	if (my numberOfColumns >= 1) {
-		if (! (my columnLabels = NUMvector (sizeof (char *), 1, my numberOfColumns))) return 0;
+		if (! (my columnLabels = NUMvector (sizeof (wchar_t *), 1, my numberOfColumns))) return 0;
 		for (long i = 1; i <= my numberOfColumns; i ++)
-			if (! (my columnLabels [i] = texgets2 (text))) return 0;
+			if (! (my columnLabels [i] = texgetw2 (text))) return 0;
 	}
 	my numberOfRows = texgeti4 (text);
 	if (my numberOfRows >= 1) {
-		if (! (my rowLabels = NUMvector (sizeof (char *), 1, my numberOfRows))) return 0;
+		if (! (my rowLabels = NUMvector (sizeof (wchar_t *), 1, my numberOfRows))) return 0;
 	}
 	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
 		if (! (my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns))) return 0;
 		for (long i = 1; i <= my numberOfRows; i ++) {
-			if (! (my rowLabels [i] = texgets2 (text))) return 0;
+			if (! (my rowLabels [i] = texgetw2 (text))) return 0;
 			for (long j = 1; j <= my numberOfColumns; j ++)
 				my data [i] [j] = texgetr8 (text);
 		}
@@ -106,21 +106,21 @@ static int readText (I, MelderReadString *text) {
 static void info (I) {
 	iam (TableOfReal);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
 }
 
 static double getNrow (I) { iam (TableOfReal); return my numberOfRows; }
 static double getNcol (I) { iam (TableOfReal); return my numberOfColumns; }
-static char * getRowStr (I, long irow) {
+static wchar_t * getRowStr (I, long irow) {
 	iam (TableOfReal);
 	if (irow < 1 || irow > my numberOfRows) return NULL;
-	return my rowLabels [irow] ? my rowLabels [irow] : "";
+	return my rowLabels [irow] ? my rowLabels [irow] : L"";
 }
-static char * getColStr (I, long icol) {
+static wchar_t * getColStr (I, long icol) {
 	iam (TableOfReal);
 	if (icol < 1 || icol > my numberOfColumns) return NULL;
-	return my columnLabels [icol] ? my columnLabels [icol] : "";
+	return my columnLabels [icol] ? my columnLabels [icol] : L"";
 }
 static double getMatrix (I, long irow, long icol) {
 	iam (TableOfReal);
@@ -128,11 +128,11 @@ static double getMatrix (I, long irow, long icol) {
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	return my data [irow] [icol];
 }
-static double getRowIndex (I, const char *rowLabel) {
+static double getRowIndex (I, const wchar_t *rowLabel) {
 	iam (TableOfReal);
 	return TableOfReal_rowLabelToIndex (me, rowLabel);
 }
-static double getColumnIndex (I, const char *columnLabel) {
+static double getColumnIndex (I, const wchar_t *columnLabel) {
 	iam (TableOfReal);
 	return TableOfReal_columnLabelToIndex (me, columnLabel);
 }
@@ -162,8 +162,8 @@ int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 		return Melder_error ("(TableOfReal_init:) Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	if (! (my rowLabels = NUMvector (sizeof (char *), 1, numberOfRows))) return 0;
-	if (! (my columnLabels = NUMvector (sizeof (char *), 1, numberOfColumns))) return 0;
+	if (! (my rowLabels = NUMvector (sizeof (wchar_t *), 1, numberOfRows))) return 0;
+	if (! (my columnLabels = NUMvector (sizeof (wchar_t *), 1, numberOfColumns))) return 0;
 	if (! (my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns))) return 0;
 	return 1;
 }
@@ -176,20 +176,18 @@ TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 
 /***** QUERY *****/
 
-long TableOfReal_rowLabelToIndex (I, const char *label) {
+long TableOfReal_rowLabelToIndex (I, const wchar_t *label) {
 	iam (TableOfReal);
-	long irow;
-	for (irow = 1; irow <= my numberOfRows; irow ++)
-		if (my rowLabels [irow] && strequ (my rowLabels [irow], label))
+	for (long irow = 1; irow <= my numberOfRows; irow ++)
+		if (my rowLabels [irow] && wcsequ (my rowLabels [irow], label))
 			return irow;
 	return 0;
 }
 
-long TableOfReal_columnLabelToIndex (I, const char *label) {
+long TableOfReal_columnLabelToIndex (I, const wchar_t *label) {
 	iam (TableOfReal);
-	long icol;
-	for (icol = 1; icol <= my numberOfColumns; icol ++)
-		if (my columnLabels [icol] && strequ (my columnLabels [icol], label))
+	for (long icol = 1; icol <= my numberOfColumns; icol ++)
+		if (my columnLabels [icol] && wcsequ (my columnLabels [icol], label))
 			return icol;
 	return 0;
 }
@@ -197,10 +195,9 @@ long TableOfReal_columnLabelToIndex (I, const char *label) {
 double TableOfReal_getColumnMean (I, long icol) {
 	iam (TableOfReal);
 	double sum = 0.0;
-	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my numberOfRows < 1) return NUMundefined;
-	for (irow = 1; irow <= my numberOfRows; irow ++)
+	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		sum += my data [irow] [icol];
 	return sum / my numberOfRows;
 }
@@ -208,10 +205,9 @@ double TableOfReal_getColumnMean (I, long icol) {
 double TableOfReal_getColumnStdev (I, long icol) {
 	iam (TableOfReal);
 	double mean = TableOfReal_getColumnMean (me, icol), sum = 0.0, d;
-	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my numberOfRows < 2) return NUMundefined;
-	for (irow = 1; irow <= my numberOfRows; irow ++)
+	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		sum += ( d = my data [irow] [icol] - mean, d * d );
 	return sqrt (sum / (my numberOfRows - 1));
 }
@@ -221,18 +217,17 @@ double TableOfReal_getColumnStdev (I, long icol) {
 int TableOfReal_removeRow (I, long irow) {
 	iam (TableOfReal);
 	double **data = NULL;
-	long i, j;
 	if (my numberOfRows == 1)
 		{ Melder_error ("Cannot remove the only row."); goto end; }
 	if (irow < 1 || irow > my numberOfRows)
 		{ Melder_error ("No row %ld.", irow); goto end; }
 	data = NUMdmatrix (1, my numberOfRows - 1, 1, my numberOfColumns); cherror
-	for (i = 1; i <= my numberOfColumns; i ++) {
-		for (j = 1; j < irow; j ++) data [j] [i] = my data [j] [i];
-		for (j = irow; j < my numberOfRows; j ++) data [j] [i] = my data [j + 1] [i];
+	for (long i = 1; i <= my numberOfColumns; i ++) {
+		for (long j = 1; j < irow; j ++) data [j] [i] = my data [j] [i];
+		for (long j = irow; j < my numberOfRows; j ++) data [j] [i] = my data [j + 1] [i];
 	}
 	Melder_free (my rowLabels [irow]);
-	for (j = irow; j < my numberOfRows; j ++) my rowLabels [j] = my rowLabels [j + 1];
+	for (long j = irow; j < my numberOfRows; j ++) my rowLabels [j] = my rowLabels [j + 1];
 	NUMdmatrix_free (my data, 1, 1);
 	my data = data;
 	my numberOfRows --;
@@ -244,19 +239,18 @@ end:
 int TableOfReal_insertRow (I, long irow) {
 	iam (TableOfReal);
 	double **data = NULL;
-	char **rowLabels = NULL;
-	long i, j;
+	wchar_t **rowLabels = NULL;
 	if (irow < 1 || irow > my numberOfRows + 1)
 		{ Melder_error ("Cannot create row %ld.", irow); goto end; }
 	data = NUMdmatrix (1, my numberOfRows + 1, 1, my numberOfColumns); cherror
 	rowLabels = NUMpvector (1, my numberOfRows + 1);
-	for (j = 1; j < irow; j ++)	{
+	for (long j = 1; j < irow; j ++)	{
 		rowLabels [j] = my rowLabels [j];
-		for (i = 1; i <= my numberOfColumns; i ++) data [j] [i] = my data [j] [i];
+		for (long i = 1; i <= my numberOfColumns; i ++) data [j] [i] = my data [j] [i];
 	}
-	for (j = my numberOfRows + 1; j > irow; j --) {
+	for (long j = my numberOfRows + 1; j > irow; j --) {
 		rowLabels [j] = my rowLabels [j - 1];
-		for (i = 1; i <= my numberOfColumns; i ++) data [j] [i] = my data [j - 1] [i];
+		for (long i = 1; i <= my numberOfColumns; i ++) data [j] [i] = my data [j - 1] [i];
 	}
 	NUMdmatrix_free (my data, 1, 1);
 	NUMpvector_free (my rowLabels, 1);
@@ -271,18 +265,17 @@ end:
 int TableOfReal_removeColumn (I, long icol) {
 	iam (TableOfReal);
 	double **data = NULL;
-	long i, j;
 	if (my numberOfColumns == 1)
 		{ Melder_error ("Cannot remove the only column."); goto end; }
 	if (icol < 1 || icol > my numberOfColumns)
 		{ Melder_error ("No column %ld.", icol); goto end; }
 	data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns - 1); cherror
-	for (i = 1; i <= my numberOfRows; i ++) {
-		for (j = 1; j < icol; j ++) data [i] [j] = my data [i] [j];
-		for (j = icol; j < my numberOfColumns; j ++) data [i] [j] = my data [i] [j + 1];
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		for (long j = 1; j < icol; j ++) data [i] [j] = my data [i] [j];
+		for (long j = icol; j < my numberOfColumns; j ++) data [i] [j] = my data [i] [j + 1];
 	}
 	Melder_free (my columnLabels [icol]);
-	for (j = icol; j < my numberOfColumns; j ++) my columnLabels [j] = my columnLabels [j + 1];
+	for (long j = icol; j < my numberOfColumns; j ++) my columnLabels [j] = my columnLabels [j + 1];
 	NUMdmatrix_free (my data, 1, 1);
 	my data = data;
 	my numberOfColumns --;
@@ -294,19 +287,18 @@ end:
 int TableOfReal_insertColumn (I, long icol) {
 	iam (TableOfReal);
 	double **data = NULL;
-	char **columnLabels = NULL;
-	long i, j;
+	wchar_t **columnLabels = NULL;
 	if (icol < 1 || icol > my numberOfColumns + 1)
 		{ Melder_error ("Cannot create column %ld.", icol); goto end; }
 	data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns + 1); cherror
 	columnLabels = NUMpvector (1, my numberOfColumns + 1); cherror
-	for (j = 1; j < icol; j ++) {
+	for (long j = 1; j < icol; j ++) {
 		columnLabels [j] = my columnLabels [j];
-		for (i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
+		for (long i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
 	}
-	for (j = my numberOfColumns + 1; j > icol; j --) {
+	for (long j = my numberOfColumns + 1; j > icol; j --) {
 		columnLabels [j] = my columnLabels [j - 1];
-		for (i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j - 1];
+		for (long i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j - 1];
 	}
 	NUMdmatrix_free (my data, 1, 1);
 	NUMpvector_free (my columnLabels, 1);
@@ -318,36 +310,33 @@ end:
 	return 1;
 }
 
-void TableOfReal_setRowLabel (I, long irow, const char *label) {
+void TableOfReal_setRowLabel (I, long irow, const wchar_t *label) {
 	iam (TableOfReal);
 	if (irow < 1 || irow > my numberOfRows || label == my rowLabels [irow]) return;
 	Melder_free (my rowLabels [irow]);
-	my rowLabels [irow] = Melder_strdup (label);
+	my rowLabels [irow] = Melder_wcsdup (label);
 }
 
-void TableOfReal_setColumnLabel (I, long icol, const char *label) {
+void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label) {
 	iam (TableOfReal);
 	if (icol < 1 || icol > my numberOfColumns || label == my columnLabels [icol]) return;
 	Melder_free (my columnLabels [icol]);
-	my columnLabels [icol] = Melder_strdup (label);
+	my columnLabels [icol] = Melder_wcsdup (label);
 }
 
-int TableOfReal_formula (I, const char *expressionA, thou) {
+int TableOfReal_formula (I, const wchar_t *expression, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
-	long irow, icol;
-	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
 	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (thee == NULL) thee = me;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			double result;
 			Formula_run (irow, icol, & result, NULL); cherror
 			thy data [irow] [icol] = result;
 		}
 	}
 end:
-	Melder_free (expression);
 	iferror return 0;
 	return 1;
 }
@@ -355,39 +344,35 @@ end:
 /***** EXTRACT PART *****/
 
 static void copyRowLabels (TableOfReal me, TableOfReal thee) {
-	long irow;
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		thy rowLabels [irow] = Melder_strdup (my rowLabels [irow]); iferror return;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		thy rowLabels [irow] = Melder_wcsdup (my rowLabels [irow]); iferror return;
 	}
 }
 
 static void copyColumnLabels (TableOfReal me, TableOfReal thee) {
-	long icol;
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy columnLabels [icol] = Melder_strdup (my columnLabels [icol]); iferror return;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		thy columnLabels [icol] = Melder_wcsdup (my columnLabels [icol]); iferror return;
 	}
 }
 
 static void copyRow (TableOfReal me, long myRow, TableOfReal thee, long thyRow) {
-	long icol;
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
-	thy rowLabels [thyRow] = Melder_strdup (my rowLabels [myRow]); iferror return;
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	thy rowLabels [thyRow] = Melder_wcsdup (my rowLabels [myRow]); iferror return;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		thy data [thyRow] [icol] = my data [myRow] [icol];
 	}
 }
 
 static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCol) {
-	long irow;
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
-	thy columnLabels [thyCol] = Melder_strdup (my columnLabels [myCol]); iferror return;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	thy columnLabels [thyCol] = Melder_wcsdup (my columnLabels [myCol]); iferror return;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		thy data [irow] [thyCol] = my data [irow] [myCol];
 	}
 }
@@ -395,12 +380,12 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder_NUMBER, double criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
-	long irow, n = 0;
+	long n = 0;
 	if (column < 1 || column > my numberOfColumns) {
 		Melder_error ("No such column: %ld.", column);
 		goto end;
 	}
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
 			n ++;
 		}
@@ -412,7 +397,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder
 	thee = TableOfReal_create (n, my numberOfColumns); cherror
 	copyColumnLabels (me, thee); cherror
 	n = 0;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
@@ -422,11 +407,11 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const char *criterion) {
+TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
-	long irow, n = 0;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	long n = 0;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
 			n ++;
 		}
@@ -438,7 +423,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const
 	thee = TableOfReal_create (n, my numberOfColumns); cherror
 	copyColumnLabels (me, thee); cherror
 	n = 0;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
 			copyRow (me, irow, thee, ++ n); cherror
 		}
@@ -478,11 +463,11 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const char *criterion) {
+TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
-	long icol, n = 0;
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	long n = 0;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
 			n ++;
 		}
@@ -494,7 +479,7 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, co
 	thee = TableOfReal_create (my numberOfRows, n);
 	copyRowLabels (me, thee); cherror
 	n = 0;
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
@@ -509,9 +494,8 @@ end:
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static long *getElementsOfRanges (const char *ranges, long maximumElement, long *numberOfElements, const char *elementType)
-{
-	const char *p;
+static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, const wchar_t *elementType) {
+	const wchar_t *p;
 	long previousElement, currentElement, *elements, ielement;
 	/*
 	 * Count the elements.
@@ -523,12 +507,14 @@ static long *getElementsOfRanges (const char *ranges, long maximumElement, long 
 		while (*p == ' ' || *p == '\t') p ++;
 		if (*p == '\0') break;
 		if (isdigit (*p)) {
-			currentElement = atol (p);
+			currentElement = wcstol (p, NULL, 10);
 			if (currentElement == 0) {
-				return Melder_errorp ("No such %s: 0 (minimum is 1).", elementType);
+				Melder_error3 (L"No such ", elementType, L": 0 (minimum is 1).");
+				return NULL;
 			}
 			if (currentElement > maximumElement) {
-				return Melder_errorp ("No such %s: %ld (maximum is %ld).", elementType, currentElement, maximumElement);
+				Melder_error7 (L"No such ", elementType, L": ", Melder_integer (currentElement), L" (maximum is ", Melder_integer (maximumElement), L").");
+				return NULL;
 			}
 			*numberOfElements += 1;
 			previousElement = currentElement;
@@ -544,12 +530,14 @@ static long *getElementsOfRanges (const char *ranges, long maximumElement, long 
 			if (! isdigit (*p)) {
 				return Melder_errorp ("End of range should be a positive whole number.");
 			}
-			currentElement = atol (p);
+			currentElement = wcstol (p, NULL, 10);
 			if (currentElement == 0) {
-				return Melder_errorp ("No such %s: 0 (minimum is 1).", elementType);
+				Melder_error3 (L"No such ", elementType, L": 0 (minimum is 1).");
+				return NULL;
 			}
 			if (currentElement > maximumElement) {
-				return Melder_errorp ("No such %s: %ld (maximum is %ld).", elementType, currentElement, maximumElement);
+				Melder_error7 (L"No such ", elementType, L": ", Melder_integer (currentElement), L" (maximum is ", Melder_integer (maximumElement), L").");
+				return NULL;
 			}
 			if (currentElement > previousElement) {
 				*numberOfElements += currentElement - previousElement;
@@ -577,13 +565,13 @@ static long *getElementsOfRanges (const char *ranges, long maximumElement, long 
 		while (*p == ' ' || *p == '\t') p ++;
 		if (*p == '\0') break;
 		if (isdigit (*p)) {
-			currentElement = atol (p);
+			currentElement = wcstol (p, NULL, 10);
 			elements [++ *numberOfElements] = currentElement;
 			previousElement = currentElement;
 			do { p ++; } while (isdigit (*p));
 		} else if (*p == ':') {
 			do { p ++; } while (*p == ' ' || *p == '\t');
-			currentElement = atol (p);
+			currentElement = wcstol (p, NULL, 10);
 			if (currentElement > previousElement) {
 				for (ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
 					elements [++ *numberOfElements] = ielement;
@@ -600,11 +588,11 @@ static long *getElementsOfRanges (const char *ranges, long maximumElement, long 
 	return elements;
 }
 
-TableOfReal TableOfReal_extractRowRanges (I, const char *ranges) {
+TableOfReal TableOfReal_extractRowRanges (I, const wchar_t *ranges) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long *elements = NULL, numberOfElements, ielement;
-	elements = getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, "row"); cherror
+	elements = getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, L"row"); cherror
 	thee = TableOfReal_create (numberOfElements, my numberOfColumns); cherror
 	copyColumnLabels (me, thee);
 	for (ielement = 1; ielement <= numberOfElements; ielement ++) {
@@ -616,11 +604,11 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnRanges (I, const char *ranges) {
+TableOfReal TableOfReal_extractColumnRanges (I, const wchar_t *ranges) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long *elements = NULL, numberOfElements, ielement;
-	elements = getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, "column"); cherror
+	elements = getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, L"column"); cherror
 	thee = TableOfReal_create (my numberOfRows, numberOfElements); cherror
 	copyRowLabels (me, thee);
 	for (ielement = 1; ielement <= numberOfElements; ielement ++) {
@@ -632,11 +620,10 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhere (I, const char *conditionA) {
+TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
-	wchar_t *condition = Melder_asciiToWcs (conditionA); cherror
 	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
 	/*
 	 * Count the new number of rows.
@@ -676,16 +663,14 @@ TableOfReal TableOfReal_extractRowsWhere (I, const char *conditionA) {
 		}
 	}
 end:
-	Melder_free (condition);
 	iferror forget (thee);
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhere (I, const char *conditionA) {
+TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
-	wchar_t *condition = Melder_asciiToWcs (conditionA); cherror
 	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
 	/*
 	 * Count the new number of columns.
@@ -725,7 +710,6 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const char *conditionA) {
 		}
 	}
 end:
-	Melder_free (condition);
 	iferror forget (thee);
 	return thee;
 }
@@ -739,7 +723,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 	thy strings = NUMpvector (1, my numberOfRows); cherror
 	thy numberOfStrings = my numberOfRows;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		thy strings [irow] = Melder_strdup (my rowLabels [irow] ? my rowLabels [irow] : ""); cherror
+		thy strings [irow] = Melder_wcsdup (my rowLabels [irow] ? my rowLabels [irow] : L""); cherror
 	}
 end:
 	iferror forget (thee);
@@ -753,7 +737,7 @@ Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 	thy strings = NUMpvector (1, my numberOfColumns); cherror
 	thy numberOfStrings = my numberOfColumns;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy strings [icol] = Melder_strdup (my columnLabels [icol] ? my columnLabels [icol] : ""); cherror
+		thy strings [icol] = Melder_wcsdup (my columnLabels [icol] ? my columnLabels [icol] : L""); cherror
 	}
 end:
 	iferror forget (thee);
@@ -775,21 +759,21 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	*denominator = 0;   /* Failure. */
 }
 
-static void print4 (char *buffer, double value, int iformat, int width, int precision) {
-	char formatString [40];
-	if (value == NUMundefined) strcpy (buffer, "undefined");
+static void print4 (wchar_t *buffer, double value, int iformat, int width, int precision) {
+	wchar_t formatString [40];
+	if (value == NUMundefined) wcscpy (buffer, L"undefined");
 	else if (iformat == 4) {
 		long numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
 		if (numerator == 0)
-			sprintf (buffer, "0");
+			swprintf (buffer, 40, L"0");
 		else if (denominator > 1)
-			sprintf (buffer, "%ld/%ld", numerator, denominator);
+			swprintf (buffer, 40, L"%ld/%ld", numerator, denominator);
 		else
-			sprintf (buffer, "%.7g", value);
+			swprintf (buffer, 40, L"%.7g", value);
 	} else {
-		sprintf (formatString, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
-		sprintf (buffer, formatString, value);
+		swprintf (formatString, 40, L"%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
+		swprintf (buffer, 40, formatString, value);
 	}
 }
 
@@ -854,7 +838,7 @@ void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int ifo
 			Graphics_text (g, 0.5 - leftMargin, y, my rowLabels [row]);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (col = 1; col <= my numberOfColumns; col ++) {
-			char text [40];
+			wchar_t text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, text);
 		}
@@ -868,7 +852,7 @@ void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int ifo
 }
 
 void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
-	const char *conditionFormula)
+	const wchar_t *conditionFormula)
 {
 	iam (TableOfReal);
 	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight;
@@ -895,7 +879,7 @@ void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int 
 			Graphics_text (g, 0.5 - leftMargin, y, my rowLabels [row]);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (col = 1; col <= my numberOfColumns; col ++) if (conditions -> z [row] [col] != 0.0) {
-			char text [40];
+			wchar_t text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, text);
 		}
@@ -1098,12 +1082,12 @@ end:
 static void TableOfReal_sort (TableOfReal me, int useLabels, long column1, long column2) {
 	long i, j;
 	for (i = 1; i < my numberOfRows; i ++) for (j = i + 1; j <= my numberOfRows; j ++) {
-		char *tmpString;
+		wchar_t *tmpString;
 		long column;
 		if (useLabels) {
 			if (my rowLabels [i] != NULL) {
 				if (my rowLabels [j] != NULL) {
-					int compare = strcmp (my rowLabels [i], my rowLabels [j]);
+					int compare = wcscmp (my rowLabels [i], my rowLabels [j]);
 					if (compare < 0) continue;
 					if (compare > 0) goto swap;
 				} else goto swap;
@@ -1163,8 +1147,8 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 		}
 		for (irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = my rows -> item [irow];
-			char *string = row -> cells [labelColumn]. string;
-			TableOfReal_setRowLabel (thee, irow, string ? string : "");
+			wchar_t *string = row -> cells [labelColumn]. string;
+			TableOfReal_setRowLabel (thee, irow, string ? string : L"");
 			for (icol = 1; icol < labelColumn; icol ++) {
 				thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 				//thy data [irow] [icol] = Table_getNumericValue (me, irow, icol);
@@ -1191,21 +1175,20 @@ end:
 	return thee;
 }
 
-Table TableOfReal_to_Table (TableOfReal me, const char *labelOfFirstColumn) {
-	long irow, icol;
+Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 	Table thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
 	Table_setColumnLabel (thee, 1, labelOfFirstColumn); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		char *columnLabel = my columnLabels [icol];
-		thy columnHeaders [icol + 1]. label = Melder_strdup (columnLabel && columnLabel [0] ? columnLabel : "?"); cherror
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		wchar_t *columnLabel = my columnLabels [icol];
+		thy columnHeaders [icol + 1]. label = Melder_wcsdup (columnLabel && columnLabel [0] ? columnLabel : L"?"); cherror
 	}
-	for (irow = 1; irow <= thy rows -> size; irow ++) {
-		char *stringValue = my rowLabels [irow];
+	for (long irow = 1; irow <= thy rows -> size; irow ++) {
+		wchar_t *stringValue = my rowLabels [irow];
 		TableRow row = thy rows -> item [irow];
-		row -> cells [1]. string = Melder_strdup (stringValue && stringValue [0] ? stringValue : "?"); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
+		row -> cells [1]. string = Melder_wcsdup (stringValue && stringValue [0] ? stringValue : L"?"); cherror
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			double numericValue = my data [irow] [icol];
-			row -> cells [icol + 1]. string = Melder_strdup (Melder_double (numericValue)); cherror
+			row -> cells [icol + 1]. string = Melder_wcsdup (Melder_double (numericValue)); cherror
 		}
 	}
 end:
@@ -1214,64 +1197,70 @@ end:
 }
 
 int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {
-	FILE *f = Melder_fopen (file, "w");
-	long i, j;
-	if (! f) return 0;
-	fprintf (f, "rowLabel");
-	for (i = 1; i <= my numberOfColumns; i ++) {
-		fprintf (f, "\t%s", my columnLabels [i] && my columnLabels [i] [0] ? my columnLabels [i] : "?");
+	MelderStringW buffer = { 0 };
+	MelderStringW_copyW (& buffer, L"rowLabel");
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		MelderStringW_appendCharacter (& buffer, '\t');
+		wchar_t *s = my columnLabels [icol];
+		MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 	}
-	for (i = 1; i <= my numberOfRows; i ++) {
-		fprintf (f, "\n%s", my rowLabels [i] && my rowLabels [i] [0] ? my rowLabels [i] : "?");
-		for (j = 1; j <= my numberOfColumns; j ++) {
-			double x = my data [i] [j];
-			fprintf (f, "\t%s", Melder_double (x));
+	MelderStringW_appendCharacter (& buffer, '\n');
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		wchar_t *s = my rowLabels [irow];
+		MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			MelderStringW_appendCharacter (& buffer, '\t');
+			double x = my data [irow] [icol];
+			MelderStringW_appendW (& buffer, Melder_double (x));
 		}
+		MelderStringW_appendCharacter (& buffer, '\n');
 	}
-	if (! Melder_fclose (file, f)) return 0;
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	MelderFile_writeText (file, buffer.string);
+end:
+	MelderStringW_free (& buffer);
+	iferror return 0;
 	return 1;
 }
 
 TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
-	FILE *f = NULL;
 	TableOfReal me = NULL;
-	long nrow, ncol, nelements, irow, icol;
-
-	f = Melder_fopen (file, "rb");
-	if (! f) goto end;
+	wchar_t *string = MelderFile_readText (file); cherror
+	long nrow, ncol, nelements;
 
 	/*
-	 * Count number of columns.
+	 * Count columns.
 	 */
 	ncol = 0;
+	wchar_t *p = & string [0];
 	for (;;) {
-		int kar = fgetc (f);
-		if (kar == '\n' || kar == '\r' || kar == EOF) break;
+		wchar_t kar = *p++;
+		if (kar == '\n' || kar == '\0') break;
 		if (kar == ' ' || kar == '\t') continue;
 		ncol ++;
-		do {
-			kar = fgetc (f);
-		} while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\r' && kar != EOF);
-		if (kar == '\n' || kar == '\r' || kar == EOF) break;
+		do { kar = *p++; } while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\0');
+		if (kar == '\n' || kar == '\0') break;
 	}
 	ncol --;
 	if (ncol < 1) { Melder_error ("No columns."); goto end; }
 
 	/*
-	 * Count number of elements.
+	 * Count elements.
 	 */
-	rewind (f);
+	p = & string [0];
 	nelements = 0;
 	for (;;) {
-		if (fscanf (f, "%s", Melder_buffer1) < 1) break;   /* Zero or end-of-file. */
+		wchar_t kar = *p++;
+		if (kar == '\0') break;
+		if (kar == ' ' || kar == '\t' || kar == '\n') continue;
 		nelements ++;
+		do { kar = *p++; } while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\0');
+		if (kar == '\0') break;
 	}
 
 	/*
 	 * Check if all columns are complete.
 	 */
-	if (! nelements || nelements % (ncol + 1)) {
+	if (nelements == 0 || nelements % (ncol + 1) != 0) {
 		Melder_error ("The number of elements (%ld) is not a multiple of the number of columns plus 1 (%ld).",
 			nelements, ncol + 1);
 		goto end;
@@ -1280,7 +1269,6 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	/*
 	 * Create empty table.
 	 */
-
 	nrow = nelements / (ncol + 1) - 1;
 	me = TableOfReal_create (nrow, ncol);
 	if (! me) goto end;
@@ -1288,26 +1276,39 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	/*
 	 * Read elements.
 	 */
-
-	rewind (f);
-	fscanf (f, "%s", Melder_buffer1);   /* Ignore header of column with labels. */
-	for (icol = 1; icol <= ncol; icol ++) {
-		fscanf (f, "%s", Melder_buffer1);
-		TableOfReal_setColumnLabel (me, icol, Melder_buffer1);
+	p = & string [0];
+	while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
+	while (*p != ' ' && *p != '\t') { Melder_assert (*p != '\0'); p ++; }   // Ignore the header of the zeroth column ("rowLabel" perhaps).
+	for (long icol = 1; icol <= ncol; icol ++) {
+		while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
+		static MelderStringW buffer = { 0 };
+		MelderStringW_empty (& buffer);
+		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		TableOfReal_setColumnLabel (me, icol, buffer.string);
+		MelderStringW_empty (& buffer);
 	}
-	for (irow = 1; irow <= nrow; irow ++) {
-		fscanf (f, "%s", Melder_buffer1);
-		TableOfReal_setRowLabel (me, irow, Melder_buffer1);
-		for (icol = 1; icol <= ncol; icol ++) {
-			fscanf (f, "%s", Melder_buffer1);   /* Because some columns may contain strings. */
-			my data [irow] [icol] = atof (Melder_buffer1);   /* If cell contains a string, this will be 0. */
+	for (long irow = 1; irow <= nrow; irow ++) {
+		while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
+		static MelderStringW buffer = { 0 };
+		MelderStringW_empty (& buffer);
+		while (*p != ' ' && *p != '\t') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		TableOfReal_setRowLabel (me, irow, buffer.string);
+		MelderStringW_empty (& buffer);
+		for (long icol = 1; icol <= ncol; icol ++) {
+			while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
+			MelderStringW_empty (& buffer);
+			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+			my data [irow] [icol] = Melder_atofW (buffer.string);   /* If cell contains a string, this will be 0. */
+			MelderStringW_empty (& buffer);
 		}
 	}
 
 end:
-	Melder_fclose (file, f);
-	iferror { forget (me); return Melder_errorp (
-		"(TableOfReal_readFromHeaderlessSpreadsheetFile:) File %s not read.", MelderFile_messageName (file)); }
+	iferror {
+		forget (me);
+		Melder_error3 (L"(TableOfReal_readFromHeaderlessSpreadsheetFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		return NULL;
+	}
 	return me;
 }
 

@@ -46,14 +46,14 @@
 static void info (I) {
 	iam (Formant);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
-	MelderInfo_writeLine1 ("Time sampling:");
-	MelderInfo_writeLine2 ("   Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine1 (L"Time sampling:");
+	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
 }
 
 static double getValueAtSample (I, long iframe, long which, int units) {
@@ -140,8 +140,8 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
-		Graphics_textLeft (g, 1, "Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
@@ -186,14 +186,14 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
-		Graphics_textLeft (g, 1, "Formant frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_textLeft (g, 1, L"Formant frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1.0, 1000.0, 1, 1, 1);
 	}
 }
 
-int Formant_formula_bandwidths (Formant me, const char *formula) {
+int Formant_formula_bandwidths (Formant me, const wchar_t *formula) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
 	if (nrow < 1) return Melder_error ("(Formant_formula_bandwidths:) No formants available.");
@@ -215,7 +215,7 @@ end:
 	return 1;
 }
 
-int Formant_formula_frequencies (Formant me, const char *formula) {
+int Formant_formula_frequencies (Formant me, const wchar_t *formula) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
 	if (nrow < 1) return Melder_error ("(Formant_formula_frequencies:) No formants available.");
@@ -336,7 +336,7 @@ double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
-	double size_mm, const char *mark, int garnish)
+	double size_mm, const wchar_t *mark, int garnish)
 {
 	long itmin, itmax, iframe;
 	if (iformant1 < 1 || iformant2 < 1) return;
@@ -361,11 +361,11 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		char text [100];
+		wchar_t text [100];
 		Graphics_drawInnerBox (g);
-		sprintf (text, "%%F_%d (Hz)", iformant1);
+		swprintf (text, 100, L"%%F_%d (Hz)", iformant1);
 		Graphics_textBottom (g, 1, text);
-		sprintf (text, "%%F_%d (Hz)", iformant2);
+		swprintf (text, 100, L"%%F_%d (Hz)", iformant2);
 		Graphics_textLeft (g, 1, text);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);

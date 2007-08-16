@@ -27,6 +27,7 @@
  * pb 2006/02/06 better cepstral smoothing
  * pb 2007/03/17 domain quantity
  * pb 2007/03/30 Spectrum_downto_Table
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Sound_and_Spectrum.h"
@@ -39,15 +40,15 @@
 static void info (I) {
 	iam (Spectrum);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Frequency domain:");
-	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my xmin), " Hz");
-	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my xmax), " Hz");
-	MelderInfo_writeLine3 ("   Total bandwidth: ", Melder_double (my xmax - my xmin), " Hz");
-	MelderInfo_writeLine1 ("Frequency sampling:");
-	MelderInfo_writeLine2 ("   Number of frequency bands (bins): ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("   Frequency step (bin width): ", Melder_double (my dx), " Hz");
-	MelderInfo_writeLine3 ("   First frequency band around (bin centre at): ", Melder_double (my x1), " Hz");
-	MelderInfo_writeLine3 ("Total energy: ", Melder_single (Spectrum_getBandEnergy (me, 0.0, 0.0)), " Pa2 sec");
+	MelderInfo_writeLine1 (L"Frequency domain:");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my xmax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (my xmax - my xmin), L" Hz");
+	MelderInfo_writeLine1 (L"Frequency sampling:");
+	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (my dx), L" Hz");
+	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (my x1), L" Hz");
+	MelderInfo_writeLine3 (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (me, 0.0, 0.0)), L" Pa2 sec");
 }
 
 static double getValueAtSample (I, long isamp, long which, int units) {
@@ -149,9 +150,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Frequency (Hz)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, "Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
 		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
 	}
 }
@@ -191,9 +192,9 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Frequency (Hz)");
 		Graphics_marksBottomLogarithmic (g, 3, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, "Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
 		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
 	}
 end:
@@ -208,12 +209,12 @@ Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFr
 	Table thee = Table_createWithoutColumnNames (my nx,
 		includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity); cherror
 	long icol = 0;
-	if (includeBinNumbers) { Table_setColumnLabel (thee, ++ icol, "bin"); cherror }
-	if (includeFrequency) { Table_setColumnLabel (thee, ++ icol, "freq(Hz)"); cherror }
-	if (includeRealPart) { Table_setColumnLabel (thee, ++ icol, "re(Pa/Hz)"); cherror }
-	if (includeImaginaryPart) { Table_setColumnLabel (thee, ++ icol, "im(Pa/Hz)"); cherror }
-	if (includeEnergyDensity) { Table_setColumnLabel (thee, ++ icol, "energy(Pa^2/Hz^2)"); cherror }
-	if (includePowerDensity) { Table_setColumnLabel (thee, ++ icol, "pow(dB/Hz)"); cherror }
+	if (includeBinNumbers) { Table_setColumnLabel (thee, ++ icol, L"bin"); cherror }
+	if (includeFrequency) { Table_setColumnLabel (thee, ++ icol, L"freq(Hz)"); cherror }
+	if (includeRealPart) { Table_setColumnLabel (thee, ++ icol, L"re(Pa/Hz)"); cherror }
+	if (includeImaginaryPart) { Table_setColumnLabel (thee, ++ icol, L"im(Pa/Hz)"); cherror }
+	if (includeEnergyDensity) { Table_setColumnLabel (thee, ++ icol, L"energy(Pa^2/Hz^2)"); cherror }
+	if (includePowerDensity) { Table_setColumnLabel (thee, ++ icol, L"pow(dB/Hz)"); cherror }
 	for (long ibin = 1; ibin <= my nx; ibin ++) {
 		icol = 0;
 		if (includeBinNumbers) { Table_setNumericValue (thee, ibin, ++ icol, ibin); cherror }
@@ -235,7 +236,7 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 		includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity); cherror
 	Table_list (table, false);
 end:
-	iferror { Melder_clearError (); Melder_information1 ("Nothing to list."); }
+	iferror { Melder_clearError (); Melder_information1 (L"Nothing to list."); }
 	forget (table);
 }
 

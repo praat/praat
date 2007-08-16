@@ -43,7 +43,7 @@ typedef struct {
 } structEdgeContour, *EdgeContour;
 
 static EdgeContour EdgeContour_create (int numberOfPoints) {
-	EdgeContour result = (EdgeContour) Melder_calloc (1, sizeof (structEdgeContour));
+	EdgeContour result = Melder_calloc (structEdgeContour, 1);
 	result -> numberOfPoints = numberOfPoints;
 	result -> x = NUMfvector (1, 2 * numberOfPoints);
 	result -> y = result -> x + numberOfPoints;
@@ -61,7 +61,7 @@ typedef struct {
 } structClosedContour, *ClosedContour;
 
 static ClosedContour ClosedContour_create (int numberOfPoints) {
-	ClosedContour result = (ClosedContour) Melder_calloc (1, sizeof (structClosedContour));
+	ClosedContour result = Melder_calloc (structClosedContour, 1);
 	result -> numberOfPoints = numberOfPoints;
 	result -> x = NUMfvector (1, 2 * numberOfPoints);
 	result -> y = result -> x + numberOfPoints;
@@ -482,12 +482,9 @@ void Graphics_grey (I, float **z,
 		below = NUMimatrix (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);
 		x = NUMfvector (1, MAXGREYPATH);
 		y = NUMfvector (1, MAXGREYPATH);
-		edgeContours = (EdgeContour *) Melder_calloc
-			(MAXGREYEDGECONTOURS * numberOfBorders, sizeof (EdgeContour)) - 1;
-		closedContours = (ClosedContour *) Melder_calloc
-			(MAXGREYCLOSEDCONTOURS * numberOfBorders, sizeof (ClosedContour)) - 1;
-		edgePoints = (EdgePoint) Melder_calloc
-			(MAXGREYEDGEPOINTS * numberOfBorders, sizeof (structEdgePoint));
+		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
+		closedContours = Melder_calloc (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
+		edgePoints = Melder_calloc (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);
 		if (! edgePoints --) {
 			right = NULL;
 			Melder_flushError ("Graphics_grey: not enough memory.");

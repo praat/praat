@@ -30,6 +30,7 @@
  * pb 2007/03/23 Go to line: guarded against uninitialized 'right'
  * pb 2007/05/30 save Unicode
  * pb 2007/06/12 more wchar_t
+ * pb 2007/08/12 more wchar_t
  */
 
 #include "TextEditor.h"
@@ -79,7 +80,7 @@ static void nameChanged (I) {
 }
 
 static int openDocument (TextEditor me, MelderFile file) {
-	wchar_t *text = MelderFile_readTextW (file);
+	wchar_t *text = MelderFile_readText (file);
 	if (! text) return 0;
 	GuiText_setStringW (my textWidget, text);
 	Melder_free (text);
@@ -101,7 +102,7 @@ static void newDocument (TextEditor me) {
 
 static int saveDocument (TextEditor me, MelderFile file) {
 	wchar_t *text = GuiText_getStringW (my textWidget);
-	if (! MelderFile_writeTextW (file, text)) { Melder_free (text); return 0; }
+	if (! MelderFile_writeText (file, text)) { Melder_free (text); return 0; }
 	Melder_free (text);
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
@@ -337,12 +338,12 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 DIRECT (TextEditor, cb_whereAmI)
 	long numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
-		Melder_information9 ("The cursor is on line ", Melder_integer (numberOfLinesLeft), ".", 0,0,0,0,0,0);
+		Melder_information3 (L"The cursor is on line ", Melder_integer (numberOfLinesLeft), L".");
 	} else if (numberOfLinesLeft == numberOfLinesRight) {
-		Melder_information9 ("The selection is on line ", Melder_integer (numberOfLinesLeft), ".", 0,0,0,0,0,0);
+		Melder_information3 (L"The selection is on line ", Melder_integer (numberOfLinesLeft), L".");
 	} else {
-		Melder_information9 ("The selection runs from line ", Melder_integer (numberOfLinesLeft),
-			" to line ", Melder_integer (numberOfLinesRight), ".", 0,0,0,0);
+		Melder_information5 (L"The selection runs from line ", Melder_integer (numberOfLinesLeft),
+			L" to line ", Melder_integer (numberOfLinesRight), L".");
 	}
 END
 
@@ -505,7 +506,7 @@ void TextEditor_showOpen (I) {
 }
 
 void TextEditor_prefs (void) {
-	Resources_addInt ("TextEditor.fontSize", & theTextEditorFontSize);
+	Resources_addInt (L"TextEditor.fontSize", & theTextEditorFontSize);
 }
 
 /* End of file TextEditor.c */

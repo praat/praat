@@ -20,6 +20,7 @@
 /*
  * pb 2004/02/15 highlight2
  * pb 2007/03/14 arrowSize
+ * pb 2007/08/08 text is saved as UTF-8
  */
 
 #include "GraphicsP.h"
@@ -33,7 +34,7 @@ float * _Graphics_check (Graphics me, long number) {
 	long nrecord = my nrecord;
 	if (nrecord == 0) {
 		nrecord = 1000;
-		record = Melder_malloc ((1 + nrecord) * sizeof (float));
+		record = Melder_malloc (float, 1 + nrecord);
 		if (record == NULL) goto error;
 		my record = record; my nrecord = nrecord;
 	}
@@ -97,7 +98,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case TEXT:
 			{  float x = get, y = get; long length = get; char *text = sget (length);
-				Graphics_text (thee, x, y, text);
+				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs ((MelderUtf8 *) text));
 			}  break;
 			case POLYLINE:
 			{  long n = get; float *x = mget (n), *y = mget (n);
@@ -151,7 +152,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY:
 			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				long nrow = get, ncol = get, irow;
-				float **z = (float **) Melder_malloc (nrow * sizeof (float *));
+				float **z = Melder_malloc (float *, nrow);
 				z [0] = p + 1;
 				for (irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
@@ -257,7 +258,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE:
 			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				long nrow = get, ncol = get, irow;
-				float **z = (float **) Melder_malloc (nrow * sizeof (float *));
+				float **z = Melder_malloc (float *, nrow);
 				z [0] = p + 1;
 				for (irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;

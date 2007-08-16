@@ -23,6 +23,7 @@
  * pb 2005/05/26 switch for scaling in multiply
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
+ * pb 2007/08/12 wchar_t
  */
 
 #include "IntensityTier.h"
@@ -40,7 +41,7 @@ IntensityTier IntensityTier_create (double tmin, double tmax) {
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, "Intensity (dB)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, L"Intensity (dB)");
 }
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
@@ -97,7 +98,7 @@ end:
 }
 
 TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
-	return RealTier_downto_TableOfReal (me, "Time (s)", "Intensity (dB)");
+	return RealTier_downto_TableOfReal (me, L"Time (s)", L"Intensity (dB)");
 }
 
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {

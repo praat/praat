@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #ifndef _Collection_h_
@@ -51,7 +51,7 @@ class_create (InterpreterVariable, Thing);
 	wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
 	wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
-	SortedSetOfStringW variables;
+	SortedSetOfString variables;
 #define Interpreter_methods Thing_methods
 class_create (Interpreter, Thing);
 

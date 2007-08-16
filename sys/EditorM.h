@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #undef FORM
@@ -118,8 +118,8 @@
 #define OPTIONMENUW(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, label, def);
 #define OPTIONW(label)	UiOptionMenu_addButton (radio, label);
 #define ENUMW(label,type,def)	UiForm_addEnum (cmd -> dialog, label, & enum_##type, def);
-#define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTONW (labelProc) }
+#define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTIONW (labelProc) }
 #define LISTW(label,n,str,def)	UiForm_addList (cmd -> dialog, label, n, str, def);
 #define OK UiForm_finish (cmd -> dialog); } if (sender == NULL) {
 #define SET_REAL(name,value)	UiForm_setReal (cmd -> dialog, Melder_peekAsciiToWcs (name), value);
@@ -157,7 +157,7 @@
 #define DO_WRITE \
 	} UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> dialog == NULL) { \
@@ -166,7 +166,7 @@
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> dialog, Melder_peekAsciiToWcs (name))
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, Melder_peekAsciiToWcs (name))

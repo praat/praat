@@ -151,12 +151,12 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, my ycursor, my endWindow, my ycursor);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printfW (my graphics, my startWindow, my ycursor, our leftTickFormat, my ycursor);
+	Graphics_printf (my graphics, my startWindow, my ycursor, our leftTickFormat, my ycursor);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_printfW (my graphics, my endWindow, my ymax, our rightTickFormat, my ymax);
+	Graphics_printf (my graphics, my endWindow, my ymax, our rightTickFormat, my ymax);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_printfW (my graphics, my endWindow, my ymin, our rightTickFormat, my ymin);
+	Graphics_printf (my graphics, my endWindow, my ymin, our rightTickFormat, my ymin);
 	ifirstSelected = AnyTier_timeToHighIndex (data, my startSelection);
 	ilastSelected = AnyTier_timeToLowIndex (data, my endSelection);
 	imin = AnyTier_timeToHighIndex (data, my startWindow);
@@ -165,7 +165,7 @@ static void draw (I) {
 	if (n == 0) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow),
-			0.5 * (my ymin + my ymax), "(no points)");
+			0.5 * (my ymin + my ymax), L"(no points)");
 	} else if (imax < imin) {
 		double yleft = RealTier_getValueAtTime (data, my startWindow);
 		double yright = RealTier_getValueAtTime (data, my endWindow);
@@ -218,10 +218,10 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 		double t = point -> time + dt, y = point -> value + dy;
 		Graphics_line (my graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics, 4.0));
 		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my ymax, "%f", t);
+		Graphics_printf (my graphics, t, my ymax, L"%f", t);
 		Graphics_line (my graphics, my startWindow, y, my endWindow, y);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, y, "%f", y);
+		Graphics_printf (my graphics, my startWindow, y, L"%f", y);
 	}
 }
 

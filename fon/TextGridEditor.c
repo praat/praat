@@ -30,6 +30,7 @@
  * pb 2007/03/23 new Editor API
  * Erez Volk & pb 2007/05/17 FLAC support
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "TextGridEditor.h"
@@ -47,7 +48,7 @@
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
 	Widget publishButton, publishPreserveButton; \
 	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton, writeFlacButton; \
-	char *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
+	wchar_t *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
 #define TextGridEditor_methods FunctionEditor_methods
 class_create_opaque (TextGridEditor, FunctionEditor);
@@ -64,7 +65,7 @@ class_create_opaque (TextGridEditor, FunctionEditor);
 #define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  TRUE
 #define TextGridEditor_DEFAULT_SHOW_NUMBER_OF  2
 #define TextGridEditor_DEFAULT_GREEN_METHOD  Melder_STRING_EQUAL_TO
-#define TextGridEditor_DEFAULT_GREEN_STRING  "some text here for green paint"
+#define TextGridEditor_DEFAULT_GREEN_STRING  L"some text here for green paint"
 
 static struct {
 		int useTextStyles;
@@ -73,7 +74,7 @@ static struct {
 					int shiftDragMultiple;
 		int showNumberOf;
 			int greenMethod;
-				char greenString [Resources_STRING_BUFFER_SIZE];
+				wchar_t greenString [Resources_STRING_BUFFER_SIZE];
 }
 	preferences = {
 		TextGridEditor_DEFAULT_USE_TEXT_STYLES,
@@ -86,13 +87,13 @@ static struct {
 	};
 
 void TextGridEditor_prefs (void) {
-	Resources_addInt ("TextGridEditor.useTextStyles", & preferences.useTextStyles);
-	Resources_addInt ("TextGridEditor.fontSize2", & preferences.fontSize);
-	Resources_addInt ("TextGridEditor.alignment", & preferences.alignment);
-	Resources_addInt ("TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
-	Resources_addInt ("TextGridEditor.showNumberOf2", & preferences.showNumberOf);
-	Resources_addInt ("TextGridEditor.greenMethod", & preferences.greenMethod);
-	Resources_addString ("TextGridEditor.greenString", & preferences.greenString [0]);
+	Resources_addInt (L"TextGridEditor.useTextStyles", & preferences.useTextStyles);
+	Resources_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize);
+	Resources_addInt (L"TextGridEditor.alignment", & preferences.alignment);
+	Resources_addInt (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
+	Resources_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf);
+	Resources_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod);
+	Resources_addString (L"TextGridEditor.greenString", & preferences.greenString [0]);
 }
 
 /********** UTILITIES **********/
@@ -384,7 +385,7 @@ static int menu_cb_GetStartingPointOfInterval (EDITOR_ARGS) {
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals -> size ? NUMundefined :
 			((TextInterval) tier -> intervals -> item [iinterval]) -> xmin;
-		Melder_informationReal (time, "seconds");
+		Melder_informationReal (time, L"seconds");
 	} else {
 		return Melder_error1 (L"The selected tier is not an interval tier.");
 	}
@@ -402,7 +403,7 @@ static int menu_cb_GetEndPointOfInterval (EDITOR_ARGS) {
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals -> size ? NUMundefined :
 			((TextInterval) tier -> intervals -> item [iinterval]) -> xmax;
-		Melder_informationReal (time, "seconds");
+		Melder_informationReal (time, L"seconds");
 	} else {
 		return Melder_error1 (L"The selected tier is not an interval tier.");
 	}
@@ -418,7 +419,7 @@ static int menu_cb_GetLabelOfInterval (EDITOR_ARGS) {
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		char *label = iinterval < 1 || iinterval > tier -> intervals -> size ? "" :
+		wchar_t *label = iinterval < 1 || iinterval > tier -> intervals -> size ? L"" :
 			((TextInterval) tier -> intervals -> item [iinterval]) -> text;
 		Melder_information1 (label);
 	} else {
@@ -595,7 +596,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 	if (intervalTier) {
 		TextInterval interval, newInterval;
 		long iinterval, position;
-		char *text;
+		wchar_t *text;
 		if (IntervalTier_hasTime (intervalTier, t)) {
 			Melder_flushError ("Cannot add a boundary at %f seconds, because there is already a boundary there.", t);
 			return 0;
@@ -613,17 +614,17 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			/*
 			 * Divide up the label text into left and right, depending on where the text cursor is.
 			 */
-			text = XmTextGetString (my text);
+			text = GuiText_getStringW (my text);
 			position = XmTextGetInsertionPosition (my text);
 			newInterval = TextInterval_create (t, interval -> xmax, text + position);
 			text [position] = '\0';
 			TextInterval_setText (interval, text);
-			XtFree (text);
+			Melder_free (text);
 		} else {
 			/*
 			 * Move the text to the left of the boundary.
 			 */
-			newInterval = TextInterval_create (t, interval -> xmax, "");
+			newInterval = TextInterval_create (t, interval -> xmax, L"");
 		}
 		interval -> xmax = t;
 		Collection_addItem (intervalTier -> intervals, newInterval);
@@ -640,7 +641,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 				}
 			}
 			if (tlast > interval -> xmin && tlast < t) {
-				newInterval = TextInterval_create (tlast, t, "");
+				newInterval = TextInterval_create (tlast, t, L"");
 				interval -> xmax = tlast;
 				Collection_addItem (intervalTier -> intervals, newInterval);
 			}
@@ -654,7 +655,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 
 		Editor_save (me, L"Add point");
 
-		newPoint = TextPoint_create (t, "");
+		newPoint = TextPoint_create (t, L"");
 		Collection_addItem (textTier -> points, newPoint);
 	}
 	my startSelection = my endSelection = t;
@@ -813,14 +814,14 @@ static int findInTier (TextGridEditor me) {
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals -> size) {
 			TextInterval interval = tier -> intervals -> item [iinterval];
-			char *text = interval -> text;
+			wchar_t *text = interval -> text;
 			if (text) {
-				char *position = strstr (text, my findString);
+				wchar_t *position = wcsstr (text, my findString);
 				if (position) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					XmTextSetSelection (my text, position - text, position - text + strlen (my findString), 0);
+					XmTextSetSelection (my text, position - text, position - text + wcslen (my findString), 0);
 					return 1;
 				}
 			}
@@ -833,13 +834,13 @@ static int findInTier (TextGridEditor me) {
 		long ipoint = AnyTier_timeToLowIndex (tier, my startSelection) + 1;
 		while (ipoint <= tier -> points -> size) {
 			TextPoint point = tier -> points -> item [ipoint];
-			char *text = point -> mark;
+			wchar_t *text = point -> mark;
 			if (text) {
-				char *position = strstr (text, my findString);
+				wchar_t *position = wcsstr (text, my findString);
 				if (position) {
 					my startSelection = my endSelection = point -> time;
 					scrollToView (me, point -> time);
-					XmTextSetSelection (my text, position - text, position - text + strlen (my findString), 0);
+					XmTextSetSelection (my text, position - text, position - text + wcslen (my findString), 0);
 					return 1;
 				}
 			}
@@ -854,14 +855,14 @@ static int findInTier (TextGridEditor me) {
 static void do_find (TextGridEditor me) {
 	if (my findString) {
 		XmTextPosition left, right;
-		char *label = XmTextGetString (my text);
-		char *position = strstr (XmTextGetSelectionPosition (my text, & left, & right) ? label + right : label, my findString);   /* CRLF BUG? */
+		wchar_t *label = GuiText_getStringW (my text);
+		wchar_t *position = wcsstr (XmTextGetSelectionPosition (my text, & left, & right) ? label + right : label, my findString);   /* CRLF BUG? */
 		if (position) {
-			XmTextSetSelection (my text, position - label, position - label + strlen (my findString), 0);
+			XmTextSetSelection (my text, position - label, position - label + wcslen (my findString), 0);
 		} else {
 			if (! findInTier (me)) Melder_flushError (NULL);
 		}
-		XtFree (label);
+		Melder_free (label);
 	}
 }
 
@@ -873,7 +874,7 @@ static int menu_cb_Find (EDITOR_ARGS) {
 		OK
 	EDITOR_DO
 		Melder_free (my findString);
-		my findString = Melder_strdup (GET_STRING ("string"));
+		my findString = Melder_wcsdup (GET_STRINGW (L"string"));
 		do_find (me);
 	EDITOR_END
 }
@@ -894,15 +895,15 @@ static int checkSpellingInTier (TextGridEditor me) {
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals -> size) {
 			TextInterval interval = tier -> intervals -> item [iinterval];
-			char *text = interval -> text;
+			wchar_t *text = interval -> text;
 			if (text) {
 				int position = 0;
-				char *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					XmTextSetSelection (my text, position, position + strlen (notAllowed), 0);
+					XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
 					return 1;
 				}
 			}
@@ -915,14 +916,14 @@ static int checkSpellingInTier (TextGridEditor me) {
 		long ipoint = AnyTier_timeToLowIndex (tier, my startSelection) + 1;
 		while (ipoint <= tier -> points -> size) {
 			TextPoint point = tier -> points -> item [ipoint];
-			char *text = point -> mark;
+			wchar_t *text = point -> mark;
 			if (text) {
 				int position = 0;
-				char *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = my endSelection = point -> time;
 					scrollToView (me, point -> time);
-					XmTextSetSelection (my text, position, position + strlen (notAllowed), 0);
+					XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
 					return 1;
 				}
 			}
@@ -939,17 +940,17 @@ static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 	if (my spellingChecker) {
 		XmTextPosition left, right;
 		int position = 0;
-		char *label, *notAllowed;
+		wchar_t *label, *notAllowed;
 		if (XmTextGetSelectionPosition (my text, & left, & right))
 			position = right;
-		label = XmTextGetString (my text);
+		label = GuiText_getStringW (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
-			XmTextSetSelection (my text, position, position + strlen (notAllowed), 0);
+			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
 		} else {
 			if (! checkSpellingInTier (me)) Melder_flushError (NULL);
 		}
-		XtFree (label);
+		Melder_free (label);
 	}
 	return 1;
 }
@@ -959,15 +960,15 @@ static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 	if (my spellingChecker) {
 		XmTextPosition left, right;
 		int position = 0;
-		char *label, *notAllowed;
+		wchar_t *label, *notAllowed;
 		if (XmTextGetSelectionPosition (my text, & left, & right))
 			position = right;
-		label = XmTextGetString (my text);
+		label = GuiText_getStringW (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
-			XmTextSetSelection (my text, position, position + strlen (notAllowed), 0);
+			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
 		}
-		XtFree (label);
+		Melder_free (label);
 	}
 	return 1;
 }
@@ -975,9 +976,9 @@ static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 static int menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		char *word = XmTextGetSelection (my text);
+		wchar_t *word = GuiText_getSelectionW (my text);
 		SpellingChecker_addNewWord (my spellingChecker, word);
-		XtFree (word);
+		Melder_free (word);
 		iferror return 0;
 		if (my dataChangedCallback)
 			my dataChangedCallback (me, my dataChangedClosure, my spellingChecker);
@@ -1163,10 +1164,10 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static int menu_cb_TextGridEditorHelp (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help ("TextGridEditor"); return 1; }
-static int menu_cb_AboutSpecialSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help ("Special symbols"); return 1; }
-static int menu_cb_PhoneticSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help ("Phonetic symbols"); return 1; }
-static int menu_cb_AboutTextStyles (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help ("Text styles"); return 1; }
+static int menu_cb_TextGridEditorHelp (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"TextGridEditor"); return 1; }
+static int menu_cb_AboutSpecialSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Special symbols"); return 1; }
+static int menu_cb_PhoneticSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Phonetic symbols"); return 1; }
+static int menu_cb_AboutTextStyles (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Text styles"); return 1; }
 
 static void createMenus (I) {
 	iam (TextGridEditor);
@@ -1298,7 +1299,7 @@ static void gui_cb_textChanged (GUI_ARGS) {
 	TextGrid grid = my data;
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method calls XmTextSetString. */
 	if (my selectedTier) {
-		char *text = XmTextGetString (my text);
+		wchar_t *text = GuiText_getStringW (my text);
 		IntervalTier intervalTier;
 		TextTier textTier;
 		_AnyTier_identifyClass (grid -> tiers -> item [my selectedTier], & intervalTier, & textTier);
@@ -1315,13 +1316,13 @@ static void gui_cb_textChanged (GUI_ARGS) {
 			if (selectedPoint) {
 				TextPoint point = textTier -> points -> item [selectedPoint];
 				Melder_free (point -> mark);
-				if (strspn (text, " \n\t") != strlen (text))   /* Any visible characters? */
-				point -> mark = Melder_strdup (text);
+				if (wcsspn (text, L" \n\t") != wcslen (text))   /* Any visible characters? */
+				point -> mark = Melder_wcsdup (text);
 				FunctionEditor_redraw (me);
 				Editor_broadcastChange (me);
 			}
 		}
-		XtFree (text);
+		Melder_free (text);
 	}
 }
 
@@ -1405,7 +1406,11 @@ static void drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
 		}
 		if (! cursorAtBoundary) {
 			double dy = Graphics_dyMMtoWC (my graphics, 1.5);
+			#ifdef macintosh
+			Graphics_setColour (my graphics, Graphics_GREEN);
+			#else
 			Graphics_setGrey (my graphics, 0.8);
+			#endif
 			Graphics_setLineWidth (my graphics, 5.0);
 			Graphics_line (my graphics, my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics, 1.0);
@@ -1574,11 +1579,11 @@ static void draw (I) {
 		Graphics_setFont (my graphics, oldFont);
 		Graphics_setFontSize (my graphics, oldFontSize * 1.5);
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my graphics, my startWindow, 0.5, selected ? "\\pf %ld" : "%ld", itier);
+		Graphics_printf (my graphics, my startWindow, 0.5, selected ? L"\\pf %ld" : L"%ld", itier);
 		Graphics_setFontSize (my graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, my showNumberOf > 1 ? Graphics_BOTTOM : Graphics_HALF);
-			Graphics_printf (my graphics, my endWindow, 0.5, anyTier -> name);
+			Graphics_text (my graphics, my endWindow, 0.5, anyTier -> nameW);
 		}
 		if (my showNumberOf > 1) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
@@ -1586,9 +1591,9 @@ static void draw (I) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
 				long position = itier == my selectedTier ? ( isIntervalTier ? getSelectedInterval (me) : getSelectedPoint (me) ) : 0;
 				if (position) {
-					Graphics_printf (my graphics, my endWindow, 0.5, "(%ld/%ld)", position, count);
+					Graphics_printf (my graphics, my endWindow, 0.5, L"(%ld/%ld)", position, count);
 				} else {
-					Graphics_printf (my graphics, my endWindow, 0.5, "(%ld)", count);
+					Graphics_printf (my graphics, my endWindow, 0.5, L"(%ld)", count);
 				}
 			} else {
 				long count = 0;
@@ -1611,7 +1616,7 @@ static void draw (I) {
 						}
 					}
 				}
-				Graphics_printf (my graphics, my endWindow, 0.5, "(##%ld#)", count);
+				Graphics_printf (my graphics, my endWindow, 0.5, L"(##%ld#)", count);
 			}
 		}
 
@@ -1684,7 +1689,7 @@ static void drawWhileDragging (TextGridEditor me, double numberOfTiers, int *sel
 	}
 	Graphics_setLineWidth (my graphics, 1);
 	Graphics_line (my graphics, x, 0, x, 1.01);
-	Graphics_printf (my graphics, x, 1.01, "%f", x);
+	Graphics_printf (my graphics, x, 1.01, L"%f", x);
 }
 
 static void dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
@@ -2069,7 +2074,7 @@ static void play (I, double tmin, double tmax) {
 static void updateText (I) {
 	iam (TextGridEditor);
 	TextGrid grid = my data;
-	char *newText = "";
+	wchar_t *newText = L"";
 	if (my selectedTier) {
 		IntervalTier intervalTier;
 		TextTier textTier;
@@ -2093,8 +2098,8 @@ static void updateText (I) {
 		}
 	}
 	my suppressRedraw = TRUE;   /* Prevent valueChangedCallback from redrawing. */
-	XmTextSetString (my text, newText);
-	XmTextSetInsertionPosition (my text, strlen (newText));
+	GuiText_setStringW (my text, newText);
+	XmTextSetInsertionPosition (my text, wcslen (newText));
 	my suppressRedraw = FALSE;
 }
 
@@ -2117,8 +2122,8 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 		OPTION ("intervals or points")
 		OPTION ("non-empty intervals or points")
 	OPTIONMENU ("Paint intervals green whose label...", TextGridEditor_DEFAULT_GREEN_METHOD + 1 - Melder_STRING_min)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
-	SENTENCE ("...the text", TextGridEditor_DEFAULT_GREEN_STRING)
+	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	SENTENCEW (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
 }
 static void prefs_setValues (I, EditorCommand cmd) {
 	iam (TextGridEditor);
@@ -2128,7 +2133,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_INTEGER ("With the shift key, you drag", my shiftDragMultiple + 1)
 	SET_INTEGER ("Show number of", my showNumberOf)
 	SET_INTEGER ("Paint intervals green whose label...", my greenMethod + 1 - Melder_STRING_min)
-	SET_STRING ("...the text", my greenString)
+	SET_STRINGW (L"...the text", my greenString)
 }
 static void prefs_getValues (I, EditorCommand cmd) {
  	iam (TextGridEditor);
@@ -2138,9 +2143,9 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER ("With the shift key, you drag") - 1;
 	preferences.showNumberOf = my showNumberOf = GET_INTEGER ("Show number of");
 	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...") - 1 + Melder_STRING_min;
-	strncpy (my greenString, GET_STRING ("...the text"), Resources_STRING_BUFFER_SIZE);
+	wcsncpy (my greenString, GET_STRINGW (L"...the text"), Resources_STRING_BUFFER_SIZE);
 	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
-	strcpy (preferences.greenString, my greenString);
+	wcscpy (preferences.greenString, my greenString);
 	FunctionEditor_redraw (me);
 }
 
@@ -2238,7 +2243,7 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 	my shiftDragMultiple = preferences.shiftDragMultiple;
 	my showNumberOf = preferences.showNumberOf;
 	my greenMethod = preferences.greenMethod;
-	strcpy (my greenString, preferences.greenString);
+	wcscpy (my greenString, preferences.greenString);
 	my selectedTier = 1;
 	FunctionEditor_init (me, parent, title, grid); cherror
 	FunctionEditor_Sound_init (me);

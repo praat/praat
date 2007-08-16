@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/11
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -30,9 +30,9 @@
 
 /***** HELP *****/
 
-DIRECT (OT_learning_tutorial) Melder_help ("OT learning"); END
+DIRECT (OT_learning_tutorial) Melder_help (L"OT learning"); END
 
-DIRECT (OTGrammar_help) Melder_help ("OTGrammar"); END
+DIRECT (OTGrammar_help) Melder_help (L"OTGrammar"); END
 
 /***** OTGRAMMAR *****/
 
@@ -94,7 +94,7 @@ FORM (OTGrammar_drawTableau, "Draw tableau", "OT learning")
 	SENTENCE ("Input string", "")
 	OK
 DO
-	EVERY_DRAW (OTGrammar_drawTableau (OBJECT, GRAPHICS, GET_STRING ("Input string")))
+	EVERY_DRAW (OTGrammar_drawTableau (OBJECT, GRAPHICS, GET_STRINGW (L"Input string")))
 END
 
 DIRECT (OTGrammar_edit)
@@ -183,9 +183,9 @@ FORM (OTGrammar_getInterpretiveParse, "OTGrammar: Interpretive parse", 0)
 DO
 	OTGrammar me = ONLY_OBJECT;
 	long bestInput, bestOutput;
-	if (! OTGrammar_getInterpretiveParse (me, GET_STRING ("Partial output"), & bestInput, & bestOutput)) return 0;
-	Melder_information9 ("Best input = ", Melder_integer (bestInput), ": ", my tableaus [bestInput]. input,
-		"\nBest output = ", Melder_integer (bestOutput), ": ", my tableaus [bestInput]. candidates [bestOutput]. output, 0);
+	if (! OTGrammar_getInterpretiveParse (me, GET_STRINGW (L"Partial output"), & bestInput, & bestOutput)) return 0;
+	Melder_information8 (L"Best input = ", Melder_integer (bestInput), L": ", my tableaus [bestInput]. input,
+		L"\nBest output = ", Melder_integer (bestOutput), L": ", my tableaus [bestInput]. candidates [bestOutput]. output);
 END
 
 FORM (OTGrammar_getNumberOfCandidates, "Get number of candidates", 0)
@@ -257,8 +257,8 @@ FORM (OTGrammar_inputToOutput, "OTGrammar: Input to output", "OTGrammar: Input t
 	REAL ("Evaluation noise", "2.0")
 	OK
 DO
-	char output [100];
-	if (! OTGrammar_inputToOutput (ONLY_OBJECT, GET_STRING ("Input form"), output, GET_REAL ("Evaluation noise"))) return 0;
+	wchar_t output [100];
+	if (! OTGrammar_inputToOutput (ONLY_OBJECT, GET_STRINGW (L"Input form"), output, GET_REAL ("Evaluation noise"))) return 0;
 	Melder_information1 (output);
 	praat_dataChanged (ONLY_OBJECT);
 END
@@ -270,7 +270,7 @@ FORM (OTGrammar_inputToOutputs, "OTGrammar: Input to outputs", "OTGrammar: Input
 	OK
 DO
 	OTGrammar ot = ONLY (classOTGrammar);
-	if (! praat_new9 (OTGrammar_inputToOutputs (ot, GET_STRING ("Input form"), GET_INTEGER ("Trials"), GET_REAL ("Evaluation noise")),
+	if (! praat_new9 (OTGrammar_inputToOutputs (ot, GET_STRINGW (L"Input form"), GET_INTEGER ("Trials"), GET_REAL ("Evaluation noise")),
 		ot -> nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (ot);
 END
@@ -315,14 +315,14 @@ FORM (OTGrammar_isPartialOutputGrammatical, "Is partial output grammatical?", 0)
 	SENTENCE ("Partial output", "")
 	OK
 DO
-	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputGrammatical (ONLY_OBJECT, GET_STRING ("Partial output"))));
+	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputGrammatical (ONLY_OBJECT, GET_STRINGW (L"Partial output"))));
 END
 
 FORM (OTGrammar_isPartialOutputSinglyGrammatical, "Is partial output singly grammatical?", 0)
 	SENTENCE ("Partial output", "")
 	OK
 DO
-	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputSinglyGrammatical (ONLY_OBJECT, GET_STRING ("Partial output"))));
+	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputSinglyGrammatical (ONLY_OBJECT, GET_STRINGW (L"Partial output"))));
 END
 
 FORM (OTGrammar_learn, "OTGrammar: Learn", "OTGrammar & 2 Strings: Learn...")
@@ -399,7 +399,7 @@ FORM (OTGrammar_learnOne, "OTGrammar: Learn one", "OTGrammar: Learn one...")
 	OK
 DO
 	WHERE (SELECTED) {
-		OTGrammar_learnOne (OBJECT, GET_STRING ("Input string"), GET_STRING ("Output string"),
+		OTGrammar_learnOne (OBJECT, GET_STRINGW (L"Input string"), GET_STRINGW (L"Output string"),
 			GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 			GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		praat_dataChanged (OBJECT);
@@ -425,7 +425,7 @@ FORM (OTGrammar_learnOneFromPartialOutput, "OTGrammar: Learn one from partial ad
 	OK
 DO
 	WHERE (SELECTED) {
-		OTGrammar_learnOneFromPartialOutput (OBJECT, GET_STRING ("Partial output"),
+		OTGrammar_learnOneFromPartialOutput (OBJECT, GET_STRINGW (L"Partial output"),
 			GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 			GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"), TRUE);
 		praat_dataChanged (OBJECT);
@@ -438,7 +438,7 @@ FORM (OTGrammar_removeConstraint, "OTGrammar: Remove constraint", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! OTGrammar_removeConstraint (OBJECT, GET_STRING ("Constraint name"))) return 0;
+		if (! OTGrammar_removeConstraint (OBJECT, GET_STRINGW (L"Constraint name"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -656,7 +656,7 @@ FORM (OTMulti_drawTableau, "Draw tableau", "OT learning")
 	BOOLEAN ("Show disharmonies", 1)
 	OK
 DO
-	EVERY_DRAW (OTMulti_drawTableau (OBJECT, GRAPHICS, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+	EVERY_DRAW (OTMulti_drawTableau (OBJECT, GRAPHICS, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
 		GET_INTEGER ("Show disharmonies")))
 END
 
@@ -739,7 +739,7 @@ FORM (OTMulti_getWinner, "OTMulti: Get winner", 0)
 	OK
 DO
 	OTMulti me = ONLY_OBJECT;
-	Melder_information1 (Melder_integer (OTMulti_getWinner (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"))));
+	Melder_information1 (Melder_integer (OTMulti_getWinner (me, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"))));
 END
 
 FORM (OTMulti_generateOptimalForm, "OTMulti: Generate optimal form", 0)
@@ -748,8 +748,8 @@ FORM (OTMulti_generateOptimalForm, "OTMulti: Generate optimal form", 0)
 	REAL ("Evaluation noise", "2.0")
 	OK
 DO
-	char output [100];
-	if (! OTMulti_generateOptimalForm (ONLY_OBJECT, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+	wchar_t output [100];
+	if (! OTMulti_generateOptimalForm (ONLY_OBJECT, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
 		output, GET_REAL ("Evaluation noise"))) return 0;
 	Melder_information1 (output);
 	praat_dataChanged (ONLY_OBJECT);
@@ -763,7 +763,7 @@ FORM (OTMulti_generateOptimalForms, "OTMulti: Generate optimal forms", 0)
 	OK
 DO
 	OTMulti me = ONLY (classOTMulti);
-	if (! praat_new9 (OTMulti_generateOptimalForms (me, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+	if (! praat_new9 (OTMulti_generateOptimalForms (me, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Trials")), my nameW, L"_out", 0,0,0,0,0,0,0)) return 0;
 	praat_dataChanged (me);
 END
@@ -780,7 +780,7 @@ FORM (OTMulti_learnOne, "OTMulti: Learn one", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		OTMulti_learnOne (OBJECT, GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		OTMulti_learnOne (OBJECT, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
 			GET_INTEGER ("Learn"), GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -792,7 +792,7 @@ FORM (OTMulti_removeConstraint, "OTMulti: Remove constraint", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! OTMulti_removeConstraint (OBJECT, GET_STRING ("Constraint name"))) return 0;
+		if (! OTMulti_removeConstraint (OBJECT, GET_STRINGW (L"Constraint name"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -838,7 +838,7 @@ FORM (OTMulti_to_Distribution, "OTMulti: Compute output distribution", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new9 (OTMulti_to_Distribution (OBJECT,  GET_STRING ("Partial form 1"), GET_STRING ("Partial form 2"),
+		int status = praat_new9 (OTMulti_to_Distribution (OBJECT,  GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
 			GET_INTEGER ("Number of trials"), GET_REAL ("Evaluation noise")), NAMEW, L"_out", 0,0,0,0,0,0,0);
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;

@@ -2,7 +2,7 @@
 #define _Regression_h_
 /* Regression.h
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/05/02
+ * pb 2007/08/12
  */
 
 #ifndef _Table_h_
@@ -40,7 +40,7 @@ oo_CLASS_CREATE (RegressionParameter, Data);
 oo_CLASS_CREATE (Regression, Data);
 
 int Regression_init (I);
-int Regression_addParameter (I, const char *label, double value);
+int Regression_addParameter (I, const wchar_t *label, double value);
 
 #define LinearRegression_members  Regression_members
 #define LinearRegression_methods  Regression_methods

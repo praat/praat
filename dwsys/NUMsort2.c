@@ -272,9 +272,9 @@ void NUMindexx_d (const double a[], long n, long index[])
 	MACRO_NUMindex(float)
 	
 #undef COMPARELT
-#define COMPARELT(x,y) (NUMstrcmp (x,y) <  0)
-void NUMindexx_s (char **a, long n, long index[])
-	MACRO_NUMindex(char *)
+#define COMPARELT(x,y) (NUMwcscmp (x,y) <  0)
+void NUMindexx_s (wchar_t **a, long n, long index[])
+	MACRO_NUMindex(wchar_t *)
 
 #undef COMPARELT
 #undef MACRO_INDEXX

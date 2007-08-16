@@ -76,7 +76,7 @@ int Lispio_openListFromFile (LispioSeq *seq, FILE *f, char *buffer, long maxLeng
 }
 
 char * Lispio_string (const Lispio *me) {
-	char *result = Melder_malloc (my length + 1);
+	char *result = Melder_malloc (char, my length + 1);
 	if (! result) return Melder_errorp ("Lispio_string: out of memory.");
 	memcpy (result, my string, my length);
 	result [my length] = '\0';

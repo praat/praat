@@ -1,6 +1,6 @@
 /* TableOfReal_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1997/03/01
- * pb 2002/07/16 GPL
+ * pb 2007/08/10
  */
 
 
@@ -28,8 +27,8 @@ oo_DEFINE_CLASS (TableOfReal, Data)
 
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_STRING_VECTOR (rowLabels, my numberOfRows)
-	oo_STRING_VECTOR (columnLabels, my numberOfColumns)
+	oo_STRINGW_VECTOR (rowLabels, my numberOfRows)
+	oo_STRINGW_VECTOR (columnLabels, my numberOfColumns)
 	oo_DOUBLE_MATRIX (data, my numberOfRows, my numberOfColumns)
 
 oo_END_CLASS (TableOfReal)

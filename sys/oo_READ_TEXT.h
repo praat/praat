@@ -231,7 +231,7 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
-#define oo_VALIDATING_ASCII  0
+#define oo_VALIDATING_ENCODING  0
 #define oo_READING  1
 #define oo_READING_TEXT  1
 #define oo_READING_BINARY  0

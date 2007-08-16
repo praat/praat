@@ -35,7 +35,7 @@ void * NUMvector (long elementSize, long lo, long hi) {
 	char *result;
 	Melder_assert (sizeof (char) == 1);
 	for (;;) { /* Not very infinite: 99.999 % of the time once, 0.001 % twice. */
-		if (! (result = Melder_calloc (hi - lo + 1, elementSize)))
+		if (! (result = _Melder_calloc (hi - lo + 1, elementSize)))
 			return Melder_errorp ("(NUMvector:) Not created.");
 		if (result -= lo * elementSize) break;   /* This will normally succeed at the first try. */
 		(void) Melder_realloc (result + lo * elementSize, 1);   /* Make sure that second try will succeed. */
@@ -80,13 +80,13 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 	char **result, **dum;
 	Melder_assert (sizeof (char) == 1);
 	for (;;) {
-		if (! (result = Melder_malloc (nrow * sizeof (char *))))   /* Assume all pointers have same size.*/
+		if (! (result = _Melder_malloc (nrow * sizeof (char *))))   /* Assume all pointers have same size.*/
 			return NULL;
 		if (result -= row1) break;   /* This will normally succeed at the first try. */
 		(void) Melder_realloc (result + row1, 1);   /* Make sure that second try will succeed. */
 	}
 	for (;;) {
-		if (! (result [row1] = Melder_calloc (nrow * ncol, elementSize))) {
+		if (! (result [row1] = _Melder_calloc (nrow * ncol, elementSize))) {
 			dum = result + row1;
 			Melder_free (dum);
 			return NULL;
@@ -147,7 +147,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
 		texputintro (file, name, L" []: ", hi >= lo ? NULL : L"(empty)", 0,0,0); \
 		for (long i = lo; i <= hi; i ++) \
-			texput##storage (file, v [i], name, L" [", Melder_integerW (i), L"]", 0,0); \
+			texput##storage (file, v [i], name, L" [", Melder_integer (i), L"]", 0,0); \
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
@@ -214,9 +214,9 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		if (row2 >= row1) { \
 			long row, col; \
 			for (row = row1; row <= row2; row ++) { \
-				texputintro (file, name, L" [", Melder_integerW (row), L"]:", 0,0); \
+				texputintro (file, name, L" [", Melder_integer (row), L"]:", 0,0); \
 				for (col = col1; col <= col2; col ++) { \
-					texput##storage (file, m [row] [col], name, L" [", Melder_integerW (row), L"] [", Melder_integerW (col), L"]"); \
+					texput##storage (file, m [row] [col], name, L" [", Melder_integer (row), L"] [", Melder_integer (col), L"]"); \
 				} \
 				texexdent (file); \
 			} \

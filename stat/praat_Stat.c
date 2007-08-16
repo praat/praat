@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -30,14 +30,14 @@
 #include "TableEditor.h"
 #include "Regression.h"
 
-static char formatBuffer [32] [40];
+static wchar_t formatBuffer [32] [40];
 static int formatIndex = 0;
-static char * Table_messageColumn (Table me, long column) {
+static wchar_t * Table_messageColumn (Table me, long column) {
 	if (++ formatIndex == 32) formatIndex = 0;
 	if (my columnHeaders [column]. label != NULL && my columnHeaders [column]. label [0] != '\0')
-		sprintf (formatBuffer [formatIndex], "\"%.39s\"", my columnHeaders [column]. label);
+		swprintf (formatBuffer [formatIndex], 40, L"\"%.39ls\"", my columnHeaders [column]. label);
 	else
-		sprintf (formatBuffer [formatIndex], "%ld", column);
+		swprintf (formatBuffer [formatIndex], 40, L"%ld", column);
 	return formatBuffer [formatIndex];
 }
 
@@ -69,10 +69,10 @@ FORM (Distributions_getProbability, "Get probability", 0)
 	OK
 DO
 	Melder_informationReal (Distributions_getProbability (ONLY_OBJECT,
-		GET_STRING ("String"), GET_INTEGER ("Column number")), NULL);
+		GET_STRINGW (L"String"), GET_INTEGER ("Column number")), NULL);
 END
 
-DIRECT (Distributions_help) Melder_help ("Distributions"); END
+DIRECT (Distributions_help) Melder_help (L"Distributions"); END
 
 FORM (Distributions_to_Strings, "To Strings", 0)
 	NATURAL ("Column number", "1")
@@ -113,8 +113,7 @@ DO
 	PairDistribution me = ONLY_OBJECT;
 	long ipair = GET_INTEGER ("Pair number");
 	if (ipair > my pairs -> size) {
-		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
-			Melder_integer (ipair), Melder_integer (my pairs -> size));
+		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
 	PairProbability prob = my pairs -> item [ipair];
 	Melder_information1 (prob -> string1);
@@ -127,8 +126,7 @@ DO
 	PairDistribution me = ONLY_OBJECT;
 	long ipair = GET_INTEGER ("Pair number");
 	if (ipair > my pairs -> size) {
-		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
-			Melder_integer (ipair), Melder_integer (my pairs -> size));
+		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
 	PairProbability prob = my pairs -> item [ipair];
 	Melder_information1 (prob -> string2);
@@ -141,14 +139,13 @@ DO
 	PairDistribution me = ONLY_OBJECT;
 	long ipair = GET_INTEGER ("Pair number");
 	if (ipair > my pairs -> size) {
-		return Melder_error ("Pair number (%s) cannot be greater than number of pairs (%s).",
-			Melder_integer (ipair), Melder_integer (my pairs -> size));
+		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
 	PairProbability prob = my pairs -> item [ipair];
 	Melder_information1 (Melder_double (prob -> weight));
 END
 
-DIRECT (PairDistribution_help) Melder_help ("PairDistribution"); END
+DIRECT (PairDistribution_help) Melder_help (L"PairDistribution"); END
 
 DIRECT (PairDistribution_removeZeroWeights)
 	EVERY (PairDistribution_removeZeroWeights (OBJECT))
@@ -187,7 +184,7 @@ FORM (Table_appendColumn, "Table: Append column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_appendColumn (OBJECT, GET_STRING ("Label"));
+		Table_appendColumn (OBJECT, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -201,10 +198,10 @@ FORM (Table_appendDifferenceColumn, "Table: Append difference column", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-		long jcol = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
-		Table_appendDifferenceColumn (OBJECT, icol, jcol, GET_STRING ("Label"));
+		Table_appendDifferenceColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -218,10 +215,10 @@ FORM (Table_appendProductColumn, "Table: Append product column", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-		long jcol = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
-		Table_appendProductColumn (OBJECT, icol, jcol, GET_STRING ("Label"));
+		Table_appendProductColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -235,10 +232,10 @@ FORM (Table_appendQuotientColumn, "Table: Append quotient column", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-		long jcol = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
-		Table_appendQuotientColumn (OBJECT, icol, jcol, GET_STRING ("Label"));
+		Table_appendQuotientColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -252,10 +249,10 @@ FORM (Table_appendSumColumn, "Table: Append sum column", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-		long jcol = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
-		Table_appendSumColumn (OBJECT, icol, jcol, GET_STRING ("Label"));
+		Table_appendSumColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -287,9 +284,9 @@ FORM (Table_collapseRows, "Table: Collapse rows", 0)
 DO
 	WHERE (SELECTED) {
 		if (! praat_new (Table_collapseRows (OBJECT,
-			GET_STRING ("factors"), GET_STRING ("columnsToSum"),
-			GET_STRING ("columnsToAverage"), GET_STRING ("columnsToMedianize"),
-			GET_STRING ("columnsToAverageLogarithmically"), GET_STRING ("columnsToMedianizeLogarithmically")),
+			GET_STRINGW (L"factors"), GET_STRINGW (L"columnsToSum"),
+			GET_STRINGW (L"columnsToAverage"), GET_STRINGW (L"columnsToMedianize"),
+			GET_STRINGW (L"columnsToAverageLogarithmically"), GET_STRINGW (L"columnsToMedianizeLogarithmically")),
 			"%s_pooled", NAME)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -303,7 +300,7 @@ FORM (Table_createWithColumnNames, "Create Table with column names", 0)
 	OK
 DO
 	if (! praat_new (Table_createWithColumnNames
-		(GET_INTEGER ("Number of rows"), GET_STRING ("columnNames")),
+		(GET_INTEGER ("Number of rows"), GET_STRINGW (L"columnNames")),
 		GET_STRING ("Name"))) return 0;
 END
 
@@ -332,8 +329,8 @@ DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long xcolumn = Table_columnLabelToIndex (me, GET_STRING ("Horizontal column"));
-		long ycolumn = Table_columnLabelToIndex (me, GET_STRING ("Vertical column"));
+		long xcolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Horizontal column"));
+		long ycolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Vertical column"));
 		Table_drawEllipse (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 			GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -357,18 +354,18 @@ END
 FORM (Table_extractRowsWhereColumn_number, "Table: Extract rows where column (number)", 0)
 	WORD ("Extract all rows where column...", "")
 	RADIO ("...is...", 1)
-	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	RADIOBUTTONS_ENUMW (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the number", "0.0")
 	OK
 DO
 	double value = GET_REAL ("...the number");
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%s_%ld", NAME, Table_messageColumn (OBJECT, icol),
+			"%s_%ls_%ld", NAME, Table_messageColumn (OBJECT, icol),
 			(long) floor (value+0.5))) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -377,18 +374,18 @@ END
 FORM (Table_extractRowsWhereColumn_text, "Table: Extract rows where column (text)", 0)
 	WORD ("Extract all rows where column...", "")
 	OPTIONMENU ("...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "hi")
 	OK
 DO
-	const char *value = GET_STRING ("...the text");
+	const wchar_t *value = GET_STRINGW (L"...the text");
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Extract all rows where column..."));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
 		if (! praat_new (Table_extractRowsWhereColumn_string (OBJECT,
 			icol, GET_INTEGER ("...") - 1 + Melder_STRING_min, value),
-			"%s_%s", NAME, value)) return 0;
+			"%s_%ls", NAME, value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -400,9 +397,9 @@ FORM (Table_formula, "Table: Formula", "Table: Formula...")
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 		if (icol == 0) return Melder_error ("No such column.");
-		if (! Table_formula (OBJECT, icol, GET_STRING ("formula"))) return 0;
+		if (! Table_formula (OBJECT, icol, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -415,11 +412,11 @@ FORM (Table_formula_columnRange, "Table: Formula (column range)", "Table: Formul
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol1 = Table_columnLabelToIndex (me, GET_STRING ("From column label"));
+		long icol1 = Table_columnLabelToIndex (me, GET_STRINGW (L"From column label"));
 		if (icol1 == 0) return Melder_error ("No such column.");
-		long icol2 = Table_columnLabelToIndex (me, GET_STRING ("To column label"));
+		long icol2 = Table_columnLabelToIndex (me, GET_STRINGW (L"To column label"));
 		if (icol2 == 0) return Melder_error ("No such column.");
-		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRING ("formula"))) return 0;
+		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -428,7 +425,7 @@ FORM (Table_getColumnIndex, "Table: Get column index", 0)
 	SENTENCE ("Column label", "")
 	OK
 DO
-	Melder_information1 (Melder_integer (Table_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label"))));
+	Melder_information1 (Melder_integer (Table_columnLabelToIndex (ONLY_OBJECT, GET_STRINGW (L"Column label"))));
 END
 	
 FORM (Table_getColumnLabel, "Table: Get column label", 0)
@@ -448,11 +445,11 @@ FORM (Table_getGroupMean, "Table: Get group mean", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	if (column == 0) return Melder_error ("No such column.");
-	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
 	if (groupColumn == 0) return Melder_error ("No such column.");
-	Melder_information1 (Melder_double (Table_getGroupMean (ONLY_OBJECT, column, groupColumn, GET_STRING ("Group"))));
+	Melder_information1 (Melder_double (Table_getGroupMean (ONLY_OBJECT, column, groupColumn, GET_STRINGW (L"Group"))));
 END
 
 FORM (Table_getMean, "Table: Get mean", 0)
@@ -460,7 +457,7 @@ FORM (Table_getMean, "Table: Get mean", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getMean (ONLY_OBJECT, icol)));
@@ -472,7 +469,7 @@ FORM (Table_getQuantile, "Table: Get quantile", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getQuantile (ONLY_OBJECT, icol, GET_REAL ("Quantile"))));
@@ -483,7 +480,7 @@ FORM (Table_getStandardDeviation, "Table: Get standard deviation", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	REQUIRE (icol > 0, "No such column.")
 	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getStdev (ONLY_OBJECT, icol)));
@@ -512,14 +509,14 @@ FORM (Table_getValue, "Table: Get value", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long irow = GET_INTEGER ("Row number");
-	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	if (icol == 0) return Melder_error ("No such column.");
 	REQUIRE (irow >= 1 && irow <= my rows -> size, "Row number out of range.")
 	REQUIRE (icol >= 1 && icol <= my numberOfColumns, "Column number out of range.")
 	Melder_information1 (((TableRow) my rows -> item [irow]) -> cells [icol]. string);
 END
 
-DIRECT (Table_help) Melder_help ("Table"); END
+DIRECT (Table_help) Melder_help (L"Table"); END
 
 FORM (Table_insertColumn, "Table: Insert column", 0)
 	NATURAL ("Position", "1")
@@ -527,7 +524,7 @@ FORM (Table_insertColumn, "Table: Insert column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_insertColumn (OBJECT, GET_INTEGER ("Position"), GET_STRING ("Label"));
+		Table_insertColumn (OBJECT, GET_INTEGER ("Position"), GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -571,7 +568,7 @@ FORM (Table_removeColumn, "Table: Remove column", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 		if (icol == 0) return Melder_error ("No such column.");
 		Table_removeColumn (me, icol);
 		praat_dataChanged (me);
@@ -597,23 +594,23 @@ FORM (Table_reportCorrelation_kendallTau, "Report correlation (Kendall tau)", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column1 = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-	long column2 = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+	long column1 = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double correlation, significance, lowerLimit, upperLimit;
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	correlation = Table_getCorrelation_kendallTau (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_writeLine5 ("Correlation between column ", Table_messageColumn (me, column1),
-		" and column ", Table_messageColumn (me, column2), ":");
-	MelderInfo_writeLine3 ("Correlation = ", Melder_double (correlation), " (Kendall's tau-b)");
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest tau that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest tau that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+		L" and column ", Table_messageColumn (me, column2), L":");
+	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest tau that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest tau that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 
@@ -624,23 +621,23 @@ FORM (Table_reportCorrelation_pearsonR, "Report correlation (Pearson r)", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column1 = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-	long column2 = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+	long column1 = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double correlation, significance, lowerLimit, upperLimit;
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	correlation = Table_getCorrelation_pearsonR (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_writeLine5 ("Correlation between column ", Table_messageColumn (me, column1),
-		" and column ", Table_messageColumn (me, column2), ":");
-	MelderInfo_writeLine3 ("Correlation = ", Melder_double (correlation), " (Pearson's r)");
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest r that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest r that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+		L" and column ", Table_messageColumn (me, column2), L":");
+	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest r that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest r that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 	
@@ -651,24 +648,24 @@ FORM (Table_reportDifference_studentT, "Report difference (Student t)", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column1 = Table_columnLabelToIndex (me, GET_STRING ("left Columns"));
-	long column2 = Table_columnLabelToIndex (me, GET_STRING ("right Columns"));
+	long column1 = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
+	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double difference, t, significance, lowerLimit, upperLimit;
 	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
 	difference = Table_getDifference_studentT (me, column1, column2, significanceLevel,
 		& t, & significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_writeLine5 ("Difference between column ", Table_messageColumn (me, column1),
-		" and column ", Table_messageColumn (me, column2), ":");
-	MelderInfo_writeLine2 ("Difference = ", Melder_double (difference));
-	MelderInfo_writeLine2 ("Student's t = ", Melder_double (t));
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significance), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
+		L" and column ", Table_messageColumn (me, column2), L":");
+	MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
+	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 	
@@ -681,26 +678,26 @@ FORM (Table_reportGroupDifference_studentT, "Report group difference (Student t)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
 	if (column == 0) return Melder_error ("No such column.");
-	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
 	if (groupColumn == 0) return Melder_error ("No such column.");
 	double significanceLevel = GET_REAL ("Significance level");
-	char *group1 = GET_STRING ("Group 1"), *group2 = GET_STRING ("Group 2");
+	wchar_t *group1 = GET_STRINGW (L"Group 1"), *group2 = GET_STRINGW (L"Group 2");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_write4 ("Difference in column ", Table_messageColumn (me, column), " between groups ", group1);
-	MelderInfo_writeLine5 (" and ", group2, " of column ", Table_messageColumn (me, groupColumn), ":");
-	MelderInfo_writeLine2 ("Difference = ", Melder_double (mean));
-	MelderInfo_writeLine2 ("Student's t = ", Melder_double (tFromZero));
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+	MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+	MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
+	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 
@@ -712,26 +709,26 @@ FORM (Table_reportGroupMean_studentT, "Report group mean (Student t)", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
 	if (column == 0) return Melder_error ("No such column.");
-	long groupColumn = Table_columnLabelToIndex (me, GET_STRING ("Group column"));
+	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
 	if (groupColumn == 0) return Melder_error ("No such column.");
 	double significanceLevel = GET_REAL ("Significance level");
-	char *group = GET_STRING ("Group");
+	wchar_t *group = GET_STRINGW (L"Group");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_write4 ("Mean in column ", Table_messageColumn (me, column), " of group ", group);
-	MelderInfo_writeLine3 (" of column ", Table_messageColumn (me, groupColumn), ":");
-	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
-	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
+	MelderInfo_writeLine3 (L" of column ", Table_messageColumn (me, groupColumn), L":");
+	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
+	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 
@@ -741,22 +738,22 @@ FORM (Table_reportMean_studentT, "Report mean (Student t)", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long column = Table_columnLabelToIndex (me, GET_STRING ("Column"));
+	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
 	if (column == 0) return Melder_error ("No such column.");
 	mean = Table_getMean_studentT (me, column, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
-	MelderInfo_writeLine3 ("Mean of column ", Table_messageColumn (me, column), ":");
-	MelderInfo_writeLine2 ("Mean = ", Melder_double (mean));
-	MelderInfo_writeLine2 ("Student's t from zero = ", Melder_double (tFromZero));
-	MelderInfo_writeLine3 ("Significance from zero = ", Melder_double (significanceFromZero), " (one-tailed)");
-	MelderInfo_writeLine3 ("Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), "%):");
-	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
-		" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
-	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
+	MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
+	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
+	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		L" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		L" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
 	MelderInfo_close ();
 END
 
@@ -769,13 +766,13 @@ FORM (Table_rowsToColumns, "Table: Rows to columns", 0)
 	LABEL ("", "Columns not mentioned above will be ignored.")
 	OK
 DO
-	const char *columnLabel = GET_STRING ("Column to transpose");
+	const wchar_t *columnLabel = GET_STRINGW (L"Column to transpose");
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, columnLabel);
-		if (icol == 0) return Melder_error ("No such column: %s.", columnLabel);
+		if (icol == 0) return Melder_error3 (L"No such column: ", columnLabel, L".");
 		if (! praat_new (Table_rowsToColumns (OBJECT,
-			GET_STRING ("factors"), icol, GET_STRING ("columnsToExpand")),
+			GET_STRINGW (L"factors"), icol, GET_STRINGW (L"columnsToExpand")),
 			"%s_nested", NAME)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -796,9 +793,9 @@ DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long xcolumn = Table_columnLabelToIndex (me, GET_STRING ("Horizontal column"));
-		long ycolumn = Table_columnLabelToIndex (me, GET_STRING ("Vertical column"));
-		long markColumn = Table_columnLabelToIndex (me, GET_STRING ("Column with marks"));
+		long xcolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Horizontal column"));
+		long ycolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Vertical column"));
+		long markColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Column with marks"));
 		if (xcolumn == 0 || ycolumn == 0 || markColumn == 0) return Melder_error ("No such column.");
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
@@ -824,12 +821,12 @@ DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long xcolumn = Table_columnLabelToIndex (me, GET_STRING ("Horizontal column"));
-		long ycolumn = Table_columnLabelToIndex (me, GET_STRING ("Vertical column"));
+		long xcolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Horizontal column"));
+		long ycolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Vertical column"));
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 			GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
-			GET_REAL ("Mark size"), GET_STRING ("Mark string"), GET_INTEGER ("Garnish"));
+			GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), GET_INTEGER ("Garnish"));
 	}
 	praat_picture_close ();
 	return 1;
@@ -841,9 +838,9 @@ FORM (Table_searchColumn, "Table: Search column", 0)
 	OK
 DO
 	Table me = ONLY_OBJECT;
-	long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	if (icol == 0) return Melder_error ("No such column.");
-	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING ("Value"))));
+	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRINGW (L"Value"))));
 END
 	
 FORM (Table_setColumnLabel_index, "Set column label", 0)
@@ -852,7 +849,7 @@ FORM (Table_setColumnLabel_index, "Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label"));
+		Table_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -864,7 +861,7 @@ FORM (Table_setColumnLabel_label, "Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_setColumnLabel (OBJECT, Table_columnLabelToIndex (OBJECT, GET_STRING ("Old label")), GET_STRING ("New label"));
+		Table_setColumnLabel (OBJECT, Table_columnLabelToIndex (OBJECT, GET_STRINGW (L"Old label")), GET_STRINGW (L"New label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -878,7 +875,7 @@ FORM (Table_setNumericValue, "Table: Set numeric value", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 		if (icol == 0) return Melder_error ("No such column.");
 		Table_setNumericValue (me, GET_INTEGER ("Row number"), icol, GET_REAL ("Numeric value"));
 		praat_dataChanged (me);
@@ -894,9 +891,9 @@ FORM (Table_setStringValue, "Table: Set string value", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column label"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 		if (icol == 0) return Melder_error ("No such column.");
-		Table_setStringValue (me, GET_INTEGER ("Row number"), icol, GET_STRING ("String value"));
+		Table_setStringValue (me, GET_INTEGER ("Row number"), icol, GET_STRINGW (L"String value"));
 		praat_dataChanged (me);
 		iferror return 0;
 	}
@@ -909,7 +906,7 @@ FORM (Table_sortRows, "Table: Sort rows", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		if (! Table_sortRows_string (me, GET_STRING ("columnLabels"))) return 0;
+		if (! Table_sortRows_string (me, GET_STRINGW (L"columnLabels"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -920,7 +917,7 @@ FORM (Table_to_TableOfReal, "Table: Down to TableOfReal", 0)
 DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
-		long icol = Table_columnLabelToIndex (me, GET_STRING ("Column for row labels"));
+		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column for row labels"));
 		if (! praat_new (Table_to_TableOfReal (OBJECT, icol), NAME)) return 0;
 	}
 END
@@ -983,7 +980,7 @@ FORM (TableOfReal_drawAsNumbers_if, "Draw as numbers if...", 0)
 DO
 	EVERY_DRAW (TableOfReal_drawAsNumbers_if (OBJECT, GRAPHICS,
 		GET_INTEGER ("From row"), GET_INTEGER ("To row"),
-		GET_INTEGER ("Format"), GET_INTEGER ("Precision"), GET_STRING ("condition")))
+		GET_INTEGER ("Format"), GET_INTEGER ("Precision"), GET_STRINGW (L"condition")))
 END
 
 FORM (TableOfReal_drawAsSquares, "Draw table as squares", 0)
@@ -1024,7 +1021,7 @@ FORM (TableOfReal_extractColumnRanges, "Extract column ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnRanges (OBJECT, GET_STRING ("ranges")), "%s_cols", NAME)) return 0;
+		if (! praat_new (TableOfReal_extractColumnRanges (OBJECT, GET_STRINGW (L"ranges")), "%s_cols", NAME)) return 0;
 	}
 END
 
@@ -1034,28 +1031,28 @@ FORM (TableOfReal_extractColumnsWhere, "Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING ("condition")), "%s_cols", NAME)) return 0;
+		if (! praat_new (TableOfReal_extractColumnsWhere (OBJECT, GET_STRINGW (L"condition")), "%s_cols", NAME)) return 0;
 	}
 END
 
 FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
 	OPTIONMENU ("Extract all columns whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
-	const char *text = GET_STRING ("...the text");
+	const wchar_t *text = GET_STRINGW (L"...the text");
 	WHERE (SELECTED) {
 		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT,
 			GET_INTEGER ("Extract all columns whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%s", NAME, text)) return 0;
+			"%s_%ls", NAME, text)) return 0;
 	}
 END
 
 FORM (TableOfReal_extractColumnsWhereRow, "Extract columns where row", 0)
 	NATURAL ("Extract all columns where row...", "1")
 	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	OPTIONS_ENUMW (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -1079,7 +1076,7 @@ FORM (TableOfReal_extractRowRanges, "Extract row ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowRanges (OBJECT, GET_STRING ("ranges")), "%s_rows", NAME)) return 0;
+		if (! praat_new (TableOfReal_extractRowRanges (OBJECT, GET_STRINGW (L"ranges")), "%s_rows", NAME)) return 0;
 	}
 END
 
@@ -1089,14 +1086,14 @@ FORM (TableOfReal_extractRowsWhere, "Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhere (OBJECT, GET_STRING ("condition")), "%s_rows", NAME)) return 0;
+		if (! praat_new (TableOfReal_extractRowsWhere (OBJECT, GET_STRINGW (L"condition")), "%s_rows", NAME)) return 0;
 	}
 END
 
 FORM (TableOfReal_extractRowsWhereColumn, "Extract rows where column", 0)
 	NATURAL ("Extract all rows where column...", "1")
 	OPTIONMENU ("...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	OPTIONS_ENUMW (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
 	REAL ("...the value", "0.0")
 	OK
 DO
@@ -1111,15 +1108,15 @@ END
 
 FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
 	OPTIONMENU ("Extract all rows whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "a")
 	OK
 DO
-	const char *text = GET_STRING ("...the text");
+	const wchar_t *text = GET_STRINGW (L"...the text");
 	WHERE (SELECTED) {
 		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT,
 			GET_INTEGER ("Extract all rows whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%s", NAME, text)) return 0;
+			"%s_%ls", NAME, text)) return 0;
 	}
 END
 
@@ -1129,7 +1126,7 @@ FORM (TableOfReal_formula, "TableOfReal: Formula", "Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_formula (OBJECT, GET_STRING ("formula"), NULL)) return 0;
+		if (! TableOfReal_formula (OBJECT, GET_STRINGW (L"formula"), NULL)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1138,7 +1135,7 @@ FORM (TableOfReal_getColumnIndex, "Get column index", 0)
 	SENTENCE ("Column label", "")
 	OK
 DO
-	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (ONLY_OBJECT, GET_STRING ("Column label"))));
+	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (ONLY_OBJECT, GET_STRINGW (L"Column label"))));
 END
 	
 FORM (TableOfReal_getColumnLabel, "Get column label", 0)
@@ -1148,7 +1145,7 @@ DO
 	TableOfReal table = ONLY_OBJECT;
 	long columnNumber = GET_INTEGER ("Column number");
 	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
-	Melder_information1 (table -> columnLabels == NULL ? "" : table -> columnLabels [columnNumber]);
+	Melder_information1 (table -> columnLabels == NULL ? L"" : table -> columnLabels [columnNumber]);
 END
 	
 FORM (TableOfReal_getColumnMean_index, "Get column mean", 0)
@@ -1166,7 +1163,7 @@ FORM (TableOfReal_getColumnMean_label, "Get column mean", 0)
 	OK
 DO
 	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
+	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRINGW (L"Column label"));
 	REQUIRE (columnNumber > 0, "Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
 END
@@ -1183,7 +1180,7 @@ FORM (TableOfReal_getColumnStdev_label, "Get column standard deviation", 0)
 	OK
 DO
 	TableOfReal table = ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING ("Column label"));
+	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRINGW (L"Column label"));
 	REQUIRE (columnNumber > 0, "Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
 END
@@ -1195,7 +1192,7 @@ FORM (TableOfReal_getRowIndex, "Get row index", 0)
 	SENTENCE ("Row label", "")
 	OK
 DO
-	Melder_information1 (Melder_integer (TableOfReal_rowLabelToIndex (ONLY_OBJECT, GET_STRING ("Row label"))));
+	Melder_information1 (Melder_integer (TableOfReal_rowLabelToIndex (ONLY_OBJECT, GET_STRINGW (L"Row label"))));
 END
 	
 FORM (TableOfReal_getRowLabel, "Get row label", 0)
@@ -1205,7 +1202,7 @@ DO
 	TableOfReal table = ONLY_OBJECT;
 	long rowNumber = GET_INTEGER ("Row number");
 	REQUIRE (rowNumber <= table -> numberOfRows, "Row number must not be greater than number of rows.")
-	Melder_information1 (table -> rowLabels == NULL ? "" : table -> rowLabels [rowNumber]);
+	Melder_information1 (table -> rowLabels == NULL ? L"" : table -> rowLabels [rowNumber]);
 END
 
 FORM (TableOfReal_getValue, "Get value", 0)
@@ -1215,7 +1212,7 @@ FORM (TableOfReal_getValue, "Get value", 0)
 	REQUIRE (column <= my numberOfColumns, "Column number must not exceed number of columns.")
 	Melder_informationReal (my data [row] [column], NULL); END
 
-DIRECT (TableOfReal_help) Melder_help ("TableOfReal"); END
+DIRECT (TableOfReal_help) Melder_help (L"TableOfReal"); END
 
 FORM (TableOfReal_insertColumn, "Insert column", 0)
 	NATURAL ("Column number", "1")
@@ -1267,7 +1264,7 @@ FORM (TableOfReal_setColumnLabel_index, "Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRING ("Label"));
+		TableOfReal_setColumnLabel (OBJECT, GET_INTEGER ("Column number"), GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1278,8 +1275,8 @@ FORM (TableOfReal_setColumnLabel_label, "Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING ("Old label")),
-			GET_STRING ("New label"));
+		TableOfReal_setColumnLabel (OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRINGW (L"Old label")),
+			GET_STRINGW (L"New label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1290,7 +1287,7 @@ FORM (TableOfReal_setRowLabel_index, "Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, GET_INTEGER ("Row number"), GET_STRING ("Label"));
+		TableOfReal_setRowLabel (OBJECT, GET_INTEGER ("Row number"), GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1317,8 +1314,8 @@ FORM (TableOfReal_setRowLabel_label, "Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING ("Old label")),
-			GET_STRING ("New label"));
+		TableOfReal_setRowLabel (OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRINGW (L"Old label")),
+			GET_STRINGW (L"New label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1354,7 +1351,7 @@ FORM (TableOfReal_to_Table, "TableOfReal: To Table", 0)
 	SENTENCE ("Label of first column", "rowLabel")
 	OK
 DO
-	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING ("Label of first column")))
+	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRINGW (L"Label of first column")))
 END
 
 FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, "Write TableOfReal to spreadsheet", 0, "txt")
@@ -1362,7 +1359,7 @@ FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, "Write TableOfReal to 
 END
 
 
-DIRECT (StatisticsTutorial) Melder_help ("Statistics"); END
+DIRECT (StatisticsTutorial) Melder_help (L"Statistics"); END
 
 static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
 	/*

@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2007/04/25 better image drawing on the Mac
+ * pb 2007/08/03 Quartz
  */
 
 #include "GraphicsP.h"
@@ -181,6 +182,9 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			bitmap = CreateDIBSection (my dc /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
 				DIB_RGB_COLORS, (VOID **) & bits, NULL, 0);
 		#elif mac
+			/*
+			 * QuickDraw requirements.
+			 */
 			CGrafPtr savePort;
 			GDHandle saveDevice;
 			GWorldPtr offscreenWorld;
@@ -190,39 +194,51 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			Rect rect, destRect;
 			int igrey;
 			unsigned long pixel [256];
-			GetGWorld (& savePort, & saveDevice);
-			if (my resolution > 150) undersampling = 4;
-			SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling + 1, (clipy1 - clipy2) / undersampling + 1);
-			if (NewGWorld (& offscreenWorld,
-				32, /* We're drawing in 32 bit, and copying it to 8, 16, 24, or 32 bit. */
-				& rect,
-				NULL,   /* BUG: we should use a colour table with 256 shades of grey !!! */
-				NULL,
-				keepLocal   /* Because we're going to access the pixels directly. */
-			) != noErr || offscreenWorld == NULL) {
-				static int notified = FALSE;
-				if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot create offscreen graphics.");
-				notified = TRUE;
-				goto end;
-			}
-			SetGWorld (offscreenWorld, /* ignored: */ NULL);
-			offscreenPixMap = GetGWorldPixMap (offscreenWorld);
-			if (! LockPixels (offscreenPixMap)) {
-				static int notified = FALSE;
-				if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot lock offscreen pixels.");
-				notified = TRUE;
-				SetGWorld (savePort, saveDevice);
-				goto cleanUp;
-			}
-			offscreenRowBytes = (*offscreenPixMap) -> rowBytes & 0x3FFF;
-			//Melder_fatal ("%d %d %d",clipx1,clipx2,offscreenRowBytes);   // 45 393 352
-			offscreenPixels = (unsigned char *) GetPixBaseAddr (offscreenPixMap);
-			EraseRect (& rect);
-			for (igrey = 0; igrey <= 255; igrey ++) {
-				RGBColor rgb;
-				rgb. red = rgb. green = rgb. blue = igrey * 256;
-				/*RGBForeColor (& rgb);*/
-				pixel [igrey] = Color2Index (& rgb) /*offscreenWorld -> fgColor*/;
+			/*
+			 * Quartz requirements.
+			 */
+			unsigned char *imageData;
+			long bytesPerRow;
+			bool useQuartzForImages = my useQuartz && 1;
+			if (useQuartzForImages) {
+				bytesPerRow = (clipx2 - clipx1) * 4;
+				imageData = Melder_malloc (unsigned char, bytesPerRow * (clipy1 - clipy2));
+				Melder_assert (imageData != NULL);
+			} else {
+				GetGWorld (& savePort, & saveDevice);
+				if (my resolution > 150) undersampling = 4;
+				SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling + 1, (clipy1 - clipy2) / undersampling + 1);
+				if (NewGWorld (& offscreenWorld,
+					32, /* We're drawing in 32 bit, and copying it to 8, 16, 24, or 32 bit. */
+					& rect,
+					NULL,   /* BUG: we should use a colour table with 256 shades of grey !!! */
+					NULL,
+					keepLocal   /* Because we're going to access the pixels directly. */
+				) != noErr || offscreenWorld == NULL) {
+					static int notified = FALSE;
+					if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot create offscreen graphics.");
+					notified = TRUE;
+					goto end;
+				}
+				SetGWorld (offscreenWorld, /* ignored: */ NULL);
+				offscreenPixMap = GetGWorldPixMap (offscreenWorld);
+				if (! LockPixels (offscreenPixMap)) {
+					static int notified = FALSE;
+					if (! notified) Melder_flushError ("(GraphicsScreen::cellArray:) Cannot lock offscreen pixels.");
+					notified = TRUE;
+					SetGWorld (savePort, saveDevice);
+					goto cleanUp;
+				}
+				offscreenRowBytes = (*offscreenPixMap) -> rowBytes & 0x3FFF;
+				//Melder_fatal ("%d %d %d",clipx1,clipx2,offscreenRowBytes);   // 45 393 352
+				offscreenPixels = (unsigned char *) GetPixBaseAddr (offscreenPixMap);
+				EraseRect (& rect);
+				for (igrey = 0; igrey <= 255; igrey ++) {
+					RGBColor rgb;
+					rgb. red = rgb. green = rgb. blue = igrey * 256;
+					/*RGBForeColor (& rgb);*/
+					pixel [igrey] = Color2Index (& rgb) /*offscreenWorld -> fgColor*/;
+				}
 			}
 		#endif
 		/*
@@ -238,13 +254,23 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
-			#define ROW_START_ADDRESS  (offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling)
+			#define ROW_START_ADDRESS \
+				(useQuartzForImages ? (imageData + (yDC - clipy2) * bytesPerRow) : \
+				(offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling))
 			#define PUT_PIXEL \
-				unsigned long pixelValue = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
-				*pixelAddress ++ = pixelValue >> 24; \
-				*pixelAddress ++ = (pixelValue & 0xff0000) >> 16; \
-				*pixelAddress ++ = (pixelValue & 0xff00) >> 8; \
-				*pixelAddress ++ = pixelValue & 0xff;
+				if (useQuartzForImages) { \
+					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = 0; \
+				} else { \
+					unsigned long pixelValue = pixel [value <= 0 ? 0 : value >= 255 ? 255 : (int) value]; \
+					*pixelAddress ++ = pixelValue >> 24; \
+					*pixelAddress ++ = (pixelValue & 0xff0000) >> 16; \
+					*pixelAddress ++ = (pixelValue & 0xff00) >> 8; \
+					*pixelAddress ++ = pixelValue & 0xff; \
+				}
 		#endif
 		if (interpolate) {
 			long *ileft = NUMlvector (clipx1, clipx2), *iright = NUMlvector (clipx1, clipx2);
@@ -328,20 +354,41 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
-			SetGWorld (savePort, saveDevice);
-			/*
-			 * Before calling CopyBits, make sure that the foreground colour is black.
-			 */
-			RGBForeColor (& theBlackColour);
-			SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling, (clipy1 - clipy2) / undersampling);
-			SetRect (& destRect, clipx1, clipy2, clipx2, clipy1);
-			/*
-			 * According to IM VI:21-19, the first argument to CopyBits should be the PixMap returned from GetGWorldPixMap.
-			 * However, the example in Imaging:6-6 violates this, and dereferences the handle directly...
-			 */
-			CopyBits ((struct BitMap *) *offscreenPixMap,
-				(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my macPort),   /* BUG for 1-bit eps preview */
-				& rect, & destRect, srcCopy, NULL);
+			if (useQuartzForImages) {
+				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);
+				Melder_assert (colourSpace != NULL);
+				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL, imageData, bytesPerRow * (clipy1 - clipy2), NULL);
+				Melder_assert (dataProvider != NULL);
+				CGImageRef image = CGImageCreate (clipx2 - clipx1, clipy1 - clipy2, 8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
+				Melder_assert (image != NULL);
+				CGDataProviderRelease (dataProvider);
+				CGColorSpaceRelease (colourSpace);
+				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				Widget widget = my drawingArea;
+				do { widget = XtParent (widget); } while (! XtIsShell (widget));
+				int shellHeight;
+				XtVaGetValues (widget, XmNheight, & shellHeight, NULL);
+				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, shellHeight - clipy1, clipx2 - clipx1, clipy1 - clipy2), image);
+				CGContextSynchronize (my macGraphicsContext);
+				QDEndCGContext (my macPort, & my macGraphicsContext);
+				CGImageRelease (image);
+			} else {
+				SetGWorld (savePort, saveDevice);
+				/*
+				 * Before calling CopyBits, make sure that the foreground colour is black.
+				 */
+				RGBForeColor (& theBlackColour);
+				SetRect (& rect, 0, 0, (clipx2 - clipx1) / undersampling, (clipy1 - clipy2) / undersampling);
+				SetRect (& destRect, clipx1, clipy2, clipx2, clipy1);
+				/*
+				 * According to IM VI:21-19, the first argument to CopyBits should be the PixMap returned from GetGWorldPixMap.
+				 * However, the example in Imaging:6-6 violates this, and dereferences the handle directly...
+				 */
+				CopyBits ((struct BitMap *) *offscreenPixMap,
+					(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my macPort),   /* BUG for 1-bit eps preview */
+					& rect, & destRect, srcCopy, NULL);
+			}
 		#endif
 		/*
 		 * Clean up.
@@ -354,8 +401,12 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			DeleteBitmap (bitmap);
 		#elif mac
 			cleanUp:
-			UnlockPixels (offscreenPixMap);
-			DisposeGWorld (offscreenWorld);
+			if (useQuartzForImages) {
+				Melder_free (imageData);
+			} else {
+				UnlockPixels (offscreenPixMap);
+				DisposeGWorld (offscreenWorld);
+			}
 		#endif
 	}
 	#if win

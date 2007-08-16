@@ -69,15 +69,15 @@ static void info (I) {
 	float *y = my z [1];
 	long i, numberOfMaxima = 0;
 	classData -> info (me);
-	MelderInfo_writeLine3 ("Loudness: ", Melder_half (Excitation_getLoudness (me)), " sones");
+	MelderInfo_writeLine3 (L"Loudness: ", Melder_half (Excitation_getLoudness (me)), L" sones");
 	for (i = 2; i < my nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
 		strength = NUMimproveMaximum (my z [1], my nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		formant_bark = my x1 + (i_real - 1) * my dx;
-		MelderInfo_write3 ("Peak at ", Melder_single (formant_bark), " Bark");
-		MelderInfo_write3 (", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), " Hertz");
-		MelderInfo_writeLine3 (", ", Melder_half (strength), " phon.");
+		MelderInfo_write3 (L"Peak at ", Melder_single (formant_bark), L" Bark");
+		MelderInfo_write3 (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hertz");
+		MelderInfo_writeLine3 (L", ", Melder_half (strength), L" phon.");
 	}
 }
 
@@ -133,8 +133,8 @@ void Excitation_draw (Excitation me, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Frequency (Bark)");
-		Graphics_textLeft (g, 1, "Excitation (phon)");
+		Graphics_textBottom (g, 1, L"Frequency (Bark)");
+		Graphics_textLeft (g, 1, L"Excitation (phon)");
 		Graphics_marksBottomEvery (g, 1, 5, 1, 1, 0);
 		Graphics_marksLeftEvery (g, 1, 20, 1, 1, 0);
 	}

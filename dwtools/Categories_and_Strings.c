@@ -38,7 +38,7 @@ Strings Categories_to_Strings (Categories me)
 	for (i = 1; i <= my size; i++)
 	{
 		SimpleString s = my item[i];
-		thy strings[i] = Melder_strdup (s -> string);
+		thy strings[i] = Melder_wcsdup (s -> string);
 		if (thy strings[i] == NULL) goto end;	
 	}
 end:

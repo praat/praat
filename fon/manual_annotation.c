@@ -22,549 +22,549 @@
 void manual_annotation_init (ManPages me);
 void manual_annotation_init (ManPages me) {
 
-MAN_BEGIN ("Create TextGrid...", "ppgb", 20060714)
-INTRO ("A command to create a @TextGrid from scratch.")
-ENTRY ("Arguments")
-TAG ("%%Start time% (seconds)")
-DEFINITION ("the start time, usually 0 seconds.")
-TAG ("%%End time% (seconds)")
-DEFINITION ("the end time, usually the duration.")
-TAG ("%%Tier names")
-DEFINITION ("a list of the names of the tiers that you want to create, separated by spaces.")
-TAG ("%%Point tiers")
-DEFINITION ("a list of the names of the tiers that you want to be %%point tiers%; "
+MAN_BEGIN (L"Create TextGrid...", L"ppgb", 20060714)
+INTRO (L"A command to create a @TextGrid from scratch.")
+ENTRY (L"Arguments")
+TAG (L"%%Start time% (seconds)")
+DEFINITION (L"the start time, usually 0 seconds.")
+TAG (L"%%End time% (seconds)")
+DEFINITION (L"the end time, usually the duration.")
+TAG (L"%%Tier names")
+DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
+TAG (L"%%Point tiers")
+DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 MAN_END
 
-MAN_BEGIN ("IntervalTier", "ppgb", 20030316)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
+MAN_BEGIN (L"IntervalTier", L"ppgb", 20030316)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
 	"An IntervalTier represents a series of contiguous intervals in time. "
 	"Each interval contains a a string.")
-ENTRY ("Creating a IntervalTier object in Praat")
-NORMAL ("An IntervalTier object is normally extracted from a @TextGrid object, "
+ENTRY (L"Creating a IntervalTier object in Praat")
+NORMAL (L"An IntervalTier object is normally extracted from a @TextGrid object, "
 	"which may contain several tiers.")
-TAG ("From scratch:")
-LIST_ITEM ("1. Select an object with a time domain, e.g., a Sound or a Pitch.")
-LIST_ITEM ("2. Click ##To IntervalTier#.")
-NORMAL ("The resulting IntervalTier will have the same time domain "
+TAG (L"From scratch:")
+LIST_ITEM (L"1. Select an object with a time domain, e.g., a Sound or a Pitch.")
+LIST_ITEM (L"2. Click ##To IntervalTier#.")
+NORMAL (L"The resulting IntervalTier will have the same time domain "
 	"as the original Sound (or Pitch), e.g., if the Sound object starts at 0.0 seconds "
 	"and has a duration of 2.1 seconds, "
 	"the resulting IntervalTier will also have an %xmin of 0.0 "
 	"and an %xmax of 2.1 seconds.")
-NORMAL ("The resulting IntervalTier will have one interval in it, extending from %xmin to %xmax.")
-ENTRY ("Editing an IntervalTier in Praat")
-NORMAL ("You would edit an IntervalTier by converting it to a @TextGrid "
+NORMAL (L"The resulting IntervalTier will have one interval in it, extending from %xmin to %xmax.")
+ENTRY (L"Editing an IntervalTier in Praat")
+NORMAL (L"You would edit an IntervalTier by converting it to a @TextGrid "
 	"and invoking a @TextGridEditor, perhaps with a Sound.")
-ENTRY ("Drawing an IntervalTier")
-NORMAL ("You can draw an IntervalTier alone or together with a Sound or Pitch object, "
+ENTRY (L"Drawing an IntervalTier")
+NORMAL (L"You can draw an IntervalTier alone or together with a Sound or Pitch object, "
 	"after converting it to a TextGrid.")
-ENTRY ("Inside an IntervalTier")
-NORMAL ("With @Inspect, you will see the following attributes:")
-TAG ("%x__%min_")
-DEFINITION ("the start of the time domain, in seconds.")
-TAG ("%x__%max_")
-DEFINITION ("the end of the time domain, in seconds.")
-TAG ("%intervals")
-DEFINITION ("a sorted collection of text intervals.")
-NORMAL ("The attributes of a text interval are:")
-TAG ("%x__%min_")
-DEFINITION ("the start of the time domain, in seconds.")
-TAG ("%x__%max_")
-DEFINITION ("the end of the time domain, in seconds.")
-TAG ("%text")
-DEFINITION ("an ASCII text string.")
-NORMAL ("Though %text is a system-independent ASCII text string, "
+ENTRY (L"Inside an IntervalTier")
+NORMAL (L"With @Inspect, you will see the following attributes:")
+TAG (L"%x__%min_")
+DEFINITION (L"the start of the time domain, in seconds.")
+TAG (L"%x__%max_")
+DEFINITION (L"the end of the time domain, in seconds.")
+TAG (L"%intervals")
+DEFINITION (L"a sorted collection of text intervals.")
+NORMAL (L"The attributes of a text interval are:")
+TAG (L"%x__%min_")
+DEFINITION (L"the start of the time domain, in seconds.")
+TAG (L"%x__%max_")
+DEFINITION (L"the end of the time domain, in seconds.")
+TAG (L"%text")
+DEFINITION (L"an ASCII text string.")
+NORMAL (L"Though %text is a system-independent ASCII text string, "
 	"it may, as everywhere in Praat, contain @@Special symbols@ "
 	"like Greek letters, mathematical symbols, style information, "
 	"and Phonetic symbols, which will be visible when the string is drawn "
 	"into the Picture window or viewed in a @TextGridEditor.")
 MAN_END
 
-MAN_BEGIN ("IntervalTier(s): To TextGrid", "ppgb", 19970317)
-INTRO ("A command to merge all selected @IntervalTier objects into a new @TextGrid object.")
-TAG ("You can also merge with @TextTier objects:")
-LIST_ITEM ("@@TextTier(s) & IntervalTier(s): To TextGrid@")
+MAN_BEGIN (L"IntervalTier(s): To TextGrid", L"ppgb", 19970317)
+INTRO (L"A command to merge all selected @IntervalTier objects into a new @TextGrid object.")
+TAG (L"You can also merge with @TextTier objects:")
+LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
 MAN_END
 
-MAN_BEGIN ("Label & Sound: To TextGrid", "ppgb", 19970317)
-INTRO ("A command to convert an old-style #Label object, "
+MAN_BEGIN (L"Label & Sound: To TextGrid", L"ppgb", 19970317)
+INTRO (L"A command to convert an old-style #Label object, "
 	"which you have probably read from an old file, into a new-style @TextGrid object.")
-NORMAL ("The Sound is needed to supply the TextGrid with a finite time domain, "
+NORMAL (L"The Sound is needed to supply the TextGrid with a finite time domain, "
 	"which old-style Label objects lacked.")
 MAN_END
 
-MAN_BEGIN ("Pitch & TextTier: To PitchTier...", "ppgb", 20030916)
-INTRO ("A command that creates a @PitchTier object from one selected @Pitch and one selected @TextTier object.")
-ENTRY ("Purpose")
-NORMAL ("to return the frequencies in the Pitch contour at the times specified by the TextTier.")
-ENTRY ("Argument")
-TAG ("%%Check voicing% (standard: on)")
-DEFINITION ("determines whether, if the time of a mark is not within a voiced frame, you will get a message like "
+MAN_BEGIN (L"Pitch & TextTier: To PitchTier...", L"ppgb", 20030916)
+INTRO (L"A command that creates a @PitchTier object from one selected @Pitch and one selected @TextTier object.")
+ENTRY (L"Purpose")
+NORMAL (L"to return the frequencies in the Pitch contour at the times specified by the TextTier.")
+ENTRY (L"Argument")
+TAG (L"%%Check voicing% (standard: on)")
+DEFINITION (L"determines whether, if the time of a mark is not within a voiced frame, you will get a message like "
 	"\"No periodicity at time %xxx.\", and no PitchTier is created. If this button is off, "
 	"the resulting pitch frequency will be 0.0 Hz.")
-ENTRY ("Normal behaviour")
-NORMAL ("For all the times of the marks in the TextTier, a pitch frequency is computed from the "
+ENTRY (L"Normal behaviour")
+NORMAL (L"For all the times of the marks in the TextTier, a pitch frequency is computed from the "
 	"information in the Pitch, by linear interpolation.")
-NORMAL ("All the resulting time-frequency pairs are put in a new PitchTier object.")
-NORMAL ("The time domain of the resulting PitchTier is a union of the domains of the original Pitch "
+NORMAL (L"All the resulting time-frequency pairs are put in a new PitchTier object.")
+NORMAL (L"The time domain of the resulting PitchTier is a union of the domains of the original Pitch "
 	"and TextTier functions.")
 MAN_END
 
-MAN_BEGIN ("PointProcess: To TextGrid...", "ppgb", 19980113)
-INTRO ("A command to create an empty @TextGrid from every selected @PointProcess.")
-NORMAL ("The only information in the PointProcess that is used, is its starting and finishing times.")
-ENTRY ("Arguments")
-TAG ("%%Tier names")
-DEFINITION ("a list of the names of the tiers that you want to create, separated by spaces.")
-TAG ("%%Point tiers")
-DEFINITION ("a list of the names of the tiers that you want to be %%point tiers%; "
+MAN_BEGIN (L"PointProcess: To TextGrid...", L"ppgb", 19980113)
+INTRO (L"A command to create an empty @TextGrid from every selected @PointProcess.")
+NORMAL (L"The only information in the PointProcess that is used, is its starting and finishing times.")
+ENTRY (L"Arguments")
+TAG (L"%%Tier names")
+DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
+TAG (L"%%Point tiers")
+DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
-ENTRY ("Example")
-NORMAL ("If %%Tier names% is \"a b c\", and %%Point tiers% is \"b\", "
+ENTRY (L"Example")
+NORMAL (L"If %%Tier names% is \"a b c\", and %%Point tiers% is \"b\", "
 	"the resulting TextGrid object will contain an interval tier named \"a\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
 
-MAN_BEGIN ("PointProcess: To TextGrid (vuv)...", "ppgb", 19980210)
-INTRO ("A command to create a @TextGrid with voiced/unvoiced information "
+MAN_BEGIN (L"PointProcess: To TextGrid (vuv)...", L"ppgb", 19980210)
+INTRO (L"A command to create a @TextGrid with voiced/unvoiced information "
 	"from every selected @PointProcess.")
-ENTRY ("Arguments")
-TAG ("%%Maximum period% (s)")
-DEFINITION ("the maximum interval that will be consider part of a larger voiced interval.")
-TAG ("%%Mean period% (s)")
-DEFINITION ("half of this value will be taken to be the amount to which a voiced interval "
+ENTRY (L"Arguments")
+TAG (L"%%Maximum period% (s)")
+DEFINITION (L"the maximum interval that will be consider part of a larger voiced interval.")
+TAG (L"%%Mean period% (s)")
+DEFINITION (L"half of this value will be taken to be the amount to which a voiced interval "
 	"will extend beyond its initial and final points. %%Mean period% must be less than "
 	"%%Maximum period%, or you may get intervals with negative durations.")
-ENTRY ("Example")
-NORMAL ("If %%Maximum period% is 0.02 s, and %%Mean period% is 0.01 s, "
+ENTRY (L"Example")
+NORMAL (L"If %%Maximum period% is 0.02 s, and %%Mean period% is 0.01 s, "
 	"and the point process is 0.1 seconds long, with points at 20, 28, 39, 61, and 72 milliseconds, "
 	"the resulting TextGrid object will contain an interval tier "
 	"with \"U\" intervals at [0 ms, 15 ms], [44 ms, 56 ms], and [77 ms, 100 ms], "
 	"and \"V\" intervals at [15 ms, 44 ms] and [56 ms, 77 ms].")
 MAN_END
 
-MAN_BEGIN ("PointProcess: Up to TextTier...", "ppgb", 19970329)
-INTRO ("A command to promote every selected @PointProcess to a @TextTier.")
-ENTRY ("Argument")
-TAG ("%Text")
-DEFINITION ("the text that will be placed in every point.")
-ENTRY ("Behaviour")
-NORMAL ("The times of all the points are trivially copied, and so is the time domain. "
+MAN_BEGIN (L"PointProcess: Up to TextTier...", L"ppgb", 19970329)
+INTRO (L"A command to promote every selected @PointProcess to a @TextTier.")
+ENTRY (L"Argument")
+TAG (L"%Text")
+DEFINITION (L"the text that will be placed in every point.")
+ENTRY (L"Behaviour")
+NORMAL (L"The times of all the points are trivially copied, and so is the time domain. "
 	"The text information will be the same for every point.")
 MAN_END
 
-MAN_BEGIN ("Sound: To TextGrid...", "ppgb", 19980730)
-INTRO ("A command to create a @TextGrid without any labels, copying the time domain from the selected @Sound.")
-ENTRY ("Arguments")
-TAG ("%%Tier names")
-DEFINITION ("a list of the names of the tiers that you want to create, separated by spaces.")
-TAG ("%%Point tiers")
-DEFINITION ("a list of the names of the tiers that you want to be %%point tiers%; "
+MAN_BEGIN (L"Sound: To TextGrid...", L"ppgb", 19980730)
+INTRO (L"A command to create a @TextGrid without any labels, copying the time domain from the selected @Sound.")
+ENTRY (L"Arguments")
+TAG (L"%%Tier names")
+DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
+TAG (L"%%Point tiers")
+DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
-ENTRY ("Example")
-NORMAL ("If %%Tier names% is \"a b c\", and \"Point tiers\" is \"b\", "
+ENTRY (L"Example")
+NORMAL (L"If %%Tier names% is \"a b c\", and \"Point tiers\" is \"b\", "
 	"the resulting TextGrid object will contain an interval tier named \"a\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
 
-MAN_BEGIN ("SpellingChecker", "ppgb", 20030916)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}. For checking the spelling in texts and @TextGrid objects.")
-ENTRY ("1. How to create a SpellingChecker object")
-NORMAL ("You normally read in a SpellignChecker with @@Read from file...@ from the Read menu.")
-ENTRY ("2. How to check the spelling of a @TextGrid")
-NORMAL ("A SpellingChecker object can be used fur purposes of spelling checking. In order "
+MAN_BEGIN (L"SpellingChecker", L"ppgb", 20030916)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. For checking the spelling in texts and @TextGrid objects.")
+ENTRY (L"1. How to create a SpellingChecker object")
+NORMAL (L"You normally read in a SpellignChecker with @@Read from file...@ from the Read menu.")
+ENTRY (L"2. How to check the spelling of a @TextGrid")
+NORMAL (L"A SpellingChecker object can be used fur purposes of spelling checking. In order "
 	"to check the spellings in a @TextGrid object, you first view the TextGrid in an editor window by selecting "
 	"the TextGrid together with the SpellingChecker object, and clicking Edit. In most cases, you will also want "
 	"to select a @Sound or @LongSound object before clicking Edit, so that a representation of the sound "
 	"is also visible (and audible) in the editor. Thus, you typically select three objects and click Edit. "
 	"The editor then allows you to check the spellings (command ##Check spelling# from the Search menu).")
-ENTRY ("3. How to create a SpellingChecker object for the first time")
-NORMAL ("If you are the maintainer of a word list for spelling checking, you will want "
+ENTRY (L"3. How to create a SpellingChecker object for the first time")
+NORMAL (L"If you are the maintainer of a word list for spelling checking, you will want "
 	"to convert this list to a SpellingChecker object that you can distribute among the transcribers of your corpus.")
-NORMAL ("The first step is to create a @WordList object from your text file, as described on the @WordList man page. "
+NORMAL (L"The first step is to create a @WordList object from your text file, as described on the @WordList man page. "
 	"Then you simply click ##To SpellingChecker#. A button labelled ##Edit...# appears. "
 	"This command allows you to set the following attributes of the SpellingChecker object:")
-/*TAG ("%%Check matching parentheses")
-DEFINITION ("determines whether it is considered a spelling error if parentheses do not match, as in the string \"Hi) there\".")*/
-TAG ("%%Allow all parenthesized")
-DEFINITION ("this flag determines whether text between parentheses is ignored in spelling checking. "
+/*TAG (L"%%Check matching parentheses")
+DEFINITION (L"determines whether it is considered a spelling error if parentheses do not match, as in the string \"Hi) there\".")*/
+TAG (L"%%Allow all parenthesized")
+DEFINITION (L"this flag determines whether text between parentheses is ignored in spelling checking. "
 	"This would allow the transcriber to mark utterances in foreign languages, which cannot be found in the lexicon.")
-TAG ("%%Separating characters")
-DEFINITION ("determines the set of characters (apart from the space character) that separate words. "
+TAG (L"%%Separating characters")
+DEFINITION (L"determines the set of characters (apart from the space character) that separate words. "
 	"The standard is \".,;:()\". If a string like \"error-prone\" should be considered two separate words, "
 	"you will like to change this to \".,;:()-\". "
 	"For the Corpus of Spoken Dutch (CGN), the hyphen is not a separator, since words like \"mee-eter\" should be checked as a whole. "
 	"If a string like \"Mary's\" should be considered two separate words, include the apostrophe.")
-/*TAG ("%%Forbidden strings")
-DEFINITION ("this will mainly contain characters that are not allowed in your corpus. For the CGN, this is \": ; \\\" \".")*/
-TAG ("%%Allow all names")
-DEFINITION ("determines whether all words that start with a capital are allowed. For the CGN, this is on, "
+/*TAG (L"%%Forbidden strings")
+DEFINITION (L"this will mainly contain characters that are not allowed in your corpus. For the CGN, this is \": ; \\\" \".")*/
+TAG (L"%%Allow all names")
+DEFINITION (L"determines whether all words that start with a capital are allowed. For the CGN, this is on, "
 	"since the lexicon does not contain many names.")
-TAG ("%%Name prefixes")
-DEFINITION ("a space-separated list that determines what small groups of characters can precede names. For the CGN, "
+TAG (L"%%Name prefixes")
+DEFINITION (L"a space-separated list that determines what small groups of characters can precede names. For the CGN, "
 	"this is \"'s- d' l'\", since names like %%'s-Gravenhage%, %%d'Ancona%, and %%l'H\\o^pital% should be ignored by the spelling checker.")
-TAG ("%%Allow all words containing")
-DEFINITION ("a space-separated list of strings that make a word correct even if not in the lexicon. "
+TAG (L"%%Allow all words containing")
+DEFINITION (L"a space-separated list of strings that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"* xxx\", since words like %%keuje*d% and %%verxxxing% should be ignored by the spelling checker.")
-TAG ("%%Allow all words starting with")
-DEFINITION ("a space-separated list of prefixes that make a word correct even if not in the lexicon. "
+TAG (L"%%Allow all words starting with")
+DEFINITION (L"a space-separated list of prefixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is empty.")
-TAG ("%%Allow all words ending in")
-DEFINITION ("a space-separated list of suffixes that make a word correct even if not in the lexicon. "
+TAG (L"%%Allow all words ending in")
+DEFINITION (L"a space-separated list of suffixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"-\", since the first word in %%verzekerings- en bankwezen% should be ignored by the spelling checker.")
 MAN_END
 
-MAN_BEGIN ("TextGrid", "ppgb", 20040413)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}, used for %annotation (segmentation and labelling). "
+MAN_BEGIN (L"TextGrid", L"ppgb", 20040413)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}, used for %annotation (segmentation and labelling). "
 	"For tutorial information, see @@Intro 7. Annotation@.")
-ENTRY ("Description")
-NORMAL ("A #TextGrid object consists of a number of %tiers. There are two kinds of tiers: "
+ENTRY (L"Description")
+NORMAL (L"A #TextGrid object consists of a number of %tiers. There are two kinds of tiers: "
 	"an %%interval tier% is a connected sequence of labelled intervals, with %boundaries in between. "
 	"A %%point tier% is a sequence of labelled points.")
-ENTRY ("How to create a TextGrid")
-TAG ("From scratch:")
-LIST_ITEM ("@@Sound: To TextGrid...@ (takes the time domain from the Sound)")
-LIST_ITEM ("@@LongSound: To TextGrid...@ (takes the time domain from the LongSound)")
-LIST_ITEM ("@@PointProcess: To TextGrid...@ (takes the time domain from the PointProcess)")
-LIST_ITEM ("@@PointProcess: To TextGrid (vuv)...@ (labels voiced and unvoiced intervals)")
-LIST_ITEM ("@@Create TextGrid...@")
-TAG ("From merging any number of existing tiers:")
-LIST_ITEM ("@@TextTier(s): To TextGrid@")
-LIST_ITEM ("@@IntervalTier(s): To TextGrid@")
-LIST_ITEM ("@@TextTier(s) & IntervalTier(s): To TextGrid@")
-TAG ("From merging an existing TextGrid with existing tiers or TextGrids:")
-LIST_ITEM ("@@TextGrid & TextTier: Append@")
-LIST_ITEM ("@@TextGrid & IntervalTier: Append@")
-LIST_ITEM ("@@TextGrid & TextGrid: Merge@")
-TAG ("Conversion from an old-style Label object:")
-LIST_ITEM ("@@Label & Sound: To TextGrid@")
-ENTRY ("How to edit a TextGrid")
-NORMAL ("You select a TextGrid alone or together with a @Sound or @LongSound, and click #Edit. "
+ENTRY (L"How to create a TextGrid")
+TAG (L"From scratch:")
+LIST_ITEM (L"@@Sound: To TextGrid...@ (takes the time domain from the Sound)")
+LIST_ITEM (L"@@LongSound: To TextGrid...@ (takes the time domain from the LongSound)")
+LIST_ITEM (L"@@PointProcess: To TextGrid...@ (takes the time domain from the PointProcess)")
+LIST_ITEM (L"@@PointProcess: To TextGrid (vuv)...@ (labels voiced and unvoiced intervals)")
+LIST_ITEM (L"@@Create TextGrid...@")
+TAG (L"From merging any number of existing tiers:")
+LIST_ITEM (L"@@TextTier(s): To TextGrid@")
+LIST_ITEM (L"@@IntervalTier(s): To TextGrid@")
+LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
+TAG (L"From merging an existing TextGrid with existing tiers or TextGrids:")
+LIST_ITEM (L"@@TextGrid & TextTier: Append@")
+LIST_ITEM (L"@@TextGrid & IntervalTier: Append@")
+LIST_ITEM (L"@@TextGrid & TextGrid: Merge@")
+TAG (L"Conversion from an old-style Label object:")
+LIST_ITEM (L"@@Label & Sound: To TextGrid@")
+ENTRY (L"How to edit a TextGrid")
+NORMAL (L"You select a TextGrid alone or together with a @Sound or @LongSound, and click #Edit. "
 	"A @TextGridEditor will appear on your screen, containing the TextGrid "
 	"and an optional copy of the Sound or LongSound.")
-ENTRY ("How to draw a TextGrid")
-TAG ("You can draw a TextGrid to the @@Picture window@ with:")
-LIST_ITEM ("##TextGrid: Draw...")
-LIST_ITEM ("##TextGrid & Sound: Draw...")
-LIST_ITEM ("##TextGrid & Pitch: Draw...")
-LIST_ITEM ("##TextGrid & Pitch: Draw separately...")
+ENTRY (L"How to draw a TextGrid")
+TAG (L"You can draw a TextGrid to the @@Picture window@ with:")
+LIST_ITEM (L"##TextGrid: Draw...")
+LIST_ITEM (L"##TextGrid & Sound: Draw...")
+LIST_ITEM (L"##TextGrid & Pitch: Draw...")
+LIST_ITEM (L"##TextGrid & Pitch: Draw separately...")
 MAN_END
 
-MAN_BEGIN ("TextGrid: Count labels...", "ppgb", 19980630)
-INTRO ("A command to ask the selected @TextGrid object how many of the specified labels "
+MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 19980630)
+INTRO (L"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
-ENTRY ("Arguments")
-TAG ("%%Tier number")
-DEFINITION ("the number (1, 2, 3...) of the tier whose labels you want to investigate.")
-TAG ("%%Label text")
-DEFINITION ("the text on the labels that you want to count.")
-ENTRY ("Behaviour")
-NORMAL ("The number of intervals or points with label %%Label text% in tier %%Tier number% "
+ENTRY (L"Arguments")
+TAG (L"%%Tier number")
+DEFINITION (L"the number (1, 2, 3...) of the tier whose labels you want to investigate.")
+TAG (L"%%Label text")
+DEFINITION (L"the text on the labels that you want to count.")
+ENTRY (L"Behaviour")
+NORMAL (L"The number of intervals or points with label %%Label text% in tier %%Tier number% "
 	"is written into the @@Info window@. If the specified tier does not exist, the number will be 0.")
-ENTRY ("Scripting")
-NORMAL ("You can use this command to put the number into a script variable:")
-CODE ("select TextGrid hallo")
-CODE ("number_of_a = Count labels... 1 a")
-NORMAL ("In this case, the value will not be written into the Info window.")
+ENTRY (L"Scripting")
+NORMAL (L"You can use this command to put the number into a script variable:")
+CODE (L"select TextGrid hallo")
+CODE (L"number_of_a = Count labels... 1 a")
+NORMAL (L"In this case, the value will not be written into the Info window.")
 MAN_END
  
-MAN_BEGIN ("TextGrid & IntervalTier: Append", "ppgb", 19970317)
-INTRO ("A command to append the selected @IntervalTier to the selected @TextGrid.")
+MAN_BEGIN (L"TextGrid & IntervalTier: Append", L"ppgb", 19970317)
+INTRO (L"A command to append the selected @IntervalTier to the selected @TextGrid.")
 MAN_END
 
-MAN_BEGIN ("TextGrid & TextGrid: Merge", "ppgb", 19970317)
-INTRO ("A command to merge two selected @TextGrid objects into a new @TextGrid.")
+MAN_BEGIN (L"TextGrid & TextGrid: Merge", L"ppgb", 19970317)
+INTRO (L"A command to merge two selected @TextGrid objects into a new @TextGrid.")
 MAN_END
 
-MAN_BEGIN ("TextGrid & TextTier: Append", "ppgb", 19970317)
-INTRO ("A command to append the selected @TextTier to the selected @TextGrid.")
+MAN_BEGIN (L"TextGrid & TextTier: Append", L"ppgb", 19970317)
+INTRO (L"A command to append the selected @TextTier to the selected @TextGrid.")
 MAN_END
 
-MAN_BEGIN ("TextGridEditor", "ppgb", 20030316)
-INTRO ("One of the @Editors in P\\s{RAAT}, for editing a @TextGrid object.")
-NORMAL ("You can optionally include a copy of a @Sound or @LongSound in this editor, "
+MAN_BEGIN (L"TextGridEditor", L"ppgb", 20030316)
+INTRO (L"One of the @Editors in P\\s{RAAT}, for editing a @TextGrid object.")
+NORMAL (L"You can optionally include a copy of a @Sound or @LongSound in this editor, "
 	"by selecting both the TextGrid and the Sound or LongSound before clicking #Edit. "
 	"The Sound or LongSound is shown in the upper part of the window, the tiers in the lower part. "
 	"A text window at the top shows the text of the %#selected interval or point, "
 	"i.e. the interval or point at the location of the cursor. "
 	"All tiers are visible, and if you do not zoom in, all boundaries, points, and texts are visible, too. "
 	"You can do many of the same things that you can do with a @SoundEditor or @LongSoundEditor.")
-ENTRY ("Positioning the cursor or the selection marks")
-NORMAL ("To position the cursor hair, @click in the #Sound, on a boundary, on a point, or inside an interval.")
-NORMAL ("To select any part of the time domain, use the @@time selection@ mechanism; "
+ENTRY (L"Positioning the cursor or the selection marks")
+NORMAL (L"To position the cursor hair, @click in the #Sound, on a boundary, on a point, or inside an interval.")
+NORMAL (L"To select any part of the time domain, use the @@time selection@ mechanism; "
 	"if you do this by clicking in a tier, "
 	"the selected time domain will snap to the nearest boundary or point.")
-ENTRY ("Creating new intervals, boundaries, points, or tiers")
-NORMAL ("To create a new interval, create a new boundary in an interval tier.")
-NORMAL ("To create a new boundary or point in a tier, @click inside the cursor circle in that tier, "
+ENTRY (L"Creating new intervals, boundaries, points, or tiers")
+NORMAL (L"To create a new interval, create a new boundary in an interval tier.")
+NORMAL (L"To create a new boundary or point in a tier, @click inside the cursor circle in that tier, "
 	"or choose one of the commands in the Boundary/Point menu to insert a boundary at the cursor time "
 	"on the selected tier (shortcut: Enter) or on any tier (shortcuts: Command-F1 through Command-F9). The original text "
 	"in the interval that is split, is divided up between the two resulting intervals, depending on "
 	"the position of the text cursor in the text window.")
-NORMAL ("To create a new tier, choose ##Add interval tier# or ##Add point tier# from the #Tier menu.")
-ENTRY ("Playing an entire interval, or part of it")
-NORMAL ("As in many other editors, you can play a stretch of sound by clicking in any of the rectangles "
+NORMAL (L"To create a new tier, choose ##Add interval tier# or ##Add point tier# from the #Tier menu.")
+ENTRY (L"Playing an entire interval, or part of it")
+NORMAL (L"As in many other editors, you can play a stretch of sound by clicking in any of the rectangles "
 	"around the drawing area.")
-NORMAL ("To play an interval of an interval tier, you first @click inside it. This will make the interval %selected, "
+NORMAL (L"To play an interval of an interval tier, you first @click inside it. This will make the interval %selected, "
 	"which means that the visible part of the interval will be drawn in yellow. The cursor will be positioned "
 	"at the start of the interval, and the time selection will comprise exactly the interval. This means that "
 	"you can use the Tab key to play the interval. If you press it while a sound is playing, "
 	"the Tab key will halt the playing sound, and the cursor will move to the time at which the sound stopped playing. "
 	"This helps you to divide up a long sentence into parts that you can remember long enough to write them "
 	"down.")
-NORMAL ("The Tab key will play the selected interval.")
-ENTRY ("Editing the text in an interval or at a point")
-NORMAL ("To edit the label text of an interval or point:")
-LIST_ITEM ("1. Select that interval or point by clicking in or on it. The text currently in the interval or point "
+NORMAL (L"The Tab key will play the selected interval.")
+ENTRY (L"Editing the text in an interval or at a point")
+NORMAL (L"To edit the label text of an interval or point:")
+LIST_ITEM (L"1. Select that interval or point by clicking in or on it. The text currently in the interval or point "
 	"will appear in the text window.")
-LIST_ITEM ("2. Just type the text, and use the mouse and the arrow keys to navigate the text window. "
+LIST_ITEM (L"2. Just type the text, and use the mouse and the arrow keys to navigate the text window. "
 	"Everything you type will become visible immediately in the text window as well as in the selected "
 	"interval or point.")
-NORMAL ("You can use all the @@Special symbols@ "
+NORMAL (L"You can use all the @@Special symbols@ "
 	"that you can use elsewhere in Praat, including mathematical symbols, Greek letters, superscripts, "
 	"and phonetic symbols.")
-ENTRY ("Selecting a tier")
-NORMAL ("To select a tier, click anywhere inside it. Its number and name will be drawn in red, "
+ENTRY (L"Selecting a tier")
+NORMAL (L"To select a tier, click anywhere inside it. Its number and name will be drawn in red, "
 	"and a pointing finger symbol (\\pf) will appear on its left.")
-ENTRY ("Selecting a boundary or point")
-NORMAL ("To select a boundary on an interval tier, @click in its vicinity or inside the following interval; "
+ENTRY (L"Selecting a boundary or point")
+NORMAL (L"To select a boundary on an interval tier, @click in its vicinity or inside the following interval; "
 	"the boundary will be drawn in red. The text in the interval will appear in the text window.")
-NORMAL ("To select a point on a point tier, @click in its vicinity; it will be drawn in red. "
+NORMAL (L"To select a point on a point tier, @click in its vicinity; it will be drawn in red. "
 	"The text of the point will appear in the text window.")
-ENTRY ("Moving one or more boundaries or points")
-NORMAL ("To move a boundary or point to another time position, @drag it with the mouse.")
-NORMAL ("To move all the boundaries and points with the same time (on different tiers) to another time position, "
+ENTRY (L"Moving one or more boundaries or points")
+NORMAL (L"To move a boundary or point to another time position, @drag it with the mouse.")
+NORMAL (L"To move all the boundaries and points with the same time (on different tiers) to another time position, "
 	"@@Shift-drag@ them.")
-NORMAL ("To move boundaries or points to the exact time position of a boundary or point on an other tier, "
+NORMAL (L"To move boundaries or points to the exact time position of a boundary or point on an other tier, "
 	"@drag them into that other tier and into the vicinity of that boundary or point.")
-NORMAL ("To move boundaries or points to the exact time position of the cursor, "
+NORMAL (L"To move boundaries or points to the exact time position of the cursor, "
 	"@drag them into the vicinity of the cursor.")
-ENTRY ("Removing a boundary, point, or tier")
-NORMAL ("To remove a selected #boundary, choose #Remove from the #Boundary menu. "
+ENTRY (L"Removing a boundary, point, or tier")
+NORMAL (L"To remove a selected #boundary, choose #Remove from the #Boundary menu. "
 	"This creates a new interval which is the union of the two intervals originally adjoining the boundary; "
 	"the new text of this interval is the concatenation of the two original texts, "
 	"except if these were equal, in which case the new text equals both original texts.")
-NORMAL ("To remove a selected #point, choose #Remove from the #Point menu.")
-NORMAL ("To remove a selected #tier, choose ##Remove entire tier# from the #Tier menu.")
+NORMAL (L"To remove a selected #point, choose #Remove from the #Point menu.")
+NORMAL (L"To remove a selected #tier, choose ##Remove entire tier# from the #Tier menu.")
 /*"To rename a selected tier, choose 'Rename...' from the 'Tier' menu. "*/
 /*"To remove all the boundaries and labels in a selected tier, "
 "   choose 'Clear entire tier' from the 'Tier' menu. "*/
-ENTRY ("Extracting a part of the sound")
-NORMAL ("To copy the selected part of the Sound or LongSound as a Sound to the @@List of Objects@, "
+ENTRY (L"Extracting a part of the sound")
+NORMAL (L"To copy the selected part of the Sound or LongSound as a Sound to the @@List of Objects@, "
 	"choose ##Extract sound selection# from the #File menu. You can specify whether you want "
 	"the time domain of the resulting Sound to match the starting and finishing times of the "
 	"selection or whether you want the time domain of the resulting Sound to start at zero seconds.")
-NORMAL ("If you are viewing a LongSound, you can save the selected part of it to a 16-bit sound file "
+NORMAL (L"If you are viewing a LongSound, you can save the selected part of it to a 16-bit sound file "
 	"(AIFF, AIFC, WAV, NeXT/Sun, NIST) with a command from the File menu.")
-ENTRY ("Accelerations")
-NORMAL ("To write the @TextGrid object to a text file without going to the @@Object window@: "
+ENTRY (L"Accelerations")
+NORMAL (L"To write the @TextGrid object to a text file without going to the @@Object window@: "
 	"choose ##Write TextGrid to text file...# from the #File menu.")
-ENTRY ("Searching")
-NORMAL ("The Search menu contains the command #Find (Command-F), which will allow you to specify "
+ENTRY (L"Searching")
+NORMAL (L"The Search menu contains the command #Find (Command-F), which will allow you to specify "
 	"a text whose first occurrence will then be looked for in the currently selected tier "
 	"(starting from the currently selected text in the currently selected interval). "
 	"The command ##Find again# (Command-G) will search for the next occurrence of the same search text.")
-ENTRY ("Checking the spelling")
-NORMAL ("You can check the spelling of the intervals in your tiers by including a @SpellingChecker "
+ENTRY (L"Checking the spelling")
+NORMAL (L"You can check the spelling of the intervals in your tiers by including a @SpellingChecker "
 	"object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, "
 	"then click Edit. The Search menu will contain the command ##Check spelling# (Command-L), "
 	"which will search for the next word that does not occur in its lexicon.")
 MAN_END
 
-MAN_BEGIN ("TextTier", "ppgb", 20030316)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}.")
-NORMAL ("A TextTier object represents a marked point process, i.e., it contains a series of (%time, %text) points, "
+MAN_BEGIN (L"TextTier", L"ppgb", 20030316)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+NORMAL (L"A TextTier object represents a marked point process, i.e., it contains a series of (%time, %text) points, "
 	"sorted by time.")
-NORMAL ("Each point is marked with a text string. Though this is a system-independent ASCII text string, "
+NORMAL (L"Each point is marked with a text string. Though this is a system-independent ASCII text string, "
 	"it may, as everywhere in Praat, contain @@Special symbols@ "
 	"like Greek letters, mathematical symbols, style information, "
 	"and Phonetic symbols, which will be visible when the string is drawn "
 	"into the Picture window or viewed in a @TextGridEditor.")
-ENTRY ("Creating a TextTier object in Praat")
-NORMAL ("A TextTier object is usually extracted from a @TextGrid object, "
+ENTRY (L"Creating a TextTier object in Praat")
+NORMAL (L"A TextTier object is usually extracted from a @TextGrid object, "
 	"which may contain several tiers.")
-TAG ("From scratch:")
-LIST_ITEM ("1. Select an object with a time domain, e.g., a Sound or a Pitch.")
-LIST_ITEM ("2. Click \"To TextTier\".")
-NORMAL ("The resulting TextTier will have the same time domain "
+TAG (L"From scratch:")
+LIST_ITEM (L"1. Select an object with a time domain, e.g., a Sound or a Pitch.")
+LIST_ITEM (L"2. Click \"To TextTier\".")
+NORMAL (L"The resulting TextTier will have the same time domain "
 	"as the original Sound (or Pitch), e.g., if the Sound object starts at 0.0 seconds "
 	"and has a duration of 2.1 seconds, "
 	"the resulting TextTier will also have an %xmin of 0.0 "
 	"and an %xmax of 2.1 seconds.")
-NORMAL ("The resulting TextTier will have 0 points in it.")
-ENTRY ("Editing a TextTier in Praat")
-NORMAL ("To edit a TextTier, first convert it into a @TextGrid. "
+NORMAL (L"The resulting TextTier will have 0 points in it.")
+ENTRY (L"Editing a TextTier in Praat")
+NORMAL (L"To edit a TextTier, first convert it into a @TextGrid. "
 	"You invoke a @TextGridEditor in either of two ways:")
-LIST_ITEM ("\\bu Select a TextGrid and click ##Edit#.")
-LIST_ITEM ("\\bu Select a TextGrid and a @Sound and click ##Edit#.")
-NORMAL ("In the latter case, a copy of the Sound object will be visible in the editor.")
-NORMAL ("The @TextGridEditor will allow you to add marks to a TextTier object, "
+LIST_ITEM (L"\\bu Select a TextGrid and click ##Edit#.")
+LIST_ITEM (L"\\bu Select a TextGrid and a @Sound and click ##Edit#.")
+NORMAL (L"In the latter case, a copy of the Sound object will be visible in the editor.")
+NORMAL (L"The @TextGridEditor will allow you to add marks to a TextTier object, "
 	"move marks around, edit the texts in the marks, and remove marks.")
-ENTRY ("Drawing a TextTier")
-NORMAL ("You can draw a TextTier together with a Pitch object, "
+ENTRY (L"Drawing a TextTier")
+NORMAL (L"You can draw a TextTier together with a Pitch object, "
 	"by selecting one TextTier and one Pitch object, "
 	"and choosing \"Draw...\". The mark texts will appear just above the pitch contour.")
-ENTRY ("Class description")
-NORMAL ("If you select a TextTier and click ##Inspect# or ##Write to console#, "
+ENTRY (L"Class description")
+NORMAL (L"If you select a TextTier and click ##Inspect# or ##Write to console#, "
 	" you will see that a TextTier object contains the following attributes:")
-TAG ("%x__%min_")
-DEFINITION ("the start of the time domain.")
-TAG ("%x__%max_")
-DEFINITION ("the end of the time domain.")
-TAG ("%points")
-DEFINITION ("a collection of text points, sorted by their times.")
+TAG (L"%x__%min_")
+DEFINITION (L"the start of the time domain.")
+TAG (L"%x__%max_")
+DEFINITION (L"the end of the time domain.")
+TAG (L"%points")
+DEFINITION (L"a collection of text points, sorted by their times.")
 MAN_END
 
-MAN_BEGIN ("TextTier: Add point...", "ppgb", 19980324)
-INTRO ("A command to add a point to each selected @TextTier.")
-ENTRY ("Arguments")
-TAG ("%Time (s)")
-DEFINITION ("the time at which a point is to be added.")
-TAG ("%Text")
-DEFINITION ("the text of the requested new point.")
-ENTRY ("Behaviour")
-NORMAL ("The tier is modified so that it contains the new point. "
+MAN_BEGIN (L"TextTier: Add point...", L"ppgb", 19980324)
+INTRO (L"A command to add a point to each selected @TextTier.")
+ENTRY (L"Arguments")
+TAG (L"%Time (s)")
+DEFINITION (L"the time at which a point is to be added.")
+TAG (L"%Text")
+DEFINITION (L"the text of the requested new point.")
+ENTRY (L"Behaviour")
+NORMAL (L"The tier is modified so that it contains the new point. "
 	"If a point at the specified time was already present in the tier, nothing happens.")
 MAN_END
 
-MAN_BEGIN ("TextTier: Down to PointProcess", "ppgb", 20010410)
-INTRO ("A command to degrade every selected @TextTier to a @PointProcess.")
-ENTRY ("Behaviour")
-NORMAL ("The times of all the text points are trivially copied, and so is the time domain. The text information is lost.")
+MAN_BEGIN (L"TextTier: Down to PointProcess", L"ppgb", 20010410)
+INTRO (L"A command to degrade every selected @TextTier to a @PointProcess.")
+ENTRY (L"Behaviour")
+NORMAL (L"The times of all the text points are trivially copied, and so is the time domain. The text information is lost.")
 MAN_END
 
-MAN_BEGIN ("TextTier(s): To TextGrid", "ppgb", 19970317)
-INTRO ("A command to merge all selected @TextTier objects into a new @TextGrid object.")
-TAG ("You can also merge with @IntervalTier objects:")
-LIST_ITEM ("@@TextTier(s) & IntervalTier(s): To TextGrid@")
+MAN_BEGIN (L"TextTier(s): To TextGrid", L"ppgb", 19970317)
+INTRO (L"A command to merge all selected @TextTier objects into a new @TextGrid object.")
+TAG (L"You can also merge with @IntervalTier objects:")
+LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
 MAN_END
 
-MAN_BEGIN ("TextTier(s) & IntervalTier(s): To TextGrid", "ppgb", 19970317)
-INTRO ("A command to merge all selected @TextTier and @IntervalTier objects into a new @TextGrid object.")
+MAN_BEGIN (L"TextTier(s) & IntervalTier(s): To TextGrid", L"ppgb", 19970317)
+INTRO (L"A command to merge all selected @TextTier and @IntervalTier objects into a new @TextGrid object.")
 MAN_END
 
-MAN_BEGIN ("WordList", "ppgb", 19991129)
-INTRO ("One of the @@types of objects@ in P\\s{RAAT}. "
+MAN_BEGIN (L"WordList", L"ppgb", 19991129)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
 	"An object of class WordList contains a sorted list of strings in a system-independent format. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
-ENTRY ("1. How to create a WordList object")
-NORMAL ("You will normally create a WordList object by reading a binary WordList file. "
+ENTRY (L"1. How to create a WordList object")
+NORMAL (L"You will normally create a WordList object by reading a binary WordList file. "
 	"You'll use the generic @@Read from file...@ command from the Read menu.")
-NORMAL ("See below under 3 for how to create such a file.")
-ENTRY ("2. What you can do with a Wordlist object")
-NORMAL ("The main functionality of a WordList is its ability to tell you whether it contains a certain string. "
+NORMAL (L"See below under 3 for how to create such a file.")
+ENTRY (L"2. What you can do with a Wordlist object")
+NORMAL (L"The main functionality of a WordList is its ability to tell you whether it contains a certain string. "
 	"If you select a WordList, you can query the existence of a specific word by using the ##Has word# "
 	"command. You supply the word and press OK. If the WordList does contain the word, "
 	"the value \"1\" will be written to the Info window; otherwise, the value \"0\" will be written.")
-ENTRY ("3. How to create a binary WordList file")
-NORMAL ("You can create a binary (compressed) WordList file from a simple text file that contains a long list of words. "
+ENTRY (L"3. How to create a binary WordList file")
+NORMAL (L"You can create a binary (compressed) WordList file from a simple text file that contains a long list of words. "
 	"Perhaps such a text file has been supplied by a lexicographic institution in your country; "
 	"because of copyright issues, such word lists cannot be distributed with the Praat program. "
 	"To convert the simple text file into a compressed WordList file, you basically take the following steps:")
-CODE ("Read Strings from raw text file... lexicon.iso")
-CODE ("Genericize")
-CODE ("Sort")
-CODE ("To WordList")
-CODE ("Write to binary file... lexicon.WordList")
-NORMAL ("I'll explain these steps in detail. "
+CODE (L"Read Strings from raw text file... lexicon.iso")
+CODE (L"Genericize")
+CODE (L"Sort")
+CODE (L"To WordList")
+CODE (L"Write to binary file... lexicon.WordList")
+NORMAL (L"I'll explain these steps in detail. "
 	"For instance, a simple text file may contain the following list of words:")
-CODE ("cook")
-CODE ("cooked")
-CODE ("cookie")
-CODE ("cookies")
-CODE ("cooking")
-CODE ("cooks")
-CODE ("Copenhagen")
-CODE ("K\\o/bnhavn")
-CODE ("M\\u\"nchen")
-CODE ("Munich")
-CODE ("\\aongstr\\o\"m")
-NORMAL ("These are just 11 words, but the procedure will work fine if you have a million of them, "
+CODE (L"cook")
+CODE (L"cooked")
+CODE (L"cookie")
+CODE (L"cookies")
+CODE (L"cooking")
+CODE (L"cooks")
+CODE (L"Copenhagen")
+CODE (L"K\\o/bnhavn")
+CODE (L"M\\u\"nchen")
+CODE (L"Munich")
+CODE (L"\\aongstr\\o\"m")
+NORMAL (L"These are just 11 words, but the procedure will work fine if you have a million of them, "
 	"and enough memory in your computer.")
-NORMAL ("You can read the file into a @Strings object with @@Read Strings from raw text file...@ "
+NORMAL (L"You can read the file into a @Strings object with @@Read Strings from raw text file...@ "
 	"from the Read menu in the Objects window. The resulting @Strings object contains 11 strings in the above order, "
 	"as you can verify by viewing them with @Inspect.")
-NORMAL ("In general, the Strings object will occupy a lot of memory, and be slow to read in. "
+NORMAL (L"In general, the Strings object will occupy a lot of memory, and be slow to read in. "
 	"For instance, a certain list of more than 300,000 Dutch word forms occupies 3.6 MB on disk, "
 	"and will occupy at least 7 MB of memory after it is read in. The extra 3.4 MB arise because the Strings object "
 	"contains a pointer to each of the strings, and each of the strings is in a separately allocated part of "
 	"the memory heap. Moreover, it takes 8 seconds on an average 1999 computer to read this object into memory. "
 	"For these reasons, we will use the WordList object if we need a sorted list for spelling checking.")
-NORMAL ("If you select the Strings, you can click the ##To WordList# button. "
+NORMAL (L"If you select the Strings, you can click the ##To WordList# button. "
 	"However, you will get the following complaint:")
-CODE ("String \"K\\o/bnhavn\" not generic. Please genericize first.")
-NORMAL ("This complaint means that the strings are still in your computer's native text format, "
+CODE (L"String \"K\\o/bnhavn\" not generic. Please genericize first.")
+NORMAL (L"This complaint means that the strings are still in your computer's native text format, "
 	"which is ISO-Latin1 for Unix and Windows computers, or Mac encoding for Macintosh computers.")
-NORMAL ("So you press the #Genericize button. You can see that the Strings object changes to")
-CODE ("cook")
-CODE ("cooked")
-CODE ("cookie")
-CODE ("cookies")
-CODE ("cooking")
-CODE ("cooks")
-CODE ("Copenhagen")
-CODE ("K\\bso/bnhavn")
-CODE ("M\\bsu\\\" nchen")
-CODE ("Munich")
-CODE ("\\bsaongstr\\bso\\\" m")
-NORMAL ("The strings are now in the generic system-independent format that is used everywhere in Praat "
+NORMAL (L"So you press the #Genericize button. You can see that the Strings object changes to")
+CODE (L"cook")
+CODE (L"cooked")
+CODE (L"cookie")
+CODE (L"cookies")
+CODE (L"cooking")
+CODE (L"cooks")
+CODE (L"Copenhagen")
+CODE (L"K\\bso/bnhavn")
+CODE (L"M\\bsu\\\" nchen")
+CODE (L"Munich")
+CODE (L"\\bsaongstr\\bso\\\" m")
+NORMAL (L"The strings are now in the generic system-independent format that is used everywhere in Praat "
 	"to draw strings (see @@Special symbols@).")
-NORMAL ("You can again try to click the ##To WordList# button. However, you will get a complaint again:")
-CODE1 ("String \"Copenhagen\" not sorted. Please sort first.")
-NORMAL ("This complaint means that the strings have not been sorted in ASCII sorting order. "
+NORMAL (L"You can again try to click the ##To WordList# button. However, you will get a complaint again:")
+CODE1 (L"String \"Copenhagen\" not sorted. Please sort first.")
+NORMAL (L"This complaint means that the strings have not been sorted in ASCII sorting order. "
 	"So you click #Sort, and the Strings object becomes:")
-CODE ("Copenhagen")
-CODE ("K\\bso/bnhavn")
-CODE ("M\\bsu\\\" nchen")
-CODE ("Munich")
-CODE ("\\bsaongstr\\bso\\\" m")
-CODE ("cook")
-CODE ("cooked")
-CODE ("cookie")
-CODE ("cookies")
-CODE ("cooking")
-CODE ("cooks")
-NORMAL ("The strings are now in the ASCII order, in which capitals come before lower-case letters, "
+CODE (L"Copenhagen")
+CODE (L"K\\bso/bnhavn")
+CODE (L"M\\bsu\\\" nchen")
+CODE (L"Munich")
+CODE (L"\\bsaongstr\\bso\\\" m")
+CODE (L"cook")
+CODE (L"cooked")
+CODE (L"cookie")
+CODE (L"cookies")
+CODE (L"cooking")
+CODE (L"cooks")
+NORMAL (L"The strings are now in the ASCII order, in which capitals come before lower-case letters, "
 	"and backslashes come in between these two series.")
-NORMAL ("Clicking ##To WordList# now succeeds, and a WordList object appears in the list. "
+NORMAL (L"Clicking ##To WordList# now succeeds, and a WordList object appears in the list. "
 	"If you write it to a text file (with the Write menu), you will get the following file:")
-CODE ("File type = \"ooTextFile\"")
-CODE ("Object class = \"WordList\"")
-CODE ("")
-CODE ("string = \"Copenhagen")
-CODE ("K\\bso/bnhavn")
-CODE ("M\\bsu\\\" \\\" nchen")
-CODE ("Munich")
-CODE ("\\bsaongstr\\bso\\\" \\\" m")
-CODE ("cook")
-CODE ("cooked")
-CODE ("cookie")
-CODE ("cookies")
-CODE ("cooking")
-CODE ("cooks\\\"r")
-NORMAL ("Note that the double quotes (\\\" ) that appear inside the strings, have been doubled, "
+CODE (L"File type = \"ooTextFile\"")
+CODE (L"Object class = \"WordList\"")
+CODE (L"")
+CODE (L"string = \"Copenhagen")
+CODE (L"K\\bso/bnhavn")
+CODE (L"M\\bsu\\\" \\\" nchen")
+CODE (L"Munich")
+CODE (L"\\bsaongstr\\bso\\\" \\\" m")
+CODE (L"cook")
+CODE (L"cooked")
+CODE (L"cookie")
+CODE (L"cookies")
+CODE (L"cooking")
+CODE (L"cooks\\\"r")
+NORMAL (L"Note that the double quotes (\\\" ) that appear inside the strings, have been doubled, "
 	"as is done everywhere inside strings in Praat text files.")
-NORMAL ("After you have created a WordList text file, you can create a WordList object just by reading this file "
+NORMAL (L"After you have created a WordList text file, you can create a WordList object just by reading this file "
 	"with @@Read from file...@ from the Read menu.")
-NORMAL ("The WordList object has two advantages over the Strings object. First, it won't take up more "
+NORMAL (L"The WordList object has two advantages over the Strings object. First, it won't take up more "
 	"memory than the original word list. This is because the WordList is stored as a single string: "
 	"a contiguous list of strings, separated by new-line symbols. Thus, our 300,000-word list "
 	"will take up only 3.6 MB, and be read in 4 seconds.")
-NORMAL ("However, disk storage and reading can again be improved by compressing the word list. "
+NORMAL (L"However, disk storage and reading can again be improved by compressing the word list. "
 	"We can take advantage of the sorting, by noting for each entry how many leading characters "
 	"are equal to those of the previous entry. The list then becomes something equivalent to")
-CODE ("Copenhagen")
-CODE ("0 K\\bso/bnhavn")
-CODE ("0 M\\bsu\\\" nchen")
-CODE ("1 unich")
-CODE ("0 \\bsaongstr\\bso\\\" m")
-CODE ("0 cook")
-CODE ("4 ed")
-CODE ("4 ie")
-CODE ("6 s")
-CODE ("5 ng")
-CODE ("4 s")
-NORMAL ("You can write the WordList compressed in this way to a binary file with "
+CODE (L"Copenhagen")
+CODE (L"0 K\\bso/bnhavn")
+CODE (L"0 M\\bsu\\\" nchen")
+CODE (L"1 unich")
+CODE (L"0 \\bsaongstr\\bso\\\" m")
+CODE (L"0 cook")
+CODE (L"4 ed")
+CODE (L"4 ie")
+CODE (L"6 s")
+CODE (L"5 ng")
+CODE (L"4 s")
+NORMAL (L"You can write the WordList compressed in this way to a binary file with "
 	"@@Write to binary file...@. For our 300,000-word list, this file takes up only 1.1 MB "
 	"and can be read into memory (with @@Read from file...@) in a single second. "
 	"When read into memory, the WordList object is again expanded to 3.6 MB to allow rapid searching.")

@@ -47,23 +47,23 @@ static void info (I) {
 		if (value > ymax) ymax = value;
 	}
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Domain:");
-	MelderInfo_writeLine2 ("   tmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 ("   tmax: ", Melder_double (my xmax));
-	MelderInfo_writeLine1 ("x sampling:");
-	MelderInfo_writeLine2 ("   Number of values of t in x: ", Melder_double (my x -> nx));
-	MelderInfo_writeLine5 ("   t step in x: ", Melder_double (my x -> dx), " (sampling rate ", Melder_double (1.0 / my x -> dx), ")");
-	MelderInfo_writeLine2 ("   First t in x: ", Melder_double (my x -> x1));
-	MelderInfo_writeLine1 ("x values:");
-	MelderInfo_writeLine2 ("   Minimum x: ", Melder_double (xmin));
-	MelderInfo_writeLine2 ("   Maximum x: ", Melder_double (xmax));
-	MelderInfo_writeLine1 ("y sampling:");
-	MelderInfo_writeLine2 ("   Number of values of t in y: ", Melder_double (my y -> nx));
-	MelderInfo_writeLine5 ("   t step in y: ", Melder_double (my y -> dx), " (sampling rate ", Melder_double (1.0 / my y -> dx), ")");
-	MelderInfo_writeLine2 ("   First t in y: ", Melder_double (my y -> x1));
-	MelderInfo_writeLine1 ("y values:");
-	MelderInfo_writeLine2 ("   Minimum y: ", Melder_double (ymin));
-	MelderInfo_writeLine2 ("   Maximum y: ", Melder_double (ymax));
+	MelderInfo_writeLine1 (L"Domain:");
+	MelderInfo_writeLine2 (L"   tmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 (L"   tmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine1 (L"x sampling:");
+	MelderInfo_writeLine2 (L"   Number of values of t in x: ", Melder_double (my x -> nx));
+	MelderInfo_writeLine5 (L"   t step in x: ", Melder_double (my x -> dx), L" (sampling rate ", Melder_double (1.0 / my x -> dx), L")");
+	MelderInfo_writeLine2 (L"   First t in x: ", Melder_double (my x -> x1));
+	MelderInfo_writeLine1 (L"x values:");
+	MelderInfo_writeLine2 (L"   Minimum x: ", Melder_double (xmin));
+	MelderInfo_writeLine2 (L"   Maximum x: ", Melder_double (xmax));
+	MelderInfo_writeLine1 (L"y sampling:");
+	MelderInfo_writeLine2 (L"   Number of values of t in y: ", Melder_double (my y -> nx));
+	MelderInfo_writeLine5 (L"   t step in y: ", Melder_double (my y -> dx), L" (sampling rate ", Melder_double (1.0 / my y -> dx), L")");
+	MelderInfo_writeLine2 (L"   First t in y: ", Melder_double (my y -> x1));
+	MelderInfo_writeLine1 (L"y values:");
+	MelderInfo_writeLine2 (L"   Minimum y: ", Melder_double (ymin));
+	MelderInfo_writeLine2 (L"   Maximum y: ", Melder_double (ymax));
 }
 
 static int copy (I, thou) {

@@ -40,11 +40,11 @@ static void cb_extended (Widget, XtPointer, XtPointer);
 static void update (I, long from, long to, const long *select, long nSelect);
 static void update_dos (I);
 
-char *CategoriesEditor_EMPTYLABEL = "(empty)";
+wchar_t *CategoriesEditor_EMPTYLABEL = L"(empty)";
 
 DIRECT (CategoriesEditor, cb_help)
 	(void) me;
-	Melder_help ("CategoriesEditor");
+	Melder_help (L"CategoriesEditor");
 END
 
 /**************** Some methods for Collection  ****************/
@@ -533,7 +533,7 @@ static void updateWidgets (I) /*all buttons except undo & redo */
 		{
 			insert = True;
 			if (posList[0] == size) insertAtEnd = True;
-			if (size == 1 && ! strcmp (CategoriesEditor_EMPTYLABEL,
+			if (size == 1 && ! wcscmp (CategoriesEditor_EMPTYLABEL,
 				OrderedOfString_itemAtIndex_c (my data, 1))) remove = False; 
 		}
 		XtFree ((XtPointer) posList);
@@ -576,15 +576,14 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		XmString *table = NULL; 
 		int k;
 		
-		if (! (table = (XmString *) Melder_malloc ((to - from + 1) * 
-			sizeof (XmString *)))) return;
+		if (! (table = Melder_malloc (XmString, to - from + 1))) return;
 		XtVaGetValues (my list, XmNitemCount, & itemCount, NULL);
 		for (k = 0, i = from; i <= to; i++)
 		{
-			char itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
-			sprintf (itemText, "%6d     %.*s", i, CategoriesEditor_TEXTMAXLENGTH,
+			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
+			swprintf (itemText, CategoriesEditor_TEXTMAXLENGTH+10, L"%6d     %.*ls", i, CategoriesEditor_TEXTMAXLENGTH,
 				OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = XmStringCreateSimple (itemText);
+			table[k++] = XmStringCreateSimple (Melder_peekWcsToAscii (itemText));
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
 		{
@@ -619,9 +618,9 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	XmListDeselectAllItems (my list);
 	if (size == 1) /* the only item is allways selected */
 	{
-		const char *catg = OrderedOfString_itemAtIndex_c (my data, 1);
+		const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, 1);
 		XmListSelectPos (my list, 1, True);
-		XmTextSetString (my text, (char *) catg);
+		GuiText_setStringW (my text, catg);
 	}
 	else if (nSelect > 0)
 	{
@@ -669,7 +668,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		else
 		{
 			int deltaTopPos = -1, nUpdate = to - from + 1;
-			if ((from == select[1]) && (to == select[nSelect]) /* Replace */ ||
+			if ((from == select[1] && to == select[nSelect]) /* Replace */ ||
 				(nUpdate > 2 && nSelect == 1) /* Inserts */) deltaTopPos = 0;
 			else if (nUpdate == nSelect + 1 && select[1] == from + 1) /* down */
 				deltaTopPos = 1;
@@ -703,17 +702,17 @@ static void insert (I, int position)
 	iam (CategoriesEditor);
 	SimpleString str = NULL;
 	CategoriesEditorInsert command = NULL;
-	char *text = XmTextGetString (my text);
+	wchar_t *text = GuiText_getStringW (my text);
 	
-	if (strlen (text) == 0 || ! (str = SimpleString_create (text)) ||
+	if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
 		! (command = CategoriesEditorInsert_create (me, str, position)) ||
 		! Command_do (command)) goto end;
 	if (my history) CommandHistory_insertItem (my history, command);
-	XtFree (text);
+	Melder_free (text);
 	updateWidgets (me);
 	return;
 end:
-	XtFree (text);
+	Melder_free (text);
 	forget (str);
 	forget (command);
 }
@@ -736,20 +735,20 @@ MOTIF_CALLBACK (cb_replace)
 	if (XmListGetSelectedPos (my list, & posList, & posCount))
 	{
 		CategoriesEditorReplace command = NULL;
-		char *text = XmTextGetString (my text);
+		wchar_t *text = GuiText_getStringW (my text);
 		SimpleString str = NULL;
 		
-		if (strlen (text) == 0 || ! (str = SimpleString_create (text)) ||
+		if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
 			! (command = CategoriesEditorReplace_create (me, str, posList,
 				posCount)) ||
 			! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
 		XtFree ((XtPointer) posList);
-		XtFree (text);
+		Melder_free (text);
 		updateWidgets (me);
 		return;
 end:
-		XtFree (text);
+		Melder_free (text);
 		forget (str);
 		forget (command);
 	}
@@ -801,8 +800,8 @@ MOTIF_CALLBACK_END
 
 MOTIF_CALLBACK (cb_default)
 	iam (CategoriesEditor);
-	const char *catg = OrderedOfString_itemAtIndex_c (my data, my position);
-	XmTextSetString (my text, (char *) catg);
+	const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, my position);
+	GuiText_setStringW (my text, catg);
 MOTIF_CALLBACK_END
 
 MOTIF_CALLBACK (cb_extended)
@@ -890,7 +889,7 @@ static void createChildren (I)
 	my text = XtVaCreateManagedWidget("Text", xmTextWidgetClass, my dialog,
 		 XmNx, 370, XmNy, 3+menuBarOffset, XmNwidth, 140, NULL);
 	XmTextSetMaxLength (my text, CategoriesEditor_TEXTMAXLENGTH);
-	XmTextSetString (my text, CategoriesEditor_EMPTYLABEL);
+	GuiText_setStringW (my text, CategoriesEditor_EMPTYLABEL);
 				 
 	my insert = XtVaCreateManagedWidget ("Insert", xmPushButtonGadgetClass, 
 		my dialog,  XmNx, 280, XmNy, 43+menuBarOffset, XmNwidth, 90, NULL);

@@ -22,7 +22,7 @@
  * pb 2003/06/11 made struct_copy global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
+ * pb 2007/08/13
  */
 
 #include "oo_undef.h"
@@ -31,18 +31,12 @@
 	thy x = my x;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			thy x [i] = my x [i]; \
-	}
+	for (int i = 0; i < n; i ++) \
+		thy x [i] = my x [i];
 
 #define oo_SET(type,storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			thy x [i] = my x [i]; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		thy x [i] = my x [i];
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
@@ -56,10 +50,10 @@
 	thy x = my x;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	{ int i; for (i = 0; i < n; i ++) thy x [i] = my x [i]; }
+	for (int i = 0; i < n; i ++) thy x [i] = my x [i];
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	{ int i; for (i = 0; i <= enumlength (setType); i ++) thy x [i] = my x [i]; }
+	for (int i = 0; i <= enumlength (setType); i ++) thy x [i] = my x [i];
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
@@ -70,24 +64,17 @@
 	if (my x && ! (thy x = Melder_strdup (my x))) return 0;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0; \
-	}
+		for (int i = 0; i <= enumlength (setType); i ++) \
+			if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
-		long i; \
 		if (! (thy x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0; \
 	}
 
@@ -97,24 +84,17 @@
 	if (my x && ! (thy x = Melder_wcsdup (my x))) return 0;
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0; \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
-		long i; \
 		if (! (thy x = NUMvector (sizeof (wchar_t *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0; \
 	}
 
@@ -124,27 +104,25 @@
 	if (! Type##_copy (& my x, & thy x)) return 0;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ int i; for (i = 0; i < n; i ++) \
-		if (! Type##_copy (& my x [i], & thy x [i])) return 0; }
+	for (int i = 0; i < n; i ++) \
+		if (! Type##_copy (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	{ int i; for (i = 0; i <= enumlength (setType); i ++) \
-		if (! Type##_copy (& my x [i], & thy x [i])) return 0; }
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (! Type##_copy (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
-		long i; \
 		if (! (thy x = NUMstructvector (Type, min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (! Type##_copy (& my x [i], & thy x [i])) return 0; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
-		long i, j; \
 		if (! (thy x = NUMstructmatrix (Type, row1, row2, col1, col2))) return 0; \
-		for (i = row1; i <= row2; i ++) \
-			for (j = col1; j <= col2; j ++) \
+		for (long i = row1; i <= row2; i ++) \
+			for (long j = col1; j <= col2; j ++) \
 				if (! Type##_copy (& my x [i] [j], & thy x [i] [j])) return 0; \
 	}
 
@@ -222,7 +200,7 @@
 #define oo_COPYING  1
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
-#define oo_VALIDATING_ASCII  0
+#define oo_VALIDATING_ENCODING  0
 #define oo_READING  0
 #define oo_READING_TEXT  0
 #define oo_READING_BINARY  0

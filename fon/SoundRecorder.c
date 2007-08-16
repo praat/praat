@@ -40,6 +40,7 @@
  * pb 2007/01/03 CoreAudio (PortAudio)
  * pb 2007/01/03 flexible drawing area
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -199,8 +200,8 @@ static int theCouplePreference = 1;
 static int nmaxMB_pref = 4;
 
 void SoundRecorder_prefs (void) {
-	Resources_addInt ("SoundRecorder.bufferSize_MB", & nmaxMB_pref);
-	Resources_addInt ("SoundRecorder.coupleSliders", & theCouplePreference);
+	Resources_addInt (L"SoundRecorder.bufferSize_MB", & nmaxMB_pref);
+	Resources_addInt (L"SoundRecorder.coupleSliders", & theCouplePreference);
 }
 
 int SoundRecorder_getBufferSizePref_MB (void) { return nmaxMB_pref; }
@@ -461,7 +462,7 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	if (nsamp < 1) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics, 0.5, 0.5, "Not recording.");
+		Graphics_text (my graphics, 0.5, 0.5, L"Not recording.");
 		return;
 	}
 	short leftMaximum = 0, rightMaximum = 0;
@@ -711,7 +712,7 @@ static int portaudioStreamCallback (
 	unsigned long samplesLeft = my nmax - my nsamp;
 	if (samplesLeft > 0) {
 		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
-		if (Melder_debug == 20) Melder_casual ("play %s %s", Melder_integer (dsamples),
+		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my portaudioStream)));
 		memcpy (my buffer + my nsamp * my numberOfChannels, input, 2 * dsamples * my numberOfChannels);
 		my nsamp += dsamples;
@@ -1419,9 +1420,9 @@ static void createChildren (I) {
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
 		if (my fsamp [i]. canDo) {
 			double fsamp = my fsamp [i]. fsamp;
-			char title [40];
-			sprintf (title, "%s Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
-			my fsamp [i]. button = XmCreateToggleButton (fsampBox, title, NULL, 0);
+			wchar_t title [40];
+			swprintf (title, 40, L"%ls Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
+			my fsamp [i]. button = XmCreateToggleButton (fsampBox, Melder_peekWcsToAscii (title), NULL, 0);
 			XtAddCallback (my fsamp [i]. button, XmNvalueChangedCallback, cb_fsamp, me);
 			XtManageChild (my fsamp [i]. button);
 		}
@@ -1519,7 +1520,7 @@ static void createChildren (I) {
 static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	if (my fakeMono) {
 		long nsamp = my nsamp / 2;
-		MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
+		MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
 		if (file -> filePointer) {
 			MelderFile_writeAudioFileHeader16 (file, audioFileType, theControlPanel. sampleRate, nsamp, 1);
 			if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
@@ -1570,7 +1571,7 @@ DO_WRITE
 	if (! writeAudioFile (me, file, Melder_NIST)) return 0;
 END
 
-DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help ("SoundRecorder"); END
+DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help (L"SoundRecorder"); END
 
 static void createMenus (I) {
 	iam (SoundRecorder);
@@ -1670,16 +1671,16 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 			paInitialized = true;
 			if (Melder_debug == 20) {
 				PaHostApiIndex hostApiCount = Pa_GetHostApiCount ();
-				Melder_casual ("host API count %s", Melder_integer (hostApiCount));
+				Melder_casual ("host API count %ls", Melder_integer (hostApiCount));
 				for (PaHostApiIndex iHostApi = 0; iHostApi < hostApiCount; iHostApi ++) {
 					const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo (iHostApi);
 					PaHostApiTypeId type = hostApiInfo -> type;
-					Melder_casual ("host API %s: %s, \"%s\"", Melder_integer (iHostApi), Melder_integer (type), hostApiInfo -> name, Melder_integer (hostApiInfo -> deviceCount));
+					Melder_casual ("host API %ls: %ls, \"%s\" %ls", Melder_integer (iHostApi), Melder_integer (type), hostApiInfo -> name, Melder_integer (hostApiInfo -> deviceCount));
 				}
 				PaHostApiIndex defaultHostApi = Pa_GetDefaultHostApi ();
-				Melder_casual ("default host API %s", Melder_integer (defaultHostApi));
+				Melder_casual ("default host API %ls", Melder_integer (defaultHostApi));
 				PaDeviceIndex deviceCount = Pa_GetDeviceCount ();
-				Melder_casual ("device count %s", Melder_integer (deviceCount));
+				Melder_casual ("device count %ls", Melder_integer (deviceCount));
 			}
 		}
 		PaDeviceIndex deviceCount = Pa_GetDeviceCount ();

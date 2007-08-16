@@ -67,9 +67,9 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 	forget (copy);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Place (Bark)");
+		Graphics_textLeft (g, 1, L"Place (Bark)");
 		Graphics_marksLeftEvery (g, 1.0, 5.0, 1, 1, 0);
 	}
 }

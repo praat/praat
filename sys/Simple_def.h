@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #define ooSTRUCT SimpleInt
@@ -53,14 +53,8 @@ oo_END_CLASS (SimpleDouble)
 
 #define ooSTRUCT SimpleString
 oo_DEFINE_CLASS (SimpleString, Data)
-	oo_STRING (string)
-oo_END_CLASS (SimpleString)
-#undef ooSTRUCT
-
-#define ooSTRUCT SimpleStringW
-oo_DEFINE_CLASS (SimpleStringW, Data)
 	oo_STRINGW (string)
-oo_END_CLASS (SimpleStringW)
+oo_END_CLASS (SimpleString)
 #undef ooSTRUCT
 
 /* End of file Simple_def.h */

@@ -115,7 +115,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 		long pos =  OrderedOfString_indexOfItem_c (my outputCategories, OrderedOfString_itemAtIndex_c (thee, i));
 		if (pos < 1)
 		{
-			 (void) Melder_error ("The FFNet doesn't know the category \"%s\" from Categories.", 
+			 (void) Melder_error ("The FFNet doesn't know the category \"%ls\" from Categories.", 
 			 	OrderedOfString_itemAtIndex_c (thee, i));
 				goto end;
 		}

@@ -45,7 +45,7 @@
 
 #define PCA_members Eigen_members \
 	long numberOfObservations;			\
-	char **labels;						\
+	wchar_t **labels;						\
 	double *centroid;
 #define PCA_methods Eigen_methods
 class_create (PCA, Eigen);
@@ -73,7 +73,7 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to
 TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
-TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char *numstring);
+TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring);
 
 #endif /* _PCA_h_ */
 

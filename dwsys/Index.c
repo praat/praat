@@ -47,7 +47,7 @@ static void info (I)
 {
 	iam (Index);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of elements: ", Melder_integer (my numberOfElements));
+	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
 }
 
 
@@ -114,14 +114,14 @@ StringsIndex StringsIndex_create (long numberOfElements)
 	return me;
 }
 
-int StringsIndex_getClass (StringsIndex me, char *classLabel)
+int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)
 {
 	long i;
 	
 	for (i = 1; i <= my classes -> size; i++)
 	{
 		SimpleString ss = my classes -> item[i];
-		if (NUMstrcmp (ss -> string, classLabel) == 0) return i;
+		if (NUMwcscmp (ss -> string, classLabel) == 0) return i;
 	}
 	return 0;
 }

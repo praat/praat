@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "Art_Speaker.h"
@@ -46,20 +46,20 @@ FORM (Art_edit, "Edit Art", 0)
 	{
 		int i;
 		for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-			REAL (enumstring (Art_MUSCLE, i), "0.0")
+			REALW (enumstring (Art_MUSCLE, i), L"0.0")
 	}
 	OK
 {
 	Art object = (Art) ONLY_OBJECT;
 	int i; for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-		SET_REAL (enumstring (Art_MUSCLE, i), object -> art [i]);
+		SET_REALW (enumstring (Art_MUSCLE, i), object -> art [i]);
 }
 DO
 	Art object = (Art) ONLY_OBJECT;
 	int i;
 	if (theCurrentPraat -> batch) return Melder_error ("Cannot edit an Art from batch.");
 	for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-		object -> art [i] = GET_REAL (enumstring (Art_MUSCLE, i));
+		object -> art [i] = GET_REALW (enumstring (Art_MUSCLE, i));
 END
 
 /***** ARTWORD *****/
@@ -93,12 +93,10 @@ FORM (Artword_getTarget, "Get one Artword target", 0)
 	ENUM ("Muscle", Art_MUSCLE, enumi (Art_MUSCLE, Lungs))
 	OK
 DO
-	Melder_information1
-		(Melder_double (Artword_getTarget ((Artword) ONLY (classArtword), GET_INTEGER ("Muscle"),
-		GET_REAL ("Time"))));
+	Melder_information1 (Melder_double (Artword_getTarget ((Artword) ONLY (classArtword), GET_INTEGER ("Muscle"), GET_REAL ("Time"))));
 END
 
-DIRECT (Artword_help) Melder_help ("Artword"); END
+DIRECT (Artword_help) Melder_help (L"Artword"); END
 
 FORM (Artword_setTarget, "Set one Artword target", 0)
 	REAL ("Time (seconds)", "0.0")
@@ -227,7 +225,7 @@ DO
 		atol (GET_STRING ("Number of tubes in glottis"))), GET_STRING ("Name"))) return 0;
 END
 
-DIRECT (Speaker_help) Melder_help ("Speaker"); END
+DIRECT (Speaker_help) Melder_help (L"Speaker"); END
 
 /***** VOCAL TRACT *****/
 
@@ -273,7 +271,7 @@ DO
 	if (! praat_Fon_formula (dia)) return 0;
 END
 
-DIRECT (VocalTract_help) Melder_help ("VocalTract"); END
+DIRECT (VocalTract_help) Melder_help (L"VocalTract"); END
 
 DIRECT (VocalTract_to_Matrix)
 	EVERY_TO (VocalTract_to_Matrix (OBJECT))
@@ -293,7 +291,7 @@ DO
 		GET_INTEGER ("Radiation damping"), GET_INTEGER ("Internal damping")));
 END
 
-DIRECT (ArticulatorySynthesisTutorial) Melder_help ("Articulatory synthesis"); END
+DIRECT (ArticulatorySynthesisTutorial) Melder_help (L"Articulatory synthesis"); END
 
 void praat_uvafon_Artsynth_init (void);
 void praat_uvafon_Artsynth_init (void) {

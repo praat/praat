@@ -31,6 +31,7 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/26 layout objects window
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include <ctype.h>
@@ -325,15 +326,15 @@ DO
 	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), "Row totals must be positive.")
 	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), "Column totals must be positive.")
 	MelderInfo_open ();
-	MelderInfo_writeLine4 ("Observed row 1 =    ", Melder_integer (a), "    ", Melder_integer (b));
-	MelderInfo_writeLine4 ("Observed row 2 =    ", Melder_integer (c), "    ", Melder_integer (d));
+	MelderInfo_writeLine4 (L"Observed row 1 =    ", Melder_integer (a), L"    ", Melder_integer (b));
+	MelderInfo_writeLine4 (L"Observed row 2 =    ", Melder_integer (c), L"    ", Melder_integer (d));
 	aexp = (a + b) * (a + c) / n;
 	bexp = (a + b) * (b + d) / n;
 	cexp = (a + c) * (c + d) / n;
 	dexp = (b + d) * (c + d) / n;
-	MelderInfo_writeLine1 ("");
-	MelderInfo_writeLine4 ("Expected row 1 =    ", Melder_double (aexp), "    ", Melder_double (bexp));
-	MelderInfo_writeLine4 ("Expected row 2 =    ", Melder_double (cexp), "    ", Melder_double (dexp));
+	MelderInfo_writeLine1 (L"");
+	MelderInfo_writeLine4 (L"Expected row 1 =    ", Melder_double (aexp), L"    ", Melder_double (bexp));
+	MelderInfo_writeLine4 (L"Expected row 2 =    ", Melder_double (cexp), L"    ", Melder_double (dexp));
 	/*
 	 * Continuity correction:
 	 * bring the observed numbers closer to the expected numbers by 0.5 (if possible).
@@ -346,16 +347,16 @@ DO
 	else if (c > cexp) { c -= 0.5; if (c < cexp) c = cexp; }
 	if (d < dexp) { d += 0.5; if (d > dexp) d = dexp; }
 	else if (d > dexp) { d -= 0.5; if (d < dexp) d = dexp; }
-	MelderInfo_writeLine1 ("");
-	MelderInfo_writeLine4 ("Corrected observed row 1 =    ", Melder_double (a), "    ", Melder_double (b));
-	MelderInfo_writeLine4 ("Corrected observed row 2 =    ", Melder_double (c), "    ", Melder_double (d));
+	MelderInfo_writeLine1 (L"");
+	MelderInfo_writeLine4 (L"Corrected observed row 1 =    ", Melder_double (a), L"    ", Melder_double (b));
+	MelderInfo_writeLine4 (L"Corrected observed row 2 =    ", Melder_double (c), L"    ", Melder_double (d));
 	
 	n = a + b + c + d;
 	crossDifference = a * d - b * c;
 	x2 = n * crossDifference * crossDifference / (a + b) / (c + d) / (a + c) / (b + d);
-	MelderInfo_writeLine1 ("");
-	MelderInfo_writeLine2 ("Chi-square =    ", Melder_double (x2));
-	MelderInfo_writeLine2 ("Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
+	MelderInfo_writeLine1 (L"");
+	MelderInfo_writeLine2 (L"Chi-square =    ", Melder_double (x2));
+	MelderInfo_writeLine2 (L"Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
 	MelderInfo_close ();
 END
 
@@ -446,8 +447,8 @@ DO
 	Manual manPage;
 	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot view manual from batch.");
-	manPage = Manual_create (theCurrentPraat -> topShell, "Intro", theCurrentPraat -> manPages);
-	Manual_search (manPage, GET_STRING ("query"));
+	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
+	Manual_search (manPage, GET_STRINGW (L"query"));
 END
 
 FORM (GoToManualPage, "Go to manual page", 0)
@@ -459,7 +460,7 @@ DO
 	Manual manPage;
 	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot view manual from batch.");
-	manPage = Manual_create (theCurrentPraat -> topShell, "Intro", theCurrentPraat -> manPages);
+	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
 	if (! HyperPage_goToPage_i (manPage, GET_INTEGER ("Page"))) return 0;
 END
 

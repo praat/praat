@@ -94,7 +94,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			praat_show ();
 		} else if (wcsnequ (command, L"echo ", 5)) {
 			MelderInfo_open ();
-			MelderInfo_write1W (command + 5);
+			MelderInfo_write1 (command + 5);
 			MelderInfo_close ();
 		} else if (wcsnequ (command, L"clearinfo", 9)) {
 			Melder_clearInfo ();
@@ -108,19 +108,13 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"fappendinfo ", 12)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"fappendinfo\" is not available inside pictures.");
-			FILE *f;
 			structMelderFile file = { 0 };
-			if (! Melder_relativePathToFileW (command + 12, & file)) return 0;
-			f = Melder_fopen (& file, "a");
-			if (! f) return 0;
-			static MelderStringA bufferA = { 0 };
-			MelderStringA_copyW (& bufferA, Melder_getInfo ());
-			fprintf (f, "%s", bufferA.string);
-			fclose (f);
+			if (! Melder_relativePathToFile (command + 12, & file)) return 0;
+			if (! MelderFile_appendText (& file, Melder_getInfo ())) return 0;
 		} else if (wcsnequ (command, L"unix ", 5)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"unix\" is not available inside pictures.");
-			if (! Melder_system (Melder_peekWcsToAscii (command + 5)))
+			if (! Melder_system (Melder_peekWcsToUtf8 (command + 5)))
 				return Melder_error3 (L"Unix command \"", command + 5, L"\" returned error status;\n"
 					"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
 		} else if (wcsnequ (command, L"unix_nocheck ", 13)) {
@@ -130,13 +124,13 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"system ", 7)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"system\" is not available inside pictures.");
-			if (! Melder_system (Melder_peekWcsToAscii (command + 7)))
+			if (! Melder_system (Melder_peekWcsToUtf8 (command + 7)))
 				return Melder_error3 (L"System command \"", command + 7, L"\" returned error status;\n"
 					"if you want to ignore this, use `system_nocheck' instead of `system'.");
 		} else if (wcsnequ (command, L"system_nocheck ", 15)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"system_nocheck\" is not available inside pictures.");
-			(void) Melder_system (Melder_peekWcsToAscii (command + 15)); Melder_clearError ();
+			(void) Melder_system (Melder_peekWcsToUtf8 (command + 15)); Melder_clearError ();
 		} else if (wcsnequ (command, L"nowarn ", 7)) {
 			int result;
 			Melder_warningOff ();
@@ -229,7 +223,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error1 (L"Missing file name after `filedelete'.");
-			if (! Melder_relativePathToFileW (p, & file)) return 0;
+			if (! Melder_relativePathToFile (p, & file)) return 0;
 			MelderFile_delete (& file);
 		} else if (wcsnequ (command, L"fileappend ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
@@ -257,8 +251,8 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			*q = '\0';
 			if (*p == ' ' || *p == '\t') {
 				structMelderFile file = { 0 };
-				if (! Melder_relativePathToFileW (path, & file)) return 0;
-				if (! MelderFile_appendTextW (& file, p + 1)) return 0;
+				if (! Melder_relativePathToFile (path, & file)) return 0;
+				if (! MelderFile_appendText (& file, p + 1)) return 0;
 			}
 		} else {
 			if (wcsnequ (command, L"getinfostring ", 14))
@@ -370,7 +364,7 @@ int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);   /* Before the first cherror! */
 
-	text = MelderFile_readTextW (file); cherror
+	text = MelderFile_readText (file); cherror
 	MelderFile_setDefaultDir (file);   /* So that relative file names can be used inside the script. */
 	Melder_includeIncludeFiles (& text); cherror
 	interpreter = Interpreter_createFromEnvironment (praatP.editor); cherror
@@ -408,7 +402,7 @@ int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArgument
 		if (space) *space = '\0';
 		arguments = p + wcslen (path);
 	}
-	if (! Melder_relativePathToFileW (path, & file)) return 0;
+	if (! Melder_relativePathToFile (path, & file)) return 0;
 	return praat_executeScriptFromFile (& file, arguments);
 }
 
@@ -428,7 +422,7 @@ int praat_executeScriptFromDialog (Any dia) {
 	Melder_getDefaultDir (& saveDir);
 
 	Melder_pathToFileW (path, & file); cherror
-	text = MelderFile_readTextW (& file); cherror
+	text = MelderFile_readText (& file); cherror
 	MelderFile_setDefaultDir (& file);
 	Melder_includeIncludeFiles (& text); cherror
 	interpreter = Interpreter_createFromEnvironment (praatP.editor); cherror
@@ -456,7 +450,7 @@ static int firstPassThroughScript (MelderFile file) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
-	text = MelderFile_readTextW (file); cherror
+	text = MelderFile_readText (file); cherror
 	MelderFile_setDefaultDir (file);
 	Melder_includeIncludeFiles (& text); cherror
 	Melder_setDefaultDir (& saveDir);
@@ -509,7 +503,7 @@ int DO_praat_runScript (Any sender, void *dummy) {
 int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
 	structMelderFile file = { 0 };
 	(void) dummy;
-	if (! Melder_relativePathToFileW ((wchar_t *) scriptPath, & file)) return 0;
+	if (! Melder_relativePathToFile ((wchar_t *) scriptPath, & file)) return 0;
 	return firstPassThroughScript (& file);
 }
 

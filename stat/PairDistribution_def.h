@@ -1,6 +1,6 @@
 /* PairDistribution_def.h
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,15 @@
  */
 
 /*
- * pb 1998/06/15
- * pb 2002/07/16 GPL
+ * pb 2007/08/12
  */
 
 
 #define ooSTRUCT PairProbability
 oo_DEFINE_CLASS (PairProbability, Data)
 
-	oo_STRING (string1)
-	oo_STRING (string2)
+	oo_STRINGW (string1)
+	oo_STRINGW (string2)
 	oo_DOUBLE (weight)
 
 oo_END_CLASS (PairProbability)

@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2007/05/19
+ * pb 2007/08/12
  */
 
 #define ooSTRUCT OTConstraint
 oo_DEFINE_STRUCT (OTConstraint)
 
-	oo_STRING (name)
+	oo_STRINGW (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
 
@@ -35,7 +35,7 @@ oo_END_STRUCT (OTConstraint)
 #define ooSTRUCT OTCandidate
 oo_DEFINE_STRUCT (OTCandidate)
 
-	oo_STRING (string)
+	oo_STRINGW (string)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, my numberOfConstraints)
 

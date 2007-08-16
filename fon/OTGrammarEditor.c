@@ -74,7 +74,7 @@ OTGrammar ot = my data;
 OTGrammarConstraint constraint;
 if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error ("Select a constraint first.");
 constraint = & ot -> constraints [ot -> index [my selected]];
-SET_STRING ("constraint", constraint -> name)
+SET_STRINGW (L"constraint", constraint -> name)
 SET_REAL ("Ranking value", constraint -> ranking)
 SET_REAL ("Disharmony", constraint -> disharmony)
 SET_REAL ("Plasticity", constraint -> plasticity)
@@ -109,7 +109,7 @@ FORM (OTGrammarEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
 	OK
 DO
 	Editor_save (me, L"Learn one");
-	OTGrammar_learnOne (my data, GET_STRING ("Input string"), GET_STRING ("Output string"),
+	OTGrammar_learnOne (my data, GET_STRINGW (L"Input string"), GET_STRINGW (L"Output string"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), TRUE, TRUE, NULL);
 	OTGrammar_sort (my data);
@@ -135,7 +135,7 @@ FORM (OTGrammarEditor, cb_learnOneFromPartialOutput, "Learn one from partial adu
 	OK
 DO
 	Editor_save (me, L"Learn one from partial output");
-	OTGrammar_learnOneFromPartialOutput (my data, GET_STRING ("Partial output"),
+	OTGrammar_learnOneFromPartialOutput (my data, GET_STRINGW (L"Partial output"),
 		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
 		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"), TRUE);
 	OTGrammar_sort (my data);
@@ -164,11 +164,11 @@ DO
 	Editor_broadcastChange (me);
 END
 
-DIRECT (OTGrammarEditor, cb_OTGrammarEditor_help) Melder_help ("OTGrammarEditor"); END
+DIRECT (OTGrammarEditor, cb_OTGrammarEditor_help) Melder_help (L"OTGrammarEditor"); END
 
-DIRECT (OTGrammarEditor, cb_OTGrammar_help) Melder_help ("OTGrammar"); END
+DIRECT (OTGrammarEditor, cb_OTGrammar_help) Melder_help (L"OTGrammar"); END
 
-DIRECT (OTGrammarEditor, cb_OTLearningTutorial) Melder_help ("OT learning"); END
+DIRECT (OTGrammarEditor, cb_OTLearningTutorial) Melder_help (L"OT learning"); END
 
 static void createMenus (I) {
 	iam (OTGrammarEditor);
@@ -190,7 +190,7 @@ static void createMenus (I) {
 }
 
 static OTGrammar drawTableau_ot;
-static const char *drawTableau_input;
+static const wchar_t *drawTableau_input;
 static void drawTableau (Graphics g) {
 	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_input);
 }
@@ -198,13 +198,13 @@ static void drawTableau (Graphics g) {
 static void draw (I) {
 	iam (OTGrammarEditor);
 	OTGrammar ot = my data;
-	static char text [1000];
+	static wchar_t text [1000];
 	long icons, itab;
 	Graphics_clearWs (my g);
-	HyperPage_listItem (me, "\t\t      %%ranking value\t      %disharmony\t      %plasticity");
+	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		sprintf (text, "\t%s@@%ld|%s@\t      %.3f\t      %.3f\t      %.6f", icons == my selected ? "\\sp " : "   ", icons,
+		swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f", icons == my selected ? L"\\sp " : L"   ", icons,
 			constraint -> name, constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
 		HyperPage_listItem (me, text);
 	}
@@ -220,10 +220,10 @@ static void draw (I) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 }
 
-static int goToPage (I, const char *title) {
+static int goToPage (I, const wchar_t *title) {
 	iam (OTGrammarEditor);
 	if (! title) return 1;
-	my selected = atoi (title);
+	my selected = wcstol (title, NULL, 10);
 	return 1;
 }
 

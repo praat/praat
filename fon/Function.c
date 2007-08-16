@@ -23,6 +23,7 @@
  * pb 2005/06/16 units
  * pb 2006/12/08 info
  * pb 2007/03/17 domain texts
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Function.h"
@@ -49,9 +50,9 @@
 static void info (I) {
 	iam (Function);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Domain:");
-	MelderInfo_writeLine2 ("   xmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 ("   xmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine1 (L"Domain:");
+	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (my xmax));
 }
 
 static double getXmin (I) {
@@ -80,12 +81,12 @@ static int getMaximumUnit (I, long ilevel) {
 	return 0;
 }
 
-static const char * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	(void) ilevel;
 	(void) unit;
 	(void) flags;
-	return "";
+	return L"";
 }
 
 static int isUnitLogarithmic (I, long ilevel, int unit) {
@@ -154,7 +155,7 @@ int ClassFunction_getDomainQuantity (I) {
 	return my domainQuantity;
 }
 
-const char * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
+const wchar_t * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	iam (Function_Table);
 	if (! my destroy) my _initialize (me);
 	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));

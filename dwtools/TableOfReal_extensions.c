@@ -68,7 +68,7 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 	if (my rowLabels[myrow] != NULL && thy rowLabels[thyrow] != my rowLabels[myrow])
 	{
 		Melder_free (thy rowLabels[thyrow]);
-		thy rowLabels[thyrow] = Melder_strdup (my rowLabels[myrow]);
+		thy rowLabels[thyrow] = Melder_wcsdup (my rowLabels[myrow]);
 		if (thy rowLabels[thyrow] == NULL) return 0;
 	}
 	if (my data[myrow] != thy data[thyrow]) NUMdvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
@@ -140,18 +140,18 @@ TableOfReal TableOfReal_createIrisDataset (void)
 
 	if (! (me = TableOfReal_create (150, 4))) return NULL;
 	
-	TableOfReal_setColumnLabel (me, 1, "sl");
-	TableOfReal_setColumnLabel (me, 2, "sw");
-	TableOfReal_setColumnLabel (me, 3, "pl");
-	TableOfReal_setColumnLabel (me, 4, "pw");
+	TableOfReal_setColumnLabel (me, 1, L"sl");
+	TableOfReal_setColumnLabel (me, 2, L"sw");
+	TableOfReal_setColumnLabel (me, 3, L"pl");
+	TableOfReal_setColumnLabel (me, 4, L"pw");
 	for (i=1; i <= 150; i++)
 	{
 		int kind = (i - 1) / 50 + 1;
-		char *label = kind == 1 ? "1" : kind == 2 ? "2" : "3";
+		wchar_t *label = kind == 1 ? L"1" : kind == 2 ? L"2" : L"3";
 		for (j=1; j <= 4; j++) my data[i][j] = iris[i-1][j-1];
 		TableOfReal_setRowLabel (me, i, label);
 	}
-	Thing_setName (me, "iris");
+	Thing_setNameW (me, L"iris");
 	return me;
 }
 
@@ -170,8 +170,8 @@ Strings TableOfReal_extractRowLabels (I)
 	
 	for (i = 1; i <= n; i++)
 	{
-		char *label = my rowLabels[i] ? my rowLabels[i] : "?";
-		thy strings[i] = Melder_strdup (label);
+		wchar_t *label = my rowLabels[i] ? my rowLabels[i] : L"?";
+		thy strings[i] = Melder_wcsdup (label);
 		if (thy strings[i] == NULL) goto end; 
 	}
 
@@ -197,8 +197,8 @@ Strings TableOfReal_extractColumnLabels (I)
 	
 	for (i = 1; i <= n; i++)
 	{
-		char *label = my columnLabels[i] ? my columnLabels[i] : "?";
-		thy strings[i] = Melder_strdup (label);
+		wchar_t *label = my columnLabels[i] ? my columnLabels[i] : L"?";
+		thy strings[i] = Melder_wcsdup (label);
 		if (thy strings[i] == NULL) goto end; 
 	}
 
@@ -272,7 +272,7 @@ int TableOfReal_to_Pattern_and_Categories (I, long fromrow, long torow, long fro
 	
 	for (row=1, i=fromrow; i <= torow; i++, row++)
 	{
-		char *s = my rowLabels[i] ? my rowLabels[i] : "?";
+		wchar_t *s = my rowLabels[i] ? my rowLabels[i] : L"?";
 		SimpleString item = SimpleString_create (s);
 		if (! item || ! Collection_addItem (*c, item)) goto end;
 		for (col=1, j=fromcol; j <= tocol; j++, col++)
@@ -308,9 +308,9 @@ void TableOfReal_getColumnExtrema (I, long col, double *min, double *max)
 	}
 }
 
-void TableOfReal_drawRowsAsHistogram (I, Graphics g, char *rows, long colb, long cole,
+void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, char *greys, int garnish)	
+	double interbarsFraction, wchar_t *greys, int garnish)	
 {
 	iam (TableOfReal);
 	char *proc = "TableOfReal_drawRowsAsHistogram";
@@ -476,16 +476,16 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	
 	for (i = 1; i <= nPoints; i++)
 	{
-		char *label;
+		wchar_t *label;
 		if (i <= nr)
 		{
 			label = my rowLabels[i];
-			if (label == NULL) label = "?__r_";
+			if (label == NULL) label = L"?__r_";
 		}
 		else
 		{
 			label = my columnLabels[i - nr];
-			if (label == NULL) label = "?__c_";
+			if (label == NULL) label = L"?__c_";
 		}
 		Graphics_text (g, x[i], y[i], label);
 	}
@@ -568,11 +568,11 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	while (i <= ie && data[i] < lowerOuterFence)
 	{
-		Graphics_text (g, x, data[i], "o"); i++;
+		Graphics_text (g, x, data[i], L"o"); i++;
 	}
 	while (i <= ie && data[i] < lowerInnerFence)
 	{
-		Graphics_text (g, x, data[i], "*"); i++;
+		Graphics_text (g, x, data[i], L"*"); i++;
 	}
 	lowerWhisker = data[i] < q25 ? data[i] : lowerInnerFence;
 	if (lowerWhisker > ymax) return;
@@ -585,11 +585,11 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	while (i >= ie && data[i] > ymax) i--;
 	while (i >= ie && data[i] > upperOuterFence)
 	{
-		Graphics_text (g, x, data[i], "o"); i--;
+		Graphics_text (g, x, data[i], L"o"); i--;
 	}
 	while (i >= ie && data[i] > upperInnerFence)
 	{
-		Graphics_text (g, x, data[i], "*"); i--;
+		Graphics_text (g, x, data[i], L"*"); i--;
 	}
 	upperWhisker = data[i] > q75 ? data[i] : upperInnerFence;
 	if (upperWhisker < ymin) return;
@@ -720,7 +720,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels)
 		if (my rowLabels == thy rowLabels) return 1;
 		for (i=1; i <= my numberOfRows; i++)
 		{
-			if (NUMstrcmp (my rowLabels[i], thy rowLabels[i])) return 0;
+			if (NUMwcscmp (my rowLabels[i], thy rowLabels[i])) return 0;
 		}
 	}
 	if (columnLabels)
@@ -729,7 +729,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels)
 		if (my columnLabels == thy columnLabels) return 1;
 		for (i=1; i <= my numberOfColumns; i++) 
 		{
-			if (NUMstrcmp (my columnLabels[i], thy columnLabels[i])) return 0;
+			if (NUMwcscmp (my columnLabels[i], thy columnLabels[i])) return 0;
 		}
 	}
 	return 1;
@@ -768,14 +768,14 @@ void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 	iam (TableOfReal); 
 	thouart (Collection); 
 	long i; 
-	char *name;
+	wchar_t *name;
 	
 	if (row)
 	{
 		Melder_assert (my numberOfRows == thy size);
 		for (i = 1; i <= my numberOfRows; i++)
 		{
-			name = Thing_getName (thy item[i]);
+			name = Thing_getNameW (thy item[i]);
 			if (name != NULL) TableOfReal_setRowLabel (me, i, name);
 		}
 	}
@@ -784,7 +784,7 @@ void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 		Melder_assert (my numberOfColumns == thy size);
 		for (i=1; i <= my numberOfColumns; i++)
 		{
-			name = Thing_getName (thy item[i]);
+			name = Thing_getNameW (thy item[i]);
 			if (name != NULL) TableOfReal_setColumnLabel (me, i, name);
 		}
 	}
@@ -817,7 +817,7 @@ int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 	for (i=1; i <= my numberOfRows; i++)
 	{
 		SimpleString s = c -> item[i];
-		char *t = s -> string;
+		wchar_t *t = s -> string;
 		s -> string = my rowLabels[i];
 		my rowLabels[i] = t;
 	}
@@ -828,13 +828,13 @@ int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 
 void TableOfReal_centreColumns_byRowLabel (I)
 {
-	iam (TableOfReal); char *label = my rowLabels[1];
+	iam (TableOfReal); wchar_t *label = my rowLabels[1];
 	long i, index = 1;
 		
 	for (i=2; i <= my numberOfRows; i++)
 	{
-		char *li = my rowLabels[i];
-		if (li != NULL && li != label && strcmp (li, label))
+		wchar_t *li = my rowLabels[i];
+		if (li != NULL && li != label && wcscmp (li, label))
 		{
 			NUMcentreColumns_d (my data, index, i - 1, 1, my numberOfColumns, NULL);
 			label = li; index = i;
@@ -1022,7 +1022,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 	
 	for (i=1; i <= n; i++)
 	{
-		long xcol, ycol = colb + i - 1; char *mark, label[20];
+		long xcol, ycol = colb + i - 1; wchar_t *mark, label[20];
 		Graphics_line (g, 0, n - i, n, n - i);
 		Graphics_line (g, i, n, i, 0);
 		for (j=1; j <= n; j++)
@@ -1033,7 +1033,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 				mark = my columnLabels[xcol];
 				if (! mark)
 				{
-					sprintf (label, "Column %ld", xcol); mark = label;
+					swprintf (label, 20, L"Column %ld", xcol); mark = label;
 				}
 				Graphics_text (g, j - 0.5, n - i + 0.5, mark);
 			}
@@ -1045,7 +1045,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 						(xmax[xcol] - xmin[xcol]);
 					double y = n - i + (my data[k][ycol] - xmin[ycol]) / 
 						(xmax[ycol] - xmin[ycol]); 
-					mark = EMPTY_STRING (my rowLabels[k]) ? "+" : my rowLabels[k];
+					mark = EMPTY_STRING (my rowLabels[k]) ? L"+" : my rowLabels[k];
 					Graphics_text (g, x, y, mark);
 				}
 			}
@@ -1057,7 +1057,7 @@ end:
 
 void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, 
 	long rowe, double xmin, double xmax, double ymin, double ymax, 
-	int labelSize, int useRowLabels, char *label, int garnish)
+	int labelSize, int useRowLabels, wchar_t *label, int garnish)
 {
     iam (TableOfReal); 
 	double tmp, m = my numberOfRows, n = my numberOfColumns;
@@ -1097,7 +1097,7 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
 			((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
 		{
-			char *plotLabel = useRowLabels ? my rowLabels[i] : label;
+			wchar_t *plotLabel = useRowLabels ? my rowLabels[i] : label;
 			if (! NUMstring_containsPrintableCharacter (plotLabel))
 			{
 				noLabel++;
@@ -1244,13 +1244,13 @@ static TableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_
 		TableOfReal_setRowLabel (thee, i, row -> cells[4].string);
 		for (j = 1; j <= 3; j++)
 		{
-			thy data[i][j] = Melder_atof (row -> cells[4+j].string);
-			if (include_levels) thy data[i][3+j] = Melder_atof (row -> cells[7+j].string);
+			thy data[i][j] = Melder_atofW (row -> cells[4+j].string);
+			if (include_levels) thy data[i][3+j] = Melder_atofW (row -> cells[7+j].string);
 		}
 	}
 	for (j = 1; j <= 3; j++)
 	{
-		char *label = table -> columnHeaders[4+j].label;
+		wchar_t *label = table -> columnHeaders[4+j].label;
 		TableOfReal_setColumnLabel (thee, j, label);
 		if (include_levels)
 		{
@@ -1295,12 +1295,12 @@ TableOfReal TableOfReal_createFromWeeninkData (int option)
 		TableOfReal_setRowLabel (thee, i, row -> cells[5].string);
 		for (j = 1; j <= 3; j++)
 		{
-			thy data[i][j] = Melder_atof (row -> cells[6+j].string); /* Skip F0 */
+			thy data[i][j] = Melder_atofW (row -> cells[6+j].string); /* Skip F0 */
 		}
 	}
 	for (j = 1; j <= 3; j++)
 	{
-		char *label = table -> columnHeaders[6+j].label;
+		wchar_t *label = table -> columnHeaders[6+j].label;
 		TableOfReal_setColumnLabel (thee, j, label);
 	}
 end:
@@ -1365,12 +1365,12 @@ TableOfReal TableOfReal_bootstrap (TableOfReal me)
 	return thee;
 }
 
-int TableOfReal_changeRowLabels (I, char *search, char *replace, 
+int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace, 
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
 	int use_regexp)
 {
 	iam (TableOfReal);
-	char ** rowLabels = strs_replace (my rowLabels, 1, my numberOfRows, 
+	wchar_t ** rowLabels = strs_replace (my rowLabels, 1, my numberOfRows, 
 		search, replace, maximumNumberOfReplaces, nmatches, 
 		nstringmatches, use_regexp);
 	if (rowLabels == NULL) return 0;
@@ -1379,12 +1379,12 @@ int TableOfReal_changeRowLabels (I, char *search, char *replace,
 	return 1;
 }
 
-int TableOfReal_changeColumnLabels (I, char *search, char *replace, 
+int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace, 
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
 	int use_regexp)
 {
 	iam (TableOfReal);
-	char ** columnLabels = strs_replace (my columnLabels, 1, my numberOfColumns, 
+	wchar_t ** columnLabels = strs_replace (my columnLabels, 1, my numberOfColumns, 
 		search, replace, maximumNumberOfReplaces, nmatches, 
 		nstringmatches, use_regexp);
 	if (columnLabels == NULL) return 0;
@@ -1393,15 +1393,15 @@ int TableOfReal_changeColumnLabels (I, char *search, char *replace,
 	return 1;
 }
 
-long TableOfReal_getNumberOfLabelMatches (I, char *search, int columnLabels, 
+long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels, 
 	int use_regexp)
 {
 	iam (TableOfReal);
 	long i, nmatches = 0, numberOfLabels = my numberOfRows;
-	char **labels = my rowLabels;
+	wchar_t **labels = my rowLabels;
 	regexp *compiled_regexp = NULL;
 	
-	if (search == NULL || strlen (search) == 0) return 0;
+	if (search == NULL || wcslen (search) == 0) return 0;
 	if (columnLabels)
 	{
 		numberOfLabels = my numberOfColumns;
@@ -1410,7 +1410,7 @@ long TableOfReal_getNumberOfLabelMatches (I, char *search, int columnLabels,
 	if (use_regexp)
 	{
 		char *compileMsg;
-		compiled_regexp = CompileRE (search, &compileMsg, 0);
+		compiled_regexp = CompileRE (Melder_peekWcsToAscii (search), &compileMsg, 0);
 		if (compiled_regexp == NULL) return Melder_error (compileMsg);
 	}
 	for (i = 1; i <= numberOfLabels; i++)
@@ -1418,10 +1418,10 @@ long TableOfReal_getNumberOfLabelMatches (I, char *search, int columnLabels,
 		if (labels[i] == NULL) continue;
 		if (use_regexp)
 		{
-			if (ExecRE (compiled_regexp, NULL, labels[i], NULL, 0, 
+			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToAscii (labels[i]), NULL, 0, 
 				'\0', '\0', NULL, NULL)) nmatches++;
 		}
-		else if (strequ (labels[i], search)) nmatches++;
+		else if (wcsequ (labels[i], search)) nmatches++;
 	}
 	if (use_regexp) free (compiled_regexp);
 	return nmatches;
@@ -1487,7 +1487,7 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 		float y1 = my data[i][coly1];	 
 		float x2 = my data[i][colx2];
 		float y2 = my data[i][coly2];
-		char *mark = EMPTY_STRING (my rowLabels[i]) ? "" : my rowLabels[i];	 
+		wchar_t *mark = EMPTY_STRING (my rowLabels[i]) ? L"" : my rowLabels[i];	 
 		if (vectype == Graphics_LINE)
 			Graphics_line (g, x1, y1, x2, y2);
 		else if (vectype == Graphics_TWOWAYARROW)
@@ -1532,7 +1532,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 	{
 		long    myindex = reverse ? i : index[i];
 		long   thyindex = reverse ? index[i] : i;
-		char   *mylabel = my rowLabels[myindex];
+		wchar_t   *mylabel = my rowLabels[myindex];
 		double  *mydata = my data[myindex];
 		double *thydata = thy data[thyindex];
 		
@@ -1542,7 +1542,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 		
 		if (mylabel != NULL)
 		{
-			thy rowLabels[i] = Melder_strdup (mylabel);
+			thy rowLabels[i] = Melder_wcsdup (mylabel);
 			if (thy rowLabels[i] == NULL) goto end;
 		}
 		
@@ -1628,7 +1628,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 {
 	iam (TableOfReal);
 	TableOfReal thee = NULL, sorted = NULL;
-	char *label, **tmp;
+	wchar_t *label, **tmp;
 	long *index = NULL, indexi = 1, indexr = 0, i;
 
 	index = TableOfReal_getSortedIndexFromRowLabels (me);
@@ -1640,8 +1640,8 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 	label = sorted -> rowLabels[1];
 	for (i = 2; i <= my numberOfRows; i++)
 	{
-		char *li = sorted -> rowLabels[i];
-		if (li != NULL && li != label && (label == NULL || strcmp (li, label)))
+		wchar_t *li = sorted -> rowLabels[i];
+		if (li != NULL && li != label && (label == NULL || wcscmp (li, label)))
 		{
 			NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, stats);
 
@@ -1697,7 +1697,7 @@ TableOfReal TableOfReal_rankColumns (I)
 }
 	
 int TableOfReal_setSequentialColumnLabels (I, long from, long to, 
-	char *precursor, long number, long increment)
+	wchar_t *precursor, long number, long increment)
 {
 	iam (TableOfReal);
 	
@@ -1711,7 +1711,7 @@ int TableOfReal_setSequentialColumnLabels (I, long from, long to,
 }
 	
 int TableOfReal_setSequentialRowLabels (I, long from, long to, 
-	char *precursor, long number, long increment)
+	wchar_t *precursor, long number, long increment)
 {
 	iam (TableOfReal);
 	
@@ -1794,7 +1794,7 @@ TableOfReal TableOfReal_appendColumns (I, thou)
 			1, thy numberOfColumns)) goto end;
 	for (i = 1; i <= my numberOfRows; i++)
 	{
-		if (NUMstrcmp (my rowLabels[i], thy rowLabels[i])) labeldiffs++;
+		if (NUMwcscmp (my rowLabels[i], thy rowLabels[i])) labeldiffs++;
 		NUMdvector_copyElements (my data[i], his data[i], 1, my numberOfColumns);
 		NUMdvector_copyElements (thy data[i], &his data[i][my numberOfColumns], 1, thy numberOfColumns);
 	}

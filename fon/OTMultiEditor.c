@@ -21,6 +21,7 @@
  * pb 2005/07/04 created
  * pb 2006/05/17 draw disharmonies on top of tableau
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "OTMultiEditor.h"
@@ -28,7 +29,7 @@
 #include "machine.h"
 
 #define OTMultiEditor_members HyperPage_members \
-	const char *form1, *form2; \
+	const wchar_t *form1, *form2; \
 	Widget form1Text, form2Text; \
 	long selectedConstraint;
 #define OTMultiEditor_methods HyperPage_methods
@@ -67,7 +68,7 @@ OTMulti grammar = my data;
 OTConstraint constraint;
 if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error ("Select a constraint first.");
 constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-SET_STRING ("constraint", constraint -> name)
+SET_STRINGW (L"constraint", constraint -> name)
 SET_REAL ("Ranking value", constraint -> ranking)
 SET_REAL ("Disharmony", constraint -> disharmony)
 DO
@@ -90,14 +91,11 @@ FORM (OTMultiEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
 	REAL ("Rel. plasticity spreading", "0.1")
 	OK
 DO
-	char *form1 = XmTextFieldGetString (my form1Text), *form2 = XmTextFieldGetString (my form2Text);
 	Editor_save (me, L"Learn one");
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = Melder_strdup (form1);
-	my form2 = Melder_strdup (form2);
-	XtFree (form1);
-	XtFree (form2);
+	my form1 = GuiText_getStringW (my form1Text);
+	my form2 = GuiText_getStringW (my form2Text);
 	OTMulti_learnOne (my data, my form1, my form2,
 		GET_INTEGER ("Learn"), GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"));
 	iferror return 0;
@@ -127,17 +125,14 @@ DO
 	Editor_broadcastChange (me);
 END
 
-DIRECT (OTMultiEditor, cb_OTLearningTutorial) Melder_help ("OT learning"); END
+DIRECT (OTMultiEditor, cb_OTLearningTutorial) Melder_help (L"OT learning"); END
 
 MOTIF_CALLBACK (cb_limit)
 	iam (OTMultiEditor);
-	char *form1 = XmTextFieldGetString (my form1Text), *form2 = XmTextFieldGetString (my form2Text);
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = Melder_strdup (form1);
-	my form2 = Melder_strdup (form2);
-	XtFree (form1);
-	XtFree (form2);
+	my form1 = GuiText_getStringW (my form1Text);
+	my form2 = GuiText_getStringW (my form2Text);
 	Graphics_updateWs (my g);
 MOTIF_CALLBACK_END
 
@@ -182,7 +177,7 @@ static void createMenus (I) {
 }
 
 static OTMulti drawTableau_grammar;
-static const char *drawTableau_form1, *drawTableau_form2;
+static const wchar_t *drawTableau_form1, *drawTableau_form2;
 static void drawTableau (Graphics g) {
 	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, TRUE);
 }
@@ -190,20 +185,19 @@ static void drawTableau (Graphics g) {
 static void draw (I) {
 	iam (OTMultiEditor);
 	OTMulti grammar = my data;
-	static char text [1000];
-	long icons, icand;
+	static wchar_t text [1000];
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (my g);
-	HyperPage_listItem (me, "\t\t      %%ranking value\t      %disharmony");
-	for (icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
+	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony");
+	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
-		sprintf (text, "\t%s@@%ld|%s@\t      %.3f\t      %.3f", icons == my selectedConstraint ? "\\sp " : "   ", icons,
+		swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f", icons == my selectedConstraint ? L"\\sp " : L"   ", icons,
 			constraint -> name, constraint -> ranking, constraint -> disharmony);
 		HyperPage_listItem (me, text);
 	}
 	Graphics_setAtSignIsLink (my g, FALSE);
 	drawTableau_grammar = grammar;
-	for (icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
+	for (long icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
 		if (OTMulti_candidateMatches (grammar, icand, my form1, my form2)) {
 			tableauHeight += rowHeight;
 		}
@@ -214,10 +208,10 @@ static void draw (I) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 }
 
-static int goToPage (I, const char *title) {
+static int goToPage (I, const wchar_t *title) {
 	iam (OTMultiEditor);
 	if (! title) return 1;
-	my selectedConstraint = atoi (title);
+	my selectedConstraint = wcstol (title, NULL, 10);
 	return 1;
 }
 
@@ -232,8 +226,8 @@ class_methods_end
 OTMultiEditor OTMultiEditor_create (Widget parent, const wchar_t *title, OTMulti grammar) {
 	OTMultiEditor me = new (OTMultiEditor);
 	my data = grammar;
-	my form1 = Melder_strdup ("");
-	my form2 = Melder_strdup ("");
+	my form1 = Melder_wcsdup (L"");
+	my form2 = Melder_wcsdup (L"");
 	if (! HyperPage_init (me, parent, title, grammar))
 		{ forget (me); return Melder_errorp ("OTMultiEditor not created."); }
 	return me;

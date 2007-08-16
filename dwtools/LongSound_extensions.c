@@ -103,7 +103,7 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	buffer = NUMsvector (1, nchannels * nbuf);
 	if (buffer == NULL) return 0;
 		
-	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", 
+	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", 
 		Melder_winAudioFileExtension (audioFileType));
 	if (! file -> filePointer) goto end;
 	MelderFile_writeAudioFileHeader16 (file, audioFileType, 

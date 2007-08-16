@@ -2,7 +2,7 @@
 #define _Distributions_h_
 /* Distributions.h
  *
- * Copyright (C) 1997-2003 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2003/07/28
+ * pb 2007/08/12
  */
 
 /* Distributions inherits from TableOfReal */
@@ -34,9 +34,9 @@ class_create (Distributions, TableOfReal);
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns);
 
-int Distributions_peek (Distributions me, long column, char **string);
+int Distributions_peek (Distributions me, long column, wchar_t **string);
 
-double Distributions_getProbability (Distributions me, const char *string, long column);
+double Distributions_getProbability (Distributions me, const wchar_t *string, long column);
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column);
 
 Distributions Distributions_addTwo (Distributions me, Distributions thee);

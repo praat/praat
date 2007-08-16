@@ -164,7 +164,7 @@ END
 /********************** BarkFilter *******************************************/
 
 DIRECT (BarkFilter_help)
-	Melder_help ("BarkFilter");
+	Melder_help (L"BarkFilter");
 END
 
 FORM (BarkFilter_drawSpectrum, "BarkFilter: Draw spectrum (slice)", "FilterBank: Draw spectrum (slice)...")
@@ -179,7 +179,7 @@ DO
 	EVERY_DRAW (FilterBank_drawTimeSlice (OBJECT, GRAPHICS,
 		GET_REAL ("Time"), GET_REAL ("left Frequency range"),
 		GET_REAL ("right Frequency range"), GET_REAL ("left Amplitude range"),
-		GET_REAL ("right Amplitude range"), "Barks", GET_INTEGER ("Garnish")))
+		GET_REAL ("right Amplitude range"), L"Barks", GET_INTEGER ("Garnish")))
 END
 
 FORM (BarkFilter_drawSekeyHansonFilterFunctions, "BarkFilter: Draw filter functions", 
@@ -211,7 +211,7 @@ FORM (Categories_append, "Categories: Append 1 category", "Categories: Append 1 
 	SENTENCE("Category", "")
 	OK
 DO
-	if (! OrderedOfString_append (ONLY_OBJECT, GET_STRING ("Category")))
+	if (! OrderedOfString_append (ONLY_OBJECT, GET_STRINGW (L"Category")))
 		return 0;
 END
 
@@ -231,9 +231,9 @@ DIRECT (Categories_getNumberOfDifferences)
    		if (c1) c2 = OBJECT; else c1 = OBJECT;
 	}
 	NumberOfDifferences = OrderedOfString_getNumberOfDifferences (c1, c2);
-	if (NumberOfDifferences< 0) Melder_information1 ("-1 (undefined: number of elements differ!)");
+	if (NumberOfDifferences< 0) Melder_information1 (L"-1 (undefined: number of elements differ!)");
 	else 
-		Melder_information2 (Melder_integer (NumberOfDifferences), " differences");
+		Melder_information2 (Melder_integer (NumberOfDifferences), L" differences");
 END
 
 DIRECT (Categories_getFractionDifferent)
@@ -254,7 +254,7 @@ DIRECT (Categories_difference)
    		if (l1) l2 = OBJECT; else l1 = OBJECT;
 	}
 	if (! OrderedOfString_difference (l1, l2, &n, &fraction)) return 0;
-	Melder_information2 (Melder_integer (n), " differences");
+	Melder_information2 (Melder_integer (n), L" differences");
 END
 
 DIRECT (Categories_selectUniqueItems)
@@ -277,7 +277,7 @@ DIRECT (Categories_to_Confusion)
 		}
 	}
 	Melder_assert (c1 && c2);
-	(void) swprintf (name, 200, L"%s_%s", wcschr (theCurrentPraat -> list[i1].name, ' ') + 1,
+	(void) swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list[i1].name, ' ') + 1,
 		wcschr (theCurrentPraat -> list[i2].name, ' ') + 1);
 	if (! praat_new9 (Categories_to_Confusion (c1, c2), name, 0,0,0,0,0,0,0,0)) return 0;
 END
@@ -386,7 +386,7 @@ DO
 		GET_INTEGER ("left Element range"), GET_INTEGER ("right Element range"),
 		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range"), 
 		GET_INTEGER ("Component loadings"), GET_REAL ("Mark size"),
-		GET_STRING ("Mark string"), GET_INTEGER ("Connect points"),
+		GET_STRINGW (L"Mark string"), GET_INTEGER ("Connect points"),
 		GET_INTEGER ("Garnish")))
 END
 
@@ -426,13 +426,13 @@ DO
 	double p, chisq; long ndf;
 	CCA_getZeroCorrelationProbability (ONLY (classCCA), GET_INTEGER ("Coefficient number"),
 		&chisq, &ndf, &p);
-	Melder_information9 (Melder_double (p), " (=probability for chisq = ", Melder_double (chisq), " and ndf = ", Melder_integer (ndf), ")", NULL, NULL, NULL);
+	Melder_information6 (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq), L" and ndf = ", Melder_integer (ndf), L")");
 END
 
 DIRECT (CCA_and_Correlation_factorLoadings)
 	CCA cca = ONLY (classCCA);
 	if (! praat_new (CCA_and_Correlation_factorLoadings (cca, 
-		ONLY (classCorrelation)), "%s_loadings", Thing_getName (cca))) return 0;
+		ONLY (classCorrelation)), "%ls_loadings", Thing_getNameW (cca))) return 0;
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, "CCA & Correlation: Get variance fraction",
@@ -449,10 +449,10 @@ DO
 	int x_or_y = GET_INTEGER ("X or Y");
 	int cv_from = GET_INTEGER ("left Canonical variate range");
 	int cv_to = GET_INTEGER ("right Canonical variate range");
-	Melder_information9 (Melder_double (CCA_and_Correlation_getVarianceFraction (ONLY (classCCA), 
-		ONLY (classCorrelation), x_or_y, cv_from, cv_to)), " (fraction variance from ",
-		(x_or_y == 1 ? "y" : "x"), ", extracted by canonical variates ", Melder_integer (cv_from), " to ",
-		 Melder_integer (cv_to), NULL, NULL);
+	Melder_information7 (Melder_double (CCA_and_Correlation_getVarianceFraction (ONLY (classCCA), 
+		ONLY (classCorrelation), x_or_y, cv_from, cv_to)), L" (fraction variance from ",
+		(x_or_y == 1 ? L"y" : L"x"), L", extracted by canonical variates ", Melder_integer (cv_from), L" to ",
+		 Melder_integer (cv_to));
 END
 
 FORM (CCA_and_Correlation_getRedundancy_sl, "CCA & Correlation: Get Stewart-Love redundancy",
@@ -470,16 +470,16 @@ DO
 	int x_or_y = GET_INTEGER ("X or Y");
 	int cv_from = GET_INTEGER ("left Canonical variate range");
 	int cv_to = GET_INTEGER ("right Canonical variate range");
-	Melder_information9 (Melder_double (CCA_and_Correlation_getRedundancy_sl (ONLY (classCCA), ONLY (classCorrelation),
-		x_or_y, cv_from, cv_to)), " (redundancy from ", (x_or_y == 1 ? "y" : "x"), " extracted by canonical variates ",
-		Melder_integer (cv_from), " to ", Melder_integer (cv_to), NULL, NULL);
+	Melder_information7 (Melder_double (CCA_and_Correlation_getRedundancy_sl (ONLY (classCCA), ONLY (classCorrelation),
+		x_or_y, cv_from, cv_to)), L" (redundancy from ", (x_or_y == 1 ? L"y" : L"x"), L" extracted by canonical variates ",
+		Melder_integer (cv_from), L" to ", Melder_integer (cv_to));
 END
 
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
 	CCA cca = ONLY (classCCA);
 	if (! praat_new (CCA_and_TableOfReal_factorLoadings (cca, 
-		ONLY (classTableOfReal)), "%s_loadings", Thing_getName (cca))) return 0;
+		ONLY (classTableOfReal)), "%ls_loadings", Thing_getNameW (cca))) return 0;
 END
 
 FORM (CCA_and_TableOfReal_scores, "CCA & TableOfReal: To TableOfReal (scores)",
@@ -489,8 +489,8 @@ FORM (CCA_and_TableOfReal_scores, "CCA & TableOfReal: To TableOfReal (scores)",
 DO
 	CCA cca = ONLY (classCCA);
 	if (! praat_new (CCA_and_TableOfReal_scores (cca, ONLY (classTableOfReal),
-		GET_INTEGER ("Number of canonical correlations")), "%s_scores",
-		Thing_getName (cca))) return 0;
+		GET_INTEGER ("Number of canonical correlations")), "%ls_scores",
+		Thing_getNameW (cca))) return 0;
 END
 
 FORM (CCA_and_TableOfReal_predict, "CCA & TableOfReal: Predict", 
@@ -506,7 +506,7 @@ END
 /***************** ChebyshevSeries ****************************************/
 
 DIRECT (ChebyshevSeries_help)
-	Melder_help ("ChebyshevSeries");
+	Melder_help (L"ChebyshevSeries");
 END
 
 FORM (ChebyshevSeries_create, "Create ChebyshevSeries",
@@ -524,7 +524,7 @@ DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
 	if (! praat_new (ChebyshevSeries_createFromString (xmin, xmax,
-		GET_STRING ("Coefficients")), GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (ChebyshevSeries_to_Polynomial)
@@ -534,7 +534,7 @@ END
 /***************** ClassificationTable ****************************************/
 
 DIRECT (ClassificationTable_help)
-	Melder_help ("ClassificationTable");
+	Melder_help (L"ClassificationTable");
 END
 
 DIRECT (ClassificationTable_to_Confusion)
@@ -548,7 +548,7 @@ END
 /********************** Confusion *******************************************/
 
 DIRECT (Confusion_help)
-	Melder_help ("Confusion");
+	Melder_help (L"Confusion");
 END
 
 DIRECT (Confusion_to_TableOfReal_marginals)
@@ -557,7 +557,7 @@ END
 
 DIRECT (Confusion_difference)
 	Confusion c1 = NULL, c2 = NULL;
-	WHERE (SELECTED && CLASS == classConfusion) if (c1) c2 = OBJECT; else c1 = OBJECT;
+	WHERE (SELECTED && CLASS == classConfusion) { if (c1) c2 = OBJECT; else c1 = OBJECT; }
     NEW (Confusion_difference (c1, c2))
 END
 
@@ -571,8 +571,8 @@ FORM (Confusion_condense, "Confusion: Condense",
 	RADIOBUTTON ("Regular Expressions")
 	OK
 DO
-	EVERY_TO (Confusion_condense (OBJECT, GET_STRING ("Search"),
-		GET_STRING ("Replace"), GET_INTEGER ("Replace limit"),
+	EVERY_TO (Confusion_condense (OBJECT, GET_STRINGW (L"Search"),
+		GET_STRINGW (L"Replace"), GET_INTEGER ("Replace limit"),
 		GET_INTEGER ("Search and replace are") - 1))
 END
 
@@ -581,7 +581,7 @@ END
 DIRECT (Confusion_getFractionCorrect)
 	double f; long n;
 	Confusion_getFractionCorrect (ONLY (classConfusion), &f, &n);
-	Melder_information2 (Melder_double (f), " (fraction correct)");
+	Melder_information2 (Melder_double (f), L" (fraction correct)");
 END
 
 FORM (Confusion_Matrix_draw, "Confusion & Matrix: Draw confusions with arrows", 0)
@@ -606,7 +606,7 @@ END
 /**********************Correlation *******************************************/
 
 DIRECT (Correlation_help)
-	Melder_help ("Correlation");
+	Melder_help (L"Correlation");
 END
 
 FORM (Correlation_confidenceIntervals, "Correlation: Confidence intervals...", 
@@ -633,9 +633,8 @@ DO
 	long nc = GET_INTEGER ("Number of contraints");
 	Correlation me = ONLY_OBJECT;
 	Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2));
 END
 
 DIRECT (Correlation_to_PCA)
@@ -645,7 +644,7 @@ END
 /**********************Covariance *******************************************/
 
 DIRECT (Covariance_help)
-	Melder_help ("Covariance");
+	Melder_help (L"Covariance");
 END
 
 FORM (Covariance_getSignificanceOfOneMean, "Covariance: Get significance of one mean",
@@ -660,9 +659,8 @@ DO
 	double t, p; double ndf;
 	Covariance_getSignificanceOfOneMean (ONLY_OBJECT, GET_INTEGER ("Index"),
 		GET_REAL ("Value"), &p, &t , &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on t = ",
-		Melder_double (t), " and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on t = ",
+		Melder_double (t), L" and ndf = ", Melder_integer (ndf));
 END
 
 FORM (Covariance_getSignificanceOfMeansDifference, 
@@ -684,9 +682,8 @@ DO
 		GET_INTEGER ("Index1"), GET_INTEGER ("Index2"),
 		GET_REAL ("Value"), GET_INTEGER ("Paired"),
 		GET_INTEGER ("Equal variances"), &p, &t , &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on t = ",
-		Melder_double (t), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on t = ",
+		Melder_double (t), L"and ndf = ", Melder_integer (ndf));
 END
 
 FORM (Covariance_getSignificanceOfOneVariance, "Covariance: Get significance of one variance",
@@ -701,9 +698,8 @@ DO
 	double chisq, p; long ndf;
 	Covariance_getSignificanceOfOneVariance (ONLY_OBJECT, GET_INTEGER ("Index"),
 		GET_REAL ("Value"), &p, &chisq , &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
 END
 
 FORM (Covariance_getSignificanceOfVariancesRatio, 
@@ -718,9 +714,9 @@ DO
 	Covariance_getSignificanceOfVariancesRatio (ONLY_OBJECT, 
 		GET_INTEGER ("Index1"), GET_INTEGER ("Index2"),
 		GET_REAL ("Hypothesized ratio"), &p, &f , &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on F = ",
-		Melder_double (f), "and ndf1 = ", Melder_integer (ndf), 
-		" and ndf2 = ", Melder_integer (ndf), NULL, NULL);
+	Melder_information7 (Melder_double (p), L" (=probability, based on F = ",
+		Melder_double (f), L"and ndf1 = ", Melder_integer (ndf), 
+		L" and ndf2 = ", Melder_integer (ndf));
 END
 
 FORM (Covariance_getFractionVariance, "Covariance: Get fraction variance", 
@@ -750,9 +746,8 @@ DIRECT (Covariance_difference)
 		if (c1) c2 = OBJECT; else c1 = OBJECT;
 	}
 	if (! Covariance_difference (c1, c2, &p, &chisq, &ndf)) return 0;
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
 END
 
 DIRECT (Covariance_to_Correlation)
@@ -766,7 +761,7 @@ END
 /********************** Discriminant **********************************/
 
 DIRECT (Discriminant_help)
-	Melder_help ("Discriminant");
+	Melder_help (L"Discriminant");
 END
 
 DIRECT (Discriminant_setGroupLabels)
@@ -800,7 +795,7 @@ DO
 END
 
 DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable)
-	Melder_information1 ("You can use the Discriminant as a classifier by \n"
+	Melder_information1 (L"You can use the Discriminant as a classifier by \n"
 		"selecting a Discriminant and a TableOfReal object together.");
 END
 
@@ -815,8 +810,8 @@ DO
 	TableOfReal t = ONLY_GENERIC (classTableOfReal);
 	if (! praat_new (Discriminant_and_TableOfReal_to_ClassificationTable
 		(d,	t, GET_INTEGER ("Pool covariance matrices"),
-		GET_INTEGER ("Use apriori probabilities")), "%s_%s", 
-		Thing_getName (d), Thing_getName (t))) return 0;
+		GET_INTEGER ("Use apriori probabilities")), "%ls_%ls", 
+		Thing_getNameW (d), Thing_getNameW (t))) return 0;
 END
 
 FORM (Discriminant_getWilksLambda, "Discriminant: Get Wilks' lambda",
@@ -855,17 +850,15 @@ DO
 		"to zero.")
 	Discriminant_getPartialDiscriminationProbability (ONLY_OBJECT, n,
 		&p, &chisq, &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
 END
 
 DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	double chisq, p; long ndf; Discriminant thee = ONLY_OBJECT;
 	SSCPs_getHomegeneityOfCovariances_box (thy groups, &p, &chisq, &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
 END
 
 FORM (Discriminant_getConcentrationEllipseArea,
@@ -879,7 +872,7 @@ FORM (Discriminant_getConcentrationEllipseArea,
 	OK
 DO
 	Discriminant d = ONLY_OBJECT;
-	long group = Discriminant_groupLabelToIndex (d, GET_STRING ("Group label"));
+	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
 	REQUIRE (group > 0, "Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getConcentrationEllipseArea(d, group,
 		GET_REAL ("Number of sigmas"), 0, GET_INTEGER ("Discriminant plane"),
@@ -896,7 +889,7 @@ FORM (Discriminant_getConfidenceEllipseArea, "Discriminant: Get confidence ellip
 	OK
 DO
 	Discriminant d = ONLY_OBJECT;
-	long group = Discriminant_groupLabelToIndex (d, GET_STRING ("Group label"));
+	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
 	REQUIRE (group > 0, "Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getConcentrationEllipseArea(d, group,
 		GET_REAL ("Confidence level"), 1, GET_INTEGER ("Discriminant plane"),
@@ -910,7 +903,7 @@ FORM (Discriminant_getLnDeterminant_group,
 	OK
 DO
 	Discriminant d = ONLY_OBJECT;
-	long group = Discriminant_groupLabelToIndex (d, GET_STRING ("Group label"));
+	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
 	REQUIRE (group > 0, "Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getLnDeterminant_group (d, group)));
 END
@@ -965,7 +958,7 @@ FORM (Discriminant_drawOneSigmaEllipse, "Discriminant: Draw one sigma ellipse",
 	OK
 DO
 	EVERY_DRAW (Discriminant_drawConcentrationEllipses (OBJECT, GRAPHICS,
-		GET_REAL ("Number of sigmas"), 0, GET_STRING ("Label"),
+		GET_REAL ("Number of sigmas"), 0, GET_STRINGW (L"Label"),
 		GET_INTEGER ("Discriminant plane"),
 		GET_INTEGER ("X-dimension"), GET_INTEGER ("Y-dimension"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
@@ -1010,7 +1003,7 @@ FORM (Discriminant_drawOneConfidenceEllipse, "Discriminant: Draw one confidence 
 	OK
 DO
 	EVERY_DRAW (Discriminant_drawConcentrationEllipses (OBJECT, GRAPHICS,
-		GET_REAL ("Confidence level"), 1, GET_STRING ("Label"), GET_INTEGER ("Discriminant plane"),
+		GET_REAL ("Confidence level"), 1, GET_STRINGW (L"Label"), GET_INTEGER ("Discriminant plane"),
 		GET_INTEGER ("X-dimension"), GET_INTEGER ("Y-dimension"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -1099,7 +1092,7 @@ void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slop
 	*slope = GET_INTEGER ("Slope constraints");
 }
 
-DIRECT (DTW_help) Melder_help ("DTW"); END
+DIRECT (DTW_help) Melder_help (L"DTW"); END
 
 FORM (DTW_drawPath, "DTW: Draw path", 0)
     REAL ("left Horizontal range", "0.0")
@@ -1175,10 +1168,10 @@ FORM (DTW_getMaximumConsecutiveSteps, "DTW: Get maximum consecutive steps", "DTW
 	OK
 DO
 	int direction[] = {DTW_START, DTW_X, DTW_Y, DTW_XANDY};
-	char *string[] = {"", "x", "y", "diagonal"};
+	wchar_t *string[] = {L"", L"x", L"y", L"diagonal"};
 	int d = GET_INTEGER ("Direction");
 	Melder_information4 (Melder_integer (DTW_getMaximumConsecutiveSteps (ONLY_OBJECT, direction[d])), 
-		" (=maximum number of consecutive steps in ", string[d], " direction");
+		L" (=maximum number of consecutive steps in ", string[d], L" direction");
 END
 
 DIRECT (DTW_getWeightedDistance)
@@ -1282,7 +1275,7 @@ DO
 		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range"), 
 		GET_INTEGER ("Fraction of eigenvalues summed"), GET_INTEGER ("Cumulative"),
 		GET_REAL ("Mark size"),
-		GET_STRING ("Mark string"), GET_INTEGER ("Garnish")))
+		GET_STRINGW (L"Mark string"), GET_INTEGER ("Garnish")))
 END
 
 FORM (Eigen_drawEigenvector, "Eigen: Draw eigenvector", "Eigen: Draw eigenvector...")
@@ -1303,7 +1296,7 @@ DO
 		GET_INTEGER ("left Element range"), GET_INTEGER ("right Element range"),
 		GET_REAL ("left Amplitude range"), GET_REAL ("right Amplitude range"), 
 		GET_INTEGER ("Component loadings"), GET_REAL ("Mark size"),
-		GET_STRING ("Mark string"), GET_INTEGER ("Connect points"), NULL,
+		GET_STRINGW (L"Mark string"), GET_INTEGER ("Connect points"), NULL,
 		GET_INTEGER ("Garnish")))
 END
 
@@ -1385,7 +1378,7 @@ END
 /******************** Index ********************************************/
 
 DIRECT (Index_help)
-	Melder_help ("Index");
+	Melder_help (L"Index");
 END
 
 DIRECT (Index_getNumberOfClasses)
@@ -1398,12 +1391,12 @@ FORM (StringsIndex_getClassLabel, "StringsIndex: Get class label", "StringsIndex
 	OK
 DO
 	StringsIndex thee = ONLY_OBJECT;
-	long class = GET_INTEGER ("Class index");
+	long klas = GET_INTEGER ("Class index");
 	long numberOfClasses = thy classes -> size;
 	SimpleString ss;
-	if (class > numberOfClasses) return Melder_error
+	if (klas > numberOfClasses) return Melder_error
 		("Element index must be less than or equal %ld.", numberOfClasses);
-	ss = thy classes -> item[class];
+	ss = thy classes -> item[klas];
 	Melder_information1 (ss -> string);
 END
 
@@ -1412,12 +1405,12 @@ FORM (StringsIndex_getLabel, "StringsIndex: Get label", "StringsIndex: Get label
 	OK
 DO
 	StringsIndex thee = ONLY_OBJECT;
-	long class, index = GET_INTEGER ("Element index");
+	long klas, index = GET_INTEGER ("Element index");
 	SimpleString ss;
 	if (index > thy numberOfElements) return Melder_error
 		("Element index must be less than or equal %ld.", thy numberOfElements);
-	class = thy classIndex[index];
-	ss = thy classes -> item [class];	
+	klas = thy classIndex[index];
+	ss = thy classes -> item [klas];	
 	Melder_information1 (ss -> string);
 END
 
@@ -1437,8 +1430,8 @@ FORM (StringsIndex_getClassIndex, "StringsIndex: Get class index", "StringsIndex
 	OK
 DO
 	StringsIndex thee = ONLY_OBJECT;
-	char *classLabel = GET_STRING ("Class label");
-	long index = StringsIndex_getClass (thee, classLabel);
+	wchar_t *klasLabel = GET_STRINGW (L"Class label");
+	long index = StringsIndex_getClass (thee, klasLabel);
 	Melder_information1 (Melder_integer (index));
 END
 
@@ -1449,7 +1442,7 @@ FORM (Index_extractPart, "Index: Extract part", "Index: Extract part...")
 DO
 	Index thee = ONLY_OBJECT;
 	if (! praat_new (Index_extractPart (thee, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		"%s_part", Thing_getName (thee))) return 0;
+		"%ls_part", Thing_getNameW (thee))) return 0;
 END
 
 FORM (Index_to_Permutation, "Index: To Permutation", "Index: To Permutation...")
@@ -1490,7 +1483,7 @@ DO
 		Ordered ms = OBJECT;
 		int j;
 		for (j = 1; j <= ms -> size; j++)
-			if (! Matrix_formula (ms->item[j], GET_STRING ("formula"), NULL)) break;
+			if (! Matrix_formula (ms->item[j], GET_STRINGW (L"formula"), NULL)) break;
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -1520,7 +1513,7 @@ END
 
 DIRECT (Excitations_append)
    Data e1 = NULL, e2 = NULL;
-   WHERE (SELECTED && CLASS == classExcitations) if (e1) e2 = OBJECT; else e1 = OBJECT;
+   WHERE (SELECTED && CLASS == classExcitations) { if (e1) e2 = OBJECT; else e1 = OBJECT; }
    NEW (Collections_merge (e1, e2))
 END
 
@@ -1680,7 +1673,7 @@ FORM (FilterBank_getFrequencyInHertz, "FilterBank: Get frequency in Hertz",
 DO
 	double f = FilterBank_getFrequencyInHertz (ONLY_OBJECT, 
 		GET_REAL ("Frequency"), GET_INTEGER ("Unit"));
-	Melder_informationReal (f, "Hertz");
+	Melder_informationReal (f, L"Hertz");
 END
 
 FORM (FilterBank_getFrequencyInBark, "FilterBank: Get frequency in Bark", 
@@ -1693,7 +1686,7 @@ FORM (FilterBank_getFrequencyInBark, "FilterBank: Get frequency in Bark",
 	OK
 DO
 	Melder_informationReal (FilterBank_getFrequencyInBark (ONLY_OBJECT, GET_REAL ("Frequency"), 
-		GET_INTEGER ("Unit")), "Bark");
+		GET_INTEGER ("Unit")), L"Bark");
 END
 
 FORM (FilterBank_getFrequencyInMel, "FilterBank: Get frequency in mel", 
@@ -1707,7 +1700,7 @@ FORM (FilterBank_getFrequencyInMel, "FilterBank: Get frequency in mel",
 DO
 	double f = FilterBank_getFrequencyInMel (ONLY_OBJECT, 
 		GET_REAL ("Frequency"), GET_INTEGER ("Unit"));
-	Melder_informationReal (f, "mel");
+	Melder_informationReal (f, L"mel");
 END
 	
 FORM (FilterBank_equalizeIntensities, "FilterBank: Equalize intensities", "")
@@ -1728,7 +1721,7 @@ END
 /*********** FormantFilter *******************************************/
 
 DIRECT (FormantFilter_help)
-	Melder_help ("FormantFilter");
+	Melder_help (L"FormantFilter");
 END
 
 FORM (FormantFilter_drawFilterFunctions, "FormantFilter: Draw filter functions", 
@@ -1768,7 +1761,7 @@ DO
 	EVERY_DRAW (FilterBank_drawTimeSlice (OBJECT, GRAPHICS, 
 		GET_REAL ("Time"), GET_REAL ("left Frequency range"),
 		GET_REAL ("right Frequency range"), GET_REAL ("left Amplitude range"),
-		GET_REAL ("right Amplitude range"), "Hz", GET_INTEGER ("Garnish")))
+		GET_REAL ("right Amplitude range"), L"Hz", GET_INTEGER ("Garnish")))
 END
 
 /****************** FunctionTerms  *********************************/
@@ -1918,12 +1911,12 @@ FORM (Intensity_to_TextGrid_detectSilences, "Intensity: To TextGrid (silences)",
 DO
 	EVERY_TO (Intensity_to_TextGrid_detectSilences (OBJECT, GET_REAL ("Silence threshold"),
 		GET_REAL ("Minimum silent interval duration"), GET_REAL ("Minimum sounding interval duration"),
-		GET_STRING ("Silent interval label"), GET_STRING ("Sounding interval label")))
+		GET_STRINGW (L"Silent interval label"), GET_STRINGW (L"Sounding interval label")))
 END
 
 /***************** ISpline ***************************************************/
 
-DIRECT (ISpline_help) Melder_help ("ISpline"); END
+DIRECT (ISpline_help) Melder_help (L"ISpline"); END
 
 FORM (ISpline_create, "Create ISpline", "Create ISpline...")
 	WORD ("Name", "ispline")
@@ -1943,7 +1936,7 @@ DO
 	long degree = GET_INTEGER ("Degree");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
 	if (! praat_new (ISpline_createFromStrings (xmin, xmax, degree,
-		GET_STRING ("Coefficients"), GET_STRING ("Interior knots")),
+		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
 		GET_STRING ("Name"))) return 0;
 END
 
@@ -1964,10 +1957,10 @@ DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
 	if (! praat_new (LegendreSeries_createFromString (xmin, xmax,
-		GET_STRING ("Coefficients")), GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
 END
 
-DIRECT (LegendreSeries_help) Melder_help ("LegendreSeries"); END
+DIRECT (LegendreSeries_help) Melder_help (L"LegendreSeries"); END
 
 DIRECT (LegendreSeries_to_Polynomial)
 	EVERY_TO (LegendreSeries_to_Polynomial (OBJECT))
@@ -2090,7 +2083,7 @@ DO
 	WHERE (SELECTED)
 	{
 		if (! praat_new (Matrix_solveEquation (OBJECT, GET_REAL ("Tolerance")), 
-						 "%s_solution", NAME)) return 0;
+						 "%ls_solution", NAMEW)) return 0;
 	}
 END
 
@@ -2119,7 +2112,7 @@ DO
     EVERY_DRAW (Matrix_scatterPlot (OBJECT, GRAPHICS, x, y,
     	GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
     	GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
-    	GET_REAL ("Mark size"), GET_STRING ("Mark string"),
+    	GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"),
 		GET_INTEGER("Garnish")))
 END
 
@@ -2206,14 +2199,14 @@ DO
 	if (row > my ny) row = my ny;
 	ta = Matrix_columnToX (me, col);
 	fa = Matrix_rowToY (me, row);
-	Melder_information9 (Melder_single (my z[row][col]), " (delta t: ", Melder_double (ta - t), " f: ", 
-		Melder_double (fa - f), ")", NULL, NULL, NULL);
+	Melder_information6 (Melder_single (my z[row][col]), L" (delta t: ", Melder_double (ta - t), L" f: ", 
+		Melder_double (fa - f), L")");
 END
 
 /**************** MelFilter *******************************************/
 
 DIRECT (MelFilter_help)
-	Melder_help ("MelFilter");
+	Melder_help (L"MelFilter");
 END
 
 FORM (MelFilter_drawFilterFunctions, "MelFilter: Draw filter functions",
@@ -2253,7 +2246,7 @@ DO
 	EVERY_DRAW (FilterBank_drawTimeSlice (OBJECT, GRAPHICS, 
 		GET_REAL ("Time"), GET_REAL ("left Frequency range"),
 		GET_REAL ("right Frequency range"), GET_REAL ("left Amplitude range"),
-		GET_REAL ("right Amplitude range"), "Mels", GET_INTEGER ("Garnish")))
+		GET_REAL ("right Amplitude range"), L"Mels", GET_INTEGER ("Garnish")))
 END
 
 FORM (MelFilter_to_MFCC, "MelFilter: To MFCC",
@@ -2268,7 +2261,7 @@ END
 /**************** MFCC *******************************************/
 
 DIRECT (MFCC_help)
-	Melder_help ("MFCC");
+	Melder_help (L"MFCC");
 END
 
 FORM (MFCC_to_MelFilter, "MFCC: To MelFilter", "MFCC: To MelFilter...")
@@ -2303,11 +2296,11 @@ DO
 	long degree = GET_INTEGER ("Degree");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
 	if (! praat_new (MSpline_createFromStrings (xmin, xmax, degree,
-		GET_STRING ("Coefficients"), GET_STRING ("Interior knots")),
+		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
 		GET_STRING ("Name"))) return 0;
 END
 
-DIRECT (MSpline_help) Melder_help ("MSpline"); END
+DIRECT (MSpline_help) Melder_help (L"MSpline"); END
 
 /********************** Pattern *******************************************/
 
@@ -2315,7 +2308,7 @@ DIRECT (Pattern_and_Categories_to_Discriminant)
 	Pattern p = ONLY (classPattern);
 	Categories c = ONLY (classCategories);
 	if (! praat_new (Pattern_and_Categories_to_Discriminant (p, c), 
-		"%s_%s", Thing_getName (p), Thing_getName (c))) return 0;
+		"%ls_%ls", Thing_getNameW (p), Thing_getNameW (c))) return 0;
 END
 
 FORM (Pattern_draw, "Pattern: Draw", 0)
@@ -2365,21 +2358,21 @@ END
 /******************* PCA ******************************/
 
 DIRECT (PCA_help)
-	Melder_help ("PCA"); 
+	Melder_help (L"PCA"); 
 END
 
 DIRECT (hint_PCA_and_TableOfReal_to_Configuration)
-	Melder_information1 ("You can get principal components by selecting a PCA and a TableOfReal\n"
+	Melder_information1 (L"You can get principal components by selecting a PCA and a TableOfReal\n"
 		"together and choosing \"To Configuration...\".");
 END
 
 DIRECT (hint_PCA_and_Covariance_Project)
-	Melder_information1 ("You can get a new Covariance object rotated to the directions of the direction vectors\n"
+	Melder_information1 (L"You can get a new Covariance object rotated to the directions of the direction vectors\n"
 		" in the PCA object by selecting a PCA and a Covariance object together.");
 END
 
 DIRECT (hint_PCA_and_Configuration_to_TableOfReal_reconstruct)
-	Melder_information1 ("You can reconstruct the original TableOfReal as well as possible from\n"
+	Melder_information1 (L"You can reconstruct the original TableOfReal as well as possible from\n"
 		" the principal components in the Configuration and the direction vectors in the PCA object.");
 END
 
@@ -2423,9 +2416,8 @@ DO
 	PCA_getEqualityOfEigenvalues (ONLY_OBJECT, GET_INTEGER ("left Eigenvalue range"),
 		GET_INTEGER ("right Eigenvalue range"), GET_INTEGER ("Conservative test"),
 		&p, &chisq, &ndf);
-	Melder_information9 (Melder_double (p), " (=probability, based on chisq = ",
-		Melder_double (chisq), "and ndf = ", Melder_integer (ndf),
-		NULL, NULL, NULL, NULL);
+	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
 END
 
 FORM (PCA_getNumberOfComponentsVAF, "PCA: Get number of components (VAF)",
@@ -2464,7 +2456,7 @@ FORM (PCA_to_TableOfReal_reconstruct1, "PCA: To TableOfReal (reconstruct)",
 	SENTENCE ("Coefficients", "1.0 1.0")
 	OK
 DO
-	EVERY_TO (PCA_to_TableOfReal_reconstruct1 (OBJECT, GET_STRING ("Coefficients")))
+	EVERY_TO (PCA_to_TableOfReal_reconstruct1 (OBJECT, GET_STRINGW (L"Coefficients")))
 END
 
 FORM (PCAs_to_Procrustes, "PCA & PCA: To Procrustes", "PCA & PCA: To Procrustes...")
@@ -2475,22 +2467,22 @@ DO
 	long from = GET_INTEGER ("left Eigenvector range");
 	long to = GET_INTEGER ("right Eigenvector range");
 	PCA me = NULL, thee = NULL;
-	WHERE (SELECTED) if (me) thee = OBJECT; else me = OBJECT;
+	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
 	if (! praat_new (Eigens_to_Procrustes (me, thee, from, to), "%s_%s", Thing_getName(me), Thing_getName(thee))) return 0;
 END
 
 
 DIRECT (PCAs_getAngleBetweenPc1Pc2Plane_degrees)
 	PCA me = NULL, thee = NULL;
-	WHERE (SELECTED) if (me) thee = OBJECT; else me = OBJECT;
+	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
 	Melder_information2 (Melder_double (Eigens_getAngleBetweenEigenplanes_degrees (me, thee)), 
-		" degrees (=angle of intersection between the two pc1-pc2 eigenplanes)");
+		L" degrees (=angle of intersection between the two pc1-pc2 eigenplanes)");
 END
 
 /******************* Permutation **************************************/
 
 DIRECT (Permutation_help)
-	Melder_help ("Permutation");
+	Melder_help (L"Permutation");
 END
 
 FORM (Permutation_create, "Create Permutation", "Create Permutation...")
@@ -2518,8 +2510,8 @@ FORM (Permutation_getValueAtIndex, "Permutation: Get value", "Permutation: Get v
 	OK
 DO
 	long index = GET_INTEGER ("Index");
-	Melder_information9 (Melder_integer (Permutation_getValueAtIndex (ONLY_OBJECT, index)), " (value, at index = ", 
-		Melder_integer (index), ")", NULL,  NULL, NULL, NULL, NULL);
+	Melder_information4 (Melder_integer (Permutation_getValueAtIndex (ONLY_OBJECT, index)), L" (value, at index = ", 
+		Melder_integer (index), L")");
 END
 
 FORM (Permutation_getIndexAtValue, "Permutation: Get index", "Permutation: Get index...")
@@ -2527,8 +2519,8 @@ FORM (Permutation_getIndexAtValue, "Permutation: Get index", "Permutation: Get i
 	OK
 DO
 	long value = GET_INTEGER ("Value");
-	Melder_information9 (Melder_integer (Permutation_getIndexAtValue (ONLY_OBJECT, value)), " (index, at value = ",
-		Melder_integer (value), ")", NULL,  NULL, NULL, NULL, NULL);
+	Melder_information4 (Melder_integer (Permutation_getIndexAtValue (ONLY_OBJECT, value)), L" (index, at value = ",
+		Melder_integer (value), L")");
 END
 
 DIRECT (Permutation_sort)
@@ -2745,7 +2737,7 @@ END
 
 /***************** Polynomial *******************/
 
-DIRECT (Polynomial_help) Melder_help ("Polynomial"); END
+DIRECT (Polynomial_help) Melder_help (L"Polynomial"); END
 
 FORM (Polynomial_create, "Create Polynomial", "Create Polynomial...")
 	WORD ("Name", "p")
@@ -2759,7 +2751,7 @@ DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
 	if (! praat_new (Polynomial_createFromString (xmin, xmax,
-		GET_STRING ("Coefficients")), GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
 END
 
 FORM (Polynomial_getArea, "Polynomial: Get area", "Polynomial: Get area...")
@@ -2808,7 +2800,7 @@ FORM (Polynomial_evaluate_z, "Polynomial: Get value (complex)",
 DO
 	dcomplex p, z = dcomplex_create (GET_REAL ("Real part"), GET_REAL ("Imaginary part"));
 	Polynomial_evaluate_z (ONLY_OBJECT, &z, &p);
-	Melder_information9 (Melder_double (p.re), " + ", Melder_double (p.im), NULL, NULL, NULL, NULL, NULL, NULL);
+	Melder_information4 (Melder_double (p.re), L" + ", Melder_double (p.im), L" i");
 END
 
 
@@ -2826,7 +2818,7 @@ END
 
 DIRECT (Polynomials_multiply)
 	Polynomial p1 = NULL, p2 = NULL;
-	WHERE (SELECTED) if (p1) p2 = OBJECT; else p1 = OBJECT;
+	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
 	if (! praat_new (Polynomials_multiply (p1, p2),
 		"%s_%s_mul", p1->name, p2->name)) return 0;
 END
@@ -2843,8 +2835,8 @@ DO
 	Polynomial p1 = NULL, p2 = NULL, s, r, q;
 	int wantq = GET_INTEGER ("Want quotient");
 	int wantr = GET_INTEGER ("Want remainder");
-	REQUIRE (wantq || wantr, "Either \'Want quotient\' or \'Want remainder\' must be choosen")
-	WHERE (SELECTED) if (p1) p2 = OBJECT; else p1 = OBJECT;
+	REQUIRE (wantq || wantr, "Either \'Want quotient\' or \'Want remainder\' must be chosen")
+	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
 	if (! wantq) q = NULL;
 	if (! wantr) r = NULL;
 	s = Polynomial_create (0,1,1);
@@ -2856,7 +2848,7 @@ END
 
 /********************* Roots ******************************/
 
-DIRECT (Roots_help) Melder_help ("Roots"); END
+DIRECT (Roots_help) Melder_help (L"Roots"); END
 
 FORM (Roots_draw, "Roots: Draw", 0)
 	REAL ("Minimum of real axis", "0.0")
@@ -2872,7 +2864,7 @@ DO
 		GET_REAL ("Minimum of real axis"), GET_REAL ("Maximum of real axis"), 
 		GET_REAL ("Minimum of imaginary axis"),
 		GET_REAL ("Maximum of imaginary axis"), 
-		GET_STRING ("Mark string"), GET_INTEGER ("Mark size"),
+		GET_STRINGW (L"Mark string"), GET_INTEGER ("Mark size"),
 		GET_INTEGER ("Garnish")))
 END
 
@@ -2885,8 +2877,7 @@ FORM (Roots_getRoot, "Roots: Get root", 0)
 	OK
 DO
 	dcomplex z = Roots_getRoot (ONLY (classRoots), GET_INTEGER ("Root number"));
-	Melder_information9 (Melder_double (z.re), (z.im < 0 ? " - " : " + "), Melder_double (fabs(z.im)), 
-		NULL, NULL, NULL, NULL, NULL, NULL);
+	Melder_information4 (Melder_double (z.re), (z.im < 0 ? L" - " : L" + "), Melder_double (fabs(z.im)), L" i");
 END
 
 FORM (Roots_getRealPartOfRoot, "Roots: Get real part", 0)
@@ -2934,18 +2925,18 @@ END
 
 DIRECT (Praat_ReportFloatingPointProperties)
 	if (! NUMfpp) NUMmachar ();
-	Melder_information1 ("Double precision floating point properties of this machine,");
-	Melder_information1 ("as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
-	Melder_information2 ("Radix: ", Melder_double (NUMfpp -> base));
-	Melder_information2 ("Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
-	Melder_information2 ("Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
-	Melder_information2 ("Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
-	Melder_information2 ("Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? "yes" : "no"));
-	Melder_information2 ("Quantization step (d): ", Melder_double (NUMfpp -> prec));
-	Melder_information2 ("Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
-	Melder_information2 ("Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
-	Melder_information2 ("Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
-	Melder_information2 ("Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
+	Melder_information1 (L"Double precision floating point properties of this machine,");
+	Melder_information1 (L"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
+	Melder_information2 (L"Radix: ", Melder_double (NUMfpp -> base));
+	Melder_information2 (L"Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
+	Melder_information2 (L"Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
+	Melder_information2 (L"Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
+	Melder_information2 (L"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? L"yes" : L"no"));
+	Melder_information2 (L"Quantization step (d): ", Melder_double (NUMfpp -> prec));
+	Melder_information2 (L"Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
+	Melder_information2 (L"Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
+	Melder_information2 (L"Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
+	Melder_information2 (L"Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
 END
 
 /******************** Sound ****************************************/
@@ -2991,7 +2982,7 @@ static int Sound_create_checkCommonFields (void *dia, double *startingTime, doub
 	}
 	if (numberOfSamples_real > LONG_MAX)
 	{
-		(void) Melder_error ("A Sound cannot have %s samples; the maximum is %s samples.\n", Melder_bigInteger (numberOfSamples_real), Melder_bigInteger (LONG_MAX));
+		(void) Melder_error ("A Sound cannot have %ls samples; the maximum is %ls samples.\n", Melder_bigInteger (numberOfSamples_real), Melder_bigInteger (LONG_MAX));
 		if (*startingTime == 0.0)
 			return Melder_error ("Please lower the finishing time or the sampling frequency.");
 		else
@@ -3004,11 +2995,11 @@ static int Sound_create_check (Sound me, double startingTime, double finishingTi
 {
 	if (me != NULL) return 1;
 	
-	if (strstr (Melder_getError (), "memory"))
+	if (wcsstr (Melder_getError (), L"memory"))
 	{
 		double numberOfSamples_real = floor ((finishingTime - startingTime) * samplingFrequency + 0.5);
 		Melder_clearError ();
-		(void) Melder_error ("There is not enough memory to create a Sound that contains %s samples.\n", Melder_bigInteger (numberOfSamples_real));
+		(void) Melder_error ("There is not enough memory to create a Sound that contains %ls samples.\n", Melder_bigInteger (numberOfSamples_real));
 		if (startingTime == 0.0)
 			return Melder_error ("You could lower the finishing time or the sampling frequency and try again.");
 		else
@@ -3083,7 +3074,7 @@ DO
 	if (f >= samplingFrequency / 2)
 	{
 		Melder_error ( "Frequency cannot be larger than half the sampling frequency.\n");
-		return Melder_error ( "Please use a frequency smaller than %s.", 
+		return Melder_error ( "Please use a frequency smaller than %ls.", 
 			Melder_double (samplingFrequency / 2));
 	}
 	if (gamma < 0)
@@ -3176,8 +3167,8 @@ FORM (Sound_to_TextGrid_detectSilences, "Sound: To TextGrid (silences)",
 DO
 	EVERY_TO (Sound_to_TextGrid_detectSilences (OBJECT, GET_REAL ("Minimum pitch"), GET_REAL ("Time step"), 
 		GET_REAL ("Silence threshold"), GET_REAL ("Minimum silent interval duration"),
-		GET_REAL ("Minimum sounding interval duration"), GET_STRING ("Silent interval label"), 
-		GET_STRING ("Sounding interval label")))	
+		GET_REAL ("Minimum sounding interval duration"), GET_STRINGW (L"Silent interval label"), 
+		GET_STRINGW (L"Sounding interval label")))	
 
 END
 
@@ -3441,7 +3432,7 @@ END
 
 /************ SSCP ***************************************************/
 
-DIRECT (SSCP_help) Melder_help ("SSCP"); END
+DIRECT (SSCP_help) Melder_help (L"SSCP"); END
 
 FORM (SSCP_drawConfidenceEllipse, "SSCP: Draw confidence ellipse", 0)
 	POSITIVE ("Confidence level", "0.95")
@@ -3564,8 +3555,8 @@ DO
 	long nc = GET_INTEGER ("Number of contraints");
 	SSCP me = ONLY_OBJECT;
 	SSCP_testDiagonality_bartlett (me, nc, &chisq, &p);
-	Melder_information9 (Melder_double (p), " (=probability for chisq = ", Melder_double (chisq), " and ndf = ", 
-		Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2), ")", NULL, NULL, NULL);
+	Melder_information6 (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq), L" and ndf = ", 
+		Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2), L")");
 END
  
 DIRECT (SSCP_to_Correlation)
@@ -3619,7 +3610,7 @@ FORM (Strings_setString, "Strings: Set string", "Strings: Set string...")
 	SENTENCE ("String", "")
 	OK	
 DO
-	if (! Strings_setString (ONLY (classStrings), GET_STRING ("String"),
+	if (! Strings_setString (ONLY (classStrings), GET_STRINGW (L"String"),
 		GET_INTEGER ("Index"))) return 0;
 END
 
@@ -3633,8 +3624,8 @@ FORM (Strings_change, "Strings: Change", "Strings: Change")
 	OK
 DO
 	long nmatches, nstringmatches;
-	EVERY_TO (Strings_change (OBJECT, GET_STRING ("Search"),
-		GET_STRING ("Replace"), GET_INTEGER ("Replace limit"), &nmatches, 
+	EVERY_TO (Strings_change (OBJECT, GET_STRINGW (L"Search"),
+		GET_STRINGW (L"Replace"), GET_INTEGER ("Replace limit"), &nmatches, 
 		&nstringmatches, GET_INTEGER ("Search and replace are") - 1))
 END
 
@@ -3778,7 +3769,7 @@ DO
 			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 			GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
 			GET_INTEGER ("Label size"), GET_INTEGER ("Use row labels"), 
-			GET_STRING ("Label"), GET_INTEGER ("Garnish")))
+			GET_STRINGW (L"Label"), GET_INTEGER ("Garnish")))
 END
 
 FORM (TableOfReal_drawScatterPlotMatrix, "TableOfReal: Draw scatter plots matrix", 0)
@@ -4002,12 +3993,12 @@ DO
 	long from = GET_INTEGER ("left Interval range");
 	long to = GET_INTEGER ("right Interval range");
 	int regexp = GET_INTEGER ("Search and replace strings are") - 1;
-	char *search = GET_STRING ("Search");
+	wchar_t *search = GET_STRINGW (L"Search");
 	long nmatches, nstringmatches;
 	
 	WHERE (SELECTED)
 	{
-		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, search, GET_STRING ("Replace"),
+		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, search, GET_STRINGW (L"Replace"),
 			regexp, &nmatches, &nstringmatches)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -4031,7 +4022,7 @@ DO
 	long nmatches, nstringmatches;
 	WHERE (SELECTED)
 	{
-		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, GET_STRING ("Search"), GET_STRING ("Replace"),
+		if (! TextGrid_changeLabels (OBJECT, GET_INTEGER ("Tier number"), from, to, GET_STRINGW (L"Search"), GET_STRINGW (L"Replace"),
 			GET_INTEGER ("Search and replace strings are")-1, &nmatches, &nstringmatches)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -4043,7 +4034,7 @@ FORM (TextGrid_setTierName, "TextGrid: Set tier name", "TextGrid: Set tier name.
 	OK
 DO
 	if (! TextGrid_setTierName (ONLY_OBJECT, GET_INTEGER ("Tier number"), 
-		GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 		praat_dataChanged (OBJECT);
 END	
 

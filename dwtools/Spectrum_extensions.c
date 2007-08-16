@@ -273,8 +273,8 @@ Matrix Spectrum_unwrap (Spectrum me)
 			thy z[2][i] -= phase * (i - 1);
 		}
 	}
-	Melder_information2 ("Number of spectral values: ", Melder_integer (tbs.count));
-	Melder_information2 (" iphase = ", Melder_integer (iphase));
+	Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
+	Melder_information2 (L" iphase = ", Melder_integer (iphase));
 end:
 
 	Melder_progress (1.0, NULL);

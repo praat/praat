@@ -2,7 +2,7 @@
 #define _enum_h_
 /* enum.h
  *
- * Copyright (C) 1994-2002 Paul Boersma
+ * Copyright (C) 1994-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  */
 
 /*
- * pb 1997/09/25
  * pb 2002/03/07 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 /*
@@ -74,7 +74,7 @@ Usage:
 	enumstring (Booklet_CAT, -2) equals "Booklet_CAT".
 
 Limitations:
-	The elements should consist of any sequence of letters, digits, and underscores,
+	The elements must consist of any sequence of letters, digits, and underscores,
 	but not start with a digit (they will be the names of structure members),
 	and they should not be called "_length", "_type", "_begin",
 	"_end", or "_trailer" (compiler will object to double declaration).
@@ -82,7 +82,7 @@ Limitations:
 	The name "enum_Booklet_CAT" refers to a global variable.
 */
 
-typedef struct enum_ANY { int _length; const char *_type, *zero, *_end; int _trailer; } enum_ANY;
+typedef struct enum_ANY { int _length; const wchar_t *_type, *zero, *_end; int _trailer; } enum_ANY;
 
 typedef signed char enum1;
 typedef signed short enum2;
@@ -93,10 +93,10 @@ typedef signed short enum2;
 #define enum_length(enumerated)  (((enum_ANY *) enumerated) -> _length)
 #define enumlength(type)  (enumi (type, _end) - 1)
 
-#define enum_string(enumerated,ielement)  (((char **) & ((enum_ANY *) enumerated) -> zero) [ielement])
+#define enum_string(enumerated,ielement)  (((wchar_t **) & ((enum_ANY *) enumerated) -> zero) [ielement])
 #define enumstring(type,ielement)  enum_string (& enum_##type, ielement)
 
-int enum_search (void *enumerated, const char *string);
+int enum_search (void *enumerated, const wchar_t *string);
 #define enumsearch(type,string)  enum_search (& enum_##type, string)
 /*
 	If not found:
@@ -109,14 +109,14 @@ int enum_search (void *enumerated, const char *string);
 
 /* The following definitions are for header files. */
 
-#define enum_begin(type,zero)  typedef struct type { int _length; const char *_type, *zero;
-#define enum(element)  const char *element;
-#define enum_end(type)  const char *_end; int _trailer; } type; extern type enum_##type;
+#define enum_begin(type,zero)  typedef struct type { int _length; const wchar_t *_type, *zero;
+#define enum(element)  const wchar_t *element;
+#define enum_end(type)  const wchar_t *_end; int _trailer; } type; extern type enum_##type;
 
 /* Technical detail:
 	We would have liked to write the 'enumi' macro as follows:
 
-		#define enumi(type,element)  ((char **) & ((type *) 0) -> element - (char **) & ((type *) 0) -> _type + 1)
+		#define enumi(type,element)  ((wchar_t **) & ((type *) 0) -> element - (wchar_t **) & ((type *) 0) -> _type + 1)
 
 	The SPARC compiler computes this correctly, but Think C would give the wrong result.
 	Some examples of how Think C 6.0 computes compile-time expressions like these:

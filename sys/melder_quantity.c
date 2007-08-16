@@ -18,22 +18,23 @@
  */
 
 /*
- * pb 2007/03/17
+ * pb 2007/03/17 created
+ * pb 2007/08/14 wchar_t
  */
 
 #include "melder.h"
 
-static const char * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
-	{ "", "", "", "" },
-	{ "Time", "Time (s)", "seconds", "s" },
-	{ "Frequency", "Frequency (Hz)", "Hertz", "Hz" },
-	{ "Frequency", "Frequency (Bark)", "Bark", "Bark" },
-	{ "Distance from glottis", "Distance from glottis (m)", "metres", "m" },	
+static const wchar_t * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
+	{ L"", L"", L"", L"" },
+	{ L"Time", L"Time (s)", L"seconds", L"s" },
+	{ L"Frequency", L"Frequency (Hz)", L"Hertz", L"Hz" },
+	{ L"Frequency", L"Frequency (Bark)", L"Bark", L"LBark" },
+	{ L"Distance from glottis", L"Distance from glottis (m)", L"metres", L"m" },	
 };
 
-const char * MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
-const char * MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
-const char * MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
-const char * MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
+const wchar_t * MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
+const wchar_t * MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
+const wchar_t * MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
+const wchar_t * MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
 
 /* End of file melder_quantity.c */

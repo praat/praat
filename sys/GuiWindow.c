@@ -31,7 +31,7 @@
 void GuiWindow_setTitleW (Widget me, const wchar_t *titleW) {
 	#if mac
 		unsigned long length = wcslen (titleW);
-		UniChar *titleUtf16 = Melder_calloc (wcslen (titleW), sizeof (UniChar));
+		UniChar *titleUtf16 = Melder_calloc (UniChar, wcslen (titleW) + 1);
 		for (unsigned long i = 0; i < length; i ++)
 			titleUtf16 [i] = titleW [i];
 		CFStringRef titleCF = CFStringCreateWithCharacters (NULL, titleUtf16, length);

@@ -345,6 +345,7 @@ void Graphics_xorOn (I, int colour) {
 			SetPort (my macPort);
 			PenMode (patXor);
 			TextMode (srcXor);
+			my duringXor = TRUE;
 		#endif
 	}
 	if (my recording) { op (XOR_ON, 1); put (colour); }
@@ -365,6 +366,7 @@ void Graphics_xorOff (I) {
 			SetPort (my macPort);
 			PenMode (patCopy);
 			TextMode (srcOr);
+			my duringXor = FALSE;
 		#endif
 	}
 	if (my recording) { op (XOR_OFF, 0); }

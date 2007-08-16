@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2007/03/14 arrowSize
+ * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  */
 
 #include <stdarg.h>
@@ -76,7 +77,7 @@ static void computeTrafo (I) {
 	workScaleX = (my x2DC - my x1DC) / (my x2wNDC - my x1wNDC);
 	my deltaX = my x1DC - (my x1wNDC - my deltaX) * workScaleX;
 	my scaleX = worldScaleX * workScaleX;
-	if (my screen) {
+	if (my yIsZeroAtTheTop) {
 		workScaleY = ((int) my y1DC - (int) my y2DC) / (my y2wNDC - my y1wNDC);
 		my deltaY = my y2DC - (my y1wNDC - my deltaY) * workScaleY;
 	} else {
@@ -185,7 +186,7 @@ void Graphics_inqWsWindow (I, double *x1NDC, double *x2NDC, double *y1NDC, doubl
 
 void Graphics_DCtoWC (I, short xDC, short yDC, double *xWC, double *yWC) {
 	iam (Graphics);
-	if (my screen) {
+	if (my yIsZeroAtTheTop) {
 		*xWC = (xDC + 0.5 - my deltaX) / my scaleX;
 		*yWC = (yDC - 0.5 - my deltaY) / my scaleY;
 	} else {
@@ -310,7 +311,7 @@ double Graphics_dxMMtoWC (I, double dx_mm) {
 
 double Graphics_dyMMtoWC (I, double dy_mm) {
 	iam (Graphics);
-	return my screen ?
+	return my yIsZeroAtTheTop ?
 		dy_mm * my resolution / (-25.4 * my scaleY) : dy_mm * my resolution / (25.4 * my scaleY);
 }
 
@@ -328,7 +329,7 @@ double Graphics_dxWCtoMM (I, double dxWC) {
 
 double Graphics_dyWCtoMM (I, double dyWC) {
 	iam (Graphics);
-	return my screen ?
+	return my yIsZeroAtTheTop ?
 		dyWC * my scaleY * -25.4 / my resolution : dyWC * my scaleY * 25.4 / my resolution;
 }
 

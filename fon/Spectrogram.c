@@ -30,22 +30,22 @@
 static void info (I) {
 	iam (Spectrogram);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
-	MelderInfo_writeLine1 ("Time sampling:");
-	MelderInfo_writeLine2 ("   Number of time slices (frames): ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("   Time step (frame distance): ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First time slice (frame centre) at: ", Melder_double (my x1), " seconds");
-	MelderInfo_writeLine1 ("Frequency domain:");
-	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my ymin), " Hz");
-	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my ymax), " Hz");
-	MelderInfo_writeLine3 ("   Total bandwidth: ", Melder_double (my xmax - my xmin), " Hz");
-	MelderInfo_writeLine1 ("Frequency sampling:");
-	MelderInfo_writeLine2 ("   Number of frequency bands (bins): ", Melder_integer (my ny));
-	MelderInfo_writeLine3 ("   Frequency step (bin width): ", Melder_double (my dy), " Hz");
-	MelderInfo_writeLine3 ("   First frequency band around (bin centre at): ", Melder_double (my y1), " Hz");
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine1 (L"Time sampling:");
+	MelderInfo_writeLine2 (L"   Number of time slices (frames): ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"   Time step (frame distance): ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First time slice (frame centre) at: ", Melder_double (my x1), L" seconds");
+	MelderInfo_writeLine1 (L"Frequency domain:");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my ymin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my ymax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (my xmax - my xmin), L" Hz");
+	MelderInfo_writeLine1 (L"Frequency sampling:");
+	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (my ny));
+	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (my dy), L" Hz");
+	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (my y1), L" Hz");
 }
 
 class_methods (Spectrogram, Matrix)
@@ -129,10 +129,10 @@ void Spectrogram_paint (I, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Frequency (Hz)");
+		Graphics_textLeft (g, 1, L"Frequency (Hz)");
 	}
 }
 

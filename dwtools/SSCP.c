@@ -186,7 +186,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale,
 	long nsteps = 100;
 	double angle_inc = twoPi / nsteps; 
 	float *x = NULL, *y = NULL; long i;
-	char *name;
+	wchar_t *name;
 	
 	x = NUMfvector (0, nsteps);
 	if (x == NULL) return; 
@@ -217,7 +217,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale,
 		x[i] = my centroid[1] + xt;	
 	}
 	Graphics_polyline (g, nsteps + 1, x, y);
-	if (fontSize > 0 && (name = Thing_getName (me)))
+	if (fontSize > 0 && (name = Thing_getNameW (me)))
 	{
 		int oldFontSize = Graphics_inqFontSize (g);
 		Graphics_setFontSize (g, fontSize);
@@ -329,14 +329,14 @@ static TableOfReal SSCP_and_TableOfReal_to_MahalanobisDistances (I, thou, long r
 	long i, k, nrows, n = my numberOfRows;
 	int copyLabels = 1;
 
-	if (n != thy numberOfColumns) return Melder_errorp ("%s:The number of columns (%d) in the "
+	if (n != thy numberOfColumns) return Melder_errorp ("%s: The number of columns (%d) in the "
 		"TableOfReal must equal the dimension (%d) of the SSCP-object.", proc, thy numberOfColumns, n);
 	if (rowe <= rowe)
 	{
 		rowb = 1; rowe = thy numberOfRows;
 	}
 	if (rowe == 0) rowe = thy numberOfRows;
-	if (rowb < 1 || rowe > thy numberOfRows) return Melder_errorp ("%s:The row selection in the TableOfReal is not valid.", 	proc);
+	if (rowb < 1 || rowe > thy numberOfRows) return Melder_errorp ("%s: The row selection in the TableOfReal is not valid.", 	proc);
 	
 	nrows = rowe - rowb + 1;
 	him = TableOfReal_create (nrows, 1);
@@ -809,7 +809,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 	SSCPs thee = NULL;
 	SSCP t;
 	long i, index = 1, numberOfCases = my numberOfRows, nsingle = 0;
-	char *label;
+	wchar_t *label;
 	
 	if ((thee = SSCPs_create ()) == NULL) return NULL;
 
@@ -819,15 +819,15 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 	label = mew -> rowLabels[1];
 	for (i = 2; i <= numberOfCases; i++)
 	{
-		char *li = mew -> rowLabels[i];
-		if (li != NULL && li != label && strcmp (li, label))
+		wchar_t *li = mew -> rowLabels[i];
+		if (li != NULL && li != label && wcscmp (li, label))
 		{
 			if (i - 1 - index > 0) /* At least two rows? */
 			{
 				t = TableOfReal_to_SSCP (mew, index, i - 1, 0, 0);
 				if (t == NULL || ! Collection_addItem (thee, t)) goto end;
-				if (! (label = mew -> rowLabels[index])) label = "?";
-				Thing_setName (t, label);
+				if (! (label = mew -> rowLabels[index])) label = L"?";
+				Thing_setNameW (t, label);
 			}
 			else
 			{
@@ -840,8 +840,8 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 	{
 		t = TableOfReal_to_SSCP (mew, index, numberOfCases, 0, 0);
 		if (! t || ! Collection_addItem (thee, t)) goto end;
-		if (! (label = mew -> rowLabels[index])) label = "?";
-		Thing_setName (t, label);
+		if (! (label = mew -> rowLabels[index])) label = L"?";
+		Thing_setNameW (t, label);
 	}
 	else
 	{
@@ -1188,7 +1188,7 @@ SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2)
 	for (i = 1; i <= my size; i++)
 	{
 		SSCP t = _SSCP_toTwoDimensions (my item[i], v1, v2);
-		Thing_setName (t, Thing_getName (my item[i]));
+		Thing_setNameW (t, Thing_getNameW (my item[i]));
 		if (t == NULL || ! Collection_addItem (thee, t)) break;
 	}
 	if (Melder_hasError ()) forget (thee);
@@ -1197,7 +1197,7 @@ SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2)
 
 
 void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
-	int confidence, char *label, long d1, long d2, double xmin, double xmax,
+	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish)
 {
 	SSCPs thee;
@@ -1230,7 +1230,7 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 		t = thy item[i];		
 		lscale = ellipseScalefactor (t, scale, confidence);
 		if (lscale < 0) continue;
-		if (label == NULL || NUMstrcmp (label, Thing_getName (t)) == 0)
+		if (label == NULL || NUMwcscmp (label, Thing_getNameW (t)) == 0)
 		{
 			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
 		}
@@ -1239,20 +1239,20 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
-		char text[20];
+		wchar_t text[20];
 		t = my item[1];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %ld", d2);
+		swprintf (text, 20, L"Dimension %ld", d2);
     	Graphics_textLeft (g, 1, t -> rowLabels[d2] ? t -> rowLabels[d2] : text);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %ld", d1);
+		swprintf (text, 20, L"Dimension %ld", d1);
 		Graphics_textBottom (g, 1, t -> rowLabels[d1] ? t -> rowLabels[d1] : text);
 	}	
 	forget (thee);
 }
 static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double scale,
-	int confidence, char *label, long d1, long d2, double xmin, double xmax,
+	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish)
 {
 	SSCPs thee;
@@ -1287,7 +1287,7 @@ static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double sc
 		t = thy item[i];		
 		lscale = ellipseScalefactor (t, scale, confidence);
 		if (lscale < 0) continue;
-		if (label == NULL || NUMstrcmp (label, Thing_getName (t)) == 0)
+		if (label == NULL || NUMwcscmp (label, Thing_getNameW (t)) == 0)
 		{
 			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
 		}
@@ -1296,14 +1296,14 @@ static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double sc
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
-		char text[20];
+		wchar_t text[20];
 		t = my item[1];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %ld", d2);
+		swprintf (text, 20, L"Dimension %ld", d2);
     	Graphics_textLeft (g, 1, t -> rowLabels[d2] ? t -> rowLabels[d2] : text);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-		sprintf (text, "Dimension %ld", d1);
+		swprintf (text, 20, L"Dimension %ld", d1);
 		Graphics_textBottom (g, 1, t -> rowLabels[d1] ? t -> rowLabels[d1] : text);
 	}	
 	forget (thee);

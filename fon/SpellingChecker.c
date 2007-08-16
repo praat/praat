@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/06/21 tex
+ * pb 2007/08/12 wchar_t
  */
 
 #include "SpellingChecker.h"
@@ -58,7 +59,7 @@ class_methods_end
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	SpellingChecker thee = new (SpellingChecker); cherror
 	thy wordList = Data_copy (me); cherror
-	thy separatingCharacters = Melder_strdup (".,;:()\"");
+	thy separatingCharacters = Melder_wcsdup (L".,;:()\"");
 end:
 	iferror forget (thee);
 	return thee;
@@ -90,19 +91,19 @@ int SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString
 	return 1;
 }
 
-static int startsWithCapital (const char *word) {
+static int startsWithCapital (const wchar_t *word) {
 	return isupper (word [0]) || (word [0] == '\\' && isupper (word [1]));
 }
 
-int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
-	int wordLength = strlen (word);
+int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word) {
+	int wordLength = wcslen (word);
 	if (my allowAllWordsContaining && my allowAllWordsContaining [0]) {
-		char *p = & my allowAllWordsContaining [0];
+		wchar_t *p = & my allowAllWordsContaining [0];
 		while (*p) {
 			/*
 			 * Find next token in list of allowed string parts.
 			 */
-			char token [100], *q = & token [0];
+			wchar_t token [100], *q = & token [0];
 			/*
 			 * Skip spaces in list.
 			 */
@@ -117,7 +118,7 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
 			/*
 			 * Allow word if it contains this token.
 			 */
-			if (strstr (word, token)) return TRUE;
+			if (wcsstr (word, token)) return TRUE;
 		}
 	}
 	if (my allowAllNames) {
@@ -128,9 +129,9 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
 			return TRUE;
 		}
 		if (my namePrefixes && my namePrefixes [0]) {
-			char *p = & my namePrefixes [0];
+			wchar_t *p = & my namePrefixes [0];
 			while (*p) {
-				char token [100], *q = & token [0];
+				wchar_t token [100], *q = & token [0];
 				while (*p == ' ') p ++;
 				while (*p != '\0' && *p != ' ') *q ++ = *p ++;
 				*q = '\0';   /* Trailing null byte. */
@@ -138,13 +139,13 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
 				 * Allow word if starts with this prefix
 				 * and this prefix is followed by a capital.
 				 */
-				if (strstr (word, token) == word && startsWithCapital (word + strlen (token))) {
+				if (wcsstr (word, token) == word && startsWithCapital (word + wcslen (token))) {
 					return TRUE;
 				}
 			}
 		}
 	} else if (my allowAllAbbreviations && startsWithCapital (word)) {
-		const char *p = & word [0];
+		const wchar_t *p = & word [0];
 		for (;;) {
 			if (*p == '\0') return TRUE;
 			if (islower (*p)) break;
@@ -152,53 +153,53 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const char *word) {
 		}
 	}
 	if (my allowAllWordsStartingWith && my allowAllWordsStartingWith [0]) {
-		char *p = & my allowAllWordsStartingWith [0];
+		wchar_t *p = & my allowAllWordsStartingWith [0];
 		while (*p) {
-			char token [100], *q = & token [0];
+			wchar_t token [100], *q = & token [0];
 			int tokenLength;
 			while (*p == ' ') p ++;
 			while (*p != '\0' && *p != ' ') *q ++ = *p ++;
 			*q = '\0';   /* Trailing null byte. */
-			tokenLength = strlen (token);
-			if (wordLength >= tokenLength && strnequ (token, word, tokenLength)) {
+			tokenLength = wcslen (token);
+			if (wordLength >= tokenLength && wcsnequ (token, word, tokenLength)) {
 				return TRUE;
 			}
 		}
 	}
 	if (my allowAllWordsEndingIn && my allowAllWordsEndingIn [0]) {
-		char *p = & my allowAllWordsEndingIn [0];
+		wchar_t *p = & my allowAllWordsEndingIn [0];
 		while (*p) {
-			char token [100], *q = & token [0];
+			wchar_t token [100], *q = & token [0];
 			int tokenLength;
 			while (*p == ' ') p ++;
 			while (*p != '\0' && *p != ' ') *q ++ = *p ++;
 			*q = '\0';   /* Trailing null byte. */
-			tokenLength = strlen (token);
-			if (wordLength >= tokenLength && strnequ (token, word + wordLength - tokenLength, tokenLength)) {
+			tokenLength = wcslen (token);
+			if (wordLength >= tokenLength && wcsnequ (token, word + wordLength - tokenLength, tokenLength)) {
 				return TRUE;
 			}
 		}
 	}
-	if (WordList_hasWord (my wordList, word))
+	if (WordList_hasWord (my wordList, Melder_peekWcsToAscii (word)))
 		return TRUE;
 	if (my userDictionary != NULL) {
-		if (strlen (word) > 3333) return FALSE;   /* Superfluous, because WordList_hasWord already checked. But safe. */
-		Longchar_genericize (word, Melder_buffer2);
-		if (SortedSetOfString_lookUp (my userDictionary, Melder_buffer2) != 0)
+		if (wcslen (word) > 3333) return FALSE;   /* Superfluous, because WordList_hasWord already checked. But safe. */
+		Longchar_genericizeW (word, (wchar_t *) Melder_buffer2);
+		if (SortedSetOfString_lookUp (my userDictionary, (wchar_t *) Melder_buffer2) != 0)
 			return TRUE;
 	}
 	return FALSE;
 }
 
-int SpellingChecker_addNewWord (SpellingChecker me, const char *word) {
-	char *generic = NULL;
+int SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word) {
+	wchar_t *generic = NULL;
 	if (! my userDictionary) {
 		my userDictionary = SortedSetOfString_create ();
 		if (! my userDictionary) return 0;
 	}
-	generic = Melder_calloc (1, 3 * strlen (word) + 1);
+	generic = Melder_calloc (wchar_t, 3 * wcslen (word) + 1);
 	if (! generic) goto end;
-	Longchar_genericize (word, generic);
+	Longchar_genericizeW (word, generic);
 	if (! SortedSetOfString_add (my userDictionary, generic)) goto end;
 end:
 	Melder_free (generic);
@@ -206,8 +207,8 @@ end:
 	return 1;
 }
 
-static int stringContains (const char *string, int character) {
-	const char *p = & string [0];
+static int stringContains (const wchar_t *string, int character) {
+	const wchar_t *p = & string [0];
 	while (*p) {
 		if (*p == character) return TRUE;
 		p ++;
@@ -215,8 +216,8 @@ static int stringContains (const char *string, int character) {
 	return FALSE;
 }
 
-char * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char *sentence, int *start) {
-	const char *p = sentence + *start;
+wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, int *start) {
+	const wchar_t *p = sentence + *start;
 	for (;;) {
 		if (*p == '\0') {
 			return NULL;   /* All words allowed. */
@@ -235,8 +236,8 @@ char * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char *sente
 		} else if (*p == ' ' || (my separatingCharacters && stringContains (my separatingCharacters, *p))) {
 			p ++;
 		} else {
-			static char word [100];
-			char *q = & word [0];
+			static wchar_t word [100];
+			wchar_t *q = & word [0];
 			*start = p - sentence;
 			for (;;) {
 				if (*p == '\0' || *p == ' ' || (my separatingCharacters && stringContains (my separatingCharacters, *p))) {

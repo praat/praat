@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/29
+ * pb 2007/08/12
  */
 
 #ifndef _Strings_h_
@@ -41,20 +41,20 @@ oo_CLASS_CREATE (PairProbability, Data);
 #define PairDistribution_methods Data_methods
 oo_CLASS_CREATE (PairDistribution, Data);
 
-PairProbability PairProbability_create (const char *string1, const char *string2, double weight);
+PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight);
 PairDistribution PairDistribution_create (void);
-int PairDistribution_add (PairDistribution me, const char *string1, const char *string2, double weight);
+int PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
 int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
-int PairDistribution_peekPair (PairDistribution me, char **string1, char **string2);
+int PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t **string2);
 
 double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution me);
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me);
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, long column);
 
-int PairDistribution_formula (PairDistribution me, const char *formula);
+int PairDistribution_formula (PairDistribution me, const wchar_t *formula);
 void PairDistribution_drawAsNumbers (PairDistribution me, Graphics g, int iformat, int precision);
-void PairDistribution_drawAsNumbers_if (PairDistribution me, Graphics g, int iformat, int precision, const char *conditionFormula);
+void PairDistribution_drawAsNumbers_if (PairDistribution me, Graphics g, int iformat, int precision, const wchar_t *conditionFormula);
 PairDistribution PairDistribution_append (PairDistribution me, PairDistribution thee);
 
 Table PairDistribution_to_Table (PairDistribution me);

@@ -1,6 +1,6 @@
 /* Transition_def.h
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1997/03/01
- * pb 2002/07/16 GPL
+ * pb 2007/08/12
  */
 
 
@@ -27,7 +26,7 @@
 oo_DEFINE_CLASS (Transition, Data)
 
 	oo_LONG (numberOfStates)
-	oo_STRING_VECTOR (stateLabels, my numberOfStates)
+	oo_STRINGW_VECTOR (stateLabels, my numberOfStates)
 	oo_DOUBLE_MATRIX (data, my numberOfStates, my numberOfStates)
 
 oo_END_CLASS (Transition)

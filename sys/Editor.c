@@ -148,7 +148,7 @@ Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wcha
 				cmd -> script = Melder_wcsdup (L"");
 			} else {
 				structMelderFile file = { 0 };
-				Melder_relativePathToFileW (script, & file);
+				Melder_relativePathToFile (script, & file);
 				cmd -> script = Melder_wcsdup (Melder_fileToPathW (& file));
 			}
 			return cmd -> itemWidget;

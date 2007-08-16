@@ -53,7 +53,7 @@ class_create (Discriminant, Eigen);
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
 
-long Discriminant_groupLabelToIndex (Discriminant me, const char *label);
+long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label);
 
 int Discriminant_setAprioriProbability (Discriminant me, long group, double p);
 
@@ -79,7 +79,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discrimin
 	int poolCovarianceMatrices, int garnish);
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, 
-	double scale, int confidence, char *label, int discriminantDirections,
+	double scale, int confidence, wchar_t *label, int discriminantDirections,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax,
 	int fontSize, int garnish);
 	

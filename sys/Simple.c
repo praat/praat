@@ -1,6 +1,6 @@
 /* Simple.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1996/08/16
  * pb 2002/03/07 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Simple.h"
@@ -158,28 +158,8 @@ class_methods (SimpleString, Data)
 	//class_method_local (SimpleString, readCache)
 class_methods_end
 
-SimpleString SimpleString_create (const char *string) {
+SimpleString SimpleString_create (const wchar_t *string) {
 	SimpleString me = new (SimpleString);
-	if (! me || ! (my string = Melder_strdup (string)))
-		{ forget (me); return NULL; }
-	return me;
-}
-
-class_methods (SimpleStringW, Data)
-	class_method_local (SimpleStringW, description)
-	class_method_local (SimpleStringW, destroy)
-	class_method_local (SimpleStringW, copy)
-	class_method_local (SimpleStringW, equal)
-	class_method_local (SimpleStringW, writeText)
-	class_method_local (SimpleStringW, writeBinary)
-	//class_method_local (SimpleStringW, writeCache)
-	class_method_local (SimpleStringW, readText)
-	class_method_local (SimpleStringW, readBinary)
-	//class_method_local (SimpleStringW, readCache)
-class_methods_end
-
-SimpleStringW SimpleStringW_create (const wchar_t *string) {
-	SimpleStringW me = new (SimpleStringW);
 	if (! me || ! (my string = Melder_wcsdup (string)))
 		{ forget (me); return NULL; }
 	return me;

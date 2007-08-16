@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1998/03/19
  * pb 2002/07/16 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 #include "PitchTier_to_PointProcess.h"
@@ -154,7 +154,7 @@ end:
 }
 
 TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
-	TableOfReal thee = RealTier_downto_TableOfReal (me, "Time", "F0");
+	TableOfReal thee = RealTier_downto_TableOfReal (me, L"Time", L"F0");
 	long i;
 	if (! thee) return NULL;
 	if (useSemitones) for (i = 1; i <= thy numberOfRows; i ++)

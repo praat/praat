@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
  * pb 2005/03/08 added "PostScript" encodings (mostly Mac and Praat-IPA)
  * pb 2006/11/17 Unicode
  * pb 2006/12/05 first wchar support
- * pb 2006/12/14
+ * pb 2007/08/08 more wchar_t support
+ * pb 2007/08/15
  */
 #include <wchar.h>
 
@@ -86,6 +87,7 @@ char * Longchar_nativize (const char *generic, char *native, int educateQuotes);
 wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes);
 
 char * Longchar_genericize (const char *native, char *generic);
+wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *generic);
 /*
 	Function:
 		Copies the string 'native' to the string 'generic',
@@ -104,7 +106,7 @@ typedef struct Longchar_Info {
 		const char *name;   /* The PostScript name, starting with a slash. */
 		/* The widths in thousands of the height. */
 		short times, timesBold, timesItalic, timesBoldItalic;   /* Times. */
-		short century, centuryBold, centuryItalic, centuryBoldItalic;   /* New Century Schoolbook. */
+		short century, centuryBold, centuryItalic, centuryBoldItalic;   /* New Century Schoolbook (obsolete). */
 		short helvetica, helveticaBold;   /* Helvetica. */
 		short palatino, palatinoBold, palatinoItalic, palatinoBoldItalic;   /* Palatino. */
 		/* Courier width always 600. */
@@ -120,7 +122,7 @@ typedef struct Longchar_Info {
 	*Longchar_Info;
 
 Longchar_Info Longchar_getInfo (char kar1, char kar2);
-Longchar_Info Longchar_getInfoFromNative (unsigned char kar);
+Longchar_Info Longchar_getInfoFromNative (wchar_t kar);
 /* If no info found, these two routines return the info for a space. */
 
 /*
@@ -142,10 +144,6 @@ Longchar_Info Longchar_getInfoFromNative (unsigned char kar);
 	Thus, the string typed as "`hallo'" will give you left and right quotes,
 	even on Macintosh. (Reading this note in Xwindows may feel somewhat funny.)
 */
-
-short *Longchar_genericToWide (const char *generic, short *wide);
-/* "\ic" is translated to 'ic', "a" is translated to 'a ' */
-/* 'wide' will be NULL-terminated. */
 
 /* End of file longchar.h */
 #endif

@@ -1,6 +1,6 @@
 /* manual_Picture.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-static void drawOneIpaSymbol (Graphics g, double x, double y, const char *symbol) {
-	char buffer [30], *p = & buffer [0];
+static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *symbol) {
+	wchar_t buffer [30], *p = & buffer [0];
 	int fontSize = Graphics_inqFontSize (g);
 	Graphics_rectangle (g, x - 0.5, x + 0.5, y - 0.5, y + 0.5);
 	if (! symbol) return;
@@ -45,57 +45,56 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
 	Graphics_setTextRotation (graphics, 60);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (graphics, 4, 17.6, "bilabial");
-	Graphics_text (graphics, 5, 17.6, "labiodental");
-	Graphics_text (graphics, 6, 17.6, "dental");
-	Graphics_text (graphics, 7, 17.6, "alveolar");
-	Graphics_text (graphics, 8, 17.6, "alv. lateral");
-	Graphics_text (graphics, 9, 17.6, "postalveolar");
-	Graphics_text (graphics, 10, 17.6, "retroflex");
-	Graphics_text (graphics, 11, 17.6, "alveolo-palatal");
-	Graphics_text (graphics, 12, 17.6, "palatal");
-	Graphics_text (graphics, 13, 17.6, "labial-palatal");
-	Graphics_text (graphics, 14, 17.6, "labial-velar");
-	Graphics_text (graphics, 15, 17.6, "velar");
-	Graphics_text (graphics, 16, 17.6, "uvular");
-	Graphics_text (graphics, 17, 17.6, "pharyngeal");
-	Graphics_text (graphics, 18, 17.6, "epiglottal");
-	Graphics_text (graphics, 19, 17.6, "glottal");
+	Graphics_text (graphics, 4, 17.6, L"bilabial");
+	Graphics_text (graphics, 5, 17.6, L"labiodental");
+	Graphics_text (graphics, 6, 17.6, L"dental");
+	Graphics_text (graphics, 7, 17.6, L"alveolar");
+	Graphics_text (graphics, 8, 17.6, L"alv. lateral");
+	Graphics_text (graphics, 9, 17.6, L"postalveolar");
+	Graphics_text (graphics, 10, 17.6, L"retroflex");
+	Graphics_text (graphics, 11, 17.6, L"alveolo-palatal");
+	Graphics_text (graphics, 12, 17.6, L"palatal");
+	Graphics_text (graphics, 13, 17.6, L"labial-palatal");
+	Graphics_text (graphics, 14, 17.6, L"labial-velar");
+	Graphics_text (graphics, 15, 17.6, L"velar");
+	Graphics_text (graphics, 16, 17.6, L"uvular");
+	Graphics_text (graphics, 17, 17.6, L"pharyngeal");
+	Graphics_text (graphics, 18, 17.6, L"epiglottal");
+	Graphics_text (graphics, 19, 17.6, L"glottal");
 	Graphics_setTextRotation (graphics, 0);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (graphics, 3.3, 17, "voiceless plosive");
-	Graphics_text (graphics, 3.3, 16, "voiced plosive");
-	Graphics_text (graphics, 3.3, 15, "nasal");
-	Graphics_text (graphics, 3.3, 14, "voiceless fricative");
-	Graphics_text (graphics, 3.3, 13, "voiced fricative");
-	Graphics_text (graphics, 3.3, 12, "approximant");
-	Graphics_text (graphics, 3.3, 11, "trill");
-	Graphics_text (graphics, 3.3, 10, "tap or flap");
-	Graphics_text (graphics, 3.3, 9, "lateral approx.");
-	Graphics_text (graphics, 3.3, 8, "implosive");
-	Graphics_text (graphics, 3.3, 7, "click");
+	Graphics_text (graphics, 3.3, 17, L"voiceless plosive");
+	Graphics_text (graphics, 3.3, 16, L"voiced plosive");
+	Graphics_text (graphics, 3.3, 15, L"nasal");
+	Graphics_text (graphics, 3.3, 14, L"voiceless fricative");
+	Graphics_text (graphics, 3.3, 13, L"voiced fricative");
+	Graphics_text (graphics, 3.3, 12, L"approximant");
+	Graphics_text (graphics, 3.3, 11, L"trill");
+	Graphics_text (graphics, 3.3, 10, L"tap or flap");
+	Graphics_text (graphics, 3.3, 9, L"lateral approx.");
+	Graphics_text (graphics, 3.3, 8, L"implosive");
+	Graphics_text (graphics, 3.3, 7, L"click");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { float x, y; char *string; } symbols [] = {
-{ 4, 17, "p" }, { 4, 16, "b" }, { 4, 15, "m" }, { 4, 14, "\\ff" }, { 4, 13, "\\bf" }, { 4, 11, "\\bc" }, { 4, 8, "\\b^" }, { 4, 7, "\\O." },
-{ 5, 15, "\\mj" }, { 5, 14, "f" }, { 5, 13, "v" }, { 5, 12, "\\vs" },
-{ 6, 14, "\\tf" }, { 6, 13, "\\dh" }, { 6, 7, "\\|1" },
-{ 7, 17, "t" }, { 7, 16, "d" }, { 7, 15, "n" }, { 7, 14, "s" }, { 7, 13, "z" }, { 7, 12, "\\rt" }, { 7, 11, "r" }, { 7, 10, "\\fh" }, { 7, 9, "l" }, { 7, 8, "\\d^" },
-{ 8, 17, "t^l" }, { 8, 16, "d^l" }, { 8, 14, "\\l-" }, { 8, 13, "\\lz" }, { 8, 12, "l" }, { 8, 10, "\\rl" }, { 8, 9, "l" }, { 8, 7, "\\|2" },
-{ 9, 14, "\\sh" }, { 9, 13, "\\zh" }, { 9, 7, "\\|-" },
-{ 10, 17, "\\t." }, { 10, 16, "\\d." }, { 10, 15, "\\n." }, { 10, 14, "\\s." }, { 10, 13, "\\z." }, { 10, 12, "\\r." }, { 10, 10, "\\f." }, { 10, 9, "\\l." }, { 10, 7, "!" },
-{ 11, 14, "\\cc" }, { 11, 13, "\\zc" },
-{ 12, 17, "c" }, { 12, 16, "\\j-" }, { 12, 15, "\\nj" }, { 12, 14, "\\c," }, { 12, 13, "\\jc" }, { 12, 12, "j" }, { 12, 9, "\\yt" }, { 12, 8, "\\j^" },
-{ 13, 12, "\\ht" },
-{ 14, 14, "\\wt" }, { 14, 12, "w" },
-{ 15, 17, "k" }, { 15, 16, "\\gs" }, { 15, 15, "\\ng" }, { 15, 14, "x" }, { 15, 13, "\\gf" }, { 15, 12, "\\ml" }, { 15, 9, "\\lc" }, { 15, 8, "\\g^" },
-{ 16, 17, "q" }, { 16, 16, "\\gc" }, { 16, 15, "\\nc" }, { 16, 14, "\\cf" }, { 16, 13, "\\ri" }, { 16, 11, "\\rc" }, { 16, 8, "\\G^" },
-{ 17, 14, "\\h-" }, { 17, 13, "\\9e" },
-{ 18, 17, "\\?-" }, { 18, 14, "\\hc" }, { 18, 13, "\\9-" },
-{ 19, 17, "\\?g" }, { 19, 14, "h" }, { 19, 13, "\\h^" },
+		static struct { float x, y; wchar_t *string; } symbols [] = {
+{ 4, 17, L"p" }, { 4, 16, L"b" }, { 4, 15, L"m" }, { 4, 14, L"\\ff" }, { 4, 13, L"\\bf" }, { 4, 11, L"\\bc" }, { 4, 8, L"\\b^" }, { 4, 7, L"\\O." },
+{ 5, 15, L"\\mj" }, { 5, 14, L"f" }, { 5, 13, L"v" }, { 5, 12, L"\\vs" },
+{ 6, 14, L"\\tf" }, { 6, 13, L"\\dh" }, { 6, 7, L"\\|1" },
+{ 7, 17, L"t" }, { 7, 16, L"d" }, { 7, 15, L"n" }, { 7, 14, L"s" }, { 7, 13, L"z" }, { 7, 12, L"\\rt" }, { 7, 11, L"r" }, { 7, 10, L"\\fh" }, { 7, 9, L"l" }, { 7, 8, L"\\d^" },
+{ 8, 17, L"t^l" }, { 8, 16, L"d^l" }, { 8, 14, L"\\l-" }, { 8, 13, L"\\lz" }, { 8, 12, L"l" }, { 8, 10, L"\\rl" }, { 8, 9, L"l" }, { 8, 7, L"\\|2" },
+{ 9, 14, L"\\sh" }, { 9, 13, L"\\zh" }, { 9, 7, L"\\|-" },
+{ 10, 17, L"\\t." }, { 10, 16, L"\\d." }, { 10, 15, L"\\n." }, { 10, 14, L"\\s." }, { 10, 13, L"\\z." }, { 10, 12, L"\\r." }, { 10, 10, L"\\f." }, { 10, 9, L"\\l." }, { 10, 7, L"!" },
+{ 11, 14, L"\\cc" }, { 11, 13, L"\\zc" },
+{ 12, 17, L"c" }, { 12, 16, L"\\j-" }, { 12, 15, L"\\nj" }, { 12, 14, L"\\c," }, { 12, 13, L"\\jc" }, { 12, 12, L"j" }, { 12, 9, L"\\yt" }, { 12, 8, L"\\j^" },
+{ 13, 12, L"\\ht" },
+{ 14, 14, L"\\wt" }, { 14, 12, L"w" },
+{ 15, 17, L"k" }, { 15, 16, L"\\gs" }, { 15, 15, L"\\ng" }, { 15, 14, L"x" }, { 15, 13, L"\\gf" }, { 15, 12, L"\\ml" }, { 15, 9, L"\\lc" }, { 15, 8, L"\\g^" },
+{ 16, 17, L"q" }, { 16, 16, L"\\gc" }, { 16, 15, L"\\nc" }, { 16, 14, L"\\cf" }, { 16, 13, L"\\ri" }, { 16, 11, L"\\rc" }, { 16, 8, L"\\G^" },
+{ 17, 14, L"\\h-" }, { 17, 13, L"\\9e" },
+{ 18, 17, L"\\?-" }, { 18, 14, L"\\hc" }, { 18, 13, L"\\9-" },
+{ 19, 17, L"\\?g" }, { 19, 14, L"h" }, { 19, 13, L"\\h^" },
 		{ 0, 0, NULL } };
-		int i;
-		for (i = 0; symbols [i]. string != NULL; i ++)
+		for (int i = 0; symbols [i]. string != NULL; i ++)
 			drawOneIpaSymbol (graphics, symbols [i]. x, symbols [i]. y, symbols [i]. string);
 	}
 }
@@ -105,29 +104,28 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
 	Graphics_setTextRotation (graphics, 60);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (graphics, 4.5, 6.6, "front");
-	Graphics_text (graphics, 7, 6.6, "central");
-	Graphics_text (graphics, 9.5, 6.6, "back");
+	Graphics_text (graphics, 4.5, 6.6, L"front");
+	Graphics_text (graphics, 7, 6.6, L"central");
+	Graphics_text (graphics, 9.5, 6.6, L"back");
 	Graphics_setTextRotation (graphics, 0);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (graphics, 3.3, 6, "close");
-	Graphics_text (graphics, 3.3, 5, "close centralized");
-	Graphics_text (graphics, 3.3, 4, "close-mid");
-	Graphics_text (graphics, 3.3, 2, "open-mid");
-	Graphics_text (graphics, 3.3, 0, "open");
+	Graphics_text (graphics, 3.3, 6, L"close");
+	Graphics_text (graphics, 3.3, 5, L"close centralized");
+	Graphics_text (graphics, 3.3, 4, L"close-mid");
+	Graphics_text (graphics, 3.3, 2, L"open-mid");
+	Graphics_text (graphics, 3.3, 0, L"open");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { float x, y; char *string; } symbols [] = {
-{ 4, 6, "i" }, { 5, 6, "y" }, { 6.5, 6, "\\i-" }, { 7.5, 6, "\\u-" }, { 9, 6, "\\mt" }, { 10, 6, "u" },
-{ 4.2, 5, "\\ic" }, { 5.2, 5, "\\yc" }, { 9.8, 5, "\\hs" },
-{ 4, 4, "e" }, { 5, 4, "\\o/" }, { 6.5, 4, "\\e-" }, { 7.5, 4, "\\o-" }, { 9, 4, "\\rh" }, { 10, 4, "o" },
-{ 7, 3, "\\sw" }, { 7, 1, "\\at" },
-{ 4, 2, "\\ef" }, { 5, 2, "\\oe" }, { 6.5, 2, "\\er" }, { 7.5, 2, "\\kb" }, { 9, 2, "\\vt" }, { 10, 2, "\\ct" },
-{ 4, 1, "\\ae" },
-{ 4, 0, "a" }, { 5, 0, "\\Oe" }, { 9, 0, "\\as" }, { 10, 0, "\\ab" },
+		static struct { float x, y; wchar_t *string; } symbols [] = {
+{ 4, 6, L"i" }, { 5, 6, L"y" }, { 6.5, 6, L"\\i-" }, { 7.5, 6, L"\\u-" }, { 9, 6, L"\\mt" }, { 10, 6, L"u" },
+{ 4.2, 5, L"\\ic" }, { 5.2, 5, L"\\yc" }, { 9.8, 5, L"\\hs" },
+{ 4, 4, L"e" }, { 5, 4, L"\\o/" }, { 6.5, 4, L"\\e-" }, { 7.5, 4, L"\\o-" }, { 9, 4, L"\\rh" }, { 10, 4, L"o" },
+{ 7, 3, L"\\sw" }, { 7, 1, L"\\at" },
+{ 4, 2, L"\\ef" }, { 5, 2, L"\\oe" }, { 6.5, 2, L"\\er" }, { 7.5, 2, L"\\kb" }, { 9, 2, L"\\vt" }, { 10, 2, L"\\ct" },
+{ 4, 1, L"\\ae" },
+{ 4, 0, L"a" }, { 5, 0, L"\\Oe" }, { 9, 0, L"\\as" }, { 10, 0, L"\\ab" },
 		{ 0, 0, NULL } };
-		int i;
-		for (i = 0; symbols [i]. string != NULL; i ++)
+		for (int i = 0; symbols [i]. string != NULL; i ++)
 			drawOneIpaSymbol (graphics, symbols [i]. x, symbols [i]. y, symbols [i]. string);
 	}
 }
@@ -135,154 +133,154 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
-MAN_BEGIN ("Special symbols", "ppgb", 20061214)
-INTRO ("When drawing text into the @@Picture window@ or into an editor, "
+MAN_BEGIN (L"Special symbols", L"ppgb", 20070816)
+INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
 	"you can use %%backslash sequences% to display various kinds of special symbols.")
 
-ENTRY ("European symbols")
-NORMAL ("To get the symbol \"\\a^\" (a-circumflex), you type \"\\bsa\\^ \", i.e., "
+ENTRY (L"European symbols")
+NORMAL (L"To get the symbol \"\\a^\" (a-circumflex), you type \"\\bsa\\^ \", i.e., "
 	"a sequence of backslash + a + circumflex. In this way, you can get a hundred "
 	"non-ASCII symbols that are used in the alphabets of many European languages. "
 	"You can also use these symbols in info messages sent from scripts.")
 #ifdef macintosh
-LIST_ITEM ("\\a\" \\bsa\\\"  \\e\" \\bse\\\"  \\i\" \\bsi\\\"  \\o\" \\bso\\\"  "
-	"\\u\" \\bsu\\\"  \\y\" \\bsy\\\"  "
-	"\\A\" \\bsA\\\"  \\E\" \\bsE\\\"  \\I\" \\bsI\\\"  \\O\" \\bsO\\\"  \\U\" \\bsU\\\" "
-	" \\Y\" \\bsY\\\" ")
-LIST_ITEM ("\\a\' \\bsa\' \\e\' \\bse\' \\i\' \\bsi\' \\o\' \\bso\' \\u\' \\bsu\' "
-	"\\A\' \\bsA\' \\E\' \\bsE\' \\I\' \\bsI\' \\O\' \\bsO\' \\U\' \\bsU\'")
-LIST_ITEM ("\\a` \\bsa` \\e` \\bse` \\i` \\bsi` \\o` \\bso` \\u` \\bsu` "
-	"\\A` \\bsA` \\E` \\bsE` \\I` \\bsI` \\O` \\bsO` \\U` \\bsU`")
-LIST_ITEM ("\\a^ \\bsa\\^  \\e^ \\bse\\^  \\i^ \\bsi\\^  \\o^ \\bso\\^  \\u^ \\bsu\\^  "
-	"\\A^ \\bsA\\^  \\E^ \\bsE\\^  \\I^ \\bsI\\^  \\O^ \\bsO\\^  \\U^ \\bsU\\^ ")
-LIST_ITEM ("\\a~ \\bsa\\~  \\n~ \\bsn\\~  \\o~ \\bso\\~  \\A~ \\bsA\\~  \\N~ \\bsN\\~  \\O~ \\bsO\\~ ")
-LIST_ITEM ("\\ae \\bsae \\o/ \\bso/ \\ao \\bsao \\Ae \\bsAe \\O/ \\bsO/ \\Ao \\bsAo "
-	"\\c, \\bsc, \\C, \\bsC, \\ss \\bsss")
+LIST_ITEM (L"\\a\" \\bsa\\\"   \\e\" \\bse\\\"   \\i\" \\bsi\\\"   \\o\" \\bso\\\"   "
+	"\\u\" \\bsu\\\"   \\y\" \\bsy\\\"  "
+	"\\A\" \\bsA\\\"   \\E\" \\bsE\\\"   \\I\" \\bsI\\\"   \\O\" \\bsO\\\"   \\U\" \\bsU\\\"   "
+	"\\Y\" \\bsY\\\" ")
+LIST_ITEM (L"\\a\' \\bsa\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\o\' \\bso\'  \\u\' \\bsu\'  "
+	"\\A\' \\bsA\'  \\E\' \\bsE\'  \\I\' \\bsI\'  \\O\' \\bsO\'  \\U\' \\bsU\'  \\Y\' \\bsY\'")
+LIST_ITEM (L"\\a` \\bsa`  \\e` \\bse`  \\i` \\bsi`  \\o` \\bso`  \\u` \\bsu`  "
+	"\\A` \\bsA`  \\E` \\bsE`  \\I` \\bsI`  \\O` \\bsO`  \\U` \\bsU`")
+LIST_ITEM (L"\\a^ \\bsa\\^   \\e^ \\bse\\^   \\i^ \\bsi\\^   \\o^ \\bso\\^   \\u^ \\bsu\\^   "
+	"\\A^ \\bsA\\^   \\E^ \\bsE\\^   \\I^ \\bsI\\^   \\O^ \\bsO\\^   \\U^ \\bsU\\^ ")
+LIST_ITEM (L"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N~ \\bsN\\~   \\O~ \\bsO\\~  ")
+LIST_ITEM (L"\\ae \\bsae  \\o/ \\bso/  \\ao \\bsao  \\Ae \\bsAe  \\O/ \\bsO/  \\Ao \\bsAo  "
+	"\\c, \\bsc,  \\C, \\bsC,  \\ss \\bsss  \\th \\bsth  \\Th \\bsTh")
 #else
-LIST_ITEM ("\\a\" \\bsa\\\"  \\e\" \\bse\\\"  \\i\" \\bsi\\\"  \\o\" \\bso\\\"  "
+LIST_ITEM (L"\\a\" \\bsa\\\"  \\e\" \\bse\\\"  \\i\" \\bsi\\\"  \\o\" \\bso\\\"  "
 	"\\u\" \\bsu\\\"  \\y\" \\bsy\\\"  "
 	"\\A\" \\bsA\\\"  \\E\" \\bsE\\\"  \\I\" \\bsI\\\"  \\O\" \\bsO\\\"  \\U\" \\bsU\\\" ")
-LIST_ITEM ("\\a\' \\bsa\' \\e\' \\bse\' \\i\' \\bsi\' \\o\' \\bso\' \\u\' \\bsu\' "
+LIST_ITEM (L"\\a\' \\bsa\' \\e\' \\bse\' \\i\' \\bsi\' \\o\' \\bso\' \\u\' \\bsu\' "
 	" \\y\' \\bsy\'"
 	"\\A\' \\bsA\' \\E\' \\bsE\' \\I\' \\bsI\' \\O\' \\bsO\' \\U\' \\bsU\'"
 	" \\Y\' \\bsY\'")
-LIST_ITEM ("\\a` \\bsa` \\e` \\bse` \\i` \\bsi` \\o` \\bso` \\u` \\bsu` "
+LIST_ITEM (L"\\a` \\bsa` \\e` \\bse` \\i` \\bsi` \\o` \\bso` \\u` \\bsu` "
 	"\\A` \\bsA` \\E` \\bsE` \\I` \\bsI` \\O` \\bsO` \\U` \\bsU`")
-LIST_ITEM ("\\a^ \\bsa\\^  \\e^ \\bse\\^  \\i^ \\bsi\\^  \\o^ \\bso\\^  \\u^ \\bsu\\^  "
+LIST_ITEM (L"\\a^ \\bsa\\^  \\e^ \\bse\\^  \\i^ \\bsi\\^  \\o^ \\bso\\^  \\u^ \\bsu\\^  "
 	"\\A^ \\bsA\\^  \\E^ \\bsE\\^  \\I^ \\bsI\\^  \\O^ \\bsO\\^  \\U^ \\bsU\\^ ")
-LIST_ITEM ("\\a~ \\bsa\\~  \\n~ \\bsn\\~  \\o~ \\bso\\~  \\A~ \\bsA\\~  \\N~ \\bsN\\~  \\O~ \\bsO\\~ ")
-LIST_ITEM ("\\ae \\bsae \\o/ \\bso/ \\ao \\bsao \\Ae \\bsAe \\O/ \\bsO/ \\Ao \\bsAo "
+LIST_ITEM (L"\\a~ \\bsa\\~  \\n~ \\bsn\\~  \\o~ \\bso\\~  \\A~ \\bsA\\~  \\N~ \\bsN\\~  \\O~ \\bsO\\~ ")
+LIST_ITEM (L"\\ae \\bsae \\o/ \\bso/ \\ao \\bsao \\Ae \\bsAe \\O/ \\bsO/ \\Ao \\bsAo "
 	"\\c, \\bsc, \\C, \\bsC, \\ss \\bsss"
 	" \\th \\bsth \\Th \\bsTh")
 #endif
-LIST_ITEM ("\\!d \\bs!d \\?d \\bs?d")
-LIST_ITEM ("\\eu \\bseu (%euro), \\Lp \\bsLp (%sterling), \\Y= \\bsY= (%yen), "
-	"\\fd \\bsfd (Dutch %florin), \\c/ \\bsc/ (%cent)")
-LIST_ITEM ("\\SS \\bsSS (%section), \\|| \\bs|| (%paragraph)")
-LIST_ITEM ("\\co \\bsco (%copyright), \\re \\bsre (%registered), \\tm \\bstm (%trademark)")
-LIST_ITEM ("\\a_ \\bsa_ (%ordfeminine), \\o_ \\bso_ (%ordmasculine)")
-LIST_ITEM ("\\<< \\bs<< (%guillemotleft), \\>> \\bs>> (%guillemotright)")
+LIST_ITEM (L"\\!d \\bs!d \\?d \\bs?d")
+LIST_ITEM (L"\\eu \\bseu %euro, \\Lp \\bsLp %%pound sterling%, \\Y= \\bsY= %yen, "
+	"\\fd \\bsfd %florin, \\c/ \\bsc/ %cent")
+LIST_ITEM (L"\\SS \\bsSS %section, \\|| \\bs|| %pilcrow (%paragraph)")
+LIST_ITEM (L"\\co \\bsco %copyright, \\re \\bsre %registered, \\tm \\bstm %trademark")
+LIST_ITEM (L"\\a_ \\bsa_ %%feminine ordinal%, \\o_ \\bso_ %%masculine ordinal%")
+LIST_ITEM (L"\\<< \\bs<< %%left-pointing guillemet%, \\>> \\bs>> %%right-pointing guillemet%")
 
-ENTRY ("Mathematical symbols")
-LIST_ITEM ("\\.c \\bs.c (%periodcentered), \\xx \\bsxx (%multiply), \\:- \\bs:- (%divide), \\/d \\bs/d (%fraction)")
-LIST_ITEM ("\\dg \\bsdg (%degree), \\\'p \\bs\'p (%minute or %prime), \\\"p \\bs\\\" p (%second or %%double prime%)")
-LIST_ITEM ("- - (%minus), \\-- \\bs-- (%endash), \\+- \\bs+- (%plusminus)")
-LIST_ITEM ("\\<_ \\bs<_ (%lessequal), \\>_ \\bs>_ (%greaterequal), \\=/ \\bs=/ (%notequal)")
-LIST_ITEM ("\\no \\bsno (%logicalnot), \\an \\bsan (%logicaland), \\or \\bsor (%logicalor)")
-LIST_ITEM ("\\At \\bsAt (%universal), \\Er \\bsEr (%existential), \\.3 \\bs.3 (%therefore)")
-LIST_ITEM ("\\oc \\bsoc (%proportional), \\=3 \\bs=3 (%equivalence), \\~~ \\bs~~ (%approxequal)")
-LIST_ITEM ("\\Vr \\bsVr (%radical)")
-LIST_ITEM ("\\<- \\bs<- (%arrowleft), \\-> \\bs-> (%arrowright), \\<> \\bs<> (%arrowboth)")
-LIST_ITEM ("\\<= \\bs<= (%arrowdblleft), \\=> \\bs=> (%arrowdblright), \\eq \\bseq (%arrowdblboth)")
-LIST_ITEM ("\\^| \\bs\\^ | (%arrowup), \\=~ \\bs=~ (%congruent), \\_| \\bs_| (%arrowdown)")
-LIST_ITEM ("\\oo \\bsoo (%infinity), \\Tt \\bsTt (%perpendicular)")
-LIST_ITEM ("\\O| \\bsO| (%emptyset), \\ni \\bsni (%intersection), \\uu \\bsuu (%union), "
-	"\\c= \\bsc= (%propersubset), \\e= \\bse= (%element)")
-LIST_ITEM ("\\dd \\bsdd (%partialdiff)")
-LIST_ITEM ("\\ox \\bsox (%circlemultiply), \\o+ \\bso+ (%circleplus)")
-LIST_ITEM ("\\su \\bssu (%summation), \\in \\bsin (%integral)")
+ENTRY (L"Mathematical symbols")
+LIST_ITEM (L"\\.c \\bs.c %%middle dot%, \\xx \\bsxx %multiplication, \\:- \\bs:- %division, \\/d \\bs/d %%division slash%")
+LIST_ITEM (L"\\dg \\bsdg %degree, \\\'p \\bs\'p %prime (%minute), \\\"p \\bs\\\" p %%double prime% (%second)")
+LIST_ITEM (L"\\-m \\bs-m %minus, \\-- \\bs-- %%en-dash%, \\+- \\bs+- %%plus-minus%")
+LIST_ITEM (L"\\<_ \\bs<_ %%less than or equal to%, \\>_ \\bs>_ %%greater than or equal to%, \\=/ \\bs=/ %%not equal to%")
+LIST_ITEM (L"\\no \\bsno %%logical not%, \\an \\bsan %%logical and%, \\or \\bsor %%logical or%")
+LIST_ITEM (L"\\At \\bsAt %%for all%, \\Er \\bsEr %%there exists%, \\.3 \\bs.3 %therefore")
+LIST_ITEM (L"\\oc \\bsoc %%proportional to%, \\=3 \\bs=3 %%defined as% (or %%congruent modulo%), \\~~ \\bs~~ %%approximately equal to%")
+LIST_ITEM (L"\\Vr \\bsVr %%square root%")
+LIST_ITEM (L"\\<- \\bs<-, \\-> \\bs->, \\<> \\bs<>")
+LIST_ITEM (L"\\<= \\bs<=, \\=> \\bs=>, \\eq \\bseq")
+LIST_ITEM (L"\\^| \\bs\\^ |, \\=~ \\bs=~ %%congruent to%, \\_| \\bs_|")
+LIST_ITEM (L"\\oo \\bsoo %infinity, \\Tt \\bsTt %%up tack% (%%perpendicular to%)")
+LIST_ITEM (L"\\O| \\bsO| %%empty set%, \\ni \\bsni %intersection, \\uu \\bsuu %union, "
+	"\\c= \\bsc= %%subset of%, \\e= \\bse= %%element of%")
+LIST_ITEM (L"\\dd \\bsdd %%partial differential%")
+LIST_ITEM (L"\\ox \\bsox %%circled times%, \\o+ \\bso+ %%circled plus%")
+LIST_ITEM (L"\\su \\bssu %summation, \\in \\bsin %integral")
 
-ENTRY ("Greek letters")
-NORMAL ("To get \\ep\\up\\ro\\et\\ka\\al, you type \\bsep\\bsup\\bsro\\bset\\bska\\bsal.")
-LIST_ITEM ("\t\\al \\bsal \t\\Al \\bsAl %alpha")
-LIST_ITEM ("\t\\be \\bsbe \t\\Be \\bsBe %beta")
-LIST_ITEM ("\t\\ga \\bsga \t\\Ga \\bsGa %gamma")
-LIST_ITEM ("\t\\de \\bsde \t\\De \\bsDe %delta")
-LIST_ITEM ("\t\\ep \\bsep \t\\Ep \\bsEp %epsilon")
-LIST_ITEM ("\t\\ze \\bsze \t\\Ze \\bsZe %zeta")
-LIST_ITEM ("\t\\et \\bset \t\\Et \\bsEt %eta")
-LIST_ITEM ("\t\\te \\bste \t\\Te \\bsTe %theta \t\\t2 \\bst2")
-LIST_ITEM ("\t\\io \\bsio \t\\Io \\bsIo %iota")
-LIST_ITEM ("\t\\ka \\bska \t\\Ka \\bsKa %kappa")
-LIST_ITEM ("\t\\la \\bsla \t\\La \\bsLa %lambda")
-LIST_ITEM ("\t\\mu \\bsmu \t\\Mu \\bsMu %mu")
-LIST_ITEM ("\t\\nu \\bsnu \t\\Nu \\bsNu %nu")
-LIST_ITEM ("\t\\xi \\bsxi \t\\Xi \\bsXi %xi")
-LIST_ITEM ("\t\\on \\bson \t\\On \\bsOn %omicron")
-LIST_ITEM ("\t\\pi \\bspi \t\\Pi \\bsPi %pi")
-LIST_ITEM ("\t\\ro \\bsro \t\\Ro \\bsRo %rho")
-LIST_ITEM ("\t\\si \\bssi \t\\Si \\bsSi %sigma \t\\s2 \\bss2")
-LIST_ITEM ("\t\\ta \\bsta \t\\Ta \\bsTa %tau")
-LIST_ITEM ("\t\\up \\bsup \t\\Up \\bsUp %upsilon")
-LIST_ITEM ("\t\\fi \\bsfi \t\\Fi \\bsFi %phi \t\\f2 \\bsf2")
-LIST_ITEM ("\t\\ci \\bsci \t\\Ci \\bsCi %chi")
-LIST_ITEM ("\t\\ps \\bsps \t\\Ps \\bsPs %psi")
-LIST_ITEM ("\t\\om \\bsom \t\\Om \\bsOm %omega \t\\o2 \\bso2")
+ENTRY (L"Greek letters")
+NORMAL (L"To get \\ep\\up\\ro\\et\\ka\\al, you type \\bsep\\bsup\\bsro\\bset\\bska\\bsal.")
+LIST_ITEM (L"\t\\al \\bsal \t\\Al \\bsAl %alpha")
+LIST_ITEM (L"\t\\be \\bsbe \t\\Be \\bsBe %beta")
+LIST_ITEM (L"\t\\ga \\bsga \t\\Ga \\bsGa %gamma")
+LIST_ITEM (L"\t\\de \\bsde \t\\De \\bsDe %delta")
+LIST_ITEM (L"\t\\ep \\bsep \t\\Ep \\bsEp %epsilon")
+LIST_ITEM (L"\t\\ze \\bsze \t\\Ze \\bsZe %zeta")
+LIST_ITEM (L"\t\\et \\bset \t\\Et \\bsEt %eta")
+LIST_ITEM (L"\t\\te \\bste \t\\Te \\bsTe %theta \t\\t2 \\bst2")
+LIST_ITEM (L"\t\\io \\bsio \t\\Io \\bsIo %iota")
+LIST_ITEM (L"\t\\ka \\bska \t\\Ka \\bsKa %kappa")
+LIST_ITEM (L"\t\\la \\bsla \t\\La \\bsLa %lambda")
+LIST_ITEM (L"\t\\mu \\bsmu \t\\Mu \\bsMu %mu")
+LIST_ITEM (L"\t\\nu \\bsnu \t\\Nu \\bsNu %nu")
+LIST_ITEM (L"\t\\xi \\bsxi \t\\Xi \\bsXi %xi")
+LIST_ITEM (L"\t\\on \\bson \t\\On \\bsOn %omicron")
+LIST_ITEM (L"\t\\pi \\bspi \t\\Pi \\bsPi %pi")
+LIST_ITEM (L"\t\\ro \\bsro \t\\Ro \\bsRo %rho")
+LIST_ITEM (L"\t\\si \\bssi \t\\Si \\bsSi %sigma \t\\s2 \\bss2")
+LIST_ITEM (L"\t\\ta \\bsta \t\\Ta \\bsTa %tau")
+LIST_ITEM (L"\t\\up \\bsup \t\\Up \\bsUp %upsilon")
+LIST_ITEM (L"\t\\fi \\bsfi \t\\Fi \\bsFi %phi \t\\f2 \\bsf2")
+LIST_ITEM (L"\t\\ci \\bsci \t\\Ci \\bsCi %chi")
+LIST_ITEM (L"\t\\ps \\bsps \t\\Ps \\bsPs %psi")
+LIST_ITEM (L"\t\\om \\bsom \t\\Om \\bsOm %omega \t\\o2 \\bso2")
 
-ENTRY ("Phonetic symbols")
-NORMAL ("See @@Phonetic symbols@")
+ENTRY (L"Phonetic symbols")
+NORMAL (L"See @@Phonetic symbols@")
 
-ENTRY ("Miscellaneous")
-LIST_ITEM ("\\bs \\bsbs %backslash")
-LIST_ITEM ("\\bu \\bsbu %bullet")
-LIST_ITEM ("\\cl \\bscl (%club), \\di \\bsdi (%diamond), \\he \\bshe (%heart), \\sp \\bssp (%spade)")
+ENTRY (L"Miscellaneous")
+LIST_ITEM (L"\\bs \\bsbs %backslash")
+LIST_ITEM (L"\\bu \\bsbu %bullet")
+LIST_ITEM (L"\\cl \\bscl (%club), \\di \\bsdi (%diamond), \\he \\bshe (%heart), \\sp \\bssp (%spade)")
 
-ENTRY ("See also")
-NORMAL ("@@Text styles@")
+ENTRY (L"See also")
+NORMAL (L"@@Text styles@")
 MAN_END
 
-MAN_BEGIN ("Text styles", "ppgb", 19961012)
-INTRO ("When drawing text into the @@Picture window@ or into an editor, "
+MAN_BEGIN (L"Text styles", L"ppgb", 19961012)
+INTRO (L"When drawing text into the @@Picture window@ or into an editor, "
 	"you can use text styles other than regular Roman.")
-ENTRY ("Italic, bold, superscript, subscript")
-NORMAL ("With the following symbols, you introduce stretches of text drawn in special styles:")
-LIST_ITEM ("\\% : the following letter will be italic.")
-LIST_ITEM ("\\# : the following letter will be bold.")
-LIST_ITEM ("\\# \\% : the following letter will be bold-italic.")
-LIST_ITEM ("\\^ : the following letter will be superscript: \\% m\\% c\\^ 2 gives %mc^2.")
-LIST_ITEM ("\\_ : the following letter will be subscript. Example: %F__0_ is typed as \\% F_0.")
-LIST_ITEM ("\\% \\% : the following letters will be italic, until the following \\% :")
-LIST_ITEM ("    $$Now \\% \\% you\\%  try$   gives:   Now %%you% try.")
-LIST_ITEM ("The same goes for \\# \\# , \\^ \\^ , and \\_ \\_ .")
-LIST_ITEM ("\\bss{...}: small:")
-LIST_ITEM ("    $$W\\bss{ARP}$   gives:   W\\s{ARP}")
-NORMAL ("To draw a \\% , \\# , \\^ , or \\_  symbol, you type \"$$\\bs\\%  $\", "
+ENTRY (L"Italic, bold, superscript, subscript")
+NORMAL (L"With the following symbols, you introduce stretches of text drawn in special styles:")
+LIST_ITEM (L"\\% : the following letter will be italic.")
+LIST_ITEM (L"\\# : the following letter will be bold.")
+LIST_ITEM (L"\\# \\% : the following letter will be bold-italic.")
+LIST_ITEM (L"\\^ : the following letter will be superscript: \\% m\\% c\\^ 2 gives %mc^2.")
+LIST_ITEM (L"\\_ : the following letter will be subscript. Example: %F__0_ is typed as \\% F_0.")
+LIST_ITEM (L"\\% \\% : the following letters will be italic, until the following \\% :")
+LIST_ITEM (L"    $$Now \\% \\% you\\%  try$   gives:   Now %%you% try.")
+LIST_ITEM (L"The same goes for \\# \\# , \\^ \\^ , and \\_ \\_ .")
+LIST_ITEM (L"\\bss{...}: small:")
+LIST_ITEM (L"    $$W\\bss{ARP}$   gives:   W\\s{ARP}")
+NORMAL (L"To draw a \\% , \\# , \\^ , or \\_  symbol, you type \"$$\\bs\\%  $\", "
 	"\"$$\\bs\\#  $\", \"$$\\bs\\^  $\", or \"$$\\bs\\_  $\": a backslash, the symbol, and a space.")
-NORMAL ("On Xwindows machines, the font `Symbol' will never look bold or italic, "
+NORMAL (L"On Xwindows machines, the font `Symbol' will never look bold or italic, "
 	"but it will be printed correctly.")
-ENTRY ("See also")
-NORMAL ("@@Special symbols@")
+ENTRY (L"See also")
+NORMAL (L"@@Special symbols@")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols", "ppgb", 20050308)
-NORMAL ("To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
+MAN_BEGIN (L"Phonetic symbols", L"ppgb", 20050308)
+NORMAL (L"To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use backslash sequences as described in:")
-LIST_ITEM ("\\bu @@Phonetic symbols: consonants")
-LIST_ITEM ("\\bu @@Phonetic symbols: vowels")
-LIST_ITEM ("\\bu @@Phonetic symbols: diacritics")
+LIST_ITEM (L"\\bu @@Phonetic symbols: consonants")
+LIST_ITEM (L"\\bu @@Phonetic symbols: vowels")
+LIST_ITEM (L"\\bu @@Phonetic symbols: diacritics")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: consonants", "ppgb", 20050918)
-NORMAL ("To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
+MAN_BEGIN (L"Phonetic symbols: consonants", L"ppgb", 20050918)
+NORMAL (L"To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 7.0, draw_IPA_consonant_chart)
-NORMAL ("Other consonant symbols:")
-LIST_ITEM ("\\l~ \\bsl~ (%%l with tilde%): velarized %l")
-LIST_ITEM ("\\hj \\bshj (%%heng with hooktop%): the Swedish rounded post-alveolar & velar fricative")
-ENTRY ("How to remember the codes")
-NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
+NORMAL (L"Other consonant symbols:")
+LIST_ITEM (L"\\l~ \\bsl~ (%%l with tilde%): velarized %l")
+LIST_ITEM (L"\\hj \\bshj (%%heng with hooktop%): the Swedish rounded post-alveolar & velar fricative")
+ENTRY (L"How to remember the codes")
+NORMAL (L"For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
 	"The second letter can be %t (%turned), %c (%capital or %curled), %s (%script), - (%barred), %l (%%with leg%), "
 	"%i (%inverted), or %j (%%left tail%). Some phonetic symbols are similar to Greek letters but have special "
 	"phonetic (%f) versions with serifs (\\ff, \\bf, \\gf) or are otherwise slightly different (\\tf, \\cf). "
@@ -291,232 +289,230 @@ NORMAL ("For most of the codes, the first letter tells you the most similar lett
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: diacritics", "ppgb", 20061216)
-NORMAL ("To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20061216)
+NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
-NORMAL ("In line:")
-LIST_ITEM ("\\:f \\bs:f the phonetic length sign")
-LIST_ITEM ("\\\'1 \\bs\'1 primary stress")
-LIST_ITEM ("\\\'2 \\bs\'2 secondary stress")
-LIST_ITEM ("\\|f \\bs|f the phonetic stroke")
-LIST_ITEM ("t\\cn t\\bscn (%corner): unreleased plosive")
-NORMAL ("Understrikes:")
-LIST_ITEM ("n\\|v n\\bs|v (%strokeunder): syllabic consonant")
-LIST_ITEM ("b\\0v b\\bs0v (%ringunder): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)")
-LIST_ITEM ("o\\Tv o\\bsTv (%lowering): lowered vowel; or turns a fricative into an approximant")
-LIST_ITEM ("o\\T^ o\\bsT\\^  (%raising): raised vowel; or turns an approximant into a fricative")
-LIST_ITEM ("e\\-v e\\bs-v (%minusunder): backed")
-LIST_ITEM ("o\\+v o\\bs+v (%plusunder): fronted")
-LIST_ITEM ("o\\:v o\\bs:v (%diaresisunder): breathy voice")
-LIST_ITEM ("o\\~v o\\bs~v (%tildeunder): creaky voice")
-LIST_ITEM ("t\\Nv t\\bsNv (%bridgeunder): dental (as opposed to alveolar)")
-LIST_ITEM ("e\\3v e\\bs3v (%halfringright): slightly rounded")
-LIST_ITEM ("u\\cv u\\bscv (%halfringleft): slightly unrounded")
-NORMAL ("Overstrikes:")
-LIST_ITEM ("\\gf\\0^ \\bsgf\\bs0\\^  (%ringover): voiceless")
-LIST_ITEM ("\\ep\\\'^ \\bsep\\bs\'\\^  (%acuteover): high tone")
-LIST_ITEM ("\\ep\\`^ \\bsep\\bs`\\^  (%graveover): low tone")
-LIST_ITEM ("\\ep\\-^ \\bsep\\bs-\\^  (%minusover): mid tone (or so)")
-LIST_ITEM ("\\ep\\~^ \\bsep\\bs~\\^  (%tildeover): nasalized")
-LIST_ITEM ("\\ep\\v^ \\bsep\\bsv\\^  (%caronover, %hac\\v^ek, %wedge): rising tone")
-LIST_ITEM ("\\ep\\^^ \\bsep\\bs\\^ \\^  (%circumover): falling tone")
-LIST_ITEM ("o\\:^ o\\bs:\\^  (%diaresisover): centralized")
-LIST_ITEM ("k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
+NORMAL (L"In line:")
+LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")
+LIST_ITEM (L"\\\'1 \\bs\'1 primary stress")
+LIST_ITEM (L"\\\'2 \\bs\'2 secondary stress")
+LIST_ITEM (L"\\|f \\bs|f the phonetic stroke")
+LIST_ITEM (L"t\\cn t\\bscn (%corner): unreleased plosive")
+NORMAL (L"Understrikes:")
+LIST_ITEM (L"n\\|v n\\bs|v (%strokeunder): syllabic consonant")
+LIST_ITEM (L"b\\0v b\\bs0v (%ringunder): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)")
+LIST_ITEM (L"o\\Tv o\\bsTv (%lowering): lowered vowel; or turns a fricative into an approximant")
+LIST_ITEM (L"o\\T^ o\\bsT\\^  (%raising): raised vowel; or turns an approximant into a fricative")
+LIST_ITEM (L"e\\-v e\\bs-v (%minusunder): backed")
+LIST_ITEM (L"o\\+v o\\bs+v (%plusunder): fronted")
+LIST_ITEM (L"o\\:v o\\bs:v (%diaresisunder): breathy voice")
+LIST_ITEM (L"o\\~v o\\bs~v (%tildeunder): creaky voice")
+LIST_ITEM (L"t\\Nv t\\bsNv (%bridgeunder): dental (as opposed to alveolar)")
+LIST_ITEM (L"e\\3v e\\bs3v (%halfringright): slightly rounded")
+LIST_ITEM (L"u\\cv u\\bscv (%halfringleft): slightly unrounded")
+NORMAL (L"Overstrikes:")
+LIST_ITEM (L"\\gf\\0^ \\bsgf\\bs0\\^  (%ringover): voiceless")
+LIST_ITEM (L"\\ep\\\'^ \\bsep\\bs\'\\^  (%acuteover): high tone")
+LIST_ITEM (L"\\ep\\`^ \\bsep\\bs`\\^  (%graveover): low tone")
+LIST_ITEM (L"\\ep\\-^ \\bsep\\bs-\\^  (%minusover): mid tone (or so)")
+LIST_ITEM (L"\\ep\\~^ \\bsep\\bs~\\^  (%tildeover): nasalized")
+LIST_ITEM (L"\\ep\\v^ \\bsep\\bsv\\^  (%caronover, %hac\\v^ek, %wedge): rising tone")
+LIST_ITEM (L"\\ep\\^^ \\bsep\\bs\\^ \\^  (%circumover): falling tone")
+LIST_ITEM (L"o\\:^ o\\bs:\\^  (%diaresisover): centralized")
+LIST_ITEM (L"k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN ("Phonetic symbols: vowels", "ppgb", 20050918)
-NORMAL ("To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
+MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20050918)
+NORMAL (L"To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
-NORMAL ("Other vowel symbols are:")
-LIST_ITEM ("\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
-ENTRY ("How to remember the codes")
-NORMAL ("For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
+NORMAL (L"Other vowel symbols are:")
+LIST_ITEM (L"\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
+ENTRY (L"How to remember the codes")
+NORMAL (L"For most of the codes, the first letter tells you the most similar letter of the English alphabet. "
 	"The second letter can be %t (%turned), %c (%capital), %s (%script), %r (%reversed), - (%barred or %retracted), or / (%slashed). "
 	"One symbol (\\ef) is a phonetic version of a Greek letter. "
 	"The codes for \\sw, \\rh, \\hs and \\kb are abbreviations for %schwa, %%ram's horn%, %horseshoe, and %%kidney bean%.")
 MAN_END
 
-MAN_BEGIN ("Axes...", "ppgb", 19970330)
-INTRO ("One of the commands in the #Margins and #World menus of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To view and change the current world coordinates of the horizontal and vertical axes.")
-ENTRY ("Usage")
-NORMAL ("The axes are normally changed by every drawing operation in the dynamic menu, "
+MAN_BEGIN (L"Axes...", L"ppgb", 19970330)
+INTRO (L"One of the commands in the #Margins and #World menus of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To view and change the current world coordinates of the horizontal and vertical axes.")
+ENTRY (L"Usage")
+NORMAL (L"The axes are normally changed by every drawing operation in the dynamic menu, "
 	"i.e., by object-specific drawing commands with titles like ##Draw...# and ##Paint...# "
 	"(the drawing commands in the Picture window, like ##Paint rectangle...#, do not change the axes).")
-NORMAL ("You would use the ##Axes...# command if your data are not in an object.")
-ENTRY ("Example")
-NORMAL ("The following script would draw a person's vowel triangle:")
-CODE ("\\#  Put F1 (between 300 and 800 Hz) along the horizontal axis,")
-CODE ("\\#  and F2 (between 600 and 3600 Hz) along the vertical axis.")
-CODE ("##Axes...# 300 800 600 3600")
-CODE ("\\#  Draw a rectangle inside the current viewport (selected area),")
-CODE ("\\#  with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,")
-CODE ("\\#  and in steps of 200 Hz along the F2 axis.")
-CODE ("Draw inner box")
-CODE ("Text top... no Dani\\bse\\\" l's Dutch vowel triangle")
-CODE ("Text bottom... yes \\% F_1 (Hz)")
-CODE ("Text left... yes \\% F_2 (Hz)")
-CODE ("Marks bottom every... 1 100 yes yes yes")
-CODE ("Marks left every... 1 200 yes yes yes")
-CODE ("\\#  Draw large phonetic symbols at the vowel points.")
-CODE ("Text special... 340 Centre 688 Half Times 24 0 u")
-CODE ("Text special... 481 Centre 1195 Half Times 24 0 \\bso/")
-CODE ("\\#  Etcetera")
-NORMAL ("This example would draw the texts \"Dani\\e\"l's Dutch vowel triangle\", "
+NORMAL (L"You would use the ##Axes...# command if your data are not in an object.")
+ENTRY (L"Example")
+NORMAL (L"The following script would draw a person's vowel triangle:")
+CODE (L"\\#  Put F1 (between 300 and 800 Hz) along the horizontal axis,")
+CODE (L"\\#  and F2 (between 600 and 3600 Hz) along the vertical axis.")
+CODE (L"##Axes...# 300 800 600 3600")
+CODE (L"\\#  Draw a rectangle inside the current viewport (selected area),")
+CODE (L"\\#  with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,")
+CODE (L"\\#  and in steps of 200 Hz along the F2 axis.")
+CODE (L"Draw inner box")
+CODE (L"Text top... no Dani\\bse\\\" l's Dutch vowel triangle")
+CODE (L"Text bottom... yes \\% F_1 (Hz)")
+CODE (L"Text left... yes \\% F_2 (Hz)")
+CODE (L"Marks bottom every... 1 100 yes yes yes")
+CODE (L"Marks left every... 1 200 yes yes yes")
+CODE (L"\\#  Draw large phonetic symbols at the vowel points.")
+CODE (L"Text special... 340 Centre 688 Half Times 24 0 u")
+CODE (L"Text special... 481 Centre 1195 Half Times 24 0 \\bso/")
+CODE (L"\\#  Etcetera")
+NORMAL (L"This example would draw the texts \"Dani\\e\"l's Dutch vowel triangle\", "
 	"\"%F__1_ (Hz)\", and \"%F__2_ (Hz)\" in the margins, "
 	"and the texts \"u\" and \"\\o/\" at the appropriate positions inside the drawing area.")
 MAN_END
 
-MAN_BEGIN ("Copy to clipboard", "ppgb", 20041130)   /* Not Unix. */
-INTRO ("A command in the File menu of the @@Picture window@.")
-NORMAL ("It copies the selected part of the picture to the clipboard. "
+MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20041130)   /* Not Unix. */
+INTRO (L"A command in the File menu of the @@Picture window@.")
+NORMAL (L"It copies the selected part of the picture to the clipboard. "
 	"You can then `Paste' it into any program that knows pictures.")
-ENTRY ("Behaviour")
-NORMAL ("Though all the picture data will be written to the clipboard, "
+ENTRY (L"Behaviour")
+NORMAL (L"Though all the picture data will be written to the clipboard, "
 	"only the part that corresponds to the selected part of the Picture window (the %viewport) will be visible.")
 #if defined (macintosh)
-ENTRY ("Usage")
-NORMAL ("If you have a PostScript printer, you will want to use @@Write to EPS file...@ instead. "
+ENTRY (L"Usage")
+NORMAL (L"If you have a PostScript printer, you will want to use @@Write to EPS file...@ instead. "
 	"If the picture is too large, e.g. a spectrogram that does not seem to fit into the clipboard, "
 	"you can try @@Write to Mac PICT file...@ instead.")
 #endif
 #if defined (_WIN32)
-ENTRY ("Usage")
-NORMAL ("If you have a PostScript printer, you will want to use @@Write to EPS file...@ instead. "
+ENTRY (L"Usage")
+NORMAL (L"If you have a PostScript printer, you will want to use @@Write to EPS file...@ instead. "
 	"If the picture is too large, e.g. a spectrogram that does not seem to fit into the clipboard, "
 	"you can try @@Write to Windows metafile...@ instead.")
 #endif
 MAN_END
 
-MAN_BEGIN ("Draw inner box", "ppgb", 19970330)
-INTRO ("One of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw a rectangle inside the drawing area, "
+MAN_BEGIN (L"Draw inner box", L"ppgb", 19970330)
+INTRO (L"One of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw a rectangle inside the drawing area, "
 	"leaving @margins on all four sides for drawing text and marks.")
-ENTRY ("Behaviour")
-NORMAL ("The widths of the margins depend on the current font size.")
+ENTRY (L"Behaviour")
+NORMAL (L"The widths of the margins depend on the current font size.")
 MAN_END
 
-MAN_BEGIN ("Encapsulated PostScript", "ppgb", 20001010)
-INTRO ("a kind of PostScript file that can easily be imported into word processors and drawing programs. "
+MAN_BEGIN (L"Encapsulated PostScript", L"ppgb", 20001010)
+INTRO (L"a kind of PostScript file that can easily be imported into word processors and drawing programs. "
 	"In Praat, you can create an Encapsulated PostScript (EPS) file by choosing @@Write to EPS file...@.")
 MAN_END
 
-MAN_BEGIN ("Erase all", "ppgb", 19980825)
-INTRO ("A command in the #Edit menu of the @@Picture window@.")
-NORMAL ("It erases all your drawings.")
+MAN_BEGIN (L"Erase all", L"ppgb", 19980825)
+INTRO (L"A command in the #Edit menu of the @@Picture window@.")
+NORMAL (L"It erases all your drawings.")
 MAN_END
 
-MAN_BEGIN ("Font menu", "ppgb", 20040211)
-INTRO ("One of the menus of the @@Picture window@.")
-NORMAL ("It allows you to choose the default font of the text "
+MAN_BEGIN (L"Font menu", L"ppgb", 20070815)
+INTRO (L"One of the menus of the @@Picture window@.")
+NORMAL (L"It allows you to choose the default font of the text "
 	"to be used in subsequent drawing, and its size (character height).")
-ENTRY ("Sizes")
-NORMAL ("You can choose any of the sizes 10, 12, 14, 18, or 24 directly from this menu, "
+ENTRY (L"Sizes")
+NORMAL (L"You can choose any of the sizes 10, 12, 14, 18, or 24 directly from this menu, "
 	"or fill in any other size in the ##Font size...# form.")
-TAG ("Unix:")
-DEFINITION ("the font size will be rounded to the nearest size available on Xwindows, "
+TAG (L"Unix:")
+DEFINITION (L"the font size will be rounded to the nearest size available on Xwindows, "
 	"which is one from 10, 12, 14, 18, or 24 points; "
 	"PostScript-printing a picture where you specified a font size of 100, however, "
 	"will still give the correct 100-point character height.")
-TAG ("Macintosh and Windows:")
-DEFINITION ("all sizes are drawn correctly (what you see on the screen "
+TAG (L"Macintosh and Windows:")
+DEFINITION (L"all sizes are drawn correctly (what you see on the screen "
 	"is what you get on your printer).")
-NORMAL ("The widths of the margins depend on the current font size, "
+NORMAL (L"The widths of the margins depend on the current font size, "
 	"so if you want to change the font size, "
 	"do so before making your drawing.")
-ENTRY ("Fonts")
-NORMAL ("With these commands, you set the font in which subsequent text will de drawn: "
-	"Times, Helvetica, New Century Schoolbook, Palatino, or Courier.")
-NORMAL ("You can mix the Symbol and IPA alphabets with the normal Roman alphabets "
+ENTRY (L"Fonts")
+NORMAL (L"With these commands, you set the font in which subsequent text will de drawn: "
+	"Times, Helvetica, Palatino, or Courier.")
+NORMAL (L"You can mix the Symbol and IPA alphabets with the normal Roman alphabets "
 	"and use sequences of backslash + digraph for @@special symbols@ (see also @@phonetic symbols@).")
-NORMAL ("For instance, you can get an \\e\" by typing \\bse\\\" , or a \\ss by typing \\bsss; "
+NORMAL (L"For instance, you can get an \\e\" by typing \\bse\\\" , or a \\ss by typing \\bsss; "
 	"you can get an \\ep by typing \\bsep, or a \\ct, which is a turned c, by typing \\bsct.")
-NORMAL ("In a PostScript preview on the Indigo (double-click on a PostScript file), "
-	"New Century Schoolbook will be replaced by Courier.")
-NORMAL ("If you print to a PostScript printer, all fonts will be correct.")
-ENTRY ("Styles")
-NORMAL ("You can use all graphical @@text styles@ in the Picture window.")
+NORMAL (L"If you print to a PostScript printer, all fonts will be correct.")
+ENTRY (L"Styles")
+NORMAL (L"You can use all graphical @@text styles@ in the Picture window.")
 MAN_END
 
-MAN_BEGIN ("Logarithmic marks left/right/top/bottom...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw a specified number of marks per decade "
+MAN_BEGIN (L"Logarithmic marks left/right/top/bottom...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw a specified number of marks per decade "
 	"into the @margins around the drawing area, along a logarithmic axis.")
-ENTRY ("Arguments")
-TAG ("%%Marks per decade")
-DEFINITION ("the number of marks that will be drawn for every decade.")
-TAG ("%%Write numbers")
-DEFINITION ("if on, real numbers will be written in the margin, "
+ENTRY (L"Arguments")
+TAG (L"%%Marks per decade")
+DEFINITION (L"the number of marks that will be drawn for every decade.")
+TAG (L"%%Write numbers")
+DEFINITION (L"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG ("%%Draw ticks")
-DEFINITION ("if on, short line pieces will be drawn in the margin.")
-TAG ("%%Draw dotted lines")
-DEFINITION ("if on, dotted lines will be drawn through your drawing.")
-ENTRY ("Behaviour")
-LIST_ITEM ("If your vertical logarithmic axis runs from 10 to 100, "
+TAG (L"%%Draw ticks")
+DEFINITION (L"if on, short line pieces will be drawn in the margin.")
+TAG (L"%%Draw dotted lines")
+DEFINITION (L"if on, dotted lines will be drawn through your drawing.")
+ENTRY (L"Behaviour")
+LIST_ITEM (L"If your vertical logarithmic axis runs from 10 to 100, "
 	"and %%Marks per decade% is 1, marks will only be drawn at 10 and 100;")
-LIST_ITEM ("if %%Marks per decade% is 2, marks will be drawn at 10, 30, and 100;")
-LIST_ITEM ("if it is 3, marks will be drawn at 10, 20, 50, and 100;")
-LIST_ITEM ("if it is 4, marks will be drawn at 10, 20, 30, 50, and 100;")
-LIST_ITEM ("if it is 5, marks will be drawn at 10, 20, 30, 50, 70, and 100;")
-LIST_ITEM ("if it is 6, marks will be drawn at 10, 15, 20, 30, 50, 70, and 100;")
-LIST_ITEM ("if it is 7 (the maximum), marks will be drawn at 10, 15, 20, 30, 40, 50, 70, and 100.")
+LIST_ITEM (L"if %%Marks per decade% is 2, marks will be drawn at 10, 30, and 100;")
+LIST_ITEM (L"if it is 3, marks will be drawn at 10, 20, 50, and 100;")
+LIST_ITEM (L"if it is 4, marks will be drawn at 10, 20, 30, 50, and 100;")
+LIST_ITEM (L"if it is 5, marks will be drawn at 10, 20, 30, 50, 70, and 100;")
+LIST_ITEM (L"if it is 6, marks will be drawn at 10, 15, 20, 30, 50, 70, and 100;")
+LIST_ITEM (L"if it is 7 (the maximum), marks will be drawn at 10, 15, 20, 30, 40, 50, 70, and 100.")
 MAN_END
 
-MAN_BEGIN ("Margins", "ppgb", 19970405)
-INTRO ("The space around most of your drawings in the @@Picture window@.")
-ENTRY ("World coordinates")
-NORMAL ("With the commands in the #Margins menu, "
+MAN_BEGIN (L"Margins", L"ppgb", 19970405)
+INTRO (L"The space around most of your drawings in the @@Picture window@.")
+ENTRY (L"World coordinates")
+NORMAL (L"With the commands in the #Margins menu, "
 	"you draw text, ticks, numbers, or a rectangle, "
 	"in the margins around the latest drawing that you made, "
 	"or you draw dotted lines through or text inside this last drawing.")
-NORMAL ("You specify the positions of these things in world coordinates, "
+NORMAL (L"You specify the positions of these things in world coordinates, "
 	"i.e., in coordinates that refer to the natural coordinate system of your last drawing.")
-NORMAL ("The numbers that you can mark around your drawing also refer to these coordinates. "
+NORMAL (L"The numbers that you can mark around your drawing also refer to these coordinates. "
 	"For instance, after drawing a spectrum with ##Spectrum: Draw...#, "
 	"you can draw a dotted line at 2000 Hz or at 60 dB "
 	"by choosing ##One mark bottom...# or ##One mark left...# "
 	"and typing \"2000\" or \"60\", respectively.")
-ENTRY ("Usage")
-NORMAL ("The margin commands work with all the drawings that leave margins around themselves, "
+ENTRY (L"Usage")
+NORMAL (L"The margin commands work with all the drawings that leave margins around themselves, "
 	"such as ##Sound: Draw...#, ##Spectrogram: Paint...#, ##Polygon: Paint...#, and more. "
 	"They do not work properly, however, with the commands that draw vocal tract shapes, "
 	"like ##Art & Speaker: Draw...# and ##Artword & Speaker: Draw...#, "
 	"because these can only be drawn correctly into a square viewport.")
-ENTRY ("Limited validity")
-NORMAL ("The margin commands work only on the latest drawing that you made "
+ENTRY (L"Limited validity")
+NORMAL (L"The margin commands work only on the latest drawing that you made "
 	"(unless you @Undo that drawing).")
-ENTRY ("Margin size")
-NORMAL ("The size of the margins depends on the font size, "
+ENTRY (L"Margin size")
+NORMAL (L"The size of the margins depends on the font size, "
 	"so be sure that you have the font size of your choice before you make your drawing. "
 	"You can set the font size with the @@Font menu@.")
 MAN_END
 
-MAN_BEGIN ("Marks left/right/top/bottom...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw any number of equally spaced marks into the @margins around the drawing area.")
-ENTRY ("Arguments")
-TAG ("%%Number of marks%")
-DEFINITION ("the number of equally spaced marks (2 or more) that will be drawn; "
+MAN_BEGIN (L"Marks left/right/top/bottom...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw any number of equally spaced marks into the @margins around the drawing area.")
+ENTRY (L"Arguments")
+TAG (L"%%Number of marks%")
+DEFINITION (L"the number of equally spaced marks (2 or more) that will be drawn; "
 	"there will always be marks at the beginning and end of the domain or range.")
-TAG ("%%Write numbers")
-DEFINITION ("if on, real numbers will be written in the margin, "
+TAG (L"%%Write numbers")
+DEFINITION (L"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG ("%%Draw ticks")
-DEFINITION ("if on, short line pieces will be drawn in the margin.")
-TAG ("%%Draw dotted lines")
-DEFINITION ("if on, dotted lines will be drawn through your drawing.")
-ENTRY ("Example")
-NORMAL ("If you draw a Sound with a domain between 0 and 1 seconds "
+TAG (L"%%Draw ticks")
+DEFINITION (L"if on, short line pieces will be drawn in the margin.")
+TAG (L"%%Draw dotted lines")
+DEFINITION (L"if on, dotted lines will be drawn through your drawing.")
+ENTRY (L"Example")
+NORMAL (L"If you draw a Sound with a domain between 0 and 1 seconds "
 	"to an amplitude range between -1 and 1, "
 	"choosing ##Marks left...# with a number of 3 and %%Draw dotted lines% on, "
 	"will give you horizontal marks and horizontal dotted lines at -1, 0, and 1; "
@@ -524,457 +520,457 @@ NORMAL ("If you draw a Sound with a domain between 0 and 1 seconds "
 	"will give you vertical marks at 0, 0.2, 0.4, 0.6, 0.8, and 1.")
 MAN_END
 
-MAN_BEGIN ("Marks left/right/top/bottom every...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw a number of equally spaced marks into the @margins around the drawing area.")
-ENTRY ("Arguments")
-TAG ("%%Units")
-DEFINITION ("the units, relative to the standard units, "
+MAN_BEGIN (L"Marks left/right/top/bottom every...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw a number of equally spaced marks into the @margins around the drawing area.")
+ENTRY (L"Arguments")
+TAG (L"%%Units")
+DEFINITION (L"the units, relative to the standard units, "
 	"for writing the numbers; for example, if you want time in milliseconds "
 	"instead of seconds (which is always the standard), "
 	"%Units should be 0.001.")
-TAG ("%%Distance")
-DEFINITION ("the distance between the equally spaced marks that will be drawn, "
+TAG (L"%%Distance")
+DEFINITION (L"the distance between the equally spaced marks that will be drawn, "
 	"expressed in %Units; for example, if you want marks every 20 milliseconds, "
 	"and %Units is 0.001, this argument should be 20.")
-TAG ("%%Write numbers")
-DEFINITION ("if on, real numbers will be written in the margin, "
+TAG (L"%%Write numbers")
+DEFINITION (L"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG ("%%Draw ticks")
-DEFINITION ("if on, short line pieces will be drawn in the margin.")
-TAG ("%%Draw dotted lines")
-DEFINITION ("if on, dotted lines will be drawn through your drawing.")
+TAG (L"%%Draw ticks")
+DEFINITION (L"if on, short line pieces will be drawn in the margin.")
+TAG (L"%%Draw dotted lines")
+DEFINITION (L"if on, dotted lines will be drawn through your drawing.")
 MAN_END
 
-MAN_BEGIN ("One logarithmic mark left/right/top/bottom...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw one mark into one of the four @margins "
+MAN_BEGIN (L"One logarithmic mark left/right/top/bottom...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw one mark into one of the four @margins "
 	"around the drawing area, along a logarithmic axis.")
-ENTRY ("Arguments")
-TAG ("%%Position")
-DEFINITION ("the %x (for top or bottom) or %y (for left or right) position of the mark, "
+ENTRY (L"Arguments")
+TAG (L"%%Position")
+DEFINITION (L"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the logarithmic domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG ("%%Write number")
-DEFINITION ("if on, a real number equal to %Position will be written in the margin, "
+TAG (L"%%Write number")
+DEFINITION (L"if on, a real number equal to %Position will be written in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw tick")
-DEFINITION ("if on, a short line piece will be drawn in the margin, "
+TAG (L"%%Draw tick")
+DEFINITION (L"if on, a short line piece will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw dotted line")
-DEFINITION ("if on, a dotted line will be drawn through your drawing, "
+TAG (L"%%Draw dotted line")
+DEFINITION (L"if on, a dotted line will be drawn through your drawing, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw text")
-DEFINITION ("if not empty, this text will be drawn in the margin, "
+TAG (L"%%Draw text")
+DEFINITION (L"if not empty, this text will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-ENTRY ("Example")
-NORMAL ("After you draw a Pitch logarithmically in a range between 100 and 400 Hz, "
+ENTRY (L"Example")
+NORMAL (L"After you draw a Pitch logarithmically in a range between 100 and 400 Hz, "
 	"choosing ##One logarithmic mark left...# with a position of 200 and %%Draw dotted line% on, "
 	"will give you a horizontal mark \"200\" and a horizontal dotted line at a %y position of 200, "
 	"which is exactly halfway between 100 and 400 Hz.")
 MAN_END
 
-MAN_BEGIN ("One mark left/right/top/bottom...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To draw one mark into one of the four @margins around the drawing area.")
-ENTRY ("Arguments")
-TAG ("%%Position")
-DEFINITION ("the %x (for top or bottom) or %y (for left or right) position of the mark, "
+MAN_BEGIN (L"One mark left/right/top/bottom...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw one mark into one of the four @margins around the drawing area.")
+ENTRY (L"Arguments")
+TAG (L"%%Position")
+DEFINITION (L"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG ("%%Write number")
-DEFINITION ("if on, a real number equal to `Position' will be written in the margin, "
+TAG (L"%%Write number")
+DEFINITION (L"if on, a real number equal to `Position' will be written in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw tick")
-DEFINITION ("if on, a short line piece will be drawn in the margin, "
+TAG (L"%%Draw tick")
+DEFINITION (L"if on, a short line piece will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw dotted line")
-DEFINITION ("if on, a dotted line will be drawn through your drawing, "
+TAG (L"%%Draw dotted line")
+DEFINITION (L"if on, a dotted line will be drawn through your drawing, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-TAG ("%%Draw text")
-DEFINITION ("if not empty, this text will be drawn in the margin, "
+TAG (L"%%Draw text")
+DEFINITION (L"if not empty, this text will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to %Position.")
-ENTRY ("Example")
-NORMAL ("If you draw a Sound to an amplitude range between -1 and 1, "
+ENTRY (L"Example")
+NORMAL (L"If you draw a Sound to an amplitude range between -1 and 1, "
 	"choosing ##One mark left...# with a position of 0.0 and %%Draw dotted line% on, "
 	"will give you a horizontal mark \"0\" and a horizontal dotted line at a y position of 0.")
 MAN_END
 
-MAN_BEGIN ("Pen menu", "ppgb", 20061122)
-INTRO ("One of the menus of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To choose the line type and colour "
+MAN_BEGIN (L"Pen menu", L"ppgb", 20061122)
+INTRO (L"One of the menus of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To choose the line type and colour "
 	"to be used in subsequent drawing of lines and painted areas.")
-ENTRY ("Behaviour")
-NORMAL ("The line type used by @@Draw inner box@ (solid), "
+ENTRY (L"Behaviour")
+NORMAL (L"The line type used by @@Draw inner box@ (solid), "
 	"and the line type of the dotted lines in the ##Mark...# commands "
 	"will not be affected.")
-NORMAL ("The commands in the @Margins menu will always draw in black.")
+NORMAL (L"The commands in the @Margins menu will always draw in black.")
 MAN_END
 
-MAN_BEGIN ("Picture window", "ppgb", 20041130)
-INTRO ("One of the two main windows in P\\s{RAAT}.")
-TAG ("File menu")
-LIST_ITEM ("\\bu @@Read from Praat picture file...@, @@Write to Praat picture file...")
+MAN_BEGIN (L"Picture window", L"ppgb", 20041130)
+INTRO (L"One of the two main windows in P\\s{RAAT}.")
+TAG (L"File menu")
+LIST_ITEM (L"\\bu @@Read from Praat picture file...@, @@Write to Praat picture file...")
 #if defined (macintosh)
-LIST_ITEM ("\\bu @@Copy to clipboard@, @@Write to Mac PICT file...@")
+LIST_ITEM (L"\\bu @@Copy to clipboard@, @@Write to Mac PICT file...@")
 #elif defined (_WIN32)
-LIST_ITEM ("\\bu @@Copy to clipboard@, @@Write to Windows metafile...@")
+LIST_ITEM (L"\\bu @@Copy to clipboard@, @@Write to Windows metafile...@")
 #else
-LIST_ITEM ("\\bu @@Copy to clipboard@")
+LIST_ITEM (L"\\bu @@Copy to clipboard@")
 #endif
-LIST_ITEM ("\\bu @@PostScript settings...")
-LIST_ITEM ("\\bu @@Write to EPS file...")
-LIST_ITEM ("\\bu @@Print...")
-TAG ("Edit menu")
-LIST_ITEM ("\\bu @@Undo@, @@Erase all")
-TAG ("@Margins menu")
-LIST_ITEM ("\\bu @@Draw inner box")
-LIST_ITEM ("\\bu @@Text left/right/top/bottom...")
-LIST_ITEM ("\\bu @@Marks left/right/top/bottom every...")
-LIST_ITEM ("\\bu @@One mark left/right/top/bottom...")
-LIST_ITEM ("\\bu @@Marks left/right/top/bottom...")
-LIST_ITEM ("\\bu @@Logarithmic marks left/right/top/bottom...")
-LIST_ITEM ("\\bu @@One logarithmic mark left/right/top/bottom...")
-LIST_ITEM ("\\bu @@Axes...")
-TAG ("World menu")
-LIST_ITEM ("\\bu @@Text...")
-LIST_ITEM ("\\bu @@Axes...")
-TAG ("Select menu")
-LIST_ITEM ("\\bu @@Select inner viewport...@, @@Select outer viewport...@, @@Viewport text...")
-TAG ("@@Pen menu")
-TAG ("@@Font menu")
+LIST_ITEM (L"\\bu @@PostScript settings...")
+LIST_ITEM (L"\\bu @@Write to EPS file...")
+LIST_ITEM (L"\\bu @@Print...")
+TAG (L"Edit menu")
+LIST_ITEM (L"\\bu @@Undo@, @@Erase all")
+TAG (L"@Margins menu")
+LIST_ITEM (L"\\bu @@Draw inner box")
+LIST_ITEM (L"\\bu @@Text left/right/top/bottom...")
+LIST_ITEM (L"\\bu @@Marks left/right/top/bottom every...")
+LIST_ITEM (L"\\bu @@One mark left/right/top/bottom...")
+LIST_ITEM (L"\\bu @@Marks left/right/top/bottom...")
+LIST_ITEM (L"\\bu @@Logarithmic marks left/right/top/bottom...")
+LIST_ITEM (L"\\bu @@One logarithmic mark left/right/top/bottom...")
+LIST_ITEM (L"\\bu @@Axes...")
+TAG (L"World menu")
+LIST_ITEM (L"\\bu @@Text...")
+LIST_ITEM (L"\\bu @@Axes...")
+TAG (L"Select menu")
+LIST_ITEM (L"\\bu @@Select inner viewport...@, @@Select outer viewport...@, @@Viewport text...")
+TAG (L"@@Pen menu")
+TAG (L"@@Font menu")
 MAN_END
 
-MAN_BEGIN ("PostScript settings...", "ppgb", 20040925)
-INTRO ("One of the commands in the File menus of many windows. "
+MAN_BEGIN (L"PostScript settings...", L"ppgb", 20040925)
+INTRO (L"One of the commands in the File menus of many windows. "
 	"The PostScript settings influence @Printing and writing to @@Encapsulated PostScript@ files.")
-ENTRY ("Arguments")
-TAG ("%%Allow direct PostScript printing% (Windows and Macintosh only)")
-DEFINITION ("this determines whether Praat prints explicit PostScript commands to your printer "
+ENTRY (L"Arguments")
+TAG (L"%%Allow direct PostScript printing% (Windows and Macintosh only)")
+DEFINITION (L"this determines whether Praat prints explicit PostScript commands to your printer "
 	"if it is a PostScript printer. This is what you will usually want. However, if you find "
 	"that some of the options that you choose in the printing dialog seem not to be supported "
 	"(e.g. scaling, printing two-up...), you may switch this off; Praat will then send native "
 	"Windows or Macintosh drawing commands, which the printer driver will try to translate "
 	"to PostScript. If your printer does not support PostScript, this switch is ignored. "
 	"On Unix, this switch is superfluous, since all printing is done directly in PostScript.")
-TAG ("%%Grey resolution")
-DEFINITION ("you can choose from two image qualities:")
-LIST_ITEM1 ("\\bu the %finest quality for grey plots (106 spots per inch), "
+TAG (L"%%Grey resolution")
+DEFINITION (L"you can choose from two image qualities:")
+LIST_ITEM1 (L"\\bu the %finest quality for grey plots (106 spots per inch), "
 	"which gives the best results directly from the printer;")
-LIST_ITEM1 ("\\bu a %photocopyable quality, which has fewer spots per inch (85) and "
+LIST_ITEM1 (L"\\bu a %photocopyable quality, which has fewer spots per inch (85) and "
 	"gives the best results after photocopying.")
-DEFINITION ("Your choice of the grey resolution influences direct PostScript printing "
+DEFINITION (L"Your choice of the grey resolution influences direct PostScript printing "
 	"and writing to @@Encapsulated PostScript@ files.")
-TAG ("%%Paper size% (Unix only)")
-DEFINITION ("you can choose from A4 (210 \\xx 297 mm), A3 (297 \\xx 420 mm) or US Letter (8.5 \\xx 11\\\"p). "
+TAG (L"%%Paper size% (Unix only)")
+DEFINITION (L"you can choose from A4 (210 \\xx 297 mm), A3 (297 \\xx 420 mm) or US Letter (8.5 \\xx 11\\\"p). "
 	"This choice applies to Unix only; on Windows, you choose the paper size in the ##Print...# dialog; "
 	"on Macintosh, you choose the paper size in the ##Page setup...# dialog.")
-TAG ("%%Orientation% (Unix only)")
-DEFINITION ("you can choose between %portrait (e.g., 297 mm high and 210 mm wide) "
+TAG (L"%%Orientation% (Unix only)")
+DEFINITION (L"you can choose between %portrait (e.g., 297 mm high and 210 mm wide) "
 	"and %landscape (e.g., 210 mm high and 297 mm wide). "
 	"This choice applies to Unix only; on Windows, you choose the orientation in the ##Print...# dialog; "
 	"on Macintosh, you choose the orientation in the ##Page setup...# dialog.")
-TAG ("%%Magnification% (Unix only)")
-DEFINITION ("the relative size with which your picture will be printed; normally 1.0. "
+TAG (L"%%Magnification% (Unix only)")
+DEFINITION (L"the relative size with which your picture will be printed; normally 1.0. "
 	"This choice applies to Unix only; on Windows, you choose the scaling in the ##Print...# dialog; "
 	"on Macintosh, you choose the scaling in the ##Page setup...# dialog.")
-TAG ("%%Print command% (Unix only)")
-DEFINITION ("When printing on Unix, a temporary PostScript^\\re file is created in the \"/tmp\" directory; "
+TAG (L"%%Print command% (Unix only)")
+DEFINITION (L"When printing on Unix, a temporary PostScript^\\re file is created in the \"/tmp\" directory; "
 	"it will have a name like \"picXXXXXX\", and is automatically removed after printing. "
 	"This file is sent to the printer with the print command, which will often look like $$lp -c \\% s$, "
 	"where $$\\% s$ stands for the file name.")
 MAN_END
 
-MAN_BEGIN ("Print...", "ppgb", 20001010)
-INTRO ("One of the commands in the File menu of the @@Picture window@.")
-NORMAL ("With this command, you send your entire picture immediately to the printer. "
+MAN_BEGIN (L"Print...", L"ppgb", 20001010)
+INTRO (L"One of the commands in the File menu of the @@Picture window@.")
+NORMAL (L"With this command, you send your entire picture immediately to the printer. "
 	"See the @Printing tutorial for details.")
 MAN_END
 
-MAN_BEGIN ("Printing", "ppgb", 20041130)
-NORMAL ("The best results will be obtained on PostScript printers, since these have built-in "
+MAN_BEGIN (L"Printing", L"ppgb", 20041130)
+NORMAL (L"The best results will be obtained on PostScript printers, since these have built-in "
 	"facilities for images (e.g. spectrograms) and rotated text. "
 	"However, the printed page will look reasonable on colour inkjet printers as well.")
 #if defined (UNIX)
-ENTRY ("1. Printing on Unix")
-NORMAL ("Most Unix networks (i.e. SGI, Solaris, HPUX) are traditionally connected to a PostScript printer. "
+ENTRY (L"1. Printing on Unix")
+NORMAL (L"Most Unix networks (i.e. SGI, Solaris, HPUX) are traditionally connected to a PostScript printer. "
 	"When you tell Praat to print a picture or manual page, Praat will write the picture to a temporary PostScript file "
 	"and send this file to a printer with the %%print command% (typically $lp), which you can change "
 	"with @@PostScript settings...@.")
-NORMAL ("On Linux, you do not need a PostScript printer to print PostScript directly, "
+NORMAL (L"On Linux, you do not need a PostScript printer to print PostScript directly, "
 	"because the #lpr program sends PostScript files through the GhostScript program, "
 	"which is a part of all modern Linux distributions. The print command is typically "
 	"$$lpr \\% s$. By changing the print command (with @@PostScript settings...@), "
 	"you can change it to something fancier. For instance, if you want to save the woods "
 	"and print two pages on one sheet of paper, you change it to $$cat \\% s | mpage -2 -o -f -m0 | lpr$.")
 #elif defined (macintosh)
-ENTRY ("1. Printing on Macintosh")
-NORMAL ("Many Macintoshes are in a network that includes a PostScript printer (e.g. an Apple^\\re LaserWriter^\\re). "
+ENTRY (L"1. Printing on Macintosh")
+NORMAL (L"Many Macintoshes are in a network that includes a PostScript printer (e.g. an Apple^\\re LaserWriter^\\re). "
 	"If a PostScript printer is available, Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
 	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
 #elif defined (_WIN32)
-ENTRY ("1. Printing on Windows")
-NORMAL ("Some Windows computers are in a network that includes a PostScript printer. "
+ENTRY (L"1. Printing on Windows")
+NORMAL (L"Some Windows computers are in a network that includes a PostScript printer. "
 	"If a PostScript printer is available, Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
 	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
 #endif
-ENTRY ("2. Indirect printing with GhostView")
-NORMAL ("If you don't have a PostScript printer, and you still want PostScript quality, "
+ENTRY (L"2. Indirect printing with GhostView")
+NORMAL (L"If you don't have a PostScript printer, and you still want PostScript quality, "
 	"you can save the picture to an EPS file (@@Write to EPS file...@). "
 	"You can then view this file with the freely available "
 	"GhostView^\\tm program, which you can download from ##http://www.cs.wisc.edu/~ghost#.")
-ENTRY ("3. Indirect printing with your word processor")
-NORMAL ("If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
+ENTRY (L"3. Indirect printing with your word processor")
+NORMAL (L"If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
 	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). See @@Write to EPS file...@.")
-NORMAL ("If you don't have a PostScript printer, you could again use GhostView^\\tm to print your document "
+NORMAL (L"If you don't have a PostScript printer, you could again use GhostView^\\tm to print your document "
 	"to any printer, after you printed your document to a PostScript file. You can do the same if you are "
 	"the lucky owner of Adobe^\\re Acrobat^\\tm Distiller^\\tm, which is more reliable than GhostView "
 	"but is also expensive.")
-ENTRY ("4. Creating a PDF file")
-NORMAL ("If you have Distiller or GhostView, you can print the entire Word^\\tm or LaTeX document to a PostScript file, "
+ENTRY (L"4. Creating a PDF file")
+NORMAL (L"If you have Distiller or GhostView, you can print the entire Word^\\tm or LaTeX document to a PostScript file, "
 	"and convert this to a PDF file, which anyone in the world can view and print with the free Adobe^\\re Acrobat^\\tm Reader program.")
 #ifdef _WIN32
-NORMAL ("Note: when creating a PDF file on Windows if you have Acrobat, ##do not use PDFWriter#, but choose Distiller as your printer. "
+NORMAL (L"Note: when creating a PDF file on Windows if you have Acrobat, ##do not use PDFWriter#, but choose Distiller as your printer. "
 	"also, ##do not use \"Print to PDF\"# from your Microsoft Word File menu; otherwise, "
 	"your EPS files will not show in the PDF file.")
 #endif
 #ifdef macintosh
-NORMAL ("Note: when creating a PDF file on MacOS X, ##do not use \"Save as PDF...\"# in your printing dialog, "
+NORMAL (L"Note: when creating a PDF file on MacOS X, ##do not use \"Save as PDF...\"# in your printing dialog, "
 	"but choose Adobe PDF as your printer or save the document to a PostScript file and convert it with "
 	"Distiller or GhostView; otherwise, your EPS files will not show in the PDF file.")
 #endif
 #ifdef _WIN32
-ENTRY ("Indirect printing without PostScript")
-NORMAL ("Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Windows metafile...@ "
+ENTRY (L"Indirect printing without PostScript")
+NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Windows metafile...@ "
 	"will print fine, though not as nicely as EPS files.")
 #endif
 #ifdef macintosh
-ENTRY ("Indirect printing without PostScript")
-NORMAL ("Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Mac PICT file...@ "
+ENTRY (L"Indirect printing without PostScript")
+NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Mac PICT file...@ "
 	"will print fine, though not as nicely as EPS files.")
 #endif
 MAN_END
 
-MAN_BEGIN ("Read from Praat picture file...", "ppgb", 19960908)
-INTRO ("One of the commands in the File menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To read a picture that you saved earlier "
+MAN_BEGIN (L"Read from Praat picture file...", L"ppgb", 19960908)
+INTRO (L"One of the commands in the File menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To read a picture that you saved earlier "
 	"with @@Write to Praat picture file...@.")
-ENTRY ("Behaviour")
-NORMAL ("The picture will be drawn across whatever is currently visible in the Picture window.")
-ENTRY ("Usage")
-NORMAL ("With the help of this command, you can transfer a picture from a Unix machine to a Macintosh. "
+ENTRY (L"Behaviour")
+NORMAL (L"The picture will be drawn across whatever is currently visible in the Picture window.")
+ENTRY (L"Usage")
+NORMAL (L"With the help of this command, you can transfer a picture from a Unix machine to a Macintosh. "
 	"Praat for Macintosh can write the picture to an @@Encapsulated PostScript@ file "
 	"with a screen preview.")
 MAN_END
 
-MAN_BEGIN ("Text...", "ppgb", 19970330)
-INTRO ("One of the commands in the #World menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To write text inside the drawing area.")
-ENTRY ("Scope")
-NORMAL ("This works with all the drawings that leave @margins around themselves.")
-ENTRY ("Arguments")
-TAG ("%x")
-DEFINITION ("horizontal position, expressed in the horizontal domain of your latest drawing.")
-TAG ("%y")
-DEFINITION ("vertical position, expressed in the vertical range or domain of your latest drawing.")
-TAG ("%%Horizontal alignment")
-DEFINITION ("determines the horizontal alignment of the text relative to %x.")
-TAG ("%%Vertical alignment")
-DEFINITION ("determines the vertical alignment of the text relative to %y.")
-TAG ("%%Text")
-DEFINITION ("will be drawn in the current font and font size "
+MAN_BEGIN (L"Text...", L"ppgb", 19970330)
+INTRO (L"One of the commands in the #World menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To write text inside the drawing area.")
+ENTRY (L"Scope")
+NORMAL (L"This works with all the drawings that leave @margins around themselves.")
+ENTRY (L"Arguments")
+TAG (L"%x")
+DEFINITION (L"horizontal position, expressed in the horizontal domain of your latest drawing.")
+TAG (L"%y")
+DEFINITION (L"vertical position, expressed in the vertical range or domain of your latest drawing.")
+TAG (L"%%Horizontal alignment")
+DEFINITION (L"determines the horizontal alignment of the text relative to %x.")
+TAG (L"%%Vertical alignment")
+DEFINITION (L"determines the vertical alignment of the text relative to %y.")
+TAG (L"%%Text")
+DEFINITION (L"will be drawn in the current font and font size "
 	"that you set with the @@Font menu@.")
-ENTRY ("Usage")
-NORMAL ("With the ##Text...# command, you can use all @@special symbols@ and @@text styles@.")
+ENTRY (L"Usage")
+NORMAL (L"With the ##Text...# command, you can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
-MAN_BEGIN ("Text left/right/top/bottom...", "ppgb", 19970330)
-INTRO ("Four of the commands in the #Margins menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To write text into the @margins around the drawing area.")
-ENTRY ("Behaviour")
-NORMAL ("The text will be centred along the side. "
+MAN_BEGIN (L"Text left/right/top/bottom...", L"ppgb", 19970330)
+INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To write text into the @margins around the drawing area.")
+ENTRY (L"Behaviour")
+NORMAL (L"The text will be centred along the side. "
 	"Text at the left or right will be turned by 90 degrees "
 	"and written up and down, respectively.")
 MAN_END
 
-MAN_BEGIN ("Undo", "ppgb", 20041108)
-INTRO ("One of the commands in the #Edit menu of the @@Picture window@.")
-NORMAL ("It erases your most recently created drawing, which could have come from a command in the Objects window "
+MAN_BEGIN (L"Undo", L"ppgb", 20041108)
+INTRO (L"One of the commands in the #Edit menu of the @@Picture window@.")
+NORMAL (L"It erases your most recently created drawing, which could have come from a command in the Objects window "
 	"or from one of the drawing commands in the World and @Margins menus.")
-ENTRY ("Behaviour")
-NORMAL ("This command will erase some drawings, but it will not change your settings in the #Pen and #Font menus "
+ENTRY (L"Behaviour")
+NORMAL (L"This command will erase some drawings, but it will not change your settings in the #Pen and #Font menus "
 	"(line type, line width, font, font size, and colour).")
-NORMAL ("The world window will be what it was after the latest-but-one drawing, "
+NORMAL (L"The world window will be what it was after the latest-but-one drawing, "
 	"so that you can use the @Margins menu as if the latest drawing had never happened.")
 MAN_END
 
-MAN_BEGIN ("Select inner viewport...", "ppgb", 20041108)
-INTRO ("One of the commands in the #Select menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To determine where your next drawing will occur.")
-ENTRY ("The viewport")
+MAN_BEGIN (L"Select inner viewport...", L"ppgb", 20041108)
+INTRO (L"One of the commands in the #Select menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To determine where your next drawing will occur.")
+ENTRY (L"The viewport")
 #ifdef macintosh
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
+NORMAL (L"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
 #else
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
+NORMAL (L"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")
 #endif
-NORMAL ("The %inner viewport does not include the margins, the %outer viewport does (see @@Select outer viewport...@).")
-NORMAL ("Normally, you select the viewport by dragging your mouse across the Picture window. "
+NORMAL (L"The %inner viewport does not include the margins, the %outer viewport does (see @@Select outer viewport...@).")
+NORMAL (L"Normally, you select the viewport by dragging your mouse across the Picture window. "
 	"However, you would use this explicit command:")
-LIST_ITEM ("\\bu from a script;")
-LIST_ITEM ("\\bu if you want a viewport that cannot be expressed in halves of an inch.")
+LIST_ITEM (L"\\bu from a script;")
+LIST_ITEM (L"\\bu if you want a viewport that cannot be expressed in halves of an inch.")
 MAN_END
 
-MAN_BEGIN ("Select outer viewport...", "ppgb", 20041108)
-INTRO ("One of the commands in the #Select menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To determine where your next drawing will occur.")
-ENTRY ("The viewport")
+MAN_BEGIN (L"Select outer viewport...", L"ppgb", 20041108)
+INTRO (L"One of the commands in the #Select menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To determine where your next drawing will occur.")
+ENTRY (L"The viewport")
 #ifdef macintosh
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
+NORMAL (L"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
 #else
-NORMAL ("The \"viewport\" is the part of the Picture window where your next drawing will occur. "
+NORMAL (L"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")
 #endif
-NORMAL ("The %outer viewport includes the margins, the %inner viewport does not (see @@Select inner viewport...@).")
-NORMAL ("Normally, you select the viewport by dragging your mouse across the Picture window. "
+NORMAL (L"The %outer viewport includes the margins, the %inner viewport does not (see @@Select inner viewport...@).")
+NORMAL (L"Normally, you select the viewport by dragging your mouse across the Picture window. "
 	"However, you would use this explicit command:")
-LIST_ITEM ("\\bu from a script;")
-LIST_ITEM ("\\bu if you want a viewport that cannot be expressed in halves of an inch.")
+LIST_ITEM (L"\\bu from a script;")
+LIST_ITEM (L"\\bu if you want a viewport that cannot be expressed in halves of an inch.")
 MAN_END
 
-MAN_BEGIN ("Viewport text...", "ppgb", 19970330)
-INTRO ("One of the commands in the #Select menu of the @@Picture window@.")
-ENTRY ("Purpose")
-NORMAL ("To write text inside the viewport, at nine different places, "
+MAN_BEGIN (L"Viewport text...", L"ppgb", 19970330)
+INTRO (L"One of the commands in the #Select menu of the @@Picture window@.")
+ENTRY (L"Purpose")
+NORMAL (L"To write text inside the viewport, at nine different places, "
 	"with a rotation between 0 to 360 degrees.")
-ENTRY ("Arguments:")
-TAG ("%%Horizontal alignment")
-DEFINITION ("determines the horizontal alignment of the text:")
-LIST_ITEM ("    \\bu %Left means pushed against the left edge of the viewport;")
-LIST_ITEM ("    \\bu %Right means pushed against the right edge of the viewport;")
-LIST_ITEM ("    \\bu %Centre means horizontally centred in the viewport.")
-TAG ("%%Vertical alignment")
-DEFINITION ("determines the vertical alignment of the text:")
-LIST_ITEM ("    \\bu %Top means pushed against the top of the viewport;")
-LIST_ITEM ("    \\bu %Bottom means pushed against the bottom of the viewport;")
-LIST_ITEM ("    \\bu %Half means vertically centred in the viewport.")
-TAG ("%%Text")
-DEFINITION ("will be drawn in the current font and font size "
+ENTRY (L"Arguments:")
+TAG (L"%%Horizontal alignment")
+DEFINITION (L"determines the horizontal alignment of the text:")
+LIST_ITEM (L"    \\bu %Left means pushed against the left edge of the viewport;")
+LIST_ITEM (L"    \\bu %Right means pushed against the right edge of the viewport;")
+LIST_ITEM (L"    \\bu %Centre means horizontally centred in the viewport.")
+TAG (L"%%Vertical alignment")
+DEFINITION (L"determines the vertical alignment of the text:")
+LIST_ITEM (L"    \\bu %Top means pushed against the top of the viewport;")
+LIST_ITEM (L"    \\bu %Bottom means pushed against the bottom of the viewport;")
+LIST_ITEM (L"    \\bu %Half means vertically centred in the viewport.")
+TAG (L"%%Text")
+DEFINITION (L"will be drawn in the current font and font size "
 	"that you set with the @@Font menu@.")
-ENTRY ("Behaviour")
-NORMAL ("For rotated text, the alignment arguments will not only determine "
+ENTRY (L"Behaviour")
+NORMAL (L"For rotated text, the alignment arguments will not only determine "
 	"the position inside the viewport, "
 	"but also the alignment in the rotated coordinate system. "
 	"This gives surprises now and then; "
 	"so, if you want several rotated texts that align with each other, "
 	"you should do this by varying the viewport, not the alignment.")
-ENTRY ("Usage")
-NORMAL ("You can use all @@special symbols@ and @@text styles@.")
+ENTRY (L"Usage")
+NORMAL (L"You can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
-MAN_BEGIN ("Write to EPS file...", "ppgb", 20041130)
-INTRO ("A command in the File menu of the @@Picture window@.")
-NORMAL ("It saves the picture to an @@Encapsulated PostScript@ (EPS) file, "
+MAN_BEGIN (L"Write to EPS file...", L"ppgb", 20041130)
+INTRO (L"A command in the File menu of the @@Picture window@.")
+NORMAL (L"It saves the picture to an @@Encapsulated PostScript@ (EPS) file, "
 	"which can be imported by many other programs, such as Microsoft^\\re Word^\\tm.")
-ENTRY ("PostScript = highest possible quality!")
-NORMAL ("With EPS files you can use high-quality graphics in your word-processor documents. "
+ENTRY (L"PostScript = highest possible quality!")
+NORMAL (L"With EPS files you can use high-quality graphics in your word-processor documents. "
 	"The quality is higher than if you use @@Copy to clipboard@.")
 #ifdef _WIN32
-ENTRY ("The big limitation")
-NORMAL ("EPS pictures imported in Word for Windows will show correctly only on PostScript printers, or with GhostView, or in PDF files "
+ENTRY (L"The big limitation")
+NORMAL (L"EPS pictures imported in Word for Windows will show correctly only on PostScript printers, or with GhostView, or in PDF files "
 	"created by Adobe^\\re Acrobat^\\tm Distiller^\\tm. "
 	"To print EPS pictures on non-PostScript printers, use a Linux or Macintosh computer.")
 #endif
 #ifdef macintosh
-ENTRY ("The big limitation")
-NORMAL ("If you have MacOS X 10.3 or higher, you are lucky. "
+ENTRY (L"The big limitation")
+NORMAL (L"If you have MacOS X 10.3 or higher, you are lucky. "
 	"These system versions can write EPS (and other PostScript files) to non-PostScript printers, such as most inkjet printers. "
 	"With older system versions, however, EPS pictures imported in Word for Macintosh will show correctly only on PostScript printers, "
 	"or with GhostView, or in PDF files created by Adobe^\\re Acrobat^\\tm Distiller^\\tm.")
 #endif
 #ifdef macintosh
-ENTRY ("Usage")
-NORMAL ("To import an EPS file in Word 5.1, choose ##File...# or ##Picture...# from the #Insert menu. "
+ENTRY (L"Usage")
+NORMAL (L"To import an EPS file in Word 5.1, choose ##File...# or ##Picture...# from the #Insert menu. "
 	"To do it in Word X, choose #Insert \\-> #Picture \\-> ##From file...#. "
 	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
-NORMAL ("Word will show you a screen preview in a mediocre quality, but you will see the high-quality PostScript version when you print.")
+NORMAL (L"Word will show you a screen preview in a mediocre quality, but you will see the high-quality PostScript version when you print.")
 #endif
 #ifdef _WIN32
-ENTRY ("Usage")
-NORMAL ("If Word cannot read your EPS files, you may have to install EPS support from the Office^\\tm CD, "
+ENTRY (L"Usage")
+NORMAL (L"If Word cannot read your EPS files, you may have to install EPS support from the Office^\\tm CD, "
 	"because the standard installation of Office may not support EPS files. "
 	"When you import an EPS file in an older version of Word, you may only see the file name and the date and time of creation, "
 	"and a message that the picture will print correctly to a PostScript printer (it will, if the PostScript driver has been selected).")
 #endif
-ENTRY ("Behaviour")
-NORMAL ("Though all the contents of the Picture window are written to the EPS file, "
+ENTRY (L"Behaviour")
+NORMAL (L"Though all the contents of the Picture window are written to the EPS file, "
 	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
-ENTRY ("Settings")
-NORMAL ("The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
+ENTRY (L"Settings")
+NORMAL (L"The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
 #ifdef macintosh
-ENTRY ("Technical information")
-NORMAL ("On the Macintosh, the EPS file will consist of PostScript text (for the printer, in the `data fork') "
+ENTRY (L"Technical information")
+NORMAL (L"On the Macintosh, the EPS file will consist of PostScript text (for the printer, in the `data fork') "
 	"plus a bitmapped screen preview (in the `resource fork'). The screen preview is lost if you transfer the EPS file "
 	"to a Windows or Unix computer, although an EPS picture imported in a Word for Macintosh document retains its preview "
 	"when the Word document is transferred to a Windows computer.")
 #endif
 MAN_END
 
-MAN_BEGIN ("Write to Praat picture file...", "ppgb", 20041130)
-INTRO ("A command in the File menu of the @@Picture window@.")
-NORMAL ("It saves a picture in a format that can be imported into P\\s{RAAT} later with @@Read from Praat picture file...@.")
-ENTRY ("Usage")
-NORMAL ("With the help of this command, you can transfer the contents of the picture window between computers or even between platforms, "
+MAN_BEGIN (L"Write to Praat picture file...", L"ppgb", 20041130)
+INTRO (L"A command in the File menu of the @@Picture window@.")
+NORMAL (L"It saves a picture in a format that can be imported into P\\s{RAAT} later with @@Read from Praat picture file...@.")
+ENTRY (L"Usage")
+NORMAL (L"With the help of this command, you can transfer the contents of the picture window between computers or even between platforms, "
 	"for instance from a Macintosh to a Windows computer.")
 MAN_END
 
 #ifdef macintosh
-MAN_BEGIN ("Write to Mac PICT file...", "ppgb", 20041130)
-INTRO ("A command in the File menu of the @@Picture window@.")
-NORMAL ("It saves the selected part of the picture in an \"extended PICT2\" format, "
+MAN_BEGIN (L"Write to Mac PICT file...", L"ppgb", 20041130)
+INTRO (L"A command in the File menu of the @@Picture window@.")
+NORMAL (L"It saves the selected part of the picture in an \"extended PICT2\" format, "
 	"which can be imported by many programs on the Mac, like MacDraw^\\tm "
 	"(Microsoft^\\re Word^\\tm 5.1 unfortunately rounds the high resolution down to screen pixels).")
-ENTRY ("Behaviour")
-NORMAL ("Though all the picture data will be written to the PICT file, "
+ENTRY (L"Behaviour")
+NORMAL (L"Though all the picture data will be written to the PICT file, "
 	"only the part that you selected in the Picture window (the %viewport) may become visible in the other program.")
-ENTRY ("Usage")
-NORMAL ("You will not use this command very often, "
+ENTRY (L"Usage")
+NORMAL (L"You will not use this command very often, "
 	"because it is usually easier to copy the selection to the clipboard with the @@Copy to clipboard@ command, "
 	"and `Paste' it into the other program. You may use a PICT file instead of the clipboard if the clipboard is too large "
 	"for the other program to read, or if you want to transfer the picture to another computer.")
-NORMAL ("If you have a PostScript printer (or MacOS X 10.3 with %any printer), you would use @@Write to EPS file...@ instead "
+NORMAL (L"If you have a PostScript printer (or MacOS X 10.3 with %any printer), you would use @@Write to EPS file...@ instead "
 	"for best printing results.")
 MAN_END
 #endif
 
 #ifdef _WIN32
-MAN_BEGIN ("Write to Windows metafile...", "ppgb", 20041130)
-INTRO ("A command in the File menu of the @@Picture window@.")
-NORMAL ("It saves the selected part of the picture in an \"enhanced metafile\" (.EMF) format, "
+MAN_BEGIN (L"Write to Windows metafile...", L"ppgb", 20041130)
+INTRO (L"A command in the File menu of the @@Picture window@.")
+NORMAL (L"It saves the selected part of the picture in an \"enhanced metafile\" (.EMF) format, "
 	"which can be imported by many Windows programs, like Adobe^\\re Illustrator^\\tm or Microsoft^\\re Word^\\tm.")
-ENTRY ("Behaviour")
-NORMAL ("Though all the picture data will be written to the file, "
+ENTRY (L"Behaviour")
+NORMAL (L"Though all the picture data will be written to the file, "
 	"only the part that you selected in the Picture window (the %viewport) may become visible in the other program.")
-ENTRY ("Usage")
-NORMAL ("You will not use this command very often, "
+ENTRY (L"Usage")
+NORMAL (L"You will not use this command very often, "
 	"because it is usually easier to copy the selection to the clipboard with the @@Copy to clipboard@ command, "
 	"and `Paste' it into the other program. You may use a metafile instead of the clipboard if the clipboard is too large "
 	"for the other program to read, or if you want to transfer the picture to another computer.")
-NORMAL ("If you have a PostScript printer, you would use @@Write to EPS file...@ instead "
+NORMAL (L"If you have a PostScript printer, you would use @@Write to EPS file...@ instead "
 	"for best printing results.")
 MAN_END
 #endif

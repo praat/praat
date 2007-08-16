@@ -58,9 +58,9 @@ static void info (I) {
 	iam (PCA);
 	
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of components: ", Melder_integer (my numberOfEigenvalues));
-	MelderInfo_writeLine2 ("Number of dimensions: ", Melder_integer (my dimension));
-	MelderInfo_writeLine2 ("Number of observations: ", Melder_integer (my numberOfObservations));
+	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (my numberOfEigenvalues));
+	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (my dimension));
+	MelderInfo_writeLine2 (L"Number of observations: ", Melder_integer (my numberOfObservations));
 }
 
 class_methods (PCA, Eigen)
@@ -105,7 +105,7 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	*ndf = 0; 
 	*chisq = 0;
 	
-	if (from > 0 && to == from || to > my numberOfEigenvalues) return;
+	if ((from > 0 && to == from) || to > my numberOfEigenvalues) return;
 	
 	if (to <= from)
 	{
@@ -207,7 +207,7 @@ Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou,
 		& him, 1, numberOfDimensions) || 
 		! NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, 
 			thy numberOfRows) ||
-		! TableOfReal_setSequentialColumnLabels (him, 0, 0, "pc", 1, 1))
+		! TableOfReal_setSequentialColumnLabels (him, 0, 0, L"pc", 1, 1))
 			forget (him);
 		
 	return him;
@@ -278,7 +278,7 @@ end:
 	return fraction;
 }
 
-TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char *numstring)
+TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring)
 {
 	TableOfReal him = NULL;
 	Configuration c = NULL;

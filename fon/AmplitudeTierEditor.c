@@ -20,6 +20,7 @@
 /*
  * pb 2003/05/31 created
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "AmplitudeTierEditor.h"
@@ -29,8 +30,8 @@
 #define AmplitudeTierEditor_methods RealTierEditor_methods
 class_create_opaque (AmplitudeTierEditor, RealTierEditor);
 
-/*DIRECT (AmplitudeTierEditor, cb_AmplitudeTierEditorHelp) Melder_help ("AmplitudeTierEditor"); END*/
-DIRECT (AmplitudeTierEditor, cb_AmplitudeTierHelp) Melder_help ("AmplitudeTier"); END
+/*DIRECT (AmplitudeTierEditor, cb_AmplitudeTierEditorHelp) Melder_help (L"AmplitudeTierEditor"); END*/
+DIRECT (AmplitudeTierEditor, cb_AmplitudeTierHelp) Melder_help (L"AmplitudeTier"); END
 
 static void createMenus (I) {
 	iam (AmplitudeTierEditor);

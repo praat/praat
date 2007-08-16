@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/02
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -31,30 +31,30 @@ static void logo (Graphics g) {
 	Graphics_setFontSize (g, 45);
 	Graphics_setColour (g, Graphics_MAROON);
 	#if defined (macintosh)
-		Graphics_text (g, 0.375, 0.66, "P");
-		Graphics_text (g, 0.447, 0.66, "\\s{R}");
-		Graphics_text (g, 0.515, 0.66, "\\s{A}");
-		Graphics_text (g, 0.580, 0.66, "\\s{A}");
-		Graphics_text (g, 0.635, 0.66, "\\s{T}");
+		Graphics_text (g, 0.375, 0.66, L"P");
+		Graphics_text (g, 0.447, 0.66, L"\\s{R}");
+		Graphics_text (g, 0.515, 0.66, L"\\s{A}");
+		Graphics_text (g, 0.580, 0.66, L"\\s{A}");
+		Graphics_text (g, 0.635, 0.66, L"\\s{T}");
 	#else
-		Graphics_text (g, 0.5, 0.66, "P\\s{RAAT}");
+		Graphics_text (g, 0.5, 0.66, L"P\\s{RAAT}");
 	#endif
 	Graphics_setFontSize (g, 15);
-	Graphics_text (g, 0.5, 0.55, "%%doing phonetics by computer");
+	Graphics_text (g, 0.5, 0.55, L"%%doing phonetics by computer");
 	#define xstr(s) str(s)
 	#define str(s) #s
-	Graphics_text (g, 0.5, 0.45, "version " xstr(PRAAT_VERSION));
+	Graphics_text (g, 0.5, 0.45, L"version " xstr(PRAAT_VERSION));
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
-	Graphics_text (g, 0.5, 0.33, "www.praat.org");
+	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
 	Graphics_setFont (g, Graphics_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, "Copyright  \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
-	Graphics_text (g, 0.5, 0.04, "PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
-	Graphics_text (g, 0.5, -0.02, "GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
-	Graphics_text (g, 0.5, -0.08, "PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");
-	Graphics_text (g, 0.5, -0.14, "Free Lossless Audio Codec:  \\co 2000-2007 Josh Coalson & Erez Volk");
-	Graphics_text (g, 0.5, -0.20, "MPEG Audio Decoder:  \\co 2000-2007 Underbit Technologies & Erez Volk");
+	Graphics_text (g, 0.5, 0.16, L"Copyright  \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (g, 0.5, 0.04, L"PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
+	Graphics_text (g, 0.5, -0.02, L"GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
+	Graphics_text (g, 0.5, -0.08, L"PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");
+	Graphics_text (g, 0.5, -0.14, L"Free Lossless Audio Codec:  \\co 2000-2007 Josh Coalson & Erez Volk");
+	Graphics_text (g, 0.5, -0.20, L"MPEG Audio Decoder:  \\co 2000-2007 Underbit Technologies & Erez Volk");
 }
 
 int main (int argc, char *argv []) {

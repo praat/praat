@@ -58,9 +58,9 @@ static void classConfiguration_info (I)
 {
 	iam (Configuration);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 ("Number of dimensions: ", Melder_integer (my numberOfColumns));
-	MelderInfo_writeLine2 ("Metric: ", Melder_integer (my metric));
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Metric: ", Melder_integer (my metric));
 }
 
 class_methods (Configuration, TableOfReal)
@@ -86,7 +86,7 @@ Configuration Configuration_create (long numberOfPoints,
 	if (! TableOfReal_init (me, numberOfPoints, numberOfDimensions) ||
 		! (my w = NUMdvector (1, numberOfDimensions)) ||
 		! TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1) ||
-		! TableOfReal_setSequentialColumnLabels (me, 0, 0, "dimension ", 1, 1))
+		! TableOfReal_setSequentialColumnLabels (me, 0, 0, L"dimension ", 1, 1))
 			goto end;
 
 	my metric = 2;
@@ -401,7 +401,7 @@ int Configuration_rotateToPrincipalDirections (Configuration me)
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, 
 	int yCoordinate, double xmin, double xmax, double ymin, double ymax, 
-	int labelSize, int useRowLabels, char *label, int garnish)
+	int labelSize, int useRowLabels, wchar_t *label, int garnish)
 {
 	long i, nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 	double *x = NULL, *y = NULL;
@@ -432,7 +432,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 	{
 		if (x[i] >= xmin && x[i] <= xmax && y[i] >= ymin && y[i] <= ymax)
 		{
-			char *plotLabel = useRowLabels ? my rowLabels[i] : label;
+			wchar_t *plotLabel = useRowLabels ? my rowLabels[i] : label;
 			if (NUMstring_containsPrintableCharacter (plotLabel))
 			{
 				Graphics_text (g, x[i], y[i], plotLabel);
@@ -469,7 +469,7 @@ end:
 
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, 
-	double scale, int confidence, char *label, long d1, long d2, double xmin, double xmax,
+	double scale, int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish)
 {
 	SSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
@@ -565,8 +565,8 @@ Configuration Configuration_createLetterRExample (int choice)
 		
 	for (i = 1; i <= 32; i++)
 	{
-		char s[20];
-		sprintf (s, "%ld", i);
+		wchar_t s[20];
+		swprintf (s, 20, L"%ld", i);
 		TableOfReal_setRowLabel (me, i, s);
 		my data [i][1] = x[i];
 		my data [i][2] = y[i];
@@ -579,7 +579,7 @@ Configuration Configuration_createCarrollWishExample (void)
 	long i, nObjects = 9;
 	double  x[10] = {0, -1, 0, 1, -1, 0, 1, -1,  0,  1};
 	double  y[10] = {0,  1, 1, 1,  0, 0, 0, -1, -1, -1};
-	char *label[] = { "", "A", "B", "C", "D", "E", "F", "G", "H", "I"};
+	wchar_t *label[] = { L"", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H", L"I"};
 	Configuration me = Configuration_create (nObjects, 2);
 	
 	if (me == NULL) return NULL;

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/11
+ * pb 2007/08/12
  */
 
 #ifndef _ManPage_h_
@@ -40,14 +40,14 @@ class_create (ManPages, Data);
 
 ManPages ManPages_create (void);
 
-int ManPages_addPage (ManPages me, const char *title, const char *author, long date,
+int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-long ManPages_lookUp (ManPages me, const char *title);
+long ManPages_lookUp (ManPages me, const wchar_t *title);
 
 int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
 int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);

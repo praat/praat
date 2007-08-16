@@ -56,9 +56,9 @@ static void info (I)
 {
 	iam (CCA);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of coefficients: ", Melder_integer (my numberOfCoefficients));
-	MelderInfo_writeLine2 ("ny: ", Melder_integer (my y -> dimension));
-	MelderInfo_writeLine2 ("nx: ", Melder_integer (my x -> dimension));
+	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (my numberOfCoefficients));
+	MelderInfo_writeLine2 (L"ny: ", Melder_integer (my y -> dimension));
+	MelderInfo_writeLine2 (L"nx: ", Melder_integer (my x -> dimension));
 }
 
 class_methods (CCA, Data)
@@ -89,7 +89,7 @@ CCA CCA_create (long numberOfCoefficients, long ny, long nx)
 }
 
 void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, long ivec, long first, long last,
-	double ymin, double ymax, int weigh, double size_mm, const char *mark,	int connect, int garnish)
+	double ymin, double ymax, int weigh, double size_mm, const wchar_t *mark,	int connect, int garnish)
 {
 	Eigen e = my x; 
 	Strings labels = my xLabels;
@@ -291,9 +291,9 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 		! Eigen_and_TableOfReal_project_into (my y, thee, 1, ny, &him, 1, numberOfFactors) ||
 		! Eigen_and_TableOfReal_project_into (my x, thee, ny + 1,
 			thy numberOfColumns, &him, numberOfFactors + 1, his numberOfColumns) ||
-		! TableOfReal_setSequentialColumnLabels (him, 1, numberOfFactors, "y_", 1, 1) ||
+		! TableOfReal_setSequentialColumnLabels (him, 1, numberOfFactors, L"y_", 1, 1) ||
 		! TableOfReal_setSequentialColumnLabels (him, numberOfFactors + 1,
-			his numberOfColumns, "x_", 1, 1)) forget (him);
+			his numberOfColumns, L"x_", 1, 1)) forget (him);
 
 	return him;
 }

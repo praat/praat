@@ -27,6 +27,7 @@
  * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
  * pb 2006/10/20 embedded scripts: not on opening page
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include <ctype.h>
@@ -42,14 +43,14 @@
 
 #define SEARCH_PAGE  0
 
-static const char *month [] =
-	{ "", "January", "February", "March", "April", "May", "June",
-	  "July", "August", "September", "October", "November", "December" };
+static const wchar_t *month [] =
+	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
+	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
 FORM_WRITE (Manual, cb_writeOneToHtmlFile, "Write to HTML file", 0)
 	ManPages manPages = my data;
 	wchar_t *p = defaultName;
-	Melder_8bitToWcs_inline ((unsigned char *) ((ManPage) manPages -> pages -> item [my path]) -> title, defaultName, Melder_INPUT_ENCODING_UTF8);
+	wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
 	while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
 	wcscat (defaultName, L".html");
 DO_WRITE
@@ -93,12 +94,12 @@ static void draw (I) {
 	Graphics_clearWs (my g);
 	if (my path == SEARCH_PAGE) {
 		int i;
-		HyperPage_pageTitle (me, "Best matches");
-		HyperPage_intro (me, "The best matches to your query seem to be:");
+		HyperPage_pageTitle (me, L"Best matches");
+		HyperPage_intro (me, L"The best matches to your query seem to be:");
 		for (i = 1; i <= my numberOfMatches; i ++) {
-			char link [300];
+			wchar_t link [300];
 			page = manPages -> pages -> item [my matches [i]];
-			sprintf (link, "\\bu @@%s", page -> title);
+			swprintf (link, 300, L"\\bu @@%ls", page -> title);
 			HyperPage_listItem (me, link);
 		}
 		return;
@@ -143,12 +144,12 @@ static void draw (I) {
 		int goAhead = TRUE;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const char *text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text == NULL || text [0] == '\0' || text [strlen (text) - 1] != ':') {
+			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
+			if (text == NULL || text [0] == '\0' || text [wcslen (text) - 1] != ':') {
 				if (my printing && my suppressLinksHither)
 					goAhead = FALSE;
 				else
-					HyperPage_entry (me, "Links to this page");
+					HyperPage_entry (me, L"Links to this page");
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
@@ -158,23 +159,23 @@ static void draw (I) {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = TRUE;
 			if (! alreadyShown) {
-				char linkText [304];
-				sprintf (linkText, "@@%s@",
-					((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title);
+				const wchar_t *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
+				wchar_t linkText [304];
+				swprintf (linkText, 304, L"@@%ls@", title);
 				HyperPage_listItem (me, linkText);
 			}
 		}
 	}
 	if (! my printing && page -> date) {
-		char signature [100];
+		wchar_t signature [100];
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
-		sprintf (signature, "\\co %s, %s %ld, %ld",
-			strequ (page -> author, "ppgb") ? "Paul Boersma" :
-			strequ (page -> author, "djmw") ? "David Weenink" : page -> author,
+		swprintf (signature, 100, L"\\co %ls, %ls %ld, %ld",
+			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
+			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
 			month [imonth], date % 100, date / 10000);
-		HyperPage_any (me, "", my font, my fontSize, 0, 0.0,
+		HyperPage_any (me, L"", my font, my fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
 		HyperPage_any (me, signature, my font, my fontSize, Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
@@ -204,7 +205,7 @@ static void print (I, Graphics graphics) {
 			par = my paragraphs;
 			while ((par ++) -> type) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
-			my currentPageTitle = Melder_strdup (page -> title);
+			my currentPageTitle = Melder_wcsdup (page -> title);
 			our goToPage_i (me, ipage);
 			our draw (me);
 			our goToPage_i (me, savePage);
@@ -242,17 +243,17 @@ SET_STRING ("Right or outside header", my name)
 if (my pageNumber) SET_INTEGER ("First page number", my pageNumber + 1)
 if (my path >= 1 && my path <= manPages -> pages -> size) {
 	ManPage page = manPages -> pages -> item [my path];
-	SET_STRING ("Print pages starting with", page -> title);
+	SET_STRINGW (L"Print pages starting with", page -> title);
 }
 DO
-	my insideHeader = GET_STRING ("Left or inside header");
-	my middleHeader = GET_STRING ("Middle header");
-	my outsideHeader = GET_STRING ("Right or outside header");
-	my insideFooter = GET_STRING ("Left or inside footer");
-	my middleFooter = GET_STRING ("Middle footer");
-	my outsideFooter = GET_STRING ("Right or outside footer");
+	my insideHeader = GET_STRINGW (L"Left or inside header");
+	my middleHeader = GET_STRINGW (L"Middle header");
+	my outsideHeader = GET_STRINGW (L"Right or outside header");
+	my insideFooter = GET_STRINGW (L"Left or inside footer");
+	my middleFooter = GET_STRINGW (L"Middle footer");
+	my outsideFooter = GET_STRINGW (L"Right or outside footer");
 	my mirror = GET_INTEGER ("Mirror even/odd headers");
-	my printPagesStartingWith = GET_STRING ("Print pages starting with");
+	my printPagesStartingWith = GET_STRINGW (L"Print pages starting with");
 	my pageNumber = GET_INTEGER ("First page number");
 	my suppressLinksHither = GET_INTEGER ("Suppress \"Links to this page\"");
 	Printer_print (print, me);
@@ -262,20 +263,20 @@ END
 
 static float *goodnessOfMatch;
 
-static float searchToken (ManPages me, long ipage, char *token) {
+static float searchToken (ManPages me, long ipage, wchar_t *token) {
 	double goodness = 0.0;
 	ManPage page = my pages -> item [ipage];
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
-	char *p;
 	if (! token [0]) return 1.0;
 	/*
 	 * Try to find a match in the title, case insensitively.
 	 */
-	strcpy (Melder_buffer1, page -> title);
-	for (p = & Melder_buffer1 [0]; *p != '\0'; p ++) *p = tolower (*p);
-	if (strstr (Melder_buffer1, token)) {
+	static MelderStringW buffer = { 0 };
+	MelderStringW_copyW (& buffer, page -> title);
+	for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
+	if (wcsstr (buffer.string, token)) {
 		goodness += 300.0;   /* Lots of points for a match in the title! */
-		if (strequ (Melder_buffer1, token))
+		if (wcsequ (buffer.string, token))
 			goodness += 10000.0;   /* Even more points for an exact match! */
 	}
 	/*
@@ -283,13 +284,13 @@ static float searchToken (ManPages me, long ipage, char *token) {
 	 */
 	while (par -> type) {
 		if (par -> text) {
-			char *ptoken;
-			strcpy (Melder_buffer1, par -> text);
-			for (p = & Melder_buffer1 [0]; *p != '\0'; p ++) *p = tolower (*p);
-			ptoken = strstr (Melder_buffer1, token);
+			wchar_t *ptoken;
+			MelderStringW_copyW (& buffer, par -> text);
+			for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
+			ptoken = wcsstr (buffer.string, token);
 			if (ptoken) {
 				goodness += 10.0;   /* Ten points for every paragraph with a match! */
-				if (strstr (ptoken + strlen (token), token)) {
+				if (wcsstr (ptoken + wcslen (token), token)) {
 					goodness += 1.0;   /* One point for every second occurrence in a paragraph! */
 				}
 			}
@@ -299,22 +300,23 @@ static float searchToken (ManPages me, long ipage, char *token) {
 	return goodness;
 }
 
-static void search (Manual me, const char *query) {
+static void search (Manual me, const wchar_t *query) {
 	ManPages manPages = my data;
 	long numberOfPages = manPages -> pages -> size, ipage, imatch;
-	char searchText [200], *p;
-	strcpy (searchText, query);
-	for (p = & searchText [0]; *p != '\0'; p ++) {
+	static MelderStringW searchText = { 0 };
+	wchar_t *p;
+	MelderStringW_copyW (& searchText, query);
+	for (p = & searchText.string [0]; *p != '\0'; p ++) {
 		if (*p == '\n') *p = ' ';
 		*p = tolower (*p);
 	}
 	if (! goodnessOfMatch && ! (goodnessOfMatch = NUMfvector (1, numberOfPages)))
 		{ Melder_flushError (NULL); return; }
 	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
-		char *token = searchText;
+		wchar_t *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
-			char *space = strchr (token, ' ');
+			wchar_t *space = wcschr (token, ' ');
 			if (space) *space = '\0';
 			goodnessOfMatch [ipage] *= searchToken (manPages, ipage, token);
 			if (! space) break;
@@ -342,15 +344,15 @@ static void search (Manual me, const char *query) {
 	if (! HyperPage_goToPage_i (me, SEARCH_PAGE)) Melder_flushError (NULL);
 }
 
-void Manual_search (Manual me, const char *query) {
-	XmTextFieldSetString (my searchText, MOTIF_CONST_CHAR_ARG (query));
+void Manual_search (Manual me, const wchar_t *query) {
+	GuiText_setStringW (my searchText, query);
 	search (me, query);
 }
 
 MOTIF_CALLBACK (cb_home)
 	iam (Manual);
 	ManPages pages = my data;
-	long iHome = ManPages_lookUp (pages, "Intro");
+	long iHome = ManPages_lookUp (pages, L"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
 MOTIF_CALLBACK_END
  
@@ -386,9 +388,9 @@ MOTIF_CALLBACK_END
 
 MOTIF_CALLBACK (cb_search)
 	iam (Manual);
-	char *query = XmTextFieldGetString (my searchText);
+	wchar_t *query = GuiText_getStringW (my searchText);
 	search (me, query);
-	XtFree (query);
+	Melder_free (query);
 MOTIF_CALLBACK_END
 
 static void createChildren (I) {
@@ -431,7 +433,7 @@ static void createChildren (I) {
 }
 
 DIRECT (Manual, cb_help)
-	if (! HyperPage_goToPage (me, "Manual")) return 0;
+	if (! HyperPage_goToPage (me, L"Manual")) return 0;
 END
 
 static void createMenus (I) {
@@ -452,16 +454,16 @@ static void defaultHeaders (EditorCommand cmd) {
 	Manual me = (Manual) cmd -> editor;
 	ManPages manPages = my data;
 	if (my path) {
-		char string [400];
-		static const char *month [] =
-			{ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+		wchar_t string [400];
+		static const wchar_t *month [] =
+			{ L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec" };
 		ManPage page = manPages -> pages -> item [my path];
 		long date = page -> date;
-		SET_STRING ("Right or outside header", page -> title)
-		SET_STRING ("Left or inside footer", page -> author)
+		SET_STRINGW (L"Right or outside header", page -> title)
+		SET_STRINGW (L"Left or inside footer", page -> author)
 		if (date) {
-			sprintf (string, "%s %ld, %ld", month [date % 10000 / 100 - 1], date % 100, date / 10000);
-			SET_STRING ("Left or inside header", string)
+			swprintf (string, 400, L"%ls %ld, %ld", month [date % 10000 / 100 - 1], date % 100, date / 10000);
+			SET_STRINGW (L"Left or inside header", string)
 		}
 	}
 }
@@ -496,11 +498,11 @@ static int goToPage_i (I, long i) {
 	par = my paragraphs;
 	while ((par ++) -> type) my numberOfParagraphs ++;
 	Melder_free (my currentPageTitle);
-	my currentPageTitle = Melder_strdup (page -> title);
+	my currentPageTitle = Melder_wcsdup (page -> title);
 	return 1;
 }
 
-static int goToPage (I, const char *title) {
+static int goToPage (I, const wchar_t *title) {
 	iam (Manual);
 	ManPages manPages = my data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
@@ -512,9 +514,7 @@ static int goToPage (I, const char *title) {
 		structMelderDir saveDir = { { 0 } };
 		Melder_getDefaultDir (& saveDir);
 		Melder_setDefaultDir (& manPages -> rootDirectory);
-		static MelderStringW titleW = { 0 };
-		MelderStringW_copyA (& titleW, title);
-		if (! praat_executeScriptFromFileNameWithArguments (titleW.string + 3)) {
+		if (! praat_executeScriptFromFileNameWithArguments (title + 3)) {
 			Melder_flushError (NULL);
 		}
 		Melder_setDefaultDir (& saveDir);
@@ -523,7 +523,7 @@ static int goToPage (I, const char *title) {
 		long i;
 		i = ManPages_lookUp (manPages, title);
 		if (! i)
-			return Melder_error ("Page \"%s\" not found.", title);
+			return Melder_error3 (L"Page \"", title, L"\" not found.");
 		return goToPage_i (me, i);
 	}
 }
@@ -545,15 +545,15 @@ class_methods (Manual, HyperPage)
 	class_method (isOrdered)
 class_methods_end
 
-int Manual_init (I, Widget parent, const char *title, Any data) {
+int Manual_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (Manual);
 	ManPages manPages = data;
-	char windowTitle [101];
+	wchar_t windowTitle [101];
 	long i;
 	ManPage page;
 	ManPage_Paragraph par;
 	if (! (i = ManPages_lookUp (manPages, title)))
-		return Melder_error ("Page \"%s\" not found.", title);
+		return Melder_error3 (L"Page \"", title, L"\" not found.");
 	my path = i;
 	page = manPages -> pages -> item [i];
 	my paragraphs = page -> paragraphs;
@@ -562,20 +562,18 @@ int Manual_init (I, Widget parent, const char *title, Any data) {
 	while ((par ++) -> type) my numberOfParagraphs ++;
 
 	if (((ManPage) manPages -> pages -> item [1]) -> title [0] == '-') {
-		strcpy (windowTitle, & ((ManPage) manPages -> pages -> item [1]) -> title [1]);
-		if (windowTitle [strlen (windowTitle) - 1] == '-') windowTitle [strlen (windowTitle) - 1] = '\0';
+		wcscpy (windowTitle, & ((ManPage) manPages -> pages -> item [1]) -> title [1]);
+		if (windowTitle [wcslen (windowTitle) - 1] == '-') windowTitle [wcslen (windowTitle) - 1] = '\0';
 	} else {
-		strcpy (windowTitle, "Manual");
+		wcscpy (windowTitle, L"Manual");
 	}
-	static MelderStringW windowTitleW = { 0 };
-	MelderStringW_copyA (& windowTitleW, windowTitle);
-	if (! HyperPage_init (me, parent, windowTitleW.string, data)) { forget (me); return 0; }
+	if (! HyperPage_init (me, parent, windowTitle, data)) { forget (me); return 0; }
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
-	my history [0]. page = Melder_strdup (title);   /* BAD */
+	my history [0]. page = Melder_wcsdup (title);   /* BAD */
 	return 1;
 }
 
-Manual Manual_create (Widget parent, const char *title, Any data) {
+Manual Manual_create (Widget parent, const wchar_t *title, Any data) {
 	Manual me = new (Manual);
 	if (! me || ! Manual_init (me, parent, title, data)) forget (me);
 	return me;

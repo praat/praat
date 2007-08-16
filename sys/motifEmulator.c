@@ -34,6 +34,7 @@
  * pb 2006/11/06 Carbon control creation functions
  * pb 2007/01/25 XmATTACH_POSITION
  * pb 2007/02/13 Win: removed Ctrl-. as meaning Escape
+ * pb 2007/08/07 GuiMacDrawingArea_clipOn_graphicsContext
  */
 #ifndef UNIX
 
@@ -359,7 +360,7 @@ static int NativeText_preferredHeight (Widget me) {
 /***** WIDGET *****/
 
 Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) {
-	Widget me = (Widget) Melder_calloc (1, sizeof (struct structWidget));
+	Widget me = Melder_calloc (struct structWidget, 1);
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -639,6 +640,30 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) 
 		}
 		SetPortWindowPort (my macWindow);
 		ClipRect (& clipRect);
+	}
+	int GuiMacDrawingArea_clipOn_graphicsContext (Widget me, void *graphicsContext) {
+		Widget parent;
+		Rect clipRect = my rect;
+		Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
+		/* InsetRect (& clipRect, my marginWidth, my marginHeight); */
+		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
+			Rect *parentRect = & parent -> rect;
+			if (MEMBER (parent, ScrolledWindow)) {
+				if (MEMBER (me, ScrollBar)) {
+					parentRect = & my rect;
+				} else {
+					Melder_assert (parent -> motif.scrolledWindow.clipWindow != NULL);
+					parentRect = & parent -> motif.scrolledWindow.clipWindow -> rect;
+				}
+			}
+			if (parentRect -> left > clipRect. left) clipRect. left = parentRect -> left;
+			if (parentRect -> right < clipRect. right) clipRect. right = parentRect -> right;
+			if (parentRect -> top > clipRect. top) clipRect. top = parentRect -> top;
+			if (parentRect -> bottom < clipRect. bottom) clipRect. bottom = parentRect -> bottom;
+		}
+		CGContextClipToRect (graphicsContext, CGRectMake (clipRect.left, my shell -> height - clipRect.bottom,
+			clipRect.right - clipRect.left, clipRect.bottom - clipRect.top));
+		return my shell -> height;
 	}
 #endif
 
@@ -3268,7 +3293,7 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				Melder_relativePathToFileW (Melder_peekAsciiToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
+				Melder_relativePathToFile (Melder_peekAsciiToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
 				if (wcslen (file. wpath) > 0 && file. wpath [wcslen (file. wpath) - 1] == '\"') {
 					file. wpath [wcslen (file. wpath) - 1] = '\0';
 				}
@@ -3354,7 +3379,7 @@ void XtVaGetValues (Widget me, ...) {
 			Melder_assert (my widgetClass == xmShellWidgetClass);
 			#if mac
 				GetWTitle (my nat.window.ptr, ptext);
-				text = Melder_malloc (ptext [0] + 1);
+				text = Melder_malloc (char, ptext [0] + 1);
 				strncpy (text, (char *) ptext + 1, ptext [0]);
 				text [ptext [0]] = 0;
 				*va_arg (arg, char **) = text;
@@ -3375,7 +3400,7 @@ void XtVaGetValues (Widget me, ...) {
 								my widgetClass == xmMessageBoxWidgetClass);
 			#if mac
 				GetWTitle (my macWindow, ptext);
-				text = Melder_malloc (ptext [0] + 1);
+				text = Melder_malloc (char, ptext [0] + 1);
 				strncpy (text, (char *) ptext + 1, ptext [0]);
 				text [ptext [0]] = 0;
 				*va_arg (arg, char **) = text;
@@ -3938,7 +3963,7 @@ Boolean XmListGetMatchPos (Widget me, XmString item, int **position_list, int *p
 	#if win
 		int i, n = ListBox_GetCount (my window), count = 0;
 		if (n < 1) return False;
-		*position_list = Melder_calloc (n, sizeof (int));
+		*position_list = Melder_calloc (int, n);
 		*position_count = 0;
 		for (i = 1; i <= n; i ++) {
 			char buffer [301];
@@ -3955,7 +3980,7 @@ Boolean XmListGetMatchPos (Widget me, XmString item, int **position_list, int *p
 		Cell cell;
 		cell.h = 0;
 		if (n < 1) return False;
-		*position_list = Melder_calloc (n, sizeof (int));
+		*position_list = Melder_calloc (int, n);
 		*position_count = 0;
 		for (i = 1; i <= n; i ++) {
 			char buffer [301];
@@ -3980,10 +4005,10 @@ Boolean XmListGetSelectedPos (Widget me, int **position_list, int *position_coun
 			int selection = ListBox_GetCurSel (my window);
 			if (selection == -1) return False;
 			n = 1;
-			indices = Melder_calloc (n, sizeof (int));
+			indices = Melder_calloc (int, n);
 			indices [0] = selection;
 		} else {
-			indices = Melder_calloc (n, sizeof (int));
+			indices = Melder_calloc (int, n);
 			ListBox_GetSelItems (my window, n, indices);
 		}
 		for (i = 0; i < n; i ++) indices [i] += 1;
@@ -3994,7 +4019,7 @@ Boolean XmListGetSelectedPos (Widget me, int **position_list, int *position_coun
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
 		if (n < 1) return False;
-		*position_list = Melder_calloc (n, sizeof (int));
+		*position_list = Melder_calloc (int, n);
 		*position_count = 0;
 		for (i = 1; i <= n; i ++) {
 			cell. v = i - 1;

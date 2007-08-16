@@ -84,11 +84,11 @@ static void info (I)
 	OrderedOfString uStrings = NULL;
 	
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of strings: ", Melder_integer (my size));
+	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my size));
 	uStrings = OrderedOfString_selectUniqueItems (me, 1);
     if (uStrings != NULL)
 	{
-		MelderInfo_writeLine2 ("Number of unique categories: ", Melder_integer (uStrings -> size));
+		MelderInfo_writeLine2 (L"Number of unique categories: ", Melder_integer (uStrings -> size));
 		forget (uStrings);
 	}
 }
@@ -110,7 +110,7 @@ Any OrderedOfString_create (void)
     return me;
 }
 
-int OrderedOfString_append (I, char *append)
+int OrderedOfString_append (I, wchar_t *append)
 {
 	iam (OrderedOfString);
 	SimpleString item;
@@ -251,7 +251,7 @@ int OrderedOfString_difference (I, thou, long *ndif, double *fraction)
 	return 1;
 }
 
-long OrderedOfString_indexOfItem_c (I, const char *str)
+long OrderedOfString_indexOfItem_c (I, const wchar_t *str)
 {
 	iam (OrderedOfString); 
 	long i, index = 0;
@@ -266,7 +266,7 @@ long OrderedOfString_indexOfItem_c (I, const char *str)
 	return index;
 }
 
-const char *OrderedOfString_itemAtIndex_c (I, long index)
+const wchar_t *OrderedOfString_itemAtIndex_c (I, long index)
 {
 	iam (OrderedOfString);
 	return index > 0 && index <= my size ? SimpleString_c (my item[index]) : NULL;
@@ -278,28 +278,29 @@ int OrderedOfString_sequentialNumbers (I, long n)
 	Collection_removeAllItems (me);
     for (i=1; i <= n; i++)
     {
-		char s[20]; SimpleString str = NULL;
-		if (sprintf (s, "%ld", i) == EOF ||
+		wchar_t s[20]; SimpleString str = NULL;
+		if (swprintf (s, 20, L"%ld", i) == EOF ||
 			! (str = SimpleString_create (s)) ||
 			! Collection_addItem (me, str)) return 0;
     }
     return 1;	
 }
 
-int OrderedOfString_changeStrings (I, char *search, char *replace, 
+int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace, 
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
 	int use_regexp)
 {
 	iam (OrderedOfString);
 	regexp *compiled_search = NULL;
-	char *compileMsg, *r;
+	char *compileMsg, *rA;
+	wchar_t *r;
 	long i;
 
 	if (search == NULL || replace == NULL) return 0;
 	
 	if (use_regexp)
 	{			
-		compiled_search = CompileRE (search, &compileMsg, 0);
+		compiled_search = CompileRE (Melder_peekWcsToAscii (search), &compileMsg, 0);
 		if (compiled_search == NULL) return Melder_error (compileMsg);
 	}
 	for (i = 1; i <= my size; i++)
@@ -307,8 +308,13 @@ int OrderedOfString_changeStrings (I, char *search, char *replace,
 		SimpleString ss = my item[i];
 		long nmatches_sub;
 		
-		if (use_regexp) r = str_replace_regexp (ss -> string, compiled_search, 
-			replace, maximumNumberOfReplaces, &nmatches_sub);
+		if (use_regexp) {
+			rA = str_replace_regexp (Melder_peekWcsToAscii (ss -> string), compiled_search, 
+				Melder_peekWcsToAscii (replace), maximumNumberOfReplaces, &nmatches_sub);
+			if (rA == NULL) goto end;
+			r = Melder_asciiToWcs (rA);
+			Melder_free (rA);
+		}
 		else r = str_replace_literal (ss -> string, search, replace,
 			maximumNumberOfReplaces, &nmatches_sub);
 			
@@ -362,7 +368,7 @@ long OrderedOfString_getSize (I)
 	return my size;
 }
 
-void OrderedOfString_removeOccurrences (I, const char *search, int use_regexp)
+void OrderedOfString_removeOccurrences (I, const wchar_t *search, int use_regexp)
 {
 	iam (OrderedOfString); 
 	long i;
@@ -371,7 +377,7 @@ void OrderedOfString_removeOccurrences (I, const char *search, int use_regexp)
 	{
 		SimpleString ss = my item[i];
 		if ((use_regexp && strstr_regexp (ss -> string, search)) ||
-			(!use_regexp && strstr (ss -> string, search)))
+			(!use_regexp && wcsstr (ss -> string, search)))
 		{
 			Collection_removeItem (me, i);
 		}

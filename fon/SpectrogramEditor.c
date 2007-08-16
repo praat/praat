@@ -54,7 +54,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_RED);
 		for (f = df; f <= my maximum; f += df) {
 			Graphics_line (my graphics, 0, f, 1, f);
-			Graphics_printf (my graphics, -0.01, f, "%ld Hz", f);
+			Graphics_printf (my graphics, -0.01, f, L"%ld Hz", f);
 		}
 	}
 	/* Vertical cursor lines. */

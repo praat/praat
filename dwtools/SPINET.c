@@ -50,10 +50,10 @@ static void info (I)
 	classData -> info (me);
  	if (! Sampled2_getWindowExtrema_d (me, my y, 1, my nx, 1, my ny, &miny, &maxy) ||
  		! Sampled2_getWindowExtrema_d (me, my s, 1, my nx, 1, my ny, &mins, &maxs)) return;
-	MelderInfo_writeLine2 ("Minimum power: ", Melder_double (miny));
-	MelderInfo_writeLine2 ("Maximum power: ", Melder_double (maxy));
-	MelderInfo_writeLine2 ("Minimum power rectified: ", Melder_double (mins));
-	MelderInfo_writeLine2 ("Maximum powerrectified: ", Melder_double (maxs));
+	MelderInfo_writeLine2 (L"Minimum power: ", Melder_double (miny));
+	MelderInfo_writeLine2 (L"Maximum power: ", Melder_double (maxy));
+	MelderInfo_writeLine2 (L"Minimum power rectified: ", Melder_double (mins));
+	MelderInfo_writeLine2 (L"Maximum powerrectified: ", Melder_double (maxs));
 }
 
 class_methods (SPINET, Sampled2)
@@ -101,12 +101,12 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	if (garnish)
 	{
 		Graphics_drawInnerBox(g);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksBottom( g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Frequency (ERB)");
+		Graphics_textLeft (g, 1, L"Frequency (ERB)");
 		Graphics_marksLeft( g, 2, 1, 1, 0);
-		Graphics_textTop (g, 0, enhanced ? "Cooperative interaction output" : 
-			"Gammatone filterbank output");
+		Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
+			L"Gammatone filterbank output");
 	}
 	forget (thee);
 }
@@ -135,9 +135,9 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	if (garnish)
 	{
 		Graphics_drawInnerBox(g);
-		Graphics_textBottom (g, 1, "Frequency (ERB)");
+		Graphics_textBottom (g, 1, L"Frequency (ERB)");
 		Graphics_marksBottom( g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "strength");
+		Graphics_textLeft (g, 1, L"strength");
 		Graphics_marksLeft( g, 2, 1, 1, 0);
 	}
 	NUMfvector_free (spec, 1);

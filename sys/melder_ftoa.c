@@ -39,70 +39,21 @@
 #define MAXIMUM_NUMERIC_STRING_LENGTH  380
 	/* = sign + 308 + point + 60 + E + sign + 3 + null byte + 4 extra */
 
-static char buffersA [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-static int ibufferA = 0;
+static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static int ibuffer = 0;
 
-static wchar_t buffersW [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-static int ibufferW = 0;
-
-const char * Melder_integerA (long value) {
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	sprintf (buffersA [ibufferA], "%ld", value);
-	return buffersA [ibufferA];
+const wchar_t * Melder_integer (long value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
+	return buffers [ibuffer];
 }
 
-const wchar_t * Melder_integerW (long value) {
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
-	return buffersW [ibufferW];
-}
-
-const char * Melder_bigIntegerA (double value) {
-	char *text;
-	int trillions, billions, millions, thousands, units, firstDigitPrinted = FALSE;
-	if (fabs (value) > 1e15) return Melder_doubleA (value);
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	text = buffersA [ibufferA];
-	text [0] = '\0';
-	if (value < 0.0) {
-		sprintf (text, "-");
-		value = - value;
-	}
-	trillions = floor (value / 1e12);
-	value -= trillions * 1e12;
-	billions = floor (value / 1e9);
-	value -= billions * 1e9;
-	millions = floor (value / 1e6);
-	value -= millions * 1e6;
-	thousands = floor (value / 1e3);
-	value -= thousands * 1e3;
-	units = value;
-	if (trillions) {
-		sprintf (text + strlen (text), "%d,", trillions);
-		firstDigitPrinted = TRUE;
-	}
-	if (billions || firstDigitPrinted) {
-		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", billions);
-		firstDigitPrinted = TRUE;
-	}
-	if (millions || firstDigitPrinted) {
-		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", millions);
-		firstDigitPrinted = TRUE;
-	}
-	if (thousands || firstDigitPrinted) {
-		sprintf (text + strlen (text), firstDigitPrinted ? "%03d," : "%d,", thousands);
-		firstDigitPrinted = TRUE;
-	}
-	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
-	return text;
-}
-
-const wchar_t * Melder_bigIntegerW (double value) {
+const wchar_t * Melder_bigInteger (double value) {
 	wchar_t *text;
 	int trillions, billions, millions, thousands, units, firstDigitPrinted = FALSE;
-	if (fabs (value) > 1e15) return Melder_doubleW (value);
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	text = buffersW [ibufferW];
+	if (fabs (value) > 1e15) return Melder_double (value);
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	text = buffers [ibuffer];
 	text [0] = L'\0';
 	if (value < 0.0) {
 		swprintf (text, MAXIMUM_NUMERIC_STRING_LENGTH, L"-");
@@ -137,140 +88,72 @@ const wchar_t * Melder_bigIntegerW (double value) {
 	return text;
 }
 
-const char * Melder_booleanA (bool value) {
-	return value ? "yes" : "no";
-}
-
-const wchar_t * Melder_booleanW (bool value) {
+const wchar_t * Melder_boolean (bool value) {
 	return value ? L"yes" : L"no";
 }
 
-const char * Melder_doubleA (double value) {
-	if (value == NUMundefined) return "--undefined--";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	sprintf (buffersA [ibufferA], "%.15g", value);
-	if (atof (buffersA [ibufferA]) != value) {
-		sprintf (buffersA [ibufferA], "%.16g", value);
-		if (atof (buffersA [ibufferA]) != value) sprintf (buffersA [ibufferA], "%.17g", value);
+const wchar_t * Melder_double (double value) {
+	if (value == NUMundefined) return L"--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
+	if (wcstod (buffers [ibuffer], NULL) != value) {
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
+		if (wcstod (buffers [ibuffer], NULL) != value) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
 	}
-	return buffersA [ibufferA];
+	return buffers [ibuffer];
 }
 
-const wchar_t * Melder_doubleW (double value) {
+const wchar_t * Melder_single (double value) {
 	if (value == NUMundefined) return L"--undefined--";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
-	if (wcstod (buffersW [ibufferW], NULL) != value) {
-		swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
-		if (wcstod (buffersW [ibufferW], NULL) != value) swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
-	}
-	return buffersW [ibufferW];
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.9g", value);
+	return buffers [ibuffer];
 }
 
-const char * Melder_singleA (double value) {
-	if (value == NUMundefined) return "--undefined--";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	sprintf (buffersA [ibufferA], "%.9g", value);
-	return buffersA [ibufferA];
-}
-
-const wchar_t * Melder_singleW (double value) {
+const wchar_t * Melder_half (double value) {
 	if (value == NUMundefined) return L"--undefined--";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.9g", value);
-	return buffersW [ibufferW];
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.4g", value);
+	return buffers [ibuffer];
 }
 
-const char * Melder_halfA (double value) {
-	if (value == NUMundefined) return "--undefined--";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	sprintf (buffersA [ibufferA], "%.4g", value);
-	return buffersA [ibufferA];
-}
-
-const wchar_t * Melder_halfW (double value) {
-	if (value == NUMundefined) return L"--undefined--";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.4g", value);
-	return buffersW [ibufferW];
-}
-
-const char * Melder_fixedA (double value, int precision) {
-	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
-	if (value == 0.0) return "0";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	if (precision > 60) precision = 60;
-	minimumPrecision = - (int) floor (log10 (value));
-	sprintf (buffersA [ibufferA], "%.*f",
-		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffersA [ibufferA];
-}
-
-const wchar_t * Melder_fixedW (double value, int precision) {
+const wchar_t * Melder_fixed (double value, int precision) {
 	int minimumPrecision;
 	if (value == NUMundefined) return L"--undefined--";
 	if (value == 0.0) return L"0";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	minimumPrecision = - (int) floor (log10 (value));
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f",
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffersW [ibufferW];
+	return buffers [ibuffer];
 }
 
-const char * Melder_fixedExponentA (double value, int exponent, int precision) {
-	double factor = pow (10, exponent);
-	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
-	if (value == 0.0) return "0";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	if (precision > 60) precision = 60;
-	value /= factor;
-	minimumPrecision = - (int) floor (log10 (value));
-	sprintf (buffersA [ibufferA], "%.*fE%d",
-		minimumPrecision > precision ? minimumPrecision : precision, value, exponent);
-	return buffersA [ibufferA];
-}
-
-const wchar_t * Melder_fixedExponentW (double value, int exponent, int precision) {
+const wchar_t * Melder_fixedExponent (double value, int exponent, int precision) {
 	double factor = pow (10, exponent);
 	int minimumPrecision;
 	if (value == NUMundefined) return L"--undefined--";
 	if (value == 0.0) return L"0";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value /= factor;
 	minimumPrecision = - (int) floor (log10 (value));
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*fE%d",
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*fE%d",
 		minimumPrecision > precision ? minimumPrecision : precision, value, exponent);
-	return buffersW [ibufferW];
+	return buffers [ibuffer];
 }
 
-const char * Melder_percentA (double value, int precision) {
-	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
-	if (value == 0.0) return "0";
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferA = 0;
-	if (precision > 60) precision = 60;
-	value *= 100.0;
-	minimumPrecision = - (int) floor (log10 (value));
-	sprintf (buffersA [ibufferA], "%.*f%%",
-		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffersA [ibufferA];
-}
-
-const wchar_t * Melder_percentW (double value, int precision) {
+const wchar_t * Melder_percent (double value, int precision) {
 	int minimumPrecision;
 	if (value == NUMundefined) return L"--undefined--";
 	if (value == 0.0) return L"0";
-	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value *= 100.0;
 	minimumPrecision = - (int) floor (log10 (value));
-	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f%%",
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f%%",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
-	return buffersW [ibufferW];
+	return buffers [ibuffer];
 }
 
 /* End of file melder_ftoa.c */

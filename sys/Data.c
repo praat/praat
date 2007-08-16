@@ -154,7 +154,7 @@ int Data_writeText (I, MelderFile openFile) {
 
 int Data_createTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	MelderFile_create (file, "TEXT", 0, "txt"); cherror
+	MelderFile_create (file, L"TEXT", 0, L"txt"); cherror
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
 	#endif
@@ -179,7 +179,7 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	}
 	Data_createTextFile (me, file, verbose); cherror
 	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _classNameW);
-	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integerW (our version));
+	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
 	MelderFile_write1 (file, L"\"\n");
 	Data_writeText (me, file); cherror
 	MelderFile_writeCharacter (file, '\n');
@@ -286,7 +286,7 @@ int Data_readText (I, MelderReadString *text) {
 Any Data_readFromTextFile (MelderFile file) {
 	Data me;
 	wchar_t *klas = NULL, *string = NULL;
-	string = MelderFile_readTextW (file); cherror
+	string = MelderFile_readText (file); cherror
 	MelderReadString text = { string, string };
 	wchar_t *line = MelderReadString_readLine (& text);
 	wchar_t *end = wcsstr (line, L"ooTextFile");   /* oo format? */
@@ -471,10 +471,10 @@ int Data_Description_countMembers (Data_Description structDescription) {
 	return count;
 }
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const char *name) {
+Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *name) {
 	Data_Description desc;
 	for (desc = structDescription; desc -> name; desc ++)
-		if (strequ (name, desc -> name)) return desc;
+		if (wcsequ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = * (Data_Description *) structDescription [0]. tagType;
 		if (parentDescription)
@@ -483,11 +483,11 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 	return NULL;   /* Not found. */
 }
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char *string) {
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string) {
 	Data_Description desc;
 	for (desc = structDescription; desc -> name; desc ++) {
-		if (desc -> max1 && strequ (desc -> max1, string)) return desc;
-		if (desc -> max2 && strequ (desc -> max2, string)) return desc;
+		if (desc -> max1 && wcsequ (desc -> max1, string)) return desc;
+		if (desc -> max2 && wcsequ (desc -> max2, string)) return desc;
 	}
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = * (Data_Description *) structDescription [0]. tagType;
@@ -517,28 +517,28 @@ long Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char *formula, long *result)
+	const wchar_t *formula, long *result)
 {
 	if (formula == NULL) {   /* This was a VECTOR_FROM array. */
 		*result = 1;
 		return 1;
 	}
-	if (strnequ (formula, "my ", 3)) {
-		char buffer [100], *minus1, *psize;
+	if (wcsnequ (formula, L"my ", 3)) {
+		wchar_t buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
-		strcpy (buffer, formula + 3);   /* Skip leading "my ". */
-		if ((minus1 = strstr (buffer, " - 1")) != NULL)
+		wcscpy (buffer, formula + 3);   /* Skip leading "my ". */
+		if ((minus1 = wcsstr (buffer, L" - 1")) != NULL)
 			*minus1 = '\0';   /* Strip trailing " - 1", but remember. */
-		if ((psize = strstr (buffer, " -> size")) != NULL)
+		if ((psize = wcsstr (buffer, L" -> size")) != NULL)
 			*psize = '\0';   /* Strip trailing " -> size". */
 		if (! (sizeDescription = Data_Description_findMatch (structDescription, buffer))) {
 			*result = 0;
-			return 0 /*Melder_error ("Cannot find member \"%s\".", buffer)*/;
+			return 0 /*Melder_error ("Cannot find member \"%ls\".", buffer)*/;
 		}
 		*result = Data_Description_integer (structAddress, sizeDescription);
 		if (minus1) *result -= 1;
 	} else {
-		*result = atol (formula);
+		*result = wcstol (formula, NULL, 10);
 	}
 	return 1;
 }

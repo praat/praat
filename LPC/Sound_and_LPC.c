@@ -414,7 +414,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 	if (floor (windowDuration / my dx) < predictionOrder + 1)
 	{
 		(void) Melder_error ("%s: Analysis window duration too short.\n", proc);
-		return Melder_errorp ("For a prediction order of  %d the analysis window duration has to be greater than %s s.\n\n"
+		return Melder_errorp ("For a prediction order of  %d the analysis window duration has to be greater than %ls s.\n\n"
 			"Please increase the analysis window duration or lower the prediction order.", predictionOrder,
 			Melder_double (my dx * (predictionOrder+1)));
 	}

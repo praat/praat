@@ -393,16 +393,7 @@ int Melder_hasError (void) { return errors [0] != L'\0'; }
 
 void Melder_clearError (void) { errors [0] = L'\0'; }
 
-wchar_t * Melder_getErrorW (void) { return & errors [0]; }
-
-char * Melder_getError (void) {
-	unsigned long messageLength = wcslen (errors);
-	static char errorsA [2000+1];
-	for (unsigned long i = 0; i <= messageLength; i ++) {
-		errorsA [i] = errors [i];   // no data range checking
-	}
-	return & errorsA [0];
-}
+wchar_t * Melder_getError (void) { return & errors [0]; }
 
 void Melder_flushError (const char *format, ...) {
 	va_list arg;

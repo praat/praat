@@ -48,12 +48,12 @@ static void info (I)
 {
 	iam (LPC);
 	classData -> info (me);
-	MelderInfo_writeLine5 ("Time domain: ", Melder_double (my xmin), " to ", Melder_double (my xmax),
-		" (s).");
-	MelderInfo_writeLine2 ("Prediction order: ", Melder_integer (my maxnCoefficients));
-	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
-	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
+	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (my xmin), L" to ", Melder_double (my xmax),
+		L" (s).");
+	MelderInfo_writeLine2 (L"Prediction order: ", Melder_integer (my maxnCoefficients));
+	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"Time step: ", Melder_double (my dx), L" (s).");
+	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (my x1), L" (s).");
 }
 
 class_methods (LPC, Sampled)
@@ -114,8 +114,8 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	if (garnish)
 	{
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (seconds)");
-		Graphics_textLeft (g, 1, "Gain");
+		Graphics_textBottom (g, 1, L"Time (seconds)");
+		Graphics_textLeft (g, 1, L"Gain");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
@@ -131,7 +131,7 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
 		Roots r = Polynomial_to_Roots (p);
 		if (r != NULL)
 		{
-			Roots_draw (r, g, -1, 1, -1, 1, "+", 12, garnish);
+			Roots_draw (r, g, -1, 1, -1, 1, L"+", 12, garnish);
 			forget (r);
 		}
 		forget (p);

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -84,27 +84,27 @@ END
 
 DIRECT (LongSound_getSamplePeriod)
 	LongSound me = ONLY (classLongSound);
-	Melder_informationReal (my dx, "seconds");
+	Melder_informationReal (my dx, L"seconds");
 END
 
 DIRECT (LongSound_getSampleRate)
 	LongSound me = ONLY (classLongSound);
-	Melder_informationReal (1 / my dx, "Hertz");
+	Melder_informationReal (1 / my dx, L"Hertz");
 END
 
 FORM (LongSound_getTimeFromIndex, "LongSound: Get time from sample index", "Sound: Get time from index...")
 	INTEGER ("Sample index", "100")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classLongSound), GET_INTEGER ("Sample index")), "seconds");
+	Melder_informationReal (Sampled_indexToX (ONLY (classLongSound), GET_INTEGER ("Sample index")), L"seconds");
 END
 
 DIRECT (LongSound_getNumberOfSamples)
 	LongSound me = ONLY (classLongSound);
-	Melder_information2 (Melder_integer (my nx), " samples");
+	Melder_information2 (Melder_integer (my nx), L" samples");
 END
 
-DIRECT (LongSound_help) Melder_help ("LongSound"); END
+DIRECT (LongSound_help) Melder_help (L"LongSound"); END
 
 FORM_READ (LongSound_open, "Open long sound file", 0)
 	if (! praat_new (LongSound_open (file), MelderFile_name (file))) return 0;
@@ -131,14 +131,14 @@ FORM (LongSound_writePartToAudioFile, "LongSound: Write part to audio file", 0)
 	TEXTFIELD ("Audio file", "")
 	RADIO ("Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
-		RADIOBUTTON (Melder_audioFileTypeString (i))
+		RADIOBUTTONW (Melder_audioFileTypeString (i))
 	}}
 	REAL ("left Time range (s)", "0.0")
 	REAL ("right Time range (s)", "10.0")
 	OK
 DO
 	structMelderFile file = { 0 };
-	if (! Melder_relativePathToFileW (GET_STRINGW (L"Audio file"), & file)) return 0;
+	if (! Melder_relativePathToFile (GET_STRINGW (L"Audio file"), & file)) return 0;
 	if (! LongSound_writePartToAudioFile16 (ONLY (classLongSound), GET_INTEGER ("Type"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), & file)) return 0;
 END
@@ -149,7 +149,7 @@ FORM (LongSound_to_TextGrid, "LongSound: To TextGrid...", "LongSound: To TextGri
 	OK
 DO
 	EVERY_TO (TextGrid_create (((LongSound) OBJECT) -> xmin, ((Pitch) OBJECT) -> xmax,
-		GET_STRING ("Tier names"), GET_STRING ("Point tiers")))
+		GET_STRINGW (L"Tier names"), GET_STRINGW (L"Point tiers")))
 END
 
 DIRECT (LongSound_view)
@@ -348,7 +348,7 @@ DIRECT (Sounds_concatenateRecoverably)
 		nx += my nx;
 	}
 	thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx); cherror
-	him = TextGrid_create (0.0, nx * dx, "labels", ""); cherror
+	him = TextGrid_create (0.0, nx * dx, L"labels", L""); cherror
 	nx = 0;
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
@@ -358,7 +358,7 @@ DIRECT (Sounds_concatenateRecoverably)
 		}
 		iinterval ++;
 		if (iinterval > 1) { TextGrid_insertBoundary (him, 1, tmin); cherror }
-		TextGrid_setIntervalText (him, 1, iinterval, my name); cherror
+		TextGrid_setIntervalText (him, 1, iinterval, my nameW); cherror
 		nx += my nx;
 		tmin = tmax;
 	}
@@ -408,43 +408,43 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 		if (startTime == 0.0)
 			return Melder_error ("Please set the end time to something greater than 0 seconds.");
 		else
-			return Melder_error ("Please lower the start time or raise the end time.");
+			return Melder_error1 (L"Please lower the start time or raise the end time.");
 	}
 	if (samplingFrequency <= 0.0) {
-		Melder_error ("A Sound cannot have a negative sampling frequency.");
-		return Melder_error ("Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
+		Melder_error1 (L"A Sound cannot have a negative sampling frequency.");
+		return Melder_error1 (L"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
 	if (numberOfSamples_real < 1.0) {
 		Melder_error ("A Sound cannot have zero samples.");
 		if (startTime == 0.0)
-			return Melder_error ("Please raise the end time.");
+			return Melder_error1 (L"Please raise the end time.");
 		else
-			return Melder_error ("Please lower the start time or raise the end time.");
+			return Melder_error1 (L"Please lower the start time or raise the end time.");
 	}
 	if (numberOfSamples_real > LONG_MAX) {
-		Melder_error ("A Sound cannot have %s samples; the maximum is %s samples "
-			"(or less, depending on your computer's memory).", Melder_bigInteger (numberOfSamples_real), Melder_bigInteger (LONG_MAX));
+		Melder_error5 (L"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), L" samples; the maximum is ",
+			Melder_bigInteger (LONG_MAX), L" samples (or less, depending on your computer's memory).");
 		if (startTime == 0.0)
-			return Melder_error ("Please lower the end time or the sampling frequency.");
+			return Melder_error1 (L"Please lower the end time or the sampling frequency.");
 		else
-			return Melder_error ("Please raise the start time, lower the end time, or lower the sampling frequency.");
+			return Melder_error1 (L"Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
 	sound = Sound_create (channels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
 		startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	if (sound == NULL) {
-		if (strstr (Melder_getError (), "memory")) {
+		if (wcsstr (Melder_getError (), L"memory")) {
 			Melder_clearError ();
-			Melder_error ("There is not enough memory to create a Sound that contains %s samples.", Melder_bigInteger (numberOfSamples_real));
+			Melder_error3 (L"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.");
 			if (startTime == 0.0)
-				return Melder_error ("You could lower the end time or the sampling frequency and try again.");
+				return Melder_error1 (L"You could lower the end time or the sampling frequency and try again.");
 			else
 				return Melder_error ("You could raise the start time or lower the end time or the sampling frequency, and try again.");
 		} else {
 			return 0;   /* Unexpected error. Wait for generic message. */
 		}
 	}
-	Matrix_formula ((Matrix) sound, GET_STRING ("formula"), NULL);
+	Matrix_formula ((Matrix) sound, GET_STRINGW (L"formula"), NULL);
 	iferror {
 		forget (sound);
 		return Melder_error ("Please correct the formula.");
@@ -645,7 +645,7 @@ FORM (Sound_filter_formula, "Sound: Filter (formula)...", "Formula...")
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (Sound_filter_formula (OBJECT, GET_STRING ("formula")),
+		if (! praat_new (Sound_filter_formula (OBJECT, GET_STRINGW (L"formula")),
 			"%s_filt", NAME)) return 0;
 END
 
@@ -732,7 +732,7 @@ FORM (Sound_getAbsoluteExtremum, "Sound: Get absolute extremum", "Sound: Get abs
 	OK
 DO
 	Melder_informationReal (Vector_getAbsoluteExtremum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
 END
 
 FORM (Sound_getEnergy, "Sound: Get energy", "Sound: Get energy...")
@@ -740,11 +740,11 @@ FORM (Sound_getEnergy, "Sound: Get energy", "Sound: Get energy...")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getEnergy (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2 sec");
+	Melder_informationReal (Sound_getEnergy (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pa2 sec");
 END
 
 DIRECT (Sound_getEnergyInAir)
-	Melder_informationReal (Sound_getEnergyInAir (ONLY (classSound)), "Joule/m2");
+	Melder_informationReal (Sound_getEnergyInAir (ONLY (classSound)), L"Joule/m2");
 END
 
 FORM (Sound_getIndexFromTime, "Get sample number from time", "Get sample number from time...")
@@ -755,7 +755,7 @@ DO
 END
 
 DIRECT (Sound_getIntensity_dB)
-	Melder_informationReal (Sound_getIntensity_dB (ONLY (classSound)), "dB");
+	Melder_informationReal (Sound_getIntensity_dB (ONLY (classSound)), L"dB");
 END
 
 FORM (Sound_getMaximum, "Sound: Get maximum", "Sound: Get maximum...")
@@ -770,7 +770,7 @@ FORM (Sound_getMaximum, "Sound: Get maximum", "Sound: Get maximum...")
 	OK
 DO
 	Melder_informationReal (Vector_getMaximum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
 END
 
 FORM (old_Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
@@ -779,7 +779,7 @@ FORM (old_Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
 	OK
 DO
 	Melder_informationReal (Vector_getMean (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
 END
 
 FORM (Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
@@ -794,7 +794,7 @@ DO_ALTERNATIVE (old_Sound_getMean)
 	Sound me = ONLY (classSound);
 	long channel = GET_INTEGER ("Channel") - 1;
 	if (channel > my ny) channel = 1;
-	Melder_informationReal (Vector_getMean (me, GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), "Pascal");
+	Melder_informationReal (Vector_getMean (me, GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), L"Pascal");
 END
 
 FORM (Sound_getMinimum, "Sound: Get minimum", "Sound: Get minimum...")
@@ -809,7 +809,7 @@ FORM (Sound_getMinimum, "Sound: Get minimum", "Sound: Get minimum...")
 	OK
 DO
 	Melder_informationReal (Vector_getMinimum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
 END
 
 FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
@@ -818,7 +818,7 @@ FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sou
 DO
 	Sound me = ONLY (classSound);
 	if (my ny > 1) return Melder_error ("Cannot determine a zero crossing for a stereo sound.");
-	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), 1), "seconds");
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), 1), L"seconds");
 END
 
 FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
@@ -831,17 +831,17 @@ DO_ALTERNATIVE (old_Sound_getNearestZeroCrossing)
 	Sound me = ONLY (classSound);
 	long channel = GET_INTEGER ("Channel");
 	if (channel > my ny) channel = 1;
-	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), channel), "seconds");
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), channel), L"seconds");
 END
 
 DIRECT (Sound_getNumberOfChannels)
 	Sound me = ONLY (classSound);
-	Melder_information2 (Melder_integer (my ny), my ny == 1 ? " channel (mono)" : my ny == 2 ? " channels (stereo)" : "channels");
+	Melder_information2 (Melder_integer (my ny), my ny == 1 ? L" channel (mono)" : my ny == 2 ? L" channels (stereo)" : L"channels");
 END
 
 DIRECT (Sound_getNumberOfSamples)
 	Sound me = ONLY (classSound);
-	Melder_information2 (Melder_integer (my nx), " samples");
+	Melder_information2 (Melder_integer (my nx), L" samples");
 END
 
 FORM (Sound_getPower, "Sound: Get power", "Sound: Get power...")
@@ -849,11 +849,11 @@ FORM (Sound_getPower, "Sound: Get power", "Sound: Get power...")
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getPower (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pa2");
+	Melder_informationReal (Sound_getPower (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pa2");
 END
 
 DIRECT (Sound_getPowerInAir)
-	Melder_informationReal (Sound_getPowerInAir (ONLY (classSound)), "Watt/m2");
+	Melder_informationReal (Sound_getPowerInAir (ONLY (classSound)), L"Watt/m2");
 END
 
 FORM (Sound_getRootMeanSquare, "Sound: Get root-mean-square", "Sound: Get root-mean-square...")
@@ -861,17 +861,17 @@ FORM (Sound_getRootMeanSquare, "Sound: Get root-mean-square", "Sound: Get root-m
 	REAL ("right Time range (s)", "0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getRootMeanSquare (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Pascal");
+	Melder_informationReal (Sound_getRootMeanSquare (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pascal");
 END
 
 DIRECT (Sound_getSamplePeriod)
 	Sound me = ONLY (classSound);
-	Melder_informationReal (my dx, "seconds");
+	Melder_informationReal (my dx, L"seconds");
 END
 
 DIRECT (Sound_getSampleRate)
 	Sound me = ONLY (classSound);
-	Melder_informationReal (1 / my dx, "Hertz");
+	Melder_informationReal (1 / my dx, L"Hertz");
 END
 
 FORM (old_Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
@@ -880,7 +880,7 @@ FORM (old_Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: G
 	OK
 DO
 	Melder_informationReal (Vector_getStandardDeviation (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
 END
 
 FORM (Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
@@ -896,14 +896,14 @@ DO_ALTERNATIVE (old_Sound_getStandardDeviation)
 	long channel = GET_INTEGER ("Channel") - 1;
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getStandardDeviation (me,
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), "Pascal");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), L"Pascal");
 END
 
 FORM (Sound_getTimeFromIndex, "Get time from sample number", "Get time from sample number...")
 	INTEGER ("Sample number", "100")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classSound), GET_INTEGER ("Sample number")), "seconds");
+	Melder_informationReal (Sampled_indexToX (ONLY (classSound), GET_INTEGER ("Sample number")), L"seconds");
 END
 
 FORM (Sound_getTimeOfMaximum, "Sound: Get time of maximum", "Sound: Get time of maximum...")
@@ -918,7 +918,7 @@ FORM (Sound_getTimeOfMaximum, "Sound: Get time of maximum", "Sound: Get time of 
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Sound_getTimeOfMinimum, "Sound: Get time of minimum", "Sound: Get time of minimum...")
@@ -933,7 +933,7 @@ FORM (Sound_getTimeOfMinimum, "Sound: Get time of minimum", "Sound: Get time of 
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMinimum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (old_Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
@@ -943,7 +943,7 @@ DO
 	Sound me = ONLY (classSound);
 	long sampleIndex = GET_INTEGER ("Sample number");
 	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
-		my ny == 1 ? my z [1] [sampleIndex] : 0.5 * (my z [1] [sampleIndex] + my z [2] [sampleIndex]), "Pascal");
+		my ny == 1 ? my z [1] [sampleIndex] : 0.5 * (my z [1] [sampleIndex] + my z [2] [sampleIndex]), L"Pascal");
 END
 
 FORM (Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
@@ -959,7 +959,7 @@ DO_ALTERNATIVE (old_Sound_getValueAtIndex)
 	long channel = GET_INTEGER ("Channel") - 1;
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
-		Sampled_getValueAtSample (me, sampleIndex, channel, 0), "Pascal");
+		Sampled_getValueAtSample (me, sampleIndex, channel, 0), L"Pascal");
 END
 
 FORM (old_Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
@@ -973,7 +973,7 @@ FORM (old_Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at
 	OK
 DO
 	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
-		Vector_CHANNEL_AVERAGE, GET_INTEGER ("Interpolation") - 1), "Pascal");
+		Vector_CHANNEL_AVERAGE, GET_INTEGER ("Interpolation") - 1), L"Pascal");
 END
 
 FORM (Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
@@ -994,10 +994,10 @@ DO_ALTERNATIVE (old_Sound_getValueAtTime)
 	long channel = GET_INTEGER ("Channel") - 1;
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
-		channel, GET_INTEGER ("Interpolation") - 1), "Pascal");
+		channel, GET_INTEGER ("Interpolation") - 1), L"Pascal");
 END
 
-DIRECT (Sound_help) Melder_help ("Sound"); END
+DIRECT (Sound_help) Melder_help (L"Sound"); END
 
 FORM (Sound_lengthen_overlapAdd, "Sound: Lengthen (overlap-add)", "Sound: Lengthen (overlap-add)...")
 	POSITIVE ("Minimum pitch (Hz)", "75")
@@ -1568,10 +1568,8 @@ FORM (Sound_to_Spectrogram, "Sound: To Spectrogram", "Sound: To Spectrogram...")
 	POSITIVE ("Time step (s)", "0.002")
 	POSITIVE ("Frequency step (Hz)", "20")
 	RADIO ("Window shape", 6)
-	{
-		int i; for (i = 0; i < 6; i ++) {
-			RADIOBUTTON (Sound_to_Spectrogram_windowShapeText (i))
-		}
+	for (int i = 0; i < 6; i ++) {
+		RADIOBUTTONW (Sound_to_Spectrogram_windowShapeText (i))
 	}
 	OK
 DO
@@ -1601,7 +1599,7 @@ FORM (Sound_to_TextGrid, "Sound: To TextGrid", "Sound: To TextGrid...")
 	OK
 DO
 	EVERY_TO (TextGrid_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax,
-		GET_STRING ("All tier names"), GET_STRING ("Which of these are point tiers?")))
+		GET_STRINGW (L"All tier names"), GET_STRINGW (L"Which of these are point tiers?")))
 END
 
 DIRECT (Sound_to_TextTier)
@@ -1683,7 +1681,7 @@ FORM (Sound_writeToRawSoundFile, "Write to raw sound file", 0)
 	OK
 DO
 	structMelderFile file = { 0 };
-	Melder_relativePathToFileW (GET_STRINGW (L"Raw binary file"), & file);
+	Melder_relativePathToFile (GET_STRINGW (L"Raw binary file"), & file);
 	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGER ("Encoding"))) return 0;
 END
 
@@ -1783,8 +1781,8 @@ END
 
 /***** Help menus *****/
 
-DIRECT (AnnotationTutorial) Melder_help ("Intro 7. Annotation"); END
-DIRECT (FilteringTutorial) Melder_help ("Filtering"); END
+DIRECT (AnnotationTutorial) Melder_help (L"Intro 7. Annotation"); END
+DIRECT (FilteringTutorial) Melder_help (L"Filtering"); END
 
 /***** file recognizers *****/
 

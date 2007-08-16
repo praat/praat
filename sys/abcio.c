@@ -25,6 +25,7 @@
  * pb 2006/02/20 corrected bingeti3, bingeti3LE, binputi3, binputi3LE
  * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
  * pb 2007/07/21 MelderReadString
+ * pb 2007/08/14 check for NULL pointer before Melder_isValidAscii
  */
 
 #include "melder.h"
@@ -252,7 +253,7 @@ static short getEnum (MelderReadString *text, void *enumerated) {
 		return -1;
 	}
 	buffer [i] = '\0';
-	return enum_search (enumerated, Melder_peekWcsToAscii (buffer));
+	return enum_search (enumerated, buffer);
 }
 
 static wchar_t * getString (MelderReadString *text) {
@@ -390,57 +391,57 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 
 void texputi1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (i), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputi2 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (i), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputi4 (MelderFile file, long i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (i), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputu1 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (u), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputu2 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (u), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputu4 (MelderFile file, unsigned long u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (u), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputr4 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_singleW (x), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_single (x), file -> verbose ? L" " : NULL);
 }
 void texputr8 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_doubleW (x), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_double (x), file -> verbose ? L" " : NULL);
 }
 void texputc8 (MelderFile file, fcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_singleW (z.re),
-		file -> verbose ? L" + " : L" ", Melder_singleW (z.im), file -> verbose ? L" i " : NULL);
+	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_single (z.re),
+		file -> verbose ? L" + " : L" ", Melder_single (z.im), file -> verbose ? L" i " : NULL);
 }
 void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_doubleW (z.re),
-		file -> verbose ? L" + " : L" ", Melder_doubleW (z.im), file -> verbose ? L" i " : NULL);
+	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_double (z.re),
+		file -> verbose ? L" + " : L" ", Melder_double (z.im), file -> verbose ? L" i " : NULL);
 }
 void texputc1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integerW (i), file -> verbose ? L" " : NULL);
+	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texpute1 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", Melder_peekAsciiToWcs (enum_string (enumerated, i)), file -> verbose ? L"> " : L">");
+	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", enum_string (enumerated, i), file -> verbose ? L"> " : L">");
 }
 void texpute2 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", Melder_peekAsciiToWcs (enum_string (enumerated, i)), file -> verbose ? L"> " : L">");
+	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", enum_string (enumerated, i), file -> verbose ? L"> " : L">");
 }
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
@@ -648,8 +649,7 @@ void binputi1 (int u, FILE *f) { putc (u, f); }
 int bingete1 (FILE *f, void *enumerated) {
 	int result = (signed char) getc (f);
 	if (result < 0)
-		(void) Melder_error ("(bingete1:) %d is not a value of enumerated type \"%s\".",
-			result, enum_type (enumerated));
+		(void) Melder_error5 (L"(bingete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
 	return result;
 }
 void binpute1 (int value, FILE *f, void *enumerated) { (void) enumerated; putc (value, f); }
@@ -702,8 +702,7 @@ int bingete2 (FILE *f, void *enumerated) {
 		result = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
 	}
 	if (result < 0)
-		(void) Melder_error ("(bingete2:) %d is not a value of enumerated type \"%s\".",
-			result, enum_type (enumerated));
+		(void) Melder_error5 (L"(bingete2:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
 	return result;
 }
 
@@ -1209,7 +1208,7 @@ void binputc16 (dcomplex z, FILE *f) {
 
 char * bingets1 (FILE *f) {
 	unsigned int length = bingetu1 (f);
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(bingets1:) Out of memory. Cannot create string of length %d.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
@@ -1219,7 +1218,7 @@ char * bingets1 (FILE *f) {
 
 char * bingets2 (FILE *f) {
 	unsigned int length = bingetu2 (f);
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(bingets2:) Out of memory. Cannot create string of length %d.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
@@ -1229,7 +1228,7 @@ char * bingets2 (FILE *f) {
 
 char * bingets4 (FILE *f) {
 	unsigned long length = bingetu4 (f);
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(bingets4:) Out of memory. Cannot create string of length %ld.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
@@ -1242,14 +1241,14 @@ wchar_t * bingetw2 (FILE *f) {
 	unsigned short length = bingetu2 (f);
 	if (length == 0xffff) {
 		length = bingetu2 (f);
-		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		result = Melder_malloc (wchar_t, length + 1);
 		if (! result)
 			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			result [i] = bingetu2 (f);
 		}
 	} else {
-		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		result = Melder_malloc (wchar_t, length + 1);
 		if (! result)
 			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
@@ -1266,14 +1265,14 @@ wchar_t * bingetw4 (FILE *f) {
 	unsigned long length = bingetu4 (f);
 	if (length == 0xffffffff) {
 		length = bingetu4 (f);
-		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		result = Melder_malloc (wchar_t, length + 1);
 		if (! result)
 			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
 			result [i] = bingetu2 (f);
 		}
 	} else {
-		result = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		result = Melder_malloc (wchar_t, length + 1);
 		if (! result)
 			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
@@ -1302,10 +1301,10 @@ void binputs4 (const char *s, FILE *f) {
 
 void binputw2 (const wchar_t *s, FILE *f) {
 	unsigned long length = s ? wcslen (s) : 0; if (length > 65534) length = 65534;
-	if (Melder_isValidAscii (s)) {
+	if (s == NULL || Melder_isValidAscii (s)) {
 		binputu2 (length, f);
 		if (s != NULL) {
-			for (unsigned long i = 1; i < length; i ++) {
+			for (unsigned long i = 0; i < length; i ++) {
 				binputu1 (s [i], f);
 			}
 		}
@@ -1313,7 +1312,7 @@ void binputw2 (const wchar_t *s, FILE *f) {
 		binputu2 (0xffff, f);
 		binputu2 (length, f);
 		if (s != NULL) {
-			for (unsigned long i = 1; i < length; i ++) {
+			for (unsigned long i = 0; i < length; i ++) {
 				binputu2 (s [i], f);
 			}
 		}
@@ -1322,10 +1321,10 @@ void binputw2 (const wchar_t *s, FILE *f) {
 
 void binputw4 (const wchar_t *s, FILE *f) {
 	unsigned long length = s ? wcslen (s) : 0;
-	if (Melder_isValidAscii (s)) {
+	if (s == NULL || Melder_isValidAscii (s)) {
 		binputu4 (length, f);
 		if (s != NULL) {
-			for (unsigned long i = 1; i < length; i ++) {
+			for (unsigned long i = 0; i < length; i ++) {
 				binputu1 (s [i], f);
 			}
 		}
@@ -1333,7 +1332,7 @@ void binputw4 (const wchar_t *s, FILE *f) {
 		binputu4 (0xffffffff, f);
 		binputu4 (length, f);
 		if (s != NULL) {
-			for (unsigned long i = 1; i < length; i ++) {
+			for (unsigned long i = 0; i < length; i ++) {
 				binputu2 (s [i], f);
 			}
 		}
@@ -1351,8 +1350,8 @@ void binputw4 (const wchar_t *s, FILE *f) {
 CACHE * memopen (size_t nbytes) {
 	CACHE *me;
 	if (nbytes < 1) return NULL;
-	if (! (me = Melder_malloc (sizeof (CACHE)))) return NULL;
-	if (! (my base = Melder_malloc (nbytes))) { Melder_free (me); return NULL; }
+	if (! (me = Melder_malloc (CACHE, 1))) return NULL;
+	if (! (my base = Melder_malloc (unsigned char, nbytes))) { Melder_free (me); return NULL; }
 	my max = my base + nbytes;
 	my ptr = my base;
 	return me;
@@ -1413,8 +1412,7 @@ void cacputi1 (int u, CACHE *me) { * (signed char *) my ptr ++ = u; }
 int cacgete1 (CACHE *me, void *enumerated) {
 	int result = * (signed char *) my ptr ++;
 	if (result < 0)
-		(void) Melder_error ("(cacgete1:) %d is not a value of enumerated type \"%s\".",
-			result, enum_type (enumerated));
+		(void) Melder_error5 (L"(cacgete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
 	return result;
 }
 void cacpute1 (int value, CACHE *me, void *enumerated) {
@@ -1482,8 +1480,7 @@ int cacgete2 (CACHE *f, void *enumerated) {
 		s = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
 	}
 	if (s < 0)
-		(void) Melder_error ("(cacgete2:) %d is not a value of enumerated type \"%s\".",
-			s, enum_type (enumerated));
+		(void) Melder_error5 (L"(cacgete2:) ", Melder_integer (s), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
 	return s;
 }
 
@@ -1883,7 +1880,7 @@ void cacputc16 (dcomplex z, CACHE *f) {
 
 char * cacgets1 (CACHE *f) {
 	unsigned int length = (unsigned char) * f -> ptr ++;
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(cacgets1:) Out of memory. Cannot create a string of length %d.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
@@ -1893,7 +1890,7 @@ char * cacgets1 (CACHE *f) {
 
 char * cacgets2 (CACHE *f) {
 	unsigned int length = cacgetu2 (f);
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(cacgets2:) Out of memory. Cannot create a string of length %d.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
@@ -1903,7 +1900,7 @@ char * cacgets2 (CACHE *f) {
 
 char * cacgets4 (CACHE *f) {
 	unsigned long length = cacgetu4 (f);
-	char *result = Melder_malloc (length + 1);
+	char *result = Melder_malloc (char, length + 1);
 	if (! result)
 		return Melder_errorp ("(cacgets4:) Out of memory. Cannot create a string of length %ld.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }

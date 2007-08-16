@@ -45,7 +45,7 @@ class_create (OrderedOfString, Ordered);
 Any OrderedOfString_create (void);
 int OrderedOfString_init (I, long initialCapacity);
 
-int OrderedOfString_append (I, char *append);
+int OrderedOfString_append (I, wchar_t *append);
 Any OrderedOfString_joinItems (I, thou);
 /* Join each item */
 
@@ -63,16 +63,16 @@ double OrderedOfString_getFractionDifferent (I, thou);
 
 long OrderedOfString_getNumberOfDifferences (I, thou);
 
-const char *OrderedOfString_itemAtIndex_c (I, long index);
-long OrderedOfString_indexOfItem_c (I, const char *str);
+const wchar_t *OrderedOfString_itemAtIndex_c (I, long index);
+long OrderedOfString_indexOfItem_c (I, const wchar_t *str);
  
 void OrderedOfString_drawItem (I, Any graphics, long index, double xWC, double yWC);
 
 int OrderedOfString_sequentialNumbers (I, long n);
 
-void OrderedOfString_removeOccurrences (I, const char *search, int user_regexp);
+void OrderedOfString_removeOccurrences (I, const wchar_t *search, int user_regexp);
 
-int OrderedOfString_changeStrings (I, char *search, char *replace, 
+int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace, 
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
 	int use_regexp);
 

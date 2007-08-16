@@ -1,6 +1,6 @@
 /* ExperimentMFC.c
  *
- * Copyright (C) 2001-2006 Paul Boersma
+ * Copyright (C) 2001-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2005/12/02 response sounds are read
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/20 stereo
+ * pb 2007/08/12 wchar_t
  */
 
 #include "ExperimentMFC.h"
@@ -65,19 +66,19 @@ class_methods_end
 #include "enum_c.h"
 #include "Experiment_enums.h"
 
-static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fileNameTail,
-	double medialSilenceDuration, char **name, Sound *sound)
+static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar_t *fileNameTail,
+	double medialSilenceDuration, wchar_t **name, Sound *sound)
 {
-	char fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
+	wchar_t fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
 	structMelderFile file = { 0 };
-	strcpy (fileNameBuffer, *name);
+	wcscpy (fileNameBuffer, *name);
 	/*
 	 * The following conversion is needed when fileNameHead is an absolute path,
 	 * and the stimulus names contain slashes for relative paths.
 	 * An ugly case, but allowed.
 	 */
 	#if defined (_WIN32)
-		for (;;) { char *slash = strchr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
+		for (;;) { wchar_t *slash = wcschr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
 	#endif
 	forget (*sound);
 	/*
@@ -88,12 +89,12 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 		/*
 		 * Determine partial file name.
 		 */
-		char *comma = strchr (fileNames, ',');
+		wchar_t *comma = wcschr (fileNames, ',');
 		if (comma) *comma = '\0';
 		/*
 		 * Determine complete (relative) file name.
 		 */
-		sprintf (pathName, "%s%s%s", fileNameHead, fileNames, fileNameTail);
+		swprintf (pathName, 256, L"%ls%ls%ls", fileNameHead, fileNames, fileNameTail);
 		/*
 		 * Make sure we are in the correct directory.
 		 */
@@ -101,7 +102,7 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 			/*
 			 * Absolute file name.
 			 */
-			Melder_pathToFile (pathName, & file);
+			Melder_pathToFileW (pathName, & file);
 		} else {
 			/*
 			 * Relative or absolute file name.
@@ -120,8 +121,7 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
 			forget (substimulus);
-			Melder_error ("The sound in file \"%s\" has a different number of channels than some other sound.",
-				MelderFile_messageName (& file));
+			Melder_error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different number of channels than some other sound.");
 			goto end;
 		}
 		/*
@@ -131,8 +131,7 @@ static int readSound (ExperimentMFC me, const char *fileNameHead, const char *fi
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
 			forget (substimulus);
-			Melder_error ("The sound in file \"%s\" has a different sampling frequency than some other sound.",
-				MelderFile_messageName (& file));
+			Melder_error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different sampling frequency than some other sound.");
 			goto end;
 		}
 		/*
@@ -342,23 +341,22 @@ ResultsMFC ResultsMFC_create (long numberOfTrials) {
 
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 	ResultsMFC thee = NULL;
-	long trial;
 	if (my trial == 0 || my trial <= my numberOfTrials)
 		return Melder_errorp ("(ExperimentMFC_extractResults:) Experiment not finished.");
 	thee = ResultsMFC_create (my numberOfTrials); cherror
-	for (trial = 1; trial <= my numberOfTrials; trial ++) {
-		char *pipe = my stimulus [my stimuli [trial]]. visibleText ?
-			strchr (my stimulus [my stimuli [trial]]. visibleText, '|') : NULL;
+	for (long trial = 1; trial <= my numberOfTrials; trial ++) {
+		wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?
+			wcschr (my stimulus [my stimuli [trial]]. visibleText, '|') : NULL;
 		if (pipe) {
-			long nameLength = strlen (my stimulus [my stimuli [trial]]. name);
-			long buttonTextLength = strlen (pipe);
-			thy result [trial]. stimulus = Melder_calloc (1, nameLength + buttonTextLength + 1); cherror
-			strcpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
-			strcat (thy result [trial]. stimulus, pipe);
+			long nameLength = wcslen (my stimulus [my stimuli [trial]]. name);
+			long buttonTextLength = wcslen (pipe);
+			thy result [trial]. stimulus = Melder_calloc (wchar_t, nameLength + buttonTextLength + 1); cherror
+			wcscpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
+			wcscat (thy result [trial]. stimulus, pipe);
 		} else {
-			thy result [trial]. stimulus = Melder_strdup (my stimulus [my stimuli [trial]]. name); cherror
+			thy result [trial]. stimulus = Melder_wcsdup (my stimulus [my stimuli [trial]]. name); cherror
 		}
-		thy result [trial]. response = Melder_strdup (my response [my responses [trial]]. name); cherror
+		thy result [trial]. response = Melder_wcsdup (my response [my responses [trial]]. name); cherror
 		thy result [trial]. goodness = my goodnesses [trial];
 	}
 end:
@@ -367,21 +365,20 @@ end:
 }
 
 ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
-	long i, j;
 	ResultsMFC him = ResultsMFC_create (thy numberOfTrials); cherror
 	his numberOfTrials = 0;
-	for (i = 1; i <= thy numberOfTrials; i ++) {
+	for (long i = 1; i <= thy numberOfTrials; i ++) {
 		int present = FALSE;
-		for (j = 1; j <= my numberOfTrials; j ++) {
-			if (strequ (thy result [i]. stimulus, my result [j]. stimulus)) {
+		for (long j = 1; j <= my numberOfTrials; j ++) {
+			if (wcsequ (thy result [i]. stimulus, my result [j]. stimulus)) {
 				present = TRUE;
 				break;
 			}
 		}
 		if (present) {
 			his numberOfTrials ++;
-			his result [his numberOfTrials]. stimulus = Melder_strdup (thy result [i]. stimulus); cherror
-			his result [his numberOfTrials]. response = Melder_strdup (thy result [i]. response); cherror
+			his result [his numberOfTrials]. stimulus = Melder_wcsdup (thy result [i]. stimulus); cherror
+			his result [his numberOfTrials]. response = Melder_wcsdup (thy result [i]. response); cherror
 		}
 	}
 	if (his numberOfTrials == 0) { Melder_error ("No shared stimuli."); goto end; }
@@ -403,16 +400,16 @@ Table ResultsMFCs_to_Table (Collection me) {
 		}
 	}
 	thee = Table_create (irow, 3 + hasGoodnesses); cherror
-	Table_setColumnLabel (thee, 1, "subject");
-	Table_setColumnLabel (thee, 2, "stimulus");
-	Table_setColumnLabel (thee, 3, "response");
-	if (hasGoodnesses) Table_setColumnLabel (thee, 4, "goodness");
+	Table_setColumnLabel (thee, 1, L"subject");
+	Table_setColumnLabel (thee, 2, L"stimulus");
+	Table_setColumnLabel (thee, 3, L"response");
+	if (hasGoodnesses) Table_setColumnLabel (thee, 4, L"goodness");
 	irow = 0;
 	for (iresults = 1; iresults <= my size; iresults ++) {
 		ResultsMFC results = my item [iresults];
 		for (itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 			irow ++;
-			Table_setStringValue (thee, irow, 1, results -> name);
+			Table_setStringValue (thee, irow, 1, results -> nameW);
 			Table_setStringValue (thee, irow, 2, results -> result [itrial]. stimulus);
 			Table_setStringValue (thee, irow, 3, results -> result [itrial]. response);
 			if (hasGoodnesses)
@@ -451,7 +448,7 @@ end:
 }
 
 static int compare (SimpleString me, SimpleString thee) {
-	return strcmp (my string, thy string);
+	return wcscmp (my string, thy string);
 }
 void Categories_sort (Categories me) {
 	NUMsort_p (my size, my item, (int (*) (const void *, const void *)) compare);
@@ -459,14 +456,14 @@ void Categories_sort (Categories me) {
 
 double Categories_getEnthropy (Categories me) {
 	long i, numberOfTokens = 0;
-	char *previousString = NULL;
+	wchar_t *previousString = NULL;
 	double enthropy = 0.0;
 	me = Data_copy (me); iferror return NUMundefined;
 	Categories_sort (me);
 	for (i = 1; i <= my size; i ++) {
 		SimpleString s = my item [i];
-		char *string = s -> string;
-		if (previousString != NULL && ! strequ (string, previousString)) {
+		wchar_t *string = s -> string;
+		if (previousString != NULL && ! wcsequ (string, previousString)) {
 			double p = (double) numberOfTokens / my size;
 			enthropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;

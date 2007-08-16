@@ -49,8 +49,8 @@ Confusion Confusion_create (long numberOfStimuli, long numberOfResponses);
 
 Confusion Categories_to_Confusion (Categories me, Categories thee);
 
-int Confusion_addEntry (Confusion me, const char *stimulus,
-	const char *response);
+int Confusion_addEntry (Confusion me, const wchar_t *stimulus,
+	const wchar_t *response);
 /* data['stim']['resp'] += 1; */
 
 void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
@@ -91,7 +91,7 @@ Any Confusion_difference (Confusion me, Confusion thee);
 
 long Confusion_getNumberOfEntries (Confusion me);
 
-Confusion Confusion_condense (Confusion me, char *search, char *replace,
+Confusion Confusion_condense (Confusion me, wchar_t *search, wchar_t *replace,
 	long maximumNumberOfReplaces, int use_regexp);
 /*
 	Group row and column labels according to search and replace.

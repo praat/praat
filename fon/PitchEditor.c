@@ -25,6 +25,7 @@
  * pb 2005/06/16 units
  * pb 2006/08/08 reduced compiler warnings
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Pitch_to_Sound.h"
@@ -78,9 +79,9 @@ END
 
 DIRECT (PitchEditor, cb_getPitch)
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, Pitch_UNIT_HERTZ, 1), "Hertz");
+		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, Pitch_UNIT_HERTZ, 1), L"Hertz");
 	} else {
-		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, Pitch_UNIT_HERTZ), "Hertz");
+		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, Pitch_UNIT_HERTZ), L"Hertz");
 	}
 END
 
@@ -137,8 +138,8 @@ DIRECT (PitchEditor, cb_voiceless)
 	Editor_broadcastChange (me);
 END
 
-DIRECT (PitchEditor, cb_PitchEditorHelp) Melder_help ("PitchEditor"); END
-DIRECT (PitchEditor, cb_PitchHelp) Melder_help ("Pitch"); END
+DIRECT (PitchEditor, cb_PitchEditorHelp) Melder_help (L"PitchEditor"); END
+DIRECT (PitchEditor, cb_PitchHelp) Melder_help (L"Pitch"); END
 
 static void createMenus (I) {
 	iam (PitchEditor);
@@ -206,7 +207,7 @@ static void draw (I) {
 				Graphics_setColour (my graphics, Graphics_RED);
 				Graphics_line (my graphics, my startWindow - radius, f, my endWindow, f);
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_printf (my graphics, my startWindow - radius, f, "%.2f", f);
+				Graphics_printf (my graphics, my startWindow - radius, f, L"%.2f", f);
 			}
 		}
 
@@ -217,7 +218,7 @@ static void draw (I) {
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
 		for (f = df; f <= pitch -> ceiling; f += df) {
 			Graphics_line (my graphics, my startWindow, f, my endWindow, f);
-			Graphics_printf (my graphics, my endWindow + radius/2, f, "%ld Hz", f);
+			Graphics_printf (my graphics, my endWindow + radius/2, f, L"%ld Hz", f);
 		}
 		Graphics_setLineType (my graphics, Graphics_DRAWN);
 
@@ -238,7 +239,7 @@ static void draw (I) {
 				int strength = floor (10 * frame -> candidate [icand]. strength + 0.5);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
-				if (f > 0 && f <= pitch -> ceiling) Graphics_printf (my graphics, t, f, "%d", strength);
+				if (f > 0 && f <= pitch -> ceiling) Graphics_printf (my graphics, t, f, L"%d", strength);
 			}
 		}
 		Graphics_resetViewport (my graphics, previous);
@@ -253,16 +254,16 @@ static void draw (I) {
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, 1);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (my graphics, my startWindow, 0.5, "intens");
+		Graphics_text (my graphics, my startWindow, 0.5, L"intens");
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text (my graphics, my endWindow, 0.5, "intens");
+		Graphics_text (my graphics, my endWindow, 0.5, L"intens");
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			int strength = floor (10 * frame -> intensity + 0.5);   /* Map 0.0-1.0 to 0-9 */
 			if (strength > 9) strength = 9;
-			Graphics_printf (my graphics, t, 0.5, "%d", strength);
+			Graphics_printf (my graphics, t, 0.5, L"%d", strength);
 		}
 		Graphics_resetViewport (my graphics, previous);
 	}
@@ -279,9 +280,9 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_BLUE);
 		Graphics_line (my graphics, my startWindow, 1, my endWindow, 1);
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (my graphics, my startWindow, 0.5, "Unv");
+		Graphics_text (my graphics, my startWindow, 0.5, L"Unv");
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text (my graphics, my endWindow, 0.5, "Unv");
+		Graphics_text (my graphics, my endWindow, 0.5, L"Unv");
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;

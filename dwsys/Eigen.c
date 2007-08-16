@@ -450,7 +450,7 @@ void Eigen_invertEigenvector (I, long ivec)
 }
 
 void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
-	int fractionOfTotal, int cumulative, double size_mm, const char *mark, int garnish)
+	int fractionOfTotal, int cumulative, double size_mm, const wchar_t *mark, int garnish)
 {
 	iam (Eigen); 
 	double xmin = first, xmax = last, scale = 1, sumOfEigenvalues = 0;
@@ -489,17 +489,17 @@ void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, d
 	if (garnish)
 	{
     	Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, 1, fractionOfTotal ? (cumulative ? "Cumulative fractional eigenvalue" : "Fractional eigenvalue") :
-			(cumulative ? "Cumulative eigenvalue" : "Eigenvalue"));
+		Graphics_textLeft (g, 1, fractionOfTotal ? (cumulative ? L"Cumulative fractional eigenvalue" : L"Fractional eigenvalue") :
+			(cumulative ? L"Cumulative eigenvalue" : L"Eigenvalue"));
 		Graphics_ticks (g, first, last, 1, 1, 0, 1);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, "Index");
+		Graphics_textBottom (g, 1, L"Index");
 	}
 }
 
 void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
-	double ymin, double ymax, int weigh, double size_mm, const char *mark,
-	int connect, char **rowLabels, int garnish)
+	double ymin, double ymax, int weigh, double size_mm, const wchar_t *mark,
+	int connect, wchar_t **rowLabels, int garnish)
 {
 	iam (Eigen); 
 	long i; 
@@ -539,7 +539,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
     	Graphics_drawInnerBox (g);
     	if (ymin * ymax < 0) Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-		if (rowLabels == NULL) Graphics_textBottom (g, 1, "Element number");
+		if (rowLabels == NULL) Graphics_textBottom (g, 1, L"Element number");
 	}
 }
 

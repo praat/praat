@@ -59,13 +59,13 @@ Table Table_createFromPetersonBarneyData (void)
 {
 	Table me;
 	long i, j, nrows = 1520, ncols = 9;
-	char *columnLabels[9] = 
-		{"Type", "Sex", "Speaker", "Vowel", "IPA", "F0", "F1", "F2", "F3"};
-	char *type[3] = {"m", "w", "c"};
-	char *vowel[10] = {"iy", "ih", "eh", "ae", "aa", "ao", "uh", "uw", "ah", "er"};
-	char *ipa[10] = {"i", "\\ic", "\\ep", "\\ae", "\\as", "\\ct", "\\hs", "u", 
-		"\\vt", "\\er\\hr"};
-	char *sex[2] = {"m", "f"};
+	wchar_t *columnLabels[9] = 
+		{L"Type", L"Sex", L"Speaker", L"Vowel", L"IPA", L"F0", L"F1", L"F2", L"F3"};
+	wchar_t *type[3] = {L"m", L"w", L"c"};
+	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"aa", L"ao", L"uh", L"uw", L"ah", L"er"};
+	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u", 
+		L"\\vt", L"\\er\\hr"};
+	wchar_t *sex[2] = {L"m", L"f"};
 	struct pbdatum {
 		short star; /* was there a * in front of the vowel-type? */
 		short f[4];	/* f0, f1, f2, f3 */	
@@ -1617,16 +1617,14 @@ Table Table_createFromPetersonBarneyData (void)
 				speaker_id == 73 || speaker_id == 76) speaker_sex = 1;
 		}
 		
-		row -> cells[1].string = Melder_strdup (type [speaker_type]);
-		row -> cells[2].string = Melder_strdup (sex [speaker_sex]);
-		sprintf (Melder_buffer1, "%d", speaker_id);
-		row -> cells [3]. string = Melder_strdup (Melder_buffer1);
-		row -> cells [4]. string = Melder_strdup (vowel[vowel_id - 1]);
-		row -> cells [5]. string = Melder_strdup (ipa[vowel_id - 1]);
+		row -> cells [1]. string = Melder_wcsdup (type [speaker_type]);
+		row -> cells [2]. string = Melder_wcsdup (sex [speaker_sex]);
+		row -> cells [3]. string = Melder_wcsdup (Melder_integer (speaker_id));
+		row -> cells [4]. string = Melder_wcsdup (vowel [vowel_id - 1]);
+		row -> cells [5]. string = Melder_wcsdup (ipa [vowel_id - 1]);
 		for (j = 0; j <= 3; j++)
 		{
-			sprintf (Melder_buffer1, "%d", pbdata[i-1].f[j]);
-			row -> cells [j + 6].string = Melder_strdup (Melder_buffer1);		
+			row -> cells [j + 6].string = Melder_wcsdup (Melder_integer (pbdata[i-1].f[j]));		
 		}
 	}
 	for (j = 1; j <= ncols; j++)
@@ -1641,12 +1639,12 @@ Table Table_createFromPolsVanNieropData (void)
 {
 	Table me;
 	long i, j, nrows = 900, ncols = 10;
-	char *columnLabels[10] = 
-		{"Sex", "Speaker", "Vowel", "IPA", "F1", "F2", "F3", "L1", "L2", "L3"};
-	char *vowel[12] = {"oe", "aa", "oo", "a", "eu", "ie", "uu", "ee", "u", 
-		"e", "o", "i"};
-	char *ipa[12] = {"u", "a", "o", "\\as", "\\o/", "i", "y", "e", "\\yc", "\\ep", "\\ct", "\\ic"};
-	char *sex[2] = {"m", "f"};
+	wchar_t *columnLabels[10] = 
+		{L"Sex", L"Speaker", L"Vowel", L"IPA", L"F1", L"F2", L"F3", L"L1", L"L2", L"L3"};
+	wchar_t *vowel[12] = {L"oe", L"aa", L"oo", L"a", L"eu", L"ie", L"uu", L"ee", L"u", 
+		L"e", L"o", L"i"};
+	wchar_t *ipa[12] = {L"u", L"a", L"o", L"\\as", L"\\o/", L"i", L"y", L"e", L"\\yc", L"\\ep", L"\\ct", L"\\ic"};
+	wchar_t *sex[2] = {L"m", L"f"};
 	struct polsdatum {
 		short f[3]; /* frequency F1, F2, F3 */
 		short l[3];	/* level f1, f2, f3 */	
@@ -2638,17 +2636,14 @@ Table Table_createFromPolsVanNieropData (void)
 		int speaker_id = (i - 1) / 12 + 1;  /* 1 - 75 */
 		int speaker_sex = speaker_id <= 50 ? 0 : 1;
 		
-		row -> cells[1].string = Melder_strdup (sex [speaker_sex]);
-		sprintf (Melder_buffer1, "%d", speaker_id);
-		row -> cells [2].string = Melder_strdup (Melder_buffer1);
-		row -> cells [3].string = Melder_strdup (vowel[vowel_id - 1]);
-		row -> cells [4].string = Melder_strdup (ipa[vowel_id - 1]);
+		row -> cells [1]. string = Melder_wcsdup (sex [speaker_sex]);
+		row -> cells [2]. string = Melder_wcsdup (Melder_integer (speaker_id));
+		row -> cells [3]. string = Melder_wcsdup (vowel [vowel_id - 1]);
+		row -> cells [4]. string = Melder_wcsdup (ipa [vowel_id - 1]);
 		for (j = 0; j <= 2; j++)
 		{
-			sprintf (Melder_buffer1, "%d", polsdata[i-1].f[j]);
-			row -> cells [j + 5].string = Melder_strdup (Melder_buffer1);	
-			sprintf (Melder_buffer1, "%d", polsdata[i-1].l[j]);
-			row -> cells [j + 8].string = Melder_strdup (Melder_buffer1);
+			row -> cells [j + 5]. string = Melder_wcsdup (Melder_integer (polsdata[i-1].f[j]));	
+			row -> cells [j + 8]. string = Melder_wcsdup (Melder_integer (polsdata[i-1].l[j]));
 		}
 	}
 	for (j = 1; j <= ncols; j++)
@@ -2663,15 +2658,15 @@ Table Table_createFromWeeninkData (void)
 {
 	Table me;
 	long i, j, nrows = 360, ncols = 9;
-	char *columnLabels[9] =
-		{"Type", "Sex", "Speaker", "Vowel", "IPA", "F0", "F1", "F2", "F3"};
-	char *type[3] = {"m", "w", "c"};
+	wchar_t *columnLabels[9] =
+		{L"Type", L"Sex", L"Speaker", L"Vowel", L"IPA", L"F0", L"F1", L"F2", L"F3"};
+	wchar_t *type[3] = {L"m", L"w", L"c"};
 	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e" 
 		to Pols & van Nierop order */
 	int order[13] = { 0, 1, 5, 3, 4, 7, 9, 8, 11, 6, 12, 2, 10};
-	char *vowel[13] = {"", "oe", "aa", "oo", "a", "eu", "ie", "uu", "ee", "u", "e", "o", "i"};
-	char *ipa[13] = {"", "u", "a", "o", "\\as", "\\o/", "i", "y", "e", "\\yc", "\\ep", "\\ct", "\\ic"};
-	char *sex[2] = {"m", "f"};
+	wchar_t *vowel[13] = {L"", L"oe", L"aa", L"oo", L"a", L"eu", L"ie", L"uu", L"ee", L"u", L"e", L"o", L"i"};
+	wchar_t *ipa[13] = {L"", L"u", L"a", L"o", L"\\as", L"\\o/", L"i", L"y", L"e", L"\\yc", L"\\ep", L"\\ct", L"\\ic"};
+	wchar_t *sex[2] = {L"m", L"f"};
 	struct weeninkdatum {
 		short f[4];	/* f0, f1, f2, f3 */	
 	} weeninkdata [] = {
@@ -3093,17 +3088,15 @@ Table Table_createFromWeeninkData (void)
 				speaker_id == 73 || speaker_id == 76) speaker_sex = 1;*/
 		}
 		
-		row -> cells[1].string = Melder_strdup (type [speaker_type]);
-		row -> cells[2].string = Melder_strdup (sex [speaker_sex]);
-		sprintf (Melder_buffer1, "%d", speaker_id);
-		row -> cells [3]. string = Melder_strdup (Melder_buffer1);
-		row -> cells [4]. string = Melder_strdup (vowel[vowel_id]);
-		row -> cells [5]. string = Melder_strdup (ipa[vowel_id]);
+		row -> cells [1]. string = Melder_wcsdup (type [speaker_type]);
+		row -> cells [2]. string = Melder_wcsdup (sex [speaker_sex]);
+		row -> cells [3]. string = Melder_wcsdup (Melder_integer (speaker_id));
+		row -> cells [4]. string = Melder_wcsdup (vowel [vowel_id]);
+		row -> cells [5]. string = Melder_wcsdup (ipa [vowel_id]);
 
 		for (j = 0; j <= 3; j++)
 		{
-			sprintf (Melder_buffer1, "%d", weeninkdata[index_in_data].f[j]);
-			row -> cells [j + 6].string = Melder_strdup (Melder_buffer1);		
+			row -> cells [j + 6]. string = Melder_wcsdup (Melder_integer (weeninkdata[index_in_data].f[j]));		
 		}
 	}
 	for (j = 1; j <= ncols; j++)

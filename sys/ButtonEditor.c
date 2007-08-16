@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2004/05/10 corrected redrawing
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "ButtonEditor.h"
@@ -52,46 +53,30 @@ static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 		(isToggled ? L"SHOWN" :  (isAdded ? (cmd -> uniqueID ? L"ADDED" : L"START-UP") : L"shown"));
 	MelderStringW_empty (& text);
 	if (cmd -> unhidable) {
-		MelderStringW_appendW (& text, L"#unhidable ");
+		MelderStringW_append1 (& text, L"#unhidable ");
 	} else {
-		MelderStringW_appendW (& text, L"@@m");
-		MelderStringW_appendW (& text, Melder_integerW (i));
-		MelderStringW_appendCharacter (& text, '|');
-		MelderStringW_appendW (& text, clickText);
-		MelderStringW_appendW (& text, L"@ ");
+		MelderStringW_append5 (& text, L"@@m", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderStringW_appendW (& text, cmd -> window);
-	MelderStringW_appendW (& text, L": ");
+	MelderStringW_append2 (& text, cmd -> window, L": ");
 	if (cmd -> menu) {
-		MelderStringW_appendW (& text, cmd -> menu);
-		MelderStringW_appendW (& text, L": ");
+		MelderStringW_append2 (& text, cmd -> menu, L": ");
 	}
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderStringW_appendW (& text, L"@@p");
-			MelderStringW_appendW (& text, Melder_integerW (i));
-			MelderStringW_appendCharacter (& text, '|');
-			MelderStringW_appendW (& text, cmd -> title);
-			MelderStringW_appendCharacter (& text, '@');
+			MelderStringW_append5 (& text, L"@@p", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderStringW_appendW (& text, cmd -> title);
+			MelderStringW_append1 (& text, cmd -> title);
 		}
 	} else {
-		MelderStringW_appendW (& text, L"---------");
+		MelderStringW_append1 (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderStringW_appendW (& text, L", %%%%after \"");
-		MelderStringW_appendW (& text, cmd -> after);
-		MelderStringW_appendW (& text, L"\"%%");
+		MelderStringW_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderStringW_appendW (& text, L", script \"");
-		MelderStringW_appendW (& text, Melder_peekExpandBackslashes (cmd -> script));
-		MelderStringW_appendW (& text, L"\"");
+		MelderStringW_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
-	static MelderStringA textA = { 0 };
-	MelderStringA_copyW (& textA, text.string);
-	HyperPage_any (me, textA.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
@@ -104,77 +89,52 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	int n1 = cmd -> n1;
 	MelderStringW_empty (& text);
 	if (cmd -> class4) {
-		MelderStringW_appendW (& text, L"#unhidable ");
+		MelderStringW_append1 (& text, L"#unhidable ");
 	} else {
-		MelderStringW_appendW (& text, L"@@a");
-		MelderStringW_appendW (& text, Melder_integerW (i));
-		MelderStringW_appendCharacter (& text, '|');
-		MelderStringW_appendW (& text, clickText);
-		MelderStringW_appendW (& text, L"@ ");
+		MelderStringW_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
 	}
 	MelderStringW_appendW (& text, ((Data_Table) cmd -> class1) -> _classNameW);
 	if (n1) {
-		MelderStringW_appendW (& text, L" (");
-		MelderStringW_appendW (& text, Melder_integerW (n1));
-		MelderStringW_appendCharacter (& text, ')');
+		MelderStringW_append3 (& text, L" (", Melder_integer (n1), L")");
 	}
 	if (cmd -> class2) {
 		int n2 = cmd -> n2;
-		MelderStringW_appendW (& text, L" & ");
-		MelderStringW_appendW (& text, ((Data_Table) cmd -> class2) -> _classNameW);
+		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _classNameW);
 		if (n2) {
-			MelderStringW_appendW (& text, L" (");
-			MelderStringW_appendW (& text, Melder_integerW (n2));
-			MelderStringW_appendCharacter (& text, ')');
+			MelderStringW_append3 (& text, L" (", Melder_integer (n2), L")");
 		}
 	}
 	if (cmd -> class3) {
 		int n3 = cmd -> n3;
-		MelderStringW_appendW (& text, L" & ");
-		MelderStringW_appendW (& text, ((Data_Table) cmd -> class3) -> _classNameW);
+		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _classNameW);
 		if (n3) {
-			MelderStringW_appendW (& text, L" (");
-			MelderStringW_appendW (& text, Melder_integerW (n3));
-			MelderStringW_appendCharacter (& text, ')');
+			MelderStringW_append3 (& text, L" (", Melder_integer (n3), L")");
 		}
 	}
 	if (cmd -> class4) {
 		int n4 = cmd -> n4;
-		MelderStringW_appendW (& text, L" & ");
-		MelderStringW_appendW (& text, ((Data_Table) cmd -> class4) -> _classNameW);
+		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _classNameW);
 		if (n4) {
-			MelderStringW_appendW (& text, L" (");
-			MelderStringW_appendW (& text, Melder_integerW (n4));
-			MelderStringW_appendCharacter (& text, ')');
+			MelderStringW_append3 (& text, L" (", Melder_integer (n4), L")");
 		}
 	}
 	MelderStringW_appendW (& text, L": ");
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderStringW_appendW (& text, L"@@e");
-			MelderStringW_appendW (& text, Melder_integerW (i));
-			MelderStringW_appendCharacter (& text, '|');
-			MelderStringW_appendW (& text, cmd -> title);
-			MelderStringW_appendCharacter (& text, '@');
+			MelderStringW_append5 (& text, L"@@e", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderStringW_appendW (& text, cmd -> title);
+			MelderStringW_append1 (& text, cmd -> title);
 		}
 	} else {
-		MelderStringW_appendW (& text, L"---------");
+		MelderStringW_append1 (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderStringW_appendW (& text, L", %%%%after \"");
-		MelderStringW_appendW (& text, cmd -> after);
-		MelderStringW_appendW (& text, L"\"%%");
+		MelderStringW_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderStringW_appendW (& text, L", script \"");
-		MelderStringW_appendW (& text, Melder_peekExpandBackslashes (cmd -> script));
-		MelderStringW_appendW (& text, L"\"");
+		MelderStringW_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
-	static MelderStringA textA = { 0 };
-	MelderStringA_copyW (& textA, text.string);
-	HyperPage_any (me, textA.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
@@ -223,13 +183,13 @@ static void draw (I) {
 	}
 }
 
-static int goToPage (Any editor, const char *title) {
+static int goToPage (Any editor, const wchar_t *title) {
 	(void) editor;
 	if (! title || ! title [0]) return 0;
-	if (strequ (title, "Buttons")) return 1;
+	if (wcsequ (title, L"Buttons")) return 1;
 	switch (title [0]) {
 		case 'a': {   /* Toggle visibility of action.*/
-			long i = atol (& title [1]);
+			long i = wcstol (& title [1], NULL, 10);
 			praat_Command action = praat_getAction (i);
 			if (! action) return 0;
 			if (action -> hidden)
@@ -238,7 +198,7 @@ static int goToPage (Any editor, const char *title) {
 				praat_hideAction (action -> class1, action -> class2, action -> class3, action -> title);
 		} break;
 		case 'm': {   /* Toggle visibility of menu command. */
-			long i = atol (& title [1]);
+			long i = wcstol (& title [1], NULL, 10);
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand) return 0;
 			if (menuCommand -> hidden)
@@ -247,7 +207,7 @@ static int goToPage (Any editor, const char *title) {
 				praat_hideMenuCommand (menuCommand -> window, menuCommand -> menu, menuCommand -> title);
 		} break;
 		case 'e': {   /* Execute action. */
-			long i = atol (& title [1]);
+			long i = wcstol (& title [1], NULL, 10);
 			praat_Command action = praat_getAction (i);
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
@@ -262,7 +222,7 @@ static int goToPage (Any editor, const char *title) {
 			praat_updateSelection ();
 		} break;
 		case 'p': {   /* Perform menu command. */
-			long i = atol (& title [1]);
+			long i = wcstol (& title [1], NULL, 10);
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
@@ -288,7 +248,7 @@ static void which (ButtonEditor me, int show) {
 	XmToggleButtonSetState (my button3, show == 3,  False);
 	XmToggleButtonSetState (my button4, show == 4,  False);
 	XmToggleButtonSetState (my button5, show == 5,  False);
-	HyperPage_goToPage (me, "Buttons");
+	HyperPage_goToPage (me, L"Buttons");
 }
 
 MOTIF_CALLBACK (cb_objects) which (void_me, 1); MOTIF_CALLBACK_END
@@ -318,7 +278,7 @@ static void createChildren (I) {
 	XtAddCallback (my button5, XmNvalueChangedCallback, cb_actionsNZ, (XtPointer) me);
 }
 
-DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help ("ButtonEditor"); END
+DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END
 
 static void createMenus (I) {
 	iam (ButtonEditor);

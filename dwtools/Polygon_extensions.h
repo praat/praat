@@ -39,6 +39,6 @@ void Polygon_Categories_draw (I, Any categories, Any graphics, double xmin, doub
 /* reverse axis when min > max */
 
 void Polygon_drawMarks (I, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const char *mark);
+	double ymin, double ymax, double size_mm, const wchar_t *mark);
 
 #endif /* _Polygon_extensions_h_ */

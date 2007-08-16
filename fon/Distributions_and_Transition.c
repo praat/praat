@@ -1,6 +1,6 @@
 /* Distributions_and_Transition.c
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 /*
- * pb 1997/03/02
+ * pb 1997/03/02 created
  * pb 2002/07/16 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Distributions_and_Transition.h"
@@ -65,8 +66,8 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 	 * Copy labels and set name.
 	 */
 	for (i = 1; i <= thy numberOfStates; i ++)
-		thy stateLabels [i] = Melder_strdup (underlying -> columnLabels [i]);
-	Thing_setName (thee, underlying -> columnLabels [environment]);
+		thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]);
+	Thing_setNameW (thee, underlying -> columnLabels [environment]);
 
 	/*
 	 * Compute the off-diagonal elements of the transition matrix in environment 'environment'.
@@ -183,7 +184,7 @@ Distributions Transition_to_Distributions_conflate (Transition me) {
 	 * Copy labels.
 	 */
 	for (i = 1; i <= my numberOfStates; i ++)
-		thy rowLabels [i] = Melder_strdup (my stateLabels [i]);
+		thy rowLabels [i] = Melder_wcsdup (my stateLabels [i]);
 
 	/*
 	 * Average rows.

@@ -28,6 +28,7 @@
  * pb 2007/06/21 readText and writeText API change
  * pb 2007/06/28 double degreesOfFreedom
  * pb 2007/07/21 readText API change
+ * pb 2007/08/10 NUMsort_strW
  */
 
 /* "NUM" = "NUMerics" */
@@ -290,6 +291,7 @@ void NUMsort_d (long n, double ra []);
 void NUMsort_i (long n, int ra []);
 void NUMsort_l (long n, long ra []);
 void NUMsort_str (long n, char *a []);
+void NUMsort_strW (long n, wchar_t *a []);
 void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *));
 
 double NUMquantile_f (long n, float  a [], double factor);

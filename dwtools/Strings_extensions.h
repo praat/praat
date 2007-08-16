@@ -46,17 +46,17 @@ Strings Strings_createFixedLength (long numberOfStrings);
 
 Strings Strings_append (Ordered me);
 
-Strings Strings_change (Strings me, char *search, char *replace, 
+Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace, 
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
 	int use_regexp);
 
-int Strings_setString (Strings me, char *new, long index);
+int Strings_setString (Strings me, wchar_t *new, long index);
 
-Strings strings_to_Strings (char **strings, long from, long to);
+Strings strings_to_Strings (wchar_t **strings, long from, long to);
 
 Strings Strings_extractPart (Strings me, long start, long end);
 
-Strings strings_to_Strings_link (char** strings, long n);
+Strings strings_to_Strings_link (wchar_t** strings, long n);
 /* for (i=1; i<= n; i++) my strings[i] = strings[i]; */
 void _Strings_unlink (Strings me);
 /* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */

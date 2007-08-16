@@ -134,7 +134,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	}
 
 	if (! class1) {
-		Melder_flushError ("praat_addAction: command \"%s\" has no first class.", title);
+		Melder_flushError ("praat_addAction: command \"%ls\" has no first class.", title);
 		return;
 	}
 
@@ -278,7 +278,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 		theActions [position]. script = NULL;
 	} else {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFileW (script, & file);
+		Melder_relativePathToFile (script, & file);
 		theActions [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
 	}
 	theActions [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
@@ -684,7 +684,7 @@ void praat_actions_createWriteMenu (Widget bar) {
 }
 
 void praat_actions_init (void) {
-	theActions = Melder_calloc (praat_MAXNUM_LOOSE_COMMANDS + 1, sizeof (struct structPraat_Command));
+	theActions = Melder_calloc (struct structPraat_Command, praat_MAXNUM_LOOSE_COMMANDS + 1);
 }
 
 void praat_actions_createDynamicMenu (Widget form, int width) {

@@ -23,6 +23,7 @@
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 compatible with stereo Sounds
  * pb 2007/03/17 domain quantity
+ * pb 2007/08/12 wchar_t
  */
 
 #include "AmplitudeTier.h"
@@ -40,7 +41,7 @@ AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, "Sound pressure (Pa)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, L"Sound pressure (Pa)");
 }
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
@@ -77,7 +78,7 @@ IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold
 }
 
 TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
-	return RealTier_downto_TableOfReal (me, "Time (s)", "Sound pressure (Pa)");
+	return RealTier_downto_TableOfReal (me, L"Time (s)", L"Sound pressure (Pa)");
 }
 
 void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {

@@ -2,7 +2,7 @@
 #define _Transition_h_
 /* Transition.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1997/03/02
- * pb 2002/07/16 GPL
+ * pb 2007/08/12
  */
 
 /* Transition inherits from Data */
@@ -35,7 +34,7 @@
 /* For the inheritors. */
 #define Transition_members Data_members \
 	long numberOfStates; \
-	char **stateLabels; \
+	wchar_t **stateLabels; \
 	double **data;
 #define Transition_methods Data_methods
 class_create (Transition, Data);
@@ -43,7 +42,7 @@ class_create (Transition, Data);
 int Transition_init (I, long numberOfStates);
 Transition Transition_create (long numberOfStates);
 
-int Transition_formula (I, const char *formula);
+int Transition_formula (I, const wchar_t *formula);
 void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision);
 
 int Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);

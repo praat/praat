@@ -84,27 +84,27 @@ static const wchar_t * theMessage_Cannot_compute_pulses = L"The pulses are not d
 
 struct logInfo {
 	int toInfoWindow, toLogFile;
-	char fileName [Resources_STRING_BUFFER_SIZE], format [Resources_STRING_BUFFER_SIZE];
+	wchar_t fileName [Resources_STRING_BUFFER_SIZE], format [Resources_STRING_BUFFER_SIZE];
 };
 
 #if defined (macintosh)
-	#define LOG_1_FILE_NAME "~/Desktop/Pitch Log"
-	#define LOG_2_FILE_NAME "~/Desktop/Formant Log"
-	#define LOG_3_FILE_NAME "~/Desktop/Log script 3"
-	#define LOG_4_FILE_NAME "~/Desktop/Log script 4"
+	#define LOG_1_FILE_NAME L"~/Desktop/Pitch Log"
+	#define LOG_2_FILE_NAME L"~/Desktop/Formant Log"
+	#define LOG_3_FILE_NAME L"~/Desktop/Log script 3"
+	#define LOG_4_FILE_NAME L"~/Desktop/Log script 4"
 #elif defined (WIN32)
-	#define LOG_1_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Pitch Log.txt"
-	#define LOG_2_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Formant Log.txt"
-	#define LOG_3_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Log script 3.praat"
-	#define LOG_4_FILE_NAME "C:\\WINDOWS\\DESKTOP\\Log script 4.praat"
+	#define LOG_1_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Pitch Log.txt"
+	#define LOG_2_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Formant Log.txt"
+	#define LOG_3_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Log script 3.praat"
+	#define LOG_4_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Log script 4.praat"
 #else
-	#define LOG_1_FILE_NAME "~/pitch_log"
-	#define LOG_2_FILE_NAME "~/formant_log"
-	#define LOG_3_FILE_NAME "~/log_script3"
-	#define LOG_4_FILE_NAME "~/log_script4"
+	#define LOG_1_FILE_NAME L"~/pitch_log"
+	#define LOG_2_FILE_NAME L"~/formant_log"
+	#define LOG_3_FILE_NAME L"~/log_script3"
+	#define LOG_4_FILE_NAME L"~/log_script4"
 #endif
-#define LOG_1_FORMAT  "Time 'time:6' seconds, pitch 'f0:2' Hertz"
-#define LOG_2_FORMAT  "'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'"
+#define LOG_1_FORMAT  L"Time 'time:6' seconds, pitch 'f0:2' Hertz"
+#define LOG_2_FORMAT  L"'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'"
 static struct {
 	double longestAnalysis;
 	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView;
@@ -114,7 +114,7 @@ static struct {
 	struct FunctionEditor_formant formant;
 	struct FunctionEditor_pulses pulses;
 	struct logInfo log [2];
-	char logScript3 [Resources_STRING_BUFFER_SIZE], logScript4 [Resources_STRING_BUFFER_SIZE];
+	wchar_t logScript3 [Resources_STRING_BUFFER_SIZE], logScript4 [Resources_STRING_BUFFER_SIZE];
 } preferences = {
 	10.0,
 	1 /* automatic time step */, 0.01 /* in case of a fixed step */, 100 /* in case of a fixed number per view */,
@@ -166,64 +166,64 @@ static struct {
 };
 
 void FunctionEditor_SoundAnalysis_prefs (void) {
-	Resources_addDouble ("FunctionEditor.longestAnalysis", & preferences.longestAnalysis);
-	Resources_addInt ("FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy);
-	Resources_addDouble ("FunctionEditor.fixedTimeStep", & preferences.fixedTimeStep);
-	Resources_addLong ("FunctionEditor.numberOfTimeStepsPerView", & preferences.numberOfTimeStepsPerView);
-	Resources_addInt ("FunctionEditor.spectrogram.show", & preferences.spectrogram.show);
-	Resources_addLong ("FunctionEditor.spectrogram.timeSteps2", & preferences.spectrogram.timeSteps);
-	Resources_addLong ("FunctionEditor.spectrogram.frequencySteps2", & preferences.spectrogram.frequencySteps);
-	Resources_addDouble ("FunctionEditor.spectrogram.viewFrom2", & preferences.spectrogram.viewFrom);
-	Resources_addDouble ("FunctionEditor.spectrogram.viewTo2", & preferences.spectrogram.viewTo);
-	Resources_addInt ("FunctionEditor.spectrogram.method2", & preferences.spectrogram.method);
-	Resources_addDouble ("FunctionEditor.spectrogram.windowLength2", & preferences.spectrogram.windowLength);
-	Resources_addInt ("FunctionEditor.spectrogram.windowShape2", & preferences.spectrogram.windowShape);
-	Resources_addDouble ("FunctionEditor.spectrogram.maximum2", & preferences.spectrogram.maximum);
-	Resources_addInt ("FunctionEditor.spectrogram.autoscaling2", & preferences.spectrogram.autoscaling);
-	Resources_addDouble ("FunctionEditor.spectrogram.dynamicRange2", & preferences.spectrogram.dynamicRange);
-	Resources_addDouble ("FunctionEditor.spectrogram.preemphasis2", & preferences.spectrogram.preemphasis);
-	Resources_addDouble ("FunctionEditor.spectrogram.dynamicCompression2", & preferences.spectrogram.dynamicCompression);
-	Resources_addInt ("FunctionEditor.pitch.show", & preferences.pitch.show);
-	Resources_addDouble ("FunctionEditor.pitch.floor", & preferences.pitch.floor);
-	Resources_addDouble ("FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling);
-	Resources_addInt ("FunctionEditor.pitch.unit", & preferences.pitch.unit);
-	Resources_addInt ("FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod);
-	Resources_addDouble ("FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom);
-	Resources_addDouble ("FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo);
-	Resources_addInt ("FunctionEditor.pitch.method", & preferences.pitch.method);
-	Resources_addInt ("FunctionEditor.pitch.veryAccurate", & preferences.pitch.veryAccurate);
-	Resources_addLong ("FunctionEditor.pitch.maximumNumberOfCandidates", & preferences.pitch.maximumNumberOfCandidates);
-	Resources_addDouble ("FunctionEditor.pitch.silenceThreshold", & preferences.pitch.silenceThreshold);
-	Resources_addDouble ("FunctionEditor.pitch.voicingThreshold", & preferences.pitch.voicingThreshold);
-	Resources_addDouble ("FunctionEditor.pitch.octaveCost", & preferences.pitch.octaveCost);
-	Resources_addDouble ("FunctionEditor.pitch.octaveJumpCost", & preferences.pitch.octaveJumpCost);
-	Resources_addDouble ("FunctionEditor.pitch.voicedUnvoicedCost", & preferences.pitch.voicedUnvoicedCost);
-	Resources_addInt ("FunctionEditor.intensity.show", & preferences.intensity.show);
-	Resources_addDouble ("FunctionEditor.intensity.viewFrom", & preferences.intensity.viewFrom);
-	Resources_addDouble ("FunctionEditor.intensity.viewTo", & preferences.intensity.viewTo);
-	Resources_addInt ("FunctionEditor.intensity.averagingMethod", & preferences.intensity.averagingMethod);
-	Resources_addInt ("FunctionEditor.intensity.subtractMeanPressure", & preferences.intensity.subtractMeanPressure);
-	Resources_addInt ("FunctionEditor.formant.show", & preferences.formant.show);
-	Resources_addDouble ("FunctionEditor.formant.maximumFormant", & preferences.formant.maximumFormant);
-	Resources_addLong ("FunctionEditor.formant.numberOfPoles", & preferences.formant.numberOfPoles);
-	Resources_addDouble ("FunctionEditor.formant.windowLength", & preferences.formant.windowLength);
-	Resources_addDouble ("FunctionEditor.formant.dynamicRange", & preferences.formant.dynamicRange);
-	Resources_addDouble ("FunctionEditor.formant.dotSize", & preferences.formant.dotSize);
-	Resources_addInt ("FunctionEditor.formant.method", & preferences.formant.method);
-	Resources_addDouble ("FunctionEditor.formant.preemphasisFrom", & preferences.formant.preemphasisFrom);
-	Resources_addInt ("FunctionEditor.pulses.show", & preferences.pulses.show);
-	Resources_addDouble ("FunctionEditor.pulses.maximumPeriodFactor", & preferences.pulses.maximumPeriodFactor);
-	Resources_addDouble ("FunctionEditor.pulses.maximumAmplitudeFactor", & preferences.pulses.maximumAmplitudeFactor);
-	Resources_addInt ("FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow);
-	Resources_addInt ("FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile);
-	Resources_addString ("FunctionEditor.log1.fileName", & preferences.log[0].fileName [0]);
-	Resources_addString ("FunctionEditor.log1.format", & preferences.log[0].format [0]);
-	Resources_addInt ("FunctionEditor.log2.toInfoWindow", & preferences.log[1].toInfoWindow);
-	Resources_addInt ("FunctionEditor.log2.toLogFile", & preferences.log[1].toLogFile);
-	Resources_addString ("FunctionEditor.log2.fileName", & preferences.log[1].fileName [0]);
-	Resources_addString ("FunctionEditor.log2.format", & preferences.log[1].format [0]);
-	Resources_addString ("FunctionEditor.logScript3", & preferences.logScript3 [0]);
-	Resources_addString ("FunctionEditor.logScript4", & preferences.logScript4 [0]);
+	Resources_addDouble (L"FunctionEditor.longestAnalysis", & preferences.longestAnalysis);
+	Resources_addInt (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy);
+	Resources_addDouble (L"FunctionEditor.fixedTimeStep", & preferences.fixedTimeStep);
+	Resources_addLong (L"FunctionEditor.numberOfTimeStepsPerView", & preferences.numberOfTimeStepsPerView);
+	Resources_addInt (L"FunctionEditor.spectrogram.show", & preferences.spectrogram.show);
+	Resources_addLong (L"FunctionEditor.spectrogram.timeSteps2", & preferences.spectrogram.timeSteps);
+	Resources_addLong (L"FunctionEditor.spectrogram.frequencySteps2", & preferences.spectrogram.frequencySteps);
+	Resources_addDouble (L"FunctionEditor.spectrogram.viewFrom2", & preferences.spectrogram.viewFrom);
+	Resources_addDouble (L"FunctionEditor.spectrogram.viewTo2", & preferences.spectrogram.viewTo);
+	Resources_addInt (L"FunctionEditor.spectrogram.method2", & preferences.spectrogram.method);
+	Resources_addDouble (L"FunctionEditor.spectrogram.windowLength2", & preferences.spectrogram.windowLength);
+	Resources_addInt (L"FunctionEditor.spectrogram.windowShape2", & preferences.spectrogram.windowShape);
+	Resources_addDouble (L"FunctionEditor.spectrogram.maximum2", & preferences.spectrogram.maximum);
+	Resources_addInt (L"FunctionEditor.spectrogram.autoscaling2", & preferences.spectrogram.autoscaling);
+	Resources_addDouble (L"FunctionEditor.spectrogram.dynamicRange2", & preferences.spectrogram.dynamicRange);
+	Resources_addDouble (L"FunctionEditor.spectrogram.preemphasis2", & preferences.spectrogram.preemphasis);
+	Resources_addDouble (L"FunctionEditor.spectrogram.dynamicCompression2", & preferences.spectrogram.dynamicCompression);
+	Resources_addInt (L"FunctionEditor.pitch.show", & preferences.pitch.show);
+	Resources_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor);
+	Resources_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling);
+	Resources_addInt (L"FunctionEditor.pitch.unit", & preferences.pitch.unit);
+	Resources_addInt (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod);
+	Resources_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom);
+	Resources_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo);
+	Resources_addInt (L"FunctionEditor.pitch.method", & preferences.pitch.method);
+	Resources_addInt (L"FunctionEditor.pitch.veryAccurate", & preferences.pitch.veryAccurate);
+	Resources_addLong (L"FunctionEditor.pitch.maximumNumberOfCandidates", & preferences.pitch.maximumNumberOfCandidates);
+	Resources_addDouble (L"FunctionEditor.pitch.silenceThreshold", & preferences.pitch.silenceThreshold);
+	Resources_addDouble (L"FunctionEditor.pitch.voicingThreshold", & preferences.pitch.voicingThreshold);
+	Resources_addDouble (L"FunctionEditor.pitch.octaveCost", & preferences.pitch.octaveCost);
+	Resources_addDouble (L"FunctionEditor.pitch.octaveJumpCost", & preferences.pitch.octaveJumpCost);
+	Resources_addDouble (L"FunctionEditor.pitch.voicedUnvoicedCost", & preferences.pitch.voicedUnvoicedCost);
+	Resources_addInt (L"FunctionEditor.intensity.show", & preferences.intensity.show);
+	Resources_addDouble (L"FunctionEditor.intensity.viewFrom", & preferences.intensity.viewFrom);
+	Resources_addDouble (L"FunctionEditor.intensity.viewTo", & preferences.intensity.viewTo);
+	Resources_addInt (L"FunctionEditor.intensity.averagingMethod", & preferences.intensity.averagingMethod);
+	Resources_addInt (L"FunctionEditor.intensity.subtractMeanPressure", & preferences.intensity.subtractMeanPressure);
+	Resources_addInt (L"FunctionEditor.formant.show", & preferences.formant.show);
+	Resources_addDouble (L"FunctionEditor.formant.maximumFormant", & preferences.formant.maximumFormant);
+	Resources_addLong (L"FunctionEditor.formant.numberOfPoles", & preferences.formant.numberOfPoles);
+	Resources_addDouble (L"FunctionEditor.formant.windowLength", & preferences.formant.windowLength);
+	Resources_addDouble (L"FunctionEditor.formant.dynamicRange", & preferences.formant.dynamicRange);
+	Resources_addDouble (L"FunctionEditor.formant.dotSize", & preferences.formant.dotSize);
+	Resources_addInt (L"FunctionEditor.formant.method", & preferences.formant.method);
+	Resources_addDouble (L"FunctionEditor.formant.preemphasisFrom", & preferences.formant.preemphasisFrom);
+	Resources_addInt (L"FunctionEditor.pulses.show", & preferences.pulses.show);
+	Resources_addDouble (L"FunctionEditor.pulses.maximumPeriodFactor", & preferences.pulses.maximumPeriodFactor);
+	Resources_addDouble (L"FunctionEditor.pulses.maximumAmplitudeFactor", & preferences.pulses.maximumAmplitudeFactor);
+	Resources_addInt (L"FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow);
+	Resources_addInt (L"FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile);
+	Resources_addString (L"FunctionEditor.log1.fileName", & preferences.log[0].fileName [0]);
+	Resources_addString (L"FunctionEditor.log1.format", & preferences.log[0].format [0]);
+	Resources_addInt (L"FunctionEditor.log2.toInfoWindow", & preferences.log[1].toInfoWindow);
+	Resources_addInt (L"FunctionEditor.log2.toLogFile", & preferences.log[1].toLogFile);
+	Resources_addString (L"FunctionEditor.log2.fileName", & preferences.log[1].fileName [0]);
+	Resources_addString (L"FunctionEditor.log2.format", & preferences.log[1].format [0]);
+	Resources_addString (L"FunctionEditor.logScript3", & preferences.logScript3 [0]);
+	Resources_addString (L"FunctionEditor.logScript4", & preferences.logScript4 [0]);
 }
 
 void FunctionEditor_SoundAnalysis_forget (I) {
@@ -378,20 +378,20 @@ static void computePulses (FunctionEditor me) {
 #define FunctionEditor_PART_CURSOR  1
 #define FunctionEditor_PART_SELECTION  2
 
-static const char *FunctionEditor_partString (int part) {
-	static const char *strings [] = { "", "CURSOR", "SELECTION" };
+static const wchar_t *FunctionEditor_partString (int part) {
+	static const wchar_t *strings [] = { L"", L"CURSOR", L"SELECTION" };
 	return strings [part];
 }
 
-static const char *FunctionEditor_partString_locative (int part) {
-	static const char *strings [] = { "", "at CURSOR", "in SELECTION" };
+static const wchar_t *FunctionEditor_partString_locative (int part) {
+	static const wchar_t *strings [] = { L"", L"at CURSOR", L"in SELECTION" };
 	return strings [part];
 }
 
 static int makeQueriable (FunctionEditor me, int allowCursor, double *tmin, double *tmax) {
 	if (my endWindow - my startWindow > my longestAnalysis) {
-		return Melder_error ("Window too long to show analyses. Zoom in to at most %s seconds or set the \"longest analysis\" "
-			"to at least %s seconds.", Melder_half (my longestAnalysis), Melder_half (my endWindow - my startWindow));
+		return Melder_error5 (L"Window too long to show analyses. Zoom in to at most ", Melder_half (my longestAnalysis), L" seconds "
+			"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), L" seconds.");
 	}
 	if (my startSelection == my endSelection) {
 		if (allowCursor) {
@@ -525,7 +525,7 @@ static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 		OPTIONMENU ("Window shape", 6)
 		{
 			int i; for (i = 0; i < 6; i ++) {
-				OPTION (Sound_to_Spectrogram_windowShapeText (i))
+				OPTIONW (Sound_to_Spectrogram_windowShapeText (i))
 			}
 		}
 		LABEL ("", "Spectrogram view settings:")
@@ -593,11 +593,11 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	publish = Sound_to_Spectrum (sound, TRUE);
 	forget (sound);
 	if (! publish) return 0;
-	static MelderStringA sliceName = { 0 };
-	MelderStringA_copyA (& sliceName, my data == NULL ? "untitled" : ((Data) my data) -> name);
-	MelderStringA_appendCharacter (& sliceName, '_');
-	MelderStringA_appendA (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
-	Thing_setName (publish, sliceName.string);
+	static MelderStringW sliceName = { 0 };
+	MelderStringW_copyW (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> nameW);
+	MelderStringW_appendCharacter (& sliceName, '_');
+	MelderStringW_append1 (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
+	Thing_setNameW (publish, sliceName.string);
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);
 	return 1;
@@ -605,7 +605,7 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 
 static int menu_cb_getFrequency (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	Melder_informationReal (my spectrogram.cursor, "Hertz");
+	Melder_informationReal (my spectrogram.cursor, L"Hertz");
 	return 1;
 }
 
@@ -622,8 +622,8 @@ static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 	if (part != FunctionEditor_PART_CURSOR) return Melder_error ("Click inside the spectrogram first.");
 	MelderInfo_open ();
 	MelderInfo_write1 (Melder_double (Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor)));
-	MelderInfo_write5 (" Pa2/Hz (at time = ", Melder_double (tmin), " seconds and frequency = ",
-		Melder_double (my spectrogram.cursor), " Hz)");
+	MelderInfo_write5 (L" Pa2/Hz (at time = ", Melder_double (tmin), L" seconds and frequency = ",
+		Melder_double (my spectrogram.cursor), L" Hz)");
 	MelderInfo_close ();
 	return 1;
 }
@@ -643,7 +643,7 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 		POSITIVE ("left Pitch range (Hz)", "75.0")
 		POSITIVE ("right Pitch range (Hz)", "500.0")
 		OPTIONMENU ("Unit", 1)
-			OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
+			OPTIONS_ENUMW (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
 		RADIO ("Optimize for", 1)
 			RADIOBUTTON ("Intonation (AC method)")
 			RADIOBUTTON ("Voice analysis (CC method)")
@@ -741,11 +741,11 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine2 ("Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
+	MelderInfo_writeLine2 (L"Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
 		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), "   ", Melder_fixed (f0, 6));
+		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), L"   ", Melder_fixed (f0, 6));
 	} else {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my pitch.data, tmin, tmax, & i1, & i2);
@@ -753,7 +753,7 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 			double t = Sampled_indexToX (my pitch.data, i);
 			double f0 = Sampled_getValueAtSample (my pitch.data, i, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 			f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-			MelderInfo_writeLine3 (Melder_fixed (t, 6), "   ", Melder_fixed (f0, 6));
+			MelderInfo_writeLine3 (Melder_fixed (t, 6), L"   ", Melder_fixed (f0, 6));
 		}
 	}
 	MelderInfo_close ();
@@ -773,13 +773,13 @@ static int menu_cb_getPitch (EDITOR_ARGS) {
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
 		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-			" (interpolated pitch at CURSOR)", 0,0,0,0,0);
+		Melder_information4 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+			L" (interpolated pitch at CURSOR)");
 	} else {
 		double f0 = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
 		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-			" (mean pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
+		Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+			L" (mean pitch ", FunctionEditor_partString_locative (part), L")");
 	}
 	return 1;
 }
@@ -796,8 +796,8 @@ static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-		" (minimum pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
+	Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		L" (minimum pitch ", FunctionEditor_partString_locative (part), L")");
 	return 1;
 }
 
@@ -813,8 +813,8 @@ static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information9 (Melder_double (f0), " ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
-		" (maximum pitch ", FunctionEditor_partString_locative (part), ")", 0,0,0);
+	Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		L" (maximum pitch ", FunctionEditor_partString_locative (part), L")");
 	return 1;
 }
 
@@ -904,17 +904,17 @@ static int menu_cb_intensityListing (EDITOR_ARGS) {
 		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine1 ("Time_s   Intensity_dB");
+	MelderInfo_writeLine1 (L"Time_s   Intensity_dB");
 	if (part == FunctionEditor_PART_CURSOR) {
 		double intensity = Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
-		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), "   ", Melder_fixed (intensity, 6));
+		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), L"   ", Melder_fixed (intensity, 6));
 	} else {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my intensity.data, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my intensity.data, i);
 			double intensity = Vector_getValueAtX (my intensity.data, t, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_NEAREST);
-			MelderInfo_writeLine3 (Melder_fixed (t, 6), "   ", Melder_fixed (intensity, 6));
+			MelderInfo_writeLine3 (Melder_fixed (t, 6), L"   ", Melder_fixed (intensity, 6));
 		}
 	}
 	MelderInfo_close ();
@@ -932,11 +932,11 @@ static int menu_cb_getIntensity (EDITOR_ARGS) {
 		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), " dB (intensity at CURSOR)");
+		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), L" dB (intensity at CURSOR)");
 	} else {
-		static const char *methodString [] = { "median", "mean-energy", "mean-sones", "mean-dB" };
-		Melder_information9 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
-			" dB (", methodString [my intensity.averagingMethod], " intensity ", FunctionEditor_partString_locative (part), ")", 0,0,0);
+		static const wchar_t *methodString [] = { L"median", L"mean-energy", L"mean-sones", L"mean-dB" };
+		Melder_information6 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
+			L" dB (", methodString [my intensity.averagingMethod], L" intensity ", FunctionEditor_partString_locative (part), L")");
 	}
 	return 1;
 }
@@ -1032,14 +1032,14 @@ static int menu_cb_formantListing (EDITOR_ARGS) {
 		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine1 ("Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
+	MelderInfo_writeLine1 (L"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f1 = Formant_getValueAtTime (my formant.data, 1, tmin, 0);
 		double f2 = Formant_getValueAtTime (my formant.data, 2, tmin, 0);
 		double f3 = Formant_getValueAtTime (my formant.data, 3, tmin, 0);
 		double f4 = Formant_getValueAtTime (my formant.data, 4, tmin, 0);
-		MelderInfo_write5 (Melder_fixed (tmin, 6), "   ", Melder_fixed (f1, 6), "   ", Melder_fixed (f2, 6));
-		MelderInfo_writeLine4 ("   ", Melder_fixed (f3, 6), "   ", Melder_fixed (f4, 6));
+		MelderInfo_write5 (Melder_fixed (tmin, 6), L"   ", Melder_fixed (f1, 6), L"   ", Melder_fixed (f2, 6));
+		MelderInfo_writeLine4 (L"   ", Melder_fixed (f3, 6), L"   ", Melder_fixed (f4, 6));
 	} else {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my formant.data, tmin, tmax, & i1, & i2);
@@ -1049,8 +1049,8 @@ static int menu_cb_formantListing (EDITOR_ARGS) {
 			double f2 = Formant_getValueAtTime (my formant.data, 2, t, 0);
 			double f3 = Formant_getValueAtTime (my formant.data, 3, t, 0);
 			double f4 = Formant_getValueAtTime (my formant.data, 4, t, 0);
-			MelderInfo_write5 (Melder_fixed (t, 6), "   ", Melder_fixed (f1, 6), "   ", Melder_fixed (f2, 6));
-			MelderInfo_writeLine4 ("   ", Melder_fixed (f3, 6), "   ", Melder_fixed (f4, 6));
+			MelderInfo_write5 (Melder_fixed (t, 6), L"   ", Melder_fixed (f1, 6), L"   ", Melder_fixed (f2, 6));
+			MelderInfo_writeLine4 (L"   ", Melder_fixed (f3, 6), L"   ", Melder_fixed (f4, 6));
 		}
 	}
 	MelderInfo_close ();
@@ -1067,11 +1067,11 @@ static int do_getFormant (FunctionEditor me, int iformant) {
 		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information9 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
-			" Hertz (nearest F", Melder_integer (iformant), " to CURSOR)", 0,0,0,0,0);
+		Melder_information4 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
+			L" Hertz (nearest F", Melder_integer (iformant), L" to CURSOR)");
 	} else {
-		Melder_information9 (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
-			" Hertz (mean F", Melder_integer (iformant), " ", FunctionEditor_partString_locative (part), ")", 0,0,0);
+		Melder_information6 (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
+			L" Hertz (mean F", Melder_integer (iformant), L" ", FunctionEditor_partString_locative (part), L")");
 	}
 	return 1;
 }
@@ -1085,11 +1085,11 @@ static int do_getBandwidth (FunctionEditor me, int iformant) {
 		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information9 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
-			" Hertz (nearest B", Melder_integer (iformant), " to CURSOR)", 0,0,0,0,0);
+		Melder_information4 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
+			L" Hertz (nearest B", Melder_integer (iformant), L" to CURSOR)");
 	} else {
-		Melder_information9 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
-			" Hertz (B", Melder_integer (iformant), " in centre of ", FunctionEditor_partString (part), ")", 0,0,0);
+		Melder_information6 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
+			L" Hertz (B", Melder_integer (iformant), L" in centre of ", FunctionEditor_partString (part), L")");
 	}
 	return 1;
 }
@@ -1186,11 +1186,11 @@ static int menu_cb_voiceReport (EDITOR_ARGS) {
 	sound = extractSound (me, tmin, tmax);
 	if (! sound) return Melder_error ("Selection too small (or out of memory).");
 	MelderInfo_open ();
-	MelderInfo_writeLine4 ("-- Voice report for ", my name, " --\nDate: ", ctime (& today));
+	MelderInfo_writeLine4 (L"-- Voice report for ", my nameW, L" --\nDate: ", Melder_peekAsciiToWcs (ctime (& today)));
 	if ((my pitch.method & 2) == 0)
-		MelderInfo_writeLine1 ("WARNING: some of the following measurements may be imprecise.\n"
+		MelderInfo_writeLine1 (L"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
-	MelderInfo_writeLine2 ("Time range of ", FunctionEditor_partString (part));
+	MelderInfo_writeLine2 (L"Time range of ", FunctionEditor_partString (part));
 	Sound_Pitch_PointProcess_voiceReport (sound, my pitch.data, my pulses.data, tmin, tmax,
 		my pitch.floor, my pitch.ceiling, my pulses.maximumPeriodFactor, my pulses.maximumAmplitudeFactor, my pitch.silenceThreshold, my pitch.voicingThreshold);
 	MelderInfo_close ();
@@ -1210,7 +1210,7 @@ static int menu_cb_pulseListing (EDITOR_ARGS) {
 		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine1 ("Time_s");
+	MelderInfo_writeLine1 (L"Time_s");
 	i1 = PointProcess_getHighIndex (my pulses.data, tmin);
 	i2 = PointProcess_getLowIndex (my pulses.data, tmax);
 	for (i = i1; i <= i2; i ++) {
@@ -1337,8 +1337,8 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setFont (my graphics, Graphics_HELVETICA);
 		Graphics_setFontSize (my graphics, 9);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_printf (my graphics, 0.5, 0.67, "To see the analyses, zoom in to at most %s seconds,", Melder_half (my longestAnalysis));
-		Graphics_text (my graphics, 0.5, 0.33, "or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.");
+		Graphics_printf (my graphics, 0.5, 0.67, L"To see the analyses, zoom in to at most %ls seconds,", Melder_half (my longestAnalysis));
+		Graphics_text (my graphics, 0.5, 0.33, L"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.");
 		Graphics_setFontSize (my graphics, 10);
 		return;
 	}
@@ -1416,20 +1416,20 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 			pitchCursor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 			if (NUMdefined (pitchCursor_hidden)) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-				Graphics_printf (my graphics, my endWindow, pitchCursor_hidden, "%.5g %s", pitchCursor_overt,
+				Graphics_printf (my graphics, my endWindow, pitchCursor_hidden, L"%.5g %ls", pitchCursor_overt,
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-				Graphics_printf (my graphics, my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics, 0.5), "%.4g %s",
+				Graphics_printf (my graphics, my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics, 0.5), L"%.4g %ls",
 					pitchViewFrom_overt,
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-				Graphics_printf (my graphics, my endWindow, pitchViewTo_hidden, "%.4g %s",
+				Graphics_printf (my graphics, my endWindow, pitchViewTo_hidden, L"%.4g %ls",
 					pitchViewTo_overt,
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
@@ -1437,7 +1437,7 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		} else {
 			Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 			Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (pitchViewFrom_hidden + pitchViewTo_hidden),
-				"(Cannot show pitch contour. Zoom out or change bottom of pitch range in pitch settings.)");
+				L"(Cannot show pitch contour. Zoom out or change bottom of pitch range in pitch settings.)");
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}
@@ -1460,24 +1460,24 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setColour (my graphics, textColour);
 		intensityCursorVisible = NUMdefined (intensityCursor) && intensityCursor > my intensity.viewFrom && intensityCursor < my intensity.viewTo;
 		if (intensityCursorVisible) {
-			static const char *methodString [] = { " (.5)", " (\\muE)", " (\\muS)", " (\\mu)" };
+			static const wchar_t *methodString [] = { L" (.5)", L" (\\muE)", L" (\\muS)", L" (\\mu)" };
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_HALF);
-			Graphics_printf (my graphics, y, intensityCursor, "%.4g dB%s", intensityCursor,
-				my startSelection == my endSelection ? "" : methodString [my intensity.averagingMethod]);
+			Graphics_printf (my graphics, y, intensityCursor, L"%.4g dB%ls", intensityCursor,
+				my startSelection == my endSelection ? L"" : methodString [my intensity.averagingMethod]);
 		}
 		if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics, intensityCursor - my intensity.viewFrom) > 5.0) {
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_BOTTOM);
 			Graphics_printf (my graphics, y, my intensity.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5),
-				"%.4g dB", my intensity.viewFrom);
+				L"%.4g dB", my intensity.viewFrom);
 		}
 		if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics, my intensity.viewTo - intensityCursor) > 5.0) {
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_TOP);
-			Graphics_printf (my graphics, y, my intensity.viewTo, "%.4g dB", my intensity.viewTo);
+			Graphics_printf (my graphics, y, my intensity.viewTo, L"%.4g dB", my intensity.viewTo);
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}
 	if (my spectrogram.show || my formant.show) {
-		char text [100];
+		wchar_t text [100];
 		double textWidth;
 		int frequencyCursorVisible = my spectrogram.cursor > my spectrogram.viewFrom && my spectrogram.cursor < my spectrogram.viewTo;
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, my spectrogram.viewFrom, my spectrogram.viewTo);
@@ -1487,14 +1487,14 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		Graphics_setLineType (my graphics, Graphics_DRAWN);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics, my spectrogram.cursor - my spectrogram.viewFrom) > 5.0) {
-			sprintf (text, "%.4g Hz", my spectrogram.viewFrom);
+			swprintf (text, 100, L"%.4g Hz", my spectrogram.viewFrom);
 			textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
 			/*Graphics_line (my graphics, my startWindow - textWidth, my spectrogram.viewFrom, my startWindow, my spectrogram.viewFrom);*/
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
 			Graphics_text (my graphics, my startWindow, my spectrogram.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5), text);
 		}
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics, my spectrogram.viewTo - my spectrogram.cursor) > 5.0) {
-			sprintf (text, "%.4g Hz", my spectrogram.viewTo);
+			swprintf (text, 100, L"%.4g Hz", my spectrogram.viewTo);
 			textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
 			/*Graphics_line (my graphics, my startWindow - textWidth, my spectrogram.viewTo, my startWindow, my spectrogram.viewTo);*/
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
@@ -1508,7 +1508,7 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 		if (frequencyCursorVisible) {
 			double x = my startWindow, y = my spectrogram.cursor;
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_printf (my graphics, x, y, "%.5g Hz", y);
+			Graphics_printf (my graphics, x, y, L"%.5g Hz", y);
 			Graphics_line (my graphics, x, y, my endWindow, y);
 		}
 		/*
@@ -1550,48 +1550,48 @@ static int menu_cb_logSettings (EDITOR_ARGS) {
 			OPTION ("Info window only")
 			OPTION ("Log file and Info window")
 		LABEL ("", "Log file 1:")
-		TEXTFIELD ("Log file 1", LOG_1_FILE_NAME)
+		TEXTFIELDW (L"Log file 1", LOG_1_FILE_NAME)
 		LABEL ("", "Log 1 format:")
-		TEXTFIELD ("Log 1 format", LOG_1_FORMAT)
+		TEXTFIELDW (L"Log 1 format", LOG_1_FORMAT)
 		OPTIONMENU ("Write log 2 to", 3)
 			OPTION ("Log file only")
 			OPTION ("Info window only")
 			OPTION ("Log file and Info window")
 		LABEL ("", "Log file 2:")
-		TEXTFIELD ("Log file 2", LOG_2_FILE_NAME)
+		TEXTFIELDW (L"Log file 2", LOG_2_FILE_NAME)
 		LABEL ("", "Log 2 format:")
-		TEXTFIELD ("Log 2 format", LOG_2_FORMAT)
+		TEXTFIELDW (L"Log 2 format", LOG_2_FORMAT)
 		LABEL ("", "Log script 3:")
-		TEXTFIELD ("Log script 3", LOG_3_FILE_NAME)
+		TEXTFIELDW (L"Log script 3", LOG_3_FILE_NAME)
 		LABEL ("", "Log script 4:")
-		TEXTFIELD ("Log script 4", LOG_4_FILE_NAME)
+		TEXTFIELDW (L"Log script 4", LOG_4_FILE_NAME)
 	EDITOR_OK
 		SET_INTEGER ("Write log 1 to", preferences.log[0].toLogFile + 2 * preferences.log[0].toInfoWindow)
-		SET_STRING ("Log file 1", preferences.log[0].fileName)
-		SET_STRING ("Log 1 format", preferences.log[0].format)
+		SET_STRINGW (L"Log file 1", preferences.log[0].fileName)
+		SET_STRINGW (L"Log 1 format", preferences.log[0].format)
 		SET_INTEGER ("Write log 2 to", preferences.log[1].toLogFile + 2 * preferences.log[1].toInfoWindow)
-		SET_STRING ("Log file 2", preferences.log[1].fileName)
-		SET_STRING ("Log 2 format", preferences.log[1].format)
-		SET_STRING ("Log script 3", preferences.logScript3)
-		SET_STRING ("Log script 4", preferences.logScript4)
+		SET_STRINGW (L"Log file 2", preferences.log[1].fileName)
+		SET_STRINGW (L"Log 2 format", preferences.log[1].format)
+		SET_STRINGW (L"Log script 3", preferences.logScript3)
+		SET_STRINGW (L"Log script 4", preferences.logScript4)
 	EDITOR_DO
 		preferences.log[0].toLogFile = (GET_INTEGER ("Write log 1 to") & 1) != 0;
 		preferences.log[0].toInfoWindow = (GET_INTEGER ("Write log 1 to") & 2) != 0;
-		strcpy (preferences.log[0].fileName, GET_STRING ("Log file 1"));
-		strcpy (preferences.log[0].format, GET_STRING ("Log 1 format"));
+		wcscpy (preferences.log[0].fileName, GET_STRINGW (L"Log file 1"));
+		wcscpy (preferences.log[0].format, GET_STRINGW (L"Log 1 format"));
 		preferences.log[1].toLogFile = (GET_INTEGER ("Write log 2 to") & 1) != 0;
 		preferences.log[1].toInfoWindow = (GET_INTEGER ("Write log 2 to") & 2) != 0;
-		strcpy (preferences.log[1].fileName, GET_STRING ("Log file 2"));
-		strcpy (preferences.log[1].format, GET_STRING ("Log 2 format"));
-		strcpy (preferences.logScript3, GET_STRING ("Log script 3"));
-		strcpy (preferences.logScript4, GET_STRING ("Log script 4"));
+		wcscpy (preferences.log[1].fileName, GET_STRINGW (L"Log file 2"));
+		wcscpy (preferences.log[1].format, GET_STRINGW (L"Log 2 format"));
+		wcscpy (preferences.logScript3, GET_STRINGW (L"Log script 3"));
+		wcscpy (preferences.logScript4, GET_STRINGW (L"Log script 4"));
 	EDITOR_END
 }
 
 static int do_deleteLogFile (FunctionEditor me, int which) {
 	structMelderFile file = { 0 };
 	(void) me;
-	if (! Melder_pathToFile (preferences.log[which].fileName, & file)) return 0;
+	if (! Melder_pathToFileW (preferences.log[which].fileName, & file)) return 0;
 	MelderFile_delete (& file);
 	return 1;
 }
@@ -1599,18 +1599,18 @@ static int menu_cb_deleteLogFile1 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); r
 static int menu_cb_deleteLogFile2 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return do_deleteLogFile (me, 1); }
 
 static int do_log (FunctionEditor me, int which) {
-	char format [1000], *p;
+	wchar_t format [1000], *p;
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
-	strcpy (format, preferences.log[which].format);
+	wcscpy (format, preferences.log[which].format);
 	for (p = format; *p !='\0'; p ++) if (*p == '\'') {
 		/*
 		 * Found a left quote. Search for a matching right quote.
 		 */
-		char *q = p + 1, varName [300], *r, *s, *colon;
+		wchar_t *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
 		double value = NUMundefined;
-		char *stringValue = NULL;
+		wchar_t *stringValue = NULL;
 		while (*q != '\0' && *q != '\'') q ++;
 		if (*q == '\0') break;   /* No matching right quote: done with this line. */
 		if (q - p == 1) continue;   /* Ignore empty variable names. */
@@ -1619,26 +1619,26 @@ static int do_log (FunctionEditor me, int which) {
 		 */
 		for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
 		*s = '\0';   /* Trailing null byte. */
-		colon = strchr (varName, ':');
+		colon = wcschr (varName, ':');
 		if (colon) {
-			precision = atoi (colon + 1);
+			precision = wcstol (colon + 1, NULL, 10);
 			*colon = '\0';
 		}
-		if (strequ (varName, "time")) {
+		if (wcsequ (varName, L"time")) {
 			value = 0.5 * (tmin + tmax);
-		} else if (strequ (varName, "t1")) {
+		} else if (wcsequ (varName, L"t1")) {
 			value = tmin;
-		} else if (strequ (varName, "t2")) {
+		} else if (wcsequ (varName, L"t2")) {
 			value = tmax;
-		} else if (strequ (varName, "dur")) {
+		} else if (wcsequ (varName, L"dur")) {
 			value = tmax - tmin;
-		} else if (strequ (varName, "freq")) {
+		} else if (wcsequ (varName, L"freq")) {
 			value = my spectrogram.cursor;
-		} else if (strequ (varName, "tab$")) {
-			stringValue = "\t";
-		} else if (strequ (varName, "editor$")) {
-			stringValue = my name;
-		} else if (strequ (varName, "f0")) {
+		} else if (wcsequ (varName, L"tab$")) {
+			stringValue = L"\t";
+		} else if (wcsequ (varName, L"editor$")) {
+			stringValue = my nameW;
+		} else if (wcsequ (varName, L"f0")) {
 			if (! my pitch.show)
 				return Melder_error ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 			if (! my pitch.data) {
@@ -1667,7 +1667,7 @@ static int do_log (FunctionEditor me, int which) {
 				return Melder_error1 (theMessage_Cannot_compute_formant);
 			}
 			value = Formant_getBandwidthAtTime (my formant.data, varName [1] - '0', 0.5 * (tmin + tmax), 0);
-		} else if (strequ (varName, "intensity")) {
+		} else if (wcsequ (varName, L"intensity")) {
 			if (! my intensity.show)
 				return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 			if (! my intensity.data) {
@@ -1678,7 +1678,7 @@ static int do_log (FunctionEditor me, int which) {
 			} else {
 				value = Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod);
 			}
-		} else if (strequ (varName, "power")) {
+		} else if (wcsequ (varName, L"power")) {
 			if (! my spectrogram.show)
 				return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 			if (! my spectrogram.data) {
@@ -1689,25 +1689,24 @@ static int do_log (FunctionEditor me, int which) {
 		}
 		if (NUMdefined (value)) {
 			int varlen = (q - p) - 1, headlen = p - format;
-			char formattedNumber [400];
-			int arglen;
+			wchar_t formattedNumber [400];
 			if (precision >= 0) {
-				sprintf (formattedNumber, "%.*f", precision, value);
+				swprintf (formattedNumber, 400, L"%.*f", precision, value);
 			} else {
-				sprintf (formattedNumber, "%.17g", value);
+				swprintf (formattedNumber, 400, L"%.17g", value);
 			}
-			arglen = strlen (formattedNumber);
-			strncpy (Melder_buffer1, format, headlen);
-			strcpy (Melder_buffer1 + headlen, formattedNumber);
-			strcpy (Melder_buffer1 + headlen + arglen, p + varlen + 2);
-			strcpy (format, Melder_buffer1);
+			int arglen = wcslen (formattedNumber);
+			static MelderStringW buffer = { 0 };
+			MelderStringW_ncopyW (& buffer, format, headlen);
+			MelderStringW_append2 (& buffer, formattedNumber, p + varlen + 2);
+			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue != NULL) {
-			int varlen = (q - p) - 1, headlen = p - format, arglen = strlen (stringValue);
-			strncpy (Melder_buffer1, format, headlen);
-			strcpy (Melder_buffer1 + headlen, stringValue);
-			strcpy (Melder_buffer1 + headlen + arglen, p + varlen + 2);
-			strcpy (format, Melder_buffer1);
+			int varlen = (q - p) - 1, headlen = p - format, arglen = wcslen (stringValue);
+			static MelderStringW buffer = { 0 };
+			MelderStringW_ncopyW (& buffer, format, headlen);
+			MelderStringW_append2 (& buffer, stringValue, p + varlen + 2);
+			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else {
 			p = q - 1;   /* Go to before next quote. */
@@ -1719,9 +1718,9 @@ static int do_log (FunctionEditor me, int which) {
 	}
 	if (preferences.log[which].toLogFile) {
 		structMelderFile file = { 0 };
-		strcat (format, "\n");
-		if (! Melder_relativePathToFileW (Melder_peekAsciiToWcs (preferences.log[which].fileName), & file)) return 0;
-		if (! MelderFile_appendTextW (& file, Melder_peekAsciiToWcs (format))) return 0;
+		wcscat (format, L"\n");
+		if (! Melder_relativePathToFile (preferences.log[which].fileName, & file)) return 0;
+		if (! MelderFile_appendText (& file, format)) return 0;
 	}
 	return 1;
 }
@@ -1731,15 +1730,11 @@ static int menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (FunctionEditor); return do_l
 
 static int menu_cb_logScript3 (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	static MelderStringW buffer = { 0 };
-	MelderStringW_copyA (& buffer, preferences.logScript3);
-	return DO_RunTheScriptFromAnyAddedEditorCommand (me, buffer.string);
+	return DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript3);
 }
 static int menu_cb_logScript4 (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	static MelderStringW buffer = { 0 };
-	MelderStringW_copyA (& buffer, preferences.logScript4);
-	return DO_RunTheScriptFromAnyAddedEditorCommand (me, buffer.string);
+	return DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript4);
 }
 
 void FunctionEditor_SoundAnalysis_viewMenus (I) {

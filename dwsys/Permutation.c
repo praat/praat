@@ -70,7 +70,7 @@ static void info (I)
 {
 	iam (Permutation);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of elements: ", Melder_integer (my numberOfElements));
+	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
 }
 
 static int readText (I, MelderReadString *text)

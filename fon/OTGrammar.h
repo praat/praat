@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/07/23
+ * pb 2007/08/08
  */
 
 #ifndef _Strings_h_
@@ -58,7 +58,7 @@ void OTGrammar_sort (OTGrammar me);
 
 void OTGrammar_newDisharmonies (OTGrammar me, double spreading);
 
-long OTGrammar_getTableau (OTGrammar me, const char *input);
+long OTGrammar_getTableau (OTGrammar me, const wchar_t *input);
 int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2);
 	/*
 	 * Function:
@@ -87,20 +87,20 @@ int OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand)
 
 /* Interpretive parsing. */
 int OTGrammar_getInterpretiveParse
-	(OTGrammar me, const char *partialOutput, long *bestTableau, long *bestCandidate);
+	(OTGrammar me, const wchar_t *partialOutput, long *bestTableau, long *bestCandidate);
 	/* Gives randomized results in case of tied candidates. */
-int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const char *partialOutput);
+int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput);
 	/* Is there an input for which this partial output is contained in any of the optimal outputs? */
-int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const char *partialOutput);
+int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput);
 	/* Is every optimal output that contains this partial output the only optimal output in its tableau? */
 
-void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input);
+void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input);
 
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials);
 Strings OTGrammar_getInputs (OTGrammar me);
-int OTGrammar_inputToOutput (OTGrammar me, const char *input, char *output, double evaluationNoise);
+int OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output, double evaluationNoise);
 Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise);
-Strings OTGrammar_inputToOutputs (OTGrammar me, const char *input, long n, double evaluationNoise);
+Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, double evaluationNoise);
 Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
 PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
 Distributions OTGrammar_measureTypology (OTGrammar me);
@@ -112,7 +112,7 @@ Distributions OTGrammar_measureTypology (OTGrammar me);
 #define OTGrammar_WEIGHTED_ALL  4
 #define OTGrammar_EDCD  5
 
-int OTGrammar_learnOne (OTGrammar me, const char *input, const char *adultOutput,
+int OTGrammar_learnOne (OTGrammar me, const wchar_t *input, const wchar_t *adultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, int newDisharmonies,
 	int warnIfStalled, int *grammarHasChanged);
@@ -123,7 +123,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, int strategy, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews);
-int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultOutput,
+int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAdultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, int warnIfStalled);
 int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
@@ -154,7 +154,7 @@ void OTGrammar_reset (OTGrammar me, double ranking);
 int OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double disharmony);
 int OTGrammar_setConstraintPlasticity (OTGrammar me, long constraint, double plasticity);
 
-int OTGrammar_removeConstraint (OTGrammar me, const char *constraintName);
+int OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName);
 int OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly);
 int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee);
 int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber);

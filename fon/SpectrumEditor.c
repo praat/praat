@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2006/04/01 dynamic range setting
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "SpectrumEditor.h"
@@ -45,8 +46,8 @@ static struct {
 	};
 
 void SpectrumEditor_prefs (void) {
-	Resources_addDouble ("SpectrumEditor.bandSmoothing", & preferences.bandSmoothing);
-	Resources_addDouble ("SpectrumEditor.dynamicRange", & preferences.dynamicRange);
+	Resources_addDouble (L"SpectrumEditor.bandSmoothing", & preferences.bandSmoothing);
+	Resources_addDouble (L"SpectrumEditor.dynamicRange", & preferences.dynamicRange);
 }
 
 static void updateRange (SpectrumEditor me) {
@@ -172,8 +173,8 @@ DO
 	FunctionEditor_redraw (me);
 END
 
-DIRECT (SpectrumEditor, cb_help_SpectrumEditor) Melder_help ("SpectrumEditor"); END
-DIRECT (SpectrumEditor, cb_help_Spectrum) Melder_help ("Spectrum"); END
+DIRECT (SpectrumEditor, cb_help_SpectrumEditor) Melder_help (L"SpectrumEditor"); END
+DIRECT (SpectrumEditor, cb_help_Spectrum) Melder_help (L"Spectrum"); END
 
 static void createMenus (I) {
 	iam (SpectrumEditor);

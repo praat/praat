@@ -42,16 +42,16 @@ static void info (I) {
 	iam (Ltas);
 	double meanPowerDensity;
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Frequency domain:");
-	MelderInfo_writeLine3 ("   Lowest frequency: ", Melder_double (my xmin), " Hz");
-	MelderInfo_writeLine3 ("   Highest frequency: ", Melder_double (my xmax), " Hz");
-	MelderInfo_writeLine3 ("   Total frequency domain: ", Melder_double (my xmax - my xmin), " Hz");
-	MelderInfo_writeLine1 ("Frequency sampling:");
-	MelderInfo_writeLine2 ("   Number of frequency bands: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("   Width of each band: ", Melder_double (my dx), " Hz");
-	MelderInfo_writeLine3 ("   First band centred at: ", Melder_double (my x1), " Hz");
+	MelderInfo_writeLine1 (L"Frequency domain:");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my xmax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total frequency domain: ", Melder_double (my xmax - my xmin), L" Hz");
+	MelderInfo_writeLine1 (L"Frequency sampling:");
+	MelderInfo_writeLine2 (L"   Number of frequency bands: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"   Width of each band: ", Melder_double (my dx), L" Hz");
+	MelderInfo_writeLine3 (L"   First band centred at: ", Melder_double (my x1), L" Hz");
 	meanPowerDensity = Sampled_getMean (me, my xmin, my xmax, 0, 1, FALSE);
-	MelderInfo_writeLine3 ("Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin)))," dB");
+	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin))), L" dB");
 }
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
@@ -93,9 +93,9 @@ void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, d
 	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Sound pressure level (dB/Hz)");
+		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }

@@ -29,9 +29,9 @@
 static void info (I) {
 	iam (VocalTract);
 	classData -> info (me);
-	MelderInfo_writeLine3 ("Vocal tract length: ", Melder_single (my xmax), " metres");
-	MelderInfo_writeLine2 ("Number of sections: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("Section length: ", Melder_single (my dx), " metres");
+	MelderInfo_writeLine3 (L"Vocal tract length: ", Melder_single (my xmax), L" metres");
+	MelderInfo_writeLine2 (L"Number of sections: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"Section length: ", Melder_single (my dx), L" metres");
 }
 
 class_methods (VocalTract, Vector)

@@ -142,12 +142,12 @@ END
 
 DIRECT (FFNet_getNumberOfInputs)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information2 (Melder_integer (my nUnitsInLayer[0]), " units");
+	Melder_information2 (Melder_integer (my nUnitsInLayer[0]), L" units");
 END
 
 DIRECT (FFNet_getNumberOfOutputs)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers]), " units");
+	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers]), L" units");
 END
 
 FORM (FFNet_getNumberOfHiddenUnits, "FFNet: Get number of hidden units", "FFNet: Get number of hidden units...")
@@ -159,7 +159,7 @@ DO
 	long numberOfUnits = 0;
 	
 	if (layerNumber > 0 && layerNumber <= my nLayers - 1) numberOfUnits = my nUnitsInLayer[layerNumber];
-	Melder_information2 (Melder_integer (numberOfUnits), " units");
+	Melder_information2 (Melder_integer (numberOfUnits), L" units");
 END
 
 FORM (FFNet_getNumberOfHiddenWeights, "FFNet: Get number of hidden weights", 
@@ -174,12 +174,12 @@ DO
 	{
 		numberOfWeights = my nUnitsInLayer[layerNumber] * (my nUnitsInLayer[layerNumber - 1]+1);
 	}
-	Melder_information2 (Melder_integer (numberOfWeights), " weights (including biases)");
+	Melder_information2 (Melder_integer (numberOfWeights), L" weights (including biases)");
 END
 
 DIRECT (FFNet_getNumberOfOutputWeights)
 	FFNet  me = ONLY(classFFNet);
-	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1]+1)), " weights");
+	Melder_information2 (Melder_integer (my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1]+1)), L" weights");
 END
 
 /**************** New Pattern ***************************/
@@ -204,7 +204,7 @@ DO
 END
 
 DIRECT (FFNet_help)
-	Melder_help ("Feedforward neural networks");
+	Melder_help (L"Feedforward neural networks");
 END
 
 DIRECT (FFNet_getMinimum)
@@ -394,12 +394,12 @@ DO
 END
 
 DIRECT (hint_FFNet_and_Pattern_classify)
-	Melder_information1 ("You can use the FFNet as a classifier by selecting a\n"
+	Melder_information1 (L"You can use the FFNet as a classifier by selecting a\n"
 		"FFNet and a Pattern together and choosing \"To Categories...\".");
 END
 
 DIRECT (hint_FFNet_and_Pattern_and_Categories_learn)
-	Melder_information1 ("You can teach a FFNet to classify by selecting a\n"
+	Melder_information1 (L"You can teach a FFNet to classify by selecting a\n"
 		"FFNet, a Pattern and a Categories together and choosing \"Learn...\".");
 END
 

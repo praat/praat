@@ -79,16 +79,16 @@ int TextGrid_extendTime (TextGrid me, double delta_time, int position);
 	Interval tiers will have a new (empty) interval at the start or the end.
 */
 
-int TextGrid_setTierName (TextGrid me, long itier, char *newName);
+int TextGrid_setTierName (TextGrid me, long itier, wchar_t *newName);
 
-int TextTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+int TextTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-int IntervalTier_changeLabels (I, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+int IntervalTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-void IntervalTier_removeBoundary_equalLabels (IntervalTier me, char *label);
-void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, char *label, double minimumDuration);
+void IntervalTier_removeBoundary_equalLabels (IntervalTier me, wchar_t *label);
+void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, wchar_t *label, double minimumDuration);
 
-int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, char *search, char *replace, int use_regexp, long *nmatches, long *nstringmatches);
+int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, wchar_t *search, wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 
 #endif /* _TextGrid_extensions_h_ */

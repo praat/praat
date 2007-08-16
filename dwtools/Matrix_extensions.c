@@ -30,7 +30,7 @@
 
 void Matrix_scatterPlot (I, Any g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
-    double size_mm, const char *mark, int garnish)
+    double size_mm, const wchar_t *mark, int garnish)
 {
     iam (Matrix); 
     long i, ix = labs (icx), iy = labs (icy);
@@ -264,7 +264,7 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
     	Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-    	if (! cumulative) Graphics_textLeft (g, 0, "number/bin");
+    	if (! cumulative) Graphics_textLeft (g, 0, L"number/bin");
     }
 	NUMlvector_free (freq, 1);
 }

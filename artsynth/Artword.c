@@ -18,7 +18,6 @@
  */
 
 /*
- * pb 2001/06/26
  * pb 2002/07/16 GPL
  */
 
@@ -156,7 +155,7 @@ void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
 		Graphics_textTop (g, FALSE, enumstring (Art_MUSCLE, feature));
-		Graphics_textBottom (g, TRUE, "Time (s)");
+		Graphics_textBottom (g, TRUE, L"Time (s)");
 	}
 }
 

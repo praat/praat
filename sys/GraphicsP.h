@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/14
+ * pb 2007/08/14
  */
 
 #ifndef _Graphics_h_
@@ -29,7 +29,7 @@
 
 typedef struct {
 	unsigned char first, second, link;
-	short style, size, code, baseline;
+	short style, size, code, baseline, kar;
 	float width;
 	union { long integer; const char *string; } font;
 } _Graphics_widechar;
@@ -38,14 +38,16 @@ typedef struct {
 
 #define Graphics_members Thing_members \
 	/* Device constants. */ \
-	int screen; \
+	bool screen; \
 		/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */ \
-	int postScript; \
+	bool postScript; \
 		/* A boolean for whether we are a PostScript device. */ \
-	int printer; \
+	bool printer; \
 		/* A boolean for whether we are a printer. */ \
-	int metafile; \
+	bool metafile; \
 		/* A boolean for whether we are a high-resolution metafile or clipboard. */ \
+	bool yIsZeroAtTheTop; \
+		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */ \
 	Widget drawingArea; \
 		/* Also used as a boolean. */ \
 	int resolution; \
@@ -161,8 +163,10 @@ int Graphics_init (I);
 		GrafPtr macPort; \
 		MacintoshPattern macPattern; \
 		int macFont, macStyle; \
-		int depth; \
-		RGBColor macColour;
+		int depth, duringXor; \
+		RGBColor macColour; \
+		bool useQuartz; \
+		CGContextRef macGraphicsContext;
 	#define mac 1
 	#define win 0
 	#define xwin 0

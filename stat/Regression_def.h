@@ -1,6 +1,6 @@
 /* Regression_def.h
  *
- * Copyright (C) 2005 Paul Boersma
+ * Copyright (C) 2005-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2005/05/01
+ * pb 2007/08/12
  */
 
 
 #define ooSTRUCT RegressionParameter
 oo_DEFINE_CLASS (RegressionParameter, Data)
 
-	oo_STRING (label)
+	oo_STRINGW (label)
 	oo_DOUBLE (value)
 	#if oo_DECLARING || oo_COPYING
 		oo_LONG (tableColumnIndex)

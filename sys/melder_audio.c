@@ -31,6 +31,7 @@
  * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
  * pb 2007/01/03 best sample rate can be over 64 kHz
  * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Koninck)
+ * pb 2007/08/12 wchar_t
  */
 
 #include "melder.h"
@@ -159,10 +160,10 @@ void Melder_setZeroPadding (double zeroPadding) {
 double Melder_getZeroPadding (void) { return prefs. zeroPadding; }
 
 void Melder_audio_prefs (void) {
-	Resources_addInt ("Audio.maximumAsynchronicity", & prefs. maximumAsynchronicity);
-	Resources_addInt ("Audio.useInternalSpeaker", & prefs. useInternalSpeaker);
-	Resources_addDouble ("Audio.outputGain", & prefs. outputGain);
-	Resources_addDouble ("Audio.zeroPadding", & prefs. zeroPadding);
+	Resources_addInt (L"Audio.maximumAsynchronicity", & prefs. maximumAsynchronicity);
+	Resources_addInt (L"Audio.useInternalSpeaker", & prefs. useInternalSpeaker);
+	Resources_addDouble (L"Audio.outputGain", & prefs. outputGain);
+	Resources_addDouble (L"Audio.zeroPadding", & prefs. zeroPadding);
 }
 
 long Melder_getBestSampleRate (long fsamp) {
@@ -613,7 +614,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	}
 	if (my samplesLeft > 0) {
 		unsigned long dsamples = my samplesLeft > frameCount ? frameCount : my samplesLeft;
-		if (Melder_debug == 20) Melder_casual ("play %s %s", Melder_integer (dsamples),
+		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my stream)));
 		memset (output, 2 * frameCount * my numberOfChannels, 0);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);

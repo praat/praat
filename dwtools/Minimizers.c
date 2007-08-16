@@ -36,10 +36,10 @@ static int classMinimizer_after (I, Any aclosure)
 	
     if (my start == 1)
     {
-    	char s[35];
+    	wchar_t s[35];
     	Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0, 
 			1.1 * my history[1], 1);
-    	sprintf (s, "Dimension of search space: %6ld", my nParameters); 
+    	swprintf (s, 35, L"Dimension of search space: %6ld", my nParameters); 
     	Graphics_textTop (my gmonitor, 0, s);
     } 
     Graphics_setInner (my gmonitor);
@@ -250,7 +250,7 @@ void Minimizer_drawHistory (I, Any graphics, long iFrom, long iTo, double hmin,
     if (garnish)
     {
     	Graphics_drawInnerBox (graphics);    
-   		Graphics_textBottom (graphics, 1, "Number of iterations");
+   		Graphics_textBottom (graphics, 1, L"Number of iterations");
 		Graphics_marksBottom (graphics, 2, 1, 1, 0);
     	Graphics_marksLeft (graphics, 2, 1, 1, 0);
     }

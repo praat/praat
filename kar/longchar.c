@@ -1,6 +1,6 @@
 /* longchar.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2006/11/17 Unicode
  * pb 2006/12/05 first wchar support
  * pb 2006/12/15 stress marks
+ * pb 2007/08/08 Longchar_genericizeW
  */
 
 #include "longchar.h"
@@ -494,7 +495,8 @@ static struct Longchar_Info Longchar_database [] = {
 
 static short where [95] [95];
 static short inited = 0;
-static struct { char first, second; } genericDigraph [256];
+#define UNICODE_TOP_GENERICIZABLE  15000
+static struct { char first, second; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
 
 static void init (void) {
 	Longchar_Info data;
@@ -507,20 +509,24 @@ static void init (void) {
 			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n", data -> first, data -> second);
 		}
 		*location = i;
-		if (data -> alphabet == Longchar_ROMAN) {
-			#if defined (UNIX)
-				genericDigraph [data -> xwinEncoding]. first = data -> first;
-				genericDigraph [data -> xwinEncoding]. second = data -> second;
-			#elif defined (macintosh)
-				genericDigraph [data -> macEncoding]. first = data -> first;
-				genericDigraph [data -> macEncoding]. second = data -> second;
-			#elif defined (_WIN32)
-				genericDigraph [data -> winEncoding]. first = data -> first;
-				genericDigraph [data -> winEncoding]. second = data -> second;
-			#else
-				#error Choose an encoding.
-			#endif
-		}
+		#if defined (macintosh)
+			if (data -> unicode <= UNICODE_TOP_GENERICIZABLE) {
+				genericDigraph [data -> unicode]. first = data -> first;
+				genericDigraph [data -> unicode]. second = data -> second;
+			}
+		#else
+			if (data -> alphabet == Longchar_ROMAN) {
+				#if defined (UNIX)
+					genericDigraph [data -> xwinEncoding]. first = data -> first;
+					genericDigraph [data -> xwinEncoding]. second = data -> second;
+				#elif defined (_WIN32)
+					genericDigraph [data -> winEncoding]. first = data -> first;
+					genericDigraph [data -> winEncoding]. second = data -> second;
+				#else
+					#error Choose an encoding.
+				#endif
+			}
+		#endif
 	}
 	inited = 1;
 }
@@ -557,15 +563,7 @@ char * Longchar_nativize (const char *generic, char *native, int educateQuotes) 
 				*native++ = kar2;   /* Even if this is a backslash itself... */
 				/* These "evens" are here to ensure that Longchar_nativize does nothing on an already nativized string. */
 			} else {
-				#if defined (UNIX)
-					*native++ = Longchar_database [location]. xwinEncoding;
-				#elif defined (macintosh)
-					*native++ = Longchar_database [location]. macEncoding;
-				#elif defined (_WIN32)
-					*native++ = Longchar_database [location]. winEncoding;
-				#else
-					#error Choose an encoding.
-				#endif
+				*native++ = Longchar_database [location]. unicode;
 			}	
 			generic += 2;
 		} else {
@@ -595,7 +593,11 @@ wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educa
 		}
 		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
 			long location = where [kar1 - 32] [kar2 - 32];
+			#ifdef macintosh
 			if (location == 0) {
+			#else
+			if (location == 0 || Longchar_database [location]. alphabet != Longchar_ROMAN) {
+			#endif
 				*native++ = kar;
 				*native++ = kar1;   /* Even if this is a backslash itself... */
 				*native++ = kar2;   /* Even if this is a backslash itself... */
@@ -628,6 +630,22 @@ char *Longchar_genericize (const char *native, char *g) {
 	return g;
 }
 
+wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *g) {
+	wchar_t kar;
+	if (! inited) init ();
+	while ((kar = *native++) != '\0') {
+		if (kar > 128 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. first != '\0') {
+			*g++ = '\\';
+			*g++ = genericDigraph [kar]. first;
+			*g++ = genericDigraph [kar]. second;
+		} else {
+			*g++ = kar;
+		}
+	}
+	*g++ = '\0';
+	return g;
+}
+
 Longchar_Info Longchar_getInfo (char kar1, char kar2) {
 	short position;
 	if (! inited) init ();
@@ -637,24 +655,8 @@ Longchar_Info Longchar_getInfo (char kar1, char kar2) {
 	return & Longchar_database [position];
 }
 
-Longchar_Info Longchar_getInfoFromNative (unsigned char kar) {
-	return Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
-}
-
-short *Longchar_genericToWide (const char *generic, short *wide) {
-	short kar;
-	unsigned char kar1, kar2;
-	if (! inited) init ();
-	while ((kar = *generic++) != '\0') {
-		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
-			*wide++ = (kar1 << 8) + kar2;
-			generic += 2;
-		} else {
-			*wide++ = (kar << 8) + ' ';
-		}
-	}
-	*wide++ = 0;
-	return wide;
+Longchar_Info Longchar_getInfoFromNative (wchar_t kar) {
+	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (' ', ' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
 }
 
 /* End of file longchar.c */

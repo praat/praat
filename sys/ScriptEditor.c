@@ -23,6 +23,7 @@
  * pb 2002/12/05 include
  * pb 2004/01/07 use GuiWindow_setDirty
  * pb 2007/06/12 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "ScriptEditor.h"
@@ -233,15 +234,15 @@ DIRECT (ScriptEditor, cb_viewHistory)
 	#endif
 END
 
-DIRECT (ScriptEditor, cb_AboutScriptEditor) Melder_help ("ScriptEditor"); END
-DIRECT (ScriptEditor, cb_ScriptingTutorial) Melder_help ("Scripting"); END
-DIRECT (ScriptEditor, cb_ScriptingExamples) Melder_help ("Scripting examples"); END
-DIRECT (ScriptEditor, cb_PraatScript) Melder_help ("Praat script"); END
-DIRECT (ScriptEditor, cb_FormulasTutorial) Melder_help ("Formulas"); END
-DIRECT (ScriptEditor, cb_TheHistoryMechanism) Melder_help ("History mechanism"); END
-DIRECT (ScriptEditor, cb_InitializationScripts) Melder_help ("Initialization script"); END
-DIRECT (ScriptEditor, cb_AddingToAFixedMenu) Melder_help ("Add to fixed menu..."); END
-DIRECT (ScriptEditor, cb_AddingToADynamicMenu) Melder_help ("Add to dynamic menu..."); END
+DIRECT (ScriptEditor, cb_AboutScriptEditor) Melder_help (L"ScriptEditor"); END
+DIRECT (ScriptEditor, cb_ScriptingTutorial) Melder_help (L"Scripting"); END
+DIRECT (ScriptEditor, cb_ScriptingExamples) Melder_help (L"Scripting examples"); END
+DIRECT (ScriptEditor, cb_PraatScript) Melder_help (L"Praat script"); END
+DIRECT (ScriptEditor, cb_FormulasTutorial) Melder_help (L"Formulas"); END
+DIRECT (ScriptEditor, cb_TheHistoryMechanism) Melder_help (L"History mechanism"); END
+DIRECT (ScriptEditor, cb_InitializationScripts) Melder_help (L"Initialization script"); END
+DIRECT (ScriptEditor, cb_AddingToAFixedMenu) Melder_help (L"Add to fixed menu..."); END
+DIRECT (ScriptEditor, cb_AddingToADynamicMenu) Melder_help (L"Add to dynamic menu..."); END
 
 static void createMenus (I) {
 	iam (ScriptEditor);
@@ -296,7 +297,7 @@ ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const w
 
 ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script) {
 	ScriptEditor me;
-	wchar_t *text = MelderFile_readTextW (& script -> file);
+	wchar_t *text = MelderFile_readText (& script -> file);
 	if (! text) return NULL;
 	me = ScriptEditor_createFromText (parent, voidEditor, text);
 	Melder_free (text);

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/01/06
+ * pb 2007/08/12
  */
 
 #ifndef _melder_h_
@@ -34,18 +34,18 @@
  */
 #define Resources_STRING_BUFFER_SIZE 260
 
-void Resources_addByte (const char *string, signed char *value);
-void Resources_addShort (const char *string, short *value);
-void Resources_addInt (const char *string, int *value);
-void Resources_addLong (const char *string, long *value);
-void Resources_addUbyte (const char *string, unsigned char *value);
-void Resources_addUshort (const char *string, unsigned short *value);
-void Resources_addUint (const char *string, unsigned int *value);
-void Resources_addUlong (const char *string, unsigned long *value);
-void Resources_addChar (const char *string, char *value);
-void Resources_addFloat (const char *string, float *value);
-void Resources_addDouble (const char *string, double *value);
-void Resources_addString (const char *string, char *value);
+void Resources_addByte (const wchar_t *string, signed char *value);
+void Resources_addShort (const wchar_t *string, short *value);
+void Resources_addInt (const wchar_t *string, int *value);
+void Resources_addLong (const wchar_t *string, long *value);
+void Resources_addUbyte (const wchar_t *string, unsigned char *value);
+void Resources_addUshort (const wchar_t *string, unsigned short *value);
+void Resources_addUint (const wchar_t *string, unsigned int *value);
+void Resources_addUlong (const wchar_t *string, unsigned long *value);
+void Resources_addChar (const wchar_t *string, wchar_t *value);
+void Resources_addFloat (const wchar_t *string, float *value);
+void Resources_addDouble (const wchar_t *string, double *value);
+void Resources_addString (const wchar_t *string, wchar_t *value);
 
 void Resources_read (MelderFile file);
 void Resources_write (MelderFile file);

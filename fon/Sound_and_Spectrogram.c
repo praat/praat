@@ -32,15 +32,15 @@
 #include "Sound_and_Spectrogram.h"
 #include "NUM2.h"
 
-const char * Sound_to_Spectrogram_windowShapeText (int windowShape) {
+const wchar_t * Sound_to_Spectrogram_windowShapeText (int windowShape) {
 	return
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_SQUARE ? "Square (rectangular)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HAMMING ? "Hamming (raised sine-squared)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_BARTLETT ? "Bartlett (triangular)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_WELCH ? "Welch (parabolic)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HANNING ? "Hanning (sine-squared)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_GAUSSIAN ? "Gaussian" :
-		"(unknown)";
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_SQUARE ? L"Square (rectangular)" :
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HAMMING ? L"Hamming (raised sine-squared)" :
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_BARTLETT ? L"Bartlett (triangular)" :
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_WELCH ? L"Welch (parabolic)" :
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HANNING ? L"Hanning (sine-squared)" :
+		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_GAUSSIAN ? L"Gaussian" :
+		L"(unknown)";
 }
 
 Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,

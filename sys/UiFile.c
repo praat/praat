@@ -133,7 +133,7 @@ static void UiFile_help (Widget w, XtPointer void_me, XtPointer call) {
 	(void) w;
 	(void) void_me;
 	(void) call;
-	if (my helpTitle) Melder_help (Melder_peekWcsToAscii (my helpTitle));
+	if (my helpTitle) Melder_help (my helpTitle);
 }
 #endif
 

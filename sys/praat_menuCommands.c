@@ -34,7 +34,7 @@ static long theNumberOfCommands = 0;
 static struct structPraat_Command *theCommands;
 
 void praat_menuCommands_init (void) {
-	theCommands = Melder_calloc (praat_MAXNUM_FIXED_COMMANDS + 1, sizeof (struct structPraat_Command));
+	theCommands = Melder_calloc (struct structPraat_Command, praat_MAXNUM_FIXED_COMMANDS + 1);
 }
 
 static int compareMenuCommands (const void *void_me, const void *void_thee) {
@@ -240,8 +240,8 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
-			/*return Melder_error ("praat_addMenuCommand: the command \"%s\" cannot be put after \"%s\",\n"
-				"in the menu \"%s\" in the window \"%s\"\n"
+			/*return Melder_error ("praat_addMenuCommand: the command \"%ls\" cannot be put after \"%ls\",\n"
+				"in the menu \"%ls\" in the window \"%ls\"\n"
 				"because the latter command does not exist.", title, after, menu, window);*/
 			position = theNumberOfCommands + 1;   /* Default: at end. */
 		}
@@ -272,7 +272,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 		theCommands [position]. script = Melder_wcsdup (L"");   /* Empty string, which will be needed to signal origin. */
 	} else {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFileW (script, & file);
+		Melder_relativePathToFile (script, & file);
 		theCommands [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
 	}
 	theCommands [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;

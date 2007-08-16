@@ -45,6 +45,7 @@
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
  djmw 20070302 NUMclipLineWithinRectangle
+ pb 20070810 wchar_t
 */
 
 #include "SVD.h"
@@ -91,10 +92,10 @@ int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce)
 	return max >= NUMfpp -> rmax || min <= - NUMfpp -> rmax;
 }
 
-int NUMstring_containsPrintableCharacter (char *s)
+int NUMstring_containsPrintableCharacter (wchar_t *s)
 {
 	long i, len; 
-	if (s == NULL || ((len = strlen (s)) == 0)) return 0;
+	if (s == NULL || ((len = wcslen (s)) == 0)) return 0;
 	for (i = 0; i < len; i++)
 	{
 		int c = s[i];
@@ -103,19 +104,20 @@ int NUMstring_containsPrintableCharacter (char *s)
 	return 0;
 }
 
-double *NUMstring_to_numbers (const char *s, long *numbers_found)
+double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 {
-	char *dup = NULL, *token, *delimiter = " ,\t";
+	wchar_t *dup = NULL, *token, *delimiter = L" ,\t";
 	long capacity = 100, n; double *numbers = NULL;
 	
 	*numbers_found = n = 0;
 	
-	if (((dup = Melder_strdup (s)) == NULL) ||
+	if (((dup = Melder_wcsdup (s)) == NULL) ||
 		((numbers = NUMdvector (1, capacity)) == NULL)) goto end;
-	token = strtok (dup, delimiter);
+	wchar_t *last;
+	token = wcstok (dup, delimiter, & last);
 	while (token)
 	{
-		double value = atof (token);
+		double value = wcstod (token, NULL);
 		if (n > capacity) 
 		{
 			long newsize = 2 * capacity; double *new;
@@ -123,7 +125,7 @@ double *NUMstring_to_numbers (const char *s, long *numbers_found)
 			numbers = new; capacity = newsize;
 		}
 		numbers[++n] = value;
-		token = strtok (NULL, delimiter);
+		token = wcstok (NULL, delimiter, & last);
 	}
 end:
 	*numbers_found = n;
@@ -136,29 +138,29 @@ end:
 	return numbers;
 }
 
-int NUMstrings_equal (char **s1, char **s2, long lo, long hi)
+int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 {
 	long i;
 	for (i=lo; i <= hi; i++)
 	{
-		if (NUMstrcmp (s1[i], s2[i])) return 0;
+		if (NUMwcscmp (s1[i], s2[i])) return 0;
 	}
 	return 1;
 }
 
-int NUMstrings_copyElements (char **from, char**to, long lo, long hi)
+int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 {
 	long i;
 	
 	for (i = lo; i <= hi; i++)
 	{
 		Melder_free (to[i]);
-		if (from[i] && ((to[i] = Melder_strdup (from[i])) == NULL)) return 0;
+		if (from[i] && ((to[i] = Melder_wcsdup (from[i])) == NULL)) return 0;
 	}
 	return 1;
 }
 
-void NUMstrings_free (char **s, long lo, long hi)
+void NUMstrings_free (wchar_t **s, long lo, long hi)
 {
 	long i;
 	if (s == NULL) return;
@@ -166,36 +168,36 @@ void NUMstrings_free (char **s, long lo, long hi)
 	NUMpvector_free (s, lo);
 }
 
-char **NUMstrings_copy (char **from, long lo, long hi)
+wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi)
 {
-	char **to = (char**) NUMpvector (lo, hi);
+	wchar_t **to = (wchar_t**) NUMpvector (lo, hi);
 	if (to == NULL || ! NUMstrings_copyElements (from, to, lo, hi))
 		NUMstrings_free (to, lo, hi);
 	return to;
 }
 
-static char *appendNumberToString (char *s, long number)
+static wchar_t *appendNumberToString (wchar_t *s, long number)
 {
-	char buf[12], *new;
+	wchar_t buf[12], *new;
 	long ncharb, nchars = 0;
 	
-	ncharb = sprintf (buf, "%ld", number);
-	if (s != NULL) nchars = strlen (s);
-	new = Melder_malloc (nchars + ncharb + 1);
+	ncharb = swprintf (buf, 12, L"%ld", number);
+	if (s != NULL) nchars = wcslen (s);
+	new = Melder_calloc (wchar_t, nchars + ncharb + 1);
 	if (new == NULL) return NULL;
-	if (nchars > 0) strncpy (new, s, nchars);
-	strncpy (new + nchars, buf, ncharb + 1);
+	if (nchars > 0) wcsncpy (new, s, nchars);
+	wcsncpy (new + nchars, buf, ncharb + 1);
 	return new;
 } 
 
-int NUMstrings_setSequentialNumbering (char **s, long lo, long hi, 
-	char *pre, long number, long increment)
+int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi, 
+	wchar_t *pre, long number, long increment)
 {
 	long i;
 	
 	for (i = lo; i <= hi; i++, number += increment)
 	{
-		char *new = appendNumberToString (pre, number);
+		wchar_t *new = appendNumberToString (pre, number);
 		if (new == NULL) return 0;
 		Melder_free (s[i]);
 		s[i] = new;
@@ -303,108 +305,24 @@ end:
 	return ! Melder_hasError ();
 }
 */ 
-char *strstr_regexp (const char *string, const char *search_regexp)
+wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
-	char *charp = NULL, *compileMsg;
-	regexp *compiled_regexp = CompileRE (search_regexp, &compileMsg, 0);
+	wchar_t *charp = NULL;
+	char *compileMsg;
+	regexp *compiled_regexp = CompileRE (Melder_peekWcsToAscii (search_regexp), &compileMsg, 0);
 	
 	if (compiled_regexp == NULL) return Melder_errorp (compileMsg);
 	
-	if (ExecRE(compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL))
-		charp = compiled_regexp -> startp[0];
+	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToAscii (string), NULL, 0, '\0', '\0', NULL, NULL)) {
+		char *charpA = compiled_regexp -> startp[0];
+		charp = Melder_asciiToWcs (charpA);
+		Melder_free (charpA);
+	}
 	free (compiled_regexp);
 	return charp;
 }
 
-char *str_replace_literal (char *string, const char *search, const char *replace,
-	long maximumNumberOfReplaces, long *nmatches)
-{
-	int len_replace, len_search, len_string, len_result;
-	int i, nchar, result_nchar = 0;
-	char *pos; 	/* current position / start of current match */
-	char *posp; /* end of previous match */
-	char *result;
-	
-	if (string == NULL || search == NULL || replace == NULL) return NULL;
-	
-	
-	len_string = strlen (string);
-	if (len_string == 0) maximumNumberOfReplaces = 1;
-	len_search = strlen (search);
-	if (len_search == 0) maximumNumberOfReplaces = 1;
-
-	/*
-		To allocate memory for 'result' only once, we have to know how many
-		matches will occur.
-	*/
-	
-	pos = string; *nmatches = 0;
-	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
-
-	if (len_search == 0) /* Search is empty string... */
-	{
-		if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
-	}
-	else
-	{
-		if (len_string != 0) /* Because empty string always matches */
-		{
-			while ((pos = strstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
-			{
-				pos += len_search; 
-				(*nmatches)++;
-			}
-		}
-	}
-	
-	len_replace = strlen (replace);
-	len_result = len_string + *nmatches * (len_replace - len_search);
-	result = (char *) Melder_malloc (len_result + 1);
-	result[len_result] = '\0';
-	if (result == NULL) return NULL;
-	
-	pos = posp = string;
-	for (i=1; i <= *nmatches; i++)
-	{
-		pos = strstr (pos, search);
-		
-		/* 
-			Copy gap between end of previous match and start of current.
-		*/
-		
-		nchar = (pos - posp);
-		if (nchar > 0)
-		{
-			strncpy (result + result_nchar, posp, nchar);
-			result_nchar += nchar;
-		}
-		
-		/*
-			Insert the replace string in result.
-		*/
-		
-		strncpy (result + result_nchar, replace, len_replace);
-		result_nchar += len_replace;
-		
-		/*
-			Next search starts after the match.
-		*/
-		
-		pos += len_search;
-		posp = pos;
-	}
-	
-	/*
-		Copy gap between end of match and end of string.
-	*/
-	
-	pos = string + len_string;
-	nchar = pos - posp;
-	if (nchar > 0) strncpy (result + result_nchar, posp, nchar);
-	return result; 
-}
-
-wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, const wchar_t *replace,
+wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wchar_t *replace,
 	long maximumNumberOfReplaces, long *nmatches)
 {
 	int len_replace, len_search, len_string, len_result;
@@ -447,7 +365,7 @@ wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, const wch
 	
 	len_replace = wcslen (replace);
 	len_result = len_string + *nmatches * (len_replace - len_search);
-	result = (wchar_t *) Melder_malloc ((len_result + 1) * sizeof (wchar_t));
+	result = Melder_malloc (wchar_t, len_result + 1);
 	result[len_result] = '\0';
 	if (result == NULL) return NULL;
 	
@@ -492,7 +410,6 @@ wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, const wch
 	return result; 
 }
 
-
 char *str_replace_regexp (char *string, regexp *compiledSearchRE, 
 	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
@@ -530,7 +447,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	  	
 	buf_size = 2 * string_length + 1;
 	buf_size = MAX (buf_size, 100);	
-	buf = (char *) Melder_malloc (buf_size);
+	buf = Melder_malloc (char, buf_size);
 	if (buf == NULL) return 0;
 	
 	/*
@@ -633,163 +550,23 @@ end:
 	return buf;
 }
 
-wchar_t *str_replace_regexpW (wchar_t *string, regexpW *compiledSearchRE, 
-	const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches)
-{
-	long i;
-	int buf_size; 					/* inclusive nul-byte */
-	int buf_nchar = 0;				/* # characters in 'buf' */
-	int string_length;				/* exclusive 0-byte*/
-	int gap_copied = 0;
-	int nchar, reverse = 0;
-	wchar_t *pos; 	/* current position in 'string' / start of current match */
-	wchar_t *posp; /* end of previous match */
-	wchar_t *buf, *tbuf;
-
-	*nmatches = 0;	
-	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || wcslen (replaceRE) == 0)
-		return NULL;
-		
-	string_length = wcslen (string);
-	if (string_length == 0) maximumNumberOfReplaces = 1;
-
-	i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
-		  
-	/*
-		We do not know the size of the replaced string in advance,
-		therefor, we allocate a replace buffer twice the size of the 
-		original string. After all replaces have taken place we do a
-		final realloc to the then exactly known size. 
-		If during the replace, the size of the buffer happens to be too
-		small (this is signalled when the last byte in the buffer equals 
-		'\0' after the replace), we double its size and restart the replace.
-		We cannot detect, however, whether the buffer was exactly filled up
-		or it was too small. In the former case we are penalized by one 
-		extra memory reallocation.
-	*/
-	  	
-	buf_size = 2 * string_length + 1;
-	buf_size = MAX (buf_size, 100);	
-	buf = (wchar_t *) Melder_malloc (buf_size * sizeof (wchar_t));
-	if (buf == NULL) return 0;
-	
-	/*
-		The last byte of 'buf' is our buffer_full test.
-		Make sure it is not '\0'.
-	*/
-	
-	buf[buf_size - 1] = 'a';
-	
-	pos = posp = string;
-	while (ExecREW(compiledSearchRE, NULL, pos, NULL, reverse, 
-		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL) && 
-		i++ < maximumNumberOfReplaces)
-	{
-		/*
-			Copy gap between the end of the previous match and the start
-			of the current match.
-			Check buffer overflow. 
-		*/
-		
-		pos = compiledSearchRE -> startp[0];
-		nchar = pos - posp;
-		if (nchar > 0 && ! gap_copied)
-		{
-			if (buf_nchar + nchar > buf_size - 1)
-			{
-				buf_size *= 2;
-				tbuf = (wchar_t *) Melder_realloc (buf, buf_size * sizeof (wchar_t));
-				if (tbuf == NULL) goto end;
-				buf = tbuf;
-				buf[buf_size - 1] = 'a';
-			}
-			wcsncpy (buf + buf_nchar, posp, nchar);
-			buf_nchar += nchar;
-		}
-		
-		gap_copied = 1;
-		
-		/*
-			Do the substitution. We can only check afterwards for buffer
-			overflow. SubstituteRE puts null byte at last replaced position.
-		*/
-		
-		SubstituteREW (compiledSearchRE, replaceRE, buf + buf_nchar,
-			buf_size - buf_nchar);
-		
-		/*
-			Check buffer overflow; 
-		*/
-		
-		if (buf[buf_size - 1] == '\0')
-		{
-			buf_size *= 2;
-			tbuf = (wchar_t *) Melder_realloc (buf, buf_size * sizeof (wchar_t));
-			if (tbuf == NULL) goto end;
-			buf = tbuf;
-			buf[buf_size - 1] = 'a';
-			/* redo */
-			i--;
-			continue;
-		}
-		
-		/*
-			Buffer is not full, get number of characters added;
-		*/
-		
-		nchar = wcslen (buf + buf_nchar);
-		buf_nchar += nchar;
-		
-		/*
-			Update next start position in search string.
-		*/
-		
-		pos = posp = compiledSearchRE -> endp[0];
-		gap_copied = 0;
-		(*nmatches)++;
-	}
-	
-	/*
-		Were done, final allocation to exact size
-	*/
-	
-	pos = string + string_length;
-	nchar = pos - posp;
-	buf_size = buf_nchar + nchar;
-	tbuf = (wchar_t *) Melder_realloc (buf, (buf_size + 1) * sizeof (wchar_t));
-	if (tbuf == NULL) goto end;
-	buf = tbuf;
-	
-	/*
-		Copy the last part of 'string'.
-	*/
-	
-	wcsncpy (buf + buf_nchar, posp, nchar);
-	buf[buf_size] = '\0';
-	
-end:
-
-	if (Melder_hasError ()) Melder_free (buf);
-	return buf;
-}
-
-static char **strs_replace_literal (char **from, long lo, long hi, 
-	const char *search, const char *replace, int maximumNumberOfReplaces,
+static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, 
+	const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
-	char **result;
+	wchar_t **result;
 	long i, nmatches_sub = 0;
 
 	if (search == NULL || replace == NULL) return NULL;
 	
-	result = (char**) NUMpvector (lo, hi);
+	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
 	
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
 		/* Treat a NULL as an empty string */
-		char *string = from[i] == NULL ? "" : from[i];
+		wchar_t *string = from[i] == NULL ? L"" : from[i];
 
 		result[i] = str_replace_literal (string, search, replace,
 			maximumNumberOfReplaces, &nmatches_sub);
@@ -808,29 +585,33 @@ end:
 }
 
 
-static char **strs_replace_regexp (char **from, long lo, long hi, 
-	const char *searchRE, const char *replaceRE, int maximumNumberOfReplaces,
+static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, 
+	const wchar_t *searchRE, const wchar_t *replaceRE, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
 	regexp *compiledRE;
-	char *compileMsg, **result = NULL;
+	char *compileMsg;
+	wchar_t **result = NULL;
 	long i, nmatches_sub = 0;
 
 	if (searchRE == NULL || replaceRE == NULL) return NULL;
 				
-	compiledRE = CompileRE (searchRE, &compileMsg, 0);
+	compiledRE = CompileRE (Melder_peekWcsToAscii (searchRE), &compileMsg, 0);
 	if (compiledRE == NULL) return Melder_errorp (compileMsg);
 
-	result = (char **) NUMpvector (lo, hi);
+	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
 	 
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
 		/* Treat a NULL as an empty string */
-		char *string = from[i] == NULL ? "" : from[i];
-		result[i] = str_replace_regexp (string, compiledRE, replaceRE,
+		wchar_t *string = from[i] == NULL ? L"" : from[i];
+		char *resultA = str_replace_regexp (Melder_peekWcsToAscii (string), compiledRE, Melder_peekWcsToAscii (replaceRE),
 			maximumNumberOfReplaces, &nmatches_sub);
+		if (resultA == NULL) goto end;
+		result [i] = Melder_asciiToWcs (resultA);
+		Melder_free (resultA);
 		if (result[i] == NULL) goto end;
 		if (nmatches_sub > 0)
 		{
@@ -846,7 +627,7 @@ end:
 	return result;	
 }
 
-char **strs_replace (char **from, long lo, long hi, const char *search, const char *replace,
+wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp)
 {
 	if (use_regexp) return strs_replace_regexp (from, lo, hi, search,
@@ -855,29 +636,29 @@ char **strs_replace (char **from, long lo, long hi, const char *search, const ch
 		maximumNumberOfReplaces, nmatches, nstringmatches);
 }
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, char *name)
+void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, wchar_t *name)
 {
 	long i, j, k, npc = 5;
 	div_t n = div (nc, npc);
 
 	MelderInfo_open ();
-	MelderInfo_write2 (name, "=[");
+	MelderInfo_write2 (name, L"=[");
 	for (i = 1; i <= nr; i++)
 	{
 		for (j = 1; j <= n.quot; j++)
 		{
 			for (k = 1; k <= npc; k++)
 			{
-				MelderInfo_write2 (Melder_double (m[i][(j-1)*npc+k]), (k < npc ? ", " : ""));
+				MelderInfo_write2 (Melder_double (m[i][(j-1)*npc+k]), (k < npc ? L", " : L""));
 			}
-			MelderInfo_write1 (j < n.quot ? ",\n" : "");
+			MelderInfo_write1 (j < n.quot ? L",\n" : L"");
 		}
 
 		for (k = 1; k <= n.rem; k++)
 		{
-			MelderInfo_write2 (Melder_double (m[i][n.quot*npc + k]), (k < n.rem ? ", " : ""));
+			MelderInfo_write2 (Melder_double (m[i][n.quot*npc + k]), (k < n.rem ? L", " : L""));
 		}
-		MelderInfo_write1 (i < nr ? ";\n" : "];\n");
+		MelderInfo_write1 (i < nr ? L";\n" : L"];\n");
 	}
 	MelderInfo_close ();
 }
@@ -1205,6 +986,20 @@ int NUMstrcmp (const char *s1, const char *s2)
 	{
 		if (s2 == NULL) return +1;
 		else return strcmp (s1, s2);
+	}
+}
+
+int NUMwcscmp (const wchar_t *s1, const wchar_t *s2)
+{
+	if (s1 == NULL || s1[0] == '\0')
+	{
+		if (s2 != NULL && s2[0] != '\0') return -1;
+		else return 0;
+	}
+	else
+	{
+		if (s2 == NULL) return +1;
+		else return wcscmp (s1, s2);
 	}
 }
 
@@ -3462,7 +3257,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		ymin = yl2; ymax = yl1; yswap = 1;
 	}
 	
-	if (hline = (yl1 == yl2))
+	if ((hline = (yl1 == yl2)) == true)
 	{
 		if (xmin < xr1) *xo1 = xr1;
 		if (xmax > xr2) *xo2 = xr2;
@@ -3472,7 +3267,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		}
 		return 1;
 	}
-	if (vline = (xl1 == xl2))
+	if ((vline = (xl1 == xl2)) == true)
 	{
 		if (ymin < yr1) *yo1 = yr1;
 		if (ymax > yr2) *yo2 = yr2;

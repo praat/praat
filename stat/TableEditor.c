@@ -24,6 +24,7 @@
  * pb 2006/05/11 underscores are not subscripts
  * pb 2006/08/02 correct vertical scroll bar on Windows (has to be called "verticalScrollBar")
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "TableEditor.h"
@@ -112,7 +113,7 @@ static int menu_cb_Erase (EDITOR_ARGS) {
 
 static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	Melder_help ("TableEditor");
+	Melder_help (L"TableEditor");
 	return 1;
 }
 
@@ -223,7 +224,7 @@ static void draw (I) {
 	iam (TableEditor);
 	Table table = my data;
 	double spacing = 2.0;   /* millimetres at both edges */
-	char numberBuffer [40];
+	wchar_t numberBuffer [40];
 	double columnWidth, cellWidth;
 	long irow, icol;
 	long rowmin = my topRow, rowmax = rowmin + 197;
@@ -241,9 +242,9 @@ static void draw (I) {
 	/*
 	 * Determine the width of the column with the row numbers.
 	 */
-	columnWidth = Graphics_textWidth (my graphics, "row");
+	columnWidth = Graphics_textWidth (my graphics, L"row");
 	for (irow = rowmin; irow <= rowmax; irow ++) {
-		sprintf (numberBuffer, "%ld", irow);
+		swprintf (numberBuffer, 40, L"%ld", irow);
 		cellWidth = Graphics_textWidth (my graphics, numberBuffer);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 	}
@@ -256,16 +257,16 @@ static void draw (I) {
 	 * Determine the width of the columns.
 	 */
 	for (icol = colmin; icol <= colmax; icol ++) {
-		const char *columnLabel = table -> columnHeaders [icol]. label;
-		sprintf (numberBuffer, "%ld", icol);
+		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
+		swprintf (numberBuffer, 40, L"%ld", icol);
 		columnWidth = Graphics_textWidth (my graphics, numberBuffer);
-		if (columnLabel == NULL) columnLabel = "";
+		if (columnLabel == NULL) columnLabel = L"";
 		cellWidth = Graphics_textWidth (my graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (irow = rowmin; irow <= rowmax; irow ++) {
-			const char *cell = Table_getStringValue (table, irow, icol);
+			const wchar_t *cell = Table_getStringValue (table, irow, icol);
 			Melder_assert (cell != NULL);
-			if (cell [0] == '\0') cell = "?";
+			if (cell [0] == '\0') cell = L"?";
 			cellWidth = Graphics_textWidth (my graphics, cell);
 			if (cellWidth > columnWidth) columnWidth = cellWidth;
 		}
@@ -275,24 +276,24 @@ static void draw (I) {
 	/*
 	 * Show the row numbers.
 	 */
-	Graphics_text (my graphics, my columnLeft [0] / 2, rowmin - 1, "row");
+	Graphics_text (my graphics, my columnLeft [0] / 2, rowmin - 1, L"row");
 	for (irow = rowmin; irow <= rowmax; irow ++) {
-		Graphics_printf (my graphics, my columnLeft [0] / 2, irow, "%ld", irow);
+		Graphics_printf (my graphics, my columnLeft [0] / 2, irow, L"%ld", irow);
 	}
 	for (icol = colmin; icol <= colmax; icol ++) {
 		double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
-		const char *columnLabel = table -> columnHeaders [icol]. label;
-		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = "?";
-		Graphics_printf (my graphics, mid, rowmin - 2, "%ld", icol);
-		Graphics_printf (my graphics, mid, rowmin - 1, "%s", columnLabel);
+		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
+		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = L"?";
+		Graphics_printf (my graphics, mid, rowmin - 2, L"%ld", icol);
+		Graphics_text (my graphics, mid, rowmin - 1, columnLabel);
 	}
 	for (irow = rowmin; irow <= rowmax; irow ++) {
 		for (icol = colmin; icol <= colmax; icol ++) {
 			double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
-			const char *cell = Table_getStringValue (table, irow, icol);
+			const wchar_t *cell = Table_getStringValue (table, irow, icol);
 			Melder_assert (cell != NULL);
-			if (cell [0] == '\0') cell = "?";
-			Graphics_printf (my graphics, mid, irow, "%s", cell);
+			if (cell [0] == '\0') cell = L"?";
+			Graphics_text (my graphics, mid, irow, cell);
 		}
 	}
 }

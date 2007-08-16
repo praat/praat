@@ -467,7 +467,7 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	 * Read data from header.
 	 * Use defaults if necessary.
 	 */
-	if ((lines = Melder_calloc (1, headerLength + 1)) == NULL) goto error;
+	if ((lines = Melder_calloc (char, headerLength + 1)) == NULL) goto error;
 	if (fread (lines, 1, headerLength, f) < headerLength)
 		{ Melder_error ("Header too short."); goto error; }
 	psamples = lines - 1;
@@ -592,7 +592,7 @@ end:
 }
 
 int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
-	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
+	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer) {
 		MelderFile_writeAudioFileHeader16 (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
 		MelderFile_writeFloatToAudio (file, Melder_defaultAudioFileEncoding16 (audioFileType),

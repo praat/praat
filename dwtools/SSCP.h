@@ -167,7 +167,7 @@ SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
 /* For inheritors */
 
 void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
-	int confidence, char *label, long d1, long d2, double xmin, double xmax,
+	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
 #endif /* _SSCP_h_ */

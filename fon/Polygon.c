@@ -42,16 +42,16 @@
 static void info (I) {
 	iam (Polygon);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my numberOfPoints));
-	MelderInfo_writeLine2 ("Perimeter: ", Melder_single (Polygon_perimeter (me)));
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my numberOfPoints));
+	MelderInfo_writeLine2 (L"Perimeter: ", Melder_single (Polygon_perimeter (me)));
 }
   
 static int writeText (I, MelderFile file) {
 	iam (Polygon);
 	texputi4 (file, my numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
 	for (long i = 1; i <= my numberOfPoints; i ++) {
-		texputr4 (file, my x [i], L"x [", Melder_integerW (i), L"]", 0,0,0);
-		texputr4 (file, my y [i], L"y [", Melder_integerW (i), L"]", 0,0,0);
+		texputr4 (file, my x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
+		texputr4 (file, my y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
 	}
 	return 1;
 }
@@ -60,7 +60,7 @@ static int readText (I, MelderReadString *text) {
 	iam (Polygon);
 	my numberOfPoints = texgeti4 (text);
 	if (my numberOfPoints < 1)
-		return Melder_error3 (L"Cannot read a Polygon with only ", Melder_integerW (my numberOfPoints), L" points.");
+		return Melder_error3 (L"Cannot read a Polygon with only ", Melder_integer (my numberOfPoints), L" points.");
 	if (! (my x = NUMfvector (1, my numberOfPoints)) || ! (my y = NUMfvector (1, my numberOfPoints)))
 		return 0;
 	for (long i = 1; i <= my numberOfPoints; i ++) {

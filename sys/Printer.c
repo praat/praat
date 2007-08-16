@@ -25,6 +25,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
+ * pb 2007/08/12 wchar_t
  */
 
 #include "melder.h"
@@ -51,11 +52,11 @@
 };
 
 void Printer_prefs (void) {
-	Resources_addInt ("Printer.paperSize", & thePrinter. paperSize);
-	Resources_addInt ("Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript);
-	Resources_addInt ("Printer.spots", & thePrinter. spots);
-	Resources_addInt ("Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy);
-	Resources_addInt ("Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview);
+	Resources_addInt (L"Printer.paperSize", & thePrinter. paperSize);
+	Resources_addInt (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript);
+	Resources_addInt (L"Printer.spots", & thePrinter. spots);
+	Resources_addInt (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy);
+	Resources_addInt (L"Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview);
 }
 
 #if defined (macintosh)
@@ -318,7 +319,7 @@ int Printer_postScriptSettings (void) {
 		UiForm_setInteger (dia, L"Paper size", thePrinter. paperSize + 1);
 		UiForm_setInteger (dia, L"Orientation", thePrinter. orientation + 1);
 		UiForm_setReal (dia, L"Magnification", thePrinter. magnification);
-		UiForm_setString (dia, L"printCommand", Melder_peekAsciiToWcs (Site_getPrintCommand ()));
+		UiForm_setString (dia, L"printCommand", Site_getPrintCommand ());
 	#endif
 	UiForm_setInteger (dia, L"Font choice strategy", thePrinter. fontChoiceStrategy + 1);
 	#if defined (macintosh)
@@ -362,7 +363,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		if (! thePrinter. graphics) return Melder_error ("Cannot create temporary PostScript file for printing.");
 		draw (boss, thePrinter. graphics);
 		forget (thePrinter. graphics);
-		sprintf (command, Site_getPrintCommand (), tempPath);
+		sprintf (command, Melder_peekWcsToAscii (Site_getPrintCommand ()), tempPath);
 		system (command);
 		MelderFile_delete (& tempFile);
 	#elif defined (_WIN32)
@@ -482,7 +483,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		CFIndex numberOfSupportedFormats = CFArrayGetCount (supportedFormats);
 		if (Melder_debug == 21) {
 			MelderInfo_open ();
-			MelderInfo_writeLine1 ("Supported document formats:");
+			MelderInfo_writeLine1 (L"Supported document formats:");
 		}
 		for (CFIndex i = 0; i < numberOfSupportedFormats; i ++) {
 			CFStringRef supportedFormat = CFArrayGetValueAtIndex (supportedFormats, i);
@@ -490,7 +491,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				isPostScriptDriver = TRUE;
 			}
 			if (Melder_debug == 21) {
-				MelderInfo_writeLine3 (Melder_integer (i), ": ", CFStringGetCStringPtr (supportedFormat, kCFStringEncodingMacRoman));
+				MelderInfo_writeLine3 (Melder_integer (i), L": ",
+					Melder_peekAsciiToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingMacRoman)));
 			}
 		}
 		if (Melder_debug == 21) {

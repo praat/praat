@@ -34,7 +34,7 @@
 #endif
 
 TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, 
-	double minSilenceDuration, double minSoundingDuration, char *silenceLabel, char *soundingLabel);
+	double minSilenceDuration, double minSoundingDuration, wchar_t *silenceLabel, wchar_t *soundingLabel);
 /*
 	Marks "silence" intervals in a sound as intervals in a TextGrid.
 	silenceThreshold_dB: silence-to-speech and speech-to-silence threshold as dB's below maximum intensity

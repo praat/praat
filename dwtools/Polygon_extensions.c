@@ -177,7 +177,7 @@ static void setWindow (Polygon me, Any graphics,
 }
 
 void Polygon_drawMarks (I, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double size_mm, const char *mark)
+	double ymin, double ymax, double size_mm, const wchar_t *mark)
 {
 	iam (Polygon);
 	long i;

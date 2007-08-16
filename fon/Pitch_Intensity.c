@@ -72,9 +72,9 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Fundamental frequency (Hz)");
+		Graphics_textBottom (g, 1, L"Fundamental frequency (Hz)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Intensity (dB)");
+		Graphics_textLeft (g, 1, L"Intensity (dB)");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }

@@ -459,14 +459,14 @@ static void info (I)
 	iam (DTW);
 	
 	classData -> info (me);
-	MelderInfo_writeLine5 ("Domain prototype:", Melder_double (my ymin), " to ", 
-		Melder_double (my ymax), " (s).");
-	MelderInfo_writeLine5 ("Domain candidate:", Melder_double (my xmin), " to ", 
-		Melder_double (my xmax), " (s).");
-	MelderInfo_writeLine2 ("Number of frames prototype: ", Melder_integer (my ny));
-	MelderInfo_writeLine2 ("Number of frames candidate: ", Melder_integer (my nx));
-	MelderInfo_writeLine2 ("Path length (frames): ", Melder_integer (my pathLength));
-	MelderInfo_writeLine2 ("Global warped distance: ", Melder_double (my weightedDistance));
+	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (my ymin), L" to ", 
+		Melder_double (my ymax), L" (s).");
+	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (my xmin), L" to ", 
+		Melder_double (my xmax), L" (s).");
+	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (my ny));
+	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (my nx));
+	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (my pathLength));
+	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (my weightedDistance));
 	if (my nx == my ny)
 	{
 		double dd = 0; long i;
@@ -474,7 +474,7 @@ static void info (I)
 		{
 			dd += my z[i][i];
 		}
-		MelderInfo_writeLine2 ("Distance along diagonal: ", Melder_double (dd / my nx));
+		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / my nx));
 	}
 }
 
@@ -745,7 +745,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 				if (Melder_debug != 0)
 				{
 					if (nodirection_assigned == 1) MelderInfo_open ();
-					MelderInfo_writeLine4 (Melder_integer (x), " ",  Melder_integer (y), " (x,y) unreachable.");
+					MelderInfo_writeLine4 (Melder_integer (x), L" ",  Melder_integer (y), L" (x,y) unreachable.");
 				}
 			}
 			delta[y][x] = minimum;
@@ -762,7 +762,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 	*/
 	if (Melder_debug != 0 && nodirection_assigned > 0)
 	{
-		MelderInfo_writeLine4 (Melder_integer (nodirection_assigned), " cells from ", Melder_integer (numberOfCells), " had no valid direction assigned.");
+		MelderInfo_writeLine4 (Melder_integer (nodirection_assigned), L" cells from ", Melder_integer (numberOfCells), L" had no valid direction assigned.");
 		MelderInfo_close ();
 		
 	}
@@ -1463,7 +1463,7 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	if (garnish)
 	{
 		Graphics_drawInnerBox(g);
-		Graphics_textLeft (g, 1, "distance");
+		Graphics_textLeft (g, 1, L"distance");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}

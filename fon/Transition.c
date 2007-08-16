@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 1998/11/03
  * pb 2002/07/16 GPL
  * pb 2003/06/19 Eigen
  * pb 2006/12/10 MelderInfo
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Transition.h"
@@ -51,13 +51,13 @@ static int writeText (I, MelderFile file) {
 	MelderFile_write1 (file, L"\n");
 	for (long i = 1; i <= my numberOfStates; i ++) {
 		MelderFile_write1 (file, L"\"");
-		if (my stateLabels [i] != NULL) MelderFile_write1 (file, Melder_peekAsciiToWcs (my stateLabels [i]));
+		if (my stateLabels [i] != NULL) MelderFile_write1 (file, my stateLabels [i]);
 		MelderFile_write1 (file, L"\"\t");
 	}
 	for (long i = 1; i <= my numberOfStates; i ++) {
-		MelderFile_write3 (file, L"\nstate [", Melder_integerW (i), L"]:");
+		MelderFile_write3 (file, L"\nstate [", Melder_integer (i), L"]:");
 		for (long j = 1; j <= my numberOfStates; j ++) {
-			MelderFile_write2 (file, L"\t", Melder_doubleW (my data [i] [j]));
+			MelderFile_write2 (file, L"\t", Melder_double (my data [i] [j]));
 		}
 	}
 	return 1;
@@ -66,7 +66,7 @@ static int writeText (I, MelderFile file) {
 static void info (I) {
 	iam (Transition);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of states: ", Melder_integer (my numberOfStates));
+	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (my numberOfStates));
 }
 
 class_methods (Transition, Data)
@@ -110,20 +110,20 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	*denominator = 0;   /* Failure. */
 }
 
-static void print4 (char *buffer, double value, int iformat, int width, int precision) {
-	char formatString [40];
+static void print4 (wchar_t *buffer, double value, int iformat, int width, int precision) {
+	wchar_t formatString [40];
 	if (iformat == 4) {
 		long numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
 		if (numerator == 0)
-			sprintf (buffer, "0");
+			swprintf (buffer, 40, L"0");
 		else if (denominator > 1)
-			sprintf (buffer, "%ld/%ld", numerator, denominator);
+			swprintf (buffer, 40, L"%ld/%ld", numerator, denominator);
 		else
-			sprintf (buffer, "%.7g", value);
+			swprintf (buffer, 40, L"%.7g", value);
 	} else {
-		sprintf (formatString, "%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
-		sprintf (buffer, formatString, value);
+		swprintf (formatString, 40, L"%%%d.%d%c", width, precision, iformat == 1 ? 'f' : iformat == 2 ? 'e' : 'g');
+		swprintf (buffer, 40, formatString, value);
 	}
 }
 
@@ -152,7 +152,7 @@ void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision) {
 		}
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (col = 1; col <= my numberOfStates; col ++) {
-			char text [40];
+			wchar_t text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, text);
 		}

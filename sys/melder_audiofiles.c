@@ -183,14 +183,14 @@ int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long 
 	return 1;
 }
 
-static char *audioFileTypeString [] = { "none", "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II", "FLAC", "MP3" };
-char * Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? "unknown" : audioFileTypeString [audioFileType]; }
-static char *macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
-	= { "", "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f", "FLAC", "MP3" };
-char * Melder_macAudioFileType (int audioFileType) { return macAudioFileType [audioFileType]; }
-static char *winAudioFileExtension [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
-	= { "", ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2", ".flac", ".mp3" };
-char * Melder_winAudioFileExtension (int audioFileType) { return winAudioFileExtension [audioFileType]; }
+static wchar_t *audioFileTypeString [] = { L"none", L"AIFF", L"AIFC", L"WAV", L"NeXT/Sun", L"NIST", L"Sound Designer II", L"FLAC", L"MP3" };
+wchar_t * Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : audioFileTypeString [audioFileType]; }
+static wchar_t *macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+	= { L"", L"AIFF", L"AIFC", L"WAVE", L"ULAW", L"NIST", L"Sd2f", L"FLAC", L"MP3" };
+wchar_t * Melder_macAudioFileType (int audioFileType) { return macAudioFileType [audioFileType]; }
+static wchar_t *winAudioFileExtension [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+	= { L"", L".aiff", L".aifc", L".wav", L".au", L".nist", L".sd2", L".flac", L".mp3" };
+wchar_t * Melder_winAudioFileExtension (int audioFileType) { return winAudioFileExtension [audioFileType]; }
 static int defaultAudioFileEncoding16 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN,
 	     Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN,
@@ -198,7 +198,7 @@ static int defaultAudioFileEncoding16 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 int Melder_defaultAudioFileEncoding16 (int audioFileType) { return defaultAudioFileEncoding16 [audioFileType]; }
 
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels) {
-	MelderFile_create (file, macAudioFileType [audioFileType], "PpgB", winAudioFileExtension [audioFileType]);
+	MelderFile_create (file, macAudioFileType [audioFileType], L"PpgB", winAudioFileExtension [audioFileType]);
 	if (file -> filePointer) {
 		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
@@ -586,18 +586,18 @@ static int MelderFile_checkSoundDesignerTwoFile (MelderFile file, int *numberOfC
 	*sampleRate = Melder_getNumberFromStrResource (1001);
 	iferror { Melder_error ("No sampling frequency information."); goto end; }
 	if (*sampleRate <= 0.0) {
-		Melder_error ("Wrong sampling frequency: %s", Melder_double (*sampleRate));
+		Melder_error3 (L"Wrong sampling frequency: ", Melder_double (*sampleRate), L" Hz");
 		goto end;
 	}
 	*numberOfChannels = Melder_getNumberFromStrResource (1002);
 	iferror { Melder_error ("No channel number information."); goto end; }
 	if (*numberOfChannels != 1 && *numberOfChannels != 2) {
-		Melder_error ("Wrong number of channels: %s", Melder_integer (*numberOfChannels));
+		Melder_error2 (L"Wrong number of channels: ", Melder_integer (*numberOfChannels));
 		goto end;
 	}
 	*numberOfSamples = MelderFile_length (file) / sampleSize / *numberOfChannels;
 	if (*numberOfSamples <= 0) {
-		Melder_error ("No samples in file.");
+		Melder_error1 (L"No samples in file.");
 		goto end;
 	}
 	*startOfData = 0;

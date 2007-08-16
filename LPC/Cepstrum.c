@@ -79,9 +79,9 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Quefrency");
+		Graphics_textBottom (g, 1, L"Quefrency");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, "Amplitude");
+		Graphics_textLeft (g, 1, L"Amplitude");
 	}
 
 	NUMfvector_free (y, imin);

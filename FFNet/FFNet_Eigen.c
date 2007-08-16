@@ -149,7 +149,7 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
 	if (we1 == 0 && we2 == 0)
 	{
 		Melder_warning ("We cannot draw the intersection of the neural net decision plane\n"
-			"for unit %d in layer %s with the plane spanned by the eigenvectors because \n"
+			"for unit %ld in layer %ld with the plane spanned by the eigenvectors because \n"
 			"both planes are parallel.", unit, layer);
 		return;
 	}

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/03/17
+ * pb 2007/08/12
  */
 
 #ifndef _Function_h_
@@ -35,7 +35,7 @@
 	int domainQuantity; \
 	int (*getMinimumUnit) (void *klas, long ilevel); \
 	int (*getMaximumUnit) (void *klas, long ilevel); \
-	const char * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
+	const wchar_t * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
 	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
 	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
 	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit);
@@ -73,7 +73,7 @@ int ClassFunction_getMaximumUnit (void *klas, long ilevel);
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const char * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
+const wchar_t * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
 
 int ClassFunction_isUnitLogarithmic (void *klas, long ilevel, int unit);
 

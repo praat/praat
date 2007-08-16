@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #ifndef _Data_h_
@@ -47,15 +47,11 @@ oo_CLASS_CREATE (SimpleDouble, Data);
 #define SimpleString_methods Data_methods
 oo_CLASS_CREATE (SimpleString, Data);
 
-#define SimpleStringW_methods Data_methods
-oo_CLASS_CREATE (SimpleStringW, Data);
-
 SimpleInt SimpleInt_create (int number);
 SimpleShort SimpleShort_create (short number);
 SimpleLong SimpleLong_create (long number);
 SimpleFloat SimpleFloat_create (float number);
 SimpleDouble SimpleDouble_create (double number);
-SimpleString SimpleString_create (const char *string);
-SimpleStringW SimpleStringW_create (const wchar_t *string);
+SimpleString SimpleString_create (const wchar_t *string);
 
 #endif

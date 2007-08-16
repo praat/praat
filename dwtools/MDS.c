@@ -248,7 +248,7 @@ Similarity Distances_to_Similarity_cc (Distances me, Weight w)
 	
 	for (i = 1; i <= my size; i++)
 	{
-		char *name = Thing_getName (my item[i]);
+		wchar_t *name = Thing_getNameW (my item[i]);
 		thy data[i][i] = 1;
 		TableOfReal_setRowLabel (thee, i, name);
 		TableOfReal_setColumnLabel (thee, i, name);
@@ -588,20 +588,20 @@ static void classContingencyTable_info (I)
 		&uygx, &uxgy, &uxy);
     ContingencyTable_chisq (me, &chisq, &ndf);
 
-	Melder_information2 ("Number of rows: ", Melder_integer (my numberOfRows));
-	Melder_information2 ("Number of columns: ", Melder_integer (my numberOfColumns));
-	Melder_information1 ("Entropies (y is row variable):");
-	Melder_information2 ("  Total: ", Melder_double (h));
-	Melder_information2 ("  Y: ", Melder_double (hy));
-	Melder_information2 ("  X: ", Melder_double (hx));
-	Melder_information2 ("  Y given x: ", Melder_double (hygx));
-	Melder_information2 ("  X given y: ", Melder_double (hxgy));
-	Melder_information2 ("  Dependency of y on x: ", Melder_double (uygx));
-	Melder_information2 ("  Dependency of x on y: ", Melder_double (uxgy));
-	Melder_information2 ("  Symmetrical dependency: ", Melder_double (uxy));
-	Melder_information2 ("  Chi squared: ", Melder_double (chisq));
-	Melder_information2 ("  Degrees of freedom: ", Melder_integer (ndf));
-	Melder_information2 ("  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));	
+	Melder_information2 (L"Number of rows: ", Melder_integer (my numberOfRows));
+	Melder_information2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
+	Melder_information1 (L"Entropies (y is row variable):");
+	Melder_information2 (L"  Total: ", Melder_double (h));
+	Melder_information2 (L"  Y: ", Melder_double (hy));
+	Melder_information2 (L"  X: ", Melder_double (hx));
+	Melder_information2 (L"  Y given x: ", Melder_double (hygx));
+	Melder_information2 (L"  X given y: ", Melder_double (hxgy));
+	Melder_information2 (L"  Dependency of y on x: ", Melder_double (uygx));
+	Melder_information2 (L"  Dependency of x on y: ", Melder_double (uxgy));
+	Melder_information2 (L"  Symmetrical dependency: ", Melder_double (uxy));
+	Melder_information2 (L"  Chi squared: ", Melder_double (chisq));
+	Melder_information2 (L"  Degrees of freedom: ", Melder_integer (ndf));
+	Melder_information2 (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));	
 }
 
 class_methods (ContingencyTable, TableOfReal)
@@ -1204,8 +1204,8 @@ void Salience_setDefaults (Salience me)
 	}
 	for (j = 1; j <= my numberOfColumns; j++)
 	{
-		char s[40];
-		sprintf (s,"dimension %ld", j);
+		wchar_t s[40];
+		swprintf (s, 40, L"dimension %ld", j);
 		TableOfReal_setColumnLabel (me, j, s);
 	}
 }
@@ -1850,7 +1850,7 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me,
 
 void Distance_and_Configuration_drawScatterDiagram (Distance me, 
 	Configuration him, Graphics g, double xmin, double xmax, double ymin, 
-	double ymax, double size_mm, const char *mark, int garnish)
+	double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance dist = Configuration_to_Distance (him);
 	 
@@ -1975,7 +1975,7 @@ Distance Configuration_to_Distance (Configuration me)
 
 void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax, double size_mm, 
-	const char *mark, int garnish)   
+	const wchar_t *mark, int garnish)   
 {
 	iam (Proximity);
 	long i, j, n = my numberOfRows * (my numberOfRows - 1) / 2;
@@ -2030,8 +2030,8 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 	if (garnish)
 	{
 		Graphics_drawInnerBox (g);
-	   	Graphics_textLeft (g, 1, "Distance");
-	   	Graphics_textBottom (g, 1, "Dissimilarity");
+	   	Graphics_textLeft (g, 1, L"Distance");
+	   	Graphics_textBottom (g, 1, L"Dissimilarity");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
@@ -2810,12 +2810,11 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
 			"Transformator_smacof: dimensions!!!");
 	}
 
-	if ((no_weight && 
-		((weight = Weight_create (nPoints)) == NULL) ||
-		((v = NUMdmatrix (1, nPoints, 1, nPoints)) == NULL) ||
-		((vplus = NUMdmatrix (1, nPoints, 1, nPoints)) == NULL) ||
-		((z = Data_copy (conf)) == NULL) ||
-		((vec = Dissimilarity_to_MDSVec (me)) == NULL))) goto end;
+	if ((no_weight && (weight = Weight_create (nPoints)) == NULL) ||
+		(v = NUMdmatrix (1, nPoints, 1, nPoints)) == NULL ||
+		(vplus = NUMdmatrix (1, nPoints, 1, nPoints)) == NULL ||
+		(z = Data_copy (conf)) == NULL ||
+		(vec = Dissimilarity_to_MDSVec (me)) == NULL) goto end;
 		
 	w = weight -> data;
 	
@@ -3353,7 +3352,7 @@ end:
 
 void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, 
 	Configuration him, Graphics g, double xmin, double xmax, double ymin, 
-	double ymax, double size_mm, const char *mark, int garnish)
+	double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance dist = Configuration_to_Distance (him);
 	 
@@ -3409,7 +3408,7 @@ end:
 void Dissimilarity_Configuration_drawMonotoneRegression 
 	(Dissimilarity me, Configuration him, Graphics g, int tiesProcessing, 
 	double xmin, double xmax, double ymin, double ymax, double size_mm, 
-	const char *mark, int garnish)
+	const wchar_t *mark, int garnish)
 {/* obsolete replace by transformator */
 	Distance fit = Dissimilarity_Configuration_monotoneRegression 
 		(me, him, tiesProcessing);
@@ -3422,7 +3421,7 @@ void Dissimilarity_Configuration_drawMonotoneRegression
 void Dissimilarity_Configuration_Weight_drawAbsoluteRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax, 
-	double size_mm, const char *mark, int garnish)
+	double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance fit = NULL;
 	Transformator t = Transformator_create (d->numberOfRows);
@@ -3444,7 +3443,7 @@ void Dissimilarity_Configuration_Weight_drawAbsoluteRegression
 void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d,
 	Configuration c, Weight w, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish)
+	double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance fit = NULL; 
 	RatioTransformator t = RatioTransformator_create (d -> numberOfRows);
@@ -3466,7 +3465,7 @@ void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d,
 void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d,
 	Configuration c, Weight w, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish)
+	double size_mm, const wchar_t *mark, int garnish)
 {
 	Dissimilarity_Configuration_Weight_drawISplineRegression (d, c, w, g,
 		0, 1, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
@@ -3475,7 +3474,7 @@ void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d,
 void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d,
 	Configuration c, Weight w, Graphics g, int tiesProcessing, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish)
+	double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance fit; 
 	MonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
@@ -3499,7 +3498,7 @@ void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d,
 void Dissimilarity_Configuration_Weight_drawISplineRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g,
 	long numberOfInternalKnots, long order, double xmin, double xmax, 
-	double ymin, double ymax, double size_mm, const char *mark, int garnish)
+	double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
 	Distance fit; 
 	ISplineTransformator t = ISplineTransformator_create (d->numberOfRows, 
@@ -3857,7 +3856,7 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 		Set labels & names.
 	*/
 	
-	Thing_setName (x, "indscal"); Thing_setName (w, "indscal");
+	Thing_setNameW (x, L"indscal"); Thing_setNameW (w, L"indscal");
 	TableOfReal_labelsFromCollectionItemNames (w, sp, 1, 0);
 	
 	*out1 = x; *out2 = w;
@@ -3865,21 +3864,21 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 	if (showProgress)
 	{
 		MelderInfo_open ();
-		MelderInfo_writeLine4 ("**************** INDSCAL results on Distances "
-			"*******************\n\n", Thing_className (sp), 
-			"number of objects: ",  Melder_integer (nSources));
+		MelderInfo_writeLine4 (L"**************** INDSCAL results on Distances "
+			"*******************\n\n", Thing_classNameW (sp), 
+			L"number of objects: ",  Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{
-			MelderInfo_writeLine2 ("  ", Thing_getName (sp -> item[i]));
+			MelderInfo_writeLine2 (L"  ", Thing_getNameW (sp -> item[i]));
 		}
 		if (nZeros > 0)
 		{
-			MelderInfo_writeLine5 ("WARNING: ", Melder_integer (nZeros),  " zero weight", 
-				(nZeros > 1 ? "s": ""), "!");
+			MelderInfo_writeLine5 (L"WARNING: ", Melder_integer (nZeros),  L" zero weight", 
+				(nZeros > 1 ? L"s": L""), L"!");
 		}
-		MelderInfo_writeLine5 ("\n\nVariance Accounted For = ", Melder_double (*vaf), 
-			"\nThe optimal configuration was reached in ", 
-			Melder_integer ((iter > numberOfIterations ? numberOfIterations : iter)), " iterations.");
+		MelderInfo_writeLine5 (L"\n\nVariance Accounted For = ", Melder_double (*vaf), 
+			L"\nThe optimal configuration was reached in ", 
+			Melder_integer ((iter > numberOfIterations ? numberOfIterations : iter)), L" iterations.");
 		MelderInfo_close ();
 	}
 	
@@ -3983,20 +3982,20 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	if (showProgress)
 	{
 		MelderInfo_open ();
-		MelderInfo_writeLine1 ("**************** INDSCAL with monotone regression *******************");
-		MelderInfo_writeLine1  (Thing_className (dissims));
-		MelderInfo_writeLine2  ("Number of objects: ", Melder_integer (nSources));
+		MelderInfo_writeLine1 (L"**************** INDSCAL with monotone regression *******************");
+		MelderInfo_writeLine1  (Thing_classNameW (dissims));
+		MelderInfo_writeLine2  (L"Number of objects: ", Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{
-			MelderInfo_writeLine2 ("  ", Thing_getName (dissims -> item[i]));
+			MelderInfo_writeLine2 (L"  ", Thing_getNameW (dissims -> item[i]));
 		}
 		if (nZeros > 0)
 		{
-			MelderInfo_writeLine4 ("WARNING: ", Melder_integer (nZeros), " zero weight", (nZeros > 1 ? "s": ""));
+			MelderInfo_writeLine4 (L"WARNING: ", Melder_integer (nZeros), L" zero weight", (nZeros > 1 ? L"s": L""));
 		}
-		MelderInfo_writeLine2  ("Variance Accounted For: ", Melder_double (*vaf));
-		MelderInfo_writeLine1 ("Based on MONOTONE REGRESSION");
-		MelderInfo_writeLine2  ("number of iterations: ", Melder_integer ((i > numberOfIterations ?	numberOfIterations : i)));
+		MelderInfo_writeLine2  (L"Variance Accounted For: ", Melder_double (*vaf));
+		MelderInfo_writeLine1 (L"Based on MONOTONE REGRESSION");
+		MelderInfo_writeLine2  (L"number of iterations: ", Melder_integer ((i > numberOfIterations ?	numberOfIterations : i)));
 		MelderInfo_close ();
 	}		
 	
@@ -4536,7 +4535,7 @@ Salience Salience_createCarrollWishExample (void)
 	long i, nSources = 8;
 	double wx[9] = {0,   1, 0.866, 0.707, 0.5,   0.1, 0.5, 0.354, 0.1};
 	double wy[9] = {0, 0.1, 0.5,   0.707, 0.866,   1, 0.1, 0.354, 0.5};
-	char  *name[] = { "", "1", "2", "3", "4", "5", "6", "7", "8"};
+	wchar_t  *name[] = { L"", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8"};
 	Salience me = Salience_create (nSources, 2);
 	
 	if (me)
@@ -4581,7 +4580,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange)
 		{
 			forget (d); goto end;
 		}
-		Thing_setName (dissim, s -> rowLabels[l]);
+		Thing_setNameW (dissim, s -> rowLabels[l]);
 		for (i = 1; i <= nObjects - 1; i++)
 		{
 			for (j = i + 1; j <= nObjects; j++)
@@ -4672,26 +4671,26 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
-		char ts[20]; 
+		wchar_t ts[20]; 
 		long lastKnot = type == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
 
 		Graphics_drawInnerBox (g);
-	   	Graphics_textLeft (g, 0, type == MDS_MSPLINE ? "\\s{M}\\--spline" : 
-			"\\s{I}\\--spline");
+	   	Graphics_textLeft (g, 0, type == MDS_MSPLINE ? L"\\s{M}\\--spline" : 
+			L"\\s{I}\\--spline");
 		Graphics_marksTop (g, 2, 1, 1, 0);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
     	if (low <= knot[order])
     	{
-    		if (order == 1) sprintf (ts, "t__1_");
-			else if (order == 2) sprintf (ts, "{t__1_, t__2_}");
-			else sprintf (ts, "{t__1_..t__%ld_}", order);
+    		if (order == 1) swprintf (ts, 20, L"t__1_");
+			else if (order == 2) swprintf (ts, 20, L"{t__1_, t__2_}");
+			else swprintf (ts, 20, L"{t__1_..t__%ld_}", order);
 			Graphics_markBottom (g, low, 0, 0, 0, ts);
 		}
 		for (i = 1; i <= numberOfInteriorKnots; i++)
 		{
 			if (low <= knot[k+i] && knot[k+i] < high)
 			{
-				sprintf (ts, "t__%ld_", order + i);
+				swprintf (ts, 20, L"t__%ld_", order + i);
 				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts); 
 				Graphics_markTop (g, knot[k+i], 1, 0, 0, 0);
 			}
@@ -4700,15 +4699,15 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		{
 			if (order ==1)
 			{
-				sprintf (ts, "t__%ld_", lastKnot);
+				swprintf (ts, 20, L"t__%ld_", lastKnot);
 			}
 			else if (order == 2)
 			{
-				sprintf (ts, "{t__%ld_, t__%ld_}", lastKnot-1, lastKnot);
+				swprintf (ts, 20, L"{t__%ld_, t__%ld_}", lastKnot-1, lastKnot);
 			}
 			else 
 			{
-				sprintf (ts, "{t__%ld_..t__%ld_}", lastKnot-order+1, lastKnot);
+				swprintf (ts, 20, L"{t__%ld_..t__%ld_}", lastKnot-order+1, lastKnot);
 			}
 			Graphics_markBottom (g, high, 0, 0, 0, ts);
 		}
@@ -4727,9 +4726,9 @@ void drawMDSClassRelations (Graphics g)
 	double x1, x2, xm, x23, x13, y1, y2, ym, y23, y13;
 	double x[7] = {0.0, 0.2, 0.2, 0.7, 0.2, 0.7, 0.2}; /* left */
 	double y[7] = {0.0, 0.9, 0.6, 0.6, 0.3, 0.3, 0.0}; /* bottom */
-	char *text[7] = {"", "Confusion", "Dissimilarity  %\\de__%%ij%_",
-		"Similarity", "Distance  %d__%%ij%_, %d\\'p__%%ij%_", 
-		"ScalarProduct", "Configuration"};
+	wchar_t *text[7] = {L"", L"Confusion", L"Dissimilarity  %\\de__%%ij%_",
+		L"Similarity", L"Distance  %d__%%ij%_, %d\\'p__%%ij%_", 
+		L"ScalarProduct", L"Configuration"};
 
 	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);	
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);	
@@ -4751,7 +4750,7 @@ void drawMDSClassRelations (Graphics g)
 	xm = x[1] + boxWidth2;
 	y2 = y[2] + boxHeight;
 	Graphics_arrow (g, xm, y[1], xm, y2);
-	Graphics_text (g, xm + dxt, y2 + dboxy / 2, "pdf"); 
+	Graphics_text (g, xm + dxt, y2 + dboxy / 2, L"pdf"); 
 
 	/*
 		Confusion to Similarity
@@ -4764,9 +4763,9 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_line (g, x1, ym, xm, ym);
 	Graphics_arrow (g, xm, ym, xm, y2);
 	y2 += + dboxy / 2 + dyt / 2;
-	Graphics_text (g, xm + dxt, y2, "average"); 
+	Graphics_text (g, xm + dxt, y2, L"average"); 
 	y2 -= dyt;
-	Graphics_text (g, xm + dxt, y2, "houtgast"); 
+	Graphics_text (g, xm + dxt, y2, L"houtgast"); 
 
 	/*
 		Dissimilarity to Similarity
@@ -4792,20 +4791,20 @@ void drawMDSClassRelations (Graphics g)
 	y1 = y[2] - dyt;
 	x2 = 0 + dxt;
 	y1 -= dyt;
-	Graphics_text (g, x1, y1, "%d\\'p__%%ij%_ = %\\de__%%ij%_");
-	Graphics_text (g, x2, y1, "absolute");
+	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = %\\de__%%ij%_");
+	Graphics_text (g, x2, y1, L"absolute");
 	y1 -= dyt;
-	Graphics_text (g, x1, y1, "%d\\'p__%%ij%_ = %b\\.c%\\de__%%ij%_");
-	Graphics_text (g, x2, y1, "ratio");
+	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = %b\\.c%\\de__%%ij%_");
+	Graphics_text (g, x2, y1, L"ratio");
 	y1 -= dyt;
-	Graphics_text (g, x1, y1, "%d\\'p__%%ij%_ = %b\\.c%\\de__%%ij%_+%a");
-	Graphics_text (g, x2, y1, "interval");
+	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = %b\\.c%\\de__%%ij%_+%a");
+	Graphics_text (g, x2, y1, L"interval");
 	y1 -= dyt;
-	Graphics_text (g, x1, y1, "%d\\'p__%%ij%_ = \\s{I}-spline (%\\de__%%ij%_)");
-	Graphics_text (g, x2, y1, "\\s{I}\\--spline");
+	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = \\s{I}-spline (%\\de__%%ij%_)");
+	Graphics_text (g, x2, y1, L"\\s{I}\\--spline");
 	y1 -= dyt;
-	Graphics_text (g, x1, y1, "%d\\'p__%%ij%_ = monotone (%\\de__%%ij%_)");
-	Graphics_text (g, x2, y1, "monotone");
+	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = monotone (%\\de__%%ij%_)");
+	Graphics_text (g, x2, y1, L"monotone");
 	
 	/*
 		Distance to ScalarProduct
@@ -4834,9 +4833,9 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_arrow (g, x23, y1, x23, y[6] + boxHeight);
 	x1 = x[6] + boxWidth + dboxx / 2;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-	Graphics_text (g, x1, y1, "\\s{TORSCA}");
+	Graphics_text (g, x1, y1, L"\\s{TORSCA}");
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
-	Graphics_text (g, x1, y1, "\\s{YTL}");
+	Graphics_text (g, x1, y1, L"\\s{YTL}");
 	
 	Graphics_setLineType (g, Graphics_DOTTED);
 	
@@ -4846,7 +4845,7 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_arrow (g, x23, ym, x[6] + boxWidth, ym);
 	x1 = x[6] + boxWidth + dboxx / 2 + boxWidth3;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-	Graphics_text (g, x1, ym, "\\s{INDSCAL}");
+	Graphics_text (g, x1, ym, L"\\s{INDSCAL}");
 	
 	/*
 		Dissimilarity to Configuration

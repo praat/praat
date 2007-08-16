@@ -28,7 +28,7 @@
 
 void Matrix_scatterPlot (I, Any g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
-    double size_mm, const char *mark, int garnish);
+    double size_mm, const wchar_t *mark, int garnish);
 /* Draw my columns ix and iy as a scatterplot (with squares)				*/
 
 void Matrix_drawAsSquares (I, Any graphics, double xmin, double xmax, double ymin, double ymax, int garnished);

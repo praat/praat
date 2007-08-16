@@ -22,6 +22,7 @@
  * pb 2002/11/19 pulses
  * pb 2007/01/27 accept stereo Sounds
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "FunctionEditor_Sound.h"
@@ -35,7 +36,7 @@ static struct {
 	preferences = { TRUE };
 
 void FunctionEditor_Sound_prefs (void) {
-	Resources_addInt ("FunctionEditor.sound.autoscaling", & preferences.autoscaling);
+	Resources_addInt (L"FunctionEditor.sound.autoscaling", & preferences.autoscaling);
 }
 
 /***** VIEW MENU *****/
@@ -58,23 +59,23 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 	double tfirst, tlast;
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	iferror {
-		int outOfMemory = strstr (Melder_getError (), "memory") != NULL;
+		int outOfMemory = wcsstr (Melder_getError (), L"memory") != NULL;
 		if (Melder_debug == 9) Melder_flushError (NULL); else Melder_clearError ();
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_printf (my graphics, 0.5, 0.5, outOfMemory ? "(out of memory)" : "(cannot read sound file)");
+		Graphics_text (my graphics, 0.5, 0.5, outOfMemory ? L"(out of memory)" : L"(cannot read sound file)");
 		return;
 	}
 	if (! fits) {
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_printf (my graphics, 0.5, 0.5, "(window too large; zoom in to see the data)");
+		Graphics_text (my graphics, 0.5, 0.5, L"(window too large; zoom in to see the data)");
 		return;
 	}
 	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound, my startWindow, my endWindow, & first, & last) <= 1) {
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_printf (my graphics, 0.5, 0.5, "(zoom out to see the data)");
+		Graphics_text (my graphics, 0.5, 0.5, L"(zoom out to see the data)");
 		return;
 	}
 	if (longSound) tfirst = Sampled_indexToX (longSound, first), tlast = Sampled_indexToX (longSound, last);
@@ -97,22 +98,22 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_printf (my graphics, my startWindow, value, "%.4g", value);
+			Graphics_printf (my graphics, my startWindow, value, L"%.4g", value);
 		} else {
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, cursorFunctionValue - minimum) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_printf (my graphics, my startWindow, minimum, "%.4g", minimum);
+				Graphics_printf (my graphics, my startWindow, minimum, L"%.4g", minimum);
 			}
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, maximum - cursorFunctionValue) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_printf (my graphics, my startWindow, maximum, "%.4g", maximum);
+				Graphics_printf (my graphics, my startWindow, maximum, L"%.4g", maximum);
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {
 			Graphics_setWindow (my graphics, 0, 1, minimum, maximum);
 			if (! cursorVisible || fabs (Graphics_dyWCtoMM (my graphics, cursorFunctionValue - 0.0)) > 3.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_text (my graphics, 0, 0, "0");
+				Graphics_text (my graphics, 0, 0, L"0");
 			}
 			Graphics_setColour (my graphics, Graphics_CYAN);
 			Graphics_setLineType (my graphics, Graphics_DOTTED);

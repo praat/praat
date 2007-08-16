@@ -1,6 +1,6 @@
 /* site.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,21 @@
  * pb 2002/03/07 GPL
  * pb 2004/10/21 simplified print command
  * pb 2005/03/02 pref string buffer 260 bytes long
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Preferences.h"
 #include <string.h>
 #include "site.h"
 
-static char printCommand [Resources_STRING_BUFFER_SIZE] = "lp -c %s";
+static wchar_t printCommand [Resources_STRING_BUFFER_SIZE] = L"lp -c %s";
 
-char * Site_getPrintCommand (void) { return printCommand; }
+wchar_t * Site_getPrintCommand (void) { return printCommand; }
 
-void Site_setPrintCommand (const char *text) { strcpy (printCommand, text); }
+void Site_setPrintCommand (const wchar_t *text) { wcscpy (printCommand, text); }
 
 void Site_prefs (void) {
-	Resources_addString ("Site.printCommand", printCommand);
+	Resources_addString (L"Site.printCommand", printCommand);
 }
 
 /* End of file site.c */

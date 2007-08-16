@@ -322,7 +322,7 @@ void _GuiText_nativizeWidget (Widget me) {
 			my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 		SetWindowLong (my window, GWL_USERDATA, (long) me);
 		static HFONT font;
-		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, L"Courier New");
+		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
 		SetWindowFont (my window, theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT), FALSE);
 		my motif.text.editable = TRUE;
 		Edit_LimitText (my window, 0);
@@ -473,8 +473,17 @@ static void NativeText_getText (Widget me, char *buffer, long length) {
 		GetWindowTextA (my window, buffer, length + 1);
 	#elif mac
 		if (isTextControl (me)) {
-			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextTextTag, length, buffer, NULL);
+			CFStringRef cfString;
+			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, NULL);
+			UniChar *macText = Melder_malloc (UniChar, length + 1);
+			CFRange range = { 0, length };
+			CFStringGetCharacters (cfString, range, macText);
+			CFRelease (cfString);
+			for (long i = 0; i < length; i ++) {
+				buffer [i] = macText [i];
+			}
 			buffer [length] = '\0';
+			Melder_free (macText);
 		} else if (isMLTE (me)) {
 			#if 1
 				Handle han;
@@ -516,7 +525,7 @@ static void NativeText_getTextW (Widget me, wchar_t *buffer, long length) {
 		if (isTextControl (me)) {
 			CFStringRef cfString;
 			GetControlData (my nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString, NULL);
-			UniChar *macText = Melder_malloc ((length + 1) * sizeof (UniChar));
+			UniChar *macText = Melder_malloc (UniChar, length + 1);
 			CFRange range = { 0, length };
 			CFStringGetCharacters (cfString, range, macText);
 			CFRelease (cfString);
@@ -539,7 +548,7 @@ static void NativeText_getTextW (Widget me, wchar_t *buffer, long length) {
 
 char *XmTextGetString (Widget me) {
 	long length = NativeText_getLength (me);
-	char *result = Melder_malloc (1 + length);
+	char *result = Melder_malloc (char, length + 1);
 	NativeText_getText (me, result, length);
 	Melder_killReturns_inline (result);
 	return result;
@@ -548,7 +557,7 @@ char *XmTextGetString (Widget me) {
 void XmTextSetString (Widget me, const char *text) {
 	#if win
 		const char *from;
-		char *winText = Melder_malloc (2 * strlen (text) + 1), *to;   /* All new lines plus one null byte. */
+		char *winText = Melder_malloc (char, 2 * strlen (text) + 1), *to;   /* All new lines plus one null byte. */
 		if (! winText) return;
 		/*
 		 * Replace all LF with CR/LF.
@@ -559,9 +568,11 @@ void XmTextSetString (Widget me, const char *text) {
 		Edit_SetText (my window, winText);
 		Melder_free (winText);
 	#elif mac
+		GuiText_setStringW (me, Melder_peekAsciiToWcs (text));
+		return;
+		
 		long length = strlen (text), i;
-		char *macText;
-		macText = Melder_malloc (length + 1);
+		char *macText = Melder_malloc (char, length + 1);
 		Melder_assert (my widgetClass == xmTextWidgetClass);
 		strncpy (macText, text, length);
 		macText [length] = '\0';
@@ -594,7 +605,7 @@ void XmTextSetString (Widget me, const char *text) {
 void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, char *text) {
 	#if win
 		const char *from;
-		char *winText = Melder_malloc (2 * strlen (text) + 1), *to;   /* All new lines plus one null byte. */
+		char *winText = Melder_malloc (char, 2 * strlen (text) + 1), *to;   /* All new lines plus one null byte. */
 		if (! winText) return;
 		Melder_assert (MEMBER (me, Text));
 		/*
@@ -612,8 +623,7 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		Melder_free (winText);
 	#elif mac
 		long length = strlen (text), i;
-		char *macText;
-		macText = Melder_malloc (length + 1);
+		char *macText = Melder_malloc (char, length + 1);
 		Melder_assert (my widgetClass == xmTextWidgetClass);
 		strncpy (macText, text, length);
 		macText [length] = '\0';
@@ -628,8 +638,8 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		if (my managed) _GuiMac_clipOn (me);
 		if (isTextControl (me)) {
 			long oldLength = NativeText_getLength (me);
-			char *totalText = Melder_malloc (oldLength - (to_pos - from_pos) + length + 1);
-			char *oldText = Melder_malloc (oldLength + 1);
+			char *totalText = Melder_malloc (char, oldLength - (to_pos - from_pos) + length + 1);
+			char *oldText = Melder_malloc (char, oldLength + 1);
 			NativeText_getText (me, oldText, oldLength);
 			strncpy (totalText, oldText, from_pos);
 			strcpy (totalText + from_pos, macText);
@@ -690,7 +700,7 @@ char *XmTextGetSelection (Widget me) {
 	 * Get all text.
 	 */
 	length = NativeText_getLength (me);
-	result = Melder_malloc (1 + length);
+	result = Melder_malloc (char, length + 1);
 	NativeText_getText (me, result, length);
 	/*
 	 * Zoom in on selection.
@@ -929,7 +939,7 @@ wchar_t *GuiText_getStringW (Widget me) {
 		return result;
 	#else
 		long length = NativeText_getLengthW (me);
-		wchar_t *result = Melder_malloc ((1 + length) * sizeof (wchar_t));
+		wchar_t *result = Melder_malloc (wchar_t, length + 1);
 		NativeText_getTextW (me, result, length);
 		Melder_killReturns_inlineW (result);
 		return result;
@@ -947,7 +957,7 @@ void GuiText_setStringW (Widget me, const wchar_t *text) {
 		//XmTextSetStringWcs (me, (wchar_t *) text);
 	#elif win
 		const wchar_t *from;
-		wchar_t *winText = Melder_malloc ((2 * wcslen (text) + 1) * sizeof (wchar_t)), *to;   /* All new lines plus one null byte. */
+		wchar_t *winText = Melder_malloc (wchar_t, 2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
 		if (! winText) return;
 		/*
 		 * Replace all LF with CR/LF.
@@ -960,7 +970,7 @@ void GuiText_setStringW (Widget me, const wchar_t *text) {
 	#elif mac
 		long length = wcslen (text), i;
 		UniChar *macText;
-		macText = Melder_malloc ((length + 1) * sizeof (UniChar));
+		macText = Melder_malloc (UniChar, length + 1);
 		Melder_assert (my widgetClass == xmTextWidgetClass);
 		/*
 		 * Replace all LF with CR.
@@ -1007,7 +1017,7 @@ wchar_t * GuiText_getSelectionW (Widget me) {
 		 * Get all text.
 		 */
 		length = NativeText_getLengthW (me);
-		result = Melder_malloc ((1 + length) * sizeof (wchar_t));
+		result = Melder_malloc (wchar_t, length + 1);
 		NativeText_getTextW (me, result, length);
 		/*
 		 * Zoom in on selection.

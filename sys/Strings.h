@@ -2,7 +2,7 @@
 #define _Strings_h_
 /* Strings.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/02/14
+ * pb 2007/08/10
  */
 
 #ifndef _Data_h_
@@ -31,10 +31,10 @@
 #define Strings_methods Data_methods
 oo_CLASS_CREATE (Strings, Data);
 
-Strings Strings_createAsFileList (const char *path);
-Strings Strings_createAsDirectoryList (const char *path);
-Strings Strings_readFromRawTextFile (MelderFile fs);
-int Strings_writeToRawTextFile (Strings me, MelderFile fs);
+Strings Strings_createAsFileList (const wchar_t *path);
+Strings Strings_createAsDirectoryList (const wchar_t *path);
+Strings Strings_readFromRawTextFile (MelderFile file);
+int Strings_writeToRawTextFile (Strings me, MelderFile file);
 
 void Strings_randomize (Strings me);
 int Strings_genericize (Strings me);

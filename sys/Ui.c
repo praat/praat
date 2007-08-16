@@ -33,6 +33,7 @@
  * pb 2007/04/23 moved allowExecutionHook installation from UiForm_finish to UiForm_do,
  *   so that scripts cannot prevent this hook from working
  * pb 2007/06/09 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include <ctype.h>
@@ -262,7 +263,7 @@ static int UiField_widgetToValue (UiField me) {
 				GuiText_setStringW (my text, my stringDefaultValue);
 			} else {
 				wchar_t clean [40];
-				wcscpy (clean, Melder_doubleW (my realValue));
+				wcscpy (clean, Melder_double (my realValue));
 				/*
 				 * If the default is overtly real, the shown value must be as well.
 				 */
@@ -284,7 +285,7 @@ static int UiField_widgetToValue (UiField me) {
 			if (my integerValue == wcstol (my stringDefaultValue, NULL, 10)) {
 				GuiText_setStringW (my text, my stringDefaultValue);
 			} else {
-				GuiText_setStringW (my text, Melder_integerW (my integerValue));
+				GuiText_setStringW (my text, Melder_integer (my integerValue));
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
 				return Melder_error3 (L"`", my nameW, L"' must be a positive whole number.");
@@ -391,7 +392,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 					(L"Field `", my nameW, L"' cannot have the value \"", string, L"\".");
 			}
 		} break; case UI_ENUM: {
-			my integerValue = enum_search (my enumerated, Melder_peekWcsToAscii (string));
+			my integerValue = enum_search (my enumerated, string);
 			if (my integerValue < 0) return Melder_error5
 				(L"Field `", my nameW, L"' cannot have the value \"", string, L"\".");
 		} break; case UI_LIST: {
@@ -421,9 +422,9 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 	UiHistory_write (L" ");
 	switch (my type) {
 		case UI_REAL: case UI_POSITIVE: {
-			UiHistory_write (Melder_doubleW (my realValue));
+			UiHistory_write (Melder_double (my realValue));
 		} break; case UI_INTEGER: case UI_NATURAL: {
-			UiHistory_write (Melder_integerW (my integerValue));
+			UiHistory_write (Melder_integer (my integerValue));
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			if (isLast == FALSE && (my stringValue [0] == '\0' || wcschr (my stringValue, ' '))) {
 				UiHistory_write (L"\"");
@@ -444,7 +445,7 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 				UiHistory_write (b -> nameW);
 			}
 		} break; case UI_ENUM: {
-			UiHistory_write (Melder_peekAsciiToWcs (enum_string (my enumerated, my integerValue)));
+			UiHistory_write (enum_string (my enumerated, my integerValue));
 		} break; case UI_LIST: {
 			if (isLast == FALSE && (my strings [my integerValue] [0] == '\0' || wcschr (my strings [my integerValue], ' '))) {
 				UiHistory_write (L"\"");
@@ -456,7 +457,7 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 		} break; case UI_COLOUR: {
 			int integerValue = floor (my realValue);
 			if (integerValue != my realValue) {
-				UiHistory_write (Melder_singleW (my realValue));
+				UiHistory_write (Melder_single (my realValue));
 			} else if (integerValue >= 0 && integerValue <= 15) {
 				UiHistory_write (colourNames [integerValue]);
 			} else {
@@ -572,11 +573,11 @@ static void UiForm_okOrApply (Widget w, XtPointer void_me, XtPointer call, int h
 		/*
 		 * If a solution has already been suggested, do not add anything more.
 		 */
-		if (! wcsstr (Melder_getErrorW (), L"Please ") && ! wcsstr (Melder_getErrorW (), L"You could ")) {
+		if (! wcsstr (Melder_getError (), L"Please ") && ! wcsstr (Melder_getError (), L"You could ")) {
 			/*
 			 * Otherwise, show a generic message.
 			 */
-			if (wcsstr (Melder_getErrorW (), L"Selection changed!")) {
+			if (wcsstr (Melder_getError (), L"Selection changed!")) {
 				Melder_error3 (L"Please change the selection in the object list, or click Cancel in the window `",
 					my nameW, L"'.");
 			} else {
@@ -606,7 +607,7 @@ static void cb_help (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiForm);
 	(void) w;
 	(void) call;
-	Melder_help (Melder_peekWcsToAscii (my helpTitle));
+	Melder_help (my helpTitle);
 }
 
 Any UiForm_create (Widget parent, const wchar_t *title,
@@ -1002,7 +1003,7 @@ void UiForm_finish (I) {
 				XtVaSetValues (field -> list, XmNwidth, fieldWidth + 100,
 					XmNvisibleItemCount, n < 10 ? n + 1 : 11, NULL);
 				for (i = field -> includeZero ? 0 : 1; i <= max; i ++) {
-					XmString s = XmStringCreateSimple (enum_string (field -> enumerated, i));
+					XmString s = XmStringCreateSimple (Melder_peekWcsToAscii (enum_string (field -> enumerated, i)));
 					XmListAddItem (field -> list, s, 0);
 					XmStringFree (s);
 				}
@@ -1191,7 +1192,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 				GuiText_setStringW (field -> text, field -> stringDefaultValue);
 			} else {
 				wchar_t s [40];
-				wcscpy (s, Melder_doubleW (value));
+				wcscpy (s, Melder_double (value));
 				/*
 				 * If the default is overtly real, the shown value must be as well.
 				 */
@@ -1206,7 +1207,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 			const wchar_t *s;
 			int integerValue = floor (value);
 			if (integerValue != value)
-				s = Melder_singleW (value);
+				s = Melder_single (value);
 			else if (integerValue >= 0 && integerValue <= 15)
 				s = colourNames [integerValue];
 			else
@@ -1226,7 +1227,7 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 			if (value == wcstol (field -> stringDefaultValue, NULL, 10)) {
 				GuiText_setStringW (field -> text, field -> stringDefaultValue);
 			} else {
-				GuiText_setStringW (field -> text, Melder_integerW (value));
+				GuiText_setStringW (field -> text, Melder_integer (value));
 			}
 		} break; case UI_BOOLEAN: {
 			XmToggleButtonSetState (field -> toggle, (int) value, False);
@@ -1279,7 +1280,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 			}
 			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_ENUM: {
-			long integerValue = enum_search (field -> enumerated, Melder_peekWcsToAscii (value));
+			long integerValue = enum_search (field -> enumerated, value);
 			if (integerValue < 0) integerValue = 0;   /* Guard against incorrect prefs file. */
 			XmListSelectPos (field -> list, integerValue + field -> includeZero, False);
 		} break; case UI_LIST: {
@@ -1376,7 +1377,7 @@ wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> nameW;
 		} break; case UI_ENUM: {
-			return Melder_peekAsciiToWcs (enum_string (field -> enumerated, field -> integerValue));
+			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
 			return (wchar_t *) field -> strings [field -> integerValue];
 		} break; default: {
@@ -1398,7 +1399,7 @@ char * UiForm_getStringA (I, const char *fieldName) {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
 		} break; case UI_ENUM: {
-			return enum_string (field -> enumerated, field -> integerValue);
+			return Melder_peekWcsToAscii (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {
 			return Melder_peekWcsToAscii (field -> strings [field -> integerValue]);
 		} break; default: {
@@ -1418,7 +1419,7 @@ wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> nameW;
 		} break; case UI_ENUM: {
-			return Melder_peekAsciiToWcs (enum_string (field -> enumerated, field -> integerValue));
+			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
 			return (wchar_t *) field -> strings [field -> integerValue];
 		} break; default: {
@@ -1444,7 +1445,7 @@ char * UiForm_getStringA_check (I, const char *fieldName) {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
 		} break; case UI_ENUM: {
-			return enum_string (field -> enumerated, field -> integerValue);
+			return Melder_peekWcsToAscii (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {
 			return Melder_peekWcsToAscii (field -> strings [field -> integerValue]);
 		} break; default: {

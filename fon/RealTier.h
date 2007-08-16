@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/30
+ * pb 2007/08/12
  */
 
 #ifndef _AnyTier_h_
@@ -85,18 +85,18 @@ double RealTier_getStandardDeviation_points (I, double tmin, double tmax);
 
 int RealTier_addPoint (I, double t, double value);
 void RealTier_draw (I, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish, const char *quantity);
-TableOfReal RealTier_downto_TableOfReal (I, const char *timeLabel, const char *valueLabel);
+	double ymin, double ymax, int garnish, const wchar_t *quantity);
+TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wchar_t *valueLabel);
 
 int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically);
 
-Table RealTier_downto_Table (I, const char *indexText, const char *timeText, const char *valueText);
+Table RealTier_downto_Table (I, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText);
 RealTier Vector_to_RealTier (I, long channel);
 RealTier Vector_to_RealTier_peaks (I, long channel);
 RealTier Vector_to_RealTier_valleys (I, long channel);
 RealTier PointProcess_upto_RealTier (PointProcess me, double value);
 
-int RealTier_formula (I, const char *expression, thou);
+int RealTier_formula (I, const wchar_t *expression, thou);
 void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
 

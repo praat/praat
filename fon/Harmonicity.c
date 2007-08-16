@@ -82,41 +82,41 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 static void info (I) {
 	iam (Harmonicity);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
 	long nSounding = 0;
 	double *strengths = NUMdvector (1, my nx);
 	for (long ix = 1; ix <= my nx; ix ++)
 		if (my z [1] [ix] != -200)
 			strengths [++ nSounding] = my z [1] [ix];
-	MelderInfo_writeLine1 ("Time sampling:");
-	MelderInfo_writeLine5 ("   Number of frames: ", Melder_integer (my nx), " (", Melder_integer (nSounding), " sounding)");
-	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine1 (L"Time sampling:");
+	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (my nx), L" (", Melder_integer (nSounding), L" sounding)");
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
 	if (nSounding) {
 		double sum = 0, sumOfSquares = 0;
-		MelderInfo_writeLine1 ("Periodicity-to-noise ratios of sounding frames:");
+		MelderInfo_writeLine1 (L"Periodicity-to-noise ratios of sounding frames:");
 		NUMsort_d (nSounding, strengths);
-		MelderInfo_writeLine3 ("   Median ", Melder_single (NUMquantile_d (nSounding, strengths, 0.50)), " dB");
-		MelderInfo_writeLine5 ("   10 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.10)), " dB   90 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.90)), " dB");
-		MelderInfo_writeLine5 ("   16 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.16)), " dB   84 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.84)), " dB");
-		MelderInfo_writeLine5 ("   25 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.25)), " dB   75 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.75)), " dB");
-		MelderInfo_writeLine3 ("Minimum: ", Melder_single (strengths [1]), " dB");
-		MelderInfo_writeLine3 ("Maximum: ", Melder_single (strengths [nSounding]), " dB");
+		MelderInfo_writeLine3 (L"   Median ", Melder_single (NUMquantile_d (nSounding, strengths, 0.50)), L" dB");
+		MelderInfo_writeLine5 (L"   10 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.10)), L" dB   90 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.90)), L" dB");
+		MelderInfo_writeLine5 (L"   16 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.16)), L" dB   84 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.84)), L" dB");
+		MelderInfo_writeLine5 (L"   25 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.25)), L" dB   75 %% = ",
+			Melder_single (NUMquantile_d (nSounding, strengths, 0.75)), L" dB");
+		MelderInfo_writeLine3 (L"Minimum: ", Melder_single (strengths [1]), L" dB");
+		MelderInfo_writeLine3 (L"Maximum: ", Melder_single (strengths [nSounding]), L" dB");
 		for (long i = 1; i <= nSounding; i ++) {
 			double f = strengths [i];
 			sum += f;
 			sumOfSquares += f * f;
 		}
-		MelderInfo_writeLine3 ("Average: ", Melder_single (sum / nSounding), " dB");
+		MelderInfo_writeLine3 (L"Average: ", Melder_single (sum / nSounding), L" dB");
 		if (nSounding > 1) {
 			double var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			MelderInfo_writeLine3 ("Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), " dB");
+			MelderInfo_writeLine3 (L"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), L" dB");
 		}
 	}
 	NUMdvector_free (strengths, 1);

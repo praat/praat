@@ -22,6 +22,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/21 asc -> tex
+ * pb 2007/08/14 enums wchar_t
  */
 
 #include "oo_undef.h"
@@ -32,13 +33,13 @@
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_peekAsciiToWcs (enumstring (setType, i)), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", enumstring (setType, i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
@@ -55,19 +56,19 @@
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", Melder_peekAsciiToWcs (enumstring (setType, i)), L"]", 0,0,0); \
+		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", enumstring (setType, i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
-		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], & enum_##Type, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 
@@ -78,19 +79,19 @@
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_peekAsciiToWcs (enumstring (setType, i)), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", enumstring (setType, i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 
@@ -101,19 +102,19 @@
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_peekAsciiToWcs (enumstring (setType, i)), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", enumstring (setType, i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integerW (i), L"]", 0,0,0); \
+		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 
@@ -126,7 +127,7 @@
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) { \
-		texputintro (file, L"" #x " [", Melder_integerW (i), L"]:", 0,0,0); \
+		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 		Type##_writeText (& my x [i], file); \
 		texexdent (file); \
 	} \
@@ -135,7 +136,7 @@
 #define oo_STRUCT_SET(Type,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= enumlength (setType); i ++) { \
-		texputintro (file, L"" #x " [", Melder_peekAsciiToWcs (enumstring (setType, i)), L"]:", 0,0,0); \
+		texputintro (file, L"" #x " [", enumstring (setType, i), L"]:", 0,0,0); \
 		Type##_writeText (& my x [i], file); \
 		texexdent (file); \
 	} \
@@ -144,7 +145,7 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) { \
-		texputintro (file, L"" #x " [", Melder_integerW (i), L"]:", 0,0,0); \
+		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 		Type##_writeText (& my x [i], file); \
 		texexdent (file); \
 	} \
@@ -160,7 +161,7 @@
 	if (my x) { \
 		for (long i = 1; i <= my x -> size; i ++) { \
 			ItemClass data = my x -> item [i]; \
-			texputintro (file, L"" #x " [", Melder_integerW (i), L"]:", 0,0,0); \
+			texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 			if (! class##ItemClass -> writeText (data, file)) return 0; \
 			texexdent (file); \
 		} \
@@ -209,7 +210,7 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
-#define oo_VALIDATING_ASCII  0
+#define oo_VALIDATING_ENCODING  0
 #define oo_READING  0
 #define oo_READING_TEXT  0
 #define oo_READING_BINARY  0

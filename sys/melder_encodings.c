@@ -21,6 +21,7 @@
  * pb 2007/06/02 utf8 <-> wcs
  * pb 2007/06/14 separated from melder_strings.c and melder_alloc.c
  * pb 2007/06/16 text encoding preferences
+ * pb 2007/08/12 prefs in wchar_t
  */
 
 #include "melder.h"
@@ -49,8 +50,8 @@ void Melder_setOutputEncoding (int encoding) { prefs. outputEncoding = encoding;
 int Melder_getOutputEncoding (void) { return prefs. outputEncoding; }
 
 void Melder_textEncoding_prefs (void) {
-	Resources_addInt ("TextEncoding.inputEncoding", & prefs. inputEncoding);
-	Resources_addInt ("TextEncoding.outputEncoding", & prefs. outputEncoding);
+	Resources_addInt (L"TextEncoding.inputEncoding", & prefs. inputEncoding);
+	Resources_addInt (L"TextEncoding.outputEncoding", & prefs. outputEncoding);
 }
 
 bool Melder_isValidAscii (const wchar_t *text) {
@@ -309,7 +310,7 @@ int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inpu
 
 wchar_t * Melder_8bitToWcs (const unsigned char *string, int inputEncoding) {
 	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc ((strlen ((char *) string) + 1) * sizeof (wchar_t));
+	wchar_t *result = Melder_malloc (wchar_t, strlen ((char *) string) + 1);
 	if (result == NULL) return NULL;
 	if (! Melder_8bitToWcs_inline (string, result, inputEncoding)) {
 		Melder_free (result);
@@ -328,7 +329,7 @@ void Melder_asciiToWcs_inline (const char *ascii, wchar_t *wcs) {
 
 wchar_t * Melder_asciiToWcs (const char *string) {
 	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc ((strlen (string) + 1) * sizeof (wchar_t));
+	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
 	if (result == NULL) return NULL;
 	Melder_asciiToWcs_inline (string, result);
 	return result;
@@ -368,7 +369,7 @@ char * Melder_peekWcsToAscii (const wchar_t *textW) {
 }
 
 wchar_t * Melder_utf8ToWcs (const unsigned char *string) {
-	wchar_t *result = Melder_malloc ((strlen ((char *) string) + 1) * sizeof (wchar_t));
+	wchar_t *result = Melder_malloc (wchar_t, strlen ((char *) string) + 1);
 	Melder_8bitToWcs_inline (string, result, Melder_INPUT_ENCODING_UTF8);
 	return result;
 }
@@ -400,7 +401,7 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8) {
 }
 
 char * Melder_wcsToUtf8 (const wchar_t *string) {
-	char *result = Melder_malloc ((wcslen (string) * 6 + 1) * sizeof (char));
+	char *result = Melder_malloc (char, wcslen (string) * 6 + 1);
 	Melder_wcsToUtf8_inline (string, (unsigned char *) result);
 	return result;
 }
@@ -474,6 +475,22 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	return buffers [ibuffer]. string;
 }
 
+const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *text) {
+	if (text == NULL) return NULL;
+	static MelderString16 buffers [11] = { { 0 } };
+	static int ibuffer = 0;
+	if (++ ibuffer == 11) ibuffer = 0;
+	MelderString16_empty (& buffers [ibuffer]);
+	unsigned long n = wcslen (text);
+	for (unsigned long i = 0; i <= n; i ++) {
+		#ifdef _WIN32
+			if (text [i] == '\n') MelderString16_appendCharacter (& buffers [ibuffer], 13);
+		#endif
+		MelderString16_appendCharacter (& buffers [ibuffer], text [i]);
+	}
+	return buffers [ibuffer]. string;
+}
+
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	for (size_t i = 0; i < n; i ++) {
 		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) ptr [i] : ptr [i];
@@ -498,31 +515,7 @@ void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	}
 }
 
-char * MelderFile_readText (MelderFile file) {
-	char *text;
-	long length;
-	FILE *f;
-	if ((f = Melder_fopen (file, "rb")) == NULL) return NULL;
- 	fseek (f, 0, SEEK_END);
- 	length = ftell (f);
- 	rewind (f);
-	text = Melder_malloc (length + 1);
-	if (! text) { Melder_fclose (file, f); return NULL; }
-	fread (text, sizeof (char), length, f);
-	if (! Melder_fclose (file, f)) {
-		Melder_free (text);
-		Melder_error3 (L"Error reading file \"", MelderFile_messageNameW (file), L"\".");
-		return NULL;
-	}
-	text [length] = '\0';
-	/*
-	 * Convert Mac and DOS files to Unix text.
-	 */
-	(void) Melder_killReturns_inline (text);
-	return text;
-}
-
-wchar_t * MelderFile_readTextW (MelderFile file) {
+wchar_t * MelderFile_readText (MelderFile file) {
 	int type = 0;   // 8-bit
 	wchar_t *text = NULL;
 	FILE *f = Melder_fopen (file, "rb");
@@ -540,7 +533,7 @@ wchar_t * MelderFile_readTextW (MelderFile file) {
 	}
 	if (type == 0) {
 		rewind (f);   // length and type already set correctly.
-		unsigned char *text8bit = Melder_malloc ((length + 1) * sizeof (char));
+		unsigned char *text8bit = Melder_malloc (unsigned char, length + 1);
 		if (! text8bit) { Melder_fclose (file, f); return NULL; }
 		fread (text8bit, sizeof (char), length, f);
 		if (! Melder_fclose (file, f)) {
@@ -553,7 +546,7 @@ wchar_t * MelderFile_readTextW (MelderFile file) {
 		Melder_free (text8bit);
 	} else {
 		length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes.
-		text = Melder_malloc ((length + 1) * sizeof (wchar_t));
+		text = Melder_malloc (wchar_t, length + 1);
 		if (! text) { Melder_fclose (file, f); return NULL; }
 		if (type == 1) {
 			for (unsigned long i = 0; i < length; i ++) {
@@ -577,7 +570,7 @@ wchar_t * MelderFile_readTextW (MelderFile file) {
 					} else if (kar1 <= 0xFFFF) {
 						text [i] = kar1;
 					} else {
-						Melder_fatal ("MelderFile_readTextW: unsigned short greater than 0xFFFF: should not occur.");
+						Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 					}
 				}
 			}
@@ -603,7 +596,7 @@ wchar_t * MelderFile_readTextW (MelderFile file) {
 					} else if (kar1 <= 0xFFFF) {
 						text [i] = kar1;
 					} else {
-						Melder_fatal ("MelderFile_readTextW_LE: unsigned short greater than 0xFFFF: should not occur.");
+						Melder_fatal ("MelderFile_readText_LE: unsigned short greater than 0xFFFF: should not occur.");
 					}
 				}
 			}
@@ -620,24 +613,7 @@ wchar_t * MelderFile_readTextW (MelderFile file) {
 	return text;
 }
 
-/* BUG: the following two routines should be made system-independent,
-   so that we can write DOS files from Unix etc., as determined by a user preference. */
-
-int MelderFile_writeText (MelderFile file, const char *text) {
-	FILE *f = Melder_fopen (file, "w");
-	if (! f) return 0;
-	/*
-	 * On all systems, the number of bytes written (i.e. the return value of fwrite) equals strlen (text).
-	 * On Windows, however, the resulting file length will be greater than this.
-	 */
-	fwrite (text, sizeof (char), strlen (text), f);   /* Not trailing null byte. */
-	if (fclose (f))
-		return Melder_error ("Error closing file \"%s\".", MelderFile_messageName (file));
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
-	return 1;
-}
-
-int MelderFile_writeTextW (MelderFile file, const wchar_t *text) {
+int MelderFile_writeText (MelderFile file, const wchar_t *text) {
 	FILE *f = Melder_fopen (file, "wb");
 	if (! f) return 0;
 	if (prefs. outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
@@ -688,11 +664,11 @@ int MelderFile_writeTextW (MelderFile file, const wchar_t *text) {
 	return 1;
 }
 
-int MelderFile_appendTextW (MelderFile file, const wchar_t *text) {
+int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 	FILE *f = Melder_fopen (file, "rb");
 	if (f == NULL) {
 		Melder_clearError ();
-		return MelderFile_writeTextW (file, text);
+		return MelderFile_writeText (file, text);
 	}
 	/*
 	 * The file already exists and is open. Determine its type.
@@ -734,7 +710,7 @@ int MelderFile_appendTextW (MelderFile file, const wchar_t *text) {
 			/*
 			 * Convert to wide character file.
 			 */
-			wchar_t *oldText = MelderFile_readTextW (file);
+			wchar_t *oldText = MelderFile_readText (file);
 			if (oldText == NULL) return 0;
 			FILE *f = Melder_fopen (file, "wb");
 			if (! f) return 0;
@@ -745,7 +721,7 @@ int MelderFile_appendTextW (MelderFile file, const wchar_t *text) {
 				#ifdef _WIN32
 					if (kar == '\n') binputu2 (13, f);
 				#endif
-				binputu2 (kar, f);
+				binputu2 (kar, f);   // BUG: should be UTF-16.
 			}
 			n = wcslen (text);
 			for (unsigned long i = 0; i < n; i ++) {
@@ -753,7 +729,7 @@ int MelderFile_appendTextW (MelderFile file, const wchar_t *text) {
 				#ifdef _WIN32
 					if (kar == '\n') binputu2 (13, f);
 				#endif
-				binputu2 (kar, f);
+				binputu2 (kar, f);   // BUG: should be UTF-16.
 			}
 			if (fclose (f))
 				return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");

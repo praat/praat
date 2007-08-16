@@ -1,6 +1,6 @@
 /* GraphicsPostscript.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/03/15 updated version number to 4.2 (after introduction of flexible fonts)
  * pb 2005/09/18 useSilipaPS
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  */
 
 #include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
@@ -155,7 +156,7 @@ Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots
 {
 	GraphicsPostscript me = new (GraphicsPostscript);
 	time_t today;
-	my postScript = TRUE, my languageLevel = 2;
+	my postScript = true, my yIsZeroAtTheTop = true, my languageLevel = 2;
 	my job = TRUE, my eps = FALSE, my printer = FALSE;
 	my printf = (int (*)(void *, const char*, ...)) fprintf;
 	if (! Graphics_init (me)) return NULL;

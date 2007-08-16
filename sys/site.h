@@ -1,6 +1,6 @@
 /* site.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,12 @@
  */
 
 /*
- * pb 2000/12/06
- * pb 2002/03/07 GPL
+ * pb 2007/08/12
  */
 
-char *Site_getPrintCommand (void);
-void Site_setPrintCommand (const char *text);
+wchar_t *Site_getPrintCommand (void);
+void Site_setPrintCommand (const wchar_t *text);
 
 void Site_prefs (void);
 
 /* End of file site.c */
-

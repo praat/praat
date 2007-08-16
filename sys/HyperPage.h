@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #ifndef _Editor_h_
@@ -38,7 +38,7 @@
 #define HyperLink_methods Data_methods
 class_create (HyperLink, Data);
 
-HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, double y2);
+HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1, double y2);
 
 #define HyperPage_members Editor_members \
 	Widget drawingArea, verticalScrollBar; \
@@ -47,13 +47,13 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	long pageNumber; \
 	Collection links; \
 	int printing, top, mirror; \
-	char *insideHeader, *middleHeader, *outsideHeader; \
-	char *insideFooter, *middleFooter, *outsideFooter; \
+	wchar_t *insideHeader, *middleHeader, *outsideHeader; \
+	wchar_t *insideFooter, *middleFooter, *outsideFooter; \
 	int font, fontSize; \
-	char *entryHint; double entryPosition; \
-	struct { char *page; int top; } history [20]; \
+	wchar_t *entryHint; double entryPosition; \
+	struct { wchar_t *page; int top; } history [20]; \
 	int historyPointer; \
-	char *currentPageTitle; \
+	wchar_t *currentPageTitle; \
 	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24; \
 	void *praat; \
 	bool scriptErrorHasBeenNotified; \
@@ -62,7 +62,7 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	void (*draw) (I); \
 	long (*getNumberOfPages) (I); \
 	long (*getCurrentPageNumber) (I); \
-	int (*goToPage) (I, const char *title); \
+	int (*goToPage) (I, const wchar_t *title); \
 	int (*goToPage_i) (I, long ipage); \
 	void (*defaultHeaders) (EditorCommand cmd); \
 	int hasHistory, isOrdered;
@@ -74,42 +74,42 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-int HyperPage_any (I, const char *text, int font, int size, int style, double minFooterDistance,
+int HyperPage_any (I, const wchar_t *text, int font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
-int HyperPage_pageTitle (I, const char *title);
-int HyperPage_intro (I, const char *text);
-int HyperPage_entry (I, const char *title);
-int HyperPage_paragraph (I, const char *text);
-int HyperPage_listItem (I, const char *text);
-int HyperPage_listItem1 (I, const char *text);
-int HyperPage_listItem2 (I, const char *text);
-int HyperPage_listItem3 (I, const char *text);
-int HyperPage_listTag (I, const char *text);
-int HyperPage_listTag1 (I, const char *text);
-int HyperPage_listTag2 (I, const char *text);
-int HyperPage_listTag3 (I, const char *text);
-int HyperPage_definition (I, const char *text);
-int HyperPage_definition1 (I, const char *text);
-int HyperPage_definition2 (I, const char *text);
-int HyperPage_definition3 (I, const char *text);
-int HyperPage_code (I, const char *text);
-int HyperPage_code1 (I, const char *text);
-int HyperPage_code2 (I, const char *text);
-int HyperPage_code3 (I, const char *text);
-int HyperPage_code4 (I, const char *text);
-int HyperPage_code5 (I, const char *text);
-int HyperPage_prototype (I, const char *text);
-int HyperPage_formula (I, const char *formula);
+int HyperPage_pageTitle (I, const wchar_t *title);
+int HyperPage_intro (I, const wchar_t *text);
+int HyperPage_entry (I, const wchar_t *title);
+int HyperPage_paragraph (I, const wchar_t *text);
+int HyperPage_listItem (I, const wchar_t *text);
+int HyperPage_listItem1 (I, const wchar_t *text);
+int HyperPage_listItem2 (I, const wchar_t *text);
+int HyperPage_listItem3 (I, const wchar_t *text);
+int HyperPage_listTag (I, const wchar_t *text);
+int HyperPage_listTag1 (I, const wchar_t *text);
+int HyperPage_listTag2 (I, const wchar_t *text);
+int HyperPage_listTag3 (I, const wchar_t *text);
+int HyperPage_definition (I, const wchar_t *text);
+int HyperPage_definition1 (I, const wchar_t *text);
+int HyperPage_definition2 (I, const wchar_t *text);
+int HyperPage_definition3 (I, const wchar_t *text);
+int HyperPage_code (I, const wchar_t *text);
+int HyperPage_code1 (I, const wchar_t *text);
+int HyperPage_code2 (I, const wchar_t *text);
+int HyperPage_code3 (I, const wchar_t *text);
+int HyperPage_code4 (I, const wchar_t *text);
+int HyperPage_code5 (I, const wchar_t *text);
+int HyperPage_prototype (I, const wchar_t *text);
+int HyperPage_formula (I, const wchar_t *formula);
 int HyperPage_picture (I, double width_inches, double height_inches, void (*draw) (Graphics g));
-int HyperPage_script (I, double width_inches, double height_inches, const char *script);
+int HyperPage_script (I, double width_inches, double height_inches, const wchar_t *script);
 
-int HyperPage_goToPage (I, const char *title);
+int HyperPage_goToPage (I, const wchar_t *title);
 int HyperPage_goToPage_i (I, long i);
 
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data);
 
 void HyperPage_prefs (void);
-void HyperPage_setEntryHint (I, const char *entry);
+void HyperPage_setEntryHint (I, const wchar_t *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
 
 /* End of file HyperPage.h */

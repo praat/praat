@@ -18,8 +18,9 @@
  */
 
 /*
- * pb 1996/09/04
+ * pb 1996/09/04 latest change
  * pb 2002/07/16 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Art_Speaker.h"
@@ -432,7 +433,7 @@ void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics graphics) {
 	for (i = 1; i <= Art_Speaker_meshCount + 1; i ++)
 		Graphics_fillCircle_mm (graphics, xmm [i], ymm [i], 1.0);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (graphics, 0.0, 0.0, "O");   /* Origin. */
+	Graphics_text (graphics, 0.0, 0.0, L"O");   /* Origin. */
 	Graphics_resetViewport (graphics, previous);
 }
 

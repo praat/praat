@@ -424,27 +424,27 @@ Configuration Dissimilarity_Weight_ispline_mds
 void Dissimilarity_Configuration_Weight_drawAbsoluteRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, 
 	double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish);
+	double size_mm, const wchar_t *mark, int garnish);
 
 void Dissimilarity_Configuration_Weight_drawRatioRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish);
+	double size_mm, const wchar_t *mark, int garnish);
 
 void Dissimilarity_Configuration_Weight_drawIntervalRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish);
+	double size_mm, const wchar_t *mark, int garnish);
 
 void Dissimilarity_Configuration_Weight_drawMonotoneRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, 
 	int tiesProcessing, double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish);
+	double size_mm, const wchar_t *mark, int garnish);
 
 void Dissimilarity_Configuration_Weight_drawISplineRegression 
 	(Dissimilarity d, Configuration c, Weight w, Graphics g, 
 	long numberOfInternalKnots, long order, double xmin, double xmax, 
-	double ymin, double ymax, double size_mm, const char *mark, int garnish);
+	double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish);
 
 Distance Dissimilarity_Configuration_Transformator_Weight_transform 
 	(Dissimilarity d, Configuration c, Any t, Weight w);
@@ -460,7 +460,7 @@ ScalarProduct Distance_to_ScalarProduct (Distance me, int normalize);
 
 void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, 
 	double xmin, double xmax, double ymin, double ymax, double size_mm, 
-	const char *mark, int garnish);  
+	const wchar_t *mark, int garnish);  
 
 
 /********** COVARIANCE & CONFIGURATION ***************************/
@@ -485,7 +485,7 @@ Distance Configuration_to_Distance (Configuration me);
 
 void Distance_and_Configuration_drawScatterDiagram 
 	(Distance me, Configuration him, Graphics g, double xmin, double xmax, 
-	double ymin, double ymax, double size_mm, const char *mark, int garnish);
+	double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish);
 
 Configuration Distance_to_Configuration_torsca (Distance me, 
 	int numberOfDimensions);
@@ -507,7 +507,7 @@ double Dissimilarity_Configuration_getStress
 
 void Dissimilarity_Configuration_drawShepardDiagram 
 	(Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, 
-	double ymin, double ymax, double size_mm, const char *mark, int garnish);
+	double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish);
 
 Distance Dissimilarity_Configuration_monotoneRegression 
 	(Dissimilarity dis, Configuration conf, int processTies);
@@ -518,7 +518,7 @@ Distances Dissimilarities_Configuration_monotoneRegression
 void Dissimilarity_Configuration_drawMonotoneRegression 
 	(Dissimilarity me, Configuration him, Graphics g, int processTies, 
 	double xmin, double xmax, double ymin, double ymax,
-	double size_mm, const char *mark, int garnish);
+	double size_mm, const wchar_t *mark, int garnish);
 
 /************** SIMILARITY & TABLESOFREAL ********************************/
 

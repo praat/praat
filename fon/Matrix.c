@@ -84,18 +84,18 @@ static void info (I) {
 	double minimum = 0, maximum = 0;
 	classData -> info (me);
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
-	MelderInfo_writeLine2 ("xmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 ("xmax: ", Melder_double (my xmax));
-	MelderInfo_writeLine2 ("Number of columns: ", Melder_integer (my nx));
-	MelderInfo_writeLine5 ("dx: ", Melder_double (my dx), " (-> sampling rate ", Melder_double (1.0 / my dx), " )");
-	MelderInfo_writeLine2 ("x1: ", Melder_double (my x1));
-	MelderInfo_writeLine2 ("ymin: ", Melder_double (my ymin));
-	MelderInfo_writeLine2 ("ymax: ", Melder_double (my ymax));
-	MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my ny));
-	MelderInfo_writeLine5 ("dy: ", Melder_double (my dy), " (-> sampling rate ", Melder_double (1.0 / my dy), " )");
-	MelderInfo_writeLine2 ("y1: ", Melder_double (my y1));
-	MelderInfo_writeLine2 ("Minimum value: ", Melder_single (minimum));
-	MelderInfo_writeLine2 ("Maximum value: ", Melder_single (maximum));
+	MelderInfo_writeLine2 (L"xmin: ", Melder_double (my xmin));
+	MelderInfo_writeLine2 (L"xmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my nx));
+	MelderInfo_writeLine5 (L"dx: ", Melder_double (my dx), L" (-> sampling rate ", Melder_double (1.0 / my dx), L" )");
+	MelderInfo_writeLine2 (L"x1: ", Melder_double (my x1));
+	MelderInfo_writeLine2 (L"ymin: ", Melder_double (my ymin));
+	MelderInfo_writeLine2 (L"ymax: ", Melder_double (my ymax));
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my ny));
+	MelderInfo_writeLine5 (L"dy: ", Melder_double (my dy), L" (-> sampling rate ", Melder_double (1.0 / my dy), L" )");
+	MelderInfo_writeLine2 (L"y1: ", Melder_double (my y1));
+	MelderInfo_writeLine2 (L"Minimum value: ", Melder_single (minimum));
+	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
 }
 
 static double getValueAtSample (I, long isamp, long ilevel, int unit) {
@@ -674,7 +674,7 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
 	for (i = 1; i <= my ny; i ++) {
 		for (j = 1; j <= my nx; j ++) {
 			if (j > 1) fprintf (f, "\t");
-			fprintf (f, "%s", Melder_single (my z [i] [j]));
+			fprintf (f, "%ls", Melder_single (my z [i] [j]));
 		}
 		fprintf (f, "\n");
 	}
@@ -683,9 +683,8 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
 	return 1;
 }
 
-int Matrix_formula (Matrix me, const char *expressionA, Matrix target) {
+int Matrix_formula (Matrix me, const wchar_t *expression, Matrix target) {
 	long irow, icol;
-	wchar_t *expression = Melder_asciiToWcs (expressionA); cherror
 	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
 	if (target == NULL) target = me;
 	for (irow = 1; irow <= my ny; irow ++) {
@@ -696,7 +695,6 @@ int Matrix_formula (Matrix me, const char *expressionA, Matrix target) {
 		}
 	}
 end:
-	Melder_free (expression);
 	iferror return 0;
 	return 1;
 }

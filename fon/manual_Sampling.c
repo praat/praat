@@ -24,151 +24,151 @@
 void manual_Sampling_init (ManPages me);
 void manual_Sampling_init (ManPages me) {
 
-MAN_BEGIN ("Get sampling period", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a @Sound object.")
-NORMAL ("The Info window will tell you the @@sampling period@ in seconds.")
-ENTRY ("Usage")
-NORMAL ("You will not often choose this command with the mouse, "
+MAN_BEGIN (L"Get sampling period", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")
+NORMAL (L"The Info window will tell you the @@sampling period@ in seconds.")
+ENTRY (L"Usage")
+NORMAL (L"You will not often choose this command with the mouse, "
 	"since the sampling period is included in the information that you get "
 	"by clicking the #Info button. This command is probably more useful in a Praat script:")
-CODE ("select Sound hello")
-CODE ("samplingPeriod = Get sampling period")
-ENTRY ("Details for hackers")
-NORMAL ("With @Inspect, you can see how the sampling period is stored in a #Sound object: it is the #dx attribute.")
+CODE (L"select Sound hello")
+CODE (L"samplingPeriod = Get sampling period")
+ENTRY (L"Details for hackers")
+NORMAL (L"With @Inspect, you can see how the sampling period is stored in a #Sound object: it is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get sampling frequency", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a @Sound object.")
-NORMAL ("The Info window will tell you the @@sampling frequency@ in Hertz.")
-ENTRY ("Usage")
-NORMAL ("You will not often choose this command with the mouse, "
+MAN_BEGIN (L"Get sampling frequency", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")
+NORMAL (L"The Info window will tell you the @@sampling frequency@ in Hertz.")
+ENTRY (L"Usage")
+NORMAL (L"You will not often choose this command with the mouse, "
 	"since the sampling frequency is included in the information that you get "
 	"by clicking the #Info button. This command is probably more useful in a Praat script:")
-CODE ("select Sound hello")
-CODE ("samplingFrequency = Get sampling frequency")
-ENTRY ("Algorithm")
-NORMAL ("The sampling frequency is defined as 1 / (\\De%t), where \\De%t is the @@sampling period@. "
+CODE (L"select Sound hello")
+CODE (L"samplingFrequency = Get sampling frequency")
+ENTRY (L"Algorithm")
+NORMAL (L"The sampling frequency is defined as 1 / (\\De%t), where \\De%t is the @@sampling period@. "
 	"See @@Get sampling period@.")
 MAN_END
 
-MAN_BEGIN ("Get time from sample number...", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
-NORMAL ("The Info window will tell you the time (in seconds) associated with the sample number that you specify.")
-ENTRY ("Setting")
-TAG ("%%Sample number")
-DEFINITION ("the sample number whose time is sought.")
-ENTRY ("Algorithm")
-NORMAL ("the result is")
-FORMULA ("%t__1_ + (%sample_number - 1) \\.c \\De%t")
-NORMAL ("where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select a Sound or LongSound and click @Inspect, "
+MAN_BEGIN (L"Get time from sample number...", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+NORMAL (L"The Info window will tell you the time (in seconds) associated with the sample number that you specify.")
+ENTRY (L"Setting")
+TAG (L"%%Sample number")
+DEFINITION (L"the sample number whose time is sought.")
+ENTRY (L"Algorithm")
+NORMAL (L"the result is")
+FORMULA (L"%t__1_ + (%sample_number - 1) \\.c \\De%t")
+NORMAL (L"where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select a Sound or LongSound and click @Inspect, "
 	"you can see how the relation between sample numbers and times is stored in the object: "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get sample number from time...", "ppgb", 20040505)
-INTRO ("A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
-NORMAL ("The Info window will tell you the sample number belonging to the time that you specify. "
+MAN_BEGIN (L"Get sample number from time...", L"ppgb", 20040505)
+INTRO (L"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+NORMAL (L"The Info window will tell you the sample number belonging to the time that you specify. "
 	"The result is presented as a real number.")
-ENTRY ("Setting")
-TAG ("%%Time (seconds)")
-DEFINITION ("the time for which you want to know the sample number.")
-ENTRY ("Example")
-NORMAL ("If the sound has a sampling frequency of 10 kHz, the sample number associated with a time of 0.1 seconds "
+ENTRY (L"Setting")
+TAG (L"%%Time (seconds)")
+DEFINITION (L"the time for which you want to know the sample number.")
+ENTRY (L"Example")
+NORMAL (L"If the sound has a sampling frequency of 10 kHz, the sample number associated with a time of 0.1 seconds "
 	"will usually be 1000.5.")
-ENTRY ("Scripting")
-NORMAL ("You can use this command to put the nearest sample number into a script variable:")
-CODE ("select Sound hallo")
-CODE ("sampleNumber = Get sample number from time... 0.1")
-CODE ("nearestSample = round (sampleNumber)")
-NORMAL ("In this case, the value will not be written into the Info window. To round down or up, use")
-CODE ("leftSample = floor (sampleNumber)")
-CODE ("rightSample = ceiling (sampleNumber)")
-ENTRY ("Algorithm")
-NORMAL ("the result is")
-FORMULA ("1 + (%time \\-- %t__1_) / \\De%t")
-NORMAL ("where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select a Sound or LongSound and click @Inspect, "
+ENTRY (L"Scripting")
+NORMAL (L"You can use this command to put the nearest sample number into a script variable:")
+CODE (L"select Sound hallo")
+CODE (L"sampleNumber = Get sample number from time... 0.1")
+CODE (L"nearestSample = round (sampleNumber)")
+NORMAL (L"In this case, the value will not be written into the Info window. To round down or up, use")
+CODE (L"leftSample = floor (sampleNumber)")
+CODE (L"rightSample = ceiling (sampleNumber)")
+ENTRY (L"Algorithm")
+NORMAL (L"the result is")
+FORMULA (L"1 + (%time \\-- %t__1_) / \\De%t")
+NORMAL (L"where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select a Sound or LongSound and click @Inspect, "
 	"you can see how the relation between sample numbers and times is stored in the object: "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get number of samples", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
-NORMAL ("The Info window will tell you the total number of time samples in this object.")
-ENTRY ("Example")
-NORMAL ("If the sampling frequency is 44100 Hertz, a recording with a duration of 60 seconds "
+MAN_BEGIN (L"Get number of samples", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+NORMAL (L"The Info window will tell you the total number of time samples in this object.")
+ENTRY (L"Example")
+NORMAL (L"If the sampling frequency is 44100 Hertz, a recording with a duration of 60 seconds "
 	"will contain 2,646,000 samples.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select a Sound or LongSound and click @Inspect, "
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select a Sound or LongSound and click @Inspect, "
 	"you can see how the number of samples is stored in the object: it is the #nx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get time from frame number...", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (L"Get time from frame number...", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
-NORMAL ("The Info window will tell you the time associated with the frame number that you specify.")
-ENTRY ("Setting")
-TAG ("%%Frame number")
-DEFINITION ("the frame number whose time is sought.")
-ENTRY ("Algorithm")
-NORMAL ("the result is")
-FORMULA ("%t__1_ + (%frame_number - 1) \\.c \\De%t")
-NORMAL ("where %t__1_ is the time associated with the centre of the first frame, and \\De%t is the time step.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select one of the above objects and click @Inspect, "
+NORMAL (L"The Info window will tell you the time associated with the frame number that you specify.")
+ENTRY (L"Setting")
+TAG (L"%%Frame number")
+DEFINITION (L"the frame number whose time is sought.")
+ENTRY (L"Algorithm")
+NORMAL (L"the result is")
+FORMULA (L"%t__1_ + (%frame_number - 1) \\.c \\De%t")
+NORMAL (L"where %t__1_ is the time associated with the centre of the first frame, and \\De%t is the time step.")
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select one of the above objects and click @Inspect, "
 	"you can see how the relation between frame numbers and times is stored in the object: "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get frame number from time...", "ppgb", 20040505)
-INTRO ("A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (L"Get frame number from time...", L"ppgb", 20040505)
+INTRO (L"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
-NORMAL ("The Info window will tell you the frame number belonging to the time that you specify. "
+NORMAL (L"The Info window will tell you the frame number belonging to the time that you specify. "
 	"The result is presented as a real number.")
-ENTRY ("Setting")
-TAG ("%%Time (seconds)")
-DEFINITION ("the time for which you want to know the frame number.")
-ENTRY ("Example")
-NORMAL ("If the Pitch object has a time step of 10 ms, and the first frame is centred around 18 ms, "
+ENTRY (L"Setting")
+TAG (L"%%Time (seconds)")
+DEFINITION (L"the time for which you want to know the frame number.")
+ENTRY (L"Example")
+NORMAL (L"If the Pitch object has a time step of 10 ms, and the first frame is centred around 18 ms, "
 	"the frame number associated with a time of 0.1 seconds is 9.2.")
-ENTRY ("Scripting")
-NORMAL ("You can use this command to put the nearest frame centre into a script variable:")
-CODE ("select Pitch hallo")
-CODE ("frame = Get frame from time... 0.1")
-CODE ("nearestFrame = round (frame)")
-NORMAL ("In this case, the value will not be written into the Info window. To round down or up, use")
-CODE ("leftFrame = floor (frame)")
-CODE ("rightFrame = ceiling (frame)")
-ENTRY ("Algorithm")
-NORMAL ("the result is")
-FORMULA ("1 + (%time \\-- %t__1_) / \\De%t")
-NORMAL ("where %t__1_ is the time associated with the centre of the first frame, "
+ENTRY (L"Scripting")
+NORMAL (L"You can use this command to put the nearest frame centre into a script variable:")
+CODE (L"select Pitch hallo")
+CODE (L"frame = Get frame from time... 0.1")
+CODE (L"nearestFrame = round (frame)")
+NORMAL (L"In this case, the value will not be written into the Info window. To round down or up, use")
+CODE (L"leftFrame = floor (frame)")
+CODE (L"rightFrame = ceiling (frame)")
+ENTRY (L"Algorithm")
+NORMAL (L"the result is")
+FORMULA (L"1 + (%time \\-- %t__1_) / \\De%t")
+NORMAL (L"where %t__1_ is the time associated with the centre of the first frame, "
 	"and \\De%t is the time step.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select one of the above objects and click @Inspect, "
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select one of the above objects and click @Inspect, "
 	"you can see how the relation between frame numbers and times is stored in the object: "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get time step", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (L"Get time step", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
-NORMAL ("The Info window will tell you the time difference between consecutive frames, e.g. "
+NORMAL (L"The Info window will tell you the time difference between consecutive frames, e.g. "
 	"the time difference between consecutive formant circles in the sound editor window.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select one of the above objects and click @Inspect, "
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select one of the above objects and click @Inspect, "
 	"you can see how the time step is stored in the object: it is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN ("Get number of frames", "ppgb", 20040420)
-INTRO ("A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (L"Get number of frames", L"ppgb", 20040420)
+INTRO (L"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
-NORMAL ("The Info window will tell you the total number of time frames in the object.")
-ENTRY ("Details for hackers")
-NORMAL ("If you select one of the above objects and click @Inspect, "
+NORMAL (L"The Info window will tell you the total number of time frames in the object.")
+ENTRY (L"Details for hackers")
+NORMAL (L"If you select one of the above objects and click @Inspect, "
 	"you can see how the number of frames is stored in the object: it is the #nx attribute.")
 MAN_END
 

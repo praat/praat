@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002 Paul Boersma
+ * Copyright (C) 2002-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
  */
 
 /*
- * pb 2002/06/11
- * pb 2002/07/16 GPL
+ * pb 2007/08/10
  */
 
 
 #define ooSTRUCT TableCell
 oo_DEFINE_STRUCT (TableCell)
 
-	oo_STRING (string)
+	oo_STRINGW (string)
 	#if oo_DECLARING || oo_COPYING
 		oo_DOUBLE (number)
 	#endif
@@ -51,7 +50,7 @@ oo_END_CLASS (TableRow)
 #define ooSTRUCT TableColumnHeader
 oo_DEFINE_STRUCT (TableColumnHeader)
 
-	oo_STRING (label)
+	oo_STRINGW (label)
 	#if oo_DECLARING || oo_COPYING
 		oo_INT (numericized)
 	#endif

@@ -29,6 +29,7 @@
  * pb 2006/12/15 turned HTML special symbols into Unicode (and removed glyph pictures)
  * pb 2006/12/28 repaired a memory leak
  * pb 2007/06/11 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include <ctype.h>
@@ -43,7 +44,7 @@ static int isSingleWordCharacter (int c) {
 	return isalnum (c) || c == '_';
 }
 
-static long lookUp_unsorted (ManPages me, const char *title);
+static long lookUp_unsorted (ManPages me, const wchar_t *title);
 
 static void classManPages_destroy (I) { iam (ManPages);
 	if (my dynamic && my pages) {
@@ -72,31 +73,37 @@ static void classManPages_destroy (I) { iam (ManPages);
 	inherited (ManPages) destroy (me);
 }
 
-static const char *extractLink (const char *text, const char *p, char *link) {
-	char *to = link, *max = link + 300;
+static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_t *link) {
+	wchar_t *to = link, *max = link + 300;
 	if (p == NULL) p = text;
 	/*
 	 * Search for next '@' that is not in a backslash sequence.
 	 */
 	for (;;) {
-		p = strchr (p, '@');
+		p = wcschr (p, '@');
 		if (! p) return NULL;   /* No more '@'. */
 		if (p - text <= 0 || (p [-1] != '\\' && (p - text <= 1 || p [-2] != '\\'))) break;
 		p ++;
 	}
 	Melder_assert (*p == '@');
 	if (p [1] == '@') {
-		const char *from = p + 2;
+		const wchar_t *from = p + 2;
 		while (*from != '@' && *from != '|' && *from != '\0') {
-		if (to >= max) return Melder_errorp ("(ManPages::grind:) Link starting with \"@@\" is too long:\n%s", text);
+			if (to >= max) {
+				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
+				return NULL;
+			}
 			*to ++ = *from ++;
 		}
 		if (*from == '|') { from ++; while (*from != '@' && *from != '\0') from ++; }
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
-		const char *from = p + 1;
+		const wchar_t *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
-			if (to >= max) return Melder_errorp ("(ManPages::grind:) Link starting with \"@@\" is too long:\n%s", text);
+			if (to >= max) {
+				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
+				return NULL;
+			}
 			*to ++ = *from ++;
 		}
 		p = from;
@@ -108,7 +115,7 @@ static const char *extractLink (const char *text, const char *p, char *link) {
 static int readOnePage (ManPages me, MelderReadString *text) {
 	ManPage page;
 	ManPage_Paragraph par;
-	char *title = texgets2 (text);
+	wchar_t *title = texgetw2 (text);
 	if (! title) return Melder_error ("Cannot find page title.");
 
 	/*
@@ -127,7 +134,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	 */
 	if (! Collection_addItem (my pages, page)) return 0;
 
-	page -> author = texgets2 (text);
+	page -> author = texgetw2 (text);
 	if (! page -> author) return Melder_error ("Cannot find author.");
 	page -> date = texgetu4 (text);
 	iferror return Melder_error ("Cannot find date.");
@@ -136,11 +143,11 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	page -> paragraphs = NUMvector (sizeof (struct structManPage_Paragraph), 0, 500);
 	if (! page -> paragraphs) return 0;
 	for (par = page -> paragraphs;; par ++) {
-		char link [501], fileName [256];
-		const char *p;
+		wchar_t link [501], fileName [256];
+		const wchar_t *p;
 		par -> type = texgete1 (text, & enum_ManPage_TYPE);
 		if (Melder_hasError ()) {
-			if (wcsstr (Melder_getErrorW (), L"end of text")) {
+			if (wcsstr (Melder_getError (), L"end of text")) {
 				Melder_clearError ();
 				break;
 			} else {
@@ -151,7 +158,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 			par -> width = texgetr4 (text);
 			par -> height = texgetr4 (text);
 		}
-		par -> text = texgets2 (text);
+		par -> text = texgetw2 (text);
 		if (! par -> text) return Melder_error ("Cannot find text.");
 		for (p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
@@ -166,7 +173,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
-					Melder_warning ("Cannot find sound file \"%s\".", link + 3);
+					Melder_warning ("Cannot find sound file \"%ls\".", link + 3);
 				} else if (! MelderFile_exists (& file2)) {
 					Melder_warning ("Cannot find sound file \"%s\".", MelderFile_messageName (& file2));
 				}
@@ -174,49 +181,57 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 				/*
 				 * A link to a script: see if it exists.
 				 */
-				char *p = link + 3;
+				wchar_t *p = link + 3;
 				if (*p == '\"') {
-					char *q = fileName;
+					wchar_t *q = fileName;
 					p ++;
 					while (*p != '\"' && *p != '\0') * q ++ = * p ++;
 					*q = '\0';
 				} else {
-					sscanf (p, "%s", fileName);   /* One word, up to the next space. */
+					wchar_t *q = fileName;
+					while (*p != ' ' && *p != '\0') * q ++ = * p ++;   // One word, up to the next space.
+					*q = '\0';
 				}
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
-					Melder_warning ("Cannot find script \"%s\".", fileName);
+					Melder_warning ("Cannot find script \"%ls\".", fileName);
 				} else if (! MelderFile_exists (& file2)) {
-					Melder_warning ("Cannot find script \"%s\".", MelderFile_messageName (& file2));
+					Melder_warning ("Cannot find script \"%ls\".", MelderFile_messageNameW (& file2));
 				}
 				my executable = TRUE;
 			} else {
-				char *q;
+				wchar_t *q;
 				/*
 				 * A link to another page: follow it.
 				 */
 				for (q = link; *q; q ++) if (! isAllowedFileNameCharacter (*q)) *q = '_';
-				strcpy (fileName, link);
-				strcat (fileName, ".man");
-				MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
-				wchar_t *string2 = MelderFile_readTextW (& file2);
+				wcscpy (fileName, link);
+				wcscat (fileName, L".man");
+				MelderDir_getFileW (& my rootDirectory, fileName, & file2);
+				wchar_t *string2 = MelderFile_readText (& file2);
 				if (string2 != NULL) {
 					MelderReadString text2 = { string2, string2 };
-					if (! readOnePage (me, & text2)) { Melder_free (string2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
+					if (! readOnePage (me, & text2)) {
+						Melder_free (string2);
+						return Melder_error3 (L"File \"", MelderFile_messageNameW (& file2), L"\".");
+					}
 				} else {
 					/*
 					 * Second try: with upper case.
 					 */
 					Melder_clearError ();
 					link [0] = toupper (link [0]);
-					strcpy (fileName, link);
-					strcat (fileName, ".man");
-					MelderDir_getFileW (& my rootDirectory, Melder_peekAsciiToWcs (fileName), & file2);
-					string2 = MelderFile_readTextW (& file2);
+					wcscpy (fileName, link);
+					wcscat (fileName, L".man");
+					MelderDir_getFileW (& my rootDirectory, fileName, & file2);
+					string2 = MelderFile_readText (& file2);
 					if (string2 == NULL) return 0;
 					MelderReadString text2 = { string2, string2 };
-					if (! readOnePage (me, & text2)) { Melder_free (string2); return Melder_error ("File \"%s\".", MelderFile_messageName (& file2)); }
+					if (! readOnePage (me, & text2)) {
+						Melder_free (string2);
+						return Melder_error3 (L"File \"", MelderFile_messageNameW (& file2), L"\".");
+					}
 				}
 				Melder_free (string2);
 			}
@@ -246,7 +261,7 @@ ManPages ManPages_create (void) {
 	return me;
 }
 
-int ManPages_addPage (ManPages me, const char *title, const char *author, long date,
+int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs [])
 {
 	ManPage page = new (ManPage);
@@ -260,18 +275,18 @@ int ManPages_addPage (ManPages me, const char *title, const char *author, long d
 
 static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
-	const char *p = my title, *q = thy title;
+	const wchar_t *p = my title, *q = thy title;
 	for (;;) {
 		int plower = tolower (*p), qlower = tolower (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
-		if (plower == '\0') return strcmp (my title, thy title);
+		if (plower == '\0') return wcscmp (my title, thy title);
 		p ++, q ++;
 	}
 	return 0;   /* Should not occur. */
 }
 
-static long lookUp_unsorted (ManPages me, const char *title) {
+static long lookUp_unsorted (ManPages me, const wchar_t *title) {
 	long i;
 
 	/*
@@ -279,25 +294,25 @@ static long lookUp_unsorted (ManPages me, const char *title) {
 	 */
 	for (i = 1; i <= my pages -> size; i ++) {
 		ManPage page = my pages -> item [i];
-		if (strequ (page -> title, title)) return i;
+		if (wcsequ (page -> title, title)) return i;
 	}
 
 	/*
 	 * If that fails, try to find the upper-case variant.
 	 */
 	if (islower (title [0])) {
-		char upperTitle [300];
-		strcpy (upperTitle, title);
+		wchar_t upperTitle [300];
+		wcscpy (upperTitle, title);
 		upperTitle [0] = toupper (upperTitle [0]);
 		for (i = 1; i <= my pages -> size; i ++) {
 			ManPage page = my pages -> item [i];
-			if (strequ (page -> title, upperTitle)) return i;
+			if (wcsequ (page -> title, upperTitle)) return i;
 		}
 	}
 	return 0;
 }
 
-static long lookUp_sorted (ManPages me, const char *title) {
+static long lookUp_sorted (ManPages me, const wchar_t *title) {
 	static ManPage dummy;
 	ManPage *page;
 	if (! dummy) dummy = new (ManPage);
@@ -305,8 +320,8 @@ static long lookUp_sorted (ManPages me, const char *title) {
 	page = bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
 	if (page) return (page - (ManPage *) & my pages -> item [1]) + 1;
 	if (islower (title [0]) || isupper (title [0])) {
-		char caseSwitchedTitle [300];
-		strcpy (caseSwitchedTitle, title);
+		wchar_t caseSwitchedTitle [300];
+		wcscpy (caseSwitchedTitle, title);
 		caseSwitchedTitle [0] = islower (title [0]) ? toupper (caseSwitchedTitle [0]) : tolower (caseSwitchedTitle [0]);
 		dummy -> title = caseSwitchedTitle;
 		page = bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
@@ -329,8 +344,8 @@ static void grind (ManPages me) {
 		ManPage page = my pages -> item [ipage];
 		int ipar;
 		for (ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
-			const char *text = page -> paragraphs [ipar]. text, *p;
-			char link [301];
+			const wchar_t *text = page -> paragraphs [ipar]. text, *p;
+			wchar_t link [301];
 			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
 				if (link [0] == '\\' && ((link [1] == 'F' && link [2] == 'I') || (link [1] == 'S' && link [2] == 'C')))
 					continue;   /* Ignore "FILE" links. */
@@ -339,7 +354,7 @@ static void grind (ManPages me) {
 					((ManPage) my pages -> item [jpage]) -> nlinksHither ++;
 					grandNlinks ++;
 				} else {
-					MelderInfo_writeLine5 ("Page \"", page -> title, "\" contains a dangling link to \"", link, "\".");
+					MelderInfo_writeLine5 (L"Page \"", page -> title, L"\" contains a dangling link to \"", link, L"\".");
 					ndangle ++;
 				}
 			}
@@ -381,8 +396,8 @@ static void grind (ManPages me) {
 		ManPage page = my pages -> item [ipage];
 		int ipar;
 		for (ipar = 0; page -> paragraphs [ipar]. type; ipar ++) {
-			const char *text = page -> paragraphs [ipar]. text, *p;
-			char link [301];
+			const wchar_t *text = page -> paragraphs [ipar]. text, *p;
+			wchar_t link [301];
 			if (text) for (p = extractLink (text, NULL, link); p != NULL; p = extractLink (text, p, link)) {
 				if (link [0] == '\\' && ((link [1] == 'F' && link [2] == 'I') || (link [1] == 'S' && link [2] == 'C')))
 					continue;   /* Ignore "FILE" links. */
@@ -419,17 +434,16 @@ long ManPages_uniqueLinksHither (ManPages me, long ipage) {
 	return result;
 }
 
-long ManPages_lookUp (ManPages me, const char *title) {
+long ManPages_lookUp (ManPages me, const wchar_t *title) {
 	if (! my ground) grind (me);
 	return lookUp_sorted (me, title);
 }
 
-static long ManPages_lookUp_caseSensitive (ManPages me, const char *title) {
-	long i;
+static long ManPages_lookUp_caseSensitive (ManPages me, const wchar_t *title) {
 	if (! my ground) grind (me);
-	for (i = 1; i <= my pages -> size; i ++) {
+	for (long i = 1; i <= my pages -> size; i ++) {
 		ManPage page = my pages -> item [i];
-		if (strequ (page -> title, title)) return i;
+		if (wcsequ (page -> title, title)) return i;
 	}
 	return 0;
 }
@@ -440,53 +454,51 @@ const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles) {
 		my titles = (const wchar_t **) NUMpvector (1, my pages -> size);
 		for (long i = 1; i <= my pages -> size; i ++) {
 			ManPage page = my pages -> item [i];
-			my titles [i] = Melder_asciiToWcs (page -> title);
+			my titles [i] = Melder_wcsdup (page -> title);
 		}
 	}
 	*numberOfTitles = my pages -> size;
 	return my titles;
 }
 
-static CACHE *theCache;
-
 static struct stylesInfo {
-	const char *htmlIn, *htmlOut;
+	const wchar_t *htmlIn, *htmlOut;
 } stylesInfo [] = {
 { 0 },
-/* INTRO: */ { "<p>", "</p>" },
-/* ENTRY: */ { "<h3>", "</h3>" },
-/* NORMAL: */ { "<p>", "</p>" },
-/* LIST_ITEM: */ { "<dd>", "" },
-/* TAG: */ { "<dt>", "" },
-/* DEFINITION: */ { "<dd>", "" },
-/* CODE: */ { "<code>", "<br></code>" },
-/* PROTOTYPE: */ { "<p>", "</p>" },
-/* FORMULA: */ { "<table width=\"100%\"><tr><td align=middle>", "</table>" },
-/* PICTURE: */ { "<p>", "</p>" },
-/* SCRIPT: */ { "<p>", "</p>" },
-/* LIST_ITEM1: */ { "<dd>&nbsp;&nbsp;&nbsp;", "" },
-/* LIST_ITEM2: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* LIST_ITEM3: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* TAG1: */ { "<dt>&nbsp;&nbsp;&nbsp;", "" },
-/* TAG2: */ { "<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* TAG3: */ { "<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* DEFINITION1: */ { "<dd>&nbsp;&nbsp;&nbsp;", "" },
-/* DEFINITION2: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* DEFINITION3: */ { "<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "" },
-/* CODE1: */ { "<code>&nbsp;&nbsp;&nbsp;", "<br></code>" },
-/* CODE2: */ { "<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "<br></code>" },
-/* CODE3: */ { "<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "<br></code>" },
-/* CODE4: */ { "<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "<br></code>" },
-/* CODE5: */ { "<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "<br></code>" }
+/* INTRO: */ { L"<p>", L"</p>" },
+/* ENTRY: */ { L"<h3>", L"</h3>" },
+/* NORMAL: */ { L"<p>", L"</p>" },
+/* LIST_ITEM: */ { L"<dd>", L"" },
+/* TAG: */ { L"<dt>", L"" },
+/* DEFINITION: */ { L"<dd>", L"" },
+/* CODE: */ { L"<code>", L"<br></code>" },
+/* PROTOTYPE: */ { L"<p>", L"</p>" },
+/* FORMULA: */ { L"<table width=\"100%\"><tr><td align=middle>", L"</table>" },
+/* PICTURE: */ { L"<p>", L"</p>" },
+/* SCRIPT: */ { L"<p>", L"</p>" },
+/* LIST_ITEM1: */ { L"<dd>&nbsp;&nbsp;&nbsp;", L"" },
+/* LIST_ITEM2: */ { L"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* LIST_ITEM3: */ { L"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* TAG1: */ { L"<dt>&nbsp;&nbsp;&nbsp;", L"" },
+/* TAG2: */ { L"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* TAG3: */ { L"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* DEFINITION1: */ { L"<dd>&nbsp;&nbsp;&nbsp;", L"" },
+/* DEFINITION2: */ { L"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* DEFINITION3: */ { L"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"" },
+/* CODE1: */ { L"<code>&nbsp;&nbsp;&nbsp;", L"<br></code>" },
+/* CODE2: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" },
+/* CODE3: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" },
+/* CODE4: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" },
+/* CODE5: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" }
 };
 
-static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs) {
+static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, MelderStringW *buffer) {
 	int inList = FALSE, inItalic = FALSE, inBold = FALSE;
 	int inSub = FALSE, inCode = FALSE, inSuper = FALSE, ul = FALSE, inSmall = FALSE;
 	int wordItalic = FALSE, wordBold = FALSE, wordCode = FALSE, letterSuper = FALSE;
 	ManPage_Paragraph paragraph;
 	for (paragraph = paragraphs; paragraph -> type != 0; paragraph ++) {
-		const char *p = paragraph -> text;
+		const wchar_t *p = paragraph -> text;
 		int type = paragraph -> type, inTable;
 		int isListItem = type == enumi (ManPage_TYPE, list_item) ||
 			(type >= enumi (ManPage_TYPE, list_item1) && type <= enumi (ManPage_TYPE, list_item3));
@@ -500,34 +512,44 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs) {
 		/*
 		 * We do not recognize pictures yet.
 		 */
-		if (! p) { memprint1 (theCache, "<p><font size=-2>[sorry, no pictures yet in the web version of this manual]</font></p>\n"); continue; }
+		if (! p) {
+			MelderStringW_append1 (buffer, L"<p><font size=-2>[sorry, no pictures yet in the web version of this manual]</font></p>\n");
+			continue;
+		}
 
 		if (isListItem || isTag || isDefinition) {
 			if (! inList) {
 				ul = isListItem && p [0] == '\\' && p [1] == 'b' && p [2] == 'u';
-				memprint1 (theCache, ul ? "<ul>\n" : "<dl>\n");
+				MelderStringW_append1 (buffer, ul ? L"<ul>\n" : L"<dl>\n");
 				inList = TRUE;
 			}
 			if (ul && p [0] == '\\' && p [1] == 'b' && p [2] == 'u' && p [3] == ' ') p += 3;
-			memprint2 (theCache, ul ? "<li>" : stylesInfo [paragraph -> type]. htmlIn, "\n");
+			MelderStringW_append2 (buffer, ul ? L"<li>" : stylesInfo [paragraph -> type]. htmlIn, L"\n");
 		} else {
-			if (inList) { memprint1 (theCache, ul ? "</ul>\n" : "</dl>\n"); inList = ul = FALSE; }
-			memprint2 (theCache, stylesInfo [paragraph -> type]. htmlIn, "\n");
+			if (inList) {
+				MelderStringW_append1 (buffer, ul ? L"</ul>\n" : L"</dl>\n");
+				inList = ul = FALSE;
+			}
+			MelderStringW_append2 (buffer, stylesInfo [paragraph -> type]. htmlIn, L"\n");
 		}
 		inTable = *p == '\t';
 		if (inTable) {
-			memprint1 (theCache, "<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>"); p ++;
+			MelderStringW_append1 (buffer, L"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>");
+			p ++;
 		}
 		/*
 		 * Leading spaces should be visible (mainly used in code fragments).
 		 */
-		while (*p == ' ') { memprint1 (theCache, "&nbsp;"); p ++; }
+		while (*p == ' ') {
+			MelderStringW_append1 (buffer, L"&nbsp;");
+			p ++;
+		}
 		while (*p) {
-				if (wordItalic && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-				if (wordBold && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</b>"); wordBold = FALSE; }
-				if (wordCode && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</code>"); wordCode = FALSE; }
+				if (wordItalic && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+				if (wordBold && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }
+				if (wordCode && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</code>"); wordCode = FALSE; }
 			if (*p == '@') {
-				char link [301], linkText [301], *q = link;
+				wchar_t link [301], linkText [301], *q = link;
 				if (p [1] == '@') {
 					p += 2;
 					while (*p != '@' && *p != '|' && *p != '\0') *q++ = *p++;
@@ -538,14 +560,14 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs) {
 						while (*p != '@' && *p != '\0') *q++ = *p++;
 						*q = '\0';   /* Close link text. */
 					} else {
-						strcpy (linkText, link);
+						wcscpy (linkText, link);
 					}
 					if (*p) p ++;
 				} else {
 					p ++;
 					while (isSingleWordCharacter (*p) && *p != '\0') *q++ = *p++;
 					*q = '\0';   /* Close link. */
-					strcpy (linkText, link);
+					wcscpy (linkText, link);
 				}
 				/*
 				 * We write the link in the following format:
@@ -555,137 +577,133 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs) {
 				 * because it will be a file name (see ManPages_writeAllToHtmlDir).
 				 * The file name will have no more than 30 or 60 characters, and no less than 1.
 				 */
-				memprint1 (theCache, "<a href=\"");
-				if (strnequ (link, "\\FI", 3)) {
-					memprint1 (theCache, link + 3);   /* File link. */
+				MelderStringW_append1 (buffer, L"<a href=\"");
+				if (wcsnequ (link, L"\\FI", 3)) {
+					MelderStringW_append1 (buffer, link + 3);   /* File link. */
 				} else {
 					q = link;
 					if (! ManPages_lookUp_caseSensitive (me, link)) {
-						char upperCase [2] = "";
-						upperCase [0] = toupper (link [0]);
-						memwrite (upperCase, 1, 1, theCache);
+						MelderStringW_appendCharacter (buffer, toupper (link [0]));
 						if (*q) q ++;   /* First letter already written. */
 					}
 					while (*q && q - link < LONGEST_FILE_NAME) {
-						if (! isAllowedFileNameCharacter (*q)) memprint1 (theCache, "_");
-						else memwrite (q, 1, 1, theCache);
+						if (! isAllowedFileNameCharacter (*q)) MelderStringW_appendCharacter (buffer, '_');
+						else MelderStringW_appendCharacter (buffer, *q);
 						q ++;
 					}
-					if (link [0] == '\0') memprint1 (theCache, "_");   /* Otherwise Mac problems or Unix invisibility. */
-					memprint1 (theCache, ".html");
+					if (link [0] == '\0') MelderStringW_appendCharacter (buffer, '_');   /* Otherwise Mac problems or Unix invisibility. */
+					MelderStringW_append1 (buffer, L".html");
 				}
-				memprint3 (theCache, "\">", linkText, "</a>");
+				MelderStringW_append3 (buffer, L"\">", linkText, L"</a>");
 			} else if (*p == '%') {
-				if (inItalic) { memprint1 (theCache, "</i>"); inItalic = FALSE; p ++; }
-				else if (p [1] == '%') { memprint1 (theCache, "<i>"); inItalic = TRUE; p += 2; }
-				else if (p [1] == '#') { memprint1 (theCache, "<i><b>"); wordItalic = TRUE; wordBold = TRUE; p += 2; }
-				else { memprint1 (theCache, "<i>"); wordItalic = TRUE; p ++; }
+				if (inItalic) { MelderStringW_append1 (buffer, L"</i>"); inItalic = FALSE; p ++; }
+				else if (p [1] == '%') { MelderStringW_append1 (buffer, L"<i>"); inItalic = TRUE; p += 2; }
+				else if (p [1] == '#') { MelderStringW_append1 (buffer, L"<i><b>"); wordItalic = TRUE; wordBold = TRUE; p += 2; }
+				else { MelderStringW_append1 (buffer, L"<i>"); wordItalic = TRUE; p ++; }
 			} else if (*p == '_') {
 				if (inSub) {
-					/*if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }*/
-					memprint1 (theCache, "</sub>"); inSub = FALSE; p ++;
+					/*if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }*/
+					MelderStringW_append1 (buffer, L"</sub>"); inSub = FALSE; p ++;
 				} else if (p [1] == '_') {
-					if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }
-					memprint1 (theCache, "<sub>"); inSub = TRUE; p += 2;
-				} else { memprint1 (theCache, "_"); p ++; }
+					if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }
+					MelderStringW_append1 (buffer, L"<sub>"); inSub = TRUE; p += 2;
+				} else { MelderStringW_append1 (buffer, L"_"); p ++; }
 			} else if (*p == '#') {
-				if (inBold) { memprint1 (theCache, "</b>"); inBold = FALSE; p ++; }
-				else if (p [1] == '#') { memprint1 (theCache, "<b>"); inBold = TRUE; p += 2; }
-				else if (p [1] == '%') { memprint1 (theCache, "<b><i>"); wordBold = TRUE; wordItalic = TRUE; p += 2; }
-				else { memprint1 (theCache, "<b>"); wordBold = TRUE; p ++; }
+				if (inBold) { MelderStringW_append1 (buffer, L"</b>"); inBold = FALSE; p ++; }
+				else if (p [1] == '#') { MelderStringW_append1 (buffer, L"<b>"); inBold = TRUE; p += 2; }
+				else if (p [1] == '%') { MelderStringW_append1 (buffer, L"<b><i>"); wordBold = TRUE; wordItalic = TRUE; p += 2; }
+				else { MelderStringW_append1 (buffer, L"<b>"); wordBold = TRUE; p ++; }
 			} else if (*p == '$') {
-				if (inCode) { memprint1 (theCache, "</code>"); inCode = FALSE; p ++; }
-				else if (p [1] == '$') { memprint1 (theCache, "<code>"); inCode = TRUE; p += 2; }
-				else { memprint1 (theCache, "<code>"); wordCode = TRUE; p ++; }
+				if (inCode) { MelderStringW_append1 (buffer, L"</code>"); inCode = FALSE; p ++; }
+				else if (p [1] == '$') { MelderStringW_append1 (buffer, L"<code>"); inCode = TRUE; p += 2; }
+				else { MelderStringW_append1 (buffer, L"<code>"); wordCode = TRUE; p ++; }
 			} else if (*p == '^') {
 				if (inSuper) {
-					/*if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }*/
-					memprint1 (theCache, "</sup>"); inSuper = FALSE; p ++;
+					/*if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }*/
+					MelderStringW_append1 (buffer, L"</sup>"); inSuper = FALSE; p ++;
 				} else if (p [1] == '^') {
-					/*if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }*/
-					memprint1 (theCache, "<sup>"); inSuper = TRUE; p += 2;
+					/*if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }*/
+					MelderStringW_append1 (buffer, L"<sup>"); inSuper = TRUE; p += 2;
 				} else {
-					/*if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }*/
-					memprint1 (theCache, "<sup>"); letterSuper = TRUE; p ++;
+					/*if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }*/
+					MelderStringW_append1 (buffer, L"<sup>"); letterSuper = TRUE; p ++;
 				}
 			} else if (*p == '}') {
-				if (inSmall) { memprint1 (theCache, "</font>"); inSmall = FALSE; p ++; }
-				else { memprint1 (theCache, "}"); p ++; }
+				if (inSmall) { MelderStringW_append1 (buffer, L"</font>"); inSmall = FALSE; p ++; }
+				else { MelderStringW_append1 (buffer, L"}"); p ++; }
 			} else if (*p == '\\' && p [1] == 's' && p [2] == '{') {
-				memprint1 (theCache, "<font size=-1>"); inSmall = TRUE; p += 3;
+				MelderStringW_append1 (buffer, L"<font size=-1>"); inSmall = TRUE; p += 3;
 			} else if (*p == '\t' && inTable) {
-				memprint1 (theCache, "<td width=100 align=middle>"); p ++;
+				MelderStringW_append1 (buffer, L"<td width=100 align=middle>"); p ++;
 			} else if (*p == '<') {
-				memprint1 (theCache, "&lt;"); p ++;
+				MelderStringW_append1 (buffer, L"&lt;"); p ++;
 			} else if (*p == '>') {
-				memprint1 (theCache, "&gt;"); p ++;
+				MelderStringW_append1 (buffer, L"&gt;"); p ++;
 			} else if (*p == '&') {
-				memprint1 (theCache, "&amp;"); p ++;
+				MelderStringW_append1 (buffer, L"&amp;"); p ++;
 			} else {
-				/*if (wordItalic && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-				if (wordBold && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</b>"); wordBold = FALSE; }
-				if (wordCode && ! isSingleWordCharacter (*p)) { memprint1 (theCache, "</code>"); wordCode = FALSE; }*/
+				/*if (wordItalic && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+				if (wordBold && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }
+				if (wordCode && ! isSingleWordCharacter (*p)) { MelderStringW_append1 (buffer, L"</code>"); wordCode = FALSE; }*/
 				if (*p == '\\') {
 					int kar1 = *++p, kar2 = *++p;
 					Longchar_Info info = Longchar_getInfo (kar1, kar2);
 					if (info -> unicode < 127) {
-						char letter [2] = "";
-						letter [0] = info -> unicode ? info -> unicode : '?';
-						memwrite (letter, 1, 1, theCache);
+						MelderStringW_appendCharacter (buffer, info -> unicode ? info -> unicode : '?');
 					} else {
-						memprint3 (theCache, "&#", Melder_integer (info -> unicode), ";");
+						MelderStringW_append3 (buffer, L"&#", Melder_integer (info -> unicode), L";");
 					}
 					p ++;
 				} else {
-					memwrite (p, 1, 1, theCache);
+					MelderStringW_appendCharacter (buffer, *p);
 					p ++;
 				}
 				if (letterSuper) {
-					if (wordItalic) { memprint1 (theCache, "</i>"); wordItalic = FALSE; }
-					if (wordBold) { memprint1 (theCache, "</b>"); wordBold = FALSE; }
-					memprint1 (theCache, "</sup>"); letterSuper = FALSE;
+					if (wordItalic) { MelderStringW_append1 (buffer, L"</i>"); wordItalic = FALSE; }
+					if (wordBold) { MelderStringW_append1 (buffer, L"</b>"); wordBold = FALSE; }
+					MelderStringW_append1 (buffer, L"</sup>"); letterSuper = FALSE;
 				}
 			}
 		}
-		if (inItalic || wordItalic) { memprint1 (theCache, "</i>"); inItalic = wordItalic = FALSE; }
-		if (inBold || wordBold) { memprint1 (theCache, "</b>"); inBold = wordBold = FALSE; }
-		if (inCode || wordCode) { memprint1 (theCache, "</code>"); inCode = wordCode = FALSE; }
-		if (inSub) { memprint1 (theCache, "</sub>"); inSub = FALSE; }
-		if (inSuper || letterSuper) { memprint1 (theCache, "</sup>"); inSuper = letterSuper = FALSE; }
-		if (inTable) { memprint1 (theCache, "</table>"); inTable = FALSE; }
-		memprint2 (theCache, stylesInfo [paragraph -> type]. htmlOut, "\n");
+		if (inItalic || wordItalic) { MelderStringW_append1 (buffer, L"</i>"); inItalic = wordItalic = FALSE; }
+		if (inBold || wordBold) { MelderStringW_append1 (buffer, L"</b>"); inBold = wordBold = FALSE; }
+		if (inCode || wordCode) { MelderStringW_append1 (buffer, L"</code>"); inCode = wordCode = FALSE; }
+		if (inSub) { MelderStringW_append1 (buffer, L"</sub>"); inSub = FALSE; }
+		if (inSuper || letterSuper) { MelderStringW_append1 (buffer, L"</sup>"); inSuper = letterSuper = FALSE; }
+		if (inTable) { MelderStringW_append1 (buffer, L"</table>"); inTable = FALSE; }
+		MelderStringW_append2 (buffer, stylesInfo [paragraph -> type]. htmlOut, L"\n");
 	}
-	if (inList) { memprint1 (theCache, ul ? "</ul>\n" : "</dl>\n"); inList = FALSE; }
+	if (inList) { MelderStringW_append1 (buffer, ul ? L"</ul>\n" : L"</dl>\n"); inList = FALSE; }
 }
 
-static const char *month [] =
-	{ "", "January", "February", "March", "April", "May", "June",
-	  "July", "August", "September", "October", "November", "December" };
+static const wchar_t *month [] =
+	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
+	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
-static void writePageAsHtml (ManPages me, long ipage) {
+static void writePageAsHtml (ManPages me, long ipage, MelderStringW *buffer) {
 	ManPage page = my pages -> item [ipage];
 	ManPage_Paragraph paragraphs = page -> paragraphs;
-	memprint3 (theCache, "<html><head><meta name=\"robots\" content=\"index,follow\">\n"
-		"<title>", page -> title, "</title></head><body bgcolor=\"#FFFFFF\">\n\n");
-	memprint3 (theCache, "<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
-		"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
-		"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
-		page -> title, "\n</b></font></table></table>\n");
-	writeParagraphsAsHtml (me, paragraphs);
+	MelderStringW_append3 (buffer, L"<html><head><meta name=\"robots\" content=\"index,follow\">\n"
+		L"<title>", page -> title, L"</title></head><body bgcolor=\"#FFFFFF\">\n\n");
+	MelderStringW_append3 (buffer, L"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
+		L"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
+		L"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
+		page -> title, L"\n</b></font></table></table>\n");
+	writeParagraphsAsHtml (me, paragraphs, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		long ilink, jlink, lastParagraph = 0;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const char *text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text && text [0] && text [strlen (text) - 1] != ':')
-				memprint1 (theCache, "<h3>Links to this page</h3>\n");
+			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
+			if (text && text [0] && text [wcslen (text) - 1] != ':')
+				MelderStringW_append1 (buffer, L"<h3>Links to this page</h3>\n");
 		}
-		memprint1 (theCache, "<ul>\n");
+		MelderStringW_append1 (buffer, L"<ul>\n");
 		for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
 			long link = page -> linksHither [ilink];
 			int alreadyShown = FALSE;
@@ -693,63 +711,58 @@ static void writePageAsHtml (ManPages me, long ipage) {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = TRUE;
 			if (! alreadyShown) {
-				const char *title = ((ManPage) my pages -> item [page -> linksHither [ilink]]) -> title, *p;
-				memprint1 (theCache, "<li><a href=\"");
+				const wchar_t *title = ((ManPage) my pages -> item [page -> linksHither [ilink]]) -> title, *p;
+				MelderStringW_append1 (buffer, L"<li><a href=\"");
 				for (p = title; *p; p ++) {
 					if (p - title >= LONGEST_FILE_NAME) break;
-					if (! isAllowedFileNameCharacter (*p)) memprint1 (theCache, "_");
-					else memwrite (p, 1, 1, theCache);
+					if (! isAllowedFileNameCharacter (*p)) MelderStringW_append1 (buffer, L"_");
+					else MelderStringW_appendCharacter (buffer, *p);
 				}
-				if (title [0] == '\0') memprint1 (theCache, "_");
-				memprint3 (theCache, ".html\">", title, "</a>\n");
+				if (title [0] == '\0') MelderStringW_append1 (buffer, L"_");
+				MelderStringW_append3 (buffer, L".html\">", title, L"</a>\n");
 			}
 		}
-		memprint1 (theCache, "</ul>\n");
+		MelderStringW_append1 (buffer, L"</ul>\n");
 	}
-	memprint2 (theCache, "<hr>\n<address>\n\t<p>&copy; ", page -> author);
+	MelderStringW_append2 (buffer, L"<hr>\n<address>\n\t<p>&copy; ", page -> author);
 	if (page -> date) {
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
-		memprint4 (theCache, ", ", month [imonth], " ", Melder_integer (date % 100));
-		memprint2 (theCache, ", ", Melder_integer (date / 10000));
+		MelderStringW_append4 (buffer, L", ", month [imonth], L" ", Melder_integer (date % 100));
+		MelderStringW_append2 (buffer, L", ", Melder_integer (date / 10000));
 	}
-	memprint1 (theCache, "</p>\n</address>\n</body>\n</html>\n");
+	MelderStringW_append1 (buffer, L"</p>\n</address>\n</body>\n</html>\n");
 }
 
 int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
-	if (! theCache) theCache = memopen (100000);
-	if (! theCache) return 0;
-	memrewind (theCache);
-	writePageAsHtml (me, ipage);
-	memwrite ("", 1, 1, theCache);   /* Closing null byte. */
-	if (! MelderFile_writeText (file, (char *) theCache -> base)) return 0;
+	static MelderStringW buffer = { 0 };
+	MelderStringW_empty (& buffer);
+	writePageAsHtml (me, ipage, & buffer);
+	if (! MelderFile_writeText (file, buffer.string)) return 0;
 	return 1;
 }
 
 int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 	structMelderDir dir;
-	long ipage;
-	if (! theCache) theCache = memopen (100000);
-	if (! theCache) return 0;
 	Melder_pathToDirW (dirPath, & dir);
-	for (ipage = 1; ipage <= my pages -> size; ipage ++) {
+	for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = my pages -> item [ipage];
-		char fileName [256], *p, *oldText;
-		strcpy (fileName, page -> title);
-		for (p = fileName; *p; p ++) if (! isAllowedFileNameCharacter (*p)) *p = '_';
-		if (fileName [0] == '\0') strcpy (fileName, "_");   /* Otherwise Mac problems and Unix invisibility. */
+		wchar_t fileName [256], *oldText;
+		wcscpy (fileName, page -> title);
+		for (wchar_t *p = fileName; *p; p ++) if (! isAllowedFileNameCharacter (*p)) *p = '_';
+		if (fileName [0] == '\0') wcscpy (fileName, L"_");   /* Otherwise Mac problems and Unix invisibility. */
 		fileName [LONGEST_FILE_NAME] = '\0';   /* Longest file name will be 30 characters on Mac. */
-		strcat (fileName, ".html");
-		memrewind (theCache);
-		writePageAsHtml (me, ipage);
-		memwrite ("", 1, 1, theCache);   /* Closing null byte. */
+		wcscat (fileName, L".html");
+		static MelderStringW buffer = { 0 };
+		MelderStringW_empty (& buffer);
+		writePageAsHtml (me, ipage, & buffer);
 		structMelderFile file = { 0 };
-		MelderDir_getFileW (& dir, Melder_peekAsciiToWcs (fileName), & file);
+		MelderDir_getFileW (& dir, fileName, & file);
 		oldText = MelderFile_readText (& file);
 		Melder_clearError ();
-		if (oldText == NULL || strncmp ((char *) theCache -> base, oldText, memtell (theCache))) {
-			if (! MelderFile_writeText (& file, (char *) theCache -> base)) return 0;
+		if (oldText == NULL || wcscmp (buffer.string, oldText)) {
+			if (! MelderFile_writeText (& file, buffer.string)) return 0;
 		}
 		Melder_free (oldText);
 	}

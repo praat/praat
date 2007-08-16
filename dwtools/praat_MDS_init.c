@@ -125,7 +125,7 @@ DO
 	Configuration c = Configuration_create (GET_INTEGER ("Number of points"),
 		GET_INTEGER ("Number of dimensions"));
 	if (! c || ! praat_new (c, GET_STRING ("Name"))) return 0;
-	if (! TableOfReal_formula (c, GET_STRING ("formula"), NULL)) return 0;
+	if (! TableOfReal_formula (c, GET_STRINGW (L"formula"), NULL)) return 0;
 END
 
 FORM (drawSplines, "Draw splines", "spline")
@@ -163,7 +163,7 @@ END
 
 
 DIRECT (AffineTransform_help)
-	Melder_help ("AffineTransform"); 
+	Melder_help (L"AffineTransform"); 
 END
 
 DIRECT (AffineTransform_invert)
@@ -205,7 +205,7 @@ END
 /***************** Configuration ***************************************/
 
 DIRECT (Configuration_help)
-	Melder_help ("Configuration"); 
+	Melder_help (L"Configuration"); 
 END
 
 static void Configuration_draw_addCommonFields (void *dia)
@@ -230,7 +230,7 @@ DO
 		GET_INTEGER ("Horizontal dimension"), GET_INTEGER ("Vertical dimension"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"), GET_REAL ("left Vertical range"),
 		GET_REAL ("right Vertical range"), GET_INTEGER ("Label size"), 
-		GET_INTEGER ("Use row labels"), GET_STRING ("Label"),
+		GET_INTEGER ("Use row labels"), GET_STRINGW (L"Label"),
 		GET_INTEGER("Garnish")))
 END
 
@@ -260,7 +260,7 @@ FORM (Configuration_drawOneSigmaEllipse, "Configuration: Draw one sigma ellipse"
 	OK
 DO
 	EVERY_DRAW (Configuration_drawConcentrationEllipses (OBJECT, GRAPHICS,
-		GET_REAL ("Number of sigmas"), 0, GET_STRING ("Label"),
+		GET_REAL ("Number of sigmas"), 0, GET_STRINGW (L"Label"),
 		GET_INTEGER ("Horizontal dimension"), GET_INTEGER ("Vertical dimension"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -292,7 +292,7 @@ FORM (Configuration_drawOneConfidenceEllipse, "Configuration: Draw one confidenc
 	OK
 DO
 	EVERY_DRAW (Configuration_drawConcentrationEllipses (OBJECT, GRAPHICS,
-		GET_REAL ("Confidence level"), 1, GET_STRING ("Label"),
+		GET_REAL ("Confidence level"), 1, GET_STRINGW (L"Label"),
 		GET_INTEGER ("Horizontal dimension"), GET_INTEGER ("Vertical dimension"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -495,7 +495,7 @@ END
 /************************* Similarity ***************************************/
 
 DIRECT (Similarity_help)
-	Melder_help ("Similarity"); 
+	Melder_help (L"Similarity"); 
 END
 
 FORM (Similarity_to_Dissimilarity, "Similarity: To Dissimilarity", 
@@ -537,7 +537,7 @@ static void Dissimilarity_Configuration_drawDiagram_addCommonFields (void *dia)
 }
 
 DIRECT (Dissimilarity_help)
-	Melder_help ("Dissimilarity");
+	Melder_help (L"Dissimilarity");
 END
 
 DIRECT (Dissimilarity_getAdditiveConstant)
@@ -885,7 +885,7 @@ DO
 		ONLY (classConfiguration), GRAPHICS, 
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"),
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"),
 		GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
@@ -901,7 +901,7 @@ DO
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), 
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), 
 		GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
@@ -917,7 +917,7 @@ DO
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), GET_INTEGER("Garnish"));
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
 
@@ -932,7 +932,7 @@ DO
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), GET_INTEGER("Garnish"));
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
 
@@ -951,7 +951,7 @@ DO
 		GRAPHICS, GET_INTEGER ("Handling of ties"),
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), GET_INTEGER("Garnish"));
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
 
@@ -970,7 +970,7 @@ DO
 		GET_INTEGER ("Order of I-spline"),
 		GET_REAL("left Proximity range"), GET_REAL("right Proximity range"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), 
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), 
 		GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
@@ -1253,7 +1253,7 @@ DO
 		ONLY (classConfiguration), GRAPHICS, GET_REAL("Minimum x-distance"), 
 		GET_REAL("Maximum x-distance"),
 		GET_REAL("Minimum y-distance"), GET_REAL("Maximum y-distance"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), 
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), 
 		GET_INTEGER("Garnish"));
 	praat_picture_close ();
 END
@@ -1436,12 +1436,12 @@ DO
 		(ONLY (classDissimilarity), ONLY (classDistance), GRAPHICS,
 		GET_REAL("Minimum dissimilarity"), GET_REAL("Maximum dissimilarity"),
 		GET_REAL("left Distance range"), GET_REAL("right Distance range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), 
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), 
 		GET_INTEGER("Garnish")))
 END
 	
 DIRECT (MDS_help)
-	Melder_help ("Multidimensional scaling");
+	Melder_help (L"Multidimensional scaling");
 END
 	
 
@@ -1472,7 +1472,7 @@ END
 /********* Procrustes ***************************/
 
 DIRECT (Procrustes_help)
-	Melder_help ("Procrustes"); 
+	Melder_help (L"Procrustes"); 
 END
 
 DIRECT (Procrustes_getScale)

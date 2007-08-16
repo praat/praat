@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -117,7 +117,7 @@ static void dia_Vector_getValue (Any dia) {
 static void dia_pitchUnits (Any dia) {
 	Any radio;
 	OPTIONMENU ("Unit", 1)
-		OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU),
+		OPTIONS_ENUMW (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU),
 			Pitch_UNIT_min, Pitch_UNIT_max)
 }
 
@@ -139,7 +139,7 @@ int praat_Fon_formula (Any dia);
 int praat_Fon_formula (Any dia) {
 	int IOBJECT;
 	WHERE_DOWN (SELECTED) {
-		Matrix_formula (OBJECT, GET_STRING ("formula"), NULL);
+		Matrix_formula (OBJECT, GET_STRINGW (L"formula"), NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -224,7 +224,7 @@ FORM (AmplitudeTier_formula, "AmplitudeTier: Formula", "AmplitudeTier: Formula..
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING ("formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRINGW (L"formula"), NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -288,17 +288,17 @@ END
 	REAL ("Time (s)", "0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), "Pa");
+	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), L"Pa");
 END
 	
 FORM (AmplitudeTier_getValueAtIndex, "Get AmplitudeTier value", "AmplitudeTier: Get value at index...")
 	INTEGER ("Point number", "10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), "Pa");
+	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), L"Pa");
 END*/
 
-DIRECT (AmplitudeTier_help) Melder_help ("AmplitudeTier"); END
+DIRECT (AmplitudeTier_help) Melder_help (L"AmplitudeTier"); END
 
 FORM (AmplitudeTier_to_IntensityTier, "AmplitudeTier: To IntensityTier", "AmplitudeTier: To IntensityTier...")
 	REAL ("Threshold (dB)", "-10000.0")
@@ -316,7 +316,7 @@ DO
 END
 
 DIRECT (info_AmplitudeTier_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your AmplitudeTier editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your AmplitudeTier editor:\n"
 		"   select an AmplitudeTier and a Sound, and click \"Edit\".");
 END
 
@@ -336,7 +336,7 @@ DO
 	Data coch1 = NULL, coch2 = NULL;
 	WHERE (SELECTED && CLASS == classCochleagram) { if (coch1) coch2 = OBJECT; else coch1 = OBJECT; }
 	Melder_informationReal (Cochleagram_difference ((Cochleagram) coch1, (Cochleagram) coch2,
-			GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hertz (root-mean-square)");
+			GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Hertz (root-mean-square)");
 END
 
 FORM (Cochleagram_formula, "Cochleagram Formula", "Cochleagram: Formula...")
@@ -349,7 +349,7 @@ DO
 	if (! praat_Fon_formula (dia)) return 0;
 END
 
-DIRECT (Cochleagram_help) Melder_help ("Cochleagram"); END
+DIRECT (Cochleagram_help) Melder_help (L"Cochleagram"); END
 
 DIRECT (Cochleagram_movie)
 	Graphics g = Movie_create ("Cochleagram movie", 300, 300);
@@ -477,7 +477,7 @@ FORM (DurationTier_formula, "DurationTier: Formula", "DurationTier: Formula...")
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING ("formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRINGW (L"formula"), NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -489,7 +489,7 @@ FORM (DurationTier_getTargetDuration, "Get target duration", 0)
 	OK
 DO
 	Melder_informationReal (RealTier_getArea (ONLY_OBJECT,
-		GET_REAL ("left Time range"), GET_REAL ("right Time range")), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"seconds");
 END
 
 FORM (DurationTier_getValueAtTime, "Get DurationTier value", "DurationTier: Get value at time...")
@@ -506,10 +506,10 @@ DO
 	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), NULL);
 END
 
-DIRECT (DurationTier_help) Melder_help ("DurationTier"); END
+DIRECT (DurationTier_help) Melder_help (L"DurationTier"); END
 
 DIRECT (info_DurationTier_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your DurationTier editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your DurationTier editor:\n"
 		"   select a DurationTier and a Sound, and click \"Edit\".");
 END
 
@@ -538,10 +538,10 @@ DO
 END
 
 DIRECT (Excitation_getLoudness)
-	Melder_informationReal (Excitation_getLoudness (ONLY (classExcitation)), "sones");
+	Melder_informationReal (Excitation_getLoudness (ONLY (classExcitation)), L"sones");
 END
 
-DIRECT (Excitation_help) Melder_help ("Excitation"); END
+DIRECT (Excitation_help) Melder_help (L"Excitation"); END
 
 FORM (Excitation_to_Formant, "From Excitation to Formant", 0)
 	NATURAL ("Maximum number of formants", "20")
@@ -589,7 +589,7 @@ FORM (Formant_formula_bandwidths, "Formant: Formula (bandwidths)", "Formant: For
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Formant_formula_bandwidths (OBJECT, GET_STRING ("formula"))) return 0;
+		if (! Formant_formula_bandwidths (OBJECT, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -600,7 +600,7 @@ FORM (Formant_formula_frequencies, "Formant: Formula (frequencies)", "Formant: F
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Formant_formula_frequencies (OBJECT, GET_STRING ("formula"))) return 0;
+		if (! Formant_formula_frequencies (OBJECT, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -616,7 +616,7 @@ FORM (Formant_getBandwidthAtTime, "Formant: Get bandwidth", "Formant: Get bandwi
 	OK
 DO
 	Melder_informationReal (Formant_getBandwidthAtTime (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 	
 FORM (Formant_getMaximum, "Formant: Get maximum", "Formant: Get maximum...")
@@ -632,12 +632,12 @@ FORM (Formant_getMaximum, "Formant: Get maximum", "Formant: Get maximum...")
 DO
 	Melder_informationReal (Formant_getMaximum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1,
-		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Unit"));
+		GET_INTEGER ("Interpolation") - 1), GET_STRINGW (L"Unit"));
 END
 
 DIRECT (Formant_getMaximumNumberOfFormants)
 	Melder_information2 (Melder_integer (Formant_getMaxNumFormants (ONLY_OBJECT)),
-		" (there are at most this many formants in every frame)");
+		L" (there are at most this many formants in every frame)");
 END
 
 FORM (Formant_getMean, "Formant: Get mean", "Formant: Get mean...")
@@ -649,7 +649,7 @@ FORM (Formant_getMean, "Formant: Get mean", "Formant: Get mean...")
 	OK
 DO
 	Melder_informationReal (Formant_getMean (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 
 FORM (Formant_getMinimum, "Formant: Get minimum", "Formant: Get minimum...")
@@ -665,12 +665,12 @@ FORM (Formant_getMinimum, "Formant: Get minimum", "Formant: Get minimum...")
 DO
 	Melder_informationReal (Formant_getMinimum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1,
-		GET_INTEGER ("Interpolation") - 1), GET_STRING ("Unit"));
+		GET_INTEGER ("Interpolation") - 1), GET_STRINGW (L"Unit"));
 END
 
 DIRECT (Formant_getMinimumNumberOfFormants)
 	Melder_information2 (Melder_integer (Formant_getMinNumFormants (ONLY_OBJECT)),
-		" (there are at least this many formants in every frame)");
+		L" (there are at least this many formants in every frame)");
 END
 
 FORM (Formant_getNumberOfFormants, "Formant: Get number of formants", "Formant: Get number of formants...")
@@ -680,7 +680,7 @@ DO
 	long frame = GET_INTEGER ("Frame number");
 	Formant me = ONLY_OBJECT;
 	if (frame > my nx) return Melder_error ("There is no frame %ld in a Formant with only %ld frames.", frame, my nx);
-	Melder_information2 (Melder_integer (my frame [frame]. nFormants), " formants");
+	Melder_information2 (Melder_integer (my frame [frame]. nFormants), L" formants");
 END
 
 FORM (Formant_getQuantile, "Formant: Get quantile", 0)
@@ -693,7 +693,7 @@ FORM (Formant_getQuantile, "Formant: Get quantile", 0)
 	OK
 DO
 	Melder_informationReal (Formant_getQuantile (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 
 FORM (Formant_getQuantileOfBandwidth, "Formant: Get quantile of bandwidth", 0)
@@ -706,7 +706,7 @@ FORM (Formant_getQuantileOfBandwidth, "Formant: Get quantile of bandwidth", 0)
 	OK
 DO
 	Melder_informationReal (Formant_getQuantileOfBandwidth (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("Quantile"), GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 
 FORM (Formant_getStandardDeviation, "Formant: Get standard deviation", 0)
@@ -718,7 +718,7 @@ FORM (Formant_getStandardDeviation, "Formant: Get standard deviation", 0)
 	OK
 DO
 	Melder_informationReal (Formant_getStandardDeviation (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 
 FORM (Formant_getTimeOfMaximum, "Formant: Get time of maximum", "Formant: Get time of maximum...")
@@ -734,7 +734,7 @@ FORM (Formant_getTimeOfMaximum, "Formant: Get time of maximum", "Formant: Get ti
 DO
 	Melder_informationReal (Formant_getTimeOfMaximum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Formant_getTimeOfMinimum, "Formant: Get time of minimum", "Formant: Get time of minimum...")
@@ -750,7 +750,7 @@ FORM (Formant_getTimeOfMinimum, "Formant: Get time of minimum", "Formant: Get ti
 DO
 	Melder_informationReal (Formant_getTimeOfMinimum (ONLY (classFormant), GET_INTEGER ("Formant number"),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1, GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Formant_getValueAtTime, "Formant: Get value", "Formant: Get value at time...")
@@ -764,10 +764,10 @@ FORM (Formant_getValueAtTime, "Formant: Get value", "Formant: Get value at time.
 	OK
 DO
 	Melder_informationReal (Formant_getValueAtTime (ONLY (classFormant), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRING ("Unit"));
+		GET_REAL ("Time"), GET_INTEGER ("Unit") - 1), GET_STRINGW (L"Unit"));
 END
 	
-DIRECT (Formant_help) Melder_help ("Formant"); END
+DIRECT (Formant_help) Melder_help (L"Formant"); END
 
 FORM (Formant_scatterPlot, "Formant: Scatter plot", 0)
 	praat_dia_timeRange (dia);
@@ -788,7 +788,7 @@ DO
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 		GET_INTEGER ("Vertical formant number"),
 		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
-		GET_REAL ("Mark size"), GET_STRING ("Mark string"), GET_INTEGER ("Garnish")))
+		GET_REAL ("Mark size"), GET_STRINGW (L"Mark string"), GET_INTEGER ("Garnish")))
 END
 
 DIRECT (Formant_sort)
@@ -895,7 +895,7 @@ FORM (FormantTier_getBandwidthAtTime, "FormantTier: Get bandwidth", "FormantTier
 	OK
 DO
 	Melder_informationReal (FormantTier_getBandwidthAtTime (ONLY (classFormantTier), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time")), "Hertz");
+		GET_REAL ("Time")), L"Hertz");
 END
 	
 FORM (FormantTier_getValueAtTime, "FormantTier: Get value", "FormantTier: Get value at time...")
@@ -904,10 +904,10 @@ FORM (FormantTier_getValueAtTime, "FormantTier: Get value", "FormantTier: Get va
 	OK
 DO
 	Melder_informationReal (FormantTier_getValueAtTime (ONLY (classFormantTier), GET_INTEGER ("Formant number"),
-		GET_REAL ("Time")), "Hertz");
+		GET_REAL ("Time")), L"Hertz");
 END
 	
-DIRECT (FormantTier_help) Melder_help ("FormantTier"); END
+DIRECT (FormantTier_help) Melder_help (L"FormantTier"); END
 
 FORM (FormantTier_speckle, "Draw FormantTier", 0)
 	praat_dia_timeRange (dia);
@@ -958,7 +958,7 @@ FORM (Harmonicity_getMaximum, "Harmonicity: Get maximum", "Harmonicity: Get maxi
 	OK
 DO
 	Melder_informationReal (Vector_getMaximum (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 FORM (Harmonicity_getMean, "Harmonicity: Get mean", "Harmonicity: Get mean...")
@@ -966,7 +966,7 @@ FORM (Harmonicity_getMean, "Harmonicity: Get mean", "Harmonicity: Get mean...")
 	OK
 DO
 	Melder_informationReal (Harmonicity_getMean (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range")), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"dB");
 END
 
 FORM (Harmonicity_getMinimum, "Harmonicity: Get minimum", "Harmonicity: Get minimum...")
@@ -974,7 +974,7 @@ FORM (Harmonicity_getMinimum, "Harmonicity: Get minimum", "Harmonicity: Get mini
 	OK
 DO
 	Melder_informationReal (Vector_getMinimum (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 FORM (Harmonicity_getStandardDeviation, "Harmonicity: Get standard deviation", "Harmonicity: Get standard deviation...")
@@ -982,7 +982,7 @@ FORM (Harmonicity_getStandardDeviation, "Harmonicity: Get standard deviation", "
 	OK
 DO
 	Melder_informationReal (Harmonicity_getStandardDeviation (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range")), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"dB");
 END
 
 FORM (Harmonicity_getTimeOfMaximum, "Harmonicity: Get time of maximum", "Harmonicity: Get time of maximum...")
@@ -990,7 +990,7 @@ FORM (Harmonicity_getTimeOfMaximum, "Harmonicity: Get time of maximum", "Harmoni
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Harmonicity_getTimeOfMinimum, "Harmonicity: Get time of minimum", "Harmonicity: Get time of minimum...")
@@ -998,14 +998,14 @@ FORM (Harmonicity_getTimeOfMinimum, "Harmonicity: Get time of minimum", "Harmoni
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMinimum (ONLY (classHarmonicity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Harmonicity_getValueAtTime, "Harmonicity: Get value", "Harmonicity: Get value at time...")
 	dia_Vector_getValue (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classHarmonicity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classHarmonicity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 	
 FORM (Harmonicity_getValueInFrame, "Get value in frame", "Harmonicity: Get value in frame...")
@@ -1014,10 +1014,10 @@ FORM (Harmonicity_getValueInFrame, "Get value in frame", "Harmonicity: Get value
 DO
 	Harmonicity me = ONLY (classHarmonicity);
 	long frameNumber = GET_INTEGER ("Frame number");
-	Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], "dB");
+	Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], L"dB");
 END
 
-DIRECT (Harmonicity_help) Melder_help ("Harmonicity"); END
+DIRECT (Harmonicity_help) Melder_help (L"Harmonicity"); END
 
 DIRECT (Harmonicity_to_Matrix)
 	EVERY_TO (Harmonicity_to_Matrix (OBJECT))
@@ -1058,7 +1058,7 @@ FORM (Intensity_getMaximum, "Intensity: Get maximum", "Intensity: Get maximum...
 	OK
 DO
 	Melder_informationReal (Vector_getMaximum (ONLY (classIntensity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 FORM (old_Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
@@ -1066,7 +1066,7 @@ FORM (old_Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
 	OK
 DO
 	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		0, 0, TRUE), "dB");
+		0, 0, TRUE), L"dB");
 END
 
 FORM (Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
@@ -1078,7 +1078,7 @@ FORM (Intensity_getMean, "Intensity: Get mean", "Intensity: Get mean...")
 	OK
 DO_ALTERNATIVE (old_Intensity_getMean)
 	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		0, GET_INTEGER ("Averaging method"), TRUE), "dB");
+		0, GET_INTEGER ("Averaging method"), TRUE), L"dB");
 END
 
 FORM (Intensity_getMinimum, "Intensity: Get minimum", "Intensity: Get minimum...")
@@ -1086,7 +1086,7 @@ FORM (Intensity_getMinimum, "Intensity: Get minimum", "Intensity: Get minimum...
 	OK
 DO
 	Melder_informationReal (Vector_getMinimum (ONLY (classIntensity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 FORM (Intensity_getQuantile, "Intensity: Get quantile", 0)
@@ -1095,14 +1095,14 @@ FORM (Intensity_getQuantile, "Intensity: Get quantile", 0)
 	OK
 DO
 	Melder_informationReal (Intensity_getQuantile (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Quantile")), "dB");
+		GET_REAL ("Quantile")), L"dB");
 END
 
 FORM (Intensity_getStandardDeviation, "Intensity: Get standard deviation", "Intensity: Get standard deviation...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getStandardDeviation (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"), 1), "dB");
+	Melder_informationReal (Vector_getStandardDeviation (ONLY (classIntensity), GET_REAL ("left Time range"), GET_REAL ("right Time range"), 1), L"dB");
 END
 
 FORM (Intensity_getTimeOfMaximum, "Intensity: Get time of maximum", "Intensity: Get time of maximum...")
@@ -1110,7 +1110,7 @@ FORM (Intensity_getTimeOfMaximum, "Intensity: Get time of maximum", "Intensity: 
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classIntensity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Intensity_getTimeOfMinimum, "Intensity: Get time of minimum", "Intensity: Get time of minimum...")
@@ -1118,14 +1118,14 @@ FORM (Intensity_getTimeOfMinimum, "Intensity: Get time of minimum", "Intensity: 
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMinimum (ONLY (classIntensity),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Intensity_getValueAtTime, "Intensity: Get value", "Intensity: Get value at time...")
 	dia_Vector_getValue (dia);
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classIntensity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classIntensity), GET_REAL ("Time"), 1, GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 	
 FORM (Intensity_getValueInFrame, "Get value in frame", "Intensity: Get value in frame...")
@@ -1134,10 +1134,10 @@ FORM (Intensity_getValueInFrame, "Get value in frame", "Intensity: Get value in 
 DO
 	Intensity me = ONLY (classIntensity);
 	long frameNumber = GET_INTEGER ("Frame number");
-	Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], "dB");
+	Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], L"dB");
 END
 
-DIRECT (Intensity_help) Melder_help ("Intensity"); END
+DIRECT (Intensity_help) Melder_help (L"Intensity"); END
 
 DIRECT (Intensity_to_IntensityTier_peaks)
 	EVERY_TO (Intensity_to_IntensityTier_peaks (OBJECT))
@@ -1243,7 +1243,7 @@ FORM (IntensityTier_formula, "IntensityTier: Formula", "IntensityTier: Formula..
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING ("formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRINGW (L"formula"), NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -1253,24 +1253,24 @@ FORM (IntensityTier_getValueAtTime, "Get IntensityTier value", "IntensityTier: G
 	REAL ("Time (s)", "0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), "dB");
+	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), L"dB");
 END
 	
 FORM (IntensityTier_getValueAtIndex, "Get IntensityTier value", "IntensityTier: Get value at index...")
 	INTEGER ("Point number", "10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), "dB");
+	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), L"dB");
 END
 
-DIRECT (IntensityTier_help) Melder_help ("IntensityTier"); END
+DIRECT (IntensityTier_help) Melder_help (L"IntensityTier"); END
 
 DIRECT (IntensityTier_to_AmplitudeTier)
 	EVERY_TO (IntensityTier_to_AmplitudeTier (OBJECT))
 END
 
 DIRECT (info_IntensityTier_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your IntensityTier editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your IntensityTier editor:\n"
 		"   select an IntensityTier and a Sound, and click \"Edit\".");
 END
 
@@ -1378,14 +1378,14 @@ END
 
 DIRECT (Ltas_getBinWidth)
 	Ltas me = ONLY (classLtas);
-	Melder_informationReal (my dx, "Hertz");
+	Melder_informationReal (my dx, L"Hertz");
 END
 
 FORM (Ltas_getFrequencyFromBinNumber, "Ltas: Get frequency from bin number", "Ltas: Get frequency from bin number...")
 	NATURAL ("Bin number", "1")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classLtas), GET_INTEGER ("Bin number")), "Hertz");
+	Melder_informationReal (Sampled_indexToX (ONLY (classLtas), GET_INTEGER ("Bin number")), L"Hertz");
 END
 
 FORM (Ltas_getFrequencyOfMaximum, "Ltas: Get frequency of maximum", "Ltas: Get frequency of maximum...")
@@ -1400,7 +1400,7 @@ FORM (Ltas_getFrequencyOfMaximum, "Ltas: Get frequency of maximum", "Ltas: Get f
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classLtas),
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), "Hertz");
+		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), L"Hertz");
 END
 
 FORM (Ltas_getFrequencyOfMinimum, "Ltas: Get frequency of minimum", "Ltas: Get frequency of minimum...")
@@ -1415,12 +1415,12 @@ FORM (Ltas_getFrequencyOfMinimum, "Ltas: Get frequency of minimum", "Ltas: Get f
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMinimum (ONLY (classLtas),
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), "Hertz");
+		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), L"Hertz");
 END
 
 DIRECT (Ltas_getHighestFrequency)
 	Ltas me = ONLY (classLtas);
-	Melder_informationReal (my xmax, "Hertz");
+	Melder_informationReal (my xmax, L"Hertz");
 END
 
 FORM (Ltas_getLocalPeakHeight, "Ltas: Get local peak height", 0)
@@ -1440,12 +1440,12 @@ DO
 	REQUIRE (peakMin < peakMax, "The end of the peak must lie after its beginning.")
 	REQUIRE (environmentMax > peakMax, "The end of the environment must lie after the peak.")
 	Melder_informationReal (Ltas_getLocalPeakHeight (ONLY (classLtas), environmentMin, environmentMax,
-		peakMin, peakMax, GET_INTEGER ("Averaging method")), "dB");
+		peakMin, peakMax, GET_INTEGER ("Averaging method")), L"dB");
 END
 
 DIRECT (Ltas_getLowestFrequency)
 	Ltas me = ONLY (classLtas);
-	Melder_informationReal (my xmin, "Hertz");
+	Melder_informationReal (my xmin, L"Hertz");
 END
 
 FORM (Ltas_getMaximum, "Ltas: Get maximum", "Ltas: Get maximum...")
@@ -1460,7 +1460,7 @@ FORM (Ltas_getMaximum, "Ltas: Get maximum", "Ltas: Get maximum...")
 	OK
 DO
 	Melder_informationReal (Vector_getMaximum (ONLY (classLtas),
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 FORM (Ltas_getMean, "Ltas: Get mean", "Ltas: Get mean...")
@@ -1473,7 +1473,7 @@ FORM (Ltas_getMean, "Ltas: Get mean", "Ltas: Get mean...")
 	OK
 DO
 	Melder_informationReal (Sampled_getMean_standardUnit (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		0, GET_INTEGER ("Averaging method"), FALSE), "dB");
+		0, GET_INTEGER ("Averaging method"), FALSE), L"dB");
 END
 
 FORM (Ltas_getMinimum, "Ltas: Get minimum", "Ltas: Get minimum...")
@@ -1488,12 +1488,12 @@ FORM (Ltas_getMinimum, "Ltas: Get minimum", "Ltas: Get minimum...")
 	OK
 DO
 	Melder_informationReal (Vector_getMinimum (ONLY (classLtas),
-		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), "dB");
+		GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 
 DIRECT (Ltas_getNumberOfBins)
 	Ltas me = ONLY (classLtas);
-	Melder_information2 (Melder_integer (my nx), " bins");
+	Melder_information2 (Melder_integer (my nx), L" bins");
 END
 
 FORM (Ltas_getSlope, "Ltas: Get slope", 0)
@@ -1508,7 +1508,7 @@ FORM (Ltas_getSlope, "Ltas: Get slope", 0)
 	OK
 DO
 	Melder_informationReal (Ltas_getSlope (ONLY (classLtas), GET_REAL ("left Low band"), GET_REAL ("right Low band"),
-		GET_REAL ("left High band"), GET_REAL ("right High band"), GET_INTEGER ("Averaging method")), "dB");
+		GET_REAL ("left High band"), GET_REAL ("right High band"), GET_INTEGER ("Averaging method")), L"dB");
 END
 
 FORM (Ltas_getStandardDeviation, "Ltas: Get standard deviation", "Ltas: Get standard deviation...")
@@ -1521,7 +1521,7 @@ FORM (Ltas_getStandardDeviation, "Ltas: Get standard deviation", "Ltas: Get stan
 	OK
 DO
 	Melder_informationReal (Sampled_getStandardDeviation_standardUnit (ONLY (classLtas), GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-		0, GET_INTEGER ("Averaging method"), FALSE), "dB");
+		0, GET_INTEGER ("Averaging method"), FALSE), L"dB");
 END
 
 FORM (Ltas_getValueAtFrequency, "Ltas: Get value", "Ltas: Get value at frequency...")
@@ -1534,7 +1534,7 @@ FORM (Ltas_getValueAtFrequency, "Ltas: Get value", "Ltas: Get value at frequency
 	RADIOBUTTON ("Sinc700")
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classLtas), GET_REAL ("Frequency"), 1, GET_INTEGER ("Interpolation") - 1), "dB");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classLtas), GET_REAL ("Frequency"), 1, GET_INTEGER ("Interpolation") - 1), L"dB");
 END
 	
 FORM (Ltas_getValueInBin, "Get value in bin", "Ltas: Get value in bin...")
@@ -1543,10 +1543,10 @@ FORM (Ltas_getValueInBin, "Get value in bin", "Ltas: Get value in bin...")
 DO
 	Ltas me = ONLY (classLtas);
 	long binNumber = GET_INTEGER ("Bin number");
-	Melder_informationReal (binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber], "dB");
+	Melder_informationReal (binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber], L"dB");
 END
 
-DIRECT (Ltas_help) Melder_help ("Ltas"); END
+DIRECT (Ltas_help) Melder_help (L"Ltas"); END
 
 DIRECT (Ltases_merge)
 	Collection ltases;
@@ -1654,7 +1654,7 @@ DIRECT (Manipulation_getResynthesis_overlapAdd)
 	EVERY_TO (Manipulation_to_Sound (OBJECT, Manipulation_OVERLAPADD))
 END
 
-DIRECT (Manipulation_help) Melder_help ("Manipulation"); END
+DIRECT (Manipulation_help) Melder_help (L"Manipulation"); END
 
 DIRECT (Manipulation_play_lpc)
 	EVERY_CHECK (Manipulation_play (OBJECT, Manipulation_PITCH_LPC))
@@ -1689,12 +1689,12 @@ FORM_WRITE (Manipulation_writeToTextFileWithoutSound, "Text file without Sound",
 END
 
 DIRECT (info_DurationTier_Manipulation_replace)
-	Melder_information1 ("To replace the DurationTier in a Manipulation object,\n"
+	Melder_information1 (L"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END
 
 DIRECT (info_PitchTier_Manipulation_replace)
-	Melder_information1 ("To replace the PitchTier in a Manipulation object,\n"
+	Melder_information1 (L"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
 END
 
@@ -1706,7 +1706,7 @@ DIRECT (Manipulation_replaceDurationTier)
 	praat_dataChanged (ana);
 END
 
-DIRECT (Manipulation_replaceDurationTier_help) Melder_help ("Manipulation: Replace duration tier"); END
+DIRECT (Manipulation_replaceDurationTier_help) Melder_help (L"Manipulation: Replace duration tier"); END
 
 /***** MANIPULATION & PITCHTIER *****/
 
@@ -1716,7 +1716,7 @@ DIRECT (Manipulation_replacePitchTier)
 	praat_dataChanged (ana);
 END
 
-DIRECT (Manipulation_replacePitchTier_help) Melder_help ("Manipulation: Replace pitch tier"); END
+DIRECT (Manipulation_replacePitchTier_help) Melder_help (L"Manipulation: Replace pitch tier"); END
 
 /***** MANIPULATION & POINTPROCESS *****/
 
@@ -1885,8 +1885,8 @@ FORM (Matrix_getValueAtXY, "Matrix: Get value at xy", 0)
 DO
 	Matrix me = ONLY_OBJECT;
 	double x = GET_REAL ("X"), y = GET_REAL ("Y");
-	Melder_information9 (Melder_double (Matrix_getValueAtXY (me, x, y)),
-		" (at x = ", Melder_double (x), " and y = ", Melder_double (y), ")", 0, 0, 0);
+	Melder_information6 (Melder_double (Matrix_getValueAtXY (me, x, y)),
+		L" (at x = ", Melder_double (x), L" and y = ", Melder_double (y), L")");
 END
 
 FORM (Matrix_getValueInCell, "Matrix: Get value in cell", 0)
@@ -1902,7 +1902,7 @@ FORM (Matrix_getYofRow, "Matrix: Get y of row", 0)
 	NATURAL ("Row number", "1") OK DO
 	Melder_informationReal (Matrix_rowToY (ONLY_OBJECT, GET_INTEGER ("Row number")), NULL); END
 
-DIRECT (Matrix_help) Melder_help ("Matrix"); END
+DIRECT (Matrix_help) Melder_help (L"Matrix"); END
 
 DIRECT (Matrix_movie)
 	Graphics g = Movie_create ("Matrix movie", 300, 300);
@@ -2089,13 +2089,13 @@ DO
 		GET_INTEGER ("Garnish")))
 END
 
-DIRECT (ParamCurve_help) Melder_help ("ParamCurve"); END
+DIRECT (ParamCurve_help) Melder_help (L"ParamCurve"); END
 
 /***** PITCH *****/
 
 DIRECT (Pitch_getNumberOfVoicedFrames)
 	Pitch me = ONLY (classPitch);
-	Melder_information2 (Melder_integer (Pitch_countVoicedFrames (me)), " voiced frames");
+	Melder_information2 (Melder_integer (Pitch_countVoicedFrames (me)), L" voiced frames");
 END
 
 DIRECT (Pitch_difference)
@@ -2185,7 +2185,7 @@ FORM (Pitch_formula, "Pitch: Formula", "Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Pitch_formula (OBJECT, GET_STRING ("formula"))) return 0;
+		if (! Pitch_formula (OBJECT, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -2229,16 +2229,16 @@ DO
 	long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 		(ONLY (classPitch), & slope);
 	if (nVoiced < 2) {
-		Melder_information1 ("--undefined--");
+		Melder_information1 (L"--undefined--");
 	} else {
-		Melder_information9 (Melder_double (slope), " ", GET_STRING ("Unit"), "/s", 0,0,0,0,0);
+		Melder_information4 (Melder_double (slope), L" ", GET_STRINGW (L"Unit"), L"/s");
 	}
 END
 
 DIRECT (Pitch_getMeanAbsSlope_noOctave)
 	double slope;
 	(void) Pitch_getMeanAbsSlope_noOctave (ONLY (classPitch), & slope);
-	Melder_informationReal (slope, "Semitones/s");
+	Melder_informationReal (slope, L"Semitones/s");
 END
 
 FORM (Pitch_getMinimum, "Pitch: Get minimum", 0)
@@ -2281,7 +2281,7 @@ FORM (Pitch_getStandardDeviation, "Pitch: Get standard deviation", 0)
 DO
 	int unit = GET_INTEGER ("Unit");
 	double value;
-	const char *unitText;
+	const wchar_t *unitText;
 	unit =
 		unit == 1 ? Pitch_UNIT_HERTZ :
 		unit == 2 ? Pitch_UNIT_MEL :
@@ -2290,11 +2290,11 @@ DO
 		Pitch_UNIT_ERB;
 	value = Pitch_getStandardDeviation (ONLY (classPitch), GET_REAL ("left Time range"), GET_REAL ("right Time range"), unit);
 	unitText =
-		unit == Pitch_UNIT_HERTZ ? "Hz" :
-		unit == Pitch_UNIT_MEL ? "mel" :
-		unit == Pitch_UNIT_LOG_HERTZ ? "logHz" :
-		unit == Pitch_UNIT_SEMITONES_1 ? "semitones" :
-		"ERB";
+		unit == Pitch_UNIT_HERTZ ? L"Hz" :
+		unit == Pitch_UNIT_MEL ? L"mel" :
+		unit == Pitch_UNIT_LOG_HERTZ ? L"logHz" :
+		unit == Pitch_UNIT_SEMITONES_1 ? L"semitones" :
+		L"ERB";
 	Melder_informationReal (value, unitText);
 END
 
@@ -2308,7 +2308,7 @@ FORM (Pitch_getTimeOfMaximum, "Pitch: Get time of maximum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMaximum (ONLY (classPitch),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Pitch_getTimeOfMinimum, "Pitch: Get time of minimum", 0)
@@ -2321,7 +2321,7 @@ FORM (Pitch_getTimeOfMinimum, "Pitch: Get time of minimum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMinimum (ONLY (classPitch),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), "seconds");
+		GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min, GET_INTEGER ("Interpolation") - 1), L"seconds");
 END
 
 FORM (Pitch_getValueAtTime, "Pitch: Get value at time", "Pitch: Get value at time...")
@@ -2349,7 +2349,7 @@ DO
 	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
-DIRECT (Pitch_help) Melder_help ("Pitch"); END
+DIRECT (Pitch_help) Melder_help (L"Pitch"); END
 
 DIRECT (Pitch_hum)
 	EVERY_CHECK (Pitch_hum (OBJECT, 0, 0))
@@ -2492,7 +2492,7 @@ FORM (Pitch_to_TextGrid, "To TextGrid...", "Pitch: To TextGrid...")
 	OK
 DO
 	EVERY_TO (TextGrid_create (((Pitch) OBJECT) -> xmin, ((Pitch) OBJECT) -> xmax,
-		GET_STRING ("Tier names"), GET_STRING ("Point tiers")))
+		GET_STRINGW (L"Tier names"), GET_STRINGW (L"Point tiers")))
 END
 
 DIRECT (Pitch_to_TextTier)
@@ -2636,7 +2636,7 @@ FORM (PitchTier_formula, "PitchTier: Formula", "PitchTier: Formula...")
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING ("formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRINGW (L"formula"), NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -2646,45 +2646,45 @@ FORM (PitchTier_getMean_curve, "PitchTier: Get mean (curve)", "PitchTier: Get me
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_curve (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hz");
+	Melder_informationReal (RealTier_getMean_curve (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Hz");
 END
 	
 FORM (PitchTier_getMean_points, "PitchTier: Get mean (points)", "PitchTier: Get mean (points)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_points (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hz");
+	Melder_informationReal (RealTier_getMean_points (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Hz");
 END
 	
 FORM (PitchTier_getStandardDeviation_curve, "PitchTier: Get standard deviation (curve)", "PitchTier: Get standard deviation (curve)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_curve (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hz");
+	Melder_informationReal (RealTier_getStandardDeviation_curve (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Hz");
 END
 	
 FORM (PitchTier_getStandardDeviation_points, "PitchTier: Get standard deviation (points)", "PitchTier: Get standard deviation (points)...")
 	praat_dia_timeRange (dia);
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_points (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), "Hz");
+	Melder_informationReal (RealTier_getStandardDeviation_points (ONLY_OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Hz");
 END
 	
 FORM (PitchTier_getValueAtTime, "PitchTier: Get value at time", "PitchTier: Get value at time...")
 	REAL ("Time (s)", "0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), "Hz");
+	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL ("Time")), L"Hz");
 END
 	
 FORM (PitchTier_getValueAtIndex, "PitchTier: Get value at index", "PitchTier: Get value at index...")
 	INTEGER ("Point number", "10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), "Hz");
+	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER ("Point number")), L"Hz");
 END
 
-DIRECT (PitchTier_help) Melder_help ("PitchTier"); END
+DIRECT (PitchTier_help) Melder_help (L"PitchTier"); END
 
 DIRECT (PitchTier_hum)
 	EVERY_CHECK (PitchTier_hum (OBJECT))
@@ -2804,7 +2804,7 @@ DO
 END
 
 DIRECT (info_PitchTier_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your PitchTier editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your PitchTier editor:\n"
 		"   select a PitchTier and a Sound, and click \"Edit\".");
 END
 
@@ -2904,7 +2904,7 @@ FORM (PointProcess_getInterval, "PointProcess: Get interval", "PointProcess: Get
 	REAL ("Time (s)", "0.5")
 	OK
 DO
-	Melder_informationReal (PointProcess_getInterval (ONLY (classPointProcess), GET_REAL ("Time")), "seconds");
+	Melder_informationReal (PointProcess_getInterval (ONLY (classPointProcess), GET_REAL ("Time")), L"seconds");
 END
 
 static void dia_PointProcess_getRangeProperty (Any dia) {
@@ -2929,7 +2929,7 @@ FORM (PointProcess_getJitter_local_absolute, "PointProcess: Get jitter (local, a
 DO
 	Melder_informationReal (PointProcess_getJitter_local_absolute (ONLY (classPointProcess),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), " seconds");
+		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), L" seconds");
 END
 
 FORM (PointProcess_getJitter_rap, "PointProcess: Get jitter (rap)", "PointProcess: Get jitter (rap)...")
@@ -2965,7 +2965,7 @@ FORM (PointProcess_getMeanPeriod, "PointProcess: Get mean period", "PointProcess
 DO
 	Melder_informationReal (PointProcess_getMeanPeriod (ONLY (classPointProcess),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), "seconds");
+		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), L"seconds");
 END
 
 FORM (PointProcess_getStdevPeriod, "PointProcess: Get stdev period", "PointProcess: Get stdev period...")
@@ -2974,7 +2974,7 @@ FORM (PointProcess_getStdevPeriod, "PointProcess: Get stdev period", "PointProce
 DO
 	Melder_informationReal (PointProcess_getStdevPeriod (ONLY (classPointProcess),
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), "seconds");
+		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), L"seconds");
 END
 
 FORM (PointProcess_getLowIndex, "PointProcess: Get low index", "PointProcess: Get low index...")
@@ -3018,11 +3018,11 @@ FORM (PointProcess_getTimeFromIndex, "Get time", 0 /*"PointProcess: Get time fro
 DO
 	PointProcess me = ONLY_OBJECT;
 	long i = GET_INTEGER ("Point number");
-	if (i > my nt) Melder_information1 ("--undefined--");
-	else Melder_informationReal (my t [i], "seconds");
+	if (i > my nt) Melder_information1 (L"--undefined--");
+	else Melder_informationReal (my t [i], L"seconds");
 END
 
-DIRECT (PointProcess_help) Melder_help ("PointProcess"); END
+DIRECT (PointProcess_help) Melder_help (L"PointProcess"); END
 
 DIRECT (PointProcess_hum)
 	EVERY_CHECK (PointProcess_hum (OBJECT,
@@ -3102,7 +3102,7 @@ FORM (PointProcess_to_TextGrid, "PointProcess: To TextGrid...", "PointProcess: T
 	OK
 DO
 	EVERY_TO (TextGrid_create (((PointProcess) OBJECT) -> xmin, ((PointProcess) OBJECT) -> xmax,
-		GET_STRING ("Tier names"), GET_STRING ("Point tiers")))
+		GET_STRINGW (L"Tier names"), GET_STRINGW (L"Point tiers")))
 END
 
 FORM (PointProcess_to_TextGrid_vuv, "PointProcess: To TextGrid (vuv)...", "PointProcess: To TextGrid (vuv)...")
@@ -3173,7 +3173,7 @@ FORM (PointProcess_upto_TextTier, "PointProcess: Up to TextTier", "PointProcess:
 	SENTENCE ("Text", "")
 	OK
 DO
-	EVERY_TO (PointProcess_upto_TextTier (OBJECT, GET_STRING ("Text")))
+	EVERY_TO (PointProcess_upto_TextTier (OBJECT, GET_STRINGW (L"Text")))
 END
 
 FORM (PointProcess_voice, "PointProcess: Fill unvoiced parts", 0)
@@ -3189,7 +3189,7 @@ DO
 END
 
 DIRECT (info_PointProcess_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your PointProcess editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your PointProcess editor:\n"
 		"   select a PointProcess and a Sound, and click \"Edit\".");
 END
 
@@ -3363,7 +3363,7 @@ DO
 		GET_INTEGER ("Arrow"), GET_REAL ("Relative length")))
 END
 
-DIRECT (Polygon_help) Melder_help ("Polygon"); END
+DIRECT (Polygon_help) Melder_help (L"Polygon"); END
 
 FORM (Polygon_paint, "Polygon: Paint", 0)
 	COLOUR ("Colour (0-1 or name)", "0.5")
@@ -3478,11 +3478,11 @@ DO
 	double time = GET_REAL ("Time"), frequency = GET_REAL ("Frequency");
 	MelderInfo_open ();
 	MelderInfo_write1 (Melder_double (Matrix_getValueAtXY (me, time, frequency)));
-	MelderInfo_write5 (" Pa2/Hz (at time = ", Melder_double (time), " seconds and frequency = ", Melder_double (frequency), " Hz)");
+	MelderInfo_write5 (L" Pa2/Hz (at time = ", Melder_double (time), L" seconds and frequency = ", Melder_double (frequency), L" Hz)");
 	MelderInfo_close ();
 END
 
-DIRECT (Spectrogram_help) Melder_help ("Spectrogram"); END
+DIRECT (Spectrogram_help) Melder_help (L"Spectrogram"); END
 
 DIRECT (Spectrogram_movie)
 	Graphics g = Movie_create ("Spectrogram movie", 300, 300);
@@ -3574,36 +3574,36 @@ END
 FORM (Spectrum_getBandDensity, "Spectrum: Get band density", 0)
 	REAL ("Band floor (Hz)", "200.0") REAL ("Band ceiling (Hz)", "1000") OK DO
 	Melder_informationReal (Spectrum_getBandDensity (ONLY_OBJECT,
-		GET_REAL ("Band floor"), GET_REAL ("Band ceiling")), " Pa2 / Hz2"); END
+		GET_REAL ("Band floor"), GET_REAL ("Band ceiling")), L" Pa2 / Hz2"); END
 FORM (Spectrum_getBandDensityDifference, "Spectrum: Get band density difference", 0)
 	REAL ("Low band floor (Hz)", "0") REAL ("Low band ceiling (Hz)", "500")
 	REAL ("High band floor (Hz)", "500") REAL ("High band ceiling (Hz)", "4000") OK DO
 	Melder_informationReal (Spectrum_getBandDensityDifference (ONLY_OBJECT,
-		GET_REAL ("Low band floor"), GET_REAL ("Low band ceiling"), GET_REAL ("High band floor"), GET_REAL ("High band ceiling")), "dB"); END
+		GET_REAL ("Low band floor"), GET_REAL ("Low band ceiling"), GET_REAL ("High band floor"), GET_REAL ("High band ceiling")), L"dB"); END
 FORM (Spectrum_getBandEnergy, "Spectrum: Get band energy", 0)
 	REAL ("Band floor (Hz)", "200.0") REAL ("Band ceiling (Hz)", "1000") OK DO
-	Melder_informationReal (Spectrum_getBandEnergy (ONLY_OBJECT, GET_REAL ("Band floor"), GET_REAL ("Band ceiling")), "Pa2 sec"); END
+	Melder_informationReal (Spectrum_getBandEnergy (ONLY_OBJECT, GET_REAL ("Band floor"), GET_REAL ("Band ceiling")), L"Pa2 sec"); END
 FORM (Spectrum_getBandEnergyDifference, "Spectrum: Get band energy difference", 0)
 	REAL ("Low band floor (Hz)", "0") REAL ("Low band ceiling (Hz)", "500")
 	REAL ("High band floor (Hz)", "500") REAL ("High band ceiling (Hz)", "4000") OK DO
 	Melder_informationReal (Spectrum_getBandEnergyDifference (ONLY_OBJECT,
-		GET_REAL ("Low band floor"), GET_REAL ("Low band ceiling"), GET_REAL ("High band floor"), GET_REAL ("High band ceiling")), "dB"); END	
+		GET_REAL ("Low band floor"), GET_REAL ("Low band ceiling"), GET_REAL ("High band floor"), GET_REAL ("High band ceiling")), L"dB"); END	
 FORM (Spectrum_getBinFromFrequency, "Spectrum: Get bin from frequency", 0)
 	REAL ("Frequency (Hz)", "2000") OK DO
 	Melder_informationReal (Sampled_xToIndex (ONLY_OBJECT, GET_REAL ("Frequency")), NULL); END
-DIRECT (Spectrum_getBinWidth) Spectrum me = ONLY_OBJECT; Melder_informationReal (my dx, "Hertz"); END
+DIRECT (Spectrum_getBinWidth) Spectrum me = ONLY_OBJECT; Melder_informationReal (my dx, L"Hertz"); END
 FORM (Spectrum_getCentralMoment, "Spectrum: Get central moment", "Spectrum: Get central moment...")
 	POSITIVE ("Moment", "3.0")
 	POSITIVE ("Power", "2.0") OK DO
 	Melder_informationReal (Spectrum_getCentralMoment (ONLY_OBJECT,
-	GET_REAL ("Moment"), GET_REAL ("Power")), "Hertz to the power 'moment'"); END
+	GET_REAL ("Moment"), GET_REAL ("Power")), L"Hertz to the power 'moment'"); END
 FORM (Spectrum_getCentreOfGravity, "Spectrum: Get centre of gravity", "Spectrum: Get centre of gravity...")
 	POSITIVE ("Power", "2.0") OK DO
-	Melder_informationReal (Spectrum_getCentreOfGravity (ONLY_OBJECT, GET_REAL ("Power")), "Hertz"); END
+	Melder_informationReal (Spectrum_getCentreOfGravity (ONLY_OBJECT, GET_REAL ("Power")), L"Hertz"); END
 FORM (Spectrum_getFrequencyFromBin, "Spectrum: Get frequency from bin", 0)
 	NATURAL ("Band number", "1") OK DO
-	Melder_informationReal (Sampled_indexToX (ONLY_OBJECT, GET_INTEGER ("Band number")), "Hertz"); END
-DIRECT (Spectrum_getHighestFrequency) Spectrum me = ONLY_OBJECT; Melder_informationReal (my xmax, "Hertz"); END
+	Melder_informationReal (Sampled_indexToX (ONLY_OBJECT, GET_INTEGER ("Band number")), L"Hertz"); END
+DIRECT (Spectrum_getHighestFrequency) Spectrum me = ONLY_OBJECT; Melder_informationReal (my xmax, L"Hertz"); END
 FORM (Spectrum_getImaginaryValueInBin, "Spectrum: Get imaginary value in bin", 0)
 	NATURAL ("Bin number", "100") OK DO Spectrum me = ONLY_OBJECT;
 	long binNumber = GET_INTEGER ("Bin number");
@@ -3612,8 +3612,8 @@ FORM (Spectrum_getImaginaryValueInBin, "Spectrum: Get imaginary value in bin", 0
 FORM (Spectrum_getKurtosis, "Spectrum: Get kurtosis", "Spectrum: Get kurtosis...")
 	POSITIVE ("Power", "2.0") OK DO
 	Melder_informationReal (Spectrum_getKurtosis (ONLY_OBJECT, GET_REAL ("Power")), NULL); END
-DIRECT (Spectrum_getLowestFrequency) Spectrum me = ONLY_OBJECT; Melder_informationReal (my xmin, "Hertz"); END
-DIRECT (Spectrum_getNumberOfBins) Spectrum me = ONLY_OBJECT; Melder_information2 (Melder_integer (my nx), " bins"); END
+DIRECT (Spectrum_getLowestFrequency) Spectrum me = ONLY_OBJECT; Melder_informationReal (my xmin, L"Hertz"); END
+DIRECT (Spectrum_getNumberOfBins) Spectrum me = ONLY_OBJECT; Melder_information2 (Melder_integer (my nx), L" bins"); END
 FORM (Spectrum_getRealValueInBin, "Spectrum: Get real value in bin", 0)
 	NATURAL ("Bin number", "100") OK DO Spectrum me = ONLY_OBJECT;
 	long binNumber = GET_INTEGER ("Bin number");
@@ -3624,9 +3624,9 @@ FORM (Spectrum_getSkewness, "Spectrum: Get skewness", "Spectrum: Get skewness...
 	Melder_informationReal (Spectrum_getSkewness (ONLY_OBJECT, GET_REAL ("Power")), NULL); END
 FORM (Spectrum_getStandardDeviation, "Spectrum: Get standard deviation", "Spectrum: Get standard deviation...")
 	POSITIVE ("Power", "2.0") OK DO
-	Melder_informationReal (Spectrum_getStandardDeviation (ONLY_OBJECT, GET_REAL ("Power")), "Hertz"); END
+	Melder_informationReal (Spectrum_getStandardDeviation (ONLY_OBJECT, GET_REAL ("Power")), L"Hertz"); END
 
-DIRECT (Spectrum_help) Melder_help ("Spectrum"); END
+DIRECT (Spectrum_help) Melder_help (L"Spectrum"); END
 
 FORM (Spectrum_list, "Spectrum: List", 0)
 	BOOLEAN ("Include bin number", false)
@@ -3760,24 +3760,24 @@ FORM (Strings_createAsFileList, "Create Strings as file list", "Create Strings a
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
-	char *workingDirectory, path [300];
+	wchar_t *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPath (& defaultDir);
+	workingDirectory = Melder_dirToPathW (& defaultDir);
 	#if defined (UNIX)
-		sprintf (path, "%s/*.wav", workingDirectory);
+		swprintf (path, 300, L"%ls/*.wav", workingDirectory);
 	#elif defined (_WIN32)
 	{
-		int len = strlen (workingDirectory);
-		sprintf (path, "%s%s*.wav", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? "\\" : "");
+		int len = wcslen (workingDirectory);
+		swprintf (path, 300, L"%ls%ls*.wav", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? L"\\" : L"");
 	}
 	#else
-		sprintf (path, "%s*.wav", workingDirectory);
+		swprintf (path, 300, L"%ls*.wav", workingDirectory);
 	#endif
-	SET_STRING ("path", path);
+	SET_STRINGW (L"path", path);
 	inited = TRUE;
 }
 DO
-	if (! praat_new (Strings_createAsFileList (GET_STRING ("path")), GET_STRING ("Name"))) return 0;
+	if (! praat_new (Strings_createAsFileList (GET_STRINGW (L"path")), GET_STRING ("Name"))) return 0;
 END
 
 FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create Strings as directory list...")
@@ -3788,24 +3788,24 @@ FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create
 static int inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
-	char *workingDirectory, path [300];
+	wchar_t *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPath (& defaultDir);
+	workingDirectory = Melder_dirToPathW (& defaultDir);
 	#if defined (UNIX)
-		sprintf (path, "%s/*", workingDirectory);
+		swprintf (path, 300, L"%ls/*", workingDirectory);
 	#elif defined (_WIN32)
 	{
-		int len = strlen (workingDirectory);
-		sprintf (path, "%s%s*", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? "\\" : "");
+		int len = wcslen (workingDirectory);
+		swprintf (path, 300, L"%ls%ls*", workingDirectory, len == 0 || workingDirectory [len - 1] != '\\' ? L"\\" : L"");
 	}
 	#else
-		sprintf (path, "%s*", workingDirectory);
+		swprintf (path, 300, L"%ls*", workingDirectory);
 	#endif
-	SET_STRING ("path", path);
+	SET_STRINGW (L"path", path);
 	inited = TRUE;
 }
 DO
-	if (! praat_new (Strings_createAsDirectoryList (GET_STRING ("path")), GET_STRING ("Name"))) return 0;
+	if (! praat_new (Strings_createAsDirectoryList (GET_STRINGW (L"path")), GET_STRING ("Name"))) return 0;
 END
 
 DIRECT (Strings_equal)
@@ -3833,10 +3833,10 @@ FORM (Strings_getString, "Get string", 0)
 DO
 	Strings me = ONLY_OBJECT;
 	long index = GET_INTEGER ("Index");
-	Melder_information1 (index > my numberOfStrings ? "" : my strings [index]);
+	Melder_information1 (index > my numberOfStrings ? L"" : my strings [index]);
 END
 
-DIRECT (Strings_help) Melder_help ("Strings"); END
+DIRECT (Strings_help) Melder_help (L"Strings"); END
 
 DIRECT (Strings_randomize)
 	WHERE (SELECTED) {
@@ -3887,7 +3887,7 @@ FORM (TextGrid_create, "Create TextGrid", "Create TextGrid...")
 DO
 	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
 	REQUIRE (tmax > tmin, "End time should be greater than start time")
-	if (! praat_new (TextGrid_create (tmin, tmax, GET_STRING ("All tier names"), GET_STRING ("Which of these are point tiers?")),
+	if (! praat_new (TextGrid_create (tmin, tmax, GET_STRINGW (L"All tier names"), GET_STRINGW (L"Which of these are point tiers?")),
 		GET_STRING ("All tier names"))) return 0;
 END
 
@@ -3901,7 +3901,7 @@ END
 
 DIRECT (TimeFrameSampled_getNumberOfFrames)
 	Sampled me = ONLY_OBJECT;
-	Melder_information2 (Melder_integer (my nx), " frames");
+	Melder_information2 (Melder_integer (my nx), L" frames");
 END
 
 FORM (TimeFrameSampled_getFrameFromTime, "Get frame number from time", "Get frame number from time...")
@@ -3913,31 +3913,31 @@ END
 
 DIRECT (TimeFrameSampled_getFrameLength)
 	Sampled me = ONLY_OBJECT;
-	Melder_informationReal (my dx, "seconds");
+	Melder_informationReal (my dx, L"seconds");
 END
 
 FORM (TimeFrameSampled_getTimeFromFrame, "Get time from frame number", "Get time from frame number...")
 	NATURAL ("Frame number", "1")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY_OBJECT, GET_INTEGER ("Frame number")), "seconds");
+	Melder_informationReal (Sampled_indexToX (ONLY_OBJECT, GET_INTEGER ("Frame number")), L"seconds");
 END
 
 /***** TIMEFUNCTION *****/
 
 DIRECT (TimeFunction_getDuration)
 	Function me = ONLY_OBJECT;
-	Melder_informationReal (my xmax - my xmin, "seconds");
+	Melder_informationReal (my xmax - my xmin, L"seconds");
 END
 
 DIRECT (TimeFunction_getEndTime)
 	Function me = ONLY_OBJECT;
-	Melder_informationReal (my xmax, "seconds");
+	Melder_informationReal (my xmax, L"seconds");
 END
 
 DIRECT (TimeFunction_getStartTime)
 	Function me = ONLY_OBJECT;
-	Melder_informationReal (my xmin, "seconds");
+	Melder_informationReal (my xmin, L"seconds");
 END
 
 /***** TIMETIER *****/
@@ -3947,7 +3947,7 @@ FORM (TimeTier_getHighIndexFromTime, "Get high index", "AnyTier: Get high index 
 	OK
 DO
 	AnyTier me = ONLY_OBJECT;
-	Melder_information1 (my points -> size == 0 ? "--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL ("Time"))));
+	Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL ("Time"))));
 END
 
 FORM (TimeTier_getLowIndexFromTime, "Get low index", "AnyTier: Get low index from time...")
@@ -3955,7 +3955,7 @@ FORM (TimeTier_getLowIndexFromTime, "Get low index", "AnyTier: Get low index fro
 	OK
 DO
 	AnyTier me = ONLY_OBJECT;
-	Melder_information1 (my points -> size == 0 ? "--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL ("Time"))));
+	Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL ("Time"))));
 END
 
 FORM (TimeTier_getNearestIndexFromTime, "Get nearest index", "AnyTier: Get nearest index from time...")
@@ -3963,12 +3963,12 @@ FORM (TimeTier_getNearestIndexFromTime, "Get nearest index", "AnyTier: Get neare
 	OK
 DO
 	AnyTier me = ONLY_OBJECT;
-	Melder_information1 (my points -> size == 0 ? "--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL ("Time"))));
+	Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL ("Time"))));
 END
 
 DIRECT (TimeTier_getNumberOfPoints)
 	AnyTier me = ONLY_OBJECT;
-	Melder_information2 (Melder_integer (my points -> size), " points");
+	Melder_information2 (Melder_integer (my points -> size), L" points");
 END
 
 FORM (TimeTier_getTimeFromIndex, "Get time", 0 /*"AnyTier: Get time from index..."*/)
@@ -3977,8 +3977,8 @@ FORM (TimeTier_getTimeFromIndex, "Get time", 0 /*"AnyTier: Get time from index..
 DO
 	AnyTier me = ONLY_OBJECT;
 	long i = GET_INTEGER ("Point number");
-	if (i > my points -> size) Melder_information1 ("--undefined--");
-	else Melder_informationReal (((AnyPoint) my points -> item [i]) -> time, "seconds");
+	if (i > my points -> size) Melder_information1 (L"--undefined--");
+	else Melder_informationReal (((AnyPoint) my points -> item [i]) -> time, L"seconds");
 END
 
 FORM (TimeTier_removePoint, "Remove one point", "AnyTier: Remove point...")
@@ -4040,7 +4040,7 @@ DIRECT (Transition_eigen)
 	}
 END
 
-DIRECT (Transition_help) Melder_help ("Transition"); END
+DIRECT (Transition_help) Melder_help (L"Transition"); END
 
 FORM (Transition_power, "Transition: Power...", 0)
 	NATURAL ("Power", "2")
@@ -4069,16 +4069,16 @@ END
 
 /***** Help menu *****/
 
-DIRECT (ObjectWindow) Melder_help ("Object window"); END
-DIRECT (Intro) Melder_help ("Intro"); END
-DIRECT (WhatsNew) Melder_help ("What's new?"); END
-DIRECT (TypesOfObjects) Melder_help ("Types of objects"); END
-DIRECT (Editors) Melder_help ("Editors"); END
-DIRECT (FrequentlyAskedQuestions) Melder_help ("FAQ (Frequently Asked Questions)"); END
-DIRECT (Acknowledgments) Melder_help ("Acknowledgments"); END
-DIRECT (FormulasTutorial) Melder_help ("Formulas"); END
-DIRECT (ScriptingTutorial) Melder_help ("Scripting"); END
-DIRECT (Programming) Melder_help ("Programming with Praat"); END
+DIRECT (ObjectWindow) Melder_help (L"Object window"); END
+DIRECT (Intro) Melder_help (L"Intro"); END
+DIRECT (WhatsNew) Melder_help (L"What's new?"); END
+DIRECT (TypesOfObjects) Melder_help (L"Types of objects"); END
+DIRECT (Editors) Melder_help (L"Editors"); END
+DIRECT (FrequentlyAskedQuestions) Melder_help (L"FAQ (Frequently Asked Questions)"); END
+DIRECT (Acknowledgments) Melder_help (L"Acknowledgments"); END
+DIRECT (FormulasTutorial) Melder_help (L"Formulas"); END
+DIRECT (ScriptingTutorial) Melder_help (L"Scripting"); END
+DIRECT (Programming) Melder_help (L"Programming with Praat"); END
 DIRECT (SearchManual) Melder_search (); END
 
 /***** file recognizers *****/

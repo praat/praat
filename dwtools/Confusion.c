@@ -41,20 +41,20 @@ static void info (I)
     Confusion_getEntropies (me, & h, & hx, & hy, & hygx, & hxgy, & uygx, 
 		& uxgy, & uxy);
     Confusion_getFractionCorrect (me, & frac, & nCorrect);
-    MelderInfo_writeLine2 ("Number of rows: ", Melder_integer (my numberOfRows));
-    MelderInfo_writeLine2 ("Number of colums: ", Melder_integer (my numberOfColumns));
-    MelderInfo_writeLine1 ("Entropies (y is row variable):");
-    MelderInfo_writeLine2 ("  Total: ", Melder_double(h));
-    MelderInfo_writeLine2 ("  Y: ", Melder_double(hy));
-    MelderInfo_writeLine2 ("  X: ", Melder_double(hx));
-    MelderInfo_writeLine2 ("  Y given x: ", Melder_double(hygx));
-    MelderInfo_writeLine2 ("  X given y: ", Melder_double(hxgy));
-    MelderInfo_writeLine2 ("  Dependency of y on x; ", Melder_double(uygx));
-    MelderInfo_writeLine2 ("  Dependency of x on y: ", Melder_double(uxgy));
-    MelderInfo_writeLine2 ("  Symmetrical dependency: ", Melder_double(uxy));
-    MelderInfo_writeLine2 ("  Total number of entries: ", 
+    MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
+    MelderInfo_writeLine2 (L"Number of colums: ", Melder_integer (my numberOfColumns));
+    MelderInfo_writeLine1 (L"Entropies (y is row variable):");
+    MelderInfo_writeLine2 (L"  Total: ", Melder_double(h));
+    MelderInfo_writeLine2 (L"  Y: ", Melder_double(hy));
+    MelderInfo_writeLine2 (L"  X: ", Melder_double(hx));
+    MelderInfo_writeLine2 (L"  Y given x: ", Melder_double(hygx));
+    MelderInfo_writeLine2 (L"  X given y: ", Melder_double(hxgy));
+    MelderInfo_writeLine2 (L"  Dependency of y on x; ", Melder_double(uygx));
+    MelderInfo_writeLine2 (L"  Dependency of x on y: ", Melder_double(uxgy));
+    MelderInfo_writeLine2 (L"  Symmetrical dependency: ", Melder_double(uxy));
+    MelderInfo_writeLine2 (L"  Total number of entries: ", 
     	Melder_integer (Confusion_getNumberOfEntries (me)));
-	MelderInfo_writeLine2 (" Fraction correct: ", Melder_double (frac));
+	MelderInfo_writeLine2 (L" Fraction correct: ", Melder_double (frac));
 }
 
 class_methods (Confusion, TableOfReal)
@@ -162,7 +162,7 @@ end:
     NUMdvector_free (colSum, 1);
 }
 
-int Confusion_addEntry (Confusion me, const char *stim, const char *resp)
+int Confusion_addEntry (Confusion me, const wchar_t *stim, const wchar_t *resp)
 {
     long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
     long respIndex = TableOfReal_columnLabelToIndex (me, resp);
@@ -192,7 +192,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
      			return;
     		}
    			ct += my data[i][j];
-    		if (! strcmp (my rowLabels[i], my columnLabels[j]))
+    		if (! wcscmp (my rowLabels[i], my columnLabels[j]))
 				c += my data[i][j];
     	}
     }
@@ -358,8 +358,8 @@ long Confusion_getNumberOfEntries (Confusion me)
 	return total;
 }
 
-static void create_index (char**s, long sb, long se, 
-	char **ref, long rb, long re, long *index)
+static void create_index (wchar_t**s, long sb, long se, 
+	wchar_t **ref, long rb, long re, long *index)
 {
 	long i, j, indxj;
 	for (i = sb; i <= se; i++)
@@ -367,7 +367,7 @@ static void create_index (char**s, long sb, long se,
 		indxj = 0;
 		for (j = rb; j <= re; j++)
 		{
-			if (strequ (s[i], ref[j]))
+			if (wcsequ (s[i], ref[j]))
 			{
 				indxj = j; break;
 			}
@@ -376,13 +376,13 @@ static void create_index (char**s, long sb, long se,
 	}
 }
  
-Confusion Confusion_condense (Confusion me, char *search, char *replace,
+Confusion Confusion_condense (Confusion me, wchar_t *search, wchar_t *replace,
 	long maximumNumberOfReplaces, int use_regexp)
 {
 	Confusion thee = NULL;
 	Strings srow = NULL, scol = NULL;
 	Distributions drow = NULL, dcol = NULL;
-	char **rowLabels = NULL, **columnLabels = NULL;
+	wchar_t **rowLabels = NULL, **columnLabels = NULL;
 	long i, j, nmatches, nstringmatches, nstim, nresp;
 	long *rowIndex = NULL, *columnIndex = NULL;
 	

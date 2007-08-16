@@ -1,6 +1,6 @@
 /* Distributions.c
  *
- * Copyright (C) 1997-2003 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/07/28 Distributions_peek
  * pb 2006/12/10 MelderInfo
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Distributions.h"
@@ -28,8 +29,8 @@
 static void info (I) {
 	iam (TableOfReal);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of distributions: ", Melder_integer (my numberOfColumns));
-	MelderInfo_writeLine2 ("Number of values: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 (L"Number of distributions: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of values: ", Melder_integer (my numberOfRows));
 }
 
 class_methods (Distributions, TableOfReal)
@@ -42,7 +43,7 @@ Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 	return me;
 }
 
-int Distributions_peek (Distributions me, long column, char **string) {
+int Distributions_peek (Distributions me, long column, wchar_t **string) {
 	double total = 0.0;
 	long irow;
 	if (column > my numberOfColumns) { Melder_error ("No column %ld.", column); goto end; }
@@ -65,13 +66,13 @@ end:
 	return 1;
 }
 
-double Distributions_getProbability (Distributions me, const char *string, long column) {
+double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
 	long row, rowOfString = 0;
 	double total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return NUMundefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
-		if (my rowLabels [row] && strequ (my rowLabels [row], string))
+		if (my rowLabels [row] && wcsequ (my rowLabels [row], string))
 			rowOfString = row;
 	}
 	if (total <= 0.0) return NUMundefined;
@@ -95,7 +96,7 @@ static void unicize (Distributions me) {
 	long nrow = 0, ifrom = 1, ito, i, j, icol;
 	for (i = 1; i <= my numberOfRows; i ++) {
 		if (i == my numberOfRows || (my rowLabels [i] == NULL) != (my rowLabels [i + 1] == NULL) ||
-		    (my rowLabels [i] != NULL && ! strequ (my rowLabels [i], my rowLabels [i + 1])))
+		    (my rowLabels [i] != NULL && ! wcsequ (my rowLabels [i], my rowLabels [i + 1])))
 		{
 			/*
 			 * Detected a change.

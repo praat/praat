@@ -2,7 +2,7 @@
 #define _Label_h_
 /* Label.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1997/03/18
- * pb 2002/07/16 GPL
+ * pb 2007/08/13
  */
 
 #ifndef _Collection_h_
@@ -35,7 +34,7 @@
 #define Autosegment_methods Function_methods
 class_create (Autosegment, Function);
 
-Any Autosegment_create (double tmin, double tmax, const char *label);
+Any Autosegment_create (double tmin, double tmax, const wchar_t *label);
 /*
 	Function:
 		create a new instance of Autosegment.

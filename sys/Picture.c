@@ -81,9 +81,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double x = i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_printf (my selectionGraphics, x, SIDE, "%d", i);
+		Graphics_printf (my selectionGraphics, x, SIDE, L"%d", i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my selectionGraphics, x, 0, "%d", i);
+		Graphics_printf (my selectionGraphics, x, 0, L"%d", i);
 	}
 	for (i = 1; i < SQUARES ; i ++) {   /* Vertical ticks. */
 		double x = 0.5 * i;
@@ -93,9 +93,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double y = SIDE - i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_printf (my selectionGraphics, 0.04, y, "%d", i);
+		Graphics_printf (my selectionGraphics, 0.04, y, L"%d", i);
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my selectionGraphics, SIDE - 0.03, y, "%d", i);
+		Graphics_printf (my selectionGraphics, SIDE - 0.03, y, L"%d", i);
 	}
 	for (i = 1; i < SQUARES; i ++) {   /* Horizontal ticks. */
 		double y = SIDE - 0.5 * i;
@@ -218,7 +218,7 @@ MOTIF_CALLBACK (cb_click)
 MOTIF_CALLBACK_END
 
 Picture Picture_create (Widget drawingArea, Boolean sensitive) {
-	Picture me = (Picture) Melder_calloc (1, sizeof (struct structPicture));
+	Picture me = Melder_calloc (struct structPicture, 1);
 	if (! me) return NULL;
 	my drawingArea = drawingArea;
 	/*
@@ -490,31 +490,31 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
 		MelderInfo_open ();
-		MelderInfo_writeLine1 ("DEVICE CAPS:");
-		MelderInfo_writeLine4 ("aspect x ", Melder_integer (GetDeviceCaps (dc, ASPECTX)),
-			" y ", Melder_integer (GetDeviceCaps (dc, ASPECTY)));
-		MelderInfo_writeLine4 ("res(pixels) hor ", Melder_integer (GetDeviceCaps (dc, HORZRES)),
-			" vert ", Melder_integer (GetDeviceCaps (dc, VERTRES)));
-		MelderInfo_writeLine4 ("size(mm) hor ", Melder_integer (GetDeviceCaps (dc, HORZSIZE)),
-			" vert ", Melder_integer (GetDeviceCaps (dc, VERTSIZE)));
-		MelderInfo_writeLine4 ("pixels/inch hor ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSX)),
-			" vert ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSY)));
-		MelderInfo_writeLine4 ("physicalOffset(pixels) hor ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETX)),
-			" vert ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETY)));
-		MelderInfo_writeLine1 ("PRINTER:");
-		MelderInfo_writeLine2 ("dmFields ", Melder_integer (devMode -> dmFields));
+		MelderInfo_writeLine1 (L"DEVICE CAPS:");
+		MelderInfo_writeLine4 (L"aspect x ", Melder_integer (GetDeviceCaps (dc, ASPECTX)),
+			L" y ", Melder_integer (GetDeviceCaps (dc, ASPECTY)));
+		MelderInfo_writeLine4 (L"res(pixels) hor ", Melder_integer (GetDeviceCaps (dc, HORZRES)),
+			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTRES)));
+		MelderInfo_writeLine4 (L"size(mm) hor ", Melder_integer (GetDeviceCaps (dc, HORZSIZE)),
+			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTSIZE)));
+		MelderInfo_writeLine4 (L"pixels/inch hor ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSX)),
+			L" vert ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSY)));
+		MelderInfo_writeLine4 (L"physicalOffset(pixels) hor ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETX)),
+			L" vert ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETY)));
+		MelderInfo_writeLine1 (L"PRINTER:");
+		MelderInfo_writeLine2 (L"dmFields ", Melder_integer (devMode -> dmFields));
 		if (devMode -> dmFields & DM_YRESOLUTION)
-			MelderInfo_writeLine2 ("y resolution ", Melder_integer (devMode -> dmYResolution));
+			MelderInfo_writeLine2 (L"y resolution ", Melder_integer (devMode -> dmYResolution));
 		if (devMode -> dmFields & DM_PRINTQUALITY)
-			MelderInfo_writeLine2 ("print quality ", Melder_integer (devMode -> dmPrintQuality));
+			MelderInfo_writeLine2 (L"print quality ", Melder_integer (devMode -> dmPrintQuality));
 		if (devMode -> dmFields & DM_PAPERWIDTH)
-			MelderInfo_writeLine2 ("paper width ", Melder_integer (devMode -> dmPaperWidth));
+			MelderInfo_writeLine2 (L"paper width ", Melder_integer (devMode -> dmPaperWidth));
 		if (devMode -> dmFields & DM_PAPERLENGTH)
-			MelderInfo_writeLine2 ("paper length ", Melder_integer (devMode -> dmPaperLength));
+			MelderInfo_writeLine2 (L"paper length ", Melder_integer (devMode -> dmPaperLength));
 		if (devMode -> dmFields & DM_PAPERSIZE)
-			MelderInfo_writeLine2 ("paper size ", Melder_integer (devMode -> dmPaperSize));
+			MelderInfo_writeLine2 (L"paper size ", Melder_integer (devMode -> dmPaperSize));
 		if (devMode -> dmFields & DM_ORIENTATION)
-			MelderInfo_writeLine2 ("orientation ", Melder_integer (devMode -> dmOrientation));
+			MelderInfo_writeLine2 (L"orientation ", Melder_integer (devMode -> dmOrientation));
 		MelderInfo_close ();
 	}
 	pictGraphics = Graphics_create_screen ((void *) dc, 0, resolution);

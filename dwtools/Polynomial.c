@@ -494,7 +494,7 @@ FunctionTerms FunctionTerms_create (double xmin, double xmax,
 	return me;
 }
 
-int FunctionTerms_initFromString (I, double xmin, double xmax, char *s,
+int FunctionTerms_initFromString (I, double xmin, double xmax, wchar_t *s,
 	int allowTrailingZeros)
 {
 	iam (FunctionTerms); long numberOfCoefficients; double *numbers = NULL;
@@ -608,7 +608,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, float *x, float *y,
 	{
 		x2 = x[i]; y2 = y[i];
 		
-		if (! (y1 > ymax && y2 > ymax || y1 < ymin && y2 < ymin))
+		if (! ((y1 > ymax && y2 > ymax) || (y1 < ymin && y2 < ymin)))
 		{
 			double dxy = (x2 - x1) / (y1 - y2);
 			double xcros_max = x1 - (ymax - y1) * dxy;
@@ -860,7 +860,7 @@ Polynomial Polynomial_create (double xmin, double xmax, long degree)
 	return me;
 }
 
-Polynomial Polynomial_createFromString (double xmin, double xmax, char *s)
+Polynomial Polynomial_createFromString (double xmin, double xmax, wchar_t *s)
 {
 	Polynomial me = new (Polynomial);
 	
@@ -1196,7 +1196,7 @@ LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPol
 }
 
 LegendreSeries LegendreSeries_createFromString (double xmin, double xmax,
-	char *s)
+	wchar_t *s)
 {
 	LegendreSeries me = new (LegendreSeries);
 	
@@ -1332,7 +1332,7 @@ static void NUMdcvector_extrema_im (dcomplex v[], long lo, long hi,
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
-	double imax, char *symbol, int fontSize, int garnish)
+	double imax, wchar_t *symbol, int fontSize, int garnish)
 {
 	long i; int oldFontSize = Graphics_inqFontSize (g);
 	double eps = 1e-6, denum;
@@ -1374,12 +1374,12 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
 	if (garnish)
 	{
     	Graphics_drawInnerBox (g);
- 		if (rmin * rmax < 0) Graphics_markLeft (g, 0, 1, 1, 1, "0");
- 		if (imin * imax < 0) Graphics_markBottom (g, 0, 1, 1, 1, "0");
+ 		if (rmin * rmax < 0) Graphics_markLeft (g, 0, 1, 1, 1, L"0");
+ 		if (imin * imax < 0) Graphics_markBottom (g, 0, 1, 1, 1, L"0");
     	Graphics_marksLeft (g, 2, 1, 1, 0);
- 		Graphics_textLeft (g, 1, "Imaginary part");
+ 		Graphics_textLeft (g, 1, L"Imaginary part");
     	Graphics_marksBottom (g, 2, 1, 1, 0);
- 		Graphics_textBottom (g, 1, "Real part");
+ 		Graphics_textBottom (g, 1, L"Real part");
 	}
 }
 
@@ -1704,7 +1704,7 @@ ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax,
 }
 
 ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax,
-	char *s)
+	wchar_t *s)
 {
 	ChebyshevSeries me = new (ChebyshevSeries);
 	
@@ -2194,7 +2194,7 @@ class_methods (Spline, FunctionTerms)
 class_methods_end
 
 /* Precondition: FunctionTerms part inited + degree */
-static int Spline_initKnotsFromString (I, long degree, char *interiorKnots)
+static int Spline_initKnotsFromString (I, long degree, wchar_t *interiorKnots)
 {
 	iam (Spline); double *numbers = NULL;
 	long i, n, numberOfInteriorKnots, order;
@@ -2270,7 +2270,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 	iam (Spline);
 	long i, order = Spline_getOrder (me);
 	double x1, x2;
-	char ts[20] = "";
+	wchar_t ts[20] = L"";
 	
 	if (xmax <= xmin)
 	{
@@ -2290,9 +2290,9 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 	{
 		if (garnish)
 		{
-    		if (order == 1) sprintf (ts, "t__1_");
-			else if (order == 2) sprintf (ts, "{t__1_, t__2_}");
-			else sprintf (ts, "{t__1_..t__%ld_}", order);
+    		if (order == 1) swprintf (ts, 20, L"t__1_");
+			else if (order == 2) swprintf (ts, 20, L"{t__1_, t__2_}");
+			else swprintf (ts, 20, L"{t__1_..t__%ld_}", order);
 		}
 		Graphics_markTop (g, my knots[1], 0, 1, 1, ts);
 	}
@@ -2300,7 +2300,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 	{
 		if (my knots[i] >= xmin && my knots[i] <= xmax)
 		{
-			if (garnish) sprintf (ts, "t__%ld_", i + order - 1);
+			if (garnish) swprintf (ts, 20, L"t__%ld_", i + order - 1);
 			Graphics_markTop (g, my knots[i], 0, 1, 1, ts); 
 		}
 	}
@@ -2312,16 +2312,16 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin,
 			long numberOfKnots = my numberOfKnots + 2 * (order - 1);
     		if (order == 1)
 			{
-				sprintf (ts, "t__%ld_", numberOfKnots);
+				swprintf (ts, 20, L"t__%ld_", numberOfKnots);
 			}
 			else if (order == 2)
 			{
-				sprintf (ts, "{t__%d_, t__%ld_}", numberOfKnots - 1,
+				swprintf (ts, 20, L"{t__%d_, t__%ld_}", numberOfKnots - 1,
 					numberOfKnots);
 			}
 			else
 			{
-				sprintf (ts, "{t__%d_..t__%ld_}", numberOfKnots - order + 1,
+				swprintf (ts, 20, L"{t__%d_..t__%ld_}", numberOfKnots - order + 1,
 					numberOfKnots);
 			}
 		}
@@ -2411,7 +2411,7 @@ MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInte
 }
 
 MSpline MSpline_createFromStrings (double xmin, double xmax, long degree,
-	char *coef, char *interiorKnots)
+	wchar_t *coef, wchar_t *interiorKnots)
 {
 	MSpline me = new (MSpline);
 	
@@ -2477,7 +2477,7 @@ ISpline ISpline_create (double xmin, double xmax, long degree,
 }
 
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree,
-	char *coef, char *interiorKnots)
+	wchar_t *coef, wchar_t *interiorKnots)
 {
 	ISpline me = new (ISpline);
 	

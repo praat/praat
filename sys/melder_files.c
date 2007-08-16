@@ -35,6 +35,7 @@
  * Erez Volk 2007/05/14 FLAC support
  * pb 2007/05/28 wchar_t
  * pb 2007/06/09 more wchar_t
+ * pb 2007/08/12 more wchar_t
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -157,7 +158,7 @@ int Melder_fileToMach (MelderFile file, void *void_fsref) {
 	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
 	OSStatus err = FSPathMakeRef (path, (FSRef *) void_fsref, NULL);
 	if (err != noErr && err != fnfErr)
-		return Melder_error5 (L"Error #", Melder_integerW (err), L" translating file name ", file -> wpath, L".");
+		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
 	return 1;
 }
 int Melder_fileToMac (MelderFile file, void *void_fspec) {
@@ -166,7 +167,7 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 	FSRef fsref;
 	OSStatus err = FSPathMakeRef (path, & fsref, NULL);
 	if (err != noErr && err != fnfErr)
-		return Melder_error5 (L"Error #", Melder_integerW (err), L" translating file name ", file -> wpath, L".");
+		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
 	FSSpec *fspec = (FSSpec *) void_fspec;
 	err = FSGetCatalogInfo (& fsref, kFSCatInfoNone, NULL, NULL, fspec, NULL);
 	if (err != noErr) {
@@ -183,10 +184,10 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		Melder_wcsTo8bitFileRepresentation_inline (parentDir. wpath, path);
 		err = FSPathMakeRef (path, & parentDirectory, NULL);
 		if (err != noErr)
-			return Melder_error5 (L"Error #", Melder_integerW (err), L" translating directory name ", parentDir. wpath, L".");
+			return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. wpath, L".");
 		err = FSGetCatalogInfo (& parentDirectory, kFSCatInfoVolume | kFSCatInfoNodeID, & info, NULL, NULL, NULL);
 		if (err != noErr)
-			return Melder_error5 (L"Error #", Melder_integerW (err), L" looking for directory of ", file -> wpath, L".");
+			return Melder_error5 (L"Error #", Melder_integer (err), L" looking for directory of ", file -> wpath, L".");
 		/*
 			Convert from UTF-8 to MacRoman.
 		*/
@@ -196,7 +197,7 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		PfromCstr (pname, romanName);
 		err = FSMakeFSSpec (info. volume, info. nodeID, & pname [0], fspec);
 		if (err != noErr && err != fnfErr)
-			return Melder_error5 (L"Error #", Melder_integerW (err), L" looking for file ", file -> wpath, L".");
+			return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> wpath, L".");
 	}
 	return 1;
 }
@@ -255,7 +256,7 @@ int Melder_pathToFileW (const wchar_t *path, MelderFile file) {
 	return 1;
 }
 
-int Melder_relativePathToFileW (const wchar_t *path, MelderFile file) {
+int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 	/*
 	 * This handles complete and partial path names,
 	 * and translates slashes to native directory separators (unlike Melder_pathToFile).
@@ -298,7 +299,7 @@ int Melder_relativePathToFileW (const wchar_t *path, MelderFile file) {
 				if (slash == NULL) break;
 				*slash = '\\';
 			}
-			return Melder_relativePathToFileW (winPath, file);
+			return Melder_relativePathToFile (winPath, file);
 		}
 		if (wcschr (path, ':') || path [0] == '\\' && path [1] == '\\' || wcsequ (path, L"<stdout>")) {
 			wcscpy (file -> wpath, path);
@@ -386,11 +387,11 @@ void MelderDir_getFileW (MelderDir parent, const wchar_t *fileName, MelderFile f
 	#endif
 }
 
-void MelderDir_relativePathToFile (MelderDir dir, const char *path, MelderFile file) {
+void MelderDir_relativePathToFile (MelderDir dir, const wchar_t *path, MelderFile file) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 	Melder_setDefaultDir (dir);
-	Melder_relativePathToFileW (Melder_peekAsciiToWcs (path), file);
+	Melder_relativePathToFile (path, file);
 	Melder_setDefaultDir (& saveDir);
 }
 
@@ -919,7 +920,7 @@ char * MelderFile_readLine (MelderFile me) {
 	if (! my filePointer) return NULL;
 	if (feof (my filePointer)) return NULL;
 	if (! buffer) {
-		buffer = Melder_malloc (capacity = 100);
+		buffer = Melder_malloc (char, capacity = 100);
 		if (buffer == NULL) {
 			Melder_error ("(MelderFile_readLine:) No room even for a string buffer of 100 bytes.");
 			fclose (my filePointer);
@@ -967,7 +968,7 @@ char * MelderFile_readLine (MelderFile me) {
 	return buffer;
 }
 
-void MelderFile_create (MelderFile me, const char *macType, const char *macCreator, const char *winExtension) {
+void MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension) {
 	my filePointer = Melder_fopen (me, "wb");
 	if (! my filePointer) return;
 	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).

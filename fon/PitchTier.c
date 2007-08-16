@@ -24,6 +24,7 @@
  * pb 2005/06/16 units
  * pb 2006/12/08 info
  * pb 2007/03/17 domain quantity
+ * pb 2007/08/12 wchar_t
  */
 
 #include "PitchTier.h"
@@ -32,13 +33,13 @@
 static void info (I) {
 	iam (RealTier);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
-	MelderInfo_writeLine2 ("Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine3 ("Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), " Hertz");
-	MelderInfo_writeLine3 ("Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), " Hertz");
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
+	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), L" Hertz");
+	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), L" Hertz");
 }
 
 class_methods (PitchTier, RealTier)
@@ -55,7 +56,7 @@ PitchTier PitchTier_create (double tmin, double tmax) {
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, "Frequency (Hz)");
+	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, L"Frequency (Hz)");
 }
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {

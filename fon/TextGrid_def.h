@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2007/07/21
+ * pb 2007/08/08
  */
 
 
 #define ooSTRUCT TextPoint
 oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
-	oo_STRING (mark)
+	oo_STRINGW (mark)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
 	#if oo_READING_TEXT
@@ -41,7 +41,7 @@ oo_END_CLASS (TextPoint)
 #define ooSTRUCT TextInterval
 oo_DEFINE_CLASS (TextInterval, Function)
 
-	oo_STRING (text)
+	oo_STRINGW (text)
 
 oo_END_CLASS (TextInterval)
 #undef ooSTRUCT

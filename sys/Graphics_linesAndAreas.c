@@ -24,6 +24,7 @@
  * pb 2005/07/31 better arrowheads
  * pb 2007/01/06 made ORDER_DC compatible with PostScript
  * pb 2007/03/14 arrowSize
+ * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  */
 
 #include "GraphicsP.h"
@@ -31,7 +32,7 @@
 #define POSTSCRIPT_MAXPATH  1000
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
 #define ORDER_DC  { short temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
-	if ((my screen != 0) == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
+	if (my yIsZeroAtTheTop == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
 
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
@@ -165,12 +166,35 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 			}
 			DEFAULT
 		#elif mac
-			long i;
+			if (my useQuartz && my drawingArea && ! my duringXor) {
+				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				CGContextSetRGBStrokeColor (my macGraphicsContext, my macColour.red, my macColour.green, my macColour.blue, 1.0);
+				double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
+				CGContextSetLineWidth (my macGraphicsContext, lineWidth_pixels);
+				float lengths [2];
+				if (my lineType == Graphics_DOTTED)
+					lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2,
+					lengths [1] = my resolution > 192 ? my resolution / 75.0 + lineWidth_pixels : 2;
+				if (my lineType == Graphics_DASHED)
+					lengths [0] = my resolution > 192 ? my resolution / 25 : 6,
+					lengths [1] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
+				CGContextSetLineDash (my macGraphicsContext, 0.0, my lineType == Graphics_DRAWN ? NULL : lengths, my lineType == 0 ? 0 : 2);
+				CGContextBeginPath (my macGraphicsContext);
+				CGContextMoveToPoint (my macGraphicsContext, xyDC [0], shellHeight - xyDC [1]);
+				for (long i = 1; i < numberOfPoints; i ++) {
+					CGContextAddLineToPoint (my macGraphicsContext, xyDC [i + i], shellHeight - xyDC [i + i + 1]);
+				}
+				CGContextStrokePath (my macGraphicsContext);
+				CGContextSynchronize (my macGraphicsContext);
+				QDEndCGContext (my macPort, & my macGraphicsContext);
+				return;
+			}
 			int halfLine = ceil (0.5 * my lineWidth);
 			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
 			initDraw (me);
 			MoveTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
-			for (i = 1; i < numberOfPoints; i ++)
+			for (long i = 1; i < numberOfPoints; i ++)
 				LineTo (xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
 			exitDraw (me);
 			if (my drawingArea) GuiMac_clipOff ();
@@ -608,7 +632,7 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 
 static void roundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC, short r) {
 	iam (Graphics);
-	short dy = my screen ? - r : r, xyDC [4];
+	short dy = my yIsZeroAtTheTop ? - r : r, xyDC [4];
 	ORDER_DC
 	#if win
 		if (my screen) {
@@ -649,7 +673,7 @@ static void roundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC,
 
 static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC, short r) {
 	iam (Graphics);
-	short dy = my screen ? - r : r;
+	short dy = my yIsZeroAtTheTop ? - r : r;
 	ORDER_DC
 	fillCircle (me, x2DC - r, y1DC + dy, r);
 	fillCircle (me, x2DC - r, y2DC - dy, r);
@@ -669,7 +693,7 @@ void Graphics_polyline (I, long numberOfPoints, float *xWC, float *yWC) {	/* Bas
 	short *xyDC;
 	long i;
 	if (! numberOfPoints) return;
-	xyDC = (short *) Melder_malloc (2 * numberOfPoints * sizeof (short));
+	xyDC = Melder_malloc (short, 2 * numberOfPoints);
 	if (! xyDC) return;
 	for (i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
@@ -698,10 +722,9 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 
 void Graphics_fillArea (I, long numberOfPoints, float *xWC, float *yWC) {
 	iam (Graphics);
-	short *xyDC = (short *) Melder_malloc (2 * numberOfPoints * sizeof (short));
-	long i;
+	short *xyDC = Melder_malloc (short, 2 * numberOfPoints);
 	if (! xyDC) return;
-	for (i = 0; i < numberOfPoints; i ++) {
+	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}
@@ -842,7 +865,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 				if (value > maxWC) maxWC = value; \
 				else if (value < minWC) minWC = value; \
 			} \
-			if (my screen) { \
+			if (my yIsZeroAtTheTop) { \
 				minDC = wdy (maxWC); \
 				maxDC = wdy (minWC); \
 				if (minDC > clipy1) minDC = clipy1; \
@@ -874,7 +897,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 			long ix = ix1 + i; \
 			short value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
-			if (my screen) { \
+			if (my yIsZeroAtTheTop) { \
 				if (value > clipy1) value = clipy1; \
 				if (value < clipy2) value = clipy2; \
 			} else { \
@@ -909,7 +932,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		short *xyDC; \
 		TYPE lastMini; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = (short *) Melder_malloc (2 * numberOfPointsActuallyDrawn * sizeof (short)); \
+		xyDC = Melder_malloc (short, 2 * numberOfPointsActuallyDrawn); \
 		for (i = 0; i < numberOfPixels; i ++) { \
 			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE mini, maxi; \
@@ -924,7 +947,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 			} \
 			minDC = wdy (mini); \
 			maxDC = wdy (maxi); \
-			if (my screen) { \
+			if (my yIsZeroAtTheTop) { \
 				if (minDC > clipy1) minDC = clipy1; \
 				if (maxDC > clipy1) maxDC = clipy1; \
 				if (maxDC < clipy2) maxDC = clipy2; \
@@ -969,12 +992,12 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		if (k > 1) polyline (me, k / 2, xyDC); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
-		short *xyDC = (short *) Melder_malloc (2 * n * sizeof (short)); \
+		short *xyDC = Melder_malloc (short, 2 * n); \
 		for (i = 0; i < n; i ++) { \
 			long ix = ix1 + i; \
 			short value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
-			if (my screen) { \
+			if (my yIsZeroAtTheTop) { \
 				if (value > clipy1) value = clipy1; \
 				if (value < clipy2) value = clipy2; \
 			} else { \
@@ -1040,7 +1063,7 @@ void Graphics_button (I, double x1WC, double x2WC, double y1WC, double y2WC) {
 
 void Graphics_innerRectangle (I, double x1WC, double x2WC, double y1WC, double y2WC) {
 	iam (Graphics);
-	int dy = my screen ? -1 : 1;
+	int dy = my yIsZeroAtTheTop ? -1 : 1;
 	rectangle (me, wdx (x1WC) + 1, wdx (x2WC) - 1, wdy (y1WC) + dy, wdy (y2WC) - dy);
 	if (my recording) { op (INNER_RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
@@ -1074,7 +1097,7 @@ void Graphics_rectangle_mm (I, double xWC, double yWC, double horSide, double ve
 	short xDC = wdx (xWC), yDC = wdy (yWC);
 	short halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
 	short halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
-	if (my screen) {
+	if (my yIsZeroAtTheTop) {
 		rectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
 		rectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
@@ -1087,7 +1110,7 @@ void Graphics_fillRectangle_mm (I, double xWC, double yWC, double horSide, doubl
 	short xDC = wdx (xWC), yDC = wdy (yWC);
 	short halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
 	short halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
-	if (my screen) {
+	if (my yIsZeroAtTheTop) {
 		_Graphics_fillRectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
 		_Graphics_fillRectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
@@ -1175,7 +1198,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 
 void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
-	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC));
+	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	#if xwin
 		double size = my screen ? 10.0 * my resolution * my arrowSize / 75.0 :
 	#else
@@ -1186,7 +1209,7 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
-	xyDC [3] = wdy (y2WC) + (my screen ? -0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
+	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
 	polyline (me, 2, xyDC);
 	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);
 	if (my recording) { op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
@@ -1194,7 +1217,7 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 
 void Graphics_doubleArrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
-	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my screen ? -1 : 1), wdx (x2WC) - wdx (x1WC));
+	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	#if xwin
 		double size = my screen ? 10.0 * my resolution * my arrowSize / 75.0 :
 	#else
@@ -1203,9 +1226,9 @@ void Graphics_doubleArrow (I, double x1WC, double y1WC, double x2WC, double y2WC
 		my resolution * my arrowSize / 10;
 	short xyDC [4];
 	xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180) * size;
-	xyDC [1] = wdy (y1WC) + (my screen ? -0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
+	xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
-	xyDC [3] = wdy (y2WC) + (my screen ? -0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
+	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
 	polyline (me, 2, xyDC);
 	arrowHead (me, wdx (x1WC), wdy (y1WC), angle + 180);
 	//polyline (me, 2, xyDC);

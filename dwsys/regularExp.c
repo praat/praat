@@ -4068,7 +4068,7 @@ static void adjustcase (unsigned char *str, int len, unsigned char chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (char *str) {
-	Melder_information2 ("Internal error processing regular expression: ", str);
+	Melder_information2 (L"Internal error processing regular expression: ", Melder_peekAsciiToWcs (str));
 }
 
 /*----------------------------------------------------------------------*

@@ -25,7 +25,7 @@
 #include "Intensity_extensions.h"
 #include "TextGrid_extensions.h"
 
-static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, char *leftLabel)
+static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, wchar_t *leftLabel)
 {
 	TextInterval ti, ti_new;
 	if (time <= my xmin || time >= my xmax) return 0;
@@ -38,13 +38,13 @@ static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, do
 	ti -> xmax = time;
 	if (! TextInterval_setText (ti, leftLabel)) return 0;
 	
-	ti_new = TextInterval_create (time, my xmax, "");
+	ti_new = TextInterval_create (time, my xmax, L"");
 	if (ti_new == NULL || ! Sorted_addItem_unsorted (my intervals, ti_new)) return 0;
 	return 1;
 }
 
 TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, 
-	double minSilenceDuration, double minSoundingDuration, char *silenceLabel, char *soundingLabel)
+	double minSilenceDuration, double minSoundingDuration, wchar_t *silenceLabel, wchar_t *soundingLabel)
 {
 	TextGrid thee = NULL;
 	IntervalTier it;
@@ -56,7 +56,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	
 	if (silenceThreshold_dB >= 0) return Melder_errorp ("The silence threshold w.r.t. the maximum intensity should be a negative number.");
 	
-	thee = TextGrid_create (my xmin, my xmax, "silences", "");
+	thee = TextGrid_create (my xmin, my xmax, L"silences", L"");
 	if (thee == NULL) return NULL;
 	it = thy tiers -> item[1];
 	if (! TextInterval_setText (it -> intervals -> item[1], soundingLabel)) goto end;
@@ -77,7 +77,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	iinterval = 1;
 	for (i = 2; i <= my nx; i++)
 	{
-		char *label; 
+		wchar_t *label; 
 		addBoundary = 0;
 		if (my z[1][i] < intensityThreshold)
 		{

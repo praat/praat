@@ -25,6 +25,7 @@
  * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
  * pb 2006/12/08 better NUMundefined pitch and duration range checking
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "ManipulationEditor.h"
@@ -103,17 +104,17 @@ static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered acro
 #define YLININV(freq)  (my pitchTier.units == UNITS_HERTZ ? (freq) : NUMsemitonesToHertz (freq))
 
 void ManipulationEditor_prefs (void) {
-	Resources_addInt ("ManipulationEditor.pitch.scaling", & prefs.pitchTier.scaling);
-	Resources_addDouble ("ManipulationEditor.pitch.minimum", & prefs.pitchTier.minimum);
-	Resources_addDouble ("ManipulationEditor.pitch.maximum", & prefs.pitchTier.maximum);
-	Resources_addInt ("ManipulationEditor.pitch.units", & prefs.pitchTier.units);
-	Resources_addInt ("ManipulationEditor.pitch.draggingStrategy", & prefs.pitchTier.draggingStrategy);
-	Resources_addDouble ("ManipulationEditor.pitch.stylize.frequencyResolution", & prefs.pitchTier.stylize.frequencyResolution);
-	Resources_addInt ("ManipulationEditor.pitch.stylize.useSemitones", & prefs.pitchTier.stylize.useSemitones);
-	Resources_addLong ("ManipulationEditor.pitch.interpolateQuadratically.numberOfPointsPerParabola", & prefs.pitchTier.interpolateQuadratically.numberOfPointsPerParabola);
-	Resources_addDouble ("ManipulationEditor.duration.minimum", & prefs.duration.minimum);
-	Resources_addDouble ("ManipulationEditor.duration.maximum", & prefs.duration.maximum);
-	/*Resources_addInt ("ManipulationEditor.synthesis.method.1", & prefs.synthesis.method);*/
+	Resources_addInt (L"ManipulationEditor.pitch.scaling", & prefs.pitchTier.scaling);
+	Resources_addDouble (L"ManipulationEditor.pitch.minimum", & prefs.pitchTier.minimum);
+	Resources_addDouble (L"ManipulationEditor.pitch.maximum", & prefs.pitchTier.maximum);
+	Resources_addInt (L"ManipulationEditor.pitch.units", & prefs.pitchTier.units);
+	Resources_addInt (L"ManipulationEditor.pitch.draggingStrategy", & prefs.pitchTier.draggingStrategy);
+	Resources_addDouble (L"ManipulationEditor.pitch.stylize.frequencyResolution", & prefs.pitchTier.stylize.frequencyResolution);
+	Resources_addInt (L"ManipulationEditor.pitch.stylize.useSemitones", & prefs.pitchTier.stylize.useSemitones);
+	Resources_addLong (L"ManipulationEditor.pitch.interpolateQuadratically.numberOfPointsPerParabola", & prefs.pitchTier.interpolateQuadratically.numberOfPointsPerParabola);
+	Resources_addDouble (L"ManipulationEditor.duration.minimum", & prefs.duration.minimum);
+	Resources_addDouble (L"ManipulationEditor.duration.maximum", & prefs.duration.maximum);
+	/*Resources_addInt (L"ManipulationEditor.synthesis.method.1", & prefs.synthesis.method);*/
 }
 
 static void updateMenus (ManipulationEditor me) {
@@ -423,7 +424,7 @@ SET_REAL ("Maximum", my pitchTier.maximum)
 DO
 	double maximum = GET_REAL ("Maximum");
 	if (maximum <= my pitchTier.minPeriodic)
-		return Melder_error5 (L"Maximum pitch must be greater than ", Melder_halfW (my pitchTier.minPeriodic), L" ", units_strings [my pitchTier.units], L".");
+		return Melder_error5 (L"Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), L" ", units_strings [my pitchTier.units], L".");
 	prefs.pitchTier.maximum = my pitchTier.maximum = maximum;
 	FunctionEditor_redraw (me);
 END
@@ -470,10 +471,10 @@ DO
 	if (minimum >= maximum) return Melder_error1 (L"Maximum relative duration must be greater than minimum.");
 	if (NUMdefined (minimumValue) && minimum > minimumValue)
 		return Melder_error3 (L"Minimum relative duration must not be greater than the minimum value present, "
-			"which is ", Melder_halfW (minimumValue), L".");
+			"which is ", Melder_half (minimumValue), L".");
 	if (NUMdefined (maximumValue) && maximum < maximumValue)
 		return Melder_error3 (L"Maximum relative duration must not be less than the maximum value present, "
-			"which is ", Melder_halfW (maximumValue), L".");
+			"which is ", Melder_half (maximumValue), L".");
 	prefs.duration.minimum = my duration.minimum = minimum;
 	prefs.duration.maximum = my duration.maximum = maximum;
 	FunctionEditor_redraw (me);
@@ -542,9 +543,9 @@ DIRECT (ManipulationEditor, cb_forgetDuration)
 	Editor_broadcastChange (me);
 END
 	
-DIRECT (ManipulationEditor, cb_ManipulationEditorHelp) Melder_help ("ManipulationEditor"); END
+DIRECT (ManipulationEditor, cb_ManipulationEditorHelp) Melder_help (L"ManipulationEditor"); END
 
-DIRECT (ManipulationEditor, cb_ManipulationHelp) Melder_help ("Manipulation"); END
+DIRECT (ManipulationEditor, cb_ManipulationHelp) Melder_help (L"Manipulation"); END
 
 #define cb_Synth_common(cb,meth) \
 DIRECT (ManipulationEditor, cb) \
@@ -642,9 +643,9 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_setFont (my graphics, Graphics_TIMES);
-	Graphics_text (my graphics, 1, 1, "%%Sound");
+	Graphics_text (my graphics, 1, 1, L"%%Sound");
 	Graphics_setColour (my graphics, Graphics_BLUE);
-	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), "%%Pulses");
+	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pulses");
 	Graphics_setFont (my graphics, Graphics_HELVETICA);
 
 	/*
@@ -719,9 +720,9 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics, Graphics_GREEN);
 	Graphics_setFont (my graphics, Graphics_TIMES);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics, 1, 1, "%%Pitch manip");
+	Graphics_text (my graphics, 1, 1, L"%%Pitch manip");
 	Graphics_setGrey (my graphics, 0.7);
-	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), "%%Pitch from pulses");
+	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pitch from pulses");
 	Graphics_setFont (my graphics, Graphics_HELVETICA);
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my pitchTier.minimum, my pitchTier.maximum);
@@ -762,7 +763,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	if (n == 0) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (my pitchTier.minimum + my pitchTier.maximum), "(no pitch points)");
+		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (my pitchTier.minimum + my pitchTier.maximum), L"(no pitch points)");
 	} else if (imax < imin) {
 		double fleft = YLIN (RealTier_getValueAtTime (pitch, my startWindow));
 		double fright = YLIN (RealTier_getValueAtTime (pitch, my endWindow));
@@ -820,7 +821,7 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics, Graphics_GREEN);
 	Graphics_setFont (my graphics, Graphics_TIMES);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics, 1, 1, "%%Duration manip");
+	Graphics_text (my graphics, 1, 1, L"%%Duration manip");
 	Graphics_setFont (my graphics, Graphics_HELVETICA);
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
@@ -847,7 +848,7 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow),
-			0.5 * (my duration.minimum + my duration.maximum), "(no duration points)");
+			0.5 * (my duration.minimum + my duration.maximum), L"(no duration points)");
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (duration, my startWindow);
 		double fright = RealTier_getValueAtTime (duration, my endWindow);
@@ -941,10 +942,10 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		double t = point -> time + dt, fWC = YLIN (point -> value) + df;
 		Graphics_line (my graphics, t, my pitchTier.minimum, t, my pitchTier.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
 		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my pitchTier.maximum, "%f", t);
+		Graphics_printf (my graphics, t, my pitchTier.maximum, L"%f", t);
 		Graphics_line (my graphics, my startWindow, fWC, my endWindow, fWC);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, fWC, "%.5f", fWC);
+		Graphics_printf (my graphics, my startWindow, fWC, L"%.5f", fWC);
 	}
 }
 
@@ -1087,10 +1088,10 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		double t = point -> time + dt, durWC = point -> value + df;
 		Graphics_line (my graphics, t, my duration.minimum, t, my duration.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
 		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my duration.maximum, "%f", t);
+		Graphics_printf (my graphics, t, my duration.maximum, L"%f", t);
 		Graphics_line (my graphics, my startWindow, durWC, my endWindow, durWC);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, durWC, "%.2f", durWC);
+		Graphics_printf (my graphics, my startWindow, durWC, L"%.2f", durWC);
 	}
 }
 

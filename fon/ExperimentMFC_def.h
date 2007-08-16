@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2006 Paul Boersma
+ * Copyright (C) 2001-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@
  * pb 2005/11/21 added replayButton
  * pb 2005/12/04 added okButton and oopsButton
  * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
- * pb 2006/12/31
+ * pb 2007/08/12 wchar_t
  */
 
 
 #define ooSTRUCT SoundMFC
 oo_DEFINE_STRUCT (SoundMFC)
 
-	oo_STRING (name)
+	oo_STRINGW (name)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (Sound, 0, sound)
 	#endif
@@ -45,9 +45,9 @@ oo_END_STRUCT (SoundMFC)
 #define ooSTRUCT StimulusMFC
 oo_DEFINE_STRUCT (StimulusMFC)
 
-	oo_STRING (name)
+	oo_STRINGW (name)
 	oo_FROM (4)
-		oo_STRING (visibleText)
+		oo_STRINGW (visibleText)
 	oo_ENDFROM
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (Sound, 0, sound)
@@ -64,11 +64,11 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_FLOAT (right)
 	oo_FLOAT (bottom)
 	oo_FLOAT (top)
-	oo_STRING (label)
+	oo_STRINGW (label)
 	oo_FROM (3)
-		oo_STRING (key)
+		oo_STRINGW (key)
 	oo_ENDFROM
-	oo_STRING (name)
+	oo_STRINGW (name)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (Sound, 0, sound)
 	#endif
@@ -84,7 +84,7 @@ oo_DEFINE_STRUCT (GoodnessMFC)
 	oo_FLOAT (right)
 	oo_FLOAT (bottom)
 	oo_FLOAT (top)
-	oo_STRING (label)
+	oo_STRINGW (label)
 
 oo_END_STRUCT (GoodnessMFC)
 #undef ooSTRUCT
@@ -93,8 +93,8 @@ oo_END_STRUCT (GoodnessMFC)
 #define ooSTRUCT TrialMFC
 oo_DEFINE_STRUCT (TrialMFC)
 
-	oo_STRING (stimulus)
-	oo_STRING (response)
+	oo_STRINGW (stimulus)
+	oo_STRINGW (response)
 	oo_FROM (1)
 		oo_DOUBLE (goodness)
 	oo_ENDFROM
@@ -119,8 +119,8 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_FROM (4)
 		oo_QUESTION (stimuliAreSounds)
 	oo_ENDFROM
-	oo_STRING (stimulusFileNameHead)
-	oo_STRING (stimulusFileNameTail)
+	oo_STRINGW (stimulusFileNameHead)
+	oo_STRINGW (stimulusFileNameTail)
 	oo_STRUCT (SoundMFC, stimulusCarrierBefore)
 	oo_STRUCT (SoundMFC, stimulusCarrierAfter)
 	oo_FROM (2)
@@ -132,35 +132,35 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_LONG (numberOfReplicationsPerStimulus)
 	oo_LONG (breakAfterEvery)
 	oo_ENUM (Experiment_RANDOMIZE, randomize)
-	oo_STRING (startText)
-	oo_STRING (runText)
-	oo_STRING (pauseText)
-	oo_STRING (endText)
+	oo_STRINGW (startText)
+	oo_STRINGW (runText)
+	oo_STRINGW (pauseText)
+	oo_STRINGW (endText)
 	oo_FROM (4)
 		oo_LONG (maximumNumberOfReplays)
 		oo_FLOAT (replay_left)
 		oo_FLOAT (replay_right)
 		oo_FLOAT (replay_bottom)
 		oo_FLOAT (replay_top)
-		oo_STRING (replay_label)
-		oo_STRING (replay_key)
+		oo_STRINGW (replay_label)
+		oo_STRINGW (replay_key)
 		oo_FLOAT (ok_left)
 		oo_FLOAT (ok_right)
 		oo_FLOAT (ok_bottom)
 		oo_FLOAT (ok_top)
-		oo_STRING (ok_label)
-		oo_STRING (ok_key)
+		oo_STRINGW (ok_label)
+		oo_STRINGW (ok_key)
 		oo_FLOAT (oops_left)
 		oo_FLOAT (oops_right)
 		oo_FLOAT (oops_bottom)
 		oo_FLOAT (oops_top)
-		oo_STRING (oops_label)
-		oo_STRING (oops_key)
+		oo_STRINGW (oops_label)
+		oo_STRINGW (oops_key)
 	oo_ENDFROM
 	oo_FROM (4)
 		oo_QUESTION (responsesAreSounds)
-		oo_STRING (responseFileNameHead)
-		oo_STRING (responseFileNameTail)
+		oo_STRINGW (responseFileNameHead)
+		oo_STRINGW (responseFileNameTail)
 		oo_STRUCT (SoundMFC, responseCarrierBefore)
 		oo_STRUCT (SoundMFC, responseCarrierAfter)
 		oo_DOUBLE (responseInitialSilenceDuration)

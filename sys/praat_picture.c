@@ -29,6 +29,8 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/03/14 arrowSize
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
+ * pb 2007/08/15 removed New Century Schoolbook
  */
 
 #include "praatP.h"
@@ -49,14 +51,14 @@ static double x1NDC = 0.0, x2NDC = 6.0, y1NDC = 8.0, y2NDC = 12.0;
 /***** "Font" MENU: font part *****/
 
 static int praat_font = Graphics_HELVETICA;
-static Widget praatButton_times, praatButton_helvetica,
-	praatButton_newCenturySchoolbook, praatButton_palatino, praatButton_courier;
+static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
 static void updateFontMenu (void) {
 	if (! theCurrentPraat -> batch) {
+		if (praat_font < 1) praat_font = 1;
+		if (praat_font > Graphics_PALATINO) praat_font = Graphics_PALATINO;
 		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_TIMES, 0);
-		XmToggleButtonGadgetSetState (praatButton_newCenturySchoolbook, praat_font == Graphics_NEWCENTURYSCHOOLBOOK, 0);
 		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_HELVETICA, 0);
-		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_PALATINO, 0);
+		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font = Graphics_PALATINO, 0);
 		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_COURIER, 0);
 	}
 }
@@ -71,7 +73,6 @@ static void setFont (int font) {
 }
 DIRECT (Times) setFont (Graphics_TIMES); END
 DIRECT (Helvetica) setFont (Graphics_HELVETICA); END
-DIRECT (New_Century_Schoolbook) setFont (Graphics_NEWCENTURYSCHOOLBOOK); END
 DIRECT (Palatino) setFont (Graphics_PALATINO); END
 DIRECT (Courier) setFont (Graphics_COURIER); END
 
@@ -256,7 +257,7 @@ DO
 	Graphics_setTextAlignment (GRAPHICS, hor, vert);
 	Graphics_setTextRotation (GRAPHICS, GET_REAL ("Rotation"));
 	Graphics_text (GRAPHICS, hor == 0 ? 0 : hor == 1 ? 0.5 : 1,
-		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRING ("text"));
+		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRINGW (L"text"));
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 	praat_picture_close ();
@@ -391,7 +392,7 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
 	return 1;
@@ -409,7 +410,7 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
 	return 1;
@@ -424,7 +425,7 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
 	return 1;
@@ -439,7 +440,7 @@ static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
 		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 		return Picture_writeToPraatPictureFile (praat_picture, file);
 	}
 	return 1;
@@ -469,7 +470,7 @@ END
 			UiOutfile_do (dia, L"praat.pict");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToMacPictFile (praat_picture, file);
 		}
 		return 1;
@@ -485,7 +486,7 @@ END
 			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; }
+			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 			return Picture_writeToWindowsMetafile (praat_picture, file);
 		}
 		return 1;
@@ -536,7 +537,7 @@ DO
 		GET_INTEGER ("Horizontal alignment") - 1, GET_INTEGER ("Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_text (GRAPHICS, GET_REAL ("Horizontal position"),
-		GET_REAL ("Vertical position"), GET_STRING ("text"));
+		GET_REAL ("Vertical position"), GET_STRINGW (L"text"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -554,7 +555,7 @@ FORM (Text_special, "Praat picture: Text special", 0)
 		OPTION ("Top")
 	OPTIONMENU ("Font", 1)
 		OPTION ("Times")
-		OPTION ("New_Century_Schoolbook")
+		OPTION ("Palatino")
 		OPTION ("Helvetica")
 		OPTION ("Courier")
 	NATURAL ("Font size", "10")
@@ -572,7 +573,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	Graphics_setFont (GRAPHICS,
 		requiredFont == 1 ? Graphics_TIMES :
-		requiredFont == 2 ? Graphics_NEWCENTURYSCHOOLBOOK :
+		requiredFont == 2 ? Graphics_PALATINO :
 		requiredFont == 3 ? Graphics_HELVETICA :
 		Graphics_COURIER);
 	Graphics_setFontSize (GRAPHICS, GET_INTEGER ("Font size"));
@@ -585,7 +586,7 @@ DO
 			Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
 	}
 	Graphics_text (GRAPHICS, GET_REAL ("Horizontal position"),
-		GET_REAL ("Vertical position"), GET_STRING ("text"));
+		GET_REAL ("Vertical position"), GET_STRINGW (L"text"));
 	Graphics_setFont (GRAPHICS, currentFont);
 	Graphics_setFontSize (GRAPHICS, currentSize);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
@@ -922,7 +923,7 @@ FORM (Text_left, "Praat picture: Text left", "Text left/right/top/bottom...")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textLeft (GRAPHICS, GET_INTEGER ("Far"), GET_STRING ("text"));
+	Graphics_textLeft (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -932,7 +933,7 @@ FORM (Text_right, "Praat picture: Text right", "Text left/right/top/bottom...")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textRight (GRAPHICS, GET_INTEGER ("Far"), GET_STRING ("text"));
+	Graphics_textRight (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -942,7 +943,7 @@ FORM (Text_top, "Praat picture: Text top", "Text left/right/top/bottom...")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textTop (GRAPHICS, GET_INTEGER ("Far"), GET_STRING ("text"));
+	Graphics_textTop (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -952,7 +953,7 @@ FORM (Text_bottom, "Praat picture: Text bottom", "Text left/right/top/bottom..."
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textBottom (GRAPHICS, GET_INTEGER ("Far"), GET_STRING ("text"));
+	Graphics_textBottom (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1055,7 +1056,7 @@ DO
 	praat_picture_open ();
 	Graphics_markLeft (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1075,7 +1076,7 @@ DO
 	praat_picture_open ();
 	Graphics_markRight (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1095,7 +1096,7 @@ DO
 	praat_picture_open ();
 	Graphics_markTop (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1115,7 +1116,7 @@ DO
 	praat_picture_open ();
 	Graphics_markBottom (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1143,7 +1144,7 @@ DO
 	praat_picture_open ();
 	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1163,7 +1164,7 @@ DO
 	praat_picture_open ();
 	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1183,7 +1184,7 @@ DO
 	praat_picture_open ();
 	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1203,7 +1204,7 @@ DO
 	praat_picture_open ();
 	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRING ("text"));
+		GET_STRINGW (L"text"));
 	praat_picture_close ();
 END
 
@@ -1217,7 +1218,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, "(world coordinates)");
+	Melder_informationReal (wc, L"(world coordinates)");
 END
 
 FORM (dxWCtoMM, "Compute horizontal distance in millimetres", 0)
@@ -1230,7 +1231,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, "mm");
+	Melder_informationReal (mm, L"mm");
 END
 
 FORM (dyMMtoWC, "Compute vertical distance in world coordinates", 0)
@@ -1243,7 +1244,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, "(world coordinates)");
+	Melder_informationReal (wc, L"(world coordinates)");
 END
 
 FORM (dyWCtoMM, "Compute vertical distance in millimetres", 0)
@@ -1256,7 +1257,7 @@ DO
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL ("Distance"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, "mm");
+	Melder_informationReal (mm, L"mm");
 END
 
 FORM (textWidth_wc, "Text width in world coordinates", 0)
@@ -1268,9 +1269,9 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth (GRAPHICS, GET_STRING ("text"));
+	wc = Graphics_textWidth (GRAPHICS, GET_STRINGW (L"text"));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, "(world coordinates)");
+	Melder_informationReal (wc, L"(world coordinates)");
 END
 
 FORM (textWidth_mm, "Text width in millimetres", 0)
@@ -1282,9 +1283,9 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING ("text")));
+	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRINGW (L"text")));
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, "mm");
+	Melder_informationReal (mm, L"mm");
 END
 
 FORM (textWidth_ps_wc, "PostScript text width in world coordinates", 0)
@@ -1299,9 +1300,9 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
+	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRINGW (L"text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, "(world coordinates)");
+	Melder_informationReal (wc, L"(world coordinates)");
 END
 
 FORM (textWidth_ps_mm, "PostScript text width in millimetres", 0)
@@ -1316,16 +1317,16 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING ("text"), GET_INTEGER ("Phonetic font") - 1);
+	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRINGW (L"text"), GET_INTEGER ("Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, "mm");
+	Melder_informationReal (mm, L"mm");
 END
 
 DIRECT (SearchManual) Melder_search (); END
-DIRECT (PictureWindowHelp) Melder_help ("Picture window"); END
-DIRECT (AboutSpecialSymbols) Melder_help ("Special symbols"); END
-DIRECT (AboutTextStyles) Melder_help ("Text styles"); END
-DIRECT (PhoneticSymbols) Melder_help ("Phonetic symbols"); END
+DIRECT (PictureWindowHelp) Melder_help (L"Picture window"); END
+DIRECT (AboutSpecialSymbols) Melder_help (L"Special symbols"); END
+DIRECT (AboutTextStyles) Melder_help (L"Text styles"); END
+DIRECT (PhoneticSymbols) Melder_help (L"Phonetic symbols"); END
 
 /**********   **********/
 
@@ -1345,22 +1346,22 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 		if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
 		if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
 		UiHistory_write (L"\nSelect inner viewport... ");
-		UiHistory_write (Melder_singleW (x1NDC + xmargin));
+		UiHistory_write (Melder_single (x1NDC + xmargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (x2NDC - xmargin));
+		UiHistory_write (Melder_single (x2NDC - xmargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (12-y2NDC + ymargin));
+		UiHistory_write (Melder_single (12-y2NDC + ymargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (12-y1NDC - ymargin));
+		UiHistory_write (Melder_single (12-y1NDC - ymargin));
 	} else {
 		UiHistory_write (L"\nSelect outer viewport... ");
-		UiHistory_write (Melder_singleW (x1NDC));
+		UiHistory_write (Melder_single (x1NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (x2NDC));
+		UiHistory_write (Melder_single (x2NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (12-y2NDC));
+		UiHistory_write (Melder_single (12-y2NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_singleW (12-y1NDC));
+		UiHistory_write (Melder_single (12-y1NDC));
 	}
 }
 
@@ -1604,7 +1605,6 @@ void praat_picture_init (void) {
 	praat_addMenuCommand ("Picture", "Font", "-- font ---", 0, 0, 0);
 	praatButton_times = praat_addMenuCommand ("Picture", "Font", "Times", 0, praat_CHECKABLE, DO_Times);
 	praatButton_helvetica = praat_addMenuCommand ("Picture", "Font", "Helvetica", 0, praat_CHECKABLE, DO_Helvetica);
-	praatButton_newCenturySchoolbook = praat_addMenuCommand ("Picture", "Font", "New Century Schoolbook", 0, praat_CHECKABLE, DO_New_Century_Schoolbook);
 	praatButton_palatino = praat_addMenuCommand ("Picture", "Font", "Palatino", 0, praat_CHECKABLE, DO_Palatino);
 	praatButton_courier = praat_addMenuCommand ("Picture", "Font", "Courier", 0, praat_CHECKABLE, DO_Courier);
 
@@ -1671,9 +1671,9 @@ void praat_picture_init (void) {
 }
 
 void praat_picture_prefs (void) {
-	Resources_addInt ("Picture.font", & praat_font);
-	Resources_addInt ("Picture.fontSize", & praat_size);
-	Resources_addInt ("Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport);
+	Resources_addInt (L"Picture.font", & praat_font);
+	Resources_addInt (L"Picture.fontSize", & praat_size);
+	Resources_addInt (L"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport);
 }
 
 void praat_picture_prefsChanged (void) {

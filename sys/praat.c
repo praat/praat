@@ -149,7 +149,7 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	if (inplace) {
-		Melder_error5 (L"No ", klas ? klas -> _classNameW : L"object", L" #", Melder_integerW (inplace), L" selected.");
+		Melder_error5 (L"No ", klas ? klas -> _classNameW : L"object", L" #", Melder_integer (inplace), L" selected.");
 	} else {
 		Melder_error3 (L"No ", klas ? klas -> _classNameW : L"object", L" selected.");
 	}
@@ -754,10 +754,10 @@ void praat_clipboardChanged (void *closure, Any clipboard) {
 				Editor_clipboardChanged (theCurrentPraat -> list [iobject]. editors [ieditor], clipboard);
 }
 
-static void helpProc (const char *query) {
+static void helpProc (const wchar_t *query) {
 	if (theCurrentPraat -> batch) { Melder_flushError ("Cannot view manual from batch."); return; }
 	if (! Manual_create (theCurrentPraat -> topShell, query, theCurrentPraat -> manPages))
-		Melder_flushError ("help: no help on \"%s\".", query);   /* Failure. */
+		Melder_flushError ("help: no help on \"%ls\".", query);   /* Failure. */
 }
 
 static int publishProc (void *anything) {
@@ -1063,7 +1063,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	praat_menuCommands_init ();
 
 	if (Melder_batch) {
-		theCurrentPraat -> batchName = Melder_calloc (1000, sizeof (wchar_t));
+		theCurrentPraat -> batchName = Melder_calloc (wchar_t, 1000);
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		{
 			unsigned int i;
@@ -1261,30 +1261,26 @@ void praat_run (void) {
 	 * The Praat phase should remain praat_STARTING_UP,
 	 * because any added commands must not be included in the buttons file.
 	 */
-	{
-		structMelderFile searchPattern = { 0 };
-		Strings directoryNames;
-		long i;
-		MelderDir_getFileW (& praatDir, L"plugin_*", & searchPattern);
-		directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
-		if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
-			for (i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-				structMelderDir pluginDir = { { 0 } };
-				structMelderFile plugin = { 0 };
-				MelderDir_getSubdirW (& praatDir, Melder_peekAsciiToWcs (directoryNames -> strings [i]), & pluginDir);
-				MelderDir_getFileW (& pluginDir, L"setup.praat", & plugin);
-				if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
-					fclose (f);
-					if (! praat_executeScriptFromFile (& plugin, NULL))
-						Melder_flushError ("%s: plugin \"%s\" contains an error.", praatP.title, MelderFile_messageName (& plugin));
-				} else {
-					Melder_clearError ();
-				}
+	structMelderFile searchPattern = { 0 };
+	MelderDir_getFileW (& praatDir, L"plugin_*", & searchPattern);
+	Strings directoryNames = Strings_createAsDirectoryList (Melder_fileToPathW (& searchPattern));
+	if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
+		for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+			structMelderDir pluginDir = { { 0 } };
+			structMelderFile plugin = { 0 };
+			MelderDir_getSubdirW (& praatDir, directoryNames -> strings [i], & pluginDir);
+			MelderDir_getFileW (& pluginDir, L"setup.praat", & plugin);
+			if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
+				fclose (f);
+				if (! praat_executeScriptFromFile (& plugin, NULL))
+					Melder_flushError ("%s: plugin \"%s\" contains an error.", praatP.title, MelderFile_messageName (& plugin));
+			} else {
+				Melder_clearError ();
 			}
 		}
-		forget (directoryNames);
-		Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 	}
+	forget (directoryNames);
+	Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 
 	if (Melder_batch) {
 		if (doingCommandLineInterface) {
@@ -1299,7 +1295,7 @@ void praat_run (void) {
 				praat_exit (0);
 			} else {
 				structMelderFile batchFile = { 0 };
-				if (! Melder_relativePathToFileW (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
+				if (! Melder_relativePathToFile (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);
 				#endif
@@ -1313,7 +1309,7 @@ void praat_run (void) {
 		/*
 		 * Read the added script buttons. Each line separately: every error should be ignored.
 		 */
-		wchar_t *buttons = MelderFile_readTextW (& buttonsFile);
+		wchar_t *buttons = MelderFile_readText (& buttonsFile);
 		if (buttons == NULL) {
 			Melder_clearError ();   // The file does not have to exist yet.
 		} else {

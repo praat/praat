@@ -38,6 +38,7 @@
  * pb 2007/04/19 allow comments with '!' in forms
  * pb 2007/05/24 some wchar_t
  * pb 2007/06/09 wchar_t
+ * pb 2007/08/12 more wchar_t
  */
 
 #include <ctype.h>
@@ -101,7 +102,7 @@ class_methods_end
 
 Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
 	Interpreter me = new (Interpreter);
-	if (! me || ! (my variables = SortedSetOfStringW_create ())) { forget (me); return NULL; }
+	if (! me || ! (my variables = SortedSetOfString_create ())) { forget (me); return NULL; }
 	my environmentName = Melder_wcsdup (environmentName);
 	my editorClass = editorClass;
 	return me;
@@ -148,8 +149,8 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 				Get the contents of the include file.
 			 */
 			structMelderFile includeFile = { 0 };
-			if (! Melder_relativePathToFileW (includeFileName, & includeFile)) return 0;
-			includeText = MelderFile_readTextW (& includeFile);
+			if (! Melder_relativePathToFile (includeFileName, & includeFile)) return 0;
+			includeText = MelderFile_readText (& includeFile);
 			if (! includeText) {
 				Melder_error3 (L"Include file \"", MelderFile_messageNameW (& includeFile), L"\" not read.");
 				goto end;
@@ -160,7 +161,7 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 			headLength = (head - *text) + wcslen (head);
 			includeTextLength = wcslen (includeText);
 			newLength = headLength + includeTextLength + 1 + wcslen (tail);
-			newText = Melder_malloc ((newLength + 1) * sizeof (wchar_t));
+			newText = Melder_malloc (wchar_t, newLength + 1);
 			if (! newText) { Melder_free (includeText); cherror }
 			wcscpy (newText, *text);
 			wcscpy (newText + headLength, includeText);
@@ -374,8 +375,8 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_POSITIVE: {
 				double value = UiForm_getReal_check (dialog, parameter); cherror
 				Melder_free (my arguments [ipar]);
-				my arguments [ipar] = Melder_calloc (1, 40 * sizeof (wchar_t));
-				wcscpy (my arguments [ipar], Melder_doubleW (value));
+				my arguments [ipar] = Melder_calloc (wchar_t, 40);
+				wcscpy (my arguments [ipar], Melder_double (value));
 				break;
 			}
 			case Interpreter_INTEGER:
@@ -383,7 +384,7 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_BOOLEAN: {
 				long value = UiForm_getInteger (dialog, parameter); cherror
 				Melder_free (my arguments [ipar]);
-				my arguments [ipar] = Melder_calloc (1, 40 * sizeof (wchar_t));
+				my arguments [ipar] = Melder_calloc (wchar_t, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", value);
 				break;
 			}
@@ -394,7 +395,7 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 				integerValue = UiForm_getInteger (dialog, parameter); cherror
 				stringValue = UiForm_getString (dialog, parameter); cherror
 				Melder_free (my arguments [ipar]);
-				my arguments [ipar] = Melder_calloc (1, 40 * sizeof (wchar_t));
+				my arguments [ipar] = Melder_calloc (wchar_t, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", integerValue);
 				wcscpy (my choiceArguments [ipar], stringValue);
 				break;
@@ -444,7 +445,7 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 		 */
 		if (my parameters [ipar] [0] == '\0') continue;
 		Melder_free (my arguments [ipar]);   /* Erase the current values, probably the default values. */
-		my arguments [ipar] = Melder_calloc (1, (length + 1) * sizeof (wchar_t));   /* Replace with the actual arguments. */
+		my arguments [ipar] = Melder_calloc (wchar_t, length + 1);   /* Replace with the actual arguments. */
 		/*
 		 * Skip spaces until next argument.
 		 */
@@ -553,7 +554,7 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key)
 	} else {
 		wcscpy (variableNameIncludingProcedureName, key);
 	}
-	ivar = SortedSetOfStringW_lookUp (my variables, variableNameIncludingProcedureName);
+	ivar = SortedSetOfString_lookUp (my variables, variableNameIncludingProcedureName);
 	return ivar ? my variables -> item [ivar] : NULL;
 }
 
@@ -690,7 +691,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	 * Copy the parameter names and argument values into the array of variables.
 	 */
 	forget (my variables);
-	my variables = SortedSetOfStringW_create ();
+	my variables = SortedSetOfString_create ();
 	for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		wchar_t parameter [200];
 		/*
@@ -756,9 +757,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				 */
 				int headlen = p - command2.string;
 				const wchar_t *string = var -> stringValue ? var -> stringValue :
-					percent ? Melder_percentW (var -> numericValue, precision) :
-					precision >= 0 ?  Melder_fixedW (var -> numericValue, precision) :
-					Melder_doubleW (var -> numericValue);
+					percent ? Melder_percent (var -> numericValue, precision) :
+					precision >= 0 ?  Melder_fixed (var -> numericValue, precision) :
+					Melder_double (var -> numericValue);
 				int arglen = wcslen (string);
 				MelderStringW_ncopyW (& buffer, command2.string, headlen);
 				MelderStringW_appendW (& buffer, string);
@@ -785,7 +786,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					Interpreter_numericExpression (me, command2.string + 7, & value); cherror
 					if (value == 0.0 || value == NUMundefined) {
 						assertionFailed = TRUE;
-						Melder_error6 (L"Script assertion fails in line ", Melder_integerW (lineNumber),
+						Melder_error6 (L"Script assertion fails in line ", Melder_integer (lineNumber),
 							L" (", value ? L"undefined" : L"false", L"):\n   ", command2.string + 7);
 						goto end;
 					}
@@ -830,7 +831,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 								goto end;
 							}
 							if (++ my callDepth > Interpreter_MAX_CALL_DEPTH) {
-								Melder_error3 (L"Call depth greater than ", Melder_integerW (Interpreter_MAX_CALL_DEPTH), L".");
+								Melder_error3 (L"Call depth greater than ", Melder_integer (Interpreter_MAX_CALL_DEPTH), L".");
 								goto end;
 							}
 							wcscpy (my procedureNames [my callDepth], callName);
@@ -1217,9 +1218,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				}
 				if (withFile) {
 					structMelderFile file = { 0 };
-					Melder_relativePathToFileW (p, & file); cherror
+					Melder_relativePathToFile (p, & file); cherror
 					if (withFile == 1) {
-						value = MelderFile_readTextW (& file); cherror
+						value = MelderFile_readText (& file); cherror
 						InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); cherror
 						Melder_free (var -> stringValue);
 						var -> stringValue = value;   /* var becomes owner */
@@ -1230,7 +1231,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						}
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) { Melder_error3 (L"Variable ", command2.string, L" undefined."); goto end; }
-						MelderFile_appendTextW (& file, var -> stringValue); cherror
+						MelderFile_appendText (& file, var -> stringValue); cherror
 					} else {
 						if (theCurrentPraat != & theForegroundPraat) {
 							Melder_error1 (L"Commands that write to a file are not available inside pictures.");
@@ -1238,7 +1239,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						}
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) { Melder_error3 (L"Variable ", command2.string, L" undefined."); goto end; }
-						MelderFile_writeTextW (& file, var -> stringValue); cherror
+						MelderFile_writeText (& file, var -> stringValue); cherror
 					}
 				} else if (isCommand (p)) {
 					/*
@@ -1380,17 +1381,17 @@ end:
 			iferror goto end2;
 		} else if (assertErrorLineNumber != lineNumber) {
 			if (/*assertErrorLineNumber != lineNumber - 1 ||*/ ! Melder_hasError ()) {
-				Melder_error5 (L"Script assertion fails in line ", Melder_integerW (assertErrorLineNumber),
+				Melder_error5 (L"Script assertion fails in line ", Melder_integer (assertErrorLineNumber),
 					L": error " L_LEFT_GUILLEMET L" ", assertErrorString.string, L" " L_RIGHT_GUILLEMET L" not raised. Instead: no error.");
 				goto end2;
 			}
-			if (wcsstr (Melder_getErrorW (), assertErrorString.string)) {
+			if (wcsstr (Melder_getError (), assertErrorString.string)) {
 				Melder_clearError ();
 				assertErrorLineNumber = 0;
 			} else {
-				wchar_t *errorCopy = Melder_wcsdup (Melder_getErrorW ());
+				wchar_t *errorCopy = Melder_wcsdup (Melder_getError ());
 				Melder_clearError ();
-				Melder_error6 (L"Script assertion fails in line ", Melder_integerW (assertErrorLineNumber),
+				Melder_error6 (L"Script assertion fails in line ", Melder_integer (assertErrorLineNumber),
 					L": error " L_LEFT_GUILLEMET L" ", assertErrorString.string, L" " L_RIGHT_GUILLEMET L" not raised. Instead:\n",
 					errorCopy);
 				goto end2;
@@ -1404,7 +1405,7 @@ end2:
 				lineNumber --;
 				Melder_assert (lineNumber > 0);   /* Originally empty lines that stayed empty should not generate errors. */
 			}
-			Melder_error5 (L"Script line ", Melder_integerW (lineNumber), L" not performed or completed:\n" L_LEFT_GUILLEMET L" ",
+			Melder_error5 (L"Script line ", Melder_integer (lineNumber), L" not performed or completed:\n" L_LEFT_GUILLEMET L" ",
 				lines [lineNumber], L" " L_RIGHT_GUILLEMET);
 		}
 	}

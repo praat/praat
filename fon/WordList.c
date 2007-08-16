@@ -53,8 +53,8 @@ static void info (I) {
 	classData -> info (me);
 	long n = WordList_count (me);
 	if (! my length) my length = strlen (my string);
-	MelderInfo_writeLine2 ("Number of words: ", Melder_integer (n));
-	MelderInfo_writeLine2 ("Number of characters: ", Melder_integer (my length - n));
+	MelderInfo_writeLine2 (L"Number of words: ", Melder_integer (n));
+	MelderInfo_writeLine2 (L"Number of characters: ", Melder_integer (my length - n));
 }
 
 static int readBinary (I, FILE *f) {
@@ -64,7 +64,7 @@ static int readBinary (I, FILE *f) {
 	my length = bingeti4 (f);
 	if (my length < 0)
 		return Melder_error ("(WordList::readBinary:) Wrong length %ld.", my length);
-	my string = Melder_malloc (my length + 1);
+	my string = Melder_malloc (char, my length + 1);
 	p = current = (unsigned char *) my string;
 	if (my length > 0) {
 		/*
@@ -155,28 +155,29 @@ WordList Strings_to_WordList (Strings me) {
 	 * Check whether the strings are generic and sorted.
 	 */
 	for (i = 1; i <= my numberOfStrings; i ++) {
-		char *string = my strings [i];
-		const unsigned char *p;
-		for (p = (const unsigned char *) string; *p; p ++) {
-			if (*p > 126)
-				return Melder_errorp ("(Strings_to_WordList:) String \"%s\" not generic.\n"
-					"Please genericize first.", string);
+		wchar_t *string = my strings [i], *p;
+		for (p = & string [0]; *p; p ++) {
+			if (*p > 126) {
+				Melder_error3 (L"(Strings_to_WordList:) String \"", string, L"\" not generic.\nPlease genericize first.");
+				return NULL;
+			}
 		}
-		if (i > 1 && strcmp (my strings [i - 1], string) > 0)
-			return Melder_errorp ("(Strings_to_WordList:) String \"%s\" not sorted.\n"
-				"Please sort first.", string);
-		totalLength += strlen (string);
+		if (i > 1 && wcscmp (my strings [i - 1], string) > 0) {
+			Melder_error3 (L"(Strings_to_WordList:) String \"", string, L"\" not sorted.\nPlease sort first.");
+			return NULL;
+		}
+		totalLength += wcslen (string);
 	}
 	thee = new (WordList); cherror
 	thy length = totalLength + my numberOfStrings;
-	thy string = Melder_malloc (thy length + 1); cherror
+	thy string = Melder_malloc (char, thy length + 1); cherror
 	/*
 	 * Concatenate the strings into the word list.
 	 */
 	q = thy string;
 	for (i = 1; i <= my numberOfStrings; i ++) {
-		long length = strlen (my strings [i]);
-		strcpy (q, my strings [i]);
+		long length = wcslen (my strings [i]);
+		strcpy (q, Melder_peekWcsToAscii (my strings [i]));
 		q += length;
 		*q ++ = '\n';
 	}
@@ -198,8 +199,8 @@ Strings WordList_to_Strings (WordList me) {
 		long length;
 		for (kar = word; *kar != '\n'; kar ++) { }
 		length = kar - word;
-		thy strings [i] = Melder_malloc (length + 1); cherror
-		strncpy (thy strings [i], (const char *) word, length);
+		thy strings [i] = Melder_calloc (wchar_t, length + 1); cherror
+		wcsncpy (thy strings [i], Melder_peekAsciiToWcs ((const char *) word), length);
 		thy strings [i] [length] = '\0';
 		word += length + 1;
 	}

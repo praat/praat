@@ -1,6 +1,6 @@
 /* enum_c.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1995/07/14
  * pb 2002/03/07 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 /* See enum.h */
@@ -29,8 +29,8 @@
 #undef enum_begin
 #undef enum
 #undef enum_end
-#define enum_begin(type,zero)  type enum_##type = { enumlength (type), #type, #zero,
-#define enum(element)  #element,
-#define enum_end(type)  (char *) 0, (int) 0 };
+#define enum_begin(type,zero)  type enum_##type = { enumlength (type), L"" #type, L"" #zero,
+#define enum(element)  L"" #element,
+#define enum_end(type)  (wchar_t *) 0, (int) 0 };
 
 /* End of file enum_c.h */

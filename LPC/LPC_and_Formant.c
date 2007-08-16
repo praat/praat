@@ -127,7 +127,7 @@ Formant LPC_to_Formant (LPC me, double margin)
 
 	if (nmax > 99) return Melder_errorp ("%s: We cannot find the roots of a polynomial "
 		"of order > 99.", proc);
-	if (margin >= samplingFrequency/4) return Melder_errorp ("%s: Margin must be smaller than %s",
+	if (margin >= samplingFrequency/4) return Melder_errorp ("%s: Margin must be smaller than %ls",
 		proc, Melder_double (samplingFrequency/4));
 	 
 	thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax+1)/2);	

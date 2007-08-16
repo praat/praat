@@ -25,6 +25,7 @@
  * pb 2004/04/21 less flashing
  * pb 2007/01/28 made compatible with stereo sounds (by converting them to mono)
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/12 wchar_t
  */
 
 #include "PointEditor.h"
@@ -135,7 +136,7 @@ DO
 	Editor_broadcastChange (me);
 END
 
-DIRECT (PointEditor, cb_PointEditorHelp) Melder_help ("PointEditor"); END
+DIRECT (PointEditor, cb_PointEditorHelp) Melder_help (L"PointEditor"); END
 
 static void createMenus (I) {
 	iam (PointEditor);

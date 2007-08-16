@@ -29,7 +29,7 @@
 /***** CATEGORIES *****/
 
 DIRECT (Categories_getEnthropy)
-	Melder_informationReal (Categories_getEnthropy (ONLY (classCategories)), "bits");
+	Melder_informationReal (Categories_getEnthropy (ONLY (classCategories)), L"bits");
 END
 
 DIRECT (Categories_sort)

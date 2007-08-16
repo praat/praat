@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2005 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/05/06
+ * pb 2007/08/12
  */
 
 /* ManPages macros. */
@@ -29,7 +29,7 @@
 	#include "ManPages.h"
 #endif
 
-#define MAN_BEGIN(t,a,d)  { const char *title = t, *author = a; long date = d; \
+#define MAN_BEGIN(t,a,d)  { const wchar_t *title = t, *author = a; long date = d; \
 	static struct structManPage_Paragraph page [] = {
 #define INTRO(text)  { enumi (ManPage_TYPE, intro), text },
 #define ENTRY(text)  { enumi (ManPage_TYPE, entry), text },

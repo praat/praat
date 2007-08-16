@@ -51,6 +51,7 @@
  * pb 2007/06/21 made spreadsheet file readable as Table
  * pb 2007/07/24 leak and constraint plasticity
  * pb 2007/07/27 leak and constraint plasticity also written...
+ * pb 2007/08/08 wchar_t
  */
 
 #include "OTGrammar.h"
@@ -78,57 +79,57 @@ static void classOTGrammar_info (I) {
 			for (icons = 1; icons <= my numberOfConstraints; icons ++)
 				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine2 ("Decision strategy: ", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
-	MelderInfo_writeLine2 ("Number of constraints: ", Melder_integer (my numberOfConstraints));
-	MelderInfo_writeLine2 ("Number of tableaus: ", Melder_integer (my numberOfTableaus));
-	MelderInfo_writeLine2 ("Number of candidates: ", Melder_integer (numberOfCandidates));
-	MelderInfo_writeLine2 ("Number of violation marks: ", Melder_integer (numberOfViolations));
+	MelderInfo_writeLine2 (L"Decision strategy: ", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
+	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (my numberOfConstraints));
+	MelderInfo_writeLine2 (L"Number of tableaus: ", Melder_integer (my numberOfTableaus));
+	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (numberOfCandidates));
+	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
 static int writeText (I, MelderFile file) {
 	iam (OTGrammar);
-	MelderFile_write7 (file, L"\n<", Melder_peekAsciiToWcs (enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy)),
-		L">\n", Melder_doubleW (my leak), L" ! leak\n", Melder_integerW (my numberOfConstraints), L" constraints");
+	MelderFile_write7 (file, L"\n<", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy),
+		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		MelderFile_write3 (file, L"\nconstraint [", Melder_integerW (icons), L"]: \"");
-		for (const char *p = & constraint -> name [0]; *p; p ++) {
+		MelderFile_write3 (file, L"\nconstraint [", Melder_integer (icons), L"]: \"");
+		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write7 (file, L"\" ", Melder_doubleW (constraint -> ranking),
-			L" ", Melder_doubleW (constraint -> disharmony), L" ", Melder_doubleW (constraint -> plasticity), L" ! ");
-		for (const char *p = & constraint -> name [0]; *p; p ++) {
+		MelderFile_write7 (file, L"\" ", Melder_double (constraint -> ranking),
+			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity), L" ! ");
+		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
 			if (*p == '\n') MelderFile_writeCharacter (file, ' ');
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
 			else if (*p == '}') { }
 			else MelderFile_writeCharacter (file, *p);
 		}
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integerW (my numberOfFixedRankings), L" fixed rankings");
+	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfFixedRankings), L" fixed rankings");
 	for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 		OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-		MelderFile_write4 (file, L"\n   ", Melder_integerW (fixedRanking -> higher), L" ", Melder_integerW (fixedRanking -> lower));
+		MelderFile_write4 (file, L"\n   ", Melder_integer (fixedRanking -> higher), L" ", Melder_integer (fixedRanking -> lower));
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integerW (my numberOfTableaus), L" tableaus");
+	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfTableaus), L" tableaus");
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		MelderFile_write3 (file, L"\ninput [", Melder_integerW (itab), L"]: \"");
-		for (const char *p = & tableau -> input [0]; *p; p ++) {
+		MelderFile_write3 (file, L"\ninput [", Melder_integer (itab), L"]: \"");
+		for (const wchar_t *p = & tableau -> input [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write2 (file, L"\" ", Melder_integerW (tableau -> numberOfCandidates));
+		MelderFile_write2 (file, L"\" ", Melder_integer (tableau -> numberOfCandidates));
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			MelderFile_write3 (file, L"\n   candidate [", Melder_integerW (icand), L"]: \"");
-			for (const char *p = & candidate -> output [0]; *p; p ++) {
+			MelderFile_write3 (file, L"\n   candidate [", Melder_integer (icand), L"]: \"");
+			for (const wchar_t *p = & candidate -> output [0]; *p; p ++) {
 				if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 				MelderFile_writeCharacter (file, *p);
 			}
 			MelderFile_writeCharacter (file, '\"');
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				MelderFile_write2 (file, L" ", Melder_integerW (candidate -> marks [icons]));
+				MelderFile_write2 (file, L" ", Melder_integer (candidate -> marks [icons]));
 			}
 		}
 	}
@@ -158,13 +159,13 @@ static int readText (I, MelderReadString *text) {
 	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		constraint -> name = texgets2 (text); iferror return Melder_error3 (L"Trying to read name of constraint ", Melder_integerW (icons), L".");
-		constraint -> ranking = texgetr8 (text); iferror return Melder_error3 (L"Trying to read ranking of constraint ", Melder_integerW (icons), L".");
-		constraint -> disharmony = texgetr8 (text); iferror return Melder_error3 (L"Trying to read disharmony of constraint ", Melder_integerW (icons), L".");
+		constraint -> name = texgetw2 (text); iferror return Melder_error3 (L"Trying to read name of constraint ", Melder_integer (icons), L".");
+		constraint -> ranking = texgetr8 (text); iferror return Melder_error3 (L"Trying to read ranking of constraint ", Melder_integer (icons), L".");
+		constraint -> disharmony = texgetr8 (text); iferror return Melder_error3 (L"Trying to read disharmony of constraint ", Melder_integer (icons), L".");
 		if (localVersion < 2) {
 			constraint -> plasticity = 1.0;
 		} else {
-			constraint -> plasticity = texgetr8 (text); iferror return Melder_error3 (L"Trying to read plasticity of constraint ", Melder_integerW (icons), L".");;
+			constraint -> plasticity = texgetr8 (text); iferror return Melder_error3 (L"Trying to read plasticity of constraint ", Melder_integer (icons), L".");;
 		}
 	}
 	my numberOfFixedRankings = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of fixed rankings.");
@@ -172,8 +173,8 @@ static int readText (I, MelderReadString *text) {
 		if (! (my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings))) return 0;
 		for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-			fixedRanking -> higher = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the higher of constraint pair ", Melder_integerW (irank), L".");;
-			fixedRanking -> lower = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the lower of constraint pair ", Melder_integerW (irank), L".");
+			fixedRanking -> higher = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the higher of constraint pair ", Melder_integer (irank), L".");;
+			fixedRanking -> lower = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the lower of constraint pair ", Melder_integer (irank), L".");
 		}
 	}
 	my numberOfTableaus = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of tableaus.");
@@ -181,33 +182,33 @@ static int readText (I, MelderReadString *text) {
 	if (! (my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus))) return 0;
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		tableau -> input = texgets2 (text); iferror return Melder_error3 (L"Trying to read input of tableau ", Melder_integerW (itab), L".");
-		tableau -> numberOfCandidates = texgeti4 (text); iferror return Melder_error3 (L"Trying to read number of candidates of tableau ", Melder_integerW (itab), L".");
+		tableau -> input = texgetw2 (text); iferror return Melder_error3 (L"Trying to read input of tableau ", Melder_integer (itab), L".");
+		tableau -> numberOfCandidates = texgeti4 (text); iferror return Melder_error3 (L"Trying to read number of candidates of tableau ", Melder_integer (itab), L".");
 		if (tableau -> numberOfCandidates < 1) return Melder_error9
-			(L"No candidates in tableau ", Melder_integerW (itab),
-			 L" (input: ", Melder_peekAsciiToWcs (tableau -> input), L")"
+			(L"No candidates in tableau ", Melder_integer (itab),
+			 L" (input: ", tableau -> input, L")"
 			 L" in line ", MelderReadString_getLineNumber (text),
 			 itab == 1 ? L"." : L", or perhaps wrong number of candidates for input " L_LEFT_GUILLEMET,
-			 itab == 1 ? NULL : Melder_peekAsciiToWcs (my tableaus [itab - 1]. input),
+			 itab == 1 ? NULL : my tableaus [itab - 1]. input,
 			 itab == 1 ? NULL : L_RIGHT_GUILLEMET L".");
 		if (! (tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates))) return 0;
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			candidate -> output = texgets2 (text); iferror return Melder_error9
-				(L"Trying to read candidate ", Melder_integerW (icand),
-				 L" of tableau ", Melder_integerW (itab),
-				 L" (input: ", Melder_peekAsciiToWcs (tableau -> input), L")"
+			candidate -> output = texgetw2 (text); iferror return Melder_error9
+				(L"Trying to read candidate ", Melder_integer (icand),
+				 L" of tableau ", Melder_integer (itab),
+				 L" (input: ", tableau -> input, L")"
 				 L" in line ", MelderReadString_getLineNumber (text), L".");
 			candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 			if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 				candidate -> marks [icons] = texgeti2 (text); iferror return Melder_error15
-					(L"Trying to read number of violations of constraint ", Melder_integerW (icons),
-					 L" (", Melder_peekAsciiToWcs (my constraints [icons]. name), L")"
-					 L" of candidate ", Melder_integerW (icand),
-					 L" (", Melder_peekAsciiToWcs (candidate -> output), L")"
-					 L" of tableau ", Melder_integerW (itab),
-					 L" (input: ", Melder_peekAsciiToWcs (tableau -> input), L")"
+					(L"Trying to read number of violations of constraint ", Melder_integer (icons),
+					 L" (", my constraints [icons]. name, L")"
+					 L" of candidate ", Melder_integer (icand),
+					 L" (", candidate -> output, L")"
+					 L" of tableau ", Melder_integer (itab),
+					 L" (input: ", tableau -> input, L")"
 					 L" in line ", MelderReadString_getLineNumber (text), L".");
 			}
 		}
@@ -257,7 +258,7 @@ static int constraintCompare (const void *first, const void *second) {
 	/*
 	 * Tied constraints are sorted alphabetically.
 	 */
-	return strcmp (my constraints [icons]. name, my constraints [jcons]. name);
+	return wcscmp (my constraints [icons]. name, my constraints [jcons]. name);
 }
 
 void OTGrammar_sort (OTGrammar me) {
@@ -283,10 +284,10 @@ void OTGrammar_newDisharmonies (OTGrammar me, double spreading) {
 	OTGrammar_sort (me);
 }
 
-long OTGrammar_getTableau (OTGrammar me, const char *input) {
+long OTGrammar_getTableau (OTGrammar me, const wchar_t *input) {
 	long i, n = my numberOfTableaus;
-	for (i = 1; i <= n; i ++) if (strequ (my tableaus [i]. input, input)) return i;
-	return Melder_error ("Input \"%s\" not in list of tableaus.", input);
+	for (i = 1; i <= n; i ++) if (wcsequ (my tableaus [i]. input, input)) return i;
+	return Melder_error3 (L"Input \"", input, L"\" not in list of tableaus.");
 }
 
 static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
@@ -480,12 +481,12 @@ int OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand)
 	return TRUE;
 }
 
-int OTGrammar_getInterpretiveParse (OTGrammar me, const char *partialOutput, long *bestTableau, long *bestCandidate) {
+int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, long *bestTableau, long *bestCandidate) {
 	long itab_best = 0, icand_best = 0, itab, icand, numberOfBestCandidates = 0;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			if (strstr (tableau -> candidates [icand]. output, partialOutput)) {   /* T&S idea of surface->overt mapping */
+			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {   /* T&S idea of surface->overt mapping */
 				if (itab_best == 0) {
 					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
 					icand_best = icand;
@@ -511,22 +512,22 @@ int OTGrammar_getInterpretiveParse (OTGrammar me, const char *partialOutput, lon
 		}
 	}
 	if (itab_best == 0) {
-		Melder_error ("The partial output \"%s\" does not match any candidate for any input form.", partialOutput);
+		Melder_error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.");
 		goto end;
 	}
 end:
 	if (bestTableau != NULL) *bestTableau = itab_best;
 	if (bestCandidate != NULL) *bestCandidate = icand_best;
-	iferror return Melder_error ("(OTGrammar: Get interpretive parse:) Not performed.");
+	iferror return Melder_error1 (L"(OTGrammar: Get interpretive parse:) Not performed.");
 	return 1;
 }
 
-int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const char *partialOutput) {
+int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput) {
 	long itab, icand;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			if (strstr (tableau -> candidates [icand]. output, partialOutput)) {
+			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {
 				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
 					return TRUE;
 				}
@@ -536,12 +537,12 @@ int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const char *partialOutpu
 	return FALSE;
 }
 
-int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const char *partialOutput) {
+int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput) {
 	long itab, icand, jcand, found = FALSE;
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			if (strstr (tableau -> candidates [icand]. output, partialOutput)) {
+			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {
 				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
 					found = TRUE;
 					/*
@@ -549,7 +550,7 @@ int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const char *partia
 					 */
 					for (jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
 						if (OTGrammar_compareCandidates (me, itab, jcand, itab, icand) == 0) {
-							if (strstr (tableau -> candidates [jcand]. output, partialOutput) == NULL) {
+							if (wcsstr (tableau -> candidates [jcand]. output, partialOutput) == NULL) {
 								return FALSE;   /* Partial output is multiply optimal. */
 							}
 						}
@@ -602,10 +603,10 @@ static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwin
 	return my numberOfConstraints;   /* Nothing grey. */
 }
 
-static double OTGrammar_constraintWidth (Graphics g, const char *name) {
-	char text [100], *newLine;
-	strcpy (text, name);
-	newLine = strchr (text, '\n');
+static double OTGrammar_constraintWidth (Graphics g, const wchar_t *name) {
+	wchar_t text [100], *newLine;
+	wcscpy (text, name);
+	newLine = wcschr (text, '\n');
 	if (newLine) {
 		double firstWidth, secondWidth;
 		*newLine = '\0';
@@ -616,14 +617,18 @@ static double OTGrammar_constraintWidth (Graphics g, const char *name) {
 	return Graphics_textWidth (g, text);
 }
 
-void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
+void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 	long itab, winner, icons, icand, numberOfOptimalCandidates, imark;
 	OTGrammarTableau tableau;
 	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
 	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
-	char text [200];
+	wchar_t text [200];
 	itab = OTGrammar_getTableau (me, input);
-	if (! itab) { Melder_flushError ("This grammar accepts no input \"%s\".", input); return; }
+	if (! itab) {
+		Melder_error3 (L"This grammar accepts no input \"", input, L"\".");
+		Melder_flushError (NULL);
+		return;
+	}
 	_OTGrammar_fillInHarmonies (me, itab);
 	winner = OTGrammar_getWinner (me, itab);
 	
@@ -640,7 +645,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 	headerHeight = rowHeight;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		if (strchr (constraint -> name, '\n')) {
+		if (wcschr (constraint -> name, '\n')) {
 			headerHeight *= 1.6;
 			break;
 		}
@@ -682,7 +687,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 	 */
 	y -= headerHeight;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_printf (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, "%s", input);
+	Graphics_text (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, input);
 	Graphics_rectangle (g, x, x + candWidth, y, y + headerHeight);
 	/*
 	 * Draw constraint names.
@@ -691,10 +696,10 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-		if (strchr (constraint -> name, '\n')) {
-			char *newLine;
-			strcpy (text, constraint -> name);
-			newLine = strchr (text, '\n');
+		if (wcschr (constraint -> name, '\n')) {
+			wchar_t *newLine;
+			wcscpy (text, constraint -> name);
+			newLine = wcschr (text, '\n');
 			*newLine = '\0';
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 			Graphics_text (g, x + 0.5 * width, y + headerHeight, text);
@@ -729,7 +734,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
-			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, "\\pf");
+			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"\\pf");
 			Graphics_setColour (g, Graphics_BLACK);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
@@ -757,7 +762,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			int index = my index [icons];
 			OTGrammarConstraint constraint = & my constraints [index];
 			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-			char markString [40];
+			wchar_t markString [40];
 			markString [0] = '\0';
 			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
 				/*
@@ -769,12 +774,12 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 				if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
 					int winnerMarks = tableau -> candidates [winner]. marks [index];
 					for (imark = 1; imark <= winnerMarks + 1; imark ++)
-						strcat (markString, "*");
+						wcscat (markString, L"*");
 					for (imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
-						strcat (markString, "+");
-					strcat (markString, "!");
+						wcscat (markString, L"+");
+					wcscat (markString, L"!");
 					for (imark = winnerMarks + 2; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-						strcat (markString, "*");
+						wcscat (markString, L"*");
 				} else {
 					if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
 					    crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
@@ -782,15 +787,15 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 						Graphics_setColour (g, Graphics_RED);
 					}
 					for (imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-						strcat (markString, "*");
+						wcscat (markString, L"*");
 					for (imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
-						strcat (markString, "+");
+						wcscat (markString, L"+");
 				}
 			} else {
 				for (imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-					strcat (markString, "*");
+					wcscat (markString, L"*");
 				for (imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
-					strcat (markString, "+");
+					wcscat (markString, L"+");
 			}
 			Graphics_text (g, x + 0.5 * width, y + descent, markString);
 			Graphics_setColour (g, Graphics_BLACK);
@@ -810,7 +815,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const char *input) {
 			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
 				value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
 			}
-			Graphics_printf (g, x, y + descent, "%s", Melder_fixedA (value, 3));
+			Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
 		}
 	}
 	/*
@@ -828,7 +833,7 @@ Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 	thy strings = NUMpvector (1, thy numberOfStrings = numberOfTrials); cherror
 	for (i = 1; i <= numberOfTrials; i ++) {
 		long itab = NUMrandomInteger (1, my numberOfTableaus);
-		thy strings [i] = Melder_strdup (my tableaus [itab]. input); cherror
+		thy strings [i] = Melder_wcsdup (my tableaus [itab]. input); cherror
 	}
 end:	iferror forget (thee);
 	return thee;
@@ -839,19 +844,19 @@ Strings OTGrammar_getInputs (OTGrammar me) {
 	Strings thee = new (Strings); cherror
 	thy strings = NUMpvector (1, thy numberOfStrings = my numberOfTableaus); cherror
 	for (i = 1; i <= my numberOfTableaus; i ++) {
-		thy strings [i] = Melder_strdup (my tableaus [i]. input); cherror
+		thy strings [i] = Melder_wcsdup (my tableaus [i]. input); cherror
 	}
 end:	iferror forget (thee);
 	return thee;
 }
 
-int OTGrammar_inputToOutput (OTGrammar me, const char *input, char *output, double rankingSpreading) {
+int OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output, double rankingSpreading) {
 	long itab, winner;
 	OTGrammar_newDisharmonies (me, rankingSpreading);
 	itab = OTGrammar_getTableau (me, input); cherror
 	winner = OTGrammar_getWinner (me, itab);
 	if (! winner) { Melder_error ("No winner"); goto end; }
-	strcpy (output, my tableaus [itab]. candidates [winner]. output);
+	wcscpy (output, my tableaus [itab]. candidates [winner]. output);
 end:
 	iferror return Melder_error ("(OTGrammar_inputToOutput:) Not performed.");
 	return 1;
@@ -864,25 +869,25 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double rankingS
 	outputs -> numberOfStrings = n;
 	outputs -> strings = NUMpvector (1, n); cherror
 	for (i = 1; i <= n; i ++) {
-		char output [100];
+		wchar_t output [100];
 		OTGrammar_inputToOutput (me, inputs -> strings [i], output, rankingSpreading); cherror
-		outputs -> strings [i] = Melder_strdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup (output); cherror
 	}
 end:
 	iferror { forget (outputs); return Melder_errorp ("(OTGrammar_inputsToOutputs:) Not performed."); }
 	return outputs;
 }
 
-Strings OTGrammar_inputToOutputs (OTGrammar me, const char *input, long n, double rankingSpreading) {
+Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, double rankingSpreading) {
 	Strings outputs = new (Strings);
 	long i;
 	cherror
 	outputs -> numberOfStrings = n;
 	outputs -> strings = NUMpvector (1, n); cherror
 	for (i = 1; i <= n; i ++) {
-		char output [100];
+		wchar_t output [100];
 		OTGrammar_inputToOutput (me, input, output, rankingSpreading); cherror
-		outputs -> strings [i] = Melder_strdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup (output); cherror
 	}
 end:
 	iferror return Melder_errorp ("(OTGrammar_inputToOutputs:) Not performed.");
@@ -906,15 +911,15 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%s\"", tableau -> input))
+		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
 			{ forget (thee); return NULL; }
 		/*
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			char rowTitle [1000];
-			sprintf (rowTitle, "%s \\-> %s", tableau -> input, tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_strdup (rowTitle);
+			wchar_t rowTitle [1000];
+			swprintf (rowTitle, 100, L"%ls \\-> %ls", tableau -> input, tableau -> candidates [icand]. output);
+			thy rowLabels [nout + icand] = Melder_wcsdup (rowTitle);
 		}
 		/*
 		 * Compute a number of outputs and store the results.
@@ -952,7 +957,7 @@ PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInpu
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%s\"", tableau -> input))
+		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
 			{ forget (thee); return NULL; }
 		/*
 		 * Copy the input and output strings to the target object.
@@ -1015,15 +1020,15 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%s\"", tableau -> input))
+		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
 			{ forget (thee); return NULL; }
 		/*
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			char rowTitle [1000];
-			sprintf (rowTitle, "%s \\-> %s", tableau -> input, tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_strdup (rowTitle);
+			wchar_t rowTitle [1000];
+			swprintf (rowTitle, 1000, L"%ls \\-> %ls", tableau -> input, tableau -> candidates [icand]. output);
+			thy rowLabels [nout + icand] = Melder_wcsdup (rowTitle);
 		}
 		/*
 		 * Compute a number of outputs and store the results.
@@ -1188,7 +1193,7 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		if (icons > my numberOfConstraints) {   /* Completed the loop? */
 			if (warnIfStalled && ! equivalent)
 				Melder_warning ("(OTGrammar_step:) Adult form has strict superset violations! EDCD stalls.\n"
-					"Underlying form: %s\nAdult output: %s\nWinner output: %s", tableau -> input, loser -> output, winner -> output);
+					"Underlying form: %ls\nAdult output: %ls\nWinner output: %ls", tableau -> input, loser -> output, winner -> output);
 			goto end;
 		}
 		/*
@@ -1246,7 +1251,7 @@ end:
 	return 1;
 }
 
-int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *adultOutput,
+int OTGrammar_learnOne (OTGrammar me, const wchar_t *underlyingForm, const wchar_t *adultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
 	double meanLearningStep, double relativeStdevLearningStep, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
 {
@@ -1272,7 +1277,7 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 	/*
 	 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
 	 */
-	if (strequ (winner -> output, adultOutput)) goto end;
+	if (wcsequ (winner -> output, adultOutput)) goto end;
 
 	/*
 	 * Find (perhaps the learner's interpretation of) the adult winner (the "loser") in the learner's own tableau
@@ -1280,10 +1285,10 @@ int OTGrammar_learnOne (OTGrammar me, const char *underlyingForm, const char *ad
 	 */
 	for (iloser = 1; iloser <= tableau -> numberOfCandidates; iloser ++) {
 		loser = & tableau -> candidates [iloser];
-		if (strequ (loser -> output, adultOutput)) break;
+		if (wcsequ (loser -> output, adultOutput)) break;
 	}
 	if (iloser > tableau -> numberOfCandidates)
-		{ Melder_error ("Cannot generate adult output \"%s\".", adultOutput); goto end; }
+		{ Melder_error3 (L"Cannot generate adult output \"", adultOutput, L"\"."); goto end; }
 
 	/*
 	 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
@@ -1328,7 +1333,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	}
 	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-			char *input, *output;
+			wchar_t *input, *output;
 			if (! PairDistribution_peekPair (thee, & input, & output)) goto end;
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
@@ -1342,7 +1347,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
 			if (! Melder_monitor ((double) idatum / numberOfData,
-				"Processing input-output pair %ld out of %ld: %s -> %s", idatum, numberOfData, input, output))
+				"Processing input-output pair %ld out of %ld: %ls -> %ls", idatum, numberOfData, input, output))
 			{
 				Melder_flushError ("Only %ld input-output pairs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -1427,7 +1432,7 @@ static void OTGrammar_restore (OTGrammar me) {
 	}
 }
 
-int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultOutput,
+int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAdultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
 	double meanLearningStep, double relativeStdevLearningStep, long numberOfChews, int warnIfStalled)
 {
@@ -1454,7 +1459,7 @@ int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const char *partialAdultO
 		OTGrammarCandidate learnerCandidate;
 		OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
 		learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
-		if (! strequ (learnerCandidate -> output,
+		if (! wcsequ (learnerCandidate -> output,
 		    my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
 		{   /* Still ungrammatical? */
 			/*
@@ -1472,11 +1477,11 @@ static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, 
 	long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   /* E.g. 0, 20, 40, ... */
 	OTHistory thee = new (OTHistory); cherror
 	TableOfReal_init (thee, 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints); cherror
-	TableOfReal_setColumnLabel (thee, 1, "Datum");
+	TableOfReal_setColumnLabel (thee, 1, L"Datum");
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		TableOfReal_setColumnLabel (thee, icons + 1, my constraints [icons]. name); cherror
 	}
-	TableOfReal_setRowLabel (thee, 1, "Initial state"); cherror
+	TableOfReal_setRowLabel (thee, 1, L"Initial state"); cherror
 	thy data [1] [1] = 0;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		thy data [1] [icons + 1] = my constraints [icons]. ranking;
@@ -1486,7 +1491,7 @@ end:
 	return thee;
 }
 
-static int OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHistoryEvery, long idatum, const char *input) {
+static int OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHistoryEvery, long idatum, const wchar_t *input) {
 	if (idatum % storeHistoryEvery == 0) {
 		long irow = 2 * idatum / storeHistoryEvery, icons;
 		TableOfReal_setRowLabel (thee, irow, input); cherror
@@ -1504,7 +1509,7 @@ end:
 
 static int OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, long idatum) {
 	long icons;
-	TableOfReal_setRowLabel (thee, thy numberOfRows, "Final state"); cherror
+	TableOfReal_setRowLabel (thee, thy numberOfRows, L"Final state"); cherror
 	thy data [thy numberOfRows] [1] = idatum;
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		thy data [thy numberOfRows] [icons + 1] = my constraints [icons]. ranking;
@@ -1560,7 +1565,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 	}
 	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-			char *partialOutput;
+			wchar_t *partialOutput;
 			if (! Distributions_peek (thee, columnNumber, & partialOutput)) goto end;
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
@@ -1574,7 +1579,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
 			if (! Melder_monitor ((double) idatum / numberOfData,
-				"Processing partial output %ld out of %ld: %s", idatum, numberOfData, partialOutput))
+				"Processing partial output %ld out of %ld: %ls", idatum, numberOfData, partialOutput))
 			{
 				Melder_flushError ("Only %ld partial outputs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -1604,13 +1609,13 @@ int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistributio
 {
 	long ireplication, numberOfCorrect = 0, inputTableau;
 	for (ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
-		char *input, *adultOutput;
+		wchar_t *input, *adultOutput;
 		OTGrammarCandidate learnerCandidate;
 		PairDistribution_peekPair (thee, & input, & adultOutput); cherror
 		OTGrammar_newDisharmonies (me, evaluationNoise);
 		inputTableau = OTGrammar_getTableau (me, input); cherror
 		learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];
-		if (strequ (learnerCandidate -> output, adultOutput))
+		if (wcsequ (learnerCandidate -> output, adultOutput))
 			numberOfCorrect ++;
 	}
 end:
@@ -1624,13 +1629,13 @@ int OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions thee
 {
 	long ireplication, numberOfCorrect = 0, assumedAdultInputTableau, assumedAdultCandidate;
 	for (ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
-		char *partialOutput;
+		wchar_t *partialOutput;
 		OTGrammarCandidate learnerCandidate;
 		Distributions_peek (thee, columnNumber, & partialOutput); cherror
 		OTGrammar_newDisharmonies (me, evaluationNoise);
 		OTGrammar_getInterpretiveParse (me, partialOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
 		learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
-		if (strequ (learnerCandidate -> output, my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
+		if (wcsequ (learnerCandidate -> output, my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
 			numberOfCorrect ++;
 	}
 end:
@@ -1639,7 +1644,7 @@ end:
 	return 1;
 }
 
-int OTGrammar_removeConstraint (OTGrammar me, const char *constraintName) {
+int OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName) {
 	long icons, ifixed, jfixed, itab, icand, removed = 0;
 
 	if (my numberOfConstraints <= 1)
@@ -1650,13 +1655,13 @@ int OTGrammar_removeConstraint (OTGrammar me, const char *constraintName) {
 	 */
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		if (strequ (constraint -> name, constraintName)) {
+		if (wcsequ (constraint -> name, constraintName)) {
 			removed = icons;
 			break;
 		}
 	}
 	if (removed == 0)
-		return Melder_error ("No constraint \"%s\".", constraintName);
+		return Melder_error3 (L"No constraint \"", constraintName, L"\".");
 	/*
 	 * Remove the constraint while reusing the memory space.
 	 */
@@ -1871,7 +1876,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		if (! grammarHasChangedDuringCycle) break;
 	}
 	if (itrial > 40) {
-		MelderInfo_writeLine1 ("There are no total rankings that generate these input-output pairs.");
+		MelderInfo_writeLine1 (L"There are no total rankings that generate these input-output pairs.");
 		goto end;
 	}
 	/*
@@ -1886,7 +1891,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 			my fixedRankings [my numberOfFixedRankings]. higher = icons;
 			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 			OTGrammar_reset (me, 100.0);
-			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %s >> %s", ipair + 1, npair,
+			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %ls >> %ls", ipair + 1, npair,
 				my constraints [icons]. name, my constraints [jcons]. name);
 			ipair ++;
 			for (itrial = 1; itrial <= 40; itrial ++) {
@@ -1910,7 +1915,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 			}
 			if (itrial > 40) {
 				obligatory [jcons] [icons] = TRUE;
-				MelderInfo_writeLine3 (my constraints [jcons]. name, " >> ", my constraints [icons]. name);
+				MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
 				MelderInfo_close ();
 			}
 		}
@@ -2012,8 +2017,8 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 	}
 	for (ilist = 1; ilist <= list -> size; ilist ++) {
 		OTGrammar_List4 el = list -> item [ilist];
-		MelderInfo_write4 (my constraints [el -> hi1]. name, " >> ", my constraints [el -> lo1]. name, " OR ");
-		MelderInfo_writeLine3 (my constraints [el -> hi2]. name, " >> ", my constraints [el -> lo2]. name);
+		MelderInfo_write4 (my constraints [el -> hi1]. name, L" >> ", my constraints [el -> lo1]. name, L" OR ");
+		MelderInfo_writeLine3 (my constraints [el -> hi2]. name, L" >> ", my constraints [el -> lo2]. name);
 		MelderInfo_close ();
 	}
 end:
@@ -2062,7 +2067,7 @@ int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions 
 			my fixedRankings [my numberOfFixedRankings]. higher = icons;
 			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 			OTGrammar_reset (me, 100.0);
-			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %s >> %s", ipair + 1, npair,
+			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %ls >> %ls", ipair + 1, npair,
 				my constraints [icons]. name, my constraints [jcons]. name);
 			ipair ++;
 			Melder_progressOff ();
@@ -2072,7 +2077,7 @@ int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions 
 			Melder_progressOn ();
 			for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
 				if (my constraints [kcons]. ranking < 0.0) {
-					MelderInfo_writeLine3 (my constraints [jcons]. name, " >> ", my constraints [icons]. name);
+					MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
 					break;
 				}
 			}
@@ -2095,74 +2100,74 @@ end:
 	return 1;
 }
 
-static void printConstraintNames (OTGrammar me, FILE *f) {
-	long icons;
-	char text [200];
+static void printConstraintNames (OTGrammar me, MelderStringW *buffer) {
+	wchar_t text [200];
 	int secondLine = FALSE;
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		if (strchr (constraint -> name, '\n')) {
-			char *newLine;
-			strcpy (text, constraint -> name);
-			newLine = strchr (text, '\n');
+		if (wcschr (constraint -> name, '\n')) {
+			wchar_t *newLine;
+			wcscpy (text, constraint -> name);
+			newLine = wcschr (text, '\n');
 			*newLine = '\0';
-			fprintf (f, "\t%s", text);
+			MelderStringW_append2 (buffer, L"\t", text);
 			secondLine = TRUE;
 		} else {
-			fprintf (f, "\t%s", constraint -> name);
+			MelderStringW_append2 (buffer, L"\t", constraint -> name);
 		}
 	}
-	fprintf (f, "\n");
+	MelderStringW_appendCharacter (buffer, '\n');
 	if (secondLine) {
-		fprintf (f, "\t");
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		MelderStringW_appendCharacter (buffer, '\t');
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			char *newLine = strchr (constraint -> name, '\n');
-			fprintf (f, "\t%s", newLine ? newLine + 1 : "");
+			wchar_t *newLine = wcschr (constraint -> name, '\n');
+			MelderStringW_append2 (buffer, L"\t", newLine ? newLine + 1 : L"");
 		}
-		fprintf (f, "\n");
+		MelderStringW_appendCharacter (buffer, '\n');
 	}
 }
 
 int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
-	long itab, icons;
-	FILE *f = Melder_fopen (file, "w"); cherror
-	fprintf (f, "CONSTRAINTS\t");
-	printConstraintNames (me, f);
-	fprintf (f, "rankings\t");
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	MelderStringW buffer = { 0 };
+	MelderStringW_append1 (& buffer, L"CONSTRAINTS\t");
+	printConstraintNames (me, & buffer);
+	MelderStringW_append1 (& buffer, L"rankings\t");
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		fprintf (f, "\t%f", constraint -> ranking);
+		MelderStringW_append2 (& buffer, L"\t", Melder_double (constraint -> ranking));
 	}
-	fprintf (f, "\ndisharmonies\t");
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	MelderStringW_append1 (& buffer, L"\ndisharmonies\t");
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		fprintf (f, "\t%f", constraint -> disharmony);
+		MelderStringW_append2 (& buffer, L"\t", Melder_double (constraint -> disharmony));
 	}
-	fprintf (f, "\n");
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+	MelderStringW_appendCharacter (& buffer, '\n');
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		long winner = OTGrammar_getWinner (me, itab), icand, numberOfOptimalCandidates = 0;
-		for (icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
-			fprintf (f, "\t");
+		long winner = OTGrammar_getWinner (me, itab), numberOfOptimalCandidates = 0;
+		for (long icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
+			MelderStringW_appendCharacter (& buffer, '\t');
 		}
-		fprintf (f, "\nINPUT\t%s", tableau -> input);
-		printConstraintNames (me, f);
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		MelderStringW_append2 (& buffer, L"\nINPUT\t", tableau -> input);
+		printConstraintNames (me, & buffer);
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
 				numberOfOptimalCandidates ++;
 			}
 		}
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
 			int candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
 			long crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
-			fprintf (f, "%s\t%s", candidateIsOptimal == FALSE ? "loser" :
-				numberOfOptimalCandidates > 1 ? "co-winner" : "winner", candidate -> output);
-			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			MelderStringW_append3 (& buffer,
+				candidateIsOptimal == FALSE ? L"loser" : numberOfOptimalCandidates > 1 ? L"co-winner" : L"winner",
+				L"\t",
+				candidate -> output);
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int index = my index [icons], imark;
 				OTGrammarConstraint constraint = & my constraints [index];
-				char markString [40];
+				wchar_t markString [40];
 				markString [0] = '\0';
 				/*
 				 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
@@ -2173,27 +2178,27 @@ int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
 				if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
 					int winnerMarks = tableau -> candidates [winner]. marks [index];
 					for (imark = 1; imark <= winnerMarks + 1; imark ++)
-						strcat (markString, "*");
-					strcat (markString, "!");
+						wcscat (markString, L"*");
+					wcscat (markString, L"!");
 					for (imark = winnerMarks + 2; imark <= candidate -> marks [index]; imark ++)
-						strcat (markString, "*");
+						wcscat (markString, L"*");
 				} else {
 					if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
 					    crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
 					{
-						strcat (markString, "=");
+						wcscat (markString, L"=");
 					}
 					for (imark = 1; imark <= candidate -> marks [index]; imark ++)
-						strcat (markString, "*");
+						wcscat (markString, L"*");
 				}
-				fprintf (f, "\t%s", markString);
+				MelderStringW_append2 (& buffer, L"\t", markString);
 			}
-			fprintf (f, "\n");
+			MelderStringW_appendCharacter (& buffer, '\n');
 		}
 	}
-	Melder_fclose (file, f); cherror
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	MelderFile_writeText (file, buffer.string); cherror
 end:
+	MelderStringW_free (& buffer);
 	iferror return 0;
 	return 1;
 }

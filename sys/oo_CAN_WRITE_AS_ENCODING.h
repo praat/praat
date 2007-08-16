@@ -51,20 +51,20 @@
 #define oo_STRINGx_VECTOR(storage,x,min,max)
 
 #define oo_STRINGWx(storage,x)  \
-	if (my x && ! Melder_isValidAscii (my x)) return false;
+	if (my x && ! Melder_isEncodable (my x, encoding)) return false;
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (my x [i] && ! Melder_isValidAscii (my x [i])) return false;
+		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		if (my x [i] && ! Melder_isValidAscii (my x [i])) return false;
+		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
-			if (my x [i] && ! Melder_isValidAscii (my x [i])) return false; \
+			if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false; \
 	}
 
 #define oo_STRUCT(Type,x)  \
@@ -162,7 +162,7 @@
 #define oo_COPYING  0
 #define oo_EQUALLING  0
 #define oo_COMPARING  0
-#define oo_VALIDATING_ASCII  1
+#define oo_VALIDATING_ENCODING  1
 #define oo_READING  0
 #define oo_READING_TEXT  0
 #define oo_READING_BINARY  0

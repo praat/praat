@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 /* Collections contain a number of items whose class is a subclass of Data.
@@ -303,19 +303,8 @@ class_create (SortedSetOfString, SortedSet);
 
 int SortedSetOfString_init (I);
 SortedSetOfString SortedSetOfString_create (void);
-long SortedSetOfString_lookUp (SortedSetOfString me, const char *string);
-int SortedSetOfString_add (SortedSetOfString me, const char *string);
-
-/********** class SortedSetOfStringW **********/
-
-#define SortedSetOfStringW_members SortedSet_members
-#define SortedSetOfStringW_methods SortedSet_methods
-class_create (SortedSetOfStringW, SortedSet);
-
-int SortedSetOfStringW_init (I);
-SortedSetOfStringW SortedSetOfStringW_create (void);
-long SortedSetOfStringW_lookUp (SortedSetOfStringW me, const wchar_t *string);
-int SortedSetOfStringW_add (SortedSetOfStringW me, const wchar_t *string);
+long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
+int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
 
 /********** class Cyclic **********/
 

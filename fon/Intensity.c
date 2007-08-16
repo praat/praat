@@ -31,14 +31,14 @@
 static void info (I) {
 	iam (Intensity);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
-	MelderInfo_writeLine1 ("Time sampling:");
-	MelderInfo_writeLine2 ("   Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("   Time step: ", Melder_double (my dx), " seconds");
-	MelderInfo_writeLine3 ("   First frame centred at: ", Melder_double (my x1), " seconds");
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine1 (L"Time sampling:");
+	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
 }
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
@@ -116,10 +116,10 @@ void Intensity_draw (Intensity me, Graphics g, double tmin, double tmax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, "Intensity (dB)");
+		Graphics_textLeft (g, 1, L"Intensity (dB)");
 	}
 }
 

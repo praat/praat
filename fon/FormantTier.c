@@ -161,10 +161,10 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, "Time (s)");
+		Graphics_textBottom (g, TRUE, L"Time (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, TRUE, "Frequency (Hz)");
+		Graphics_textLeft (g, TRUE, L"Frequency (Hz)");
 	}
 }
 
@@ -241,15 +241,15 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 	thee = TableOfReal_create (my points -> size, 1 +
 		( includeFormants ? maximumNumberOfFormants : 0 ) +
 		( includeBandwidths ? maximumNumberOfFormants : 0 )); cherror
-	TableOfReal_setColumnLabel (thee, 1, "Time");
+	TableOfReal_setColumnLabel (thee, 1, L"Time");
 	for (icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
-		char label [4];
+		wchar_t label [4];
 		if (includeFormants) {
-			sprintf (label, "F%d", iformant);
+			swprintf (label, 4, L"F%d", iformant);
 			TableOfReal_setColumnLabel (thee, ++ icol, label); cherror
 		}
 		if (includeBandwidths) {
-			sprintf (label, "B%d", iformant);
+			swprintf (label, 4, L"B%d", iformant);
 			TableOfReal_setColumnLabel (thee, ++ icol, label); cherror
 		}
 	}

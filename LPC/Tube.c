@@ -46,12 +46,11 @@ static void classTube_info (I)
 {
 	iam (Tube);
 	classData -> info (me);
-	MelderInfo_writeLine5 ("Time domain: ", Melder_double (my xmin), " to ", Melder_double (my xmax),
-		" (s).");
-	MelderInfo_writeLine2 ("maximum number of segments: ", Melder_integer (my maxnSegments));
-	MelderInfo_writeLine2 ("Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 ("Time step: ", Melder_double (my dx), " (s).");
-	MelderInfo_writeLine3 ("First frame at: ", Melder_double (my x1), " (s).");
+	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (my xmin), L" to ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine2 (L"Maximum number of segments: ", Melder_integer (my maxnSegments));
+	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my nx));
+	MelderInfo_writeLine3 (L"Time step: ", Melder_double (my dx), L" seconds");
+	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (my x1), L" seconds");
 }
 
 class_methods (Tube, Sampled)

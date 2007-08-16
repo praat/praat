@@ -23,6 +23,7 @@
  * pb 2006/08/08 reduced compiler warnings
  * pb 2006/12/17 better info
  * pb 2007/06/24 wchar_t
+ * pb 2007/08/08 canWriteAsEncoding
  */
 
 #include "Collection.h"
@@ -38,7 +39,7 @@ static void classCollection_destroy (I) {
 
 static void classCollection_info (I) {
 	iam (Collection);
-	MelderInfo_writeLine2 (Melder_integer (my size), " items");
+	MelderInfo_writeLine2 (Melder_integer (my size), L" items");
 }
 
 static int classCollection_copy (I, thou) {
@@ -49,7 +50,7 @@ static int classCollection_copy (I, thou) {
 	thy itemClass = my itemClass;
 	thy _capacity = my _capacity;
 	thy size = my size;
-	if (! (thy item = Melder_calloc (my _capacity, sizeof (Any)))) return 0;   /* Filled with NULL. */
+	if (! (thy item = Melder_calloc (void *, my _capacity))) return 0;   /* Filled with NULL. */
 	thy item --;   /* Base 1. */
 	for (i = 1; i <= my size; i ++) {   /* Try to copy the items themselves. */
 		if (! Thing_member (my item [i], classData))
@@ -80,6 +81,14 @@ static bool classCollection_equal (I, thou) {
 	return 1;
 }
 
+static bool classCollection_canWriteAsEncoding (I, int encoding) {
+	iam (Collection);
+	for (long i = 1; i <= my size; i ++) {
+		if (! Data_canWriteAsEncoding (my item [i], encoding)) return false;
+	}
+	return true;
+}
+
 static int classCollection_writeText (I, MelderFile file) {
 	iam (Collection);
 	long i;
@@ -88,17 +97,17 @@ static int classCollection_writeText (I, MelderFile file) {
 	for (i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
-		texputintro (file, L"item [", Melder_integerW (i), L"]:", 0,0,0);
+		texputintro (file, L"item [", Melder_integer (i), L"]:", 0,0,0);
 		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
 			return Melder_error ("(Collection::writeText:) "
 				"Objects of class %s cannot be written.", table -> _className);
-		char className [100];
+		wchar_t className [100];
 		if (table -> version)
-			sprintf (className, "%s %ld", table -> _className, table -> version);
+			swprintf (className, 100, L"%ls %ld", table -> _classNameW, table -> version);
 		else
-			strcpy (className, table -> _className);
-		texputs1 (file, className, L"class", 0,0,0,0,0);
-		texputs2 (file, thing -> name, L"name", 0,0,0,0,0);
+			wcscpy (className, table -> _classNameW);
+		texputw2 (file, className, L"class", 0,0,0,0,0);
+		texputw2 (file, thing -> nameW, L"name", 0,0,0,0,0);
 		if (! Data_writeText (thing, file)) return 0;
 		texexdent (file);
 	}
@@ -181,7 +190,7 @@ static int classCollection_writeBinary (I, FILE *f) {
 			return Melder_error ("(Collection::writeBinary:) "
 				"Objects of class %s cannot be written.", table -> _className);
 		binputs1 (className, f);
-		binputs2 (thing -> name, f);
+		binputw2 (thing -> nameW, f);
 		if (! Data_writeBinary (thing, f)) return 0;
 	}
 	return 1;
@@ -228,8 +237,8 @@ static int classCollection_readBinary (I, FILE *f) {
 }
 
 static struct structData_Description classCollection_description [] = {
-	{ "size", 4, (int) & ((Collection) 0) -> size, sizeof (long) },
-	{ "item", 23, (int) & ((Collection) 0) -> item, sizeof (Data), "Data", & theStructData, 1, 0, "my size" },
+	{ L"size", 4, (int) & ((Collection) 0) -> size, sizeof (long) },
+	{ L"item", 23, (int) & ((Collection) 0) -> item, sizeof (Data), L"Data", & theStructData, 1, 0, L"my size" },
 	{ 0 } };
 
 static long classCollection_position (I, Any data) {
@@ -243,6 +252,7 @@ class_methods (Collection, Data)
 	class_method_local (Collection, info)
 	class_method_local (Collection, copy)
 	class_method_local (Collection, equal)
+	class_method_local (Collection, canWriteAsEncoding)
 	class_method_local (Collection, writeText)
 	class_method_local (Collection, writeBinary)
 	class_method_local (Collection, readText)
@@ -256,7 +266,7 @@ int Collection_init (I, void *itemClass, long initialCapacity) {
 	my itemClass = itemClass;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
 	my size = 0;
-	if (! (my item = Melder_calloc (my _capacity, sizeof (Any)))) return 0;
+	if (! (my item = Melder_calloc (void *, my _capacity))) return 0;
 	my item --;   /* Base 1. */
 	return 1;
 }
@@ -570,7 +580,7 @@ SortedSetOfDouble SortedSetOfDouble_create (void) {
 
 static int classSortedSetOfString_compare (I, thou) {
 	iam (SimpleString); thouart (SimpleString);
-	return strcmp (my string, thy string);
+	return wcscmp (my string, thy string);
 }
 
 class_methods (SortedSetOfString, SortedSet)
@@ -585,64 +595,8 @@ SortedSetOfString SortedSetOfString_create (void) {
 	return me;
 }
 
-long SortedSetOfString_lookUp (SortedSetOfString me, const char *string) {
+long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string) {
 	SimpleString *items = (SimpleString *) my item;
-	long numberOfItems = my size;
-	long left = 1, right = numberOfItems;
-	int atStart, atEnd;
-	if (numberOfItems == 0) return 0;
-
-	atEnd = strcmp (string, items [numberOfItems] -> string);
-	if (atEnd > 0) return 0;
-	if (atEnd == 0) return numberOfItems;
-
-	atStart = strcmp (string, items [1] -> string);
-	if (atStart < 0) return 0;
-	if (atStart == 0) return 1;
-
-	while (left < right - 1) {
-		long mid = (left + right) / 2;
-		int here = strcmp (string, items [mid] -> string);
-		if (here == 0) return mid;
-		if (here > 0) left = mid; else right = mid;
-	}
-	Melder_assert (right == left + 1);
-	return 0;
-}
-
-int SortedSetOfString_add (SortedSetOfString me, const char *string) {
-	static SimpleString simp;
-	long index;
-	SimpleString newSimp;
-	if (! simp) { simp = SimpleString_create (""); Melder_free (simp -> string); }
-	simp -> string = (char *) string;
-	if ((index = our position (me, simp)) == 0) return 1;   /* OK: already there: do not add. */
-	newSimp = SimpleString_create (string);
-	if (! newSimp || ! _Collection_insertItem (me, newSimp, index)) return 0;   /* Must be out of memory. */
-	return 1;   /* OK: added new string. */
-}
-
-/********** class SortedSetOfStringW **********/
-
-static int classSortedSetOfStringW_compare (I, thou) {
-	iam (SimpleStringW); thouart (SimpleStringW);
-	return wcscmp (my string, thy string);
-}
-
-class_methods (SortedSetOfStringW, SortedSet)
-	class_method_local (SortedSetOfStringW, compare)
-class_methods_end
-
-int SortedSetOfStringW_init (I) { iam (SortedSetOfStringW); return SortedSet_init (me, classSimpleStringW, 10); }
-
-SortedSetOfStringW SortedSetOfStringW_create (void) {
-	SortedSetOfStringW me = new (SortedSetOfStringW);
-	if (! me || ! SortedSetOfStringW_init (me)) { forget (me); return NULL; }
-	return me;
-}
-
-long SortedSetOfStringW_lookUp (SortedSetOfStringW me, const wchar_t *string) {
-	SimpleStringW *items = (SimpleStringW *) my item;
 	long numberOfItems = my size;
 	long left = 1, right = numberOfItems;
 	int atStart, atEnd;
@@ -666,14 +620,14 @@ long SortedSetOfStringW_lookUp (SortedSetOfStringW me, const wchar_t *string) {
 	return 0;
 }
 
-int SortedSetOfStringW_add (SortedSetOfStringW me, const wchar_t *string) {
-	static SimpleStringW simp;
+int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string) {
+	static SimpleString simp;
 	long index;
-	SimpleStringW newSimp;
-	if (! simp) { simp = SimpleStringW_create (L""); Melder_free (simp -> string); }
+	SimpleString newSimp;
+	if (! simp) { simp = SimpleString_create (L""); Melder_free (simp -> string); }
 	simp -> string = (wchar_t *) string;
 	if ((index = our position (me, simp)) == 0) return 1;   /* OK: already there: do not add. */
-	newSimp = SimpleStringW_create (string);
+	newSimp = SimpleString_create (string);
 	if (! newSimp || ! _Collection_insertItem (me, newSimp, index)) return 0;   /* Must be out of memory. */
 	return 1;   /* OK: added new string. */
 }

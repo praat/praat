@@ -37,7 +37,7 @@ int Praat_tests (int itest, char *arg1, char *arg2, char *arg3, char *arg4) {
 			NUMlvector_free (array, 1);
 		} break;
 	}
-	MelderInfo_writeLine2 (Melder_single (Melder_stopwatch () / n * 1e9), " nanoseconds");
+	MelderInfo_writeLine2 (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");
 	MelderInfo_close ();
 	return 1;
 }

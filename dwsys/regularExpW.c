@@ -4052,7 +4052,7 @@ static void adjustcase (wchar_t *str, int len, wchar_t chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (wchar_t *str) {
-	Melder_information2W (L"Internal error processing regular expression: ", str);
+	Melder_information2 (L"Internal error processing regular expression: ", str);
 }
 
 /*----------------------------------------------------------------------*

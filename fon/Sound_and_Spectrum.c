@@ -146,7 +146,7 @@ end:
 	return thee;
 }
 
-Sound Sound_filter_formula (Sound me, const char *formula) {
+Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
 	Sound result = NULL;
 	Spectrum spec;
 	spec = Sound_to_Spectrum (me, TRUE); cherror

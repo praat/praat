@@ -197,20 +197,20 @@ static void info (I)
 {
 	iam (FFNet);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of layers: ", Melder_integer (my nLayers));
-	MelderInfo_writeLine2 ("Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (me)));
-	MelderInfo_writeLine4 ("   Number of units in layer ", Melder_integer (my nLayers), " (output): ",
+	MelderInfo_writeLine2 (L"Number of layers: ", Melder_integer (my nLayers));
+	MelderInfo_writeLine2 (L"Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (me)));
+	MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (my nLayers), L" (output): ",
 		Melder_integer (my nUnitsInLayer[my nLayers]));
 	for (int i = my nLayers-1; i >= 1; i--)
 	{
-		MelderInfo_writeLine4 ("   Number of units in layer ", Melder_integer (i), " (hidden): ",
+		MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (i), L" (hidden): ",
 			Melder_integer (my nUnitsInLayer[i]));
 	}
-	MelderInfo_writeLine2 ("   Number of units in layer 0 (input): ", Melder_integer (my nUnitsInLayer[0]));
-	MelderInfo_writeLine2 ("Outputs are linear: ", Melder_boolean (my outputsAreLinear));
-	MelderInfo_writeLine5 ("Number of weights: ", Melder_integer (my nWeights), " (", 
-		Melder_integer (FFNet_dimensionOfSearchSpace (me)), " selected)");
-	MelderInfo_writeLine2 ("Number of nodes: ", Melder_integer (my nNodes));
+	MelderInfo_writeLine2 (L"   Number of units in layer 0 (input): ", Melder_integer (my nUnitsInLayer[0]));
+	MelderInfo_writeLine2 (L"Outputs are linear: ", Melder_boolean (my outputsAreLinear));
+	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (my nWeights), L" (", 
+		Melder_integer (FFNet_dimensionOfSearchSpace (me)), L" selected)");
+	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (my nNodes));
 } 
 
 
@@ -624,17 +624,17 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
     Matrix_drawAsSquares (weights, g, 0, 0, 0, 0, 0);
     if (garnish)
     {
-    	double x1WC, x2WC, y1WC, y2WC; char text[30];
+    	double x1WC, x2WC, y1WC, y2WC; wchar_t text[30];
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
-		sprintf (text, "Units in layer %ld ->", layer);
+		swprintf (text, 30, L"Units in layer %ld ->", layer);
 		Graphics_textBottom (g, 0, text);
-		if (layer == 1) strcpy (text, "Input units ->");
-		else sprintf (text, "Units in layer %ld ->", layer-1);
+		if (layer == 1) wcscpy (text, L"Input units ->");
+		else swprintf (text, 30, L"Units in layer %ld ->", layer-1);
 		Graphics_textLeft (g, 0, text);
 		/* how do I find out the current settings ??? */
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		Graphics_setInner (g);
-		Graphics_text (g, 0.5, weights->ny, "bias");
+		Graphics_text (g, 0.5, weights->ny, L"bias");
 		Graphics_unsetInner (g);
     }
     forget (weights);
@@ -659,9 +659,9 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo,
 	{
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, 1, my costFunctionType == FFNet_COST_MSE ?
-			"Minimum squared error" : "Minimum cross entropy");
+			L"Minimum squared error" : L"Minimum cross entropy");
 		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_textBottom (g, 1, "Number of epochs");
+		Graphics_textBottom (g, 1, L"Number of epochs");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 	}
 }
@@ -708,7 +708,7 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer)
 {
 	TableOfReal thee = NULL;
 	long i, node = 1, numberOfUnitsFrom, numberOfUnitsTo;
-	char label[20];
+	wchar_t label[20];
 	
 	if (! FFNet_checkLayerNumber (me, layer)) return NULL;
 	
@@ -719,13 +719,13 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer)
 	
 	for (i = 1; i <= numberOfUnitsFrom - 1; i++)
 	{
-		sprintf (label,"L%ld-%ld", layer-1, i);
+		swprintf (label,20,L"L%ld-%ld", layer-1, i);
 		TableOfReal_setRowLabel (thee, i, label);	
 	}
-	TableOfReal_setRowLabel (thee, numberOfUnitsFrom, "Bias");
+	TableOfReal_setRowLabel (thee, numberOfUnitsFrom, L"Bias");
 	for (i = 1; i <= numberOfUnitsTo; i++)
 	{
-		sprintf (label,"L%ld-%ld", layer, i);
+		swprintf (label,20,L"L%ld-%ld", layer, i);
 		TableOfReal_setColumnLabel (thee, i, label);	
 	}
 	

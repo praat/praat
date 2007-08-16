@@ -1,6 +1,6 @@
 /* Distributions_and_Strings.c
  *
- * Copyright (C) 1997-2003 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 1998/06/21
  * pb 2002/07/16 GPL
  * pb 2003/07/28 factored out Distributions_peek
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Distributions_and_Strings.h"
@@ -31,9 +31,9 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 	thy numberOfStrings = numberOfStrings;
 	thy strings = NUMpvector (1, numberOfStrings); cherror
 	for (istring = 1; istring <= numberOfStrings; istring ++) {
-		char *string;
+		wchar_t *string;
 		Distributions_peek (me, column, & string); cherror
-		thy strings [istring] = Melder_strdup (string); cherror
+		thy strings [istring] = Melder_wcsdup (string); cherror
 	}
 end:
 	iferror { forget (thee); return Melder_errorp ("(Distributions_to_Strings:) Not performed."); }
@@ -58,10 +58,10 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 	thy strings = NUMpvector (1, total); cherror
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
 		long number = my data [irow] [column];
-		char *string = my rowLabels [irow];
+		wchar_t *string = my rowLabels [irow];
 		if (! string) { Melder_error ("No string in row %ld.", irow); goto end; }
 		for (i = 1; i <= number; i ++)
-			thy strings [++ istring] = Melder_strdup (string); cherror
+			thy strings [++ istring] = Melder_wcsdup (string); cherror
 	}
 	Strings_randomize (thee);
 end:
@@ -74,15 +74,15 @@ Distributions Strings_to_Distributions (Strings me) {
 	long i, idist = 0, j;
 	thee = Distributions_create (my numberOfStrings, 1); cherror
 	for (i = 1; i <= my numberOfStrings; i ++) {
-		char *string = my strings [i];
+		wchar_t *string = my strings [i];
 		long where = 0;
 		for (j = 1; j <= idist; j ++)
-			if (strequ (thy rowLabels [j], string))
+			if (wcsequ (thy rowLabels [j], string))
 				{ where = j; break; }
 		if (where) {
 			thy data [j] [1] += 1.0;
 		} else {
-			thy rowLabels [++ idist] = Melder_strdup (string); cherror
+			thy rowLabels [++ idist] = Melder_wcsdup (string); cherror
 			thy data [idist] [1] = 1.0;
 		}
 	}

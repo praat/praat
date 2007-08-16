@@ -20,6 +20,7 @@
 /*
  * pb 2006/12/10
  * pb 2007/06/02 utf8 <-> wcs
+ * pb 2007/08/07 MelderUtf16
  */
 
 #include "melder.h"
@@ -46,26 +47,13 @@ void MelderStringW_free (MelderStringW *me) {
 	my length = 0;
 }
 
-void MelderStringA_empty (MelderStringA *me) {
-	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES) {
-		MelderStringA_free (me);
-	} else if (my string) {
-		my string [0] = '\0';   // Optimization.
-		my length = 0;
-	} else {
-		MelderStringA_copyA (me, "");
-	}
-}
-
-void MelderStringW_empty (MelderStringW *me) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
-		MelderStringW_free (me);
-	} else if (my string) {
-		my string [0] = L'\0';   // Optimization.
-		my length = 0;
-	} else {
-		MelderStringW_copyW (me, L"");
-	}
+void MelderString16_free (MelderString16 *me) {
+	if (my string == NULL) return;
+	Melder_free (my string);
+	totalNumberOfDeallocations += 1;
+	totalDeallocationSize += my bufferSize * sizeof (MelderUtf16);
+	my bufferSize = 0;
+	my length = 0;
 }
 
 #define expandIfNecessary(type) \
@@ -86,6 +74,39 @@ void MelderStringW_empty (MelderStringW *me) {
 		totalAllocationSize += bytesNeeded; \
 		my bufferSize = sizeNeeded; \
 	}
+
+void MelderStringA_empty (MelderStringA *me) {
+	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES) {
+		MelderStringA_free (me);
+	}
+	unsigned long sizeNeeded = 1;
+	expandIfNecessary (char)
+	my string [0] = '\0';
+end:
+	my length = 0;
+}
+
+void MelderStringW_empty (MelderStringW *me) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
+		MelderStringW_free (me);
+	}
+	unsigned long sizeNeeded = 1;
+	expandIfNecessary (wchar_t)
+	my string [0] = '\0';
+end:
+	my length = 0;
+}
+
+void MelderString16_empty (MelderString16 *me) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
+		MelderString16_free (me);
+	}
+	unsigned long sizeNeeded = 1;
+	expandIfNecessary (MelderUtf16)
+	my string [0] = '\0';
+end:
+	my length = 0;
+}
 
 bool MelderStringA_copyA (MelderStringA *me, const char *source) {
 	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
@@ -468,7 +489,7 @@ end:
 bool MelderStringA_appendCharacter (MelderStringA *me, char character) {
 	unsigned long sizeNeeded = my length + 1;
 	expandIfNecessary (char)
-	my string [my length] = (unsigned char) character;   // Prevent negative extension.
+	my string [my length] = character;
 	my length ++;
 	my string [my length] = '\0';
 end:
@@ -479,9 +500,37 @@ end:
 bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 1;
 	expandIfNecessary (wchar_t)
-	my string [my length] = (unsigned char) character;   // Prevent negative extension.
+	my string [my length] = character;
 	my length ++;
 	my string [my length] = L'\0';
+end:
+	iferror return false;
+	return true;
+}
+
+bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
+	unsigned long sizeNeeded = my length + 2;   // Allow for surrogate characters.
+	expandIfNecessary (MelderUtf16)
+	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+		my string [my length] = character;
+		my length ++;
+	} else {   // wchar_t is UTF-32.
+		MelderUtf32 kar = character;
+		if (kar <= 0xFFFF) {
+			my string [my length] = character;
+			my length ++;
+		} else if (kar <= 0x10FFFF) {
+			kar -= 0x10000;
+			my string [my length] = 0xD800 | (kar >> 10);
+			my length ++;
+			my string [my length] = 0xDC00 | (kar & 0x3ff);
+			my length ++;
+		} else {
+			my string [my length] = '?';
+			my length ++;
+		}
+	}
+	my string [my length] = '\0';
 end:
 	iferror return false;
 	return true;
@@ -573,7 +622,7 @@ const wchar_t * MelderReadString_getLineNumber (MelderReadString *text) {
 		if (*p == '\0' || *p == '\n') result ++;
 		p ++;
 	}
-	return Melder_integerW (result);
+	return Melder_integer (result);
 }
 
 /* End of file melder_strings.c */

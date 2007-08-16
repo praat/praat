@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #ifndef _HyperPage_h_
@@ -38,13 +38,13 @@
 	int numberOfMatches; \
 	long matches [1 + 20], fromPage, toPage; \
 	int suppressLinksHither; \
-	char *printPagesStartingWith;
+	wchar_t *printPagesStartingWith;
 #define Manual_methods HyperPage_methods
 class_create (Manual, HyperPage);
 
-int Manual_init (I, Widget parent, const char *title, Any data);
-Manual Manual_create (Widget parent, const char *title, Any data);
-void Manual_search (Manual me, const char *query);
+int Manual_init (I, Widget parent, const wchar_t *title, Any data);
+Manual Manual_create (Widget parent, const wchar_t *title, Any data);
+void Manual_search (Manual me, const wchar_t *query);
 
 /* End of file Manual.h */
 #endif

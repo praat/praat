@@ -148,8 +148,8 @@ TableOfReal AffineTransform_extractMatrix (I)
 	NUMdmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
 	for (i = 1; i <= my n; i++)
 	{
-		char label[20];
-		(void) sprintf (label, "%ld", i);
+		wchar_t label[20];
+		(void) swprintf (label, 20, L"%ld", i);
 		TableOfReal_setRowLabel (thee, i, label);
 		TableOfReal_setColumnLabel (thee, i, label);
 	}

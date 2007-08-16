@@ -58,32 +58,32 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	double jitter_rap = PointProcess_getJitter_rap (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	double jitter_ppq5 = PointProcess_getJitter_ppq5 (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	double jitter_ddp = PointProcess_getJitter_ddp (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	MelderInfo_writeLine2 ("     Number of periods: ", Melder_integer (numberOfPeriods));
-	MelderInfo_writeLine3 ("     Mean period: ", Melder_double (meanPeriod), " seconds");
-	MelderInfo_writeLine3 ("     Stdev period: ", Melder_double (stdevPeriod), " seconds");
-	MelderInfo_writeLine2 ("     Jitter (local): ", Melder_percent (jitter_local, precision));
-	MelderInfo_writeLine3 ("     Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), " seconds");
-	MelderInfo_writeLine2 ("     Jitter (rap): ", Melder_percent (jitter_rap, precision));
-	MelderInfo_writeLine2 ("     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
-	MelderInfo_writeLine2 ("     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
+	MelderInfo_writeLine2 (L"     Number of periods: ", Melder_integer (numberOfPeriods));
+	MelderInfo_writeLine3 (L"     Mean period: ", Melder_double (meanPeriod), L" seconds");
+	MelderInfo_writeLine3 (L"     Stdev period: ", Melder_double (stdevPeriod), L" seconds");
+	MelderInfo_writeLine2 (L"     Jitter (local): ", Melder_percent (jitter_local, precision));
+	MelderInfo_writeLine3 (L"     Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), L" seconds");
+	MelderInfo_writeLine2 (L"     Jitter (rap): ", Melder_percent (jitter_rap, precision));
+	MelderInfo_writeLine2 (L"     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
+	MelderInfo_writeLine2 (L"     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
 }
 
 static void info (I) {
 	iam (PointProcess);
 	classData -> info (me);
-	MelderInfo_writeLine1 ("Time domain:");
-	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
-	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
-	MelderInfo_writeLine3 ("   Total duration: ", Melder_double (my xmax - my xmin), " seconds");
-	MelderInfo_writeLine2 ("Number of times: ", Melder_integer (my nt));
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (L"Number of times: ", Melder_integer (my nt));
 	if (my nt) {
-		MelderInfo_writeLine3 ("First time: ", Melder_double (my t [1]), " seconds");
-		MelderInfo_writeLine3 ("Last time: ", Melder_double (my t [my nt]), " seconds");
+		MelderInfo_writeLine3 (L"First time: ", Melder_double (my t [1]), L" seconds");
+		MelderInfo_writeLine3 (L"Last time: ", Melder_double (my t [my nt]), L" seconds");
 	}
-	MelderInfo_writeLine1 ("Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
-	MelderInfo_writeLine1 ("with a maximum \"period factor\" of 1.3:");
+	MelderInfo_writeLine1 (L"Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
+	MelderInfo_writeLine1 (L"with a maximum \"period factor\" of 1.3:");
 	infoPeriods (me, 1e-4, 20e-3, 1.3, 3);
-	MelderInfo_writeLine1 ("All periods:");
+	MelderInfo_writeLine1 (L"All periods:");
 	infoPeriods (me, 0.0, 0.0, 1e300, 6);
 }
 
@@ -245,7 +245,7 @@ void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, i
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, "Time (s)");
+		Graphics_textBottom (g, 1, L"Time (s)");
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 	}
 }

@@ -43,9 +43,9 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 	if (! NUMstrings_copyElements (thy columnLabels, his columnLabels, 
 			1, thy numberOfColumns) ||
 		! TableOfReal_setSequentialRowLabels (him, 1, my numberOfCoefficients,
-			"dv", 1, 1) ||
+			L"dv", 1, 1) ||
 		! TableOfReal_setSequentialRowLabels (him, my numberOfCoefficients + 1,
-			2 * my numberOfCoefficients, "iv", 1, 1))
+			2 * my numberOfCoefficients, L"iv", 1, 1))
 	{
 		forget (him);
 		return NULL;

@@ -1,6 +1,6 @@
 /* GraphicsScreen.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/05/28 GPL
  * pb 2004/10/18 ReleaseDC
+ * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  */
 
 #include "GraphicsP.h"
@@ -197,6 +198,9 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 		my macColour = theBlackColour;
 		my resolution = resolution;
 		my depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
+		if (my useQuartz) {
+			(void) my macGraphicsContext;
+		}
 		_Graphics_text_init (me);
 	#endif
 	return 1;
@@ -204,7 +208,8 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 
 Graphics Graphics_create_screen (void *display, unsigned long window, int resolution) {
 	GraphicsScreen me = new (GraphicsScreen);
-	my screen = TRUE;
+	my screen = true;
+	my yIsZeroAtTheTop = true;
 	if (! Graphics_init (me)) return 0;
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
 	#ifdef macintosh
@@ -218,7 +223,8 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 #ifdef macintosh
 Graphics Graphics_create_port (void *display, unsigned long port, int resolution) {
 	GraphicsScreen me = new (GraphicsScreen);
-	my screen = TRUE;
+	my screen = true;
+	my yIsZeroAtTheTop = true;
 	if (! Graphics_init (me)) return 0;
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
 	GraphicsScreen_init (me, display, (unsigned long) port, resolution);
@@ -228,8 +234,9 @@ Graphics Graphics_create_port (void *display, unsigned long port, int resolution
 
 Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
 	GraphicsScreen me = new (GraphicsScreen);
-	my screen = TRUE;
-	my printer = TRUE;
+	my screen = true;
+	my yIsZeroAtTheTop = true;
+	my printer = true;
 	if (! Graphics_init (me)) return 0;
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
@@ -280,7 +287,11 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	Dimension width, height, marginWidth, marginHeight;
 
 	my drawingArea = w;   /* Now !!!!!!!!!! */
-	my screen = TRUE;
+	my screen = true;
+	my yIsZeroAtTheTop = true;
+	#ifdef macintosh
+		my useQuartz = true;
+	#endif
 	if (! Graphics_init (me)) return 0;
 	#ifdef macintosh
 		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) GetWindowPort ((WindowRef) XtWindow (w)), motif_getResolution (w));

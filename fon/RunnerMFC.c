@@ -1,6 +1,6 @@
 /* RunnerMFC.c
  *
- * Copyright (C) 2001-2006 Paul Boersma
+ * Copyright (C) 2001-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2005/12/08 multiple experiments
  * pb 2006/01/19 fixed a bug that caused an assertion violation when the oops button was pressed after the experiment finished
  * pb 2006/02/23 repaired small memory leak in destroy()
+ * pb 2007/08/12 wchar_t
  */
 
 #include "RunnerMFC.h"
@@ -66,7 +67,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	return 1;
 }
 
-static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char *visibleText) {
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar_t *visibleText) {
 	Graphics_setColour (my graphics, Graphics_MAROON);
 	Graphics_setLineWidth (my graphics, 3.0);
 	Graphics_fillRectangle (my graphics, left, right, bottom, top);
@@ -89,36 +90,36 @@ MOTIF_CALLBACK (cb_draw)
 	if (experiment -> trial == 0) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
-		Graphics_printf (my graphics, 0.5, 0.5, "%s", experiment -> startText);
+		Graphics_text (my graphics, 0.5, 0.5, experiment -> startText);
 	} else if (experiment -> pausing) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
-		Graphics_printf (my graphics, 0.5, 0.5, "%s", experiment -> pauseText);
+		Graphics_text (my graphics, 0.5, 0.5, experiment -> pauseText);
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
 				experiment -> oops_label);
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		const char *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
-		char *visibleText_dup = Melder_strdup (visibleText ? visibleText : ""), *visibleText_p = visibleText_dup, *visibleText_q;
+		const wchar_t *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
+		wchar_t *visibleText_dup = Melder_wcsdup (visibleText ? visibleText : L""), *visibleText_p = visibleText_dup, *visibleText_q;
 		Graphics_setFont (my graphics, Graphics_TIMES);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-		Graphics_printf (my graphics, 0, 1, "%ld / %ld", experiment -> trial, experiment -> numberOfTrials);
+		Graphics_printf (my graphics, 0, 1, L"%ld / %ld", experiment -> trial, experiment -> numberOfTrials);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics, 24);
 		/*
 		 * The run text.
 		 */
 		if (visibleText_p [0] != '\0') {
-			visibleText_q = strchr (visibleText_p, '|');
+			visibleText_q = wcschr (visibleText_p, '|');
 			if (visibleText_q) *visibleText_q = '\0';
-			Graphics_printf (my graphics, 0.5, 1, "%s", visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
-			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += strlen (visibleText_p);
+			Graphics_text (my graphics, 0.5, 1, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
+			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
 		} else {
-			Graphics_printf (my graphics, 0.5, 1, "%s", experiment -> runText);
+			Graphics_text (my graphics, 0.5, 1, experiment -> runText);
 		}
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
@@ -133,11 +134,11 @@ MOTIF_CALLBACK (cb_draw)
 			Graphics_setColour (my graphics, Graphics_MAROON);
 			Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
 			if (visibleText_p [0] != '\0') {
-				visibleText_q = strchr (visibleText_p, '|');
+				visibleText_q = wcschr (visibleText_p, '|');
 				if (visibleText_q) *visibleText_q = '\0';
 				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
 					0.5 * (response -> bottom + response -> top), visibleText_p);
-				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += strlen (visibleText_p);
+				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
 			} else {
 				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
 					0.5 * (response -> bottom + response -> top), response -> label);
@@ -175,7 +176,7 @@ MOTIF_CALLBACK (cb_draw)
 	} else {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics, 24);
-		Graphics_printf (my graphics, 0.5, 0.5, "%s", experiment -> endText);
+		Graphics_text (my graphics, 0.5, 0.5, experiment -> endText);
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,

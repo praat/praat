@@ -64,11 +64,11 @@ static void info (I) {
 	iam (Discriminant);
 	
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of groups: ", Melder_integer (my numberOfGroups));
-	MelderInfo_writeLine2 ("Number of variables: ", Melder_integer (my dimension));
-	MelderInfo_writeLine2 ("Number of discriminant functions: ", 
+	MelderInfo_writeLine2 (L"Number of groups: ", Melder_integer (my numberOfGroups));
+	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (my dimension));
+	MelderInfo_writeLine2 (L"Number of discriminant functions: ", 
 		Melder_integer (Discriminant_getNumberOfFunctions (me)));
-	MelderInfo_writeLine2 ("Number of observations (total): ", 
+	MelderInfo_writeLine2 (L"Number of observations (total): ", 
 		Melder_integer (Discriminant_getNumberOfObservations (me, 0)));
 }
 
@@ -99,12 +99,12 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 	return me;
 }
 
-long Discriminant_groupLabelToIndex (Discriminant me, const char *label)
+long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label)
 {
-	long i; SSCPs groups = my groups; char *name;
+	long i; SSCPs groups = my groups; wchar_t *name;
 	for (i=1; i <= my numberOfGroups; i++)
 	{
-		if ((name = Thing_getName (groups -> item[i])) && strequ (name, label))
+		if ((name = Thing_getNameW (groups -> item[i])) && wcsequ (name, label))
 			return i;
 	}
 	return 0; 	
@@ -159,10 +159,10 @@ int Discriminant_setGroupLabels (Discriminant me, Strings thee)
 	
 	for (i=1; i <= my numberOfGroups; i++)
 	{
-		char *noname = "", *name;
+		wchar_t *noname = L"", *name;
 		name = thy strings[i];
 		if (name == NULL) name = noname;
-		Thing_setName (my groups -> item[i], name);
+		Thing_setNameW (my groups -> item[i], name);
 	}
 	return 1;
 }
@@ -178,8 +178,8 @@ Strings Discriminant_extractGroupLabels (Discriminant me)
 	if (thy strings == NULL) goto end;
 	for (i=1; i <= my numberOfGroups; i++)
 	{
-		char *name = Thing_getName (my groups -> item[i]);
-		thy strings[i] = Melder_strdup (name);
+		wchar_t *name = Thing_getNameW (my groups -> item[i]);
+		thy strings[i] = Melder_wcsdup (name);
 	}
 end:
 	if (Melder_hasError()) forget (thee);
@@ -197,7 +197,7 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me)
 	for (i=1; i <= m; i++)
 	{
 		sscp = my groups -> item[i];
-		TableOfReal_setRowLabel (thee, i, Thing_getName (sscp));
+		TableOfReal_setRowLabel (thee, i, Thing_getNameW (sscp));
 		NUMdvector_copyElements (sscp -> centroid, thy data[i], 1, n);
 	}
 	NUMstrings_copyElements (sscp -> columnLabels, thy columnLabels, 1, n);
@@ -216,7 +216,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me)
 	for (i=1; i <= m; i++)
 	{
 		sscp = my groups -> item[i];
-		TableOfReal_setRowLabel (thee, i, Thing_getName (sscp));
+		TableOfReal_setRowLabel (thee, i, Thing_getNameW (sscp));
 		numberOfObservationsm1 = sscp -> numberOfObservations - 1;
 		for (j=1; j <= n; j++) thy data[i][j] = numberOfObservationsm1 > 0 ? 
 			sqrt (sscp -> data[j][j] / numberOfObservationsm1) : NUMundefined;
@@ -260,8 +260,8 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice)
 		if (within == NULL) goto end;
 	}
 	
-	TableOfReal_setColumnLabel (thee, nx + 1, "constant");
-	(void) TableOfReal_setSequentialRowLabels (thee, 1, ny, "function_", 1, 1);
+	TableOfReal_setColumnLabel (thee, nx + 1, L"constant");
+	(void) TableOfReal_setSequentialRowLabels (thee, 1, ny, L"function_", 1, 1);
 	for (i = 1; i <= ny; i++)
 	{
 		double u0 = 0, ui; 
@@ -419,7 +419,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g,
 }
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, 
-	double scale, int confidence, char *label, int discriminantDirections, long d1, long d2,
+	double scale, int confidence, wchar_t *label, int discriminantDirections, long d1, long d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish)
 {
 	SSCPs thee;
@@ -460,13 +460,13 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 
 	if (garnish)
 	{
-		char label[40];
+		wchar_t label[40];
     	Graphics_drawInnerBox (g);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-    	sprintf (label, "function %ld", d2);
+    	swprintf (label, 40, L"function %ld", d2);
     	Graphics_textLeft (g, 1, label);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-    	sprintf (label, "function %ld", d1);
+    	swprintf (label, 40, L"function %ld", d1);
 		Graphics_textBottom (g, 1, label);
 	}
 	
@@ -496,7 +496,7 @@ Discriminant TableOfReal_to_Discriminant (I)
 	mew = TableOfReal_sortOnlyByRowLabels (me);
 	if (mew == NULL) goto end;
 	if (! TableOfReal_hasColumnLabels (mew) &&
-		! TableOfReal_setSequentialColumnLabels (mew, 0, 0, "c", 1, 1))
+		! TableOfReal_setSequentialColumnLabels (mew, 0, 0, L"c", 1, 1))
 	{
 		(void) Melder_error ("%s: There were no column labels. We could not set them either.", proc);
 		goto end;
@@ -598,7 +598,7 @@ Configuration Discriminant_and_TableOfReal_to_Configuration
 	if (! Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns,
 		& him, 1, numberOfDimensions) ||	
 		! TableOfReal_copyLabels (thee, him, 1, 0) ||
-		! TableOfReal_setSequentialColumnLabels (him, 0, 0, "Eigenvector ", 1, 1))
+		! TableOfReal_setSequentialColumnLabels (him, 0, 0, L"Eigenvector ", 1, 1))
 	{
 		forget (him);
 	}
@@ -737,8 +737,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
 	
 	for (j = 1; j <= g; j++)
 	{
-		char *name = Thing_getName (my groups -> item[j]);
-		if (! name ) name = "?";
+		wchar_t *name = Thing_getNameW (my groups -> item[j]);
+		if (! name ) name = L"?";
 		TableOfReal_setColumnLabel (him, j, name);
 	}
 
@@ -902,8 +902,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 	
 	for (j = 1; j <= g; j++)
 	{
-		char *name = Thing_getName (my groups -> item[j]);
-		if (! name ) name = "?";
+		wchar_t *name = Thing_getNameW (my groups -> item[j]);
+		if (! name ) name = L"?";
 		TableOfReal_setColumnLabel (him, j, name);
 	}
 

@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/06/10 wchar_t
+ * pb 2007/08/11 wchar_t
  */
 
 #include "IntensityTierEditor.h"
@@ -29,8 +30,8 @@
 #define IntensityTierEditor_methods RealTierEditor_methods
 class_create_opaque (IntensityTierEditor, RealTierEditor);
 
-/*DIRECT (IntensityTierEditor, cb_IntensityTierEditorHelp) Melder_help ("IntensityTierEditor"); END*/
-DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help ("IntensityTier"); END
+/*DIRECT (IntensityTierEditor, cb_IntensityTierEditorHelp) Melder_help (L"IntensityTierEditor"); END*/
+DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help (L"IntensityTier"); END
 
 static void createMenus (I) {
 	iam (IntensityTierEditor);

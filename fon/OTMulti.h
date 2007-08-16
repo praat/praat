@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/19
+ * pb 2007/08/12
  */
 
 #ifndef _Data_h_
@@ -55,29 +55,29 @@ void OTMulti_sort (OTMulti me);
 
 void OTMulti_newDisharmonies (OTMulti me, double evaluationNoise);
 
-int OTMulti_candidateMatches (OTMulti me, long icand, const char *form1, const char *form2);
+int OTMulti_candidateMatches (OTMulti me, long icand, const wchar_t *form1, const wchar_t *form2);
 int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2);
-long OTMulti_getWinner (OTMulti me, const char *form1, const char *form2);
+long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2);
 
 #define OTMulti_LEARN_FORWARD  1
 #define OTMulti_LEARN_BACKWARD  2
 #define OTMulti_LEARN_BIDIRECTIONALLY  3
-int OTMulti_learnOne (OTMulti me, const char *form1, const char *form2,
+int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
 	int direction, double plasticity, double relativePlasticityNoise);
 int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double evaluationNoise, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise);
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const char *form1, const char *form2, int showDisharmonies);
+void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wchar_t *form2, int showDisharmonies);
 
 void OTMulti_reset (OTMulti me, double ranking);
 int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
-int OTMulti_removeConstraint (OTMulti me, const char *constraintName);
+int OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName);
 
-int OTMulti_generateOptimalForm (OTMulti me, const char *form1, const char *form2, char *optimalForm, double evaluationNoise);
-Strings OTMulti_generateOptimalForms (OTMulti me, const char *form1, const char *form2, long numberOfTrials, double evaluationNoise);
-Distributions OTMulti_to_Distribution (OTMulti me, const char *form1, const char *form2, long numberOfTrials, double evaluationNoise);
+int OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise);
+Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
+Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
 Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
 
 /* End of file OTMulti.h */

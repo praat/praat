@@ -26,7 +26,7 @@
 oo_DEFINE_CLASS (PCA, Eigen)
 	
 	oo_LONG (numberOfObservations)
-	oo_STRING_VECTOR (labels, my dimension)
+	oo_STRINGW_VECTOR (labels, my dimension)
 	oo_DOUBLE_VECTOR (centroid, my dimension)
 
 oo_END_CLASS (PCA)	

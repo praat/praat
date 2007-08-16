@@ -36,22 +36,23 @@
 #define NUMeps 2.2e-16
 
 int NUMstrcmp (const char *s1, const char *s2);
+int NUMwcscmp (const wchar_t *s1, const wchar_t *s2);
 /*
 	Compares strings, accepts NUL-strings (NULL < 'a')
 	return s1 == NULL ? (s2 == NULL ? 0 : - 1) : 
 		(s2 == NULL ? 1 : strcmp (s1, s2)); 
 */
 
-int NUMstring_containsPrintableCharacter (char *s);
+int NUMstring_containsPrintableCharacter (wchar_t *s);
 
-double *NUMstring_to_numbers (const char *s, long *numbers_found);
+double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
 /* return array with the number of numbers found */
 
-int NUMstrings_equal (char **s1, char **s2, long lo, long hi);
-int NUMstrings_copyElements (char **from, char**to, long lo, long hi);
-void NUMstrings_free (char **s, long lo, long hi);
-int NUMstrings_setSequentialNumbering (char **s, long lo, long hi, 
-	char *precursor, long number, long increment);
+int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi);
+int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
+void NUMstrings_free (wchar_t **s, long lo, long hi);
+int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi, 
+	wchar_t *precursor, long number, long increment);
 /* 
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -59,21 +60,21 @@ int NUMstrings_setSequentialNumbering (char **s, long lo, long hi,
 		s[hi]   = precursor<number+hi-lo>
 */
 
-char **NUMstrings_copy (char **from, long lo, long hi);
+wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi);
 
-regexp *NUMregexp_compile (const char *regexp);
+regexp *NUMregexp_compile (const wchar_t *regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
 
 
-char *strstr_regexp (const char *string, const char *search_regexp);
+wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp);
 /*
 	Returns a pointer to the first occurrence in 'string' of the 
 	regular expression 'searchRE'. It returns a null pointer if
 	no match is found.
 */
 
-char **strs_replace (char **from, long lo, long hi, const char *search, 
-	const char *replace, int maximumNumberOfReplaces, long *nmatches, 
+wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, 
+	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, 
 	long *nstringmatches, int use_regexp);
 /*
 	Searches and replaces in string array of strings.
@@ -88,9 +89,7 @@ char **strs_replace (char **from, long lo, long hi, const char *search,
 	'nstringmatches'.
 */
 
-char *str_replace_literal (char *string, const char *search, 
-	const char *replace, long maximumNumberOfReplaces, long *nmatches);
-wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search, 
+wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, 
 	const wchar_t *replace, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Search and replace in 'string'.
@@ -99,8 +98,6 @@ wchar_t *str_replace_literalW (wchar_t *string, const wchar_t *search,
 
 char *str_replace_regexp (char *string, regexp *search_compiled, 
 	const char *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
-wchar_t *str_replace_regexpW (wchar_t *string, regexpW *search_compiled, 
-	const wchar_t *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on 
 	the basis of regular expressions (RE). 
@@ -124,7 +121,7 @@ void NUMsvector_extrema (short v[], long lo, long hi, double *min, double *max);
 		lo and hi must be valid indices in the array.
 */
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, char *name);
+void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, wchar_t *name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 	                      1 2 3
@@ -283,7 +280,7 @@ void NUMsort2_ll (long n, long a[], long b[]);
 
 void NUMindexx_f (const float a[], long n, long indx[]);
 void NUMindexx_d (const double a[], long n, long indx[]);
-void NUMindexx_s (char *a[], long n, long indx[]);
+void NUMindexx_s (wchar_t *a[], long n, long indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
 	a[ indx[i] ] is in ascending order for i=1..n;

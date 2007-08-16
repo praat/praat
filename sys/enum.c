@@ -21,22 +21,20 @@
  * pb 1995/07/12 latest version
  * pb 2002/03/07 GPL
  * pb 2007/07/22 message changed
+ * pb 2007/08/12 wchar_t
  */
 
 #include "melder.h"
 #include "enum.h"
 
-int enum_search (void *void_enumerated, const char *string) {
+int enum_search (void *void_enumerated, const wchar_t *string) {
 	enum_ANY *enumerated = void_enumerated;
-	const char **strings = & enumerated -> zero;
-	int i;
-	for (i = 0; strings [i] != NULL; i ++)
-		if (strequ (strings [i], string))
+	const wchar_t **strings = & enumerated -> zero;
+	for (int i = 0; strings [i] != NULL; i ++)
+		if (wcsequ (strings [i], string))
 			return i;
-	(void) Melder_error ("\"%s\" is not a value of enumerated type \"%s\".",
-		string, enumerated -> _type);
+	Melder_error5 (L"\"", string, L"\" is not a value of enumerated type \"", enumerated -> _type, L"\".");
 	return -1;   /* "<eof>" */
 }
 
 /* End of file enum.c */
-

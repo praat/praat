@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2007/08/12
  */
 
 #include "Editor.h"
@@ -262,8 +262,8 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define OPTIONMENUW(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
 #define OPTIONW(label)	UiOptionMenu_addButton (radio, label);
 #define ENUMW(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
-#define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTONW (labelProc) }
+#define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTIONW (labelProc) }
 #define LISTW(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
 #define FILE_INW(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUTW(label,def)	UiForm_addFileOut (dia, label, def);
@@ -278,7 +278,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define DO  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (wchar_t *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
-	if (! UiForm_parseString (dia, (wchar_t *) sender)) { wchar_t *parkedError = Melder_wcsdup (Melder_getErrorW ()); Melder_clearError (); \
+	if (! UiForm_parseString (dia, (wchar_t *) sender)) { wchar_t *parkedError = Melder_wcsdup (Melder_getError ()); Melder_clearError (); \
 	int result = DO_##alternative (sender, modified); \
 	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
@@ -306,28 +306,28 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
 		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_READW(proc,title,help) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
 		if (! sender) praat_write_do (dia, Melder_peekAsciiToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITEW(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFileW (sender, & file2)) return 0; file = & file2; } {
+		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 #endif
   
 /* Callbacks should return 1 if OK, and 0 if failure.

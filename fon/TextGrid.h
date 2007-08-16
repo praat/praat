@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/02/24
+ * pb 2007/08/12
  */
 
 #ifndef _AnyTier_h_
@@ -46,24 +46,24 @@
 
 #define TextPoint_methods AnyPoint_methods
 oo_CLASS_CREATE (TextPoint, AnyPoint);
-TextPoint TextPoint_create (double time, const char *mark);
+TextPoint TextPoint_create (double time, const wchar_t *mark);
 
-int TextPoint_setText (TextPoint me, const char *text);
+int TextPoint_setText (TextPoint me, const wchar_t *text);
 
 #define TextInterval_methods Function_methods
 oo_CLASS_CREATE (TextInterval, Function);
-TextInterval TextInterval_create (double tmin, double tmax, const char *text);
+TextInterval TextInterval_create (double tmin, double tmax, const wchar_t *text);
 
-long TextGrid_countLabels (TextGrid me, long itier, const char *text);
-int TextInterval_setText (TextInterval me, const char *text);
+long TextGrid_countLabels (TextGrid me, long itier, const wchar_t *text);
+int TextInterval_setText (TextInterval me, const wchar_t *text);
 
 #define TextTier_methods Function_methods
 oo_CLASS_CREATE (TextTier, Function);
 TextTier TextTier_create (double tmin, double tmax);
 
-int TextTier_addPoint (TextTier me, double time, const char *mark);
+int TextTier_addPoint (TextTier me, double time, const wchar_t *mark);
 TextTier TextTier_readFromXwaves (MelderFile file);
-PointProcess TextTier_getPoints (TextTier me, const char *text);
+PointProcess TextTier_getPoints (TextTier me, const wchar_t *text);
 
 #define IntervalTier_methods Function_methods
 oo_CLASS_CREATE (IntervalTier, Function);
@@ -76,9 +76,9 @@ long IntervalTier_timeToIndex (IntervalTier me, double t);   /* Obsolete. */
 long IntervalTier_timeToHighIndex (IntervalTier me, double t);
 long IntervalTier_hasTime (IntervalTier me, double t);
 long IntervalTier_hasBoundary (IntervalTier me, double t);
-PointProcess IntervalTier_getStartingPoints (IntervalTier me, const char *text);
-PointProcess IntervalTier_getEndPoints (IntervalTier me, const char *text);
-PointProcess IntervalTier_getCentrePoints (IntervalTier me, const char *text);
+PointProcess IntervalTier_getStartingPoints (IntervalTier me, const wchar_t *text);
+PointProcess IntervalTier_getEndPoints (IntervalTier me, const wchar_t *text);
+PointProcess IntervalTier_getCentrePoints (IntervalTier me, const wchar_t *text);
 PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
 PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
 int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
@@ -88,7 +88,7 @@ void TextTier_removePoint (TextTier me, long ipoint);
 #define TextGrid_methods Function_methods
 oo_CLASS_CREATE (TextGrid, Function);
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
-TextGrid TextGrid_create (double tmin, double tmax, const char *tierNames, const char *pointTiers);
+TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, const wchar_t *pointTiers);
 
 int TextGrid_add (TextGrid me, Any tier);
 TextGrid TextGrid_merge (Collection textGrids);
@@ -103,16 +103,16 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	long itier, int which_Melder_STRING, const char *text, int preserveTimes);
+	long itier, int which_Melder_STRING, const wchar_t *text, int preserveTimes);
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
 	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int yscale);
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
-TextTier PointProcess_upto_TextTier (PointProcess me, const char *text);
-TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const char *label);
+TextTier PointProcess_upto_TextTier (PointProcess me, const wchar_t *text);
+TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const wchar_t *label);
 TableOfReal IntervalTier_downto_TableOfReal_any (IntervalTier me);
-TableOfReal TextTier_downto_TableOfReal (TextTier me, const char *label);
+TableOfReal TextTier_downto_TableOfReal (TextTier me, const wchar_t *label);
 TableOfReal TextTier_downto_TableOfReal_any (TextTier me);
 
 TextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT);
@@ -135,9 +135,9 @@ void TextTier_removeText (TextTier me);
 
 int TextGrid_insertBoundary (TextGrid me, int itier, double t);
 int TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t);
-int TextGrid_setIntervalText (TextGrid me, int itier, long iinterval, const char *text);
-int TextGrid_insertPoint (TextGrid me, int itier, double t, const char *mark);
-int TextGrid_setPointText (TextGrid me, int itier, long ipoint, const char *text);
+int TextGrid_setIntervalText (TextGrid me, int itier, long iinterval, const wchar_t *text);
+int TextGrid_insertPoint (TextGrid me, int itier, double t, const wchar_t *mark);
+int TextGrid_setPointText (TextGrid me, int itier, long ipoint, const wchar_t *text);
 
 int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "DurationTierEditor.h"
@@ -28,8 +28,8 @@
 #define DurationTierEditor_methods RealTierEditor_methods
 class_create_opaque (DurationTierEditor, RealTierEditor);
 
-/*DIRECT (DurationTierEditor, cb_DurationTierEditorHelp) Melder_help ("DurationTierEditor"); END*/
-DIRECT (DurationTierEditor, cb_DurationTierHelp) Melder_help ("DurationTier"); END
+/*DIRECT (DurationTierEditor, cb_DurationTierEditorHelp) Melder_help (L"DurationTierEditor"); END*/
+DIRECT (DurationTierEditor, cb_DurationTierHelp) Melder_help (L"DurationTier"); END
 
 static void createMenus (I) {
 	iam (DurationTierEditor);

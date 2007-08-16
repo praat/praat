@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/03/18
+ * pb 2007/08/10
  */
 
 /* Matrix inherits from Sampled */
@@ -192,7 +192,7 @@ long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
 		if result == 0, *minimum and *maximum are not changed;
 */
 
-int Matrix_formula (Matrix me, const char *expression, Matrix target);
+int Matrix_formula (Matrix me, const wchar_t *expression, Matrix target);
 /*
 	Arguments:
 		"me" is the Matrix referred to as "self" or with "nx" etc. in the expression
@@ -262,8 +262,8 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 
 void Matrix_movie (I, Graphics g);
 
-Matrix Matrix_readFromRawTextFile (MelderFile fs);
-Matrix Matrix_readAP (MelderFile fs);
+Matrix Matrix_readFromRawTextFile (MelderFile file);
+Matrix Matrix_readAP (MelderFile file);
 Matrix Matrix_appendRows (I, thou);
 
 int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);

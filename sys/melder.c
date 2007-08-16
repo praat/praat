@@ -32,6 +32,7 @@
  * pb 2007/05/24 more wchar_t
  * pb 2007/05/26 Melder_stringMatchesCriterionW
  * pb 2007/06/19 removed some
+ * pb 2007/08/12 wchar_t in helpProc
  */
 
 #include <math.h>
@@ -81,8 +82,9 @@ static int defaultPause (char *message) {
 	return key != 'q' && key != 'Q';
 }
 
-static void defaultHelp (const char *query) {
-	Melder_flushError ("Do not know how to find help on \"%s\".", query);
+static void defaultHelp (const wchar_t *query) {
+	Melder_error3 (L"Do not know how to find help on \"", query, L"\".");
+	Melder_flushError (NULL);
 }
 
 static void defaultSearch (void) {
@@ -124,7 +126,7 @@ static int defaultPublishPlayed (void) {
 
 static struct {
 	int (*pause) (char *message);
-	void (*help) (const char *query);
+	void (*help) (const wchar_t *query);
 	void (*search) (void);
 	void (*warning) (char *message);
 	void (*fatal) (char *message);
@@ -380,11 +382,11 @@ int Melder_pause (const char *format, ...) {
 
 /********** NUMBER AND STRING COMPARISONS **********/
 
-const char * Melder_NUMBER_text_adjective (int which_Melder_NUMBER) {
-	static const char *strings [1+Melder_NUMBER_max] = { "",
-		"equal to", "not equal to",
-		"less than", "less than or equal to",
-		"greater than", "greater than or equal to"
+const wchar_t * Melder_NUMBER_text_adjective (int which_Melder_NUMBER) {
+	static const wchar_t *strings [1+Melder_NUMBER_max] = { L"",
+		L"equal to", L"not equal to",
+		L"less than", L"less than or equal to",
+		L"greater than", L"greater than or equal to"
 	};
 	return strings [which_Melder_NUMBER < 0 || which_Melder_NUMBER > Melder_NUMBER_max ? 0 : which_Melder_NUMBER];
 }
@@ -399,54 +401,18 @@ int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double
 		(which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-const char * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {
-	static const char *strings [1+Melder_STRING_max] = { "",
-		"is equal to", "is not equal to",
-		"contains", "does not contain",
-		"starts with", "does not start with",
-		"ends with", "does not end with",
-		"matches (regex)"
+const wchar_t * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {
+	static const wchar_t *strings [1+Melder_STRING_max] = { L"",
+		L"is equal to", L"is not equal to",
+		L"contains", L"does not contain",
+		L"starts with", L"does not start with",
+		L"ends with", L"does not end with",
+		L"matches (regex)"
 	};
 	return strings [which_Melder_STRING < 0 || which_Melder_STRING > Melder_STRING_max ? 0 : which_Melder_STRING];
 }
 
-int Melder_stringMatchesCriterion (const char *value, int which_Melder_STRING, const char *criterion) {
-	if (value == NULL) {
-		value = "";   /* Regard null strings as empty strings, as is usual in Praat. */
-	}
-	if (criterion == NULL) {
-		criterion = "";   /* Regard null strings as empty strings, as is usual in Praat. */
-	}
-	if (which_Melder_STRING <= Melder_STRING_NOT_EQUAL_TO) {
-		int matchPositiveCriterion = strequ (value, criterion);
-		return (which_Melder_STRING == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
-	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_CONTAIN) {
-		int matchPositiveCriterion = strstr (value, criterion) != NULL;
-		return (which_Melder_STRING == Melder_STRING_CONTAINS) == matchPositiveCriterion;
-	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_START_WITH) {
-		int matchPositiveCriterion = strnequ (value, criterion, strlen (criterion));
-		return (which_Melder_STRING == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
-	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_END_WITH) {
-		int criterionLength = strlen (criterion), valueLength = strlen (value);
-		int matchPositiveCriterion = criterionLength <= valueLength && strequ (value + valueLength - criterionLength, criterion);
-		return (which_Melder_STRING == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
-	}
-	if (which_Melder_STRING == Melder_STRING_MATCH_REGEXP) {
-		char *place = NULL, *errorMessage;
-		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
-		if (compiled_regexp == NULL) return FALSE;
-		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL))
-			place = compiled_regexp -> startp [0];
-		free (compiled_regexp);
-		return place != NULL;
-	}
-	return 0;   /* Should not occur. */
-}
-
-int Melder_stringMatchesCriterionW (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion) {
+int Melder_stringMatchesCriterion (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion) {
 	if (value == NULL) {
 		value = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
@@ -471,10 +437,10 @@ int Melder_stringMatchesCriterionW (const wchar_t *value, int which_Melder_STRIN
 		return (which_Melder_STRING == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_Melder_STRING == Melder_STRING_MATCH_REGEXP) {
-		wchar_t *place = NULL, *errorMessage;
-		regexpW *compiled_regexp = CompileREW (criterion, & errorMessage, 0);
+		char *place = NULL, *errorMessage;
+		regexp *compiled_regexp = CompileRE (Melder_peekWcsToAscii (criterion), & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;
-		if (ExecREW (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL))
+		if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToAscii (value), NULL, 0, '\0', '\0', NULL, NULL))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);
 		return place != NULL;
@@ -482,7 +448,7 @@ int Melder_stringMatchesCriterionW (const wchar_t *value, int which_Melder_STRIN
 	return 0;   /* Should not occur. */
 }
 
-void Melder_help (const char *query) {
+void Melder_help (const wchar_t *query) {
 	theMelder. help (query);
 }
 
@@ -698,7 +664,7 @@ int Melder_publishPlayed (void) {
 void Melder_setPauseProc (int (*pause) (char *))
 	{ theMelder. pause = pause ? pause : defaultPause; }
 
-void Melder_setHelpProc (void (*help) (const char *query))
+void Melder_setHelpProc (void (*help) (const wchar_t *query))
 	{ theMelder. help = help ? help : defaultHelp; }
 
 void Melder_setSearchProc (void (*search) (void))

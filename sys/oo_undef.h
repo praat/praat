@@ -77,7 +77,7 @@
 #undef oo_COPYING
 #undef oo_EQUALLING
 #undef oo_COMPARING
-#undef oo_VALIDATING_ASCII
+#undef oo_VALIDATING_ENCODING
 #undef oo_READING
 #undef oo_READING_TEXT
 #undef oo_READING_BINARY

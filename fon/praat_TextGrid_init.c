@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/08/12
  */
 
 #include "praat.h"
@@ -55,7 +55,7 @@ FORM (IntervalTier_downto_TableOfReal, "IntervalTier: Down to TableOfReal", 0)
 	SENTENCE ("Label", "")
 	OK
 DO
-	EVERY_TO (IntervalTier_downto_TableOfReal (OBJECT, GET_STRING ("Label")))
+	EVERY_TO (IntervalTier_downto_TableOfReal (OBJECT, GET_STRINGW (L"Label")))
 END
 
 DIRECT (IntervalTier_downto_TableOfReal_any)
@@ -67,7 +67,7 @@ FORM (IntervalTier_getCentrePoints, "IntervalTier: Get centre points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getCentrePoints (OBJECT, GET_STRING ("Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new (IntervalTier_getCentrePoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
 END
 
 FORM (IntervalTier_getEndPoints, "IntervalTier: Get end points", 0)
@@ -75,7 +75,7 @@ FORM (IntervalTier_getEndPoints, "IntervalTier: Get end points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getEndPoints (OBJECT, GET_STRING ("Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new (IntervalTier_getEndPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
 END
 
 FORM (IntervalTier_getStartingPoints, "IntervalTier: Get starting points", 0)
@@ -83,10 +83,10 @@ FORM (IntervalTier_getStartingPoints, "IntervalTier: Get starting points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getStartingPoints (OBJECT, GET_STRING ("Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new (IntervalTier_getStartingPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
 END
 
-DIRECT (IntervalTier_help) Melder_help ("IntervalTier"); END
+DIRECT (IntervalTier_help) Melder_help (L"IntervalTier"); END
 
 FORM_WRITE (IntervalTier_writeToXwaves, "Xwaves label file", 0, 0)
 	if (! IntervalTier_writeToXwaves (ONLY_OBJECT, file)) return 0;
@@ -125,7 +125,7 @@ DIRECT (Label_Sound_to_TextGrid)
 END
 
 DIRECT (info_Label_Sound_to_TextGrid)
-	Melder_information1 ("This is an old-style Label object. To turn it into a TextGrid, "
+	Melder_information1 (L"This is an old-style Label object. To turn it into a TextGrid, "
 		"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
 END
 
@@ -473,7 +473,7 @@ FORM (TextGrid_Sound_extractIntervals, "TextGrid & Sound: Extract intervals", 0)
 	OK
 DO
 	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER (STRING_TIER_NUMBER), Melder_STRING_EQUAL_TO, GET_STRING ("Label text"),
+		GET_INTEGER (STRING_TIER_NUMBER), Melder_STRING_EQUAL_TO, GET_STRINGW (L"Label text"),
 		GET_INTEGER ("Preserve times")), GET_STRING ("Label text"))) return 0;
 END
 
@@ -481,14 +481,14 @@ FORM (TextGrid_Sound_extractIntervalsWhere, "TextGrid & Sound: Extract intervals
 	INTEGER (STRING_TIER_NUMBER, "1")
 	BOOLEAN ("Preserve times", 0)
 	OPTIONMENU ("Extract all intervals whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
 	SENTENCE ("...the text", "")
 	OK
 DO
 	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
 		GET_INTEGER (STRING_TIER_NUMBER),
 		GET_INTEGER ("Extract all intervals whose label...") - 1 + Melder_STRING_min,
-		GET_STRING ("...the text"),
+		GET_STRINGW (L"...the text"),
 		GET_INTEGER ("Preserve times")), GET_STRING ("...the text"))) return 0;
 END
 
@@ -514,7 +514,7 @@ FORM (SpellingChecker_addNewWord, "Add word to user dictionary", "SpellingChecke
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! SpellingChecker_addNewWord (OBJECT, GET_STRING ("New word"))) return 0;
+		if (! SpellingChecker_addNewWord (OBJECT, GET_STRINGW (L"New word"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -538,32 +538,32 @@ FORM (SpellingChecker_edit, "Edit spelling checker", "SpellingChecker")
 	SENTENCE ("Allow all words ending in", "")
 	OK
 SpellingChecker me = ONLY_OBJECT;
-SET_STRING ("Forbidden strings", my forbiddenStrings)
+SET_STRINGW (L"Forbidden strings", my forbiddenStrings)
 SET_INTEGER ("Check matching parentheses", my checkMatchingParentheses)
-SET_STRING ("Separating characters", my separatingCharacters)
+SET_STRINGW (L"Separating characters", my separatingCharacters)
 SET_INTEGER ("Allow all parenthesized", my allowAllParenthesized)
 SET_INTEGER ("Allow all names", my allowAllNames)
-SET_STRING ("Name prefixes", my namePrefixes)
+SET_STRINGW (L"Name prefixes", my namePrefixes)
 SET_INTEGER ("Allow all abbreviations", my allowAllAbbreviations)
 SET_INTEGER ("Allow caps sentence-initially", my allowCapsSentenceInitially)
 SET_INTEGER ("Allow caps after colon", my allowCapsAfterColon)
-SET_STRING ("Allow all words containing", my allowAllWordsContaining)
-SET_STRING ("Allow all words starting with", my allowAllWordsStartingWith)
-SET_STRING ("Allow all words ending in", my allowAllWordsEndingIn)
+SET_STRINGW (L"Allow all words containing", my allowAllWordsContaining)
+SET_STRINGW (L"Allow all words starting with", my allowAllWordsStartingWith)
+SET_STRINGW (L"Allow all words ending in", my allowAllWordsEndingIn)
 DO
 	SpellingChecker me = ONLY_OBJECT;
-	Melder_free (my forbiddenStrings); my forbiddenStrings = Melder_strdup (GET_STRING ("Forbidden strings"));
+	Melder_free (my forbiddenStrings); my forbiddenStrings = Melder_wcsdup (GET_STRINGW (L"Forbidden strings"));
 	my checkMatchingParentheses = GET_INTEGER ("Check matching parentheses");
-	Melder_free (my separatingCharacters); my separatingCharacters = Melder_strdup (GET_STRING ("Separating characters"));
+	Melder_free (my separatingCharacters); my separatingCharacters = Melder_wcsdup (GET_STRINGW (L"Separating characters"));
 	my allowAllParenthesized = GET_INTEGER ("Allow all parenthesized");
 	my allowAllNames = GET_INTEGER ("Allow all names");
-	Melder_free (my namePrefixes); my namePrefixes = Melder_strdup (GET_STRING ("Name prefixes"));
+	Melder_free (my namePrefixes); my namePrefixes = Melder_wcsdup (GET_STRINGW (L"Name prefixes"));
 	my allowAllAbbreviations = GET_INTEGER ("Allow all abbreviations");
 	my allowCapsSentenceInitially = GET_INTEGER ("Allow caps sentence-initially");
 	my allowCapsAfterColon = GET_INTEGER ("Allow caps after colon");
-	Melder_free (my allowAllWordsContaining); my allowAllWordsContaining = Melder_strdup (GET_STRING ("Allow all words containing"));
-	Melder_free (my allowAllWordsStartingWith); my allowAllWordsStartingWith = Melder_strdup (GET_STRING ("Allow all words starting with"));
-	Melder_free (my allowAllWordsEndingIn); my allowAllWordsEndingIn = Melder_strdup (GET_STRING ("Allow all words ending in"));
+	Melder_free (my allowAllWordsContaining); my allowAllWordsContaining = Melder_wcsdup (GET_STRINGW (L"Allow all words containing"));
+	Melder_free (my allowAllWordsStartingWith); my allowAllWordsStartingWith = Melder_wcsdup (GET_STRINGW (L"Allow all words starting with"));
+	Melder_free (my allowAllWordsEndingIn); my allowAllWordsEndingIn = Melder_wcsdup (GET_STRINGW (L"Allow all words ending in"));
 	praat_dataChanged (me);
 END
 
@@ -579,8 +579,8 @@ FORM (SpellingChecker_isWordAllowed, "Is word allowed?", "SpellingChecker")
 	SENTENCE ("Word", "")
 	OK
 DO
-	Melder_information1 (SpellingChecker_isWordAllowed (ONLY_OBJECT, GET_STRING ("Word")) ?
-		"1 (allowed)" : "0 (not allowed)");
+	Melder_information1 (SpellingChecker_isWordAllowed (ONLY_OBJECT, GET_STRINGW (L"Word")) ?
+		L"1 (allowed)" : L"0 (not allowed)");
 END
 
 FORM (SpellingChecker_nextNotAllowedWord, "Next not allowed word?", "SpellingChecker")
@@ -589,10 +589,10 @@ FORM (SpellingChecker_nextNotAllowedWord, "Next not allowed word?", "SpellingChe
 	INTEGER ("Starting character", "0")
 	OK
 DO
-	char *sentence = GET_STRING ("sentence");
+	wchar_t *sentence = GET_STRINGW (L"sentence");
 	int startingCharacter = GET_INTEGER ("Starting character");
 	REQUIRE (startingCharacter >= 0, "Starting character should be 0 or positive.")
-	REQUIRE (startingCharacter <= (int) strlen (sentence), "Starting character should not exceed end of sentence.")
+	REQUIRE (startingCharacter <= (int) wcslen (sentence), "Starting character should not exceed end of sentence.")
 	Melder_information1 (SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter));
 END
 
@@ -601,7 +601,7 @@ DIRECT (SpellingChecker_replaceWordList)
 END
 
 DIRECT (SpellingChecker_replaceWordList_help)
-	Melder_information1 ("To replace the checker's word list\nby the contents of a Strings object:\n"
+	Melder_information1 (L"To replace the checker's word list\nby the contents of a Strings object:\n"
 		"1. select the Strings;\n2. convert to a WordList object;\n3. select the SpellingChecker and the WordList;\n"
 		"4. choose Replace.");
 END
@@ -618,7 +618,7 @@ FORM (TextGrid_countLabels, "Count labels", "TextGrid: Count labels...")
 	OK
 DO
 	Melder_information2 (Melder_integer (TextGrid_countLabels (ONLY (classTextGrid),
-		GET_INTEGER (STRING_TIER_NUMBER), GET_STRING ("Label text"))), " labels");
+		GET_INTEGER (STRING_TIER_NUMBER), GET_STRINGW (L"Label text"))), L" labels");
 END
 
 FORM (TextGrid_draw, "TextGrid: Draw", 0)
@@ -831,7 +831,7 @@ FORM (TextGrid_getStartingPoint, "TextGrid: Get starting point", 0)
 DO
 	TextInterval interval = pr_TextGrid_getInterval (dia);
 	if (! interval) return 0;
-	Melder_informationReal (interval -> xmin, "seconds");
+	Melder_informationReal (interval -> xmin, L"seconds");
 END
 	
 FORM (TextGrid_getEndPoint, "TextGrid: Get end point", 0)
@@ -841,7 +841,7 @@ FORM (TextGrid_getEndPoint, "TextGrid: Get end point", 0)
 DO
 	TextInterval interval = pr_TextGrid_getInterval (dia);
 	if (! interval) return 0;
-	Melder_informationReal (interval -> xmax, "seconds");
+	Melder_informationReal (interval -> xmax, L"seconds");
 END
 	
 FORM (TextGrid_getLabelOfInterval, "TextGrid: Get label of interval", 0)
@@ -871,7 +871,7 @@ FORM (TextGrid_getTierName, "TextGrid: Get tier name", 0)
 DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
-	Melder_information1 (tier -> name);
+	Melder_information1 (tier -> nameW);
 END
 
 FORM (TextGrid_getTimeOfPoint, "TextGrid: Get time of point", 0)
@@ -881,7 +881,7 @@ FORM (TextGrid_getTimeOfPoint, "TextGrid: Get time of point", 0)
 DO
 	TextPoint point = pr_TextGrid_getPoint (dia);
 	if (! point) return 0;
-	Melder_informationReal (point -> time, "seconds");
+	Melder_informationReal (point -> time, L"seconds");
 END
 	
 FORM (TextGrid_getLabelOfPoint, "TextGrid: Get label of point", 0)
@@ -894,7 +894,7 @@ DO
 	Melder_information1 (point -> mark);
 END
 	
-DIRECT (TextGrid_help) Melder_help ("TextGrid"); END
+DIRECT (TextGrid_help) Melder_help (L"TextGrid"); END
 
 FORM (TextGrid_insertBoundary, "TextGrid: Insert boundary", 0)
 	NATURAL (STRING_TIER_NUMBER, "1")
@@ -933,7 +933,7 @@ FORM (TextGrid_insertPoint, "TextGrid: Insert point", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TextGrid_insertPoint (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL ("Time"), GET_STRING ("text"))) return 0;
+		if (! TextGrid_insertPoint (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL ("Time"), GET_STRINGW (L"text"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -946,11 +946,11 @@ DO
 	WHERE (SELECTED) {
 		TextGrid grid = OBJECT;
 		int position = GET_INTEGER ("Position");
-		char *name = GET_STRING ("Name");
+		wchar_t *name = GET_STRINGW (L"Name");
 		TextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setName (tier, name);
+		Thing_setNameW (tier, name);
 		if (! Ordered_addItemPos (grid -> tiers, tier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -963,9 +963,9 @@ DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
 	if (tier -> methods == (Data_Table) classIntervalTier) {
-		Melder_information9 ("1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), " is an interval tier)", 0,0,0,0,0,0);
+		Melder_information3 (L"1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is an interval tier)");
 	} else {
-		Melder_information9 ("0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), " is a point tier)", 0,0,0,0,0,0);
+		Melder_information3 (L"0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is a point tier)");
 	}
 END
 
@@ -985,7 +985,7 @@ DIRECT (TextGrids_merge)
 END
 
 DIRECT (info_TextGrid_Pitch_draw)
-	Melder_information1 ("You can draw a TextGrid together with a Pitch after selecting them both.");
+	Melder_information1 (L"You can draw a TextGrid together with a Pitch after selecting them both.");
 END
 
 FORM (TextGrid_removeBoundaryAtTime, "TextGrid: Remove boundary at time", 0)
@@ -1097,12 +1097,12 @@ DO
 END
 
 DIRECT (info_TextGrid_Sound_edit)
-	Melder_information1 ("To include a copy of a Sound in your TextGrid editor:\n"
+	Melder_information1 (L"To include a copy of a Sound in your TextGrid editor:\n"
 		"   select a TextGrid and a Sound, and click \"Edit\".");
 END
 
 DIRECT (info_TextGrid_Sound_draw)
-	Melder_information1 ("You can draw a TextGrid together with a Sound after selecting them both.");
+	Melder_information1 (L"You can draw a TextGrid together with a Sound after selecting them both.");
 END
 
 FORM (TextGrid_scaleTimes, "TextGrid: Scale times", 0)
@@ -1126,7 +1126,7 @@ FORM (TextGrid_setIntervalText, "TextGrid: Set interval text", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TextGrid_setIntervalText (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_INTERVAL_NUMBER), GET_STRING ("text"))) return 0;
+		if (! TextGrid_setIntervalText (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_INTERVAL_NUMBER), GET_STRINGW (L"text"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1139,7 +1139,7 @@ FORM (TextGrid_setPointText, "TextGrid: Set point text", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TextGrid_setPointText (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_POINT_NUMBER), GET_STRING ("text"))) return 0;
+		if (! TextGrid_setPointText (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_POINT_NUMBER), GET_STRINGW (L"text"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1190,7 +1190,7 @@ FORM (TextTier_addPoint, "TextTier: Add point", "TextTier: Add point...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TextTier_addPoint (OBJECT, GET_REAL ("Time"), GET_STRING ("Text"))) return 0;
+		if (! TextTier_addPoint (OBJECT, GET_REAL ("Time"), GET_STRINGW (L"Text"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1203,7 +1203,7 @@ FORM (TextTier_downto_TableOfReal, "TextTier: Down to TableOfReal", 0)
 	SENTENCE ("Label", "")
 	OK
 DO
-	EVERY_TO (TextTier_downto_TableOfReal (OBJECT, GET_STRING ("Label")))
+	EVERY_TO (TextTier_downto_TableOfReal (OBJECT, GET_STRINGW (L"Label")))
 END
 
 DIRECT (TextTier_downto_TableOfReal_any)
@@ -1215,10 +1215,10 @@ FORM (TextTier_getPoints, "Get points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (TextTier_getPoints (OBJECT, GET_STRING ("Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new (TextTier_getPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
 END
 
-DIRECT (TextTier_help) Melder_help ("TextTier"); END
+DIRECT (TextTier_help) Melder_help (L"TextTier"); END
 
 /***** WORDLIST *****/
 
@@ -1226,7 +1226,7 @@ FORM (WordList_hasWord, "Does word occur in list?", "WordList")
 	SENTENCE ("Word", "")
 	OK
 DO
-	Melder_information1 (WordList_hasWord (ONLY_OBJECT, GET_STRING ("Word")) ? "1" : "0");
+	Melder_information1 (WordList_hasWord (ONLY_OBJECT, GET_STRING ("Word")) ? L"1" : L"0");
 END
 
 DIRECT (WordList_to_Strings)

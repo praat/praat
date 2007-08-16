@@ -1,6 +1,6 @@
 /* Picture.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2005/09/18
+ * pb 2007/08/12
  */
 
 /* A self-recording picture inside a Motif DrawingArea widget.
@@ -35,15 +35,15 @@
 		Any g = Picture_getGraphics (p);
 		Picture_unhighlight (p);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (g, 0.5, 0.7, "Hello");
-		Graphics_text (g, 0.5, 0.6, "there");
+		Graphics_text (g, 0.5, 0.7, L"Hello");
+		Graphics_text (g, 0.5, 0.6, L"there");
 		Picture_highlight (p);
 		... (event handling)
 		Picture_unhighlight (p);
-		Graphics_text (g, 0.5, 0.3, "Goodbye");
+		Graphics_text (g, 0.5, 0.3, L"Goodbye");
 		Picture_highlight (p);
 		... (event handling)
-		Picture_writeToPostscriptFile (p, "HelloGoodbye.ps");
+		Picture_writeToPostscriptFile (p, L"HelloGoodbye.ps");
 		Picture_print (p, GraphicsPostscript_FINE);
 		Picture_remove (& p);
 */

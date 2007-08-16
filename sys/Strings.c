@@ -31,6 +31,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2007/01/24 Strings_createAsFileList: removed gigantic memory leak
  * pb 2007/01/24 Strings_createAsFileList: used stat instead of platform-specific struct dirent. entry
+ * pb 2007/08/10 wchar_t
  */
 
 //#define USE_STAT  1
@@ -73,7 +74,7 @@
 static long Strings_totalLength (Strings me) {
 	long totalLength = 0, i;
 	for (i = 1; i <= my numberOfStrings; i ++) {
-		totalLength += strlen (my strings [i]);
+		totalLength += wcslen (my strings [i]);
 	}
 	return totalLength;
 }
@@ -81,7 +82,7 @@ static long Strings_totalLength (Strings me) {
 static long Strings_maximumLength (Strings me) {
 	long maximumLength = 0, i;
 	for (i = 1; i <= my numberOfStrings; i ++) {
-		long length = strlen (my strings [i]);
+		long length = wcslen (my strings [i]);
 		if (length > maximumLength) {
 			maximumLength = length;
 		}
@@ -92,9 +93,9 @@ static long Strings_maximumLength (Strings me) {
 static void info (I) {
 	iam (Strings);
 	classData -> info (me);
-	MelderInfo_writeLine2 ("Number of strings: ", Melder_integer (my numberOfStrings));
-	MelderInfo_writeLine3 ("Total length: ", Melder_integer (Strings_totalLength (me)), " characters");
-	MelderInfo_writeLine3 ("Longest string: ", Melder_integer (Strings_maximumLength (me)), " characters");
+	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my numberOfStrings));
+	MelderInfo_writeLine3 (L"Total length: ", Melder_integer (Strings_totalLength (me)), L" characters");
+	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (me)), L" characters");
 }
 
 class_methods (Strings, Data)
@@ -111,52 +112,52 @@ class_methods_end
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
-static Strings Strings_createAsFileOrDirectoryList (const char *path, int type) {
+static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int type) {
 	Strings me = new (Strings);
 	#if USE_STAT
 		/*
 		 * Initialize.
 		 */
 		DIR *d = NULL;
-		MelderStringA filePath = { 0 }, searchDirectory = { 0 }, left = { 0 }, right = { 0 };
+		MelderStringW filePath = { 0 }, searchDirectory = { 0 }, left = { 0 }, right = { 0 };
 		/*
 		 * Parse the path.
 		 * Example: in /Users/paul/sounds/h*.wav",
 		 * the search directory is "/Users/paul/sounds",
 		 * the left environment is "h", and the right environment is ".wav".
 		 */
-		MelderStringA_copyA (& searchDirectory, path);
-		char *asterisk = strrchr (searchDirectory. string, '*');
+		MelderStringW_copyW (& searchDirectory, path);
+		wchar_t *asterisk = wcsrchr (searchDirectory. string, '*');
 		if (asterisk != NULL) {
 			*asterisk = '\0';
 			searchDirectory. length = asterisk - searchDirectory. string;   // Probably superfluous, but correct.
-			char *lastSlash = strrchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
+			wchar_t *lastSlash = wcsrchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
 			if (lastSlash != NULL) {
 				*lastSlash = '\0';   // This fixes searchDirectory.
 				searchDirectory. length = lastSlash - searchDirectory. string;   // Probably superfluous, but correct.
-				MelderStringA_copyA (& left, lastSlash + 1);
+				MelderStringW_copyW (& left, lastSlash + 1);
 			} else {
-				MelderStringA_copyA (& left, searchDirectory. string);   /* Quickly save... */
-				MelderStringA_empty (& searchDirectory);   /* ...before destruction. */
+				MelderStringW_copyW (& left, searchDirectory. string);   /* Quickly save... */
+				MelderStringW_empty (& searchDirectory);   /* ...before destruction. */
 			}
-			MelderStringA_copyA (& right, asterisk + 1);
+			MelderStringW_copyW (& right, asterisk + 1);
 		}
-		d = opendir (searchDirectory. string [0] ? searchDirectory. string : ".");
+		d = opendir (Melder_peekWcsToUtf8 (searchDirectory. string [0] ? searchDirectory. string : L"."));
 		if (d == NULL) {
-			Melder_error ("Cannot open directory %s.", searchDirectory. string);
+			Melder_error3 (L"Cannot open directory ", searchDirectory. string, L".");
 			goto end;
 		}
 		//Melder_casual ("opened");
 		my strings = NUMpvector (1, 1000000); cherror
 		struct dirent *entry;
 		while ((entry = readdir (d)) != NULL) {
-			MelderStringA_copyA (& filePath, searchDirectory. string [0] ? searchDirectory. string : ".");
-			MelderStringA_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
-			MelderStringA_appendA (& filePath, entry -> d_name);
+			MelderStringW_copyW (& filePath, searchDirectory. string [0] ? searchDirectory. string : L".");
+			MelderStringW_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
+			MelderStringW_appendW (& filePath, Melder_peekUtf8ToWcs (entry -> d_name));
 			//Melder_casual ("read %s", filePath. string);
 			struct stat stats;
-			if (stat (filePath. string, & stats) != 0) {
-				Melder_error ("Cannot look at file %s.", filePath. string);
+			if (stat (Melder_peekWcsToUtf8 (filePath. string), & stats) != 0) {
+				Melder_error3 (L"Cannot look at file ", filePath. string, L".");
 				goto end;
 				//stats. st_mode = -1L;
 			}
@@ -165,24 +166,24 @@ static Strings Strings_createAsFileOrDirectoryList (const char *path, int type) 
 			if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE && S_ISREG (stats. st_mode)) ||
 				(type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && S_ISDIR (stats. st_mode)))
 			{
-				char *fileName = entry -> d_name;
-				unsigned long length = strlen (fileName);
+				wchar_t *fileName = Melder_peekUtf8ToWcs (entry -> d_name);
+				unsigned long length = wcslen (fileName);
 				if (fileName [0] != '.' &&
-					(left. length == 0 || strnequ (entry -> d_name, left. string, left. length)) &&
-					(right. length == 0 || (length >= right. length && strequ (entry -> d_name + (length - right. length), right. string))))
+					(left. length == 0 || wcsnequ (fileName, left. string, left. length)) &&
+					(right. length == 0 || (length >= right. length && wcsequ (fileName + (length - right. length), right. string))))
 				{
-					my strings [++ my numberOfStrings] = Melder_strdup (entry -> d_name); cherror
+					my strings [++ my numberOfStrings] = Melder_wcsdup (fileName); cherror
 				}
 			}
 		}
 	#elif defined (_WIN32)
 		HANDLE searchHandle;
-		WIN32_FIND_DATA findData;
-		char searchPath [300];
-		int len = strlen (path), hasAsterisk = strchr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
+		WIN32_FIND_DATAW findData;
+		wchar_t searchPath [300];
+		int len = wcslen (path), hasAsterisk = wcschr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
 		my strings = NUMpvector (1, 1000000); cherror
-		sprintf (searchPath, "%s%s%s", path, hasAsterisk || endsInSeparator ? "" : "\\", hasAsterisk ? "" : "*");
-		searchHandle = FindFirstFile (searchPath, & findData);
+		swprintf (searchPath, 300, L"%ls%ls%ls", path, hasAsterisk || endsInSeparator ? L"" : L"\\", hasAsterisk ? L"" : L"*");
+		searchHandle = FindFirstFileW (searchPath, & findData);
 		if (searchHandle != INVALID_HANDLE_VALUE) {
 			do {
 				if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE &&
@@ -190,46 +191,44 @@ static Strings Strings_createAsFileOrDirectoryList (const char *path, int type) 
 				 || (type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && 
 						(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0))
 				{
-					my strings [++ my numberOfStrings] = Melder_strdup (findData. cFileName); cherror
+					my strings [++ my numberOfStrings] = Melder_wcsdup (findData. cFileName); cherror
 				}
-			} while (FindNextFile (searchHandle, & findData));
+			} while (FindNextFileW (searchHandle, & findData));
 			FindClose (searchHandle);
 		}
 	#endif
 end:
 	#if USE_STAT
 		if (d) closedir (d);
-		MelderStringA_free (& filePath);
-		MelderStringA_free (& searchDirectory);
-		MelderStringA_free (& left);
-		MelderStringA_free (& right);
+		MelderStringW_free (& filePath);
+		MelderStringW_free (& searchDirectory);
+		MelderStringW_free (& left);
+		MelderStringW_free (& right);
 	#endif
 	iferror forget (me);
 	return me;
 }
 
-Strings Strings_createAsFileList (const char *path) {
+Strings Strings_createAsFileList (const wchar_t *path) {
 	return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_FILE);
 }
 
-Strings Strings_createAsDirectoryList (const char *path) {
+Strings Strings_createAsDirectoryList (const wchar_t *path) {
 	return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY);
 }
 
 Strings Strings_readFromRawTextFile (MelderFile file) {
 	Strings me = NULL;
-	long n, i;
-	char *line;
-
-	MelderFile_open (file); cherror
+	wchar_t *string = MelderFile_readText (file); cherror
+	MelderReadString text = { string, string };
 
 	/*
 	 * Count number of strings.
 	 */
-	for (n = 0;; n++) {
-		line = MelderFile_readLine (file); cherror
-		if (line == NULL) break;
-	}
+	long n = 0;
+	wchar_t *p = & string [0];
+	for (; *p != '\0'; p ++) if (*p == '\n') n ++;
+	if (p - string > 1 && p [-1] != '\n') n ++;
 
 	/*
 	 * Create.
@@ -241,52 +240,51 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 	/*
 	 * Read strings.
 	 */
-	MelderFile_rewind (file);
-	for (i = 1; i <= n; i ++) {
-		line = MelderFile_readLine (file); cherror
-		my strings [i] = Melder_strdup (line); cherror
+	for (long i = 1; i <= n; i ++) {
+		wchar_t *line = MelderReadString_readLine (& text); cherror
+		my strings [i] = Melder_wcsdup (line); cherror
 	}
 
 end:
-	MelderFile_close (file);
-	iferror { forget (me); return Melder_errorp (
-		"(Strings_readFromRawTextFile:) File %s not read.", MelderFile_messageName (file)); }
+	Melder_free (string);
+	iferror {
+		forget (me);
+		Melder_error3 (L"(Strings_readFromRawTextFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		return NULL;
+	}
 	return me;
 }
 
-int Strings_writeToRawTextFile (Strings me, MelderFile fs) {
-	long i;
-	FILE *f = Melder_fopen (fs, "w"); cherror
-	for (i = 1; i <= my numberOfStrings; i ++) {
-		fprintf (f, "%s\n", my strings [i]);
+int Strings_writeToRawTextFile (Strings me, MelderFile file) {
+	MelderStringW buffer = { 0 };
+	for (long i = 1; i <= my numberOfStrings; i ++) {
+		MelderStringW_append2 (& buffer, my strings [i], L"\n");
 	}
+	MelderFile_writeText (file, buffer.string);
 end:
-	Melder_fclose (fs, f);
+	MelderStringW_free (& buffer);
 	iferror return 0;
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
 	return 1;
 }
 
 void Strings_randomize (Strings me) {
-	long i;
-	for (i = 1; i < my numberOfStrings; i ++) {
+	for (long i = 1; i < my numberOfStrings; i ++) {
 		long other = NUMrandomInteger (i, my numberOfStrings);
-		char *dummy = my strings [other];
+		wchar_t *dummy = my strings [other];
 		my strings [other] = my strings [i];
 		my strings [i] = dummy;
 	}
 }
 
 int Strings_genericize (Strings me) {
-	long i;
-	char *buffer = Melder_malloc (Strings_maximumLength (me) * 3 + 1); cherror
-	for (i = 1; i <= my numberOfStrings; i ++) {
-		const unsigned char *p = (const unsigned char *) my strings [i];
+	wchar_t *buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) * 3 + 1); cherror
+	for (long i = 1; i <= my numberOfStrings; i ++) {
+		const wchar_t *p = (const wchar_t *) my strings [i];
 		while (*p) {
 			if (*p > 126) {   /* Backslashes are not converted, i.e. genericize^2 == genericize. */
-				char *newString;
-				Longchar_genericize (my strings [i], buffer);
-				newString = Melder_strdup (buffer); cherror
+				wchar_t *newString;
+				Longchar_genericizeW (my strings [i], buffer);
+				newString = Melder_wcsdup (buffer); cherror
 				/*
 				 * Replace string only if copying was OK.
 				 */
@@ -304,7 +302,7 @@ end:
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_str (my numberOfStrings, my strings);
+	NUMsort_strW (my numberOfStrings, my strings);
 }
 
 /* End of file Strings.c */

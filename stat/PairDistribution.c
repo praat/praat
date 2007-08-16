@@ -56,7 +56,7 @@ class_methods_end
 static void info (I) {
 	iam (PairDistribution);
 	inherited (PairDistribution) info (me);
-	MelderInfo_writeLine2 ("Number of pairs: ", Melder_integer (my pairs -> size));
+	MelderInfo_writeLine2 (L"Number of pairs: ", Melder_integer (my pairs -> size));
 }
 
 class_methods (PairDistribution, Data)
@@ -71,11 +71,11 @@ class_methods (PairDistribution, Data)
 	class_method (info)
 class_methods_end
 
-PairProbability PairProbability_create (const char *string1, const char *string2, double weight) {
+PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
 	PairProbability me = new (PairProbability);
 	if (! me) return NULL;
-	my string1 = Melder_strdup (string1);
-	my string2 = Melder_strdup (string2);
+	my string1 = Melder_wcsdup (string1);
+	my string2 = Melder_wcsdup (string2);
 	my weight = weight;
 	if (Melder_hasError ()) forget (me);
 	return me;
@@ -87,7 +87,7 @@ PairDistribution PairDistribution_create (void) {
 	return me;
 }
 
-int PairDistribution_add (PairDistribution me, const char *string1, const char *string2, double weight) {
+int PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight) {
 	PairProbability pair = PairProbability_create (string1, string2, weight);
 	if (! pair || ! Collection_addItem (my pairs, pair)) return 0;
 	return 1;
@@ -132,8 +132,8 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 		} while (iin > nin);   /* Guard against rounding errors. */
 		prob = my pairs -> item [iin];
 		if (! prob -> string1 || ! prob -> string2) { Melder_error ("No string in probability pair %ld.", iin); goto end; }
-		(*strings1) -> strings [iout] = Melder_strdup (prob -> string1); cherror
-		(*strings2) -> strings [iout] = Melder_strdup (prob -> string2); cherror
+		(*strings1) -> strings [iout] = Melder_wcsdup (prob -> string1); cherror
+		(*strings2) -> strings [iout] = Melder_wcsdup (prob -> string2); cherror
 	}
 end:
 	iferror { forget (*strings1); forget (*strings2);
@@ -141,7 +141,7 @@ end:
 	return 1;
 }
 
-int PairDistribution_peekPair (PairDistribution me, char **string1, char **string2) {
+int PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t **string2) {
 	double total = 0.0;
 	long nin = my pairs -> size, iin;
 	PairProbability prob;
@@ -169,7 +169,7 @@ end:
 }
 
 static int compare (PairProbability me, PairProbability thee) {
-	return strcmp (my string1, thy string1);
+	return wcscmp (my string1, thy string1);
 }
 
 static double PairDistribution_getFractionCorrect (PairDistribution me, int which) {
@@ -184,10 +184,10 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 	if (total == 0.0) { Melder_error ("Total is zero."); goto end; }
 	do {
 		long pairmax = pairmin;
-		char *firstInput = ((PairProbability) thy pairs -> item [pairmin]) -> string1;
+		wchar_t *firstInput = ((PairProbability) thy pairs -> item [pairmin]) -> string1;
 		for (ipair = pairmin + 1; ipair <= thy pairs -> size; ipair ++) {
 			PairProbability prob = thy pairs -> item [ipair];
-			if (! strequ (prob -> string1, firstInput)) {
+			if (! wcsequ (prob -> string1, firstInput)) {
 				pairmax = ipair - 1;
 				break;
 			}
@@ -230,7 +230,7 @@ double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions dist, long column) {
 	double total = 0.0, correct = 0.0;
 	long pairmin = 1, ipair;
-	char string [1000];
+	wchar_t string [1000];
 	PairDistribution thee;
 	if (column < 1 || column > dist -> numberOfColumns) return NUMundefined;
 	thee = Data_copy (me); cherror
@@ -243,10 +243,10 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 	do {
 		long pairmax = pairmin, length, idist;
 		double sum = 0.0, sumDist = 0.0;
-		char *firstInput = ((PairProbability) thy pairs -> item [pairmin]) -> string1;
+		wchar_t *firstInput = ((PairProbability) thy pairs -> item [pairmin]) -> string1;
 		for (ipair = pairmin + 1; ipair <= thy pairs -> size; ipair ++) {
 			PairProbability prob = thy pairs -> item [ipair];
-			if (! strequ (prob -> string1, firstInput)) {
+			if (! wcsequ (prob -> string1, firstInput)) {
 				pairmax = ipair - 1;
 				break;
 			}
@@ -255,19 +255,19 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		for (ipair = pairmin; ipair <= pairmax; ipair ++) {
 			PairProbability prob = thy pairs -> item [ipair];
 			double p = prob -> weight / total, pout = 0.0;
-			sprintf (string, "%s \\-> %s", prob -> string1, prob -> string2);
+			swprintf (string, 1000, L"%ls \\-> %ls", prob -> string1, prob -> string2);
 			for (idist = 1; idist <= dist -> numberOfRows; idist ++) {
-				if (strequ (string, dist -> rowLabels [idist])) {
+				if (wcsequ (string, dist -> rowLabels [idist])) {
 					pout = dist -> data [idist] [column];
 					break;
 				}
 			}
 			sum += p * pout;
 		}
-		sprintf (string, "%s \\-> ", firstInput);
-		length = strlen (string);
+		swprintf (string, 1000, L"%ls \\-> ", firstInput);
+		length = wcslen (string);
 		for (idist = 1; idist <= dist -> numberOfRows; idist ++) {
-			if (strnequ (string, dist -> rowLabels [idist], length)) {
+			if (wcsnequ (string, dist -> rowLabels [idist], length)) {
 				sumDist += dist -> data [idist] [column];
 			}
 		}
@@ -281,7 +281,7 @@ end:
 }
 
 Table PairDistribution_to_Table (PairDistribution me) {
-	Table thee = Table_createWithColumnNames (my pairs -> size, "string1 string2 weight"); cherror
+	Table thee = Table_createWithColumnNames (my pairs -> size, L"string1 string2 weight"); cherror
 	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
 		PairProbability prob = my pairs -> item [ipair];
 		Table_setStringValue (thee, ipair, 1, prob -> string1); cherror

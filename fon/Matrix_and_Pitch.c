@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1996/04/17
  * pb 2002/07/16 GPL
+ * pb 2007/08/12 wchar_t
  */
 
 #include "Matrix_and_Pitch.h"
@@ -57,7 +57,7 @@ error:
 	return Melder_errorp ("(Matrix_to_Pitch:) Not performed.");
 }
 
-int Pitch_formula (Pitch me, const char *formula) {
+int Pitch_formula (Pitch me, const wchar_t *formula) {
 	Matrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		1, my maxnCandidates, my maxnCandidates, 1, 1);
 	long iframe, icand;

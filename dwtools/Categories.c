@@ -49,7 +49,7 @@ static int writeText (I, MelderFile file)
 	for (i = 1; i <= my size; i++)
 	{
 			SimpleString data = my item [i];
-			texputintro (file, L"item" " [", Melder_integerW (i), L"]:", 0,0,0);
+			texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0,0,0);
 			if (! classSimpleString->writeText (data, file)) return 0;
 			texexdent (file);
 	}

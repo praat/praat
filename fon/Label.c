@@ -1,6 +1,6 @@
 /* Label.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/10/16 C++ compatible structs
+ * pb 2007/08/13 wchar_t
  */
 
 #include "Label.h"
@@ -27,20 +28,20 @@
 static int copy (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
 	if (! inherited (Autosegment) copy (me, thee)) return 0;
-	return my name == NULL || (Thing_setName (thee, my name), my name != NULL);
+	return my nameW == NULL || (Thing_setNameW (thee, my nameW), my nameW != NULL);
 }
 
 static bool equal (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
 	if (! inherited (Autosegment) equal (me, thee)) return 0;
-	if (my name == NULL && thy name == NULL) return 1;   /* Shortcut: no names. */
-	if (my name == NULL || thy name == NULL) return 0;
-	return strcmp (my name, thy name) == 0;
+	if (my nameW == NULL && thy nameW == NULL) return 1;   /* Shortcut: no names. */
+	if (my nameW == NULL || thy nameW == NULL) return 0;
+	return wcsequ (my nameW, thy nameW);
 }
 
 static struct structData_Description description [] = {
-	{ "Autosegment", inheritwa, 0, sizeof (struct structAutosegment), "Autosegment", & theStructFunction. description },
-	{ "name", stringwa, (int) & ((Autosegment) 0) -> name, sizeof (char *) },
+	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theStructFunction. description },
+	{ L"name", stringwwa, (int) & ((Autosegment) 0) -> nameW, sizeof (wchar_t *) },
 	{ 0 } };
 
 class_methods (Autosegment, Function)
@@ -49,10 +50,10 @@ class_methods (Autosegment, Function)
 	class_method (description)
 class_methods_end
 
-Any Autosegment_create (double tmin, double tmax, const char *label) {
+Any Autosegment_create (double tmin, double tmax, const wchar_t *label) {
 	Autosegment me = new (Autosegment);
 	if (! me || ! Function_init (me, tmin, tmax) ||
-		 (label != NULL && (Thing_setName (me, label), my name == NULL)))
+		 (label != NULL && (Thing_setNameW (me, label), my name == NULL)))
 		forget (me);
 	return me;
 }
