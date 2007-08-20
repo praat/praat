@@ -40,7 +40,7 @@ static void logo (Graphics g) {
 		Graphics_text (g, 0.5, 0.66, L"P\\s{RAAT}");
 	#endif
 	Graphics_setFontSize (g, 15);
-	Graphics_text (g, 0.5, 0.55, L"%%doing phonetics by computer");
+	Graphics_text (g, 0.5, 0.55, L"%%doing Pphonetics by computer");
 	#define xstr(s) str(s)
 	#define str(s) #s
 	Graphics_text (g, 0.5, 0.45, L"version " xstr(PRAAT_VERSION));
@@ -49,7 +49,7 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
 	Graphics_setFont (g, Graphics_HELVETICA);
 	Graphics_setFontSize (g, 10);
-	Graphics_text (g, 0.5, 0.16, L"Copyright  \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_text (g, 0.5, 0.04, L"PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
 	Graphics_text (g, 0.5, -0.02, L"GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
 	Graphics_text (g, 0.5, -0.08, L"PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");

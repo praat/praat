@@ -44,22 +44,28 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 	Strings thee = NULL;
 	long total = 0;
 	long istring = 0, irow, i;
-	if (column > my numberOfColumns) { Melder_error ("No column %ld.", column); goto end; }
-	if (my numberOfRows < 1) { Melder_error ("No candidates."); goto end; }
+	if (column > my numberOfColumns)
+		error3 (L"No column ", Melder_integer (column), L".")
+	if (my numberOfRows < 1)
+		error1 (L"No candidates.")
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
 		double value = my data [irow] [column];
-		if (value != floor (value)) { Melder_error ("Non-integer value %.17g in row %ld.", value, irow); goto end; }
-		if (value < 0.0) { Melder_error ("Found a negative value %g in row %ld.", value, irow); goto end; }
+		if (value != floor (value))
+			error5 (L"Non-integer value ", Melder_double (value), L" in row ", Melder_integer (irow), L".")
+		if (value < 0.0)
+			error5 (L"Found a negative value ", Melder_double (value), L" in row ", Melder_integer (irow), L".")
 		total += value;
 	}
-	if (total <= 0) { Melder_error ("Column total not positive."); goto end; }
+	if (total <= 0)
+		error1 (L"Column total not positive.")
 	thee = new (Strings);
 	thy numberOfStrings = total;
 	thy strings = NUMpvector (1, total); cherror
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
 		long number = my data [irow] [column];
 		wchar_t *string = my rowLabels [irow];
-		if (! string) { Melder_error ("No string in row %ld.", irow); goto end; }
+		if (! string)
+			error3 (L"No string in row ", Melder_integer (irow), L".")
 		for (i = 1; i <= number; i ++)
 			thy strings [++ istring] = Melder_wcsdup (string); cherror
 	}

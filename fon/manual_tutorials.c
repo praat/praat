@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070816)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070820)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.14# (August 20, 2007)")
+LIST_ITEM (L"\\bu Repaired a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.")
+LIST_ITEM (L"\\bu Macintosh: corrected height of subscripts and superscripts (broken in 4.6.13).")
 NORMAL (L"##4.6.13# (August 16, 2007)")
 LIST_ITEM (L"\\bu TextGrid: corrected reading of chronological files.")
 LIST_ITEM (L"\\bu Macintosh: text looks better.")

@@ -235,10 +235,7 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2) 
 			}
 		}
 	}
-	if (icand_best == 0) {
-		Melder_error5 (L"The forms ", form1, L" and ", form2, L" do not match any candidate.");
-		goto end;
-	}
+	if (icand_best == 0) error5 (L"The forms ", form1, L" and ", form2, L" do not match any candidate.")
 end:
 	iferror return Melder_error ("(OTMulti: Get winner (two):) Not performed.");
 	return icand_best;
@@ -708,7 +705,7 @@ int OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t
 	long winner;
 	OTMulti_newDisharmonies (me, evaluationNoise);
 	winner = OTMulti_getWinner (me, form1, form2);
-	if (! winner) { Melder_error ("No winner"); goto end; }
+	if (! winner) error1 (L"No winner")
 	wcscpy (optimalForm, my candidates [winner]. string);
 end:
 	iferror return Melder_error ("(OTMulti_generateOptimalForm:) Not performed.");

@@ -511,10 +511,7 @@ int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, 
 			}
 		}
 	}
-	if (itab_best == 0) {
-		Melder_error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.");
-		goto end;
-	}
+	if (itab_best == 0) error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.")
 end:
 	if (bestTableau != NULL) *bestTableau = itab_best;
 	if (bestCandidate != NULL) *bestCandidate = icand_best;
@@ -855,7 +852,7 @@ int OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output
 	OTGrammar_newDisharmonies (me, rankingSpreading);
 	itab = OTGrammar_getTableau (me, input); cherror
 	winner = OTGrammar_getWinner (me, itab);
-	if (! winner) { Melder_error ("No winner"); goto end; }
+	if (! winner) error1 (L"No winner")
 	wcscpy (output, my tableaus [itab]. candidates [winner]. output);
 end:
 	iferror return Melder_error ("(OTGrammar_inputToOutput:) Not performed.");
@@ -1227,13 +1224,13 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
 			if (my constraints [my index [icons]]. tiedToTheRight)
-				{ Melder_error ("Demotion-only learning cannot handle tied constraints."); goto end; }
+				error1 (L"Demotion-only learning cannot handle tied constraints.")
 			if (loserMarks < winnerMarks)
-				{ Melder_error ("Demotion-only learning step: Loser wins! Should never happen."); goto end; }
+				error1 (L"Demotion-only learning step: Loser wins! Should never happen.")
 			if (loserMarks > winnerMarks) break;
 		}
 		if (icons > my numberOfConstraints)   /* Completed the loop? */
-			{ Melder_error ("(OTGrammar_step:) Loser equals correct candidate."); goto end; }
+			error1 (L"(OTGrammar_step:) Loser equals correct candidate.")
 		crucialLoserMark = icons;
 		/*
 		 * Demote the highest uniquely violated constraint in the loser.
@@ -1288,7 +1285,7 @@ int OTGrammar_learnOne (OTGrammar me, const wchar_t *underlyingForm, const wchar
 		if (wcsequ (loser -> output, adultOutput)) break;
 	}
 	if (iloser > tableau -> numberOfCandidates)
-		{ Melder_error3 (L"Cannot generate adult output \"", adultOutput, L"\"."); goto end; }
+		error3 (L"Cannot generate adult output \"", adultOutput, L"\".")
 
 	/*
 	 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
@@ -1309,7 +1306,7 @@ int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 	long n = inputs -> numberOfStrings, i, ichew;
 	if (! inputs) inputs = outputs;
 	if (outputs -> numberOfStrings != n)
-		{ Melder_error ("Numbers of strings in input and output do not match."); goto end; }
+		error1 (L"Numbers of strings in input and output do not match.")
 	for (i = 1; i <= n; i ++)
 		for (ichew = 1; ichew <= numberOfChews; ichew ++)
 			if (! OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],

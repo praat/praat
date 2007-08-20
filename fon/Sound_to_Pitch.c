@@ -94,11 +94,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 			break;
 	}
 	duration = my dx * my nx;
-	if (minimumPitch < periodsPerWindow / duration) {
-		Melder_error ("For this Sound, the parameter 'minimum pitch'\n"
-			"may not be less than %.8g Hz.", periodsPerWindow / duration);
-		goto end;
-	}
+	if (minimumPitch < periodsPerWindow / duration)
+		error3 (L"For this Sound, the parameter 'minimum pitch' may not be less than ", Melder_single (periodsPerWindow / duration), L" Hz.")
 
 	/*
 	 * Determine the number of samples in the longest period.
@@ -116,10 +113,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 	dt_window = periodsPerWindow / minimumPitch;
 	nsamp_window = floor (dt_window / my dx);
 	halfnsamp_window = nsamp_window / 2 - 1;
-	if (halfnsamp_window < 2) {
-		Melder_errorp ("Analysis window too short.");
-		goto end;
-	}
+	if (halfnsamp_window < 2)
+		error1 (L"Analysis window too short.")
 	nsamp_window = halfnsamp_window * 2;
 
 	/*

@@ -121,8 +121,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
 			forget (substimulus);
-			Melder_error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different number of channels than some other sound.");
-			goto end;
+			error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different number of channels than some other sound.")
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
@@ -131,8 +130,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
 			forget (substimulus);
-			Melder_error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different sampling frequency than some other sound.");
-			goto end;
+			error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different sampling frequency than some other sound.")
 		}
 		/*
 		 * Append the substimuli, perhaps with silent intervals.
@@ -381,7 +379,7 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 			his result [his numberOfTrials]. response = Melder_wcsdup (thy result [i]. response); cherror
 		}
 	}
-	if (his numberOfTrials == 0) { Melder_error ("No shared stimuli."); goto end; }
+	if (his numberOfTrials == 0) error1 (L"No shared stimuli.")
 end:
 	iferror { forget (him); return Melder_errorp ("(ResultsMFC_removeUnsharedStimuli:) Not performed."); }
 	return him;

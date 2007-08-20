@@ -241,10 +241,8 @@ Transition Matrix_to_Transition (Matrix me) {
 	/*
 	 * Preconditions: matrix matching.
 	 */
-	if (my nx != my ny) {
-		Melder_error ("Matrix should be square.");
-		goto end;
-	}
+	if (my nx != my ny)
+		error1 (L"Matrix should be square.")
 
 	if (! (thee = Transition_create (my nx))) goto end;
 	for (i = 1; i <= my nx; i ++) for (j = 1; j <= my nx; j ++)

@@ -571,35 +571,23 @@ static int MelderFile_checkSoundDesignerTwoFile (MelderFile file, int *numberOfC
 	int path = -1, sampleSize;
 	Melder_fileToMac (file, & fspec);
 	path = FSpOpenResFile (& fspec, fsRdPerm);   /* Open resource fork; there is the header info. */
-	if (path == -1) { Melder_error ("Cannot open resource fork."); goto end; }
+	if (path == -1) error1 (L"Cannot open resource fork.")
 	sampleSize = Melder_getNumberFromStrResource (1000);
-	iferror { Melder_error ("No sample size information."); goto end; }
-	if (sampleSize < 1 || sampleSize > 4) {
-		Melder_error ("Wrong sample size: %d (should be between 1 and 4).", sampleSize);
-		goto end;
-	}
+	iferror error1 (L"No sample size information.")
+	if (sampleSize < 1 || sampleSize > 4) error3 (L"Wrong sample size: ", Melder_integer (sampleSize), L" (should be between 1 and 4).")
 	*encoding =
 		sampleSize == 1 ? Melder_LINEAR_8_SIGNED :
 		sampleSize == 2 ? Melder_LINEAR_16_BIG_ENDIAN :
 		sampleSize == 3 ? Melder_LINEAR_24_BIG_ENDIAN :
 		Melder_LINEAR_32_BIG_ENDIAN;
 	*sampleRate = Melder_getNumberFromStrResource (1001);
-	iferror { Melder_error ("No sampling frequency information."); goto end; }
-	if (*sampleRate <= 0.0) {
-		Melder_error3 (L"Wrong sampling frequency: ", Melder_double (*sampleRate), L" Hz");
-		goto end;
-	}
+	iferror error1 (L"No sampling frequency information.")
+	if (*sampleRate <= 0.0) error3 (L"Wrong sampling frequency: ", Melder_double (*sampleRate), L" Hz")
 	*numberOfChannels = Melder_getNumberFromStrResource (1002);
-	iferror { Melder_error ("No channel number information."); goto end; }
-	if (*numberOfChannels != 1 && *numberOfChannels != 2) {
-		Melder_error2 (L"Wrong number of channels: ", Melder_integer (*numberOfChannels));
-		goto end;
-	}
+	iferror error1 (L"No channel number information.")
+	if (*numberOfChannels != 1 && *numberOfChannels != 2) error2 (L"Wrong number of channels: ", Melder_integer (*numberOfChannels))
 	*numberOfSamples = MelderFile_length (file) / sampleSize / *numberOfChannels;
-	if (*numberOfSamples <= 0) {
-		Melder_error1 (L"No samples in file.");
-		goto end;
-	}
+	if (*numberOfSamples <= 0) error1 (L"No samples in file.")
 	*startOfData = 0;
 end:
 	if (path != -1) CloseResFile (path);
@@ -833,20 +821,20 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 			if (numberOfChannels == 1)
 				for (i = 1; i <= numberOfSamples; i ++) {
 					signed char value;
-					if (! fread (& value, 1, 1, f)) { Melder_error ("File too small (mono 8-bit)."); goto end; }
+					if (! fread (& value, 1, 1, f)) error1 (L"File too small (mono 8-bit).")
 					leftBuffer [i] = value * (1.0f / 128);
 				}
 			else if (rightBuffer)
 				for (i = 1; i <= numberOfSamples; i ++) {
 					signed char left, right;
-					if (! fread (& left, 1, 1, f) || ! fread (& right, 1, 1, f)) { Melder_error ("File too small (stereo 8-bit)."); goto end; }
+					if (! fread (& left, 1, 1, f) || ! fread (& right, 1, 1, f)) error1 (L"File too small (stereo 8-bit).")
 					leftBuffer [i] = left * (1.0f / 128);
 					rightBuffer [i] = right * (1.0f / 128);
 				}
 			else
 				for (i = 1; i <= numberOfSamples; i ++) {
 					signed char left, right;
-					if (! fread (& left, 1, 1, f) || ! fread (& right, 1, 1, f)) { Melder_error ("File too small (stereo 8-bit)."); goto end; }
+					if (! fread (& left, 1, 1, f) || ! fread (& right, 1, 1, f)) error1 (L"File too small (stereo 8-bit).")
 					leftBuffer [i] = (left + right) * (1.0f / 256);
 				}
 			break;
@@ -1070,7 +1058,7 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 		case Melder_LINEAR_8_SIGNED:
 			for (i = 0; i < n; i ++) {
 				signed char value;
-				if (! fread (& value, 1, 1, f)) { Melder_error ("File too small (mono 8-bit)."); goto end; }
+				if (! fread (& value, 1, 1, f)) error1 (L"File too small (mono 8-bit).")
 				buffer [i] = value * 256;
 			}
 			break;

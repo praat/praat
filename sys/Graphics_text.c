@@ -386,7 +386,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					 * Convert size and baseline information to device coordinates.
 					 */
 					lc -> size *= normalSize * 0.01;
-					lc -> baseline *= normalSize * 0.01;
+					//lc -> baseline *= normalSize * 0.01;
 
 					if (font == Graphics_COURIER) {
 						lc -> width = 600;   /* Courier. */

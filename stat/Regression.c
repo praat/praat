@@ -112,10 +112,8 @@ LinearRegression Table_to_LinearRegression (Table me) {
 	long numberOfCells = my rows -> size, icell, ivar;
 	double **u = NULL, *b = NULL, *x = NULL;
 	LinearRegression thee = NULL;
-	if (numberOfParameters < 1) {   /* Includes intercept. */
-		Melder_error ("Not enough columns (has to be more than 1).");
-		goto end;
-	}
+	if (numberOfParameters < 1)   /* Includes intercept. */
+		error1 (L"Not enough columns (has to be more than 1).")
 	if (numberOfCells < numberOfParameters) {
 		Melder_warning ("Solution is not unique (more parameters than cases).");
 	}
@@ -166,10 +164,8 @@ LogisticRegression Table_to_LogisticRegression (Table me) {
 	double logLikelihood = 1e300, previousLogLikelihood = 2e300;
 	double **smallMatrix = NULL;
 	LogisticRegression thee = NULL;
-	if (numberOfParameters < 1) {   /* Includes intercept. */
-		Melder_error ("Not enough columns (has to be more than 1).");
-		goto end;
-	}
+	if (numberOfParameters < 1)   /* Includes intercept. */
+		error1 (L"Not enough columns (has to be more than 1).")
 	/*
 	 * Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
 	 */
@@ -195,18 +191,12 @@ LogisticRegression Table_to_LogisticRegression (Table me) {
 			meanX [ivar] += x [icell] [ivar] * (y0 [icell] + y1 [icell]);
 		}
 	}
-	if (numberOfY0 == 0 && numberOfY1 == 0) {
-		Melder_error ("No data in either class. Cannot determine result.");
-		goto end;
-	}
-	if (numberOfY0 == 0) {
-		Melder_error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 1]. label, L". Cannot determine result.");
-		goto end;
-	}
-	if (numberOfY1 == 0) {
-		Melder_error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 2]. label, L". Cannot determine result.");
-		goto end;
-	}
+	if (numberOfY0 == 0 && numberOfY1 == 0)
+		error1 (L"No data in either class. Cannot determine result.")
+	if (numberOfY0 == 0)
+		error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 1]. label, L". Cannot determine result.")
+	if (numberOfY1 == 0)
+		error3 (L"No data in class ", my columnHeaders [numberOfIndependentVariables + 2]. label, L". Cannot determine result.")
 	/*
 	 * Normalize the data.
 	 */

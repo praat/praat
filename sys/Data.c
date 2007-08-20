@@ -173,10 +173,7 @@ end:
 
 static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	if (! Data_canWriteText (me)) {
-		Melder_error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.");
-		goto end;
-	}
+	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.")
 	Data_createTextFile (me, file, verbose); cherror
 	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _classNameW);
 	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
@@ -212,15 +209,10 @@ int Data_writeBinary (I, FILE *f) {
 
 int Data_writeToBinaryFile (I, MelderFile file) {
 	iam (Data);
-	if (! Data_canWriteBinary (me)) {
-		return Melder_error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _classNameW, L" cannot be written to a generic binary file.");
-		goto end;
-	}
+	if (! Data_canWriteBinary (me)) error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _classNameW, L" cannot be written to a generic binary file.")
 	MelderFile_create (file, 0, 0, 0); cherror
-	if (fprintf (file -> filePointer, "ooBinaryFile") < 0) {
-		Melder_error1 (L"Cannot write first bytes of file.");
-		goto end;
-	}
+	if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
+		error1 (L"Cannot write first bytes of file.")
 	char className [100];
 	if (our version)
 		sprintf (className, "%s %ld", our _className, our version);
@@ -295,10 +287,7 @@ Any Data_readFromTextFile (MelderFile file) {
 		me = Thing_newFromClassNameW (klas); cherror
 	} else {
 		end = wcsstr (line, L"TextFile");
-		if (end == NULL) {
-			Melder_error1 (L"Not an old-type text file; should not occur.");
-			goto end;
-		}
+		if (end == NULL) error1 (L"Not an old-type text file; should not occur.")
 		*end = '\0';
 		me = Thing_newFromClassNameW (line); cherror
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */

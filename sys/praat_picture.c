@@ -58,7 +58,7 @@ static void updateFontMenu (void) {
 		if (praat_font > Graphics_PALATINO) praat_font = Graphics_PALATINO;
 		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_TIMES, 0);
 		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_HELVETICA, 0);
-		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font = Graphics_PALATINO, 0);
+		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_PALATINO, 0);
 		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_COURIER, 0);
 	}
 }

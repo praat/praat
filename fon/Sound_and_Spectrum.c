@@ -81,10 +81,8 @@ Sound Spectrum_to_Sound (Spectrum me) {
 	float *amp, scaling, *re = my z [1], *im = my z [2];
 	double lastFrequency = my x1 + (my nx - 1) * my dx;
 	int originalNumberOfSamplesProbablyOdd = im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx;
-	if (my x1 != 0.0) {
-		Melder_error ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not %.8g Hz.", my x1);
-		goto end;
-	}
+	if (my x1 != 0.0)
+		error3 (L"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", Melder_single (my x1), L" Hz.")
 	numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 	thee = Sound_createSimple (1, 1 / my dx, numberOfSamples * my dx); cherror
 	amp = thy z [1];

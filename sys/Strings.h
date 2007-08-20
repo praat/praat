@@ -38,6 +38,7 @@ int Strings_writeToRawTextFile (Strings me, MelderFile file);
 
 void Strings_randomize (Strings me);
 int Strings_genericize (Strings me);
+int Strings_nativize (Strings me);
 void Strings_sort (Strings me);
 
 /* End of file Strings.h */

@@ -107,13 +107,16 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 	double total = 0.0;
 	long nin = my pairs -> size, iin, iout;
 	*strings1 = *strings2 = NULL;
-	if (nin < 1) { Melder_error ("No candidates."); goto end; }
-	if (nout < 1) { Melder_error ("Number of generated string pairs should be positive."); goto end; }
+	if (nin < 1)
+		error1 (L"No candidates.")
+	if (nout < 1)
+		error1 (L"Number of generated string pairs should be positive.")
 	for (iin = 1; iin <= nin; iin ++) {
 		PairProbability prob = my pairs -> item [iin];
 		total += prob -> weight;
 	}
-	if (total <= 0.0) { Melder_error ("Sum of weights not positive."); goto end; }
+	if (total <= 0.0)
+		error1 (L"Sum of weights not positive.")
 	*strings1 = new (Strings); cherror
 	(*strings1) -> numberOfStrings = nout;
 	(*strings1) -> strings = NUMpvector (1, nout); cherror
@@ -131,7 +134,8 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 			}
 		} while (iin > nin);   /* Guard against rounding errors. */
 		prob = my pairs -> item [iin];
-		if (! prob -> string1 || ! prob -> string2) { Melder_error ("No string in probability pair %ld.", iin); goto end; }
+		if (! prob -> string1 || ! prob -> string2)
+			error3 (L"No string in probability pair ", Melder_integer (iin), L".")
 		(*strings1) -> strings [iout] = Melder_wcsdup (prob -> string1); cherror
 		(*strings2) -> strings [iout] = Melder_wcsdup (prob -> string2); cherror
 	}
@@ -146,7 +150,7 @@ int PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t *
 	long nin = my pairs -> size, iin;
 	PairProbability prob;
 	*string1 = *string2 = NULL;
-	if (nin < 1) { Melder_error ("No candidates."); goto end; }
+	if (nin < 1) error1 (L"No candidates.")
 	for (iin = 1; iin <= nin; iin ++) {
 		prob = my pairs -> item [iin];
 		total += prob -> weight;
@@ -160,7 +164,7 @@ int PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t *
 		}
 	} while (iin > nin);   /* Guard against rounding errors. */
 	prob = my pairs -> item [iin];
-	if (! prob -> string1 || ! prob -> string2) { Melder_error ("No string in probability pair %ld.", iin); goto end; }
+	if (! prob -> string1 || ! prob -> string2) error3 (L"No string in probability pair ", Melder_integer (iin), L".")
 	*string1 = prob -> string1;
 	*string2 = prob -> string2;
 end:
@@ -181,7 +185,8 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		PairProbability prob = thy pairs -> item [ipair];
 		total += prob -> weight;
 	}
-	if (total == 0.0) { Melder_error ("Total is zero."); goto end; }
+	if (total == 0.0)
+		error1 (L"Total is zero.")
 	do {
 		long pairmax = pairmin;
 		wchar_t *firstInput = ((PairProbability) thy pairs -> item [pairmin]) -> string1;
@@ -239,7 +244,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		PairProbability prob = thy pairs -> item [ipair];
 		total += prob -> weight;
 	}
-	if (total == 0.0) { Melder_error ("Total is zero."); goto end; }
+	if (total == 0.0) error1 (L"Total is zero.")
 	do {
 		long pairmax = pairmin, length, idist;
 		double sum = 0.0, sumDist = 0.0;

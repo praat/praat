@@ -120,9 +120,10 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 	MelderFile_open (file); cherror
 	f = file -> filePointer;
 	fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples); cherror
-	if (fileType == 0) { Melder_error ("Not an audio file."); goto end; }
+	if (fileType == 0)
+		error1 (L"Not an audio file.")
 	if (fseek (f, startOfData, SEEK_SET) == EOF)   /* Start from beginning of Data Chunk. */
-		{ Melder_error ("No data in audio file."); goto end; }
+		error1 (L"No data in audio file.")
 	me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate); cherror
 	if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE) {
 		fclose (f);
@@ -148,13 +149,14 @@ int Sound_read2FromSoundFile (MelderFile file, Sound *return_left, Sound *return
 	MelderFile_open (file); cherror
 	f = file -> filePointer;
 	fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples); cherror
-	if (fileType == 0) { Melder_error ("Can only read AIFF/C, WAV, NeXT/Sun, and NIST files."); goto end; }
+	if (fileType == 0)
+		error1 (L"Can only read AIFF/C, WAV, NeXT/Sun, and NIST files.")
 	if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE) {
 		fclose (f);
 		return Melder_error ("(Sound_read2FromSoundFile:) Cannot unshorten two channels.");
 	}
 	if (fseek (f, startOfData, SEEK_SET) == EOF)   /* Start from beginning of sample data. */
-		{ Melder_error ("No data in audio file."); goto end; }
+		error1 (L"No data in audio file.")
 	left = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); cherror
 	if (numberOfChannels == 2) {
 		right = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); cherror
@@ -286,43 +288,31 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	EnterMovies ();
 	Melder_fileToMac (file, & fspec); cherror
 	err = OpenMovieFile (& fspec, & refNum, fsRdPerm);
-	if (err != noErr) {
-		Melder_error ("Not a movie file.");
-		goto end;
-	}
+	if (err != noErr)
+		error1 (L"Not a movie file.")
 	err = NewMovieFromFile (& movie, refNum, & resourceID, NULL, newMovieActive, & wasChanged);
-	if (err != noErr) {
-		Melder_error ("Cannot find the movie in the movie file.");
-		goto end;
-	}
+	if (err != noErr)
+		error1 (L"Cannot find the movie in the movie file.")
 	track = GetMovieIndTrackType (movie, 1, SoundMediaType, movieTrackMediaType);
-	if (track == NULL) {
-		Melder_error ("Invalid track in movie file.");
-		goto end;
-	}
+	if (track == NULL)
+		error1 (L"Invalid track in movie file.")
 	media = GetTrackMedia (track);
-	if (media == NULL) {
-		Melder_error ("Invalid media in movie file.");
-		goto end;
-	}
+	if (media == NULL)
+		error1 (L"Invalid media in movie file.")
 	hSoundDescription = (SoundDescriptionHandle) NewHandle (0);
 	numberOfMediaSamples = GetMediaSampleCount (media);
 	duration = (double) GetMediaDuration (media) / GetMediaTimeScale (media);
 	GetMediaSampleDescription (media, 1, (SampleDescriptionHandle) hSoundDescription);
-	if (GetMoviesError () != noErr) {
-		Melder_error ("Cannot get sound description in movie file.");
-		goto end;
-	}
+	if (GetMoviesError () != noErr)
+		error1 (L"Cannot get sound description in movie file.")
 	err = GetSoundDescriptionExtension (hSoundDescription, & extension, siDecompressionParams);
 	if (err == noErr) {
 		Size size = GetHandleSize (extension);
 		HLock (extension);
 		decompressionAtom = (AudioFormatAtomPtr) NewPtr (size);
 		err = MemError ();
-		if (err != noErr) {
-			Melder_error ("No memory left when looking into movie file.");
-			goto end;
-		}
+		if (err != noErr)
+			error1 (L"No memory left when looking into movie file.")
 		BlockMoveData (*extension, decompressionAtom, size);
 		HUnlock (extension);
 	} else {
@@ -333,10 +323,8 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	samplingFrequency = (double) (*hSoundDescription) -> sampleRate / 65536.0;
 	me = Sound_createSimple (numberOfChannels, duration, samplingFrequency); cherror
 	numberOfSamplesPerMediaSample = my nx / numberOfMediaSamples;
-	if (my nx % numberOfMediaSamples != 0) {
-		Melder_error ("Media samples not equally long: %ld / %ld gives a remainder.", my nx, numberOfMediaSamples);
-		goto end;
-	}
+	if (my nx % numberOfMediaSamples != 0)
+		error5 (L"Media samples not equally long: ", Melder_integer (my nx), L" / ", Melder_integer (numberOfMediaSamples), L" gives a remainder.")
 	/*
 	 * The sound converter has to decompress the sound data to 16-bit mono.
 	 */
@@ -352,30 +340,22 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	input. buffer = output. buffer = NULL;
 	input. reserved = output. reserved = 0;
 	err = SoundConverterOpen (& input, & output, & soundConverter);
-	if (err != noErr) {
-		Melder_error ("Cannot open sound converter.");
-		goto end;
-	}
+	if (err != noErr)
+		error1 (L"Cannot open sound converter.")
 	err = SoundConverterSetInfo (soundConverter, siClientAcceptsVBR, (Ptr) true);
-	if (err != noErr && err != siUnknownInfoType) {
-		Melder_error ("Don't like VBR.");
-		goto end;
-	}
+	if (err != noErr && err != siUnknownInfoType)
+		error1 (L"Don't like VBR.")
 	err = SoundConverterSetInfo (soundConverter, siDecompressionParams, decompressionAtom);
-	if (err != noErr && err != siUnknownInfoType) {
-		Melder_error ("Don't like that decompression.");
-		goto end;
-	}
+	if (err != noErr && err != siUnknownInfoType)
+		error1 (L"Don't like that decompression.")
 	outputBufferSize = my nx * 2;
 	if (debug) Melder_casual ("Before SoundConverterGetBufferSizes:\n"
 		"   outputBufferSize = %ld", outputBufferSize);
 	SoundConverterGetBufferSizes (soundConverter, outputBufferSize, & numberOfInputFrames,
 		& inputBufferSize, & outputBufferSize);
 	inputBufferHandle = NewHandle (inputBufferSize);
-	if (inputBufferHandle == NULL) {
-		Melder_error ("No room for input buffer.");
-		goto end;
-	}
+	if (inputBufferHandle == NULL)
+		error1 (L"No room for input buffer.")
 	if (debug) Melder_casual ("Between SoundConverterGetBufferSizes and GetMediaSample:\n"
 		"   numberOfInputFrames = %ld\n   inputBufferSize = %ld\n   outputBufferSize = %ld",
 		numberOfInputFrames, inputBufferSize, outputBufferSize);
@@ -384,41 +364,33 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		& inputNumberOfBytes,
 		0,   /* Start time. */
 		& actualTime, & durationPerSample, NULL, NULL, numberOfMediaSamples*10, & actualNumberOfSamples, NULL);
-	if (err != noErr) {
-		Melder_error ("Cannot get media samples.");
-		goto end;
-	}
+	if (err != noErr)
+		error1 (L"Cannot get media samples.")
 	if (debug) Melder_casual ("Between GetMediaSample and SoundConverterBeginConversion:\n"
 		"   inputBufferSize = %ld\n   inputNumberOfBytes = %ld\n   actualTime = %ld\n"
 		"   durationPerSample = %ld\n   actualNumberOfMediaSamples = %ld",
 		inputBufferSize, inputNumberOfBytes, actualTime, durationPerSample, actualNumberOfSamples);
 	/*compressionID = (*hSoundDescription) -> compressionID;*/
 	err = SoundConverterBeginConversion (soundConverter);
-	if (err != noErr) {
-		Melder_error ("Cannot begin sound conversion.");
-		goto end;
-	}
+	if (err != noErr)
+		error1 (L"Cannot begin sound conversion.")
+
 	HLock (inputBufferHandle);
 	buffer = NUMsvector (0, numberOfChannels * my nx);
 	err = SoundConverterConvertBuffer (soundConverter,
 		*inputBufferHandle, numberOfInputFrames,
 		buffer, & numberOfOutputFrames, & numberOfOutputBytes);
 	HUnlock (inputBufferHandle);
-	if (err != noErr) {
-		Melder_error ("Cannot convert sound. Error #%ld. "
-			"%ld frames in, %ld frames out, %ld bytes out.", (long) err,
-			numberOfInputFrames, numberOfOutputFrames, numberOfOutputBytes);
-		goto end;
-	}
+	if (err != noErr)
+		error9 (L"Cannot convert sound. Error #", Melder_integer (err), L". ", Melder_integer (numberOfInputFrames),
+			L" frames in, ", Melder_integer (numberOfOutputFrames), L" frames out, ", Melder_integer (numberOfOutputBytes), L" bytes out.")
 /*	err = SoundConverterEndConversion (soundConverter, & my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
 	if (err != noErr) {
 		Melder_error ("Cannot end sound conversion.");
 		goto end;
 	}*/
-	if (numberOfOutputBytes != my nx * 2) {
-		Melder_error ("Promised %ld samples, but got %ld after conversion.", my nx, numberOfOutputBytes / 2);
-		goto end;
-	}
+	if (numberOfOutputBytes != my nx * 2)
+		error5 (L"Promised ", Melder_integer (my nx), L" samples, but got ", Melder_integer (numberOfOutputBytes / 2), L" after conversion.")
 	for (long channel = 1; channel <= my ny; channel ++) {
 		for (isamp = my nx; isamp > 0; isamp --) {
 			my z [channel] [isamp] = buffer [(isamp - 1) * numberOfChannels + channel - 1] / 32768.0;

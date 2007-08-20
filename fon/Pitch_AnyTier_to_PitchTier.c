@@ -84,15 +84,13 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 		AnyPoint point = points -> item [ipoint];
 		double time = point -> time;
 		double frequency = Pitch_getValueAtTime (pitch, time, Pitch_UNIT_HERTZ, Pitch_LINEAR);
-		if (frequency == NUMundefined && checkMethod) {
-			Melder_error ("No periodicity at time %.8g.", time);
-			goto end;
-		}
+		if (frequency == NUMundefined && checkMethod)
+			error3 (L"No periodicity at time ", Melder_single (time), L" seconds.")
 		if (! RealTier_addPoint (result, time, frequency)) goto end;
 	}
 
 end:
-	if (Melder_hasError ()) {
+	iferror {
 		forget (result);
 		Melder_error ("(Pitch_AnyTier_to_PitchTier:) Not performed.");
 	}

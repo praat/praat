@@ -350,7 +350,7 @@ Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserv
 	if (tmin < my xmin) tmin = my xmin;
 	if (tmax > my xmax) tmax = my xmax;
 	n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) { Melder_error ("Less than 1 sample in window."); goto end; }
+	if (n < 1) error1 (L"Less than 1 sample in window.")
 	thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx); cherror
 	if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
 	LongSound_readAudioToFloat (me, thy z [1], thy ny == 1 ? NULL : thy z [2], imin, n); cherror

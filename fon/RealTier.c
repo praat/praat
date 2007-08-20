@@ -493,9 +493,8 @@ int RealTier_formula (I, const wchar_t *expression, thou) {
 	for (long icol = 1; icol <= my points -> size; icol ++) {
 		double result;
 		Formula_run (0, icol, & result, NULL); cherror
-		if (result == NUMundefined) {
-			Melder_error ("Cannot put an undefined value into the tier.\nFormula not finished."); goto end;
-		}
+		if (result == NUMundefined)
+			error1 (L"Cannot put an undefined value into the tier.\nFormula not finished.")
 		((RealPoint) thy points -> item [icol]) -> value = result;
 	}
 end:

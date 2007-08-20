@@ -142,12 +142,11 @@ NORMAL (L"To get the symbol \"\\a^\" (a-circumflex), you type \"\\bsa\\^ \", i.e
 	"a sequence of backslash + a + circumflex. In this way, you can get a hundred "
 	"non-ASCII symbols that are used in the alphabets of many European languages. "
 	"You can also use these symbols in info messages sent from scripts.")
-#ifdef macintosh
 LIST_ITEM (L"\\a\" \\bsa\\\"   \\e\" \\bse\\\"   \\i\" \\bsi\\\"   \\o\" \\bso\\\"   "
 	"\\u\" \\bsu\\\"   \\y\" \\bsy\\\"  "
 	"\\A\" \\bsA\\\"   \\E\" \\bsE\\\"   \\I\" \\bsI\\\"   \\O\" \\bsO\\\"   \\U\" \\bsU\\\"   "
 	"\\Y\" \\bsY\\\" ")
-LIST_ITEM (L"\\a\' \\bsa\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\o\' \\bso\'  \\u\' \\bsu\'  "
+LIST_ITEM (L"\\a\' \\bsa\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\o\' \\bso\'  \\u\' \\bsu\'  \\y\' \\bsy\'  "
 	"\\A\' \\bsA\'  \\E\' \\bsE\'  \\I\' \\bsI\'  \\O\' \\bsO\'  \\U\' \\bsU\'  \\Y\' \\bsY\'")
 LIST_ITEM (L"\\a` \\bsa`  \\e` \\bse`  \\i` \\bsi`  \\o` \\bso`  \\u` \\bsu`  "
 	"\\A` \\bsA`  \\E` \\bsE`  \\I` \\bsI`  \\O` \\bsO`  \\U` \\bsU`")
@@ -156,23 +155,6 @@ LIST_ITEM (L"\\a^ \\bsa\\^   \\e^ \\bse\\^   \\i^ \\bsi\\^   \\o^ \\bso\\^   \\u
 LIST_ITEM (L"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N~ \\bsN\\~   \\O~ \\bsO\\~  ")
 LIST_ITEM (L"\\ae \\bsae  \\o/ \\bso/  \\ao \\bsao  \\Ae \\bsAe  \\O/ \\bsO/  \\Ao \\bsAo  "
 	"\\c, \\bsc,  \\C, \\bsC,  \\ss \\bsss  \\th \\bsth  \\Th \\bsTh")
-#else
-LIST_ITEM (L"\\a\" \\bsa\\\"  \\e\" \\bse\\\"  \\i\" \\bsi\\\"  \\o\" \\bso\\\"  "
-	"\\u\" \\bsu\\\"  \\y\" \\bsy\\\"  "
-	"\\A\" \\bsA\\\"  \\E\" \\bsE\\\"  \\I\" \\bsI\\\"  \\O\" \\bsO\\\"  \\U\" \\bsU\\\" ")
-LIST_ITEM (L"\\a\' \\bsa\' \\e\' \\bse\' \\i\' \\bsi\' \\o\' \\bso\' \\u\' \\bsu\' "
-	" \\y\' \\bsy\'"
-	"\\A\' \\bsA\' \\E\' \\bsE\' \\I\' \\bsI\' \\O\' \\bsO\' \\U\' \\bsU\'"
-	" \\Y\' \\bsY\'")
-LIST_ITEM (L"\\a` \\bsa` \\e` \\bse` \\i` \\bsi` \\o` \\bso` \\u` \\bsu` "
-	"\\A` \\bsA` \\E` \\bsE` \\I` \\bsI` \\O` \\bsO` \\U` \\bsU`")
-LIST_ITEM (L"\\a^ \\bsa\\^  \\e^ \\bse\\^  \\i^ \\bsi\\^  \\o^ \\bso\\^  \\u^ \\bsu\\^  "
-	"\\A^ \\bsA\\^  \\E^ \\bsE\\^  \\I^ \\bsI\\^  \\O^ \\bsO\\^  \\U^ \\bsU\\^ ")
-LIST_ITEM (L"\\a~ \\bsa\\~  \\n~ \\bsn\\~  \\o~ \\bso\\~  \\A~ \\bsA\\~  \\N~ \\bsN\\~  \\O~ \\bsO\\~ ")
-LIST_ITEM (L"\\ae \\bsae \\o/ \\bso/ \\ao \\bsao \\Ae \\bsAe \\O/ \\bsO/ \\Ao \\bsAo "
-	"\\c, \\bsc, \\C, \\bsC, \\ss \\bsss"
-	" \\th \\bsth \\Th \\bsTh")
-#endif
 LIST_ITEM (L"\\!d \\bs!d \\?d \\bs?d")
 LIST_ITEM (L"\\eu \\bseu %euro, \\Lp \\bsLp %%pound sterling%, \\Y= \\bsY= %yen, "
 	"\\fd \\bsfd %florin, \\c/ \\bsc/ %cent")

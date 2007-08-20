@@ -53,7 +53,8 @@ static int burg (float sample [], long nsamp_window, float cof [], int nPoles,
 	 * Find the roots of the polynomial.
 	 */
 	roots = Polynomial_to_Roots (polynomial); cherror
-	if (roots == NULL) { Melder_error ("Cannot find roots."); goto end; }
+	if (roots == NULL)
+		error1 (L"Cannot find roots.")
 	Roots_fixIntoUnitCircle (roots);
 
 	Melder_assert (frame -> nFormants == 0 && frame -> formant == NULL);
@@ -319,7 +320,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 				maximumIntensity = value * value;
 			}
 		}
-		if (maximumIntensity == HUGE_VAL) { Melder_error ("Sound contains infinities."); goto end; }
+		if (maximumIntensity == HUGE_VAL) error1 (L"Sound contains infinities.")
 		thy frame [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   /* Burg cannot stand all zeroes. */
 

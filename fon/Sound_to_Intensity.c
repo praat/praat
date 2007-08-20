@@ -43,8 +43,8 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 	/*
 	 * Soft preconditions.
 	 */
-	if (! NUMdefined (minimumPitch)) { Melder_error ("(Sound-to-Intensity:) Minimum pitch undefined."); goto end; }
-	if (! NUMdefined (timeStep)) { Melder_error ("(Sound-to-Intensity:) Time step undefined."); goto end; }
+	if (! NUMdefined (minimumPitch)) error1 (L"(Sound-to-Intensity:) Minimum pitch undefined.")
+	if (! NUMdefined (timeStep)) error1 (L"(Sound-to-Intensity:) Time step undefined.")
 	/*
 	 * Hard preconditions.
 	 */
@@ -75,10 +75,8 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 	}
 
 	/* Step 2: smooth and resample. */
-	if (! Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime)) {
-		Melder_error ("Sound-to-Intensity: the duration of the sound should be at least 6.4 divided by the minimum pitch.");
-		goto end;
-	}
+	if (! Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime))
+		error1 (L"Sound-to-Intensity: the duration of the sound should be at least 6.4 divided by the minimum pitch.")
 	smooth = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime); cherror
 	for (iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		double midTime = Sampled_indexToX (smooth, iframe);

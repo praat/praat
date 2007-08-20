@@ -27,35 +27,33 @@
  * pb 2006/11/17 Unicode
  * pb 2006/12/05 first wchar support
  * pb 2007/08/08 more wchar_t support
- * pb 2007/08/15
+ * pb 2007/08/16 removed New Century Schoolbook
  */
 #include <wchar.h>
 
 /********** NON-ASCII CHARACTERS **********/
 
 /* System-independent representation of some non-ASCII symbols.
-	We need this because the encoding of these symbols is different
-	for Macintosh and XWindow/MSWindows.
+	We need this because Praat is multilingual, and not all input methods are available on all international systems.
 	These symbols are represented by a backslash (\) plus two ASCII symbols.
 
 	- ASCII would suffice for English.
-	- The intersection of Macintosh and ISO8859-1 (XWindow/MSWindows) handles the Roman alphabets
-	  of Dutch, German, French, Spanish, Portuguese, Italian, Danish, Swedish,
-	  Norwegian, Welsh, Rumanian, Luxemburgian, Frisian.
-	- This intersection still cannot represent the Roman alphabets
-	  of Hungarian, Polish, Czech, Icelandic, Serbocroat, Turkish.
+	- By supporting ISO8859-1, we support the Roman alphabets of Dutch, German, French, Spanish, Portuguese, Italian,
+	  Danish, Swedish, Norwegian, Welsh, Rumanian, Luxemburgian, Frisian.
+	- We will soon also support the Roman alphabets of Hungarian, Polish, Czech, Icelandic, Serbocroat, Turkish.
 
-	The following symbols are in the union of the Roman alphabets:
-		vowel + dieresis: \a" \e" \i" \o" \u"
+	The following symbols are in the Roman alphabet:
+		vowel + dieresis: \a" \e" \i" \o" \u" \y"
 		vowel + grave: \a` \e` \i` \o` \u`
 		vowel + circumflex: \a^ \e^ \i^ \o^ \u^
-		vowel + acute: \a' \e' \i' \o' \u'
+		vowel + acute: \a' \e' \i' \o' \u' \y'
 		letter + tilde: \n~ \a~ \o~
 		c + cedilla: \c,
-		Ringel-s: \ss
+		German double s: \ss
 		ligatures: \ae
 		o + slash: \o/
 		a + ring: \ao
+		thorn: \th
 	These symbols will look right on all systems (most fonts).
 */
 
@@ -106,7 +104,6 @@ typedef struct Longchar_Info {
 		const char *name;   /* The PostScript name, starting with a slash. */
 		/* The widths in thousands of the height. */
 		short times, timesBold, timesItalic, timesBoldItalic;   /* Times. */
-		short century, centuryBold, centuryItalic, centuryBoldItalic;   /* New Century Schoolbook (obsolete). */
 		short helvetica, helveticaBold;   /* Helvetica. */
 		short palatino, palatinoBold, palatinoItalic, palatinoBoldItalic;   /* Palatino. */
 		/* Courier width always 600. */

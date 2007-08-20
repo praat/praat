@@ -46,12 +46,15 @@ Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 int Distributions_peek (Distributions me, long column, wchar_t **string) {
 	double total = 0.0;
 	long irow;
-	if (column > my numberOfColumns) { Melder_error ("No column %ld.", column); goto end; }
-	if (my numberOfRows < 1) { Melder_error ("No candidates."); goto end; }
+	if (column > my numberOfColumns)
+		error3 (L"No column ", Melder_integer (column), L".")
+	if (my numberOfRows < 1)
+		error1 (L"No candidates.")
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
 		total += my data [irow] [column];
 	}
-	if (total <= 0.0) { Melder_error ("Column total not positive."); goto end; }
+	if (total <= 0.0)
+		error1 (L"Column total not positive.")
 	do {
 		double rand = NUMrandomUniform (0, total), sum = 0.0;
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
@@ -60,7 +63,8 @@ int Distributions_peek (Distributions me, long column, wchar_t **string) {
 		}
 	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
 	*string = my rowLabels [irow];
-	if (! *string) { Melder_error ("No string in row %ld.", irow); goto end; }
+	if (! *string)
+		error3 (L"No string in row ", Melder_integer (irow), L".")
 end:
 	iferror return Melder_error ("(Distributions_peek:) Not performed.");
 	return 1;

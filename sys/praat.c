@@ -859,10 +859,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	static int cb_userMessageA (char *messageA) {
 		praat_background ();
 		wchar_t *message = Melder_8bitToWcs ((unsigned char *) messageA, 0);
-		if (! praat_executeScriptFromText (message)) {
-			Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
-			goto end;
-		}
+		if (! praat_executeScriptFromText (message)) error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.")
 	end:
 		Melder_free (message);
 		praat_foreground ();
@@ -871,10 +868,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 	static int cb_userMessageW (wchar_t *message) {
 		praat_background ();
-		if (! praat_executeScriptFromText (message)) {
-			Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
-			goto end;
-		}
+		if (! praat_executeScriptFromText (message)) error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.")
 	end:
 		praat_foreground ();
 		iferror Melder_flushError (NULL);

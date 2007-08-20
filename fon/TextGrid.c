@@ -344,7 +344,8 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 	 */
 	for (;;) {
 		line = MelderFile_readLine (file); cherror
-		if (line == NULL) { Melder_error ("No '#' line."); goto end; }
+		if (line == NULL)
+			error1 (L"No '#' line.")
 		if (line [0] == '#') break;
 	}
 
@@ -418,7 +419,8 @@ int TextGrid_add (TextGrid me, Any anyTier) {
 TextGrid TextGrid_merge (Collection textGrids) {
 	TextGrid thee = NULL;
 	long igrid, itier;
-	if (textGrids -> size < 1) { Melder_error ("Cannot merge zero TextGrid objects."); goto end; }
+	if (textGrids -> size < 1)
+		error1 (L"Cannot merge zero TextGrid objects.")
 	thee = Data_copy (textGrids -> item [1]); cherror
 	for (igrid = 2; igrid <= textGrids -> size; igrid ++) {
 		TextGrid textGrid = textGrids -> item [igrid];
@@ -1082,7 +1084,8 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 	 */
 	for (;;) {
 		line = MelderFile_readLine (file); cherror
-		if (line == NULL) { Melder_error ("No '#' line."); goto end; }
+		if (line == NULL)
+			error1 (L"No '#' line.")
 		if (line [0] == '#') break;
 	}
 
@@ -1532,31 +1535,28 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 
 	MelderReadString text = { string, string };
 	tag = texgetw2 (& text); cherror
-	if (! wcsequ (tag, L"Praat chronological TextGrid text file")) {
-		Melder_error ("Not a chronological TextGrid text file.");
-		goto end;
-	}
+	if (! wcsequ (tag, L"Praat chronological TextGrid text file"))
+		error1 (L"Not a chronological TextGrid text file.")
 	me = new (TextGrid); cherror
 	classFunction -> readText (me, & text); cherror
 	my tiers = Ordered_create (); cherror
 	long numberOfTiers = texgeti4 (& text); cherror
 	for (long itier = 1; itier <= numberOfTiers; itier ++) {
-		char *klas = texgets2 (& text); cherror
-		if (strequ (klas, "IntervalTier")) {
+		wchar_t *klas = texgetw2 (& text); cherror
+		if (wcsequ (klas, L"IntervalTier")) {
 			IntervalTier tier = new (IntervalTier); cherror
 			Collection_addItem (my tiers, tier); cherror
 			tier -> nameW = texgetw2 (& text); cherror
 			classFunction -> readText (tier, & text); cherror
 			tier -> intervals = SortedSetOfDouble_create (); cherror
-		} else if (strequ (klas, "TextTier")) {
+		} else if (wcsequ (klas, L"TextTier")) {
 			TextTier tier = new (TextTier); cherror
 			Collection_addItem (my tiers, tier); cherror
 			tier -> nameW = texgetw2 (& text); cherror
 			classFunction -> readText (tier, & text); cherror
 			tier -> points = SortedSetOfDouble_create (); cherror
 		} else {
-			Melder_error ("Unknown tier class \"%s\".", klas);
-			goto end;
+			error3 (L"Unknown tier class \"", klas, L"\".")
 		}
 		Melder_free (klas);
 	}
@@ -1570,10 +1570,8 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				goto end;
 			}
 		}
-		if (itier < 1 || itier > my tiers -> size) {
-			Melder_error ("Wrong tier number %ld.", itier);
-			goto end;
-		}
+		if (itier < 1 || itier > my tiers -> size)
+			error3 (L"Wrong tier number ", Melder_integer (itier), L".")
 		if (((Data) my tiers -> item [itier]) -> methods == (Data_Table) classIntervalTier) {
 			IntervalTier tier = my tiers -> item [itier];
 			TextInterval interval = new (TextInterval); cherror
@@ -1700,9 +1698,9 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 		{ forget (me); return NULL; }
 	MelderFile_open (fs); cherror
 	line = MelderFile_readLine (fs);
-	if (! strequ (line, "<?xml version=\"1.0\"?>")) { Melder_error ("No CGN syntax file."); goto end; }
+	if (! strequ (line, "<?xml version=\"1.0\"?>")) error1 (L"No CGN syntax file.")
 	line = MelderFile_readLine (fs);
-	if (! strequ (line, "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">")) { Melder_error ("No CGN syntax file."); goto end; }
+	if (! strequ (line, "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">")) error1 (L"No CGN syntax file.")
 	line = MelderFile_readLine (fs);
 	startOfData = MelderFile_tell (fs);
 	/*
@@ -1714,11 +1712,11 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 		if (! line) break;
 		if (strnequ (line, "  <tau ref=\"", 12)) {
 			if (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) < 7)
-				{ Melder_error ("Too few strings in tau line."); goto end; }
+				error1 (L"Too few strings in tau line.")
 			my xmax = atof (arg5 + 4);
 		}
 	}
-	if (my xmax <= 0.0) { Melder_error ("Duration not greater than zero."); goto end; }
+	if (my xmax <= 0.0) error1 (L"Duration not greater than zero.")
 	/*
 	 * Get number and names of tiers.
 	 */
@@ -1731,9 +1729,10 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 			int length, speakerTier = 0;
 			double tb, te;
 			if (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) < 7)
-				{ Melder_error ("Too few strings in tau line."); goto end; }
+				error1 (L"Too few strings in tau line.")
 			length = strlen (arg3);
-			if (length < 5 || ! strnequ (arg3, "s=\"", 3)) { Melder_error ("Missing speaker name."); goto end; }
+			if (length < 5 || ! strnequ (arg3, "s=\"", 3))
+				error1 (L"Missing speaker name.")
 			arg3 [length - 1] = '\0';   /* Truncate at double quote. */
 			speakerName = arg3 + 3;   /* Truncate leading s=". */
 			/*
@@ -1767,7 +1766,8 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				phraseTier = my tiers -> item [speakerTier + 1];
 			}
 			tb = atof (arg4 + 4), te = atof (arg5 + 4);
-			if (te <= tb) { Melder_error ("Zero duration for sentence."); goto end; }
+			if (te <= tb)
+				error1 (L"Zero duration for sentence.")
 			/*
 			 * We are going to add one or two intervals to the sentence tier.
 			 */
@@ -1777,14 +1777,14 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 					TextInterval interval = TextInterval_create (latestInterval -> xmax, tb, L"");
 					Collection_addItem (sentenceTier -> intervals, interval); cherror
 				} else if (tb < latestInterval -> xmax) {
-					Melder_error ("Overlap on tier not allowed."); goto end;
+					error1 (L"Overlap on tier not allowed.")
 				}
 			} else {
 				if (tb > 0.0) {
 					TextInterval interval = TextInterval_create (0.0, tb, L"");
 					Collection_addItem (sentenceTier -> intervals, interval); cherror
 				} else if (tb < 0.0) {
-					Melder_error ("Negative times not allowed."); goto end;
+					error1 (L"Negative times not allowed.")
 				}
 			}
 			{
@@ -1798,19 +1798,23 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 			int length;
 			double tb, te;
 			if (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) < 7)
-				{ Melder_error ("Too few strings in tw line."); goto end; }
+				error1 (L"Too few strings in tw line.")
 			length = strlen (arg3);
-			if (length < 6 || ! strnequ (arg3, "tb=\"", 4)) { Melder_error ("Missing tb."); goto end; }
+			if (length < 6 || ! strnequ (arg3, "tb=\"", 4))
+				error1 (L"Missing tb.")
 			tb = atof (arg3 + 4);
 			length = strlen (arg4);
-			if (length < 6 || ! strnequ (arg4, "te=\"", 4)) { Melder_error ("Missing te."); goto end; }
+			if (length < 6 || ! strnequ (arg4, "te=\"", 4))
+				error1 (L"Missing te.")
 			te = atof (arg4 + 4);
-			if (te <= tb) { Melder_error ("Zero duration for phrase."); goto end; }
+			if (te <= tb)
+				error1 (L"Zero duration for phrase.")
 			if (tb == phraseBegin && te == phraseEnd) {
 				/* Append a word. */
 				strcat (phrase, " ");
 				length = strlen (arg7);
-				if (length < 6 || ! strnequ (arg7, "w=\"", 3)) { Melder_error ("Missing word."); goto end; }
+				if (length < 6 || ! strnequ (arg7, "w=\"", 3))
+					error1 (L"Missing word.")
 				arg7 [length - 3] = '\0';   /* Truncate "/>. */
 				strcat (phrase, arg7 + 3);
 			} else {
@@ -1821,7 +1825,8 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				}
 				phrase [0] = '\0';
 				length = strlen (arg7);
-				if (length < 6 || ! strnequ (arg7, "w=\"", 3)) { Melder_error ("Missing word."); goto end; }
+				if (length < 6 || ! strnequ (arg7, "w=\"", 3))
+					error1 (L"Missing word.")
 				arg7 [length - 3] = '\0';   /* Truncate "/>. */
 				strcat (phrase, arg7 + 3);
 				if (phraseTier -> intervals -> size > 0) {
@@ -1830,18 +1835,19 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 						TextInterval interval = TextInterval_create (latestInterval -> xmax, tb, L"");
 						Collection_addItem (phraseTier -> intervals, interval); cherror
 					} else if (tb < latestInterval -> xmax) {
-						Melder_error ("Overlap on tier not allowed."); goto end;
+						error1 (L"Overlap on tier not allowed.")
 					}
 				} else {
 					if (tb > 0.0) {
 						TextInterval interval = TextInterval_create (0.0, tb, L"");
 						Collection_addItem (phraseTier -> intervals, interval); cherror
 					} else if (tb < 0.0) {
-						Melder_error ("Negative times not allowed."); goto end;
+						error1 (L"Negative times not allowed.")
 					}
 				}
 				lastInterval = TextInterval_create (tb, te, L"");
-				if (! phraseTier) { Melder_error ("Phrase outside sentence."); goto end; }
+				if (! phraseTier)
+					error1 (L"Phrase outside sentence.")
 				Collection_addItem (phraseTier -> intervals, lastInterval);
 				phraseBegin = tb;
 				phraseEnd = te;

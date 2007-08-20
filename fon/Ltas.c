@@ -134,7 +134,7 @@ Ltas Matrix_to_Ltas (Matrix me) {
 Ltas Ltases_merge (Collection ltases) {
 	Ltas me, thee = NULL;
 	long iband, ispec;
-	if (ltases -> size < 1) { Melder_error ("Cannot merge zero Ltas objects."); goto end; }
+	if (ltases -> size < 1) error1 (L"Cannot merge zero Ltas objects.")
 	me = ltases -> item [1];
 	thee = Data_copy (me); cherror
 	/*
@@ -145,9 +145,9 @@ Ltas Ltases_merge (Collection ltases) {
 	}
 	for (ispec = 2; ispec <= ltases -> size; ispec ++) {
 		Ltas him = ltases -> item [ispec];
-		if (his xmin != thy xmin || his xmax != thy xmax) { Melder_error ("Frequency domains do not match."); goto end; }
-		if (his dx != thy dx) { Melder_error ("Bandwidths do not match."); goto end; }
-		if (his nx != thy nx || his x1 != thy x1) { Melder_error ("Frequency bands do not match."); goto end; }
+		if (his xmin != thy xmin || his xmax != thy xmax) error1 (L"Frequency domains do not match.")
+		if (his dx != thy dx) error1 (L"Bandwidths do not match.")
+		if (his nx != thy nx || his x1 != thy x1) error1 (L"Frequency bands do not match.")
 		/*
 		 * Add band energies.
 		 */
@@ -264,10 +264,7 @@ Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	Ltas thee = NULL;
 	long numberOfBands = ceil ((my xmax - my xmin) / bandWidth), iband;
-	if (bandWidth <= my dx) {
-		Melder_error ("Bandwidth must be greater than %f.", my dx);
-		goto end;
-	}
+	if (bandWidth <= my dx) error3 (L"Bandwidth must be greater than ", Melder_double (my dx), L".")
 	thee = new (Ltas); cherror
 	Matrix_init (thee, my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1); cherror
 	for (iband = 1; iband <= numberOfBands; iband ++) {
@@ -321,10 +318,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	ltas = Ltas_create (maximumFrequency / bandWidth, bandWidth); cherror
 	ltas -> xmax = maximumFrequency;
 	numbers = Data_copy (ltas);
-	if (numberOfPeriods < 1) {
-		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
-		goto end;
-	}
+	if (numberOfPeriods < 1) error1 (L"Cannot compute an Ltas if there are no periods in the point process.")
 	for (ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
 		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
@@ -359,10 +353,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			numberOfPeriods -= 1;
 		}
 	}
-	if (numberOfPeriods < 1) {
-		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
-		goto end;
-	}
+	if (numberOfPeriods < 1) error1 (L"Cannot compute an Ltas if there are no periods in the point process.")
 	for (iband = 1; iband <= ltas -> nx; iband ++) {
 		if (numbers -> z [1] [iband] == 0) {
 			ltas -> z [1] [iband] = NUMundefined;
@@ -395,10 +386,8 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			long ibandleft = iband - 1, ibandright = iband + 1;
 			while (ibandleft >= 1 && ltas -> z [1] [ibandleft] == NUMundefined) ibandleft --;
 			while (ibandright <= ltas -> nx && ltas -> z [1] [ibandright] == NUMundefined) ibandright ++;
-			if (ibandleft < 1 && ibandright > ltas -> nx) {
-				Melder_error ("Cannot create an Ltas without energy in any bins.");
-				goto end;
-			}
+			if (ibandleft < 1 && ibandright > ltas -> nx)
+				error1 (L"Cannot create an Ltas without energy in any bins.")
 			if (ibandleft < 1) {
 				ltas -> z [1] [iband] = ltas -> z [1] [ibandright];
 			} else if (ibandright > ltas -> nx) {
@@ -446,10 +435,8 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 	long numberOfPeriods = pulses -> nt - 2, ipulse, iharm;
 	ltas = Ltas_create (maximumHarmonic, 1.0); cherror
 	ltas -> xmax = maximumHarmonic;
-	if (numberOfPeriods < 1) {
-		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
-		goto end;
-	}
+	if (numberOfPeriods < 1)
+		error1 (L"Cannot compute an Ltas if there are no periods in the point process.")
 	for (ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
 		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
@@ -480,10 +467,8 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 			numberOfPeriods -= 1;
 		}
 	}
-	if (numberOfPeriods < 1) {
-		Melder_error ("Cannot compute an Ltas if there are no periods in the point process.");
-		goto end;
-	}
+	if (numberOfPeriods < 1)
+		error1 (L"Cannot compute an Ltas if there are no periods in the point process.")
 	for (iharm = 1; iharm <= ltas -> nx; iharm ++) {
 		if (ltas -> z [1] [iharm] == 0) {
 			ltas -> z [1] [iharm] = -300;

@@ -551,7 +551,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {
 		} while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\r' && kar != EOF);
 		if (kar == '\n' || kar == '\r' || kar == EOF) break;
 	}
-	if (! ncol) { Melder_error ("File empty"); goto end; }
+	if (! ncol) error1 (L"File empty")
 
 	/*
 	 * Count number of elements.
@@ -567,11 +567,8 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {
 	/*
 	 * Check if all columns are complete.
 	 */
-	if (! nelements || nelements % ncol) {
-		Melder_error ("The number of elements (%ld) is not a multiple of the number of columns (%ld)",
-			nelements, ncol);
-		goto end;
-	}
+	if (! nelements || nelements % ncol)
+		error5 (L"The number of elements (", Melder_integer (nelements), L") is not a multiple of the number of columns (", Melder_integer (ncol), L").")
 
 	/*
 	 * Create simple matrix.
@@ -592,7 +589,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {
 
 end:
 	Melder_fclose (fs, f);
-	if (Melder_hasError ()) { forget (me); return Melder_errorp (
+	iferror { forget (me); return Melder_errorp (
 		"(Matrix_readFromRawTextFile:) File %s not read.", MelderFile_messageName (fs)); }
 	return me;
 }

@@ -122,16 +122,12 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 		switch (unit) {
 			case Pitch_UNIT_HERTZ: {	
 				frequency += shift;
-				if (frequency <= 0.0) {
-					Melder_error ("Resulting frequency has to be greater than 0 Hz.");
-					goto end;
-				}
+				if (frequency <= 0.0)
+					error1 (L"Resulting frequency has to be greater than 0 Hz.")
 			} break; case Pitch_UNIT_MEL: {
 				frequency = NUMhertzToMel (frequency) + shift;
-				if (frequency <= 0.0) {
-					Melder_error ("Resulting frequency has to be greater than 0 mel.");
-					goto end;
-				}
+				if (frequency <= 0.0)
+					error1 (L"Resulting frequency has to be greater than 0 mel.")
 				frequency = NUMmelToHertz (frequency);
 			} break; case Pitch_UNIT_LOG_HERTZ: {
 				frequency = pow (10.0, log10 (frequency) + shift);
@@ -139,10 +135,8 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 				frequency = NUMsemitonesToHertz (NUMhertzToSemitones (frequency) + shift);
 			} break; case Pitch_UNIT_ERB: {
 				frequency = NUMhertzToErb (frequency) + shift;
-				if (frequency <= 0.0) {
-					Melder_error ("Resulting frequency has to be greater than 0 ERB.");
-					goto end;
-				}
+				if (frequency <= 0.0)
+					error1 (L"Resulting frequency has to be greater than 0 ERB.")
 				frequency = NUMerbToHertz (frequency);
 			}
 		}

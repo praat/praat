@@ -3838,6 +3838,14 @@ END
 
 DIRECT (Strings_help) Melder_help (L"Strings"); END
 
+DIRECT (Strings_nativize)
+	WHERE (SELECTED) {
+		int status = Strings_nativize (OBJECT);
+		praat_dataChanged (OBJECT);
+		if (! status) return 0;
+	}
+END
+
 DIRECT (Strings_randomize)
 	WHERE (SELECTED) {
 		Strings_randomize (OBJECT);
@@ -4762,6 +4770,7 @@ praat_addAction1 (classSpectrogram, 0, "Hack", 0, 0, 0);
 		praat_addAction1 (classStrings, 0, "Randomize", 0, 0, DO_Strings_randomize);
 		praat_addAction1 (classStrings, 0, "Sort", 0, 0, DO_Strings_sort);
 		praat_addAction1 (classStrings, 0, "Genericize", 0, 0, DO_Strings_genericize);
+		praat_addAction1 (classStrings, 0, "Nativize", 0, 0, DO_Strings_nativize);
 	praat_addAction1 (classStrings, 0, "Analyze", 0, 0, 0);
 		praat_addAction1 (classStrings, 0, "To Distributions", 0, 0, DO_Strings_to_Distributions);
 	praat_addAction1 (classStrings, 0, "Synthesize", 0, 0, 0);

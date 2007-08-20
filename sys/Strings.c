@@ -143,10 +143,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 			MelderStringW_copyW (& right, asterisk + 1);
 		}
 		d = opendir (Melder_peekWcsToUtf8 (searchDirectory. string [0] ? searchDirectory. string : L"."));
-		if (d == NULL) {
-			Melder_error3 (L"Cannot open directory ", searchDirectory. string, L".");
-			goto end;
-		}
+		if (d == NULL) error3 (L"Cannot open directory ", searchDirectory. string, L".")
 		//Melder_casual ("opened");
 		my strings = NUMpvector (1, 1000000); cherror
 		struct dirent *entry;
@@ -157,8 +154,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 			//Melder_casual ("read %s", filePath. string);
 			struct stat stats;
 			if (stat (Melder_peekWcsToUtf8 (filePath. string), & stats) != 0) {
-				Melder_error3 (L"Cannot look at file ", filePath. string, L".");
-				goto end;
+				error3 (L"Cannot look at file ", filePath. string, L".")
 				//stats. st_mode = -1L;
 			}
 			//Melder_casual ("statted %s", filePath. string);
@@ -284,6 +280,31 @@ int Strings_genericize (Strings me) {
 			if (*p > 126) {   /* Backslashes are not converted, i.e. genericize^2 == genericize. */
 				wchar_t *newString;
 				Longchar_genericizeW (my strings [i], buffer);
+				newString = Melder_wcsdup (buffer); cherror
+				/*
+				 * Replace string only if copying was OK.
+				 */
+				Melder_free (my strings [i]);
+				my strings [i] = newString;
+				break;
+			}
+			p ++;
+		}
+	}
+end:
+	Melder_free (buffer);
+	iferror return 0;
+	return 1;
+}
+
+int Strings_nativize (Strings me) {
+	wchar_t *buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) + 1); cherror
+	for (long i = 1; i <= my numberOfStrings; i ++) {
+		const wchar_t *p = (const wchar_t *) my strings [i];
+		while (*p) {
+			if (*p > 126) {   /* Backslashes are not converted, i.e. genericize^2 == genericize. */
+				wchar_t *newString;
+				Longchar_nativizeW (my strings [i], buffer, false);
 				newString = Melder_wcsdup (buffer); cherror
 				/*
 				 * Replace string only if copying was OK.

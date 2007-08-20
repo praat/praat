@@ -126,6 +126,69 @@ bool Melder_error19 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, co
 	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
 	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17,
 	const wchar_t *s18, const wchar_t *s19);
+void * Melder_errorp1 (const wchar_t *s1);
+void * Melder_errorp2 (const wchar_t *s1, const wchar_t *s2);
+void * Melder_errorp3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void * Melder_errorp4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void * Melder_errorp5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5);
+void * Melder_errorp6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6);
+void * Melder_errorp7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void * Melder_errorp8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void * Melder_errorp9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
+void * Melder_errorp10 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10);
+void * Melder_errorp11 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11);
+void * Melder_errorp12 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12);
+void * Melder_errorp13 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13);
+void * Melder_errorp14 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14);
+void * Melder_errorp15 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15);
+void * Melder_errorp16 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16);
+void * Melder_errorp17 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17);
+void * Melder_errorp18 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17,
+	const wchar_t *s18);
+void * Melder_errorp19 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
+	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9, const wchar_t *s10, const wchar_t *s11,
+	const wchar_t *s12, const wchar_t *s13, const wchar_t *s14, const wchar_t *s15, const wchar_t *s16, const wchar_t *s17,
+	const wchar_t *s18, const wchar_t *s19);
+#define error1(s1)  { Melder_error1 (s1); goto end; }
+#define error2(s1,s2)  { Melder_error2 (s1,s2); goto end; }
+#define error3(s1,s2,s3)  { Melder_error3 (s1,s2,s3); goto end; }
+#define error4(s1,s2,s3,s4)  { Melder_error4 (s1,s2,s3,s4); goto end; }
+#define error5(s1,s2,s3,s4,s5)  { Melder_error5 (s1,s2,s3,s4,s5); goto end; }
+#define error6(s1,s2,s3,s4,s5,s6)  { Melder_error6 (s1,s2,s3,s4,s5,s6); goto end; }
+#define error7(s1,s2,s3,s4,s5,s6,s7)  { Melder_error7 (s1,s2,s3,s4,s5,s6,s7); goto end; }
+#define error8(s1,s2,s3,s4,s5,s6,s7,s8)  { Melder_error8 (s1,s2,s3,s4,s5,s6,s7,s8); goto end; }
+#define error9(s1,s2,s3,s4,s5,s6,s7,s8,s9)  { Melder_error9 (s1,s2,s3,s4,s5,s6,s7,s8,s9); goto end; }
+#define error10(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10)  { Melder_error10 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10); goto end; }
+#define error11(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11)  { Melder_error11 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11); goto end; }
+#define error12(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12)  { Melder_error12 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12); goto end; }
+#define error13(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13)  { Melder_error13 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13); goto end; }
+#define error14(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14)  { Melder_error14 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14); goto end; }
+#define error15(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15)  { Melder_error15 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15); goto end; }
+#define error16(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16)  { Melder_error16 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16); goto end; }
+#define error17(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17)  { Melder_error17 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17); goto end; }
+#define error18(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18)  { Melder_error18 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18); goto end; }
+#define error19(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19)  { Melder_error19 (s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19); goto end; }
 	/* Generate, but do not yet show, an error message; return 0. */
 
 void * Melder_errorp (const char *format, ...);

@@ -408,6 +408,10 @@ static double getLocalCost (long iframe, long icand, int itrack, void *closure) 
 	Formant_Formant candidate;
 	if (icand > frame -> nFormants) return 1e30;
 	candidate = & frame -> formant [icand];
+	/*if (candidate -> frequency <= 0.0) candidate -> frequency = 0.001;
+		/*Melder_fatal ("Weird formant frequency %ls Hertz.", Melder_double (candidate -> frequency))*/;
+	Melder_assert (candidate -> bandwidth > 0.0);
+	Melder_assert (itrack > 0 && itrack <= 5);
 	return my dfCost * fabs (candidate -> frequency - my refF [itrack]) +
 		my bfCost * candidate -> bandwidth / candidate -> frequency;
 }
@@ -419,10 +423,15 @@ static double getTransitionCost (long iframe, long icand1, long icand2, int itra
 	if (icand1 > prevFrame -> nFormants || icand2 > curFrame -> nFormants) return 1e30;
 	f1 = prevFrame -> formant [icand1]. frequency;
 	f2 = curFrame -> formant [icand2]. frequency;
+	/*Melder_assert (f1 > 0.0);*/
+	/*Melder_assert (f2 > 0.0);*/
 	return my octaveJumpCost * fabs (NUMlog2 (f1 / f2));
 }
 static void putResult (long iframe, long place, int itrack, void *closure) {
 	struct fparm *me = closure;
+	Melder_assert (iframe > 0 && iframe <= my my nx);
+	Melder_assert (itrack > 0 && itrack <= 5);
+	Melder_assert (place > 0);
 	Melder_assert (place <= my my frame [iframe]. nFormants);
 	my thy frame [iframe]. formant [itrack] = my my frame [iframe]. formant [place];
 }

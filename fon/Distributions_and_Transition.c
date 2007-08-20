@@ -28,51 +28,42 @@
 Transition Distributions_to_Transition (Distributions underlying, Distributions surface, long environment,
 	Transition adjacency, int greedy)
 {
+	if (underlying == NULL) return NULL;
 	Transition thee = NULL;
-	long i, j, m;
-	if (! underlying) return NULL;
 
 	/*
 	 * Preconditions: range check and matrix matching.
 	 */
-	if (environment < 1 || environment > underlying -> numberOfColumns) {
-		Melder_error ("Environment (%ld) out of range (1-%ld).", environment, underlying -> numberOfColumns);
-		goto end;
-	}
-	if (surface && (underlying -> numberOfColumns != surface -> numberOfColumns ||
-			underlying -> numberOfRows != surface -> numberOfRows))
-	{
-		Melder_error ("Sizes of underlying and surface distributions do not match.");
-		goto end;
-	}
-	if (adjacency && adjacency -> numberOfStates != underlying -> numberOfColumns) {
-		Melder_error ("Number of states (%ld) in adjacency matrix "
-			"does not match number of distributions (%ld)",
-			adjacency -> numberOfStates, underlying -> numberOfColumns);
-		goto end;
-	}
+	if (environment < 1 || environment > underlying -> numberOfColumns)
+		error5 (L"Environment (", Melder_integer (environment), L") out of range (1-", Melder_integer (underlying -> numberOfColumns), L").")
+	if (surface && (underlying -> numberOfColumns != surface -> numberOfColumns || underlying -> numberOfRows != surface -> numberOfRows))
+		error1 (L"Sizes of underlying and surface distributions do not match.")
+	if (adjacency && adjacency -> numberOfStates != underlying -> numberOfColumns)
+		error5 (L"Number of states (", Melder_integer (adjacency -> numberOfStates), L") in adjacency matrix "
+			"does not match number of distributions (", Melder_integer (underlying -> numberOfColumns), L")")
 
 	/*
 	 * Defaults.
 	 */
-	if (! surface) surface = underlying;
+	if (surface == NULL) surface = underlying;
 
 	/*
 	 * Create the output object.
 	 */
-	thee = Transition_create (underlying -> numberOfColumns); if (! thee) goto end;
+	thee = Transition_create (underlying -> numberOfColumns); cherror
 
 	/*
 	 * Copy labels and set name.
 	 */
-	for (i = 1; i <= thy numberOfStates; i ++)
-		thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]);
-	Thing_setNameW (thee, underlying -> columnLabels [environment]);
+	for (long i = 1; i <= thy numberOfStates; i ++) {
+		thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]); cherror
+	}
+	Thing_setNameW (thee, underlying -> columnLabels [environment]); cherror
 
 	/*
 	 * Compute the off-diagonal elements of the transition matrix in environment 'environment'.
 	 */
-	for (i = 1; i <= thy numberOfStates; i ++) {
+	for (long i = 1; i <= thy numberOfStates; i ++) {
 
 		/*
 		 * How many states are available for the learner to step to (excluding current state)?
@@ -80,7 +71,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		long numberOfAdjacentStates;
 		if (adjacency) {
 			numberOfAdjacentStates = 0;
-			for (j = 1; j <= thy numberOfStates; j ++)
+			for (long j = 1; j <= thy numberOfStates; j ++)
 				if (i != j && adjacency -> data [i] [j])
 					numberOfAdjacentStates ++;
 		} else {
@@ -90,7 +81,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		/*
 		 * Try all possible steps to adjacent states.
 		 */
-		for (j = 1; j <= thy numberOfStates; j ++) if (i != j) {
+		for (long j = 1; j <= thy numberOfStates; j ++) if (i != j) {
 
 			/*
 			 * Local: grammar step only possible to adjacent grammar.
@@ -100,7 +91,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 			/*
 			 * Compute element (i, j): sum over all possible data.
 			 */
-			for (m = 1; m <= underlying -> numberOfRows; m ++) {
+			for (long m = 1; m <= underlying -> numberOfRows; m ++) {
 
 				/*
 				 * Error-driven: grammar step only triggered by positive evidence.
@@ -124,53 +115,49 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 	/*
 	 * Compute the elements on the diagonal, so that the sum of each row is unity.
 	 */
-	for (i = 1; i <= thy numberOfStates; i ++) {
+	for (long i = 1; i <= thy numberOfStates; i ++) {
 		double sum = 0.0;
-		for (j = 1; j <= thy numberOfStates; j ++) if (j != i)
+		for (long j = 1; j <= thy numberOfStates; j ++) if (j != i)
 			sum += thy data [i] [j];
 		thy data [i] [i] = sum > 1.0 ? 0.0 : 1.0 - sum;   /* Guard against rounding errors. */
 	}
 
 end:
-	if (Melder_hasError ()) {
+	iferror {
 		forget (thee);
-		return Melder_errorp ("(Distributions_to_Transition:) Not performed.");
+		return Melder_errorp1 (L"Distributions to Transition: not performed.");
 	}
 	return thee;
 }
 
 Distributions Distributions_Transition_map (Distributions me, Transition map) {
 	Distributions thee = NULL;
-	long row, col, m;
 
 	/*
 	 * Preconditions: matrix matching.
 	 */
-	if (map -> numberOfStates != my numberOfRows) {
-		Melder_error ("Number of data (%ld) in mapping matrix "
-			"does not match number of data (%ld) in distributions",
-			map -> numberOfStates, my numberOfRows);
-		goto end;
-	}
+	if (map -> numberOfStates != my numberOfRows)
+		error5 (L"Number of data (", Melder_integer (map -> numberOfStates), L") in mapping matrix "
+			"does not match number of data (", Melder_integer (my numberOfRows), L") in distribution.")
 
 	/*
 	 * Create the output object.
 	 */
-	thee = Data_copy (me);
+	thee = Data_copy (me); cherror
 
 	/*
 	 * Compute the elements of the surface distributions.
 	 */
-	for (row = 1; row <= my numberOfRows; row ++) for (col = 1; col <= my numberOfColumns; col ++) {
+	for (long row = 1; row <= my numberOfRows; row ++) for (long col = 1; col <= my numberOfColumns; col ++) {
 		thy data [row] [col] = 0.0;
-		for (m = 1; m <= map -> numberOfStates; m ++)
+		for (long m = 1; m <= map -> numberOfStates; m ++)
 			thy data [row] [col] += my data [m] [col] * map -> data [m] [row];
 	}
 
 end:
-	if (Melder_hasError ()) {
+	iferror {
 		forget (thee);
-		return Melder_errorp ("(Distributions_Transition_map:) Not performed.");
+		return Melder_errorp1 (L"Distributions & Transition: Mapping not performed.");
 	}
 	return thee;
 }

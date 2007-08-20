@@ -220,31 +220,25 @@ int Table_appendColumn (Table me, const wchar_t *label) {
 }
 
 int Table_removeRow (Table me, long irow) {
-	long icol;
-	if (my rows -> size == 1)
-		{ Melder_error ("Cannot remove the only row."); goto end; }
-	if (irow < 1 || irow > my rows -> size)
-		{ Melder_error ("No row %ld.", irow); goto end; }
+	if (my rows -> size == 1) error1 (L"Cannot remove the only row.")
+	if (irow < 1 || irow > my rows -> size) error3 (L"No row ", Melder_integer (irow), L".")
 	Collection_removeItem (my rows, irow);
-	for (icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
 	iferror return Melder_error ("(Table_removeRow:) Not performed.");
 	return 1;
 }
 
 int Table_removeColumn (Table me, long icol) {
-	long irow, jcol;
-	if (my numberOfColumns == 1)
-		{ Melder_error ("Cannot remove the only column."); goto end; }
-	if (icol < 1 || icol > my numberOfColumns)
-		{ Melder_error ("No column %ld.", icol); goto end; }
+	if (my numberOfColumns == 1) error1 (L"Cannot remove the only column.")
+	if (icol < 1 || icol > my numberOfColumns) error3 (L"No column ", Melder_integer (icol), L".")
 	Melder_free (my columnHeaders [icol]. label);
-	for (jcol = icol; jcol < my numberOfColumns; jcol ++)
+	for (long jcol = icol; jcol < my numberOfColumns; jcol ++)
 		my columnHeaders [jcol] = my columnHeaders [jcol + 1];
-	for (irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		Melder_free (row -> cells [icol]. string);
-		for (jcol = icol; jcol < row -> numberOfColumns; jcol ++)
+		for (long jcol = icol; jcol < row -> numberOfColumns; jcol ++)
 			row -> cells [jcol] = row -> cells [jcol + 1];
 		row -> numberOfColumns --;
 	}
@@ -255,12 +249,10 @@ end:
 }
 
 int Table_insertRow (Table me, long irow) {
-	long icol;
 	TableRow row = TableRow_create (my numberOfColumns); cherror
-	if (irow < 1 || irow > my rows -> size + 1)
-		{ Melder_error ("Cannot create row %ld.", irow); goto end; }
+	if (irow < 1 || irow > my rows -> size + 1) error3 (L"Cannot create row ", Melder_integer (irow), L".")
 	Ordered_addItemPos (my rows, row, irow);
-	for (icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
 	iferror return Melder_error ("(Table_insertRow:) Not performed.");
 	return 1;
@@ -268,23 +260,21 @@ end:
 
 int Table_insertColumn (Table me, long icol, const wchar_t *label) {
 	struct structTableColumnHeader *columnHeaders = NULL;
-	long irow, jcol;
-	if (icol < 1 || icol > my numberOfColumns + 1)
-		{ Melder_error ("Cannot create column %ld.", icol); goto end; }
+	if (icol < 1 || icol > my numberOfColumns + 1) error3 (L"Cannot create column ", Melder_integer (icol), L".")
 	columnHeaders = NUMstructvector (TableColumnHeader, 1, my numberOfColumns + 1); cherror
-	for (jcol = 1; jcol < icol; jcol ++)
+	for (long jcol = 1; jcol < icol; jcol ++)
 		columnHeaders [jcol] = my columnHeaders [jcol];   /* Shallow copy of strings. */
-	for (jcol = my numberOfColumns + 1; jcol > icol; jcol --)
+	for (long jcol = my numberOfColumns + 1; jcol > icol; jcol --)
 		columnHeaders [jcol] = my columnHeaders [jcol - 1];   /* Shallow copy of strings. */
 	columnHeaders [icol]. label = Melder_wcsdup (label); cherror
 	NUMstructvector_free (TableColumnHeader, my columnHeaders, 1);
 	my columnHeaders = columnHeaders;
-	for (irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		struct structTableCell *cells = NUMstructvector (TableCell, 1, row -> numberOfColumns + 1); cherror
-		for (jcol = 1; jcol < icol; jcol ++)
+		for (long jcol = 1; jcol < icol; jcol ++)
 			cells [jcol] = row -> cells [jcol];   /* Shallow copy of strings. */
-		for (jcol = row -> numberOfColumns + 1; jcol > icol; jcol --)
+		for (long jcol = row -> numberOfColumns + 1; jcol > icol; jcol --)
 			cells [jcol] = row -> cells [jcol - 1];   /* Shallow copy of strings. */
 		NUMstructvector_free (TableCell, row -> cells, 1);
 		row -> cells = cells;
@@ -540,15 +530,14 @@ double Table_getStdev (Table me, long icol) {
 
 Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion) {
 	Table thee = NULL;
-	long irow, icol;
 	if (column < 1 || column > my numberOfColumns)
-		{ Melder_error ("No column %ld.", column); goto end; }
+		error3 (L"No column ", Melder_integer (column), L".")
 	Table_numericize (me, column);
 	thee = Table_create (0, my numberOfColumns); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		thy columnHeaders [icol]. label = Melder_wcsdup (my columnHeaders [icol]. label); cherror
 	}
-	for (irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		if (Melder_numberMatchesCriterion (row -> cells [column]. number, which_Melder_NUMBER, criterion)) {
 			TableRow newRow = Data_copy (row);
@@ -569,7 +558,7 @@ end:
 Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Melder_STRING, const wchar_t *criterion) {
 	Table thee = NULL;
 	if (column < 1 || column > my numberOfColumns)
-		{ Melder_error ("No column %ld.", column); goto end; }
+		error3 (L"No column ", Melder_integer (column), L".")
 	Table_numericize (me, column);
 	thee = Table_create (0, my numberOfColumns); cherror
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -639,10 +628,8 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 	 * Parse the six strings of tokens.
 	 */
 	factors = Melder_getTokens (factors_string, & numberOfFactors); cherror
-	if (numberOfFactors < 1) {
-		Melder_error ("In order to pool table data, you must supply at least one independent variable.");
-		goto end;
-	}
+	if (numberOfFactors < 1)
+		error1 (L"In order to pool table data, you must supply at least one independent variable.")
 	_Table_columnsExist_check (me, factors, numberOfFactors); cherror
 	if (columnsToSum_string) {
 		columnsToSum = Melder_getTokens (columnsToSum_string, & numberToSum); cherror
@@ -778,14 +765,12 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 			++ icol;
 			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
 				double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
-				if (value <= 0.0) {
-					Melder_error7 (
+				if (value <= 0.0)
+					error7 (
 						L"The cell in column \"", columnsToAverageLogarithmically [i],
 						L"\" of row ", Melder_integer (jrow),
 						L" of Table \"", my nameW ? my nameW : L"(untitled)",
-						L"\" is not positive.\nCannot average logarithmically.");
-					goto end;
-				}
+						L"\" is not positive.\nCannot average logarithmically.")
 				sum += log (value);
 			}
 			Table_setNumericValue (thee, thy rows -> size, icol, exp (sum / (rowmax - rowmin + 1)));
@@ -796,14 +781,12 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 			++ icol;
 			for (jrow = rowmin; jrow <= rowmax; jrow ++) {
 				double value = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
-				if (value <= 0.0) {
-					Melder_error7 (
+				if (value <= 0.0)
+					error7 (
 						L"The cell in column \"", columnsToMedianizeLogarithmically [i],
 						L"\" of row ", Melder_integer (jrow),
 						L" of Table \"", my nameW ? my nameW : L"(untitled)",
-						L"\" is not positive.\nCannot medianize logarithmically.");
-					goto end;
-				}
+						L"\" is not positive.\nCannot medianize logarithmically.")
 				sortingColumn [jrow] = log (value);
 			}
 			NUMsort_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1);
@@ -877,16 +860,12 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 	 * Parse the two strings of tokens.
 	 */
 	factors_names = Melder_getTokens (factors_string, & numberOfFactors); cherror
-	if (numberOfFactors < 1) {
-		Melder_error ("In order to nest table data, you must supply at least one independent variable.");
-		goto end;
-	}
+	if (numberOfFactors < 1)
+		error1 (L"In order to nest table data, you must supply at least one independent variable.")
 	_Table_columnsExist_check (me, factors_names, numberOfFactors); cherror
 	columnsToExpand_names = Melder_getTokens (columnsToExpand_string, & numberToExpand); cherror
-	if (numberToExpand < 1) {
-		Melder_error ("In order to nest table data, you must supply at least one dependent variable (to expand).");
-		goto end;
-	}
+	if (numberToExpand < 1)
+		error1 (L"In order to nest table data, you must supply at least one dependent variable (to expand).")
 	_Table_columnsExist_check (me, columnsToExpand_names, numberToExpand); cherror
 	_columns_crossSectionIsEmpty_check (factors_names, numberOfFactors, columnsToExpand_names, numberToExpand); cherror
 	levels_names = _Table_getLevels (me, columnToTranspose, & numberOfLevels); cherror
@@ -1020,17 +999,13 @@ void Table_sortRows (Table me, long *columns, long numberOfColumns) {
 int Table_sortRows_string (Table me, const wchar_t *columns_string) {
 	long numberOfColumns, icol, *columns = NULL;
 	wchar_t **columns_tokens = Melder_getTokens (columns_string, & numberOfColumns); cherror
-	if (numberOfColumns < 1) {
-		Melder_error ("Empty list of columns. Cannot sort.");
-		goto end;
-	}
+	if (numberOfColumns < 1)
+		error1 (L"Empty list of columns. Cannot sort.")
 	columns = NUMlvector (1, numberOfColumns); cherror
 	for (icol = 1; icol <= numberOfColumns; icol ++) {
 		columns [icol] = Table_columnLabelToIndex (me, columns_tokens [icol]);
-		if (columns [icol] == 0) {
-			Melder_error3 (L"Column \"", columns_tokens [icol], L"\" does not exist.");
-			goto end;
-		}
+		if (columns [icol] == 0)
+			error3 (L"Column \"", columns_tokens [icol], L"\" does not exist.")
 	}
 	Table_sortRows (me, columns, numberOfColumns);
 end:
@@ -1598,7 +1573,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		do { kar = *p++; } while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\0');
 		if (kar == '\n' || kar == '\0') break;
 	}
-	if (ncol < 1) { Melder_error ("No columns."); goto end; }
+	if (ncol < 1) error1 (L"No columns.")
 
 	/*
 	 * Count elements.
@@ -1617,11 +1592,8 @@ Table Table_readFromTableFile (MelderFile file) {
 	/*
 	 * Check if all columns are complete.
 	 */
-	if (nelements == 0 || nelements % ncol != 0) {
-		Melder_error ("The number of elements (%ld) is not a multiple of the number of columns (%ld).",
-			nelements, ncol);
-		goto end;
-	}
+	if (nelements == 0 || nelements % ncol != 0)
+		error5 (L"The number of elements (", Melder_integer (nelements), L") is not a multiple of the number of columns (", Melder_integer (ncol), L").")
 
 	/*
 	 * Create empty table.
@@ -1679,7 +1651,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 	wchar_t *p = & string [0];
 	for (;;) {
 		wchar_t kar = *p++;
-		if (kar == '\0') { Melder_error1 (L"No rows."); goto end; }
+		if (kar == '\0') error1 (L"No rows.")
 		if (kar == '\n') break;
 		if (kar == separator) ncol ++;
 	}
@@ -1730,9 +1702,9 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 			}
 			if (*p == '\0') {
 				if (irow != nrow) Melder_fatal ("irow %ld, nrow %ld, icol %ld, ncol %ld", irow, nrow, icol, ncol);
-				if (icol != ncol) { Melder_error1 (L"Last row incomplete."); goto end; }
+				if (icol != ncol) error1 (L"Last row incomplete.")
 			} else if (*p == '\n') {
-				if (icol != ncol) { Melder_error3 (L"Row ", Melder_integer (irow), L"incomplete."); goto end; }
+				if (icol != ncol) error3 (L"Row ", Melder_integer (irow), L"incomplete.")
 				p ++;
 			} else {
 				Melder_assert (*p == separator);

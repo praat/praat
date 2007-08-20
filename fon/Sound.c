@@ -758,7 +758,7 @@ Sound Sound_extractPart (Sound me, double t1, double t2, int windowType, double 
 	 */
 	ix1 = 1 + (long) ceil ((t1 - my x1) / my dx);
 	ix2 = 1 + (long) floor ((t2 - my x1) / my dx);
-	if (ix2 < ix1) { Melder_error ("Extracted Sound would contain no samples."); goto end; }
+	if (ix2 < ix1) error1 (L"Extracted Sound would contain no samples.")
 	/*
 	 * Create sound, optionally shifted to [0..t2-t1].
 	 */

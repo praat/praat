@@ -217,10 +217,8 @@ double TableOfReal_getColumnStdev (I, long icol) {
 int TableOfReal_removeRow (I, long irow) {
 	iam (TableOfReal);
 	double **data = NULL;
-	if (my numberOfRows == 1)
-		{ Melder_error ("Cannot remove the only row."); goto end; }
-	if (irow < 1 || irow > my numberOfRows)
-		{ Melder_error ("No row %ld.", irow); goto end; }
+	if (my numberOfRows == 1) error1 (L"Cannot remove the only row.")
+	if (irow < 1 || irow > my numberOfRows) error3 (L"No row ", Melder_integer (irow), L".")
 	data = NUMdmatrix (1, my numberOfRows - 1, 1, my numberOfColumns); cherror
 	for (long i = 1; i <= my numberOfColumns; i ++) {
 		for (long j = 1; j < irow; j ++) data [j] [i] = my data [j] [i];
@@ -240,8 +238,7 @@ int TableOfReal_insertRow (I, long irow) {
 	iam (TableOfReal);
 	double **data = NULL;
 	wchar_t **rowLabels = NULL;
-	if (irow < 1 || irow > my numberOfRows + 1)
-		{ Melder_error ("Cannot create row %ld.", irow); goto end; }
+	if (irow < 1 || irow > my numberOfRows + 1) error3 (L"Cannot create row ", Melder_integer (irow), L".")
 	data = NUMdmatrix (1, my numberOfRows + 1, 1, my numberOfColumns); cherror
 	rowLabels = NUMpvector (1, my numberOfRows + 1);
 	for (long j = 1; j < irow; j ++)	{
@@ -265,10 +262,8 @@ end:
 int TableOfReal_removeColumn (I, long icol) {
 	iam (TableOfReal);
 	double **data = NULL;
-	if (my numberOfColumns == 1)
-		{ Melder_error ("Cannot remove the only column."); goto end; }
-	if (icol < 1 || icol > my numberOfColumns)
-		{ Melder_error ("No column %ld.", icol); goto end; }
+	if (my numberOfColumns == 1) error1 (L"Cannot remove the only column.")
+	if (icol < 1 || icol > my numberOfColumns) error3 (L"No column ", Melder_integer (icol), L".")
 	data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns - 1); cherror
 	for (long i = 1; i <= my numberOfRows; i ++) {
 		for (long j = 1; j < icol; j ++) data [i] [j] = my data [i] [j];
@@ -288,8 +283,7 @@ int TableOfReal_insertColumn (I, long icol) {
 	iam (TableOfReal);
 	double **data = NULL;
 	wchar_t **columnLabels = NULL;
-	if (icol < 1 || icol > my numberOfColumns + 1)
-		{ Melder_error ("Cannot create column %ld.", icol); goto end; }
+	if (icol < 1 || icol > my numberOfColumns + 1) error3 (L"Cannot create column ", Melder_integer (icol), L".")
 	data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns + 1); cherror
 	columnLabels = NUMpvector (1, my numberOfColumns + 1); cherror
 	for (long j = 1; j < icol; j ++) {
@@ -379,21 +373,22 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 
 TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder_NUMBER, double criterion) {
 	iam (TableOfReal);
+	/*
+	 * init
+	 */
 	TableOfReal thee = NULL;
+	/*
+	 * check input
+	 */
+	if (column < 1 || column > my numberOfColumns) error3 (L"No such column: ", Melder_integer (column), L".")
+
 	long n = 0;
-	if (column < 1 || column > my numberOfColumns) {
-		Melder_error ("No such column: %ld.", column);
-		goto end;
-	}
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
 			n ++;
 		}
 	}
-	if (n == 0) {
-		Melder_error ("No row matches this criterion.");
-		goto end;
-	}
+	if (n == 0) error1 (L"No row matches this criterion.")
 	thee = TableOfReal_create (n, my numberOfColumns); cherror
 	copyColumnLabels (me, thee); cherror
 	n = 0;
@@ -416,10 +411,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const
 			n ++;
 		}
 	}
-	if (n == 0) {
-		Melder_error ("No row matches this criterion.");
-		goto end;
-	}
+	if (n == 0) error1 (L"No row matches this criterion.")
 	thee = TableOfReal_create (n, my numberOfColumns); cherror
 	copyColumnLabels (me, thee); cherror
 	n = 0;
@@ -435,25 +427,27 @@ end:
 
 TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NUMBER, double criterion) {
 	iam (TableOfReal);
+	/*
+	 * init
+	 */
 	TableOfReal thee = NULL;
-	long icol, n = 0;
-	if (row < 1 || row > my numberOfRows) {
-		Melder_error ("No such row: %ld.", row);
-		goto end;
-	}
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	/*
+	 * check input
+	 */
+	if (row < 1 || row > my numberOfRows) error3 (L"No such row: ", Melder_integer (row), L".")
+
+	long n = 0;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
 			n ++;
 		}
 	}
-	if (n == 0) {
-		Melder_error ("No column matches this criterion.");
-		goto end;
-	}
+	if (n == 0) error1 (L"No column matches this criterion.")
+
 	thee = TableOfReal_create (my numberOfRows, n);
 	copyRowLabels (me, thee); cherror
 	n = 0;
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
 			copyColumn (me, icol, thee, ++ n); cherror
 		}
@@ -472,10 +466,8 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, co
 			n ++;
 		}
 	}
-	if (n == 0) {
-		Melder_error ("No column matches this criterion.");
-		goto end;
-	}
+	if (n == 0) error1 (L"No column matches this criterion.")
+
 	thee = TableOfReal_create (my numberOfRows, n);
 	copyRowLabels (me, thee); cherror
 	n = 0;
@@ -639,10 +631,8 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition) {
 			}
 		}
 	}
-	if (numberOfElements < 1) {
-		Melder_error ("No rows match this condition.");
-		goto end;
-	}
+	if (numberOfElements < 1) error1 (L"No rows match this condition.")
+
 	/*
 	 * Create room for the result.
 	 */	
@@ -686,10 +676,8 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition) {
 			}
 		}
 	}
-	if (numberOfElements < 1) {
-		Melder_error ("No columns match this condition.");
-		goto end;
-	}
+	if (numberOfElements < 1) error1 (L"No columns match this condition.")
+
 	/*
 	 * Create room for the result.
 	 */	
@@ -1018,25 +1006,30 @@ void TableOfReal_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
 
 Any TablesOfReal_append (I, thou) {
 	iam (TableOfReal); thouart (TableOfReal);
+	/*
+	 * init
+	 */
 	TableOfReal him = NULL;
-	long irow, icol;
-	if (thy numberOfColumns != my numberOfColumns)
-		{ Melder_error ("Numbers of columns do not match."); goto end; }
+	/*
+	 * check input
+	 */
+	if (thy numberOfColumns != my numberOfColumns) error1 (L"Numbers of columns do not match.")
+
 	him = Thing_new (my methods); cherror
 	TableOfReal_init (him, my numberOfRows + thy numberOfRows, my numberOfColumns); cherror
 	/* Unsafe: new attributes not initialized. */
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		TableOfReal_setColumnLabel (him, icol, my columnLabels [icol]); cherror
 	}
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		TableOfReal_setRowLabel (him, irow, my rowLabels [irow]); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++)
+		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			his data [irow] [icol] = my data [irow] [icol];
 	}
-	for (irow = 1; irow <= thy numberOfRows; irow ++) {
+	for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 		long hisRow = irow + my numberOfRows;
 		TableOfReal_setRowLabel (him, hisRow, thy rowLabels [irow]); cherror
-		for (icol = 1; icol <= my numberOfColumns; icol ++)
+		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			his data [hisRow] [icol] = thy data [irow] [icol];
 	}
 end:
@@ -1047,15 +1040,14 @@ end:
 Any TablesOfReal_appendMany (Collection me) {
 	TableOfReal him = NULL, thee;
 	long itab, irow, icol, nrow, ncol;
-	if (my size == 0) return Melder_errorp ("Cannot add zero tables.");
+	if (my size == 0) return Melder_errorp1 (L"Cannot add zero tables.");
 	thee = my item [1];
 	nrow = thy numberOfRows;
 	ncol = thy numberOfColumns;
 	for (itab = 2; itab <= my size; itab ++) {
 		thee = my item [itab];
 		nrow += thy numberOfRows;
-		if (thy numberOfColumns != ncol)
-			{ Melder_error ("Numbers of columns do not match."); goto end; }
+		if (thy numberOfColumns != ncol) error1 (L"Numbers of columns do not match.")
 	}
 	him = Thing_new (thy methods); cherror
 	TableOfReal_init (him, nrow, ncol); cherror
@@ -1241,7 +1233,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 		if (kar == '\n' || kar == '\0') break;
 	}
 	ncol --;
-	if (ncol < 1) { Melder_error ("No columns."); goto end; }
+	if (ncol < 1) error1 (L"No columns.")
 
 	/*
 	 * Count elements.
@@ -1260,11 +1252,8 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	/*
 	 * Check if all columns are complete.
 	 */
-	if (nelements == 0 || nelements % (ncol + 1) != 0) {
-		Melder_error ("The number of elements (%ld) is not a multiple of the number of columns plus 1 (%ld).",
-			nelements, ncol + 1);
-		goto end;
-	}
+	if (nelements == 0 || nelements % (ncol + 1) != 0)
+		error5 (L"The number of elements (", Melder_integer (nelements), L") is not a multiple of the number of columns plus 1 (", Melder_integer (ncol + 1), L").")
 
 	/*
 	 * Create empty table.

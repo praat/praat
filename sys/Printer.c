@@ -265,7 +265,7 @@ static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 		}
 		thePrinter. orientation = UiForm_getInteger (dia, L"Orientation") - 1;
 		thePrinter. magnification = UiForm_getReal (dia, L"Magnification");
-		Site_setPrintCommand (UiForm_getStringA (dia, "printCommand"));
+		Site_setPrintCommand (UiForm_getString (dia, L"printCommand"));
 	#endif
 	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, L"Font choice strategy") - 1;
 	#if defined (macintosh)
@@ -363,7 +363,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		if (! thePrinter. graphics) return Melder_error ("Cannot create temporary PostScript file for printing.");
 		draw (boss, thePrinter. graphics);
 		forget (thePrinter. graphics);
-		sprintf (command, Melder_peekWcsToAscii (Site_getPrintCommand ()), tempPath);
+		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath);
 		system (command);
 		MelderFile_delete (& tempFile);
 	#elif defined (_WIN32)
@@ -531,9 +531,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		SetPort (theMacPort);
 		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
 		if (thePrinter. postScript) {
-			if (! openPostScript ()) {
-				Melder_error ("Cannot print PostScript."); goto end;
-			}
+			if (! openPostScript ()) error1 (L"Cannot print PostScript.")
 			thePrinter. graphics = Graphics_create_postscriptprinter ();
 			if (! thePrinter. graphics) goto end;
 			draw (boss, thePrinter. graphics);

@@ -25,6 +25,7 @@
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2007/01/27 use #defines for value interpolation
+ * pb 2007/08/20 built a "weird value" check into NUMviterbi (bug report by Adam Jacks)
  */
 
 #include "NUM.h"
@@ -532,6 +533,7 @@ int NUM_viterbi (
 					- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
 			}
+			if (place == 0) error1 (L"Viterbi algorithm cannot compute a track because of weird values.")
 			delta [iframe] [icand2] = maximum;
 			psi [iframe] [icand2] = place;
 		}
