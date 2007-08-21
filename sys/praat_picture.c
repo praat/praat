@@ -50,16 +50,16 @@ static double x1NDC = 0.0, x2NDC = 6.0, y1NDC = 8.0, y2NDC = 12.0;
 
 /***** "Font" MENU: font part *****/
 
-static int praat_font = Graphics_HELVETICA;
+static int praat_font = Graphics_FONT_HELVETICA;
 static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
 static void updateFontMenu (void) {
 	if (! theCurrentPraat -> batch) {
-		if (praat_font < 1) praat_font = 1;
-		if (praat_font > Graphics_PALATINO) praat_font = Graphics_PALATINO;
-		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_TIMES, 0);
-		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_HELVETICA, 0);
-		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_PALATINO, 0);
-		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_COURIER, 0);
+		if (praat_font < Graphics_FONT_MIN) praat_font = Graphics_FONT_MIN;
+		if (praat_font > Graphics_FONT_MAX) praat_font = Graphics_FONT_MAX;
+		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_FONT_TIMES, 0);
+		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_FONT_HELVETICA, 0);
+		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_FONT_PALATINO, 0);
+		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_FONT_COURIER, 0);
 	}
 }
 static void setFont (int font) {
@@ -71,10 +71,10 @@ static void setFont (int font) {
 		updateFontMenu ();
 	}
 }
-DIRECT (Times) setFont (Graphics_TIMES); END
-DIRECT (Helvetica) setFont (Graphics_HELVETICA); END
-DIRECT (Palatino) setFont (Graphics_PALATINO); END
-DIRECT (Courier) setFont (Graphics_COURIER); END
+DIRECT (Times) setFont (Graphics_FONT_TIMES); END
+DIRECT (Helvetica) setFont (Graphics_FONT_HELVETICA); END
+DIRECT (Palatino) setFont (Graphics_FONT_PALATINO); END
+DIRECT (Courier) setFont (Graphics_FONT_COURIER); END
 
 /***** "Font" MENU: size part *****/
 
@@ -572,10 +572,10 @@ DO
 		GET_INTEGER ("Horizontal alignment") - 1, GET_INTEGER ("Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_setFont (GRAPHICS,
-		requiredFont == 1 ? Graphics_TIMES :
-		requiredFont == 2 ? Graphics_PALATINO :
-		requiredFont == 3 ? Graphics_HELVETICA :
-		Graphics_COURIER);
+		requiredFont == 1 ? Graphics_FONT_TIMES :
+		requiredFont == 2 ? Graphics_FONT_PALATINO :
+		requiredFont == 3 ? Graphics_FONT_HELVETICA :
+		Graphics_FONT_COURIER);
 	Graphics_setFontSize (GRAPHICS, GET_INTEGER ("Font size"));
 	{
 		char *rotation = GET_STRING ("Rotation"), *semicolon;

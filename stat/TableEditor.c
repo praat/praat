@@ -359,7 +359,7 @@ TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table
 	Graphics_setWsViewport (my graphics, 0, 3000, 0, 3000);
 	Graphics_setWsWindow (my graphics, 0, 3000, 0, 3000);
 	Graphics_setViewport (my graphics, 0, 3000, 0, 3000);
-	Graphics_setFont (my graphics, Graphics_COURIER);
+	Graphics_setFont (my graphics, Graphics_FONT_COURIER);
 	Graphics_setFontSize (my graphics, 12);
 	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 	Graphics_setAtSignIsLink (my graphics, TRUE);

@@ -1610,7 +1610,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
 		static MelderStringW buffer = { 0 };
 		MelderStringW_empty (& buffer);
-		while (*p != ' ' && *p != '\t') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
 		Table_setColumnLabel (me, icol, buffer.string);
 		MelderStringW_empty (& buffer);
 	}

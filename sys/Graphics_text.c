@@ -108,22 +108,22 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 	 * characterSet                  // iso8859-1 or adobe-fontspecific
 	 */
 	sprintf (name, "-*-%s-%s-normal--*-%d0-%d-%d-%s-*-%s",
-		font == Graphics_TIMES ? "times" :
-		font == Graphics_COURIER ? "courier" :
-		font == Graphics_PALATINO ? "palatino" :
+		font == Graphics_FONT_TIMES ? "times" :
+		font == Graphics_FONT_COURIER ? "courier" :
+		font == Graphics_FONT_PALATINO ? "palatino" :
 		font == Graphics_IPATIMES ? "xipadontusebecausethishasthewrongencoding" :
 		font == Graphics_DINGBATS ? "itc zapf dingbats" :
 		font == Graphics_SYMBOL ? "symbol" : "helvetica",
 		font == Graphics_SYMBOL || font == Graphics_DINGBATS ? "medium-r" :
 		style == Graphics_BOLD ? "bold-r" :
 		style == Graphics_ITALIC ?
-			font == Graphics_TIMES || font == Graphics_PALATINO ? "medium-i" : "medium-o" :
+			font == Graphics_FONT_TIMES || font == Graphics_FONT_PALATINO ? "medium-i" : "medium-o" :
 		style == Graphics_BOLD_ITALIC ?
-			font == Graphics_TIMES || font == Graphics_PALATINO ? "bold-i" : "bold-o" : "medium-r",
+			font == Graphics_FONT_TIMES || font == Graphics_FONT_PALATINO ? "bold-i" : "bold-o" : "medium-r",
 		size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
-		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
-		font == Graphics_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
-		"*" /*font == Graphics_COURIER ? "m" : "p"*/,
+		font == Graphics_FONT_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
+		font == Graphics_FONT_PALATINO || font == Graphics_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
+		"*" /*font == Graphics_FONT_COURIER ? "m" : "p"*/,
 		font == Graphics_SYMBOL || font == Graphics_IPATIMES || font == Graphics_DINGBATS ?
 			"adobe-fontspecific" : "iso8859-1");
 	fontInfo = XLoadQueryFont (my display, name);
@@ -182,8 +182,8 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		spec. lfHeight = - win_isize2size (size);
 	}
 	if (font == Graphics_IPATIMES) {
-		if (my font == Graphics_TIMES) spec. lfHeight *= 1.13;
-		else if (my font == Graphics_HELVETICA) spec. lfHeight *= 1.3;
+		if (my font == Graphics_FONT_TIMES) spec. lfHeight *= 1.13;
+		else if (my font == Graphics_FONT_HELVETICA) spec. lfHeight *= 1.3;
 	}
 	spec. lfWidth = 0;
 	spec. lfEscapement = spec. lfOrientation = 0;
@@ -193,8 +193,8 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	spec. lfCharSet = font == Graphics_SYMBOL ? SYMBOL_CHARSET : font >= Graphics_IPATIMES ? DEFAULT_CHARSET : ANSI_CHARSET;
 	spec. lfOutPrecision = spec. lfClipPrecision = spec. lfQuality = 0;
 	spec. lfPitchAndFamily =
-		( font == Graphics_COURIER ? FIXED_PITCH : font == Graphics_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
-		( font == Graphics_HELVETICA ? FF_SWISS : font == Graphics_COURIER ? FF_MODERN :
+		( font == Graphics_FONT_COURIER ? FIXED_PITCH : font == Graphics_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
+		( font == Graphics_FONT_HELVETICA ? FF_SWISS : font == Graphics_FONT_COURIER ? FF_MODERN :
 		  font >= Graphics_IPATIMES ? FF_DONTCARE : FF_ROMAN );
 	if (font == Graphics_IPATIMES && ! ipaInited && Melder_debug != 15) {
 		LOGFONT logFont;
@@ -208,10 +208,10 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 			/*Melder_warning ("The phonetic font is not available.\nI shall use an ugly bitmap font instead.\nSee www.praat.org")*/;
 	}
 	strcpy (spec. lfFaceName,
-		font == Graphics_HELVETICA ? "Arial" :
-		font == Graphics_TIMES ? "Times New Roman" :
-		font == Graphics_COURIER ? "Courier New" :
-		font == Graphics_PALATINO ? "Book Antiqua" :
+		font == Graphics_FONT_HELVETICA ? "Arial" :
+		font == Graphics_FONT_TIMES ? "Times New Roman" :
+		font == Graphics_FONT_COURIER ? "Courier New" :
+		font == Graphics_FONT_PALATINO ? "Book Antiqua" :
 		font == Graphics_SYMBOL ? "Symbol" :
 		font == Graphics_IPATIMES ? "SILDoulos IPA93" :
 		font == Graphics_DINGBATS ? "Wingdings" :
@@ -304,7 +304,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			}
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
 			lc -> font.string = NULL;
-			lc -> font.integer = font;   // Graphics_HELVETICA .. Graphics_DINGBATS
+			lc -> font.integer = font;   // Graphics_FONT_HELVETICA .. Graphics_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
 		#elif mac
@@ -315,7 +315,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			       info -> alphabet == Longchar_PHONETIC ? theIpaTimesFont :
 			       lc -> first == '/' && lc -> second == ' ' ? thePalatinoFont :   /* Override Courier. */
 			       info -> alphabet == Longchar_DINGBATS ? theZapfDingbatsFont:
-			       lc -> font.integer == Graphics_COURIER ? theCourierFont : my macFont;
+			       lc -> font.integer == Graphics_FONT_COURIER ? theCourierFont : my macFont;
 			style = (lc -> style & Graphics_ITALIC ? italic : 0) +
 			        (lc -> style & Graphics_BOLD ? bold : 0);
 			size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
@@ -388,30 +388,30 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> size *= normalSize * 0.01;
 					//lc -> baseline *= normalSize * 0.01;
 
-					if (font == Graphics_COURIER) {
+					if (font == Graphics_FONT_COURIER) {
 						lc -> width = 600;   /* Courier. */
 					} else if (style == 0) {
-						if (font == Graphics_TIMES) lc -> width = info -> ps.times;
-						else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
-						else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatino;
+						if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.times;
+						else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helvetica;
+						else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatino;
 						else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 						else lc -> width = info -> ps.times;   /* XIPA. */
 					} else if (style == Graphics_BOLD) {
-						if (font == Graphics_TIMES) lc -> width = info -> ps.timesBold;
-						else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
-						else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBold;
+						if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesBold;
+						else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helveticaBold;
+						else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoBold;
 						else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 						else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 					} else if (style == Graphics_ITALIC) {
-						if (font == Graphics_TIMES) lc -> width = info -> ps.timesItalic;
-						else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
-						else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoItalic;
+						if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesItalic;
+						else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helvetica;
+						else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoItalic;
 						else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 						else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 					} else if (style == Graphics_BOLD_ITALIC) {
-						if (font == Graphics_TIMES) lc -> width = info -> ps.timesBoldItalic;
-						else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
-						else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
+						if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesBoldItalic;
+						else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helveticaBold;
+						else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
 						else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 						else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 					}
@@ -443,7 +443,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
 		if (! my fontInfos [font] [style]) {
 			char *fontInfo, *secondaryFontInfo = NULL, *tertiaryFontInfo = NULL;
-			if (font == Graphics_COURIER) {
+			if (font == Graphics_FONT_COURIER) {
 				fontInfo = style == Graphics_BOLD ? "Courier-Bold" :
 					style == Graphics_ITALIC ? "Courier-Oblique" :
 					style == Graphics_BOLD_ITALIC ? "Courier-BoldOblique" : "Courier";
@@ -453,7 +453,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				tertiaryFontInfo = style == Graphics_BOLD ? "CourierNew-Bold" :
 					style == Graphics_ITALIC ? "CourierNew-Italic" :
 					style == Graphics_BOLD_ITALIC ? "CourierNew-BoldItalic" : "CourierNew";
-			} else if (font == Graphics_TIMES) {
+			} else if (font == Graphics_FONT_TIMES) {
 				fontInfo = style == Graphics_BOLD ? "Times-Bold" :
 					style == Graphics_ITALIC ? "Times-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Times-BoldItalic" : "Times-Roman";
@@ -463,7 +463,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				tertiaryFontInfo = style == Graphics_BOLD ? "TimesNewRoman-Bold" :
 					style == Graphics_ITALIC ? "TimesNewRoman-Italic" :
 					style == Graphics_BOLD_ITALIC ? "TimesNewRoman-BoldItalic" : "TimesNewRoman";
-			} else if (font == Graphics_PALATINO) {
+			} else if (font == Graphics_FONT_PALATINO) {
 				fontInfo = style == Graphics_BOLD ? "Palatino-Bold" :
 					style == Graphics_ITALIC ? "Palatino-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Palatino-BoldItalic" : "Palatino-Roman";
@@ -533,33 +533,33 @@ static void charSize (I, _Graphics_widechar *lc) {
 		lc -> size *= normalSize * 0.01;
 		lc -> baseline *= normalSize * 0.01;
 
-		if (font == Graphics_COURIER) {
+		if (font == Graphics_FONT_COURIER) {
 			lc -> width = 600;   /* Courier. */
 		} else if (style == 0) {
-			if (font == Graphics_TIMES) lc -> width = info -> ps.times;
-			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
-			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatino;
+			if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.times;
+			else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helvetica;
+			else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatino;
 			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   /* XIPA. */
 		} else if (style == Graphics_BOLD) {
-			if (font == Graphics_TIMES) lc -> width = info -> ps.timesBold;
-			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
-			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBold;
+			if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesBold;
+			else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helveticaBold;
+			else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoBold;
 			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_ITALIC) {
-			if (font == Graphics_TIMES) lc -> width = info -> ps.timesItalic;
-			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helvetica;
-			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoItalic;
+			if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesItalic;
+			else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helvetica;
+			else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoItalic;
 			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD_ITALIC) {
-			if (font == Graphics_TIMES) lc -> width = info -> ps.timesBoldItalic;
-			else if (font == Graphics_HELVETICA) lc -> width = info -> ps.helveticaBold;
-			else if (font == Graphics_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
+			if (font == Graphics_FONT_TIMES) lc -> width = info -> ps.timesBoldItalic;
+			else if (font == Graphics_FONT_HELVETICA) lc -> width = info -> ps.helveticaBold;
+			else if (font == Graphics_FONT_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
 			else if (font == Graphics_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
@@ -967,10 +967,10 @@ static void initText (I) {
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
 			switch (my font) {
-				case Graphics_HELVETICA: my macFont = theHelveticaFont; break;   /* geneva? */
-				case Graphics_TIMES: my macFont = theTimesFont; break;
-				case Graphics_COURIER: my macFont = theCourierFont; break;
-				case Graphics_PALATINO: my macFont = thePalatinoFont; break;
+				case Graphics_FONT_HELVETICA: my macFont = theHelveticaFont; break;   /* geneva? */
+				case Graphics_FONT_TIMES: my macFont = theTimesFont; break;
+				case Graphics_FONT_COURIER: my macFont = theCourierFont; break;
+				case Graphics_FONT_PALATINO: my macFont = thePalatinoFont; break;
 				default: break;
 			}
 		#else
@@ -1349,7 +1349,7 @@ static void stringToWidechar (Graphics me, const wchar_t *txt, _Graphics_widecha
 			/*
 			 * Catch "\tm": if the font is Helvetica, replace with sans-serif version ("\TM").
 			 */
-			} else if (kar1 == 't' && kar2 == 'm' && my font == Graphics_HELVETICA) {
+			} else if (kar1 == 't' && kar2 == 'm' && my font == Graphics_FONT_HELVETICA) {
 				info = Longchar_getInfo ('T', 'M');
 				in += 2;
 			/*
@@ -1397,7 +1397,7 @@ static void stringToWidechar (Graphics me, const wchar_t *txt, _Graphics_widecha
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = NULL;
 		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
-			((info -> first == '/' || info -> first == '|') && info -> second == ' ') ? Graphics_COURIER : my font;
+			((info -> first == '/' || info -> first == '|') && info -> second == ' ') ? Graphics_FONT_COURIER : my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
 		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
@@ -1517,30 +1517,30 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 			character -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
 		double size = character -> size * 0.01;
 		double charWidth = 600;   /* Courier. */
-		if (font == Graphics_COURIER) {
+		if (font == Graphics_FONT_COURIER) {
 			charWidth = 600;
 		} else if (style == 0) {
-			if (font == Graphics_TIMES) charWidth = info -> ps.times;
-			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helvetica;
-			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatino;
+			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.times;
+			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helvetica;
+			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatino;
 			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD) {
-			if (font == Graphics_TIMES) charWidth = info -> ps.timesBold;
-			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helveticaBold;
-			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoBold;
+			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesBold;
+			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helveticaBold;
+			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoBold;
 			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_ITALIC) {
-			if (font == Graphics_TIMES) charWidth = info -> ps.timesItalic;
-			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helvetica;
-			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoItalic;
+			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesItalic;
+			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helvetica;
+			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoItalic;
 			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_BOLD_ITALIC) {
-			if (font == Graphics_TIMES) charWidth = info -> ps.timesBoldItalic;
-			else if (font == Graphics_HELVETICA) charWidth = info -> ps.helveticaBold;
-			else if (font == Graphics_PALATINO) charWidth = info -> ps.palatinoBoldItalic;
+			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesBoldItalic;
+			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helveticaBold;
+			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoBoldItalic;
 			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		}

@@ -27,7 +27,7 @@
 static void logo (Graphics g) {
 	Graphics_setWindow (g, 0, 1, -0.26, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setFont (g, Graphics_TIMES);
+	Graphics_setFont (g, Graphics_FONT_TIMES);
 	Graphics_setFontSize (g, 45);
 	Graphics_setColour (g, Graphics_MAROON);
 	#if defined (macintosh)
@@ -47,7 +47,7 @@ static void logo (Graphics g) {
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
-	Graphics_setFont (g, Graphics_HELVETICA);
+	Graphics_setFont (g, Graphics_FONT_HELVETICA);
 	Graphics_setFontSize (g, 10);
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_text (g, 0.5, 0.04, L"PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");

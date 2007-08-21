@@ -1334,7 +1334,7 @@ void FunctionEditor_SoundAnalysis_draw (I) {
 	Graphics_rectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 
 	if (my endWindow - my startWindow > my longestAnalysis) {
-		Graphics_setFont (my graphics, Graphics_HELVETICA);
+		Graphics_setFont (my graphics, Graphics_FONT_HELVETICA);
 		Graphics_setFontSize (my graphics, 9);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_printf (my graphics, 0.5, 0.67, L"To see the analyses, zoom in to at most %ls seconds,", Melder_half (my longestAnalysis));

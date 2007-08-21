@@ -111,14 +111,14 @@ class_create_opaque (Graphics, Thing);
 int Graphics_init (I);
 /*
 	Postconditions:
-		my font == Graphics_HELVETICA;
+		my font == Graphics_FONT_HELVETICA;
 		my fontSize == 9;
 		my fontStyle == Graphics_NORMAL;
 */ 
 
-#define Graphics_SYMBOL  (Graphics_PALATINO + 1)
-#define Graphics_IPATIMES  (Graphics_PALATINO + 2)
-#define Graphics_DINGBATS  (Graphics_PALATINO + 3)
+#define Graphics_SYMBOL  (Graphics_FONT_MAX + 1)
+#define Graphics_IPATIMES  (Graphics_FONT_MAX + 2)
+#define Graphics_DINGBATS  (Graphics_FONT_MAX + 3)
 
 #ifdef UNIX
 	#define GraphicsScreen_members Graphics_members \

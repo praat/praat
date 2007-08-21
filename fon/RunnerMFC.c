@@ -103,7 +103,7 @@ MOTIF_CALLBACK (cb_draw)
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		const wchar_t *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
 		wchar_t *visibleText_dup = Melder_wcsdup (visibleText ? visibleText : L""), *visibleText_p = visibleText_dup, *visibleText_q;
-		Graphics_setFont (my graphics, Graphics_TIMES);
+		Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);

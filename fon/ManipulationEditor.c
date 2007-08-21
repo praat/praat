@@ -642,11 +642,11 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_setFont (my graphics, Graphics_TIMES);
+	Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 	Graphics_text (my graphics, 1, 1, L"%%Sound");
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pulses");
-	Graphics_setFont (my graphics, Graphics_HELVETICA);
+	Graphics_setFont (my graphics, Graphics_FONT_HELVETICA);
 
 	/*
 	 * Draw blue pulses.
@@ -718,12 +718,12 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setColour (my graphics, Graphics_GREEN);
-	Graphics_setFont (my graphics, Graphics_TIMES);
+	Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics, 1, 1, L"%%Pitch manip");
 	Graphics_setGrey (my graphics, 0.7);
 	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pitch from pulses");
-	Graphics_setFont (my graphics, Graphics_HELVETICA);
+	Graphics_setFont (my graphics, Graphics_FONT_HELVETICA);
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my pitchTier.minimum, my pitchTier.maximum);
 
@@ -819,10 +819,10 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setColour (my graphics, Graphics_GREEN);
-	Graphics_setFont (my graphics, Graphics_TIMES);
+	Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics, 1, 1, L"%%Duration manip");
-	Graphics_setFont (my graphics, Graphics_HELVETICA);
+	Graphics_setFont (my graphics, Graphics_FONT_HELVETICA);
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
 	FunctionEditor_drawGridLine (me, 1.0);

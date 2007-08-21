@@ -1621,7 +1621,7 @@ static void draw (I) {
 		}
 
 		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setFont (my graphics, Graphics_TIMES);
+		Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 		Graphics_setFontSize (my graphics, my fontSize);
 		if (isIntervalTier)
 			drawIntervalTier (me, (IntervalTier) anyTier, itier);

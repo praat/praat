@@ -43,8 +43,8 @@
 #define BOTTOM_MARGIN  0.5
 static double resolution;
 
-static int prefs_font = Graphics_TIMES, prefs_fontSize = 12;
-static int codeFont = Graphics_COURIER;
+static int prefs_font = Graphics_FONT_TIMES, prefs_fontSize = 12;
+static int codeFont = Graphics_FONT_COURIER;
 
 void HyperPage_prefs (void) {
 	Resources_addInt (L"HyperPage.font", & prefs_font);
@@ -121,7 +121,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	my y = PAPER_TOP - TOP_MARGIN;
 	my x = 0;
 	my previousBottomSpacing = 0.0;
-	Graphics_setFont (my ps, Graphics_TIMES);
+	Graphics_setFont (my ps, Graphics_FONT_TIMES);
 	Graphics_setFontSize (my ps, 12);
 	Graphics_setFontStyle (my ps, Graphics_ITALIC);
 	if (leftHeader) {
@@ -624,12 +624,12 @@ FORM (HyperPage, cb_font, "Font", 0)
 		RADIOBUTTON ("Helvetica")
 		RADIOBUTTON ("Palatino")
 	OK
-SET_INTEGER ("Font", my font == Graphics_TIMES ? 1 :
-		my font == Graphics_HELVETICA ? 2 : my font == Graphics_PALATINO ? 3 : 1);
+SET_INTEGER ("Font", my font == Graphics_FONT_TIMES ? 1 :
+		my font == Graphics_FONT_HELVETICA ? 2 : my font == Graphics_FONT_PALATINO ? 3 : 1);
 DO
 	int font = GET_INTEGER ("Font");
-	prefs_font = my font = font == 1 ? Graphics_TIMES : font == 2 ? Graphics_HELVETICA :
-		font == 3 ? Graphics_PALATINO : Graphics_TIMES;
+	prefs_font = my font = font == 1 ? Graphics_FONT_TIMES : font == 2 ? Graphics_FONT_HELVETICA :
+		font == 3 ? Graphics_FONT_PALATINO : Graphics_FONT_TIMES;
 	if (my g) Graphics_updateWs (my g);
 END
 
@@ -919,8 +919,8 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my g, TRUE);
 	Graphics_setDollarSignIsCode (my g, TRUE);
-	Graphics_setFont (my g, Graphics_TIMES);
-	my font = prefs_font > Graphics_PALATINO ? Graphics_PALATINO : prefs_font;
+	Graphics_setFont (my g, Graphics_FONT_TIMES);
+	my font = prefs_font > Graphics_FONT_MAX ? Graphics_FONT_MAX : prefs_font;
 	setFontSize (me, prefs_fontSize);
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);

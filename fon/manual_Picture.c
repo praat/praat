@@ -25,7 +25,7 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *sym
 	Graphics_rectangle (g, x - 0.5, x + 0.5, y - 0.5, y + 0.5);
 	if (! symbol) return;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setFont (g, Graphics_TIMES);
+	Graphics_setFont (g, Graphics_FONT_TIMES);
 	Graphics_setFontSize (g, fontSize * 3 / 2);
 	Graphics_text (g, x, y + 0.25, symbol);
 	while (*symbol) {
@@ -34,7 +34,7 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *sym
 		symbol ++;
 	}
 	*p = '\0';   /* Trailing null byte. */
-	Graphics_setFont (g, Graphics_HELVETICA);
+	Graphics_setFont (g, Graphics_FONT_HELVETICA);
 	Graphics_setFontSize (g, fontSize * 5 / 6);
 	Graphics_text (g, x, y - 0.25, buffer);
 	Graphics_setFontSize (g, fontSize);

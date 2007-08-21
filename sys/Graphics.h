@@ -128,10 +128,12 @@ void Graphics_unhighlight2 (I, double x1, double x2, double y1, double y2,
 #define Graphics_BASELINE  3
 void Graphics_setTextAlignment (I, int horizontal, int vertical);
 void Graphics_setFont (I, int font);
-#define Graphics_HELVETICA  0
-#define Graphics_TIMES  1
-#define Graphics_COURIER  2
-#define Graphics_PALATINO  3
+#define Graphics_FONT_MIN  0
+#define Graphics_FONT_HELVETICA  0
+#define Graphics_FONT_TIMES  1
+#define Graphics_FONT_COURIER  2
+#define Graphics_FONT_PALATINO  3
+#define Graphics_FONT_MAX  3
 void Graphics_setFontSize (I, int height);
 void Graphics_setFontStyle (I, int style);
 void Graphics_setItalic (I, int onoff);
