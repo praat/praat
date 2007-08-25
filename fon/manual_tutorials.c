@@ -23,18 +23,25 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070821)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070825)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.17# (August 25, 2007)")
+LIST_ITEM (L"\\bu Windows: improved rotated text, also for copy-paste and printing.")
+LIST_ITEM (L"\\bu Windows: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.")
+LIST_ITEM (L"\\bu Picture settings report (mainly for script writers).")
+LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when closing a manual page that had been read from a file.")
+NORMAL (L"##4.6.16# (August 22, 2007)")
+LIST_ITEM (L"\\bu Macintosh: corrected a bug introduced in 4.6.13 that could cause Praat to crash when drawing a spectrogram in MacOS X 10.3 or earlier.")
 NORMAL (L"##4.6.15# (August 21, 2007)")
-LIST_ITEM (L"\\bu Repaired a bug introduced in 4.6.14 that prevented the use of Helvetica in the Picture window.")
-LIST_ITEM (L"\\bu Repaired a bug in \"Read Table from table file...\".")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 4.6.14 that prevented the use of Helvetica in the Picture window.")
+LIST_ITEM (L"\\bu Corrected a bug in \"Read Table from table file...\", introduced in 4.6.13.")
 NORMAL (L"##4.6.14# (August 20, 2007)")
-LIST_ITEM (L"\\bu Repaired a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.")
 LIST_ITEM (L"\\bu Macintosh: corrected height of subscripts and superscripts (broken in 4.6.13).")
 NORMAL (L"##4.6.13# (August 16, 2007)")
 LIST_ITEM (L"\\bu TextGrid: corrected reading of chronological files.")
-LIST_ITEM (L"\\bu Macintosh: text looks better.")
+LIST_ITEM (L"\\bu Macintosh: text looks better (and rotated text is now readable on Intel Macs).")
 LIST_ITEM (L"\\bu Macintosh: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.")
 NORMAL (L"##4.6.12# (July 27, 2007)")
 LIST_ITEM (L"\\bu OTGrammar bug fix: leak and constraint plasticity correctly written into OTGrammar text files.")
@@ -1965,16 +1972,20 @@ NORMAL (L"To put this DurationTier back into a Manipulation object, you select t
 	"and choose ##Replace duration tier#.")
 MAN_END
 
-MAN_BEGIN (L"Intro 8.3. Manipulation of intensity", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 8.3. Manipulation of intensity", L"ppgb", 20070825)
 INTRO (L"You can modify the intensity contour of an existing sound.")
 NORMAL (L"While the pitch and duration of a sound can be modified with the @ManipulationEditor "
 	"(see @@Intro 8.1. Manipulation of pitch@ and @@Intro 8.2. Manipulation of duration@), "
 	"the modification of the intensity curve is done in a different way.")
 NORMAL (L"You can create an @IntensityTier with the command @@Create IntensityTier...@ "
 	"from the @@New menu@. With @Edit, you can add points to this tier. "
-	"You can then multiply this tier with a sound, by selecting the @Sound and the "
+	"You can then \"multiply\" this tier with a sound, by selecting the @Sound and the "
 	"IntensityTier together and clicking @@Sound & IntensityTier: Multiply|Multiply@. "
-	"The points in the IntensityTier thus represent %relative intensities in dB.")
+	"The points in the IntensityTier represent relative intensities in dB; "
+	"therefore, the sound pressure values in the Sound are multiplied by 10^^(dB/20)^.")
+NORMAL (L"Instead of an IntensityTier, you can use an @AmplitudeTier; "
+	"when you click #Multiply for a selected Sound and AmplitudeTier, "
+	"the sound pressure values in the Sound are directly multiplied by the values in the AmplitudeTier.")
 MAN_END
 
 MAN_BEGIN (L"Intro 8.4. Manipulation of formants", L"ppgb", 20010408)

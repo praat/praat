@@ -113,6 +113,15 @@ ENTRY (L"Behaviour")
 NORMAL (L"Any points between %tmin and %tmax (inclusive) are removed from the tier.")
 MAN_END
 
+MAN_BEGIN (L"AmplitudeTier", L"ppgb", 20070825)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+	"An AmplitudeTier object represents a time-stamped amplitude contour, i.e., it contains a series of (%time, %amplitude) points. "
+	"The amplitude values are in Pascal. To see some applications, consult the @IntensityTier information; "
+	"the difference between an AmplitudeTier and an IntensityTier is that the former has values in Pascal "
+	"which multiply linearly with a Sound (for instance), and the latter has values in dB, "
+	"which multiply logarithmically with a Sound.")
+MAN_END
+
 MAN_BEGIN (L"Cochleagram", L"ppgb", 20030316)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. It represents the excitation pattern "
 	"of the basilar membrane in the inner ear (see @Excitation) as a function of time.")

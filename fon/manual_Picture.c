@@ -244,18 +244,18 @@ ENTRY (L"See also")
 NORMAL (L"@@Special symbols@")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols", L"ppgb", 20050308)
+MAN_BEGIN (L"Phonetic symbols", L"ppgb", 20070825)
 NORMAL (L"To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
+	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use backslash sequences as described in:")
 LIST_ITEM (L"\\bu @@Phonetic symbols: consonants")
 LIST_ITEM (L"\\bu @@Phonetic symbols: vowels")
 LIST_ITEM (L"\\bu @@Phonetic symbols: diacritics")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: consonants", L"ppgb", 20050918)
+MAN_BEGIN (L"Phonetic symbols: consonants", L"ppgb", 20070825)
 NORMAL (L"To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
+	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 7.0, draw_IPA_consonant_chart)
 NORMAL (L"Other consonant symbols:")
@@ -271,9 +271,9 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20061216)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20070825)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
+	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
 NORMAL (L"In line:")
 LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")
@@ -305,9 +305,9 @@ LIST_ITEM (L"o\\:^ o\\bs:\\^  (%diaresisover): centralized")
 LIST_ITEM (L"k\\lip t\\lis k\\bslip (%ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20050918)
+MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20070825)
 NORMAL (L"To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
-	"make sure that you have installed the SIL Doulos IPA 1993 font, e.g. from www.praat.org. "
+	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
 NORMAL (L"Other vowel symbols are:")

@@ -355,7 +355,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
 			if (useQuartzForImages) {
-				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);
+				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceUserRGB);
 				Melder_assert (colourSpace != NULL);
 				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL, imageData, bytesPerRow * (clipy1 - clipy2), NULL);
 				Melder_assert (dataProvider != NULL);
@@ -364,11 +364,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				CGDataProviderRelease (dataProvider);
 				CGColorSpaceRelease (colourSpace);
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
-				Widget widget = my drawingArea;
-				do { widget = XtParent (widget); } while (! XtIsShell (widget));
-				int shellHeight;
-				XtVaGetValues (widget, XmNheight, & shellHeight, NULL);
+				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, shellHeight - clipy1, clipx2 - clipx1, clipy1 - clipy2), image);
 				CGContextSynchronize (my macGraphicsContext);
 				QDEndCGContext (my macPort, & my macGraphicsContext);

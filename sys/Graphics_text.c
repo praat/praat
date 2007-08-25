@@ -165,25 +165,24 @@ static XFontStruct * loadFont (I, int font, int size, int style) {
 	return fontInfo;
 }
 #elif win
-static int CALLBACK fontFuncEx (const LOGFONT *oldLogFont, const TEXTMETRIC *oldTextMetric, unsigned long fontType, LPARAM lparam) {
-	const LPENUMLOGFONT logFont = (LPENUMLOGFONT) oldLogFont;
-	(void) oldTextMetric;
-	(void) fontType;
-	(void) lparam;
-	ipaAvailable = TRUE;
+static bool charisAvailable = false, doulosAvailable = false;
+static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long fontType, LPARAM lparam) {
+	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
+	charisAvailable = TRUE;
+	return 1;
+}
+static int CALLBACK fontFuncEx_doulos (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long fontType, LPARAM lparam) {
+	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
+	doulosAvailable = TRUE;
 	return 1;
 }
 static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
-	LOGFONT spec;
+	LOGFONTW spec;
 	static int ipaInited;
 	if (my printer || my metafile) {
 		spec. lfHeight = - win_isize2size (size) * my resolution / 72;
 	} else {
 		spec. lfHeight = - win_isize2size (size);
-	}
-	if (font == Graphics_IPATIMES) {
-		if (my font == Graphics_FONT_TIMES) spec. lfHeight *= 1.13;
-		else if (my font == Graphics_FONT_HELVETICA) spec. lfHeight *= 1.3;
 	}
 	spec. lfWidth = 0;
 	spec. lfEscapement = spec. lfOrientation = 0;
@@ -197,26 +196,31 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		( font == Graphics_FONT_HELVETICA ? FF_SWISS : font == Graphics_FONT_COURIER ? FF_MODERN :
 		  font >= Graphics_IPATIMES ? FF_DONTCARE : FF_ROMAN );
 	if (font == Graphics_IPATIMES && ! ipaInited && Melder_debug != 15) {
-		LOGFONT logFont;
+		LOGFONTW logFont;
 		logFont. lfCharSet = DEFAULT_CHARSET;
-		strcpy (logFont. lfFaceName, "SILDoulos IPA93");
 		logFont. lfPitchAndFamily = 0;
-		EnumFontFamiliesEx (my dc, & logFont, fontFuncEx, 0, 0);
+		wcscpy (logFont. lfFaceName, L"Charis SIL");
+		EnumFontFamiliesExW (my dc, & logFont, fontFuncEx_charis, 0, 0);
+		wcscpy (logFont. lfFaceName, L"Doulos SIL");
+		EnumFontFamiliesExW (my dc, & logFont, fontFuncEx_doulos, 0, 0);
 		ipaInited = TRUE;
-		if (! ipaAvailable)
+		if (! charisAvailable && ! doulosAvailable) {
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-			/*Melder_warning ("The phonetic font is not available.\nI shall use an ugly bitmap font instead.\nSee www.praat.org")*/;
+			Melder_warning ("The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
+		} else {
+			ipaAvailable = true;
+		}
 	}
-	strcpy (spec. lfFaceName,
-		font == Graphics_FONT_HELVETICA ? "Arial" :
-		font == Graphics_FONT_TIMES ? "Times New Roman" :
-		font == Graphics_FONT_COURIER ? "Courier New" :
-		font == Graphics_FONT_PALATINO ? "Book Antiqua" :
-		font == Graphics_SYMBOL ? "Symbol" :
-		font == Graphics_IPATIMES ? "SILDoulos IPA93" :
-		font == Graphics_DINGBATS ? "Wingdings" :
-		"");
-	return CreateFontIndirect (& spec);
+	wcscpy (spec. lfFaceName,
+		font == Graphics_FONT_HELVETICA ? L"Arial" :
+		font == Graphics_FONT_TIMES ? L"Times New Roman" :
+		font == Graphics_FONT_COURIER ? L"Courier New" :
+		font == Graphics_FONT_PALATINO ? L"Book Antiqua" :
+		font == Graphics_SYMBOL ? L"Symbol" :
+		font == Graphics_IPATIMES ? ( charisAvailable ? L"Charis SIL" : doulosAvailable ? L"Doulos SIL" : L"Times New Roman" ) :
+		font == Graphics_DINGBATS ? L"Wingdings" :
+		L"");
+	return CreateFontIndirectW (& spec);
 }
 #endif
 
@@ -276,8 +280,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 			} else {
 				SIZE extent;
-				char code;
-				lc -> code = info -> winEncoding;
+				wchar_t code;
+				lc -> code = font == Graphics_IPATIMES ? info -> unicode : info -> winEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> first == 's' && lc -> second == 'r') {
@@ -299,7 +303,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					}
 				}
 				SelectFont (my dc, fontInfo);
-				GetTextExtentPoint32 (my dc, (code = lc -> code, & code), 1, & extent);
+				GetTextExtentPoint32W (my dc, (code = lc -> code, & code), 1, & extent);
 				lc -> width = extent. cx;
 			}
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
@@ -736,7 +740,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 						if (lc -> link) SetTextColor (my dc, RGB (0, 0, 255)); else SetTextColor (my dc, my foregroundColour);
 						SelectFont (my dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
 							screenFonts [font] [lc -> size] [lc -> style]);
-						TextOut (my dc, xDC, yDC, codes8, nchars);
+						TextOutW (my dc, xDC, yDC, codes16, nchars);
 						if (lc -> link) SetTextColor (my dc, my foregroundColour);
 						SelectPen (my dc, GetStockPen (BLACK_PEN)), SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
 					}
@@ -826,6 +830,26 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 				/*
 				 * Rotated native font.
 				 */
+				#if win
+					if (1) {
+						SelectPen (my dc, my pen), SelectBrush (my dc, my brush);
+						if (lc -> link) SetTextColor (my dc, RGB (0, 0, 255)); else SetTextColor (my dc, my foregroundColour);
+						SelectFont (my dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
+							screenFonts [font] [lc -> size] [lc -> style]);
+						int restore = SaveDC (my dc);
+						SetGraphicsMode (my dc, GM_ADVANCED);
+						double a = my textRotation * NUMpi / 180.0, cosa = cos (a), sina = sin (a);
+						XFORM rotate = { cosa, - sina, sina, cosa, 0, 0 };
+						ModifyWorldTransform (my dc, & rotate, MWT_RIGHTMULTIPLY);
+						XFORM translate = { 1, 0, 0, 1, xDC, yDC };
+						ModifyWorldTransform (my dc, & translate, MWT_RIGHTMULTIPLY);
+						TextOutW (my dc, 0 /*xDC*/, 0 /*yDC*/, codes16, nchars);
+						RestoreDC (my dc, restore);
+						if (lc -> link) SetTextColor (my dc, my foregroundColour);
+						SelectPen (my dc, GetStockPen (BLACK_PEN)), SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
+						return;
+					}
+				#endif
 				int ascent = (1.0/72) * my fontSize * my resolution;
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ix, iy /*, baseline = 1 + ascent * 2*/;

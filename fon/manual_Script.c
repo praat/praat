@@ -1039,14 +1039,23 @@ NORMAL (L"causes the sound to decay exponentially in such a way that it has only
 NORMAL (L"More examples of the use of attributes are on the next page.")
 MAN_END
 
-MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20060127)
+MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20070822)
 NORMAL (L"With square brackets, you can get the values inside some objects.")
 ENTRY (L"Object contents in the calculator")
 NORMAL (L"The outcomes of the following examples can be checked with the @calculator.")
 TAG (L"##Matrix_hello [10, 3]")
 DEFINITION (L"gives the value in the cell at the third column of the 10th row of the Matrix called %hello.")
+TAG (L"##Sound_hello [0, 10000]")
+DEFINITION (L"gives the value (in Pa) of the 1000th sample of the Sound %hello, averaged over the channels.")
+TAG (L"##Sound_hello [1, 10000]")
+DEFINITION (L"gives the value (in Pa) of the 1000th sample of the left channel of the Sound %hello.")
+TAG (L"##Sound_hello [2, 10000]")
+DEFINITION (L"gives the value (in Pa) of the 1000th sample of the right channel of the Sound %hello.")
 TAG (L"##Sound_hello [10000]")
-DEFINITION (L"gives the value (in Pa) of the 1000th sample of the Sound %hello.")
+DEFINITION (L"this can mean various things. In the calculator it means the same as ##Sound_hello [0, 10000]#, "
+	"but in modification formulas it can mean ##Sound_hello [row, 10000]#, where %row refers to the channel. This variation exists in order to make "
+	"older Praat scripts (from the time that Praat did not support stereo) compatible with present-day Praat versions; "
+	"because of possible confusions, the use of ##Sound_hello [10000]# is not recommended.")
 TAG (L"##TableOfReal_tokens [5, 12]")
 DEFINITION (L"gives the value in the cell at the fifth row of the 12th column of the TableOfReal called %tokens.")
 TAG (L"##TableOfReal_tokens [5, \"F1\"]")
@@ -1061,18 +1070,32 @@ TAG (L"##Table_results\\$  [3, \"response\"]")
 DEFINITION (L"gives the string value in the cell at the third row of column %response of the Table %results.")
 TAG (L"##Table_results\\$  [3, 12]")
 DEFINITION (L"gives the string value in the cell at the third row of the 12th column of the Table %results.")
-NORMAL (L"Cells outside the objects are considered to contain zeroes.")
+TAG (L"##PitchTier_hello [8]")
+DEFINITION (L"gives the pitch (in Hertz) of the 8th point in the PitchTier %hello.")
+NORMAL (L"Cells (or samples, or points) outside the objects are considered to contain zeroes.")
 ENTRY (L"Interpolation")
 NORMAL (L"The values inside some objects can be interpolated.")
-TAG (L"##Sound_hallo (0.7)")
-DEFINITION (L"gives the value (in Pa) at a time of 0.7 seconds in the Sound \"hallo\", by linear interpolation between "
-	"the two samples that are nearest to 0.7 seconds.")
+TAG (L"##Sound_hello (0.7, 0)")
+DEFINITION (L"gives the value (in Pa) at a time of 0.7 seconds in the Sound %hello, by linear interpolation between "
+	"the two samples that are nearest to 0.7 seconds. The channels are averaged.")
+TAG (L"##Sound_hello (0.7, 1)")
+DEFINITION (L"gives the interpolated value (in Pa) at a time of 0.7 seconds in the left channel of the Sound %hello.")
+TAG (L"##Sound_hello (0.7, 2)")
+DEFINITION (L"gives the interpolated value (in Pa) at a time of 0.7 seconds in the right channel of the Sound %hello.")
+TAG (L"##Sound_hello (0.7)")
+DEFINITION (L"this can mean various things. In the calculator it means the same as ##Sound_hello (0.7, 0)#, "
+	"but in modification formulas it can mean ##Sound_hello (0.7, row)#, where %row refers to the channel. This variation exists in order to make "
+	"older Praat scripts (from the time that Praat did not support stereo) compatible with present-day Praat versions; "
+	"because of possible confusions, the use of ##Sound_hello (0.7)# is not recommended.")
 TAG (L"##Spectrogram_hallo (0.7, 2500)")
-DEFINITION (L"gives the value at a time of 0.7 seconds and at a frequency of 2500 Hz in the Spectrogram \"hallo\", "
+DEFINITION (L"gives the value at a time of 0.7 seconds and at a frequency of 2500 Hz in the Spectrogram %hallo, "
 	"by linear interpolation between the four samples that are nearest to that point.")
-NORMAL (L"In the interpolation, cells outside the objects are considered to contain zeroes.")
+TAG (L"##PitchTier_hullo (0.7)")
+DEFINITION (L"gives the pitch (in Hertz) at a time of 0.7 seconds in the PitchTier %hullo.")
+NORMAL (L"In the interpolation, times outside the time domain of the objects are considered to contain zeroes (this does not apply to PitchTiers and the like, "
+	"which undergo constant extrapolation).")
 ENTRY (L"Object contents in a modification formula")
-NORMAL (L"Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #%Reverse "
+NORMAL (L"Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #Reverse "
 	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse%. "
 	"You select this new Sound and choose ##Formula...# from the @Modify menu. The formula will be")
 CODE (L"Sound_hello [ncol + 1 - col]")

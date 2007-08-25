@@ -30,6 +30,7 @@
  * pb 2006/12/28 repaired a memory leak
  * pb 2007/06/11 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/08/25 added an extra count to "par" in readOnePage (awful bug)
  */
 
 #include <ctype.h>
@@ -238,7 +239,8 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 		}
 		iferror return 0;
 	}
-	++ par;   /* Leave room for zero. */
+	++ par;   // Room for the last paragraph (because counting starts at 0).
+	++ par;   // Room for the final zero-type paragraph.
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }

@@ -1327,6 +1327,54 @@ DIRECT (PictureWindowHelp) Melder_help (L"Picture window"); END
 DIRECT (AboutSpecialSymbols) Melder_help (L"Special symbols"); END
 DIRECT (AboutTextStyles) Melder_help (L"Text styles"); END
 DIRECT (PhoneticSymbols) Melder_help (L"Phonetic symbols"); END
+DIRECT (Picture_settings_report)
+	MelderInfo_open ();
+	MelderInfo_writeLine3 (L"Outer viewport left: ", Melder_double (x1NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport right: ", Melder_double (x2NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport top: ", Melder_double (12-y2NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport bottom: ", Melder_double (12-y1NDC), L" inches");
+	MelderInfo_writeLine3 (L"Font size: ", Melder_double (praat_size), L" points");
+	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
+	if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
+	if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
+	MelderInfo_writeLine3 (L"Inner viewport left: ", Melder_double (x1NDC + xmargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport right: ", Melder_double (x2NDC - xmargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport top: ", Melder_double (12-y2NDC + ymargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport bottom: ", Melder_double (12-y1NDC - ymargin), L" inches");
+	MelderInfo_writeLine2 (L"Font: ",
+		praat_font == Graphics_FONT_TIMES ? L"Times" :
+		praat_font == Graphics_FONT_HELVETICA ? L"Helvetica" :
+		praat_font == Graphics_FONT_COURIER ? L"Courier" :
+		praat_font == Graphics_FONT_PALATINO ? L"Palatino" :
+		L"(unknown)");
+	MelderInfo_writeLine2 (L"Line type: ",
+		praat_lineType == Graphics_DRAWN ? L"Solid" :
+		praat_lineType == Graphics_DOTTED ? L"Dotted" :
+		praat_lineType == Graphics_DASHED ? L"Dashed" :
+		L"(unknown)");
+	MelderInfo_writeLine2 (L"Line width: ", Melder_double (praat_lineWidth));
+	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (praat_arrowSize));
+	MelderInfo_writeLine2 (L"Colour: ",
+		praat_colour == Graphics_WHITE ? L"White" :
+		praat_colour == Graphics_BLACK ? L"Black" :
+		praat_colour == Graphics_GREY ? L"Grey" :
+		praat_colour == Graphics_SILVER ? L"Silver" :
+		praat_colour == Graphics_TEAL ? L"Teal" :
+		praat_colour == Graphics_RED ? L"Red" :
+		praat_colour == Graphics_GREEN ? L"Green" :
+		praat_colour == Graphics_BLUE ? L"Blue" :
+		praat_colour == Graphics_MAGENTA ? L"Magenta" :
+		praat_colour == Graphics_OLIVE ? L"Olive" :
+		praat_colour == Graphics_NAVY ? L"Navy" :
+		praat_colour == Graphics_YELLOW ? L"Yellow" :
+		praat_colour == Graphics_CYAN ? L"Cyan" :
+		praat_colour == Graphics_MAROON ? L"Maroon" :
+		praat_colour == Graphics_PURPLE ? L"Purple" :
+		praat_colour == Graphics_LIME ? L"Lime" :
+		L"(unknown)");
+	MelderInfo_close ();
+END
+
 
 /**********   **********/
 
@@ -1464,6 +1512,9 @@ void praat_picture_init (void) {
 		helpMenu = motif_addMenu (menuBar, L"Help", 0);
 	}
 
+	praat_addMenuCommand ("Picture", "File", "PostScript settings...", 0, 0, DO_PostScript_settings);
+	praat_addMenuCommand ("Picture", "File", "Picture settings report", 0, 0, DO_Picture_settings_report);
+	praat_addMenuCommand ("Picture", "File", "-- read & write --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "File", "Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
 	praat_addMenuCommand ("Picture", "File", "Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);
 	#ifdef _WIN32
@@ -1480,7 +1531,6 @@ void praat_picture_init (void) {
 	praat_addMenuCommand ("Picture", "File", "Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif
 	praat_addMenuCommand ("Picture", "File", "-- print --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "File", "PostScript settings...", 0, 0, DO_PostScript_settings);
 	praat_addMenuCommand ("Picture", "File", "Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
 	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
 	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
