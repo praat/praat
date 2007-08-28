@@ -24,7 +24,14 @@
 #include "praat.h"
 #include "praat_version.h"
 
+const char *test8 = "hfgfhésgɑfhdfgh";
+const wchar_t *test16 = L"hfgfhésgɑfhdfgh";
+
 static void logo (Graphics g) {
+	if (Melder_debug == 22) {
+		Melder_error3 (Melder_peekUtf8ToWcs ((const unsigned char *) test8), L"...", test16);
+		Melder_flushError (NULL);
+	}
 	Graphics_setWindow (g, 0, 1, -0.26, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (g, Graphics_FONT_TIMES);

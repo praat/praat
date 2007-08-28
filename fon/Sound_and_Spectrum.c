@@ -145,17 +145,30 @@ end:
 }
 
 Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
-	Sound result = NULL;
-	Spectrum spec;
-	spec = Sound_to_Spectrum (me, TRUE); cherror
-	Matrix_formula ((Matrix) spec, formula, 0); cherror
-	result = Spectrum_to_Sound (spec); cherror
-	/* The filtered signal may be longer than the original, so: */
-	result -> nx = my nx;
+	Spectrum spec = NULL;
+	Sound thee = Data_copy (me), him = NULL; cherror
+	if (my ny == 1) {
+		spec = Sound_to_Spectrum (me, TRUE); cherror
+		Matrix_formula ((Matrix) spec, formula, 0); cherror
+		him = Spectrum_to_Sound (spec); cherror
+		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+	} else {
+		for (long channel = 1; channel <= my ny; channel ++) {
+			forget (him);
+			him = Sound_extractChannel (me, channel); cherror
+			forget (spec);
+			spec = Sound_to_Spectrum (him, TRUE); cherror
+			Matrix_formula ((Matrix) spec, formula, 0); cherror
+			forget (him);
+			him = Spectrum_to_Sound (spec); cherror
+			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+		}
+	}
 end:
 	forget (spec);
-	iferror forget (result);
-	return result;
+	forget (him);
+	iferror forget (thee);
+	return thee;
 }
 
 Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth) {

@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2007/04/28
+ * pb 2007/08/26
  */
 
 #include "melder.h"
@@ -49,6 +49,7 @@ the behaviour of that program changes in the following way:
 19: show path name in UiOutfile_do
 20: trace PortAudio
 21: Mac: list supported document formats when printing
+22: UTF-8 tests in logo
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

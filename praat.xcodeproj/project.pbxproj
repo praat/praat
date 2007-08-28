@@ -949,7 +949,7 @@
 		23D87E850B3C929700AD716D /* Eigen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen.h; path = dwsys/Eigen.h; sourceTree = "<group>"; };
 		23E4918D0ABF529D00FA787E /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings.h; path = sys/Strings.h; sourceTree = "<group>"; };
 		23E5C92009A228FA004E41D5 /* Praat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Praat.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		23E5C93009A228FB004E41D5 /* main_Praat.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main_Praat.c; path = main/main_Praat.c; sourceTree = SOURCE_ROOT; };
+		23E5C93009A228FB004E41D5 /* main_Praat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main_Praat.c; path = main/main_Praat.c; sourceTree = SOURCE_ROOT; };
 		23E5C93509A228FC004E41D5 /* manual_Artsynth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_Artsynth.c; path = artsynth/manual_Artsynth.c; sourceTree = SOURCE_ROOT; };
 		23E5C93609A228FC004E41D5 /* praat_Artsynth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = praat_Artsynth.c; path = artsynth/praat_Artsynth.c; sourceTree = SOURCE_ROOT; };
 		23E5C93709A228FC004E41D5 /* Art_Speaker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Art_Speaker.c; path = artsynth/Art_Speaker.c; sourceTree = SOURCE_ROOT; };

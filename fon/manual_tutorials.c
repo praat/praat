@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070825)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070828)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.18# (August 28, 2007)")
+LIST_ITEM (L"\\bu Sound: Filter (formula): now works in the same way as the other filter commands "
+	"(without adding an empty space at the end), and on stereo sounds.")
 NORMAL (L"##4.6.17# (August 25, 2007)")
 LIST_ITEM (L"\\bu Windows: improved rotated text, also for copy-paste and printing.")
 LIST_ITEM (L"\\bu Windows: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.")
