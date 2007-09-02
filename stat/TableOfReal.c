@@ -159,7 +159,7 @@ class_methods_end
 int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 	iam (TableOfReal);
 	if (numberOfRows < 1 || numberOfColumns < 1)
-		return Melder_error ("(TableOfReal_init:) Cannot create cell-less table.");
+		return Melder_error1 (L"(TableOfReal_init:) Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
 	if (! (my rowLabels = NUMvector (sizeof (wchar_t *), 1, numberOfRows))) return 0;
@@ -216,10 +216,10 @@ double TableOfReal_getColumnStdev (I, long icol) {
 
 int TableOfReal_removeRow (I, long irow) {
 	iam (TableOfReal);
-	double **data = NULL;
-	if (my numberOfRows == 1) error1 (L"Cannot remove the only row.")
+	if (my numberOfRows == 1)
+		error2 (Thing_messageName (me), L" has only one row, and a TableOfReal without rows cannot exist.")
 	if (irow < 1 || irow > my numberOfRows) error3 (L"No row ", Melder_integer (irow), L".")
-	data = NUMdmatrix (1, my numberOfRows - 1, 1, my numberOfColumns); cherror
+	double **data = NUMdmatrix (1, my numberOfRows - 1, 1, my numberOfColumns); cherror
 	for (long i = 1; i <= my numberOfColumns; i ++) {
 		for (long j = 1; j < irow; j ++) data [j] [i] = my data [j] [i];
 		for (long j = irow; j < my numberOfRows; j ++) data [j] [i] = my data [j + 1] [i];
@@ -230,7 +230,7 @@ int TableOfReal_removeRow (I, long irow) {
 	my data = data;
 	my numberOfRows --;
 end:
-	iferror return Melder_error ("(TableOfReal_removeRow:) Not performed.");
+	iferror return Melder_error5 (L"Row ", Melder_integer (irow), L" of ", Thing_messageName (me), L" not removed.");
 	return 1;
 }
 

@@ -498,6 +498,7 @@ long Data_Description_integer (void *address, Data_Description description) {
 		case ushortwa: return * (unsigned short *) ((char *) address + description -> offset);
 		case uintwa: return * (unsigned int *) ((char *) address + description -> offset);
 		case ulongwa: return * (unsigned long *) ((char *) address + description -> offset);
+		case boolwa: return * (bool *) ((char *) address + description -> offset);
 		case charwa: return * (char *) ((char *) address + description -> offset);
 		case collectionwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
 		case objectwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;

@@ -2,7 +2,7 @@
 #define _Cepstrumc_h_
 /* Cepstrumc.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 19950822
  djmw 20020812 GPL header
+ djmw 20070620 Latest modification.
 */
 
 #include "Sampled.h"

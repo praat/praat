@@ -1357,7 +1357,7 @@ NORMAL (L"You can create an example @Dissimilarity object with the @@Create "
 	"##Multidimensional scaling# option in the #New menu.")
 MAN_END
 
-MAN_BEGIN (L"MDS models", L"djmw", 19980108)
+MAN_BEGIN (L"MDS models", L"djmw", 20070821)
 INTRO (L"Multidimensional scaling (MDS) models are defined by specifying "
 	"how given @Dissimilarity data, %\\de__%ij_, are "
 	"mapped into distances of an %m-dimensional MDS @Configuration %#X. "
@@ -1390,7 +1390,7 @@ DEFINITION (L"where the value of %b can be estimated by a linear regression of "
 LIST_ITEM (L"\\bu %interval mds: %d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_,")
 DEFINITION (L"where the values of %a and %b can be estimated by a linear "
 	"regression of %d__%ij_ on %\\de__%ij_.")
-LIST_ITEM (L"\\bu i-spline mds: %d\\'p__%ij_ = %i-spline(%\\de__%ij_),")
+LIST_ITEM (L"\\bu %i-spline mds: %d\\'p__%ij_ = %i-spline(%\\de__%ij_),")
 DEFINITION (L"where %i-spline(\\.c) is a smooth monotonically increasing "
 	"@spline curve. The conceptual idea is that it is not possible to map "
 	"all dissimilarities into disparities by one simple function.")
@@ -1433,7 +1433,7 @@ ENTRY (L"MDS-analysis")
 NORMAL (L"Let us first create a Dissimilarity object. You can for example "
 	"@@Dissimilarity|create a Dissimilarity object from a file@. Here we "
 	"will the use the Dissimilarity object from @@Create letter R example...|"
-	"the letter R example@. We have chchosenhe default value (32.5) for the "
+	"the letter R example@. We have chosen the default value (32.5) for the "
 	"(uniform) noise range. Note that this may result in substantial "
 	"distortions between the dissimilarities and the distances.")
 NORMAL (L"Now you can do the following, for example:")

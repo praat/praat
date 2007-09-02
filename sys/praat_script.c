@@ -256,25 +256,25 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			}
 		} else {
 			if (wcsnequ (command, L"getinfostring ", 14))
-				return Melder_error ("Command \"getinfostring\" no longer supported. Consult scripting tutorial or the author.");
+				return Melder_error1 (L"Command \"getinfostring\" no longer supported. Consult scripting tutorial or the author.");
 			if (wcsnequ (command, L"getinfonumber ", 14))
-				return Melder_error ("Command \"getinfonumber\" no longer supported. Consult scripting tutorial or the author.");
+				return Melder_error1 (L"Command \"getinfonumber\" no longer supported. Consult scripting tutorial or the author.");
 			if (wcsnequ (command, L"getnameofselected ", 18))
-				return Melder_error ("Command \"getnameofselected\" no longer supported. Instead use things like: name$ = selected$ (\"Sound\")");
+				return Melder_error1 (L"Command \"getnameofselected\" no longer supported. Instead use things like: name$ = selected$ (\"Sound\")");
 			if (wcsnequ (command, L"getidofselected ", 16))
-				return Melder_error ("Command \"getidofselected\" no longer supported. Instead use things like: id = selected (\"Sound\")");
+				return Melder_error1 (L"Command \"getidofselected\" no longer supported. Instead use things like: id = selected (\"Sound\")");
 			if (wcsnequ (command, L"getnumberofselected ", 20))
-				return Melder_error ("Command \"getnumberofselected\" no longer supported. Instead use things like: n = numberOfSelected (\"Sound\")");
+				return Melder_error1 (L"Command \"getnumberofselected\" no longer supported. Instead use things like: n = numberOfSelected (\"Sound\")");
 			if (wcsnequ (command, L"getnumber ", 10))
-				return Melder_error ("Command \"getnumber\" no longer supported. Instead use things like: \"variable = Menu command\".");
+				return Melder_error1 (L"Command \"getnumber\" no longer supported. Instead use things like: \"variable = Menu command\".");
 			if (wcsnequ (command, L"getstring ", 10))
-				return Melder_error ("Command \"getstring\" no longer supported. Instead use things like: \"variable$ = Menu command\".");
+				return Melder_error1 (L"Command \"getstring\" no longer supported. Instead use things like: \"variable$ = Menu command\".");
 			if (wcsnequ (command, L"let ", 4))
-				return Melder_error ("Command \"let\" no longer supported. Instead use things like: \"variable = numeric-formula\" or \"variable$ = string-formula\".");
+				return Melder_error1 (L"Command \"let\" no longer supported. Instead use things like: \"variable = numeric-formula\" or \"variable$ = string-formula\".");
 			if (wcsnequ (command, L"proc ", 5))
-				return Melder_error ("Command \"proc\" no longer supported. Instead use \"procedure\", and distinguish between numeric variables and string variables.");
+				return Melder_error1 (L"Command \"proc\" no longer supported. Instead use \"procedure\", and distinguish between numeric variables and string variables.");
 			if (wcsnequ (command, L"copy ", 5))
-				return Melder_error ("Command \"copy x y\" no longer supported. Instead use normal assignments, i.e. y = x.");
+				return Melder_error1 (L"Command \"copy x y\" no longer supported. Instead use normal assignments, i.e. y = x.");
 			return Melder_error2 (L"Unknown command: ", command);
 		}
 	} else {   /* Simulate menu choice. */
@@ -307,7 +307,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			 wcsnequ (command, L"Append ", 7) ||
 			 wcsequ (command, L"Quit")))
 		{
-			return Melder_error ("Commands that write files (including Quit) are not available inside pictures.");
+			return Melder_error1 (L"Commands that write files (including Quit) are not available inside pictures.");
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {
 				UiInterpreter_set (NULL);
@@ -410,7 +410,7 @@ int praat_executeScriptFromText (wchar_t *text) {
 	Interpreter interpreter = Interpreter_create (NULL, NULL);
 	Interpreter_run (interpreter, text);
 	forget (interpreter);
-	iferror return Melder_error ("Script not completed.");
+	iferror return Melder_error1 (L"Script not completed.");
 	return 1;
 }
 
@@ -468,7 +468,7 @@ end:
 	Melder_setDefaultDir (& saveDir);
 	Melder_free (text);
 	forget (interpreter);
-	iferror return Melder_error ("Script \"%s\" not completed.", MelderFile_messageName (file));
+	iferror return Melder_error3 (L"Script ", MelderFile_messageNameW (file), L" not completed.");
 	return 1;
 }
 

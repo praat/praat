@@ -69,7 +69,7 @@ int Pitch_formula (Pitch me, const wchar_t *formula) {
 	}
 	if (! Matrix_formula (m, formula, 0)) {
 		forget (m);
-		return Melder_error ("(Pitch_formula:) Not performed.");
+		return Melder_error1 (L"(Pitch_formula:) Not performed.");
 	}
 	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];

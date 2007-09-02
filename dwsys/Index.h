@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20050724
+ djmw 20070620 Latest modification.
 */
 
 #ifndef _Data_h_

@@ -26,6 +26,7 @@
  * pb 2004/10/25 C++ compatible assignments
  * pb 2006/12/10 update on "info" documentation
  * pb 2007/06/11 wchar_t
+ * 2007/08/30
  */
 
 /* The root class of all objects. */
@@ -167,6 +168,7 @@ void *Thing_classFromClassNameW (const wchar_t *className);
 char * Thing_getName (I);
 wchar_t * Thing_getNameW (I);
 /* Return a pointer to your internal name (which can be NULL). */
+wchar_t * Thing_messageName (I);
 
 void Thing_setName (I, const char *name);
 void Thing_setNameW (I, const wchar_t *name);

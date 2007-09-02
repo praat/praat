@@ -154,7 +154,7 @@ END
 
 DIRECT (LongSound_view)
 	if (theCurrentPraat -> batch)
-		return Melder_error ("Cannot view a LongSound from batch.");
+		return Melder_error1 (L"Cannot view a LongSound from batch.");
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT))
@@ -288,11 +288,10 @@ END
 DIRECT (Sounds_combineToStereo)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
-	wchar_t name [200];
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1);
-	if (! praat_new9 (Sounds_combineToStereo (sound1, sound2), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new3 (Sounds_combineToStereo (sound1, sound2),
+		wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1)) return 0;
 END
 
 DIRECT (Sounds_concatenate)
@@ -304,13 +303,13 @@ DIRECT (Sounds_concatenate)
 		if (numberOfChannels == 0) {
 			numberOfChannels = my ny;
 		} else if (my ny != numberOfChannels) {
-			return Melder_error ("To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+			return Melder_error1 (L"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
 		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
-			(void) Melder_error ("To concatenate sounds, their sampling frequencies must be equal.\n");
-			return Melder_error ("You could resample one or more of the sounds before concatenating.");
+			(void) Melder_error1 (L"To concatenate sounds, their sampling frequencies must be equal.\n");
+			return Melder_error1 (L"You could resample one or more of the sounds before concatenating.");
 		}
 		nx += my nx;
 	}
@@ -337,13 +336,13 @@ DIRECT (Sounds_concatenateRecoverably)
 		if (numberOfChannels == 0) {
 			numberOfChannels = my ny;
 		} else if (my ny != numberOfChannels) {
-			return Melder_error ("To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+			return Melder_error1 (L"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
 		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
-			(void) Melder_error ("To concatenate sounds, their sampling frequencies must be equal.\n");
-			return Melder_error ("You could resample one or more of the sounds before concatenating.");
+			(void) Melder_error1 (L"To concatenate sounds, their sampling frequencies must be equal.\n");
+			return Melder_error1 (L"You could resample one or more of the sounds before concatenating.");
 		}
 		nx += my nx;
 	}
@@ -385,11 +384,10 @@ END
 DIRECT (Sounds_convolve)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
-	wchar_t name [200];
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1);
-	if (! praat_new9 (Sounds_convolve (sound1, sound2), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new3 (Sounds_convolve (sound1, sound2),
+		wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1)) return 0;
 END
 
 static int common_Sound_create (void *dia, bool allowStereo) {
@@ -402,11 +400,11 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 	long numberOfSamples;
 	if (endTime <= startTime) {
 		if (endTime == startTime)
-			Melder_error ("A Sound cannot have a duration of zero.");
+			Melder_error1 (L"A Sound cannot have a duration of zero.");
 		else
-			Melder_error ("A Sound cannot have a duration less than zero.");
+			Melder_error1 (L"A Sound cannot have a duration less than zero.");
 		if (startTime == 0.0)
-			return Melder_error ("Please set the end time to something greater than 0 seconds.");
+			return Melder_error1 (L"Please set the end time to something greater than 0 seconds.");
 		else
 			return Melder_error1 (L"Please lower the start time or raise the end time.");
 	}
@@ -415,7 +413,7 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 		return Melder_error1 (L"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
 	if (numberOfSamples_real < 1.0) {
-		Melder_error ("A Sound cannot have zero samples.");
+		Melder_error1 (L"A Sound cannot have zero samples.");
 		if (startTime == 0.0)
 			return Melder_error1 (L"Please raise the end time.");
 		else
@@ -439,7 +437,7 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 			if (startTime == 0.0)
 				return Melder_error1 (L"You could lower the end time or the sampling frequency and try again.");
 			else
-				return Melder_error ("You could raise the start time or lower the end time or the sampling frequency, and try again.");
+				return Melder_error1 (L"You could raise the start time or lower the end time or the sampling frequency, and try again.");
 		} else {
 			return 0;   /* Unexpected error. Wait for generic message. */
 		}
@@ -447,7 +445,7 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 	Matrix_formula ((Matrix) sound, GET_STRINGW (L"formula"), NULL);
 	iferror {
 		forget (sound);
-		return Melder_error ("Please correct the formula.");
+		return Melder_error1 (L"Please correct the formula.");
 	}
 	if (! praat_new (sound, GET_STRING ("Name"))) return 0;
 	//praat_updateSelection ();
@@ -586,7 +584,7 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 }
 DIRECT (Sound_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a Sound from batch.");
+		return Melder_error1 (L"Cannot edit a Sound from batch.");
 	} else {
 		WHERE (SELECTED) {
 			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
@@ -817,7 +815,7 @@ FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sou
 	OK
 DO
 	Sound me = ONLY (classSound);
-	if (my ny > 1) return Melder_error ("Cannot determine a zero crossing for a stereo sound.");
+	if (my ny > 1) return Melder_error1 (L"Cannot determine a zero crossing for a stereo sound.");
 	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), 1), L"seconds");
 END
 
@@ -1091,7 +1089,7 @@ static void cb_SoundRecorder_publish (Any editor, void *closure, Any publish) {
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_mono)
-	if (theCurrentPraat -> batch) return Melder_error ("Cannot record a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 1) {
 			Editor_raise (soundRecorder);
@@ -1114,7 +1112,7 @@ static void cb_SoundRecorder_publish2 (Any editor, Any closure, Any publish1, An
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_stereo)
-	if (theCurrentPraat -> batch) return Melder_error ("Cannot record a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 2) {
 			Editor_raise (soundRecorder);
@@ -1223,7 +1221,7 @@ DO
 		Sound me = OBJECT;
 		long index = GET_INTEGER ("Sample number");
 		if (index > my nx)
-			return Melder_error ("The sample number should not exceed the number of samples, which is %ld.", my nx);
+			return Melder_error3 (L"The sample number should not exceed the number of samples, which is ", Melder_integer (my nx), L".");
 		for (long channel = 1; channel <= my ny; channel ++)
 			my z [channel] [index] = GET_REAL ("New value");
 		praat_dataChanged (me);
@@ -1243,7 +1241,7 @@ DO_ALTERNATIVE (old_Sound_setValueAtIndex)
 		Sound me = OBJECT;
 		long index = GET_INTEGER ("Sample number");
 		if (index > my nx)
-			return Melder_error ("The sample number should not exceed the number of samples, which is %ld.", my nx);
+			return Melder_error3 (L"The sample number should not exceed the number of samples, which is ", Melder_integer (my nx), L".");
 		long channel = GET_INTEGER ("Channel") - 1;
 		if (channel > my ny) channel = 1;
 		if (channel > 0) {

@@ -887,7 +887,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		}
 		static MelderStringW buffer = { 0 };
 		MelderStringW_empty (& buffer);
-		MelderStringW_append3 (& buffer, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L"Pitch (", L")");
+		MelderStringW_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, TRUE, buffer.string);
 		Graphics_textBottom (g, TRUE, L"Time (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, TRUE);
@@ -1400,11 +1400,10 @@ int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 	} else if (left -> text == NULL) {
 		TextInterval_setText (left, right -> text);
 	} else {
-		wchar_t *buffer = Melder_calloc (wchar_t, wcslen (left -> text) + wcslen (right -> text) + 1);
-		if (! buffer) return 0;
-		swprintf (buffer, 1000000000, L"%ls%ls", left -> text, right -> text);
-		if (! TextInterval_setText (left, buffer)) { Melder_free (buffer); return 0; }
-		Melder_free (buffer);
+		static MelderStringW buffer = { 0 };
+		MelderStringW_empty (& buffer);
+		MelderStringW_append2 (& buffer, left -> text, right -> text);
+		if (! TextInterval_setText (left, buffer.string)) { return 0; }
 	}
 	Collection_removeItem (my intervals, iinterval);   /* Remove right interval. */
 	return 1;

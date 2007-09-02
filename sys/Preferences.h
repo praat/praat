@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2006 Paul Boersma
+ * Copyright (C) 1996-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/09/01
  */
 
 #ifndef _melder_h_
@@ -42,6 +42,7 @@ void Resources_addUbyte (const wchar_t *string, unsigned char *value);
 void Resources_addUshort (const wchar_t *string, unsigned short *value);
 void Resources_addUint (const wchar_t *string, unsigned int *value);
 void Resources_addUlong (const wchar_t *string, unsigned long *value);
+void Resources_addBool (const wchar_t *string, bool *value);
 void Resources_addChar (const wchar_t *string, wchar_t *value);
 void Resources_addFloat (const wchar_t *string, float *value);
 void Resources_addDouble (const wchar_t *string, double *value);

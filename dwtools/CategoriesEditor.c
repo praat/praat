@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20060111 Replaced Resources.h with Preferences.h
  djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
  	for 64-bit compatibility.
+ djmw 20070620 Latest modification.
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100

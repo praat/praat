@@ -24,298 +24,313 @@
  * pb 2007/06/09 wchar_t
  * pb 2007/06/21 oo_LSTRINGW
  * pb 2007/08/13 wchar_t
+ * pb 2007/09/02 bool
  */
 
 #include "oo_undef.h"
 
 #undef oo_BYTE
-#define oo_BYTE(x)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
+#define oo_BYTE(x)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
 #undef oo_SHORT
-#define oo_SHORT(x)  { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short) },
+#define oo_SHORT(x)  { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short) },
 #undef oo_INT
-#define oo_INT(x)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int) },
+#define oo_INT(x)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int) },
 #undef oo_LONG
-#define oo_LONG(x)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long) },
+#define oo_LONG(x)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long) },
 #undef oo_UBYTE
-#define oo_UBYTE(x)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char) },
+#define oo_UBYTE(x)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char) },
 #undef oo_USHORT
-#define oo_USHORT(x)  { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short) },
+#define oo_USHORT(x)  { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short) },
 #undef oo_UINT
-#define oo_UINT(x)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int) },
+#define oo_UINT(x)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int) },
 #undef oo_ULONG
-#define oo_ULONG(x)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long) },
+#define oo_ULONG(x)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long) },
+#undef oo_BOOL
+#define oo_BOOL(x)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool) },
 #undef oo_FLOAT
-#define oo_FLOAT(x)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float) },
+#define oo_FLOAT(x)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float) },
 #undef oo_DOUBLE
-#define oo_DOUBLE(x)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double) },
+#define oo_DOUBLE(x)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double) },
 #undef oo_FCOMPLEX
-#define oo_FCOMPLEX(x)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex) },
+#define oo_FCOMPLEX(x)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex) },
 #undef oo_DCOMPLEX
-#define oo_DCOMPLEX(x)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex) },
+#define oo_DCOMPLEX(x)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex) },
 #undef oo_CHAR
-#define oo_CHAR(x)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char) },
+#define oo_CHAR(x)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char) },
 #undef oo_WCHAR
-#define oo_WCHAR(x)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t) },
+#define oo_WCHAR(x)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t) },
 
 #undef oo_BYTE_ARRAY
-#define oo_BYTE_ARRAY(x,cap,n)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
+#define oo_BYTE_ARRAY(x,cap,n)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
 #undef oo_SHORT_ARRAY
-#define oo_SHORT_ARRAY(x,cap,n)  { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, - cap, 0, L"" #n },
+#define oo_SHORT_ARRAY(x,cap,n)  { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, - cap, 0, L"" #n },
 #undef oo_INT_ARRAY
-#define oo_INT_ARRAY(x,cap,n)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, - cap, 0, L"" #n },
+#define oo_INT_ARRAY(x,cap,n)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, - cap, 0, L"" #n },
 #undef oo_LONG_ARRAY
-#define oo_LONG_ARRAY(x,cap,n)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, - cap, 0, L"" #n },
+#define oo_LONG_ARRAY(x,cap,n)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, - cap, 0, L"" #n },
 #undef oo_UBYTE_ARRAY
-#define oo_UBYTE_ARRAY(x,cap,n)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, - cap, 0, L"" #n },
+#define oo_UBYTE_ARRAY(x,cap,n)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, - cap, 0, L"" #n },
 #undef oo_USHORT_ARRAY
-#define oo_USHORT_ARRAY(x,cap,n)  { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, - cap, 0, L"" #n },
+#define oo_USHORT_ARRAY(x,cap,n)  { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, - cap, 0, L"" #n },
 #undef oo_UINT_ARRAY
-#define oo_UINT_ARRAY(x,cap,n)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, - cap, 0, L"" #n },
+#define oo_UINT_ARRAY(x,cap,n)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, - cap, 0, L"" #n },
 #undef oo_ULONG_ARRAY
-#define oo_ULONG_ARRAY(x,cap,n)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, - cap, 0, L"" #n },
+#define oo_ULONG_ARRAY(x,cap,n)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, - cap, 0, L"" #n },
+#undef oo_BOOL_ARRAY
+#define oo_BOOL_ARRAY(x,cap,n)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, - cap, 0, L"" #n },
 #undef oo_FLOAT_ARRAY
-#define oo_FLOAT_ARRAY(x,cap,n)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, - cap, 0, L"" #n },
+#define oo_FLOAT_ARRAY(x,cap,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, - cap, 0, L"" #n },
 #undef oo_DOUBLE_ARRAY
-#define oo_DOUBLE_ARRAY(x,cap,n)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, - cap, 0, L"" #n },
+#define oo_DOUBLE_ARRAY(x,cap,n)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, - cap, 0, L"" #n },
 #undef oo_FCOMPLEX_ARRAY
-#define oo_FCOMPLEX_ARRAY(x,cap,n)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, - cap, 0, L"" #n },
+#define oo_FCOMPLEX_ARRAY(x,cap,n)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, - cap, 0, L"" #n },
 #undef oo_DCOMPLEX_ARRAY
-#define oo_DCOMPLEX_ARRAY(x,cap,n)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, - cap, 0, L"" #n },
+#define oo_DCOMPLEX_ARRAY(x,cap,n)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, - cap, 0, L"" #n },
 #undef oo_CHAR_ARRAY
-#define oo_CHAR_ARRAY(x,cap,n)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, - cap, 0, L"" #n },
+#define oo_CHAR_ARRAY(x,cap,n)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, - cap, 0, L"" #n },
 #undef oo_WCHAR_ARRAY
-#define oo_WCHAR_ARRAY(x,cap,n)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, - cap, 0, L"" #n },
+#define oo_WCHAR_ARRAY(x,cap,n)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, - cap, 0, L"" #n },
 
 #undef oo_BYTE_SET
-#define oo_BYTE_SET(x,setType)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_BYTE_SET(x,setType)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_SHORT_SET
-#define oo_SHORT_SET(x,setType)  { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_SHORT_SET(x,setType)  { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_INT_SET
-#define oo_INT_SET(x,setType)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_INT_SET(x,setType)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_LONG_SET
-#define oo_LONG_SET(x,setType)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_LONG_SET(x,setType)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_UBYTE_SET
-#define oo_UBYTE_SET(x,setType)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_UBYTE_SET(x,setType)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_USHORT_SET
-#define oo_USHORT_SET(x,setType)  { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_USHORT_SET(x,setType)  { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_UINT_SET
-#define oo_UINT_SET(x,setType)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_UINT_SET(x,setType)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_ULONG_SET
-#define oo_ULONG_SET(x,setType)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_ULONG_SET(x,setType)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#undef oo_BOOL_SET
+#define oo_BOOL_SET(x,setType)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_FLOAT_SET
-#define oo_FLOAT_SET(x,setType)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_FLOAT_SET(x,setType)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_DOUBLE_SET
-#define oo_DOUBLE_SET(x,setType)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_DOUBLE_SET(x,setType)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_FCOMPLEX_SET
-#define oo_FCOMPLEX_SET(x,setType)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_FCOMPLEX_SET(x,setType)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_DCOMPLEX_SET
-#define oo_DCOMPLEX_SET(x,setType)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_DCOMPLEX_SET(x,setType)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_CHAR_SET
-#define oo_CHAR_SET(x,setType)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_CHAR_SET(x,setType)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_WCHAR_SET
-#define oo_WCHAR_SET(x,setType)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_WCHAR_SET(x,setType)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 
 #undef oo_BYTE_VECTOR_FROM
-#define oo_BYTE_VECTOR_FROM(x,min,max)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
+#define oo_BYTE_VECTOR_FROM(x,min,max)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_SHORT_VECTOR_FROM
-#define oo_SHORT_VECTOR_FROM(x,min,max)   { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 1, L"" #min, L"" #max },
+#define oo_SHORT_VECTOR_FROM(x,min,max)   { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_INT_VECTOR_FROM
-#define oo_INT_VECTOR_FROM(x,min,max)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 1, L"" #min, L"" #max },
+#define oo_INT_VECTOR_FROM(x,min,max)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_LONG_VECTOR_FROM
-#define oo_LONG_VECTOR_FROM(x,min,max)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 1, L"" #min, L"" #max },
+#define oo_LONG_VECTOR_FROM(x,min,max)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_UBYTE_VECTOR_FROM
-#define oo_UBYTE_VECTOR_FROM(x,min,max)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 1, L"" #min, L"" #max },
+#define oo_UBYTE_VECTOR_FROM(x,min,max)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_USHORT_VECTOR_FROM
-#define oo_USHORT_VECTOR_FROM(x,min,max)   { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 1, L"" #min, L"" #max },
+#define oo_USHORT_VECTOR_FROM(x,min,max)   { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_UINT_VECTOR_FROM
-#define oo_UINT_VECTOR_FROM(x,min,max)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 1, L"" #min, L"" #max },
+#define oo_UINT_VECTOR_FROM(x,min,max)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_ULONG_VECTOR_FROM
-#define oo_ULONG_VECTOR_FROM(x,min,max)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 1, L"" #min, L"" #max },
+#define oo_ULONG_VECTOR_FROM(x,min,max)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 1, L"" #min, L"" #max },
+#undef oo_BOOL_VECTOR_FROM
+#define oo_BOOL_VECTOR_FROM(x,min,max)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_FLOAT_VECTOR_FROM
-#define oo_FLOAT_VECTOR_FROM(x,min,max)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, L"" #min, L"" #max },
+#define oo_FLOAT_VECTOR_FROM(x,min,max)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_DOUBLE_VECTOR_FROM
-#define oo_DOUBLE_VECTOR_FROM(x,min,max)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, L"" #min, L"" #max },
+#define oo_DOUBLE_VECTOR_FROM(x,min,max)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_FCOMPLEX_VECTOR_FROM
-#define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 1, L"" #min, L"" #max },
+#define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_DCOMPLEX_VECTOR_FROM
-#define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 1, L"" #min, L"" #max },
+#define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_CHAR_VECTOR_FROM
-#define oo_CHAR_VECTOR_FROM(x,min,max)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 1, L"" #min, L"" #max },
+#define oo_CHAR_VECTOR_FROM(x,min,max)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_WCHAR_VECTOR_FROM
-#define oo_WCHAR_VECTOR_FROM(x,min,max)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 1, L"" #min, L"" #max },
+#define oo_WCHAR_VECTOR_FROM(x,min,max)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 1, L"" #min, L"" #max },
 
 #undef oo_BYTE_MATRIX_FROM
-#define oo_BYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_BYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_SHORT_MATRIX_FROM
-#define oo_SHORT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_SHORT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_INT_MATRIX_FROM
-#define oo_INT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_INT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_LONG_MATRIX_FROM
-#define oo_LONG_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_LONG_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_UBYTE_MATRIX_FROM
-#define oo_UBYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_UBYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_USHORT_MATRIX_FROM
-#define oo_USHORT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_USHORT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_UINT_MATRIX_FROM
-#define oo_UINT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_UINT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_ULONG_MATRIX_FROM
-#define oo_ULONG_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_ULONG_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#undef oo_BOOL_MATRIX_FROM
+#define oo_BOOL_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_FLOAT_MATRIX_FROM
-#define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_DOUBLE_MATRIX_FROM
-#define oo_DOUBLE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_DOUBLE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_FCOMPLEX_MATRIX_FROM
-#define oo_FCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_FCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_DCOMPLEX_MATRIX_FROM
-#define oo_DCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_DCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_CHAR_MATRIX_FROM
-#define oo_CHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_CHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_WCHAR_MATRIX_FROM
-#define oo_WCHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_WCHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 
 #undef oo_BYTE_VECTOR
-#define oo_BYTE_VECTOR(x,n)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
+#define oo_BYTE_VECTOR(x,n)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
 #undef oo_SHORT_VECTOR
-#define oo_SHORT_VECTOR(x,n)   { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 1, 0, L"" #n },
+#define oo_SHORT_VECTOR(x,n)   { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 1, 0, L"" #n },
 #undef oo_INT_VECTOR
-#define oo_INT_VECTOR(x,n)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 1, 0, L"" #n },
+#define oo_INT_VECTOR(x,n)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 1, 0, L"" #n },
 #undef oo_LONG_VECTOR
-#define oo_LONG_VECTOR(x,n)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 1, 0, L"" #n },
+#define oo_LONG_VECTOR(x,n)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 1, 0, L"" #n },
 #undef oo_UBYTE_VECTOR
-#define oo_UBYTE_VECTOR(x,n)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 1, 0, L"" #n },
+#define oo_UBYTE_VECTOR(x,n)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 1, 0, L"" #n },
 #undef oo_USHORT_VECTOR
-#define oo_USHORT_VECTOR(x,n)   { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 1, 0, L"" #n },
+#define oo_USHORT_VECTOR(x,n)   { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 1, 0, L"" #n },
 #undef oo_UINT_VECTOR
-#define oo_UINT_VECTOR(x,n)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 1, 0, L"" #n },
+#define oo_UINT_VECTOR(x,n)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 1, 0, L"" #n },
 #undef oo_ULONG_VECTOR
-#define oo_ULONG_VECTOR(x,n)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 1, 0, L"" #n },
+#define oo_ULONG_VECTOR(x,n)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 1, 0, L"" #n },
+#undef oo_BOOL_VECTOR
+#define oo_BOOL_VECTOR(x,n)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 1, 0, L"" #n },
 #undef oo_FLOAT_VECTOR
-#define oo_FLOAT_VECTOR(x,n)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, 0, L"" #n },
+#define oo_FLOAT_VECTOR(x,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, 0, L"" #n },
 #undef oo_DOUBLE_VECTOR
-#define oo_DOUBLE_VECTOR(x,n)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, 0, L"" #n },
+#define oo_DOUBLE_VECTOR(x,n)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, 0, L"" #n },
 #undef oo_FCOMPLEX_VECTOR
-#define oo_FCOMPLEX_VECTOR(x,n)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 1, 0, L"" #n },
+#define oo_FCOMPLEX_VECTOR(x,n)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 1, 0, L"" #n },
 #undef oo_CCOMPLEX_VECTOR
-#define oo_CCOMPLEX_VECTOR(x,n)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 1, 0, L"" #n },
+#define oo_CCOMPLEX_VECTOR(x,n)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 1, 0, L"" #n },
 #undef oo_CHAR_VECTOR
-#define oo_CHAR_VECTOR(x,n)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 1, 0, L"" #n },
+#define oo_CHAR_VECTOR(x,n)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 1, 0, L"" #n },
 #undef oo_WCHAR_VECTOR
-#define oo_WCHAR_VECTOR(x,n)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 1, 0, L"" #n },
+#define oo_WCHAR_VECTOR(x,n)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 1, 0, L"" #n },
 
 #undef oo_BYTE_MATRIX
-#define oo_BYTE_MATRIX(x,nrow,ncol)  { L"" #x, 1, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_BYTE_MATRIX(x,nrow,ncol)  { L"" #x, bytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_SHORT_MATRIX
-#define oo_SHORT_MATRIX(x,nrow,ncol)  { L"" #x, 2, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_SHORT_MATRIX(x,nrow,ncol)  { L"" #x, shortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (short), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_INT_MATRIX
-#define oo_INT_MATRIX(x,nrow,ncol)  { L"" #x, 3, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_INT_MATRIX(x,nrow,ncol)  { L"" #x, intwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (int), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_LONG_MATRIX
-#define oo_LONG_MATRIX(x,nrow,ncol)  { L"" #x, 4, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_LONG_MATRIX(x,nrow,ncol)  { L"" #x, longwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (long), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_UBYTE_MATRIX
-#define oo_UBYTE_MATRIX(x,nrow,ncol)  { L"" #x, 5, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_UBYTE_MATRIX(x,nrow,ncol)  { L"" #x, ubytewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_USHORT_MATRIX
-#define oo_USHORT_MATRIX(x,nrow,ncol)  { L"" #x, 6, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_USHORT_MATRIX(x,nrow,ncol)  { L"" #x, ushortwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned short), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_UINT_MATRIX
-#define oo_UINT_MATRIX(x,nrow,ncol)  { L"" #x, 7, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_UINT_MATRIX(x,nrow,ncol)  { L"" #x, uintwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned int), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_ULONG_MATRIX
-#define oo_ULONG_MATRIX(x,nrow,ncol)  { L"" #x, 8, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_ULONG_MATRIX(x,nrow,ncol)  { L"" #x, ulongwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (unsigned long), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#undef oo_BOOL_MATRIX
+#define oo_BOOL_MATRIX(x,nrow,ncol)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_FLOAT_MATRIX
-#define oo_FLOAT_MATRIX(x,nrow,ncol)  { L"" #x, 9, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_FLOAT_MATRIX(x,nrow,ncol)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_DOUBLE_MATRIX
-#define oo_DOUBLE_MATRIX(x,nrow,ncol)  { L"" #x, 10, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_DOUBLE_MATRIX(x,nrow,ncol)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_FCOMPLEX_MATRIX
-#define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, 11, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, fcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (fcomplex), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_DCOMPLEX_MATRIX
-#define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, 12, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, dcomplexwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (dcomplex), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_CHAR_MATRIX
-#define oo_CHAR_MATRIX(x,nrow,ncol)  { L"" #x, 13, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_CHAR_MATRIX(x,nrow,ncol)  { L"" #x, charwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_WCHAR_MATRIX
-#define oo_WCHAR_MATRIX(x,nrow,ncol)  { L"" #x, 14, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_WCHAR_MATRIX(x,nrow,ncol)  { L"" #x, wcharwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 
 #undef oo_ENUM
-#define oo_ENUM(Type,x)  { L"" #x, 15, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type },
+#define oo_ENUM(Type,x)  { L"" #x, enumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type },
 #undef oo_LENUM
-#define oo_LENUM(Type,x)  { L"" #x, 16, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type },
+#define oo_LENUM(Type,x)  { L"" #x, lenumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type },
 #undef oo_ENUM_ARRAY
-#define oo_ENUM_ARRAY(Type,x,cap,n)  { L"" #x, 15, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, - cap, 0, L"" #n },
+#define oo_ENUM_ARRAY(Type,x,cap,n)  { L"" #x, enumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, - cap, 0, L"" #n },
 #undef oo_LENUM_ARRAY
-#define oo_LENUM_ARRAY(Type,x,cap,n)  { L"" #x, 16, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, - cap, 0, L"" #n },
+#define oo_LENUM_ARRAY(Type,x,cap,n)  { L"" #x, lenumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, - cap, 0, L"" #n },
 #undef oo_ENUM_SET
-#define oo_ENUM_SET(Type,x,setType)  { L"" #x, 15, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_ENUM_SET(Type,x,setType)  { L"" #x, enumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_LENUM_SET
-#define oo_LENUM_SET(Type,x,setType)  { L"" #x, 16, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_LENUM_SET(Type,x,setType)  { L"" #x, lenumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_ENUM_VECTOR_FROM
-#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  { L"" #x, 15, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 1, L"" #min, L"" #max },
+#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  { L"" #x, enumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 1, L"" #min, L"" #max },
 #undef oo_LENUM_VECTOR_FROM
-#define oo_LENUM_VECTOR_FROM(Type,x,min,max)  { L"" #x, 16, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 1, L"" #min, L"" #max },
+#define oo_LENUM_VECTOR_FROM(Type,x,min,max)  { L"" #x, lenumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 1, L"" #min, L"" #max },
 #undef oo_ENUM_VECTOR
-#define oo_ENUM_VECTOR(Type,x,n)  { L"" #x, 15, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 1, 0, L"" #n },
+#define oo_ENUM_VECTOR(Type,x,n)  { L"" #x, enumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), L"" #Type, & enum_##Type, 1, 0, L"" #n },
 #undef oo_LENUM_VECTOR
-#define oo_LENUM_VECTOR(Type,x,n)  { L"" #x, 16, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 1, 0, L"" #n },
+#define oo_LENUM_VECTOR(Type,x,n)  { L"" #x, lenumwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed short), L"" #Type, & enum_##Type, 1, 0, L"" #n },
 #undef oo_BOOLEAN
-#define oo_BOOLEAN(x)  { L"" #x, 17, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
+#define oo_BOOLEAN(x)  { L"" #x, booleanwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
 #undef oo_BOOLEAN_ARRAY
-#define oo_BOOLEAN_ARRAY(x,cap,n)  { L"" #x, 17, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
+#define oo_BOOLEAN_ARRAY(x,cap,n)  { L"" #x, booleanwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
 #undef oo_BOOLEAN_SET
-#define oo_BOOLEAN_SET(x,setType)  { L"" #x, 17, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_BOOLEAN_SET(x,setType)  { L"" #x, booleanwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_BOOLEAN_VECTOR_FROM
-#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  { L"" #x, 17, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
+#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  { L"" #x, booleanwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_BOOLEAN_VECTOR
-#define oo_BOOLEAN_VECTOR(x,n)  { L"" #x, 17, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
+#define oo_BOOLEAN_VECTOR(x,n)  { L"" #x, booleanwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
 #undef oo_QUESTION
-#define oo_QUESTION(x)  { L"" #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
+#define oo_QUESTION(x)  { L"" #x, questionwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char) },
 #undef oo_QUESTION_ARRAY
-#define oo_QUESTION_ARRAY(x,cap,n)  { L"" #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
+#define oo_QUESTION_ARRAY(x,cap,n)  { L"" #x, questionwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, - cap, 0, L"" #n },
 #undef oo_QUESTION_SET
-#define oo_QUESTION_SET(x,setType)  { L"" #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_QUESTION_SET(x,setType)  { L"" #x, questionwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_QUESTION_VECTOR_FROM
-#define oo_QUESTION_VECTOR_FROM(x,min,max)  { L"" #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
+#define oo_QUESTION_VECTOR_FROM(x,min,max)  { L"" #x, questionwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_QUESTION_VECTOR
-#define oo_QUESTION_VECTOR(x,n)  { L"" #x, 18, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
+#define oo_QUESTION_VECTOR(x,n)  { L"" #x, questionwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (signed char), 0, 0, 1, 0, L"" #n },
 
 #undef oo_STRING
-#define oo_STRING(x)  { L"" #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
+#define oo_STRING(x)  { L"" #x, stringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
 #undef oo_STRINGW
-#define oo_STRINGW(x)  { L"" #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
+#define oo_STRINGW(x)  { L"" #x, stringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
 #undef oo_LSTRING
-#define oo_LSTRING(x)  { L"" #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
+#define oo_LSTRING(x)  { L"" #x, lstringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *) },
 #undef oo_LSTRINGW
-#define oo_LSTRINGW(x)  { L"" #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
+#define oo_LSTRINGW(x)  { L"" #x, lstringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *) },
 
 #undef oo_STRING_ARRAY
-#define oo_STRING_ARRAY(x,cap,n)  { L"" #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, L"" #n },
+#define oo_STRING_ARRAY(x,cap,n)  { L"" #x, stringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, L"" #n },
 #undef oo_STRINGW_ARRAY
-#define oo_STRINGW_ARRAY(x,cap,n)  { L"" #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
+#define oo_STRINGW_ARRAY(x,cap,n)  { L"" #x, stringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
 #undef oo_LSTRING_ARRAY
-#define oo_LSTRING_ARRAY(x,cap,n)  { L"" #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, L"" #n },
+#define oo_LSTRING_ARRAY(x,cap,n)  { L"" #x, lstringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, - cap, 0, L"" #n },
 #undef oo_LSTRINGW_ARRAY
-#define oo_LSTRINGW_ARRAY(x,cap,n)  { L"" #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
+#define oo_LSTRINGW_ARRAY(x,cap,n)  { L"" #x, lstringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
 
 #undef oo_STRING_SET
-#define oo_STRING_SET(x,setType)  { L"" #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_STRING_SET(x,setType)  { L"" #x, stringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_STRINGW_SET
-#define oo_STRINGW_SET(x,setType)  { L"" #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_STRINGW_SET(x,setType)  { L"" #x, stringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_LSTRING_SET
-#define oo_LSTRING_SET(x,setType)  { L"" #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_LSTRING_SET(x,setType)  { L"" #x, lstringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_LSTRINGW_SET
-#define oo_LSTRINGW_SET(x,setType)  { L"" #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_LSTRINGW_SET(x,setType)  { L"" #x, lstringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 
 #undef oo_STRING_VECTOR_FROM
-#define oo_STRING_VECTOR_FROM(x,min,max)  { L"" #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, L"" #min, L"" #max },
+#define oo_STRING_VECTOR_FROM(x,min,max)  { L"" #x, stringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_STRINGW_VECTOR_FROM
-#define oo_STRINGW_VECTOR_FROM(x,min,max)  { L"" #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
+#define oo_STRINGW_VECTOR_FROM(x,min,max)  { L"" #x, stringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_LSTRING_VECTOR_FROM
-#define oo_LSTRING_VECTOR_FROM(x,min,max)  { L"" #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, L"" #min, L"" #max },
+#define oo_LSTRING_VECTOR_FROM(x,min,max)  { L"" #x, lstringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_LSTRINGW_VECTOR_FROM
-#define oo_LSTRINGW_VECTOR_FROM(x,min,max)  { L"" #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
+#define oo_LSTRINGW_VECTOR_FROM(x,min,max)  { L"" #x, lstringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
 
 #undef oo_STRING_VECTOR
-#define oo_STRING_VECTOR(x,n)  { L"" #x, 19, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, L"" #n },
+#define oo_STRING_VECTOR(x,n)  { L"" #x, stringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, L"" #n },
 #undef oo_STRINGW_VECTOR
-#define oo_STRINGW_VECTOR(x,n)  { L"" #x, 20, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, L"" #n },
+#define oo_STRINGW_VECTOR(x,n)  { L"" #x, stringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, L"" #n },
 #undef oo_LSTRING_VECTOR
-#define oo_LSTRING_VECTOR(x,n)  { L"" #x, 21, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, L"" #n },
+#define oo_LSTRING_VECTOR(x,n)  { L"" #x, lstringwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (char *), 0, 0, 1, 0, L"" #n },
 #undef oo_LSTRINGW_VECTOR
-#define oo_LSTRINGW_VECTOR(x,n)  { L"" #x, 22, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, L"" #n },
+#define oo_LSTRINGW_VECTOR(x,n)  { L"" #x, lstringwwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (wchar_t *), 0, 0, 1, 0, L"" #n },
 
 #define oo_STRUCT(Type,x)  { L"" #x, structwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), L"" #Type, Type##_description },
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  { L"" #x, structwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (struct struct##Type), L"" #Type, Type##_description, - cap, 0, L"" #n },

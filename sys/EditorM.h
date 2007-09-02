@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/09/02
  */
 
 #undef FORM
@@ -132,6 +132,8 @@
 	if (! UiForm_parseStringE (cmd, (wchar_t *) sender)) return 0; } else { {
 #define END  } } return 1; }
 #define DIRECT(klas,proc)  static int proc (I, EditorCommand cmd, Any sender) { iam (klas); (void) me; (void) cmd; (void) sender; { {
+
+#define DIALOG  cmd -> dialog
 
 #define EDITOR_ARGS  Any void_me, EditorCommand cmd, Any sender
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sender

@@ -159,6 +159,7 @@ int Graphics_init (I);
 	#include <Quickdraw.h>
 	#include <MacWindows.h>
 	#include "macport_off.h"
+	#define MAC_USE_QUARTZ  1
 	#define GraphicsScreen_members Graphics_members \
 		GrafPtr macPort; \
 		MacintoshPattern macPattern; \

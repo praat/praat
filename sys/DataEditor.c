@@ -48,12 +48,12 @@
 #define MAXNUM_ROWS  12
 
 /*static const char * typeStrings [] = { "none",
-	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong",
+	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
 	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
 	"enum", "lenum", "boolean", "question", "string", "stringw", "lstring", "lstringw",
 	"struct", "widget", "object", "collection" };*/
 static int stringLengths [] = { 0,
-	4, 6, 6, 11, 3, 5, 5, 10,
+	4, 6, 6, 11, 3, 5, 5, 10, 1,
 	15, 27, 35, 59, 4, 6,
 	33, 33, 8, 6, 60, 60, 60, 60 };
 
@@ -162,7 +162,7 @@ MOTIF_CALLBACK (cb_change)
 	for (i = 1; i <= MAXNUM_ROWS; i ++) if (XtIsManaged (my fieldData [i]. text)) {
 		int type = my fieldData [i]. description -> type;
 		wchar_t *text;
-		if (type > 20) continue;
+		if (type > maxsingletypewa) continue;
 		text = GuiText_getStringW (my fieldData [i]. text);
 		switch (type) {
 			case bytewa: {
@@ -217,10 +217,11 @@ MOTIF_CALLBACK (cb_change)
 					}
 				}
 			} break;
-			case ubytewa: { * (unsigned char *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
-			case ushortwa: { * (unsigned short *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
-			case uintwa: { * (unsigned int *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
-			case ulongwa: { * (unsigned long *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
+			case ubytewa: { * (unsigned char *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
+			case ushortwa: { * (unsigned short *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
+			case uintwa: { * (unsigned int *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
+			case ulongwa: { * (unsigned long *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
+			case boolwa: { * (bool *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
 			case floatwa: { * (float *) my fieldData [i]. address = Melder_atofW (text); } break;
 			case doublewa: { * (double *) my fieldData [i]. address = Melder_atofW (text); } break;
 			case fcomplexwa: { fcomplex *x = (fcomplex *) my fieldData [i]. address;
@@ -443,6 +444,7 @@ static wchar_t * singleTypeToText (void *address, int type, void *tagType, Melde
 		case ushortwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned short *) address)); break;
 		case uintwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned int *) address)); break;
 		case ulongwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned long *) address)); break;
+		case boolwa: MelderStringW_append1 (buffer, Melder_integer (* (bool *) address)); break;
 		case floatwa: MelderStringW_append1 (buffer, Melder_single (* (float *) address)); break;
 		case doublewa: MelderStringW_append1 (buffer, Melder_double (* (double *) address)); break;
 		case fcomplexwa: { fcomplex value = * (fcomplex *) address;
@@ -474,7 +476,7 @@ static void showStructMember (
 	DataSubEditor_FieldData fieldData,   /* The widgets in which to show the info about the current member. */
 	wchar_t *history)
 {
-	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= 22 && rank == 0;
+	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= maxsingletypewa && rank == 0;
 	unsigned char *memberAddress = (unsigned char *) structAddress + memberDescription -> offset;
 	static MelderStringW buffer = { 0 };
 	MelderStringW_empty (& buffer);
@@ -630,7 +632,7 @@ static long classVectorEditor_countFields (I) {
 static void classVectorEditor_showMembers (I) {
 	iam (VectorEditor);
 	long firstElement, ielement;
-	int type = my description -> type, isSingleType = type <= 22;
+	int type = my description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (my description -> tagType) + 1 : 1;
 	firstElement = my minimum + (my topField - 1) / elementSize;
@@ -738,7 +740,7 @@ static long classMatrixEditor_countFields (I) {
 static void classMatrixEditor_showMembers (I) {
 	iam (MatrixEditor);
 	long firstRow, firstColumn;
-	int type = my description -> type, isSingleType = type <= 22;
+	int type = my description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (my description -> tagType) + 1 : 1;
 	int rowSize = elementSize * (my max2 - my min2 + 1);

@@ -51,7 +51,7 @@ error:
 int Pitch_play (I, double tmin, double tmax) {
 	iam (Pitch);
 	Sound sound = Pitch_to_Sound (me, tmin, tmax, FALSE);
-	if (! sound) return Melder_error ("Pitch_play: not played.");
+	if (! sound) return Melder_error1 (L"Pitch_play: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
@@ -61,7 +61,7 @@ int Pitch_play (I, double tmin, double tmax) {
 int Pitch_hum (I, double tmin, double tmax) {
 	iam (Pitch);
 	Sound sound = Pitch_to_Sound (me, tmin, tmax, TRUE);
-	if (! sound) return Melder_error ("Pitch_hum: not played.");
+	if (! sound) return Melder_error1 (L"Pitch_hum: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);

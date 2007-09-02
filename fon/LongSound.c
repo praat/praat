@@ -406,7 +406,7 @@ int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int ch
 		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, my nx, 1);
 	writePartToOpenFile16 (me, audioFileType, 1, my nx, file, channel == 0 ? -1 : -2);
 	MelderFile_close (file);
-	iferror return Melder_error ("Sound file not written.");
+	iferror return Melder_error1 (L"Sound file not written.");
 	return 1;
 }
 
@@ -618,7 +618,7 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 	long i, sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 	int numberOfChannels;
 	Data data;
-	if (my size < 1) return Melder_error ("(LongSound_concatenate:) No Sound or LongSound objects to concatenate.");
+	if (my size < 1) return Melder_error1 (L"(LongSound_concatenate:) No Sound or LongSound objects to concatenate.");
 	/*
 	 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 	 */
@@ -652,9 +652,9 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 			n += longSound -> nx;
 		}
 		if (! sampleRatesMatch)
-			return Melder_error ("(LongSound_concatenate:) Sampling frequencies do not match.");
+			return Melder_error1 (L"(LongSound_concatenate:) Sampling frequencies do not match.");
 		if (! numbersOfChannelsMatch)
-			return Melder_error ("(LongSound_concatenate:) Cannot mix stereo and mono.");
+			return Melder_error1 (L"(LongSound_concatenate:) Cannot mix stereo and mono.");
 	}
 	/*
 	 * Create output file and write header.
@@ -676,7 +676,7 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 		}
 	}
 	MelderFile_close (file);
-	iferror return Melder_error ("Sound file not written.");
+	iferror return Melder_error1 (L"Sound file not written.");
 	return 1;
 }
 

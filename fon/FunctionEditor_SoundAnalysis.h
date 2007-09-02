@@ -2,7 +2,7 @@
 #define _FunctionEditor_SoundAnalysis_h_
 /* FunctionEditor_SoundAnalysis.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,7 @@
  */
 
 /*
- * pb 2001/10/03
- * pb 2002/07/16 GPL
- * pb 2002/11/19
+ * pb 2007/09/01
  */
 
 #ifndef _FunctionEditor_h_
@@ -44,6 +42,12 @@ void FunctionEditor_SoundAnalysis_selectionQueries (I);
 void FunctionEditor_SoundAnalysis_addMenus (I);
 
 void FunctionEditor_SoundAnalysis_init (I);
+
+void FunctionEditor_SoundAnalysis_computeSpectrogram (I);
+void FunctionEditor_SoundAnalysis_computePitch (I);
+void FunctionEditor_SoundAnalysis_computeIntensity (I);
+void FunctionEditor_SoundAnalysis_computeFormants (I);
+void FunctionEditor_SoundAnalysis_computePulses (I);
 
 /* End of file FunctionEditor_SoundAnalysis.h */
 #endif

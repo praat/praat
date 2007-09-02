@@ -126,7 +126,7 @@ static int menu_cb_PublishWindow (EDITOR_ARGS) {
 		publish = Sound_extractPart (sound, my startSelection, my endSelection, my publish.windowType,
 			my publish.relativeWidth, my publish.preserveTimes);
 		if (! publish) return 0;
-		Thing_setName (publish, GET_STRING ("Name"));
+		Thing_setNameW (publish, GET_STRINGW (L"Name"));
 		if (my publishCallback)
 			my publishCallback (me, my publishClosure, publish);
 	EDITOR_END

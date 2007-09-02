@@ -200,7 +200,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			unsigned char *imageData;
 			long bytesPerRow;
 			bool useQuartzForImages = my useQuartz && 1;
-			if (useQuartzForImages) {
+			if (useQuartzForImages && MAC_USE_QUARTZ) {
 				bytesPerRow = (clipx2 - clipx1) * 4;
 				imageData = Melder_malloc (unsigned char, bytesPerRow * (clipy1 - clipy2));
 				Melder_assert (imageData != NULL);
@@ -255,10 +255,10 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
 			#define ROW_START_ADDRESS \
-				(useQuartzForImages ? (imageData + (yDC - clipy2) * bytesPerRow) : \
+				(useQuartzForImages && MAC_USE_QUARTZ ? (imageData + (yDC - clipy2) * bytesPerRow) : \
 				(offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling))
 			#define PUT_PIXEL \
-				if (useQuartzForImages) { \
+				if (useQuartzForImages && MAC_USE_QUARTZ) { \
 					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
@@ -354,7 +354,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
-			if (useQuartzForImages) {
+			if (useQuartzForImages && MAC_USE_QUARTZ) {
 				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceUserRGB);
 				Melder_assert (colourSpace != NULL);
 				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL, imageData, bytesPerRow * (clipy1 - clipy2), NULL);
@@ -397,7 +397,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			DeleteBitmap (bitmap);
 		#elif mac
 			cleanUp:
-			if (useQuartzForImages) {
+			if (useQuartzForImages && MAC_USE_QUARTZ) {
 				Melder_free (imageData);
 			} else {
 				UnlockPixels (offscreenPixMap);

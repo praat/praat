@@ -20,8 +20,8 @@
 /*
  djmw 20010628
  djmw 20020813 GPL header
- djmw 20030116 Latest modification
  djmw 20061214 Changed info to Melder_writeLine<x> format.
+ djmw 20070620 Latest modification.
 */
 
 #include "Confusion.h"

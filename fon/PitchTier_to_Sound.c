@@ -103,7 +103,7 @@ end:
 int PitchTier_playPart_sine (I, double tmin, double tmax) {
 	iam (PitchTier);
 	Sound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
-	if (! sound) return Melder_error ("PitchTier_play: not played.");
+	if (! sound) return Melder_error1 (L"PitchTier_play: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
 	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);

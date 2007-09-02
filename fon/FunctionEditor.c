@@ -28,6 +28,7 @@
  * pb 2006/12/21 thicker moving cursor
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/02 Picture window drawing
  */
 
 #include "FunctionEditor.h"
@@ -65,12 +66,18 @@ static struct {
 	int shellWidth, shellHeight;
 	int groupWindow;
 	double arrowScrollStep;
-} prefs =
+	struct FunctionEditor_picture picture;
+} preferences =
 #ifdef UNIX
-	{ 700, 440, TRUE, 0.05 };
+	{ 700, 440, TRUE, 0.05, { true, true, true } };
 #else
-	{ 600, 340, TRUE, 0.05 };
+	{ 600, 340, TRUE, 0.05, { true, true, true } };
 #endif
+
+void FunctionEditor_setPicturePreferences (I) {
+	iam (FunctionEditor);
+	preferences.picture = my picture;
+}
 
 #define maxGroup 100
 static int nGroup = 0;
@@ -106,7 +113,7 @@ static void updateGroup (FunctionEditor me) {
 	if (! my group) return;
 	for (i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
 		FunctionEditor thee = group [i];
-		if (prefs.groupWindow) {
+		if (preferences.groupWindow) {
 			thy startWindow = my startWindow;
 			thy endWindow = my endWindow;
 		}
@@ -375,19 +382,19 @@ static void updateText (Any functionEditor) {
 
 /********** MENU METHOD **********/
 
-FORM (FunctionEditor, cb_prefs, "Preferences", 0);
+FORM (FunctionEditor, cb_preferences, "Preferences", 0);
 	BOOLEAN ("Synchronize zoom and scroll", 1)
 	POSITIVE ("Arrow scroll step (s)", "0.05")
 	our prefs_addFields (me, cmd);
 	OK
-SET_INTEGER ("Synchronize zoom and scroll", 2 - prefs.groupWindow)
+SET_INTEGER ("Synchronize zoom and scroll", 2 - preferences.groupWindow)
 SET_REAL ("Arrow scroll step", my arrowScrollStep)
 our prefs_setValues (me, cmd);
 DO
-	int oldGroupWindow = prefs.groupWindow;
-	prefs.groupWindow = 2 - GET_INTEGER ("Synchronize zoom and scroll");
-	prefs.arrowScrollStep = my arrowScrollStep = GET_REAL ("Arrow scroll step");
-	if (oldGroupWindow == FALSE && prefs.groupWindow == TRUE) {
+	int oldGroupWindow = preferences.groupWindow;
+	preferences.groupWindow = 2 - GET_INTEGER ("Synchronize zoom and scroll");
+	preferences.arrowScrollStep = my arrowScrollStep = GET_REAL ("Arrow scroll step");
+	if (oldGroupWindow == FALSE && preferences.groupWindow == TRUE) {
 		updateGroup (me);
 	}
 	our prefs_getValues (me, cmd);
@@ -624,27 +631,30 @@ END
 
 /********** CHILD METHODS **********/
 
-FORM (FunctionEditor, cb_zoom, "Zoom", 0);
-	REAL ("From", "0.0")
-	REAL ("To", "1.0")
-	OK
-SET_REAL ("From", my startWindow)
-SET_REAL ("To", my endWindow)
-DO
-	my startWindow = GET_REAL ("From");
-	if (my startWindow < my tmin + 1e-12)
-		my startWindow = my tmin;
-	my endWindow = GET_REAL ("To");
-	if (my endWindow > my tmax - 1e-12)
-		my endWindow = my tmax;
-	our updateText (me);
-	updateScrollBar (me);
-	/*Graphics_updateWs (my graphics);*/ drawNow (me);
-	updateGroup (me);
-END
+static int menu_cb_zoom (EDITOR_ARGS) {
+	EDITOR_IAM (FunctionEditor);
+	EDITOR_FORM ("Zoom", 0);
+		REAL ("From", "0.0")
+		REAL ("To", "1.0")
+	EDITOR_OK
+		SET_REAL ("From", my startWindow)
+		SET_REAL ("To", my endWindow)
+	EDITOR_DO
+		my startWindow = GET_REAL ("From");
+		if (my startWindow < my tmin + 1e-12)
+			my startWindow = my tmin;
+		my endWindow = GET_REAL ("To");
+		if (my endWindow > my tmax - 1e-12)
+			my endWindow = my tmax;
+		our updateText (me);
+		updateScrollBar (me);
+		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		updateGroup (me);
+	EDITOR_END
+}
 
-MOTIF_CALLBACK (cb_zoomIn)
-	iam (FunctionEditor);
+static void gui_cb_zoomIn (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	double shift = (my endWindow - my startWindow) / 4;
 	my startWindow += shift;
 	my endWindow -= shift;
@@ -652,10 +662,10 @@ MOTIF_CALLBACK (cb_zoomIn)
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_zoomOut)
-	iam (FunctionEditor);
+static void gui_cb_zoomOut (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	double shift = (my endWindow - my startWindow) / 2;
 	Melder_stopPlaying (Melder_IMPLICIT);   /* Quickly, before window changes. */
 	my startWindow -= shift;
@@ -668,20 +678,24 @@ MOTIF_CALLBACK (cb_zoomOut)
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_showAll)
-	iam (FunctionEditor);
+static void do_showAll (FunctionEditor me) {
 	my startWindow = my tmin;
 	my endWindow = my tmax;
 	our updateText (me);
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_zoomToSelection)
-	iam (FunctionEditor);
+static void gui_cb_showAll (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
+	do_showAll (me);
+}
+
+static void gui_cb_zoomToSelection (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	if (my endSelection > my startSelection) {
 		my startWindow = my startSelection;
 		my endWindow = my endSelection;
@@ -690,10 +704,10 @@ MOTIF_CALLBACK (cb_zoomToSelection)
 		/*Graphics_updateWs (my graphics);*/ drawNow (me);
 		updateGroup (me);
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_scroll)
-	iam (FunctionEditor);
+static void gui_cb_scroll (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	int value, slider, incr, pincr;
 	double shift;
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
@@ -707,7 +721,7 @@ MOTIF_CALLBACK (cb_scroll)
 		our updateText (me);
 		/*Graphics_clearWs (my graphics);*/
 		drawNow (me);   /* Do not wait for expose event. */
-		if (! my group || ! prefs.groupWindow) return;
+		if (! my group || ! preferences.groupWindow) return;
 		for (i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
 			group [i] -> startWindow = my startWindow;
 			group [i] -> endWindow = my endWindow;
@@ -717,10 +731,9 @@ MOTIF_CALLBACK (cb_scroll)
 			drawNow (group [i]);
 		}
 	}
-MOTIF_CALLBACK_END
-
-MOTIF_CALLBACK (cb_resize)
-	iam (FunctionEditor);
+}
+static void gui_cb_resize (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	Dimension width, height, marginWidth = 10, marginHeight = 10, shellWidth, shellHeight;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
@@ -734,12 +747,12 @@ MOTIF_CALLBACK (cb_resize)
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
 	XtVaGetValues (my shell, XmNwidth, & shellWidth, XmNheight, & shellHeight, NULL);
-	prefs.shellWidth = shellWidth;
-	prefs.shellHeight = shellHeight;
-MOTIF_CALLBACK_END
+	preferences.shellWidth = shellWidth;
+	preferences.shellHeight = shellHeight;
+}
 
-MOTIF_CALLBACK (cb_group)
-	iam (FunctionEditor);
+static void gui_cb_group (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	int i;
 	my group = ! my group;
 	if (my group) {
@@ -747,7 +760,7 @@ MOTIF_CALLBACK (cb_group)
 		i = 1; while (group [i]) i ++; group [i] = me;
 		if (++ nGroup == 1) { Graphics_updateWs (my graphics); return; }
 		i = 1; while (group [i] == NULL || group [i] == me) i ++; thee = group [i];
-		if (prefs.groupWindow) {
+		if (preferences.groupWindow) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
 		}
@@ -781,12 +794,16 @@ MOTIF_CALLBACK (cb_group)
 		Graphics_updateWs (my graphics);   /* For setting buttons in draw method. */
 	}
 	if (my group) updateGroup (me);
-MOTIF_CALLBACK_END
+}
 
-DIRECT (FunctionEditor, DO_showAll) cb_showAll (0, me, 0); END
-DIRECT (FunctionEditor, DO_zoomIn) cb_zoomIn (0, me, 0); END
-DIRECT (FunctionEditor, DO_zoomOut) cb_zoomOut (0, me, 0); END
-DIRECT (FunctionEditor, DO_zoomToSelection) cb_zoomToSelection (0, me, 0); END
+static int menu_cb_showAll (EDITOR_ARGS) {
+	EDITOR_IAM (FunctionEditor);
+	do_showAll (me);
+	return 1;
+}
+DIRECT (FunctionEditor, DO_zoomIn) gui_cb_zoomIn (0, me, 0); END
+DIRECT (FunctionEditor, DO_zoomOut) gui_cb_zoomOut (0, me, 0); END
+DIRECT (FunctionEditor, DO_zoomToSelection) gui_cb_zoomToSelection (0, me, 0); END
 
 DIRECT (FunctionEditor, DO_intro) Melder_help (L"Intro"); END
 
@@ -794,8 +811,8 @@ static void createMenus (I) {
 	iam (FunctionEditor);
 	inherited (FunctionEditor) createMenus (me);
 
-	Editor_addCommand (me, L"File", L"Preferences...", 0, cb_prefs);
-	Editor_addCommand (me, L"File", L"-- after prefs --", 0, 0);
+	Editor_addCommand (me, L"File", L"Preferences...", 0, cb_preferences);
+	Editor_addCommand (me, L"File", L"-- after preferences --", 0, 0);
 
 	Editor_addMenu (me, L"Query", 0);
 	Editor_addCommand (me, L"Query", L"Get start of selection", 0, cb_getB);
@@ -806,16 +823,16 @@ static void createMenus (I) {
 
 	Editor_addMenu (me, L"View", 0);
 	our viewMenuEntries (me);
-	Editor_addCommand (me, L"View", our format_domain, motif_INSENSITIVE, cb_prefs /* dummy */);
-	Editor_addCommand (me, L"View", L"Zoom...", 0, cb_zoom);
-	Editor_addCommand (me, L"View", L"Show all", 'A', DO_showAll);
+	Editor_addCommand (me, L"View", our format_domain, motif_INSENSITIVE, cb_preferences /* dummy */);
+	Editor_addCommand (me, L"View", L"Zoom...", 0, menu_cb_zoom);
+	Editor_addCommand (me, L"View", L"Show all", 'A', menu_cb_showAll);
 	Editor_addCommand (me, L"View", L"Zoom in", 'I', DO_zoomIn);
 	Editor_addCommand (me, L"View", L"Zoom out", 'O', DO_zoomOut);
 	Editor_addCommand (me, L"View", L"Zoom to selection", 'N', DO_zoomToSelection);
 	Editor_addCommand (me, L"View", L"Scroll page back", motif_PAGE_UP, cb_pageUp);
 	Editor_addCommand (me, L"View", L"Scroll page forward", motif_PAGE_DOWN, cb_pageDown);
 	Editor_addCommand (me, L"View", L"-- play --", 0, 0);
-	Editor_addCommand (me, L"View", L"Audio:", motif_INSENSITIVE, cb_prefs /* dummy */);
+	Editor_addCommand (me, L"View", L"Audio:", motif_INSENSITIVE, cb_preferences /* dummy */);
 	Editor_addCommand (me, L"View", L"Play...", 0, cb_play);
 	Editor_addCommand (me, L"View", L"Play or stop", motif_TAB, cb_playOrStop);
 	Editor_addCommand (me, L"View", L"Play window", motif_SHIFT + motif_TAB, cb_playWindow);
@@ -863,22 +880,22 @@ static void createChildren (I) {
 		XmNx, x,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
 		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_showAll, (XtPointer) me);
+	XtAddCallback (button, XmNactivateCallback, gui_cb_showAll, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("in", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
 		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_zoomIn, (XtPointer) me);
+	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomIn, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("out", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
 		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_zoomOut, (XtPointer) me);
+	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomOut, (XtPointer) me);
 	button = XtVaCreateManagedWidget ("sel", xmPushButtonWidgetClass, form,
 		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
 		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_zoomToSelection, (XtPointer) me);
+	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomToSelection, (XtPointer) me);
 
 	/***** Create scroll bar. *****/
 
@@ -901,7 +918,7 @@ static void createChildren (I) {
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
 		XmNheight, Machine_getScrollBarWidth () + 1, XmNwidth, 80, NULL);
-	XtAddCallback (my groupButton, XmNvalueChangedCallback, cb_group, (XtPointer) me);
+	XtAddCallback (my groupButton, XmNvalueChangedCallback, gui_cb_group, (XtPointer) me);
 	XmToggleButtonSetState (my groupButton, group_equalDomain (my tmin, my tmax), False);
 
 	/***** Create drawing area. *****/
@@ -1298,7 +1315,7 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 	return 0.0;
 }
 
-class_methods (FunctionEditor, Editor)
+class_methods (FunctionEditor, Editor) {
 	class_method (destroy)
 	class_method (createMenus)
 	class_method (createChildren)
@@ -1327,16 +1344,18 @@ class_methods (FunctionEditor, Editor)
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)
-class_methods_end
+	us -> preferences.picture.pitch.garnish = true;
+	class_methods_end
+}
 
-MOTIF_CALLBACK (cb_draw)
-	iam (FunctionEditor);
+static void gui_cb_draw (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 #ifdef UNIX
 	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 #endif
 	if (my enableUpdates)
 		drawNow (me);
-MOTIF_CALLBACK_END
+}
 
 static void cb_buttonPress (FunctionEditor me, MotifEvent event) {
 	double xWC, yWC;
@@ -1415,20 +1434,20 @@ static void cb_keyPress (FunctionEditor me, MotifEvent event)
 	our key (me, key);
 }
 
-MOTIF_CALLBACK (cb_input)
-	iam (FunctionEditor);
+static void gui_cb_input (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
 	MotifEvent event = MotifEvent_fromCallData (call);
 	if (MotifEvent_isButtonPressedEvent (event))
 		cb_buttonPress (me, event);
 	else if (MotifEvent_isKeyPressedEvent (event))
 		cb_keyPress (me, event);
-MOTIF_CALLBACK_END
+}
 
 int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (FunctionEditor);
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
 	my tmax = ((Function) data) -> xmax;
-	if (! Editor_init (me, parent, 0, 0, prefs.shellWidth, prefs.shellHeight, title, data)) return 0;
+	if (! Editor_init (me, parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data)) return 0;
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -1436,19 +1455,20 @@ int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	Melder_assert (XtWindow (my drawingArea));
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 Graphics_setFontSize (my graphics, 10);
-cb_resize (my drawingArea, (XtPointer) me, 0);
+gui_cb_resize (my drawingArea, (XtPointer) me, 0);
 
 	/* Callbacks only now that "graphics" exists. */   
-	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, cb_resize, (XtPointer) me);
-	XtAddCallback (my scrollBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
-	XtAddCallback (my scrollBar, XmNdragCallback, cb_scroll, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
+	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
+	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	our updateText (me);
 	if (group_equalDomain (my tmin, my tmax))
-		cb_group (NULL, (XtPointer) me, NULL);
+		gui_cb_group (NULL, (XtPointer) me, NULL);
 	my enableUpdates = TRUE;
-	my arrowScrollStep = prefs.arrowScrollStep;
+	my arrowScrollStep = preferences.arrowScrollStep;
+	my picture = preferences.picture;
 	return 1;
 }
 
@@ -1489,10 +1509,13 @@ void FunctionEditor_ungroup (I) {
 }
 
 void FunctionEditor_prefs (void) {
-	Resources_addInt (L"FunctionEditor.shellWidth", & prefs.shellWidth);
-	Resources_addInt (L"FunctionEditor.shellHeight", & prefs.shellHeight);
-	Resources_addInt (L"FunctionEditor.groupWindow", & prefs.groupWindow);
-	Resources_addDouble (L"FunctionEditor.arrowScrollStep", & prefs.arrowScrollStep);
+	Resources_addInt (L"FunctionEditor.shellWidth", & preferences.shellWidth);
+	Resources_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight);
+	Resources_addInt (L"FunctionEditor.groupWindow", & preferences.groupWindow);
+	Resources_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep);
+	Resources_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes);
+	Resources_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs);
+	Resources_addBool (L"FunctionEditor.picture.garnish", & preferences.picture.garnish);
 }
 
 void FunctionEditor_drawRangeMark (I, const wchar_t *format, double yWC, int verticalAlignment) {
@@ -1556,6 +1579,22 @@ void FunctionEditor_drawGridLine (I, double yWC) {
 	Graphics_setLineType (my graphics, Graphics_DOTTED);
 	Graphics_line (my graphics, my startWindow, yWC, my endWindow, yWC);
 	Graphics_setLineType (my graphics, Graphics_DRAWN);
+}
+
+void FunctionEditor_garnish (I) {
+	iam (FunctionEditor);
+	if (my picture.drawSelectionTimes) {
+		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
+			Graphics_markTop (my pictureGraphics, my startSelection, true, true, false, NULL);
+		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)
+			Graphics_markTop (my pictureGraphics, my endSelection, true, true, false, NULL);
+	}
+	if (my picture.drawSelectionHairs) {
+		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
+			Graphics_markTop (my pictureGraphics, my startSelection, false, false, true, NULL);
+		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)
+			Graphics_markTop (my pictureGraphics, my endSelection, false, false, true, NULL);
+	}
 }
 
 /* End of file FunctionEditor.c */

@@ -182,7 +182,7 @@ long PointProcess_getNearestIndex (PointProcess me, double t) {
 
 int PointProcess_addPoint (PointProcess me, double t) {
 	if (t == NUMundefined) {
-		return Melder_error ("Cannot add a point at an undefined time.");
+		return Melder_error1 (L"Cannot add a point at an undefined time.");
 	}
 	if (my nt >= my maxnt) {
 		double *dum = NUMdvector (1, 2 * my maxnt);

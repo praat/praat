@@ -98,15 +98,15 @@ void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_printf (my graphics, my startWindow, value, L"%.4g", value);
+			Graphics_text1 (my graphics, my startWindow, value, Melder_half (value));
 		} else {
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, cursorFunctionValue - minimum) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_printf (my graphics, my startWindow, minimum, L"%.4g", minimum);
+				Graphics_text1 (my graphics, my startWindow, minimum, Melder_half (minimum));
 			}
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, maximum - cursorFunctionValue) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_printf (my graphics, my startWindow, maximum, L"%.4g", maximum);
+				Graphics_text1 (my graphics, my startWindow, maximum, Melder_half (maximum));
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {

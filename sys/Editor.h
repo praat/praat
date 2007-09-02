@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/09/02
  */
 
 #ifndef _Collection_h_
@@ -31,6 +31,9 @@
 #endif
 #ifndef _Ui_h_
 	#include "Ui.h"
+#endif
+#ifndef _Graphics_h_
+	#include "Graphics.h"
 #endif
 
 #define EditorCommand_members Thing_members \
@@ -58,6 +61,7 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	Ordered menus; \
 	Any data, previousData;   /* The data that can be displayed and edited. */ \
 	wchar_t undoText [100]; \
+	Graphics pictureGraphics; \
 	void (*destroyCallback) (I, void *closure); \
 	void *destroyClosure; \
 	void (*dataChangedCallback) (I, void *closure, Any data); \
@@ -74,7 +78,13 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void (*dataChanged) (I); \
 	void (*save) (I); \
 	void (*restore) (I); \
-	void (*clipboardChanged) (I, Any data);
+	void (*clipboardChanged) (I, Any data); \
+	void (*form_pictureWindow) (I, EditorCommand cmd); \
+	void (*ok_pictureWindow) (I, EditorCommand cmd); \
+	void (*do_pictureWindow) (I, EditorCommand cmd); \
+	void (*form_pictureMargins) (I, EditorCommand cmd); \
+	void (*ok_pictureMargins) (I, EditorCommand cmd); \
+	void (*do_pictureMargins) (I, EditorCommand cmd);
 class_create_opaque (Editor, Thing);
 
 #define Editor_HIDDEN  (1 << 11)
@@ -170,6 +180,17 @@ Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *h
 
 EditorCommand Editor_getMenuCommand (I, const wchar_t *menuTitle, const wchar_t *itemTitle);
 int Editor_doMenuCommand (Any editor, const wchar_t *command, const wchar_t *arguments);
+
+/*
+ * The following two procedures are in praat_picture.c.
+ * They allow editors to draw into the Picture window.
+ */
+Graphics praat_picture_editor_open (bool eraseFirst);
+void praat_picture_editor_close (void);
+void Editor_openPraatPicture (I);
+void Editor_closePraatPicture (I);
+
+void Editor_prefs (void);
 
 #endif
 /* End of file Editor.h */

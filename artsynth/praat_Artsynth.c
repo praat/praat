@@ -57,7 +57,7 @@ FORM (Art_edit, "Edit Art", 0)
 DO
 	Art object = (Art) ONLY_OBJECT;
 	int i;
-	if (theCurrentPraat -> batch) return Melder_error ("Cannot edit an Art from batch.");
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit an Art from batch.");
 	for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
 		object -> art [i] = GET_REALW (enumstring (Art_MUSCLE, i));
 END
@@ -82,7 +82,7 @@ END
 
 DIRECT (Artword_edit)
 	if (theCurrentPraat -> batch)
-		return Melder_error ("Cannot edit an Artword from batch.");
+		return Melder_error1 (L"Cannot edit an Artword from batch.");
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
@@ -105,7 +105,7 @@ FORM (Artword_setTarget, "Set one Artword target", 0)
 	OK
 DO
 	double tim = GET_REAL ("Time");
-	if (tim < 0.0) return Melder_error ("'Time' must not be less than 0.");
+	if (tim < 0.0) return Melder_error1 (L"'Time' must not be less than 0.");
 	WHERE (SELECTED) {
 		Artword_setTarget (OBJECT, GET_INTEGER ("Muscle"), tim, GET_REAL ("Target value"));
 		praat_dataChanged (OBJECT);
@@ -180,22 +180,22 @@ DO
 	wchar_t name [200];
 	int result;
 	praat_name2 (name, classArtword, classSpeaker);
-	result = praat_new9 (
+	result = praat_new1 (
 		Artword_Speaker_to_Sound (ONLY (classArtword), ONLY (classSpeaker),
 			GET_REAL ("Sampling frequency"), GET_INTEGER ("Oversampling factor"),
 			& w1, iw1, & w2, iw2, & w3, iw3,
 			& p1, ip1, & p2, ip2, & p3, ip3,
 			& v1, iv1, & v2, iv2, & v3, iv3),
-		name, 0,0,0,0,0,0,0,0);
-	if (iw1) { swprintf (name, 200, L"width%d", iw1); praat_new9 (w1, name, 0,0,0,0,0,0,0,0); }
-	if (iw2) { swprintf (name, 200, L"width%d", iw2); praat_new9 (w2, name, 0,0,0,0,0,0,0,0); }
-	if (iw3) { swprintf (name, 200, L"width%d", iw3); praat_new9 (w3, name, 0,0,0,0,0,0,0,0); }
-	if (ip1) { swprintf (name, 200, L"pressure%d", ip1); praat_new9 (p1, name, 0,0,0,0,0,0,0,0); }
-	if (ip2) { swprintf (name, 200, L"pressure%d", ip2); praat_new9 (p2, name, 0,0,0,0,0,0,0,0); }
-	if (ip3) { swprintf (name, 200, L"pressure%d", ip3); praat_new9 (p3, name, 0,0,0,0,0,0,0,0); }
-	if (iv1) { swprintf (name, 200, L"velocity%d", iv1); praat_new9 (v1, name, 0,0,0,0,0,0,0,0); }
-	if (iv2) { swprintf (name, 200, L"velocity%d", iv2); praat_new9 (v2, name, 0,0,0,0,0,0,0,0); }
-	if (iv3) { swprintf (name, 200, L"velocity%d", iv3); praat_new9 (v3, name, 0,0,0,0,0,0,0,0); }
+		name);
+	if (iw1) praat_new2 (w1, L"width", Melder_integer (iw1));
+	if (iw2) praat_new2 (w2, L"width", Melder_integer (iw2));
+	if (iw3) praat_new2 (w3, L"width", Melder_integer (iw3));
+	if (ip1) praat_new2 (p1, L"pressure", Melder_integer (ip1));
+	if (ip2) praat_new2 (p2, L"pressure", Melder_integer (ip2));
+	if (ip3) praat_new2 (p3, L"pressure", Melder_integer (ip3));
+	if (iv1) praat_new2 (v1, L"velocity", Melder_integer (iv1));
+	if (iv2) praat_new2 (v2, L"velocity", Melder_integer (iv2));
+	if (iv3) praat_new2 (v3, L"velocity", Melder_integer (iv3));
 	if (! result) return 0;
 END
 

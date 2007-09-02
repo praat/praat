@@ -1,6 +1,6 @@
 /* manual_Artsynth.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
-MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20030316)
+MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20070830)
 INTRO (L"This is a description of the articulatory synthesis package in P\\s{RAAT}. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
@@ -46,7 +46,7 @@ NORMAL (L"8. Select the Speaker and the Artword and click #Movie; "
 NORMAL (L"9. Select the Speaker and the Artword and click ##To Sound...# "
 	"(see @@Artword & Speaker: To Sound...@).")
 NORMAL (L"10. Just click %OK; the synthesis starts.")
-NORMAL (L"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so. "
+NORMAL (L"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2006 computer, 12 seconds. "
 	"If this is too slow for you, click %Interrupt. "
 	"Otherwise, you can watch the vibrating vocal cords "
 	"and the changing vocal-tract shape.")

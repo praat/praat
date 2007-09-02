@@ -31,11 +31,7 @@
 
 #define noiseFactor 0.1
 
-#ifdef macintosh
-	#define MONITOR_SAMPLES 11
-#else
-	#define MONITOR_SAMPLES 11
-#endif
+#define MONITOR_SAMPLES 11
 
 /* While debugging, some of these can be 1; otherwise, they are all 0: */
 #define EQUAL_TUBE_WIDTHS  0
@@ -110,7 +106,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		t->V = t->A * t->Dx;   /* 5.114 */
 		totalVolume += t->V;
 	}
-	Melder_casual ("Starting volume: %.10g litres.", totalVolume * 1000);
+	//Melder_casual ("Starting volume: %.10g litres.", totalVolume * 1000);
 	for (sample = 1; sample <= numberOfSamples; sample ++) {
 		double time = (sample - 1) / fsamp;
 		Artword_intoArt (artword, art, time);
@@ -429,7 +425,7 @@ if (graphics) {   /* Because we can be in batch. */
 	totalVolume = 0.0;
 	for (m = 1; m <= M; m ++)
 		totalVolume += delta->tube [m]. V;
-	Melder_casual ("Ending volume: %.10g litres.", totalVolume * 1000);
+	//Melder_casual ("Ending volume: %.10g litres.", totalVolume * 1000);
 end:
 	forget (delta);
 	forget (art);

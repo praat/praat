@@ -69,7 +69,7 @@ cleanUp:
 	forget (fullPoint);
 	if (Melder_hasError ()) {
 		forget (thee);
-		Melder_error ("(Pitch_to_PointProcess:) Not performed.");
+		return Melder_errorp1 (L"(Pitch_to_PointProcess:) Not performed.");
 	}
 	return thee;
 }
@@ -106,7 +106,7 @@ cleanUp:
 	forget (fullPoint);
 	if (Melder_hasError ()) {
 		forget (thee);
-		Melder_error ("(Pitch_to_PointProcess:) Not performed.");
+		return Melder_errorp1 (L"(Pitch_to_PointProcess:) Not performed.");
 	}
 	return thee;
 }

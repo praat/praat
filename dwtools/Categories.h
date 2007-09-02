@@ -2,7 +2,7 @@
 #define _Categories_h_
 /* Categories.h
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 
 /*
  djmw 20020315 GPL header
- */
+  djmw 20070620 Latest modification.
+*/
 
 #ifndef _Collection_extensions_h_
 	#include "Collection_extensions.h"

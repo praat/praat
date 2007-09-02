@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070828)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070902)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.20# (September 2, 2007)")
+LIST_ITEM (L"\\bu Introduced direct drawing to the Praat picture window from Sound windows and TextGrid windows.")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 4.6.13 by which Inspect did not show all data in a TextGrid.")
+NORMAL (L"##4.6.19# (August 31, 2007)")
+LIST_ITEM (L"\\bu Macintosh: worked around a bug in a system library that caused Praat to crash (since version 4.6.13) "
+	"when removing a boundary from a TextGrid interval in MacOS X 10.3 or earlier.")
 NORMAL (L"##4.6.18# (August 28, 2007)")
 LIST_ITEM (L"\\bu Sound: Filter (formula): now works in the same way as the other filter commands "
 	"(without adding an empty space at the end), and on stereo sounds.")

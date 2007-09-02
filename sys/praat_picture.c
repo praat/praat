@@ -31,6 +31,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/08/15 removed New Century Schoolbook
+ * pb 2007/09/01 praat_picture_editor_open/close
  */
 
 #include "praatP.h"
@@ -1464,6 +1465,16 @@ void praat_picture_open (void) {
 void praat_picture_close (void) {
 	if (theCurrentPraat != & theForegroundPraat) return;
 	if (! theCurrentPraat -> batch) Picture_highlight (praat_picture);
+}
+
+Graphics praat_picture_editor_open (bool eraseFirst) {
+	if (eraseFirst) Picture_erase (praat_picture);
+	praat_picture_open ();
+	return GRAPHICS;
+}
+
+void praat_picture_editor_close (void) {
+	praat_picture_close ();
 }
 
 void praat_picture_init (void) {

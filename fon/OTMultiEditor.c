@@ -185,15 +185,17 @@ static void drawTableau (Graphics g) {
 static void draw (I) {
 	iam (OTMultiEditor);
 	OTMulti grammar = my data;
-	static wchar_t text [1000];
+	static MelderStringW buffer = { 0 };
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (my g);
 	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony");
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
-		swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f", icons == my selectedConstraint ? L"\\sp " : L"   ", icons,
-			constraint -> name, constraint -> ranking, constraint -> disharmony);
-		HyperPage_listItem (me, text);
+		MelderStringW_empty (& buffer);
+		MelderStringW_append8 (& buffer, L"\t", icons == my selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
+			L"|", constraint -> name, L"@\t      ", Melder_fixed (constraint -> ranking, 3));
+		MelderStringW_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
+		HyperPage_listItem (me, buffer.string);
 	}
 	Graphics_setAtSignIsLink (my g, FALSE);
 	drawTableau_grammar = grammar;

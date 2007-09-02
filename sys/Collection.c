@@ -44,7 +44,6 @@ static void classCollection_info (I) {
 
 static int classCollection_copy (I, thou) {
 	iam (Collection); thouart (Collection);
-	long i;
 	thy item = NULL;   /* Kill shallow copy of item. */
 	if (! inherited (Collection) copy (me, thee)) return 0;
 	thy itemClass = my itemClass;
@@ -52,24 +51,23 @@ static int classCollection_copy (I, thou) {
 	thy size = my size;
 	if (! (thy item = Melder_calloc (void *, my _capacity))) return 0;   /* Filled with NULL. */
 	thy item --;   /* Base 1. */
-	for (i = 1; i <= my size; i ++) {   /* Try to copy the items themselves. */
+	for (long i = 1; i <= my size; i ++) {   /* Try to copy the items themselves. */
 		if (! Thing_member (my item [i], classData))
 			return Melder_error ("Collection::copy: "
 				"cannot copy item of class %s.", Thing_className (my item [i]));
 		if (! (thy item [i] = Data_copy (my item [i]))) return 0;
 		/* Copy the names of the items (but Data_copy does that). */
-		/* if (! Thing_getName (thy item [i]))
-			Thing_setName (thy item [i], Thing_getName (my item [i])); */
+		/* if (! Thing_getNameW (thy item [i]))
+			Thing_setNameW (thy item [i], Thing_getNameW (my item [i])); */
 	}
 	return 1;
 }
 
 static bool classCollection_equal (I, thou) {
 	iam (Collection); thouart (Collection);
-	long i;
 	if (! inherited (Collection) equal (me, thee)) return 0;
 	if (my size != thy size) return 0;
-	for (i = 1; i <= my size; i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		if (! Thing_member (my item [i], classData))
 			return Melder_error ("Collection::equal: "
 				"cannot compare items of class %s.", Thing_className (my item [i]));
@@ -237,8 +235,8 @@ static int classCollection_readBinary (I, FILE *f) {
 }
 
 static struct structData_Description classCollection_description [] = {
-	{ L"size", 4, (int) & ((Collection) 0) -> size, sizeof (long) },
-	{ L"item", 23, (int) & ((Collection) 0) -> item, sizeof (Data), L"Data", & theStructData, 1, 0, L"my size" },
+	{ L"size", longwa, (int) & ((Collection) 0) -> size, sizeof (long) },
+	{ L"item", objectwa, (int) & ((Collection) 0) -> item, sizeof (Data), L"Data", & theStructData, 1, 0, L"my size" },
 	{ 0 } };
 
 static long classCollection_position (I, Any data) {

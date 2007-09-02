@@ -71,6 +71,10 @@
 	#include "PointProcess.h"
 #endif
 
+struct FunctionEditor_picture {
+	/* KEEP IN SYNC WITH PREFS. */
+	bool drawSelectionTimes, drawSelectionHairs, garnish;
+};
 struct FunctionEditor_spectrogram {
 	/* KEEP IN SYNC WITH PREFS. */
 	Spectrogram data; int show;
@@ -103,6 +107,7 @@ struct FunctionEditor_pitch {
 	int method, veryAccurate;
 	long maximumNumberOfCandidates; double silenceThreshold, voicingThreshold;
 	double octaveCost, octaveJumpCost, voicedUnvoicedCost;
+	struct { bool speckle; } picture;
 };
 struct FunctionEditor_intensity {
 	/* KEEP IN SYNC WITH PREFS. */
@@ -150,6 +155,7 @@ struct FunctionEditor_pulses {
 	struct { LongSound data; } longSound; \
 	double longestAnalysis, arrowScrollStep; \
 	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView; \
+	struct FunctionEditor_picture picture; \
 	struct FunctionEditor_spectrogram spectrogram; \
 	struct FunctionEditor_pitch pitch; \
 	struct FunctionEditor_intensity intensity; \
@@ -182,7 +188,8 @@ struct FunctionEditor_pulses {
 	void (*viewMenuEntries) (I); \
 	void (*highlightSelection) (I, double left, double right, double bottom, double top); \
 	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
-	double (*getBottomOfSoundAndAnalysisArea) (I);
+	double (*getBottomOfSoundAndAnalysisArea) (I); \
+	struct { struct { struct { bool garnish; } pitch; } picture; } preferences;
 
 class_create (FunctionEditor, Editor);
 
@@ -341,6 +348,9 @@ void FunctionEditor_drawHorizontalHair (I, const wchar_t *format, double yWC);
 void FunctionEditor_drawGridLine (I, double yWC);
 
 void FunctionEditor_insetViewport (I);
+
+void FunctionEditor_setPicturePreferences (I);
+void FunctionEditor_garnish (I);   // Optionally selection times and selection hairs.
 
 /* End of file FunctionEditor.h */
 #endif

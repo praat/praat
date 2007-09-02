@@ -2,7 +2,7 @@
 #define _Tube_h_
 /* Tube.h
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20030617 Creation
+ djmw 20070620 Latest modification.
 */
 
 #ifndef _Sampled_h_

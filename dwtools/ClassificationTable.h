@@ -2,7 +2,7 @@
 #define _ClassificationTable_h_
 /* ClassificationTable.h
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20020315 GPL header
  djmw 20040422 Added ClassificationTable_to_Categories_maximumProbability
  djmw 20040623 Added ClassificationTable_to_Strings_maximumProbability
+ djmw 20070620 Latest modification.
  */
 
 #ifndef _TableOfReal_h_

@@ -788,7 +788,7 @@ int Sound_filterWithFormants (Sound me, double tmin, double tmax,
 		long itmin, itmax, n;
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
 		if ((n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) <= 2)
-			return Melder_error ("Sound too short.");
+			return Melder_error1 (L"Sound too short.");
 		float *amplitude = my z [channel] + itmin - 1;   /* Base 1. */
 		NUMdeemphasize_f (amplitude, n, my dx, 50.0);
 		for (int iformant = 1; iformant <= numberOfFormants; iformant ++) {

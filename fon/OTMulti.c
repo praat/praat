@@ -470,7 +470,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 	 */
 	y -= headerHeight;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_printf (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, L"%ls%ls", form1, form2);
+	Graphics_text2 (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, form1, form2);
 	Graphics_rectangle (g, x, x + candWidth, y, y + headerHeight);
 	/*
 	 * Draw constraint names.

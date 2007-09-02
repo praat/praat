@@ -600,9 +600,9 @@ int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues) {
 	long i, j;
 
 	*eigenvectors = NULL, *eigenvalues = NULL;
-	if (my nx != my ny) return Melder_error ("(Matrix_eigen:) Matrix not square.");
-	return Melder_error ("(Matrix_eigen:) Not implemented. Write to the authors.");
-	/*if ((eigen = Eigen_createFromSymmetricMatrix_f (eigen, my z, my nx)) == NULL) goto end;*/
+	if (my nx != my ny) return Melder_error1 (L"(Matrix_eigen:) Matrix not square.");
+	return Melder_error1 (L"(Matrix_eigen:) Not implemented. Write to the authors.");
+	//if ((eigen = Eigen_createFromSymmetricMatrix_f (eigen, my z, my nx)) == NULL) goto end;   // BUG
 
 	*eigenvectors = Data_copy (me); cherror
 	*eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);

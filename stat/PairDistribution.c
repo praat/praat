@@ -141,7 +141,7 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 	}
 end:
 	iferror { forget (*strings1); forget (*strings2);
-			return Melder_error ("(PairDistribution_to_Stringses:) Not performed."); }
+			return Melder_error1 (L"(PairDistribution_to_Stringses:) Not performed."); }
 	return 1;
 }
 
@@ -168,7 +168,7 @@ int PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t *
 	*string1 = prob -> string1;
 	*string2 = prob -> string2;
 end:
-	iferror return Melder_error ("(PairDistribution_peekPair:) Not performed.");
+	iferror return Melder_error1 (L"(PairDistribution_peekPair:) Not performed.");
 	return 1;
 }
 

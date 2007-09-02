@@ -66,7 +66,7 @@ int Distributions_peek (Distributions me, long column, wchar_t **string) {
 	if (! *string)
 		error3 (L"No string in row ", Melder_integer (irow), L".")
 end:
-	iferror return Melder_error ("(Distributions_peek:) Not performed.");
+	iferror return Melder_error1 (L"(Distributions_peek:) Not performed.");
 	return 1;
 }
 

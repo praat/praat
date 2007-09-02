@@ -19,6 +19,7 @@
 
 /*
  djmw 20020423 GPL header
+ djmw 20070620 Latest modification.
 */
 #ifndef _SVD_h_
 #define _SVD_h_

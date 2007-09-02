@@ -343,12 +343,12 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 				lc -> code = info -> psEncoding;
 			} else {
-				lc -> code = my useQuartz && my drawingArea && ! my duringXor ? lc -> kar : info -> macEncoding /*info -> unicode*/;
+				lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? lc -> kar : info -> macEncoding /*info -> unicode*/;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> first == 's' && lc -> second == 'r') {
 						info = Longchar_getInfo ('s', 'w');
-						lc -> code = my useQuartz && my drawingArea && ! my duringXor ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
 						lc2 [1]. first = lc2 [1]. second = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
@@ -356,7 +356,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 						lc [1]. second = 'r';
 					} else if (lc -> first == 'l' && lc -> second == '~') {
 						info = Longchar_getInfo ('l', ' ');
-						lc -> code = my useQuartz && my drawingArea && ! my duringXor ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> first != '\0' || lc2 -> second != '\0'; lc2 ++) { }
 						lc2 [1]. first = lc2 [1]. second = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
@@ -364,7 +364,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 						lc [1]. second = '<';
 					}
 				}
-				if (my useQuartz && my drawingArea && ! my duringXor) {
+				if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
 					OSStatus ATSUGetGlyphBounds (
    ATSUTextLayout iTextLayout,
    ATSUTextMeasurement iTextBasePointX,
@@ -639,7 +639,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 		#elif mac
 			long font = lc -> font.integer;
 			int needBitmappedIPA = font == 0;
-			if (my useQuartz && my drawingArea && ! my duringXor) {
+			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
 				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				ATSFontRef atsuiFont =

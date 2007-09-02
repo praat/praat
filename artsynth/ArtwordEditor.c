@@ -1,6 +1,6 @@
 /* ArtwordEditor.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  */
 
 /*
- * pb 2001/07/18
  * pb 2002/07/16 GPL
  * pb 2003/05/19 Melder_atof
+ * pb 2007/08/30 include menu bar height
  */
 
 #include "ArtwordEditor.h"
+#include "machine.h"
 
 static void destroy (I) {
 	iam (ArtwordEditor);
@@ -137,15 +138,15 @@ static void dataChanged (I) {
 static void createChildren (I) {
 	iam (ArtwordEditor);
 	Widget button, scrolled;
-	unsigned int i;
+	int dy = Machine_getMenuBarHeight ();
 	XtVaCreateManagedWidget ("Targets:", xmLabelGadgetClass, my dialog,
-		XmNx, 40, XmNy, 3, XmNwidth, 60, NULL);
+		XmNx, 40, XmNy, dy + 3, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Times:", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 20, XmNwidth, 60, NULL);
+		XmNx, 5, XmNy, dy + 20, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
-		XmNx, 80, XmNy, 20, XmNwidth, 60, NULL);
+		XmNx, 80, XmNy, dy + 20, XmNwidth, 60, NULL);
 	scrolled = XmCreateScrolledWindow (my dialog, "listWindow", NULL, 0);
-	XtVaSetValues (scrolled, XmNy, 40, XmNwidth, 140, XmNheight, 300, NULL);
+	XtVaSetValues (scrolled, XmNy, dy + 40, XmNwidth, 140, XmNheight, 300, NULL);
 	my list = XtVaCreateManagedWidget
 		("list", xmListWidgetClass, scrolled,
 		 XmNvisibleItemCount, 20 /*Artword_maximumNumberOfTargets*/,
@@ -154,36 +155,36 @@ static void createChildren (I) {
 
 	button = XtVaCreateManagedWidget
 		("Remove target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 10, XmNy, 410, XmNwidth, 120, NULL);
+		 XmNx, 10, XmNy, dy + 410, XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_removeTarget, (XtPointer) me);
 
 	my drawingArea = XtVaCreateManagedWidget
 		("drawingArea", xmDrawingAreaWidgetClass, my dialog,
-		 XmNx, 170, XmNy, 10,
+		 XmNx, 170, XmNy, dy + 10,
 		 XmNwidth, 300, XmNheight, 300, NULL);
 
 	XtVaCreateManagedWidget ("Time:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, 340, XmNwidth, 50, NULL);
+		XmNx, 220, XmNy, dy + 340, XmNwidth, 50, NULL);
 	my time = XtVaCreateManagedWidget
 		("Time", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, 340, XmNwidth, 100, NULL);
+		 XmNx, 270, XmNy, dy + 340, XmNwidth, 100, NULL);
 
 	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, 370, XmNwidth, 50, NULL);
+		XmNx, 220, XmNy, dy + 370, XmNwidth, 50, NULL);
 	my value = XtVaCreateManagedWidget
 		("Value", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, 370, XmNwidth, 100, NULL);
+		 XmNx, 270, XmNy, dy + 370, XmNwidth, 100, NULL);
 
 	button = XtVaCreateManagedWidget
 		("Add target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 240, XmNy, 410, XmNwidth, 120, NULL);
+		 XmNx, 240, XmNy, dy + 410, XmNwidth, 120, NULL);
 	XtAddCallback (button, XmNactivateCallback, cb_addTarget, (XtPointer) me);
 	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
 
 	my radio = XtVaCreateManagedWidget
 		("radioBox", xmRowColumnWidgetClass, my dialog,
-		 XmNradioBehavior, True, XmNx, 470, NULL);
-	for (i = 1; i <= enumlength (Art_MUSCLE); i ++) {
+		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
+	for (int i = 1; i <= enumlength (Art_MUSCLE); i ++) {
 		my button [i] = XtVaCreateManagedWidget
 			(Melder_peekWcsToAscii (enumstring (Art_MUSCLE, i)), xmToggleButtonGadgetClass, my radio,
 			#if defined (_WIN32) || defined (macintosh)
@@ -204,9 +205,9 @@ class_methods_end
 
 ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data) {
 	ArtwordEditor me = new (ArtwordEditor);
-	if (! me || ! Editor_init (me, parent, 20, 40, 600, 600, title, data))
+	if (! me || ! Editor_init (me, parent, 20, 40, 650, 600, title, data))
 		return NULL;
-	XtUnmanageChild (my menuBar);
+	//XtUnmanageChild (my menuBar);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);

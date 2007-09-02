@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  * 
- * Copyright (C) 1992-2005 David Weenink
+ * Copyright (C) 1992-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020315 GPL header
- djmw 20050406 Latest modification
+ djmw 20070620 Latest modification.
  */
 
 #ifndef _Data_h_

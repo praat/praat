@@ -87,8 +87,8 @@ DO
 	if (theCurrentPraat -> totalSelection > 1)
 		return Melder_error ("Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
-		char *name = GET_STRING ("newName");
-		if (! praat_new (Data_copy (OBJECT), name)) return 0;
+		wchar_t *name = GET_STRINGW (L"newName");
+		if (! praat_new1 (Data_copy (OBJECT), name)) return 0;
 	}
 END
 
@@ -446,7 +446,7 @@ FORM (SearchManual, "Search manual", "Manual")
 DO
 	Manual manPage;
 	if (theCurrentPraat -> batch)
-		return Melder_error ("Cannot view manual from batch.");
+		return Melder_error1 (L"Cannot view manual from batch.");
 	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
 	Manual_search (manPage, GET_STRINGW (L"query"));
 END
@@ -459,7 +459,7 @@ FORM (GoToManualPage, "Go to manual page", 0)
 DO
 	Manual manPage;
 	if (theCurrentPraat -> batch)
-		return Melder_error ("Cannot view manual from batch.");
+		return Melder_error1 (L"Cannot view manual from batch.");
 	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
 	if (! HyperPage_goToPage_i (manPage, GET_INTEGER ("Page"))) return 0;
 END

@@ -31,6 +31,7 @@
  * Erez Volk & pb 2007/05/17 FLAC support
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/02 direct drawing to Picture window
  */
 
 #include "TextGridEditor.h"
@@ -75,6 +76,7 @@ static struct {
 		int showNumberOf;
 			int greenMethod;
 				wchar_t greenString [Resources_STRING_BUFFER_SIZE];
+		struct { bool showBoundaries; struct { bool speckle; } pitch; } picture;
 }
 	preferences = {
 		TextGridEditor_DEFAULT_USE_TEXT_STYLES,
@@ -83,7 +85,8 @@ static struct {
 					TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE,
 		TextGridEditor_DEFAULT_SHOW_NUMBER_OF,
 			TextGridEditor_DEFAULT_GREEN_METHOD,
-				TextGridEditor_DEFAULT_GREEN_STRING
+				TextGridEditor_DEFAULT_GREEN_STRING,
+		{ true, { false } }
 	};
 
 void TextGridEditor_prefs (void) {
@@ -94,6 +97,8 @@ void TextGridEditor_prefs (void) {
 	Resources_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf);
 	Resources_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod);
 	Resources_addString (L"TextGridEditor.greenString", & preferences.greenString [0]);
+	Resources_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries);
+	Resources_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle);
 }
 
 /********** UTILITIES **********/
@@ -581,6 +586,58 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 		FunctionEditor_marksChanged (me);
 	}
 	return 1;
+}
+
+/***** PITCH MENU *****/
+
+static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORM ("Draw TextGrid and Pitch separately", 0)
+		our form_pictureWindow (me, cmd);
+		LABEL ("", "TextGrid:")
+		BOOLEAN ("Show boundaries and points", 1);
+		LABEL ("", "Pitch:")
+		BOOLEAN ("Speckle", 0);
+		our form_pictureMargins (me, cmd);
+		BOOLEAN ("Draw selection times", 1);
+		BOOLEAN ("Draw selection hairs", 1);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		SET_INTEGER ("Show boundaries and points", preferences.picture.showBoundaries);
+		SET_INTEGER ("Speckle", preferences.picture.pitch.speckle);
+		our ok_pictureMargins (me, cmd);
+		SET_INTEGER ("Draw selection times", my picture.drawSelectionTimes);
+		SET_INTEGER ("Draw selection hairs", my picture.drawSelectionHairs);
+		SET_INTEGER ("Garnish", my picture.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		preferences.picture.showBoundaries = GET_INTEGER ("Show boundaries and points");
+		preferences.picture.pitch.speckle = GET_INTEGER ("Speckle");
+		our do_pictureMargins (me, cmd);
+		my picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
+		my picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
+		my picture.garnish = GET_INTEGER ("Garnish");
+		FunctionEditor_setPicturePreferences (me);
+		if (! my pitch.show)
+			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		if (! my pitch.data) {
+			FunctionEditor_SoundAnalysis_computePitch (me);
+			if (! my pitch.data) return Melder_error1 (L"Cannot compute pitch.");
+		}
+		Editor_openPraatPicture (me);
+		double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchFloor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchCeiling_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
+		double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
+		TextGrid_Pitch_drawSeparately (my data, my pitch.data, my pictureGraphics, my startWindow, my endWindow,
+			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER ("Show boundaries and points"), my useTextStyles, GET_INTEGER ("Garnish"),
+			GET_INTEGER ("Speckle"), my pitch.unit);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
 }
 
 /***** INTERVAL MENU *****/
@@ -1285,6 +1342,7 @@ static void createMenus (I) {
 	if (my sound.data || my longSound.data) {
 		FunctionEditor_SoundAnalysis_addMenus (me);
 	}
+	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 
 	Editor_addCommand (me, L"Help", L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
 	Editor_addCommand (me, L"Help", L"About special symbols", 0, menu_cb_AboutSpecialSymbols);

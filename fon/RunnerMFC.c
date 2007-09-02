@@ -107,7 +107,7 @@ MOTIF_CALLBACK (cb_draw)
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-		Graphics_printf (my graphics, 0, 1, L"%ld / %ld", experiment -> trial, experiment -> numberOfTrials);
+		Graphics_text3 (my graphics, 0, 1, Melder_integer (experiment -> trial), L" / ", Melder_integer (experiment -> numberOfTrials));
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics, 24);
 		/*

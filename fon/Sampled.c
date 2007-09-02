@@ -122,7 +122,7 @@ int Sampled_shortTermAnalysis (I, double windowDuration, double timeStep, long *
 	Melder_assert (timeStep > 0.0);
 	myDuration = my dx * my nx;
 	if (windowDuration > myDuration)
-		return Melder_error ("%s shorter than window length.", Thing_className (me)); 
+		return Melder_error2 (Thing_classNameW (me), L" shorter than window length."); 
 	*numberOfFrames = floor ((myDuration - windowDuration) / timeStep) + 1;
 	Melder_assert (*numberOfFrames >= 1);
 	ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;

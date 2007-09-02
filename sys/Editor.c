@@ -22,6 +22,7 @@
  * pb 2002/03/22 Editor_setPublish2Callback
  * pb 2005/09/01 do not add a "(cannot) undo" button if there is no data to save
  * pb 2007/06/10 wchar_t
+ * pb 2007/09/02 form/ok/do_pictureWindow
  */
 
 #include "ScriptEditor.h"
@@ -29,6 +30,21 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "praat_script.h"
+#include "Preferences.h"
+
+/********** PREFERENCES **********/
+
+static struct {
+	struct { bool eraseFirst; int writeNameAtTop; } picture;
+}
+	preferences = {
+		{ true, 1 /* Far */ }   // picture
+	};
+
+void Editor_prefs (void) {
+	Resources_addBool (L"Editor.picture.eraseFirst", & preferences.picture.eraseFirst);
+	Resources_addInt (L"Editor.picture.writeNameAtTop", & preferences.picture.writeNameAtTop);
+}
 
 /********** class EditorCommand **********/
 
@@ -302,6 +318,38 @@ static void clipboardChanged (Any editor, Any clipboard) {
 	(void) clipboard;
 }
 
+static void form_pictureWindow (I, EditorCommand cmd) {
+	(void) void_me;
+	LABEL ("", "Picture window:")
+	BOOLEAN ("Erase first", 1);
+}
+static void ok_pictureWindow (I, EditorCommand cmd) {
+	(void) void_me;
+	SET_INTEGER ("Erase first", preferences.picture.eraseFirst);
+}
+static void do_pictureWindow (I, EditorCommand cmd) {
+	(void) void_me;
+	preferences.picture.eraseFirst = GET_INTEGER ("Erase first");
+}
+
+static void form_pictureMargins (I, EditorCommand cmd) {
+	(void) void_me;
+	Any radio = 0;
+	LABEL ("", "Margins:")
+	OPTIONMENU ("Write name at top", 2);
+		OPTION ("No")
+		OPTION ("Far")
+		OPTION ("Near")
+}
+static void ok_pictureMargins (I, EditorCommand cmd) {
+	(void) void_me;
+	SET_INTEGER ("Write name at top", preferences.picture.writeNameAtTop + 1);
+}
+static void do_pictureMargins (I, EditorCommand cmd) {
+	(void) void_me;
+	preferences.picture.writeNameAtTop = GET_INTEGER ("Write name at top") - 1;
+}
+
 class_methods (Editor, Thing)
 	class_method (destroy)
 	class_method (nameChanged)
@@ -314,6 +362,12 @@ class_methods (Editor, Thing)
 	class_method (save)
 	class_method (restore)
 	class_method (clipboardChanged)
+	class_method (form_pictureWindow)
+	class_method (ok_pictureWindow)
+	class_method (do_pictureWindow)
+	class_method (form_pictureMargins)
+	class_method (ok_pictureMargins)
+	class_method (do_pictureMargins)
 class_methods_end
 
 MOTIF_CALLBACK (cb_goAway)
@@ -451,6 +505,26 @@ void Editor_save (I, const wchar_t *text) {
 	XtSetSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
 	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (my undoText)), NULL);
+}
+
+void Editor_openPraatPicture (I) {
+	iam (Editor);
+	my pictureGraphics = praat_picture_editor_open (preferences.picture.eraseFirst);
+}
+void Editor_closePraatPicture (I) {
+	iam (Editor);
+	if (preferences.picture.writeNameAtTop) {
+		Graphics_setNumberSignIsBold (my pictureGraphics, false);
+		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
+		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
+		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
+		Graphics_textTop (my pictureGraphics, 2 - preferences.picture.writeNameAtTop, ((Data) my data) -> nameW);
+		Graphics_setNumberSignIsBold (my pictureGraphics, true);
+		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
+		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);
+		Graphics_setUnderscoreIsSubscript (my pictureGraphics, true);
+	}
+	praat_picture_editor_close ();
 }
 
 /* End of file Editor.c */

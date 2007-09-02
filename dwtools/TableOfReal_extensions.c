@@ -36,6 +36,7 @@
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20070822 wchar_t
 */
 
 #include <ctype.h>
@@ -321,7 +322,7 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 	{
 		colb = 1; cole = my numberOfColumns;
 	}
-	if (colb <= cole && colb < 1 || cole > my numberOfColumns)
+	if (colb <= cole && (colb < 1 || cole > my numberOfColumns))
 	{
 		    Melder_warning ("%s: Invalid columns", proc);
 			return;

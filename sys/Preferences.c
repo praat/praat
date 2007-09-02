@@ -23,6 +23,7 @@
  * pb 2003/12/09 guard against Preference file that has been copied from one platform to another
  * pb 2005/03/04 guard against hand-edited Preference files that contain strings longer than (Resources_STRING_BUFFER_SIZE - 1) bytes
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/01 bool
  */
 
 #include "Preferences.h"
@@ -87,6 +88,9 @@ void Resources_addUint (const wchar_t *string, unsigned int *value)
 void Resources_addUlong (const wchar_t *string, unsigned long *value)
 	{ Resources_add (string, ulongwa, value); }
 
+void Resources_addBool (const wchar_t *string, bool *value)
+	{ Resources_add (string, boolwa, value); }
+
 void Resources_addChar (const wchar_t *string, wchar_t *value)
 	{ Resources_add (string, charwa, value); }
 
@@ -127,6 +131,7 @@ void Resources_read (MelderFile file) {
 			case ushortwa: * (unsigned short *) resource -> value = wcstoul (value, NULL, 10); break;
 			case uintwa: * (unsigned int *) resource -> value = wcstoul (value, NULL, 10); break;
 			case ulongwa: * (unsigned long *) resource -> value = wcstoul (value, NULL, 10); break;
+			case boolwa: * (bool *) resource -> value = wcstol (value, NULL, 10); break;
 			case charwa: * (wchar_t *) resource -> value = value [0]; break;
 			case floatwa: * (float *) resource -> value = wcstod (value, NULL); break;
 			case doublewa: * (double *) resource -> value = wcstod (value, NULL); break;
@@ -152,6 +157,7 @@ void Resources_write (MelderFile file) {
 			case ushortwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned short *) resource -> value)); break;
 			case uintwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned int *) resource -> value)); break;
 			case ulongwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned long *) resource -> value)); break;
+			case boolwa: MelderStringW_append1 (& buffer, Melder_integer (* (bool *) resource -> value)); break;
 			case charwa: MelderStringW_appendCharacter (& buffer, * (char *) resource -> value); break;
 			case floatwa: MelderStringW_append1 (& buffer, Melder_single (* (float *) resource -> value)); break;
 			case doublewa: MelderStringW_append1 (& buffer, Melder_double (* (double *) resource -> value)); break;

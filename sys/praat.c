@@ -35,6 +35,8 @@
  * pb 2007/01/25 width of object list is 50 procent
  * pb 2007/06/10 wchar_t
  * pb 2007/06/16 text encoding prefs
+ * pb 2007/08/31 praat_new1-9
+ * pb 2007/09/02 include Editor prefs
  */
 
 #include "melder.h"
@@ -302,7 +304,8 @@ void praat_cleanUpName (wchar_t *name) {
 
 /***** objects + commands *****/
 
-static int _praat_new (Data me, wchar_t *myName) {
+bool praat_new1 (I, const wchar_t *myName) {
+	iam (Data);
 	wchar_t name [200], givenName [200];
 	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
 	static long uniqueID = 0;
@@ -313,13 +316,13 @@ static int _praat_new (Data me, wchar_t *myName) {
 	 */
 	if (my methods == (Any) classCollection) {
 		Collection list = (Collection) me;
-		int idata, result = 1;
-		for (idata = 1; idata <= list -> size; idata ++) {
+		bool result = true;
+		for (long idata = 1; idata <= list -> size; idata ++) {
 			Data object = list -> item [idata];
 			Melder_assert (object -> nameW != NULL);
-			result &= _praat_new (object, object -> nameW) ? 1 : 0;   /* Recurse. */
+			result &= praat_new1 (object, object -> nameW) ? true : false;   // Recurse.
 		}
-		list -> size = 0;   /* Disown. */
+		list -> size = 0;   // Disown.
 		forget (list);
 		return result;
 	}
@@ -377,27 +380,60 @@ static int _praat_new (Data me, wchar_t *myName) {
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setNameW (OBJECT, givenName);
 	theCurrentPraat -> totalBeingCreated ++;
-	return IOBJECT;
+	return true;
 }
 
-int praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
-{
+static MelderStringW thePraatNewName = { 0 };
+bool praat_new2 (I, const wchar_t *s1, const wchar_t *s2) {
 	iam (Data);
-	static MelderStringW myName = { 0 };
-	MelderStringW_copyW (& myName, s1);
-	MelderStringW_appendW (& myName, s2);
-	MelderStringW_appendW (& myName, s3);
-	MelderStringW_appendW (& myName, s4);
-	MelderStringW_appendW (& myName, s5);
-	MelderStringW_appendW (& myName, s6);
-	MelderStringW_appendW (& myName, s7);
-	MelderStringW_appendW (& myName, s8);
-	MelderStringW_appendW (& myName, s9);
-	return _praat_new (me, myName.string);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append2 (& thePraatNewName, s1, s2);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append3 (& thePraatNewName, s1, s2, s3);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append4 (& thePraatNewName, s1, s2, s3, s4);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append6 (& thePraatNewName, s1, s2, s3, s4, s5, s6);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append7 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append8 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
+	return praat_new1 (me, thePraatNewName.string);
+}
+bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+	iam (Data);
+	MelderStringW_empty (& thePraatNewName);
+	MelderStringW_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	return praat_new1 (me, thePraatNewName.string);
 }
 
-int praat_new (I, const char *format, ...) {
+bool praat_new (I, const char *format, ...) {
 /*
    Add an Object to the List if "me" exists.
    Its name will be the highest available of:
@@ -426,7 +462,7 @@ int praat_new (I, const char *format, ...) {
 		}
 	}
 	#endif
-	return _praat_new (me, Melder_peekAsciiToWcs (myName));
+	return praat_new1 (me, Melder_peekAsciiToWcs (myName));
 }
 
 void praat_updateSelection (void) {
@@ -1184,14 +1220,15 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	/*
 	 * Install the preferences of the Praat shell.
 	 */
-	praat_statistics_prefs ();   /* Number of sessions, memory used... */
-	praat_picture_prefs ();   /* Font... */
-	HyperPage_prefs ();   /* Font... */
-	Site_prefs ();   /* Print command... */
-	Melder_audio_prefs ();   /* Use speaker (Sun & HP), output gain (HP)... */
+	praat_statistics_prefs ();   // Number of sessions, memory used...
+	praat_picture_prefs ();   // Font...
+	Editor_prefs ();   // Erase picture first...
+	HyperPage_prefs ();   // Font...
+	Site_prefs ();   // Print command...
+	Melder_audio_prefs ();   // Use speaker (Sun & HP), output gain (HP)...
 	Melder_textEncoding_prefs ();
-	Printer_prefs ();   /* Paper size, printer command... */
-	TextEditor_prefs ();   /* Font size... */
+	Printer_prefs ();   // Paper size, printer command...
+	TextEditor_prefs ();   // Font size...
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {

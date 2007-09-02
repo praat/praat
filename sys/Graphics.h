@@ -69,6 +69,15 @@ void Graphics_setWindow (I, double x1, double x2, double y1, double y2);
 
 void Graphics_polyline (I, long numberOfPoints, float *x, float *y);
 void Graphics_text (I, double x, double y, const wchar_t *text);
+void Graphics_text1 (I, double x, double y, const wchar_t *s1);
+void Graphics_text2 (I, double x, double y, const wchar_t *s1, const wchar_t *s2);
+void Graphics_text3 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void Graphics_text4 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void Graphics_text5 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void Graphics_text6 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void Graphics_text7 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void Graphics_text8 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void Graphics_text9 (I, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wchar_t *text);
 double Graphics_textWidth (I, const wchar_t *text);
 double Graphics_textWidth_ps (I, const wchar_t *text, int useSilipaPS);

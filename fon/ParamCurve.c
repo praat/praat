@@ -119,7 +119,7 @@ int ParamCurve_init (I, Any void_x, Any void_y) {
 	iam (ParamCurve);
 	Sound x = void_x, y = void_y;
 	if (x -> xmax <= y -> xmin || x -> xmin >= y -> xmax)
-		return Melder_error ("Domains do not overlap.");
+		return Melder_error1 (L"Domains do not overlap.");
 	if (! (my x = Data_copy (x)) || ! (my y = Data_copy (y)))
 		return 0;
 	my xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;

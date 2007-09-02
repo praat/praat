@@ -143,7 +143,7 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 		point -> value = frequency;
 	}
 end:
-	iferror return Melder_error ("(PitchTier_shiftFrequency:) Not completed.");
+	iferror return Melder_error1 (L"(PitchTier_shiftFrequency:) Not completed.");
 	return 1;
 }
 

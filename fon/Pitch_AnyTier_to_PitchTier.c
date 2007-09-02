@@ -52,7 +52,7 @@ PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 end:
 	if (Melder_hasError ()) {
 		forget (result);
-		Melder_error ("(Pitch_AnyTier_to_PitchTier:) Not performed.");
+		Melder_error1 (L"(Pitch_AnyTier_to_PitchTier:) Not performed.");
 	}
 	return result;
 }
@@ -92,7 +92,7 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 end:
 	iferror {
 		forget (result);
-		Melder_error ("(Pitch_AnyTier_to_PitchTier:) Not performed.");
+		Melder_error1 (L"(Pitch_AnyTier_to_PitchTier:) Not performed.");
 	}
 	return result;
 }

@@ -659,7 +659,7 @@ static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
 	(void) closure;
 	if (! praat_new (publish, NULL)) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
-	if (Thing_member (publish, classSpectrum) && strequ (Thing_getName (publish), "slice")) {
+	if (Thing_member (publish, classSpectrum) && wcsequ (Thing_getNameW (publish), L"slice")) {
 		int IOBJECT;
 		WHERE (SELECTED) {
 			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
@@ -670,7 +670,7 @@ static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
 }
 DIRECT (TextGrid_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a TextGrid from batch.");
+		return Melder_error1 (L"Cannot edit a TextGrid from batch.");
 	} else {
 		WHERE (SELECTED && CLASS == classTextGrid) {
 			TextGridEditor editor = TextGridEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
@@ -683,7 +683,7 @@ END
 
 DIRECT (TextGrid_LongSound_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a TextGrid from batch.");
+		return Melder_error1 (L"Cannot edit a TextGrid from batch.");
 	} else {
 		LongSound longSound = NULL;
 		int ilongSound = 0;
@@ -698,7 +698,7 @@ END
 
 DIRECT (TextGrid_SpellingChecker_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a TextGrid from batch.");
+		return Melder_error1 (L"Cannot edit a TextGrid from batch.");
 	} else {
 		SpellingChecker spellingChecker = NULL;
 		int ispellingChecker = 0;
@@ -713,7 +713,7 @@ END
 
 DIRECT (TextGrid_LongSound_SpellingChecker_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a TextGrid from batch.");
+		return Melder_error1 (L"Cannot edit a TextGrid from batch.");
 	} else {
 		LongSound longSound = NULL;
 		SpellingChecker spellingChecker = NULL;
@@ -1010,18 +1010,18 @@ DO
 		TextGrid grid = OBJECT;
 		IntervalTier intervalTier;
 		if (itier > grid -> tiers -> size)
-			return Melder_error ("You cannot remove a boundary from tier %ld of TextGrid \"%s\", "
-				"because that TextGrid has only %ld tiers.", itier, NAME, grid -> tiers -> size);
+			return Melder_error7 (L"You cannot remove a boundary from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that TextGrid has only ", Melder_integer (grid -> tiers -> size), L" tiers.");
 		intervalTier = grid -> tiers -> item [itier];
 		if (intervalTier -> methods != classIntervalTier)
-			return Melder_error ("You cannot remove a boundary from tier %ld of TextGrid \"%s\", "
-				"because that tier is a point tier instead of an interval tier.", itier, NAME);
+			return Melder_error5 (L"You cannot remove a boundary from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)
-			return Melder_error ("You cannot remove a boundary from interval %ld of tier %ld of TextGrid \"%s\", "
-				"because that tier has only %ld intervals.", iinterval, itier, NAME, intervalTier -> intervals -> size);
+			return Melder_error9 (L"You cannot remove a boundary from interval ", Melder_integer (iinterval), L" of tier ", Melder_integer (itier), L" of ",
+				Thing_messageName (grid), L", because that tier has only ", Melder_integer (intervalTier -> intervals -> size), L" intervals.");
 		if (iinterval == 1)
-			return Melder_error ("You cannot remove the left boundary from interval 1 of tier %ld of TextGrid \"%s\", "
-				"because this is at the left edge of the tier.", itier, NAME);
+			return Melder_error5 (L"You cannot remove the left boundary from interval 1 of tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because this is at the left edge of the tier.");
 		if (! IntervalTier_removeLeftBoundary (intervalTier, iinterval)) return 0;
 		praat_dataChanged (grid);
 	}
@@ -1038,8 +1038,8 @@ DO
 		TextGrid grid = OBJECT;
 		TextTier pointTier;
 		if (itier > grid -> tiers -> size)
-			return Melder_error ("You cannot remove a point from tier %ld of TextGrid \"%s\", "
-				"because that TextGrid has only %ld tiers.", itier, NAME, grid -> tiers -> size);
+			return Melder_error7 (L"You cannot remove a point from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that TextGrid has only ", Melder_integer (grid -> tiers -> size), L" tiers.");
 		pointTier = grid -> tiers -> item [itier];
 		if (pointTier -> methods != classTextTier)
 			return Melder_error ("You cannot remove a point from tier %ld of TextGrid \"%s\", "

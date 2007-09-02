@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/08/31
  */
 
 #include "Editor.h"
@@ -159,9 +159,16 @@ Any praat_onlyObject_generic (void *klas);
 praat_Object praat_onlyScreenObject (void);
 wchar_t *praat_name (int iobject);
 void praat_write_do (Any dia, const wchar_t *extension);
-int praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-int praat_new (Any data, const char *myName, ...);
+bool praat_new1 (I, const wchar_t *s1);
+bool praat_new2 (I, const wchar_t *s1, const wchar_t *s2);
+bool praat_new3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+bool praat_new4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+bool praat_new5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
+bool praat_new (Any data, const char *myName, ...);
 void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 
 /* Macros for description of forms (dialog boxes).

@@ -27,6 +27,7 @@
  * pb 2007/06/09 oo_WCHAR, oo_STRINGW
  * pb 2007/06/10 corrections
  * pb 2007/06/21 oo_LSTRINGW; removed oo_SSTRINGxxx
+ * pb 2007/09/01 oo_BOOL
  */
 
 /*** Single types. ***/
@@ -59,6 +60,7 @@
 #define oo_USHORT(x)  oo_SIMPLE (unsigned short, u2, x)
 #define oo_UINT(x)  oo_SIMPLE (unsigned int, u2, x)
 #define oo_ULONG(x)  oo_SIMPLE (unsigned long, u4, x)
+#define oo_BOOL(x)  oo_SIMPLE (unsigned char, u1, x)
 #define oo_FLOAT(x)  oo_SIMPLE (float, r4, x)
 #define oo_DOUBLE(x)  oo_SIMPLE (double, r8, x)
 #define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c8, x)
@@ -81,6 +83,7 @@
 #define oo_USHORT_ARRAY(x,cap,n)  oo_ARRAY (unsigned short, u2, x, cap, n)
 #define oo_UINT_ARRAY(x,cap,n)  oo_ARRAY (unsigned int, u2, x, cap, n)
 #define oo_ULONG_ARRAY(x,cap,n)  oo_ARRAY (unsigned long, u4, x, cap, n)
+#define oo_BOOL_ARRAY(x,cap,n)  oo_ARRAY (unsigned char, u1, x, cap, n)
 #define oo_FLOAT_ARRAY(x,cap,n)  oo_ARRAY (float, r4, x, cap, n)
 #define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r8, x, cap, n)
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c8, x, cap, n)
@@ -100,6 +103,7 @@
 #define oo_USHORT_SET(x,setType)  oo_SET (unsigned short, u2, x, setType)
 #define oo_UINT_SET(x,setType)  oo_SET (unsigned int, u2, x, setType)
 #define oo_ULONG_SET(x,setType)  oo_SET (unsigned long, u4, x, setType)
+#define oo_BOOL_SET(x,setType)  oo_SET (unsigned char, u1, x, setType)
 #define oo_FLOAT_SET(x,setType)  oo_SET (float, r4, x, setType)
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r8, x, setType)
 #define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c8, x, setType)
@@ -120,6 +124,7 @@
 #define oo_USHORT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned short, us, u2, x, min, max)
 #define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, ui, u2, x, min, max)
 #define oo_ULONG_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned long, ul, u4, x, min, max)
+#define oo_BOOL_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, ub, u1, x, min, max)
 #define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (float, f, r4, x, min, max)
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, d, r8, x, min, max)
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, fc, c8, x, min, max)
@@ -136,6 +141,7 @@
 #define oo_USHORT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned short, us, u2, x, row1, row2, col1, col2)
 #define oo_UINT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned int, ui, u2, x, row1, row2, col1, col2)
 #define oo_ULONG_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned long, ul, u4, x, row1, row2, col1, col2)
+#define oo_BOOL_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, ub, u1, x, row1, row2, col1, col2)
 #define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (float, f, r4, x, row1, row2, col1, col2)
 #define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, d, r8, x, row1, row2, col1, col2)
 #define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, fc, c8, x, row1, row2, col1, col2)
@@ -154,6 +160,7 @@
 #define oo_USHORT_VECTOR(x,n)  oo_VECTOR (unsigned short, us, u2, x, 1, n)
 #define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, ui, u2, x, 1, n)
 #define oo_ULONG_VECTOR(x,n)  oo_VECTOR (unsigned long, ul, u4, x, 1, n)
+#define oo_BOOL_VECTOR(x,n)  oo_VECTOR (unsigned char, ub, u1, x, 1, n)
 #define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (float, f, r4, x, 1, n)
 #define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, d, r8, x, 1, n)
 #define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, fc, c8, x, 1, n)
@@ -170,6 +177,7 @@
 #define oo_USHORT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned short, us, u2, x, 1, nrow, 1, ncol)
 #define oo_UINT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned int, ui, u2, x, 1, nrow, 1, ncol)
 #define oo_ULONG_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned long, ul, u4, x, 1, nrow, 1, ncol)
+#define oo_BOOL_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, ub, u1, x, 1, nrow, 1, ncol)
 #define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (float, f, r4, x, 1, nrow, 1, ncol)
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, d, r8, x, 1, nrow, 1, ncol)
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, fc, c8, x, 1, nrow, 1, ncol)

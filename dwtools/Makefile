@@ -19,7 +19,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20061222 Latest modification.
+#  djmw 20070622 Latest modification.
 
 
 include ../makefile.defs

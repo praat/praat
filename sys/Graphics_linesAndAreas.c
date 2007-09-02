@@ -166,7 +166,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 			}
 			DEFAULT
 		#elif mac
-			if (my useQuartz && my drawingArea && ! my duringXor) {
+			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
 				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				CGContextSetRGBStrokeColor (my macGraphicsContext, my macColour.red, my macColour.green, my macColour.blue, 1.0);

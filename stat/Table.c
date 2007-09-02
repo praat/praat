@@ -145,7 +145,7 @@ int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
 	iam (Table);
 	long irow;
 	if (numberOfColumns < 1)
-		return Melder_error ("Cannot create table without columns.");
+		return Melder_error1 (L"Cannot create table without columns.");
 	my numberOfColumns = numberOfColumns;
 	if (! (my columnHeaders = NUMstructvector (TableColumnHeader, 1, numberOfColumns))) return 0;
 	if (! (my rows = Ordered_create ())) return 0;
@@ -225,7 +225,7 @@ int Table_removeRow (Table me, long irow) {
 	Collection_removeItem (my rows, irow);
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
-	iferror return Melder_error ("(Table_removeRow:) Not performed.");
+	iferror return Melder_error1 (L"(Table_removeRow:) Not performed.");
 	return 1;
 }
 
@@ -244,7 +244,7 @@ int Table_removeColumn (Table me, long icol) {
 	}
 	my numberOfColumns --;
 end:
-	iferror return Melder_error ("(Table_removeColumn:) Not performed.");
+	iferror return Melder_error1 (L"(Table_removeColumn:) Not performed.");
 	return 1;
 }
 
@@ -254,7 +254,7 @@ int Table_insertRow (Table me, long irow) {
 	Ordered_addItemPos (my rows, row, irow);
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) my columnHeaders [icol]. numericized = FALSE;
 end:
-	iferror return Melder_error ("(Table_insertRow:) Not performed.");
+	iferror return Melder_error1 (L"(Table_insertRow:) Not performed.");
 	return 1;
 }
 
@@ -282,7 +282,7 @@ int Table_insertColumn (Table me, long icol, const wchar_t *label) {
 	}
 	my numberOfColumns ++;
 end:
-	iferror return Melder_error ("(Table_insertColumn:) Not performed.");
+	iferror return Melder_error1 (L"(Table_insertColumn:) Not performed.");
 	return 1;
 }
 
@@ -310,8 +310,8 @@ long Table_searchColumn (Table me, long icol, const wchar_t *value) {
 
 int Table_setStringValue (Table me, long irow, long icol, const wchar_t *value) {
 	TableRow row;
-	if (irow < 1 || irow > my rows -> size) return Melder_error ("Row number %ld out of range.", irow);
-	if (icol < 1 || icol > my numberOfColumns) return Melder_error ("Column number %ld out of range.", icol);
+	if (irow < 1 || irow > my rows -> size) return Melder_error3 (L"Row number ", Melder_integer (irow), L" out of range.");
+	if (icol < 1 || icol > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (icol), L" out of range.");
 	row = my rows -> item [irow];
 	Melder_free (row -> cells [icol]. string);
 	row -> cells [icol]. string = Melder_wcsdup (value);
@@ -321,8 +321,8 @@ int Table_setStringValue (Table me, long irow, long icol, const wchar_t *value) 
 
 int Table_setNumericValue (Table me, long irow, long icol, double value) {
 	TableRow row;
-	if (irow < 1 || irow > my rows -> size) return Melder_error ("Row number %ld out of range.", irow);
-	if (icol < 1 || icol > my numberOfColumns) return Melder_error ("Column number %ld out of range.", icol);
+	if (irow < 1 || irow > my rows -> size) return Melder_error3 (L"Row number ", Melder_integer (irow), L" out of range.");
+	if (icol < 1 || icol > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (icol), L" out of range.");
 	row = my rows -> item [irow];
 	Melder_free (row -> cells [icol]. string);
 	row -> cells [icol]. string = Melder_wcsdup (Melder_double (value));
@@ -464,7 +464,7 @@ double Table_getMean (Table me, long icol) {
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my rows -> size < 1) return NUMundefined;
 	if (! Table_numericize_checkDefined (me, icol)) {
-		Melder_error ("Cannot compute mean.");
+		Melder_error1 (L"Cannot compute mean.");
 		return NUMundefined;
 	}
 	for (irow = 1; irow <= my rows -> size; irow ++) {
@@ -500,7 +500,7 @@ double Table_getQuantile (Table me, long icol, double quantile) {
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my rows -> size < 1) return NUMundefined;
 	if (! Table_numericize_checkDefined (me, icol)) {
-		Melder_error ("Cannot compute quantile.");
+		Melder_error1 (L"Cannot compute quantile.");
 		return NUMundefined;
 	}
 	sortingColumn = NUMdvector (1, my rows -> size); cherror
@@ -550,7 +550,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Meld
 end:
 	iferror {
 		forget (thee);
-		Melder_error ("(Table_selectRowsWhereColumn:) Not performed.");
+		Melder_error1 (L"(Table_selectRowsWhereColumn:) Not performed.");
 	}
 	return thee;
 }
@@ -577,7 +577,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Meld
 end:
 	iferror {
 		forget (thee);
-		Melder_error ("(Table_selectRowsWhereColumn:) Not performed.");
+		Melder_error1 (L"(Table_selectRowsWhereColumn:) Not performed.");
 	}
 	return thee;
 }
@@ -1017,8 +1017,8 @@ end:
 
 int Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label) {
 	long irow;
-	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column1);
-	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column2);
+	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column1), L" out of range.");
+	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column2), L" out of range.");
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
 	Table_appendColumn (me, label); cherror
@@ -1034,8 +1034,8 @@ end:
 
 int Table_appendDifferenceColumn (Table me, long column1, long column2, const wchar_t *label) {
 	long irow;
-	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column1);
-	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column2);
+	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column1), L" out of range.");
+	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column2), L" out of range.");
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
 	Table_appendColumn (me, label); cherror
@@ -1051,8 +1051,8 @@ end:
 
 int Table_appendProductColumn (Table me, long column1, long column2, const wchar_t *label) {
 	long irow;
-	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column1);
-	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column2);
+	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column1), L" out of range.");
+	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column2), L" out of range.");
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
 	Table_appendColumn (me, label); cherror
@@ -1068,8 +1068,8 @@ end:
 
 int Table_appendQuotientColumn (Table me, long column1, long column2, const wchar_t *label) {
 	long irow;
-	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column1);
-	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error ("Column number %ld out of range.", column2);
+	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column1), L" out of range.");
+	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column2), L" out of range.");
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
 	Table_appendColumn (me, label); cherror
@@ -1084,8 +1084,8 @@ end:
 }
 
 int Table_formula_columnRange (Table me, long icol1, long icol2, const wchar_t *expression) {
-	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error ("No column %ld.", icol1);
-	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error ("No column %ld.", icol2);
+	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol1), L".");
+	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol2), L".");
 	Formula_compile (NULL, me, expression, 2, TRUE); cherror
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		for (long icol = icol1; icol <= icol2; icol ++) {

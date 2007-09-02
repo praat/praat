@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/10
+ * pb 2007/09/02
  */
 
 /* Data inherits from Thing. */
@@ -546,25 +546,27 @@ class_create (Data, Thing);
 #define ushortwa  6
 #define uintwa  7
 #define ulongwa  8
-#define floatwa  9
-#define doublewa  10
-#define fcomplexwa  11
-#define dcomplexwa  12
-#define charwa  13
-#define wcharwa  14
-#define enumwa  15
-#define lenumwa  16
-#define booleanwa  17
-#define questionwa  18
-#define stringwa  19
-#define stringwwa  20
-#define lstringwa  21
-#define lstringwwa  22
-#define structwa  23
-#define widgetwa  24
-#define objectwa  25
-#define collectionwa  26
-#define inheritwa  27
+#define boolwa 9
+#define floatwa  10
+#define doublewa  11
+#define fcomplexwa  12
+#define dcomplexwa  13
+#define charwa  14
+#define wcharwa  15
+#define enumwa  16
+#define lenumwa  17
+#define booleanwa  18
+#define questionwa  19
+#define stringwa  20
+#define stringwwa  21
+#define lstringwa  22
+#define lstringwwa  23
+#define maxsingletypewa lstringwwa
+#define structwa  24
+#define widgetwa  25
+#define objectwa  26
+#define collectionwa  27
+#define inheritwa  28
 
 /* Recursive routines for working with struct members. */
 

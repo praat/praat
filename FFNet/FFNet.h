@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2004 David Weenink
+ * Copyright (C) 1997-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20040420 FFNet_create and Pattern&Categories: To FFNet changes.
  djmw 20040422 FFNet_extractWeights added.
  djmw 20040505 FFNet_getNodeNumberFromUnitNumber added.
+ djmw 20070620 Latest modification.
 */
 
 #ifndef _Data_h_

@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 20020813 GPL header
  djmw 20030701 Removed non-GPL minimizations
- djmw 20031025 Latest modification
+ djmw 20070620 Latest modification.
 */
 
 

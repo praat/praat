@@ -148,7 +148,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		Sound part, saved = my sound, played;
 		long i, imin, imax;
 		float *amp;
-		if (! my sound) return Melder_error ("Cannot synthesize overlap-add without a sound.");
+		if (! my sound) return Melder_error1 (L"Cannot synthesize overlap-add without a sound.");
 		part = Data_copy (my sound);
 		if (! part) return 0;
 		imin = Sampled_xToLowIndex (part, tmin), imax = Sampled_xToHighIndex (part, tmax);
@@ -662,15 +662,14 @@ Sound Manipulation_to_Sound (Manipulation me, int method) {
 Manipulation Manipulation_AnyTier_to_Manipulation (Manipulation ana, AnyTier tier) {
 	Manipulation result = NULL;
 	PitchTier pitch = NULL;
-	result = Data_copy (ana);
-	if (! result) goto end;
-	pitch = PitchTier_AnyTier_to_PitchTier (ana -> pitch, tier);
-	if (! pitch) goto end;
+
+	result = Data_copy (ana); cherror
+	pitch = PitchTier_AnyTier_to_PitchTier (ana -> pitch, tier); cherror
 	forget (result -> pitch);
 	result -> pitch = pitch;
 	pitch = NULL;
 end:
-	if (Melder_hasError ()) Melder_error ("(Manipulation_AnyTier_to_Manipulation:) Not performed.");
+	if (Melder_hasError ()) return Melder_errorp1 (L"(Manipulation_AnyTier_to_Manipulation:) Not performed.");
 	return result;
 }
 

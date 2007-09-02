@@ -914,9 +914,10 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			wchar_t rowTitle [1000];
-			swprintf (rowTitle, 100, L"%ls \\-> %ls", tableau -> input, tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_wcsdup (rowTitle);
+			static MelderStringW buffer = { 0 };
+			MelderStringW_empty (& buffer);
+			MelderStringW_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
 		}
 		/*
 		 * Compute a number of outputs and store the results.
@@ -1023,9 +1024,10 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			wchar_t rowTitle [1000];
-			swprintf (rowTitle, 1000, L"%ls \\-> %ls", tableau -> input, tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_wcsdup (rowTitle);
+			static MelderStringW buffer = { 0 };
+			MelderStringW_empty (& buffer);
+			MelderStringW_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
 		}
 		/*
 		 * Compute a number of outputs and store the results.

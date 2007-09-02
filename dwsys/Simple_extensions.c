@@ -1,6 +1,6 @@
 /* Simple_extensions.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020812 GPL header
+ djmw & pb wchar_t
 */
 
 #include "Simple_extensions.h"

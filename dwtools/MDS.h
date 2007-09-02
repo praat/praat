@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20030116 Latest modification
+ djmw 20070620 Latest modification.
 */
 
 #define KRUSKAL_MAXDIMENSION 10
