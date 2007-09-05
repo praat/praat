@@ -18,13 +18,11 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/09/03
  */
 
 #include "praat.h"
 
-#include "FunctionEditor_Sound.h"
-#include "FunctionEditor_SoundAnalysis.h"
 #include "Ltas.h"
 #include "LongSound.h"
 #include "Manipulation.h"
@@ -1893,9 +1891,8 @@ void praat_uvafon_Sound_init (void) {
 	SoundEditor_prefs ();
 	SoundRecorder_prefs ();
 	FunctionEditor_prefs ();
-	FunctionEditor_Sound_prefs ();
-	FunctionEditor_SoundAnalysis_prefs ();
 	LongSound_prefs ();
+	TimeSoundAnalysisEditor_prefs ();
 
 	Melder_setRecordProc (recordProc);
 	Melder_setRecordFromFileProc (recordFromFileProc);

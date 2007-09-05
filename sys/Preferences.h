@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/01
+ * pb 2007/09/03
  */
 
 #ifndef _melder_h_
@@ -35,18 +35,31 @@
 #define Resources_STRING_BUFFER_SIZE 260
 
 void Resources_addByte (const wchar_t *string, signed char *value);
+void Preferences_addByte (const wchar_t *string, signed char *value, signed char defaultValue);
 void Resources_addShort (const wchar_t *string, short *value);
+void Preferences_addShort (const wchar_t *string, short *value, short defaultValue);
 void Resources_addInt (const wchar_t *string, int *value);
+void Preferences_addInt (const wchar_t *string, int *value, int defaultValue);
 void Resources_addLong (const wchar_t *string, long *value);
+void Preferences_addLong (const wchar_t *string, long *value, long defaultValue);
 void Resources_addUbyte (const wchar_t *string, unsigned char *value);
+void Preferences_addUbyte (const wchar_t *string, unsigned char *value, unsigned char defaultValue);
 void Resources_addUshort (const wchar_t *string, unsigned short *value);
+void Preferences_addUshort (const wchar_t *string, unsigned short *value, unsigned short defaultValue);
 void Resources_addUint (const wchar_t *string, unsigned int *value);
+void Preferences_addUint (const wchar_t *string, unsigned int *value, unsigned int defaultValue);
 void Resources_addUlong (const wchar_t *string, unsigned long *value);
+void Preferences_addUlong (const wchar_t *string, unsigned long *value, unsigned long defaultValue);
 void Resources_addBool (const wchar_t *string, bool *value);
+void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue);
 void Resources_addChar (const wchar_t *string, wchar_t *value);
+void Preferences_addChar (const wchar_t *string, wchar_t *value, wchar_t defaultValue);
 void Resources_addFloat (const wchar_t *string, float *value);
+void Preferences_addFloat (const wchar_t *string, float *value, float defaultValue);
 void Resources_addDouble (const wchar_t *string, double *value);
+void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue);
 void Resources_addString (const wchar_t *string, wchar_t *value);
+void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue);
 
 void Resources_read (MelderFile file);
 void Resources_write (MelderFile file);

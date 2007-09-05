@@ -20,11 +20,11 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/09/04
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
+#ifndef _TimeSoundAnalysisEditor_h_
+	#include "TimeSoundAnalysisEditor.h"
 #endif
 #ifndef _TextGrid_h_
 	#include "TextGrid.h"

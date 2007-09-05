@@ -211,6 +211,7 @@ void Thing_setName (I, const char *name) {
 	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
 		Melder_free (my name);
 		my name = Melder_strdup (name);
+		Melder_free (my nameW);
 		my nameW = Melder_asciiToWcs (name);
 	}
 	our nameChanged (me);
@@ -220,6 +221,7 @@ void Thing_setNameW (I, const wchar_t *name) {
 	if (name != my nameW) {   /* Pointer comparison! So that Thing_setNameW (me, my nameW) does not fail. */
 		Melder_free (my nameW);
 		my nameW = Melder_wcsdup (name);
+		Melder_free (my name);
 		my name = Melder_wcsToAscii (name);
 	}
 	our nameChanged (me);

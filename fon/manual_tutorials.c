@@ -23,11 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070902)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070905)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.21# (September 5, 2007)")
+LIST_ITEM (L"\\bu Sound and TextGrid windows: direct drawing of selected sound to the picture window.")
 NORMAL (L"##4.6.20# (September 2, 2007)")
-LIST_ITEM (L"\\bu Introduced direct drawing to the Praat picture window from Sound windows and TextGrid windows.")
+LIST_ITEM (L"\\bu Introduced direct drawing of spectrogram and pitch to the Praat picture window from Sound windows and TextGrid windows.")
 LIST_ITEM (L"\\bu Corrected a bug introduced in 4.6.13 by which Inspect did not show all data in a TextGrid.")
 NORMAL (L"##4.6.19# (August 31, 2007)")
 LIST_ITEM (L"\\bu Macintosh: worked around a bug in a system library that caused Praat to crash (since version 4.6.13) "
@@ -456,7 +458,7 @@ ENTRY (L"Praat 4.1, June 5, 2003")
 	LIST_ITEM (L"\\bu TextGrid: shift times, scale times.")
 	LIST_ITEM (L"\\bu Overlap-add synthesis: reduced buzz in voiceless parts.")
 	LIST_ITEM (L"\\bu @@Sound: Change gender...")
-	LIST_ITEM (L"\\bu Editors: @@Intro 3.5. Viewing a spectral slice@.")
+	LIST_ITEM (L"\\bu Editors: @@Intro 3.6. Viewing a spectral slice@.")
 	LIST_ITEM (L"\\bu Editors: Get spectral power at cursor cross.")
 	LIST_ITEM (L"\\bu @@Sound: To PointProcess (periodic, peaks)...@")
 	LIST_ITEM (L"\\bu Ltas: merge.")
@@ -1189,7 +1191,7 @@ NORMAL (L"Changes that you make to the data with a Data Editor, "
 	"are immediately reflected in any open type-specific Editors (e.g., a SoundEditor).")
 MAN_END
 
-MAN_BEGIN (L"Intro", L"ppgb", 20041028)
+MAN_BEGIN (L"Intro", L"ppgb", 20070905)
 INTRO (L"This is an introductory tutorial to P\\s{RAAT}, a computer program "
 	"with which you can analyse, synthesize, and manipulate speech, "
 	"and create high-quality pictures for your articles and thesis. "
@@ -1207,15 +1209,17 @@ LIST_ITEM (L"@@Intro 3. Spectral analysis")
 LIST_ITEM1 (L"spectrograms: @@Intro 3.1. Viewing a spectrogram|view@, "
 	"@@Intro 3.2. Configuring the spectrogram|configure@, "
 	"@@Intro 3.3. Querying the spectrogram|query@, "
-	"@@Intro 3.4. The Spectrogram object|the Spectrogram object@.")
-LIST_ITEM1 (L"spectral slices: @@Intro 3.5. Viewing a spectral slice|view@, "
-	"@@Intro 3.6. Configuring the spectral slice|configure@, "
-	"@@Intro 3.7. The Spectrum object|the Spectrum object@.")
+	"@@Intro 3.4. Printing the spectrogram|print@, "
+	"@@Intro 3.5. The Spectrogram object|the Spectrogram object@.")
+LIST_ITEM1 (L"spectral slices: @@Intro 3.6. Viewing a spectral slice|view@, "
+	"@@Intro 3.7. Configuring the spectral slice|configure@, "
+	"@@Intro 3.8. The Spectrum object|the Spectrum object@.")
 LIST_ITEM (L"@@Intro 4. Pitch analysis")
 LIST_ITEM1 (L"pitch contours: @@Intro 4.1. Viewing a pitch contour|view@, "
 	"@@Intro 4.2. Configuring the pitch contour|configure@, "
 	"@@Intro 4.3. Querying the pitch contour|query@, "
-	"@@Intro 4.4. The Pitch object|the Pitch object@.")
+	"@@Intro 4.4. Printing the pitch contour|print@, "
+	"@@Intro 4.5. The Pitch object|the Pitch object@.")
 LIST_ITEM (L"@@Intro 5. Formant analysis")
 LIST_ITEM1 (L"formant contours: @@Intro 5.1. Viewing formant contours|view@, "
 	"@@Intro 5.2. Configuring the formant contours|configure@, "
@@ -1359,16 +1363,17 @@ NORMAL (L"If your sound file is longer than a couple of minutes, "
 	"To change these 60 seconds to something else, e.g. 500 seconds, choose ##LongSound prefs...# from the #Preferences submenu.")
 MAN_END
 
-MAN_BEGIN (L"Intro 3. Spectral analysis", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 3. Spectral analysis", L"ppgb", 20070905)
 INTRO (L"This section describes how you can analyse the spectral content of an existing sound. "
 	"You will learn how to use %spectrograms and %%spectral slices%.")
 LIST_ITEM (L"@@Intro 3.1. Viewing a spectrogram")
 LIST_ITEM (L"@@Intro 3.2. Configuring the spectrogram")
 LIST_ITEM (L"@@Intro 3.3. Querying the spectrogram")
-LIST_ITEM (L"@@Intro 3.4. The Spectrogram object")
-LIST_ITEM (L"@@Intro 3.5. Viewing a spectral slice")
-LIST_ITEM (L"@@Intro 3.6. Configuring the spectral slice")
-LIST_ITEM (L"@@Intro 3.7. The Spectrum object")
+LIST_ITEM (L"@@Intro 3.4. Printing the spectrogram")
+LIST_ITEM (L"@@Intro 3.5. The Spectrogram object")
+LIST_ITEM (L"@@Intro 3.6. Viewing a spectral slice")
+LIST_ITEM (L"@@Intro 3.7. Configuring the spectral slice")
+LIST_ITEM (L"@@Intro 3.8. The Spectrum object")
 MAN_END
 
 MAN_BEGIN (L"Intro 3.1. Viewing a spectrogram", L"ppgb", 20030513)
@@ -1567,19 +1572,28 @@ NORMAL (L"To query the power of the spectrogram at the cursor cross, "
 	"The Info window will show you the power density, expressed in Pascal^2/Hz.")
 MAN_END
 
-MAN_BEGIN (L"Intro 3.4. The Spectrogram object", L"ppgb", 20030317)
+MAN_BEGIN (L"Intro 3.4. Printing the spectrogram", L"ppgb", 20070905)
 NORMAL (L"To print a spectrogram, or to put it in an EPS file or on the clipboard for inclusion in your word processor, "
-	"you first have to create a @Spectrogram object in the @@List of Objects@. "
+	"you first have to paint it into the @@Picture window@. "
+	"You do this by choosing ##Paint visible spectrogram...# "
+	"from the Spectrum menu in the Sound or TextGrid window. "
+	"From the File menu in the Picture window, you can then print it, save it to an EPS file, "
+	"or copy it to the clipboard (to do Paste in your word processor, for instance).")
+MAN_END
+
+MAN_BEGIN (L"Intro 3.5. The Spectrogram object", L"ppgb", 20070905)
+NORMAL (L"To do more with spectrograms, you can create a @Spectrogram object in the @@List of Objects@. "
 	"You do this either by choosing ##Extract visible spectrogram# "
-	"from the Spectrum menu in the SoundEditor or TextGridEditor window, "
+	"from the Spectrum menu in the Sound or TextGrid window, "
 	"or by selecting a Sound object in the list and choosing @@Sound: To Spectrogram...@ from the #Spectrum menu. "
 	"In either case, a new Spectrogram object will appear in the list. "
 	"To draw this Spectrogram object to the @@Picture window@, "
 	"select it and choose the @@Spectrogram: Paint...@ command. "
-	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard.")
+	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard. "
+	"Many other commands are available in the @@dynamic menu@.")
 MAN_END
 
-MAN_BEGIN (L"Intro 3.5. Viewing a spectral slice", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 3.6. Viewing a spectral slice", L"ppgb", 20030316)
 INTRO (L"With ##View spectral slice# from the #Spectrum menu in the @SoundEditor and the @TextGridEditor, "
 	"you can see the frequency spectrum at the time cursor "
 	"or the average frequency spectrum in the time selection.")
@@ -1596,7 +1610,7 @@ NORMAL (L"If you drag the mouse through the wave form of the SoundEditor or Text
 MAN_END
 
 
-MAN_BEGIN (L"Intro 3.6. Configuring the spectral slice", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 3.7. Configuring the spectral slice", L"ppgb", 20030316)
 ENTRY (L"Spectral slice at the cursor")
 NORMAL (L"What P\\s{RAAT} does precisely, depends on your Spectrogram settings. "
 	"Suppose that the %%window length% setting is 0.005 seconds (5 milliseconds). "
@@ -1619,7 +1633,7 @@ NORMAL (L"If the window is Gaussian, P\\s{RAAT} will still only use the selectio
 	"and the signal near the edges will be largely ignored.")
 MAN_END
 
-MAN_BEGIN (L"Intro 3.7. The Spectrum object", L"ppgb", 20030403)
+MAN_BEGIN (L"Intro 3.8. The Spectrum object", L"ppgb", 20030403)
 NORMAL (L"To compute a Fourier frequency spectrum of an entire sound, "
 	"select a @Sound object and choose @@Sound: To Spectrum...|To Spectrum...@ from the #Spectrum menu. "
 	"A new @Spectrum object will appear in the @@List of Objects@. "
@@ -1627,12 +1641,13 @@ NORMAL (L"To compute a Fourier frequency spectrum of an entire sound, "
 	"To print it, choose one of the #Draw commands to draw the Spectrum object to the @@Picture window@ first.")
 MAN_END
 
-MAN_BEGIN (L"Intro 4. Pitch analysis", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 4. Pitch analysis", L"ppgb", 20070905)
 INTRO (L"This section describes how you can analyse the pitch contour of an existing sound.")
 LIST_ITEM (L"@@Intro 4.1. Viewing a pitch contour")
 LIST_ITEM (L"@@Intro 4.2. Configuring the pitch contour")
 LIST_ITEM (L"@@Intro 4.3. Querying the pitch contour")
-LIST_ITEM (L"@@Intro 4.4. The Pitch object")
+LIST_ITEM (L"@@Intro 4.4. Printing the pitch contour")
+LIST_ITEM (L"@@Intro 4.5. The Pitch object")
 MAN_END
 
 MAN_BEGIN (L"Intro 4.1. Viewing a pitch contour", L"ppgb", 20030521)
@@ -1750,7 +1765,16 @@ NORMAL (L"With @@Get pitch@ from the #Pitch menu in the @SoundEditor or @TextGri
 	"otherwise, ##Get pitch# writes the average pitch in the visible part of the sound.")
 MAN_END
 
-MAN_BEGIN (L"Intro 4.4. The Pitch object", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 4.4. Printing the pitch contour", L"ppgb", 20070905)
+NORMAL (L"To print a pitch contour, or to put it in an EPS file or on the clipboard for inclusion in your word processor, "
+	"you first have to draw it into the @@Picture window@. "
+	"You do this by choosing ##Draw visible pitch contour...# "
+	"from the Pitch menu in the Sound or TextGrid window. "
+	"From the File menu in the Picture window, you can then print it, save it to an EPS file, "
+	"or copy it to the clipboard (to do Paste in your word processor, for instance).")
+MAN_END
+
+MAN_BEGIN (L"Intro 4.5. The Pitch object", L"ppgb", 20030316)
 NORMAL (L"The pitch contour that is visible in the @SoundEditor or @TextGridEditor window, "
 	"can be copied as a separate @Pitch object to the @@List of Objects@. To do this, "
 	"choose @@Extract visible pitch contour@ from the #Pitch menu.")

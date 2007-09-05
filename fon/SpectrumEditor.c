@@ -22,6 +22,7 @@
  * pb 2006/04/01 dynamic range setting
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/04 new FunctionEditor API
  */
 
 #include "SpectrumEditor.h"
@@ -189,15 +190,17 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Help", L"Spectrum help", 0, cb_help_Spectrum);
 }
 
-static void viewMenuEntries (I) {
+static void createMenuItems_view (I, EditorMenu menu) {
 	iam (SpectrumEditor);
-	Editor_addCommand (me, L"View", L"Set dynamic range...", 0, cb_setDynamicRange);
-	Editor_addCommand (me, L"View", L"-- view settings --", 0, 0);
+	(void) me;
+	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, cb_setDynamicRange);
+	EditorMenu_addCommand (menu, L"-- view settings --", 0, 0);
+	inherited (SpectrumEditor) createMenuItems_view (me, menu);
 }
 
 class_methods (SpectrumEditor, FunctionEditor)
 	class_method (createMenus)
-	class_method (viewMenuEntries)
+	class_method (createMenuItems_view)
 	class_method (dataChanged)
 	class_method (draw)
 	us -> format_domain = L"Frequency domain:";

@@ -22,6 +22,7 @@
  * pb 2007/06/14 separated from melder_strings.c and melder_alloc.c
  * pb 2007/06/16 text encoding preferences
  * pb 2007/08/12 prefs in wchar_t
+ * pb 2007/09/04 Melder_malloc rather than malloc in Melder_wcsToAscii (had caused an error in counting memory leaks)
  */
 
 #include "melder.h"
@@ -344,7 +345,7 @@ void Melder_wcsToAscii_inline (const wchar_t *from, char *to) {
 
 char * Melder_wcsToAscii (const wchar_t *string) {
 	if (! string) return NULL;
-	char *result = malloc ((wcslen (string) + 1) * sizeof (char));
+	char *result = Melder_malloc (char, wcslen (string) + 1);
 	if (result == NULL) return NULL;
 	Melder_wcsToAscii_inline (string, result);
 	return result;

@@ -216,6 +216,7 @@ PointEditor PointEditor_create (Widget parent, const wchar_t *title, PointProces
 	PointEditor me = new (PointEditor); cherror
 	if (sound) {
 		my sound.data = Sound_convertToMono (sound); cherror   /* Deep copy; ownership transferred. */
+		my ownSound = TRUE;
 	}
 	FunctionEditor_init (me, parent, title, point); cherror
 	updateMenus (me);

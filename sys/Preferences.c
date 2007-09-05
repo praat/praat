@@ -67,41 +67,80 @@ static void Resources_add (const wchar_t *string, int type, void *value) {
 void Resources_addByte (const wchar_t *string, signed char *value)
 	{ Resources_add (string, bytewa, value); }
 
+void Preferences_addByte (const wchar_t *string, signed char *value, signed char defaultValue)
+	{ *value = defaultValue; Resources_add (string, bytewa, value); }
+
 void Resources_addShort (const wchar_t *string, short *value)
 	{ Resources_add (string, shortwa, value); }
+
+void Preferences_addShort (const wchar_t *string, short *value, short defaultValue)
+	{ *value = defaultValue; Resources_add (string, shortwa, value); }
 
 void Resources_addInt (const wchar_t *string, int *value)
 	{ Resources_add (string, intwa, value); }
 
+void Preferences_addInt (const wchar_t *string, int *value, int defaultValue)
+	{ *value = defaultValue; Resources_add (string, intwa, value); }
+
 void Resources_addLong (const wchar_t *string, long *value)
 	{ Resources_add (string, longwa, value); }
+
+void Preferences_addLong (const wchar_t *string, long *value, long defaultValue)
+	{ *value = defaultValue; Resources_add (string, longwa, value); }
 
 void Resources_addUbyte (const wchar_t *string, unsigned char *value)
 	{ Resources_add (string, ubytewa, value); }
 
+void Preferences_addUbyte (const wchar_t *string, unsigned char *value, unsigned char defaultValue)
+	{ *value = defaultValue; Resources_add (string, ubytewa, value); }
+
 void Resources_addUshort (const wchar_t *string, unsigned short *value)
 	{ Resources_add (string, ushortwa, value); }
+
+void Preferences_addUshort (const wchar_t *string, unsigned short *value, unsigned short defaultValue)
+	{ *value = defaultValue; Resources_add (string, ushortwa, value); }
 
 void Resources_addUint (const wchar_t *string, unsigned int *value)
 	{ Resources_add (string, uintwa, value); }
 
+void Preferences_addUint (const wchar_t *string, unsigned int *value, unsigned int defaultValue)
+	{ *value = defaultValue; Resources_add (string, uintwa, value); }
+
 void Resources_addUlong (const wchar_t *string, unsigned long *value)
 	{ Resources_add (string, ulongwa, value); }
+
+void Preferences_addUlong (const wchar_t *string, unsigned long *value, unsigned long defaultValue)
+	{ *value = defaultValue; Resources_add (string, ulongwa, value); }
 
 void Resources_addBool (const wchar_t *string, bool *value)
 	{ Resources_add (string, boolwa, value); }
 
+void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue)
+	{ *value = defaultValue; Resources_add (string, boolwa, value); }
+
 void Resources_addChar (const wchar_t *string, wchar_t *value)
 	{ Resources_add (string, charwa, value); }
+
+void Preferences_addChar (const wchar_t *string, wchar_t *value, wchar_t defaultValue)
+	{ *value = defaultValue; Resources_add (string, charwa, value); }
 
 void Resources_addFloat (const wchar_t *string, float *value)
 	{ Resources_add (string, floatwa, value); }
 
+void Preferences_addFloat (const wchar_t *string, float *value, float defaultValue)
+	{ *value = defaultValue; Resources_add (string, floatwa, value); }
+
 void Resources_addDouble (const wchar_t *string, double *value)
 	{ Resources_add (string, doublewa, value); }
 
+void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue)
+	{ *value = defaultValue; Resources_add (string, doublewa, value); }
+
 void Resources_addString (const wchar_t *string, wchar_t *value)
 	{ Resources_add (string, stringwwa, value); }
+
+void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue)
+	{ wcscpy (value, defaultValue); Resources_add (string, stringwwa, value); }
 
 void Resources_read (MelderFile file) {
 	/*

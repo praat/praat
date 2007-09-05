@@ -32,27 +32,27 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/09/02 direct drawing to Picture window
+ * pb 2007/09/04 TimeSoundAnalysisEditor
+ * pb 2007/09/05 direct drawing to picture window
  */
 
 #include "TextGridEditor.h"
-#include "FunctionEditor_Sound.h"
-#include "FunctionEditor_SoundAnalysis.h"
 #include "SpellingChecker.h"
 #include "Preferences.h"
 #include "EditorM.h"
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"
 
-#define TextGridEditor_members FunctionEditor_members \
+#define TextGridEditor_members TimeSoundAnalysisEditor_members \
 	SpellingChecker spellingChecker; \
 	long selectedTier; \
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
-	Widget publishButton, publishPreserveButton; \
+	Widget drawButton, publishButton, publishPreserveButton; \
 	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton, writeFlacButton; \
 	wchar_t *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
-#define TextGridEditor_methods FunctionEditor_methods
-class_create_opaque (TextGridEditor, FunctionEditor);
+#define TextGridEditor_methods TimeSoundAnalysisEditor_methods
+class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
 
 /********** PREFERENCES **********/
 
@@ -76,29 +76,28 @@ static struct {
 		int showNumberOf;
 			int greenMethod;
 				wchar_t greenString [Resources_STRING_BUFFER_SIZE];
-		struct { bool showBoundaries; struct { bool speckle; } pitch; } picture;
+		struct {
+			bool showBoundaries;
+			struct { bool preserveTimes; double bottom, top; bool garnish; } sound;
+			struct { bool speckle; } pitch;
+		} picture;
 }
-	preferences = {
-		TextGridEditor_DEFAULT_USE_TEXT_STYLES,
-			TextGridEditor_DEFAULT_FONT_SIZE,
-				TextGridEditor_DEFAULT_ALIGNMENT,
-					TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE,
-		TextGridEditor_DEFAULT_SHOW_NUMBER_OF,
-			TextGridEditor_DEFAULT_GREEN_METHOD,
-				TextGridEditor_DEFAULT_GREEN_STRING,
-		{ true, { false } }
-	};
+	preferences;
 
 void TextGridEditor_prefs (void) {
-	Resources_addInt (L"TextGridEditor.useTextStyles", & preferences.useTextStyles);
-	Resources_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize);
-	Resources_addInt (L"TextGridEditor.alignment", & preferences.alignment);
-	Resources_addInt (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple);
-	Resources_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf);
-	Resources_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod);
-	Resources_addString (L"TextGridEditor.greenString", & preferences.greenString [0]);
-	Resources_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries);
-	Resources_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle);
+	Preferences_addInt (L"TextGridEditor.useTextStyles", & preferences.useTextStyles, TextGridEditor_DEFAULT_USE_TEXT_STYLES);
+	Preferences_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize, TextGridEditor_DEFAULT_FONT_SIZE);
+	Preferences_addInt (L"TextGridEditor.alignment", & preferences.alignment, TextGridEditor_DEFAULT_ALIGNMENT);
+	Preferences_addInt (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple, TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE);
+	Preferences_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf, TextGridEditor_DEFAULT_SHOW_NUMBER_OF);
+	Preferences_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod, TextGridEditor_DEFAULT_GREEN_METHOD);
+	Preferences_addString (L"TextGridEditor.greenString", & preferences.greenString [0], TextGridEditor_DEFAULT_GREEN_STRING);
+	Preferences_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries, true);
+	Preferences_addBool (L"TextGridEditor.picture.sound.preserveTimes", & preferences.picture.sound.preserveTimes, true);
+	Preferences_addDouble (L"TextGridEditor.picture.sound.bottom", & preferences.picture.sound.bottom, 0.0);
+	Preferences_addDouble (L"TextGridEditor.picture.sound.top", & preferences.picture.sound.top, 0.0);
+	Preferences_addBool (L"TextGridEditor.picture.sound.garnish", & preferences.picture.sound.garnish, true);
+	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
 }
 
 /********** UTILITIES **********/
@@ -217,11 +216,48 @@ static void scrollToView (TextGridEditor me, double t) {
 static void destroy (I) {
 	iam (TextGridEditor);
 	forget (my sound.data);
-	FunctionEditor_SoundAnalysis_forget (me);
 	inherited (TextGridEditor) destroy (me);
 }
 
 /***** FILE MENU *****/
+
+static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORM ("Draw selected sound", 0)
+		our form_pictureWindow (me, cmd);
+		LABEL ("", "Sound:")
+		BOOLEAN ("Preserve times", 1);
+		REAL ("left Vertical range", "0.0")
+		REAL ("right Vertical range", "0.0 (= auto)")
+		our form_pictureMargins (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		SET_INTEGER ("Preserve times", preferences.picture.sound.preserveTimes);
+		SET_REAL ("left Vertical range", preferences.picture.sound.bottom);
+		SET_REAL ("right Vertical range", preferences.picture.sound.top);
+		our ok_pictureMargins (me, cmd);
+		SET_INTEGER ("Garnish", preferences.picture.sound.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		preferences.picture.sound.preserveTimes = GET_INTEGER ("Preserve times");
+		preferences.picture.sound.bottom = GET_REAL ("left Vertical range");
+		preferences.picture.sound.top = GET_REAL ("right Vertical range");
+		our do_pictureMargins (me, cmd);
+		preferences.picture.sound.garnish = GET_INTEGER ("Garnish");
+		if (my longSound.data == NULL && my sound.data == NULL)
+			return Melder_error1 (L"There is no sound to draw.");
+		Sound publish = my longSound.data ?
+			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.sound.preserveTimes) :
+			Sound_extractPart (my sound.data, my startSelection, my endSelection, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.sound.preserveTimes);
+		if (! publish) return 0;
+		Editor_openPraatPicture (me);
+		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.sound.bottom, preferences.picture.sound.top,
+			preferences.picture.sound.garnish, "Curve");
+		forget (publish);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
 
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
@@ -1232,7 +1268,10 @@ static void createMenus (I) {
 	inherited (TextGridEditor) createMenus (me);
 
 	if (my sound.data || my longSound.data) {
-		Editor_addCommand (me, L"File", L"Copy to list of objects:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+		Editor_addCommand (me, L"File", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+		my drawButton = Editor_addCommand (me, L"File", L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+		Editor_addCommand (me, L"File", L"-- extract sound --", 0, NULL);
+		Editor_addCommand (me, L"File", L"Copy to objects window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
 		my publishPreserveButton = Editor_addCommand (me, L"File", L"Extract sound selection (preserve times)", 0, menu_cb_PublishPreserve);
 		Editor_addCommand (me, L"File", L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_PublishPreserve);
 		my publishButton = Editor_addCommand (me, L"File", L"Extract sound selection (time from 0)", 0, menu_cb_Publish);
@@ -1340,9 +1379,8 @@ static void createMenus (I) {
 	}
 
 	if (my sound.data || my longSound.data) {
-		FunctionEditor_SoundAnalysis_addMenus (me);
+		our createMenus_analysis (me);
 	}
-	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 
 	Editor_addCommand (me, L"Help", L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
 	Editor_addCommand (me, L"Help", L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
@@ -1414,7 +1452,7 @@ static void prepareDraw (I) {
 	}
 }
 
-static void drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
+static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
 	short x1DC, x2DC, yDC;
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals -> size;
 	Graphics_WCtoDC (my graphics, my startWindow, 0.0, & x1DC, & yDC);
@@ -1524,7 +1562,7 @@ static void drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
 	Graphics_setUnderscoreIsSubscript (my graphics, TRUE);
 }
 
-static void drawTextTier (TextGridEditor me, TextTier tier, int itier) {
+static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 	int ipoint, npoint = tier -> points -> size;
 	Graphics_setPercentSignIsItalic (my graphics, my useTextStyles);
 	Graphics_setNumberSignIsBold (my graphics, my useTextStyles);
@@ -1682,9 +1720,9 @@ static void draw (I) {
 		Graphics_setFont (my graphics, Graphics_FONT_TIMES);
 		Graphics_setFontSize (my graphics, my fontSize);
 		if (isIntervalTier)
-			drawIntervalTier (me, (IntervalTier) anyTier, itier);
+			do_drawIntervalTier (me, (IntervalTier) anyTier, itier);
 		else
-			drawTextTier (me, (TextTier) anyTier, itier);
+			do_drawTextTier (me, (TextTier) anyTier, itier);
 		Graphics_resetViewport (my graphics, vp2);
 	}
 	Graphics_setColour (my graphics, Graphics_BLACK);
@@ -1695,13 +1733,13 @@ static void draw (I) {
 
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (my graphics, 0.0, 1.0, soundY, soundY2);
-		FunctionEditor_SoundAnalysis_draw (me);
+		our draw_analysis (me);
 		Graphics_flushWs (my graphics);
 		Graphics_resetViewport (my graphics, vp1);
 		/* Draw pulses. */
 		if (my pulses.show) {
 			vp1 = Graphics_insetViewport (my graphics, 0.0, 1.0, soundY2, 1.0);
-			FunctionEditor_SoundAnalysis_drawPulses (me);
+			our draw_analysis_pulses (me);
 			FunctionEditor_Sound_draw (me, -1.0, 1.0);   /* Second time, partially across the pulses. */
 			Graphics_flushWs (my graphics);
 			Graphics_resetViewport (my graphics, vp1);
@@ -1720,8 +1758,9 @@ static void draw (I) {
 	/*
 	 * Finally, us usual, update the menus.
 	 */
-	if (my publishButton) {
+	if (my drawButton) {
 		int selected = my endSelection > my startSelection ? TRUE : FALSE;
+		XtSetSensitive (my drawButton, selected);
 		XtSetSensitive (my publishButton, selected);
 		XtSetSensitive (my publishPreserveButton, selected);
 	}
@@ -1737,7 +1776,7 @@ static void draw (I) {
 	}
 }
 
-static void drawWhileDragging (TextGridEditor me, double numberOfTiers, int *selectedTier, double x, double soundY) {
+static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, int *selectedTier, double x, double soundY) {
 	long itier;
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
@@ -1750,7 +1789,7 @@ static void drawWhileDragging (TextGridEditor me, double numberOfTiers, int *sel
 	Graphics_printf (my graphics, x, 1.01, L"%f", x);
 }
 
-static void dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
+static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
 	TextGrid grid = my data;
 	int itier, numberOfTiers = grid -> tiers -> size, itierDrop;
 	double xWC = xbegin, yWC;
@@ -1801,13 +1840,13 @@ static void dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, in
 
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_BOTTOM);
-	drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	while (Graphics_mouseStillDown (my graphics)) {
-		drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+		do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 		Graphics_getMouseLocation (my graphics, & xWC, & yWC);
-		drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+		do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	}
-	drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	Graphics_xorOff (my graphics);
 
 	/*
@@ -2023,10 +2062,10 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 		} else if (drag) {
 			/*
 			 * The tier that has been clicked becomes the new selected tier.
-			 * This has to be done before the next Update, i.e. also before dragBoundary!
+			 * This has to be done before the next Update, i.e. also before do_dragBoundary!
 			 */
 			my selectedTier = iClickedTier;
-			dragBoundary (me, tnear, iClickedTier, shiftKeyPressed);
+			do_dragBoundary (me, tnear, iClickedTier, shiftKeyPressed);
 			return FunctionEditor_NO_UPDATE_NEEDED;
 		} else {
 			/*
@@ -2207,11 +2246,11 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	FunctionEditor_redraw (me);
 }
 
-static void viewMenuEntries (I) {
+static void createMenuItems_view (I, EditorMenu menu) {
 	iam (TextGridEditor);
 	if (my sound.data || my longSound.data) {
-		FunctionEditor_Sound_createMenus (me);
-		FunctionEditor_SoundAnalysis_viewMenus (me);
+		our createMenuItems_view_sound (me, menu);
+		our createMenuItems_view_analysis (me, menu);
 	}
 	Editor_addCommand (me, L"View", L"Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
 	Editor_addCommand (me, L"View", L"Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
@@ -2220,8 +2259,10 @@ static void viewMenuEntries (I) {
 	Editor_addCommand (me, L"View", L"Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
 	Editor_addCommand (me, L"View", L"Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
 	Editor_addCommand (me, L"View", L"-- select interval --", 0, 0);
+	our createMenuItems_view_zoom (me, menu);
+	our createMenuItems_view_play (me, menu);
 	if (my sound.data || my longSound.data) {
-		FunctionEditor_SoundAnalysis_selectionQueries (me);
+		our createMenuItems_query_selection (me);
 	}
 }
 
@@ -2254,7 +2295,13 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 	return _TextGridEditor_computeSoundY (me);
 }
 
-class_methods (TextGridEditor, FunctionEditor) {
+static void createMenus_pitch_picture (I) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) createMenus_pitch_picture (me);
+	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
+}
+
+class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
@@ -2271,10 +2318,11 @@ class_methods (TextGridEditor, FunctionEditor) {
 	class_method (prefs_addFields)
 	class_method (prefs_setValues)
 	class_method (prefs_getValues)
-	class_method (viewMenuEntries)
+	class_method (createMenuItems_view)
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)
+	class_method (createMenus_pitch_picture)
 	class_methods_end
 }
 
@@ -2305,7 +2353,7 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 	my selectedTier = 1;
 	FunctionEditor_init (me, parent, title, grid); cherror
 	FunctionEditor_Sound_init (me);
-	FunctionEditor_SoundAnalysis_init (me);
+	TimeSoundAnalysisEditor_init (me);
 	if (my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		FunctionEditor_marksChanged (me);

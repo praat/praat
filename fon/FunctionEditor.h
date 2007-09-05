@@ -21,22 +21,6 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2002/11/19 added show-widgets
- * pb 2002/11/19 added pulse
- * pb 2003/05/20 longestAnalysis replaces pitch.timeSteps, pitch.speckle, formant.maximumDuration
- * pb 2003/05/21 pitch floor and ceiling replace the view and analysis ranges
- * pb 2003/05/27 spectrogram maximum and autoscaling
- * pb 2003/08/23 formant.numberOfTimeSteps
- * pb 2003/09/16 advanced pitch settings: pitch.timeStep, pitch.timeStepsPerView, pitch.viewFrom, pitch.viewTo
- * pb 2003/09/18 advanced formant settings: formant.timeStep, formant.timeStepsPerView
- * pb 2003/10/01 time step settings: timeStepStrategy, fixedTimeStep, numberOfTimeStepsPerView
- * pb 2004/02/15 highlight methods
- * pb 2004/07/14 pulses.maximumAmplitudeFactor
- * pb 2004/10/24 intensity.averagingMethod
- * pb 2004/10/27 intensity.subtractMeanPressure
- * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
- * pb 2005/06/16 units
- * pb 2005/12/07 arrowScrollStep
  * pb 2007/06/10 wchar_t
  */
 
@@ -55,82 +39,14 @@
 #ifndef _LongSound_h_
 	#include "LongSound.h"
 #endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
 
 struct FunctionEditor_picture {
 	/* KEEP IN SYNC WITH PREFS. */
 	bool drawSelectionTimes, drawSelectionHairs, garnish;
 };
-struct FunctionEditor_spectrogram {
+struct FunctionEditor_sound {
 	/* KEEP IN SYNC WITH PREFS. */
-	Spectrogram data; int show;
-	/* Spectrogram settings: */
-	double viewFrom, viewTo;   /* Hertz */
-	double windowLength;   /* seconds */
-	double dynamicRange;   /* dB */
-	/* Advanced spectrogram settings: */
-	long timeSteps, frequencySteps;
-	int method;   /* Fourier */
-	int windowShape;   /* 0=Square 1=Hamming 2=Bartlett 3=Welch 4=Hanning 5=Gaussian */
-	int autoscaling;   /* yes/no */
-	double maximum;   /* dB/Hz */
-	double preemphasis;   /* dB/octave */
-	double dynamicCompression;   /* 0..1 */
-	/* Dynamic information: */
-	double cursor;
-};
-struct FunctionEditor_pitch {
-	/* KEEP IN SYNC WITH PREFS. */
-	Pitch data; int show;
-	/* Pitch settings: */
-	double floor, ceiling; int unit;
-	#define FunctionEditor_pitch_DRAWING_METHOD_CURVE  1
-	#define FunctionEditor_pitch_DRAWING_METHOD_SPECKLE  2
-	#define FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC  3
-	int drawingMethod;
-	/* Advanced pitch settings: */
-	double viewFrom, viewTo;
-	int method, veryAccurate;
-	long maximumNumberOfCandidates; double silenceThreshold, voicingThreshold;
-	double octaveCost, octaveJumpCost, voicedUnvoicedCost;
-	struct { bool speckle; } picture;
-};
-struct FunctionEditor_intensity {
-	/* KEEP IN SYNC WITH PREFS. */
-	Intensity data; int show;
-	/* Intensity settings: */
-	double viewFrom, viewTo;
-	int averagingMethod, subtractMeanPressure;
-};
-struct FunctionEditor_formant {
-	/* KEEP IN SYNC WITH PREFS. */
-	Formant data; int show;
-	/* Formant settings: */
-	double maximumFormant; long numberOfPoles;
-	double windowLength;
-	double dynamicRange, dotSize;
-	/* Advanced formant settings: */
-	int method; double preemphasisFrom;
-};
-struct FunctionEditor_pulses {
-	/* KEEP IN SYNC WITH PREFS. */
-	PointProcess data; int show;
-	/* Pulses settings: */
-	double maximumPeriodFactor, maximumAmplitudeFactor;
+	Sound data; int autoscaling;
 };
 
 #define FunctionEditor_members Editor_members \
@@ -143,32 +59,23 @@ struct FunctionEditor_pulses {
 		/* These attributes are all expressed in seconds. Invariants: */ \
 		/*    tmin <= startWindow < endWindow <= tmax; */	 \
 		/*    tmin <= (startSelection, endSelection) <= tmax; */ \
+	double arrowScrollStep; \
 	\
 	Graphics graphics;   /* Used in the 'draw' method. */ \
 	short width, height;   /* Size of drawing area in pixels. */ \
 	Widget text;   /* Optional text at top. */ \
 	int shiftKeyPressed;   /* Information for the 'play' method. */ \
 	int playingCursor, playingSelection;   /* Information for end of play. */ \
-	int numberOfFields; \
-	int fieldHeight [10]; \
-	struct { Sound data; int autoscaling; } sound; \
-	struct { LongSound data; } longSound; \
-	double longestAnalysis, arrowScrollStep; \
-	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView; \
 	struct FunctionEditor_picture picture; \
-	struct FunctionEditor_spectrogram spectrogram; \
-	struct FunctionEditor_pitch pitch; \
-	struct FunctionEditor_intensity intensity; \
-	struct FunctionEditor_formant formant; \
-	struct FunctionEditor_pulses pulses; \
+	struct FunctionEditor_sound sound; \
+	struct { LongSound data; } longSound; \
 	\
 	/* Private attributes: */ \
 	Widget drawingArea, scrollBar, groupButton, bottomArea; \
 	int group, enableUpdates, nrect; \
 	struct { double left, right, bottom, top; } rect [8]; \
 	double marker [1 + 3], playCursor; \
-	int numberOfMarkers; \
-	Widget spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+	int numberOfMarkers;
 
 #define FunctionEditor_methods Editor_methods \
 	void (*draw) (I); \
@@ -185,11 +92,13 @@ struct FunctionEditor_pulses {
 	void (*prefs_addFields) (I, EditorCommand cmd); \
 	void (*prefs_setValues) (I, EditorCommand cmd); \
 	void (*prefs_getValues) (I, EditorCommand cmd); \
-	void (*viewMenuEntries) (I); \
+	void (*createMenuItems_view) (I, EditorMenu menu); \
+	void (*createMenuItems_view_zoom) (I, EditorMenu menu); \
+	void (*createMenuItems_view_play) (I, EditorMenu menu); \
+	void (*createMenuItems_view_sound) (I, EditorMenu menu); \
 	void (*highlightSelection) (I, double left, double right, double bottom, double top); \
 	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
-	double (*getBottomOfSoundAndAnalysisArea) (I); \
-	struct { struct { struct { bool garnish; } pitch; } picture; } preferences;
+	double (*getBottomOfSoundAndAnalysisArea) (I);
 
 class_create (FunctionEditor, Editor);
 
@@ -351,6 +260,9 @@ void FunctionEditor_insetViewport (I);
 
 void FunctionEditor_setPicturePreferences (I);
 void FunctionEditor_garnish (I);   // Optionally selection times and selection hairs.
+
+void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum);
+void FunctionEditor_Sound_init (I);
 
 /* End of file FunctionEditor.h */
 #endif

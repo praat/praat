@@ -20,14 +20,11 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/09/04
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#ifndef _TimeSoundAnalysisEditor_h_
+	#include "TimeSoundAnalysisEditor.h"
 #endif
 
 typedef struct structSoundEditor *SoundEditor;

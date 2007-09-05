@@ -120,6 +120,8 @@
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
 		23B6C16D0C0633CB0090DBBB /* regularExp.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B6C16C0C0633CB0090DBBB /* regularExp.c */; };
+		23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */; };
+		23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */; };
 		23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
 		23D87E860B3C929700AD716D /* Eigen_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D87E830B3C929700AD716D /* Eigen_def.h */; };
 		23D87E870B3C929700AD716D /* Eigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D87E840B3C929700AD716D /* Eigen.c */; };
@@ -501,10 +503,6 @@
 		23E5D0D109A22A57004E41D5 /* Ui.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB3309A22902004E41D5 /* Ui.h */; };
 		23E5D0D209A22A57004E41D5 /* UiFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB3409A22902004E41D5 /* UiFile.c */; };
 		23E5D0D409A22A57004E41D5 /* melder_debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6509A22902004E41D5 /* melder_debug.c */; };
-		23E5D0D509A22A57004E41D5 /* FunctionEditor_Sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CAD109A22900004E41D5 /* FunctionEditor_Sound.c */; };
-		23E5D0D609A22A57004E41D5 /* FunctionEditor_Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAD209A22900004E41D5 /* FunctionEditor_Sound.h */; };
-		23E5D0D709A22A57004E41D5 /* FunctionEditor_SoundAnalysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CAD309A22900004E41D5 /* FunctionEditor_SoundAnalysis.c */; };
-		23E5D0D809A22A57004E41D5 /* FunctionEditor_SoundAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CAD409A22900004E41D5 /* FunctionEditor_SoundAnalysis.h */; };
 		23E5D0D909A22A57004E41D5 /* Cepstrumc.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C96909A228FD004E41D5 /* Cepstrumc.c */; };
 		23E5D0DA09A22A57004E41D5 /* Cepstrumc.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C96A09A228FD004E41D5 /* Cepstrumc.h */; };
 		23E5D0DB09A22A57004E41D5 /* LPC_and_Cepstrumc.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C96D09A228FD004E41D5 /* LPC_and_Cepstrumc.c */; };
@@ -944,6 +942,8 @@
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
 		23B6C16C0C0633CB0090DBBB /* regularExp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = regularExp.c; path = dwsys/regularExp.c; sourceTree = "<group>"; };
+		23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundAnalysisEditor.h; path = fon/TimeSoundAnalysisEditor.h; sourceTree = "<group>"; };
+		23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundAnalysisEditor.c; path = fon/TimeSoundAnalysisEditor.c; sourceTree = "<group>"; };
 		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
 		23D87E840B3C929700AD716D /* Eigen.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwsys/Eigen.c; sourceTree = "<group>"; };
 		23D87E850B3C929700AD716D /* Eigen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen.h; path = dwsys/Eigen.h; sourceTree = "<group>"; };
@@ -1333,10 +1333,6 @@
 		23E5CACE09A22900004E41D5 /* DurationTierEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DurationTierEditor.h; path = fon/DurationTierEditor.h; sourceTree = SOURCE_ROOT; };
 		23E5CACF09A22900004E41D5 /* FunctionEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = FunctionEditor.c; path = fon/FunctionEditor.c; sourceTree = SOURCE_ROOT; };
 		23E5CAD009A22900004E41D5 /* FunctionEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FunctionEditor.h; path = fon/FunctionEditor.h; sourceTree = SOURCE_ROOT; };
-		23E5CAD109A22900004E41D5 /* FunctionEditor_Sound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = FunctionEditor_Sound.c; path = fon/FunctionEditor_Sound.c; sourceTree = SOURCE_ROOT; };
-		23E5CAD209A22900004E41D5 /* FunctionEditor_Sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FunctionEditor_Sound.h; path = fon/FunctionEditor_Sound.h; sourceTree = SOURCE_ROOT; };
-		23E5CAD309A22900004E41D5 /* FunctionEditor_SoundAnalysis.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = FunctionEditor_SoundAnalysis.c; path = fon/FunctionEditor_SoundAnalysis.c; sourceTree = SOURCE_ROOT; };
-		23E5CAD409A22900004E41D5 /* FunctionEditor_SoundAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FunctionEditor_SoundAnalysis.h; path = fon/FunctionEditor_SoundAnalysis.h; sourceTree = SOURCE_ROOT; };
 		23E5CAD509A22900004E41D5 /* IntensityTierEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = IntensityTierEditor.c; path = fon/IntensityTierEditor.c; sourceTree = SOURCE_ROOT; };
 		23E5CAD609A22901004E41D5 /* IntensityTierEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IntensityTierEditor.h; path = fon/IntensityTierEditor.h; sourceTree = SOURCE_ROOT; };
 		23E5CAD709A22901004E41D5 /* ManipulationEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ManipulationEditor.c; path = fon/ManipulationEditor.c; sourceTree = SOURCE_ROOT; };
@@ -2324,10 +2320,6 @@
 				23E5CACD09A22900004E41D5 /* DurationTierEditor.c */,
 				23E5CAD009A22900004E41D5 /* FunctionEditor.h */,
 				23E5CACF09A22900004E41D5 /* FunctionEditor.c */,
-				23E5CAD209A22900004E41D5 /* FunctionEditor_Sound.h */,
-				23E5CAD109A22900004E41D5 /* FunctionEditor_Sound.c */,
-				23E5CAD409A22900004E41D5 /* FunctionEditor_SoundAnalysis.h */,
-				23E5CAD309A22900004E41D5 /* FunctionEditor_SoundAnalysis.c */,
 				23E5CAD609A22901004E41D5 /* IntensityTierEditor.h */,
 				23E5CAD509A22900004E41D5 /* IntensityTierEditor.c */,
 				23E5CAD809A22901004E41D5 /* ManipulationEditor.h */,
@@ -2350,6 +2342,8 @@
 				23E5CAE709A22901004E41D5 /* SpectrumEditor.c */,
 				23E5CAEA09A22901004E41D5 /* TextGridEditor.h */,
 				23E5CAE909A22901004E41D5 /* TextGridEditor.c */,
+				23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */,
+				23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */,
 			);
 			name = "fon editors";
 			sourceTree = "<group>";
@@ -2877,8 +2871,6 @@
 				23E5D0CD09A22A57004E41D5 /* TextEditor.h in Headers */,
 				23E5D0CF09A22A57004E41D5 /* Thing.h in Headers */,
 				23E5D0D109A22A57004E41D5 /* Ui.h in Headers */,
-				23E5D0D609A22A57004E41D5 /* FunctionEditor_Sound.h in Headers */,
-				23E5D0D809A22A57004E41D5 /* FunctionEditor_SoundAnalysis.h in Headers */,
 				23E5D0DA09A22A57004E41D5 /* Cepstrumc.h in Headers */,
 				23E5D0DC09A22A57004E41D5 /* LPC_and_Cepstrumc.h in Headers */,
 				23E5D0DE09A22A57004E41D5 /* MFCC.h in Headers */,
@@ -3130,6 +3122,7 @@
 				23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */,
 				23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */,
 				233BAB8B0C3AEFC80026BA17 /* oo_CAN_WRITE_AS_ENCODING.h in Headers */,
+				23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3409,8 +3402,6 @@
 				23E5D0D009A22A57004E41D5 /* Ui.c in Sources */,
 				23E5D0D209A22A57004E41D5 /* UiFile.c in Sources */,
 				23E5D0D409A22A57004E41D5 /* melder_debug.c in Sources */,
-				23E5D0D509A22A57004E41D5 /* FunctionEditor_Sound.c in Sources */,
-				23E5D0D709A22A57004E41D5 /* FunctionEditor_SoundAnalysis.c in Sources */,
 				23E5D0D909A22A57004E41D5 /* Cepstrumc.c in Sources */,
 				23E5D0DB09A22A57004E41D5 /* LPC_and_Cepstrumc.c in Sources */,
 				23E5D0DD09A22A57004E41D5 /* MFCC.c in Sources */,
@@ -3598,6 +3589,7 @@
 				233FEC920C1345F8003E27FB /* mad_version.c in Sources */,
 				233FEC950C1345F8003E27FB /* mp3.c in Sources */,
 				23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */,
+				23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

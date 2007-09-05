@@ -29,29 +29,35 @@
  * Erez Volk 2007/05/14 FLAC support
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/04 TimeSoundAnalysisEditor
+ * pb 2007/09/05 direct drawing to picture window
  */
 
 #include "SoundEditor.h"
-#include "FunctionEditor_Sound.h"
-#include "FunctionEditor_SoundAnalysis.h"
 #include "Sound_and_Spectrogram.h"
 #include "Pitch.h"
 #include "Preferences.h"
 #include "EditorM.h"
 
-#define SoundEditor_members FunctionEditor_members \
-	Widget publishButton, publishPreserveButton, publishWindowButton; \
+#define SoundEditor_members TimeSoundAnalysisEditor_members \
+	Widget drawButton, publishButton, publishPreserveButton, publishWindowButton; \
 	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton; \
 	Widget cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
 	double minimum, maximum; \
 	struct { int windowType; double relativeWidth; int preserveTimes; } publish; \
 	double maxBuffer;
-#define SoundEditor_methods FunctionEditor_methods
-class_create_opaque (SoundEditor, FunctionEditor);
+#define SoundEditor_methods TimeSoundAnalysisEditor_methods
+class_create_opaque (SoundEditor, TimeSoundAnalysisEditor);
 
 /********** PREFERENCES **********/
 
 static struct {
+	struct {
+		bool preserveTimes;
+		double bottom, top;
+		bool garnish;
+	}
+		picture;
 	struct {
 		int windowType;
 		double relativeWidth;
@@ -59,34 +65,65 @@ static struct {
 	}
 		publish;
 }
-	preferences = {
-		{ enumi (Sound_WINDOW, Hanning), 1.0, TRUE }   /* publish */
-	};
+	preferences;
 
 void SoundEditor_prefs (void) {
-	Resources_addInt (L"SoundEditor.publish.windowType", & preferences.publish.windowType);
-	Resources_addDouble (L"SoundEditor.publish.relativeWidth", & preferences.publish.relativeWidth);
-	Resources_addInt (L"SoundEditor.publish.preserveTimes", & preferences.publish.preserveTimes);
+	Preferences_addBool (L"SoundEditor.sound.picture.preserveTimes", & preferences.picture.preserveTimes, true);
+	Preferences_addDouble (L"SoundEditor.sound.picture.bottom", & preferences.picture.bottom, 0.0);
+	Preferences_addDouble (L"SoundEditor.sound.picture.top", & preferences.picture.top, 0.0);
+	Preferences_addBool (L"SoundEditor.sound.picture.garnish", & preferences.picture.garnish, true);
+	Preferences_addInt (L"SoundEditor.publish.windowType", & preferences.publish.windowType, enumi (Sound_WINDOW, Hanning));
+	Preferences_addDouble (L"SoundEditor.publish.relativeWidth", & preferences.publish.relativeWidth, 1.0);
+	Preferences_addInt (L"SoundEditor.publish.preserveTimes", & preferences.publish.preserveTimes, TRUE);
 }
 
 /********** METHODS **********/
-
-static void destroy (I) {
-	iam (SoundEditor);
-	FunctionEditor_SoundAnalysis_forget (me);
-	inherited (SoundEditor) destroy (me);
-}
 
 static void dataChanged (I) {
 	iam (SoundEditor);
 	Sound sound = my data;
 	Melder_assert (sound != NULL);   /* LongSound objects should not get dataChanged messages. */
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
-	FunctionEditor_SoundAnalysis_forget (me);
+	our destroy_analysis (me);
 	inherited (SoundEditor) dataChanged (me);
 }
 
 /***** FILE MENU *****/
+
+static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
+	EDITOR_IAM (SoundEditor);
+	EDITOR_FORM ("Draw selected sound", 0)
+		our form_pictureWindow (me, cmd);
+		LABEL ("", "Sound:")
+		BOOLEAN ("Preserve times", 1);
+		REAL ("left Vertical range", "0.0")
+		REAL ("right Vertical range", "0.0 (= auto)")
+		our form_pictureMargins (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		SET_INTEGER ("Preserve times", preferences.picture.preserveTimes);
+		SET_REAL ("left Vertical range", preferences.picture.bottom);
+		SET_REAL ("right Vertical range", preferences.picture.top);
+		our ok_pictureMargins (me, cmd);
+		SET_INTEGER ("Garnish", preferences.picture.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		preferences.picture.preserveTimes = GET_INTEGER ("Preserve times");
+		preferences.picture.bottom = GET_REAL ("left Vertical range");
+		preferences.picture.top = GET_REAL ("right Vertical range");
+		our do_pictureMargins (me, cmd);
+		preferences.picture.garnish = GET_INTEGER ("Garnish");
+		Sound publish = my longSound.data ? LongSound_extractPart (my data, my startSelection, my endSelection, preferences.picture.preserveTimes) :
+			Sound_extractPart (my data, my startSelection, my endSelection, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.preserveTimes);
+		if (! publish) return 0;
+		Editor_openPraatPicture (me);
+		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
+			preferences.picture.garnish, "Curve");
+		forget (publish);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
 
 static int do_publish (SoundEditor me, int preserveTimes) {
 	Sound publish = my longSound.data ? LongSound_extractPart (my data, my startSelection, my endSelection, preserveTimes) :
@@ -314,7 +351,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 		/* Force FunctionEditor to show changes. */
 
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
-		FunctionEditor_SoundAnalysis_forget (me);
+		our destroy_analysis (me);
 		FunctionEditor_ungroup (me);
 		FunctionEditor_marksChanged (me);
 		Editor_broadcastChange (me);
@@ -376,7 +413,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	/* Force FunctionEditor to show changes. */
 
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
-	FunctionEditor_SoundAnalysis_forget (me);
+	our destroy_analysis (me);
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
 	Editor_broadcastChange (me);
@@ -394,7 +431,7 @@ static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
-	FunctionEditor_SoundAnalysis_forget (me);
+	our destroy_analysis (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -404,7 +441,7 @@ static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Editor_save (me, L"Reverse selection");
 	Sound_reverse (my data, my startSelection, my endSelection);
-	FunctionEditor_SoundAnalysis_forget (me);
+	our destroy_analysis (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -532,8 +569,13 @@ static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor);
 static void createMenus (I) {
 	iam (SoundEditor);
 	inherited (SoundEditor) createMenus (me);
+	Melder_assert (my data != NULL);
+	Melder_assert (my sound.data != NULL || my longSound.data != NULL);
 
-	Editor_addCommand (me, L"File", L"Copy to list of objects:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+	Editor_addCommand (me, L"File", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
+	my drawButton = Editor_addCommand (me, L"File", L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+	Editor_addCommand (me, L"File", L"-- extract sound --", 0, NULL);
+	Editor_addCommand (me, L"File", L"Copy to objects window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
 	my publishPreserveButton = Editor_addCommand (me, L"File", L"Extract sound selection (preserve times)", 0, menu_cb_PublishPreserve);
 	Editor_addCommand (me, L"File", L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_PublishPreserve);
 	my publishButton = Editor_addCommand (me, L"File", L"Extract sound selection (time from 0)", 0, menu_cb_Publish);
@@ -568,7 +610,7 @@ static void createMenus (I) {
 		my reverseButton = Editor_addCommand (me, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
 
-	FunctionEditor_SoundAnalysis_selectionQueries (me);
+	our createMenuItems_query_selection (me);
 
 	if (my sound.data) {
 		Editor_addCommand (me, L"Select", L"-- move to zero --", 0, 0);
@@ -578,7 +620,7 @@ static void createMenus (I) {
 		Editor_addCommand (me, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	FunctionEditor_SoundAnalysis_addMenus (me);
+	our createMenus_analysis (me);
 	Editor_addCommand (me, L"Query", L"-- reports --", 0, 0);
 	Editor_addCommand (me, L"Query", L"Settings report", 0, menu_cb_SettingsReport);
 
@@ -601,6 +643,8 @@ static void draw (I) {
 	long first, last, selectedSamples;
 	Graphics_Viewport viewport;
 	int showAnalysis = my spectrogram.show || my pitch.show || my intensity.show || my formant.show;
+	Melder_assert (my data != NULL);
+	Melder_assert (my sound.data != NULL || my longSound.data != NULL);
 
 	/*
 	 * We check beforehand whether the window fits the LongSound buffer.
@@ -634,7 +678,7 @@ static void draw (I) {
 	if (showAnalysis) {
 		/* Draw spectrogram, pitch, formants. */
 		viewport = Graphics_insetViewport (my graphics, 0, 1, 0, 0.5);
-		FunctionEditor_SoundAnalysis_draw (me);
+		our draw_analysis (me);
 		Graphics_flushWs (my graphics);
 		Graphics_resetViewport (my graphics, viewport);
 	}
@@ -644,7 +688,7 @@ static void draw (I) {
 	if (my pulses.show) {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (my graphics, 0, 1, 0.5, 1);
-		FunctionEditor_SoundAnalysis_drawPulses (me);
+		our draw_analysis_pulses (me);
 		FunctionEditor_Sound_draw (me, my minimum, my maximum);   /* Second time, partially across the pulses. */
 		Graphics_flushWs (my graphics);
 		if (showAnalysis)
@@ -654,6 +698,7 @@ static void draw (I) {
 	/* Update buttons. */
 
 	selectedSamples = Sampled_getWindowSamples (my data, my startSelection, my endSelection, & first, & last);
+	XtSetSensitive (my drawButton, selectedSamples != 0);
 	XtSetSensitive (my publishButton, selectedSamples != 0);
 	XtSetSensitive (my publishPreserveButton, selectedSamples != 0);
 	if (my publishWindowButton) XtSetSensitive (my publishWindowButton, selectedSamples != 0);
@@ -688,12 +733,6 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 	return inherited (SoundEditor) click (me, xWC, yWC, shiftKeyPressed);   /* Drag & update. */
 }
 
-static void viewMenuEntries (I) {
-	iam (SoundEditor);
-	FunctionEditor_Sound_createMenus (me);
-	FunctionEditor_SoundAnalysis_viewMenus (me);
-}
-
 static void highlightSelection (I, double left, double right, double bottom, double top) {
 	iam (SoundEditor);
 	if (my spectrogram.show)
@@ -710,15 +749,13 @@ static void unhighlightSelection (I, double left, double right, double bottom, d
 		Graphics_unhighlight (my graphics, left, right, bottom, top);
 }
 
-class_methods (SoundEditor, FunctionEditor) {
-	class_method (destroy)
+class_methods (SoundEditor, TimeSoundAnalysisEditor) {
 	class_method (createMenus)
 	class_method (dataChanged)
 	class_method (prepareDraw)
 	class_method (draw)
 	class_method (play)
 	class_method (click)
-	class_method (viewMenuEntries)
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_methods_end
@@ -726,18 +763,31 @@ class_methods (SoundEditor, FunctionEditor) {
 
 SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data) {
 	SoundEditor me = new (SoundEditor);
+	Melder_assert (data != NULL);
+	Melder_assert (Thing_member (data, classLongSound) || Thing_member (data, classSound));
+	/*
+	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
+	 * because createMenus expect that one of them is not NULL.
+	 */
 	if (Thing_member (data, classLongSound))
 		my longSound.data = data;
 	else if (Thing_member (data, classSound))
 		my sound.data = data;
 	if (! me || ! FunctionEditor_init (me, parent, title, data))
 		return NULL;
-	if (my longSound.data)
-		my minimum = -1, my maximum = 1;
-	else
-		Matrix_getWindowExtrema (data, 1, my sound.data -> nx, 1, my sound.data -> ny, & my minimum, & my maximum);
 	FunctionEditor_Sound_init (me);
-	FunctionEditor_SoundAnalysis_init (me);
+	Melder_assert (my longSound.data != NULL || my sound.data != NULL);
+	TimeSoundAnalysisEditor_init (me);
+	Melder_assert (my longSound.data != NULL || my sound.data != NULL);
+	if (my longSound.data) {
+		Melder_assert (Thing_member (data, classLongSound));
+		Melder_assert (data == my longSound.data);
+		my minimum = -1, my maximum = 1;
+	} else {
+		Melder_assert (Thing_member (data, classSound));
+		Melder_assert (data == my sound.data);
+		Matrix_getWindowExtrema (data, 1, my sound.data -> nx, 1, my sound.data -> ny, & my minimum, & my maximum);
+	}
 	my publish.windowType = preferences.publish.windowType;
 	my publish.relativeWidth = preferences.publish.relativeWidth;
 	my publish.preserveTimes = preferences.publish.preserveTimes;

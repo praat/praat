@@ -23,10 +23,10 @@
  * pb 2004/04/13 less flashing
  * pb 2006/12/08 keyboard shortcuts
  * pb 2007/06/10 wchar_t
+ * pb 2007/09/04 new FunctionEditor API
  */
 
 #include "RealTierEditor.h"
-#include "FunctionEditor_Sound.h"
 #include "Preferences.h"
 #include "EditorM.h"
 
@@ -88,19 +88,21 @@ DO
 	FunctionEditor_redraw (me);
 END
 
+static void createMenuItems_view (I, EditorMenu menu) {
+	iam (RealTierEditor);
+	if (my sound.data) our createMenuItems_view_sound (me, menu);
+	inherited (RealTierEditor) createMenuItems_view (me, menu);
+	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
+	EditorMenu_addCommand (menu, our setRangeTitle, 0, cb_setRange);
+}
+
 static void createMenus (I) {
 	iam (RealTierEditor);
 	inherited (RealTierEditor) createMenus (me);
-
-	if (my sound.data) FunctionEditor_Sound_createMenus (me);
-
-	Editor_addCommand (me, L"View", L"-- view/realtier --", 0, 0);
-	Editor_addCommand (me, L"View", our setRangeTitle, 0, cb_setRange);
-
-	Editor_addMenu (me, L"Point", 0);
-	Editor_addCommand (me, L"Point", L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
-	Editor_addCommand (me, L"Point", L"Add point at cursor", 'T', cb_addPointAtCursor);
-	Editor_addCommand (me, L"Point", L"Add point at...", 0, cb_addPointAt);
+	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
+	EditorMenu_addCommand (menu, L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
+	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', cb_addPointAtCursor);
+	EditorMenu_addCommand (menu, L"Add point at...", 0, cb_addPointAt);
 }
 
 void RealTierEditor_updateScaling (I) {
@@ -373,6 +375,7 @@ class_methods (RealTierEditor, FunctionEditor)
 	us -> ymaxText = L"Maximum";   /* Normally includes units. */
 	us -> yminKey = L"Minimum";   /* Without units. */
 	us -> ymaxKey = L"Maximum";   /* Without units. */
+	class_method (createMenuItems_view)
 class_methods_end
 
 int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
