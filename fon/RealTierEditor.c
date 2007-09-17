@@ -24,6 +24,7 @@
  * pb 2006/12/08 keyboard shortcuts
  * pb 2007/06/10 wchar_t
  * pb 2007/09/04 new FunctionEditor API
+ * pb 2007/09/08 inherit from TimeSoundEditor
  */
 
 #include "RealTierEditor.h"
@@ -31,14 +32,6 @@
 #include "EditorM.h"
 
 #define SOUND_HEIGHT  0.382
-
-/********** DESTRUCTION **********/
-
-static void destroy (I) {
-	iam (RealTierEditor);
-	if (my ownSound) forget (my sound.data);
-	inherited (RealTierEditor) destroy (me);
-}
 
 /********** MENU COMMANDS **********/
 
@@ -100,9 +93,10 @@ static void createMenus (I) {
 	iam (RealTierEditor);
 	inherited (RealTierEditor) createMenus (me);
 	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
-	EditorMenu_addCommand (menu, L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, cb_addPointAt);
+	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
 }
 
 void RealTierEditor_updateScaling (I) {
@@ -142,7 +136,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		FunctionEditor_Sound_draw (me, -1.0, 1.0);
+		TimeSoundEditor_draw_sound (me, -1.0, 1.0);
 		Graphics_resetViewport (my graphics, viewport);
 		Graphics_insetViewport (my graphics, 0, 1, 0.0, 1 - SOUND_HEIGHT);
 	}
@@ -194,6 +188,7 @@ static void draw (I) {
 	}
 	Graphics_setLineWidth (my graphics, 1);
 	Graphics_setColour (my graphics, Graphics_BLACK);
+	our updateMenuItems_file (me);
 }
 
 static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
@@ -354,8 +349,7 @@ static void play (I, double tmin, double tmax) {
 		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 }
 
-class_methods (RealTierEditor, FunctionEditor)
-	class_method (destroy)
+class_methods (RealTierEditor, TimeSoundEditor)
 	class_method (dataChanged)
 	class_method (createMenus)
 	class_method (draw)
@@ -382,15 +376,7 @@ int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, 
 	iam (RealTierEditor);
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
-	Melder_assert (sound == NULL || Thing_member (sound, classSound));
-	my ownSound = ownSound;
-	if (sound && ownSound) {
-		if (! (my sound.data = Data_copy (sound))) return 0;   /* Deep copy; ownership transferred. */
-	} else {
-		my sound.data = sound;   /* Reference copy; ownership not transferred. */
-	}
-	if (! FunctionEditor_init (me, parent, title, data)) return 0;
-	FunctionEditor_Sound_init (me);
+	if (! TimeSoundEditor_init (me, parent, title, data, sound, ownSound)) return 0;
 	my ymin = -1.0;
 	RealTierEditor_updateScaling (me);
 	my ycursor = 0.382 * my ymin + 0.618 * my ymax;

@@ -120,6 +120,8 @@
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
 		23B6C16D0C0633CB0090DBBB /* regularExp.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B6C16C0C0633CB0090DBBB /* regularExp.c */; };
+		23C47C9B0C933F680024C703 /* TimeSoundEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23C47C990C933F680024C703 /* TimeSoundEditor.h */; };
+		23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23C47C9A0C933F680024C703 /* TimeSoundEditor.c */; };
 		23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */; };
 		23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */; };
 		23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
@@ -942,6 +944,8 @@
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
 		23B6C16C0C0633CB0090DBBB /* regularExp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = regularExp.c; path = dwsys/regularExp.c; sourceTree = "<group>"; };
+		23C47C990C933F680024C703 /* TimeSoundEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundEditor.h; path = fon/TimeSoundEditor.h; sourceTree = "<group>"; };
+		23C47C9A0C933F680024C703 /* TimeSoundEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundEditor.c; path = fon/TimeSoundEditor.c; sourceTree = "<group>"; };
 		23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundAnalysisEditor.h; path = fon/TimeSoundAnalysisEditor.h; sourceTree = "<group>"; };
 		23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundAnalysisEditor.c; path = fon/TimeSoundAnalysisEditor.c; sourceTree = "<group>"; };
 		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
@@ -2342,6 +2346,8 @@
 				23E5CAE709A22901004E41D5 /* SpectrumEditor.c */,
 				23E5CAEA09A22901004E41D5 /* TextGridEditor.h */,
 				23E5CAE909A22901004E41D5 /* TextGridEditor.c */,
+				23C47C990C933F680024C703 /* TimeSoundEditor.h */,
+				23C47C9A0C933F680024C703 /* TimeSoundEditor.c */,
 				23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */,
 				23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */,
 			);
@@ -3123,6 +3129,7 @@
 				23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */,
 				233BAB8B0C3AEFC80026BA17 /* oo_CAN_WRITE_AS_ENCODING.h in Headers */,
 				23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */,
+				23C47C9B0C933F680024C703 /* TimeSoundEditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3590,6 +3597,7 @@
 				233FEC950C1345F8003E27FB /* mp3.c in Sources */,
 				23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */,
 				23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */,
+				23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

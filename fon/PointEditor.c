@@ -26,6 +26,7 @@
  * pb 2007/01/28 made compatible with stereo sounds (by converting them to mono)
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/08 inherit from TimeSoundEditor
  */
 
 #include "PointEditor.h"
@@ -33,21 +34,17 @@
 #include "EditorM.h"
 #include "VoiceAnalysis.h"
 
-#define PointEditor_members FunctionEditor_members \
-	int ownSound; \
+#define PointEditor_members TimeSoundEditor_members \
+	Sound monoSound; \
 	Widget addPointAtDialog;
-#define PointEditor_methods FunctionEditor_methods
-class_create_opaque (PointEditor, FunctionEditor);
-
-static void updateMenus (PointEditor me) {
-	Editor_setMenuSensitive (me, L"Selection", my endSelection > my startSelection);
-}
+#define PointEditor_methods TimeSoundEditor_methods
+class_create_opaque (PointEditor, TimeSoundEditor);
 
 /********** DESTRUCTION **********/
 
 static void destroy (I) {
 	iam (PointEditor);
-	if (my ownSound) forget (my sound);
+	forget (my monoSound);
 	inherited (PointEditor) destroy (me);
 }
 
@@ -193,7 +190,7 @@ static void draw (I) {
 			Graphics_line (my graphics, t, -0.9, t, 0.9);
 	}
 	Graphics_setColour (my graphics, Graphics_BLACK);
-	updateMenus (me);
+	our updateMenuItems_file (me);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -205,7 +202,7 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-class_methods (PointEditor, FunctionEditor)
+class_methods (PointEditor, TimeSoundEditor)
 	class_method (destroy)
 	class_method (createMenus)
 	class_method (draw)
@@ -215,11 +212,9 @@ class_methods_end
 PointEditor PointEditor_create (Widget parent, const wchar_t *title, PointProcess point, Sound sound) {
 	PointEditor me = new (PointEditor); cherror
 	if (sound) {
-		my sound.data = Sound_convertToMono (sound); cherror   /* Deep copy; ownership transferred. */
-		my ownSound = TRUE;
+		my monoSound = Sound_convertToMono (sound); cherror
 	}
-	FunctionEditor_init (me, parent, title, point); cherror
-	updateMenus (me);
+	TimeSoundEditor_init (me, parent, title, point, my monoSound, false); cherror
 end:
 	iferror forget (me);
 	return me;

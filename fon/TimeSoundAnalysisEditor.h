@@ -39,10 +39,11 @@
  * pb 2005/12/07 arrowScrollStep
  * pb 2007/06/10 wchar_t
  * pb 2007/09/02 direct drawing to picture window
+ * pb 2007/09/08 inherit from TimeSoundEditor
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
+#ifndef _TimeSoundEditor_h_
+	#include "TimeSoundEditor.h"
 #endif
 #ifndef _Spectrogram_h_
 	#include "Spectrogram.h"
@@ -118,7 +119,7 @@ struct FunctionEditor_pulses {
 	double maximumPeriodFactor, maximumAmplitudeFactor;
 };
 
-#define TimeSoundAnalysisEditor_members FunctionEditor_members \
+#define TimeSoundAnalysisEditor_members TimeSoundEditor_members \
 	double longestAnalysis; \
 	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView; \
 	struct FunctionEditor_spectrogram spectrogram; \
@@ -128,19 +129,19 @@ struct FunctionEditor_pulses {
 	struct FunctionEditor_pulses pulses; \
 	Widget spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 
-#define TimeSoundAnalysisEditor_methods FunctionEditor_methods \
+#define TimeSoundAnalysisEditor_methods TimeSoundEditor_methods \
 	struct { struct { struct { bool garnish; } pitch; } picture; } preferences; \
-	void (*createMenus_pitch_picture) (I); \
+	void (*createMenuItems_pitch_picture) (I); \
 	void (*destroy_analysis) (I); \
 	void (*draw_analysis) (I); \
 	void (*draw_analysis_pulses) (I); \
-	void (*createMenuItems_query_selection) (I); \
+	void (*createMenuItems_query_log) (I); \
 	void (*createMenus_analysis) (I); \
 	void (*createMenuItems_view_analysis) (I, EditorMenu menu);
 
-class_create (TimeSoundAnalysisEditor, FunctionEditor);
+class_create (TimeSoundAnalysisEditor, TimeSoundEditor);
 
-void TimeSoundAnalysisEditor_init (I);
+int TimeSoundAnalysisEditor_init (I, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 void FunctionEditor_SoundAnalysis_computeSpectrogram (I);
 void FunctionEditor_SoundAnalysis_computePitch (I);
 void FunctionEditor_SoundAnalysis_computeIntensity (I);

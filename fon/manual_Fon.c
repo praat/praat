@@ -1609,7 +1609,7 @@ SCRIPT (4.5, 3,
 NORMAL (L"For the generation of speech sounds, we do not take the glottal flow itself, "
 	"but rather its derivative (this takes into account the influence of raditaion at the lips). "
 	"The glottal flow derivative is given by")
-FORMULA (L"%dU(%x)%dx = %power1 %x^^(%power1-1)^ - %power2 %x^^(%power2-1)^")
+FORMULA (L"%dU(%x)/%dx = %power1 %x^^(%power1-1)^ - %power2 %x^^(%power2-1)^")
 NORMAL (L"The flow derivative clearly shows the influence of the smoothing mentioned above. "
 	"The unsmoothed curve, with %power1 = 2.0 and %power2 = 3.0, looks like:")
 SCRIPT (4.5, 4,

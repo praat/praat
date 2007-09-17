@@ -290,17 +290,11 @@ static int UiField_widgetToValue (UiField me) {
 			if (my type == UI_NATURAL && my integerValue < 1)
 				return Melder_error3 (L"`", my nameW, L"' must be a positive whole number.");
 		} break; case UI_WORD: {
-			wchar_t *dirty = GuiText_getStringW (my text), clean [200];
-			clean [0] = '\0';
-			swscanf (dirty, L"%ls", clean);   /* Stop at first white space. */
-			/*
-			 * BUG FIX: Metrowerks CodeWarrior 11 could not stand reading %s from an empty string.
-			 */
-			if (dirty [0] == '\0') clean [0] = '\0';
-			Melder_free (dirty);
-			GuiText_setStringW (my text, clean);
 			Melder_free (my stringValue);
-			my stringValue = Melder_wcsdup (clean);
+			my stringValue = GuiText_getStringW (my text);
+			wchar_t *p = my stringValue;
+			while (*p != '\0') { if (*p == ' ' || *p == '\t') *p = '\0'; p ++; }
+			GuiText_setStringW (my text, my stringValue);
 		} break; case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getStringW (my text);

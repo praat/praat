@@ -45,7 +45,7 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 	my printf (my file, "/C { 0 360 arc stroke } bind def /FC { 0 360 arc fill } bind def\n");
 	my printf (my file,
 		"/PraatEncoding [\n"
-		"	/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
+		"	/.notdef/ccaron/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
 		"	/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
 		"	/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
 		"	/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesinglright\n"

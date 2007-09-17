@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, September 4, 2007
+# Paul Boersma, September 8, 2007
 
 include ../makefile.defs
 CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../FLAC -I ../mp3
@@ -21,7 +21,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
    SoundRecorder.o Sound_enhance.o VoiceAnalysis.o \
-   FunctionEditor.o TimeSoundAnalysisEditor.o \
+   FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
    RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \

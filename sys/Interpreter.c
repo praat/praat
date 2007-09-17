@@ -271,8 +271,9 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 				while (*p == ' ' || *p == '\t') p ++;
 				if (*p == '\n' || *p == '\0')
 					return Melder_error3 (L"Missing parameter:\n\"", line, L"\".");
-				swscanf (p, L"%ls", my parameters [++ my numberOfParameters]);
-				p += wcslen (my parameters [my numberOfParameters]);
+				wchar_t *q = my parameters [++ my numberOfParameters];
+				while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') * (q ++) = * (p ++);
+				*q = '\0';
 				npar ++;
 			} else {
 				my parameters [++ my numberOfParameters] [0] = '\0';
@@ -1199,7 +1200,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				} else error3 (L"Missing '=', '<', or '>' after variable ", command2.string, L".")
 				*endOfVariable = '\0';
 				p ++;
-				while (*p == ' ' || *p == '\t') p ++;   /* Go to first token after assignment or I/O symbol. */		
+				while (*p == ' ' || *p == '\t') p ++;   /* Go to first token after assignment or I/O symbol. */
 				if (*p == '\0') {
 					if (withFile)
 						error3 (L"Missing file name after variable ", command2.string, L".")

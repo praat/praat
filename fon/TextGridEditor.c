@@ -47,8 +47,6 @@
 	SpellingChecker spellingChecker; \
 	long selectedTier; \
 	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
-	Widget drawButton, publishButton, publishPreserveButton; \
-	Widget writeWavButton, writeAiffButton, writeAifcButton, writeNextSunButton, writeNistButton, writeFlacButton; \
 	wchar_t *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
 #define TextGridEditor_methods TimeSoundAnalysisEditor_methods
@@ -78,7 +76,7 @@ static struct {
 				wchar_t greenString [Resources_STRING_BUFFER_SIZE];
 		struct {
 			bool showBoundaries;
-			struct { bool preserveTimes; double bottom, top; bool garnish; } sound;
+			bool garnish;
 			struct { bool speckle; } pitch;
 		} picture;
 }
@@ -93,10 +91,7 @@ void TextGridEditor_prefs (void) {
 	Preferences_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod, TextGridEditor_DEFAULT_GREEN_METHOD);
 	Preferences_addString (L"TextGridEditor.greenString", & preferences.greenString [0], TextGridEditor_DEFAULT_GREEN_STRING);
 	Preferences_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries, true);
-	Preferences_addBool (L"TextGridEditor.picture.sound.preserveTimes", & preferences.picture.sound.preserveTimes, true);
-	Preferences_addDouble (L"TextGridEditor.picture.sound.bottom", & preferences.picture.sound.bottom, 0.0);
-	Preferences_addDouble (L"TextGridEditor.picture.sound.top", & preferences.picture.sound.top, 0.0);
-	Preferences_addBool (L"TextGridEditor.picture.sound.garnish", & preferences.picture.sound.garnish, true);
+	Preferences_addBool (L"TextGridEditor.picture.garnish", & preferences.picture.garnish, true);
 	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
 }
 
@@ -221,44 +216,6 @@ static void destroy (I) {
 
 /***** FILE MENU *****/
 
-static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Draw selected sound", 0)
-		our form_pictureWindow (me, cmd);
-		LABEL ("", "Sound:")
-		BOOLEAN ("Preserve times", 1);
-		REAL ("left Vertical range", "0.0")
-		REAL ("right Vertical range", "0.0 (= auto)")
-		our form_pictureMargins (me, cmd);
-		BOOLEAN ("Garnish", 1);
-	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
-		SET_INTEGER ("Preserve times", preferences.picture.sound.preserveTimes);
-		SET_REAL ("left Vertical range", preferences.picture.sound.bottom);
-		SET_REAL ("right Vertical range", preferences.picture.sound.top);
-		our ok_pictureMargins (me, cmd);
-		SET_INTEGER ("Garnish", preferences.picture.sound.garnish);
-	EDITOR_DO
-		our do_pictureWindow (me, cmd);
-		preferences.picture.sound.preserveTimes = GET_INTEGER ("Preserve times");
-		preferences.picture.sound.bottom = GET_REAL ("left Vertical range");
-		preferences.picture.sound.top = GET_REAL ("right Vertical range");
-		our do_pictureMargins (me, cmd);
-		preferences.picture.sound.garnish = GET_INTEGER ("Garnish");
-		if (my longSound.data == NULL && my sound.data == NULL)
-			return Melder_error1 (L"There is no sound to draw.");
-		Sound publish = my longSound.data ?
-			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.sound.preserveTimes) :
-			Sound_extractPart (my sound.data, my startSelection, my endSelection, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.sound.preserveTimes);
-		if (! publish) return 0;
-		Editor_openPraatPicture (me);
-		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.sound.bottom, preferences.picture.sound.top,
-			preferences.picture.sound.garnish, "Curve");
-		forget (publish);
-		Editor_closePraatPicture (me);
-	EDITOR_END
-}
-
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM_WRITE (L"Write to TextGrid text file", 0)
@@ -268,104 +225,10 @@ static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int do_publish (TextGridEditor me, int preserveTimes) {
-	Sound publish = NULL;
-	if (my endSelection <= my startSelection) return Melder_error ("No selection.");
-	if (my longSound.data) {
-		publish = LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preserveTimes);
-		iferror return 0;
-	} else if (my sound.data) {
-		publish = Sound_extractPart (my sound.data, my startSelection, my endSelection,
-			enumi (Sound_WINDOW, Rectangular), 1.0, preserveTimes);
-		iferror return 0;
-	}
-	Melder_assert (publish != NULL);
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
-}
-
-static int menu_cb_Publish (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	if (! do_publish (me, FALSE)) return 0;
-	return 1;
-}
-
-static int menu_cb_PublishPreserve (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	if (! do_publish (me, TRUE)) return 0;
-	return 1;
-}
-
-static int do_writeAny (TextGridEditor me, MelderFile file, int audioFileType) {
-	if (my startSelection >= my endSelection)
-		return Melder_error ("No samples selected.");
-	if (my longSound.data) {
-		if (! LongSound_writePartToAudioFile16 (my longSound.data, audioFileType, my startSelection, my endSelection, file)) return 0;
-	} else if (my sound.data) {
-		/* if (! Sound_writePartToAudioFile16 (my sound.data, my startSelection, my endSelection, file)) return 0; */
-	}
-	return 1;
-}
-
-static int menu_cb_WriteWav (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to WAV file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.wav", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_WAV)) return 0;
-	EDITOR_END
-}
-
-static int menu_cb_WriteAiff (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to AIFF file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.aiff", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_AIFF)) return 0;
-	EDITOR_END
-}
-
-static int menu_cb_WriteAifc (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to AIFC file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.aifc", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_AIFC)) return 0;
-	EDITOR_END
-}
-
-static int menu_cb_WriteNextSun (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to NeXT/Sun file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.au", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_NEXT_SUN)) return 0;
-	EDITOR_END
-}
-
-static int menu_cb_WriteNist (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to NIST file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.nist", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_NIST)) return 0;
-	EDITOR_END
-}
-
-static int menu_cb_WriteFlac (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to FLAC file", 0)
-		if (my longSound.data)
-			swprintf (defaultName, 300, L"%ls.flac", my longSound.data -> nameW);
-	EDITOR_DO_WRITE
-		if (! do_writeAny (me, file, Melder_FLAC)) return 0;
-	EDITOR_END
+static void createMenuItems_file_write (I, EditorMenu menu) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) createMenuItems_file_write (me, menu);
+	EditorMenu_addCommand (menu, L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
 }
 
 /***** EDIT MENU *****/
@@ -635,26 +498,22 @@ static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 		LABEL ("", "Pitch:")
 		BOOLEAN ("Speckle", 0);
 		our form_pictureMargins (me, cmd);
-		BOOLEAN ("Draw selection times", 1);
-		BOOLEAN ("Draw selection hairs", 1);
+		our form_pictureSelection (me, cmd);
 		BOOLEAN ("Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		SET_INTEGER ("Show boundaries and points", preferences.picture.showBoundaries);
 		SET_INTEGER ("Speckle", preferences.picture.pitch.speckle);
 		our ok_pictureMargins (me, cmd);
-		SET_INTEGER ("Draw selection times", my picture.drawSelectionTimes);
-		SET_INTEGER ("Draw selection hairs", my picture.drawSelectionHairs);
-		SET_INTEGER ("Garnish", my picture.garnish);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGER ("Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		preferences.picture.showBoundaries = GET_INTEGER ("Show boundaries and points");
 		preferences.picture.pitch.speckle = GET_INTEGER ("Speckle");
 		our do_pictureMargins (me, cmd);
-		my picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
-		my picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
-		my picture.garnish = GET_INTEGER ("Garnish");
-		FunctionEditor_setPicturePreferences (me);
+		our do_pictureSelection (me, cmd);
+		preferences.picture.garnish = GET_INTEGER ("Garnish");
 		if (! my pitch.show)
 			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -1267,36 +1126,6 @@ static void createMenus (I) {
 	EditorMenu menu;
 	inherited (TextGridEditor) createMenus (me);
 
-	if (my sound.data || my longSound.data) {
-		Editor_addCommand (me, L"File", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
-		my drawButton = Editor_addCommand (me, L"File", L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
-		Editor_addCommand (me, L"File", L"-- extract sound --", 0, NULL);
-		Editor_addCommand (me, L"File", L"Copy to objects window:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
-		my publishPreserveButton = Editor_addCommand (me, L"File", L"Extract sound selection (preserve times)", 0, menu_cb_PublishPreserve);
-		Editor_addCommand (me, L"File", L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_PublishPreserve);
-		my publishButton = Editor_addCommand (me, L"File", L"Extract sound selection (time from 0)", 0, menu_cb_Publish);
-		Editor_addCommand (me, L"File", L"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_Publish);
-		Editor_addCommand (me, L"File", L"Extract selection", Editor_HIDDEN, menu_cb_Publish);
-		Editor_addCommand (me, L"File", L"-- write --", 0, NULL);
-		Editor_addCommand (me, L"File", L"Copy to disk:", motif_INSENSITIVE, menu_cb_Publish /* dummy */);
-	}
-	Editor_addCommand (me, L"File", L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
-	if (my longSound.data) {
-		my writeWavButton = Editor_addCommand (me, L"File", L"Write sound selection to WAV file...", 0, menu_cb_WriteWav);
-		Editor_addCommand (me, L"File", L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		my writeAiffButton = Editor_addCommand (me, L"File", L"Write sound selection to AIFF file...", 0, menu_cb_WriteAiff);
-		Editor_addCommand (me, L"File", L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-		my writeAifcButton = Editor_addCommand (me, L"File", L"Write sound selection to AIFC file...", 0, menu_cb_WriteAifc);
-		Editor_addCommand (me, L"File", L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		my writeNextSunButton = Editor_addCommand (me, L"File", L"Write sound selection to Next/Sun file...", 0, menu_cb_WriteNextSun);
-		Editor_addCommand (me, L"File", L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-		my writeNistButton = Editor_addCommand (me, L"File", L"Write sound selection to NIST file...", 0, menu_cb_WriteNist);
-		Editor_addCommand (me, L"File", L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-		my writeFlacButton = Editor_addCommand (me, L"File", L"Write sound selection to FLAC file...", 0, menu_cb_WriteFlac);
-		Editor_addCommand (me, L"File", L"Write selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
-	}
-	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
-
 	#ifndef macintosh
 		Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
 		Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
@@ -1379,7 +1208,7 @@ static void createMenus (I) {
 	}
 
 	if (my sound.data || my longSound.data) {
-		our createMenus_analysis (me);
+		our createMenus_analysis (me);   // Insert some of the ancestor's menus *after* the TextGrid menus.
 	}
 
 	Editor_addCommand (me, L"Help", L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
@@ -1643,7 +1472,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		FunctionEditor_Sound_draw (me, -1.0, 1.0);
+		TimeSoundEditor_draw_sound (me, -1.0, 1.0);
 		Graphics_flushWs (my graphics);
 		Graphics_resetViewport (my graphics, vp1);
 	}
@@ -1740,7 +1569,7 @@ static void draw (I) {
 		if (my pulses.show) {
 			vp1 = Graphics_insetViewport (my graphics, 0.0, 1.0, soundY2, 1.0);
 			our draw_analysis_pulses (me);
-			FunctionEditor_Sound_draw (me, -1.0, 1.0);   /* Second time, partially across the pulses. */
+			TimeSoundEditor_draw_sound (me, -1.0, 1.0);   /* Second time, partially across the pulses. */
 			Graphics_flushWs (my graphics);
 			Graphics_resetViewport (my graphics, vp1);
 		}
@@ -1758,22 +1587,7 @@ static void draw (I) {
 	/*
 	 * Finally, us usual, update the menus.
 	 */
-	if (my drawButton) {
-		int selected = my endSelection > my startSelection ? TRUE : FALSE;
-		XtSetSensitive (my drawButton, selected);
-		XtSetSensitive (my publishButton, selected);
-		XtSetSensitive (my publishPreserveButton, selected);
-	}
-	if (my longSound.data) {
-		long first, last, selectedSamples;
-		selectedSamples = Sampled_getWindowSamples (my longSound.data, my startSelection, my endSelection, & first, & last);
-		XtSetSensitive (my writeWavButton, selectedSamples != 0);
-		XtSetSensitive (my writeAiffButton, selectedSamples != 0);
-		XtSetSensitive (my writeAifcButton, selectedSamples != 0);
-		XtSetSensitive (my writeNextSunButton, selectedSamples != 0);
-		XtSetSensitive (my writeNistButton, selectedSamples != 0);
-		XtSetSensitive (my writeFlacButton, selectedSamples != 0);
-	}
+	our updateMenuItems_file (me);
 }
 
 static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, int *selectedTier, double x, double soundY) {
@@ -2262,7 +2076,7 @@ static void createMenuItems_view (I, EditorMenu menu) {
 	our createMenuItems_view_zoom (me, menu);
 	our createMenuItems_view_play (me, menu);
 	if (my sound.data || my longSound.data) {
-		our createMenuItems_query_selection (me);
+		our createMenuItems_query_log (me);
 	}
 }
 
@@ -2295,9 +2109,9 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 	return _TextGridEditor_computeSoundY (me);
 }
 
-static void createMenus_pitch_picture (I) {
+static void createMenuItems_pitch_picture (I) {
 	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenus_pitch_picture (me);
+	inherited (TextGridEditor) createMenuItems_pitch_picture (me);
 	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
@@ -2305,6 +2119,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
+	class_method (createMenuItems_file_write)
 	class_method (createMenus)
 	class_method (prepareDraw)
 	class_method (draw)
@@ -2322,7 +2137,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)
-	class_method (createMenus_pitch_picture)
+	class_method (createMenuItems_pitch_picture)
 	class_methods_end
 }
 
@@ -2330,18 +2145,16 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 
 TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextGrid grid, Any sound, Any spellingChecker) {
 	TextGridEditor me = new (TextGridEditor); cherror
+	my spellingChecker = spellingChecker;   // Set in time.
 
 	/*
 	 * Include a deep copy of the Sound, owned by the TextGridEditor, or a pointer to the LongSound.
 	 */
-	if (sound) {
-		if (((Data) sound) -> methods == (Data_Table) classSound) {
-			my sound.data = Data_copy (sound); cherror
-		} else {
-			my longSound.data = sound;
-		}
+	if (sound && Thing_member (sound, classSound)) {
+		TimeSoundAnalysisEditor_init (me, parent, title, grid, sound, true); cherror
+	} else {
+		TimeSoundAnalysisEditor_init (me, parent, title, grid, sound, false); cherror
 	}
-	my spellingChecker = spellingChecker;
 
 	my useTextStyles = preferences.useTextStyles;
 	my fontSize = preferences.fontSize;
@@ -2351,9 +2164,6 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 	my greenMethod = preferences.greenMethod;
 	wcscpy (my greenString, preferences.greenString);
 	my selectedTier = 1;
-	FunctionEditor_init (me, parent, title, grid); cherror
-	FunctionEditor_Sound_init (me);
-	TimeSoundAnalysisEditor_init (me);
 	if (my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		FunctionEditor_marksChanged (me);

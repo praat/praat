@@ -20,7 +20,6 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/10/16 C++ compatible struct tags
- * pb 2005/03/02 all pref string buffers are 260 bytes long
  * pb 2006/12/21 thicker moving cursor
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
@@ -61,8 +60,7 @@ static struct {
 	int shellWidth, shellHeight;
 	int groupWindow;
 	double arrowScrollStep;
-	struct FunctionEditor_picture picture;
-	struct FunctionEditor_sound sound;
+	struct { bool drawSelectionTimes, drawSelectionHairs; } picture;
 } preferences;
 
 void FunctionEditor_prefs (void) {
@@ -72,13 +70,6 @@ void FunctionEditor_prefs (void) {
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
-	Preferences_addBool (L"FunctionEditor.picture.garnish", & preferences.picture.garnish, true);
-	Preferences_addInt (L"FunctionEditor.sound.autoscaling", & preferences.sound.autoscaling, TRUE);
-}
-
-void FunctionEditor_setPicturePreferences (I) {
-	iam (FunctionEditor);
-	preferences.picture = my picture;
 }
 
 #define maxGroup 100
@@ -405,6 +396,22 @@ static int menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void form_pictureSelection (I, EditorCommand cmd) {
+	(void) void_me;
+	BOOLEAN ("Draw selection times", 1);
+	BOOLEAN ("Draw selection hairs", 1);
+}
+static void ok_pictureSelection (I, EditorCommand cmd) {
+	(void) void_me;
+	SET_INTEGER ("Draw selection times", preferences.picture.drawSelectionTimes);
+	SET_INTEGER ("Draw selection hairs", preferences.picture.drawSelectionHairs);
+}
+static void do_pictureSelection (I, EditorCommand cmd) {
+	(void) void_me;
+	preferences.picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
+	preferences.picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
+}
+
 /********** QUERY MENU **********/
 
 static int menu_cb_getB (EDITOR_ARGS) {
@@ -429,13 +436,6 @@ static int menu_cb_getSelectionDuration (EDITOR_ARGS) {
 }
 
 /********** VIEW MENU **********/
-
-static int menu_cb_autoscaling (EDITOR_ARGS) {
-	EDITOR_IAM (FunctionEditor);
-	preferences.sound.autoscaling = my sound.autoscaling = ! my sound.autoscaling;
-	FunctionEditor_redraw (me);
-	return 1;
-}
 
 static int menu_cb_zoom (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
@@ -917,11 +917,11 @@ static int menu_cb_intro (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_view_sound (I, EditorMenu menu) {
+static void createMenuItems_file (I, EditorMenu menu) {
 	iam (FunctionEditor);
-	(void) me;
-	EditorMenu_addCommand (menu, L"Sound autoscaling", motif_CHECKABLE | (preferences.sound.autoscaling ? motif_CHECKED : 0), menu_cb_autoscaling);
-	EditorMenu_addCommand (menu, L"-- sound view --", 0, 0);
+	inherited (FunctionEditor) createMenuItems_file (me, menu);
+	EditorMenu_addCommand (menu, L"Preferences...", 0, menu_cb_preferences);
+	EditorMenu_addCommand (menu, L"-- after preferences --", 0, 0);
 }
 
 static void createMenuItems_view_zoom (I, EditorMenu menu) {
@@ -958,9 +958,6 @@ static void createMenus (I) {
 	iam (FunctionEditor);
 	inherited (FunctionEditor) createMenus (me);
 	EditorMenu menu;
-
-	Editor_addCommand (me, L"File", L"Preferences...", 0, menu_cb_preferences);
-	Editor_addCommand (me, L"File", L"-- after preferences --", 0, 0);
 
 	Editor_addMenu (me, L"Query", 0);
 	Editor_addCommand (me, L"Query", L"Get start of selection", 0, menu_cb_getB);
@@ -1107,117 +1104,6 @@ static void dataChanged (I) {
  	if (my endSelection < my tmin) my endSelection = my tmin;
  	if (my endSelection > my tmax) my endSelection = my tmax;
 	FunctionEditor_marksChanged (me);
-}
-
-void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum) {
-	iam (FunctionEditor);
-	Sound sound = my sound.data;
-	LongSound longSound = my longSound.data;
-	long first, last;
-	Melder_assert ((sound == NULL) != (longSound == NULL));
-	int fits = sound ? TRUE : LongSound_haveWindow (longSound, my startWindow, my endWindow);
-	int nchan = sound ? sound -> ny : longSound -> numberOfChannels, ichan;
-	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
-	double cursorFunctionValue = longSound ? 0.0 :
-		Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), Vector_CHANNEL_AVERAGE, 70);
-	double tfirst, tlast;
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	iferror {
-		int outOfMemory = wcsstr (Melder_getError (), L"memory") != NULL;
-		if (Melder_debug == 9) Melder_flushError (NULL); else Melder_clearError ();
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics, 0.5, 0.5, outOfMemory ? L"(out of memory)" : L"(cannot read sound file)");
-		return;
-	}
-	if (! fits) {
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics, 0.5, 0.5, L"(window too large; zoom in to see the data)");
-		return;
-	}
-	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound, my startWindow, my endWindow, & first, & last) <= 1) {
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics, 0.5, 0.5, L"(zoom out to see the data)");
-		return;
-	}
-	if (longSound) tfirst = Sampled_indexToX (longSound, first), tlast = Sampled_indexToX (longSound, last);
-	for (ichan = 1; ichan <= nchan; ichan ++) {
-		/*
-		 * BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
-		 */
-		double ymin = (double) (nchan - ichan) / nchan;
-		double ymax = (double) (nchan + 1 - ichan) / nchan;
-		Graphics_Viewport vp = Graphics_insetViewport (my graphics, 0, 1, ymin, ymax);
-		long horizontal = 0;
-		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0, value;
-		if (my sound.autoscaling) {
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-		}
-		if (minimum == maximum) { horizontal = 1; value = minimum; minimum -= 1; maximum += 1;}
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
-		if (horizontal) {
-			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_text1 (my graphics, my startWindow, value, Melder_half (value));
-		} else {
-			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, cursorFunctionValue - minimum) > 5.0) {
-				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_text1 (my graphics, my startWindow, minimum, Melder_half (minimum));
-			}
-			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, maximum - cursorFunctionValue) > 5.0) {
-				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_text1 (my graphics, my startWindow, maximum, Melder_half (maximum));
-			}
-		}
-		if (minimum < 0 && maximum > 0 && ! horizontal) {
-			Graphics_setWindow (my graphics, 0, 1, minimum, maximum);
-			if (! cursorVisible || fabs (Graphics_dyWCtoMM (my graphics, cursorFunctionValue - 0.0)) > 3.0) {
-				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_text (my graphics, 0, 0, L"0");
-			}
-			Graphics_setColour (my graphics, Graphics_CYAN);
-			Graphics_setLineType (my graphics, Graphics_DOTTED);
-			Graphics_line (my graphics, 0, 0, 1, 0);
-			Graphics_setLineType (my graphics, Graphics_DRAWN);
-		}
-		/*
-		 * Garnish the drawing area of each channel.
-		 */
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_setColour (my graphics, Graphics_CYAN);
-		Graphics_innerRectangle (my graphics, 0, 1, 0, 1);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		/*
-		 * Draw a very thin separator line underneath.
-		 */
-		if (ichan < nchan) {
-			/*Graphics_setColour (my graphics, Graphics_BLACK);*/
-			Graphics_line (my graphics, 0, 0, 1, 0);
-		}
-		/*
-		 * Draw the samples.
-		 */
-		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (me);*/
-		if (sound) {
-			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
-			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, L"%.4g", cursorFunctionValue);
-			Graphics_setColour (my graphics, Graphics_BLACK);
-			Graphics_function (my graphics, sound -> z [ichan], first, last,
-				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
-		} else {
-			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum * 32768, maximum * 32768);
-			Graphics_function16 (my graphics,
-				longSound -> buffer - longSound -> imin * nchan + (ichan - 1), nchan - 1, first, last, tfirst, tlast);
-		}
-		Graphics_resetViewport (my graphics, vp);
-	}
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 }
 
 static void draw (Any functionEditor) {
@@ -1559,6 +1445,7 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 
 class_methods (FunctionEditor, Editor) {
 	class_method (destroy)
+	class_method (createMenuItems_file)
 	class_method (createMenus)
 	class_method (createChildren)
 	class_method (dataChanged)
@@ -1588,7 +1475,9 @@ class_methods (FunctionEditor, Editor) {
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)
-	class_method (createMenuItems_view_sound)
+	class_method (form_pictureSelection)
+	class_method (ok_pictureSelection)
+	class_method (do_pictureSelection)
 	class_methods_end
 }
 
@@ -1687,11 +1576,6 @@ static void gui_cb_input (GUI_ARGS) {
 		do_keyPress (me, event);
 }
 
-void FunctionEditor_Sound_init (I) {
-	iam (FunctionEditor);
-	my sound.autoscaling = preferences.sound.autoscaling;
-}
-
 int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (FunctionEditor);
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
@@ -1717,8 +1601,6 @@ gui_cb_resize (my drawingArea, (XtPointer) me, 0);
 		gui_cb_group (NULL, (XtPointer) me, NULL);
 	my enableUpdates = TRUE;
 	my arrowScrollStep = preferences.arrowScrollStep;
-	my picture = preferences.picture;
-	FunctionEditor_Sound_init (me);
 	return 1;
 }
 
@@ -1823,13 +1705,13 @@ void FunctionEditor_drawGridLine (I, double yWC) {
 
 void FunctionEditor_garnish (I) {
 	iam (FunctionEditor);
-	if (my picture.drawSelectionTimes) {
+	if (preferences.picture.drawSelectionTimes) {
 		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my startSelection, true, true, false, NULL);
 		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my endSelection, true, true, false, NULL);
 	}
-	if (my picture.drawSelectionHairs) {
+	if (preferences.picture.drawSelectionHairs) {
 		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my startSelection, false, false, true, NULL);
 		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)

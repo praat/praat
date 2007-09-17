@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/02
+ * pb 2007/09/08
  */
 
 #ifndef _Collection_h_
@@ -73,6 +73,8 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 #define Editor_methods Thing_methods \
 	void (*goAway) (I); \
 	int editable, scriptable; \
+	void (*createMenuItems_file) (I, EditorMenu menu); \
+	void (*createMenuItems_edit) (I, EditorMenu menu); \
 	void (*createMenus) (I); \
 	void (*createChildren) (I); \
 	void (*dataChanged) (I); \

@@ -68,8 +68,10 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/01 computeXXX procedures are global on behalf of the inheritors
  * pb 2007/09/02 Picture window drawing
+ * pb 2007/09/08 inherit from TimeSoundEditor
  */
 
+#include <time.h>
 #include "TimeSoundAnalysisEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
@@ -88,29 +90,29 @@ static const wchar_t * theMessage_Cannot_compute_formant = L"The formants are no
 static const wchar_t * theMessage_Cannot_compute_intensity = L"The intensity curve is not defined at the edge of the sound.";
 static const wchar_t * theMessage_Cannot_compute_pulses = L"The pulses are not defined at the edge of the sound.";
 
+#if defined (macintosh)
+	static const wchar_t * LOG_1_FILE_NAME = L"~/Desktop/Pitch Log";
+	static const wchar_t * LOG_2_FILE_NAME = L"~/Desktop/Formant Log";
+	static const wchar_t * LOG_3_FILE_NAME = L"~/Desktop/Log script 3";
+	static const wchar_t * LOG_4_FILE_NAME = L"~/Desktop/Log script 4";
+#elif defined (WIN32)
+	static const wchar_t * LOG_1_FILE_NAME = L"C:\\WINDOWS\\DESKTOP\\Pitch Log.txt";
+	static const wchar_t * LOG_2_FILE_NAME = L"C:\\WINDOWS\\DESKTOP\\Formant Log.txt";
+	static const wchar_t * LOG_3_FILE_NAME = L"C:\\WINDOWS\\DESKTOP\\Log script 3.praat";
+	static const wchar_t * LOG_4_FILE_NAME = L"C:\\WINDOWS\\DESKTOP\\Log script 4.praat";
+#else
+	static const wchar_t * LOG_1_FILE_NAME = L"~/pitch_log";
+	static const wchar_t * LOG_2_FILE_NAME = L"~/formant_log";
+	static const wchar_t * LOG_3_FILE_NAME = L"~/log_script3";
+	static const wchar_t * LOG_4_FILE_NAME = L"~/log_script4";
+#endif
+static const wchar_t * LOG_1_FORMAT = L"Time 'time:6' seconds, pitch 'f0:2' Hertz";
+static const wchar_t * LOG_2_FORMAT = L"'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'";
+
 struct logInfo {
 	int toInfoWindow, toLogFile;
 	wchar_t fileName [Resources_STRING_BUFFER_SIZE], format [Resources_STRING_BUFFER_SIZE];
 };
-
-#if defined (macintosh)
-	#define LOG_1_FILE_NAME L"~/Desktop/Pitch Log"
-	#define LOG_2_FILE_NAME L"~/Desktop/Formant Log"
-	#define LOG_3_FILE_NAME L"~/Desktop/Log script 3"
-	#define LOG_4_FILE_NAME L"~/Desktop/Log script 4"
-#elif defined (WIN32)
-	#define LOG_1_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Pitch Log.txt"
-	#define LOG_2_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Formant Log.txt"
-	#define LOG_3_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Log script 3.praat"
-	#define LOG_4_FILE_NAME L"C:\\WINDOWS\\DESKTOP\\Log script 4.praat"
-#else
-	#define LOG_1_FILE_NAME L"~/pitch_log"
-	#define LOG_2_FILE_NAME L"~/formant_log"
-	#define LOG_3_FILE_NAME L"~/log_script3"
-	#define LOG_4_FILE_NAME L"~/log_script4"
-#endif
-#define LOG_1_FORMAT  L"Time 'time:6' seconds, pitch 'f0:2' Hertz"
-#define LOG_2_FORMAT  L"'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'"
 
 static struct {
 	double longestAnalysis;
@@ -185,7 +187,13 @@ void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addString (L"FunctionEditor.logScript4", & preferences.logScript4 [0], LOG_4_FILE_NAME);
 }
 
-static void destroy_analysis (I) {
+static void classTimeSoundAnalysisEditor_destroy (I) {
+	iam (TimeSoundAnalysisEditor);
+	our destroy_analysis (me);
+	inherited (TimeSoundAnalysisEditor) destroy (me);
+}
+
+static void classTimeSoundAnalysisEditor_destroy_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	forget (my spectrogram.data);
 	forget (my pitch.data);
@@ -194,8 +202,10 @@ static void destroy_analysis (I) {
 	forget (my pulses.data);
 }
 
-#define FunctionEditor_PART_CURSOR  1
-#define FunctionEditor_PART_SELECTION  2
+enum {
+	FunctionEditor_PART_CURSOR = 1,
+	FunctionEditor_PART_SELECTION = 2
+};
 
 static const wchar_t *FunctionEditor_partString (int part) {
 	static const wchar_t *strings [] = { L"", L"CURSOR", L"SELECTION" };
@@ -659,22 +669,18 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_FORM ("Paint visible spectrogram", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
-		BOOLEAN ("Draw selection times", 1);
-		BOOLEAN ("Draw selection hairs", 1);
+		our form_pictureSelection (me, cmd);
 		BOOLEAN ("Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
-		SET_INTEGER ("Draw selection times", my picture.drawSelectionTimes);
-		SET_INTEGER ("Draw selection hairs", my picture.drawSelectionHairs);
+		our ok_pictureSelection (me, cmd);
 		SET_INTEGER ("Garnish", my picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
-		my picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
-		my picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
+		our do_pictureSelection (me, cmd);
 		my picture.garnish = GET_INTEGER ("Garnish");
-		FunctionEditor_setPicturePreferences (me);
 		if (! my spectrogram.show)
 			return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my spectrogram.data) {
@@ -946,24 +952,20 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 		LABEL ("", "Pitch:")
 		BOOLEAN ("Speckle", 0);
 		our form_pictureMargins (me, cmd);
-		BOOLEAN ("Draw selection times", 1);
-		BOOLEAN ("Draw selection hairs", 1);
+		our form_pictureSelection (me, cmd);
 		BOOLEAN ("Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		SET_INTEGER ("Speckle", my pitch.picture.speckle);
 		our ok_pictureMargins (me, cmd);
-		SET_INTEGER ("Draw selection times", my picture.drawSelectionTimes);
-		SET_INTEGER ("Draw selection hairs", my picture.drawSelectionHairs);
+		our ok_pictureSelection (me, cmd);
 		SET_INTEGER ("Garnish", our preferences.picture.pitch.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		preferences.pitch.picture.speckle = my pitch.picture.speckle = GET_INTEGER ("Speckle");
 		our do_pictureMargins (me, cmd);
-		my picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
-		my picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
+		our do_pictureSelection (me, cmd);
 		our preferences.picture.pitch.garnish = GET_INTEGER ("Garnish");
-		FunctionEditor_setPicturePreferences (me);
 		if (! my pitch.show)
 			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -1420,7 +1422,7 @@ DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) if (! cb_getShimmer_xx (me
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda)) return 0; END
 */
 
-static void createMenuItems_view_analysis (I, EditorMenu menu) {
+static void classTimeSoundAnalysisEditor_createMenuItems_view_analysis (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"Analysis window:", motif_INSENSITIVE, menu_cb_showAnalyses);
@@ -1429,14 +1431,14 @@ static void createMenuItems_view_analysis (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"-- sound analysis --", 0, 0);
 }
 
-static void createMenuItems_view (I, EditorMenu menu) {
+static void classTimeSoundAnalysisEditor_createMenuItems_view (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	our createMenuItems_view_sound (me, menu);
 	our createMenuItems_view_analysis (me, menu);
 	inherited (TimeSoundAnalysisEditor) createMenuItems_view (me, menu);
 }
 
-static void createMenuItems_query_selection (I) {
+static void classTimeSoundAnalysisEditor_createMenuItems_query_log (I) {
 	iam (TimeSoundAnalysisEditor);
 	Editor_addCommand (me, L"Query", L"-- query log --", 0, NULL);
 	Editor_addCommand (me, L"Query", L"Log settings...", 0, menu_cb_logSettings);
@@ -1448,7 +1450,7 @@ static void createMenuItems_query_selection (I) {
 	Editor_addCommand (me, L"Query", L"Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
 }
 
-static void createMenus_analysis (I) {
+static void classTimeSoundAnalysisEditor_createMenus_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	EditorMenu menu;
 
@@ -1457,15 +1459,15 @@ static void createMenus_analysis (I) {
 		motif_CHECKABLE | (preferences.spectrogram.show ? motif_CHECKED : 0), menu_cb_showSpectrogram);
 	EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
 	EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
-	EditorMenu_addCommand (menu, L"-- query spectrogram --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- spectrum query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
 	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", motif_F7, menu_cb_getSpectralPowerAtCursorCross);
-	EditorMenu_addCommand (menu, L"-- draw spectrum to picture window --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- spectrum draw --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, L"Paint visible spectrogram...", 0, menu_cb_paintVisibleSpectrogram);
-	EditorMenu_addCommand (menu, L"-- copy spectrum to objects window --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Copy to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
+	EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
 	EditorMenu_addCommand (menu, L"View spectral slice", 'L', menu_cb_viewSpectralSlice);
 
@@ -1474,31 +1476,31 @@ static void createMenus_analysis (I) {
 		motif_CHECKABLE | (preferences.pitch.show ? motif_CHECKED : 0), menu_cb_showPitch);
 	EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
 	EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
-	EditorMenu_addCommand (menu, L"-- query pitch --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- pitch query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Pitch listing", 0, menu_cb_pitchListing);
 	EditorMenu_addCommand (menu, L"Get pitch", motif_F5, menu_cb_getPitch);
 	EditorMenu_addCommand (menu, L"Get minimum pitch", motif_F5 + motif_COMMAND, menu_cb_getMinimumPitch);
 	EditorMenu_addCommand (menu, L"Get maximum pitch", motif_F5 + motif_SHIFT, menu_cb_getMaximumPitch);
-	EditorMenu_addCommand (menu, L"-- select pitch --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- pitch select --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Select:", motif_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
 	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
 	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
-	our createMenus_pitch_picture (me);
-	EditorMenu_addCommand (menu, L"-- copy pitch to objects window --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Copy to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
+	our createMenuItems_pitch_picture (me);
+	EditorMenu_addCommand (menu, L"-- pitch extract --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
 
 	menu = Editor_addMenu (me, L"Intensity", 0);
 	my intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
 		motif_CHECKABLE | (preferences.intensity.show ? motif_CHECKED : 0), menu_cb_showIntensity);
 	EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
-	EditorMenu_addCommand (menu, L"-- query intensity --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- intensity query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
 	EditorMenu_addCommand (menu, L"Get intensity", motif_F8, menu_cb_getIntensity);
-	EditorMenu_addCommand (menu, L"-- copy intensity to objects window --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Copy to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
+	EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
 
 	menu = Editor_addMenu (me, L"Formant", 0);
@@ -1506,7 +1508,7 @@ static void createMenus_analysis (I) {
 		motif_CHECKABLE | (preferences.formant.show ? motif_CHECKED : 0), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
 	EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-	EditorMenu_addCommand (menu, L"-- query formants --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- formant query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Formant listing", 0, menu_cb_formantListing);
 	EditorMenu_addCommand (menu, L"Get first formant", motif_F1, menu_cb_getFirstFormant);
@@ -1519,15 +1521,15 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
 	EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
 	EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
-	EditorMenu_addCommand (menu, L"-- copy formant to objects window --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Copy to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, L"-- formant extract --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
 
 	menu = Editor_addMenu (me, L"Pulses", 0);
 	my pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
 		motif_CHECKABLE | (preferences.pulses.show ? motif_CHECKED : 0), menu_cb_showPulses);
 	EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
-	EditorMenu_addCommand (menu, L"-- query pulses --", 0, NULL);
+	EditorMenu_addCommand (menu, L"-- pulses query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Voice report", 0, menu_cb_voiceReport);
 	EditorMenu_addCommand (menu, L"Pulse listing", 0, menu_cb_pulseListing);
@@ -1544,9 +1546,16 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
 	EditorMenu_addCommand (menu, L"Get shimmer (dda)", 0, cb_getShimmer_dda);
 	*/
-	EditorMenu_addCommand (menu, L"-- copy pulses to objects window --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Copy to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
+	EditorMenu_addCommand (menu, L"-- pulses extract --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
+}
+
+static void classTimeSoundAnalysisEditor_createMenuItems_pitch_picture (I) {
+	iam (FunctionEditor);
+	Editor_addCommand (me, L"Pitch", L"-- pitch draw --", 0, NULL);
+	Editor_addCommand (me, L"Pitch", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
+	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
 }
 
 void FunctionEditor_SoundAnalysis_computeSpectrogram (I) {
@@ -1680,7 +1689,7 @@ void FunctionEditor_SoundAnalysis_computePulses (I) {
 	Melder_progressOn ();
 }
 
-static void draw_analysis (I) {
+static void classTimeSoundAnalysisEditor_draw_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 	double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -1889,7 +1898,7 @@ static void draw_analysis (I) {
 	}
 }
 
-static void draw_analysis_pulses (I) {
+static void classTimeSoundAnalysisEditor_draw_analysis_pulses (I) {
 	iam (TimeSoundAnalysisEditor);
 	FunctionEditor_SoundAnalysis_computePulses (me);
 	if (my pulses.show && my endWindow - my startWindow <= my longestAnalysis && my pulses.data != NULL) {
@@ -1906,35 +1915,23 @@ static void draw_analysis_pulses (I) {
 	}
 }
 
-static void createMenus_pitch_picture (I) {
-	iam (FunctionEditor);
-	Editor_addCommand (me, L"Pitch", L"-- draw pitch to picture window --", 0, NULL);
-	Editor_addCommand (me, L"Pitch", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
-	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
-}
-
-static void destroy (I) {
-	iam (TimeSoundAnalysisEditor);
-	our destroy_analysis (me);
-	inherited (TimeSoundAnalysisEditor) destroy (me);
-}
-
-class_methods (TimeSoundAnalysisEditor, FunctionEditor) {
-	class_method (destroy)
-	class_method (destroy_analysis)
-	class_method (createMenuItems_query_selection)
-	class_method (createMenuItems_view)
-	class_method (createMenuItems_view_analysis)
-	class_method (createMenus_analysis)
-	class_method (draw_analysis)
-	class_method (draw_analysis_pulses)
-	class_method (createMenus_pitch_picture)
+class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
+	class_method_local (TimeSoundAnalysisEditor, destroy)
+	class_method_local (TimeSoundAnalysisEditor, destroy_analysis)
+	class_method_local (TimeSoundAnalysisEditor, createMenuItems_query_log)
+	class_method_local (TimeSoundAnalysisEditor, createMenuItems_view)
+	class_method_local (TimeSoundAnalysisEditor, createMenuItems_view_analysis)
+	class_method_local (TimeSoundAnalysisEditor, createMenus_analysis)
+	class_method_local (TimeSoundAnalysisEditor, draw_analysis)
+	class_method_local (TimeSoundAnalysisEditor, draw_analysis_pulses)
+	class_method_local (TimeSoundAnalysisEditor, createMenuItems_pitch_picture)
 	us -> preferences.picture.pitch.garnish = true;
 	class_methods_end
 }
 
-void TimeSoundAnalysisEditor_init (I) {
+int TimeSoundAnalysisEditor_init (I, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
 	iam (TimeSoundAnalysisEditor);
+	if (! TimeSoundEditor_init (me, parent, title, data, sound, ownSound)) return 0;
 	my longestAnalysis = preferences.longestAnalysis;
 	if (preferences.timeStepStrategy < 1 || preferences.timeStepStrategy > 3)
 		preferences.timeStepStrategy = 1;
@@ -1950,6 +1947,7 @@ void TimeSoundAnalysisEditor_init (I) {
 	my intensity = preferences.intensity;
 	my formant = preferences.formant;
 	my pulses = preferences.pulses;
+	return 1;
 }
 
 /* End of file TimeSoundAnalysisEditor.c */

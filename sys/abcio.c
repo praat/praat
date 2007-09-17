@@ -98,7 +98,6 @@ static long getInteger (MelderReadString *text) {
 
 static unsigned long getUnsigned (MelderReadString *text) {
 	if (text -> readPointer == NULL) return 0;
-	unsigned long result;
 	int i;
 	wchar_t buffer [41], c;
 	for (c = getChar (text); ! isdigit (c) && c != '+'; c = getChar (text)) {
@@ -143,8 +142,7 @@ static unsigned long getUnsigned (MelderReadString *text) {
 		return 0;
 	}
 	buffer [i + 1] = '\0';
-	swscanf (buffer, L"%lu", & result);
-	return result;
+	return wcstoul (buffer, NULL, 10);
 }
 
 static double getReal (MelderReadString *text) {

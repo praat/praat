@@ -33,20 +33,10 @@
 #ifndef _Function_h_
 	#include "Function.h"
 #endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _LongSound_h_
-	#include "LongSound.h"
-#endif
 
 struct FunctionEditor_picture {
 	/* KEEP IN SYNC WITH PREFS. */
-	bool drawSelectionTimes, drawSelectionHairs, garnish;
-};
-struct FunctionEditor_sound {
-	/* KEEP IN SYNC WITH PREFS. */
-	Sound data; int autoscaling;
+	bool garnish;
 };
 
 #define FunctionEditor_members Editor_members \
@@ -67,8 +57,6 @@ struct FunctionEditor_sound {
 	int shiftKeyPressed;   /* Information for the 'play' method. */ \
 	int playingCursor, playingSelection;   /* Information for end of play. */ \
 	struct FunctionEditor_picture picture; \
-	struct FunctionEditor_sound sound; \
-	struct { LongSound data; } longSound; \
 	\
 	/* Private attributes: */ \
 	Widget drawingArea, scrollBar, groupButton, bottomArea; \
@@ -92,13 +80,18 @@ struct FunctionEditor_sound {
 	void (*prefs_addFields) (I, EditorCommand cmd); \
 	void (*prefs_setValues) (I, EditorCommand cmd); \
 	void (*prefs_getValues) (I, EditorCommand cmd); \
+	void (*createMenuItems_file_draw) (I, EditorMenu menu); \
+	void (*createMenuItems_file_extract) (I, EditorMenu menu); \
+	void (*createMenuItems_file_write) (I, EditorMenu menu); \
 	void (*createMenuItems_view) (I, EditorMenu menu); \
 	void (*createMenuItems_view_zoom) (I, EditorMenu menu); \
 	void (*createMenuItems_view_play) (I, EditorMenu menu); \
-	void (*createMenuItems_view_sound) (I, EditorMenu menu); \
 	void (*highlightSelection) (I, double left, double right, double bottom, double top); \
 	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
-	double (*getBottomOfSoundAndAnalysisArea) (I);
+	double (*getBottomOfSoundAndAnalysisArea) (I); \
+	void (*form_pictureSelection) (I, EditorCommand cmd); \
+	void (*ok_pictureSelection) (I, EditorCommand cmd); \
+	void (*do_pictureSelection) (I, EditorCommand cmd);
 
 class_create (FunctionEditor, Editor);
 
@@ -258,11 +251,7 @@ void FunctionEditor_drawGridLine (I, double yWC);
 
 void FunctionEditor_insetViewport (I);
 
-void FunctionEditor_setPicturePreferences (I);
 void FunctionEditor_garnish (I);   // Optionally selection times and selection hairs.
-
-void FunctionEditor_Sound_draw (I, double globalMinimum, double globalMaximum);
-void FunctionEditor_Sound_init (I);
 
 /* End of file FunctionEditor.h */
 #endif

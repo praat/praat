@@ -176,6 +176,7 @@ static struct Longchar_Info Longchar_database [] = {
 { 'a', '^', 0, { "/acircumflex",    444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 226, 226, 137, 137, UNICODE_LATIN_SMALL_LETTER_A_WITH_CIRCUMFLEX },
 { 'a', '~', 0, { "/atilde",         444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 227, 227, 139, 139, UNICODE_LATIN_SMALL_LETTER_A_WITH_TILDE },
 { 'a','\"', 0, { "/adieresis",      444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 228, 228, 138, 138, UNICODE_LATIN_SMALL_LETTER_A_WITH_DIAERESIS },
+{ 'c', '<', 0, { "/ccaron",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   1, UNICODE_LATIN_SMALL_LETTER_C_WITH_CARON },
 { 'e', '`', 0, { "/egrave",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 232, 232, 143, 143, UNICODE_LATIN_SMALL_LETTER_E_WITH_GRAVE },
 { 'e','\'', 0, { "/eacute",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 233, 233, 142, 142, UNICODE_LATIN_SMALL_LETTER_E_WITH_ACUTE },
 { 'e', '^', 0, { "/ecircumflex",    444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 234, 234, 144, 144, UNICODE_LATIN_SMALL_LETTER_E_WITH_CIRCUMFLEX },
@@ -473,6 +474,7 @@ static struct Longchar_Info Longchar_database [] = {
 { '0', 'v', 2, { "/ringunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  56,  56,  56,  56, UNICODE_COMBINING_RING_BELOW }, // voiceless
 { '|', 'v', 2, { "/strokeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  96,  96,  96,  96, UNICODE_COMBINING_VERTICAL_LINE_BELOW }, // syllabicity mark
 { 'N', 'v', 2, { "/bridgeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  53,  53,  53,  53, UNICODE_COMBINING_BRIDGE_BELOW }, // dental
+{ 'n', 'v', 2, { "/archunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  57,  57,  57,  57, UNICODE_COMBINING_INVERTED_BREVE_BELOW }, // nonsyllabic
 { '~', 'v', 2, { "/tildeunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  48,  48,  48,  48, UNICODE_COMBINING_TILDE_BELOW }, // creaky voiced
 { '-', 'v', 2, { "/minusunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  61,  61,  61,  61, UNICODE_COMBINING_MACRON_BELOW }, // backed
 { '~', '<', 2, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l

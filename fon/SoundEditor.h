@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/04
+ * pb 2007/09/08
  */
 
 #ifndef _TimeSoundAnalysisEditor_h_
@@ -30,8 +30,6 @@
 typedef struct structSoundEditor *SoundEditor;
 
 SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data);
-
-void SoundEditor_prefs (void);
 
 /* End of file SoundEditor.h */
 #endif

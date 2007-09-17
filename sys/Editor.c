@@ -23,6 +23,7 @@
  * pb 2005/09/01 do not add a "(cannot) undo" button if there is no data to save
  * pb 2007/06/10 wchar_t
  * pb 2007/09/02 form/ok/do_pictureWindow
+ * pb 2007/09/08 createMenuItems_file and createMenuItems_edit
  */
 
 #include "ScriptEditor.h"
@@ -295,13 +296,26 @@ DIRECT (Editor, cb_openScript)
 	TextEditor_showOpen (scriptEditor);
 END
 
+static void createMenuItems_file (I, EditorMenu menu) {
+	iam (Editor);
+	(void) me;
+	(void) menu;
+}
+
+static void createMenuItems_edit (I, EditorMenu menu) {
+	iam (Editor);
+	(void) me;
+	if (my data)
+		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
+}
+
 static void createMenus (I) {
 	iam (Editor);
-	Editor_addMenu (me, L"File", 0);
+	EditorMenu menu = Editor_addMenu (me, L"File", 0);
+	our createMenuItems_file (me, menu);
 	if (our editable) {
-		Editor_addMenu (me, L"Edit", 0);
-		if (my data)
-			my undoButton = Editor_addCommand (me, L"Edit", L"Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
+		menu = Editor_addMenu (me, L"Edit", 0);
+		our createMenuItems_edit (me, menu);
 	}
 }
 
@@ -356,6 +370,8 @@ class_methods (Editor, Thing)
 	class_method (goAway)
 	us -> editable = TRUE;
 	us -> scriptable = TRUE;
+	class_method (createMenuItems_file)
+	class_method (createMenuItems_edit)
 	class_method (createMenus)
 	class_method (createChildren)
 	class_method (dataChanged)
@@ -435,7 +451,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	if (our scriptable) {
 		Editor_addCommand (me, L"File", L"New editor script", 0, cb_newScript);
 		Editor_addCommand (me, L"File", L"Open editor script...", 0, cb_openScript);
-		Editor_addCommand (me, L"File", L"-- script --", 0, 0);
+		Editor_addCommand (me, L"File", L"-- after script --", 0, 0);
 	}
 	/*
 	 * Add the scripted commands.

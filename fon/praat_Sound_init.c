@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/09/03
+ * pb 2007/09/08
  */
 
 #include "praat.h"
@@ -1888,10 +1888,10 @@ void praat_uvafon_Sound_init (void) {
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);
 
-	SoundEditor_prefs ();
 	SoundRecorder_prefs ();
 	FunctionEditor_prefs ();
 	LongSound_prefs ();
+	TimeSoundEditor_prefs ();
 	TimeSoundAnalysisEditor_prefs ();
 
 	Melder_setRecordProc (recordProc);

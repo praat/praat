@@ -20,29 +20,25 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/09/08
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
+#ifndef _TimeSoundEditor_h_
+	#include "TimeSoundEditor.h"
 #endif
 #ifndef _RealTier_h_
 	#include "RealTier.h"
 #endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
 
-#define RealTierEditor_members FunctionEditor_members \
-	int ownSound; \
+#define RealTierEditor_members TimeSoundEditor_members \
 	double ymin, ymax, ycursor;
-#define RealTierEditor_methods FunctionEditor_methods \
+#define RealTierEditor_methods TimeSoundEditor_methods \
 	int zeroIsMinimum; \
 	const wchar_t *quantityText, *quantityKey, *leftTickFormat, *rightTickFormat; \
 	double defaultYmin, defaultYmax; \
 	const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
 	const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
-class_create (RealTierEditor, FunctionEditor);
+class_create (RealTierEditor, TimeSoundEditor);
 
 void RealTierEditor_updateScaling (I);
 /*
