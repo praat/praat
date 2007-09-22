@@ -83,7 +83,6 @@ END
 
 static void createMenuItems_view (I, EditorMenu menu) {
 	iam (RealTierEditor);
-	if (my sound.data) our createMenuItems_view_sound (me, menu);
 	inherited (RealTierEditor) createMenuItems_view (me, menu);
 	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
 	EditorMenu_addCommand (menu, our setRangeTitle, 0, cb_setRange);

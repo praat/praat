@@ -23,6 +23,8 @@
  * pb 2006/12/21 thicker moving cursor
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/19 info
+ * pb 2007/09/21 query menu hierarchical
  */
 
 #include "FunctionEditor.h"
@@ -367,6 +369,17 @@ static void destroy (I) {
 	}
 	forget (my graphics);
 	inherited (FunctionEditor) destroy (me);
+}
+
+static void info (I) {
+	iam (FunctionEditor);
+	inherited (FunctionEditor) info (me);
+	MelderInfo_writeLine4 (L"Editor start: ", Melder_double (my tmin), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Editor end: ", Melder_double (my tmax), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Window start: ", Melder_double (my startWindow), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Window end: ", Melder_double (my endWindow), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Selection start: ", Melder_double (my startSelection), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Selection end: ", Melder_double (my endSelection), L" ", our format_units);
 }
 
 static void updateText (Any functionEditor) {
@@ -924,7 +937,7 @@ static void createMenuItems_file (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"-- after preferences --", 0, 0);
 }
 
-static void createMenuItems_view_zoom (I, EditorMenu menu) {
+static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	iam (FunctionEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, our format_domain, motif_INSENSITIVE, menu_cb_zoom /* dummy */);
@@ -937,7 +950,7 @@ static void createMenuItems_view_zoom (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Scroll page forward", motif_PAGE_DOWN, menu_cb_pageDown);
 }
 
-static void createMenuItems_view_play (I, EditorMenu menu) {
+static void createMenuItems_view_audio (I, EditorMenu menu) {
 	iam (FunctionEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- play --", 0, 0);
@@ -950,21 +963,25 @@ static void createMenuItems_view_play (I, EditorMenu menu) {
 
 static void createMenuItems_view (I, EditorMenu menu) {
 	iam (FunctionEditor);
-	our createMenuItems_view_zoom (me, menu);
-	our createMenuItems_view_play (me, menu);
+	our createMenuItems_view_timeDomain (me, menu);
+	our createMenuItems_view_audio (me, menu);
+}
+
+static void createMenuItems_query (I, EditorMenu menu) {
+	iam (FunctionEditor);
+	inherited (FunctionEditor) createMenuItems_query (me, menu);
+	EditorMenu_addCommand (menu, L"-- query selection --", 0, 0);
+	EditorMenu_addCommand (menu, L"Get start of selection", 0, menu_cb_getB);
+	EditorMenu_addCommand (menu, L"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
+	EditorMenu_addCommand (menu, L"Get cursor", motif_F6, menu_cb_getCursor);
+	EditorMenu_addCommand (menu, L"Get end of selection", 0, menu_cb_getE);
+	EditorMenu_addCommand (menu, L"Get selection length", 0, menu_cb_getSelectionDuration);
 }
 
 static void createMenus (I) {
 	iam (FunctionEditor);
 	inherited (FunctionEditor) createMenus (me);
 	EditorMenu menu;
-
-	Editor_addMenu (me, L"Query", 0);
-	Editor_addCommand (me, L"Query", L"Get start of selection", 0, menu_cb_getB);
-	Editor_addCommand (me, L"Query", L"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
-	Editor_addCommand (me, L"Query", L"Get cursor", motif_F6, menu_cb_getCursor);
-	Editor_addCommand (me, L"Query", L"Get end of selection", 0, menu_cb_getE);
-	Editor_addCommand (me, L"Query", L"Get selection length", 0, menu_cb_getSelectionDuration);
 
 	menu = Editor_addMenu (me, L"View", 0);
 	our createMenuItems_view (me, menu);
@@ -1445,8 +1462,10 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 
 class_methods (FunctionEditor, Editor) {
 	class_method (destroy)
-	class_method (createMenuItems_file)
+	class_method (info)
 	class_method (createMenus)
+	class_method (createMenuItems_file)
+	class_method (createMenuItems_query)
 	class_method (createChildren)
 	class_method (dataChanged)
 	class_method (draw)
@@ -1470,8 +1489,8 @@ class_methods (FunctionEditor, Editor) {
 	class_method (prefs_setValues)
 	class_method (prefs_getValues)
 	class_method (createMenuItems_view)
-	class_method (createMenuItems_view_zoom)
-	class_method (createMenuItems_view_play)
+	class_method (createMenuItems_view_timeDomain)
+	class_method (createMenuItems_view_audio)
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)

@@ -135,9 +135,9 @@ struct FunctionEditor_pulses {
 	void (*destroy_analysis) (I); \
 	void (*draw_analysis) (I); \
 	void (*draw_analysis_pulses) (I); \
-	void (*createMenuItems_query_log) (I); \
+	void (*createMenuItems_query_log) (I, EditorMenu menu); \
 	void (*createMenus_analysis) (I); \
-	void (*createMenuItems_view_analysis) (I, EditorMenu menu);
+	void (*createMenuItems_view_sound_analysis) (I, EditorMenu menu);
 
 class_create (TimeSoundAnalysisEditor, TimeSoundEditor);
 

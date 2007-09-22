@@ -22,6 +22,7 @@
  * pb 2004/10/16 C++ compatible struct tags
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/19 info
  */
 
 #include "TimeSoundEditor.h"
@@ -48,12 +49,19 @@ void TimeSoundEditor_prefs (void) {
 	Preferences_addBool (L"TimeSoundEditor.extract.preserveTimes", & preferences.extract.preserveTimes, true);
 }
 
-/********** DESTRUCTION **********/
+/********** Thing methods **********/
 
 static void destroy (I) {
 	iam (TimeSoundEditor);
 	if (my ownSound) forget (my sound.data);
 	inherited (TimeSoundEditor) destroy (me);
+}
+
+static void info (I) {
+	iam (TimeSoundEditor);
+	inherited (TimeSoundEditor) info (me);
+	/* Sound flag: */
+	MelderInfo_writeLine2 (L"Sound autoscaling: ", Melder_boolean (my sound.autoscaling));
 }
 
 /***** FILE MENU *****/
@@ -294,6 +302,30 @@ static void createMenuItems_file (I, EditorMenu menu) {
 	}
 }
 
+/********** QUERY MENU **********/
+
+static int menu_cb_SoundInfo (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	Thing_info (my sound.data);
+	return 1;
+}
+
+static int menu_cb_LongSoundInfo (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	Thing_info (my longSound.data);
+	return 1;
+}
+
+static void createMenuItems_query_info (I, EditorMenu menu) {
+	iam (TimeSoundEditor);
+	inherited (TimeSoundEditor) createMenuItems_query_info (me, menu);
+	if (my sound.data != NULL && my sound.data != my data) {
+		EditorMenu_addCommand (menu, L"Sound info", 0, menu_cb_SoundInfo);
+	} else if (my longSound.data != NULL && my longSound.data != my data) {
+		EditorMenu_addCommand (menu, L"LongSound info", 0, menu_cb_LongSoundInfo);
+	}
+}
+
 /********** VIEW MENU **********/
 
 static int menu_cb_autoscaling (EDITOR_ARGS) {
@@ -301,6 +333,12 @@ static int menu_cb_autoscaling (EDITOR_ARGS) {
 	preferences.sound.autoscaling = my sound.autoscaling = ! my sound.autoscaling;
 	FunctionEditor_redraw (me);
 	return 1;
+}
+
+static void createMenuItems_view (I, EditorMenu menu) {
+	iam (TimeSoundEditor);
+	if (my sound.data || my longSound.data) our createMenuItems_view_sound (me, menu);
+	inherited (TimeSoundEditor) createMenuItems_view (me, menu);
 }
 
 static void createMenuItems_view_sound (I, EditorMenu menu) {
@@ -442,10 +480,13 @@ void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum) 
 
 class_methods (TimeSoundEditor, FunctionEditor) {
 	class_method (destroy)
+	class_method (info)
 	class_method (createMenuItems_file)
 	class_method (createMenuItems_file_draw)
 	class_method (createMenuItems_file_extract)
 	class_method (createMenuItems_file_write)
+	class_method (createMenuItems_query_info)
+	class_method (createMenuItems_view)
 	class_method (createMenuItems_view_sound)
 	class_method (updateMenuItems_file)
 	class_methods_end
@@ -458,10 +499,13 @@ int TimeSoundEditor_init (I, Widget parent, const wchar_t *title, Any data, Any 
 		if (ownSound) {
 			Melder_assert (Thing_member (sound, classSound));
 			my sound.data = Data_copy (sound); cherror   // Deep copy; ownership transferred.
+			Matrix_getWindowExtrema (sound, 1, my sound.data -> nx, 1, my sound.data -> ny, & my sound.minimum, & my sound.maximum);
 		} else if (Thing_member (sound, classSound)) {
 			my sound.data = sound;   // Reference copy; ownership not transferred.
+			Matrix_getWindowExtrema (sound, 1, my sound.data -> nx, 1, my sound.data -> ny, & my sound.minimum, & my sound.maximum);
 		} else if (Thing_member (sound, classLongSound)) {
 			my longSound.data = sound;
+			my sound.minimum = -1.0, my sound.maximum = 1.0;
 		} else {
 			Melder_fatal ("Invalid sound class in TimeSoundEditor_init.");
 		}

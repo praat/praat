@@ -24,6 +24,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/09/02 form/ok/do_pictureWindow
  * pb 2007/09/08 createMenuItems_file and createMenuItems_edit
+ * pb 2007/09/19 info
  */
 
 #include "ScriptEditor.h"
@@ -244,6 +245,18 @@ static void destroy (I) {
 	inherited (Editor) destroy (me);
 }
 
+static void info (I) {
+	iam (Editor);
+	MelderInfo_writeLine2 (L"Editor type: ", Thing_classNameW (me));
+	MelderInfo_writeLine2 (L"Editor name: ", my nameW ? my nameW : L"<no name>");
+	time_t today = time (NULL);
+	MelderInfo_writeLine2 (L"Date: ", Melder_peekAsciiToWcs (ctime (& today)));   /* Includes a newline. */
+	if (my data) {
+		MelderInfo_writeLine2 (L"Data type: ", ((Thing) my data) -> methods -> _classNameW);
+		MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> nameW);
+	}
+}
+
 static void nameChanged (I) {
 	iam (Editor);
 	if (my nameW)
@@ -265,9 +278,14 @@ static void restore (I) {
 		Thing_swap (my data, my previousData);
 }
 
-DIRECT (Editor, cb_close) our goAway (me); END
+static int menu_cb_close (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
+	our goAway (me);
+	return 1;
+}
 
-DIRECT (Editor, cb_undo)
+static int menu_cb_undo (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
 	our restore (me);
 	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
@@ -281,20 +299,29 @@ DIRECT (Editor, cb_undo)
 	 * Send a message to my boss (e.g., she will notify the others that depend on me).
 	 */
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (Editor, cb_searchManual) Melder_search (); END
+static int menu_cb_searchManual (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
+	Melder_search ();
+	return 1;
+}
 
-DIRECT (Editor, cb_newScript)
+static int menu_cb_newScript (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
 	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL);
 	if (! scriptEditor) return 0;
-END
+	return 1;
+}
 
-DIRECT (Editor, cb_openScript)
+static int menu_cb_openScript (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
 	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL);
 	if (! scriptEditor) return 0;
 	TextEditor_showOpen (scriptEditor);
-END
+	return 1;
+}
 
 static void createMenuItems_file (I, EditorMenu menu) {
 	iam (Editor);
@@ -306,7 +333,38 @@ static void createMenuItems_edit (I, EditorMenu menu) {
 	iam (Editor);
 	(void) me;
 	if (my data)
-		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", motif_INSENSITIVE + 'Z', cb_undo);
+		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", motif_INSENSITIVE + 'Z', menu_cb_undo);
+}
+
+static int menu_cb_settingsReport (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
+	Thing_info (me);
+	return 1;
+}
+
+static int menu_cb_info (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
+	if (my data) Thing_info (my data);
+	return 1;
+}
+
+static void createMenuItems_query (I, EditorMenu menu) {
+	iam (Editor);
+	our createMenuItems_query_info (me, menu);
+}
+
+static void createMenuItems_query_info (I, EditorMenu menu) {
+	iam (Editor);
+	static MelderStringW title = { 0 };
+	MelderStringW_empty (& title);
+	MelderStringW_append2 (& title, our _classNameW, L" info");
+	EditorMenu_addCommand (menu, title.string, 0, menu_cb_settingsReport);
+	EditorMenu_addCommand (menu, L"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
+	if (my data) {
+		MelderStringW_empty (& title);
+		MelderStringW_append2 (& title, Thing_classNameW (my data), L" info");
+		EditorMenu_addCommand (menu, title.string, 0, menu_cb_info);
+	}
 }
 
 static void createMenus (I) {
@@ -316,6 +374,10 @@ static void createMenus (I) {
 	if (our editable) {
 		menu = Editor_addMenu (me, L"Edit", 0);
 		our createMenuItems_edit (me, menu);
+	}
+	if (our createMenuItems_query) {
+		menu = Editor_addMenu (me, L"Query", 0);
+		our createMenuItems_query (me, menu);
 	}
 }
 
@@ -364,14 +426,17 @@ static void do_pictureMargins (I, EditorCommand cmd) {
 	preferences.picture.writeNameAtTop = GET_INTEGER ("Write name at top") - 1;
 }
 
-class_methods (Editor, Thing)
+class_methods (Editor, Thing) {
 	class_method (destroy)
+	class_method (info)
 	class_method (nameChanged)
 	class_method (goAway)
 	us -> editable = TRUE;
 	us -> scriptable = TRUE;
 	class_method (createMenuItems_file)
 	class_method (createMenuItems_edit)
+	class_method (createMenuItems_query)
+	class_method (createMenuItems_query_info)
 	class_method (createMenus)
 	class_method (createChildren)
 	class_method (dataChanged)
@@ -384,12 +449,13 @@ class_methods (Editor, Thing)
 	class_method (form_pictureMargins)
 	class_method (ok_pictureMargins)
 	class_method (do_pictureMargins)
-class_methods_end
+	class_methods_end
+}
 
-MOTIF_CALLBACK (cb_goAway)
-	iam (Editor);
+static void gui_cb_goAway (GUI_ARGS) {
+	GUI_IAM (Editor);
 	our goAway (me);
-MOTIF_CALLBACK_END
+}
 
 extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (I, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
@@ -426,7 +492,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 		/* Catch Window Manager "Close" and "Quit". */
 		Atom atom = XmInternAtom (XtDisplay (my shell), "WM_DELETE_WINDOW", True);
 		XmAddWMProtocols (my shell, & atom, 1);
-		XmAddWMProtocolCallback (my shell, atom, cb_goAway, (void *) me);
+		XmAddWMProtocolCallback (my shell, atom, gui_cb_goAway, (void *) me);
 	}
 	#endif
 	XtVaSetValues (my shell, XmNdeleteResponse, XmDO_NOTHING,
@@ -447,10 +513,10 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	our createMenus (me);
 	Melder_clearError ();   /* TEMPORARY: to protect against CategoriesEditor */
 	Editor_addCommand (me, L"Help", L"-- search --", 0, NULL);
-	my searchButton = Editor_addCommand (me, L"Help", L"Search manual...", 'M', cb_searchManual);
+	my searchButton = Editor_addCommand (me, L"Help", L"Search manual...", 'M', menu_cb_searchManual);
 	if (our scriptable) {
-		Editor_addCommand (me, L"File", L"New editor script", 0, cb_newScript);
-		Editor_addCommand (me, L"File", L"Open editor script...", 0, cb_openScript);
+		Editor_addCommand (me, L"File", L"New editor script", 0, menu_cb_newScript);
+		Editor_addCommand (me, L"File", L"Open editor script...", 0, menu_cb_openScript);
 		Editor_addCommand (me, L"File", L"-- after script --", 0, 0);
 	}
 	/*
@@ -458,7 +524,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	 */
 	praat_addCommandsToEditor (me);
 
-	Editor_addCommand (me, L"File", L"Close", 'W', cb_close);
+	Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
 	XtManageChild (my menuBar);
 
 	our createChildren (me);

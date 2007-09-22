@@ -75,6 +75,8 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	int editable, scriptable; \
 	void (*createMenuItems_file) (I, EditorMenu menu); \
 	void (*createMenuItems_edit) (I, EditorMenu menu); \
+	void (*createMenuItems_query) (I, EditorMenu menu); \
+	void (*createMenuItems_query_info) (I, EditorMenu menu); \
 	void (*createMenus) (I); \
 	void (*createChildren) (I); \
 	void (*dataChanged) (I); \

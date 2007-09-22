@@ -136,33 +136,36 @@ static int cb_saveAs_ok (Any sender, I) {
 	return 1;
 }
 
-DIRECT (TextEditor, cb_saveAs)
+static int menu_cb_saveAs (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	wchar_t defaultName [300];
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, 0);
 	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my nameW ? MelderFile_nameW (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
-END
+	return 1;
+}
 
-MOTIF_CALLBACK (cb_saveAndOpen)
+static void gui_cb_saveAndOpen (GUI_ARGS) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		cb_showOpen (cmd, NULL);
 	} else {
-		cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL);
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_discardAndOpen)
+static void gui_cb_discardAndOpen (GUI_ARGS) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	XtUnmanageChild (my dirtyOpenDialog);
 	cb_showOpen (cmd, NULL);
-MOTIF_CALLBACK_END
+}
 
-DIRECT (TextEditor, cb_open)
+static int menu_cb_open (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	if (my dirty) {
 		if (! my dirtyOpenDialog) {
 			my dirtyOpenDialog = XmCreateMessageDialog (my shell, "dirtyOpenDialog", NULL, 0);
@@ -173,34 +176,36 @@ DIRECT (TextEditor, cb_open)
 				motif_argXmString (XmNokLabelString, "Save & Open"),
 				motif_argXmString (XmNhelpLabelString, "Discard & Open"),
 				NULL);
-			XtAddCallback (my dirtyOpenDialog, XmNokCallback, cb_saveAndOpen, cmd);
-			XtAddCallback (my dirtyOpenDialog, XmNhelpCallback, cb_discardAndOpen, cmd);
+			XtAddCallback (my dirtyOpenDialog, XmNokCallback, gui_cb_saveAndOpen, cmd);
+			XtAddCallback (my dirtyOpenDialog, XmNhelpCallback, gui_cb_discardAndOpen, cmd);
 		}
 		XtManageChild (my dirtyOpenDialog);
 	} else {
 		cb_showOpen (cmd, sender);
 	}
-END
+	return 1;
+}
 
-MOTIF_CALLBACK (cb_saveAndNew)
+static void gui_cb_saveAndNew (GUI_ARGS) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		newDocument (me);
 	} else {
-		cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL);
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_discardAndNew)
+static void gui_cb_discardAndNew (GUI_ARGS) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	XtUnmanageChild (my dirtyNewDialog);
 	newDocument (me);
-MOTIF_CALLBACK_END
+}
 
-DIRECT (TextEditor, cb_new)
+static int menu_cb_new (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	if (our fileBased && my dirty) {
 		if (! my dirtyNewDialog) {
 			my dirtyNewDialog = XmCreateMessageDialog (my shell, "dirtyNewDialog", NULL, 0);
@@ -211,26 +216,31 @@ DIRECT (TextEditor, cb_new)
 				motif_argXmString (XmNokLabelString, "Save & New"),
 				motif_argXmString (XmNhelpLabelString, "Discard & New"),
 				NULL);
-			XtAddCallback (my dirtyNewDialog, XmNokCallback, cb_saveAndNew, cmd);
-			XtAddCallback (my dirtyNewDialog, XmNhelpCallback, cb_discardAndNew, cmd);
+			XtAddCallback (my dirtyNewDialog, XmNokCallback, gui_cb_saveAndNew, cmd);
+			XtAddCallback (my dirtyNewDialog, XmNhelpCallback, gui_cb_discardAndNew, cmd);
 		}
 		XtManageChild (my dirtyNewDialog);
 	} else {
 		newDocument (me);
 	}
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_clear)
+static int menu_cb_clear (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	our clear (me);
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_save)
+static int menu_cb_save (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	if (my name) {
 		if (! saveDocument (me, & my file)) return 0;
 	} else {
-		cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL);
 	}
-END
+	return 1;
+}
 
 MOTIF_CALLBACK (cb_saveAndClose)
 	iam (TextEditor);
@@ -238,7 +248,7 @@ MOTIF_CALLBACK (cb_saveAndClose)
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL);
+		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL);
 	}
 MOTIF_CALLBACK_END
 
@@ -418,17 +428,17 @@ static void createMenus (I) {
 	iam (TextEditor);
 	inherited (TextEditor) createMenus (me);
 	if (our fileBased) {
-		Editor_addCommand (me, L"File", L"New", 'N', cb_new);
-		Editor_addCommand (me, L"File", L"Open...", 'O', cb_open);
+		Editor_addCommand (me, L"File", L"New", 'N', menu_cb_new);
+		Editor_addCommand (me, L"File", L"Open...", 'O', menu_cb_open);
 	} else {
-		Editor_addCommand (me, L"File", L"Clear", 'N', cb_clear);
+		Editor_addCommand (me, L"File", L"Clear", 'N', menu_cb_clear);
 	}
 	Editor_addCommand (me, L"File", L"-- save --", 0, NULL);
 	if (our fileBased) {
-		Editor_addCommand (me, L"File", L"Save", 'S', cb_save);
-		Editor_addCommand (me, L"File", L"Save as...", 0, cb_saveAs);
+		Editor_addCommand (me, L"File", L"Save", 'S', menu_cb_save);
+		Editor_addCommand (me, L"File", L"Save as...", 0, menu_cb_saveAs);
 	} else {
-		Editor_addCommand (me, L"File", L"Save as...", 'S', cb_saveAs);
+		Editor_addCommand (me, L"File", L"Save as...", 'S', menu_cb_saveAs);
 	}
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Undo", 'Z', cb_undo);
@@ -479,6 +489,7 @@ class_methods (TextEditor, Editor)
 	class_method (createChildren)
 	class_method (createMenus)
 	us -> fileBased = TRUE;
+	us -> createMenuItems_query = NULL;
 	class_method (clear)
 class_methods_end
 

@@ -2060,24 +2060,15 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	FunctionEditor_redraw (me);
 }
 
-static void createMenuItems_view (I, EditorMenu menu) {
+static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	iam (TextGridEditor);
-	if (my sound.data || my longSound.data) {
-		our createMenuItems_view_sound (me, menu);
-		our createMenuItems_view_analysis (me, menu);
-	}
-	Editor_addCommand (me, L"View", L"Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
-	Editor_addCommand (me, L"View", L"Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
-	Editor_addCommand (me, L"View", L"Select previous interval", motif_OPTION | motif_LEFT_ARROW, menu_cb_SelectPreviousInterval);
-	Editor_addCommand (me, L"View", L"Select next interval", motif_OPTION | motif_RIGHT_ARROW, menu_cb_SelectNextInterval);
-	Editor_addCommand (me, L"View", L"Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
-	Editor_addCommand (me, L"View", L"Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
-	Editor_addCommand (me, L"View", L"-- select interval --", 0, 0);
-	our createMenuItems_view_zoom (me, menu);
-	our createMenuItems_view_play (me, menu);
-	if (my sound.data || my longSound.data) {
-		our createMenuItems_query_log (me);
-	}
+	inherited (TextGridEditor) createMenuItems_view_timeDomain (me, menu);
+	EditorMenu_addCommand (menu, L"Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
+	EditorMenu_addCommand (menu, L"Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
+	EditorMenu_addCommand (menu, L"Select previous interval", motif_OPTION | motif_LEFT_ARROW, menu_cb_SelectPreviousInterval);
+	EditorMenu_addCommand (menu, L"Select next interval", motif_OPTION | motif_RIGHT_ARROW, menu_cb_SelectNextInterval);
+	EditorMenu_addCommand (menu, L"Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
+	EditorMenu_addCommand (menu, L"Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
 }
 
 static void highlightSelection (I, double left, double right, double bottom, double top) {
@@ -2133,7 +2124,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (prefs_addFields)
 	class_method (prefs_setValues)
 	class_method (prefs_getValues)
-	class_method (createMenuItems_view)
+	class_method (createMenuItems_view_timeDomain)
 	class_method (highlightSelection)
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)

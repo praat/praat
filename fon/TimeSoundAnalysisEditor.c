@@ -69,6 +69,8 @@
  * pb 2007/09/01 computeXXX procedures are global on behalf of the inheritors
  * pb 2007/09/02 Picture window drawing
  * pb 2007/09/08 inherit from TimeSoundEditor
+ * pb 2007/09/19 info
+ * pb 2007/09/21 split Query menu
  */
 
 #include <time.h>
@@ -187,13 +189,71 @@ void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addString (L"FunctionEditor.logScript4", & preferences.logScript4 [0], LOG_4_FILE_NAME);
 }
 
-static void classTimeSoundAnalysisEditor_destroy (I) {
+static void destroy (I) {
 	iam (TimeSoundAnalysisEditor);
 	our destroy_analysis (me);
 	inherited (TimeSoundAnalysisEditor) destroy (me);
 }
 
-static void classTimeSoundAnalysisEditor_destroy_analysis (I) {
+static void info (I) {
+	iam (TimeSoundAnalysisEditor);
+	inherited (TimeSoundAnalysisEditor) info (me);
+	/* Spectrogram flag: */
+	MelderInfo_writeLine2 (L"Spectrogram show: ", Melder_boolean (my spectrogram.show));
+	/* Spectrogram settings: */
+	MelderInfo_writeLine3 (L"Spectrogram view from: ", Melder_double (my spectrogram.viewFrom), L" Hertz");
+	MelderInfo_writeLine3 (L"Spectrogram view to: ", Melder_double (my spectrogram.viewTo), L" Hertz");
+	MelderInfo_writeLine3 (L"Spectrogram window length: ", Melder_double (my spectrogram.windowLength), L" seconds");
+	MelderInfo_writeLine3 (L"Spectrogram dynamic range: ", Melder_double (my spectrogram.dynamicRange), L" dB");
+	/* Advanced spectrogram settings: */
+	MelderInfo_writeLine2 (L"Spectrogram number of time steps: ", Melder_integer (my spectrogram.timeSteps));
+	MelderInfo_writeLine2 (L"Spectrogram number of frequency steps: ", Melder_integer (my spectrogram.frequencySteps));
+	MelderInfo_writeLine2 (L"Spectrogram method: ", L"Fourier");
+	MelderInfo_writeLine2 (L"Spectrogram window shape: ", Sound_to_Spectrogram_windowShapeText (my spectrogram.windowShape));
+	MelderInfo_writeLine2 (L"Spectrogram autoscaling: ", Melder_boolean (my spectrogram.autoscaling));
+	MelderInfo_writeLine3 (L"Spectrogram maximum: ", Melder_double (my spectrogram.maximum), L" dB/Hz");
+	MelderInfo_writeLine3 (L"Spectrogram pre-emphasis: ", Melder_integer (my spectrogram.preemphasis), L" dB/octave");
+	MelderInfo_writeLine2 (L"Spectrogram dynamicCompression: ", Melder_integer (my spectrogram.dynamicCompression));
+	/* Dynamic information: */
+	MelderInfo_writeLine3 (L"Spectrogram cursor frequency: ", Melder_double (my spectrogram.cursor), L" Hertz");
+	/* Pitch flag: */
+	MelderInfo_writeLine2 (L"Pitch show: ", Melder_boolean (my pitch.show));
+	/* Pitch settings: */
+	MelderInfo_writeLine3 (L"Pitch floor: ", Melder_double (my pitch.floor), L" Hertz");
+	MelderInfo_writeLine3 (L"Pitch ceiling: ", Melder_double (my pitch.ceiling), L" Hertz");
+	MelderInfo_writeLine2 (L"Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	/* Advanced pitch settings: */
+	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (my pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (my pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine2 (L"Pitch method: ", my pitch.method == 1 ? L"Autocorrelation" : L"Forward cross-correlation");
+	MelderInfo_writeLine2 (L"Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
+	MelderInfo_writeLine2 (L"Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));
+	MelderInfo_writeLine3 (L"Pitch silence threshold: ", Melder_double (my pitch.silenceThreshold), L" of global peak");
+	MelderInfo_writeLine3 (L"Pitch voicing threshold: ", Melder_double (my pitch.voicingThreshold), L" (periodic power / total power)");
+	MelderInfo_writeLine3 (L"Pitch octave cost: ", Melder_double (my pitch.octaveCost), L" per octave");
+	MelderInfo_writeLine3 (L"Pitch octave jump cost: ", Melder_double (my pitch.octaveJumpCost), L" per octave");
+	MelderInfo_writeLine3 (L"Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost), L" Hertz");
+	/* Intensity flag: */
+	MelderInfo_writeLine2 (L"Intensity show: ", Melder_boolean (my intensity.show));
+	/* Intensity settings: */
+	MelderInfo_writeLine3 (L"Intensity view from: ", Melder_double (my intensity.viewFrom), L" dB");
+	MelderInfo_writeLine3 (L"Intensity view to: ", Melder_double (my intensity.viewTo), L" dB");
+	/* Formant flag: */
+	MelderInfo_writeLine2 (L"Formant show: ", Melder_boolean (my formant.show));
+	/* Formant settings: */
+	MelderInfo_writeLine3 (L"Formant maximum formant: ", Melder_double (my formant.maximumFormant), L" Hertz");
+	MelderInfo_writeLine2 (L"Formant number of poles: ", Melder_integer (my formant.numberOfPoles));
+	MelderInfo_writeLine3 (L"Formant window length: ", Melder_double (my formant.windowLength), L" seconds");
+	MelderInfo_writeLine3 (L"Formant dynamic range: ", Melder_double (my formant.dynamicRange), L" dB");
+	MelderInfo_writeLine3 (L"Formant dot size: ", Melder_double (my formant.dotSize), L" mm");
+	/* Advanced formant settings: */
+	MelderInfo_writeLine2 (L"Formant method: ", L"Burg");
+	MelderInfo_writeLine3 (L"Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), L" Hertz");
+	/* Pulses flag: */
+	MelderInfo_writeLine2 (L"Pulses show: ", Melder_boolean (my pulses.show));
+}
+
+static void destroy_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	forget (my spectrogram.data);
 	forget (my pitch.data);
@@ -1422,7 +1482,14 @@ DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) if (! cb_getShimmer_xx (me
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda)) return 0; END
 */
 
-static void classTimeSoundAnalysisEditor_createMenuItems_view_analysis (I, EditorMenu menu) {
+static void createMenuItems_view_sound (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	inherited (TimeSoundAnalysisEditor) createMenuItems_view_sound (me, menu);
+	our createMenuItems_view_sound_analysis (me, menu);
+}
+
+static void createMenuItems_view_sound_analysis (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"Analysis window:", motif_INSENSITIVE, menu_cb_showAnalyses);
@@ -1431,26 +1498,28 @@ static void classTimeSoundAnalysisEditor_createMenuItems_view_analysis (I, Edito
 	EditorMenu_addCommand (menu, L"-- sound analysis --", 0, 0);
 }
 
-static void classTimeSoundAnalysisEditor_createMenuItems_view (I, EditorMenu menu) {
+static void createMenuItems_query (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
-	our createMenuItems_view_sound (me, menu);
-	our createMenuItems_view_analysis (me, menu);
-	inherited (TimeSoundAnalysisEditor) createMenuItems_view (me, menu);
+	inherited (TimeSoundAnalysisEditor) createMenuItems_query (me, menu);
+	if (my sound.data || my longSound.data) {
+		our createMenuItems_query_log (me, menu);
+	}
 }
 
-static void classTimeSoundAnalysisEditor_createMenuItems_query_log (I) {
+static void createMenuItems_query_log (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
-	Editor_addCommand (me, L"Query", L"-- query log --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Log settings...", 0, menu_cb_logSettings);
-	Editor_addCommand (me, L"Query", L"Delete log file 1", 0, menu_cb_deleteLogFile1);
-	Editor_addCommand (me, L"Query", L"Delete log file 2", 0, menu_cb_deleteLogFile2);
-	Editor_addCommand (me, L"Query", L"Log 1", motif_F12, menu_cb_log1);
-	Editor_addCommand (me, L"Query", L"Log 2", motif_F12 + motif_SHIFT, menu_cb_log2);
-	Editor_addCommand (me, L"Query", L"Log script 3 (...)", motif_F12 + motif_OPTION, menu_cb_logScript3);
-	Editor_addCommand (me, L"Query", L"Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- query log --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Log settings...", 0, menu_cb_logSettings);
+	EditorMenu_addCommand (menu, L"Delete log file 1", 0, menu_cb_deleteLogFile1);
+	EditorMenu_addCommand (menu, L"Delete log file 2", 0, menu_cb_deleteLogFile2);
+	EditorMenu_addCommand (menu, L"Log 1", motif_F12, menu_cb_log1);
+	EditorMenu_addCommand (menu, L"Log 2", motif_F12 + motif_SHIFT, menu_cb_log2);
+	EditorMenu_addCommand (menu, L"Log script 3 (...)", motif_F12 + motif_OPTION, menu_cb_logScript3);
+	EditorMenu_addCommand (menu, L"Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
 }
 
-static void classTimeSoundAnalysisEditor_createMenus_analysis (I) {
+static void createMenus_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	EditorMenu menu;
 
@@ -1551,7 +1620,7 @@ static void classTimeSoundAnalysisEditor_createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
 }
 
-static void classTimeSoundAnalysisEditor_createMenuItems_pitch_picture (I) {
+static void createMenuItems_pitch_picture (I) {
 	iam (FunctionEditor);
 	Editor_addCommand (me, L"Pitch", L"-- pitch draw --", 0, NULL);
 	Editor_addCommand (me, L"Pitch", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
@@ -1689,7 +1758,7 @@ void FunctionEditor_SoundAnalysis_computePulses (I) {
 	Melder_progressOn ();
 }
 
-static void classTimeSoundAnalysisEditor_draw_analysis (I) {
+static void draw_analysis (I) {
 	iam (TimeSoundAnalysisEditor);
 	double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 	double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -1898,7 +1967,7 @@ static void classTimeSoundAnalysisEditor_draw_analysis (I) {
 	}
 }
 
-static void classTimeSoundAnalysisEditor_draw_analysis_pulses (I) {
+static void draw_analysis_pulses (I) {
 	iam (TimeSoundAnalysisEditor);
 	FunctionEditor_SoundAnalysis_computePulses (me);
 	if (my pulses.show && my endWindow - my startWindow <= my longestAnalysis && my pulses.data != NULL) {
@@ -1916,15 +1985,17 @@ static void classTimeSoundAnalysisEditor_draw_analysis_pulses (I) {
 }
 
 class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
-	class_method_local (TimeSoundAnalysisEditor, destroy)
-	class_method_local (TimeSoundAnalysisEditor, destroy_analysis)
-	class_method_local (TimeSoundAnalysisEditor, createMenuItems_query_log)
-	class_method_local (TimeSoundAnalysisEditor, createMenuItems_view)
-	class_method_local (TimeSoundAnalysisEditor, createMenuItems_view_analysis)
-	class_method_local (TimeSoundAnalysisEditor, createMenus_analysis)
-	class_method_local (TimeSoundAnalysisEditor, draw_analysis)
-	class_method_local (TimeSoundAnalysisEditor, draw_analysis_pulses)
-	class_method_local (TimeSoundAnalysisEditor, createMenuItems_pitch_picture)
+	class_method (destroy)
+	class_method (info)
+	class_method (destroy_analysis)
+	class_method (createMenuItems_query)
+	class_method (createMenuItems_query_log)
+	class_method (createMenuItems_view_sound)
+	class_method (createMenuItems_view_sound_analysis)
+	class_method (createMenus_analysis)
+	class_method (draw_analysis)
+	class_method (draw_analysis_pulses)
+	class_method (createMenuItems_pitch_picture)
 	us -> preferences.picture.pitch.garnish = true;
 	class_methods_end
 }

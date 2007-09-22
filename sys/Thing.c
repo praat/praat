@@ -36,9 +36,9 @@ static void destroy (I) { iam (Thing); Melder_free (my name); Melder_free (my na
 
 static void info (I) {
 	iam (Thing);
+	MelderInfo_writeLine2 (L"Object type: ", Thing_classNameW (me));
+	MelderInfo_writeLine2 (L"Object name: ", my nameW ? my nameW : L"<no name>");
 	time_t today = time (NULL);
-	wchar_t *name = my nameW ? my nameW : L"<no name>";
-	MelderInfo_writeLine4 (L"Object: ", Thing_classNameW (me), L" ", name);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekAsciiToWcs (ctime (& today)));   /* Includes a newline. */
 }
 

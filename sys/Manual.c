@@ -536,6 +536,7 @@ class_methods (Manual, HyperPage)
 	class_method (draw)
 	class_method (createChildren)
 	class_method (createMenus)
+	us -> createMenuItems_query = NULL;
 	class_method (defaultHeaders)
 	class_method (getNumberOfPages)
 	class_method (getCurrentPageNumber)

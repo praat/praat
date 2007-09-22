@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2007/06/10 wchar_t
+ * pb 2007/09/21
  */
 
 #ifndef _Editor_h_
@@ -84,8 +83,8 @@ struct FunctionEditor_picture {
 	void (*createMenuItems_file_extract) (I, EditorMenu menu); \
 	void (*createMenuItems_file_write) (I, EditorMenu menu); \
 	void (*createMenuItems_view) (I, EditorMenu menu); \
-	void (*createMenuItems_view_zoom) (I, EditorMenu menu); \
-	void (*createMenuItems_view_play) (I, EditorMenu menu); \
+	void (*createMenuItems_view_timeDomain) (I, EditorMenu menu); \
+	void (*createMenuItems_view_audio) (I, EditorMenu menu); \
 	void (*highlightSelection) (I, double left, double right, double bottom, double top); \
 	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
 	double (*getBottomOfSoundAndAnalysisArea) (I); \

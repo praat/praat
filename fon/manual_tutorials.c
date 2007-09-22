@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070917)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070921)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.23# (September 21, 2007)")
+LIST_ITEM (L"\\bu Info commands in editors.")
 NORMAL (L"##4.6.22# (September 17, 2007)")
 LIST_ITEM (L"\\bu Phonetic symbols: added the nonsyllabicity diacritic (a\\nv).")
 LIST_ITEM (L"\\bu Macintosh: worked around a feature of a system library that could cause strange behaviour of forms in scripts with non-ASCII characters.")

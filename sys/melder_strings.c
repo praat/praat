@@ -487,7 +487,7 @@ end:
 }
 
 bool MelderStringA_appendCharacter (MelderStringA *me, char character) {
-	unsigned long sizeNeeded = my length + 1;
+	unsigned long sizeNeeded = my length + 2;
 	expandIfNecessary (char)
 	my string [my length] = character;
 	my length ++;
@@ -498,7 +498,7 @@ end:
 }
 
 bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 1;
+	unsigned long sizeNeeded = my length + 2;
 	expandIfNecessary (wchar_t)
 	my string [my length] = character;
 	my length ++;
@@ -509,7 +509,7 @@ end:
 }
 
 bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 2;   // Allow for surrogate characters.
+	unsigned long sizeNeeded = my length + 3;   // Allow for surrogate characters.
 	expandIfNecessary (MelderUtf16)
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 		my string [my length] = character;

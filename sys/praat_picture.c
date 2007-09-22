@@ -1524,7 +1524,8 @@ void praat_picture_init (void) {
 	}
 
 	praat_addMenuCommand ("Picture", "File", "PostScript settings...", 0, 0, DO_PostScript_settings);
-	praat_addMenuCommand ("Picture", "File", "Picture settings report", 0, 0, DO_Picture_settings_report);
+	praat_addMenuCommand ("Picture", "File", "Picture info", 0, 0, DO_Picture_settings_report);
+	praat_addMenuCommand ("Picture", "File", "Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
 	praat_addMenuCommand ("Picture", "File", "-- read & write --", 0, 0, 0);
 	praat_addMenuCommand ("Picture", "File", "Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
 	praat_addMenuCommand ("Picture", "File", "Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);

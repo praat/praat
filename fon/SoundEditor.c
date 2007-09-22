@@ -32,6 +32,7 @@
  * pb 2007/09/04 TimeSoundAnalysisEditor
  * pb 2007/09/05 direct drawing to picture window
  * pb 2007/09/08 moved File menu to TimeSoundEditor.c
+ * pb 2007/09/19 moved settings report to info
  */
 
 #include "SoundEditor.h"
@@ -42,7 +43,6 @@
 
 #define SoundEditor_members TimeSoundAnalysisEditor_members \
 	Widget cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
-	double minimum, maximum; \
 	double maxBuffer;
 #define SoundEditor_methods TimeSoundAnalysisEditor_methods
 class_create_opaque (SoundEditor, TimeSoundAnalysisEditor);
@@ -53,7 +53,7 @@ static void dataChanged (I) {
 	iam (SoundEditor);
 	Sound sound = my data;
 	Melder_assert (sound != NULL);   /* LongSound objects should not get dataChanged messages. */
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 	our destroy_analysis (me);
 	inherited (SoundEditor) dataChanged (me);
 }
@@ -152,7 +152,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 
 		/* Force FunctionEditor to show changes. */
 
-		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
+		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 		our destroy_analysis (me);
 		FunctionEditor_ungroup (me);
 		FunctionEditor_marksChanged (me);
@@ -214,7 +214,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 
 	/* Force FunctionEditor to show changes. */
 
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my minimum, & my maximum);
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 	our destroy_analysis (me);
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
@@ -246,78 +246,6 @@ static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 	our destroy_analysis (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-	return 1;
-}
-
-/***** QUERY MENU *****/
-
-static int menu_cb_SettingsReport (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
-	MelderInfo_open ();
-	MelderInfo_writeLine2 (L"Data class: ", ((Thing) my data) -> methods -> _classNameW);
-	MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> nameW);
-	MelderInfo_writeLine3 (L"Editor start: ", Melder_double (my tmin), L" seconds");
-	MelderInfo_writeLine3 (L"Editor end: ", Melder_double (my tmax), L" seconds");
-	MelderInfo_writeLine3 (L"Window start: ", Melder_double (my startWindow), L" seconds");
-	MelderInfo_writeLine3 (L"Window end: ", Melder_double (my endWindow), L" seconds");
-	MelderInfo_writeLine3 (L"Selection start: ", Melder_double (my startSelection), L" seconds");
-	MelderInfo_writeLine3 (L"Selection end: ", Melder_double (my endSelection), L" seconds");
-	/* Sound flag: */
-	MelderInfo_writeLine2 (L"Sound autoscaling: ", Melder_boolean (my sound.autoscaling));
-	/* Spectrogram flag: */
-	MelderInfo_writeLine2 (L"Spectrogram show: ", Melder_boolean (my spectrogram.show));
-	/* Spectrogram settings: */
-	MelderInfo_writeLine3 (L"Spectrogram view from: ", Melder_double (my spectrogram.viewFrom), L" Hertz");
-	MelderInfo_writeLine3 (L"Spectrogram view to: ", Melder_double (my spectrogram.viewTo), L" Hertz");
-	MelderInfo_writeLine3 (L"Spectrogram window length: ", Melder_double (my spectrogram.windowLength), L" seconds");
-	MelderInfo_writeLine3 (L"Spectrogram dynamic range: ", Melder_double (my spectrogram.dynamicRange), L" dB");
-	/* Advanced spectrogram settings: */
-	MelderInfo_writeLine2 (L"Spectrogram number of time steps: ", Melder_integer (my spectrogram.timeSteps));
-	MelderInfo_writeLine2 (L"Spectrogram number of frequency steps: ", Melder_integer (my spectrogram.frequencySteps));
-	MelderInfo_writeLine2 (L"Spectrogram method: ", L"Fourier");
-	MelderInfo_writeLine2 (L"Spectrogram window shape: ", Sound_to_Spectrogram_windowShapeText (my spectrogram.windowShape));
-	MelderInfo_writeLine2 (L"Spectrogram autoscaling: ", Melder_boolean (my spectrogram.autoscaling));
-	MelderInfo_writeLine3 (L"Spectrogram maximum: ", Melder_double (my spectrogram.maximum), L" dB/Hz");
-	MelderInfo_writeLine3 (L"Spectrogram pre-emphasis: ", Melder_integer (my spectrogram.preemphasis), L" dB/octave");
-	MelderInfo_writeLine2 (L"Spectrogram dynamicCompression: ", Melder_integer (my spectrogram.dynamicCompression));
-	/* Dynamic information: */
-	MelderInfo_writeLine3 (L"Spectrogram cursor frequency: ", Melder_double (my spectrogram.cursor), L" Hertz");
-	/* Pitch flag: */
-	MelderInfo_writeLine2 (L"Pitch show: ", Melder_boolean (my pitch.show));
-	/* Pitch settings: */
-	MelderInfo_writeLine3 (L"Pitch floor: ", Melder_double (my pitch.floor), L" Hertz");
-	MelderInfo_writeLine3 (L"Pitch ceiling: ", Melder_double (my pitch.ceiling), L" Hertz");
-	MelderInfo_writeLine2 (L"Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	/* Advanced pitch settings: */
-	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (my pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (my pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine2 (L"Pitch method: ", my pitch.method == 1 ? L"Autocorrelation" : L"Forward cross-correlation");
-	MelderInfo_writeLine2 (L"Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
-	MelderInfo_writeLine2 (L"Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));
-	MelderInfo_writeLine3 (L"Pitch silence threshold: ", Melder_double (my pitch.silenceThreshold), L" of global peak");
-	MelderInfo_writeLine3 (L"Pitch voicing threshold: ", Melder_double (my pitch.voicingThreshold), L" (periodic power / total power)");
-	MelderInfo_writeLine3 (L"Pitch octave cost: ", Melder_double (my pitch.octaveCost), L" per octave");
-	MelderInfo_writeLine3 (L"Pitch octave jump cost: ", Melder_double (my pitch.octaveJumpCost), L" per octave");
-	MelderInfo_writeLine3 (L"Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost), L" Hertz");
-	/* Intensity flag: */
-	MelderInfo_writeLine2 (L"Intensity show: ", Melder_boolean (my intensity.show));
-	/* Intensity settings: */
-	MelderInfo_writeLine3 (L"Intensity view from: ", Melder_double (my intensity.viewFrom), L" dB");
-	MelderInfo_writeLine3 (L"Intensity view to: ", Melder_double (my intensity.viewTo), L" dB");
-	/* Formant flag: */
-	MelderInfo_writeLine2 (L"Formant show: ", Melder_boolean (my formant.show));
-	/* Formant settings: */
-	MelderInfo_writeLine3 (L"Formant maximum formant: ", Melder_double (my formant.maximumFormant), L" Hertz");
-	MelderInfo_writeLine2 (L"Formant number of poles: ", Melder_integer (my formant.numberOfPoles));
-	MelderInfo_writeLine3 (L"Formant window length: ", Melder_double (my formant.windowLength), L" seconds");
-	MelderInfo_writeLine3 (L"Formant dynamic range: ", Melder_double (my formant.dynamicRange), L" dB");
-	MelderInfo_writeLine3 (L"Formant dot size: ", Melder_double (my formant.dotSize), L" mm");
-	/* Advanced formant settings: */
-	MelderInfo_writeLine2 (L"Formant method: ", L"Burg");
-	MelderInfo_writeLine3 (L"Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), L" Hertz");
-	/* Pulses flag: */
-	MelderInfo_writeLine2 (L"Pulses show: ", Melder_boolean (my pulses.show));
-	MelderInfo_close ();
 	return 1;
 }
 
@@ -384,8 +312,6 @@ static void createMenus (I) {
 		my reverseButton = Editor_addCommand (me, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
 
-	our createMenuItems_query_log (me);
-
 	if (my sound.data) {
 		Editor_addCommand (me, L"Select", L"-- move to zero --", 0, 0);
 		Editor_addCommand (me, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
@@ -395,8 +321,6 @@ static void createMenus (I) {
 	}
 
 	our createMenus_analysis (me);
-	Editor_addCommand (me, L"Query", L"-- reports --", 0, 0);
-	Editor_addCommand (me, L"Query", L"Settings report", 0, menu_cb_SettingsReport);
 
 	Editor_addCommand (me, L"Help", L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
 	Editor_addCommand (me, L"Help", L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
@@ -442,7 +366,7 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	TimeSoundEditor_draw_sound (me, my minimum, my maximum);
+	TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);
 	Graphics_flushWs (my graphics);
 	if (showAnalysis)
 		Graphics_resetViewport (my graphics, viewport);
@@ -463,7 +387,7 @@ static void draw (I) {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (my graphics, 0, 1, 0.5, 1);
 		our draw_analysis_pulses (me);
-		TimeSoundEditor_draw_sound (me, my minimum, my maximum);   /* Second time, partially across the pulses. */
+		TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);   /* Second time, partially across the pulses. */
 		Graphics_flushWs (my graphics);
 		if (showAnalysis)
 			Graphics_resetViewport (my graphics, viewport);
@@ -535,16 +459,6 @@ SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data) {
 	 */
 	if (! me || ! TimeSoundAnalysisEditor_init (me, parent, title, data, data, false))
 		return NULL;
-	Melder_assert (my longSound.data != NULL || my sound.data != NULL);
-	if (my longSound.data) {
-		Melder_assert (Thing_member (data, classLongSound));
-		Melder_assert (data == my longSound.data);
-		my minimum = -1, my maximum = 1;
-	} else {
-		Melder_assert (Thing_member (data, classSound));
-		Melder_assert (data == my sound.data);
-		Matrix_getWindowExtrema (data, 1, my sound.data -> nx, 1, my sound.data -> ny, & my minimum, & my maximum);
-	}
 	if (my longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		FunctionEditor_marksChanged (me);

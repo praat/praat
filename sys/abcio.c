@@ -255,41 +255,56 @@ static short getEnum (MelderReadString *text, void *enumerated) {
 }
 
 static wchar_t * getString (MelderReadString *text) {
+Melder_casual ("101");
 	if (text -> readPointer == NULL) return NULL;
 	int i;
 	wchar_t c;
 	static MelderStringW buffer = { 0 };
 	MelderStringW_empty (& buffer);
+Melder_casual ("102");
 	for (c = getChar (text); c != '\"'; c = getChar (text)) {
+Melder_casual ("103");
 		if (c == 0) {
+Melder_casual ("104");
 			Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadString_getLineNumber (text), L").");
 			return NULL;
 		}
 		if (c == '!') {   /* End-of-line comment? */
+Melder_casual ("105");
 			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
 				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadString_getLineNumber (text), L").");
 				return NULL;
 			}
 		}
 		if (c == '-' || isdigit (c) || c == '+') {
+Melder_casual ("106");
 			Melder_error3 (L"Found a number while looking for a string in text (line ", MelderReadString_getLineNumber (text), L").");
 			return NULL;
 		}
 		if (c == '<') {
+Melder_casual ("107");
 			Melder_error3 (L"Found an enumerated value while looking for a string in text (line ", MelderReadString_getLineNumber (text), L").");
 			return NULL;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
+Melder_casual ("108");
 			if (c == 0) {
+Melder_casual ("109");
 				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadString_getLineNumber (text), L")");
 				return NULL;
 			}
+Melder_casual ("110");
 			c = getChar (text);
+Melder_casual ("111");
 		}
 	}
+Melder_casual ("112");
 	for (i = 0; 1; i ++) {
+Melder_casual ("113");
 		c = getChar (text);   /* Read past first '"'. */
+Melder_casual ("114");
 		if (c == 0) {
+Melder_casual ("115");
 			Melder_error3 (L"Early end of text detected while reading a string (line ", MelderReadString_getLineNumber (text), L").");
 			return NULL;
 		}
@@ -307,8 +322,11 @@ static wchar_t * getString (MelderReadString *text) {
 				break;   /* The expected closing double quote; not added to the buffer. */
 			} /* Else: add only one of the two quotes to the buffer. */
 		}
+Melder_casual ("116");
 		MelderStringW_appendCharacter (& buffer, c);
+Melder_casual ("117");
 	}
+Melder_casual ("199");
 	return buffer. string;
 }
 

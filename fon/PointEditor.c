@@ -27,6 +27,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/09/08 inherit from TimeSoundEditor
+ * pb 2007/09/22 autoscaling
  */
 
 #include "PointEditor.h"
@@ -174,7 +175,13 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, -1.0, 1.0);
+	double minimum = -1.0, maximum = +1.0;
+	if (my sound.autoscaling) {
+		long first, last;
+		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) >= 1)
+			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
+	}
+	Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	if (sound != NULL && Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
 		Graphics_setLineType (my graphics, Graphics_DOTTED);
@@ -184,10 +191,11 @@ static void draw (I) {
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 	Graphics_setColour (my graphics, Graphics_BLUE);
+	Graphics_setWindow (my graphics, my startWindow, my endWindow, -1.0, +1.0);
 	for (i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= my startWindow && t <= my endWindow)
-			Graphics_line (my graphics, t, -0.9, t, 0.9);
+			Graphics_line (my graphics, t, -0.9, t, +0.9);
 	}
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	our updateMenuItems_file (me);
