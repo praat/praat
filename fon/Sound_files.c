@@ -97,9 +97,9 @@ static void Sound_alawDecode (Sound me) {
 		FSSpec *fspec = (FSSpec *) void_fspec;
 		Str255 pname;
 		OSErr err;
-		unsigned char path [1000];
+		char path [1000];
 		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
-		PfromCstr (pname, (char *) path);
+		PfromCstr (pname, path);
 		err = FSMakeFSSpec (0, 0, & pname [0], fspec);
 		if (err != noErr && err != fnfErr) {
 			if (err == -2095) {

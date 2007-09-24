@@ -30,6 +30,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/20 stereo
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/26 added font size; version 5
  */
 
 #include "ExperimentMFC.h"
@@ -52,7 +53,7 @@
 #include "ExperimentMFC_def.h"
 
 class_methods (ExperimentMFC, Data)
-	us -> version = 4;
+	us -> version = 5;
 	class_method_local (ExperimentMFC, destroy)
 	class_method_local (ExperimentMFC, description)
 	class_method_local (ExperimentMFC, copy)

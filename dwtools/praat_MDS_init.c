@@ -28,6 +28,7 @@
  djmw 20050426 Removed "Procrustus.h"
  djmw 20050630 Better name of Procrustes object after Configurations_to_Procrustes.
  djmw 20061218 Introduction of Melder_information<12...9>
+ djmw 20070902 Melder_new<1...>
 */
 
 #include <math.h>
@@ -124,7 +125,7 @@ FORM (Configuration_create, "Create Configuration", "Create Configuration...")
 DO
 	Configuration c = Configuration_create (GET_INTEGER ("Number of points"),
 		GET_INTEGER ("Number of dimensions"));
-	if (! c || ! praat_new (c, GET_STRING ("Name"))) return 0;
+	if (c == NULL || ! praat_new1 (c, GET_STRINGW (L"Name"))) return 0;
 	if (! TableOfReal_formula (c, GET_STRINGW (L"formula"), NULL)) return 0;
 END
 
@@ -167,8 +168,7 @@ DIRECT (AffineTransform_help)
 END
 
 DIRECT (AffineTransform_invert)
-	EVERY_CHECK (praat_new (AffineTransform_invert (OBJECT), 
-		"%s_inverse", NAME))	 
+	EVERY_CHECK (praat_new2 (AffineTransform_invert (OBJECT), NAMEW, L"_inverse"))	 
 END
 
 FORM (AffineTransform_getTransformationElement, "AffineTransform: Get transformation element", "Procrustes")
@@ -364,7 +364,7 @@ DIRECT (Configuration_to_Similarity_cc)
 	WHERE (SELECTED) (void) Collection_addItem (cs, OBJECT);
 	s = Configurations_to_Similarity_cc (cs, NULL);
 	cs -> size = 0; forget (cs);
-	if (! praat_new (s, "congruence")) return 0;
+	if (! praat_new1 (s, L"congruence")) return 0;
 END
 
 FORM (Configurations_to_Procrustes, "Configuration & Configuration: To Procrustes",
@@ -374,8 +374,8 @@ FORM (Configurations_to_Procrustes, "Configuration & Configuration: To Procruste
 DO
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
-	if (! praat_new (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
-		"%s_to_%s", Thing_getName (c2), Thing_getName (c1))) return 0;
+	if (! praat_new3 (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
+		Thing_getNameW (c2), L"_to_", Thing_getNameW (c1))) return 0;
 END
 
 FORM (Configurations_to_AffineTransform_congruence, "Configurations: To AffineTransform (congruence)",
@@ -404,7 +404,7 @@ DIRECT (Configuration_Weight_to_Similarity_cc)
 	}
 	s = Configurations_to_Similarity_cc (cs, w);
 	cs -> size = 0; forget (cs);
-	if (! praat_new (s, "congruence")) return 0;
+	if (! praat_new1 (s, L"congruence")) return 0;
 END
 
 DIRECT (Configuration_and_AffineTransform_to_Configuration)
@@ -422,8 +422,8 @@ DO
 	WHERE (SELECTED)
 	{
 		Confusion c = OBJECT;
-		if (! praat_new (Confusion_to_Dissimilarity_pdf (OBJECT,
-			GET_REAL ("Minimum confusion level")), "%s_pdf", c -> name))
+		if (! praat_new2 (Confusion_to_Dissimilarity_pdf (OBJECT,
+			GET_REAL ("Minimum confusion level")), c -> nameW, L"_pdf"))
 				return 0;
 	}
 END
@@ -445,7 +445,7 @@ DIRECT (Confusions_sum)
 	WHERE (SELECTED) (void) Collection_addItem (me, OBJECT);
 	conf = Confusions_sum (me);
 	my size = 0; forget (me);
-	if (! praat_new (conf, "untitled_sum")) return 0;
+	if (! praat_new1 (conf, L"untitled_sum")) return 0;
 END
 
 DIRECT (Confusion_to_ContingencyTable)
@@ -559,12 +559,11 @@ FORM (Dissimilarity_Configuration_kruskal, "Dissimilarity & Configuration: To Co
 	OK
 DO
 	Configuration conf = ONLY (classConfiguration);
-	if (! praat_new (Dissimilarity_Configuration_kruskal 
+	if (! praat_new2 (Dissimilarity_Configuration_kruskal 
 		(ONLY (classDissimilarity), conf,
 		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress calculation"),
 		GET_REAL ("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
-		GET_INTEGER ("Number of repetitions")), 
-		"%s_s_kruskal", conf -> name)) return 0;
+		GET_INTEGER ("Number of repetitions")), conf -> nameW, L"_s_kruskal")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_absolute_mds, 
@@ -575,11 +574,11 @@ FORM (Dissimilarity_Configuration_absolute_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_absolute_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds 
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_s_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_s_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_ratio_mds, "Dissimilarity & Configuration: To Configuration (ratio mds)",
@@ -589,11 +588,11 @@ FORM (Dissimilarity_Configuration_ratio_mds, "Dissimilarity & Configuration: To 
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_ratio_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds 
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_s_ratio", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_s_ratio")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_interval_mds, "Dissimilarity & Configuration: To Configuration (interval mds)",
@@ -603,11 +602,11 @@ FORM (Dissimilarity_Configuration_interval_mds, "Dissimilarity & Configuration: 
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_interval_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds 
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_s_interval", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_s_interval")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_monotone_mds, 
@@ -621,12 +620,12 @@ FORM (Dissimilarity_Configuration_monotone_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_monotone_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds 
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_s_monotone", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_s_monotone")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_ispline_mds, 
@@ -640,13 +639,13 @@ FORM (Dissimilarity_Configuration_ispline_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_ispline_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds 
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_INTEGER ("Number of interior knots"), 
 		GET_INTEGER ("Order of I-spline"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_s_ispline", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_s_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_absolute_mds, 
@@ -657,11 +656,11 @@ FORM (Dissimilarity_Configuration_Weight_absolute_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_absolute_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds 
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_sw_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_sw_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_ratio_mds, 
@@ -672,11 +671,11 @@ FORM (Dissimilarity_Configuration_Weight_ratio_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_ratio_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds 
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_sw_ratio", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_sw_ratio")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_interval_mds, 
@@ -687,11 +686,11 @@ FORM (Dissimilarity_Configuration_Weight_interval_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_interval_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds 
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_sw_interval", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_sw_interval")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_monotone_mds, 
@@ -705,12 +704,12 @@ FORM (Dissimilarity_Configuration_Weight_monotone_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_monotone_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds 
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_sw_monotone", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_sw_monotone")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_ispline_mds, 
@@ -724,13 +723,13 @@ FORM (Dissimilarity_Configuration_Weight_ispline_mds,
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Configuration_Weight_ispline_mds 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds 
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_INTEGER ("Number of interior knots"), 
 		GET_INTEGER ("Order of I-spline"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_sw_ispline", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_sw_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_getStress, "Dissimilarity & Configuration: Get stress", 
@@ -991,13 +990,13 @@ FORM (Dissimilarity_kruskal, "Dissimilarity: To Configuration (kruskal)",
 	OK
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
-	if (! praat_new (Dissimilarity_kruskal (dissimilarity,
+	if (! praat_new1 (Dissimilarity_kruskal (dissimilarity,
 		 GET_INTEGER ("Number of dimensions"),
 		GET_INTEGER ("Distance metric"), GET_INTEGER ("Handling of ties"),
 		GET_INTEGER ("Stress calculation"), GET_REAL("Tolerance"),
 		GET_INTEGER ("Maximum number of iterations"), 
 		GET_INTEGER ("Number of repetitions")),
-		dissimilarity -> name)) return 0;
+		dissimilarity -> nameW)) return 0;
 END
 
 FORM (Dissimilarity_absolute_mds, "Dissimilarity: To Configuration (absolute mds)", 
@@ -1009,11 +1008,11 @@ FORM (Dissimilarity_absolute_mds, "Dissimilarity: To Configuration (absolute mds
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_absolute_mds (dissimilarity, NULL, 
+	if (! praat_new2 (Dissimilarity_Weight_absolute_mds (dissimilarity, NULL, 
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_ratio_mds, "Dissimilarity: To Configuration (ratio mds)", 
@@ -1025,11 +1024,11 @@ FORM (Dissimilarity_ratio_mds, "Dissimilarity: To Configuration (ratio mds)",
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_ratio_mds (dissimilarity, NULL,
+	if (! praat_new2 (Dissimilarity_Weight_ratio_mds (dissimilarity, NULL,
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_ratio", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_ratio")) return 0;
 END
 
 FORM (Dissimilarity_interval_mds, "Dissimilarity: To Configuration (interval mds)", 
@@ -1041,11 +1040,11 @@ FORM (Dissimilarity_interval_mds, "Dissimilarity: To Configuration (interval mds
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_interval_mds (dissimilarity, NULL,
+	if (! praat_new2 (Dissimilarity_Weight_interval_mds (dissimilarity, NULL,
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_interval", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_interval")) return 0;
 END
 
 FORM (Dissimilarity_monotone_mds, "Dissimilarity: To Configuration (monotone mds)", 
@@ -1060,12 +1059,12 @@ FORM (Dissimilarity_monotone_mds, "Dissimilarity: To Configuration (monotone mds
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_monotone_mds (dissimilarity, NULL,
+	if (! praat_new2 (Dissimilarity_Weight_monotone_mds (dissimilarity, NULL,
 		GET_INTEGER ("Number of dimensions"),
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_monotone", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_monotone")) return 0;
 END
 
 FORM (Dissimilarity_ispline_mds, "Dissimilarity: To Configuration (i-spline mds)", 
@@ -1084,12 +1083,12 @@ DO
 	long order = GET_INTEGER ("Order of I-spline");
 	REQUIRE (order > 0 || niknots > 0, 
 		"Order-zero spline must at least have 1 interior knot.")
-	if (! praat_new (Dissimilarity_Weight_ispline_mds (dissimilarity, NULL,
+	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, NULL,
 		GET_INTEGER ("Number of dimensions"),
 		niknots, order,
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_ispline", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Weight_ispline_mds, "Dissimilarity & Weight: To Configuration (i-spline mds)", 
@@ -1108,12 +1107,12 @@ DO
 	long order = GET_INTEGER ("Order of I-spline");
 	REQUIRE (order > 0 || niknots > 0, 
 		"Order-zero spline must at least have 1 interior knot.")
-	if (! praat_new (Dissimilarity_Weight_ispline_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, 
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"), niknots, order,
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_ispline", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Weight_absolute_mds, "Dissimilarity & Weight: To Configuration (absolute mds)", 
@@ -1125,12 +1124,12 @@ FORM (Dissimilarity_Weight_absolute_mds, "Dissimilarity & Weight: To Configurati
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_absolute_mds (dissimilarity,
+	if (! praat_new2 (Dissimilarity_Weight_absolute_mds (dissimilarity,
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_ratio_mds, "Dissimilarity & Weight: To Configuration (ratio mds)", 
@@ -1142,12 +1141,12 @@ FORM (Dissimilarity_Weight_ratio_mds, "Dissimilarity & Weight: To Configuration 
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_ratio_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_ratio_mds (dissimilarity, 
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_interval_mds, "Dissimilarity & Weight: To Configuration (interval mds)", 
@@ -1159,12 +1158,12 @@ FORM (Dissimilarity_Weight_interval_mds, "Dissimilarity & Weight: To Configurati
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_interval_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_interval_mds (dissimilarity, 
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_absolute", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_monotone_mds, "Dissimilarity & Weight: To Configuration (monotone mds)", 
@@ -1179,13 +1178,13 @@ FORM (Dissimilarity_Weight_monotone_mds, "Dissimilarity & Weight: To Configurati
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
 	int showProgress = 1;
-	if (! praat_new (Dissimilarity_Weight_monotone_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_monotone_mds (dissimilarity, 
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"),
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		"%s_monotone", dissimilarity -> name)) return 0;
+		dissimilarity -> nameW, L"_monotone")) return 0;
 END
 
 FORM (Dissimilarity_to_Distance, "Dissimilarity: To Distance", "Dissimilarity: To Distance...")
@@ -1233,8 +1232,8 @@ DO
 		GET_INTEGER("Number of repetitions"),
 		1, &cresult, &wresult);
 	distances -> size = 0; forget (distances);
-	if (! praat_new (cresult, "indscal") ||
-		! praat_new (wresult, "indscal")) return 0;
+	if (! praat_new1 (cresult, L"indscal") ||
+		! praat_new1 (wresult, L"indscal")) return 0;
 END
 
 FORM (Distance_and_Configuration_drawScatterDiagram, "Distance & Configuration: Draw scatter diagram",
@@ -1280,8 +1279,8 @@ DO
 		GET_INTEGER ("Normalize scalar products"), GET_REAL ("Tolerance"),
 		GET_INTEGER ("Maximum number of iterations"), 1, &cresult, &wresult);
 	distances -> size = 0; forget (distances);
-	if (! praat_new (cresult, "indscal") ||
-		! praat_new (wresult, "indscal")) return 0;
+	if (! praat_new1 (cresult, L"indscal") ||
+		! praat_new1 (wresult, L"indscal")) return 0;
 END
 
 FORM (Distance_Configuration_vaf, "Distance & Configuration: Get VAF", 
@@ -1381,8 +1380,8 @@ DO
 		&wresult, &vaf);
 	distances -> size = 0;
 	forget (distances);
-	if (! praat_new (cresult, "indscal") ||
-		! praat_new (wresult, "indscal")) return 0;
+	if (! praat_new1 (cresult, L"indscal") ||
+		! praat_new1 (wresult, L"indscal")) return 0;
 END
 
 
@@ -1416,9 +1415,9 @@ FORM (Dissimilarity_Distance_monotoneRegression, "Dissimilarity & Distance: Mono
 	OK
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
-	if (! praat_new (Dissimilarity_Distance_monotoneRegression (dissimilarity, 
+	if (! praat_new1 (Dissimilarity_Distance_monotoneRegression (dissimilarity, 
 		ONLY (classDistance),
-		GET_INTEGER ("Handling of ties")), dissimilarity -> name)) return 0;
+		GET_INTEGER ("Handling of ties")), dissimilarity -> nameW)) return 0;
 END
 
 FORM (Distance_Dissimilarity_drawShepardDiagram, 

@@ -280,20 +280,19 @@ int Melder_getOutputEncoding (void);
 #define Melder_OUTPUT_ENCODING_ISO_LATIN1  0x4C415401
 #define Melder_OUTPUT_ENCODING_FLAC  0x464C4143
 
-typedef unsigned char MelderUtf8;
 typedef unsigned short MelderUtf16;
 typedef unsigned int MelderUtf32;
 
 bool Melder_isValidAscii (const wchar_t *string);
-bool Melder_isValidUtf8 (const unsigned char *string);
+bool Melder_isValidUtf8 (const char *string);
 bool Melder_isEncodable (const wchar_t *string, int outputEncoding);
 
 long Melder_killReturns_inlineW (wchar_t *text);
 
-int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inputEncoding);
-wchar_t * Melder_8bitToWcs (const unsigned char *string, int inputEncoding);
-wchar_t * Melder_utf8ToWcs (const unsigned char *string);
-int Melder_wcsTo8bit_inline (const wchar_t *wcs, unsigned char *string, int outputEncoding);
+int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding);
+wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding);
+wchar_t * Melder_utf8ToWcs (const char *string);
+int Melder_wcsTo8bit_inline (const wchar_t *wcs, char *string, int outputEncoding);
 char * Melder_wcsTo8bit (const wchar_t *string, int outputEncoding);
 
 wchar_t * Melder_asciiToWcs (const char *string);
@@ -301,11 +300,11 @@ void Melder_asciiToWcs_inline (const char *ascii, wchar_t *wcs);
 char * Melder_wcsToAscii (const wchar_t *string);
 void Melder_wcsToAscii_inline (const wchar_t *wcs, char *ascii);
 char * Melder_wcsToUtf8 (const wchar_t *string);
-void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8);
-void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, unsigned char *utf8);
-void Melder_8bitFileRepresentationToWcs_inline (const unsigned char *utf8, wchar_t *wcs);
+void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8);
+void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8);
+void Melder_8bitFileRepresentationToWcs_inline (const char *utf8, wchar_t *wcs);
 wchar_t * Melder_peekAsciiToWcs (const char *string);
-wchar_t * Melder_peekUtf8ToWcs (const unsigned char *string);
+wchar_t * Melder_peekUtf8ToWcs (const char *string);
 char * Melder_peekWcsToAscii (const wchar_t *string);
 char * Melder_peekWcsToUtf8 (const wchar_t *string);
 const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *string);

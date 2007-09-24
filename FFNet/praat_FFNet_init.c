@@ -1,6 +1,6 @@
 /* praat_FFNet_init.c
  *
- * Copyright (C) 1994-2004 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20040526 Removed bug in FFNet_drawCostHistory interface.
  djmw 20041123 Latest modification
  djmw 20061218 Changed to Melder_information<x> format.
+ djmw 20080902 Melder_error<1...>
 */
 
 #include <math.h>
@@ -95,7 +96,7 @@ static int FFNet_create_checkCommonFields (void *dia, long *numberOfInputs, long
 }
 
 FORM (FFNet_create, "Create FFNet", "Create FFNet...")
-	WORD ("Name", "4-3")
+	WORDW (L"Name", L"4-3")
 	FFNet_create_addCommonFields (dia);
     OK
 DO
@@ -106,10 +107,10 @@ DO
 	thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 0);
 	if (thee == NULL)
 	{
-		(void) Melder_error ("There was not enough memory to create the FFNet.\n");
-		return Melder_error ("Please reduce some of the numbers.");
+		return Melder_error1 (L"There was not enough memory to create the FFNet.\n"
+			" Please reduce some of the numbers.");
 	}
-    if (! praat_new (thee, GET_STRING ("Name"))) return 0;
+    if (! praat_new1 (thee, GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (FFNet_create_linearOutputs, "Create FFNet", "Create FFNet (linear outputs)...")
@@ -124,10 +125,9 @@ DO
 	thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 1);
 	if (thee == NULL)
 	{
-		(void) Melder_error ("There was not enough memory to create the FFNet.\n");
-		return Melder_error ("Please reduce some of the numbers.");
+		return Melder_error ("There was not enough memory to create the FFNet.\nPlease reduce some of the numbers.");
 	}
-    if (! praat_new (thee, GET_STRING ("Name"))) return 0;
+    if (! praat_new1 (thee, GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (FFNet_createIrisExample, "Create iris example", "Create iris example...")
@@ -190,8 +190,8 @@ FORM (Pattern_create, "Create Pattern", 0)
     NATURAL ("Number of patterns", "1")
     OK
 DO
-	if (! praat_new (Pattern_create (GET_INTEGER ("Number of patterns"), 
-		GET_INTEGER ("Dimension of a pattern")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Pattern_create (GET_INTEGER ("Number of patterns"), 
+		GET_INTEGER ("Dimension of a pattern")), GET_STRINGW (L"Name"))) return 0;
 END
 
 /**************** New Categories ***************************/
@@ -200,7 +200,7 @@ FORM (Categories_create, "Create Categories", "")
 	WORD ("Name", "empty")
 	OK
 DO
-	if (! praat_new (Categories_create (), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Categories_create (), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (FFNet_help)
@@ -311,8 +311,8 @@ FORM (FFNet_Activation_to_Categories, "FFNet & Activation: To Categories", 0)
 DO
 	wchar_t name [200];
 	praat_name2 (name, classFFNet, classActivation);
-	if (! praat_new9 (FFNet_Activation_to_Categories (ONLY (classFFNet), ONLY (classActivation),
-		GET_INTEGER ("Kind of labeling")), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (FFNet_Activation_to_Categories (ONLY (classFFNet), ONLY (classActivation),
+		GET_INTEGER ("Kind of labeling")), name)) return 0;
 END
 
 /******************* FFNet && Eigen ******************************************/
@@ -389,8 +389,8 @@ FORM (FFNet_Pattern_to_Activation, "To activations in layer", 0)
 DO
 	wchar_t name [200];
 	praat_name2 (name, classFFNet, classPattern);
-	if (! praat_new9 (FFNet_Pattern_to_Activation (ONLY (classFFNet),
-		ONLY (classPattern), GET_INTEGER ("Layer")), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (FFNet_Pattern_to_Activation (ONLY (classFFNet),
+		ONLY (classPattern), GET_INTEGER ("Layer")), name)) return 0;
 END
 
 DIRECT (hint_FFNet_and_Pattern_classify)
@@ -412,8 +412,8 @@ FORM (FFNet_Pattern_to_Categories, "FFNet & Pattern: To Categories",
 DO
 	wchar_t name [200];
 	praat_name2 (name, classFFNet, classPattern);
-	if (! praat_new9 (FFNet_Pattern_to_Categories (ONLY (classFFNet),
-		ONLY (classPattern), GET_INTEGER ("Determine output category as")), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (FFNet_Pattern_to_Categories (ONLY (classFFNet),
+		ONLY (classPattern), GET_INTEGER ("Determine output category as")), name)) return 0;
 END
 
 /*********** FFNet Pattern Activation **********************************/
@@ -506,7 +506,7 @@ DO
 	FFNet ffnet = NULL;
 	long nHidden1 = GET_INTEGER ("Number of units in hidden layer 1");
 	long nHidden2 = GET_INTEGER ("Number of units in hidden layer 2");
-	char ffnetName[40];
+	wchar_t ffnetName[40];
 	
 	if (nHidden1 < 1) nHidden1 = 0;
  	if (nHidden2 < 1) nHidden2 = 0;
@@ -537,7 +537,7 @@ DO
 		return 0;
 	}
 	FFNet_createNameFromTopology (ffnet, ffnetName);
-	if (! praat_new (ffnet, ffnetName)) return 0;
+	if (! praat_new1 (ffnet, ffnetName)) return 0;
 END
 
 FORM (FFNet_Pattern_Categories_learnSM, "FFNet & Pattern & Categories: Learn", "FFNet & Pattern & Categories: Learn...")

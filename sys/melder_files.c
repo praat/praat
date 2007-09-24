@@ -83,7 +83,7 @@ wchar_t * Melder_getShellDirectory (void) {
 	return & theShellDirectory [0];
 }
 
-void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, unsigned char *utf8) {
+void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) {
 	#if defined (_WIN32)
 		int n = wcslen (wcs), i, j;
 		for (i = 0, j = 0; i < n; i ++) {
@@ -112,16 +112,16 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, unsigned cha
 	#endif
 }
 
-void Melder_8bitFileRepresentationToWcs_inline (const unsigned char *path, wchar_t *wpath) {
+void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath) {
 	#if defined (_WIN32)
-		long n = strlen ((char *) path), i, j;
+		long n = strlen (path), i, j;
 		for (i = 0, j = 0; i < n; i ++) {
-			wpath [j ++] = path [i];
+			wpath [j ++] = (unsigned char) path [i];
 		}
 		wpath [j] = '\0';
 	#elif defined (macintosh)
-		long n = strlen ((char *) path);
-		CFStringRef cfpath = CFStringCreateWithCString (NULL, (char *) path, kCFStringEncodingUTF8);
+		long n = strlen (path);
+		CFStringRef cfpath = CFStringCreateWithCString (NULL, path, kCFStringEncodingUTF8);
 		Melder_assert (cfpath != 0);
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (NULL, 0, cfpath);
 		CFRelease (cfpath);
@@ -140,8 +140,8 @@ void Melder_8bitFileRepresentationToWcs_inline (const unsigned char *path, wchar
 #if defined (macintosh)
 void Melder_machToFile (void *void_fsref, MelderFile file) {
 	FSRef *fsref = (FSRef *) void_fsref;
-	unsigned char path [1000];
-	FSRefMakePath (fsref, path, 999);   // Decomposed UTF-8.
+	char path [1000];
+	FSRefMakePath (fsref, (unsigned char *) path, 999);   // Decomposed UTF-8.
 	Melder_8bitFileRepresentationToWcs_inline (path, file -> wpath);
 }
 static void Melder_machToDir (int vRefNum, long dirID, MelderDir dir) {
@@ -149,23 +149,23 @@ static void Melder_machToDir (int vRefNum, long dirID, MelderDir dir) {
 	FSMakeFSSpec (vRefNum, dirID, NULL, & fspec);
 	FSRef fsref;
 	FSpMakeFSRef (& fspec, & fsref);
-	unsigned char path [1000];
-	FSRefMakePath (& fsref, path, 999);   // Decomposed UTF-8.
+	char path [1000];
+	FSRefMakePath (& fsref, (unsigned char *) path, 999);   // Decomposed UTF-8.
 	Melder_8bitFileRepresentationToWcs_inline (path, dir -> wpath);
 }
 int Melder_fileToMach (MelderFile file, void *void_fsref) {
-	unsigned char path [1000];
+	char path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
-	OSStatus err = FSPathMakeRef (path, (FSRef *) void_fsref, NULL);
+	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
 	if (err != noErr && err != fnfErr)
 		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
 	return 1;
 }
 int Melder_fileToMac (MelderFile file, void *void_fspec) {
-	unsigned char path [1000];
+	char path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
 	FSRef fsref;
-	OSStatus err = FSPathMakeRef (path, & fsref, NULL);
+	OSStatus err = FSPathMakeRef ((unsigned char *) path, & fsref, NULL);
 	if (err != noErr && err != fnfErr)
 		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
 	FSSpec *fspec = (FSSpec *) void_fspec;
@@ -182,7 +182,7 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		FSRef parentDirectory;
 		MelderFile_getParentDir (file, & parentDir);
 		Melder_wcsTo8bitFileRepresentation_inline (parentDir. wpath, path);
-		err = FSPathMakeRef (path, & parentDirectory, NULL);
+		err = FSPathMakeRef ((unsigned char *) path, & parentDirectory, NULL);
 		if (err != noErr)
 			return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. wpath, L".");
 		err = FSGetCatalogInfo (& parentDirectory, kFSCatInfoVolume | kFSCatInfoNodeID, & info, NULL, NULL, NULL);
@@ -240,7 +240,7 @@ int Melder_pathToFile (const char *path, MelderFile file) {
 	 * Used if we know for sure that we have a complete path name,
 	 * i.e. if the program determined the name (fileselector, printing, prefs).
 	 */
-	Melder_8bitFileRepresentationToWcs_inline ((unsigned char *) path, file -> wpath);
+	Melder_8bitFileRepresentationToWcs_inline (path, file -> wpath);
 	return 1;
 }
 
@@ -637,7 +637,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	 * On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.
 	 * On MacOS, the characters also have to be decomposed.
 	 */
-	unsigned char utf8path [1000];
+	char utf8path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, utf8path);
 	FILE *f;
 	file -> openForWriting = type [0] == 'w' || type [0] == 'a' || strchr (type, '+');
@@ -779,10 +779,10 @@ void Melder_files_cleanUp (void) {
 
 int MelderFile_exists (MelderFile file) {
 	#if defined (UNIX)
-		unsigned char utf8path [1000];
+		char utf8path [1000];
 		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, utf8path);
 		struct stat statistics;
-		return ! stat ((char *) utf8path, & statistics);
+		return ! stat (utf8path, & statistics);
 	#else
 		FILE *f = Melder_fopen (file, "rb");
 		return f ? (fclose (f), TRUE) : (Melder_clearError (), FALSE);
@@ -798,7 +798,7 @@ int MelderFile_readable (MelderFile file) {
 
 long MelderFile_length (MelderFile file) {
 	#if defined (UNIX)
-		unsigned char utf8path [1000];
+		char utf8path [1000];
 		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, utf8path);
 		struct stat statistics;
 		if (stat ((char *) utf8path, & statistics)) return -1;
@@ -816,7 +816,7 @@ long MelderFile_length (MelderFile file) {
 
 int MelderFile_delete (MelderFile file) {
 	if (! file) return 1;
-	unsigned char utf8path [1000];
+	char utf8path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, utf8path);
 	remove ((char *) utf8path);
 	return 1;
@@ -859,8 +859,8 @@ wchar_t * MelderFile_messageNameW (MelderFile file) {
 }
 
 void Melder_getDefaultDir (MelderDir dir) {
-	unsigned char path [1000];
-	getcwd ((char *) path, 1000);
+	char path [1000];
+	getcwd (path, 1000);
 	Melder_8bitFileRepresentationToWcs_inline (path, dir -> wpath);
 }
 
@@ -893,9 +893,9 @@ int Melder_createDirectoryW (MelderDir parent, const wchar_t *dirName, int mode)
 	} else {
 		swprintf (file. wpath, 260, L"%ls/%ls", parent -> wpath, dirName);
 	}
-	unsigned char utf8path [1000];
+	char utf8path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file. wpath, utf8path);
-	if (mkdir ((char *) utf8path, mode) == -1 && errno != EEXIST)   /* Ignore if directory already exists. */
+	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   /* Ignore if directory already exists. */
 		return Melder_error3 (L"Cannot create directory \"", MelderFile_messageNameW (& file), L"\".");
 	return 1;
 #endif

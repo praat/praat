@@ -23,10 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070921)
+MAN_BEGIN (L"What's new?", L"ppgb", 20070926)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (L"##4.6.23# (September 21, 2007)")
+NORMAL (L"##4.6.25# (September 26, 2007)")
+LIST_ITEM (L"\\bu @ExperimentMFC: can set font size for response buttons.")
+NORMAL (L"##4.6.24# (September 24, 2007)")
+LIST_ITEM (L"\\bu Czech, Polish, Croatian, and Hungarian characters such as \\c< \\uo \\t< \\e; \\s' \\l/ \\c\' \\o: (see @@Special symbols@).")
+LIST_ITEM (L"\\bu Some support for Hebrew characters such as \\?+ \\B+ \\sU (see @@Special symbols@).")
+NORMAL (L"##4.6.23# (September 22, 2007)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 4.6.13 that caused crashes in text handling (mainly on Linux).")
 LIST_ITEM (L"\\bu Info commands in editors.")
 NORMAL (L"##4.6.22# (September 17, 2007)")
 LIST_ITEM (L"\\bu Phonetic symbols: added the nonsyllabicity diacritic (a\\nv).")

@@ -1,6 +1,6 @@
 /* FFNet.c
  *
- * Copyright (C) 1997-2004 David Weenink
+ * Copyright (C) 1997-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
  djmw 20060811 Changed %d to %ld in sprintf for longs.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20070902 FFNet_createNameFromTopology to wchar_t
 */
 
 #include "FFNet_Matrix.h"
@@ -80,13 +81,14 @@ static int FFNet_checkLayerNumber (FFNet me, long layer)
 	return 1;
 }
 
-void FFNet_createNameFromTopology (FFNet me, char *name)
+#define FFNet_MAXNAMELENGTH 40
+void FFNet_createNameFromTopology (FFNet me, wchar_t *name)
 {
-	int nchars1 = sprintf (name, "%ld-%ld", my nUnitsInLayer[0], my nUnitsInLayer[1]);
+	int nchars1 = swprintf (name, FFNet_MAXNAMELENGTH, L"%ld-%ld", my nUnitsInLayer[0], my nUnitsInLayer[1]);
 	if (my nLayers > 1)
 	{
-		int nchars2 = sprintf (name + nchars1, "-%ld", my nUnitsInLayer[2]);
-		if (my nLayers > 2) (void) sprintf (name + nchars1 + nchars2, "-%ld", my nUnitsInLayer[3]);
+		int nchars2 = swprintf (name + nchars1, FFNet_MAXNAMELENGTH, L"-%ld", my nUnitsInLayer[2]);
+		if (my nLayers > 2) (void) swprintf (name + nchars1 + nchars2, FFNet_MAXNAMELENGTH, L"-%ld", my nUnitsInLayer[3]);
 	}
 }
 
@@ -674,7 +676,7 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 	Pattern thee = NULL;
 	Categories him = NULL, uniq = NULL;
 	long i, j;
-	char ffnetname[40];
+	wchar_t ffnetname[40];
 	
 	if (! (c = Collection_create (classData, 3)) ||
 		! (uniq = Categories_sequentialNumbers (3)) ||
@@ -694,9 +696,9 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 		for (j = 1; j <= 4; j++) thy z[i][j] /= 10.0;
 	}
 	FFNet_createNameFromTopology (me, ffnetname);
-	Thing_setName (me, ffnetname);
-	Thing_setName (thee, "iris");
-	Thing_setName (him, "iris"); 
+	Thing_setNameW (me, ffnetname);
+	Thing_setNameW (thee, L"iris");
+	Thing_setNameW (him, L"iris"); 
 end:
 	forget (uniq); forget (iris);
 	if (! Melder_hasError()) return c;

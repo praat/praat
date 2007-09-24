@@ -547,7 +547,6 @@
 		23E5D10009A22A57004E41D5 /* Categories_and_Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9B209A228FD004E41D5 /* Categories_and_Strings.h */; };
 		23E5D10109A22A57004E41D5 /* NUMrandom.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5E09A22902004E41D5 /* NUMrandom.c */; };
 		23E5D10209A22A57004E41D5 /* NUMsort.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5F09A22902004E41D5 /* NUMsort.c */; };
-		23E5D10309A22A57004E41D5 /* regularExpW.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C99D09A228FD004E41D5 /* regularExpW.c */; };
 		23E5D10409A22A57004E41D5 /* regularExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C99E09A228FD004E41D5 /* regularExp.h */; };
 		23E5D10509A22A57004E41D5 /* OTGrammar_ex_NoCoda.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2709A228FF004E41D5 /* OTGrammar_ex_NoCoda.c */; };
 		23E5D10609A22A57004E41D5 /* OTGrammar_ex_NPA.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CA2809A228FF004E41D5 /* OTGrammar_ex_NPA.c */; };
@@ -1055,7 +1054,6 @@
 		23E5C99A09A228FD004E41D5 /* Permutation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Permutation.h; path = dwsys/Permutation.h; sourceTree = SOURCE_ROOT; };
 		23E5C99B09A228FD004E41D5 /* Permutation_and_Index.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Permutation_and_Index.c; path = dwsys/Permutation_and_Index.c; sourceTree = SOURCE_ROOT; };
 		23E5C99C09A228FD004E41D5 /* Permutation_and_Index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Permutation_and_Index.h; path = dwsys/Permutation_and_Index.h; sourceTree = SOURCE_ROOT; };
-		23E5C99D09A228FD004E41D5 /* regularExpW.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = regularExpW.c; path = dwsys/regularExpW.c; sourceTree = "<group>"; };
 		23E5C99E09A228FD004E41D5 /* regularExp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = regularExp.h; path = dwsys/regularExp.h; sourceTree = SOURCE_ROOT; };
 		23E5C99F09A228FD004E41D5 /* Simple_extensions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Simple_extensions.c; path = dwsys/Simple_extensions.c; sourceTree = SOURCE_ROOT; };
 		23E5C9A009A228FD004E41D5 /* Simple_extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Simple_extensions.h; path = dwsys/Simple_extensions.h; sourceTree = SOURCE_ROOT; };
@@ -1933,7 +1931,6 @@
 				23E5C99B09A228FD004E41D5 /* Permutation_and_Index.c */,
 				23E5C99E09A228FD004E41D5 /* regularExp.h */,
 				23B6C16C0C0633CB0090DBBB /* regularExp.c */,
-				23E5C99D09A228FD004E41D5 /* regularExpW.c */,
 				23E5C9A009A228FD004E41D5 /* Simple_extensions.h */,
 				23E5C99F09A228FD004E41D5 /* Simple_extensions.c */,
 				23E5CED009A22A47004E41D5 /* SimpleVector_def.h */,
@@ -3431,7 +3428,6 @@
 				23E5D0FF09A22A57004E41D5 /* Categories_and_Strings.c in Sources */,
 				23E5D10109A22A57004E41D5 /* NUMrandom.c in Sources */,
 				23E5D10209A22A57004E41D5 /* NUMsort.c in Sources */,
-				23E5D10309A22A57004E41D5 /* regularExpW.c in Sources */,
 				23E5D10509A22A57004E41D5 /* OTGrammar_ex_NoCoda.c in Sources */,
 				23E5D10609A22A57004E41D5 /* OTGrammar_ex_NPA.c in Sources */,
 				23E5D10709A22A57004E41D5 /* OTGrammar_ex_tongueRoot.c in Sources */,

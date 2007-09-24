@@ -1,6 +1,6 @@
 /* praat_LPC_init.c
  *
- * Copyright (C) 1994-2006 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20040414 Forms texts.
  djmw 20060428 Latest modification
  djmw 20061218 Changed to Melder_information<x> format.
+ djmw 20070902 Melder_error<1...>
 */
 
 #include <math.h>
@@ -382,11 +383,11 @@ FORM (LPC_and_Sound_to_LPC_robust, "Robust LPC analysis",
 	OK
 DO
 	Sound sound = ONLY (classSound);	
-	if (! praat_new (LPC_and_Sound_to_LPC_robust (ONLY (classLPC), sound,
+	if (! praat_new2 (LPC_and_Sound_to_LPC_robust (ONLY (classLPC), sound,
 		GET_REAL ("Analysis width"), GET_REAL ("Pre-emphasis frequency"), 
 		GET_REAL ("Number of std. dev."), GET_INTEGER ("Maximum number of iterations"),  
 		GET_REAL ("Tolerance"), GET_INTEGER ("Variable location")),
-			"%s_r", sound -> name)) return 0;
+			L"%s_r", sound -> nameW)) return 0;
 END
 
 void praat_uvafon_LPC_init (void);

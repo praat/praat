@@ -60,7 +60,7 @@ static void info (I) {
 static int readBinary (I, FILE *f) {
 	iam (WordList);
 	unsigned char *current, *p;
-	int kar;
+	int kar = 0;
 	my length = bingeti4 (f);
 	if (my length < 0)
 		return Melder_error ("(WordList::readBinary:) Wrong length %ld.", my length);

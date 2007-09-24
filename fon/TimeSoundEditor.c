@@ -23,6 +23,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/09/19 info
+ * pb 2007/09/22 Draw visible sound
  */
 
 #include "TimeSoundEditor.h"
@@ -65,6 +66,48 @@ static void info (I) {
 }
 
 /***** FILE MENU *****/
+
+static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	EDITOR_FORM ("Draw visible sound", 0)
+		our form_pictureWindow (me, cmd);
+		LABEL ("", "Sound:")
+		BOOLEAN ("Preserve times", 1);
+		REAL ("left Vertical range", "0.0")
+		REAL ("right Vertical range", "0.0 (= auto)")
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		SET_INTEGER ("Preserve times", preferences.picture.preserveTimes);
+		SET_REAL ("left Vertical range", preferences.picture.bottom);
+		SET_REAL ("right Vertical range", preferences.picture.top);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGER ("Garnish", preferences.picture.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		preferences.picture.preserveTimes = GET_INTEGER ("Preserve times");
+		preferences.picture.bottom = GET_REAL ("left Vertical range");
+		preferences.picture.top = GET_REAL ("right Vertical range");
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		preferences.picture.garnish = GET_INTEGER ("Garnish");
+		if (my longSound.data == NULL && my sound.data == NULL)
+			return Melder_error1 (L"There is no sound to draw.");
+		Sound publish = my longSound.data ?
+			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, preferences.picture.preserveTimes) :
+			Sound_extractPart (my sound.data, my startWindow, my endWindow, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.preserveTimes);
+		if (! publish) return 0;
+		Editor_openPraatPicture (me);
+		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
+			preferences.picture.garnish, "Curve");
+		forget (publish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
 
 static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
@@ -246,7 +289,8 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 
 static void createMenuItems_file_draw (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_DrawSelectedSound /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
 	my drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
 }
 

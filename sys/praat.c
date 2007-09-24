@@ -1101,7 +1101,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == 1 || i < argc - 1);
 				if (i > 1) wcscat (theCurrentPraat -> batchName, L" ");
 				if (needsQuoting) wcscat (theCurrentPraat -> batchName, L"\"");
-				wcscat (theCurrentPraat -> batchName, Melder_utf8ToWcs ((unsigned char *) argv [i]));
+				wcscat (theCurrentPraat -> batchName, Melder_utf8ToWcs (argv [i]));
 				if (needsQuoting) wcscat (theCurrentPraat -> batchName, L"\"");
 			}
 		}

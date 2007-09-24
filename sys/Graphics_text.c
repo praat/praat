@@ -282,7 +282,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			} else {
 				SIZE extent;
 				wchar_t code;
-				lc -> code = font == Graphics_IPATIMES ? info -> unicode : info -> winEncoding;
+				lc -> code = font == Graphics_IPATIMES || font == Graphics_FONT_TIMES || font == Graphics_FONT_HELVETICA || font == Graphics_FONT_COURIER ? info -> unicode : info -> winEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> first == 's' && lc -> second == 'r') {

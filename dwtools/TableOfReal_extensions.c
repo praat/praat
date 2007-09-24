@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,12 @@
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int'
+<<<<<<< HEAD:dwtools/TableOfReal_extensions.c
  djmw 20070822 wchar_t
+ djmw 20070902 Better error messages (object type and name feedback)
+=======
+ djmw 20070614 updated to version 1.30 of regular expressions.
+>>>>>>> regex:dwtools/TableOfReal_extensions.c
 */
 
 #include <ctype.h>
@@ -250,7 +255,7 @@ int TableOfReal_to_Pattern_and_Categories (I, long fromrow, long torow, long fro
 	}
 	else if (! (fromrow > 0 && torow <= nrow && fromrow <= torow))
 	{
-		return Melder_error ("TableOfReal_split: illegal row selection.");
+		return Melder_error2 (L"Illegal row selection for ", Thing_messageName(me));
 	}
 	if (fromcol == tocol && fromcol == 0)
 	{
@@ -262,7 +267,7 @@ int TableOfReal_to_Pattern_and_Categories (I, long fromrow, long torow, long fro
 	}
 	else if (! (fromcol > 0 && tocol <= ncol && fromcol <= tocol))
 	{
-		return Melder_error ("TableOfReal_split: illegal col selection.");
+		return Melder_error2 (L"Illegal col selection for ", Thing_messageName(me));
 	}
 	nrow = torow - fromrow + 1;
 	ncol = tocol - fromcol + 1;
@@ -298,7 +303,7 @@ void TableOfReal_getColumnExtrema (I, long col, double *min, double *max)
 	iam (TableOfReal); long i;
 	if (col < 1 || col > my numberOfColumns)
 	{
-		(void) Melder_error ("TableOfReal_getColumnExtrema: not a valid column.");
+		(void) Melder_error2 (L"Not a valid column for ", Thing_messageName(me));
 		*min = NUMundefined; *max = NUMundefined; return;
 	}
 	*min = *max = my data[1][col];
@@ -803,8 +808,8 @@ int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 	iam (TableOfReal);
 	Categories c = NULL;
 	long i;
-	if (my numberOfRows != thy size) return Melder_error 
-		("TableOfReal_and_Categories_swap: unequal number of items.");
+	if (my numberOfRows != thy size) return Melder_error5 
+		(L"The number of items in ", Thing_messageName(me), L"and ", Thing_messageName(thee), L" must be equal.");
 		
 	/* 
 		If anything goes wrong we must leave the Table intact.
@@ -961,7 +966,7 @@ int TableOfReal_checkPositive (I)
 		}
 	}
 	return negative == 0 ? 1 : 
-		Melder_error ("All matrix entries should be positive!");
+		Melder_error2 (L"All matrix entries should be positive for ", Thing_messageName(me));
 }
 
 /* NUMundefined ??? */
@@ -1172,7 +1177,7 @@ TableOfReal TablesOfReal_sum (I)
 			! TableOfReal_equalLabels (thee, him, 1, 1))
 		{
 			forget (thee);
-			return Melder_errorp ("TablesOfReal_sum: dimensions or labels of items 1 and %d differ", i);
+			return Melder_errorp5 (L"TablesOfReal_sum: dimensions or labels differ for items 1 and ", Melder_integer(i), L" in ", Thing_messageName(thee), Thing_messageName(him));
 		}
 		for (j=1; j <= thy numberOfRows; j++)
 			for (k=1; k <= thy numberOfColumns; k++) thy data[j][k] += his data[j][k]; 
@@ -1420,7 +1425,7 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 		if (use_regexp)
 		{
 			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToAscii (labels[i]), NULL, 0, 
-				'\0', '\0', NULL, NULL)) nmatches++;
+				'\0', '\0', NULL, NULL, NULL)) nmatches++;
 		}
 		else if (wcsequ (labels[i], search)) nmatches++;
 	}
@@ -1705,8 +1710,8 @@ int TableOfReal_setSequentialColumnLabels (I, long from, long to,
 	if (from == 0) from = 1;
 	if (to == 0) to = my numberOfColumns;
 	if (from < 1 || from > my numberOfColumns || to < from ||
-		to > my numberOfColumns) return Melder_error 
-			("TableOfReal_setSequentialColumnLabels: wrong column indices.");
+		to > my numberOfColumns) return Melder_error2 
+			(L"TableOfReal_setSequentialColumnLabels: wrong column indices for ", Thing_messageName(me));
 	return NUMstrings_setSequentialNumbering (my columnLabels, from, to, 
 		precursor, number, increment);
 }
@@ -1719,8 +1724,8 @@ int TableOfReal_setSequentialRowLabels (I, long from, long to,
 	if (from == 0) from = 1;
 	if (to == 0) to = my numberOfRows;
 	if (from < 1 || from > my numberOfRows || to < from ||
-		to > my numberOfRows) return Melder_error 
-			("TableOfReal_setSequentialRowLabels: wrong row indices.");
+		to > my numberOfRows) return Melder_error2 
+			(L"TableOfReal_setSequentialRowLabels: wrong row indices for ", Thing_messageName(me));
 	return NUMstrings_setSequentialNumbering (my rowLabels, from, to, 
 		precursor, number, increment);
 }
@@ -1741,11 +1746,11 @@ TableOfReal TableOfReal_to_TableOfReal (I)
 TableOfReal TableOfReal_choleskyDecomposition (I, int upper, int inverse)
 {
 	iam (TableOfReal);
-	char *proc = "TableOfReal_choleskyDecomposition", uplo = 'U', diag = 'N';
+	wchar_t *proc = L"TableOfReal_choleskyDecomposition"; char uplo = 'U', diag = 'N';
 	long i, j, n = my numberOfColumns, lda = my numberOfRows, info;
 	TableOfReal thee;
 
-	if (n != lda) return Melder_errorp("%s: Must be a square symmetric matrix.", proc);
+	if (n != lda) return Melder_errorp4 (proc, L": The matrix part of ", Thing_messageName(me), L" must be a square symmetric matrix.");
 	if ((thee = Data_copy (me)) == NULL) return NULL;
 
 	if (upper)
@@ -1778,8 +1783,8 @@ TableOfReal TableOfReal_appendColumns (I, thou)
 	long i, ncols = my numberOfColumns + thy numberOfColumns;
 	long labeldiffs = 0;
 
-	if (my numberOfRows != thy numberOfRows) return Melder_errorp ("%s: "
-		"The number of rows must be equal.", proc);
+	if (my numberOfRows != thy numberOfRows) return Melder_errorp4 (Thing_messageName(me), L" and ", 
+		Thing_messageName(thee), L" must have an equal number of rows.");
 	/* Stricter label checking???
 		append only if
 		  (my rowLabels[i] == thy rowlabels[i], i=1..my numberOfRows) or
@@ -1816,7 +1821,7 @@ Any TableOfReal_appendColumnsMany (Collection me)
 	TableOfReal him = NULL, thee;
 	long itab, irow, icol, nrow, ncol;
 	
-	if (my size == 0) return Melder_errorp ("Cannot add zero tables.");
+	if (my size == 0) return Melder_errorp1 (L"No tables selected.");
 	thee = my item [1];
 	nrow = thy numberOfRows;
 	ncol = thy numberOfColumns;
@@ -1826,7 +1831,7 @@ Any TableOfReal_appendColumnsMany (Collection me)
 		ncol += thy numberOfColumns;
 		if (thy numberOfRows != nrow)
 		{
-			Melder_error ("Numbers of rows do not match.");
+			Melder_error3 (L"Numbers of rows in ", Thing_messageName(thee), L" does not match the others.");
 			goto end;
 		}
 	}

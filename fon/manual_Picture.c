@@ -133,29 +133,33 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
-MAN_BEGIN (L"Special symbols", L"ppgb", 20070914)
+MAN_BEGIN (L"Special symbols", L"ppgb", 20070924)
 INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
-	"you can use %%backslash sequences% to display various kinds of special symbols.")
+	"you can use %%backslash sequences% to display various kinds of special symbols. "
+	"You can usually also type the characters themselves, if your computer has an input method for them.")
 
 ENTRY (L"European symbols")
 NORMAL (L"To get the symbol \"\\a^\" (a-circumflex), you type \"\\bsa\\^ \", i.e., "
 	"a sequence of backslash + a + circumflex. In this way, you can get a hundred "
-	"non-ASCII symbols that are used in the alphabets of many European languages. "
-	"You can also use these symbols in info messages sent from scripts.")
+	"non-ASCII symbols that are used in the alphabets of many European languages.")
 LIST_ITEM (L"\\a\" \\bsa\\\"   \\e\" \\bse\\\"   \\i\" \\bsi\\\"   \\o\" \\bso\\\"   "
 	"\\u\" \\bsu\\\"   \\y\" \\bsy\\\"  "
 	"\\A\" \\bsA\\\"   \\E\" \\bsE\\\"   \\I\" \\bsI\\\"   \\O\" \\bsO\\\"   \\U\" \\bsU\\\"   "
 	"\\Y\" \\bsY\\\" ")
-LIST_ITEM (L"\\a\' \\bsa\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\o\' \\bso\'  \\u\' \\bsu\'  \\y\' \\bsy\'  "
-	"\\A\' \\bsA\'  \\E\' \\bsE\'  \\I\' \\bsI\'  \\O\' \\bsO\'  \\U\' \\bsU\'  \\Y\' \\bsY\'")
+LIST_ITEM (L"\\a\' \\bsa\'  \\c\' \\bsc\'  \\e\' \\bse\'  \\i\' \\bsi\'  \\n\' \\bsn\'  \\o\' \\bso\'  \\s\' \\bss\'  \\u\' \\bsu\'  \\y\' \\bsy\'  \\z\' \\bsz\'  "
+	"\\A\' \\bsA\'  \\C\' \\bsC\'  \\E\' \\bsE\'  \\I\' \\bsI\'  \\N\' \\bsN\'  \\O\' \\bsO\'  \\S\' \\bsS\'  \\U\' \\bsU\'  \\Y\' \\bsY\'  \\Z\' \\bsZ\'")
+LIST_ITEM (L"\\o: \\bso:  \\u: \\bsu:  \\O: \\bsO:  \\U: \\bsU:")
 LIST_ITEM (L"\\a` \\bsa`  \\e` \\bse`  \\i` \\bsi`  \\o` \\bso`  \\u` \\bsu`  "
 	"\\A` \\bsA`  \\E` \\bsE`  \\I` \\bsI`  \\O` \\bsO`  \\U` \\bsU`")
 LIST_ITEM (L"\\a^ \\bsa\\^   \\e^ \\bse\\^   \\i^ \\bsi\\^   \\o^ \\bso\\^   \\u^ \\bsu\\^   "
 	"\\A^ \\bsA\\^   \\E^ \\bsE\\^   \\I^ \\bsI\\^   \\O^ \\bsO\\^   \\U^ \\bsU\\^ ")
 LIST_ITEM (L"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N~ \\bsN\\~   \\O~ \\bsO\\~  ")
-LIST_ITEM (L"\\ae \\bsae  \\o/ \\bso/  \\ao \\bsao  \\Ae \\bsAe  \\O/ \\bsO/  \\Ao \\bsAo  "
-	"\\c, \\bsc,  \\C, \\bsC,  \\ss \\bsss  \\th \\bsth  \\Th \\bsTh")
-LIST_ITEM (L"\\!d \\bs!d \\?d \\bs?d")
+LIST_ITEM (L"\\c< \\bsc<  \\d< \\bsd<  \\e< \\bse<  \\g< \\bsg<  \\n< \\bsn<  \\r< \\bsr<  \\s< \\bss<  \\t< \\bst<  \\z< \\bsz<  "
+	"\\C< \\bsC<  \\D< \\bsD<  \\E< \\bsE<  \\G< \\bsG<  \\N< \\bsN<  \\R< \\bsR<  \\S< \\bsS<  \\T< \\bsT<  \\Z< \\bsZ<")
+LIST_ITEM (L"\\ao \\bsao  \\uo \\bsuo  \\Ao \\bsAo  \\Uo \\bsUo")
+LIST_ITEM (L"\\ae \\bsae  \\Ae \\bsAe  \\o/ \\bso/  \\O/ \\bsO/  "
+	"\\c, \\bsc,  \\C, \\bsC,  \\l/ \\bsl/  \\L/ \\bsL/  \\ss \\bsss  \\th \\bsth  \\z! \\bsz!  \\Z! \\bsZ!")
+LIST_ITEM (L"\\!d \\bs!d  \\?d \\bs?d")
 LIST_ITEM (L"\\eu \\bseu %euro, \\Lp \\bsLp %%pound sterling%, \\Y= \\bsY= %yen, "
 	"\\fd \\bsfd %florin, \\c/ \\bsc/ %cent")
 LIST_ITEM (L"\\SS \\bsSS %section, \\|| \\bs|| %pilcrow (%paragraph)")
@@ -208,6 +212,46 @@ LIST_ITEM (L"\t\\fi \\bsfi \t\\Fi \\bsFi %phi \t\\f2 \\bsf2")
 LIST_ITEM (L"\t\\ci \\bsci \t\\Ci \\bsCi %chi")
 LIST_ITEM (L"\t\\ps \\bsps \t\\Ps \\bsPs %psi")
 LIST_ITEM (L"\t\\om \\bsom \t\\Om \\bsOm %omega \t\\o2 \\bso2")
+
+ENTRY (L"Hebrew letters")
+NORMAL (L"To get an alef, you type \\bsA+. To type a longer Hebrew text, you %may have to type the letters "
+	"in reverse order (this can happen on Windows and is a known bug). "
+	"If you mix Hebrew and Latin text, the Latin text may appear in reverse order "
+	"(this can happen on the Mac and is another known bug).")
+/*
+ * The purpose of the "$$ $" sequences below is to prevent the trigraph text from reversing (on the Mac).
+ */
+LIST_ITEM (L"\t\\?+$$ $\\bs?+\t%alef")
+LIST_ITEM (L"\t\\B+$$ $\\bsB+\t%bet")
+LIST_ITEM (L"\t\\G+$$ $\\bsG+\t%gimel")
+LIST_ITEM (L"\t\\D+$$ $\\bsD+\t%dalet")
+LIST_ITEM (L"\t\\H+$$ $\\bsH+\t%he")
+LIST_ITEM (L"\t\\V+$$ $\\bsV+\t%vav")
+LIST_ITEM (L"\t\\Z+$$ $\\bsZ+\t%zayin")
+LIST_ITEM (L"\t\\X+$$ $\\bsX+\t%het")
+LIST_ITEM (L"\t\\Y+$$ $\\bsY+\t%tet")
+LIST_ITEM (L"\t\\J+$$ $\\bsJ+\t%yod")
+LIST_ITEM (L"\t\\K+$$ $\\bsK+\t%kaf\t\\K%$$ $\\bsK\\% ")
+LIST_ITEM (L"\t\\L+$$ $\\bsL+\t%lamed")
+LIST_ITEM (L"\t\\M+$$ $\\bsM+\t%mem\t\\M%$$ $\\bsM\\% ")
+LIST_ITEM (L"\t\\N+$$ $\\bsN+\t%nun\t\\N%$$ $\\bsN\\% ")
+LIST_ITEM (L"\t\\S+$$ $\\bsS+\t%samekh")
+LIST_ITEM (L"\t\\9+$$ $\\bs9+\t%ayin")
+LIST_ITEM (L"\t\\P+$$ $\\bsP+\t%pe\t\\P%$$ $\\bsP\\% ")
+LIST_ITEM (L"\t\\C+$$ $\\bsC+\t%tsadi\t\\C%$$ $\\bsC\\% ")
+LIST_ITEM (L"\t\\Q+$$ $\\bsQ+\t%qof")
+LIST_ITEM (L"\t\\R+$$ $\\bsR+\t%resh")
+LIST_ITEM (L"\t\\W+$$ $\\bsW+\t%shin")
+LIST_ITEM (L"\t\\T+$$ $\\bsT+\t%tav")
+LIST_ITEM (L"\t\\?+\\hI$$ $\\bs?+\\bshI\t%hiriq")
+LIST_ITEM (L"\t\\?+\\sE$$ $\\bs?+\\bssE\t%segol\t\\?+\\cE$$ $\\bs?+\\bscE\t%tsere")
+LIST_ITEM (L"\t\\?+\\qA$$ $\\bs?+\\bsqA\t%qamats\t\\?+\\pA$$ $\\bs?+\\bspA\t%patah")
+LIST_ITEM (L"\t\\?+\\hO$$ $\\bs?+\\bshO\t%holam")
+LIST_ITEM (L"\t\\?+\\qU$$ $\\bs?+\\bsqU\t%qubuts")
+LIST_ITEM (L"\t\\dq$$ $\\bsdq\t%dagesh or %maliq")
+NORMAL (L"Combinations:")
+LIST_ITEM (L"\t\\vO$$ $\\bsvO\t%%vav holam")
+LIST_ITEM (L"\t\\sU$$ $\\bssU\t%shuruq")
 
 ENTRY (L"Phonetic symbols")
 NORMAL (L"See @@Phonetic symbols@")

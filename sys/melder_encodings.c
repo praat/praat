@@ -235,10 +235,11 @@ static wchar_t decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inputEncoding) {
+int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding) {
+	const unsigned char *ustring = (const unsigned char *) string;
 	if (inputEncoding == 0)
 		inputEncoding = prefs. inputEncoding;
-	long n = strlen ((char *) string), i, j;
+	long n = strlen (string), i, j;
 	if (inputEncoding == Melder_INPUT_ENCODING_UTF8 ||
 	    inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1 ||
 	    inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1 ||
@@ -246,27 +247,27 @@ int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inpu
 	{
 		bool isValidUtf8 = true;
 		for (i = 0, j = 0; i < n; i ++) {
-			unsigned long kar = (unsigned char) string [i];
+			unsigned long kar = ustring [i];
 			if (kar <= 0x7F) {
 				wcs [j ++] = kar;
 			} else if (kar <= 0xC1) {
 				isValidUtf8 = false; break;
 			} else if (kar <= 0xDF) {
-				unsigned long kar2 = (unsigned char) string [++ i];
+				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
 				wcs [j ++] = ((kar & 0x3F) << 6) | (kar2 & 0x3F);
 			} else if (kar <= 0xEF) {
-				unsigned long kar2 = (unsigned char) string [++ i];
+				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
-				unsigned long kar3 = (unsigned char) string [++ i];
+				unsigned long kar3 = ustring [++ i];
 				if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) { isValidUtf8 = false; break; }
 				wcs [j ++] = ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
 			} else if (kar <= 0xF4) {
-				unsigned long kar2 = (unsigned char) string [++ i];
+				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
-				unsigned long kar3 = (unsigned char) string [++ i];
+				unsigned long kar3 = ustring [++ i];
 				if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) { isValidUtf8 = false; break; }
-				unsigned long kar4 = (unsigned char) string [++ i];
+				unsigned long kar4 = ustring [++ i];
 				if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) { isValidUtf8 = false; break; }
 				wcs [j ++] = ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
 			} else {
@@ -288,18 +289,18 @@ int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inpu
 		}
 	}
 	if (inputEncoding == Melder_INPUT_ENCODING_ISO_LATIN1) {
-		for (i = 0; *string != '\0'; string ++, i ++) {
-			wcs [i] = (unsigned char) *string;
+		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
+			wcs [i] = *ustring;
 		}
 		wcs [i] = '\0';
 	} else if (inputEncoding == Melder_INPUT_ENCODING_WINDOWS_LATIN1) {
-		for (i = 0; *string != '\0'; string ++, i ++) {
-			wcs [i] = decodeWindowsLatin1 [(unsigned char) *string];
+		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
+			wcs [i] = decodeWindowsLatin1 [*ustring];
 		}
 		wcs [i] = '\0';
 	} else if (inputEncoding == Melder_INPUT_ENCODING_MACROMAN) {
-		for (i = 0; *string != '\0'; string ++, i ++) {
-			wcs [i] = decodeMacRoman [(unsigned char) *string];
+		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
+			wcs [i] = decodeMacRoman [*ustring];
 		}
 		wcs [i] = '\0';
 	} else if (inputEncoding != Melder_INPUT_ENCODING_UTF8) {
@@ -309,9 +310,9 @@ int Melder_8bitToWcs_inline (const unsigned char *string, wchar_t *wcs, int inpu
 	return 1;
 }
 
-wchar_t * Melder_8bitToWcs (const unsigned char *string, int inputEncoding) {
+wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding) {
 	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc (wchar_t, strlen ((char *) string) + 1);
+	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
 	if (result == NULL) return NULL;
 	if (! Melder_8bitToWcs_inline (string, result, inputEncoding)) {
 		Melder_free (result);
@@ -369,13 +370,13 @@ char * Melder_peekWcsToAscii (const wchar_t *textW) {
 	return buffers [ibuffer]. string;
 }
 
-wchar_t * Melder_utf8ToWcs (const unsigned char *string) {
-	wchar_t *result = Melder_malloc (wchar_t, strlen ((char *) string) + 1);
+wchar_t * Melder_utf8ToWcs (const char *string) {
+	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
 	Melder_8bitToWcs_inline (string, result, Melder_INPUT_ENCODING_UTF8);
 	return result;
 }
 
-void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8) {
+void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 	long n = wcslen (wcs), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
 		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) wcs [i] : wcs [i];
@@ -403,17 +404,17 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, unsigned char *utf8) {
 
 char * Melder_wcsToUtf8 (const wchar_t *string) {
 	char *result = Melder_malloc (char, wcslen (string) * 6 + 1);
-	Melder_wcsToUtf8_inline (string, (unsigned char *) result);
+	Melder_wcsToUtf8_inline (string, result);
 	return result;
 }
 
-wchar_t * Melder_peekUtf8ToWcs (const unsigned char *textA) {
+wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 	if (textA == NULL) return NULL;
 	static MelderStringW buffers [11] = { { 0 } };
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderStringW_empty (& buffers [ibuffer]);
-	unsigned long n = strlen ((char *) textA), i, j;
+	unsigned long n = strlen (textA), i, j;
 	for (i = 0, j = 0; i <= n; i ++) {
 		unsigned char kar = textA [i];
 		if (kar <= 0x7F) {
@@ -534,7 +535,7 @@ wchar_t * MelderFile_readText (MelderFile file) {
 	}
 	if (type == 0) {
 		rewind (f);   // length and type already set correctly.
-		unsigned char *text8bit = Melder_malloc (unsigned char, length + 1);
+		char *text8bit = Melder_malloc (char, length + 1);
 		if (! text8bit) { Melder_fclose (file, f); return NULL; }
 		fread (text8bit, sizeof (char), length, f);
 		if (! Melder_fclose (file, f)) {

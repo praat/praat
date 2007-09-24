@@ -21,6 +21,7 @@
  * pb 2006/12/10
  * pb 2007/06/02 utf8 <-> wcs
  * pb 2007/08/07 MelderUtf16
+ * pb 2007/09/22 bug removed: an extra character of room in *_appendCharacter
  */
 
 #include "melder.h"
@@ -487,7 +488,7 @@ end:
 }
 
 bool MelderStringA_appendCharacter (MelderStringA *me, char character) {
-	unsigned long sizeNeeded = my length + 2;
+	unsigned long sizeNeeded = my length + 2;   // Make room for character and null byte.
 	expandIfNecessary (char)
 	my string [my length] = character;
 	my length ++;
@@ -498,7 +499,7 @@ end:
 }
 
 bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 2;
+	unsigned long sizeNeeded = my length + 2;   // Make room for character and null byte.
 	expandIfNecessary (wchar_t)
 	my string [my length] = character;
 	my length ++;
@@ -509,7 +510,7 @@ end:
 }
 
 bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
-	unsigned long sizeNeeded = my length + 3;   // Allow for surrogate characters.
+	unsigned long sizeNeeded = my length + 3;   // Make room for character, potential surrogate character, and null byte.
 	expandIfNecessary (MelderUtf16)
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 		my string [my length] = character;

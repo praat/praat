@@ -29,10 +29,10 @@ const wchar_t *test16 = L"hfgfhésgɑfhdfgh";
 
 static void logo (Graphics g) {
 	if (Melder_debug == 22) {
-		Melder_error3 (Melder_peekUtf8ToWcs ((const unsigned char *) test8), L"...", test16);
+		Melder_error3 (Melder_peekUtf8ToWcs (test8), L"...", test16);
 		Melder_flushError (NULL);
 	}
-	Graphics_setWindow (g, 0, 1, -0.26, 0.80);
+	Graphics_setWindow (g, 0, 1, 0.00, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (g, Graphics_FONT_TIMES);
 	Graphics_setFontSize (g, 45);
@@ -57,15 +57,10 @@ static void logo (Graphics g) {
 	Graphics_setFont (g, Graphics_FONT_HELVETICA);
 	Graphics_setFontSize (g, 10);
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
-	Graphics_text (g, 0.5, 0.04, L"PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
-	Graphics_text (g, 0.5, -0.02, L"GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
-	Graphics_text (g, 0.5, -0.08, L"PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");
-	Graphics_text (g, 0.5, -0.14, L"Free Lossless Audio Codec:  \\co 2000-2007 Josh Coalson & Erez Volk");
-	Graphics_text (g, 0.5, -0.20, L"MPEG Audio Decoder:  \\co 2000-2007 Underbit Technologies & Erez Volk");
 }
 
 int main (int argc, char *argv []) {
-	praat_setLogo (130, 110, logo);
+	praat_setLogo (130, 80, logo);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
 	praat_run ();

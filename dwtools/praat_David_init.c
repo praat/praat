@@ -48,6 +48,7 @@
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
  djmw 20070206 Sound_changeGender: pitch range factor must be >= 0
  djmw 20070304 Latest modification.
+ djmw 20070903 Melder_new<1...>
 */
 
 #include "praat.h"
@@ -279,7 +280,7 @@ DIRECT (Categories_to_Confusion)
 	Melder_assert (c1 && c2);
 	(void) swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list[i1].name, ' ') + 1,
 		wcschr (theCurrentPraat -> list[i2].name, ' ') + 1);
-	if (! praat_new9 (Categories_to_Confusion (c1, c2), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (Categories_to_Confusion (c1, c2), name)) return 0;
 END
 
 DIRECT (Categories_to_Strings)
@@ -431,8 +432,8 @@ END
 
 DIRECT (CCA_and_Correlation_factorLoadings)
 	CCA cca = ONLY (classCCA);
-	if (! praat_new (CCA_and_Correlation_factorLoadings (cca, 
-		ONLY (classCorrelation)), "%ls_loadings", Thing_getNameW (cca))) return 0;
+	if (! praat_new2 (CCA_and_Correlation_factorLoadings (cca, 
+		ONLY (classCorrelation)), Thing_getNameW (cca), L"_loadings")) return 0;
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, "CCA & Correlation: Get variance fraction",
@@ -478,8 +479,8 @@ END
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
 	CCA cca = ONLY (classCCA);
-	if (! praat_new (CCA_and_TableOfReal_factorLoadings (cca, 
-		ONLY (classTableOfReal)), "%ls_loadings", Thing_getNameW (cca))) return 0;
+	if (! praat_new2 (CCA_and_TableOfReal_factorLoadings (cca, 
+		ONLY (classTableOfReal)), Thing_getNameW (cca), L"_loadings")) return 0;
 END
 
 FORM (CCA_and_TableOfReal_scores, "CCA & TableOfReal: To TableOfReal (scores)",
@@ -488,9 +489,9 @@ FORM (CCA_and_TableOfReal_scores, "CCA & TableOfReal: To TableOfReal (scores)",
 	OK
 DO
 	CCA cca = ONLY (classCCA);
-	if (! praat_new (CCA_and_TableOfReal_scores (cca, ONLY (classTableOfReal),
-		GET_INTEGER ("Number of canonical correlations")), "%ls_scores",
-		Thing_getNameW (cca))) return 0;
+	if (! praat_new2 (CCA_and_TableOfReal_scores (cca, ONLY (classTableOfReal),
+		GET_INTEGER ("Number of canonical correlations")),
+		Thing_getNameW (cca), L"_scores")) return 0;
 END
 
 FORM (CCA_and_TableOfReal_predict, "CCA & TableOfReal: Predict", 
@@ -523,8 +524,8 @@ FORM (ChebyshevSeries_create, "Create ChebyshevSeries",
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
-	if (! praat_new (ChebyshevSeries_createFromString (xmin, xmax,
-		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (ChebyshevSeries_createFromString (xmin, xmax,
+		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (ChebyshevSeries_to_Polynomial)
@@ -808,10 +809,10 @@ FORM (Discriminant_and_TableOfReal_to_ClassificationTable,
 DO
 	Discriminant d = ONLY (classDiscriminant);
 	TableOfReal t = ONLY_GENERIC (classTableOfReal);
-	if (! praat_new (Discriminant_and_TableOfReal_to_ClassificationTable
+	if (! praat_new3 (Discriminant_and_TableOfReal_to_ClassificationTable
 		(d,	t, GET_INTEGER ("Pool covariance matrices"),
-		GET_INTEGER ("Use apriori probabilities")), "%ls_%ls", 
-		Thing_getNameW (d), Thing_getNameW (t))) return 0;
+		GET_INTEGER ("Use apriori probabilities")),
+		Thing_getNameW (d), L"_", Thing_getNameW (t))) return 0;
 END
 
 FORM (Discriminant_getWilksLambda, "Discriminant: Get Wilks' lambda",
@@ -1441,8 +1442,8 @@ FORM (Index_extractPart, "Index: Extract part", "Index: Extract part...")
 	OK
 DO
 	Index thee = ONLY_OBJECT;
-	if (! praat_new (Index_extractPart (thee, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		"%ls_part", Thing_getNameW (thee))) return 0;
+	if (! praat_new2 (Index_extractPart (thee, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
+		Thing_getNameW (thee), L"_part")) return 0;
 END
 
 FORM (Index_to_Permutation, "Index: To Permutation", "Index: To Permutation...")
@@ -1507,7 +1508,7 @@ DO
 	WHERE (SELECTED && CLASS == classExcitations)
 	{
 		Excitation me = Excitations_getItem (OBJECT, GET_INTEGER("Item number"));
-		if (! praat_new (me, Thing_getName(me))) return 0;
+		if (! praat_new1 (me, Thing_getNameW (me))) return 0;
 	}
 END
 
@@ -1935,9 +1936,9 @@ DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	long degree = GET_INTEGER ("Degree");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
-	if (! praat_new (ISpline_createFromStrings (xmin, xmax, degree,
+	if (! praat_new1 (ISpline_createFromStrings (xmin, xmax, degree,
 		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
-		GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 END
 
 /******************* LegendreSeries *********************************/
@@ -1956,8 +1957,8 @@ FORM (LegendreSeries_create, "Create LegendreSeries",
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
-	if (! praat_new (LegendreSeries_createFromString (xmin, xmax,
-		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (LegendreSeries_createFromString (xmin, xmax,
+		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (LegendreSeries_help) Melder_help (L"LegendreSeries"); END
@@ -2082,8 +2083,7 @@ FORM (Matrix_solveEquation, "Matrix: Solve equation",
 DO
 	WHERE (SELECTED)
 	{
-		if (! praat_new (Matrix_solveEquation (OBJECT, GET_REAL ("Tolerance")), 
-						 "%ls_solution", NAMEW)) return 0;
+		if (! praat_new2 (Matrix_solveEquation (OBJECT, GET_REAL ("Tolerance")), NAMEW, L"_solution")) return 0;
 	}
 END
 
@@ -2295,9 +2295,9 @@ DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	long degree = GET_INTEGER ("Degree");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
-	if (! praat_new (MSpline_createFromStrings (xmin, xmax, degree,
+	if (! praat_new1 (MSpline_createFromStrings (xmin, xmax, degree,
 		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
-		GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (MSpline_help) Melder_help (L"MSpline"); END
@@ -2307,8 +2307,8 @@ DIRECT (MSpline_help) Melder_help (L"MSpline"); END
 DIRECT (Pattern_and_Categories_to_Discriminant)
 	Pattern p = ONLY (classPattern);
 	Categories c = ONLY (classCategories);
-	if (! praat_new (Pattern_and_Categories_to_Discriminant (p, c), 
-		"%ls_%ls", Thing_getNameW (p), Thing_getNameW (c))) return 0;
+	if (! praat_new3 (Pattern_and_Categories_to_Discriminant (p, c), 
+		Thing_getNameW (p), L"_", Thing_getNameW (c))) return 0;
 END
 
 FORM (Pattern_draw, "Pattern: Draw", 0)
@@ -2468,7 +2468,8 @@ DO
 	long to = GET_INTEGER ("right Eigenvector range");
 	PCA me = NULL, thee = NULL;
 	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
-	if (! praat_new (Eigens_to_Procrustes (me, thee, from, to), "%s_%s", Thing_getName(me), Thing_getName(thee))) return 0;
+	if (! praat_new3 (Eigens_to_Procrustes (me, thee, from, to), Thing_getNameW (me), L"_", 
+		Thing_getNameW (thee))) return 0;
 END
 
 
@@ -2497,7 +2498,7 @@ DO
 	{
 		forget (p); return 0;
 	}
-	if (! praat_new (p, GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (p, GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (Permutation_getNumberOfElements)
@@ -2559,8 +2560,8 @@ FORM (Permutation_permuteRandomly, "Permutation: Permute randomly", "Permutation
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new (Permutation_permuteRandomly (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		"%s_randomly", Thing_getName (p))) return 0;
+	if (! praat_new2 (Permutation_permuteRandomly (p, GET_INTEGER ("left Range"), 
+		GET_INTEGER ("right Range")), Thing_getNameW (p), L"_randomly")) return 0;
 END
 
 FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
@@ -2571,7 +2572,7 @@ FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
 DO
 	Permutation p = ONLY_OBJECT;
 	long step = GET_INTEGER ("Step size");
-	if (! praat_new (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), "%s_rotate%ld", Thing_getName (p),step)) return 0;
+	if (! praat_new3 (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), Thing_getNameW (p), L"_rotate", Melder_integer (step))) return 0;
 END
 
 FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
@@ -2580,8 +2581,8 @@ FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new (Permutation_reverse (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		"%s_reverse", Thing_getName (p))) return 0;
+	if (! praat_new2 (Permutation_reverse (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
+		Thing_getNameW (p), L"_reverse")) return 0;
 END
 
 FORM (Permutation_permuteBlocksRandomly, "Permutation: Permute blocks randomly", "Permutation: Permute randomly (blocks)...")
@@ -2594,9 +2595,9 @@ FORM (Permutation_permuteBlocksRandomly, "Permutation: Permute blocks randomly",
 DO
 	Permutation p = ONLY_OBJECT;
 	long blocksize = GET_INTEGER ("Block size");
-	if (! praat_new (Permutation_permuteBlocksRandomly (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
-		blocksize, GET_INTEGER ("Permute within blocks"), GET_INTEGER ("No doublets")),
-		"%s_blocks%ld", Thing_getName (p), blocksize)) return 0;
+	if (! praat_new3 (Permutation_permuteBlocksRandomly (p, GET_INTEGER ("left Range"), 
+		GET_INTEGER ("right Range"), blocksize, GET_INTEGER ("Permute within blocks"), GET_INTEGER ("No doublets")),
+		Thing_getNameW (p), L"_blocks", Melder_integer(blocksize))) return 0;
 END
 
 FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleave...")
@@ -2607,13 +2608,13 @@ FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleav
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new (Permutation_interleave (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
-		GET_INTEGER ("Block size"), GET_INTEGER ("Offset")), "%s_interleave", Thing_getName (p))) return 0;
+	if (! praat_new2 (Permutation_interleave (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
+		GET_INTEGER ("Block size"), GET_INTEGER ("Offset")), Thing_getNameW (p), L"_interleave")) return 0;
 END
 
 DIRECT (Permutation_invert)
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new (Permutation_invert (p), "%s_inverse", Thing_getName (p))) return 0;
+	if (! praat_new2 (Permutation_invert (p), Thing_getNameW (p), L"_inverse")) return 0;
 END
 
 DIRECT (Permutations_multiply)
@@ -2658,7 +2659,7 @@ end:
 	{
 		forget (thee); return 0;
 	}
-	if (! praat_new (thee, "multiply%ld", np)) return 0;
+	if (! praat_new2 (thee, L"multiply", Melder_integer(np))) return 0;
 END
 
 FORM (Pitches_to_DTW, "Pitches: To DTW", "Pitches: To DTW...")
@@ -2671,7 +2672,7 @@ DO
 	int begin, end, slope;
 	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
 	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
-	if (! praat_new (Pitches_to_DTW (p1, p2, GET_REAL ("Voiced-unvoiced costs"), GET_REAL ("Time costs weight"), begin, end, slope), "dtw_%s_%s", p1 -> name, p2 -> name)) return 0;
+	if (! praat_new4 (Pitches_to_DTW (p1, p2, GET_REAL ("Voiced-unvoiced costs"), GET_REAL ("Time costs weight"), begin, end, slope), L"dtw_", p1 -> nameW, L"_", p2 -> nameW)) return 0;
 
 END
 
@@ -2750,8 +2751,8 @@ FORM (Polynomial_create, "Create Polynomial", "Create Polynomial...")
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
-	if (! praat_new (Polynomial_createFromString (xmin, xmax,
-		GET_STRINGW (L"Coefficients")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Polynomial_createFromString (xmin, xmax,
+		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Polynomial_getArea, "Polynomial: Get area", "Polynomial: Get area...")
@@ -2819,8 +2820,7 @@ END
 DIRECT (Polynomials_multiply)
 	Polynomial p1 = NULL, p2 = NULL;
 	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
-	if (! praat_new (Polynomials_multiply (p1, p2),
-		"%s_%s_mul", p1->name, p2->name)) return 0;
+	if (! praat_new4 (Polynomials_multiply (p1, p2), p1->nameW, L"_", p2->nameW, L"_mul")) return 0;
 END
 
 FORM (Polynomials_divide, "Polynomials: Divide", "Polynomials: Divide...")
@@ -2842,8 +2842,8 @@ DO
 	s = Polynomial_create (0,1,1);
 	forget (s);
 	if (! Polynomials_divide (p1, p2, &q, &r)) return 0;
-	if (wantq && ! praat_new (q, "%s_q", p1->name)) return 0;
-	if (wantr && ! praat_new (r, "%s_r", p1->name)) return 0;
+	if (wantq && ! praat_new2 (q, p1 -> nameW, L"_q")) return 0;
+	if (wantr && ! praat_new2 (r, p1 -> nameW, L"_r")) return 0;
 END
 
 /********************* Roots ******************************/
@@ -3091,7 +3091,7 @@ DO
 		bandwidth, GET_REAL ("Initial phase"), GET_REAL ("Addition factor"),
 		GET_INTEGER ("Scale amplitudes"));
 	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) || 
-		! praat_new (sound, GET_STRING ("Name"))) return 0;
+		! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Sound_createFromShepardTone, "Create a Shepard tone",
@@ -3120,7 +3120,7 @@ DO
 		GET_REAL ("Frequency change"), GET_REAL ("Amplitude range"), octaveShiftFraction);
 	
 	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
-		! praat_new (sound, GET_STRING ("Name"))) return 0; 
+		! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0; 
 END
 /* old
 FORM (Sound_createFromShepardTone, "Create a Shepard tone",
@@ -3322,13 +3322,13 @@ DO
 END
 
 FORM_READ (Sound_readFromRawFileLE, "Read Sound from raw Little Endian file", 0)
-	if (! praat_new (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0,
-		16000), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0,
+		16000), MelderFile_nameW (file))) return 0;
 END
 
 FORM_READ (Sound_readFromRawFileBE, "Read Sound from raw 16-bit Little Endian  file", 0)
-	if (! praat_new (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0,
-		16000), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0,
+		16000), MelderFile_nameW (file))) return 0;
 END
 
 FORM_WRITE (Sound_writeToRawFileBE, "Sound: Write to raw 16-bit Big Endian file",
@@ -3472,8 +3472,8 @@ DO
 END
 
 DIRECT (SSCP_extractCentroid)
-	EVERY_CHECK (praat_new (SSCP_extractCentroid (OBJECT),
-		"%s_centroid", Thing_getName (OBJECT)))
+	EVERY_CHECK (praat_new2 (SSCP_extractCentroid (OBJECT),
+		Thing_getNameW (OBJECT), L"_centroid"))
 END
 
 FORM (SSCP_getConfidenceEllipseArea, "SSCP: Get confidence ellipse area", 
@@ -3585,7 +3585,7 @@ DIRECT (Strings_append)
 	{
 		if (! Collection_addItem (me, OBJECT)) goto Strings_append_end;
 	}
-	if (praat_new (Strings_append (me), "appended")) status = 1;
+	if (praat_new1 (Strings_append (me), L"appended")) status = 1;
 Strings_append_end:
 	my size = 0; forget (me);
 	return status;
@@ -3659,31 +3659,31 @@ END
 
 DIRECT (SVD_extractLeftSingularVectors)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new (SVD_extractLeftSingularVectors (svd), "%s_lsv", Thing_getName (svd))) return 0;
+	if (! praat_new2 (SVD_extractLeftSingularVectors (svd), Thing_getNameW (svd), L"_lsv")) return 0;
 END
 
 DIRECT (SVD_extractRightSingularVectors)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new (SVD_extractRightSingularVectors (svd), "%s_rsv", Thing_getName (svd))) return 0;
+	if (! praat_new2 (SVD_extractRightSingularVectors (svd), Thing_getNameW (svd), L"_rsv")) return 0;
 END
 
 DIRECT (SVD_extractSingularValues)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new (SVD_extractSingularValues (svd), "%s_sv", Thing_getName (svd))) return 0;
+	if (! praat_new2 (SVD_extractSingularValues (svd), Thing_getNameW (svd), L"_sv")) return 0;
 END
 
 /******************* Table ****************************/
 
 DIRECT (Table_createFromPetersonBarneyData)
-	if (! praat_new (Table_createFromPetersonBarneyData (), "pb")) return 0;
+	if (! praat_new1 (Table_createFromPetersonBarneyData (), L"pb")) return 0;
 END
 
 DIRECT (Table_createFromPolsVanNieropData)
-	if (! praat_new (Table_createFromPolsVanNieropData (), "pvn")) return 0;
+	if (! praat_new1 (Table_createFromPolsVanNieropData (), L"pvn")) return 0;
 END
 
 DIRECT (Table_createFromWeeninkData)
-	if (! praat_new (Table_createFromWeeninkData (), "m10w10c10")) return 0;
+	if (! praat_new1 (Table_createFromWeeninkData (), L"m10w10c10")) return 0;
 END
 
 /******************* TableOfReal ****************************/
@@ -3691,8 +3691,8 @@ END
 DIRECT (TableOfReal_and_Permutation_permuteRows)
 	TableOfReal t = ONLY (classTableOfReal);
 	Permutation p = ONLY (classPermutation);
-	if (! praat_new (TableOfReal_and_Permutation_permuteRows (t, p),
-		"%s_%s", Thing_getName (t), Thing_getName (p))) return 0;
+	if (! praat_new3 (TableOfReal_and_Permutation_permuteRows (t, p),
+		Thing_getNameW (t), L"_", Thing_getNameW (p))) return 0;
 END
 
 DIRECT (TableOfReal_to_Permutation_sortRowlabels)
@@ -3707,7 +3707,7 @@ DIRECT (TableOfReal_appendColumns)
 		{ 
 			my size = 0; forget (me); return 0;
 		}
-	if (! praat_new (TableOfReal_appendColumnsMany (me), "columns_appended"))
+	if (! praat_new1 (TableOfReal_appendColumnsMany (me), L"columns_appended"))
 	{
 		my size = 0; forget (me); return 0;
 	}
@@ -3719,8 +3719,8 @@ FORM (TableOfReal_createFromPolsData_50males, "Create TableOfReal (Pols 1973)",
 	BOOLEAN ("Include formant levels", 0)
 	OK
 DO
-	if (! praat_new (TableOfReal_createFromPolsData_50males
-		(GET_INTEGER ("Include formant levels")), "pols_50males")) return 0;
+	if (! praat_new1 (TableOfReal_createFromPolsData_50males
+		(GET_INTEGER ("Include formant levels")), L"pols_50males")) return 0;
 END
 
 FORM (TableOfReal_createFromVanNieropData_25females, "Create TableOfReal (Van Nierop 1973)...",
@@ -3728,8 +3728,8 @@ FORM (TableOfReal_createFromVanNieropData_25females, "Create TableOfReal (Van Ni
 	BOOLEAN ("Include formant levels", 0)
 	OK
 DO
-	if (! praat_new (TableOfReal_createFromVanNieropData_25females
-		(GET_INTEGER ("Include formant levels")), "vannierop_25females")) return 0;
+	if (! praat_new1 (TableOfReal_createFromVanNieropData_25females
+		(GET_INTEGER ("Include formant levels")), L"vannierop_25females")) return 0;
 END
 
 FORM (TableOfReal_createFromWeeninkData,"Create TableOfReal (Weenink 1985)...",
@@ -3741,8 +3741,8 @@ FORM (TableOfReal_createFromWeeninkData,"Create TableOfReal (Weenink 1985)...",
 	OK
 DO
 	int type = GET_INTEGER ("Speakers group");
-	if (! praat_new (TableOfReal_createFromWeeninkData (type), "%s10", 
-		type == 1 ? "m" : type == 2 ? "w" : "c")) return 0;
+	if (! praat_new1 (TableOfReal_createFromWeeninkData (type), 
+		(type == 1 ? L"m10" : type == 2 ? L"w10" : L"c10"))) return 0;
 END
 
 FORM (TableOfReal_drawScatterPlot, "TableOfReal: Draw scatter plot", "TableOfReal: Draw scatter plot...")
@@ -3923,9 +3923,9 @@ DO
 		GET_INTEGER ("right Row range"), GET_INTEGER ("left Column range"),
 		GET_INTEGER ("right Column range"), &p, &c))
 	{
-		char *name = Thing_getName (t);
-		praat_new (p, name);
-		praat_new (c, name);
+		wchar_t *name = Thing_getNameW (t);
+		praat_new1 (p, name);
+		praat_new1 (c, name);
 	}
 END
 
@@ -3951,14 +3951,14 @@ FORM (TableOfReal_meansByRowLabels, "TableOfReal: Means by row labels", "TableOf
     BOOLEAN ("Expand", 0)
 	OK
 DO
-	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 0), "%s_byrowlabels", NAME))
+	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 0), NAMEW, L"_byrowlabels"))
 END
 
 FORM (TableOfReal_mediansByRowLabels, "TableOfReal: Medians by row labels", "TableOfReal: To TableOfReal (medians by row labels)...")
     BOOLEAN ("Expand", 0)
 	OK
 DO
-	EVERY_CHECK(praat_new (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 1), "%s_byrowlabels", NAME))
+	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER ("Expand"), 1), NAMEW, L"_byrowlabels"))
 END
 
 /***** TableOfReal and FilterBank  *****/

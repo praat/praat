@@ -323,7 +323,7 @@ void _GuiText_nativizeWidget (Widget me) {
 		SetWindowLong (my window, GWL_USERDATA, (long) me);
 		static HFONT font;
 		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-		SetWindowFont (my window, theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT), FALSE);
+		SetWindowFont (my window, font /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);
 		my motif.text.editable = TRUE;
 		Edit_LimitText (my window, 0);
 	#elif mac

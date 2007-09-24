@@ -2157,14 +2157,16 @@ static void _motif_setValues (Widget me, va_list arg) {
 			#if win
 				DestroyWindow (my window);
 				if (wrap) {
-					my window = CreateWindow ("edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOVSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS,
+					my window = CreateWindowW (L"edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOVSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS,
 						my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				} else {
-					my window = CreateWindow ("edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS,
+					my window = CreateWindowW (L"edit", NULL, WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_MULTILINE | WS_CLIPSIBLINGS,
 						my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				}
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
-				SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		static HFONT font;
+		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+				SetWindowFont (my window, font /*GetStockFont (ANSI_VAR_FONT)*/, FALSE);
 			#endif
 		} break;
 		case XmNx: my x = va_arg (arg, int); move = True; break;

@@ -176,27 +176,47 @@ static struct Longchar_Info Longchar_database [] = {
 { 'a', '^', 0, { "/acircumflex",    444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 226, 226, 137, 137, UNICODE_LATIN_SMALL_LETTER_A_WITH_CIRCUMFLEX },
 { 'a', '~', 0, { "/atilde",         444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 227, 227, 139, 139, UNICODE_LATIN_SMALL_LETTER_A_WITH_TILDE },
 { 'a','\"', 0, { "/adieresis",      444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 228, 228, 138, 138, UNICODE_LATIN_SMALL_LETTER_A_WITH_DIAERESIS },
-{ 'c', '<', 0, { "/ccaron",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   1, UNICODE_LATIN_SMALL_LETTER_C_WITH_CARON },
+{ 'a', 'o', 0, { "/aring",          444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 229, 229, 140, 140, UNICODE_LATIN_SMALL_LETTER_A_WITH_RING_ABOVE },
+{ 'a', ';', 0, { "/aogonek",        444, 500, 500, 500,  556, 556,  500, 500, 444, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_A_WITH_OGONEK },
+{ 'c','\'', 0, { "/cacute",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_C_WITH_ACUTE },
+{ 'c', '<', 0, { "/ccaron",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_C_WITH_CARON },
+{ 'd', '<', 0, { "/dcaron",         500, 556, 500, 500,  556, 611,  611, 611, 500, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_D_WITH_CARON },
 { 'e', '`', 0, { "/egrave",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 232, 232, 143, 143, UNICODE_LATIN_SMALL_LETTER_E_WITH_GRAVE },
 { 'e','\'', 0, { "/eacute",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 233, 233, 142, 142, UNICODE_LATIN_SMALL_LETTER_E_WITH_ACUTE },
 { 'e', '^', 0, { "/ecircumflex",    444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 234, 234, 144, 144, UNICODE_LATIN_SMALL_LETTER_E_WITH_CIRCUMFLEX },
 { 'e','\"', 0, { "/edieresis",      444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 235, 235, 145, 145, UNICODE_LATIN_SMALL_LETTER_E_WITH_DIAERESIS },
+{ 'e', '<', 0, { "/ecaron",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_E_WITH_CARON },
+{ 'e', ';', 0, { "/eogonek",        444, 444, 444, 444,  556, 556,  479, 500, 389, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_E_WITH_OGONEK },
+{ 'g', '<', 0, { "/gcaron",         500, 500, 500, 500,  556, 611,  556, 556, 500, 500 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_G_WITH_CARON },
 { 'i', '`', 0, { "/igrave",         278, 278, 278, 278,  222, 278,  287, 333, 278, 333 }, 236, 236, 147, 147, UNICODE_LATIN_SMALL_LETTER_I_WITH_GRAVE },
 { 'i','\'', 0, { "/iacute",         278, 278, 278, 278,  222, 278,  287, 333, 278, 333 }, 237, 237, 146, 146, UNICODE_LATIN_SMALL_LETTER_I_WITH_ACUTE },
 { 'i', '^', 0, { "/icircumflex",    278, 278, 278, 278,  222, 278,  287, 333, 278, 333 }, 238, 238, 148, 148, UNICODE_LATIN_SMALL_LETTER_I_WITH_CIRCUMFLEX },
 { 'i','\"', 0, { "/idieresis",      278, 278, 278, 278,  222, 278,  287, 333, 278, 333 }, 239, 239, 149, 149, UNICODE_LATIN_SMALL_LETTER_I_WITH_DIAERESIS },
+{ 'l', '/', 0, { "/lslash",         278, 278, 278, 278,  222, 278,  291, 333, 278, 333 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_L_WITH_STROKE },
+{ 'n','\'', 0, { "/nacute",         500, 556, 500, 556,  556, 611,  582, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_N_WITH_ACUTE },
 { 'n', '~', 0, { "/ntilde",         500, 556, 500, 556,  556, 611,  582, 611, 556, 556 }, 241, 241, 150, 150, UNICODE_LATIN_SMALL_LETTER_N_WITH_TILDE },
+{ 'n', '<', 0, { "/ncaron",         500, 556, 500, 556,  556, 611,  582, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_N_WITH_CARON },
 { 'o', '`', 0, { "/ograve",         500, 500, 500, 500,  556, 611,  546, 556, 444, 556 }, 242, 242, 152, 152, UNICODE_LATIN_SMALL_LETTER_O_WITH_GRAVE },
 { 'o','\'', 0, { "/oacute",         500, 500, 500, 500,  556, 611,  546, 556, 444, 556 }, 243, 243, 151, 151, UNICODE_LATIN_SMALL_LETTER_O_WITH_ACUTE },
 { 'o', '^', 0, { "/ocircumflex",    500, 500, 500, 500,  556, 611,  546, 556, 444, 556 }, 244, 244, 153, 153, UNICODE_LATIN_SMALL_LETTER_O_WITH_CIRCUMFLEX },
 { 'o', '~', 0, { "/otilde",         444, 500, 500, 500,  556, 611,  546, 556, 444, 556 }, 245, 245, 155, 155, UNICODE_LATIN_SMALL_LETTER_O_WITH_TILDE },
 { 'o','\"', 0, { "/odieresis",      500, 500, 500, 500,  556, 611,  546, 556, 444, 556 }, 246, 246, 154, 154, UNICODE_LATIN_SMALL_LETTER_O_WITH_DIAERESIS },
+{ 'o', ':', 0, { "/ohungarumlaut",  500, 500, 500, 500,  556, 611,  546, 556, 444, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_O_WITH_DOUBLE_ACUTE },
+{ 'r', '<', 0, { "/rcaron",         333, 444, 389, 389,  333, 389,  395, 389, 389, 389 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_R_WITH_CARON },
+{ 's','\'', 0, { "/sacute",         389, 389, 389, 389,  500, 556,  424, 444, 389, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_S_WITH_ACUTE },
+{ 's', '<', 0, { "/scaron",         389, 389, 389, 389,  500, 556,  424, 444, 389, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_S_WITH_CARON },
+{ 't', '<', 0, { "/tcaron",         278, 333, 278, 278,  278, 333,  326, 333, 333, 389 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_T_WITH_CARON },
 { 'u', '`', 0, { "/ugrave",         500, 556, 500, 556,  556, 611,  603, 611, 556, 556 }, 249, 249, 157, 157, UNICODE_LATIN_SMALL_LETTER_U_WITH_GRAVE },
 { 'u','\'', 0, { "/uacute",         500, 556, 500, 556,  556, 611,  603, 611, 556, 556 }, 250, 250, 156, 156, UNICODE_LATIN_SMALL_LETTER_U_WITH_ACUTE },
 { 'u', '^', 0, { "/ucircumflex",    500, 556, 500, 556,  556, 611,  603, 611, 556, 556 }, 251, 251, 158, 158, UNICODE_LATIN_SMALL_LETTER_U_WITH_CIRCUMFLEX },
 { 'u','\"', 0, { "/udieresis",      500, 556, 500, 556,  556, 611,  603, 611, 556, 556 }, 252, 252, 159, 159, UNICODE_LATIN_SMALL_LETTER_U_WITH_DIAERESIS },
+{ 'u', ':', 0, { "/uhungarumlaut",  500, 556, 500, 556,  556, 611,  603, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_U_WITH_DOUBLE_ACUTE },
+{ 'u', 'o', 0, { "/uring",          500, 556, 500, 556,  556, 611,  603, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_U_WITH_RING_ABOVE },
 { 'y','\'', 0, { "/yacute",         500, 500, 444, 444,  500, 556,  556, 556, 500, 556 }, 253, 253,   0,   0, UNICODE_LATIN_SMALL_LETTER_Y_WITH_ACUTE },
-{ 'y','\"', 0, { "/ydieresis",      500, 500, 444, 444,  500, 556,  556, 556, 500, 556 }, 255, 255, 216, 216, UNICODE_LATIN_SMALL_LETTER_Y_WITH_DIAERESIS }, /* where? */
+{ 'y','\"', 0, { "/ydieresis",      500, 500, 444, 444,  500, 556,  556, 556, 500, 556 }, 255, 255, 216, 216, UNICODE_LATIN_SMALL_LETTER_Y_WITH_DIAERESIS },
+{ 'z','\'', 0, { "/zacute",         444, 444, 389, 389,  500, 500,  500, 500, 444, 500 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_Z_WITH_ACUTE },
+{ 'z', '<', 0, { "/zcaron",         444, 444, 389, 389,  500, 500,  500, 500, 444, 500 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_Z_WITH_CARON },
+{ 'z', '!', 0, { "/zdot",           444, 444, 389, 389,  500, 500,  500, 500, 444, 500 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_Z_WITH_DOT_ABOVE },
 
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 'A', '`', 0, { "/Agrave",         722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 192, 192, 203, 203, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_GRAVE },
@@ -204,35 +224,54 @@ static struct Longchar_Info Longchar_database [] = {
 { 'A', '^', 0, { "/Acircumflex",    722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 194, 194, 229, 229, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX },
 { 'A', '~', 0, { "/Atilde",         722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 195, 195, 204, 204, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_TILDE },
 { 'A','\"', 0, { "/Adieresis",      722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 196, 196, 128, 128, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_DIAERESIS },
+{ 'A', 'o', 0, { "/Aring",          722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 197, 197, 129, 129, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_RING_ABOVE },
+{ 'A', ';', 0, { "/Aogonek",        722, 722, 611, 667,  667, 722,  778, 778, 722, 722 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_OGONEK },
+{ 'C','\'', 0, { "/Cacute",         667, 722, 667, 667,  722, 722,  709, 722, 667, 685 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_ACUTE },
+{ 'C', '<', 0, { "/Ccaron",         667, 722, 667, 667,  722, 722,  709, 722, 667, 685 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CARON },
+{ 'D', '<', 0, { "/Dcaron",         722, 722, 722, 722,  722, 722,  774, 833, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_D_WITH_CARON },
 { 'E', '`', 0, { "/Egrave",         611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 200, 200, 233, 233, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_GRAVE },
 { 'E','\'', 0, { "/Eacute",         611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 201, 201, 131, 131, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_ACUTE },
 { 'E', '^', 0, { "/Ecircumflex",    611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 202, 202, 230, 230, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_CIRCUMFLEX },
 { 'E','\"', 0, { "/Edieresis",      611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 203, 203, 232, 232, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_DIAERESIS },
+{ 'E', '<', 0, { "/Ecaron",         611, 667, 611, 667,  667, 667,  611, 611, 611, 611 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_CARON },
+{ 'E', ';', 0, { "/Eogonek",        611, 667, 611, 667,  667, 667,  611, 611, 611, 611 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_OGONEK },
+{ 'G', '<', 0, { "/Gcaron",         722, 778, 722, 722,  778, 778,  763, 833, 722, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_G_WITH_CARON },
 { 'I', '`', 0, { "/Igrave",         333, 389, 333, 389,  278, 278,  337, 389, 333, 389 }, 204, 204, 237, 237, UNICODE_LATIN_CAPITAL_LETTER_I_WITH_GRAVE },
 { 'I','\'', 0, { "/Iacute",         333, 389, 333, 389,  278, 278,  337, 389, 333, 389 }, 205, 205, 234, 234, UNICODE_LATIN_CAPITAL_LETTER_I_WITH_ACUTE },
 { 'I', '^', 0, { "/Icircumflex",    333, 389, 333, 389,  278, 278,  337, 389, 333, 389 }, 206, 206, 235, 235, UNICODE_LATIN_CAPITAL_LETTER_I_WITH_CIRCUMFLEX },
 { 'I','\"', 0, { "/Idieresis",      333, 389, 333, 389,  278, 278,  337, 389, 333, 389 }, 207, 207, 236, 236, UNICODE_LATIN_CAPITAL_LETTER_I_WITH_DIAERESIS },
+{ 'L', '/', 0, { "/Lslash",         611, 667, 556, 611,  556, 611,  611, 611, 556, 611 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_L_WITH_STROKE },
+{ 'N','\'', 0, { "/Nacute",         722, 722, 667, 722,  722, 722,  831, 833, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_N_WITH_ACUTE },
 { 'N', '~', 0, { "/Ntilde",         722, 722, 667, 722,  722, 722,  831, 833, 778, 778 }, 209, 209, 132, 132, UNICODE_LATIN_CAPITAL_LETTER_N_WITH_TILDE },
+{ 'N', '<', 0, { "/Ncaron",         722, 722, 667, 722,  722, 722,  831, 833, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_N_WITH_CARON },
 { 'O', '`', 0, { "/Ograve",         722, 778, 722, 722,  778, 778,  786, 833, 778, 833 }, 210, 210, 241, 241, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_GRAVE },
 { 'O','\'', 0, { "/Oacute",         722, 778, 722, 722,  778, 778,  786, 833, 778, 833 }, 211, 211, 238, 238, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_ACUTE },
 { 'O', '^', 0, { "/Ocircumflex",    722, 778, 722, 722,  778, 778,  786, 833, 778, 833 }, 212, 212, 239, 239, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_CIRCUMFLEX },
 { 'O', '~', 0, { "/Otilde",         722, 778, 722, 722,  778, 778,  786, 833, 778, 833 }, 213, 213, 205, 205, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_TILDE },
 { 'O','\"', 0, { "/Odieresis",      722, 778, 722, 722,  778, 778,  786, 833, 778, 833 }, 214, 214, 133, 133, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_DIAERESIS },
+{ 'O', ':', 0, { "/Ohungarumlaut",  722, 778, 722, 722,  778, 778,  786, 833, 778, 833 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_DOUBLE_ACUTE },
+{ 'R', '<', 0, { "/Rcaron",         667, 722, 611, 667,  722, 722,  668, 722, 667, 722 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_R_WITH_CARON },
+{ 'S','\'', 0, { "/Sacute",         556, 556, 500, 556,  667, 667,  525, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_S_WITH_ACUTE },
+{ 'S', '<', 0, { "/Scaron",         556, 556, 500, 556,  667, 667,  525, 611, 556, 556 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_S_WITH_CARON },
+{ 'T', '<', 0, { "/Tcaron",         611, 667, 556, 611,  611, 611,  613, 667, 611, 611 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_T_WITH_CARON },
 { 'U', '`', 0, { "/Ugrave",         722, 722, 722, 722,  722, 722,  778, 778, 778, 778 }, 217, 217, 244, 244, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_GRAVE },
 { 'U','\'', 0, { "/Uacute",         722, 722, 722, 722,  722, 722,  778, 778, 778, 778 }, 218, 218, 242, 242, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_ACUTE },
 { 'U', '^', 0, { "/Ucircumflex",    722, 722, 722, 722,  722, 722,  778, 778, 778, 778 }, 219, 219, 243, 243, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_CIRCUMFLEX },
 { 'U','\"', 0, { "/Udieresis",      722, 722, 722, 722,  722, 722,  778, 778, 778, 778 }, 220, 220, 134, 134, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_DIAERESIS },
+{ 'U', ':', 0, { "/Uhungarumlaut",  722, 722, 722, 722,  722, 722,  778, 778, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_DOUBLE_ACUTE },
+{ 'U', 'o', 0, { "/Uring",          722, 722, 722, 722,  722, 722,  778, 778, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_U_WITH_RING_ABOVE },
 { 'Y','\'', 0, { "/Yacute",         722, 722, 556, 611,  667, 667,  667, 667, 667, 611 }, 221, 221,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_Y_WITH_ACUTE },
-{ 'Y','\"', 0, { "/Ydieresis",      722, 722, 556, 611,  667, 667,  667, 667, 667, 611 },   0,   0, 217, 217,      0 }, /* where? */
+{ 'Y','\"', 0, { "/Ydieresis",      722, 722, 556, 611,  667, 667,  667, 667, 667, 611 },   0,   0, 217, 217, UNICODE_LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS },
+{ 'Z','\'', 0, { "/Zacute",         611, 667, 556, 611,  611, 611,  667, 667, 667, 667 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_Z_WITH_ACUTE },
+{ 'Z', '<', 0, { "/Zcaron",         611, 667, 556, 611,  611, 611,  667, 667, 667, 667 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_Z_WITH_CARON },
+{ 'Z', '!', 0, { "/Zdot",           611, 667, 556, 611,  611, 611,  667, 667, 667, 667 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_Z_WITH_DOT_ABOVE },
 
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 's', 's', 0, { "/germandbls",     500, 556, 500, 500,  611, 611,  556, 611, 500, 556 }, 223, 223, 167, 167, UNICODE_LATIN_SMALL_LETTER_SHARP_S }, /* Ringel-s. */
-{ 'a', 'o', 0, { "/aring",          444, 500, 500, 500,  556, 556,  500, 500, 444, 556 }, 229, 229, 140, 140, UNICODE_LATIN_SMALL_LETTER_A_WITH_RING_ABOVE },
 { 'a', 'e', 0, { "/ae",             667, 722, 667, 722,  889, 889,  758, 778, 638, 738 }, 230, 230, 190, 190, UNICODE_LATIN_SMALL_LETTER_AE }, /* ash */
 { 'c', ',', 0, { "/ccedilla",       444, 444, 444, 444,  500, 556,  444, 444, 407, 444 }, 231, 231, 141, 141, UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA },
 { 'o', '/', 0, { "/oslash",         500, 500, 500, 500,  611, 611,  556, 556, 444, 556 }, 248, 248, 191, 191, UNICODE_LATIN_SMALL_LETTER_O_WITH_STROKE },
 { 't', 'h', 0, { "/thorn",          500, 556, 500, 500,  556, 611,  601, 611, 500, 556 }, 254, 254,   0,   0, UNICODE_LATIN_SMALL_LETTER_THORN },
-{ 'A', 'o', 0, { "/Aring",          722, 722, 611, 667,  667, 722,  778, 778, 722, 722 }, 197, 197, 129, 129, UNICODE_LATIN_CAPITAL_LETTER_A_WITH_RING_ABOVE },
 { 'A', 'e', 0, { "/AE",             722,1000, 889, 944, 1000,1000,  944,1000, 941, 944 }, 198, 198, 174, 174, UNICODE_LATIN_CAPITAL_LETTER_AE }, /* Ash */
 { 'C', ',', 0, { "/Ccedilla",       667, 722, 667, 667,  722, 722,  709, 722, 667, 685 }, 199, 199, 130, 130, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CEDILLA },
 { 'O', '/', 0, { "/Oslash",         722, 778, 722, 722,  778, 778,  833, 833, 778, 833 }, 216, 216, 175, 175, UNICODE_LATIN_CAPITAL_LETTER_O_WITH_STROKE },
@@ -312,6 +351,45 @@ static struct Longchar_Info Longchar_database [] = {
 { 'C', 'i', 1, { "/Chi",            722, 0,   0,   0,    722, 0,    722, 0,   0,   0   },  67,  67,  67,  67, UNICODE_GREEK_CAPITAL_LETTER_CHI },
 { 'P', 's', 1, { "/Psi",            795, 0,   0,   0,    795, 0,    795, 0,   0,   0   },  89,  89,  89,  89, UNICODE_GREEK_CAPITAL_LETTER_PSI },
 { 'O', 'm', 1, { "/Omega",          768, 0,   0,   0,    768, 0,    768, 0,   0,   0   },  87,  87,  87,  87, UNICODE_GREEK_CAPITAL_LETTER_OMEGA },
+
+/* Hebrew. */
+{ '?', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ALEF },
+{ 'B', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_BET },
+{ 'G', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_GIMEL },
+{ 'D', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_DALET },
+{ 'H', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HE },
+{ 'V', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV },
+{ 'Z', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ZAYIN },
+{ 'X', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HET },
+{ 'Y', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TET },
+{ 'J', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_YOD },
+{ 'K', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_KAF },
+{ 'K', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_KAF },
+{ 'L', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_LAMED },
+{ 'M', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_MEM },
+{ 'M', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_MEM },
+{ 'N', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_NUN },
+{ 'N', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_NUN },
+{ 'S', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SAMEKH },
+{ '9', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_AYIN },
+{ 'P', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_PE },
+{ 'P', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_PE },
+{ 'C', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_TSADI },
+{ 'C', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TSADI },
+{ 'Q', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_QOF },
+{ 'R', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_RESH },
+{ 'W', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SHIN },
+{ 'T', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TAV },
+{ 'h', 'I', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HIRIQ },
+{ 's', 'E', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_SEGOL },
+{ 'c', 'E', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_TSERE },
+{ 'q', 'A', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QAMATS },
+{ 'p', 'A', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_PATAH },
+{ 'h', 'O', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HOLAM },
+{ 'v', 'O', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_HOLAM },
+{ 'q', 'U', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QUBUTS },
+{ 'd', 'q', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_DAGESH_OR_MAPIQ },
+{ 's', 'U', 0, { "/shuruq",         500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_DAGESH },
 
 /* Symbol. */
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
@@ -498,7 +576,7 @@ static struct Longchar_Info Longchar_database [] = {
 
 static short where [95] [95];
 static short inited = 0;
-#define UNICODE_TOP_GENERICIZABLE  15000
+#define UNICODE_TOP_GENERICIZABLE  65000
 static struct { char first, second; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
 
 static void init (void) {
@@ -512,7 +590,7 @@ static void init (void) {
 			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n", data -> first, data -> second);
 		}
 		*location = i;
-		#if defined (macintosh)
+		#if defined (macintosh) || defined (_WIN32)
 			if (data -> unicode <= UNICODE_TOP_GENERICIZABLE) {
 				genericDigraph [data -> unicode]. first = data -> first;
 				genericDigraph [data -> unicode]. second = data -> second;

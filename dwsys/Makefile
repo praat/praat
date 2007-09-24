@@ -16,7 +16,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	NUM2.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_f.o NUMfft_d.o NUMsort2.o \
 	Permutation.o Permutation_and_Index.o \
-	regularExp.o regularExpW.o SimpleVector.o Simple_extensions.o \
+	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o
 
 $(OBJECTS): *.h ../sys/*.h

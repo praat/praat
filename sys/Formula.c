@@ -2292,15 +2292,17 @@ end: return;
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *sA = Melder_wcsToAscii (s->content.string), *tA = Melder_wcsToAscii (t->content.string);
+		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string);
 		char *errorMessage;
 		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
-		} else if (ExecRE (compiled_regexp, NULL, sA, NULL, backward, '\0', '\0', NULL, NULL)) {
+		} else if (ExecRE (compiled_regexp, NULL, sA, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
 			char *place = compiled_regexp -> startp [0];
 			free (compiled_regexp);
-			pushNumber ((place - sA) + 1);
+			long numberOfCharacters = 0;
+			for (char *p = sA; place - p > 0; p ++) if ((unsigned char) *p <= 127 || (unsigned char) *p >= 0xC2) numberOfCharacters ++;
+			pushNumber (numberOfCharacters + 1);
 		} else {
 			pushNumber (FALSE);
 		}
@@ -2326,7 +2328,7 @@ end: return;
 static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		char *sA = Melder_wcsToAscii (s->content.string), *tA = Melder_wcsToAscii (t->content.string), *uA = Melder_wcsToAscii (u->content.string);
+		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string), *uA = Melder_wcsToUtf8 (u->content.string);
 		char *errorMessage;
 		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
@@ -2335,7 +2337,7 @@ static void do_replace_regexStr (void) {
 		} else {
 			long numberOfMatches;
 			char *resultA = str_replace_regexp (sA, compiled_regexp, uA, x->content.number, & numberOfMatches); cherror
-			wchar_t *result = Melder_asciiToWcs (resultA ? resultA : ""); cherror
+			wchar_t *result = Melder_utf8ToWcs (resultA ? resultA : ""); cherror
 			free (resultA);
 			pushString (result);
 		}

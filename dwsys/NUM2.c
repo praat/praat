@@ -45,7 +45,11 @@
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
  djmw 20070302 NUMclipLineWithinRectangle
+<<<<<<< HEAD:dwsys/NUM2.c
  pb 20070810 wchar_t
+=======
+ djmw 20070614 updated to version 1.30 of regular expressions.
+>>>>>>> regex:dwsys/NUM2.c
 */
 
 #include "SVD.h"
@@ -313,11 +317,12 @@ wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 	
 	if (compiled_regexp == NULL) return Melder_errorp (compileMsg);
 	
-	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToAscii (string), NULL, 0, '\0', '\0', NULL, NULL)) {
+	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToAscii (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
 		char *charpA = compiled_regexp -> startp[0];
 		charp = Melder_asciiToWcs (charpA);
 		Melder_free (charpA);
 	}
+
 	free (compiled_regexp);
 	return charp;
 }
@@ -459,7 +464,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	
 	pos = posp = string;
 	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, 
-		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL) && 
+		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL, NULL) && 
 		i++ < maximumNumberOfReplaces)
 	{
 		/*

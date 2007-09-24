@@ -133,6 +133,7 @@ MOTIF_CALLBACK (cb_draw)
 			Graphics_fillRectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
 			Graphics_setColour (my graphics, Graphics_MAROON);
 			Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
+			Graphics_setFontSize (my graphics, response -> fontSize ? response -> fontSize : 24);
 			if (visibleText_p [0] != '\0') {
 				visibleText_q = wcschr (visibleText_p, '|');
 				if (visibleText_q) *visibleText_q = '\0';
@@ -143,6 +144,7 @@ MOTIF_CALLBACK (cb_draw)
 				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
 					0.5 * (response -> bottom + response -> top), response -> label);
 			}
+			Graphics_setFontSize (my graphics, 24);
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 			GoodnessMFC goodness = & experiment -> goodness [iresponse];

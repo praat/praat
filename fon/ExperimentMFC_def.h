@@ -27,6 +27,7 @@
  * pb 2005/12/04 added okButton and oopsButton
  * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
  * pb 2007/08/12 wchar_t
+ * pb 2007/09/26 added font size
  */
 
 
@@ -65,6 +66,9 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_FLOAT (bottom)
 	oo_FLOAT (top)
 	oo_STRINGW (label)
+	oo_FROM (5)
+		oo_INT (fontSize)
+	oo_ENDFROM
 	oo_FROM (3)
 		oo_STRINGW (key)
 	oo_ENDFROM
