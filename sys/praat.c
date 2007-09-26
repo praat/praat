@@ -894,7 +894,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
 		praat_background ();
-		wchar_t *message = Melder_8bitToWcs ((unsigned char *) messageA, 0);
+		wchar_t *message = Melder_8bitToWcs (messageA, 0);
 		if (! praat_executeScriptFromText (message)) error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.")
 	end:
 		Melder_free (message);

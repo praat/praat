@@ -654,10 +654,15 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 				if (lc -> font.integer == theIpaTimesFont && theIpaTimesAtsuiFont == theTimesAtsuiFont) {
 					static bool notified = false;
 					if (! notified) {
-						Melder_error1 (L"You have not installed the Charis SIL or Doulos SIL font. Some characters will not be shown correctly.");
+						Melder_error1 (L"You have not installed the Charis SIL or Doulos SIL font. Some characters may not be shown correctly.");
 						Melder_flushError (NULL);
 						notified = true;
 					}
+				}
+				static ATSUFontFallbacks fontFallbacks = NULL;
+				if (fontFallbacks == NULL) {
+					ATSUCreateFontFallbacks (& fontFallbacks);
+					ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
 				}
 				UniCharCount runLength = nchars;
 				ATSUTextLayout textLayout;
@@ -675,10 +680,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 				OSStatus err = ATSUCreateTextLayoutWithTextPtr (codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars,
 					1, & runLength, & style, & textLayout);
 				Melder_assert (err == 0);
-				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag };
-				ByteCount valueSizes [] = { sizeof (CGContextRef) };
-				ATSUAttributeValuePtr values [] = { & my macGraphicsContext };
-				ATSUSetLayoutControls (textLayout, 1, attributeTags, valueSizes, values);
+				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
+				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
+				ATSUAttributeValuePtr values [] = { & my macGraphicsContext, & fontFallbacks };
+				ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
+				ATSUSetTransientFontMatching (textLayout, true);
 				CGContextTranslateCTM (my macGraphicsContext, xDC, shellHeight - yDC);
 				CGContextRotateCTM (my macGraphicsContext, my textRotation * NUMpi / 180.0);
 				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);

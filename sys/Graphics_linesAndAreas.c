@@ -168,6 +168,8 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 		#elif mac
 			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				//CGContextSetAlpha (my macGraphicsContext, 1.0);
+				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
 				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				CGContextSetRGBStrokeColor (my macGraphicsContext, my macColour.red, my macColour.green, my macColour.blue, 1.0);
 				double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
