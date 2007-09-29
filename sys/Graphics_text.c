@@ -1413,6 +1413,7 @@ static void stringToWidechar (Graphics me, const wchar_t *txt, _Graphics_widecha
 			continue;   /* Do not draw. */
 		} else {
 			if (kar == '\n') kar = ' ';
+			//Melder_casual ("kar %d",kar);
 			info = Longchar_getInfoFromNative (kar);
 		}
 		if (wordItalic | wordBold | wordCode | wordLink) {

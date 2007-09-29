@@ -255,13 +255,13 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 			} else if (kar <= 0xDF) {
 				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
-				wcs [j ++] = ((kar & 0x3F) << 6) | (kar2 & 0x3F);
+				wcs [j ++] = ((kar & 0x1F) << 6) | (kar2 & 0x3F);
 			} else if (kar <= 0xEF) {
 				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
 				unsigned long kar3 = ustring [++ i];
 				if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) { isValidUtf8 = false; break; }
-				wcs [j ++] = ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
+				wcs [j ++] = ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
 			} else if (kar <= 0xF4) {
 				unsigned long kar2 = ustring [++ i];
 				if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) { isValidUtf8 = false; break; }
@@ -269,7 +269,7 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 				if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) { isValidUtf8 = false; break; }
 				unsigned long kar4 = ustring [++ i];
 				if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) { isValidUtf8 = false; break; }
-				wcs [j ++] = ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
+				wcs [j ++] = ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
 			} else {
 				isValidUtf8 = false; break;
 			}
@@ -424,13 +424,13 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 		} else if (kar <= 0xDF) {
 			unsigned char kar2 = textA [++ i];
 			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x3F) << 6) | (kar2 & 0x3F));
+			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x1F) << 6) | (kar2 & 0x3F));
 		} else if (kar <= 0xEF) {
 			unsigned char kar2 = textA [++ i];
 			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
 			unsigned char kar3 = textA [++ i];
 			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x3F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F));
+			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F));
 		} else if (kar <= 0xF4) {
 			unsigned char kar2 = textA [++ i];
 			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
@@ -438,7 +438,7 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
 			unsigned char kar4 = textA [++ i];
 			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x3F) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F));
+			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F));
 		} else {
 			MelderStringW_appendCharacter (& buffers [ibuffer], '?');
 		}

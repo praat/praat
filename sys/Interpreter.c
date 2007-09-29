@@ -979,6 +979,11 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					} else {
 						error1 (command2.string + 5)
 					}
+				} else if (wcsnequ (command2.string, L"echo ", 5)) {
+					/*
+					 * Make sure that lines like "echo = 3" will not be regarded as assignments.
+					 */
+					praat_executeCommand (me, command2.string); cherror
 				} else fail = TRUE;
 				break;
 			case 'f':
@@ -1099,6 +1104,13 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						if (wcsnequ (lines [iline], L"endproc", 7) && wordEnd (lines [iline] [7]))
 							{ lineNumber = iline; break; }   /* Go after 'endproc'. */
 					if (iline > numberOfLines) error1 (L"Unmatched 'proc'.")
+				} else if (wcsnequ (command2.string, L"print", 5)) {
+					/*
+					 * Make sure that lines like "print = 3" will not be regarded as assingments.
+					 */
+					if (command2.string [5] == ' ' || (wcsnequ (command2.string + 5, L"line", 4) && (command2.string [9] == ' ' || command2.string [9] == '\0'))) {
+						praat_executeCommand (me, command2.string); cherror
+					} else fail = TRUE;
 				} else fail = TRUE;
 				break;
 			case 'q':
