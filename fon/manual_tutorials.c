@@ -26,6 +26,8 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (L"What's new?", L"ppgb", 20070929)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.27# (September 29, 2007)")
+LIST_ITEM (L"\\bu Corrected redrawing of text with non-ASCII characters.")
 NORMAL (L"##4.6.26# (September 29, 2007)")
 LIST_ITEM (L"\\bu Corrected reading of high UTF-8 codes.")
 NORMAL (L"##4.6.25# (September 26, 2007)")

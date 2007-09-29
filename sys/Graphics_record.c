@@ -97,8 +97,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			}  break;
 			case TEXT:
-			{  float x = get, y = get; long length = get; char *text = sget (length);
-				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text));
+			{  float x = get, y = get; long length = get; char *text_utf8 = sget (length);
+				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text_utf8));
 			}  break;
 			case POLYLINE:
 			{  long n = get; float *x = mget (n), *y = mget (n);

@@ -36,6 +36,7 @@
  * pb 2007/06/11 wchar_t
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2007/08/25 use Charis SIL or Doulos SIL rather than SILDoulos IPA93
+ * pb 2007/09/29 correct counting of UTF-8 bytes
  */
 
 #include <ctype.h>
@@ -1523,8 +1524,9 @@ void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 	text (me, xWC, yWC, widechar);
 	exitText (me);
 	if (my recording) {
-		int length = wcslen (txt) / sizeof (float) + 1;
-		op (TEXT, 3 + length); put (xWC); put (yWC); sput (Melder_peekWcsToUtf8 (txt), length)
+		char *txt_utf8 = Melder_peekWcsToUtf8 (txt);
+		int length = strlen (txt_utf8) / sizeof (float) + 1;
+		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	}
 }
 
