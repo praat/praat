@@ -32,6 +32,8 @@
  * pb 2007/01/24 Strings_createAsFileList: removed gigantic memory leak
  * pb 2007/01/24 Strings_createAsFileList: used stat instead of platform-specific struct dirent. entry
  * pb 2007/08/10 wchar_t
+ * pb 2007/10/01 can write as encoding
+ * pb 2007/10/01 corrected nativization
  */
 
 //#define USE_STAT  1
@@ -59,6 +61,8 @@
 #include "oo_COPY.h"
 #include "Strings_def.h"
 #include "oo_EQUAL.h"
+#include "Strings_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Strings_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Strings_def.h"
@@ -98,17 +102,19 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (me)), L" characters");
 }
 
-class_methods (Strings, Data)
+class_methods (Strings, Data) {
 	class_method_local (Strings, destroy)
 	class_method_local (Strings, description)
 	class_method_local (Strings, copy)
 	class_method_local (Strings, equal)
+	class_method_local (Strings, canWriteAsEncoding)
 	class_method_local (Strings, writeText)
 	class_method_local (Strings, readText)
 	class_method_local (Strings, writeBinary)
 	class_method_local (Strings, readBinary)
 	class_method (info)
-class_methods_end
+	class_methods_end
+}
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
@@ -300,21 +306,13 @@ end:
 int Strings_nativize (Strings me) {
 	wchar_t *buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) + 1); cherror
 	for (long i = 1; i <= my numberOfStrings; i ++) {
-		const wchar_t *p = (const wchar_t *) my strings [i];
-		while (*p) {
-			if (*p > 126) {   /* Backslashes are not converted, i.e. genericize^2 == genericize. */
-				wchar_t *newString;
-				Longchar_nativizeW (my strings [i], buffer, false);
-				newString = Melder_wcsdup (buffer); cherror
-				/*
-				 * Replace string only if copying was OK.
-				 */
-				Melder_free (my strings [i]);
-				my strings [i] = newString;
-				break;
-			}
-			p ++;
-		}
+		Longchar_nativizeW (my strings [i], buffer, false);
+		wchar_t *newString = Melder_wcsdup (buffer); cherror
+		/*
+		 * Replace string only if copying was OK.
+		 */
+		Melder_free (my strings [i]);
+		my strings [i] = newString;
 	}
 end:
 	Melder_free (buffer);

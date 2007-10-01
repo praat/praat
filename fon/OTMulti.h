@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/10/01
  */
 
 #ifndef _Data_h_
@@ -73,6 +73,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 
 void OTMulti_reset (OTMulti me, double ranking);
 int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
+int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity);
 int OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName);
 
 int OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise);

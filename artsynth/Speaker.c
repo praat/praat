@@ -1,6 +1,6 @@
 /* Speaker.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1996/08/16
  * pb 2002/07/16 GPL
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Speaker.h"
@@ -29,6 +29,8 @@
 #include "oo_COPY.h"
 #include "Speaker_def.h"
 #include "oo_EQUAL.h"
+#include "Speaker_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Speaker_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Speaker_def.h"
@@ -41,16 +43,18 @@
 #include "oo_DESCRIPTION.h"
 #include "Speaker_def.h"
 
-class_methods (Speaker, Data)
+class_methods (Speaker, Data) {
 	class_method_local (Speaker, destroy)
 	class_method_local (Speaker, description)
 	class_method_local (Speaker, copy)
 	class_method_local (Speaker, equal)
+	class_method_local (Speaker, canWriteAsEncoding)
 	class_method_local (Speaker, writeText)
 	class_method_local (Speaker, readText)
 	class_method_local (Speaker, writeBinary)
 	class_method_local (Speaker, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
 {

@@ -26,6 +26,7 @@
  * pb 2007/03/18 moved table stuff here
  * pb 2007/05/26 wchar_t
  * pb 2007/06/21 tex
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Matrix.h"
@@ -38,6 +39,8 @@
 #include "oo_COPY.h"
 #include "Matrix_def.h"
 #include "oo_EQUAL.h"
+#include "Matrix_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Matrix_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Matrix_def.h"
@@ -132,11 +135,12 @@ static double getFunction2 (I, double x, double y) {
 	return (1.0 - drow) * (1.0 - dcol) * z1 + drow * (1.0 - dcol) * z2 + (1.0 - drow) * dcol * z3 + drow * dcol * z4;
 }
 
-class_methods (Matrix, Sampled)
+class_methods (Matrix, Sampled) {
 	class_method_local (Matrix, destroy)
 	class_method_local (Matrix, description)
 	class_method_local (Matrix, copy)
 	class_method_local (Matrix, equal)
+	class_method_local (Matrix, canWriteAsEncoding)
 	class_method_local (Matrix, writeText)
 	class_method (readText)
 	class_method_local (Matrix, writeBinary)
@@ -152,7 +156,8 @@ class_methods (Matrix, Sampled)
 	class_method (getY)
 	class_method (getMatrix)
 	class_method (getFunction2)
-class_methods_end
+	class_methods_end
+}
 
 int Matrix_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,

@@ -24,8 +24,8 @@
 #include "praat.h"
 #include "praat_version.h"
 
-const char *test8 = "hfgfhésgɑfhdfgh";
-const wchar_t *test16 = L"hfgfhésgɑfhdfgh";
+const char *test8 = "hfgfhésgɑfhd“f”gh";
+const wchar_t *test16 = L"hfgfhésgɑfhd“f”gh";
 
 static void logo (Graphics g) {
 	if (Melder_debug == 22) {

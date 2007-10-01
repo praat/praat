@@ -27,6 +27,7 @@
  * pb 2007/03/30 RealTier_downto_Table: include point numbers
  * pb 2007/04/19 RealTier_formula: defence against undefined values
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "RealTier.h"
@@ -37,6 +38,8 @@
 #include "oo_COPY.h"
 #include "RealTier_def.h"
 #include "oo_EQUAL.h"
+#include "RealTier_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "RealTier_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "RealTier_def.h"
@@ -51,16 +54,18 @@
 
 /********** class RealPoint **********/
 
-class_methods (RealPoint, Data)
+class_methods (RealPoint, Data) {
 	class_method_local (RealPoint, destroy)
 	class_method_local (RealPoint, copy)
 	class_method_local (RealPoint, equal)
+	class_method_local (RealPoint, canWriteAsEncoding)
 	class_method_local (RealPoint, writeText)
 	class_method_local (RealPoint, readText)
 	class_method_local (RealPoint, writeBinary)
 	class_method_local (RealPoint, readBinary)
 	class_method_local (RealPoint, description)
-class_methods_end
+	class_methods_end
+}
 
 RealPoint RealPoint_create (double time, double value) {
 	RealPoint me = new (RealPoint);
@@ -94,10 +99,11 @@ static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flag
 	return L"Time (s)";
 }
 
-class_methods (RealTier, Function)
+class_methods (RealTier, Function) {
 	class_method_local (RealTier, destroy)
 	class_method_local (RealTier, copy)
 	class_method_local (RealTier, equal)
+	class_method_local (RealTier, canWriteAsEncoding)
 	class_method_local (RealTier, writeText)
 	class_method_local (RealTier, readText)
 	class_method_local (RealTier, writeBinary)
@@ -110,7 +116,8 @@ class_methods (RealTier, Function)
 	class_method (getVector)
 	class_method (getFunction1)
 	class_method (getUnitText)
-class_methods_end
+	class_methods_end
+}
 
 int RealTier_init (I, double tmin, double tmax) {
 	iam (RealTier);

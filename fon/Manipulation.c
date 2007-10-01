@@ -25,6 +25,7 @@
  * pb 2007/02/25 changed default sampling frequency to 44100 Hz
  * pb 2007/03/17 domain quantity
  * pb 2007/07/22 changed names of overlap-add method in such a way that it does not sound like an existing trademark of a diphone concatenation method
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Manipulation.h"
@@ -44,6 +45,8 @@
 #include "Manipulation_def.h"
 #include "oo_EQUAL.h"
 #include "Manipulation_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Manipulation_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Manipulation_def.h"
 #include "oo_READ_TEXT.h"
@@ -55,18 +58,20 @@
 #include "oo_DESCRIPTION.h"
 #include "Manipulation_def.h"
 
-class_methods (Manipulation, Function)
+class_methods (Manipulation, Function) {
 	us -> version = 4;
 	class_method_local (Manipulation, destroy)
 	class_method_local (Manipulation, description)
 	class_method_local (Manipulation, copy)
 	class_method_local (Manipulation, equal)
+	class_method_local (Manipulation, canWriteAsEncoding)
 	class_method_local (Manipulation, writeText)
 	class_method_local (Manipulation, readText)
 	class_method_local (Manipulation, writeBinary)
 	class_method_local (Manipulation, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
+	class_methods_end
+}
 
 Manipulation Manipulation_create (double tmin, double tmax) {
 	Manipulation me = new (Manipulation);

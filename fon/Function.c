@@ -24,6 +24,7 @@
  * pb 2006/12/08 info
  * pb 2007/03/17 domain texts
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Function.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "Function_def.h"
 #include "oo_EQUAL.h"
+#include "Function_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Function_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Function_def.h"
@@ -110,9 +113,10 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 	return value;
 }
 
-class_methods (Function, Data)
+class_methods (Function, Data) {
 	class_method_local (Function, copy)
 	class_method_local (Function, equal)
+	class_method_local (Function, canWriteAsEncoding)
 	class_method_local (Function, writeText)
 	class_method_local (Function, readText)
 	class_method_local (Function, writeBinary)
@@ -128,7 +132,8 @@ class_methods (Function, Data)
 	class_method (isUnitLogarithmic)
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
-class_methods_end
+	class_methods_end
+}
 
 int Function_init (I, double xmin, double xmax) {
 	iam (Function);

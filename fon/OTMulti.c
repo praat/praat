@@ -23,6 +23,8 @@
  * pb 2006/05/17 draw disharmonies above tableau
  * pb 2007/05/19 decision strategies
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 leak and constraint plasticity
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "OTMulti.h"
@@ -32,6 +34,8 @@
 #include "oo_COPY.h"
 #include "OTMulti_def.h"
 #include "oo_EQUAL.h"
+#include "OTMulti_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "OTMulti_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "OTMulti_def.h"
@@ -55,7 +59,8 @@ static void classOTMulti_info (I) {
 
 static int writeText (I, MelderFile file) {
 	iam (OTMulti);
-	MelderFile_write3 (file, L"\n", Melder_integer (my numberOfConstraints), L" constraints");
+	MelderFile_write7 (file, L"\n<", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy),
+		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
 		MelderFile_write1 (file, L"\n\t\"");
@@ -63,7 +68,8 @@ static int writeText (I, MelderFile file) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write4 (file, L"\"   ", Melder_double (constraint -> ranking), L" ", Melder_double (constraint -> disharmony));
+		MelderFile_write6 (file, L"\" ", Melder_double (constraint -> ranking),
+			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity));
 	}
 	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfCandidates), L" candidates");
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
@@ -90,8 +96,15 @@ void OTMulti_checkIndex (OTMulti me) {
 }
 
 static int readText (I, MelderReadString *text) {
+	int localVersion = Thing_version;
 	iam (OTMulti);
 	if (! inherited (OTMulti) readText (me, text)) return 0;
+	if (localVersion >= 1) {
+		if ((my decisionStrategy = texgete1 (text, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return Melder_error1 (L"Trying to read decision strategy.");
+	}
+	if (localVersion >= 2) {
+		my leak = texgetr8 (text); iferror return Melder_error1 (L"Trying to read leak.");
+	}
 	if ((my numberOfConstraints = texgeti4 (text)) < 1) return Melder_error ("No constraints.");
 	if (! (my constraints = NUMstructvector (OTConstraint, 1, my numberOfConstraints))) return 0;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -99,6 +112,11 @@ static int readText (I, MelderReadString *text) {
 		if ((constraint -> name = texgetw2 (text)) == NULL) return 0;
 		constraint -> ranking = texgetr8 (text);
 		constraint -> disharmony = texgetr8 (text);
+		if (localVersion < 2) {
+			constraint -> plasticity = 1.0;
+		} else {
+			constraint -> plasticity = texgetr8 (text); iferror return Melder_error3 (L"Trying to read plasticity of constraint ", Melder_integer (icons), L".");;
+		}
 	}
 	if ((my numberOfCandidates = texgeti4 (text)) < 1) return Melder_error ("No candidates.");
 	if (! (my candidates = NUMstructvector (OTCandidate, 1, my numberOfCandidates))) return 0;
@@ -115,12 +133,13 @@ static int readText (I, MelderReadString *text) {
 }
 
 class_methods (OTMulti, Data)
-	us -> version = 1;
+	us -> version = 2;
 	class_method_local (OTMulti, destroy)
 	class_method_local (OTMulti, info)
 	class_method_local (OTMulti, description)
 	class_method_local (OTMulti, copy)
 	class_method_local (OTMulti, equal)
+	class_method_local (OTMulti, canWriteAsEncoding)
 	class_method (writeText)
 	class_method (readText)
 	class_method_local (OTMulti, writeBinary)
@@ -245,7 +264,6 @@ static int OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	double plasticity, double relativePlasticityNoise)
 {
 	OTCandidate winner = & my candidates [iwinner], loser = & my candidates [iloser];
-	long icons;
 	double step = relativePlasticityNoise == 0.0 ? plasticity :
 		NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
 	bool multiplyStepByNumberOfViolations =
@@ -253,16 +271,18 @@ static int OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG);
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		OTConstraint constraint = & my constraints [icons];
+		double constraintStep = step * constraint -> plasticity;
 		int winnerMarks = winner -> marks [icons];
 		int loserMarks = loser -> marks [icons];
 		if (loserMarks > winnerMarks) {
-			my constraints [icons]. ranking -=
-				multiplyStepByNumberOfViolations ? (loserMarks - winnerMarks) * step : step;
+			if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+			constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
 		}
 		if (winnerMarks > loserMarks) {
-			my constraints [icons]. ranking +=
-				multiplyStepByNumberOfViolations ? (winnerMarks - loserMarks) * step : step;
+			if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+			constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
 		}
 	}
 end:
@@ -657,6 +677,13 @@ int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double dish
 	my constraints [constraint]. ranking = ranking;
 	my constraints [constraint]. disharmony = disharmony;
 	OTMulti_sort (me);
+	return 1;
+}
+
+int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity) {
+	if (constraint < 1 || constraint > my numberOfConstraints)
+		return Melder_error ("(OTMulti_setConstraintPlasticity): No constraint %ld.", constraint);
+	my constraints [constraint]. plasticity = plasticity;
 	return 1;
 }
 

@@ -52,6 +52,7 @@
  * pb 2007/07/24 leak and constraint plasticity
  * pb 2007/07/27 leak and constraint plasticity also written...
  * pb 2007/08/08 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "OTGrammar.h"
@@ -61,6 +62,8 @@
 #include "oo_COPY.h"
 #include "OTGrammar_def.h"
 #include "oo_EQUAL.h"
+#include "OTGrammar_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "OTGrammar_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "OTGrammar_def.h"
@@ -224,6 +227,7 @@ class_methods (OTGrammar, Data) {
 	class_method_local (OTGrammar, description)
 	class_method_local (OTGrammar, copy)
 	class_method_local (OTGrammar, equal)
+	class_method_local (OTGrammar, canWriteAsEncoding)
 	class_method (writeText)
 	class_method (readText)
 	class_method_local (OTGrammar, writeBinary)
@@ -1385,7 +1389,7 @@ int OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double 
 
 int OTGrammar_setConstraintPlasticity (OTGrammar me, long constraint, double plasticity) {
 	if (constraint < 1 || constraint > my numberOfConstraints)
-		return Melder_error ("(OTGrammar_setRanking): No constraint %ld.", constraint);
+		return Melder_error ("(OTGrammar_setConstraintPlasticity): No constraint %ld.", constraint);
 	my constraints [constraint]. plasticity = plasticity;
 	return 1;
 }

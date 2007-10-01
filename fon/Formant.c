@@ -22,6 +22,7 @@
  * pb 2004/10/05 allow reverse axes in scatter plot (and remove special routine for those)
  * pb 2005/12/08 Formant_getQuantileOfBandwidth
  * pb 2007/03/17 domain quantity
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Formant.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "Formant_def.h"
 #include "oo_EQUAL.h"
+#include "Formant_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Formant_def.h"
 #include "oo_READ_TEXT.h"
 #include "Formant_def.h"
@@ -78,12 +81,13 @@ static double getValueAtSample (I, long iframe, long which, int units) {
 	return NUMundefined;
 }
 
-class_methods (Formant, Sampled)
+class_methods (Formant, Sampled) {
 	us -> version = 1;   /* With intensity. */
 	class_method_local (Formant, destroy)
 	class_method_local (Formant, description)
 	class_method_local (Formant, copy)
 	class_method_local (Formant, equal)
+	class_method_local (Formant, canWriteAsEncoding)
 	class_method_local (Formant, writeText)
 	class_method_local (Formant, readText)
 	class_method_local (Formant, writeBinary)
@@ -91,7 +95,8 @@ class_methods (Formant, Sampled)
 	class_method (info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (getValueAtSample)
-class_methods_end
+	class_methods_end
+}
 
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 	int maxnFormants)

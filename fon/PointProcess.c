@@ -27,6 +27,7 @@
  * pb 2004/07/09 better period counting
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "PointProcess.h"
@@ -37,6 +38,8 @@
 #include "oo_COPY.h"
 #include "PointProcess_def.h"
 #include "oo_EQUAL.h"
+#include "PointProcess_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "PointProcess_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "PointProcess_def.h"
@@ -87,18 +90,20 @@ static void info (I) {
 	infoPeriods (me, 0.0, 0.0, 1e300, 6);
 }
 
-class_methods (PointProcess, Function)
+class_methods (PointProcess, Function) {
 	class_method_local (PointProcess, destroy)
 	class_method (info)
 	class_method_local (PointProcess, description)
 	class_method_local (PointProcess, copy)
 	class_method_local (PointProcess, equal)
+	class_method_local (PointProcess, canWriteAsEncoding)
 	class_method_local (PointProcess, writeText)
 	class_method_local (PointProcess, readText)
 	class_method_local (PointProcess, writeBinary)
 	class_method_local (PointProcess, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
+	class_methods_end
+}
 
 int PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {
 	iam (PointProcess);

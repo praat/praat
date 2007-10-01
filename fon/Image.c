@@ -1,6 +1,6 @@
 /* Image.c
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 2000/09/24
  * pb 2002/07/16 GPL
  * pb 2003/02/17 removed source code
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Image.h"
@@ -31,6 +31,8 @@
 #include "oo_COPY.h"
 #include "Image_def.h"
 #include "oo_EQUAL.h"
+#include "Image_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Image_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Image_def.h"
@@ -43,15 +45,17 @@
 #include "oo_DESCRIPTION.h"
 #include "Image_def.h"
 
-class_methods (Image, Sampled)
+class_methods (Image, Sampled) {
 	class_method_local (Image, destroy)
 	class_method_local (Image, copy)
 	class_method_local (Image, equal)
+	class_method_local (Image, canWriteAsEncoding)
 	class_method_local (Image, writeText)
 	class_method_local (Image, readText)
 	class_method_local (Image, writeBinary)
 	class_method_local (Image, readBinary)
 	class_method_local (Image, description)
-class_methods_end
+	class_methods_end
+}
 
 /* End of file Image.c */

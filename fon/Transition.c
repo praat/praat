@@ -1,6 +1,6 @@
 /* Transition.c
  *
- * Copyright (C) 1997-2003 Paul Boersma
+ * Copyright (C) 1997-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/06/19 Eigen
  * pb 2006/12/10 MelderInfo
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Transition.h"
@@ -33,6 +34,8 @@
 #include "oo_COPY.h"
 #include "Transition_def.h"
 #include "oo_EQUAL.h"
+#include "Transition_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Transition_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Transition_def.h"
@@ -69,17 +72,19 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (my numberOfStates));
 }
 
-class_methods (Transition, Data)
+class_methods (Transition, Data) {
 	class_method_local (Transition, destroy)
 	class_method_local (Transition, description)
 	class_method_local (Transition, copy)
 	class_method_local (Transition, equal)
+	class_method_local (Transition, canWriteAsEncoding)
 	class_method (writeText)
 	class_method_local (Transition, readText)
 	class_method_local (Transition, writeBinary)
 	class_method_local (Transition, readBinary)
 	class_method (info)
-class_methods_end
+	class_methods_end
+}
 
 int Transition_init (I, long numberOfStates) {
 	iam (Transition);

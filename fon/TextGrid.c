@@ -63,7 +63,7 @@
 #include "oo_DESCRIPTION.h"
 #include "TextGrid_def.h"
 
-class_methods (TextPoint, AnyPoint)
+class_methods (TextPoint, AnyPoint) {
 	class_method_local (TextPoint, destroy)
 	class_method_local (TextPoint, copy)
 	class_method_local (TextPoint, equal)
@@ -73,7 +73,8 @@ class_methods (TextPoint, AnyPoint)
 	class_method_local (TextPoint, writeBinary)
 	class_method_local (TextPoint, readBinary)
 	class_method_local (TextPoint, description)
-class_methods_end
+	class_methods_end
+}
 
 TextPoint TextPoint_create (double time, const wchar_t *mark) {
 	TextPoint me = new (TextPoint);
@@ -265,7 +266,7 @@ static void classTextGrid_info (I) {
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfPoints));
 }
 
-class_methods (TextGrid, Function)
+class_methods (TextGrid, Function) {
 	class_method_local (TextGrid, destroy)
 	class_method_local (TextGrid, copy)
 	class_method_local (TextGrid, equal)
@@ -277,7 +278,8 @@ class_methods (TextGrid, Function)
 	class_method_local (TextGrid, description)
 	class_method_local (TextGrid, info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
+	class_methods_end
+}
 
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	TextGrid me = new (TextGrid);

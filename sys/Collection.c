@@ -24,6 +24,7 @@
  * pb 2006/12/17 better info
  * pb 2007/06/24 wchar_t
  * pb 2007/08/08 canWriteAsEncoding
+ * pb 2007/10/01 make sure that names are encodable when writing
  */
 
 #include "Collection.h"
@@ -82,7 +83,9 @@ static bool classCollection_equal (I, thou) {
 static bool classCollection_canWriteAsEncoding (I, int encoding) {
 	iam (Collection);
 	for (long i = 1; i <= my size; i ++) {
-		if (! Data_canWriteAsEncoding (my item [i], encoding)) return false;
+		Thing thing = my item [i];
+		if (thing -> nameW != NULL && ! Melder_isEncodable (thing -> nameW, encoding)) return false;
+		if (! Data_canWriteAsEncoding (thing, encoding)) return false;
 	}
 	return true;
 }
@@ -245,7 +248,7 @@ static long classCollection_position (I, Any data) {
 	return my size + 1;
 }
 
-class_methods (Collection, Data)
+class_methods (Collection, Data) {
 	class_method_local (Collection, destroy)
 	class_method_local (Collection, info)
 	class_method_local (Collection, copy)
@@ -257,7 +260,8 @@ class_methods (Collection, Data)
 	class_method_local (Collection, readBinary)
 	class_method_local (Collection, description)
 	class_method_local (Collection, position)
-class_methods_end
+	class_methods_end
+}
 
 int Collection_init (I, void *itemClass, long initialCapacity) {
 	iam (Collection);

@@ -1,6 +1,6 @@
 /* Sampled.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/11/25 corrected crashing bug in Sampled_getSumAndDefinitionRange
  * pb 2005/03/21 implemented Sampled_getStandardDeviation
  * pb 2005/06/16 removed units
+ * pb 2007/10/01 can write as encoding
  */
 
 #include <math.h>
@@ -35,6 +36,8 @@
 #include "oo_COPY.h"
 #include "Sampled_def.h"
 #include "oo_EQUAL.h"
+#include "Sampled_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Sampled_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Sampled_def.h"
@@ -60,9 +63,10 @@ static double getValueAtSample (I, long isamp, long ilevel, int unit) {
 	return NUMundefined;
 }
 
-class_methods (Sampled, Function)
+class_methods (Sampled, Function) {
 	class_method_local (Sampled, copy)
 	class_method_local (Sampled, equal)
+	class_method_local (Sampled, canWriteAsEncoding)
 	class_method_local (Sampled, writeBinary)
 	class_method_local (Sampled, readBinary)
 	class_method_local (Sampled, writeText)
@@ -72,7 +76,8 @@ class_methods (Sampled, Function)
 	class_method (getDx)
 	class_method (getX)
 	class_method (getValueAtSample)
-class_methods_end
+	class_methods_end
+}
 
 double Sampled_indexToX (I, long i) {
 	iam (Sampled);

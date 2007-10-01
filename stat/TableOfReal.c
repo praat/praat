@@ -31,6 +31,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 moved Table stuff here
  * pb 2007/06/21 tex
+ * pb 2007/10/01 can write as encoding
  */
 
 #include <ctype.h>
@@ -44,6 +45,8 @@
 #include "oo_COPY.h"
 #include "TableOfReal_def.h"
 #include "oo_EQUAL.h"
+#include "TableOfReal_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "TableOfReal_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "TableOfReal_def.h"
@@ -137,11 +140,12 @@ static double getColumnIndex (I, const wchar_t *columnLabel) {
 	return TableOfReal_columnLabelToIndex (me, columnLabel);
 }
 
-class_methods (TableOfReal, Data)
+class_methods (TableOfReal, Data) {
 	class_method_local (TableOfReal, destroy)
 	class_method_local (TableOfReal, description)
 	class_method_local (TableOfReal, copy)
 	class_method_local (TableOfReal, equal)
+	class_method_local (TableOfReal, canWriteAsEncoding)
 	class_method (writeText)
 	class_method (readText)
 	class_method_local (TableOfReal, writeBinary)
@@ -154,7 +158,8 @@ class_methods (TableOfReal, Data)
 	class_method (getMatrix)
 	class_method (getRowIndex)
 	class_method (getColumnIndex)
-class_methods_end
+	class_methods_end
+}
 
 int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 	iam (TableOfReal);

@@ -32,6 +32,7 @@
  * pb 2007/01/12 commented out Melder_casual in Pitch_difference
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Pitch.h"
@@ -44,6 +45,8 @@
 #include "oo_COPY.h"
 #include "Pitch_def.h"
 #include "oo_EQUAL.h"
+#include "Pitch_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Pitch_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Pitch_def.h"
@@ -396,11 +399,12 @@ static void info (I) {
 	}
 }
 
-class_methods (Pitch, Sampled)
+class_methods (Pitch, Sampled) {
 	class_method_local (Pitch, destroy)
 	class_method_local (Pitch, description)
 	class_method_local (Pitch, copy)
 	class_method_local (Pitch, equal)
+	class_method_local (Pitch, canWriteAsEncoding)
 	class_method_local (Pitch, writeText)
 	class_method_local (Pitch, readText)
 	class_method_local (Pitch, writeBinary)
@@ -414,7 +418,8 @@ class_methods (Pitch, Sampled)
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
 	class_method (getValueAtSample)
-class_methods_end
+	class_methods_end
+}
 
 int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 	NUMstructvector_free (Pitch_Candidate, my candidate, 1);

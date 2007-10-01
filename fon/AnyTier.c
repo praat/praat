@@ -1,6 +1,6 @@
 /* AnyTier.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2001/07/18
  * pb 2002/07/16 GPL
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "AnyTier.h"
@@ -29,6 +29,8 @@
 #include "oo_COPY.h"
 #include "AnyTier_def.h"
 #include "oo_EQUAL.h"
+#include "AnyTier_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "AnyTier_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "AnyTier_def.h"
@@ -41,27 +43,31 @@
 #include "oo_DESCRIPTION.h"
 #include "AnyTier_def.h"
 
-class_methods (AnyPoint, Data)
+class_methods (AnyPoint, Data) {
 	class_method_local (AnyPoint, destroy)
 	class_method_local (AnyPoint, copy)
 	class_method_local (AnyPoint, equal)
+	class_method_local (AnyPoint, canWriteAsEncoding)
 	class_method_local (AnyPoint, writeText)
 	class_method_local (AnyPoint, readText)
 	class_method_local (AnyPoint, writeBinary)
 	class_method_local (AnyPoint, readBinary)
 	class_method_local (AnyPoint, description)
-class_methods_end
+	class_methods_end
+}
 
-class_methods (AnyTier, Function)
+class_methods (AnyTier, Function) {
 	class_method_local (AnyTier, destroy)
 	class_method_local (AnyTier, copy)
 	class_method_local (AnyTier, equal)
+	class_method_local (AnyTier, canWriteAsEncoding)
 	class_method_local (AnyTier, writeText)
 	class_method_local (AnyTier, readText)
 	class_method_local (AnyTier, writeBinary)
 	class_method_local (AnyTier, readBinary)
 	class_method_local (AnyTier, description)
-class_methods_end
+	class_methods_end
+}
 
 long AnyTier_timeToLowIndex (I, double time) {
 	iam (AnyTier);

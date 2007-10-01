@@ -1,6 +1,6 @@
 /* Artword.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Artword.h"
@@ -26,6 +27,8 @@
 #include "oo_DESTROY.h"
 #include "Artword_def.h"
 #include "oo_COPY.h"
+#include "Artword_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Artword_def.h"
 #include "oo_EQUAL.h"
 #include "Artword_def.h"
@@ -40,16 +43,18 @@
 #include "oo_DESCRIPTION.h"
 #include "Artword_def.h"
 
-class_methods (Artword, Data)
+class_methods (Artword, Data) {
 	class_method_local (Artword, destroy)
 	class_method_local (Artword, description)
 	class_method_local (Artword, copy)
 	class_method_local (Artword, equal)
+	class_method_local (Artword, canWriteAsEncoding)
 	class_method_local (Artword, writeText)
 	class_method_local (Artword, readText)
 	class_method_local (Artword, writeBinary)
 	class_method_local (Artword, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 Artword Artword_create (double totalTime) {
 	Artword me = new (Artword);

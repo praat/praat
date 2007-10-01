@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2007/06/21 tex
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "SpellingChecker.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "SpellingChecker_def.h"
 #include "oo_EQUAL.h"
+#include "SpellingChecker_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "SpellingChecker_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "SpellingChecker_def.h"
@@ -45,16 +48,18 @@
 
 #include "longchar.h"
 
-class_methods (SpellingChecker, Data)
+class_methods (SpellingChecker, Data) {
 	class_method_local (SpellingChecker, description)
 	class_method_local (SpellingChecker, destroy)
 	class_method_local (SpellingChecker, copy)
 	class_method_local (SpellingChecker, equal)
+	class_method_local (SpellingChecker, canWriteAsEncoding)
 	class_method_local (SpellingChecker, writeText)
 	class_method_local (SpellingChecker, writeBinary)
 	class_method_local (SpellingChecker, readText)
 	class_method_local (SpellingChecker, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	SpellingChecker thee = new (SpellingChecker); cherror

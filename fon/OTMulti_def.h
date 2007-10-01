@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/10/01
  */
 
 #define ooSTRUCT OTConstraint
@@ -27,6 +27,14 @@ oo_DEFINE_STRUCT (OTConstraint)
 	oo_STRINGW (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
+	oo_FROM (2)
+		oo_DOUBLE (plasticity)
+	oo_ENDFROM
+	#if OO_READING
+		if (localVersion < 2) {
+			my plasticity = 1.0;
+		}
+	#endif
 
 oo_END_STRUCT (OTConstraint)
 #undef ooSTRUCT
@@ -48,6 +56,9 @@ oo_DEFINE_CLASS (OTMulti, Data)
 
 	oo_FROM (1)
 		oo_ENUM (OTGrammar_DECISION_STRATEGY, decisionStrategy)
+	oo_ENDFROM
+	oo_FROM (2)
+		oo_DOUBLE (leak)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
 	oo_STRUCT_VECTOR (OTConstraint, constraints, my numberOfConstraints)

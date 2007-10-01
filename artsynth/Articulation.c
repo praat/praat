@@ -1,6 +1,6 @@
 /* Articulation.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1996/08/16
  * pb 2002/07/16 GPL
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Articulation.h"
@@ -30,6 +30,8 @@
 #include "oo_COPY.h"
 #include "Articulation_def.h"
 #include "oo_EQUAL.h"
+#include "Articulation_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Articulation_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Articulation_def.h"
@@ -46,10 +48,11 @@
 #include "oo_DESCRIPTION.h"
 #include "Articulation_def.h"
 
-class_methods (Art, Data)
+class_methods (Art, Data) {
 	class_method_local (Art, destroy)
 	class_method_local (Art, copy)
 	class_method_local (Art, equal)
+	class_method_local (Art, canWriteAsEncoding)
 	class_method_local (Art, writeText)
 	class_method_local (Art, writeBinary)
 	class_method_local (Art, writeCache)
@@ -57,7 +60,8 @@ class_methods (Art, Data)
 	class_method_local (Art, readBinary)
 	class_method_local (Art, readCache)
 	class_method_local (Art, description)
-class_methods_end
+	class_methods_end
+}
 
 Art Art_create (void) {
 	return new (Art);

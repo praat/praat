@@ -31,6 +31,7 @@
  * pb 2006/12/20 stereo
  * pb 2007/08/12 wchar_t
  * pb 2007/09/26 added font size; version 5
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "ExperimentMFC.h"
@@ -40,6 +41,8 @@
 #include "oo_COPY.h"
 #include "ExperimentMFC_def.h"
 #include "oo_EQUAL.h"
+#include "ExperimentMFC_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "ExperimentMFC_def.h"
 #include "oo_READ_TEXT.h"
 #include "ExperimentMFC_def.h"
@@ -52,17 +55,19 @@
 #include "oo_DESCRIPTION.h"
 #include "ExperimentMFC_def.h"
 
-class_methods (ExperimentMFC, Data)
+class_methods (ExperimentMFC, Data) {
 	us -> version = 5;
 	class_method_local (ExperimentMFC, destroy)
 	class_method_local (ExperimentMFC, description)
 	class_method_local (ExperimentMFC, copy)
 	class_method_local (ExperimentMFC, equal)
+	class_method_local (ExperimentMFC, canWriteAsEncoding)
 	class_method_local (ExperimentMFC, writeText)
 	class_method_local (ExperimentMFC, readText)
 	class_method_local (ExperimentMFC, writeBinary)
 	class_method_local (ExperimentMFC, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 #include "enum_c.h"
 #include "Experiment_enums.h"
@@ -317,17 +322,19 @@ void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
 		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration);
 }
 
-class_methods (ResultsMFC, Data)
+class_methods (ResultsMFC, Data) {
 	us -> version = 1;
 	class_method_local (ResultsMFC, destroy)
 	class_method_local (ResultsMFC, description)
 	class_method_local (ResultsMFC, copy)
 	class_method_local (ResultsMFC, equal)
+	class_method_local (ResultsMFC, canWriteAsEncoding)
 	class_method_local (ResultsMFC, writeText)
 	class_method_local (ResultsMFC, readText)
 	class_method_local (ResultsMFC, writeBinary)
 	class_method_local (ResultsMFC, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 ResultsMFC ResultsMFC_create (long numberOfTrials) {
 	ResultsMFC me = new (ResultsMFC);

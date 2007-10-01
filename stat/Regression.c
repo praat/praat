@@ -21,6 +21,7 @@
  * pb 2005/05/01 created
  * pb 2006/12/10 MelderInfo
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "Regression.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "Regression_def.h"
 #include "oo_EQUAL.h"
+#include "Regression_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Regression_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Regression_def.h"
@@ -43,16 +46,18 @@
 #include "oo_DESCRIPTION.h"
 #include "Regression_def.h"
 
-class_methods (RegressionParameter, Data)
+class_methods (RegressionParameter, Data) {
 	class_method_local (RegressionParameter, destroy)
 	class_method_local (RegressionParameter, description)
 	class_method_local (RegressionParameter, copy)
 	class_method_local (RegressionParameter, equal)
+	class_method_local (RegressionParameter, canWriteAsEncoding)
 	class_method_local (RegressionParameter, writeText)
 	class_method_local (RegressionParameter, writeBinary)
 	class_method_local (RegressionParameter, readText)
 	class_method_local (RegressionParameter, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 static void classRegression_info (I) {
 	iam (Regression);
@@ -65,17 +70,19 @@ static void classRegression_info (I) {
 	}
 }
 
-class_methods (Regression, Data)
+class_methods (Regression, Data) {
 	class_method_local (Regression, destroy)
 	class_method_local (Regression, description)
 	class_method_local (Regression, copy)
 	class_method_local (Regression, equal)
+	class_method_local (Regression, canWriteAsEncoding)
 	class_method_local (Regression, writeText)
 	class_method_local (Regression, writeBinary)
 	class_method_local (Regression, readText)
 	class_method_local (Regression, readBinary)
 	class_method_local (Regression, info)
-class_methods_end
+	class_methods_end
+}
 
 int Regression_init (I) {
 	iam (Regression);

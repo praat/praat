@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/09/30
+ * pb 2007/10/01
  */
 
 #include "praat.h"
@@ -805,6 +805,17 @@ DO
 	}
 END
 
+FORM (OTMulti_setConstraintPlasticity, "OTMulti: Set constraint plasticity", 0)
+	NATURAL ("Constraint", "1")
+	REAL ("Plasticity", "1.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! OTMulti_setConstraintPlasticity (OBJECT, GET_INTEGER ("Constraint"), GET_REAL ("Plasticity"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
 FORM (OTMulti_setDecisionStrategy, "OTMulti: Set decision strategy", 0)
 	ENUM ("Decision strategy", OTGrammar_DECISION_STRATEGY, 0)
 	OK
@@ -813,6 +824,17 @@ SET_INTEGER ("Decision strategy", my decisionStrategy);
 DO
 	OTMulti me = ONLY_OBJECT;
 	my decisionStrategy = GET_INTEGER ("Decision strategy");
+	praat_dataChanged (ONLY_OBJECT);
+END
+
+FORM (OTMulti_setLeak, "OTGrammar: Set leak", 0)
+	REAL ("Leak", "0.0")
+	OK
+OTMulti me = ONLY_OBJECT;
+SET_REAL ("Leak", my leak);
+DO
+	OTMulti me = ONLY_OBJECT;
+	my leak = GET_REAL ("Leak");
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -962,6 +984,8 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTMulti, 0, "Learn one...", 0, 0, DO_OTMulti_learnOne);
 	praat_addAction1 (classOTMulti, 0, "Modify behaviour -", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 1, "Set decision strategy...", 0, 1, DO_OTMulti_setDecisionStrategy);
+	praat_addAction1 (classOTMulti, 1, "Set leak...", 0, 1, DO_OTMulti_setLeak);
+	praat_addAction1 (classOTMulti, 1, "Set constraint plasticity...", 0, 1, DO_OTMulti_setConstraintPlasticity);
 	praat_addAction1 (classOTMulti, 0, "Modify structure -", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 0, "Remove constraint...", 0, 1, DO_OTMulti_removeConstraint);
 

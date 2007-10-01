@@ -1,6 +1,6 @@
 /* WordList.c
  *
- * Copyright (C) 1999-2006 Paul Boersma
+ * Copyright (C) 1999-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /*
- * pb 1999/06/04
  * pb 2002/07/16 GPL
  * pb 2006/12/10 MelderInfo
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "WordList.h"
@@ -31,6 +31,8 @@
 #include "oo_COPY.h"
 #include "WordList_def.h"
 #include "oo_EQUAL.h"
+#include "WordList_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "WordList_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "WordList_def.h"
@@ -135,17 +137,19 @@ static int writeBinary (I, FILE *f) {
 	return 1;
 }
 
-class_methods (WordList, Data)
+class_methods (WordList, Data) {
 	class_method (info)
 	class_method_local (WordList, description)
 	class_method_local (WordList, destroy)
 	class_method_local (WordList, copy)
 	class_method_local (WordList, equal)
+	class_method_local (WordList, canWriteAsEncoding)
 	class_method_local (WordList, writeText)
 	class_method (writeBinary)
 	class_method_local (WordList, readText)
 	class_method (readBinary)
-class_methods_end
+	class_methods_end
+}
 
 WordList Strings_to_WordList (Strings me) {
 	WordList thee = NULL;

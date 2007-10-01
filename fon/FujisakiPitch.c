@@ -1,6 +1,6 @@
 /* FujisakiPitch.c
  *
- * Copyright (C) 2002 Paul Boersma
+ * Copyright (C) 2002-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 2002/05/18
  * pb 2002/07/16 GPL
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "FujisakiPitch.h"
@@ -29,6 +29,8 @@
 #include "oo_COPY.h"
 #include "FujisakiPitch_def.h"
 #include "oo_EQUAL.h"
+#include "FujisakiPitch_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "FujisakiPitch_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "FujisakiPitch_def.h"
@@ -41,16 +43,18 @@
 #include "oo_DESCRIPTION.h"
 #include "FujisakiPitch_def.h"
 
-class_methods (FujisakiCommand, Function)
+class_methods (FujisakiCommand, Function) {
 	class_method_local (FujisakiCommand, destroy)
 	class_method_local (FujisakiCommand, copy)
 	class_method_local (FujisakiCommand, equal)
+	class_method_local (FujisakiCommand, canWriteAsEncoding)
 	class_method_local (FujisakiCommand, writeText)
 	class_method_local (FujisakiCommand, readText)
 	class_method_local (FujisakiCommand, writeBinary)
 	class_method_local (FujisakiCommand, readBinary)
 	class_method_local (FujisakiCommand, description)
-class_methods_end
+	class_methods_end
+}
 
 FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
 	FujisakiCommand me = new (FujisakiCommand);
@@ -60,16 +64,18 @@ FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitu
 	return me;
 }
 
-class_methods (FujisakiPitch, Function)
+class_methods (FujisakiPitch, Function) {
 	class_method_local (FujisakiPitch, destroy)
 	class_method_local (FujisakiPitch, copy)
 	class_method_local (FujisakiPitch, equal)
+	class_method_local (FujisakiPitch, canWriteAsEncoding)
 	class_method_local (FujisakiPitch, writeText)
 	class_method_local (FujisakiPitch, readText)
 	class_method_local (FujisakiPitch, writeBinary)
 	class_method_local (FujisakiPitch, readBinary)
 	class_method_local (FujisakiPitch, description)
-class_methods_end
+	class_methods_end
+}
 
 FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma)

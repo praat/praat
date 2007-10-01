@@ -23,13 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20070930)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071001)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.29# (October 1, 2007)")
+LIST_ITEM (L"\\bu OT learning: leak and constraint in OTMulti.")
+LIST_ITEM (L"\\bu Support for writing Table, TableOfReal, Strings, OTGrammar and OTMulti in Unicode.")
 NORMAL (L"##4.6.28# (October 1, 2007)")
 LIST_ITEM (L"\\bu OT learning: positive constraint satisfactions in OTMulti tableaus.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when reading a non-UTF-8 text file "
-	"when the “Text reading preference” had been set to UTF-8.")
+	"when the \"Text reading preference\" had been set to UTF-8.")
 NORMAL (L"##4.6.27# (September 29, 2007)")
 LIST_ITEM (L"\\bu Corrected redrawing of text with non-ASCII characters.")
 NORMAL (L"##4.6.26# (September 29, 2007)")

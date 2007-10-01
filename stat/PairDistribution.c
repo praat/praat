@@ -31,6 +31,8 @@
 #include "PairDistribution_def.h"
 #include "oo_EQUAL.h"
 #include "PairDistribution_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "PairDistribution_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "PairDistribution_def.h"
 #include "oo_READ_TEXT.h"
@@ -42,16 +44,18 @@
 #include "oo_DESCRIPTION.h"
 #include "PairDistribution_def.h"
 
-class_methods (PairProbability, Data)
+class_methods (PairProbability, Data) {
 	class_method_local (PairProbability, destroy)
 	class_method_local (PairProbability, copy)
 	class_method_local (PairProbability, equal)
+	class_method_local (PairProbability, canWriteAsEncoding)
 	class_method_local (PairProbability, writeText)
 	class_method_local (PairProbability, readText)
 	class_method_local (PairProbability, writeBinary)
 	class_method_local (PairProbability, readBinary)
 	class_method_local (PairProbability, description)
-class_methods_end
+	class_methods_end
+}
 
 static void info (I) {
 	iam (PairDistribution);
@@ -59,17 +63,19 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Number of pairs: ", Melder_integer (my pairs -> size));
 }
 
-class_methods (PairDistribution, Data)
+class_methods (PairDistribution, Data) {
 	class_method_local (PairDistribution, destroy)
 	class_method_local (PairDistribution, copy)
 	class_method_local (PairDistribution, equal)
+	class_method_local (PairDistribution, canWriteAsEncoding)
 	class_method_local (PairDistribution, writeText)
 	class_method_local (PairDistribution, readText)
 	class_method_local (PairDistribution, writeBinary)
 	class_method_local (PairDistribution, readBinary)
 	class_method_local (PairDistribution, description)
 	class_method (info)
-class_methods_end
+	class_methods_end
+}
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
 	PairProbability me = new (PairProbability);

@@ -96,7 +96,7 @@ static int readLisp (Any data, FILE *f) {
 	return 1;
 }
 
-class_methods (Data, Thing)
+class_methods (Data, Thing) {
 	class_method (copy)
 	class_method (equal)
 	class_method (canWriteAsEncoding)
@@ -108,7 +108,8 @@ class_methods (Data, Thing)
 	class_method (readCache)
 	class_method (writeLisp)
 	class_method (readLisp)
-class_methods_end
+	class_methods_end
+}
 
 Any Data_copy (I) {
 	iam (Data);

@@ -22,6 +22,7 @@
  * pb 2006/05/17 draw disharmonies on top of tableau
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/01 constraint plasticity
  */
 
 #include "OTMultiEditor.h"
@@ -188,13 +189,14 @@ static void draw (I) {
 	static MelderStringW buffer = { 0 };
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (my g);
-	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony");
+	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderStringW_empty (& buffer);
 		MelderStringW_append8 (& buffer, L"\t", icons == my selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
 			L"|", constraint -> name, L"@\t      ", Melder_fixed (constraint -> ranking, 3));
 		MelderStringW_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
+		MelderStringW_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> plasticity, 6));
 		HyperPage_listItem (me, buffer.string);
 	}
 	Graphics_setAtSignIsLink (my g, FALSE);

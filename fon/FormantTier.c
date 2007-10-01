@@ -22,6 +22,7 @@
  * pb 2006/07/21 made Sound_FormantTier_filter_inline () accurate for higher numbers of formants
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
+ * pb 2007/10/01 can write as encoding
  */
 
 #include "FormantTier.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "FormantTier_def.h"
 #include "oo_EQUAL.h"
+#include "FormantTier_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "FormantTier_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "FormantTier_def.h"
@@ -43,16 +46,18 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantTier_def.h"
 
-class_methods (FormantPoint, Data)
+class_methods (FormantPoint, Data) {
 	class_method_local (FormantPoint, destroy)
 	class_method_local (FormantPoint, copy)
 	class_method_local (FormantPoint, equal)
+	class_method_local (FormantPoint, canWriteAsEncoding)
 	class_method_local (FormantPoint, writeText)
 	class_method_local (FormantPoint, readText)
 	class_method_local (FormantPoint, writeBinary)
 	class_method_local (FormantPoint, readBinary)
 	class_method_local (FormantPoint, description)
-class_methods_end
+	class_methods_end
+}
 
 FormantPoint FormantPoint_create (double time) {
 	FormantPoint me = new (FormantPoint);
@@ -61,16 +66,18 @@ FormantPoint FormantPoint_create (double time) {
 	return me;
 }
 
-class_methods (FormantTier, Function)
+class_methods (FormantTier, Function) {
 	class_method_local (FormantTier, destroy)
 	class_method_local (FormantTier, copy)
 	class_method_local (FormantTier, equal)
+	class_method_local (FormantTier, canWriteAsEncoding)
 	class_method_local (FormantTier, writeText)
 	class_method_local (FormantTier, readText)
 	class_method_local (FormantTier, writeBinary)
 	class_method_local (FormantTier, readBinary)
 	class_method_local (FormantTier, description)
-class_methods_end
+	class_methods_end
+}
 
 FormantTier FormantTier_create (double tmin, double tmax) {
 	FormantTier me = new (FormantTier);

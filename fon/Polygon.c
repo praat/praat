@@ -22,6 +22,7 @@
  * pb 2004/01/27 paint with colours
  * pb 2004/06/15 allow reversed axes
  * pb 2007/06/21 tex
+ * pb 2007/10/01 canWriteAsEncoding
  */
 
 #include "Polygon.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "Polygon_def.h"
 #include "oo_EQUAL.h"
+#include "Polygon_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Polygon_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Polygon_def.h"
@@ -70,17 +73,19 @@ static int readText (I, MelderReadString *text) {
 	return 1;
 }
 
-class_methods (Polygon, Data)
+class_methods (Polygon, Data) {
 	class_method_local (Polygon, destroy)
 	class_method (info)
 	class_method_local (Polygon, description)
 	class_method_local (Polygon, copy)
 	class_method_local (Polygon, equal)
+	class_method_local (Polygon, canWriteAsEncoding)
 	class_method (writeText)
 	class_method (readText)
 	class_method_local (Polygon, writeBinary)
 	class_method_local (Polygon, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 Polygon Polygon_create (long numberOfPoints) {
 	Polygon me = new (Polygon);

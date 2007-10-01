@@ -43,6 +43,7 @@
  * pb 2007/05/07 renamed Table_pool to Table_collapseRows
  * pb 2007/05/07 Table_rowsToColumns
  * pb 2007/06/28 Table_getGroupMean_studentT, Table_getGroupMean
+ * pb 2007/10/01 can write as encoding
  */
 
 #include <ctype.h>
@@ -56,6 +57,8 @@
 #include "oo_COPY.h"
 #include "Table_def.h"
 #include "oo_EQUAL.h"
+#include "Table_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Table_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Table_def.h"
@@ -73,11 +76,13 @@ class_methods (TableRow, Data) {
 	class_method_local (TableRow, description)
 	class_method_local (TableRow, copy)
 	class_method_local (TableRow, equal)
+	class_method_local (TableRow, canWriteAsEncoding)
 	class_method_local (TableRow, writeText)
 	class_method_local (TableRow, writeBinary)
 	class_method_local (TableRow, readText)
 	class_method_local (TableRow, readBinary)
-class_methods_end }
+	class_methods_end
+}
 
 static void info (I) {
 	iam (Table);
@@ -119,6 +124,7 @@ class_methods (Table, Data) {
 	class_method_local (Table, description)
 	class_method_local (Table, copy)
 	class_method_local (Table, equal)
+	class_method_local (Table, canWriteAsEncoding)
 	class_method_local (Table, writeText)
 	class_method_local (Table, writeBinary)
 	class_method_local (Table, readText)
@@ -130,7 +136,8 @@ class_methods (Table, Data) {
 	class_method (getMatrix)
 	class_method (getMatrixStr)
 	class_method (getColumnIndex)
-class_methods_end }
+	class_methods_end
+}
 
 static TableRow TableRow_create (long numberOfColumns) {
 	TableRow me = new (TableRow); cherror
