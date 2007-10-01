@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (L"Programming with Praat", L"ppgb", 20061218)
+MAN_BEGIN (L"Programming with Praat", L"ppgb", 20070930)
 INTRO (L"You can extend the functionality of the P\\s{RAAT} program "
 	"by adding modules written in C to it. All of P\\s{RAAT}'s source code "
 	"is available under the General Public Licence.")
@@ -33,11 +33,11 @@ NORMAL (L"Before trying the task of learning how to write P\\s{RAAT} extensions 
 	"lives as P\\s{RAAT} scripts, and scripts are easier to write than extensions in C.")
 ENTRY (L"2. Getting the existing source code")
 NORMAL (L"You obtain the P\\s{RAAT} source code via ##www.praat.org#, in a file with a name like "
-	"##praat4506_sources.tar.gz# (depending on the P\\s{RAAT} version), and unpack this with #gunzip and ##tar xvf# "
+	"##praat4627_sources.tar.gz# (depending on the P\\s{RAAT} version), and unpack this with #gunzip and ##tar xvf# "
 	"(on Unix), or ##StuffIt^\\re Expander^\\tm# (on Macintosh), "
 	"or ##Aladdin^\\re Expander^\\tm# (on Windows). The result will be a set of directories "
-	"called #kar, #GSL, #sys, #dwsys, #fon, #dwtools, #LPC, #FFNet, #artsynth, #main, and #makefiles, "
-	"plus a makefile and a Codewarrior project for Macintosh and Windows.")
+	"called #kar, #GSL, #FLAC, #sys, #dwsys, #fon, #dwtools, #LPC, #FFNet, #artsynth, #main, and #makefiles, "
+	"plus a makefile, a Codewarrior project for Windows, and an Xcode project for Macintosh.")
 ENTRY (L"3. Building P\\s{RAAT} on Unix")
 NORMAL (L"To compile and link P\\s{RAAT} on Unix, you go to the directory that "
 	"contains the source directories and the makefile, and copy a ##makefile.defs# "
@@ -68,7 +68,7 @@ NORMAL (L"You can edit ##main/main_Praat.c#. "
 CODE (L"\\# include \"praat.h\"")
 CODE (L"")
 CODE (L"DIRECT (HelloFromJane)")
-CODE1 (L"Melder_information1 (\"Hello, I am Jane.\");")
+CODE1 (L"Melder_information1 (L\"Hello, I am Jane.\");")
 CODE (L"END")
 CODE (L"")
 CODE (L"void main (int argc, char **argv) {")
@@ -85,8 +85,8 @@ NORMAL (L"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/D
 	"in the fixed and dynamic menus, take a look at the large interface description file "
 	"##fon/praat_Fon.c#.")
 ENTRY (L"8. Using the P\\s{RAAT} shell only")
-NORMAL (L"For building the P\\s{RAAT} shell (the Objects and Picture windows) only, you need only the code in the four directories "
-	"#kar, #GSL, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
+NORMAL (L"For building the P\\s{RAAT} shell (the Objects and Picture windows) only, you need only the code in the five directories "
+	"#kar, #GSL, #FLAC, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
 	"You will be able to build a P\\s{RAAT} shell, i.e. an Objects and a Picture window, "
 	"which has no knowledge of the world, i.e., which does not know any objects "
 	"that can be included in the list of objects. You could use this P\\s{RAAT} shell "

@@ -605,12 +605,14 @@ wchar_t * MelderFile_readText (MelderFile file) {
 		}
 		if (! Melder_fclose (file, f)) {
 			Melder_free (text);
-			Melder_error3 (L"Error reading file \"", MelderFile_messageNameW (file), L"\".");
-			return NULL;
+			goto end;
 		}
 		text [length] = '\0';
 
 	}
+end:
+	if (text == NULL)
+		return Melder_errorp3 (L"Error reading file \"", MelderFile_messageNameW (file), L"\".");
 	(void) Melder_killReturns_inlineW (text);
 	return text;
 }

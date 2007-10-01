@@ -267,11 +267,11 @@ END
 
 FORM (TextInputEncodingSettings, "Text reading preferences", "Text reading preferences")
 	#if defined (macintosh)
-	RADIO ("Input encoding", 6)
+	RADIO ("Encoding of 8-bit text files", 6)
 	#elif defined (_WIN32)
-	RADIO ("Input encoding", 4)
+	RADIO ("Encoding of 8-bit text files", 4)
 	#else
-	RADIO ("Input encoding", 2)
+	RADIO ("Encoding of 8-bit text files", 2)
 	#endif
 		OPTION ("UTF-8")
 		OPTION ("Try UTF-8, then ISO Latin-1")
@@ -281,9 +281,9 @@ FORM (TextInputEncodingSettings, "Text reading preferences", "Text reading prefe
 		OPTION ("Try UTF-8, then MacRoman")
 		OPTION ("MacRoman")
 	OK
-SET_INTEGER ("Input encoding", Melder_getInputEncoding ())
+SET_INTEGER ("Encoding of 8-bit text files", Melder_getInputEncoding ())
 DO
-	Melder_setInputEncoding (GET_INTEGER ("Input encoding"));
+	Melder_setInputEncoding (GET_INTEGER ("Encoding of 8-bit text files"));
 END
 
 FORM (TextOutputEncodingSettings, "Text writing preferences", "Text writing preferences")

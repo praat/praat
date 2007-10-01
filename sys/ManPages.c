@@ -31,6 +31,7 @@
  * pb 2007/06/11 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/08/25 added an extra count to "par" in readOnePage (awful bug)
+ * pb 2007/10/01 made sure that non-ASCII characters in ManPage code are written as ASCII Unicode numbers
  */
 
 #include <ctype.h>
@@ -662,7 +663,11 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, Me
 					}
 					p ++;
 				} else {
-					MelderStringW_appendCharacter (buffer, *p);
+					if (*p < 127) {
+						MelderStringW_appendCharacter (buffer, *p);
+					} else {
+						MelderStringW_append3 (buffer, L"&#", Melder_integer (*p), L";");
+					}
 					p ++;
 				}
 				if (letterSuper) {

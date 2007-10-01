@@ -596,12 +596,16 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 					for (long imark = 1; imark <= winnerMarks + 1; imark ++)
 						wcscat (markString, L"*");
 				}
+				for (long imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
+					wcscat (markString, L"+");
 				wcscat (markString, L"!");
 				if (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1 > 5) {
 					wcscat (markString, Melder_integer (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1));
 				} else {
 					for (long imark = winnerMarks + 2; imark <= my candidates [icand]. marks [index]; imark ++)
 						wcscat (markString, L"*");
+					for (long imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
+						wcscat (markString, L"+");
 				}
 			} else {
 				if (my candidates [icand]. marks [index] > 5) {
@@ -609,6 +613,8 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 				} else {
 					for (long imark = 1; imark <= my candidates [icand]. marks [index]; imark ++)
 						wcscat (markString, L"*");
+					for (long imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
+						wcscat (markString, L"+");
 				}
 			}
 			if (bidirectional && my candidates [icand]. marks [index]) {

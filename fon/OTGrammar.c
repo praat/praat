@@ -1308,7 +1308,7 @@ int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 	long n = inputs -> numberOfStrings, i, ichew;
 	if (! inputs) inputs = outputs;
 	if (outputs -> numberOfStrings != n)
-		error1 (L"Numbers of strings in input and output do not match.")
+		error1 (L"Numbers of strings in input and output are not equal.")
 	for (i = 1; i <= n; i ++)
 		for (ichew = 1; ichew <= numberOfChews; ichew ++)
 			if (! OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],

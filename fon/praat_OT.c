@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/09/30
  */
 
 #include "praat.h"
@@ -381,9 +381,7 @@ DO
 END
 
 FORM (OTGrammar_learnOne, "OTGrammar: Learn one", "OTGrammar: Learn one...")
-	LABEL ("", "Underlying form:")
 	SENTENCE ("Input string", "")
-	LABEL ("", "Adult surface form:")
 	SENTENCE ("Output string", "")
 	REAL ("Evaluation noise", "2.0")
 	OPTIONMENU ("Reranking strategy", 3)

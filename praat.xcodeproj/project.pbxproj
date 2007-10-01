@@ -1357,7 +1357,7 @@
 		23E5CAE809A22901004E41D5 /* SpectrumEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumEditor.h; path = fon/SpectrumEditor.h; sourceTree = SOURCE_ROOT; };
 		23E5CAE909A22901004E41D5 /* TextGridEditor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TextGridEditor.c; path = fon/TextGridEditor.c; sourceTree = SOURCE_ROOT; };
 		23E5CAEA09A22901004E41D5 /* TextGridEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextGridEditor.h; path = fon/TextGridEditor.h; sourceTree = SOURCE_ROOT; };
-		23E5CAEC09A22901004E41D5 /* manual_tutorials.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_tutorials.c; path = fon/manual_tutorials.c; sourceTree = SOURCE_ROOT; };
+		23E5CAEC09A22901004E41D5 /* manual_tutorials.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = manual_tutorials.c; path = fon/manual_tutorials.c; sourceTree = SOURCE_ROOT; };
 		23E5CAED09A22901004E41D5 /* manual_annotation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_annotation.c; path = fon/manual_annotation.c; sourceTree = SOURCE_ROOT; };
 		23E5CAEE09A22901004E41D5 /* manual_exampleSound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = manual_exampleSound.c; path = fon/manual_exampleSound.c; sourceTree = SOURCE_ROOT; };
 		23E5CAEF09A22901004E41D5 /* manual_exampleSound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = manual_exampleSound.h; path = fon/manual_exampleSound.h; sourceTree = SOURCE_ROOT; };
