@@ -300,7 +300,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 	
 	if (use_regexp)
 	{			
-		compiled_search = CompileRE (Melder_peekWcsToAscii (search), &compileMsg, 0);
+		compiled_search = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
 		if (compiled_search == NULL) return Melder_error (compileMsg);
 	}
 	for (i = 1; i <= my size; i++)
@@ -309,10 +309,10 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 		long nmatches_sub;
 		
 		if (use_regexp) {
-			rA = str_replace_regexp (Melder_peekWcsToAscii (ss -> string), compiled_search, 
-				Melder_peekWcsToAscii (replace), maximumNumberOfReplaces, &nmatches_sub);
+			rA = str_replace_regexp (Melder_peekWcsToUtf8 (ss -> string), compiled_search, 
+				Melder_peekWcsToUtf8 (replace), maximumNumberOfReplaces, &nmatches_sub);
 			if (rA == NULL) goto end;
-			r = Melder_asciiToWcs (rA);
+			r = Melder_utf8ToWcs (rA);
 			Melder_free (rA);
 		}
 		else r = str_replace_literal (ss -> string, search, replace,

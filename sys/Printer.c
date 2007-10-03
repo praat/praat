@@ -492,7 +492,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			}
 			if (Melder_debug == 21) {
 				MelderInfo_writeLine3 (Melder_integer (i), L": ",
-					Melder_peekAsciiToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingMacRoman)));
+					Melder_peekUtf8ToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingUTF8)));
 			}
 		}
 		if (Melder_debug == 21) {

@@ -111,7 +111,7 @@ void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3,
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
 	const char *titleA, const char *afterA, unsigned long flags, int (*callback) (Any, void *))
 {
-	wchar_t *title = Melder_asciiToWcs (titleA), *after = Melder_asciiToWcs (afterA);
+	wchar_t *title = Melder_utf8ToWcs (titleA), *after = Melder_utf8ToWcs (afterA);
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
@@ -590,7 +590,7 @@ void praat_actions_show (void) {
 					/* Create a new push-button widget.
 					 * Unfortunately, we cannot use motif_addItem, which would create a gadget.
 					 */
-					my button = XmCreatePushButton (parent, Melder_peekWcsToAscii (my title), NULL, 0);
+					my button = XmCreatePushButton (parent, Melder_peekWcsToUtf8 (my title), NULL, 0);
 					#if defined (_WIN32)
 						XtVaSetValues (my button, XmNx, 4, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, NULL);
 					#elif defined (macintosh)
@@ -624,7 +624,7 @@ void praat_actions_show (void) {
 				 * Apparently a labelled separator.
 				 */
 				if (! my button) {
-					my button = XmCreateLabelGadget (praat_dynamicMenu, Melder_peekWcsToAscii (my title), NULL, 0);
+					my button = XmCreateLabelGadget (praat_dynamicMenu, Melder_peekWcsToUtf8 (my title), NULL, 0);
 					#if defined (_WIN32)
 						XtVaSetValues (my button, XmNheight, 19, NULL);
 					#elif defined (macintosh)

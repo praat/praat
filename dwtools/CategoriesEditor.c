@@ -584,7 +584,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
 			swprintf (itemText, CategoriesEditor_TEXTMAXLENGTH+10, L"%6d     %.*ls", i, CategoriesEditor_TEXTMAXLENGTH,
 				OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = XmStringCreateSimple (Melder_peekWcsToAscii (itemText));
+			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
 		{

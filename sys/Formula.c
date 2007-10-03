@@ -2156,7 +2156,7 @@ end: return;
 static void do_dateStr (void) {
 	time_t today = time (NULL);
 	wchar_t *date, *newline;
-	date = Melder_asciiToWcs (ctime (& today)); cherror
+	date = Melder_utf8ToWcs (ctime (& today)); cherror
 	newline = wcschr (date, '\n');
 	if (newline) *newline = '\0';
 	pushString (date);
@@ -2235,7 +2235,7 @@ end: return;
 static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		wchar_t *value = Melder_peekAsciiToWcs (Melder_getenv (Melder_peekWcsToAscii (s->content.string)));
+		wchar_t *value = Melder_peekUtf8ToWcs (Melder_getenv (Melder_peekWcsToUtf8 (s->content.string)));
 		wchar_t *result = Melder_wcsdup (value != NULL ? value : L""); cherror
 		pushString (result);
 	} else {

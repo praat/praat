@@ -230,31 +230,31 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define FORM(proc,name,helpTitle) \
 	static int DO_##proc (Any sender, void *modified) \
 	{ static Any dia; if (dia == NULL) { Any radio = 0; (void) radio; \
-	dia = UiForm_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (name), DO_##proc, NULL, Melder_peekAsciiToWcs (helpTitle));
+	dia = UiForm_create (theCurrentPraat -> topShell, Melder_peekUtf8ToWcs (name), DO_##proc, NULL, Melder_peekUtf8ToWcs (helpTitle));
 #define FORMW(proc,name,helpTitle) \
 	static int DO_##proc (Any sender, void *modified) \
 	{ static Any dia; if (dia == NULL) { Any radio = 0; (void) radio; \
 	dia = UiForm_create (theCurrentPraat -> topShell, name, DO_##proc, NULL, helpTitle);
-#define REAL(label,def)		UiForm_addReal (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define POSITIVE(label,def)	UiForm_addPositive (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define INTEGER(label,def)	UiForm_addInteger (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define NATURAL(label,def)	UiForm_addNatural (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define WORD(label,def)		UiForm_addWord (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define SENTENCE(label,def)	UiForm_addSentence (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define BOOLEAN(label,def)	UiForm_addBoolean (dia, Melder_peekAsciiToWcs (label), def);
-#define LABEL(name,label)	UiForm_addLabel (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (label));
-#define TEXTFIELD(name,def)	UiForm_addText (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (def));
-#define RADIO(label,def)	radio = UiForm_addRadio (dia, Melder_peekAsciiToWcs (label), def);
-#define RADIOBUTTON(label)	UiRadio_addButton (radio, Melder_peekAsciiToWcs (label));
-#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, Melder_peekAsciiToWcs (label), def);
-#define OPTION(label)	UiOptionMenu_addButton (radio, Melder_peekAsciiToWcs (label));
-#define ENUM(label,type,def)	UiForm_addEnum (dia, Melder_peekAsciiToWcs (label), & enum_##type, def);
+#define REAL(label,def)		UiForm_addReal (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define POSITIVE(label,def)	UiForm_addPositive (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define INTEGER(label,def)	UiForm_addInteger (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define NATURAL(label,def)	UiForm_addNatural (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define WORD(label,def)		UiForm_addWord (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define SENTENCE(label,def)	UiForm_addSentence (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define BOOLEAN(label,def)	UiForm_addBoolean (dia, Melder_peekUtf8ToWcs (label), def);
+#define LABEL(name,label)	UiForm_addLabel (dia, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (label));
+#define TEXTFIELD(name,def)	UiForm_addText (dia, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (def));
+#define RADIO(label,def)	radio = UiForm_addRadio (dia, Melder_peekUtf8ToWcs (label), def);
+#define RADIOBUTTON(label)	UiRadio_addButton (radio, Melder_peekUtf8ToWcs (label));
+#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, Melder_peekUtf8ToWcs (label), def);
+#define OPTION(label)	UiOptionMenu_addButton (radio, Melder_peekUtf8ToWcs (label));
+#define ENUM(label,type,def)	UiForm_addEnum (dia, Melder_peekUtf8ToWcs (label), & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
-#define LIST(label,n,str,def)	UiForm_addList (dia, Melder_peekAsciiToWcs (label), n, str, def);
-#define FILE_IN(label)		UiForm_addFileIn (dia, Melder_peekAsciiToWcs (label));
-#define FILE_OUT(label,def)	UiForm_addFileOut (dia, Melder_peekAsciiToWcs (label), def);
-#define COLOUR(label,def)	UiForm_addColour (dia, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
+#define LIST(label,n,str,def)	UiForm_addList (dia, Melder_peekUtf8ToWcs (label), n, str, def);
+#define FILE_IN(label)		UiForm_addFileIn (dia, Melder_peekUtf8ToWcs (label));
+#define FILE_OUT(label,def)	UiForm_addFileOut (dia, Melder_peekUtf8ToWcs (label), def);
+#define COLOUR(label,def)	UiForm_addColour (dia, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
 #define REALW(label,def)		UiForm_addReal (dia, label, def);
 #define POSITIVEW(label,def)	UiForm_addPositive (dia, label, def);
 #define INTEGERW(label,def)	UiForm_addInteger (dia, label, def);
@@ -276,9 +276,9 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define FILE_OUTW(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOURW(label,def)	UiForm_addColour (dia, label, def);
 #define OK UiForm_finish (dia); } if (sender == NULL) {
-#define SET_REAL(name,value)	UiForm_setReal (dia, Melder_peekAsciiToWcs (name), value);
-#define SET_INTEGER(name,value)	UiForm_setInteger (dia, Melder_peekAsciiToWcs (name), value);
-#define SET_STRING(name,value)	UiForm_setString (dia, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (value));
+#define SET_REAL(name,value)	UiForm_setReal (dia, Melder_peekUtf8ToWcs (name), value);
+#define SET_INTEGER(name,value)	UiForm_setInteger (dia, Melder_peekUtf8ToWcs (name), value);
+#define SET_STRING(name,value)	UiForm_setString (dia, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (value));
 #define SET_REALW(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGERW(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRINGW(name,value)	UiForm_setString (dia, name, value);
@@ -310,7 +310,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	#define FORM_READ(proc,title,help) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
-		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
+		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, Melder_peekUtf8ToWcs (title), DO_##proc, NULL, Melder_peekUtf8ToWcs (help)); \
 		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
@@ -324,8 +324,8 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
-		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, Melder_peekAsciiToWcs (title), DO_##proc, NULL, Melder_peekAsciiToWcs (help)); \
-		if (! sender) praat_write_do (dia, Melder_peekAsciiToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, Melder_peekUtf8ToWcs (title), DO_##proc, NULL, Melder_peekUtf8ToWcs (help)); \
+		if (! sender) praat_write_do (dia, Melder_peekUtf8ToWcs (ext)); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITEW(proc,title,help,ext) \
@@ -349,10 +349,10 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		returns 1 if function returned a new object;
 		returns 0 if function returned a NULL object.
 */
-#define GET_REAL(name)  UiForm_getReal (dia, Melder_peekAsciiToWcs (name))
-#define GET_INTEGER(name)  UiForm_getInteger (dia, Melder_peekAsciiToWcs (name))
+#define GET_REAL(name)  UiForm_getReal (dia, Melder_peekUtf8ToWcs (name))
+#define GET_INTEGER(name)  UiForm_getInteger (dia, Melder_peekUtf8ToWcs (name))
 #define GET_STRING(name)  UiForm_getStringA (dia, name)
-#define GET_FILE(name)  UiForm_getFile (dia, Melder_peekAsciiToWcs (name))
+#define GET_FILE(name)  UiForm_getFile (dia, Melder_peekUtf8ToWcs (name))
 #define GET_REALW(name)  UiForm_getReal (dia, name)
 #define GET_INTEGERW(name)  UiForm_getInteger (dia, name)
 #define GET_STRINGW(name)  UiForm_getString (dia, name)
@@ -366,12 +366,12 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define CLASS  (theCurrentPraat -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraat -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraat -> graphics
-#define FULL_NAME  (Melder_peekWcsToAscii (theCurrentPraat -> list [IOBJECT]. name))
+#define FULL_NAME  (Melder_peekWcsToUtf8 (theCurrentPraat -> list [IOBJECT]. name))
 #define FULL_NAMEW  (theCurrentPraat -> list [IOBJECT]. name)
 #define ID  (theCurrentPraat -> list [IOBJECT]. id)
-#define NAME  Melder_peekWcsToAscii (praat_name (IOBJECT))
+#define NAME  Melder_peekWcsToUtf8 (praat_name (IOBJECT))
 #define NAMEW  praat_name (IOBJECT)
-#define FILENAME  (Melder_peekWcsToAscii (theCurrentPraat -> list [IOBJECT]. file))
+#define FILENAME  (Melder_peekWcsToUtf8 (theCurrentPraat -> list [IOBJECT]. file))
 #define FILENAMEW  (theCurrentPraat -> list [IOBJECT]. file)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)

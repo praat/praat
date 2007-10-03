@@ -127,7 +127,7 @@ static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 Widget praat_addMenuCommand (const char *windowA, const char *menuA, const char *titleA,
 	const char *afterA, unsigned long flags, int (*callback) (Any, void *))
 {
-	wchar_t *window = Melder_asciiToWcs (windowA), *menu = Melder_asciiToWcs (menuA), *title = Melder_asciiToWcs (titleA), *after = Melder_asciiToWcs (afterA);
+	wchar_t *window = Melder_utf8ToWcs (windowA), *menu = Melder_utf8ToWcs (menuA), *title = Melder_utf8ToWcs (titleA), *after = Melder_utf8ToWcs (afterA);
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
@@ -379,7 +379,7 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 	if (theCurrentPraat -> batch) {
 		my button = NULL;
 	} else {
-		Widget button = my button = XmCreatePushButton (parent, Melder_peekWcsToAscii (title), 0, 0);
+		Widget button = my button = XmCreatePushButton (parent, Melder_peekWcsToUtf8 (title), 0, 0);
 		XtVaSetValues (button, XmNx, x,
 			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y, XmNwidth, 76, NULL);
 		XtSetSensitive (button, False);

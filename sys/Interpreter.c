@@ -110,7 +110,7 @@ Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
 
 Interpreter Interpreter_createFromEnvironment (Any editor) {
 	if (editor == NULL) return Interpreter_create (NULL, NULL);
-	return Interpreter_create (Melder_peekAsciiToWcs (((Editor) editor) -> name), ((Editor) editor) -> methods);
+	return Interpreter_create (Melder_peekUtf8ToWcs (((Editor) editor) -> name), ((Editor) editor) -> methods);
 }
 
 int Melder_includeIncludeFiles (wchar_t **text) {

@@ -358,8 +358,8 @@ short texgete2 (MelderReadString *text, void *enumerated) { return getEnum (text
 short texgeteb (MelderReadString *text) { return getEnum (text, & enum_Boolean); }
 short texgeteq (MelderReadString *text) { return getEnum (text, & enum_Question); }
 short texgetex (MelderReadString *text) { return getEnum (text, & enum_Existence); }
-char *texgets2 (MelderReadString *text) { return Melder_wcsToAscii (getString (text)); }
-char *texgets4 (MelderReadString *text) { return Melder_wcsToAscii (getString (text)); }
+char *texgets2 (MelderReadString *text) { return Melder_wcsToUtf8 (getString (text)); }
+char *texgets4 (MelderReadString *text) { return Melder_wcsToUtf8 (getString (text)); }
 wchar_t *texgetw2 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
 wchar_t *texgetw4 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
 

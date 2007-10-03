@@ -1422,7 +1422,7 @@ static void createChildren (I) {
 			double fsamp = my fsamp [i]. fsamp;
 			wchar_t title [40];
 			swprintf (title, 40, L"%ls Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
-			my fsamp [i]. button = XmCreateToggleButton (fsampBox, Melder_peekWcsToAscii (title), NULL, 0);
+			my fsamp [i]. button = XmCreateToggleButton (fsampBox, Melder_peekWcsToUtf8 (title), NULL, 0);
 			XtAddCallback (my fsamp [i]. button, XmNvalueChangedCallback, cb_fsamp, me);
 			XtManageChild (my fsamp [i]. button);
 		}

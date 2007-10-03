@@ -241,7 +241,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		}
 		/* standard: new TextInterval */
 		labelstring = (strncmp (label, "h#", 2) ? label : TIMIT_DELIMITER);
-		if (! IntervalTier_add (timit, xmin, xmax, Melder_peekAsciiToWcs (labelstring))) goto cleanup;
+		if (! IntervalTier_add (timit, xmin, xmax, Melder_peekUtf8ToWcs (labelstring))) goto cleanup;
 	}
 	/*
 		Now correct the end times, based on last read interval.
@@ -266,7 +266,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 			interval = timit -> intervals -> item[i];
 			
 			if (! TextInterval_setText (ipa -> intervals -> item[i],
-				Melder_peekAsciiToWcs (timitLabelToIpaLabel (Melder_peekWcsToAscii (interval -> text))))) goto cleanup;
+				Melder_peekUtf8ToWcs (timitLabelToIpaLabel (Melder_peekWcsToUtf8 (interval -> text))))) goto cleanup;
 		}
 		Thing_setName (ipa, "ipa");
 		Thing_setName (timit, "phn");

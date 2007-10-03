@@ -39,7 +39,7 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Object type: ", Thing_classNameW (me));
 	MelderInfo_writeLine2 (L"Object name: ", my nameW ? my nameW : L"<no name>");
 	time_t today = time (NULL);
-	MelderInfo_writeLine2 (L"Date: ", Melder_peekAsciiToWcs (ctime (& today)));   /* Includes a newline. */
+	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 }
 
 static void nameChanged (Any thing) {
@@ -138,7 +138,7 @@ void *Thing_classFromClassName (const char *klas) {
 	return Melder_errorp ("(Thing_classFromClassName:) Class \"%s\" not recognized.", buffer);
 }
 void *Thing_classFromClassNameW (const wchar_t *klas) {
-	return Thing_classFromClassName (Melder_peekWcsToAscii (klas));
+	return Thing_classFromClassName (Melder_peekWcsToUtf8 (klas));
 }
 
 Any Thing_newFromClassName (const char *className) {
@@ -212,7 +212,7 @@ void Thing_setName (I, const char *name) {
 		Melder_free (my name);
 		my name = Melder_strdup (name);
 		Melder_free (my nameW);
-		my nameW = Melder_asciiToWcs (name);
+		my nameW = Melder_utf8ToWcs (name);
 	}
 	our nameChanged (me);
 }
@@ -222,7 +222,7 @@ void Thing_setNameW (I, const wchar_t *name) {
 		Melder_free (my nameW);
 		my nameW = Melder_wcsdup (name);
 		Melder_free (my name);
-		my name = Melder_wcsToAscii (name);
+		my name = Melder_wcsToUtf8 (name);
 	}
 	our nameChanged (me);
 }

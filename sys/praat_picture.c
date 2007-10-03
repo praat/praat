@@ -670,7 +670,7 @@ DO
 	long n = GET_INTEGER ("Number of horizontal steps"), i;
 	float *y = NULL;
 	PraatPictureFunction function = NULL;
-	wchar_t *formula = Melder_asciiToWcs (GET_STRING ("formula"));
+	wchar_t *formula = GET_STRINGW (L"formula");
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;

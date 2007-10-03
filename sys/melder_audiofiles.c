@@ -601,7 +601,7 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
-	if (! FLAC__metadata_get_streaminfo (Melder_fileToPath (file), & metadata))   // BUG: not Unicode-compatible on Windows.
+	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPathW (file)), & metadata))   // BUG: not Unicode-compatible on Windows.
 		return Melder_error ("Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;

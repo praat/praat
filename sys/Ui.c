@@ -851,7 +851,7 @@ void UiForm_finish (I) {
 				if (wcsnequ (field -> nameW, L"left ", 5)) {
 					MelderStringW_copyW (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
-					XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 						XmNx, x, XmNy, y
 						#if defined (macintosh)
 							+ 3
@@ -882,7 +882,7 @@ void UiForm_finish (I) {
 				} else {
 					MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 						XmNx, x, XmNy, y
 						#if defined (macintosh)
 							+ 3
@@ -910,15 +910,15 @@ void UiForm_finish (I) {
 			case UI_LABEL:
 			{
 				MelderStringW_copyW (& theFinishBuffer, field -> stringValue);
-				field -> text = XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+				field -> text = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 5, XmNwidth, dialogWidth - Gui_leftDialogSpacing () - Gui_rightDialogSpacing (),
-					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (theFinishBuffer.string)), NULL);
+					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (theFinishBuffer.string)), NULL);
 			} break;
 			case UI_RADIO:
 			{
 				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y
 					#if defined (macintosh)
 						+ 1
@@ -928,7 +928,7 @@ void UiForm_finish (I) {
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderStringW_copyW (& theFinishBuffer, button -> nameW);
-					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
+					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
 						XmNx, fieldX, XmNy, y + (ibutton - 1) * (Gui_radioButtonHeight () + Gui_radioButtonSpacing ()),
 						XmNwidth, fieldWidth, XmNheight, Gui_radioButtonHeight (),
 						XmNindicatorType, XmONE_OF_MANY, NULL);
@@ -940,7 +940,7 @@ void UiForm_finish (I) {
 				Widget bar, box;
 				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y
 					#if defined (macintosh)
 						+ 2
@@ -959,7 +959,7 @@ void UiForm_finish (I) {
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderStringW_copyW (& theFinishBuffer, button -> nameW);
-					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
+					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 				}
 				XtManageChild (bar);
@@ -970,7 +970,7 @@ void UiForm_finish (I) {
 					XmNx, x, XmNy, y, XmNwidth, labelWidth, XmNheight, Gui_checkButtonHeight (),
 					XmNalignment, XmALIGNMENT_END, NULL);*/
 				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
-				field -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
+				field -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
 					XmNx, fieldX, XmNy, y, XmNheight, Gui_checkButtonHeight (), NULL);
 			} break;
 			case UI_ENUM:
@@ -981,7 +981,7 @@ void UiForm_finish (I) {
 				int max = enum_length (field -> enumerated), n = max + field -> includeZero, i;
 				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
 					XmNalignment, XmALIGNMENT_END, NULL);
 				#ifdef _WIN32
@@ -997,7 +997,7 @@ void UiForm_finish (I) {
 				XtVaSetValues (field -> list, XmNwidth, fieldWidth + 100,
 					XmNvisibleItemCount, n < 10 ? n + 1 : 11, NULL);
 				for (i = field -> includeZero ? 0 : 1; i <= max; i ++) {
-					XmString s = XmStringCreateSimple (Melder_peekWcsToAscii (enum_string (field -> enumerated, i)));
+					XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (enum_string (field -> enumerated, i)));
 					XmListAddItem (field -> list, s, 0);
 					XmStringFree (s);
 				}
@@ -1015,7 +1015,7 @@ void UiForm_finish (I) {
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToAscii (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
+				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
 					XmNalignment, XmALIGNMENT_END, NULL);
 				#ifdef _WIN32
@@ -1031,7 +1031,7 @@ void UiForm_finish (I) {
 				XtVaSetValues (field -> list, XmNwidth, listWidth + 100,
 					XmNvisibleItemCount, (int) (field -> numberOfStrings < 10 ? field -> numberOfStrings + 1 : 11), NULL);
 				for (i = 1; i <= field -> numberOfStrings; i ++) {
-					XmString s = XmStringCreateSimple (Melder_peekWcsToAscii (field -> strings [i]));
+					XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (field -> strings [i]));
 					XmListAddItem (field -> list, s, 0);
 					XmStringFree (s);
 				}
@@ -1257,7 +1257,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 		{
 			GuiText_setStringW (field -> text, value);
 		} break; case UI_LABEL: {
-			XtVaSetValues (field -> text, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (value)), NULL);
+			XtVaSetValues (field -> text, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			int i, found = FALSE;
 			for (i = 1; i <= field -> options -> size; i ++) {
@@ -1266,7 +1266,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 					XmToggleButtonSetState (b -> toggle, True, False);
 					found = TRUE;
 					if (field -> type == UI_OPTIONMENU) {
-						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (value)), NULL);
+						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
 					}
 				} else {
 					XmToggleButtonSetState (b -> toggle, False, False);
@@ -1383,19 +1383,19 @@ wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 
 char * UiForm_getStringA (I, const char *fieldName) {
 	iam (UiForm);
-	UiField field = findField (me, Melder_peekAsciiToWcs (fieldName));
+	UiField field = findField (me, Melder_peekUtf8ToWcs (fieldName));
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (field -> stringValueA);
-			field -> stringValueA = Melder_wcsToAscii (field -> stringValue);
+			field -> stringValueA = Melder_wcsToUtf8 (field -> stringValue);
 			return field -> stringValueA;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
 		} break; case UI_ENUM: {
-			return Melder_peekWcsToAscii (enum_string (field -> enumerated, field -> integerValue));
+			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {
-			return Melder_peekWcsToAscii (field -> strings [field -> integerValue]);
+			return Melder_peekWcsToUtf8 (field -> strings [field -> integerValue]);
 		} break; default: {
 			fatalField (me);
 		}
@@ -1428,22 +1428,22 @@ end:
 
 char * UiForm_getStringA_check (I, const char *fieldName) {
 	iam (UiForm);
-	UiField field = findField_check (me, Melder_peekAsciiToWcs (fieldName)); cherror
+	UiField field = findField_check (me, Melder_peekUtf8ToWcs (fieldName)); cherror
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			if (field -> stringValueA == NULL) {
-				field -> stringValueA = Melder_wcsToAscii (field -> stringValue);
+				field -> stringValueA = Melder_wcsToUtf8 (field -> stringValue);
 			}
 			return field -> stringValueA;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
 		} break; case UI_ENUM: {
-			return Melder_peekWcsToAscii (enum_string (field -> enumerated, field -> integerValue));
+			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {
-			return Melder_peekWcsToAscii (field -> strings [field -> integerValue]);
+			return Melder_peekWcsToUtf8 (field -> strings [field -> integerValue]);
 		} break; default: {
-			Melder_error3 (L"Cannot find a string in field \"", Melder_peekAsciiToWcs (fieldName), L"\" in the form.\n"
+			Melder_error3 (L"Cannot find a string in field \"", Melder_peekUtf8ToWcs (fieldName), L"\" in the form.\n"
 				"The script may have changed while the form was open.\n"
 				"Please click Cancel in the form and try again.");
 		}

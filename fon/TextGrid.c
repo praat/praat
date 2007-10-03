@@ -365,7 +365,7 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 			Melder_error ("Line too short: \"%s\".", line);
 			goto end;
 		}
-		if (! TextTier_addPoint (me, time, Melder_peekAsciiToWcs (mark))) goto end;
+		if (! TextTier_addPoint (me, time, Melder_peekUtf8ToWcs (mark))) goto end;
 	}
 
 	/*
@@ -1115,9 +1115,9 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 		if (lastTime == 0.0) {
 			TextInterval interval = my intervals -> item [1];
 			interval -> xmax = time;
-			if (! TextInterval_setText (interval, Melder_peekAsciiToWcs (mark))) goto end;
+			if (! TextInterval_setText (interval, Melder_peekUtf8ToWcs (mark))) goto end;
 		} else {
-			if (! IntervalTier_add (me, lastTime, time, Melder_peekAsciiToWcs (mark))) goto end;
+			if (! IntervalTier_add (me, lastTime, time, Melder_peekUtf8ToWcs (mark))) goto end;
 		}
 		lastTime = time;
 	}
@@ -1146,7 +1146,7 @@ int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 	fprintf (f, "separator ;\nnfields 1\n#\n");
 	for (iinterval = 1; iinterval <= my intervals -> size; iinterval ++) {
 		TextInterval interval = (TextInterval) my intervals -> item [iinterval];
-		fprintf (f, "\t%.5f 26\t%s\n", interval -> xmax, Melder_peekWcsToAscii (interval -> text));
+		fprintf (f, "\t%.5f 26\t%s\n", interval -> xmax, Melder_peekWcsToUtf8 (interval -> text));
 	}
 	if (! Melder_fclose (file, f)) return 0;
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
@@ -1792,7 +1792,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				TextInterval interval;
 				char label [10];
 				sprintf (label, "%ld", ++ sentenceNumber);
-				interval = TextInterval_create (tb, te, Melder_peekAsciiToWcs (label));
+				interval = TextInterval_create (tb, te, Melder_peekUtf8ToWcs (label));
 				Collection_addItem (sentenceTier -> intervals, interval); cherror
 			}
 		} else if (strnequ (line, "    <tw ref=\"", 13)) {
@@ -1822,7 +1822,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				/* Begin a phrase. */
 				if (lastInterval) {
 					sgmlToPraat (phrase); cherror
-					TextInterval_setText (lastInterval, Melder_peekAsciiToWcs (phrase)); cherror
+					TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase)); cherror
 				}
 				phrase [0] = '\0';
 				length = strlen (arg7);
@@ -1857,7 +1857,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 	}
 	if (lastInterval) {
 		sgmlToPraat (phrase); cherror
-		TextInterval_setText (lastInterval, Melder_peekAsciiToWcs (phrase)); cherror
+		TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase)); cherror
 	}
 	for (itier = 1; itier <= my tiers -> size; itier ++) {
 		IntervalTier tier = my tiers -> item [itier];

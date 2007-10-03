@@ -63,7 +63,7 @@ FORM (Manual, cb_writeAllToHtmlDir, "Write all pages as HTML files", 0)
 	OK
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
-SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
+SET_STRINGW (L"directory", Melder_dirToPathW (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;

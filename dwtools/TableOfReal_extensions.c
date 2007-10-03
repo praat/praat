@@ -1416,7 +1416,7 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	if (use_regexp)
 	{
 		char *compileMsg;
-		compiled_regexp = CompileRE (Melder_peekWcsToAscii (search), &compileMsg, 0);
+		compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
 		if (compiled_regexp == NULL) return Melder_error (compileMsg);
 	}
 	for (i = 1; i <= numberOfLabels; i++)
@@ -1424,7 +1424,7 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 		if (labels[i] == NULL) continue;
 		if (use_regexp)
 		{
-			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToAscii (labels[i]), NULL, 0, 
+			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToUtf8 (labels[i]), NULL, 0, 
 				'\0', '\0', NULL, NULL, NULL)) nmatches++;
 		}
 		else if (wcsequ (labels[i], search)) nmatches++;

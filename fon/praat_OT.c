@@ -669,6 +669,14 @@ DIRECT (OTMulti_edit)
 	}
 END
 
+FORM (OTMulti_evaluate, "OTMulti: Evaluate", 0)
+	REAL ("Evaluation noise", "2.0")
+	OK
+DO
+	OTMulti_newDisharmonies (ONLY_OBJECT, GET_REAL ("Evaluation noise"));
+	praat_dataChanged (ONLY_OBJECT);
+END
+
 FORM (OTMulti_getCandidate, "Get candidate", 0)
 	NATURAL ("Candidate", "1")
 	OK
@@ -975,6 +983,7 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTMulti, 1, "-- parse --", 0, 1, 0);
 	praat_addAction1 (classOTMulti, 1, "Get winner...", 0, 1, DO_OTMulti_getWinner);
 	praat_addAction1 (classOTMulti, 0, "Evaluate", 0, 0, 0);
+	praat_addAction1 (classOTMulti, 0, "Evaluate...", 0, 0, DO_OTMulti_evaluate);
 	praat_addAction1 (classOTMulti, 0, "Get output...", 0, 0, DO_OTMulti_generateOptimalForm);
 	praat_addAction1 (classOTMulti, 0, "Get outputs...", 0, 0, DO_OTMulti_generateOptimalForms);
 	praat_addAction1 (classOTMulti, 0, "To output Distribution...", 0, 0, DO_OTMulti_to_Distribution);

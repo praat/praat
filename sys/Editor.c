@@ -250,7 +250,7 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Editor type: ", Thing_classNameW (me));
 	MelderInfo_writeLine2 (L"Editor name: ", my nameW ? my nameW : L"<no name>");
 	time_t today = time (NULL);
-	MelderInfo_writeLine2 (L"Date: ", Melder_peekAsciiToWcs (ctime (& today)));   /* Includes a newline. */
+	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 	if (my data) {
 		MelderInfo_writeLine2 (L"Data type: ", ((Thing) my data) -> methods -> _classNameW);
 		MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> nameW);
@@ -290,7 +290,7 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
 	else wcscpy (my undoText, L"Undo?");
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (my undoText)), NULL);
+	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
 	 */
@@ -586,7 +586,7 @@ void Editor_save (I, const wchar_t *text) {
 	if (! my undoButton) return;
 	XtSetSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (my undoText)), NULL);
+	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
 }
 
 void Editor_openPraatPicture (I) {

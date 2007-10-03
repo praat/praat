@@ -568,7 +568,7 @@ void XmTextSetString (Widget me, const char *text) {
 		Edit_SetText (my window, winText);
 		Melder_free (winText);
 	#elif mac
-		GuiText_setStringW (me, Melder_peekAsciiToWcs (text));
+		GuiText_setStringW (me, Melder_peekUtf8ToWcs (text));
 		return;
 		
 		long length = strlen (text), i;
@@ -934,7 +934,7 @@ void GuiText_redo (Widget me) {
 wchar_t *GuiText_getStringW (Widget me) {
 	#if defined (UNIX)
 		char *textUtf8 = XmTextGetString (me);
-		wchar_t *result = Melder_asciiToWcs (textUtf8);
+		wchar_t *result = Melder_utf8ToWcs (textUtf8);
 		XtFree (textUtf8);
 		return result;
 	#else
@@ -948,13 +948,13 @@ wchar_t *GuiText_getStringW (Widget me) {
 
 void GuiText_setStringW (Widget me, const wchar_t *text) {
 	#if defined (UNIX)
-		char *textIsoLatin1 = Melder_wcsToAscii (text);
-		XmTextSetString (me, textIsoLatin1);
-		Melder_free (textIsoLatin1);
+		char *textUtf8 = Melder_wcsToUtf8 (text);
+		XmTextSetString (me, textUtf8);
+		Melder_free (textUtf8);
 		/*
-		 * At some point to be replaced with:
+		 * At some point perhaps to be replaced with:
 		 */
-		//XmTextSetStringWcs (me, (wchar_t *) text);
+		//XmTextSetStringWcs (me, text);
 	#elif win
 		const wchar_t *from;
 		wchar_t *winText = Melder_malloc (wchar_t, 2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
@@ -1032,7 +1032,7 @@ wchar_t * GuiText_getSelectionW (Widget me) {
 }
 
 void GuiText_replaceW (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, const wchar_t *text) {
-	XmTextReplace (me, from_pos, to_pos, Melder_peekWcsToAscii (text));
+	XmTextReplace (me, from_pos, to_pos, Melder_peekWcsToUtf8 (text));
 }
 
 /* End of file GuiText.c */

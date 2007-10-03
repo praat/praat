@@ -313,13 +313,13 @@ wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = NULL;
 	char *compileMsg;
-	regexp *compiled_regexp = CompileRE (Melder_peekWcsToAscii (search_regexp), &compileMsg, 0);
+	regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search_regexp), &compileMsg, 0);
 	
 	if (compiled_regexp == NULL) return Melder_errorp (compileMsg);
 	
-	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToAscii (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
+	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToUtf8 (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
 		char *charpA = compiled_regexp -> startp[0];
-		charp = Melder_asciiToWcs (charpA);
+		charp = Melder_utf8ToWcs (charpA);
 		Melder_free (charpA);
 	}
 
@@ -601,7 +601,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 
 	if (searchRE == NULL || replaceRE == NULL) return NULL;
 				
-	compiledRE = CompileRE (Melder_peekWcsToAscii (searchRE), &compileMsg, 0);
+	compiledRE = CompileRE (Melder_peekWcsToUtf8 (searchRE), &compileMsg, 0);
 	if (compiledRE == NULL) return Melder_errorp (compileMsg);
 
 	result = (wchar_t **) NUMpvector (lo, hi);
@@ -612,10 +612,10 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	{
 		/* Treat a NULL as an empty string */
 		wchar_t *string = from[i] == NULL ? L"" : from[i];
-		char *resultA = str_replace_regexp (Melder_peekWcsToAscii (string), compiledRE, Melder_peekWcsToAscii (replaceRE),
+		char *resultA = str_replace_regexp (Melder_peekWcsToUtf8 (string), compiledRE, Melder_peekWcsToUtf8 (replaceRE),
 			maximumNumberOfReplaces, &nmatches_sub);
 		if (resultA == NULL) goto end;
-		result [i] = Melder_asciiToWcs (resultA);
+		result [i] = Melder_utf8ToWcs (resultA);
 		Melder_free (resultA);
 		if (result[i] == NULL) goto end;
 		if (nmatches_sub > 0)

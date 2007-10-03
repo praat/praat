@@ -81,29 +81,29 @@
 #define FORM(klas,proc,title,helpTitle) \
 	static int proc (I, EditorCommand cmd, Any sender) \
 	{ iam (klas); (void) me; if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
-	cmd -> dialog = UiForm_createE (cmd, Melder_peekAsciiToWcs (title), Melder_peekAsciiToWcs (helpTitle));
+	cmd -> dialog = UiForm_createE (cmd, Melder_peekUtf8ToWcs (title), Melder_peekUtf8ToWcs (helpTitle));
 #define FORMW(klas,proc,title,helpTitle) \
 	static int proc (I, EditorCommand cmd, Any sender) \
 	{ iam (klas); (void) me; if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
 	cmd -> dialog = UiForm_createE (cmd, title, helpTitle);
 
-#define REAL(label,def)		UiForm_addReal (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define POSITIVE(label,def)	UiForm_addPositive (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define INTEGER(label,def)	UiForm_addInteger (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define NATURAL(label,def)	UiForm_addNatural (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define WORD(label,def)		UiForm_addWord (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define SENTENCE(label,def)	UiForm_addSentence (cmd -> dialog, Melder_peekAsciiToWcs (label), Melder_peekAsciiToWcs (def));
-#define BOOLEAN(label,def)	UiForm_addBoolean (cmd -> dialog, Melder_peekAsciiToWcs (label), def);
-#define LABEL(name,label)	UiForm_addLabel (cmd -> dialog, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (label));
-#define TEXTFIELD(name,def)	UiForm_addText (cmd -> dialog, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (def));
-#define RADIO(label,def)	radio = UiForm_addRadio (cmd -> dialog, Melder_peekAsciiToWcs (label), def);
-#define RADIOBUTTON(label)	UiRadio_addButton (radio, Melder_peekAsciiToWcs (label));
-#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, Melder_peekAsciiToWcs (label), def);
-#define OPTION(label)	UiOptionMenu_addButton (radio, Melder_peekAsciiToWcs (label));
-#define ENUM(label,type,def)	UiForm_addEnum (cmd -> dialog, Melder_peekAsciiToWcs (label), & enum_##type, def);
+#define REAL(label,def)		UiForm_addReal (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define POSITIVE(label,def)	UiForm_addPositive (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define INTEGER(label,def)	UiForm_addInteger (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define NATURAL(label,def)	UiForm_addNatural (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define WORD(label,def)		UiForm_addWord (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define SENTENCE(label,def)	UiForm_addSentence (cmd -> dialog, Melder_peekUtf8ToWcs (label), Melder_peekUtf8ToWcs (def));
+#define BOOLEAN(label,def)	UiForm_addBoolean (cmd -> dialog, Melder_peekUtf8ToWcs (label), def);
+#define LABEL(name,label)	UiForm_addLabel (cmd -> dialog, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (label));
+#define TEXTFIELD(name,def)	UiForm_addText (cmd -> dialog, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (def));
+#define RADIO(label,def)	radio = UiForm_addRadio (cmd -> dialog, Melder_peekUtf8ToWcs (label), def);
+#define RADIOBUTTON(label)	UiRadio_addButton (radio, Melder_peekUtf8ToWcs (label));
+#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, Melder_peekUtf8ToWcs (label), def);
+#define OPTION(label)	UiOptionMenu_addButton (radio, Melder_peekUtf8ToWcs (label));
+#define ENUM(label,type,def)	UiForm_addEnum (cmd -> dialog, Melder_peekUtf8ToWcs (label), & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
-#define LIST(label,n,str,def)	UiForm_addList (cmd -> dialog, Melder_peekAsciiToWcs (label), n, str, def);
+#define LIST(label,n,str,def)	UiForm_addList (cmd -> dialog, Melder_peekUtf8ToWcs (label), n, str, def);
 #define REALW(label,def)		UiForm_addReal (cmd -> dialog, label, def);
 #define POSITIVEW(label,def)	UiForm_addPositive (cmd -> dialog, label, def);
 #define INTEGERW(label,def)	UiForm_addInteger (cmd -> dialog, label, def);
@@ -122,9 +122,9 @@
 #define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTIONW (labelProc) }
 #define LISTW(label,n,str,def)	UiForm_addList (cmd -> dialog, label, n, str, def);
 #define OK UiForm_finish (cmd -> dialog); } if (sender == NULL) {
-#define SET_REAL(name,value)	UiForm_setReal (cmd -> dialog, Melder_peekAsciiToWcs (name), value);
-#define SET_INTEGER(name,value)	UiForm_setInteger (cmd -> dialog, Melder_peekAsciiToWcs (name), value);
-#define SET_STRING(name,value)	UiForm_setString (cmd -> dialog, Melder_peekAsciiToWcs (name), Melder_peekAsciiToWcs (value));
+#define SET_REAL(name,value)	UiForm_setReal (cmd -> dialog, Melder_peekUtf8ToWcs (name), value);
+#define SET_INTEGER(name,value)	UiForm_setInteger (cmd -> dialog, Melder_peekUtf8ToWcs (name), value);
+#define SET_STRING(name,value)	UiForm_setString (cmd -> dialog, Melder_peekUtf8ToWcs (name), Melder_peekUtf8ToWcs (value));
 #define SET_REALW(name,value)	UiForm_setReal (cmd -> dialog, name, value);
 #define SET_INTEGERW(name,value)	UiForm_setInteger (cmd -> dialog, name, value);
 #define SET_STRINGW(name,value)	UiForm_setString (cmd -> dialog, name, value);
@@ -138,7 +138,7 @@
 #define EDITOR_ARGS  Any void_me, EditorCommand cmd, Any sender
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sender
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
-	cmd -> dialog = UiForm_createE (cmd, Melder_peekAsciiToWcs (title), Melder_peekAsciiToWcs (helpTitle));
+	cmd -> dialog = UiForm_createE (cmd, Melder_peekUtf8ToWcs (title), Melder_peekUtf8ToWcs (helpTitle));
 #define EDITOR_FORMW(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
 	cmd -> dialog = UiForm_createE (cmd, title, helpTitle);
 #define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sender == NULL) {
@@ -149,7 +149,7 @@
 #define FORM_WRITE(klas,proc,title,helpTitle) \
 	static int proc (I, EditorCommand cmd, Any sender) \
 	{ iam (klas); (void) me; if (cmd -> dialog == NULL) { \
-	cmd -> dialog = UiOutfile_createE (cmd, Melder_peekAsciiToWcs (title), Melder_peekAsciiToWcs (helpTitle)); \
+	cmd -> dialog = UiOutfile_createE (cmd, Melder_peekUtf8ToWcs (title), Melder_peekUtf8ToWcs (helpTitle)); \
 	} if (sender == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0'; {
 #define FORM_WRITEW(klas,proc,title,helpTitle) \
 	static int proc (I, EditorCommand cmd, Any sender) \
@@ -170,8 +170,8 @@
 		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
 
-#define GET_REAL(name)  UiForm_getReal (cmd -> dialog, Melder_peekAsciiToWcs (name))
-#define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, Melder_peekAsciiToWcs (name))
+#define GET_REAL(name)  UiForm_getReal (cmd -> dialog, Melder_peekUtf8ToWcs (name))
+#define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, Melder_peekUtf8ToWcs (name))
 #define GET_STRING(name)  UiForm_getStringA (cmd -> dialog, name)
 #define GET_REALW(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGERW(name)  UiForm_getInteger (cmd -> dialog, name)

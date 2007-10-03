@@ -49,10 +49,10 @@ Widget motif_addMenuBar (Widget form) {
 
 Widget motif_addMenu (Widget bar, const wchar_t *title, long flags) {
 	Widget menuTitle, menu;
-	menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 	if (wcsequ (title, L"Help"))   /* BUG: Mac reacts to this title... */
 		XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
-	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
 	XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
@@ -62,10 +62,10 @@ Widget motif_addMenu (Widget bar, const wchar_t *title, long flags) {
 
 Widget motif_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle) {
 	Widget menu;
-	*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 	if (wcsequ (title, L"Help"))
 		XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
-	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToAscii (title), NULL, 0);
+	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (menu, False);
 	XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
@@ -79,7 +79,7 @@ Widget motif_addItem (Widget menu, const wchar_t *title, long flags,
 	Boolean toggle = flags & (motif_CHECKABLE | motif_CHECKED) ? True : False;
 	Widget button;
 	int accelerator = flags & 127;
-	button = XtVaCreateManagedWidget (Melder_peekWcsToAscii (title),
+	button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (button, False);

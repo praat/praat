@@ -3295,7 +3295,7 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				Melder_relativePathToFile (Melder_peekAsciiToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
+				Melder_relativePathToFile (Melder_peekUtf8ToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
 				if (wcslen (file. wpath) > 0 && file. wpath [wcslen (file. wpath) - 1] == '\"') {
 					file. wpath [wcslen (file. wpath) - 1] = '\0';
 				}

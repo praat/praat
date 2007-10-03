@@ -46,7 +46,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *s
 		if (swscanf (string, L"%ls %ls", className, givenName) < 2) goto end;
 		WHERE_DOWN (1) {
 			Data object = OBJECT;
-			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, Melder_peekAsciiToWcs (object -> name)))
+			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, Melder_peekUtf8ToWcs (object -> name)))
 				return IOBJECT;
 		}
 	} else {
@@ -120,7 +120,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"unix_nocheck ", 13)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"unix_nocheck\" is not available inside pictures.");
-			(void) Melder_system (Melder_peekWcsToAscii (command + 13)); Melder_clearError ();
+			(void) Melder_system (Melder_peekWcsToUtf8 (command + 13)); Melder_clearError ();
 		} else if (wcsnequ (command, L"system ", 7)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"system\" is not available inside pictures.");
@@ -153,7 +153,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
 			if (wasBackgrounding) praat_foreground ();
-			if (! Melder_pause (Melder_peekWcsToAscii (command + 5))) return Melder_error1 (L"You interrupted the script.");
+			if (! Melder_pause (Melder_peekWcsToUtf8 (command + 5))) return Melder_error1 (L"You interrupted the script.");
 			if (wasBackgrounding) praat_background ();
 			Melder_setDefaultDir (& dir);
 			/* BUG: should also restore praatP. editor. */
@@ -195,10 +195,10 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error1 (L"Missing command after `sendpraat'.");
-			char *result = sendpraat (XtDisplay (theCurrentPraat -> topShell), Melder_peekWcsToAscii (programName),
-				SENDPRAAT_TIMEOUT, Melder_peekWcsToAscii (p));
+			char *result = sendpraat (XtDisplay (theCurrentPraat -> topShell), Melder_peekWcsToUtf8 (programName),
+				SENDPRAAT_TIMEOUT, Melder_peekWcsToUtf8 (p));
 			if (result)
-				return Melder_error4 (Melder_peekAsciiToWcs (result), L"\nMessage to ", programName, L" not completed.");
+				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", programName, L" not completed.");
 		} else if (wcsnequ (command, L"sendsocket ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"sendsocket\" is not available inside pictures.");
@@ -212,9 +212,9 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error ("Missing command after `sendsocket'.");
-			char *result = sendsocket (Melder_peekWcsToAscii (hostName), Melder_peekWcsToAscii (p));
+			char *result = sendsocket (Melder_peekWcsToUtf8 (hostName), Melder_peekWcsToUtf8 (p));
 			if (result)
-				return Melder_error4 (Melder_peekAsciiToWcs (result), L"\nMessage to ", hostName, L" not completed.");
+				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", hostName, L" not completed.");
 		} else if (wcsnequ (command, L"filedelete ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"filedelete\" is not available inside pictures.");
@@ -350,7 +350,7 @@ int praat_executeCommandFromStandardInput (const char *programName) {
 		if (! fgets (command, 999, stdin)) return 0;
 		newLine = strchr (command, '\n');
 		if (newLine) *newLine = '\0';
-		wchar_t *commandW = Melder_asciiToWcs (command);
+		wchar_t *commandW = Melder_utf8ToWcs (command);
 		if (! praat_executeCommand (NULL, commandW))
 			Melder_flushError ("%s: command \"%s\" not executed.", programName, command);
 		Melder_free (commandW);

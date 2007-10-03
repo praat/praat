@@ -167,7 +167,7 @@ void Melder_print (const wchar_t *s) {
 	 * and a better solution would be to disallow the script from running (BUG: accept fewer events in waitWhileProgress).
 	 */
 	if (theInformation == defaultInformation) {
-		printf ("%s", Melder_peekWcsToAscii (s));   // Do not print the previous lines again.
+		printf ("%s", Melder_peekWcsToUtf8 (s));   // Do not print the previous lines again.
 	} else {
 		MelderStringW_appendW (& theForegroundBuffer, s);
 		theInformation (theForegroundBuffer. string);

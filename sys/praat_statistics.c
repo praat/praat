@@ -49,7 +49,7 @@ void praat_statistics_prefsChanged (void) {
 	if (! statistics.dateOfFirstSession [0]) {
 		time_t today = time (NULL);
 		wchar_t *newLine;
-		wcscpy (statistics.dateOfFirstSession, Melder_peekAsciiToWcs (ctime (& today)));
+		wcscpy (statistics.dateOfFirstSession, Melder_peekUtf8ToWcs (ctime (& today)));
 		newLine = wcschr (statistics.dateOfFirstSession, '\n');
 		if (newLine) *newLine = '\0';
 	}

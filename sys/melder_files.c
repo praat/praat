@@ -128,7 +128,7 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormC);   // Praat requires composed characters.
 		n = CFStringGetLength (cfpath2);
 		for (long i = 0; i < n; i ++) {
-			wpath [i] = CFStringGetCharacterAtIndex (cfpath2, i);
+			wpath [i] = CFStringGetCharacterAtIndex (cfpath2, i);   // BUG: should be UTF-16.
 		}
 		wpath [n] = '\0';
 		CFRelease (cfpath2);
@@ -204,7 +204,7 @@ int Melder_fileToMac (MelderFile file, void *void_fspec) {
 #endif
 
 char * MelderFile_name (MelderFile file) {
-	return Melder_peekWcsToAscii (MelderFile_nameW (file));
+	return Melder_peekWcsToUtf8 (MelderFile_nameW (file));
 }
 
 wchar_t * MelderFile_nameW (MelderFile file) {
@@ -269,7 +269,7 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 		 * We assume that Unix complete path names start with a slash.
 		 */
 		if (path [0] == '~' && path [1] == '/') {
-			swprintf (file -> wpath, 256, L"%ls%ls", Melder_peekAsciiToWcs (getenv ("HOME")), & path [1]);
+			swprintf (file -> wpath, 256, L"%ls%ls", Melder_peekUtf8ToWcs (getenv ("HOME")), & path [1]);
 		} else if (path [0] == '/' || wcsequ (path, L"<stdout>") || wcsstr (path, L"://")) {
 			wcscpy (file -> wpath, path);
 		} else {
@@ -315,24 +315,8 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 	return 1;
 }
 
-char * Melder_dirToPath (MelderDir dir) {
-	#ifdef _WIN32
-		return Melder_peekWcsToAscii (Melder_dirToPathW (dir));
-	#else
-		return Melder_peekWcsToUtf8 (Melder_dirToPathW (dir));
-	#endif
-}
-
 wchar_t * Melder_dirToPathW (MelderDir dir) {
 	return & dir -> wpath [0];
-}
-
-char * Melder_fileToPath (MelderFile file) {
-	#ifdef _WIN32
-		return Melder_peekWcsToAscii (Melder_fileToPathW (file));
-	#else
-		return Melder_peekWcsToUtf8 (Melder_fileToPathW (file));
-	#endif
 }
 
 wchar_t * Melder_fileToPathW (MelderFile file) {
@@ -546,7 +530,7 @@ int MelderDir_getSubdirW (MelderDir parent, const wchar_t *subdirName, MelderDir
 void Melder_getHomeDir (MelderDir homeDir) {
 	#if defined (UNIX)
 		char *home = getenv ("HOME");
-		wcscpy (homeDir -> wpath, home ? Melder_peekAsciiToWcs (home) : L"/");
+		wcscpy (homeDir -> wpath, home ? Melder_peekUtf8ToWcs (home) : L"/");
 	#elif defined (_WIN32)
 		if (GetEnvironmentVariableW (L"USERPROFILE", homeDir -> wpath, 255)) {
 			;   /* Ready. */
@@ -686,7 +670,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	#endif
 	} else {
 		#ifdef _WIN32
-			f = _wfopen (file -> wpath, Melder_peekAsciiToWcs (type));
+			f = _wfopen (file -> wpath, Melder_peekUtf8ToWcs (type));
 		#else
 			f = fopen ((char *) utf8path, type);
 		#endif
@@ -822,20 +806,6 @@ int MelderFile_delete (MelderFile file) {
 	return 1;
 }
 
-char * Melder_asciiMessage (const char *message) {
-	static char names [11] [300];
-	static int index = 0;
-	const char *from;
-	char *to;
-	if (++ index == 11) index = 0;
-	for (from = & message [0], to = & names [index] [0]; *from != '\0'; from ++, to ++) {
-		*to = *from;
-		if (*from == '\\') { * ++ to = 'b'; * ++ to = 's'; }
-	}
-	*to = '\0';
-	return & names [index] [0];
-}
-
 wchar_t * Melder_peekExpandBackslashes (const wchar_t *message) {
 	static wchar_t names [11] [300];
 	static int index = 0;
@@ -851,7 +821,7 @@ wchar_t * Melder_peekExpandBackslashes (const wchar_t *message) {
 }
 
 char * MelderFile_messageName (MelderFile file) {
-	return Melder_peekWcsToAscii (file -> wpath);
+	return Melder_peekWcsToUtf8 (file -> wpath);
 }
 
 wchar_t * MelderFile_messageNameW (MelderFile file) {
@@ -865,7 +835,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 }
 
 void Melder_setDefaultDir (MelderDir dir) {
-	chdir (Melder_peekWcsToAscii (dir -> wpath));
+	chdir (Melder_peekWcsToUtf8 (dir -> wpath));
 }
 
 void MelderFile_setDefaultDir (MelderFile file) {

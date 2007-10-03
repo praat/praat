@@ -28,25 +28,15 @@
 #include "GuiP.h"
 #include "UnicodeData.h"
 
-void GuiWindow_setTitleW (Widget me, const wchar_t *titleW) {
+void GuiWindow_setTitleW (Widget me, const wchar_t *title) {
 	#if mac
-		unsigned long length = wcslen (titleW);
-		UniChar *titleUtf16 = Melder_calloc (UniChar, wcslen (titleW) + 1);
-		for (unsigned long i = 0; i < length; i ++)
-			titleUtf16 [i] = titleW [i];
-		CFStringRef titleCF = CFStringCreateWithCharacters (NULL, titleUtf16, length);
-		Melder_free (titleUtf16);
+		CFStringRef titleCF = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (title), kCFStringEncodingUTF8);
 		SetWindowTitleWithCFString (my nat.window.ptr, titleCF);
 		CFRelease (titleCF);
 	#elif win
-		SetWindowTextW (my window, titleW);
+		SetWindowTextW (my window, title);
 	#else
-		char *titleA = Melder_peekWcsToAscii (titleW);   // BANDAID
-		unsigned long length = strlen (titleA);
-		for (unsigned long i = 0; i < length; i ++) {   // BANDAID
-			if (titleW [i] == UNICODE_LEFT_DOUBLE_QUOTATION_MARK || titleW [i] == UNICODE_RIGHT_DOUBLE_QUOTATION_MARK)
-			    titleA [i] = '\"';
-		}
+		char *titleA = Melder_peekWcsToUtf8 (title);
 		XtVaSetValues (me, XmNtitle, titleA, XmNiconName, titleA, NULL);
 	#endif
 }

@@ -119,12 +119,12 @@ static int classCollection_writeText (I, MelderFile file) {
 static int classCollection_readText (I, MelderReadString *text) {
 	iam (Collection);
 	if (Thing_version < 0) {
-		long i, size;
+		long size;
 		wchar_t *line = MelderReadString_readLine (text);
 		if (line == NULL || ! swscanf (line, L"%ld", & size) || size < 0)
 			return Melder_error ("Collection::readText: cannot read size.");
 		if (! Collection_init (me, NULL, size)) return 0;
-		for (i = 1; i <= size; i ++) {
+		for (long i = 1; i <= size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
@@ -151,27 +151,28 @@ static int classCollection_readText (I, MelderReadString *text) {
 				Thing_setNameW (my item [i], line+n);
 			}
 		}
-	} else {
-		long i, size;
-		size = texgeti4 (text);
-		if (! Collection_init (me, NULL, size)) return 0;
-		for (i = 1; i <= size; i ++) {
-			long saveVersion = Thing_version;   /* The version of the Collection... */
-			char *klas = texgets2 (text);
-			if (klas == NULL) return 0;
-			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
-			Melder_free (klas);
-			my size ++;
-			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-				return Melder_error ("(Collection::readText:) "
-					"Cannot read item of class %s.", Thing_className (my item [i]));
-			wchar_t *name = texgetw2 (text);
-			Thing_setNameW (my item [i], name);
-			Melder_free (name);
-			if (! Data_readText (my item [i], text)) return 0;
-			Thing_version = saveVersion;
-		}
+		return 1;
 	}
+	char *className = NULL;
+	wchar_t *objectName = NULL;
+	long size = texgeti4 (text);
+	Collection_init (me, NULL, size); cherror
+	for (long i = 1; i <= size; i ++) {
+		long saveVersion = Thing_version;   /* The version of the Collection... */
+		Melder_free (className); className = texgets2 (text); cherror
+		my item [i] = Thing_newFromClassName (className); cherror
+		my size ++;
+		if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
+			error3 (L"Cannot read item of class ", Thing_classNameW (my item [i]), L"in collection.");
+		Melder_free (objectName); objectName = texgetw2 (text); cherror
+		Thing_setNameW (my item [i], objectName); cherror
+		Data_readText (my item [i], text); cherror
+		Thing_version = saveVersion;
+	}
+end:
+	Melder_free (className);
+	Melder_free (objectName);
+	iferror return 0;
 	return 1;
 }
 

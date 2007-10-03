@@ -186,7 +186,7 @@ static void createChildren (I) {
 		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
 	for (int i = 1; i <= enumlength (Art_MUSCLE); i ++) {
 		my button [i] = XtVaCreateManagedWidget
-			(Melder_peekWcsToAscii (enumstring (Art_MUSCLE, i)), xmToggleButtonGadgetClass, my radio,
+			(Melder_peekWcsToUtf8 (enumstring (Art_MUSCLE, i)), xmToggleButtonGadgetClass, my radio,
 			#if defined (_WIN32) || defined (macintosh)
 				XmNheight, 18,
 			#endif

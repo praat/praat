@@ -185,7 +185,7 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word) {
 			}
 		}
 	}
-	if (WordList_hasWord (my wordList, Melder_peekWcsToAscii (word)))
+	if (WordList_hasWord (my wordList, Melder_peekWcsToUtf8 (word)))
 		return TRUE;
 	if (my userDictionary != NULL) {
 		if (wcslen (word) > 3333) return FALSE;   /* Superfluous, because WordList_hasWord already checked. But safe. */

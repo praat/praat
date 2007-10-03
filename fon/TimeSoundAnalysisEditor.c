@@ -1398,7 +1398,7 @@ static int menu_cb_voiceReport (EDITOR_ARGS) {
 	sound = extractSound (me, tmin, tmax);
 	if (! sound) return Melder_error ("Selection too small (or out of memory).");
 	MelderInfo_open ();
-	MelderInfo_writeLine4 (L"-- Voice report for ", my nameW, L" --\nDate: ", Melder_peekAsciiToWcs (ctime (& today)));
+	MelderInfo_writeLine4 (L"-- Voice report for ", my nameW, L" --\nDate: ", Melder_peekUtf8ToWcs (ctime (& today)));
 	if ((my pitch.method & 2) == 0)
 		MelderInfo_writeLine1 (L"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");

@@ -159,7 +159,7 @@ static void UiFile_init (I, Widget parent, const wchar_t *title) {
 		}
 		if (my dialog) {
 			XtVaSetValues (my dialog,
-				motif_argXmString (XmNdialogTitle, Melder_peekWcsToAscii (title)),
+				motif_argXmString (XmNdialogTitle, Melder_peekWcsToUtf8 (title)),
 				XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, NULL);
 			XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, NULL);
 			XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST),
@@ -269,7 +269,7 @@ void UiInfile_do (I) {
 		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
 		openFileName. lpstrFile = fullFileName;
 		openFileName. nMaxFile = 3000;
-		openFileName. lpstrTitle = Melder_peekAsciiToWcs (my name);
+		openFileName. lpstrTitle = my nameW;
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		OSVERSIONINFO osVersionInfo;
 		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
@@ -445,10 +445,10 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
-		dialogOptions. message = CFStringCreateWithCString (NULL, my name, kCFStringEncodingMacRoman);
+		dialogOptions. windowTitle = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (my nameW), kCFStringEncodingUTF8);
+		dialogOptions. message = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (my nameW), kCFStringEncodingUTF8);
 		dialogOptions. saveFileName = CFStringCreateWithCString (NULL,
-			Melder_peekWcsToAscii (lastSlash ? lastSlash + 1 : defaultName), kCFStringEncodingMacRoman);
+			Melder_peekWcsToUtf8 (lastSlash ? lastSlash + 1 : defaultName), kCFStringEncodingUTF8);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
 		if (dialogOptions. windowTitle) CFRelease (dialogOptions. windowTitle);
@@ -510,7 +510,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrFileTitle = NULL;
 		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = Melder_peekAsciiToWcs (my name);
+		openFileName. lpstrTitle = my nameW;
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
 		SHELLFLAGSTATE settings = { 0 };

@@ -295,17 +295,11 @@ wchar_t * Melder_utf8ToWcs (const char *string);
 int Melder_wcsTo8bit_inline (const wchar_t *wcs, char *string, int outputEncoding);
 char * Melder_wcsTo8bit (const wchar_t *string, int outputEncoding);
 
-wchar_t * Melder_asciiToWcs (const char *string);
-void Melder_asciiToWcs_inline (const char *ascii, wchar_t *wcs);
-char * Melder_wcsToAscii (const wchar_t *string);
-void Melder_wcsToAscii_inline (const wchar_t *wcs, char *ascii);
 char * Melder_wcsToUtf8 (const wchar_t *string);
 void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8);
 void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8);
 void Melder_8bitFileRepresentationToWcs_inline (const char *utf8, wchar_t *wcs);
-wchar_t * Melder_peekAsciiToWcs (const char *string);
 wchar_t * Melder_peekUtf8ToWcs (const char *string);
-char * Melder_peekWcsToAscii (const wchar_t *string);
 char * Melder_peekWcsToUtf8 (const wchar_t *string);
 const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *string);
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f);
@@ -735,10 +729,8 @@ int Melder_pathToDirW (const wchar_t *path, MelderDir dir);
 int Melder_pathToFile (const char *path, MelderFile file);
 int Melder_pathToFileW (const wchar_t *path, MelderFile file);
 int Melder_relativePathToFile (const wchar_t *path, MelderFile file);
-char * Melder_dirToPath (MelderDir dir);
 wchar_t * Melder_dirToPathW (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
-char * Melder_fileToPath (MelderFile file);
 wchar_t * Melder_fileToPathW (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
@@ -824,11 +816,10 @@ void MelderFile_nativizePathW (wchar_t *path);   /* Convert from Unix-style slas
 
 /* Use the following functions to pass unchanged text or file names to Melder_* functions. */
 /* Backslashes are replaced by "\bs". */
-/* The trick is that Melder_asciiMessage returns one of 11 cyclically used static strings, */
+/* The trick is that they return one of 11 cyclically used static strings, */
 /* so you can use up to 11 strings in a single Melder_* call. */
-char * Melder_asciiMessage (const char *message);
 wchar_t * Melder_peekExpandBackslashes (const wchar_t *message);
-char * MelderFile_messageName (MelderFile file);   // Calls Melder_asciiMessage ().
+char * MelderFile_messageName (MelderFile file);
 wchar_t * MelderFile_messageNameW (MelderFile file);   // Calls Melder_peekExpandBackslashes ().
 
 double Melder_stopwatch (void);

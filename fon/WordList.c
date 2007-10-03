@@ -181,7 +181,7 @@ WordList Strings_to_WordList (Strings me) {
 	q = thy string;
 	for (i = 1; i <= my numberOfStrings; i ++) {
 		long length = wcslen (my strings [i]);
-		strcpy (q, Melder_peekWcsToAscii (my strings [i]));
+		strcpy (q, Melder_peekWcsToUtf8 (my strings [i]));
 		q += length;
 		*q ++ = '\n';
 	}
@@ -204,7 +204,7 @@ Strings WordList_to_Strings (WordList me) {
 		for (kar = word; *kar != '\n'; kar ++) { }
 		length = kar - word;
 		thy strings [i] = Melder_calloc (wchar_t, length + 1); cherror
-		wcsncpy (thy strings [i], Melder_peekAsciiToWcs ((const char *) word), length);
+		wcsncpy (thy strings [i], Melder_peekUtf8ToWcs ((const char *) word), length);
 		thy strings [i] [length] = '\0';
 		word += length + 1;
 	}

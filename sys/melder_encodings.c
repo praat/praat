@@ -320,57 +320,8 @@ wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding) {
 	return result;
 }
 
-void Melder_asciiToWcs_inline (const char *ascii, wchar_t *wcs) {
-	const char *from = & ascii [0];
-	wchar_t *to = & wcs [0];
-	for (; *from != '\0'; from ++, to ++) {
-		*to = (unsigned char) *from;
-	}
-	*to = L'\0';
-}
-
-wchar_t * Melder_asciiToWcs (const char *string) {
-	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
-	if (result == NULL) return NULL;
-	Melder_asciiToWcs_inline (string, result);
-	return result;
-}
-
-void Melder_wcsToAscii_inline (const wchar_t *from, char *to) {
-	for (; *from != '\0'; from ++, to ++) {
-		*to = (char) (unsigned char) *from;
-	}
-	*to = L'\0';
-}
-
-char * Melder_wcsToAscii (const wchar_t *string) {
-	if (! string) return NULL;
-	char *result = Melder_malloc (char, wcslen (string) + 1);
-	if (result == NULL) return NULL;
-	Melder_wcsToAscii_inline (string, result);
-	return result;
-}
-
-wchar_t * Melder_peekAsciiToWcs (const char *textA) {
-	if (textA == NULL) return NULL;
-	static MelderStringW buffers [11] = { { 0 } };
-	static int ibuffer = 0;
-	if (++ ibuffer == 11) ibuffer = 0;
-	MelderStringW_copyA (& buffers [ibuffer], textA);
-	return buffers [ibuffer]. string;
-}
-
-char * Melder_peekWcsToAscii (const wchar_t *textW) {
-	if (textW == NULL) return NULL;
-	static MelderStringA buffers [11] = { { 0 } };
-	static int ibuffer = 0;
-	if (++ ibuffer == 11) ibuffer = 0;
-	MelderStringA_copyW (& buffers [ibuffer], textW);
-	return buffers [ibuffer]. string;
-}
-
 wchar_t * Melder_utf8ToWcs (const char *string) {
+	if (string == NULL) return NULL;
 	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
 	Melder_8bitToWcs_inline (string, result, Melder_INPUT_ENCODING_UTF8);
 	return result;
@@ -403,6 +354,7 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 }
 
 char * Melder_wcsToUtf8 (const wchar_t *string) {
+	if (string == NULL) return NULL;
 	char *result = Melder_malloc (char, wcslen (string) * 6 + 1);
 	Melder_wcsToUtf8_inline (string, result);
 	return result;

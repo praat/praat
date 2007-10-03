@@ -58,20 +58,21 @@ FORM (Rename, "Rename object", "Rename...")
 	OK
 { int IOBJECT; WHERE (SELECTED) SET_STRING ("newName", NAME) }
 DO
-	wchar_t fullName [200], *string = GET_STRINGW (L"newName");
-	int ieditor;
+	wchar_t *string = GET_STRINGW (L"newName");
 	if (theCurrentPraat -> totalSelection == 0)
 		return Melder_error ("Selection changed!\nNo object selected. Cannot rename.");
 	if (theCurrentPraat -> totalSelection > 1)
 		return Melder_error ("Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
-	swprintf (fullName, 200, L"%ls %ls", Thing_classNameW (OBJECT), string);
-	if (! wcsequ (fullName, FULL_NAMEW)) {
-		Melder_free (FULL_NAMEW), FULL_NAMEW = Melder_wcsdup (fullName);
-		praat_list_renameAndSelect (IOBJECT, fullName);
-		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setNameW (EDITOR [ieditor], fullName);
+	static MelderStringW fullName = { 0 };
+	MelderStringW_empty (& fullName);
+	MelderStringW_append3 (& fullName, Thing_classNameW (OBJECT), L" ", string);
+	if (! wcsequ (fullName.string, FULL_NAMEW)) {
+		Melder_free (FULL_NAMEW), FULL_NAMEW = Melder_wcsdup (fullName.string);
+		praat_list_renameAndSelect (IOBJECT, fullName.string);
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+			if (EDITOR [ieditor]) Thing_setNameW (EDITOR [ieditor], fullName.string);
 		Thing_setNameW (OBJECT, string);
 	}
 END
@@ -380,7 +381,7 @@ static int readFromFile (MelderFile file) {
 		iferror return 0;
 		return 1;
 	}
-	result = praat_new (object, MelderFile_name (file));
+	result = praat_new1 (object, MelderFile_nameW (file));
 	praat_updateSelection ();
 	return result;
 }
@@ -470,7 +471,7 @@ FORM (WriteManualToHtmlDirectory, "Write all pages as HTML files", 0)
 	OK
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
-SET_STRING ("directory", Melder_dirToPath (& currentDirectory))
+SET_STRINGW (L"directory", Melder_dirToPathW (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (theCurrentPraat -> manPages, directory)) return 0;
@@ -539,7 +540,7 @@ void praat_addMenus (Widget bar) {
 			appleMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
 		#endif
 		#ifdef macintosh
-			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, Melder_peekAsciiToWcs (praatP.title), 0);
+			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, Melder_peekUtf8ToWcs (praatP.title), 0);
 		#else
 			praatMenu = motif_addMenu (bar, L"Praat", 0);
 		#endif

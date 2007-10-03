@@ -306,11 +306,9 @@ void praat_cleanUpName (wchar_t *name) {
 
 bool praat_new1 (I, const wchar_t *myName) {
 	iam (Data);
-	wchar_t name [200], givenName [200];
 	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
 	static long uniqueID = 0;
 	if (me == NULL) return Melder_error ("No object was put into the list.");
-
 	/*
 	 * If my class is Collection, I'll have to be unpacked.
 	 */
@@ -327,20 +325,19 @@ bool praat_new1 (I, const wchar_t *myName) {
 		return result;
 	}
 
+	MelderStringW name = { 0 }, givenName = { 0 };
 	if (myName [0]) {
-		wchar_t *p;
-		wcscpy (givenName, myName);
+		MelderStringW_copyW (& givenName, myName);
 		/*
 		 * Remove extension.
 		 */
-		p = wcsrchr (givenName, '.');
+		wchar_t *p = wcsrchr (givenName.string, '.');
 		if (p) *p = '\0';
-		praat_cleanUpName (givenName);
+		praat_cleanUpName (givenName.string);
 	} else {
-		swprintf (givenName, 200, my nameW && my nameW [0] ? my nameW : L"untitled");
+		MelderStringW_copyW (& givenName, my nameW && my nameW [0] ? my nameW : L"untitled");
 	}
-
-	swprintf (name, 200, L"%ls %ls", Thing_classNameW (me), givenName);
+	MelderStringW_append3 (& name, Thing_classNameW (me), L" ", givenName.string);
 
 	if (theCurrentPraat -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
@@ -350,12 +347,12 @@ bool praat_new1 (I, const wchar_t *myName) {
 		
 	IOBJECT = ++ theCurrentPraat -> n;
 	Melder_assert (FULL_NAMEW == NULL);
-	FULL_NAMEW = Melder_wcsdup (name);
+	FULL_NAMEW = Melder_wcsdup (name.string);
 	Melder_assert (FULL_NAMEW != NULL);
 	++ uniqueID;
 
 	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
-		XmString s = XmStringCreateSimple (Melder_peekWcsToAscii (name));
+		XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (name.string));
 		#ifdef UNIX
 			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
 		#endif
@@ -378,8 +375,10 @@ bool praat_new1 (I, const wchar_t *myName) {
 	MelderFile_setToNull (& FILENAMEW);
 	ID = uniqueID;
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
-	Thing_setNameW (OBJECT, givenName);
+	Thing_setNameW (OBJECT, givenName.string);
 	theCurrentPraat -> totalBeingCreated ++;
+	MelderStringW_free (& givenName);
+	MelderStringW_free (& name);
 	return true;
 }
 
@@ -462,7 +461,7 @@ bool praat_new (I, const char *format, ...) {
 		}
 	}
 	#endif
-	return praat_new1 (me, Melder_peekAsciiToWcs (myName));
+	return praat_new1 (me, Melder_peekUtf8ToWcs (myName));
 }
 
 void praat_updateSelection (void) {
@@ -498,7 +497,7 @@ MOTIF_CALLBACK_END
 
 void praat_list_renameAndSelect (int position, const wchar_t *name) {
 	if (! theCurrentPraat -> batch) {
-		XmString s = XmStringCreateSimple (MOTIF_CONST_CHAR_ARG (Melder_peekWcsToAscii (name)));
+		XmString s = XmStringCreateSimple (MOTIF_CONST_CHAR_ARG (Melder_peekWcsToUtf8 (name)));
 		XmListReplaceItemsPos (praatList_objects, & s, 1, position);   /* Void if name equal. */
 		if (! Melder_backgrounding)
 			XmListSelectPos (praatList_objects, position, False);
@@ -585,7 +584,7 @@ static void praat_exit (int exit_code) {
 		if (f) {
 			MelderFile_setMacTypeAndCreator (& buttonsFile, 'pref', 'PpgB');
 			fwprintf (f, L"\ufeff# Buttons (1).\n");
-			fwprintf (f, L"# This file is generated automatically when you quit the %ls program.\n", Melder_peekAsciiToWcs (praatP.title));
+			fwprintf (f, L"# This file is generated automatically when you quit the %ls program.\n", Melder_peekUtf8ToWcs (praatP.title));
 			fwprintf (f, L"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 			fwprintf (f, L"# and the buttons that you hid or showed.\n\n");
 			praat_saveMenuCommands (f);
@@ -821,12 +820,12 @@ FORM (Quit, "Confirm Quit", "Quit")
 	wchar_t prompt [300];
 	if (ScriptEditors_dirty ()) {
 		if (theCurrentPraat -> n)
-			swprintf (prompt, 300, L"You have objects and unsaved scripts! Do you still want to quit %ls?", Melder_peekAsciiToWcs (praatP.title));
+			swprintf (prompt, 300, L"You have objects and unsaved scripts! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
 		else
-			swprintf (prompt, 300, L"You have unsaved scripts! Do you still want to quit %ls?", Melder_peekAsciiToWcs (praatP.title));
+			swprintf (prompt, 300, L"You have unsaved scripts! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
 		SET_STRINGW (L"label", prompt);
 	} else if (theCurrentPraat -> n) {
-		swprintf (prompt, 300, L"You have objects in your list! Do you still want to quit %ls?", Melder_peekAsciiToWcs (praatP.title));
+		swprintf (prompt, 300, L"You have objects in your list! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
 		SET_STRINGW (L"label", prompt);
 	} else {
 		praat_exit (0);
@@ -856,7 +855,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 			fclose (f);
 			praat_background ();
 			if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-				Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
+				Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
 				Melder_flushError (NULL);
 			}
 			praat_foreground ();
@@ -877,7 +876,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	static int cb_userMessage (void) {
 		praat_background ();
 		if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-			Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
+			Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
 			Melder_flushError (NULL);
 		}
 		praat_foreground ();
@@ -888,14 +887,14 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	static int cb_openDocument (MelderFile file) {
 		wchar_t text [500];
 		swprintf (text, 500, L"Read from file... %ls", file -> wpath);
-		sendpraatW (NULL, Melder_peekAsciiToWcs (praatP.title), 0, text);
+		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 		return 0;
 	}
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
 		praat_background ();
 		wchar_t *message = Melder_8bitToWcs (messageA, 0);
-		if (! praat_executeScriptFromText (message)) error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.")
+		if (! praat_executeScriptFromText (message)) error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.")
 	end:
 		Melder_free (message);
 		praat_foreground ();
@@ -904,7 +903,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 	static int cb_userMessageW (wchar_t *message) {
 		praat_background ();
-		if (! praat_executeScriptFromText (message)) error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.")
+		if (! praat_executeScriptFromText (message)) error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.")
 	end:
 		praat_foreground ();
 		iferror Melder_flushError (NULL);
@@ -954,7 +953,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * or running PRAATCON.EXE from the MS-DOS prompt or the NT command line:
 		 *    <programName> <scriptFileName>
 		 */
-		theCurrentPraat -> batchName = argc > 1 && (int) argv [1] [0] != '-' ? Melder_asciiToWcs (argv [1]) : NULL;
+		theCurrentPraat -> batchName = argc > 1 && (int) argv [1] [0] != '-' ? Melder_utf8ToWcs (argv [1]) : NULL;
 
 		Melder_batch = theCurrentPraat -> batchName != NULL;
 
@@ -977,7 +976,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		sprintf (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
 	#else
 		#if defined (_WIN32)
-			theCurrentPraat -> batchName = argv [3] ? Melder_asciiToWcs (argv [3]) : L"";   /* The command line. */
+			theCurrentPraat -> batchName = argv [3] ? Melder_utf8ToWcs (argv [3]) : L"";   /* The command line. */
 		#endif
 		Melder_batch = FALSE;   /* Classic Macintosh and PRAAT.EXE are always interactive. */
 		sprintf (truncatedTitle, title && title [0] ? title : "praat");
@@ -1106,7 +1105,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			}
 		}
 		#elif defined (_WIN32)
-			wcscpy (theCurrentPraat -> batchName, Melder_peekAsciiToWcs (argv [3]));
+			wcscpy (theCurrentPraat -> batchName, Melder_peekUtf8ToWcs (argv [3]));
 		#endif
 	} else {
 		char objectWindowTitle [100];
@@ -1234,14 +1233,14 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {
 	FILE *f;
 	wchar_t name [256];
-	swprintf (name, 256, fileNameTemplate, Melder_peekAsciiToWcs (programName));
+	swprintf (name, 256, fileNameTemplate, Melder_peekUtf8ToWcs (programName));
 	if (! MelderDir_isNull (startUpDirectory)) {   // Should not occur on modern systems.
 		structMelderFile startUp = { 0 };
 		MelderDir_getFileW (startUpDirectory, name, & startUp);
 		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
 			fclose (f);
 			if (! praat_executeScriptFromFile (& startUp, NULL)) {
-				Melder_error4 (Melder_peekAsciiToWcs (praatP.title), L": start-up file \"", MelderFile_messageNameW (& startUp), L"\" not completed.");
+				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": start-up file \"", MelderFile_messageNameW (& startUp), L"\" not completed.");
 				Melder_flushError (NULL);
 			}
 		} else {
@@ -1330,7 +1329,7 @@ void praat_run (void) {
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);
 				#endif
-				Melder_error4 (Melder_peekAsciiToWcs (praatP.title), L": command file \"", MelderFile_messageNameW (& batchFile), L"\" not completed.");
+				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": command file \"", MelderFile_messageNameW (& batchFile), L"\" not completed.");
 				Melder_flushError (NULL);
 				praat_exit (-1);
 			}
@@ -1388,7 +1387,7 @@ void praat_run (void) {
 						int narg = fscanf (f, "#%ld", & pid);
 						fclose (f);
 						if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-							Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
+							Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
 							Melder_flushError (NULL);
 						}
 						if (narg) kill (pid, SIGUSR2);
@@ -1406,7 +1405,7 @@ void praat_run (void) {
 						int narg = fscanf (f, "#%ld", & pid);
 						fclose (f);
 						if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-							Melder_error2 (Melder_peekAsciiToWcs (praatP.title), L": message not completely handled.");
+							Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
 							Melder_flushError (NULL);
 						}
 						if (narg) kill (pid, SIGUSR2);

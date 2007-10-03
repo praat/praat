@@ -36,7 +36,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
 	Graphics_setUnderscoreIsSubscript (g, FALSE);   /* Because program names may contain underscores. */
-	Graphics_text (g, 0.5, 0.6, Melder_peekAsciiToWcs (praatP.title));
+	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
 	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2006");

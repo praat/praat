@@ -486,7 +486,7 @@ static void showStructMember (
 		MelderStringW_append2 (& buffer, memberDescription -> name,
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
-	XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (buffer.string)),
+	XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)),
 		XmNx, type == inheritwa ? 0 : NAME_X, NULL);
 	XtManageChild (fieldData -> label);
 
@@ -650,7 +650,7 @@ static void classVectorEditor_showMembers (I) {
 		if (isSingleType) {
 			MelderStringW_append4 (& buffer, my description -> name, L" [",
 				my description -> rank == 3 ? enum_string (my description -> max1, ielement) : Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			MelderStringW_empty (& buffer);
@@ -678,7 +678,7 @@ static void classVectorEditor_showMembers (I) {
 				my irow --;
 			} else {
 				MelderStringW_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
-				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (buffer.string)), XmNx, 0, NULL);
+				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 				XtManageChild (fieldData -> label);
 			}
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history.string);
@@ -694,7 +694,7 @@ static void classVectorEditor_showMembers (I) {
 			MelderStringW_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
 			MelderStringW_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			Data object = * (Data *) elementAddress;
@@ -759,7 +759,7 @@ static void classMatrixEditor_showMembers (I) {
 			static MelderStringW buffer = { 0 };
 			MelderStringW_empty (& buffer);
 			MelderStringW_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToAscii (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
 			MelderStringW_empty (& buffer);
