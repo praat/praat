@@ -346,7 +346,7 @@ static int menu_cb_logSettings (EDITOR_ARGS) {
 static int do_deleteLogFile (TimeSoundAnalysisEditor me, int which) {
 	structMelderFile file = { 0 };
 	(void) me;
-	if (! Melder_pathToFileW (preferences.log[which].fileName, & file)) return 0;
+	if (! Melder_pathToFile (preferences.log[which].fileName, & file)) return 0;
 	MelderFile_delete (& file);
 	return 1;
 }
@@ -451,16 +451,16 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 				swprintf (formattedNumber, 400, L"%.17g", value);
 			}
 			int arglen = wcslen (formattedNumber);
-			static MelderStringW buffer = { 0 };
-			MelderStringW_ncopyW (& buffer, format, headlen);
-			MelderStringW_append2 (& buffer, formattedNumber, p + varlen + 2);
+			static MelderString buffer = { 0 };
+			MelderString_ncopy (& buffer, format, headlen);
+			MelderString_append2 (& buffer, formattedNumber, p + varlen + 2);
 			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue != NULL) {
 			int varlen = (q - p) - 1, headlen = p - format, arglen = wcslen (stringValue);
-			static MelderStringW buffer = { 0 };
-			MelderStringW_ncopyW (& buffer, format, headlen);
-			MelderStringW_append2 (& buffer, stringValue, p + varlen + 2);
+			static MelderString buffer = { 0 };
+			MelderString_ncopy (& buffer, format, headlen);
+			MelderString_append2 (& buffer, stringValue, p + varlen + 2);
 			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else {
@@ -714,10 +714,10 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	publish = Sound_to_Spectrum (sound, TRUE);
 	forget (sound);
 	if (! publish) return 0;
-	static MelderStringW sliceName = { 0 };
-	MelderStringW_copyW (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> nameW);
-	MelderStringW_appendCharacter (& sliceName, '_');
-	MelderStringW_append1 (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
+	static MelderString sliceName = { 0 };
+	MelderString_copy (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> nameW);
+	MelderString_appendCharacter (& sliceName, '_');
+	MelderString_append (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
 	Thing_setNameW (publish, sliceName.string);
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);

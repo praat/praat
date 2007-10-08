@@ -18,10 +18,11 @@
  */
 
 /*
- * pb 2006/12/10
+ * pb 2006/12/10 created
  * pb 2007/06/02 utf8 <-> wcs
  * pb 2007/08/07 MelderUtf16
  * pb 2007/09/22 bug removed: an extra character of room in *_appendCharacter
+ * pb 2007/10/06 removed MelderStringA
  */
 
 #include "melder.h"
@@ -30,16 +31,7 @@
 
 static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
-void MelderStringA_free (MelderStringA *me) {
-	if (my string == NULL) return;
-	Melder_free (my string);
-	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * sizeof (char);
-	my bufferSize = 0;
-	my length = 0;
-}
-
-void MelderStringW_free (MelderStringW *me) {
+void MelderString_free (MelderString *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
 	totalNumberOfDeallocations += 1;
@@ -76,20 +68,9 @@ void MelderString16_free (MelderString16 *me) {
 		my bufferSize = sizeNeeded; \
 	}
 
-void MelderStringA_empty (MelderStringA *me) {
-	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES) {
-		MelderStringA_free (me);
-	}
-	unsigned long sizeNeeded = 1;
-	expandIfNecessary (char)
-	my string [0] = '\0';
-end:
-	my length = 0;
-}
-
-void MelderStringW_empty (MelderStringW *me) {
+void MelderString_empty (MelderString *me) {
 	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
-		MelderStringW_free (me);
+		MelderString_free (me);
 	}
 	unsigned long sizeNeeded = 1;
 	expandIfNecessary (wchar_t)
@@ -109,55 +90,9 @@ end:
 	my length = 0;
 }
 
-bool MelderStringA_copyA (MelderStringA *me, const char *source) {
-	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
-		MelderStringA_free (me);
-	if (source == NULL) source = "";
-	unsigned long length = strlen (source);
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (char)
-	strcpy (my string, source);
-	my length = length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringW_copyA (MelderStringW *me, const char *source) {
+bool MelderString_copy (MelderString *me, const wchar_t *source) {
 	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
-		MelderStringW_free (me);
-	if (source == NULL) source = "";
-	unsigned long length = strlen (source);
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (wchar_t)
-	const char *from = & source [0];
-	wchar_t *to = & my string [0];
-	for (; *from != '\0'; from ++, to ++) { *to = (unsigned char) *from; } *to = L'\0';
-	my length = length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringA_copyW (MelderStringA *me, const wchar_t *source) {
-	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
-		MelderStringA_free (me);
-	if (source == NULL) source = L"";
-	unsigned long length = wcslen (source);
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (char)
-	const wchar_t *from = & source [0];
-	char *to = & my string [0];
-	for (; *from != L'\0'; from ++, to ++) { *to = *from; /* Truncate */ } *to = '\0';
-	my length = length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringW_copyW (MelderStringW *me, const wchar_t *source) {
-	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
-		MelderStringW_free (me);
+		MelderString_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	unsigned long sizeNeeded = length + 1;
@@ -169,25 +104,9 @@ end:
 	return true;
 }
 
-bool MelderStringA_ncopyA (MelderStringA *me, const char *source, unsigned long n) {
-	if (my bufferSize * sizeof (char) >= FREE_THRESHOLD_BYTES)
-		MelderStringA_free (me);
-	if (source == NULL) source = "";
-	unsigned long length = strlen (source);
-	if (length > n) length = n;
-	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (char)
-	strncpy (my string, source, length);
-	my string [length] = '\0';
-	my length = length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringW_ncopyW (MelderStringW *me, const wchar_t *source, unsigned long n) {
+bool MelderString_ncopy (MelderString *me, const wchar_t *source, unsigned long n) {
 	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
-		MelderStringW_free (me);
+		MelderString_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	if (length > n) length = n;
@@ -201,19 +120,7 @@ end:
 	return true;
 }
 
-bool MelderStringA_appendA (MelderStringA *me, const char *source) {
-	if (source == NULL) source = "";
-	unsigned long length = strlen (source);
-	unsigned long sizeNeeded = my length + length + 1;
-	expandIfNecessary (char)
-	strcpy (my string + my length, source);
-	my length += length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringW_appendW (MelderStringW *me, const wchar_t *source) {
+bool MelderString_append (MelderString *me, const wchar_t *source) {
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	unsigned long sizeNeeded = my length + length + 1;
@@ -225,7 +132,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append1 (MelderStringW *me, const wchar_t *s1) {
+bool MelderString_append1 (MelderString *me, const wchar_t *s1) {
 	if (s1 == NULL) s1 = L"";
 	unsigned long length1 = wcslen (s1);
 	unsigned long sizeNeeded = my length + length1 + 1;
@@ -237,7 +144,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append2 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2) {
+bool MelderString_append2 (MelderString *me, const wchar_t *s1, const wchar_t *s2) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	unsigned long length1 = wcslen (s1);
@@ -253,7 +160,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append3 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+bool MelderString_append3 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -273,7 +180,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append4 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+bool MelderString_append4 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -297,7 +204,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append5 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append5 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5)
 {
 	if (s1 == NULL) s1 = L"";
@@ -327,7 +234,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append6 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append6 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6)
 {
 	if (s1 == NULL) s1 = L"";
@@ -361,7 +268,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append7 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append7 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7)
 {
 	if (s1 == NULL) s1 = L"";
@@ -399,7 +306,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append8 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append8 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
 {
 	if (s1 == NULL) s1 = L"";
@@ -441,7 +348,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_append9 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append9 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
 {
 	if (s1 == NULL) s1 = L"";
@@ -487,18 +394,7 @@ end:
 	return true;
 }
 
-bool MelderStringA_appendCharacter (MelderStringA *me, char character) {
-	unsigned long sizeNeeded = my length + 2;   // Make room for character and null byte.
-	expandIfNecessary (char)
-	my string [my length] = character;
-	my length ++;
-	my string [my length] = '\0';
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character) {
+bool MelderString_appendCharacter (MelderString *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 2;   // Make room for character and null byte.
 	expandIfNecessary (wchar_t)
 	my string [my length] = character;
@@ -537,44 +433,7 @@ end:
 	return true;
 }
 
-bool MelderStringW_appendA (MelderStringW *me, const char *source) {
-	if (source == NULL) source = "";
-	unsigned long length = strlen (source);
-	unsigned long sizeNeeded = my length + length + 1;
-	expandIfNecessary (wchar_t)
-	const char *from = & source [0];
-	wchar_t *to = & my string [my length];
-	for (; *from != '\0'; from ++, to ++) { *to = (unsigned char) *from; } *to = L'\0';
-	my length += length;
-end:
-	iferror return false;
-	return true;
-}
-
-bool MelderStringA_getA (MelderStringA *me, char *destination) {
-	if (my string) {
-		strcpy (destination, my string);
-	} else {
-		destination [0] = '\0';
-	}
-	return true;
-}
-
-bool MelderStringW_getA (MelderStringW *me, char *destination) {
-	if (my string) {
-		wchar_t *from = & my string [0];
-		char *to = & destination [0];
-		for (; *from != L'\0'; from ++, to ++) {
-			*to = *from;
-		}
-		*to = '\0';
-	} else {
-		destination [0] = '\0';
-	}
-	return true;
-}
-
-bool MelderStringW_getW (MelderStringW *me, wchar_t *destination) {
+bool MelderString_get (MelderString *me, wchar_t *destination) {
 	if (my string) {
 		wcscpy (destination, my string);
 	} else {

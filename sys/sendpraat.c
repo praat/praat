@@ -141,12 +141,12 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		}
 		sprintf (messageFileName, "%s/.%s-dir/message", home, programName);
 	#elif win
-		if (GetEnvironmentVariable ("USERPROFILE", homeDirectory, 255)) {
+		if (GetEnvironmentVariableA ("USERPROFILE", homeDirectory, 255)) {
 			;   /* Ready. */
-		} else if (GetEnvironmentVariable ("HOMEDRIVE", homeDirectory, 255)) {
-			GetEnvironmentVariable ("HOMEPATH", homeDirectory + strlen (homeDirectory), 255);
+		} else if (GetEnvironmentVariableA ("HOMEDRIVE", homeDirectory, 255)) {
+			GetEnvironmentVariableA ("HOMEPATH", homeDirectory + strlen (homeDirectory), 255);
 		} else {
-			GetWindowsDirectory (homeDirectory, 255);
+			GetWindowsDirectoryA (homeDirectory, 255);
 		}
 		sprintf (messageFileName, "%s\\%s\\Message.txt", homeDirectory, programName);
 	#endif
@@ -194,7 +194,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		 * Get the window handle of the "Objects" window of a running Praat-shell program.
 		 */
 		sprintf (windowName, "PraatShell1 %s", programName);
-		window = FindWindow (windowName, NULL);
+		window = FindWindowA (windowName, NULL);
 		if (! window) {
 			sprintf (errorMessage, "Program %s not running (or an old version).", programName);
 			return errorMessage;

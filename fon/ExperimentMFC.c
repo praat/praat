@@ -108,7 +108,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			/*
 			 * Absolute file name.
 			 */
-			Melder_pathToFileW (pathName, & file);
+			Melder_pathToFile (pathName, & file);
 		} else {
 			/*
 			 * Relative or absolute file name.

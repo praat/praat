@@ -125,14 +125,14 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 		 * Initialize.
 		 */
 		DIR *d = NULL;
-		MelderStringW filePath = { 0 }, searchDirectory = { 0 }, left = { 0 }, right = { 0 };
+		MelderString filePath = { 0 }, searchDirectory = { 0 }, left = { 0 }, right = { 0 };
 		/*
 		 * Parse the path.
 		 * Example: in /Users/paul/sounds/h*.wav",
 		 * the search directory is "/Users/paul/sounds",
 		 * the left environment is "h", and the right environment is ".wav".
 		 */
-		MelderStringW_copyW (& searchDirectory, path);
+		MelderString_copy (& searchDirectory, path);
 		wchar_t *asterisk = wcsrchr (searchDirectory. string, '*');
 		if (asterisk != NULL) {
 			*asterisk = '\0';
@@ -141,12 +141,12 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 			if (lastSlash != NULL) {
 				*lastSlash = '\0';   // This fixes searchDirectory.
 				searchDirectory. length = lastSlash - searchDirectory. string;   // Probably superfluous, but correct.
-				MelderStringW_copyW (& left, lastSlash + 1);
+				MelderString_copy (& left, lastSlash + 1);
 			} else {
-				MelderStringW_copyW (& left, searchDirectory. string);   /* Quickly save... */
-				MelderStringW_empty (& searchDirectory);   /* ...before destruction. */
+				MelderString_copy (& left, searchDirectory. string);   /* Quickly save... */
+				MelderString_empty (& searchDirectory);   /* ...before destruction. */
 			}
-			MelderStringW_copyW (& right, asterisk + 1);
+			MelderString_copy (& right, asterisk + 1);
 		}
 		d = opendir (Melder_peekWcsToUtf8 (searchDirectory. string [0] ? searchDirectory. string : L"."));
 		if (d == NULL) error3 (L"Cannot open directory ", searchDirectory. string, L".")
@@ -154,9 +154,9 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 		my strings = NUMpvector (1, 1000000); cherror
 		struct dirent *entry;
 		while ((entry = readdir (d)) != NULL) {
-			MelderStringW_copyW (& filePath, searchDirectory. string [0] ? searchDirectory. string : L".");
-			MelderStringW_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
-			MelderStringW_appendW (& filePath, Melder_peekUtf8ToWcs (entry -> d_name));
+			MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : L".");
+			MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
+			MelderString_append (& filePath, Melder_peekUtf8ToWcs (entry -> d_name));
 			//Melder_casual ("read %s", filePath. string);
 			struct stat stats;
 			if (stat (Melder_peekWcsToUtf8 (filePath. string), & stats) != 0) {
@@ -202,10 +202,10 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 end:
 	#if USE_STAT
 		if (d) closedir (d);
-		MelderStringW_free (& filePath);
-		MelderStringW_free (& searchDirectory);
-		MelderStringW_free (& left);
-		MelderStringW_free (& right);
+		MelderString_free (& filePath);
+		MelderString_free (& searchDirectory);
+		MelderString_free (& left);
+		MelderString_free (& right);
 	#endif
 	iferror forget (me);
 	return me;
@@ -258,13 +258,13 @@ end:
 }
 
 int Strings_writeToRawTextFile (Strings me, MelderFile file) {
-	MelderStringW buffer = { 0 };
+	MelderString buffer = { 0 };
 	for (long i = 1; i <= my numberOfStrings; i ++) {
-		MelderStringW_append2 (& buffer, my strings [i], L"\n");
+		MelderString_append2 (& buffer, my strings [i], L"\n");
 	}
 	MelderFile_writeText (file, buffer.string);
 end:
-	MelderStringW_free (& buffer);
+	MelderString_free (& buffer);
 	iferror return 0;
 	return 1;
 }

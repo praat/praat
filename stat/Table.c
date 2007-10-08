@@ -852,7 +852,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 	long numberOfFactors = 0, numberToExpand = 0, numberOfLevels;
 	long *factorColumns = NULL, *columnsToExpand = NULL;
 	double *sortingColumn = NULL;
-	MelderStringW columnLabel = { 0 };
+	MelderString columnLabel = { 0 };
 	bool warned = false;
 	Melder_assert (factors_string != NULL);
 	/*
@@ -905,9 +905,9 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 	}
 	for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
-			MelderStringW_copyW (& columnLabel, columnsToExpand_names [iexpand]);
-			MelderStringW_appendCharacter (& columnLabel, '.');
-			MelderStringW_appendW (& columnLabel, levels_names [ilevel]);
+			MelderString_copy (& columnLabel, columnsToExpand_names [iexpand]);
+			MelderString_appendCharacter (& columnLabel, '.');
+			MelderString_append (& columnLabel, levels_names [ilevel]);
 			Table_setColumnLabel (thee, numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel, columnLabel.string);
 		}
 	}
@@ -971,7 +971,7 @@ end:
 	Melder_freeTokens (& factors_names);
 	Melder_assert (factors_names == NULL);
 	Melder_freeTokens (& columnsToExpand_names);
-	MelderStringW_free (& columnLabel);
+	MelderString_free (& columnLabel);
 	NUMpvector_free ((void **) levels_names, 1);
 	NUMlvector_free (factorColumns, 1);
 	NUMlvector_free (columnsToExpand, 1);
@@ -1539,25 +1539,25 @@ void Table_list (Table me, bool includeRowNumbers) {
 }
 
 int Table_writeToTableFile (Table me, MelderFile file) {
-	MelderStringW buffer = { 0 };
+	MelderString buffer = { 0 };
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (icol != 1) MelderStringW_appendCharacter (& buffer, '\t');
+		if (icol != 1) MelderString_appendCharacter (& buffer, '\t');
 		wchar_t *s = my columnHeaders [icol]. label;
-		MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 	}
-	MelderStringW_appendCharacter (& buffer, '\n');
+	MelderString_appendCharacter (& buffer, '\n');
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (icol != 1) MelderStringW_appendCharacter (& buffer, '\t');
+			if (icol != 1) MelderString_appendCharacter (& buffer, '\t');
 			wchar_t *s = row -> cells [icol]. string;
-			MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 		}
-		MelderStringW_appendCharacter (& buffer, '\n');
+		MelderString_appendCharacter (& buffer, '\n');
 	}
 	MelderFile_writeText (file, buffer.string);
 end:
-	MelderStringW_free (& buffer);
+	MelderString_free (& buffer);
 	iferror return 0;
 	return 1;
 }
@@ -1615,21 +1615,21 @@ Table Table_readFromTableFile (MelderFile file) {
 	p = & string [0];
 	for (long icol = 1; icol <= ncol; icol ++) {
 		while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
-		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
+		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
 		Table_setColumnLabel (me, icol, buffer.string);
-		MelderStringW_empty (& buffer);
+		MelderString_empty (& buffer);
 	}
 	for (long irow = 1; irow <= nrow; irow ++) {
 		TableRow row = my rows -> item [irow];
 		for (long icol = 1; icol <= ncol; icol ++) {
 			while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
-			static MelderStringW buffer = { 0 };
-			MelderStringW_empty (& buffer);
-			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
+			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
 			row -> cells [icol]. string = Melder_wcsdup (buffer.string);
-			MelderStringW_empty (& buffer);
+			MelderString_empty (& buffer);
 		}
 	}
 
@@ -1683,16 +1683,16 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 	 */
 	p = & string [0];
 	for (long icol = 1; icol <= ncol; icol ++) {
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
 		while (*p != separator && *p != '\n') {
 			Melder_assert (*p != '\0');
-			MelderStringW_appendCharacter (& buffer, *p);
+			MelderString_appendCharacter (& buffer, *p);
 			p ++;
 		}
 		p ++;
 		Table_setColumnLabel (me, icol, buffer.string);
-		MelderStringW_empty (& buffer);
+		MelderString_empty (& buffer);
 	}
 
 	/*
@@ -1701,10 +1701,10 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 	for (long irow = 1; irow <= nrow; irow ++) {
 		TableRow row = my rows -> item [irow];
 		for (long icol = 1; icol <= ncol; icol ++) {
-			static MelderStringW buffer = { 0 };
-			MelderStringW_empty (& buffer);
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
 			while (*p != separator && *p != '\n' && *p != '\0') {
-				MelderStringW_appendCharacter (& buffer, *p);
+				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
 			if (*p == '\0') {
@@ -1718,7 +1718,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 				p ++;
 			}
 			row -> cells [icol]. string = Melder_wcsdup (buffer.string);
-			MelderStringW_empty (& buffer);
+			MelderString_empty (& buffer);
 		}
 	}
 

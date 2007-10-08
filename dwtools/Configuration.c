@@ -555,12 +555,12 @@ Configuration Configuration_createLetterRExample (int choice)
 	if (choice == 2)
 	{
 		x = x2; y = y2;
-		Thing_setName (me, "R_fit");
+		Thing_setNameW (me, L"R_fit");
 	}
 	else
 	{
 		x = x1; y = y1;
-		Thing_setName (me, "R");
+		Thing_setNameW (me, L"R");
 	}
 		
 	for (i = 1; i <= 32; i++)

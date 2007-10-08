@@ -172,7 +172,7 @@ static SSCPs _SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2)
 	for (i=1; i <= my size; i++)
 	{
 		SSCP t = _SSCP_extractTwoDimensions (my item[i], d1, d2);
-		Thing_setName (t, Thing_getName (my item[i]));
+		Thing_setNameW (t, Thing_getNameW (my item[i]));
 		if (! t || ! Collection_addItem (thee, t)) break;
 	}
 	if (Melder_hasError ()) forget (thee);

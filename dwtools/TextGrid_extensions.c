@@ -268,8 +268,8 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 			if (! TextInterval_setText (ipa -> intervals -> item[i],
 				Melder_peekUtf8ToWcs (timitLabelToIpaLabel (Melder_peekWcsToUtf8 (interval -> text))))) goto cleanup;
 		}
-		Thing_setName (ipa, "ipa");
-		Thing_setName (timit, "phn");
+		Thing_setNameW (ipa, L"ipa");
+		Thing_setNameW (timit, L"phn");
 	}
 cleanup:
 	fclose (f);

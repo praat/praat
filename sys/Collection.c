@@ -213,7 +213,7 @@ static int classCollection_readBinary (I, FILE *f) {
 				return Melder_error ("Collection::readBinary: "
 					"cannot read item of class %s.", Thing_className (my item [i]));
 			if (fgetc (f) != ' ' || ! Data_readBinary (my item [i], f)) return 0;
-			if (strcmp (name, "?")) Thing_setName (my item [i], name);
+			if (strcmp (name, "?")) Thing_setNameW (my item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
 		long i, size;
@@ -228,8 +228,8 @@ static int classCollection_readBinary (I, FILE *f) {
 			if (! Thing_member (my item [i], classData) || ! Data_canReadBinary (my item [i]))
 				return Melder_error ("(Collection::readBinary:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
-			char *name = bingets2 (f);
-			Thing_setName (my item [i], name);
+			wchar_t *name = bingetw2 (f);
+			Thing_setNameW (my item [i], name);
 			Melder_free (name);
 			if (! Data_readBinary (my item [i], f)) return 0;
 			Thing_version = saveVersion;

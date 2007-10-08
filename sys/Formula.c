@@ -231,8 +231,8 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 #define oudlees  (-- ilexan)
 
 static int formulefout (wchar_t *message, int position) {
-	static MelderStringW truncatedExpression = { 0 };
-	MelderStringW_ncopyW (& truncatedExpression, theExpression, position + 1);
+	static MelderString truncatedExpression = { 0 };
+	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	return Melder_error3 (message, L":\n" L_LEFT_GUILLEMET L" ", truncatedExpression.string);
 }
 
@@ -294,9 +294,9 @@ static int Formula_lexan (void) {
 #define tokgetal(g)  lexan [itok]. content.number = (g)
 #define tokmatriks(m)  lexan [itok]. content.object = (m)
 
-	static MelderStringW token = { 0 };   /* String to collect a symbol name in. */
-#define stokaan MelderStringW_empty (& token);
-#define stokkar { MelderStringW_appendCharacter (& token, kar); nieuwkar; }
+	static MelderString token = { 0 };   /* String to collect a symbol name in. */
+#define stokaan MelderString_empty (& token);
+#define stokkar { MelderString_appendCharacter (& token, kar); nieuwkar; }
 #define stokuit (void) 0
 
 	ilexan = iparse = ilabel = numberOfStringConstants = 0;
@@ -631,12 +631,10 @@ static int pas (int symbol) {
 	if (symbol == nieuwlees) {
 		return 1;
 	} else {
-		static MelderStringW melding = { 0 };
-		MelderStringW_copyW (& melding, L"Expected \"");
-		MelderStringW_appendW (& melding, Formula_instructionNames [symbol]);
-		MelderStringW_appendW (& melding, L"\", but found \"");
-		MelderStringW_appendW (& melding, Formula_instructionNames [lexan [ilexan]. symbol]);
-		MelderStringW_appendW (& melding, L"\"");
+		static MelderString melding = { 0 };
+		MelderString_empty (& melding);
+		MelderString_append5 (& melding, L"Expected \"", Formula_instructionNames [symbol], L"\", but found \"",
+			Formula_instructionNames [lexan [ilexan]. symbol], L"\"");
 		return formulefout (melding.string, lexan [ilexan]. position);
 	}
 }
@@ -2235,7 +2233,7 @@ end: return;
 static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		wchar_t *value = Melder_peekUtf8ToWcs (Melder_getenv (Melder_peekWcsToUtf8 (s->content.string)));
+		wchar_t *value = Melder_getenv (s->content.string);
 		wchar_t *result = Melder_wcsdup (value != NULL ? value : L""); cherror
 		pushString (result);
 	} else {

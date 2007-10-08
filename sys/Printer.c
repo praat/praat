@@ -26,6 +26,7 @@
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/05 less char
  */
 
 #include "melder.h"
@@ -354,16 +355,17 @@ int Printer_postScriptSettings (void) {
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	#if defined (UNIX)
 		structMelderFile tempFile = { 0 };
-		char tempPath [200], command [500];
-		strcpy (tempPath, "/tmp/picXXXXXX");
-		mktemp (tempPath);
+		wchar_t tempPath [200];
+		wcscpy (tempPath, L"/tmp/picXXXXXX");
+		mktemp (Melder_peekWcsToUtf8 (tempPath));
 		Melder_pathToFile (tempPath, & tempFile);
 		thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
 			thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
 		if (! thePrinter. graphics) return Melder_error ("Cannot create temporary PostScript file for printing.");
 		draw (boss, thePrinter. graphics);
 		forget (thePrinter. graphics);
-		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath);
+		char command [500];
+		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), Melder_peekWcsToUtf8 (tempPath));
 		system (command);
 		MelderFile_delete (& tempFile);
 	#elif defined (_WIN32)
@@ -428,14 +430,14 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		SetAbortProc (theWinDC, AbortFunc);
 		memset (& docInfo, 0, sizeof (DOCINFO));
 		docInfo. cbSize = sizeof (DOCINFO);
-		docInfo. lpszDocName = "Praatjes";
+		docInfo. lpszDocName = L"Praatjes";
 		docInfo. lpszOutput = NULL;
 		if (thePrinter. postScript) {
 			StartDoc (theWinDC, & docInfo);
 			if (nt_is_running) StartPage (theWinDC);
 			initPostScriptPage ();
 			thePrinter. graphics = Graphics_create_postscriptprinter ();
-			if (! thePrinter. graphics) return Melder_error ("Cannot open printer.");
+			if (! thePrinter. graphics) return Melder_error1 (L"Cannot open printer.");
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			exitPostScriptPage ();
@@ -445,7 +447,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			StartDoc (theWinDC, & docInfo);
 			StartPage (theWinDC);
 			thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theWinDC);
-			if (! thePrinter. graphics) return Melder_error ("Cannot open printer.");
+			if (! thePrinter. graphics) return Melder_error1 (L"Cannot open printer.");
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			if (EndPage (theWinDC) < 0) {
@@ -507,7 +509,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			OSStatus err = PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, array, NULL);
 			CFRelease (array);
 			if (err != 0) {
-				return Melder_error ("PMSessionSetDocumentFormatGeneration: error %d", err);
+				return Melder_error2 (L"PMSessionSetDocumentFormatGeneration: error ", Melder_integer (err));
 			}
 		}
 		PMOrientation orientation;

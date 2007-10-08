@@ -166,8 +166,7 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 	for (i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
 		if (b -> toggle == w) {
-			Longchar_nativize (b -> name, Melder_buffer1, TRUE);
-			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
+			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> nameW)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
 				Melder_warning ("%d \"%s\"", i, b -> name);
@@ -210,8 +209,7 @@ static void UiField_setDefault (UiField me) {
 				UiOption b = my options -> item [i];
 				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
 				if (i == my integerDefaultValue) {
-					Longchar_nativize (b -> name, Melder_buffer1, TRUE);
-					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_buffer1), NULL);
+					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> nameW)), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
@@ -463,10 +461,10 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 
 /***** History mechanism. *****/
 
-static MelderStringW theHistory = { 0 };
-void UiHistory_write (const wchar_t *string) { MelderStringW_appendW (& theHistory, string); }
+static MelderString theHistory = { 0 };
+void UiHistory_write (const wchar_t *string) { MelderString_append (& theHistory, string); }
 wchar_t *UiHistory_get (void) { return theHistory.string; }
-void UiHistory_clear (void) { MelderStringW_empty (& theHistory); }
+void UiHistory_clear (void) { MelderString_empty (& theHistory); }
 
 /***** class UiForm: dialog windows *****/
 
@@ -780,14 +778,14 @@ Widget Gui_addRadioButton (Widget parent, const char *title, int x1, int x2, int
 #define DEF_BUTTON_X  100
 #define LIST_HEIGHT  192
 
-static MelderStringW theFinishBuffer = { 0 };
+static MelderString theFinishBuffer = { 0 };
 
 static void appendColon (void) {
 	long length = theFinishBuffer.length;
 	if (length < 1) return;
 	wchar_t lastCharacter = theFinishBuffer.string [length - 1];
 	if (lastCharacter == ':' || lastCharacter == '?' || lastCharacter == '.') return;
-	MelderStringW_appendCharacter (& theFinishBuffer, ':');
+	MelderString_appendCharacter (& theFinishBuffer, ':');
 }
 
 void UiForm_finish (I) {
@@ -849,7 +847,7 @@ void UiForm_finish (I) {
 			case UI_COLOUR:
 			{
 				if (wcsnequ (field -> nameW, L"left ", 5)) {
-					MelderStringW_copyW (& theFinishBuffer, field -> formLabel + 5);
+					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
 					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 						XmNx, x, XmNy, y
@@ -880,7 +878,7 @@ void UiForm_finish (I) {
 						XmNheight, textFieldHeight, NULL);
 					XtManageChild (field -> text);
 				} else {
-					MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
 					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 						XmNx, x, XmNy, y
@@ -909,14 +907,14 @@ void UiForm_finish (I) {
 			} break;
 			case UI_LABEL:
 			{
-				MelderStringW_copyW (& theFinishBuffer, field -> stringValue);
+				MelderString_copy (& theFinishBuffer, field -> stringValue);
 				field -> text = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 5, XmNwidth, dialogWidth - Gui_leftDialogSpacing () - Gui_rightDialogSpacing (),
 					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (theFinishBuffer.string)), NULL);
 			} break;
 			case UI_RADIO:
 			{
-				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y
@@ -927,7 +925,7 @@ void UiForm_finish (I) {
 					XmNalignment, XmALIGNMENT_END, NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
-					MelderStringW_copyW (& theFinishBuffer, button -> nameW);
+					MelderString_copy (& theFinishBuffer, button -> nameW);
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
 						XmNx, fieldX, XmNy, y + (ibutton - 1) * (Gui_radioButtonHeight () + Gui_radioButtonSpacing ()),
 						XmNwidth, fieldWidth, XmNheight, Gui_radioButtonHeight (),
@@ -938,7 +936,7 @@ void UiForm_finish (I) {
 			case UI_OPTIONMENU:
 			{
 				Widget bar, box;
-				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y
@@ -958,7 +956,7 @@ void UiForm_finish (I) {
 				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_optionMenuHeight (), NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
-					MelderStringW_copyW (& theFinishBuffer, button -> nameW);
+					MelderString_copy (& theFinishBuffer, button -> nameW);
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 				}
@@ -969,7 +967,7 @@ void UiForm_finish (I) {
 				/*XtVaCreateManagedWidget ("", xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y, XmNwidth, labelWidth, XmNheight, Gui_checkButtonHeight (),
 					XmNalignment, XmALIGNMENT_END, NULL);*/
-				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				field -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
 					XmNx, fieldX, XmNy, y, XmNheight, Gui_checkButtonHeight (), NULL);
 			} break;
@@ -979,7 +977,7 @@ void UiForm_finish (I) {
 					Widget scrolled;
 				#endif
 				int max = enum_length (field -> enumerated), n = max + field -> includeZero, i;
-				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
@@ -1013,7 +1011,7 @@ void UiForm_finish (I) {
 				#endif
 				long i;
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
-				MelderStringW_copyW (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
 				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
 					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,

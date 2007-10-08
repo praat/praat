@@ -105,7 +105,7 @@ END
 DIRECT (LongSound_help) Melder_help (L"LongSound"); END
 
 FORM_READ (LongSound_open, "Open long sound file", 0)
-	if (! praat_new (LongSound_open (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (LongSound_open (file), MelderFile_name (file))) return 0;
 END
 
 FORM (LongSound_playPart, "LongSound: Play part", 0)
@@ -1070,7 +1070,7 @@ FORM_READ (Sound_read2FromStereoFile, "Read two Sounds from stereo file", 0)
 END
 
 FORM_READ (Sound_readFromRawAlawFile, "Read Sound from raw Alaw file", 0)
-	if (! praat_new (Sound_readFromRawAlawFile (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Sound_readFromRawAlawFile (file), MelderFile_name (file))) return 0;
 END
 
 static SoundRecorder soundRecorder;   /* Only one at a time. */
@@ -1810,21 +1810,21 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 }
 
 static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
-	char *fileName = MelderFile_name (file);
+	wchar_t *fileName = MelderFile_name (file);
 	(void) header;
 	/*Melder_error ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
-	if (nread < 512 || (! strstr (fileName, ".mov") && ! strstr (fileName, ".MOV") &&
-	    ! strstr (fileName, ".avi") && ! strstr (fileName, ".AVI"))) return NULL;
+	if (nread < 512 || (! wcsstr (fileName, L".mov") && ! wcsstr (fileName, L".MOV") &&
+	    ! wcsstr (fileName, L".avi") && ! wcsstr (fileName, L".AVI"))) return NULL;
 	return Sound_readFromMovieFile (file);
 }
 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
-	char *fileName = MelderFile_name (file);
+	wchar_t *fileName = MelderFile_name (file);
 	(void) header;
-	if (nread < 512 || (! strstr (fileName, ".sdf") && ! strstr (fileName, ".SDF"))) return NULL;
+	if (nread < 512 || (! wcsstr (fileName, L".sdf") && ! wcsstr (fileName, L".SDF"))) return NULL;
 	return Sound_readFromSesamFile (file);
 }
 

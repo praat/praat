@@ -248,58 +248,58 @@ static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. reserved = 0;
 }
 static int win_waveInCheck (SoundRecorder me) {
-	char messageText [MAXERRORLENGTH];
+	wchar_t messageText [MAXERRORLENGTH];
 	MMRESULT err;
 	if (my err == MMSYSERR_NOERROR) return 1;
 	err = waveInGetErrorText (my err, messageText, MAXERRORLENGTH);
-	if (err == MMSYSERR_NOERROR) Melder_error ("%s", messageText);
-	else if (err == MMSYSERR_BADERRNUM) Melder_error ("Error number %d out of range.", my err);
-	else if (err == MMSYSERR_NODRIVER) Melder_error ("No sound driver present.");
-	else if (err == MMSYSERR_NOMEM) Melder_error ("Out of memory.");
-	else Melder_error ("Unknown sound error.");
+	if (err == MMSYSERR_NOERROR) Melder_error1 (messageText);
+	else if (err == MMSYSERR_BADERRNUM) Melder_error3 (L"Error number ", Melder_integer (my err), L" out of range.");
+	else if (err == MMSYSERR_NODRIVER) Melder_error1 (L"No sound driver present.");
+	else if (err == MMSYSERR_NOMEM) Melder_error1 (L"Out of memory.");
+	else Melder_error1 (L"Unknown sound error.");
 	return 0;
 }
 static int win_waveInOpen (SoundRecorder me) {
 	my err = waveInOpen (& my hWaveIn, WAVE_MAPPER, & my waveFormat, 0, 0, CALLBACK_NULL);
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input not opened.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not opened.");
 	if (Melder_debug != 8) waveInReset (my hWaveIn);
 	return 1;
 }
 static int win_waveInPrepareHeader (SoundRecorder me, int which) {
 	my err = waveInPrepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input: cannot prepare header.\n"
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot prepare header.\n"
 		"Quit some other programs or go to \"Sound input prefs\" in the Preferences menu.");
 	return 1;
 }
 static int win_waveInAddBuffer (SoundRecorder me, int which) {
 	my err = waveInAddBuffer (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input: cannot add buffer.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot add buffer.");
 	return 1;
 }
 static int win_waveInStart (SoundRecorder me) {
 	my err = waveInStart (my hWaveIn);   /* Asynchronous. */
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input not started.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not started.");
 	return 1;
 }
 static int win_waveInStop (SoundRecorder me) {
 	my err = waveInStop (my hWaveIn);
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input not stopped.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not stopped.");
 	return 1;
 }
 static int win_waveInReset (SoundRecorder me) {
 	my err = waveInReset (my hWaveIn);
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input not reset.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not reset.");
 	return 1;
 }
 static int win_waveInUnprepareHeader (SoundRecorder me, int which) {
 	my err = waveInUnprepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input: cannot unprepare header.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot unprepare header.");
 	return 1;
 }
 static int win_waveInClose (SoundRecorder me) {
 	my err = waveInClose (my hWaveIn);
 	my hWaveIn = 0;
-	if (! win_waveInCheck (me)) return Melder_error ("Audio input not closed.");
+	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not closed.");
 	return 1;
 }
 #endif
@@ -830,9 +830,9 @@ static void publish (SoundRecorder me) {
 		}
 	}
 	if (my soundName) {
-		char *name = XmTextFieldGetString (my soundName);
-		Thing_setName (sound, name);
-		XtFree (name);
+		wchar_t *name = GuiText_getStringW (my soundName);
+		Thing_setNameW (sound, name);
+		Melder_free (name);
 	}
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, sound);

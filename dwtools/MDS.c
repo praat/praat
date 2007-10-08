@@ -201,14 +201,14 @@ Distances Configurations_to_Distances (Configurations me)
 	if (thee == NULL) return NULL;
 	for (i = 1; i <= my size; i++)
 	{
-		char *name = Thing_getName (my item[i]);
+		wchar_t *name = Thing_getNameW (my item[i]);
 		Distance d = Configuration_to_Distance (my item[i]);
 		
 		if (d == NULL || ! Collection_addItem (thee, d))
 		{
 			forget (thee); goto end;
 		}
-		Thing_setName (d, name);
+		Thing_setNameW (d, name);
 	}
 	
 end:
@@ -1342,7 +1342,7 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 			forget (thee);
 			return NULL;
 		}
-		Thing_setName (him, Thing_getName (my item[i]));
+		Thing_setNameW (him, Thing_getNameW (my item[i]));
 	}
 	return thee;
 }
@@ -1920,7 +1920,7 @@ ScalarProduct Distance_to_ScalarProduct (Distance me, int normalize)
 		}
 	}
 	TableOfReal_doubleCentre (thee);
-	if (my name) Thing_setName (thee, my name);
+	if (my nameW) Thing_setNameW (thee, my nameW);
 	if (normalize) TableOfReal_normalizeTable (thee, 1);
 	return thee;
 }
@@ -2247,8 +2247,8 @@ int ScalarProducts_to_Configuration_ytl (ScalarProducts me,
 	
 	*out1 = NULL; *out2 = NULL;
 	
-	Thing_setName (mdsw, "ytl"); 
-	Thing_setName (thee, "ytl");
+	Thing_setNameW (mdsw, L"ytl"); 
+	Thing_setNameW (thee, L"ytl");
 	TableOfReal_labelsFromCollectionItemNames (mdsw, me, 1, 0);
 	
 	/*
@@ -2450,13 +2450,13 @@ Dissimilarities Distances_to_Dissimilarities (Distances me)
 	for (i = 1; i <= my size; i++)
 	{
 		Dissimilarity him = Distance_to_Dissimilarity (my item[i]);
-		char *name = Thing_getName (my item[i]);
+		wchar_t *name = Thing_getNameW (my item[i]);
 		if (! him || ! Collection_addItem (thee, him))
 		{
 			forget (thee); 
 			return NULL;
 		}
-		Thing_setName (him, name ? name : "untitled");
+		Thing_setNameW (him, name ? name : L"untitled");
 	}
 	return thee;
 }
@@ -2473,12 +2473,12 @@ Distances Dissimilarities_to_Distances (Dissimilarities me,
 	{
 		Distance him = Dissimilarity_to_Distance (my item[i],
 			measurementLevel == MDS_ORDINAL);
-		char *name = Thing_getName (my item[i]);
+		wchar_t *name = Thing_getNameW (my item[i]);
 		if ((him == NULL) || ! Collection_addItem (thee, him))
 		{
 			forget (thee); return NULL;
 		}
-		Thing_setName (him, name ? name : "untitled");
+		Thing_setNameW (him, name ? name : L"untitled");
 	}
 	return thee;
 }
@@ -3974,7 +3974,7 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 		Set labels & names.
 	*/
 	
-	Thing_setName (x, "indscal_mr"); Thing_setName (w, "indscal_mr");
+	Thing_setNameW (x, L"indscal_mr"); Thing_setNameW (w, L"indscal_mr");
 	TableOfReal_labelsFromCollectionItemNames (w, dissims, 1, 0);
 	
 	*out1 = x; *out2 = w;
@@ -4512,7 +4512,7 @@ Dissimilarity Dissimilarity_createLetterRExample (double noiseStd)
 			me = Distance_to_Dissimilarity (d);
 			if (me)
 			{
-				Thing_setName (me, "R");
+				Thing_setNameW (me, L"R");
 				for (i = 1; i <= my numberOfRows - 1; i++)
 				{
 					for (j = i + 1; j <= my numberOfRows; j++)
@@ -4591,7 +4591,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange)
 		}
 		forget (d); 
 	}
-	Thing_setName (me, "CarrollWish");
+	Thing_setNameW (me, L"CarrollWish");
 end:
 	forget (s); 
 	forget (c);

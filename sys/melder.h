@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/14
+ * pb 2007/10/06
  */
 
 #include <stdio.h>
@@ -302,6 +302,7 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *utf8, wchar_t *wcs);
 wchar_t * Melder_peekUtf8ToWcs (const char *string);
 char * Melder_peekWcsToUtf8 (const wchar_t *string);
 const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *string);
+const void * Melder_peekWcsToCfstring (const wchar_t *string);
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f);
 
 /*
@@ -350,13 +351,8 @@ double Melder_allocationSize (void);
 typedef struct {
 	unsigned long length;
 	unsigned long bufferSize;
-	char *string;   // a growing buffer, never shrunk (can only be freed by MelderStringA_free)
-} MelderStringA;
-typedef struct {
-	unsigned long length;
-	unsigned long bufferSize;
-	wchar_t *string;   // a growing buffer, never shrunk (can only be freed by MelderStringW_free)
-} MelderStringW;
+	wchar_t *string;   // a growing buffer, never shrunk (can only be freed by MelderString_free)
+} MelderString;
 typedef struct {
 	unsigned long length;
 	unsigned long bufferSize;
@@ -366,41 +362,30 @@ typedef struct {
 	wchar_t *string, *readPointer;
 } MelderReadString;
 
-void MelderStringA_free (MelderStringA *me);   // frees the "string" attribute only (and sets other attributes to zero)
-void MelderStringW_free (MelderStringW *me);   // frees the "string" attribute only (and sets other attributes to zero)
+void MelderString_free (MelderString *me);   // frees the "string" attribute only (and sets other attributes to zero)
 void MelderString16_free (MelderString16 *me);   // frees the "string" attribute only (and sets other attributes to zero)
-void MelderStringA_empty (MelderStringA *me);   // sets to empty string (buffer not freed)
-void MelderStringW_empty (MelderStringW *me);   // sets to empty string (buffer not freed)
+void MelderString_empty (MelderString *me);   // sets to empty string (buffer not freed)
 void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer not freed)
-bool MelderStringA_copyA (MelderStringA *me, const char *source);
-bool MelderStringA_copyW (MelderStringA *me, const wchar_t *source);   // performs no data range checking
-bool MelderStringW_copyA (MelderStringW *me, const char *source);
-bool MelderStringW_copyW (MelderStringW *me, const wchar_t *source);
-bool MelderStringA_ncopyA (MelderStringA *me, const char *source, unsigned long n);
-bool MelderStringW_ncopyW (MelderStringW *me, const wchar_t *source, unsigned long n);
-bool MelderStringA_appendA (MelderStringA *me, const char *source);
-bool MelderStringW_appendW (MelderStringW *me, const wchar_t *source);
-bool MelderStringW_append1 (MelderStringW *me, const wchar_t *s1);   // Identical to MelderStringW_appendW.
-bool MelderStringW_append2 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2);
-bool MelderStringW_append3 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
-bool MelderStringW_append4 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
-bool MelderStringW_append5 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_copy (MelderString *me, const wchar_t *source);
+bool MelderString_ncopy (MelderString *me, const wchar_t *source, unsigned long n);
+bool MelderString_append (MelderString *me, const wchar_t *source);
+bool MelderString_append1 (MelderString *me, const wchar_t *s1);   // Identical to MelderString_append.
+bool MelderString_append2 (MelderString *me, const wchar_t *s1, const wchar_t *s2);
+bool MelderString_append3 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+bool MelderString_append4 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+bool MelderString_append5 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5);
-bool MelderStringW_append6 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append6 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6);
-bool MelderStringW_append7 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append7 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
-bool MelderStringW_append8 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append8 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
-bool MelderStringW_append9 (MelderStringW *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+bool MelderString_append9 (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-bool MelderStringW_appendA (MelderStringW *me, const char *source);
-bool MelderStringA_appendCharacter (MelderStringA *me, char character);
-bool MelderStringW_appendCharacter (MelderStringW *me, wchar_t character);
+bool MelderString_appendCharacter (MelderString *me, wchar_t character);
 bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character);
-bool MelderStringA_getA (MelderStringA *me, char *destination);   // performs no boundary checking
-bool MelderStringW_getA (MelderStringW *me, char *destination);   // performs no boundary checking and no data range checking
-bool MelderStringW_getW (MelderStringW *me, wchar_t *destination);   // performs no boundary checking
+bool MelderString_get (MelderString *me, wchar_t *destination);   // performs no boundary checking
 double MelderString_allocationCount (void);
 double MelderString_deallocationCount (void);
 double MelderString_allocationSize (void);
@@ -528,7 +513,7 @@ void Melder_information9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s
 
 void Melder_informationReal (double value, const wchar_t *units);   /* %.17g or --undefined--; units may be NULL */
 
-void Melder_divertInfo (MelderStringW *buffer);   /* NULL = back to normal. */
+void Melder_divertInfo (MelderString *buffer);   /* NULL = back to normal. */
 
 void Melder_print (const wchar_t *s);
 	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
@@ -696,16 +681,16 @@ extern int Melder_backgrounding;   /* True if running a script. */
 /* They may chage the string arguments. */
 /* Many of these routines are called by MelderMotif_create and MelderXvt_create. */
 
-void Melder_setCasualProc (void (*casualProc) (char *message));
-void Melder_setProgressProc (int (*progressProc) (double progress, char *message));
-void Melder_setMonitorProc (void * (*monitorProc) (double progress, char *message));
-void Melder_setPauseProc (int (*pauseProc) (char *message));
+void Melder_setCasualProc (void (*casualProc) (wchar_t *message));
+void Melder_setProgressProc (int (*progressProc) (double progress, wchar_t *message));
+void Melder_setMonitorProc (void * (*monitorProc) (double progress, wchar_t *message));
+void Melder_setPauseProc (int (*pauseProc) (wchar_t *message));
 void Melder_setInformationProc (void (*informationProc) (wchar_t *message));
 void Melder_setHelpProc (void (*help) (const wchar_t *query));
 void Melder_setSearchProc (void (*search) (void));
-void Melder_setWarningProc (void (*warningProc) (char *message));
+void Melder_setWarningProc (void (*warningProc) (wchar_t *message));
 void Melder_setErrorProc (void (*errorProc) (wchar_t *message));
-void Melder_setFatalProc (void (*fatalProc) (char *message));
+void Melder_setFatalProc (void (*fatalProc) (wchar_t *message));
 void Melder_setPublishProc (int (*publish) (void *));
 void Melder_setRecordProc (int (*record) (double));
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
@@ -717,21 +702,18 @@ void Melder_setPublishPlayedProc (int (*publishPlayed) (void));
 
 #if defined (macintosh)
 	void Melder_machToFile (void *void_fsref, MelderFile file);
+	void Melder_machToDir (void *void_fsref, MelderDir dir);
 	int Melder_fileToMach (MelderFile file, void *void_fsref);
-	int Melder_fileToMac (MelderFile file, void *void_fspec);
+	int Melder_dirToMach (MelderDir dir, void *void_fsref);
 #endif
-char * MelderFile_name (MelderFile file);
-wchar_t * MelderFile_nameW (MelderFile file);
-char * MelderDir_name (MelderDir dir);
-wchar_t * MelderDir_nameW (MelderDir dir);
-int Melder_pathToDir (const char *path, MelderDir dir);
-int Melder_pathToDirW (const wchar_t *path, MelderDir dir);
-int Melder_pathToFile (const char *path, MelderFile file);
-int Melder_pathToFileW (const wchar_t *path, MelderFile file);
+wchar_t * MelderFile_name (MelderFile file);
+wchar_t * MelderDir_name (MelderDir dir);
+int Melder_pathToDir (const wchar_t *path, MelderDir dir);
+int Melder_pathToFile (const wchar_t *path, MelderFile file);
 int Melder_relativePathToFile (const wchar_t *path, MelderFile file);
-wchar_t * Melder_dirToPathW (MelderDir dir);
+wchar_t * Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
-wchar_t * Melder_fileToPathW (MelderFile file);
+wchar_t * Melder_fileToPath (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
 int MelderFile_equal (MelderFile file1, MelderFile file2);
@@ -740,12 +722,12 @@ void MelderFile_setToNull (MelderFile file);
 int MelderFile_isNull (MelderFile file);
 void MelderDir_setToNull (MelderDir dir);
 int MelderDir_isNull (MelderDir dir);
-void MelderDir_getFileW (MelderDir parent, const wchar_t *fileName, MelderFile file);
+void MelderDir_getFile (MelderDir parent, const wchar_t *fileName, MelderFile file);
 void MelderDir_relativePathToFile (MelderDir dir, const wchar_t *path, MelderFile file);
 void MelderFile_getParentDir (MelderFile file, MelderDir parent);
 void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 int MelderDir_isDesktop (MelderDir dir);
-int MelderDir_getSubdirW (MelderDir parent, const wchar_t *subdirName, MelderDir subdir);
+int MelderDir_getSubdir (MelderDir parent, const wchar_t *subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory (void);
 wchar_t * Melder_getShellDirectory (void);
 void Melder_getHomeDir (MelderDir homeDir);
@@ -811,8 +793,6 @@ int Melder_createDirectoryW (MelderDir parent, const wchar_t *subdirName, int mo
 void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);
 void MelderFile_setDefaultDir (MelderFile file);
-void MelderFile_nativizePath (char *path);   /* Convert from Unix-style slashes. */
-void MelderFile_nativizePathW (wchar_t *path);   /* Convert from Unix-style slashes. */
 
 /* Use the following functions to pass unchanged text or file names to Melder_* functions. */
 /* Backslashes are replaced by "\bs". */
@@ -930,8 +910,8 @@ const wchar_t * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 /********** MISCELLANEOUS **********/
 
-char * Melder_getenv (const char *variableName);
-int Melder_system (const char *command);   /* Spawn a system command; return 0 if error. */
+wchar_t * Melder_getenv (const wchar_t *variableName);
+int Melder_system (const wchar_t *command);   /* Spawn a system command; return 0 if error. */
 
 /* End of file melder.h */
 #endif

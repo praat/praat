@@ -298,8 +298,8 @@ MOTIF_CALLBACK_END
 MOTIF_CALLBACK (cb_open)
 	iam (DataSubEditor);
 	int ifield = 0;
-	static MelderStringW name = { 0 };
-	MelderStringW_empty (& name);
+	static MelderString name = { 0 };
+	MelderString_empty (& name);
 	DataSubEditor_FieldData fieldData;
 
 	/* Identify the pressed button; it must be one of those created in the list. */
@@ -316,22 +316,22 @@ MOTIF_CALLBACK (cb_open)
 	}
 
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
-		MelderStringW_append8 (& name, fieldData -> history, L". ", fieldData -> description -> name,
+		MelderString_append8 (& name, fieldData -> history, L". ", fieldData -> description -> name,
 			L" [", Melder_integer (fieldData -> minimum), L"..", Melder_integer (fieldData -> maximum), L"]");
 		if (! VectorEditor_create (my root, name.string, fieldData -> address,
 			fieldData -> description, fieldData -> minimum, fieldData -> maximum)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> rank == 2) {
-		MelderStringW_append8 (& name, fieldData -> history, L". ", fieldData -> description -> name,
+		MelderString_append8 (& name, fieldData -> history, L". ", fieldData -> description -> name,
 			L" [", Melder_integer (fieldData -> minimum), L"..", Melder_integer (fieldData -> maximum), L"]");
-		MelderStringW_append5 (& name, L" [", Melder_integer (fieldData -> min2), L"..", Melder_integer (fieldData -> max2), L"]");
+		MelderString_append5 (& name, L" [", Melder_integer (fieldData -> min2), L"..", Melder_integer (fieldData -> max2), L"]");
 		if (! MatrixEditor_create (my root, name.string, fieldData -> address, fieldData -> description,
 			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> type == structwa) {
-		MelderStringW_append3 (& name, fieldData -> history, L". ", fieldData -> description -> name);
+		MelderString_append3 (& name, fieldData -> history, L". ", fieldData -> description -> name);
 		if (! StructEditor_create (my root, name.string, fieldData -> address,
 			(Data_Description) fieldData -> description -> tagType)) Melder_flushError (NULL);
 	} else if (fieldData -> description -> type == objectwa || fieldData -> description -> type == collectionwa) {
-		MelderStringW_append3 (& name, fieldData -> history, L". ", fieldData -> description -> name);
+		MelderString_append3 (& name, fieldData -> history, L". ", fieldData -> description -> name);
 		if (! ClassEditor_create (my root, name.string, fieldData -> address,
 			((Data_Table) fieldData -> description -> tagType) -> description)) Melder_flushError (NULL);
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
@@ -434,34 +434,34 @@ static long classStructEditor_countFields (I) {
 	return Data_Description_countMembers (my description);
 }
 
-static wchar_t * singleTypeToText (void *address, int type, void *tagType, MelderStringW *buffer) {
+static wchar_t * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
-		case bytewa: MelderStringW_append1 (buffer, Melder_integer (* (signed char *) address)); break;
-		case shortwa: MelderStringW_append1 (buffer, Melder_integer (* (short *) address)); break;
-		case intwa: MelderStringW_append1 (buffer, Melder_integer (* (int *) address)); break;
-		case longwa: MelderStringW_append1 (buffer, Melder_integer (* (long *) address)); break;
-		case ubytewa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned char *) address)); break;
-		case ushortwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned short *) address)); break;
-		case uintwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned int *) address)); break;
-		case ulongwa: MelderStringW_append1 (buffer, Melder_integer (* (unsigned long *) address)); break;
-		case boolwa: MelderStringW_append1 (buffer, Melder_integer (* (bool *) address)); break;
-		case floatwa: MelderStringW_append1 (buffer, Melder_single (* (float *) address)); break;
-		case doublewa: MelderStringW_append1 (buffer, Melder_double (* (double *) address)); break;
+		case bytewa: MelderString_append1 (buffer, Melder_integer (* (signed char *) address)); break;
+		case shortwa: MelderString_append1 (buffer, Melder_integer (* (short *) address)); break;
+		case intwa: MelderString_append1 (buffer, Melder_integer (* (int *) address)); break;
+		case longwa: MelderString_append1 (buffer, Melder_integer (* (long *) address)); break;
+		case ubytewa: MelderString_append1 (buffer, Melder_integer (* (unsigned char *) address)); break;
+		case ushortwa: MelderString_append1 (buffer, Melder_integer (* (unsigned short *) address)); break;
+		case uintwa: MelderString_append1 (buffer, Melder_integer (* (unsigned int *) address)); break;
+		case ulongwa: MelderString_append1 (buffer, Melder_integer (* (unsigned long *) address)); break;
+		case boolwa: MelderString_append1 (buffer, Melder_integer (* (bool *) address)); break;
+		case floatwa: MelderString_append1 (buffer, Melder_single (* (float *) address)); break;
+		case doublewa: MelderString_append1 (buffer, Melder_double (* (double *) address)); break;
 		case fcomplexwa: { fcomplex value = * (fcomplex *) address;
-			MelderStringW_append4 (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;
+			MelderString_append4 (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;
 		case dcomplexwa: { dcomplex value = * (dcomplex *) address;
-			MelderStringW_append4 (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
-		case charwa: MelderStringW_append1 (buffer, Melder_integer (* (wchar_t *) address)); break;
-		case enumwa: MelderStringW_append3 (buffer, L"<", enum_string (tagType, * (signed char *) address), L">"); break;
-		case lenumwa: MelderStringW_append3 (buffer, L"<", enum_string (tagType, * (signed short *) address), L">"); break;
-		case booleanwa: MelderStringW_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
-		case questionwa: MelderStringW_append1 (buffer, * (signed char *) address ? L"<yes>" : L"<no>"); break;
+			MelderString_append4 (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
+		case charwa: MelderString_append1 (buffer, Melder_integer (* (wchar_t *) address)); break;
+		case enumwa: MelderString_append3 (buffer, L"<", enum_string (tagType, * (signed char *) address), L">"); break;
+		case lenumwa: MelderString_append3 (buffer, L"<", enum_string (tagType, * (signed short *) address), L">"); break;
+		case booleanwa: MelderString_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
+		case questionwa: MelderString_append1 (buffer, * (signed char *) address ? L"<yes>" : L"<no>"); break;
 		case stringwa:
 		case stringwwa:
 		case lstringwa:
 		case lstringwwa: {
 			wchar_t *string = * (wchar_t **) address;
-			if (string == NULL) { MelderStringW_empty (buffer); return buffer -> string; }   // Convert NULL string to empty string.
+			if (string == NULL) { MelderString_empty (buffer); return buffer -> string; }   // Convert NULL string to empty string.
 			return string;   // May be much longer than the usual size of 'buffer'.
 		} break;
 		default: return L"(unknown)";
@@ -478,12 +478,12 @@ static void showStructMember (
 {
 	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= maxsingletypewa && rank == 0;
 	unsigned char *memberAddress = (unsigned char *) structAddress + memberDescription -> offset;
-	static MelderStringW buffer = { 0 };
-	MelderStringW_empty (& buffer);
+	static MelderString buffer = { 0 };
+	MelderString_empty (& buffer);
 	if (type == inheritwa) {
-		MelderStringW_append3 (& buffer, L"Class part \"", memberDescription -> name, L"\":");
+		MelderString_append3 (& buffer, L"Class part \"", memberDescription -> name, L"\":");
 	} else {
-		MelderStringW_append2 (& buffer, memberDescription -> name,
+		MelderString_append2 (& buffer, memberDescription -> name,
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
 	XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)),
@@ -494,7 +494,7 @@ static void showStructMember (
 
 	if (isSingleType) {
 		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
-		MelderStringW_empty (& buffer);
+		MelderString_empty (& buffer);
 		wchar_t *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
 		GuiText_setStringW (fieldData -> text, text);
 		XtManageChild (fieldData -> text);
@@ -639,8 +639,8 @@ static void classVectorEditor_showMembers (I) {
 
 	for (ielement = firstElement; ielement <= my maximum; ielement ++) {
 		unsigned char *elementAddress = (unsigned char *) my address + ielement * my description -> size;
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
 		DataSubEditor_FieldData fieldData;
 		int skip = ielement == firstElement ? (my topField - 1) % elementSize : 0;
 
@@ -648,12 +648,12 @@ static void classVectorEditor_showMembers (I) {
 		fieldData = & my fieldData [my irow];
 
 		if (isSingleType) {
-			MelderStringW_append4 (& buffer, my description -> name, L" [",
+			MelderString_append4 (& buffer, my description -> name, L" [",
 				my description -> rank == 3 ? enum_string (my description -> max1, ielement) : Melder_integer (ielement), L"]");
 			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
-			MelderStringW_empty (& buffer);
+			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
 			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 			GuiText_setStringW (fieldData -> text, text);
@@ -661,8 +661,8 @@ static void classVectorEditor_showMembers (I) {
 			fieldData -> address = elementAddress;
 			fieldData -> description = my description;
 		} else if (type == structwa) {
-			static MelderStringW history = { 0 };
-			MelderStringW_copyW (& history, my nameW);
+			static MelderString history = { 0 };
+			MelderString_copy (& history, my nameW);
 
 			/* Replace things like [1..100] by things like [19]. */
 
@@ -672,28 +672,28 @@ static void classVectorEditor_showMembers (I) {
 				* openingBracket = '\0';
 				history.length = openingBracket - history.string;
 			}
-			MelderStringW_append3 (& history, L"[", Melder_integer (ielement), L"]");
+			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
 			if (skip) {
 				my irow --;
 			} else {
-				MelderStringW_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
+				MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
 				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 				XtManageChild (fieldData -> label);
 			}
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history.string);
 		} else if (type == objectwa) {
-			static MelderStringW history = { 0 };
-			MelderStringW_copyW (& history, my nameW);
+			static MelderString history = { 0 };
+			MelderString_copy (& history, my nameW);
 			if (history.string [history.length - 1] == ']') {
 				wchar_t *openingBracket = wcsrchr (history.string, '[');
 				Melder_assert (openingBracket != NULL);
 				* openingBracket = '\0';
 				history.length = openingBracket - history.string;
 			}
-			MelderStringW_append3 (& history, L"[", Melder_integer (ielement), L"]");
+			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
-			MelderStringW_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
+			MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
 			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
@@ -756,13 +756,13 @@ static void classMatrixEditor_showMembers (I) {
 		fieldData = & my fieldData [my irow];
 		
 		if (isSingleType) {
-			static MelderStringW buffer = { 0 };
-			MelderStringW_empty (& buffer);
-			MelderStringW_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
+			MelderString_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
 			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
 			XtManageChild (fieldData -> label);
 
-			MelderStringW_empty (& buffer);
+			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
 			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 			GuiText_setStringW (fieldData -> text, text);

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/01
+ * pb 2007/10/06
  */
 
 #include "Gui.h"
@@ -72,8 +72,8 @@ struct structWidget {
 	long magicNumber;
 	unsigned long widgetClass;
 	Widget parent, previousSibling, nextSibling, firstChild;
-	char *name;
-	char inMenu, nativized, managed, insensitive;
+	wchar_t *name;
+	bool inMenu, nativized, managed, insensitive;
 	Widget textFocus;   /* For shells. */
 	Widget shell;   /* My shell ancestor. */
 
@@ -94,13 +94,13 @@ struct structWidget {
 	#elif mac
 		Rect rect;   /* Window coordinates. */
 		WindowPtr macWindow;
-		int isControl;
+		bool isControl;
 		struct {
 			/* XtShell: */
 			struct { WindowPtr ptr; ControlRef rootControl; } window;
 
 			/* XmPushButton (if not in menu), XmToggleButton (if not in menu), XmScrollBar, XmLabel (sometimes), XmCascadeButton (if not in menu or bar): */
-			struct { ControlHandle handle; char isBevel, isPopup; } control;
+			struct { ControlHandle handle; bool isBevel, isPopup; } control;
 
 			/* XmPushButton (if in menu), XmToggleButton (if in menu), XmCascadeButton (if in menu): */
 			struct { MenuHandle handle; int item; } entry;
@@ -132,7 +132,7 @@ struct structWidget {
 	/* Resources. */
 
 	int x, y, width, height;
-	int isRadioButton;   /* For radio buttons and check buttons. */
+	bool isRadioButton;   /* For radio buttons and check buttons. */
 	int visibleItemCount, selectionPolicy;   /* For lists. */
 	int radioBehavior, packing, rowColumnType;   /* For row-columns. */
 	int orientation;   /* For row-columns and scroll bars. */
@@ -141,7 +141,7 @@ struct structWidget {
 	int dialogStyle;   /* For forms and shells. */
 	int dialogType;   /* For message boxes and shells. */
 	Widget messageText;   /* For message boxes. */
-	int autoUnmanage;   /* For bulletin boards. */
+	bool autoUnmanage;   /* For bulletin boards. */
 	Widget subMenuId, popUpButton;   /* For cascade buttons and their menus. */
 	long increment, pageIncrement, sliderSize;   /* For scroll bars. */
 	long minimum, maximum, value;   /* For scales and scroll bars. */
@@ -165,7 +165,7 @@ struct structWidget {
 
 extern struct Gui {
 	Widget textFocus;
-	int duringUpdate;
+	bool duringUpdate;
 	#if win
 		HINSTANCE instance;   /* First argument of WinMain. */
 	#elif mac
@@ -178,7 +178,7 @@ void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call);
 	void _GuiMac_clipOn (Widget me);
 	void _GuiMac_clipOffValid (Widget me);
 #endif
-Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name);
+Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name);
 void _Gui_invalidateWidget (Widget me);
 void _Gui_validateWidget (Widget me);
 void _GuiNativeControl_check (Widget me, Boolean value);

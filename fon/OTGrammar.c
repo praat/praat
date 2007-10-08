@@ -918,9 +918,9 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			static MelderStringW buffer = { 0 };
-			MelderStringW_empty (& buffer);
-			MelderStringW_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
+			MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
 			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
 		}
 		/*
@@ -1028,9 +1028,9 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 		 * Set the row labels to the output strings.
 		 */
 		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			static MelderStringW buffer = { 0 };
-			MelderStringW_empty (& buffer);
-			MelderStringW_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
+			MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
 			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
 		}
 		/*
@@ -2103,7 +2103,7 @@ end:
 	return 1;
 }
 
-static void printConstraintNames (OTGrammar me, MelderStringW *buffer) {
+static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 	wchar_t text [200];
 	int secondLine = FALSE;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2113,46 +2113,46 @@ static void printConstraintNames (OTGrammar me, MelderStringW *buffer) {
 			wcscpy (text, constraint -> name);
 			newLine = wcschr (text, '\n');
 			*newLine = '\0';
-			MelderStringW_append2 (buffer, L"\t", text);
+			MelderString_append2 (buffer, L"\t", text);
 			secondLine = TRUE;
 		} else {
-			MelderStringW_append2 (buffer, L"\t", constraint -> name);
+			MelderString_append2 (buffer, L"\t", constraint -> name);
 		}
 	}
-	MelderStringW_appendCharacter (buffer, '\n');
+	MelderString_appendCharacter (buffer, '\n');
 	if (secondLine) {
-		MelderStringW_appendCharacter (buffer, '\t');
+		MelderString_appendCharacter (buffer, '\t');
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
 			wchar_t *newLine = wcschr (constraint -> name, '\n');
-			MelderStringW_append2 (buffer, L"\t", newLine ? newLine + 1 : L"");
+			MelderString_append2 (buffer, L"\t", newLine ? newLine + 1 : L"");
 		}
-		MelderStringW_appendCharacter (buffer, '\n');
+		MelderString_appendCharacter (buffer, '\n');
 	}
 }
 
 int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
-	MelderStringW buffer = { 0 };
-	MelderStringW_append1 (& buffer, L"CONSTRAINTS\t");
+	MelderString buffer = { 0 };
+	MelderString_append1 (& buffer, L"CONSTRAINTS\t");
 	printConstraintNames (me, & buffer);
-	MelderStringW_append1 (& buffer, L"rankings\t");
+	MelderString_append1 (& buffer, L"rankings\t");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		MelderStringW_append2 (& buffer, L"\t", Melder_double (constraint -> ranking));
+		MelderString_append2 (& buffer, L"\t", Melder_double (constraint -> ranking));
 	}
-	MelderStringW_append1 (& buffer, L"\ndisharmonies\t");
+	MelderString_append1 (& buffer, L"\ndisharmonies\t");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		MelderStringW_append2 (& buffer, L"\t", Melder_double (constraint -> disharmony));
+		MelderString_append2 (& buffer, L"\t", Melder_double (constraint -> disharmony));
 	}
-	MelderStringW_appendCharacter (& buffer, '\n');
+	MelderString_appendCharacter (& buffer, '\n');
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		long winner = OTGrammar_getWinner (me, itab), numberOfOptimalCandidates = 0;
 		for (long icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
-			MelderStringW_appendCharacter (& buffer, '\t');
+			MelderString_appendCharacter (& buffer, '\t');
 		}
-		MelderStringW_append2 (& buffer, L"\nINPUT\t", tableau -> input);
+		MelderString_append2 (& buffer, L"\nINPUT\t", tableau -> input);
 		printConstraintNames (me, & buffer);
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
@@ -2163,7 +2163,7 @@ int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
 			int candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
 			long crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
-			MelderStringW_append3 (& buffer,
+			MelderString_append3 (& buffer,
 				candidateIsOptimal == FALSE ? L"loser" : numberOfOptimalCandidates > 1 ? L"co-winner" : L"winner",
 				L"\t",
 				candidate -> output);
@@ -2194,14 +2194,14 @@ int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
 					for (imark = 1; imark <= candidate -> marks [index]; imark ++)
 						wcscat (markString, L"*");
 				}
-				MelderStringW_append2 (& buffer, L"\t", markString);
+				MelderString_append2 (& buffer, L"\t", markString);
 			}
-			MelderStringW_appendCharacter (& buffer, '\n');
+			MelderString_appendCharacter (& buffer, '\n');
 		}
 	}
 	MelderFile_writeText (file, buffer.string); cherror
 end:
-	MelderStringW_free (& buffer);
+	MelderString_free (& buffer);
 	iferror return 0;
 	return 1;
 }

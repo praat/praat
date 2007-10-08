@@ -237,16 +237,19 @@ wchar_t *praat_name (int IOBJECT) { return wcschr (FULL_NAMEW, ' ') + 1; }
 void praat_write_do (Any dia, const wchar_t *extension) {
 	int IOBJECT, found = 0;
 	Data data = NULL;
-	wchar_t defaultFileName [200];
+	static MelderString defaultFileName = { 0 };
+	MelderString_empty (& defaultFileName);
 	WHERE (SELECTED) { if (! data) data = OBJECT; found += 1; }
 	if (found == 1) {
-		swprintf (defaultFileName, 200, L"%.50ls.%ls", data -> nameW, extension ? extension : Thing_classNameW (data));
+		MelderString_append (& defaultFileName, data -> nameW);
+		if (defaultFileName.length > 50) { defaultFileName.string [50] = '\0'; defaultFileName.length = 50; }
+		MelderString_append2 (& defaultFileName, L".", extension ? extension : Thing_classNameW (data));
 	} else if (extension == NULL) {
-		swprintf (defaultFileName, 200, L"praat.Collection");
+		MelderString_append (& defaultFileName, L"praat.Collection");
 	} else {
-		swprintf (defaultFileName, 200, L"praat.%ls", extension);
+		MelderString_append2 (& defaultFileName, L"praat.", extension);
 	}
-	UiOutfile_do (dia, defaultFileName);
+	UiOutfile_do (dia, defaultFileName.string);
 }
 
 static void removeAllReferencesToEditor (Any editor) {
@@ -325,9 +328,9 @@ bool praat_new1 (I, const wchar_t *myName) {
 		return result;
 	}
 
-	MelderStringW name = { 0 }, givenName = { 0 };
+	MelderString name = { 0 }, givenName = { 0 };
 	if (myName [0]) {
-		MelderStringW_copyW (& givenName, myName);
+		MelderString_copy (& givenName, myName);
 		/*
 		 * Remove extension.
 		 */
@@ -335,9 +338,9 @@ bool praat_new1 (I, const wchar_t *myName) {
 		if (p) *p = '\0';
 		praat_cleanUpName (givenName.string);
 	} else {
-		MelderStringW_copyW (& givenName, my nameW && my nameW [0] ? my nameW : L"untitled");
+		MelderString_copy (& givenName, my nameW && my nameW [0] ? my nameW : L"untitled");
 	}
-	MelderStringW_append3 (& name, Thing_classNameW (me), L" ", givenName.string);
+	MelderString_append3 (& name, Thing_classNameW (me), L" ", givenName.string);
 
 	if (theCurrentPraat -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
@@ -377,58 +380,58 @@ bool praat_new1 (I, const wchar_t *myName) {
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setNameW (OBJECT, givenName.string);
 	theCurrentPraat -> totalBeingCreated ++;
-	MelderStringW_free (& givenName);
-	MelderStringW_free (& name);
+	MelderString_free (& givenName);
+	MelderString_free (& name);
 	return true;
 }
 
-static MelderStringW thePraatNewName = { 0 };
+static MelderString thePraatNewName = { 0 };
 bool praat_new2 (I, const wchar_t *s1, const wchar_t *s2) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append2 (& thePraatNewName, s1, s2);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append2 (& thePraatNewName, s1, s2);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append3 (& thePraatNewName, s1, s2, s3);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append3 (& thePraatNewName, s1, s2, s3);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append4 (& thePraatNewName, s1, s2, s3, s4);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append6 (& thePraatNewName, s1, s2, s3, s4, s5, s6);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append6 (& thePraatNewName, s1, s2, s3, s4, s5, s6);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append7 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append7 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append8 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append8 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
 	return praat_new1 (me, thePraatNewName.string);
 }
 bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	iam (Data);
-	MelderStringW_empty (& thePraatNewName);
-	MelderStringW_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return praat_new1 (me, thePraatNewName.string);
 }
 
@@ -452,15 +455,6 @@ bool praat_new (I, const char *format, ...) {
 		myName [0] = '\0';
 	}
 	va_end (arg);
-	#if defined (macintosh)
-	{
-		CFStringRef unicodeName = CFStringCreateWithCString (NULL, myName, kCFStringEncodingUTF8);
-		if (unicodeName) {
-			CFStringGetCString (unicodeName, myName, 200, kCFStringEncodingMacRoman);
-			CFRelease (unicodeName);
-		}
-	}
-	#endif
 	return praat_new1 (me, Melder_peekUtf8ToWcs (myName));
 }
 
@@ -1043,19 +1037,19 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#else
 			Melder_createDirectoryW (& prefParentDir, name, 0);
 		#endif
-		MelderDir_getSubdirW (& prefParentDir, name, & praatDir);
+		MelderDir_getSubdir (& prefParentDir, name, & praatDir);
 		#if defined (UNIX)
-			MelderDir_getFileW (& praatDir, L"prefs", & prefsFile);
-			MelderDir_getFileW (& praatDir, L"buttons", & buttonsFile);
-			MelderDir_getFileW (& praatDir, L"pid", & pidFile);
-			MelderDir_getFileW (& praatDir, L"message", & messageFile);
+			MelderDir_getFile (& praatDir, L"prefs", & prefsFile);
+			MelderDir_getFile (& praatDir, L"buttons", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"pid", & pidFile);
+			MelderDir_getFile (& praatDir, L"message", & messageFile);
 		#elif defined (_WIN32)
-			MelderDir_getFileW (& praatDir, L"Preferences.ini", & prefsFile);
-			MelderDir_getFileW (& praatDir, L"Buttons.ini", & buttonsFile);
-			MelderDir_getFileW (& praatDir, L"Message.txt", & messageFile);
+			MelderDir_getFile (& praatDir, L"Preferences.ini", & prefsFile);
+			MelderDir_getFile (& praatDir, L"Buttons.ini", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"Message.txt", & messageFile);
 		#elif defined (macintosh)
-			MelderDir_getFileW (& praatDir, L"Prefs", & prefsFile);   /* We invite trouble if we call it Preferences! */
-			MelderDir_getFileW (& praatDir, L"Buttons", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"Prefs", & prefsFile);   /* We invite trouble if we call it Preferences! */
+			MelderDir_getFile (& praatDir, L"Buttons", & buttonsFile);
 		#endif
 	}
 	#if defined (UNIX)
@@ -1236,7 +1230,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 	swprintf (name, 256, fileNameTemplate, Melder_peekUtf8ToWcs (programName));
 	if (! MelderDir_isNull (startUpDirectory)) {   // Should not occur on modern systems.
 		structMelderFile startUp = { 0 };
-		MelderDir_getFileW (startUpDirectory, name, & startUp);
+		MelderDir_getFile (startUpDirectory, name, & startUp);
 		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
 			fclose (f);
 			if (! praat_executeScriptFromFile (& startUp, NULL)) {
@@ -1277,7 +1271,7 @@ void praat_run (void) {
 
 	#if defined (UNIX) || defined (macintosh)
 		structMelderDir usrLocal = { { 0 } };
-		Melder_pathToDirW (L"/usr/local", & usrLocal);
+		Melder_pathToDir (L"/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, L"%ls-startUp");
 	#endif
 	#if defined (UNIX) || defined (macintosh)
@@ -1292,14 +1286,14 @@ void praat_run (void) {
 	 * because any added commands must not be included in the buttons file.
 	 */
 	structMelderFile searchPattern = { 0 };
-	MelderDir_getFileW (& praatDir, L"plugin_*", & searchPattern);
-	Strings directoryNames = Strings_createAsDirectoryList (Melder_fileToPathW (& searchPattern));
+	MelderDir_getFile (& praatDir, L"plugin_*", & searchPattern);
+	Strings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 	if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
 		for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
 			structMelderDir pluginDir = { { 0 } };
 			structMelderFile plugin = { 0 };
-			MelderDir_getSubdirW (& praatDir, directoryNames -> strings [i], & pluginDir);
-			MelderDir_getFileW (& pluginDir, L"setup.praat", & plugin);
+			MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
+			MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
 			if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
 				fclose (f);
 				if (! praat_executeScriptFromFile (& plugin, NULL))

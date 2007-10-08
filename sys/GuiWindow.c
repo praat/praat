@@ -30,9 +30,7 @@
 
 void GuiWindow_setTitleW (Widget me, const wchar_t *title) {
 	#if mac
-		CFStringRef titleCF = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (title), kCFStringEncodingUTF8);
-		SetWindowTitleWithCFString (my nat.window.ptr, titleCF);
-		CFRelease (titleCF);
+		SetWindowTitleWithCFString (my nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win
 		SetWindowTextW (my window, title);
 	#else

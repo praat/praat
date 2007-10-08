@@ -38,33 +38,34 @@
 #endif
 #include "melder.h"
 
-char * Melder_getenv (const char *variableName) {
+wchar_t * Melder_getenv (const wchar_t *variableName) {
 	#if defined (macintosh) || defined (UNIX) || defined (MINGW)
-		return getenv (variableName);
+		return Melder_peekUtf8ToWcs (getenv (Melder_peekWcsToUtf8 (variableName)));
 	#elif defined (_WIN32)
-		char *env;
-		int length = strlen (variableName);
-		int i = 0;
-		for (i = 0; (env = _Environ [i]) != NULL; i ++)
-			if (strnequ (env, variableName, length))
-				return env [length] == '=' ? env + length + 1 : NULL;
-		return NULL;
+		static wchar_t buffer [11] [255];
+		static int ibuffer = 0;
+		if (++ ibuffer == 11) ibuffer = 0;
+		long n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);
+		if (n == ERROR_ENVVAR_NOT_FOUND) return NULL;
+		return & buffer [ibuffer] [0];
 	#endif
 }
 
-int Melder_system (const char *command) {
+int Melder_system (const wchar_t *command) {
 	#if defined (macintosh) || defined (UNIX)
-		if (system (command) != 0) return Melder_error ("System command failed.");
+		if (system (Melder_peekWcsToUtf8 (command)) != 0)
+			return Melder_error1 (L"System command failed.");
 		return 1;
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
-		char *comspec = Melder_getenv ("COMSPEC");   /* E.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" */
+		wchar_t *comspec = Melder_getenv (L"COMSPEC");   /* E.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" */
 		if (comspec == NULL) {
-			comspec = Melder_getenv ("ComSpec");
+			comspec = Melder_getenv (L"ComSpec");
 		}
+		MelderString buffer = { 0 };
 		if (comspec != NULL) {
-			strcpy (Melder_buffer1, comspec);
+			MelderString_copy (& buffer, comspec);
 		} else {
 			OSVERSIONINFOEX osVersionInfo;
 			memset (& osVersionInfo, 0, sizeof (OSVERSIONINFOEX));
@@ -72,23 +73,22 @@ int Melder_system (const char *command) {
 			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
 				osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 				if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-					return Melder_error ("System command cannot find system version.");
+					return Melder_error1 (L"System command cannot find system version.");
 			}
 			switch (osVersionInfo. dwPlatformId) {
 				case VER_PLATFORM_WIN32_NT: {
-					strcpy (Melder_buffer1, "cmd.exe");
+					MelderString_copy (& buffer, L"cmd.exe");
 				} break; case VER_PLATFORM_WIN32_WINDOWS: {
-					strcpy (Melder_buffer1, "command.com");
+					MelderString_copy (& buffer, L"command.com");
 				} break; default: {
-					strcpy (Melder_buffer1, "command.com");
+					MelderString_copy (& buffer, L"command.com");
 				}
 			}
 		}
-		strcat (Melder_buffer1, " /c ");
-		strcat (Melder_buffer1, command == NULL ? "" : command);
+		MelderString_append2 (& buffer, L" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
-		if (! CreateProcess (NULL, Melder_buffer1, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))
+		if (! CreateProcess (NULL, buffer.string, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))
 			return 0;
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);

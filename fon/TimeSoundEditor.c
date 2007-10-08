@@ -290,60 +290,64 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 static void createMenuItems_file_draw (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
-	EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
-	my drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+	if (my sound.data || my longSound.data) {
+		EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
+		my drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+	}
 }
 
 static void createMenuItems_file_extract (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
-	my publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
-		EditorMenu_addCommand (menu, L"Extract sound selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
-		EditorMenu_addCommand (menu, L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
-	my publishButton = EditorMenu_addCommand (menu, L"Extract selected sound (time from 0)", 0, menu_cb_ExtractSelectedSound_timeFromZero);
-		EditorMenu_addCommand (menu, L"Extract sound selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-		EditorMenu_addCommand (menu, L"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-		EditorMenu_addCommand (menu, L"Extract selection", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-	if (my sound.data) {
-		my publishWindowButton = EditorMenu_addCommand (menu, L"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
-			EditorMenu_addCommand (menu, L"Extract windowed sound selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
-			EditorMenu_addCommand (menu, L"Extract windowed selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
+	if (my sound.data || my longSound.data) {
+		my publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
+			EditorMenu_addCommand (menu, L"Extract sound selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
+			EditorMenu_addCommand (menu, L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
+		my publishButton = EditorMenu_addCommand (menu, L"Extract selected sound (time from 0)", 0, menu_cb_ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, L"Extract sound selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, L"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, L"Extract selection", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
+		if (my sound.data) {
+			my publishWindowButton = EditorMenu_addCommand (menu, L"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
+				EditorMenu_addCommand (menu, L"Extract windowed sound selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
+				EditorMenu_addCommand (menu, L"Extract windowed selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
+		}
 	}
 }
 
 static void createMenuItems_file_write (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	EditorMenu_addCommand (menu, L"Write to disk:", motif_INSENSITIVE, menu_cb_WriteWav /* dummy */);
-	my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
-		EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		EditorMenu_addCommand (menu, L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-	my writeAiffButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", 0, menu_cb_WriteAiff);
-		EditorMenu_addCommand (menu, L"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-		EditorMenu_addCommand (menu, L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-	my writeAifcButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFC file...", 0, menu_cb_WriteAifc);
-		EditorMenu_addCommand (menu, L"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		EditorMenu_addCommand (menu, L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-	my writeNextSunButton = EditorMenu_addCommand (menu, L"Write selected sound to Next/Sun file...", 0, menu_cb_WriteNextSun);
-		EditorMenu_addCommand (menu, L"Write sound selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-		EditorMenu_addCommand (menu, L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-	my writeNistButton = EditorMenu_addCommand (menu, L"Write selected sound to NIST file...", 0, menu_cb_WriteNist);
-		EditorMenu_addCommand (menu, L"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-		EditorMenu_addCommand (menu, L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-	my writeFlacButton = EditorMenu_addCommand (menu, L"Write selected sound to FLAC file...", 0, menu_cb_WriteFlac);
-		EditorMenu_addCommand (menu, L"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
+	if (my sound.data || my longSound.data) {
+		my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
+			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
+			EditorMenu_addCommand (menu, L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
+		my writeAiffButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", 0, menu_cb_WriteAiff);
+			EditorMenu_addCommand (menu, L"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
+			EditorMenu_addCommand (menu, L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
+		my writeAifcButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFC file...", 0, menu_cb_WriteAifc);
+			EditorMenu_addCommand (menu, L"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
+			EditorMenu_addCommand (menu, L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
+		my writeNextSunButton = EditorMenu_addCommand (menu, L"Write selected sound to Next/Sun file...", 0, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, L"Write sound selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+		my writeNistButton = EditorMenu_addCommand (menu, L"Write selected sound to NIST file...", 0, menu_cb_WriteNist);
+			EditorMenu_addCommand (menu, L"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
+			EditorMenu_addCommand (menu, L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
+		my writeFlacButton = EditorMenu_addCommand (menu, L"Write selected sound to FLAC file...", 0, menu_cb_WriteFlac);
+			EditorMenu_addCommand (menu, L"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
+	}
 }
 
 static void createMenuItems_file (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	inherited (TimeSoundEditor) createMenuItems_file (me, menu);
-	if (my sound.data || my longSound.data) {
-		our createMenuItems_file_draw (me, menu);
-		EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
-		our createMenuItems_file_extract (me, menu);
-		EditorMenu_addCommand (menu, L"-- after file extract --", 0, NULL);
-		our createMenuItems_file_write (me, menu);
-		EditorMenu_addCommand (menu, L"-- after file write --", 0, NULL);
-	}
+	our createMenuItems_file_draw (me, menu);
+	EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
+	our createMenuItems_file_extract (me, menu);
+	EditorMenu_addCommand (menu, L"-- after file extract --", 0, NULL);
+	our createMenuItems_file_write (me, menu);
+	EditorMenu_addCommand (menu, L"-- after file write --", 0, NULL);
 }
 
 /********** QUERY MENU **********/

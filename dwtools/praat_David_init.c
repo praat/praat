@@ -3323,12 +3323,12 @@ END
 
 FORM_READ (Sound_readFromRawFileLE, "Read Sound from raw Little Endian file", 0)
 	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0,
-		16000), MelderFile_nameW (file))) return 0;
+		16000), MelderFile_name (file))) return 0;
 END
 
 FORM_READ (Sound_readFromRawFileBE, "Read Sound from raw 16-bit Little Endian  file", 0)
 	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0,
-		16000), MelderFile_nameW (file))) return 0;
+		16000), MelderFile_name (file))) return 0;
 END
 
 FORM_WRITE (Sound_writeToRawFileBE, "Sound: Write to raw 16-bit Big Endian file",

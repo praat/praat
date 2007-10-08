@@ -34,7 +34,7 @@
 #define Command_methods Thing_methods
 class_create (Command, Thing);
 
-int Command_init (I, char *name, Any data, int (*execute)(Any), int (*undo)(Any));
+int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any));
 	
 int Command_do (I);
 
@@ -78,7 +78,7 @@ int CommandHistory_offleft (I);
 int CommandHistory_offright (I);
 /*	return my size == 0 || my current == my size + 1; */
 
-char *CommandHistory_commandName (I, long offsetFromCurrent);
+wchar_t *CommandHistory_commandName (I, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return NULL. */
 

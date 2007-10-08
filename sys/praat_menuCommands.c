@@ -273,7 +273,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	} else {
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (script, & file);
-		theCommands [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
+		theCommands [position]. script = Melder_wcsdup (Melder_fileToPath (& file));
 	}
 	theCommands [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
 	if (praatP.phase >= praat_READING_BUTTONS) {

@@ -31,6 +31,7 @@
  * pb 2007/05/30 save Unicode
  * pb 2007/06/12 more wchar_t
  * pb 2007/08/12 more wchar_t
+ * pb 2007/10/05 less char
  */
 
 #include "TextEditor.h"
@@ -55,25 +56,20 @@ static void nameChanged (I) {
 	iam (TextEditor);
 	if (our fileBased) {
 		int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
-		static MelderStringW windowTitle = { 0 };
-		MelderStringW_empty (& windowTitle);
+		static MelderString windowTitle = { 0 };
+		MelderString_empty (& windowTitle);
 		if (my name == NULL) {
-			MelderStringW_appendW (& windowTitle, L"(untitled");
-			if (my dirty && ! dirtinessAlreadyShown) MelderStringW_appendW (& windowTitle, L", modified");
-			MelderStringW_appendW (& windowTitle, L")");
+			MelderString_append (& windowTitle, L"(untitled");
+			if (my dirty && ! dirtinessAlreadyShown) MelderString_append (& windowTitle, L", modified");
+			MelderString_append (& windowTitle, L")");
 		} else {
-			MelderStringW_appendW (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK);
-			MelderStringW_appendW (& windowTitle, MelderFile_messageNameW (& my file));
-			MelderStringW_appendW (& windowTitle, UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
-			if (my dirty && ! dirtinessAlreadyShown) MelderStringW_appendW (& windowTitle, L" (modified)");
+			MelderString_append3 (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+			if (my dirty && ! dirtinessAlreadyShown) MelderString_append (& windowTitle, L" (modified)");
 		}
 		GuiWindow_setTitleW (my shell, windowTitle.string);
-		if (my name == NULL)
-			sprintf (Melder_buffer1, "%s(untitled)", my dirty && ! dirtinessAlreadyShown ? "*" : "");
-		else
-			sprintf (Melder_buffer1, "%s%s", my dirty && ! dirtinessAlreadyShown ? "*" : "", MelderFile_name (& my file));
-		Longchar_nativize (Melder_buffer1, Melder_buffer2, TRUE);
-		XtVaSetValues (my shell, XmNiconName, Melder_buffer2, NULL);
+		MelderString_empty (& windowTitle);
+		MelderString_append2 (& windowTitle, my dirty && ! dirtinessAlreadyShown ? L"*" : L"", my name == NULL ? L"(untitled)" : MelderFile_name (& my file));
+		XtVaSetValues (my shell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
 	} else {
 		inherited (TextEditor) nameChanged (me);
 	}
@@ -90,14 +86,14 @@ static int openDocument (TextEditor me, MelderFile file) {
 	 */
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	Thing_setNameW (me, Melder_fileToPathW (file));
+	Thing_setNameW (me, Melder_fileToPath (file));
 	return 1;
 }
 
 static void newDocument (TextEditor me) {
 	XmTextSetString (my textWidget, "");   /* Implicitly sets my dirty to TRUE. */
 	my dirty = FALSE;
-	if (our fileBased) Thing_setName (me, NULL);
+	if (our fileBased) Thing_setNameW (me, NULL);
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
@@ -106,7 +102,7 @@ static int saveDocument (TextEditor me, MelderFile file) {
 	Melder_free (text);
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	if (our fileBased) Thing_setNameW (me, Melder_fileToPathW (file));
+	if (our fileBased) Thing_setNameW (me, Melder_fileToPath (file));
 	return 1;
 }
 
@@ -141,7 +137,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	wchar_t defaultName [300];
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, 0);
-	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my nameW ? MelderFile_nameW (& my file) : L"");
+	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my nameW ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 	return 1;
 }

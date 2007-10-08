@@ -56,20 +56,16 @@ static void destroy (I) {
 static void nameChanged (I) {
 	iam (ScriptEditor);
 	int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
-	static MelderStringW buffer = { 0 };
-	MelderStringW_copyW (& buffer, my nameW ? L"Script" : L"untitled script");
+	static MelderString buffer = { 0 };
+	MelderString_copy (& buffer, my nameW ? L"Script" : L"untitled script");
 	if (my editorClass) {
-		MelderStringW_appendW (& buffer, L" [");
-		MelderStringW_appendW (& buffer, my environmentName);
-		MelderStringW_appendW (& buffer, L"]");
+		MelderString_append3 (& buffer, L" [", my environmentName, L"]");
 	}
 	if (my nameW) {
-		MelderStringW_appendW (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK);
-		MelderStringW_appendW (& buffer, MelderFile_messageNameW (& my file));
-		MelderStringW_appendW (& buffer, UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+		MelderString_append3 (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 	}
 	if (my dirty && ! dirtinessAlreadyShown)
-		MelderStringW_appendW (& buffer, L" (modified)");
+		MelderString_append (& buffer, L" (modified)");
 	GuiWindow_setTitleW (my shell, buffer.string);
 	XtVaSetValues (my shell, XmNiconName, "Script", NULL);
 }
@@ -79,7 +75,7 @@ static int args_ok (Any dia, I) {
 	structMelderFile file = { 0 };
 	wchar_t *text = GuiText_getStringW (my textWidget);
 	if (my nameW) {
-		Melder_pathToFileW (my nameW, & file);
+		Melder_pathToFile (my nameW, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -99,7 +95,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 	structMelderFile file = { 0 };
 	int npar;
 	if (my nameW) {
-		Melder_pathToFileW (my nameW, & file);
+		Melder_pathToFile (my nameW, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (text);
@@ -303,7 +299,7 @@ ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Scrip
 	Melder_free (text);
 	if (! me) return NULL;
 	MelderFile_copy (& script -> file, & my file);
-	Thing_setNameW (me, Melder_fileToPathW (& script -> file));
+	Thing_setNameW (me, Melder_fileToPath (& script -> file));
 	return me;
 }
 

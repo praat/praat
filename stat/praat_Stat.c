@@ -551,15 +551,15 @@ DO
 END
 
 FORM_READ (Table_readFromTableFile, "Read Table from table file", 0)
-	if (! praat_new (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
 END
 
 FORM_READ (Table_readFromCommaSeparatedFile, "Read Table from comma-separated file", 0)
-	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
 END
 
 FORM_READ (Table_readFromTabSeparatedFile, "Read Table from tab-separated file", 0)
-	if (! praat_new (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
 END
 
 FORM (Table_removeColumn, "Table: Remove column", 0)
@@ -1235,7 +1235,7 @@ DO
 END
 
 FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, "Read TableOfReal from headerless spreadsheet file", 0)
-	if (! praat_new (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
 END
 
 FORM (TableOfReal_removeColumn, "Remove column", 0)

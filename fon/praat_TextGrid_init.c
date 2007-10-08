@@ -643,12 +643,12 @@ DO
 		TextGrid grid = OBJECT;
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER ("Position");
-		const char *name = GET_STRING ("Name");
+		const wchar_t *name = GET_STRINGW (L"Name");
 		AnyTier newTier;
 		if (itier > grid -> tiers -> size) itier = grid -> tiers -> size;
 		newTier = Data_copy (grid -> tiers -> item [itier]);
 		if (! newTier) return 0;
-		Thing_setName (newTier, name);
+		Thing_setNameW (newTier, name);
 		if (! Ordered_addItemPos (grid -> tiers, newTier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -915,11 +915,11 @@ DO
 	WHERE (SELECTED) {
 		TextGrid grid = OBJECT;
 		int position = GET_INTEGER ("Position");
-		char *name = GET_STRING ("Name");
+		wchar_t *name = GET_STRINGW (L"Name");
 		IntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setName (tier, name);
+		Thing_setNameW (tier, name);
 		if (! Ordered_addItemPos (grid -> tiers, tier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}

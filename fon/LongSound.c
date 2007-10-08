@@ -80,7 +80,7 @@ static void info (I) {
 		L"FLAC", L"MP3" };
 	classData -> info (me);
 	MelderInfo_writeLine3 (L"Duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	MelderInfo_writeLine2 (L"File name: ", Melder_fileToPathW (& my file));
+	MelderInfo_writeLine2 (L"File name: ", Melder_fileToPath (& my file));
 	MelderInfo_writeLine2 (L"File type: ", my audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : Melder_audioFileTypeString (my audioFileType));
 	MelderInfo_writeLine2 (L"Channels: ", my numberOfChannels > 4 ? L"unknown" : channelStrings [my numberOfChannels]);
 	MelderInfo_writeLine2 (L"Encoding: ", my encoding > 16 ? L"unknown" : encodingStrings [my encoding]);

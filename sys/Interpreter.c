@@ -619,10 +619,10 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 }
 
 int Interpreter_run (Interpreter me, wchar_t *text) {
-	static MelderStringW valueString = { 0 };   /* To divert the info. */
-	static MelderStringW assertErrorString = { 0 };
+	static MelderString valueString = { 0 };   /* To divert the info. */
+	static MelderString assertErrorString = { 0 };
 	wchar_t *command = text;
-	MelderStringW command2 = { 0 }, buffer = { 0 };
+	MelderString command2 = { 0 }, buffer = { 0 };
 	wchar_t **lines = NULL;
 	long lineNumber = 0, numberOfLines = 0, assertErrorLineNumber = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
 	int atLastLine = FALSE, fromif = FALSE, fromendfor = FALSE, callDepth = 0, chopped = 0, ipar, assertionFailed = FALSE;
@@ -680,8 +680,8 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		wchar_t *line = lines [lineNumber];
 		if (line [0] == '.' && line [1] == '.' && line [2] == '.') {
 			wchar_t *previous = lines [lineNumber - 1];
-			MelderStringW_copyW (& command2, line + 3);
-			MelderStringW_getW (& command2, previous + wcslen (previous));
+			MelderString_copy (& command2, line + 3);
+			MelderString_get (& command2, previous + wcslen (previous));
 			lines [lineNumber] = L"";
 		}
 	}
@@ -709,12 +709,12 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	Interpreter_addStringVariable (me, L"tab$", L"\t");
 	Interpreter_addStringVariable (me, L"shellDirectory$", Melder_getShellDirectory ());
 	structMelderDir dir = { { 0 } }; Melder_getDefaultDir (& dir);
-	Interpreter_addStringVariable (me, L"defaultDirectory$", Melder_dirToPathW (& dir));
-	Interpreter_addStringVariable (me, L"preferencesDirectory$", Melder_dirToPathW (& praatDir));
+	Interpreter_addStringVariable (me, L"defaultDirectory$", Melder_dirToPath (& dir));
+	Interpreter_addStringVariable (me, L"preferencesDirectory$", Melder_dirToPath (& praatDir));
 	Melder_getHomeDir (& dir);
-	Interpreter_addStringVariable (me, L"homeDirectory$", Melder_dirToPathW (& dir));
+	Interpreter_addStringVariable (me, L"homeDirectory$", Melder_dirToPath (& dir));
 	Melder_getTempDir (& dir);
-	Interpreter_addStringVariable (me, L"temporaryDirectory$", Melder_dirToPathW (& dir));
+	Interpreter_addStringVariable (me, L"temporaryDirectory$", Melder_dirToPath (& dir));
 	/*
 	 * Execute commands.
 	 */
@@ -722,7 +722,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
 		int c0, fail = FALSE;
 		wchar_t *p;
-		MelderStringW_copyW (& command2, lines [lineNumber]);
+		MelderString_copy (& command2, lines [lineNumber]);
 		c0 = command2. string [0];
 		if (c0 == '\0') continue;
 		/*
@@ -759,10 +759,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					precision >= 0 ?  Melder_fixed (var -> numericValue, precision) :
 					Melder_double (var -> numericValue);
 				int arglen = wcslen (string);
-				MelderStringW_ncopyW (& buffer, command2.string, headlen);
-				MelderStringW_appendW (& buffer, string);
-				MelderStringW_appendW (& buffer, q + 1);
-				MelderStringW_copyW (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
+				MelderString_ncopy (& buffer, command2.string, headlen);
+				MelderString_append2 (& buffer, string, q + 1);
+				MelderString_copy (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
 				p = command2.string + headlen + arglen - 1;
 			} else {
 				p = q - 1;   /* Go to before next quote. */
@@ -788,7 +787,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 							L" (", value ? L"undefined" : L"false", L"):\n   ", command2.string + 7)
 					}
 				} else if (wcsnequ (command2.string, L"asserterror ", 12)) {
-					MelderStringW_copyW (& assertErrorString, command2.string + 12);
+					MelderString_copy (& assertErrorString, command2.string + 12);
 					assertErrorLineNumber = lineNumber;
 				} else fail = TRUE;
 				break;
@@ -1242,7 +1241,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * Example: name$ = Get name
 					 */
-					MelderStringW_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
+					MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 					Melder_divertInfo (& valueString);
 					praat_executeCommand (me, p);
 					Melder_divertInfo (NULL); cherror
@@ -1313,9 +1312,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * Get the value of the query.
 					 */
-					MelderStringW_empty (& valueString);
+					MelderString_empty (& valueString);
 					Melder_divertInfo (& valueString);
-					MelderStringW_appendCharacter (& valueString, 1);
+					MelderString_appendCharacter (& valueString, 1);
 					praat_executeCommand (me, p);
 					if (valueString.string [0] == 1) {
 						int IOBJECT, result = 0, found = 0;
@@ -1406,24 +1405,12 @@ end2:
 		}
 	}
 	NUMpvector_free (lines, 1);
-	MelderStringW_free (& command2);
-	MelderStringW_free (& buffer);
+	MelderString_free (& command2);
+	MelderString_free (& buffer);
 	my numberOfLabels = 0;
 	iferror return 0;
 	return 1;
 }
-
-/*
-bool Interpreter_runA (Interpreter me, const char *textA) {
-	MelderString text = { 0 };
-	MelderString_copyA (& textS, textA); cherror
-	Interpreter_runS (me, & textS); cherror
-end:
-	MelderString_free (& textS);
-	iferror return false;
-	return true;
-}
-*/
 
 int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *result) {
 	Melder_assert (result != NULL);

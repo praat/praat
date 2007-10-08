@@ -165,12 +165,10 @@ void *Thing_classFromClassNameW (const wchar_t *className);
 		and Thing_version will be set to 300.
 */
 
-char * Thing_getName (I);
 wchar_t * Thing_getNameW (I);
 /* Return a pointer to your internal name (which can be NULL). */
 wchar_t * Thing_messageName (I);
 
-void Thing_setName (I, const char *name);
 void Thing_setNameW (I, const wchar_t *name);
 /*
 	Function:

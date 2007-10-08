@@ -63,7 +63,7 @@ FORM (Manual, cb_writeAllToHtmlDir, "Write all pages as HTML files", 0)
 	OK
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
-SET_STRINGW (L"directory", Melder_dirToPathW (& currentDirectory))
+SET_STRINGW (L"directory", Melder_dirToPath (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;
@@ -271,8 +271,8 @@ static float searchToken (ManPages me, long ipage, wchar_t *token) {
 	/*
 	 * Try to find a match in the title, case insensitively.
 	 */
-	static MelderStringW buffer = { 0 };
-	MelderStringW_copyW (& buffer, page -> title);
+	static MelderString buffer = { 0 };
+	MelderString_copy (& buffer, page -> title);
 	for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
 	if (wcsstr (buffer.string, token)) {
 		goodness += 300.0;   /* Lots of points for a match in the title! */
@@ -285,7 +285,7 @@ static float searchToken (ManPages me, long ipage, wchar_t *token) {
 	while (par -> type) {
 		if (par -> text) {
 			wchar_t *ptoken;
-			MelderStringW_copyW (& buffer, par -> text);
+			MelderString_copy (& buffer, par -> text);
 			for (wchar_t *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower (*p);
 			ptoken = wcsstr (buffer.string, token);
 			if (ptoken) {
@@ -303,9 +303,9 @@ static float searchToken (ManPages me, long ipage, wchar_t *token) {
 static void search (Manual me, const wchar_t *query) {
 	ManPages manPages = my data;
 	long numberOfPages = manPages -> pages -> size, ipage, imatch;
-	static MelderStringW searchText = { 0 };
+	static MelderString searchText = { 0 };
 	wchar_t *p;
-	MelderStringW_copyW (& searchText, query);
+	MelderString_copy (& searchText, query);
 	for (p = & searchText.string [0]; *p != '\0'; p ++) {
 		if (*p == '\n') *p = ' ';
 		*p = tolower (*p);

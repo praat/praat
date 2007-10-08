@@ -279,7 +279,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	} else {
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (script, & file);
-		theActions [position]. script = Melder_wcsdup (Melder_fileToPathW (& file));
+		theActions [position]. script = Melder_wcsdup (Melder_fileToPath (& file));
 	}
 	theActions [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
 	theActions [position]. phase = praatP.phase;

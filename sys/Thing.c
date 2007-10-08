@@ -193,29 +193,18 @@ void Thing_info (I) {
 	MelderInfo_close ();
 }
 
-char * Thing_getName (I) { iam (Thing); return my name; }
 wchar_t * Thing_getNameW (I) { iam (Thing); return my nameW; }
 
 wchar_t * Thing_messageName (I) {
 	iam (Thing);
-	static MelderStringW buffers [11];
+	static MelderString buffers [11];
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
-	MelderStringW_empty (& buffers [ibuffer]);
-	MelderStringW_append4 (& buffers [ibuffer], our _classNameW, L" \"", my nameW ? my nameW : L"(nameless)", L"\"");
+	MelderString_empty (& buffers [ibuffer]);
+	MelderString_append4 (& buffers [ibuffer], our _classNameW, L" \"", my nameW ? my nameW : L"(nameless)", L"\"");
 	return buffers [ibuffer]. string;
 }
 
-void Thing_setName (I, const char *name) {
-	iam (Thing);
-	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
-		Melder_free (my name);
-		my name = Melder_strdup (name);
-		Melder_free (my nameW);
-		my nameW = Melder_utf8ToWcs (name);
-	}
-	our nameChanged (me);
-}
 void Thing_setNameW (I, const wchar_t *name) {
 	iam (Thing);
 	if (name != my nameW) {   /* Pointer comparison! So that Thing_setNameW (me, my nameW) does not fail. */

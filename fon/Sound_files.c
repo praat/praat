@@ -31,6 +31,8 @@
  * pb 2007/01/28 made readFromMovieFile compatible with stereo
  * pb 2007/03/17 resistant against conflicting declarations of Collection
  * pb 2007/05/08 removed warning about stereo sounds
+ * pb 2007/10/05 removed FSSpec
+ * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sample rates between 32768 and 65535 Hertz
  */
 
 /*
@@ -91,8 +93,9 @@ static void Sound_alawDecode (Sound me) {
 		#include "macport_off.h"
 	#endif
 #endif
+#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
+#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
 #if defined (_WIN32) && ! defined (DONT_INCLUDE_QUICKTIME)
-	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
 	static int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		FSSpec *fspec = (FSSpec *) void_fspec;
 		Str255 pname;
@@ -106,6 +109,45 @@ static void Sound_alawDecode (Sound me) {
 				return Melder_error ("To open this movie file, you have to install QuickTime first (www.apple.com).");
 			}
 			return Melder_error ("Error #%d looking for file %s.", err, path);
+		}
+		return 1;
+	}
+#elif defined (macintosh)
+	static int Melder_fileToMac (MelderFile file, void *void_fspec) {
+		char path [1000];
+		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
+		FSRef fsref;
+		OSStatus err = FSPathMakeRef ((unsigned char *) path, & fsref, NULL);
+		if (err != noErr && err != fnfErr)
+			return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
+		FSSpec *fspec = (FSSpec *) void_fspec;
+		err = FSGetCatalogInfo (& fsref, kFSCatInfoNone, NULL, NULL, fspec, NULL);
+		if (err != noErr) {
+			/*
+				File does not exist. Get its parent directory instead.
+			*/
+			structMelderDir parentDir = { { 0 } };
+			char romanName [260];
+			CFStringRef unicodeName;
+			Str255 pname;
+			FSCatalogInfo info;
+			FSRef parentDirectory;
+			MelderFile_getParentDir (file, & parentDir);
+			Melder_wcsTo8bitFileRepresentation_inline (parentDir. wpath, path);
+			err = FSPathMakeRef ((unsigned char *) path, & parentDirectory, NULL);
+			if (err != noErr)
+				return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. wpath, L".");
+			err = FSGetCatalogInfo (& parentDirectory, kFSCatInfoVolume | kFSCatInfoNodeID, & info, NULL, NULL, NULL);
+			if (err != noErr)
+				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for directory of ", file -> wpath, L".");
+			/*
+				Convert from Unicode to MacRoman.
+			*/
+			CFStringGetCString (Melder_peekWcsToCfstring (MelderFile_name (file)), romanName, 260, kCFStringEncodingMacRoman);   // BUG
+			PfromCstr (pname, romanName);
+			err = FSMakeFSSpec (info. volume, info. nodeID, & pname [0], fspec);
+			if (err != noErr && err != fnfErr)
+				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> wpath, L".");
 		}
 		return 1;
 	}
@@ -202,7 +244,7 @@ Sound Sound_readFromSesamFile (MelderFile fs) {
 #ifdef macintosh
 Sound Sound_readFromMacSoundFile (MelderFile file) {
 	Sound me = NULL;
-	FSSpec fspec;
+	FSRef fsRef;
 	int path;
 	Handle han;
 	long numberOfSamples;
@@ -211,8 +253,8 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 	unsigned const char *from;
 	float *to;
 	long i;
-	Melder_fileToMac (file, & fspec);
-	path = FSpOpenResFile (& fspec, fsRdPerm);   /* Open resource fork; there are the sounds. */
+	Melder_fileToMach (file, & fsRef);
+	path = FSOpenResFile (& fsRef, fsRdPerm);   /* Open resource fork; there are the sounds. */
 	if (path == -1)
 		return Melder_errorp ("(Sound_readFromMacSoundFile:) Error opening resource fork.");
 	if (Count1Resources ('snd ') == 0) {   /* Are there really any sounds in this file? */
@@ -242,7 +284,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 	}
 	header = & (**(SndResourceHandle) han).itsSndHeader;
 	numberOfSamples = header -> length;
-	samplingFrequency = (long) header -> sampleRate / 65536.0;
+	samplingFrequency = (unsigned long) header -> sampleRate / 65536.0;
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (me == NULL) return NULL;
 	header = & (**(SndResourceHandle) han).itsSndHeader;   /* Do not move memory. */
@@ -605,8 +647,6 @@ int Sound_writeToSesamFile (Sound me, MelderFile file) {
 
 #ifdef macintosh
 int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
-	int path;
-	FSSpec fspec;
 	long numberOfSamples = my nx;
 	SndResourceHandle dataH = (SndResourceHandle) NewHandle (42 + numberOfSamples);
 	SndResourcePtr data;
@@ -626,7 +666,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	data -> itsSndHeader. samplePtr = NULL;
 	data -> itsSndHeader. length = numberOfSamples;
 	data -> itsSndHeader. sampleRate =
-		(Fixed) (long) floor (65536.0 / my dx);
+		(Fixed) (unsigned long) floor (65536.0 / my dx);
 	data -> itsSndHeader. loopStart = 0L;
 	data -> itsSndHeader. loopEnd = 0L;
 	data -> itsSndHeader. encode = stdSH;
@@ -635,11 +675,31 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	to = (unsigned char *) & data -> itsSndHeader. sampleArea - 1;
 	for (i = 1; i <= numberOfSamples; i ++) to [i] = (int) (from [i] * 128 + 128);
 
-	Melder_fileToMac (file, & fspec);
-	FSpDelete (& fspec);   /* Overwrite existing file with same name. */
-	/* FSpCreate (& fspec, 'PpgB', 'sfil', smSystemScript);   /* File type is 'sfil' (sound file). */
-	FSpCreateResFile (& fspec, 'PpgB', 'sfil', smSystemScript);   /* Make a resource fork... */
-	path = FSpOpenResFile (& fspec, fsWrPerm);   /* ...and open it. */
+	HFSUniStr255 resourceForkName;
+	FSGetResourceForkName (& resourceForkName);
+	FSRef fsRef;
+	char pathUtf8 [1000];
+	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, pathUtf8);
+	OSStatus err = FSPathMakeRef ((unsigned char *) pathUtf8, & fsRef, NULL);
+	if (err == fnfErr) {
+		structMelderDir dir;
+		MelderFile_getParentDir (file, & dir);
+		FSRef parentRef;
+		Melder_dirToMach (& dir, & parentRef);
+		OSErr err = FSCreateResourceFile (& parentRef, wcslen (MelderFile_name (file)) /* BUG */,
+			Melder_peekWcsToUtf16 (MelderFile_name (file)), 0, NULL,
+			resourceForkName. length, resourceForkName. unicode, & fsRef, NULL);
+		if (err != noErr)
+			return Melder_error1 (L"Error %d when trying to create a Mac sound resource file.");
+	}
+	Melder_fileToMach (file, & fsRef);
+	FSDeleteFork (& fsRef, resourceForkName. length, resourceForkName. unicode);
+	OSErr err2 = FSCreateResourceFork (& fsRef, resourceForkName. length, resourceForkName. unicode, 0);
+	if (err2 == nsvErr) {
+		return Melder_error1 (L"File not found when trying to create a Mac sound resource file.");
+	} else if (err2 != noErr)
+		return Melder_error ("Unexpected error %d trying to create a Mac sound file.", err2);
+	int path = FSOpenResFile (& fsRef, fsWrPerm);
 
 	/* Write the data to the file as an 'snd ' resource. */
 	/* The Id of this resource is 128, which is the same as ResEdit would suggest. */
@@ -648,7 +708,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	/* 2. we can use it as a warning signal (control panel Sound) in the System file. */
 	/* 3. we can hear when the Macintosh boots if it is in the folder "Starting up". */
 
-	AddResource ((Handle) dataH, 'snd ', 128, fspec. name);   /* Resource manager's. */
+	AddResource ((Handle) dataH, 'snd ', 128, (unsigned char *) "sound");   /* Resource manager's. */
 	if (ResError () != noErr) {
 		CloseResFile (path);
 		return Melder_error ("Sound_writeToMacSoundFile: not enough disk space.");

@@ -300,7 +300,7 @@ int Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 	if (fprintf (f, "PraatPictureFile") < 0 || ! Graphics_writeRecordings (my graphics, f)) {
 		fclose (f);
 		return Melder_error ("Picture_writeToPraatPictureFile: "
-			"error while writing file %.200s", MelderFile_messageName (file));
+			"error while writing file %.200s.", MelderFile_messageName (file));
 	}
 	fclose (f);
 	return 1;
@@ -445,24 +445,22 @@ void Picture_copyToClipboard_screenImage (Picture me) {
 }
 int Picture_writeToMacPictFile (Picture me, MelderFile file) {
 	long i, zero = 0, count;
-	FSSpec fspec;
-	short int path;
 	PicHandle pict = copyToPict (me);	
 	MelderFile_delete (file);   /* Overwrite existing file with same name. */
-	Melder_fileToMac (file, & fspec);
-	if (FSpCreate (& fspec, 'PpgB', 'PICT', smSystemScript) != noErr)
+	FILE *f = Melder_fopen (file, "wb");
+	if (f == NULL)
 		return Melder_error ("Picture_writeToMacPictFile: "
 			"cannot open file %.200s", MelderFile_messageName (file));
-	FSpOpenDF (& fspec, fsWrPerm, & path);
 	count = 4;
 	for (i = 1; i <= 128; i ++)
-		FSWrite (path, & count, & zero);
+		fwrite (& zero, 4, 1, f);
 	HLock ((Handle) pict);
 	count = GetHandleSize ((Handle) pict);
-	FSWrite (path, & count, *pict);
+	fwrite (*pict, count, 1, f);
 	HUnlock ((Handle) pict);
-	FSClose (path);
+	Melder_fclose (file, f);
 	KillPicture (pict);
+	MelderFile_setMacTypeAndCreator (file, 'PICT', 'PpgB');
 	return 1;
 }
 #endif
@@ -484,8 +482,8 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	defaultPrinter. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 	PrintDlg (& defaultPrinter);
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
-	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, "Praat\0");
-	if (! dc) return Melder_errorp ("Cannot create metafile.");
+	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, L"Praat\0");
+	if (! dc) return Melder_errorp1 (L"Cannot create metafile.");
 	resolution = GetDeviceCaps (dc, LOGPIXELSX);   /* Virtual PC: 360 */
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
@@ -566,30 +564,34 @@ int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int u
 		Create an 8-bit screen preview.
 	*/
 	if (thePrinter. epsFilesHavePreview) {
-		int path;
-		FSSpec fspec;
 		PicHandle pict = copyToPict_screenImage (me);
 		/*
 		 * Copy the PICT to the file.
 		 */
-		Melder_fileToMac (file, & fspec);
-		FSpCreateResFile (& fspec, 'vgrd', 'EPSF', smSystemScript);   /* Make a resource fork... */
-		path = FSpOpenResFile (& fspec, fsWrPerm);   /* ...and open it. */
+		FSRef macFileReference;
+		Melder_fileToMach (file, & macFileReference);
+		HFSUniStr255 resourceForkName;
+		FSGetResourceForkName (& resourceForkName);
+		OSErr err = FSCreateResourceFork (& macFileReference, resourceForkName. length, resourceForkName. unicode, 0);
+		if (err != noErr)
+			return Melder_error3 (L"Unexpected error ", Melder_integer (err), L" trying to create a screen preview .");
+		int path = FSOpenResFile (& macFileReference, fsWrPerm);
 
 		/* Write the data to the file as a 'PICT' resource. */
 		/* The Id of this resource is 256 (PS. Lang. Ref. Man., 2nd ed., p. 728. */
-		/* The name of the resource will be equal to the name of the file. */
 
-		AddResource ((Handle) pict, 'PICT', 256, fspec. name);   /* Resource manager's. */
-		if (ResError () != noErr) {
-			/*
-			 * Disk full, or PICT resource larger than 32 kilobytes?
-			 */
+		if (path != -1) {
+			AddResource ((Handle) pict, 'PICT', 256, (unsigned char *) "pict");   /* Resource manager's. */
+			if (ResError () != noErr) {
+				/*
+				 * Disk full, or PICT resource larger than 32 kilobytes?
+				 */
+				CloseResFile (path);
+				return Melder_error1 (L"Picture_writeToEpsFile: not enough disk space.");
+			}
+			SetResAttrs ((Handle) pict, resPurgeable + resChanged);
 			CloseResFile (path);
-			return Melder_error ("Picture_writeToEpsFile: not enough disk space.");
 		}
-		SetResAttrs ((Handle) pict, resPurgeable + resChanged);
-		CloseResFile (path);
 	}
 	#endif
 

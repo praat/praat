@@ -23,6 +23,7 @@
  * pb 2007/06/16 text encoding preferences
  * pb 2007/08/12 prefs in wchar_t
  * pb 2007/09/04 Melder_malloc rather than malloc in Melder_wcsToAscii (had caused an error in counting memory leaks)
+ * pb 2007/10/06 Melder_peekWcsToCfstring
  */
 
 #include "melder.h"
@@ -30,6 +31,12 @@
 #include "UnicodeData.h"
 #include "abcio.h"
 #define my  me ->
+
+#if defined (macintosh)
+	#include "macport_on.h"
+	#include <Carbon/Carbon.h>
+	#include "macport_off.h"
+#endif
 
 static struct {
 	int inputEncoding, outputEncoding;
@@ -327,6 +334,44 @@ wchar_t * Melder_utf8ToWcs (const char *string) {
 	return result;
 }
 
+wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
+	if (textA == NULL) return NULL;
+	static MelderString buffers [11] = { { 0 } };
+	static int ibuffer = 0;
+	if (++ ibuffer == 11) ibuffer = 0;
+	MelderString_empty (& buffers [ibuffer]);
+	unsigned long n = strlen (textA), i, j;
+	for (i = 0, j = 0; i <= n; i ++) {
+		unsigned char kar = textA [i];
+		if (kar <= 0x7F) {
+			MelderString_appendCharacter (& buffers [ibuffer], kar);
+		} else if (kar <= 0xC1) {
+			MelderString_appendCharacter (& buffers [ibuffer], '?');
+		} else if (kar <= 0xDF) {
+			unsigned char kar2 = textA [++ i];
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x1F) << 6) | (kar2 & 0x3F));
+		} else if (kar <= 0xEF) {
+			unsigned char kar2 = textA [++ i];
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			unsigned char kar3 = textA [++ i];
+			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F));
+		} else if (kar <= 0xF4) {
+			unsigned char kar2 = textA [++ i];
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			unsigned char kar3 = textA [++ i];
+			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			unsigned char kar4 = textA [++ i];
+			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F));
+		} else {
+			MelderString_appendCharacter (& buffers [ibuffer], '?');
+		}
+	}
+	return buffers [ibuffer]. string;
+}
+
 void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 	long n = wcslen (wcs), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
@@ -355,78 +400,29 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 
 char * Melder_wcsToUtf8 (const wchar_t *string) {
 	if (string == NULL) return NULL;
-	char *result = Melder_malloc (char, wcslen (string) * 6 + 1);
+	char *result = Melder_malloc (char, wcslen (string) * 4 + 1);
 	Melder_wcsToUtf8_inline (string, result);
 	return result;
 }
 
-wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
-	if (textA == NULL) return NULL;
-	static MelderStringW buffers [11] = { { 0 } };
-	static int ibuffer = 0;
-	if (++ ibuffer == 11) ibuffer = 0;
-	MelderStringW_empty (& buffers [ibuffer]);
-	unsigned long n = strlen (textA), i, j;
-	for (i = 0, j = 0; i <= n; i ++) {
-		unsigned char kar = textA [i];
-		if (kar <= 0x7F) {
-			MelderStringW_appendCharacter (& buffers [ibuffer], kar);
-		} else if (kar <= 0xC1) {
-			MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-		} else if (kar <= 0xDF) {
-			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x1F) << 6) | (kar2 & 0x3F));
-		} else if (kar <= 0xEF) {
-			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			unsigned char kar3 = textA [++ i];
-			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F));
-		} else if (kar <= 0xF4) {
-			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			unsigned char kar3 = textA [++ i];
-			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			unsigned char kar4 = textA [++ i];
-			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-			MelderStringW_appendCharacter (& buffers [ibuffer], ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F));
-		} else {
-			MelderStringW_appendCharacter (& buffers [ibuffer], '?');
-		}
-	}
-	return buffers [ibuffer]. string;
-}
-
 char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	if (text == NULL) return NULL;
-	static MelderStringA buffers [11] = { { 0 } };
+	static char *buffer [11] = { NULL };
+	static long bufferSize [11] = { 0 };
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
-	MelderStringA_empty (& buffers [ibuffer]);
-	unsigned long n = wcslen (text);
-	for (unsigned long i = 0; i <= n; i ++) {
-		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) text [i] : text [i];
-		if (kar <= 0x00007F) {
-			#ifdef _WIN32
-				if (kar == '\n') MelderStringA_appendCharacter (& buffers [ibuffer], 13);
-			#endif
-			MelderStringA_appendCharacter (& buffers [ibuffer], kar);
-		} else if (kar <= 0x0007FF) {
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0xC0 | (kar >> 6));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | (kar & 0x00003F));
-		} else if (kar <= 0x00FFFF) {
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0xE0 | (kar >> 12));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | ((kar >> 6) & 0x00003F));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | (kar & 0x00003F));
-		} else {
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0xF0 | (kar >> 18));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | ((kar >> 12) & 0x00003F));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | ((kar >> 6) & 0x00003F));
-			MelderStringA_appendCharacter (& buffers [ibuffer], 0x80 | (kar & 0x00003F));
-		}
+	long sizeNeeded = wcslen (text) * 4 + 1;
+	if ((bufferSize [ibuffer] - sizeNeeded) * sizeof (char) >= 10000) {
+		Melder_free (buffer [ibuffer]);
+		bufferSize [ibuffer] = 0;
 	}
-	return buffers [ibuffer]. string;
+	if (sizeNeeded > bufferSize [ibuffer]) {
+		sizeNeeded = sizeNeeded * 1.61803 + 100;
+		buffer [ibuffer] = Melder_malloc (char, sizeNeeded);
+		bufferSize [ibuffer] = sizeNeeded;
+	}
+	Melder_wcsToUtf8_inline (text, buffer [ibuffer]);
+	return buffer [ibuffer];
 }
 
 const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *text) {
@@ -444,6 +440,18 @@ const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *text) {
 	}
 	return buffers [ibuffer]. string;
 }
+
+#if defined (macintosh)
+const void * Melder_peekWcsToCfstring (const wchar_t *text) {
+	if (text == NULL) return NULL;
+	static CFStringRef cfString [11];
+	static int icfString = 0;
+	if (++ icfString == 11) icfString = 0;
+	if (cfString [icfString] != NULL) CFRelease (cfString [icfString]);
+	cfString [icfString] = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (text), kCFStringEncodingUTF8);
+	return cfString [icfString];
+}
+#endif
 
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	for (size_t i = 0; i < n; i ++) {

@@ -103,10 +103,8 @@ static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
 	char *fileName;
 	int motifBug;
 	(void) w;
-	XmStringGetLtoR (((XmSelectionBoxCallbackStruct *) call) -> value,
-				(XmStringCharSet) XmSTRING_DEFAULT_CHARSET, & fileName);
-	my shiftKeyPressed = ((XButtonPressedEvent *) ((XmSelectionBoxCallbackStruct *) call) -> event)
-		-> state & ShiftMask;
+	XmStringGetLtoR (((XmSelectionBoxCallbackStruct *) call) -> value, (XmStringCharSet) XmSTRING_DEFAULT_CHARSET, & fileName);
+	my shiftKeyPressed = ((XButtonPressedEvent *) ((XmSelectionBoxCallbackStruct *) call) -> event) -> state & ShiftMask;
 	/* Work around a Motif BUG. */
 	/* Activating the 'OK' button with a directory chosen should perform the actions */
 	/* of the 'Filter' button. */
@@ -118,7 +116,7 @@ static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
 		XmFileSelectionDoSearch (my dialog, dirMask);
 		XmStringFree (dirMask);
 	} else {
-		Melder_pathToFile (fileName, & my file);
+		Melder_pathToFile (Melder_peekUtf8ToWcs (fileName), & my file);
 		our ok (me);
 	}
 	XtFree (fileName);
@@ -254,7 +252,7 @@ void UiInfile_do (I) {
 					Melder_flushError (NULL);
 				}
 				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPathW (& my file));
+				UiHistory_write (Melder_fileToPath (& my file));
 				NavDisposeReply (& reply);
 			}
 			NavDialogDispose (dialogRef);
@@ -299,14 +297,14 @@ void UiInfile_do (I) {
 				}
 				MelderInfo_close ();
 			#endif
-			Melder_pathToFileW (fullFileName, & my file);
+			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure)) {
 				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
 				Melder_flushError (NULL);
 				//Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 			}
 			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPathW (& my file));
+			UiHistory_write (Melder_fileToPath (& my file));
 		}
 		if (hasFileInfoTipsBug) {
 			if (infoTipsWereVisible | ! extensionsWereVisible) {
@@ -445,15 +443,11 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (my nameW), kCFStringEncodingUTF8);
-		dialogOptions. message = CFStringCreateWithCString (NULL, Melder_peekWcsToUtf8 (my nameW), kCFStringEncodingUTF8);
-		dialogOptions. saveFileName = CFStringCreateWithCString (NULL,
-			Melder_peekWcsToUtf8 (lastSlash ? lastSlash + 1 : defaultName), kCFStringEncodingUTF8);
+		dialogOptions. windowTitle = Melder_peekWcsToCfstring (my nameW);
+		dialogOptions. message = Melder_peekWcsToCfstring (my nameW);
+		dialogOptions. saveFileName = Melder_peekWcsToCfstring (lastSlash ? lastSlash + 1 : defaultName);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
-		if (dialogOptions. windowTitle) CFRelease (dialogOptions. windowTitle);
-		if (dialogOptions. message) CFRelease (dialogOptions. message);
-		if (dialogOptions. saveFileName) CFRelease (dialogOptions. saveFileName);
 		if (err == noErr) {
 			NavReplyRecord reply;
 			NavDialogRun (dialogRef);
@@ -471,10 +465,10 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 					/*
 					 * machFile contains the directory as e.g. "/" or "/Users/jane"; in the latter (most usual) case, append a slash.
 					 */
-					unsigned char directoryPath [1000];
-					FSRefMakePath (& machFile, directoryPath, 999);
+					char directoryPath [1000];
+					FSRefMakePath (& machFile, (unsigned char *) directoryPath, 999);
 					if (! (directoryPath [0] == '/' && directoryPath [1] == '\0'))
-						strcat ((char *) directoryPath, "/");
+						strcat (directoryPath, "/");
 					Melder_8bitToWcs_inline (directoryPath, my file. wpath, Melder_INPUT_ENCODING_UTF8);
 					int dirLength = wcslen (my file. wpath);
 					int n = CFStringGetLength (fileName);
@@ -488,7 +482,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 					Melder_flushError (NULL);
 				}
 				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPathW (& my file));
+				UiHistory_write (Melder_fileToPath (& my file));
 				NavDisposeReply (& reply);
 			}
 			NavDialogDispose (dialogRef);
@@ -528,13 +522,13 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 				Melder_flushError ("Dialog `%s' cancelled.", my name);
 				return;
 			}
-			Melder_pathToFileW (fullFileName, & my file);
+			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure)) {
 				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
 				Melder_flushError (NULL);
 			}
 			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPathW (& my file));
+			UiHistory_write (Melder_fileToPath (& my file));
 		}
 		if (infoTipsWereVisible | ! extensionsWereVisible) {
 			SHELLSTATE state = { 0 };
@@ -560,7 +554,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		strcpy (dirSpec, dirMask);
 		length = strlen (dirSpec);
 		if (dirSpec [length - 1] == '*') dirSpec [length - 1] = '\0';
-		unsigned char defaultNameUtf8 [300];
+		char defaultNameUtf8 [300];
 		Melder_wcsTo8bitFileRepresentation_inline (defaultName, defaultNameUtf8);
 		strcat (dirSpec, defaultNameUtf8);
 		XtVaSetValues (my dialog, motif_argXmString (XmNdirSpec, dirSpec), NULL);

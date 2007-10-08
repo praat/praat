@@ -65,9 +65,9 @@ DO
 		return Melder_error ("Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
-	static MelderStringW fullName = { 0 };
-	MelderStringW_empty (& fullName);
-	MelderStringW_append3 (& fullName, Thing_classNameW (OBJECT), L" ", string);
+	static MelderString fullName = { 0 };
+	MelderString_empty (& fullName);
+	MelderString_append3 (& fullName, Thing_classNameW (OBJECT), L" ", string);
 	if (! wcsequ (fullName.string, FULL_NAMEW)) {
 		Melder_free (FULL_NAMEW), FULL_NAMEW = Melder_wcsdup (fullName.string);
 		praat_list_renameAndSelect (IOBJECT, fullName.string);
@@ -381,7 +381,7 @@ static int readFromFile (MelderFile file) {
 		iferror return 0;
 		return 1;
 	}
-	result = praat_new1 (object, MelderFile_nameW (file));
+	result = praat_new1 (object, MelderFile_name (file));
 	praat_updateSelection ();
 	return result;
 }
@@ -471,7 +471,7 @@ FORM (WriteManualToHtmlDirectory, "Write all pages as HTML files", 0)
 	OK
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
-SET_STRINGW (L"directory", Melder_dirToPathW (& currentDirectory))
+SET_STRINGW (L"directory", Melder_dirToPath (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRINGW (L"directory");
 	if (! ManPages_writeAllToHtmlDir (theCurrentPraat -> manPages, directory)) return 0;
@@ -509,7 +509,7 @@ static void searchProc (void) {
 static char itemTitle_about [100];
 
 static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
-	wchar_t *name = MelderFile_nameW (file);
+	wchar_t *name = MelderFile_name (file);
 	if (nread < 2) return NULL;
 	if ((header [0] == '#' && header [1] == '!') || wcsstr (name, L".praat") == name + wcslen (name) - 6
 	    || wcsstr (name, L".html") == name + wcslen (name) - 5)

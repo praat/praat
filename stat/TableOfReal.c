@@ -1194,27 +1194,27 @@ end:
 }
 
 int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {
-	MelderStringW buffer = { 0 };
-	MelderStringW_copyW (& buffer, L"rowLabel");
+	MelderString buffer = { 0 };
+	MelderString_copy (& buffer, L"rowLabel");
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		MelderStringW_appendCharacter (& buffer, '\t');
+		MelderString_appendCharacter (& buffer, '\t');
 		wchar_t *s = my columnLabels [icol];
-		MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 	}
-	MelderStringW_appendCharacter (& buffer, '\n');
+	MelderString_appendCharacter (& buffer, '\n');
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		wchar_t *s = my rowLabels [irow];
-		MelderStringW_appendW (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
+		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			MelderStringW_appendCharacter (& buffer, '\t');
+			MelderString_appendCharacter (& buffer, '\t');
 			double x = my data [irow] [icol];
-			MelderStringW_appendW (& buffer, Melder_double (x));
+			MelderString_append (& buffer, Melder_double (x));
 		}
-		MelderStringW_appendCharacter (& buffer, '\n');
+		MelderString_appendCharacter (& buffer, '\n');
 	}
 	MelderFile_writeText (file, buffer.string);
 end:
-	MelderStringW_free (& buffer);
+	MelderString_free (& buffer);
 	iferror return 0;
 	return 1;
 }
@@ -1275,25 +1275,25 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 	while (*p != ' ' && *p != '\t') { Melder_assert (*p != '\0'); p ++; }   // Ignore the header of the zeroth column ("rowLabel" perhaps).
 	for (long icol = 1; icol <= ncol; icol ++) {
 		while (*p == ' ' || *p == '\t') { Melder_assert (*p != '\0'); p ++; }
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
-		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
+		while (*p != ' ' && *p != '\t' && *p != '\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
 		TableOfReal_setColumnLabel (me, icol, buffer.string);
-		MelderStringW_empty (& buffer);
+		MelderString_empty (& buffer);
 	}
 	for (long irow = 1; irow <= nrow; irow ++) {
 		while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
-		while (*p != ' ' && *p != '\t') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
+		while (*p != ' ' && *p != '\t') { MelderString_appendCharacter (& buffer, *p); p ++; }
 		TableOfReal_setRowLabel (me, irow, buffer.string);
-		MelderStringW_empty (& buffer);
+		MelderString_empty (& buffer);
 		for (long icol = 1; icol <= ncol; icol ++) {
 			while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
-			MelderStringW_empty (& buffer);
-			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderStringW_appendCharacter (& buffer, *p); p ++; }
+			MelderString_empty (& buffer);
+			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
 			my data [irow] [icol] = Melder_atofW (buffer.string);   /* If cell contains a string, this will be 0. */
-			MelderStringW_empty (& buffer);
+			MelderString_empty (& buffer);
 		}
 	}
 

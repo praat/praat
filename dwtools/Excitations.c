@@ -95,7 +95,7 @@ Any Excitations_getItem (Excitations me, long item)
 	Excitation thee = NULL;
 	if (item < 1 || item > my size ||
 		! (thee = Data_copy (my item[item]))) return thee;
-	Thing_setName (thee, Thing_getName (my item[item]));
+	Thing_setNameW (thee, Thing_getNameW (my item[item]));
 	return thee;
 }
 /* End of file Excitations.c */

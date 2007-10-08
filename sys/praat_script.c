@@ -30,6 +30,7 @@
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/02/17 corrected the messages about trailing spaces
  * pb 2007/06/11 wchar_t
+ * pb 2007/10/04 removed swscanf
  */
 
 #include <ctype.h>
@@ -42,8 +43,12 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *s
 	int IOBJECT;
 	while (*string == ' ') string ++;
 	if (*string >= 'A' && *string <= 'Z') {
-		wchar_t className [30], givenName [200];
-		if (swscanf (string, L"%ls %ls", className, givenName) < 2) goto end;
+		static MelderString buffer = { 0 };
+		MelderString_copy (& buffer, string);
+		wchar_t *space = wcschr (buffer.string, ' ');
+		if (space == NULL) goto end;
+		*space = '\0';
+		wchar_t *className = & buffer.string [0], *givenName = space + 1;
 		WHERE_DOWN (1) {
 			Data object = OBJECT;
 			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, Melder_peekUtf8ToWcs (object -> name)))
@@ -114,23 +119,23 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"unix ", 5)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"unix\" is not available inside pictures.");
-			if (! Melder_system (Melder_peekWcsToUtf8 (command + 5)))
+			if (! Melder_system (command + 5))
 				return Melder_error3 (L"Unix command \"", command + 5, L"\" returned error status;\n"
 					"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
 		} else if (wcsnequ (command, L"unix_nocheck ", 13)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"unix_nocheck\" is not available inside pictures.");
-			(void) Melder_system (Melder_peekWcsToUtf8 (command + 13)); Melder_clearError ();
+			(void) Melder_system (command + 13); Melder_clearError ();
 		} else if (wcsnequ (command, L"system ", 7)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"system\" is not available inside pictures.");
-			if (! Melder_system (Melder_peekWcsToUtf8 (command + 7)))
+			if (! Melder_system (command + 7))
 				return Melder_error3 (L"System command \"", command + 7, L"\" returned error status;\n"
 					"if you want to ignore this, use `system_nocheck' instead of `system'.");
 		} else if (wcsnequ (command, L"system_nocheck ", 15)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"system_nocheck\" is not available inside pictures.");
-			(void) Melder_system (Melder_peekWcsToUtf8 (command + 15)); Melder_clearError ();
+			(void) Melder_system (command + 15); Melder_clearError ();
 		} else if (wcsnequ (command, L"nowarn ", 7)) {
 			int result;
 			Melder_warningOff ();
@@ -421,7 +426,7 @@ int praat_executeScriptFromDialog (Any dia) {
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 
-	Melder_pathToFileW (path, & file); cherror
+	Melder_pathToFile (path, & file); cherror
 	text = MelderFile_readText (& file); cherror
 	MelderFile_setDefaultDir (& file);
 	Melder_includeIncludeFiles (& text); cherror
@@ -456,7 +461,7 @@ static int firstPassThroughScript (MelderFile file) {
 	Melder_setDefaultDir (& saveDir);
 	interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	if (Interpreter_readParameters (interpreter, text) > 0) {
-		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPathW (file), secondPassThroughScript, NULL);
+		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPath (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
 		UiForm_do (form, 0);
 	} else {

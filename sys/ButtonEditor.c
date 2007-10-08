@@ -45,94 +45,94 @@
 class_create_opaque (ButtonEditor, HyperPage);
 
 static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
-	static MelderStringW text = { 0 };
+	static MelderString text = { 0 };
 	int isAdded = cmd -> uniqueID != 0 || cmd -> script != NULL;
 	int isHidden = cmd -> hidden;
 	int isToggled = cmd -> toggled;
 	const wchar_t *clickText = isHidden ? (isToggled ? (isAdded ? L"REMOVED" : L"HIDDEN") : L"hidden") :
 		(isToggled ? L"SHOWN" :  (isAdded ? (cmd -> uniqueID ? L"ADDED" : L"START-UP") : L"shown"));
-	MelderStringW_empty (& text);
+	MelderString_empty (& text);
 	if (cmd -> unhidable) {
-		MelderStringW_append1 (& text, L"#unhidable ");
+		MelderString_append1 (& text, L"#unhidable ");
 	} else {
-		MelderStringW_append5 (& text, L"@@m", Melder_integer (i), L"|", clickText, L"@ ");
+		MelderString_append5 (& text, L"@@m", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderStringW_append2 (& text, cmd -> window, L": ");
+	MelderString_append2 (& text, cmd -> window, L": ");
 	if (cmd -> menu) {
-		MelderStringW_append2 (& text, cmd -> menu, L": ");
+		MelderString_append2 (& text, cmd -> menu, L": ");
 	}
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderStringW_append5 (& text, L"@@p", Melder_integer (i), L"|", cmd -> title, L"@");
+			MelderString_append5 (& text, L"@@p", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderStringW_append1 (& text, cmd -> title);
+			MelderString_append1 (& text, cmd -> title);
 		}
 	} else {
-		MelderStringW_append1 (& text, L"---------");
+		MelderString_append1 (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderStringW_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
+		MelderString_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderStringW_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
+		MelderString_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
 	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
 static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
-	static MelderStringW text = { 0 };
+	static MelderString text = { 0 };
 	int isAdded = cmd -> uniqueID != 0 || cmd -> script != NULL;
 	int isHidden = cmd -> hidden, isToggled = cmd -> toggled;
 	const wchar_t *clickText = isHidden ? (isToggled ? (isAdded ? L"REMOVED" : L"HIDDEN") : L"hidden") :
 		(isToggled ? L"SHOWN" :  (isAdded ? (cmd -> uniqueID ? L"ADDED" : L"START-UP") : L"shown"));
 	int n1 = cmd -> n1;
-	MelderStringW_empty (& text);
+	MelderString_empty (& text);
 	if (cmd -> class4) {
-		MelderStringW_append1 (& text, L"#unhidable ");
+		MelderString_append1 (& text, L"#unhidable ");
 	} else {
-		MelderStringW_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
+		MelderString_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderStringW_appendW (& text, ((Data_Table) cmd -> class1) -> _classNameW);
+	MelderString_append (& text, ((Data_Table) cmd -> class1) -> _classNameW);
 	if (n1) {
-		MelderStringW_append3 (& text, L" (", Melder_integer (n1), L")");
+		MelderString_append3 (& text, L" (", Melder_integer (n1), L")");
 	}
 	if (cmd -> class2) {
 		int n2 = cmd -> n2;
-		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _classNameW);
 		if (n2) {
-			MelderStringW_append3 (& text, L" (", Melder_integer (n2), L")");
+			MelderString_append3 (& text, L" (", Melder_integer (n2), L")");
 		}
 	}
 	if (cmd -> class3) {
 		int n3 = cmd -> n3;
-		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _classNameW);
 		if (n3) {
-			MelderStringW_append3 (& text, L" (", Melder_integer (n3), L")");
+			MelderString_append3 (& text, L" (", Melder_integer (n3), L")");
 		}
 	}
 	if (cmd -> class4) {
 		int n4 = cmd -> n4;
-		MelderStringW_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _classNameW);
 		if (n4) {
-			MelderStringW_append3 (& text, L" (", Melder_integer (n4), L")");
+			MelderString_append3 (& text, L" (", Melder_integer (n4), L")");
 		}
 	}
-	MelderStringW_appendW (& text, L": ");
+	MelderString_append (& text, L": ");
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderStringW_append5 (& text, L"@@e", Melder_integer (i), L"|", cmd -> title, L"@");
+			MelderString_append5 (& text, L"@@e", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderStringW_append1 (& text, cmd -> title);
+			MelderString_append1 (& text, cmd -> title);
 		}
 	} else {
-		MelderStringW_append1 (& text, L"---------");
+		MelderString_append1 (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderStringW_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
+		MelderString_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderStringW_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
+		MelderString_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
 	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);

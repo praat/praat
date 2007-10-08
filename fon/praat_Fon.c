@@ -1299,7 +1299,7 @@ END
 /***** INTERVALTIER, rest in praat_TextGrid_init.c *****/
 
 FORM_READ (IntervalTier_readFromXwaves, "Read IntervalTier from Xwaves", 0)
-	if (! praat_new (IntervalTier_readFromXwaves (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (IntervalTier_readFromXwaves (file), MelderFile_name (file))) return 0;
 END
 
 /***** LTAS *****/
@@ -1973,11 +1973,11 @@ DO
 END
 
 FORM_READ (Matrix_readFromRawTextFile, "Read Matrix from raw text file", 0)
-	if (! praat_new (Matrix_readFromRawTextFile (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Matrix_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 
 FORM_READ (Matrix_readAP, "Read Matrix from LVS AP file", 0)
-	if (! praat_new (Matrix_readAP (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Matrix_readAP (file), MelderFile_name (file))) return 0;
 END
 
 FORM (Matrix_setValue, "Matrix: Set value", "Matrix: Set value...")
@@ -3762,7 +3762,7 @@ if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
 	wchar_t *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPathW (& defaultDir);
+	workingDirectory = Melder_dirToPath (& defaultDir);
 	#if defined (UNIX)
 		swprintf (path, 300, L"%ls/*.wav", workingDirectory);
 	#elif defined (_WIN32)
@@ -3790,7 +3790,7 @@ if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
 	wchar_t *workingDirectory, path [300];
 	Melder_getDefaultDir (& defaultDir);
-	workingDirectory = Melder_dirToPathW (& defaultDir);
+	workingDirectory = Melder_dirToPath (& defaultDir);
 	#if defined (UNIX)
 		swprintf (path, 300, L"%ls/*", workingDirectory);
 	#elif defined (_WIN32)
@@ -3854,7 +3854,7 @@ DIRECT (Strings_randomize)
 END
 
 FORM_READ (Strings_readFromRawTextFile, "Read Strings from raw text file", 0)
-	if (! praat_new (Strings_readFromRawTextFile (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (Strings_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 
 DIRECT (Strings_sort)
@@ -3902,7 +3902,7 @@ END
 /***** TEXTTIER, rest in praat_TextGrid_init.c *****/
 
 FORM_READ (TextTier_readFromXwaves, "Read TextTier from Xwaves", 0)
-	if (! praat_new (TextTier_readFromXwaves (file), MelderFile_name (file))) return 0;
+	if (! praat_new1 (TextTier_readFromXwaves (file), MelderFile_name (file))) return 0;
 END
 
 /***** TIMEFRAMESAMPLED *****/

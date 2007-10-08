@@ -887,9 +887,9 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 			Graphics_markLeft (g, fmax, TRUE, TRUE, FALSE, NULL);
 			autoMarks (g, fmin, fmax, FALSE);
 		}
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
-		MelderStringW_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
+		MelderString_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, TRUE, buffer.string);
 		Graphics_textBottom (g, TRUE, L"Time (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, TRUE);
@@ -1402,9 +1402,9 @@ int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 	} else if (left -> text == NULL) {
 		TextInterval_setText (left, right -> text);
 	} else {
-		static MelderStringW buffer = { 0 };
-		MelderStringW_empty (& buffer);
-		MelderStringW_append2 (& buffer, left -> text, right -> text);
+		static MelderString buffer = { 0 };
+		MelderString_empty (& buffer);
+		MelderString_append2 (& buffer, left -> text, right -> text);
 		if (! TextInterval_setText (left, buffer.string)) { return 0; }
 	}
 	Collection_removeItem (my intervals, iinterval);   /* Remove right interval. */
@@ -1754,13 +1754,13 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				sentenceTier -> intervals = SortedSetOfDouble_create (); cherror
 				sentenceTier -> xmin = 0.0;
 				sentenceTier -> xmax = my xmax;
-				Thing_setName (sentenceTier, speakerName);
+				Thing_setNameW (sentenceTier, Melder_peekUtf8ToWcs (speakerName));
 				Collection_addItem (my tiers, sentenceTier); cherror
 				phraseTier = new (IntervalTier); cherror
 				phraseTier -> intervals = SortedSetOfDouble_create (); cherror
 				phraseTier -> xmin = 0.0;
 				phraseTier -> xmax = my xmax;
-				Thing_setName (phraseTier, speakerName);
+				Thing_setNameW (phraseTier, Melder_peekUtf8ToWcs (speakerName));
 				Collection_addItem (my tiers, phraseTier); cherror
 			} else {
 				sentenceTier = my tiers -> item [speakerTier];

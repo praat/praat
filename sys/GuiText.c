@@ -373,7 +373,7 @@ void _GuiText_nativizeWidget (Widget me) {
 }
 
 Widget XmCreateText (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget me = _Gui_initializeWidget (xmTextWidgetClass, parent, name);
+	Widget me = _Gui_initializeWidget (xmTextWidgetClass, parent, Melder_peekUtf8ToWcs (name));
 	(void) dum1;
 	(void) dum2;
 	_GuiText_nativizeWidget (me);
@@ -565,7 +565,7 @@ void XmTextSetString (Widget me, const char *text) {
 		for (from = text, to = winText; *from != '\0'; from ++, to ++)
 			if (*from == '\n') { *to = 13; * ++ to = '\n'; } else *to = *from;
 		*to = '\0';
-		Edit_SetText (my window, winText);
+		Edit_SetText (my window, Melder_peekUtf8ToWcs (winText));
 		Melder_free (winText);
 	#elif mac
 		GuiText_setStringW (me, Melder_peekUtf8ToWcs (text));
@@ -887,7 +887,7 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 			NULL);
 	#else
 		theScrolledHint = TRUE;
-		me = _Gui_initializeWidget (xmTextWidgetClass, parent, name);
+		me = _Gui_initializeWidget (xmTextWidgetClass, parent, Melder_peekUtf8ToWcs (name));
 		my motif.text.editable = editable;
 		_GuiText_nativizeWidget (me);
 		XtVaSetValues (me,

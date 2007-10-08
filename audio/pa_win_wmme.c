@@ -396,7 +396,7 @@ static PaDeviceIndex GetEnvDefaultDeviceID( char *envName )
 #ifndef WIN32_PLATFORM_PSPC /* no GetEnvironmentVariable on PocketPC */
 
     /* Let user determine default device by setting environment variable. */
-    hresult = GetEnvironmentVariable( envName, envbuf, PA_ENV_BUF_SIZE_ );
+    hresult = GetEnvironmentVariableA( envName, envbuf, PA_ENV_BUF_SIZE_ );
     if( (hresult > 0) && (hresult < PA_ENV_BUF_SIZE_) )
     {
         recommendedIndex = atoi( envbuf );
@@ -565,12 +565,12 @@ static PaError InitializeInputDeviceInfo( PaWinMmeHostApiRepresentation *winMmeH
     PaError result = paNoError;
     char *deviceName; /* non-const ptr */
     MMRESULT mmresult;
-    WAVEINCAPS wic;
+    WAVEINCAPSA wic;
     PaDeviceInfo *deviceInfo = &winMmeDeviceInfo->inheritedDeviceInfo;
     
     *success = 0;
 
-    mmresult = waveInGetDevCaps( winMmeInputDeviceId, &wic, sizeof( WAVEINCAPS ) );
+    mmresult = waveInGetDevCapsA( winMmeInputDeviceId, &wic, sizeof( WAVEINCAPS ) );
     if( mmresult == MMSYSERR_NOMEM )
     {
         result = paInsufficientMemory;
@@ -641,12 +641,12 @@ static PaError InitializeOutputDeviceInfo( PaWinMmeHostApiRepresentation *winMme
     PaError result = paNoError;
     char *deviceName; /* non-const ptr */
     MMRESULT mmresult;
-    WAVEOUTCAPS woc;
+    WAVEOUTCAPSA woc;
     PaDeviceInfo *deviceInfo = &winMmeDeviceInfo->inheritedDeviceInfo;
     
     *success = 0;
 
-    mmresult = waveOutGetDevCaps( winMmeOutputDeviceId, &woc, sizeof( WAVEOUTCAPS ) );
+    mmresult = waveOutGetDevCapsA( winMmeOutputDeviceId, &woc, sizeof( WAVEOUTCAPS ) );
     if( mmresult == MMSYSERR_NOMEM )
     {
         result = paInsufficientMemory;

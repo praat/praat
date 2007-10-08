@@ -29,6 +29,7 @@
  * Erez Volk 2007/05/14 FLAC writing
  * pb 2007/05/17 corrected stereo FLAC writing
  * Erez Volk 2007/06/02 MP3 reading
+ * pb 2007/10/05 FSOpenResFile
  */
 
 #include "melder.h"
@@ -567,10 +568,10 @@ static double Melder_getNumberFromStrResource (int resourceID) {
 static int MelderFile_checkSoundDesignerTwoFile (MelderFile file, int *numberOfChannels, int *encoding,
 	double *sampleRate, long *startOfData, long *numberOfSamples)
 {
-	FSSpec fspec;
+	FSRef fsRef;
 	int path = -1, sampleSize;
-	Melder_fileToMac (file, & fspec);
-	path = FSpOpenResFile (& fspec, fsRdPerm);   /* Open resource fork; there is the header info. */
+	Melder_fileToMach (file, & fsRef);
+	path = FSOpenResFile (& fsRef, fsRdPerm);   /* Open resource fork; there is the header info. */
 	if (path == -1) error1 (L"Cannot open resource fork.")
 	sampleSize = Melder_getNumberFromStrResource (1000);
 	iferror error1 (L"No sample size information.")
@@ -601,7 +602,7 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
-	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPathW (file)), & metadata))   // BUG: not Unicode-compatible on Windows.
+	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPath (file)), & metadata))   // BUG: not Unicode-compatible on Windows.
 		return Melder_error ("Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;

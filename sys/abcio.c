@@ -258,8 +258,8 @@ static wchar_t * getString (MelderReadString *text) {
 	if (text -> readPointer == NULL) return NULL;
 	int i;
 	wchar_t c;
-	static MelderStringW buffer = { 0 };
-	MelderStringW_empty (& buffer);
+	static MelderString buffer = { 0 };
+	MelderString_empty (& buffer);
 	for (c = getChar (text); c != '\"'; c = getChar (text)) {
 		if (c == 0) {
 			Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadString_getLineNumber (text), L").");
@@ -307,7 +307,7 @@ static wchar_t * getString (MelderReadString *text) {
 				break;   /* The expected closing double quote; not added to the buffer. */
 			} /* Else: add only one of the two quotes to the buffer. */
 		}
-		MelderStringW_appendCharacter (& buffer, c);
+		MelderString_appendCharacter (& buffer, c);
 	}
 	return buffer. string;
 }

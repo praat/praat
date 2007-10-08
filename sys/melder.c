@@ -75,9 +75,9 @@ unsigned long Melder_systemVersion;
 	void *Melder_topShell;   /* Widget */
 #endif
 
-static int defaultPause (char *message) {
+static int defaultPause (wchar_t *message) {
 	int key;
-	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or any other key to continue.\n", message);
+	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or any other key to continue.\n", Melder_peekWcsToUtf8 (message));
 	key = getc (stdin);
 	return key != 'q' && key != 'Q';
 }
@@ -91,12 +91,12 @@ static void defaultSearch (void) {
 	Melder_flushError ("Do not know how to search.");
 }
 
-static void defaultWarning (char *message) {
-	fprintf (stderr, "Warning: %s\n", message);
+static void defaultWarning (wchar_t *message) {
+	fprintf (stderr, "Warning: %s\n", Melder_peekWcsToUtf8 (message));
 }
 
-static void defaultFatal (char *message) {
-	fprintf (stderr, "Fatal error: %s\n", message);
+static void defaultFatal (wchar_t *message) {
+	fprintf (stderr, "Fatal error: %s\n", Melder_peekWcsToUtf8 (message));
 }
 
 static int defaultPublish (void *anything) {
@@ -125,11 +125,11 @@ static int defaultPublishPlayed (void) {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	int (*pause) (char *message);
+	int (*pause) (wchar_t *message);
 	void (*help) (const wchar_t *query);
 	void (*search) (void);
-	void (*warning) (char *message);
-	void (*fatal) (char *message);
+	void (*warning) (wchar_t *message);
+	void (*fatal) (wchar_t *message);
 	int (*publish) (void *anything);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile fs);
@@ -153,7 +153,7 @@ void Melder_casual (const char *format, ...) {
 	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
 	#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 	if (! Melder_batch) {
-		MessageBox (NULL, Melder_buffer2, "Casual info", MB_OK);
+		MessageBox (NULL, Melder_peekUtf8ToWcs (Melder_buffer2), L"Casual info", MB_OK);
 	} else
 	#endif
 	fprintf (stderr, "%s\n", Melder_buffer2);
@@ -375,7 +375,7 @@ int Melder_pause (const char *format, ...) {
 	} else {
 		Melder_buffer2 [0] = '\0';
 	}
-	interruption = theMelder. pause (Melder_buffer1);
+	interruption = theMelder. pause (Melder_peekUtf8ToWcs (Melder_buffer1));
 	va_end (arg);
 	return interruption;
 }
@@ -468,7 +468,7 @@ void Melder_warning (const char *format, ...) {
 	if (theWarningDepth >= 0) {
 		vsprintf (Melder_buffer1, format, arg);
 		Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-		theMelder. warning (Melder_buffer2);
+		theMelder. warning (Melder_peekUtf8ToWcs (Melder_buffer2));
 	}
 	va_end (arg);
 }
@@ -491,7 +491,7 @@ int Melder_fatal (const char *format, ...) {
 	strcpy (Melder_buffer1, lead);
 	vsprintf (Melder_buffer1 + strlen (lead), format, arg);
 	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-	theMelder. fatal (Melder_buffer2);
+	theMelder. fatal (Melder_peekUtf8ToWcs (Melder_buffer2));
 	va_end (arg);
 	abort ();
 	return 0;   /* Make some compilers happy, some unhappy. */
@@ -519,7 +519,7 @@ static Widget makeMessage (unsigned char dialogType, const char *resourceName, c
 static int pause_continued, pause_stopped;
 MOTIF_CALLBACK (pause_continue_cb) pause_continued = 1; MOTIF_CALLBACK_END
 MOTIF_CALLBACK (pause_stop_cb) pause_stopped = 1; MOTIF_CALLBACK_END
-static int motif_pause (char *message) {
+static int motif_pause (wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
 		dia = XmCreateFormDialog (Melder_topShell, "melderPause", NULL, 0);
@@ -545,8 +545,8 @@ static int motif_pause (char *message) {
 		XtManageChild (buttons);
 		XtManageChild (rc);
 	}
-	if (! message) message = "";
-	XtVaSetValues (text, motif_argXmString (XmNlabelString, message), NULL);
+	if (! message) message = L"";
+	XtVaSetValues (text, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
 	XtManageChild (dia);
 	pause_continued = pause_stopped = FALSE;
 	do {
@@ -558,14 +558,14 @@ static int motif_pause (char *message) {
 	return pause_continued;
 }
 
-static void motif_warning (char *message) {
+static void motif_warning (wchar_t *message) {
 #ifdef _WIN32
-	MessageBox (NULL, message, "Warning", MB_OK);
+	MessageBox (NULL, message, L"Warning", MB_OK);
 #else
 	static Widget dia = NULL;
 	if (dia == NULL)
 		dia = makeMessage (XmDIALOG_WARNING, "warning", "Warning");
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, message), NULL);
+	XtVaSetValues (dia, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
 	XtManageChild (dia);
 	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
 #endif
@@ -598,8 +598,8 @@ static void motif_error (wchar_t *messageW) {
 	XmUpdateDisplay (0);
 }
 #elif defined (_WIN32)
-static void motif_fatal (char *message) {
-	MessageBox (NULL, message, "Fatal error", MB_OK);
+static void motif_fatal (wchar_t *message) {
+	MessageBox (NULL, message, L"Fatal error", MB_OK);
 }
 static void motif_error (wchar_t *messageW) {
 	MessageBoxW (NULL, messageW, L"Message", MB_OK);
@@ -661,7 +661,7 @@ int Melder_publishPlayed (void) {
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
-void Melder_setPauseProc (int (*pause) (char *))
+void Melder_setPauseProc (int (*pause) (wchar_t *))
 	{ theMelder. pause = pause ? pause : defaultPause; }
 
 void Melder_setHelpProc (void (*help) (const wchar_t *query))
@@ -670,10 +670,10 @@ void Melder_setHelpProc (void (*help) (const wchar_t *query))
 void Melder_setSearchProc (void (*search) (void))
 	{ theMelder. search = search ? search : defaultSearch; }
 
-void Melder_setWarningProc (void (*warning) (char *))
+void Melder_setWarningProc (void (*warning) (wchar_t *))
 	{ theMelder. warning = warning ? warning : defaultWarning; }
 
-void Melder_setFatalProc (void (*fatal) (char *))
+void Melder_setFatalProc (void (*fatal) (wchar_t *))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
 
 void Melder_setPublishProc (int (*publish) (void *))

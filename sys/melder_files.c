@@ -36,6 +36,7 @@
  * pb 2007/05/28 wchar_t
  * pb 2007/06/09 more wchar_t
  * pb 2007/08/12 more wchar_t
+ * pb 2007/10/05 FSFindFolder
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -59,8 +60,6 @@
 	#include "macport_on.h"
 	#include <Folders.h>
 	#include "macport_off.h"
-	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
-	#define PfromCstr(p,c)  p [0] = strlen (c), strcpy ((char *) p + 1, c);
 #endif
 #include <errno.h>
 #include "melder.h"
@@ -77,7 +76,7 @@ static wchar_t theShellDirectory [256];
 void Melder_rememberShellDirectory (void) {
 	structMelderDir shellDir = { { 0 } };
 	Melder_getDefaultDir (& shellDir);
-	wcscpy (theShellDirectory, Melder_dirToPathW (& shellDir));
+	wcscpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
 wchar_t * Melder_getShellDirectory (void) {
 	return & theShellDirectory [0];
@@ -144,13 +143,10 @@ void Melder_machToFile (void *void_fsref, MelderFile file) {
 	FSRefMakePath (fsref, (unsigned char *) path, 999);   // Decomposed UTF-8.
 	Melder_8bitFileRepresentationToWcs_inline (path, file -> wpath);
 }
-static void Melder_machToDir (int vRefNum, long dirID, MelderDir dir) {
-	FSSpec fspec;
-	FSMakeFSSpec (vRefNum, dirID, NULL, & fspec);
-	FSRef fsref;
-	FSpMakeFSRef (& fspec, & fsref);
+void Melder_machToDir (void *void_fsref, MelderDir dir) {
+	FSRef *fsref = (FSRef *) void_fsref;
 	char path [1000];
-	FSRefMakePath (& fsref, (unsigned char *) path, 999);   // Decomposed UTF-8.
+	FSRefMakePath (fsref, (unsigned char *) path, 999);   // Decomposed UTF-8.
 	Melder_8bitFileRepresentationToWcs_inline (path, dir -> wpath);
 }
 int Melder_fileToMach (MelderFile file, void *void_fsref) {
@@ -161,53 +157,17 @@ int Melder_fileToMach (MelderFile file, void *void_fsref) {
 		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
 	return 1;
 }
-int Melder_fileToMac (MelderFile file, void *void_fspec) {
+int Melder_dirToMach (MelderDir dir, void *void_fsref) {
 	char path [1000];
-	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
-	FSRef fsref;
-	OSStatus err = FSPathMakeRef ((unsigned char *) path, & fsref, NULL);
+	Melder_wcsTo8bitFileRepresentation_inline (dir -> wpath, path);
+	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
 	if (err != noErr && err != fnfErr)
-		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
-	FSSpec *fspec = (FSSpec *) void_fspec;
-	err = FSGetCatalogInfo (& fsref, kFSCatInfoNone, NULL, NULL, fspec, NULL);
-	if (err != noErr) {
-		/*
-			File does not exist. Get its parent directory instead.
-		*/
-		structMelderDir parentDir = { { 0 } };
-		char romanName [260];
-		CFStringRef unicodeName;
-		Str255 pname;
-		FSCatalogInfo info;
-		FSRef parentDirectory;
-		MelderFile_getParentDir (file, & parentDir);
-		Melder_wcsTo8bitFileRepresentation_inline (parentDir. wpath, path);
-		err = FSPathMakeRef ((unsigned char *) path, & parentDirectory, NULL);
-		if (err != noErr)
-			return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. wpath, L".");
-		err = FSGetCatalogInfo (& parentDirectory, kFSCatInfoVolume | kFSCatInfoNodeID, & info, NULL, NULL, NULL);
-		if (err != noErr)
-			return Melder_error5 (L"Error #", Melder_integer (err), L" looking for directory of ", file -> wpath, L".");
-		/*
-			Convert from UTF-8 to MacRoman.
-		*/
-		unicodeName = CFStringCreateWithCString (NULL, MelderFile_name (file), kCFStringEncodingUTF8);
-		CFStringGetCString (unicodeName, romanName, 260, kCFStringEncodingMacRoman);
-		CFRelease (unicodeName);
-		PfromCstr (pname, romanName);
-		err = FSMakeFSSpec (info. volume, info. nodeID, & pname [0], fspec);
-		if (err != noErr && err != fnfErr)
-			return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> wpath, L".");
-	}
+		return Melder_error5 (L"Error #", Melder_integer (err), L" translating dir name ", dir -> wpath, L".");
 	return 1;
 }
 #endif
 
-char * MelderFile_name (MelderFile file) {
-	return Melder_peekWcsToUtf8 (MelderFile_nameW (file));
-}
-
-wchar_t * MelderFile_nameW (MelderFile file) {
+wchar_t * MelderFile_name (MelderFile file) {
 	#if defined (UNIX)
 		wchar_t *slash = wcsrchr (file -> wpath, '/');
 		return slash ? slash + 1 : file -> wpath;
@@ -217,7 +177,7 @@ wchar_t * MelderFile_nameW (MelderFile file) {
 	#endif
 }
 
-wchar_t * MelderDir_nameW (MelderDir dir) {
+wchar_t * MelderDir_name (MelderDir dir) {
 	#if defined (UNIX)
 		wchar_t *slash = wcsrchr (dir -> wpath, '/');
 		return slash ? slash + 1 : dir -> wpath;
@@ -227,24 +187,12 @@ wchar_t * MelderDir_nameW (MelderDir dir) {
 	#endif
 }
 
-int Melder_pathToDirW (const wchar_t *path, MelderDir dir) {
+int Melder_pathToDir (const wchar_t *path, MelderDir dir) {
 	wcscpy (dir -> wpath, path);
 	return 1;
 }
 
-int Melder_pathToFile (const char *path, MelderFile file) {
-	/*
-	 * This handles complete path names only.
-	 * Unlike Melder_relativePathToFile, this handles Windows file names with slashes in them.
-	 *
-	 * Used if we know for sure that we have a complete path name,
-	 * i.e. if the program determined the name (fileselector, printing, prefs).
-	 */
-	Melder_8bitFileRepresentationToWcs_inline (path, file -> wpath);
-	return 1;
-}
-
-int Melder_pathToFileW (const wchar_t *path, MelderFile file) {
+int Melder_pathToFile (const wchar_t *path, MelderFile file) {
 	/*
 	 * This handles complete path names only.
 	 * Unlike Melder_relativePathToFile, this handles Windows file names with slashes in them.
@@ -315,11 +263,11 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 	return 1;
 }
 
-wchar_t * Melder_dirToPathW (MelderDir dir) {
+wchar_t * Melder_dirToPath (MelderDir dir) {
 	return & dir -> wpath [0];
 }
 
-wchar_t * Melder_fileToPathW (MelderFile file) {
+wchar_t * Melder_fileToPath (MelderFile file) {
 	return & file -> wpath [0];
 }
 
@@ -355,7 +303,7 @@ int MelderDir_isNull (MelderDir dir) {
 	return dir -> wpath [0] == '\0';
 }
 
-void MelderDir_getFileW (MelderDir parent, const wchar_t *fileName, MelderFile file) {
+void MelderDir_getFile (MelderDir parent, const wchar_t *fileName, MelderFile file) {
 	#if defined (UNIX)
 		if (parent -> wpath [0] == '/' && parent -> wpath [1] == '\0') {
 			swprintf (file -> wpath, 256, L"/%ls", fileName);
@@ -508,7 +456,7 @@ int MelderDir_isDesktop (MelderDir dir) {
 	return dir -> wpath [0] == '\0';
 }
 
-int MelderDir_getSubdirW (MelderDir parent, const wchar_t *subdirName, MelderDir subdir) {
+int MelderDir_getSubdir (MelderDir parent, const wchar_t *subdirName, MelderDir subdir) {
 	#if defined (UNIX)
 		if (parent -> wpath [0] == '/' && parent -> wpath [1] == '\0') {
 			swprintf (subdir -> wpath, 260, L"/%ls", subdirName);
@@ -544,10 +492,9 @@ void Melder_getHomeDir (MelderDir homeDir) {
 
 void Melder_getPrefDir (MelderDir prefDir) {
 	#if defined (macintosh)
-		short vRefNum;
-		long dirID;
-		FindFolder (kOnSystemDisk, kPreferencesFolderType, kCreateFolder, & vRefNum, & dirID);
-		Melder_machToDir (vRefNum, dirID, prefDir);
+		FSRef macFileReference;
+		FSFindFolder (kOnSystemDisk, kPreferencesFolderType, kCreateFolder, & macFileReference);
+		Melder_machToDir (& macFileReference, prefDir);
 	#elif defined (UNIX)
 		/*
 		 * Preferences files go into the home directory.
@@ -567,10 +514,9 @@ void Melder_getPrefDir (MelderDir prefDir) {
 
 void Melder_getTempDir (MelderDir tempDir) {
 	#if defined (macintosh)
-		short vRefNum;
-		long dirID;
-		FindFolder (kOnSystemDisk, kTemporaryFolderType, kCreateFolder, & vRefNum, & dirID);
-		Melder_machToDir (vRefNum, dirID, tempDir);
+		FSRef macFileReference;
+		FSFindFolder (kOnSystemDisk, kTemporaryFolderType, kCreateFolder, & macFileReference);
+		Melder_machToDir (& macFileReference, tempDir);
 	#else
 		(void) tempDir;
 	#endif

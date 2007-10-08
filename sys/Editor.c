@@ -167,7 +167,7 @@ Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wcha
 			} else {
 				structMelderFile file = { 0 };
 				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_wcsdup (Melder_fileToPathW (& file));
+				cmd -> script = Melder_wcsdup (Melder_fileToPath (& file));
 			}
 			return cmd -> itemWidget;
 		}
@@ -355,14 +355,14 @@ static void createMenuItems_query (I, EditorMenu menu) {
 
 static void createMenuItems_query_info (I, EditorMenu menu) {
 	iam (Editor);
-	static MelderStringW title = { 0 };
-	MelderStringW_empty (& title);
-	MelderStringW_append2 (& title, our _classNameW, L" info");
+	static MelderString title = { 0 };
+	MelderString_empty (& title);
+	MelderString_append2 (& title, our _classNameW, L" info");
 	EditorMenu_addCommand (menu, title.string, 0, menu_cb_settingsReport);
 	EditorMenu_addCommand (menu, L"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
 	if (my data) {
-		MelderStringW_empty (& title);
-		MelderStringW_append2 (& title, Thing_classNameW (my data), L" info");
+		MelderString_empty (& title);
+		MelderString_append2 (& title, Thing_classNameW (my data), L" info");
 		EditorMenu_addCommand (menu, title.string, 0, menu_cb_info);
 	}
 }

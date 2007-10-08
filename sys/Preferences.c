@@ -183,26 +183,26 @@ end:
 
 void Resources_write (MelderFile file) {
 	if (! theResources || theResources -> size == 0) return;
-	static MelderStringW buffer = { 0 };
+	static MelderString buffer = { 0 };
 	for (long iresource = 1; iresource <= theResources -> size; iresource ++) {
 		Resource resource = theResources -> item [iresource];
-		MelderStringW_append2 (& buffer, resource -> string, L": ");
+		MelderString_append2 (& buffer, resource -> string, L": ");
 		switch (resource -> type) {
-			case bytewa: MelderStringW_append1 (& buffer, Melder_integer (* (signed char *) resource -> value)); break;
-			case shortwa: MelderStringW_append1 (& buffer, Melder_integer (* (short *) resource -> value)); break;
-			case intwa: MelderStringW_append1 (& buffer, Melder_integer (* (int *) resource -> value)); break;
-			case longwa: MelderStringW_append1 (& buffer, Melder_integer (* (long *) resource -> value)); break;
-			case ubytewa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned char *) resource -> value)); break;
-			case ushortwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned short *) resource -> value)); break;
-			case uintwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned int *) resource -> value)); break;
-			case ulongwa: MelderStringW_append1 (& buffer, Melder_integer (* (unsigned long *) resource -> value)); break;
-			case boolwa: MelderStringW_append1 (& buffer, Melder_integer (* (bool *) resource -> value)); break;
-			case charwa: MelderStringW_appendCharacter (& buffer, * (char *) resource -> value); break;
-			case floatwa: MelderStringW_append1 (& buffer, Melder_single (* (float *) resource -> value)); break;
-			case doublewa: MelderStringW_append1 (& buffer, Melder_double (* (double *) resource -> value)); break;
-			case stringwwa: MelderStringW_append1 (& buffer, resource -> value); break;
+			case bytewa: MelderString_append1 (& buffer, Melder_integer (* (signed char *) resource -> value)); break;
+			case shortwa: MelderString_append1 (& buffer, Melder_integer (* (short *) resource -> value)); break;
+			case intwa: MelderString_append1 (& buffer, Melder_integer (* (int *) resource -> value)); break;
+			case longwa: MelderString_append1 (& buffer, Melder_integer (* (long *) resource -> value)); break;
+			case ubytewa: MelderString_append1 (& buffer, Melder_integer (* (unsigned char *) resource -> value)); break;
+			case ushortwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned short *) resource -> value)); break;
+			case uintwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned int *) resource -> value)); break;
+			case ulongwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned long *) resource -> value)); break;
+			case boolwa: MelderString_append1 (& buffer, Melder_integer (* (bool *) resource -> value)); break;
+			case charwa: MelderString_appendCharacter (& buffer, * (char *) resource -> value); break;
+			case floatwa: MelderString_append1 (& buffer, Melder_single (* (float *) resource -> value)); break;
+			case doublewa: MelderString_append1 (& buffer, Melder_double (* (double *) resource -> value)); break;
+			case stringwwa: MelderString_append1 (& buffer, resource -> value); break;
 		}
-		MelderStringW_appendCharacter (& buffer, '\n');
+		MelderString_appendCharacter (& buffer, '\n');
 	}
 	MelderFile_writeText (file, buffer.string);
 	Melder_clearError ();

@@ -35,6 +35,7 @@
  * pb 2007/01/25 XmATTACH_POSITION
  * pb 2007/02/13 Win: removed Ctrl-. as meaning Escape
  * pb 2007/08/07 GuiMacDrawingArea_clipOn_graphicsContext
+ * pb 2007/10/06 wchar_t
  */
 #ifndef UNIX
 
@@ -199,7 +200,7 @@ static int (*theOpenDocumentCallback) (MelderFile file);
 static int (*theQuitApplicationCallback) (void);
 #if win
 	static int theCommandShow = False;   /* Last argument of WinMain. */
-	static char theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
+	static wchar_t theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
 	static int (*theUserMessageCallback) (void);
 	#define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
 	#define MAXIMUM_MENU_ITEM_ID  32767
@@ -310,15 +311,16 @@ static int Native_titleWidth (Widget me) {
 			HDC dc = GetDC (my parent -> window);
 			SIZE size;
 			SelectFont (dc, GetStockFont (ANSI_VAR_FONT));   /* Possible BUG. */
-			GetTextExtentPoint32 (dc, my name, strlen (my name), & size);
+			GetTextExtentPoint32 (dc, my name, wcslen (my name), & size);
 			ReleaseDC (my parent -> window, dc);
 			return size. cx;
-		} else return 7 * strlen (my name);
+		} else return 7 * wcslen (my name);
 	#elif mac
 		int width;
 		SetPortWindowPort (my macWindow);
 		motif_mac_defaultFont ();
-		width = TextWidth ((Ptr) my name, 0, strlen (my name));
+		char *nameA = Melder_peekWcsToUtf8 (my name);
+		width = TextWidth ((Ptr) nameA, 0, strlen (nameA));
 		motif_mac_defaultFont ();
 		return width;
 	#endif
@@ -359,7 +361,7 @@ static int NativeText_preferredHeight (Widget me) {
 
 /***** WIDGET *****/
 
-Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) {
+Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name) {
 	Widget me = Melder_calloc (struct structWidget, 1);
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
@@ -384,7 +386,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) 
 	/*
 	 * Copy the name into my name.
 	 */
-	my name = Melder_strdup (name);
+	my name = Melder_wcsdup (name);
 
 	/*
 	 * I am in the same shell as my parent, so I inherit my parent's "shell" attribute.
@@ -448,7 +450,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) 
 			my alignment = XmALIGNMENT_BEGINNING;
 		} break; case xmCascadeButtonWidgetClass: {
 			if (my parent -> rowColumnType == XmMENU_BAR) {
-				char *hyphen = strstr (my name, " -");
+				wchar_t *hyphen = wcsstr (my name, L" -");
 				if (hyphen) hyphen [2] = '\0';   /* Chop any trailing spaces. */
 				my x = 2;
 				my y = 2;
@@ -538,7 +540,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const char *name) 
 	if (MEMBER3 (me, BulletinBoard, Form, MessageBox) && MEMBER (my parent, Shell))
 		my leftAttachment = my rightAttachment = my topAttachment = my bottomAttachment = XmATTACH_FORM;
 
-	if (MEMBER (me, CascadeButton) && strequ (name, "Help"))
+	if (MEMBER (me, CascadeButton) && wcsequ (name, L"Help"))
 		my rightAttachment = XmATTACH_FORM;   /* !!!!!! */
 
 	/* A child of a scrolled window will be installed as the workWindow of that scrolled window,
@@ -720,10 +722,10 @@ void _GuiNativeControl_setSensitive (Widget me) {
 	#endif
 }
 
-static char * motif_win_expandAmpersands (const char *title) {
-	static char buffer [300];
-	const char *from = title;
-	char *to = & buffer [0];
+static wchar_t * motif_win_expandAmpersands (const wchar_t *title) {
+	static wchar_t buffer [300];
+	const wchar_t *from = title;
+	wchar_t *to = & buffer [0];
 	while (*from) { if (*from == '&') * to ++ = '&'; * to ++ = * from ++; } * to = '\0';
 	return buffer;
 }
@@ -755,22 +757,22 @@ static void NativeControl_setTitle (Widget me) {
 			/*
 			 * Static Text controls on the Mac do not understand SetControlTitle.
 			 */
-			SetControlData (my nat.control.handle, kControlEntireControl, kControlStaticTextTextTag, strlen (my name), my name);
+			CFStringRef cfString = Melder_peekWcsToCfstring (my name);
+			SetControlData (my nat.control.handle, kControlEntireControl, kControlStaticTextCFStringTag, sizeof (CFStringRef), & cfString);
 			/* SetControlData does not redraw the control. */
 			if (IsControlVisible (my nat.control.handle))
 				Draw1Control (my nat.control.handle);
 		} else if (my nat.control.isPopup) {
 			Widget menu = my subMenuId, item;
 			if (menu) for (item = menu -> firstChild; item; item = item -> nextSibling) {
-				if (strequ (item -> name, my name)) {
+				if (wcsequ (item -> name, my name)) {
 					SetControlValue (my nat.control.handle, item -> nat.entry.item);
 					return;
 				}
 			}
 			SetControlValue (my nat.control.handle, 0);
 		} else {
-			PfromCstr (mac_text, my name);
-			SetControlTitle (my nat.control.handle, mac_text);
+			SetControlTitleWithCFString (my nat.control.handle, Melder_peekWcsToCfstring (my name));
 		}
 	#endif
 }
@@ -919,35 +921,36 @@ static void NativeMenuItem_setSensitive (Widget me) {
 
 static void NativeMenuItem_setText (Widget me) {
 	int acc = my motif.pushButton.acceleratorChar, modifiers = my motif.pushButton.acceleratorModifiers;
-	char title [300];
 	#if win
+		static MelderString title = { 0 };
 		if (acc == 0) {
-			strcpy (title, motif_win_expandAmpersands (my name));
+			MelderString_copy (& title, motif_win_expandAmpersands (my name));
 		} else {
-			static const char *keyStrings [256] = {
-				0, "<-", "->", "Up", "Down", "PAUSE", "Del", "Ins", "Backspace", "Tab", "LineFeed", "Home", "End", "Enter", "PageUp", "PageDown",
-				"Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", 0, 0, 0,
-				"Space", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/",
-				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?",
-				"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-				"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_",
-				"`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
-				"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "Del",
+			static const wchar_t *keyStrings [256] = {
+				0, L"<-", L"->", L"Up", L"Down", L"PAUSE", L"Del", L"Ins", L"Backspace", L"Tab", L"LineFeed", L"Home", L"End", L"Enter", L"PageUp", L"PageDown",
+				L"Esc", L"F1", L"F2", L"F3", L"F4", L"F5", L"F6", L"F7", L"F8", L"F9", L"F10", L"F11", L"F12", 0, 0, 0,
+				L"Space", L"!", L"\"", L"#", L"$", L"%", L"&", L"\'", L"(", L")", L"*", L"+", L",", L"-", L".", L"/",
+				L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L":", L";", L"<", L"=", L">", L"?",
+				L"@", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H", L"I", L"J", L"K", L"L", L"M", L"N", L"O",
+				L"P", L"Q", L"R", L"S", L"T", L"U", L"V", L"W", L"X", L"Y", L"Z", L"[", L"\\", L"]", L"^", L"_",
+				L"`", L"a", L"b", L"c", L"d", L"e", L"f", L"g", L"h", L"i", L"j", L"k", L"l", L"m", L"n", L"o",
+				L"p", L"q", L"r", L"s", L"t", L"u", L"v", L"w", L"x", L"y", L"z", L"{", L"|", L"}", L"~", L"Del",
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", "]", ",", "?", ".", "\\",
-				";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "-", "`", "=", "\'", 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"[", L"]", L",", L"?", L".", L"\\",
+				L";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"-", L"`", L"=", L"\'", 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			const char *keyString = keyStrings [acc] ? keyStrings [acc] : "???";
-			sprintf (title, "%s\t%s%s%s%s", motif_win_expandAmpersands (my name),
-				modifiers & _motif_COMMAND_MASK ? "Ctrl-" : "",
-				modifiers & _motif_OPTION_MASK ? "Alt-" : "",
-				modifiers & _motif_SHIFT_MASK ? "Shift-" : "", keyString);
+			const wchar_t *keyString = keyStrings [acc] ? keyStrings [acc] : L"???";
+			MelderString_empty (& title);
+			MelderString_append6 (&title, motif_win_expandAmpersands (my name), L"\t",
+				modifiers & _motif_COMMAND_MASK ? L"Ctrl-" : NULL,
+				modifiers & _motif_OPTION_MASK ? L"Alt-" : NULL,
+				modifiers & _motif_SHIFT_MASK ? L"Shift-" : NULL, keyString);
 		}
-		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, title);
+		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, title.string);
 	#elif mac
 		static int theGlyphs [1+31] = { 0,
 			kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
@@ -957,9 +960,7 @@ static void NativeMenuItem_setText (Widget me) {
 			kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
 			kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
 			0 };
-		(void) title;
-		PfromCstr (mac_text, my name);
-		SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
+		SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, Melder_peekWcsToCfstring (my name));
 		if (acc > 32) {
 			SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
 		} else {
@@ -1005,8 +1006,8 @@ static void _GuiNativizeWidget (Widget me) {
 				/*
 				 * This will be a hierarchical menu.
 				 */
-				PfromCstr (mac_text, my name);
-				my nat.menu.handle = NewMenu (my nat.menu.id, mac_text);
+				CreateNewMenu (my nat.menu.id, 0, & my nat.menu.handle);
+				SetMenuTitleWithCFString (my nat.menu.handle, Melder_peekWcsToCfstring (my name));
 				InsertMenu (my nat.menu.handle, kInsertHierarchicalMenu);
 			#endif
 		} else {
@@ -1033,35 +1034,35 @@ static void _GuiNativizeWidget (Widget me) {
 	} else switch (my widgetClass) {
 		case xmBulletinBoardWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, theWindowClassName, "bulletinBoard", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theWindowClassName, L"bulletinBoard", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
 		case xmDrawingAreaWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, theDrawingAreaClassName, "drawingArea", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theDrawingAreaClassName, L"drawingArea", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
 		case xmFormWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, theWindowClassName, "form", WS_CHILD | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theWindowClassName, L"form", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
 		case xmRowColumnWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, theWindowClassName, "rowColumn", WS_CHILD | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theWindowClassName, L"rowColumn", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
 		case xmListWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, "listbox", "list",
+				my window = CreateWindowEx (0, L"listbox", L"list",
 					WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | WS_CLIPSIBLINGS |
 					( my selectionPolicy == XmSINGLE_SELECT || my selectionPolicy == XmBROWSE_SELECT ? 0 : LBS_EXTENDEDSEL ),
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
@@ -1103,7 +1104,7 @@ static void _GuiNativizeWidget (Widget me) {
 					my widgetClass = xmRowColumnWidgetClass;   /* !!!!!!!!!!!!! */
 					my orientation = XmHORIZONTAL;
 					my rowColumnType = XmMENU_BAR;
-					my window = CreateWindowEx (0, theWindowClassName, "rowColumn", WS_CHILD,
+					my window = CreateWindowEx (0, theWindowClassName, L"rowColumn", WS_CHILD,
 						my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 					SetWindowLong (my window, GWL_USERDATA, (long) me);
 				}
@@ -1125,7 +1126,7 @@ static void _GuiNativizeWidget (Widget me) {
 		} break;
 		case xmMessageBoxWidgetClass: {
 			#if win
-				my window = CreateWindowEx (0, theWindowClassName, "messageBox", WS_CHILD | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theWindowClassName, L"messageBox", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
@@ -1155,7 +1156,7 @@ static void _GuiNativizeWidget (Widget me) {
 					 * Insert the menu before the Help menu, if that exists; otherwise, at the end.
 					 */
 					for (menu = my parent -> firstChild; menu != NULL; menu = menu -> nextSibling) {
-						if (MEMBER (menu, PulldownMenu) && strequ (menu -> name, "Help") && menu != me) {
+						if (MEMBER (menu, PulldownMenu) && wcsequ (menu -> name, L"Help") && menu != me) {
 							beforeID = (UINT) menu -> nat.menu./*handle*/id;
 							break;
 						}
@@ -1164,7 +1165,7 @@ static void _GuiNativizeWidget (Widget me) {
 						MENUITEMINFO info;
 						info. cbSize = sizeof (MENUITEMINFO);
 						info. fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_ID;
-						info. fType = MFT_STRING | ( strequ (my name, "Help") ? MFT_RIGHTJUSTIFY : 0 );
+						info. fType = MFT_STRING | ( wcsequ (my name, L"Help") ? MFT_RIGHTJUSTIFY : 0 );
 						info. dwTypeData = my name;
 						info. hSubMenu = my nat.menu.handle;
 						info. wID = (UINT) my nat.menu./*handle*/id;
@@ -1179,27 +1180,26 @@ static void _GuiNativizeWidget (Widget me) {
 					my nat.menu.handle = CreatePopupMenu ();
 				}
 			#elif mac
-				Str255 title;
 				int id;
 				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of RefCon fields. */
-				PfromCstr (title, my name);
 				if (MEMBER (my parent, MenuBar)) {
 					/*
 					 * This will be a menu in the Macintosh menu bar.
 					 */
-					if (USE_QUESTION_MARK_HELP_MENU && strequ (my name, "Help")) {
+					if (USE_QUESTION_MARK_HELP_MENU && wcsequ (my name, L"Help")) {
 						HMGetHelpMenu (& my nat.menu.handle, NULL);
 						theMenus [my nat.menu.id] = NULL;
 						my nat.menu.id = kHMHelpMenuID;
 						theMenus [MAXIMUM_NUMBER_OF_MENUS] = me;
 					} else {
 						int beforeID = 0;
-						my nat.menu.handle = NewMenu (my nat.menu.id, title);
+						CreateNewMenu (my nat.menu.id, 0, & my nat.menu.handle);
+						SetMenuTitleWithCFString (my nat.menu.handle, Melder_peekWcsToCfstring (my name));
 						for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) {
 							Widget menu = theMenus [id];
-							if (menu && strequ (menu -> name, "Help")) {
+							if (menu && wcsequ (menu -> name, L"Help")) {
 								beforeID = id;
 								break;
 							}
@@ -1212,14 +1212,15 @@ static void _GuiNativizeWidget (Widget me) {
 					 * or at a different place in the main window.
 					 * It is implemented as a Mac pop-up menu.
 					 */
-					my nat.menu.handle = NewMenu (my nat.menu.id, title);
+					CreateNewMenu (my nat.menu.id, 0, & my nat.menu.handle);
+					SetMenuTitleWithCFString (my nat.menu.handle, Melder_peekWcsToCfstring (my name));
 					InsertMenu (my nat.menu.handle, -1);
 				}
 			#endif
 		} break;
 		case xmLabelWidgetClass: {
 			#if win
-				my window = CreateWindow ("static", motif_win_expandAmpersands (my name), WS_CHILD |
+				my window = CreateWindow (L"static", motif_win_expandAmpersands (my name), WS_CHILD |
 					( my alignment == XmALIGNMENT_END ? SS_RIGHT :
 					  my alignment == XmALIGNMENT_CENTER ? SS_CENTER : SS_LEFT ) | SS_CENTERIMAGE,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
@@ -1236,13 +1237,13 @@ static void _GuiNativizeWidget (Widget me) {
 		case xmCascadeButtonWidgetClass: {
 			if (! my motif.cascadeButton.inBar) {
 				#if win
-					my window = CreateWindow ("button", motif_win_expandAmpersands (my name),
+					my window = CreateWindow (L"button", motif_win_expandAmpersands (my name),
 						WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 						my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 					SetWindowLong (my window, GWL_USERDATA, (long) me);
 					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 				#elif mac
-					if (strstr (my name, " -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
+					if (wcsstr (my name, L" -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
 						my nat.control.isBevel = true;
 						CreateBevelButtonControl (my macWindow, & my rect, NULL, kControlBevelButtonSmallBevel,
 							kControlBehaviorPushbutton, NULL, 1, kControlBehaviorCommandMenu, 0, & my nat.control.handle);
@@ -1267,7 +1268,7 @@ static void _GuiNativizeWidget (Widget me) {
 		} break;
 		case xmPushButtonWidgetClass: {
 			#if win
-				my window = CreateWindow ("button", motif_win_expandAmpersands (my name),
+				my window = CreateWindow (L"button", motif_win_expandAmpersands (my name),
 					WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
@@ -1287,7 +1288,7 @@ static void _GuiNativizeWidget (Widget me) {
 		case xmToggleButtonWidgetClass: {
 			my isRadioButton = my parent -> radioBehavior || my motif.toggleButton.indicatorType == XmONE_OF_MANY;
 			#if win
-				my window = CreateWindow ("button", motif_win_expandAmpersands (my name), WS_CHILD |
+				my window = CreateWindow (L"button", motif_win_expandAmpersands (my name), WS_CHILD |
 					( my isRadioButton ? ( my parent -> radioBehavior ? BS_AUTORADIOBUTTON : BS_RADIOBUTTON )
 						: BS_AUTOCHECKBOX ) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
@@ -1316,8 +1317,8 @@ static void _GuiNativizeWidget (Widget me) {
 		} break;
 		case xmScrollBarWidgetClass: {
 			#if win
-				my window = CreateWindow ("scrollbar", my name, WS_CHILD |
-					( strequ (my name, "verticalScrollBar") ? SBS_VERT : SBS_HORZ ) | WS_CLIPSIBLINGS,
+				my window = CreateWindow (L"scrollbar", my name, WS_CHILD |
+					( wcsequ (my name, L"verticalScrollBar") ? SBS_VERT : SBS_HORZ ) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 				NativeScrollBar_set (me);
@@ -1345,7 +1346,7 @@ static void _GuiNativizeWidget (Widget me) {
 			 *      (shell.)form.(scrolledWindow.)clipWindow.column.row.pushButton
 			 */
 			#if win
-				my window = CreateWindowEx (0, theWindowClassName, "scrolledWindow", WS_CHILD | WS_CLIPSIBLINGS,
+				my window = CreateWindowEx (0, theWindowClassName, L"scrolledWindow", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
@@ -1406,13 +1407,13 @@ static void _GuiNativizeWidget (Widget me) {
 }
 
 static Widget createWidget (int widgetClass, Widget parent, const char *name) {
-	Widget me = _Gui_initializeWidget (widgetClass, parent, name);
+	Widget me = _Gui_initializeWidget (widgetClass, parent, Melder_peekUtf8ToWcs (name));
 	_GuiNativizeWidget (me);
 	return me;
 }
 
 static Widget vaCreateWidget (int widgetClass, Widget parent, const char *name, va_list arg) {
-	Widget me = _Gui_initializeWidget (widgetClass, parent, name);
+	Widget me = _Gui_initializeWidget (widgetClass, parent, Melder_peekUtf8ToWcs (name));
 	int resource;
 	while (resource = va_arg (arg, int), resource != 0) switch (resource) {
 		case XmNalignment: {
@@ -1870,7 +1871,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			Melder_assert (MEMBER3 (me, Form, BulletinBoard, MessageBox));
 			text = va_arg (arg, char *);
 			#if win
-				SetWindowText (my shell -> window, text);
+				SetWindowText (my shell -> window, Melder_peekUtf8ToWcs (text));
 			#elif mac
 				ptext [0] = strlen (text); strcpy ((char *) ptext + 1, text);
 				SetWTitle (my macWindow, ptext);
@@ -1949,7 +1950,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			Melder_assert (MEMBER3 (me, Label, CascadeButton, PushButton));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_strdup (text);
+			my name = Melder_utf8ToWcs (text);
 			if (my inMenu) {
 				NativeMenuItem_setText (me);
 			} else if (MEMBER (me, CascadeButton) && my motif.cascadeButton.inBar) {
@@ -2090,14 +2091,14 @@ static void _motif_setValues (Widget me, va_list arg) {
 				ptext [0] = strlen (text); strcpy ((char *) ptext + 1, text);
 				SetWTitle (my nat.window.ptr, ptext);
 			#elif win
-				SetWindowText (my window, text);
+				SetWindowText (my window, Melder_peekUtf8ToWcs (text));
 			#endif
 			break;
 		case XmNtitleString:
 			Melder_assert (MEMBER (me, Scale));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_strdup (text);
+			my name = Melder_utf8ToWcs (text);
 			_Gui_invalidateWidget (me);
 			break;
 		case XmNtopAttachment:
@@ -2863,8 +2864,7 @@ static void mapWidget (Widget me) {
 				InsertMenuItem (my nat.entry.handle, "\p-", my nat.entry.item - 1);
 			} else {
 				InsertMenuItem (my nat.entry.handle, "\p ", my nat.entry.item - 1);
-				PfromCstr (mac_text, my name);
-				SetMenuItemText (my nat.entry.handle, my nat.entry.item, mac_text);
+				SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, Melder_peekWcsToCfstring (my name));
 				if (my insensitive) DisableMenuItem (my nat.entry.handle, my nat.entry.item);
 				if (mac_text [mac_text [0]] == ':')
 					SetItemStyle (my nat.entry.handle, my nat.entry.item, underline);
@@ -2915,7 +2915,7 @@ static void mapWidget (Widget me) {
 		case xmScrollBarWidgetClass: {
 			#if win
 			if (! my window) {
-				my window = CreateWindow ("scrollbar", my name, WS_CHILD |
+				my window = CreateWindow (L"scrollbar", my name, WS_CHILD |
 					( my orientation == XmHORIZONTAL ? SBS_HORZ : SBS_VERT) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
@@ -3272,10 +3272,10 @@ Widget XtInitialize (void *dum1, const char *name,
 	{
 		HWND window;
 		WNDCLASSEX windowClass;
-		sprintf (theApplicationName, argv [0] ? argv [0] : "Unknown");
-		sprintf (theApplicationClassName, "PraatShell%d %s", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
-		sprintf (theWindowClassName, "PraatChildWindow%d %s", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
-		sprintf (theDrawingAreaClassName, "PraatDrawingArea%d %s", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
+		swprintf (theApplicationName, 100, argv [0] ? Melder_peekUtf8ToWcs (argv [0]) : L"Unknown");
+		swprintf (theApplicationClassName, 100, L"PraatShell%d %ls", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
+		swprintf (theWindowClassName, 100, L"PraatChildWindow%d %ls", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
+		swprintf (theDrawingAreaClassName, 100, L"PraatDrawingArea%d %ls", PRAAT_WINDOW_CLASS_NUMBER, theApplicationName);
 		window = FindWindow (theWindowClassName, NULL);
 		if (window != NULL) {
 			/*
@@ -3393,7 +3393,7 @@ void XtVaGetValues (Widget me, ...) {
 		case XmNtitleString:
 			Melder_assert (my widgetClass == xmLabelWidgetClass || my widgetClass == xmCascadeButtonWidgetClass ||
 								my widgetClass == xmScaleWidgetClass);
-			text = Melder_strdup (my name);
+			text = Melder_wcsToUtf8 (my name);
 			*va_arg (arg, char **) = text;
 			break;
 		case XmNdialogTitle:
@@ -3802,9 +3802,9 @@ Atom XmInternAtom (Display *display, String name, Boolean only_if_exists) {
 void XmListAddItem (Widget me, XmString item, int position) {
 	#if win
 		if (position)
-			ListBox_InsertString (my window, position - 1, item);
+			ListBox_InsertString (my window, position - 1, Melder_peekUtf8ToWcs (item));
 		else
-			ListBox_AddString (my window, item);
+			ListBox_AddString (my window, Melder_peekUtf8ToWcs (item));
 	#elif mac
 		Cell cell;
 		int n = (** my nat.list.handle). dataBounds. bottom;
@@ -3825,10 +3825,10 @@ void XmListAddItems (Widget me, XmString *items, int n, int position) {
 		int i;
 		if (position)
 			for (i = 0; i < n; i ++)
-				ListBox_InsertString (my window, (position ++) - 1, items [i]);
+				ListBox_InsertString (my window, (position ++) - 1, Melder_peekUtf8ToWcs (items [i]));
 		else
 			for (i = 0; i < n; i ++)
-				ListBox_AddString (my window, items [i]);
+				ListBox_AddString (my window, Melder_peekUtf8ToWcs (items [i]));
 	#elif mac
 		int i, there = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
@@ -3867,9 +3867,9 @@ void XmListDeleteItem (Widget me, XmString item) {
 	#if win
 		int i, n = ListBox_GetCount (my window);
 		for (i = n - 1; i >= 0; i --) {
-			char buffer [301];
+			wchar_t buffer [301];
 			ListBox_GetText (my window, i, buffer);
-			if (strequ (buffer, item)) ListBox_DeleteString (my window, i);
+			if (wcsequ (buffer, Melder_peekUtf8ToWcs (item))) ListBox_DeleteString (my window, i);
 		}
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
@@ -3929,9 +3929,9 @@ void XmListDeselectItem (Widget me, XmString item) {
 	#if win
 		int i, n = ListBox_GetCount (my window);
 		for (i = n - 1; i >= 0; i --) {
-			char buffer [301];
+			wchar_t buffer [301];
 			ListBox_GetText (my window, i, buffer);
-			if (strequ (buffer, item)) ListBox_SetSel (my window, False, i);
+			if (wcsequ (buffer, Melder_peekUtf8ToWcs (item))) ListBox_SetSel (my window, False, i);
 		}
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
@@ -3968,9 +3968,9 @@ Boolean XmListGetMatchPos (Widget me, XmString item, int **position_list, int *p
 		*position_list = Melder_calloc (int, n);
 		*position_count = 0;
 		for (i = 1; i <= n; i ++) {
-			char buffer [301];
+			wchar_t buffer [301];
 			ListBox_GetText (my window, i - 1, buffer);
-			if (strequ (buffer, item)) {
+			if (wcsequ (buffer, Melder_peekUtf8ToWcs (item))) {
 				(*position_count) ++;
 				(*position_list) [*position_count - 1] = i;
 			}
@@ -4041,7 +4041,7 @@ Boolean XmListItemExists (Widget me, XmString item) {
 
 int XmListItemPos (Widget me, XmString item) {
 	#if win
-		int winPos = ListBox_FindStringExact (my window, 0, item);
+		int winPos = ListBox_FindStringExact (my window, 0, Melder_peekUtf8ToWcs (item));
 		return winPos < 0 ? 0 : winPos + 1;
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
@@ -4063,7 +4063,7 @@ void XmListReplaceItemsPos (Widget me, XmString *new_items, int item_count, int 
 		for (i = 0; i < item_count; i ++) {
 			int winPos = position - 1 + i;
 			ListBox_DeleteString (my window, winPos);
-			ListBox_InsertString (my window, winPos, new_items [i]);
+			ListBox_InsertString (my window, winPos, Melder_peekUtf8ToWcs (new_items [i]));
 		}
 	#elif mac
 		int i;
@@ -4086,9 +4086,9 @@ void XmListSelectItem (Widget me, XmString item, Boolean notify) {
 	#if win
 		int i, n = ListBox_GetCount (my window);
 		for (i = n - 1; i >= 0; i --) {
-			char buffer [301];
+			wchar_t buffer [301];
 			ListBox_GetText (my window, i, buffer);
-			if (strequ (buffer, item)) {
+			if (wcsequ (buffer, Melder_peekUtf8ToWcs (item))) {
 				if (my selectionPolicy == XmSINGLE_SELECT || my selectionPolicy == XmBROWSE_SELECT) {
 					ListBox_SetCurSel (my window, i);
 				} else {

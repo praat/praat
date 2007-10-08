@@ -27,11 +27,11 @@
 class_methods (Command, Thing)
 class_methods_end
 
-int Command_init (I, char *name, Any data, int (*execute)(Any), int (*undo)(Any))
+int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any))
 {
 	iam (Command);
 	Melder_assert (execute && undo);
-	Thing_setName (me, name);
+	Thing_setNameW (me, name);
 	my data = data;
 	my execute = execute;
 	my undo = undo;
@@ -113,10 +113,10 @@ int CommandHistory_offright (I)
 	return my size == 0 || my current == my size + 1;
 }
 
-char *CommandHistory_commandName (I, long offsetFromCurrent)
+wchar_t *CommandHistory_commandName (I, long offsetFromCurrent)
 {
 	iam (CommandHistory); long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size ? Thing_getName (my item[pos]) : NULL;
+	return pos >= 1 && pos <= my size ? Thing_getNameW (my item[pos]) : NULL;
 }
 
 /* End of file Command.c */

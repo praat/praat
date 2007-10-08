@@ -191,7 +191,7 @@ Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots
 	 */
 	my printf (my file, "%%!PS-Adobe-3.0\n");
 	my printf (my file, "%%%%Creator: Praat Shell 4.2\n");
-	my printf (my file, "%%%%Title: %s\n", MelderFile_name (fs));
+	my printf (my file, "%%%%Title: %s\n", Melder_peekWcsToUtf8 (MelderFile_name (fs)));
 	today = time (NULL);
 	my printf (my file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my printf (my file, "%%%%PageOrder: Special\n");

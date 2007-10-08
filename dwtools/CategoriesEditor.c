@@ -156,7 +156,7 @@ static void classCategoriesEditorCommand_destroy (I)
 	inherited (CategoriesEditorCommand) destroy (me);
 }
 
-static int CategoriesEditorCommand_init (I, char *name,  Any data,
+static int CategoriesEditorCommand_init (I, wchar_t *name,  Any data,
 	int (*execute) (Any), int (*undo) (Any), int nCategories, int nSelected)
 {
 	iam (CategoriesEditorCommand);
@@ -204,7 +204,7 @@ static int CategoriesEditorInsert_undo (I)
 static Any CategoriesEditorInsert_create (Any data, Any str, int position)
 {
 	CategoriesEditorInsert me = new (CategoriesEditorInsert);
-	if (! me || ! CategoriesEditorCommand_init (me, "Insert", data,
+	if (! me || ! CategoriesEditorCommand_init (me, L"Insert", data,
 		CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1))
 	{
 		forget (me); return NULL;
@@ -261,7 +261,7 @@ static Any CategoriesEditorRemove_create (Any data, int *posList, int posCount)
 	CategoriesEditorRemove me = new (CategoriesEditorRemove); 
 	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, "Remove", data,
+	if (! me || ! CategoriesEditorCommand_init (me, L"Remove", data,
 		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, 
 		posCount, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++) my selection[i] = posList[i-1];
@@ -317,7 +317,7 @@ static Any CategoriesEditorReplace_create (Any data, Any str, int *posList, int 
 	CategoriesEditorReplace me = new (CategoriesEditorReplace);
 	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, "Replace", data,
+	if (! me || ! CategoriesEditorCommand_init (me, L"Replace", data,
 		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo, 
 			posCount + 1, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
@@ -375,7 +375,7 @@ static Any CategoriesEditorMoveUp_create (Any data, int *posList,
 	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp); 
 	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, "Move up", data,
+	if (! me || ! CategoriesEditorCommand_init (me, L"Move up", data,
 		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 
 		0, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
@@ -431,7 +431,7 @@ static Any CategoriesEditorMoveDown_create (Any data, int *posList,
 	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown); 
 	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, "Move down", data,
+	if (! me || ! CategoriesEditorCommand_init (me, L"Move down", data,
 		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 
 			0, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
@@ -481,8 +481,7 @@ static void notifyOutOfView (I)
 static void update_dos (I)
 {
 	iam (CategoriesEditor);
-	char tmp[50], *name;
-	XmString commandName;
+	wchar_t tmp[50], *name;
 	Boolean undoSense = True, redoSense = True;
 	
 	/*
@@ -491,12 +490,11 @@ static void update_dos (I)
 	
 	if (! (name = CommandHistory_commandName (my history, 0)))
 	{
-			name = "nothing"; undoSense = False;
+			name = L"nothing"; undoSense = False;
 	}
 	
-	sprintf (tmp, "Undo `%.40s'", name);
-	commandName = XmStringCreateSimple (tmp); 
-	XtVaSetValues (my undo, XmNlabelString, commandName, NULL);
+	swprintf (tmp, 50, L"Undo `%ls'", name);
+	XtVaSetValues (my undo, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (name)), NULL);
 	XtSetSensitive (my undo, undoSense);
 	
 	/*
@@ -505,14 +503,12 @@ static void update_dos (I)
 	
 	if (! (name = CommandHistory_commandName (my history, 1)))
 	{
-		name = "nothing"; redoSense = False;
+		name = L"nothing"; redoSense = False;
 	}
 	
-	sprintf (tmp, "Redo `%.40s'", name);
-	commandName = XmStringCreateSimple (tmp); 
-	XtVaSetValues (my redo, XmNlabelString, commandName, NULL);
+	swprintf (tmp, 50, L"Redo `%ls'", name);
+	XtVaSetValues (my redo, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (name)), NULL);
 	XtSetSensitive (my redo, redoSense);
-	XmStringFree (commandName);
 }
 
 static void updateWidgets (I) /*all buttons except undo & redo */

@@ -951,7 +951,7 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 		tier = grid -> tiers -> item [my selectedTier];
 		SET_STRING ("Name", tier -> name ? tier -> name : "")
 	EDITOR_DO
-		char *newName = GET_STRING ("Name");
+		wchar_t *newName = GET_STRINGW (L"Name");
 		TextGrid grid = my data;
 		Data tier;
 		if (! checkTierSelection (me, L"rename a tier")) return 0;
@@ -959,7 +959,7 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 
 		Editor_save (me, L"Rename tier");
 
-		Thing_setName (tier, newName);
+		Thing_setNameW (tier, newName);
 
 		FunctionEditor_redraw (me);
 		Editor_broadcastChange (me);
@@ -974,7 +974,7 @@ static int menu_cb_PublishTier (EDITOR_ARGS) {
 	if (my publishCallback) {
 		Data anyTier = grid -> tiers -> item [my selectedTier], copy = Data_copy (anyTier);
 		if (! copy) return 0;
-		Thing_setName (copy, anyTier -> name); 
+		Thing_setNameW (copy, anyTier -> nameW); 
 		my publishCallback (me, my publishClosure, copy);
 	}
 	return 1;
@@ -1033,11 +1033,11 @@ static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 	EDITOR_DO
 		TextGrid grid = my data;
 		int position = GET_INTEGER ("Position");
-		char *name = GET_STRING ("Name");
+		wchar_t *name = GET_STRINGW (L"Name");
 		IntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setName (tier, name);
+		Thing_setNameW (tier, name);
 
 		Editor_save (me, L"Add interval tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
@@ -1063,11 +1063,11 @@ static int menu_cb_AddPointTier (EDITOR_ARGS) {
 	EDITOR_DO
 		TextGrid grid = my data;
 		int position = GET_INTEGER ("Position");
-		char *name = GET_STRING ("Name");
+		wchar_t *name = GET_STRINGW (L"Name");
 		TextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setName (tier, name);
+		Thing_setNameW (tier, name);
 
 		Editor_save (me, L"Add point tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
@@ -1086,23 +1086,21 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 		SENTENCE ("Name", "")
 	EDITOR_OK
 		TextGrid grid = my data;
-		char text [200];
 		if (my selectedTier) {
-			sprintf (text, "%ld", my selectedTier + 1);
-			SET_STRING ("Position", text)
-			SET_STRING ("Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> name)
+			SET_STRINGW (L"Position", Melder_integer (my selectedTier + 1))
+			SET_STRINGW (L"Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> nameW)
 		}
 	EDITOR_DO
 		TextGrid grid = my data;
 		int position = GET_INTEGER ("Position");
-		char *name = GET_STRING ("Name");
+		wchar_t *name = GET_STRINGW (L"Name");
 		AnyTier tier, newTier;
 		if (! checkTierSelection (me, L"duplicate a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
 		newTier = Data_copy (tier);
 		if (! newTier) return 0;
 			if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setName (newTier, name);
+		Thing_setNameW (newTier, name);
 
 		Editor_save (me, L"Duplicate tier");
 		Ordered_addItemPos (grid -> tiers, newTier, position);

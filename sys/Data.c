@@ -122,7 +122,7 @@ Any Data_copy (I) {
 		forget (thee);
 		return Melder_errorp ("(Data_copy:) Object of class %s not copied.", our _className);
 	}
-	Thing_setName (thee, my name);
+	Thing_setNameW (thee, my nameW);
 	return thee;
 }
 
