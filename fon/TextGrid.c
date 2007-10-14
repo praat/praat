@@ -303,7 +303,7 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 		for (tierName = wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = wcstok (NULL, L" ", & last)) {
 			IntervalTier tier = IntervalTier_create (tmin, tmax);
 			if (! tier || ! Collection_addItem (my tiers, tier)) { forget (me); return NULL; }
-			Thing_setNameW (tier, tierName);
+			Thing_setName (tier, tierName);
 		}
 	}
 
@@ -315,12 +315,12 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 		for (tierName = wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = wcstok (NULL, L" ", & last)) {
 			long itier;
 			for (itier = 1; itier <= my tiers -> size; itier ++) {
-				if (wcsequ (tierName, Thing_getNameW (my tiers -> item [itier]))) {
+				if (wcsequ (tierName, Thing_getName (my tiers -> item [itier]))) {
 					TextTier tier = TextTier_create (tmin, tmax);
 					if (! tier) { forget (me); return NULL; }
 					forget (my tiers -> item [itier]);
 					my tiers -> item [itier] = tier;
-					Thing_setNameW (tier, tierName);
+					Thing_setName (tier, tierName);
 				}
 			}
 		}
@@ -450,7 +450,7 @@ static TextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 			TextInterval textInterval = TextInterval_create (
 				iinterval == 1 ? tmin : autosegment -> xmin,
 				iinterval == tier -> size ? tmax : autosegment -> xmax,
-				autosegment -> nameW);
+				autosegment -> name);
 			if (! textInterval || ! Collection_addItem (intervalTier -> intervals, textInterval))
 				{ forget (thee); return NULL; }
 		}
@@ -642,7 +642,7 @@ Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long it
 	for (iseg = 1; iseg <= tier -> intervals -> size; iseg ++) {
 		TextInterval segment = tier -> intervals -> item [iseg];
 		Sound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, 0, 1.0, preserveTimes); cherror
-		Thing_setNameW (interval, segment -> text ? segment -> text : L"untitled");
+		Thing_setName (interval, segment -> text ? segment -> text : L"untitled");
 		Collection_addItem (collection, interval); cherror
 	}
 end:
@@ -664,7 +664,7 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 		TextInterval segment = tier -> intervals -> item [iseg];
 		if (segment -> text != NULL && segment -> text [0] != '\0') {
 			Sound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, 0, 1.0, preserveTimes); cherror
-			Thing_setNameW (interval, segment -> text ? segment -> text : L"untitled");
+			Thing_setName (interval, segment -> text ? segment -> text : L"untitled");
 			Collection_addItem (collection, interval); cherror
 		}
 	}
@@ -694,8 +694,8 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 				0, 1.0, preserveTimes);
 			wchar_t name [1000];
 			if (! interval) goto error;
-			swprintf (name, 1000, L"%ls_%ls_%ld", sound -> nameW ? sound -> nameW : L"", text, ++ count);
-			Thing_setNameW (interval, name);
+			swprintf (name, 1000, L"%ls_%ls_%ld", sound -> name ? sound -> name : L"", text, ++ count);
+			Thing_setName (interval, name);
 			if (! Collection_addItem (collection, interval)) goto error;
 		}
 	}
@@ -1547,13 +1547,13 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		if (wcsequ (klas, L"IntervalTier")) {
 			IntervalTier tier = new (IntervalTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> nameW = texgetw2 (& text); cherror
+			tier -> name = texgetw2 (& text); cherror
 			classFunction -> readText (tier, & text); cherror
 			tier -> intervals = SortedSetOfDouble_create (); cherror
 		} else if (wcsequ (klas, L"TextTier")) {
 			TextTier tier = new (TextTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> nameW = texgetw2 (& text); cherror
+			tier -> name = texgetw2 (& text); cherror
 			classFunction -> readText (tier, & text); cherror
 			tier -> points = SortedSetOfDouble_create (); cherror
 		} else {
@@ -1620,7 +1620,7 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		MelderFile_write1 (file, L"\n");
 		writeQuotedString (file, Thing_classNameW (anyTier));
 		MelderFile_write1 (file, L" ");
-		writeQuotedString (file, anyTier -> nameW);
+		writeQuotedString (file, anyTier -> name);
 		MelderFile_write4 (file, L" ", Melder_double (anyTier -> xmin), L" ", Melder_double (anyTier -> xmax));
 	}
 	for (;;) {
@@ -1741,7 +1741,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 			 */
 			for (itier = 1; itier <= my tiers -> size; itier ++) {
 				IntervalTier tier = my tiers -> item [itier];
-				if (strequ (tier -> name, speakerName)) {
+				if (wcsequ (tier -> name, Melder_peekUtf8ToWcs (speakerName))) {
 					speakerTier = itier;
 					break;
 				}
@@ -1754,13 +1754,13 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				sentenceTier -> intervals = SortedSetOfDouble_create (); cherror
 				sentenceTier -> xmin = 0.0;
 				sentenceTier -> xmax = my xmax;
-				Thing_setNameW (sentenceTier, Melder_peekUtf8ToWcs (speakerName));
+				Thing_setName (sentenceTier, Melder_peekUtf8ToWcs (speakerName));
 				Collection_addItem (my tiers, sentenceTier); cherror
 				phraseTier = new (IntervalTier); cherror
 				phraseTier -> intervals = SortedSetOfDouble_create (); cherror
 				phraseTier -> xmin = 0.0;
 				phraseTier -> xmax = my xmax;
-				Thing_setNameW (phraseTier, Melder_peekUtf8ToWcs (speakerName));
+				Thing_setName (phraseTier, Melder_peekUtf8ToWcs (speakerName));
 				Collection_addItem (my tiers, phraseTier); cherror
 			} else {
 				sentenceTier = my tiers -> item [speakerTier];

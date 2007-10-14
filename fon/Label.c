@@ -28,20 +28,20 @@
 static int copy (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
 	if (! inherited (Autosegment) copy (me, thee)) return 0;
-	return my nameW == NULL || (Thing_setNameW (thee, my nameW), my nameW != NULL);
+	return my name == NULL || (Thing_setName (thee, my name), my name != NULL);
 }
 
 static bool equal (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
 	if (! inherited (Autosegment) equal (me, thee)) return 0;
-	if (my nameW == NULL && thy nameW == NULL) return 1;   /* Shortcut: no names. */
-	if (my nameW == NULL || thy nameW == NULL) return 0;
-	return wcsequ (my nameW, thy nameW);
+	if (my name == NULL && thy name == NULL) return 1;   /* Shortcut: no names. */
+	if (my name == NULL || thy name == NULL) return 0;
+	return wcsequ (my name, thy name);
 }
 
 static struct structData_Description description [] = {
 	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theStructFunction. description },
-	{ L"name", stringwwa, (int) & ((Autosegment) 0) -> nameW, sizeof (wchar_t *) },
+	{ L"name", stringwwa, (int) & ((Autosegment) 0) -> name, sizeof (wchar_t *) },
 	{ 0 } };
 
 class_methods (Autosegment, Function)
@@ -52,8 +52,7 @@ class_methods_end
 
 Any Autosegment_create (double tmin, double tmax, const wchar_t *label) {
 	Autosegment me = new (Autosegment);
-	if (! me || ! Function_init (me, tmin, tmax) ||
-		 (label != NULL && (Thing_setNameW (me, label), my name == NULL)))
+	if (! me || ! Function_init (me, tmin, tmax) || (label != NULL && (Thing_setName (me, label), my name == NULL)))
 		forget (me);
 	return me;
 }

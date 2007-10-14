@@ -51,7 +51,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *s
 		wchar_t *className = & buffer.string [0], *givenName = space + 1;
 		WHERE_DOWN (1) {
 			Data object = OBJECT;
-			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, Melder_peekUtf8ToWcs (object -> name)))
+			if (wcsequ (className, Thing_classNameW (OBJECT)) && wcsequ (givenName, object -> name))
 				return IOBJECT;
 		}
 	} else {

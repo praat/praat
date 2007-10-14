@@ -39,7 +39,7 @@ FORM (Art_create, "Create a default Articulation", "Articulatory synthesis")
 	WORD ("Name", "articulation")
 	OK
 DO
-	if (! praat_new (Art_create (), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Art_create (), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Art_edit, "Edit Art", 0)
@@ -69,7 +69,7 @@ FORM (Artword_create, "Create an empty Artword", "Create Artword...")
 	POSITIVE ("Duration (seconds)", "1.0")
 	OK
 DO
-	if (! praat_new (Artword_create (GET_REAL ("Duration")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Artword_create (GET_REAL ("Duration")), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Artword_draw, "Draw one Artword tier", NULL)
@@ -142,7 +142,7 @@ END
 DIRECT (Art_Speaker_to_VocalTract)
 	wchar_t name [200];
 	praat_name2 (name, classArt, classSpeaker);
-	if (! praat_new9 (Art_Speaker_to_VocalTract (ONLY (classArt), ONLY (classSpeaker)), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (Art_Speaker_to_VocalTract (ONLY (classArt), ONLY (classSpeaker)), name)) return 0;
 END
 
 /***** ARTWORD & SPEAKER *****/
@@ -202,8 +202,8 @@ END
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
 
 DIRECT (Artword_Speaker_movie)
-	extern Graphics Movie_create (const char *title, int width, int height);
-	Graphics g = Movie_create ("Artword & Speaker movie", 300, 300);
+	extern Graphics Movie_create (const wchar_t *title, int width, int height);
+	Graphics g = Movie_create (L"Artword & Speaker movie", 300, 300);
 	Artword_Speaker_Sound_movie (ONLY (classArtword), ONLY (classSpeaker), ONLY (classSound), g);
 END
 
@@ -221,8 +221,8 @@ FORM (Speaker_create, "Create a Speaker", "Create Speaker...")
 		OPTION ("10")
 	OK
 DO
-	if (! praat_new (Speaker_create (GET_STRING ("Kind of speaker"),
-		atol (GET_STRING ("Number of tubes in glottis"))), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Speaker_create (GET_STRINGW (L"Kind of speaker"),
+		wcstol (GET_STRINGW (L"Number of tubes in glottis"), NULL, 10)), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (Speaker_help) Melder_help (L"Speaker"); END
@@ -255,7 +255,7 @@ FORM (VocalTract_createFromPhone, "Create Vocal Tract from phone", "Create Vocal
 		OPTION ("ku")
 	OK
 DO
-	NEW (VocalTract_createFromPhone (GET_STRING ("Phone")))
+	if (! praat_new1 (VocalTract_createFromPhone (GET_STRINGW (L"Phone")), GET_STRINGW (L"Phone"))) return 0;
 END
 
 DIRECT (VocalTract_draw)

@@ -26,7 +26,7 @@
  * pb 2004/10/25 C++ compatible assignments
  * pb 2006/12/10 update on "info" documentation
  * pb 2007/06/11 wchar_t
- * 2007/08/30
+ * pb 2007/10/09 removed char
  */
 
 /* The root class of all objects. */
@@ -165,16 +165,16 @@ void *Thing_classFromClassNameW (const wchar_t *className);
 		and Thing_version will be set to 300.
 */
 
-wchar_t * Thing_getNameW (I);
+wchar_t * Thing_getName (I);
 /* Return a pointer to your internal name (which can be NULL). */
 wchar_t * Thing_messageName (I);
 
-void Thing_setNameW (I, const wchar_t *name);
+void Thing_setName (I, const wchar_t *name);
 /*
 	Function:
 		remember that you are called 'name'.
 	Postconditions:
-		my name *and* my nameW are copies of 'name'.
+		my name *and* my name are copies of 'name'.
 */
 
 void Thing_overrideClass (I, void *klas);
@@ -264,8 +264,7 @@ void Thing_swap (I, thou);
 /* For the inheritors. */
 
 #define Thing_members \
-	char *name; \
-	wchar_t *nameW;
+	wchar_t *name;
 #define Thing_methods \
 	long version; \
 	void (*destroy) (I); \

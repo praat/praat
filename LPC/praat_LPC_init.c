@@ -138,7 +138,7 @@ FORM (LFCC_to_LPC, "LFCC: To LPC", "LFCC: To LPC...")
 	OK
 DO
 	long ncof = GET_INTEGER ("Number of coefficients");
-	REQUIRE (ncof >= 0, "Number of coefficients must be greater or equal zero.")
+	REQUIRE (ncof >= 0, L"Number of coefficients must be greater or equal zero.")
 	EVERY_TO (LFCC_to_LPC (OBJECT, ncof))
 END
 
@@ -206,7 +206,7 @@ FORM (LPC_to_LFCC, "LPC: To LFCC", "LPC: To LFCC...")
 	OK
 DO
 	long ncof = GET_INTEGER ("Number of coefficients");
-	REQUIRE (ncof >= 0, "Number of coefficients must be greater or equal zero.")
+	REQUIRE (ncof >= 0, L"Number of coefficients must be greater or equal zero.")
 	EVERY_TO (LPC_to_LFCC (OBJECT, ncof))
 END
 
@@ -345,7 +345,7 @@ FORM (Sound_to_MFCC, "Sound: To MFCC",
 	OK
 DO
 	long p = GET_INTEGER ("Number of coefficients");
-	REQUIRE (p < 25, "Number of coefficients must be < 25.")
+	REQUIRE (p < 25, L"Number of coefficients must be < 25.")
 	EVERY_TO (Sound_to_MFCC (OBJECT, p, GET_REAL ("Analysis window duration"),
 		GET_REAL ("Time step"), GET_REAL ("Position of first filter"), 
 		GET_REAL ("Maximum frequency"), GET_REAL ("Distance between filters")))
@@ -387,7 +387,7 @@ DO
 		GET_REAL ("Analysis width"), GET_REAL ("Pre-emphasis frequency"), 
 		GET_REAL ("Number of std. dev."), GET_INTEGER ("Maximum number of iterations"),  
 		GET_REAL ("Tolerance"), GET_INTEGER ("Variable location")),
-			L"%s_r", sound -> nameW)) return 0;
+			L"%s_r", sound -> name)) return 0;
 END
 
 void praat_uvafon_LPC_init (void);

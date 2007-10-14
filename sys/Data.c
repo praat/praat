@@ -122,7 +122,7 @@ Any Data_copy (I) {
 		forget (thee);
 		return Melder_errorp ("(Data_copy:) Object of class %s not copied.", our _className);
 	}
-	Thing_setNameW (thee, my nameW);
+	Thing_setName (thee, my name);
 	return thee;
 }
 
@@ -243,8 +243,7 @@ int Data_writeLisp (I, FILE *f) {
 int Data_writeLispToConsole (I) {
 	iam (Data);
 	if (! Data_canWriteLisp (me)) return Melder_error ("(Data_writeLispToConsole:) Class %s cannot be written as LISP.", our _className);
-	printf ("Write as LISP sequence to console: class %s,  name \"%s\".\n",
-		Thing_className (me), my name ? my name : "<none>");
+	wprintf (L"Write as LISP sequence to console: class %ls,  name \"%ls\".\n", Thing_classNameW (me), my name ? my name : L"<none>");
 	return Data_writeLisp (me, stdout);
 }
 

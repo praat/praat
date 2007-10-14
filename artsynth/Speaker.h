@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1995/10/15
- * pb 2002/07/16 GPL
+ * pb 2007/10/09
  */
 
 #ifndef _Data_h_
@@ -32,7 +31,7 @@
 #define Speaker_methods Data_methods
 oo_CLASS_CREATE (Speaker, Data);
 
-Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses);
+Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses);
 	/* Preconditions:								*/
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/

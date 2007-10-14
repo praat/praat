@@ -32,12 +32,12 @@
 
 static long theTotalNumberOfThings;
 
-static void destroy (I) { iam (Thing); Melder_free (my name); Melder_free (my nameW); }
+static void destroy (I) { iam (Thing); Melder_free (my name); }
 
 static void info (I) {
 	iam (Thing);
 	MelderInfo_writeLine2 (L"Object type: ", Thing_classNameW (me));
-	MelderInfo_writeLine2 (L"Object name: ", my nameW ? my nameW : L"<no name>");
+	MelderInfo_writeLine2 (L"Object name: ", my name ? my name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 }
@@ -68,7 +68,6 @@ Any Thing_new (void *table) {
 	theTotalNumberOfThings += 1;
 	my methods = us;
 	my name = NULL;
-	my nameW = NULL;
 	if (! us -> destroy)   /* Table not initialized? */
 		us -> _initialize (us);
 	return me;
@@ -193,7 +192,7 @@ void Thing_info (I) {
 	MelderInfo_close ();
 }
 
-wchar_t * Thing_getNameW (I) { iam (Thing); return my nameW; }
+wchar_t * Thing_getName (I) { iam (Thing); return my name; }
 
 wchar_t * Thing_messageName (I) {
 	iam (Thing);
@@ -201,17 +200,15 @@ wchar_t * Thing_messageName (I) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	MelderString_append4 (& buffers [ibuffer], our _classNameW, L" \"", my nameW ? my nameW : L"(nameless)", L"\"");
+	MelderString_append4 (& buffers [ibuffer], our _classNameW, L" \"", my name ? my name : L"(nameless)", L"\"");
 	return buffers [ibuffer]. string;
 }
 
-void Thing_setNameW (I, const wchar_t *name) {
+void Thing_setName (I, const wchar_t *name) {
 	iam (Thing);
-	if (name != my nameW) {   /* Pointer comparison! So that Thing_setNameW (me, my nameW) does not fail. */
-		Melder_free (my nameW);
-		my nameW = Melder_wcsdup (name);
+	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
 		Melder_free (my name);
-		my name = Melder_wcsToUtf8 (name);
+		my name = Melder_wcsdup (name);
 	}
 	our nameChanged (me);
 }

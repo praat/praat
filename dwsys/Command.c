@@ -31,7 +31,7 @@ int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(A
 {
 	iam (Command);
 	Melder_assert (execute && undo);
-	Thing_setNameW (me, name);
+	Thing_setName (me, name);
 	my data = data;
 	my execute = execute;
 	my undo = undo;
@@ -116,7 +116,7 @@ int CommandHistory_offright (I)
 wchar_t *CommandHistory_commandName (I, long offsetFromCurrent)
 {
 	iam (CommandHistory); long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size ? Thing_getNameW (my item[pos]) : NULL;
+	return pos >= 1 && pos <= my size ? Thing_getName (my item[pos]) : NULL;
 }
 
 /* End of file Command.c */

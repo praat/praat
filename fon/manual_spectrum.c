@@ -63,7 +63,7 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, int stop, int g
 		Graphics_markBottom (g, 4000, TRUE, TRUE, FALSE, NULL);
 	}
 	Graphics_setColour (g, stop ? Graphics_BLUE : Graphics_RED);
-	Sound_draw (me, g, 0, 0, -0.1, 1.1, FALSE, "curve");
+	Sound_draw (me, g, 0, 0, -0.1, 1.1, FALSE, L"curve");
 	Graphics_setColour (g, Graphics_BLACK);
 	forget (me);
 }

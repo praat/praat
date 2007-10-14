@@ -241,7 +241,7 @@ void praat_write_do (Any dia, const wchar_t *extension) {
 	MelderString_empty (& defaultFileName);
 	WHERE (SELECTED) { if (! data) data = OBJECT; found += 1; }
 	if (found == 1) {
-		MelderString_append (& defaultFileName, data -> nameW);
+		MelderString_append (& defaultFileName, data -> name);
 		if (defaultFileName.length > 50) { defaultFileName.string [50] = '\0'; defaultFileName.length = 50; }
 		MelderString_append2 (& defaultFileName, L".", extension ? extension : Thing_classNameW (data));
 	} else if (extension == NULL) {
@@ -297,10 +297,10 @@ void praat_cleanUpName (wchar_t *name) {
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		#if defined (_WIN32) || defined (macintosh)
+		#if 1
 			if (wcschr (L" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = '_';
 		#else
-			if (! isalnum (*name) && *name != '-' && *name != '+') *name = '_';
+			if (! iswalnum (*name) && *name != '-' && *name != '+') *name = '_';
 		#endif
 	}
 }
@@ -320,8 +320,8 @@ bool praat_new1 (I, const wchar_t *myName) {
 		bool result = true;
 		for (long idata = 1; idata <= list -> size; idata ++) {
 			Data object = list -> item [idata];
-			Melder_assert (object -> nameW != NULL);
-			result &= praat_new1 (object, object -> nameW) ? true : false;   // Recurse.
+			Melder_assert (object -> name != NULL);
+			result &= praat_new1 (object, object -> name) ? true : false;   // Recurse.
 		}
 		list -> size = 0;   // Disown.
 		forget (list);
@@ -329,7 +329,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	}
 
 	MelderString name = { 0 }, givenName = { 0 };
-	if (myName [0]) {
+	if (myName && myName [0]) {
 		MelderString_copy (& givenName, myName);
 		/*
 		 * Remove extension.
@@ -338,7 +338,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 		if (p) *p = '\0';
 		praat_cleanUpName (givenName.string);
 	} else {
-		MelderString_copy (& givenName, my nameW && my nameW [0] ? my nameW : L"untitled");
+		MelderString_copy (& givenName, my name && my name [0] ? my name : L"untitled");
 	}
 	MelderString_append3 (& name, Thing_classNameW (me), L" ", givenName.string);
 
@@ -378,7 +378,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	MelderFile_setToNull (& FILENAMEW);
 	ID = uniqueID;
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
-	Thing_setNameW (OBJECT, givenName.string);
+	Thing_setName (OBJECT, givenName.string);
 	theCurrentPraat -> totalBeingCreated ++;
 	MelderString_free (& givenName);
 	MelderString_free (& name);
@@ -433,29 +433,6 @@ bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, con
 	MelderString_empty (& thePraatNewName);
 	MelderString_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return praat_new1 (me, thePraatNewName.string);
-}
-
-bool praat_new (I, const char *format, ...) {
-/*
-   Add an Object to the List if "me" exists.
-   Its name will be the highest available of:
-      1. 'myName' (made from 'format' and '...')
-      2. my name
-      3. "untitled"
-*/
-	iam (Data);
-	char myName [200];
-	va_list arg;
-	va_start (arg, format);
-	if (format) {
-		vsprintf (Melder_buffer1, format, arg);
-		strncpy (myName, Melder_buffer1, 100);
-		myName [100] = '\0';
-	} else {
-		myName [0] = '\0';
-	}
-	va_end (arg);
-	return praat_new1 (me, Melder_peekUtf8ToWcs (myName));
 }
 
 void praat_updateSelection (void) {
@@ -646,7 +623,7 @@ static void cb_Editor_publish (Any editor, void *closure, Any publish) {
 */
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish, NULL)) { Melder_flushError (NULL); return; }
+	if (! praat_new1 (publish, NULL)) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
 }
 
@@ -790,7 +767,7 @@ static void helpProc (const wchar_t *query) {
 }
 
 static int publishProc (void *anything) {
-	if (! praat_new (anything, NULL)) return Melder_error ("(Melder_publish:) not published.");
+	if (! praat_new1 (anything, NULL)) return Melder_error ("(Melder_publish:) not published.");
 	praat_updateSelection ();
 	return 1;
 }
@@ -800,7 +777,7 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	for (iobject = theCurrentPraat -> n; iobject >= 1; iobject --)
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = theCurrentPraat -> list [iobject]. editors [ieditor];
-			if (editor && wcsequ (editor -> nameW, string)) return editor;
+			if (editor && wcsequ (editor -> name, string)) return editor;
 	}
 	return NULL;
 }
@@ -925,8 +902,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 #ifdef UNIX
 	FILE *f;
-	setlocale (LC_ALL, "en_US");
-	//XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
+	//setlocale (LC_ALL, "en_US");
+	XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
 #endif
 	char *p;
 	#ifdef macintosh
@@ -1150,7 +1127,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
 			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
-		#if defined (_WIN32) || defined (macintoshXXX)
+		#if defined (_WIN32) || defined (macintoshXXXX)
 			praatList_objects = XmCreateList (Raam, "list", NULL, 0);
 			XtVaSetValues (praatList_objects,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,

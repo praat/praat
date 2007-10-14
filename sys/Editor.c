@@ -27,6 +27,7 @@
  * pb 2007/09/19 info
  */
 
+#include <time.h>
 #include "ScriptEditor.h"
 #include "ButtonEditor.h"
 #include "machine.h"
@@ -248,19 +249,19 @@ static void destroy (I) {
 static void info (I) {
 	iam (Editor);
 	MelderInfo_writeLine2 (L"Editor type: ", Thing_classNameW (me));
-	MelderInfo_writeLine2 (L"Editor name: ", my nameW ? my nameW : L"<no name>");
+	MelderInfo_writeLine2 (L"Editor name: ", my name ? my name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 	if (my data) {
 		MelderInfo_writeLine2 (L"Data type: ", ((Thing) my data) -> methods -> _classNameW);
-		MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> nameW);
+		MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> name);
 	}
 }
 
 static void nameChanged (I) {
 	iam (Editor);
-	if (my nameW)
-		GuiWindow_setTitleW (my shell, my nameW);
+	if (my name)
+		GuiWindow_setTitleW (my shell, my name);
 }
 
 static void goAway (I) { iam (Editor); forget (me); }
@@ -499,7 +500,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 		XmNx, left, XmNy, top, XmNwidth, right - left, XmNheight, bottom - top, NULL);
 	/*if (width != 0) XtVaSetValues (my shell, XmNwidth, right - left, NULL);
 	if (height != 0) XtVaSetValues (my shell, XmNheight, bottom - top, NULL);*/
-	Thing_setNameW (me, title);
+	Thing_setName (me, title);
 	my dialog = XtVaCreateWidget ("editor", xmFormWidgetClass, my shell,
 		XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
 	if (! my dialog) return 0;
@@ -600,7 +601,7 @@ void Editor_closePraatPicture (I) {
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
-		Graphics_textTop (my pictureGraphics, 2 - preferences.picture.writeNameAtTop, ((Data) my data) -> nameW);
+		Graphics_textTop (my pictureGraphics, 2 - preferences.picture.writeNameAtTop, ((Data) my data) -> name);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);

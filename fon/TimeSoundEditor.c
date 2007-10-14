@@ -102,7 +102,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		if (! publish) return 0;
 		Editor_openPraatPicture (me);
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
-			preferences.picture.garnish, "Curve");
+			preferences.picture.garnish, L"Curve");
 		forget (publish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -141,7 +141,7 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 		if (! publish) return 0;
 		Editor_openPraatPicture (me);
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
-			preferences.picture.garnish, "Curve");
+			preferences.picture.garnish, L"Curve");
 		forget (publish);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -194,7 +194,7 @@ static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 		Sound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowType,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
 		if (! extract) return 0;
-		Thing_setNameW (extract, GET_STRINGW (L"Name"));
+		Thing_setName (extract, GET_STRINGW (L"Name"));
 		if (my publishCallback)
 			my publishCallback (me, my publishClosure, extract);
 	EDITOR_END
@@ -236,7 +236,7 @@ static int do_write (TimeSoundEditor me, MelderFile file, int format) {
 static int menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to WAV file", 0)
-		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_WAV)) return 0;
 	EDITOR_END
@@ -245,7 +245,7 @@ static int menu_cb_WriteWav (EDITOR_ARGS) {
 static int menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to AIFF file", 0)
-		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_AIFF)) return 0;
 	EDITOR_END
@@ -254,7 +254,7 @@ static int menu_cb_WriteAiff (EDITOR_ARGS) {
 static int menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to AIFC file", 0)
-		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_AIFC)) return 0;
 	EDITOR_END
@@ -263,7 +263,7 @@ static int menu_cb_WriteAifc (EDITOR_ARGS) {
 static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to NeXT/Sun file", 0)
-		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_NEXT_SUN)) return 0;
 	EDITOR_END
@@ -272,7 +272,7 @@ static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 static int menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to NIST file", 0)
-		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_NIST)) return 0;
 	EDITOR_END
@@ -281,7 +281,7 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Write selected sound to FLAC file", 0)
-		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> nameW : my sound.data -> nameW);
+		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_FLAC)) return 0;
 	EDITOR_END

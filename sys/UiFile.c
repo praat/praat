@@ -169,7 +169,7 @@ static void UiFile_init (I, Widget parent, const wchar_t *title) {
 			XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
 		}
 	#endif
-	Thing_setNameW (me, title);
+	Thing_setName (me, title);
 }
 
 MelderFile UiFile_getFile (I) {
@@ -267,7 +267,7 @@ void UiInfile_do (I) {
 		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
 		openFileName. lpstrFile = fullFileName;
 		openFileName. nMaxFile = 3000;
-		openFileName. lpstrTitle = my nameW;
+		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		OSVERSIONINFO osVersionInfo;
 		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
@@ -443,8 +443,8 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = Melder_peekWcsToCfstring (my nameW);
-		dialogOptions. message = Melder_peekWcsToCfstring (my nameW);
+		dialogOptions. windowTitle = Melder_peekWcsToCfstring (my name);
+		dialogOptions. message = Melder_peekWcsToCfstring (my name);
 		dialogOptions. saveFileName = Melder_peekWcsToCfstring (lastSlash ? lastSlash + 1 : defaultName);
 		dialogOptions. optionFlags |= kNavNoTypePopup;
 		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
@@ -504,7 +504,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		openFileName. nMaxFile = 300;
 		openFileName. lpstrFileTitle = NULL;
 		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = my nameW;
+		openFileName. lpstrTitle = my name;
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
 		SHELLFLAGSTATE settings = { 0 };

@@ -65,16 +65,16 @@ MOTIF_CALLBACK_END
 MOTIF_CALLBACK (cb_addTarget)
 	iam (ArtwordEditor);
 	Artword artword = my data;
-	char *timeText = XmTextGetString (my time);
-	double tim = Melder_atof (timeText);
-	char *valueText = XmTextGetString (my value);
-	double value = Melder_atof (valueText);
+	wchar_t *timeText = GuiText_getStringW (my time);
+	double tim = Melder_atofW (timeText);
+	wchar_t *valueText = GuiText_getStringW (my value);
+	double value = Melder_atofW (valueText);
 	XmString item;
 	char itemText [100];
 	ArtwordData a = & artword -> data [my feature];
 	int i = 1, oldCount = a -> numberOfTargets;
-	XtFree (timeText);
-	XtFree (valueText);
+	Melder_free (timeText);
+	Melder_free (valueText);
 	Artword_setTarget (artword, my feature, tim, value);
 
 	/* Optimization instead of "updateList (me)". */
@@ -114,19 +114,16 @@ MOTIF_CALLBACK_END
 MOTIF_CALLBACK (cb_click)
 	iam (ArtwordEditor);
 	MotifEvent event = MotifEvent_fromCallData (call);
-	int x = MotifEvent_x (event), y = MotifEvent_y (event);
-	Artword artword = my data;
-	double xWC, yWC;
-	char text [30];
 	if (! MotifEvent_isButtonPressedEvent (event)) return;
+	Artword artword = my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);
+	int x = MotifEvent_x (event), y = MotifEvent_y (event);
+	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, x, y, & xWC, & yWC);
 	Graphics_unsetInner (my graphics);
-	sprintf (text, "%f", xWC);
-	XmTextSetString (my time, text);
-	sprintf (text, "%f", yWC);
-	XmTextSetString (my value, text);
+	GuiText_setStringW (my time, Melder_fixed (xWC, 6));
+	GuiText_setStringW (my value, Melder_fixed (yWC, 6));
 MOTIF_CALLBACK_END
 
 static void dataChanged (I) {

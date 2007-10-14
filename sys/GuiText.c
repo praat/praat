@@ -619,7 +619,7 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		 * thus allowing ourselves to select [from_pos, to_pos] and use the REPLACESEL message.
 		 */
 		Edit_SetSel (my window, from_pos, to_pos);
-		Edit_ReplaceSel (my window, winText);
+		Edit_ReplaceSel (my window, Melder_peekUtf8ToWcs (winText));
 		Melder_free (winText);
 	#elif mac
 		long length = strlen (text), i;

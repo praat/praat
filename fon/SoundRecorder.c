@@ -831,7 +831,7 @@ static void publish (SoundRecorder me) {
 	}
 	if (my soundName) {
 		wchar_t *name = GuiText_getStringW (my soundName);
-		Thing_setNameW (sound, name);
+		Thing_setName (sound, name);
 		Melder_free (name);
 	}
 	if (my publishCallback)

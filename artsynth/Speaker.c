@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
+ * pb 2007/10/09 wchar_t
  */
 
 #include "Speaker.h"
@@ -56,7 +57,7 @@ class_methods (Speaker, Data) {
 	class_methods_end
 }
 
-Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
+Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses)
 {
 	Speaker me = new (Speaker);
 
@@ -67,15 +68,14 @@ Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
 
 	double scaling;
 	if (! me) return NULL;
-	if (strequ (kindOfSpeaker, "Male")) my relativeSize = 1.1;
-	else if (strequ (kindOfSpeaker, "Child")) my relativeSize = 0.7;
+	if (wcsequ (kindOfSpeaker, L"Male")) my relativeSize = 1.1;
+	else if (wcsequ (kindOfSpeaker, L"Child")) my relativeSize = 0.7;
 	else my relativeSize = 1.0;
 	scaling = my relativeSize;
 
 	/* Laryngeal system. Data for male speaker from Ishizaka and Flanagan.	*/
 
-	if (! strcmp (kindOfSpeaker, "Female"))
-	{
+	if (wcsequ (kindOfSpeaker, L"Female")) {
 		my lowerCord.thickness = 1.4e-3;   /* dx, in metres */
 		my upperCord.thickness = 0.7e-3;
 		my cord.length = 10e-3;
@@ -83,9 +83,7 @@ Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
 		my upperCord.mass = 0.01e-3;
 		my lowerCord.k1 = 10;   /* Newtons per metre */
 		my upperCord.k1 = 4;
-	}
-	else if (! strcmp (kindOfSpeaker, "Male"))
-	{
+	} else if (wcsequ (kindOfSpeaker, L"Male")) {
 		my lowerCord.thickness = 2.0e-3;   /* dx, in metres */
 		my upperCord.thickness = 1.0e-3;
 		my cord.length = 18e-3;
@@ -93,9 +91,7 @@ Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
 		my upperCord.mass = 0.05e-3;
 		my lowerCord.k1 = 12;   /* Newtons per metre */
 		my upperCord.k1 = 4;
-	}
-	else /* "Child" */
-	{
+	} else /* "Child" */ {
 		my lowerCord.thickness = 0.7e-3;   /* dx, in metres */
 		my upperCord.thickness = 0.3e-3;
 		my cord.length = 6e-3;
@@ -105,8 +101,7 @@ Speaker Speaker_create (char *kindOfSpeaker, int numberOfVocalCordMasses)
 		my upperCord.k1 = 2;
 	}
 	my cord.numberOfMasses = numberOfVocalCordMasses;
-	if (numberOfVocalCordMasses == 1)
-	{
+	if (numberOfVocalCordMasses == 1) {
 		my lowerCord.thickness += my upperCord.thickness;
 		my lowerCord.mass += my upperCord.mass;
 		my lowerCord.k1 += my upperCord.k1;

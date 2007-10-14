@@ -597,7 +597,7 @@ static void showStructMembers (I, void *structAddress, Data_Description structDe
 
 static void classStructEditor_showMembers (I) {
 	iam (StructEditor);
-	showStructMembers (me, my address, my description, my topField, my nameW);
+	showStructMembers (me, my address, my description, my topField, my name);
 }
 
 class_methods (StructEditor, DataSubEditor)
@@ -662,7 +662,7 @@ static void classVectorEditor_showMembers (I) {
 			fieldData -> description = my description;
 		} else if (type == structwa) {
 			static MelderString history = { 0 };
-			MelderString_copy (& history, my nameW);
+			MelderString_copy (& history, my name);
 
 			/* Replace things like [1..100] by things like [19]. */
 
@@ -684,7 +684,7 @@ static void classVectorEditor_showMembers (I) {
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history.string);
 		} else if (type == objectwa) {
 			static MelderString history = { 0 };
-			MelderString_copy (& history, my nameW);
+			MelderString_copy (& history, my name);
 			if (history.string [history.length - 1] == ']') {
 				wchar_t *openingBracket = wcsrchr (history.string, '[');
 				Melder_assert (openingBracket != NULL);
@@ -803,7 +803,7 @@ static void ClassEditor_showMembers_recursive (ClassEditor me, void *klas) {
 		ClassEditor_showMembers_recursive (me, parentClass);
 		classFieldsTraversed = Data_Description_countMembers (parentClass -> description);
 	}
-	showStructMembers (me, my address, description, my irow ? 1 : my topField - classFieldsTraversed, my nameW);
+	showStructMembers (me, my address, description, my irow ? 1 : my topField - classFieldsTraversed, my name);
 }
 
 static void classClassEditor_showMembers (I) {

@@ -239,7 +239,7 @@ char date [50], *newline;
 #endif
 newline = strchr (date, '\n'); if (newline) *newline = '\0';
 SET_STRING ("Left or inside header", date)
-SET_STRING ("Right or outside header", my name)
+SET_STRINGW (L"Right or outside header", my name)
 if (my pageNumber) SET_INTEGER ("First page number", my pageNumber + 1)
 if (my path >= 1 && my path <= manPages -> pages -> size) {
 	ManPage page = manPages -> pages -> item [my path];

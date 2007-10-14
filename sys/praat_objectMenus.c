@@ -56,7 +56,7 @@ FORM (Rename, "Rename object", "Rename...")
 	LABEL ("rename object", "New name:")
 	TEXTFIELD ("newName", "")
 	OK
-{ int IOBJECT; WHERE (SELECTED) SET_STRING ("newName", NAME) }
+{ int IOBJECT; WHERE (SELECTED) SET_STRINGW (L"newName", NAMEW) }
 DO
 	wchar_t *string = GET_STRINGW (L"newName");
 	if (theCurrentPraat -> totalSelection == 0)
@@ -72,8 +72,8 @@ DO
 		Melder_free (FULL_NAMEW), FULL_NAMEW = Melder_wcsdup (fullName.string);
 		praat_list_renameAndSelect (IOBJECT, fullName.string);
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setNameW (EDITOR [ieditor], fullName.string);
-		Thing_setNameW (OBJECT, string);
+			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
+		Thing_setName (OBJECT, string);
 	}
 END
 
@@ -81,7 +81,7 @@ FORM (Copy, "Copy object", "Copy...")
 	LABEL ("copy object", "Name of new object:")
 	TEXTFIELD ("newName", "")
 	OK
-{ int IOBJECT; WHERE (SELECTED) SET_STRING ("newName", NAME) }
+{ int IOBJECT; WHERE (SELECTED) SET_STRINGW (L"newName", NAMEW) }
 DO
 	if (theCurrentPraat -> totalSelection == 0)
 		return Melder_error ("Selection changed!\nNo object selected. Cannot copy.");
@@ -323,9 +323,9 @@ DO
 	double c = GET_INTEGER ("left Row 2"), d = GET_INTEGER ("right Row 2");
 	double n = a + b + c + d;
 	double aexp, bexp, cexp, dexp, crossDifference, x2;
-	REQUIRE (a >= 0 && b >= 0 && c >= 0 && d >= 0, "Numbers must not be negative.")
-	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), "Row totals must be positive.")
-	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), "Column totals must be positive.")
+	REQUIRE (a >= 0 && b >= 0 && c >= 0 && d >= 0, L"Numbers must not be negative.")
+	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), L"Row totals must be positive.")
+	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), L"Column totals must be positive.")
 	MelderInfo_open ();
 	MelderInfo_writeLine4 (L"Observed row 1 =    ", Melder_integer (a), L"    ", Melder_integer (b));
 	MelderInfo_writeLine4 (L"Observed row 2 =    ", Melder_integer (c), L"    ", Melder_integer (d));

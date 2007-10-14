@@ -48,7 +48,7 @@ DIRECT (Distributionses_add)
 	if (! me) return 0;
 	WHERE (SELECTED)
 		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new (Distributions_addMany (me), "added")) {
+	if (! praat_new1 (Distributions_addMany (me), L"added")) {
 		my size = 0; forget (me); return 0;
 	}
 	my size = 0; forget (me);
@@ -159,8 +159,8 @@ FORM (PairDistribution_to_Stringses, "Generate two Strings objects", 0)
 DO
 	Strings strings1, strings2;
 	if (! PairDistribution_to_Stringses (ONLY (classPairDistribution), GET_INTEGER ("Number"), & strings1, & strings2)) return 0;
-	if (! praat_new (strings1, "%s", GET_STRING ("Name of first Strings"))) { forget (strings2); return 0; }
-	if (! praat_new (strings2, "%s", GET_STRING ("Name of second Strings"))) return 0;
+	if (! praat_new1 (strings1, GET_STRINGW (L"Name of first Strings"))) { forget (strings2); return 0; }
+	if (! praat_new1 (strings2, GET_STRINGW (L"Name of second Strings"))) return 0;
 END
 
 DIRECT (PairDistribution_to_Table)
@@ -283,11 +283,11 @@ FORM (Table_collapseRows, "Table: Collapse rows", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Table_collapseRows (OBJECT,
+		if (! praat_new2 (Table_collapseRows (OBJECT,
 			GET_STRINGW (L"factors"), GET_STRINGW (L"columnsToSum"),
 			GET_STRINGW (L"columnsToAverage"), GET_STRINGW (L"columnsToMedianize"),
 			GET_STRINGW (L"columnsToAverageLogarithmically"), GET_STRINGW (L"columnsToMedianizeLogarithmically")),
-			"%s_pooled", NAME)) return 0;
+			NAMEW, L"_pooled")) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -299,9 +299,9 @@ FORM (Table_createWithColumnNames, "Create Table with column names", 0)
 	TEXTFIELD ("columnNames", "speaker dialect age vowel F0 F1 F2")
 	OK
 DO
-	if (! praat_new (Table_createWithColumnNames
+	if (! praat_new1 (Table_createWithColumnNames
 		(GET_INTEGER ("Number of rows"), GET_STRINGW (L"columnNames")),
-		GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Table_createWithoutColumnNames, "Create Table without column names", 0)
@@ -310,9 +310,9 @@ FORM (Table_createWithoutColumnNames, "Create Table without column names", 0)
 	NATURAL ("Number of columns", "3")
 	OK
 DO
-	if (! praat_new (Table_createWithoutColumnNames
+	if (! praat_new1 (Table_createWithoutColumnNames
 		(GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
-		GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Table_drawEllipse, "Draw ellipse (standard deviation)", 0)
@@ -363,10 +363,9 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
-		if (! praat_new (Table_extractRowsWhereColumn_number (OBJECT,
+		if (! praat_new5 (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ls_%ld", NAME, Table_messageColumn (OBJECT, icol),
-			(long) floor (value+0.5))) return 0;
+			NAMEW, L"_", Table_messageColumn (OBJECT, icol), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -383,9 +382,9 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
 		if (icol == 0) return Melder_error ("No such column.");
-		if (! praat_new (Table_extractRowsWhereColumn_string (OBJECT,
+		if (! praat_new3 (Table_extractRowsWhereColumn_string (OBJECT,
 			icol, GET_INTEGER ("...") - 1 + Melder_STRING_min, value),
-			"%s_%ls", NAME, value)) return 0;
+			NAMEW, L"_", value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -434,7 +433,7 @@ FORM (Table_getColumnLabel, "Table: Get column label", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long icol = GET_INTEGER ("Column number");
-	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (my columnHeaders [icol]. label);
 END
 
@@ -458,8 +457,8 @@ FORM (Table_getMean, "Table: Get mean", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	REQUIRE (icol > 0, "No such column.")
-	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (icol > 0, L"No such column.")
+	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getMean (ONLY_OBJECT, icol)));
 END
 	
@@ -470,8 +469,8 @@ FORM (Table_getQuantile, "Table: Get quantile", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	REQUIRE (icol > 0, "No such column.")
-	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (icol > 0, L"No such column.")
+	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getQuantile (ONLY_OBJECT, icol, GET_REAL ("Quantile"))));
 END
 	
@@ -481,8 +480,8 @@ FORM (Table_getStandardDeviation, "Table: Get standard deviation", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	REQUIRE (icol > 0, "No such column.")
-	REQUIRE (icol <= my numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (icol > 0, L"No such column.")
+	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (Melder_double (Table_getStdev (ONLY_OBJECT, icol)));
 END
 	
@@ -511,8 +510,8 @@ DO
 	long irow = GET_INTEGER ("Row number");
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
 	if (icol == 0) return Melder_error ("No such column.");
-	REQUIRE (irow >= 1 && irow <= my rows -> size, "Row number out of range.")
-	REQUIRE (icol >= 1 && icol <= my numberOfColumns, "Column number out of range.")
+	REQUIRE (irow >= 1 && irow <= my rows -> size, L"Row number out of range.")
+	REQUIRE (icol >= 1 && icol <= my numberOfColumns, L"Column number out of range.")
 	Melder_information1 (((TableRow) my rows -> item [irow]) -> cells [icol]. string);
 END
 
@@ -771,9 +770,9 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, columnLabel);
 		if (icol == 0) return Melder_error3 (L"No such column: ", columnLabel, L".");
-		if (! praat_new (Table_rowsToColumns (OBJECT,
+		if (! praat_new2 (Table_rowsToColumns (OBJECT,
 			GET_STRINGW (L"factors"), icol, GET_STRINGW (L"columnsToExpand")),
-			"%s_nested", NAME)) return 0;
+			NAMEW, L"_nested")) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -918,7 +917,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column for row labels"));
-		if (! praat_new (Table_to_TableOfReal (OBJECT, icol), NAME)) return 0;
+		if (! praat_new1 (Table_to_TableOfReal (OBJECT, icol), NAMEW)) return 0;
 	}
 END
 
@@ -933,7 +932,7 @@ DIRECT (TablesOfReal_append)
 	if (! me) return 0;
 	WHERE (SELECTED)
 		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new (TablesOfReal_appendMany (me), "appended")) {
+	if (! praat_new1 (TablesOfReal_appendMany (me), L"appended")) {
 		my size = 0; forget (me); return 0;
 	}
 	my size = 0; forget (me);
@@ -945,8 +944,8 @@ FORM (TableOfReal_create, "Create TableOfReal", 0)
 	NATURAL ("Number of columns", "3")
 	OK
 DO
-	if (! praat_new (TableOfReal_create (GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
-		GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (TableOfReal_create (GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
+		GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (TableOfReal_drawAsNumbers, "Draw as numbers", 0)
@@ -1021,7 +1020,7 @@ FORM (TableOfReal_extractColumnRanges, "Extract column ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnRanges (OBJECT, GET_STRINGW (L"ranges")), "%s_cols", NAME)) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnRanges (OBJECT, GET_STRINGW (L"ranges")), NAMEW, L"_cols")) return 0;
 	}
 END
 
@@ -1031,7 +1030,7 @@ FORM (TableOfReal_extractColumnsWhere, "Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhere (OBJECT, GET_STRINGW (L"condition")), "%s_cols", NAME)) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRINGW (L"condition")), NAMEW, L"_cols")) return 0;
 	}
 END
 
@@ -1043,9 +1042,9 @@ FORM (TableOfReal_extractColumnsWhereLabel, "Extract column where label", 0)
 DO
 	const wchar_t *text = GET_STRINGW (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhereLabel (OBJECT,
+		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel (OBJECT,
 			GET_INTEGER ("Extract all columns whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%ls", NAME, text)) return 0;
+			NAMEW, L"_", text)) return 0;
 	}
 END
 
@@ -1059,9 +1058,9 @@ DO
 	long row = GET_INTEGER ("Extract all columns where row...");
 	double value = GET_REAL ("...the value");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractColumnsWhereRow (OBJECT,
+		if (! praat_new5 (TableOfReal_extractColumnsWhereRow (OBJECT,
 			row, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ld_%ld", NAME, row, (long) floor (value+0.5))) return 0;
+			NAMEW, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
@@ -1076,7 +1075,7 @@ FORM (TableOfReal_extractRowRanges, "Extract row ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowRanges (OBJECT, GET_STRINGW (L"ranges")), "%s_rows", NAME)) return 0;
+		if (! praat_new2 (TableOfReal_extractRowRanges (OBJECT, GET_STRINGW (L"ranges")), NAMEW, L"_rows")) return 0;
 	}
 END
 
@@ -1086,7 +1085,7 @@ FORM (TableOfReal_extractRowsWhere, "Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhere (OBJECT, GET_STRINGW (L"condition")), "%s_rows", NAME)) return 0;
+		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRINGW (L"condition")), NAMEW, L"_rows")) return 0;
 	}
 END
 
@@ -1100,9 +1099,9 @@ DO
 	long column = GET_INTEGER ("Extract all rows where column...");
 	double value = GET_REAL ("...the value");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhereColumn (OBJECT,
+		if (! praat_new5 (TableOfReal_extractRowsWhereColumn (OBJECT,
 			column, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
-			"%s_%ld_%ld", NAME, column, (long) floor (value+0.5))) return 0;
+			NAMEW, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
@@ -1114,9 +1113,9 @@ FORM (TableOfReal_extractRowsWhereLabel, "Extract rows where label", 0)
 DO
 	const wchar_t *text = GET_STRINGW (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new (TableOfReal_extractRowsWhereLabel (OBJECT,
+		if (! praat_new3 (TableOfReal_extractRowsWhereLabel (OBJECT,
 			GET_INTEGER ("Extract all rows whose label...") - 1 + Melder_STRING_min, text),
-			"%s_%ls", NAME, text)) return 0;
+			NAMEW, L"_", text)) return 0;
 	}
 END
 
@@ -1144,7 +1143,7 @@ FORM (TableOfReal_getColumnLabel, "Get column label", 0)
 DO
 	TableOfReal table = ONLY_OBJECT;
 	long columnNumber = GET_INTEGER ("Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (table -> columnLabels == NULL ? L"" : table -> columnLabels [columnNumber]);
 END
 	
@@ -1154,7 +1153,7 @@ FORM (TableOfReal_getColumnMean_index, "Get column mean", 0)
 DO
 	TableOfReal table = ONLY_OBJECT;
 	long columnNumber = GET_INTEGER ("Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, "Column number must not be greater than number of columns.")
+	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
 END
 	
@@ -1164,7 +1163,7 @@ FORM (TableOfReal_getColumnMean_label, "Get column mean", 0)
 DO
 	TableOfReal table = ONLY_OBJECT;
 	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRINGW (L"Column label"));
-	REQUIRE (columnNumber > 0, "Column label does not exist.")
+	REQUIRE (columnNumber > 0, L"Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
 END
 	
@@ -1181,7 +1180,7 @@ FORM (TableOfReal_getColumnStdev_label, "Get column standard deviation", 0)
 DO
 	TableOfReal table = ONLY_OBJECT;
 	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRINGW (L"Column label"));
-	REQUIRE (columnNumber > 0, "Column label does not exist.")
+	REQUIRE (columnNumber > 0, L"Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
 END
 
@@ -1201,15 +1200,15 @@ FORM (TableOfReal_getRowLabel, "Get row label", 0)
 DO
 	TableOfReal table = ONLY_OBJECT;
 	long rowNumber = GET_INTEGER ("Row number");
-	REQUIRE (rowNumber <= table -> numberOfRows, "Row number must not be greater than number of rows.")
+	REQUIRE (rowNumber <= table -> numberOfRows, L"Row number must not be greater than number of rows.")
 	Melder_information1 (table -> rowLabels == NULL ? L"" : table -> rowLabels [rowNumber]);
 END
 
 FORM (TableOfReal_getValue, "Get value", 0)
 	NATURAL ("Row number", "1") NATURAL ("Column number", "1") OK DO TableOfReal me = ONLY_OBJECT;
 	long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
-	REQUIRE (row <= my numberOfRows, "Row number must not exceed number of rows.")
-	REQUIRE (column <= my numberOfColumns, "Column number must not exceed number of columns.")
+	REQUIRE (row <= my numberOfRows, L"Row number must not exceed number of rows.")
+	REQUIRE (column <= my numberOfColumns, L"Column number must not exceed number of columns.")
 	Melder_informationReal (my data [row] [column], NULL); END
 
 DIRECT (TableOfReal_help) Melder_help (L"TableOfReal"); END
@@ -1301,8 +1300,8 @@ DO
 	WHERE (SELECTED) {
 		TableOfReal me = OBJECT;
 		long irow = GET_INTEGER ("Row number"), icol = GET_INTEGER ("Column number");
-		REQUIRE (irow <= my numberOfRows, "Row number too large.")
-		REQUIRE (icol <= my numberOfColumns, "Column number too large.")
+		REQUIRE (irow <= my numberOfRows, L"Row number too large.")
+		REQUIRE (icol <= my numberOfColumns, L"Column number too large.")
 		my data [irow] [icol] = GET_REAL ("New value");
 		praat_dataChanged (me);
 	}
@@ -1361,15 +1360,41 @@ END
 
 DIRECT (StatisticsTutorial) Melder_help (L"Statistics"); END
 
+static bool isTabSeparated_8bit (int nread, const char *header) {
+	for (long i = 0; i < nread; i ++) {
+		if (header [i] == '\t') return true;
+		if (header [i] == '\n' || header [i] == '\r') return false;
+	}
+	return false;
+}
+
+static bool isTabSeparated_utf16be (int nread, const char *header) {
+	for (long i = 2; i < nread; i += 2) {
+		if (header [i] == '\0' && header [i + 1] == '\t') return true;
+		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r')) return false;
+	}
+	return false;
+}
+
+static bool isTabSeparated_utf16le (int nread, const char *header) {
+	for (long i = 2; i < nread; i += 2) {
+		if (header [i + 1] == '\0' && header [i] == '\t') return true;
+		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r')) return false;
+	}
+	return false;
+}
+
 static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
 	/*
 	 * A table is recognized if it has at least one tab symbol,
 	 * which must be before the first newline symbol (if any).
 	 */
-	const char *tab = strchr (header, '\t'), *newline = strchr (header, '\n');
-	(void) nread;
-	if (newline == NULL) newline = strchr (header, '\r');
-	if (tab == NULL || (newline != NULL && newline - tab < 0)) return NULL;
+	unsigned char *uheader = (unsigned char *) header;
+	bool isTabSeparated =
+		uheader [0] == 0xef && uheader [1] == 0xff ? isTabSeparated_utf16be (nread, header) :
+		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
+		isTabSeparated_8bit (nread, header);
+	if (! isTabSeparated) return NULL;
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 

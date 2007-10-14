@@ -268,8 +268,8 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 			if (! TextInterval_setText (ipa -> intervals -> item[i],
 				Melder_peekUtf8ToWcs (timitLabelToIpaLabel (Melder_peekWcsToUtf8 (interval -> text))))) goto cleanup;
 		}
-		Thing_setNameW (ipa, L"ipa");
-		Thing_setNameW (timit, L"phn");
+		Thing_setName (ipa, L"ipa");
+		Thing_setName (timit, L"phn");
 	}
 cleanup:
 	fclose (f);
@@ -383,7 +383,7 @@ int TextGrid_setTierName (TextGrid me, long itier, wchar_t *newName)
 	if (itier < 1 || itier > ntiers) return 
 		Melder_error ("TextGrid_renameTier: Tier number (%d) should not be "
 		"larger than the number of tiers (%d).", itier, ntiers);
-	Thing_setNameW (my tiers -> item [itier], newName);	
+	Thing_setName (my tiers -> item [itier], newName);	
 	return 1;
 }
 

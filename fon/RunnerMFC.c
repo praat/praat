@@ -61,7 +61,7 @@ static void dataChanged (I) {
 static int RunnerMFC_startExperiment (RunnerMFC me) {
 	my data = my experiments -> item [my iexperiment];
 	if (! ExperimentMFC_start (my data)) return Melder_error ("Cannot start experiment.");
-	Thing_setNameW (me, ((ExperimentMFC) my data) -> nameW);
+	Thing_setName (me, ((ExperimentMFC) my data) -> name);
 	Editor_broadcastChange (me);
 	Graphics_updateWs (my graphics);
 	return 1;

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/09/08
+ * pb 2007/10/10
  */
 
 #include "praat.h"
@@ -64,20 +64,20 @@ static int pr_LongSound_concatenate (MelderFile file, int audioFileType) {
 
 /***** LONGSOUND *****/
 
-FORM (LongSound_extractPart, "LongSound: Extract part", 0)
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "1.0")
-	BOOLEAN ("Preserve times", 1)
+FORMW (LongSound_extractPart, L"LongSound: Extract part", 0)
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"1.0")
+	BOOLEANW (L"Preserve times", 1)
 	OK
 DO
-	EVERY_TO (LongSound_extractPart (OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Preserve times")))
+	EVERY_TO (LongSound_extractPart (OBJECT, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Preserve times")))
 END
 
-FORM (LongSound_getIndexFromTime, "LongSound: Get sample index from time", "Sound: Get index from time...")
-	REAL ("Time (s)", "0.5")
+FORMW (LongSound_getIndexFromTime, L"LongSound: Get sample index from time", L"Sound: Get index from time...")
+	REALW (L"Time (s)", L"0.5")
 	OK
 DO
-	Melder_informationReal (Sampled_xToIndex (ONLY (classLongSound), GET_REAL ("Time")), NULL);
+	Melder_informationReal (Sampled_xToIndex (ONLY (classLongSound), GET_REALW (L"Time")), NULL);
 END
 
 DIRECT (LongSound_getSamplePeriod)
@@ -90,11 +90,11 @@ DIRECT (LongSound_getSampleRate)
 	Melder_informationReal (1 / my dx, L"Hertz");
 END
 
-FORM (LongSound_getTimeFromIndex, "LongSound: Get time from sample index", "Sound: Get time from index...")
-	INTEGER ("Sample index", "100")
+FORMW (LongSound_getTimeFromIndex, L"LongSound: Get time from sample index", L"Sound: Get time from index...")
+	INTEGERW (L"Sample index", L"100")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classLongSound), GET_INTEGER ("Sample index")), L"seconds");
+	Melder_informationReal (Sampled_indexToX (ONLY (classLongSound), GET_INTEGERW (L"Sample index")), L"seconds");
 END
 
 DIRECT (LongSound_getNumberOfSamples)
@@ -104,46 +104,46 @@ END
 
 DIRECT (LongSound_help) Melder_help (L"LongSound"); END
 
-FORM_READ (LongSound_open, "Open long sound file", 0)
+FORM_READW (LongSound_open, L"Open long sound file", 0)
 	if (! praat_new1 (LongSound_open (file), MelderFile_name (file))) return 0;
 END
 
-FORM (LongSound_playPart, "LongSound: Play part", 0)
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "10.0")
+FORMW (LongSound_playPart, L"LongSound: Play part", 0)
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"10.0")
 	OK
 DO
 	int n = 0;
 	EVERY (n ++)
 	if (n == 1 || Melder_getMaximumAsynchronicity () < Melder_ASYNCHRONOUS) {
-		EVERY (LongSound_playPart (OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range"), NULL, NULL))
+		EVERY (LongSound_playPart (OBJECT, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), NULL, NULL))
 	} else {
 		Melder_setMaximumAsynchronicity (Melder_INTERRUPTABLE);
-		EVERY (LongSound_playPart (OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range"), NULL, NULL))
+		EVERY (LongSound_playPart (OBJECT, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), NULL, NULL))
 		Melder_setMaximumAsynchronicity (Melder_ASYNCHRONOUS);
 	}
 END
 
-FORM (LongSound_writePartToAudioFile, "LongSound: Write part to audio file", 0)
-	LABEL ("", "Audio file:")
-	TEXTFIELD ("Audio file", "")
-	RADIO ("Type", 3)
+FORMW (LongSound_writePartToAudioFile, L"LongSound: Write part to audio file", 0)
+	LABELW (L"", L"Audio file:")
+	TEXTFIELDW (L"Audio file", L"")
+	RADIOW (L"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTONW (Melder_audioFileTypeString (i))
 	}}
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "10.0")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"10.0")
 	OK
 DO
 	structMelderFile file = { 0 };
 	if (! Melder_relativePathToFile (GET_STRINGW (L"Audio file"), & file)) return 0;
-	if (! LongSound_writePartToAudioFile16 (ONLY (classLongSound), GET_INTEGER ("Type"),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), & file)) return 0;
+	if (! LongSound_writePartToAudioFile16 (ONLY (classLongSound), GET_INTEGERW (L"Type"),
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), & file)) return 0;
 END
 	
-FORM (LongSound_to_TextGrid, "LongSound: To TextGrid...", "LongSound: To TextGrid...")
-	SENTENCE ("Tier names", "Mary John bell")
-	SENTENCE ("Point tiers", "bell")
+FORMW (LongSound_to_TextGrid, L"LongSound: To TextGrid...", L"LongSound: To TextGrid...")
+	SENTENCEW (L"Tier names", L"Mary John bell")
+	SENTENCEW (L"Point tiers", L"bell")
 	OK
 DO
 	EVERY_TO (TextGrid_create (((LongSound) OBJECT) -> xmin, ((Pitch) OBJECT) -> xmax,
@@ -159,126 +159,126 @@ DIRECT (LongSound_view)
 				return 0;
 END
 
-FORM_WRITE (LongSound_writeToAifcFile, "Write to AIFC file", 0, "aifc")
+FORM_WRITEW (LongSound_writeToAifcFile, L"Write to AIFC file", 0, L"aifc")
 	if (! pr_LongSound_concatenate (file, Melder_AIFC)) return 0;
 END
 
-FORM_WRITE (LongSound_writeToAiffFile, "Write to AIFF file", 0, "aiff")
+FORM_WRITEW (LongSound_writeToAiffFile, L"Write to AIFF file", 0, L"aiff")
 	if (! pr_LongSound_concatenate (file, Melder_AIFF)) return 0;
 END
 
-FORM_WRITE (LongSound_writeToNextSunFile, "Write to NeXT/Sun file", 0, "au")
+FORM_WRITEW (LongSound_writeToNextSunFile, L"Write to NeXT/Sun file", 0, L"au")
 	if (! pr_LongSound_concatenate (file, Melder_NEXT_SUN)) return 0;
 END
 
-FORM_WRITE (LongSound_writeToNistFile, "Write to NIST file", 0, "nist")
+FORM_WRITEW (LongSound_writeToNistFile, L"Write to NIST file", 0, L"nist")
 	if (! pr_LongSound_concatenate (file, Melder_NIST)) return 0;
 END
 
-FORM_WRITE (LongSound_writeToFlacFile, "Write to FLAC file", 0, "flac")
+FORM_WRITEW (LongSound_writeToFlacFile, L"Write to FLAC file", 0, L"flac")
 	if (! pr_LongSound_concatenate (file, Melder_FLAC)) return 0;
 END
 
-FORM_WRITE (LongSound_writeToWavFile, "Write to WAV file", 0, "wav")
+FORM_WRITEW (LongSound_writeToWavFile, L"Write to WAV file", 0, L"wav")
 	if (! pr_LongSound_concatenate (file, Melder_WAV)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToAifcFile, "Write left channel to AIFC file", 0, "aifc")
+FORM_WRITEW (LongSound_writeLeftChannelToAifcFile, L"Write left channel to AIFC file", 0, L"aifc")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_AIFC, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToAiffFile, "Write left channel to AIFF file", 0, "aiff")
+FORM_WRITEW (LongSound_writeLeftChannelToAiffFile, L"Write left channel to AIFF file", 0, L"aiff")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_AIFF, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToNextSunFile, "Write left channel to NeXT/Sun file", 0, "au")
+FORM_WRITEW (LongSound_writeLeftChannelToNextSunFile, L"Write left channel to NeXT/Sun file", 0, L"au")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_NEXT_SUN, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToNistFile, "Write left channel to NIST file", 0, "nist")
+FORM_WRITEW (LongSound_writeLeftChannelToNistFile, L"Write left channel to NIST file", 0, L"nist")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_NIST, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToFlacFile, "Write left channel to FLAC file", 0, "flac")
+FORM_WRITEW (LongSound_writeLeftChannelToFlacFile, L"Write left channel to FLAC file", 0, L"flac")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_FLAC, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeLeftChannelToWavFile, "Write left channel to WAV file", 0, "wav")
+FORM_WRITEW (LongSound_writeLeftChannelToWavFile, L"Write left channel to WAV file", 0, L"wav")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_WAV, 0, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToAifcFile, "Write right channel to AIFC file", 0, "aifc")
+FORM_WRITEW (LongSound_writeRightChannelToAifcFile, L"Write right channel to AIFC file", 0, L"aifc")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_AIFC, 1, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToAiffFile, "Write right channel to AIFF file", 0, "aiff")
+FORM_WRITEW (LongSound_writeRightChannelToAiffFile, L"Write right channel to AIFF file", 0, L"aiff")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_AIFF, 1, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToNextSunFile, "Write right channel to NeXT/Sun file", 0, "au")
+FORM_WRITEW (LongSound_writeRightChannelToNextSunFile, L"Write right channel to NeXT/Sun file", 0, L"au")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_NEXT_SUN, 1, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToNistFile, "Write right channel to NIST file", 0, "nist")
+FORM_WRITEW (LongSound_writeRightChannelToNistFile, L"Write right channel to NIST file", 0, L"nist")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_NIST, 1, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToFlacFile, "Write right channel to FLAC file", 0, "flac")
+FORM_WRITEW (LongSound_writeRightChannelToFlacFile, L"Write right channel to FLAC file", 0, L"flac")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_FLAC, 1, file)) return 0;
 END
 
-FORM_WRITE (LongSound_writeRightChannelToWavFile, "Write right channel to WAV file", 0, "wav")
+FORM_WRITEW (LongSound_writeRightChannelToWavFile, L"Write right channel to WAV file", 0, L"wav")
 	if (! LongSound_writeChannelToAudioFile16 (ONLY_OBJECT, Melder_WAV, 1, file)) return 0;
 END
 
-FORM (LongSoundPrefs, "LongSound preferences", "LongSound")
-	LABEL ("", "This setting determines the maximum number of seconds")
-	LABEL ("", "for viewing the waveform and playing a sound in the LongSound window.")
-	LABEL ("", "The LongSound window can become very slow if you set it too high.")
-	NATURAL ("Maximum viewable part (seconds)", "60")
-	LABEL ("", "Note: this setting works for the next long sound file that you open,")
-	LABEL ("", "not for currently existing LongSound objects.")
+FORMW (LongSoundPrefs, L"LongSound preferences", L"LongSound")
+	LABELW (L"", L"This setting determines the maximum number of seconds")
+	LABELW (L"", L"for viewing the waveform and playing a sound in the LongSound window.")
+	LABELW (L"", L"The LongSound window can become very slow if you set it too high.")
+	NATURALW (L"Maximum viewable part (seconds)", L"60")
+	LABELW (L"", L"Note: this setting works for the next long sound file that you open,")
+	LABELW (L"", L"not for currently existing LongSound objects.")
 	OK
-SET_INTEGER ("Maximum viewable part", LongSound_getBufferSizePref_seconds ())
+SET_INTEGERW (L"Maximum viewable part", LongSound_getBufferSizePref_seconds ())
 DO
-	LongSound_setBufferSizePref_seconds (GET_INTEGER ("Maximum viewable part"));
+	LongSound_setBufferSizePref_seconds (GET_INTEGERW (L"Maximum viewable part"));
 END
 
 /********** LONGSOUND & SOUND **********/
 
-FORM_WRITE (LongSound_Sound_writeToAifcFile, "Write to AIFC file", 0, "aifc")
+FORM_WRITEW (LongSound_Sound_writeToAifcFile, L"Write to AIFC file", 0, L"aifc")
 	if (! pr_LongSound_concatenate (file, Melder_AIFC)) return 0;
 END
 
-FORM_WRITE (LongSound_Sound_writeToAiffFile, "Write to AIFF file", 0, "aiff")
+FORM_WRITEW (LongSound_Sound_writeToAiffFile, L"Write to AIFF file", 0, L"aiff")
 	if (! pr_LongSound_concatenate (file, Melder_AIFF)) return 0;
 END
 
-FORM_WRITE (LongSound_Sound_writeToNextSunFile, "Write to NeXT/Sun file", 0, "au")
+FORM_WRITEW (LongSound_Sound_writeToNextSunFile, L"Write to NeXT/Sun file", 0, L"au")
 	if (! pr_LongSound_concatenate (file, Melder_NEXT_SUN)) return 0;
 END
 
-FORM_WRITE (LongSound_Sound_writeToNistFile, "Write to NIST file", 0, "nist")
+FORM_WRITEW (LongSound_Sound_writeToNistFile, L"Write to NIST file", 0, L"nist")
 	if (! pr_LongSound_concatenate (file, Melder_NIST)) return 0;
 END
 
-FORM_WRITE (LongSound_Sound_writeToFlacFile, "Write to FLAC file", 0, "flac")
+FORM_WRITEW (LongSound_Sound_writeToFlacFile, L"Write to FLAC file", 0, L"flac")
 	if (! pr_LongSound_concatenate (file, Melder_FLAC)) return 0;
 END
 
-FORM_WRITE (LongSound_Sound_writeToWavFile, "Write to WAV file", 0, "wav")
+FORM_WRITEW (LongSound_Sound_writeToWavFile, L"Write to WAV file", 0, L"wav")
 	if (! pr_LongSound_concatenate (file, Melder_WAV)) return 0;
 END
 
 /********** SOUND **********/
 
-FORM (Sound_add, "Sound: Add", 0)
-	LABEL ("", "The following number will be added to the amplitudes of all samples of the sound.")
-	REAL ("Number", "0.1")
+FORMW (Sound_add, L"Sound: Add", 0)
+	LABELW (L"", L"The following number will be added to the amplitudes of all samples of the sound.")
+	REALW (L"Number", L"0.1")
 	OK
 DO
 	WHERE (SELECTED) {
-		Vector_addScalar (OBJECT, GET_REAL ("Number"));
+		Vector_addScalar (OBJECT, GET_REALW (L"Number"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -321,7 +321,7 @@ DIRECT (Sounds_concatenate)
 		}
 		nx += my nx;
 	}
-	if (! praat_new (thee, "chain")) return 0;
+	if (! praat_new1 (thee, L"chain")) return 0;
 END
 
 DIRECT (Sounds_concatenateRecoverably)
@@ -355,12 +355,12 @@ DIRECT (Sounds_concatenateRecoverably)
 		}
 		iinterval ++;
 		if (iinterval > 1) { TextGrid_insertBoundary (him, 1, tmin); cherror }
-		TextGrid_setIntervalText (him, 1, iinterval, my nameW); cherror
+		TextGrid_setIntervalText (him, 1, iinterval, my name); cherror
 		nx += my nx;
 		tmin = tmax;
 	}
-	praat_new (thee, "chain"); cherror
-	praat_new (him, "chain"); cherror
+	praat_new1 (thee, L"chain"); cherror
+	praat_new1 (him, L"chain"); cherror
 end:
 	iferror { forget (thee); forget (him); return 0; }
 END
@@ -368,14 +368,14 @@ END
 DIRECT (Sound_convertToMono)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new (Sound_convertToMono (me), "%s_mono", my name)) return 0;
+		if (! praat_new2 (Sound_convertToMono (me), my name, L"_mono")) return 0;
 	}
 END
 
 DIRECT (Sound_convertToStereo)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new (Sound_convertToStereo (me), "%s_stereo", my name)) return 0;
+		if (! praat_new2 (Sound_convertToStereo (me), my name, L"_stereo")) return 0;
 	}
 END
 
@@ -390,10 +390,10 @@ END
 
 static int common_Sound_create (void *dia, bool allowStereo) {
 	Sound sound = NULL;
-	long channels = allowStereo ? GET_INTEGER ("Channels") : 1;
-	double startTime = GET_REAL ("Start time");
-	double endTime = GET_REAL ("End time");
-	double samplingFrequency = GET_REAL ("Sampling frequency");
+	long channels = allowStereo ? GET_INTEGERW (L"Channels") : 1;
+	double startTime = GET_REALW (L"Start time");
+	double endTime = GET_REALW (L"End time");
+	double samplingFrequency = GET_REALW (L"Sampling frequency");
 	double numberOfSamples_real = floor ((endTime - startTime) * samplingFrequency + 0.5);
 	long numberOfSamples;
 	if (endTime <= startTime) {
@@ -445,131 +445,131 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 		forget (sound);
 		return Melder_error1 (L"Please correct the formula.");
 	}
-	if (! praat_new (sound, GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0;
 	//praat_updateSelection ();
 	return 1;
 }
 
-FORM (Sound_create, "Create mono Sound", "Create Sound from formula...")
-	WORD ("Name", "sineWithNoise")
-	REAL ("Start time (s)", "0.0")
-	REAL ("End time (s)", "1.0")
-	REAL ("Sampling frequency (Hz)", "44100")
-	LABEL ("", "Formula:")
-	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+FORMW (Sound_create, L"Create mono Sound", L"Create Sound from formula...")
+	WORDW (L"Name", L"sineWithNoise")
+	REALW (L"Start time (s)", L"0.0")
+	REALW (L"End time (s)", L"1.0")
+	REALW (L"Sampling frequency (Hz)", L"44100")
+	LABELW (L"", L"Formula:")
+	TEXTFIELDW (L"formula", L"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	if (! common_Sound_create (dia, false)) return 0;
 END
 
-FORM (Sound_createFromFormula, "Create Sound from formula", "Create Sound from formula...")
-	WORD ("Name", "sineWithNoise")
-	OPTIONMENU ("Channels", 1)
-		OPTION ("Mono")
-		OPTION ("Stereo")
-	REAL ("Start time (s)", "0.0")
-	REAL ("End time (s)", "1.0")
-	REAL ("Sampling frequency (Hz)", "44100")
-	LABEL ("", "Formula:")
-	TEXTFIELD ("formula", "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+FORMW (Sound_createFromFormula, L"Create Sound from formula", L"Create Sound from formula...")
+	WORDW (L"Name", L"sineWithNoise")
+	OPTIONMENUW (L"Channels", 1)
+		OPTIONW (L"Mono")
+		OPTIONW (L"Stereo")
+	REALW (L"Start time (s)", L"0.0")
+	REALW (L"End time (s)", L"1.0")
+	REALW (L"Sampling frequency (Hz)", L"44100")
+	LABELW (L"", L"Formula:")
+	TEXTFIELDW (L"formula", L"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	if (! common_Sound_create (dia, true)) return 0;
 END
 
-FORM (Sound_createFromToneComplex, "Create Sound from tone complex", "Create Sound from tone complex...")
-	WORD ("Name", "toneComplex")
-	REAL ("Start time (s)", "0.0")
-	REAL ("End time (s)", "1.0")
-	POSITIVE ("Sampling frequency (Hz)", "44100")
-	RADIO ("Phase", 2)
-		RADIOBUTTON ("Sine")
-		RADIOBUTTON ("Cosine")
-	POSITIVE ("Frequency step (Hz)", "100")
-	REAL ("First frequency (Hz)", "0 (= frequency step)")
-	REAL ("Ceiling (Hz)", "0 (= Nyquist)")
-	INTEGER ("Number of components", "0 (= maximum)")
+FORMW (Sound_createFromToneComplex, L"Create Sound from tone complex", L"Create Sound from tone complex...")
+	WORDW (L"Name", L"toneComplex")
+	REALW (L"Start time (s)", L"0.0")
+	REALW (L"End time (s)", L"1.0")
+	POSITIVEW (L"Sampling frequency (Hz)", L"44100")
+	RADIOW (L"Phase", 2)
+		RADIOBUTTONW (L"Sine")
+		RADIOBUTTONW (L"Cosine")
+	POSITIVEW (L"Frequency step (Hz)", L"100")
+	REALW (L"First frequency (Hz)", L"0 (= frequency step)")
+	REALW (L"Ceiling (Hz)", L"0 (= Nyquist)")
+	INTEGERW (L"Number of components", L"0 (= maximum)")
 	OK
 DO
-	if (! praat_new (Sound_createFromToneComplex (GET_REAL ("Start time"), GET_REAL ("End time"),
-		GET_REAL ("Sampling frequency"), GET_INTEGER ("Phase") - 1, GET_REAL ("Frequency step"),
-		GET_REAL ("First frequency"), GET_REAL ("Ceiling"), GET_INTEGER ("Number of components")),
-		GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Sound_createFromToneComplex (GET_REALW (L"Start time"), GET_REALW (L"End time"),
+		GET_REALW (L"Sampling frequency"), GET_INTEGERW (L"Phase") - 1, GET_REALW (L"Frequency step"),
+		GET_REALW (L"First frequency"), GET_REALW (L"Ceiling"), GET_INTEGERW (L"Number of components")),
+		GET_STRINGW (L"Name"))) return 0;
 END
 
-FORM (Sounds_crossCorrelate, "Cross-correlate", 0)
-	REAL ("From lag (s)", "-0.1")
-	REAL ("To lag (s)", "0.1")
-	BOOLEAN ("Normalize", 1)
+FORMW (Sounds_crossCorrelate, L"Cross-correlate", 0)
+	REALW (L"From lag (s)", L"-0.1")
+	REALW (L"To lag (s)", L"0.1")
+	BOOLEANW (L"Normalize", 1)
 	OK
 DO
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
-	if (! praat_new (Sounds_crossCorrelate (s1, s2, GET_REAL ("From lag"), GET_REAL ("To lag"),
-		GET_INTEGER ("Normalize")), "cc_%s_%s", s1 -> name, s2 -> name)) return 0;
+	if (! praat_new4 (Sounds_crossCorrelate (s1, s2, GET_REALW (L"From lag"), GET_REALW (L"To lag"),
+		GET_INTEGERW (L"Normalize")), L"cc_", s1 -> name, L"_", s2 -> name)) return 0;
 END
 
-FORM (Sound_deemphasizeInline, "Sound: De-emphasize (in-line)", "Sound: De-emphasize (in-line)...")
-	REAL ("From frequency (Hz)", "50.0")
+FORMW (Sound_deemphasizeInline, L"Sound: De-emphasize (in-line)", L"Sound: De-emphasize (in-line)...")
+	REALW (L"From frequency (Hz)", L"50.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_deEmphasis (OBJECT, GET_REAL ("From frequency"));
+		Sound_deEmphasis (OBJECT, GET_REALW (L"From frequency"));
 		Vector_scale (OBJECT, 0.99);
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (Sound_deepenBandModulation, "Deepen band modulation", "Sound: Deepen band modulation...")
-	POSITIVE ("Enhancement (dB)", "20")
-	POSITIVE ("From frequency (Hz)", "300")
-	POSITIVE ("To frequency (Hz)", "8000")
-	POSITIVE ("Slow modulation (Hz)", "3")
-	POSITIVE ("Fast modulation (Hz)", "30")
-	POSITIVE ("Band smoothing (Hz)", "100")
+FORMW (Sound_deepenBandModulation, L"Deepen band modulation", L"Sound: Deepen band modulation...")
+	POSITIVEW (L"Enhancement (dB)", L"20")
+	POSITIVEW (L"From frequency (Hz)", L"300")
+	POSITIVEW (L"To frequency (Hz)", L"8000")
+	POSITIVEW (L"Slow modulation (Hz)", L"3")
+	POSITIVEW (L"Fast modulation (Hz)", L"30")
+	POSITIVEW (L"Band smoothing (Hz)", L"100")
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (Sound_deepenBandModulation (OBJECT, GET_REAL ("Enhancement"),
-			GET_REAL ("From frequency"), GET_REAL ("To frequency"),
-			GET_REAL ("Slow modulation"), GET_REAL ("Fast modulation"), GET_REAL ("Band smoothing")),
-			"%s_%.0f", NAME, GET_REAL ("Enhancement"))) return 0;
+		if (! praat_new3 (Sound_deepenBandModulation (OBJECT, GET_REALW (L"Enhancement"),
+			GET_REALW (L"From frequency"), GET_REALW (L"To frequency"),
+			GET_REALW (L"Slow modulation"), GET_REALW (L"Fast modulation"), GET_REALW (L"Band smoothing")),
+			NAMEW, L"_", Melder_integer ((long) GET_REALW (L"Enhancement")))) return 0;
 END
 
-FORM (old_Sound_draw, "Sound: Draw", 0)
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range", "0.0 (= all)")
-	REAL ("left Vertical range", "0.0")
-	REAL ("right Vertical range", "0.0 (= auto)")
-	BOOLEAN ("Garnish", 1)
+FORMW (old_Sound_draw, L"Sound: Draw", 0)
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range", L"0.0 (= all)")
+	REALW (L"left Vertical range", L"0.0")
+	REALW (L"right Vertical range", L"0.0 (= auto)")
+	BOOLEANW (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (Sound_draw (OBJECT, GRAPHICS, GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"), GET_INTEGER ("Garnish"), "curve"))
+	EVERY_DRAW (Sound_draw (OBJECT, GRAPHICS, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"),
+		GET_REALW (L"left Vertical range"), GET_REALW (L"right Vertical range"), GET_INTEGERW (L"Garnish"), L"curve"))
 END
 
-FORM (Sound_draw, "Sound: Draw", 0)
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range", "0.0 (= all)")
-	REAL ("left Vertical range", "0.0")
-	REAL ("right Vertical range", "0.0 (= auto)")
-	BOOLEAN ("Garnish", 1)
-	LABEL ("", "")
-	OPTIONMENU ("Drawing method", 1)
-		OPTION ("Curve")
-		OPTION ("Bars")
-		OPTION ("Poles")
-		OPTION ("Speckles")
+FORMW (Sound_draw, L"Sound: Draw", 0)
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range", L"0.0 (= all)")
+	REALW (L"left Vertical range", L"0.0")
+	REALW (L"right Vertical range", L"0.0 (= auto)")
+	BOOLEANW (L"Garnish", 1)
+	LABELW (L"", L"")
+	OPTIONMENUW (L"Drawing method", 1)
+		OPTIONW (L"Curve")
+		OPTIONW (L"Bars")
+		OPTIONW (L"Poles")
+		OPTIONW (L"Speckles")
 	OK
 DO_ALTERNATIVE (old_Sound_draw)
-	EVERY_DRAW (Sound_draw (OBJECT, GRAPHICS, GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"), GET_INTEGER ("Garnish"), GET_STRING ("Drawing method")))
+	EVERY_DRAW (Sound_draw (OBJECT, GRAPHICS, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"),
+		GET_REALW (L"left Vertical range"), GET_REALW (L"right Vertical range"), GET_INTEGERW (L"Garnish"), GET_STRINGW (L"Drawing method")))
 END
 
 static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish, NULL)) { Melder_flushError (NULL); return; }
+	if (! praat_new1 (publish, NULL)) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
 	if (Thing_member (publish, classSpectrum)) {
 		int IOBJECT;
@@ -596,238 +596,238 @@ END
 DIRECT (Sound_extractLeftChannel)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new (Sound_extractLeftChannel (me), "%s_left", my name)) return 0;
+		if (! praat_new2 (Sound_extractLeftChannel (me), my name, L"_left")) return 0;
 	}
 END
 
-FORM (Sound_extractPart, "Sound: Extract part", 0)
-	REAL ("left Time range (s)", "0")
-	REAL ("right Time range (s)", "0.1")
+FORMW (Sound_extractPart, L"Sound: Extract part", 0)
+	REALW (L"left Time range (s)", L"0")
+	REALW (L"right Time range (s)", L"0.1")
 	ENUM ("Window", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
-	POSITIVE ("Relative width", "1.0")
-	BOOLEAN ("Preserve times", 0)
+	POSITIVEW (L"Relative width", L"1.0")
+	BOOLEANW (L"Preserve times", 0)
 	OK
 DO
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new (Sound_extractPart (me,
-			GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-			GET_INTEGER ("Window"), GET_REAL ("Relative width"),
-			GET_INTEGER ("Preserve times")),
-			"%s_part", my name)) return 0;
+		if (! praat_new2 (Sound_extractPart (me,
+			GET_REALW (L"left Time range"), GET_REALW (L"right Time range"),
+			GET_INTEGERW (L"Window"), GET_REALW (L"Relative width"),
+			GET_INTEGERW (L"Preserve times")),
+			my name, L"_part")) return 0;
 	}
 END
 
 DIRECT (Sound_extractRightChannel)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new (Sound_extractRightChannel (me), "%s_right", my name)) return 0;
+		if (! praat_new2 (Sound_extractRightChannel (me), my name, L"_right")) return 0;
 	}
 END
 
-FORM (Sound_filter_deemphasis, "Sound: Filter (de-emphasis)", "Sound: Filter (de-emphasis)...")
-	REAL ("From frequency (Hz)", "50.0")
+FORMW (Sound_filter_deemphasis, L"Sound: Filter (de-emphasis)", L"Sound: Filter (de-emphasis)...")
+	REALW (L"From frequency (Hz)", L"50.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Sound_filter_deemphasis (OBJECT, GET_REAL ("From frequency")),
-			"%s_deemp", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_deemphasis (OBJECT, GET_REALW (L"From frequency")),
+			NAMEW, L"_deemp")) return 0;
 	}
 END
 
-FORM (Sound_filter_formula, "Sound: Filter (formula)...", "Formula...")
-	LABEL ("", "Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in Hertz")
-	TEXTFIELD ("formula", "if x<500 or x>1000 then 0 else self fi; rectangular band filter")
+FORMW (Sound_filter_formula, L"Sound: Filter (formula)...", L"Formula...")
+	LABELW (L"", L"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in Hertz")
+	TEXTFIELDW (L"formula", L"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (Sound_filter_formula (OBJECT, GET_STRINGW (L"formula")),
-			"%s_filt", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_formula (OBJECT, GET_STRINGW (L"formula")),
+			NAMEW, L"_filt")) return 0;
 END
 
-FORM (Sound_filter_oneFormant, "Sound: Filter (one formant)", "Sound: Filter (one formant)...")
-	REAL ("Frequency (Hz)", "1000")
-	POSITIVE ("Bandwidth (Hz)", "100")
+FORMW (Sound_filter_oneFormant, L"Sound: Filter (one formant)", L"Sound: Filter (one formant)...")
+	REALW (L"Frequency (Hz)", L"1000")
+	POSITIVEW (L"Bandwidth (Hz)", L"100")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Sound_filter_oneFormant (OBJECT, GET_REAL ("Frequency"), GET_REAL ("Bandwidth")),
-			"%s_filt", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_oneFormant (OBJECT, GET_REALW (L"Frequency"), GET_REALW (L"Bandwidth")),
+			NAMEW, L"_filt")) return 0;
 	}
 END
 
-FORM (Sound_filterWithOneFormantInline, "Sound: Filter with one formant (in-line)", "Sound: Filter with one formant (in-line)...")
-	REAL ("Frequency (Hz)", "1000")
-	POSITIVE ("Bandwidth (Hz)", "100")
+FORMW (Sound_filterWithOneFormantInline, L"Sound: Filter with one formant (in-line)", L"Sound: Filter with one formant (in-line)...")
+	REALW (L"Frequency (Hz)", L"1000")
+	POSITIVEW (L"Bandwidth (Hz)", L"100")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_filterWithOneFormantInline (OBJECT, GET_REAL ("Frequency"), GET_REAL ("Bandwidth"));
+		Sound_filterWithOneFormantInline (OBJECT, GET_REALW (L"Frequency"), GET_REALW (L"Bandwidth"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (Sound_filter_passHannBand, "Sound: Filter (pass Hann band)", "Sound: Filter (pass Hann band)...")
-	REAL ("From frequency (Hz)", "500")
-	REAL ("To frequency (s)", "1000")
-	POSITIVE ("Smoothing (Hz)", "100")
+FORMW (Sound_filter_passHannBand, L"Sound: Filter (pass Hann band)", L"Sound: Filter (pass Hann band)...")
+	REALW (L"From frequency (Hz)", L"500")
+	REALW (L"To frequency (s)", L"1000")
+	POSITIVEW (L"Smoothing (Hz)", L"100")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Sound_filter_passHannBand (OBJECT,
-			GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_REAL ("Smoothing")),
-			"%s_band", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_passHannBand (OBJECT,
+			GET_REALW (L"From frequency"), GET_REALW (L"To frequency"), GET_REALW (L"Smoothing")),
+			NAMEW, L"_band")) return 0;
 	}
 END
 
-FORM (Sound_filter_preemphasis, "Sound: Filter (pre-emphasis)", "Sound: Filter (pre-emphasis)...")
-	REAL ("From frequency (Hz)", "50.0")
+FORMW (Sound_filter_preemphasis, L"Sound: Filter (pre-emphasis)", L"Sound: Filter (pre-emphasis)...")
+	REALW (L"From frequency (Hz)", L"50.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Sound_filter_preemphasis (OBJECT, GET_REAL ("From frequency")),
-			"%s_preemp", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_preemphasis (OBJECT, GET_REALW (L"From frequency")),
+			NAMEW, L"_preemp")) return 0;
 	}
 END
 
-FORM (Sound_filter_stopHannBand, "Sound: Filter (stop Hann band)", "Sound: Filter (stop Hann band)...")
-	REAL ("From frequency (Hz)", "500")
-	REAL ("To frequency (s)", "1000")
-	POSITIVE ("Smoothing (Hz)", "100")
+FORMW (Sound_filter_stopHannBand, L"Sound: Filter (stop Hann band)", L"Sound: Filter (stop Hann band)...")
+	REALW (L"From frequency (Hz)", L"500")
+	REALW (L"To frequency (s)", L"1000")
+	POSITIVEW (L"Smoothing (Hz)", L"100")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Sound_filter_stopHannBand (OBJECT,
-			GET_REAL ("From frequency"), GET_REAL ("To frequency"), GET_REAL ("Smoothing")),
-			"%s_band", NAME)) return 0;
+		if (! praat_new2 (Sound_filter_stopHannBand (OBJECT,
+			GET_REALW (L"From frequency"), GET_REALW (L"To frequency"), GET_REALW (L"Smoothing")),
+			NAMEW, L"_band")) return 0;
 	}
 END
 
-FORM (Sound_formula, "Sound: Formula", "Sound: Formula...")
-	LABEL ("label1", "! `x' is the time in seconds, `col' is the sample number.")
-	LABEL ("label2", "x = x1   ! time associated with first sample")
-	LABEL ("label3", "for col from 1 to ncol")
-	LABEL ("label4", "   self [col] = ...")
-	TEXTFIELD ("formula", "self")
-	LABEL ("label5", "   x = x + dx")
-	LABEL ("label6", "endfor")
+FORMW (Sound_formula, L"Sound: Formula", L"Sound: Formula...")
+	LABELW (L"label1", L"! `x' is the time in seconds, `col' is the sample number.")
+	LABELW (L"label2", L"x = x1   ! time associated with first sample")
+	LABELW (L"label3", L"for col from 1 to ncol")
+	LABELW (L"label4", L"   self [col] = ...")
+	TEXTFIELDW (L"formula", L"self")
+	LABELW (L"label5", L"   x = x + dx")
+	LABELW (L"label6", L"endfor")
 	OK
 DO
 	if (! praat_Fon_formula (dia)) return 0;
 END
 
-FORM (Sound_getAbsoluteExtremum, "Sound: Get absolute extremum", "Sound: Get absolute extremum...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+FORMW (Sound_getAbsoluteExtremum, L"Sound: Get absolute extremum", L"Sound: Get absolute extremum...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Interpolation", 4)
+	RADIOBUTTONW (L"None")
+	RADIOBUTTONW (L"Parabolic")
+	RADIOBUTTONW (L"Cubic")
+	RADIOBUTTONW (L"Sinc70")
+	RADIOBUTTONW (L"Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getAbsoluteExtremum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Interpolation") - 1), L"Pascal");
 END
 
-FORM (Sound_getEnergy, "Sound: Get energy", "Sound: Get energy...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (Sound_getEnergy, L"Sound: Get energy", L"Sound: Get energy...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getEnergy (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pa2 sec");
+	Melder_informationReal (Sound_getEnergy (ONLY (classSound), GET_REALW (L"left Time range"), GET_REALW (L"right Time range")), L"Pa2 sec");
 END
 
 DIRECT (Sound_getEnergyInAir)
 	Melder_informationReal (Sound_getEnergyInAir (ONLY (classSound)), L"Joule/m2");
 END
 
-FORM (Sound_getIndexFromTime, "Get sample number from time", "Get sample number from time...")
-	REAL ("Time (s)", "0.5")
+FORMW (Sound_getIndexFromTime, L"Get sample number from time", L"Get sample number from time...")
+	REALW (L"Time (s)", L"0.5")
 	OK
 DO
-	Melder_informationReal (Sampled_xToIndex (ONLY (classSound), GET_REAL ("Time")), NULL);
+	Melder_informationReal (Sampled_xToIndex (ONLY (classSound), GET_REALW (L"Time")), NULL);
 END
 
 DIRECT (Sound_getIntensity_dB)
 	Melder_informationReal (Sound_getIntensity_dB (ONLY (classSound)), L"dB");
 END
 
-FORM (Sound_getMaximum, "Sound: Get maximum", "Sound: Get maximum...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+FORMW (Sound_getMaximum, L"Sound: Get maximum", L"Sound: Get maximum...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Interpolation", 4)
+	RADIOBUTTONW (L"None")
+	RADIOBUTTONW (L"Parabolic")
+	RADIOBUTTONW (L"Cubic")
+	RADIOBUTTONW (L"Sinc70")
+	RADIOBUTTONW (L"Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getMaximum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Interpolation") - 1), L"Pascal");
 END
 
-FORM (old_Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (old_Sound_getMean, L"Sound: Get mean", L"Sound: Get mean...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO
 	Melder_informationReal (Vector_getMean (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
 END
 
-FORM (Sound_getMean, "Sound: Get mean", "Sound: Get mean...")
-	OPTIONMENU ("Channel", 1)
-		OPTION ("All")
-		OPTION ("Left")
-		OPTION ("Right")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (Sound_getMean, L"Sound: Get mean", L"Sound: Get mean...")
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"All")
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (old_Sound_getMean)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER ("Channel") - 1;
+	long channel = GET_INTEGERW (L"Channel") - 1;
 	if (channel > my ny) channel = 1;
-	Melder_informationReal (Vector_getMean (me, GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), L"Pascal");
+	Melder_informationReal (Vector_getMean (me, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), channel), L"Pascal");
 END
 
-FORM (Sound_getMinimum, "Sound: Get minimum", "Sound: Get minimum...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+FORMW (Sound_getMinimum, L"Sound: Get minimum", L"Sound: Get minimum...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Interpolation", 4)
+	RADIOBUTTONW (L"None")
+	RADIOBUTTONW (L"Parabolic")
+	RADIOBUTTONW (L"Cubic")
+	RADIOBUTTONW (L"Sinc70")
+	RADIOBUTTONW (L"Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getMinimum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Interpolation") - 1), L"Pascal");
 END
 
-FORM (old_Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
-	REAL ("Time (s)", "0.5")
+FORMW (old_Sound_getNearestZeroCrossing, L"Sound: Get nearest zero crossing", L"Sound: Get nearest zero crossing...")
+	REALW (L"Time (s)", L"0.5")
 	OK
 DO
 	Sound me = ONLY (classSound);
 	if (my ny > 1) return Melder_error1 (L"Cannot determine a zero crossing for a stereo sound.");
-	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), 1), L"seconds");
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REALW (L"Time"), 1), L"seconds");
 END
 
-FORM (Sound_getNearestZeroCrossing, "Sound: Get nearest zero crossing", "Sound: Get nearest zero crossing...")
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Left")
-		OPTION ("Right")
-	REAL ("Time (s)", "0.5")
+FORMW (Sound_getNearestZeroCrossing, L"Sound: Get nearest zero crossing", L"Sound: Get nearest zero crossing...")
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	REALW (L"Time (s)", L"0.5")
 	OK
 DO_ALTERNATIVE (old_Sound_getNearestZeroCrossing)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER ("Channel");
+	long channel = GET_INTEGERW (L"Channel");
 	if (channel > my ny) channel = 1;
-	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REAL ("Time"), channel), L"seconds");
+	Melder_informationReal (Sound_getNearestZeroCrossing (me, GET_REALW (L"Time"), channel), L"seconds");
 END
 
 DIRECT (Sound_getNumberOfChannels)
@@ -840,24 +840,24 @@ DIRECT (Sound_getNumberOfSamples)
 	Melder_information2 (Melder_integer (my nx), L" samples");
 END
 
-FORM (Sound_getPower, "Sound: Get power", "Sound: Get power...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (Sound_getPower, L"Sound: Get power", L"Sound: Get power...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getPower (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pa2");
+	Melder_informationReal (Sound_getPower (ONLY (classSound), GET_REALW (L"left Time range"), GET_REALW (L"right Time range")), L"Pa2");
 END
 
 DIRECT (Sound_getPowerInAir)
 	Melder_informationReal (Sound_getPowerInAir (ONLY (classSound)), L"Watt/m2");
 END
 
-FORM (Sound_getRootMeanSquare, "Sound: Get root-mean-square", "Sound: Get root-mean-square...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (Sound_getRootMeanSquare, L"Sound: Get root-mean-square", L"Sound: Get root-mean-square...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO
-	Melder_informationReal (Sound_getRootMeanSquare (ONLY (classSound), GET_REAL ("left Time range"), GET_REAL ("right Time range")), L"Pascal");
+	Melder_informationReal (Sound_getRootMeanSquare (ONLY (classSound), GET_REALW (L"left Time range"), GET_REALW (L"right Time range")), L"Pascal");
 END
 
 DIRECT (Sound_getSamplePeriod)
@@ -870,171 +870,171 @@ DIRECT (Sound_getSampleRate)
 	Melder_informationReal (1 / my dx, L"Hertz");
 END
 
-FORM (old_Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (old_Sound_getStandardDeviation, L"Sound: Get standard deviation", L"Sound: Get standard deviation...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO
 	Melder_informationReal (Vector_getStandardDeviation (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), Vector_CHANNEL_AVERAGE), L"Pascal");
 END
 
-FORM (Sound_getStandardDeviation, "Sound: Get standard deviation", "Sound: Get standard deviation...")
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Average")
-		OPTION ("Left")
-		OPTION ("Right")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
+FORMW (Sound_getStandardDeviation, L"Sound: Get standard deviation", L"Sound: Get standard deviation...")
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Average")
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (old_Sound_getStandardDeviation)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER ("Channel") - 1;
+	long channel = GET_INTEGERW (L"Channel") - 1;
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getStandardDeviation (me,
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), channel), L"Pascal");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), channel), L"Pascal");
 END
 
-FORM (Sound_getTimeFromIndex, "Get time from sample number", "Get time from sample number...")
-	INTEGER ("Sample number", "100")
+FORMW (Sound_getTimeFromIndex, L"Get time from sample number", L"Get time from sample number...")
+	INTEGERW (L"Sample number", L"100")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classSound), GET_INTEGER ("Sample number")), L"seconds");
+	Melder_informationReal (Sampled_indexToX (ONLY (classSound), GET_INTEGERW (L"Sample number")), L"seconds");
 END
 
-FORM (Sound_getTimeOfMaximum, "Sound: Get time of maximum", "Sound: Get time of maximum...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Interpolation", 4)
-		RADIOBUTTON ("None")
-		RADIOBUTTON ("Parabolic")
-		RADIOBUTTON ("Cubic")
-		RADIOBUTTON ("Sinc70")
-		RADIOBUTTON ("Sinc700")
+FORMW (Sound_getTimeOfMaximum, L"Sound: Get time of maximum", L"Sound: Get time of maximum...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Interpolation", 4)
+		RADIOBUTTONW (L"None")
+		RADIOBUTTONW (L"Parabolic")
+		RADIOBUTTONW (L"Cubic")
+		RADIOBUTTONW (L"Sinc70")
+		RADIOBUTTONW (L"Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMaximum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Interpolation") - 1), L"seconds");
 END
 
-FORM (Sound_getTimeOfMinimum, "Sound: Get time of minimum", "Sound: Get time of minimum...")
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+FORMW (Sound_getTimeOfMinimum, L"Sound: Get time of minimum", L"Sound: Get time of minimum...")
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Interpolation", 4)
+	RADIOBUTTONW (L"None")
+	RADIOBUTTONW (L"Parabolic")
+	RADIOBUTTONW (L"Cubic")
+	RADIOBUTTONW (L"Sinc70")
+	RADIOBUTTONW (L"Sinc700")
 	OK
 DO
 	Melder_informationReal (Vector_getXOfMinimum (ONLY (classSound),
-		GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Interpolation") - 1), L"seconds");
+		GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Interpolation") - 1), L"seconds");
 END
 
-FORM (old_Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
-	INTEGER ("Sample number", "100")
+FORMW (old_Sound_getValueAtIndex, L"Sound: Get value at sample number", L"Sound: Get value at sample number...")
+	INTEGERW (L"Sample number", L"100")
 	OK
 DO
 	Sound me = ONLY (classSound);
-	long sampleIndex = GET_INTEGER ("Sample number");
+	long sampleIndex = GET_INTEGERW (L"Sample number");
 	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
 		my ny == 1 ? my z [1] [sampleIndex] : 0.5 * (my z [1] [sampleIndex] + my z [2] [sampleIndex]), L"Pascal");
 END
 
-FORM (Sound_getValueAtIndex, "Sound: Get value at sample number", "Sound: Get value at sample number...")
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Average")
-		OPTION ("Left")
-		OPTION ("Right")
-	INTEGER ("Sample number", "100")
+FORMW (Sound_getValueAtIndex, L"Sound: Get value at sample number", L"Sound: Get value at sample number...")
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Average")
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	INTEGERW (L"Sample number", L"100")
 	OK
 DO_ALTERNATIVE (old_Sound_getValueAtIndex)
 	Sound me = ONLY (classSound);
-	long sampleIndex = GET_INTEGER ("Sample number");
-	long channel = GET_INTEGER ("Channel") - 1;
+	long sampleIndex = GET_INTEGERW (L"Sample number");
+	long channel = GET_INTEGERW (L"Channel") - 1;
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
 		Sampled_getValueAtSample (me, sampleIndex, channel, 0), L"Pascal");
 END
 
-FORM (old_Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
-	REAL ("Time (s)", "0.5")
-	RADIO ("Interpolation", 4)
-		RADIOBUTTON ("Nearest")
-		RADIOBUTTON ("Linear")
-		RADIOBUTTON ("Cubic")
-		RADIOBUTTON ("Sinc70")
-		RADIOBUTTON ("Sinc700")
+FORMW (old_Sound_getValueAtTime, L"Sound: Get value at time", L"Sound: Get value at time...")
+	REALW (L"Time (s)", L"0.5")
+	RADIOW (L"Interpolation", 4)
+		RADIOBUTTONW (L"Nearest")
+		RADIOBUTTONW (L"Linear")
+		RADIOBUTTONW (L"Cubic")
+		RADIOBUTTONW (L"Sinc70")
+		RADIOBUTTONW (L"Sinc700")
 	OK
 DO
-	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
-		Vector_CHANNEL_AVERAGE, GET_INTEGER ("Interpolation") - 1), L"Pascal");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REALW (L"Time"),
+		Vector_CHANNEL_AVERAGE, GET_INTEGERW (L"Interpolation") - 1), L"Pascal");
 END
 
-FORM (Sound_getValueAtTime, "Sound: Get value at time", "Sound: Get value at time...")
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Average")
-		OPTION ("Left")
-		OPTION ("Right")
-	REAL ("Time (s)", "0.5")
-	RADIO ("Interpolation", 4)
-		RADIOBUTTON ("Nearest")
-		RADIOBUTTON ("Linear")
-		RADIOBUTTON ("Cubic")
-		RADIOBUTTON ("Sinc70")
-		RADIOBUTTON ("Sinc700")
+FORMW (Sound_getValueAtTime, L"Sound: Get value at time", L"Sound: Get value at time...")
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Average")
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	REALW (L"Time (s)", L"0.5")
+	RADIOW (L"Interpolation", 4)
+		RADIOBUTTONW (L"Nearest")
+		RADIOBUTTONW (L"Linear")
+		RADIOBUTTONW (L"Cubic")
+		RADIOBUTTONW (L"Sinc70")
+		RADIOBUTTONW (L"Sinc700")
 	OK
 DO_ALTERNATIVE (old_Sound_getValueAtTime)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER ("Channel") - 1;
+	long channel = GET_INTEGERW (L"Channel") - 1;
 	if (channel > my ny) channel = 1;
-	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL ("Time"),
-		channel, GET_INTEGER ("Interpolation") - 1), L"Pascal");
+	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REALW (L"Time"),
+		channel, GET_INTEGERW (L"Interpolation") - 1), L"Pascal");
 END
 
 DIRECT (Sound_help) Melder_help (L"Sound"); END
 
-FORM (Sound_lengthen_overlapAdd, "Sound: Lengthen (overlap-add)", "Sound: Lengthen (overlap-add)...")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	POSITIVE ("Maximum pitch (Hz)", "600")
-	POSITIVE ("Factor", "1.5")
+FORMW (Sound_lengthen_overlapAdd, L"Sound: Lengthen (overlap-add)", L"Sound: Lengthen (overlap-add)...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	POSITIVEW (L"Maximum pitch (Hz)", L"600")
+	POSITIVEW (L"Factor", L"1.5")
 	OK
 DO
-	double minimumPitch = GET_REAL ("Minimum pitch"), maximumPitch = GET_REAL ("Maximum pitch");
-	double factor = GET_REAL ("Factor");
-	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
+	double minimumPitch = GET_REALW (L"Minimum pitch"), maximumPitch = GET_REALW (L"Maximum pitch");
+	double factor = GET_REALW (L"Factor");
+	REQUIRE (minimumPitch < maximumPitch, L"Maximum pitch should be greater than minimum pitch.")
 	WHERE (SELECTED)
-		if (! praat_new (Sound_lengthen_overlapAdd (OBJECT, minimumPitch, maximumPitch, factor),
-			"%s_%.2f", NAME, factor)) return 0;
+		if (! praat_new3 (Sound_lengthen_overlapAdd (OBJECT, minimumPitch, maximumPitch, factor),
+			NAMEW, L"_", Melder_fixed (factor, 2))) return 0;
 END
 
-FORM (Sound_multiply, "Sound: Multiply", 0)
-	REAL ("Multiplication factor", "1.5")
+FORMW (Sound_multiply, L"Sound: Multiply", 0)
+	REALW (L"Multiplication factor", L"1.5")
 	OK
 DO
 	WHERE (SELECTED) {
-		Vector_multiplyByScalar (OBJECT, GET_REAL ("Multiplication factor"));
+		Vector_multiplyByScalar (OBJECT, GET_REALW (L"Multiplication factor"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (Sound_multiplyByWindow, "Sound: Multiply by window", 0)
+FORMW (Sound_multiplyByWindow, L"Sound: Multiply by window", 0)
 	ENUM ("Window shape", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_multiplyByWindow (OBJECT, GET_INTEGER ("Window shape"));
+		Sound_multiplyByWindow (OBJECT, GET_INTEGERW (L"Window shape"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (Sound_overrideSamplingFrequency, "Sound: Override sampling frequency", 0)
-	POSITIVE ("New sampling frequency (Hz)", "16000.0")
+FORMW (Sound_overrideSamplingFrequency, L"Sound: Override sampling frequency", 0)
+	POSITIVEW (L"New sampling frequency (Hz)", L"16000.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_overrideSamplingFrequency (OBJECT, GET_REAL ("New sampling frequency"));
+		Sound_overrideSamplingFrequency (OBJECT, GET_REALW (L"New sampling frequency"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1051,25 +1051,25 @@ DIRECT (Sound_play)
 	}
 END
 
-FORM (Sound_preemphasizeInline, "Sound: Pre-emphasize (in-line)", "Sound: Pre-emphasize (in-line)...")
-	REAL ("From frequency (Hz)", "50.0")
+FORMW (Sound_preemphasizeInline, L"Sound: Pre-emphasize (in-line)", L"Sound: Pre-emphasize (in-line)...")
+	REALW (L"From frequency (Hz)", L"50.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_preEmphasis (OBJECT, GET_REAL ("From frequency"));
+		Sound_preEmphasis (OBJECT, GET_REALW (L"From frequency"));
 		Vector_scale (OBJECT, 0.99);
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM_READ (Sound_read2FromStereoFile, "Read two Sounds from stereo file", 0)
+FORM_READW (Sound_read2FromStereoFile, L"Read two Sounds from stereo file", 0)
 	Sound left, right;
 	if (! Sound_read2FromSoundFile (file, & left, & right)) return 0;
-	if (! praat_new (left, "left")) return 0;
-	if (right) { if (! praat_new (right, "right")) return 0; }
+	if (! praat_new1 (left, L"left")) return 0;
+	if (right) { if (! praat_new1 (right, L"right")) return 0; }
 END
 
-FORM_READ (Sound_readFromRawAlawFile, "Read Sound from raw Alaw file", 0)
+FORM_READW (Sound_readFromRawAlawFile, L"Read Sound from raw Alaw file", 0)
 	if (! praat_new1 (Sound_readFromRawAlawFile (file), MelderFile_name (file))) return 0;
 END
 
@@ -1083,7 +1083,7 @@ static int previousNumberOfChannels;
 static void cb_SoundRecorder_publish (Any editor, void *closure, Any publish) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish, NULL)) Melder_flushError (NULL);
+	if (! praat_new1 (publish, NULL)) Melder_flushError (NULL);
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_mono)
@@ -1106,7 +1106,7 @@ END
 static void cb_SoundRecorder_publish2 (Any editor, Any closure, Any publish1, Any publish2) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish1, "left") || ! praat_new (publish2, "right")) Melder_flushError (NULL);
+	if (! praat_new1 (publish1, L"left") || ! praat_new1 (publish2, L"right")) Melder_flushError (NULL);
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_stereo)
@@ -1128,59 +1128,59 @@ DIRECT (Sound_record_stereo)
 	previousNumberOfChannels = 2;
 END
 
-FORM (Sound_recordFixedTime, "Record Sound", 0)
-	RADIO ("Input source", 1)
-		RADIOBUTTON ("Microphone")
-		RADIOBUTTON ("Line")
+FORMW (Sound_recordFixedTime, L"Record Sound", 0)
+	RADIOW (L"Input source", 1)
+		RADIOBUTTONW (L"Microphone")
+		RADIOBUTTONW (L"Line")
 	#if defined (sgi)
-		RADIOBUTTON ("Digital")
-		REAL ("Gain (0-1)", "0.5")
+		RADIOBUTTONW (L"Digital")
+		REALW (L"Gain (0-1)", L"0.5")
 	#else
-		REAL ("Gain (0-1)", "0.1")
+		REALW (L"Gain (0-1)", L"0.1")
 	#endif
-	REAL ("Balance (0-1)", "0.5")
-	RADIO ("Sampling frequency", 1)
+	REALW (L"Balance (0-1)", L"0.5")
+	RADIOW (L"Sampling frequency", 1)
 		#if defined (hpux)
-			RADIOBUTTON ("5512")
+			RADIOBUTTONW (L"5512")
 		#endif
 		#ifdef UNIX
-		RADIOBUTTON ("8000")
+		RADIOBUTTONW (L"8000")
 		#endif
 		#ifdef sgi
-		RADIOBUTTON ("9800")
+		RADIOBUTTONW (L"9800")
 		#endif
 		#ifndef macintosh
-		RADIOBUTTON ("11025")
+		RADIOBUTTONW (L"11025")
 		#endif
 		#ifdef UNIX
-		RADIOBUTTON ("16000")
+		RADIOBUTTONW (L"16000")
 		#endif
 		#ifndef macintosh
-		RADIOBUTTON ("22050")
+		RADIOBUTTONW (L"22050")
 		#endif
 		#ifdef UNIX
-		RADIOBUTTON ("32000")
+		RADIOBUTTONW (L"32000")
 		#endif
-		RADIOBUTTON ("44100")
-		RADIOBUTTON ("48000")
-		RADIOBUTTON ("96000")
-	POSITIVE ("Duration (seconds)", "1.0")
+		RADIOBUTTONW (L"44100")
+		RADIOBUTTONW (L"48000")
+		RADIOBUTTONW (L"96000")
+	POSITIVEW (L"Duration (seconds)", L"1.0")
 	OK
 DO
-	NEW (Sound_recordFixedTime (GET_INTEGER ("Input source"),
-		GET_REAL ("Gain"), GET_REAL ("Balance"),
-		atof (GET_STRING ("Sampling frequency")), GET_REAL ("Duration")));
+	NEW (Sound_recordFixedTime (GET_INTEGERW (L"Input source"),
+		GET_REALW (L"Gain"), GET_REALW (L"Balance"),
+		wcstod (GET_STRINGW (L"Sampling frequency"), NULL), GET_REALW (L"Duration")));
 END
 
-FORM (Sound_resample, "Sound: Resample", "Sound: Resample...")
-	POSITIVE ("New sampling frequency (Hz)", "10000")
-	NATURAL ("Precision (samples)", "50")
+FORMW (Sound_resample, L"Sound: Resample", L"Sound: Resample...")
+	POSITIVEW (L"New sampling frequency (Hz)", L"10000")
+	NATURALW (L"Precision (samples)", L"50")
 	OK
 DO
-	double samplingFrequency = GET_REAL ("New sampling frequency");
+	double samplingFrequency = GET_REALW (L"New sampling frequency");
 	WHERE (SELECTED)
-		if (! praat_new (Sound_resample (OBJECT, samplingFrequency, GET_INTEGER ("Precision")),
-			"%s %ld", NAME, (long) floor (samplingFrequency + 0.5))) return 0;
+		if (! praat_new3 (Sound_resample (OBJECT, samplingFrequency, GET_INTEGERW (L"Precision")),
+			NAMEW, L"_", Melder_integer ((long) floor (samplingFrequency + 0.5)))) return 0;
 END
 
 DIRECT (Sound_reverse)
@@ -1190,79 +1190,79 @@ DIRECT (Sound_reverse)
 	}
 END
 
-FORM (Sound_scalePeak, "Sound: Scale peak", 0)
-	POSITIVE ("New maximum amplitude", "0.99")
+FORMW (Sound_scalePeak, L"Sound: Scale peak", 0)
+	POSITIVEW (L"New maximum amplitude", L"0.99")
 	OK
 DO
 	WHERE (SELECTED) {
-		Vector_scale (OBJECT, GET_REAL ("New maximum amplitude"));
+		Vector_scale (OBJECT, GET_REALW (L"New maximum amplitude"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (Sound_scaleIntensity, "Sound: Scale intensity", 0)
-	POSITIVE ("New average intensity (dB)", "70.0")
+FORMW (Sound_scaleIntensity, L"Sound: Scale intensity", 0)
+	POSITIVEW (L"New average intensity (dB)", L"70.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_scaleIntensity (OBJECT, GET_REAL ("New average intensity"));
+		Sound_scaleIntensity (OBJECT, GET_REALW (L"New average intensity"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
-FORM (old_Sound_setValueAtIndex, "Sound: Set value at sample number", "Sound: Set value at sample number...")
-	NATURAL ("Sample number", "100")
-	REAL ("New value", "0")
+FORMW (old_Sound_setValueAtIndex, L"Sound: Set value at sample number", L"Sound: Set value at sample number...")
+	NATURALW (L"Sample number", L"100")
+	REALW (L"New value", L"0")
 	OK
 DO
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		long index = GET_INTEGER ("Sample number");
+		long index = GET_INTEGERW (L"Sample number");
 		if (index > my nx)
 			return Melder_error3 (L"The sample number should not exceed the number of samples, which is ", Melder_integer (my nx), L".");
 		for (long channel = 1; channel <= my ny; channel ++)
-			my z [channel] [index] = GET_REAL ("New value");
+			my z [channel] [index] = GET_REALW (L"New value");
 		praat_dataChanged (me);
 	}
 END
 
-FORM (Sound_setValueAtIndex, "Sound: Set value at sample number", "Sound: Set value at sample number...")
-	OPTIONMENU ("Channel", 2)
-		OPTION ("Both")
-		OPTION ("Left")
-		OPTION ("Right")
-	NATURAL ("Sample number", "100")
-	REAL ("New value", "0")
+FORMW (Sound_setValueAtIndex, L"Sound: Set value at sample number", L"Sound: Set value at sample number...")
+	OPTIONMENUW (L"Channel", 2)
+		OPTIONW (L"Both")
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	NATURALW (L"Sample number", L"100")
+	REALW (L"New value", L"0")
 	OK
 DO_ALTERNATIVE (old_Sound_setValueAtIndex)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		long index = GET_INTEGER ("Sample number");
+		long index = GET_INTEGERW (L"Sample number");
 		if (index > my nx)
 			return Melder_error3 (L"The sample number should not exceed the number of samples, which is ", Melder_integer (my nx), L".");
-		long channel = GET_INTEGER ("Channel") - 1;
+		long channel = GET_INTEGERW (L"Channel") - 1;
 		if (channel > my ny) channel = 1;
 		if (channel > 0) {
-			my z [channel] [index] = GET_REAL ("New value");
+			my z [channel] [index] = GET_REALW (L"New value");
 		} else {
 			for (channel = 1; channel <= my ny; channel ++) {
-				my z [channel] [index] = GET_REAL ("New value");
+				my z [channel] [index] = GET_REALW (L"New value");
 			}
 		}
 		praat_dataChanged (me);
 	}
 END
 
-FORM (Sound_setPartToZero, "Sound: Set part to zero", 0)
-	REAL ("left Time range (s)", "0.0")
-	REAL ("right Time range (s)", "0.0 (= all)")
-	RADIO ("Cut", 2)
-		OPTION ("at exactly these times")
-		OPTION ("at nearest zero crossing")
+FORMW (Sound_setPartToZero, L"Sound: Set part to zero", 0)
+	REALW (L"left Time range (s)", L"0.0")
+	REALW (L"right Time range (s)", L"0.0 (= all)")
+	RADIOW (L"Cut", 2)
+		OPTIONW (L"at exactly these times")
+		OPTIONW (L"at nearest zero crossing")
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_setZero (OBJECT, GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Cut") - 1);
+		Sound_setZero (OBJECT, GET_REALW (L"left Time range"), GET_REALW (L"right Time range"), GET_INTEGERW (L"Cut") - 1);
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1274,166 +1274,166 @@ DIRECT (Sound_subtractMean)
 	}
 END
 
-FORM (Sound_to_Manipulation, "Sound: To Manipulation", "Manipulation")
-	POSITIVE ("Time step (s)", "0.01")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	POSITIVE ("Maximum pitch (Hz)", "600")
+FORMW (Sound_to_Manipulation, L"Sound: To Manipulation", L"Manipulation")
+	POSITIVEW (L"Time step (s)", L"0.01")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	POSITIVEW (L"Maximum pitch (Hz)", L"600")
 	OK
 DO
-	double fmin = GET_REAL ("Minimum pitch"), fmax = GET_REAL ("Maximum pitch");
-	REQUIRE (fmax > fmin, "Maximum pitch must be greater than minimum pitch.");
-	EVERY_TO (Sound_to_Manipulation (OBJECT, GET_REAL ("Time step"), fmin, fmax))
+	double fmin = GET_REALW (L"Minimum pitch"), fmax = GET_REALW (L"Maximum pitch");
+	REQUIRE (fmax > fmin, L"Maximum pitch must be greater than minimum pitch.");
+	EVERY_TO (Sound_to_Manipulation (OBJECT, GET_REALW (L"Time step"), fmin, fmax))
 END
 
-FORM (Sound_to_Cochleagram, "Sound: To Cochleagram", 0)
-	POSITIVE ("Time step (s)", "0.01")
-	POSITIVE ("Frequency resolution (Bark)", "0.1")
-	POSITIVE ("Window length (s)", "0.03")
-	REAL ("Forward-masking time (s)", "0.03")
+FORMW (Sound_to_Cochleagram, L"Sound: To Cochleagram", 0)
+	POSITIVEW (L"Time step (s)", L"0.01")
+	POSITIVEW (L"Frequency resolution (Bark)", L"0.1")
+	POSITIVEW (L"Window length (s)", L"0.03")
+	REALW (L"Forward-masking time (s)", L"0.03")
 	OK
 DO
-	EVERY_TO (Sound_to_Cochleagram (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Frequency resolution"), GET_REAL ("Window length"), GET_REAL ("Forward-masking time")))
+	EVERY_TO (Sound_to_Cochleagram (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Frequency resolution"), GET_REALW (L"Window length"), GET_REALW (L"Forward-masking time")))
 END
 
-FORM (Sound_to_Cochleagram_edb, "Sound: To Cochleagram (De Boer, Meddis & Hewitt)", 0)
-	POSITIVE ("Time step (s)", "0.01")
-	POSITIVE ("Frequency resolution (Bark)", "0.1")
-	BOOLEAN ("Has synapse", 1)
-	LABEL ("", "Meddis synapse properties")
-	POSITIVE ("   replenishment rate (/sec)", "5.05")
-	POSITIVE ("   loss rate (/sec)", "2500")
-	POSITIVE ("   return rate (/sec)", "6580")
-	POSITIVE ("   reprocessing rate (/sec)", "66.31")
+FORMW (Sound_to_Cochleagram_edb, L"Sound: To Cochleagram (De Boer, Meddis & Hewitt)", 0)
+	POSITIVEW (L"Time step (s)", L"0.01")
+	POSITIVEW (L"Frequency resolution (Bark)", L"0.1")
+	BOOLEANW (L"Has synapse", 1)
+	LABELW (L"", L"Meddis synapse properties")
+	POSITIVEW (L"   replenishment rate (/sec)", L"5.05")
+	POSITIVEW (L"   loss rate (/sec)", L"2500")
+	POSITIVEW (L"   return rate (/sec)", L"6580")
+	POSITIVEW (L"   reprocessing rate (/sec)", L"66.31")
 	OK
 DO
-	EVERY_TO (Sound_to_Cochleagram_edb (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Frequency resolution"), GET_INTEGER ("Has synapse"),
-		GET_REAL ("   replenishment rate"), GET_REAL ("   loss rate"),
-		GET_REAL ("   return rate"), GET_REAL ("   reprocessing rate")))
+	EVERY_TO (Sound_to_Cochleagram_edb (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Frequency resolution"), GET_INTEGERW (L"Has synapse"),
+		GET_REALW (L"   replenishment rate"), GET_REALW (L"   loss rate"),
+		GET_REALW (L"   return rate"), GET_REALW (L"   reprocessing rate")))
 END
 
-FORM (Sound_to_Formant_burg, "Sound: To Formant (Burg method)", "Sound: To Formant (burg)...")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Max. number of formants", "5")
-	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
-	POSITIVE ("Window length (s)", "0.025")
-	POSITIVE ("Pre-emphasis from (Hz)", "50")
+FORMW (Sound_to_Formant_burg, L"Sound: To Formant (Burg method)", L"Sound: To Formant (burg)...")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Max. number of formants", L"5")
+	REALW (L"Maximum formant (Hz)", L"5500 (= adult female)")
+	POSITIVEW (L"Window length (s)", L"0.025")
+	POSITIVEW (L"Pre-emphasis from (Hz)", L"50")
 	OK
 DO
-	EVERY_TO (Sound_to_Formant_burg (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Max. number of formants"), GET_REAL ("Maximum formant"),
-		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
+	EVERY_TO (Sound_to_Formant_burg (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Max. number of formants"), GET_REALW (L"Maximum formant"),
+		GET_REALW (L"Window length"), GET_REALW (L"Pre-emphasis from")))
 END
 
-FORM (Sound_to_Formant_keepAll, "Sound: To Formant (keep all)", "Sound: To Formant (keep all)...")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Max. number of formants", "5")
-	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
-	POSITIVE ("Window length (s)", "0.025")
-	POSITIVE ("Pre-emphasis from (Hz)", "50")
+FORMW (Sound_to_Formant_keepAll, L"Sound: To Formant (keep all)", L"Sound: To Formant (keep all)...")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Max. number of formants", L"5")
+	REALW (L"Maximum formant (Hz)", L"5500 (= adult female)")
+	POSITIVEW (L"Window length (s)", L"0.025")
+	POSITIVEW (L"Pre-emphasis from (Hz)", L"50")
 	OK
 DO
-	EVERY_TO (Sound_to_Formant_keepAll (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Max. number of formants"), GET_REAL ("Maximum formant"),
-		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
+	EVERY_TO (Sound_to_Formant_keepAll (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Max. number of formants"), GET_REALW (L"Maximum formant"),
+		GET_REALW (L"Window length"), GET_REALW (L"Pre-emphasis from")))
 END
 
-FORM (Sound_to_Formant_willems, "Sound: To Formant (split Levinson (Willems))", "Sound: To Formant (sl)...")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Number of formants", "5")
-	REAL ("Maximum formant (Hz)", "5500 (= adult female)")
-	POSITIVE ("Window length (s)", "0.025")
-	POSITIVE ("Pre-emphasis from (Hz)", "50")
+FORMW (Sound_to_Formant_willems, L"Sound: To Formant (split Levinson (Willems))", L"Sound: To Formant (sl)...")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Number of formants", L"5")
+	REALW (L"Maximum formant (Hz)", L"5500 (= adult female)")
+	POSITIVEW (L"Window length (s)", L"0.025")
+	POSITIVEW (L"Pre-emphasis from (Hz)", L"50")
 	OK
 DO
-	EVERY_TO (Sound_to_Formant_willems (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Number of formants"), GET_REAL ("Maximum formant"),
-		GET_REAL ("Window length"), GET_REAL ("Pre-emphasis from")))
+	EVERY_TO (Sound_to_Formant_willems (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Number of formants"), GET_REALW (L"Maximum formant"),
+		GET_REALW (L"Window length"), GET_REALW (L"Pre-emphasis from")))
 END
 
-FORM (Sound_to_Harmonicity_ac, "Sound: To Harmonicity (ac)", "Sound: To Harmonicity (ac)...")
-	POSITIVE ("Time step (s)", "0.01")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	REAL ("Silence threshold", "0.1")
-	POSITIVE ("Periods per window", "4.5")
+FORMW (Sound_to_Harmonicity_ac, L"Sound: To Harmonicity (ac)", L"Sound: To Harmonicity (ac)...")
+	POSITIVEW (L"Time step (s)", L"0.01")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	REALW (L"Silence threshold", L"0.1")
+	POSITIVEW (L"Periods per window", L"4.5")
 	OK
 DO
-	double periodsPerWindow = GET_REAL ("Periods per window");
-	REQUIRE (periodsPerWindow >= 3.0, "Number of periods per window must be >= 3.")
-	EVERY_TO (Sound_to_Harmonicity_ac (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Minimum pitch"), GET_REAL ("Silence threshold"), periodsPerWindow))
+	double periodsPerWindow = GET_REALW (L"Periods per window");
+	REQUIRE (periodsPerWindow >= 3.0, L"Number of periods per window must be >= 3.")
+	EVERY_TO (Sound_to_Harmonicity_ac (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Minimum pitch"), GET_REALW (L"Silence threshold"), periodsPerWindow))
 END
 
-FORM (Sound_to_Harmonicity_cc, "Sound: To Harmonicity (cc)", "Sound: To Harmonicity (cc)...")
-	POSITIVE ("Time step (s)", "0.01")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	REAL ("Silence threshold", "0.1")
-	POSITIVE ("Periods per window", "1.0")
+FORMW (Sound_to_Harmonicity_cc, L"Sound: To Harmonicity (cc)", L"Sound: To Harmonicity (cc)...")
+	POSITIVEW (L"Time step (s)", L"0.01")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	REALW (L"Silence threshold", L"0.1")
+	POSITIVEW (L"Periods per window", L"1.0")
 	OK
 DO
-	EVERY_TO (Sound_to_Harmonicity_cc (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Minimum pitch"), GET_REAL ("Silence threshold"),
-		GET_REAL ("Periods per window")))
+	EVERY_TO (Sound_to_Harmonicity_cc (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Minimum pitch"), GET_REALW (L"Silence threshold"),
+		GET_REALW (L"Periods per window")))
 END
 
-FORM (Sound_to_Harmonicity_gne, "Sound: To Harmonicity (gne)", 0)
-	POSITIVE ("Minimum frequency (Hz)", "500")
-	POSITIVE ("Maximum frequency (Hz)", "4500")
-	POSITIVE ("Bandwidth (Hz)", "1000")
-	POSITIVE ("Step (Hz)", "80")
+FORMW (Sound_to_Harmonicity_gne, L"Sound: To Harmonicity (gne)", 0)
+	POSITIVEW (L"Minimum frequency (Hz)", L"500")
+	POSITIVEW (L"Maximum frequency (Hz)", L"4500")
+	POSITIVEW (L"Bandwidth (Hz)", L"1000")
+	POSITIVEW (L"Step (Hz)", L"80")
 	OK
 DO
-	EVERY_TO (Sound_to_Harmonicity_GNE (OBJECT, GET_REAL ("Minimum frequency"),
-		GET_REAL ("Maximum frequency"), GET_REAL ("Bandwidth"),
-		GET_REAL ("Step")))
+	EVERY_TO (Sound_to_Harmonicity_GNE (OBJECT, GET_REALW (L"Minimum frequency"),
+		GET_REALW (L"Maximum frequency"), GET_REALW (L"Bandwidth"),
+		GET_REALW (L"Step")))
 END
 
-FORM (old_Sound_to_Intensity, "Sound: To Intensity", "Sound: To Intensity...")
-	POSITIVE ("Minimum pitch (Hz)", "100")
-	REAL ("Time step (s)", "0.0 (= auto)")
+FORMW (old_Sound_to_Intensity, L"Sound: To Intensity", L"Sound: To Intensity...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"100")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
 	OK
 DO
 	EVERY_TO (Sound_to_Intensity ((Sound) OBJECT,
-		GET_REAL ("Minimum pitch"), GET_REAL ("Time step"), FALSE))
+		GET_REALW (L"Minimum pitch"), GET_REALW (L"Time step"), FALSE))
 END
 
-FORM (Sound_to_Intensity, "Sound: To Intensity", "Sound: To Intensity...")
-	POSITIVE ("Minimum pitch (Hz)", "100")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	BOOLEAN ("Subtract mean", 1)
+FORMW (Sound_to_Intensity, L"Sound: To Intensity", L"Sound: To Intensity...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"100")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	BOOLEANW (L"Subtract mean", 1)
 	OK
 DO_ALTERNATIVE (old_Sound_to_Intensity)
 	EVERY_TO (Sound_to_Intensity ((Sound) OBJECT,
-		GET_REAL ("Minimum pitch"), GET_REAL ("Time step"), GET_INTEGER ("Subtract mean")))
+		GET_REALW (L"Minimum pitch"), GET_REALW (L"Time step"), GET_INTEGERW (L"Subtract mean")))
 END
 
 DIRECT (Sound_to_IntervalTier)
 	EVERY_TO (IntervalTier_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax))
 END
 
-FORM (Sound_to_Ltas, "Sound: To long-term average spectrum", 0)
-	POSITIVE ("Bandwidth (Hz)", "100")
+FORMW (Sound_to_Ltas, L"Sound: To long-term average spectrum", 0)
+	POSITIVEW (L"Bandwidth (Hz)", L"100")
 	OK
 DO
-	EVERY_TO (Sound_to_Ltas (OBJECT, GET_REAL ("Bandwidth")))
+	EVERY_TO (Sound_to_Ltas (OBJECT, GET_REALW (L"Bandwidth")))
 END
 
-FORM (Sound_to_Ltas_pitchCorrected, "Sound: To Ltas (pitch-corrected)", "Sound: To Ltas (pitch-corrected)...")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	POSITIVE ("Maximum pitch (Hz)", "600")
-	POSITIVE ("Maximum frequency (Hz)", "5000")
-	POSITIVE ("Bandwidth (Hz)", "100")
-	REAL ("Shortest period (s)", "0.0001")
-	REAL ("Longest period (s)", "0.02")
-	POSITIVE ("Maximum period factor", "1.3")
+FORMW (Sound_to_Ltas_pitchCorrected, L"Sound: To Ltas (pitch-corrected)", L"Sound: To Ltas (pitch-corrected)...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	POSITIVEW (L"Maximum pitch (Hz)", L"600")
+	POSITIVEW (L"Maximum frequency (Hz)", L"5000")
+	POSITIVEW (L"Bandwidth (Hz)", L"100")
+	REALW (L"Shortest period (s)", L"0.0001")
+	REALW (L"Longest period (s)", L"0.02")
+	POSITIVEW (L"Maximum period factor", L"1.3")
 	OK
 DO
-	double fmin = GET_REAL ("Minimum pitch"), fmax = GET_REAL ("Maximum pitch");
-	REQUIRE (fmax > fmin, "Maximum pitch must be greater than minimum pitch.");
+	double fmin = GET_REALW (L"Minimum pitch"), fmax = GET_REALW (L"Maximum pitch");
+	REQUIRE (fmax > fmin, L"Maximum pitch must be greater than minimum pitch.");
 	EVERY_TO (Sound_to_Ltas_pitchCorrected (OBJECT, fmin, fmax,
-		GET_REAL ("Maximum frequency"), GET_REAL ("Bandwidth"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")))
+		GET_REALW (L"Maximum frequency"), GET_REALW (L"Bandwidth"),
+		GET_REALW (L"Shortest period"), GET_REALW (L"Longest period"), GET_REALW (L"Maximum period factor")))
 END
 
 DIRECT (Sound_to_Matrix)
@@ -1443,142 +1443,142 @@ END
 DIRECT (Sounds_to_ParamCurve)
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
-	if (! praat_new (ParamCurve_create (s1, s2), "%s_%s", s1 -> name, s2 -> name)) return 0;
+	if (! praat_new3 (ParamCurve_create (s1, s2), s1 -> name, L"_", s2 -> name)) return 0;
 END
 
-FORM (Sound_to_Pitch, "Sound: To Pitch", "Sound: To Pitch...")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Pitch floor (Hz)", "75.0")
-	POSITIVE ("Pitch ceiling (Hz)", "600.0")
+FORMW (Sound_to_Pitch, L"Sound: To Pitch", L"Sound: To Pitch...")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Pitch floor (Hz)", L"75.0")
+	POSITIVEW (L"Pitch ceiling (Hz)", L"600.0")
 	OK
 DO
-	EVERY_TO (Sound_to_Pitch (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Pitch floor"), GET_REAL ("Pitch ceiling")))
+	EVERY_TO (Sound_to_Pitch (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Pitch floor"), GET_REALW (L"Pitch ceiling")))
 END
 
-FORM (Sound_to_Pitch_ac, "Sound: To Pitch (ac)", "Sound: To Pitch (ac)...")
-	LABEL ("", "Finding the candidates")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Pitch floor (Hz)", "75.0")
-	NATURAL ("Max. number of candidates", "15")
-	BOOLEAN ("Very accurate", 0)
-	LABEL ("", "Finding a path")
-	REAL ("Silence threshold", "0.03")
-	REAL ("Voicing threshold", "0.45")
-	REAL ("Octave cost", "0.01")
-	REAL ("Octave-jump cost", "0.35")
-	REAL ("Voiced / unvoiced cost", "0.14")
-	POSITIVE ("Pitch ceiling (Hz)", "600.0")
+FORMW (Sound_to_Pitch_ac, L"Sound: To Pitch (ac)", L"Sound: To Pitch (ac)...")
+	LABELW (L"", L"Finding the candidates")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Pitch floor (Hz)", L"75.0")
+	NATURALW (L"Max. number of candidates", L"15")
+	BOOLEANW (L"Very accurate", 0)
+	LABELW (L"", L"Finding a path")
+	REALW (L"Silence threshold", L"0.03")
+	REALW (L"Voicing threshold", L"0.45")
+	REALW (L"Octave cost", L"0.01")
+	REALW (L"Octave-jump cost", L"0.35")
+	REALW (L"Voiced / unvoiced cost", L"0.14")
+	POSITIVEW (L"Pitch ceiling (Hz)", L"600.0")
 	OK
 DO
-	long maxnCandidates = GET_INTEGER ("Max. number of candidates");
-	REQUIRE (maxnCandidates >= 2, "Maximum number of candidates must be greater than 1.")
-	EVERY_TO (Sound_to_Pitch_ac (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Pitch floor"), 3.0, maxnCandidates, GET_INTEGER ("Very accurate"),
-		GET_REAL ("Silence threshold"), GET_REAL ("Voicing threshold"),
-		GET_REAL ("Octave cost"), GET_REAL ("Octave-jump cost"),
-		GET_REAL ("Voiced / unvoiced cost"), GET_REAL ("Pitch ceiling")))
+	long maxnCandidates = GET_INTEGERW (L"Max. number of candidates");
+	REQUIRE (maxnCandidates >= 2, L"Maximum number of candidates must be greater than 1.")
+	EVERY_TO (Sound_to_Pitch_ac (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Pitch floor"), 3.0, maxnCandidates, GET_INTEGERW (L"Very accurate"),
+		GET_REALW (L"Silence threshold"), GET_REALW (L"Voicing threshold"),
+		GET_REALW (L"Octave cost"), GET_REALW (L"Octave-jump cost"),
+		GET_REALW (L"Voiced / unvoiced cost"), GET_REALW (L"Pitch ceiling")))
 END
 
-FORM (Sound_to_Pitch_cc, "Sound: To Pitch (cc)", "Sound: To Pitch (cc)...")
-	LABEL ("", "Finding the candidates")
-	REAL ("Time step (s)", "0.0 (= auto)")
-	POSITIVE ("Pitch floor (Hz)", "75")
-	NATURAL ("Max. number of candidates", "15")
-	BOOLEAN ("Very accurate", 0)
-	LABEL ("", "Finding a path")
-	REAL ("Silence threshold", "0.03")
-	REAL ("Voicing threshold", "0.45")
-	REAL ("Octave cost", "0.01")
-	REAL ("Octave-jump cost", "0.35")
-	REAL ("Voiced / unvoiced cost", "0.14")
-	POSITIVE ("Pitch ceiling (Hz)", "600")
+FORMW (Sound_to_Pitch_cc, L"Sound: To Pitch (cc)", L"Sound: To Pitch (cc)...")
+	LABELW (L"", L"Finding the candidates")
+	REALW (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVEW (L"Pitch floor (Hz)", L"75")
+	NATURALW (L"Max. number of candidates", L"15")
+	BOOLEANW (L"Very accurate", 0)
+	LABELW (L"", L"Finding a path")
+	REALW (L"Silence threshold", L"0.03")
+	REALW (L"Voicing threshold", L"0.45")
+	REALW (L"Octave cost", L"0.01")
+	REALW (L"Octave-jump cost", L"0.35")
+	REALW (L"Voiced / unvoiced cost", L"0.14")
+	POSITIVEW (L"Pitch ceiling (Hz)", L"600")
 	OK
 DO
-	long maxnCandidates = GET_INTEGER ("Max. number of candidates");
-	REQUIRE (maxnCandidates >= 2, "Maximum number of candidates must be greater than 1.")
-	EVERY_TO (Sound_to_Pitch_cc (OBJECT, GET_REAL ("Time step"),
-		GET_REAL ("Pitch floor"), 1.0, maxnCandidates, GET_INTEGER ("Very accurate"),
-		GET_REAL ("Silence threshold"), GET_REAL ("Voicing threshold"),
-		GET_REAL ("Octave cost"), GET_REAL ("Octave-jump cost"),
-		GET_REAL ("Voiced / unvoiced cost"), GET_REAL ("Pitch ceiling")))
+	long maxnCandidates = GET_INTEGERW (L"Max. number of candidates");
+	REQUIRE (maxnCandidates >= 2, L"Maximum number of candidates must be greater than 1.")
+	EVERY_TO (Sound_to_Pitch_cc (OBJECT, GET_REALW (L"Time step"),
+		GET_REALW (L"Pitch floor"), 1.0, maxnCandidates, GET_INTEGERW (L"Very accurate"),
+		GET_REALW (L"Silence threshold"), GET_REALW (L"Voicing threshold"),
+		GET_REALW (L"Octave cost"), GET_REALW (L"Octave-jump cost"),
+		GET_REALW (L"Voiced / unvoiced cost"), GET_REALW (L"Pitch ceiling")))
 END
 
-FORM (Sound_to_PointProcess_extrema, "Sound: To PointProcess (extrema)", 0)
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Left")
-		OPTION ("Right")
-	BOOLEAN ("Include maxima", 1)
-	BOOLEAN ("Include minima", 0)
-	RADIO ("Interpolation", 4)
-	RADIOBUTTON ("None")
-	RADIOBUTTON ("Parabolic")
-	RADIOBUTTON ("Cubic")
-	RADIOBUTTON ("Sinc70")
-	RADIOBUTTON ("Sinc700")
+FORMW (Sound_to_PointProcess_extrema, L"Sound: To PointProcess (extrema)", 0)
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	BOOLEANW (L"Include maxima", 1)
+	BOOLEANW (L"Include minima", 0)
+	RADIOW (L"Interpolation", 4)
+	RADIOBUTTONW (L"None")
+	RADIOBUTTONW (L"Parabolic")
+	RADIOBUTTONW (L"Cubic")
+	RADIOBUTTONW (L"Sinc70")
+	RADIOBUTTONW (L"Sinc700")
 	OK
 DO
-	long channel = GET_INTEGER ("Channel");
-	EVERY_TO (Sound_to_PointProcess_extrema (OBJECT, channel > ((Sound) OBJECT) -> ny ? 1 : channel, GET_INTEGER ("Interpolation") - 1,
-		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")))
+	long channel = GET_INTEGERW (L"Channel");
+	EVERY_TO (Sound_to_PointProcess_extrema (OBJECT, channel > ((Sound) OBJECT) -> ny ? 1 : channel, GET_INTEGERW (L"Interpolation") - 1,
+		GET_INTEGERW (L"Include maxima"), GET_INTEGERW (L"Include minima")))
 END
 
-FORM (Sound_to_PointProcess_periodic_cc, "Sound: To PointProcess (periodic, cc)", "Sound: To PointProcess (periodic, cc)...")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	POSITIVE ("Maximum pitch (Hz)", "600")
+FORMW (Sound_to_PointProcess_periodic_cc, L"Sound: To PointProcess (periodic, cc)", L"Sound: To PointProcess (periodic, cc)...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	POSITIVEW (L"Maximum pitch (Hz)", L"600")
 	OK
 DO
-	double fmin = GET_REAL ("Minimum pitch"), fmax = GET_REAL ("Maximum pitch");
-	REQUIRE (fmax > fmin, "Maximum pitch must be greater than minimum pitch.");
+	double fmin = GET_REALW (L"Minimum pitch"), fmax = GET_REALW (L"Maximum pitch");
+	REQUIRE (fmax > fmin, L"Maximum pitch must be greater than minimum pitch.");
 	EVERY_TO (Sound_to_PointProcess_periodic_cc (OBJECT, fmin, fmax))
 END
 
-FORM (Sound_to_PointProcess_periodic_peaks, "Sound: To PointProcess (periodic, peaks)", "Sound: To PointProcess (periodic, peaks)...")
-	POSITIVE ("Minimum pitch (Hz)", "75")
-	POSITIVE ("Maximum pitch (Hz)", "600")
-	BOOLEAN ("Include maxima", 1)
-	BOOLEAN ("Include minima", 0)
+FORMW (Sound_to_PointProcess_periodic_peaks, L"Sound: To PointProcess (periodic, peaks)", L"Sound: To PointProcess (periodic, peaks)...")
+	POSITIVEW (L"Minimum pitch (Hz)", L"75")
+	POSITIVEW (L"Maximum pitch (Hz)", L"600")
+	BOOLEANW (L"Include maxima", 1)
+	BOOLEANW (L"Include minima", 0)
 	OK
 DO
-	double fmin = GET_REAL ("Minimum pitch"), fmax = GET_REAL ("Maximum pitch");
-	REQUIRE (fmax > fmin, "Maximum pitch must be greater than minimum pitch.");
-	EVERY_TO (Sound_to_PointProcess_periodic_peaks (OBJECT, fmin, fmax, GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")))
+	double fmin = GET_REALW (L"Minimum pitch"), fmax = GET_REALW (L"Maximum pitch");
+	REQUIRE (fmax > fmin, L"Maximum pitch must be greater than minimum pitch.");
+	EVERY_TO (Sound_to_PointProcess_periodic_peaks (OBJECT, fmin, fmax, GET_INTEGERW (L"Include maxima"), GET_INTEGERW (L"Include minima")))
 END
 
-FORM (Sound_to_PointProcess_zeroes, "Get zeroes", 0)
-	OPTIONMENU ("Channel", 1)
-		OPTION ("Left")
-		OPTION ("Right")
-	BOOLEAN ("Include raisers", 1)
-	BOOLEAN ("Include fallers", 0)
+FORMW (Sound_to_PointProcess_zeroes, L"Get zeroes", 0)
+	OPTIONMENUW (L"Channel", 1)
+		OPTIONW (L"Left")
+		OPTIONW (L"Right")
+	BOOLEANW (L"Include raisers", 1)
+	BOOLEANW (L"Include fallers", 0)
 	OK
 DO
-	long channel = GET_INTEGER ("Channel");
+	long channel = GET_INTEGERW (L"Channel");
 	EVERY_TO (Sound_to_PointProcess_zeroes (OBJECT, channel > ((Sound) OBJECT) -> ny ? 1 : channel,
-		GET_INTEGER ("Include raisers"), GET_INTEGER ("Include fallers")))
+		GET_INTEGERW (L"Include raisers"), GET_INTEGERW (L"Include fallers")))
 END
 
-FORM (Sound_to_Spectrogram, "Sound: To Spectrogram", "Sound: To Spectrogram...")
-	POSITIVE ("Window length (s)", "0.005")
-	POSITIVE ("Maximum frequency (Hz)", "5000")
-	POSITIVE ("Time step (s)", "0.002")
-	POSITIVE ("Frequency step (Hz)", "20")
-	RADIO ("Window shape", 6)
+FORMW (Sound_to_Spectrogram, L"Sound: To Spectrogram", L"Sound: To Spectrogram...")
+	POSITIVEW (L"Window length (s)", L"0.005")
+	POSITIVEW (L"Maximum frequency (Hz)", L"5000")
+	POSITIVEW (L"Time step (s)", L"0.002")
+	POSITIVEW (L"Frequency step (Hz)", L"20")
+	RADIOW (L"Window shape", 6)
 	for (int i = 0; i < 6; i ++) {
 		RADIOBUTTONW (Sound_to_Spectrogram_windowShapeText (i))
 	}
 	OK
 DO
-	EVERY_TO (Sound_to_Spectrogram (OBJECT, GET_REAL ("Window length"),
-		GET_REAL ("Maximum frequency"), GET_REAL ("Time step"),
-		GET_REAL ("Frequency step"), GET_INTEGER ("Window shape") - 1, 8.0, 8.0))
+	EVERY_TO (Sound_to_Spectrogram (OBJECT, GET_REALW (L"Window length"),
+		GET_REALW (L"Maximum frequency"), GET_REALW (L"Time step"),
+		GET_REALW (L"Frequency step"), GET_INTEGERW (L"Window shape") - 1, 8.0, 8.0))
 END
 
-FORM (Sound_to_Spectrum, "Sound: To Spectrum", "Sound: To Spectrum...")
-	BOOLEAN ("Fast", 1)
+FORMW (Sound_to_Spectrum, L"Sound: To Spectrum", L"Sound: To Spectrum...")
+	BOOLEANW (L"Fast", 1)
 	OK
 DO
-	EVERY_TO (Sound_to_Spectrum (OBJECT, GET_INTEGER ("Fast")))
+	EVERY_TO (Sound_to_Spectrum (OBJECT, GET_INTEGERW (L"Fast")))
 END
 
 DIRECT (Sound_to_Spectrum_dft)
@@ -1589,9 +1589,9 @@ DIRECT (Sound_to_Spectrum_fft)
 	EVERY_TO (Sound_to_Spectrum (OBJECT, TRUE))
 END
 
-FORM (Sound_to_TextGrid, "Sound: To TextGrid", "Sound: To TextGrid...")
-	SENTENCE ("All tier names", "Mary John bell")
-	SENTENCE ("Which of these are point tiers?", "bell")
+FORMW (Sound_to_TextGrid, L"Sound: To TextGrid", L"Sound: To TextGrid...")
+	SENTENCEW (L"All tier names", L"Mary John bell")
+	SENTENCEW (L"Which of these are point tiers?", L"bell")
 	OK
 DO
 	EVERY_TO (TextGrid_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax,
@@ -1602,112 +1602,112 @@ DIRECT (Sound_to_TextTier)
 	EVERY_TO (TextTier_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax))
 END
 
-FORM (SoundInputPrefs, "Sound recording preferences", "SoundRecorder")
-	NATURAL ("Buffer size (MB)", "20")
+FORMW (SoundInputPrefs, L"Sound recording preferences", L"SoundRecorder")
+	NATURALW (L"Buffer size (MB)", L"20")
 	OK
-SET_INTEGER ("Buffer size", SoundRecorder_getBufferSizePref_MB ())
+SET_INTEGERW (L"Buffer size", SoundRecorder_getBufferSizePref_MB ())
 DO
-	long size = GET_INTEGER ("Buffer size");
-	REQUIRE (size <= 1000, "Buffer size cannot exceed 1000 megabytes.")
+	long size = GET_INTEGERW (L"Buffer size");
+	REQUIRE (size <= 1000, L"Buffer size cannot exceed 1000 megabytes.")
 	SoundRecorder_setBufferSizePref_MB (size);
 END
 
-FORM (SoundOutputPrefs, "Sound playing preferences", 0)
+FORMW (SoundOutputPrefs, L"Sound playing preferences", 0)
 	#if defined (sun) || defined (HPUX)
-		RADIO ("Internal speaker", 1)
-		RADIOBUTTON ("On")
-		RADIOBUTTON ("Off")
+		RADIOW (L"Internal speaker", 1)
+		RADIOBUTTONW (L"On")
+		RADIOBUTTONW (L"Off")
 	#endif
 	#if defined (pietjepuk)
-		REAL ("Output gain (0..1)", "0.3")
+		REALW (L"Output gain (0..1)", L"0.3")
 	#endif
-	LABEL ("", "The following determines how sounds are played.")
-	LABEL ("", "Between parentheses, you find what you can do simultaneously.")
-	LABEL ("", "Decrease asynchronicity if sound plays with discontinuities.")
-	OPTIONMENU ("Maximum asynchronicity", 4)
-	OPTION ("Synchronous (nothing)")
-	OPTION ("Calling back (view running cursor)")
-	OPTION ("Interruptable (Escape key stops playing)")
-	OPTION ("Asynchronous (anything)")
-	REAL ("Silence before and after (s)", "0.0")
+	LABELW (L"", L"The following determines how sounds are played.")
+	LABELW (L"", L"Between parentheses, you find what you can do simultaneously.")
+	LABELW (L"", L"Decrease asynchronicity if sound plays with discontinuities.")
+	OPTIONMENUW (L"Maximum asynchronicity", 4)
+	OPTIONW (L"Synchronous (nothing)")
+	OPTIONW (L"Calling back (view running cursor)")
+	OPTIONW (L"Interruptable (Escape key stops playing)")
+	OPTIONW (L"Asynchronous (anything)")
+	REALW (L"Silence before and after (s)", L"0.0")
 	OK
 #if defined (sun) || defined (HPUX)
-	SET_INTEGER ("Internal speaker", 2 - Melder_getUseInternalSpeaker ())
+	SET_INTEGERW (L"Internal speaker", 2 - Melder_getUseInternalSpeaker ())
 #endif
 #if defined (pietjepuk)
 	SET_REAL ("Output gain", Melder_getOutputGain ())
 #endif
-SET_INTEGER ("Maximum asynchronicity", Melder_getMaximumAsynchronicity () + 1);
+SET_INTEGERW (L"Maximum asynchronicity", Melder_getMaximumAsynchronicity () + 1);
 SET_REAL ("Silence before and after", Melder_getZeroPadding ());
 DO
 	#if defined (sun) || defined (HPUX)
-		Melder_setUseInternalSpeaker (2 - GET_INTEGER ("Internal speaker"));
+		Melder_setUseInternalSpeaker (2 - GET_INTEGERW (L"Internal speaker"));
 	#endif
 	#if defined (pietjepuk)
-		Melder_setOutputGain (GET_REAL ("Gain"));
+		Melder_setOutputGain (GET_REALW (L"Gain"));
 	#endif
-	Melder_setMaximumAsynchronicity (GET_INTEGER ("Maximum asynchronicity") - 1);
-	Melder_setZeroPadding (GET_REAL ("Silence before and after"));
+	Melder_setMaximumAsynchronicity (GET_INTEGERW (L"Maximum asynchronicity") - 1);
+	Melder_setZeroPadding (GET_REALW (L"Silence before and after"));
 END
 
-FORM_WRITE (Sound_writeToAifcFile, "Write to AIFC file", 0, "aifc")
+FORM_WRITEW (Sound_writeToAifcFile, L"Write to AIFC file", 0, L"aifc")
 	if (! pr_LongSound_concatenate (file, Melder_AIFC)) return 0;
 END
 
-FORM_WRITE (Sound_writeToAiffFile, "Write to AIFF file", 0, "aiff")
+FORM_WRITEW (Sound_writeToAiffFile, L"Write to AIFF file", 0, L"aiff")
 	if (! pr_LongSound_concatenate (file, Melder_AIFF)) return 0;
 END
 
-FORM_WRITE (Sound_writeToRaw8bitUnsignedFile, "Write to raw 8-bit unsigned sound file", 0, "8uns")
+FORM_WRITEW (Sound_writeToRaw8bitUnsignedFile, L"Write to raw 8-bit unsigned sound file", 0, L"8uns")
 	if (! Sound_writeToRaw8bitUnsignedFile (ONLY_OBJECT, file)) return 0;
 END
 
-FORM_WRITE (Sound_writeToRaw8bitSignedFile, "Write to raw 8-bit signed sound file", 0, "8sig")
+FORM_WRITEW (Sound_writeToRaw8bitSignedFile, L"Write to raw 8-bit signed sound file", 0, L"8sig")
 	if (! Sound_writeToRaw8bitSignedFile (ONLY_OBJECT, file)) return 0;
 END
 
-FORM (Sound_writeToRawSoundFile, "Write to raw sound file", 0)
-	LABEL ("", "Raw binary file:")
-	TEXTFIELD ("Raw binary file", "")
-	RADIO ("Encoding", 3)
-		RADIOBUTTON ("Linear 8-bit signed")
-		RADIOBUTTON ("Linear 8-bit unsigned")
-		RADIOBUTTON ("Linear 16-bit big-endian")
-		RADIOBUTTON ("Linear 16-bit little-endian")
+FORMW (Sound_writeToRawSoundFile, L"Write to raw sound file", 0)
+	LABELW (L"", L"Raw binary file:")
+	TEXTFIELDW (L"Raw binary file", L"")
+	RADIOW (L"Encoding", 3)
+		RADIOBUTTONW (L"Linear 8-bit signed")
+		RADIOBUTTONW (L"Linear 8-bit unsigned")
+		RADIOBUTTONW (L"Linear 16-bit big-endian")
+		RADIOBUTTONW (L"Linear 16-bit little-endian")
 	OK
 DO
 	structMelderFile file = { 0 };
 	Melder_relativePathToFile (GET_STRINGW (L"Raw binary file"), & file);
-	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGER ("Encoding"))) return 0;
+	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGERW (L"Encoding"))) return 0;
 END
 
-FORM_WRITE (Sound_writeToKayFile, "Write to Kay sound file", 0, "kay")
+FORM_WRITEW (Sound_writeToKayFile, L"Write to Kay sound file", 0, L"kay")
 	if (! Sound_writeToKayFile (ONLY_OBJECT, file)) return 0;
 END
 
 #ifdef macintosh
-FORM_WRITE (Sound_writeToMacSoundFile, "Write to Macintosh sound file", 0, "macsound")
+FORM_WRITEW (Sound_writeToMacSoundFile, L"Write to Macintosh sound file", 0, L"macsound")
 	if (! Sound_writeToMacSoundFile (ONLY_OBJECT, file)) return 0;
 END
 #endif
 
-FORM_WRITE (Sound_writeToNextSunFile, "Write to NeXT/Sun file", 0, "au")
+FORM_WRITEW (Sound_writeToNextSunFile, L"Write to NeXT/Sun file", 0, L"au")
 	if (! pr_LongSound_concatenate (file, Melder_NEXT_SUN)) return 0;
 END
 
-FORM_WRITE (Sound_writeToNistFile, "Write to NIST file", 0, "nist")
+FORM_WRITEW (Sound_writeToNistFile, L"Write to NIST file", 0, L"nist")
 	if (! pr_LongSound_concatenate (file, Melder_NIST)) return 0;
 END
 
-FORM_WRITE (Sound_writeToFlacFile, "Write to FLAC file", 0, "flac")
+FORM_WRITEW (Sound_writeToFlacFile, L"Write to FLAC file", 0, L"flac")
 	if (! pr_LongSound_concatenate (file, Melder_FLAC)) return 0;
 END
 
-FORM_WRITE (Sound_writeToSesamFile, "Write to Sesam file", 0, "sdf")
+FORM_WRITEW (Sound_writeToSesamFile, L"Write to Sesam file", 0, L"sdf")
 	if (! Sound_writeToSesamFile (ONLY_OBJECT, file)) return 0;
 END
 
-FORM_WRITE (Sound_writeToStereoAifcFile, "Write to stereo AIFC file", 0, "aifc")
+FORM_WRITEW (Sound_writeToStereoAifcFile, L"Write to stereo AIFC file", 0, L"aifc")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1716,7 +1716,7 @@ FORM_WRITE (Sound_writeToStereoAifcFile, "Write to stereo AIFC file", 0, "aifc")
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToStereoAiffFile, "Write to stereo AIFF file", 0, "aiff")
+FORM_WRITEW (Sound_writeToStereoAiffFile, L"Write to stereo AIFF file", 0, L"aiff")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1725,7 +1725,7 @@ FORM_WRITE (Sound_writeToStereoAiffFile, "Write to stereo AIFF file", 0, "aiff")
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToStereoNextSunFile, "Write to stereo NeXT/Sun file", 0, "au")
+FORM_WRITEW (Sound_writeToStereoNextSunFile, L"Write to stereo NeXT/Sun file", 0, L"au")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1734,7 +1734,7 @@ FORM_WRITE (Sound_writeToStereoNextSunFile, "Write to stereo NeXT/Sun file", 0, 
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToStereoNistFile, "Write to stereo NIST file", 0, "nist")
+FORM_WRITEW (Sound_writeToStereoNistFile, L"Write to stereo NIST file", 0, L"nist")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1743,7 +1743,7 @@ FORM_WRITE (Sound_writeToStereoNistFile, "Write to stereo NIST file", 0, "nist")
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToStereoFlacFile, "Write to stereo FLAC file", 0, "flac")
+FORM_WRITEW (Sound_writeToStereoFlacFile, L"Write to stereo FLAC file", 0, L"flac")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1752,7 +1752,7 @@ FORM_WRITE (Sound_writeToStereoFlacFile, "Write to stereo FLAC file", 0, "flac")
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToStereoWavFile, "Write to stereo WAV file", 0, "wav")
+FORM_WRITEW (Sound_writeToStereoWavFile, L"Write to stereo WAV file", 0, L"wav")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
@@ -1761,11 +1761,11 @@ FORM_WRITE (Sound_writeToStereoWavFile, "Write to stereo WAV file", 0, "wav")
 	forget (stereo);
 END
 
-FORM_WRITE (Sound_writeToSunAudioFile, "Write to NeXT/Sun file", 0, "au")
+FORM_WRITEW (Sound_writeToSunAudioFile, L"Write to NeXT/Sun file", 0, L"au")
 	if (! pr_LongSound_concatenate (file, Melder_NEXT_SUN)) return 0;
 END
 
-FORM_WRITE (Sound_writeToWavFile, "Write to WAV file", 0, "wav")
+FORM_WRITEW (Sound_writeToWavFile, L"Write to WAV file", 0, L"wav")
 	if (! pr_LongSound_concatenate (file, Melder_WAV)) return 0;
 END
 

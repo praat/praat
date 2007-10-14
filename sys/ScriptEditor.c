@@ -57,11 +57,11 @@ static void nameChanged (I) {
 	iam (ScriptEditor);
 	int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
 	static MelderString buffer = { 0 };
-	MelderString_copy (& buffer, my nameW ? L"Script" : L"untitled script");
+	MelderString_copy (& buffer, my name ? L"Script" : L"untitled script");
 	if (my editorClass) {
 		MelderString_append3 (& buffer, L" [", my environmentName, L"]");
 	}
-	if (my nameW) {
+	if (my name) {
 		MelderString_append3 (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 	}
 	if (my dirty && ! dirtinessAlreadyShown)
@@ -74,8 +74,8 @@ static int args_ok (Any dia, I) {
 	iam (ScriptEditor);
 	structMelderFile file = { 0 };
 	wchar_t *text = GuiText_getStringW (my textWidget);
-	if (my nameW) {
-		Melder_pathToFile (my nameW, & file);
+	if (my name) {
+		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -94,8 +94,8 @@ static int args_ok (Any dia, I) {
 static void run (ScriptEditor me, wchar_t **text) {
 	structMelderFile file = { 0 };
 	int npar;
-	if (my nameW) {
-		Melder_pathToFile (my nameW, & file);
+	if (my name) {
+		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (text);
@@ -145,9 +145,9 @@ FORM (ScriptEditor, cb_addToMenu, "Add to menu", "Add to fixed menu...");
 	OK
 if (my editorClass) SET_STRING ("Window", my editorClass -> _className)
 if (my name)
-	SET_STRING ("Script", my name)
+	SET_STRINGW (L"Script", my name)
 else
-	SET_STRING ("Script", "(please save your script first)")
+	SET_STRINGW (L"Script", L"(please save your script first)")
 DO
 	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
 		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
@@ -167,9 +167,9 @@ FORM (ScriptEditor, cb_addToFixedMenu, "Add to fixed menu", "Add to fixed menu..
 	TEXTFIELD ("Script", "")
 	OK
 if (my name)
-	SET_STRING ("Script", my name)
+	SET_STRINGW (L"Script", my name)
 else
-	SET_STRING ("Script", "(please save your script first)")
+	SET_STRINGW (L"Script", L"(please save your script first)")
 DO
 	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
 		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
@@ -191,9 +191,9 @@ FORM (ScriptEditor, cb_addToDynamicMenu, "Add to dynamic menu", "Add to dynamic 
 	TEXTFIELD ("Script", "")
 	OK
 if (my name)
-	SET_STRING ("Script", my name)
+	SET_STRINGW (L"Script", my name)
 else
-	SET_STRING ("Script", "(please save your script first)")
+	SET_STRINGW (L"Script", L"(please save your script first)")
 DO
 	if (! praat_addActionScript (GET_STRINGW (L"Class 1"), GET_INTEGER ("Number 1"),
 		GET_STRINGW (L"Class 2"), GET_INTEGER ("Number 2"), GET_STRINGW (L"Class 3"),
@@ -281,7 +281,7 @@ ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const w
 	ScriptEditor me = new (ScriptEditor);
 	if (! me) return NULL;
 	if (editor) {
-		my environmentName = Melder_wcsdup (editor -> nameW);
+		my environmentName = Melder_wcsdup (editor -> name);
 		my editorClass = editor -> methods;
 	}
 	if (! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
@@ -299,7 +299,7 @@ ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Scrip
 	Melder_free (text);
 	if (! me) return NULL;
 	MelderFile_copy (& script -> file, & my file);
-	Thing_setNameW (me, Melder_fileToPath (& script -> file));
+	Thing_setName (me, Melder_fileToPath (& script -> file));
 	return me;
 }
 

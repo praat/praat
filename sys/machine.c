@@ -371,12 +371,12 @@ static char *explicitStyleResources [] = {
 	"*raam.menuWindow*dynamicSubmenuBar*spacing: 0",
 0 };
 static char *motifFonts [] = {
-	"*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso8859-1",
-	"*menuBar*fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso8859-1",
-	"*dynamicSubmenuBar*XmPushButton.fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso8859-1",
-	"*XmLabel.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
-	"*XmLabelGadget.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
-	"*information*text*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso8859-1",
+	"*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso10646-1",
+	"*menuBar*fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso10646-1",
+	"*dynamicSubmenuBar*XmPushButton.fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso10646-1",
+	"*XmLabel.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso10646-1",
+	"*XmLabelGadget.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso10646-1",
+	"*information*text*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso10646-1",
 0 };
 static char *linuxFonts [] = {
 	"*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso10646-1",

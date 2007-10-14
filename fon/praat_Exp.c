@@ -98,7 +98,7 @@ DIRECT (ResultsMFC_removeUnsharedStimuli)
 	ResultsMFC res1 = NULL, res2 = NULL;
 	WHERE (SELECTED) { if (res1) res2 = OBJECT; else res1 = OBJECT; }
 	Melder_assert (res1 && res2);
-	if (! praat_new (ResultsMFC_removeUnsharedStimuli (res1, res2), "%s_shared", res2 -> name)) return 0;
+	if (! praat_new2 (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, L"_shared")) return 0;
 END
 
 DIRECT (ResultsMFC_to_Categories_stimuli)
@@ -114,7 +114,7 @@ DIRECT (ResultsMFCs_to_Table)
 	if (! me) return 0;
 	WHERE (SELECTED)
 		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new (ResultsMFCs_to_Table (me), "allResults")) {
+	if (! praat_new1 (ResultsMFCs_to_Table (me), L"allResults")) {
 		my size = 0; forget (me); return 0;
 	}
 	my size = 0; forget (me);

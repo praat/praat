@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071008)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071014)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.32# (October 14, 2007)")
+LIST_ITEM (L"\\bu Unicode support for names of objects.")
+LIST_ITEM (L"\\bu Linux: first Unicode support (in window titles).")
+LIST_ITEM (L"\\bu Windows scripting: corrected a bug that caused weird characters in Paste History.")
 NORMAL (L"##4.6.31# (October 8, 2007)")
 LIST_ITEM (L"\\bu TextGrid window: made Save command available again for TextGrid windows without a sound.")
 LIST_ITEM (L"\\bu Corrected a bug that caused binary Collection files with objects with names with non-ASCII characters to be unreadable.")

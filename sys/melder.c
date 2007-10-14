@@ -572,16 +572,17 @@ static void motif_warning (wchar_t *message) {
 }
 
 #ifdef macintosh
-static void motif_fatal (char *message)
-{
-	Str255 pmessage;
-	int length, i;
-	message [255] = '\0';
-	length = strlen (message);
-	pmessage [0] = length;
-	strcpy ((char *) pmessage + 1, message);
-	for (i = 1; i <= length; i ++) if (pmessage [i] == '\n') pmessage [i] = '\r';
-	StandardAlert (kAlertStopAlert, pmessage, NULL, NULL, NULL);
+static void motif_fatal (wchar_t *message) {
+	DialogRef dialog;
+	static UniChar messageU [2000+1];
+	int messageLength = wcslen (message);
+	for (int i = 0; i < messageLength; i ++) {
+		messageU [i] = message [i];   // BUG: should convert to UTF16
+	}
+	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
+	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
+	CFRelease (messageCF);
+	RunStandardAlert (dialog, NULL, NULL);
 	SysError (11);
 }
 static void motif_error (wchar_t *messageW) {
@@ -601,8 +602,8 @@ static void motif_error (wchar_t *messageW) {
 static void motif_fatal (wchar_t *message) {
 	MessageBox (NULL, message, L"Fatal error", MB_OK);
 }
-static void motif_error (wchar_t *messageW) {
-	MessageBoxW (NULL, messageW, L"Message", MB_OK);
+static void motif_error (wchar_t *message) {
+	MessageBox (NULL, message, L"Message", MB_OK);
 }
 #else
 static void motif_error (wchar_t *messageW) {

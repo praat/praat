@@ -44,6 +44,7 @@
  * pb 2007/05/07 Table_rowsToColumns
  * pb 2007/06/28 Table_getGroupMean_studentT, Table_getGroupMean
  * pb 2007/10/01 can write as encoding
+ * pb 2007/10/13 made Table_getExtrema global
  */
 
 #include <ctype.h>
@@ -440,7 +441,7 @@ static int Table_numericize_checkDefined (Table me, long icol) {
 			return Melder_error7 (
 				L"The cell in row ", Melder_integer (irow),
 				L" of column \"", my columnHeaders [icol]. label ? my columnHeaders [icol]. label : Melder_integer (icol),
-				L"\" of Table \"", my nameW ? my nameW : L"(noname)", L"\" is undefined.");
+				L"\" of Table \"", my name ? my name : L"(noname)", L"\" is undefined.");
 		}
 	}
 	return 1;
@@ -776,7 +777,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 					error7 (
 						L"The cell in column \"", columnsToAverageLogarithmically [i],
 						L"\" of row ", Melder_integer (jrow),
-						L" of Table \"", my nameW ? my nameW : L"(untitled)",
+						L" of Table \"", my name ? my name : L"(untitled)",
 						L"\" is not positive.\nCannot average logarithmically.")
 				sum += log (value);
 			}
@@ -792,7 +793,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 					error7 (
 						L"The cell in column \"", columnsToMedianizeLogarithmically [i],
 						L"\" of row ", Melder_integer (jrow),
-						L" of Table \"", my nameW ? my nameW : L"(untitled)",
+						L" of Table \"", my name ? my name : L"(untitled)",
 						L"\" is not positive.\nCannot medianize logarithmically.")
 				sortingColumn [jrow] = log (value);
 			}
@@ -1391,11 +1392,11 @@ double Table_getOneWayAnovaSignificance (Table me, long col1, long col2);
 double Table_getFisherFLowerLimit (Table me, long col1, long col2, double significanceLevel);
 double Table_getFisherFUpperLimit (Table me, long col1, long col2, double significanceLevel);
 
-static int Table_getExtrema (Table me, long icol, double *minimum, double *maximum) {
+bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum) {
 	long n = my rows -> size, irow;
 	if (icol < 1 || icol > my numberOfColumns || n == 0) {
 		*minimum = *maximum = NUMundefined;
-		return 0;
+		return false;
 	}
 	Table_numericize (me, icol);
 	*minimum = *maximum = ((TableRow) my rows -> item [1]) -> cells [icol]. number;
@@ -1404,7 +1405,7 @@ static int Table_getExtrema (Table me, long icol, double *minimum, double *maxim
 		if (value < *minimum) *minimum = value;
 		if (value > *maximum) *maximum = value;
 	}
-	return 1;
+	return true;
 }
 
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,

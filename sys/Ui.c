@@ -119,7 +119,7 @@ static UiField UiField_create (int type, const wchar_t *name) {
 	}
 	p = shortName;
 	if (*p != '\0' && p [wcslen (p) - 1] == ':') p [wcslen (p) - 1] = '\0';
-	Thing_setNameW (me, shortName);
+	Thing_setName (me, shortName);
 	return me;
 }
 
@@ -135,7 +135,7 @@ class_methods_end }
 
 static Any UiOption_create (const wchar_t *label) {
 	UiOption me = new (UiOption);
-	Thing_setNameW (me, label);
+	Thing_setName (me, label);
 	return me;
 }
 
@@ -166,10 +166,10 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 	for (i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
 		if (b -> toggle == w) {
-			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> nameW)), NULL);
+			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
-				Melder_warning ("%d \"%s\"", i, b -> name);
+				Melder_warning ("%d \"%s\"", i, Melder_peekWcsToUtf8 (b -> name));
 			}
 		} else {
 			XmToggleButtonSetState (b -> toggle, FALSE, FALSE);
@@ -209,7 +209,7 @@ static void UiField_setDefault (UiField me) {
 				UiOption b = my options -> item [i];
 				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
 				if (i == my integerDefaultValue) {
-					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> nameW)), NULL);
+					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
@@ -273,7 +273,7 @@ static int UiField_widgetToValue (UiField me) {
 				GuiText_setStringW (my text, clean);
 			}
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				return Melder_error3 (L"`", my nameW, L"' must be greater than 0.0.");
+				return Melder_error3 (L"`", my name, L"' must be greater than 0.0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
 			wchar_t *dirty = GuiText_getStringW (my text);
 			double realValue;
@@ -286,7 +286,7 @@ static int UiField_widgetToValue (UiField me) {
 				GuiText_setStringW (my text, Melder_integer (my integerValue));
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
-				return Melder_error3 (L"`", my nameW, L"' must be a positive whole number.");
+				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
 		} break; case UI_WORD: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getStringW (my text);
@@ -307,7 +307,7 @@ static int UiField_widgetToValue (UiField me) {
 					my integerValue = i;
 			}
 			if (my integerValue == 0)
-				return Melder_error3 (L"No option chosen for `", my nameW, L"'.");
+				return Melder_error3 (L"No option chosen for `", my name, L"'.");
 		} break; case UI_ENUM: case UI_LIST: {
 			int nSelected, *selected;
 			if (! XmListGetSelectedPos (my list, & selected, & nSelected)) {
@@ -338,18 +338,18 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 	switch (my type) {
 		case UI_REAL: case UI_POSITIVE: {
 			if (wcsspn (string, L" \t") == wcslen (string))
-				return Melder_error3 (L"Argument `", my nameW, L"' empty.");
+				return Melder_error3 (L"Argument `", my name, L"' empty.");
 			if (! Interpreter_numericExpression (theCurrentInterpreter, string, & my realValue)) return 0;
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				return Melder_error3 (L"`", my nameW, L"' must be greater than 0.");
+				return Melder_error3 (L"`", my name, L"' must be greater than 0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
 			double realValue;
 			if (wcsspn (string, L" \t") == wcslen (string))
-				return Melder_error3 (L"Argument `", my nameW, L"' empty.");
+				return Melder_error3 (L"Argument `", my name, L"' empty.");
 			if (! Interpreter_numericExpression (theCurrentInterpreter, string, & realValue)) return 0;
 			my integerValue = floor (realValue + 0.5);
 			if (my type == UI_NATURAL && my integerValue < 1)
-				return Melder_error3 (L"`", my nameW, L"' must be a positive whole number.");
+				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
 			my stringValue = Melder_wcsdup (string);
@@ -362,7 +362,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			my integerValue = 0;
 			for (i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
-				if (wcsequ (string, b -> nameW))
+				if (wcsequ (string, b -> name))
 					my integerValue = i;
 			}
 			if (my integerValue == 0) {
@@ -372,7 +372,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 				for (i = 1; i <= my options -> size; i ++) {
 					UiOption b = my options -> item [i];
 					wchar_t name2 [100];
-					wcscpy (name2, b -> nameW);
+					wcscpy (name2, b -> name);
 					if (islower (name2 [0])) name2 [0] = toupper (name2 [0]);
 					else if (isupper (name2 [0])) name2 [0] = tolower (name2 [0]);
 					if (wcsequ (string, name2))
@@ -381,18 +381,18 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			}
 			if (my integerValue == 0) {
 				return Melder_error5
-					(L"Field `", my nameW, L"' cannot have the value \"", string, L"\".");
+					(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 			}
 		} break; case UI_ENUM: {
 			my integerValue = enum_search (my enumerated, string);
 			if (my integerValue < 0) return Melder_error5
-				(L"Field `", my nameW, L"' cannot have the value \"", string, L"\".");
+				(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 		} break; case UI_LIST: {
 			long i;
 			for (i = 1; i <= my numberOfStrings; i ++)
 				if (wcsequ (string, my strings [i])) break;
 			if (i > my numberOfStrings) return Melder_error5
-				(L"Field `", my nameW, L"' cannot have the value \"", string, L"\".");
+				(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 			my integerValue = i;
 		} break; case UI_COLOUR: {
 			wchar_t *string2 = Melder_wcsdup (string);
@@ -429,12 +429,12 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 			UiHistory_write (my integerValue ? L"yes" : L"no");
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = my options -> item [my integerValue];
-			if (isLast == FALSE && (b -> nameW [0] == '\0' || wcschr (b -> nameW, ' '))) {
+			if (isLast == FALSE && (b -> name [0] == '\0' || wcschr (b -> name, ' '))) {
 				UiHistory_write (L"\"");
-				UiHistory_write (b -> nameW);
+				UiHistory_write (b -> name);
 				UiHistory_write (L"\"");
 			} else {
-				UiHistory_write (b -> nameW);
+				UiHistory_write (b -> name);
 			}
 		} break; case UI_ENUM: {
 			UiHistory_write (enum_string (my enumerated, my integerValue));
@@ -528,13 +528,13 @@ static void UiForm_okOrApply (Widget w, XtPointer void_me, XtPointer call, int h
 	(void) w;
 	(void) call;
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-		Melder_error3 (L"Cannot execute dialog `", my nameW, L"'.");
+		Melder_error3 (L"Cannot execute dialog `", my name, L"'.");
 		Melder_flushError (NULL);
 		return;
 	}
 	for (ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		if (! UiField_widgetToValue (my field [ifield])) {
-			Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my nameW, L_RIGHT_SINGLE_QUOTE L" or cancel.");
+			Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my name, L_RIGHT_SINGLE_QUOTE L" or cancel.");
 			Melder_flushError (NULL);
 			return;
 		}
@@ -571,10 +571,10 @@ static void UiForm_okOrApply (Widget w, XtPointer void_me, XtPointer call, int h
 			 */
 			if (wcsstr (Melder_getError (), L"Selection changed!")) {
 				Melder_error3 (L"Please change the selection in the object list, or click Cancel in the window `",
-					my nameW, L"'.");
+					my name, L"'.");
 			} else {
 				Melder_error3 (L"Please change something in the window `",
-					my nameW, L"', or click Cancel in that window.");
+					my name, L"', or click Cancel in that window.");
 			}
 		}
 		/*XtAddCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
@@ -608,7 +608,7 @@ Any UiForm_create (Widget parent, const wchar_t *title,
 {
 	UiForm me = new (UiForm);
 	my parent = parent;
-	Thing_setNameW (me, title);
+	Thing_setName (me, title);
 	my helpTitle = Melder_wcsdup (helpTitle);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
@@ -804,9 +804,9 @@ void UiForm_finish (I) {
 		dialogHeight +=
 			ifield == 1 ? Gui_topDialogSpacing () :
 			thy type == UI_RADIO || previous -> type == UI_RADIO ? Gui_verticalDialogSpacing_different () :
-			thy type >= UI_LABELLEDTEXT_MIN && thy type <= UI_LABELLEDTEXT_MAX && wcsnequ (thy nameW, L"right ", 6) &&
+			thy type >= UI_LABELLEDTEXT_MIN && thy type <= UI_LABELLEDTEXT_MAX && wcsnequ (thy name, L"right ", 6) &&
 			previous -> type >= UI_LABELLEDTEXT_MIN && previous -> type <= UI_LABELLEDTEXT_MAX &&
-			wcsnequ (previous -> nameW, L"left ", 5) ? - textFieldHeight : Gui_verticalDialogSpacing_same ();
+			wcsnequ (previous -> name, L"left ", 5) ? - textFieldHeight : Gui_verticalDialogSpacing_same ();
 		thy y = dialogHeight;
 		dialogHeight +=
 			thy type == UI_BOOLEAN ? Gui_checkButtonHeight () :
@@ -826,12 +826,12 @@ void UiForm_finish (I) {
 	dialogHeight += 2 * Gui_bottomDialogSpacing () + Gui_pushButtonHeight ();
 	my shell = XmCreateDialogShell (my parent, "UiForm", NULL, 0);
 	XtVaSetValues (my shell, XmNx, DIALOG_X, XmNy, DIALOG_Y, XmNwidth, dialogWidth, XmNheight, dialogHeight, NULL);
-	my dialog = XmCreateBulletinBoard (my shell, my name, NULL, 0);
+	my dialog = XmCreateBulletinBoard (my shell, Melder_peekWcsToUtf8 (my name), NULL, 0);
 	/* Catch Window Manager "Close". */
 	Atom atom = XmInternAtom (XtDisplay (my shell), "WM_DELETE_WINDOW", True);
 	XmAddWMProtocols (my shell, & atom, 1);
 	XmAddWMProtocolCallback (my shell, atom, UiForm_hide, (void *) me);
-	XtVaSetValues (XtParent (my dialog), XmNtitle, my name, XmNdeleteResponse, XmDO_NOTHING, NULL);
+	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_peekWcsToUtf8 (my name), XmNdeleteResponse, XmDO_NOTHING, NULL);
 	XtVaSetValues (my dialog, XmNautoUnmanage, False,
 		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ NULL);
 	for (ifield = 1; ifield <= size; ifield ++) {
@@ -846,7 +846,7 @@ void UiForm_finish (I) {
 			case UI_SENTENCE:
 			case UI_COLOUR:
 			{
-				if (wcsnequ (field -> nameW, L"left ", 5)) {
+				if (wcsnequ (field -> name, L"left ", 5)) {
 					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
 					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
@@ -866,7 +866,7 @@ void UiForm_finish (I) {
 						#endif
 						XmNheight, textFieldHeight, NULL);
 					XtManageChild (field -> text);
-				} else if (strnequ (field -> name, "right ", 6)) {
+				} else if (wcsnequ (field -> name, L"right ", 6)) {
 					field -> text = XmCreateText (my dialog, "UiLabelledRange_textRight", NULL, 0);
 					XtVaSetValues (field -> text,
 						XmNx, fieldX + halfFieldWidth + 12, XmNy, y,
@@ -925,7 +925,7 @@ void UiForm_finish (I) {
 					XmNalignment, XmALIGNMENT_END, NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
-					MelderString_copy (& theFinishBuffer, button -> nameW);
+					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
 						XmNx, fieldX, XmNy, y + (ibutton - 1) * (Gui_radioButtonHeight () + Gui_radioButtonSpacing ()),
 						XmNwidth, fieldWidth, XmNheight, Gui_radioButtonHeight (),
@@ -956,7 +956,7 @@ void UiForm_finish (I) {
 				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_optionMenuHeight (), NULL);
 				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
-					MelderString_copy (& theFinishBuffer, button -> nameW);
+					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 				}
@@ -1141,7 +1141,7 @@ int UiForm_parseString (I, const wchar_t *arguments) {
 		}
 		stringValue [ichar] = '\0';   /* Trailing null byte. */
 		if (! UiField_stringToValue (my field [i], stringValue))
-			return Melder_error3 (L"Don't understand contents of field \"", my field [i] -> nameW, L"\".");
+			return Melder_error3 (L"Don't understand contents of field \"", my field [i] -> name, L"\".");
 	}
 	/* The last item is handled separately, because it consists of the rest of the line.
 	 * Leading spaces are skipped, but trailing spaces are included.
@@ -1149,7 +1149,7 @@ int UiForm_parseString (I, const wchar_t *arguments) {
 	if (size > 0) {
 		while (*arguments == ' ' || *arguments == '\t') arguments ++;
 		if (! UiField_stringToValue (my field [size], arguments))
-			return Melder_error3 (L"Don't understand contents of field \"", my field [size] -> nameW, L"\".");
+			return Melder_error3 (L"Don't understand contents of field \"", my field [size] -> name, L"\".");
 	}
 	return my okCallback (me, my okClosure);
 }
@@ -1161,12 +1161,12 @@ int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments) {
 static UiField findField_lenient (UiForm me, const wchar_t *fieldName) {
 	int ifield;
 	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
-		if (wcsequ (fieldName, my field [ifield] -> nameW)) return my field [ifield];
+		if (wcsequ (fieldName, my field [ifield] -> name)) return my field [ifield];
 	return NULL;
 }
 
 static void fatalField (UiForm dia) {
-	Melder_fatal ("Wrong field in dialog \"%s\".", dia -> name);
+	Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (dia -> name));
 }
 
 static UiField findField (UiForm me, const wchar_t *fieldName) {
@@ -1230,7 +1230,7 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 				UiOption b = field -> options -> item [i];
 				XmToggleButtonSetState (b -> toggle, i == value, False);
 				if (field -> type == UI_OPTIONMENU && i == value) {
-					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, b -> name), NULL);
+					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
@@ -1260,7 +1260,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 			int i, found = FALSE;
 			for (i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
-				if (wcsequ (value, b -> nameW)) {
+				if (wcsequ (value, b -> name)) {
 					XmToggleButtonSetState (b -> toggle, True, False);
 					found = TRUE;
 					if (field -> type == UI_OPTIONMENU) {
@@ -1367,7 +1367,7 @@ wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 			return field -> stringValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
-			return b -> nameW;
+			return b -> name;
 		} break; case UI_ENUM: {
 			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
@@ -1389,7 +1389,7 @@ char * UiForm_getStringA (I, const char *fieldName) {
 			return field -> stringValueA;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
-			return b -> name;
+			return Melder_peekWcsToUtf8 (b -> name);
 		} break; case UI_ENUM: {
 			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {
@@ -1409,7 +1409,7 @@ wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 			return field -> stringValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
-			return b -> nameW;
+			return b -> name;
 		} break; case UI_ENUM: {
 			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
@@ -1435,7 +1435,7 @@ char * UiForm_getStringA_check (I, const char *fieldName) {
 			return field -> stringValueA;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
-			return b -> name;
+			return Melder_peekWcsToUtf8 (b -> name);
 		} break; case UI_ENUM: {
 			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
 		} break; case UI_LIST: {

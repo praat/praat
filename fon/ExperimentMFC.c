@@ -415,7 +415,7 @@ Table ResultsMFCs_to_Table (Collection me) {
 		ResultsMFC results = my item [iresults];
 		for (itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 			irow ++;
-			Table_setStringValue (thee, irow, 1, results -> nameW);
+			Table_setStringValue (thee, irow, 1, results -> name);
 			Table_setStringValue (thee, irow, 2, results -> result [itrial]. stimulus);
 			Table_setStringValue (thee, irow, 3, results -> result [itrial]. response);
 			if (hasGoodnesses)

@@ -392,7 +392,7 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 		} else if (wcsequ (varName, L"tab$")) {
 			stringValue = L"\t";
 		} else if (wcsequ (varName, L"editor$")) {
-			stringValue = my nameW;
+			stringValue = my name;
 		} else if (wcsequ (varName, L"f0")) {
 			if (! my pitch.show)
 				return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -715,10 +715,10 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	forget (sound);
 	if (! publish) return 0;
 	static MelderString sliceName = { 0 };
-	MelderString_copy (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> nameW);
+	MelderString_copy (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> name);
 	MelderString_appendCharacter (& sliceName, '_');
 	MelderString_append (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
-	Thing_setNameW (publish, sliceName.string);
+	Thing_setName (publish, sliceName.string);
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);
 	return 1;
@@ -1398,7 +1398,7 @@ static int menu_cb_voiceReport (EDITOR_ARGS) {
 	sound = extractSound (me, tmin, tmax);
 	if (! sound) return Melder_error ("Selection too small (or out of memory).");
 	MelderInfo_open ();
-	MelderInfo_writeLine4 (L"-- Voice report for ", my nameW, L" --\nDate: ", Melder_peekUtf8ToWcs (ctime (& today)));
+	MelderInfo_writeLine4 (L"-- Voice report for ", my name, L" --\nDate: ", Melder_peekUtf8ToWcs (ctime (& today)));
 	if ((my pitch.method & 2) == 0)
 		MelderInfo_writeLine1 (L"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");

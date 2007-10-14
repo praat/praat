@@ -46,7 +46,7 @@ DIRECT (AnyTier_into_TextGrid)
 	TextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
 	if (grid == NULL) return 0;
 	WHERE (SELECTED) if (! TextGrid_add (grid, OBJECT)) { forget (grid); return 0; }
-	if (! praat_new (grid, "grid")) return 0;
+	if (! praat_new1 (grid, L"grid")) return 0;
 END
 
 /***** INTERVALTIER *****/
@@ -67,7 +67,7 @@ FORM (IntervalTier_getCentrePoints, "IntervalTier: Get centre points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getCentrePoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new1 (IntervalTier_getCentrePoints (OBJECT, GET_STRINGW (L"Text")), GET_STRINGW (L"Text"))) return 0;
 END
 
 FORM (IntervalTier_getEndPoints, "IntervalTier: Get end points", 0)
@@ -75,7 +75,7 @@ FORM (IntervalTier_getEndPoints, "IntervalTier: Get end points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getEndPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new1 (IntervalTier_getEndPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRINGW (L"Text"))) return 0;
 END
 
 FORM (IntervalTier_getStartingPoints, "IntervalTier: Get starting points", 0)
@@ -83,7 +83,7 @@ FORM (IntervalTier_getStartingPoints, "IntervalTier: Get starting points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (IntervalTier_getStartingPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new1 (IntervalTier_getStartingPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRINGW (L"Text"))) return 0;
 END
 
 DIRECT (IntervalTier_help) Melder_help (L"IntervalTier"); END
@@ -101,8 +101,8 @@ DO
 	IntervalTier tier = ONLY (classIntervalTier);
 	PointProcess point = ONLY (classPointProcess);
 	double phase = GET_REAL ("Phase");
-	if (! praat_new (IntervalTier_PointProcess_endToCentre (tier, point, phase),
-		"%s %s %ld", tier -> name, point -> name, (long) (100 * phase))) return 0;
+	if (! praat_new5 (IntervalTier_PointProcess_endToCentre (tier, point, phase),
+		tier -> name, L"_", point -> name, L"_", Melder_integer ((long) (100 * phase)))) return 0;
 END
 
 FORM (IntervalTier_PointProcess_startToCentre, "From start to centre", "IntervalTier & PointProcess: Start to centre...")
@@ -112,8 +112,8 @@ DO
 	IntervalTier tier = ONLY (classIntervalTier);
 	PointProcess point = ONLY (classPointProcess);
 	double phase = GET_REAL ("Phase");
-	if (! praat_new (IntervalTier_PointProcess_startToCentre (tier, point, phase),
-		"%s %s %ld", tier -> name, point -> name, (long) (100 * phase))) return 0;
+	if (! praat_new5 (IntervalTier_PointProcess_startToCentre (tier, point, phase),
+		tier -> name, L"_", point -> name, L"_", Melder_integer ((long) (100 * phase)))) return 0;
 END
 
 /***** LABEL (obsolete) *****/
@@ -121,7 +121,7 @@ END
 DIRECT (Label_Sound_to_TextGrid)
 	Label label = ONLY (classLabel);
 	Sound sound = ONLY (classSound);
-	if (! praat_new (Label_Function_to_TextGrid (label, sound), sound -> name)) return 0;
+	if (! praat_new1 (Label_Function_to_TextGrid (label, sound), sound -> name)) return 0;
 END
 
 DIRECT (info_Label_Sound_to_TextGrid)
@@ -428,7 +428,7 @@ FORM (Pitch_TextTier_to_PitchTier, "Pitch & TextTier to PitchTier", "Pitch & Tex
 	RADIOBUTTON ("Interpolate")
 	OK
 DO
-	if (! praat_new (Pitch_AnyTier_to_PitchTier (ONLY (classPitch), ONLY (classTextTier),
+	if (! praat_new1 (Pitch_AnyTier_to_PitchTier (ONLY (classPitch), ONLY (classTextTier),
 		GET_INTEGER ("Unvoiced strategy") - 1), ((Pitch) (ONLY (classPitch))) -> name)) return 0;
 END
 
@@ -453,8 +453,8 @@ FORM (TextGrid_Sound_extractAllIntervals, "TextGrid & Sound: Extract all interva
 	BOOLEAN ("Preserve times", 0)
 	OK
 DO
-	if (! praat_new (TextGrid_Sound_extractAllIntervals (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER ("Preserve times")), "dummy")) return 0;
+	if (! praat_new1 (TextGrid_Sound_extractAllIntervals (ONLY (classTextGrid), ONLY (classSound),
+		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER ("Preserve times")), L"dummy")) return 0;
 END
 
 FORM (TextGrid_Sound_extractNonemptyIntervals, "TextGrid & Sound: Extract non-empty intervals", 0)
@@ -462,8 +462,8 @@ FORM (TextGrid_Sound_extractNonemptyIntervals, "TextGrid & Sound: Extract non-em
 	BOOLEAN ("Preserve times", 0)
 	OK
 DO
-	if (! praat_new (TextGrid_Sound_extractNonemptyIntervals (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER ("Preserve times")), "dummy")) return 0;
+	if (! praat_new1 (TextGrid_Sound_extractNonemptyIntervals (ONLY (classTextGrid), ONLY (classSound),
+		GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER ("Preserve times")), L"dummy")) return 0;
 END
 
 FORM (TextGrid_Sound_extractIntervals, "TextGrid & Sound: Extract intervals", 0)
@@ -472,9 +472,9 @@ FORM (TextGrid_Sound_extractIntervals, "TextGrid & Sound: Extract intervals", 0)
 	SENTENCE ("Label text", "")
 	OK
 DO
-	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
+	if (! praat_new1 (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
 		GET_INTEGER (STRING_TIER_NUMBER), Melder_STRING_EQUAL_TO, GET_STRINGW (L"Label text"),
-		GET_INTEGER ("Preserve times")), GET_STRING ("Label text"))) return 0;
+		GET_INTEGER ("Preserve times")), GET_STRINGW (L"Label text"))) return 0;
 END
 
 FORM (TextGrid_Sound_extractIntervalsWhere, "TextGrid & Sound: Extract intervals", 0)
@@ -485,11 +485,11 @@ FORM (TextGrid_Sound_extractIntervalsWhere, "TextGrid & Sound: Extract intervals
 	SENTENCE ("...the text", "")
 	OK
 DO
-	if (! praat_new (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
+	if (! praat_new1 (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
 		GET_INTEGER (STRING_TIER_NUMBER),
 		GET_INTEGER ("Extract all intervals whose label...") - 1 + Melder_STRING_min,
 		GET_STRINGW (L"...the text"),
-		GET_INTEGER ("Preserve times")), GET_STRING ("...the text"))) return 0;
+		GET_INTEGER ("Preserve times")), GET_STRINGW (L"...the text"))) return 0;
 END
 
 DIRECT (TextGrid_Sound_scaleTimes)
@@ -591,8 +591,8 @@ FORM (SpellingChecker_nextNotAllowedWord, "Next not allowed word?", "SpellingChe
 DO
 	wchar_t *sentence = GET_STRINGW (L"sentence");
 	int startingCharacter = GET_INTEGER ("Starting character");
-	REQUIRE (startingCharacter >= 0, "Starting character should be 0 or positive.")
-	REQUIRE (startingCharacter <= (int) wcslen (sentence), "Starting character should not exceed end of sentence.")
+	REQUIRE (startingCharacter >= 0, L"Starting character should be 0 or positive.")
+	REQUIRE (startingCharacter <= (int) wcslen (sentence), L"Starting character should not exceed end of sentence.")
 	Melder_information1 (SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter));
 END
 
@@ -648,7 +648,7 @@ DO
 		if (itier > grid -> tiers -> size) itier = grid -> tiers -> size;
 		newTier = Data_copy (grid -> tiers -> item [itier]);
 		if (! newTier) return 0;
-		Thing_setNameW (newTier, name);
+		Thing_setName (newTier, name);
 		if (! Ordered_addItemPos (grid -> tiers, newTier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -657,9 +657,9 @@ END
 static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish, NULL)) { Melder_flushError (NULL); return; }
+	if (! praat_new1 (publish, NULL)) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
-	if (Thing_member (publish, classSpectrum) && wcsequ (Thing_getNameW (publish), L"slice")) {
+	if (Thing_member (publish, classSpectrum) && wcsequ (Thing_getName (publish), L"slice")) {
 		int IOBJECT;
 		WHERE (SELECTED) {
 			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT);
@@ -736,7 +736,7 @@ FORM (TextGrid_extractPart, "TextGrid: Extract part", 0)
 	OK
 DO
 	TextGrid grid = ONLY (classTextGrid);
-	if (! praat_new (TextGrid_extractPart (grid, GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Preserve times")), "%s_part", grid -> name)) return 0;
+	if (! praat_new2 (TextGrid_extractPart (grid, GET_REAL ("left Time range"), GET_REAL ("right Time range"), GET_INTEGER ("Preserve times")), grid -> name, L"_part")) return 0;
 END
 
 static Data pr_TextGrid_getTier (Any dia) {
@@ -783,7 +783,7 @@ FORM (TextGrid_extractTier, "TextGrid: Extract tier", 0)
 DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
-	if (! praat_new (Data_copy (tier), "%s", tier -> name)) return 0;
+	if (! praat_new1 (Data_copy (tier), tier -> name)) return 0;
 END
 
 DIRECT (TextGrid_genericize)
@@ -871,7 +871,7 @@ FORM (TextGrid_getTierName, "TextGrid: Get tier name", 0)
 DO
 	Data tier = pr_TextGrid_getTier (dia);
 	if (! tier) return 0;
-	Melder_information1 (tier -> nameW);
+	Melder_information1 (tier -> name);
 END
 
 FORM (TextGrid_getTimeOfPoint, "TextGrid: Get time of point", 0)
@@ -919,7 +919,7 @@ DO
 		IntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setNameW (tier, name);
+		Thing_setName (tier, name);
 		if (! Ordered_addItemPos (grid -> tiers, tier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -950,7 +950,7 @@ DO
 		TextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setNameW (tier, name);
+		Thing_setName (tier, name);
 		if (! Ordered_addItemPos (grid -> tiers, tier, position)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -975,7 +975,7 @@ DIRECT (TextGrids_merge)
 	WHERE (SELECTED) n ++;
 	textGrids = Collection_create (classTextGrid, n);
 	WHERE (SELECTED) Collection_addItem (textGrids, OBJECT);
-	if (! praat_new (TextGrid_merge (textGrids), "merged")) {
+	if (! praat_new1 (TextGrid_merge (textGrids), L"merged")) {
 		textGrids -> size = 0;   /* Undangle. */
 		forget (textGrids);
 		return 0;
@@ -1042,11 +1042,11 @@ DO
 				L", because that TextGrid has only ", Melder_integer (grid -> tiers -> size), L" tiers.");
 		pointTier = grid -> tiers -> item [itier];
 		if (pointTier -> methods != classTextTier)
-			return Melder_error ("You cannot remove a point from tier %ld of TextGrid \"%s\", "
-				"because that tier is an interval tier instead of a point tier.", itier, NAME);
+			return Melder_error5 (L"You cannot remove a point from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that tier is an interval tier instead of a point tier.");
 		if (ipoint > pointTier -> points -> size)
-			return Melder_error ("You cannot remove point %ld from tier %ld of TextGrid \"%s\", "
-				"because that tier has only %ld points.", ipoint, itier, NAME, pointTier -> points -> size);
+			return Melder_error9 (L"You cannot remove point ", Melder_integer (ipoint), L" from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that tier has only ", Melder_integer (pointTier -> points -> size), L" points.");
 		TextTier_removePoint (pointTier, ipoint);
 		praat_dataChanged (grid);
 	}
@@ -1063,18 +1063,18 @@ DO
 		TextGrid grid = OBJECT;
 		IntervalTier intervalTier;
 		if (itier > grid -> tiers -> size)
-			return Melder_error ("You cannot remove a boundary from tier %ld of TextGrid \"%s\", "
-				"because that TextGrid has only %ld tiers.", itier, NAME, grid -> tiers -> size);
+			return Melder_error7 (L"You cannot remove a boundary from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that TextGrid has only ", Melder_integer (grid -> tiers -> size), L" tiers.");
 		intervalTier = grid -> tiers -> item [itier];
 		if (intervalTier -> methods != classIntervalTier)
-			return Melder_error ("You cannot remove a boundary from tier %ld of TextGrid \"%s\", "
-				"because that tier is a point tier instead of an interval tier.", itier, NAME);
+			return Melder_error5 (L"You cannot remove a boundary from tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)
-			return Melder_error ("You cannot remove a boundary from interval %ld of tier %ld of TextGrid \"%s\", "
-				"because that tier has only %ld intervals.", iinterval, itier, NAME, intervalTier -> intervals -> size);
+			return Melder_error9 (L"You cannot remove a boundary from interval ", Melder_integer (iinterval), L" of tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because that tier has only ", Melder_integer (intervalTier -> intervals -> size), L" intervals.");
 		if (iinterval == intervalTier -> intervals -> size)
-			return Melder_error ("You cannot remove the right boundary from interval %ld of tier %ld of TextGrid \"%s\", "
-				"because this is at the right edge of the tier.", iinterval, itier, NAME);
+			return Melder_error7 (L"You cannot remove the right boundary from interval ", Melder_integer (iinterval), L" of tier ", Melder_integer (itier), L" of ", Thing_messageName (grid),
+				L", because this is at the right edge of the tier.");
 		if (! IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1)) return 0;
 		praat_dataChanged (grid);
 	}
@@ -1171,7 +1171,7 @@ DIRECT (TextGrid_AnyTier_append)
 	TextGrid oldGrid = ONLY (classTextGrid), newGrid = Data_copy (oldGrid);
 	if (! newGrid) return 0;
 	WHERE (SELECTED && OBJECT != oldGrid) if (! TextGrid_add (newGrid, OBJECT)) { forget (newGrid); return 0; }
-	if (! praat_new (newGrid, oldGrid -> name)) return 0;
+	if (! praat_new1 (newGrid, oldGrid -> name)) return 0;
 END
 
 /***** TEXTGRID & LONGSOUND *****/
@@ -1215,7 +1215,7 @@ FORM (TextTier_getPoints, "Get points", 0)
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new (TextTier_getPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRING ("Text"))) return 0;
+		if (! praat_new1 (TextTier_getPoints (OBJECT, GET_STRINGW (L"Text")), GET_STRINGW (L"Text"))) return 0;
 END
 
 DIRECT (TextTier_help) Melder_help (L"TextTier"); END

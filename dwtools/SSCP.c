@@ -172,7 +172,7 @@ static SSCPs _SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2)
 	for (i=1; i <= my size; i++)
 	{
 		SSCP t = _SSCP_extractTwoDimensions (my item[i], d1, d2);
-		Thing_setNameW (t, Thing_getNameW (my item[i]));
+		Thing_setName (t, Thing_getName (my item[i]));
 		if (! t || ! Collection_addItem (thee, t)) break;
 	}
 	if (Melder_hasError ()) forget (thee);
@@ -217,7 +217,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale,
 		x[i] = my centroid[1] + xt;	
 	}
 	Graphics_polyline (g, nsteps + 1, x, y);
-	if (fontSize > 0 && (name = Thing_getNameW (me)))
+	if (fontSize > 0 && (name = Thing_getName (me)))
 	{
 		int oldFontSize = Graphics_inqFontSize (g);
 		Graphics_setFontSize (g, fontSize);
@@ -827,7 +827,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 				t = TableOfReal_to_SSCP (mew, index, i - 1, 0, 0);
 				if (t == NULL || ! Collection_addItem (thee, t)) goto end;
 				if (! (label = mew -> rowLabels[index])) label = L"?";
-				Thing_setNameW (t, label);
+				Thing_setName (t, label);
 			}
 			else
 			{
@@ -841,7 +841,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 		t = TableOfReal_to_SSCP (mew, index, numberOfCases, 0, 0);
 		if (! t || ! Collection_addItem (thee, t)) goto end;
 		if (! (label = mew -> rowLabels[index])) label = L"?";
-		Thing_setNameW (t, label);
+		Thing_setName (t, label);
 	}
 	else
 	{
@@ -1188,7 +1188,7 @@ SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2)
 	for (i = 1; i <= my size; i++)
 	{
 		SSCP t = _SSCP_toTwoDimensions (my item[i], v1, v2);
-		Thing_setNameW (t, Thing_getNameW (my item[i]));
+		Thing_setName (t, Thing_getName (my item[i]));
 		if (t == NULL || ! Collection_addItem (thee, t)) break;
 	}
 	if (Melder_hasError ()) forget (thee);
@@ -1230,7 +1230,7 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 		t = thy item[i];		
 		lscale = ellipseScalefactor (t, scale, confidence);
 		if (lscale < 0) continue;
-		if (label == NULL || NUMwcscmp (label, Thing_getNameW (t)) == 0)
+		if (label == NULL || NUMwcscmp (label, Thing_getName (t)) == 0)
 		{
 			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
 		}
@@ -1287,7 +1287,7 @@ static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double sc
 		t = thy item[i];		
 		lscale = ellipseScalefactor (t, scale, confidence);
 		if (lscale < 0) continue;
-		if (label == NULL || NUMwcscmp (label, Thing_getNameW (t)) == 0)
+		if (label == NULL || NUMwcscmp (label, Thing_getName (t)) == 0)
 		{
 			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
 		}

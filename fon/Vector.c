@@ -404,7 +404,7 @@ void Vector_scale (I, double scale) {
 /***** Graphics. *****/
 
 void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
-	double defaultDy, const char *method)
+	double defaultDy, const wchar_t *method)
 {
 	iam (Vector);
 	long ixmin, ixmax, ix;
@@ -434,7 +434,7 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	 */
 	Graphics_setInner (g);
 	Graphics_setWindow (g, *pxmin, *pxmax, *pymin, *pymax);
-	if (strstr (method, "bars") || strstr (method, "Bars")) {
+	if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			double y = my z [1] [ix];
@@ -446,12 +446,12 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 			Graphics_line (g, left, y, left, *pymin);
 			Graphics_line (g, right, y, right, *pymin);
 		}
-	} else if (strstr (method, "poles") || strstr (method, "Poles")) {
+	} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_line (g, x, 0, x, my z [1] [ix]);
 		}
-	} else if (strstr (method, "speckles") || strstr (method, "Speckles")) {
+	} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);
 			Graphics_fillCircle_mm (g, x, my z [1] [ix], 1.0);

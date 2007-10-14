@@ -69,9 +69,7 @@ const wchar_t * Melder_percent (double value, int precision);
 
 /********** STRING TO NUMBER CONVERSION **********/
 
-int Melder_isStringNumeric (const char *string);
 int Melder_isStringNumericW (const wchar_t *string);
-double Melder_atof (const char *string);
 double Melder_atofW (const wchar_t *string);
 	/*
 	 * "3.14e-3" -> 3.14e-3

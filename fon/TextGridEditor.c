@@ -219,7 +219,7 @@ static void destroy (I) {
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM_WRITE (L"Write to TextGrid text file", 0)
-		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> nameW);
+		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> name);
 	EDITOR_DO_WRITE
 		if (! Data_writeToTextFile (my data, file)) return 0;
 	EDITOR_END
@@ -949,7 +949,7 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 		Data tier;
 		if (! checkTierSelection (me, L"rename a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
-		SET_STRING ("Name", tier -> name ? tier -> name : "")
+		SET_STRINGW (L"Name", tier -> name ? tier -> name : L"")
 	EDITOR_DO
 		wchar_t *newName = GET_STRINGW (L"Name");
 		TextGrid grid = my data;
@@ -959,7 +959,7 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 
 		Editor_save (me, L"Rename tier");
 
-		Thing_setNameW (tier, newName);
+		Thing_setName (tier, newName);
 
 		FunctionEditor_redraw (me);
 		Editor_broadcastChange (me);
@@ -974,7 +974,7 @@ static int menu_cb_PublishTier (EDITOR_ARGS) {
 	if (my publishCallback) {
 		Data anyTier = grid -> tiers -> item [my selectedTier], copy = Data_copy (anyTier);
 		if (! copy) return 0;
-		Thing_setNameW (copy, anyTier -> nameW); 
+		Thing_setName (copy, anyTier -> name); 
 		my publishCallback (me, my publishClosure, copy);
 	}
 	return 1;
@@ -1037,7 +1037,7 @@ static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 		IntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setNameW (tier, name);
+		Thing_setName (tier, name);
 
 		Editor_save (me, L"Add interval tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
@@ -1067,7 +1067,7 @@ static int menu_cb_AddPointTier (EDITOR_ARGS) {
 		TextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setNameW (tier, name);
+		Thing_setName (tier, name);
 
 		Editor_save (me, L"Add point tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
@@ -1088,7 +1088,7 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 		TextGrid grid = my data;
 		if (my selectedTier) {
 			SET_STRINGW (L"Position", Melder_integer (my selectedTier + 1))
-			SET_STRINGW (L"Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> nameW)
+			SET_STRINGW (L"Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> name)
 		}
 	EDITOR_DO
 		TextGrid grid = my data;
@@ -1100,7 +1100,7 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 		newTier = Data_copy (tier);
 		if (! newTier) return 0;
 			if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
-		Thing_setNameW (newTier, name);
+		Thing_setName (newTier, name);
 
 		Editor_save (me, L"Duplicate tier");
 		Ordered_addItemPos (grid -> tiers, newTier, position);
@@ -1506,7 +1506,7 @@ static void draw (I) {
 		Graphics_setFontSize (my graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, my showNumberOf > 1 ? Graphics_BOTTOM : Graphics_HALF);
-			Graphics_text (my graphics, my endWindow, 0.5, anyTier -> nameW);
+			Graphics_text (my graphics, my endWindow, 0.5, anyTier -> name);
 		}
 		if (my showNumberOf > 1) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);

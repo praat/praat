@@ -433,7 +433,7 @@ END
 DIRECT (CCA_and_Correlation_factorLoadings)
 	CCA cca = ONLY (classCCA);
 	if (! praat_new2 (CCA_and_Correlation_factorLoadings (cca, 
-		ONLY (classCorrelation)), Thing_getNameW (cca), L"_loadings")) return 0;
+		ONLY (classCorrelation)), Thing_getName (cca), L"_loadings")) return 0;
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, "CCA & Correlation: Get variance fraction",
@@ -480,7 +480,7 @@ END
 DIRECT (CCA_and_TableOfReal_factorLoadings)
 	CCA cca = ONLY (classCCA);
 	if (! praat_new2 (CCA_and_TableOfReal_factorLoadings (cca, 
-		ONLY (classTableOfReal)), Thing_getNameW (cca), L"_loadings")) return 0;
+		ONLY (classTableOfReal)), Thing_getName (cca), L"_loadings")) return 0;
 END
 
 FORM (CCA_and_TableOfReal_scores, "CCA & TableOfReal: To TableOfReal (scores)",
@@ -491,7 +491,7 @@ DO
 	CCA cca = ONLY (classCCA);
 	if (! praat_new2 (CCA_and_TableOfReal_scores (cca, ONLY (classTableOfReal),
 		GET_INTEGER ("Number of canonical correlations")),
-		Thing_getNameW (cca), L"_scores")) return 0;
+		Thing_getName (cca), L"_scores")) return 0;
 END
 
 FORM (CCA_and_TableOfReal_predict, "CCA & TableOfReal: Predict", 
@@ -523,7 +523,7 @@ FORM (ChebyshevSeries_create, "Create ChebyshevSeries",
 	OK
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	if (! praat_new1 (ChebyshevSeries_createFromString (xmin, xmax,
 		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
@@ -596,7 +596,7 @@ FORM (Confusion_Matrix_draw, "Confusion & Matrix: Draw confusions with arrows", 
 	OK
 DO
 	long categoryPosition = GET_INTEGER ("Category position");
-	REQUIRE (categoryPosition >= 0, "Category position must be >= 0")
+	REQUIRE (categoryPosition >= 0, L"Category position must be >= 0")
 	EVERY_DRAW (Confusion_Matrix_draw(ONLY(classConfusion), ONLY(classMatrix), GRAPHICS,
 		categoryPosition, GET_REAL ("lower level(%)"),
 		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
@@ -789,7 +789,7 @@ FORM (Discriminant_and_TableOfReal_to_Configuration, "Discriminant & TableOfReal
 	OK
 DO
 	long dimension = GET_INTEGER ("Number of dimensions");
-	REQUIRE (dimension >= 0, "Number of dimensions must be greater equal zero.")
+	REQUIRE (dimension >= 0, L"Number of dimensions must be greater equal zero.")
 	NEW (Discriminant_and_TableOfReal_to_Configuration
 		(ONLY (classDiscriminant), ONLY_GENERIC (classTableOfReal),
 			dimension))
@@ -812,7 +812,7 @@ DO
 	if (! praat_new3 (Discriminant_and_TableOfReal_to_ClassificationTable
 		(d,	t, GET_INTEGER ("Pool covariance matrices"),
 		GET_INTEGER ("Use apriori probabilities")),
-		Thing_getNameW (d), L"_", Thing_getNameW (t))) return 0;
+		Thing_getName (d), L"_", Thing_getName (t))) return 0;
 END
 
 FORM (Discriminant_getWilksLambda, "Discriminant: Get Wilks' lambda",
@@ -822,7 +822,7 @@ FORM (Discriminant_getWilksLambda, "Discriminant: Get Wilks' lambda",
 	OK
 DO
 	long from = GET_INTEGER ("From");
-	REQUIRE (from >= 1, "Number must be greater than or equal to one.")
+	REQUIRE (from >= 1, L"Number must be greater than or equal to one.")
 	Melder_information1 (Melder_double (Discriminant_getWilksLambda (ONLY_OBJECT, from)));
 END
 
@@ -847,7 +847,7 @@ FORM (Discriminant_getPartialDiscriminationProbability,
 DO
 	long ndf, n = GET_INTEGER ("Number of dimensions");
 	double chisq, p;
-	REQUIRE (n >= 0, "Number of dimensions must be greater than or equal "
+	REQUIRE (n >= 0, L"Number of dimensions must be greater than or equal "
 		"to zero.")
 	Discriminant_getPartialDiscriminationProbability (ONLY_OBJECT, n,
 		&p, &chisq, &ndf);
@@ -874,7 +874,7 @@ FORM (Discriminant_getConcentrationEllipseArea,
 DO
 	Discriminant d = ONLY_OBJECT;
 	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
-	REQUIRE (group > 0, "Group label does not exist.")
+	REQUIRE (group > 0, L"Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getConcentrationEllipseArea(d, group,
 		GET_REAL ("Number of sigmas"), 0, GET_INTEGER ("Discriminant plane"),
 		GET_INTEGER ("X-dimension"), GET_INTEGER ("Y-dimension"))));
@@ -891,7 +891,7 @@ FORM (Discriminant_getConfidenceEllipseArea, "Discriminant: Get confidence ellip
 DO
 	Discriminant d = ONLY_OBJECT;
 	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
-	REQUIRE (group > 0, "Group label does not exist.")
+	REQUIRE (group > 0, L"Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getConcentrationEllipseArea(d, group,
 		GET_REAL ("Confidence level"), 1, GET_INTEGER ("Discriminant plane"),
 		GET_INTEGER ("X-dimension"), GET_INTEGER ("Y-dimension"))));
@@ -905,7 +905,7 @@ FORM (Discriminant_getLnDeterminant_group,
 DO
 	Discriminant d = ONLY_OBJECT;
 	long group = Discriminant_groupLabelToIndex (d, GET_STRINGW (L"Group label"));
-	REQUIRE (group > 0, "Group label does not exist.")
+	REQUIRE (group > 0, L"Group label does not exist.")
 	Melder_information1 (Melder_double (Discriminant_getLnDeterminant_group (d, group)));
 END
 
@@ -1443,7 +1443,7 @@ FORM (Index_extractPart, "Index: Extract part", "Index: Extract part...")
 DO
 	Index thee = ONLY_OBJECT;
 	if (! praat_new2 (Index_extractPart (thee, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		Thing_getNameW (thee), L"_part")) return 0;
+		Thing_getName (thee), L"_part")) return 0;
 END
 
 FORM (Index_to_Permutation, "Index: To Permutation", "Index: To Permutation...")
@@ -1508,7 +1508,7 @@ DO
 	WHERE (SELECTED && CLASS == classExcitations)
 	{
 		Excitation me = Excitations_getItem (OBJECT, GET_INTEGER("Item number"));
-		if (! praat_new1 (me, Thing_getNameW (me))) return 0;
+		if (! praat_new1 (me, Thing_getName (me))) return 0;
 	}
 END
 
@@ -1818,7 +1818,7 @@ FORM (FunctionTerms_getCoefficient, "FunctionTerms: Get coefficient", 0)
 DO
 	long index = GET_INTEGER ("Index");
 	FunctionTerms f = ONLY_GENERIC (classFunctionTerms);
-	REQUIRE (index <= f -> numberOfCoefficients, "Index too large.")
+	REQUIRE (index <= f -> numberOfCoefficients, L"Index too large.")
 	Melder_information1 (Melder_double (f -> coefficients[index]));
 END
 	
@@ -1896,7 +1896,7 @@ FORM (FunctionTerms_setDomain, "FunctionTerms: Set domain", 0)
 DO
 	FunctionTerms f = ONLY_GENERIC (classFunctionTerms);
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmax must be larger than Xmin.")
+	REQUIRE (xmin < xmax, L"Xmax must be larger than Xmin.")
 	FunctionTerms_setDomain (f, xmin, xmax);
 END
 
@@ -1935,7 +1935,7 @@ FORM (ISpline_create, "Create ISpline", "Create ISpline...")
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	long degree = GET_INTEGER ("Degree");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	if (! praat_new1 (ISpline_createFromStrings (xmin, xmax, degree,
 		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
 		GET_STRINGW (L"Name"))) return 0;
@@ -1956,7 +1956,7 @@ FORM (LegendreSeries_create, "Create LegendreSeries",
 	OK
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	if (! praat_new1 (LegendreSeries_createFromString (xmin, xmax,
 		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
@@ -2068,7 +2068,7 @@ FORM (Matrix_scale, "Matrix: Scale", 0)
 	OK
 DO
 	int scale = GET_INTEGER ("Scale factor");
-	REQUIRE (scale > 0 && scale < 4, "illegal value for scale.") 
+	REQUIRE (scale > 0 && scale < 4, L"illegal value for scale.") 
 	EVERY (Matrix_scale (OBJECT, scale))
 END
 
@@ -2108,7 +2108,7 @@ FORM (Matrix_scatterPlot, "Matrix: Scatter plot", 0)
 DO
     long x = GET_INTEGER ("Column for X-axis");
 	long y = GET_INTEGER ("Column for Y-axis");
-    REQUIRE (x != 0 && y != 0, "X and Y component must differ from 0.")
+    REQUIRE (x != 0 && y != 0, L"X and Y component must differ from 0.")
     EVERY_DRAW (Matrix_scatterPlot (OBJECT, GRAPHICS, x, y,
     	GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
     	GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -2189,8 +2189,8 @@ DO
 	long row, col;
 	double ta, t = GET_REAL ("Time");
 	double fa, f = GET_REAL ("Frequency");
-	REQUIRE (f>= my xmin && f <= my ymax, "Frequency out of range.")
-	REQUIRE (t>= my xmin && t <= my xmax, "Time out of range.")
+	REQUIRE (f>= my xmin && f <= my ymax, L"Frequency out of range.")
+	REQUIRE (t>= my xmin && t <= my xmax, L"Time out of range.")
 	col = Matrix_xToNearestColumn (me, t);
 	if (col < 1) col = 1;
 	if (col > my nx) col = my nx;
@@ -2294,7 +2294,7 @@ FORM (MSpline_create, "Create MSpline", "Create MSpline...")
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
 	long degree = GET_INTEGER ("Degree");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	if (! praat_new1 (MSpline_createFromStrings (xmin, xmax, degree,
 		GET_STRINGW (L"Coefficients"), GET_STRINGW (L"Interior knots")),
 		GET_STRINGW (L"Name"))) return 0;
@@ -2308,7 +2308,7 @@ DIRECT (Pattern_and_Categories_to_Discriminant)
 	Pattern p = ONLY (classPattern);
 	Categories c = ONLY (classCategories);
 	if (! praat_new3 (Pattern_and_Categories_to_Discriminant (p, c), 
-		Thing_getNameW (p), L"_", Thing_getNameW (c))) return 0;
+		Thing_getName (p), L"_", Thing_getName (c))) return 0;
 END
 
 FORM (Pattern_draw, "Pattern: Draw", 0)
@@ -2344,8 +2344,8 @@ DO
 	WHERE (SELECTED) {
 		Pattern me = OBJECT;
 		long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
-		REQUIRE (row <= my ny, "Row number must not be greater than number of rows.")
-		REQUIRE (column <= my nx, "Column number must not be greater than number of columns.")
+		REQUIRE (row <= my ny, L"Row number must not be greater than number of rows.")
+		REQUIRE (column <= my nx, L"Column number must not be greater than number of columns.")
 		my z [row] [column] = GET_REAL ("New value");
 		praat_dataChanged (me);
 	}
@@ -2400,7 +2400,7 @@ FORM (PCA_and_TableOfReal_to_Configuration,
 	OK
 DO
 	long dimension = GET_INTEGER ("Number of dimensions");
-	REQUIRE (dimension >= 0, "Number of dimensions must be greater equal zero.")
+	REQUIRE (dimension >= 0, L"Number of dimensions must be greater equal zero.")
 	NEW (PCA_and_TableOfReal_to_Configuration (ONLY (classPCA),
 		ONLY_GENERIC (classTableOfReal), dimension))
 END
@@ -2426,7 +2426,7 @@ FORM (PCA_getNumberOfComponentsVAF, "PCA: Get number of components (VAF)",
 	OK
 DO
 	double f = GET_REAL ("Variance fraction");
-	REQUIRE (f > 0 && f <= 1, "The variance fraction must be in interval (0-1).")
+	REQUIRE (f > 0 && f <= 1, L"The variance fraction must be in interval (0-1).")
 	Melder_information1 (Melder_integer (Eigen_getDimensionOfFraction (ONLY_OBJECT, f)));
 END
 
@@ -2438,7 +2438,7 @@ FORM (PCA_getFractionVAF, "PCA: Get fraction variance accounted for",
 DO
 	long from = GET_INTEGER ("left Principal component range");
 	long to = GET_INTEGER ("right Principal component range");
-	REQUIRE (from <= to, "The second component must be greater than or equal "
+	REQUIRE (from <= to, L"The second component must be greater than or equal "
 		"to the first component.")
 	Melder_information1 (Melder_double (Eigen_getCumulativeContributionOfComponents
 		(ONLY_OBJECT, from, to)));
@@ -2468,8 +2468,8 @@ DO
 	long to = GET_INTEGER ("right Eigenvector range");
 	PCA me = NULL, thee = NULL;
 	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
-	if (! praat_new3 (Eigens_to_Procrustes (me, thee, from, to), Thing_getNameW (me), L"_", 
-		Thing_getNameW (thee))) return 0;
+	if (! praat_new3 (Eigens_to_Procrustes (me, thee, from, to), Thing_getName (me), L"_", 
+		Thing_getName (thee))) return 0;
 END
 
 
@@ -2561,7 +2561,7 @@ FORM (Permutation_permuteRandomly, "Permutation: Permute randomly", "Permutation
 DO
 	Permutation p = ONLY_OBJECT;
 	if (! praat_new2 (Permutation_permuteRandomly (p, GET_INTEGER ("left Range"), 
-		GET_INTEGER ("right Range")), Thing_getNameW (p), L"_randomly")) return 0;
+		GET_INTEGER ("right Range")), Thing_getName (p), L"_randomly")) return 0;
 END
 
 FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
@@ -2572,7 +2572,7 @@ FORM (Permutation_rotate, "Permutation: Rotate", "Permutation: Rotate...")
 DO
 	Permutation p = ONLY_OBJECT;
 	long step = GET_INTEGER ("Step size");
-	if (! praat_new3 (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), Thing_getNameW (p), L"_rotate", Melder_integer (step))) return 0;
+	if (! praat_new3 (Permutation_rotate (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"), step), Thing_getName (p), L"_rotate", Melder_integer (step))) return 0;
 END
 
 FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
@@ -2582,7 +2582,7 @@ FORM (Permutation_reverse, "Permutation: Reverse", "Permutation: Reverse...")
 DO
 	Permutation p = ONLY_OBJECT;
 	if (! praat_new2 (Permutation_reverse (p, GET_INTEGER ("left Range"), GET_INTEGER ("right Range")),
-		Thing_getNameW (p), L"_reverse")) return 0;
+		Thing_getName (p), L"_reverse")) return 0;
 END
 
 FORM (Permutation_permuteBlocksRandomly, "Permutation: Permute blocks randomly", "Permutation: Permute randomly (blocks)...")
@@ -2597,7 +2597,7 @@ DO
 	long blocksize = GET_INTEGER ("Block size");
 	if (! praat_new3 (Permutation_permuteBlocksRandomly (p, GET_INTEGER ("left Range"), 
 		GET_INTEGER ("right Range"), blocksize, GET_INTEGER ("Permute within blocks"), GET_INTEGER ("No doublets")),
-		Thing_getNameW (p), L"_blocks", Melder_integer(blocksize))) return 0;
+		Thing_getName (p), L"_blocks", Melder_integer(blocksize))) return 0;
 END
 
 FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleave...")
@@ -2609,12 +2609,12 @@ FORM (Permutation_interleave, "Permutation: Interleave", "Permutation: Interleav
 DO
 	Permutation p = ONLY_OBJECT;
 	if (! praat_new2 (Permutation_interleave (ONLY_OBJECT, GET_INTEGER ("left Range"), GET_INTEGER ("right Range"),
-		GET_INTEGER ("Block size"), GET_INTEGER ("Offset")), Thing_getNameW (p), L"_interleave")) return 0;
+		GET_INTEGER ("Block size"), GET_INTEGER ("Offset")), Thing_getName (p), L"_interleave")) return 0;
 END
 
 DIRECT (Permutation_invert)
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new2 (Permutation_invert (p), Thing_getNameW (p), L"_inverse")) return 0;
+	if (! praat_new2 (Permutation_invert (p), Thing_getName (p), L"_inverse")) return 0;
 END
 
 DIRECT (Permutations_multiply)
@@ -2672,7 +2672,7 @@ DO
 	int begin, end, slope;
 	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
 	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
-	if (! praat_new4 (Pitches_to_DTW (p1, p2, GET_REAL ("Voiced-unvoiced costs"), GET_REAL ("Time costs weight"), begin, end, slope), L"dtw_", p1 -> nameW, L"_", p2 -> nameW)) return 0;
+	if (! praat_new4 (Pitches_to_DTW (p1, p2, GET_REAL ("Voiced-unvoiced costs"), GET_REAL ("Time costs weight"), begin, end, slope), L"dtw_", p1 -> name, L"_", p2 -> name)) return 0;
 
 END
 
@@ -2750,7 +2750,7 @@ FORM (Polynomial_create, "Create Polynomial", "Create Polynomial...")
 	OK
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	if (! praat_new1 (Polynomial_createFromString (xmin, xmax,
 		GET_STRINGW (L"Coefficients")), GET_STRINGW (L"Name"))) return 0;
 END
@@ -2781,7 +2781,7 @@ FORM (Polynomial_scaleX, "Polynomial: Scale x", "Polynomial: Scale x...")
 	OK
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	EVERY_TO (Polynomial_scaleX (OBJECT, xmin, xmax))
 END
 
@@ -2812,7 +2812,7 @@ FORM (Polynomial_to_Spectrum, "Polynomial: To Spectrum",
 	OK
 DO
 	long n = GET_INTEGER ("Number of frequencies");
-	REQUIRE (n > 1, "\"Number of frequencies\" must be greater than 2.")
+	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 2.")
 	EVERY_TO (Polynomial_to_Spectrum (OBJECT, GET_REAL ("Nyquist frequency"),
 		n, 1.0))
 END
@@ -2820,7 +2820,7 @@ END
 DIRECT (Polynomials_multiply)
 	Polynomial p1 = NULL, p2 = NULL;
 	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
-	if (! praat_new4 (Polynomials_multiply (p1, p2), p1->nameW, L"_", p2->nameW, L"_mul")) return 0;
+	if (! praat_new4 (Polynomials_multiply (p1, p2), p1->name, L"_", p2->name, L"_mul")) return 0;
 END
 
 FORM (Polynomials_divide, "Polynomials: Divide", "Polynomials: Divide...")
@@ -2835,15 +2835,15 @@ DO
 	Polynomial p1 = NULL, p2 = NULL, s, r, q;
 	int wantq = GET_INTEGER ("Want quotient");
 	int wantr = GET_INTEGER ("Want remainder");
-	REQUIRE (wantq || wantr, "Either \'Want quotient\' or \'Want remainder\' must be chosen")
+	REQUIRE (wantq || wantr, L"Either \'Want quotient\' or \'Want remainder\' must be chosen")
 	WHERE (SELECTED) { if (p1) p2 = OBJECT; else p1 = OBJECT; }
 	if (! wantq) q = NULL;
 	if (! wantr) r = NULL;
 	s = Polynomial_create (0,1,1);
 	forget (s);
 	if (! Polynomials_divide (p1, p2, &q, &r)) return 0;
-	if (wantq && ! praat_new2 (q, p1 -> nameW, L"_q")) return 0;
-	if (wantr && ! praat_new2 (r, p1 -> nameW, L"_r")) return 0;
+	if (wantq && ! praat_new2 (q, p1 -> name, L"_q")) return 0;
+	if (wantr && ! praat_new2 (r, p1 -> name, L"_r")) return 0;
 END
 
 /********************* Roots ******************************/
@@ -2912,7 +2912,7 @@ FORM (Roots_to_Spectrum, "Roots: To Spectrum", "Roots: To Spectrum...")
 	OK
 DO
 	long n = GET_INTEGER ("Number of frequencies");
-	REQUIRE (n > 1, "\"Number of frequencies\" must be greater than 2.")
+	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 2.")
 	EVERY_TO (Roots_to_Spectrum (OBJECT, GET_REAL ("Nyquist frequency"),
 		n, 1.0))
 END
@@ -3020,7 +3020,7 @@ FORM (Sound_and_Pitch_to_FormantFilter, "Sound & Pitch: To FormantFilter",
 	POSITIVE ("Relative bandwidth", "1.1")
 	OK
 DO
-	 if (! praat_new (Sound_and_Pitch_to_FormantFilter (ONLY(classSound),
+	 if (! praat_new1 (Sound_and_Pitch_to_FormantFilter (ONLY(classSound),
 	 	ONLY(classPitch), GET_REAL ("Analysis window duration"),
 		GET_REAL ("Time step"), GET_REAL ("Position of first filter"), 
 		GET_REAL ("Maximum frequency"), GET_REAL ("Distance between filters"),
@@ -3034,7 +3034,7 @@ FORM (Sound_and_Pitch_changeGender, "Sound & Pitch: Change gender", "Sound & Pit
 	POSITIVE ("Duration factor", "1.0")
 	OK
 DO
-	if (! praat_new (Sound_and_Pitch_changeGender_old (ONLY(classSound), ONLY(classPitch),
+	if (! praat_new1 (Sound_and_Pitch_changeGender_old (ONLY(classSound), ONLY(classPitch),
 		GET_REAL ("Formant shift ratio"), GET_REAL ("New pitch median"), 
 		GET_REAL ("Pitch range factor"), GET_REAL ("Duration factor")), NULL)) return 0;
 END
@@ -3046,7 +3046,7 @@ FORM (Sound_and_Pitch_changeSpeaker, "Sound & Pitch: Change speaker", "Sound & P
 	POSITIVE ("Multiply duration", "1.0")
 	OK
 DO
-	if (! praat_new (Sound_and_Pitch_changeSpeaker (ONLY(classSound), ONLY(classPitch),
+	if (! praat_new1 (Sound_and_Pitch_changeSpeaker (ONLY(classSound), ONLY(classPitch),
 		GET_REAL ("Multiply formants by"), GET_REAL ("Multiply pitch by"), 
 		GET_REAL ("Multiply pitch range by"), GET_REAL ("Multiply duration")), NULL)) return 0;
 END
@@ -3148,7 +3148,7 @@ DO
 		GET_REAL ("Frequency change"), GET_REAL ("Amplitude range"));
 	
 	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
-		! praat_new (sound, GET_STRING ("Name"))) return 0; 
+		! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0; 
 END
 */
 
@@ -3239,9 +3239,9 @@ DO
 	double minimumPitch = GET_REAL ("Minimum pitch");
 	double fmax = GET_REAL ("Maximum frequency component");
 	double ceiling = GET_REAL ("Ceiling");
-	REQUIRE (minimumPitch < ceiling, "Minimum pitch should be smaller "
+	REQUIRE (minimumPitch < ceiling, L"Minimum pitch should be smaller "
 		"than ceiling.")
-	REQUIRE (ceiling <= fmax, "Maximum frequency must be greaterequal ceiling.")
+	REQUIRE (ceiling <= fmax, L"Maximum frequency must be greaterequal ceiling.")
 	EVERY_TO (Sound_to_Pitch_shs (OBJECT, GET_REAL ("Time step"),
 		minimumPitch, fmax, ceiling,
 		GET_INTEGER ("Max. number of subharmonics"),
@@ -3264,7 +3264,7 @@ FORM (Sound_to_Pitch_SPINET,
 DO
 	double fmin = GET_REAL ("Minimum filter frequency");
 	double fmax = GET_REAL ("Maximum filter frequency");
-	REQUIRE (fmax > fmin, "Maximum frequency must be larger than "
+	REQUIRE (fmax > fmin, L"Maximum frequency must be larger than "
 		"minimum frequency.")
 	EVERY_TO (Sound_to_Pitch_SPINET (OBJECT, GET_REAL ("Time step"),
 		GET_REAL ("Analysis window duration"),
@@ -3294,7 +3294,7 @@ FORM (Sound_changeSpeaker, "Sound: Change speaker", "Sound: Change speaker...")
 DO
 	double minimumPitch = GET_REAL ("Pitch floor");
 	double maximumPitch = GET_REAL ("Pitch ceiling");
-	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
+	REQUIRE (minimumPitch < maximumPitch, L"Maximum pitch should be greater than minimum pitch.")
 	EVERY_TO (Sound_changeSpeaker (OBJECT, minimumPitch, maximumPitch,
 		GET_REAL ("Multiply formants by"), GET_REAL ("Multiply pitch by"),
 		GET_REAL ("Multiply pitch range by"), GET_REAL ("Multiply duration by")))
@@ -3314,8 +3314,8 @@ DO
 	double minimumPitch = GET_REAL ("Pitch floor");
 	double maximumPitch = GET_REAL ("Pitch ceiling");
 	double pitchrf = GET_REAL ("Pitch range factor");
-	REQUIRE (minimumPitch < maximumPitch, "Maximum pitch should be greater than minimum pitch.")
-	REQUIRE (pitchrf >= 0, "Pitch range factor may not be negative")
+	REQUIRE (minimumPitch < maximumPitch, L"Maximum pitch should be greater than minimum pitch.")
+	REQUIRE (pitchrf >= 0, L"Pitch range factor may not be negative")
 	EVERY_TO (Sound_changeGender_old (OBJECT, minimumPitch, maximumPitch,
 		GET_REAL ("Formant shift ratio"), GET_REAL ("New pitch median"),
 		pitchrf, GET_REAL ("Duration factor")))
@@ -3426,7 +3426,7 @@ FORM (Spline_scaleX, "Spline: Scale x", "Spline: Scale x...")
 	OK
 DO
 	double xmin = GET_REAL ("Xmin"), xmax = GET_REAL ("Xmax");
-	REQUIRE (xmin < xmax, "Xmin must be smaller than Xmax.")
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
 	EVERY_TO (Spline_scaleX (OBJECT, xmin, xmax))
 END
 
@@ -3473,7 +3473,7 @@ END
 
 DIRECT (SSCP_extractCentroid)
 	EVERY_CHECK (praat_new2 (SSCP_extractCentroid (OBJECT),
-		Thing_getNameW (OBJECT), L"_centroid"))
+		Thing_getName (OBJECT), L"_centroid"))
 END
 
 FORM (SSCP_getConfidenceEllipseArea, "SSCP: Get confidence ellipse area", 
@@ -3598,7 +3598,7 @@ END
 		if (s1) s2 = OBJECT;
 		else s1 = OBJECT;
 	}	
-	if (! praat_new (Strings_append (s1, s2), "%s_%s", Thing_getName (s1), Thing_getName (s2))) return 0;
+	if (! praat_new3 (Strings_append (s1, s2), Thing_getName (s1), L"_", Thing_getName (s2))) return 0;
 END*/
 
 DIRECT (Strings_to_Categories)
@@ -3659,17 +3659,17 @@ END
 
 DIRECT (SVD_extractLeftSingularVectors)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new2 (SVD_extractLeftSingularVectors (svd), Thing_getNameW (svd), L"_lsv")) return 0;
+	if (! praat_new2 (SVD_extractLeftSingularVectors (svd), Thing_getName (svd), L"_lsv")) return 0;
 END
 
 DIRECT (SVD_extractRightSingularVectors)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new2 (SVD_extractRightSingularVectors (svd), Thing_getNameW (svd), L"_rsv")) return 0;
+	if (! praat_new2 (SVD_extractRightSingularVectors (svd), Thing_getName (svd), L"_rsv")) return 0;
 END
 
 DIRECT (SVD_extractSingularValues)
 	SVD svd = ONLY (classSVD);
-	if (! praat_new2 (SVD_extractSingularValues (svd), Thing_getNameW (svd), L"_sv")) return 0;
+	if (! praat_new2 (SVD_extractSingularValues (svd), Thing_getName (svd), L"_sv")) return 0;
 END
 
 /******************* Table ****************************/
@@ -3692,7 +3692,7 @@ DIRECT (TableOfReal_and_Permutation_permuteRows)
 	TableOfReal t = ONLY (classTableOfReal);
 	Permutation p = ONLY (classPermutation);
 	if (! praat_new3 (TableOfReal_and_Permutation_permuteRows (t, p),
-		Thing_getNameW (t), L"_", Thing_getNameW (p))) return 0;
+		Thing_getName (t), L"_", Thing_getName (p))) return 0;
 END
 
 DIRECT (TableOfReal_to_Permutation_sortRowlabels)
@@ -3823,7 +3823,7 @@ FORM (TableOfReal_to_Configuration_lda, "TableOfReal: To Configuration (lda)",
 	OK
 DO
 	long dimension = GET_INTEGER ("Number of dimensions");
-	REQUIRE (dimension >= 0, "Number of dimensions must be greater equal zero.")
+	REQUIRE (dimension >= 0, L"Number of dimensions must be greater equal zero.")
 	EVERY_TO (TableOfReal_to_Configuration_lda (OBJECT, dimension))
 END
 
@@ -3923,7 +3923,7 @@ DO
 		GET_INTEGER ("right Row range"), GET_INTEGER ("left Column range"),
 		GET_INTEGER ("right Column range"), &p, &c))
 	{
-		wchar_t *name = Thing_getNameW (t);
+		wchar_t *name = Thing_getName (t);
 		praat_new1 (p, name);
 		praat_new1 (c, name);
 	}

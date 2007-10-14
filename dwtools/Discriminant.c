@@ -104,7 +104,7 @@ long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label)
 	long i; SSCPs groups = my groups; wchar_t *name;
 	for (i=1; i <= my numberOfGroups; i++)
 	{
-		if ((name = Thing_getNameW (groups -> item[i])) && wcsequ (name, label))
+		if ((name = Thing_getName (groups -> item[i])) && wcsequ (name, label))
 			return i;
 	}
 	return 0; 	
@@ -162,7 +162,7 @@ int Discriminant_setGroupLabels (Discriminant me, Strings thee)
 		wchar_t *noname = L"", *name;
 		name = thy strings[i];
 		if (name == NULL) name = noname;
-		Thing_setNameW (my groups -> item[i], name);
+		Thing_setName (my groups -> item[i], name);
 	}
 	return 1;
 }
@@ -178,7 +178,7 @@ Strings Discriminant_extractGroupLabels (Discriminant me)
 	if (thy strings == NULL) goto end;
 	for (i=1; i <= my numberOfGroups; i++)
 	{
-		wchar_t *name = Thing_getNameW (my groups -> item[i]);
+		wchar_t *name = Thing_getName (my groups -> item[i]);
 		thy strings[i] = Melder_wcsdup (name);
 	}
 end:
@@ -197,7 +197,7 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me)
 	for (i=1; i <= m; i++)
 	{
 		sscp = my groups -> item[i];
-		TableOfReal_setRowLabel (thee, i, Thing_getNameW (sscp));
+		TableOfReal_setRowLabel (thee, i, Thing_getName (sscp));
 		NUMdvector_copyElements (sscp -> centroid, thy data[i], 1, n);
 	}
 	NUMstrings_copyElements (sscp -> columnLabels, thy columnLabels, 1, n);
@@ -216,7 +216,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me)
 	for (i=1; i <= m; i++)
 	{
 		sscp = my groups -> item[i];
-		TableOfReal_setRowLabel (thee, i, Thing_getNameW (sscp));
+		TableOfReal_setRowLabel (thee, i, Thing_getName (sscp));
 		numberOfObservationsm1 = sscp -> numberOfObservations - 1;
 		for (j=1; j <= n; j++) thy data[i][j] = numberOfObservationsm1 > 0 ? 
 			sqrt (sscp -> data[j][j] / numberOfObservationsm1) : NUMundefined;
@@ -737,7 +737,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
 	
 	for (j = 1; j <= g; j++)
 	{
-		wchar_t *name = Thing_getNameW (my groups -> item[j]);
+		wchar_t *name = Thing_getName (my groups -> item[j]);
 		if (! name ) name = L"?";
 		TableOfReal_setColumnLabel (him, j, name);
 	}
@@ -902,7 +902,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 	
 	for (j = 1; j <= g; j++)
 	{
-		wchar_t *name = Thing_getNameW (my groups -> item[j]);
+		wchar_t *name = Thing_getName (my groups -> item[j]);
 		if (! name ) name = L"?";
 		TableOfReal_setColumnLabel (him, j, name);
 	}

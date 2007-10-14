@@ -101,8 +101,8 @@ FORM (Dissimilarity_createLetterRExample, "Create letter R example",
 	REAL("Noise range", "32.5")
 	OK
 DO
-	(void) praat_new (Dissimilarity_createLetterRExample 
-		(GET_REAL("Noise range")), NULL);
+	(void) praat_new1 (Dissimilarity_createLetterRExample 
+		(GET_REAL("Noise range")), L"letterR");
 END
 
 FORM (INDSCAL_createCarrollWishExample, 
@@ -111,8 +111,8 @@ FORM (INDSCAL_createCarrollWishExample,
 	REAL("Noise standard deviation", "0.0")
 	OK
 DO
-	(void) praat_new (INDSCAL_createCarrollWishExample 
-		(GET_REAL("Noise standard deviation")), NULL);
+	(void) praat_new1 (INDSCAL_createCarrollWishExample 
+		(GET_REAL("Noise standard deviation")), L"carrollWish");
 END
 
 FORM (Configuration_create, "Create Configuration", "Create Configuration...")
@@ -145,7 +145,7 @@ DO
 	double xmin = GET_REAL ("left Horizontal range"), xmax = GET_REAL ("right Horizontal range");
 	double ymin = GET_REAL ("left Vertical range"), ymax = GET_REAL ("right Vertical range");
 	REQUIRE (xmin < xmax && ymin < ymax, 
-		"required: xmin < xmax and ymin < ymax")
+		L"required: xmin < xmax and ymin < ymax")
 	praat_picture_open ();
 	drawSplines (GRAPHICS,xmin, xmax, ymin, ymax, GET_INTEGER ("Spline type"),
 		GET_INTEGER ("Order"), GET_STRING ("Interior knots"), 
@@ -179,8 +179,8 @@ DO
 	AffineTransform me = ONLY_OBJECT;
 	long row = GET_INTEGER ("Row number");
 	long column = GET_INTEGER ("Column number");
-	REQUIRE (row <= my n, "Row number must not exceed number of rows.")
-	REQUIRE (column <= my n, "Column number must not exceed number of columns.")
+	REQUIRE (row <= my n, L"Row number must not exceed number of rows.")
+	REQUIRE (column <= my n, L"Column number must not exceed number of columns.")
 	Melder_information1 (Melder_double (my r [row] [column]));
 END
 
@@ -190,7 +190,7 @@ FORM (AffineTransform_getTranslationElement, "AffineTransform: Get translation e
 DO
 	AffineTransform me = ONLY_OBJECT;
 	long number = GET_INTEGER ("Index");
-	REQUIRE (number <= my n, "Index must not exceed number of elements.")
+	REQUIRE (number <= my n, L"Index must not exceed number of elements.")
 	Melder_information1 (Melder_double (my t [number]));
 END
 
@@ -375,7 +375,7 @@ DO
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
 	if (! praat_new3 (Configurations_to_Procrustes (c1, c2, GET_INTEGER ("Orthogonal transform")), 
-		Thing_getNameW (c2), L"_to_", Thing_getNameW (c1))) return 0;
+		Thing_getName (c2), L"_to_", Thing_getName (c1))) return 0;
 END
 
 FORM (Configurations_to_AffineTransform_congruence, "Configurations: To AffineTransform (congruence)",
@@ -423,7 +423,7 @@ DO
 	{
 		Confusion c = OBJECT;
 		if (! praat_new2 (Confusion_to_Dissimilarity_pdf (OBJECT,
-			GET_REAL ("Minimum confusion level")), c -> nameW, L"_pdf"))
+			GET_REAL ("Minimum confusion level")), c -> name, L"_pdf"))
 				return 0;
 	}
 END
@@ -563,7 +563,7 @@ DO
 		(ONLY (classDissimilarity), conf,
 		GET_INTEGER ("Handling of ties"), GET_INTEGER ("Stress calculation"),
 		GET_REAL ("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
-		GET_INTEGER ("Number of repetitions")), conf -> nameW, L"_s_kruskal")) return 0;
+		GET_INTEGER ("Number of repetitions")), conf -> name, L"_s_kruskal")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_absolute_mds, 
@@ -578,7 +578,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_s_absolute")) return 0;
+		dissimilarity -> name, L"_s_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_ratio_mds, "Dissimilarity & Configuration: To Configuration (ratio mds)",
@@ -592,7 +592,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_s_ratio")) return 0;
+		dissimilarity -> name, L"_s_ratio")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_interval_mds, "Dissimilarity & Configuration: To Configuration (interval mds)",
@@ -606,7 +606,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), NULL, 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_s_interval")) return 0;
+		dissimilarity -> name, L"_s_interval")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_monotone_mds, 
@@ -625,7 +625,7 @@ DO
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_s_monotone")) return 0;
+		dissimilarity -> name, L"_s_monotone")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_ispline_mds, 
@@ -645,7 +645,7 @@ DO
 		GET_INTEGER ("Order of I-spline"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_s_ispline")) return 0;
+		dissimilarity -> name, L"_s_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_absolute_mds, 
@@ -660,7 +660,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_sw_absolute")) return 0;
+		dissimilarity -> name, L"_sw_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_ratio_mds, 
@@ -675,7 +675,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_sw_ratio")) return 0;
+		dissimilarity -> name, L"_sw_ratio")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_interval_mds, 
@@ -690,7 +690,7 @@ DO
 		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_sw_interval")) return 0;
+		dissimilarity -> name, L"_sw_interval")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_monotone_mds, 
@@ -709,7 +709,7 @@ DO
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_sw_monotone")) return 0;
+		dissimilarity -> name, L"_sw_monotone")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_Weight_ispline_mds, 
@@ -729,7 +729,7 @@ DO
 		GET_INTEGER ("Order of I-spline"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_sw_ispline")) return 0;
+		dissimilarity -> name, L"_sw_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Configuration_getStress, "Dissimilarity & Configuration: Get stress", 
@@ -996,7 +996,7 @@ DO
 		GET_INTEGER ("Stress calculation"), GET_REAL("Tolerance"),
 		GET_INTEGER ("Maximum number of iterations"), 
 		GET_INTEGER ("Number of repetitions")),
-		dissimilarity -> nameW)) return 0;
+		dissimilarity -> name)) return 0;
 END
 
 FORM (Dissimilarity_absolute_mds, "Dissimilarity: To Configuration (absolute mds)", 
@@ -1012,7 +1012,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_absolute")) return 0;
+		dissimilarity -> name, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_ratio_mds, "Dissimilarity: To Configuration (ratio mds)", 
@@ -1028,7 +1028,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_ratio")) return 0;
+		dissimilarity -> name, L"_ratio")) return 0;
 END
 
 FORM (Dissimilarity_interval_mds, "Dissimilarity: To Configuration (interval mds)", 
@@ -1044,7 +1044,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_interval")) return 0;
+		dissimilarity -> name, L"_interval")) return 0;
 END
 
 FORM (Dissimilarity_monotone_mds, "Dissimilarity: To Configuration (monotone mds)", 
@@ -1064,7 +1064,7 @@ DO
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_monotone")) return 0;
+		dissimilarity -> name, L"_monotone")) return 0;
 END
 
 FORM (Dissimilarity_ispline_mds, "Dissimilarity: To Configuration (i-spline mds)", 
@@ -1082,13 +1082,13 @@ DO
 	long niknots = GET_INTEGER ("Number of interior knots");
 	long order = GET_INTEGER ("Order of I-spline");
 	REQUIRE (order > 0 || niknots > 0, 
-		"Order-zero spline must at least have 1 interior knot.")
+		L"Order-zero spline must at least have 1 interior knot.")
 	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, NULL,
 		GET_INTEGER ("Number of dimensions"),
 		niknots, order,
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_ispline")) return 0;
+		dissimilarity -> name, L"_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Weight_ispline_mds, "Dissimilarity & Weight: To Configuration (i-spline mds)", 
@@ -1106,13 +1106,13 @@ DO
 	long niknots = GET_INTEGER ("Number of interior knots");
 	long order = GET_INTEGER ("Order of I-spline");
 	REQUIRE (order > 0 || niknots > 0, 
-		"Order-zero spline must at least have 1 interior knot.")
+		L"Order-zero spline must at least have 1 interior knot.")
 	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, 
 		ONLY (classWeight),
 		GET_INTEGER ("Number of dimensions"), niknots, order,
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_ispline")) return 0;
+		dissimilarity -> name, L"_ispline")) return 0;
 END
 
 FORM (Dissimilarity_Weight_absolute_mds, "Dissimilarity & Weight: To Configuration (absolute mds)", 
@@ -1129,7 +1129,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_absolute")) return 0;
+		dissimilarity -> name, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_ratio_mds, "Dissimilarity & Weight: To Configuration (ratio mds)", 
@@ -1146,7 +1146,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_absolute")) return 0;
+		dissimilarity -> name, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_interval_mds, "Dissimilarity & Weight: To Configuration (interval mds)", 
@@ -1163,7 +1163,7 @@ DO
 		GET_INTEGER ("Number of dimensions"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_absolute")) return 0;
+		dissimilarity -> name, L"_absolute")) return 0;
 END
 
 FORM (Dissimilarity_Weight_monotone_mds, "Dissimilarity & Weight: To Configuration (monotone mds)", 
@@ -1184,7 +1184,7 @@ DO
 		GET_INTEGER ("Handling of ties"),
 		GET_REAL("Tolerance"), GET_INTEGER ("Maximum number of iterations"),
 		GET_INTEGER ("Number of repetitions"), showProgress),
-		dissimilarity -> nameW, L"_monotone")) return 0;
+		dissimilarity -> name, L"_monotone")) return 0;
 END
 
 FORM (Dissimilarity_to_Distance, "Dissimilarity: To Distance", "Dissimilarity: To Distance...")
@@ -1400,10 +1400,10 @@ DO
 		GET_INTEGER("Normalize scalar products"), &cresult, &wresult);
 	my size = 0; 
 	forget (me);
-	if (! praat_new (cresult, NULL)) return 0;
+	if (! praat_new1 (cresult, NULL)) return 0;
 	if (GET_INTEGER ("Salience object"))
 	{
-		if (! praat_new (wresult, NULL)) return 0;
+		if (! praat_new1 (wresult, NULL)) return 0;
 	}
 	else forget (wresult);
 END
@@ -1417,7 +1417,7 @@ DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	if (! praat_new1 (Dissimilarity_Distance_monotoneRegression (dissimilarity, 
 		ONLY (classDistance),
-		GET_INTEGER ("Handling of ties")), dissimilarity -> nameW)) return 0;
+		GET_INTEGER ("Handling of ties")), dissimilarity -> name)) return 0;
 END
 
 FORM (Distance_Dissimilarity_drawShepardDiagram, 

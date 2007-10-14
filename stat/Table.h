@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/10
+ * pb 2007/10/13
  */
 
 #ifndef _Collection_h_
@@ -95,6 +95,7 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getVarianceRatio (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
+bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum);
 
 int Table_formula (Table me, long column, const wchar_t *formula);
 int Table_formula_columnRange (Table me, long column1, long column2, const wchar_t *expression);

@@ -1487,7 +1487,7 @@ static void Formula_print (FormulaInstruction f) {
 		{
 			Thing object = (Thing) f [i]. content.object;
 			if (object) {
-				Melder_casual ("%d %ls %s %s", i, instructionName, Thing_className (object), object -> name);
+				Melder_casual ("%d %ls %s %s", i, instructionName, Thing_className (object), Melder_peekWcsToUtf8 (object -> name));
 			} else {
 				Melder_casual ("%d %ls", i, instructionName);
 			}
@@ -2534,7 +2534,7 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 				L" do not have row labels, so row indexes have to be numbers.");
 		result = your getRowIndex (thee, row->content.string);
 		if (result == 0)
-			return Melder_error5 (L"Object \"", thy nameW,
+			return Melder_error5 (L"Object \"", thy name,
 				L"\" has no row labelled \"", row->content.string, L"\".");
 	} else {
 		return Melder_error3 (L"A row index should be a number or a string, not ", Stackel_whichText (row), L".");
@@ -2551,7 +2551,7 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 				L" do not have column labels, so column indexes have to be numbers.");
 		result = your getColumnIndex (thee, column->content.string);
 		if (result == 0)
-			return Melder_error5 (L"Object \"", thy nameW,
+			return Melder_error5 (L"Object \"", thy name,
 				L"\" has no column labelled \"", column->content.string, L"\".");
 	} else {
 		return Melder_error3 (L"A column index should be a number or a string, not ", Stackel_whichText (column), L".");

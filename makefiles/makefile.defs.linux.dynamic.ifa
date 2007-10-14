@@ -1,11 +1,11 @@
-# File: makefile.defs.linux.static
+# File: makefile.defs.linux.dynamic.ifa
 
 # System: Linux
 # Paul Boersma, October 14, 2007
 
 CC = gcc -std=gnu99 -DUNIX -Dlinux -I /usr/local/include -I /usr/X11R6/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
 
-LIBS = -L /usr/X11R6/lib -static -lXm -lXmu -lXft -lXrender -ljpeg -lpng12 -lfontconfig -lfreetype -lz -lexpat -lXp -lXt -lSM -lICE -lXext -lX11 -lm -lpthread -lc
+LIBS = -Xlinker -rpath -Xlinker /usr/local/lib -L /usr/local/lib -L /usr/X11R6/lib -lXm -lXmu -lXp -lXt -lSM -lICE -lXext -lX11 -lm -lpthread
 
 RANLIB = ls
 ICON =

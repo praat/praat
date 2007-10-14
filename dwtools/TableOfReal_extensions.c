@@ -157,7 +157,7 @@ TableOfReal TableOfReal_createIrisDataset (void)
 		for (j=1; j <= 4; j++) my data[i][j] = iris[i-1][j-1];
 		TableOfReal_setRowLabel (me, i, label);
 	}
-	Thing_setNameW (me, L"iris");
+	Thing_setName (me, L"iris");
 	return me;
 }
 
@@ -781,7 +781,7 @@ void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 		Melder_assert (my numberOfRows == thy size);
 		for (i = 1; i <= my numberOfRows; i++)
 		{
-			name = Thing_getNameW (thy item[i]);
+			name = Thing_getName (thy item[i]);
 			if (name != NULL) TableOfReal_setRowLabel (me, i, name);
 		}
 	}
@@ -790,7 +790,7 @@ void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 		Melder_assert (my numberOfColumns == thy size);
 		for (i=1; i <= my numberOfColumns; i++)
 		{
-			name = Thing_getNameW (thy item[i]);
+			name = Thing_getName (thy item[i]);
 			if (name != NULL) TableOfReal_setColumnLabel (me, i, name);
 		}
 	}

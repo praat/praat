@@ -567,10 +567,9 @@ FORM (Text_special, "Praat picture: Text special", 0)
 DO
 	int currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
-	int requiredFont = GET_INTEGER ("Font");
+	int requiredFont = GET_INTEGERW (L"Font");
 	praat_picture_open ();
-	Graphics_setTextAlignment (GRAPHICS,
-		GET_INTEGER ("Horizontal alignment") - 1, GET_INTEGER ("Vertical alignment") - 1);
+	Graphics_setTextAlignment (GRAPHICS, GET_INTEGERW (L"Horizontal alignment") - 1, GET_INTEGERW (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_setFont (GRAPHICS,
 		requiredFont == 1 ? Graphics_FONT_TIMES :
@@ -578,16 +577,12 @@ DO
 		requiredFont == 3 ? Graphics_FONT_HELVETICA :
 		Graphics_FONT_COURIER);
 	Graphics_setFontSize (GRAPHICS, GET_INTEGER ("Font size"));
-	{
-		char *rotation = GET_STRING ("Rotation"), *semicolon;
-		if ((semicolon = strchr (rotation, ';')) != NULL)
-			Graphics_setTextRotation_vector (GRAPHICS,
-				Melder_atof (rotation), Melder_atof (semicolon + 1));
-		else
-			Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
-	}
-	Graphics_text (GRAPHICS, GET_REAL ("Horizontal position"),
-		GET_REAL ("Vertical position"), GET_STRINGW (L"text"));
+	wchar_t *rotation = GET_STRINGW (L"Rotation"), *semicolon;
+	if ((semicolon = wcschr (rotation, ';')) != NULL)
+		Graphics_setTextRotation_vector (GRAPHICS, Melder_atofW (rotation), Melder_atofW (semicolon + 1));
+	else
+		Graphics_setTextRotation (GRAPHICS, Melder_atofW (rotation));
+	Graphics_text (GRAPHICS, GET_REALW (L"Horizontal position"), GET_REALW (L"Vertical position"), GET_STRINGW (L"text"));
 	Graphics_setFont (GRAPHICS, currentFont);
 	Graphics_setFontSize (GRAPHICS, currentSize);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
@@ -903,8 +898,8 @@ SET_REAL ("right Bottom and top", y2WC);
 DO
 	double left = GET_REAL ("left Left and right"), right = GET_REAL ("right Left and right");
 	double top = GET_REAL ("right Bottom and top"), bottom = GET_REAL ("left Bottom and top");
-	REQUIRE (right != left, "Left and right must not be equal.")
-	REQUIRE (top != bottom, "Top and bottom must not be equal.")
+	REQUIRE (right != left, L"Left and right must not be equal.")
+	REQUIRE (top != bottom, L"Top and bottom must not be equal.")
 	praat_picture_open ();
 	Graphics_setWindow (GRAPHICS, left, right, bottom, top);
 	praat_picture_close ();
@@ -989,7 +984,7 @@ static void dia_marks (Any dia) {
 }
 static int do_marks (Any dia, void (*Graphics_marks) (void *, int, int, int, int)) {
 	long numberOfMarks = GET_INTEGER ("Number of marks");
-	REQUIRE (numberOfMarks >= 2, "`Number of marks' must be at least 2.")
+	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
 	praat_picture_open ();
 	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER ("Write numbers"),
 		GET_INTEGER ("Draw ticks"), GET_INTEGER ("Draw dotted lines"));

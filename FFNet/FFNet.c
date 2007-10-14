@@ -696,9 +696,9 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 		for (j = 1; j <= 4; j++) thy z[i][j] /= 10.0;
 	}
 	FFNet_createNameFromTopology (me, ffnetname);
-	Thing_setNameW (me, ffnetname);
-	Thing_setNameW (thee, L"iris");
-	Thing_setNameW (him, L"iris"); 
+	Thing_setName (me, ffnetname);
+	Thing_setName (thee, L"iris");
+	Thing_setName (him, L"iris"); 
 end:
 	forget (uniq); forget (iris);
 	if (! Melder_hasError()) return c;

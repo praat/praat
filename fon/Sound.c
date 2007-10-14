@@ -452,7 +452,7 @@ end:
 }
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, int garnish, const char *method)
+	double tmin, double tmax, double minimum, double maximum, int garnish, const wchar_t *method)
 {
 	long ixmin, ixmax, ix;
 	/*
@@ -484,7 +484,7 @@ void Sound_draw (Sound me, Graphics g,
 		Graphics_setWindow (g, tmin, tmax,
 			minimum - (my ny - channel) * (maximum - minimum),
 			maximum + (channel - 1) * (maximum - minimum));
-		if (strstr (method, "bars") || strstr (method, "Bars")) {
+		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 			for (ix = ixmin; ix <= ixmax; ix ++) {
 				double x = Sampled_indexToX (me, ix);
 				double y = my z [channel] [ix];
@@ -496,12 +496,12 @@ void Sound_draw (Sound me, Graphics g,
 				Graphics_line (g, left, y, left, minimum);
 				Graphics_line (g, right, y, right, minimum);
 			}
-		} else if (strstr (method, "poles") || strstr (method, "Poles")) {
+		} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
 			for (ix = ixmin; ix <= ixmax; ix ++) {
 				double x = Sampled_indexToX (me, ix);
 				Graphics_line (g, x, 0, x, my z [channel] [ix]);
 			}
-		} else if (strstr (method, "speckles") || strstr (method, "Speckles")) {
+		} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
 			for (ix = ixmin; ix <= ixmax; ix ++) {
 				double x = Sampled_indexToX (me, ix);
 				Graphics_fillCircle_mm (g, x, my z [channel] [ix], 1.0);

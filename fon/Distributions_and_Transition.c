@@ -58,7 +58,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 	for (long i = 1; i <= thy numberOfStates; i ++) {
 		thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]); cherror
 	}
-	Thing_setNameW (thee, underlying -> columnLabels [environment]); cherror
+	Thing_setName (thee, underlying -> columnLabels [environment]); cherror
 
 	/*
 	 * Compute the off-diagonal elements of the transition matrix in environment 'environment'.

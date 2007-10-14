@@ -45,7 +45,7 @@ static void draw_SoundDeepen_filter (Graphics g) {
 	Graphics_markBottom (g, 30, TRUE, TRUE, TRUE, NULL);
 	Graphics_markBottom (g, 100, TRUE, TRUE, FALSE, NULL);
 	Graphics_setColour (g, Graphics_RED);
-	Sound_draw (s, g, 0, 0, 0, 1, FALSE, "curve");
+	Sound_draw (s, g, 0, 0, 0, 1, FALSE, L"curve");
 	Graphics_setColour (g, Graphics_BLACK);
 	forget (s);
 }
@@ -69,7 +69,7 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 	Graphics_markBottom (g, 0.2, TRUE, TRUE, FALSE, NULL);
 	Graphics_markLeft (g, 0, TRUE, TRUE, TRUE, NULL);
 	Graphics_setColour (g, Graphics_RED);
-	Sound_draw (s, g, 0, 0, -100, 400, FALSE, "curve");
+	Sound_draw (s, g, 0, 0, -100, 400, FALSE, L"curve");
 	Graphics_setColour (g, Graphics_BLACK);
 	forget (s);
 }

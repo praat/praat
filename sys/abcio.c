@@ -1214,6 +1214,7 @@ char * bingets1 (FILE *f) {
 	return result;
 }
 
+#if 0
 char * bingets2 (FILE *f) {
 	unsigned int length = bingetu2 (f);
 	char *result = Melder_malloc (char, length + 1);
@@ -1223,6 +1224,7 @@ char * bingets2 (FILE *f) {
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
 }
+#endif
 
 char * bingets4 (FILE *f) {
 	unsigned long length = bingetu4 (f);
@@ -1311,7 +1313,7 @@ void binputw2 (const wchar_t *s, FILE *f) {
 		binputu2 (length, f);
 		if (s != NULL) {
 			for (unsigned long i = 0; i < length; i ++) {
-				binputu2 (s [i], f);
+				binputu2 (s [i], f);   // BUG: should be UTF-16.
 			}
 		}
 	}
@@ -1331,7 +1333,7 @@ void binputw4 (const wchar_t *s, FILE *f) {
 		binputu4 (length, f);
 		if (s != NULL) {
 			for (unsigned long i = 0; i < length; i ++) {
-				binputu2 (s [i], f);
+				binputu2 (s [i], f);   // BUG: should be UTF-16.
 			}
 		}
 	}

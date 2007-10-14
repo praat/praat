@@ -58,8 +58,8 @@ static int classCollection_copy (I, thou) {
 				"cannot copy item of class %s.", Thing_className (my item [i]));
 		if (! (thy item [i] = Data_copy (my item [i]))) return 0;
 		/* Copy the names of the items (but Data_copy does that). */
-		/* if (! Thing_getNameW (thy item [i]))
-			Thing_setNameW (thy item [i], Thing_getNameW (my item [i])); */
+		/* if (! Thing_getName (thy item [i]))
+			Thing_setName (thy item [i], Thing_getName (my item [i])); */
 	}
 	return 1;
 }
@@ -84,7 +84,7 @@ static bool classCollection_canWriteAsEncoding (I, int encoding) {
 	iam (Collection);
 	for (long i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
-		if (thing -> nameW != NULL && ! Melder_isEncodable (thing -> nameW, encoding)) return false;
+		if (thing -> name != NULL && ! Melder_isEncodable (thing -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (thing, encoding)) return false;
 	}
 	return true;
@@ -108,7 +108,7 @@ static int classCollection_writeText (I, MelderFile file) {
 		else
 			wcscpy (className, table -> _classNameW);
 		texputw2 (file, className, L"class", 0,0,0,0,0);
-		texputw2 (file, thing -> nameW, L"name", 0,0,0,0,0);
+		texputw2 (file, thing -> name, L"name", 0,0,0,0,0);
 		if (! Data_writeText (thing, file)) return 0;
 		texexdent (file);
 	}
@@ -148,7 +148,7 @@ static int classCollection_readText (I, MelderReadString *text) {
 				if (line [n] == ' ') n ++;   /* Skip space character. */
 				length = wcslen (line+n);
 				if (length > 0 && (line+n) [length - 1] == '\n') (line+n) [length - 1] = '\0';
-				Thing_setNameW (my item [i], line+n);
+				Thing_setName (my item [i], line+n);
 			}
 		}
 		return 1;
@@ -165,7 +165,7 @@ static int classCollection_readText (I, MelderReadString *text) {
 		if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
 			error3 (L"Cannot read item of class ", Thing_classNameW (my item [i]), L"in collection.");
 		Melder_free (objectName); objectName = texgetw2 (text); cherror
-		Thing_setNameW (my item [i], objectName); cherror
+		Thing_setName (my item [i], objectName); cherror
 		Data_readText (my item [i], text); cherror
 		Thing_version = saveVersion;
 	}
@@ -192,7 +192,7 @@ static int classCollection_writeBinary (I, FILE *f) {
 			return Melder_error ("(Collection::writeBinary:) "
 				"Objects of class %s cannot be written.", table -> _className);
 		binputs1 (className, f);
-		binputw2 (thing -> nameW, f);
+		binputw2 (thing -> name, f);
 		if (! Data_writeBinary (thing, f)) return 0;
 	}
 	return 1;
@@ -213,7 +213,7 @@ static int classCollection_readBinary (I, FILE *f) {
 				return Melder_error ("Collection::readBinary: "
 					"cannot read item of class %s.", Thing_className (my item [i]));
 			if (fgetc (f) != ' ' || ! Data_readBinary (my item [i], f)) return 0;
-			if (strcmp (name, "?")) Thing_setNameW (my item [i], Melder_peekUtf8ToWcs (name));
+			if (strcmp (name, "?")) Thing_setName (my item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
 		long i, size;
@@ -229,7 +229,7 @@ static int classCollection_readBinary (I, FILE *f) {
 				return Melder_error ("(Collection::readBinary:) "
 					"Cannot read item of class %s.", Thing_className (my item [i]));
 			wchar_t *name = bingetw2 (f);
-			Thing_setNameW (my item [i], name);
+			Thing_setName (my item [i], name);
 			Melder_free (name);
 			if (! Data_readBinary (my item [i], f)) return 0;
 			Thing_version = saveVersion;

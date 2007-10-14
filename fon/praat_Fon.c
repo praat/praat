@@ -91,7 +91,7 @@ int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 int praat_get_frequencyRange (Any dia, double *fmin, double *fmax) {
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
-	REQUIRE (*fmax > *fmin, "Maximum frequency must be greater than minimum frequency.")
+	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")
 	return 1;
 }
 static void dia_Vector_getExtremum (Any dia) {
@@ -126,7 +126,7 @@ static int getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmi
 	*tmax = GET_REAL (STRING_TO_TIME);
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
-	REQUIRE (*fmax > *fmin, "Maximum frequency must be greater than minimum frequency.")
+	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")
 	return 1;
 }
 #define GET_TMIN_TMAX_FMIN_FMAX \
@@ -146,22 +146,22 @@ int praat_Fon_formula (Any dia) {
 	return 1;
 }
 
-Graphics Movie_create (const char *title, int width, int height);
-Graphics Movie_create (const char *title, int width, int height) {
+Graphics Movie_create (const wchar_t *title, int width, int height);
+Graphics Movie_create (const wchar_t *title, int width, int height) {
 	static Graphics graphics;
 	static Widget shell, dialog, drawingArea;
 	if (! graphics) {
 		dialog = XmCreateFormDialog (theCurrentPraat -> topShell, "Movie", NULL, 0);
 		shell = XtParent (dialog);
 		drawingArea = XmCreateDrawingArea (dialog, "movingArea", NULL, 0);
-		XtVaSetValues (shell, XmNx, 100, XmNy, 100, XmNtitle, title, XmNwidth, width + 2, XmNheight, height + 2,
+		XtVaSetValues (shell, XmNx, 100, XmNy, 100, XmNtitle, Melder_peekWcsToUtf8 (title), XmNwidth, width + 2, XmNheight, height + 2,
 			XmNdeleteResponse, XmUNMAP, NULL);
 		XtVaSetValues (drawingArea, XmNwidth, width, XmNheight, height, NULL);
 		XtManageChild (drawingArea);
 		XtManageChild (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
-	XtVaSetValues (XtParent (dialog), XmNtitle, title, XmNwidth, width + 2, XmNheight, height + 2, NULL);
+	XtVaSetValues (XtParent (dialog), XmNtitle, Melder_peekWcsToUtf8 (title), XmNwidth, width + 2, XmNheight, height + 2, NULL);
 	XtVaSetValues (drawingArea, XmNwidth, width, XmNheight, height, NULL);
 	XtManageChild (dialog);
 	XMapRaised (XtDisplay (shell), XtWindow (shell));
@@ -188,8 +188,8 @@ FORM (AmplitudeTier_create, "Create empty AmplitudeTier", NULL)
 	OK
 DO
 	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
-	REQUIRE (endTime > startTime, "End time must be greater than start time.")
-	if (! praat_new (AmplitudeTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (AmplitudeTier_create (startTime, endTime), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (AmplitudeTier_downto_PointProcess)
@@ -324,7 +324,7 @@ END
 
 DIRECT (Sound_AmplitudeTier_multiply)
 	Sound sound = ONLY (classSound);
-	if (! praat_new9 (Sound_AmplitudeTier_multiply (sound, ONLY (classAmplitudeTier)), sound -> nameW, L"_amp", 0,0,0,0,0,0,0)) return 0;
+	if (! praat_new2 (Sound_AmplitudeTier_multiply (sound, ONLY (classAmplitudeTier)), sound -> name, L"_amp")) return 0;
 END
 
 /***** COCHLEAGRAM *****/
@@ -352,7 +352,7 @@ END
 DIRECT (Cochleagram_help) Melder_help (L"Cochleagram"); END
 
 DIRECT (Cochleagram_movie)
-	Graphics g = Movie_create ("Cochleagram movie", 300, 300);
+	Graphics g = Movie_create (L"Cochleagram movie", 300, 300);
 	WHERE (SELECTED) Matrix_movie (OBJECT, g);
 END
 
@@ -383,7 +383,7 @@ FORM (Distributions_to_Transition, "To Transition", 0)
 	BOOLEAN ("Greedy", 1)
 	OK
 DO
-	if (! praat_new (Distributions_to_Transition (ONLY_OBJECT, NULL, GET_INTEGER ("Environment"),
+	if (! praat_new1 (Distributions_to_Transition (ONLY_OBJECT, NULL, GET_INTEGER ("Environment"),
 		NULL, GET_INTEGER ("Greedy")), NULL)) return 0;
 END
 
@@ -392,7 +392,7 @@ FORM (Distributions_to_Transition_adj, "To Transition", 0)
 	BOOLEAN ("Greedy", 1)
 	OK
 DO
-	if (! praat_new (Distributions_to_Transition (ONLY (classDistributions), NULL,
+	if (! praat_new1 (Distributions_to_Transition (ONLY (classDistributions), NULL,
 		GET_INTEGER ("Environment"), ONLY (classTransition), GET_INTEGER ("Greedy")), NULL)) return 0;
 END
 
@@ -403,7 +403,7 @@ FORM (Distributions_to_Transition_noise, "To Transition (noise)", 0)
 DO
 	Distributions underlying = NULL, surface = NULL;
 	WHERE (SELECTED) { if (underlying) surface = OBJECT; else underlying = OBJECT; }
-	if (! praat_new (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
+	if (! praat_new1 (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
 		NULL, GET_INTEGER ("Greedy")), NULL)) return 0;
 END
 
@@ -414,15 +414,15 @@ FORM (Distributions_to_Transition_noise_adj, "To Transition (noise)", 0)
 DO
 	Distributions underlying = NULL, surface = NULL;
 	WHERE (SELECTED && CLASS == classDistributions) { if (underlying) surface = OBJECT; else underlying = OBJECT; }
-	if (! praat_new (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
+	if (! praat_new1 (Distributions_to_Transition (underlying, surface, GET_INTEGER ("Environment"),
 		ONLY (classTransition), GET_INTEGER ("Greedy")), NULL)) return 0;
 END
 
 /***** DISTRIBUTIONS & TRANSITION *****/
 
 DIRECT (Distributions_Transition_map)
-	if (! praat_new (Distributions_Transition_map (ONLY (classDistributions), ONLY (classTransition)),
-		"surface")) return 0;
+	if (! praat_new1 (Distributions_Transition_map (ONLY (classDistributions), ONLY (classTransition)),
+		L"surface")) return 0;
 END
 
 /***** DURATIONTIER *****/
@@ -445,8 +445,8 @@ FORM (DurationTier_create, "Create empty DurationTier", "Create DurationTier..."
 	OK
 DO
 	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
-	REQUIRE (endTime > startTime, "End time must be greater than start time.")
-	if (! praat_new (DurationTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (DurationTier_create (startTime, endTime), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (DurationTier_downto_PointProcess)
@@ -829,20 +829,20 @@ END
 DIRECT (Formant_PointProcess_to_FormantTier)
 	Formant formant = ONLY (classFormant);
 	PointProcess point = ONLY (classPointProcess);
-	if (! praat_new9 (Formant_PointProcess_to_FormantTier (formant, point),
-		formant -> nameW, L"_", point -> nameW, 0,0,0,0,0,0)) return 0;
+	if (! praat_new3 (Formant_PointProcess_to_FormantTier (formant, point),
+		formant -> name, L"_", point -> name)) return 0;
 END
 
 /***** FORMANT & SOUND *****/
 
 DIRECT (Sound_Formant_filter)
 	Sound me = ONLY (classSound);
-	if (! praat_new (Sound_Formant_filter (me, ONLY (classFormant)), "%s_filt", my name)) return 0;
+	if (! praat_new2 (Sound_Formant_filter (me, ONLY (classFormant)), my name, L"_filt")) return 0;
 END
 
 DIRECT (Sound_Formant_filter_noscale)
 	Sound me = ONLY (classSound);
-	if (! praat_new (Sound_Formant_filter_noscale (me, ONLY (classFormant)), "%s_filt", my name)) return 0;
+	if (! praat_new2 (Sound_Formant_filter_noscale (me, ONLY (classFormant)), my name, L"_filt")) return 0;
 END
 
 /***** FORMANTTIER *****/
@@ -877,8 +877,8 @@ FORM (FormantTier_create, "Create empty FormantTier", NULL)
 	OK
 DO
 	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
-	REQUIRE (endTime > startTime, "End time must be greater than start time.")
-	if (! praat_new (FormantTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (FormantTier_create (startTime, endTime), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (FormantTier_downto_TableOfReal, "Down to TableOfReal", 0)
@@ -923,12 +923,12 @@ END
 
 DIRECT (Sound_FormantTier_filter)
 	Sound me = ONLY (classSound);
-	if (! praat_new (Sound_FormantTier_filter (me, ONLY (classFormantTier)), "%s_filt", my name)) return 0;
+	if (! praat_new2 (Sound_FormantTier_filter (me, ONLY (classFormantTier)), my name, L"_filt")) return 0;
 END
 
 DIRECT (Sound_FormantTier_filter_noscale)
 	Sound me = ONLY (classSound);
-	if (! praat_new (Sound_FormantTier_filter_noscale (me, ONLY (classFormantTier)), "%s_filt", my name)) return 0;
+	if (! praat_new2 (Sound_FormantTier_filter_noscale (me, ONLY (classFormantTier)), my name, L"_filt")) return 0;
 END
 
 /***** HARMONICITY *****/
@@ -1183,7 +1183,7 @@ END
 
 DIRECT (Intensity_PointProcess_to_IntensityTier)
 	Intensity intensity = ONLY (classIntensity);
-	if (! praat_new (Intensity_PointProcess_to_IntensityTier (intensity, ONLY (classPointProcess)),
+	if (! praat_new1 (Intensity_PointProcess_to_IntensityTier (intensity, ONLY (classPointProcess)),
 		intensity -> name)) return 0;
 END
 
@@ -1207,8 +1207,8 @@ FORM (IntensityTier_create, "Create empty IntensityTier", NULL)
 	OK
 DO
 	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
-	REQUIRE (endTime > startTime, "End time must be greater than start time.")
-	if (! praat_new (IntensityTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (IntensityTier_create (startTime, endTime), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (IntensityTier_downto_PointProcess)
@@ -1278,14 +1278,14 @@ END
 
 DIRECT (IntensityTier_PointProcess_to_IntensityTier)
 	IntensityTier intensity = ONLY (classIntensityTier);
-	if (! praat_new (IntensityTier_PointProcess_to_IntensityTier (intensity, ONLY (classPointProcess)), intensity -> name)) return 0;
+	if (! praat_new1 (IntensityTier_PointProcess_to_IntensityTier (intensity, ONLY (classPointProcess)), intensity -> name)) return 0;
 END
 
 /***** INTENSITYTIER & SOUND *****/
 
 DIRECT (Sound_IntensityTier_multiply_old)
 	Sound sound = ONLY (classSound);
-	if (! praat_new (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), TRUE), "%s_int", sound -> name)) return 0;
+	if (! praat_new2 (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), TRUE), sound -> name, L"_int")) return 0;
 END
 
 FORM (Sound_IntensityTier_multiply, "Sound & IntervalTier: Multiply", 0)
@@ -1293,7 +1293,7 @@ FORM (Sound_IntensityTier_multiply, "Sound & IntervalTier: Multiply", 0)
 	OK
 DO
 	Sound sound = ONLY (classSound);
-	if (! praat_new (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), GET_INTEGER ("Scale to 0.9")), "%s_int", sound -> name)) return 0;
+	if (! praat_new2 (Sound_IntensityTier_multiply (sound, ONLY (classIntensityTier), GET_INTEGER ("Scale to 0.9")), sound -> name, L"_int")) return 0;
 END
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.c *****/
@@ -1310,7 +1310,7 @@ DIRECT (Ltases_average)
 	WHERE (SELECTED) n ++;
 	ltases = Collection_create (classLtas, n);
 	WHERE (SELECTED) Collection_addItem (ltases, OBJECT);
-	if (! praat_new (Ltases_average (ltases), "averaged")) {
+	if (! praat_new1 (Ltases_average (ltases), L"averaged")) {
 		ltases -> size = 0;   /* Undangle. */
 		forget (ltases);
 		return 0;
@@ -1325,8 +1325,8 @@ FORM (Ltas_computeTrendLine, "Ltas: Compute trend line", "Ltas: Compute trend li
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Ltas_computeTrendLine (OBJECT, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range")),
-			"%s_trend", NAME)) return 0;
+		if (! praat_new2 (Ltas_computeTrendLine (OBJECT, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range")),
+			NAMEW, L"_trend")) return 0;
 	}
 END
 
@@ -1339,25 +1339,25 @@ FORM (old_Ltas_draw, "Ltas: Draw", 0)
 	OK
 DO
 	EVERY_DRAW (Ltas_draw (OBJECT, GRAPHICS, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
-		GET_REAL ("left Power range"), GET_REAL ("right Power range"), GET_INTEGER ("Garnish"), "Bars"))
+		GET_REAL ("left Power range"), GET_REAL ("right Power range"), GET_INTEGER ("Garnish"), L"Bars"))
 END
 
 FORM (Ltas_draw, "Ltas: Draw", 0)
-	REAL ("left Frequency range (Hz)", "0.0")
-	REAL ("right Frequency range (Hz)", "0.0 (= all)")
-	REAL ("left Power range (dB/Hz)", "-20.0")
-	REAL ("right Power range (dB/Hz)", "80.0")
-	BOOLEAN ("Garnish", 1)
-	LABEL ("", "")
-	OPTIONMENU ("Drawing method", 2)
-		OPTION ("Curve")
-		OPTION ("Bars")
-		OPTION ("Poles")
-		OPTION ("Speckles")
+	REALW (L"left Frequency range (Hz)", L"0.0")
+	REALW (L"right Frequency range (Hz)", L"0.0 (= all)")
+	REALW (L"left Power range (dB/Hz)", L"-20.0")
+	REALW (L"right Power range (dB/Hz)", L"80.0")
+	BOOLEANW (L"Garnish", 1)
+	LABELW (L"", L"")
+	OPTIONMENUW (L"Drawing method", 2)
+		OPTIONW (L"Curve")
+		OPTIONW (L"Bars")
+		OPTIONW (L"Poles")
+		OPTIONW (L"Speckles")
 	OK
 DO_ALTERNATIVE (old_Ltas_draw)
-	EVERY_DRAW (Ltas_draw (OBJECT, GRAPHICS, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range"),
-		GET_REAL ("left Power range"), GET_REAL ("right Power range"), GET_INTEGER ("Garnish"), GET_STRING ("Drawing method")))
+	EVERY_DRAW (Ltas_draw (OBJECT, GRAPHICS, GET_REALW (L"left Frequency range"), GET_REALW (L"right Frequency range"),
+		GET_REALW (L"left Power range"), GET_REALW (L"right Power range"), GET_INTEGER ("Garnish"), GET_STRINGW (L"Drawing method")))
 END
 
 FORM (Ltas_formula, "Ltas Formula", 0)
@@ -1436,9 +1436,9 @@ FORM (Ltas_getLocalPeakHeight, "Ltas: Get local peak height", 0)
 DO
 	double environmentMin = GET_REAL ("left Environment"), environmentMax = GET_REAL ("right Environment");
 	double peakMin = GET_REAL ("left Peak"), peakMax = GET_REAL ("right Peak");
-	REQUIRE (environmentMin < peakMin, "The beginning of the environment must lie before the peak.")
-	REQUIRE (peakMin < peakMax, "The end of the peak must lie after its beginning.")
-	REQUIRE (environmentMax > peakMax, "The end of the environment must lie after the peak.")
+	REQUIRE (environmentMin < peakMin, L"The beginning of the environment must lie before the peak.")
+	REQUIRE (peakMin < peakMax, L"The end of the peak must lie after its beginning.")
+	REQUIRE (environmentMax > peakMax, L"The end of the environment must lie after the peak.")
 	Melder_informationReal (Ltas_getLocalPeakHeight (ONLY (classLtas), environmentMin, environmentMax,
 		peakMin, peakMax, GET_INTEGER ("Averaging method")), L"dB");
 END
@@ -1554,7 +1554,7 @@ DIRECT (Ltases_merge)
 	WHERE (SELECTED) n ++;
 	ltases = Collection_create (classLtas, n);
 	WHERE (SELECTED) Collection_addItem (ltases, OBJECT);
-	if (! praat_new (Ltases_merge (ltases), "merged")) {
+	if (! praat_new1 (Ltases_merge (ltases), L"merged")) {
 		ltases -> size = 0;   /* Undangle. */
 		forget (ltases);
 		return 0;
@@ -1569,8 +1569,8 @@ FORM (Ltas_subtractTrendLine, "Ltas: Subtract trend line", "Ltas: Subtract trend
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new (Ltas_subtractTrendLine (OBJECT, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range")),
-			"%s_fit", NAME)) return 0;
+		if (! praat_new2 (Ltas_subtractTrendLine (OBJECT, GET_REAL ("left Frequency range"), GET_REAL ("right Frequency range")),
+			NAMEW, L"_fit")) return 0;
 	}
 END
 
@@ -1587,7 +1587,7 @@ END
 static void cb_ManipulationEditor_publish (Any editor, void *closure, Any publish) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new (publish, "fromManipulationEditor")) { Melder_flushError (NULL); return; }
+	if (! praat_new1 (publish, L"fromManipulationEditor")) { Melder_flushError (NULL); return; }
 	praat_updateSelection ();
 }
 DIRECT (Manipulation_edit)
@@ -1606,7 +1606,7 @@ DIRECT (Manipulation_extractDurationTier)
 	WHERE (SELECTED) {
 		Manipulation ana = OBJECT;
 		if (ana -> duration) {
-			if (! praat_new (Data_copy (ana -> duration), NULL)) return 0;
+			if (! praat_new1 (Data_copy (ana -> duration), NULL)) return 0;
 		} else {
 			return Melder_error ("Manipulation does not contain a DurationTier.");
 		}
@@ -1617,7 +1617,7 @@ DIRECT (Manipulation_extractOriginalSound)
 	WHERE (SELECTED) {
 		Manipulation ana = OBJECT;
 		if (ana -> sound) {
-			if (! praat_new (Data_copy (ana -> sound), NULL)) return 0;
+			if (! praat_new1 (Data_copy (ana -> sound), NULL)) return 0;
 		} else {
 			return Melder_error ("Manipulation does not contain a Sound.");
 		}
@@ -1628,7 +1628,7 @@ DIRECT (Manipulation_extractPitchTier)
 	WHERE (SELECTED) {
 		Manipulation ana = OBJECT;
 		if (ana -> pitch) {
-			if (! praat_new (Data_copy (ana -> pitch), NULL)) return 0;
+			if (! praat_new1 (Data_copy (ana -> pitch), NULL)) return 0;
 		} else {
 			return Melder_error ("Manipulation does not contain a PitchTier.");
 		}
@@ -1639,7 +1639,7 @@ DIRECT (Manipulation_extractPulses)
 	WHERE (SELECTED) {
 		Manipulation ana = OBJECT;
 		if (ana -> pulses) {
-			if (! praat_new (Data_copy (ana -> pulses), NULL)) return 0;
+			if (! praat_new1 (Data_copy (ana -> pulses), NULL)) return 0;
 		} else {
 			return Melder_error ("Manipulation does not contain a PointProcess.");
 		}
@@ -1737,7 +1737,7 @@ END
 /***** MANIPULATION & TEXTTIER *****/
 
 DIRECT (Manipulation_TextTier_to_Manipulation)
-	if (! praat_new (Manipulation_AnyTier_to_Manipulation (ONLY (classManipulation), ONLY (classTextTier)),
+	if (! praat_new1 (Manipulation_AnyTier_to_Manipulation (ONLY (classManipulation), ONLY (classTextTier)),
 		((Manipulation) (ONLY (classManipulation))) -> name)) return 0;	
 END
 
@@ -1746,7 +1746,7 @@ END
 DIRECT (Matrix_appendRows)
 	Matrix m1 = NULL, m2 = NULL;
 	WHERE (SELECTED) { if (m1) m2 = OBJECT; else m1 = OBJECT; }
-	if (! praat_new (Matrix_appendRows (m1, m2), "%s_%s", m1 -> name, m2 -> name)) return 0;
+	if (! praat_new3 (Matrix_appendRows (m1, m2), m1 -> name, L"_", m2 -> name)) return 0;
 END
 
 FORM (Matrix_create, "Create Matrix", "Create Matrix...")
@@ -1771,10 +1771,10 @@ DO
 		return Melder_error ("xmax (%.8g) should not be less than xmin (%.8g).", xmax, xmin);
 	if (ymax < ymin)
 		return Melder_error ("ymax (%.8g) should not be less than ymin (%.8g).", ymax, ymin);
-	if (! praat_new (Matrix_create (
+	if (! praat_new1 (Matrix_create (
 		xmin, xmax, GET_INTEGER ("Number of columns"), GET_REAL ("dx"), GET_REAL ("x1"),
 		ymin, ymax, GET_INTEGER ("Number of rows"), GET_REAL ("dy"), GET_REAL ("y1")),
-		"%s", GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 	praat_updateSelection ();
 	return praat_Fon_formula (dia);
 END
@@ -1787,9 +1787,9 @@ FORM (Matrix_createSimple, "Create simple Matrix", "Create simple Matrix...")
 	TEXTFIELD ("formula", "x*y")
 	OK
 DO
-	if (! praat_new (Matrix_createSimple (
+	if (! praat_new1 (Matrix_createSimple (
 		GET_INTEGER ("Number of rows"), GET_INTEGER ("Number of columns")),
-		"%s", GET_STRING ("Name"))) return 0;
+		GET_STRINGW (L"Name"))) return 0;
 	praat_updateSelection ();
 	return praat_Fon_formula (dia);
 END
@@ -1840,8 +1840,8 @@ DIRECT (Matrix_eigen)
 	WHERE (SELECTED) {
 		Matrix vec, val;
 		if (! Matrix_eigen (OBJECT, & vec, & val)) return 0;
-		if (! praat_new (vec, "eigenvectors")) return 0;
-		if (! praat_new (val, "eigenvalues")) return 0;
+		if (! praat_new1 (vec, L"eigenvectors")) return 0;
+		if (! praat_new1 (val, L"eigenvalues")) return 0;
 	}
 END
 
@@ -1892,8 +1892,8 @@ END
 FORM (Matrix_getValueInCell, "Matrix: Get value in cell", 0)
 	NATURAL ("Row number", "1") NATURAL ("Column number", "1") OK DO Matrix me = ONLY_OBJECT;
 	long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
-	REQUIRE (row <= my ny, "Row number must not exceed number of rows.")
-	REQUIRE (column <= my nx, "Column number must not exceed number of columns.")
+	REQUIRE (row <= my ny, L"Row number must not exceed number of rows.")
+	REQUIRE (column <= my nx, L"Column number must not exceed number of columns.")
 	Melder_informationReal (my z [row] [column], NULL); END
 FORM (Matrix_getXofColumn, "Matrix: Get x of column", 0)
 	NATURAL ("Column number", "1") OK DO
@@ -1905,7 +1905,7 @@ FORM (Matrix_getYofRow, "Matrix: Get y of row", 0)
 DIRECT (Matrix_help) Melder_help (L"Matrix"); END
 
 DIRECT (Matrix_movie)
-	Graphics g = Movie_create ("Matrix movie", 300, 300);
+	Graphics g = Movie_create (L"Matrix movie", 300, 300);
 	WHERE (SELECTED) Matrix_movie (OBJECT, g);
 END
 
@@ -1989,8 +1989,8 @@ DO
 	WHERE (SELECTED) {
 		Matrix me = OBJECT;
 		long row = GET_INTEGER ("Row number"), column = GET_INTEGER ("Column number");
-		REQUIRE (row <= my ny, "Row number must not be greater than number of rows.")
-		REQUIRE (column <= my nx, "Column number must not be greater than number of columns.")
+		REQUIRE (row <= my ny, L"Row number must not be greater than number of rows.")
+		REQUIRE (column <= my nx, L"Column number must not be greater than number of columns.")
 		my z [row] [column] = GET_REAL ("New value");
 		praat_dataChanged (me);
 	}
@@ -2031,7 +2031,7 @@ END
 DIRECT (Matrix_to_ParamCurve)
 	Matrix m1 = NULL, m2 = NULL;
 	WHERE (SELECTED) { if (m1) m2 = OBJECT; else m1 = OBJECT; }
-	if (! praat_new (ParamCurve_create (m1, m2), "%s_%s", m1 -> name, m2 -> name)) return 0;
+	if (! praat_new3 (ParamCurve_create (m1, m2), m1 -> name, L"_", m2 -> name)) return 0;
 END
 
 DIRECT (Matrix_to_PointProcess)
@@ -2524,28 +2524,27 @@ END
 DIRECT (Pitch_PitchTier_to_Pitch)
 	Pitch pitch = ONLY (classPitch);
 	PitchTier tier = ONLY (classPitchTier);
-	if (! praat_new (Pitch_PitchTier_to_Pitch (pitch, tier),
-		"%s_stylized", pitch -> name)) return 0;
+	if (! praat_new2 (Pitch_PitchTier_to_Pitch (pitch, tier), pitch -> name, L"_stylized")) return 0;
 END
 
 /***** PITCH & POINTPROCESS *****/
 
 DIRECT (Pitch_PointProcess_to_PitchTier)
 	Pitch pitch = ONLY (classPitch);
-	if (! praat_new (Pitch_PointProcess_to_PitchTier (pitch, ONLY (classPointProcess)), pitch -> name)) return 0;
+	if (! praat_new1 (Pitch_PointProcess_to_PitchTier (pitch, ONLY (classPointProcess)), pitch -> name)) return 0;
 END
 
 /***** PITCH & SOUND *****/
 
 DIRECT (Sound_Pitch_to_Manipulation)
 	Pitch pitch = ONLY (classPitch);
-	if (! praat_new (Sound_Pitch_to_Manipulation (ONLY (classSound), pitch), pitch -> name)) return 0;
+	if (! praat_new1 (Sound_Pitch_to_Manipulation (ONLY (classSound), pitch), pitch -> name)) return 0;
 END
 
 DIRECT (Sound_Pitch_to_PointProcess_cc)
 	wchar_t name [200];
 	praat_name2 (name, classSound, classPitch);
-	if (! praat_new9 (Sound_Pitch_to_PointProcess_cc (ONLY (classSound), ONLY (classPitch)), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (Sound_Pitch_to_PointProcess_cc (ONLY (classSound), ONLY (classPitch)), name)) return 0;
 END
 
 FORM (Sound_Pitch_to_PointProcess_peaks, "Sound & Pitch: To PointProcess (peaks)", 0)
@@ -2555,8 +2554,8 @@ FORM (Sound_Pitch_to_PointProcess_peaks, "Sound & Pitch: To PointProcess (peaks)
 DO
 	wchar_t name [200];
 	praat_name2 (name, classSound, classPitch);
-	if (! praat_new9 (Sound_Pitch_to_PointProcess_peaks (ONLY (classSound), ONLY (classPitch),
-		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")), name, 0,0,0,0,0,0,0,0)) return 0;
+	if (! praat_new1 (Sound_Pitch_to_PointProcess_peaks (ONLY (classSound), ONLY (classPitch),
+		GET_INTEGER ("Include maxima"), GET_INTEGER ("Include minima")), name)) return 0;
 END
 
 /***** PITCHTIER *****/
@@ -2579,8 +2578,8 @@ FORM (PitchTier_create, "Create empty PitchTier", NULL)
 	OK
 DO
 	double startTime = GET_REAL ("Start time"), endTime = GET_REAL ("End time");
-	REQUIRE (endTime > startTime, "End time must be greater than start time.")
-	if (! praat_new (PitchTier_create (startTime, endTime), GET_STRING ("Name"))) return 0;
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (PitchTier_create (startTime, endTime), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (PitchTier_downto_PointProcess)
@@ -2606,7 +2605,7 @@ DO
 	double minimumFrequency = GET_REAL ("Minimum frequency");
 	double maximumFrequency = GET_REAL ("Maximum frequency");
 	REQUIRE (maximumFrequency > minimumFrequency,
-		"Maximum frequency must be greater than minimum frequency.")
+		L"Maximum frequency must be greater than minimum frequency.")
 	EVERY_DRAW (PitchTier_draw (OBJECT, GRAPHICS,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"), minimumFrequency, maximumFrequency,
 		GET_INTEGER ("Garnish")))
@@ -2820,7 +2819,7 @@ END
 
 DIRECT (PitchTier_PointProcess_to_PitchTier)
 	PitchTier pitch = ONLY (classPitchTier);
-	if (! praat_new (PitchTier_PointProcess_to_PitchTier (pitch, ONLY (classPointProcess)), pitch -> name)) return 0;
+	if (! praat_new1 (PitchTier_PointProcess_to_PitchTier (pitch, ONLY (classPointProcess)), pitch -> name)) return 0;
 END
 
 /***** POINTPROCESS *****/
@@ -2844,7 +2843,7 @@ DO
 	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
 	if (tmax < tmin)
 		return Melder_error ("End time (%.8g) should not be less than start time (%.8g).", tmax, tmin);
-	if (! praat_new (PointProcess_create (tmin, tmax, 0), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (PointProcess_create (tmin, tmax, 0), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (PointProcess_createPoissonProcess, "Create Poisson process", "Create Poisson process...")
@@ -2857,13 +2856,13 @@ DO
 	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
 	if (tmax < tmin)
 		return Melder_error ("End time (%.8g) should not be less than start time (%.8g).", tmax, tmin);
-	if (! praat_new (PointProcess_createPoissonProcess (tmin, tmax, GET_REAL ("Density")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (PointProcess_createPoissonProcess (tmin, tmax, GET_REAL ("Density")), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (PointProcess_difference)
 	PointProcess point1 = NULL, point2 = NULL;
 	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
-	if (! praat_new (PointProcesses_difference (point1, point2), "difference")) return 0;
+	if (! praat_new1 (PointProcesses_difference (point1, point2), L"difference")) return 0;
 END
 
 FORM (PointProcess_draw, "PointProcess: Draw", 0)
@@ -3032,7 +3031,7 @@ END
 DIRECT (PointProcess_intersection)
 	PointProcess point1 = NULL, point2 = NULL;
 	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
-	if (! praat_new (PointProcesses_intersection (point1, point2), "intersection")) return 0;
+	if (! praat_new1 (PointProcesses_intersection (point1, point2), L"intersection")) return 0;
 END
 
 DIRECT (PointProcess_play)
@@ -3152,7 +3151,7 @@ END
 DIRECT (PointProcess_union)
 	PointProcess point1 = NULL, point2 = NULL;
 	WHERE (SELECTED) { if (point1) point2 = OBJECT; else point1 = OBJECT; }
-	if (! praat_new (PointProcesses_union (point1, point2), "union")) return 0;
+	if (! praat_new1 (PointProcesses_union (point1, point2), L"union")) return 0;
 END
 
 FORM (PointProcess_upto_IntensityTier, "PointProcess: Up to IntensityTier", "PointProcess: Up to IntensityTier...")
@@ -3198,7 +3197,7 @@ END
 /*DIRECT (Sound_PointProcess_to_Manipulation)
 	Sound sound = ONLY (classSound);
 	PointProcess point = ONLY (classPointProcess);
-	if (! praat_new (Sound_PointProcess_to_Manipulation (sound, point), point -> name)) return 0;
+	if (! praat_new1 (Sound_PointProcess_to_Manipulation (sound, point), point -> name)) return 0;
 END*/
 
 DIRECT (Point_Sound_transplantDomain)
@@ -3281,44 +3280,44 @@ FORM (PointProcess_Sound_to_AmplitudeTier_period, "PointProcess & Sound: To Ampl
 DO
 	PointProcess point = ONLY (classPointProcess);
 	Sound sound = ONLY (classSound);
-	if (! praat_new (PointProcess_Sound_to_AmplitudeTier_period (point, sound,
+	if (! praat_new3 (PointProcess_Sound_to_AmplitudeTier_period (point, sound,
 		GET_REAL ("left Time range"), GET_REAL ("right Time range"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), "%s_%s", sound -> name, point -> name)) return 0;
+		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), sound -> name, L"_", point -> name)) return 0;
 END
 
 DIRECT (PointProcess_Sound_to_AmplitudeTier_point)
 	PointProcess point = ONLY (classPointProcess);
 	Sound sound = ONLY (classSound);
-	if (! praat_new (PointProcess_Sound_to_AmplitudeTier_point (point, sound), "%s_%s", sound -> name, point -> name)) return 0;
+	if (! praat_new3 (PointProcess_Sound_to_AmplitudeTier_point (point, sound), sound -> name, L"_", point -> name)) return 0;
 END
 
 FORM (PointProcess_Sound_to_Ltas, "PointProcess & Sound: To Ltas", 0)
-	POSITIVE ("Maximum frequency (Hz)", "5000")
-	POSITIVE ("Band width (Hz)", "100")
-	REAL ("Shortest period (s)", "0.0001")
-	REAL ("Longest period (s)", "0.02")
-	POSITIVE ("Maximum period factor", "1.3")
+	POSITIVEW (L"Maximum frequency (Hz)", L"5000")
+	POSITIVEW (L"Band width (Hz)", L"100")
+	REALW (L"Shortest period (s)", L"0.0001")
+	REALW (L"Longest period (s)", L"0.02")
+	POSITIVEW (L"Maximum period factor", L"1.3")
 	OK
 DO
 	PointProcess point = ONLY (classPointProcess);
 	Sound sound = ONLY (classSound);
-	if (! praat_new (PointProcess_Sound_to_Ltas (point, sound,
-		GET_REAL ("Maximum frequency"), GET_REAL ("Band width"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), "%s", sound -> name)) return 0;
+	if (! praat_new1 (PointProcess_Sound_to_Ltas (point, sound,
+		GET_REALW (L"Maximum frequency"), GET_REALW (L"Band width"),
+		GET_REALW (L"Shortest period"), GET_REALW (L"Longest period"), GET_REALW (L"Maximum period factor")), sound -> name)) return 0;
 END
 
 FORM (PointProcess_Sound_to_Ltas_harmonics, "PointProcess & Sound: To Ltas (harmonics", 0)
-	NATURAL ("Maximum harmonic", "20")
-	REAL ("Shortest period (s)", "0.0001")
-	REAL ("Longest period (s)", "0.02")
-	POSITIVE ("Maximum period factor", "1.3")
+	NATURALW (L"Maximum harmonic", L"20")
+	REALW (L"Shortest period (s)", L"0.0001")
+	REALW (L"Longest period (s)", L"0.02")
+	POSITIVEW (L"Maximum period factor", L"1.3")
 	OK
 DO
 	PointProcess point = ONLY (classPointProcess);
 	Sound sound = ONLY (classSound);
-	if (! praat_new (PointProcess_Sound_to_Ltas_harmonics (point, sound,
-		GET_INTEGER ("Maximum harmonic"),
-		GET_REAL ("Shortest period"), GET_REAL ("Longest period"), GET_REAL ("Maximum period factor")), "%s", sound -> name)) return 0;
+	if (! praat_new1 (PointProcess_Sound_to_Ltas_harmonics (point, sound,
+		GET_INTEGERW (L"Maximum harmonic"),
+		GET_REALW (L"Shortest period"), GET_REALW (L"Longest period"), GET_REALW (L"Maximum period factor")), sound -> name)) return 0;
 END
 
 /***** POLYGON *****/
@@ -3432,8 +3431,8 @@ FORM (Sound_Point_Pitch_Duration_to_Sound, "To Sound", 0)
 	POSITIVE ("Longest period (s)", "0.02")
 	OK
 DO
-	if (! praat_new (Sound_Point_Pitch_Duration_to_Sound (ONLY (classSound), ONLY (classPointProcess),
-		ONLY (classPitchTier), ONLY (classDurationTier), GET_REAL ("Longest period")), "manip")) return 0;
+	if (! praat_new1 (Sound_Point_Pitch_Duration_to_Sound (ONLY (classSound), ONLY (classPointProcess),
+		ONLY (classPitchTier), ONLY (classDurationTier), GET_REAL ("Longest period")), L"manip")) return 0;
 END
 
 /***** SPECTROGRAM *****/
@@ -3485,7 +3484,7 @@ END
 DIRECT (Spectrogram_help) Melder_help (L"Spectrogram"); END
 
 DIRECT (Spectrogram_movie)
-	Graphics g = Movie_create ("Spectrogram movie", 300, 300);
+	Graphics g = Movie_create (L"Spectrogram movie", 300, 300);
 	WHERE (SELECTED) Matrix_movie (OBJECT, g);
 END
 
@@ -3607,7 +3606,7 @@ DIRECT (Spectrum_getHighestFrequency) Spectrum me = ONLY_OBJECT; Melder_informat
 FORM (Spectrum_getImaginaryValueInBin, "Spectrum: Get imaginary value in bin", 0)
 	NATURAL ("Bin number", "100") OK DO Spectrum me = ONLY_OBJECT;
 	long binNumber = GET_INTEGER ("Bin number");
-	REQUIRE (binNumber <= my nx, "Bin number must not exceed number of bins.");
+	REQUIRE (binNumber <= my nx, L"Bin number must not exceed number of bins.");
 	Melder_informationReal (my z [2] [binNumber], NULL); END
 FORM (Spectrum_getKurtosis, "Spectrum: Get kurtosis", "Spectrum: Get kurtosis...")
 	POSITIVE ("Power", "2.0") OK DO
@@ -3617,7 +3616,7 @@ DIRECT (Spectrum_getNumberOfBins) Spectrum me = ONLY_OBJECT; Melder_information2
 FORM (Spectrum_getRealValueInBin, "Spectrum: Get real value in bin", 0)
 	NATURAL ("Bin number", "100") OK DO Spectrum me = ONLY_OBJECT;
 	long binNumber = GET_INTEGER ("Bin number");
-	REQUIRE (binNumber <= my nx, "Bin number must not exceed number of bins.");
+	REQUIRE (binNumber <= my nx, L"Bin number must not exceed number of bins.");
 	Melder_informationReal (my z [1] [binNumber], NULL); END
 FORM (Spectrum_getSkewness, "Spectrum: Get skewness", "Spectrum: Get skewness...")
 	POSITIVE ("Power", "2.0") OK DO
@@ -3777,7 +3776,7 @@ if (! inited) {
 	inited = TRUE;
 }
 DO
-	if (! praat_new (Strings_createAsFileList (GET_STRINGW (L"path")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Strings_createAsFileList (GET_STRINGW (L"path")), GET_STRINGW (L"Name"))) return 0;
 END
 
 FORM (Strings_createAsDirectoryList, "Create Strings as directory list", "Create Strings as directory list...")
@@ -3805,7 +3804,7 @@ if (! inited) {
 	inited = TRUE;
 }
 DO
-	if (! praat_new (Strings_createAsDirectoryList (GET_STRINGW (L"path")), GET_STRING ("Name"))) return 0;
+	if (! praat_new1 (Strings_createAsDirectoryList (GET_STRINGW (L"path")), GET_STRINGW (L"Name"))) return 0;
 END
 
 DIRECT (Strings_equal)
@@ -3894,9 +3893,9 @@ FORM (TextGrid_create, "Create TextGrid", "Create TextGrid...")
 	OK
 DO
 	double tmin = GET_REAL ("Start time"), tmax = GET_REAL ("End time");
-	REQUIRE (tmax > tmin, "End time should be greater than start time")
-	if (! praat_new (TextGrid_create (tmin, tmax, GET_STRINGW (L"All tier names"), GET_STRINGW (L"Which of these are point tiers?")),
-		GET_STRING ("All tier names"))) return 0;
+	REQUIRE (tmax > tmin, L"End time should be greater than start time")
+	if (! praat_new1 (TextGrid_create (tmin, tmax, GET_STRINGW (L"All tier names"), GET_STRINGW (L"Which of these are point tiers?")),
+		GET_STRINGW (L"All tier names"))) return 0;
 END
 
 /***** TEXTTIER, rest in praat_TextGrid_init.c *****/
@@ -4043,8 +4042,8 @@ DIRECT (Transition_eigen)
 	WHERE (SELECTED) {
 		Matrix vec, val;
 		if (! Transition_eigen (OBJECT, & vec, & val)) return 0;
-		if (! praat_new (vec, "eigenvectors")) return 0;
-		if (! praat_new (val, "eigenvalues")) return 0;
+		if (! praat_new1 (vec, L"eigenvectors")) return 0;
+		if (! praat_new1 (val, L"eigenvalues")) return 0;
 	}
 END
 

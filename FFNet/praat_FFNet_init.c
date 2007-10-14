@@ -327,7 +327,7 @@ FORM (FFNet_Eigen_drawIntersection, "FFnet & Eigen: Draw intersection", 0)
     OK
 DO
     long pcx = GET_INTEGER ("X-component"), pcy = GET_INTEGER ("Y-component");
-    REQUIRE (pcx != 0 && pcy != 0, "X and Y component must differ from 0.")
+    REQUIRE (pcx != 0 && pcy != 0, L"X and Y component must differ from 0.")
     praat_picture_open ();
     FFNet_Eigen_drawIntersection (ONLY (classFFNet), ONLY (classEigen),
     	GRAPHICS, pcx, pcy, GET_REAL ("xmin"), GET_REAL ("xmax"),

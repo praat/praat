@@ -86,14 +86,14 @@ static int openDocument (TextEditor me, MelderFile file) {
 	 */
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	Thing_setNameW (me, Melder_fileToPath (file));
+	Thing_setName (me, Melder_fileToPath (file));
 	return 1;
 }
 
 static void newDocument (TextEditor me) {
-	XmTextSetString (my textWidget, "");   /* Implicitly sets my dirty to TRUE. */
+	GuiText_setStringW (my textWidget, L"");   /* Implicitly sets my dirty to TRUE. */
 	my dirty = FALSE;
-	if (our fileBased) Thing_setNameW (me, NULL);
+	if (our fileBased) Thing_setName (me, NULL);
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
@@ -102,7 +102,7 @@ static int saveDocument (TextEditor me, MelderFile file) {
 	Melder_free (text);
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	if (our fileBased) Thing_setNameW (me, Melder_fileToPath (file));
+	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));
 	return 1;
 }
 
@@ -137,7 +137,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	wchar_t defaultName [300];
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, 0);
-	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my nameW ? MelderFile_name (& my file) : L"");
+	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 	return 1;
 }
@@ -496,7 +496,7 @@ int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
 	if (initialText) {
 		GuiText_setStringW (my textWidget, initialText);
 		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
-		Thing_setNameW (me, NULL);
+		Thing_setName (me, NULL);
 	}
 	return 1;
 }

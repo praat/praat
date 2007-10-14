@@ -59,7 +59,7 @@ class_methods_end
 HyperLink HyperLink_create (const wchar_t *name, double x1DC, double x2DC, double y1DC, double y2DC) {
 	HyperLink me = new (HyperLink);
 	if (! me) return NULL;
-	Thing_setNameW (me, name);
+	Thing_setName (me, name);
 	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;
 	return me;
 }
@@ -574,7 +574,7 @@ MOTIF_CALLBACK (cb_input)
 		HyperLink link = my links -> item [ilink];
 		if (yDC > link -> y2DC && yDC < link -> y1DC && xDC > link -> x1DC && xDC < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
-			if (! HyperPage_goToPage (me, link -> nameW)) {
+			if (! HyperPage_goToPage (me, link -> name)) {
 				/* Allow for a returned 0 just to mean: 'do not jump'. */
 				if (Melder_hasError ()) Melder_flushError (NULL);
 			}

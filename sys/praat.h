@@ -168,7 +168,6 @@ bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, con
 bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
 bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
 bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-bool praat_new (Any data, const char *myName, ...);
 void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 
 /* Macros for description of forms (dialog boxes).
@@ -223,7 +222,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	See Ui.h for more information.
 	Between DO and END, you should return 0 if something is wrong;
 	if everything is alright, you should trickle down to END; never return 1!
-	E.g. NOT return praat_new (...); BUT if (! praat_new (...)) return 0;
+	E.g. NOT return praat_new1 (...); BUT if (! praat_new1 (...)) return 0;
 	This is because END updates the selection if an object was created.
  */
 
@@ -357,8 +356,8 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define GET_INTEGERW(name)  UiForm_getInteger (dia, name)
 #define GET_STRINGW(name)  UiForm_getString (dia, name)
 #define GET_FILEW(name)  UiForm_getFile (dia, name)
-#define REQUIRE(c,t)  if (! (c)) return Melder_error ("%s", t);
-#define NEW(proc)  if (! praat_new (proc, NULL)) return 0;
+#define REQUIRE(c,t)  if (! (c)) return Melder_error1 (t);
+#define NEW(proc)  if (! praat_new1 (proc, NULL)) return 0;
 
 #define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraat -> n; IOBJECT ++) if (condition)
 #define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraat -> n; IOBJECT > 0; IOBJECT --) if (condition)
@@ -366,16 +365,14 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define CLASS  (theCurrentPraat -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraat -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraat -> graphics
-#define FULL_NAME  (Melder_peekWcsToUtf8 (theCurrentPraat -> list [IOBJECT]. name))
 #define FULL_NAMEW  (theCurrentPraat -> list [IOBJECT]. name)
 #define ID  (theCurrentPraat -> list [IOBJECT]. id)
-#define NAME  Melder_peekWcsToUtf8 (praat_name (IOBJECT))
 #define NAMEW  praat_name (IOBJECT)
 #define FILENAME  (Melder_peekWcsToUtf8 (theCurrentPraat -> list [IOBJECT]. file))
 #define FILENAMEW  (theCurrentPraat -> list [IOBJECT]. file)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
-#define EVERY_TO(proc)  EVERY_CHECK (praat_new (proc, NAME))
+#define EVERY_TO(proc)  EVERY_CHECK (praat_new1 (proc, NAMEW))
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
@@ -397,7 +394,7 @@ int praat_installEditor (Any editor, int iobject);
 		if (praat.batch) return Melder_error ("Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+				(SpectrogramEditor_create (praat.topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
 	END
 */
 int praat_installEditor2 (Any editor, int iobject1, int iobject2);
