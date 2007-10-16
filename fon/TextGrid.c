@@ -362,7 +362,7 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 		line = MelderFile_readLine (file); cherror
 		if (line == NULL) break;   /* Normal end-of-file. */
 		if (sscanf (line, "%lf%ld%s", & time, & colour, mark) < 3) {
-			Melder_error ("Line too short: \"%s\".", line);
+			Melder_error3 (L"Line too short: \"", Melder_peekUtf8ToWcs (line), L"\".");
 			goto end;
 		}
 		if (! TextTier_addPoint (me, time, Melder_peekUtf8ToWcs (mark))) goto end;
@@ -1106,7 +1106,7 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			break;   /* An empty line, hopefully at the end. */
 		}
 		if (numberOfElements == 1) {
-			Melder_error ("Line too short: \"%s\".", line);
+			Melder_error3 (L"Line too short: \"", Melder_peekUtf8ToWcs (line), L"\".");
 			goto end;
 		}
 		if (numberOfElements == 2) {

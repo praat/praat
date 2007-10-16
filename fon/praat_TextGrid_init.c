@@ -1088,7 +1088,7 @@ DO
 		TextGrid grid = OBJECT;
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		if (grid -> tiers -> size <= 1) {
-			return Melder_error ("Sorry, I refuse to remove the last tier.");
+			return Melder_error1 (L"Sorry, I refuse to remove the last tier.");
 		}
 		if (itier > grid -> tiers -> size) itier = grid -> tiers -> size;
 		Collection_removeItem (grid -> tiers, itier);
@@ -1111,7 +1111,7 @@ FORM (TextGrid_scaleTimes, "TextGrid: Scale times", 0)
 	OK
 DO
 	double tmin = GET_REAL ("left New time domain"), tmax = GET_REAL ("right New time domain");
-	if (tmin >= tmax) return Melder_error ("Duration of time domain must be positive.");
+	if (tmin >= tmax) return Melder_error1 (L"Duration of time domain must be positive.");
 	WHERE (SELECTED) {
 		TextGrid_scaleTimes (OBJECT, tmin, tmax);
 		praat_dataChanged (OBJECT);

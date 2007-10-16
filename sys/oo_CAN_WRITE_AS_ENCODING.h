@@ -21,6 +21,7 @@
  * pb 2007/06/24 created as oo_CAN_WRITE_AS_ASCII.h
  * pb 2007/07/03 renamed to oo_CAN_WRITE_AS_ENCODING.h
  * pb 2007/10/01 struct_canWriteAsEncoding static
+ * pb 2007/10/14 api
  */
 
 #include "oo_undef.h"
@@ -113,10 +114,10 @@
 	if (my x && ! Data_canWriteAsEncoding (my x, encoding)) return false;
 
 #define oo_FILE(x)  \
-	if (! Melder_isEncodable (my x. wpath, encoding)) return false;
+	if (! Melder_isEncodable (my x. path, encoding)) return false;
 
 #define oo_DIR(x)  \
-	if (! Melder_isEncodable (my x. wpath, encoding)) return false;
+	if (! Melder_isEncodable (my x. path, encoding)) return false;
 
 
 

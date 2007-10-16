@@ -262,7 +262,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (! paInitialized) {
 			PaError err = Pa_Initialize ();
 			if (err) {
-				Melder_error ("Pa_Initialize: %s", Pa_GetErrorText (err));
+				Melder_error2 (L"Pa_Initialize: ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err)));
 				goto error;
 			}
 			paInitialized = true;
@@ -282,13 +282,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		fd = open (DEV_AUDIO, O_RDONLY);
 		if (fd == -1) {
 			if (errno == EBUSY)
-				Melder_error ("(Sound_record:) Audio device in use by another program.");
+				Melder_error1 (L"(Sound_record:) Audio device in use by another program.");
 			else
 				#ifdef linux
-					Melder_error ("(Sound_record:) Cannot open audio device.\n"
+					Melder_error1 (L"(Sound_record:) Cannot open audio device.\n"
 						"Consult /usr/doc/HOWTO/Sound-HOWTO.");
 				#else
-					Melder_error ("(Sound_record:) Cannot open audio device.");
+					Melder_error1 (L"(Sound_record:) Cannot open audio device.");
 				#endif
 			goto error;
 		}
@@ -311,7 +311,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	#if USE_PORTAUDIO
 		if (inputSource < 1 || inputSource > Pa_GetDeviceCount ()) {
-			Melder_error ("Unknown device #%d.", inputSource);
+			Melder_error3 (L"Unknown device #", Melder_integer (inputSource), L".");
 			goto error;
 		}
 		streamParameters. device = inputSource - 1;
@@ -340,24 +340,25 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		AUDIO_INITINFO (& info);
 		info. record. port = inputSource == 2 ? AUDIO_LINE_IN : AUDIO_MICROPHONE;   /* No digital. */
 		if (ioctl (fd, AUDIO_SETINFO, & info) == -1) {
-			Melder_error ("(Sound_record:) Cannot set port.");
+			Melder_error1 (L"(Sound_record:) Cannot set port.");
 			goto error;
 		}
 	#elif defined (HPUX)
 		if (ioctl (fd, AUDIO_SET_INPUT, inputSource == 2 ? AUDIO_IN_LINE : AUDIO_IN_MIKE) == -1) {
-			Melder_error ("(Sound_record:) Cannot set input source.");
+			Melder_error1 (L"(Sound_record:) Cannot set input source.");
 			goto error;
 		}
 	#elif defined (linux)
 		fd_mixer = open("/dev/mixer", O_WRONLY);		
 		if (fd_mixer == -1) {
-			Melder_error ("(Sound_record:) Cannot open /dev/mixer.");
+			Melder_error1 (L"(Sound_record:) Cannot open /dev/mixer.");
 			goto error;
 		}
 		
 
 		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECMASK, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Cannot access /dev/mixer.");						goto error;
+			Melder_error1 (L"(Sound_record:) Cannot access /dev/mixer.");
+			goto error;
 		}
 		/*		printf("%d %d %d\n", dev_mask, (dev_mask&SOUND_MASK_LINE), (dev_mask&SOUND_MASK_MIC));*/
 		if (inputSource == 2) {
@@ -365,7 +366,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (dev_mask&SOUND_MASK_LINE) {
 				dev_mask = SOUND_MASK_LINE;
 			} else {
-				Melder_error ("(Sound_record:) Can't set LINE as recording device");
+				Melder_error1 (L"(Sound_record:) Can't set LINE as recording device");
 				goto error;
 			}
 			
@@ -374,17 +375,17 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (dev_mask&SOUND_MASK_MIC) {
 				dev_mask = SOUND_MASK_MIC;
 			} else {
-				Melder_error ("(Sound_record:) Can't set MIC as recording device");
+				Melder_error1 (L"(Sound_record:) Can't set MIC as recording device");
 				goto error;
 			}
 
 		}
 		/*		printf("%d\n", dev_mask);*/
 		if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Can't set recording device in mixer");		
+			Melder_error1 (L"(Sound_record:) Can't set recording device in mixer");		
 		}
 		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECSRC, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Can't read recording device from mixer");		
+			Melder_error1 (L"(Sound_record:) Can't read recording device from mixer");		
 		} else {
 			/*			printf("%x\n",dev_mask);*/
 			if (dev_mask&SOUND_MASK_MIC) {
@@ -405,7 +406,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		info. record. gain = gain <= 0.0 ? 0 : gain >= 1.0 ? 255 : floor (gain * 255 + 0.5);
 		info. record. balance = balance <= 0.0 ? 0 : balance >= 1.0 ? 64 : floor (balance * 64 + 0.5);
 		if (ioctl (fd, AUDIO_SETINFO, & info) == -1) {
-			Melder_error ("(Sound_record:) Cannot set gain and balance.");
+			Melder_error1 (L"(Sound_record:) Cannot set gain and balance.");
 			goto error;
 		}
 	#elif defined (linux)
@@ -420,13 +421,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (inputSource == 1) {			
 			/* MIC */		       
 			if (ioctl(fd_mixer, MIXER_WRITE(SOUND_MIXER_MIC), &val) == -1) {
-				Melder_error ("(Sound_record:) Cannot set gain and balance.");
+				Melder_error1 (L"(Sound_record:) Cannot set gain and balance.");
 				goto error;				
 			}
 		} else {
 			/* LINE */
 			if (ioctl(fd_mixer, MIXER_WRITE(SOUND_MIXER_LINE), &val) == -1) {
-				Melder_error ("(Sound_record:) Cannot set gain and balance.");
+				Melder_error1 (L"(Sound_record:) Cannot set gain and balance.");
 				goto error;				
 			}
 		}
@@ -465,24 +466,24 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	#elif defined (macintosh)
 		unsigned long sampleRate_uf = sampleRate * 65536.0;
 		if (SPBSetDeviceInfo (refNum, siSampleRate, & sampleRate_uf) != noErr) {
-			Melder_error ("(Sound_record:) Cannot set sampling frequency to %f.", sampleRate);
+			Melder_error3 (L"(Sound_record:) Cannot set sampling frequency to ", Melder_integer (sampleRate), L" Hertz.");
 			goto error;
 		}
 	#elif defined (sun)
 		AUDIO_INITINFO (& info);
 		info. record. sample_rate = sampleRate;
 		if (ioctl (fd, AUDIO_SETINFO, & info) == -1) {
-			Melder_error ("(Sound_record:) Cannot set sampling frequency to %f.", sampleRate);
+			Melder_error3 (L"(Sound_record:) Cannot set sampling frequency to ", Melder_double (sampleRate), L" Hertz.");
 			goto error;
 		}
 	#elif defined (HPUX)
 		if (ioctl (fd, AUDIO_SET_SAMPLE_RATE, (int) sampleRate) == -1) {
-			Melder_error ("(Sound_record:) Cannot set sampling frequency to %d.", (int) sampleRate);
+			Melder_error3 (L"(Sound_record:) Cannot set sampling frequency to ", Melder_integer (sampleRate), L" Hertz.");
 			goto error;
 		}
 	#elif defined (linux)
 		if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate) == -1) {
-			Melder_error ("(Sound_record:) Cannot set sampling frequency to %d.", (int) sampleRate);
+			Melder_error3 (L"(Sound_record:) Cannot set sampling frequency to ", Melder_integer (sampleRate), L" Hertz.");
 			goto error;
 		}
 	#elif defined (_WIN32)
@@ -505,18 +506,18 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		AUDIO_INITINFO (& info);
 		info. record. channels = 1;
 		if (ioctl (fd, AUDIO_SETINFO, & info) == -1) {
-			Melder_error ("(Sound_record:) Cannot set to mono.");
+			Melder_error1 (L"(Sound_record:) Cannot set to mono.");
 			goto error;
 		}
 	#elif defined (HPUX)
 		if (ioctl (fd, AUDIO_SET_CHANNELS, 1) == -1) {
-			Melder_error ("(Sound_record:) Cannot set to mono.");
+			Melder_error1 (L"(Sound_record:) Cannot set to mono.");
 			goto error;
 		}
 	#elif defined (linux)
 		val = 1;
 		if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1) {
-			Melder_error ("(Sound_record:) Cannot set to mono.");
+			Melder_error1 (L"(Sound_record:) Cannot set to mono.");
 			goto error;
 		}
 	#elif defined (_WIN32)
@@ -534,11 +535,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		OSType compressionType = 'NONE';
 		short sampleSize = can16bit ? 16 : 8;
 		if (SPBSetDeviceInfo (refNum, siCompressionType, & compressionType) != noErr) {
-			Melder_error ("(Sound_record:) Cannot set to linear.");
+			Melder_error1 (L"(Sound_record:) Cannot set to linear.");
 			goto error;
 		}
 		if (SPBSetDeviceInfo (refNum, siSampleSize, & sampleSize) != noErr) {
-			Melder_error ("(Sound_record:) Cannot set to %d-bit.", sampleSize);
+			Melder_error3 (L"(Sound_record:) Cannot set to ", Melder_integer (sampleSize), L"-bit.");
 			goto error;
 		}
 	}
@@ -547,18 +548,18 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		info. record. precision = 16;
 		info. record. encoding = AUDIO_ENCODING_LINEAR;
 		if (ioctl (fd, AUDIO_SETINFO, & info) == -1) {
-			Melder_error ("(Sound_record:) Cannot set to 16-bit linear.");
+			Melder_error1 (L"(Sound_record:) Cannot set to 16-bit linear.");
 			goto error;
 		}
 	#elif defined (HPUX)
 		if (ioctl (fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1) {
-			Melder_error ("(Sound_record:) Cannot set 16-bit linear.");
+			Melder_error1 (L"(Sound_record:) Cannot set 16-bit linear.");
 			goto error;
 		}
 	#elif defined (linux)
 		val = AFMT_S16_LE;
 		if (ioctl (fd, SNDCTL_DSP_SETFMT, &val) == -1) {
-			Melder_error ("(Sound_record:) Cannot set 16-bit linear.");
+			Melder_error1 (L"(Sound_record:) Cannot set 16-bit linear.");
 			goto error;
 		}
 	#elif defined (_WIN32)
@@ -600,9 +601,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		info. buffer = buffer;
 		PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, NULL,
 			sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
-		if (err) { Melder_error ("open %s", Pa_GetErrorText (err)); goto error; }
+		if (err) { Melder_error2 (L"open ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err))); goto error; }
 		Pa_StartStream (portaudioStream);
-		if (err) { Melder_error ("start %s", Pa_GetErrorText (err)); goto error; }
+		if (err) { Melder_error2 (L"start ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err))); goto error; }
 	#elif defined (sgi)
 		port = ALopenport ("Sound_record", "r", config);
 		if (! port) {
@@ -642,7 +643,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	#elif defined (_WIN32)
 		waveFormat. cbSize = 0;
 		err = waveInOpen (& hWaveIn, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL);
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while opening.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while opening."); goto error; }
 	#endif
 
 	/* Read the sound into the buffer. */
@@ -664,14 +665,14 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		waveHeader. lpNext = NULL;
 		waveHeader. reserved = 0;
 		err = waveInPrepareHeader (hWaveIn, & waveHeader, sizeof (WAVEHDR));
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while preparing header.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while preparing header."); goto error; }
 		err = waveInAddBuffer (hWaveIn, & waveHeader, sizeof (WAVEHDR));
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while listening.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while listening."); goto error; }
 		err = waveInStart (hWaveIn);
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while starting.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while starting."); goto error; }
       		while (! (waveHeader. dwFlags & WHDR_DONE)) { (void) clock (); }
 		err = waveInUnprepareHeader (hWaveIn, & waveHeader, sizeof (WAVEHDR));
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while unpreparing header.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while unpreparing header."); goto error; }
 	#else
 		if (mulaw)
 			read (fd, & ((char *) buffer) [1], numberOfSamples);
@@ -714,7 +715,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		SPBCloseDevice (refNum);
 	#elif defined (_WIN32)
 		err = waveInClose (hWaveIn);
-		if (err != MMSYSERR_NOERROR) { Melder_error ("(Sound_record:) Error %d while closing.", err); goto error; }
+		if (err != MMSYSERR_NOERROR) { Melder_error3 (L"(Sound_record:) Error ", Melder_integer (err), L" while closing."); goto error; }
 	#else
 		close (fd);
 	#endif

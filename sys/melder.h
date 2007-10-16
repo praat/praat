@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/10/06
+ * pb 2007/10/14
  */
 
 #include <stdio.h>
@@ -404,14 +404,14 @@ struct FLAC__StreamEncoder;
 
 typedef struct {
 	FILE *filePointer;
-	wchar_t wpath [260];
+	wchar_t path [260];
 	bool openForReading, openForWriting, verbose, requiresCRLF;
 	unsigned long outputEncoding;
 	int indent;
 	struct FLAC__StreamEncoder *flacEncoder;
 } structMelderFile, *MelderFile;
 typedef struct {
-	wchar_t wpath [260];
+	wchar_t path [260];
 } structMelderDir, *MelderDir;
 
 /********** NUMBER AND STRING COMPARISON **********/
@@ -739,7 +739,6 @@ int MelderFile_delete (MelderFile file);
 
 /* The following two should be combined with each other and with Windows extension setting: */
 FILE * Melder_fopen (MelderFile file, const char *type);
-FILE * Melder_fopenW (MelderFile file, const wchar_t *type);
 #if defined (macintosh)
 	void MelderFile_setMacTypeAndCreator (MelderFile file, long fileType, long creator);
 	unsigned long MelderFile_getMacType (MelderFile file);
@@ -773,20 +772,12 @@ void MelderFile_close (MelderFile file);
 /* It is often sufficient to call cherror only before other tests that could */
 /* result in Melder_error (), and to call iferror at the end. */
 
-/* A global for writing text files. Affects MelderFile_writeLine () only. */
-#define MelderFile_NATIVE  1
-#define MelderFile_MACINTOSH  2
-#define MelderFile_UNIX  3
-#define MelderFile_WINDOWS  4
-void MelderFile_setLineSeparator (int systemType);
-
 /* Read and write whole text files. */
 wchar_t * MelderFile_readText (MelderFile file);
 int MelderFile_writeText (MelderFile file, const wchar_t *text);
 int MelderFile_appendText (MelderFile file, const wchar_t *text);
 
-int Melder_createDirectory (MelderDir parent, const char *subdirName, int mode);
-int Melder_createDirectoryW (MelderDir parent, const wchar_t *subdirName, int mode);
+int Melder_createDirectory (MelderDir parent, const wchar_t *subdirName, int mode);
 
 void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);

@@ -145,7 +145,7 @@ static void updateViewportMenu (void) {
 }
 
 DIRECT (MouseSelectsInnerViewport)
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = TRUE);
 	praat_picture_close ();
@@ -153,7 +153,7 @@ DIRECT (MouseSelectsInnerViewport)
 END
 
 DIRECT (MouseSelectsOuterViewport)
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = FALSE);
 	praat_picture_close ();
@@ -178,20 +178,20 @@ SET_REAL ("right Horizontal range", x2NDC - xmargin);
 SET_REAL ("left Vertical range", 12-y2NDC + ymargin);
 SET_REAL ("right Vertical range", 12-y1NDC - ymargin);
 DO
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
 	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
 	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
 	if (left == right) {
-		Melder_error ("The left and right edges of the viewport cannot be equal.");
-		return Melder_error ("Please change the horizontal range.");
+		Melder_error1 (L"The left and right edges of the viewport cannot be equal.");
+		return Melder_error1 (L"Please change the horizontal range.");
 	}
 	if (left > right) { double temp; temp = left; left = right; right = temp; }
 	if (top == bottom) {
-		Melder_error ("The top and bottom edges of the viewport cannot be equal.");
-		return Melder_error ("Please change the vertical range.");
+		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
+		return Melder_error1 (L"Please change the vertical range.");
 	}
 	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 	x1NDC = left - xmargin;
@@ -216,17 +216,17 @@ SET_REAL ("right Horizontal range", x2NDC);
 SET_REAL ("left Vertical range", 12-y2NDC);
 SET_REAL ("right Vertical range", 12-y1NDC);
 DO
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
 	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
 	if (left == right) {
-		Melder_error ("The left and right edges of the viewport cannot be equal.");
-		return Melder_error ("Please change the horizontal range.");
+		Melder_error1 (L"The left and right edges of the viewport cannot be equal.");
+		return Melder_error1 (L"Please change the horizontal range.");
 	}
 	if (left > right) { double temp; temp = left; left = right; right = temp; }
 	if (top == bottom) {
-		Melder_error ("The top and bottom edges of the viewport cannot be equal.");
-		return Melder_error ("Please change the vertical range.");
+		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
+		return Melder_error1 (L"Please change the vertical range.");
 	}
 	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 	x1NDC = left;
@@ -1047,8 +1047,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.01 * (y2WC - y1WC);
-	if (position < y1WC - dy || position > y2WC + dy) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", y1WC, y2WC);
+	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
 	Graphics_markLeft (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
@@ -1067,8 +1067,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.01 * (y2WC - y1WC);
-	if (position < y1WC - dy || position > y2WC + dy) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", y1WC, y2WC);
+	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
 	Graphics_markRight (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
@@ -1087,8 +1087,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.01 * (x2WC - x1WC);
-	if (position < x1WC - dx || position > x2WC + dx) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", x1WC, x2WC);
+	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
 	Graphics_markTop (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
@@ -1107,8 +1107,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.01 * (x2WC - x1WC);
-	if (position < x1WC - dx || position > x2WC + dx) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", x1WC, x2WC);
+	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
 	Graphics_markBottom (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
@@ -1135,8 +1135,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.01 * (y2WC - y1WC);
-	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", pow (10, y1WC), pow (10, y2WC));
+	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
 	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
@@ -1155,8 +1155,8 @@ DO
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.01 * (y2WC - y1WC);
-	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", pow (10, y1WC), pow (10, y2WC));
+	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
+		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
 	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
 		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),

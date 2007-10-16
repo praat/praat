@@ -39,7 +39,7 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 	if (itime > my nx) itime = my nx;
 	for (ifreq = 1; ifreq <= my ny; ifreq ++) {
 		double value = my z [ifreq] [itime];
-		if (value < 0.0) { Melder_error ("Negative values in spectrogram."); goto error; }
+		if (value < 0.0) { Melder_error1 (L"Negative values in spectrogram."); goto error; }
 		thy z [1] [ifreq] = sqrt (value);
 		thy z [2] [ifreq] = 0.0;
 	}

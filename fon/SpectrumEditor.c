@@ -144,7 +144,7 @@ FORM (SpectrumEditor, cb_passBand, "Filter (pass Hann band)", "Spectrum: Filter 
 SET_REAL ("Band smoothing", my bandSmoothing)
 DO
 	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
-	if (my endSelection <= my startSelection) return Melder_error ("To apply band-pass filter, first make a selection.");
+	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
 	Editor_save (me, L"Pass band");
 	Spectrum_passHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
 	FunctionEditor_redraw (me);
@@ -157,7 +157,7 @@ FORM (SpectrumEditor, cb_stopBand, "Filter (stop Hann band)", 0)
 SET_REAL ("Band smoothing", my bandSmoothing)
 DO
 	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
-	if (my endSelection <= my startSelection) return Melder_error ("To apply band-stop filter, first make a selection.");
+	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
 	Editor_save (me, L"Stop band");
 	Spectrum_stopHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
 	FunctionEditor_redraw (me);

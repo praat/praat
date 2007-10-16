@@ -206,7 +206,7 @@ static void classUiInfile_ok (I) {
 		XtUnmanageChild (my dialog);
 	my shiftKeyPressed = 0;
 	UiHistory_write (L" ");
-	UiHistory_write (my file. wpath);
+	UiHistory_write (my file. path);
 }
 #endif
 
@@ -346,7 +346,7 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 		Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
 	XtUnmanageChild (my dialog);
 	UiHistory_write (L" ");
-	UiHistory_write (my file. wpath);
+	UiHistory_write (my file. path);
 }
 static XmString outDirMask;
 	/* Set when users clicks 'OK'. */
@@ -469,10 +469,10 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 					FSRefMakePath (& machFile, (unsigned char *) directoryPath, 999);
 					if (! (directoryPath [0] == '/' && directoryPath [1] == '\0'))
 						strcat (directoryPath, "/");
-					Melder_8bitToWcs_inline (directoryPath, my file. wpath, Melder_INPUT_ENCODING_UTF8);
-					int dirLength = wcslen (my file. wpath);
+					Melder_8bitToWcs_inline (directoryPath, my file. path, Melder_INPUT_ENCODING_UTF8);
+					int dirLength = wcslen (my file. path);
 					int n = CFStringGetLength (fileName);
-					wchar_t *p = my file. wpath + dirLength;
+					wchar_t *p = my file. path + dirLength;
 					for (int i = 0; i < n; i ++, p ++)
 						*p = CFStringGetCharacterAtIndex (fileName, i);
 					*p = '\0';

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071014)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071016)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.33# (October 16, 2007)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in September that caused Praat to crash when a PointProcess window was opened without a Sound.")
+LIST_ITEM (L"\\bu Macintosh: objects with non-ASCII names show up correctly in the list.")
 NORMAL (L"##4.6.32# (October 14, 2007)")
 LIST_ITEM (L"\\bu Unicode support for names of objects.")
 LIST_ITEM (L"\\bu Linux: first Unicode support (in window titles).")

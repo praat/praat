@@ -201,7 +201,7 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 int Formant_formula_bandwidths (Formant me, const wchar_t *formula) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
-	if (nrow < 1) return Melder_error ("(Formant_formula_bandwidths:) No formants available.");
+	if (nrow < 1) return Melder_error1 (L"(Formant_formula_bandwidths:) No formants available.");
 	mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1); cherror
 	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
@@ -223,7 +223,7 @@ end:
 int Formant_formula_frequencies (Formant me, const wchar_t *formula) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
-	if (nrow < 1) return Melder_error ("(Formant_formula_frequencies:) No formants available.");
+	if (nrow < 1) return Melder_error1 (L"(Formant_formula_frequencies:) No formants available.");
 	mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1); cherror
 	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];

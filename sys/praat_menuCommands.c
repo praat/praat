@@ -252,7 +252,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	/* Increment the command area.
 	 */
 	if (theNumberOfCommands >= praat_MAXNUM_FIXED_COMMANDS)
-		return Melder_error ("praat_addMenuCommand: too many menu commands.");
+		return Melder_error1 (L"praat_addMenuCommand: too many menu commands.");
 	theNumberOfCommands += 1;
 
 	/* Make room for insertion.

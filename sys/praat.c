@@ -131,8 +131,8 @@ long praat_getIdOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	return inplace ?
-		Melder_error ("No %s #%d selected.", klas ? klas -> _className : "object", inplace) :
-		Melder_error ("No %s selected.", klas ? klas -> _className : "object");
+		Melder_error5 (L"No ", klas ? klas -> _classNameW : L"object", L" #", Melder_integer (inplace), L" selected.") :
+		Melder_error3 (L"No ", klas ? klas -> _classNameW : L"object", L" selected.");
 }
 
 wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
@@ -311,7 +311,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	iam (Data);
 	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
 	static long uniqueID = 0;
-	if (me == NULL) return Melder_error ("No object was put into the list.");
+	if (me == NULL) return Melder_error1 (L"No object was put into the list.");
 	/*
 	 * If my class is Collection, I'll have to be unpacked.
 	 */
@@ -344,8 +344,8 @@ bool praat_new1 (I, const wchar_t *myName) {
 
 	if (theCurrentPraat -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
-		return Melder_error ("The Object Window cannot contain more than %d objects. "
-			"You could remove some objects.", praat_MAXNUM_OBJECTS);
+		return Melder_error3 (L"The Object Window cannot contain more than ", Melder_integer (praat_MAXNUM_OBJECTS), L" objects. "
+			"You could remove some objects.");
 	}
 		
 	IOBJECT = ++ theCurrentPraat -> n;
@@ -525,7 +525,7 @@ static void praat_exit (int exit_code) {
 	 * Stop receiving messages.
 	 */
 	#if defined (UNIX)
-		if (pidFile. wpath [0]) {
+		if (pidFile. path [0]) {
 			FILE *f = Melder_fopen (& pidFile, "r");
 			if (f) {
 				long pid;
@@ -640,8 +640,7 @@ int praat_installEditor (Any editor, int IOBJECT) {
 		}
 	}
 	forget (editor);
-	return Melder_error ("(praat_installEditor:) Cannot have more than %d editors with one object.",
-		praat_MAXNUM_EDITORS);
+	return Melder_error3 (L"(praat_installEditor:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
 }
 
 int praat_installEditor2 (Any editor, int i1, int i2) {
@@ -660,8 +659,7 @@ int praat_installEditor2 (Any editor, int i1, int i2) {
 		Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
 	} else {
 		forget (editor);
-		return Melder_error ("(praat_installEditor2:) Cannot have more than %d editors with one object.",
-			praat_MAXNUM_EDITORS);
+		return Melder_error3 (L"(praat_installEditor2:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
 	}
 	return 1;
 }
@@ -685,8 +683,7 @@ int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
 		Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
 	} else {
 		forget (editor);
-		return Melder_error ("(praat_installEditor3:) Cannot have more than %d editors with one object.",
-			praat_MAXNUM_EDITORS);
+		return Melder_error3 (L"(praat_installEditor3:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
 	}
 	return 1;
 }
@@ -710,7 +707,7 @@ int praat_installEditorN (Any editor, Ordered objects) {
 				}
 				if (ieditor >= praat_MAXNUM_EDITORS) {
 					forget (editor);
-					return Melder_error ("Cannot view the same object in more than %d windows.", praat_MAXNUM_EDITORS);
+					return Melder_error3 (L"Cannot view the same object in more than ", Melder_integer (praat_MAXNUM_EDITORS), L" windows.");
 				}
 				break;
 			}
@@ -767,7 +764,7 @@ static void helpProc (const wchar_t *query) {
 }
 
 static int publishProc (void *anything) {
-	if (! praat_new1 (anything, NULL)) return Melder_error ("(Melder_publish:) not published.");
+	if (! praat_new1 (anything, NULL)) return Melder_error1 (L"(Melder_publish:) not published.");
 	praat_updateSelection ();
 	return 1;
 }
@@ -857,7 +854,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	extern wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static int cb_openDocument (MelderFile file) {
 		wchar_t text [500];
-		swprintf (text, 500, L"Read from file... %ls", file -> wpath);
+		swprintf (text, 500, L"Read from file... %ls", file -> path);
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 		return 0;
 	}
@@ -921,7 +918,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
-		 * or running PRAATCON.EXE from the MS-DOS prompt or the NT command line:
+		 * or running PRAATCON.EXE from the Windows command prompt:
 		 *    <programName> <scriptFileName>
 		 */
 		theCurrentPraat -> batchName = argc > 1 && (int) argv [1] [0] != '-' ? Melder_utf8ToWcs (argv [1]) : NULL;
@@ -1010,9 +1007,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			swprintf (name, 256, L"%s", praatP.title);   /* For example MyProg */
 		#endif
 		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectoryW (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		#else
-			Melder_createDirectoryW (& prefParentDir, name, 0);
+			Melder_createDirectory (& prefParentDir, name, 0);
 		#endif
 		MelderDir_getSubdir (& prefParentDir, name, & praatDir);
 		#if defined (UNIX)
@@ -1345,7 +1342,7 @@ void praat_run (void) {
 				if (wcslen (text) > 0 && text [wcslen (text) - 1] == '\"') {
 					text [wcslen (text) - 1] = '\0';
 				}
-				if (! praat_executeScriptFromText (text)) Melder_error (NULL);
+				if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG
 			}
 		#endif
 

@@ -391,7 +391,7 @@ int praat_installEditor (Any editor, int iobject);
       Return value: normally 1, but 0 if 'editor' is NULL.
    A typical calling sequence is:
 	DIRECT (Spectrogram_edit)
-		if (praat.batch) return Melder_error ("Cannot edit a Spectrogram from batch.");
+		if (praat.batch) return Melder_error1 (L"Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			if (! praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;
@@ -402,7 +402,7 @@ int praat_installEditor3 (Any editor, int iobject1, int iobject2, int iobject3);
 /* The same for two objects in one editor. Example:
 DIRECT (SiftLdbDisambiguate)
 	if (praat.batch) {
-		return Melder_error ("Cannot edit from batch.");
+		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		int ildb, idict;
 		WHERE (SELECTED) {

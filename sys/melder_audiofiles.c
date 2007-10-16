@@ -725,10 +725,9 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 {
 	MelderDecodeFlacContext *c = (MelderDecodeFlacContext *) client_data;
 	const FLAC__FrameHeader *header = & frame -> header;
-	unsigned count = header -> blocksize;
+	long count = header -> blocksize;
 	const FLAC__int32 *input;
 	float multiplier, *output;
-	unsigned i, j;
 
 	(void) decoder;
 
@@ -740,10 +739,10 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 		default: return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 	}
 
-	for (i = 0; i < c -> numberOfChannels; ++ i) {
+	for (long i = 0; i < c -> numberOfChannels; ++ i) {
 		input = buffer [i];
 		output = c -> channels [i];
-		for (j = 0; j < count; ++ j)
+		for (long j = 0; j < count; ++ j)
 			output [j] = ((long) input [j]) * multiplier;
 		c -> channels [i] += count;
 	}
@@ -754,11 +753,10 @@ static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHAN
 	MelderDecodeMp3Context *c = (MelderDecodeMp3Context *) context;
 	const MP3F_SAMPLE *input;
 	float *output;
-	unsigned i, j;
-	for (i = 0; i < c -> numberOfChannels; ++ i) {
+	for (long i = 0; i < c -> numberOfChannels; ++ i) {
 		input = channels [i];
 		output = c -> channels [i];
-		for (j = 0; j < count; ++ j)
+		for (long j = 0; j < count; ++ j)
 			output [j] = mp3f_sample_to_float (input [j]);
 		c -> channels [i] += count;
 	}

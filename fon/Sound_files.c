@@ -101,25 +101,25 @@ static void Sound_alawDecode (Sound me) {
 		Str255 pname;
 		OSErr err;
 		char path [1000];
-		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
+		Melder_wcsTo8bitFileRepresentation_inline (file -> path, path);
 		PfromCstr (pname, path);
 		err = FSMakeFSSpec (0, 0, & pname [0], fspec);
 		if (err != noErr && err != fnfErr) {
 			if (err == -2095) {
-				return Melder_error ("To open this movie file, you have to install QuickTime first (www.apple.com).");
+				return Melder_error1 (L"To open this movie file, you have to install QuickTime first (www.apple.com).");
 			}
-			return Melder_error ("Error #%d looking for file %s.", err, path);
+			return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> path, L".");
 		}
 		return 1;
 	}
 #elif defined (macintosh)
 	static int Melder_fileToMac (MelderFile file, void *void_fspec) {
 		char path [1000];
-		Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, path);
+		Melder_wcsTo8bitFileRepresentation_inline (file -> path, path);
 		FSRef fsref;
 		OSStatus err = FSPathMakeRef ((unsigned char *) path, & fsref, NULL);
 		if (err != noErr && err != fnfErr)
-			return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> wpath, L".");
+			return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> path, L".");
 		FSSpec *fspec = (FSSpec *) void_fspec;
 		err = FSGetCatalogInfo (& fsref, kFSCatInfoNone, NULL, NULL, fspec, NULL);
 		if (err != noErr) {
@@ -133,13 +133,13 @@ static void Sound_alawDecode (Sound me) {
 			FSCatalogInfo info;
 			FSRef parentDirectory;
 			MelderFile_getParentDir (file, & parentDir);
-			Melder_wcsTo8bitFileRepresentation_inline (parentDir. wpath, path);
+			Melder_wcsTo8bitFileRepresentation_inline (parentDir. path, path);
 			err = FSPathMakeRef ((unsigned char *) path, & parentDirectory, NULL);
 			if (err != noErr)
-				return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. wpath, L".");
+				return Melder_error5 (L"Error #", Melder_integer (err), L" translating directory name ", parentDir. path, L".");
 			err = FSGetCatalogInfo (& parentDirectory, kFSCatInfoVolume | kFSCatInfoNodeID, & info, NULL, NULL, NULL);
 			if (err != noErr)
-				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for directory of ", file -> wpath, L".");
+				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for directory of ", file -> path, L".");
 			/*
 				Convert from Unicode to MacRoman.
 			*/
@@ -147,7 +147,7 @@ static void Sound_alawDecode (Sound me) {
 			PfromCstr (pname, romanName);
 			err = FSMakeFSSpec (info. volume, info. nodeID, & pname [0], fspec);
 			if (err != noErr && err != fnfErr)
-				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> wpath, L".");
+				return Melder_error5 (L"Error #", Melder_integer (err), L" looking for file ", file -> path, L".");
 		}
 		return 1;
 	}
@@ -171,14 +171,14 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 		fclose (f);
 		if (TRUE /* ! unshorten (file, 1024, encoding == Melder_POLYPHONE, & me) */) {
 			forget (me);
-			return Melder_errorp ("(Sound_readFromSoundFile:) Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
+			return Melder_errorp1 (L"(Sound_readFromSoundFile:) Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
 		}
 		return me;
 	}
 	Melder_readAudioToFloat (f, numberOfChannels, encoding, my z [1], numberOfChannels == 1 ? NULL : my z [2], numberOfSamples); cherror
 end:
 	if (f) fclose (f);
-	iferror { Melder_error ("(Sound_readFromSoundFile:) File %s not read.", MelderFile_messageName (file)); forget (me); }
+	iferror { Melder_error3 (L"(Sound_readFromSoundFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (me); }
 	return me;
 }
 
@@ -195,7 +195,7 @@ int Sound_read2FromSoundFile (MelderFile file, Sound *return_left, Sound *return
 		error1 (L"Can only read AIFF/C, WAV, NeXT/Sun, and NIST files.")
 	if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE) {
 		fclose (f);
-		return Melder_error ("(Sound_read2FromSoundFile:) Cannot unshorten two channels.");
+		return Melder_error1 (L"(Sound_read2FromSoundFile:) Cannot unshorten two channels.");
 	}
 	if (fseek (f, startOfData, SEEK_SET) == EOF)   /* Start from beginning of sample data. */
 		error1 (L"No data in audio file.")
@@ -206,7 +206,7 @@ int Sound_read2FromSoundFile (MelderFile file, Sound *return_left, Sound *return
 	Melder_readAudioToFloat (f, numberOfChannels, encoding, left -> z [1], right ? right -> z [1] : NULL, numberOfSamples); cherror
 end:
 	if (f) fclose (f);
-	iferror { Melder_error ("(Sound_read2FromSoundFile:) File %s not read.", MelderFile_messageName (file)); forget (left); forget (right); }
+	iferror { Melder_error3 (L"(Sound_read2FromSoundFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (left); forget (right); }
 	*return_left = left;
 	*return_right = right;
 	return 1;
@@ -428,7 +428,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 			L" frames in, ", Melder_integer (numberOfOutputFrames), L" frames out, ", Melder_integer (numberOfOutputBytes), L" bytes out.")
 /*	err = SoundConverterEndConversion (soundConverter, & my z [1] [1], & numberOfOutputFrames, & numberOfOutputBytes);
 	if (err != noErr) {
-		Melder_error ("Cannot end sound conversion.");
+		Melder_error1 (L"Cannot end sound conversion.");
 		goto end;
 	}*/
 	if (numberOfOutputBytes != my nx * 2)
@@ -449,7 +449,7 @@ end:
 	NUMsvector_free (buffer, 0);
 	iferror forget (me);
 #else
-	Melder_error ("This edition of Praat cannot handle movie files.");
+	Melder_error1 (L"This edition of Praat cannot handle movie files.");
 #endif
 	return me;
 }
@@ -470,12 +470,12 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	 * Check identity of file: first line is "SIG", second line contains a number.
 	 */
 	if (fread (tag, 1, 16, f) < 16 || ! strnequ (tag, "SIG\n", 4))
-		{ Melder_error ("Not a Bell-Labs sound file."); goto error; }
+		{ Melder_error1 (L"Not a Bell-Labs sound file."); goto error; }
 	if ((endOfTag = strchr (tag + 4, '\n')) == NULL)
-		{ Melder_error ("Second line missing or too long."); goto error; }
+		{ Melder_error1 (L"Second line missing or too long."); goto error; }
 	tagLength = endOfTag - tag + 1;   /* Probably 12. */
 	if ((headerLength = atol (tag + 4)) <= 0)
-		{ Melder_error ("Wrong header-length info."); goto error; }
+		{ Melder_error1 (L"Wrong header-length info."); goto error; }
 
 	/*
 	 * Read data from header.
@@ -483,7 +483,7 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	 */
 	if ((lines = Melder_calloc (char, headerLength + 1)) == NULL) goto error;
 	if (fread (lines, 1, headerLength, f) < headerLength)
-		{ Melder_error ("Header too short."); goto error; }
+		{ Melder_error1 (L"Header too short."); goto error; }
 	psamples = lines - 1;
 	while ((psamples = strstr (psamples + 1, "samples ")) != NULL)   /* Take last occurrence. */
 		numberOfSamples = atol (psamples + 8);
@@ -493,7 +493,7 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 		numberOfSamples = (ftell (f) - tagLength - headerLength) / 2;
 	}
 	if (numberOfSamples < 1)
-		{ Melder_error ("No samples found."); goto error; }
+		{ Melder_error1 (L"No samples found."); goto error; }
 	pfrequency = lines - 1;
 	while ((pfrequency = strstr (pfrequency + 1, "frequency ")) != NULL)   /* Take last occurrence. */
 		samplingFrequency = atof (pfrequency + 10);
@@ -512,17 +512,17 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	for (i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2 (f) * (1.0 / 32768); /* 16 bits Big-Endian. */
 
 	if (fclose (f) != 0)
-		{ Melder_error ("Error reading file."); goto error; }
+		{ Melder_error1 (L"Error reading file."); goto error; }
 	Melder_free (lines);
 	return me;
 error:
 	if (f) fclose (f);
 	Melder_free (lines);
-	return Melder_errorp ("(Sound_readFromBellLabsFile:) File \"%s\" not read.", MelderFile_messageName (fs));
+	return Melder_errorp3 (L"(Sound_readFromBellLabsFile:) File ", MelderFile_messageNameW (fs), L" not read.");
 }
 
 static Sound readError (MelderFile file) {
-	return Melder_errorp ("(Sound_readFrom...File:) Cannot read file \"%s\".", MelderFile_messageName (file));
+	return Melder_errorp3 (L"(Sound_readFrom...File:) Cannot read file ", MelderFile_messageNameW (file), L".");
 }
 
 Sound Sound_readFromKayFile (MelderFile fs) {
@@ -601,7 +601,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 	Melder_readAudioToFloat (f, 1, Melder_ALAW, my z [1], NULL, numberOfSamples); cherror
 end:
 	Melder_fclose (file, f);
-	iferror { Melder_error ("(Sound_readFromRawAlawFile:) File %s not read.", MelderFile_messageName (file)); forget (me); }
+	iferror { Melder_error3 (L"(Sound_readFromRawAlawFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (me); }
 	return me;
 }
 
@@ -641,7 +641,7 @@ int Sound_writeToSesamFile (Sound me, MelderFile file) {
 	tail = 256 - my nx % 256;
 	if (tail == 256) tail = 0;
 	for (i = 1; i <= tail; i ++) binputi2LE (0, f);   /* Pad last block with zeroes. */
-	if (fclose (f) == EOF) return Melder_error ("Error writing file \"%s\".", MelderFile_messageName (file));
+	if (fclose (f) == EOF) return Melder_error3 (L"Error writing file ", MelderFile_messageNameW (file), L".");
 	return 1;
 }
 
@@ -653,7 +653,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	long i;
 	float *from;
 	unsigned char *to;
-	if (! dataH) return Melder_error ("Sound_writeToMacSoundFile: not enough memory.");
+	if (! dataH) return Melder_error1 (L"Sound_writeToMacSoundFile: not enough memory.");
 	data = *dataH;
 	data -> formatType = 1;
 	data -> numberOfSynthesizers = 1;
@@ -679,7 +679,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	FSGetResourceForkName (& resourceForkName);
 	FSRef fsRef;
 	char pathUtf8 [1000];
-	Melder_wcsTo8bitFileRepresentation_inline (file -> wpath, pathUtf8);
+	Melder_wcsTo8bitFileRepresentation_inline (file -> path, pathUtf8);
 	OSStatus err = FSPathMakeRef ((unsigned char *) pathUtf8, & fsRef, NULL);
 	if (err == fnfErr) {
 		structMelderDir dir;
@@ -698,7 +698,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	if (err2 == nsvErr) {
 		return Melder_error1 (L"File not found when trying to create a Mac sound resource file.");
 	} else if (err2 != noErr)
-		return Melder_error ("Unexpected error %d trying to create a Mac sound file.", err2);
+		return Melder_error3 (L"Unexpected error ", Melder_integer (err2), L" trying to create a Mac sound file.");
 	int path = FSOpenResFile (& fsRef, fsWrPerm);
 
 	/* Write the data to the file as an 'snd ' resource. */
@@ -711,7 +711,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	AddResource ((Handle) dataH, 'snd ', 128, (unsigned char *) "sound");   /* Resource manager's. */
 	if (ResError () != noErr) {
 		CloseResFile (path);
-		return Melder_error ("Sound_writeToMacSoundFile: not enough disk space.");
+		return Melder_error1 (L"Sound_writeToMacSoundFile: not enough disk space.");
 	}
 	SetResAttrs ((Handle) dataH, resPurgeable + resChanged);
 		/* Make purgeable, like system sounds. Keep the changes. */

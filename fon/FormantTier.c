@@ -216,7 +216,7 @@ FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 	}
 end:
 	forget (temp);
-	iferror { forget (thee); Melder_error ("(Formant_PointProcess_to_FormantTier:) Not performed."); }
+	iferror { forget (thee); Melder_error1 (L"(Formant_PointProcess_to_FormantTier:) Not performed."); }
 	return thee;
 }
 

@@ -89,7 +89,7 @@ class_methods (Transition, Data) {
 int Transition_init (I, long numberOfStates) {
 	iam (Transition);
 	if (numberOfStates < 1)
-		return Melder_error ("(Transition_init:) Cannot create empty matrix.");
+		return Melder_error1 (L"(Transition_init:) Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
 	if (! (my stateLabels = NUMvector (sizeof (char *), 1, numberOfStates))) return 0;
 	if (! (my data = NUMdmatrix (1, my numberOfStates, 1, my numberOfStates))) return 0;

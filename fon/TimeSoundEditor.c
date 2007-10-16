@@ -149,7 +149,7 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 
 static int do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	Sound extract = NULL;
-	if (my endSelection <= my startSelection) return Melder_error ("No selection.");
+	if (my endSelection <= my startSelection) return Melder_error1 (L"No selection.");
 	if (my longSound.data) {
 		extract = LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preserveTimes);
 		iferror return 0;
@@ -202,7 +202,7 @@ static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 
 static int do_write (TimeSoundEditor me, MelderFile file, int format) {
 	if (my startSelection >= my endSelection)
-		return Melder_error ("No samples selected.");
+		return Melder_error1 (L"No samples selected.");
 	if (my longSound.data) {
 		return LongSound_writePartToAudioFile16 (my longSound.data, format, my startSelection, my endSelection, file);
 	} else if (my sound.data) {

@@ -254,7 +254,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	/* Increment the command area.
 	 */
 	if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
-		return Melder_error ("praat_addActionScript: too many loose commands.");
+		return Melder_error1 (L"praat_addActionScript: too many loose commands.");
 	theNumberOfActions += 1;
 
 	/* Make room for insertion.

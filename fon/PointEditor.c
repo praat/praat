@@ -52,57 +52,57 @@ static void destroy (I) {
 /********** MENU COMMANDS **********/
 
 DIRECT (PointEditor, cb_getJitter_local)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_local (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 END
 
 DIRECT (PointEditor, cb_getJitter_local_absolute)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_local_absolute (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 END
 
 DIRECT (PointEditor, cb_getJitter_rap)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_rap (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 END
 
 DIRECT (PointEditor, cb_getJitter_ppq5)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ppq5 (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 END
 
 DIRECT (PointEditor, cb_getJitter_ddp)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ddp (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_local)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_local_dB)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local_dB (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_apq3)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq3 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_apq5)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq5 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_apq11)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq11 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
 DIRECT (PointEditor, cb_getShimmer_dda)
-	if (my startSelection == my endSelection) return Melder_error ("Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_dda (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 END
 
@@ -171,28 +171,31 @@ static void draw (I) {
 	iam (PointEditor);
 	PointProcess point = my data;
 	Sound sound = my sound.data;
-	long first, last, i;
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	double minimum = -1.0, maximum = +1.0;
-	if (my sound.autoscaling) {
+	if (sound != NULL && my sound.autoscaling) {
 		long first, last;
-		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) >= 1)
+		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
+		}
 	}
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 	Graphics_setColour (my graphics, Graphics_BLACK);
-	if (sound != NULL && Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
-		Graphics_setLineType (my graphics, Graphics_DOTTED);
-		Graphics_line (my graphics, my startWindow, 0.0, my endWindow, 0.0);
-		Graphics_setLineType (my graphics, Graphics_DRAWN);      
-		Graphics_function (my graphics, sound -> z [1], first, last,
-			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+	if (sound != NULL) {
+		long first, last;
+		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
+			Graphics_setLineType (my graphics, Graphics_DOTTED);
+			Graphics_line (my graphics, my startWindow, 0.0, my endWindow, 0.0);
+			Graphics_setLineType (my graphics, Graphics_DRAWN);      
+			Graphics_function (my graphics, sound -> z [1], first, last,
+				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+		}
 	}
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, -1.0, +1.0);
-	for (i = 1; i <= point -> nt; i ++) {
+	for (long i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= my startWindow && t <= my endWindow)
 			Graphics_line (my graphics, t, -0.9, t, +0.9);

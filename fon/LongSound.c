@@ -203,9 +203,9 @@ static int LongSound_init (LongSound me, MelderFile file) {
 	my f = file -> filePointer;
 	my audioFileType = MelderFile_checkSoundFile (file, & my numberOfChannels, & my encoding, & my sampleRate, & my startOfData, & my nx); cherror
 	if (my audioFileType == 0)
-		return Melder_error ("File not recognized (LongSound only supports AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC).");
+		return Melder_error1 (L"File not recognized (LongSound only supports AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC).");
 	if (my encoding == Melder_SHORTEN || my encoding == Melder_POLYPHONE)
-		return Melder_error ("LongSound does not support sound files compressed with \"shorten\".");
+		return Melder_error1 (L"LongSound does not support sound files compressed with \"shorten\".");
 	my xmin = 0.0;
 	my dx = 1 / my sampleRate;
 	my xmax = my nx * my dx;
@@ -240,7 +240,7 @@ static int LongSound_init (LongSound me, MelderFile file) {
 		mp3f_set_file (my mp3f, my f);
 		mp3f_set_callback (my mp3f, _LongSound_MP3_convert, me);
 		if (! mp3f_analyze (my mp3f))
-			return Melder_error ("Unable to analyze MP3 file.");
+			return Melder_error1 (L"Unable to analyze MP3 file.");
 	}
 end:
 	iferror return 0;
@@ -274,19 +274,19 @@ LongSound LongSound_open (MelderFile fs) {
 static int _LongSound_FLAC_process (LongSound me, long firstSample, long numberOfSamples) {
 	my compressedSamplesLeft = numberOfSamples - 1;
 	if (! FLAC__stream_decoder_seek_absolute (my flacDecoder, firstSample))
-		return Melder_error ("Cannot seek in FLAC file %s.", MelderFile_messageName (& my file));
+		return Melder_error3 (L"Cannot seek in FLAC file ", MelderFile_messageNameW (& my file), L".");
 	while (my compressedSamplesLeft > 0) {
 		if (FLAC__stream_decoder_get_state (my flacDecoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
-			return Melder_error ("FLAC file %s too short.", MelderFile_messageName (& my file ));
+			return Melder_error3 (L"FLAC file ", MelderFile_messageNameW (& my file ), L" too short.");
 		if (! FLAC__stream_decoder_process_single (my flacDecoder))
-			return Melder_error ("Error decoding FLAC file %s.", MelderFile_messageName (& my file ));
+			return Melder_error3 (L"Error decoding FLAC file ", MelderFile_messageNameW (& my file ), L".");
 	}
 	return 1;
 }
 
 static int _LongSound_FILE_seekSample (LongSound me, long firstSample) {
 	if (fseek (my f, my startOfData + (firstSample - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
-		return Melder_error3 (L"Cannot seek in file \"", MelderFile_messageNameW (& my file), L"\".");
+		return Melder_error3 (L"Cannot seek in file ", MelderFile_messageNameW (& my file), L".");
 	return 1;
 }
 
@@ -355,7 +355,7 @@ Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserv
 	if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
 	LongSound_readAudioToFloat (me, thy z [1], thy ny == 1 ? NULL : thy z [2], imin, n); cherror
 end:
-	iferror { forget (thee); Melder_error ("Sound not extracted from LongSound."); }
+	iferror { forget (thee); Melder_error1 (L"Sound not extracted from LongSound."); }
 	return thee;
 }
 
@@ -388,19 +388,19 @@ int LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double tm
 	if (tmin < my xmin) tmin = my xmin;
 	if (tmax > my xmax) tmax = my xmax;
 	n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) return Melder_error ("Less than 1 sample selected.");
+	if (n < 1) return Melder_error1 (L"Less than 1 sample selected.");
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer)
 		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, n, my numberOfChannels);
 	writePartToOpenFile16 (me, audioFileType, imin, n, file, 0);
 	MelderFile_close (file);
-	iferror return Melder_error ("Sound file not written.");
+	iferror return Melder_error1 (L"Sound file not written.");
 	return 1;
 }
 
 int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int channel, MelderFile file) {
 	if (my numberOfChannels != 2)
-		return Melder_error ("This audio file is not a stereo file. It does not have a %s channel.", channel == 0 ? "left" : "right");
+		return Melder_error3 (L"This audio file is not a stereo file. It does not have a ", channel == 0 ? L"left" : L"right", L" channel.");
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer)
 		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, my nx, 1);

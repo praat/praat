@@ -43,7 +43,7 @@ END
 
 DIRECT (ExperimentMFC_run)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot run experiments from the command line.");
+		return Melder_error1 (L"Cannot run experiments from the command line.");
 	} else {
 		RunnerMFC runner = NULL;
 		Ordered experiments = Ordered_create ();

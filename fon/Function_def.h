@@ -1,6 +1,6 @@
 /* Function_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1995/08/24
- * pb 2002/07/16 GPL
+ * pb 2007/10/15
  */
 
 
@@ -31,7 +30,7 @@ oo_DEFINE_CLASS (Function, Data)
 
 	#if oo_READING
 		if (my xmin > my xmax)
-			return Melder_error ("Wrong xmin %.8g and xmax %.8g.", my xmin, my xmax);
+			return Melder_error5 (L"Wrong xmin ", Melder_double (my xmin), L" and xmax ", Melder_double (my xmax), L".");
 	#endif
 
 oo_END_CLASS (Function)

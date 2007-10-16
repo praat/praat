@@ -99,7 +99,7 @@ END
 
 DIRECT (OTGrammar_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit from batch.");
+		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
 			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,
@@ -660,7 +660,7 @@ END
 
 DIRECT (OTMulti_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit from batch.");
+		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
 			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, FULL_NAMEW,

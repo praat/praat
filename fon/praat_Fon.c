@@ -202,7 +202,7 @@ END
 
 DIRECT (AmplitudeTier_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit an AmplitudeTier from batch.");
+		return Melder_error1 (L"Cannot edit an AmplitudeTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
@@ -455,7 +455,7 @@ END
 
 DIRECT (DurationTier_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a DurationTier from batch.");
+		return Melder_error1 (L"Cannot edit a DurationTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)

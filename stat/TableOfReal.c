@@ -260,7 +260,7 @@ int TableOfReal_insertRow (I, long irow) {
 	my rowLabels = rowLabels;
 	my numberOfRows ++;
 end:
-	iferror return Melder_error ("(TableOfReal_insertRow:) Not performed.");
+	iferror return Melder_error1 (L"(TableOfReal_insertRow:) Not performed.");
 	return 1;
 }
 
@@ -280,7 +280,7 @@ int TableOfReal_removeColumn (I, long icol) {
 	my data = data;
 	my numberOfColumns --;
 end:
-	iferror return Melder_error ("(TableOfReal_removeColumn:) Not performed.");
+	iferror return Melder_error1 (L"(TableOfReal_removeColumn:) Not performed.");
 	return 1;
 }
 
@@ -305,7 +305,7 @@ int TableOfReal_insertColumn (I, long icol) {
 	my columnLabels = columnLabels;
 	my numberOfColumns ++;
 end:
-	iferror return Melder_error ("(TableOfReal_insertColumn:) Not performed.");
+	iferror return Melder_error1 (L"(TableOfReal_insertColumn:) Not performed.");
 	return 1;
 }
 
@@ -1038,7 +1038,7 @@ Any TablesOfReal_append (I, thou) {
 			his data [hisRow] [icol] = thy data [irow] [icol];
 	}
 end:
-	iferror { forget (him); Melder_error ("(TablesOfReal_append:) Not performed."); }
+	iferror { forget (him); Melder_error1 (L"(TablesOfReal_append:) Not performed."); }
 	return him;
 }
 
@@ -1072,7 +1072,7 @@ Any TablesOfReal_appendMany (Collection me) {
 	}
 	Melder_assert (nrow == his numberOfRows);
 end:
-	iferror { forget (him); Melder_error ("(TablesOfReal_appendMany:) Not performed."); }
+	iferror { forget (him); Melder_error1 (L"(TablesOfReal_appendMany:) Not performed."); }
 	return him;
 }
 

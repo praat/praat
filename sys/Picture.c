@@ -539,7 +539,7 @@ int Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 	HENHMETAFILE metafile = copyToMetafile (me);
 	if (! metafile) Melder_flushError (NULL);
 	MelderFile_delete (file);   /* Overwrite existing file with same name. */
-	DeleteEnhMetaFile (CopyEnhMetaFileW (metafile, file -> wpath));
+	DeleteEnhMetaFile (CopyEnhMetaFile (metafile, file -> path));
 	DeleteEnhMetaFile (metafile);
 	return 1;
 }

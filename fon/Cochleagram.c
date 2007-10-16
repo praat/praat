@@ -79,10 +79,10 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 	long itime, ifreq, itmin, itmax, nt;
 	double diff = 0.0;
 	if (my nx != thy nx || my dx != thy dx || my x1 != thy x1 || my ny != thy ny)
-		return Melder_error ("Cochleagram_difference: unequal time sampling or number of frequencies.");
+		return Melder_error1 (L"Cochleagram_difference: unequal time sampling or number of frequencies.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (! (nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax)))
-		return Melder_error ("Cochleagram_difference: window too short.");
+		return Melder_error1 (L"Cochleagram_difference: window too short.");
 	for (itime = itmin; itime <= itmax; itime ++)
 		for (ifreq = 1; ifreq <= my ny; ifreq ++)
 		{

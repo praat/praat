@@ -200,7 +200,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
 		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
-		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
+		if (icol == 0 || jcol == 0) return Melder_error1 (L"No such column.");
 		Table_appendDifferenceColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -217,7 +217,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
 		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
-		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
+		if (icol == 0 || jcol == 0) return Melder_error1 (L"No such column.");
 		Table_appendProductColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -234,7 +234,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
 		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
-		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
+		if (icol == 0 || jcol == 0) return Melder_error1 (L"No such column.");
 		Table_appendQuotientColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -251,7 +251,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"left Columns"));
 		long jcol = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
-		if (icol == 0 || jcol == 0) return Melder_error ("No such column.");
+		if (icol == 0 || jcol == 0) return Melder_error1 (L"No such column.");
 		Table_appendSumColumn (OBJECT, icol, jcol, GET_STRINGW (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -342,7 +342,7 @@ END
 
 DIRECT (Table_edit)
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot edit a Table from batch.");
+		return Melder_error1 (L"Cannot edit a Table from batch.");
 	} else {
 		WHERE (SELECTED) {
 			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, ONLY_OBJECT);
@@ -362,7 +362,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		if (! praat_new5 (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_INTEGER ("...is...") - 1 + Melder_NUMBER_min, value),
 			NAMEW, L"_", Table_messageColumn (OBJECT, icol), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
@@ -381,7 +381,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Extract all rows where column..."));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		if (! praat_new3 (Table_extractRowsWhereColumn_string (OBJECT,
 			icol, GET_INTEGER ("...") - 1 + Melder_STRING_min, value),
 			NAMEW, L"_", value)) return 0;
@@ -397,7 +397,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		if (! Table_formula (OBJECT, icol, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -412,9 +412,9 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol1 = Table_columnLabelToIndex (me, GET_STRINGW (L"From column label"));
-		if (icol1 == 0) return Melder_error ("No such column.");
+		if (icol1 == 0) return Melder_error1 (L"No such column.");
 		long icol2 = Table_columnLabelToIndex (me, GET_STRINGW (L"To column label"));
-		if (icol2 == 0) return Melder_error ("No such column.");
+		if (icol2 == 0) return Melder_error1 (L"No such column.");
 		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRINGW (L"formula"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -445,9 +445,9 @@ FORM (Table_getGroupMean, "Table: Get group mean", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	if (column == 0) return Melder_error ("No such column.");
+	if (column == 0) return Melder_error1 (L"No such column.");
 	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
-	if (groupColumn == 0) return Melder_error ("No such column.");
+	if (groupColumn == 0) return Melder_error1 (L"No such column.");
 	Melder_information1 (Melder_double (Table_getGroupMean (ONLY_OBJECT, column, groupColumn, GET_STRINGW (L"Group"))));
 END
 
@@ -509,7 +509,7 @@ DO
 	Table me = ONLY_OBJECT;
 	long irow = GET_INTEGER ("Row number");
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	if (icol == 0) return Melder_error ("No such column.");
+	if (icol == 0) return Melder_error1 (L"No such column.");
 	REQUIRE (irow >= 1 && irow <= my rows -> size, L"Row number out of range.")
 	REQUIRE (icol >= 1 && icol <= my numberOfColumns, L"Column number out of range.")
 	Melder_information1 (((TableRow) my rows -> item [irow]) -> cells [icol]. string);
@@ -568,7 +568,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		Table_removeColumn (me, icol);
 		praat_dataChanged (me);
 		iferror return 0;
@@ -597,7 +597,7 @@ DO
 	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double correlation, significance, lowerLimit, upperLimit;
-	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
+	if (column1 == 0 || column2 == 0) return Melder_error1 (L"No such column.");
 	correlation = Table_getCorrelation_kendallTau (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
@@ -624,7 +624,7 @@ DO
 	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double correlation, significance, lowerLimit, upperLimit;
-	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
+	if (column1 == 0 || column2 == 0) return Melder_error1 (L"No such column.");
 	correlation = Table_getCorrelation_pearsonR (me, column1, column2, significanceLevel,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
@@ -651,7 +651,7 @@ DO
 	long column2 = Table_columnLabelToIndex (me, GET_STRINGW (L"right Columns"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double difference, t, significance, lowerLimit, upperLimit;
-	if (column1 == 0 || column2 == 0) return Melder_error ("No such column.");
+	if (column1 == 0 || column2 == 0) return Melder_error1 (L"No such column.");
 	difference = Table_getDifference_studentT (me, column1, column2, significanceLevel,
 		& t, & significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
@@ -678,9 +678,9 @@ FORM (Table_reportGroupDifference_studentT, "Report group difference (Student t)
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
-	if (column == 0) return Melder_error ("No such column.");
+	if (column == 0) return Melder_error1 (L"No such column.");
 	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
-	if (groupColumn == 0) return Melder_error ("No such column.");
+	if (groupColumn == 0) return Melder_error1 (L"No such column.");
 	double significanceLevel = GET_REAL ("Significance level");
 	wchar_t *group1 = GET_STRINGW (L"Group 1"), *group2 = GET_STRINGW (L"Group 2");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
@@ -709,9 +709,9 @@ FORM (Table_reportGroupMean_studentT, "Report group mean (Student t)", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
-	if (column == 0) return Melder_error ("No such column.");
+	if (column == 0) return Melder_error1 (L"No such column.");
 	long groupColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Group column"));
-	if (groupColumn == 0) return Melder_error ("No such column.");
+	if (groupColumn == 0) return Melder_error1 (L"No such column.");
 	double significanceLevel = GET_REAL ("Significance level");
 	wchar_t *group = GET_STRINGW (L"Group");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
@@ -740,7 +740,7 @@ DO
 	long column = Table_columnLabelToIndex (me, GET_STRINGW (L"Column"));
 	double significanceLevel = GET_REAL ("Significance level");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
-	if (column == 0) return Melder_error ("No such column.");
+	if (column == 0) return Melder_error1 (L"No such column.");
 	mean = Table_getMean_studentT (me, column, significanceLevel,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
@@ -795,7 +795,7 @@ DO
 		long xcolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Horizontal column"));
 		long ycolumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Vertical column"));
 		long markColumn = Table_columnLabelToIndex (me, GET_STRINGW (L"Column with marks"));
-		if (xcolumn == 0 || ycolumn == 0 || markColumn == 0) return Melder_error ("No such column.");
+		if (xcolumn == 0 || ycolumn == 0 || markColumn == 0) return Melder_error1 (L"No such column.");
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
 			GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
@@ -838,7 +838,7 @@ FORM (Table_searchColumn, "Table: Search column", 0)
 DO
 	Table me = ONLY_OBJECT;
 	long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-	if (icol == 0) return Melder_error ("No such column.");
+	if (icol == 0) return Melder_error1 (L"No such column.");
 	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRINGW (L"Value"))));
 END
 	
@@ -875,7 +875,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		Table_setNumericValue (me, GET_INTEGER ("Row number"), icol, GET_REAL ("Numeric value"));
 		praat_dataChanged (me);
 		iferror return 0;
@@ -891,7 +891,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_columnLabelToIndex (me, GET_STRINGW (L"Column label"));
-		if (icol == 0) return Melder_error ("No such column.");
+		if (icol == 0) return Melder_error1 (L"No such column.");
 		Table_setStringValue (me, GET_INTEGER ("Row number"), icol, GET_STRINGW (L"String value"));
 		praat_dataChanged (me);
 		iferror return 0;

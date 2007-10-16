@@ -641,14 +641,14 @@ static int menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 	if (anyTier -> methods == (Data_Table) classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
-		if (! selectedLeftBoundary) return Melder_error ("To remove a boundary, first click on it.");
+		if (! selectedLeftBoundary) return Melder_error1 (L"To remove a boundary, first click on it.");
 
 		Editor_save (me, L"Remove boundary");
 		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary); iferror return 0;
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		long selectedPoint = getSelectedPoint (me);
-		if (! selectedPoint) return Melder_error ("To remove a point, first click on it.");
+		if (! selectedPoint) return Melder_error1 (L"To remove a point, first click on it.");
 
 		Editor_save (me, L"Remove point");
 		Collection_removeItem (tier -> points, selectedPoint);
@@ -671,7 +671,7 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 		static wchar_t *boundarySaveText [3] = { L"Move boundary to zero crossing", L"Move boundary to B", L"Move boundary to E" };
 		TextInterval left, right;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
-		if (! selectedLeftBoundary) return Melder_error ("To move a boundary, first click on it.");
+		if (! selectedLeftBoundary) return Melder_error1 (L"To move a boundary, first click on it.");
 		left = tier -> intervals -> item [selectedLeftBoundary - 1];
 		right = tier -> intervals -> item [selectedLeftBoundary];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
@@ -688,7 +688,7 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 		static wchar_t *pointSaveText [3] = { L"Move point to zero crossing", L"Move point to B", L"Move point to E" };
 		TextPoint point;
 		long selectedPoint = getSelectedPoint (me);
-		if (! selectedPoint) return Melder_error ("To move a point, first click on it.");
+		if (! selectedPoint) return Melder_error1 (L"To move a point, first click on it.");
 		point = tier -> points -> item [selectedPoint];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
 			Sound_getNearestZeroCrossing (my sound.data, point -> time, 1);   // STEREO BUG
@@ -1005,7 +1005,7 @@ static int menu_cb_RemoveTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	TextGrid grid = my data;
 	if (grid -> tiers -> size <= 1) {
-		return Melder_error ("Sorry, I refuse to remove the last tier.");
+		return Melder_error1 (L"Sorry, I refuse to remove the last tier.");
 	}
 	if (! checkTierSelection (me, L"remove a tier")) return 0;
 

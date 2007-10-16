@@ -299,7 +299,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 cleanUp:
 	forget (dBspectrum);
 	forget (cepstrum);
-	if (Melder_hasError ()) { forget (thee); Melder_error ("(Spectrum_cepstralSmoothing:) Not performed."); }
+	if (Melder_hasError ()) { forget (thee); Melder_error1 (L"(Spectrum_cepstralSmoothing:) Not performed."); }
 	return thee;
 }
 

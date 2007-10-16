@@ -60,9 +60,9 @@ FORM (Rename, "Rename object", "Rename...")
 DO
 	wchar_t *string = GET_STRINGW (L"newName");
 	if (theCurrentPraat -> totalSelection == 0)
-		return Melder_error ("Selection changed!\nNo object selected. Cannot rename.");
+		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot rename.");
 	if (theCurrentPraat -> totalSelection > 1)
-		return Melder_error ("Selection changed!\nCannot rename more than one object at a time.");
+		return Melder_error1 (L"Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
 	static MelderString fullName = { 0 };
@@ -84,9 +84,9 @@ FORM (Copy, "Copy object", "Copy...")
 { int IOBJECT; WHERE (SELECTED) SET_STRINGW (L"newName", NAMEW) }
 DO
 	if (theCurrentPraat -> totalSelection == 0)
-		return Melder_error ("Selection changed!\nNo object selected. Cannot copy.");
+		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot copy.");
 	if (theCurrentPraat -> totalSelection > 1)
-		return Melder_error ("Selection changed!\nCannot copy more than one object at a time.");
+		return Melder_error1 (L"Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
 		wchar_t *name = GET_STRINGW (L"newName");
 		if (! praat_new1 (Data_copy (OBJECT), name)) return 0;
@@ -95,17 +95,17 @@ END
 
 DIRECT (Info)
 	if (theCurrentPraat -> totalSelection == 0)
-		return Melder_error ("Selection changed!\nNo object selected. Cannot query.");
+		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot query.");
 	if (theCurrentPraat -> totalSelection > 1)
-		return Melder_error ("Selection changed!\nCannot query more than one object at a time.");
+		return Melder_error1 (L"Selection changed!\nCannot query more than one object at a time.");
 	WHERE (SELECTED) Thing_info (OBJECT);
 END
 
 DIRECT (Inspect)
 	if (theCurrentPraat -> totalSelection == 0)
-		return Melder_error ("Selection changed!\nNo object selected. Cannot inspect.");
+		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot inspect.");
 	if (theCurrentPraat -> batch) {
-		return Melder_error ("Cannot inspect data from batch.");
+		return Melder_error1 (L"Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED)
 			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, FULL_NAMEW, OBJECT), IOBJECT)) return 0;

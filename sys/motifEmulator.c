@@ -646,7 +646,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 	int GuiMacDrawingArea_clipOn_graphicsContext (Widget me, void *graphicsContext) {
 		Widget parent;
 		Rect clipRect = my rect;
-		Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
+		//Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
 		/* InsetRect (& clipRect, my marginWidth, my marginHeight); */
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
@@ -985,6 +985,77 @@ static void NativeMenuItem_setText (Widget me) {
  * On Win, we use SetWindowLong (window, GWL_USERDATA, widget).
  */
 
+#if mac
+static void listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
+	Widget me = (Widget) GetListRefCon (handle);
+	switch (message) {
+		case lDrawMsg:
+		case lHiliteMsg:
+			Melder_assert (me != NULL);
+			//Melder_fatal ("rect %d %d %d %d", rect->top, rect->bottom, rect->left, rect->right);
+			SetPortWindowPort (my macWindow);
+			_GuiMac_clipOn (me);
+			static RGBColor whiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, blackColour = { 0, 0, 0 };
+			RGBForeColor (& whiteColour);
+			PaintRect (rect);
+			RGBForeColor (& blackColour);
+			if (select) {
+				LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+				InvertRect (rect);
+			}
+			CGContextRef macGraphicsContext;
+			QDBeginCGContext (GetWindowPort (my macWindow), & macGraphicsContext);
+			int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (me, macGraphicsContext);
+			static ATSUFontFallbacks fontFallbacks = NULL;
+			if (fontFallbacks == NULL) {
+				ATSUCreateFontFallbacks (& fontFallbacks);
+				ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
+			}
+			char *text_utf8 = (char *) *((*handle) -> cells) + dataOffset;
+			strncpy (Melder_buffer1, text_utf8, dataLength);
+			Melder_buffer1 [dataLength] = '\0';
+			wchar_t *text_wcs = Melder_peekUtf8ToWcs (Melder_buffer1);
+			const MelderUtf16 *text_utf16 = Melder_peekWcsToUtf16 (text_wcs);
+			UniCharCount runLength = wcslen (text_wcs);   // BUG
+			ATSUTextLayout textLayout;
+			ATSUStyle style;
+			ATSUCreateStyle (& style);
+			Fixed fontSize = 12 << 16;
+			Boolean boldStyle = 0;
+			Boolean italicStyle = 0;
+			ATSUAttributeTag styleAttributeTags [] = { kATSUSizeTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
+			ByteCount styleValueSizes [] = { sizeof (Fixed), sizeof (Boolean), sizeof (Boolean) };
+			ATSUAttributeValuePtr styleValues [] = { & fontSize, & boldStyle, & italicStyle };
+			ATSUSetAttributes (style, 3, styleAttributeTags, styleValueSizes, styleValues);
+			OSStatus err = ATSUCreateTextLayoutWithTextPtr (text_utf16, kATSUFromTextBeginning, kATSUToTextEnd, runLength,
+				1, & runLength, & style, & textLayout);
+			Melder_assert (err == 0);
+			ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
+			ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
+			ATSUAttributeValuePtr values [] = { & macGraphicsContext, & fontFallbacks };
+			ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
+			ATSUSetTransientFontMatching (textLayout, true);
+			CGContextTranslateCTM (macGraphicsContext, rect -> left, shellHeight - rect -> bottom + 4);
+			err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
+			Melder_assert (err == 0);
+			CGContextSynchronize (macGraphicsContext);
+			ATSUDisposeTextLayout (textLayout);
+			ATSUDisposeStyle (style);
+			QDEndCGContext (GetWindowPort (my macWindow), & macGraphicsContext);
+			GuiMac_clipOff ();
+			break;
+/*		case lHiliteMsg:
+			Melder_assert (me != NULL);
+			SetPortWindowPort (my macWindow);
+			_GuiMac_clipOn (me);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+			InvertRect (rect);
+			GuiMac_clipOff ();
+			break;*/
+	}
+}
+#endif
+
 static void _GuiNativizeWidget (Widget me) {
 	if (my nativized) return;
 	if (my inMenu) {
@@ -1086,8 +1157,19 @@ static void _GuiNativizeWidget (Widget me) {
 					Rect dataBounds = { 0, 0, 0, 1 };
 					Point cSize;
 					SetPt (& cSize, my rect.right - my rect.left + 1, CELL_HEIGHT);
+					#if 0
 					my nat.list.handle = LNew (& my rect, & dataBounds, cSize, 0,
 						my macWindow, false, false, false, false);
+					#else
+					static ListDefSpec listDefSpec;
+					if (listDefSpec. u. userProc == NULL) {
+						listDefSpec. defType = kListDefUserProcType;
+						listDefSpec. u. userProc = listDefinition;
+					}
+					CreateCustomList (& my rect, & dataBounds, cSize, & listDefSpec, my macWindow,
+						false, false, false, false, & my nat.list.handle);
+					SetListRefCon (my nat.list.handle, me);
+					#endif
 				#endif
 				if (my selectionPolicy != XmSINGLE_SELECT && my selectionPolicy != XmBROWSE_SELECT)
 					SetListSelectionFlags (my nat.list.handle, lExtendDrag | lNoRect);
@@ -3296,8 +3378,8 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * which on Windows XP is very usual.
 				 */
 				Melder_relativePathToFile (Melder_peekUtf8ToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
-				if (wcslen (file. wpath) > 0 && file. wpath [wcslen (file. wpath) - 1] == '\"') {
-					file. wpath [wcslen (file. wpath) - 1] = '\0';
+				if (wcslen (file. path) > 0 && file. path [wcslen (file. path) - 1] == '\"') {
+					file. path [wcslen (file. path) - 1] = '\0';
 				}
 				theOpenDocumentCallback (& file);
 			}
