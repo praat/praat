@@ -93,7 +93,7 @@ void Graphics_clearWs (I) {
 		#elif mac
 			Rect r;
 			RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
 			SetPort (my macPort);
 			RGBForeColor (& white);
@@ -116,7 +116,7 @@ void Graphics_updateWs (I) {
 			if (my window) InvalidateRect (my window, NULL, TRUE);
 		#elif mac
 			Rect r;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
 			SetPort (my macPort);
 			/*EraseRect (& r);*/

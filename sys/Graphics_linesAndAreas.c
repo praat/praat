@@ -170,7 +170,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
 				//CGContextSetAlpha (my macGraphicsContext, 1.0);
 				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				CGContextSetRGBStrokeColor (my macGraphicsContext, my macColour.red, my macColour.green, my macColour.blue, 1.0);
 				double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 				CGContextSetLineWidth (my macGraphicsContext, lineWidth_pixels);
@@ -193,7 +193,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 				return;
 			}
 			int halfLine = ceil (0.5 * my lineWidth);
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			initDraw (me);
 			MoveTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
 			for (long i = 1; i < numberOfPoints; i ++)
@@ -255,7 +255,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 		#elif mac
 			long i;
 			PolyHandle macpolygon;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
 			macpolygon = OpenPoly ();
@@ -311,7 +311,7 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		#elif mac
 			Rect rect;
 			double halfLine = 0.5 * my lineWidth;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, x1DC - halfLine, y2DC - halfLine, x2DC + halfLine, y1DC + halfLine);
 			initDraw (me);
 			FrameRect (& rect);
@@ -354,7 +354,7 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 			DEFAULT
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
@@ -394,7 +394,7 @@ static void circle (I, short xDC, short yDC, short rDC) {
 		#elif mac
 			Rect rect;
 			double halfLine = 0.5 * my lineWidth;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, xDC - rDC - halfLine, yDC - rDC - halfLine, xDC + rDC + halfLine, yDC + rDC + halfLine);
 			initDraw (me);
 			FrameOval (& rect);
@@ -426,7 +426,7 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		#elif mac
 			Rect rect;
 			double halfLine = 0.5 * my lineWidth;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, x1DC - halfLine, y2DC - halfLine, x2DC + halfLine, y1DC + halfLine);
 			initDraw (me);
 			FrameOval (& rect);
@@ -476,7 +476,7 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 			double halfLine = 0.5 * my lineWidth;
 			int startAngle = 90 - (int) fromAngle;
 			int arcAngle = (int) fromAngle - (int) toAngle;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			if (arcAngle > 0) arcAngle -= 360;
 			SetRect (& rect, xDC - rDC - halfLine, yDC - rDC - halfLine, xDC + rDC + halfLine, yDC + rDC + halfLine);
 			initDraw (me);
@@ -509,7 +509,7 @@ static void fillCircle (I, short xDC, short yDC, short rDC) {
 			DEFAULT
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, xDC - rDC, yDC - rDC, xDC + rDC, yDC + rDC);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
@@ -539,7 +539,7 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			DEFAULT
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
@@ -603,7 +603,7 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			RGBColor rgb;
 			width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetPort (my macPort);
 			/* Dark grey. */
 			rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.1 * 65535.0); RGBForeColor (& rgb);
@@ -749,7 +749,7 @@ static void initLine (I) {
 		#elif win
 			winPrepareLine (me);
 		#elif mac
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			initDraw (me);
 		#endif
 	} else {
@@ -808,7 +808,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		#elif mac
 			long i;
 			int halfLine = ceil (0.5 * my lineWidth);
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			initDraw (me);
 			for (i = 0; i < numberOfPoints; i ++) {
 				MoveTo (xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
@@ -1174,7 +1174,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 			double size = 10.0 * my resolution * my arrowSize / 72.0;
 			PolyHandle macpolygon;
 			MacintoshPattern pattern;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0)
 				RGBForeColor (& my macColour);

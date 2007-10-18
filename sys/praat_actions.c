@@ -24,6 +24,7 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/25 width of button list is 50 procent
  * pb 2007/06/10 wchar_t
+ * pb 2007/10/17 removed a bug that caused a crash in praat_show/hideAction if class2 or class3 was NULL
  */
 
 #include "praatP.h"
@@ -324,9 +325,9 @@ int praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *t
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
-		return Melder_error9 (L"(praat_hideAction:) Action command \"", ((Data_Table) class1) -> _classNameW,
-			class2 ? L" & ": L"", ((Data_Table) class2) -> _classNameW,
-			class3 ? L" & ": L"", ((Data_Table) class3) -> _classNameW,
+		return Melder_error9 (L"(praat_hideAction:) Action command \"", class1 ? ((Data_Table) class1) -> _classNameW : NULL,
+			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _classNameW : NULL,
+			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _classNameW : NULL,
 			L": ", title, L"\" not found.");
 	}
 	if (! theActions [found]. hidden) {
@@ -354,9 +355,9 @@ int praat_showAction (void *class1, void *class2, void *class3, const wchar_t *t
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
-		return Melder_error9 (L"(praat_showAction:) Action command \"", ((Data_Table) class1) -> _classNameW,
-			class2 ? L" & ": L"", ((Data_Table) class2) -> _classNameW,
-			class3 ? L" & ": L"", ((Data_Table) class3) -> _classNameW,
+		return Melder_error9 (L"(praat_showAction:) Action command \"", class1 ? ((Data_Table) class1) -> _classNameW : NULL,
+			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _classNameW : NULL,
+			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _classNameW : NULL,
 			L": ", title, L"\" not found.");
 	}
 	if (theActions [found]. hidden) {
@@ -448,7 +449,8 @@ static int allowExecutionHook (void *closure) {
 	return FALSE;
 }
 
-MOTIF_CALLBACK (cb_menu)
+static void cb_menu (GUI_ARGS) {
+	(void) w;
 /*
  *	Convert a Motif callback into a Ui callback, and catch modifier keys and special mouse buttons.
  *	Call that callback!
@@ -488,7 +490,7 @@ MOTIF_CALLBACK (cb_menu)
 			praat_updateSelection (); return;
 		}
 	}
-MOTIF_CALLBACK_END
+}
 
 void praat_actions_show (void) {
 	long i;

@@ -26,6 +26,7 @@
  * pb 2006/08/08 reduced compiler warnings
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/10/16 Get pitch: F5 shortcut, as in Sound windows
  */
 
 #include "Pitch_to_Sound.h"
@@ -149,7 +150,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Path finder...", 0, cb_pathFinder);
 
 	Editor_addCommand (me, L"Query", L"-- pitch --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Get pitch", motif_F10, cb_getPitch);
+	Editor_addCommand (me, L"Query", L"Get pitch", motif_F5, cb_getPitch);
 
 	Editor_addMenu (me, L"Selection", 0);
 	Editor_addCommand (me, L"Selection", L"Unvoice", 0, cb_voiceless);

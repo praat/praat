@@ -364,7 +364,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				CGDataProviderRelease (dataProvider);
 				CGColorSpaceRelease (colourSpace);
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, shellHeight - clipy1, clipx2 - clipx1, clipy1 - clipy2), image);
 				CGContextSynchronize (my macGraphicsContext);
 				QDEndCGContext (my macPort, & my macGraphicsContext);
@@ -428,7 +428,7 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if mac
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 		#endif
 		screenCellArrayOrImage (me, z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
 			minimum, maximum, clipx1, clipx2, clipy1, clipy2, interpolate);

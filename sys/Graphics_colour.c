@@ -227,7 +227,7 @@ static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
 			SetPort (my macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   /* see IM V-61 */
@@ -282,7 +282,7 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetPort (my macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 			SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);

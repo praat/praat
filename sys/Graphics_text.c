@@ -642,7 +642,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 			int needBitmappedIPA = font == 0;
 			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				ATSFontRef atsuiFont =
 					lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 					lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -995,7 +995,7 @@ static void initText (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if mac
-			if (my drawingArea) GuiMacDrawingArea_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);
 			SetPort (my macPort);
 			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
 			switch (my font) {

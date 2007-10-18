@@ -114,25 +114,20 @@ END
 
 /********** The fixed menus. **********/
 
-static Widget appleMenu, praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
+static Widget praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
 
 Widget praat_objects_resolveMenu (const wchar_t *menu) {
 	return
-		#ifdef macintosh
-		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? ( Melder_systemVersion >= 0x0A00 ? appleMenu : praatMenu ) :
-		#else
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
-		#endif
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
 		wcsequ (menu, L"Read") ? readMenu :
 		wcsequ (menu, L"Help") ? helpMenu :
 		wcsequ (menu, L"Goodies") ? goodiesMenu :
 		wcsequ (menu, L"Preferences") ? preferencesMenu :
 		#ifdef macintosh
-		wcsequ (menu, L"Apple") ? appleMenu :
-		wcsequ (menu, L"ApplicationHelp") ? applicationHelpMenu :
+			wcsequ (menu, L"ApplicationHelp") ? applicationHelpMenu :
 		#else
-		wcsequ (menu, L"ApplicationHelp") ? helpMenu :
+			wcsequ (menu, L"ApplicationHelp") ? helpMenu :
 		#endif
 		newMenu;   /* Default. */
 }
@@ -537,10 +532,7 @@ void praat_addMenus (Widget bar) {
 	 */
 	if (! theCurrentPraat -> batch) {
 		#ifdef macintosh
-			appleMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
-		#endif
-		#ifdef macintosh
-			if (Melder_systemVersion < 0x0A00) praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, Melder_peekUtf8ToWcs (praatP.title), 0);
+			praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
 		#else
 			praatMenu = motif_addMenu (bar, L"Praat", 0);
 		#endif
@@ -555,7 +547,7 @@ void praat_addMenus (Widget bar) {
 		
 	sprintf (itemTitle_about, "About %s...", praatP.title);
 	#ifdef macintosh
-		praat_addMenuCommand ("Objects", "Apple", itemTitle_about, 0, praat_UNHIDABLE, DO_About);
+		praat_addMenuCommand ("Objects", "Praat", itemTitle_about, 0, praat_UNHIDABLE, DO_About);
 	#endif
 	#ifdef UNIX
 		praat_addMenuCommand ("Objects", "Praat", itemTitle_about, 0, praat_UNHIDABLE, DO_About);

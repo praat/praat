@@ -175,7 +175,7 @@ extern struct Gui {
 
 void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call);
 #if mac
-	void _GuiMac_clipOn (Widget me);
+	void _GuiMac_clipOnParent (Widget me);
 	void _GuiMac_clipOffValid (Widget me);
 #endif
 Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name);

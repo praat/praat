@@ -36,6 +36,7 @@
  * pb 2007/02/13 Win: removed Ctrl-. as meaning Escape
  * pb 2007/08/07 GuiMacDrawingArea_clipOn_graphicsContext
  * pb 2007/10/06 wchar_t
+ * pb 2007/10/16 Unicode support in lists
  */
 #ifndef UNIX
 
@@ -568,7 +569,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 	static Rect _motif_wideRect = { -32768, -32768, 32767, 32767 };
 	static Rect _motif_clipRect;
 
-	void _GuiMac_clipOn (Widget me) {
+	void _GuiMac_clipOnParent (Widget me) {
 		/* The 'clipRect' will be the intersection of the rects of all its ancestors,
 		 * stopping before a shell and making side steps at scrolled windows.
 		 */
@@ -620,11 +621,9 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		ClipRect (& _motif_wideRect);
 	}
 
-	void GuiMacDrawingArea_clipOn (Widget me) {
+	void GuiMac_clipOn (Widget me) {
 		Widget parent;
 		Rect clipRect = my rect;
-		Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
-		/* InsetRect (& clipRect, my marginWidth, my marginHeight); */
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
 			if (MEMBER (parent, ScrolledWindow)) {
@@ -643,11 +642,9 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		SetPortWindowPort (my macWindow);
 		ClipRect (& clipRect);
 	}
-	int GuiMacDrawingArea_clipOn_graphicsContext (Widget me, void *graphicsContext) {
+	int GuiMac_clipOn_graphicsContext (Widget me, void *graphicsContext) {
 		Widget parent;
 		Rect clipRect = my rect;
-		//Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
-		/* InsetRect (& clipRect, my marginWidth, my marginHeight); */
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
 			if (MEMBER (parent, ScrolledWindow)) {
@@ -683,7 +680,7 @@ void _GuiNativeControl_destroy (Widget me) {
 	#if win
 		DestroyWindow (my window);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		DisposeControl (my nat.control.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -693,7 +690,7 @@ void _GuiNativeControl_show (Widget me) {
 	#if win
 		ShowWindow (my window, SW_SHOW);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (IsControlVisible (my nat.control.handle))
 			Draw1Control (my nat.control.handle);
 		else
@@ -706,7 +703,7 @@ void _GuiNativeControl_hide (Widget me) {
 	#if win
 		ShowWindow (my window, SW_HIDE);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		HideControl (my nat.control.handle);
 		_GuiMac_clipOffValid (me);
 	#endif
@@ -716,7 +713,7 @@ void _GuiNativeControl_setSensitive (Widget me) {
 	#if win
 		EnableWindow (my window, ! my insensitive);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		HiliteControl (my nat.control.handle, my insensitive ? 255 : 0);
 		GuiMac_clipOff ();
 	#endif
@@ -990,28 +987,41 @@ static void listDefinition (short message, Boolean select, Rect *rect, Cell cell
 	Widget me = (Widget) GetListRefCon (handle);
 	switch (message) {
 		case lDrawMsg:
-		case lHiliteMsg:
+		case lHiliteMsg:   // We redraw everything, even when just highlighting. The reason is anti-aliasing.
 			Melder_assert (me != NULL);
-			//Melder_fatal ("rect %d %d %d %d", rect->top, rect->bottom, rect->left, rect->right);
 			SetPortWindowPort (my macWindow);
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
+			/*
+			 * In order that highlighting (which by default turns only the white pixels into pink)
+			 * does not leave light-grey specks around the glyphs (in the anti-aliasing regions),
+			 * we simply draw the glyphs on a pink background if the item is selected.
+			 */
+			/*
+			 * Erase the background.
+			 */
 			static RGBColor whiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, blackColour = { 0, 0, 0 };
 			RGBForeColor (& whiteColour);
 			PaintRect (rect);
 			RGBForeColor (& blackColour);
+			/*
+			 * Pink (or any other colour the user prefers) if the item is selected.
+			 */
 			if (select) {
 				LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 				InvertRect (rect);
 			}
+			/*
+			 * Draw the text on top of this.
+			 */
 			CGContextRef macGraphicsContext;
 			QDBeginCGContext (GetWindowPort (my macWindow), & macGraphicsContext);
-			int shellHeight = GuiMacDrawingArea_clipOn_graphicsContext (me, macGraphicsContext);
+			int shellHeight = GuiMac_clipOn_graphicsContext (me, macGraphicsContext);
 			static ATSUFontFallbacks fontFallbacks = NULL;
 			if (fontFallbacks == NULL) {
 				ATSUCreateFontFallbacks (& fontFallbacks);
 				ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
 			}
-			char *text_utf8 = (char *) *((*handle) -> cells) + dataOffset;
+			char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
 			strncpy (Melder_buffer1, text_utf8, dataLength);
 			Melder_buffer1 [dataLength] = '\0';
 			wchar_t *text_wcs = Melder_peekUtf8ToWcs (Melder_buffer1);
@@ -1047,7 +1057,7 @@ static void listDefinition (short message, Boolean select, Rect *rect, Cell cell
 /*		case lHiliteMsg:
 			Melder_assert (me != NULL);
 			SetPortWindowPort (my macWindow);
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 			InvertRect (rect);
 			GuiMac_clipOff ();
@@ -1520,7 +1530,7 @@ void _Gui_invalidateWidget (Widget me) {
 		 my widgetClass == xmRowColumnWidgetClass ||
 		 my widgetClass == xmFormWidgetClass*/) return;   /* Composites are not invalidated !!!!! ???? */
 	#if mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		EraseRect (& my rect);
 		_motif_clipOffInvalid (me);
 	#endif
@@ -1530,7 +1540,7 @@ void _Gui_validateWidget (Widget me) {
 	if (! my managed) return;   /* Should be: visible. */
 	if (MEMBER (me, Shell)) return;
 	#if mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		_GuiMac_clipOffValid (me);   
 	#endif
 }
@@ -1576,7 +1586,7 @@ static void Native_move (Widget me, int dx, int dy) {
 	if (MEMBER (me, Text)) {
 		_GuiMacText_move (me);
 	} else if (my isControl) {
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		MoveControl (my nat.control.handle, my rect.left, my rect.top);
 		_GuiMac_clipOffValid (me);
 	} else if (MEMBER (me, List)) {
@@ -1611,7 +1621,7 @@ static void reshowControls (Widget me) {
 			 * Let Mac do the redrawing if Motif considers it visible and Mac considers it invisible?
 			 */
 			if (child -> managed && ! IsControlVisible (child -> nat.control.handle)) {
-				_GuiMac_clipOn (child);
+				_GuiMac_clipOnParent (child);
 				ShowControl (child -> nat.control.handle);
 				_GuiMac_clipOffValid (child);
 			}
@@ -2737,7 +2747,7 @@ void XtDestroyWidget (Widget me) {
 			#if win
 				DestroyWindow (my window);
 			#elif mac
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				EraseRect (& my rect);
 				GuiMac_clipOff ();
 			#endif
@@ -2757,7 +2767,7 @@ void XtDestroyWidget (Widget me) {
 				if (my isControl) {
 					_GuiNativeControl_destroy (me);
 				} else {
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					LDispose (my nat.list.handle);
 					GuiMac_clipOff ();
 				}
@@ -3037,11 +3047,11 @@ static void mapWidget (Widget me) {
 				if (my isControl) {
 					_GuiNativeControl_show (me);
 					Melder_casual ("showing a list");
-					//_GuiMac_clipOn (me);
+					//_GuiMac_clipOnParent (me);
 					//LSetDrawingMode (true, my nat.list.handle);
 					//_motif_clipOffInvalid (me);
 				} else {
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					LSetDrawingMode (true, my nat.list.handle);
 					_motif_clipOffInvalid (me);
 				}
@@ -3348,7 +3358,7 @@ Widget XtInitialize (void *dum1, const char *name,
 		AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments, NewAEEventHandlerUPP (_motif_processOpenDocumentsMessage), 0, false);
 		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignalA), 0, false);
 		AEInstallEventHandler (758934756, 0, NewAEEventHandlerUPP (_motif_processSignalW), 0, false);
-		if (Melder_systemVersion >= 0x0800) USE_QUESTION_MARK_HELP_MENU = 1;
+		USE_QUESTION_MARK_HELP_MENU = 1;
 		theUserFocusEventTarget = GetUserFocusEventTarget ();
 	#elif win
 	{
@@ -3893,7 +3903,7 @@ void XmListAddItem (Widget me, XmString item, int position) {
 		if (position == 0)
 			position = n + 1;   /* At end. */
 		cell.h = 0; cell. v = position - 1;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LAddRow (1, position - 1, my nat.list.handle);
 		LSetCell (item, (short) strlen (item), cell, my nat.list.handle);
 		(** my nat.list.handle). visible. bottom = n + 1;
@@ -3914,7 +3924,7 @@ void XmListAddItems (Widget me, XmString *items, int n, int position) {
 	#elif mac
 		int i, there = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (position == 0)
 			position = there + 1;   /* At end. */
 		LAddRow (n, position - 1, my nat.list.handle);
@@ -3939,7 +3949,7 @@ void XmListDeleteAllItems (Widget me) {
 	#if win
 		ListBox_ResetContent (my window);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LDelRow (0, 0, my nat.list.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -3956,7 +3966,7 @@ void XmListDeleteItem (Widget me, XmString item) {
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		for (i = n - 1; i >= 0; i --) {
 			char buffer [301];
 			short int length = 300;
@@ -3979,7 +3989,7 @@ void XmListDeleteItemsPos (Widget me, int item_count, int position) {
 		for (i = position + item_count - 2; i >= position - 1; i --)
 			ListBox_DeleteString (my window, i);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LDelRow (item_count, position - 1, my nat.list.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -3989,7 +3999,7 @@ void XmListDeletePos (Widget me, int position) {
 	#if win
 		ListBox_DeleteString (my window, position - 1);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LDelRow (1, position - 1, my nat.list.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -4001,7 +4011,7 @@ void XmListDeselectAllItems (Widget me) {
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		for (i = 0; i < n; i ++) { cell.v = i; LSetSelect (false, cell, my nat.list.handle); }
 		GuiMac_clipOff ();
 	#endif
@@ -4018,7 +4028,7 @@ void XmListDeselectItem (Widget me, XmString item) {
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		for (i = n - 1; i >= 0; i --) {
 			char buffer [301];
 			short int length = 300;
@@ -4037,7 +4047,7 @@ void XmListDeselectPos (Widget me, int position) {
 		Cell cell;
 		cell. h = 0;
 		cell. v = position - 1; 
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LSetSelect (false, cell, my nat.list.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -4150,7 +4160,7 @@ void XmListReplaceItemsPos (Widget me, XmString *new_items, int item_count, int 
 	#elif mac
 		int i;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		for (i = 0; i < item_count; i ++) {
 			cell.v = position - 1 + i;
 			LSetCell (new_items [i], strlen (new_items [i]), cell, my nat.list.handle);
@@ -4181,7 +4191,7 @@ void XmListSelectItem (Widget me, XmString item, Boolean notify) {
 	#elif mac
 		int i, n = (** my nat.list.handle). dataBounds. bottom;
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		for (i = 0; i < n; i ++) {
 			char buffer [301];
 			short int length = 300;
@@ -4207,7 +4217,7 @@ void XmListSelectPos (Widget me, int position, Boolean notify) {
 		}
 	#elif mac
 		Cell cell; cell.h = 0;
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (my selectionPolicy == XmSINGLE_SELECT || my selectionPolicy == XmBROWSE_SELECT) {
 			int i, n = (** my nat.list.handle). dataBounds. bottom;
 			for (i = 0; i < n; i ++) if (i != position - 1) {
@@ -4231,7 +4241,7 @@ void XmListSetAddMode (Widget me, Boolean mode) {
 void XmListSetBottomItem (Widget me, XmString item) {
 	#if mac
 		int position = XmListItemPos (me, item);
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (position)
 			LScroll (0, position - (** my nat.list.handle). visible. bottom - 1, my nat.list.handle);
 		GuiMac_clipOff ();
@@ -4243,7 +4253,7 @@ void XmListSetBottomItem (Widget me, XmString item) {
 
 void XmListSetBottomPos (Widget me, int position) {
 	#if mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LScroll (0, position - (** my nat.list.handle). visible. bottom - 1, my nat.list.handle);
 		GuiMac_clipOff ();
 	#else
@@ -4262,7 +4272,7 @@ void XmListSetItem (Widget me, XmString item) {
 	#if win
 		ListBox_SetTopIndex (my window, position - 1);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (position)
 			LScroll (0, position - (** my nat.list.handle). visible. top - 1, my nat.list.handle);
 		GuiMac_clipOff ();
@@ -4273,7 +4283,7 @@ void XmListSetPos (Widget me, int position) {
 	#if win
 		ListBox_SetTopIndex (my window, position - 1);
 	#elif mac
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LScroll (0, position - (** my nat.list.handle). visible. top - 1, my nat.list.handle);
 		GuiMac_clipOff ();
 	#endif
@@ -4381,12 +4391,12 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			case xmPushButtonWidgetClass:
 			case xmToggleButtonWidgetClass:
 			case xmScrollBarWidgetClass: {
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				Draw1Control (my nat.control.handle);
 				GuiMac_clipOff ();
 			} break;
 			case xmListWidgetClass: {
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				if (my isControl) {
 					Draw1Control (my nat.control.handle);
 				} else {
@@ -4396,7 +4406,7 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 			} break;
 			case xmDrawingAreaWidgetClass: {
 				if (my exposeCallback) {
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					my exposeCallback (me, my exposeClosure, (XtPointer) event);
 					GuiMac_clipOff ();
 				}
@@ -4405,13 +4415,13 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 				_GuiMacText_update (me);
 			} break;
 			case xmLabelWidgetClass: {
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				Draw1Control (my nat.control.handle);
 				GuiMac_clipOff ();
 			} break;
 			case xmCascadeButtonWidgetClass: {
 				if (my isControl) {   /* In window menu bar or in dynamic menu. */
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					Draw1Control (my nat.control.handle);
 					/* BUG: should make insensitive if not my shell.active or my macWindow != FrontWindow () */
 					GuiMac_clipOff ();
@@ -4422,18 +4432,18 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 					DrawThemeMenuBarBackground (& my rect, 0, 0);*/
 			} break;
 			case xmScrolledWindowWidgetClass: {
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				FrameRect (& my rect);
 				GuiMac_clipOff ();
 			} break;
 			case xmFrameWidgetClass: {
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				FrameRect (& my rect);
 				GuiMac_clipOff ();
 			} break;
 			case xmScaleWidgetClass: {
 				Rect r = my rect;
-				_GuiMac_clipOn (me);
+				_GuiMac_clipOnParent (me);
 				InsetRect (& r, 20, 15);
 				FrameRect (& r);
 				InsetRect (& r, 1, 1);
@@ -4576,7 +4586,7 @@ static void _motif_activateControls (Widget me, Boolean act) {
 		GetIndexedSubControl (my nat.window.rootControl, icontrol, & macControl);
 		control = (Widget) GetControlReference (macControl);
 		if (control && control -> magicNumber == 15111959 && control -> managed) {
-			_GuiMac_clipOn (control);
+			_GuiMac_clipOnParent (control);
 			HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
 			GuiMac_clipOff ();
 		}
@@ -4619,7 +4629,7 @@ static void _motif_activateRest (Widget me, Boolean act) {
 	if (my isControl) {
 		return;   /* Already done by _motif_activateControls. */
 	} else if (my widgetClass == xmListWidgetClass) {
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		LActivate (act, my nat.list.handle);
 		GuiMac_clipOff ();
 	} else if (my widgetClass == xmTextWidgetClass) {
@@ -5106,7 +5116,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 					switch (controlPart) {
 						case kControlListBoxPart: {
 							if (control -> widgetClass == xmListWidgetClass) {
-								_GuiMac_clipOn (control);
+								_GuiMac_clipOnParent (control);
 								bool pushed = TrackControl (maccontrol, event -> where, NULL);
 								GuiMac_clipOff ();
 								if (pushed && control -> extendedSelectionCallback)
@@ -5117,7 +5127,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						case kControlLabelPart: {
 							if (control -> widgetClass == xmPushButtonWidgetClass) {   /* Push button. */
 								int pushed;
-								_GuiMac_clipOn (control);
+								_GuiMac_clipOnParent (control);
 								pushed = TrackControl (maccontrol, event -> where, NULL);
 								GuiMac_clipOff ();
 								if (pushed && control -> activateCallback)
@@ -5127,7 +5137,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 								if (menu && ! control -> insensitive) {
 									Point pos;
 									long choice = 0;
-									_GuiMac_clipOn (control);
+									_GuiMac_clipOnParent (control);
 									HiliteControl (maccontrol, 10);
 									GuiMac_clipOff ();
 									SetPt (& pos, control -> rect.left + 2, control -> rect.bottom);
@@ -5137,7 +5147,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 										Beware: we must unhighlight the cascade button NOW,
 										because callbacks may destroy it.
 									*/
-									_GuiMac_clipOn (control);
+									_GuiMac_clipOnParent (control);
 									HiliteControl (maccontrol, 0);
 									GuiMac_clipOff ();
 									mac_processMenuChoice (choice, event);
@@ -5203,7 +5213,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 					if (clicked) {
 						if (clicked -> widgetClass == xmListWidgetClass) {
 							int doubleClick;
-							_GuiMac_clipOn (clicked);
+							_GuiMac_clipOnParent (clicked);
 							doubleClick = LClick (event -> where, event -> modifiers,
 								clicked -> nat.list.handle);
 							GuiMac_clipOff ();
@@ -5228,7 +5238,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 								Point pos;
 								long choice = 0;
 								Rect r = clicked -> rect; r.left -= 4; r.right += 4; r.top -= 1;
-								_GuiMac_clipOn (clicked);
+								_GuiMac_clipOnParent (clicked);
 								InvertRect (& r);
 								GuiMac_clipOff ();
 								SetPt (& pos, r.left + 1, r.bottom);

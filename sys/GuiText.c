@@ -118,7 +118,7 @@ void _GuiText_handleFocusLoss (Widget me) {
 #if mac
 void _GuiMac_clearTheTextFocus (void) {
 	if (theGui.textFocus) {
-		_GuiMac_clipOn (theGui.textFocus);
+		_GuiMac_clipOnParent (theGui.textFocus);
 		if (isTextControl (theGui.textFocus)) {
 			ClearKeyboardFocus (theGui.textFocus -> macWindow);
 		} else if (isMLTE (theGui.textFocus)) {
@@ -138,7 +138,7 @@ void _GuiText_setTheTextFocus (Widget me) {
 		SetFocus (my window);   /* Will send an EN_SETFOCUS notification, which will call _GuiText_handleFocusReception (). */
 	#elif mac
 		_GuiMac_clearTheTextFocus ();
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (isTextControl (me)) {
 			SetKeyboardFocus (my macWindow, my nat.control.handle, kControlEditTextPart);
 		} else if (isMLTE (me)) {
@@ -197,7 +197,7 @@ void _GuiText_handleValueChanged (Widget me) {
 	int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, unsigned char keyCode, unsigned char charCode, EventRecord *event) {
 		(void) keyCode;
 		if (me && my motif.text.editable) {
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			if (isTextControl (me)) {
 				CallNextEventHandler (eventHandlerCallRef, eventRef);
 			} else if (isMLTE (me)) {
@@ -214,7 +214,7 @@ void _GuiText_handleValueChanged (Widget me) {
 	}
 	void _GuiMacText_handleClick (Widget me, EventRecord *event) {
 		_GuiText_setTheTextFocus (me);
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (isTextControl (me)) {
 			HandleControlClick (my nat.control.handle, event -> where, event -> modifiers, NULL);
 		} else if (isMLTE (me)) {
@@ -233,7 +233,7 @@ void _GuiText_handleValueChanged (Widget me) {
 #if mac
 	void _GuiMacText_move (Widget me) {
 		if (isTextControl (me)) {
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			MoveControl (my nat.control.handle, my rect.left + 3, my rect.top + 3);
 			_GuiMac_clipOffValid (me);
 		} else if (isMLTE (me)) {
@@ -301,7 +301,7 @@ void _GuiText_unmanage (Widget me) {
 		}
 	}
 	void _GuiMacText_update (Widget me) {
-		_GuiMac_clipOn (me);
+		_GuiMac_clipOnParent (me);
 		if (isTextControl (me)) {
 			Draw1Control (my nat.control.handle);
 		} else if (isMLTE (me)) {
@@ -591,7 +591,7 @@ void XmTextSetString (Widget me, const char *text) {
 				_Gui_invalidateWidget (me);   /* HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer). */
 			} else {
 				if (isTextControl (me)) {
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					Draw1Control (my nat.control.handle);
 					GuiMac_clipOff ();
 				} else if (isMLTE (me)) {
@@ -635,7 +635,7 @@ void XmTextReplace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, c
 		 * We DON'T replace any text without selecting it, so we can deselect any other text,
 		 * thus allowing ourselves to select [from_pos, to_pos] and use selection replacement.
 		 */
-		if (my managed) _GuiMac_clipOn (me);
+		if (my managed) _GuiMac_clipOnParent (me);
 		if (isTextControl (me)) {
 			long oldLength = NativeText_getLength (me);
 			char *totalText = Melder_malloc (char, oldLength - (to_pos - from_pos) + length + 1);
@@ -780,7 +780,7 @@ Boolean XmTextCut (Widget me, long time) {
 		SendMessage (my window, WM_CUT, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
 		if (isTextControl (me)) {
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			HandleControlKey (my nat.control.handle, 0, 'X', cmdKey);
 			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
@@ -812,7 +812,7 @@ Boolean XmTextPaste (Widget me) {
 		SendMessage (my window, WM_PASTE, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
 		if (isTextControl (me)) {
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			HandleControlKey (my nat.control.handle, 0, 'V', cmdKey);
 			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
@@ -829,7 +829,7 @@ Boolean XmTextRemove (Widget me) {
 		SendMessage (my window, WM_CLEAR, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
 		if (isTextControl (me)) {
-			_GuiMac_clipOn (me);
+			_GuiMac_clipOnParent (me);
 			HandleControlKey (my nat.control.handle, 0, 8, 0);   /* Backspace key. */
 			GuiMac_clipOff ();
 		} else if (isMLTE (me)) {
@@ -991,7 +991,7 @@ void GuiText_setStringW (Widget me, const wchar_t *text) {
 				_Gui_invalidateWidget (me);   /* HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer). */
 			} else {
 				if (isTextControl (me)) {
-					_GuiMac_clipOn (me);
+					_GuiMac_clipOnParent (me);
 					Draw1Control (my nat.control.handle);
 					GuiMac_clipOff ();
 				} else if (isMLTE (me)) {

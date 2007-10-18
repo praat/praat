@@ -1222,14 +1222,11 @@ void praat_run (void) {
 
 	praat_addMenus2 ();
 	#ifdef macintosh
-	if (Melder_systemVersion >= 0x0A00) {
 		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_HIDDEN, DO_Quit);
-	} else
-	#endif
-	{
+	#else
 		praat_addMenuCommand ("Objects", "Praat", "-- quit --", 0, 0, 0);
 		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
-	}
+	#endif
 
 	/*
 	 * Read the preferences file, and notify those who want to be notified of this,

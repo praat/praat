@@ -720,7 +720,7 @@ NORMAL (L"With this command, you send your entire picture immediately to the pri
 	"See the @Printing tutorial for details.")
 MAN_END
 
-MAN_BEGIN (L"Printing", L"ppgb", 20041130)
+MAN_BEGIN (L"Printing", L"ppgb", 20071016)
 NORMAL (L"The best results will be obtained on PostScript printers, since these have built-in "
 	"facilities for images (e.g. spectrograms) and rotated text. "
 	"However, the printed page will look reasonable on colour inkjet printers as well.")
@@ -738,14 +738,14 @@ NORMAL (L"On Linux, you do not need a PostScript printer to print PostScript dir
 	"and print two pages on one sheet of paper, you change it to $$cat \\% s | mpage -2 -o -f -m0 | lpr$.")
 #elif defined (macintosh)
 ENTRY (L"1. Printing on Macintosh")
-NORMAL (L"Many Macintoshes are in a network that includes a PostScript printer (e.g. an Apple^\\re LaserWriter^\\re). "
-	"If a PostScript printer is available, Praat will usually write direct PostScript commands to that printer "
+NORMAL (L"If you are on a Mac and a PostScript printer is available, "
+	"Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
 	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
 #elif defined (_WIN32)
 ENTRY (L"1. Printing on Windows")
-NORMAL (L"Some Windows computers are in a network that includes a PostScript printer. "
-	"If a PostScript printer is available, Praat will usually write direct PostScript commands to that printer "
+NORMAL (L"If you are on a Windows computer and a PostScript printer is available, "
+	"Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
 	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
 #endif
@@ -753,7 +753,7 @@ ENTRY (L"2. Indirect printing with GhostView")
 NORMAL (L"If you don't have a PostScript printer, and you still want PostScript quality, "
 	"you can save the picture to an EPS file (@@Write to EPS file...@). "
 	"You can then view this file with the freely available "
-	"GhostView^\\tm program, which you can download from ##http://www.cs.wisc.edu/~ghost#.")
+	"GhostView^\\tm program, which you can download from ##http://pages.cs.wisc.edu/~ghost/#.")
 ENTRY (L"3. Indirect printing with your word processor")
 NORMAL (L"If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
 	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). See @@Write to EPS file...@.")
