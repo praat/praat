@@ -34,7 +34,7 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 	Collection thee = NULL;
 	long i, *pos = NULL;
 
-	if (my size != his numberOfElements) return Melder_errorp ("The number of elements are not equal.");
+	if (my size != his numberOfElements) return Melder_errorp1 (L"The number of elements are not equal.");
 	if (! (pos = NUMlvector (1, my size)) ||
 		! (thee = Data_copy (me)))
 	{
@@ -184,7 +184,7 @@ Any OrderedOfString_selectUniqueItems (I, int sort)
 	return him;
 error:
 	forget (thee); forget (him);
-	return Melder_errorp ("OrderedOfString_selectUniqueItems: not performed");
+	return Melder_errorp1 (L"OrderedOfString_selectUniqueItems: not performed");
 }
 
 void OrderedOfString_frequency (I, thou, long *count)
@@ -276,7 +276,7 @@ int OrderedOfString_sequentialNumbers (I, long n)
 {
 	iam (OrderedOfString); long i;
 	Collection_removeAllItems (me);
-    for (i=1; i <= n; i++)
+    for (i = 1; i <= n; i++)
     {
 		wchar_t s[20]; SimpleString str = NULL;
 		if (swprintf (s, 20, L"%ld", i) == EOF ||
@@ -301,7 +301,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 	if (use_regexp)
 	{			
 		compiled_search = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
-		if (compiled_search == NULL) return Melder_error (compileMsg);
+		if (compiled_search == NULL) return Melder_error1 (Melder_utf8ToWcs (compileMsg));
 	}
 	for (i = 1; i <= my size; i++)
 	{

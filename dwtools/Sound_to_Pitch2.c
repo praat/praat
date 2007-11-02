@@ -295,7 +295,7 @@ cleanup:
 	forget (sound); forget (hamming); forget (frame);
 	if (! Melder_hasError()) return thee;
 	forget (thee);
-	return Melder_errorp ("Sound_to_Pitch_shs: not performed.");
+	return Melder_errorp1 (L"Sound_to_Pitch_shs: not performed.");
 }
 
 Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,

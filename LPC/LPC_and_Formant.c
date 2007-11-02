@@ -125,15 +125,14 @@ Formant LPC_to_Formant (LPC me, double margin)
 	int nmax = my maxnCoefficients;
 	long err = 0, i, interval = nmax > 20 ? 1 : 10;
 
-	if (nmax > 99) return Melder_errorp ("%s: We cannot find the roots of a polynomial "
-		"of order > 99.", proc);
-	if (margin >= samplingFrequency/4) return Melder_errorp ("%s: Margin must be smaller than %ls",
-		proc, Melder_double (samplingFrequency/4));
+	if (nmax > 99) return Melder_errorp1 (L"We cannot find the roots of a polynomial "
+		"of order > 99.");
+	if (margin >= samplingFrequency/4) return Melder_errorp3 (L"Margin must be smaller than ", Melder_double (samplingFrequency/4), L".");
 	 
 	thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax+1)/2);	
 	if (thee == NULL) return NULL;
 
-	(void) Melder_progress (0.0, "LPC to Formant");
+	(void) Melder_progress1 (0.0, L"LPC to Formant");
 	
 	for (i = 1; i <= my nx; i++)
 	{
@@ -150,15 +149,15 @@ Formant LPC_to_Formant (LPC me, double margin)
 			err++;
 		}
 		
-		if ((interval == 1 || (i % interval) == 1) && ! Melder_progress ((double)i / my nx,
-			"LPC to Formant: frame %ld out of %ld", i, my nx)) goto end;
+		if ((interval == 1 || (i % interval) == 1) && ! Melder_progress5 ((double)i / my nx,
+			L"LPC to Formant: frame ", Melder_integer (i), L" out of ", Melder_integer (my nx), L".")) goto end;
 	}
 	
 	Formant_sort (thee);
 
 end:
 
-	(void) Melder_progress (1.0, NULL);
+	(void) Melder_progress1 (1.0, NULL);
 	
 	if (err > 0) Melder_warning ("%s: %d formant frames out of %d suspect.", proc, err, my nx);
 	if (Melder_hasError()) forget (thee);

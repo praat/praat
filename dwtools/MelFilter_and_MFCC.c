@@ -86,7 +86,7 @@ MelFilter MFCC_to_MelFilter (MFCC me, long first_cc,
 	double fmin = MAX (f1_mel - df_mel, 0);
 	double fmax = f1_mel + (nf + 1) * df_mel;
 
-	if (nf < 1) return Melder_errorp ("MFCC_to_MelFilter: the position of the "
+	if (nf < 1) return Melder_errorp1 (L"MFCC_to_MelFilter: the position of the "
 		"first filter, the distance between the filters, and, the maximum "
 		"do not result in a positive number of filters.");
 	/*

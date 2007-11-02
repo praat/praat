@@ -46,9 +46,10 @@ static int classMinimizer_after (I, Any aclosure)
     Graphics_line (my gmonitor, my iteration, my history[my iteration],
     	my iteration, my history[my iteration]);
     Graphics_unsetInner (my gmonitor);
-	if (! Melder_monitor ((double) (my iteration) / my maxNumOfIterations,
-		"Iterations: %ld, Function calls: %ld, Cost: %f", my iteration,
-		my funcCalls, my minimum))
+	if (! Melder_monitor6 ((double) (my iteration) / my maxNumOfIterations,
+		L"Iterations: ", Melder_integer (my iteration),
+		L", Function calls: ", Melder_integer (my funcCalls),
+		L", Cost: ", Melder_double (my minimum)))
 	{
 		Melder_casual ("Minimization interrupted after %ld iterations.", 
 			my iteration);
@@ -122,12 +123,12 @@ int Minimizer_minimize (I, long maxNumOfIterations, double tolerance,
 		if (history == NULL) return 0;
 		my history = --history; /* arrays start at 1 !! */
     }
-    if (monitor) my gmonitor = Melder_monitor (0.0, "Starting...");
+    if (monitor) my gmonitor = Melder_monitor1 (0.0, L"Starting...");
     my start = 1; /* for my after() */
     status = our minimize (me);
     if (monitor)
     {
-    	(void) Melder_monitor (1.1, NULL);
+    	(void) Melder_monitor1 (1.1, NULL);
     	if (my gmonitor)
     	{
     		Graphics_clearWs (my gmonitor); /* DON'T forget (my gmonitor) */
@@ -151,7 +152,7 @@ int Minimizer_minimizeManyTimes (I, long numberOfTimes, long
 	popt = NUMdvector_copy (my p, 1, my nParameters);
 	if (popt == NULL) return 0;
 	
-	if (! monitorSingle) Melder_progress (0.0, "Minimize many times");
+	if (! monitorSingle) Melder_progress1 (0.0, L"Minimize many times");
 	/* on first iteration start with current parameters 27/11/97 */
 	for (i = 1; i <= numberOfTimes; i++)
 	{
@@ -164,10 +165,10 @@ int Minimizer_minimizeManyTimes (I, long numberOfTimes, long
 			fopt = my minimum;
 		}
 		Minimizer_reset (me, NULL); 
-		if (! monitorSingle && ! Melder_progress ((double)i / numberOfTimes,
-			" %ld from %ld", i, numberOfTimes)) break;
+		if (! monitorSingle && ! Melder_progress3 ((double)i / numberOfTimes,
+			Melder_integer (i), L" from ", Melder_integer (numberOfTimes))) break;
 	}
-	if (! monitorSingle) Melder_progress (1.0, NULL);
+	if (! monitorSingle) Melder_progress1 (1.0, NULL);
 	Minimizer_reset (me, popt);
 	NUMdvector_free (popt, 1);
 	return 1;

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20070302 Latest modification.
+ djmw 20071022 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -161,9 +161,6 @@ void NUMsvector_clip (short v[], long lo, long hi, double min, double max);
 */
 
 int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce);
-
-void NUMfvector_moment2 (float v[], long lo, long hi, double *mean, 
-	double *variance);
 
 float NUMfvector_normalize1 (float v[], long n);
 float NUMfvector_normalize2 (float v[], long n);
@@ -622,6 +619,14 @@ double NUMwilksLambda (double *lambda, long from, long to);
 	Calculate: Product (i=from..to; 1/(1+lambda[i]))
 	Preconditions: to >= from
 */
+
+double NUMlnBeta (double a, double b);
+/*
+	Computes the logarithm of the beta function log(B(a,b) subject to 
+	a and b not being negative integers.
+*/
+
+double NUMbeta2 (double z, double w);//temporarily
 
 double NUMincompleteBeta (double a, double b, double x);
 /*

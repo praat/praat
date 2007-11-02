@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -151,9 +151,9 @@ gsl_sf_bessel_Yn_e(int n, const double x, gsl_sf_result * result)
       int j;
 
       for(j=1; j<n; j++) { 
-	byp = j*two_over_x*by - bym;
-	bym = by;
-	by  = byp;
+        byp = j*two_over_x*by - bym;
+        bym = by;
+        by  = byp;
       }
       result->val  = sign * by;
       result->err  = fabs(result->val) * (fabs(r_by.err/r_by.val) + fabs(r_bym.err/r_bym.val));
@@ -191,7 +191,7 @@ gsl_sf_bessel_Yn_array(const int nmin, const int nmax, const double x, double * 
       for(n=nmin+1; n<=nmax+1; n++) {
         result_array[n-nmin-1] = Ynm1;
         Ynp1 = -Ynm1 + 2.0*n/x * Yn;
-	Ynm1 = Yn;
+        Ynm1 = Yn;
         Yn   = Ynp1;
       }
     }

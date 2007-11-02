@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -67,7 +67,12 @@ int gsl_sf_bessel_i0_scaled_e(const double x, gsl_sf_result * result)
 
   /* CHECK_POINTER(result) */
 
-  if(ax < 0.2) {
+  if(x == 0.0) {
+    result->val = 1.0;
+    result->err = 0.0;
+    return GSL_SUCCESS;    
+  }
+  else if(ax < 0.2) {
     const double eax = exp(-ax);
     const double y = ax*ax;
     const double c1 = 1.0/6.0;
@@ -97,7 +102,12 @@ int gsl_sf_bessel_i1_scaled_e(const double x, gsl_sf_result * result)
 
   /* CHECK_POINTER(result) */
 
-  if(ax < 3.0*GSL_DBL_MIN) {
+  if(x == 0.0) {
+    result->val = 0.0;
+    result->err = 0.0;
+    return GSL_SUCCESS;
+  }
+  else if(ax < 3.0*GSL_DBL_MIN) {
     UNDERFLOW_ERROR(result);
   }
   else if(ax < 0.25) {
@@ -129,7 +139,12 @@ int gsl_sf_bessel_i2_scaled_e(const double x, gsl_sf_result * result)
 
   /* CHECK_POINTER(result) */
 
-  if(ax < 4.0*GSL_SQRT_DBL_MIN) {
+  if(x == 0.0) {
+    result->val = 0.0;
+    result->err = 0.0;
+    return GSL_SUCCESS;    
+  }
+  else if(ax < 4.0*GSL_SQRT_DBL_MIN) {
     UNDERFLOW_ERROR(result);
   }
   else if(ax < 0.25) {
@@ -170,7 +185,7 @@ int gsl_sf_bessel_il_scaled_e(const int l, double x, gsl_sf_result * result)
     DOMAIN_ERROR(result);
   }
   else if(x == 0.0) {
-    result->val = 0.0;
+    result->val = ( l == 0 ? 1.0 : 0.0 );
     result->err = 0.0;
     return GSL_SUCCESS;
   }
@@ -210,7 +225,7 @@ int gsl_sf_bessel_il_scaled_e(const int l, double x, gsl_sf_result * result)
     double rat;
     int stat_CF1 = bessel_il_CF1(l, ax, GSL_DBL_EPSILON, &rat);
     double iellp1 = rat * GSL_SQRT_DBL_MIN;
-    double iell	  = GSL_SQRT_DBL_MIN;
+    double iell   = GSL_SQRT_DBL_MIN;
     double iellm1;
     int ell;
     for(ell = l; ell >= 1; ell--) {
@@ -260,22 +275,31 @@ int gsl_sf_bessel_il_scaled_e(const int l, double x, gsl_sf_result * result)
 
 int gsl_sf_bessel_il_scaled_array(const int lmax, const double x, double * result_array)
 {
-  int ell;
-  gsl_sf_result r_iellp1;
-  gsl_sf_result r_iell;
-  int stat_0 = gsl_sf_bessel_il_scaled_e(lmax+1, x, &r_iellp1);
-  int stat_1 = gsl_sf_bessel_il_scaled_e(lmax,   x, &r_iell);
-  double iellp1 = r_iellp1.val;
-  double iell   = r_iell.val;
-  double iellm1;
-  result_array[lmax] = iell;
-  for(ell = lmax; ell >= 1; ell--) {
-    iellm1 = iellp1 + (2*ell + 1)/x * iell;
-    iellp1 = iell;
-    iell   = iellm1;
-    result_array[ell-1] = iellm1;
+  if(x == 0.0) {
+    int ell;
+    result_array[0] = 1.0;
+    for (ell = lmax; ell >= 1; ell--) {
+      result_array[ell] = 0.0;
+    };
+    return GSL_SUCCESS;
+  } else {
+    int ell;
+    gsl_sf_result r_iellp1;
+    gsl_sf_result r_iell;
+    int stat_0 = gsl_sf_bessel_il_scaled_e(lmax+1, x, &r_iellp1);
+    int stat_1 = gsl_sf_bessel_il_scaled_e(lmax,   x, &r_iell);
+    double iellp1 = r_iellp1.val;
+    double iell   = r_iell.val;
+    double iellm1;
+    result_array[lmax] = iell;
+    for(ell = lmax; ell >= 1; ell--) {
+      iellm1 = iellp1 + (2*ell + 1)/x * iell;
+      iellp1 = iell;
+      iell   = iellm1;
+      result_array[ell-1] = iellm1;
+    }
+    return GSL_ERROR_SELECT_2(stat_0, stat_1);
   }
-  return GSL_ERROR_SELECT_2(stat_0, stat_1);
 }
 
 

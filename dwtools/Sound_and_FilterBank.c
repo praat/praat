@@ -154,7 +154,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 	fmax_bark = MIN (fmax_bark, zmax);
 	nf = floor ((fmax_bark - f1_bark) / df_bark + 0.5);
-	if (nf <= 0) return Melder_errorp ("Sound_to_BarkFilter: The combination of filter parameters is not valid.");
+	if (nf <= 0) return Melder_errorp1 (L"Sound_to_BarkFilter: The combination of filter parameters is not valid.");
 		
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1) ||
 		((sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) == NULL) ||
@@ -162,7 +162,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 		((thee = BarkFilter_create (my xmin, my xmax, nt, dt, t1, 
 				fmin_bark, fmax_bark, nf, df_bark, f1_bark)) == NULL)) goto end;
 		 
-	Melder_progress (0.0, "BarkFilter analysis");
+	Melder_progress1 (0.0, L"BarkFilter analysis");
 
 	for (i=1; i <= nt; i++)
 	{
@@ -174,8 +174,8 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 						
 		if (! Sound_into_BarkFilter_frame (sframe, thee, i)) frameErrorCount++;
 		
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / nt, 
-			"BarkFilter analysis: frame %ld from %ld", i, nt)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt,  L"BarkFilter analysis: frame ",
+			Melder_integer (i), L" from ", Melder_integer (nt), L".")) goto end;
 	}
 	
 	if (frameErrorCount > 0)
@@ -191,7 +191,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	forget (sframe); forget (window);
 	if (Melder_hasError()) forget (thee);
 
@@ -273,7 +273,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		((thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, 
 			fmax_mel, nf, df_mel, f1_mel)) == NULL)) goto end;
 
-	Melder_progress (0.0, "MelFilters analysis");
+	Melder_progress1 (0.0, L"MelFilters analysis");
 
 	for (i = 1; i <= nt; i++)
 	{
@@ -281,8 +281,8 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		Sound_into_Sound (me, sframe, t - windowDuration / 2);
 		Sounds_multiply (sframe, window);				
 		if (! Sound_into_MelFilter_frame (sframe, thee, i)) frameErrorCount++;
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / nt, 
-			"Sound to MFCC: frame %ld out of %ld", i, nt)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Sound to MFCC: frame ",
+			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) goto end;
 	}
 	
 	if (frameErrorCount) Melder_warning ("Sound_to_MelFilters: analysis results"
@@ -299,7 +299,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 
 end:
 
-	Melder_progress (1.1, NULL);
+	Melder_progress1 (1.1, NULL);
 	forget (sframe); 
 	forget (window); 
 	if (Melder_hasError()) forget (thee);
@@ -439,9 +439,8 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 						
 	 	if (! Sound_into_FormantFilter_frame (sframe, him, i, b)) goto end;
 		
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / nt, 
-			"Sound_and_Pitch_to_FormantFilters: frame %ld out of %ld",
-			i, nt)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Sound_and_Pitch_to_FormantFilters: frame ",
+			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) goto end;
 	}
 
 	ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
@@ -450,7 +449,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 		FilterBank_DBFAC, FilterBank_DBFLOOR);
 
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	forget (sframe); forget (window);
 	if (Melder_hasError()) forget (him);
 	return him;

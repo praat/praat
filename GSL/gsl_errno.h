@@ -1,10 +1,10 @@
 /* err/gsl_errno.h
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman, Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Gerard Jungman, Brian Gough
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef __GSL_ERRNO_H__
@@ -65,21 +65,18 @@ enum {
 } ;
 
 void gsl_error (const char * reason, const char * file, int line,
-		int gsl_errno);
-
-void gsl_warning (const char * reason, const char * file, int line,
-		  int gsl_errno) ;
+                int gsl_errno);
 
 void gsl_stream_printf (const char *label, const char *file,
-			int line, const char *reason);
+                        int line, const char *reason);
 
 const char * gsl_strerror (const int gsl_errno);
 
 typedef void gsl_error_handler_t (const char * reason, const char * file,
-				  int line, int gsl_errno);
+                                  int line, int gsl_errno);
 
 typedef void gsl_stream_handler_t (const char * label, const char * file,
-				   int line, const char * reason);
+                                   int line, const char * reason);
 
 gsl_error_handler_t * 
 gsl_set_error_handler (gsl_error_handler_t * new_handler);
@@ -120,32 +117,6 @@ FILE * gsl_set_stream (FILE * new_stream);
 /* GSL_ERROR_NULL suitable for out-of-memory conditions */
 
 #define GSL_ERROR_NULL(reason, gsl_errno) GSL_ERROR_VAL(reason, gsl_errno, 0)
-
-
-/* GSL library code can occasionally generate warnings, which are not
-   intended to be fatal. You can compile a version of the library with
-   warnings turned off globally by defining the preprocessor constant
-   GSL_WARNINGS_OFF. This turns off the warnings, but does not disable
-   error handling in any way or turn off error messages.
- 
-   GSL_WARNING() is not intended for use in client code -- use
-   GSL_MESSAGE() instead.  */
-    
-#ifdef GSL_WARNINGS_OFF   /* throw away warnings */
-#define GSL_WARNING(warning, gsl_errno) \
-       do { } while(0)
-#else                     /* output all warnings */
-#define GSL_WARNING(warning, gsl_errno) \
-       do { \
-       gsl_warning (warning, __FILE__, __LINE__, gsl_errno) ; \
-       } while (0)
-#endif
-
-/* Warnings can also be turned off at runtime by setting the variable
-   gsl_warnings_off to a non-zero value */
-
-GSL_VAR int gsl_warnings_off ;
-
 
 /* Sometimes you have several status results returned from
  * function calls and you want to combine them in some sensible

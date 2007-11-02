@@ -28,7 +28,7 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee)
 {
 	iam (Matrix); TableOfReal him; long i, j;
 	
-	if (thy size != my ny) return Melder_errorp ("Matrix_and_Categories_to_TableOfReal: "
+	if (thy size != my ny) return Melder_errorp1 (L"Matrix_and_Categories_to_TableOfReal: "
 		"number of rows and number of categories must be equal.");
 		
 	if (! (him = TableOfReal_create (my ny, my nx)) ||

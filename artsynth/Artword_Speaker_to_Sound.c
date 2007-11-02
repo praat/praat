@@ -71,7 +71,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	Graphics graphics;
 	delta = Speaker_to_Delta (speaker);
 	if (! delta) { forget (art); return NULL; }
-	graphics = Melder_monitor (0.0, "Articulatory synthesis");
+	graphics = Melder_monitor1 (0.0, L"Articulatory synthesis");
 	Artword_intoArt (artword, art, 0.0);
 	Art_Speaker_intoDelta (art, speaker, delta);
 	M = delta -> numberOfTubes;
@@ -169,9 +169,7 @@ if (graphics) {   /* Because we can be in batch. */
 	Graphics_setLineType (graphics, Graphics_DRAWN);
 	Graphics_resetViewport (graphics, vp);
 }
-			if (! Melder_monitor ((float) sample / numberOfSamples,
-				 "Articulatory synthesis: %.4g seconds", time))
-			{
+			if (! Melder_monitor3 ((float) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds")) {
 				forget (result);
 				if (iw1) forget (*w1); if (iw2) forget (*w2); if (iw3) forget (*w3);
 				if (ip1) forget (*p1); if (ip2) forget (*p2); if (ip3) forget (*p3);
@@ -421,7 +419,7 @@ if (graphics) {   /* Because we can be in batch. */
 			}
 		}
 	}
-	Melder_monitor (1.0, NULL);
+	Melder_monitor1 (1.0, NULL);
 	totalVolume = 0.0;
 	for (m = 1; m <= M; m ++)
 		totalVolume += delta->tube [m]. V;

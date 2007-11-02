@@ -1,6 +1,6 @@
 /* Table_extensions.c
 	 *
- * Copyright (C) 1997-2004 David Weenink
+ * Copyright (C) 1997-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 */
 
 #include "Table_extensions.h"
+#include "GraphicsP.h"
+#include "NUM2.h"
 
 /*
 The Peterson & Barney data were once (1991) obtained by me as a compressed tar-file 
@@ -3105,6 +3107,83 @@ Table Table_createFromWeeninkData (void)
 		my columnHeaders [j]. numericized = FALSE;
 	}
 	return me;
+
+}
+
+void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
+	long yci_min, long yci_max, double bar_mm, int garnish)
+{
+	long nrows = my rows -> size;
+	double x2min, x1max, y1max, y2min;
+	double bar = ceil (bar_mm * g -> resolution / 25.4);
+	
+	// check validity of columns
+	if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows) return;
+	if (labs (xci_min) > nrows || labs (xci_max) > nrows ||
+		labs (yci_min) > nrows || labs (yci_max) > nrows) return;
+	
+	if (xmin >= xmax && 
+		Table_getExtrema (me, xci_min, &xmin, &x1max) &&
+		Table_getExtrema (me, xci_max, &x2min, &xmax) &&
+		xmin >= xmax) return;
+	
+	if (ymin >= ymax && 
+		Table_getExtrema (me, yci_min, &ymin, &y1max) &&
+		Table_getExtrema (me, yci_max, &y2min, &ymax) &&
+		ymin >= ymax) return;
+	
+    Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+    Graphics_setInner (g);
+
+	for (long row = 1; row <= nrows; row++)
+	{
+		double x  = Table_getNumericValue (me, row, xcolumn);
+		double y  = Table_getNumericValue (me, row, ycolumn);
+		double x1 = Table_getNumericValue (me, row, xci_min);	
+		double x2 = Table_getNumericValue (me, row, xci_max);
+		double y1 = Table_getNumericValue (me, row, yci_min);	
+		double y2 = Table_getNumericValue (me, row, yci_max);
+		double xo1, yo1, xo2, yo2;
+		
+		if (xci_min > 0)
+		{
+			if (NUMclipLineWithinRectangle (x1, y, x, y, xmin, ymin, xmax, ymax,
+				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (bar > 0 && NUMclipLineWithinRectangle (x1, y - bar/2, x1, y + bar/2, 
+				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+		}
+		if (xci_max > 0)
+		{
+			if (NUMclipLineWithinRectangle (x, y, x2, y, xmin, ymin, xmax, ymax,
+				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (bar > 0 && NUMclipLineWithinRectangle (x2, y - bar/2, x2, y + bar/2, 
+				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+		}
+		if (yci_min > 0)
+		{
+			if (NUMclipLineWithinRectangle (x, y1, x, y, xmin, ymin, xmax, ymax,
+				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y1, x + bar/2, y1, 
+				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+		}
+		if (yci_max > 0)
+		{
+			if (NUMclipLineWithinRectangle (x, y, x, y2, xmin, ymin, xmax, ymax,
+				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y2, x + bar/2, y2, 
+				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
+		}
+	}
+	
+    Graphics_unsetInner (g);
+	
+	if (garnish)
+	{
+		Graphics_drawInnerBox (g);
+		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_marksBottom (g, 2, 1, 1, 0);
+	}
 
 }
 

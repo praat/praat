@@ -21,6 +21,7 @@
  djmw 2001
  djmw 20020525 GPL header.
  djmw 20060323 Stewart-Love redundancy added.
+ djmw 20071022 Melder_error<n>
  */
 
 #include "CCA_and_Correlation.h"
@@ -28,14 +29,13 @@
 
 TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 {
-	char *proc = "CCA_and_Correlation_dvFactorLoadings";
 	TableOfReal him;
 	long i, j, k, ny = my y -> dimension, nx = my x -> dimension;
 	double t, **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
 
-	if (ny + nx != thy numberOfColumns) return Melder_errorp ("%s: the number "
+	if (ny + nx != thy numberOfColumns) return Melder_errorp1 (L"The number "
 		"of columns in the Correlation object must equal the sum of the "
-		"dimensions in the CCA object", proc);
+		"dimensions in the CCA object");
 
 	him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 	if (him == NULL) return NULL;
@@ -75,14 +75,14 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 	return him;
 }
 
-static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to, char *proc)
+static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)
 {
-	if (my y -> dimension + my x -> dimension != thy numberOfColumns) return Melder_error
-		("%s: The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object", proc);
-	if (canonicalVariate_to < canonicalVariate_from) return Melder_error
-		("%s: The second value in the \"Canonical variate range\" must be equal or larger than the first.", proc);
-	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) return Melder_error
-		("%s: The \"Canonical variate range\" must be within the interval [1, %d]", proc, my numberOfCoefficients);
+	if (my y -> dimension + my x -> dimension != thy numberOfColumns) return Melder_error1
+		(L"The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
+	if (canonicalVariate_to < canonicalVariate_from) return Melder_error1
+		(L"The second value in the \"Canonical variate range\" must be equal or larger than the first.");
+	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) return Melder_error3
+		(L"The \"Canonical variate range\" must be within the interval [1, ", Melder_integer (my numberOfCoefficients), L"].");
 	return 1;
 }
 
@@ -91,8 +91,7 @@ double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_
 	long i, icv, ioffset, j, n;
 	double **evec, varianceFraction = 0;
 
-	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to,
-		"CCA_and_Correlation_getVarianceFraction")) return NUMundefined;
+	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to)) return NUMundefined;
 
 	/* For the formulas see:
 		William W. Cooley & Paul R. Lohnes (1971), Multivariate data Analysis, John Wiley & Sons, pag 170-...
@@ -146,8 +145,7 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	long icv;
 	double redundancy = 0;
 
-	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to,
-		"CCA_and_Correlation_getRedundancy_sl")) return NUMundefined;
+	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to)) return NUMundefined;
 	
 	for (icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)
 	{

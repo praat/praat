@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into.
  djmw 20030324 Added PCA_and_TableOfReal_getFractionVariance.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "PCA.h"
@@ -42,6 +43,8 @@
 #include "oo_COPY.h"
 #include "PCA_def.h"
 #include "oo_EQUAL.h"
+#include "PCA_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "PCA_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "PCA_def.h"
@@ -68,6 +71,7 @@ class_methods (PCA, Eigen)
 	class_method_local (PCA, description)
 	class_method_local (PCA, copy)
 	class_method_local (PCA, equal)
+	class_method_local (PCA, canWriteAsEncoding)
 	class_method_local (PCA, writeText)
 	class_method_local (PCA, readText)
 	class_method_local (PCA, writeBinary)
@@ -136,14 +140,14 @@ PCA TableOfReal_to_PCA (I)
 	double **a = NULL;
 	long i, j, m = my numberOfRows, n = my numberOfColumns;
 	
-	if (m < 2) return Melder_errorp ("%s: There is not enough data to perform a PCA.\n"
-		"Your table has less than 2 rows.", proc);
+	if (m < 2) return Melder_errorp1 (L"There is not enough data to perform a PCA.\n"
+		"Your table has less than 2 rows.");
 
 	if (m < n) Melder_warning ("%s: The number of rows in your table is less than the\n"
 		"number of columns. ", proc);
 	
-	if (NUMfrobeniusnorm (m, n, my data) == 0) return Melder_errorp 
-		("%s: All values in your table are zero. ", proc);
+	if (NUMfrobeniusnorm (m, n, my data) == 0) return Melder_errorp1 
+		(L"All values in your table are zero. ");
 	
 	if (! (thee = new (PCA)) ||
 		! (a = NUMdmatrix_copy (my data, 1, m, 1, n)) ||
@@ -219,8 +223,8 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 	TableOfReal him;
 	long i, j, k, npc = thy numberOfColumns;
 	
-	if (thy numberOfColumns > my dimension) return Melder_errorp 
-		("PCA_and_Configuration_to_TableOfReal: The dimension of the Configuration must "
+	if (thy numberOfColumns > my dimension) return Melder_errorp1 
+		(L"PCA_and_Configuration_to_TableOfReal: The dimension of the Configuration must "
 			"be less equal the dimension of the PCA.");
 			
 	if (npc > my numberOfEigenvalues)

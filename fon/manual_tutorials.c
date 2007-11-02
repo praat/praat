@@ -23,9 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071018)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071102)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.36# (November 2, 2007)")
+LIST_ITEM (L"\\bu Sound and TextGrid windows: direct drawing of intensity, formants, pulses, and TextGrid.")
+LIST_ITEM (L"\\bu Regular expressions: corrected handling of newlines on Windows.")
+LIST_ITEM (L"\\bu Scripting: improved positioning of settings windows for script commands in editors on Windows.")
+NORMAL (L"##4.6.35# (October 22, 2007)")
+LIST_ITEM (L"\\bu Windows and Linux: better positioning of form windows of editor scripts.")
+LIST_ITEM (L"\\bu Macintosh: OTMulti learning window more compatible with non-ASCII characters.")
 NORMAL (L"##4.6.34# (October 18, 2007)")
 LIST_ITEM (L"\\bu Corrected a bug introduced in September that could cause Praat to crash when starting up "
 	"if the user had explicitly made action commands visible or invisible in an earlier session.")

@@ -205,7 +205,6 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol, 
 	int wantlocation)
 {
-	char *proc = "Sound_and_LPC_to_LPC_robust";
 	struct huber_struct struct_huber;
 	Sound sound = NULL, sframe = NULL, window = NULL;
 	LPC him = NULL;
@@ -217,15 +216,15 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 
 	if (my xmin != thy xmin || my xmax != thy xmax)
 	{
-		return Melder_errorp ("%s: Time domains differ.", proc);
+		return Melder_errorp1 (L"Time domains differ.");
 	}
 	if (my dx != thy samplingPeriod)
 	{
-		return Melder_errorp ("%s: Sampling intervals differ.", proc);
+		return Melder_errorp1 (L"Sampling intervals differ.");
 	}
 	if (floor (windowDuration / my dx) < p + 1)
 	{
-		return Melder_errorp ("%s: Analysis window too short.", proc);
+		return Melder_errorp1 (L"Analysis window too short.");
 	}
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1))
 	{
@@ -233,7 +232,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	}
 	if (nFrames != thy nx || t1 != thy x1)
 	{
-		return Melder_errorp ("%s: Incorrect retrieved analysis width", proc);
+		return Melder_errorp1 (L"Incorrect retrieved analysis width");
 	}
 	
 	sound = (Sound) Data_copy (me);
@@ -252,7 +251,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	struct_huber.tol = tol_svd;
 	struct_huber.itermax = itermax;
 	
-	Melder_progress (0.0, "LPC analysis");
+	Melder_progress1 (0.0, L"LPC analysis");
 
 	if (preEmphasisFrequency < samplingFrequency / 2) 
 	{
@@ -275,8 +274,8 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 		
 		iter += struct_huber.iter;
 		
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / nFrames,
-			"LPC analysis of frame %ld out of %ld", i, nFrames)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
+			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) goto end;
 	}
 	
 	if (frameErrorCount) Melder_warning ("Sound_to_LPC: analysis results of %ld"
@@ -284,7 +283,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	forget (sound); forget (sframe); forget (window);
 	huber_struct_destroy (&struct_huber);
 	if (Melder_hasError ()) forget (him);

@@ -1,6 +1,6 @@
 /* Configuration.c
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
  djmw 20050314 Configuration_draw crashed when rowlabel==NULL
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071009 wchar_t
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  */
 
 #include <ctype.h>
@@ -42,6 +44,8 @@
 #include "oo_COPY.h"
 #include "Configuration_def.h"
 #include "oo_EQUAL.h"
+#include "Configuration_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Configuration_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Configuration_def.h"
@@ -66,6 +70,7 @@ static void classConfiguration_info (I)
 class_methods (Configuration, TableOfReal)
 	class_method_local (Configuration, destroy)
 	class_method_local (Configuration, equal)
+	class_method_local (Configuration, canWriteAsEncoding)
 	class_method_local (Configuration, copy)
 	class_method_local (Configuration, readText)
 	class_method_local (Configuration, readBinary)

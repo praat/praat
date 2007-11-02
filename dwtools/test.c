@@ -10,7 +10,7 @@ int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues)
 	*eigenvectors = NULL, *eigenvalues = NULL;
 
 	if (eigen == NULL) return 0;	
-	if (my nx != my ny) return Melder_error ("(Matrix_eigen:) Matrix not square.");
+	if (my nx != my ny) return Melder_error1 (L"(Matrix_eigen:) Matrix not square.");
 
 	if (! Eigen_initFromSymmetricMatrix_f (eigen, my z, my nx)) goto end;
 	

@@ -25,6 +25,8 @@
  djmw 20041123 Latest modification
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20080902 Melder_error<1...>
+ djmw 20071011 REQUIRE requires L"".
+ djmw 20071024 Use MelderString_append in FFNet_createNameFromTopology
 */
 
 #include <math.h>
@@ -77,7 +79,7 @@ static int FFNet_create_checkCommonFields_hidden (void *dia, 	long *numberOfHidd
 	*numberOfHidden2 = GET_INTEGER ("Number of units in hidden layer 2");
 	if (*numberOfHidden1 < 0 || *numberOfHidden2 < 0)
 	{
-		return Melder_error ("The number of units in a hidden layer must be greater than or equal to 0.");
+		return Melder_error1 (L"The number of units in a hidden layer must be greater than or equal to 0.");
 	}
 	return 1;
 }
@@ -125,7 +127,7 @@ DO
 	thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 1);
 	if (thee == NULL)
 	{
-		return Melder_error ("There was not enough memory to create the FFNet.\nPlease reduce some of the numbers.");
+		return Melder_error1 (L"There was not enough memory to create the FFNet.\nPlease reduce some of the numbers.");
 	}
     if (! praat_new1 (thee, GET_STRINGW (L"Name"))) return 0;
 END
@@ -506,38 +508,37 @@ DO
 	FFNet ffnet = NULL;
 	long nHidden1 = GET_INTEGER ("Number of units in hidden layer 1");
 	long nHidden2 = GET_INTEGER ("Number of units in hidden layer 2");
-	wchar_t ffnetName[40];
+	MelderString ffnetName = { 0 };
 	
 	if (nHidden1 < 1) nHidden1 = 0;
  	if (nHidden2 < 1) nHidden2 = 0;
 	uniq = Categories_selectUniqueItems (l, 1);
-	if (uniq == NULL)
-	{
-		(void) Melder_error ("There is not enough memory to create %d output categories.\n");
-		return Melder_error ("Please try again with less categories.");
-	}
+	if (uniq == NULL) return Melder_error1 (L"There is not enough memory to create the output categories.\n"
+			"Please try again with less categories.");
 	numberOfOutputs = uniq -> size;
 	if (numberOfOutputs < 1)
 	{
 		forget (uniq);
-		(void) Melder_error ("There are not enough categories in the Categories.\n");
-		return Melder_error ("Please try again with more categories in the Categories.");
+		return Melder_error1 (L"There are not enough categories in the Categories.\n"
+			"Please try again with more categories in the Categories.");
 	}
 	
     ffnet = FFNet_create (p -> nx, nHidden1, nHidden2, numberOfOutputs, 0);
 	if (ffnet == NULL)
 	{
 		forget (uniq);
-		(void) Melder_error ("There was not enough memory to create the FFNet.\n");
-		return Melder_error ("Please try again with less hidden nodes in the hidden layer(s).");
+		return Melder_error1 (L"There was not enough memory to create the FFNet.\n"
+			"Please try again with less hidden nodes in the hidden layer(s).");
 	}
 	if (! FFNet_setOutputCategories (ffnet, uniq))
 	{
 		forget (uniq); forget (ffnet);
 		return 0;
 	}
-	FFNet_createNameFromTopology (ffnet, ffnetName);
-	if (! praat_new1 (ffnet, ffnetName)) return 0;
+	FFNet_createNameFromTopology (ffnet, &ffnetName);
+	int status = praat_new1 (ffnet, ffnetName.string);
+	MelderString_free (&ffnetName);
+	return status;
 END
 
 FORM (FFNet_Pattern_Categories_learnSM, "FFNet & Pattern & Categories: Learn", "FFNet & Pattern & Categories: Learn...")

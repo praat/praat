@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  djmw 20031106 Removed bug from CCA_and_TableOfReal_scores
  djmw 20031221 Removed bug: CCA_and_TableOfReal_scores (wrong dimensions to Eigen_project_into).
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "CCA_and_Correlation.h"
@@ -40,6 +41,8 @@
 #include "oo_COPY.h"
 #include "CCA_def.h"
 #include "oo_EQUAL.h"
+#include "CCA_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "CCA_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "CCA_def.h"
@@ -64,6 +67,7 @@ static void info (I)
 class_methods (CCA, Data)
 	class_method_local (CCA, destroy)
 	class_method_local (CCA, equal)
+	class_method_local (CCA, canWriteAsEncoding)
 	class_method_local (CCA, copy)
 	class_method (info)
 	class_method_local (CCA, readText)
@@ -109,7 +113,6 @@ double CCA_getEigenvectorElement (CCA me, int x_or_y, long ivec, long element)
 
 CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 {
-	char *proc = "TableOfReal_to_CCA";
 	CCA thee = NULL;
 	SVD svdy = NULL, svdx = NULL, svdc = NULL;
 	double fnormy, fnormx, **uy, **vy, **ux, **vx, **uc, **vc;
@@ -119,19 +122,18 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 	long numberOfCoefficients;
 	long nx = my numberOfColumns - ny;
 		
-	if (ny < 1 || ny > my numberOfColumns - 1) return Melder_errorp ("%s: "
-		"Dimension of first part not correct.", proc);
+	if (ny < 1 || ny > my numberOfColumns - 1) return Melder_errorp1 (L"Dimension of first part not correct.");
 
 	/*
 		The dependent 'part' of the CCA should be the smallest dimension.
 	*/
 		
-	if (ny > nx) return Melder_errorp ("%s: The dimension of the dependent "
-		"part (%d) must be less than or equal to the dimension of the "
-		"independent part (%d).", proc, ny, nx);
+	if (ny > nx) return Melder_errorp5 (L"The dimension of the dependent "
+		"part (", Melder_integer (ny), L") must be less than or equal to the dimension of the "
+		"independent part (", Melder_integer (nx), L").");
 	
-	if (n < ny) return Melder_errorp ("%s: The number of "
-		"observations must be larger then %d", proc, ny);
+	if (n < ny) return Melder_errorp2 (L"The number of "
+		"observations must be larger then ", Melder_integer (ny));
 
 	/*
 		Use svd as (temporary) storage, and copy data
@@ -161,8 +163,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 	fnormx = NUMfrobeniusnorm (n, nx, ux);
 	if (fnormy == 0 || fnormx == 0)
 	{
-		(void) Melder_errorp ("%s: One of the parts of the table contains "
-			"only zeros.", proc);
+		(void) Melder_errorp1 (L"One of the parts of the table contains only zeros.");
 		goto end;
 	}
 
@@ -269,20 +270,18 @@ end:
 
 TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfFactors)
 {
-	char *proc = "CCA_and_TablesOfReal_scores";
 	TableOfReal him = NULL;
 	long n = thy numberOfRows;
 	long nx = my x -> dimension, ny = my y -> dimension;
 
-	if (ny + nx != thy numberOfColumns) return Melder_errorp ("%s: the number "
-		"of columns in the table (%d) does not agree with "
-		"the dimensions of the CCA object (ny + nx = %d + %d).",
-		proc, thy numberOfColumns, ny, nx);
+	if (ny + nx != thy numberOfColumns) return Melder_errorp7 (L"The number "
+		"of columns in the table (", Melder_integer (thy numberOfColumns), L") does not agree with "
+		"the dimensions of the CCA object (ny + nx = ", Melder_integer (ny), L" + ", Melder_integer (nx), L").");
 
 	if (numberOfFactors == 0) numberOfFactors = my numberOfCoefficients;
 	if (numberOfFactors < 1 || numberOfFactors > my numberOfCoefficients)
-		return Melder_errorp ("%s: number of factors must be in interval "
-			"[1, %d].", proc, my numberOfCoefficients);
+		return Melder_errorp3 (L"The number of factors must be in interval "
+			"[1, ", Melder_integer (my numberOfCoefficients), L"].");
 	
 	him = TableOfReal_create (n, 2 * numberOfFactors);
 	if (him == NULL) return NULL;
@@ -301,7 +300,6 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from)
 {
 	TableOfReal him = NULL;
-	char *proc = "CCA_and_TableOfReal_predict";
 	long ny = my y -> dimension, nx = my x -> dimension;
 	long i, j, k, ncols, nev = my y -> numberOfEigenvalues;
 	double *buf = NULL, **v = my y -> eigenvectors;
@@ -312,13 +310,12 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from)
 		and the number of coefficients equals the dimension of the smallest.
 	*/
 			
-	if (ny != nev) return Melder_errorp ("%s: There are not enough "
-		"correlations present for prediction.", proc);
+	if (ny != nev) return Melder_errorp1 (L"There are not enough correlations present for prediction.");
 	
 	if (from == 0) from = 1;
 	ncols = thy numberOfColumns - from + 1;
-	if (from < 1 || ncols != nx) return Melder_errorp ("%s:"
-		" the number of columns to analyze must be equal to %d.", proc, nx); 
+	if (from < 1 || ncols != nx) return Melder_errorp3 (L"The number of columns to analyze must be equal to ",
+		Melder_integer (nx), L"."); 
 	
 	/* ???? dimensions if nx .. ny ?? */
 	 

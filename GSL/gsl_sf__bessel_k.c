@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -189,12 +189,17 @@ int gsl_sf_bessel_kl_scaled_e(int l, const double x, gsl_sf_result * result)
   }
 }
 
-int gsl_sf_bessel_kl_scaled_array(const int lmax, const double x, double * result_array)
+int 
+gsl_sf_bessel_kl_scaled_array(const int lmax, const double x, double * result_array)
 {
-  if(lmax < 1 || x <= 0.0) {
+  if(lmax < 0 || x <= 0.0) {
     GSL_ERROR("domain error", GSL_EDOM);
-  }
-  else {
+  } else if (lmax == 0) {
+    gsl_sf_result result;
+    int stat = gsl_sf_bessel_k0_scaled_e(x, &result);
+    result_array[0] = result.val;
+    return stat;
+  } else {
     int ell;
     double kellp1, kell, kellm1;
     gsl_sf_result r_kell;

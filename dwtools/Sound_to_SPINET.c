@@ -68,7 +68,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 		bw[i] = 2 * NUMpi * b * (f[i] * (6.23e-6 * f[i] + 93.39e-3) + 28.52);
 	}
 	
-	Melder_progress (0.0, "SPINET analysis");
+	Melder_progress1 (0.0, L"SPINET analysis");
 	
 	for (i=1; i <= nFilters; i++)
 	{
@@ -94,8 +94,8 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			thy y[i][j] = Sound_power (frame) * bb / gammaMaxAmplitude;
 		}
 		forget (filtered); forget (gammaTone);
-		if (! Melder_progress ((double)i / nFilters, "SPINET: filter %ld from %ld",
-			i, nFilters)) goto cleanup;		
+		if (! Melder_progress5 ((double)i / nFilters, L"SPINET: filter ", Melder_integer (i), L" from ",
+			Melder_integer (nFilters), L".")) goto cleanup;		
 	}
 
 	/*
@@ -129,14 +129,14 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			}
 			thy s[i][j] = a > 0 ? a : 0;
 		}
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 cleanup:
 	NUMdvector_free (aex, 1); NUMdvector_free (ain, 1);
 	NUMdvector_free (f, 1); NUMdvector_free (bw, 1);
 	forget (window); forget (frame);
 	if (! Melder_hasError()) return thee;
 	forget (thee);
-	return Melder_errorp ("Sound_to_SPINET: not performed.");
+	return Melder_errorp1 (L"Sound_to_SPINET: not performed.");
 }
 
 /* End of file Sound_to_SPINET.c */

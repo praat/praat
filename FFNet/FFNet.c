@@ -29,6 +29,7 @@
  djmw 20060811 Changed %d to %ld in sprintf for longs.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070902 FFNet_createNameFromTopology to wchar_t
+ djmw 20071014 Melder_error<n>
 */
 
 #include "FFNet_Matrix.h"
@@ -46,6 +47,8 @@ static int bookkeeping (FFNet me);
 #include "FFNet_def.h"
 #include "oo_EQUAL.h"
 #include "FFNet_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "FFNet_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "FFNet_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -62,33 +65,31 @@ static int FFNet_checkLayerNumber (FFNet me, long layer)
 	if (layer < 1 || layer > my nLayers)
 	{
 		if (layer == 0)
-			(void) Melder_error ("A Layer number of 0 is not allowed.");
+			(void) Melder_error1 (L"A Layer number of 0 is not allowed.");
 		else if (layer < 0)
-			(void) Melder_error ("A negative layer number is not allowed.");
+			(void) Melder_error1 (L"A negative layer number is not allowed.");
 		else if (layer > my nLayers)
-			(void) Melder_error ("A layer number of %ld is too big.", layer);
+			(void) Melder_error3 (L"A layer number of ", Melder_integer (layer), L" is too big.");
 			
-		(void) Melder_error ("This FFNet has %ld layer%s.\n", layer, my nLayers, (my nLayers > 1 ? "s" : ""));
+		(void) Melder_error4 (L"This FFNet has ", Melder_integer (layer), L" layer", (my nLayers > 1 ? L"s\n" : L"\n"));
 		if (my nLayers == 1)
-			return Melder_error ("Please set the layer number equal to 1.");
+			return Melder_error1 (L"Please set the layer number equal to 1.");
 		else if (my nLayers == 2)
-			return Melder_error ("Please choose a layer number equal to 1 or 2.");
+			return Melder_error1 (L"Please choose a layer number equal to 1 or 2.");
 		else if (my nLayers == 3)
-			return Melder_error ("Please choose a layer number equal to 1, 2 or 3.");
+			return Melder_error1 (L"Please choose a layer number equal to 1, 2 or 3.");
 		else
-			return Melder_error ("Please choose a layer number in the range 1 to %ld", my nLayers);
+			return Melder_error2 (L"Please choose a layer number in the range 1 to ", Melder_integer (my nLayers));
 	}
 	return 1;
 }
 
-#define FFNet_MAXNAMELENGTH 40
-void FFNet_createNameFromTopology (FFNet me, wchar_t *name)
+void FFNet_createNameFromTopology (FFNet me, MelderString *name)
 {
-	int nchars1 = swprintf (name, FFNet_MAXNAMELENGTH, L"%ld-%ld", my nUnitsInLayer[0], my nUnitsInLayer[1]);
-	if (my nLayers > 1)
+	MelderString_append1 (name, Melder_integer (my nUnitsInLayer[0]));
+	for (long i = 1; i <= my nLayers; i++)
 	{
-		int nchars2 = swprintf (name + nchars1, FFNet_MAXNAMELENGTH, L"-%ld", my nUnitsInLayer[2]);
-		if (my nLayers > 2) (void) swprintf (name + nchars1 + nchars2, FFNet_MAXNAMELENGTH, L"-%ld", my nUnitsInLayer[3]);
+		MelderString_append2 (name, L"-", Melder_integer (my nUnitsInLayer[i]));
 	}
 }
 
@@ -220,6 +221,7 @@ class_methods (FFNet, Data)
 	class_method_local (FFNet, destroy)
 	class_method_local (FFNet, copy)
 	class_method_local (FFNet, equal)
+	class_method_local (FFNet, canWriteAsEncoding)
 	class_method_local (FFNet, writeText)
 	class_method_local (FFNet, writeBinary)
 	class_method_local (FFNet, readText)
@@ -676,7 +678,7 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 	Pattern thee = NULL;
 	Categories him = NULL, uniq = NULL;
 	long i, j;
-	wchar_t ffnetname[40];
+	MelderString ffnetname = { 0 };
 	
 	if (! (c = Collection_create (classData, 3)) ||
 		! (uniq = Categories_sequentialNumbers (3)) ||
@@ -695,10 +697,11 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 	{
 		for (j = 1; j <= 4; j++) thy z[i][j] /= 10.0;
 	}
-	FFNet_createNameFromTopology (me, ffnetname);
-	Thing_setName (me, ffnetname);
+	FFNet_createNameFromTopology (me, &ffnetname);
+	Thing_setName (me, ffnetname.string);
 	Thing_setName (thee, L"iris");
-	Thing_setName (him, L"iris"); 
+	Thing_setName (him, L"iris");
+	MelderString_free (&ffnetname);
 end:
 	forget (uniq); forget (iris);
 	if (! Melder_hasError()) return c;
@@ -752,7 +755,7 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 		(my nUnitsInLayer[layer] == his numberOfColumns && my nUnitsInLayer[layer-1]+1 == his numberOfRows))
 	{
 		long i, try[3], rows[3], cols[3], ntry = my nLayers > 3 ? 3 : my nLayers, ok = 0;
-		if (my nLayers > 3) return Melder_errorp ("Dimensions don't fit.");
+		if (my nLayers > 3) return Melder_errorp1 (L"Dimensions don't fit.");
 		for (i = 1; i <= ntry; i++)
 		{
 			cols[i] = my nUnitsInLayer[i] == his numberOfColumns;
@@ -761,19 +764,20 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 			if (try[i]) ok ++;
 		}
 		if (! rows[layer])
-			(void)  Melder_error ("The number of rows in the TableOfReal does not equal \n"
-				"the number of units in the layer that connect to layer %ld.\n", layer);
+			(void)  Melder_error3 (L"The number of rows in the TableOfReal does not equal \n"
+				"the number of units in the layer that connect to layer ", Melder_integer (layer), L".\n");
 		else
-			(void)  Melder_error ("The number of columns in the TableOfReal does not equal \n"
-				"the number of units in layer %ld.\n", layer);
+			(void)  Melder_error3 (L"The number of columns in the TableOfReal does not equal \n"
+				"the number of units in layer ", Melder_integer (layer), L".\n");
 		if (ok == 0)
-			return Melder_errorp ("Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
+			return Melder_errorp1 (L"Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
 		else
 		{
 			if (ok == 1)
-				return Melder_errorp ("Please try again with layer number %ld.", (try[1] ? try[1] : (try[2] ? try[2] : try[3])));
+				return Melder_errorp3 (L"Please try again with layer number ", 
+					Melder_integer (try[1] ? try[1] : (try[2] ? try[2] : try[3])), L".");
 			else
-				return Melder_errorp ("Please try again with one of the other two layer numbers.");
+				return Melder_errorp1 (L"Please try again with one of the other two layer numbers.");
 		}
 	}
 	thee = Data_copy (me);

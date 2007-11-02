@@ -60,6 +60,10 @@ void Resources_addDouble (const wchar_t *string, double *value);
 void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue);
 void Resources_addString (const wchar_t *string, wchar_t *value);
 void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue);
+void _Preferences_addEnum (const wchar_t *string, int *value, int min, int max,
+	wchar_t *(*getText) (int value), int (*getValue) (wchar_t *text), int defaultValue);
+#define Preferences_addEnum(string,value,enum,defaultValue) \
+	_Preferences_addEnum (string, value, enum##_MIN, enum##_MAX, enum##_getText, enum##_getValue, enum##_##defaultValue)
 
 void Resources_read (MelderFile file);
 void Resources_write (MelderFile file);

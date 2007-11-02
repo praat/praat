@@ -1,6 +1,6 @@
 /* Sampled2.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Sampled2.h"
@@ -30,6 +31,8 @@
 #include "oo_COPY.h"
 #include "Sampled2_def.h"
 #include "oo_EQUAL.h"
+#include "Sampled2_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Sampled2_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Sampled2_def.h"
@@ -53,11 +56,11 @@ static int readText (I, MelderReadString *text) {
 	my dy = texgetr8 (text);
 	my y1 = texgetr8 (text);
 	if (my xmin > my xmax || my ymin > my ymax)
-		return Melder_error ("(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
+		return Melder_error1 (L"(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		return Melder_error ("(Sampled2::readText:) nx should >= 1 and ny >= 1.");
+		return Melder_error1 (L"(Sampled2::readText:) nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		return Melder_error ("(Sampled2::readText:) dx should > 0 and dy > 0.");
+		return Melder_error1 (L"(Sampled2::readText:) dx should > 0 and dy > 0.");
 	return 1;
 }
 
@@ -66,6 +69,7 @@ class_methods (Sampled2, Data)
 	class_method_local (Sampled2, description)
 	class_method_local (Sampled2, copy)
 	class_method_local (Sampled2, equal)
+	class_method_local (Sampled2, canWriteAsEncoding)
 	class_method_local (Sampled2, writeText)
 	class_method (readText)
 	class_method_local (Sampled2, writeBinary)

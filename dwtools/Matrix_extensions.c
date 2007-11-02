@@ -319,7 +319,7 @@ Matrix Matrix_solveEquation (I, double tolerance)
 	double **u = NULL, *b = NULL, *x = NULL;
 	double tol = tolerance ? tolerance : NUMeps * m;
 
-	if (n == 0) return Melder_errorp ("Matrix_solveEquation: there must be at least 2 columns in the matrix.");
+	if (n == 0) return Melder_errorp1 (L"Matrix_solveEquation: there must be at least 2 columns in the matrix.");
 
 	if (m < n) Melder_warning ("Matrix_solveEquation: solution is not unique "
 		"(fewer equations than unknowns).");

@@ -30,6 +30,7 @@
  djmw 20060810 Removed #include praat.h
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070102 Removed the #include "TableOfReal.h"
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "SVD.h"
@@ -44,6 +45,8 @@
 #include "oo_COPY.h"
 #include "SVD_def.h"
 #include "oo_EQUAL.h"
+#include "SVD_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "SVD_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "SVD_def.h"
@@ -86,6 +89,7 @@ static void classSVD_info (I)
 class_methods (SVD, Data)
 	class_method_local (SVD, destroy)
 	class_method_local (SVD, equal)
+	class_method_local (SVD, canWriteAsEncoding)
 	class_method_local (SVD, copy)
 	class_method_local (SVD, readText)
 	class_method_local (SVD, readBinary)
@@ -371,7 +375,7 @@ int SVD_synthesize (I, long sv_from, long sv_to, double **m)
 	if (sv_to == 0) sv_to = mn_min;
 
 	if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) return
-		Melder_error ("SVD_synthesize: indices must be in range [1, %d].", mn_min);
+		Melder_error3 (L"SVD_synthesize: indices must be in range [1, ", Melder_integer (mn_min), L"].");
 
 	for (i = 1; i <= my numberOfRows; i++)
 	{
@@ -400,6 +404,7 @@ static void classGSVD_info (I)
 class_methods (GSVD, Data)
 	class_method_local (GSVD, destroy)
 	class_method_local (GSVD, equal)
+	class_method_local (GSVD, canWriteAsEncoding)
 	class_method_local (GSVD, copy)
 	class_method_local (GSVD, readText)
 	class_method_local (GSVD, readBinary)
@@ -427,7 +432,6 @@ GSVD GSVD_create (long numberOfColumns)
 GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
 	double **m2, long numberOfRows2)
 {
-	char *proc = "GSVD_create_d";
 	long m = numberOfRows1, n = numberOfColumns, p = numberOfRows2, kl;
 	long i, j, k, l, lwork = MAX (MAX (3*n, m), p) + n, *iwork = NULL, info;
 	double **a = NULL, **b = NULL, *work = NULL, *pr;
@@ -452,7 +456,7 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
 			NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
 		if (info != 0)
 		{
-			(void) Melder_error ("%s: Error info = %d", proc, info);
+			(void) Melder_error2 (L"Error info = ", Melder_integer (info));
 			goto end;
 		}
 	}

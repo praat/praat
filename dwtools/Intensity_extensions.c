@@ -54,7 +54,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	double intensity_max_db, intensity_min_db, intensity_dbRange;
 	double intensityThreshold, xOfMaximum, xOfMinimum;
 	
-	if (silenceThreshold_dB >= 0) return Melder_errorp ("The silence threshold w.r.t. the maximum intensity should be a negative number.");
+	if (silenceThreshold_dB >= 0) return Melder_errorp1 (L"The silence threshold w.r.t. the maximum intensity should be a negative number.");
 	
 	thee = TextGrid_create (my xmin, my xmax, L"silences", L"");
 	if (thee == NULL) return NULL;

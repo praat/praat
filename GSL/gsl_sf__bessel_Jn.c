@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -79,7 +79,7 @@ int gsl_sf_bessel_Jn_e(int n, double x, gsl_sf_result * result)
       result->err += GSL_DBL_EPSILON * fabs(result->val);
       return status;
     }
-    else if(GSL_ROOT3_DBL_EPSILON * x > (n*n+1.0)) {
+    else if(GSL_ROOT4_DBL_EPSILON * x > (n*n+1.0)) {
       int status = gsl_sf_bessel_Jnu_asympx_e((double)n, x, result);
       result->val *= sign;
       return status;
@@ -88,6 +88,15 @@ int gsl_sf_bessel_Jn_e(int n, double x, gsl_sf_result * result)
       int status = gsl_sf_bessel_Jnu_asymp_Olver_e((double)n, x, result);
       result->val *= sign;
       return status;
+    }
+    else if(x > 1000.0)
+    {
+      /* We need this to avoid feeding large x to CF1; note that
+       * due to the above check, we know that n <= 50.
+       */
+      int status = gsl_sf_bessel_Jnu_asympx_e((double)n, x, result);
+      result->val *= sign;
+      return status;      
     }
     else {
       double ans;
@@ -104,22 +113,22 @@ int gsl_sf_bessel_Jn_e(int n, double x, gsl_sf_result * result)
       int k;
 
       for(k=n; k>0; k--) {
-	Jkm1 = 2.0*k/x * Jk - Jkp1;
-	Jkp1 = Jk;
-	Jk   = Jkm1;
+        Jkm1 = 2.0*k/x * Jk - Jkp1;
+        Jkp1 = Jk;
+        Jk   = Jkm1;
       }
 
       if(fabs(Jkp1) > fabs(Jk)) {
         gsl_sf_result b1;
-	stat_b = gsl_sf_bessel_J1_e(x, &b1);
-	ans = b1.val/Jkp1 * GSL_SQRT_DBL_MIN;
-	err = b1.err/Jkp1 * GSL_SQRT_DBL_MIN;
+        stat_b = gsl_sf_bessel_J1_e(x, &b1);
+        ans = b1.val/Jkp1 * GSL_SQRT_DBL_MIN;
+        err = b1.err/Jkp1 * GSL_SQRT_DBL_MIN;
       }
       else {
         gsl_sf_result b0;
-	stat_b = gsl_sf_bessel_J0_e(x, &b0);
-	ans = b0.val/Jk * GSL_SQRT_DBL_MIN;
-	err = b0.err/Jk * GSL_SQRT_DBL_MIN;
+        stat_b = gsl_sf_bessel_J0_e(x, &b0);
+        ans = b0.val/Jk * GSL_SQRT_DBL_MIN;
+        err = b0.err/Jk * GSL_SQRT_DBL_MIN;
       }
 
       result->val = sign * ans;

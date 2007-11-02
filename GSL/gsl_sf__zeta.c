@@ -1,10 +1,10 @@
 /* specfunc/zeta.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -109,6 +109,45 @@ static cheb_series zeta_xgt1_cs = {
 };
 
 
+/* chebyshev fit for Ln[Zeta[s(t)] - 1 - 2^(-s(t))]
+ * s(t)= 10 + 5t
+ * -1 <= t <= 1; 5 <= s <= 15
+ */
+static double zetam1_inter_data[24] = {
+  -21.7509435653088483422022339374,
+  -5.63036877698121782876372020472,
+   0.0528041358684229425504861579635,
+  -0.0156381809179670789342700883562,
+   0.00408218474372355881195080781927,
+  -0.0010264867349474874045036628282,
+   0.000260469880409886900143834962387,
+  -0.0000676175847209968878098566819447,
+   0.0000179284472587833525426660171124,
+  -4.83238651318556188834107605116e-6,
+   1.31913788964999288471371329447e-6,
+  -3.63760500656329972578222188542e-7,
+   1.01146847513194744989748396574e-7,
+  -2.83215225141806501619105289509e-8,
+   7.97733710252021423361012829496e-9,
+  -2.25850168553956886676250696891e-9,
+   6.42269392950164306086395744145e-10,
+  -1.83363861846127284505060843614e-10,
+   5.25309763895283179960368072104e-11,
+  -1.50958687042589821074710575446e-11,
+   4.34997545516049244697776942981e-12,
+  -1.25597782748190416118082322061e-12,
+   3.61280740072222650030134104162e-13,
+  -9.66437239205745207188920348801e-14
+}; 
+static cheb_series zetam1_inter_cs = {
+  zetam1_inter_data,
+  22,
+  -1, 1,
+  12
+};
+
+
+
 /* assumes s >= 0 and s != 1.0 */
 inline
 static int
@@ -140,9 +179,10 @@ riemann_zeta_sgt0(double s, gsl_sf_result * result)
   }
 }
 
+
 inline
 static int
-riemann_zeta1m_slt0(double s, gsl_sf_result * result)
+riemann_zeta1ms_slt0(double s, gsl_sf_result * result)
 {
   if(s > -19.0) {
     double x = (-19 - 2.0*s)/19.0;
@@ -163,9 +203,60 @@ riemann_zeta1m_slt0(double s, gsl_sf_result * result)
   }
 }
 
+
+/* works for 5 < s < 15*/
+static int
+riemann_zeta_minus_1_intermediate_s(double s, gsl_sf_result * result)
+{
+  double t = (s - 10.0)/5.0;
+  gsl_sf_result c;
+  cheb_eval_e(&zetam1_inter_cs, t, &c);
+  result->val = exp(c.val) + pow(2.0, -s);
+  result->err = (c.err + 2.0*GSL_DBL_EPSILON)*result->val;
+  return GSL_SUCCESS;
+}
+
+
+/* assumes s is large and positive
+ * write: zeta(s) - 1 = zeta(s) * (1 - 1/zeta(s))
+ * and expand a few terms of the product formula to evaluate 1 - 1/zeta(s)
+ *
+ * works well for s > 15
+ */
+static int
+riemann_zeta_minus1_large_s(double s, gsl_sf_result * result)
+{
+  double a = pow( 2.0,-s);
+  double b = pow( 3.0,-s);
+  double c = pow( 5.0,-s);
+  double d = pow( 7.0,-s);
+  double e = pow(11.0,-s);
+  double f = pow(13.0,-s);
+  double t1 = a + b + c + d + e + f;
+  double t2 = a*(b+c+d+e+f) + b*(c+d+e+f) + c*(d+e+f) + d*(e+f) + e*f;
+  /*
+  double t3 = a*(b*(c+d+e+f) + c*(d+e+f) + d*(e+f) + e*f) +
+              b*(c*(d+e+f) + d*(e+f) + e*f) +
+              c*(d*(e+f) + e*f) +
+              d*e*f;
+  double t4 = a*(b*(c*(d + e + f) + d*(e + f) + e*f) + c*(d*(e+f) + e*f) + d*e*f) +
+              b*(c*(d*(e+f) + e*f) + d*e*f) +
+              c*d*e*f;
+  double t5 = b*c*d*e*f + a*c*d*e*f+ a*b*d*e*f+ a*b*c*e*f+ a*b*c*d*f+ a*b*c*d*e;
+  double t6 = a*b*c*d*e*f;
+  */
+  double numt = t1 - t2 /* + t3 - t4 + t5 - t6 */;
+  double zeta = 1.0/((1.0-a)*(1.0-b)*(1.0-c)*(1.0-d)*(1.0-e)*(1.0-f));
+  result->val = numt*zeta;
+  result->err = (15.0/s + 1.0) * 6.0*GSL_DBL_EPSILON*result->val;
+  return GSL_SUCCESS;
+}
+
+
+#if 0
 /* zeta(n) */
 #define ZETA_POS_TABLE_NMAX   100
-static double zeta_pos_int_table[ZETA_POS_TABLE_NMAX+1] = {
+static double zeta_pos_int_table_OLD[ZETA_POS_TABLE_NMAX+1] = {
  -0.50000000000000000000000000000,       /* zeta(0) */
   0.0 /* FIXME: DirectedInfinity() */,   /* zeta(1) */
   1.64493406684822643647241516665,       /* ...     */
@@ -268,6 +359,116 @@ static double zeta_pos_int_table[ZETA_POS_TABLE_NMAX+1] = {
   1.00000000000000000000000000000,
   1.00000000000000000000000000000
 };
+#endif /* 0 */
+
+
+/* zeta(n) - 1 */
+#define ZETA_POS_TABLE_NMAX   100
+static double zetam1_pos_int_table[ZETA_POS_TABLE_NMAX+1] = {
+ -1.5,                               /* zeta(0) */
+  0.0,       /* FIXME: Infinity */   /* zeta(1) - 1 */
+  0.644934066848226436472415166646,  /* zeta(2) - 1 */
+  0.202056903159594285399738161511,
+  0.082323233711138191516003696541,
+  0.036927755143369926331365486457,
+  0.017343061984449139714517929790,
+  0.008349277381922826839797549849,
+  0.004077356197944339378685238508,
+  0.002008392826082214417852769232,
+  0.000994575127818085337145958900,
+  0.000494188604119464558702282526,
+  0.000246086553308048298637998047,
+  0.000122713347578489146751836526,
+  0.000061248135058704829258545105,
+  0.000030588236307020493551728510,
+  0.000015282259408651871732571487,
+  7.6371976378997622736002935630e-6,
+  3.8172932649998398564616446219e-6,
+  1.9082127165539389256569577951e-6,
+  9.5396203387279611315203868344e-7,
+  4.7693298678780646311671960437e-7,
+  2.3845050272773299000364818675e-7,
+  1.1921992596531107306778871888e-7,
+  5.9608189051259479612440207935e-8,
+  2.9803503514652280186063705069e-8,
+  1.4901554828365041234658506630e-8,
+  7.4507117898354294919810041706e-9,
+  3.7253340247884570548192040184e-9,
+  1.8626597235130490064039099454e-9,
+  9.3132743241966818287176473502e-10,
+  4.6566290650337840729892332512e-10,
+  2.3283118336765054920014559759e-10,
+  1.1641550172700519775929738354e-10,
+  5.8207720879027008892436859891e-11,
+  2.9103850444970996869294252278e-11,
+  1.4551921891041984235929632245e-11,
+  7.2759598350574810145208690123e-12,
+  3.6379795473786511902372363558e-12,
+  1.8189896503070659475848321007e-12,
+  9.0949478402638892825331183869e-13,
+  4.5474737830421540267991120294e-13,
+  2.2737368458246525152268215779e-13,
+  1.1368684076802278493491048380e-13,
+  5.6843419876275856092771829675e-14,
+  2.8421709768893018554550737049e-14,
+  1.4210854828031606769834307141e-14,
+  7.1054273952108527128773544799e-15,
+  3.5527136913371136732984695340e-15,
+  1.7763568435791203274733490144e-15,
+  8.8817842109308159030960913863e-16,
+  4.4408921031438133641977709402e-16,
+  2.2204460507980419839993200942e-16,
+  1.1102230251410661337205445699e-16,
+  5.5511151248454812437237365905e-17,
+  2.7755575621361241725816324538e-17,
+  1.3877787809725232762839094906e-17,
+  6.9388939045441536974460853262e-18,
+  3.4694469521659226247442714961e-18,
+  1.7347234760475765720489729699e-18,
+  8.6736173801199337283420550673e-19,
+  4.3368086900206504874970235659e-19,
+  2.1684043449972197850139101683e-19,
+  1.0842021724942414063012711165e-19,
+  5.4210108624566454109187004043e-20,
+  2.7105054312234688319546213119e-20,
+  1.3552527156101164581485233996e-20,
+  6.7762635780451890979952987415e-21,
+  3.3881317890207968180857031004e-21,
+  1.6940658945097991654064927471e-21,
+  8.4703294725469983482469926091e-22,
+  4.2351647362728333478622704833e-22,
+  2.1175823681361947318442094398e-22,
+  1.0587911840680233852265001539e-22,
+  5.2939559203398703238139123029e-23,
+  2.6469779601698529611341166842e-23,
+  1.3234889800848990803094510250e-23,
+  6.6174449004244040673552453323e-24,
+  3.3087224502121715889469563843e-24,
+  1.6543612251060756462299236771e-24,
+  8.2718061255303444036711056167e-25,
+  4.1359030627651609260093824555e-25,
+  2.0679515313825767043959679193e-25,
+  1.0339757656912870993284095591e-25,
+  5.1698788284564313204101332166e-26,
+  2.5849394142282142681277617708e-26,
+  1.2924697071141066700381126118e-26,
+  6.4623485355705318034380021611e-27,
+  3.2311742677852653861348141180e-27,
+  1.6155871338926325212060114057e-27,
+  8.0779356694631620331587381863e-28,
+  4.0389678347315808256222628129e-28,
+  2.0194839173657903491587626465e-28,
+  1.0097419586828951533619250700e-28,
+  5.0487097934144756960847711725e-29,
+  2.5243548967072378244674341938e-29,
+  1.2621774483536189043753999660e-29,
+  6.3108872417680944956826093943e-30,
+  3.1554436208840472391098412184e-30,
+  1.5777218104420236166444327830e-30,
+  7.8886090522101180735205378276e-31
+};
+
+
 #define ZETA_NEG_TABLE_NMAX  99
 #define ZETA_NEG_TABLE_SIZE  50
 static double zeta_neg_int_table[ZETA_NEG_TABLE_SIZE] = {
@@ -456,7 +657,7 @@ M_LN2,                            /* eta(1) */
 static double eta_neg_int_table[ETA_NEG_TABLE_SIZE] = {
  0.25000000000000000000000000000,   /* eta(-1) */
 -0.12500000000000000000000000000,   /* eta(-3) */
- 0.25000000000000000000000000000,   /* ...	*/
+ 0.25000000000000000000000000000,   /* ...      */
 -1.06250000000000000000000000000,
  7.75000000000000000000000000000,
 -86.3750000000000000000000000000,
@@ -586,8 +787,8 @@ int gsl_sf_zeta_e(const double s, gsl_sf_result * result)
     /* reflection formula, [Abramowitz+Stegun, 23.2.5] */
 
     gsl_sf_result zeta_one_minus_s;
-    const int stat_zoms = riemann_zeta1m_slt0(s, &zeta_one_minus_s);
-    const double sin_term = sin(0.5*M_PI*s)/M_PI;
+    const int stat_zoms = riemann_zeta1ms_slt0(s, &zeta_one_minus_s);
+    const double sin_term = (fmod(s,2.0) == 0.0) ? 0.0 : sin(0.5*M_PI*fmod(s,4.0))/M_PI;
 
     if(sin_term == 0.0) {
       result->val = 0.0;
@@ -617,8 +818,8 @@ int gsl_sf_zeta_e(const double s, gsl_sf_result * result)
                                      5.799397627482402614e+103,
                                      5.561367186955830005e+111,
                                      5.333106466365131227e+119,
-				     5.114214477385391780e+127,
-				     4.904306689854036836e+135
+                                     5.114214477385391780e+127,
+                                     4.904306689854036836e+135
                                     };
       const int n = floor((-s)/10.0);
       const double fs = s + 10.0*n;
@@ -672,7 +873,7 @@ int gsl_sf_zeta_int_e(const int n, gsl_sf_result * result)
     DOMAIN_ERROR(result);
   }
   else if(n <= ZETA_POS_TABLE_NMAX){
-    result->val = zeta_pos_int_table[n];
+    result->val = 1.0 + zetam1_pos_int_table[n];
     result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val);
     return GSL_SUCCESS;
   }
@@ -680,6 +881,58 @@ int gsl_sf_zeta_int_e(const int n, gsl_sf_result * result)
     result->val = 1.0;
     result->err = GSL_DBL_EPSILON;
     return GSL_SUCCESS;
+  }
+}
+
+
+int gsl_sf_zetam1_e(const double s, gsl_sf_result * result)
+{
+  if(s <= 5.0)
+  {
+    int stat = gsl_sf_zeta_e(s, result);
+    result->val = result->val - 1.0;
+    return stat;
+  }
+  else if(s < 15.0)
+  {
+    return riemann_zeta_minus_1_intermediate_s(s, result);
+  }
+  else
+  {
+    return riemann_zeta_minus1_large_s(s, result);
+  }
+}
+
+
+int gsl_sf_zetam1_int_e(const int n, gsl_sf_result * result)
+{
+  if(n < 0) {
+    if(!GSL_IS_ODD(n)) {
+      result->val = -1.0; /* at even negative integers zetam1 == -1 since zeta is exactly zero */
+      result->err = 0.0;
+      return GSL_SUCCESS;
+    }
+    else if(n > -ZETA_NEG_TABLE_NMAX) {
+      result->val = zeta_neg_int_table[-(n+1)/2] - 1.0;
+      result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val);
+      return GSL_SUCCESS;
+    }
+    else {
+      /* could use gsl_sf_zetam1_e here but subtracting 1 makes no difference
+         for such large values, so go straight to the result */
+      return gsl_sf_zeta_e((double)n, result);  
+    }
+  }
+  else if(n == 1){
+    DOMAIN_ERROR(result);
+  }
+  else if(n <= ZETA_POS_TABLE_NMAX){
+    result->val = zetam1_pos_int_table[n];
+    result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val);
+    return GSL_SUCCESS;
+  }
+  else {
+    return gsl_sf_zetam1_e(n, result);
   }
 }
 
@@ -774,6 +1027,16 @@ double gsl_sf_hzeta(const double s, const double a)
 double gsl_sf_zeta_int(const int s)
 {
   EVAL_RESULT(gsl_sf_zeta_int_e(s, &result));
+}
+
+double gsl_sf_zetam1(const double s)
+{
+  EVAL_RESULT(gsl_sf_zetam1_e(s, &result));
+}
+
+double gsl_sf_zetam1_int(const int s)
+{
+  EVAL_RESULT(gsl_sf_zetam1_int_e(s, &result));
 }
 
 double gsl_sf_eta_int(const int s)

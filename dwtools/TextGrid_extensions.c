@@ -1,6 +1,6 @@
 /* TextGrid_extensions.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  djmw 20060921 Added IntervalTier_removeBoundary_equalLabels, IntervalTier_removeBoundary_minimumDuration
  djmw 20061113 Reassign item in list after a deletion.
  djmw 20061116 Added IntervalTier_removeInterval to correct a bug in IntervalTier_removeBoundary...
+ djmw 20071008 Removed two unused variables.
 */
 
 #include <ctype.h>
@@ -199,7 +200,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	double xmax = dt, xmin;
 	FILE *f = Melder_fopen (file, "r");
 	
-	if (! f) return Melder_errorp ("%s: cannot open file.", proc);
+	if (! f) return Melder_errorp1 (L"Cannot open file.");
 	/*
 		Ending time will only be known after all labels have been read.
 		Start with a sufficiently long duration (one hour) and correct this later.
@@ -212,12 +213,12 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		linesRead++; 
 		if (sscanf (line,"%ld%ld%s", &it1, &it2, label) != 3)
 		{
-			(void) Melder_error("%s: incorrect number of items.", proc);
+			(void) Melder_error1 (L"Incorrect number of items.");
 			goto cleanup;
 		}
 		if (it1 < 0 || it2 <= it1)
 		{
-			(void) Melder_error ("%s: incorrect time at line %ld.", proc, linesRead);
+			(void) Melder_error2 (L"Incorrect time at line ", Melder_integer (linesRead));
 			goto cleanup;
 		}
 		xmin = it1 * dt;
@@ -249,7 +250,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	*/
 	if (timit -> intervals -> size < 2)
 	{
-		(void) Melder_error ("%s: Empty TextGrid", proc);
+		(void) Melder_error1 (L"Empty TextGrid");
 		goto cleanup;
 	}
 	Collection_removeItem (timit -> intervals, timit -> intervals -> size);
@@ -275,8 +276,7 @@ cleanup:
 	fclose (f);
 	if (! Melder_hasError()) return me;
 	forget (me);
-	return Melder_errorp("%s: Reading from file \"%s\" not performed.", proc,
-		MelderFile_messageName (file));	
+	return Melder_errorp3 (L"Reading from file \"", MelderFile_name (file), L"\" not performed.");	
 }
 
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
@@ -381,8 +381,8 @@ int TextGrid_setTierName (TextGrid me, long itier, wchar_t *newName)
 	long ntiers = my tiers -> size;
 	
 	if (itier < 1 || itier > ntiers) return 
-		Melder_error ("TextGrid_renameTier: Tier number (%d) should not be "
-		"larger than the number of tiers (%d).", itier, ntiers);
+		Melder_error5 (L"TextGrid_renameTier: Tier number (", Melder_integer (itier), L") should not be "
+		"larger than the number of tiers (", Melder_integer (ntiers), L").");
 	Thing_setName (my tiers -> item [itier], newName);	
 	return 1;
 }
@@ -430,7 +430,6 @@ void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, wchar_t *labe
 	while (i <= my intervals -> size)
 	{
 		TextInterval ti = my intervals -> item[i];
-		double xmax = ti -> xmax;
 		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) && 
 			ti -> xmax - ti -> xmin < minimumDuration)
 		{
@@ -450,7 +449,6 @@ void IntervalTier_removeBoundary_equalLabels (IntervalTier me, wchar_t *label)
 	while (i < my intervals -> size)
 	{
 		TextInterval ti = my intervals -> item[i], tip1 = my intervals -> item[i+1];
-		double xmax = tip1 -> xmax;
 		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) && 
 			(NUMwcscmp (ti -> text, tip1 -> text) == 0))
 		{
@@ -473,7 +471,7 @@ int IntervalTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *
 	if (from == 0) from = 1;
 	if (to == 0) to = my intervals -> size;
 	if (from > to || from < 1 || to > my intervals -> size) return 0;
-	if (use_regexp && wcslen (search) == 0) return Melder_error ("TextTier_changeLabels: The regex search string may not be empty.\n"
+	if (use_regexp && wcslen (search) == 0) return Melder_error1 (L"TextTier_changeLabels: The regex search string may not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 	
 	nlabels = to - from + 1;
@@ -512,7 +510,7 @@ int TextTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *repl
 	if (from == 0) from = 1;
 	if (to == 0) to = my points -> size;
 	if (from > to || from < 1 || to > my points -> size) return 0;
-	if (use_regexp && wcslen (search) == 0) return Melder_error ("TextTier_changeLabels: The regex search string may not be empty.\n"
+	if (use_regexp && wcslen (search) == 0) return Melder_error1 (L"TextTier_changeLabels: The regex search string may not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 	
 	nmarks = to - from + 1;
@@ -551,7 +549,7 @@ int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, wchar_t *s
 	if (tier < 1 || tier > ntiers) return Melder_error
 		("TextGrid_changeLabels: The tier number (%d) should not be "
 		"larger than the number of tiers (%d).", tier, ntiers);
-	if (use_regexp && wcslen (search) == 0) return Melder_error ("TextGrid_changeLabels: The regex search string may not be empty.\n"
+	if (use_regexp && wcslen (search) == 0) return Melder_error1 (L"TextGrid_changeLabels: The regex search string may not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 	anyTier = my tiers -> item [tier];
 	if (anyTier -> methods == (Data_Table) classIntervalTier)

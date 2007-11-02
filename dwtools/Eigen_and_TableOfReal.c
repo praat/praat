@@ -53,20 +53,18 @@ int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	TableOfReal him = *((TableOfReal *)void_pointer_to_him);
 	thouart (TableOfReal);
 	iam (Eigen);
-	char *name = "Eigen_and_TableOfReal_project_into";
 	long i, j, k, thee_ncols = thee_to - thee_from + 1;
 	long his_ncols = his_to - his_from + 1;
 	
 	if (thee_from < 1 || thee_to > thy numberOfColumns ||
-		his_from < 1 || his_to > his numberOfColumns) return Melder_error
-		("%s: Column selection not correct.");
-	if (thee_ncols != my dimension) return Melder_error ("%s: The number of "
-		"selected columns to project (%d) must equal the dimension of the "
-		"eigenvectors (%d).", name, thee_ncols, my dimension);
-	if (his_ncols > my numberOfEigenvalues) return Melder_error
-		("%s: The number of selected columns in the result (%d) cannot exceed "
-		"the number of eigenvectors (%d).", name, his_ncols,
-		my numberOfEigenvalues);
+		his_from < 1 || his_to > his numberOfColumns) return Melder_error1
+		(L"Column selection not correct.");
+	if (thee_ncols != my dimension) return Melder_error5 (L"The number of "
+		"selected columns to project (", Melder_integer (thee_ncols), L") must equal the dimension of the "
+		"eigenvectors (", Melder_integer (my dimension), L").");
+	if (his_ncols > my numberOfEigenvalues) return Melder_error5
+		(L"The number of selected columns in the result (", Melder_integer (his_ncols), L") cannot exceed "
+		"the number of eigenvectors (", Melder_integer (my numberOfEigenvalues), L").");
 
 	for (i = 1; i <= thy numberOfRows; i++) /* row */
 	{

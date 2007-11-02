@@ -1,6 +1,6 @@
 /* Eigen.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
  djmw 20050706 Shortened horizontal offsets in Eigen_drawEigenvalues from 1 to 0.5
  djmw 20051204 Eigen_initFromSquareRoot adapted for nrows < ncols
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Eigen.h"
@@ -47,6 +48,8 @@
 #include "oo_COPY.h"
 #include "Eigen_def.h"
 #include "oo_EQUAL.h"
+#include "Eigen_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Eigen_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Eigen_def.h"
@@ -102,6 +105,7 @@ class_methods (Eigen, Data)
 	class_method_local (Eigen, description)
 	class_method_local (Eigen, copy)
 	class_method_local (Eigen, equal)
+	class_method_local (Eigen, canWriteAsEncoding)
 	class_method_local (Eigen, writeText)
 	class_method_local (Eigen, readText)
 	class_method_local (Eigen, writeBinary)
@@ -175,7 +179,6 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	long numberOfColumns, double **b, long numberOfRows_b)
 {
 	iam (Eigen);
-	char *proc = "Eigen_initFromSquareRootPair";
 	double *u = NULL, *v = NULL, *work = NULL, **ac = NULL, **bc = NULL;
 	double *alpha = NULL, *beta = NULL, **q = NULL, maxsv2 = -10;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
@@ -201,7 +204,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 
 	if (info != 0)
 	{
-		(void) Melder_error ("%: Returned status code from NUMlapack_dggsvd: %d", proc, info);
+		(void) Melder_error2 (L"Returned status code from NUMlapack_dggsvd: ", Melder_integer (info));
 		goto end;
 	}
 
@@ -231,7 +234,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 
 	if (ll - n < 1)
 	{
-		(void) Melder_error ("%s: No eigenvectors can be found. Matrix too singular.", proc);
+		(void) Melder_error1 (L"No eigenvectors can be found. Matrix too singular.");
 		goto end;
 	}
 	
@@ -561,8 +564,8 @@ int Eigens_alignEigenvectors (Ordered me)
 		e2 = my item[i];
 		if (e2 -> dimension != dimension)
 		{
-			 return Melder_error ("Eigens_alignEigenvectors: The dimension of the "
-			 	"eigenvectors must be equal (Object %d offending).", i);
+			 return Melder_error3 (L"Eigens_alignEigenvectors: The dimension of the "
+			 	"eigenvectors must be equal (offending object is ", Melder_integer (i), L").");
 		}
 	}
 	
@@ -602,9 +605,9 @@ static int Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec_
 	int status = 0;
 		
 	if (my dimension != thy dimension)
-		return Melder_error ("The eigenvectors must have the same dimension.");
+		return Melder_error1 (L"The eigenvectors must have the same dimension.");
 	if (ivec_from > ivec_to || ivec_from< 1 || ivec_to > nmin)
-		return Melder_error ("Eigenvector range too large.");
+		return Melder_error1 (L"Eigenvector range too large.");
 	
 	c = NUMdmatrix (1, nvectors, 1, nvectors);
 	if (c == NULL) goto end;
@@ -650,44 +653,6 @@ double Eigens_getAngleBetweenEigenplanes_degrees (I, thou)
 	if (! Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees)) return NUMundefined;
 	return angles_degrees[2];
 }
-
-/*double Eigens_getAngleBetweenEigenplanes_degrees (I, thou)
-{
-	iam (Eigen); thouart (Eigen);
-	SVD svd = NULL;
-	double **c = NULL, angle_degrees = NUMundefined;;
-	long i, j, k, nvectors = my numberOfEigenvalues > 1 && thy numberOfEigenvalues > 1 ? 2 : 1;
-	
-	if (my dimension != thy dimension)
-	{
-		Melder_warning ("The eigenvectors must have the same dimension.");
-		return NUMundefined;
-	}
-	
-	c = NUMdmatrix (1, nvectors, 1, nvectors);
-	if (c == NULL) goto end;
-
-	for (i = 1; i <= nvectors; i++)
-	{
-		for (j = 1; j <= nvectors; j++)
-		{
-			for (k = 1; k <= my dimension; k++)
-			{
-				c[i][j] += my eigenvectors[i][k] * thy eigenvectors[j][k];
-			}
-		}
-	}
-	svd = SVD_create_d (c, nvectors, nvectors);
-	if (svd == NULL) goto end;
-	
-	angle_degrees = acos (svd -> d[2]) * 180 / NUMpi;
-	forget (svd);
-		
-end:
-	
-	NUMdmatrix_free (c, 1, 1);
-	return angle_degrees;	
-}*/
 
 #undef MAX
 #undef MIN

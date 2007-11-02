@@ -23,6 +23,7 @@
  djmw 20030623 Modified calls to NUMeigensystem_d
  djmw 20040309 Extra tests for empty objects.
  djmw 20061218 Changed to Melder_information<x> format.
+ djmw 20071022 Removed unused code.
 */
 
 #include "SVD.h"
@@ -50,24 +51,6 @@ static void NUMdmatrix_into_vector (double **m, double *v, long r1, long r2,
 	}
 }
 
-static double *NUMdmatrix_to_vector (double **m, long r1, long r2, 
-	long c1, long c2)
-{
-	long i, j, k = 1;
-	double *v = NUMdvector (1, (r2-r1+1) * (c2-c1+1));
-	
-	if (v == NULL) return NULL;
-	
-	for (i = r1; i <= r2; i++)
-	{
-		for (j = c1; j <= c2; j++)
-		{
-			v[k++] = m[i][j];
-		}
-	}
-	return v;
-}
-
 static void NUMdvector_into_matrix (const double *v, double **m, 
 	long r1, long r2, long c1, long c2)
 {
@@ -80,24 +63,6 @@ static void NUMdvector_into_matrix (const double *v, double **m,
 			m[i][j] = v[k++];
 		}
 	}
-}
-
-static double **NUMdvector_to_matrix (const double *v, long r1, long r2,
-	long c1, long c2)
-{
-	long i, j, k = 1;
-	double **m = NUMdmatrix ( r1, r2, c1, c2);
-	
-	if (m == NULL) return NULL;
-	
-	for (i = r1; i <= r2; i++)
-	{
-		for (j=c1; j <= c2; j++)
-		{
-			m[i][j] = v[k++];
-		}
-	}
-	return m;
 }
 
 static void NUMdmatrix_normalizeRows (double **m, long nr, long nc)
@@ -118,18 +83,6 @@ static void NUMdmatrix_normalizeRows (double **m, long nr, long nc)
 			{
 				m[i][j] /= rowSum;
 			}
-		}
-	}
-}
-
-static void NUMdmatrix_symmetrizeAverage (double **m, long nxy)
-{
-	long i, j;
-	for (i = 1; i <= nxy-1; i++)
-	{
-		for (j = i + 1; j <= nxy; j++)
-		{
-			m[i][j] = m[j][i] = (m[i][j] + m[j][i]) / 2;
 		}
 	}
 }
@@ -238,7 +191,7 @@ Similarity Distances_to_Similarity_cc (Distances me, Weight w)
 	
 	if (! TablesOfReal_checkDimensions (me))
 	{
-		return Melder_errorp ("Distances_to_Similarity_cc: "
+		return Melder_errorp1 (L"Distances_to_Similarity_cc: "
 			"All matrices must have the same dimensions.");
 	}
 	
@@ -331,7 +284,7 @@ Distance Transformator_transform (I, MDSVec vec, Distance d, Weight w)
 		my numberOfPoints != d -> numberOfRows ||
 		d -> numberOfRows != w -> numberOfRows)
 	{
-		return Melder_errorp ("Transformator_transform: Dimensions do "
+		return Melder_errorp1 (L"Transformator_transform: Dimensions do "
 			"not agree.");
 	}
 	
@@ -497,8 +450,8 @@ static Distance classISplineTransformator_transform (I, MDSVec vec,
 		{
 			if (! NUMispline (my knot, nKnots, my order, j - 1, x, &y))
 			{
-				(void) Melder_error ("classISplineTransformator_transform: "
-					"I-spline[%d], data[%d] = %f", j-1, i, x);
+				(void) Melder_error6 (L"classISplineTransformator_transform: "
+					"I-spline[,", Melder_integer (j-1), L"], data[", Melder_integer (i), L"d] = ", Melder_double (x));
 				goto end;
 			}
 			my m[i][j] = y;
@@ -632,8 +585,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
 	if (numberOfDimensions == 0) numberOfDimensions = dimmin - 1;
 	if (numberOfDimensions >= dimmin)
 	{
-		return Melder_errorp ("ContingencyTable_to_Configuration_ca: "
-			"Dimension too high.");
+		return Melder_errorp1 (L"ContingencyTable_to_Configuration_ca: Dimension too high.");
 	}
 	
 	/*
@@ -652,8 +604,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
 		}
 		if (rowsum[i] <= 0)
 		{
-			(void) Melder_error ("ContingencyTable_to_Configuration_ca: "
-				"Empty row (%d).", i);
+			(void) Melder_error3 (L"ContingencyTable_to_Configuration_ca: Empty row: ",	Melder_integer (i), L".");
 			goto end;
 		}
 	    sum += rowsum[i];
@@ -663,8 +614,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
 	{
 		if (colsum[j] <= 0)
 		{
-			(void) Melder_error ("ContingencyTable_to_Configuration_ca: "
-				"Empty column (%d).", j);
+			(void) Melder_error3 (L"ContingencyTable_to_Configuration_ca: Empty column: ", Melder_integer (i), L".");
 			goto end;
 		}
 	}
@@ -957,8 +907,8 @@ Dissimilarity TableOfReal_to_Dissimilarity (I)
 	iam (TableOfReal); 
 	Dissimilarity thee;
 	
-	if (my numberOfRows != my numberOfColumns) return Melder_errorp
-		("TableOfReal_to_Dissimilarity: TableOfReal must be a square matrix.");
+	if (my numberOfRows != my numberOfColumns) return Melder_errorp1
+		(L"TableOfReal_to_Dissimilarity: TableOfReal must be a square matrix.");
 	if (! TableOfReal_checkPositive (me) ||
 		! (thee = Data_copy (me))) return NULL;
 	Thing_overrideClass (thee, classDissimilarity);
@@ -970,8 +920,8 @@ Similarity TableOfReal_to_Similarity (I)
 	iam (TableOfReal); 
 	Similarity thee;
 	
-	if (my numberOfRows != my numberOfColumns) return Melder_errorp
-		("TableOfReal_to_Similarity: TableOfReal must be a square matrix.");
+	if (my numberOfRows != my numberOfColumns) return Melder_errorp1
+		(L"TableOfReal_to_Similarity: TableOfReal must be a square matrix.");
 	if (! TableOfReal_checkPositive (me) ||
 		! (thee = Data_copy (me))) return NULL;
 	Thing_overrideClass (thee, classSimilarity);
@@ -983,8 +933,8 @@ Distance TableOfReal_to_Distance (I)
 	iam (TableOfReal); 
 	Distance thee;
 	
-	if (my numberOfRows != my numberOfColumns) return Melder_errorp
-		("TableOfReal_to_Distance: TableOfReal must be a square matrix.");
+	if (my numberOfRows != my numberOfColumns) return Melder_errorp1
+		(L"TableOfReal_to_Distance: TableOfReal must be a square matrix.");
 	if (! TableOfReal_checkPositive (me) ||
 		! (thee = Data_copy (me))) return NULL;
 	Thing_overrideClass (thee, classDistance);
@@ -1015,8 +965,8 @@ Weight TableOfReal_to_Weight (I)
 ScalarProduct TableOfReal_to_ScalarProduct (I)
 {
 	iam (TableOfReal); ScalarProduct thee;
-	if (my numberOfRows != my numberOfColumns) return Melder_errorp
-		("TableOfReal_to_ScalarProduct: TableOfReal must be a square matrix.");
+	if (my numberOfRows != my numberOfColumns) return Melder_errorp1
+		(L"TableOfReal_to_ScalarProduct: TableOfReal must be a square matrix.");
 	if (! (thee = Data_copy (me))) return NULL;
 	Thing_overrideClass (thee, classScalarProduct);
 	return thee;
@@ -1454,7 +1404,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c)
 	if (nPoints < 1) 
 	{
 		*c = NUMundefined;
-		return Melder_error ("Dissimilarity_getAdditiveConstant: Matrix part is empty.");
+		return Melder_error1 (L"Dissimilarity_getAdditiveConstant: Matrix part is empty.");
 	}
 		
 	*c = 0;
@@ -1561,8 +1511,8 @@ Similarity Confusion_to_Similarity (Confusion me, int normalize,
 	Similarity thee = NULL;
 	long i, j, k, nxy = my numberOfColumns;
 	
-	if (my numberOfColumns != my numberOfRows) return Melder_errorp
-		("Confusion_to_Similarity: Confusion must be a square matrix.");
+	if (my numberOfColumns != my numberOfRows) return Melder_errorp1
+		(L"Confusion_to_Similarity: Confusion must be a square matrix.");
 		
 	if ((thee = Similarity_create (nxy)) == NULL) goto end;
 	
@@ -1705,55 +1655,6 @@ Weight Dissimilarity_to_Weight (Dissimilarity me)
 	return thee;
 }
 
-static Dissimilarity Confusion_to_Dissimilarity_pdf2 (Confusion me, 
-	int symmetrizeBefore, double maximumProximity_sd)
-{
-	Dissimilarity thee = NULL;
-	long i, j, nxy = my numberOfColumns;
-
-	if (my numberOfColumns != my numberOfRows)
-	{
-		return Melder_errorp ("Confusion_to_Dissimilarity_pdf: "
-			"Must be a square matrix.");
-	}
-	
-	if ((thee = Dissimilarity_create (nxy)) == NULL) return NULL;
-	
-	if (! TableOfReal_copyLabels (me, thee, 1, 1))
-	{
-		forget (thee); return NULL;
-	}
-	
-	NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 
-		1, my numberOfColumns);
-	NUMdmatrix_normalizeRows (thy data, nxy, nxy);
-
-	if (symmetrizeBefore) NUMdmatrix_symmetrizeAverage (thy data, nxy);
-
-	/*
-		Consider the fraction as the fraction overlap between two gaussians 
-		with equal sigmas. The overlap equals 2 * Erf (x).
-		Make maximum dissimilarity equal to 4sigma.
-	*/
-
-	for (i = 1; i <= nxy; i++)
-	{
-		for (j = 1; j <= nxy; j++)
-		{
-			if (thy data[i][j] > 0)
-			{
-				thy data[i][j] =  NUMinvGaussQ (thy data[i][j] / 2);
-				if (thy data[i][j] > maximumProximity_sd) 
-				{
-					thy data[i][j] = maximumProximity_sd;
-				}
-			}
-			else thy data[i][j] = maximumProximity_sd;
-		}
-	}
-	
-	return thee;
-}
 
 Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, 
 	double minimumConfusionLevel)
@@ -1763,8 +1664,7 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me,
 
 	if (my numberOfColumns != my numberOfRows)
 	{
-		return Melder_errorp ("Confusion_to_Dissimilarity_pdf: "
-			"Must be a square matrix.");
+		return Melder_errorp1 (L"Confusion_to_Dissimilarity_pdf: Must be a square matrix.");
 	}
 	
 	Melder_assert (minimumConfusionLevel > 0);
@@ -1882,8 +1782,7 @@ Configuration Distance_to_Configuration_torsca (Distance me,
 	
 	if (numberOfDimensions > my numberOfRows)
 	{
-		return Melder_errorp ("Distance_to_Configuration_torsca: "
-			"number of dimensions too high.");
+		return Melder_errorp1 (L"Distance_to_Configuration_torsca: Number of dimensions too high.");
 	}
 	if (! (sp = Distance_to_ScalarProduct (me, 0))) return NULL;
 	if (! (thee = Configuration_create (my numberOfRows, numberOfDimensions)) ||
@@ -1984,8 +1883,7 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 	if (n == 0) return;
 	if (! TableOfReal_equalLabels (me, thee, 1, 1))
 	{
-		(void) Melder_error ("Proximity_Distance_drawScatterDiagram: "
-			"dimensions and labels must be the same.");
+		(void) Melder_error1 (L"Proximity_Distance_drawScatterDiagram: Dimensions and labels must be the same.");
 		return;
 	}
 	if (xmax <= xmin)
@@ -2806,8 +2704,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
 		(!no_weight && weight->numberOfRows != nPoints) ||
 		t -> numberOfPoints != nPoints)
 	{
-		return Melder_errorp ("Dissimilarity_Configuration_Weight_"
-			"Transformator_smacof: dimensions!!!");
+		return Melder_errorp1 (L"Dissimilarity_Configuration_Weight_Transformator_smacof: dimensions!!!");
 	}
 
 	if ((no_weight && (weight = Weight_create (nPoints)) == NULL) ||
@@ -2818,7 +2715,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
 		
 	w = weight -> data;
 	
-	if (showProgress) Melder_progress (0.0, "MDS analysis" );
+	if (showProgress) Melder_progress1 (0.0, L"MDS analysis" );
 
 	/*
 		Get V (eq. 8.19). 
@@ -2883,14 +2780,14 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
 			1, nDimensions);
 		
 		stressp = *stress;
-		if (showProgress && ! Melder_progress ((double) i /
-			(numberOfIterations+1), "kruskal: stress %f", *stress)) break;	
+		if (showProgress && ! Melder_progress2 ((double) i /
+			(numberOfIterations+1), L"kruskal: stress ", Melder_double (*stress))) break;	
 		forget (cdist); forget (fit);
 	}
 	
 end:
 
-	if (showProgress) Melder_progress (1.0, NULL);
+	if (showProgress) Melder_progress1 (1.0, NULL);
 	
 	NUMdmatrix_free (v, 1, 1);
 	NUMdmatrix_free (vplus, 1, 1);
@@ -2916,7 +2813,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof
 	if (((cstart = Data_copy (conf)) == NULL) ||
 		((cbest = Data_copy (cstart)) == NULL)) goto end;
 
-	if (showMulti) Melder_progress (0.0, "mds many times");
+	if (showMulti) Melder_progress1 (0.0, L"mds many times");
 		
 	for (i = 1; i <= numberOfRepetitions; i++)
 	{
@@ -2935,13 +2832,13 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof
  		Configuration_randomize (cstart);
  		TableOfReal_centreColumns (cstart);
  		
- 		if (showMulti && ! Melder_progress ((double)i / (numberOfRepetitions+1),
-			" %ld from %ld", i, numberOfRepetitions)) break;
+ 		if (showMulti && ! Melder_progress3 ((double)i / (numberOfRepetitions+1),
+			Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions))) break;
 	}
 	
 end:
  
-	if (showMulti) Melder_progress (1.0, NULL);
+	if (showMulti) Melder_progress1 (1.0, NULL);
 	forget (cstart);
 	if (Melder_hasError ()) forget (cbest);
 	return cbest;
@@ -3619,9 +3516,8 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me,
 	
 	if (numberOfData < numberOfParameters)
 	{
-		return Melder_errorp ("Dissimilarity_Configuration_kruskal: "
-			"the number of data must be larger than number of parameters "
-			"in the model.");
+		return Melder_errorp1 (L"Dissimilarity_Configuration_kruskal: "
+			"The number of data must be larger than number of parameters in the model.");
 	}
 		
 	if (! (thee = Kruskal_create (my numberOfRows, his numberOfColumns))) 
@@ -3821,7 +3717,7 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 	
 	*out1 = NULL; *out2 = NULL;
 		
-	if (showProgress) Melder_progress( 0.0, "INDSCAL analysis" );
+	if (showProgress) Melder_progress1 (0.0, L"INDSCAL analysis");
 	
 	/*
 		Solve for X, and W matrix via Alternating Least Squares.
@@ -3841,8 +3737,8 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 		if (*vaf > 1-tol || fabs(*vaf - vafp) /  vafp < tolerance) break;
 		vafp = *vaf;
 		if (showProgress && 
-			! Melder_progress ((double) iter / (numberOfIterations+1), 
-				"indscal: vaf %f", *vaf)) break;	
+			! Melder_progress2 ((double) iter / (numberOfIterations+1), 
+				L"indscal: vaf ", Melder_double(*vaf))) break;	
 	}
 	
 	/*
@@ -3884,7 +3780,7 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 	
 end:
 
-	if (showProgress) Melder_progress (1.0, NULL);
+	if (showProgress) Melder_progress1 (1.0, NULL);
 	
 	if (Melder_hasError ())
 	{
@@ -3935,7 +3831,7 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	
 	*out1 = NULL; *out2 = NULL;
 		
-	if (showProgress) Melder_progress( 0.0, "INDSCAL analysis" );
+	if (showProgress) Melder_progress1 (0.0, L"INDSCAL analysis");
 		
 	for (i = 1; i <= numberOfIterations; i++)
 	{
@@ -3959,8 +3855,8 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 		
 		if (*vaf > 1-tol || fabs(*vaf - vafp) /  vafp < tolerance) break;
 		vafp = *vaf;
-		if (showProgress && ! Melder_progress ((double) i / 
-			(numberOfIterations+1), "indscal: vaf %f", *vaf)) break;	
+		if (showProgress && ! Melder_progress2 ((double) i / 
+			(numberOfIterations+1), L"indscal: vaf ", Melder_double (*vaf))) break;	
 	}
 	
 	/*
@@ -4000,7 +3896,7 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	}		
 	
 end:
-	if (showProgress) Melder_progress (1.0, NULL);
+	if (showProgress) Melder_progress1 (1.0, NULL);
 
 	forget (sp); 
 	forget (vecs); 
@@ -4078,36 +3974,6 @@ Salience Distances_Configuration_to_Salience (Distances d, Configuration c,
 	return w;
 }
 
-static int leastSquaresSolution (double **a, long nra, long nca, double **b, 
-	long ncb, double **x)
-{
-	long j, k, l, m; 
-	SVD svd = NULL;
-	
-	if (! (svd = SVD_create_d (b, nca, ncb))) return 0; /* now: P == H */
-	(void) SVD_zeroSmallSingularValues (svd, 0);
-	for (j=1; j <= nra; j++) 
-	{
-		for (k=1; k <= ncb; k++)
-		{
-			double s = 0;
-			for (m=1; m <= ncb; m++)
-			{
-				if (svd->d[m])
-				{
-					for (l=1; l <= nca; l++)
-					{
-						s += a[j][l] * b[l][m] * svd->v[k][m] / svd->d[m];
-					}
-				}
-			}
-			x[j][k] = s;
-		}
-	}
-	forget (svd);
-	return 1;
-}
-
 Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, 
 	Configuration him)
 {
@@ -4123,49 +3989,6 @@ end:
 	if (Melder_hasError ()) forget (salience);
 	return salience;	
 }
-
-static Salience ScalarProducts_Configuration_to_Salience2 (ScalarProducts me, 
-	Configuration him)
-{
-	Salience thee = NULL; 
-	long i, j, k, t, nSources = my size, nDimensions =  his numberOfColumns; 
-	long nPoints = his numberOfRows, ns = nPoints * nPoints;
-	double **zs = NULL, **g = NULL, **x = his data;
-
-	if (! (zs = NUMdmatrix (1, nSources, 1, ns)) ||
-		! (g = NUMdmatrix (1, ns, 1, nDimensions)) ||
-		! (thee = Salience_create (nSources,nDimensions)) ||
-		! TableOfReal_setSequentialColumnLabels (thee, 0, 0, NULL, 1, 1)) goto end;
-
-	TableOfReal_labelsFromCollectionItemNames (thee, me, 1, 0);
-	
-	for (j = 1; j <= nPoints; j++)
-	{
-		for (k = 1; k <= nPoints; k++)
-		{
-			long s = nPoints * (j - 1) + k;
-			for (t=1; t <= nDimensions; t++)
-			{
-				g[s][t] = x[j][t] * x[k][t];
-			}
-			for (i=1; i <= nSources; i++)
-			{
-				TableOfReal sp = my item[i];
-				zs[i][s] = sp->data[j][k];
-			}
-		}
-	}
-	
-	leastSquaresSolution (zs, nSources, ns, g, nDimensions, thy data);
-	
-end:
-
-	NUMdmatrix_free (zs, 1, 1);
-	NUMdmatrix_free (g, 1, 1);
-	if (Melder_hasError ()) forget (thee);
-	return thee;
-}
-
 
 Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me, 
 	Configuration him, int tiesProcessing, int normalizeScalarProducts)
@@ -4240,7 +4063,7 @@ int Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions,
 	if (! (cbest = Data_copy (cstart)) || 
 		! (wbest = Data_copy (wstart))) goto end;	
 
-	if (showMulti) Melder_progress (0.0, "Indscal many times");
+	if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
 	
 	for (i = 1; i <= numberOfRepetitions; i++)
 	{		
@@ -4261,8 +4084,8 @@ int Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions,
  		Configuration_normalize (cstart, 1.0, 1);
   		Salience_setDefaults (wstart);
   		
- 		if (showMulti && ! Melder_progress ((double)i / (numberOfRepetitions+1),
-			" %ld from %ld", i, numberOfRepetitions)) break;
+ 		if (showMulti && ! Melder_progress3 ((double)i / (numberOfRepetitions+1),
+			Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions))) break;
 
 	}
 	
@@ -4270,7 +4093,7 @@ int Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions,
 	
 end:
 
-	if (showMulti) Melder_progress (1.0, NULL);
+	if (showMulti) Melder_progress1 (1.0, NULL);
 	
  	forget (cstart); 
 	forget (wstart); 
@@ -4306,7 +4129,7 @@ int Distances_indscal (Distances distances, long numberOfDimensions,
 	if (! (cbest = Data_copy (cstart)) || 
 		! (wbest = Data_copy (wstart))) goto end;	
 
-	if (showMulti) Melder_progress (0.0, "Indscal many times");
+	if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
 
 	for (i = 1; i <= numberOfRepetitions; i++)
 	{		
@@ -4326,8 +4149,8 @@ int Distances_indscal (Distances distances, long numberOfDimensions,
  		Configuration_normalize (cstart, 1.0, 1);
   		Salience_setDefaults (wstart);
   		
- 		if (showMulti && ! Melder_progress ((double)i / (numberOfRepetitions+1),
-			" %ld from %ld", i, numberOfRepetitions)) break;
+ 		if (showMulti && ! Melder_progress3 ((double)i / (numberOfRepetitions+1),
+			Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions))) break;
 
 	}
 
@@ -4335,7 +4158,7 @@ int Distances_indscal (Distances distances, long numberOfDimensions,
 	
 end:
 
-	if (showMulti) Melder_progress (1.0, NULL);
+	if (showMulti) Melder_progress1 (1.0, NULL);
 	
  	forget (cstart); 
 	forget (wstart);
@@ -4404,8 +4227,8 @@ int Distances_Configuration_Salience_vaf (Distances me, Configuration thee,
 	int status = 0;
 
 	if (my size != his numberOfRows || 
-		thy numberOfColumns != his numberOfColumns) return Melder_error 
-		("Distances_Configuration_Salience_vaf: dimensions must conform.");
+		thy numberOfColumns != his numberOfColumns) return Melder_error1 
+		(L"Distances_Configuration_Salience_vaf: dimensions must conform.");
 
 	sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
 	if (sp)
@@ -4454,8 +4277,7 @@ int ScalarProducts_Configuration_Salience_vaf (ScalarProducts me,
 	if (my size != his numberOfRows || 
 		thy numberOfColumns != his numberOfColumns)
 	{
-		return Melder_error ("ScalarProducts_Configuration_Salience_vaf: "
-			"dimensions of input objects must conform.");
+		return Melder_error1 (L"ScalarProducts_Configuration_Salience_vaf: Dimensions of input objects must conform.");
 	}
 	
 	if (! (w = NUMdvector_copy (thy w, 1, thy numberOfColumns))) return 0;
@@ -4467,8 +4289,8 @@ int ScalarProducts_Configuration_Salience_vaf (ScalarProducts me,
 		
 		if (sp->numberOfRows != thy numberOfRows)
 		{
-			return Melder_error ("ScalarProducts_Configuration_Salience_vaf: "
-				"ScalarProduct %d does not match Configuration.", i);
+			return Melder_error3 (L"ScalarProducts_Configuration_Salience_vaf: "
+				"ScalarProduct ", Melder_integer (i), L" does not match Configuration.");
 		}
 		
 		/*

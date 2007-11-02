@@ -69,7 +69,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 
 	if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   /* e.g. 3 periods, 75 Hz: 10 milliseconds. */
 
-	Melder_progress (0.0, "Sound to Pitch...");
+	Melder_progress1 (0.0, L"Sound to Pitch...");
 	switch (method) {
 		case AC_HANNING:
 			brent_depth = NUM_PEAK_INTERPOLATE_SINC70;
@@ -154,7 +154,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			if (value > globalPeak) globalPeak = value;
 		}
 	}
-	if (globalPeak == 0.0) { Melder_progress (1.0, NULL); return thee; }
+	if (globalPeak == 0.0) { Melder_progress1 (1.0, NULL); return thee; }
 
 	if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
@@ -225,8 +225,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 		double t = Sampled_indexToX (thee, iframe), localPeak;
 		long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 		long startSample, endSample;
-		if (! Melder_progress (0.1 + (0.8 * iframe) / (nFrames + 1),
-			"Sound to Pitch: analysis of frame %ld out of %ld", iframe, nFrames)) { forget (thee); goto end; }
+		if (! Melder_progress4 (0.1 + (0.8 * iframe) / (nFrames + 1),
+			L"Sound to Pitch: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (nFrames))) { forget (thee); goto end; }
 
 		double localMean [1+MAXIMUM_NUMBER_OF_CHANNELS];
 		for (long channel = 1; channel <= my ny; channel ++) {
@@ -424,12 +424,12 @@ Pitch Sound_to_Pitch_any (Sound me,
 		}
 	}   /* Next frame. */
 
-	Melder_progress (0.95, "Sound to Pitch: path finder");
+	Melder_progress1 (0.95, L"Sound to Pitch: path finder");
 	Pitch_pathFinder (thee, silenceThreshold, voicingThreshold,
 		octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, FALSE);
 
 end:
-	Melder_progress (1.0, NULL);   /* Done. */
+	Melder_progress1 (1.0, NULL);   /* Done. */
 	NUMdmatrix_free (frame, 1, 1);
 	NUMdvector_free (ac, 1);
 	NUMdvector_free (window, 1);

@@ -1,10 +1,11 @@
 /* specfunc/psi.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 2007 Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004, 2005, 2006 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +15,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author: G. Jungman */
@@ -26,6 +27,9 @@
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_zeta.h"
 #include "gsl_sf_psi.h"
+#include "gsl_complex_math.h"
+
+#include <stdio.h>
 
 #include "gsl_sf__error.h"
 
@@ -85,17 +89,17 @@ static cheb_series r1py_cs = {
 
 /* Chebyshev fits from SLATEC code for psi(x)
 
- Series for PSI        on the interval  0.	   to  1.00000D+00
-				       with weighted error   2.03E-17
-					log weighted error  16.69
-			      significant figures required  16.39
-				   decimal places required  17.37
+ Series for PSI        on the interval  0.         to  1.00000D+00
+                                       with weighted error   2.03E-17
+                                        log weighted error  16.69
+                              significant figures required  16.39
+                                   decimal places required  17.37
 
- Series for APSI       on the interval  0.	   to  2.50000D-01
-				       with weighted error   5.54E-17
-					log weighted error  16.26
-			      significant figures required  14.42
-				   decimal places required  16.86
+ Series for APSI       on the interval  0.         to  2.50000D-01
+                                       with weighted error   5.54E-17
+                                        log weighted error  16.26
+                              significant figures required  14.42
+                                   decimal places required  16.86
 
 */
 
@@ -265,7 +269,7 @@ static double psi_table[PSI_TABLE_NMAX+1] = {
 #define PSI_1_TABLE_NMAX 100
 static double psi_1_table[PSI_1_TABLE_NMAX+1] = {
   0.0,  /* Infinity */              /* psi(1,0) */
- -M_PI*M_PI/6.0,                    /* psi(1,1) */
+  M_PI*M_PI/6.0,                    /* psi(1,1) */
   0.644934066848226436472415,       /* ...      */
   0.394934066848226436472415,
   0.2838229557371153253613041,
@@ -368,41 +372,14 @@ static double psi_1_table[PSI_1_TABLE_NMAX+1] = {
 };
 
 
-/*-*-*-*-*-*-*-*-*-*-*-* Functions with Error Codes *-*-*-*-*-*-*-*-*-*-*-*/
-
-int gsl_sf_psi_int_e(const int n, gsl_sf_result * result)
-{
-  /* CHECK_POINTER(result) */
-
-  if(n <= 0) {
-    DOMAIN_ERROR(result);
-  }
-  else if(n <= PSI_TABLE_NMAX) {
-    result->val = psi_table[n];
-    result->err = GSL_DBL_EPSILON * fabs(result->val);
-    return GSL_SUCCESS;
-  }
-  else {
-    /* Abramowitz+Stegun 6.3.18 */
-    const double c2 = -1.0/12.0;
-    const double c3 =  1.0/120.0;
-    const double c4 = -1.0/252.0;
-    const double c5 =  1.0/240.0;
-    const double ni2 = (1.0/n)*(1.0/n);
-    const double ser = ni2 * (c2 + ni2 * (c3 + ni2 * (c4 + ni2*c5)));
-    result->val  = log(n) - 0.5/n + ser;
-    result->err  = GSL_DBL_EPSILON * (fabs(log(n)) + fabs(0.5/n) + fabs(ser));
-    result->err += GSL_DBL_EPSILON * fabs(result->val);
-    return GSL_SUCCESS;
-  }
-}
-
-
-int gsl_sf_psi_e(const double x, gsl_sf_result * result)
+/* digamma for x both positive and negative; we do both
+ * cases here because of the way we use even/odd parts
+ * of the function
+ */
+static int
+psi_x(const double x, gsl_sf_result * result)
 {
   const double y = fabs(x);
-
-  /* CHECK_POINTER(result) */
 
   if(x == 0.0 || x == -1.0 || x == -2.0) {
     DOMAIN_ERROR(result);
@@ -419,10 +396,10 @@ int gsl_sf_psi_e(const double x, gsl_sf_result * result)
       }
       else {
         result->val  = log(y) - 0.5/x + result_c.val - M_PI * c/s;
-	result->err  = M_PI*fabs(x)*GSL_DBL_EPSILON/(s*s);
-	result->err += result_c.err;
+        result->err  = M_PI*fabs(x)*GSL_DBL_EPSILON/(s*s);
+        result->err += result_c.err;
         result->err += GSL_DBL_EPSILON * fabs(result->val);
-	return GSL_SUCCESS;
+        return GSL_SUCCESS;
       }
     }
     else {
@@ -478,6 +455,165 @@ int gsl_sf_psi_e(const double x, gsl_sf_result * result)
 }
 
 
+/* psi(z) for large |z| in the right half-plane; [Abramowitz + Stegun, 6.3.18] */
+static
+gsl_complex
+psi_complex_asymp(gsl_complex z)
+{
+  /* coefficients in the asymptotic expansion for large z;
+   * let w = z^(-2) and write the expression in the form
+   *
+   *   ln(z) - 1/(2z) - 1/12 w (1 + c1 w + c2 w + c3 w + ... )
+   */
+  static const double c1 = -0.1;
+  static const double c2 =  1.0/21.0;
+  static const double c3 = -0.05;
+
+  gsl_complex zi = gsl_complex_inverse(z);
+  gsl_complex w  = gsl_complex_mul(zi, zi);
+  gsl_complex cs;
+
+  /* Horner method evaluation of term in parentheses */
+  gsl_complex sum;
+  sum = gsl_complex_mul_real(w, c3/c2);
+  sum = gsl_complex_add_real(sum, 1.0);
+  sum = gsl_complex_mul_real(sum, c2/c1);
+  sum = gsl_complex_mul(sum, w);
+  sum = gsl_complex_add_real(sum, 1.0);
+  sum = gsl_complex_mul_real(sum, c1);
+  sum = gsl_complex_mul(sum, w);
+  sum = gsl_complex_add_real(sum, 1.0);
+
+  /* correction added to log(z) */
+  cs = gsl_complex_mul(sum, w);
+  cs = gsl_complex_mul_real(cs, -1.0/12.0);
+  cs = gsl_complex_add(cs, gsl_complex_mul_real(zi, -0.5));
+
+  return gsl_complex_add(gsl_complex_log(z), cs);
+}
+
+
+
+/* psi(z) for complex z in the right half-plane */
+static int
+psi_complex_rhp(
+  gsl_complex z,
+  gsl_sf_result * result_re,
+  gsl_sf_result * result_im
+  )
+{
+  int n_recurse = 0;
+  int i;
+  gsl_complex a;
+
+  if(GSL_REAL(z) == 0.0 && GSL_IMAG(z) == 0.0)
+  {
+    result_re->val = 0.0;
+    result_im->val = 0.0;
+    result_re->err = 0.0;
+    result_im->err = 0.0;
+    return GSL_EDOM;
+  }
+
+  /* compute the number of recurrences to apply */
+  if(GSL_REAL(z) < 20.0 && fabs(GSL_IMAG(z)) < 20.0)
+  {
+    const double sp = sqrt(20.0 + GSL_IMAG(z));
+    const double sn = sqrt(20.0 - GSL_IMAG(z));
+    const double rhs = sp*sn - GSL_REAL(z);
+    if(rhs > 0.0) n_recurse = ceil(rhs);
+  }
+
+  /* compute asymptotic at the large value z + n_recurse */
+  a = psi_complex_asymp(gsl_complex_add_real(z, n_recurse));
+
+  result_re->err = 2.0 * GSL_DBL_EPSILON * fabs(GSL_REAL(a));
+  result_im->err = 2.0 * GSL_DBL_EPSILON * fabs(GSL_IMAG(a));
+
+  /* descend recursively, if necessary */
+  for(i = n_recurse; i >= 1; --i)
+  {
+    gsl_complex zn = gsl_complex_add_real(z, i - 1.0);
+    gsl_complex zn_inverse = gsl_complex_inverse(zn);
+    a = gsl_complex_sub(a, zn_inverse);
+
+    /* accumulate the error, to catch cancellations */
+    result_re->err += 2.0 * GSL_DBL_EPSILON * fabs(GSL_REAL(zn_inverse));
+    result_im->err += 2.0 * GSL_DBL_EPSILON * fabs(GSL_IMAG(zn_inverse));
+  }
+
+  result_re->val = GSL_REAL(a);
+  result_im->val = GSL_IMAG(a);
+
+  result_re->err += 2.0 * GSL_DBL_EPSILON * fabs(result_re->val);
+  result_im->err += 2.0 * GSL_DBL_EPSILON * fabs(result_im->val);
+
+  return GSL_SUCCESS;
+}
+
+
+
+/* generic polygamma; assumes n >= 0 and x > 0
+ */
+static int
+psi_n_xg0(const int n, const double x, gsl_sf_result * result)
+{
+  if(n == 0) {
+    return gsl_sf_psi_e(x, result);
+  }
+  else {
+    /* Abramowitz + Stegun 6.4.10 */
+    gsl_sf_result ln_nf;
+    gsl_sf_result hzeta;
+    int stat_hz = gsl_sf_hzeta_e(n+1.0, x, &hzeta);
+    int stat_nf = gsl_sf_lnfact_e((unsigned int) n, &ln_nf);
+    int stat_e  = gsl_sf_exp_mult_err_e(ln_nf.val, ln_nf.err,
+                                           hzeta.val, hzeta.err,
+                                           result);
+    if(GSL_IS_EVEN(n)) result->val = -result->val;
+    return GSL_ERROR_SELECT_3(stat_e, stat_nf, stat_hz);
+  }
+}
+
+
+
+/*-*-*-*-*-*-*-*-*-*-*-* Functions with Error Codes *-*-*-*-*-*-*-*-*-*-*-*/
+
+int gsl_sf_psi_int_e(const int n, gsl_sf_result * result)
+{
+  /* CHECK_POINTER(result) */
+
+  if(n <= 0) {
+    DOMAIN_ERROR(result);
+  }
+  else if(n <= PSI_TABLE_NMAX) {
+    result->val = psi_table[n];
+    result->err = GSL_DBL_EPSILON * fabs(result->val);
+    return GSL_SUCCESS;
+  }
+  else {
+    /* Abramowitz+Stegun 6.3.18 */
+    const double c2 = -1.0/12.0;
+    const double c3 =  1.0/120.0;
+    const double c4 = -1.0/252.0;
+    const double c5 =  1.0/240.0;
+    const double ni2 = (1.0/n)*(1.0/n);
+    const double ser = ni2 * (c2 + ni2 * (c3 + ni2 * (c4 + ni2*c5)));
+    result->val  = log(n) - 0.5/n + ser;
+    result->err  = GSL_DBL_EPSILON * (fabs(log(n)) + fabs(0.5/n) + fabs(ser));
+    result->err += GSL_DBL_EPSILON * fabs(result->val);
+    return GSL_SUCCESS;
+  }
+}
+
+
+int gsl_sf_psi_e(const double x, gsl_sf_result * result)
+{
+  /* CHECK_POINTER(result) */
+  return psi_x(x, result);
+}
+
+
 int
 gsl_sf_psi_1piy_e(const double y, gsl_sf_result * result)
 {
@@ -500,7 +636,7 @@ gsl_sf_psi_1piy_e(const double y, gsl_sf_result * result)
     const double lny = log(ay);
     const double sum = yi2 * (1.0/12.0 +
                          yi2 * (1.0/120.0 +
-	                   yi2 * (1.0/252.0 +
+                           yi2 * (1.0/252.0 +
                              yi2 * (1.0/240.0 +
                                yi2 * (1.0/132.0 + 691.0/32760.0 * yi2)))));
     result->val = lny + sum;
@@ -583,15 +719,66 @@ int gsl_sf_psi_1_int_e(const int n, gsl_sf_result * result)
 }
 
 
+int gsl_sf_psi_1_e(const double x, gsl_sf_result * result)
+{
+  /* CHECK_POINTER(result) */
+
+  if(x == 0.0 || x == -1.0 || x == -2.0) {
+    DOMAIN_ERROR(result);
+  }
+  else if(x > 0.0)
+  {
+    return psi_n_xg0(1, x, result);
+  }
+  else if(x > -5.0)
+  {
+    /* Abramowitz + Stegun 6.4.6 */
+    int M = -floor(x);
+    double fx = x + M;
+    double sum = 0.0;
+    int m;
+
+    if(fx == 0.0)
+      DOMAIN_ERROR(result);
+
+    for(m = 0; m < M; ++m)
+      sum += 1.0/((x+m)*(x+m));
+
+    {
+      int stat_psi = psi_n_xg0(1, fx, result);
+      result->val += sum;
+      result->err += M * GSL_DBL_EPSILON * sum;
+      return stat_psi;
+    }
+  }
+  else
+  {
+    /* Abramowitz + Stegun 6.4.7 */
+    const double sin_px = sin(M_PI * x);
+    const double d = M_PI*M_PI/(sin_px*sin_px);
+    gsl_sf_result r;
+    int stat_psi = psi_n_xg0(1, 1.0-x, &r);
+    result->val = d - r.val;
+    result->err = r.err + 2.0*GSL_DBL_EPSILON*d;
+    return stat_psi;
+  }
+}
+
+
 int gsl_sf_psi_n_e(const int n, const double x, gsl_sf_result * result)
 {
   /* CHECK_POINTER(result) */
 
-  if(n < 0 || x <= 0.0) {
-    DOMAIN_ERROR(result);
-  }
-  else if(n == 0) {
+  if(n == 0)
+  {
     return gsl_sf_psi_e(x, result);
+  }
+  else if(n == 1)
+  {
+    return gsl_sf_psi_1_e(x, result);
+  }
+  else if(n < 0 || x <= 0.0) {
+    DOMAIN_ERROR(result);
   }
   else {
     gsl_sf_result ln_nf;
@@ -600,11 +787,48 @@ int gsl_sf_psi_n_e(const int n, const double x, gsl_sf_result * result)
     int stat_nf = gsl_sf_lnfact_e((unsigned int) n, &ln_nf);
     int stat_e  = gsl_sf_exp_mult_err_e(ln_nf.val, ln_nf.err,
                                            hzeta.val, hzeta.err,
-					   result);
+                                           result);
     if(GSL_IS_EVEN(n)) result->val = -result->val;
     return GSL_ERROR_SELECT_3(stat_e, stat_nf, stat_hz);
   }
 }
+
+
+int
+gsl_sf_complex_psi_e(
+  const double x,
+  const double y,
+  gsl_sf_result * result_re,
+  gsl_sf_result * result_im
+  )
+{
+  if(x >= 0.0)
+  {
+    gsl_complex z = gsl_complex_rect(x, y);
+    return psi_complex_rhp(z, result_re, result_im);
+  }
+  else
+  {
+    /* reflection formula [Abramowitz+Stegun, 6.3.7] */
+    gsl_complex z = gsl_complex_rect(x, y);
+    gsl_complex omz = gsl_complex_rect(1.0 - x, -y);
+    gsl_complex zpi = gsl_complex_mul_real(z, M_PI);
+    gsl_complex cotzpi = gsl_complex_cot(zpi);
+    int ret_val = psi_complex_rhp(omz, result_re, result_im);
+
+    if(GSL_IS_REAL(GSL_REAL(cotzpi)) && GSL_IS_REAL(GSL_IMAG(cotzpi)))
+    {
+      result_re->val -= M_PI * GSL_REAL(cotzpi);
+      result_im->val -= M_PI * GSL_IMAG(cotzpi);
+      return ret_val;
+    }
+    else
+    {
+      GSL_ERROR("singularity", GSL_EDOM);
+    }
+  }
+}
+
 
 
 /*-*-*-*-*-*-*-*-*-* Functions w/ Natural Prototypes *-*-*-*-*-*-*-*-*-*-*/
@@ -629,6 +853,11 @@ double gsl_sf_psi_1piy(const double x)
 double gsl_sf_psi_1_int(const int n)
 {
   EVAL_RESULT(gsl_sf_psi_1_int_e(n, &result));
+}
+
+double gsl_sf_psi_1(const double x)
+{
+  EVAL_RESULT(gsl_sf_psi_1_e(x, &result));
 }
 
 double gsl_sf_psi_n(const int n, const double x)

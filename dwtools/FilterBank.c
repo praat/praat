@@ -1,6 +1,6 @@
 /* FilterBank.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20020813 GPL header
  djmw 20030901 Added fiter function drawing and frequency scale drawing.
  djmw 20050731 +FilterBank_and_PCA_drawComponent
+ djmw 20071017 Melder_error<n>
 */
 
 #include "Eigen_and_Matrix.h"
@@ -88,7 +89,7 @@ static wchar_t *GetFreqScaleText (int scale)
 
 static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
 	int *toFilter, double *zmin, double *zmax, int dbScale, 
-	double *ymin, double *ymax, char *proc)
+	double *ymin, double *ymax)
 {
 	iam (Matrix);
 	
@@ -103,14 +104,13 @@ static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
 	if (*toFilter > my ny) *toFilter = my ny;
 	if (*fromFilter > *toFilter)
 	{
-		Melder_warning ("&s: filter numbers must be in range [%d, %d]", 
-			proc, 1, my ny);
+		Melder_warning ("Filter numbers must be in range [1, ", Melder_integer (my ny), "]");
 		return 0;
 	}
 		
 	if (*zmin < 0 || *zmax < 0)
 	{
-		Melder_warning ("&s: Frequencies must be positive.", proc);
+		Melder_warning ("Frequencies must be positive.");
 		return 0;
 	}
 	if (*zmax <= *zmin)
@@ -230,7 +230,6 @@ int FilterBank_getFrequencyScale (I)
 void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin, 
 	double xmax, int verticalScale, double ymin, double ymax, int garnish)
 {
-	char *proc = "FilterBank_drawFrequencyScales";
 	iam (FilterBank);
 	long i, ibegin, iend, n = 2000;
 	float *a, df;
@@ -238,7 +237,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 
 	if (xmin < 0 || xmax < 0 ||ymin < 0 || ymax < 0)
 	{
-		Melder_warning ("%s: Frequencies must be >= 0.", proc);
+		Melder_warning ("Frequencies must be >= 0.");
 		return;
 	}
 	
@@ -300,12 +299,11 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	char *proc = "BarkFilter_drawSekeyHansonFilterFunctions";
 	long i, j, n = 1000; 
 	float *a = NULL;
 		
 	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, 
-		& zmin, & zmax, dbScale, & ymin, & ymax, proc)) return;
+		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 	
 	a = NUMfvector (1, n);
 	if (a == NULL) return;
@@ -413,12 +411,11 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	char *proc = "MelFilter_drawFilterFunctions";
 	long i, j, n = 1000; 
 	float *a = NULL;
 
 	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, 
-		& zmin, & zmax, dbScale, & ymin, & ymax, proc)) return;
+		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 		
 	a = NUMfvector (1, n);
 	if (a == NULL) return;
@@ -571,16 +568,15 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	char *proc = "FormantFilter_drawFilterFunctions";
 	long i, j, n = 1000; 
 	float *a = NULL;
 		
 	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, 
-		& zmin, & zmax, dbScale, & ymin, & ymax, proc)) return;
+		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 	
 	if (bandwidth <= 0)
 	{
-		Melder_warning ("%s: Bandwidth must be greater than zero.", proc);
+		Melder_warning ("Bandwidth must be greater than zero.");
 	}
 		
 	a = NUMfvector (1, n);
@@ -735,7 +731,7 @@ void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, 
 	
 	if (component < 1 || component > thy numberOfEigenvalues)
 	{
-		(void) Melder_error ("Component too large.");
+		(void) Melder_error1 (L"Component too large.");
 	}
 	/*
 	 	Scale Intensity

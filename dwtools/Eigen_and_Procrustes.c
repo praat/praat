@@ -30,10 +30,10 @@ Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to)
 	long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 	double **x = NULL, **y = NULL;
 	
-	if (my dimension != thy dimension) return Melder_errorp ("The eigenvectors must have the same dimension.");
+	if (my dimension != thy dimension) return Melder_errorp1 (L"The eigenvectors must have the same dimension.");
 
 	if (evec_from > evec_to || evec_from < 1 || evec_to > nmin) 
-		return Melder_errorp ("Eigenvector range too large.");
+		return Melder_errorp1 (L"Eigenvector range too large.");
 	
 	x = NUMdmatrix (1, my dimension, 1, nvectors);
 	if (x == NULL) return NULL;

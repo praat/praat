@@ -46,6 +46,8 @@
  djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061214 Corrected possible integer overflow in ellipseScalefactor.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071016 To Melder_error<n>
 */
 
 #include "SSCP.h"
@@ -60,6 +62,8 @@
 #include "oo_COPY.h"
 #include "SSCP_def.h"
 #include "oo_EQUAL.h"
+#include "SSCP_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "SSCP_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "SSCP_def.h"
@@ -81,6 +85,7 @@ class_methods (SSCP, TableOfReal)
 	class_method_local (SSCP, description)
 	class_method_local (SSCP, copy)
 	class_method_local (SSCP, equal)
+	class_method_local (SSCP, canWriteAsEncoding)
 	class_method_local (SSCP, writeText)
 	class_method_local (SSCP, readText)
 	class_method_local (SSCP, writeBinary)
@@ -321,55 +326,6 @@ double SSCP_getFractionVariation(I, long from, long to)
 	return trace > 0 ? sum / trace : NUMundefined;
 }
 
-static TableOfReal SSCP_and_TableOfReal_to_MahalanobisDistances (I, thou, long rowb, long rowe)
-{
-	char *proc = "SSCP_and_TableOfReal_to_MahalanobisDistance";
-	iam (SSCP); thouart (TableOfReal); TableOfReal him = NULL;
-	double **linv = NULL, *mean = NULL, lnd;
-	long i, k, nrows, n = my numberOfRows;
-	int copyLabels = 1;
-
-	if (n != thy numberOfColumns) return Melder_errorp ("%s: The number of columns (%d) in the "
-		"TableOfReal must equal the dimension (%d) of the SSCP-object.", proc, thy numberOfColumns, n);
-	if (rowe <= rowe)
-	{
-		rowb = 1; rowe = thy numberOfRows;
-	}
-	if (rowe == 0) rowe = thy numberOfRows;
-	if (rowb < 1 || rowe > thy numberOfRows) return Melder_errorp ("%s: The row selection in the TableOfReal is not valid.", 	proc);
-	
-	nrows = rowe - rowb + 1;
-	him = TableOfReal_create (nrows, 1);
-	if (him == NULL) return NULL;
-	
-	if (copyLabels && 
-		(! NUMstrings_copyElements (&thy rowLabels[rowb], his rowLabels, 1, nrows) ||
-		! NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns)))
-		goto end;
-
-	linv = NUMdmatrix_copy (my data, 1, n, 1, n);
-	if (linv == NULL || ! NUMinverse_cholesky (linv, n, &lnd)) goto end;
-	
-	mean = NUMdvector (1, n);
-	if (mean == NULL) goto end;
-	
-	for (i = 1; i <= n; i++)
-	{
-		NUMcolumn_avevar (&thy data[rowb], nrows, n, i, &mean[i], NULL);
-	}
-	for (k=1, i = rowb; i <= rowe; i++, k++)
-	{
-		double chisq = NUMmahalanobisDistance_chi (linv, thy data[i], mean, n);
-		his data[k][1] = sqrt (chisq);
-	}
-
-end:
-	NUMdmatrix_free (linv, 1, 1);
-	NUMdvector_free (mean, 1);
-	if (Melder_hasError ()) forget (him);
-	return him;
-}
-
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, 
 	int confidence, long d1, long d2, double xmin, double xmax, 
 	double ymin, double ymax, int garnish)
@@ -532,14 +488,9 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 	
 	m = rowe - rowb + 1; /* # rows */
 	n = cole - colb + 1; /* # columns */
-	/*
-	if (m < 2) return Melder_errorp ("TableOfReal_to_SSCP: there is only one "
-		"row in the selection from the table.");
-	*/
 	if (m < n) Melder_warning ("TableOfReal_to_SSCP: The SSCP will not have \n"
 		"full dimensionality. This may be a problem in following analysis steps. \n"
-		"(The number of data points (%d) was less than the number of variables (%d).)",
-		m, n);
+		"(The number of data points was less than the number of variables.)");
 		
 	thee = SSCP_create (n);
 	if (thee == NULL) goto end;
@@ -585,87 +536,6 @@ end:
 	return thee; 
 }
 
-static SSCP TableOfReal_to_SSCP_old (I, long rowb, long rowe, long colb, long cole)
-{
-	iam (TableOfReal);
-	SSCP thee = NULL;
-	SVD him = NULL;
-	long i, j, k, m, n, numberOfZeroed;
-	double **v, *d;
-	
-	if (rowb == 0 && rowe == 0)
-	{
-		rowb = 1; rowe = my numberOfRows;
-	}
-	else if (rowe < rowb || rowb < 1 || rowe > my numberOfRows) return NULL;
-	
-	if (colb == 0 && cole == 0)
-	{
-		colb = 1; cole = my numberOfColumns;
-	}
-	else if (cole < colb || colb < 1 || cole > my numberOfColumns) return NULL;
-	
-	m = rowe - rowb + 1; /* # rows */
-	n = cole - colb + 1; /* # columns */
-	/*
-	if (m < 2) return Melder_errorp ("TableOfReal_to_SSCP: there is only one "
-		"row in the selection from the table.");
-	*/
-	if (m < n) Melder_warning ("TableOfReal_to_SSCP: The SSCP will not have \n"
-		"full dimensionality. This may be a problem in following analysis steps. \n"
-		"(The number of data points (%d) was less than the number of variables (%d).)",
-		m, n);
-		
-	/* copy data to svd */
-	
-	him = SVD_create (m, n);
-	if (him == NULL) goto end;
-	thee = SSCP_create (n);
-	if (thee == NULL) goto end;
-	
-	for (i = 1; i <= m; i++)
-	{
-		for (j = 1; j <= n; j++)
-		{
-			his u[i][j] = my data[rowb + i - 1][colb + j - 1];
-		}
-	}
-	
-	NUMcentreColumns_d (his u, 1, m, 1, n, thy centroid);
-	
-	SSCP_setNumberOfObservations (thee, m);
-	
-	if (! SVD_compute (him)) goto end;
-	numberOfZeroed = SVD_zeroSmallSingularValues (him, 0);
- 	v = his v; d = his d;
-
-	/*
-		Covariance = T'T = V D^2 V'
-	*/
-	
-	for (i = 1; i <= n; i++)
-	{
-		for (j = i; j <= n; j++)
-		{
-			double t = 0;
-			for (k = 1; k <= n; k++)
-			{
-				t += v[i][k] * d[k] * d[k] * v[j][k];
-			}
-			thy data[i][j] = thy data[j][i] = t;
-		}
-	}	
-	
-	NUMstrings_copyElements (TOVEC(my columnLabels[colb]), thy columnLabels,
-		1, n);
-	NUMstrings_copyElements (thy columnLabels, thy rowLabels, 1, n);
-	
-end:
-
-	forget (him);
-	if (Melder_hasError ()) forget (thee);
-	return thee; 
-}
 
 TableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, thou,
 	double qlow, double qhigh)
@@ -682,7 +552,6 @@ TableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, thou,
 TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, thou,
 	double qlow, double qhigh)
 {
-	char *proc = "Covariance_and_TableOfReal_extractQuantileRange";
 	thouart (TableOfReal);
 	TableOfReal him = NULL;
 	long i, j, k, nrows = thy numberOfRows, n = my numberOfRows, nsel;
@@ -692,8 +561,8 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 	{
 		qlow = 0; qhigh = 1;
 	}
-	if (qhigh > 1 || qlow < 0) return Melder_errorp ("%s: 0 <= lowerQuantile < higherQuantile <= 1.", proc);
-	if (n != thy numberOfColumns) return Melder_errorp ("%s: dimensions", proc);
+	if (qhigh > 1 || qlow < 0) return Melder_errorp1 (L"0 <= lowerQuantile < higherQuantile <= 1.");
+	if (n != thy numberOfColumns) return Melder_errorp1 (L"Dimensions");
 	if (((d = NUMdvector (1, nrows)) == NULL) ||
 		((covari = NUMdmatrix_copy (my data, 1, n, 1, n)) == NULL)) goto end;
 		
@@ -739,7 +608,7 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 		if (low <= d[i] && d[i] <= high) nsel++;
 	}
 	
-	if (nsel < 1) return Melder_errorp ("%s: Not enough data in quantile interval.", proc);
+	if (nsel < 1) return Melder_errorp1 (L"Not enough data in quantile interval.");
 
 	him = TableOfReal_create (nsel, thy numberOfColumns);
 	if (him == NULL ||
@@ -849,10 +718,8 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 	}
 	if (nsingle > 0)
 	{
-		char *message = "TableOfReal_to_SSCPs_byLabel: %d row labels out of %d are unique. "
-			"We can't determine SSCP-objects for these rows.";
-		nsingle == numberOfCases ? (void) Melder_error (message, nsingle, numberOfCases) : 
-			Melder_warning (message, nsingle, numberOfCases);
+		nsingle == numberOfCases ? (void) Melder_error3 (L"There are ", Melder_integer (nsingle), L" groups with only one data record. ") : 
+			Melder_warning ("There are %d groups with only one data record.", nsingle);
 	}
 end:
 
@@ -884,13 +751,13 @@ PCA SSCP_to_PCA (I)
 CCA SSCP_to_CCA (I, long ny)
 {
 	iam (SSCP);
-	char *proc = "SSCP_to_CCA", upper = 'L', diag = 'N';
+	char upper = 'L', diag = 'N';
 	long info, i, j, k, l, n, m = my numberOfRows, nx = m - ny;
 	long xy_interchanged, yof = 0, xof = ny;
 	double **sxx = NULL, **syy = NULL, **syx = NULL, **a = NULL, **ri = NULL;
 	GSVD gsvd = NULL; CCA thee = NULL;
 
-	if (ny < 1 || ny >= m) return Melder_errorp ("%s", proc);
+	if (ny < 1 || ny >= m) return Melder_errorp1 (L"ny < 1 || ny >= m");
 	
 	if ((xy_interchanged = nx < ny))
 	{
@@ -936,17 +803,17 @@ CCA SSCP_to_CCA (I, long ny)
 	(void) NUMlapack_dpotf2 (&upper, &ny, &syy[1][1], &ny, &info);
 	if (info != 0)
 	{
-		(void) Melder_error ("%s: The leading minor of order %d is not "
+		(void) Melder_error3 (L"The leading minor of order ", Melder_integer (info), L" is not "
 			"positive definite, and the factorization of Syy could not be "
-			"completed.", proc, info);
+			"completed.");
 		goto end;
 	}
 	(void) NUMlapack_dpotf2 (&upper, &nx, &sxx[1][1], &nx, &info);
 	if (info != 0)
 	{
-		(void) Melder_error ("%s: The leading minor of order %d is not "
+		(void) Melder_error3 (L"The leading minor of order ", Melder_integer (info), L" is not "
 			"positive definite, and the factorization of Sxx could not be "
-			"completed.", proc, info);
+			"completed.");
 		goto end;
 	}
 	
@@ -986,7 +853,7 @@ CCA SSCP_to_CCA (I, long ny)
 	(void) NUMlapack_dtrti2 (&upper, &diag, &nx, &sxx[1][1], &nx, &info);
 	if (info != 0)
 	{
-		(void) Melder_error ("%s: Error in inverse for Sxx.", proc);
+		(void) Melder_error1 (L"Error in inverse for Sxx.");
 		goto end;
 	}
 	/*
@@ -1018,7 +885,7 @@ CCA SSCP_to_CCA (I, long ny)
 		&ri[1][1], &gsvd -> numberOfColumns, &info);
 	if (info != 0)
 	{
-		(void) Melder_error ("%s: Error in inverse for R.", proc);
+		(void) Melder_error1 (L"Error in inverse for R.");
 		goto end;
 	}
 
@@ -1108,7 +975,7 @@ SSCP SSCPs_to_SSCP_pool (SSCPs me)
 		if (t -> numberOfRows != thy numberOfRows)
 		{
 			forget (thee);
-			return Melder_errorp ("SSCPs_sum: unequal dimensions (%d).", k);
+			return Melder_errorp3 (L"SSCPs_sum: unequal dimensions (", Melder_integer (k), L").");
 		}
 		
 		thy numberOfObservations += no;
@@ -1251,63 +1118,6 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 	}	
 	forget (thee);
 }
-static void SSCPs_drawConcentrationEllipses_old (SSCPs me, Graphics g, double scale,
-	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, int garnish)
-{
-	SSCPs thee;
-	SSCP t = my item[1];
-	double xmn, xmx, ymn, ymx;
-	long i, p = t -> numberOfColumns;
-
-	if (d1 < 1 || d1 > p || d2 < 1 || d2 > p || d1 == d2) return;
-	
-	if (! (thee = _SSCPs_extractTwoDimensions (me, d1, d2))) return;
-	getEllipsesBoundingBoxCoordinates (me, scale, confidence, &xmn, &xmx, &ymn, &ymx);
-	
-	if (xmax <= xmin) 
-	{
-		xmin = xmn; xmax = xmx;
-	}
-	if (xmax <= xmin) return;
-	
-	if (ymax <= ymin)
-	{
-		ymin = ymn; ymax = ymx;
-	}
-	if (ymax <= ymin) return;
-	
-	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setInner (g);
-	
-	
-	for (i = 1; i <= thy size; i++)
-	{
-		double lscale;
-		t = thy item[i];		
-		lscale = ellipseScalefactor (t, scale, confidence);
-		if (lscale < 0) continue;
-		if (label == NULL || NUMwcscmp (label, Thing_getName (t)) == 0)
-		{
-			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
-		}
-	}
-	
-	Graphics_unsetInner (g);
-	if (garnish)
-	{
-		wchar_t text[20];
-		t = my item[1];
-    	Graphics_drawInnerBox (g);
-    	Graphics_marksLeft (g, 2, 1, 1, 0);
-		swprintf (text, 20, L"Dimension %ld", d2);
-    	Graphics_textLeft (g, 1, t -> rowLabels[d2] ? t -> rowLabels[d2] : text);
-    	Graphics_marksBottom (g, 2, 1, 1, 0);
-		swprintf (text, 20, L"Dimension %ld", d1);
-		Graphics_textBottom (g, 1, t -> rowLabels[d1] ? t -> rowLabels[d1] : text);
-	}	
-	forget (thee);
-}
 
 TableOfReal SSCP_to_TableOfReal (SSCP me)
 {
@@ -1415,7 +1225,7 @@ int Covariance_difference (Covariance me, Covariance thee, double *prob,
 	
 	if (my numberOfRows != thy numberOfRows)
 	{ 
-		return Melder_error ("Covariance_difference: matrices don't have "
+		return Melder_error1 (L"Covariance_difference: matrices don't have "
 			"equal dimensions.");
 	}
 	if (my numberOfObservations != thy numberOfObservations)
@@ -1429,7 +1239,7 @@ int Covariance_difference (Covariance me, Covariance thee, double *prob,
 	}
 	if (numberOfObservations < 2)
 	{
-		return Melder_error ("Covariance_difference: number of observations "
+		return Melder_error1 (L"Covariance_difference: number of observations "
 			"too small.");
 	}
 	
@@ -1469,30 +1279,30 @@ end:
 	return ! Melder_hasError ();
 }
 
-static int checkOneIndex (I, long index, char *proc)
+static int checkOneIndex (I, long index)
 {
 	iam (TableOfReal);
 	if (index < 1 || index > my numberOfColumns)
 	{
-		return Melder_error ("%s: Index must be in interval [1 - %d].",
-			proc, my numberOfColumns);
+		return Melder_error3 (L"Index must be in interval [1, ", 
+			Melder_integer (my numberOfColumns), L"].");
 	}
 	return 1;
 }
 
-static int checkTwoIndices (I, long index1, long index2, char *proc)
+static int checkTwoIndices (I, long index1, long index2)
 {
 	iam (TableOfReal);
 
 	if (index1 < 1 || index1 > my numberOfColumns || index2 < 1 ||
 		index2 > my numberOfColumns)
 	{
-		return Melder_error ("%s: Index must be in interval [1 - %d].",
-			proc, my numberOfColumns);
+		return Melder_error3 (L"Index must be in interval [1, ", 
+			Melder_integer (my numberOfColumns), L"].");
 	}
 	if (index1 == index2)
 	{
-		return Melder_error ("%s: Indices must be different.", proc);
+		return Melder_error1 (L"Indices must be different.");
 	}
 	return 1;
 }
@@ -1504,8 +1314,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	*probability = *t = NUMundefined;
 	*ndf = my numberOfObservations - 1;
 
-	if (! checkOneIndex (me, index, "Covariance_getSignificanceOfOneMean"))
-		return;
+	if (! checkOneIndex (me, index)) return;
 
 	if ((var = my data[index][index]) == 0) return;
 
@@ -1524,7 +1333,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	*probability = *t = NUMundefined;
 	*ndf = 2 * (n - 1);
 	
-	if (! checkTwoIndices (me, index1, index2, proc)) return;
+	if (! checkTwoIndices (me, index1, index2)) return;
 	
 	var1 = my data[index1][index1];
 	var2 = my data[index2][index2];	
@@ -1575,8 +1384,7 @@ void Covariance_getSignificanceOfOneVariance (Covariance me, long index,
 	*probability = *chisq = NUMundefined;
 	*ndf = my numberOfObservations - 1;
 			
-	if (checkOneIndex (me, index, "Covariance_getSignificanceOfOneVariance"))
-		return;
+	if (checkOneIndex (me, index)) return;
 
 	if ((var = my data[index][index]) == 0) return;
 
@@ -1596,8 +1404,7 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me,
 	double var1, var2, ratio2;
 	
 	*ndf = n - 1;
-	if (! checkTwoIndices (me, index1, index2,
-		"Covariance_getSignificanceOfRatioOfTwoVariances")) return;
+	if (! checkTwoIndices (me, index1, index2)) return;
 	
 	var1 = my data[index1][index1];
 	var2 = my data[index2][index2];	
@@ -1618,18 +1425,13 @@ TableOfReal Correlation_confidenceIntervals (Correlation me,
 	double z, zf, two_n = 2 * my numberOfObservations;
 	long i, j, m_bonferroni = my numberOfRows * (my numberOfRows - 1) / 2;
 
-	if (confidenceLevel <= 0 || confidenceLevel > 1) return Melder_errorp
-		("Correlation_getConfidenceIntervals: Confidence level must be in "
-		"interval (0 - 1).");
+	if (confidenceLevel <= 0 || confidenceLevel > 1) return Melder_errorp1 (L"Confidence level must be in interval (0 - 1).");
 
-	if (my numberOfObservations < 5) return Melder_errorp 
-		("Correlation_getConfidenceIntervals: number of observations must "
-		"be greater than 4.");
+	if (my numberOfObservations < 5) return Melder_errorp1 (L"The number of observations must be greater than 4.");
 	
 	if (numberOfTests < 0)
 	{
-		return Melder_errorp ("Correlation_getConfidenceIntervals: \"number of "
-			"tests\" cannot be less than zero."); 
+		return Melder_errorp1 (L"The \"number of tests\" cannot be less than zero."); 
 	}
 	else if (numberOfTests == 0)
 	{

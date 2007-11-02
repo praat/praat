@@ -19,7 +19,7 @@
 
 /*
  djmw 20020619 GPL header
- djmw 20041213 Latest modification
+ djmw 20071014 Latest modification
 */
 
 #ifndef _Table_extensions_h_
@@ -32,5 +32,9 @@
 Table Table_createFromPetersonBarneyData (void);
 Table Table_createFromPolsVanNieropData (void);
 Table Table_createFromWeeninkData (void);
+
+void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
+	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
+	long yci_min, long yci_max, double bar_mm, int garnish);
 
 #endif /* _Table_extensions_h_ */

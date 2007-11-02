@@ -92,8 +92,8 @@
  */
 
 /* machine precision constants */
-/* #define GSL_MACH_EPS		1.0e-15 */
-#define GSL_SQRT_MACH_EPS	3.2e-08
+/* #define GSL_MACH_EPS         1.0e-15 */
+#define GSL_SQRT_MACH_EPS       3.2e-08
 #define GSL_ROOT3_MACH_EPS      1.0e-05
 #define GSL_ROOT4_MACH_EPS      0.000178
 #define GSL_ROOT5_MACH_EPS      0.00100

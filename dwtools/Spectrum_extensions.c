@@ -25,6 +25,7 @@
  djmw 20040506 Changed warning message in Spectrum_drawPhases.
  djmw 20041124 Changed call to Sound_to_Spectrum.
  djmw 20061218 Introduction of Melder_information<12...9>
+ djmw 20071022 phase_unwrap initialize phase = 0.
 */
 
 #include "Spectrum_extensions.h"
@@ -121,7 +122,7 @@ static double phase_unwrap (struct tribolet_struct *tbs, double pfreq,
 	double ppv, double pdvt, double *pphase, double *ppdvt)
 {
 	double sdvt[25], sppv[25];
-	double freq, phase, phase_inc;
+	double freq, phase = 0, phase_inc;
 	double delta, xr, xi, xmsq, nxr, nxi;
 	long k, sindex[25], pindex = 1, sp = 1;
 	
@@ -197,7 +198,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 	while (nfft < my nx - 1) nfft *= 2;
 	nfft *= 2;
 
-	if (nfft / 2 != my nx - 1) return Melder_errorp ("Spectrum_unwrapPhases: "
+	if (nfft / 2 != my nx - 1) return Melder_errorp1 (L"Spectrum_unwrapPhases: "
 		" dimension of Spectrum is not (power of 2 - 1).");
 
 	if ((x = Spectrum_to_Sound (me)) == NULL) return NULL;
@@ -246,7 +247,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 	tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx])
 		/ (my nx - 1);
 		
-	Melder_progress (0.0, "Phase unwrapping");
+	Melder_progress1 (0.0, L"Phase unwrapping");
 	
 	pphase = 0;
 	ppdvt = snx -> z[2][1];
@@ -259,8 +260,8 @@ Matrix Spectrum_unwrap (Spectrum me)
 		phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
 		ppdvt = pdvt;
 		thy z[2][i] = pphase = phase;
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / my nx, 
-			"%ld phases from %ld unwrapped.", i, my nx)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress4 ((double)i / my nx, Melder_integer (i),
+			L" unwrapped phases from ", Melder_integer (my nx), L".")) goto end;
 	}
 
 	iphase = (phase / NUMpi + 0.1);
@@ -277,7 +278,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 	Melder_information2 (L" iphase = ", Melder_integer (iphase));
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	forget (x); forget (nx); forget (snx);
 	if (Melder_hasError ()) forget (thee);
 	return thee;
@@ -323,8 +324,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
 	long i;
 
 	if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
-		my dx != thy dx) return Melder_errorp 
-		("Spectra_multiply: Dimensions of both spectra do not conform.");
+		my dx != thy dx) return Melder_errorp1 (L"Dimensions of both spectra do not conform.");
 		
 	him = Data_copy (me);
 	if (him == NULL) return NULL;

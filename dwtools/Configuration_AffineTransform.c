@@ -110,7 +110,7 @@ static int NUMmaximizeCongruence (double **b, double **a, long nr, long nc,
 	
 	if (checkc == 0 || checkw == 0) 
 	{
-		(void) Melder_error ("NUMmaximizeCongruence: we cannot rotate a "
+		(void) Melder_error1 (L"NUMmaximizeCongruence: we cannot rotate a "
 			"zero matrix.");
 		goto end;
 	}

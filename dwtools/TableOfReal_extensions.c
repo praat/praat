@@ -1417,7 +1417,7 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	{
 		char *compileMsg;
 		compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
-		if (compiled_regexp == NULL) return Melder_error (compileMsg);
+		if (compiled_regexp == NULL) return Melder_error1 (Melder_utf8ToWcs (compileMsg));
 	}
 	for (i = 1; i <= numberOfLabels; i++)
 	{

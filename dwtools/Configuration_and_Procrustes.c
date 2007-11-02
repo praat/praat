@@ -32,7 +32,7 @@ Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, i
 	double *translation = NULL, *scale = NULL;
 	
 	if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns) 
-		return Melder_errorp ("Configurations_to_Procrustes: Configurations must have the "
+		return Melder_errorp1 (L"Configurations_to_Procrustes: Configurations must have the "
 			"same number of points and the same dimension.");
 
 	p = Procrustes_create (my numberOfColumns);

@@ -123,15 +123,16 @@ enum { GEENSYMBOOL_,
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
 		ARCTAN2_, RANDOM_UNIFORM_, RANDOM_INTEGER_, RANDOM_GAUSS_,
-		CHI_SQUARE_P_, CHI_SQUARE_Q_, INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
-		BETA_, BESSEL_I_, BESSEL_K_,
+		CHI_SQUARE_P_, CHI_SQUARE_Q_, INCOMPLETE_GAMMAP_,
+		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
+		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
 	#define HIGH_FUNCTION_2  OBJECTS_ARE_IDENTICAL_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_3  FISHER_P_
 		FISHER_P_, FISHER_Q_, INV_FISHER_Q_,
-		BINOMIAL_P_, BINOMIAL_Q_, INV_BINOMIAL_P_, INV_BINOMIAL_Q_,
+		BINOMIAL_P_, BINOMIAL_Q_, INCOMPLETE_BETA_, INV_BINOMIAL_P_, INV_BINOMIAL_Q_,
 	#define HIGH_FUNCTION_3  INV_BINOMIAL_Q_
 
 	/* Functions of a variable number of variables; if you add, update the #defines. */
@@ -198,11 +199,11 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"hertzToMel", L"melToHertz", L"hertzToSemitones", L"semitonesToHertz",
 	L"erb", L"hertzToErb", L"erbToHertz",
 	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss",
-	L"chiSquareP", L"chiSquareQ", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
-	L"beta", L"besselI", L"besselK",
+	L"chiSquareP", L"chiSquareQ", L"incompleteGammaP", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
+	L"beta", L"beta2", L"besselI", L"besselK", L"lnBeta",
 	L"soundPressureToPhon", L"objectsAreIdentical",
 	L"fisherP", L"fisherQ", L"invFisherQ",
-	L"binomialP", L"binomialQ", L"invBinomialP", L"invBinomialQ",
+	L"binomialP", L"binomialQ", L"incompleteBeta", L"invBinomialP", L"invBinomialQ",
 
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
@@ -2291,6 +2292,8 @@ static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string);
+		Melder_killReturns_inline (sA);
+		Melder_killReturns_inline (tA);
 		char *errorMessage;
 		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
@@ -2327,6 +2330,9 @@ static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string), *uA = Melder_wcsToUtf8 (u->content.string);
+		Melder_killReturns_inline (sA);
+		Melder_killReturns_inline (tA);
+		Melder_killReturns_inline (uA);
 		char *errorMessage;
 		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
@@ -2977,13 +2983,16 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_GAUSS_: { do_function_dd_d (NUMrandomGauss);
 } break; case CHI_SQUARE_P_: { do_function_dd_d (NUMchiSquareP);
 } break; case CHI_SQUARE_Q_: { do_function_dd_d (NUMchiSquareQ);
+} break; case INCOMPLETE_GAMMAP_: { do_function_dd_d (NUMincompleteGammaP);
 } break; case INV_CHI_SQUARE_Q_: { do_function_dd_d (NUMinvChiSquareQ);
 } break; case STUDENT_P_: { do_function_dd_d (NUMstudentP);
 } break; case STUDENT_Q_: { do_function_dd_d (NUMstudentQ);
 } break; case INV_STUDENT_Q_: { do_function_dd_d (NUMinvStudentQ);
 } break; case BETA_: { do_function_dd_d (NUMbeta);
+} break; case BETA2_: { do_function_dd_d (NUMbeta2);
 } break; case BESSEL_I_: { do_function_ld_d (NUMbesselI);
 } break; case BESSEL_K_: { do_function_ld_d (NUMbesselK);
+} break; case LN_BETA_: { do_function_dd_d (NUMlnBeta);
 } break; case SOUND_PRESSURE_TO_PHON_: { do_function_dd_d (NUMsoundPressureToPhon);
 } break; case OBJECTS_ARE_IDENTICAL_: { do_objects_are_identical ();
 /********** Functions of 3 numerical variables: **********/
@@ -2992,6 +3001,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case INV_FISHER_Q_: { do_function_ddd_d (NUMinvFisherQ);
 } break; case BINOMIAL_P_: { do_function_ddd_d (NUMbinomialP);
 } break; case BINOMIAL_Q_: { do_function_ddd_d (NUMbinomialQ);
+} break; case INCOMPLETE_BETA_: { do_function_ddd_d (NUMincompleteBeta);
 } break; case INV_BINOMIAL_P_: { do_function_ddd_d (NUMinvBinomialP);
 } break; case INV_BINOMIAL_Q_: { do_function_ddd_d (NUMinvBinomialQ);
 /********** Functions of a variable number of variables: **********/
@@ -3121,3 +3131,4 @@ end:
 }
 
 /* End of file Formula.c */
+

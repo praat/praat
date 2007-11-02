@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -98,6 +98,14 @@ gsl_sf_bessel_Jnu_e(const double nu, const double x, gsl_sf_result * result)
   else if(nu > 50.0) {
     return gsl_sf_bessel_Jnu_asymp_Olver_e(nu, x, result);
   }
+  else if(x > 1000.0)
+  {
+    /* We need this to avoid feeding large x to CF1; note that
+     * due to the above check, we know that n <= 50. See similar
+     * block in bessel_Jn.c.
+     */
+    return gsl_sf_bessel_Jnu_asympx_e(nu, x, result);
+  }
   else {
     /* -1/2 <= mu <= 1/2 */
     int N = (int)(nu + 0.5);
@@ -122,8 +130,8 @@ gsl_sf_bessel_Jnu_e(const double nu, const double x, gsl_sf_result * result)
       int n;
       for(n=1; n<N; n++) {
         Ynp1 = 2.0*(mu+n)/x * Yn - Ynm1;
-	Ynm1 = Yn;
-	Yn   = Ynp1;
+        Ynm1 = Yn;
+        Yn   = Ynp1;
       }
 
       result->val = 2.0/(M_PI*x) / (Jnup1_Jnu*Yn - Ynp1);

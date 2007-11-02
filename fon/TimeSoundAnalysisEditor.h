@@ -40,6 +40,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/09/02 direct drawing to picture window
  * pb 2007/09/08 inherit from TimeSoundEditor
+ * pb 2007/11/01 direct intensity, formants, and pulses drawing
  */
 
 #ifndef _TimeSoundEditor_h_
@@ -79,14 +80,19 @@ struct FunctionEditor_spectrogram {
 	/* Dynamic information: */
 	double cursor;
 };
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_MIN  1
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE  1
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE  2
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC  3
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_MAX  3
+#define kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT  kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC
+wchar_t *kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (int value);
+int kTimeSoundAnalysisEditor_pitch_drawingMethod_getValue (wchar_t *text);
 struct FunctionEditor_pitch {
 	/* KEEP IN SYNC WITH PREFS. */
 	Pitch data; int show;
 	/* Pitch settings: */
 	double floor, ceiling; int unit;
-	#define FunctionEditor_pitch_DRAWING_METHOD_CURVE  1
-	#define FunctionEditor_pitch_DRAWING_METHOD_SPECKLE  2
-	#define FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC  3
 	int drawingMethod;
 	/* Advanced pitch settings: */
 	double viewFrom, viewTo;
@@ -130,8 +136,18 @@ struct FunctionEditor_pulses {
 	Widget spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 
 #define TimeSoundAnalysisEditor_methods TimeSoundEditor_methods \
-	struct { struct { struct { bool garnish; } pitch; } picture; } preferences; \
-	void (*createMenuItems_pitch_picture) (I); \
+	struct { struct { \
+		struct { bool garnish; } spectrogram; \
+		struct { bool garnish; } pitch; \
+		struct { bool garnish; } intensity; \
+		struct { bool garnish; } formant; \
+		struct { bool garnish; } pulses; \
+	} picture; } preferences; \
+	void (*createMenuItems_spectrum_picture) (I, EditorMenu menu); \
+	void (*createMenuItems_pitch_picture) (I, EditorMenu menu); \
+	void (*createMenuItems_intensity_picture) (I, EditorMenu menu); \
+	void (*createMenuItems_formant_picture) (I, EditorMenu menu); \
+	void (*createMenuItems_pulses_picture) (I, EditorMenu menu); \
 	void (*destroy_analysis) (I); \
 	void (*draw_analysis) (I); \
 	void (*draw_analysis_pulses) (I); \

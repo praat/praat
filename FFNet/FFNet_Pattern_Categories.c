@@ -28,18 +28,15 @@
 #include "FFNet_Pattern_Categories.h"
 #include "FFNet_Pattern_Activation.h"
 
-static int _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c, char *function)
+static int _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c)
 {
-	char *proc = "FFNet & Pattern & Categories";
-    if (my nInputs != p -> nx) return Melder_error ("%s: %s\nThe Pattern and the FFNet do not match.\n"
-    	"The number of colums in the Pattern (%d) must equal the number of inputs in the FFNet (%d).",
-		proc, function, p -> nx, my nInputs);
-	if (p -> ny != c -> size) return Melder_error ("%s: %s\nThe Pattern and the categories do not match.\n"
-		"The number of rows in the Pattern (%d) must equal the number of categories (%d).", 
-		proc, function, p -> ny, c -> size);
-	if (! _Pattern_checkElements (p)) return Melder_error ("%s: %s\nThe elements in the Pattern are not all "
+    if (my nInputs != p -> nx) return Melder_error1 (L"The Pattern and the FFNet do not match.\n"
+    	"The number of colums in the Pattern must equal the number of inputs in the FFNet.");
+	if (p -> ny != c -> size) return Melder_error1 (L"The Pattern and the categories do not match.\n"
+		"The number of rows in the Pattern must equal the number of categories.");
+	if (! _Pattern_checkElements (p)) return Melder_error1 (L"The elements in the Pattern are not all "
 		"in the interval [0, 1].\nThe input of the neural net can only process values that are between 0 "
-			"and 1.\nYou could use \"Formula...\" to scale the Pattern values first.", proc, function);
+			"and 1.\nYou could use \"Formula...\" to scale the Pattern values first.");
 	return 1;
 
 }
@@ -52,7 +49,7 @@ static int _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c,
 	int status; 
 	double min, max;
     
-	if (! _FFNet_Pattern_Categories_checkDimensions (me, p, c, "Learn")) return 0;
+	if (! _FFNet_Pattern_Categories_checkDimensions (me, p, c)) return 0;
 	
     if (! (activation = FFNet_Categories_to_Activation (me, c))) return 0;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
@@ -67,7 +64,7 @@ double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories 
     Activation activation;
 	double cost;
 	
-	if (! _FFNet_Pattern_Categories_checkDimensions (me, p, c, "Get cost")) return NUMundefined;
+	if (! _FFNet_Pattern_Categories_checkDimensions (me, p, c)) return NUMundefined;
 	
     if (! (activation = FFNet_Categories_to_Activation (me, c))) return NUMundefined;
 	cost = FFNet_Pattern_Activation_getCosts_total (me, p, activation, costFunctionType);
@@ -102,14 +99,12 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling)
     Categories him = NULL; 
 	long k, index;
 	Data item;
-    if (! my outputCategories) return Melder_errorp 
-		("FFNet_Pattern_to_Categories: FFNet has no output categories.");
-    if (my nInputs != thy nx) return Melder_errorp 
-		("FFNet_Pattern_to_Categories: The Pattern and the FFNet do not match.\n"
-    	"The number of colums in the Pattern (%d) must equal the number of inputs in the FFNet (%d).",
-		thy nx, my nInputs);
-    if (! _Pattern_checkElements (thee)) return Melder_errorp 
-		("FFNet_Pattern_to_Categories\nThe elements in the Pattern are not all in the interval [0, 1].\n"
+    if (! my outputCategories) return Melder_errorp1 (L"The FFNet has no output categories.");
+    if (my nInputs != thy nx) return Melder_errorp5 
+		(L"The Pattern and the FFNet do not match.\nThe number of colums in the Pattern (", Melder_integer (thy nx),
+    	L") must equal the number of inputs in the FFNet (", Melder_integer (my nInputs), L").");
+    if (! _Pattern_checkElements (thee)) return Melder_errorp1 
+		(L"The elements in the Pattern are not all in the interval [0, 1].\n"
 		"The input of the neural net can only process values that are between 0 and 1.\n"
 		"You could use \"Formula...\" to scale the Pattern values first.");
 

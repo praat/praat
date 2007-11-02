@@ -1,10 +1,10 @@
 /* poly/qr.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Brian Gough
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 static int qr_companion (double *h, size_t nc, gsl_complex_packed_ptr z);
@@ -55,7 +55,7 @@ next_iteration:
       double a3 = fabs (FMAT (h, e, e, nc));
 
       if (a1 <= GSL_DBL_EPSILON * (a2 + a3))
-	break;
+        break;
     }
 
   x = FMAT (h, n, n, nc);
@@ -79,20 +79,20 @@ next_iteration:
 
       x += t;
 
-      if (q > 0)		/* two real roots */
-	{
-	  if (p < 0)
-	    y = -y;
-	  y += p;
+      if (q > 0)                /* two real roots */
+        {
+          if (p < 0)
+            y = -y;
+          y += p;
 
-	  GSL_SET_COMPLEX_PACKED (zroot, n-1, x - w / y, 0);
+          GSL_SET_COMPLEX_PACKED (zroot, n-1, x - w / y, 0);
           GSL_SET_COMPLEX_PACKED (zroot, n-2, x + y, 0);
-	}
+        }
       else
-	{
-	  GSL_SET_COMPLEX_PACKED (zroot, n-1, x + p, -y);
-	  GSL_SET_COMPLEX_PACKED (zroot, n-2, x + p, y);
-	}
+        {
+          GSL_SET_COMPLEX_PACKED (zroot, n-1, x + p, -y);
+          GSL_SET_COMPLEX_PACKED (zroot, n-2, x + p, y);
+        }
       n -= 2;
 
       goto next_root;
@@ -115,9 +115,9 @@ next_iteration:
       t += x;
 
       for (i = 1; i <= n; i++)
-	{
-	  FMAT (h, i, i, nc) -= x;
-	}
+        {
+          FMAT (h, i, i, nc) -= x;
+        }
 
       s = fabs (FMAT (h, n, n - 1, nc)) + fabs (FMAT (h, n - 1, n - 2, nc));
       y = 0.75 * s;
@@ -143,7 +143,7 @@ next_iteration:
       r /= s;
 
       if (m == e)
-	break;
+        break;
       
       a1 = fabs (FMAT (h, m, m - 1, nc));
       a2 = fabs (FMAT (h, m - 1, m - 1, nc));
@@ -170,34 +170,34 @@ next_iteration:
       notlast = (k != n - 1);
 
       if (k != m)
-	{
-	  p = FMAT (h, k, k - 1, nc);
-	  q = FMAT (h, k + 1, k - 1, nc);
-	  r = notlast ? FMAT (h, k + 2, k - 1, nc) : 0.0;
+        {
+          p = FMAT (h, k, k - 1, nc);
+          q = FMAT (h, k + 1, k - 1, nc);
+          r = notlast ? FMAT (h, k + 2, k - 1, nc) : 0.0;
 
-	  x = fabs (p) + fabs (q) + fabs (r);
+          x = fabs (p) + fabs (q) + fabs (r);
 
-	  if (x == 0)
-	    continue;		/* FIXME????? */
+          if (x == 0)
+            continue;           /* FIXME????? */
 
-	  p /= x;
-	  q /= x;
-	  r /= x;
-	}
+          p /= x;
+          q /= x;
+          r /= x;
+        }
 
       s = sqrt (p * p + q * q + r * r);
 
       if (p < 0)
-	s = -s;
+        s = -s;
 
       if (k != m)
-	{
-	  FMAT (h, k, k - 1, nc) = -s * x;
-	}
+        {
+          FMAT (h, k, k - 1, nc) = -s * x;
+        }
       else if (e != m)
-	{
-	  FMAT (h, k, k - 1, nc) *= -1;
-	}
+        {
+          FMAT (h, k, k - 1, nc) *= -1;
+        }
 
       p += s;
       x = p / s;
@@ -209,35 +209,35 @@ next_iteration:
       /* do row modifications */
 
       for (j = k; j <= n; j++)
-	{
-	  p = FMAT (h, k, j, nc) + q * FMAT (h, k + 1, j, nc);
+        {
+          p = FMAT (h, k, j, nc) + q * FMAT (h, k + 1, j, nc);
 
-	  if (notlast)
-	    {
-	      p += r * FMAT (h, k + 2, j, nc);
-	      FMAT (h, k + 2, j, nc) -= p * z;
-	    }
+          if (notlast)
+            {
+              p += r * FMAT (h, k + 2, j, nc);
+              FMAT (h, k + 2, j, nc) -= p * z;
+            }
 
-	  FMAT (h, k + 1, j, nc) -= p * y;
-	  FMAT (h, k, j, nc) -= p * x;
-	}
+          FMAT (h, k + 1, j, nc) -= p * y;
+          FMAT (h, k, j, nc) -= p * x;
+        }
 
       j = (k + 3 < n) ? (k + 3) : n;
 
       /* do column modifications */
 
       for (i = e; i <= j; i++)
-	{
-	  p = x * FMAT (h, i, k, nc) + y * FMAT (h, i, k + 1, nc);
+        {
+          p = x * FMAT (h, i, k, nc) + y * FMAT (h, i, k + 1, nc);
 
-	  if (notlast)
-	    {
-	      p += z * FMAT (h, i, k + 2, nc);
-	      FMAT (h, i, k + 2, nc) -= p * r;
-	    }
-	  FMAT (h, i, k + 1, nc) -= p * q;
-	  FMAT (h, i, k, nc) -= p;
-	}
+          if (notlast)
+            {
+              p += z * FMAT (h, i, k + 2, nc);
+              FMAT (h, i, k + 2, nc) -= p * r;
+            }
+          FMAT (h, i, k + 1, nc) -= p * q;
+          FMAT (h, i, k, nc) -= p;
+        }
     }
 
   goto next_iteration;

@@ -1,6 +1,6 @@
 /* Pattern.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20020813 GPL header
  djmw 20041203 Added _Pattern_checkElements.
+ djmw 20071017 Melder_error<p>
 */
 
 #include "Pattern.h"
@@ -97,7 +98,7 @@ Pattern Matrix_to_Pattern (I, int join)
 	Pattern thee = NULL;
 	
     if (join < 1) join = 1;
-	if ((my ny % join) != 0) return Melder_errorp("Matrix_to_Pattern:"
+	if ((my ny % join) != 0) return Melder_errorp1 (L"Matrix_to_Pattern:"
 		"number of rows is not a multiple of join."); 
 	if (! (thee = Pattern_create (my ny / join, join * my nx))) return thee;
 	for (i = 1; i <= my ny; i++)

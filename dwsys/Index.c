@@ -21,6 +21,7 @@
  djmw 20050724
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070102
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include <time.h>
@@ -32,6 +33,8 @@
 #include "oo_COPY.h"
 #include "Index_def.h"
 #include "oo_EQUAL.h"
+#include "Index_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Index_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Index_def.h"
@@ -55,6 +58,7 @@ class_methods (Index, Data)
 	class_method_local (Index, destroy)
 	class_method_local (Index, copy)
 	class_method_local (Index, equal)
+	class_method_local (Index, canWriteAsEncoding)
 	class_method_local (Index, writeText)
 	class_method_local (Index, writeBinary)
 	class_method (info)
@@ -101,6 +105,7 @@ class_methods (StringsIndex, Index)
 	class_method_local (StringsIndex, destroy)
 	class_method_local (StringsIndex, copy)
 	class_method_local (StringsIndex, equal)
+	class_method_local (StringsIndex, canWriteAsEncoding)
 	class_method_local (StringsIndex, writeText)
 	class_method_local (StringsIndex, writeBinary)
 	class_method_local (StringsIndex, readBinary)

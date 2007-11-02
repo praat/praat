@@ -31,6 +31,8 @@
 #include "Tube_def.h"
 #include "oo_EQUAL.h"
 #include "Tube_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Tube_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Tube_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -58,6 +60,7 @@ class_methods (Tube, Sampled)
 	class_method_local (Tube, equal)
 	class_method_local (Tube, copy)
 	class_method_local (Tube, info)
+	class_method_local (Tube, canWriteAsEncoding)
 	class_method_local (Tube, readText)
 	class_method_local (Tube, readBinary)
 	class_method_local (Tube, writeText)

@@ -451,9 +451,8 @@ static void notifyOutOfView (I)
 {
 	iam (CategoriesEditor); 
 	int *posList, posCount; 
-	char tmp[40] = "";
+	MelderString tmp = { 0 };
 	XmString outOfViewLabel;
-	
 	if (XmListGetSelectedPos (my list, & posList, & posCount))
 	{
 		int i, outOfView = 0, bottom, topItemPosition;
@@ -470,20 +469,22 @@ static void notifyOutOfView (I)
 		XtFree ((XtPointer) posList);
 		if (outOfView > 0)
 		{
-			sprintf (tmp, "%d selection(s) out of view", outOfView);
+			MelderString_append2 (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
 		}
 	}
-	outOfViewLabel = XmStringCreateSimple (tmp);
+	outOfViewLabel = XmStringCreateSimple (Melder_peekWcsToUtf8 (tmp.string));
 	XtVaSetValues (my outOfView, XmNlabelString, outOfViewLabel, NULL);
 	XmStringFree (outOfViewLabel);
+	MelderString_free (&tmp);
 }
 
 static void update_dos (I)
 {
 	iam (CategoriesEditor);
-	wchar_t tmp[50], *name;
+	wchar_t *name;
+	MelderString tmp = { 0 };
+	XmString commandName;
 	Boolean undoSense = True, redoSense = True;
-	
 	/*
 		undo
 	*/
@@ -493,8 +494,9 @@ static void update_dos (I)
 			name = L"nothing"; undoSense = False;
 	}
 	
-	swprintf (tmp, 50, L"Undo `%ls'", name);
-	XtVaSetValues (my undo, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (name)), NULL);
+	MelderString_append4 (&tmp, L"Undo ", L"\"", name, L"\"");
+	commandName = XmStringCreateSimple (Melder_wcsToUtf8 (tmp.string)); 
+	XtVaSetValues (my undo, XmNlabelString, commandName, NULL);
 	XtSetSensitive (my undo, undoSense);
 	
 	/*
@@ -505,10 +507,12 @@ static void update_dos (I)
 	{
 		name = L"nothing"; redoSense = False;
 	}
-	
-	swprintf (tmp, 50, L"Redo `%ls'", name);
-	XtVaSetValues (my redo, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (name)), NULL);
+	MelderString_empty (&tmp);
+	MelderString_append4 (&tmp, L"Redo ", L"\"", name, L"\"");
+	commandName = XmStringCreateSimple (Melder_wcsToUtf8 (tmp.string)); 
+	XtVaSetValues (my redo, XmNlabelString, commandName, NULL);
 	XtSetSensitive (my redo, redoSense);
+	MelderString_free (&tmp);
 }
 
 static void updateWidgets (I) /*all buttons except undo & redo */
@@ -571,16 +575,23 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	
 	{
 		XmString *table = NULL; 
+		MelderString itemText  = { 0 };
 		int k;
 		
 		if (! (table = Melder_malloc (XmString, to - from + 1))) return;
 		XtVaGetValues (my list, XmNitemCount, & itemCount, NULL);
-		for (k = 0, i = from; i <= to; i++)
+		/*for (k = 0, i = from; i <= to; i++)
 		{
 			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
 			swprintf (itemText, CategoriesEditor_TEXTMAXLENGTH+10, L"%6d     %.*ls", i, CategoriesEditor_TEXTMAXLENGTH,
 				OrderedOfString_itemAtIndex_c (my data, i));
 			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
+		}*/
+		for (k = 0, i = from; i <= to; i++)
+		{
+			MelderString_empty (&itemText);
+			MelderString_append2 (&itemText, Melder_integer (i), OrderedOfString_itemAtIndex_c (my data, i));
+			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText.string));
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
 		{
@@ -601,7 +612,8 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		{
 			XmStringFree (table[k++]);
 		}
-		Melder_free (table); 
+		Melder_free (table);
+		MelderString_free (&itemText);
 	}
 	
 	/*

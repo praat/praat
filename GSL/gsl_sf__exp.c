@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -104,7 +104,6 @@ exprel_n_CF(const int N, const double x, gsl_sf_result * result)
 
 /*-*-*-*-*-*-*-*-*-*-*-* Functions with Error Codes *-*-*-*-*-*-*-*-*-*-*-*/
 
-#ifndef HIDE_INLINE_STATIC
 int gsl_sf_exp_e(const double x, gsl_sf_result * result)
 {
   if(x > GSL_LOG_DBL_MAX) {
@@ -119,7 +118,6 @@ int gsl_sf_exp_e(const double x, gsl_sf_result * result)
     return GSL_SUCCESS;
   }
 }
-#endif
 
 int gsl_sf_exp_e10_e(const double x, gsl_sf_result_e10 * result)
 {
@@ -475,30 +473,30 @@ gsl_sf_exprel_n_e(const int N, const double x, gsl_sf_result * result)
       lnpre_err += lnf_N.err;
       if(lnpre_val < GSL_LOG_DBL_MAX - 5.0) {
         int stat_eG;
-	gsl_sf_result bigG_ratio;
-	gsl_sf_result pre;
-	int stat_ex = gsl_sf_exp_err_e(lnpre_val, lnpre_err, &pre);
+        gsl_sf_result bigG_ratio;
+        gsl_sf_result pre;
+        int stat_ex = gsl_sf_exp_err_e(lnpre_val, lnpre_err, &pre);
         double ln_bigG_ratio_pre = -x + (N-1)*ln_x - lg_N;
-	double bigGsum = 1.0;
-	double term = 1.0;
-	int k;
-	for(k=1; k<N; k++) {
-	  term *= (N-k)/x;
-	  bigGsum += term;
-	}
-	stat_eG = gsl_sf_exp_mult_e(ln_bigG_ratio_pre, bigGsum, &bigG_ratio);
-	if(stat_eG == GSL_SUCCESS) {
+        double bigGsum = 1.0;
+        double term = 1.0;
+        int k;
+        for(k=1; k<N; k++) {
+          term *= (N-k)/x;
+          bigGsum += term;
+        }
+        stat_eG = gsl_sf_exp_mult_e(ln_bigG_ratio_pre, bigGsum, &bigG_ratio);
+        if(stat_eG == GSL_SUCCESS) {
           result->val  = pre.val * (1.0 - bigG_ratio.val);
-	  result->err  = pre.val * (2.0*GSL_DBL_EPSILON + bigG_ratio.err);
-	  result->err += pre.err * fabs(1.0 - bigG_ratio.val);
-	  result->err += 2.0 * GSL_DBL_EPSILON * fabs(result->val);
-	  return stat_ex;
-	}
-	else {
-	  result->val = 0.0;
-	  result->err = 0.0;
-	  return stat_eG;
-	}
+          result->err  = pre.val * (2.0*GSL_DBL_EPSILON + bigG_ratio.err);
+          result->err += pre.err * fabs(1.0 - bigG_ratio.val);
+          result->err += 2.0 * GSL_DBL_EPSILON * fabs(result->val);
+          return stat_ex;
+        }
+        else {
+          result->val = 0.0;
+          result->err = 0.0;
+          return stat_eG;
+        }
       }
       else {
         OVERFLOW_ERROR(result);
@@ -517,7 +515,7 @@ gsl_sf_exprel_n_e(const int N, const double x, gsl_sf_result * result)
       int k;
       for(k=1; k<N; k++) {
         term *= (N-k)/x;
-	sum  += term;
+        sum  += term;
       }
       result->val = -N/x * sum;
       result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val);

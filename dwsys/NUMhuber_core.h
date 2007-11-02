@@ -80,7 +80,7 @@ int HUBER_STATISTICS_HUBER (HUBER_DATA_TYPE *x, long n, double *location, int wa
 
 	if (! HUBER_MAD (x, n, location, wantlocation, & mad, tmp)) goto end;
     if (wantscale) *scale = mad;
-    if (*scale == 0) return Melder_error ("NUMstatistics_huber: scale is zero.");
+    if (*scale == 0) return Melder_error1 (L"NUMstatistics_huber: scale is zero.");
 
     mu1 = *location;
     s1 = *scale;

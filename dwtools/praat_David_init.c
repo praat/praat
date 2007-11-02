@@ -49,6 +49,7 @@
  djmw 20070206 Sound_changeGender: pitch range factor must be >= 0
  djmw 20070304 Latest modification.
  djmw 20070903 Melder_new<1...>
+ djmw 20071011 REQUIRE requires L"".
 */
 
 #include "praat.h"
@@ -218,7 +219,7 @@ END
 
 DIRECT (Categories_edit)
 	if (theCurrentPraat -> batch)
-		return Melder_error ("Cannot edit a Categories from batch.");
+		return Melder_error1 (L"Cannot edit a Categories from batch.");
 	else
 		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraat -> topShell,
 			FULL_NAMEW, OBJECT), IOBJECT)) return 0;
@@ -265,7 +266,6 @@ END
 DIRECT (Categories_to_Confusion)
 	Categories c1 = NULL, c2 = NULL;
 	int i1 = 0, i2 = 0;
-	wchar_t name [200];
 	WHERE (SELECTED)
 	{
 		if (c1)
@@ -278,9 +278,7 @@ DIRECT (Categories_to_Confusion)
 		}
 	}
 	Melder_assert (c1 && c2);
-	(void) swprintf (name, 200, L"%ls_%ls", wcschr (theCurrentPraat -> list[i1].name, ' ') + 1,
-		wcschr (theCurrentPraat -> list[i2].name, ' ') + 1);
-	if (! praat_new1 (Categories_to_Confusion (c1, c2), name)) return 0;
+	if (! praat_new3 (Categories_to_Confusion (c1, c2), Thing_getName(c1), L"_", Thing_getName(c2))) return 0;
 END
 
 DIRECT (Categories_to_Strings)
@@ -2068,7 +2066,7 @@ FORM (Matrix_scale, "Matrix: Scale", 0)
 	OK
 DO
 	int scale = GET_INTEGER ("Scale factor");
-	REQUIRE (scale > 0 && scale < 4, L"illegal value for scale.") 
+	REQUIRE (scale > 0 && scale < 4, L"Illegal value for scale.") 
 	EVERY (Matrix_scale (OBJECT, scale))
 END
 
@@ -2630,7 +2628,7 @@ DIRECT (Permutations_multiply)
 		}
 		else if (my numberOfElements != n)
 		{
-			return Melder_error ("To apply a number of permutations they all must have the same number of elements.");	
+			return Melder_error1 (L"To apply a number of permutations they all must have the same number of elements.");	
 		}
 		np += 1;
 	}
@@ -2812,7 +2810,7 @@ FORM (Polynomial_to_Spectrum, "Polynomial: To Spectrum",
 	OK
 DO
 	long n = GET_INTEGER ("Number of frequencies");
-	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 2.")
+	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 1.")
 	EVERY_TO (Polynomial_to_Spectrum (OBJECT, GET_REAL ("Nyquist frequency"),
 		n, 1.0))
 END
@@ -2912,7 +2910,7 @@ FORM (Roots_to_Spectrum, "Roots: To Spectrum", "Roots: To Spectrum...")
 	OK
 DO
 	long n = GET_INTEGER ("Number of frequencies");
-	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 2.")
+	REQUIRE (n > 1, L"\"Number of frequencies\" must be greater than 1.")
 	EVERY_TO (Roots_to_Spectrum (OBJECT, GET_REAL ("Nyquist frequency"),
 		n, 1.0))
 END
@@ -2959,34 +2957,34 @@ static int Sound_create_checkCommonFields (void *dia, double *startingTime, doub
 	if (*finishingTime <= *startingTime)
 	{
 		if (*finishingTime == *startingTime)
-			(void) Melder_error ("A Sound cannot have a duration of zero.\n");
+			(void) Melder_error1 (L"A Sound cannot have a duration of zero.\n");
 		else
-			(void) Melder_error ("A Sound cannot have a duration less than zero.\n");
+			(void) Melder_error1 (L"A Sound cannot have a duration less than zero.\n");
 		if (*startingTime == 0.0)
-			return Melder_error ("Please set the finishing time to something greater than 0 seconds.");
+			return Melder_error1 (L"Please set the finishing time to something greater than 0 seconds.");
 		else
-			return Melder_error ("Please lower the starting time or raise the finishing time.");
+			return Melder_error1 (L"Please lower the starting time or raise the finishing time.");
 	}
 	if (*samplingFrequency <= 0.0)
 	{
-		(void) Melder_error ("A Sound cannot have a negative sampling frequency.\n");
-		return Melder_error ("Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
+		(void) Melder_error1 (L"A Sound cannot have a negative sampling frequency.\n");
+		return Melder_error1 (L"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
 	if (numberOfSamples_real < 1.0)
 	{
-		(void) Melder_error ("A Sound cannot have zero samples.\n");
+		(void) Melder_error1 (L"A Sound cannot have zero samples.\n");
 		if (*startingTime == 0.0)
-			return Melder_error ("Please raise the finishing time.");
+			return Melder_error1 (L"Please raise the finishing time.");
 		else
-			return Melder_error ("Please lower the starting time or raise the finishing time.");
+			return Melder_error1 (L"Please lower the starting time or raise the finishing time.");
 	}
 	if (numberOfSamples_real > LONG_MAX)
 	{
-		(void) Melder_error ("A Sound cannot have %ls samples; the maximum is %ls samples.\n", Melder_bigInteger (numberOfSamples_real), Melder_bigInteger (LONG_MAX));
+		(void) Melder_error5 (L"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), L" samples; the maximum is ", Melder_bigInteger (LONG_MAX), L" samples.\n");
 		if (*startingTime == 0.0)
-			return Melder_error ("Please lower the finishing time or the sampling frequency.");
+			return Melder_error1 (L"Please lower the finishing time or the sampling frequency.");
 		else
-			return Melder_error ("Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
+			return Melder_error1 (L"Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
 	}
 	return 1;
 }
@@ -2999,11 +2997,11 @@ static int Sound_create_check (Sound me, double startingTime, double finishingTi
 	{
 		double numberOfSamples_real = floor ((finishingTime - startingTime) * samplingFrequency + 0.5);
 		Melder_clearError ();
-		(void) Melder_error ("There is not enough memory to create a Sound that contains %ls samples.\n", Melder_bigInteger (numberOfSamples_real));
+		(void) Melder_error3 (L"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.\n");
 		if (startingTime == 0.0)
-			return Melder_error ("You could lower the finishing time or the sampling frequency and try again.");
+			return Melder_error1 (L"You could lower the finishing time or the sampling frequency and try again.");
 		else
-			return Melder_error ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
+			return Melder_error1 (L"You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
 	}
 	
 	return 0;
@@ -3071,22 +3069,11 @@ DO
 
 	if (! Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency))
 		return 0;
-	if (f >= samplingFrequency / 2)
-	{
-		Melder_error ( "Frequency cannot be larger than half the sampling frequency.\n");
-		return Melder_error ( "Please use a frequency smaller than %ls.", 
-			Melder_double (samplingFrequency / 2));
-	}
-	if (gamma < 0)
-	{
-		(void) Melder_error ("Gamma can not be negative.\n");
-		return Melder_error ("Please use a positive or zero gamma.");
-	}
-	if (bandwidth < 0)
-	{
-		(void) Melder_error ("Bandwidth can not be negative.\n");
-		return Melder_error ("Please use a positive or zero bandwidth.");
-	}
+	if (f >= samplingFrequency / 2) return Melder_error2
+		(L"Frequency cannot be larger than half the sampling frequency.\n"
+			"Please use a frequency smaller than ", Melder_double (samplingFrequency / 2));
+	if (gamma < 0) return Melder_error1 (L"Gamma can not be negative.\nPlease use a positive or zero gamma.");
+	if (bandwidth < 0) return Melder_error1 (L"Bandwidth can not be negative.\nPlease use a positive or zero bandwidth.");
 	sound = Sound_createGammaTone (startingTime, finishingTime, samplingFrequency, gamma, f,
 		bandwidth, GET_REAL ("Initial phase"), GET_REAL ("Addition factor"),
 		GET_INTEGER ("Scale amplitudes"));
@@ -3110,11 +3097,7 @@ DO
 	double amplitudeRange = GET_REAL ("Amplitude range");
 	double octaveShiftFraction = GET_REAL ("Octave shift fraction");
 	if (! Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency)) return 0;
-	if (amplitudeRange < 0)
-	{
-		(void) Melder_error ("Amplitude range can not be negative.\n");
-		return Melder_error ("Please use a positive or zero amplitude range.");
-	}
+	if (amplitudeRange < 0) return Melder_error1 (L"Amplitude range can not be negative.\nPlease use a positive or zero amplitude range.");
 	sound = Sound_createShepardToneComplex (startingTime, finishingTime, samplingFrequency,
 		GET_REAL ("Lowest frequency"), GET_INTEGER("Number of components"),
 		GET_REAL ("Frequency change"), GET_REAL ("Amplitude range"), octaveShiftFraction);
@@ -3122,35 +3105,6 @@ DO
 	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
 		! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0; 
 END
-/* old
-FORM (Sound_createFromShepardTone, "Create a Shepard tone",
-	"Create Sound from Shepard tone...")
-	WORD ("Name", "shepardTone")
-	Sound_create_addCommonFields (dia);
-	POSITIVE ("Lowest frequency (Hz)", "4.863")
-	NATURAL ("Number of components", "10")
-	REAL ("Frequency change (semitones/s)", "4.0")
-	REAL ("Amplitude range (dB)", "30.0")
-	OK
-DO
-	Sound sound = NULL;
-	double startingTime, finishingTime, samplingFrequency;
-	double amplitudeRange = GET_REAL ("Amplitude range");
-	
-	if (! Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency)) return 0;
-	if (amplitudeRange < 0)
-	{
-		(void) Melder_error ("Amplitude range can not be negative.\n");
-		return Melder_error ("Please use a positive or zero amplitude range.");
-	}
-	sound = Sound_createShepardTone (startingTime, finishingTime, samplingFrequency,
-		GET_REAL ("Lowest frequency"), GET_INTEGER("Number of components"),
-		GET_REAL ("Frequency change"), GET_REAL ("Amplitude range"));
-	
-	if (! Sound_create_check (sound, startingTime, finishingTime, samplingFrequency) ||
-		! praat_new1 (sound, GET_STRINGW (L"Name"))) return 0; 
-END
-*/
 
 FORM (Sound_to_TextGrid_detectSilences, "Sound: To TextGrid (silences)", 
 	"Sound: To TextGrid (silences)...")
@@ -3241,7 +3195,7 @@ DO
 	double ceiling = GET_REAL ("Ceiling");
 	REQUIRE (minimumPitch < ceiling, L"Minimum pitch should be smaller "
 		"than ceiling.")
-	REQUIRE (ceiling <= fmax, L"Maximum frequency must be greaterequal ceiling.")
+	REQUIRE (ceiling <= fmax, L"Maximum frequency must be greater than or equal to ceiling.")
 	EVERY_TO (Sound_to_Pitch_shs (OBJECT, GET_REAL ("Time step"),
 		minimumPitch, fmax, ceiling,
 		GET_INTEGER ("Max. number of subharmonics"),
@@ -3536,8 +3490,8 @@ DO
 	long number = GET_INTEGER ("Number");
 	if (number < 1 || number > my numberOfColumns)
 	{
-		return Melder_error ("SSCP_getCentroidElement: "
-		"\"Number\" must be smaller than %ld.", my numberOfColumns + 1);
+		return Melder_error3 (L"SSCP_getCentroidElement: "
+		"\"Number\" must be smaller than ", Melder_integer (my numberOfColumns + 1), L".");
 	}
 	Melder_information1 (Melder_double (my centroid[number]));
 END
@@ -3590,16 +3544,6 @@ Strings_append_end:
 	my size = 0; forget (me);
 	return status;
 END
-
-/*DIRECT (Strings_append)
-	Strings s1 = NULL, s2 = NULL;
-	WHERE (SELECTED)
-	{
-		if (s1) s2 = OBJECT;
-		else s1 = OBJECT;
-	}	
-	if (! praat_new3 (Strings_append (s1, s2), Thing_getName (s1), L"_", Thing_getName (s2))) return 0;
-END*/
 
 DIRECT (Strings_to_Categories)
 	EVERY_TO (Strings_to_Categories (OBJECT))
@@ -3684,6 +3628,30 @@ END
 
 DIRECT (Table_createFromWeeninkData)
 	if (! praat_new1 (Table_createFromWeeninkData (), L"m10w10c10")) return 0;
+END
+
+FORM (Table_drawScatterPlotWithConfidenceIntervals, "Table: Scatter plot (confidence intervals)", "")
+	NATURAL ("Horizontal axis column", "1")
+	REAL ("left Horizontal range", "0.0")
+	REAL ("right Horizontal range", "0.0")
+	INTEGER ("left Horizontal confidence interval column", "3")
+	INTEGER ("right Horizontal confidence interval column", "4")
+	NATURAL ("Vertical axis column", "2")
+	REAL ("left Vertical range", "0.0")
+	REAL ("right Vertical range", "0.0")
+	INTEGER ("left Vertical confidence interval column", "5")
+	INTEGER ("right Vertical confidence interval column", "6")
+	REAL ("Bar size (mm)", "1.0")
+	BOOLEAN ("Garnish", 1);
+	OK
+DO
+	Table_drawScatterPlotWithConfidenceIntervals (ONLY (classTable), GRAPHICS, 
+		GET_INTEGER ("Horizontal axis column"), GET_INTEGER ("Vertical axis column"),
+		GET_REAL ("left Horizontal range"), GET_REAL ("right Horizontal range"),
+		GET_REAL ("left Vertical range"), GET_REAL ("right Vertical range"),
+		GET_INTEGER ("left Horizontal confidence interval column"), GET_INTEGER ("right Horizontal confidence interval column"),
+		GET_INTEGER ("left Vertical confidence interval column"), GET_INTEGER ("right Vertical confidence interval column"),
+		GET_REAL ("Bar size"), GET_INTEGER ("Garnish"));
 END
 
 /******************* TableOfReal ****************************/
@@ -4921,6 +4889,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSVD, 0, "Extract right singular vectors", 0, 0, DO_SVD_extractRightSingularVectors);
 	praat_addAction1 (classSVD, 0, "Extract singular values", 0, 0, DO_SVD_extractSingularValues);
 
+	praat_addAction1 (classTable, 0, "Scatter plot (ci)...", 0, praat_DEPTH_1|praat_HIDDEN, DO_Table_drawScatterPlotWithConfidenceIntervals);
 	
 	praat_addAction1 (classTableOfReal, 0, "Append columns", 
 		"Append", 1, DO_TableOfReal_appendColumns);

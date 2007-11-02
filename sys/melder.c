@@ -177,7 +177,7 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static int waitWhileProgress (double progress, char *message, Widget dia, Widget scale, Widget label, Widget cancelButton) {
+static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label, Widget cancelButton) {
 	#if defined (macintosh)
 	{
 		EventRecord event;
@@ -236,7 +236,7 @@ static int waitWhileProgress (double progress, char *message, Widget dia, Widget
 	} else {
 		if (progress <= 0.0) progress = 0.0;
 		XtManageChild (dia);
-		XtVaSetValues (label, motif_argXmString (XmNlabelString, message), NULL);
+		XtVaSetValues (label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
 		XmScaleSetValue (scale, floor (progress * 1000.0));
 		XmUpdateDisplay (dia);
 	}
@@ -244,9 +244,8 @@ static int waitWhileProgress (double progress, char *message, Widget dia, Widget
 }
 #endif
 
-int Melder_progress (double progress, const char *format, ...) {
+static int _Melder_progress (double progress, const wchar_t *message) {
 	(void) progress;
-	(void) format;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
@@ -255,16 +254,6 @@ int Melder_progress (double progress, const char *format, ...) {
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
-			int interruption;
-			va_list arg;
-			va_start (arg, format);
-			if (format) {
-				vsprintf (Melder_buffer1, format, arg);
-				Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-			} else {
-				Melder_buffer2 [0] = '\0';
-			}
-			va_end (arg);
 			if (dia == NULL) {
 				dia = XmCreateFormDialog (Melder_topShell, "melderProgress", NULL, 0);
 				XtVaSetValues (XtParent (dia), XmNx, 200, XmNy, 100,
@@ -289,8 +278,8 @@ int Melder_progress (double progress, const char *format, ...) {
 					XtManageChild (cancelButton);
 				#endif
 			}
-			interruption = waitWhileProgress (progress, Melder_buffer2, dia, scale, label, cancelButton);
-			if (! interruption) Melder_error ("Interrupted!");
+			bool interruption = waitWhileProgress (progress, message, dia, scale, label, cancelButton);
+			if (! interruption) Melder_error1 (L"Interrupted!");
 			lastTime = now;
 			return interruption;
 		}
@@ -299,9 +288,56 @@ int Melder_progress (double progress, const char *format, ...) {
 	return 1;   /* Proceed. */
 }
 
-void * Melder_monitor (double progress, const char *format, ...) {
+static MelderString theProgressBuffer = { 0 };
+
+int Melder_progress1 (double progress, const wchar_t *s1) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append1 (& theProgressBuffer, s1);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress2 (double progress, const wchar_t *s1, const wchar_t *s2) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append2 (& theProgressBuffer, s1, s2);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+int Melder_progress9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	return _Melder_progress (progress, theProgressBuffer.string);
+}
+
+static void * _Melder_monitor (double progress, const wchar_t *message) {
 	(void) progress;
-	(void) format;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
@@ -311,16 +347,6 @@ void * Melder_monitor (double progress, const char *format, ...) {
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
-			int interruption;
-			va_list arg;
-			va_start (arg, format);
-			if (format) {
-				vsprintf (Melder_buffer1, format, arg);
-				Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-			} else {
-				Melder_buffer2 [0] = '\0';
-			}
-			va_end (arg);
 			if (dia == NULL) {
 				dia = XmCreateFormDialog (Melder_topShell, "melderMonitor", NULL, 0);
 				XtVaSetValues (XtParent (dia), XmNx, 200, XmNy, 100,
@@ -351,8 +377,8 @@ void * Melder_monitor (double progress, const char *format, ...) {
 				XtManageChild (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
-			interruption = waitWhileProgress (progress, Melder_buffer2, dia, scale, label, cancelButton);
-			if (! interruption) Melder_error ("Interrupted!");
+			bool interruption = waitWhileProgress (progress, message, dia, scale, label, cancelButton);
+			if (! interruption) Melder_error1 (L"Interrupted!");
 			lastTime = now;
 			if (progress == 0.0)
 				return graphics;
@@ -361,6 +387,52 @@ void * Melder_monitor (double progress, const char *format, ...) {
 	}
 	#endif
 	return progress <= 0.0 ? NULL /* No Graphics. */ : & progress /* Any non-NULL pointer. */;
+}
+
+void * Melder_monitor1 (double progress, const wchar_t *s1) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append1 (& theProgressBuffer, s1);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor2 (double progress, const wchar_t *s1, const wchar_t *s2) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append2 (& theProgressBuffer, s1, s2);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	return _Melder_monitor (progress, theProgressBuffer.string);
+}
+void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+	MelderString_empty (& theProgressBuffer);
+	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	return _Melder_monitor (progress, theProgressBuffer.string);
 }
 
 /********** PAUSE **********/

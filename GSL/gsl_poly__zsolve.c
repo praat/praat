@@ -1,10 +1,10 @@
 /* poly/zsolve.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Brian Gough
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* zsolve.c - finds the complex roots of  = 0 */
@@ -35,13 +35,12 @@
 
 #include "gsl_poly__companion.c"
 #include "gsl_poly__balance.c"
-/* #include "norm.c" */
 #include "gsl_poly__qr.c"
 
 int
 gsl_poly_complex_solve (const double *a, size_t n,
-			gsl_poly_complex_workspace * w,
-			gsl_complex_packed_ptr z)
+                        gsl_poly_complex_workspace * w,
+                        gsl_complex_packed_ptr z)
 {
   int status;
   double *m;

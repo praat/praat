@@ -23,7 +23,7 @@
  djmw 20020923 GPL header
 */
 
-#define xerbla_(src,info) (void) Melder_error ("%s: parameter %d not correct!",src,*info)
+#define xerbla_(src,info) (void) Melder_error4 (Melder_peekUtf8ToWcs (src), L": parameter ", Melder_integer (*info), L"not correct!")
 
 int NUMblas_daxpy (long *n, double *da, double *dx,	long *incx, double *dy, long *incy);
 /*     constant times a vector plus a vector.   

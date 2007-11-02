@@ -323,7 +323,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 		double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
-		Melder_progress ((double) ipulse / pulses -> nt, "Sound & PointProcess: To Ltas: pulse %ld out of %ld", ipulse, pulses -> nt);
+		Melder_progress4 ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
 		if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
 		    rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
 		    intervalFactor <= maximumPeriodFactor)
@@ -402,7 +402,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		}
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	iferror forget (ltas);
 	forget (numbers);
 	forget (period);
@@ -441,7 +441,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 		double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 		double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
-		Melder_progress ((double) ipulse / pulses -> nt, "Sound & PointProcess: To Ltas: pulse %ld out of %ld", ipulse, pulses -> nt);
+		Melder_progress4 ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
 		if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
 		    rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
 		    intervalFactor <= maximumPeriodFactor)
@@ -479,7 +479,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		}
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	iferror forget (ltas);
 	forget (period);
 	forget (spectrum);

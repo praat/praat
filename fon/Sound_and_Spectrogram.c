@@ -108,7 +108,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	window = NUMfvector (1, nsamp_window); cherror
 	NUMfft_Table_init_f (& fftTable, nsampFFT); cherror
 
-	Melder_progress (0.0, "Sound to Spectrogram...");
+	Melder_progress1 (0.0, L"Sound to Spectrogram...");
 	for (i = 1; i <= nsamp_window; i ++) {
 		double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
 		double phase = (double) i / nSamplesPerWindow_f;   /* 0 .. 1 */
@@ -155,8 +155,8 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 			}
 			for (j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
 
-			Melder_progress (iframe / (numberOfTimes + 1.0),
-				"Sound to Spectrogram: analysis of frame %ld out of %ld", iframe, numberOfTimes); cherror
+			Melder_progress4 (iframe / (numberOfTimes + 1.0),
+				L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of %ld", Melder_integer (numberOfTimes)); cherror
 
 			/* Compute Fast Fourier Transform of the frame. */
 
@@ -182,7 +182,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		}
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	NUMfvector_free (frame, 1);
 	NUMfvector_free (spec, 1);
 	NUMfvector_free (window, 1);

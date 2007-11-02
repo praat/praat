@@ -196,7 +196,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		 * Go to the middle of the voice stretch.
 		 */
 		tmiddle = (tleft + tright) / 2;
-		if (! Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), "Sound & Pitch to PointProcess"))
+		if (! Melder_progress1 ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch to PointProcess"))
 			goto end;
 		f0middle = Pitch_getValueAtTime (pitch, tmiddle, Pitch_UNIT_HERTZ, Pitch_LINEAR);
 
@@ -248,7 +248,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		t = tright;
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	iferror forget (point);
 	return point;
 }
@@ -269,7 +269,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 		 * Go to the middle of the voiced interval.
 		 */
 		tmiddle = (tleft + tright) / 2;
-		if (! Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), "Sound & Pitch to PointProcess"))
+		if (! Melder_progress1 ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch to PointProcess"))
 			goto end;
 		f0middle = Pitch_getValueAtTime (pitch, tmiddle, Pitch_UNIT_HERTZ, Pitch_LINEAR);
 
@@ -310,7 +310,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 		t = tright;
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	iferror forget (point);
 	return point;
 }

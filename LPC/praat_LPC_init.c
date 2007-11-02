@@ -23,6 +23,7 @@
  djmw 20060428 Latest modification
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20070902 Melder_error<1...>
+ djmw 20071011 REQUIRE requires L"".
 */
 
 #include <math.h>
@@ -173,7 +174,7 @@ DO
 	long iframe = GET_INTEGER ("Frame number");
 	if (iframe > my nx)
 	{
-		(void) Melder_error ("Frame number is too large.\n\nPlease choose a number between 1 and %ld.", my nx);
+		(void) Melder_error3 (L"Frame number is too large.\n\nPlease choose a number between 1 and ", Melder_integer (my nx), L".");
 		Melder_information1 (L"-1 coefficients (frame number was not defined)");
 		return 0;
 	}
@@ -195,10 +196,6 @@ END
 
 DIRECT (LPC_to_Formant_keep_all)
 	EVERY_TO (LPC_to_Formant (OBJECT, 0))
-END
-
-DIRECT (LPC_to_Cepstrumc)
-	EVERY_TO (LPC_to_Cepstrumc (OBJECT))
 END
 
 FORM (LPC_to_LFCC, "LPC: To LFCC", "LPC: To LFCC...")
@@ -276,8 +273,8 @@ static int Sound_to_LPC_checkCommonFields (void * dia,
 	*timeStep = GET_REAL ("Time step");
 	*preemphasisFrequency = GET_REAL ("Pre-emphasis frequency");
 	if (*preemphasisFrequency < 0.0) {
-		(void) Melder_error ("Pre-emphasis frequencies cannot be negative.\n");
-		return Melder_error ("Please use a positive or zero pre-emphasis frequency.");
+		(void) Melder_error1 (L"Pre-emphasis frequencies cannot be negative.\n");
+		return Melder_error1 (L"Please use a positive or zero pre-emphasis frequency.");
 	}
 	return 1;
 }
@@ -327,10 +324,6 @@ DO
 		return 0;
 	EVERY_TO (Sound_to_LPC_marple (OBJECT, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency,
 		GET_REAL("Tolerance 1"), GET_REAL("Tolerance 2")))
-END
-
-DIRECT (Sound_to_Cepstrum)
-	EVERY_TO (Sound_to_Cepstrum (OBJECT))
 END
 
 FORM (Sound_to_MFCC, "Sound: To MFCC",

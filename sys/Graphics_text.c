@@ -1557,25 +1557,25 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.times;
 			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helvetica;
 			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatino;
-			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
+			else if (font == Graphics_IPATIMES && useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;   /* Symbol, IPA. */
 		} else if (style == Graphics_BOLD) {
 			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesBold;
 			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helveticaBold;
 			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoBold;
-			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
+			else if (font == Graphics_IPATIMES && useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_ITALIC) {
 			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesItalic;
 			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helvetica;
 			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoItalic;
-			else if (useSilipaPS) charWidth = info -> ps.timesItalic;
+			else if (font == Graphics_IPATIMES && useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_BOLD_ITALIC) {
 			if (font == Graphics_FONT_TIMES) charWidth = info -> ps.timesBoldItalic;
 			else if (font == Graphics_FONT_HELVETICA) charWidth = info -> ps.helveticaBold;
 			else if (font == Graphics_FONT_PALATINO) charWidth = info -> ps.palatinoBoldItalic;
-			else if (useSilipaPS) charWidth = info -> ps.timesBoldItalic;
+			else if (font == Graphics_IPATIMES && useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		}
 		charWidth *= size / 1000.0;

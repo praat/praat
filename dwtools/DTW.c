@@ -26,6 +26,9 @@
  djmw 20060909 DTW_getPathY linear behaviour outside domains.
  djmw 20061205 Pitches_to_DTW
  djmw 20061214 Changed info to Melder_writeLine<x> format.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071016 To Melder_error<n>
+ djmw 20071022 Extra comments + possible bug correction in DTW_Path_recode. 
 */
 
 #include "DTW.h"
@@ -37,6 +40,8 @@
 #include "oo_COPY.h"
 #include "DTW_def.h"
 #include "oo_EQUAL.h"
+#include "DTW_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "DTW_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "DTW_def.h"
@@ -63,29 +68,32 @@ extern machar_Table NUMfpp;
 
 
 /* 
-   The path can then be calculated as follows:
-   In the distance matrix we have cells of dx by dy.
-   The optimal path connects cells with one another.
-   In a diagonal path, i.e. cells have no side in common, the path runs from the lowerleft corner
-   to the upperright corner.
+   The actual path will be interpolated as follows:
+   The distance matrix has cells of dimensions dx by dy.
+   The optimal path connects these cells with one another in the following ways:
+
+   In a diagonal ''path'' segment, i.e. when cells have no side in common, 
+   the interplated path runs from the lowerleft corner to the upperright corner.
    If a path segment is horizontal or vertical the path also runs from lowerleft to upperright.
    It is only when a horizontal and a vertical segment have a cell in common that we have to make
    some adjustments to the path in the common cell.
+   This will be done as follows:
    Let nx and ny be the number of horizontal and vertical cells in this path segment.
    The path will always start at the lowerleft of the leftmost block and end
    at the upperright of the rightmost block.
-   In the common cell there is an extra point in the path at (x1,y1)
-   This point is at the intersection of the line in the horizontal segment with the line in
-   the vertical segment. Let the lowerleft and upperright point of the common cell be (0,0) and (dx,dy).
-   We have two lines y = a1*x+b1 and y = a2*x+b2 with intersection:
+   In the common cell we have to introduce an extra point in the path at (x1,y1) 
+   where the line from the horizontal segment and the line from the vertical segment intersect.
+   Let the lowerleft and upperright point of the common cell be (0,0) and (dx,dy), 
+   then the coordinates (x,y) of the intersection can be calculated as follows:
+   If we have two lines y = a1*x+b1 and y = a2*x+b2 they intersect at
       (x,y) = (b2-b1, a1*b2-a2*b1)/(a1-a2)
-	If we substitute for a hv segment:
+	For horizontal-vertical (hv) cells:
 		a1 = dy/(nx*dx),   a2 = ny*dy/dx
 		b1 = dy*(nx-1)/nx, b2 = 0
 	Then:
 		(x,y) = (dx, dy*ny ) * (nx-1)/(nx*ny-1)
 
-	If we substitute for a vh segment
+	For vertical-horizontal (vh) cells:
 		a1 = ny*dy/dx,   a2 = dy/(nx*dx)
 		b1 = -(ny-1)*dy   b2 = 0
 	Then:
@@ -236,13 +244,19 @@ static void DTW_Path_makeIndex (DTW me, int xory)
 	}
 }
 
+/* Recode the path from a chain of cells to a piecewise linear path. */
 void DTW_Path_recode (DTW me)
 {
 	DTW_Path_Query thee = & my pathQuery;
-	long j, nxy, nx = 1, ny = 1, nd = 0, ixp = 0, iyp = 0;
-	int isv = 0, ish = 0;
+	long nxy;		// current number of elements in recoded path
+	long nx = 1;	// current number of successive horizontal cells in the cells chain 
+	long ny = 1;	// current number of successive vertical cells in the cells chain
+	long nd = 0;	// current number of successive diagonal cells in the cells chain
+	int isv = 0;	// previous segment in the original path was vertical
+	int ish = 0;	// previous segment in the original path was horizontal
+	long ixp = 0, iyp = 0; // previous cell
 	
-	/* two pass algorithm
+	/* Algorithm
 		1: get all the points in the path
 		2. get the x and y indices 
 	*/
@@ -258,24 +272,29 @@ void DTW_Path_recode (DTW me)
 	thy xytimes[2].y = my y1 + (ny - 1 - 0.5) * my dy;
 	// implicit: my x1 - 0.5 * my dx > my xmin && my y1 - 0.5 * my dy > my ymin
 	nxy = 2;
-	for (j = 1; j <= my pathLength; j++)
+	for (long j = 1; j <= my pathLength; j++)
 	{
-		long index, ix = my path[j].x, iy = my path[j].y;
+		long index; // where are we in the new path?
+		long ix = my path[j].x, iy = my path[j].y;
 		double xright = my x1 + (ix - 1 + 0.5) * my dx;
 		double x, y, f, ytop = my y1 + (iy - 1 + 0.5) * my dy;
 		
 		if (iy == iyp) // horizontal path?
 		{
 			ish = 1;
-			if (isv) // we came from vertical direction
+			if (isv) // we came from vertical direction?
 			{
+				// We came from a vertical direction so this is the second horizontal cell in a row.
+				// The statement after this "if" updates nx to 2.
 				nx = 1; isv = 0;
 			}
 			nx++;
 			
-			if (ny > 1 || nd > 1) // When previous was not diagonal modify intersection
+			if (ny > 1 || nd > 1)
 			{
+				// Previous segment was diagonal or vertical: modify intersection
 				// The vh intersection (x,y) = (nx*dx, dy) * (ny-1)/(nx*ny-1)
+				// A diagonal segment has ny = 1.
 				f = (ny - 1.0) / (nx * ny - 1);
 				x = xright - nx * my dx + nx * my dx * f;
 				y = ytop - my dy + my dy * f;
@@ -305,6 +324,7 @@ void DTW_Path_recode (DTW me)
 				f = (nx - 1.0) / (nx * ny - 1);
 				x = xright - my dx + my dx * f;
 				y = ytop - ny * my dy + ny * my dy * f;
+				index = nxy - 1;
 				if (ny == 2) 
 				{
 					index = nxy;
@@ -326,7 +346,7 @@ void DTW_Path_recode (DTW me)
 		}
 		else
 		{
-			(void) Melder_error ("The path goes back in time");
+			(void) Melder_error1 (L"The path goes back in time");
 			return;
 		}
 		// update 
@@ -481,6 +501,7 @@ static void info (I)
 class_methods (DTW, Matrix)
 	class_method_local (DTW, destroy)
 	class_method_local (DTW, equal)
+	class_method_local (DTW, canWriteAsEncoding)
 	class_method_local (DTW, copy)
 	class_method (info)
 	class_method_local (DTW, readText)
@@ -529,7 +550,7 @@ DTW DTW_swapAxes (DTW me)
 	return thee;
 }
 
-static int DTW_checkAdjustmentWindow (DTW me, char *proc, double adjustment_window_duration, int adjustment_window_includes_end)
+static int DTW_checkAdjustmentWindow (DTW me, double adjustment_window_duration, int adjustment_window_includes_end)
 {
 	double durationx = (my xmax - my xmin), durationMin = durationx; 
 	double durationy = (my ymax - my ymin), durationMax = durationy;
@@ -541,18 +562,18 @@ static int DTW_checkAdjustmentWindow (DTW me, char *proc, double adjustment_wind
 	
 	if (! adjustment_window_includes_end && durationMin + adjustment_window_duration < durationMax)
 	{
-		return Melder_error ("%s: There is a conflict between the chosen parameters.\n "
+		return Melder_error1 (L"There is a conflict between the chosen parameters.\n "
 			"We cannot \'Match end positions\' because the sum of the durations of the shortest \n"
 			"object and the adjustment window is shorter than the duration of the longest object and you have not \n"
 			"chosen to include the end point in the adjustment window.\n"
 			"Suggestions:\n"
 			"1. Include end point in adjustment window, or,\n"
-			"2. Uncheck \'Match end positions\'.", proc);
+			"2. Uncheck \'Match end positions\'.");
 	}
 	return 1;
 }
 
-static int DTW_checkSlopeConstraintParameters (DTW me, char *proc, long nsteps_xory, long nsteps_xandy)
+static int DTW_checkSlopeConstraintParameters (DTW me, long nsteps_xory, long nsteps_xandy)
 {
 	double durationx = (my xmax - my xmin), durationMin = durationx; 
 	double durationy = (my ymax - my ymin), durationMax = durationy;
@@ -571,11 +592,9 @@ static int DTW_checkSlopeConstraintParameters (DTW me, char *proc, long nsteps_x
 		if (! get_ylimitsFromConstraints (nsteps_xory, nsteps_xandy, my nx, my ny, 1, &ylow, &yhigh) && ylow > 0)
 		{
 			double slope_min = slope < 1 ? 1 / slope : slope;
-			return Melder_error ("%s: The slope constraints cannot be satisfied.\n"
+			return Melder_error3 (L"The slope constraints cannot be satisfied.\n"
 				"Hint:\n"
-				"To follow the the shortest path diagonal, the quotient \'Non-diagonal steps\'/\'Diagonal steps\' is %.4g.\n"
-				"",
-				proc, slope_min);
+				"To follow the the shortest path diagonal, the quotient \'Non-diagonal steps\'/\'Diagonal steps\' is ", Melder_double (slope_min), L"\n");
 		}
 	}
 	return 1;
@@ -655,7 +674,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 		1. Forward pass.
 	*/
 	
-	Melder_progress (0.0, "Find path");
+	Melder_progress1 (0.0, L"Find path");
 	
 	/* 
 		initialize the psi and delta matrices.
@@ -707,7 +726,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 	for (x = 2; x <= my nx; x++)
 	{
 		if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end, 
-			nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) return Melder_error ("Er");
+			nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) return Melder_error1 (L"Er");
 
 		if (ylow < 2) ylow = 2;
 		if (yhigh > my ny) yhigh = my ny;
@@ -751,8 +770,8 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 			delta[y][x] = minimum;
 			psi[y][x] = direction;
 		}
-		if ((x % 10) == 2 && ! Melder_progress (0.999 * x / my nx,
-			"Calculate time warp: frame %ld from %ld", x, my nx)) goto end;
+		if ((x % 10) == 2 && ! Melder_progress5 (0.999 * x / my nx, L"Calculate time warp: frame ",
+			Melder_integer (x), L" from ", Melder_integer (my nx), L".")) goto end;
 	}
 
 	/*
@@ -815,7 +834,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 		}
 		else
 		{
-			Melder_error("DTW_pathfinder: Path stops at (x, y) = (%d, %d).", x, y);
+			Melder_error5 (L"DTW_pathfinder: Path stops at (x,y) = (", Melder_integer (x), L",", Melder_integer (y), L").");
 			goto end;
 		}
 		
@@ -839,7 +858,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	NUMfmatrix_free (delta, 1, 1);
 	NUMlmatrix_free (psi, 1, 1);
 	return ! Melder_hasError();
@@ -848,14 +867,14 @@ end:
 int DTW_pathFinder_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end, 
 	 double costs_x, double costs_y, double costs_xandy)
 {
-	return DTW_checkAdjustmentWindow (me, "DTW_pathFinder_band", adjustment_window_duration, adjustment_window_includes_end) &&
+	return DTW_checkAdjustmentWindow (me, adjustment_window_duration, adjustment_window_includes_end) &&
 		_DTW_pathFinder (me, DTW_SAKOECHIBA, adjustment_window_duration, adjustment_window_includes_end,
 			1, 0, costs_x, costs_y, costs_xandy);
 }
 
 int DTW_pathFinder_slopes (DTW me, long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy)
 {
-	return DTW_checkSlopeConstraintParameters (me, "DTW_pathFinder_slopes", nsteps_xory, nsteps_xandy) &&
+	return DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy) &&
 		_DTW_pathFinder (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy, costs_x, costs_y, costs_xandy);
 }
 
@@ -867,7 +886,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 	float slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
 	float relDuration = (my ymax - my ymin) / (my xmax - my xmin);
 
-	if (slope < 1 || slope > 4) Melder_error ("DTW_findPath: Invalid slope constraint.");
+	if (slope < 1 || slope > 4) Melder_error1 (L"DTW_findPath: Invalid slope constraint.");
 	
 	if (relDuration < 1)
 	{
@@ -886,7 +905,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 	/*
 		Forward pass.
 	*/
-	Melder_progress (0.0, "Find path");
+	Melder_progress1 (0.0, L"Find path");
 	if (matchStart)
 	{
 		for (i = 2; i <= my ny; i++)
@@ -1037,8 +1056,8 @@ s3:			{
 			psi[i][j] = direction;
 			delta[i][j] = minimum;
 		}
-		if ((j % 10) == 2 && ! Melder_progress (0.999 * j / my nx,
-			"Calculate time warp: frame %ld from %ld", j, my nx)) goto end;
+		if ((j % 10) == 2 && ! Melder_progress5 (0.999 * j / my nx, L"Calculate time warp: frame ",
+			Melder_integer (j), L" from ", Melder_integer (my nx), L".")) goto end;
 	}
 	
 	/*
@@ -1079,7 +1098,7 @@ s3:			{
 		}
 		else
 		{
-			Melder_error("DTW_findPath: illegal path");
+			Melder_error1 (L"DTW_findPath: illegal path");
 			goto end;
 		}
 		
@@ -1101,7 +1120,7 @@ s3:			{
 	
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	NUMfmatrix_free (delta, 1, 1);
 	NUMlmatrix_free (psi, 1, 1);
 }
@@ -1264,7 +1283,7 @@ static Polygon _DTW_to_Polygon (DTW me, int choice, double adjustment_window_dur
 		if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end, 
 			nsteps_xory, nsteps_xandy, x, &ylow, &yhigh))
 		{
-			(void) Melder_error ("");
+			(void) Melder_error1 (L"");
 			goto end;
 		}
 	
@@ -1298,13 +1317,13 @@ end:
 
 Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end)
 {
-	return DTW_checkAdjustmentWindow (me, "DTW_to_Polygon_band", adjustment_window_duration, adjustment_window_includes_end) ?
+	return DTW_checkAdjustmentWindow (me, adjustment_window_duration, adjustment_window_includes_end) ?
 		_DTW_to_Polygon (me, DTW_SAKOECHIBA, adjustment_window_duration, adjustment_window_includes_end, 1, 0) : NULL;
 }
 
 Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
 {
-	return DTW_checkSlopeConstraintParameters (me, "DTW_to_Polygon_slopes", nsteps_xory, nsteps_xandy) ? 
+	return DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy) ? 
 		_DTW_to_Polygon (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy) : NULL;
 }
 
@@ -1480,7 +1499,7 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 	DTW him = NULL;
 	long i, j, k;
 
-	if (thy ny != my ny) return Melder_errorp ("Matrices_to_DTW: Columns must have the same dimensions.");
+	if (thy ny != my ny) return Melder_errorp1 (L"Matrices_to_DTW: Columns must have the same dimensions.");
 
 	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 	if (him == NULL) return NULL;
@@ -1510,12 +1529,12 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 			d = dmax * pow (d, 1.0 / metric);
 			his z[i][j] = d / my ny; /* == d * dy / ymax */
 		}
-		if ((i % 10) == 1 && ! Melder_progress (0.999 * i / my nx,
-			 "Calculate distances: column %ld from %ld", i, my nx)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 (0.999 * i / my nx, L"Calculate distances: column ",
+			Melder_integer (i), L" from ", Melder_integer (my nx), L".")) goto end;
 	}
 	DTW_findPath (him, matchStart, matchEnd, slope);
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	if (Melder_hasError ()) forget (him);
 	return him;
 }
@@ -1529,8 +1548,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 	
 	if (my xmin != thy xmin || my ymax != thy ymax || my ny != thy ny)
 	{
-		 return Melder_errorp("Spectrograms_to_DTW: #frequencies and/or "
-		 	"frequency ranges do not match.");
+		 return Melder_errorp1 (L"The number of frequencies and/or frequency ranges do not match.");
 	}
 	if (((m1 = Spectrogram_to_Matrix (me)) == NULL) ||
 		((m2 = Spectrogram_to_Matrix (thee)) == NULL) ||
@@ -1585,12 +1603,12 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 	double *pitchx = NULL;
 	int unit = Pitch_UNIT_SEMITONES_100;
  
- 	if (vuv_costs < 0) return Melder_errorp ("Voiced-unvoiced costs may not be negative.");
- 	if (time_weight < 0) return Melder_errorp ("Time costs weight may not be negative.");
+ 	if (vuv_costs < 0) return Melder_errorp1 (L"Voiced-unvoiced costs may not be negative.");
+ 	if (time_weight < 0) return Melder_errorp1 (L"Time costs weight may not be negative.");
 
 	if (! Pitch_findFirstAndLastVoicedFrame (me, &myfirst, &mylast) ||
-		! Pitch_findFirstAndLastVoicedFrame (thee, &thyfirst, &thylast)) return Melder_errorp 
-			("No voiced frames.");
+		! Pitch_findFirstAndLastVoicedFrame (thee, &thyfirst, &thylast)) return Melder_errorp1 
+			(L"No voiced frames.");
 	/*
 		We do not want the silences before the first voiced frame and after the last voiced frame 
 		to determine the distances.
@@ -1648,8 +1666,8 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 	double *pitchx = NULL;
 	int unit = Pitch_UNIT_SEMITONES_100;
  
- 	if (vuv_costs < 0) return Melder_errorp ("Voiced-unvoiced costs may not be negative.");
- 	if (time_weight < 0) return Melder_errorp ("Time costs weight may not be negative.");
+ 	if (vuv_costs < 0) return Melder_errorp1 (L"Voiced-unvoiced costs may not be negative.");
+ 	if (time_weight < 0) return Melder_errorp1 (L"Time costs weight may not be negative.");
 
  	him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
  	if (him == NULL) return NULL;

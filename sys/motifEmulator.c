@@ -983,7 +983,7 @@ static void NativeMenuItem_setText (Widget me) {
  */
 
 #if mac
-static void listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
+static pascal void listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
 	Widget me = (Widget) GetListRefCon (handle);
 	switch (message) {
 		case lDrawMsg:
@@ -1178,7 +1178,7 @@ static void _GuiNativizeWidget (Widget me) {
 					}
 					CreateCustomList (& my rect, & dataBounds, cSize, & listDefSpec, my macWindow,
 						false, false, false, false, & my nat.list.handle);
-					SetListRefCon (my nat.list.handle, me);
+					SetListRefCon (my nat.list.handle, (long) me);
 					#endif
 				#endif
 				if (my selectionPolicy != XmSINGLE_SELECT && my selectionPolicy != XmBROWSE_SELECT)

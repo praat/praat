@@ -1,10 +1,10 @@
 /* specfunc/erfc.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  J. Theiler (modifications by G. Jungman) */
@@ -29,6 +29,7 @@
 #include "gsl__config.h"
 #include "gsl_math.h"
 #include "gsl_errno.h"
+#include "gsl_sf_exp.h"
 #include "gsl_sf_erf.h"
 
 #include "gsl_sf__check.h"
@@ -401,6 +402,33 @@ int gsl_sf_erf_Q_e(double x, gsl_sf_result * result)
 }
 
 
+int gsl_sf_hazard_e(double x, gsl_sf_result * result)
+{
+  if(x < 25.0)
+  {
+    gsl_sf_result result_ln_erfc;
+    const int stat_l = gsl_sf_log_erfc_e(x/M_SQRT2, &result_ln_erfc);
+    const double lnc = -0.22579135264472743236; /* ln(sqrt(2/pi)) */
+    const double arg = lnc - 0.5*x*x - result_ln_erfc.val;
+    const int stat_e = gsl_sf_exp_e(arg, result);
+    result->err += 3.0 * (1.0 + fabs(x)) * GSL_DBL_EPSILON * fabs(result->val);
+    result->err += fabs(result_ln_erfc.err * result->val);
+    return GSL_ERROR_SELECT_2(stat_l, stat_e);
+  }
+  else
+  {
+    const double ix2 = 1.0/(x*x);
+    const double corrB = 1.0 - 9.0*ix2 * (1.0 - 11.0*ix2);
+    const double corrM = 1.0 - 5.0*ix2 * (1.0 - 7.0*ix2 * corrB);
+    const double corrT = 1.0 - ix2 * (1.0 - 3.0*ix2*corrM);
+    result->val = x / corrT;
+    result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val);
+    return GSL_SUCCESS;
+  }
+}
+
+
+
 /*-*-*-*-*-*-*-*-*-* Functions w/ Natural Prototypes *-*-*-*-*-*-*-*-*-*-*/
 
 #include "gsl_sf__eval.h"
@@ -429,3 +457,9 @@ double gsl_sf_erf_Q(double x)
 {
   EVAL_RESULT(gsl_sf_erf_Q_e(x, &result));
 }
+
+double gsl_sf_hazard(double x)
+{
+  EVAL_RESULT(gsl_sf_hazard_e(x, &result));
+}
+

@@ -1,6 +1,6 @@
 /* Excitations.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20071009 wchar_t
+ djmw 20071017 Melder_error<n>
 */
 
 #include "Excitations.h"
@@ -58,7 +60,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join)
 	Melder_assert (my size > 0);
 	m = my item[1];
     if (join < 1) join = 1;
-	if ((my size % join) != 0) return Melder_errorp("Excitations_to_Pattern:"
+	if ((my size % join) != 0) return Melder_errorp1 (L"Excitations_to_Pattern:"
 		"number of rows is not a multiple of join."); 
 	if (! (thee = Pattern_create (my size / join, join * m->nx))) return thee;
 	for (i = 1; i <= my size; i++)

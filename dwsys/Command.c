@@ -1,6 +1,6 @@
 /* Command.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 19950710
  djmw 20020812 GPL header
+ djmw 20071007 wchar_t
 */
 
 #include "Command.h"
@@ -87,7 +88,7 @@ void CommandHistory_insertItem (I, Any data)
 	Melder_assert (data && (Thing_member (data, my itemClass) || my itemClass == NULL));
 	if (my current < my size)
 	{
-		for (i=my current+1; i <= my size; i++) forget (my item[i]);
+		for (i = my current+1; i <= my size; i++) forget (my item[i]);
 		my size = my current;
 	}
 	if (my size >= my _capacity) Collection_removeItem (me, 1);
@@ -115,7 +116,9 @@ int CommandHistory_offright (I)
 
 wchar_t *CommandHistory_commandName (I, long offsetFromCurrent)
 {
-	iam (CommandHistory); long pos = my current + offsetFromCurrent;
+	iam (CommandHistory); 
+	long pos = my current + offsetFromCurrent;
+	
 	return pos >= 1 && pos <= my size ? Thing_getName (my item[pos]) : NULL;
 }
 

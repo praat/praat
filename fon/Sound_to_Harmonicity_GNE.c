@@ -102,7 +102,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 	}
 	fmid = fmin;
 	ienvelope = 1;
-	graphics = Melder_monitor (0.0, "Computing Hilbert envelopes...");
+	graphics = Melder_monitor1 (0.0, L"Computing Hilbert envelopes...");
 	while (fmid <= fmax) {
 		/*
 		 * Step 3: calculate Hilbert envelopes of bands.
@@ -122,7 +122,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 			Graphics_clearWs (graphics);
 			Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, TRUE);
 		}*/
-		if (! Melder_monitor (ienvelope / (nenvelopes + 1.0), "Computing Hilbert envelope %ld...", ienvelope))
+		if (! Melder_monitor3 (ienvelope / (nenvelopes + 1.0), L"Computing Hilbert envelope ", Melder_integer (ienvelope), L"..."))
 			goto end;
 		forget (bandSpectrum);
 		hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum); cherror
@@ -179,7 +179,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 	}
 
 end:
-	Melder_monitor (1.0, NULL);
+	Melder_monitor1 (1.0, NULL);
 	forget (original10k);
 	forget (lpc);
 	forget (flat);

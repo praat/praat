@@ -1,10 +1,10 @@
 /* specfunc/bessel_j.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 1996,1997,1998,1999,2000,2001,2002,2003 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -180,7 +180,7 @@ gsl_sf_bessel_jl_e(const int l, const double x, gsl_sf_result * result)
     result->err += 2.0 * GSL_DBL_EPSILON * fabs(result->val);
     return status;
   }
-  else if(GSL_ROOT3_DBL_EPSILON * x > (l*l + l + 1.0)) {
+  else if(GSL_ROOT4_DBL_EPSILON * x > (l*l + l + 1.0)) {
     gsl_sf_result b;
     int status = gsl_sf_bessel_Jnu_asympx_e(l + 0.5, x, &b);
     double pre = sqrt((0.5*M_PI)/x);
@@ -195,6 +195,18 @@ gsl_sf_bessel_jl_e(const int l, const double x, gsl_sf_result * result)
     result->val = pre * b.val;
     result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val) + pre * b.err;
     return status;
+  }
+  else if(x > 1000.0 && x > 100.0*l*l)
+  {
+    /* We need this to avoid feeding large x to CF1; note that
+     * due to the above check, we know that n <= 50.
+     */
+    gsl_sf_result b;
+    int status = gsl_sf_bessel_Jnu_asympx_e(l + 0.5, x, &b);
+    double pre = sqrt((0.5*M_PI)/x);
+    result->val = pre * b.val;
+    result->err = 2.0 * GSL_DBL_EPSILON * fabs(result->val) + pre * b.err;
+    return status;  
   }
   else {
     double sgn;
@@ -320,7 +332,7 @@ int gsl_sf_bessel_jl_steed_array(const int lmax, const double x, double * jl_x)
       FP += del;
       if(D < 0.0) F = -F;
       if(B > end) {
-	GSL_ERROR ("error", GSL_EMAXITER);
+        GSL_ERROR ("error", GSL_EMAXITER);
       }
     }
     while(fabs(del) >= fabs(FP) * GSL_DBL_EPSILON);
@@ -335,22 +347,22 @@ int gsl_sf_bessel_jl_steed_array(const int lmax, const double x, double * jl_x)
       int LP;
       jl_x[lmax] = F;
       for(LP = 1; LP<=lmax; LP++) {
-	jl_x[L-1] = PL * jl_x[L] + XP2;
-	FP = PL*jl_x[L-1] - jl_x[L];
-	XP2 = FP;
-	PL -= x_inv;
-	--L;
+        jl_x[L-1] = PL * jl_x[L] + XP2;
+        FP = PL*jl_x[L-1] - jl_x[L];
+        XP2 = FP;
+        PL -= x_inv;
+        --L;
       }
       F = jl_x[0];
     }
     
     /* normalization */
-    W = x_inv / sqrt(FP*FP + F*F);
+    W = x_inv / hypot(FP, F);
     jl_x[0] = W*F;
     if(lmax > 0) {
       int L;
       for(L=1; L<=lmax; L++) {
-	jl_x[L] *= W;
+        jl_x[L] *= W;
       }
     }
 

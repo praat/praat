@@ -23,6 +23,7 @@
  djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
  	In previous version a NULL pointer was returned. New error messages.
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Polynomial.h"
@@ -36,6 +37,8 @@
 #include "oo_COPY.h"
 #include "Polynomial_def.h"
 #include "oo_EQUAL.h"
+#include "Polynomial_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Polynomial_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Polynomial_def.h"
@@ -91,36 +94,6 @@ static void Polynomial_evaluate2_z (I, dcomplex *z, dcomplex *p, dcomplex *dp)
 	dp -> re =  dpr; dp -> im = dpi;
 }
 
-static void Polynomial_evaluate3_z (I, dcomplex *z, dcomplex *p, dcomplex *dp,
-	dcomplex *ddp, double *err)
-{
-	iam (Polynomial);
-	long double pr = my coefficients[my numberOfCoefficients], pi = 0;
-	long double dpr = 0, dpi = 0, ddpr = 0, ddpi = 0;
-	long double absz, x = z -> re, y = z -> im, tr;
-	long i;
-
-	*err = fabs (pr);
-	absz = dcomplex_abs (*z);
-	for (i = my numberOfCoefficients - 1; i > 0; i--)
-	{
-		double prt, pit; 
-		tr = ddpr;
-		ddpr = ddpr * x - ddpi * y + dpr;
-		ddpi =   tr * y + ddpi * x + dpi;
-		tr   = dpr;
-		dpr  =  dpr * x -  dpi * y + pr;
-		dpi  =   tr * y +  dpi * x + pi;
-		tr   = pr;
-		pr   =   pr * x -   pi * y + my coefficients[i];
-		pi   =   tr * y +   pi * x;
-		prt = pr; pit = pi;
-		*err    =   *err * absz + NUMlapack_dlapy2 (&prt, &pit);
-	}
-	  p -> re =   pr;   p -> im =   pi;
-	 dp -> re =  dpr;  dp -> im =  dpi;
-	ddp -> re = ddpr; ddp -> im = ddpi;
-}
 
 
 /*
@@ -193,7 +166,7 @@ static int Polynomial_polish_realroot (I, double *x, long maxit)
 static int Polynomial_polish_complexroot_nr (I, dcomplex *z, long maxit)
 {
 	iam (Polynomial);
-	dcomplex dz, zbest, p, dp;
+	dcomplex dz, zbest = *z, p, dp;
 	double pmin = 1e38, fabsp;
 	long i;
 
@@ -215,92 +188,6 @@ static int Polynomial_polish_complexroot_nr (I, dcomplex *z, long maxit)
         *z = dcomplex_sub (*z, dz);
     }
 	return 0; /* Maximum number of iterations exceeded. */
-}
-
-static int Polynomial_polish_complexroot_laguerre (I, dcomplex *z, long maxit)
-{
-	iam (Polynomial);
-	long i, degree = my numberOfCoefficients - 1, mr = 8, mt = 10;
-	dcomplex g1, g2, p, dp, ddp, dz, zn, zmin;
-	double ndivnm1, err, absp, abspmin = 1e38;
-	static double frac[9] = {0, 0.5, 0.25, 0.75, 0.13, 0.38, 0.62, 0.88, 1};
-
-    if (degree < 2) return 1;
-    ndivnm1 = degree / (degree - 1.0);
-
-	for (i = 1 ; i <= maxit; i++)
-	{
-		/* Evaluate the polynomial P(z), P'(z), P''(z) and its
-			roundoff error estimate.
-		*/
-        Polynomial_evaluate3_z (me, z, &p, &dp, &ddp, &err);
-
-        absp = dcomplex_abs (p);
-		if (absp > abspmin)
-		{
-			/*
-				We stop because the approximation gets worse.
-				Return previous (best) value for z.
-			*/
-			*z = zmin; return 1;
-		}
-		abspmin = absp; zmin = *z;
-		
-        /*
-        	Laguerre step L(z[k]) is defined as:
-				L(z[k]) = z[k+1]-z[k] = -n*P(z[k])/(P'(z[k]) +- sqrt(H(z[k]))), where
-				H(z[k]) = (n-1) {(n-1) * P'(z[k])^2 - n * P(z[k]) * P''(z[k])}
-			Divide the numerator and denominator of L by P(z[k]):
-				L = -n / (P'/P +- sqrt(H/P^2)), where
-				H/P^2 = (n-1) {(n-1) * (P'/P)^2 - n P''/P}
-				      = (n-1)^2 * { (P'/P)^2 - (n/(n-1)) * P''/P }
-			Now L becomes:
-				L = -n /(g1 +- (n-1) * K), where
-				K = sqrt(g1^2 - (n/(n-1)) * g2) and
-				g1 = P'/P and g2 = P''/P
-			The sign should be chosen as to make L as small as possible.
-			The calculation above overflows when P <<< 1 (because of (P'/P)^2
-			
-			In the neighbourhood of a zero this is almost Newton-Raphson because:
-				L = -n (P/P') /(1 +- sqrt((n-1)[(n-1) - n PP''/(P')^2]) =
-				  = -n (P/P') /(1 +- (n-1)sqrt(1 - (n/(n-1))(P/P')(P''/P'))
-			In  the neighbourhood of a zero we have P/P' << 1 and the denominator
-			reduces to 1 +- (n-1) =~ -n +2
-			    L =~ n/(-n+2) (P/P')
-			The calculation above is more stable
-       */
-       g1 = dcomplex_div (p, dp);
-       g2 = dcomplex_rmul (ndivnm1, dcomplex_mul (g1, dcomplex_div (ddp, dp)));
-       g2.re = 1 - g2.re; g2.im = -g2.im;
-       g2 = dcomplex_sqrt (g2);
-       g2 = dcomplex_rmul (degree-1, g2);
-       dz = g2;
-       if (g2.re > 0)
-       {
-		   dz.re = 1 + g2.re;
-	   }
-	   else
-	   {
-		   dz.re = 1 - g2.re; dz.im = - g2.im;
-	   }
-	   dz = dcomplex_div (dcomplex_rmul (degree, g1), dz);
-       if (dz.re == 0 && dz.im == 0)
-       {
-		   double r = exp (log (1 + dcomplex_abs (*z)));
-		   dz = dcomplex_create (cos (i), sin (i));
-		   dz.re *= r; dz.im *= r;
-       }
-
-       if (i % mt == 0)
-       {
-		   dz = dcomplex_rmul (frac[((i / mt) - 1) % mr + 1], dz);
-       }
-       zn = dcomplex_sub (*z, dz);
-       if (zn.re == z->re && zn.im == z->re) return 1;
-       *z = zn;
-	}
-
-	return 1;
 }
 
 /*
@@ -329,28 +216,6 @@ static void NUMpolynomial_recurrence (double *pn, long degree, double a,
 	pn[degree+1] = a * pnm1[degree];
 }
 
-static void NUMdvector_simpleStats (double *x, long n, double *ave, 
-	double *sdev)
-{
-	double ep = 0, s = 0, var = 0; long i;
-	if (n < 2)
-	{
-		*sdev = NUMundefined;
-		*ave = n == 1 ? x[1] : NUMundefined;
-	}
-	else
-	{		
-		for (i=1; i <= n; i++) s += x[i];
-		*ave /= n;
-		for (i=1; i <= n; i++)
-		{
-			ep += (s = x[i] - *ave);
-			var += s * s;
-		}
-		var = (var - ep * ep / n) / (n - 1);
-		*sdev = sqrt (var);
-	}
-}
 
 /* frozen[1..ma] */
 static int svdcvm (double **v, long mfit, long ma, int *frozen, double *w,
@@ -459,6 +324,7 @@ static void defaultGetExtrema (I, double x1, double x2, double *xmin,
 class_methods (FunctionTerms, Function)
 	class_method_local (FunctionTerms, destroy)
 	class_method_local (FunctionTerms, equal)
+	class_method_local (FunctionTerms, canWriteAsEncoding)
 	class_method_local (FunctionTerms, copy)
 	class_method_local (FunctionTerms, readText)
 	class_method_local (FunctionTerms, readBinary)
@@ -748,12 +614,12 @@ int FunctionTerms_setCoefficient (I, long index, double value)
 	iam (FunctionTerms);
 	if (index < 1 || index > my numberOfCoefficients)
 	{
-		return Melder_error ("FunctionTerms_setCoefficient: index out of "
-			"range [1, %d].", my numberOfCoefficients);
+		return Melder_error3 (L"FunctionTerms_setCoefficient: index out of "
+			"range [1, ", Melder_integer (my numberOfCoefficients), L"].");
 	}
 	if (index == my numberOfCoefficients && value == 0)
 	{
-		return Melder_error ("FunctionTerms_setCoefficient: you cannot remove "
+		return Melder_error1 (L"FunctionTerms_setCoefficient: you cannot remove "
 			"the highest degree term.");
 	}
 	my coefficients[index] = value;
@@ -973,31 +839,6 @@ static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi,
 	}
 }
 
-/*
-	Evaluation of a polynomial for complex value z = x + iy
-	Knuth,  vol II, page 487
-*/
-static void Polynomial_evaluate_z_knuth (Polynomial me, dcomplex *z, dcomplex *p)
-{
-	long double x = z -> re, y = z -> im, r = x + x, s = x * x + y * y, a, b;
-	double *u = &my coefficients[1];
-	long j, n = my numberOfCoefficients - 1;
-
-	a = u[n];
-	if (n == 0)
-	{
-		p -> re = a; p -> im = 0; return;
-	}
-	b = u[n-1];
-	for (j = 2; j <= n; j++)
-	{
-		long double ajm1 = a;
-		a = b + r * ajm1;
-		b = u[n - j] - s * ajm1;
-	}
-	p -> re = x * a + b;
-	p -> im = y * a;
-}
 
 Polynomial Polynomial_getDerivative (Polynomial me)
 {
@@ -1392,7 +1233,7 @@ Roots Polynomial_to_Roots (Polynomial me)
     long i, np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n, nrootsfound = n, ioffset = 0;
 	long ihi = n, ilo = 1, ldh = n, ldz = n, lwork = -1, info;
 
-	if (n < 1) return Melder_errorp ("%s: Cannot find roots of a constant function.", proc);
+	if (n < 1) return Melder_errorp1 (L"Cannot find roots of a constant function.");
 
 	/*
     	Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
@@ -1422,8 +1263,8 @@ Roots Polynomial_to_Roots (Polynomial me)
 		&wr[1], &wi[1], z, &ldz, wt, &lwork, &info);
 	if (info != 0)
 	{
-		if (info < 0) (void) Melder_error ("%s: Programming error. Argument %d in NUMlapack_dhseqr has illegal value.", proc, info);
-		else { (void) Melder_error ("%s: Cannot occur here.", proc); }
+		if (info < 0) (void) Melder_error3 (L"Programming error. Argument ", Melder_integer (info), L" in NUMlapack_dhseqr has illegal value.");
+		else { (void) Melder_error1 (L"Cannot occur here."); }
 		goto end;
 	}
 	lwork = wt[0];
@@ -1449,7 +1290,7 @@ Roots Polynomial_to_Roots (Polynomial me)
 	}
 	else if (info < 0)
 	{
-		(void) Melder_error ("%s: Programming error. Argument %d in NUMlapack_dhseqr has illegal value.", proc, info);
+		(void) Melder_error3 (L"Programming error. Argument ", Melder_integer (info), L" in NUMlapack_dhseqr has illegal value.");
 		goto end;
 	}
 	
@@ -1505,15 +1346,15 @@ void Roots_and_Polynomial_polish (Roots me, Polynomial thee)
 Polynomial Roots_to_Polynomial (Roots me)
 {
 	(void) me;
-	return Melder_errorp ("Not implemented yet");
+	return Melder_errorp1 (L"Not implemented yet");
 }
 
 int Roots_setRoot (Roots me, long index, double re, double im)
 {
 	if (index < my min || index > my max)
 	{
-		return Melder_error ("Roots_setRoot: "
-		"index must be in interval [1, %d].", my max);
+		return Melder_error3 (L"Roots_setRoot: index must be in interval [1, ", 
+			Melder_integer (my max), L"].");
 	}
 	my v[index].re = re;
 	my v[index].im = im;
@@ -1543,7 +1384,7 @@ Spectrum Roots_to_Spectrum (Roots me, double nyquistFrequency,
 	
 	if (numberOfFrequencies < 2)
 	{
-		return Melder_errorp ("Roots_to_Spectrum: numberOfFrequencies must "
+		return Melder_errorp1 (L"Roots_to_Spectrum: numberOfFrequencies must "
 			"be greater or equal 2.");
 	}
 		
@@ -1577,7 +1418,7 @@ dcomplex Roots_getRoot (Roots me, long index)
 	}
 	else
 	{
-		(void) Melder_error ("Roots_getRoot: root index out of range.");
+		(void) Melder_error1 (L"Roots_getRoot: root index out of range.");
 		root.re = root.im = NUMundefined;
 	}
 	return root;
@@ -1591,7 +1432,7 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 
 	if (numberOfFrequencies < 2)
 	{
-		return Melder_errorp ("Polynomial_to_Spectrum: numberOfFrequencies "
+		return Melder_errorp1 (L"Polynomial_to_Spectrum: numberOfFrequencies "
 			"must be greater or equal 2.");
 	}
 	if ((thee = Spectrum_create (nyquistFrequency, numberOfFrequencies))
@@ -1768,101 +1609,6 @@ end:
 	return thee;
 }
 
-static int _FunctionTerms_xys_fit (I, int *freeze, double *x, double *y, 
-	double *sigma_y, long numberOfData, double **cvm, double tol)
-{
-	iam (FunctionTerms);
-	FunctionTerms frozen = NULL;
-	SVD svd = NULL;
-	long i, j, k, numberOfParameters = my numberOfCoefficients;
-	long numberOfFreeParameters = numberOfParameters;
-	double *terms = NULL, *y_residual = NULL, *p = NULL, average, sigma;
-	
-	if (((frozen = Data_copy (me)) == NULL) ||
-		((terms = NUMdvector (1, my numberOfCoefficients)) == NULL) ||
-		((p = NUMdvector (1, numberOfParameters)) == NULL) ||
-		((y_residual = NUMdvector (1, numberOfData)) == NULL)) goto end;
-
-	for (k=1, j=1; j <= my numberOfCoefficients; j++)
-	{
-		if (freeze && freeze[j])
-		{
-			numberOfFreeParameters--;
-		}
-		else
-		{
-			p[k] = my coefficients[j]; k++;
-			frozen -> coefficients[j] = 0;
-		}
-	}
-	
-	if (numberOfFreeParameters == 0) goto end;
-
-	if ((svd = SVD_create (numberOfData, numberOfFreeParameters))
-		== NULL) goto end;
-
-	if (! sigma_y) NUMdvector_simpleStats (y, numberOfData, &average, &sigma);
-	
-	for (i=1; i <= numberOfData; i++)
-	{
-		/*
-			Only 'residual variance' must be explained by the model
-			Evaluate only with the frozen parameters
-		*/
-		
-		double y_frozen, sy = sigma_y ? sigma_y[i] : sigma;
-		double **u = svd -> u;
-		
-		y_frozen = numberOfFreeParameters == numberOfParameters ? 0 :
-			FunctionTerms_evaluate (frozen, x[i]);
-				
-		y_residual[i] = (y[i] - y_frozen) / sy;
-		
-		/*
-			Data matrix
-		*/
-		
-		FunctionTerms_evaluateTerms (me, x[i], terms);
-		
-		for (k=0, j=1; j <= my numberOfCoefficients; j++)
-		{
-			if (! freeze || ! freeze[j])
-			{
-				k++; u[i][k] = terms[j] / sy;
-			}
-		}
-	}
-
-	/*
-		SVD and evaluation of the singular values
-	*/
-	
-	if (tol > 0) SVD_setTolerance (svd, tol);
-	
-	if (! SVD_compute (svd) ||
-		! SVD_solve (svd, y_residual, p)) goto end;
-
-	/*
-		Put fitted values at correct position
-	*/
-	
-	for (k=1, j=1; j <= my numberOfCoefficients; j++)
-	{
-		if (! freeze || ! freeze[j])
-		{
-			my coefficients[j] = p[k]; k++;
-		}
-	}
-	
-	if (cvm && ! svdcvm (svd -> v, numberOfFreeParameters, numberOfParameters,
-		freeze, svd -> d, cvm)) goto end;
-
-end:
-	forget (frozen); forget (svd);
-	NUMdvector_free (terms, 1);
-	NUMdvector_free (y_residual, 1);
-	return ! Melder_hasError ();
-}
 
 int FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol,
 	int ic, Covariance *c)
@@ -1878,7 +1624,7 @@ int FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol,
 	
 	if (numberOfData < 2)
 	{
-		return Melder_error ("FunctionTerms_and_RealTier_fit: not enough "
+		return Melder_error1 (L"FunctionTerms_and_RealTier_fit: not enough "
 			"data points.");
 	}
 	
@@ -1911,7 +1657,7 @@ int FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol,
 	
 	if (sigma == NUMundefined)
 	{
-		return Melder_error ("FunctionTerms_and_RealTier_fit: not enough "
+		return Melder_error1 (L"FunctionTerms_and_RealTier_fit: not enough "
 			"data points in fit interval.");
 	}
 
@@ -1978,32 +1724,6 @@ end:
 	return 1;
 }
 
-static double FunctionTerms_and_RealTier_getChiSquared (I, thou)
-{
-	iam (FunctionTerms); thouart (RealTier);
-	long i, numberOfData = thy points -> size;
-	double chisq = 0, sigma;
-	
-	if (numberOfData < 2) return NUMundefined;
-	sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
-	for (i=1; i <= numberOfData; i++)
-	{
-		RealPoint point = thy points -> item [i];
-		double x = point -> time, y = point -> value;
-		double tmp = (y - FunctionTerms_evaluate (me, x));
-		chisq += tmp * tmp;
-	}
-	return chisq / (sigma * sigma);
-}
-
-static long FunctionTerms_and_RealTier_getDegreesOfFreedom (I, thou,
-	long numberOfFrozen)
-{
-	iam (FunctionTerms);
-	thouart (RealTier);
-	
-	return thy points -> size - my numberOfCoefficients + numberOfFrozen;
-}
 
 Polynomial RealTier_to_Polynomial (I, long degree, double tol, int ic,
 	Covariance *cvm)
@@ -2182,6 +1902,7 @@ static long classSpline_getOrder (I)
 class_methods (Spline, FunctionTerms)
 	class_method_local (Spline, destroy)
 	class_method_local (Spline, equal)
+	class_method_local (Spline, canWriteAsEncoding)
 	class_method_local (Spline, copy)
 	class_method_local (Spline, readText)
 	class_method_local (Spline, readBinary)
@@ -2201,7 +1922,7 @@ static int Spline_initKnotsFromString (I, long degree, wchar_t *interiorKnots)
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{
-		return Melder_error ("Spline_init: degree must be <= 20.");
+		return Melder_error1 (L"Spline_init: degree must be <= 20.");
 	}
 		 
 	if ((numbers = NUMstring_to_numbers (interiorKnots, &numberOfInteriorKnots))
@@ -2212,7 +1933,7 @@ static int Spline_initKnotsFromString (I, long degree, wchar_t *interiorKnots)
 		NUMsort_d (numberOfInteriorKnots, numbers);
 		if (numbers[1] <= my xmin || numbers[numberOfInteriorKnots] > my xmax)
 		{
-			(void) Melder_error ("Spline_initKnotsfromString: knots must be "						"inside domain.");
+			(void) Melder_error1 (L"Spline_initKnotsfromString: knots must be inside domain.");
 		}
 	}
 	
@@ -2222,8 +1943,8 @@ static int Spline_initKnotsFromString (I, long degree, wchar_t *interiorKnots)
 	
 	if (my numberOfCoefficients != n)
 	{
-		(void) Melder_error ("MSpline_createFromStrings: numberOfCoefficients"
-			" must equal %d", n);
+		(void) Melder_error2 (L"MSpline_createFromStrings: numberOfCoefficients"
+			" must equal ", Melder_integer (n));
 		goto end;
 	}
 	
@@ -2249,7 +1970,7 @@ int Spline_init (I, double xmin, double xmax, long degree,
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{
-		return Melder_error ("Spline_init: degree must be <= 20.");
+		return Melder_error1 (L"Spline_init: degree must be <= 20.");
 	}	 
 	
 	if (! FunctionTerms_init (me, xmin, xmax, numberOfCoefficients)) return 0;
@@ -2417,8 +2138,7 @@ MSpline MSpline_createFromStrings (double xmin, double xmax, long degree,
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{
-		return Melder_errorp ("MSpline_createFromStrings: degree must be "
-			"<= 20.");
+		return Melder_errorp1 (L"MSpline_createFromStrings: degree must be <= 20.");
 	}	 
 		
 	if ((me == NULL) ||
@@ -2483,8 +2203,7 @@ ISpline ISpline_createFromStrings (double xmin, double xmax, long degree,
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{
-		return Melder_errorp ("ISpline_createFromStrings: degree must be "
-			"<= 20.");	 
+		return Melder_errorp1 (L"ISpline_createFromStrings: degree must be <= 20.");	 
 	}
 	if ((me == NULL) ||
 		! FunctionTerms_initFromString (me, xmin, xmax, coef, 1) ||

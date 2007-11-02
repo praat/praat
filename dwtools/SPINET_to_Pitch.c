@@ -46,8 +46,8 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 	double maxPower = 0, *sumspec = NULL, *power = NULL;
 	double *y = NULL, *y2 = NULL, *pitch = NULL, *fl2 = NULL;
 	
-	if (nFrequencyPoints < 2) return Melder_errorp ("SPINET_to_Pitch: frequency range too small.");
-	if (ceiling <= fmin) return Melder_errorp ("SPINET_to_Pitch: ceiling is smaller than centre "
+	if (nFrequencyPoints < 2) return Melder_errorp1 (L"SPINET_to_Pitch: frequency range too small.");
+	if (ceiling <= fmin) return Melder_errorp1 (L"SPINET_to_Pitch: ceiling is smaller than centre "
 		"frequency of lowest filter.");
 
 	if (! (thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1,
@@ -150,7 +150,7 @@ cleanup:
 	NUMdvector_free (fl2, 1);NUMdvector_free (power, 1);
 	if (! Melder_hasError()) return thee;
 	forget (thee);
-	return Melder_errorp ("SPINET_to_Pitch: not performed.");
+	return Melder_errorp1 (L"SPINET_to_Pitch: not performed.");
 }
 
 /* End of file SPINET_to_Pitch.c */

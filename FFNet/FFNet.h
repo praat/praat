@@ -26,7 +26,7 @@
  djmw 20040420 FFNet_create and Pattern&Categories: To FFNet changes.
  djmw 20040422 FFNet_extractWeights added.
  djmw 20040505 FFNet_getNodeNumberFromUnitNumber added.
- djmw 20070620 Latest modification.
+ djmw 20071024 Latest modification.
 */
 
 #ifndef _Data_h_
@@ -131,7 +131,7 @@ int FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInL
 FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, 
 	long numberOfOutputs, int outputsAreLinear	);
 	
-void FFNet_createNameFromTopology (FFNet me, wchar_t *name);	
+void FFNet_createNameFromTopology (FFNet me, MelderString *name);	
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>, 
 	<inputs>-<hidden1>-<hidden2>-<outputs> for 1, 2 or 3 layer networks.
 */

@@ -29,6 +29,7 @@
  djmw 20050630 Better name of Procrustes object after Configurations_to_Procrustes.
  djmw 20061218 Introduction of Melder_information<12...9>
  djmw 20070902 Melder_new<1...>
+ djmw 20071011 REQUIRE requires L"".
 */
 
 #include <math.h>
@@ -44,10 +45,7 @@
 void praat_TableOfReal_init (void *klas);
 
 static char *QUERY_BUTTON   = "Query -                ";
-static char *CONVERT_BUTTON   = "Convert -              ";
 static char *DRAW_BUTTON    = "Draw -                 ";
-static char *MODIFY_BUTTON  = "Modify -               ";
-static char *EXTRACT_BUTTON = "Extract - ";
 static char *ANALYSE_BUTTON = "Analyse -              ";
 static char *CONFIGURATION_BUTTON = "To Configuration -     ";
 extern void praat_TableOfReal_init2  (void *klas);
@@ -66,9 +64,9 @@ static int TabelOfReal_testSorting (I, long rowtoindex)
 	long *index = NUMlvector (1, nc);
 	
 	if (index == NULL) return 0;
-	if (nr < 6) return Melder_error ("TabelOfReal_sort2: we want at least 6 rows!!");
+	if (nr < 6) return Melder_error1 (L"TabelOfReal_sort2: we want at least 6 rows!!");
 	if (rowtoindex < 1 || rowtoindex > 2) 
-		return Melder_error	("TabelOfReal_sort2: rowtoindex <= 2");
+		return Melder_error1 (L"TabelOfReal_sort2: rowtoindex <= 2");
 
 	/* Copy 1->3 and sort 3 inplace */	
 	NUMdvector_copyElements (my data[1], my data[3], 1, nc);
@@ -102,7 +100,7 @@ FORM (Dissimilarity_createLetterRExample, "Create letter R example",
 	OK
 DO
 	(void) praat_new1 (Dissimilarity_createLetterRExample 
-		(GET_REAL("Noise range")), L"letterR");
+		(GET_REAL("Noise range")), NULL);
 END
 
 FORM (INDSCAL_createCarrollWishExample, 
@@ -112,7 +110,7 @@ FORM (INDSCAL_createCarrollWishExample,
 	OK
 DO
 	(void) praat_new1 (INDSCAL_createCarrollWishExample 
-		(GET_REAL("Noise standard deviation")), L"carrollWish");
+		(GET_REAL("Noise standard deviation")), NULL);
 END
 
 FORM (Configuration_create, "Create Configuration", "Create Configuration...")
@@ -145,9 +143,9 @@ DO
 	double xmin = GET_REAL ("left Horizontal range"), xmax = GET_REAL ("right Horizontal range");
 	double ymin = GET_REAL ("left Vertical range"), ymax = GET_REAL ("right Vertical range");
 	REQUIRE (xmin < xmax && ymin < ymax, 
-		L"required: xmin < xmax and ymin < ymax")
+		L"Required: xmin < xmax and ymin < ymax.")
 	praat_picture_open ();
-	drawSplines (GRAPHICS,xmin, xmax, ymin, ymax, GET_INTEGER ("Spline type"),
+	drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, GET_INTEGER ("Spline type"),
 		GET_INTEGER ("Order"), GET_STRING ("Interior knots"), 
 		GET_INTEGER ("Garnish"));
 	praat_picture_close ();

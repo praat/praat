@@ -1,6 +1,6 @@
 /* AffineTransform.c
  * 
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20041027 Added AffineTransform_extractMatrix
  djmw 20050726 Added AffineTransform_extractTranslationVector
  djmw 20061021 printf expects %ld for 'long int'
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  */
 
 #include "AffineTransform.h"
@@ -83,6 +84,8 @@ static Any classAffineTransform_invert (I)
 #include "AffineTransform_def.h"
 #include "oo_EQUAL.h"
 #include "AffineTransform_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "AffineTransform_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "AffineTransform_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -98,6 +101,7 @@ class_methods (AffineTransform, Data)
 	class_method_local (AffineTransform, destroy)
 	class_method_local (AffineTransform, copy)
 	class_method_local (AffineTransform, equal)
+	class_method_local (AffineTransform, canWriteAsEncoding)
 	class_method_local (AffineTransform, writeText)
 	class_method_local (AffineTransform, writeBinary)
 	class_method_local (AffineTransform, readText)

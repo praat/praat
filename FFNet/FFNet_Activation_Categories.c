@@ -1,6 +1,6 @@
 /* FFNet_Activation_Categories.c
  *
- * Copyright (C) 1997-2002 David Weenink
+ * Copyright (C) 1997-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 19960322
  djmw 20020712 GPL header
  djmw 20040416 Better error messages
+ djmw 20071014 Melder_error<n>
 */
 
 #include "FFNet_Activation_Categories.h"
@@ -55,13 +56,13 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 	
 	if (! my outputCategories)
 	{
-		(void) Melder_error ("FFNet & Activation: To Categories\n");
-		return Melder_errorp ("The neural net has no Categories (has the FFNet been trained yet?).");
+		(void) Melder_error1 (L"FFNet & Activation: To Categories\n");
+		return Melder_errorp1 (L"The neural net has no Categories (has the FFNet been trained yet?).");
 	}
 	if (my nOutputs != activation->nx)
 	{
-		(void) Melder_error ("FFNet & Activation: To Categories\n");
-		return Melder_errorp ("The number of columns in the Activation must equal the number of outputs of FFNet.");
+		(void) Melder_error1 (L"FFNet & Activation: To Categories\n");
+		return Melder_errorp1 (L"The number of columns in the Activation must equal the number of outputs of FFNet.");
 	}
 	thee = Categories_create ();
 	if (thee == NULL) return NULL;
@@ -73,7 +74,8 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 		if (item == NULL || ! Collection_addItem (thee, item)) 
 		{
 			forget (thee);
-			return Melder_errorp ("FFNet & Activation: To Categories\n\nError creating label %ld.", i);
+			return Melder_errorp3 (L"FFNet & Activation: To Categories\n\nError creating label ",
+				Melder_integer (i), L".");
 		}
 	}
 	return thee;
@@ -86,7 +88,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 	long i, nl, cSize = thy size, hasCategories = 1;
 	
 	uniq = Categories_selectUniqueItems (thee, 1);
-	if (uniq == NULL)  Melder_error ("There is not enough memory to create a Categories."); 
+	if (uniq == NULL)  Melder_error1 (L"There is not enough memory to create a Categories."); 
 	
 	if (my outputCategories == NULL)
 	{
@@ -97,14 +99,14 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 		}
 		else
 		{
-			(void) Melder_error ("");
+			(void) Melder_error1 (L"");
 			goto end;
 		}
 	}
 	else if (! ( (nl = OrderedOfString_isSubsetOf (uniq, my outputCategories, NULL)) &&
 		nl == uniq -> size && my nOutputs >= uniq -> size))
 	{
-		 (void) Melder_error ("The Categories do not match the categories of the FFNet.");
+		 (void) Melder_error1 (L"The Categories do not match the categories of the FFNet.");
 		goto end;
 	}
 	
@@ -115,8 +117,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 		long pos =  OrderedOfString_indexOfItem_c (my outputCategories, OrderedOfString_itemAtIndex_c (thee, i));
 		if (pos < 1)
 		{
-			 (void) Melder_error ("The FFNet doesn't know the category \"%ls\" from Categories.", 
-			 	OrderedOfString_itemAtIndex_c (thee, i));
+			 (void) Melder_error3 (L"The FFNet doesn't know the category ", OrderedOfString_itemAtIndex_c (thee, i), L" from Categories.");
 				goto end;
 		}
 		his z[i][pos] = 1.0;

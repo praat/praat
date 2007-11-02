@@ -120,6 +120,10 @@
 #define ENUMW(label,type,def)	UiForm_addEnum (cmd -> dialog, label, & enum_##type, def);
 #define RADIOBUTTONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTONW (labelProc) }
 #define OPTIONS_ENUMW(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTIONW (labelProc) }
+#define OPTIONMENU_ENUM(label,enum,def) \
+	OPTIONMENUW (label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTIONW (enum##_getText (ienum))
 #define LISTW(label,n,str,def)	UiForm_addList (cmd -> dialog, label, n, str, def);
 #define OK UiForm_finish (cmd -> dialog); } if (sender == NULL) {
 #define SET_REAL(name,value)	UiForm_setReal (cmd -> dialog, Melder_peekUtf8ToWcs (name), value);
@@ -128,6 +132,7 @@
 #define SET_REALW(name,value)	UiForm_setReal (cmd -> dialog, name, value);
 #define SET_INTEGERW(name,value)	UiForm_setInteger (cmd -> dialog, name, value);
 #define SET_STRINGW(name,value)	UiForm_setString (cmd -> dialog, name, value);
+#define SET_ENUM(name,enum,value)  SET_STRINGW (name, enum##_getText (value))
 #define DO  UiForm_do (cmd -> dialog, 0); } else if (sender != cmd -> dialog) { \
 	if (! UiForm_parseStringE (cmd, (wchar_t *) sender)) return 0; } else { {
 #define END  } } return 1; }
@@ -176,6 +181,7 @@
 #define GET_REALW(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGERW(name)  UiForm_getInteger (cmd -> dialog, name)
 #define GET_STRINGW(name)  UiForm_getString (cmd -> dialog, name)
+#define GET_ENUM(enum,name)  enum##_getValue (GET_STRINGW (name))
 #define GET_FILE  UiForm_getFile (cmd -> dialog)
 
 /* End of file EditorM.h */

@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -200,7 +200,9 @@ double gsl_sf_pochrel(const double a, const double x);
  *
  * Q(a,x) = 1/Gamma(a) Integral[ t^(a-1) e^(-t), {t,x,Infinity} ]
  *
- * a > 0, x >= 0
+ * a >= 0, x >= 0
+ *   Q(a,0) := 1
+ *   Q(0,x) := 0, x != 0
  *
  * exceptions: GSL_EDOM
  */
@@ -220,6 +222,19 @@ int gsl_sf_gamma_inc_P_e(const double a, const double x, gsl_sf_result * result)
 double gsl_sf_gamma_inc_P(const double a, const double x);
 
 
+/* Non-normalized Incomplete Gamma Function
+ *
+ * Gamma(a,x) := Integral[ t^(a-1) e^(-t), {t,x,Infinity} ]
+ *
+ * x >= 0.0
+ *   Gamma(a, 0) := Gamma(a)
+ *
+ * exceptions: GSL_EDOM
+ */
+int gsl_sf_gamma_inc_e(const double a, const double x, gsl_sf_result * result);
+double gsl_sf_gamma_inc(const double a, const double x);
+
+
 /* Logarithm of Beta Function
  * Log[B(a,b)]
  *
@@ -228,6 +243,8 @@ double gsl_sf_gamma_inc_P(const double a, const double x);
  */
 int gsl_sf_lnbeta_e(const double a, const double b, gsl_sf_result * result);
 double gsl_sf_lnbeta(const double a, const double b);
+
+int gsl_sf_lnbeta_sgn_e(const double x, const double y, gsl_sf_result * result, double * sgn);
 
 
 /* Beta Function
@@ -255,6 +272,11 @@ double gsl_sf_beta_inc(const double a, const double b, const double x);
  */
 #define GSL_SF_GAMMA_XMAX  171.0
 
+/* The maximum n such that gsl_sf_fact(n) does not give an overflow. */
+#define GSL_SF_FACT_NMAX 170
+
+/* The maximum n such that gsl_sf_doublefact(n) does not give an overflow. */
+#define GSL_SF_DOUBLEFACT_NMAX 297
 
 
 #endif /* __GSL_SF_GAMMA_H__ */

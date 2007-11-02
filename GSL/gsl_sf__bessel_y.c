@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -233,10 +233,14 @@ int gsl_sf_bessel_yl_array(const int lmax, const double x, double * result_array
 {
   /* CHECK_POINTER(result_array) */
 
-  if(lmax < 1 || x <= 0.0) {
+  if(lmax < 0 || x <= 0.0) {
     GSL_ERROR ("error", GSL_EDOM);
-  }
-  else {
+  } else if (lmax == 0) {
+    gsl_sf_result result;
+    int stat = gsl_sf_bessel_y0_e(x, &result);
+    result_array[0] = result.val;
+    return stat;
+  } else {
     gsl_sf_result r_yell;
     gsl_sf_result r_yellm1;
     int stat_1 = gsl_sf_bessel_y1_e(x, &r_yell);

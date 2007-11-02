@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -36,24 +36,24 @@
 
 /* chebyshev expansions
 
- series for bi0        on the interval  0.	    to  9.00000d+00
-					with weighted error   2.46e-18
-					 log weighted error  17.61
-			       significant figures required  17.90
-				    decimal places required  18.15
+ series for bi0        on the interval  0.          to  9.00000d+00
+                                        with weighted error   2.46e-18
+                                         log weighted error  17.61
+                               significant figures required  17.90
+                                    decimal places required  18.15
 
  series for ai0        on the interval  1.25000d-01 to  3.33333d-01
-					with weighted error   7.87e-17
-					 log weighted error  16.10
-			       significant figures required  14.69
-				    decimal places required  16.76
+                                        with weighted error   7.87e-17
+                                         log weighted error  16.10
+                               significant figures required  14.69
+                                    decimal places required  16.76
 
 
- series for ai02       on the interval  0.	    to  1.25000d-01
-					with weighted error   3.79e-17
-					 log weighted error  16.42
-			       significant figures required  14.86
-				    decimal places required  17.09
+ series for ai02       on the interval  0.          to  1.25000d-01
+                                        with weighted error   3.79e-17
+                                         log weighted error  16.42
+                               significant figures required  14.86
+                                    decimal places required  17.09
 */
 
 static double bi0_data[12] = {

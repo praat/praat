@@ -124,6 +124,18 @@
 		23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23C47C9A0C933F680024C703 /* TimeSoundEditor.c */; };
 		23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */; };
 		23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */; };
+		23D6C3F40CD5296800E90767 /* gsl_complex__math.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C3F30CD5296800E90767 /* gsl_complex__math.c */; };
+		23D6C3F70CD529A300E90767 /* gsl_complex_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D6C3F60CD529A300E90767 /* gsl_complex_math.h */; };
+		23D6C3FF0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C3FE0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c */; };
+		23D6C4020CD52B4C00E90767 /* gsl_sf__hyperg_1F1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4010CD52B4C00E90767 /* gsl_sf__hyperg_1F1.c */; };
+		23D6C4050CD52B7900E90767 /* gsl_sf__hyperg.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4040CD52B7900E90767 /* gsl_sf__hyperg.c */; };
+		23D6C4080CD52B9000E90767 /* gsl_sf__hyperg.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D6C4070CD52B9000E90767 /* gsl_sf__hyperg.h */; };
+		23D6C40A0CD52B9900E90767 /* gsl_sf__hyperg_U.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4090CD52B9900E90767 /* gsl_sf__hyperg_U.c */; };
+		23D6C40D0CD52BC700E90767 /* gsl_sf__bessel_Inu.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C40C0CD52BC700E90767 /* gsl_sf__bessel_Inu.c */; };
+		23D6C4100CD52BE200E90767 /* gsl_sf__bessel_J1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C40F0CD52BE200E90767 /* gsl_sf__bessel_J1.c */; };
+		23D6C4130CD52BF500E90767 /* gsl_sf__bessel_Knu.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4120CD52BF500E90767 /* gsl_sf__bessel_Knu.c */; };
+		23D6C4160CD52C1000E90767 /* gsl_sf__laguerre.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4150CD52C1000E90767 /* gsl_sf__laguerre.c */; };
+		23D6C4190CD52C4300E90767 /* gsl_sf__expint.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C4180CD52C4300E90767 /* gsl_sf__expint.c */; };
 		23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
 		23D87E860B3C929700AD716D /* Eigen_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D87E830B3C929700AD716D /* Eigen_def.h */; };
 		23D87E870B3C929700AD716D /* Eigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D87E840B3C929700AD716D /* Eigen.c */; };
@@ -947,6 +959,18 @@
 		23C47C9A0C933F680024C703 /* TimeSoundEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundEditor.c; path = fon/TimeSoundEditor.c; sourceTree = "<group>"; };
 		23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundAnalysisEditor.h; path = fon/TimeSoundAnalysisEditor.h; sourceTree = "<group>"; };
 		23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundAnalysisEditor.c; path = fon/TimeSoundAnalysisEditor.c; sourceTree = "<group>"; };
+		23D6C3F30CD5296800E90767 /* gsl_complex__math.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_complex__math.c; path = GSL/gsl_complex__math.c; sourceTree = "<group>"; };
+		23D6C3F60CD529A300E90767 /* gsl_complex_math.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = gsl_complex_math.h; path = GSL/gsl_complex_math.h; sourceTree = "<group>"; };
+		23D6C3FE0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__hyperg_2F1.c; path = GSL/gsl_sf__hyperg_2F1.c; sourceTree = "<group>"; };
+		23D6C4010CD52B4C00E90767 /* gsl_sf__hyperg_1F1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__hyperg_1F1.c; path = GSL/gsl_sf__hyperg_1F1.c; sourceTree = "<group>"; };
+		23D6C4040CD52B7900E90767 /* gsl_sf__hyperg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__hyperg.c; path = GSL/gsl_sf__hyperg.c; sourceTree = "<group>"; };
+		23D6C4070CD52B9000E90767 /* gsl_sf__hyperg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = gsl_sf__hyperg.h; path = GSL/gsl_sf__hyperg.h; sourceTree = "<group>"; };
+		23D6C4090CD52B9900E90767 /* gsl_sf__hyperg_U.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__hyperg_U.c; path = GSL/gsl_sf__hyperg_U.c; sourceTree = "<group>"; };
+		23D6C40C0CD52BC700E90767 /* gsl_sf__bessel_Inu.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Inu.c; path = GSL/gsl_sf__bessel_Inu.c; sourceTree = "<group>"; };
+		23D6C40F0CD52BE200E90767 /* gsl_sf__bessel_J1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_J1.c; path = GSL/gsl_sf__bessel_J1.c; sourceTree = "<group>"; };
+		23D6C4120CD52BF500E90767 /* gsl_sf__bessel_Knu.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__bessel_Knu.c; path = GSL/gsl_sf__bessel_Knu.c; sourceTree = "<group>"; };
+		23D6C4150CD52C1000E90767 /* gsl_sf__laguerre.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__laguerre.c; path = GSL/gsl_sf__laguerre.c; sourceTree = "<group>"; };
+		23D6C4180CD52C4300E90767 /* gsl_sf__expint.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__expint.c; path = GSL/gsl_sf__expint.c; sourceTree = "<group>"; };
 		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
 		23D87E840B3C929700AD716D /* Eigen.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwsys/Eigen.c; sourceTree = "<group>"; };
 		23D87E850B3C929700AD716D /* Eigen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen.h; path = dwsys/Eigen.h; sourceTree = "<group>"; };
@@ -2572,6 +2596,8 @@
 			children = (
 				23E5CF2A09A22A54004E41D5 /* gsl_complex.h */,
 				23E5CF0409A22A51004E41D5 /* gsl__config.h */,
+				23D6C3F60CD529A300E90767 /* gsl_complex_math.h */,
+				23D6C3F30CD5296800E90767 /* gsl_complex__math.c */,
 				23E5CEF209A22A4E004E41D5 /* gsl_errno.h */,
 				23E5CB6C09A22902004E41D5 /* gsl_err__error.c */,
 				23E5CB6D09A22902004E41D5 /* gsl_err__stream.c */,
@@ -2597,9 +2623,12 @@
 				233B13EE0BB2AC7D004440C3 /* gsl_sf__bessel_I0.c */,
 				233B13F10BB2AC91004440C3 /* gsl_sf__bessel_I1.c */,
 				233B13EB0BB2AC5B004440C3 /* gsl_sf__bessel_In.c */,
+				23D6C40C0CD52BC700E90767 /* gsl_sf__bessel_Inu.c */,
+				23D6C40F0CD52BE200E90767 /* gsl_sf__bessel_J1.c */,
 				233B14050BB2ADBB004440C3 /* gsl_sf__bessel_K0.c */,
 				233B14080BB2ADC9004440C3 /* gsl_sf__bessel_K1.c */,
 				233B14020BB2ADA6004440C3 /* gsl_sf__bessel_Kn.c */,
+				23D6C4120CD52BF500E90767 /* gsl_sf__bessel_Knu.c */,
 				233B13FF0BB2AD8E004440C3 /* gsl_sf__bessel_temme.c */,
 				23E5CB8B09A22903004E41D5 /* gsl_sf__beta.c */,
 				23E5CB8C09A22903004E41D5 /* gsl_sf__beta_inc.c */,
@@ -2614,10 +2643,17 @@
 				23E5CF0A09A22A52004E41D5 /* gsl_sf__error.h */,
 				23E5CF1609A22A53004E41D5 /* gsl_sf_exp.h */,
 				23E5CB8F09A22903004E41D5 /* gsl_sf__exp.c */,
+				23D6C4180CD52C4300E90767 /* gsl_sf__expint.c */,
 				23E5CF0E09A22A52004E41D5 /* gsl_sf__eval.h */,
 				23E5CECC09A22A47004E41D5 /* gsl_sf_gamma.h */,
 				23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */,
 				23E5CB9109A22903004E41D5 /* gsl_sf__gamma_inc.c */,
+				23D6C4070CD52B9000E90767 /* gsl_sf__hyperg.h */,
+				23D6C4040CD52B7900E90767 /* gsl_sf__hyperg.c */,
+				23D6C4010CD52B4C00E90767 /* gsl_sf__hyperg_1F1.c */,
+				23D6C3FE0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c */,
+				23D6C4090CD52B9900E90767 /* gsl_sf__hyperg_U.c */,
+				23D6C4150CD52C1000E90767 /* gsl_sf__laguerre.c */,
 				23E5CF1C09A22A54004E41D5 /* gsl_sf_log.h */,
 				23E5CB9209A22903004E41D5 /* gsl_sf__log.c */,
 				23E5CB9309A22903004E41D5 /* gsl_sf__poch.c */,
@@ -3127,6 +3163,8 @@
 				233BAB8B0C3AEFC80026BA17 /* oo_CAN_WRITE_AS_ENCODING.h in Headers */,
 				23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */,
 				23C47C9B0C933F680024C703 /* TimeSoundEditor.h in Headers */,
+				23D6C3F70CD529A300E90767 /* gsl_complex_math.h in Headers */,
+				23D6C4080CD52B9000E90767 /* gsl_sf__hyperg.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3594,6 +3632,16 @@
 				23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */,
 				23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */,
 				23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */,
+				23D6C3F40CD5296800E90767 /* gsl_complex__math.c in Sources */,
+				23D6C3FF0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c in Sources */,
+				23D6C4020CD52B4C00E90767 /* gsl_sf__hyperg_1F1.c in Sources */,
+				23D6C4050CD52B7900E90767 /* gsl_sf__hyperg.c in Sources */,
+				23D6C40A0CD52B9900E90767 /* gsl_sf__hyperg_U.c in Sources */,
+				23D6C40D0CD52BC700E90767 /* gsl_sf__bessel_Inu.c in Sources */,
+				23D6C4100CD52BE200E90767 /* gsl_sf__bessel_J1.c in Sources */,
+				23D6C4130CD52BF500E90767 /* gsl_sf__bessel_Knu.c in Sources */,
+				23D6C4160CD52C1000E90767 /* gsl_sf__laguerre.c in Sources */,
+				23D6C4190CD52C4300E90767 /* gsl_sf__expint.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

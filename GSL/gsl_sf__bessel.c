@@ -1,10 +1,10 @@
 /* specfunc/bessel.c
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 1996,1997,1998,1999,2000,2001,2002,2003 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -186,15 +186,22 @@ gsl_sf_bessel_IJ_taylor_e(const double nu, const double x,
 
 
 /* x >> nu*nu+1
- * error ~ O( ((nu*nu+1)/x)^3 )
+ * error ~ O( ((nu*nu+1)/x)^4 )
  *
  * empirical error analysis:
- *   choose  GSL_ROOT3_MACH_EPS * x > (nu*nu + 1)
+ *   choose  GSL_ROOT4_MACH_EPS * x > (nu*nu + 1)
  *
  * This is not especially useful. When the argument gets
  * large enough for this to apply, the cos() and sin()
  * start loosing digits. However, this seems inevitable
  * for this particular method.
+ *
+ * Wed Jun 25 14:39:38 MDT 2003 [GJ]
+ * This function was inconsistent since the Q term did not
+ * go to relative order eps^2. That's why the error estimate
+ * originally given was screwy (it didn't make sense that the
+ * "empirical" error was coming out O(eps^3)).
+ * With Q to proper order, the error is O(eps^4).
  */
 int
 gsl_sf_bessel_Jnu_asympx_e(const double nu, const double x, gsl_sf_result * result)
@@ -202,16 +209,17 @@ gsl_sf_bessel_Jnu_asympx_e(const double nu, const double x, gsl_sf_result * resu
   double mu   = 4.0*nu*nu;
   double mum1 = mu-1.0;
   double mum9 = mu-9.0;
+  double mum25 = mu-25.0;
   double chi = x - (0.5*nu + 0.25)*M_PI;
   double P   = 1.0 - mum1*mum9/(128.0*x*x);
-  double Q   = mum1/(8.0*x);
+  double Q   = mum1/(8.0*x) * (1.0 - mum9*mum25/(384.0*x*x));
   double pre = sqrt(2.0/(M_PI*x));
   double c   = cos(chi);
   double s   = sin(chi);
   double r   = mu/x;
   result->val  = pre * (c*P - s*Q);
-  result->err  = pre * GSL_DBL_EPSILON * (fabs(c*P) + fabs(s*Q));
-  result->err += pre * fabs(0.1*r*r*r);
+  result->err  = pre * GSL_DBL_EPSILON * (1.0 + fabs(x)) * (fabs(c*P) + fabs(s*Q));
+  result->err += pre * fabs(0.1*r*r*r*r);
   return GSL_SUCCESS;
 }
 
@@ -314,7 +322,7 @@ gsl_sf_bessel_Inu_scaled_asymp_unif_e(const double nu, const double x, gsl_sf_re
 {
   int i;
   double z = x/nu;
-  double root_term = sqrt(1.0 + z*z);
+  double root_term = hypot(1.0,z);
   double pre = 1.0/sqrt(2.0*M_PI*nu * root_term);
   double eta = root_term + log(z/(1.0+root_term));
   double ex_arg = ( z < 1.0/GSL_ROOT3_DBL_EPSILON ? nu*(-z + eta) : -0.5*nu/z*(1.0 - 1.0/(12.0*z*z)) );
@@ -352,7 +360,7 @@ gsl_sf_bessel_Knu_scaled_asymp_unif_e(const double nu, const double x, gsl_sf_re
 {
   int i;
   double z = x/nu;
-  double root_term = sqrt(1.0 + z*z);
+  double root_term = hypot(1.0,z);
   double pre = sqrt(M_PI/(2.0*nu*root_term));
   double eta = root_term + log(z/(1.0+root_term));
   double ex_arg = ( z < 1.0/GSL_ROOT3_DBL_EPSILON ? nu*(z - eta) : 0.5*nu/z*(1.0 + 1.0/(12.0*z*z)) );
@@ -827,7 +835,7 @@ double besselJ_meissel(double nu, double x)
       int k;
       double xo2 = 0.5 * x;
       double gamfactor = pow(nu,nu) * exp(-nu) * sqrt(nu * 2. * M_PI)
-	* (1. + 1./(12.*nu) + 1./(288.*nu*nu));
+        * (1. + 1./(12.*nu) + 1./(288.*nu*nu));
       double prefactor = pow(xo2, nu) / gamfactor;
       double C[5];
 
@@ -839,7 +847,7 @@ double besselJ_meissel(double nu, double x)
       
       result = 0.;
       for(k=0; k<5; k++)
-	result += C[k] * pow(xo2, 2.*k);
+        result += C[k] * pow(xo2, 2.*k);
 
       result *= prefactor;
     }

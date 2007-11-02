@@ -71,6 +71,7 @@
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/09/19 info
  * pb 2007/09/21 split Query menu
+ * pb 2007/11/01 direct intensity, formants, and pulses drawing
  */
 
 #include <time.h>
@@ -85,6 +86,25 @@
 #include "Pitch_to_PointProcess.h"
 #include "VoiceAnalysis.h"
 #include "praat_script.h"
+
+/* Enumerated types. */
+
+wchar_t *kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (int value) {
+	return
+		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE ? L"curve" :
+		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE ? L"speckles" :
+		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC ? L"automatic" :
+	kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT);
+}
+
+int kTimeSoundAnalysisEditor_pitch_drawingMethod_getValue (wchar_t *text) {
+	return
+		wcsequ (text, L"curve") || wcsequ (text, L"Curve") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE :
+		wcsequ (text, L"speckle") || wcsequ (text, L"Speckle") ||
+		wcsequ (text, L"speckles") || wcsequ (text, L"Speckles") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE :
+		wcsequ (text, L"automatic") || wcsequ (text, L"Automatic") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC :
+	kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT;
+}
 
 static const wchar_t * theMessage_Cannot_compute_spectrogram = L"The spectrogram is not defined at the edge of the sound.";
 static const wchar_t * theMessage_Cannot_compute_pitch = L"The pitch contour is not defined at the edge of the sound.";
@@ -150,7 +170,8 @@ void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor, 75.0);
 	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling, 500.0);
 	Preferences_addInt (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, Pitch_UNIT_HERTZ);
-	Preferences_addInt (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod, FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod,
+		kTimeSoundAnalysisEditor_pitch_drawingMethod, AUTOMATIC);
 	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom, 0.0);   // auto
 	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo, 0.0);   // auto
 	Preferences_addInt (L"FunctionEditor.pitch.method", & preferences.pitch.method, 1);   // autocorrelation
@@ -222,6 +243,7 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Pitch floor: ", Melder_double (my pitch.floor), L" Hertz");
 	MelderInfo_writeLine3 (L"Pitch ceiling: ", Melder_double (my pitch.ceiling), L" Hertz");
 	MelderInfo_writeLine2 (L"Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine2 (L"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (my pitch.drawingMethod));
 	/* Advanced pitch settings: */
 	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (my pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (my pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
@@ -238,6 +260,12 @@ static void info (I) {
 	/* Intensity settings: */
 	MelderInfo_writeLine3 (L"Intensity view from: ", Melder_double (my intensity.viewFrom), L" dB");
 	MelderInfo_writeLine3 (L"Intensity view to: ", Melder_double (my intensity.viewTo), L" dB");
+	MelderInfo_writeLine2 (L"Intensity averaging method: ",
+		my intensity.averagingMethod == Intensity_averaging_MEDIAN ? L"median" :
+		my intensity.averagingMethod == Intensity_averaging_ENERGY ? L"mean energy" :
+		my intensity.averagingMethod == Intensity_averaging_SONES ? L"mean sones" :
+		my intensity.averagingMethod == Intensity_averaging_DB ? L"mean dB" : L"unknown");
+	MelderInfo_writeLine2 (L"Intensity subtract mean pressure: ", Melder_boolean (my intensity.subtractMeanPressure));
 	/* Formant flag: */
 	MelderInfo_writeLine2 (L"Formant show: ", Melder_boolean (my formant.show));
 	/* Formant settings: */
@@ -251,6 +279,8 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), L" Hertz");
 	/* Pulses flag: */
 	MelderInfo_writeLine2 (L"Pulses show: ", Melder_boolean (my pulses.show));
+	MelderInfo_writeLine2 (L"Pulses maximum period factor: ", Melder_double (my pulses.maximumPeriodFactor));
+	MelderInfo_writeLine2 (L"Pulses maximum amplitude factor: ", Melder_double (my pulses.maximumAmplitudeFactor));
 }
 
 static void destroy_analysis (I) {
@@ -735,12 +765,12 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", my picture.garnish);
+		SET_INTEGER ("Garnish", our preferences.picture.spectrogram.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		my picture.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.spectrogram.garnish = GET_INTEGER ("Garnish");
 		if (! my spectrogram.show)
 			return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my spectrogram.data) {
@@ -750,7 +780,7 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 		Editor_openPraatPicture (me);
 		Spectrogram_paint (my spectrogram.data, my pictureGraphics, my startWindow, my endWindow, my spectrogram.viewFrom, my spectrogram.viewTo,
 			my spectrogram.maximum, my spectrogram.autoscaling, my spectrogram.dynamicRange, my spectrogram.preemphasis,
-			my spectrogram.dynamicCompression, my picture.garnish);
+			my spectrogram.dynamicCompression, our preferences.picture.spectrogram.garnish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -775,17 +805,14 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 		RADIO ("Optimize for", 1)
 			RADIOBUTTON ("Intonation (AC method)")
 			RADIOBUTTON ("Voice analysis (CC method)")
-		OPTIONMENU ("Drawing method", FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC)
-			OPTION ("curve")
-			OPTION ("speckles")
-			OPTION ("automatic")
+		OPTIONMENU_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT)
 		LABEL ("note1", "")
 		LABEL ("note2", "")
 	EDITOR_OK
 		SET_REAL ("left Pitch range", my pitch.floor)
 		SET_REAL ("right Pitch range", my pitch.ceiling)
 		SET_INTEGER ("Unit", my pitch.unit + 1 - Pitch_UNIT_min)
-		SET_INTEGER ("Drawing method", my pitch.drawingMethod)
+		SET_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my pitch.drawingMethod)
 		SET_INTEGER ("Optimize for", my pitch.method)
 		if (my pitch.viewFrom != 0.0 || my pitch.viewTo != 0.0 ||
 			my pitch.veryAccurate != FALSE || my pitch.maximumNumberOfCandidates != 15 ||
@@ -806,7 +833,7 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 		preferences.pitch.floor = my pitch.floor = GET_REAL ("left Pitch range");
 		preferences.pitch.ceiling = my pitch.ceiling = GET_REAL ("right Pitch range");
 		preferences.pitch.unit = my pitch.unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
-		preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_INTEGER ("Drawing method");
+		preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, L"Drawing method");
 		preferences.pitch.method = my pitch.method = GET_INTEGER ("Optimize for");
 		forget (my pitch.data);
 		forget (my intensity.data);
@@ -1105,6 +1132,37 @@ static int menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 	return 1;
 }
 
+static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	EDITOR_FORM ("Draw visible intensity contour", 0)
+		our form_pictureWindow (me, cmd);
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGER ("Garnish", our preferences.picture.intensity.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		our preferences.picture.intensity.garnish = GET_INTEGER ("Garnish");
+		if (! my intensity.show)
+			return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		if (! my intensity.data) {
+			FunctionEditor_SoundAnalysis_computeIntensity (me);
+			if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		}
+		Editor_openPraatPicture (me);
+		Intensity_draw (my intensity.data, my pictureGraphics, my startWindow, my endWindow, my intensity.viewFrom, my intensity.viewTo,
+			our preferences.picture.intensity.garnish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
+
 static int menu_cb_intensityListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
@@ -1231,6 +1289,38 @@ static int menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);
 	return 1;
+}
+
+static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	EDITOR_FORM ("Draw visible formant contour", 0)
+		our form_pictureWindow (me, cmd);
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGER ("Garnish", our preferences.picture.formant.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		our preferences.picture.formant.garnish = GET_INTEGER ("Garnish");
+		if (! my formant.show)
+			return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
+		if (! my formant.data) {
+			FunctionEditor_SoundAnalysis_computeFormants (me);
+			if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+		}
+		Editor_openPraatPicture (me);
+		Formant_drawSpeckles (my formant.data, my pictureGraphics, my startWindow, my endWindow,
+			my spectrogram.viewTo, my formant.dynamicRange,
+			our preferences.picture.formant.garnish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
 }
 
 static int menu_cb_formantListing (EDITOR_ARGS) {
@@ -1383,6 +1473,37 @@ static int menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 	return 1;
 }
 
+static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	EDITOR_FORM ("Draw visible pulses", 0)
+		our form_pictureWindow (me, cmd);
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEAN ("Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGER ("Garnish", our preferences.picture.pulses.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		our preferences.picture.pulses.garnish = GET_INTEGER ("Garnish");
+		if (! my pulses.show)
+			return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		if (! my pulses.data) {
+			FunctionEditor_SoundAnalysis_computePulses (me);
+			if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		}
+		Editor_openPraatPicture (me);
+		PointProcess_draw (my pulses.data, my pictureGraphics, my startWindow, my endWindow,
+			our preferences.picture.pulses.garnish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
+
 static int menu_cb_voiceReport (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	time_t today = time (NULL);
@@ -1532,9 +1653,7 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
 	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", motif_F7, menu_cb_getSpectralPowerAtCursorCross);
-	EditorMenu_addCommand (menu, L"-- spectrum draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
-	EditorMenu_addCommand (menu, L"Paint visible spectrogram...", 0, menu_cb_paintVisibleSpectrogram);
+	our createMenuItems_spectrum_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
@@ -1555,7 +1674,7 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Select:", motif_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
 	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
 	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
-	our createMenuItems_pitch_picture (me);
+	our createMenuItems_pitch_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- pitch extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
@@ -1568,6 +1687,7 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
 	EditorMenu_addCommand (menu, L"Get intensity", motif_F8, menu_cb_getIntensity);
+	our createMenuItems_intensity_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
@@ -1590,6 +1710,7 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
 	EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
 	EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
+	our createMenuItems_formant_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- formant extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
@@ -1615,16 +1736,50 @@ static void createMenus_analysis (I) {
 	EditorMenu_addCommand (menu, L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
 	EditorMenu_addCommand (menu, L"Get shimmer (dda)", 0, cb_getShimmer_dda);
 	*/
+	our createMenuItems_pulses_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- pulses extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
 }
 
-static void createMenuItems_pitch_picture (I) {
-	iam (FunctionEditor);
-	Editor_addCommand (me, L"Pitch", L"-- pitch draw --", 0, NULL);
-	Editor_addCommand (me, L"Pitch", L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
-	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
+static void createMenuItems_spectrum_picture (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- spectrum draw --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
+	EditorMenu_addCommand (menu, L"Paint visible spectrogram...", 0, menu_cb_paintVisibleSpectrogram);
+}
+
+static void createMenuItems_pitch_picture (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- pitch draw --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
+}
+
+static void createMenuItems_intensity_picture (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- intensity draw --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisibleIntensityContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw visible intensity contour...", 0, menu_cb_drawVisibleIntensityContour);
+}
+
+static void createMenuItems_formant_picture (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- formant draw --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw visible formant contour...", 0, menu_cb_drawVisibleFormantContour);
+}
+
+static void createMenuItems_pulses_picture (I, EditorMenu menu) {
+	iam (TimeSoundAnalysisEditor);
+	(void) me;
+	EditorMenu_addCommand (menu, L"-- pulses draw --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePulses /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw visible pulses...", 0, menu_cb_drawVisiblePulses);
 }
 
 void FunctionEditor_SoundAnalysis_computeSpectrogram (I) {
@@ -1803,25 +1958,25 @@ static void draw_analysis (I) {
 		long numberOfVisiblePitchPoints = (long) ((my endWindow - my startWindow) / timeStep);
 		Graphics_setColour (my graphics, Graphics_CYAN);
 		Graphics_setLineWidth (my graphics, 3.0);
-		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
-		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_SPECKLE)
+		if ((my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE)
 		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 2, my pitch.unit);
 		}
-		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && ! undersampled) ||
-		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_CURVE)
+		if ((my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && ! undersampled) ||
+		    my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE)
 		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
 		Graphics_setColour (my graphics, Graphics_BLUE);
 		Graphics_setLineWidth (my graphics, 1.0);
-		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
-		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_SPECKLE)
+		if ((my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE)
 		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, 1, my pitch.unit);
 		}
-		if ((my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_AUTOMATIC && ! undersampled) ||
-		    my pitch.drawingMethod == FunctionEditor_pitch_DRAWING_METHOD_CURVE)
+		if ((my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC && ! undersampled) ||
+		    my pitch.drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE)
 		{
 			Pitch_drawInside (my pitch.data, my graphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt, FALSE, my pitch.unit);
 		}
@@ -1995,8 +2150,16 @@ class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	class_method (createMenus_analysis)
 	class_method (draw_analysis)
 	class_method (draw_analysis_pulses)
+	class_method (createMenuItems_spectrum_picture)
 	class_method (createMenuItems_pitch_picture)
+	class_method (createMenuItems_intensity_picture)
+	class_method (createMenuItems_formant_picture)
+	class_method (createMenuItems_pulses_picture)
+	us -> preferences.picture.spectrogram.garnish = true;
 	us -> preferences.picture.pitch.garnish = true;
+	us -> preferences.picture.intensity.garnish = true;
+	us -> preferences.picture.formant.garnish = true;
+	us -> preferences.picture.pulses.garnish = true;
 	class_methods_end
 }
 

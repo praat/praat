@@ -231,6 +231,68 @@ static void createMenuItems_file_write (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
 }
 
+static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORMW (L"Draw visible TextGrid", 0)
+		our form_pictureWindow (me, cmd);
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEANW (L"Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		Editor_openPraatPicture (me);
+		TextGrid_Sound_draw (my data, NULL, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles,
+			preferences.picture.garnish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
+
+static int menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORMW (L"Draw visible sound and TextGrid", 0)
+		our form_pictureWindow (me, cmd);
+		our form_pictureMargins (me, cmd);
+		our form_pictureSelection (me, cmd);
+		BOOLEANW (L"Garnish", 1);
+	EDITOR_OK
+		our ok_pictureWindow (me, cmd);
+		our ok_pictureMargins (me, cmd);
+		our ok_pictureSelection (me, cmd);
+		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+	EDITOR_DO
+		our do_pictureWindow (me, cmd);
+		our do_pictureMargins (me, cmd);
+		our do_pictureSelection (me, cmd);
+		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		Editor_openPraatPicture (me);
+		Sound publish = my longSound.data ?
+			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, true) :
+			Sound_extractPart (my sound.data, my startWindow, my endWindow, enumi (Sound_WINDOW, Rectangular), 1.0, true);
+		if (! publish) return 0;
+		TextGrid_Sound_draw (my data, publish, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles, preferences.picture.garnish);
+		forget (publish);
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
+	EDITOR_END
+}
+
+static void createMenuItems_file_draw (I, EditorMenu menu) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) createMenuItems_file_draw (me, menu);
+	EditorMenu_addCommand (menu, L"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
+	if (my sound.data || my longSound.data)
+		EditorMenu_addCommand (menu, L"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
+}
+
 /***** EDIT MENU *****/
 
 #ifndef macintosh
@@ -2098,10 +2160,10 @@ static double getBottomOfSoundAndAnalysisArea (I) {
 	return _TextGridEditor_computeSoundY (me);
 }
 
-static void createMenuItems_pitch_picture (I) {
+static void createMenuItems_pitch_picture (I, EditorMenu menu) {
 	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_pitch_picture (me);
-	Editor_addCommand (me, L"Pitch", L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
+	inherited (TextGridEditor) createMenuItems_pitch_picture (me, menu);
+	EditorMenu_addCommand (menu, L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
 class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
@@ -2109,6 +2171,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenuItems_file_write)
+	class_method (createMenuItems_file_draw)
 	class_method (createMenus)
 	class_method (prepareDraw)
 	class_method (draw)

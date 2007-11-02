@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/10/14
+ * pb 2007/10/23
  */
 
 #include <stdio.h>
@@ -533,14 +533,22 @@ extern int Melder_debug;
 
 /********** PROGRESS ROUTINES **********/
 
-int Melder_progress (double progress, const char *format, ...);
+int Melder_progress1 (double progress, const wchar_t *s1);
+int Melder_progress2 (double progress, const wchar_t *s1, const wchar_t *s2);
+int Melder_progress3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+int Melder_progress4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+int Melder_progress5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+int Melder_progress6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+int Melder_progress7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+int Melder_progress8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+int Melder_progress9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void Melder_progressOff (void);
 void Melder_progressOn (void);
 /*
 	Function:
 		Show the progress of a time-consuming process.
 	Arguments:
-		'format' may be NULL.
+		Any of 's1' through 's9' may be NULL.
 	Batch behaviour:
 		Does nothing, always returns 1.
 	Interactive behaviour:
@@ -554,21 +562,28 @@ void Melder_progressOn (void);
 			  (void) Melder_progress (0.0, "Starting work...");
 		- at every turn in your loop, call with 'progress' between 0 and 1,
 		  and check the return value to see if the user clicked the Cancel button:
-			  if (! Melder_progress (i / (n + 1.0), "Working on part %d out of %d...", i, n))
-			  {
+			  if (! Melder_progress5 (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...")) {
 				  forget (me);   // Clean up.
-				  return Melder_errorp ("Work interrupted, not finished");   // Interrupt.
+				  return Melder_errorp1 (L"Work interrupted, not finished");   // Interrupt.
 			  }
 		- after the process has finished, call with 'progress' = 1.0:
-			  (void) Melder_progress (1.0, NULL);
+			  (void) Melder_progress1 (1.0, NULL);
 */
 	
-void * Melder_monitor (double progress, const char *format, ...);
+void * Melder_monitor1 (double progress, const wchar_t *s1);
+void * Melder_monitor2 (double progress, const wchar_t *s1, const wchar_t *s2);
+void * Melder_monitor3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void * Melder_monitor4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void * Melder_monitor5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void * Melder_monitor6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void * Melder_monitor7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void * Melder_monitor8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 /*
 	Function:
 		Show the progress of a time-consuming process.
 	Arguments:
-		'format' may be NULL.
+		Any of 's1' through 's9' may be NULL.
 	Batch behaviour:
 		Does nothing, returns NULL if 'progress' <= 0.0 and a non-NULL pointer otherwise.
 	Interactive behaviour:
@@ -581,7 +596,7 @@ void * Melder_monitor (double progress, const char *format, ...);
 	Usage:
 		- call with 'progress' = 0.0 before the process starts.
 		- assign the return value to a Graphics:
-			Graphics graphics = Melder_monitor (0.0, "Starting work...");
+			Graphics graphics = Melder_monitor1 (0.0, L"Starting work...");
 		- at every turn of your loop, draw something in the Graphics:
 			if (graphics) {   // Always check; might be batch.
 				Graphics_clearWs (graphics);   // Only if you redraw all every time.
@@ -590,12 +605,12 @@ void * Melder_monitor (double progress, const char *format, ...);
 			}
 		- immediately after this in your loop, call with 'progress' between 0 and 1,
 		  and check the return value to see if the user clicked the Cancel button:
-			if (! Melder_monitor (i / (n + 1.0), "Working on part %d out of %d...", i, n)) {
+			if (! Melder_monitor5 (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...")) {
 				forget (me);   // Clean up.
-				return Melder_errorp ("Work interrupted, not finished");   // Interrupt.
+				return Melder_errorp1 (L"Work interrupted, not finished");   // Interrupt.
 			}
 		- after the process has finished, call with 'progress' = 1.0:
-			(void) Melder_monitor (1.0, NULL);
+			(void) Melder_monitor1 (1.0, NULL);
 */
 
 int Melder_pause (const char *format, ...);

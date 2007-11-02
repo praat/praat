@@ -124,8 +124,8 @@ Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace,
 int Strings_setString (Strings me, wchar_t *new, long index)
 {
 	wchar_t *s;
-	if (index < 1 || index > my numberOfStrings) return Melder_error 
-		("Strings_setString: index must be in range [1, %d].", my numberOfStrings);
+	if (index < 1 || index > my numberOfStrings) return Melder_error3 
+		(L"Index must be in range [1, ", Melder_integer (my numberOfStrings), L"].");
 
 	s = Melder_wcsdup (new);
 	if (my strings[index]) Melder_free (my strings[index]);
@@ -153,8 +153,8 @@ end:
 
 Strings Strings_extractPart (Strings me, long from, long to)
 {
-	if (from < 1 || to > my numberOfStrings || from > to) return Melder_errorp 
-		("Strings_extractPart: begin and end must be in interval [1, %d].", my numberOfStrings);
+	if (from < 1 || to > my numberOfStrings || from > to) return Melder_errorp3 
+		(L"Strings_extractPart: begin and end must be in interval [1, ", Melder_integer (my numberOfStrings), L"].");
 	return strings_to_Strings (my strings, from, to);
 }
 
@@ -191,7 +191,7 @@ Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
 {
 	long i;
 	Strings him = NULL;
-	if (my numberOfStrings != thy numberOfElements) return Melder_errorp ("Strings_and_Permutation_permuteStrings: "
+	if (my numberOfStrings != thy numberOfElements) return Melder_errorp1 (L"Strings_and_Permutation_permuteStrings: "
 		"The number of strings and the number of elements in the Permutation must be equal.");
 
 	him = Strings_createFixedLength (my numberOfStrings);

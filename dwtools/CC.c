@@ -1,6 +1,6 @@
 /* CC.c
  * 
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20011016 removed some causes for compiler warnings
  djmw 20020315 GPL header
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  */
 
 #include "CC.h"
@@ -31,6 +32,8 @@
 #include "oo_COPY.h"
 #include "CC_def.h"
 #include "oo_EQUAL.h"
+#include "CC_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "CC_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "CC_def.h"
@@ -59,6 +62,7 @@ static void info (I)
 class_methods (CC, Sampled)
 	class_method_local (CC, destroy)
 	class_method_local (CC, equal)
+	class_method_local (CC, canWriteAsEncoding)
 	class_method_local (CC, copy)
 	class_method (info)
 	class_method_local (CC, readText)

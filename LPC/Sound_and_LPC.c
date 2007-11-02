@@ -403,7 +403,6 @@ end:
 static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, 
 	double preEmphasisFrequency, int method, double tol1, double tol2)
 {
-	char *proc = "Sound_to_LPC";
 	Sound sound = NULL, sframe = NULL, window = NULL;
 	LPC thee = NULL;
 	double *window_autocor = NULL;
@@ -413,10 +412,9 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 	
 	if (floor (windowDuration / my dx) < predictionOrder + 1)
 	{
-		(void) Melder_error ("%s: Analysis window duration too short.\n", proc);
-		return Melder_errorp ("For a prediction order of  %d the analysis window duration has to be greater than %ls s.\n\n"
-			"Please increase the analysis window duration or lower the prediction order.", predictionOrder,
-			Melder_double (my dx * (predictionOrder+1)));
+		(void) Melder_error1 (L"Analysis window duration too short.\n");
+		return Melder_errorp5 (L"For a prediction order of ", Melder_integer (predictionOrder), L" the analysis window duration has to be greater than ", Melder_double (my dx * (predictionOrder+1)),
+		L"Please increase the analysis window duration or lower the prediction order.");
 	}
 
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1) ||
@@ -445,7 +443,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 		}
 		window_autocor[1] = 1;
 	}
-	Melder_progress (0.0, "LPC analysis");
+	Melder_progress1 (0.0, L"LPC analysis");
 	
 	if (preEmphasisFrequency < samplingFrequency / 2) Sound_preEmphasis (sound, preEmphasisFrequency);	 	
 	
@@ -462,12 +460,12 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 			(method == LPC_METHOD_BURG && ! Sound_into_LPC_Frame_burg (sframe, lpcframe)) ||
 			(method == LPC_METHOD_MARPLE && ! Sound_into_LPC_Frame_marple (sframe, lpcframe, tol1, tol2)))
 			frameErrorCount++;
-		if ((i % 10) == 1 && ! Melder_progress ((double)i / nFrames, 
-			"%s: LPC analysis of frame %d out of %d", proc, i, nFrames)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
+			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) goto end;
 	}
 
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	if (Melder_debug == -2) NUMdvector_free (window_autocor, 1);
 	forget (sound);
 	forget (sframe);

@@ -237,7 +237,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index,
 	 
 	if(	thy ny != my numberOfRows)
 	{
-		(void) Melder_error("Confusion_Matrix_draw: number of positions.");
+		(void) Melder_error1 (L"Confusion_Matrix_draw: number of positions.");
 		return;
 	}
 	
@@ -328,8 +328,8 @@ Any Confusion_difference (Confusion me, Confusion thee)
 	
 	/* categories must be the same too*/
 	if (my numberOfColumns != thy numberOfColumns ||
-		my numberOfRows != thy numberOfRows) return Melder_errorp
-			("Confusion_difference: dimensions not equal.");
+		my numberOfRows != thy numberOfRows) return Melder_errorp1
+			(L"Confusion_difference: dimensions not equal.");
 
 	if ((him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns,
 		1, 1, 0.5, my numberOfRows+0.5, my numberOfRows, 1, 1)) == NULL)
@@ -387,7 +387,7 @@ Confusion Confusion_condense (Confusion me, wchar_t *search, wchar_t *replace,
 	long *rowIndex = NULL, *columnIndex = NULL;
 	
 	if (my rowLabels == NULL || my columnLabels == NULL) return 
-		Melder_errorp ("Confusion_condense: no row or column labels.");
+		Melder_errorp1 (L"Confusion_condense: no row or column labels.");
 	rowLabels = strs_replace (my rowLabels, 1, my numberOfRows, 
 		search, replace, maximumNumberOfReplaces, &nmatches, 
 		&nstringmatches, use_regexp);

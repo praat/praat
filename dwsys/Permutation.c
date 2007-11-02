@@ -21,6 +21,7 @@
  djmw 20050706
  djmw 20050722 Latest modification.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include <time.h>
@@ -32,6 +33,8 @@
 #include "Permutation_def.h"
 #include "oo_EQUAL.h"
 #include "Permutation_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Permutation_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Permutation_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -41,10 +44,10 @@
 #include "oo_DESCRIPTION.h"
 #include "Permutation_def.h"
 
-static int _Permutation_checkRange (Permutation me, long *from, long *to, long *n, char *proc)
+static int _Permutation_checkRange (Permutation me, long *from, long *to, long *n)
 {
 	if ((*from < 0 || *from > my numberOfElements) ||
-		(*to < 0 || *to > my numberOfElements)) return Melder_error ("%s: Range must be in [1, %d]", proc, my numberOfElements);
+		(*to < 0 || *to > my numberOfElements)) return Melder_error3 (L"Range must be in [1, ", Melder_integer (my numberOfElements), L"].");
 	if (*from == 0) *from = 1;
 	if (*to == 0) *to = my numberOfElements;
 	*n = *to - *from + 1;
@@ -77,7 +80,7 @@ static int readText (I, MelderReadString *text)
 {
 	iam (Permutation);
 	my numberOfElements = texgeti4 (text);
-	if (my numberOfElements < 1) return Melder_error ("(Permutation::readText:) Number of elements must be >= 1.");
+	if (my numberOfElements < 1) return Melder_error1 (L"(Permutation::readText:) Number of elements must be >= 1.");
 	if (! (my p = NUMlvector_readText (1, my numberOfElements, text, "p"))) return 0;
 	if (! Permutation_checkInvariant (me)) return Melder_error
 		("(Permutation::readText:) All values must be unique and in the [1, %d] range.", my numberOfElements);
@@ -88,6 +91,7 @@ class_methods (Permutation, Data)
 	class_method_local (Permutation, destroy)
 	class_method_local (Permutation, copy)
 	class_method_local (Permutation, equal)
+	class_method_local (Permutation, canWriteAsEncoding)
 	class_method_local (Permutation, writeText)
 	class_method_local (Permutation, writeBinary)
 	class_method (readText)
@@ -130,8 +134,8 @@ int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 	if (blocksize < 1 || blocksize > my numberOfElements) return Melder_error
 		("%s: Blocksize must be in [1, %d] range.", proc, my numberOfElements / 2);
 	if (from < 0 || from + blocksize - 1 > my numberOfElements || to < 0 || to + blocksize - 1 > my numberOfElements)
-		return Melder_error	("%s: Start and finish positions of the two blocks must be in [1,%d] range.",
-		proc, my numberOfElements);
+		return Melder_error3	(L"Start and finish positions of the two blocks must be in [1,", 
+			Melder_integer(my numberOfElements), L"] range.");
 	if (from == to) return 1;
 	
 	for (i = 1; i <= blocksize; i++)
@@ -147,7 +151,7 @@ int Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 {
 	long i, n;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_permuteRandomly")) return 0;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return 0;
 	
 	if (n == 1) return 1;
 	for (i = from; i < to; i++)
@@ -171,11 +175,10 @@ Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
 
 Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 {
-	char *proc = "Permutation_rotate";
 	long i, n;
 	Permutation thee;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, proc)) return NULL;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	step = (step - 1) % n + 1;
 	
 	thee = Data_copy (me);
@@ -194,14 +197,14 @@ int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, 
 {
 	long tmp, newpos, n;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_swapOneFromRange")) return 0;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return 0;
 	
 	newpos = NUMrandomInteger (from, to);
 	if (newpos == pos && forbidsame)
 	{
 		if (n == 1)
 		{
-			return Melder_error ("Permutation_swapOneFromRange: Impossible to satisfy \"forbid same\" constraint "
+			return Melder_error1 (L"Permutation_swapOneFromRange: Impossible to satisfy \"forbid same\" constraint "
 				"within the chosen range.");
 		}
 		while ((newpos = NUMrandomInteger (from, to)) == pos) ;
@@ -215,11 +218,10 @@ int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, 
 Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,
 	int permuteWithinBlocks, int noDoublets)
 {
-	char *proc = "Permutation_permuteBlocksRandomly";
 	long iblock, first, j, nrest, n, nblocks;
 	Permutation thee, pblocks = NULL;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, proc)) return NULL;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 
 	if (blocksize == 1 || (blocksize >= n && permuteWithinBlocks))
 	{
@@ -231,8 +233,8 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 	if (blocksize >= n) return thee;
 	
 	nblocks  = n / blocksize;
-	if ((nrest = n % blocksize) != 0) return Melder_errorp ("%s: It is not possible to fit an integer number of blocks "
-		"in the range.\n(The last block is only of size %d).", proc, nrest);
+	if ((nrest = n % blocksize) != 0) return Melder_errorp3 (L"It is not possible to fit an integer number of blocks "
+		"in the range.\n(The last block is only of size ", Melder_integer (nrest), L").");
 	
 	pblocks = Permutation_create (nblocks);
 	if (pblocks == NULL) goto end;
@@ -267,15 +269,14 @@ end:
 
 Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset)
 {
-	char *proc = "Permutation_interleave";
 	long i, n, *occupied = NULL, nblocks, nrest, posinblock;
 	Permutation thee = NULL;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, proc)) return NULL;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	nblocks = n / blocksize;
-	if ((nrest = n % blocksize) != 0) return Melder_errorp ("%s: There is not an integer number of blocks in the range.\n"
-			"(The last block is only of size %d instead of %d).", proc, nrest, blocksize);
-	if (offset >= blocksize) return Melder_errorp ("%s: Offset must be smaller than blocksize.", proc);
+	if ((nrest = n % blocksize) != 0) return Melder_errorp5 (L"There is not an integer number of blocks in the range.\n"
+			"(The last block is only of size ", Melder_integer (nrest), L" instead of ", Melder_integer (blocksize), L").");
+	if (offset >= blocksize) return Melder_errorp1 (L"Offset must be smaller than blocksize.");
 	
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
@@ -346,7 +347,7 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 	long i, n;
 	Permutation thee = NULL;
 	
-	if (! _Permutation_checkRange (me, &from, &to, &n, "Permutation_reverse")) return NULL;
+	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
 	for (i = 1; i <= n; i++)

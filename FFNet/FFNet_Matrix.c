@@ -27,8 +27,8 @@
 Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights)
 {
 	Matrix thee = NULL; long i, node = 1;
-	if (layer < 1 || layer > my nLayers) return Melder_errorp ("FFNet_weightsToMatrix: "
-		"layer must be > 0 and < %ld.", my nLayers);
+	if (layer < 1 || layer > my nLayers) return Melder_errorp3 (L"FFNet_weightsToMatrix: "
+		"layer must be > 0 and < ", Melder_integer (my nLayers), L".");
 	if (! (thee = Matrix_create (
 		0.5, my nUnitsInLayer[layer]+0.5, my nUnitsInLayer[layer], 1, 1,
 		0.5, my nUnitsInLayer[layer-1]+1+0.5, my nUnitsInLayer[layer-1]+1, 1, 1)
@@ -46,13 +46,12 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights)
 FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer)
 {
 	FFNet thee = NULL; long i, node = 1;
-	if (layer < 1 || layer > my nLayers) return Melder_errorp ("FFNet_weightsFromMatrix: "
-		"layer must be > 0 and < %ld.", my nLayers);
-	if (my nUnitsInLayer[layer] != his nx) return Melder_errorp ("FFNet_weightsFromMatrix:"
-		"#columns in Matrix must equal #units in layer %ld (%ld)", layer, my nUnitsInLayer[layer]);
-	if (my nUnitsInLayer[layer-1]+1 != his ny) return Melder_errorp ("FFNet_weightsFromMatrix:"
-		"#rows in Matrix must equal (#units in layer %ld) + 1 (%ld).",
-		layer-1, my nUnitsInLayer[layer-1] + 1);
+	if (layer < 1 || layer > my nLayers) return Melder_errorp3 (L"FFNet_weightsFromMatrix: "
+		"layer must be > 0 and < ", Melder_integer (my nLayers), L".");
+	if (my nUnitsInLayer[layer] != his nx) return Melder_errorp5 (L"FFNet_weightsFromMatrix:"
+		"#columns in Matrix must equal #units in layer ", Melder_integer (layer), L" (", Melder_integer (my nUnitsInLayer[layer]), L").");
+	if (my nUnitsInLayer[layer-1]+1 != his ny) return Melder_errorp5 (L"FFNet_weightsFromMatrix:"
+		"#rows in Matrix must equal (#units in layer ", Melder_integer (layer-1), L") + 1 (", Melder_integer (my nUnitsInLayer[layer-1] + 1), L").");
 	if (! (thee = Data_copy (me))) return NULL;
 	for (i=0; i < layer; i++) node += thy nUnitsInLayer[i] + 1;
 	for (i=1; i <= thy nUnitsInLayer[layer]; i++, node++)

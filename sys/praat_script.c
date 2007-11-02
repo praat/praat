@@ -461,7 +461,9 @@ static int firstPassThroughScript (MelderFile file) {
 	Melder_setDefaultDir (& saveDir);
 	interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	if (Interpreter_readParameters (interpreter, text) > 0) {
-		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPath (file), secondPassThroughScript, NULL);
+		Any form = Interpreter_createForm (interpreter,
+			praatP.editor ? ((Editor) praatP.editor) -> dialog : theCurrentPraat -> topShell,
+			Melder_fileToPath (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
 		UiForm_do (form, 0);
 	} else {

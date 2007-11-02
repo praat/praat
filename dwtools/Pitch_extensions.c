@@ -139,9 +139,9 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 	double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
 	
 	if (fminr == NUMundefined || fmaxr == NUMundefined || fmin == NUMundefined || fmax == NUMundefined) return
-		Melder_errorp ("The conversion of a pitch value is not defined. ");
+		Melder_errorp1 (L"The conversion of a pitch value is not defined. ");
 	ranger = fmaxr - fminr; range = fmax - fmin;
-	if (ranger < 0.01 || range < 0.01) return Melder_errorp ("Pitch range too small.");
+	if (ranger < 0.01 || range < 0.01) return Melder_errorp1 (L"Pitch range too small.");
 	fmidr = fminr + ranger / 2;
 	factor = ranger / range;
 	thee = Data_copy (me);
@@ -163,12 +163,12 @@ Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pit
 	long i, nt;
 	double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2;
 	
-	if (my points -> size < 1) return Melder_errorp ("The PitchTier is empty.");
-	if (dt <= 0) return Melder_errorp ("The time step should be a positive number.");
-	if (pitchFloor >= pitchCeiling) return Melder_errorp ("The pitch ceiling must be a higher number than the pitch floor.");
+	if (my points -> size < 1) return Melder_errorp1 (L"The PitchTier is empty.");
+	if (dt <= 0) return Melder_errorp1 (L"The time step should be a positive number.");
+	if (pitchFloor >= pitchCeiling) return Melder_errorp1 (L"The pitch ceiling must be a higher number than the pitch floor.");
 	nt = (tmax - tmin - t1) / dt;
 	if (t1 + nt * dt < tmax) nt++;
-	if (nt < 1) return Melder_errorp ("Duration is too short.");
+	if (nt < 1) return Melder_errorp1 (L"Duration is too short.");
 	thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
 	if (thee == NULL) return NULL;
 	for (i = 1; i <= nt; i++)

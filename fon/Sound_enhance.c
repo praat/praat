@@ -93,7 +93,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			double fmid_bark = NUMhertzToBark (fmin) + 0.5, ceiling;
 			double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1);
 			if (fmax > fhigh) fmax = fhigh;
-			Melder_progress (fmin / fhigh, "Band: %.0f ... %.0f Hz", fmin, fmax); cherror
+			Melder_progress5 (fmin / fhigh, L"Band: ", Melder_fixed (fmin, 0), L" ... ", Melder_fixed (fmax, 0), L" Hz"); cherror
 			NUMfmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
 			Spectrum_passHannBand (spec, fmin, fmax, bandSmoothing);
 			forget (band);
@@ -141,7 +141,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	thy nx = my nx;
 	thy x1 = my x1;
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	forget (channelSound);
 	forget (orgspec);
 	forget (spec);

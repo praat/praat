@@ -20,6 +20,7 @@
 /*
  djmw 20020812 GPL header
  djmw 20030205 Latest modification (NUMmacros)
+ djmw 20071022 NUMmatricesToUpperTriangularForms now inializes l=0
 */
 
 #include "NUM.h"
@@ -1249,8 +1250,8 @@ int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 	
 	if (iter == MAXIT + 1) 
 	{
-		(void) Melder_error ("NUMgsvdFromUpperTriangulars: "
-			"No convergence after %d iterations.", MAXIT);
+		(void) Melder_error3 (L"NUMgsvdFromUpperTriangulars: "
+			"No convergence after ", Melder_integer (MAXIT), L" iterations.");
 		*ncycle = MAXIT; goto end;
 	}
 	
@@ -1338,7 +1339,7 @@ int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 {
 	int forward = 1; 
 	double *tau = NULL;
-	long i, j, k = 0, l, *pivot, lda = n, ldb = n;
+	long i, j, k = 0, l = 0, *pivot, lda = n, ldb = n;
 	
 	Melder_assert (m > 0 && p > 0 && n > 0);
 	
@@ -1550,7 +1551,7 @@ int NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 	
 	if (anorm == 0 || bnorm == 0)
 	{
-		return Melder_error ("NUMgsvdcmp: empty matrix.");
+		return Melder_error1 (L"NUMgsvdcmp: empty matrix.");
 	}	
 	
 	tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;

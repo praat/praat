@@ -45,11 +45,8 @@
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
  djmw 20070302 NUMclipLineWithinRectangle
-<<<<<<< HEAD:dwsys/NUM2.c
- pb 20070810 wchar_t
-=======
  djmw 20070614 updated to version 1.30 of regular expressions.
->>>>>>> regex:dwsys/NUM2.c
+ djmw 20071022 Removed function NUMfvector_moment2.
 */
 
 #include "SVD.h"
@@ -61,8 +58,12 @@
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "melder.h"
-#include "gsl_sf_gamma.h"
 #include <ctype.h>
+
+#include "gsl_errno.h"
+#include "gsl_sf_bessel.h"
+#include "gsl_sf_gamma.h"
+#include "gsl_sf_erf.h"
 
 #define my me ->
 
@@ -226,96 +227,13 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 	}
 }
 
-/*
-int NUMstrings_setSequential (char **s, long lo, long hi, 
-	char *pre, char *start, long increment, char *post)
-{
-	char *proc = "NUMstrings_setSequential";
-	long d, i, iset = 0, istart, startlen, nsymbolsets = 3, plast;
-	long startnum = 0, prelen, postlen, setsize, maxnum, maxchar = 100;
-	int symbolSetSize[4] = {0, 10, 26, 26};
-	char *p, *psymbols, *pt, *pinc;
-	char *pres = pre == NULL ? "" : pre; 
-	char *posts = post == NULL ? "" : post;
-	char *number = NULL, *inc = NULL;
-	char *symbolSet[] = {"", "0123456789", "abcdefghijklmnopqrstuvwxyz", 
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
-
-	// First char of start determines the symbol set
-		
-	for (i = 1; i <= nsymbolsets; i++)
-	{
-		p = strchr (symbolSet[i], start[0]);
-		if (p != NULL)
-		{
-			iset = i; istart = p - start;
-			break;
-		}
-	}
-	
-	if (iset == 0) return Melder_error ("%s: Illegal first character in start.", proc);
-	if (istart == 0) iset = 1; // empty start 
-	
-	if (((inc = Melder_malloc (maxchar)) == NULL) ||
-		((startnum = Melder_malloc (maxchar)) == NULL)) goto end;
-	
-	// Translate the increment into the symbol system
-	
-	psymbols = symbolSet[iset];
-	setsize = symbolSetSize[iset];
-	
-	pinc = inc;
-	d = increment;
-	while (d > 0)
-	{
-		long mod = d % setsize;
-		d /= setsize;
-		pt = strchr (psymbols, *pinc);
-		pinc++;
-	}
-	// Get the 'number' of the start symbol in the corresponding
-	// number system and check if all start's chars are in the set.
-	
-	p = start;
-	psymbols = symbolSet[iset];
-	setsize = symbolSetSize[iset];
-	while (*p)
-	{
-		pt = strchr (psymbols, *p);
-		if (pt == NULL) return Melder_error ("%s: Illegal symbol in start.", proc); // mixed symbols
-		startnum = startnum * setsize + (psymbols - pt);
-		p++;
-	}
-	startlen = p - start; // length of start (== strlen(start))
-
-	maxchar = MAX (100, startlen);	
-	number = Melder_malloc (maxchar); // number in reverse
-		
-	prelen = strlen (pre);
-	postlen = strlen (post);
-	inclen =   
-	for (i = lo; i <= hi; i++)
-	{
-		char *new;
-		// add the strings
-		for (j=1; j <= MAX (
-		if (new == NULL) return 0;
-		Melder_free (s[i]);
-		s[i] = new;
-	}
-end:
-	Melder_free (inc);
-	Melder_free (startnum);
-	return ! Melder_hasError ();
-}
-*/ 
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = NULL;
 	char *compileMsg;
 	regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search_regexp), &compileMsg, 0);
 	
-	if (compiled_regexp == NULL) return Melder_errorp (compileMsg);
+	if (compiled_regexp == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
 	
 	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToUtf8 (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
 		char *charpA = compiled_regexp -> startp[0];
@@ -602,7 +520,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	if (searchRE == NULL || replaceRE == NULL) return NULL;
 				
 	compiledRE = CompileRE (Melder_peekWcsToUtf8 (searchRE), &compileMsg, 0);
-	if (compiledRE == NULL) return Melder_errorp (compileMsg);
+	if (compiledRE == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
 
 	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
@@ -1016,7 +934,7 @@ void NUMlocate_f (float *xx, long n, float x, long *index)
 	while (ju - jl > 1)
 	{
 		jm = (ju + jl) / 2;
-		if (x >= xx[jm] == ascend) jl = jm; else ju = jm;
+		if ((x >= xx[jm]) == ascend) jl = jm; else ju = jm;
 	}
 	if (x == xx[1]) *index = 1;
 	else if (x == xx[n]) *index = n - 1;
@@ -1031,7 +949,7 @@ void NUMlocate_d (double *xx, long n, double x, long *index)
 	while (ju - jl > 1)
 	{
 		jm = (ju + jl) / 2;
-		if (x >= xx[jm] == ascend) jl = jm; else ju = jm;
+		if ((x >= xx[jm]) == ascend) jl = jm; else ju = jm;
 	}
 	if (x == xx[1]) *index = 1;
 	else if (x == xx[n]) *index = n - 1;
@@ -1046,7 +964,9 @@ void NUMlocate_d (double *xx, long n, double x, long *index)
 */
 void NUMmonotoneRegression_d (const double x[], long n, double xs[])
 {
-	double sum, xt;
+	double sum;
+	double xt = NUMundefined; // Only to stop gcc complaining "may be used unitialized"
+	// 
 	long i, j, nt;
 	
 	for (i = 1; i <= n; i++)
@@ -1062,7 +982,7 @@ void NUMmonotoneRegression_d (const double x[], long n, double xs[])
 		for (j = 1; j <= i - 1; j++)
 		{
 			sum += xs[i-j]; nt++;
-			xt = sum / nt;
+			xt = sum / nt; // i >= 2 -> xt always gets a value
 			if (j < i-1 && xt >= xs[i-j-1]) break;
 		}
 		for (j = i - nt + 1; j <= i; j++)
@@ -1070,74 +990,6 @@ void NUMmonotoneRegression_d (const double x[], long n, double xs[])
 			xs[j] = xt;
 		}
 	}
-}
-
-static int NUMdmonotoneRegressionKruskal (const double x[], long n, double xm[], int descending)
-{
-	long i, current = 1, nBlocks = n, *length, index = 1; int status = 0;
-	double low = -1e38, high = 1e38;
-	for (i=1; i <= n; i++) xm[i] = x[i];
-	if ((length = NUMlvector (1, n)) == NULL) goto end;
-	if (descending) { low = 1e38; high = -1e38; } 
-	for (i=1; i <= n; i++) length[i] = 1;
-	do
-	{
-		int up_satisfied, down_satisfied;
-		index += current > 1 ? length[current-1] : 0;
-		do
-		{
-			long l_current = length[current], l_join;
-			long l_prev = current > 1 ? length[current-1] : 0;
-			double x_current = xm[index], x_join;
-			double x_prev = current > 1 ? xm[index-l_prev] : low;
-			double x_next = current < nBlocks ? xm[index+l_current] : high;
-			up_satisfied = descending ? x_current > x_next : x_current < x_next;
-			if (! up_satisfied) /* join current and next block */
-			{
-				l_join = l_current + length[current+1];
-				x_join = (x_current * l_current + x_next *
-					length[current+1]) / l_join;
-				for (i=1; i <= l_join; i++) xm[index + i - 1] = x_join;
-				length[current] = l_join; nBlocks--;
-				for (i=current+1; i <= nBlocks; i++) length[i] = length[i+1];
-				x_current = x_join; l_current = l_join;
-			}
-			down_satisfied = descending ? x_current < x_prev :
-				x_current > x_prev;
-			if (! down_satisfied) /* join current and previous block */
-			{
-				l_join = l_current + l_prev;
-				x_join = (x_current * l_current + x_prev * l_prev) / l_join;
-				index -= l_prev;
-				Melder_assert (index > 0);
-				for (i=1; i <= l_join; i++) xm[index + i - 1] = x_join;
-				current--; length[current] = l_join; nBlocks--;
-				for (i=current+1; i <= nBlocks; i++) length[i] = length[i+1];
-			}
-		} while (! (up_satisfied && down_satisfied));
-		current++;
-	} while (current < nBlocks);
-	status = 1;
-end:
-	NUMlvector_free (length, 1);
-	return status;
-}
-
-void NUMfvector_moment2 (float v[], long lo, long hi, double *ave, double *var)
-{
-	double m, s, mp = v[lo], sp = 0;
-	long k;
-	
-	for (k = lo+1; k <= hi; k++)
-	{
-		double xk = v[k];
-		double tmp = xk - mp;
-		m = mp + tmp / k;
-		s = sp + tmp * (xk - m);
-		mp = m; sp = s;
-	}
-	*ave = m;
-	*var = s / (hi - lo);
 }
 
 float NUMfvector_getNorm1 (const float v[], long n)
@@ -2024,7 +1876,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 	
 	if (trace == 0)
 	{
-		(void) Melder_error ("NUMProcrustes: degenerate configuration(s).");
+		(void) Melder_error1 (L"NUMProcrustes: degenerate configuration(s).");
 		goto end;
 	}
 	
@@ -2248,7 +2100,7 @@ int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure),
 	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0))
 	{
 		*root = NUMundefined;
-		return Melder_error("NUMnrbis: root must be bracketed.");
+		return Melder_error1 (L"NUMnrbis: root must be bracketed.");
 	}
 	
 	if (fl < 0.0)
@@ -2325,7 +2177,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	
 	for (iter = 1; iter <= itermax; iter++)
 	{
-		x3 = 0.5 * (x1 + x2);   
+		x3 = 0.5 * (x1 + x2);
 		f3 = f (x3, closure);
 		if (f3 == 0.0) return x3;
 		if (f3 == NUMundefined) return NUMundefined;
@@ -2440,10 +2292,10 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 					else
 					{
 						x2 = x4; f2 = f4;
-					}	       
+					}
 				}
 			}
-		}	       
+		}
 		if (fabs (x1 - x2) < tol) return root;
 	}
 
@@ -2553,9 +2405,9 @@ double NUMinvChiSquareQ (double p, double df)
 {
 	struct pdf1_struct params;      
 	double xmin, xmax = 1;
-        
+ 
 	if (p < 0 || p >= 1) return NUMundefined;
-        
+
 	/*
 		Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
 	*/
@@ -2567,7 +2419,7 @@ double NUMinvChiSquareQ (double p, double df)
 		xmax *= 2;
 	}
 	xmin = xmax > 1 ? xmax / 2 : 0;
-        
+	
 	/*
 		Find zero of f(x) with Ridders' method.
 	*/
@@ -2582,6 +2434,13 @@ static double fisherQ_func (double x, void *voidParams)
 	double q = NUMfisherQ (x, params -> df1, params -> df2);
 	return q == NUMundefined ? NUMundefined : q - params -> p;
 }
+
+/* gsl-1.10
+double NUMinvFisherQ2 (double p, double df1, double df2)
+{
+return gsl_cdf_fdist_Pinv (p, df1, df2);
+
+}*/
 
 double NUMinvFisherQ (double p, double df1, double df2)
 {
@@ -2603,6 +2462,18 @@ double NUMinvFisherQ (double p, double df1, double df2)
 	return NUMridders (fisherQ_func, 0.0, p > 0.5 ? 2.2 : top, & params);
 }
 
+double NUMbeta2 (double z, double w) {
+	gsl_sf_result result;
+	int status = gsl_sf_beta_e(z, w, &result);
+	return status == GSL_SUCCESS ? result.val : NUMundefined;
+}
+
+double NUMlnBeta (double a, double b)
+{
+	gsl_sf_result result;
+	int status = gsl_sf_lnbeta_e (a, b, &result);
+	return status == GSL_SUCCESS ? result.val : NUMundefined;
+}
 
 /*************** Hz <--> other freq reps *********************/
 
@@ -2797,50 +2668,6 @@ end:
 	return status;
 }
 
-static int NUMfmatrix_to_dBs2 (float **m, long rb, long re, long cb, long ce, 
-	double ref, double factor, double dynamic_range_db)
-{
-	double ref_db, min2, max_db, min_db, factor10 = factor * 10;
-	float max = m[rb][cb], min = max;
-	long i, j;
-	
-	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
-	
-	for (i=rb; i <= re; i++)
-	{
-		for (j=cb; j <= ce; j++)
-		{
-			if (m[i][j] > max) max = m[i][j];
-			else if (m[i][j] < min) min = m[i][j];
-		}
-	}
-	
-	if (max < 0 || min < 0) return Melder_error ("NUMdmatrix_to_dBs: all "
-		"matrix elements must be positive.");
-	
-	ref_db = factor10 * log10 (ref);
-	max_db = factor10 * log10 (max) - ref_db;
-	min_db = max_db - fabs (dynamic_range_db);
-	min2 = ref * pow (10, min_db / factor10);
-	
-	if (min2 < min)
-	{
-		min2 = min; min_db = factor10 * log10 (min2) - ref_db;
-	} 
-	
-	for (i=rb; i <= re; i++)
-	{
-		for (j=cb; j <= ce; j++)
-		{
-			double mij = m[i][j];
-			if (mij <= min2) mij = min_db;
-			else mij = factor10 * log10 (mij) - ref_db;
-			m[i][j] = mij;
-		}
-	}	
-	return 1;
-}
-
 int NUMfmatrix_to_dBs (float **m, long rb, long re, long cb, long ce, 
 	double ref, double factor, double floor)
 {
@@ -2859,7 +2686,7 @@ int NUMfmatrix_to_dBs (float **m, long rb, long re, long cb, long ce,
 		}
 	}
 	
-	if (max < 0 || min < 0) return Melder_error ("NUMdmatrix_to_dBs: all "
+	if (max < 0 || min < 0) return Melder_error1 (L"NUMdmatrix_to_dBs: all "
 		"matrix elements must be positive.");
 
 	ref_db = factor10 * log10 (ref);
@@ -3012,7 +2839,7 @@ int NUMsplint_f (float xa[], float ya[], float y2a[], long n, float x, float *y)
 		else klo = k;
 	}
 	h = xa[khi] - xa[klo];
-	if (h == 0.0) return Melder_error ("NUMsplint_f: bad input value");
+	if (h == 0.0) return Melder_error1 (L"NUMsplint_f: bad input value");
 	a = (xa[khi] - x) / h;
 	b = (x - xa[klo]) / h;
 	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
@@ -3034,7 +2861,7 @@ int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
 		else klo = k;
 	}
 	h = xa[khi] - xa[klo];
-	if (h == 0.0) return Melder_error ("NUMsplint_d: bad input value");
+	if (h == 0.0) return Melder_error1 (L"NUMsplint_d: bad input value");
 	a = (xa[khi] - x) / h;
 	b = (x - xa[klo]) / h;
 	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
@@ -3216,7 +3043,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 		ni++;
 		if (ni > 2)
 		{
-			(void) Melder_error ("Too many intersections.");
+			(void) Melder_error1 (L"Too many intersections.");
 			return 2;
 		}
 		xi[ni] = x[i] + t * (x[i+1] - x[i]);
@@ -3364,7 +3191,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	}
 	else
 	{
-		return Melder_error ("Too many crossings found.");
+		return Melder_error1 (L"Too many crossings found.");
 	}
 	return 1;
 }
@@ -3401,19 +3228,6 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
 		phi = atan2 (b *cospsi , a * sn);
 		*height = fabs (a * sn * cos (phi) + b * cospsi * sin (phi));
 	}
-}
-
-static void NUMgetLinearTransform (double x1, double x2, double x3, double x4,
-	double *a, double *b)
-{
-	Melder_assert (x1 < x2 && x3 < x4);
-	*a = (x3 - x4) / (x1 - x2);
-	*b = x3 - *a * x1;
-}
-
-static double NUMtransformLinear (double x, double a, double b)
-{
-	return a * x + b;
 }
 
 /*

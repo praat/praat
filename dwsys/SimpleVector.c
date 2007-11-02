@@ -1,6 +1,6 @@
 /* SimpleVector.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "SimpleVector.h"
@@ -28,6 +29,8 @@
 #include "oo_COPY.h"
 #include "SimpleVector_def.h"
 #include "oo_EQUAL.h"
+#include "SimpleVector_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "SimpleVector_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "SimpleVector_def.h"
@@ -43,6 +46,7 @@
 class_methods (DoubleVector, Data)
 	class_method_local (DoubleVector, destroy)
 	class_method_local (DoubleVector, equal)
+	class_method_local (DoubleVector, canWriteAsEncoding)
 	class_method_local (DoubleVector, copy)
 	class_method_local (DoubleVector, readText)
 	class_method_local (DoubleVector, readBinary)
@@ -69,6 +73,7 @@ DoubleVector DoubleVector_create (long min, long max)
 class_methods (ComplexVector, Data)
 	class_method_local (ComplexVector, destroy)
 	class_method_local (ComplexVector, equal)
+	class_method_local (ComplexVector, canWriteAsEncoding)
 	class_method_local (ComplexVector, copy)
 	class_method_local (ComplexVector, readText)
 	class_method_local (ComplexVector, readBinary)

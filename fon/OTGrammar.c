@@ -912,7 +912,7 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
+		if (! Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""))
 			{ forget (thee); return NULL; }
 		/*
 		 * Set the row labels to the output strings.
@@ -937,7 +937,7 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 		 */
 		nout += tableau -> numberOfCandidates;
 	}
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	return thee;
 }
 
@@ -959,7 +959,7 @@ PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInpu
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
+		if (! Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""))
 			{ forget (thee); return NULL; }
 		/*
 		 * Copy the input and output strings to the target object.
@@ -982,7 +982,7 @@ PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInpu
 		 */
 		nout += tableau -> numberOfCandidates;
 	}
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	return thee;
 }
 
@@ -1022,7 +1022,7 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 	 */
 	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress ((itab - 0.5) / my numberOfTableaus, "Measuring input \"%ls\"", tableau -> input))
+		if (! Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""))
 			{ forget (thee); return NULL; }
 		/*
 		 * Set the row labels to the output strings.
@@ -1062,7 +1062,7 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 		 */
 		nout += tableau -> numberOfCandidates;
 	}
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	return thee;
 }
 
@@ -1330,7 +1330,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 {
 	long iplasticity, ireplication, ichew, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	double plasticity = initialPlasticity;
-	Graphics graphics = Melder_monitor (0.0, "Learning with full knowledge...");
+	Graphics graphics = Melder_monitor1 (0.0, L"Learning with full knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
 	}
@@ -1349,8 +1349,8 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				}
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
-			if (! Melder_monitor ((double) idatum / numberOfData,
-				"Processing input-output pair %ld out of %ld: %ls -> %ls", idatum, numberOfData, input, output))
+			if (! Melder_monitor8 ((double) idatum / numberOfData,
+				L"Processing input-output pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ", input, L" -> ", output))
 			{
 				Melder_flushError ("Only %ld input-output pairs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -1364,7 +1364,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 		plasticity *= plasticityDecrement;
 	}
 end:
-	Melder_monitor (1.0, NULL);
+	Melder_monitor1 (1.0, NULL);
 	iferror return Melder_error ("OTGrammar did not complete learning from input-output pairs.");
 	return 1;
 }
@@ -1559,7 +1559,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 	long iplasticity, ireplication, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	double plasticity = initialPlasticity;
 	OTHistory history = NULL;
-	Graphics graphics = Melder_monitor (0.0, "Learning with limited knowledge...");
+	Graphics graphics = Melder_monitor1 (0.0, L"Learning with limited knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
 	}
@@ -1581,8 +1581,8 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 				}
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
-			if (! Melder_monitor ((double) idatum / numberOfData,
-				"Processing partial output %ld out of %ld: %ls", idatum, numberOfData, partialOutput))
+			if (! Melder_monitor6 ((double) idatum / numberOfData,
+				L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ", partialOutput))
 			{
 				Melder_flushError ("Only %ld partial outputs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -1598,7 +1598,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 		plasticity *= plasticityDecrement;
 	}
 end:
-	Melder_monitor (1.0, NULL);
+	Melder_monitor1 (1.0, NULL);
 	if (history_out) *history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
 	iferror return Melder_error ("OTGrammar did not complete learning from partial outputs.");
 	if (history) {
@@ -1888,14 +1888,14 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 	my numberOfFixedRankings ++;
 	obligatory = NUMimatrix (1, my numberOfConstraints, 1, my numberOfConstraints); cherror
 	MelderInfo_open ();
-	Melder_progress (0.0, "");
+	Melder_progress1 (0.0, L"");
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
 			my fixedRankings [my numberOfFixedRankings]. higher = icons;
 			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 			OTGrammar_reset (me, 100.0);
-			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %ls >> %ls", ipair + 1, npair,
-				my constraints [icons]. name, my constraints [jcons]. name);
+			Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+				my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
 			ipair ++;
 			for (itrial = 1; itrial <= 40; itrial ++) {
 				int grammarHasChangedDuringCycle = FALSE;
@@ -1924,7 +1924,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		}
 	}
 	my numberOfFixedRankings ++;
-	Melder_progress (0.0, "");
+	Melder_progress1 (0.0, L"");
 	npair = npair * npair;
 	list = Ordered_create ();
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -1941,7 +1941,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 					my fixedRankings [my numberOfFixedRankings]. higher = kcons;
 					my fixedRankings [my numberOfFixedRankings]. lower = lcons;
 					OTGrammar_reset (me, 100.0);
-					Melder_progress ((double) ipair / npair, "%ld/%ld", ipair + 1, npair);
+					Melder_progress3 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair));
 					ipair ++;
 					for (itrial = 1; itrial <= 40; itrial ++) {
 						int grammarHasChangedDuringCycle = FALSE;
@@ -1974,7 +1974,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 			}
 		}
 	}
-	Melder_progress (1.0, "");
+	Melder_progress1 (1.0, L"");
 	/*
 	 * Improve list.
 	 */
@@ -2025,7 +2025,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 		MelderInfo_close ();
 	}
 end:
-	Melder_progress (1.0, "");
+	Melder_progress1 (1.0, L"");
 	MelderInfo_close ();
 	forget (list);
 	NUMimatrix_free (obligatory, 1, 1);
@@ -2064,14 +2064,14 @@ int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions 
 	 * Test learnability of every possible ranked pair.
 	 */
 	MelderInfo_open ();
-	Melder_progress (0.0, "");
+	Melder_progress1 (0.0, L"");
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
 			my fixedRankings [my numberOfFixedRankings]. higher = icons;
 			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 			OTGrammar_reset (me, 100.0);
-			Melder_progress ((double) ipair / npair, "%ld/%ld: Trying ranking %ls >> %ls", ipair + 1, npair,
-				my constraints [icons]. name, my constraints [jcons]. name);
+			Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+				my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
 			ipair ++;
 			Melder_progressOff ();
 			OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
@@ -2087,7 +2087,7 @@ int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions 
 		}
 	}
 end:
-	Melder_progress (1.0, "");
+	Melder_progress1 (1.0, L"");
 	MelderInfo_close ();
 	/*
 	 * Remove room.

@@ -70,11 +70,11 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 	
 	if (nmax != thy maximumNumberOfCoefficients)
 	{
-		return Melder_errorp ( "CCs_to_DTW: CC orders must be equal.");
+		return Melder_errorp1 (L"CCs_to_DTW: CC orders must be equal.");
 	}
 	if (wr != 0 && nr < 2)
 	{
-		return Melder_errorp ("CCs_to_DTW: Time window for regression "
+		return Melder_errorp1 (L"CCs_to_DTW: Time window for regression "
 			"coefficients is too small.");
 	}
 	if (nr % 2 == 0) nr++;
@@ -93,7 +93,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 		Calculate distance matrix
 	*/
 	
-	Melder_progress (0.0, "CCs_to_DTW");
+	Melder_progress1 (0.0, L"CCs_to_DTW");
 	for (i = 1; i <= my nx; i++)
 	{
 		CC_Frame fi = & my frame[i];
@@ -159,16 +159,15 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 			his z[i][j] = sqrt (dist);	/* prototype along y-direction */
 		}
 		
-		if ((i % 10) == 1 && ! Melder_progress (0.999 * i / my nx, 
-			"Calculate distances: frame %ld from %ld", i, my nx)) goto end;
+		if ((i % 10) == 1 && ! Melder_progress5 (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L".")) goto end;
 	}
 	
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	DTW_findPath (him, matchStart, matchEnd, constraint);
 	
 end:
 
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	NUMfvector_free (ri, 0);
 	NUMfvector_free (rj, 0); 	
 	if (Melder_hasError ()) forget (him);

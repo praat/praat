@@ -314,7 +314,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 {
 	long iplasticity, ireplication, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	double plasticity = initialPlasticity;
-	Graphics graphics = Melder_monitor (0.0, "Learning with full knowledge...");
+	Graphics graphics = Melder_monitor1 (0.0, L"Learning with full knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
 	}
@@ -333,8 +333,8 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 				}
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
-			if (! Melder_monitor ((double) idatum / numberOfData,
-				"Processing partial pair %ld out of %ld: { \"%ls\", \"%ls\" }", idatum, numberOfData, form1, form2))
+			if (! Melder_monitor9 ((double) idatum / numberOfData,
+				L"Processing partial pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": { \"", form1, L"\", \"", form2, L"\" }"))
 			{
 				Melder_flushError ("Only %ld partial pairs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -345,7 +345,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 		plasticity *= plasticityDecrement;
 	}
 end:
-	Melder_monitor (1.0, NULL);
+	Melder_monitor1 (1.0, NULL);
 	iferror return Melder_error ("OTMulti did not complete learning from partial pairs.");
 	return 1;
 }

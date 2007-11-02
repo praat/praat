@@ -22,6 +22,7 @@
  djmw 20030612 Removed LPC_Frame_free
  djmw 20060510 LPC_drawPoles error cleared if something goes wrong.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "LPC_and_Polynomial.h"
@@ -32,6 +33,8 @@
 #include "oo_COPY.h"
 #include "LPC_def.h"
 #include "oo_EQUAL.h"
+#include "LPC_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "LPC_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "LPC_def.h"
@@ -61,6 +64,7 @@ class_methods (LPC, Sampled)
 	class_method_local (LPC, equal)
 	class_method_local (LPC, copy)
 	class_method (info)
+	class_method_local (LPC, canWriteAsEncoding)
 	class_method_local (LPC, readText)
 	class_method_local (LPC, readBinary)
 	class_method_local (LPC, writeText)
@@ -139,35 +143,6 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
 	Melder_clearError ();
 }
 
-/*
-	distance = ln (a'Ra' / aRa);
-	a=[1,a1,a2,...ap];
-	R is (p+1)x(p+1) autocorrelation Toeplitz matrix (first row: [r0,r1,..rp])
-	aRa = Sum (i=0; i=p; a[i] * Sum (j=0; j=p; t[i][j]*a[j]))
-		= Sum (i=0; i=p; a[i] * Sum (j=0; j=p; r[|i-j|]*a[j]))
-	    = Sum (i=0; i=p; r[0]*a[i]*a[i] + 2*Sum (j=i+1; j=p; r[|i-j|]*a[i]*a[j]))
-*/
-static double LPC_Frame_difference_Itakura (LPC_Frame me, LPC_Frame thee)
-{
-	int i, j, n = my nCoefficients < thy nCoefficients ? my nCoefficients : thy nCoefficients;
-	float *r = NULL, *a = NULL; double num = 0, denum = 0;
-	
-	if ((r = NUMfvector (0, n)) == NULL) return 1e38;
-	NUMfvector_copyElements (my a, a+1, 1, n);
-	/* from a to autocorrelation coefficients ...*/
-	for (i=0; i <= n; i++)
-	{
-		float ai = i==0 ? 1 : my a[i], api = i==0 ? 1 : thy a[i];
-		num += r[0] * api * api; denum = r[0] * ai * ai;
-		for (j=i+1; j <= n; j++)
-		{
-			num += 2 * r[abs(i-j)] * api * thy a[j];
-			denum += 2 * r[abs(i-j)] * ai * my a[j];
-		}
-	}
-	NUMfvector_free (r, 0);
-	return log (num / denum); 
-}
 
 Matrix LPC_to_Matrix (LPC me)
 {

@@ -54,7 +54,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 	
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 	{
-		return Melder_error ("LPC_Frame_into_Spectrum: Spectrum size not large enough.");
+		return Melder_error1 (L"LPC_Frame_into_Spectrum: Spectrum size not large enough.");
 	}
 	
 	if ((fftbuffer = NUMfvector (1, nfft)) == NULL) return 0;

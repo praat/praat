@@ -1,10 +1,10 @@
 /* specfunc/gsl_sf_exp.h
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004 Gerard Jungman
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -116,36 +116,6 @@ int gsl_sf_exp_mult_err_e(const double x, const double dx, const double y, const
  * exceptions: GSL_EOVRFLW, GSL_EUNDRFLW
  */
 int gsl_sf_exp_mult_err_e10_e(const double x, const double dx, const double y, const double dy, gsl_sf_result_e10 * result);
-
-
-
-#ifdef HAVE_INLINE
-#include "gsl_math.h"
-#include "gsl_errno.h"
-
-
-extern inline
-int gsl_sf_exp_e(const double x, gsl_sf_result * result)
-{
-  if(x > GSL_LOG_DBL_MAX) {
-    result->val = GSL_POSINF;
-    result->err = GSL_POSINF;
-    GSL_ERROR ("overflow", GSL_EOVRFLW);
-  }
-  else if(x < GSL_LOG_DBL_MIN) {
-    result->val = 0.0;
-    result->err = GSL_DBL_MIN;
-    GSL_ERROR ("underflow", GSL_EUNDRFLW);
-  }
-  else {
-    result->val = exp(x);
-    result->err = 2.0 * GSL_DBL_EPSILON * result->val;
-    return GSL_SUCCESS;
-  }  
-}
-
-
-#endif /* HAVE_INLINE */
 
 
 #endif /* __GSL_SF_EXP_H__ */

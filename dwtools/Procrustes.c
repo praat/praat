@@ -1,6 +1,6 @@
 /* Procrustes.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20020813 GPL header
  djmw 20040117 Corrected bug in classProcrustes_transform: scale (s) was not used.
  djmw 20050406 Renamed Procrustus Procrustes
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Procrustes.h"
@@ -91,6 +92,8 @@ static Any classProcrustes_invert (I)
 #include "Procrustes_def.h"
 #include "oo_EQUAL.h"
 #include "Procrustes_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Procrustes_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Procrustes_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -106,6 +109,7 @@ class_methods (Procrustes, AffineTransform)
 	class_method_local (Procrustes, destroy)
 	class_method_local (Procrustes, copy)
 	class_method_local (Procrustes, equal)
+	class_method_local (Procrustes, canWriteAsEncoding)
 	class_method_local (Procrustes, writeText)
 	class_method_local (Procrustes, writeBinary)
 	class_method_local (Procrustes, readText)

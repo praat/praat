@@ -764,13 +764,13 @@ END
 FORM (OTMulti_generateOptimalForms, "OTMulti: Generate optimal forms", 0)
 	SENTENCE ("Partial form 1", "")
 	SENTENCE ("Partial form 2", "")
+	NATURAL ("Number of trials", "1000")
 	REAL ("Evaluation noise", "2.0")
-	NATURAL ("Trials", "1000")
 	OK
 DO
 	OTMulti me = ONLY (classOTMulti);
 	if (! praat_new2 (OTMulti_generateOptimalForms (me, GET_STRINGW (L"Partial form 1"), GET_STRINGW (L"Partial form 2"),
-		GET_REAL ("Evaluation noise"), GET_INTEGER ("Trials")), my name, L"_out")) return 0;
+		GET_INTEGER ("Number of trials"), GET_REAL ("Evaluation noise")), my name, L"_out")) return 0;
 	praat_dataChanged (me);
 END
 

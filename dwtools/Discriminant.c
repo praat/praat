@@ -1,6 +1,6 @@
 /* Discriminant.c
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20071009 wchar_t
+ djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Discriminant.h"
@@ -45,6 +47,8 @@
 #include "oo_COPY.h"
 #include "Discriminant_def.h"
 #include "oo_EQUAL.h"
+#include "Discriminant_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Discriminant_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Discriminant_def.h"
@@ -77,6 +81,7 @@ class_methods (Discriminant, Eigen)
 	class_method_local (Discriminant, description)
 	class_method_local (Discriminant, copy)
 	class_method_local (Discriminant, equal)
+	class_method_local (Discriminant, canWriteAsEncoding)
 	class_method_local (Discriminant, writeText)
 	class_method_local (Discriminant, readText)
 	class_method_local (Discriminant, writeBinary)
@@ -102,6 +107,7 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label)
 {
 	long i; SSCPs groups = my groups; wchar_t *name;
+	
 	for (i=1; i <= my numberOfGroups; i++)
 	{
 		if ((name = Thing_getName (groups -> item[i])) && wcsequ (name, label))
@@ -132,12 +138,9 @@ long Discriminant_getNumberOfObservations (Discriminant me, long group)
 
 int Discriminant_setAprioriProbability (Discriminant me, long group, double p)
 {
-	if (group < 1 || group > my numberOfGroups) return Melder_error 
-		("Discriminant_setAprioriProbability: "
-		"group (%d) must be in interval [1, %d].", group, my numberOfGroups);
-	if (p < 0 || p > 1) return Melder_error 
-		("Discriminant_setAprioriProbability: "
-		"probability must be in interval [0,1]");
+	if (group < 1 || group > my numberOfGroups) return Melder_error5 
+		(L"Group (", Melder_integer (group), L") must be in interval [1, ", Melder_integer(my numberOfGroups), L"].");
+	if (p < 0 || p > 1) return Melder_error1 (L"Probability must be in interval [0,1]");
 	my aprioriProbabilities[group] = p;
 	return 1;
 }
@@ -153,9 +156,8 @@ int Discriminant_setGroupLabels (Discriminant me, Strings thee)
 {
 	long i;
 	
-	if (my numberOfGroups != thy numberOfStrings) return Melder_error 
-		("Discriminant_setGroupLabels: The number of strings must equal "
-		"the number of groups.");
+	if (my numberOfGroups != thy numberOfStrings) return Melder_error1 
+		(L"Discriminant_setGroupLabels: The number of strings must equal the number of groups.");
 	
 	for (i=1; i <= my numberOfGroups; i++)
 	{
@@ -377,9 +379,8 @@ SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index)
 {
 	SSCP thee;
 	
-	if (index < 1 || index > my numberOfGroups) return Melder_errorp 
-		("Discriminant_extractWithinGroupSSCP: index must be in interval "
-			"[1,%d]", my numberOfGroups);
+	if (index < 1 || index > my numberOfGroups) return Melder_errorp3 
+		(L"Index must be in interval [1,", Melder_integer (my numberOfGroups), L"].");
 	thee = Data_copy (my groups -> item[index]);
 	return thee;
 }
@@ -476,7 +477,6 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 Discriminant TableOfReal_to_Discriminant (I)
 {
 	iam (TableOfReal);
-	char *proc = "TableOfReal_to_Discriminant";
 	Discriminant thee = new (Discriminant);
 	TableOfReal mew = NULL;
 	double **between = NULL, *centroid = NULL, scale, sum;
@@ -485,12 +485,12 @@ Discriminant TableOfReal_to_Discriminant (I)
 	if (thee == NULL) return NULL;
 	if (NUMdmatrix_hasInfinities (my data, 1, my numberOfRows, 1, dimension))
 	{
-		(void) Melder_error ("%s: table contains infinities.", proc);
+		(void) Melder_error1 (L"Table contains infinities.");
 		goto end; 
 	}
 	if (! TableOfReal_hasRowLabels (me))
 	{
-		(void) Melder_error ("%s: At least one of the rows has no label.", proc);
+		(void) Melder_error1 (L"At least one of the rows has no label.");
 		goto end;
 	}
 	mew = TableOfReal_sortOnlyByRowLabels (me);
@@ -498,7 +498,7 @@ Discriminant TableOfReal_to_Discriminant (I)
 	if (! TableOfReal_hasColumnLabels (mew) &&
 		! TableOfReal_setSequentialColumnLabels (mew, 0, 0, L"c", 1, 1))
 	{
-		(void) Melder_error ("%s: There were no column labels. We could not set them either.", proc);
+		(void) Melder_error1 (L"There were no column labels. We could not set them either.");
 		goto end;
 	}
 	
@@ -509,7 +509,7 @@ Discriminant TableOfReal_to_Discriminant (I)
 
 	if ((thy numberOfGroups = thy groups -> size) < 2)	
 	{
-		(void) Melder_error ("%s: number of groups must be greater than one.", proc);
+		(void) Melder_error1 (L"Number of groups must be greater than one.");
 		goto end;
 	}
 	
@@ -648,10 +648,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
 	double *log_p = NULL, *log_apriori = NULL, *ln_determinant = NULL;
 	double *buf = NULL;
 	 
-	if (p != thy numberOfColumns) return
-		Melder_errorp("Discriminant_and_TableOfReal_to_ClassificationTable: "
-		"the number of columns does not agree with the dimension of the "
-		"discriminant.");
+	if (p != thy numberOfColumns) return Melder_errorp1
+		(L"The number of columns does not agree with the dimension of the discriminant.");
 	
 	if (((log_p = NUMdvector (1, g)) == NULL) ||
 		((log_apriori = NUMdvector (1, g)) == NULL) ||
@@ -810,10 +808,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 	double *log_p = NULL, *log_apriori = NULL, *ln_determinant = NULL;
 	double *buf = NULL, *displacement = NULL, *x = NULL;
 	 
-	if (p != thy numberOfColumns) return
-		Melder_errorp("Discriminant_and_TableOfReal_to_ClassificationTable: "
-		"the number of columns does not agree with the dimension of the "
-		"discriminant.");
+	if (p != thy numberOfColumns) return Melder_errorp1
+		(L"The number of columns does not agree with the dimension of the discriminant.");
 	
 	if (((log_p = NUMdvector (1, g)) == NULL) ||
 		((log_apriori = NUMdvector (1, g)) == NULL) ||

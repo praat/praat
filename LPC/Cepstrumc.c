@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20020812 GPL header
  djmw 20061218 Changed info to Melder_writeLine<x> format.
+ djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "Cepstrumc.h"
@@ -30,6 +31,8 @@
 #include "oo_COPY.h"
 #include "Cepstrumc_def.h"
 #include "oo_EQUAL.h"
+#include "Cepstrumc_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
 #include "Cepstrumc_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "Cepstrumc_def.h"
@@ -59,6 +62,7 @@ class_methods (Cepstrumc, Sampled)
 	class_method_local (Cepstrumc, equal)
 	class_method_local (Cepstrumc, copy)
 	class_method ( info)
+	class_method_local (Cepstrumc, canWriteAsEncoding)
 	class_method_local (Cepstrumc, readText)
 	class_method_local (Cepstrumc, readBinary)
 	class_method_local (Cepstrumc, writeText)
@@ -119,7 +123,7 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	
 	if (my maxnCoefficients != thy maxnCoefficients) return Melder_errorp(
 		"Cepstrumc_difference: Cepstrumc orders must be equal.");
-	if (wr != 0 && nr < 2) return Melder_errorp ("Cepstrumc_difference: "
+	if (wr != 0 && nr < 2) return Melder_errorp1 (L"Cepstrumc_difference: "
 		"time window for regression coefficients too small.");
 	if (nr % 2 == 0) nr++;
 	if (wr != 0) Melder_casual ("Cepstrumc_difference: #frames used for regression coefficients %ld", nr); 
@@ -133,7 +137,7 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 		Calculate distance matrix
 	*/
 	
-	Melder_progress (0.0, "");
+	Melder_progress1 (0.0, L"");
 	for (i=1; i <= my nx; i++)
 	{
 		Cepstrumc_Frame fi = & my frame[i];
@@ -170,10 +174,10 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 			dist /= wc + wle + wr + wer;
 			his z[i][j] = sqrt (dist);	/* prototype along y-direction */
 		}
-		if (! Melder_progress ((double)i / my nx, 
-			"Calculate distances: frame %ld from %ld", i, my nx)) { forget(him); goto end; }
+		if (! Melder_progress5 ((double)i / my nx, L"Calculate distances: frame ",
+			Melder_integer (i), L" from ", Melder_integer (my nx), L".")) { forget(him); goto end; }
 	}
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	DTW_findPath (him, matchStart, matchEnd, constraint);
 end:
 	NUMfvector_free (ri, 0);

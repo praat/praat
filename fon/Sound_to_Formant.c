@@ -291,7 +291,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	if (which == 2) { frame_d = NUMdvector (1, nsamp_window); cherror }
 	if (which == 1) { cof_f = NUMfvector (1, numberOfPoles); cherror }
 
-	Melder_progress (0.0, "Formant analysis");
+	Melder_progress1 (0.0, L"Formant analysis");
 
 	/* Pre-emphasis. */
 	Sound_preEmphasis (me, preemphasisFrequency);
@@ -337,11 +337,11 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 			Melder_clearError ();
 			Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
 		}
-		if (! Melder_progress ((double) iframe / (double) nFrames, "Formant analysis: frame %ld", iframe))
+		if (! Melder_progress2 ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe)))
 			break;
 	}
 end:
-	Melder_progress (1.0, NULL);
+	Melder_progress1 (1.0, NULL);
 	NUMdvector_free (window, 1);
 	NUMfvector_free (frame_f, 1);
 	NUMdvector_free (frame_d, 1);

@@ -33,6 +33,7 @@
  djmw 20061214 Sound_and_Pitch_changeSpeaker removed warning.
  djmw 20070103 Sound interface changes
  djmw 20070129 Warning added in changeGender_old.
+ djmw 20071022 Possible (bug?) correction in Sound_createShepardToneComplex
 */
 
 #include "Intensity_extensions.h"
@@ -258,34 +259,34 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 	if (bingeti2LE (f) != 6)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromCmuAudioFile: incorrect header size.");
+		return Melder_errorp1 (L"Sound_readFromCmuAudioFile: incorrect header size.");
 	}
 	(void) bingeti2LE (f);
 	if ((nChannels = bingeti2LE (f)) < 1)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromCmuAudioFile: incorrect number of channels.");
+		return Melder_errorp1 (L"Sound_readFromCmuAudioFile: incorrect number of channels.");
 	}
 	if (nChannels > 1)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromCmuAudioFile: multi channel, cannot read.");
+		return Melder_errorp1 (L"Sound_readFromCmuAudioFile: multi channel, cannot read.");
 	}
 	if (bingeti2LE (f) < 1)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromCmuAudioFile: incorrect sampling frequency.");
+		return Melder_errorp1 (L"Sound_readFromCmuAudioFile: incorrect sampling frequency.");
 	}
 	if ((nSamples = bingeti4LE (f)) < 1)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromCmuAudioFile: incorrect number of samples. "); 
+		return Melder_errorp1 (L"Sound_readFromCmuAudioFile: incorrect number of samples. "); 
 	}
 	if (! (me = Sound_createSimple (1, nSamples/16000., 16000))) goto error;
 	i2read (me, f, littleEndian);
 	if (feof (f) || ferror (f))
 	{
-		Melder_error ("Sound_readFromCmuAudioFile: not completed.");
+		Melder_error1 (L"Sound_readFromCmuAudioFile: not completed.");
 		goto error;
 	}
 	Melder_fclose (file, f);
@@ -293,7 +294,7 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 error:
 	forget (me);		
 	Melder_fclose (file, f);
-	return Melder_errorp("Sound_readFromCmuAudioFile: Reading from file \"%s\" not performed.", MelderFile_messageName (file));
+	return Melder_errorp3 (L"Reading from file \"", MelderFile_name (file), L"\" not performed.");
 }
  
 Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
@@ -311,7 +312,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 	if (nBytesPerSample == 3 || nBytesPerSample > 4)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromRawFile: number of bytes"
+		return Melder_errorp1 (L"Sound_readFromRawFile: number of bytes"
 		" per sample should be 1, 2 or 4.");
 	}
 	if (skipNBytes <= 0) skipNBytes = 0;
@@ -319,12 +320,12 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 	if (nSamples < 1)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromRawFile: no samples left to read");
+		return Melder_errorp1 (L"Sound_readFromRawFile: no samples left to read");
 	}
 	if (! (me = Sound_createSimple (1, nSamples/samplingFrequency, samplingFrequency)))
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("Sound_readFromRawFile: no memory for Sound.");
+		return Melder_errorp1 (L"Sound_readFromRawFile: no memory for Sound.");
 	}
 	fseek (f, skipNBytes, SEEK_SET);
 	if (      nBytesPerSample == 1 &&   unSigned) u1read (me, f);
@@ -336,14 +337,14 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 	else if ( nBytesPerSample == 4 && strequ (format, "float")) r4read (me, f);
 	if (feof (f) || ferror (f))
 	{
-		Melder_error ("Sound_readFromRawFile: not completed."); goto error;
+		Melder_error1 (L"Sound_readFromRawFile: not completed."); goto error;
 	}
 	Melder_fclose (file, f);
 	return me;
 error:
 	forget (me);
 	Melder_fclose (file, f);
-	return Melder_errorp("Sound_readFromRawFile: Reading from file \"%s\" not performed", MelderFile_messageName (file));
+	return Melder_errorp3 (L"Reading from file \"", MelderFile_name (file), L"\" not performed");
 }
 
 int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, 
@@ -353,14 +354,14 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 	FILE *f = Melder_fopen (file, "wb");
 	if (! f)
 	{
-		return Melder_error ("Sound_readWriteToRawFile: cannot open.");
+		return Melder_error1 (L"Sound_readWriteToRawFile: cannot open.");
 	}
 	if (! format) format = "integer";
 	if (nBitsCoding <= 0) nBitsCoding = 16;
 	nBytesPerSample = ( nBitsCoding + 7) / 8;
 	if (strequ (format, "float")) nBytesPerSample = 4;
 	if (nBytesPerSample == 3 || nBytesPerSample > 4)
-		{ Melder_error ("number of bytes per sample should be 1, 2 or 4."); goto error; }
+		{ Melder_error1 (L"number of bytes per sample should be 1, 2 or 4."); goto error; }
 	if (     nBytesPerSample == 1 &&   unSigned) u1write (me, f, & nClip);
 	else if (nBytesPerSample == 1 && ! unSigned) i1write (me, f, & nClip);
 	else if (nBytesPerSample == 2 &&   unSigned) u2write (me, f, littleEndian, & nClip);
@@ -371,13 +372,13 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 	if (nClip > 0) warning ("Sound_writeToRawAudioFile", nClip, my nx);
 	if (feof (f) || ferror (f))
 	{ 
-		Melder_error ("Sound_writeToRawFile: not completed"); goto error;
+		Melder_error1 (L"Sound_writeToRawFile: not completed"); goto error;
 	}
 	Melder_fclose (file, f);
 	return 1;
 error:
 	Melder_fclose (file, f);
-	return Melder_error("Sound_writeToRawFile: writing to file \"%s\" not performed.", MelderFile_messageName (file));
+	return Melder_error3 (L"Sound_writeToRawFile: writing to file \"", MelderFile_name (file), L"\" not performed.");
 }
 
 struct dialogic_adpcm 
@@ -457,7 +458,6 @@ static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm)
 
 Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 {
-	char *proc = "Sound_readFromDialogicADPCMFile";
 	struct dialogic_adpcm adpcm;
 	unsigned char sc;
 	Sound me = NULL;
@@ -471,7 +471,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 	if (filelength <= 0)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("%s: File is empty", proc);
+		return Melder_errorp1 (L"File is empty.");
 	}
 	
 	/*
@@ -482,7 +482,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 	if (numberOfSamples <= 0)
 	{
 		Melder_fclose (file, f);
-		return Melder_errorp ("%s: File too long", proc);
+		return Melder_errorp1 (L"File too long");
 	}
 	me = Sound_createSimple (1, numberOfSamples /sampleRate, sampleRate);
 	if (me == NULL) return NULL;
@@ -812,102 +812,6 @@ end:
 }
 
 
-static Sound Sound_filterByGammaToneFilter42 (Sound me, double centre_frequency, double bandwidth)
-{
-	Sound thee = NULL; long i, j; double *y = NULL, *x = NULL;
-	double a[5], b[9], zr, zi, dr, di, tr, ti, nr, ni, n2, gr, gi, gain;
-	double dt = my dx, wt = 2 * NUMpi * centre_frequency * dt;
-	double bt = 2 * NUMpi * bandwidth * dt;
-
-	if (centre_frequency < 50 || centre_frequency > 0.5 / my dx ||
-		bandwidth < 0) return  NULL;
-	
-	if (! (thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1)) ||
-		! (y = NUMdvector (-7, my nx)) ||
-		! (x = NUMdvector (-3, my nx))) goto end;
-		
-	b[0] = 1;
-	b[1]= -8 * cos (wt) * exp (-bt);
-	b[2]= (16 + 12 * cos (2 * wt)) * exp (-2 * bt);
-	b[3]= (-48 * cos (wt) - 8 * cos (3 * wt)) * exp (-3 * bt);
-	b[4]= (36 + 32 * cos (2 * wt) + 2 * cos (4 * wt)) * exp (-4 * bt);
-	b[5]= (-48 * cos (wt) - 8 * cos (3 * wt)) * exp (-5 * bt);
-	b[6]= (16 + 12*cos (2 * wt)) * exp (-6 * bt);
-	b[7]= (-8 * cos (wt)) * exp (-7 * bt);
-	b[8]= exp (-8 * bt);
-
-	/*
-		Leave out overall scale factor dt^4, this makes a[0] = 1 
-	*/
-	
-	a[0]= 1;
-	a[1]= -4 * cos (    wt) * exp (-bt);
-	a[2]=  6 * cos (2 * wt) * exp (-2 * bt);
-	a[3]= -4 * cos (3 * wt) * exp (-3 * bt);
-	a[4]=      cos (4 * wt) * exp (-4 * bt);
-	
-	/*
-		Calculate gain and scale a[0-4] with it.
-		H(z) = sum (i=0..4, a[i] z^-i) / sum (j=0..4, b[j] z^-j)
-		gain = Abs (H(z); f=fc)
-	*/
-	
-	zr = cos (wt);
-	zi = -sin (wt);
-
-	dr = a[4];
-    di = 0;
-
-  	for (j=1; j <= 4; j++)
-  	{
-  		tr = a[4-j] + zr * dr - zi * di;
-		ti = zi * dr + zr * di;
-    	dr = tr; di = ti;
-	}
-	
-	dr = b[8];
-	di = 0;
-	for (j=1; j <= 8; j++)
-	{
-		nr = b[8 - j] + zr * dr - zi * di;
-		ni = zi * dr + zr * di;
-		dr = nr; di = ni;
-	}
-
-	n2 = nr * nr + ni * ni;
-	gr = tr * nr + ti * ni;
-	gi = ti * nr - tr * ni;
-	gain = sqrt (gr * gr + gi * gi) / n2;
-
-  	for (j=0; j <= 4; j++) a[j] /= gain;
-	
-	/* perform the filtering */
-	
-	for (long channel = 1; channel <= my ny; channel ++)
-	{
-		for (i = -7; i <= 0; i++) y[i] = 0;
-		for (i = -3; i <= 0; i++) x[i] = 0;
-		for (i = 1; i <= my nx; i++)
-		{
-			x[i] = my z[channel][i];
-		}
-	
-		for (i = 1; i <= my nx; i++)
-		{
-			y[i] = a[0] * x[i];
-			y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
-			y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
-			y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
-			thy z[channel][i] = y[i];
-		}
-	}
-end:
-	NUMdvector_free (x, -3);
-	NUMdvector_free (y, -7);
-	if (Melder_hasError ()) forget (thee);
-	return thee;
-}
-
 /*
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyShiftFraction, double maximumFrequency, double amplitudeRange)
@@ -938,7 +842,6 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 	double samplingFrequency, double lowestFrequency, long numberOfComponents,
 	double frequencyChange_st, double amplitudeRange, double octaveShiftFraction)
 {
-	char *proc = "Sound_createShepardToneComplex";
 	Sound me;
 	long i, j;
 	double nyquist = samplingFrequency / 2;
@@ -947,11 +850,11 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 	double octaveTime, sweeptime;
 	double a = frequencyChange_st / 12;
 
-	if (highestFrequency > nyquist) return Melder_errorp ("%s: The highest frequency you want to generate is above "
+	if (highestFrequency > nyquist) return Melder_errorp1 (L"The highest frequency you want to generate is above "
 		"the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
-		"\"Number of components\" or \"Lowest frequency\".", proc);
-	if (octaveShiftFraction < 0 || octaveShiftFraction >= 1) return Melder_errorp ("%s: Octave offset fraction "
-		"must be greater or equal zero and smaller than one.", proc);
+		"\"Number of components\" or \"Lowest frequency\".");
+	if (octaveShiftFraction < 0 || octaveShiftFraction >= 1) return Melder_errorp1 (L"Octave offset fraction "
+		"must be greater or equal zero and smaller than one.");
 	if (frequencyChange_st != 0)
 	{
 		octaveTime = 12 / fabs (frequencyChange_st);
@@ -969,7 +872,7 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 		double tswitch;
 		double freqi = lowestFrequency * pow (2, i - 1 + octaveShiftFraction);
 		double b1, b2;
-		double phasejm1 = 0;
+		double phase1 = 0, phasejm1 = 0;
 
 		/*
 			The frequency is f(t) = lowestFrequency * 2^tone(t)
@@ -1008,10 +911,9 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 			double theta = 2 * NUMpi * tone / numberOfComponents;
 			double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
 			double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
-			double phase1 = j == 1 ? phasej : phase1;
-			double si = level * sin (phasej - phase1);
 
-			my z[1][j] += si;
+			if (j == 1) phase1 = phasej; // phase1 = j == 1 ? phasej : phase1;
+			my z[1][j] += level * sin (phasej - phase1); // si
 			phasejm1 = phasej;
 		}
 	}
@@ -1110,103 +1012,6 @@ void Sounds_multiply (Sound me, Sound thee)
 	for (i=1; i <= n; i++) s1[i] *= s2[i];
 }
 
-static Matrix Sound_to_KoonenMatrix (Sound me, long octavesUp)
-{
-	Spectrum thee = NULL; Matrix him = NULL; int status = 0;
-	/*
-		C C# D Eb E F F# G G#  A Bb  B  C
-	    1  2 3  4 5 6  7 8  9 10 11 12
-	    A = 220 hz (octave -1), A' = 440 Hz (octave 0),	A'' = 880 (octave 1); 
-	*/
-	double a0 = 440; 
-	/* minimum and maximum frequencies needed */
-	double fmin, fmax;
-	/* first frequency (C) of octave in which a = 440 */
-	double c0 = a0 * pow (2, - 9 / 12.0);
-	float *flow = NULL;
-	long i, j, kf, octavesDown, nOctaves, nflow;
-	/*
-		maximum number of octaves up w.r.t. sampling frequency.
-		sampling frequency == 1 / (2 * dx)
-	*/
-	long  octavesUpMax = - NUMlog2 (my dx * 2 * c0); 
-	
-	if (octavesUp > octavesUpMax) octavesUp = octavesUpMax;
-	/*
-		we don't need more than 3 octaves down -> a = 55 Hz (440 / 2^3) -> c = 32.7 Hz
-	*/
-	octavesDown = 3; 
-	nOctaves = octavesUp + 1 + octavesDown;
-	nflow = nOctaves * 12 + 1;
-	if (! (thee = Sound_to_Spectrum (me, TRUE)) ||
-		! (him = Matrix_create (0.5, 12.5, 12, 1, 1, 0.5, nOctaves + 0.5, nOctaves, 1, 1)) ||
-		! (flow = NUMfvector (1, nflow))) goto end;
-	/*
-		calculate lower frequency of each interval
-	*/
-	fmin = c0 * pow (2, - octavesDown - 0.5 / 12);
-	for (kf=1; kf <= nflow; kf++) flow[kf] = fmin * pow (2, (kf - 1) / 12.);
-	fmax = flow[nflow];
-	kf = 1;
-	/*
-		sum the energy in the Spectrum in the corresbonding bins
-	*/
-	for (i=2; i <= thy nx; i++)
-	{
-		double f = i * thy dx; long irow, icol;
-		if (f < fmin) continue;
-		if (f > fmax) break;
-		if (f > flow[kf+1]) kf++;
-		irow = (kf - 1) / 12 + 1; icol = (kf - 1) % 12 + 1;
-		his z[irow][icol] += thy z[1][i] * thy z[1][i] + thy z[2][i] * thy z[2][i];
-	}
-	for (i=1; i <= nOctaves; i++) for (j=1; j <= 12; j++) /* dB's */
-	{
-		double dbm = 2 * his z[i][j] * thy dx / 4.0e-10;
-		if (dbm > 0) his z[i][j] = 10 * log10 (dbm);
-	}
-	status = 1;
-end:
-	forget (thee); NUMfvector_free (flow, 1);
-	if (Melder_hasError ())  forget (him);
-	return him;
-}
-
-static void Sound_drawKoonenPlot (Sound me, Graphics g, long octavesDown, long octavesUp, int garnish)
-{
-	Spectrum thee = NULL; Matrix him = NULL;
-	double a = 440, fc0 = a * pow (2, -9 / 12), fmin, fmax;
-	long i, j, upmax = - NUMlog2 (fc0 * my dx * 2), nOctaves;
-	
-	if (octavesDown > 3) octavesDown = 3;
-	if (octavesUp > upmax) octavesUp = upmax;
-	nOctaves = octavesUp + 1 + octavesDown;
-	fmin = fc0 * pow (2, - octavesDown); fmax = fc0 * pow (2, octavesUp+1);
-	if (! (thee = Sound_to_Spectrum (me, TRUE)) ||
-		! (him = Matrix_create (0.5, 12.5, 12, 1, 1, 0.5, nOctaves + 0.5, nOctaves, 1, 1))) goto end;
-	for (i=2; i <= thy nx; i++)
-	{
-		double f = i * thy dx, nr; long n, irow, icol;
-		if (f < fmin) continue;
-		if (f > fmax) break;
-		nr = 12 * NUMlog2 (f / fc0); /* f = fc0 * 2 ^(n/12) */
-		n = 12 * octavesDown + 1 + nr;
-		irow = (n - 1) / 12 + 1; icol = (n - 1) % 12 + 1;
-		his z[irow][icol] += thy z[1][i] * thy z[1][i] + thy z[2][i] * thy z[2][i];
-	}
-	for (i=1; i <= nOctaves; i++) for (j=1; j <= 12; j++) /* dB's */
-	{
-		double dbm = 2 * his z[i][j] * thy dx / 4.0e-10;
-		if (dbm > 0) his z[i][j] = 10 * log10 (dbm);
-	}
-	Matrix_paintCells (him, g, 0, 0, 0, 0, 0, 0);
-	if (garnish)
-	{
-	}
-end:
-	forget (thee);
-	forget (him);
-}
 
 double Sound_power (Sound me)
 {
@@ -1239,31 +1044,6 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration)
 	}
 	denum = sxx * syy;
 	rxy = denum > 0 ? sxy / sqrt (denum) : 0;
-	return rxy;
-}
-
-static double Sound_correlateParts2 (Sound me, double tx, double ty, double duration)
-{
-	double xsum = 0, x2sum = 0, ysum = 0, y2sum = 0, xysum = 0, denum, rxy;
-	float *z = my z[1]; long i, nbx, nby, ney, ns, increment = 0, decrement = 0;
-	
-	if (ty < tx ) { double t = tx; tx = ty; ty = t; }
-	nbx = Sampled_xToNearestIndex (me, tx);
-	nby = Sampled_xToNearestIndex (me, ty);
-	ney = Sampled_xToNearestIndex (me, ty + duration);
-	if (nbx < 1) increment = 1 - nbx;
-	if (ney > my nx) decrement = ney - my nx;
-	ns = duration / my dx - increment - decrement;
-	if (ns < 1) return 0;
-	for (i=1; i <= ns; i++)
-	{
-		double x = z[nbx + increment - 1 + i];
-		double y = z[nby + increment - 1 + i];
-		xsum += x; x2sum += x * x; xysum += x * y;
-		ysum += y; y2sum += y * y;
-	}
-	denum = (ns * x2sum - xsum * xsum) * (ns * y2sum - ysum * ysum);
-	rxy = denum > 0 ? (ns * xysum - xsum * ysum) / sqrt (denum) : 0;
 	return rxy;
 }
 
@@ -1355,26 +1135,24 @@ end:
 
 int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 {
-	char *proc = "Sound_overwritePart";
 	long i, i1, i2, i3, i4;
 
-	if (my dx != thy dx) return Melder_error 
-		("%s: Sample rates must be equal.", proc);
+	if (my dx != thy dx) return Melder_error1 (L"Sample rates must be equal.");
 			
 	if (t1 == 0) t1 =  my xmin;
 	if (t2 == 0) t2 =  my xmax;
 	
 	i1 = Sampled_xToHighIndex (me, t1);
 	i2 = Sampled_xToLowIndex (me, t2);
-	if (i1 > i2 || i2 > my nx || i1 < 1) return Melder_error 
-		("%s: Times of part to be overwritten must be within the sound.", proc);
+	if (i1 > i2 || i2 > my nx || i1 < 1) return Melder_error1 
+		(L"Times of part to be overwritten must be within the sound.");
 	
 	if (t3 == 0) t3 = thy xmin;
 	i3 = Sampled_xToHighIndex (thee, t3);
 	i4 = Sampled_xToLowIndex (thee, t3 + t2 - t1);
-	if (i4 > thy nx || i3 < 1) return Melder_error ("%s: Not enough samples to be copied", proc);
+	if (i4 > thy nx || i3 < 1) return Melder_error1 (L"Not enough samples to be copied.");
 
-	if (i4 - i3 != i2 - i1) return Melder_error ("%s: ", proc);
+	if (i4 - i3 != i2 - i1) return Melder_error1 (L"Error i4 - i3 != i2 - i1.");
 
 	for (i = i1; i <= i2; i++)
 	{
@@ -1466,8 +1244,8 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	double samplingFrequency_old = 1 / my dx;
 	double median;
 	
-	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
-		("%s: The Pitch and the Sound object must have the same start and end times.", proc);
+	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp1 
+		(L"The Pitch and the Sound object must have the same start and end times.");
 	
 	sound = Data_copy (me);
 	if (sound == NULL) return NULL;
@@ -1617,11 +1395,11 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	double samplingFrequency_old = 1 / my dx;
 	double median, factor;
  
- 	if (my ny > 1) return Melder_errorp ("Change Gender works only on mono sounds.");
+ 	if (my ny > 1) return Melder_errorp1 (L"Change Gender works only on mono sounds.");
  		
-	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp 
-		("%s: The Pitch and the Sound object must have the same starting times and finishing times.", proc);
-	if (new_pitch < 0) return Melder_errorp ("%s: The new pitch median must not be negative.", proc);
+	if (my xmin != his xmin || my xmax != his xmax) return Melder_errorp1 
+		(L"The Pitch and the Sound object must have the same starting times and finishing times.");
+	if (new_pitch < 0) return Melder_errorp1 (L"The new pitch median must not be negative.");
 	
 	sound = Data_copy (me);
 	if (sound == NULL) return NULL;

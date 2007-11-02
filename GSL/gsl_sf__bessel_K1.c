@@ -4,7 +4,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
+ * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Author:  G. Jungman */
@@ -36,23 +36,23 @@
 
 /* chebyshev expansions 
 
- series for bk1        on the interval  0.	    to  4.00000d+00
-					with weighted error   7.02e-18
-					 log weighted error  17.15
-			       significant figures required  16.73
-				    decimal places required  17.67
+ series for bk1        on the interval  0.          to  4.00000d+00
+                                        with weighted error   7.02e-18
+                                         log weighted error  17.15
+                               significant figures required  16.73
+                                    decimal places required  17.67
 
  series for ak1        on the interval  1.25000d-01 to  5.00000d-01
-					with weighted error   6.06e-17
-					 log weighted error  16.22
-			       significant figures required  15.41
-				    decimal places required  16.83
+                                        with weighted error   6.06e-17
+                                         log weighted error  16.22
+                               significant figures required  15.41
+                                    decimal places required  16.83
 
- series for ak12       on the interval  0.	    to  1.25000d-01
-					with weighted error   2.58e-17
-					 log weighted error  16.59
-			       significant figures required  15.22
-				    decimal places required  17.16
+ series for ak12       on the interval  0.          to  1.25000d-01
+                                        with weighted error   2.58e-17
+                                         log weighted error  16.59
+                               significant figures required  15.22
+                                    decimal places required  17.16
 */
 
 static double bk1_data[11] = {
@@ -199,7 +199,7 @@ int gsl_sf_bessel_K1_e(const double x, gsl_sf_result * result)
     int stat_K1 = gsl_sf_bessel_K1_scaled_e(x, &K1_scaled);
     int stat_e  = gsl_sf_exp_mult_err_e(-x, 0.0,
                                            K1_scaled.val, K1_scaled.err,
-					   result);
+                                           result);
     result->err = fabs(result->val) * (GSL_DBL_EPSILON*fabs(x) + K1_scaled.err/K1_scaled.val);
     return GSL_ERROR_SELECT_2(stat_e, stat_K1);
   }
