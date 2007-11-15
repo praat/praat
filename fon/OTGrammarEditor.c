@@ -33,12 +33,12 @@
 #define OTGrammarEditor_methods HyperPage_methods
 class_create_opaque (OTGrammarEditor, HyperPage);
 
-FORM (OTGrammarEditor, cb_evaluate, "Evaluate", 0)
-	REAL ("Noise", "2.0")
+FORM (OTGrammarEditor, cb_evaluate, L"Evaluate", 0)
+	REAL (L"Noise", L"2.0")
 	OK
 DO
 	Editor_save (me, L"Evaluate");
-	OTGrammar_newDisharmonies (my data, GET_REAL ("Noise"));
+	OTGrammar_newDisharmonies (my data, GET_REAL (L"Noise"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
@@ -64,80 +64,80 @@ DIRECT (OTGrammarEditor, cb_evaluate_zeroNoise)
 	Editor_broadcastChange (me);
 END
 
-FORM (OTGrammarEditor, cb_editConstraint, "Edit constraint", 0)
-	LABEL ("constraint", "");
-	REAL ("Ranking value", "100.0");
-	REAL ("Disharmony", "100.0");
-	REAL ("Plasticity", "1.0");
+FORM (OTGrammarEditor, cb_editConstraint, L"Edit constraint", 0)
+	LABEL (L"constraint", L"");
+	REAL (L"Ranking value", L"100.0");
+	REAL (L"Disharmony", L"100.0");
+	REAL (L"Plasticity", L"1.0");
 	OK
 OTGrammar ot = my data;
 OTGrammarConstraint constraint;
-if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error ("Select a constraint first.");
+if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
 constraint = & ot -> constraints [ot -> index [my selected]];
-SET_STRINGW (L"constraint", constraint -> name)
-SET_REAL ("Ranking value", constraint -> ranking)
-SET_REAL ("Disharmony", constraint -> disharmony)
-SET_REAL ("Plasticity", constraint -> plasticity)
+SET_STRING (L"constraint", constraint -> name)
+SET_REAL (L"Ranking value", constraint -> ranking)
+SET_REAL (L"Disharmony", constraint -> disharmony)
+SET_REAL (L"Plasticity", constraint -> plasticity)
 DO
 	OTGrammar ot = my data;
 	OTGrammarConstraint constraint = & ot -> constraints [ot -> index [my selected]];
 	Editor_save (me, L"Edit constraint");
-	constraint -> ranking = GET_REAL ("Ranking value");
-	constraint -> disharmony = GET_REAL ("Disharmony");
-	constraint -> plasticity = GET_REAL ("Plasticity");
+	constraint -> ranking = GET_REAL (L"Ranking value");
+	constraint -> disharmony = GET_REAL (L"Disharmony");
+	constraint -> plasticity = GET_REAL (L"Plasticity");
 	OTGrammar_sort (ot);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
-FORM (OTGrammarEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
-	LABEL ("", "Underlying form:")
-	SENTENCE ("Input string", "")
-	LABEL ("", "Adult surface form:")
-	SENTENCE ("Output string", "")
-	REAL ("Evaluation noise", "2.0")
-	OPTIONMENU ("Reranking strategy", 3)
-		OPTION ("Demotion only")
-		OPTION ("Symmetric one")
-		OPTION ("Symmetric all")
-		OPTION ("Weighted uncancelled")
-		OPTION ("Weighted all")
-		OPTION ("EDCD")
-	REAL ("Plasticity", "0.1")
-	REAL ("Rel. plasticity spreading", "0.1")
-	BOOLEAN ("Honour local rankings", 1)
+FORM (OTGrammarEditor, cb_learnOne, L"Learn one", L"OTGrammar: Learn one...")
+	LABEL (L"", L"Underlying form:")
+	SENTENCE (L"Input string", L"")
+	LABEL (L"", L"Adult surface form:")
+	SENTENCE (L"Output string", L"")
+	REAL (L"Evaluation noise", L"2.0")
+	OPTIONMENU (L"Reranking strategy", 3)
+		OPTION (L"Demotion only")
+		OPTION (L"Symmetric one")
+		OPTION (L"Symmetric all")
+		OPTION (L"Weighted uncancelled")
+		OPTION (L"Weighted all")
+		OPTION (L"EDCD")
+	REAL (L"Plasticity", L"0.1")
+	REAL (L"Rel. plasticity spreading", L"0.1")
+	BOOLEAN (L"Honour local rankings", 1)
 	OK
 DO
 	Editor_save (me, L"Learn one");
-	OTGrammar_learnOne (my data, GET_STRINGW (L"Input string"), GET_STRINGW (L"Output string"),
-		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
-		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), TRUE, TRUE, NULL);
+	OTGrammar_learnOne (my data, GET_STRING (L"Input string"), GET_STRING (L"Output string"),
+		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 	OTGrammar_sort (my data);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
-FORM (OTGrammarEditor, cb_learnOneFromPartialOutput, "Learn one from partial adult output", 0)
-	LABEL ("", "Partial adult surface form (e.g. overt form):")
-	SENTENCE ("Partial output", "")
-	REAL ("Evaluation noise", "2.0")
-	OPTIONMENU ("Reranking strategy", 3)
-		OPTION ("Demotion only")
-		OPTION ("Symmetric one")
-		OPTION ("Symmetric all")
-		OPTION ("Weighted uncancelled")
-		OPTION ("Weighted all")
-		OPTION ("EDCD")
-	REAL ("Plasticity", "0.1")
-	REAL ("Rel. plasticity spreading", "0.1")
-	BOOLEAN ("Honour local rankings", 1)
-	NATURAL ("Number of chews", "1")
+FORM (OTGrammarEditor, cb_learnOneFromPartialOutput, L"Learn one from partial adult output", 0)
+	LABEL (L"", L"Partial adult surface form (e.g. overt form):")
+	SENTENCE (L"Partial output", L"")
+	REAL (L"Evaluation noise", L"2.0")
+	OPTIONMENU (L"Reranking strategy", 3)
+		OPTION (L"Demotion only")
+		OPTION (L"Symmetric one")
+		OPTION (L"Symmetric all")
+		OPTION (L"Weighted uncancelled")
+		OPTION (L"Weighted all")
+		OPTION (L"EDCD")
+	REAL (L"Plasticity", L"0.1")
+	REAL (L"Rel. plasticity spreading", L"0.1")
+	BOOLEAN (L"Honour local rankings", 1)
+	NATURAL (L"Number of chews", L"1")
 	OK
 DO
 	Editor_save (me, L"Learn one from partial output");
-	OTGrammar_learnOneFromPartialOutput (my data, GET_STRINGW (L"Partial output"),
-		GET_REAL ("Evaluation noise"), GET_INTEGER ("Reranking strategy") - 1, GET_INTEGER ("Honour local rankings"),
-		GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"), GET_INTEGER ("Number of chews"), TRUE);
+	OTGrammar_learnOneFromPartialOutput (my data, GET_STRING (L"Partial output"),
+		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 	OTGrammar_sort (my data);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -154,12 +154,12 @@ DIRECT (OTGrammarEditor, cb_removeConstraint)
 	Editor_broadcastChange (me);
 END
 
-FORM (OTGrammarEditor, cb_resetAllRankings, "Reset all rankings", 0)
-	REAL ("Ranking", "100.0")
+FORM (OTGrammarEditor, cb_resetAllRankings, L"Reset all rankings", 0)
+	REAL (L"Ranking", L"100.0")
 	OK
 DO
 	Editor_save (me, L"Reset all rankings");
-	OTGrammar_reset (my data, GET_REAL ("Ranking"));
+	OTGrammar_reset (my data, GET_REAL (L"Ranking"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END

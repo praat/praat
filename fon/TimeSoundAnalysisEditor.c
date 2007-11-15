@@ -329,47 +329,47 @@ static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *t
 
 static int menu_cb_logSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Log settings", "Log files")
-		OPTIONMENU ("Write log 1 to", 3)
-			OPTION ("Log file only")
-			OPTION ("Info window only")
-			OPTION ("Log file and Info window")
-		LABEL ("", "Log file 1:")
-		TEXTFIELDW (L"Log file 1", LOG_1_FILE_NAME)
-		LABEL ("", "Log 1 format:")
-		TEXTFIELDW (L"Log 1 format", LOG_1_FORMAT)
-		OPTIONMENU ("Write log 2 to", 3)
-			OPTION ("Log file only")
-			OPTION ("Info window only")
-			OPTION ("Log file and Info window")
-		LABEL ("", "Log file 2:")
-		TEXTFIELDW (L"Log file 2", LOG_2_FILE_NAME)
-		LABEL ("", "Log 2 format:")
-		TEXTFIELDW (L"Log 2 format", LOG_2_FORMAT)
-		LABEL ("", "Log script 3:")
-		TEXTFIELDW (L"Log script 3", LOG_3_FILE_NAME)
-		LABEL ("", "Log script 4:")
-		TEXTFIELDW (L"Log script 4", LOG_4_FILE_NAME)
+	EDITOR_FORM (L"Log settings", L"Log files")
+		OPTIONMENU (L"Write log 1 to", 3)
+			OPTION (L"Log file only")
+			OPTION (L"Info window only")
+			OPTION (L"Log file and Info window")
+		LABEL (L"", L"Log file 1:")
+		TEXTFIELD (L"Log file 1", LOG_1_FILE_NAME)
+		LABEL (L"", L"Log 1 format:")
+		TEXTFIELD (L"Log 1 format", LOG_1_FORMAT)
+		OPTIONMENU (L"Write log 2 to", 3)
+			OPTION (L"Log file only")
+			OPTION (L"Info window only")
+			OPTION (L"Log file and Info window")
+		LABEL (L"", L"Log file 2:")
+		TEXTFIELD (L"Log file 2", LOG_2_FILE_NAME)
+		LABEL (L"", L"Log 2 format:")
+		TEXTFIELD (L"Log 2 format", LOG_2_FORMAT)
+		LABEL (L"", L"Log script 3:")
+		TEXTFIELD (L"Log script 3", LOG_3_FILE_NAME)
+		LABEL (L"", L"Log script 4:")
+		TEXTFIELD (L"Log script 4", LOG_4_FILE_NAME)
 	EDITOR_OK
-		SET_INTEGER ("Write log 1 to", preferences.log[0].toLogFile + 2 * preferences.log[0].toInfoWindow)
-		SET_STRINGW (L"Log file 1", preferences.log[0].fileName)
-		SET_STRINGW (L"Log 1 format", preferences.log[0].format)
-		SET_INTEGER ("Write log 2 to", preferences.log[1].toLogFile + 2 * preferences.log[1].toInfoWindow)
-		SET_STRINGW (L"Log file 2", preferences.log[1].fileName)
-		SET_STRINGW (L"Log 2 format", preferences.log[1].format)
-		SET_STRINGW (L"Log script 3", preferences.logScript3)
-		SET_STRINGW (L"Log script 4", preferences.logScript4)
+		SET_INTEGER (L"Write log 1 to", preferences.log[0].toLogFile + 2 * preferences.log[0].toInfoWindow)
+		SET_STRING (L"Log file 1", preferences.log[0].fileName)
+		SET_STRING (L"Log 1 format", preferences.log[0].format)
+		SET_INTEGER (L"Write log 2 to", preferences.log[1].toLogFile + 2 * preferences.log[1].toInfoWindow)
+		SET_STRING (L"Log file 2", preferences.log[1].fileName)
+		SET_STRING (L"Log 2 format", preferences.log[1].format)
+		SET_STRING (L"Log script 3", preferences.logScript3)
+		SET_STRING (L"Log script 4", preferences.logScript4)
 	EDITOR_DO
-		preferences.log[0].toLogFile = (GET_INTEGER ("Write log 1 to") & 1) != 0;
-		preferences.log[0].toInfoWindow = (GET_INTEGER ("Write log 1 to") & 2) != 0;
-		wcscpy (preferences.log[0].fileName, GET_STRINGW (L"Log file 1"));
-		wcscpy (preferences.log[0].format, GET_STRINGW (L"Log 1 format"));
-		preferences.log[1].toLogFile = (GET_INTEGER ("Write log 2 to") & 1) != 0;
-		preferences.log[1].toInfoWindow = (GET_INTEGER ("Write log 2 to") & 2) != 0;
-		wcscpy (preferences.log[1].fileName, GET_STRINGW (L"Log file 2"));
-		wcscpy (preferences.log[1].format, GET_STRINGW (L"Log 2 format"));
-		wcscpy (preferences.logScript3, GET_STRINGW (L"Log script 3"));
-		wcscpy (preferences.logScript4, GET_STRINGW (L"Log script 4"));
+		preferences.log[0].toLogFile = (GET_INTEGER (L"Write log 1 to") & 1) != 0;
+		preferences.log[0].toInfoWindow = (GET_INTEGER (L"Write log 1 to") & 2) != 0;
+		wcscpy (preferences.log[0].fileName, GET_STRING (L"Log file 1"));
+		wcscpy (preferences.log[0].format, GET_STRING (L"Log 1 format"));
+		preferences.log[1].toLogFile = (GET_INTEGER (L"Write log 2 to") & 1) != 0;
+		preferences.log[1].toInfoWindow = (GET_INTEGER (L"Write log 2 to") & 2) != 0;
+		wcscpy (preferences.log[1].fileName, GET_STRING (L"Log file 2"));
+		wcscpy (preferences.log[1].format, GET_STRING (L"Log 2 format"));
+		wcscpy (preferences.logScript3, GET_STRING (L"Log script 3"));
+		wcscpy (preferences.logScript4, GET_STRING (L"Log script 4"));
 	EDITOR_END
 }
 
@@ -524,52 +524,52 @@ static int menu_cb_logScript4 (EDITOR_ARGS) {
 
 static int menu_cb_showAnalyses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Show analyses", 0)
-		BOOLEAN ("Show spectrogram", 1)
-		BOOLEAN ("Show pitch", 1)
-		BOOLEAN ("Show intensity", 0)
-		BOOLEAN ("Show formants", 0)
-		BOOLEAN ("Show pulses", 0)
-		POSITIVE ("Longest analysis (s)", "5.0")
+	EDITOR_FORM (L"Show analyses", 0)
+		BOOLEAN (L"Show spectrogram", 1)
+		BOOLEAN (L"Show pitch", 1)
+		BOOLEAN (L"Show intensity", 0)
+		BOOLEAN (L"Show formants", 0)
+		BOOLEAN (L"Show pulses", 0)
+		POSITIVE (L"Longest analysis (s)", L"5.0")
 	EDITOR_OK
-		SET_INTEGER ("Show spectrogram", my spectrogram.show)
-		SET_INTEGER ("Show pitch", my pitch.show)
-		SET_INTEGER ("Show intensity", my intensity.show)
-		SET_INTEGER ("Show formants", my formant.show)
-		SET_INTEGER ("Show pulses", my pulses.show)
-		SET_REAL ("Longest analysis", my longestAnalysis)
+		SET_INTEGER (L"Show spectrogram", my spectrogram.show)
+		SET_INTEGER (L"Show pitch", my pitch.show)
+		SET_INTEGER (L"Show intensity", my intensity.show)
+		SET_INTEGER (L"Show formants", my formant.show)
+		SET_INTEGER (L"Show pulses", my pulses.show)
+		SET_REAL (L"Longest analysis", my longestAnalysis)
 	EDITOR_DO
-		XmToggleButtonGadgetSetState (my spectrogramToggle, preferences.spectrogram.show = my spectrogram.show = GET_INTEGER ("Show spectrogram"), False);
-		XmToggleButtonGadgetSetState (my pitchToggle, preferences.pitch.show = my pitch.show = GET_INTEGER ("Show pitch"), False);
-		XmToggleButtonGadgetSetState (my intensityToggle, preferences.intensity.show = my intensity.show = GET_INTEGER ("Show intensity"), False);
-		XmToggleButtonGadgetSetState (my formantToggle, preferences.formant.show = my formant.show = GET_INTEGER ("Show formants"), False);
-		XmToggleButtonGadgetSetState (my pulsesToggle, preferences.pulses.show = my pulses.show = GET_INTEGER ("Show pulses"), False);
-		preferences.longestAnalysis = my longestAnalysis = GET_REAL ("Longest analysis");
+		XmToggleButtonGadgetSetState (my spectrogramToggle, preferences.spectrogram.show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"), False);
+		XmToggleButtonGadgetSetState (my pitchToggle, preferences.pitch.show = my pitch.show = GET_INTEGER (L"Show pitch"), False);
+		XmToggleButtonGadgetSetState (my intensityToggle, preferences.intensity.show = my intensity.show = GET_INTEGER (L"Show intensity"), False);
+		XmToggleButtonGadgetSetState (my formantToggle, preferences.formant.show = my formant.show = GET_INTEGER (L"Show formants"), False);
+		XmToggleButtonGadgetSetState (my pulsesToggle, preferences.pulses.show = my pulses.show = GET_INTEGER (L"Show pulses"), False);
+		preferences.longestAnalysis = my longestAnalysis = GET_REAL (L"Longest analysis");
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Time step settings", "Time step settings...")
-		OPTIONMENU ("Time step strategy", 1)
-			OPTION ("automatic")
-			OPTION ("fixed")
-			OPTION ("view-dependent")
-		LABEL ("", "")
-		LABEL ("", "If the time step strategy is \"fixed\":")
-		POSITIVE ("Fixed time step (s)", "0.01")
-		LABEL ("", "")
-		LABEL ("", "If the time step strategy is \"view-dependent\":")
-		NATURAL ("Number of time steps per view", "100")
+	EDITOR_FORM (L"Time step settings", L"Time step settings...")
+		OPTIONMENU (L"Time step strategy", 1)
+			OPTION (L"automatic")
+			OPTION (L"fixed")
+			OPTION (L"view-dependent")
+		LABEL (L"", L"")
+		LABEL (L"", L"If the time step strategy is \"fixed\":")
+		POSITIVE (L"Fixed time step (s)", L"0.01")
+		LABEL (L"", L"")
+		LABEL (L"", L"If the time step strategy is \"view-dependent\":")
+		NATURAL (L"Number of time steps per view", L"100")
 	EDITOR_OK
-		SET_INTEGER ("Time step strategy", my timeStepStrategy)
-		SET_REAL ("Fixed time step", my fixedTimeStep)
-		SET_INTEGER ("Number of time steps per view", my numberOfTimeStepsPerView)
+		SET_INTEGER (L"Time step strategy", my timeStepStrategy)
+		SET_REAL (L"Fixed time step", my fixedTimeStep)
+		SET_INTEGER (L"Number of time steps per view", my numberOfTimeStepsPerView)
 	EDITOR_DO
-		preferences.timeStepStrategy = my timeStepStrategy = GET_INTEGER ("Time step strategy");
-		preferences.fixedTimeStep = my fixedTimeStep = GET_REAL ("Fixed time step");
-		preferences.numberOfTimeStepsPerView = my numberOfTimeStepsPerView = GET_INTEGER ("Number of time steps per view");
+		preferences.timeStepStrategy = my timeStepStrategy = GET_INTEGER (L"Time step strategy");
+		preferences.fixedTimeStep = my fixedTimeStep = GET_REAL (L"Fixed time step");
+		preferences.numberOfTimeStepsPerView = my numberOfTimeStepsPerView = GET_INTEGER (L"Number of time steps per view");
 		forget (my pitch.data);
 		forget (my formant.data);
 		forget (my intensity.data);
@@ -589,37 +589,37 @@ static int menu_cb_showSpectrogram (EDITOR_ARGS) {
 
 static int menu_cb_spectrogramSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Spectrogram settings", "Intro 3.2. Configuring the spectrogram")
-		REAL ("left View range (Hz)", "0.0")
-		POSITIVE ("right View range (Hz)", "5000.0")
-		POSITIVE ("Window length (s)", "0.005")
-		POSITIVE ("Dynamic range (dB)", "50.0")
-		LABEL ("note1", "")
-		LABEL ("note2", "")
+	EDITOR_FORM (L"Spectrogram settings", L"Intro 3.2. Configuring the spectrogram")
+		REAL (L"left View range (Hz)", L"0.0")
+		POSITIVE (L"right View range (Hz)", L"5000.0")
+		POSITIVE (L"Window length (s)", L"0.005")
+		POSITIVE (L"Dynamic range (dB)", L"50.0")
+		LABEL (L"note1", L"")
+		LABEL (L"note2", L"")
 	EDITOR_OK
-		SET_REAL ("left View range", my spectrogram.viewFrom)
-		SET_REAL ("right View range", my spectrogram.viewTo)
-		SET_REAL ("Window length", my spectrogram.windowLength)
-		SET_REAL ("Dynamic range", my spectrogram.dynamicRange)
+		SET_REAL (L"left View range", my spectrogram.viewFrom)
+		SET_REAL (L"right View range", my spectrogram.viewTo)
+		SET_REAL (L"Window length", my spectrogram.windowLength)
+		SET_REAL (L"Dynamic range", my spectrogram.dynamicRange)
 		if (my spectrogram.timeSteps != 1000 || my spectrogram.frequencySteps != 250 || my spectrogram.method != 1 ||
 			my spectrogram.windowShape != 5 || my spectrogram.maximum != 100.0 || my spectrogram.autoscaling != TRUE ||
 			my spectrogram.preemphasis != 6.0 || my spectrogram.dynamicCompression != 0.0)
 		{
-			SET_STRING ("note1", "Warning: you have non-standard \"advanced settings\".")
+			SET_STRING (L"note1", L"Warning: you have non-standard \"advanced settings\".")
 		} else {
-			SET_STRING ("note1", "(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my timeStepStrategy != 1)
 		{
-			SET_STRING ("note2", "Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING ("note2", "(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.spectrogram.viewFrom = my spectrogram.viewFrom = GET_REAL ("left View range");
-		preferences.spectrogram.viewTo = my spectrogram.viewTo = GET_REAL ("right View range");
-		preferences.spectrogram.windowLength = my spectrogram.windowLength = GET_REAL ("Window length");
-		preferences.spectrogram.dynamicRange = my spectrogram.dynamicRange = GET_REAL ("Dynamic range");
+		preferences.spectrogram.viewFrom = my spectrogram.viewFrom = GET_REAL (L"left View range");
+		preferences.spectrogram.viewTo = my spectrogram.viewTo = GET_REAL (L"right View range");
+		preferences.spectrogram.windowLength = my spectrogram.windowLength = GET_REAL (L"Window length");
+		preferences.spectrogram.dynamicRange = my spectrogram.dynamicRange = GET_REAL (L"Dynamic range");
 		forget (my spectrogram.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -627,42 +627,40 @@ static int menu_cb_spectrogramSettings (EDITOR_ARGS) {
 
 static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Advanced spectrogram settings", "Advanced spectrogram settings...")
-		LABEL ("", "Time and frequency resolutions:")
-		NATURAL ("Number of time steps", "1000")
-		NATURAL ("Number of frequency steps", "250")
-		LABEL ("", "Spectrogram analysis settings:")
-		OPTIONMENU ("Method", 1)
-			OPTION ("Fourier")
-		OPTIONMENU ("Window shape", 6)
-		{
-			int i; for (i = 0; i < 6; i ++) {
-				OPTIONW (Sound_to_Spectrogram_windowShapeText (i))
-			}
+	EDITOR_FORM (L"Advanced spectrogram settings", L"Advanced spectrogram settings...")
+		LABEL (L"", L"Time and frequency resolutions:")
+		NATURAL (L"Number of time steps", L"1000")
+		NATURAL (L"Number of frequency steps", L"250")
+		LABEL (L"", L"Spectrogram analysis settings:")
+		OPTIONMENU (L"Method", 1)
+			OPTION (L"Fourier")
+		OPTIONMENU (L"Window shape", 6)
+		for (int i = 0; i < 6; i ++) {
+			OPTION (Sound_to_Spectrogram_windowShapeText (i))
 		}
-		LABEL ("", "Spectrogram view settings:")
-		BOOLEAN ("Autoscaling", 1)
-		REAL ("Maximum (dB/Hz)", "100.0")
-		REAL ("Pre-emphasis (dB/oct)", "6.0")
-		REAL ("Dynamic compression (0-1)", "0.0")
+		LABEL (L"", L"Spectrogram view settings:")
+		BOOLEAN (L"Autoscaling", 1)
+		REAL (L"Maximum (dB/Hz)", L"100.0")
+		REAL (L"Pre-emphasis (dB/oct)", L"6.0")
+		REAL (L"Dynamic compression (0-1)", L"0.0")
 	EDITOR_OK
-		SET_INTEGER ("Number of time steps", my spectrogram.timeSteps)
-		SET_INTEGER ("Number of frequency steps", my spectrogram.frequencySteps)
-		SET_INTEGER ("Method", my spectrogram.method)
-		SET_INTEGER ("Window shape", my spectrogram.windowShape + 1)
-		SET_REAL ("Maximum", my spectrogram.maximum)
-		SET_INTEGER ("Autoscaling", my spectrogram.autoscaling)
-		SET_REAL ("Pre-emphasis", my spectrogram.preemphasis)
-		SET_REAL ("Dynamic compression", my spectrogram.dynamicCompression)
+		SET_INTEGER (L"Number of time steps", my spectrogram.timeSteps)
+		SET_INTEGER (L"Number of frequency steps", my spectrogram.frequencySteps)
+		SET_INTEGER (L"Method", my spectrogram.method)
+		SET_INTEGER (L"Window shape", my spectrogram.windowShape + 1)
+		SET_REAL (L"Maximum", my spectrogram.maximum)
+		SET_INTEGER (L"Autoscaling", my spectrogram.autoscaling)
+		SET_REAL (L"Pre-emphasis", my spectrogram.preemphasis)
+		SET_REAL (L"Dynamic compression", my spectrogram.dynamicCompression)
 	EDITOR_DO
-		preferences.spectrogram.timeSteps = my spectrogram.timeSteps = GET_INTEGER ("Number of time steps");
-		preferences.spectrogram.frequencySteps = my spectrogram.frequencySteps = GET_INTEGER ("Number of frequency steps");
-		preferences.spectrogram.method = my spectrogram.method = GET_INTEGER ("Method");
-		preferences.spectrogram.windowShape = my spectrogram.windowShape = GET_INTEGER ("Window shape") - 1;
-		preferences.spectrogram.maximum = my spectrogram.maximum = GET_REAL ("Maximum");
-		preferences.spectrogram.autoscaling = my spectrogram.autoscaling = GET_INTEGER ("Autoscaling");
-		preferences.spectrogram.preemphasis = my spectrogram.preemphasis = GET_REAL ("Pre-emphasis");
-		preferences.spectrogram.dynamicCompression = my spectrogram.dynamicCompression = GET_REAL ("Dynamic compression");
+		preferences.spectrogram.timeSteps = my spectrogram.timeSteps = GET_INTEGER (L"Number of time steps");
+		preferences.spectrogram.frequencySteps = my spectrogram.frequencySteps = GET_INTEGER (L"Number of frequency steps");
+		preferences.spectrogram.method = my spectrogram.method = GET_INTEGER (L"Method");
+		preferences.spectrogram.windowShape = my spectrogram.windowShape = GET_INTEGER (L"Window shape") - 1;
+		preferences.spectrogram.maximum = my spectrogram.maximum = GET_REAL (L"Maximum");
+		preferences.spectrogram.autoscaling = my spectrogram.autoscaling = GET_INTEGER (L"Autoscaling");
+		preferences.spectrogram.preemphasis = my spectrogram.preemphasis = GET_REAL (L"Pre-emphasis");
+		preferences.spectrogram.dynamicCompression = my spectrogram.dynamicCompression = GET_REAL (L"Dynamic compression");
 		forget (my spectrogram.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -756,21 +754,21 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 
 static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Paint visible spectrogram", 0)
+	EDITOR_FORM (L"Paint visible spectrogram", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", our preferences.picture.spectrogram.garnish);
+		SET_INTEGER (L"Garnish", our preferences.picture.spectrogram.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		our preferences.picture.spectrogram.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.spectrogram.garnish = GET_INTEGER (L"Garnish");
 		if (! my spectrogram.show)
 			return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my spectrogram.data) {
@@ -797,44 +795,44 @@ static int menu_cb_showPitch (EDITOR_ARGS) {
 
 static int menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Pitch settings", "Intro 4.2. Configuring the pitch contour")
-		POSITIVE ("left Pitch range (Hz)", "75.0")
-		POSITIVE ("right Pitch range (Hz)", "500.0")
-		OPTIONMENU ("Unit", 1)
-			OPTIONS_ENUMW (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
-		RADIO ("Optimize for", 1)
-			RADIOBUTTON ("Intonation (AC method)")
-			RADIOBUTTON ("Voice analysis (CC method)")
+	EDITOR_FORM (L"Pitch settings", L"Intro 4.2. Configuring the pitch contour")
+		POSITIVE (L"left Pitch range (Hz)", L"75.0")
+		POSITIVE (L"right Pitch range (Hz)", L"500.0")
+		OPTIONMENU (L"Unit", 1)
+			OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
+		RADIO (L"Optimize for", 1)
+			RADIOBUTTON (L"Intonation (AC method)")
+			RADIOBUTTON (L"Voice analysis (CC method)")
 		OPTIONMENU_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT)
-		LABEL ("note1", "")
-		LABEL ("note2", "")
+		LABEL (L"note1", L"")
+		LABEL (L"note2", L"")
 	EDITOR_OK
-		SET_REAL ("left Pitch range", my pitch.floor)
-		SET_REAL ("right Pitch range", my pitch.ceiling)
-		SET_INTEGER ("Unit", my pitch.unit + 1 - Pitch_UNIT_min)
+		SET_REAL (L"left Pitch range", my pitch.floor)
+		SET_REAL (L"right Pitch range", my pitch.ceiling)
+		SET_INTEGER (L"Unit", my pitch.unit + 1 - Pitch_UNIT_min)
 		SET_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my pitch.drawingMethod)
-		SET_INTEGER ("Optimize for", my pitch.method)
+		SET_INTEGER (L"Optimize for", my pitch.method)
 		if (my pitch.viewFrom != 0.0 || my pitch.viewTo != 0.0 ||
 			my pitch.veryAccurate != FALSE || my pitch.maximumNumberOfCandidates != 15 ||
 			my pitch.silenceThreshold != 0.03 || my pitch.voicingThreshold != 0.45 || my pitch.octaveCost != 0.01 ||
 			my pitch.octaveJumpCost != 0.35 || my pitch.voicedUnvoicedCost != 0.14)
 		{
-			SET_STRING ("note1", "Warning: you have some non-standard \"advanced settings\".")
+			SET_STRING (L"note1", L"Warning: you have some non-standard \"advanced settings\".")
 		} else {
-			SET_STRING ("note1", "(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my timeStepStrategy != 1)
 		{
-			SET_STRING ("note2", "Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING ("note2", "(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.pitch.floor = my pitch.floor = GET_REAL ("left Pitch range");
-		preferences.pitch.ceiling = my pitch.ceiling = GET_REAL ("right Pitch range");
-		preferences.pitch.unit = my pitch.unit = GET_INTEGER ("Unit") - 1 + Pitch_UNIT_min;
+		preferences.pitch.floor = my pitch.floor = GET_REAL (L"left Pitch range");
+		preferences.pitch.ceiling = my pitch.ceiling = GET_REAL (L"right Pitch range");
+		preferences.pitch.unit = my pitch.unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
 		preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, L"Drawing method");
-		preferences.pitch.method = my pitch.method = GET_INTEGER ("Optimize for");
+		preferences.pitch.method = my pitch.method = GET_INTEGER (L"Optimize for");
 		forget (my pitch.data);
 		forget (my intensity.data);
 		forget (my pulses.data);
@@ -844,40 +842,40 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 
 static int menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Advanced pitch settings", "Advanced pitch settings...")
-		LABEL ("", "Make view range different from analysis range:")
-		REAL ("left View range (units)", "0.0 (= auto)")
-		REAL ("right View range (units)", "0.0 (= auto)")
-		LABEL ("", "Analysis settings:")
-		BOOLEAN ("Very accurate", 0)
-		NATURAL ("Max. number of candidates", "15")
-		REAL ("Silence threshold", "0.03")
-		REAL ("Voicing threshold", "0.45")
-		REAL ("Octave cost", "0.01")
-		REAL ("Octave-jump cost", "0.35")
-		REAL ("Voiced / unvoiced cost", "0.14")
+	EDITOR_FORM (L"Advanced pitch settings", L"Advanced pitch settings...")
+		LABEL (L"", L"Make view range different from analysis range:")
+		REAL (L"left View range (units)", L"0.0 (= auto)")
+		REAL (L"right View range (units)", L"0.0 (= auto)")
+		LABEL (L"", L"Analysis settings:")
+		BOOLEAN (L"Very accurate", 0)
+		NATURAL (L"Max. number of candidates", L"15")
+		REAL (L"Silence threshold", L"0.03")
+		REAL (L"Voicing threshold", L"0.45")
+		REAL (L"Octave cost", L"0.01")
+		REAL (L"Octave-jump cost", L"0.35")
+		REAL (L"Voiced / unvoiced cost", L"0.14")
 	EDITOR_OK
-		SET_REAL ("left View range", my pitch.viewFrom)
-		SET_REAL ("right View range", my pitch.viewTo)
-		SET_INTEGER ("Very accurate", my pitch.veryAccurate)
-		SET_INTEGER ("Max. number of candidates", my pitch.maximumNumberOfCandidates)
-		SET_REAL ("Silence threshold", my pitch.silenceThreshold)
-		SET_REAL ("Voicing threshold", my pitch.voicingThreshold)
-		SET_REAL ("Octave cost", my pitch.octaveCost)
-		SET_REAL ("Octave-jump cost", my pitch.octaveJumpCost)
-		SET_REAL ("Voiced / unvoiced cost", my pitch.voicedUnvoicedCost)
+		SET_REAL (L"left View range", my pitch.viewFrom)
+		SET_REAL (L"right View range", my pitch.viewTo)
+		SET_INTEGER (L"Very accurate", my pitch.veryAccurate)
+		SET_INTEGER (L"Max. number of candidates", my pitch.maximumNumberOfCandidates)
+		SET_REAL (L"Silence threshold", my pitch.silenceThreshold)
+		SET_REAL (L"Voicing threshold", my pitch.voicingThreshold)
+		SET_REAL (L"Octave cost", my pitch.octaveCost)
+		SET_REAL (L"Octave-jump cost", my pitch.octaveJumpCost)
+		SET_REAL (L"Voiced / unvoiced cost", my pitch.voicedUnvoicedCost)
 	EDITOR_DO
-		long maxnCandidates = GET_INTEGER ("Max. number of candidates");
+		long maxnCandidates = GET_INTEGER (L"Max. number of candidates");
 		if (maxnCandidates < 2) return Melder_error1 (L"Maximum number of candidates must be greater than 1.");
-		preferences.pitch.viewFrom = my pitch.viewFrom = GET_REAL ("left View range");
-		preferences.pitch.viewTo = my pitch.viewTo = GET_REAL ("right View range");
-		preferences.pitch.veryAccurate = my pitch.veryAccurate = GET_INTEGER ("Very accurate");
-		preferences.pitch.maximumNumberOfCandidates = my pitch.maximumNumberOfCandidates = GET_INTEGER ("Max. number of candidates");
-		preferences.pitch.silenceThreshold = my pitch.silenceThreshold = GET_REAL ("Silence threshold");
-		preferences.pitch.voicingThreshold = my pitch.voicingThreshold = GET_REAL ("Voicing threshold");
-		preferences.pitch.octaveCost = my pitch.octaveCost = GET_REAL ("Octave cost");
-		preferences.pitch.octaveJumpCost = my pitch.octaveJumpCost = GET_REAL ("Octave-jump cost");
-		preferences.pitch.voicedUnvoicedCost = my pitch.voicedUnvoicedCost = GET_REAL ("Voiced / unvoiced cost");
+		preferences.pitch.viewFrom = my pitch.viewFrom = GET_REAL (L"left View range");
+		preferences.pitch.viewTo = my pitch.viewTo = GET_REAL (L"right View range");
+		preferences.pitch.veryAccurate = my pitch.veryAccurate = GET_INTEGER (L"Very accurate");
+		preferences.pitch.maximumNumberOfCandidates = my pitch.maximumNumberOfCandidates = GET_INTEGER (L"Max. number of candidates");
+		preferences.pitch.silenceThreshold = my pitch.silenceThreshold = GET_REAL (L"Silence threshold");
+		preferences.pitch.voicingThreshold = my pitch.voicingThreshold = GET_REAL (L"Voicing threshold");
+		preferences.pitch.octaveCost = my pitch.octaveCost = GET_REAL (L"Octave cost");
+		preferences.pitch.octaveJumpCost = my pitch.octaveJumpCost = GET_REAL (L"Octave-jump cost");
+		preferences.pitch.voicedUnvoicedCost = my pitch.voicedUnvoicedCost = GET_REAL (L"Voiced / unvoiced cost");
 		forget (my pitch.data);
 		forget (my intensity.data);
 		forget (my pulses.data);
@@ -1034,25 +1032,25 @@ static int menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 
 static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Draw visible pitch contour", 0)
+	EDITOR_FORM (L"Draw visible pitch contour", 0)
 		our form_pictureWindow (me, cmd);
-		LABEL ("", "Pitch:")
-		BOOLEAN ("Speckle", 0);
+		LABEL (L"", L"Pitch:")
+		BOOLEAN (L"Speckle", 0);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
-		SET_INTEGER ("Speckle", my pitch.picture.speckle);
+		SET_INTEGER (L"Speckle", my pitch.picture.speckle);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", our preferences.picture.pitch.garnish);
+		SET_INTEGER (L"Garnish", our preferences.picture.pitch.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
-		preferences.pitch.picture.speckle = my pitch.picture.speckle = GET_INTEGER ("Speckle");
+		preferences.pitch.picture.speckle = my pitch.picture.speckle = GET_INTEGER (L"Speckle");
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		our preferences.picture.pitch.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.pitch.garnish = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
 			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -1067,7 +1065,7 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 		double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
 		double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
 		Pitch_draw (my pitch.data, my pictureGraphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt,
-			our preferences.picture.pitch.garnish, GET_INTEGER ("Speckle"), my pitch.unit);
+			our preferences.picture.pitch.garnish, GET_INTEGER (L"Speckle"), my pitch.unit);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -1084,33 +1082,33 @@ static int menu_cb_showIntensity (EDITOR_ARGS) {
 
 static int menu_cb_intensitySettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Intensity settings", "Intro 6.2. Configuring the intensity contour")
-		REAL ("left View range (dB)", "50.0")
-		REAL ("right View range (dB)", "100.0")
-		RADIO ("Averaging method", Intensity_averaging_ENERGY + 1)
-			RADIOBUTTON ("median")
-			RADIOBUTTON ("mean energy")
-			RADIOBUTTON ("mean sones")
-			RADIOBUTTON ("mean dB")
-		BOOLEAN ("Subtract mean pressure", 1)
-		LABEL ("", "Note: the pitch floor is taken from the pitch settings.")
-		LABEL ("note2", "")
+	EDITOR_FORM (L"Intensity settings", L"Intro 6.2. Configuring the intensity contour")
+		REAL (L"left View range (dB)", L"50.0")
+		REAL (L"right View range (dB)", L"100.0")
+		RADIO (L"Averaging method", Intensity_averaging_ENERGY + 1)
+			RADIOBUTTON (L"median")
+			RADIOBUTTON (L"mean energy")
+			RADIOBUTTON (L"mean sones")
+			RADIOBUTTON (L"mean dB")
+		BOOLEAN (L"Subtract mean pressure", 1)
+		LABEL (L"", L"Note: the pitch floor is taken from the pitch settings.")
+		LABEL (L"note2", L"")
 	EDITOR_OK
-		SET_REAL ("left View range", my intensity.viewFrom)
-		SET_REAL ("right View range", my intensity.viewTo)
-		SET_INTEGER ("Averaging method", my intensity.averagingMethod + 1)
-		SET_INTEGER ("Subtract mean pressure", my intensity.subtractMeanPressure)
+		SET_REAL (L"left View range", my intensity.viewFrom)
+		SET_REAL (L"right View range", my intensity.viewTo)
+		SET_INTEGER (L"Averaging method", my intensity.averagingMethod + 1)
+		SET_INTEGER (L"Subtract mean pressure", my intensity.subtractMeanPressure)
 		if (my timeStepStrategy != 1)
 		{
-			SET_STRING ("note2", "Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING ("note2", "(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.intensity.viewFrom = my intensity.viewFrom = GET_REAL ("left View range");
-		preferences.intensity.viewTo = my intensity.viewTo = GET_REAL ("right View range");
-		preferences.intensity.averagingMethod = my intensity.averagingMethod = GET_INTEGER ("Averaging method") - 1;
-		preferences.intensity.subtractMeanPressure = my intensity.subtractMeanPressure = GET_INTEGER ("Subtract mean pressure");
+		preferences.intensity.viewFrom = my intensity.viewFrom = GET_REAL (L"left View range");
+		preferences.intensity.viewTo = my intensity.viewTo = GET_REAL (L"right View range");
+		preferences.intensity.averagingMethod = my intensity.averagingMethod = GET_INTEGER (L"Averaging method") - 1;
+		preferences.intensity.subtractMeanPressure = my intensity.subtractMeanPressure = GET_INTEGER (L"Subtract mean pressure");
 		forget (my intensity.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1134,21 +1132,21 @@ static int menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 
 static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Draw visible intensity contour", 0)
+	EDITOR_FORM (L"Draw visible intensity contour", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", our preferences.picture.intensity.garnish);
+		SET_INTEGER (L"Garnish", our preferences.picture.intensity.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		our preferences.picture.intensity.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.intensity.garnish = GET_INTEGER (L"Garnish");
 		if (! my intensity.show)
 			return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 		if (! my intensity.data) {
@@ -1222,37 +1220,37 @@ static int menu_cb_showFormants (EDITOR_ARGS) {
 
 static int menu_cb_formantSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Formant settings", "Intro 5.2. Configuring the formant contours")
-		POSITIVE ("Maximum formant (Hz)", "5500.0")
-		POSITIVE ("Number of formants", "5.0")
-		POSITIVE ("Window length (s)", "0.025")
-		REAL ("Dynamic range (dB)", "30.0")
-		POSITIVE ("Dot size (mm)", "1.0")
-		LABEL ("note1", "")
-		LABEL ("note2", "")
+	EDITOR_FORM (L"Formant settings", L"Intro 5.2. Configuring the formant contours")
+		POSITIVE (L"Maximum formant (Hz)", L"5500.0")
+		POSITIVE (L"Number of formants", L"5.0")
+		POSITIVE (L"Window length (s)", L"0.025")
+		REAL (L"Dynamic range (dB)", L"30.0")
+		POSITIVE (L"Dot size (mm)", L"1.0")
+		LABEL (L"note1", L"")
+		LABEL (L"note2", L"")
 	EDITOR_OK
-		SET_REAL ("Maximum formant", my formant.maximumFormant)
-		SET_REAL ("Number of formants", 0.5 * my formant.numberOfPoles)
-		SET_REAL ("Window length", my formant.windowLength)
-		SET_REAL ("Dynamic range", my formant.dynamicRange)
-		SET_REAL ("Dot size", my formant.dotSize)
+		SET_REAL (L"Maximum formant", my formant.maximumFormant)
+		SET_REAL (L"Number of formants", 0.5 * my formant.numberOfPoles)
+		SET_REAL (L"Window length", my formant.windowLength)
+		SET_REAL (L"Dynamic range", my formant.dynamicRange)
+		SET_REAL (L"Dot size", my formant.dotSize)
 		if (my formant.method != 1 || my formant.preemphasisFrom != 50.0) {
-			SET_STRING ("note1", "Warning: you have non-standard \"advanced settings\".")
+			SET_STRING (L"note1", L"Warning: you have non-standard \"advanced settings\".")
 		} else {
-			SET_STRING ("note1", "(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my timeStepStrategy != 1)
 		{
-			SET_STRING ("note2", "Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING ("note2", "(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.formant.maximumFormant = my formant.maximumFormant = GET_REAL ("Maximum formant");
-		preferences.formant.numberOfPoles = my formant.numberOfPoles = 2.0 * GET_REAL ("Number of formants");
-		preferences.formant.windowLength = my formant.windowLength = GET_REAL ("Window length");
-		preferences.formant.dynamicRange = my formant.dynamicRange = GET_REAL ("Dynamic range");
-		preferences.formant.dotSize = my formant.dotSize = GET_REAL ("Dot size");
+		preferences.formant.maximumFormant = my formant.maximumFormant = GET_REAL (L"Maximum formant");
+		preferences.formant.numberOfPoles = my formant.numberOfPoles = 2.0 * GET_REAL (L"Number of formants");
+		preferences.formant.windowLength = my formant.windowLength = GET_REAL (L"Window length");
+		preferences.formant.dynamicRange = my formant.dynamicRange = GET_REAL (L"Dynamic range");
+		preferences.formant.dotSize = my formant.dotSize = GET_REAL (L"Dot size");
 		forget (my formant.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1260,16 +1258,16 @@ static int menu_cb_formantSettings (EDITOR_ARGS) {
 
 static int menu_cb_advancedFormantSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Advanced formant settings", "Advanced formant settings...")
-		RADIO ("Method", 1)
-			RADIOBUTTON ("Burg")
-		POSITIVE ("Pre-emphasis from (Hz)", "50.0")
+	EDITOR_FORM (L"Advanced formant settings", L"Advanced formant settings...")
+		RADIO (L"Method", 1)
+			RADIOBUTTON (L"Burg")
+		POSITIVE (L"Pre-emphasis from (Hz)", L"50.0")
 	EDITOR_OK
-		SET_INTEGER ("Method", my formant.method)
-		SET_REAL ("Pre-emphasis from", my formant.preemphasisFrom)
+		SET_INTEGER (L"Method", my formant.method)
+		SET_REAL (L"Pre-emphasis from", my formant.preemphasisFrom)
 	EDITOR_DO
-		preferences.formant.method = my formant.method = GET_INTEGER ("Method");
-		preferences.formant.preemphasisFrom = my formant.preemphasisFrom = GET_REAL ("Pre-emphasis from");
+		preferences.formant.method = my formant.method = GET_INTEGER (L"Method");
+		preferences.formant.preemphasisFrom = my formant.preemphasisFrom = GET_REAL (L"Pre-emphasis from");
 		forget (my formant.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1293,21 +1291,21 @@ static int menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 
 static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Draw visible formant contour", 0)
+	EDITOR_FORM (L"Draw visible formant contour", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", our preferences.picture.formant.garnish);
+		SET_INTEGER (L"Garnish", our preferences.picture.formant.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		our preferences.picture.formant.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.formant.garnish = GET_INTEGER (L"Garnish");
 		if (! my formant.show)
 			return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		if (! my formant.data) {
@@ -1414,21 +1412,21 @@ static int menu_cb_getFourthBandwidth (EDITOR_ARGS) {
 
 static int menu_cb_getFormant (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Get formant", 0)
-		NATURAL ("Formant number", "5")
+	EDITOR_FORM (L"Get formant", 0)
+		NATURAL (L"Formant number", L"5")
 	EDITOR_OK
 	EDITOR_DO
-		if (! do_getFormant (me, GET_INTEGER ("Formant number"))) return 0;
+		if (! do_getFormant (me, GET_INTEGER (L"Formant number"))) return 0;
 	EDITOR_END
 }
 
 static int menu_cb_getBandwidth (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Get bandwidth", 0)
-		NATURAL ("Formant number", "5")
+	EDITOR_FORM (L"Get bandwidth", 0)
+		NATURAL (L"Formant number", L"5")
 	EDITOR_OK
 	EDITOR_DO
-		if (! do_getBandwidth (me, GET_INTEGER ("Formant number"))) return 0;
+		if (! do_getBandwidth (me, GET_INTEGER (L"Formant number"))) return 0;
 	EDITOR_END
 }
 
@@ -1443,15 +1441,15 @@ static int menu_cb_showPulses (EDITOR_ARGS) {
 
 static int menu_cb_advancedPulsesSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Advanced pulses settings", "Advanced pulses settings...")
-		POSITIVE ("Maximum period factor", "1.3")
-		POSITIVE ("Maximum amplitude factor", "1.6")
+	EDITOR_FORM (L"Advanced pulses settings", L"Advanced pulses settings...")
+		POSITIVE (L"Maximum period factor", L"1.3")
+		POSITIVE (L"Maximum amplitude factor", L"1.6")
 	EDITOR_OK
-		SET_REAL ("Maximum period factor", my pulses.maximumPeriodFactor)
-		SET_REAL ("Maximum amplitude factor", my pulses.maximumAmplitudeFactor)
+		SET_REAL (L"Maximum period factor", my pulses.maximumPeriodFactor)
+		SET_REAL (L"Maximum amplitude factor", my pulses.maximumAmplitudeFactor)
 	EDITOR_DO
-		preferences.pulses.maximumPeriodFactor = my pulses.maximumPeriodFactor = GET_REAL ("Maximum period factor");
-		preferences.pulses.maximumAmplitudeFactor = my pulses.maximumAmplitudeFactor = GET_REAL ("Maximum amplitude factor");
+		preferences.pulses.maximumPeriodFactor = my pulses.maximumPeriodFactor = GET_REAL (L"Maximum period factor");
+		preferences.pulses.maximumAmplitudeFactor = my pulses.maximumAmplitudeFactor = GET_REAL (L"Maximum amplitude factor");
 		forget (my pulses.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1475,21 +1473,21 @@ static int menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 
 static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	EDITOR_FORM ("Draw visible pulses", 0)
+	EDITOR_FORM (L"Draw visible pulses", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", our preferences.picture.pulses.garnish);
+		SET_INTEGER (L"Garnish", our preferences.picture.pulses.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		our preferences.picture.pulses.garnish = GET_INTEGER ("Garnish");
+		our preferences.picture.pulses.garnish = GET_INTEGER (L"Garnish");
 		if (! my pulses.show)
 			return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my pulses.data) {

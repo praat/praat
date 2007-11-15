@@ -47,7 +47,7 @@ static const wchar_t *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
-FORM_WRITE (Manual, cb_writeOneToHtmlFile, "Write to HTML file", 0)
+FORM_WRITE (Manual, cb_writeOneToHtmlFile, L"Write to HTML file", 0)
 	ManPages manPages = my data;
 	wchar_t *p = defaultName;
 	wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
@@ -57,26 +57,26 @@ DO_WRITE
 	if (! ManPages_writeOneToHtmlFile (my data, my path, file)) return 0;
 END
 
-FORM (Manual, cb_writeAllToHtmlDir, "Write all pages as HTML files", 0)
-	LABEL ("", "Type a directory name:")
-	TEXTFIELD ("directory", "")
+FORM (Manual, cb_writeAllToHtmlDir, L"Write all pages as HTML files", 0)
+	LABEL (L"", L"Type a directory name:")
+	TEXTFIELD (L"directory", L"")
 	OK
 structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
-SET_STRINGW (L"directory", Melder_dirToPath (& currentDirectory))
+SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 DO
-	wchar_t *directory = GET_STRINGW (L"directory");
+	wchar_t *directory = GET_STRING (L"directory");
 	if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;
 END
 
-FORM (Manual, cb_searchForPageList, "Search for page", 0)
+FORM (Manual, cb_searchForPageList, L"Search for page", 0)
 	{ ManPages manPages = my data;
 	long numberOfPages;
 	const wchar_t **pages = ManPages_getTitles (manPages, & numberOfPages);
-	LIST ("Page", manPages -> pages -> size, pages, 1) }
+	LIST (L"Page", manPages -> pages -> size, pages, 1) }
 	OK
 DO
-	if (! HyperPage_goToPage_i (me, GET_INTEGER ("Page"))) return 0;
+	if (! HyperPage_goToPage_i (me, GET_INTEGER (L"Page"))) return 0;
 END
 
 static void destroy (I) {
@@ -215,47 +215,48 @@ static void print (I, Graphics graphics) {
 	my printPagesStartingWith = NULL;
 }
 
-FORM (Manual, cb_printRange, "Print range", 0)
-	SENTENCE ("Left or inside header", "")
-	SENTENCE ("Middle header", "")
-	SENTENCE ("Right or outside header", "Manual")
-	SENTENCE ("Left or inside footer", "")
-	SENTENCE ("Middle footer", "")
-	SENTENCE ("Right or outside footer", "")
-	BOOLEAN ("Mirror even/odd headers", TRUE)
-	LABEL ("", "Print all pages whose title starts with:")
-	TEXTFIELD ("Print pages starting with", "Intro")
-	INTEGER ("First page number", "1")
-	BOOLEAN ("Suppress \"Links to this page\"", FALSE)
+FORM (Manual, cb_printRange, L"Print range", 0)
+	SENTENCE (L"Left or inside header", L"")
+	SENTENCE (L"Middle header", L"")
+	SENTENCE (L"Right or outside header", L"Manual")
+	SENTENCE (L"Left or inside footer", L"")
+	SENTENCE (L"Middle footer", L"")
+	SENTENCE (L"Right or outside footer", L"")
+	BOOLEAN (L"Mirror even/odd headers", TRUE)
+	LABEL (L"", L"Print all pages whose title starts with:")
+	TEXTFIELD (L"Print pages starting with", L"Intro")
+	INTEGER (L"First page number", L"1")
+	BOOLEAN (L"Suppress \"Links to this page\"", FALSE)
 	OK
 ManPages manPages = my data;
 time_t today = time (NULL);
-char date [50], *newline;
+char dateA [50];
 #ifdef UNIX
 	struct tm *tm = localtime (& today);
-	strftime (date, 50, "%B %e, %Y", tm);
+	strftime (dateA, 50, "%B %e, %Y", tm);
 #else
-	strcpy (date, ctime (& today));
+	strcpy (dateA, ctime (& today));
 #endif
-newline = strchr (date, '\n'); if (newline) *newline = '\0';
-SET_STRING ("Left or inside header", date)
-SET_STRINGW (L"Right or outside header", my name)
-if (my pageNumber) SET_INTEGER ("First page number", my pageNumber + 1)
+wchar_t *date = Melder_peekUtf8ToWcs (dateA), *newline;
+newline = wcschr (date, '\n'); if (newline) *newline = '\0';
+SET_STRING (L"Left or inside header", date)
+SET_STRING (L"Right or outside header", my name)
+if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
 if (my path >= 1 && my path <= manPages -> pages -> size) {
 	ManPage page = manPages -> pages -> item [my path];
-	SET_STRINGW (L"Print pages starting with", page -> title);
+	SET_STRING (L"Print pages starting with", page -> title);
 }
 DO
-	my insideHeader = GET_STRINGW (L"Left or inside header");
-	my middleHeader = GET_STRINGW (L"Middle header");
-	my outsideHeader = GET_STRINGW (L"Right or outside header");
-	my insideFooter = GET_STRINGW (L"Left or inside footer");
-	my middleFooter = GET_STRINGW (L"Middle footer");
-	my outsideFooter = GET_STRINGW (L"Right or outside footer");
-	my mirror = GET_INTEGER ("Mirror even/odd headers");
-	my printPagesStartingWith = GET_STRINGW (L"Print pages starting with");
-	my pageNumber = GET_INTEGER ("First page number");
-	my suppressLinksHither = GET_INTEGER ("Suppress \"Links to this page\"");
+	my insideHeader = GET_STRING (L"Left or inside header");
+	my middleHeader = GET_STRING (L"Middle header");
+	my outsideHeader = GET_STRING (L"Right or outside header");
+	my insideFooter = GET_STRING (L"Left or inside footer");
+	my middleFooter = GET_STRING (L"Middle footer");
+	my outsideFooter = GET_STRING (L"Right or outside footer");
+	my mirror = GET_INTEGER (L"Mirror even/odd headers");
+	my printPagesStartingWith = GET_STRING (L"Print pages starting with");
+	my pageNumber = GET_INTEGER (L"First page number");
+	my suppressLinksHither = GET_INTEGER (L"Suppress \"Links to this page\"");
 	Printer_print (print, me);
 END
 
@@ -459,11 +460,11 @@ static void defaultHeaders (EditorCommand cmd) {
 			{ L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec" };
 		ManPage page = manPages -> pages -> item [my path];
 		long date = page -> date;
-		SET_STRINGW (L"Right or outside header", page -> title)
-		SET_STRINGW (L"Left or inside footer", page -> author)
+		SET_STRING (L"Right or outside header", page -> title)
+		SET_STRING (L"Left or inside footer", page -> author)
 		if (date) {
 			swprintf (string, 400, L"%ls %ld, %ld", month [date % 10000 / 100 - 1], date % 100, date / 10000);
-			SET_STRINGW (L"Left or inside header", string)
+			SET_STRING (L"Left or inside header", string)
 		}
 	}
 }

@@ -460,10 +460,10 @@ void Categories_sort (Categories me) {
 	NUMsort_p (my size, my item, (int (*) (const void *, const void *)) compare);
 }
 
-double Categories_getEnthropy (Categories me) {
+double Categories_getEntropy (Categories me) {
 	long i, numberOfTokens = 0;
 	wchar_t *previousString = NULL;
-	double enthropy = 0.0;
+	double entropy = 0.0;
 	me = Data_copy (me); iferror return NUMundefined;
 	Categories_sort (me);
 	for (i = 1; i <= my size; i ++) {
@@ -471,7 +471,7 @@ double Categories_getEnthropy (Categories me) {
 		wchar_t *string = s -> string;
 		if (previousString != NULL && ! wcsequ (string, previousString)) {
 			double p = (double) numberOfTokens / my size;
-			enthropy -= p * NUMlog2 (p);
+			entropy -= p * NUMlog2 (p);
 			numberOfTokens = 1;
 		} else {
 			numberOfTokens ++;
@@ -480,10 +480,10 @@ double Categories_getEnthropy (Categories me) {
 	}
 	if (numberOfTokens) {
 		double p = (double) numberOfTokens / my size;
-		enthropy -= p * NUMlog2 (p);
+		entropy -= p * NUMlog2 (p);
 	}
 	forget (me);
-	return enthropy;
+	return entropy;
 }
 
 /* End of file Formant.c */

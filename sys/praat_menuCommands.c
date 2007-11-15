@@ -124,10 +124,9 @@ static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 		wcsequ (window, L"Objects") ? praat_objects_resolveMenu (menu) : NULL;
 }
 
-Widget praat_addMenuCommand (const char *windowA, const char *menuA, const char *titleA,
-	const char *afterA, unsigned long flags, int (*callback) (Any, void *))
+Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+	const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 {
-	wchar_t *window = Melder_utf8ToWcs (windowA), *menu = Melder_utf8ToWcs (menuA), *title = Melder_utf8ToWcs (titleA), *after = Melder_utf8ToWcs (afterA);
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
@@ -160,7 +159,6 @@ Widget praat_addMenuCommand (const char *windowA, const char *menuA, const char 
 	} else {
 		position = theNumberOfCommands + 1;   /* At end. */
 	}
-	Melder_free (after);
 
 	/* Increment the command area.
 	 */
@@ -177,9 +175,9 @@ Widget praat_addMenuCommand (const char *windowA, const char *menuA, const char 
 
 	/* Insert new command.
 	 */
-	theCommands [position]. window = window;
-	theCommands [position]. menu = menu;
-	theCommands [position]. title = title;
+	theCommands [position]. window = Melder_wcsdup (window);
+	theCommands [position]. menu = Melder_wcsdup (menu);
+	theCommands [position]. title = Melder_wcsdup (title);
 	theCommands [position]. depth = depth;
 	theCommands [position]. callback = callback;   /* NULL for a separator or cascade button. */
 	theCommands [position]. executable = callback != NULL;

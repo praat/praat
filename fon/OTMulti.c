@@ -25,6 +25,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 leak and constraint plasticity
  * pb 2007/10/01 can write as encoding
+ * pb 2007/11/14 drawTableau: corrected direction of arrows for positive satisfactions
  */
 
 #include "OTMulti.h"
@@ -324,17 +325,25 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 			if (! PairDistribution_peekPair (thee, & form1, & form2)) goto end;
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
-				long icons;
-				Graphics_setWindow (graphics, 0, numberOfData, 50, 150);
-				for (icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
-					Graphics_setColour (graphics, icons + 1);
-					Graphics_line (graphics, idatum, my constraints [icons]. ranking,
-						idatum, my constraints [icons]. ranking+1);
+				long numberOfDrawnConstraints = my numberOfConstraints < 14 ? my numberOfConstraints : 14;
+				if (numberOfDrawnConstraints > 0) {
+					double sumOfRankings = 0.0;
+					for (long icons = 1; icons <= numberOfDrawnConstraints; icons ++) {
+						sumOfRankings += my constraints [icons]. ranking;
+					}
+					double meanRanking = sumOfRankings / numberOfDrawnConstraints;
+					Graphics_setWindow (graphics, 0, numberOfData, meanRanking - 50, meanRanking + 50);
+					for (long icons = 1; icons <= numberOfDrawnConstraints; icons ++) {
+						Graphics_setColour (graphics, icons + 1);
+						Graphics_line (graphics, idatum, my constraints [icons]. ranking,
+							idatum, my constraints [icons]. ranking+1);
+					}
+					Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 				}
-				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
-			if (! Melder_monitor9 ((double) idatum / numberOfData,
-				L"Processing partial pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": { \"", form1, L"\", \"", form2, L"\" }"))
+			if (! Melder_monitor8 ((double) idatum / numberOfData,
+				L"Processing partial pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData),
+					L":\n      ", form1, L"     ", form2))
 			{
 				Melder_flushError ("Only %ld partial pairs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
@@ -596,8 +605,16 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 			wchar_t markString [40];
 			markString [0] = '\0';
-			if (bidirectional && my candidates [icand]. marks [index]) {
+			if (bidirectional && my candidates [icand]. marks [index] > 0) {
 				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal) {
+					wcscat (markString, L"\\<-");
+				}
+			}
+			if (bidirectional && my candidates [icand]. marks [index] < 0) {
+				if (candidateIsOptimal && ! candidateIsOptimal1) {
+					wcscat (markString, L"\\<-");
+				}
+				if (candidateIsOptimal && ! candidateIsOptimal2) {
 					wcscat (markString, L"\\<-");
 				}
 			}
@@ -637,11 +654,16 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 						wcscat (markString, L"+");
 				}
 			}
-			if (bidirectional && my candidates [icand]. marks [index]) {
+			if (bidirectional && my candidates [icand]. marks [index] > 0) {
 				if (candidateIsOptimal && ! candidateIsOptimal1) {
 					wcscat (markString, L"\\->");
 				}
 				if (candidateIsOptimal && ! candidateIsOptimal2) {
+					wcscat (markString, L"\\->");
+				}
+			}
+			if (bidirectional && my candidates [icand]. marks [index] < 0) {
+				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal) {
 					wcscat (markString, L"\\->");
 				}
 			}

@@ -59,7 +59,7 @@ class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
  */
 #define TextGridEditor_DEFAULT_USE_TEXT_STYLES  FALSE
 #define TextGridEditor_DEFAULT_FONT_SIZE  18
-	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  "18"
+	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  L"18"
 #define TextGridEditor_DEFAULT_ALIGNMENT  Graphics_CENTRE
 #define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  TRUE
 #define TextGridEditor_DEFAULT_SHOW_NUMBER_OF  2
@@ -233,21 +233,21 @@ static void createMenuItems_file_write (I, EditorMenu menu) {
 
 static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORMW (L"Draw visible TextGrid", 0)
+	EDITOR_FORM (L"Draw visible TextGrid", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEANW (L"Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
 		TextGrid_Sound_draw (my data, NULL, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles,
 			preferences.picture.garnish);
@@ -258,21 +258,21 @@ static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 
 static int menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORMW (L"Draw visible sound and TextGrid", 0)
+	EDITOR_FORM (L"Draw visible sound and TextGrid", 0)
 		our form_pictureWindow (me, cmd);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEANW (L"Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
 		Sound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, true) :
@@ -553,29 +553,29 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 
 static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Draw TextGrid and Pitch separately", 0)
+	EDITOR_FORM (L"Draw TextGrid and Pitch separately", 0)
 		our form_pictureWindow (me, cmd);
-		LABEL ("", "TextGrid:")
-		BOOLEAN ("Show boundaries and points", 1);
-		LABEL ("", "Pitch:")
-		BOOLEAN ("Speckle", 0);
+		LABEL (L"", L"TextGrid:")
+		BOOLEAN (L"Show boundaries and points", 1);
+		LABEL (L"", L"Pitch:")
+		BOOLEAN (L"Speckle", 0);
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEAN ("Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
-		SET_INTEGER ("Show boundaries and points", preferences.picture.showBoundaries);
-		SET_INTEGER ("Speckle", preferences.picture.pitch.speckle);
+		SET_INTEGER (L"Show boundaries and points", preferences.picture.showBoundaries);
+		SET_INTEGER (L"Speckle", preferences.picture.pitch.speckle);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGER ("Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
-		preferences.picture.showBoundaries = GET_INTEGER ("Show boundaries and points");
-		preferences.picture.pitch.speckle = GET_INTEGER ("Speckle");
+		preferences.picture.showBoundaries = GET_INTEGER (L"Show boundaries and points");
+		preferences.picture.pitch.speckle = GET_INTEGER (L"Speckle");
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		preferences.picture.garnish = GET_INTEGER ("Garnish");
+		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
 			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -590,8 +590,8 @@ static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 		double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
 		double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
 		TextGrid_Pitch_drawSeparately (my data, my pitch.data, my pictureGraphics, my startWindow, my endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER ("Show boundaries and points"), my useTextStyles, GET_INTEGER ("Garnish"),
-			GET_INTEGER ("Speckle"), my pitch.unit);
+			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (L"Show boundaries and points"), my useTextStyles, GET_INTEGER (L"Garnish"),
+			GET_INTEGER (L"Speckle"), my pitch.unit);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -882,13 +882,13 @@ static void do_find (TextGridEditor me) {
 
 static int menu_cb_Find (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Find text", 0)
-		LABEL ("", "Text:")
-		TEXTFIELD ("string", "")
+	EDITOR_FORM (L"Find text", 0)
+		LABEL (L"", L"Text:")
+		TEXTFIELD (L"string", L"")
 		OK
 	EDITOR_DO
 		Melder_free (my findString);
-		my findString = Melder_wcsdup (GET_STRINGW (L"string"));
+		my findString = Melder_wcsdup (GET_STRING (L"string"));
 		do_find (me);
 	EDITOR_END
 }
@@ -1004,16 +1004,16 @@ static int menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 
 static int menu_cb_RenameTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Rename tier", 0)
-		SENTENCE ("Name", "");
+	EDITOR_FORM (L"Rename tier", 0)
+		SENTENCE (L"Name", L"");
 	EDITOR_OK
 		TextGrid grid = my data;
 		Data tier;
 		if (! checkTierSelection (me, L"rename a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
-		SET_STRINGW (L"Name", tier -> name ? tier -> name : L"")
+		SET_STRING (L"Name", tier -> name ? tier -> name : L"")
 	EDITOR_DO
-		wchar_t *newName = GET_STRINGW (L"Name");
+		wchar_t *newName = GET_STRING (L"Name");
 		TextGrid grid = my data;
 		Data tier;
 		if (! checkTierSelection (me, L"rename a tier")) return 0;
@@ -1083,19 +1083,20 @@ static int menu_cb_RemoveTier (EDITOR_ARGS) {
 
 static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Add interval tier", 0)
-		NATURAL ("Position", "1 (= at top)")
-		SENTENCE ("Name", "")
+	EDITOR_FORM (L"Add interval tier", 0)
+		NATURAL (L"Position", L"1 (= at top)")
+		SENTENCE (L"Name", L"")
 	EDITOR_OK
 		TextGrid grid = my data;
-		char text [20];
-		sprintf (text, "%ld (= at bottom)", grid -> tiers -> size + 1);
-		SET_STRING ("Position", text)
-		SET_STRING ("Name", "")
+		static MelderString text = { 0 };
+		MelderString_empty (& text);
+		MelderString_append2 (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
+		SET_STRING (L"Position", text.string)
+		SET_STRING (L"Name", L"")
 	EDITOR_DO
 		TextGrid grid = my data;
-		int position = GET_INTEGER ("Position");
-		wchar_t *name = GET_STRINGW (L"Name");
+		int position = GET_INTEGER (L"Position");
+		wchar_t *name = GET_STRING (L"Name");
 		IntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
@@ -1113,19 +1114,20 @@ static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 
 static int menu_cb_AddPointTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Add point tier", 0)
-		NATURAL ("Position", "1 (= at top)")
-		SENTENCE ("Name", "");
+	EDITOR_FORM (L"Add point tier", 0)
+		NATURAL (L"Position", L"1 (= at top)")
+		SENTENCE (L"Name", L"");
 	EDITOR_OK
 		TextGrid grid = my data;
-		char text [20];
-		sprintf (text, "%ld (= at bottom)", grid -> tiers -> size + 1);
-		SET_STRING ("Position", text)
-		SET_STRING ("Name", "")
+		static MelderString text = { 0 };
+		MelderString_empty (& text);
+		MelderString_append2 (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
+		SET_STRING (L"Position", text.string)
+		SET_STRING (L"Name", L"")
 	EDITOR_DO
 		TextGrid grid = my data;
-		int position = GET_INTEGER ("Position");
-		wchar_t *name = GET_STRINGW (L"Name");
+		int position = GET_INTEGER (L"Position");
+		wchar_t *name = GET_STRING (L"Name");
 		TextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 		if (! tier) return 0;
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
@@ -1143,19 +1145,19 @@ static int menu_cb_AddPointTier (EDITOR_ARGS) {
 
 static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM ("Duplicate tier", 0)
-		NATURAL ("Position", "1 (= at top)")
-		SENTENCE ("Name", "")
+	EDITOR_FORM (L"Duplicate tier", 0)
+		NATURAL (L"Position", L"1 (= at top)")
+		SENTENCE (L"Name", L"")
 	EDITOR_OK
 		TextGrid grid = my data;
 		if (my selectedTier) {
-			SET_STRINGW (L"Position", Melder_integer (my selectedTier + 1))
-			SET_STRINGW (L"Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> name)
+			SET_STRING (L"Position", Melder_integer (my selectedTier + 1))
+			SET_STRING (L"Name", ((AnyTier) grid -> tiers -> item [my selectedTier]) -> name)
 		}
 	EDITOR_DO
 		TextGrid grid = my data;
-		int position = GET_INTEGER ("Position");
-		wchar_t *name = GET_STRINGW (L"Name");
+		int position = GET_INTEGER (L"Position");
+		wchar_t *name = GET_STRING (L"Name");
 		AnyTier tier, newTier;
 		if (! checkTierSelection (me, L"duplicate a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
@@ -2077,44 +2079,44 @@ static void updateText (I) {
 static void prefs_addFields (Any editor, EditorCommand cmd) {
 	Any radio;
 	(void) editor;
-	NATURAL ("Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
-	OPTIONMENU ("Text alignment in intervals", TextGridEditor_DEFAULT_ALIGNMENT + 1)
-		OPTION ("Left")
-		OPTION ("Centre")
-		OPTION ("Right")
-	OPTIONMENU ("The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
-		OPTION ("are shown as typed")
-		OPTION ("mean italic/bold/sub/super")
-	OPTIONMENU ("With the shift key, you drag", TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE + 1)
-		OPTION ("a single boundary")
-		OPTION ("multiple boundaries")
-	OPTIONMENU ("Show number of", TextGridEditor_DEFAULT_SHOW_NUMBER_OF)
-		OPTION ("nothing")
-		OPTION ("intervals or points")
-		OPTION ("non-empty intervals or points")
-	OPTIONMENU ("Paint intervals green whose label...", TextGridEditor_DEFAULT_GREEN_METHOD + 1 - Melder_STRING_min)
-	OPTIONS_ENUMW (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
-	SENTENCEW (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
+	NATURAL (L"Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
+	OPTIONMENU (L"Text alignment in intervals", TextGridEditor_DEFAULT_ALIGNMENT + 1)
+		OPTION (L"Left")
+		OPTION (L"Centre")
+		OPTION (L"Right")
+	OPTIONMENU (L"The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
+		OPTION (L"are shown as typed")
+		OPTION (L"mean italic/bold/sub/super")
+	OPTIONMENU (L"With the shift key, you drag", TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE + 1)
+		OPTION (L"a single boundary")
+		OPTION (L"multiple boundaries")
+	OPTIONMENU (L"Show number of", TextGridEditor_DEFAULT_SHOW_NUMBER_OF)
+		OPTION (L"nothing")
+		OPTION (L"intervals or points")
+		OPTION (L"non-empty intervals or points")
+	OPTIONMENU (L"Paint intervals green whose label...", TextGridEditor_DEFAULT_GREEN_METHOD + 1 - Melder_STRING_min)
+	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	SENTENCE (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
 }
 static void prefs_setValues (I, EditorCommand cmd) {
 	iam (TextGridEditor);
-	SET_INTEGER ("The symbols %#_^ in labels", my useTextStyles + 1)
-	SET_INTEGER ("Font size", my fontSize)
-	SET_INTEGER ("Text alignment in intervals", my alignment + 1)
-	SET_INTEGER ("With the shift key, you drag", my shiftDragMultiple + 1)
-	SET_INTEGER ("Show number of", my showNumberOf)
-	SET_INTEGER ("Paint intervals green whose label...", my greenMethod + 1 - Melder_STRING_min)
-	SET_STRINGW (L"...the text", my greenString)
+	SET_INTEGER (L"The symbols %#_^ in labels", my useTextStyles + 1)
+	SET_INTEGER (L"Font size", my fontSize)
+	SET_INTEGER (L"Text alignment in intervals", my alignment + 1)
+	SET_INTEGER (L"With the shift key, you drag", my shiftDragMultiple + 1)
+	SET_INTEGER (L"Show number of", my showNumberOf)
+	SET_INTEGER (L"Paint intervals green whose label...", my greenMethod + 1 - Melder_STRING_min)
+	SET_STRING (L"...the text", my greenString)
 }
 static void prefs_getValues (I, EditorCommand cmd) {
  	iam (TextGridEditor);
-	preferences.useTextStyles = my useTextStyles = GET_INTEGER ("The symbols %#_^ in labels") - 1;
-	preferences.fontSize = my fontSize = GET_INTEGER ("Font size");
-	preferences.alignment = my alignment = GET_INTEGER ("Text alignment in intervals") - 1;
-	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER ("With the shift key, you drag") - 1;
-	preferences.showNumberOf = my showNumberOf = GET_INTEGER ("Show number of");
-	preferences.greenMethod = my greenMethod = GET_INTEGER ("Paint intervals green whose label...") - 1 + Melder_STRING_min;
-	wcsncpy (my greenString, GET_STRINGW (L"...the text"), Resources_STRING_BUFFER_SIZE);
+	preferences.useTextStyles = my useTextStyles = GET_INTEGER (L"The symbols %#_^ in labels") - 1;
+	preferences.fontSize = my fontSize = GET_INTEGER (L"Font size");
+	preferences.alignment = my alignment = GET_INTEGER (L"Text alignment in intervals") - 1;
+	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER (L"With the shift key, you drag") - 1;
+	preferences.showNumberOf = my showNumberOf = GET_INTEGER (L"Show number of");
+	preferences.greenMethod = my greenMethod = GET_INTEGER (L"Paint intervals green whose label...") - 1 + Melder_STRING_min;
+	wcsncpy (my greenString, GET_STRING (L"...the text"), Resources_STRING_BUFFER_SIZE);
 	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
 	wcscpy (preferences.greenString, my greenString);
 	FunctionEditor_redraw (me);

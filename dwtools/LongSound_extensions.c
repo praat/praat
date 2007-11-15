@@ -26,6 +26,7 @@
  djmw 20061213 MelderFile_truncate also works for MacOS X
  djmw 20061212 Header unistd.h for MacOS X added.
  djmw 20070129 Sounds may be multichannel
+ djmw 20071030 MelderFile->wpath to  MelderFile->path
 */
 
 #include "LongSound_extensions.h" 

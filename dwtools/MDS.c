@@ -24,6 +24,7 @@
  djmw 20040309 Extra tests for empty objects.
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20071022 Removed unused code.
+ djmw 20071106 drawSplines: to wchar_t
 */
 
 #include "SVD.h"
@@ -4422,33 +4423,28 @@ end:
 }
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
-	int type, long order, char *interiorKnots, int garnish)
+	int type, long order, wchar_t *interiorKnots, int garnish)
 {
 	long i, j, k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	long nSplines, n = 1000;
 	double knot[101]; float y[1001];
-	char *token, *string, *delimiter = " ,\t";
-
+	wchar_t *start, *end;
+	
 	if (type == MDS_ISPLINE) k++;
 	for (i = 1; i <= k; i++)
 	{
 		knot[i] = low;
 	}
 	numberOfKnots = k;
-
-	/*
-		Copy the interiorKnots-string because strtok modifies it.
-	*/
 	
-	if ( ! (string = Melder_strdup (interiorKnots))) return;
-	token = strtok (string, delimiter);
-	while (token)
+	start = interiorKnots;
+	while (*start)
 	{
-		double value = atof (token);
+		double value = wcstod (start, &end);
+		start = end;
 		if (value < low || value > high)
 		{
-			Melder_warning ("drawSplines: knots must be in interval (%f, %f)", 
-				low, high);
+			Melder_warning ("drawSplines: knots must be in interval (%f, %f)", low, high);
 			return;
 		}
 		if (numberOfKnots == 100) 
@@ -4456,10 +4452,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			Melder_warning ("drawSplines: too many knots (101)");
 			return;
 		}
-		if (value > low && value < high) knot[++numberOfKnots] = value;
-		token = strtok (NULL, delimiter);
+	    knot[++numberOfKnots] = value;
 	}
-	
+
 	numberOfInteriorKnots = numberOfKnots - k;
 	for (i = 1; i <= k; i++)
 	{
@@ -4493,9 +4488,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
-		wchar_t ts[20]; 
+		static MelderString ts = { 0 };
 		long lastKnot = type == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
-
+		MelderString_empty (&ts);
 		Graphics_drawInnerBox (g);
 	   	Graphics_textLeft (g, 0, type == MDS_MSPLINE ? L"\\s{M}\\--spline" : 
 			L"\\s{I}\\--spline");
@@ -4503,35 +4498,33 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
     	Graphics_marksLeft (g, 2, 1, 1, 0);
     	if (low <= knot[order])
     	{
-    		if (order == 1) swprintf (ts, 20, L"t__1_");
-			else if (order == 2) swprintf (ts, 20, L"{t__1_, t__2_}");
-			else swprintf (ts, 20, L"{t__1_..t__%ld_}", order);
-			Graphics_markBottom (g, low, 0, 0, 0, ts);
+    		if (order == 1) MelderString_append (&ts, L"t__1_");
+			else if (order == 2) MelderString_append (&ts,  L"{t__1_, t__2_}");
+			else MelderString_append3 (&ts, L"{t__1_..t__", Melder_integer (order), L"_}"); 
+			Graphics_markBottom (g, low, 0, 0, 0, ts.string);
 		}
 		for (i = 1; i <= numberOfInteriorKnots; i++)
 		{
 			if (low <= knot[k+i] && knot[k+i] < high)
 			{
-				swprintf (ts, 20, L"t__%ld_", order + i);
-				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts); 
+				MelderString_empty (&ts);
+				MelderString_append3 (&ts, L"t__", Melder_integer (order + i), L"_");
+				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts.string); 
 				Graphics_markTop (g, knot[k+i], 1, 0, 0, 0);
 			}
 		}
 		if (knot[lastKnot-order+1] <= high)
 		{
-			if (order ==1)
+			MelderString_empty (&ts);
+			if (order == 1)
 			{
-				swprintf (ts, 20, L"t__%ld_", lastKnot);
-			}
-			else if (order == 2)
-			{
-				swprintf (ts, 20, L"{t__%ld_, t__%ld_}", lastKnot-1, lastKnot);
+				MelderString_append3 (&ts, L"t__", Melder_integer (lastKnot), L"_");
 			}
 			else 
 			{
-				swprintf (ts, 20, L"{t__%ld_..t__%ld_}", lastKnot-order+1, lastKnot);
+				MelderString_append5 (&ts, L"{t__", Melder_integer (order == 2 ? lastKnot-1 : lastKnot-order+1), L"_, t__", Melder_integer (lastKnot), L"_}");
 			}
-			Graphics_markBottom (g, high, 0, 0, 0, ts);
+			Graphics_markBottom (g, high, 0, 0, 0, ts.string);
 		}
 	}
 }

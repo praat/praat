@@ -177,7 +177,7 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label, Widget cancelButton) {
+static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label1, Widget label2, Widget cancelButton) {
 	#if defined (macintosh)
 	{
 		EventRecord event;
@@ -236,7 +236,18 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 	} else {
 		if (progress <= 0.0) progress = 0.0;
 		XtManageChild (dia);
-		XtVaSetValues (label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
+		wchar_t *newline = wcschr (message, '\n');
+		if (newline != NULL) {
+			static MelderString buffer = { 0 };
+			MelderString_copy (& buffer, message);
+			buffer.string [newline - message] = '\0';
+			XtVaSetValues (label1, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), NULL);
+			buffer.string [newline - message] = '\n';
+			XtVaSetValues (label2, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string + (newline - message) + 1)), NULL);
+		} else {
+			XtVaSetValues (label1, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
+			XtVaSetValues (label2, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (L"")), NULL);
+		}
 		XmScaleSetValue (scale, floor (progress * 1000.0));
 		XmUpdateDisplay (dia);
 	}
@@ -249,7 +260,7 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
-		static Widget dia = NULL, scale = NULL, label = NULL, cancelButton = NULL;
+		static Widget dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
@@ -261,11 +272,14 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 					XmNdeleteResponse, XmUNMAP,
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
-				label = XmCreateLabel (dia, "label", NULL, 0);
-				XtVaSetValues (label, XmNwidth, 400, NULL);
-				XtManageChild (label);
+				label1 = XmCreateLabel (dia, "label1", NULL, 0);
+				XtVaSetValues (label1, XmNwidth, 400, NULL);
+				XtManageChild (label1);
+				label2 = XmCreateLabel (dia, "label2", NULL, 0);
+				XtVaSetValues (label2, XmNy, 30, XmNwidth, 400, NULL);
+				XtManageChild (label2);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
-				XtVaSetValues (scale, XmNy, 40, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
+				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
 					XmNorientation, XmHORIZONTAL,
 					#if ! defined (macintosh)
 						XmNscaleHeight, 20,
@@ -274,11 +288,11 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 				XtManageChild (scale);
 				#if ! defined (macintosh)
 					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, NULL);
+					XtVaSetValues (cancelButton, XmNy, 170, XmNwidth, 400, NULL);
 					XtManageChild (cancelButton);
 				#endif
 			}
-			bool interruption = waitWhileProgress (progress, message, dia, scale, label, cancelButton);
+			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
 			if (! interruption) Melder_error1 (L"Interrupted!");
 			lastTime = now;
 			return interruption;
@@ -341,7 +355,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
-		static Widget dia = NULL, scale = NULL, label = NULL, cancelButton = NULL, drawingArea = NULL;
+		static Widget dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL, drawingArea = NULL;
 		clock_t now = clock ();
 		static Any graphics = NULL;
 		if (progress <= 0.0 || progress >= 1.0 ||
@@ -354,11 +368,14 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 					XmNdeleteResponse, XmUNMAP,
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
-				label = XmCreateLabel (dia, "label", NULL, 0);
-				XtVaSetValues (label, XmNwidth, 400, NULL);
-				XtManageChild (label);
+				label1 = XmCreateLabel (dia, "label1", NULL, 0);
+				XtVaSetValues (label1, XmNwidth, 400, NULL);
+				XtManageChild (label1);
+				label2 = XmCreateLabel (dia, "label2", NULL, 0);
+				XtVaSetValues (label2, XmNy, 30, XmNwidth, 400, NULL);
+				XtManageChild (label2);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
-				XtVaSetValues (scale, XmNy, 40, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
+				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
 					XmNorientation, XmHORIZONTAL,
 					#if ! defined (macintosh) && ! defined (_WIN32)
 						XmNscaleHeight, 20,
@@ -367,17 +384,17 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 				XtManageChild (scale);
 				#if ! defined (macintosh)
 					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 140, XmNwidth, 400, NULL);
+					XtVaSetValues (cancelButton, XmNy, 170, XmNwidth, 400, NULL);
 					XtManageChild (cancelButton);
 				#endif
 				drawingArea = XmCreateDrawingArea (dia, "drawingArea", NULL, 0);
-				XtVaSetValues (drawingArea, XmNy, 200, XmNwidth, 400, XmNheight, 200,
+				XtVaSetValues (drawingArea, XmNy, 230, XmNwidth, 400, XmNheight, 200,
 					XmNmarginWidth, 10, XmNmarginHeight, 10, NULL);
 				XtManageChild (drawingArea);
 				XtManageChild (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
-			bool interruption = waitWhileProgress (progress, message, dia, scale, label, cancelButton);
+			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
 			if (! interruption) Melder_error1 (L"Interrupted!");
 			lastTime = now;
 			if (progress == 0.0)

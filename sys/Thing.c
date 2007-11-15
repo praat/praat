@@ -90,22 +90,22 @@ void Thing_recognizeClassesByName (void *readableClass, ...) {
 }
 
 static int numberOfAliases = 0;
-static struct { void *readableClass; const char *otherName; } aliases [1 + 100];
-void Thing_recognizeClassByOtherName (void *readableClass, const char *otherName) {
+static struct { void *readableClass; const wchar_t *otherName; } aliases [1 + 100];
+void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName) {
 	aliases [++ numberOfAliases]. readableClass = readableClass;
 	aliases [numberOfAliases]. otherName = otherName;
 }
 
 long Thing_version;   /* Global variable! */
-void *Thing_classFromClassName (const char *klas) {
+void *Thing_classFromClassName (const wchar_t *klas) {
 	int i;
-	char *space;
-	static char buffer [1+100];
-	strncpy (buffer, klas ? klas : "", 100);
-	space = strchr (buffer, ' ');
+	wchar_t *space;
+	static wchar_t buffer [1+100];
+	wcsncpy (buffer, klas ? klas : L"", 100);
+	space = wcschr (buffer, ' ');
 	if (space) {
 		*space = '\0';   /* Strip version number. */
-		Thing_version = atol (space + 1);
+		Thing_version = wcstol (space + 1, NULL, 10);
 	} else {
 		Thing_version = 0;
 	}
@@ -115,7 +115,7 @@ void *Thing_classFromClassName (const char *klas) {
 	 */
 	for (i = 1; i <= numberOfReadableClasses; i ++) {
 		Thing_Table table = readableClasses [i];
-		if (strequ (buffer, table -> _className)) {
+		if (wcsequ (buffer, table -> _classNameW)) {
 			if (! table -> destroy)   /* Table not initialized? */
 				table -> _initialize (table);
 			return table;
@@ -126,7 +126,7 @@ void *Thing_classFromClassName (const char *klas) {
 	 * Then try the aliases that were registered with Thing_recognizeClassByOtherName.
 	 */
 	for (i = 1; i <= numberOfAliases; i ++) {
-		if (strequ (buffer, aliases [i]. otherName)) {
+		if (wcsequ (buffer, aliases [i]. otherName)) {
 			Thing_Table table = aliases [i]. readableClass;
 			if (! table -> destroy)   /* Table not initialized? */
 				table -> _initialize (table);
@@ -134,19 +134,16 @@ void *Thing_classFromClassName (const char *klas) {
 		}
 	}
 
-	return Melder_errorp ("(Thing_classFromClassName:) Class \"%s\" not recognized.", buffer);
-}
-void *Thing_classFromClassNameW (const wchar_t *klas) {
-	return Thing_classFromClassName (Melder_peekWcsToUtf8 (klas));
+	return Melder_errorp3 (L"(Thing_classFromClassName:) Class \"", buffer, L"\" not recognized.");
 }
 
 Any Thing_newFromClassName (const char *className) {
-	void *table = Thing_classFromClassName (className);
+	void *table = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
 	return Thing_new (table);
 }
 Any Thing_newFromClassNameW (const wchar_t *className) {
-	void *table = Thing_classFromClassNameW (className);
+	void *table = Thing_classFromClassName (className);
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
 	return Thing_new (table);
 }

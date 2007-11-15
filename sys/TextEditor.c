@@ -353,15 +353,15 @@ DIRECT (TextEditor, cb_whereAmI)
 	}
 END
 
-FORM (TextEditor, cb_goToLine, "Go to line", 0)
-	NATURAL ("Line", "1")
+FORM (TextEditor, cb_goToLine, L"Go to line", 0)
+	NATURAL (L"Line", L"1")
 	OK
 long firstLine, lastLine;
 getSelectedLines (me, & firstLine, & lastLine);
-SET_INTEGER ("Line", firstLine);
+SET_INTEGER (L"Line", firstLine);
 DO
 	char *text = XmTextGetString (my textWidget);
-	long lineToGo = GET_INTEGER ("Line"), currentLine = 1;
+	long lineToGo = GET_INTEGER (L"Line"), currentLine = 1;
 	unsigned long left = 0, right = 0;
 	if (lineToGo == 1) {
 		for (; text [right] != '\n' && text [right] != '\0'; right ++) { }
@@ -412,12 +412,12 @@ DIRECT (TextEditor, cb_12) setFontSize (me, 12); END
 DIRECT (TextEditor, cb_14) setFontSize (me, 14); END
 DIRECT (TextEditor, cb_18) setFontSize (me, 18); END
 DIRECT (TextEditor, cb_24) setFontSize (me, 24); END
-FORM (TextEditor, cb_fontSize, "Text window: Font size", 0)
-	NATURAL ("Font size (points)", "12")
+FORM (TextEditor, cb_fontSize, L"Text window: Font size", 0)
+	NATURAL (L"Font size (points)", L"12")
 	OK
-SET_INTEGER ("Font size", (long) my fontSize);
+SET_INTEGER (L"Font size", (long) my fontSize);
 DO
-	setFontSize (me, GET_INTEGER ("Font size"));
+	setFontSize (me, GET_INTEGER (L"Font size"));
 END
 
 static void createMenus (I) {

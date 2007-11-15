@@ -3196,10 +3196,12 @@
 		23E5C91309A228F8004E41D5 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 23E5C91409A228F8004E41D5 /* Build configuration list for PBXProject "praat" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 23E5C91109A228F6004E41D5;
 			productRefGroup = 23E5C92109A228FA004E41D5 /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				23E5C91D09A228F9004E41D5 /* praat_mac */,
 			);

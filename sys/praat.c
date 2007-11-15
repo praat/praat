@@ -64,8 +64,8 @@
 
 #define EDITOR  theCurrentPraat -> list [IOBJECT]. editors
 
-#define WINDOW_WIDTH 430
-#define WINDOW_HEIGHT 560
+#define WINDOW_WIDTH 490
+#define WINDOW_HEIGHT 610
 
 structPraat theForegroundPraat;
 Praat theCurrentPraat = & theForegroundPraat;
@@ -141,12 +141,12 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 	if (place == 0) place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (klas == NULL || CLASS == klas)) {
-			if (place == 1) return klas == NULL ? FULL_NAMEW : NAMEW;
+			if (place == 1) return klas == NULL ? FULL_NAME : NAMEW;
 			place --;
 		}
 	} else {
 		WHERE_DOWN (SELECTED && (klas == NULL || CLASS == klas)) {
-			if (place == -1) return klas == NULL ? FULL_NAMEW : NAMEW;
+			if (place == -1) return klas == NULL ? FULL_NAME : NAMEW;
 			place ++;
 		}
 	}
@@ -232,7 +232,7 @@ praat_Object praat_onlyScreenObject (void) {
 	return & theCurrentPraat -> list [result];
 }
 
-wchar_t *praat_name (int IOBJECT) { return wcschr (FULL_NAMEW, ' ') + 1; }
+wchar_t *praat_name (int IOBJECT) { return wcschr (FULL_NAME, ' ') + 1; }
 
 void praat_write_do (Any dia, const wchar_t *extension) {
 	int IOBJECT, found = 0;
@@ -349,13 +349,16 @@ bool praat_new1 (I, const wchar_t *myName) {
 	}
 		
 	IOBJECT = ++ theCurrentPraat -> n;
-	Melder_assert (FULL_NAMEW == NULL);
-	FULL_NAMEW = Melder_wcsdup (name.string);
-	Melder_assert (FULL_NAMEW != NULL);
+	Melder_assert (FULL_NAME == NULL);
+	FULL_NAME = Melder_wcsdup (name.string);
+	Melder_assert (FULL_NAME != NULL);
 	++ uniqueID;
 
 	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
-		XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (name.string));
+		MelderString listName = { 0 };
+		MelderString_append3 (& listName, Melder_integer (uniqueID), L". ", name.string);
+		XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (listName.string));
+		MelderString_free (& listName);
 		#ifdef UNIX
 			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
 		#endif
@@ -375,7 +378,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	CLASS = my methods;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = NULL;
-	MelderFile_setToNull (& FILENAMEW);
+	MelderFile_setToNull (& theCurrentPraat -> list [IOBJECT]. file);
 	ID = uniqueID;
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setName (OBJECT, givenName.string);
@@ -457,7 +460,7 @@ MOTIF_CALLBACK (cb_list)
 			IOBJECT = position_list [pos];
 			SELECTED = TRUE;
 			UiHistory_write (first ? L"\nselect " : L"\nplus ");
-			UiHistory_write (FULL_NAMEW);
+			UiHistory_write (FULL_NAME);
 			first = FALSE;
 			theCurrentPraat -> totalSelection += 1;
 		}
@@ -569,7 +572,7 @@ static void praat_exit (int exit_code) {
 	/*
 	 * Flush the file-based objects.
 	 */
-	WHERE_DOWN (! MelderFile_isNull (& FILENAMEW)) praat_remove (IOBJECT);
+	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraat -> list [IOBJECT]. file)) praat_remove (IOBJECT);
 	Melder_files_cleanUp ();   /* If a URL is open. */
 
 	/*
@@ -781,8 +784,8 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 
 /***** QUIT *****/
 
-FORM (Quit, "Confirm Quit", "Quit")
-	LABEL ("label", "You have objects in your list!")
+FORM (Quit, L"Confirm Quit", L"Quit")
+	LABEL (L"label", L"You have objects in your list!")
 	OK
 {
 	wchar_t prompt [300];
@@ -791,10 +794,10 @@ FORM (Quit, "Confirm Quit", "Quit")
 			swprintf (prompt, 300, L"You have objects and unsaved scripts! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
 		else
 			swprintf (prompt, 300, L"You have unsaved scripts! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
-		SET_STRINGW (L"label", prompt);
+		SET_STRING (L"label", prompt);
 	} else if (theCurrentPraat -> n) {
 		swprintf (prompt, 300, L"You have objects in your list! Do you still want to quit %ls?", Melder_peekUtf8ToWcs (praatP.title));
-		SET_STRINGW (L"label", prompt);
+		SET_STRING (L"label", prompt);
 	} else {
 		praat_exit (0);
 	}
@@ -1129,7 +1132,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			XtVaSetValues (praatList_objects,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 200, NULL);
+				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 210, NULL);
 		#elif defined (UNIX)
 			praatList_objects = XmCreateScrolledList (Raam, "list", NULL, 0);
 			listWindow = XtParent (praatList_objects);
@@ -1143,9 +1146,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			XtVaSetValues (listWindow,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 200, NULL);
+				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 210, NULL);
 			praatList_objects = XmCreateList (listWindow, "list", NULL, 0);
-			XtVaSetValues (praatList_objects, XmNwidth, 500, NULL);
+			XtVaSetValues (praatList_objects, XmNwidth, 530, NULL);
 		#endif
 		XtAddCallback (praatList_objects, XmNextendedSelectionCallback, cb_list, 0);
 		XtManageChild (praatList_objects);
@@ -1153,7 +1156,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			if (listWindow) XtManageChild (listWindow);
 		#endif
 		praat_addFixedButtons (Raam);
-		praat_actions_createDynamicMenu (Raam, 200);
+		praat_actions_createDynamicMenu (Raam, 210);
 		XtManageChild (Raam);
 		XtRealizeWidget (theCurrentPraat -> topShell);
 		#ifdef UNIX
@@ -1222,10 +1225,10 @@ void praat_run (void) {
 
 	praat_addMenus2 ();
 	#ifdef macintosh
-		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_HIDDEN, DO_Quit);
+		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_HIDDEN, DO_Quit);
 	#else
-		praat_addMenuCommand ("Objects", "Praat", "-- quit --", 0, 0, 0);
-		praat_addMenuCommand ("Objects", "Praat", "Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
+		praat_addMenuCommand (L"Objects", L"Praat", L"-- quit --", 0, 0, 0);
+		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
 	#endif
 
 	/*

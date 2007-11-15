@@ -2439,7 +2439,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassNameW (a->content.string); cherror
+			void *klas = Thing_classFromClassName (a->content.string); cherror
 			result = praat_getIdOfSelected (klas, 0); cherror
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_getIdOfSelected (NULL, a->content.number); cherror
@@ -2449,7 +2449,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassNameW (s->content.string); cherror
+			void *klas = Thing_classFromClassName (s->content.string); cherror
 			result = praat_getIdOfSelected (klas, x->content.number); cherror
 		} else {
 			error1 (L"The function \"selected\" requires a string (an object type name) and/or a number.")
@@ -2469,7 +2469,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassNameW (a->content.string); cherror
+			void *klas = Thing_classFromClassName (a->content.string); cherror
 			name = praat_getNameOfSelected (klas, 0); cherror
 			result = Melder_wcsdup (name); cherror
 		} else if (a->which == Stackel_NUMBER) {
@@ -2481,7 +2481,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassNameW (s->content.string); cherror
+			void *klas = Thing_classFromClassName (s->content.string); cherror
 			name = praat_getNameOfSelected (klas, x->content.number); cherror
 			result = Melder_wcsdup (name); cherror
 		} else {
@@ -2499,7 +2499,7 @@ static void do_numberOfSelected (void) {
 	} else if (n->content.number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassNameW (s->content.string); cherror
+			void *klas = Thing_classFromClassName (s->content.string); cherror
 			result = praat_selection (klas);
 		} else {
 			error3 (L"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), L".")

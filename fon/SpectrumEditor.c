@@ -138,12 +138,12 @@ DIRECT (SpectrumEditor, cb_publishSound)
 		my publishCallback (me, my publishClosure, publish);
 END
 
-FORM (SpectrumEditor, cb_passBand, "Filter (pass Hann band)", "Spectrum: Filter (pass Hann band)...");
-	REAL ("Band smoothing (Hz)", "100.0")
+FORM (SpectrumEditor, cb_passBand, L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
+	REAL (L"Band smoothing (Hz)", L"100.0")
 	OK
-SET_REAL ("Band smoothing", my bandSmoothing)
+SET_REAL (L"Band smoothing", my bandSmoothing)
 DO
-	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
+	preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
 	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
 	Editor_save (me, L"Pass band");
 	Spectrum_passHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
@@ -151,12 +151,12 @@ DO
 	Editor_broadcastChange (me);
 END
 
-FORM (SpectrumEditor, cb_stopBand, "Filter (stop Hann band)", 0)
-	REAL ("Band smoothing (Hz)", "100.0")
+FORM (SpectrumEditor, cb_stopBand, L"Filter (stop Hann band)", 0)
+	REAL (L"Band smoothing (Hz)", L"100.0")
 	OK
-SET_REAL ("Band smoothing", my bandSmoothing)
+SET_REAL (L"Band smoothing", my bandSmoothing)
 DO
-	preferences.bandSmoothing = my bandSmoothing = GET_REAL ("Band smoothing");
+	preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
 	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
 	Editor_save (me, L"Stop band");
 	Spectrum_stopHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
@@ -164,12 +164,12 @@ DO
 	Editor_broadcastChange (me);
 END
 
-FORM (SpectrumEditor, cb_setDynamicRange, "Set dynamic range", 0)
-	POSITIVE ("Dynamic range (dB)", "60.0")
+FORM (SpectrumEditor, cb_setDynamicRange, L"Set dynamic range", 0)
+	POSITIVE (L"Dynamic range (dB)", L"60.0")
 	OK
-SET_REAL ("Dynamic range", my dynamicRange)
+SET_REAL (L"Dynamic range", my dynamicRange)
 DO
-	preferences.dynamicRange = my dynamicRange = GET_REAL ("Dynamic range");
+	preferences.dynamicRange = my dynamicRange = GET_REAL (L"Dynamic range");
 	updateRange (me);
 	FunctionEditor_redraw (me);
 END

@@ -54,7 +54,7 @@ Table ResultsMFCs_to_Table (Collection me);
 Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me);
 Categories ResultsMFC_to_Categories_responses (ResultsMFC me);
 void Categories_sort (Categories me);
-double Categories_getEnthropy (Categories me);
+double Categories_getEntropy (Categories me);
 
 /* End of file ExperimentMFC.h */
 #endif

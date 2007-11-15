@@ -395,34 +395,34 @@ static void clipboardChanged (Any editor, Any clipboard) {
 
 static void form_pictureWindow (I, EditorCommand cmd) {
 	(void) void_me;
-	LABEL ("", "Picture window:")
-	BOOLEAN ("Erase first", 1);
+	LABEL (L"", L"Picture window:")
+	BOOLEAN (L"Erase first", 1);
 }
 static void ok_pictureWindow (I, EditorCommand cmd) {
 	(void) void_me;
-	SET_INTEGER ("Erase first", preferences.picture.eraseFirst);
+	SET_INTEGER (L"Erase first", preferences.picture.eraseFirst);
 }
 static void do_pictureWindow (I, EditorCommand cmd) {
 	(void) void_me;
-	preferences.picture.eraseFirst = GET_INTEGER ("Erase first");
+	preferences.picture.eraseFirst = GET_INTEGER (L"Erase first");
 }
 
 static void form_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
 	Any radio = 0;
-	LABEL ("", "Margins:")
-	OPTIONMENU ("Write name at top", 2);
-		OPTION ("No")
-		OPTION ("Far")
-		OPTION ("Near")
+	LABEL (L"", L"Margins:")
+	OPTIONMENU (L"Write name at top", 2);
+		OPTION (L"No")
+		OPTION (L"Far")
+		OPTION (L"Near")
 }
 static void ok_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
-	SET_INTEGER ("Write name at top", preferences.picture.writeNameAtTop + 1);
+	SET_INTEGER (L"Write name at top", preferences.picture.writeNameAtTop + 1);
 }
 static void do_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
-	preferences.picture.writeNameAtTop = GET_INTEGER ("Write name at top") - 1;
+	preferences.picture.writeNameAtTop = GET_INTEGER (L"Write name at top") - 1;
 }
 
 class_methods (Editor, Thing) {

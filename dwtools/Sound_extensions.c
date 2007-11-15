@@ -34,6 +34,7 @@
  djmw 20070103 Sound interface changes
  djmw 20070129 Warning added in changeGender_old.
  djmw 20071022 Possible (bug?) correction in Sound_createShepardToneComplex
+ djmw 20071030 Sound_preEmphasis: no pre-emphasis above the Nyquist frequency.
 */
 
 #include "Intensity_extensions.h"
@@ -508,7 +509,10 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency)
 {
+	if (preEmphasisFrequency >= 0.5 / my dx) return; // above Nyquist?
+	
 	double preEmphasis = exp(- 2.0 * NUMpi * preEmphasisFrequency * my dx);
+	
 	for (long channel = 1; channel <= my ny; channel++)
 	{
 		float *s = my z[channel];

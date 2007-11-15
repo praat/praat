@@ -28,8 +28,8 @@
 
 /***** CATEGORIES *****/
 
-DIRECT (Categories_getEnthropy)
-	Melder_informationReal (Categories_getEnthropy (ONLY (classCategories)), L"bits");
+DIRECT (Categories_getEntropy)
+	Melder_informationReal (Categories_getEntropy (ONLY (classCategories)), L"bits");
 END
 
 DIRECT (Categories_sort)
@@ -72,25 +72,25 @@ DIRECT (ResultsMFC_getNumberOfTrials)
 	Melder_information1 (Melder_integer (my numberOfTrials));
 END
 
-FORM (ResultsMFC_getResponse, "ResultsMFC: Get response", 0)
-	NATURAL ("Trial", "1")
+FORM (ResultsMFC_getResponse, L"ResultsMFC: Get response", 0)
+	NATURAL (L"Trial", L"1")
 	OK
 DO
 	ResultsMFC me = ONLY (classResultsMFC);
-	long trial = GET_INTEGER ("Trial");
-	if (trial > my numberOfTrials) return Melder_error ("Trial %ld does not exist (maximum %ld).",
-		trial, my numberOfTrials);
+	long trial = GET_INTEGER (L"Trial");
+	if (trial > my numberOfTrials)
+		return Melder_error5 (L"Trial ", Melder_integer (trial), L" does not exist (maximum ", Melder_integer (my numberOfTrials), L").");
 	Melder_information1 (my result [trial]. response);
 END
 
-FORM (ResultsMFC_getStimulus, "ResultsMFC: Get stimulus", 0)
-	NATURAL ("Trial", "1")
+FORM (ResultsMFC_getStimulus, L"ResultsMFC: Get stimulus", 0)
+	NATURAL (L"Trial", L"1")
 	OK
 DO
 	ResultsMFC me = ONLY (classResultsMFC);
-	long trial = GET_INTEGER ("Trial");
-	if (trial > my numberOfTrials) return Melder_error ("Trial %ld does not exist (maximum %ld).",
-		trial, my numberOfTrials);
+	long trial = GET_INTEGER (L"Trial");
+	if (trial > my numberOfTrials)
+		return Melder_error5 (L"Trial ", Melder_integer (trial), L" does not exist (maximum ", Melder_integer (my numberOfTrials), L").");
 	Melder_information1 (my result [trial]. stimulus);
 END
 
@@ -126,23 +126,23 @@ void praat_uvafon_Exp_init (void);
 void praat_uvafon_Exp_init (void) {
 	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, NULL);
 
-	praat_addAction1 (classCategories, 0, "Sort", 0, 0, DO_Categories_sort);
-	praat_addAction1 (classCategories, 1, "Get enthropy", 0, 0, DO_Categories_getEnthropy);
+	praat_addAction1 (classCategories, 0, L"Sort", 0, 0, DO_Categories_sort);
+	praat_addAction1 (classCategories, 1, L"Get entropy", 0, 0, DO_Categories_getEntropy);
 
-	praat_addAction1 (classExperimentMFC, 0, "Run", 0, 0, DO_ExperimentMFC_run);
-	praat_addAction1 (classExperimentMFC, 0, "Extract results", 0, 0, DO_ExperimentMFC_extractResults);
+	praat_addAction1 (classExperimentMFC, 0, L"Run", 0, 0, DO_ExperimentMFC_run);
+	praat_addAction1 (classExperimentMFC, 0, L"Extract results", 0, 0, DO_ExperimentMFC_extractResults);
 
-	praat_addAction1 (classResultsMFC, 0, "Query -          ", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 1, "Get number of trials", 0, 1, DO_ResultsMFC_getNumberOfTrials);
-	praat_addAction1 (classResultsMFC, 1, "Get stimulus...", 0, 1, DO_ResultsMFC_getStimulus);
-	praat_addAction1 (classResultsMFC, 1, "Get response...", 0, 1, DO_ResultsMFC_getResponse);
-	praat_addAction1 (classResultsMFC, 0, "Modify", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 2, "Remove unshared stimuli", 0, 0, DO_ResultsMFC_removeUnsharedStimuli);
-	praat_addAction1 (classResultsMFC, 0, "Convert", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 0, "To Categories (stimuli)", 0, 0, DO_ResultsMFC_to_Categories_stimuli);
-	praat_addAction1 (classResultsMFC, 0, "To Categories (responses)", 0, 0, DO_ResultsMFC_to_Categories_responses);
-	praat_addAction1 (classResultsMFC, 0, "Collect", 0, 0, 0);
-	praat_addAction1 (classResultsMFC, 0, "Collect to Table", 0, 0, DO_ResultsMFCs_to_Table);
+	praat_addAction1 (classResultsMFC, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 1, L"Get number of trials", 0, 1, DO_ResultsMFC_getNumberOfTrials);
+	praat_addAction1 (classResultsMFC, 1, L"Get stimulus...", 0, 1, DO_ResultsMFC_getStimulus);
+	praat_addAction1 (classResultsMFC, 1, L"Get response...", 0, 1, DO_ResultsMFC_getResponse);
+	praat_addAction1 (classResultsMFC, 0, L"Modify", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 2, L"Remove unshared stimuli", 0, 0, DO_ResultsMFC_removeUnsharedStimuli);
+	praat_addAction1 (classResultsMFC, 0, L"Convert", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 0, L"To Categories (stimuli)", 0, 0, DO_ResultsMFC_to_Categories_stimuli);
+	praat_addAction1 (classResultsMFC, 0, L"To Categories (responses)", 0, 0, DO_ResultsMFC_to_Categories_responses);
+	praat_addAction1 (classResultsMFC, 0, L"Collect", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 0, L"Collect to Table", 0, 0, DO_ResultsMFCs_to_Table);
 }
 
 /* End of file praat_Exp.c */

@@ -104,12 +104,12 @@ DIRECT (12) setFontSize (12); END
 DIRECT (14) setFontSize (14); END
 DIRECT (18) setFontSize (18); END
 DIRECT (24) setFontSize (24); END
-FORM (Font_size, "Praat picture: Font size", "Font menu")
-	NATURAL ("Font size (points)", "10")
+FORM (Font_size, L"Praat picture: Font size", L"Font menu")
+	NATURAL (L"Font size (points)", L"10")
 	OK
-SET_INTEGER ("Font size", (long) praat_size);
+SET_INTEGER (L"Font size", (long) praat_size);
 DO
-	setFontSize (GET_INTEGER ("Font size"));
+	setFontSize (GET_INTEGER (L"Font size"));
 END
 
 /*static void setFontSize_keepInnerViewport (int fontSize) {
@@ -160,27 +160,27 @@ DIRECT (MouseSelectsOuterViewport)
 	updateViewportMenu ();
 END
 
-FORM (SelectInnerViewport, "Praat picture: Select inner viewport", "Select inner viewport...")
-	LABEL ("", "The viewport is the selected rectangle in the Picture window.")
-	LABEL ("", "It is where your next drawing will appear.")
-	LABEL ("", "The rectangle you select here will not include the margins.")
-	LABEL ("", "")
-	REAL ("left Horizontal range (inches)", "0.0")
-	REAL ("right Horizontal range (inches)", "6.0")
-	REAL ("left Vertical range (inches)", "0.0")
-	REAL ("right Vertical range (inches)", "6.0")
+FORM (SelectInnerViewport, L"Praat picture: Select inner viewport", L"Select inner viewport...")
+	LABEL (L"", L"The viewport is the selected rectangle in the Picture window.")
+	LABEL (L"", L"It is where your next drawing will appear.")
+	LABEL (L"", L"The rectangle you select here will not include the margins.")
+	LABEL (L"", L"")
+	REAL (L"left Horizontal range (inches)", L"0.0")
+	REAL (L"right Horizontal range (inches)", L"6.0")
+	REAL (L"left Vertical range (inches)", L"0.0")
+	REAL (L"right Vertical range (inches)", L"6.0")
 	OK
 double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
 if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
 if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
-SET_REAL ("left Horizontal range", x1NDC + xmargin);
-SET_REAL ("right Horizontal range", x2NDC - xmargin);
-SET_REAL ("left Vertical range", 12-y2NDC + ymargin);
-SET_REAL ("right Vertical range", 12-y1NDC - ymargin);
+SET_REAL (L"left Horizontal range", x1NDC + xmargin);
+SET_REAL (L"right Horizontal range", x2NDC - xmargin);
+SET_REAL (L"left Vertical range", 12-y2NDC + ymargin);
+SET_REAL (L"right Vertical range", 12-y1NDC - ymargin);
 DO
 	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
-	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
-	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
+	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
+	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
@@ -201,24 +201,24 @@ DO
 	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
 END
 
-FORM (SelectOuterViewport, "Praat picture: Select outer viewport", "Select outer viewport...")
-	LABEL ("", "The viewport is the selected rectangle in the Picture window.")
-	LABEL ("", "It is where your next drawing will appear.")
-	LABEL ("", "The rectangle you select here will include the margins.")
-	LABEL ("", "")
-	REAL ("left Horizontal range (inches)", "0.0")
-	REAL ("right Horizontal range (inches)", "6.0")
-	REAL ("left Vertical range (inches)", "0.0")
-	REAL ("right Vertical range (inches)", "6.0")
+FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select outer viewport...")
+	LABEL (L"", L"The viewport is the selected rectangle in the Picture window.")
+	LABEL (L"", L"It is where your next drawing will appear.")
+	LABEL (L"", L"The rectangle you select here will include the margins.")
+	LABEL (L"", L"")
+	REAL (L"left Horizontal range (inches)", L"0.0")
+	REAL (L"right Horizontal range (inches)", L"6.0")
+	REAL (L"left Vertical range (inches)", L"0.0")
+	REAL (L"right Vertical range (inches)", L"6.0")
 	OK
-SET_REAL ("left Horizontal range", x1NDC);
-SET_REAL ("right Horizontal range", x2NDC);
-SET_REAL ("left Vertical range", 12-y2NDC);
-SET_REAL ("right Vertical range", 12-y1NDC);
+SET_REAL (L"left Horizontal range", x1NDC);
+SET_REAL (L"right Horizontal range", x2NDC);
+SET_REAL (L"left Vertical range", 12-y2NDC);
+SET_REAL (L"right Vertical range", 12-y1NDC);
 DO
 	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
-	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
-	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
+	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
+	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	if (left == right) {
 		Melder_error1 (L"The left and right edges of the viewport cannot be equal.");
 		return Melder_error1 (L"Please change the horizontal range.");
@@ -236,29 +236,29 @@ DO
 	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
 END
 
-FORM (ViewportText, "Praat picture: Viewport text", "Viewport text...")
-	RADIO ("Horizontal alignment", 2)
-		RADIOBUTTON ("Left")
-		RADIOBUTTON ("Centre")
-		RADIOBUTTON ("Right")
-	RADIO ("Vertical alignment", 2)
-		RADIOBUTTON ("Bottom")
-		RADIOBUTTON ("Half")
-		RADIOBUTTON ("Top")
-	REAL ("Rotation (degrees)", "0")
-	TEXTFIELD ("text", "")
+FORM (ViewportText, L"Praat picture: Viewport text", L"Viewport text...")
+	RADIO (L"Horizontal alignment", 2)
+		RADIOBUTTON (L"Left")
+		RADIOBUTTON (L"Centre")
+		RADIOBUTTON (L"Right")
+	RADIO (L"Vertical alignment", 2)
+		RADIOBUTTON (L"Bottom")
+		RADIOBUTTON (L"Half")
+		RADIOBUTTON (L"Top")
+	REAL (L"Rotation (degrees)", L"0")
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
-	int hor = GET_INTEGER ("Horizontal alignment") - 1;
-	int vert = GET_INTEGER ("Vertical alignment") - 1;
+	int hor = GET_INTEGER (L"Horizontal alignment") - 1;
+	int vert = GET_INTEGER (L"Vertical alignment") - 1;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
 	Graphics_setTextAlignment (GRAPHICS, hor, vert);
-	Graphics_setTextRotation (GRAPHICS, GET_REAL ("Rotation"));
+	Graphics_setTextRotation (GRAPHICS, GET_REAL (L"Rotation"));
 	Graphics_text (GRAPHICS, hor == 0 ? 0 : hor == 1 ? 0.5 : 1,
-		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRINGW (L"text"));
+		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRING (L"text"));
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 	praat_picture_close ();
@@ -310,12 +310,12 @@ DIRECT (Solid_line) setLineType (Graphics_DRAWN); END
 DIRECT (Dotted_line) setLineType (Graphics_DOTTED); END
 DIRECT (Dashed_line) setLineType (Graphics_DASHED); END
 
-FORM (Line_width, "Praat picture: Line width", 0)
-	POSITIVE ("Line width", "1.0")
+FORM (Line_width, L"Praat picture: Line width", 0)
+	POSITIVE (L"Line width", L"1.0")
 	OK
-SET_REAL ("Line width", praat_lineWidth);
+SET_REAL (L"Line width", praat_lineWidth);
 DO
-	double lineWidth = GET_REAL ("Line width");
+	double lineWidth = GET_REAL (L"Line width");
 	praat_picture_open ();
 	Graphics_setLineWidth (GRAPHICS, lineWidth);
 	praat_picture_close ();
@@ -324,12 +324,12 @@ DO
 	}
 END
 
-FORM (Arrow_size, "Praat picture: Arrow size", 0)
-	POSITIVE ("Arrow size", "1.0")
+FORM (Arrow_size, L"Praat picture: Arrow size", 0)
+	POSITIVE (L"Arrow size", L"1.0")
 	OK
-SET_REAL ("Arrow size", praat_arrowSize);
+SET_REAL (L"Arrow size", praat_arrowSize);
 DO
-	double arrowSize = GET_REAL ("Arrow size");
+	double arrowSize = GET_REAL (L"Arrow size");
 	praat_picture_open ();
 	Graphics_setArrowSize (GRAPHICS, arrowSize);
 	praat_picture_close ();
@@ -366,11 +366,11 @@ DIRECT (Grey) setColour (Graphics_GREY); END
 
 /***** "File" MENU *****/
 
-FORM_READ (Picture_readFromPraatPictureFile, "Read picture from praat picture file", 0)
+FORM_READ (Picture_readFromPraatPictureFile, L"Read picture from praat picture file", 0)
 	return Picture_readFromPraatPictureFile (praat_picture, file);
 END
 
-FORM_READ (Picture_readFromOldPraatPictureFile, "Read picture from old praat picture file", 0)
+FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat picture file", 0)
 	int result;
 	Graphics_setWsWindow (GRAPHICS, 0, 2, -1, 1);
 	result = Picture_readFromPraatPictureFile (praat_picture, file);
@@ -379,7 +379,7 @@ FORM_READ (Picture_readFromOldPraatPictureFile, "Read picture from old praat pic
 END
 
 #ifdef _WIN32
-FORM_READ (Picture_readFromOldWindowsPraatPictureFile, "Read picture from praat picture file", 0)
+FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat picture file", 0)
 	return Picture_readFromOldWindowsPraatPictureFile (praat_picture, file);
 END
 #endif
@@ -398,7 +398,7 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	}
 	return 1;
 }
-/*FORM_WRITE (Picture_writeToEpsFile, "Write picture to Encapsulated PostScript file", 0, "praat.eps")
+/*FORM_WRITE (Picture_writeToEpsFile, L"Write picture to Encapsulated PostScript file", 0, L"praat.eps")
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
@@ -518,71 +518,71 @@ END
 
 /***** "World" MENU *****/
 
-FORM (Text, "Praat picture: Text", "Text...")
-	REAL ("Horizontal position", "0.0")
-	OPTIONMENU ("Horizontal alignment", 2)
-		OPTION ("Left")
-		OPTION ("Centre")
-		OPTION ("Right")
-	REAL ("Vertical position", "0.0")
-	OPTIONMENU ("Vertical alignment", 2)
-		OPTION ("Bottom")
-		OPTION ("Half")
-		OPTION ("Top")
-	LABEL ("", "Text:")
-	TEXTFIELD ("text", "")
+FORM (Text, L"Praat picture: Text", L"Text...")
+	REAL (L"Horizontal position", L"0.0")
+	OPTIONMENU (L"Horizontal alignment", 2)
+		OPTION (L"Left")
+		OPTION (L"Centre")
+		OPTION (L"Right")
+	REAL (L"Vertical position", L"0.0")
+	OPTIONMENU (L"Vertical alignment", 2)
+		OPTION (L"Bottom")
+		OPTION (L"Half")
+		OPTION (L"Top")
+	LABEL (L"", L"Text:")
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setTextAlignment (GRAPHICS,
-		GET_INTEGER ("Horizontal alignment") - 1, GET_INTEGER ("Vertical alignment") - 1);
+		GET_INTEGER (L"Horizontal alignment") - 1, GET_INTEGER (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
-	Graphics_text (GRAPHICS, GET_REAL ("Horizontal position"),
-		GET_REAL ("Vertical position"), GET_STRINGW (L"text"));
+	Graphics_text (GRAPHICS, GET_REAL (L"Horizontal position"),
+		GET_REAL (L"Vertical position"), GET_STRING (L"text"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (Text_special, "Praat picture: Text special", 0)
-	REAL ("Horizontal position", "0.0")
-	OPTIONMENU ("Horizontal alignment", 2)
-		OPTION ("Left")
-		OPTION ("Centre")
-		OPTION ("Right")
-	REAL ("Vertical position", "0.0")
-	OPTIONMENU ("Vertical alignment", 2)
-		OPTION ("Bottom")
-		OPTION ("Half")
-		OPTION ("Top")
-	OPTIONMENU ("Font", 1)
-		OPTION ("Times")
-		OPTION ("Palatino")
-		OPTION ("Helvetica")
-		OPTION ("Courier")
-	NATURAL ("Font size", "10")
-	SENTENCE ("Rotation (degrees or dx;dy)", "0")
-	LABEL ("", "Text:")
-	TEXTFIELD ("text", "")
+FORM (Text_special, L"Praat picture: Text special", 0)
+	REAL (L"Horizontal position", L"0.0")
+	OPTIONMENU (L"Horizontal alignment", 2)
+		OPTION (L"Left")
+		OPTION (L"Centre")
+		OPTION (L"Right")
+	REAL (L"Vertical position", L"0.0")
+	OPTIONMENU (L"Vertical alignment", 2)
+		OPTION (L"Bottom")
+		OPTION (L"Half")
+		OPTION (L"Top")
+	OPTIONMENU (L"Font", 1)
+		OPTION (L"Times")
+		OPTION (L"Palatino")
+		OPTION (L"Helvetica")
+		OPTION (L"Courier")
+	NATURAL (L"Font size", L"10")
+	SENTENCE (L"Rotation (degrees or dx;dy)", L"0")
+	LABEL (L"", L"Text:")
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	int currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
-	int requiredFont = GET_INTEGERW (L"Font");
+	int requiredFont = GET_INTEGER (L"Font");
 	praat_picture_open ();
-	Graphics_setTextAlignment (GRAPHICS, GET_INTEGERW (L"Horizontal alignment") - 1, GET_INTEGERW (L"Vertical alignment") - 1);
+	Graphics_setTextAlignment (GRAPHICS, GET_INTEGER (L"Horizontal alignment") - 1, GET_INTEGER (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_setFont (GRAPHICS,
 		requiredFont == 1 ? Graphics_FONT_TIMES :
 		requiredFont == 2 ? Graphics_FONT_PALATINO :
 		requiredFont == 3 ? Graphics_FONT_HELVETICA :
 		Graphics_FONT_COURIER);
-	Graphics_setFontSize (GRAPHICS, GET_INTEGER ("Font size"));
-	wchar_t *rotation = GET_STRINGW (L"Rotation"), *semicolon;
+	Graphics_setFontSize (GRAPHICS, GET_INTEGER (L"Font size"));
+	wchar_t *rotation = GET_STRING (L"Rotation"), *semicolon;
 	if ((semicolon = wcschr (rotation, ';')) != NULL)
 		Graphics_setTextRotation_vector (GRAPHICS, Melder_atofW (rotation), Melder_atofW (semicolon + 1));
 	else
 		Graphics_setTextRotation (GRAPHICS, Melder_atofW (rotation));
-	Graphics_text (GRAPHICS, GET_REALW (L"Horizontal position"), GET_REALW (L"Vertical position"), GET_STRINGW (L"text"));
+	Graphics_text (GRAPHICS, GET_REAL (L"Horizontal position"), GET_REAL (L"Vertical position"), GET_STRING (L"text"));
 	Graphics_setFont (GRAPHICS, currentFont);
 	Graphics_setFontSize (GRAPHICS, currentSize);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
@@ -591,43 +591,43 @@ DO
 END
 
 static void dia_line (Any dia) {
-	REAL ("From x", "0.0")
-	REAL ("From y", "0.0")
-	REAL ("To x", "1.0")
-	REAL ("To y", "1.0")
+	REAL (L"From x", L"0.0")
+	REAL (L"From y", L"0.0")
+	REAL (L"To x", L"1.0")
+	REAL (L"To y", L"1.0")
 }
-FORM (DrawLine, "Praat picture: Draw line", 0)
+FORM (DrawLine, L"Praat picture: Draw line", 0)
 	dia_line (dia);
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_line (GRAPHICS, GET_REAL ("From x"), GET_REAL ("From y"), GET_REAL ("To x"),
-		GET_REAL ("To y"));
+	Graphics_line (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
+		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawArrow, "Praat picture: Draw arrow", 0)
+FORM (DrawArrow, L"Praat picture: Draw arrow", 0)
 	dia_line (dia);
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_arrow (GRAPHICS, GET_REAL ("From x"), GET_REAL ("From y"), GET_REAL ("To x"),
-		GET_REAL ("To y"));
+	Graphics_arrow (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
+		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawDoubleArrow, "Praat picture: Draw double arrow", 0)
+FORM (DrawDoubleArrow, L"Praat picture: Draw double arrow", 0)
 	dia_line (dia);
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_doubleArrow (GRAPHICS, GET_REAL ("From x"), GET_REAL ("From y"), GET_REAL ("To x"),
-		GET_REAL ("To y"));
+	Graphics_doubleArrow (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
+		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -652,20 +652,20 @@ class_methods (PraatPictureFunction, Data)
 	class_method (getX)
 class_methods_end
 
-FORM (DrawFunction, "Praat picture: Draw function", 0)
-	REAL ("From x", "0.0")
-	REAL ("To x", "0.0 (= all)")
-	NATURAL ("Number of horizontal steps", "1000")
-	LABEL ("", "Formula:")
-	TEXTFIELD ("formula", "x^2 - x^4")
+FORM (DrawFunction, L"Praat picture: Draw function", 0)
+	REAL (L"From x", L"0.0")
+	REAL (L"To x", L"0.0 (= all)")
+	NATURAL (L"Number of horizontal steps", L"1000")
+	LABEL (L"", L"Formula:")
+	TEXTFIELD (L"formula", L"x^2 - x^4")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
-	double fromX = GET_REAL ("From x"), toX = GET_REAL ("To x");
-	long n = GET_INTEGER ("Number of horizontal steps"), i;
+	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
+	long n = GET_INTEGER (L"Number of horizontal steps"), i;
 	float *y = NULL;
 	PraatPictureFunction function = NULL;
-	wchar_t *formula = GET_STRINGW (L"formula");
+	wchar_t *formula = GET_STRING (L"formula");
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
@@ -695,29 +695,29 @@ end:
 END
 
 static void dia_rectangle (Any dia) {
-	REAL ("From x", "0.0")
-	REAL ("To x", "1.0")
-	REAL ("From y", "0.0")
-	REAL ("To y", "1.0")
+	REAL (L"From x", L"0.0")
+	REAL (L"To x", L"1.0")
+	REAL (L"From y", L"0.0")
+	REAL (L"To y", L"1.0")
 }
-FORM (DrawRectangle, "Praat picture: Draw rectangle", 0)
+FORM (DrawRectangle, L"Praat picture: Draw rectangle", 0)
 	dia_rectangle (dia);
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
 	Graphics_rectangle (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (PaintRectangle, "Praat picture: Paint rectangle", 0)
-	COLOUR ("Colour (0-1 or name)", "0.5")
+FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
+	COLOUR (L"Colour (0-1 or name)", L"0.5")
 	dia_rectangle (dia);
 	OK
 DO
-	double realColour = GET_REAL ("Colour");
+	double realColour = GET_REAL (L"Colour");
 	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -726,32 +726,32 @@ DO
 	else
 		Graphics_setGrey (GRAPHICS, realColour);
 	Graphics_fillRectangle (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawRoundedRectangle, "Praat picture: Draw rounded rectangle", 0)
+FORM (DrawRoundedRectangle, L"Praat picture: Draw rounded rectangle", 0)
 	dia_rectangle (dia);
-	POSITIVE ("Radius (mm)", "3.0")
+	POSITIVE (L"Radius (mm)", L"3.0")
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
 	Graphics_roundedRectangle (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"), GET_REAL ("Radius"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (PaintRoundedRectangle, "Praat picture: Paint rounded rectangle", 0)
-	COLOUR ("Colour (0-1 or name)", "0.5")
+FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
+	COLOUR (L"Colour (0-1 or name)", L"0.5")
 	dia_rectangle (dia);
-	POSITIVE ("Radius (mm)", "3.0")
+	POSITIVE (L"Radius (mm)", L"3.0")
 	OK
 DO
-	double realColour = GET_REAL ("Colour");
+	double realColour = GET_REAL (L"Colour");
 	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -760,46 +760,46 @@ DO
 	else
 		Graphics_setGrey (GRAPHICS, realColour);
 	Graphics_fillRoundedRectangle (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"), GET_REAL ("Radius"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawArc, "Praat picture: Draw arc", 0)
-	REAL ("Centre x", "0.0")
-	REAL ("Centre y", "0.0")
-	POSITIVE ("Radius (along x)", "1.0")
-	REAL ("From angle (degrees)", "0.0")
-	REAL ("To angle (degrees)", "90.0")
+FORM (DrawArc, L"Praat picture: Draw arc", 0)
+	REAL (L"Centre x", L"0.0")
+	REAL (L"Centre y", L"0.0")
+	POSITIVE (L"Radius (along x)", L"1.0")
+	REAL (L"From angle (degrees)", L"0.0")
+	REAL (L"To angle (degrees)", L"90.0")
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_arc (GRAPHICS, GET_REAL ("Centre x"), GET_REAL ("Centre y"), GET_REAL ("Radius"),
-		GET_REAL ("From angle"), GET_REAL ("To angle"));
+	Graphics_arc (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"),
+		GET_REAL (L"From angle"), GET_REAL (L"To angle"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawEllipse, "Praat picture: Draw ellipse", 0)
+FORM (DrawEllipse, L"Praat picture: Draw ellipse", 0)
 	dia_rectangle (dia);
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
 	Graphics_ellipse (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (PaintEllipse, "Praat picture: Paint ellipse", 0)
-	COLOUR ("Colour (0-1 or name)", "0.5")
+FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
+	COLOUR (L"Colour (0-1 or name)", L"0.5")
 	dia_rectangle (dia);
 	OK
 DO
-	double realColour = GET_REAL ("Colour");
+	double realColour = GET_REAL (L"Colour");
 	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -808,33 +808,33 @@ DO
 	else
 		Graphics_setGrey (GRAPHICS, realColour);
 	Graphics_fillEllipse (GRAPHICS,
-		GET_REAL ("From x"), GET_REAL ("To x"), GET_REAL ("From y"), GET_REAL ("To y"));
+		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawCircle, "Praat picture: Draw circle", 0)
-	REAL ("Centre x", "0.0")
-	REAL ("Centre y", "0.0")
-	POSITIVE ("Radius (along x)", "1.0")
+FORM (DrawCircle, L"Praat picture: Draw circle", 0)
+	REAL (L"Centre x", L"0.0")
+	REAL (L"Centre y", L"0.0")
+	POSITIVE (L"Radius (along x)", L"1.0")
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_circle (GRAPHICS, GET_REAL ("Centre x"), GET_REAL ("Centre y"), GET_REAL ("Radius"));
+	Graphics_circle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (PaintCircle, "Praat picture: Paint circle", 0)
-	COLOUR ("Colour (0-1 or name)", "0.5")
-	REAL ("Centre x", "0")
-	REAL ("Centre y", "0")
-	POSITIVE ("Radius (along x)", "1.0")
+FORM (PaintCircle, L"Praat picture: Paint circle", 0)
+	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	REAL (L"Centre x", L"0")
+	REAL (L"Centre y", L"0")
+	POSITIVE (L"Radius (along x)", L"1.0")
 	OK
 DO
-	double realColour = GET_REAL ("Colour");
+	double realColour = GET_REAL (L"Colour");
 	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -842,33 +842,33 @@ DO
 		Graphics_setColour (GRAPHICS, integerColour);
 	else
 		Graphics_setGrey (GRAPHICS, realColour);
-	Graphics_fillCircle (GRAPHICS, GET_REAL ("Centre x"), GET_REAL ("Centre y"), GET_REAL ("Radius"));
+	Graphics_fillCircle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (DrawCircle_mm, "Praat picture: Draw circle (mm)", 0)
-	REAL ("Centre x", "0.0")
-	REAL ("Centre y", "0.0")
-	POSITIVE ("Diameter (mm)", "5.0")
+FORM (DrawCircle_mm, L"Praat picture: Draw circle (mm)", 0)
+	REAL (L"Centre x", L"0.0")
+	REAL (L"Centre y", L"0.0")
+	POSITIVE (L"Diameter (mm)", L"5.0")
 	OK
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_circle_mm (GRAPHICS, GET_REAL ("Centre x"), GET_REAL ("Centre y"), GET_REAL ("Diameter"));
+	Graphics_circle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
-FORM (PaintCircle_mm, "Praat picture: Paint circle (mm)", 0)
-	COLOUR ("Colour (0-1 or name)", "0.5")
-	REAL ("Centre x", "0.0")
-	REAL ("Centre y", "0.0")
-	POSITIVE ("Diameter (mm)", "5.0")
+FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
+	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	REAL (L"Centre x", L"0.0")
+	REAL (L"Centre y", L"0.0")
+	POSITIVE (L"Diameter (mm)", L"5.0")
 	OK
 DO
-	double realColour = GET_REAL ("Colour");
+	double realColour = GET_REAL (L"Colour");
 	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -876,28 +876,28 @@ DO
 		Graphics_setColour (GRAPHICS, integerColour);
 	else
 		Graphics_setGrey (GRAPHICS, realColour);
-	Graphics_fillCircle_mm (GRAPHICS, GET_REAL ("Centre x"), GET_REAL ("Centre y"), GET_REAL ("Diameter"));
+	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
 
 
-FORM (Axes, "Praat picture: Axes", "Axes...")
-	REAL ("left Left and right", "0.0")
-	REAL ("right Left and right", "1.0")
-	REAL ("left Bottom and top", "0.0")
-	REAL ("right Bottom and top", "1.0")
+FORM (Axes, L"Praat picture: Axes", L"Axes...")
+	REAL (L"left Left and right", L"0.0")
+	REAL (L"right Left and right", L"1.0")
+	REAL (L"left Bottom and top", L"0.0")
+	REAL (L"right Bottom and top", L"1.0")
 	OK
 double x1WC, x2WC, y1WC, y2WC;
 Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-SET_REAL ("left Left and right", x1WC);
-SET_REAL ("right Left and right", x2WC);
-SET_REAL ("left Bottom and top", y1WC);
-SET_REAL ("right Bottom and top", y2WC);
+SET_REAL (L"left Left and right", x1WC);
+SET_REAL (L"right Left and right", x2WC);
+SET_REAL (L"left Bottom and top", y1WC);
+SET_REAL (L"right Bottom and top", y2WC);
 DO
-	double left = GET_REAL ("left Left and right"), right = GET_REAL ("right Left and right");
-	double top = GET_REAL ("right Bottom and top"), bottom = GET_REAL ("left Bottom and top");
+	double left = GET_REAL (L"left Left and right"), right = GET_REAL (L"right Left and right");
+	double top = GET_REAL (L"right Bottom and top"), bottom = GET_REAL (L"left Bottom and top");
 	REQUIRE (right != left, L"Left and right must not be equal.")
 	REQUIRE (top != bottom, L"Top and bottom must not be equal.")
 	praat_picture_open ();
@@ -913,113 +913,113 @@ DIRECT (DrawInnerBox)
 	praat_picture_close ();
 END
 
-FORM (Text_left, "Praat picture: Text left", "Text left/right/top/bottom...")
-	BOOLEAN ("Far", 1)
-	TEXTFIELD ("text", "")
+FORM (Text_left, L"Praat picture: Text left", L"Text left/right/top/bottom...")
+	BOOLEAN (L"Far", 1)
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textLeft (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
+	Graphics_textLeft (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Text_right, "Praat picture: Text right", "Text left/right/top/bottom...")
-	BOOLEAN ("Far", 1)
-	TEXTFIELD ("text", "")
+FORM (Text_right, L"Praat picture: Text right", L"Text left/right/top/bottom...")
+	BOOLEAN (L"Far", 1)
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textRight (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
+	Graphics_textRight (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Text_top, "Praat picture: Text top", "Text left/right/top/bottom...")
-	BOOLEAN ("Far", 0)
-	TEXTFIELD ("text", "")
+FORM (Text_top, L"Praat picture: Text top", L"Text left/right/top/bottom...")
+	BOOLEAN (L"Far", 0)
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textTop (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
+	Graphics_textTop (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Text_bottom, "Praat picture: Text bottom", "Text left/right/top/bottom...")
-	BOOLEAN ("Far", 1)
-	TEXTFIELD ("text", "")
+FORM (Text_bottom, L"Praat picture: Text bottom", L"Text left/right/top/bottom...")
+	BOOLEAN (L"Far", 1)
+	TEXTFIELD (L"text", L"")
 	OK
 DO
 	praat_picture_open ();
-	Graphics_textBottom (GRAPHICS, GET_INTEGER ("Far"), GET_STRINGW (L"text"));
+	Graphics_textBottom (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
 static void dia_marksEvery (Any dia) {
-	POSITIVE ("Units", "1.0")
-	POSITIVE ("Distance", "0.1")
-	BOOLEAN ("Write numbers", 1)
-	BOOLEAN ("Draw ticks", 1)
-	BOOLEAN ("Draw dotted lines", 1)
+	POSITIVE (L"Units", L"1.0")
+	POSITIVE (L"Distance", L"0.1")
+	BOOLEAN (L"Write numbers", 1)
+	BOOLEAN (L"Draw ticks", 1)
+	BOOLEAN (L"Draw dotted lines", 1)
 }
 static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (void *, double, double, int, int, int)) {
 	praat_picture_open ();
-	Graphics_marksEvery (GRAPHICS, GET_REAL ("Units"), GET_REAL ("Distance"),
-		GET_INTEGER ("Write numbers"),
-		GET_INTEGER ("Draw ticks"), GET_INTEGER ("Draw dotted lines"));
+	Graphics_marksEvery (GRAPHICS, GET_REAL (L"Units"), GET_REAL (L"Distance"),
+		GET_INTEGER (L"Write numbers"),
+		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
 	praat_picture_close ();
 }
-FORM (Marks_left_every, "Praat picture: Marks left every...", "Marks left/right/top/bottom every...")
+FORM (Marks_left_every, L"Praat picture: Marks left every...", L"Marks left/right/top/bottom every...")
 	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksLeftEvery); END
-FORM (Marks_right_every, "Praat picture: Marks right every...", "Marks left/right/top/bottom every...")
+FORM (Marks_right_every, L"Praat picture: Marks right every...", L"Marks left/right/top/bottom every...")
 	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksRightEvery); END
-FORM (Marks_bottom_every, "Praat picture: Marks bottom every...", "Marks left/right/top/bottom every...")
+FORM (Marks_bottom_every, L"Praat picture: Marks bottom every...", L"Marks left/right/top/bottom every...")
 	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksBottomEvery); END
-FORM (Marks_top_every, "Praat picture: Marks top every...", "Marks left/right/top/bottom every...")
+FORM (Marks_top_every, L"Praat picture: Marks top every...", L"Marks left/right/top/bottom every...")
 	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksTopEvery); END
 
 static void dia_marks (Any dia) {
-	NATURAL ("Number of marks", "6")
-	BOOLEAN ("Write numbers", 1)
-	BOOLEAN ("Draw ticks", 1)
-	BOOLEAN ("Draw dotted lines", 1)
+	NATURAL (L"Number of marks", L"6")
+	BOOLEAN (L"Write numbers", 1)
+	BOOLEAN (L"Draw ticks", 1)
+	BOOLEAN (L"Draw dotted lines", 1)
 }
 static int do_marks (Any dia, void (*Graphics_marks) (void *, int, int, int, int)) {
-	long numberOfMarks = GET_INTEGER ("Number of marks");
+	long numberOfMarks = GET_INTEGER (L"Number of marks");
 	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
 	praat_picture_open ();
-	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER ("Write numbers"),
-		GET_INTEGER ("Draw ticks"), GET_INTEGER ("Draw dotted lines"));
+	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (L"Write numbers"),
+		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
 	praat_picture_close ();
 	return 1;
 }
-FORM (Marks_left, "Praat picture: Marks left", "Marks left/right/top/bottom...")
+FORM (Marks_left, L"Praat picture: Marks left", L"Marks left/right/top/bottom...")
 	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksLeft)) return 0; END
-FORM (Marks_right, "Praat picture: Marks right", "Marks left/right/top/bottom...")
+FORM (Marks_right, L"Praat picture: Marks right", L"Marks left/right/top/bottom...")
 	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksRight)) return 0; END
-FORM (Marks_bottom, "Praat picture: Marks bottom", "Marks left/right/top/bottom...")
+FORM (Marks_bottom, L"Praat picture: Marks bottom", L"Marks left/right/top/bottom...")
 	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksBottom)) return 0; END
-FORM (Marks_top, "Praat picture: Marks top", "Marks left/right/top/bottom...")
+FORM (Marks_top, L"Praat picture: Marks top", L"Marks left/right/top/bottom...")
 	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksTop)) return 0; END
 
 static void dia_marksLogarithmic (Any dia) {
-	NATURAL ("Marks per decade", "3")
-	BOOLEAN ("Write numbers", 1)
-	BOOLEAN ("Draw ticks", 1)
-	BOOLEAN ("Draw dotted lines", 1)
+	NATURAL (L"Marks per decade", L"3")
+	BOOLEAN (L"Write numbers", 1)
+	BOOLEAN (L"Draw ticks", 1)
+	BOOLEAN (L"Draw dotted lines", 1)
 }
 static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (void *, int, int, int, int)) {
-	long numberOfMarksPerDecade = GET_INTEGER ("Marks per decade");
+	long numberOfMarksPerDecade = GET_INTEGER (L"Marks per decade");
 	praat_picture_open ();
-	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER ("Write numbers"),
-		GET_INTEGER ("Draw ticks"), GET_INTEGER ("Draw dotted lines"));
+	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (L"Write numbers"),
+		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
 	praat_picture_close ();
 }
-FORM (marksLeftLogarithmic, "Praat picture: Logarithmic marks left", "Logarithmic marks left/right/top/bottom...")
+FORM (marksLeftLogarithmic, L"Praat picture: Logarithmic marks left", L"Logarithmic marks left/right/top/bottom...")
 	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksLeftLogarithmic); END
-FORM (marksRightLogarithmic, "Praat picture: Logarithmic marks right", "Logarithmic marks left/right/top/bottom...")
+FORM (marksRightLogarithmic, L"Praat picture: Logarithmic marks right", L"Logarithmic marks left/right/top/bottom...")
 	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksRightLogarithmic); END
-FORM (marksBottomLogarithmic, "Praat picture: Logarithmic marks bottom", "Logarithmic marks left/right/top/bottom...")
+FORM (marksBottomLogarithmic, L"Praat picture: Logarithmic marks bottom", L"Logarithmic marks left/right/top/bottom...")
 	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksBottomLogarithmic); END
-FORM (marksTopLogarithmic, "Praat picture: Logarithmic marks top", "Logarithmic marks left/right/top/bottom...")
+FORM (marksTopLogarithmic, L"Praat picture: Logarithmic marks top", L"Logarithmic marks left/right/top/bottom...")
 	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksTopLogarithmic); END
 
 static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
@@ -1029,18 +1029,18 @@ static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y
 }
 
 static void dia_oneMark (Any dia) {
-	REAL ("Position", "0.0")
-	BOOLEAN ("Write number", 1)
-	BOOLEAN ("Draw tick", 1)
-	BOOLEAN ("Draw dotted line", 1)
-	LABEL ("", "Draw text:")
-	TEXTFIELD ("text", "")
+	REAL (L"Position", L"0.0")
+	BOOLEAN (L"Write number", 1)
+	BOOLEAN (L"Draw tick", 1)
+	BOOLEAN (L"Draw dotted line", 1)
+	LABEL (L"", L"Draw text:")
+	TEXTFIELD (L"text", L"")
 }
-FORM (Mark_left, "Praat picture: One mark left", "One mark left/right/top/bottom...")
+FORM (Mark_left, L"Praat picture: One mark left", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1050,17 +1050,17 @@ DO
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
-	Graphics_markLeft (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markLeft (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Mark_right, "Praat picture: One mark right", "One mark left/right/top/bottom...")
+FORM (Mark_right, L"Praat picture: One mark right", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1070,17 +1070,17 @@ DO
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
-	Graphics_markRight (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markRight (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Mark_top, "Praat picture: One mark top", "One mark left/right/top/bottom...")
+FORM (Mark_top, L"Praat picture: One mark top", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1090,17 +1090,17 @@ DO
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
-	Graphics_markTop (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markTop (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (Mark_bottom, "Praat picture: One mark bottom", "One mark left/right/top/bottom...")
+FORM (Mark_bottom, L"Praat picture: One mark bottom", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1110,25 +1110,25 @@ DO
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
-	Graphics_markBottom (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markBottom (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
 static void dia_oneLogarithmicMark (Any dia) {
-	REAL ("Position", "1.0")
-	BOOLEAN ("Write number", 1)
-	BOOLEAN ("Draw tick", 1)
-	BOOLEAN ("Draw dotted line", 1)
-	LABEL ("", "Draw text:")
-	TEXTFIELD ("text", "")
+	REAL (L"Position", L"1.0")
+	BOOLEAN (L"Write number", 1)
+	BOOLEAN (L"Draw tick", 1)
+	BOOLEAN (L"Draw dotted line", 1)
+	LABEL (L"", L"Draw text:")
+	TEXTFIELD (L"text", L"")
 }
-FORM (LogarithmicMark_left, "Praat picture: One logarithmic mark left", "One logarithmic mark left/right/top/bottom...")
+FORM (LogarithmicMark_left, L"Praat picture: One logarithmic mark left", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1138,17 +1138,17 @@ DO
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
-	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (LogarithmicMark_right, "Praat picture: One logarithmic mark right", "One logarithmic mark left/right/top/bottom...")
+FORM (LogarithmicMark_right, L"Praat picture: One logarithmic mark right", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1158,17 +1158,17 @@ DO
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
-	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (LogarithmicMark_top, "Praat picture: One logarithmic mark top", "One logarithmic mark left/right/top/bottom...")
+FORM (LogarithmicMark_top, L"Praat picture: One logarithmic mark top", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1178,17 +1178,17 @@ DO
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
 	praat_picture_open ();
-	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (LogarithmicMark_bottom, "Praat picture: One logarithmic mark bottom", "One logarithmic mark left/right/top/bottom...")
+FORM (LogarithmicMark_bottom, L"Praat picture: One logarithmic mark bottom", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
 	OK
 DO
-	double position = GET_REAL ("Position");
+	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	praat_picture_open ();
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1198,66 +1198,66 @@ DO
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
 	praat_picture_open ();
-	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER ("Write number"),
-		GET_INTEGER ("Draw tick"), GET_INTEGER ("Draw dotted line"),
-		GET_STRINGW (L"text"));
+	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
+		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
+		GET_STRING (L"text"));
 	praat_picture_close ();
 END
 
-FORM (dxMMtoWC, "Compute horizontal distance in world coordinates", 0)
-	REAL ("Distance (mm)", "10.0")
+FORM (dxMMtoWC, L"Compute horizontal distance in world coordinates", 0)
+	REAL (L"Distance (mm)", L"10.0")
 	OK
 DO
 	double wc;
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL ("Distance"));
+	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
 
-FORM (dxWCtoMM, "Compute horizontal distance in millimetres", 0)
-	REAL ("Distance (wc)", "0.1")
+FORM (dxWCtoMM, L"Compute horizontal distance in millimetres", 0)
+	REAL (L"Distance (wc)", L"0.1")
 	OK
 DO
 	double mm;
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL ("Distance"));
+	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
 
-FORM (dyMMtoWC, "Compute vertical distance in world coordinates", 0)
-	REAL ("Distance (mm)", "10.0")
+FORM (dyMMtoWC, L"Compute vertical distance in world coordinates", 0)
+	REAL (L"Distance (mm)", L"10.0")
 	OK
 DO
 	double wc;
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL ("Distance"));
+	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
 
-FORM (dyWCtoMM, "Compute vertical distance in millimetres", 0)
-	REAL ("Distance (wc)", "1.0")
+FORM (dyWCtoMM, L"Compute vertical distance in millimetres", 0)
+	REAL (L"Distance (wc)", L"1.0")
 	OK
 DO
 	double mm;
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL ("Distance"));
+	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
 
-FORM (textWidth_wc, "Text width in world coordinates", 0)
-	TEXTFIELD ("text", "Hello world")
+FORM (textWidth_wc, L"Text width in world coordinates", 0)
+	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
 	double wc;
@@ -1265,13 +1265,13 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth (GRAPHICS, GET_STRINGW (L"text"));
+	wc = Graphics_textWidth (GRAPHICS, GET_STRING (L"text"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
 
-FORM (textWidth_mm, "Text width in millimetres", 0)
-	TEXTFIELD ("text", "Hello world")
+FORM (textWidth_mm, L"Text width in millimetres", 0)
+	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
 	double mm;
@@ -1279,16 +1279,16 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRINGW (L"text")));
+	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING (L"text")));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
 
-FORM (textWidth_ps_wc, "PostScript text width in world coordinates", 0)
-	RADIO ("Phonetic font", 1)
-		RADIOBUTTON ("XIPA")
-		RADIOBUTTON ("SILIPA")
-	TEXTFIELD ("text", "Hello world")
+FORM (textWidth_ps_wc, L"PostScript text width in world coordinates", 0)
+	RADIO (L"Phonetic font", 1)
+		RADIOBUTTON (L"XIPA")
+		RADIOBUTTON (L"SILIPA")
+	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
 	double wc;
@@ -1296,16 +1296,16 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRINGW (L"text"), GET_INTEGER ("Phonetic font") - 1);
+	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
 
-FORM (textWidth_ps_mm, "PostScript text width in millimetres", 0)
-	RADIO ("Phonetic font", 1)
-		RADIOBUTTON ("XIPA")
-		RADIOBUTTON ("SILIPA")
-	TEXTFIELD ("text", "Hello world")
+FORM (textWidth_ps_mm, L"PostScript text width in millimetres", 0)
+	RADIO (L"Phonetic font", 1)
+		RADIOBUTTON (L"XIPA")
+		RADIOBUTTON (L"SILIPA")
+	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
 	double mm;
@@ -1313,7 +1313,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, praat_size);
 	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRINGW (L"text"), GET_INTEGER ("Phonetic font") - 1);
+	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
@@ -1475,7 +1475,7 @@ void praat_picture_editor_close (void) {
 void praat_picture_init (void) {
 	Widget dialog, scrollWindow, menuBar, drawingArea = NULL;
 	int margin, width, height, resolution, x;
-	static char itemTitle_search [100];
+	static MelderString itemTitle_search = { 0 };
 	if (! theCurrentPraat -> batch) {
 		char pictureWindowTitle [100];
 		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
@@ -1498,7 +1498,7 @@ void praat_picture_init (void) {
 		shell = motif_addShell (theCurrentPraat -> topShell, 0);
 		sprintf (pictureWindowTitle, "%s picture", praatP.title);
 		XtVaSetValues (shell, XmNwidth, width, XmNheight, height,
-			XmNdeleteResponse, XmUNMAP, XmNiconName, "Picture", XmNtitle, pictureWindowTitle,
+			XmNdeleteResponse, XmUNMAP, XmNiconName, L"Picture", XmNtitle, pictureWindowTitle,
 			XmNx, x, NULL);
 		dialog = XtVaCreateWidget ("picture", xmFormWidgetClass, shell,
 			XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
@@ -1518,160 +1518,161 @@ void praat_picture_init (void) {
 		helpMenu = motif_addMenu (menuBar, L"Help", 0);
 	}
 
-	praat_addMenuCommand ("Picture", "File", "PostScript settings...", 0, 0, DO_PostScript_settings);
-	praat_addMenuCommand ("Picture", "File", "Picture info", 0, 0, DO_Picture_settings_report);
-	praat_addMenuCommand ("Picture", "File", "Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
-	praat_addMenuCommand ("Picture", "File", "-- read & write --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "File", "Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
-	praat_addMenuCommand ("Picture", "File", "Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);
+	praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
+	praat_addMenuCommand (L"Picture", L"File", L"Picture info", 0, 0, DO_Picture_settings_report);
+	praat_addMenuCommand (L"Picture", L"File", L"Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
+	praat_addMenuCommand (L"Picture", L"File", L"-- read & write --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"File", L"Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);
 	#ifdef _WIN32
-	praat_addMenuCommand ("Picture", "File", "Read from old Windows praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldWindowsPraatPictureFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Read from old Windows praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldWindowsPraatPictureFile);
 	#endif
-	praat_addMenuCommand ("Picture", "File", "Write to praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
 	#ifdef macintosh
-	praat_addMenuCommand ("Picture", "File", "Write to Mac PICT file...", 0, 0, DO_Picture_writeToMacPictFile);
-	praat_addMenuCommand ("Picture", "File", "Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
-	praat_addMenuCommand ("Picture", "File", "Copy screen image to clipboard", 0, 0, DO_Copy_screen_image_to_clipboard);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, 0, DO_Picture_writeToMacPictFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
+	praat_addMenuCommand (L"Picture", L"File", L"Copy screen image to clipboard", 0, 0, DO_Copy_screen_image_to_clipboard);
 	#endif
 	#ifdef _WIN32
-	praat_addMenuCommand ("Picture", "File", "Write to Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
-	praat_addMenuCommand ("Picture", "File", "Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
+	praat_addMenuCommand (L"Picture", L"File", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif
-	praat_addMenuCommand ("Picture", "File", "-- print --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "File", "Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
-	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
-	praat_addMenuCommand ("Picture", "File", "Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
+	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
 	#if defined (macintosh)
-		praat_addMenuCommand ("Picture", "File", "Page setup...", 0, 0, DO_Page_setup);
+		praat_addMenuCommand (L"Picture", L"File", L"Page setup...", 0, 0, DO_Page_setup);
 	#endif
-	praat_addMenuCommand ("Picture", "File", "Print...", 0, 'P', DO_Print);
+	praat_addMenuCommand (L"Picture", L"File", L"Print...", 0, 'P', DO_Print);
 
-	praat_addMenuCommand ("Picture", "Edit", "Undo", 0, 'Z', DO_Undo);
-	praat_addMenuCommand ("Picture", "Edit", "-- erase --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Edit", "Erase all", 0, 'E', DO_Erase_all);
+	praat_addMenuCommand (L"Picture", L"Edit", L"Undo", 0, 'Z', DO_Undo);
+	praat_addMenuCommand (L"Picture", L"Edit", L"-- erase --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Edit", L"Erase all", 0, 'E', DO_Erase_all);
 
-	praat_addMenuCommand ("Picture", "Margins", "Draw inner box", 0, 0, DO_DrawInnerBox);
-	praat_addMenuCommand ("Picture", "Margins", "-- text --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Text left...", 0, 0, DO_Text_left);
-	praat_addMenuCommand ("Picture", "Margins", "Text right...", 0, 0, DO_Text_right);
-	praat_addMenuCommand ("Picture", "Margins", "Text top...", 0, 0, DO_Text_top);
-	praat_addMenuCommand ("Picture", "Margins", "Text bottom...", 0, 0, DO_Text_bottom);
-	praat_addMenuCommand ("Picture", "Margins", "-- marks every --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Marks left every...", 0, 0, DO_Marks_left_every);
-	praat_addMenuCommand ("Picture", "Margins", "Marks right every...", 0, 0, DO_Marks_right_every);
-	praat_addMenuCommand ("Picture", "Margins", "Marks bottom every...", 0, 0, DO_Marks_bottom_every);
-	praat_addMenuCommand ("Picture", "Margins", "Marks top every...", 0, 0, DO_Marks_top_every);
-	praat_addMenuCommand ("Picture", "Margins", "-- one mark --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "One mark left...", 0, 0, DO_Mark_left);
-	praat_addMenuCommand ("Picture", "Margins", "One mark right...", 0, 0, DO_Mark_right);
-	praat_addMenuCommand ("Picture", "Margins", "One mark bottom...", 0, 0, DO_Mark_bottom);
-	praat_addMenuCommand ("Picture", "Margins", "One mark top...", 0, 0, DO_Mark_top);
-	praat_addMenuCommand ("Picture", "Margins", "-- marks --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Marks", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Marks left...", 0, 1, DO_Marks_left);
-	praat_addMenuCommand ("Picture", "Margins", "Marks right...", 0, 1, DO_Marks_right);
-	praat_addMenuCommand ("Picture", "Margins", "Marks bottom...", 0, 1, DO_Marks_bottom);
-	praat_addMenuCommand ("Picture", "Margins", "Marks top...", 0, 1, DO_Marks_top);
-	praat_addMenuCommand ("Picture", "Margins", "Logarithmic marks", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Logarithmic marks left...", 0, 1, DO_marksLeftLogarithmic);
-	praat_addMenuCommand ("Picture", "Margins", "Logarithmic marks right...", 0, 1, DO_marksRightLogarithmic);
-	praat_addMenuCommand ("Picture", "Margins", "Logarithmic marks bottom...", 0, 1, DO_marksBottomLogarithmic);
-	praat_addMenuCommand ("Picture", "Margins", "Logarithmic marks top...", 0, 1, DO_marksTopLogarithmic);
-	praat_addMenuCommand ("Picture", "Margins", "One logarithmic mark", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "One logarithmic mark left...", 0, 1, DO_LogarithmicMark_left);
-	praat_addMenuCommand ("Picture", "Margins", "One logarithmic mark right...", 0, 1, DO_LogarithmicMark_right);
-	praat_addMenuCommand ("Picture", "Margins", "One logarithmic mark bottom...", 0, 1, DO_LogarithmicMark_bottom);
-	praat_addMenuCommand ("Picture", "Margins", "One logarithmic mark top...", 0, 1, DO_LogarithmicMark_top);
-	praat_addMenuCommand ("Picture", "Margins", "-- axes --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Margins", "Axes...", 0, 0, DO_Axes);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Draw inner box", 0, 0, DO_DrawInnerBox);
+	praat_addMenuCommand (L"Picture", L"Margins", L"-- text --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Text left...", 0, 0, DO_Text_left);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Text right...", 0, 0, DO_Text_right);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Text top...", 0, 0, DO_Text_top);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Text bottom...", 0, 0, DO_Text_bottom);
+	praat_addMenuCommand (L"Picture", L"Margins", L"-- marks every --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks left every...", 0, 0, DO_Marks_left_every);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks right every...", 0, 0, DO_Marks_right_every);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks bottom every...", 0, 0, DO_Marks_bottom_every);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks top every...", 0, 0, DO_Marks_top_every);
+	praat_addMenuCommand (L"Picture", L"Margins", L"-- one mark --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One mark left...", 0, 0, DO_Mark_left);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One mark right...", 0, 0, DO_Mark_right);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One mark bottom...", 0, 0, DO_Mark_bottom);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One mark top...", 0, 0, DO_Mark_top);
+	praat_addMenuCommand (L"Picture", L"Margins", L"-- marks --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks left...", 0, 1, DO_Marks_left);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks right...", 0, 1, DO_Marks_right);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks bottom...", 0, 1, DO_Marks_bottom);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Marks top...", 0, 1, DO_Marks_top);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Logarithmic marks", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Logarithmic marks left...", 0, 1, DO_marksLeftLogarithmic);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Logarithmic marks right...", 0, 1, DO_marksRightLogarithmic);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Logarithmic marks bottom...", 0, 1, DO_marksBottomLogarithmic);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Logarithmic marks top...", 0, 1, DO_marksTopLogarithmic);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One logarithmic mark", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One logarithmic mark left...", 0, 1, DO_LogarithmicMark_left);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One logarithmic mark right...", 0, 1, DO_LogarithmicMark_right);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One logarithmic mark bottom...", 0, 1, DO_LogarithmicMark_bottom);
+	praat_addMenuCommand (L"Picture", L"Margins", L"One logarithmic mark top...", 0, 1, DO_LogarithmicMark_top);
+	praat_addMenuCommand (L"Picture", L"Margins", L"-- axes --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Margins", L"Axes...", 0, 0, DO_Axes);
 
-	praat_addMenuCommand ("Picture", "World", "Text...", 0, 0, DO_Text);
-	praat_addMenuCommand ("Picture", "World", "Text special...", 0, 0, DO_Text_special);
-	praat_addMenuCommand ("Picture", "World", "-- line --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Draw line...", 0, 0, DO_DrawLine);
-	praat_addMenuCommand ("Picture", "World", "Draw arrow...", 0, 0, DO_DrawArrow);
-	praat_addMenuCommand ("Picture", "World", "Draw two-way arrow...", 0, 0, DO_DrawDoubleArrow);
-	praat_addMenuCommand ("Picture", "World", "-- function --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Draw function...", 0, 0, DO_DrawFunction);
-	praat_addMenuCommand ("Picture", "World", "-- rectangle --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Draw rectangle...", 0, 0, DO_DrawRectangle);
-	praat_addMenuCommand ("Picture", "World", "Paint rectangle...", 0, 0, DO_PaintRectangle);
-	praat_addMenuCommand ("Picture", "World", "Draw rounded rectangle...", 0, 0, DO_DrawRoundedRectangle);
-	praat_addMenuCommand ("Picture", "World", "Paint rounded rectangle...", 0, 0, DO_PaintRoundedRectangle);
-	praat_addMenuCommand ("Picture", "World", "-- arc --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Draw arc...", 0, 0, DO_DrawArc);
-	praat_addMenuCommand ("Picture", "World", "Draw ellipse...", 0, 0, DO_DrawEllipse);
-	praat_addMenuCommand ("Picture", "World", "Paint ellipse...", 0, 0, DO_PaintEllipse);
-	praat_addMenuCommand ("Picture", "World", "Draw circle...", 0, 0, DO_DrawCircle);
-	praat_addMenuCommand ("Picture", "World", "Paint circle...", 0, 0, DO_PaintCircle);
-	praat_addMenuCommand ("Picture", "World", "Draw circle (mm)...", 0, 0, DO_DrawCircle_mm);
-	praat_addMenuCommand ("Picture", "World", "Paint circle (mm)...", 0, 0, DO_PaintCircle_mm);
-	praat_addMenuCommand ("Picture", "World", "-- axes --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Axes...", 0, 0, DO_Axes);
-	praat_addMenuCommand ("Picture", "World", "Measure", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "World", "Horizontal mm to wc...", 0, 1, DO_dxMMtoWC);
-	praat_addMenuCommand ("Picture", "World", "Horizontal wc to mm...", 0, 1, DO_dxWCtoMM);
-	praat_addMenuCommand ("Picture", "World", "Vertical mm to wc...", 0, 1, DO_dyMMtoWC);
-	praat_addMenuCommand ("Picture", "World", "Vertical wc to mm...", 0, 1, DO_dyWCtoMM);
-	praat_addMenuCommand ("Picture", "World", "-- text measure --", 0, 1, 0);
-	praat_addMenuCommand ("Picture", "World", "Text width (wc)...", 0, 1, DO_textWidth_wc);
-	praat_addMenuCommand ("Picture", "World", "Text width (mm)...", 0, 1, DO_textWidth_mm);
-	praat_addMenuCommand ("Picture", "World", "PostScript text width (wc)...", 0, 1, DO_textWidth_ps_wc);
-	praat_addMenuCommand ("Picture", "World", "PostScript text width (mm)...", 0, 1, DO_textWidth_ps_mm);
+	praat_addMenuCommand (L"Picture", L"World", L"Text...", 0, 0, DO_Text);
+	praat_addMenuCommand (L"Picture", L"World", L"Text special...", 0, 0, DO_Text_special);
+	praat_addMenuCommand (L"Picture", L"World", L"-- line --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw line...", 0, 0, DO_DrawLine);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw arrow...", 0, 0, DO_DrawArrow);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw two-way arrow...", 0, 0, DO_DrawDoubleArrow);
+	praat_addMenuCommand (L"Picture", L"World", L"-- function --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw function...", 0, 0, DO_DrawFunction);
+	praat_addMenuCommand (L"Picture", L"World", L"-- rectangle --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw rectangle...", 0, 0, DO_DrawRectangle);
+	praat_addMenuCommand (L"Picture", L"World", L"Paint rectangle...", 0, 0, DO_PaintRectangle);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw rounded rectangle...", 0, 0, DO_DrawRoundedRectangle);
+	praat_addMenuCommand (L"Picture", L"World", L"Paint rounded rectangle...", 0, 0, DO_PaintRoundedRectangle);
+	praat_addMenuCommand (L"Picture", L"World", L"-- arc --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw arc...", 0, 0, DO_DrawArc);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw ellipse...", 0, 0, DO_DrawEllipse);
+	praat_addMenuCommand (L"Picture", L"World", L"Paint ellipse...", 0, 0, DO_PaintEllipse);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw circle...", 0, 0, DO_DrawCircle);
+	praat_addMenuCommand (L"Picture", L"World", L"Paint circle...", 0, 0, DO_PaintCircle);
+	praat_addMenuCommand (L"Picture", L"World", L"Draw circle (mm)...", 0, 0, DO_DrawCircle_mm);
+	praat_addMenuCommand (L"Picture", L"World", L"Paint circle (mm)...", 0, 0, DO_PaintCircle_mm);
+	praat_addMenuCommand (L"Picture", L"World", L"-- axes --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Axes...", 0, 0, DO_Axes);
+	praat_addMenuCommand (L"Picture", L"World", L"Measure", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Horizontal mm to wc...", 0, 1, DO_dxMMtoWC);
+	praat_addMenuCommand (L"Picture", L"World", L"Horizontal wc to mm...", 0, 1, DO_dxWCtoMM);
+	praat_addMenuCommand (L"Picture", L"World", L"Vertical mm to wc...", 0, 1, DO_dyMMtoWC);
+	praat_addMenuCommand (L"Picture", L"World", L"Vertical wc to mm...", 0, 1, DO_dyWCtoMM);
+	praat_addMenuCommand (L"Picture", L"World", L"-- text measure --", 0, 1, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Text width (wc)...", 0, 1, DO_textWidth_wc);
+	praat_addMenuCommand (L"Picture", L"World", L"Text width (mm)...", 0, 1, DO_textWidth_mm);
+	praat_addMenuCommand (L"Picture", L"World", L"PostScript text width (wc)...", 0, 1, DO_textWidth_ps_wc);
+	praat_addMenuCommand (L"Picture", L"World", L"PostScript text width (mm)...", 0, 1, DO_textWidth_ps_mm);
 
-	praatButton_innerViewport = praat_addMenuCommand ("Picture", "Select", "Mouse selects inner viewport", 0, praat_CHECKABLE, DO_MouseSelectsInnerViewport);
-	praatButton_outerViewport = praat_addMenuCommand ("Picture", "Select", "Mouse selects outer viewport", 0, praat_CHECKABLE, DO_MouseSelectsOuterViewport);
-	praat_addMenuCommand ("Picture", "Select", "-- select --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Select", "Select inner viewport...", 0, 0, DO_SelectInnerViewport);
-	praat_addMenuCommand ("Picture", "Select", "Select outer viewport...", 0, 0, DO_SelectOuterViewport);
-	praat_addMenuCommand ("Picture", "Select", "Viewport...", 0, praat_HIDDEN, DO_SelectOuterViewport);
-	praat_addMenuCommand ("Picture", "Select", "-- viewport drawing --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Select", "Viewport text...", 0, 0, DO_ViewportText);
+	praatButton_innerViewport = praat_addMenuCommand (L"Picture", L"Select", L"Mouse selects inner viewport", 0, praat_CHECKABLE, DO_MouseSelectsInnerViewport);
+	praatButton_outerViewport = praat_addMenuCommand (L"Picture", L"Select", L"Mouse selects outer viewport", 0, praat_CHECKABLE, DO_MouseSelectsOuterViewport);
+	praat_addMenuCommand (L"Picture", L"Select", L"-- select --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Select", L"Select inner viewport...", 0, 0, DO_SelectInnerViewport);
+	praat_addMenuCommand (L"Picture", L"Select", L"Select outer viewport...", 0, 0, DO_SelectOuterViewport);
+	praat_addMenuCommand (L"Picture", L"Select", L"Viewport...", 0, praat_HIDDEN, DO_SelectOuterViewport);
+	praat_addMenuCommand (L"Picture", L"Select", L"-- viewport drawing --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Select", L"Viewport text...", 0, 0, DO_ViewportText);
 
-	praatButton_solidLine = praat_addMenuCommand ("Picture", "Pen", "Solid line", 0, praat_CHECKABLE, DO_Solid_line);
-	praat_addMenuCommand ("Picture", "Pen", "Plain line", 0, praat_HIDDEN, DO_Solid_line);
-	praatButton_dottedLine = praat_addMenuCommand ("Picture", "Pen", "Dotted line", 0, praat_CHECKABLE, DO_Dotted_line);
-	praatButton_dashedLine = praat_addMenuCommand ("Picture", "Pen", "Dashed line", 0, praat_CHECKABLE, DO_Dashed_line);
-	praat_addMenuCommand ("Picture", "Pen", "-- line width --", 0, 0, 0);
-	praat_addMenuCommand ("Picture", "Pen", "Line width...", 0, 0, DO_Line_width);
-	praat_addMenuCommand ("Picture", "Pen", "Arrow size...", 0, 0, DO_Arrow_size);
-	praat_addMenuCommand ("Picture", "Pen", "-- colour --", 0, 0, 0);
-	praatButton_black = praat_addMenuCommand ("Picture", "Pen", "Black", 0, praat_CHECKABLE, DO_Black);
-	praatButton_white = praat_addMenuCommand ("Picture", "Pen", "White", 0, praat_CHECKABLE, DO_White);
-	praatButton_red = praat_addMenuCommand ("Picture", "Pen", "Red", 0, praat_CHECKABLE, DO_Red);
-	praatButton_green = praat_addMenuCommand ("Picture", "Pen", "Green", 0, praat_CHECKABLE, DO_Green);
-	praatButton_blue = praat_addMenuCommand ("Picture", "Pen", "Blue", 0, praat_CHECKABLE, DO_Blue);
-	praatButton_yellow = praat_addMenuCommand ("Picture", "Pen", "Yellow", 0, praat_CHECKABLE, DO_Yellow);
-	praatButton_cyan = praat_addMenuCommand ("Picture", "Pen", "Cyan", 0, praat_CHECKABLE, DO_Cyan);
-	praatButton_magenta = praat_addMenuCommand ("Picture", "Pen", "Magenta", 0, praat_CHECKABLE, DO_Magenta);
-	praatButton_maroon = praat_addMenuCommand ("Picture", "Pen", "Maroon", 0, praat_CHECKABLE, DO_Maroon);
-	praatButton_lime = praat_addMenuCommand ("Picture", "Pen", "Lime", 0, praat_CHECKABLE, DO_Lime);
-	praatButton_navy = praat_addMenuCommand ("Picture", "Pen", "Navy", 0, praat_CHECKABLE, DO_Navy);
-	praatButton_teal = praat_addMenuCommand ("Picture", "Pen", "Teal", 0, praat_CHECKABLE, DO_Teal);
-	praatButton_purple = praat_addMenuCommand ("Picture", "Pen", "Purple", 0, praat_CHECKABLE, DO_Purple);
-	praatButton_olive = praat_addMenuCommand ("Picture", "Pen", "Olive", 0, praat_CHECKABLE, DO_Olive);
-	praatButton_silver = praat_addMenuCommand ("Picture", "Pen", "Silver", 0, praat_CHECKABLE, DO_Silver);
-	praatButton_grey = praat_addMenuCommand ("Picture", "Pen", "Grey", 0, praat_CHECKABLE, DO_Grey);
+	praatButton_solidLine = praat_addMenuCommand (L"Picture", L"Pen", L"Solid line", 0, praat_CHECKABLE, DO_Solid_line);
+	praat_addMenuCommand (L"Picture", L"Pen", L"Plain line", 0, praat_HIDDEN, DO_Solid_line);
+	praatButton_dottedLine = praat_addMenuCommand (L"Picture", L"Pen", L"Dotted line", 0, praat_CHECKABLE, DO_Dotted_line);
+	praatButton_dashedLine = praat_addMenuCommand (L"Picture", L"Pen", L"Dashed line", 0, praat_CHECKABLE, DO_Dashed_line);
+	praat_addMenuCommand (L"Picture", L"Pen", L"-- line width --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"Pen", L"Line width...", 0, 0, DO_Line_width);
+	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);
+	praat_addMenuCommand (L"Picture", L"Pen", L"-- colour --", 0, 0, 0);
+	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_CHECKABLE, DO_Black);
+	praatButton_white = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_CHECKABLE, DO_White);
+	praatButton_red = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_CHECKABLE, DO_Red);
+	praatButton_green = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_CHECKABLE, DO_Green);
+	praatButton_blue = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_CHECKABLE, DO_Blue);
+	praatButton_yellow = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_CHECKABLE, DO_Yellow);
+	praatButton_cyan = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_CHECKABLE, DO_Cyan);
+	praatButton_magenta = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_CHECKABLE, DO_Magenta);
+	praatButton_maroon = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_CHECKABLE, DO_Maroon);
+	praatButton_lime = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_CHECKABLE, DO_Lime);
+	praatButton_navy = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_CHECKABLE, DO_Navy);
+	praatButton_teal = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_CHECKABLE, DO_Teal);
+	praatButton_purple = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_CHECKABLE, DO_Purple);
+	praatButton_olive = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_CHECKABLE, DO_Olive);
+	praatButton_silver = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_CHECKABLE, DO_Silver);
+	praatButton_grey = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_CHECKABLE, DO_Grey);
 
-	praatButton_10 = praat_addMenuCommand ("Picture", "Font", "10", 0, praat_CHECKABLE, DO_10);
-	praatButton_12 = praat_addMenuCommand ("Picture", "Font", "12", 0, praat_CHECKABLE,  DO_12);
-	praatButton_14 = praat_addMenuCommand ("Picture", "Font", "14", 0, praat_CHECKABLE, DO_14);
-	praatButton_18 = praat_addMenuCommand ("Picture", "Font", "18", 0, praat_CHECKABLE, DO_18);
-	praatButton_24 = praat_addMenuCommand ("Picture", "Font", "24", 0, praat_CHECKABLE, DO_24);
-	praat_addMenuCommand ("Picture", "Font", "Font size...", 0, 0, DO_Font_size);
-	praat_addMenuCommand ("Picture", "Font", "-- font ---", 0, 0, 0);
-	praatButton_times = praat_addMenuCommand ("Picture", "Font", "Times", 0, praat_CHECKABLE, DO_Times);
-	praatButton_helvetica = praat_addMenuCommand ("Picture", "Font", "Helvetica", 0, praat_CHECKABLE, DO_Helvetica);
-	praatButton_palatino = praat_addMenuCommand ("Picture", "Font", "Palatino", 0, praat_CHECKABLE, DO_Palatino);
-	praatButton_courier = praat_addMenuCommand ("Picture", "Font", "Courier", 0, praat_CHECKABLE, DO_Courier);
+	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_CHECKABLE, DO_10);
+	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_CHECKABLE,  DO_12);
+	praatButton_14 = praat_addMenuCommand (L"Picture", L"Font", L"14", 0, praat_CHECKABLE, DO_14);
+	praatButton_18 = praat_addMenuCommand (L"Picture", L"Font", L"18", 0, praat_CHECKABLE, DO_18);
+	praatButton_24 = praat_addMenuCommand (L"Picture", L"Font", L"24", 0, praat_CHECKABLE, DO_24);
+	praat_addMenuCommand (L"Picture", L"Font", L"Font size...", 0, 0, DO_Font_size);
+	praat_addMenuCommand (L"Picture", L"Font", L"-- font ---", 0, 0, 0);
+	praatButton_times = praat_addMenuCommand (L"Picture", L"Font", L"Times", 0, praat_CHECKABLE, DO_Times);
+	praatButton_helvetica = praat_addMenuCommand (L"Picture", L"Font", L"Helvetica", 0, praat_CHECKABLE, DO_Helvetica);
+	praatButton_palatino = praat_addMenuCommand (L"Picture", L"Font", L"Palatino", 0, praat_CHECKABLE, DO_Palatino);
+	praatButton_courier = praat_addMenuCommand (L"Picture", L"Font", L"Courier", 0, praat_CHECKABLE, DO_Courier);
 
-	praat_addMenuCommand ("Picture", "Help", "Picture window help", 0, '?', DO_PictureWindowHelp);
-	praat_addMenuCommand ("Picture", "Help", "About special symbols", 0, 0, DO_AboutSpecialSymbols);
-	praat_addMenuCommand ("Picture", "Help", "About text styles", 0, 0, DO_AboutTextStyles);
-	praat_addMenuCommand ("Picture", "Help", "Phonetic symbols", 0, 0, DO_PhoneticSymbols);
-	praat_addMenuCommand ("Picture", "Help", "-- manual --", 0, 0, 0);
-	sprintf (itemTitle_search, "Search %s manual...", praatP.title);
-	praat_addMenuCommand ("Picture", "Help", itemTitle_search, 0, 'M', DO_SearchManual);
+	praat_addMenuCommand (L"Picture", L"Help", L"Picture window help", 0, '?', DO_PictureWindowHelp);
+	praat_addMenuCommand (L"Picture", L"Help", L"About special symbols", 0, 0, DO_AboutSpecialSymbols);
+	praat_addMenuCommand (L"Picture", L"Help", L"About text styles", 0, 0, DO_AboutTextStyles);
+	praat_addMenuCommand (L"Picture", L"Help", L"Phonetic symbols", 0, 0, DO_PhoneticSymbols);
+	praat_addMenuCommand (L"Picture", L"Help", L"-- manual --", 0, 0, 0);
+	MelderString_empty (& itemTitle_search);
+	MelderString_append3 (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
+	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
 
 	if (! theCurrentPraat -> batch) {
 		XtManageChild (menuBar);

@@ -390,18 +390,18 @@ static void updateText (Any functionEditor) {
 
 static int menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Preferences", 0)
-		BOOLEAN ("Synchronize zoom and scroll", 1)
-		POSITIVE ("Arrow scroll step (s)", "0.05")
+	EDITOR_FORM (L"Preferences", 0)
+		BOOLEAN (L"Synchronize zoom and scroll", 1)
+		POSITIVE (L"Arrow scroll step (s)", L"0.05")
 		our prefs_addFields (me, cmd);
 	EDITOR_OK
-		SET_INTEGER ("Synchronize zoom and scroll", 2 - preferences.groupWindow)
-		SET_REAL ("Arrow scroll step", my arrowScrollStep)
+		SET_INTEGER (L"Synchronize zoom and scroll", 2 - preferences.groupWindow)
+		SET_REAL (L"Arrow scroll step", my arrowScrollStep)
 		our prefs_setValues (me, cmd);
 	EDITOR_DO
 		int oldGroupWindow = preferences.groupWindow;
-		preferences.groupWindow = 2 - GET_INTEGER ("Synchronize zoom and scroll");
-		preferences.arrowScrollStep = my arrowScrollStep = GET_REAL ("Arrow scroll step");
+		preferences.groupWindow = 2 - GET_INTEGER (L"Synchronize zoom and scroll");
+		preferences.arrowScrollStep = my arrowScrollStep = GET_REAL (L"Arrow scroll step");
 		if (oldGroupWindow == FALSE && preferences.groupWindow == TRUE) {
 			updateGroup (me);
 		}
@@ -411,18 +411,18 @@ static int menu_cb_preferences (EDITOR_ARGS) {
 
 static void form_pictureSelection (I, EditorCommand cmd) {
 	(void) void_me;
-	BOOLEAN ("Draw selection times", 1);
-	BOOLEAN ("Draw selection hairs", 1);
+	BOOLEAN (L"Draw selection times", 1);
+	BOOLEAN (L"Draw selection hairs", 1);
 }
 static void ok_pictureSelection (I, EditorCommand cmd) {
 	(void) void_me;
-	SET_INTEGER ("Draw selection times", preferences.picture.drawSelectionTimes);
-	SET_INTEGER ("Draw selection hairs", preferences.picture.drawSelectionHairs);
+	SET_INTEGER (L"Draw selection times", preferences.picture.drawSelectionTimes);
+	SET_INTEGER (L"Draw selection hairs", preferences.picture.drawSelectionHairs);
 }
 static void do_pictureSelection (I, EditorCommand cmd) {
 	(void) void_me;
-	preferences.picture.drawSelectionTimes = GET_INTEGER ("Draw selection times");
-	preferences.picture.drawSelectionHairs = GET_INTEGER ("Draw selection hairs");
+	preferences.picture.drawSelectionTimes = GET_INTEGER (L"Draw selection times");
+	preferences.picture.drawSelectionHairs = GET_INTEGER (L"Draw selection hairs");
 }
 
 /********** QUERY MENU **********/
@@ -452,17 +452,17 @@ static int menu_cb_getSelectionDuration (EDITOR_ARGS) {
 
 static int menu_cb_zoom (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Zoom", 0)
-		REAL ("From", "0.0")
-		REAL ("To", "1.0")
+	EDITOR_FORM (L"Zoom", 0)
+		REAL (L"From", L"0.0")
+		REAL (L"To", L"1.0")
 	EDITOR_OK
-		SET_REAL ("From", my startWindow)
-		SET_REAL ("To", my endWindow)
+		SET_REAL (L"From", my startWindow)
+		SET_REAL (L"To", my endWindow)
 	EDITOR_DO
-		my startWindow = GET_REAL ("From");
+		my startWindow = GET_REAL (L"From");
 		if (my startWindow < my tmin + 1e-12)
 			my startWindow = my tmin;
-		my endWindow = GET_REAL ("To");
+		my endWindow = GET_REAL (L"To");
 		if (my endWindow > my tmax - 1e-12)
 			my endWindow = my tmax;
 		our updateText (me);
@@ -563,15 +563,15 @@ static int menu_cb_zoomToSelection (EDITOR_ARGS) {
 
 static int menu_cb_play (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Play", 0)
-		REAL ("From", "0.0")
-		REAL ("To", "1.0")
+	EDITOR_FORM (L"Play", 0)
+		REAL (L"From", L"0.0")
+		REAL (L"To", L"1.0")
 	EDITOR_OK
-		SET_REAL ("From", my startWindow)
-		SET_REAL ("To", my endWindow)
+		SET_REAL (L"From", my startWindow)
+		SET_REAL (L"To", my endWindow)
 	EDITOR_DO
 		Melder_stopPlaying (Melder_IMPLICIT);
-		our play (me, GET_REAL ("From"), GET_REAL ("To"));
+		our play (me, GET_REAL (L"From"), GET_REAL (L"To"));
 	EDITOR_END
 }
 
@@ -610,17 +610,17 @@ static int menu_cb_interruptPlaying (EDITOR_ARGS) {
 
 static int menu_cb_select (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Select", 0)
-		REAL ("Start of selection", "0.0")
-		REAL ("End of selection", "1.0")
+	EDITOR_FORM (L"Select", 0)
+		REAL (L"Start of selection", L"0.0")
+		REAL (L"End of selection", L"1.0")
 	EDITOR_OK
-		SET_REAL ("Start of selection", my startSelection)
-		SET_REAL ("End of selection", my endSelection)
+		SET_REAL (L"Start of selection", my startSelection)
+		SET_REAL (L"End of selection", my endSelection)
 	EDITOR_DO
-		my startSelection = GET_REAL ("Start of selection");
+		my startSelection = GET_REAL (L"Start of selection");
 		if (my startSelection < my tmin + 1e-12)
 			my startSelection = my tmin;
-		my endSelection = GET_REAL ("End of selection");
+		my endSelection = GET_REAL (L"End of selection");
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
 		if (my startSelection > my endSelection) {
@@ -654,12 +654,12 @@ static int menu_cb_moveCursorToE (EDITOR_ARGS) {
 
 static int menu_cb_moveCursorTo (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Move cursor to", 0)
-		REAL ("Position", "0.0")
+	EDITOR_FORM (L"Move cursor to", 0)
+		REAL (L"Position", L"0.0")
 	EDITOR_OK
-		SET_REAL ("Position", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Position", 0.5 * (my startSelection + my endSelection))
 	EDITOR_DO
-		double position = GET_REAL ("Position");
+		double position = GET_REAL (L"Position");
 		if (position < my tmin + 1e-12) position = my tmin;
 		if (position > my tmax - 1e-12) position = my tmax;
 		my startSelection = my endSelection = position;
@@ -671,11 +671,11 @@ static int menu_cb_moveCursorTo (EDITOR_ARGS) {
 
 static int menu_cb_moveCursorBy (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Move cursor by", 0)
-		REAL ("Distance", "0.05")
+	EDITOR_FORM (L"Move cursor by", 0)
+		REAL (L"Distance", L"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = 0.5 * (my startSelection + my endSelection) + GET_REAL ("Distance");
+		double position = 0.5 * (my startSelection + my endSelection) + GET_REAL (L"Distance");
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my startSelection = my endSelection = position;
@@ -687,11 +687,11 @@ static int menu_cb_moveCursorBy (EDITOR_ARGS) {
 
 static int menu_cb_moveBby (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Move start of selection by", 0)
-		REAL ("Distance", "0.05")
+	EDITOR_FORM (L"Move start of selection by", 0)
+		REAL (L"Distance", L"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = my startSelection + GET_REAL ("Distance");
+		double position = my startSelection + GET_REAL (L"Distance");
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my startSelection = position;
@@ -708,11 +708,11 @@ static int menu_cb_moveBby (EDITOR_ARGS) {
 
 static int menu_cb_moveEby (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	EDITOR_FORM ("Move end of selection by", 0)
-		REAL ("Distance", "0.05")
+	EDITOR_FORM (L"Move end of selection by", 0)
+		REAL (L"Distance", L"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = my endSelection + GET_REAL ("Distance");
+		double position = my endSelection + GET_REAL (L"Distance");
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my endSelection = position;

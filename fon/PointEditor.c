@@ -123,13 +123,13 @@ DIRECT (PointEditor, cb_addPointAtCursor)
 	Editor_broadcastChange (me);
 END
 
-FORM (PointEditor, cb_addPointAt, "Add point", 0);
-	REAL ("Position", "0.0");
+FORM (PointEditor, cb_addPointAt, L"Add point", 0);
+	REAL (L"Position", L"0.0");
 	OK
-SET_REAL ("Position", 0.5 * (my startSelection + my endSelection));
+SET_REAL (L"Position", 0.5 * (my startSelection + my endSelection));
 DO
 	Editor_save (me, L"Add point");
-	PointProcess_addPoint (my data, GET_REAL ("Position"));
+	PointProcess_addPoint (my data, GET_REAL (L"Position"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 END

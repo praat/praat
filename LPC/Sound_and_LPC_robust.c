@@ -195,7 +195,7 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 		for (i = 1; i <= p; i++) his a[i] = hs -> a[i];
 		
 		(hs -> iter)++;
-	} while (hs -> iter < hs -> itermax && fabs (s0 - hs -> scale) > hs -> tol * s0);
+	} while ((hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
 	
 	return 1;
 }
@@ -253,10 +253,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	
 	Melder_progress1 (0.0, L"LPC analysis");
 
-	if (preEmphasisFrequency < samplingFrequency / 2) 
-	{
-		Sound_preEmphasis (sound, preEmphasisFrequency);
-	}
+	Sound_preEmphasis (sound, preEmphasisFrequency);
 
 	for (i = 1; i <= nFrames; i++)
 	{
@@ -288,8 +285,8 @@ end:
 	huber_struct_destroy (&struct_huber);
 	if (Melder_hasError ()) forget (him);
 	
-	Melder_information2 (L"Number of iterations: ", Melder_integer (iter));
-	Melder_information2 (L"   Average per frame: ", Melder_double (((double) iter)/nFrames));
+	MelderInfo_writeLine4 (L"Number of iterations: ", Melder_integer (iter),
+		L"\n   Average per frame: ", Melder_double (((double) iter)/nFrames));
 	return him;
 }
 

@@ -69,31 +69,31 @@ static void info (I) {
 
 static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORMW (L"Draw visible sound", 0)
+	EDITOR_FORM (L"Draw visible sound", 0)
 		our form_pictureWindow (me, cmd);
-		LABELW (L"", L"Sound:")
-		BOOLEANW (L"Preserve times", 1);
-		REALW (L"left Vertical range", L"0.0")
-		REALW (L"right Vertical range", L"0.0 (= auto)")
+		LABEL (L"", L"Sound:")
+		BOOLEAN (L"Preserve times", 1);
+		REAL (L"left Vertical range", L"0.0")
+		REAL (L"right Vertical range", L"0.0 (= auto)")
 		our form_pictureMargins (me, cmd);
 		our form_pictureSelection (me, cmd);
-		BOOLEANW (L"Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
-		SET_INTEGERW (L"Preserve times", preferences.picture.preserveTimes);
-		SET_REALW (L"left Vertical range", preferences.picture.bottom);
-		SET_REALW (L"right Vertical range", preferences.picture.top);
+		SET_INTEGER (L"Preserve times", preferences.picture.preserveTimes);
+		SET_REAL (L"left Vertical range", preferences.picture.bottom);
+		SET_REAL (L"right Vertical range", preferences.picture.top);
 		our ok_pictureMargins (me, cmd);
 		our ok_pictureSelection (me, cmd);
-		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
-		preferences.picture.preserveTimes = GET_INTEGERW (L"Preserve times");
-		preferences.picture.bottom = GET_REALW (L"left Vertical range");
-		preferences.picture.top = GET_REALW (L"right Vertical range");
+		preferences.picture.preserveTimes = GET_INTEGER (L"Preserve times");
+		preferences.picture.bottom = GET_REAL (L"left Vertical range");
+		preferences.picture.top = GET_REAL (L"right Vertical range");
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
-		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
 			return Melder_error1 (L"There is no sound to draw.");
 		Sound publish = my longSound.data ?
@@ -111,28 +111,28 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 
 static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORMW (L"Draw selected sound", 0)
+	EDITOR_FORM (L"Draw selected sound", 0)
 		our form_pictureWindow (me, cmd);
-		LABELW (L"", L"Sound:")
-		BOOLEANW (L"Preserve times", 1);
-		REALW (L"left Vertical range", L"0.0")
-		REALW (L"right Vertical range", L"0.0 (= auto)")
+		LABEL (L"", L"Sound:")
+		BOOLEAN (L"Preserve times", 1);
+		REAL (L"left Vertical range", L"0.0")
+		REAL (L"right Vertical range", L"0.0 (= auto)")
 		our form_pictureMargins (me, cmd);
-		BOOLEANW (L"Garnish", 1);
+		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		our ok_pictureWindow (me, cmd);
-		SET_INTEGERW (L"Preserve times", preferences.picture.preserveTimes);
-		SET_REALW (L"left Vertical range", preferences.picture.bottom);
-		SET_REALW (L"right Vertical range", preferences.picture.top);
+		SET_INTEGER (L"Preserve times", preferences.picture.preserveTimes);
+		SET_REAL (L"left Vertical range", preferences.picture.bottom);
+		SET_REAL (L"right Vertical range", preferences.picture.top);
 		our ok_pictureMargins (me, cmd);
-		SET_INTEGERW (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		our do_pictureWindow (me, cmd);
-		preferences.picture.preserveTimes = GET_INTEGERW (L"Preserve times");
-		preferences.picture.bottom = GET_REALW (L"left Vertical range");
-		preferences.picture.top = GET_REALW (L"right Vertical range");
+		preferences.picture.preserveTimes = GET_INTEGER (L"Preserve times");
+		preferences.picture.bottom = GET_REAL (L"left Vertical range");
+		preferences.picture.top = GET_REAL (L"right Vertical range");
 		our do_pictureMargins (me, cmd);
-		preferences.picture.garnish = GET_INTEGERW (L"Garnish");
+		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
 			return Melder_error1 (L"There is no sound to draw.");
 		Sound publish = my longSound.data ?
@@ -176,25 +176,25 @@ static int menu_cb_ExtractSelectedSound_preserveTimes (EDITOR_ARGS) {
 
 static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORMW (L"Extract selected sound (windowed)", 0)
-		WORDW (L"Name", L"slice")
-		ENUMW (L"Window", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
-		POSITIVEW (L"Relative width", L"1.0")
-		BOOLEANW (L"Preserve times", 1)
+	EDITOR_FORM (L"Extract selected sound (windowed)", 0)
+		WORD (L"Name", L"slice")
+		ENUM (L"Window", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
+		POSITIVE (L"Relative width", L"1.0")
+		BOOLEAN (L"Preserve times", 1)
 	EDITOR_OK
-		SET_INTEGERW (L"Window", preferences.extract.windowType)
-		SET_REALW (L"Relative width", preferences.extract.relativeWidth)
-		SET_INTEGERW (L"Preserve times", preferences.extract.preserveTimes)
+		SET_INTEGER (L"Window", preferences.extract.windowType)
+		SET_REAL (L"Relative width", preferences.extract.relativeWidth)
+		SET_INTEGER (L"Preserve times", preferences.extract.preserveTimes)
 	EDITOR_DO
 		Sound sound = my sound.data;
 		Melder_assert (sound != NULL);
-		preferences.extract.windowType = GET_INTEGERW (L"Window");
-		preferences.extract.relativeWidth = GET_REALW (L"Relative width");
-		preferences.extract.preserveTimes = GET_INTEGERW (L"Preserve times");
+		preferences.extract.windowType = GET_INTEGER (L"Window");
+		preferences.extract.relativeWidth = GET_REAL (L"Relative width");
+		preferences.extract.preserveTimes = GET_INTEGER (L"Preserve times");
 		Sound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowType,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
 		if (! extract) return 0;
-		Thing_setName (extract, GET_STRINGW (L"Name"));
+		Thing_setName (extract, GET_STRING (L"Name"));
 		if (my publishCallback)
 			my publishCallback (me, my publishClosure, extract);
 	EDITOR_END

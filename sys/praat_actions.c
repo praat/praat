@@ -33,7 +33,7 @@
 #include "machine.h"
 
 #if defined (_WIN32) || defined (macintosh)
-	#define BUTTON_WIDTH  190
+	#define BUTTON_WIDTH  200
 #endif
 
 #define praat_MAXNUM_LOOSE_COMMANDS  5000
@@ -94,25 +94,24 @@ static int lookUpMatchingAction (void *class1, void *class2, void *class3, void 
 }
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const char *title, const char *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (void *class1, int n1,
-	const char *title, const char *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (void *class1, int n1, void *class2, int n2,
-	const char *title, const char *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const char *title, const char *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
-	const char *titleA, const char *afterA, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
 {
-	wchar_t *title = Melder_utf8ToWcs (titleA), *after = Melder_utf8ToWcs (afterA);
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
@@ -154,7 +153,6 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	} else {
 		position = theNumberOfActions + 1;   /* At end. */
 	}
-	Melder_free (after);
 
 	/* Increment the command area.
 	 */
@@ -177,7 +175,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	theActions [position]. n3 = n3;
 	theActions [position]. class4 = class4;
 	theActions [position]. n4 = n4;
-	theActions [position]. title = title;
+	theActions [position]. title = Melder_wcsdup (title);
 	theActions [position]. depth = depth;
 	theActions [position]. callback = callback;   /* NULL for a separator. */
 	theActions [position]. button = NULL;
@@ -218,9 +216,9 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	int i, position, found;
 	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
 	Melder_assert (className1 && className2 && className3 && title && after && script);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassNameW (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassNameW (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassNameW (className3))) return 0;
+	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
+	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
+	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
 	if (wcslen (script) && ! wcslen (title))
@@ -312,9 +310,9 @@ int praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cla
 {
 	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
 	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassNameW (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassNameW (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassNameW (className3))) return 0;
+	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
+	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
+	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
 	if (! praat_removeAction (class1, class2, class3, title)) return 0;
 	updateDynamicMenu ();
 	return 1;
@@ -343,9 +341,9 @@ int praat_hideAction_classNames (const wchar_t *className1, const wchar_t *class
 {
 	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
 	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassNameW (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassNameW (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassNameW (className3))) return 0;
+	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
+	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
+	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
 	if (! praat_hideAction (class1, class2, class3, title)) return 0;
 	return 1;
 }
@@ -373,9 +371,9 @@ int praat_showAction_classNames (const wchar_t *className1, const wchar_t *class
 {
 	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
 	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassNameW (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassNameW (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassNameW (className3))) return 0;
+	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
+	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
+	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
 	if (! praat_showAction (class1, class2, class3, title)) return 0;
 	return 1;
 }

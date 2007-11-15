@@ -33,7 +33,7 @@
  djmw 20030825 Replaced gsl_sf_beta_inc with NUMincompleteBeta
  pb   20030828 Improvements for invFisherQ, ridders, studentP, studentQ, 
  	invStudentQ, invChiSquareQ: modifications for 'undefined' return values.
- djmw 20030830 Coorected a bug in NUMtriangularfilter_amplitude
+ djmw 20030830 Corrected a bug in NUMtriangularfilter_amplitude
  djmw 20031111 Added NUMdmatrix_transpose, NUMdmatrix_printMatlabForm
  djmw 20040105 Added NUMmahalanobisDistance_chi
  djmw 20040211 Modified NUMstrings_copyElements: if (form[i]==NULL) then {to[i]= NULL}.

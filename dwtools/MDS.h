@@ -23,7 +23,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20071106 Latest modification.
 */
 
 #define KRUSKAL_MAXDIMENSION 10
@@ -727,7 +727,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseStd);
 Salience Salience_createCarrollWishExample (void);
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
-	int type, long order, char *interiorKnots, int garnish);
+	int type, long order, wchar_t *interiorKnots, int garnish);
 
 void drawMDSClassRelations (Graphics g);
 

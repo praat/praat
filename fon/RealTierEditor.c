@@ -54,29 +54,29 @@ DIRECT (RealTierEditor, cb_addPointAtCursor)
 	Editor_broadcastChange (me);
 END
 
-FORM (RealTierEditor, cb_addPointAt, "Add point", 0);
-	REALW (L"Time (s)", L"0.0")
-	REALW (our quantityText, L"0.0")
+FORM (RealTierEditor, cb_addPointAt, L"Add point", 0);
+	REAL (L"Time (s)", L"0.0")
+	REAL (our quantityText, L"0.0")
 	OK
-SET_REALW (L"Time", 0.5 * (my startSelection + my endSelection))
-SET_REALW (our quantityKey, my ycursor)
+SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+SET_REAL (our quantityKey, my ycursor)
 DO
 	Editor_save (me, L"Add point");
-	RealTier_addPoint (my data, GET_REALW (L"Time"), GET_REALW (our quantityKey));
+	RealTier_addPoint (my data, GET_REAL (L"Time"), GET_REAL (our quantityKey));
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 END
 
-FORMW (RealTierEditor, cb_setRange, our setRangeTitle, 0);
-	REALW (our yminText, our defaultYminText)
-	REALW (our ymaxText, our defaultYmaxText)
+FORM (RealTierEditor, cb_setRange, our setRangeTitle, 0);
+	REAL (our yminText, our defaultYminText)
+	REAL (our ymaxText, our defaultYmaxText)
 	OK
-SET_REALW (our yminKey, my ymin)
-SET_REALW (our ymaxKey, my ymax)
+SET_REAL (our yminKey, my ymin)
+SET_REAL (our ymaxKey, my ymax)
 DO
-	my ymin = GET_REALW (our yminKey);
-	my ymax = GET_REALW (our ymaxKey);
+	my ymin = GET_REAL (our yminKey);
+	my ymax = GET_REAL (our ymaxKey);
 	if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 END

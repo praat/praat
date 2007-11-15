@@ -135,7 +135,7 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (void *readableClass, const char *otherName);
+void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
 
 Any Thing_newFromClassName (const char *className);
 Any Thing_newFromClassNameW (const wchar_t *className);
@@ -150,18 +150,17 @@ Any Thing_newFromClassNameW (const wchar_t *className);
 		see Thing_classFromClassName.
 */
 
-void *Thing_classFromClassName (const char *className);
-void *Thing_classFromClassNameW (const wchar_t *className);
+void *Thing_classFromClassName (const wchar_t *className);
 /*
 	Function:
 		Return the class table of class 'className', or NULL if it is not recognized.
-		E.g. the value returned from Thing_classFromClassName ("PietjePuk")
+		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
 		will be equal to classPietjePuk.
 	Postcondition:
 		class'className' -> destroy != NULL;   // class'className' has been initialized.
 	Side effect:
 		Sets the global variable Thing_version.
-		If 'className' equals "PietjePuk 300", the value returned will be classPietjePuk,
+		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
 		and Thing_version will be set to 300.
 */
 

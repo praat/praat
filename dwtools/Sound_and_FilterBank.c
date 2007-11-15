@@ -22,6 +22,7 @@
  djmw 20020813 GPL header.
  djmw 20041124 Changed call to Sound_to_Spectrum.
  djmw 20070103 Sound interface changes
+ djmw 20071107 Errors/warnings text changes
 */
 
 #include "Sound_and_FilterBank.h"
@@ -154,7 +155,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 	fmax_bark = MIN (fmax_bark, zmax);
 	nf = floor ((fmax_bark - f1_bark) / df_bark + 0.5);
-	if (nf <= 0) return Melder_errorp1 (L"Sound_to_BarkFilter: The combination of filter parameters is not valid.");
+	if (nf <= 0) return Melder_errorp1 (L"The combination of filter parameters is not valid.");
 		
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1) ||
 		((sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) == NULL) ||
@@ -180,7 +181,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 	if (frameErrorCount > 0)
 	{
-		Melder_warning ("Sound_to_BarkFilter: analysis results of %ld "
+		Melder_warning ("Analysis results of %ld "
 			"frame(s) out of %ld will be suspect.", frameErrorCount, nt);
 	}
 
@@ -281,11 +282,11 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		Sound_into_Sound (me, sframe, t - windowDuration / 2);
 		Sounds_multiply (sframe, window);				
 		if (! Sound_into_MelFilter_frame (sframe, thee, i)) frameErrorCount++;
-		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Sound to MFCC: frame ",
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Frame ",
 			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) goto end;
 	}
 	
-	if (frameErrorCount) Melder_warning ("Sound_to_MelFilters: analysis results"
+	if (frameErrorCount) Melder_warning ("Analysis results"
 		" of %ld frame(s) out of %ld will be suspect.", frameErrorCount, nt);
 
 	/*
@@ -392,16 +393,14 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 	long i, nt, nf, f0_undefined = 0;
 	
 	if (my xmin > thy xmin || my xmax > thy xmax) return Melder_errorp
-		("Sound_and_Pitch_to_FormantFilters: the domain of the Sound is "
-		"not included in the domain of the Pitch.");
+		("The domain of the Sound is not included in the domain of the Pitch.");
 	
 	f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, Pitch_UNIT_HERTZ);
 	
 	if (f0_median == NUMundefined || f0_median == 0)
 	{
 		f0_median = 100;
-		Melder_warning ("Sound_and_Pitch_to_FormantFilters: pitch values "
-			"undefined. Bandwith fixed to 100 Hz. ");
+		Melder_warning ("Pitch values undefined. Bandwith fixed to 100 Hz. ");
 	}
 
 	if (f1_hz <= 0) f1_hz = 100;
@@ -439,7 +438,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 						
 	 	if (! Sound_into_FormantFilter_frame (sframe, him, i, b)) goto end;
 		
-		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Sound_and_Pitch_to_FormantFilters: frame ",
+		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Frame ",
 			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) goto end;
 	}
 

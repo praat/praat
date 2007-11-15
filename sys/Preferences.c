@@ -25,6 +25,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/01 bool
  * pb 2007/11/02 enum
+ * pb 2007/11/14 removed swprintf(%ls) because of bug on Mac
  */
 
 #include "Preferences.h"
@@ -188,7 +189,10 @@ void Resources_read (MelderFile file) {
 			case charwa: * (wchar_t *) resource -> value = value [0]; break;
 			case floatwa: * (float *) resource -> value = wcstod (value, NULL); break;
 			case doublewa: * (double *) resource -> value = wcstod (value, NULL); break;
-			case stringwwa: swprintf ((wchar_t *) resource -> value, Resources_STRING_BUFFER_SIZE, L"%ls", value); ((wchar_t *) resource -> value) [Resources_STRING_BUFFER_SIZE - 1] = '\0'; break;
+			case stringwwa: {
+				wcsncpy ((wchar_t *) resource -> value, value, Resources_STRING_BUFFER_SIZE);
+				((wchar_t *) resource -> value) [Resources_STRING_BUFFER_SIZE - 1] = '\0'; break;
+			}
 			case enumwa: * (int *) resource -> value = resource -> getValue (value); break;
 		}
 	}

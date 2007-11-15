@@ -593,41 +593,41 @@ END
 	END
 #endif
 
-FORM (HyperPage, cb_print, "Print", 0)
-	SENTENCE ("Left or inside header", "")
-	SENTENCE ("Middle header", "")
-	LABEL ("", "Right or outside header:")
-	TEXTFIELD ("Right or outside header", "")
-	SENTENCE ("Left or inside footer", "")
-	SENTENCE ("Middle footer", "")
-	SENTENCE ("Right or outside footer", "")
-	BOOLEAN ("Mirror even/odd headers", TRUE)
-	INTEGER ("First page number", "0 (= no page numbers)")
+FORM (HyperPage, cb_print, L"Print", 0)
+	SENTENCE (L"Left or inside header", L"")
+	SENTENCE (L"Middle header", L"")
+	LABEL (L"", L"Right or outside header:")
+	TEXTFIELD (L"Right or outside header", L"")
+	SENTENCE (L"Left or inside footer", L"")
+	SENTENCE (L"Middle footer", L"")
+	SENTENCE (L"Right or outside footer", L"")
+	BOOLEAN (L"Mirror even/odd headers", TRUE)
+	INTEGER (L"First page number", L"0 (= no page numbers)")
 	OK
 our defaultHeaders (cmd);
-if (my pageNumber) SET_INTEGER ("First page number", my pageNumber + 1)
+if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
 DO
-	my insideHeader = GET_STRINGW (L"Left or inside header");
-	my middleHeader = GET_STRINGW (L"Middle header");
-	my outsideHeader = GET_STRINGW (L"Right or outside header");
-	my insideFooter = GET_STRINGW (L"Left or inside footer");
-	my middleFooter = GET_STRINGW (L"Middle footer");
-	my outsideFooter = GET_STRINGW (L"Right or outside footer");
-	my mirror = GET_INTEGER ("Mirror even/odd headers");
-	my pageNumber = GET_INTEGER ("First page number");
+	my insideHeader = GET_STRING (L"Left or inside header");
+	my middleHeader = GET_STRING (L"Middle header");
+	my outsideHeader = GET_STRING (L"Right or outside header");
+	my insideFooter = GET_STRING (L"Left or inside footer");
+	my middleFooter = GET_STRING (L"Middle footer");
+	my outsideFooter = GET_STRING (L"Right or outside footer");
+	my mirror = GET_INTEGER (L"Mirror even/odd headers");
+	my pageNumber = GET_INTEGER (L"First page number");
 	Printer_print (print, me);
 END
 
-FORM (HyperPage, cb_font, "Font", 0)
-	RADIO ("Font", 1)
-		RADIOBUTTON ("Times")
-		RADIOBUTTON ("Helvetica")
-		RADIOBUTTON ("Palatino")
+FORM (HyperPage, cb_font, L"Font", 0)
+	RADIO (L"Font", 1)
+		RADIOBUTTON (L"Times")
+		RADIOBUTTON (L"Helvetica")
+		RADIOBUTTON (L"Palatino")
 	OK
-SET_INTEGER ("Font", my font == Graphics_FONT_TIMES ? 1 :
+SET_INTEGER (L"Font", my font == Graphics_FONT_TIMES ? 1 :
 		my font == Graphics_FONT_HELVETICA ? 2 : my font == Graphics_FONT_PALATINO ? 3 : 1);
 DO
-	int font = GET_INTEGER ("Font");
+	int font = GET_INTEGER (L"Font");
 	prefs_font = my font = font == 1 ? Graphics_FONT_TIMES : font == 2 ? Graphics_FONT_HELVETICA :
 		font == 3 ? Graphics_FONT_PALATINO : Graphics_FONT_TIMES;
 	if (my g) Graphics_updateWs (my g);
@@ -652,19 +652,19 @@ DIRECT (HyperPage, cb_14) setFontSize (me, 14); END
 DIRECT (HyperPage, cb_18) setFontSize (me, 18); END
 DIRECT (HyperPage, cb_24) setFontSize (me, 24); END
 
-FORM (HyperPage, cb_fontSize, "Font size", 0)
-	NATURAL ("Font size (points)", "12")
+FORM (HyperPage, cb_fontSize, L"Font size", 0)
+	NATURAL (L"Font size (points)", L"12")
 	OK
-SET_INTEGER ("Font size", my fontSize)
+SET_INTEGER (L"Font size", my fontSize)
 DO
-	setFontSize (me, GET_INTEGER ("Font size"));
+	setFontSize (me, GET_INTEGER (L"Font size"));
 END
 
-FORM (HyperPage, cb_searchForPage, "Search for page", 0)
-	TEXTFIELD ("Page", "a")
+FORM (HyperPage, cb_searchForPage, L"Search for page", 0)
+	TEXTFIELD (L"Page", L"a")
 	OK
 DO
-	if (! HyperPage_goToPage (me, GET_STRINGW (L"Page"))) return 0;
+	if (! HyperPage_goToPage (me, GET_STRING (L"Page"))) return 0;
 END
 
 /********************************************************************************

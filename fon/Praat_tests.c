@@ -1,13 +1,14 @@
 /* Praat_tests.c */
 /* Paul Boersma, August 2, 2001 */
 /* December 10, 2006: MelderInfo */
+/* November 5, 2007: wchar_t */
 
 #include "Praat_tests.h"
 #include "enum_c.h"
 #include "Praat_tests_enums.h"
 
-int Praat_tests (int itest, char *arg1, char *arg2, char *arg3, char *arg4) {
-	long i, n = atol (arg1);
+int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {
+	long i, n = wcstol (arg1, NULL, 10);
 	double x;
 	(void) arg1;
 	(void) arg2;
@@ -27,7 +28,7 @@ int Praat_tests (int itest, char *arg1, char *arg2, char *arg3, char *arg4) {
 				(void) NUMrandomFraction ();
 		} break;
 		case enumi (PraatTests, TimeSort): {
-			long m = atol (arg2);
+			long m = wcstol (arg2, NULL, 10);
 			long *array = NUMlvector (1, m);
 			for (i = 1; i <= m; i ++)
 				array [i] = NUMrandomInteger (1, 100);

@@ -36,12 +36,12 @@
 #define OTMultiEditor_methods HyperPage_methods
 class_create_opaque (OTMultiEditor, HyperPage);
 
-FORM (OTMultiEditor, cb_evaluate, "Evaluate", 0)
-	REAL ("Evaluation noise", "2.0")
+FORM (OTMultiEditor, cb_evaluate, L"Evaluate", 0)
+	REAL (L"Evaluation noise", L"2.0")
 	OK
 DO
 	Editor_save (me, L"Evaluate");
-	OTMulti_newDisharmonies (my data, GET_REAL ("Evaluation noise"));
+	OTMulti_newDisharmonies (my data, GET_REAL (L"Evaluation noise"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
@@ -60,36 +60,36 @@ DIRECT (OTMultiEditor, cb_evaluate_tinyNoise)
 	Editor_broadcastChange (me);
 END
 
-FORM (OTMultiEditor, cb_editRanking, "Edit ranking", 0)
-	LABEL ("constraint", "");
-	REAL ("Ranking value", "100.0");
-	REAL ("Disharmony", "100.0");
+FORM (OTMultiEditor, cb_editRanking, L"Edit ranking", 0)
+	LABEL (L"constraint", L"");
+	REAL (L"Ranking value", L"100.0");
+	REAL (L"Disharmony", L"100.0");
 	OK
 OTMulti grammar = my data;
 OTConstraint constraint;
 if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error ("Select a constraint first.");
 constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-SET_STRINGW (L"constraint", constraint -> name)
-SET_REAL ("Ranking value", constraint -> ranking)
-SET_REAL ("Disharmony", constraint -> disharmony)
+SET_STRING (L"constraint", constraint -> name)
+SET_REAL (L"Ranking value", constraint -> ranking)
+SET_REAL (L"Disharmony", constraint -> disharmony)
 DO
 	OTMulti grammar = my data;
 	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 	Editor_save (me, L"Edit ranking");
-	constraint -> ranking = GET_REAL ("Ranking value");
-	constraint -> disharmony = GET_REAL ("Disharmony");
+	constraint -> ranking = GET_REAL (L"Ranking value");
+	constraint -> disharmony = GET_REAL (L"Disharmony");
 	OTMulti_sort (grammar);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END
 
-FORM (OTMultiEditor, cb_learnOne, "Learn one", "OTGrammar: Learn one...")
-	OPTIONMENU ("Learn", 3)
-		OPTION ("forward")
-		OPTION ("backward")
-		OPTION ("bidirectionally")
-	REAL ("Plasticity", "0.1")
-	REAL ("Rel. plasticity spreading", "0.1")
+FORM (OTMultiEditor, cb_learnOne, L"Learn one", L"OTGrammar: Learn one...")
+	OPTIONMENU (L"Learn", 3)
+		OPTION (L"forward")
+		OPTION (L"backward")
+		OPTION (L"bidirectionally")
+	REAL (L"Plasticity", L"0.1")
+	REAL (L"Rel. plasticity spreading", L"0.1")
 	OK
 DO
 	Editor_save (me, L"Learn one");
@@ -98,7 +98,7 @@ DO
 	my form1 = GuiText_getStringW (my form1Text);
 	my form2 = GuiText_getStringW (my form2Text);
 	OTMulti_learnOne (my data, my form1, my form2,
-		GET_INTEGER ("Learn"), GET_REAL ("Plasticity"), GET_REAL ("Rel. plasticity spreading"));
+		GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 	iferror return 0;
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
@@ -116,12 +116,12 @@ DIRECT (OTMultiEditor, cb_removeConstraint)
 	Editor_broadcastChange (me);
 END
 
-FORM (OTMultiEditor, cb_resetAllRankings, "Reset all rankings", 0)
-	REAL ("Ranking", "100.0")
+FORM (OTMultiEditor, cb_resetAllRankings, L"Reset all rankings", 0)
+	REAL (L"Ranking", L"100.0")
 	OK
 DO
 	Editor_save (me, L"Reset all rankings");
-	OTMulti_reset (my data, GET_REAL ("Ranking"));
+	OTMulti_reset (my data, GET_REAL (L"Ranking"));
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
 END

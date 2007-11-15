@@ -134,71 +134,71 @@ DIRECT (ScriptEditor, cb_runSelection)
 	Melder_free (text);
 END
 
-FORM (ScriptEditor, cb_addToMenu, "Add to menu", "Add to fixed menu...");
-	WORD ("Window", "?")
-	SENTENCE ("Menu", "File")
-	SENTENCE ("Command", "Do it...")
-	SENTENCE ("After command", "")
-	INTEGER ("Depth", "0")
-	LABEL ("", "Script file:")
-	TEXTFIELD ("Script", "")
+FORM (ScriptEditor, cb_addToMenu, L"Add to menu", L"Add to fixed menu...");
+	WORD (L"Window", L"?")
+	SENTENCE (L"Menu", L"File")
+	SENTENCE (L"Command", L"Do it...")
+	SENTENCE (L"After command", L"")
+	INTEGER (L"Depth", L"0")
+	LABEL (L"", L"Script file:")
+	TEXTFIELD (L"Script", L"")
 	OK
-if (my editorClass) SET_STRING ("Window", my editorClass -> _className)
+if (my editorClass) SET_STRING (L"Window", my editorClass -> _classNameW)
 if (my name)
-	SET_STRINGW (L"Script", my name)
+	SET_STRING (L"Script", my name)
 else
-	SET_STRINGW (L"Script", L"(please save your script first)")
+	SET_STRING (L"Script", L"(please save your script first)")
 DO
-	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
-		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
-		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
+	if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
+		GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
 	praat_show ();
 END
 
-FORM (ScriptEditor, cb_addToFixedMenu, "Add to fixed menu", "Add to fixed menu...");
-	RADIO ("Window", 1)
-		RADIOBUTTON ("Objects")
-		RADIOBUTTON ("Picture")
-	SENTENCE ("Menu", "New")
-	SENTENCE ("Command", "Do it...")
-	SENTENCE ("After command", "")
-	INTEGER ("Depth", "0")
-	LABEL ("", "Script file:")
-	TEXTFIELD ("Script", "")
+FORM (ScriptEditor, cb_addToFixedMenu, L"Add to fixed menu", L"Add to fixed menu...");
+	RADIO (L"Window", 1)
+		RADIOBUTTON (L"Objects")
+		RADIOBUTTON (L"Picture")
+	SENTENCE (L"Menu", L"New")
+	SENTENCE (L"Command", L"Do it...")
+	SENTENCE (L"After command", L"")
+	INTEGER (L"Depth", L"0")
+	LABEL (L"", L"Script file:")
+	TEXTFIELD (L"Script", L"")
 	OK
 if (my name)
-	SET_STRINGW (L"Script", my name)
+	SET_STRING (L"Script", my name)
 else
-	SET_STRINGW (L"Script", L"(please save your script first)")
+	SET_STRING (L"Script", L"(please save your script first)")
 DO
-	if (! praat_addMenuCommandScript (GET_STRINGW (L"Window"),
-		GET_STRINGW (L"Menu"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
-		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
+	if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
+		GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
 	praat_show ();
 END
 
-FORM (ScriptEditor, cb_addToDynamicMenu, "Add to dynamic menu", "Add to dynamic menu...")
-	WORD ("Class 1", "Sound")
-	INTEGER ("Number 1", "0")
-	WORD ("Class 2", "")
-	INTEGER ("Number 2", "0")
-	WORD ("Class 3", "")
-	INTEGER ("Number 3", "0")
-	SENTENCE ("Command", "Do it...")
-	SENTENCE ("After command", "")
-	INTEGER ("Depth", "0")
-	LABEL ("", "Script file:")
-	TEXTFIELD ("Script", "")
+FORM (ScriptEditor, cb_addToDynamicMenu, L"Add to dynamic menu", L"Add to dynamic menu...")
+	WORD (L"Class 1", L"Sound")
+	INTEGER (L"Number 1", L"0")
+	WORD (L"Class 2", L"")
+	INTEGER (L"Number 2", L"0")
+	WORD (L"Class 3", L"")
+	INTEGER (L"Number 3", L"0")
+	SENTENCE (L"Command", L"Do it...")
+	SENTENCE (L"After command", L"")
+	INTEGER (L"Depth", L"0")
+	LABEL (L"", L"Script file:")
+	TEXTFIELD (L"Script", L"")
 	OK
 if (my name)
-	SET_STRINGW (L"Script", my name)
+	SET_STRING (L"Script", my name)
 else
-	SET_STRINGW (L"Script", L"(please save your script first)")
+	SET_STRING (L"Script", L"(please save your script first)")
 DO
-	if (! praat_addActionScript (GET_STRINGW (L"Class 1"), GET_INTEGER ("Number 1"),
-		GET_STRINGW (L"Class 2"), GET_INTEGER ("Number 2"), GET_STRINGW (L"Class 3"),
-		GET_INTEGER ("Number 3"), GET_STRINGW (L"Command"), GET_STRINGW (L"After command"),
-		GET_INTEGER ("Depth"), GET_STRINGW (L"Script"))) return 0;
+	if (! praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
+		GET_STRING (L"Class 2"), GET_INTEGER (L"Number 2"), GET_STRING (L"Class 3"),
+		GET_INTEGER (L"Number 3"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
 	praat_show ();
 END
 

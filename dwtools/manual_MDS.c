@@ -99,12 +99,12 @@ static void drawCarrollWishSalienceExample (Graphics g)
 
 static void drawMsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 10, 1, 3, "0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 10, 1, 3, L"0.3 0.5 0.6", 1);
 }
 
 static void drawIsplineExample (Graphics g)
 {
-	drawSplines (g, 0, 1, 0, 1.5, 2, 3, "0.3 0.5 0.6", 1);
+	drawSplines (g, 0, 1, 0, 1.5, 2, 3, L"0.3 0.5 0.6", 1);
 }
 
 void manual_MDS_init (ManPages me);

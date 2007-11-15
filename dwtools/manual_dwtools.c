@@ -3565,7 +3565,7 @@ MAN_END
 /********************** GSL ********************************************/
 MAN_BEGIN (L"incompleteBeta", L"djmw", 20071024)
 TAG (L"##incompleteBeta (%a, %b, %x)")
-DEFINITION (L"I__x_(%a,%b)=1/beta(%a,%b)\\in__0_^%x %t^^%a-1^(1-%t)^^%b-1^ dt,")
+DEFINITION (L"I__x_(%a,%b) = 1/beta(%a,%b)\\in__0_^%x %t^^%a-1^(1-%t)^^%b-1^ dt,")
 NORMAL (L"for 0 \\<_ %x \\<_ 1 and %a and %b and %a+%b not equal to a negative integer.")
 //double incompleteBeta (double a, double b, double x);
 //Pre: 0<= x <= 1; a> 0, b>0
@@ -3576,14 +3576,15 @@ MAN_END
 
 MAN_BEGIN (L"incompleteGammaP", L"djmw", 20071024)
 TAG (L"##incompleteGammaP (%a, %x)")
-DEFINITION (L"##incompleteGammaP = 1/\\Ga(%a)\\in_0^%x e^^-%t^%t^^%a-1^ dt,")
-NORMAL (L"For %x\\>_ 0 and %a not %a negative integer.")
+DEFINITION (L"incompleteGammaP = 1/\\Ga(%a)\\in__0_^%x e^^-%t^%t^^%a-1^ dt,")
+NORMAL (L"For %x\\>_ 0 and %a not a negative integer.")
 MAN_END
 
 MAN_BEGIN (L"lnBeta", L"djmw", 20071024)
 TAG (L"##lnBeta (%a, %b)")
 DEFINITION (L"Computes the logarithm of the #beta function, subject to %a and %b and %a+%b not being negative integers.")
 MAN_END
+
 /********************* References **************************************/
 
 MAN_BEGIN (L"Bai & Demmel (1993)", L"djmw", 19981007)

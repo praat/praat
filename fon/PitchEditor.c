@@ -43,37 +43,37 @@ class_create_opaque (PitchEditor, FunctionEditor);
 
 /********** MENU COMMANDS **********/
 
-FORM (PitchEditor, cb_setCeiling, "Change ceiling", 0)
-	POSITIVE ("Ceiling (Hertz)", "600")
+FORM (PitchEditor, cb_setCeiling, L"Change ceiling", 0)
+	POSITIVE (L"Ceiling (Hertz)", L"600")
 	OK
 Pitch pitch = my data;
-SET_REAL ("Ceiling", pitch -> ceiling)
+SET_REAL (L"Ceiling", pitch -> ceiling)
 DO
 	Pitch pitch = my data;
 	Editor_save (me, L"Change ceiling");
-	Pitch_setCeiling (pitch, GET_REAL ("Ceiling"));
+	Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 END
 
-FORM (PitchEditor, cb_pathFinder, "Path finder", 0);
-	REAL ("Silence threshold", "0.03")
-	REAL ("Voicing threshold", "0.45")
-	REAL ("Octave cost", "0.01")
-	REAL ("Octave-jump cost", "0.35")
-	REAL ("Voiced/unvoiced cost", "0.14")
-	POSITIVE ("Ceiling (Hertz)", "600")
-	BOOLEAN ("Pull formants", 0)
+FORM (PitchEditor, cb_pathFinder, L"Path finder", 0);
+	REAL (L"Silence threshold", L"0.03")
+	REAL (L"Voicing threshold", L"0.45")
+	REAL (L"Octave cost", L"0.01")
+	REAL (L"Octave-jump cost", L"0.35")
+	REAL (L"Voiced/unvoiced cost", L"0.14")
+	POSITIVE (L"Ceiling (Hertz)", L"600")
+	BOOLEAN (L"Pull formants", 0)
 	OK
 Pitch pitch = my data;
-SET_REAL ("Ceiling", pitch -> ceiling)
+SET_REAL (L"Ceiling", pitch -> ceiling)
 DO
 	Pitch pitch = my data;
 	Editor_save (me, L"Path finder");
 	Pitch_pathFinder (pitch,
-		GET_REAL ("Silence threshold"), GET_REAL ("Voicing threshold"),
-		GET_REAL ("Octave cost"), GET_REAL ("Octave-jump cost"),
-		GET_REAL ("Voiced/unvoiced cost"), GET_REAL ("Ceiling"), GET_INTEGER ("Pull formants"));
+		GET_REAL (L"Silence threshold"), GET_REAL (L"Voicing threshold"),
+		GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
+		GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 END
