@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071115)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071119)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.38# (November 19, 2007)")
+LIST_ITEM (L"\\bu More extensive @@logistic regression@.")
 NORMAL (L"##4.6.37# (November 15, 2007)")
 LIST_ITEM (L"\\bu Object list shows numbers.")
 LIST_ITEM (L"\\bu Macintosh: corrected saving of non-ASCII text settings.")

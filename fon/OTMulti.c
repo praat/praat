@@ -106,7 +106,7 @@ static int readText (I, MelderReadString *text) {
 	if (localVersion >= 2) {
 		my leak = texgetr8 (text); iferror return Melder_error1 (L"Trying to read leak.");
 	}
-	if ((my numberOfConstraints = texgeti4 (text)) < 1) return Melder_error ("No constraints.");
+	if ((my numberOfConstraints = texgeti4 (text)) < 1) return Melder_error1 (L"No constraints.");
 	if (! (my constraints = NUMstructvector (OTConstraint, 1, my numberOfConstraints))) return 0;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
@@ -119,7 +119,7 @@ static int readText (I, MelderReadString *text) {
 			constraint -> plasticity = texgetr8 (text); iferror return Melder_error3 (L"Trying to read plasticity of constraint ", Melder_integer (icons), L".");;
 		}
 	}
-	if ((my numberOfCandidates = texgeti4 (text)) < 1) return Melder_error ("No candidates.");
+	if ((my numberOfCandidates = texgeti4 (text)) < 1) return Melder_error1 (L"No candidates.");
 	if (! (my candidates = NUMstructvector (OTCandidate, 1, my numberOfCandidates))) return 0;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
@@ -257,7 +257,7 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2) 
 	}
 	if (icand_best == 0) error5 (L"The forms ", form1, L" and ", form2, L" do not match any candidate.")
 end:
-	iferror return Melder_error ("(OTMulti: Get winner (two):) Not performed.");
+	iferror return Melder_error1 (L"(OTMulti: Get winner (two):) Not performed.");
 	return icand_best;
 }
 
@@ -355,7 +355,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 	}
 end:
 	Melder_monitor1 (1.0, NULL);
-	iferror return Melder_error ("OTMulti did not complete learning from partial pairs.");
+	iferror return Melder_error1 (L"OTMulti did not complete learning from partial pairs.");
 	return 1;
 }
 
@@ -713,7 +713,7 @@ int OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName) {
 	long removed = 0;
 
 	if (my numberOfConstraints <= 1)
-		return Melder_error ("Cannot remove last constraint.");
+		return Melder_error1 (L"Cannot remove last constraint.");
 
 	/*
 	 * Look for the constraint to be removed.
@@ -763,7 +763,7 @@ int OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t
 	if (! winner) error1 (L"No winner")
 	wcscpy (optimalForm, my candidates [winner]. string);
 end:
-	iferror return Melder_error ("(OTMulti_generateOptimalForm:) Not performed.");
+	iferror return Melder_error1 (L"(OTMulti_generateOptimalForm:) Not performed.");
 	return 1;
 }
 

@@ -335,6 +335,7 @@ typedef struct structData_Description {
 	wchar_t * (*getRowStr) (I, long irow); \
 	wchar_t * (*getColStr) (I, long icol); \
 	double (*getCell) (I); \
+	wchar_t * (*getCellStr) (I); \
 	double (*getVector) (I, long irow, long icol); \
 	wchar_t * (*getVectorStr) (I, long icol); \
 	double (*getMatrix) (I, long irow, long icol); \
@@ -464,10 +465,10 @@ class_create (Data, Thing);
 			my xmin = ascgetr8 (f);
 			my xmax = ascgetr8 (f);
 			if (my xmax <= my xmin)
-				return Melder_error ("Miep::readText: xmax must be greater than xmin.");
+				return Melder_error1 (L"Miep::readText: xmax must be greater than xmin.");
 			my length = ascgeti4 (f);
 			if (my length < 1)
-				return Melder_error ("Miep::readText: length must be positive, not %ld.", my length);
+				return Melder_error1 (L"Miep::readText: length must be positive, not %ld.", my length);
 			if (! (my array = NUMfvector_readText (1, my length, f))) return 0;
 			if (! (my object = new (Theo))) return 0;   // Out of memory.
 			if (! Data_readText (my object, f))   // Recursion.

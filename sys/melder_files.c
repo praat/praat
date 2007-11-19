@@ -838,7 +838,7 @@ char * MelderFile_readLine (MelderFile me) {
 	if (! buffer) {
 		buffer = Melder_malloc (char, capacity = 100);
 		if (buffer == NULL) {
-			Melder_error ("(MelderFile_readLine:) No room even for a string buffer of 100 bytes.");
+			Melder_error1 (L"(MelderFile_readLine:) No room even for a string buffer of 100 bytes.");
 			fclose (my filePointer);
 			my filePointer = NULL;
 		}

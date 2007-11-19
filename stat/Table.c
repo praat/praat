@@ -45,6 +45,7 @@
  * pb 2007/06/28 Table_getGroupMean_studentT, Table_getGroupMean
  * pb 2007/10/01 can write as encoding
  * pb 2007/10/13 made Table_getExtrema global
+ * pb 2007/11/18 refactoring
  */
 
 #include <ctype.h>
@@ -117,7 +118,7 @@ static wchar_t * getMatrixStr (I, long irow, long icol) {
 }
 static double getColumnIndex (I, const wchar_t *columnLabel) {
 	iam (Table);
-	return Table_columnLabelToIndex (me, columnLabel);
+	return Table_findColumnIndexFromColumnLabel (me, columnLabel);
 }
 
 class_methods (Table, Data) {
@@ -197,32 +198,6 @@ end:
 	return 1;
 }
 
-static wchar_t ** Melder_getTokens (const wchar_t *string, long *n) {
-	wchar_t **result = NULL, *token;
-	long itoken = 0;
-	*n = Melder_countTokens (string);
-	if (*n == 0) return NULL;
-	result = (wchar_t **) NUMpvector (1, *n); cherror
-	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
-		result [++ itoken] = Melder_wcsdup (token); cherror
-	}
-end:
-	iferror NUMpvector_free ((void **) result, 1);
-	return result;
-}
-
-static void Melder_freeTokens (wchar_t ***tokens) {
-	NUMpvector_free ((void **) *tokens, 1);
-	*tokens = NULL;
-}
-
-static long Melder_searchToken (const wchar_t *string, wchar_t **tokens, long n) {
-	for (long i = 1; i <= n; i ++) {
-		if (wcsequ (string, tokens [i])) return i;
-	}
-	return 0;
-}
-
 int Table_appendColumn (Table me, const wchar_t *label) {
 	return Table_insertColumn (me, my numberOfColumns + 1, label);
 }
@@ -300,11 +275,38 @@ void Table_setColumnLabel (Table me, long icol, const wchar_t *label) {
 	my columnHeaders [icol]. label = Melder_wcsdup (label);
 }
 
-long Table_columnLabelToIndex (Table me, const wchar_t *label) {
+long Table_findColumnIndexFromColumnLabel (Table me, const wchar_t *label) {
 	for (long icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnHeaders [icol]. label && wcsequ (my columnHeaders [icol]. label, label))
 			return icol;
 	return 0;
+}
+
+long Table_getColumnIndexFromColumnLabel (Table me, const wchar_t *columnLabel) {
+	long columnIndex = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+	if (columnIndex == 0)
+		error4 (Thing_messageName (me), L" does not contain a column named \"", columnLabel, L"\".")
+end:
+	iferror return 0;
+	return columnIndex;
+}
+
+long * Table_getColumnIndicesFromColumnLabelString (Table me, const wchar_t *string, long *numberOfTokens) {
+	wchar_t **tokens = NULL;
+	long *columns = NULL;
+	*numberOfTokens = 0;
+
+	tokens = Melder_getTokens (string, numberOfTokens); cherror
+	if (*numberOfTokens < 1)
+		error1 (L"Empty list of columns.")
+	columns = NUMlvector (1, *numberOfTokens); cherror
+	for (long icol = 1; icol <= *numberOfTokens; icol ++) {
+		columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]); cherror
+	}
+end:
+	Melder_freeTokens (& tokens);
+	iferror return NULL;
+	return columns;
 }
 
 long Table_searchColumn (Table me, long icol, const wchar_t *value) {
@@ -466,20 +468,53 @@ end:
 	return row -> cells [icol]. number;
 }
 
-double Table_getMean (Table me, long icol) {
+double Table_getMean_e (Table me, long icol) {
 	double sum = 0.0;
-	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my rows -> size < 1) return NUMundefined;
 	if (! Table_numericize_checkDefined (me, icol)) {
 		Melder_error1 (L"Cannot compute mean.");
 		return NUMundefined;
 	}
-	for (irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		sum += row -> cells [icol]. number;
 	}
 	return sum / my rows -> size;
+}
+
+double Table_getMaximum_e (Table me, long icol) {
+	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
+	if (my rows -> size < 1) return NUMundefined;
+	if (! Table_numericize_checkDefined (me, icol)) {
+		Melder_error1 (L"Cannot compute maximum.");
+		return NUMundefined;
+	}
+	TableRow firstRow = my rows -> item [1];
+	double maximum = firstRow -> cells [icol]. number;
+	for (long irow = 2; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [icol]. number > maximum)
+			maximum = row -> cells [icol]. number;
+	}
+	return maximum;
+}
+
+double Table_getMinimum_e (Table me, long icol) {
+	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
+	if (my rows -> size < 1) return NUMundefined;
+	if (! Table_numericize_checkDefined (me, icol)) {
+		Melder_error1 (L"Cannot compute minimum.");
+		return NUMundefined;
+	}
+	TableRow firstRow = my rows -> item [1];
+	double minimum = firstRow -> cells [icol]. number;
+	for (long irow = 2; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [icol]. number < minimum)
+			minimum = row -> cells [icol]. number;
+	}
+	return minimum;
 }
 
 double Table_getGroupMean (Table me, long column, long groupColumn, const wchar_t *group) {
@@ -501,7 +536,7 @@ double Table_getGroupMean (Table me, long column, long groupColumn, const wchar_
 	return mean;
 }
 
-double Table_getQuantile (Table me, long icol, double quantile) {
+double Table_getQuantile_e (Table me, long icol, double quantile) {
 	double *sortingColumn = NULL;
 	double result = NUMundefined;
 	long irow;
@@ -522,8 +557,8 @@ end:
 	return result;
 }
 
-double Table_getStdev (Table me, long icol) {
-	double mean = Table_getMean (me, icol), sum = 0.0;
+double Table_getStdev_e (Table me, long icol) {
+	double mean = Table_getMean_e (me, icol), sum = 0.0;
 	long irow;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	if (my rows -> size < 2) return NUMundefined;
@@ -592,7 +627,7 @@ end:
 
 static int _Table_columnsExist_check (Table me, wchar_t **columnNames, long n) {
 	for (long i = 1; i <= n; i ++) {
-		if (Table_columnLabelToIndex (me, columnNames [i]) == 0) {
+		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0) {
 			return Melder_error3 (L"Column \"", columnNames [i], L"\" does not exist.");
 		}
 	}
@@ -676,27 +711,27 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 	icol = 0;
 	for (i = 1; i <= numberOfFactors; i ++) {
 		Table_setColumnLabel (thee, ++ icol, factors [i]);
-		columns [icol] = Table_columnLabelToIndex (me, factors [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i]);
 	}
 	for (i = 1; i <= numberToSum; i ++) {
 		Table_setColumnLabel (thee, ++ icol, columnsToSum [i]);
-		columns [icol] = Table_columnLabelToIndex (me, columnsToSum [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i]);
 	}
 	for (i = 1; i <= numberToAverage; i ++) {
 		Table_setColumnLabel (thee, ++ icol, columnsToAverage [i]);
-		columns [icol] = Table_columnLabelToIndex (me, columnsToAverage [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i]);
 	}
 	for (i = 1; i <= numberToMedianize; i ++) {
 		Table_setColumnLabel (thee, ++ icol, columnsToMedianize [i]);
-		columns [icol] = Table_columnLabelToIndex (me, columnsToMedianize [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i]);
 	}
 	for (i = 1; i <= numberToAverageLogarithmically; i ++) {
 		Table_setColumnLabel (thee, ++ icol, columnsToAverageLogarithmically [i]);
-		columns [icol] = Table_columnLabelToIndex (me, columnsToAverageLogarithmically [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i]);
 	}
 	for (i = 1; i <= numberToMedianizeLogarithmically; i ++) {
 		Table_setColumnLabel (thee, ++ icol, columnsToMedianizeLogarithmically [i]);
-		columns [icol] = Table_columnLabelToIndex (me, columnsToMedianizeLogarithmically [i]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i]);
 	}
 	Melder_assert (icol == thy numberOfColumns);
 	/*
@@ -882,7 +917,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 	 */
 	factorColumns = NUMlvector (1, numberOfFactors); cherror
 	for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
-		factorColumns [ifactor] = Table_columnLabelToIndex (me, factors_names [ifactor]);
+		factorColumns [ifactor] = Table_findColumnIndexFromColumnLabel (me, factors_names [ifactor]);
 		/*
 		 * Make sure that all the columns in the original table that we will use in the nested table are defined.
 		 */
@@ -893,7 +928,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 	 */
 	columnsToExpand = NUMlvector (1, numberToExpand); cherror
 	for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
-		columnsToExpand [iexpand] = Table_columnLabelToIndex (me, columnsToExpand_names [iexpand]);
+		columnsToExpand [iexpand] = Table_findColumnIndexFromColumnLabel (me, columnsToExpand_names [iexpand]);
 		Table_numericize_checkDefined (me, columnsToExpand [iexpand]); cherror
 	}
 	/*
@@ -1011,7 +1046,7 @@ int Table_sortRows_string (Table me, const wchar_t *columns_string) {
 		error1 (L"Empty list of columns. Cannot sort.")
 	columns = NUMlvector (1, numberOfColumns); cherror
 	for (icol = 1; icol <= numberOfColumns; icol ++) {
-		columns [icol] = Table_columnLabelToIndex (me, columns_tokens [icol]);
+		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol]);
 		if (columns [icol] == 0)
 			error3 (L"Column \"", columns_tokens [icol], L"\" does not exist.")
 	}
@@ -1712,7 +1747,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 				if (irow != nrow) Melder_fatal ("irow %ld, nrow %ld, icol %ld, ncol %ld", irow, nrow, icol, ncol);
 				if (icol != ncol) error1 (L"Last row incomplete.")
 			} else if (*p == '\n') {
-				if (icol != ncol) error3 (L"Row ", Melder_integer (irow), L"incomplete.")
+				if (icol != ncol) error3 (L"Row ", Melder_integer (irow), L" incomplete.")
 				p ++;
 			} else {
 				Melder_assert (*p == separator);

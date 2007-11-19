@@ -99,36 +99,7 @@ void NUMsort_i (long n, int a [])
 void NUMsort_l (long n, long a [])
 	MACRO_NUMsort (long)
 
-void NUMsort_str (long n, char *a []) {
-	long l, r, j, i;
-	char *k;
-	if (n < 2) return;
-	l = (n >> 1) + 1;
-	r = n;
-	for (;;) {
-		if (l > 1) {
-			l --;
-			k = a [l];
-		} else { 
-			k = a [r];
-			a [r] = a [1];
-			r --;
-			if (r == 1) { a [1] = k; return; }
-		}
-		j = l;
-		for (;;) {
-			i = j;
-			j = j << 1;
-			if (j > r) break;
-			if (j < r && strcmp (a [j], a [j + 1]) < 0) j ++;
-			if (strcmp (k, a [j]) >= 0) break;
-			a [i] = a [j];
-		}
-		a [i] = k;
-	}
-}
-
-void NUMsort_strW (long n, wchar_t *a []) {
+void NUMsort_str (long n, wchar_t *a []) {
 	long l, r, j, i;
 	wchar_t *k;
 	if (n < 2) return;

@@ -782,18 +782,18 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		remoteHost. sin_port = htons (my portNumber);
 
 		if ((my sokket = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
-			return cancel (), Melder_error ("Cannot create socket for audio.");
+			return cancel (), Melder_error1 (L"Cannot create socket for audio.");
 		if (ioctl (my sokket, FIONBIO, (val = 1, & val)) == -1 )
-			return cancel (), Melder_error ("Cannot set non-blocking on for audio socket.");
+			return cancel (), Melder_error1 (L"Cannot set non-blocking on for audio socket.");
 		for (;;) {
 			int status = connect (my sokket, & remoteHost, sizeof (struct sockaddr_in));
 			if (status == 0 || errno == EISCONN)   /* Success. */
 				break;
 			else if (errno != EINPROGRESS && errno != EALREADY)
-				return cancel (), Melder_error ("Cannot connect socket to audio host.");
+				return cancel (), Melder_error1 (L"Cannot connect socket to audio host.");
 		}
 		if (ioctl (my sokket, FIONBIO, (val = 0, & val)) == -1)
-			return cancel (), Melder_error ("Cannot set non-blocking off for audio socket.");
+			return cancel (), Melder_error1 (L"Cannot set non-blocking off for audio socket.");
 		/* Now we are connected to port 'ntohs (remoteHost.sin_port)'
 		 * on host 'inet_ntoa (remoteHost.sin_addr)'.
 		 */
@@ -806,14 +806,14 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		header. channels = my channels;
 
 		if (write (my sokket, (char *) & header, sizeof header) < 0)
-			return cancel (), Melder_error ("Audio server: error writing header.");
+			return cancel (), Melder_error1 (L"Audio server: error writing header.");
 
 		/*
 		 * Read the accept or refuse message from the server.
 		 */
 		/* Set socket to non-blocking I/O so we can interrupt if it takes too long. */
 		if (ioctl (my sokket, FIONBIO, (val = 1, & val)) == -1)
-			return cancel (), Melder_error ("Audio server cannot set blocking off.");
+			return cancel (), Melder_error1 (L"Audio server cannot set blocking off.");
 		/* Wait for read message. */
 		for (;;) {
 			int nread = read (my sokket, message, sizeof (message));
@@ -824,11 +824,11 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		}
 		/* Set socket back to blocking mode. */
 		if (ioctl (my sokket, FIONBIO, (val = 0, & val)) == -1)
-			return cancel (), Melder_error ("Audio server cannot set blocking on.");
+			return cancel (), Melder_error1 (L"Audio server cannot set blocking on.");
 		if (message [0] == 'A')
 			;   /* Audio server accepts message. */
 		else if (message [0] == 'R')
-			return cancel (), Melder_error ("Audio server refuses message.");
+			return cancel (), Melder_error1 (L"Audio server refuses message.");
 		else
 			return cancel (), Melder_error ("Audio server: unknown message \"%s\".", message);
 
@@ -838,7 +838,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			long dsamples = my samplesLeft > 10240 ? 10240 : my samplesLeft, dbytes;
 			dbytes = write (my sokket, (char *) & my buffer [my samplesSent], dsamples * 2);   /* BUG: mono */
 			if (dbytes < 0)
-				return cancel (), Melder_error ("Audio server: error writing data.");
+				return cancel (), Melder_error1 (L"Audio server: error writing data.");
 			my samplesLeft -= dbytes / 2;   /* BUG: what if odd ? */
 			my samplesSent += dbytes / 2;
 		}
@@ -857,7 +857,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		ALsetwidth (my config, AL_SAMPLE_16);
 		if (! (my port = ALopenport ("Praat play", "w", my config))) {
 			Melder_isPlaying = 0;
-			return Melder_error ("Cannot open audio port.");
+			return Melder_error1 (L"Cannot open audio port.");
 		}
 		if (my asynchronicity == Melder_SYNCHRONOUS) {
 			ALwritesamps (my port, (void *) my buffer, my numberOfSamples * my numberOfChannels);
@@ -1006,7 +1006,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	if (my status) return cancel (), Melder_error ("Cannot open audio. Check audio server (\"man aserver\").");
 	my bucket = ACreateSBucket (my audio, ASDataFormatMask | ASBitsPerSampleMask |
 		ASSamplingRateMask | ASChannelsMask | ASDurationMask, & attributes, & my status);
-	if (my status) return cancel (), Melder_error ("Cannot create sound bucket.");
+	if (my status) return cancel (), Melder_error1 (L"Cannot create sound bucket.");
 
 	/*
 	 * According to the Audio man pages, the bucket created by ACreateSBucket is for recording;
@@ -1039,7 +1039,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	params. previous_transaction = 0;
 	params. event_mask = ATransCompletedMask;
 	my xid = APlaySBucket (my audio, my bucket, & params, & my status);
-	if (my status) return cancel (), Melder_error ("Cannot play sound bucket.");
+	if (my status) return cancel (), Melder_error1 (L"Cannot play sound bucket.");
 
 	/*
 	 * One of the following is superfluous (loop plus ASetCloseDownMode).
@@ -1091,26 +1091,26 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	int err, channels, wantedOutput, currentOutput, dataFormat, oldSampleRate;
 
 	my audio_fd = open ("/dev/audio", O_WRONLY);
-	if (my audio_fd == -1) return cancel (), Melder_error ("Cannot open audio output device.");
+	if (my audio_fd == -1) return cancel (), Melder_error1 (L"Cannot open audio output device.");
 	ioctl (my audio_fd, AUDIO_RESET, RESET_TX_BUF | RESET_TX_UNF);   /* Flush buffers? */
 
 	ioctl (my audio_fd, AUDIO_GET_CHANNELS, & channels);
 	if (channels != 1 && ioctl (my audio_fd, AUDIO_SET_CHANNELS, 1) == -1)
-		return cancel (), Melder_error ("Cannot set mono.");
+		return cancel (), Melder_error1 (L"Cannot set mono.");
 
 	wantedOutput = ( prefs. useInternalSpeaker ? AUDIO_OUT_SPEAKER : AUDIO_OUT_HEADPHONE ) | AUDIO_OUT_LINE;
 	ioctl (my audio_fd, AUDIO_GET_OUTPUT, & currentOutput);
 	if (wantedOutput != currentOutput && ioctl (my audio_fd, AUDIO_SET_OUTPUT, wantedOutput) == -1)
-		return cancel (), Melder_error ("Cannot set output device.");
+		return cancel (), Melder_error1 (L"Cannot set output device.");
 
 	ioctl (my audio_fd, AUDIO_GET_DATA_FORMAT, & dataFormat);
 	if (dataFormat != AUDIO_FORMAT_LINEAR16BIT && ioctl (my audio_fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1)
-		return cancel (), Melder_error ("Cannot set to 16-bit linear.");
+		return cancel (), Melder_error1 (L"Cannot set to 16-bit linear.");
 
 	/*{
 		struct audio_beep_type beep;
 		if (ioctl (audio_fd, AUDIO_GET_BEEP, & oldBeep) == -1)
-			return cancel (), Melder_error ("Cannot get old beep.");
+			return cancel (), Melder_error1 (L"Cannot get old beep.");
 		beep. type = 1;
 		beep. datalen = 1;
 		beep. data = "";
@@ -1119,7 +1119,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		beep. sample_rate = 8000;
 		beep. nchannels = 1;
 		if (ioctl (audio_fd, AUDIO_SET_BEEP, & beep) == -1)
-			return cancel (), Melder_error ("Cannot remove beep.");
+			return cancel (), Melder_error1 (L"Cannot remove beep.");
 	}*/
 	/*ioctl (audio_fd, AUDIO_DESCRIBE, & audioInfo);
 	audioGains. transmit_gain = 9 + 20 * log10 (
@@ -1127,7 +1127,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	if (audioGains. transmit_gain < -84) audioGains. transmit_gain = -84;
 	audioGains. monitor_gain = audioInfo. min_monitor_gain;
 	if (ioctl (audio_fd, AUDIO_SET_GAINS, & audioGains) == -1)
-		return cancel (), Melder_error ("Cannot set gains.");
+		return cancel (), Melder_error1 (L"Cannot set gains.");
 	}*/
 
 	ioctl (audio_fd, AUDIO_GET_SAMPLE_RATE, & oldSampleRate);
@@ -1137,7 +1137,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	while (bytesLeft) {
 		int dbytes = bytesLeft > 262144 ? 262144 : bytesLeft;
 		if (write (audio_fd, (char *) & buffer [0] + bytesWritten, dbytes) == -1)
-			return cancel (), Melder_error ("Cannot write audio output.");
+			return cancel (), Melder_error1 (L"Cannot write audio output.");
 		bytesLeft -= dbytes;
 		bytesWritten += dbytes;
 	}
@@ -1145,7 +1145,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 
 	/*audio_fd = open ("/dev/audio", O_WRONLY);
 	if (ioctl (audio_fd, AUDIO_SET_BEEP, & oldBeep) == -1)
-		return cancel (), Melder_error ("Cannot reset old beep.");
+		return cancel (), Melder_error1 (L"Cannot reset old beep.");
 	close (audio_fd);*/
 
 	return 1;
@@ -1153,7 +1153,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 #elif defined (sun)
 {
 	if ((my audio_fd = open (getenv ("AUDIODEV") ? getenv ("AUDIODEV") : "/dev/audio", O_WRONLY)) == -1)
-		return cancel (), Melder_error ("Cannot open audio output device.");
+		return cancel (), Melder_error1 (L"Cannot open audio output device.");
 	AUDIO_INITINFO (& my audioInfo);
 	my audioInfo. play. sample_rate = my sampleRate;
 	my audioInfo. play. channels = my numberOfChannels;
@@ -1161,12 +1161,12 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	my audioInfo. play. encoding = AUDIO_ENCODING_LINEAR;
 	my audioInfo. play. port = ( prefs. useInternalSpeaker ? AUDIO_SPEAKER : 0 ) | AUDIO_HEADPHONE | AUDIO_LINE_OUT;
 	if (ioctl (my audio_fd, AUDIO_SETINFO, & my audioInfo) == -1)
-		return cancel (), Melder_error ("Cannot initialize audio output.");
+		return cancel (), Melder_error1 (L"Cannot initialize audio output.");
 
 	Melder_startClock ();
 	if (my asynchronicity == Melder_SYNCHRONOUS) {
 		if (write (my audio_fd, & buffer [0], 2 * my numberOfChannels * my numberOfSamples) == -1)
-			return cancel (), Melder_error ("Cannot write audio output.");
+			return cancel (), Melder_error1 (L"Cannot write audio output.");
 		close (my audio_fd), my audio_fd = 0;   /* Drain. */
 		my samplesPlayed = my numberOfSamples;
 	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
@@ -1175,7 +1175,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			int dsamples = my samplesLeft > 2000 ? 2000 : my samplesLeft;
 			XEvent event;
 			if (write (my audio_fd, (char *) & buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels) == -1)
-				return cancel (), Melder_error ("Cannot write audio output.");
+				return cancel (), Melder_error1 (L"Cannot write audio output.");
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
 			my samplesPlayed = Melder_clock () * my sampleRate;
@@ -1211,13 +1211,13 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 {
 	/* O_NDELAY option added by Rafael Laboissiere, May 19, 2005 */
 	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | (Melder_debug == 16 ? 0 : O_NDELAY))) == -1)
-		return cancel (), Melder_error (errno == EBUSY ? "Audio device already in use." :
-			"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
+		return cancel (), Melder_error1 (errno == EBUSY ? L"Audio device already in use." :
+			L"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
 	fcntl (my audio_fd, F_SETFL, 0);   /* Added by Rafael Laboissiere, May 19, 2005 */
 	if (ioctl (my audio_fd, SNDCTL_DSP_SAMPLESIZE, (my val = 16, & my val)) == -1 ||   /* Error? */
 	    my val != 16)   /* Has sound card overridden our sample size? */
 	{
-		return cancel (), Melder_error ("Cannot set sample size to 16 bit.");
+		return cancel (), Melder_error1 (L"Cannot set sample size to 16 bit.");
 	}
 	if (ioctl (my audio_fd, SNDCTL_DSP_CHANNELS, (my val = my numberOfChannels, & my val)) == -1 ||   /* Error? */
 	    my val != my numberOfChannels)   /* Has sound card overridden our number of channels? */
@@ -1232,7 +1232,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			short *newBuffer;
 			my fakeMono = TRUE;
 			if ((newBuffer = NUMsvector (0, 2 * numberOfSamples - 1)) == NULL)
-				return cancel (), Melder_error ("Cannot fake mono.");
+				return cancel (), Melder_error1 (L"Cannot fake mono.");
 			for (isamp = 0; isamp < numberOfSamples; isamp ++) {
 				newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 			}
@@ -1251,7 +1251,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	Melder_startClock ();
 	if (my asynchronicity == Melder_SYNCHRONOUS) {
 		if (write (my audio_fd, & my buffer [0], 2 * numberOfChannels * numberOfSamples) == -1)
-			return cancel (), Melder_error ("Cannot write audio output.");
+			return cancel (), Melder_error1 (L"Cannot write audio output.");
 		close (my audio_fd), my audio_fd = 0;   /* Drain. Set to zero in order to notify flush (). */
 		my samplesPlayed = my numberOfSamples;
 	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
@@ -1260,7 +1260,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
 			XEvent event;
 			if (write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels) == -1)
-				return cancel (), Melder_error ("Cannot write audio output.");
+				return cancel (), Melder_error1 (L"Cannot write audio output.");
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
 			my samplesPlayed = Melder_clock () * my sampleRate;
@@ -1368,7 +1368,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #else
 {
-	return Melder_error ("Cannot play a sound on this machine.");
+	return Melder_error1 (L"Cannot play a sound on this machine.");
 }
 #endif
 }

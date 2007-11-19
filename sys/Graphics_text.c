@@ -597,6 +597,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 	}
 }
 
+static int shellHeight;
+
 static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *codes8, const MelderUtf16 *codes16, int nchars, int width) {
 	iam (Graphics);
 	if (my postScript) {
@@ -641,8 +643,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 			long font = lc -> font.integer;
 			int needBitmappedIPA = font == 0;
 			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
-				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
 				ATSFontRef atsuiFont =
 					lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 					lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -660,40 +660,51 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 						notified = true;
 					}
 				}
+				/*
+				 * Define the text layout.
+				 */
+				static ATSUTextLayout textLayout;
+				if (textLayout == NULL) {
+					OSStatus err = ATSUCreateTextLayout (& textLayout);
+					Melder_assert (err == 0);
+				}
+				OSStatus err = ATSUSetTextPointerLocation (textLayout, codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars);
+				Melder_assert (err == 0);
 				static ATSUFontFallbacks fontFallbacks = NULL;
 				if (fontFallbacks == NULL) {
 					ATSUCreateFontFallbacks (& fontFallbacks);
 					ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
 				}
-				UniCharCount runLength = nchars;
-				ATSUTextLayout textLayout;
-				ATSUStyle style;
-				ATSUCreateStyle (& style);
+				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
+				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
+				ATSUAttributeValuePtr values [] = { & my macGraphicsContext, & fontFallbacks };
+				ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
+				ATSUSetTransientFontMatching (textLayout, true);
+				/*
+				 * Set styles: font, size, colour, bold, italic.
+				 */
+				static ATSUStyle style;
+				if (style == NULL) {
+					ATSUCreateStyle (& style);
+				}
 				Fixed fontSize = lc -> size << 16;
 				Boolean boldStyle = (lc -> style & bold) != 0;
 				Boolean italicStyle = (lc -> style & italic) != 0;
 				static RGBColor blueColour = { 0, 0, 0xFFFF };
 				ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
 				ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean) };
-				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize,
-					lc -> link ? & blueColour : & my macColour, & boldStyle, & italicStyle };
+				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize, lc -> link ? & blueColour : & my macColour, & boldStyle, & italicStyle };
 				ATSUSetAttributes (style, 5, styleAttributeTags, styleValueSizes, styleValues);
-				OSStatus err = ATSUCreateTextLayoutWithTextPtr (codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars,
-					1, & runLength, & style, & textLayout);
-				Melder_assert (err == 0);
-				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
-				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
-				ATSUAttributeValuePtr values [] = { & my macGraphicsContext, & fontFallbacks };
-				ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
-				ATSUSetTransientFontMatching (textLayout, true);
+				ATSUSetRunStyle (textLayout, style, 0, nchars);
+				/*
+				 * Draw.
+				 */
+				CGContextSaveGState (my macGraphicsContext);
 				CGContextTranslateCTM (my macGraphicsContext, xDC, shellHeight - yDC);
 				CGContextRotateCTM (my macGraphicsContext, my textRotation * NUMpi / 180.0);
 				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
 				Melder_assert (err == 0);
-				CGContextSynchronize (my macGraphicsContext);
-				ATSUDisposeTextLayout (textLayout);
-				ATSUDisposeStyle (style);
-				QDEndCGContext (my macPort, & my macGraphicsContext);
+				CGContextRestoreGState (my macGraphicsContext);
 				return;
 			}
 		#endif
@@ -1116,6 +1127,12 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 		case Graphics_BASELINE:  dy = 0; break;
 		default:                 dy = 0; break;
 	}
+	#if mac
+		if (my screen && ((GraphicsScreen) me) -> useQuartz && my drawingArea && ! ((GraphicsScreen) me) -> duringXor && MAC_USE_QUARTZ) {
+			QDBeginCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
+			shellHeight = GuiMac_clipOn_graphicsContext (((GraphicsScreen) me) -> drawingArea, ((GraphicsScreen) me) -> macGraphicsContext);
+		}
+	#endif
 	if (my textRotation) {
 		double xbegin = dx, x = xbegin, cosa, sina;
 		if (my textRotation == 90.0f) { cosa = 0.0; sina = 1.0; }
@@ -1215,6 +1232,14 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 		my textX = (x - my deltaX) / my scaleX;
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
 	}
+	#if mac
+		if (my screen && ((GraphicsScreen) me) -> useQuartz && my drawingArea && ! ((GraphicsScreen) me) -> duringXor && MAC_USE_QUARTZ) {
+			CGContextSynchronize (((GraphicsScreen) me) -> macGraphicsContext);
+			//ATSUDisposeTextLayout (textLayout);
+			//ATSUDisposeStyle (style);
+			QDEndCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
+		}
+	#endif
 }
 
 static struct { float width; short alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },

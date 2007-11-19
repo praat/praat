@@ -120,7 +120,7 @@ NORMAL (L"The result was %p = 0.0056, which reliably showed that these 40 listen
 	"(this is easier to accomplish for 40 participants than for 5).")
 MAN_END
 
-MAN_BEGIN (L"Logistic regression", L"ppgb", 20050427)
+MAN_BEGIN (L"Logistic regression", L"ppgb", 20071119)
 INTRO (L"This page explains how you do logistic regression with Praat. "
 	"You start by writing a table in a text file. "
 	"The following example contains natural stimuli (female speaker) with measured F1 and duration values, "
@@ -137,13 +137,13 @@ CODE1 (L" 696   169    9     1")
 CODE1 (L"1024   124   10     0")
 CODE1 (L" 752    92    6     4")
 NORMAL (L"In this table we see 10 different stimuli, each characterized by a certain combination "
-	"of the independent variables %F1 (first formant in Hertz) and %Dur (duration in milliseconds). "
+	"of the factors (independent variables) %F1 (first formant in Hertz) and %Dur (duration in milliseconds). "
 	"The first row of the table means that there was a stimulus with an F1 of 764 Hz and a duration of 87 ms, "
 	"and that the listener responded to this stimulus 2 times with the response category /\\ae/, "
 	"and the remaining 8 times with the category /\\ep/.")
 NORMAL (L"A table as above can be typed into a text file. The columns can be separated with spaces and/or tab stops. "
 	"The file can be read into Praat with ##Read Table from table file...#. "
-	"The command \"To logistic regression\" will become available in the #Statistics menu.")
+	"The command ##To logistic regression...# will become available in the #Statistics menu.")
 ENTRY (L"What does it do?")
 /*SCRIPT (4.5, 4,
 	"Axes... 60 180 900 500\n"
@@ -172,10 +172,9 @@ NORMAL (L"The optimization criterion is %%maximum likelihood%, i.e. those %\\al,
 	"most likely.")
 NORMAL (L"Praat will create an object of type #LogisticRegression in the list. "
 	"When you then click the #Info button, Praat will write the values of %\\al (the %intercept), "
-	"%%\\be__F1_% and %%\\be__dur_% into the Info window.")
-NORMAL (L"The number of independent variables does not have to be 2; it can be 1 or more. "
-	"The number of dependent categories is always 2, and they should always be put in the last two columns of the table. "
-	"This will be made more flexible in a future version of Praat.")
+	"%%\\be__F1_% and %%\\be__dur_% into the Info window (as well as much other information).")
+NORMAL (L"The number of factors does not have to be 2; it can be 1 or more. "
+	"The number of dependent categories is always 2.")
 MAN_END
 
 }

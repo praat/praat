@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/10/13
+ * pb 2007/11/17
  */
 
 #ifndef _Collection_h_
@@ -57,7 +57,9 @@ int Table_removeColumn (Table me, long column);
 int Table_insertRow (Table me, long row);
 int Table_insertColumn (Table me, long column, const wchar_t *label);
 void Table_setColumnLabel (Table me, long column, const wchar_t *label);
-long Table_columnLabelToIndex (Table me, const wchar_t *label);
+long Table_findColumnIndexFromColumnLabel (Table me, const wchar_t *label);
+long Table_getColumnIndexFromColumnLabel (Table me, const wchar_t *columnLabel);
+long * Table_getColumnIndicesFromColumnLabelString (Table me, const wchar_t *string, long *numberOfTokens);
 long Table_searchColumn (Table me, long column, const wchar_t *value);
 
 /*
@@ -77,10 +79,12 @@ int Table_setNumericValue (Table me, long row, long column, double value);
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
 void Table_numericize (Table me, long column);
 
-double Table_getQuantile (Table me, long column, double quantile);
-double Table_getMean (Table me, long column);
+double Table_getQuantile_e (Table me, long column, double quantile);
+double Table_getMean_e (Table me, long column);
+double Table_getMaximum_e (Table me, long icol);
+double Table_getMinimum_e (Table me, long icol);
 double Table_getGroupMean (Table me, long column, long groupColumn, const wchar_t *group);
-double Table_getStdev (Table me, long column);
+double Table_getStdev_e (Table me, long column);
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getCorrelation_kendallTau (Table me, long column1, long column2, double significanceLevel,

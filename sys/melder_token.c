@@ -20,9 +20,11 @@
 /*
  * pb 2006/04/16 created
  * pb 2007/08/10 wchar_t
+ * pb 2007/11/18 moved Melder_get/free/searchToken(s) here
  */
 
 #include "melder.h"
+#include "NUM.h"
 
 long Melder_countTokens (const wchar_t *string) {
 	long numberOfTokens = 0;
@@ -49,6 +51,32 @@ wchar_t *Melder_firstToken (const wchar_t *string) {
 
 wchar_t *Melder_nextToken (void) {
 	return wcstok (NULL, L" \t\n\r", & theMelderTokenLast);
+}
+
+wchar_t ** Melder_getTokens (const wchar_t *string, long *n) {
+	wchar_t **result = NULL, *token;
+	long itoken = 0;
+	*n = Melder_countTokens (string);
+	if (*n == 0) return NULL;
+	result = (wchar_t **) NUMpvector (1, *n); cherror
+	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
+		result [++ itoken] = Melder_wcsdup (token); cherror
+	}
+end:
+	iferror NUMpvector_free ((void **) result, 1);
+	return result;
+}
+
+void Melder_freeTokens (wchar_t ***tokens) {
+	NUMpvector_free ((void **) *tokens, 1);
+	*tokens = NULL;
+}
+
+long Melder_searchToken (const wchar_t *string, wchar_t **tokens, long n) {
+	for (long i = 1; i <= n; i ++) {
+		if (wcsequ (string, tokens [i])) return i;
+	}
+	return 0;
 }
 
 /* End of file melder_token.c */

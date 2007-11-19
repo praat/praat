@@ -118,7 +118,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	ManPage page;
 	ManPage_Paragraph par;
 	wchar_t *title = texgetw2 (text);
-	if (! title) return Melder_error ("Cannot find page title.");
+	if (! title) return Melder_error1 (L"Cannot find page title.");
 
 	/*
 	 * Check whether a page with this title is already present.
@@ -137,11 +137,11 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	if (! Collection_addItem (my pages, page)) return 0;
 
 	page -> author = texgetw2 (text);
-	if (! page -> author) return Melder_error ("Cannot find author.");
+	if (! page -> author) return Melder_error1 (L"Cannot find author.");
 	page -> date = texgetu4 (text);
-	iferror return Melder_error ("Cannot find date.");
+	iferror return Melder_error1 (L"Cannot find date.");
 	page -> recordingTime = texgetr8 (text);
-	iferror return Melder_error ("Cannot find recording time.");
+	iferror return Melder_error1 (L"Cannot find recording time.");
 	page -> paragraphs = NUMvector (sizeof (struct structManPage_Paragraph), 0, 500);
 	if (! page -> paragraphs) return 0;
 	for (par = page -> paragraphs;; par ++) {
@@ -161,7 +161,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 			par -> height = texgetr4 (text);
 		}
 		par -> text = texgetw2 (text);
-		if (! par -> text) return Melder_error ("Cannot find text.");
+		if (! par -> text) return Melder_error1 (L"Cannot find text.");
 		for (p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.

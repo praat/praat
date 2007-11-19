@@ -59,7 +59,7 @@ static int MelderFile_createFlacFile (MelderFile file, long sampleRate, long num
 	FLAC__StreamEncoder *encoder;
 
 	if ((encoder = FLAC__stream_encoder_new ()) == NULL)
-		return Melder_error ("Error creating FLAC stream encoder");
+		return Melder_error1 (L"Error creating FLAC stream encoder");
 	FLAC__stream_encoder_set_bits_per_sample (encoder, 16);
 	FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
 	FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
@@ -67,7 +67,7 @@ static int MelderFile_createFlacFile (MelderFile file, long sampleRate, long num
 
 	if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
 		FLAC__stream_encoder_delete (encoder);
-		return Melder_error ("Error creating FLAC stream encoder");
+		return Melder_error1 (L"Error creating FLAC stream encoder");
 	}
 
 	file -> flacEncoder = encoder;
@@ -174,7 +174,7 @@ int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long 
 			fwrite (header, 1, 1024, f);
 		} break;
 		case Melder_SOUND_DESIGNER_TWO: {
-			return Melder_error ("Cannot yet write Sound Designer II files.");
+			return Melder_error1 (L"Cannot yet write Sound Designer II files.");
 		} break;
 		case Melder_FLAC: {
 			return MelderFile_createFlacFile (file, sampleRate, numberOfSamples, numberOfChannels);
@@ -205,7 +205,7 @@ int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
 	}
 	MelderFile_close (file);
-	iferror return Melder_error ("(MelderFile_writeAudioFile16:) File not written.");
+	iferror return Melder_error1 (L"(MelderFile_writeAudioFile16:) File not written.");
 	return 1;
 }
 
@@ -300,11 +300,11 @@ static int Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 
 	/* Read header of AIFF(-C) file: 12 bytes. */
 
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no FORM statement.");
-	if (! strnequ (data, "FORM", 4)) return Melder_error ("Not an AIFF or AIFC file (FORM statement expected).");
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no size of FORM chunk.");
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no file type info (expected AIFF or AIFC).");
-	if (! strnequ (data, "AIFF", 4) && ! strnequ (data, "AIFC", 4)) return Melder_error ("Not an AIFF or AIFC file (wrong file type info).");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no FORM statement.");
+	if (! strnequ (data, "FORM", 4)) return Melder_error1 (L"Not an AIFF or AIFC file (FORM statement expected).");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no size of FORM chunk.");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no file type info (expected AIFF or AIFC).");
+	if (! strnequ (data, "AIFF", 4) && ! strnequ (data, "AIFC", 4)) return Melder_error1 (L"Not an AIFF or AIFC file (wrong file type info).");
 	if (strnequ (data, "AIFF", 4)) isAifc = FALSE;
 
 	/* Search for Common Chunk and Data Chunk. */
@@ -345,7 +345,7 @@ static int Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 				/*
 				 * Read compression data; should be "NONE" or "sowt".
 				 */
-				if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no compression info.");
+				if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no compression info.");
 				if (! strnequ (data, "NONE", 4) && ! strnequ (data, "sowt", 4)) return Melder_error ("Cannot read compressed AIFC files (compression type %c%c%c%c).",
 					data [0], data [1], data [2], data [3]);
 				if (strnequ (data, "sowt", 4))
@@ -372,8 +372,8 @@ static int Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);
 	}
 
-	if (! commonChunkPresent) return Melder_error ("Found no Common Chunk.");
-	if (! dataChunkPresent) return Melder_error ("Found no Data Chunk.");
+	if (! commonChunkPresent) return Melder_error1 (L"Found no Common Chunk.");
+	if (! dataChunkPresent) return Melder_error1 (L"Found no Data Chunk.");
 
 	return 1;
 }
@@ -385,11 +385,11 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	int formatChunkPresent = FALSE, dataChunkPresent = FALSE, numberOfBitsPerSamplePoint = -1;
 	long chunkSize, dataChunkSize = -1, i;
 
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no RIFF statement.");
-	if (! strnequ (data, "RIFF", 4)) return Melder_error ("Not a WAV file (RIFF statement expected).");
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no size of RIFF chunk.");
-	if (fread (data, 1, 4, f) < 4) return Melder_error ("File too small: no file type info (expected WAVE statement).");
-	if (! strnequ (data, "WAVE", 4) && ! strnequ (data, "CDDA", 4)) return Melder_error ("Not a WAVE or CD audio file (wrong file type info).");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no RIFF statement.");
+	if (! strnequ (data, "RIFF", 4)) return Melder_error1 (L"Not a WAV file (RIFF statement expected).");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no size of RIFF chunk.");
+	if (fread (data, 1, 4, f) < 4) return Melder_error1 (L"File too small: no file type info (expected WAVE statement).");
+	if (! strnequ (data, "WAVE", 4) && ! strnequ (data, "CDDA", 4)) return Melder_error1 (L"Not a WAVE or CD audio file (wrong file type info).");
 
 	/* Search for Format Chunk and Data Chunk. */
 
@@ -430,7 +430,7 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 					*encoding = Melder_MULAW;
 					break;
 				case WAVE_FORMAT_DVI_ADPCM:
-					return Melder_error ("Cannot read lossy compressed audio files (this one is DVI ADPCM).\n"
+					return Melder_error1 (L"Cannot read lossy compressed audio files (this one is DVI ADPCM).\n"
 						"Please use uncompressed audio files. If you must open this file,\n"
 						"please use an audio converter program to convert it first to normal (PCM) WAV format\n"
 						"(Praat may have difficulty analysing the poor recording, though).");
@@ -454,8 +454,8 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 		}
 	}
 
-	if (! formatChunkPresent) return Melder_error ("Found no Format Chunk.");
-	if (! dataChunkPresent) return Melder_error ("Found no Data Chunk.");
+	if (! formatChunkPresent) return Melder_error1 (L"Found no Format Chunk.");
+	if (! dataChunkPresent) return Melder_error1 (L"Found no Data Chunk.");
 	Melder_assert (numberOfBitsPerSamplePoint != -1 && dataChunkSize != -1);
 	*numberOfSamples = dataChunkSize / *numberOfChannels / ((numberOfBitsPerSamplePoint + 7) / 8);
 
@@ -468,7 +468,7 @@ static int Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodin
 	long dataSize, sunEncoding, skip;
 	char tag [4];
 	fread (tag, 1, 4, f);
-	if (strncmp (tag, ".snd", 4)) return Melder_error ("Not a Sun audio file.");
+	if (strncmp (tag, ".snd", 4)) return Melder_error1 (L"Not a Sun audio file.");
 	*startOfData = bingeti4 (f);
 	if (*startOfData < 24 || *startOfData > 320)
 		return Melder_error ("Sorry, cannot read header of audio file. Length %ld.", *startOfData);
@@ -516,21 +516,21 @@ static int Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
  	double rval;
 	int numberOfBytesPerSamplePoint;
 	if (fread (header, 1, 1024, f) != 1024)
-		return Melder_error ("Cannot read NISTheader.");
+		return Melder_error1 (L"Cannot read NISTheader.");
 	if (! strnequ (header, "NIST_1A", 7))
-		return Melder_error ("Not a NIST sound file.");
+		return Melder_error1 (L"Not a NIST sound file.");
 	*startOfData = atol (header + 9);
 	if (! nistGetValue (header, "sample_count", & rval, sval) || rval < 1)
-		return Melder_error ("Incorrect number of samples in NIST file.");
+		return Melder_error1 (L"Incorrect number of samples in NIST file.");
 	*numberOfSamples = rval;
 	if (! nistGetValue (header, "sample_n_bytes", & rval, sval) || rval < 1 || rval > 2)
-		return Melder_error ("Incorrect number of bytes per sample (should be 1 or 2).");
+		return Melder_error1 (L"Incorrect number of bytes per sample (should be 1 or 2).");
 	numberOfBytesPerSamplePoint = rval;
 	if (! nistGetValue (header, "channel_count", & rval, sval) || rval < 1)
-		return Melder_error ("Incorrect number of channels.");
+		return Melder_error1 (L"Incorrect number of channels.");
 	*numberOfChannels = rval;
 	if (*numberOfChannels > 2)
-		return Melder_error ("Too many channels in NIST file.");
+		return Melder_error1 (L"Too many channels in NIST file.");
 	if (! nistGetValue (header, "sample_rate", sampleRate, sval) || *sampleRate < 1)
 		return Melder_error ("Incorrect sampling frequency %f Hz.", *sampleRate);
 	*encoding = Melder_LINEAR_16_BIG_ENDIAN;
@@ -592,7 +592,7 @@ static int MelderFile_checkSoundDesignerTwoFile (MelderFile file, int *numberOfC
 	*startOfData = 0;
 end:
 	if (path != -1) CloseResFile (path);
-	iferror return Melder_error ("Sound Designer II file not read.");
+	iferror return Melder_error1 (L"Sound Designer II file not read.");
 	return 1;
 }
 #endif
@@ -603,7 +603,7 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
 	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPath (file)), & metadata))   // BUG: not Unicode-compatible on Windows.
-		return Melder_error ("Invalid FLAC file");
+		return Melder_error1 (L"Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;
 	*encoding = Melder_FLAC_COMPRESSION;
@@ -611,7 +611,7 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 	*startOfData = 0;   /* Meaningless, libFLAC does the I/O */
 	*numberOfSamples = info -> total_samples;   /* Might lose bits above LONG_MAX */
 	if ((FLAC__uint64) *numberOfSamples != info -> total_samples)
-		return Melder_error ("FLAC file too long.");
+		return Melder_error1 (L"FLAC file too long.");
 	return 1;
 }
 
@@ -620,18 +620,18 @@ static int Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
 {
 	MP3_FILE mp3f;
 	if (! (mp3f = mp3f_new ()) )
-		return Melder_error ("Cannot allocate MP3 decoder object");
+		return Melder_error1 (L"Cannot allocate MP3 decoder object");
 	mp3f_set_file (mp3f, f);
 	if (! mp3f_analyze (mp3f)) {
 		mp3f_delete (mp3f);
-		return Melder_error ("Cannot analyze MP3 file");
+		return Melder_error1 (L"Cannot analyze MP3 file");
 	}
 	*encoding = Melder_MPEG_COMPRESSION;
 	*numberOfChannels = mp3f_channels (mp3f);
 	*sampleRate = mp3f_frequency (mp3f);
 	*numberOfSamples = mp3f_samples (mp3f);
 	if ((MP3F_OFFSET)*numberOfSamples != mp3f_samples (mp3f))
-		return Melder_error ("MP3 file too long.");
+		return Melder_error1 (L"MP3 file too long.");
 	*startOfData = 0; /* Meaningless */
 	mp3f_delete (mp3f);
 	return 1;
@@ -1034,11 +1034,11 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 			break;
 		case Melder_FLAC_COMPRESSION:
 			if (! Melder_readFlacFile (f, numberOfChannels, leftBuffer, rightBuffer, numberOfSamples))
-				return Melder_error ("(Melder_readAudioToFloat:) Error decoding FLAC file.");
+				return Melder_error1 (L"(Melder_readAudioToFloat:) Error decoding FLAC file.");
 			break;
 		case Melder_MPEG_COMPRESSION:
 			if (! Melder_readMp3File (f, numberOfChannels, leftBuffer, rightBuffer, numberOfSamples))
-				return Melder_error ("(Melder_readAudioToFloat:) Error decoding MP3 file.");
+				return Melder_error1 (L"(Melder_readAudioToFloat:) Error decoding MP3 file.");
 			break;
 		default:
 			return Melder_error ("(Melder_readAudioToFloat:) Unknown encoding %d.", encoding);
@@ -1046,7 +1046,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 	readEverything = 1;
 end:
 	if (! readEverything) Melder_warning ("Audio file too short. Missing samples were set to zero.");
-	if (ferror (f)) return Melder_error ("(Melder_readAudioToFloat:) Error reading audio samples from file.");
+	if (ferror (f)) return Melder_error1 (L"(Melder_readAudioToFloat:) Error reading audio samples from file.");
 	return 1;
 }
 
@@ -1120,7 +1120,7 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 	}
 end:
 	if (feof (f)) Melder_warning ("Audio file too short. Missing samples were set to zero.");
-	if (ferror (f)) return Melder_error ("(Melder_readAudioToShort:) Error reading audio samples from file.");
+	if (ferror (f)) return Melder_error1 (L"(Melder_readAudioToShort:) Error reading audio samples from file.");
 	return 1;
 }
 
@@ -1168,20 +1168,20 @@ int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int enc
 				binputr4LE (buffer [i] / 32768.0, f);
 		break; case Melder_FLAC_COMPRESSION:
 			if (! file -> flacEncoder)
-				return Melder_error ("(MelderFile_writeShortToAudio:) FLAC encoder not initialized.");
+				return Melder_error1 (L"(MelderFile_writeShortToAudio:) FLAC encoder not initialized.");
 			for (i = start; i < n; i += step * numberOfChannels) {
 				FLAC__int32 samples [2];
 				samples [0] = buffer [i];
 				if (numberOfChannels > 1)
 					samples [1] = buffer [i + 1];
 				if (! FLAC__stream_encoder_process_interleaved (file -> flacEncoder, samples, 1))
-					return Melder_error ("(MelderFile_writeShortToAudio:) Error encoding FLAC stream.");
+					return Melder_error1 (L"(MelderFile_writeShortToAudio:) Error encoding FLAC stream.");
 			}
 		break; case Melder_MULAW: case Melder_ALAW: default:
 			return Melder_error ("(MelderFile_writeShortToAudio:) Unknown encoding %d.", encoding);
 	}
-	if (feof (f)) return Melder_error ("(MelderFile_writeShortToAudio:) Early end of audio file.");
-	if (ferror (f)) return Melder_error ("(MelderFile_writeShortToAudio:) Error writing audio samples to file.");
+	if (feof (f)) return Melder_error1 (L"(MelderFile_writeShortToAudio:) Early end of audio file.");
+	if (ferror (f)) return Melder_error1 (L"(MelderFile_writeShortToAudio:) Error writing audio samples to file.");
 	return 1;
 }
 
@@ -1403,7 +1403,7 @@ int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *le
 			break;
 		case Melder_FLAC_COMPRESSION:
 			if (! file -> flacEncoder)
-				return Melder_error ("(MelderFile_writeFloatToAudio:) FLAC encoder not initialized.");
+				return Melder_error1 (L"(MelderFile_writeFloatToAudio:) FLAC encoder not initialized.");
 			for (i = 0; i < n; i ++) {
 				FLAC__int32 samples [2];
 				if (i < nleft) {
@@ -1425,13 +1425,13 @@ int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *le
 						samples [1] = 0;
 				}
 				if (! FLAC__stream_encoder_process_interleaved (file -> flacEncoder, samples, 1))
-					return Melder_error ("(MelderFile_writeFloatToAudio:) Error encoding FLAC stream.");
+					return Melder_error1 (L"(MelderFile_writeFloatToAudio:) Error encoding FLAC stream.");
 			}
 			break;
 		case Melder_MULAW:
 		case Melder_ALAW:
 		default:
-			return Melder_error ("(MelderFile_writeFloatToAudio:) Unknown format.");
+			return Melder_error1 (L"(MelderFile_writeFloatToAudio:) Unknown format.");
 	}
 	if (nclipped > 0 && warnIfClipped)
 		Melder_warning ("(MelderFile_writeFloatToAudio:) %ld out of %ld samples have been clipped.\n"

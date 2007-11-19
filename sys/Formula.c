@@ -42,6 +42,7 @@
  * pb 2007/01/28 made compatible with multi-channelled vectors
  * pb 2007/05/26 wchar_t
  * pb 2007/06/09 wchar_t for Interpreter
+ * pb 2007/11/17 implemented self0$
  */
 
 #include <ctype.h>
@@ -1194,7 +1195,7 @@ static int parseExpression (void) {
 
 static int Formula_parseExpression (void) {
 	ilabel = ilexan = iparse = 0;
-	if (lexan [1]. symbol == END_) return Melder_error ("Empty formula.");
+	if (lexan [1]. symbol == END_) return Melder_error1 (L"Empty formula.");
 	if (! parseExpression () || ! pas (END_)) return 0;
 	nieuwontleed (END_);
 	numberOfInstructions = iparse;
@@ -1510,7 +1511,7 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 	}
 	if (! parse) parse = Melder_calloc (struct FormulaInstruction, 3000);
 	if (lexan == NULL || parse == NULL)
-		return Melder_error ("Out of memory during formula computation.");
+		return Melder_error1 (L"Out of memory during formula computation.");
 
 	/*
 		Clean up strings from the previous call.
@@ -2597,6 +2598,42 @@ static void do_self0 (long irow, long icol) {
 	}
 end: return;
 }
+static void do_selfStr0 (long irow, long icol) {
+	Data me = theSource;
+	if (me == NULL) error1 (L"The name \"self$\" is restricted to formulas for objects.")
+	if (our getCellStr) {
+		wchar_t *result = Melder_wcsdup (our getCellStr (me)); cherror
+		pushString (result);
+	} else if (our getVectorStr) {
+		if (icol == 0) {
+			error3 (L"We are not in a loop, hence no implicit column index for the current ",
+				Thing_classNameW (me), L" object (self).\nTry using the [column] index explicitly.")
+		} else {
+			wchar_t *result = Melder_wcsdup (our getVectorStr (me, icol)); cherror
+			pushString (result);
+		}
+	} else if (our getMatrixStr) {
+		if (irow == 0) {
+			if (icol == 0) {
+				error3 (L"We are not in a loop over rows and columns,\n"
+					"hence no implicit row and column indexing for the current ",
+					Thing_classNameW (me), L" object (self).\n"
+					"Try using both [row, column] indexes explicitly.")
+			} else {
+				error3 (L"We are not in a loop over columns only,\n"
+					"hence no implicit row index for the current ",
+					Thing_classNameW (me), L" object (self).\n"
+					"Try using the [row] index explicitly.")
+			}
+		} else {
+			wchar_t *result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
+			pushString (result);
+		}
+	} else {
+		error2 (Thing_classNameW (me), L" objects (like self) accept no [] indexing.")
+	}
+end: return;
+}
 static void do_matriks0 (long irow, long icol) {
 	Data thee = parse [programPointer]. content.object;
 	if (your getCell) {
@@ -3065,6 +3102,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case LABEL_: {
 	;
 } break; case SELF0_: { do_self0 (row, col);
+} break; case SELFSTR0_: { do_selfStr0 (row, col);
 } break; case SELFMATRIKS1_: { do_selfMatriks1 (row);
 } break; case SELFMATRIKSSTR1_: { do_selfMatriksStr1 (row);
 } break; case SELFMATRIKS2_: { do_selfMatriks2 ();

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/10/23
+ * pb 2007/11/18
  */
 
 #include <stdio.h>
@@ -456,6 +456,9 @@ int Melder_stringMatchesCriterion (const wchar_t *value, int which_Melder_STRING
 long Melder_countTokens (const wchar_t *string);
 wchar_t *Melder_firstToken (const wchar_t *string);
 wchar_t *Melder_nextToken (void);
+wchar_t ** Melder_getTokens (const wchar_t *string, long *n);
+void Melder_freeTokens (wchar_t ***tokens);
+long Melder_searchToken (const wchar_t *string, wchar_t **tokens, long n);
 
 /********** MESSAGING ROUTINES **********/
 

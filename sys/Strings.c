@@ -34,6 +34,7 @@
  * pb 2007/08/10 wchar_t
  * pb 2007/10/01 can write as encoding
  * pb 2007/10/01 corrected nativization
+ * pb 2007/11/17 getVectorStr
  */
 
 //#define USE_STAT  1
@@ -102,6 +103,14 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (me)), L" characters");
 }
 
+static wchar_t * getVectorStr (I, long icol) {
+	iam (Strings);
+	wchar_t *stringValue;
+	if (icol < 1 || icol > my numberOfStrings) return L"";
+	stringValue = my strings [icol];
+	return stringValue == NULL ? L"" : stringValue;
+}
+
 class_methods (Strings, Data) {
 	class_method_local (Strings, destroy)
 	class_method_local (Strings, description)
@@ -113,6 +122,7 @@ class_methods (Strings, Data) {
 	class_method_local (Strings, writeBinary)
 	class_method_local (Strings, readBinary)
 	class_method (info)
+	class_method (getVectorStr)
 	class_methods_end
 }
 
@@ -321,7 +331,7 @@ end:
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_strW (my numberOfStrings, my strings);
+	NUMsort_str (my numberOfStrings, my strings);
 }
 
 /* End of file Strings.c */

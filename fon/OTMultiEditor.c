@@ -67,7 +67,7 @@ FORM (OTMultiEditor, cb_editRanking, L"Edit ranking", 0)
 	OK
 OTMulti grammar = my data;
 OTConstraint constraint;
-if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error ("Select a constraint first.");
+if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
 constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 SET_STRING (L"constraint", constraint -> name)
 SET_REAL (L"Ranking value", constraint -> ranking)
@@ -108,7 +108,7 @@ DIRECT (OTMultiEditor, cb_removeConstraint)
 	OTMulti grammar = my data;
 	OTConstraint constraint;
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
-		return Melder_error ("Select a constraint first.");
+		return Melder_error1 (L"Select a constraint first.");
 	constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);

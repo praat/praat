@@ -1,4 +1,4 @@
-/* Regression_def.h
+/* LogisticRegression_def.h
  *
  * Copyright (C) 2005-2007 Paul Boersma
  *
@@ -22,29 +22,14 @@
  */
 
 
-#define ooSTRUCT RegressionParameter
-oo_DEFINE_CLASS (RegressionParameter, Data)
+#define ooSTRUCT LogisticRegression
+oo_DEFINE_CLASS (LogisticRegression, Regression)
 
-	oo_STRINGW (label)
-	oo_DOUBLE (minimum)
-	oo_DOUBLE (maximum)
-	oo_DOUBLE (value)
-	#if oo_DECLARING || oo_COPYING
-		oo_LONG (tableColumnIndex)
-	#endif
+	oo_STRINGW (dependent1)
+	oo_STRINGW (dependent2)
 
-oo_END_CLASS (RegressionParameter)
+oo_END_CLASS (LogisticRegression)
 #undef ooSTRUCT
 
 
-#define ooSTRUCT Regression
-oo_DEFINE_CLASS (Regression, Data)
-
-	oo_DOUBLE (intercept)
-	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)
-
-oo_END_CLASS (Regression)
-#undef ooSTRUCT
-
-
-/* End of file Regression_def.h */
+/* End of file LogisticRegression_def.h */

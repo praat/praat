@@ -180,7 +180,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			}
 		} else if (wcsnequ (command, L"endeditor", 9)) {
 			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error ("The script command \"endeditor\" is not available inside pictures.");
+				return Melder_error1 (L"The script command \"endeditor\" is not available inside pictures.");
 			praatP. editor = NULL;
 		} else if (wcsnequ (command, L"sendpraat ", 10)) {
 			if (theCurrentPraat != & theForegroundPraat)
@@ -213,10 +213,10 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			while (*p != '\0' && *p != ' ' && *p != '\t' && q < hostName + 59) *q ++ = *p ++;
 			*q = '\0';
 			if (q == hostName)
-				return Melder_error ("Missing host name after `sendsocket'.");
+				return Melder_error1 (L"Missing host name after `sendsocket'.");
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
-				return Melder_error ("Missing command after `sendsocket'.");
+				return Melder_error1 (L"Missing command after `sendsocket'.");
 			char *result = sendsocket (Melder_peekWcsToUtf8 (hostName), Melder_peekWcsToUtf8 (p));
 			if (result)
 				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", hostName, L" not completed.");

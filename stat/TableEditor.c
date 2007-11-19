@@ -224,7 +224,6 @@ static void draw (I) {
 	iam (TableEditor);
 	Table table = my data;
 	double spacing = 2.0;   /* millimetres at both edges */
-	wchar_t numberBuffer [40];
 	double columnWidth, cellWidth;
 	long irow, icol;
 	long rowmin = my topRow, rowmax = rowmin + 197;
@@ -244,8 +243,7 @@ static void draw (I) {
 	 */
 	columnWidth = Graphics_textWidth (my graphics, L"row");
 	for (irow = rowmin; irow <= rowmax; irow ++) {
-		swprintf (numberBuffer, 40, L"%ld", irow);
-		cellWidth = Graphics_textWidth (my graphics, numberBuffer);
+		cellWidth = Graphics_textWidth (my graphics, Melder_integer (irow));
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 	}
 	my columnLeft [0] = columnWidth + 2 * spacing;
@@ -258,8 +256,7 @@ static void draw (I) {
 	 */
 	for (icol = colmin; icol <= colmax; icol ++) {
 		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
-		swprintf (numberBuffer, 40, L"%ld", icol);
-		columnWidth = Graphics_textWidth (my graphics, numberBuffer);
+		columnWidth = Graphics_textWidth (my graphics, Melder_integer (icol));
 		if (columnLabel == NULL) columnLabel = L"";
 		cellWidth = Graphics_textWidth (my graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;

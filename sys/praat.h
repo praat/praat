@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/11/10
+ * pb 2007/11/18
  */
 
 #include "Editor.h"
@@ -261,7 +261,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	int result = DO_##alternative (sender, modified); \
 	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
-#define END  } } praat_updateSelection (); return 1; }
+#define END  (void) 0; } } iferror return 0; praat_updateSelection (); return 1; }
 #define DIRECT(proc)  static int DO_##proc (Any dummy1, void *dummy2) { \
 	(void) dummy1; (void) dummy2; { int IOBJECT = 0; (void) IOBJECT; {
 

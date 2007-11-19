@@ -1368,12 +1368,12 @@ int TextGrid_insertBoundary (TextGrid me, int itier, double t) {
 	TextInterval interval, newInterval;
 	long iinterval;
 	if (itier < 1 || itier > my tiers -> size)
-		return Melder_error ("Cannot add a boundary on tier %d, because that tier does not exist.", itier);
+		return Melder_error3 (L"Cannot add a boundary on tier ", Melder_integer (itier), L", because that tier does not exist.");
 	intervalTier = my tiers -> item [itier];
 	if (intervalTier -> methods != classIntervalTier)
-		return Melder_error ("Cannot add a boundary on tier %d, because that tier is not an interval tier.", itier);
+		return Melder_error3 (L"Cannot add a boundary on tier ", Melder_integer (itier), L", because that tier is not an interval tier.");
 	if (IntervalTier_hasTime (intervalTier, t))
-		return Melder_error ("Cannot add a boundary at %f seconds, because there is already a boundary there.", t);
+		return Melder_error3 (L"Cannot add a boundary at ", Melder_fixed (t, 6), L" seconds, because there is already a boundary there.");
 	iinterval = IntervalTier_timeToIndex (intervalTier, t);
 	if (iinterval == 0)
 		return Melder_error ("Cannot add a boundary at %f seconds, because this is outside the time domain of the intervals.", t);
@@ -1505,13 +1505,13 @@ static int sgmlToPraat (char *text) {
 			for (i = 0; i < 200; i ++) {
 				char sgmlChar = sgml [i];
 				if (sgmlChar == ';') {
-					if (i == 0) return Melder_error ("Empty SGML code.");
+					if (i == 0) return Melder_error1 (L"Empty SGML code.");
 					sgml += i + 1;
 					break;
 				}
 				sgmlCode [i] = sgmlChar;
 			}
-			if (i >= 200) return Melder_error ("Unfinished SGML code.");
+			if (i >= 200) return Melder_error1 (L"Unfinished SGML code.");
 			sgmlCode [i] = '\0';
 			for (i = 0; translations [i]. sgml != NULL; i ++) {
 				if (strequ (sgmlCode, translations [i]. sgml)) {

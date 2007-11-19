@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/11/18
  */
 
 #ifndef _Table_h_
@@ -40,7 +40,8 @@ oo_CLASS_CREATE (RegressionParameter, Data);
 oo_CLASS_CREATE (Regression, Data);
 
 int Regression_init (I);
-int Regression_addParameter (I, const wchar_t *label, double value);
+int Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value);
+long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName);
 
 #define LinearRegression_members  Regression_members
 #define LinearRegression_methods  Regression_methods
@@ -49,14 +50,6 @@ class_create (LinearRegression, Regression);
 LinearRegression LinearRegression_create (void);
 
 LinearRegression Table_to_LinearRegression (Table me);
-
-#define LogisticRegression_members  Regression_members
-#define LogisticRegression_methods  Regression_methods
-class_create (LogisticRegression, Regression);
-
-LogisticRegression LogisticRegression_create (void);
-
-LogisticRegression Table_to_LogisticRegression (Table me);
 
 #endif
 /* End of file Regression.h */

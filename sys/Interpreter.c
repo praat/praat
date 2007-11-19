@@ -119,7 +119,7 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 		wchar_t *head = *text;
 		long numberOfIncludes = 0;
 		if (depth > 10)
-			return Melder_error ("Include files nested too deep. Probably cyclic.");
+			return Melder_error1 (L"Include files nested too deep. Probably cyclic.");
 		for (;;) {
 			wchar_t *includeLocation, *includeFileName, *includeText, *tail, *newText;
 			long headLength, includeTextLength, newLength;

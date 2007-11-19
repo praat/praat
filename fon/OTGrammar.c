@@ -859,7 +859,7 @@ int OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output
 	if (! winner) error1 (L"No winner")
 	wcscpy (output, my tableaus [itab]. candidates [winner]. output);
 end:
-	iferror return Melder_error ("(OTGrammar_inputToOutput:) Not performed.");
+	iferror return Melder_error1 (L"(OTGrammar_inputToOutput:) Not performed.");
 	return 1;
 }
 
@@ -1319,7 +1319,7 @@ int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 				rankingSpreading, strategy, honourLocalRankings,
 				meanLearningStep, relativeStdevLearningStep, TRUE, TRUE, NULL)) return 0;
 end:
-	iferror return Melder_error ("(OTGrammar_learn:) Not completed.");
+	iferror return Melder_error1 (L"(OTGrammar_learn:) Not completed.");
 	return 1;
 }
 
@@ -1365,7 +1365,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	}
 end:
 	Melder_monitor1 (1.0, NULL);
-	iferror return Melder_error ("OTGrammar did not complete learning from input-output pairs.");
+	iferror return Melder_error1 (L"OTGrammar did not complete learning from input-output pairs.");
 	return 1;
 }
 
@@ -1543,7 +1543,7 @@ int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 	}
 end:
 	*history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
-	iferror return Melder_error ("(OTGrammar_learnFromPartialOutputs:) Not completed.");
+	iferror return Melder_error1 (L"(OTGrammar_learnFromPartialOutputs:) Not completed.");
 	if (history) {
 		OTGrammar_finalizeHistory (me, history, partialOutputs -> numberOfStrings);
 	}
@@ -1600,7 +1600,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 end:
 	Melder_monitor1 (1.0, NULL);
 	if (history_out) *history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
-	iferror return Melder_error ("OTGrammar did not complete learning from partial outputs.");
+	iferror return Melder_error1 (L"OTGrammar did not complete learning from partial outputs.");
 	if (history) {
 		OTGrammar_finalizeHistory (me, history, numberOfData);
 	}
@@ -1622,7 +1622,7 @@ int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistributio
 			numberOfCorrect ++;
 	}
 end:
-	iferror return Melder_error ("(OTGrammar_PairDistribution_getFractionCorrect:) Not completed.");
+	iferror return Melder_error1 (L"(OTGrammar_PairDistribution_getFractionCorrect:) Not completed.");
 	*fractionCorrect = (double) numberOfCorrect / numberOfInputs;
 	return 1;
 }
@@ -1642,7 +1642,7 @@ int OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions thee
 			numberOfCorrect ++;
 	}
 end:
-	iferror return Melder_error ("(OTGrammar_Distributions_getFractionCorrect:) Not completed.");
+	iferror return Melder_error1 (L"(OTGrammar_Distributions_getFractionCorrect:) Not completed.");
 	*fractionCorrect = (double) numberOfCorrect / numberOfInputs;
 	return 1;
 }
@@ -1651,7 +1651,7 @@ int OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName) {
 	long icons, ifixed, jfixed, itab, icand, removed = 0;
 
 	if (my numberOfConstraints <= 1)
-		return Melder_error ("Cannot remove last constraint.");
+		return Melder_error1 (L"Cannot remove last constraint.");
 
 	/*
 	 * Look for the constraint to be removed.

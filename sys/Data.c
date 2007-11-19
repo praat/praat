@@ -149,7 +149,7 @@ bool Data_canWriteText (I) {
 int Data_writeText (I, MelderFile openFile) {
 	iam (Data);
 	if (! our writeText (me, openFile)) return 0;
-	if (ferror (openFile -> filePointer)) return Melder_error ("(Data_writeText:) I/O error.");
+	if (ferror (openFile -> filePointer)) return Melder_error1 (L"(Data_writeText:) I/O error.");
 	return 1;
 }
 
@@ -236,7 +236,7 @@ bool Data_canWriteLisp (I) {
 int Data_writeLisp (I, FILE *f) {
 	iam (Data);
 	if (! our writeLisp (me, f)) return 0;
-	if (ferror (f)) return Melder_error ("(Data_writeLisp:) I/O error.");
+	if (ferror (f)) return Melder_error1 (L"(Data_writeLisp:) I/O error.");
 	return 1;
 }
 

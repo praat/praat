@@ -75,7 +75,7 @@ static int readBinary (I, FILE *f) {
 		for (;;) {
 			if (p - (unsigned char *) my string >= my length - 1) break;
 			kar = fgetc (f);
-			if (kar == EOF) return Melder_error ("(WordList::readBinary:) Early end of file.");
+			if (kar == EOF) return Melder_error1 (L"(WordList::readBinary:) Early end of file.");
 			if (kar >= 128) break;
 			*p ++ = kar;
 		}
@@ -92,7 +92,7 @@ static int readBinary (I, FILE *f) {
 			for (;;) {
 				if (p - (unsigned char *) my string >= my length - 1) break;
 				kar = fgetc (f);
-				if (kar == EOF) return Melder_error ("(WordList::readBinary:) Early end of file.");
+				if (kar == EOF) return Melder_error1 (L"(WordList::readBinary:) Early end of file.");
 				if (kar >= 128) break;
 				*p ++ = kar;
 			}

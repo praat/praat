@@ -124,6 +124,9 @@
 		23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23C47C9A0C933F680024C703 /* TimeSoundEditor.c */; };
 		23CBA3890C8DF07500F61B9D /* TimeSoundAnalysisEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */; };
 		23CBA3A70C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */; };
+		23D3ADAA0CF0821E004A1305 /* LogisticRegression_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D3ADA70CF0821E004A1305 /* LogisticRegression_def.h */; };
+		23D3ADAB0CF0821E004A1305 /* LogisticRegression.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D3ADA80CF0821E004A1305 /* LogisticRegression.c */; };
+		23D3ADAC0CF0821E004A1305 /* LogisticRegression.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D3ADA90CF0821E004A1305 /* LogisticRegression.h */; };
 		23D6C3F40CD5296800E90767 /* gsl_complex__math.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C3F30CD5296800E90767 /* gsl_complex__math.c */; };
 		23D6C3F70CD529A300E90767 /* gsl_complex_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D6C3F60CD529A300E90767 /* gsl_complex_math.h */; };
 		23D6C3FF0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D6C3FE0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c */; };
@@ -959,6 +962,9 @@
 		23C47C9A0C933F680024C703 /* TimeSoundEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundEditor.c; path = fon/TimeSoundEditor.c; sourceTree = "<group>"; };
 		23CBA3880C8DF07500F61B9D /* TimeSoundAnalysisEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundAnalysisEditor.h; path = fon/TimeSoundAnalysisEditor.h; sourceTree = "<group>"; };
 		23CBA3A60C8DF42A00F61B9D /* TimeSoundAnalysisEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundAnalysisEditor.c; path = fon/TimeSoundAnalysisEditor.c; sourceTree = "<group>"; };
+		23D3ADA70CF0821E004A1305 /* LogisticRegression_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogisticRegression_def.h; path = stat/LogisticRegression_def.h; sourceTree = "<group>"; };
+		23D3ADA80CF0821E004A1305 /* LogisticRegression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LogisticRegression.c; path = stat/LogisticRegression.c; sourceTree = "<group>"; };
+		23D3ADA90CF0821E004A1305 /* LogisticRegression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogisticRegression.h; path = stat/LogisticRegression.h; sourceTree = "<group>"; };
 		23D6C3F30CD5296800E90767 /* gsl_complex__math.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_complex__math.c; path = GSL/gsl_complex__math.c; sourceTree = "<group>"; };
 		23D6C3F60CD529A300E90767 /* gsl_complex_math.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = gsl_complex_math.h; path = GSL/gsl_complex_math.h; sourceTree = "<group>"; };
 		23D6C3FE0CD52B3100E90767 /* gsl_sf__hyperg_2F1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = gsl_sf__hyperg_2F1.c; path = GSL/gsl_sf__hyperg_2F1.c; sourceTree = "<group>"; };
@@ -2140,6 +2146,9 @@
 				2343C2340BAE1567003D66E8 /* Distributions.c */,
 				2343C20E0BAE1504003D66E8 /* Distributions_and_Strings.h */,
 				2343C20C0BAE14FE003D66E8 /* Distributions_and_Strings.c */,
+				23D3ADA70CF0821E004A1305 /* LogisticRegression_def.h */,
+				23D3ADA80CF0821E004A1305 /* LogisticRegression.c */,
+				23D3ADA90CF0821E004A1305 /* LogisticRegression.h */,
 				2343C2B10BAE20C1003D66E8 /* PairDistribution_def.h */,
 				2343C2B30BAE20C1003D66E8 /* PairDistribution.h */,
 				2343C2B20BAE20C1003D66E8 /* PairDistribution.c */,
@@ -3165,6 +3174,8 @@
 				23C47C9B0C933F680024C703 /* TimeSoundEditor.h in Headers */,
 				23D6C3F70CD529A300E90767 /* gsl_complex_math.h in Headers */,
 				23D6C4080CD52B9000E90767 /* gsl_sf__hyperg.h in Headers */,
+				23D3ADAA0CF0821E004A1305 /* LogisticRegression_def.h in Headers */,
+				23D3ADAC0CF0821E004A1305 /* LogisticRegression.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3644,6 +3655,7 @@
 				23D6C4130CD52BF500E90767 /* gsl_sf__bessel_Knu.c in Sources */,
 				23D6C4160CD52C1000E90767 /* gsl_sf__laguerre.c in Sources */,
 				23D6C4190CD52C4300E90767 /* gsl_sf__expint.c in Sources */,
+				23D3ADAB0CF0821E004A1305 /* LogisticRegression.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -559,6 +559,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		strcat (dirSpec, defaultNameUtf8);
 		XtVaSetValues (my dialog, motif_argXmString (XmNdirSpec, dirSpec), NULL);
 		XmStringFree (xmDirMask);
+		XmStringFree (xmDirSpec);
 		XtFree (dirMask);
 		XtFree (dirSpecc);
 		XtManageChild (my dialog);

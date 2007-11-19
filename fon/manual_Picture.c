@@ -214,7 +214,7 @@ LIST_ITEM (L"\t\\ps \\bsps \t\\Ps \\bsPs %psi")
 LIST_ITEM (L"\t\\om \\bsom \t\\Om \\bsOm %omega \t\\o2 \\bso2")
 
 ENTRY (L"Hebrew letters")
-NORMAL (L"To get an alef, you type \\bsA+. To type a longer Hebrew text, you %may have to type the letters "
+NORMAL (L"To get an alef, you type \\bs?+. To type a longer Hebrew text, you %may have to type the letters "
 	"in reverse order (this can happen on Windows and is a known bug). "
 	"If you mix Hebrew and Latin text, the Latin text may appear in reverse order "
 	"(this can happen on the Mac and is another known bug).")

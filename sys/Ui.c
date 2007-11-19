@@ -354,7 +354,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			Melder_free (my stringValue);
 			my stringValue = Melder_wcsdup (string);
 		} break; case UI_BOOLEAN: {
-			if (! string [0]) return Melder_error ("Empty argument for toggle button.");
+			if (! string [0]) return Melder_error1 (L"Empty argument for toggle button.");
 			my integerValue = string [0] == '1' || string [0] == 'y' || string [0] == 'Y' ||
 				string [0] == 't' || string [0] == 'T';
 		} break; case UI_RADIO: case UI_OPTIONMENU: {

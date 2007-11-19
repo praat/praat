@@ -1,11 +1,12 @@
 # Makefile of the library "stat"
-# Paul Boersma, March 18, 2007
+# Paul Boersma, November 18, 2007
 
 include ../makefile.defs
 CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
 
 OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
-   TableOfReal.o Distributions.o Distributions_and_Strings.o PairDistribution.o
+   TableOfReal.o Distributions.o Distributions_and_Strings.o PairDistribution.o \
+   LogisticRegression.o
 
 all: libstat.a
 libstat.a: $(OBJECTS)

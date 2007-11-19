@@ -68,7 +68,7 @@ int Lispio_openListFromFile (LispioSeq *me, FILE *f, char *buffer, long maxLengt
 			LispioSeq entry;
 			char *buffer = NULL;
 			FILE *f = fopen (fileName, "r");
-			if (! f) { Melder_error ("Cannot open file."); goto error; }
+			if (! f) { Melder_error1 (L"Cannot open file."); goto error; }
 			if (! (buffer = Melder_malloc (200000))) goto error;
 			for (;;)
 			{
