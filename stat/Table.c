@@ -588,7 +588,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Meld
 		}
 	}
 	if (thy rows -> size == 0) {
-		Melder_warning ("No row matches criterion.");
+		Melder_warning1 (L"No row matches criterion.");
 	}
 end:
 	iferror {
@@ -615,7 +615,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Meld
 		}
 	}
 	if (thy rows -> size == 0) {
-		Melder_warning ("No row matches criterion.");
+		Melder_warning1 (L"No row matches criterion.");
 	}
 end:
 	iferror {
@@ -971,7 +971,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 		}
 		#if 0
 		if (rowmax - rowmin > numberOfLevels && ! warned) {
-			Melder_warning ("Some rows of the original table have not been included in the new table. "
+			Melder_warning1 (L"Some rows of the original table have not been included in the new table. "
 				"You could perhaps add more factors.");
 			warned = true;
 		}
@@ -993,7 +993,7 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 				long level = myRow -> cells [columnToTranspose]. number;
 				long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
 				if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
-					Melder_warning ("Some information from the original table has not been included in the new table. "
+					Melder_warning1 (L"Some information from the original table has not been included in the new table. "
 						"You could perhaps add more factors.");
 					warned = true;
 				}

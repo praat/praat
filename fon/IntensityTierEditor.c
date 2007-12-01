@@ -54,7 +54,7 @@ class_methods (IntensityTierEditor, RealTierEditor)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Intensity (dB)", us -> quantityKey = L"Intensity";
-	us -> leftTickFormat = L"%4g", us -> rightTickFormat = L"%4g dB";
+	us -> rightTickUnits = L" dB";
 	us -> defaultYmin = 50.0, us -> defaultYmax = 100.0;
 	us -> setRangeTitle = L"Set intensity range...";
 	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"100.0";

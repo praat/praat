@@ -776,15 +776,15 @@ static void NativeControl_setTitle (Widget me) {
 
 static int _XmScrollBar_check (Widget me) {
 	if (my maximum < my minimum)
-		Melder_warning ("XmScrollBar: maximum (%d) less than minimum (%d).", my maximum, my minimum);
+		Melder_warning5 (L"XmScrollBar: maximum (", Melder_integer (my maximum), L") less than minimum (", Melder_integer (my minimum), L").");
 	else if (my sliderSize > my maximum - my minimum)
-		Melder_warning ("XmScrollBar: slider size (%d) greater than maximum (%d) minus minimum (%d).",
-			my sliderSize, my maximum, my minimum);
+		Melder_warning7 (L"XmScrollBar: slider size (", Melder_integer (my sliderSize), L") greater than maximum (",
+			Melder_integer (my maximum), L") minus minimum (", Melder_integer (my minimum), L").");
 	else if (my value < my minimum)
-		Melder_warning ("XmScrollBar: value (%d) less than minimum (%d).", my value, my minimum);
+		Melder_warning5 (L"XmScrollBar: value (", Melder_integer (my value), L") less than minimum (", Melder_integer (my minimum), L").");
 	else if (my value > my maximum - my sliderSize)
-		Melder_warning ("XmScrollBar: value (%d) greater than maximum (%d) minus slider size (%d).",
-			my value, my maximum, my sliderSize);
+		Melder_warning7 (L"XmScrollBar: value (", Melder_integer (my value), L") greater than maximum (",
+			Melder_integer (my maximum), L") minus slider size (", Melder_integer (my sliderSize), L").");
 	else return 1;
 	return 0;
 }
@@ -1931,7 +1931,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNcolumns: {
 			int columns = va_arg (arg, int);
 			Melder_assert (MEMBER (me, Text));
-			my width = columns * (mac ? 7 : 9) + 4;
+			my width = columns * 9 + 4;
 			resize = True;
 		} break;
 		case XmNdefaultButton:
@@ -3258,7 +3258,7 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 		(void) reply;
 		(void) handlerRefCon;
 		return noErr;
-		Melder_warning ("Open app event.");
+		Melder_warning1 (L"Open app event.");
 	}
 	static pascal OSErr _motif_processQuitApplicationMessage (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		/*
@@ -5225,6 +5225,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 							}
 						} else if (clicked -> widgetClass == xmTextWidgetClass) {
 							if (clicked -> isControl) {   /* A click in the margin of an EditText control !! */
+								_GuiMacText_handleClick (clicked, event);   // BUG?:
 								;   /* Do nothing. To react would feel like clicking after all text. */
 							} else {
 								_GuiMacText_handleClick (clicked, event);

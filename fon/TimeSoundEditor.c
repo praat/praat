@@ -510,7 +510,7 @@ void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum) 
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, L"%.4g", cursorFunctionValue);
+				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));

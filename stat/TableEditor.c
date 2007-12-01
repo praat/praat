@@ -25,6 +25,7 @@
  * pb 2006/08/02 correct vertical scroll bar on Windows (has to be called "verticalScrollBar")
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "TableEditor.h"
@@ -275,13 +276,13 @@ static void draw (I) {
 	 */
 	Graphics_text (my graphics, my columnLeft [0] / 2, rowmin - 1, L"row");
 	for (irow = rowmin; irow <= rowmax; irow ++) {
-		Graphics_printf (my graphics, my columnLeft [0] / 2, irow, L"%ld", irow);
+		Graphics_text1 (my graphics, my columnLeft [0] / 2, irow, Melder_integer (irow));
 	}
 	for (icol = colmin; icol <= colmax; icol ++) {
 		double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
 		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
 		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = L"?";
-		Graphics_printf (my graphics, mid, rowmin - 2, L"%ld", icol);
+		Graphics_text1 (my graphics, mid, rowmin - 2, Melder_integer (icol));
 		Graphics_text (my graphics, mid, rowmin - 1, columnLabel);
 	}
 	for (irow = rowmin; irow <= rowmax; irow ++) {

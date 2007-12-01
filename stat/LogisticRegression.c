@@ -274,7 +274,7 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 		}
 	}
 	if (iteration > 100) {
-		Melder_warning ("Logistic regression has not converged in 100 iterations. The results are unreliable.");
+		Melder_warning1 (L"Logistic regression has not converged in 100 iterations. The results are unreliable.");
 	}
 	for (ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		RegressionParameter parm = thy parameters -> item [ivar];

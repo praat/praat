@@ -26,6 +26,7 @@
  * pb 2006/12/08 better NUMundefined pitch and duration range checking
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "ManipulationEditor.h"
@@ -675,8 +676,8 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		scaleMin = 0.83 * minimum + 0.17 * my soundmin;
 		scaleMax = 0.83 * maximum + 0.17 * my soundmax;
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, scaleMin, scaleMax);
-		FunctionEditor_drawRangeMark (me, L"%.4g", scaleMin, Graphics_BOTTOM);
-		FunctionEditor_drawRangeMark (me, L"%.4g", scaleMax, Graphics_TOP);
+		FunctionEditor_drawRangeMark (me, scaleMin, Melder_float (Melder_half (scaleMin)), L"", Graphics_BOTTOM);
+		FunctionEditor_drawRangeMark (me, scaleMax, Melder_float (Melder_half (scaleMax)), L"", Graphics_TOP);
 
 		/*
 		 * Draw dotted zero line.
@@ -706,7 +707,8 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points -> size : 0, imin, imax, i;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	double minimumFrequency = YLIN (50);
-	wchar_t *rangeFormats [] = { L"", L"%.1f Hz", L"%.2f st" };
+	int rangePrecisions [] = { 0, 1, 2 };
+	wchar_t *rangeUnits [] = { L"", L" Hz", L" st" };
 
 	/*
 	 * Pitch contours.
@@ -745,14 +747,19 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setGrey (my graphics, 0.0);
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
-	FunctionEditor_drawRangeMark (me, rangeFormats [my pitchTier.units], my pitchTier.maximum, Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, rangeFormats [my pitchTier.units], my pitchTier.minimum, Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, my pitchTier.maximum,
+		Melder_fixed (my pitchTier.maximum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my pitchTier.minimum,
+		Melder_fixed (my pitchTier.minimum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_BOTTOM);
 	if (my startSelection == my endSelection && my pitchTier.cursor >= my pitchTier.minimum && my pitchTier.cursor <= my pitchTier.maximum)
-		FunctionEditor_drawHorizontalHair (me, rangeFormats [my pitchTier.units], my pitchTier.cursor);
-	if (cursorVisible && n > 0)
-		FunctionEditor_insertCursorFunctionValue (me, rangeFormats [my pitchTier.units],
-			YLIN (RealTier_getValueAtTime (pitch, my startSelection)), my pitchTier.minimum, my pitchTier.maximum);
-
+		FunctionEditor_drawHorizontalHair (me, my pitchTier.cursor,
+			Melder_fixed (my pitchTier.cursor, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units]);
+	if (cursorVisible && n > 0) {
+		double y = YLIN (RealTier_getValueAtTime (pitch, my startSelection));
+		FunctionEditor_insertCursorFunctionValue (me, y,
+			Melder_fixed (y, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units],
+			my pitchTier.minimum, my pitchTier.maximum);
+	}
 	if (pitch) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
@@ -826,13 +833,14 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
-	FunctionEditor_drawRangeMark (me, L"%.3f", my duration.maximum, Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, L"%.3f", my duration.minimum, Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, my duration.maximum, Melder_fixed (my duration.maximum, 3), L"", Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my duration.minimum, Melder_fixed (my duration.minimum, 3), L"", Graphics_BOTTOM);
 	if (my startSelection == my endSelection && my duration.cursor >= my duration.minimum && my duration.cursor <= my duration.maximum)
-		FunctionEditor_drawHorizontalHair (me, L"%.3f", my duration.cursor);
-	if (cursorVisible && n > 0)
-		FunctionEditor_insertCursorFunctionValue (me, L"%.3f",
-			RealTier_getValueAtTime (duration, my startSelection), my duration.minimum, my duration.maximum);
+		FunctionEditor_drawHorizontalHair (me, my duration.cursor, Melder_fixed (my duration.cursor, 3), L"");
+	if (cursorVisible && n > 0) {
+		double y = RealTier_getValueAtTime (duration, my startSelection);
+		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), L"", my duration.minimum, my duration.maximum);
+	}
 
 	/*
 	 * Draw duration tier.
@@ -941,11 +949,11 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		RealPoint point = pitch -> points -> item [first];
 		double t = point -> time + dt, fWC = YLIN (point -> value) + df;
 		Graphics_line (my graphics, t, my pitchTier.minimum, t, my pitchTier.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my pitchTier.maximum, L"%f", t);
+		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text1 (my graphics, t, my pitchTier.maximum, Melder_fixed (t, 6));
 		Graphics_line (my graphics, my startWindow, fWC, my endWindow, fWC);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, fWC, L"%.5f", fWC);
+		Graphics_text1 (my graphics, my startWindow, fWC, Melder_fixed (fWC, 5));
 	}
 }
 
@@ -1087,11 +1095,11 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		RealPoint point = duration -> points -> item [first];
 		double t = point -> time + dt, durWC = point -> value + df;
 		Graphics_line (my graphics, t, my duration.minimum, t, my duration.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my duration.maximum, L"%f", t);
+		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text1 (my graphics, t, my duration.maximum, Melder_fixed (t, 6));
 		Graphics_line (my graphics, my startWindow, durWC, my endWindow, durWC);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, durWC, L"%.2f", durWC);
+		Graphics_text1 (my graphics, my startWindow, durWC, Melder_fixed (durWC, 2));
 	}
 }
 

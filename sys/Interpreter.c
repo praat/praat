@@ -830,7 +830,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 								++ p;   /* First argument. */
 								++ q;   /* First parameter. */
 								while (*q) {
-									wchar_t *par, save, arg [1000], *to = & arg [0];
+									wchar_t *par, save;
+									static MelderString arg = { 0 };
+									MelderString_empty (& arg);
 									while (*p == ' ' || *p == '\t') p ++;
 									while (*q == ' ' || *q == '\t') q ++;
 									par = q;
@@ -841,32 +843,33 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 											while (*p != '\0') {
 												if (*p == '\"') {   /* Quote signals end-of-string or string-internal quote. */
 													if (p [1] == '\"') {   /* Double quote signals string-internal quote. */
-														*to ++ = '\"';
+														MelderString_appendCharacter (& arg, '\"');
 														p += 2;   /* Skip second quote. */
 													} else {   /* Single quote signals end-of-string. */
 														break;
 													}
 												} else {
-													*to ++ = *p ++;
+													MelderString_appendCharacter (& arg, *p ++);
 												}
 											}
 										} else {
-											while (*p != '\0' && *p != ' ' && *p != '\t') *to ++ = *p ++;   /* White space separates. */
+											while (*p != '\0' && *p != ' ' && *p != '\t')
+												MelderString_appendCharacter (& arg, *p ++);   /* White space separates. */
 										}
 										if (*p) { *p = '\0'; p ++; }
 									} else {   /* Else rest of line. */
-										while (*p != '\0') *to ++ = *p ++;
+										while (*p != '\0')
+											MelderString_appendCharacter (& arg, *p ++);
 									}
-									*to = '\0';
 									if (q [-1] == '$') {
 										save = *q; *q = '\0';
 										InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save; cherror
 										Melder_free (var -> stringValue);
-										var -> stringValue = Melder_wcsdup (arg);
+										var -> stringValue = Melder_wcsdup (arg.string);
 									} else {
 										double value;
 										my callDepth --;
-										Interpreter_numericExpression (me, arg, & value);
+										Interpreter_numericExpression (me, arg.string, & value);
 										my callDepth ++;
 										save = *q; *q = '\0'; 
 										InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save; cherror

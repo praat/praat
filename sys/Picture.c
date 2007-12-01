@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2005/05/19 EPS files have the option to switch off the screen preview
  * pb 2005/09/18 useSilipaPS
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "melder.h"
@@ -81,9 +82,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double x = i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_printf (my selectionGraphics, x, SIDE, L"%d", i);
+		Graphics_text1 (my selectionGraphics, x, SIDE, Melder_integer (i));
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my selectionGraphics, x, 0, L"%d", i);
+		Graphics_text1 (my selectionGraphics, x, 0, Melder_integer (i));
 	}
 	for (i = 1; i < SQUARES ; i ++) {   /* Vertical ticks. */
 		double x = 0.5 * i;
@@ -93,9 +94,9 @@ static void drawMarkers (Picture me)
 	for (i = 1; i < SIDE; i ++) {
 		double y = SIDE - i;
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_printf (my selectionGraphics, 0.04, y, L"%d", i);
+		Graphics_text1 (my selectionGraphics, 0.04, y, Melder_integer (i));
 		Graphics_setTextAlignment (my selectionGraphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my selectionGraphics, SIDE - 0.03, y, L"%d", i);
+		Graphics_text1 (my selectionGraphics, SIDE - 0.03, y, Melder_integer (i));
 	}
 	for (i = 1; i < SQUARES; i ++) {   /* Horizontal ticks. */
 		double y = SIDE - 0.5 * i;

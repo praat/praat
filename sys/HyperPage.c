@@ -25,6 +25,7 @@
  * pb 2005/07/19 moved "<1" and "1>" buttons to the top, removed horizontal scroll bar and page number
  * pb 2006/10/20 embedded scripts allow links
  * pb 2007/06/10 wchar_t
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include <ctype.h>
@@ -150,7 +151,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	}
 	Graphics_setFontStyle (my ps, Graphics_NORMAL);
 	if (my pageNumber)
-		Graphics_printf (my ps, 0.7 + ( reflect ? 0 : 6 ), PAPER_BOTTOM, L"%ld", my pageNumber);
+		Graphics_text1 (my ps, 0.7 + ( reflect ? 0 : 6 ), PAPER_BOTTOM, Melder_integer (my pageNumber));
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 

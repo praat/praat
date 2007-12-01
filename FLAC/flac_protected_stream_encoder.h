@@ -34,7 +34,7 @@
 
 #include "flac_FLAC_stream_encoder.h"
 #if FLAC__HAS_OGG
-#include "flac_private_ogg_encoder_aspect.h"
+#include "private/ogg_encoder_aspect.h"
 #endif
 
 #ifndef FLAC__INTEGER_ONLY_LIBRARY
@@ -79,6 +79,7 @@ typedef struct FLAC__StreamEncoderProtected {
 	FLAC__StreamEncoderState state;
 	FLAC__bool verify;
 	FLAC__bool streamable_subset;
+	FLAC__bool do_md5;
 	FLAC__bool do_mid_side_stereo;
 	FLAC__bool loose_mid_side_stereo;
 	unsigned channels;

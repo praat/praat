@@ -126,11 +126,17 @@ void Graphics_unhighlight2 (I, double x1, double x2, double y1, double y2,
 	double innerX1, double innerX2, double innerY1, double innerY2);
 
 #define Graphics_NOCHANGE  -1
-#define Graphics_LEFT  0
-#define Graphics_CENTRE  1
-#define Graphics_CENTER  1
-#define Graphics_RIGHT  2
-#define Graphics_JUSTIFIED  3
+#define kGraphics_horizontalAlignment_MIN  0
+#define kGraphics_horizontalAlignment_LEFT  0
+#define kGraphics_horizontalAlignment_CENTRE  1
+#define kGraphics_horizontalAlignment_RIGHT  2
+#define kGraphics_horizontalAlignment_MAX  2
+#define kGraphics_horizontalAlignment_DEFAULT  kGraphics_horizontalAlignment_LEFT
+#define Graphics_LEFT  kGraphics_horizontalAlignment_LEFT
+#define Graphics_CENTRE  kGraphics_horizontalAlignment_CENTRE
+#define Graphics_RIGHT  kGraphics_horizontalAlignment_RIGHT
+wchar_t *kGraphics_horizontalAlignment_getText (int value);
+int kGraphics_horizontalAlignment_getValue (wchar_t *text);
 #define Graphics_BOTTOM  0
 #define Graphics_HALF  1
 #define Graphics_TOP  2
@@ -206,7 +212,6 @@ float Graphics_inqLineWidth (I);
 float Graphics_inqArrowSize (I);
 int Graphics_inqColour (I);
 
-void Graphics_printf (I, double xWC, double yWC, const wchar_t *format, ...);
 void Graphics_contour (I, float **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);
 void Graphics_altitude (I, float **z,

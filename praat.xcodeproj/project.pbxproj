@@ -114,6 +114,7 @@
 		2343C2B50BAE20C1003D66E8 /* PairDistribution.c in Sources */ = {isa = PBXBuildFile; fileRef = 2343C2B20BAE20C1003D66E8 /* PairDistribution.c */; };
 		2343C2B60BAE20C1003D66E8 /* PairDistribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 2343C2B30BAE20C1003D66E8 /* PairDistribution.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
+		237EBB2A0CF346A1001364DE /* flac_share_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 237EBB290CF346A1001364DE /* flac_share_alloc.h */; };
 		23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23AC02E90C2195F300990540 /* melder_encodings.c */; };
 		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
 		23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */; };
@@ -954,6 +955,7 @@
 		2343C2B20BAE20C1003D66E8 /* PairDistribution.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = PairDistribution.c; path = stat/PairDistribution.c; sourceTree = "<group>"; };
 		2343C2B30BAE20C1003D66E8 /* PairDistribution.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PairDistribution.h; path = stat/PairDistribution.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
+		237EBB290CF346A1001364DE /* flac_share_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flac_share_alloc.h; sourceTree = "<group>"; };
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
@@ -2741,6 +2743,7 @@
 				23F8A8C60BF103B2000ED19D /* flac_protected_all.h */,
 				23F8A8C70BF103B2000ED19D /* flac_protected_stream_decoder.h */,
 				23F8A8C80BF103B2000ED19D /* flac_protected_stream_encoder.h */,
+				237EBB290CF346A1001364DE /* flac_share_alloc.h */,
 				23F8A8C90BF103B2000ED19D /* flac_stream_decoder.c */,
 				23F8A8CA0BF103B2000ED19D /* flac_stream_encoder.c */,
 				23F8A8CB0BF103B2000ED19D /* flac_stream_encoder_framing.c */,
@@ -3176,6 +3179,7 @@
 				23D6C4080CD52B9000E90767 /* gsl_sf__hyperg.h in Headers */,
 				23D3ADAA0CF0821E004A1305 /* LogisticRegression_def.h in Headers */,
 				23D3ADAC0CF0821E004A1305 /* LogisticRegression.h in Headers */,
+				237EBB2A0CF346A1001364DE /* flac_share_alloc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

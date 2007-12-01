@@ -35,11 +35,9 @@
 
 #include <stdlib.h> /* for malloc() */
 #include <string.h> /* for memcpy(), memset() */
-#if defined(_MSC_VER) && _MSC_VER <= 1200
+#ifdef _WIN32
 #include <winsock.h> /* for ntohl() */
-#elif defined(__MINGW32__) || defined (_WIN32) && defined (__MWERKS__)
-#include <winsock2.h> /* for ntohl() */
-#elif defined FLAC__SYS_DARWIN
+#elif defined macintosh
 #include <machine/endian.h> /* for ntohl() */
 #else
 #include <netinet/in.h> /* for ntohl() */
@@ -49,23 +47,14 @@
 #include "flac_private_crc.h"
 #include "flac_FLAC_assert.h"
 
-/*
- * Along the way you will see two versions of some functions, selected
- * by a FLAC__NO_MANUAL_INLINING macro.  One is the simplified, more
- * readable, and slow version, and the other is the same function
- * where crucial parts have been manually inlined and are much faster.
- *
- */
-
 /* Things should be fastest when this matches the machine word size */
-/* WATCHOUT: if you change this you must also change the following #defines down to ALIGNED_UNARY_BITS below to match */
+/* WATCHOUT: if you change this you must also change the following #defines down to COUNT_ZERO_MSBS below to match */
 /* WATCHOUT: there are a few places where the code will not work unless brword is >= 32 bits wide */
 /*           also, some sections currently only have fast versions for 4 or 8 bytes per word */
 typedef FLAC__uint32 brword;
 #define FLAC__BYTES_PER_WORD 4
 #define FLAC__BITS_PER_WORD 32
 #define FLAC__WORD_ALL_ONES ((FLAC__uint32)0xffffffff)
-#define FLAC__WORD_TOP_BIT_ONE ((FLAC__uint32)0x80000000)
 /* SWAP_BE_WORD_TO_HOST swaps bytes in a brword (which is always big-endian) if necessary to match host byte order */
 #if WORDS_BIGENDIAN
 #define SWAP_BE_WORD_TO_HOST(x) (x)
@@ -77,13 +66,13 @@ typedef FLAC__uint32 brword;
 #endif
 #endif
 /* counts the # of zero MSBs in a word */
-#define ALIGNED_UNARY_BITS(word) ( \
+#define COUNT_ZERO_MSBS(word) ( \
 	(word) <= 0xffff ? \
 		( (word) <= 0xff? byte_to_unary_table[word] + 24 : byte_to_unary_table[(word) >> 8] + 16 ) : \
 		( (word) <= 0xffffff? byte_to_unary_table[word >> 16] + 8 : byte_to_unary_table[(word) >> 24] ) \
 )
 /* this alternate might be slightly faster on some systems/compilers: */
-#define ALIGNED_UNARY_BITS2(word) ( (word) <= 0xff ? byte_to_unary_table[word] + 24 : ((word) <= 0xffff ? byte_to_unary_table[(word) >> 8] + 16 : ((word) <= 0xffffff ? byte_to_unary_table[(word) >> 16] + 8 : byte_to_unary_table[(word) >> 24])) )
+#define COUNT_ZERO_MSBS2(word) ( (word) <= 0xff ? byte_to_unary_table[word] + 24 : ((word) <= 0xffff ? byte_to_unary_table[(word) >> 8] + 16 : ((word) <= 0xffffff ? byte_to_unary_table[(word) >> 16] + 8 : byte_to_unary_table[(word) >> 24])) )
 
 
 /*
@@ -141,6 +130,7 @@ static const unsigned char byte_to_unary_table[] = {
 #define FLaC__INLINE
 #endif
 
+/* WATCHOUT: assembly routines rely on the order in which these fields are declared */
 struct FLAC__BitReader {
 	/* any partially-consumed word at the head will stay right-justified as bits are consumed from the left */
 	/* any incomplete word at the tail will be left-justified, and bytes from the read callback are added on the right */
@@ -148,11 +138,13 @@ struct FLAC__BitReader {
 	unsigned capacity; /* in words */
 	unsigned words; /* # of completed words in buffer */
 	unsigned bytes; /* # of bytes in incomplete word at buffer[words] */
-	unsigned consumed_words, consumed_bits; /* #words+(#bits of head word) already consumed from the front of buffer */
+	unsigned consumed_words; /* #words ... */
+	unsigned consumed_bits; /* ... + (#bits of head word) already consumed from the front of buffer */
 	unsigned read_crc16; /* the running frame CRC */
 	unsigned crc16_align; /* the number of bits in the current consumed word that should not be CRC'd */
 	FLAC__BitReaderReadCallback read_callback;
 	void *client_data;
+	FLAC__CPUInfo cpu_info;
 };
 
 #ifdef _MSC_VER
@@ -161,6 +153,23 @@ static _inline FLAC__uint32 local_swap32_(FLAC__uint32 x)
 {
 	x = ((x<<8)&0xFF00FF00) | ((x>>8)&0x00FF00FF);
 	return (x>>16) | (x<<16);
+}
+static void local_swap32_block_(FLAC__uint32 *start, FLAC__uint32 len)
+{
+	__asm {
+		mov edx, start
+		mov ecx, len
+		test ecx, ecx
+loop1:
+		jz done1
+		mov eax, [edx]
+		bswap eax
+		mov [edx], eax
+		add edx, 4
+		dec ecx
+		jmp short loop1
+done1:
+	}
 }
 #endif
 
@@ -193,7 +202,8 @@ static FLaC__INLINE void crc16_update_word_(FLAC__BitReader *br, brword word)
 	br->crc16_align = 0;
 }
 
-static FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
+/* would be static except it needs to be called by asm routines */
+FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
 {
 	unsigned start, end;
 	size_t bytes;
@@ -251,6 +261,13 @@ static FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
 #if WORDS_BIGENDIAN
 #else
 	end = (br->words*FLAC__BYTES_PER_WORD + br->bytes + bytes + (FLAC__BYTES_PER_WORD-1)) / FLAC__BYTES_PER_WORD;
+# if defined(_MSC_VER) && (FLAC__BYTES_PER_WORD == 4)
+	if(br->cpu_info.type == FLAC__CPUINFO_TYPE_IA32 && br->cpu_info.data.ia32.bswap) {
+		start = br->words;
+		local_swap32_block_(br->buffer + start, end - start);
+	}
+	else
+# endif
 	for(start = br->words; start < end; start++)
 		br->buffer[start] = SWAP_BE_WORD_TO_HOST(br->buffer[start]);
 #endif
@@ -304,7 +321,7 @@ void FLAC__bitreader_delete(FLAC__BitReader *br)
  *
  ***********************************************************************/
 
-FLAC__bool FLAC__bitreader_init(FLAC__BitReader *br, FLAC__BitReaderReadCallback rcb, void *cd)
+FLAC__bool FLAC__bitreader_init(FLAC__BitReader *br, FLAC__CPUInfo cpu, FLAC__BitReaderReadCallback rcb, void *cd)
 {
 	FLAC__ASSERT(0 != br);
 
@@ -316,6 +333,7 @@ FLAC__bool FLAC__bitreader_init(FLAC__BitReader *br, FLAC__BitReaderReadCallback
 		return false;
 	br->read_callback = rcb;
 	br->client_data = cd;
+	br->cpu_info = cpu;
 
 	return true;
 }
@@ -675,7 +693,7 @@ FLAC__bool FLAC__bitreader_read_byte_block_aligned_no_crc(FLAC__BitReader *br, F
 }
 
 FLaC__INLINE FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br, unsigned *val)
-#ifdef FLAC__NO_MANUAL_INLINING
+#if 0 /* slow but readable version */
 {
 	unsigned bit;
 
@@ -705,16 +723,11 @@ FLaC__INLINE FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br,
 		while(br->consumed_words < br->words) { /* if we've not consumed up to a partial tail word... */
 			brword b = br->buffer[br->consumed_words] << br->consumed_bits;
 			if(b) {
-#if 0 /* too slow, but this is the idea: */
-				for(i = 0; !(b & FLAC__WORD_TOP_BIT_ONE); i++)
-					b <<= 1;
-#else
-				i = ALIGNED_UNARY_BITS(b);
-#endif
+				i = COUNT_ZERO_MSBS(b);
 				*val += i;
 				i++;
 				br->consumed_bits += i;
-				if(br->consumed_bits == FLAC__BITS_PER_WORD) {
+				if(br->consumed_bits >= FLAC__BITS_PER_WORD) { /* faster way of testing if(br->consumed_bits == FLAC__BITS_PER_WORD) */
 					crc16_update_word_(br, br->buffer[br->consumed_words]);
 					br->consumed_words++;
 					br->consumed_bits = 0;
@@ -740,12 +753,7 @@ FLaC__INLINE FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br,
 			const unsigned end = br->bytes * 8;
 			brword b = (br->buffer[br->consumed_words] & (FLAC__WORD_ALL_ONES << (FLAC__BITS_PER_WORD-end))) << br->consumed_bits;
 			if(b) {
-#if 0 /* too slow, but this is the idea: */
-				for(i = 0; !(b & FLAC__WORD_TOP_BIT_ONE); i++)
-					b <<= 1;
-#else
-				i = ALIGNED_UNARY_BITS(b);
-#endif
+				i = COUNT_ZERO_MSBS(b);
 				*val += i;
 				i++;
 				br->consumed_bits += i;
@@ -767,10 +775,9 @@ FLaC__INLINE FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br,
 
 FLAC__bool FLAC__bitreader_read_rice_signed(FLAC__BitReader *br, int *val, unsigned parameter)
 {
-//	FLAC__uint32 lsbs = 0, msbs = 0;
-//	unsigned uval; // changed by Paul Boersma into the following:
 	FLAC__uint32 lsbs = 0;
-	unsigned uval, msbs = 0;
+	unsigned msbs = 0;
+	unsigned uval;
 
 	FLAC__ASSERT(0 != br);
 	FLAC__ASSERT(0 != br->buffer);
@@ -797,6 +804,8 @@ FLAC__bool FLAC__bitreader_read_rice_signed(FLAC__BitReader *br, int *val, unsig
 /* this is by far the most heavily used reader call.  it ain't pretty but it's fast */
 /* a lot of the logic is copied, then adapted, from FLAC__bitreader_read_unary_unsigned() and FLAC__bitreader_read_raw_uint32() */
 FLAC__bool FLAC__bitreader_read_rice_signed_block(FLAC__BitReader *br, int vals[], unsigned nvals, unsigned parameter)
+/* OPT: possibly faster version for use with MSVC */
+#ifdef _MSC_VER
 {
 	unsigned i;
 	unsigned uval = 0;
@@ -828,11 +837,15 @@ FLAC__bool FLAC__bitreader_read_rice_signed_block(FLAC__BitReader *br, int vals[
 			while(cwords < br->words) { /* if we've not consumed up to a partial tail word... */
 				brword b = br->buffer[cwords] << cbits;
 				if(b) {
-#if 0 /* too slow, but this is the idea: */
-					for(i = 0; !(b & FLAC__WORD_TOP_BIT_ONE); i++)
-						b <<= 1;
+#if 0 /* slower, probably due to bad register allocation... */ && defined FLAC__CPU_IA32 && !defined FLAC__NO_ASM && FLAC__BITS_PER_WORD == 32
+					__asm {
+						bsr eax, b
+						not eax
+						and eax, 31
+						mov i, eax
+					}
 #else
-					i = ALIGNED_UNARY_BITS(b);
+					i = COUNT_ZERO_MSBS(b);
 #endif
 					uval += i;
 					bits = parameter;
@@ -864,12 +877,7 @@ FLAC__bool FLAC__bitreader_read_rice_signed_block(FLAC__BitReader *br, int vals[
 				const unsigned end = br->bytes * 8;
 				brword b = (br->buffer[cwords] & (FLAC__WORD_ALL_ONES << (FLAC__BITS_PER_WORD-end))) << cbits;
 				if(b) {
-#if 0 /* too slow, but this is the idea: */
-					for(i = 0; !(b & FLAC__WORD_TOP_BIT_ONE); i++)
-						b <<= 1;
-#else
-					i = ALIGNED_UNARY_BITS(b);
-#endif
+					i = COUNT_ZERO_MSBS(b);
 					uval += i;
 					bits = parameter;
 					i++;
@@ -979,6 +987,194 @@ break2:
 
 	}
 }
+#else
+{
+	unsigned i;
+	unsigned uval = 0;
+
+	/* try and get br->consumed_words and br->consumed_bits into register;
+	 * must remember to flush them back to *br before calling other
+	 * bitwriter functions that use them, and before returning */
+	register unsigned cwords;
+	register unsigned cbits;
+	unsigned ucbits; /* keep track of the number of unconsumed bits in the buffer */
+
+	FLAC__ASSERT(0 != br);
+	FLAC__ASSERT(0 != br->buffer);
+	/* WATCHOUT: code does not work with <32bit words; we can make things much faster with this assertion */
+	FLAC__ASSERT(FLAC__BITS_PER_WORD >= 32);
+	FLAC__ASSERT(parameter < 32);
+	/* the above two asserts also guarantee that the binary part never straddles more than 2 words, so we don't have to loop to read it */
+
+	if(nvals == 0)
+		return true;
+
+	cbits = br->consumed_bits;
+	cwords = br->consumed_words;
+	ucbits = (br->words-cwords)*FLAC__BITS_PER_WORD + br->bytes*8 - cbits;
+
+	while(1) {
+
+		/* read unary part */
+		while(1) {
+			while(cwords < br->words) { /* if we've not consumed up to a partial tail word... */
+				brword b = br->buffer[cwords] << cbits;
+				if(b) {
+#if 0 /* is not discernably faster... */ && defined FLAC__CPU_IA32 && !defined FLAC__NO_ASM && FLAC__BITS_PER_WORD == 32 && defined __GNUC__
+					asm volatile (
+						"bsrl %1, %0;"
+						"notl %0;"
+						"andl $31, %0;"
+						: "=r"(i)
+						: "r"(b)
+					);
+#else
+					i = COUNT_ZERO_MSBS(b);
+#endif
+					uval += i;
+					cbits += i;
+					cbits++; /* skip over stop bit */
+					if(cbits >= FLAC__BITS_PER_WORD) { /* faster way of testing if(cbits == FLAC__BITS_PER_WORD) */
+						crc16_update_word_(br, br->buffer[cwords]);
+						cwords++;
+						cbits = 0;
+					}
+					goto break1;
+				}
+				else {
+					uval += FLAC__BITS_PER_WORD - cbits;
+					crc16_update_word_(br, br->buffer[cwords]);
+					cwords++;
+					cbits = 0;
+					/* didn't find stop bit yet, have to keep going... */
+				}
+			}
+			/* at this point we've eaten up all the whole words; have to try
+			 * reading through any tail bytes before calling the read callback.
+			 * this is a repeat of the above logic adjusted for the fact we
+			 * don't have a whole word.  note though if the client is feeding
+			 * us data a byte at a time (unlikely), br->consumed_bits may not
+			 * be zero.
+			 */
+			if(br->bytes) {
+				const unsigned end = br->bytes * 8;
+				brword b = (br->buffer[cwords] & ~(FLAC__WORD_ALL_ONES >> end)) << cbits;
+				if(b) {
+					i = COUNT_ZERO_MSBS(b);
+					uval += i;
+					cbits += i;
+					cbits++; /* skip over stop bit */
+					FLAC__ASSERT(cbits < FLAC__BITS_PER_WORD);
+					goto break1;
+				}
+				else {
+					uval += end - cbits;
+					cbits += end;
+					FLAC__ASSERT(cbits < FLAC__BITS_PER_WORD);
+					/* didn't find stop bit yet, have to keep going... */
+				}
+			}
+			/* flush registers and read; bitreader_read_from_client_() does
+			 * not touch br->consumed_bits at all but we still need to set
+			 * it in case it fails and we have to return false.
+			 */
+			br->consumed_bits = cbits;
+			br->consumed_words = cwords;
+			if(!bitreader_read_from_client_(br))
+				return false;
+			cwords = br->consumed_words;
+			ucbits = (br->words-cwords)*FLAC__BITS_PER_WORD + br->bytes*8 - cbits + uval;
+			/* + uval to offset our count by the # of unary bits already
+			 * consumed before the read, because we will add these back
+			 * in all at once at break1
+			 */
+		}
+break1:
+		ucbits -= uval;
+		ucbits--; /* account for stop bit */
+
+		/* read binary part */
+		FLAC__ASSERT(cwords <= br->words);
+
+		if(parameter) {
+			while(ucbits < parameter) {
+				/* flush registers and read; bitreader_read_from_client_() does
+				 * not touch br->consumed_bits at all but we still need to set
+				 * it in case it fails and we have to return false.
+				 */
+				br->consumed_bits = cbits;
+				br->consumed_words = cwords;
+				if(!bitreader_read_from_client_(br))
+					return false;
+				cwords = br->consumed_words;
+				ucbits = (br->words-cwords)*FLAC__BITS_PER_WORD + br->bytes*8 - cbits;
+			}
+			if(cwords < br->words) { /* if we've not consumed up to a partial tail word... */
+				if(cbits) {
+					/* this also works when consumed_bits==0, it's just slower than necessary for that case */
+					const unsigned n = FLAC__BITS_PER_WORD - cbits;
+					const brword word = br->buffer[cwords];
+					if(parameter < n) {
+						uval <<= parameter;
+						uval |= (word & (FLAC__WORD_ALL_ONES >> cbits)) >> (n-parameter);
+						cbits += parameter;
+					}
+					else {
+						uval <<= n;
+						uval |= word & (FLAC__WORD_ALL_ONES >> cbits);
+						crc16_update_word_(br, word);
+						cwords++;
+						cbits = parameter - n;
+						if(cbits) { /* parameter > n, i.e. if there are still bits left to read, there have to be less than 32 so they will all be in the next word */
+							uval <<= cbits;
+							uval |= (br->buffer[cwords] >> (FLAC__BITS_PER_WORD-cbits));
+						}
+					}
+				}
+				else {
+					cbits = parameter;
+					uval <<= parameter;
+					uval |= br->buffer[cwords] >> (FLAC__BITS_PER_WORD-cbits);
+				}
+			}
+			else {
+				/* in this case we're starting our read at a partial tail word;
+				 * the reader has guaranteed that we have at least 'parameter'
+				 * bits available to read, which makes this case simpler.
+				 */
+				uval <<= parameter;
+				if(cbits) {
+					/* this also works when consumed_bits==0, it's just a little slower than necessary for that case */
+					FLAC__ASSERT(cbits + parameter <= br->bytes*8);
+					uval |= (br->buffer[cwords] & (FLAC__WORD_ALL_ONES >> cbits)) >> (FLAC__BITS_PER_WORD-cbits-parameter);
+					cbits += parameter;
+				}
+				else {
+					cbits = parameter;
+					uval |= br->buffer[cwords] >> (FLAC__BITS_PER_WORD-cbits);
+				}
+			}
+		}
+
+		ucbits -= parameter;
+
+		/* compose the value */
+		*vals = (int)(uval >> 1 ^ -(int)(uval & 1));
+
+		/* are we done? */
+		--nvals;
+		if(nvals == 0) {
+			br->consumed_bits = cbits;
+			br->consumed_words = cwords;
+			return true;
+		}
+
+		uval = 0;
+		++vals;
+
+	}
+}
+#endif
 
 #if 0 /* UNUSED */
 FLAC__bool FLAC__bitreader_read_golomb_signed(FLAC__BitReader *br, int *val, unsigned parameter)

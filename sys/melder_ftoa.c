@@ -1,6 +1,6 @@
 /* melder_ftoa.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2006/04/16 separated from melder.c
  * pb 2006/12/10 A and W versions
  * pb 2006/12/29 removed future bug
+ * pb 2007/11/30 Melder_float
  */
 
 #include "melder.h"
@@ -36,8 +37,8 @@
 
 #define NUMBER_OF_BUFFERS  32
 	/* = maximum number of arguments to a function call */
-#define MAXIMUM_NUMERIC_STRING_LENGTH  380
-	/* = sign + 308 + point + 60 + E + sign + 3 + null byte + 4 extra */
+#define MAXIMUM_NUMERIC_STRING_LENGTH  386
+	/* = sign + 308 + point + 60 + E + sign + 3 + null byte + (\.c10^^ - 1) + 4 extra */
 
 static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
@@ -113,7 +114,7 @@ const wchar_t * Melder_single (double value) {
 const wchar_t * Melder_half (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.4g", value);
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.5g", value);
 	return buffers [ibuffer];
 }
 
@@ -153,6 +154,27 @@ const wchar_t * Melder_percent (double value, int precision) {
 	minimumPrecision = - (int) floor (log10 (value));
 	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f%%",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
+	return buffers [ibuffer];
+}
+
+const wchar_t * Melder_float (const wchar_t *number) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	if (wcschr (buffers [ibuffer], 'e') == NULL) {
+		wcscpy (buffers [ibuffer], number);
+	} else {
+		wchar_t *b = buffers [ibuffer];
+		const wchar_t *n = number;
+		while (*n != 'e') *(b++) = *(n++); *b = '\0';
+		if (number [0] == '1' && number [1] == 'e') {
+			wcscpy (buffers [ibuffer], L"10^^"); b = buffers [ibuffer] + 4;
+		} else {
+			wcscat (buffers [ibuffer], L"\\.c10^^"); b += 7;
+		}
+		if (*++n == '+') n ++;   /* Ignore leading plus sign in exponent. */
+		if (*n == '-') *(b++) = *(n++);   /* Copy sign of negative exponent. */
+		while (*n == '0') n ++;   /* Ignore leading zeroes in exponent. */
+		while (*n) *(b++) = *(n++); *b = '\0';
+	}
 	return buffers [ibuffer];
 }
 

@@ -33,6 +33,7 @@
  * pb 2007/09/05 direct drawing to picture window
  * pb 2007/09/08 moved File menu to TimeSoundEditor.c
  * pb 2007/09/19 moved settings report to info
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "SoundEditor.h"
@@ -158,7 +159,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 		FunctionEditor_marksChanged (me);
 		Editor_broadcastChange (me);
 	} else {
-		Melder_warning ("No samples selected.");
+		Melder_warning1 (L"No samples selected.");
 	}
 	return 1;
 }
@@ -170,7 +171,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
 	float **newData, **oldData = sound -> z;
 	if (! Sound_clipboard) {
-		Melder_warning ("(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
+		Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
 		return 1;
 	}
 	if (Sound_clipboard -> ny != sound -> ny)
@@ -353,9 +354,9 @@ static void draw (I) {
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my graphics, 0.5, 0.5, L"(window longer than %.7g seconds)", my longSound.data -> bufferLength);
+		Graphics_text3 (my graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (my longSound.data -> bufferLength)), L" seconds)");
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_printf (my graphics, 0.5, 0.5, L"(zoom in to see the samples)");
+		Graphics_text1 (my graphics, 0.5, 0.5, L"(zoom in to see the samples)");
 		return;
 	}
 

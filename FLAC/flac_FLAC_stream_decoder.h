@@ -459,7 +459,7 @@ struct FLAC__StreamDecoderPrivate;
  *  See the \link flac_stream_decoder stream decoder module \endlink
  *  for a detailed description.
  */
-typedef struct FLAC__StreamDecoder {
+typedef struct FLAC__StreamDecoder {   // ppgb 20071120
 	struct FLAC__StreamDecoderProtected *protected_; /* avoid the C++ keyword 'protected' */
 	struct FLAC__StreamDecoderPrivate *private_; /* avoid the C++ keyword 'private' */
 } FLAC__StreamDecoder;

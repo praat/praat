@@ -278,7 +278,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 		 */
 		#if 0
 			if (numberOfPoints > POSTSCRIPT_MAXPATH) {
-				Melder_warning ("GraphicsPostscript::fillArea: path truncated.");
+				Melder_warning1 (L"GraphicsPostscript::fillArea: path truncated.");
 				numberOfPoints = POSTSCRIPT_MAXPATH, nn = numberOfPoints + numberOfPoints;
 			}
 		#endif

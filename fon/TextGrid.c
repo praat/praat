@@ -565,7 +565,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	/*
 	 * Draw labels in lower part.
 	 */
-	Graphics_setTextAlignment (g, Graphics_CENTER, Graphics_HALF);
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setPercentSignIsItalic (g, useTextStyles);
 	Graphics_setNumberSignIsBold (g, useTextStyles);
 	Graphics_setCircumflexIsSuperscript (g, useTextStyles);

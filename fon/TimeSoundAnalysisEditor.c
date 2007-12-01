@@ -72,6 +72,7 @@
  * pb 2007/09/19 info
  * pb 2007/09/21 split Query menu
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include <time.h>
@@ -170,8 +171,7 @@ void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor, 75.0);
 	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling, 500.0);
 	Preferences_addInt (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, Pitch_UNIT_HERTZ);
-	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod,
-		kTimeSoundAnalysisEditor_pitch_drawingMethod, AUTOMATIC);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom, 0.0);   // auto
 	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo, 0.0);   // auto
 	Preferences_addInt (L"FunctionEditor.pitch.method", & preferences.pitch.method, 1);   // autocorrelation
@@ -2011,21 +2011,20 @@ static void draw_analysis (I) {
 			pitchCursor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 			if (NUMdefined (pitchCursor_hidden)) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-				Graphics_printf (my graphics, my endWindow, pitchCursor_hidden, L"%.5g %ls", pitchCursor_overt,
+				Graphics_text3 (my graphics, my endWindow, pitchCursor_hidden, Melder_float (Melder_half (pitchCursor_overt)), L" ",
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-				Graphics_printf (my graphics, my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics, 0.5), L"%.4g %ls",
-					pitchViewFrom_overt,
+				Graphics_text3 (my graphics, my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics, 0.5),
+					Melder_float (Melder_half (pitchViewFrom_overt)), L" ",
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics, pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-				Graphics_printf (my graphics, my endWindow, pitchViewTo_hidden, L"%.4g %ls",
-					pitchViewTo_overt,
+				Graphics_text3 (my graphics, my endWindow, pitchViewTo_hidden, Melder_float (Melder_half (pitchViewTo_overt)), L" ",
 					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
@@ -2057,17 +2056,17 @@ static void draw_analysis (I) {
 		if (intensityCursorVisible) {
 			static const wchar_t *methodString [] = { L" (.5)", L" (\\muE)", L" (\\muS)", L" (\\mu)" };
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_HALF);
-			Graphics_printf (my graphics, y, intensityCursor, L"%.4g dB%ls", intensityCursor,
+			Graphics_text3 (my graphics, y, intensityCursor, Melder_float (Melder_half (intensityCursor)), L" dB",
 				my startSelection == my endSelection ? L"" : methodString [my intensity.averagingMethod]);
 		}
 		if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics, intensityCursor - my intensity.viewFrom) > 5.0) {
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_BOTTOM);
-			Graphics_printf (my graphics, y, my intensity.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5),
-				L"%.4g dB", my intensity.viewFrom);
+			Graphics_text2 (my graphics, y, my intensity.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5),
+				Melder_float (Melder_half (my intensity.viewFrom)), L" dB");
 		}
 		if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics, my intensity.viewTo - intensityCursor) > 5.0) {
 			Graphics_setTextAlignment (my graphics, alignment, Graphics_TOP);
-			Graphics_printf (my graphics, y, my intensity.viewTo, L"%.4g dB", my intensity.viewTo);
+			Graphics_text2 (my graphics, y, my intensity.viewTo, Melder_float (Melder_half (my intensity.viewTo)), L" dB");
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}
@@ -2103,7 +2102,7 @@ static void draw_analysis (I) {
 		if (frequencyCursorVisible) {
 			double x = my startWindow, y = my spectrogram.cursor;
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-			Graphics_printf (my graphics, x, y, L"%.5g Hz", y);
+			Graphics_text2 (my graphics, x, y, Melder_float (Melder_half (y)), L" Hz");
 			Graphics_line (my graphics, x, y, my endWindow, y);
 		}
 		/*

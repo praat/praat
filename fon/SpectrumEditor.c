@@ -76,10 +76,10 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Spectrum_drawInside (spectrum, my graphics, my startWindow, my endWindow, my minimum, my maximum);
-	FunctionEditor_drawRangeMark (me, L"%.1f dB", my maximum, Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, L"%.1f dB", my minimum, Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, my maximum, Melder_fixed (my maximum, 1), L" dB", Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my minimum, Melder_fixed (my minimum, 1), L" dB", Graphics_BOTTOM);
 	if (my cursorHeight > my minimum && my cursorHeight < my maximum)
-		FunctionEditor_drawHorizontalHair (me, L"%.1f dB", my cursorHeight);
+		FunctionEditor_drawHorizontalHair (me, my cursorHeight, Melder_fixed (my cursorHeight, 1), L" dB");
 	Graphics_setColour (my graphics, Graphics_BLACK);
 
 	/* Update buttons. */
@@ -206,6 +206,7 @@ class_methods (SpectrumEditor, FunctionEditor)
 	us -> format_domain = L"Frequency domain:";
 	us -> format_short = L"%.0f";
 	us -> format_long = L"%.2f";
+	us -> fixedPrecision_long = 2;
 	us -> format_units = L"Hertz";
 	us -> format_totalDuration = L"Total bandwidth %.2f Hertz";
 	us -> format_window = L"Window %.2f Hertz";

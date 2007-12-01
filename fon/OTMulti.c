@@ -641,8 +641,6 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 				} else {
 					for (long imark = winnerMarks + 2; imark <= my candidates [icand]. marks [index]; imark ++)
 						wcscat (markString, L"*");
-					for (long imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
-						wcscat (markString, L"+");
 				}
 			} else {
 				if (my candidates [icand]. marks [index] > 5) {

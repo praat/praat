@@ -91,36 +91,6 @@ void Graphics_text9 (I, double x, double y, const wchar_t *s1, const wchar_t *s2
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 
-void Graphics_printf (I, double xWC, double yWC, const wchar_t *format, ...) {
-	iam (Graphics);
-	wchar_t buffer [1000], *b = buffer;
-	int formatLength = wcslen (format);
-	va_list arg;
-	va_start (arg, format);
-	vswprintf (buffer, 1000, format, arg);
-	if (((formatLength == 4 && format [0] == '%' && format [1] == '.' &&
-		 format [2] >= '1' && format [2] <= '9' && format [3] == 'g') ||
-	     (formatLength == 5 && format [0] == '%' && format [1] == '.' &&
-		 format [2] >= '1' && format [2] <= '9' && format [3] == 'l' && format [4] == 'g'))
-	     && wcschr (buffer, 'e') != NULL)
-	{
-		wchar_t number [100], *n = number;
-		wcscpy (number, buffer);
-		while (*n != 'e') *(b++) = *(n++); *b = '\0';
-		if (number [0] == '1' && number [1] == 'e') {
-			wcscpy (buffer, L"10^^"); b = buffer + 4;
-		} else {
-			wcscat (buffer, L"\\.c10^^"); b += 7;
-		}
-		if (*++n == '+') n ++;   /* Ignore leading plus sign in exponent. */
-		if (*n == '-') *(b++) = *(n++);   /* Copy sign of negative exponent. */
-		while (*n == '0') n ++;   /* Ignore leading zeroes in exponent. */
-		while (*n) *(b++) = *(n++); *b = '\0';
-	}
-	Graphics_text (me, xWC, yWC, buffer);
-	va_end (arg);
-}
-
 /********** Drawing into margins. **********/
 
 void Graphics_drawInnerBox (I) {
@@ -227,7 +197,7 @@ void Graphics_marksLeft (I, int numberOfMarks, int haveNumbers, int haveTicks, i
 	}
 	for (i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), yWC = y1WC + (y2WC - y1WC) * f;
-		if (haveNumbers) Graphics_printf (me, - my horTick, yWC, L"%.4g", yWC);
+		if (haveNumbers) Graphics_text1 (me, - my horTick, yWC, Melder_float (Melder_half (yWC)));
 		if (haveTicks) Graphics_line (me, - my horTick, yWC, 0, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -262,7 +232,7 @@ void Graphics_marksRight (I, int numberOfMarks, int haveNumbers, int haveTicks, 
 	}
 	for (i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), yWC = y1WC + (y2WC - y1WC) * f;
-		if (haveNumbers) Graphics_printf (me, 1 + my horTick, yWC, L"%.4g", yWC);
+		if (haveNumbers) Graphics_text1 (me, 1 + my horTick, yWC, Melder_float (Melder_half (yWC)));
 		if (haveTicks) Graphics_line (me, 1, yWC, 1 + my horTick, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -297,7 +267,7 @@ void Graphics_marksBottom (I, int numberOfMarks, int haveNumbers, int haveTicks,
 	}
 	for (i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), xWC = x1WC + (x2WC - x1WC) * f;
-		if (haveNumbers) Graphics_printf (me, xWC, - my vertTick, L"%.6g", xWC);
+		if (haveNumbers) Graphics_text1 (me, xWC, - my vertTick, Melder_float (Melder_half (xWC)));
 		if (haveTicks) Graphics_line (me, xWC, - my vertTick, xWC, 0);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -333,7 +303,7 @@ void Graphics_marksTop (I, int numberOfMarks, int haveNumbers, int haveTicks, in
 	}
 	for (i = 1; i <= numberOfMarks; i ++) {
 		double f = (i - 1.0) / (numberOfMarks - 1), xWC = x1WC + (x2WC - x1WC) * f;
-		if (haveNumbers) Graphics_printf (me, xWC, 1 + my vertTick, L"%.6g", xWC);
+		if (haveNumbers) Graphics_text1 (me, xWC, 1 + my vertTick, Melder_float (Melder_half (xWC)));
 		if (haveTicks) Graphics_line (me, xWC, 1, xWC, 1 + my vertTick);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -383,7 +353,7 @@ void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, int haveNumbe
 		while (y < (y1<y2?py1:py2)) y *= 10;
 		while (y >= (y1<y2?py1:py2)) y /= 10;
 		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
-			if (haveNumbers) Graphics_printf (me, - my horTick, log10 (y), L"%.4g", y);
+			if (haveNumbers) Graphics_text1 (me, - my horTick, log10 (y), Melder_float (Melder_half (y)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
@@ -423,7 +393,7 @@ void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, int haveNumb
 		while (y < (y1<y2?py1:py2)) y *= 10;
 		while (y >= (y1<y2?py1:py2)) y /= 10;
 		for (y *= 10; y <= (y1<y2?py2:py1); y *= 10) {
-			if (haveNumbers) Graphics_printf (me, 1 + my horTick, log10 (y), L"%.4g", y);
+			if (haveNumbers) Graphics_text1 (me, 1 + my horTick, log10 (y), Melder_float (Melder_half (y)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
@@ -463,7 +433,7 @@ void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, int haveNumber
 		while (x < (x1<x2?px1:px2)) x *= 10;
 		while (x >= (x1<x2?px1:px2)) x /= 10;
 		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
-			if (haveNumbers) Graphics_printf (me, log10 (x), 1 + my vertTick, L"%.4g", x);
+			if (haveNumbers) Graphics_text1 (me, log10 (x), 1 + my vertTick, Melder_float (Melder_half (x)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
@@ -503,7 +473,7 @@ void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, int haveNum
 		while (x < (x1<x2?px1:px2)) x *= 10;
 		while (x >= (x1<x2?px1:px2)) x /= 10;
 		for (x *= 10; x <= (x1<x2?px2:px1); x *= 10) {
-			if (haveNumbers) Graphics_printf (me, log10 (x), - my vertTick, L"%.4g", x);
+			if (haveNumbers) Graphics_text1 (me, log10 (x), - my vertTick, Melder_float (Melder_half (x)));
 			if (haveTicks) {
 				Graphics_setLineWidth (me, 2.0 * lineWidth);
 				Graphics_setLineType (me, Graphics_DRAWN);
@@ -533,7 +503,7 @@ void Graphics_markLeft (I, double position, int hasNumber, int hasTick, int hasD
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, - my horTick, position, L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, - my horTick, position, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -562,7 +532,7 @@ void Graphics_markRight (I, double position, int hasNumber, int hasTick, int has
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, 1 + my horTick, position, L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, 1 + my horTick, position, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -591,7 +561,7 @@ void Graphics_markTop (I, double position, int hasNumber, int hasTick, int hasDo
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, position, 1 + my vertTick, L"%.6g", position);
+	if (hasNumber) Graphics_text1 (me, position, 1 + my vertTick, Melder_float (Melder_single (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -620,7 +590,7 @@ void Graphics_markBottom (I, double position, int hasNumber, int hasTick, int ha
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, position, - my vertTick, L"%.6g", position);
+	if (hasNumber) Graphics_text1 (me, position, - my vertTick, Melder_float (Melder_single (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -650,7 +620,7 @@ void Graphics_markLeftLogarithmic (I, double position, int hasNumber, int hasTic
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, - my horTick, log10 (position), L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, - my horTick, log10 (position), Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -680,7 +650,7 @@ void Graphics_markRightLogarithmic (I, double position, int hasNumber, int hasTi
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, 1 + my horTick, log10 (position), L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, 1 + my horTick, log10 (position), Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -710,7 +680,7 @@ void Graphics_markTopLogarithmic (I, double position, int hasNumber, int hasTick
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, log10 (position), 1 + my vertTick, L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, log10 (position), 1 + my vertTick, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -740,7 +710,7 @@ void Graphics_markBottomLogarithmic (I, double position, int hasNumber, int hasT
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
 	Graphics_setInner (me);
-	if (hasNumber) Graphics_printf (me, log10 (position), - my vertTick, L"%.4g", position);
+	if (hasNumber) Graphics_text1 (me, log10 (position), - my vertTick, Melder_float (Melder_half (position)));
 	if (hasTick) {
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
@@ -780,7 +750,7 @@ void Graphics_marksLeftEvery (I, double units, double distance,
 	}
 	for (i = first; i <= last; i ++) {
 		double yWC = i * distance;
-		if (haveNumbers) Graphics_printf (me, - my horTick, yWC, L"%.4g", yWC / units);
+		if (haveNumbers) Graphics_text1 (me, - my horTick, yWC, Melder_float (Melder_half (yWC / units)));
 		if (haveTicks) Graphics_line (me, - my horTick, yWC, 0, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -820,7 +790,7 @@ void Graphics_marksRightEvery (I, double units, double distance,
 	}
 	for (i = first; i <= last; i ++) {
 		double yWC = i * distance;
-		if (haveNumbers) Graphics_printf (me, 1 + my horTick, yWC, L"%.4g", yWC / units);
+		if (haveNumbers) Graphics_text1 (me, 1 + my horTick, yWC, Melder_float (Melder_half (yWC / units)));
 		if (haveTicks) Graphics_line (me, 1, yWC, 1 + my horTick, yWC);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -859,7 +829,7 @@ void Graphics_marksBottomEvery (I, double units, double distance,
 	}
 	for (i = first; i <= last; i ++) {
 		double xWC = i * distance;
-		if (haveNumbers) Graphics_printf (me, xWC, - my vertTick, L"%.6g", xWC / units);
+		if (haveNumbers) Graphics_text1 (me, xWC, - my vertTick, Melder_float (Melder_half (xWC / units)));
 		if (haveTicks) Graphics_line (me, xWC, - my vertTick, xWC, 0);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);
@@ -898,7 +868,7 @@ void Graphics_marksTopEvery (I, double units, double distance,
 	}
 	for (i = first; i <= last; i ++) {
 		double xWC = i * distance;
-		if (haveNumbers) Graphics_printf (me, xWC, 1 + my vertTick, L"%.6g", xWC / units);
+		if (haveNumbers) Graphics_text1 (me, xWC, 1 + my vertTick, Melder_float (Melder_half (xWC / units)));
 		if (haveTicks) Graphics_line (me, xWC, 1, xWC, 1 + my vertTick);
 	}
 	if (haveTicks) Graphics_setLineWidth (me, lineWidth);

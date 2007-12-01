@@ -64,7 +64,7 @@ void Graphics_getMouseLocation (I, double *xWC, double *yWC) {
 			Graphics_DCtoWC (me, button -> x, button -> y, xWC, yWC);
 		#elif win
 			POINT pos;
-			if (! GetCursorPos (& pos)) { Melder_warning ("Cannot get cursor position."); return; }
+			if (! GetCursorPos (& pos)) { Melder_warning1 (L"Cannot get cursor position."); return; }
 			ScreenToClient (my window, & pos);
 			Graphics_DCtoWC (me, pos. x, pos. y, xWC, yWC);
 		#elif mac

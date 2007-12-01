@@ -27,6 +27,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/10/16 Get pitch: F5 shortcut, as in Sound windows
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "Pitch_to_Sound.h"
@@ -208,7 +209,7 @@ static void draw (I) {
 				Graphics_setColour (my graphics, Graphics_RED);
 				Graphics_line (my graphics, my startWindow - radius, f, my endWindow, f);
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_printf (my graphics, my startWindow - radius, f, L"%.2f", f);
+				Graphics_text1 (my graphics, my startWindow - radius, f, Melder_fixed (f, 2));
 			}
 		}
 
@@ -219,7 +220,7 @@ static void draw (I) {
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
 		for (f = df; f <= pitch -> ceiling; f += df) {
 			Graphics_line (my graphics, my startWindow, f, my endWindow, f);
-			Graphics_printf (my graphics, my endWindow + radius/2, f, L"%ld Hz", f);
+			Graphics_text2 (my graphics, my endWindow + radius/2, f, Melder_integer (f), L" Hz");
 		}
 		Graphics_setLineType (my graphics, Graphics_DRAWN);
 
@@ -240,7 +241,7 @@ static void draw (I) {
 				int strength = floor (10 * frame -> candidate [icand]. strength + 0.5);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
-				if (f > 0 && f <= pitch -> ceiling) Graphics_printf (my graphics, t, f, L"%d", strength);
+				if (f > 0 && f <= pitch -> ceiling) Graphics_text1 (my graphics, t, f, Melder_integer (strength));
 			}
 		}
 		Graphics_resetViewport (my graphics, previous);
@@ -264,7 +265,7 @@ static void draw (I) {
 			double t = Sampled_indexToX (pitch, it);
 			int strength = floor (10 * frame -> intensity + 0.5);   /* Map 0.0-1.0 to 0-9 */
 			if (strength > 9) strength = 9;
-			Graphics_printf (my graphics, t, 0.5, L"%d", strength);
+			Graphics_text1 (my graphics, t, 0.5, Melder_integer (strength));
 		}
 		Graphics_resetViewport (my graphics, previous);
 	}

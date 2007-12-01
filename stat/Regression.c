@@ -146,7 +146,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 	if (numberOfParameters < 1)   /* Includes intercept. */
 		error1 (L"Not enough columns (has to be more than 1).")
 	if (numberOfCells < numberOfParameters) {
-		Melder_warning ("Solution is not unique (more parameters than cases).");
+		Melder_warning1 (L"Solution is not unique (more parameters than cases).");
 	}
 	u = NUMdmatrix (1, numberOfCells, 1, numberOfParameters); cherror
 	b = NUMdvector (1, numberOfCells); cherror

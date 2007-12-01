@@ -25,6 +25,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/09/04 new FunctionEditor API
  * pb 2007/09/08 inherit from TimeSoundEditor
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "RealTierEditor.h"
@@ -146,12 +147,12 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, my ycursor, my endWindow, my ycursor);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, my ycursor, our leftTickFormat, my ycursor);
+	Graphics_text1 (my graphics, my startWindow, my ycursor, Melder_float (Melder_half (my ycursor)));
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_printf (my graphics, my endWindow, my ymax, our rightTickFormat, my ymax);
+	Graphics_text2 (my graphics, my endWindow, my ymax, Melder_float (Melder_half (my ymax)), our rightTickUnits);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_printf (my graphics, my endWindow, my ymin, our rightTickFormat, my ymin);
+	Graphics_text2 (my graphics, my endWindow, my ymin, Melder_float (Melder_half (my ymin)), our rightTickUnits);
 	ifirstSelected = AnyTier_timeToHighIndex (data, my startSelection);
 	ilastSelected = AnyTier_timeToLowIndex (data, my endSelection);
 	imin = AnyTier_timeToHighIndex (data, my startWindow);
@@ -213,11 +214,11 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 		RealPoint point = data -> points -> item [first];
 		double t = point -> time + dt, y = point -> value + dy;
 		Graphics_line (my graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_TOP);
-		Graphics_printf (my graphics, t, my ymax, L"%f", t);
+		Graphics_setTextAlignment (my graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_text1 (my graphics, t, my ymax, Melder_fixed (t, 6));
 		Graphics_line (my graphics, my startWindow, y, my endWindow, y);
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startWindow, y, L"%f", y);
+		Graphics_text1 (my graphics, my startWindow, y, Melder_fixed (y, 6));
 	}
 }
 
@@ -357,8 +358,7 @@ class_methods (RealTierEditor, TimeSoundEditor)
 	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Y";   /* Normally includes units. */
 	us -> quantityKey = L"Y";   /* Without units. */
-	us -> leftTickFormat = L"%5g";   /* Often without units (so that number does not run off screen). */
-	us -> rightTickFormat = L"%5g";   /* Often with units (units may run off screen). */
+	us -> rightTickUnits = L"";
 	us -> defaultYmin = 0.0;
 	us -> defaultYmax = 1.0;
 	us -> setRangeTitle = L"Set range...";

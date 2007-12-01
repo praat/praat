@@ -34,7 +34,7 @@
 	double ymin, ymax, ycursor;
 #define RealTierEditor_methods TimeSoundEditor_methods \
 	int zeroIsMinimum; \
-	const wchar_t *quantityText, *quantityKey, *leftTickFormat, *rightTickFormat; \
+	const wchar_t *quantityText, *quantityKey, *rightTickUnits; \
 	double defaultYmin, defaultYmax; \
 	const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
 	const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;

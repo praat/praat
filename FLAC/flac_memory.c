@@ -35,6 +35,7 @@
 
 #include "flac_private_memory.h"
 #include "flac_FLAC_assert.h"
+#include "flac_share_alloc.h"
 
 void *FLAC__memory_alloc_aligned(size_t bytes, void **aligned_address)
 {
@@ -44,7 +45,17 @@ void *FLAC__memory_alloc_aligned(size_t bytes, void **aligned_address)
 
 #ifdef FLAC__ALIGN_MALLOC_DATA
 	/* align on 32-byte (256-bit) boundary */
-	x = malloc(bytes+31);
+	x = safe_malloc_add_2op_(bytes, /*+*/31);
+#ifdef SIZEOF_VOIDP
+#if SIZEOF_VOIDP == 4
+		/* could do  *aligned_address = x + ((unsigned) (32 - (((unsigned)x) & 31))) & 31; */
+		*aligned_address = (void*)(((unsigned)x + 31) & -32);
+#elif SIZEOF_VOIDP == 8
+		*aligned_address = (void*)(((FLAC__uint64)x + 31) & (FLAC__uint64)(-((FLAC__int64)32)));
+#else
+# error  Unsupported sizeof(void*)
+#endif
+#else
 	/* there's got to be a better way to do this right for all archs */
 	if(sizeof(void*) == sizeof(unsigned))
 		*aligned_address = (void*)(((unsigned)x + 31) & -32);
@@ -52,8 +63,9 @@ void *FLAC__memory_alloc_aligned(size_t bytes, void **aligned_address)
 		*aligned_address = (void*)(((FLAC__uint64)x + 31) & (FLAC__uint64)(-((FLAC__int64)32)));
 	else
 		return 0;
+#endif
 #else
-	x = malloc(bytes);
+	x = safe_malloc_(bytes);
 	*aligned_address = x;
 #endif
 	return x;
@@ -72,7 +84,10 @@ FLAC__bool FLAC__memory_alloc_aligned_int32_array(unsigned elements, FLAC__int32
 	FLAC__ASSERT(0 != aligned_pointer);
 	FLAC__ASSERT(unaligned_pointer != aligned_pointer);
 
-	pu = (FLAC__int32*)FLAC__memory_alloc_aligned(sizeof(FLAC__int32) * elements, &u.pv);
+	if((size_t)elements > SIZE_MAX / sizeof(*pu)) /* overflow check */
+		return false;
+
+	pu = (FLAC__int32*)FLAC__memory_alloc_aligned(sizeof(*pu) * (size_t)elements, &u.pv);
 	if(0 == pu) {
 		return false;
 	}
@@ -98,7 +113,10 @@ FLAC__bool FLAC__memory_alloc_aligned_uint32_array(unsigned elements, FLAC__uint
 	FLAC__ASSERT(0 != aligned_pointer);
 	FLAC__ASSERT(unaligned_pointer != aligned_pointer);
 
-	pu = (FLAC__uint32*)FLAC__memory_alloc_aligned(sizeof(FLAC__uint32) * elements, &u.pv);
+	if((size_t)elements > SIZE_MAX / sizeof(*pu)) /* overflow check */
+		return false;
+
+	pu = (FLAC__uint32*)FLAC__memory_alloc_aligned(sizeof(*pu) * elements, &u.pv);
 	if(0 == pu) {
 		return false;
 	}
@@ -124,7 +142,10 @@ FLAC__bool FLAC__memory_alloc_aligned_uint64_array(unsigned elements, FLAC__uint
 	FLAC__ASSERT(0 != aligned_pointer);
 	FLAC__ASSERT(unaligned_pointer != aligned_pointer);
 
-	pu = (FLAC__uint64*)FLAC__memory_alloc_aligned(sizeof(FLAC__uint64) * elements, &u.pv);
+	if((size_t)elements > SIZE_MAX / sizeof(*pu)) /* overflow check */
+		return false;
+
+	pu = (FLAC__uint64*)FLAC__memory_alloc_aligned(sizeof(*pu) * elements, &u.pv);
 	if(0 == pu) {
 		return false;
 	}
@@ -150,7 +171,10 @@ FLAC__bool FLAC__memory_alloc_aligned_unsigned_array(unsigned elements, unsigned
 	FLAC__ASSERT(0 != aligned_pointer);
 	FLAC__ASSERT(unaligned_pointer != aligned_pointer);
 
-	pu = (unsigned*)FLAC__memory_alloc_aligned(sizeof(unsigned) * elements, &u.pv);
+	if((size_t)elements > SIZE_MAX / sizeof(*pu)) /* overflow check */
+		return false;
+
+	pu = (unsigned*)FLAC__memory_alloc_aligned(sizeof(*pu) * elements, &u.pv);
 	if(0 == pu) {
 		return false;
 	}
@@ -178,7 +202,10 @@ FLAC__bool FLAC__memory_alloc_aligned_real_array(unsigned elements, FLAC__real *
 	FLAC__ASSERT(0 != aligned_pointer);
 	FLAC__ASSERT(unaligned_pointer != aligned_pointer);
 
-	pu = (FLAC__real*)FLAC__memory_alloc_aligned(sizeof(FLAC__real) * elements, &u.pv);
+	if((size_t)elements > SIZE_MAX / sizeof(*pu)) /* overflow check */
+		return false;
+
+	pu = (FLAC__real*)FLAC__memory_alloc_aligned(sizeof(*pu) * elements, &u.pv);
 	if(0 == pu) {
 		return false;
 	}

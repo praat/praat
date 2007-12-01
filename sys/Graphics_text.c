@@ -208,7 +208,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		ipaInited = TRUE;
 		if (! charisAvailable && ! doulosAvailable) {
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-			Melder_warning ("The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
+			Melder_warning1 (L"The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
 		} else {
 			ipaAvailable = true;
 		}
@@ -332,7 +332,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				if (theIpaTimesFont != 0) {
 					ipaAvailable = TRUE;
 				} else {
-					Melder_warning ("The phonetic font is not available.\nI shall use an ugly bitmap font instead.\nSee http://www.fon.hum.uva.nl/praat/");
+					Melder_warning1 (L"The phonetic font is not available.\nPraat will use an ugly bitmap font instead.\nSee http://www.praat.org");
 				}
 				font = theIpaTimesFont;
 			}
@@ -1117,7 +1117,6 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 		case Graphics_LEFT:      dx = 2; break;
 		case Graphics_CENTRE:    dx = - width / 2; break;
 		case Graphics_RIGHT:     dx = width ? - width - 1 : 0; break;   /* If width is zero, do not step left. */
-		case Graphics_JUSTIFIED: dx = 2; break;
 		default:                 dx = 2; break;
 	}
 	switch (my verticalTextAlignment) {

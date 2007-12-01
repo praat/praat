@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2004/04/13 less flashing
  * pb 2007/06/10 wchar_t
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "SpectrogramEditor.h"
@@ -54,7 +55,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_RED);
 		for (f = df; f <= my maximum; f += df) {
 			Graphics_line (my graphics, 0, f, 1, f);
-			Graphics_printf (my graphics, -0.01, f, L"%ld Hz", f);
+			Graphics_text2 (my graphics, -0.01, f, Melder_integer (f), L" Hz");
 		}
 	}
 	/* Vertical cursor lines. */

@@ -1049,7 +1049,7 @@ static int initialize (SoundRecorder me) {
 		if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
 			static int warned = FALSE;
 			my synchronous = TRUE;
-			if (! warned) { Melder_warning ("Recording must and will be synchronous on this machine."); warned = TRUE; }
+			if (! warned) { Melder_warning1 (L"Recording must and will be synchronous on this machine."); warned = TRUE; }
 		}
 		if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
 			return Melder_error1 (L"(Sound_record:) Cannot set continuous recording.");

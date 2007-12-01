@@ -369,7 +369,7 @@ static int readFromFile (MelderFile file) {
 		ManPage firstPage = pages -> pages -> item [1];
 		if (! Manual_create (theCurrentPraat -> topShell, firstPage -> title, object)) return 0;
 		if (pages -> executable)
-			Melder_warning ("These manual pages contain links to executable scripts.\n"
+			Melder_warning1 (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return 1;
 	}

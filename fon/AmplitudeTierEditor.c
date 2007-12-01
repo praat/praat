@@ -54,7 +54,7 @@ class_methods (AmplitudeTierEditor, RealTierEditor)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Sound pressure (Pa)", us -> quantityKey = L"Sound pressure";
-	us -> leftTickFormat = L"%4g", us -> rightTickFormat = L"%4g Pa";
+	us -> rightTickUnits = L" Pa";
 	us -> defaultYmin = -1.0, us -> defaultYmax = +1.0;
 	us -> setRangeTitle = L"Set amplitude range...";
 	us -> defaultYminText = L"-1.0", us -> defaultYmaxText = L"+1.0";

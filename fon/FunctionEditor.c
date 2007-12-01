@@ -25,6 +25,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/19 info
  * pb 2007/09/21 query menu hierarchical
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "FunctionEditor.h"
@@ -255,9 +256,9 @@ static void drawNow (FunctionEditor me) {
 					 */	
 					Graphics_setColour (my graphics, Graphics_BLUE);
 					Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-					Graphics_printf (my graphics, left, 0.5 * (bottom + top) - verticalCorrection, our format_long, my startWindow);
+					Graphics_text1 (my graphics, left, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my startWindow, our fixedPrecision_long));
 					Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-					Graphics_printf (my graphics, right, 0.5 * (bottom + top) - verticalCorrection, our format_long, my endWindow);
+					Graphics_text1 (my graphics, right, 0.5 * (bottom + top) - verticalCorrection, Melder_fixed (my endWindow, our fixedPrecision_long));
 					Graphics_setColour (my graphics, Graphics_BLACK);
 					Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 				break;
@@ -301,15 +302,15 @@ static void drawNow (FunctionEditor me) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	if (cursorVisible) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_printf (my graphics, my startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, our format_long, my startSelection);
+		Graphics_text1 (my graphics, my startSelection, my height - (TOP_MARGIN + space) - verticalCorrection, Melder_fixed (my startSelection, our fixedPrecision_long));
 	}
 	if (beginVisible && selection) {
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my graphics, my startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my startSelection);
+		Graphics_text1 (my graphics, my startSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my startSelection, our fixedPrecision_long));
 	}
 	if (endVisible && selection) {
 		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_printf (my graphics, my endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, our format_long, my endSelection);
+		Graphics_text1 (my graphics, my endSelection, my height - (TOP_MARGIN + space/2) - verticalCorrection, Melder_fixed (my endSelection, our fixedPrecision_long));
 	}
 	Graphics_setColour (my graphics, Graphics_BLACK);
 
@@ -380,6 +381,8 @@ static void info (I) {
 	MelderInfo_writeLine4 (L"Window end: ", Melder_double (my endWindow), L" ", our format_units);
 	MelderInfo_writeLine4 (L"Selection start: ", Melder_double (my startSelection), L" ", our format_units);
 	MelderInfo_writeLine4 (L"Selection end: ", Melder_double (my endSelection), L" ", our format_units);
+	MelderInfo_writeLine4 (L"Arrow scroll step: ", Melder_double (my arrowScrollStep), L" ", our format_units);
+	MelderInfo_writeLine2 (L"Group: ", my group ? L"yes" : L"no");
 }
 
 static void updateText (Any functionEditor) {
@@ -1147,13 +1150,13 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	if (x1 > x2) xleft = x2, xright = x1; else xleft = x1, xright = x2;
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_printf (my graphics, xleft, 1.0, L"%f", xleft);
+	Graphics_text1 (my graphics, xleft, 1.0, Melder_fixed (xleft, 6));
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_printf (my graphics, xright, 1.0, L"%f", xright);
+	Graphics_text1 (my graphics, xright, 1.0, Melder_fixed (xright, 6));
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-	Graphics_printf (my graphics, xleft, 0.0, L"%f", xleft);
+	Graphics_text1 (my graphics, xleft, 0.0, Melder_fixed (xleft, 6));
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-	Graphics_printf (my graphics, xright, 0.0, L"%f", xright);
+	Graphics_text1 (my graphics, xright, 0.0, Melder_fixed (xright, 6));
 	Graphics_xorOff (my graphics);
 }
 
@@ -1474,6 +1477,7 @@ class_methods (FunctionEditor, Editor) {
 	us -> format_domain = L"Time domain:";
 	us -> format_short = L"%.3f";
 	us -> format_long = L"%f";
+	us -> fixedPrecision_long = 6;
 	us -> format_units = L"seconds";
 	us -> format_totalDuration = L"Total duration %f seconds";
 	us -> format_window = L"Visible part %f seconds";
@@ -1659,32 +1663,34 @@ void FunctionEditor_ungroup (I) {
 	Graphics_updateWs (my graphics);   /* For setting buttons in draw method. */
 }
 
-void FunctionEditor_drawRangeMark (I, const wchar_t *format, double yWC, int verticalAlignment) {
+void FunctionEditor_drawRangeMark (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment) {
 	iam (FunctionEditor);
-	wchar_t text [100];
-	double textWidth;
-	swprintf (text, 100, format, yWC);
-	textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
+	static MelderString text = { 0 };
+	MelderString_empty (& text);
+	MelderString_append2 (& text, yWC_string, units);
+	double textWidth = Graphics_textWidth (my graphics, text.string) + Graphics_dxMMtoWC (my graphics, 0.5);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_line (my graphics, my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, verticalAlignment);
 	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my graphics, 0.5);
-	Graphics_text (my graphics, my endWindow, yWC, text);
+	Graphics_text (my graphics, my endWindow, yWC, text.string);
 }
 
-void FunctionEditor_drawCursorFunctionValue (I, const wchar_t *format, double yWC) {
+void FunctionEditor_drawCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
 	iam (FunctionEditor);
 	Graphics_setColour (my graphics, Graphics_CYAN);
 	Graphics_line (my graphics, my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics, 0.5 * (my startSelection + my endSelection), yWC, 1.5);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, yWC, format, yWC);
+	Graphics_text2 (my graphics, my startWindow, yWC, yWC_string, units);
 }
 
-void FunctionEditor_insertCursorFunctionValue (I, const wchar_t *format, double yWC, double minimum, double maximum) {
+void FunctionEditor_insertCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum) {
 	iam (FunctionEditor);
-	wchar_t text [100];
+	static MelderString text = { 0 };
+	MelderString_empty (& text);
+	MelderString_append2 (& text, yWC_string, units);
 	double textX = my endWindow, textY = yWC, textWidth;
 	int tooHigh = Graphics_dyWCtoMM (my graphics, maximum - textY) < 5.0;
 	int tooLow = Graphics_dyWCtoMM (my graphics, textY - minimum) < 5.0;
@@ -1698,20 +1704,19 @@ void FunctionEditor_insertCursorFunctionValue (I, const wchar_t *format, double 
 	} else if (tooLow) {
 		textY = minimum + Graphics_dyMMtoWC (my graphics, 5.0);
 	}
-	swprintf (text, 100, format, yWC);
-	textWidth = Graphics_textWidth (my graphics, text);
+	textWidth = Graphics_textWidth (my graphics, text.string);
 	Graphics_fillCircle_mm (my graphics, my endWindow + textWidth + Graphics_dxMMtoWC (my graphics, 1.5), textY, 1.5);
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my graphics, textX, textY, text);
+	Graphics_text (my graphics, textX, textY, text.string);
 }
 
-void FunctionEditor_drawHorizontalHair (I, const wchar_t *format, double yWC) {
+void FunctionEditor_drawHorizontalHair (I, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
 	iam (FunctionEditor);
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_printf (my graphics, my startWindow, yWC, format, yWC);
+	Graphics_text2 (my graphics, my startWindow, yWC, yWC_string, units);
 }
 
 void FunctionEditor_drawGridLine (I, double yWC) {

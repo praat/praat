@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/11/18
+ * pb 2007/11/30
  */
 
 #include <stdio.h>
@@ -66,6 +66,8 @@ const wchar_t * Melder_fixedExponent (double value, int exponent, int precision)
 	/* if exponent is -2 and precision is 2:   67E-2, 0.00024E-2 */
 const wchar_t * Melder_percent (double value, int precision);
 	/* "--undefined--" or, if precision is 3: "0" or "34.400%" of "0.014%" or "0.001%" or "0.0000007%" */
+const wchar_t * Melder_float (const wchar_t *number);
+	/* turns 1e+4 into 10^^4, or -1.23456e-78 into -1.23456\.c10^^-78 */
 
 /********** STRING TO NUMBER CONVERSION **********/
 
@@ -527,6 +529,15 @@ void Melder_search (void);
 
 void Melder_warning (const char *format, ...);
 	/* Give warning to stderr (batch) or to a "Warning" dialog. */
+void Melder_warning1 (const wchar_t *s1);
+void Melder_warning2 (const wchar_t *s1, const wchar_t *s2);
+void Melder_warning3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void Melder_warning4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void Melder_warning5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void Melder_warning6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void Melder_warning7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void Melder_warning8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void Melder_warning9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void Melder_warningOff (void);
 void Melder_warningOn (void);
 	
@@ -604,7 +615,7 @@ void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, c
 			if (graphics) {   // Always check; might be batch.
 				Graphics_clearWs (graphics);   // Only if you redraw all every time.
 				Graphics_polyline (graphics, ...);
-				Graphics_printf (graphics, ...);
+				Graphics_text1 (graphics, ...);
 			}
 		- immediately after this in your loop, call with 'progress' between 0 and 1,
 		  and check the return value to see if the user clicked the Cancel button:

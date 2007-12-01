@@ -26,6 +26,7 @@
  * pb 2007/09/01 bool
  * pb 2007/11/02 enum
  * pb 2007/11/14 removed swprintf(%ls) because of bug on Mac
+ * pb 2007/11/30 Resources_write forgets theResources
  */
 
 #include "Preferences.h"
@@ -185,7 +186,10 @@ void Resources_read (MelderFile file) {
 			case ushortwa: * (unsigned short *) resource -> value = wcstoul (value, NULL, 10); break;
 			case uintwa: * (unsigned int *) resource -> value = wcstoul (value, NULL, 10); break;
 			case ulongwa: * (unsigned long *) resource -> value = wcstoul (value, NULL, 10); break;
-			case boolwa: * (bool *) resource -> value = wcstol (value, NULL, 10); break;
+			case boolwa: * (bool *) resource -> value =
+				wcsnequ (value, L"yes", 3) ? true :
+				wcsnequ (value, L"no", 2) ? false :
+				wcstol (value, NULL, 10) != 0; break;
 			case charwa: * (wchar_t *) resource -> value = value [0]; break;
 			case floatwa: * (float *) resource -> value = wcstod (value, NULL); break;
 			case doublewa: * (double *) resource -> value = wcstod (value, NULL); break;
@@ -198,6 +202,7 @@ void Resources_read (MelderFile file) {
 	}
 end:
 	Melder_clearError ();
+	Melder_free (string);
 }
 
 void Resources_write (MelderFile file) {
@@ -215,7 +220,7 @@ void Resources_write (MelderFile file) {
 			case ushortwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned short *) resource -> value)); break;
 			case uintwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned int *) resource -> value)); break;
 			case ulongwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned long *) resource -> value)); break;
-			case boolwa: MelderString_append1 (& buffer, Melder_integer (* (bool *) resource -> value)); break;
+			case boolwa: MelderString_append1 (& buffer, * (bool *) resource -> value ? L"yes" : L"no"); break;
 			case charwa: MelderString_appendCharacter (& buffer, * (char *) resource -> value); break;
 			case floatwa: MelderString_append1 (& buffer, Melder_single (* (float *) resource -> value)); break;
 			case doublewa: MelderString_append1 (& buffer, Melder_double (* (double *) resource -> value)); break;
@@ -226,6 +231,7 @@ void Resources_write (MelderFile file) {
 	}
 	MelderFile_writeText (file, buffer.string);
 	Melder_clearError ();
+	forget (theResources);	
 }
 
 /* End of file Preferences.c */

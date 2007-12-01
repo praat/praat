@@ -1195,8 +1195,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		}
 		if (icons > my numberOfConstraints) {   /* Completed the loop? */
 			if (warnIfStalled && ! equivalent)
-				Melder_warning ("(OTGrammar_step:) Adult form has strict superset violations! EDCD stalls.\n"
-					"Underlying form: %ls\nAdult output: %ls\nWinner output: %ls", tableau -> input, loser -> output, winner -> output);
+				Melder_warning6 (L"Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
+					"Input: ", tableau -> input, L"\nCorrect output: ", loser -> output, L"\nLearner's output: ", winner -> output);
 			goto end;
 		}
 		/*

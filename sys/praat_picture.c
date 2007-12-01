@@ -688,7 +688,6 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 end:
-	Melder_free (formula);
 	NUMfvector_free (y, 1);
 	forget (function);
 	iferror return 0;

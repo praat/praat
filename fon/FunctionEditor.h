@@ -68,6 +68,7 @@ struct FunctionEditor_picture {
 	void (*draw) (I); \
 	void (*prepareDraw) (I);   /* For less flashing. */ \
 	const wchar_t *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
+	int fixedPrecision_long; \
 	int hasText; \
 	void (*play) (I, double tmin, double tmax); \
 	int (*click) (I, double xWC, double yWC, int shiftKeyPressed); \
@@ -242,10 +243,10 @@ void FunctionEditor_prefs (void);
 /* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */
 /* Preconditions: default line type, default line width. */
 /* Postconditions: default line type, default line width, undefined colour, undefined text alignment. */
-void FunctionEditor_drawRangeMark (I, const wchar_t *format, double yWC, int verticalAlignment);
-void FunctionEditor_drawCursorFunctionValue (I, const wchar_t *format, double yWC);
-void FunctionEditor_insertCursorFunctionValue (I, const wchar_t *format, double yWC, double minimum, double maximum);
-void FunctionEditor_drawHorizontalHair (I, const wchar_t *format, double yWC);
+void FunctionEditor_drawRangeMark (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment);
+void FunctionEditor_drawCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units);
+void FunctionEditor_insertCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum);
+void FunctionEditor_drawHorizontalHair (I, double yWC, const wchar_t *yWC_string, const wchar_t *units);
 void FunctionEditor_drawGridLine (I, double yWC);
 
 void FunctionEditor_insetViewport (I);

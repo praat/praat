@@ -6,7 +6,7 @@
 
 #if !defined(FLAC__CPU_IA32) && !defined(FLAC__CPU_PPC)
 #   if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__i386) || defined(_M_IX86)
-#       define FLAC__CPU_IA32
+#       define FLAC__CPU_IA32 gdfjgdfjgd
 #   elif defined(__ppc)
 #       define FLAC__CPU_PPC
 #   else

@@ -52,7 +52,7 @@ class_methods (PitchTierEditor, RealTierEditor)
 	class_method (play)
 	us -> zeroIsMinimum = TRUE;
 	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";
-	us -> leftTickFormat = L"%5g", us -> rightTickFormat = L"%5g Hz";
+	us -> rightTickUnits = L" Hz";
 	us -> defaultYmin = 50.0, us -> defaultYmax = 600.0;
 	us -> setRangeTitle = L"Set frequency range...";
 	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"600.0";

@@ -169,7 +169,7 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
-				Melder_warning ("%d \"%s\"", i, Melder_peekWcsToUtf8 (b -> name));
+				Melder_warning4 (Melder_integer (i), L" \"", b -> name, L"\"");
 			}
 		} else {
 			XmToggleButtonSetState (b -> toggle, FALSE, FALSE);
@@ -311,10 +311,10 @@ static int UiField_widgetToValue (UiField me) {
 		} break; case UI_ENUM: case UI_LIST: {
 			int nSelected, *selected;
 			if (! XmListGetSelectedPos (my list, & selected, & nSelected)) {
-				Melder_warning ("No items selected.");
+				Melder_warning1 (L"No items selected.");
 				my integerValue = 1;
 			} else {
-				if (nSelected > 1) Melder_warning ("More than one item selected.");
+				if (nSelected > 1) Melder_warning1 (L"More than one item selected.");
 				my integerValue = selected [0];
 				XtFree ((char *) selected);
 			}

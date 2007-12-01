@@ -52,7 +52,7 @@ class_methods (DurationTierEditor, RealTierEditor)
 	class_method (play)
 	us -> zeroIsMinimum = TRUE;
 	us -> quantityText = L"Relative duration", us -> quantityKey = L"Relative duration";
-	us -> leftTickFormat = L"%5g", us -> rightTickFormat = L"%5g";
+	us -> rightTickUnits = L"";
 	us -> defaultYmin = 0.25, us -> defaultYmax = 3.0;
 	us -> setRangeTitle = L"Set duration range...";
 	us -> defaultYminText = L"0.25", us -> defaultYmaxText = L"3.0";

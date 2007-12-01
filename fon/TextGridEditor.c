@@ -34,6 +34,7 @@
  * pb 2007/09/02 direct drawing to Picture window
  * pb 2007/09/04 TimeSoundAnalysisEditor
  * pb 2007/09/05 direct drawing to picture window
+ * pb 2007/11/30 erased Graphics_printf
  */
 
 #include "TextGridEditor.h"
@@ -60,7 +61,36 @@ class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
 #define TextGridEditor_DEFAULT_USE_TEXT_STYLES  FALSE
 #define TextGridEditor_DEFAULT_FONT_SIZE  18
 	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  L"18"
-#define TextGridEditor_DEFAULT_ALIGNMENT  Graphics_CENTRE
+
+#define kTextGridEditor_horizontalAlignment_MIN  0
+#define kTextGridEditor_horizontalAlignment_LEFT  0
+#define kTextGridEditor_horizontalAlignment_CENTRE  1
+#define kTextGridEditor_horizontalAlignment_RIGHT  2
+#define kTextGridEditor_horizontalAlignment_MAX  2
+#define kTextGridEditor_horizontalAlignment_DEFAULT  kGraphics_horizontalAlignment_CENTRE
+static wchar_t *kTextGridEditor_horizontalAlignment_getText (int value) {
+	return
+		value == kTextGridEditor_horizontalAlignment_LEFT ? L"left" :
+		value == kTextGridEditor_horizontalAlignment_CENTRE ? L"centre" :
+		value == kTextGridEditor_horizontalAlignment_RIGHT ? L"right" :
+	kTextGridEditor_horizontalAlignment_getText (kTextGridEditor_horizontalAlignment_DEFAULT);
+}
+static int kTextGridEditor_horizontalAlignment_getValue (wchar_t *text) {
+	return
+		wcsequ (text, L"left") || wcsequ (text, L"Left") ? kTextGridEditor_horizontalAlignment_LEFT :
+		wcsequ (text, L"centre") || wcsequ (text, L"Centre") ||
+		wcsequ (text, L"center") || wcsequ (text, L"Center") ? kTextGridEditor_horizontalAlignment_CENTRE :
+		wcsequ (text, L"right") || wcsequ (text, L"Right") ? kTextGridEditor_horizontalAlignment_RIGHT :
+	kTextGridEditor_horizontalAlignment_DEFAULT;
+}
+static int kTextGridEditor_horizontalAlignment_to_kGraphics_horizontalAlignment (int value) {
+	return
+		value == kTextGridEditor_horizontalAlignment_LEFT ? kGraphics_horizontalAlignment_LEFT :
+		value == kTextGridEditor_horizontalAlignment_CENTRE ? kGraphics_horizontalAlignment_CENTRE :
+		value == kTextGridEditor_horizontalAlignment_RIGHT ? kGraphics_horizontalAlignment_RIGHT :
+	kGraphics_horizontalAlignment_CENTRE;
+}
+
 #define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  TRUE
 #define TextGridEditor_DEFAULT_SHOW_NUMBER_OF  2
 #define TextGridEditor_DEFAULT_GREEN_METHOD  Melder_STRING_EQUAL_TO
@@ -85,7 +115,7 @@ static struct {
 void TextGridEditor_prefs (void) {
 	Preferences_addInt (L"TextGridEditor.useTextStyles", & preferences.useTextStyles, TextGridEditor_DEFAULT_USE_TEXT_STYLES);
 	Preferences_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize, TextGridEditor_DEFAULT_FONT_SIZE);
-	Preferences_addInt (L"TextGridEditor.alignment", & preferences.alignment, TextGridEditor_DEFAULT_ALIGNMENT);
+	Preferences_addEnum (L"TextGridEditor.alignment", & preferences.alignment, kTextGridEditor_horizontalAlignment, DEFAULT);
 	Preferences_addInt (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple, TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE);
 	Preferences_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf, TextGridEditor_DEFAULT_SHOW_NUMBER_OF);
 	Preferences_addInt (L"TextGridEditor.greenMethod", & preferences.greenMethod, TextGridEditor_DEFAULT_GREEN_METHOD);
@@ -93,6 +123,13 @@ void TextGridEditor_prefs (void) {
 	Preferences_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries, true);
 	Preferences_addBool (L"TextGridEditor.picture.garnish", & preferences.picture.garnish, true);
 	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
+}
+
+static void info (I) {
+	iam (TextGridEditor);
+	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", my useTextStyles ? L"yes" : L"no");
+	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (my fontSize));
+	MelderInfo_writeLine2 (L"TextGrid alignment: ", kTextGridEditor_horizontalAlignment_getText (my alignment));
 }
 
 /********** UTILITIES **********/
@@ -1406,7 +1443,8 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		}
 	}
 
-	Graphics_setTextAlignment (my graphics, my alignment, Graphics_HALF);
+	Graphics_setTextAlignment (my graphics,
+		kTextGridEditor_horizontalAlignment_to_kGraphics_horizontalAlignment (my alignment), Graphics_HALF);
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
@@ -1480,7 +1518,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		}
 	}
 
-	Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_HALF);
+	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 	for (ipoint = 1; ipoint <= npoint; ipoint ++) {
 		TextPoint point = tier -> points -> item [ipoint];
 		double t = point -> time;
@@ -1566,7 +1604,7 @@ static void draw (I) {
 		Graphics_setFont (my graphics, oldFont);
 		Graphics_setFontSize (my graphics, oldFontSize * 1.5);
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_printf (my graphics, my startWindow, 0.5, selected ? L"\\pf %ld" : L"%ld", itier);
+		Graphics_text2 (my graphics, my startWindow, 0.5, selected ? L"\\pf " : L"", Melder_integer (itier));
 		Graphics_setFontSize (my graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, my showNumberOf > 1 ? Graphics_BOTTOM : Graphics_HALF);
@@ -1578,9 +1616,9 @@ static void draw (I) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
 				long position = itier == my selectedTier ? ( isIntervalTier ? getSelectedInterval (me) : getSelectedPoint (me) ) : 0;
 				if (position) {
-					Graphics_printf (my graphics, my endWindow, 0.5, L"(%ld/%ld)", position, count);
+					Graphics_text5 (my graphics, my endWindow, 0.5, L"(", Melder_integer (position), L"/", Melder_integer (count), L")");
 				} else {
-					Graphics_printf (my graphics, my endWindow, 0.5, L"(%ld)", count);
+					Graphics_text3 (my graphics, my endWindow, 0.5, L"(", Melder_integer (count), L")");
 				}
 			} else {
 				long count = 0;
@@ -1603,7 +1641,7 @@ static void draw (I) {
 						}
 					}
 				}
-				Graphics_printf (my graphics, my endWindow, 0.5, L"(##%ld#)", count);
+				Graphics_text3 (my graphics, my endWindow, 0.5, L"(##", Melder_integer (count), L"#)");
 			}
 		}
 
@@ -1662,7 +1700,7 @@ static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, int *
 	}
 	Graphics_setLineWidth (my graphics, 1);
 	Graphics_line (my graphics, x, 0, x, 1.01);
-	Graphics_printf (my graphics, x, 1.01, L"%f", x);
+	Graphics_text1 (my graphics, x, 1.01, Melder_fixed (x, 6));
 }
 
 static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
@@ -1715,7 +1753,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	}
 
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
-	Graphics_setTextAlignment (my graphics, Graphics_CENTER, Graphics_BOTTOM);
+	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	while (Graphics_mouseStillDown (my graphics)) {
 		do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
@@ -1804,7 +1842,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 			if (iDraggedPoint) {
 				long dropSiteHasPoint = AnyTier_hasPoint (textTier, xWC);
 				if (dropSiteHasPoint) {
-					Melder_warning ("Cannot drop point on an existing point.");
+					Melder_warning1 (L"Cannot drop point on an existing point.");
 				} else {
 					TextPoint point = textTier -> points -> item [iDraggedPoint];
 					/*
@@ -2080,10 +2118,7 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 	Any radio;
 	(void) editor;
 	NATURAL (L"Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
-	OPTIONMENU (L"Text alignment in intervals", TextGridEditor_DEFAULT_ALIGNMENT + 1)
-		OPTION (L"Left")
-		OPTION (L"Centre")
-		OPTION (L"Right")
+	OPTIONMENU_ENUM (L"Text alignment in intervals", kTextGridEditor_horizontalAlignment, DEFAULT)
 	OPTIONMENU (L"The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
 		OPTION (L"are shown as typed")
 		OPTION (L"mean italic/bold/sub/super")
@@ -2102,7 +2137,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	iam (TextGridEditor);
 	SET_INTEGER (L"The symbols %#_^ in labels", my useTextStyles + 1)
 	SET_INTEGER (L"Font size", my fontSize)
-	SET_INTEGER (L"Text alignment in intervals", my alignment + 1)
+	SET_ENUM (L"Text alignment in intervals", kTextGridEditor_horizontalAlignment, my alignment)
 	SET_INTEGER (L"With the shift key, you drag", my shiftDragMultiple + 1)
 	SET_INTEGER (L"Show number of", my showNumberOf)
 	SET_INTEGER (L"Paint intervals green whose label...", my greenMethod + 1 - Melder_STRING_min)
@@ -2112,7 +2147,7 @@ static void prefs_getValues (I, EditorCommand cmd) {
  	iam (TextGridEditor);
 	preferences.useTextStyles = my useTextStyles = GET_INTEGER (L"The symbols %#_^ in labels") - 1;
 	preferences.fontSize = my fontSize = GET_INTEGER (L"Font size");
-	preferences.alignment = my alignment = GET_INTEGER (L"Text alignment in intervals") - 1;
+	preferences.alignment = my alignment = GET_ENUM (kTextGridEditor_horizontalAlignment, L"Text alignment in intervals");
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER (L"With the shift key, you drag") - 1;
 	preferences.showNumberOf = my showNumberOf = GET_INTEGER (L"Show number of");
 	preferences.greenMethod = my greenMethod = GET_INTEGER (L"Paint intervals green whose label...") - 1 + Melder_STRING_min;
@@ -2170,6 +2205,7 @@ static void createMenuItems_pitch_picture (I, EditorMenu menu) {
 
 class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (destroy)
+	class_method (info)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenuItems_file_write)

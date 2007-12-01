@@ -48,7 +48,7 @@ static int isSingleWordCharacter (int c) {
 
 static long lookUp_unsorted (ManPages me, const wchar_t *title);
 
-static void classManPages_destroy (I) { iam (ManPages);
+static void destroy (I) { iam (ManPages);
 	if (my dynamic && my pages) {
 		for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 			ManPage page = my pages -> item [ipage];
@@ -175,9 +175,9 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
-					Melder_warning ("Cannot find sound file \"%ls\".", link + 3);
+					Melder_warning3 (L"Cannot find sound file \"", link + 3, L"\".");
 				} else if (! MelderFile_exists (& file2)) {
-					Melder_warning ("Cannot find sound file \"%s\".", MelderFile_messageName (& file2));
+					Melder_warning3 (L"Cannot find sound file ", MelderFile_messageNameW (& file2), L".");
 				}
 			} else if (link [0] == '\\' && link [1] == 'S' && link [2] == 'C') {
 				/*
@@ -197,9 +197,9 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
 				if (Melder_hasError ()) {
 					Melder_clearError ();
-					Melder_warning ("Cannot find script \"%ls\".", fileName);
+					Melder_warning3 (L"Cannot find script \"", fileName, L"\".");
 				} else if (! MelderFile_exists (& file2)) {
-					Melder_warning ("Cannot find script \"%ls\".", MelderFile_messageNameW (& file2));
+					Melder_warning3 (L"Cannot find script ", MelderFile_messageNameW (& file2), L".");
 				}
 				my executable = TRUE;
 			} else {
@@ -245,7 +245,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }
-static int classManPages_readText (I, MelderReadString *text) {
+static int readText (I, MelderReadString *text) {
 	iam (ManPages);
 	my dynamic = TRUE;
 	my pages = Ordered_create ();
@@ -253,10 +253,11 @@ static int classManPages_readText (I, MelderReadString *text) {
 	return readOnePage (me, text);
 }
 
-class_methods (ManPages, Data)
-	class_method_local (ManPages, destroy)
-	class_method_local (ManPages, readText)
-class_methods_end
+class_methods (ManPages, Data) {
+	class_method (destroy)
+	class_method (readText)
+	class_methods_end
+}
 
 ManPages ManPages_create (void) {
 	ManPages me = new (ManPages);

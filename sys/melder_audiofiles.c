@@ -765,7 +765,7 @@ static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHAN
 static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
 	(void) decoder;
 	(void) client_data;
-	Melder_warning ("FLAC decoder error: %s", FLAC__StreamDecoderErrorStatusString [status]);
+	Melder_warning2 (L"FLAC decoder error: ", Melder_peekUtf8ToWcs (FLAC__StreamDecoderErrorStatusString [status]));
 }
 
 static int Melder_readFlacFile (FILE *f, int numberOfChannels, float *leftBuffer, float *rightBuffer, long numberOfSamples) {
@@ -1045,7 +1045,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 	}
 	readEverything = 1;
 end:
-	if (! readEverything) Melder_warning ("Audio file too short. Missing samples were set to zero.");
+	if (! readEverything) Melder_warning1 (L"Audio file too short. Missing samples were set to zero.");
 	if (ferror (f)) return Melder_error1 (L"(Melder_readAudioToFloat:) Error reading audio samples from file.");
 	return 1;
 }
@@ -1119,7 +1119,7 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 			return Melder_error ("(Melder_readAudioToShort:) Unknown encoding %d.", encoding);
 	}
 end:
-	if (feof (f)) Melder_warning ("Audio file too short. Missing samples were set to zero.");
+	if (feof (f)) Melder_warning1 (L"Audio file too short. Missing samples were set to zero.");
 	if (ferror (f)) return Melder_error1 (L"(Melder_readAudioToShort:) Error reading audio samples from file.");
 	return 1;
 }
