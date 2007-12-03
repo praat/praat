@@ -54,7 +54,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 	
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 	{
-		return Melder_error1 (L"LPC_Frame_into_Spectrum: Spectrum size not large enough.");
+		return Melder_error1 (L"Spectrum size not large enough.");
 	}
 	
 	if ((fftbuffer = NUMfvector (1, nfft)) == NULL) return 0;
@@ -83,18 +83,15 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 		}
 	}
 	
-	if (bandwidthReduction > 0)
-	{
-		/*
-			Calculate sum (k=0..ndata; a[k] (z)^-k) along a contour with radius r:
-			sum (k=0..ndata; a[k] (rz)^-k) = sum (k=0..ndata; (a[k]r^-k) z^-k)
-		*/
+	/*
+		Calculate sum (k=0..ndata; a[k] (z)^-k) along a contour with radius r:
+		sum (k=0..ndata; a[k] (rz)^-k) = sum (k=0..ndata; (a[k]r^-k) z^-k)
+	*/
 	
-		double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
-		for (i=2; i <= ndata; i++)
-		{
-			fftbuffer[i] *= pow (g, i - 1);
-		}
+	double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
+	for (i=2; i <= ndata; i++)
+	{
+		fftbuffer[i] *= pow (g, i - 1);
 	}
 	
 	/*

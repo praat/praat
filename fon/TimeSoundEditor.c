@@ -41,13 +41,13 @@ static struct {
 
 void TimeSoundEditor_prefs (void) {
 	Preferences_addInt (L"TimeSoundEditor.sound.autoscaling", & preferences.sound.autoscaling, TRUE);
-	Preferences_addBool (L"TimeSoundEditor.picture.preserveTimes", & preferences.picture.preserveTimes, true);
+	Preferences_addBool (L"TimeSoundEditor.picture.preserveTimes2", & preferences.picture.preserveTimes, true);
 	Preferences_addDouble (L"TimeSoundEditor.picture.bottom", & preferences.picture.bottom, 0.0);
 	Preferences_addDouble (L"TimeSoundEditor.picture.top", & preferences.picture.top, 0.0);
-	Preferences_addBool (L"TimeSoundEditor.picture.garnish", & preferences.picture.garnish, true);
+	Preferences_addBool (L"TimeSoundEditor.picture.garnish2", & preferences.picture.garnish, true);
 	Preferences_addInt (L"TimeSoundEditor.extract.windowType", & preferences.extract.windowType, enumi (Sound_WINDOW, Hanning));
 	Preferences_addDouble (L"TimeSoundEditor.extract.relativeWidth", & preferences.extract.relativeWidth, 1.0);
-	Preferences_addBool (L"TimeSoundEditor.extract.preserveTimes", & preferences.extract.preserveTimes, true);
+	Preferences_addBool (L"TimeSoundEditor.extract.preserveTimes2", & preferences.extract.preserveTimes, true);
 }
 
 /********** Thing methods **********/

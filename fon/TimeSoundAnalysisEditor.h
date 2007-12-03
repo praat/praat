@@ -41,6 +41,7 @@
  * pb 2007/09/02 direct drawing to picture window
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
+ * pb 2007/12/02 split off TimeSoundAnalysisEditor_enums.h
  */
 
 #ifndef _TimeSoundEditor_h_
@@ -62,6 +63,8 @@
 	#include "PointProcess.h"
 #endif
 
+#include "TimeSoundAnalysisEditor_enums.h"
+
 struct FunctionEditor_spectrogram {
 	/* KEEP IN SYNC WITH PREFS. */
 	Spectrogram data; int show;
@@ -80,14 +83,7 @@ struct FunctionEditor_spectrogram {
 	/* Dynamic information: */
 	double cursor;
 };
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_MIN  1
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE  1
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE  2
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC  3
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_MAX  3
-#define kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT  kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC
-wchar_t *kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (int value);
-int kTimeSoundAnalysisEditor_pitch_drawingMethod_getValue (wchar_t *text);
+
 struct FunctionEditor_pitch {
 	/* KEEP IN SYNC WITH PREFS. */
 	Pitch data; int show;

@@ -21,29 +21,16 @@
  * pb 2002/03/07 GPL
  * pb 2007/03/14 arrowSize
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
+ * pb 2007/12/02 enums
  */
 
 #include <stdarg.h>
 #include "GraphicsP.h"
 
-/***** Enumerated types *****/
-
-wchar_t *kGraphics_horizontalAlignment_getText (int value) {
-	return
-		value == kGraphics_horizontalAlignment_LEFT ? L"left" :
-		value == kGraphics_horizontalAlignment_CENTRE ? L"centre" :
-		value == kGraphics_horizontalAlignment_RIGHT ? L"right" :
-	kGraphics_horizontalAlignment_getText (kGraphics_horizontalAlignment_DEFAULT);
-}
-
-int kGraphics_horizontalAlignment_getValue (wchar_t *text) {
-	return
-		wcsequ (text, L"left") || wcsequ (text, L"Left") ? kGraphics_horizontalAlignment_LEFT :
-		wcsequ (text, L"centre") || wcsequ (text, L"Centre") ||
-		wcsequ (text, L"center") || wcsequ (text, L"Center") ? kGraphics_horizontalAlignment_CENTRE :
-		wcsequ (text, L"right") || wcsequ (text, L"Right") ? kGraphics_horizontalAlignment_RIGHT :
-	kGraphics_horizontalAlignment_DEFAULT;
-}
+#include "enums_getText.h"
+#include "Graphics_enums.h"
+#include "enums_getValue.h"
+#include "Graphics_enums.h"
 
 /***** Methods *****/
 

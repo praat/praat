@@ -41,6 +41,7 @@
  * pb 2007/01/03 flexible drawing area
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/02 big-endian Linux (suggested by Stefan de Konink)
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -64,6 +65,7 @@
 #include "EditorM.h"
 #include "Preferences.h"
 
+/* Uncomment the following line if you want to override the default choices for using PortAudio. */
 //#define USE_PORTAUDIO  1
 #ifndef USE_PORTAUDIO
 	// Default: use PortAudio on Mac only.
@@ -1158,7 +1160,12 @@ static int initialize (SoundRecorder me) {
 		(void) me;
 	#elif defined (linux)
 		int sampleRate = (int) theControlPanel. sampleRate, sampleSize = 16;
-		int channels = my numberOfChannels, stereo = ( my numberOfChannels == 2 ), format = AFMT_S16_LE, val;
+		int channels = my numberOfChannels, stereo = ( my numberOfChannels == 2 ), val;
+		#if __BYTE_ORDER == __BIG_ENDIAN
+			int format = AFMT_S16_BE;
+		#else
+			int format = AFMT_S16_LE;
+		#endif
 		int fd_mixer;
 		my fd = open ("/dev/dsp", O_RDONLY);
 		if (my fd == -1) {

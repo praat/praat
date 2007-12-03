@@ -129,6 +129,7 @@ int enum_search (void *enumerated, const wchar_t *string);
 
 		int result = (char **) 20 - (char **) 0;   // 20 (incorrect: SPARC compiler yields 5).
 */
+
 /* End of file enum.h */
 #endif
 

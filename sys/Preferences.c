@@ -42,8 +42,8 @@
 	int type; \
 	void *value; \
 	int min, max; \
-	wchar_t * (*getText) (int value); \
-	int (*getValue) (wchar_t *text);
+	const wchar_t * (*getText) (int value); \
+	int (*getValue) (const wchar_t *text);
 #define Resource_methods Data_methods
 class_create (Resource, Data);
 
@@ -61,7 +61,7 @@ class_methods_end
 
 static SortedSetOfString theResources;
 
-static void Resources_add (const wchar_t *string, int type, void *value, int min, int max, wchar_t *(*getText) (int value), int (*getValue) (wchar_t *text)) {
+static void Resources_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text)) {
 	Resource me = new (Resource);
 	my string = Melder_wcsdup (string);
 	my type = type;
@@ -153,7 +153,7 @@ void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t
 	{ wcscpy (value, defaultValue); Resources_add (string, stringwwa, value, 0, 0, NULL, NULL); }
 
 void _Preferences_addEnum (const wchar_t *string, int *value, int min, int max,
-	wchar_t *(*getText) (int value), int (*getValue) (wchar_t *text), int defaultValue)
+	const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text), int defaultValue)
 {
 	{ *value = defaultValue; Resources_add (string, enumwa, value, min, max, getText, getValue); }
 }

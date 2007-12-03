@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/11/30
+ * pb 2007/12/02
  */
 
 #include <stdio.h>
@@ -38,6 +38,7 @@
 #include <stddef.h>
 #include <wchar.h>
 #include <stdbool.h>
+#include "enums.h"
 
 #ifndef TRUE
 	#define TRUE  1
@@ -418,30 +419,35 @@ typedef struct {
 
 /********** NUMBER AND STRING COMPARISON **********/
 
-#define Melder_NUMBER_min  1
-#define Melder_NUMBER_EQUAL_TO  1
-#define Melder_NUMBER_NOT_EQUAL_TO  2
-#define Melder_NUMBER_LESS_THAN  3
-#define Melder_NUMBER_LESS_THAN_OR_EQUAL_TO  4
-#define Melder_NUMBER_GREATER_THAN  5
-#define Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO  6
-#define Melder_NUMBER_max  6
-const wchar_t * Melder_NUMBER_text_adjective (int which_Melder_NUMBER);
-int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion);
+#define kMelder_number_MIN  1
+#define kMelder_number_EQUAL_TO  1
+#define kMelder_number_NOT_EQUAL_TO  2
+#define kMelder_number_LESS_THAN  3
+#define kMelder_number_LESS_THAN_OR_EQUAL_TO  4
+#define kMelder_number_GREATER_THAN  5
+#define kMelder_number_GREATER_THAN_OR_EQUAL_TO  6
+#define kMelder_number_MAX  6
+#define kMelder_number_DEFAULT  kMelder_number_EQUAL_TO
+const wchar_t * kMelder_number_getText (int value);
+int kMelder_number_getValue (const wchar_t *text);
+int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion);
 
-#define Melder_STRING_min  1
-#define Melder_STRING_EQUAL_TO  1
-#define Melder_STRING_NOT_EQUAL_TO  2
-#define Melder_STRING_CONTAINS  3
-#define Melder_STRING_DOES_NOT_CONTAIN  4
-#define Melder_STRING_STARTS_WITH  5
-#define Melder_STRING_DOES_NOT_START_WITH  6
-#define Melder_STRING_ENDS_WITH  7
-#define Melder_STRING_DOES_NOT_END_WITH  8
-#define Melder_STRING_MATCH_REGEXP  9
-#define Melder_STRING_max  9
-const wchar_t * Melder_STRING_text_finiteVerb (int which_Melder_STRING);
-int Melder_stringMatchesCriterion (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion);
+enum {
+	kMelder_string_MIN = 1,
+	kMelder_string_EQUAL_TO = 1,
+	kMelder_string_NOT_EQUAL_TO = 2,
+	kMelder_string_CONTAINS = 3,
+	kMelder_string_DOES_NOT_CONTAIN = 4,
+	kMelder_string_STARTS_WITH = 5,
+	kMelder_string_DOES_NOT_START_WITH = 6,
+	kMelder_string_ENDS_WITH = 7,
+	kMelder_string_DOES_NOT_END_WITH = 8,
+	kMelder_string_MATCH_REGEXP = 9,
+	kMelder_string_MAX = 9,
+	kMelder_string_DEFAULT = kMelder_string_EQUAL_TO };
+const wchar_t * kMelder_string_getText (int value);
+int kMelder_string_getValue (const wchar_t *text);
+int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_string, const wchar_t *criterion);
 
 /********** STRING PARSING **********/
 

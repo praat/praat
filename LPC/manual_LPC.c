@@ -19,7 +19,7 @@
 
 /*
  djmw 20020422 GPL + removed "C syntax" part of manpage
- djmw 20060428 Latest modification
+ djmw 20071120 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -187,7 +187,7 @@ FORMULA (L"%c__%i_ = %a__%n\\--%i+1_, ")
 FORMULA (L"%c__%n+1_ = 1")
 MAN_END
 
-MAN_BEGIN (L"LPC: To Spectrum (slice)...", L"djmw", 20040407)
+MAN_BEGIN (L"LPC: To Spectrum (slice)...", L"djmw", 20071120)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
 TAG (L"%%Time (seconds)")
@@ -200,7 +200,9 @@ DEFINITION (L"formants with small bandwidths show up very well as peaks in the s
 	"lie close to the contour along which the spectrum is computed (the unit circle in the z-plane). "
 	"Peak enhancement can be realized by computing the spectrum in the z-plane along a contour of radius "
 	"%r = exp (\\-- %\\pi \\.c %BandwidthReduction / %samplingFrequency). "
-	"This technique is also called off-axis spectrum computation.")
+	"This technique is also called off-axis spectrum computation. "
+	"Negative values evaluate the spectrum on a contour %outside the unit circle and therefore result in a "
+	"flattened  spectrum.")
 TAG (L"%%De-emphasis frequency (Hz)")
 DEFINITION (L"Performs de-emphasis when frequency is in the interval (0, @@Nyquist frequency@)")
 ENTRY (L"Algorithm")

@@ -246,6 +246,14 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define ENUM(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define RADIO_ENUM(label,enum,def) \
+	RADIO (label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUM(label,enum,def) \
+	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
 #define LIST(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
@@ -254,6 +262,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
+#define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
 #define DO  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (wchar_t *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
@@ -310,6 +319,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
+#define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
 #define GET_FILE(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) return Melder_error1 (t);
 #define NEW(proc)  if (! praat_new1 (proc, NULL)) return 0;

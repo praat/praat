@@ -196,7 +196,7 @@ static void print (I, Graphics graphics) {
 	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages -> item [ipage];
 		if (my printPagesStartingWith == NULL ||
-		    Melder_stringMatchesCriterion (page -> title, Melder_STRING_STARTS_WITH, my printPagesStartingWith))
+		    Melder_stringMatchesCriterion (page -> title, kMelder_string_STARTS_WITH, my printPagesStartingWith))
 		{
 			ManPage_Paragraph par;
 			my path = ipage;

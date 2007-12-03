@@ -381,8 +381,7 @@ END
 
 FORM (Table_extractRowsWhereColumn_number, L"Table: Extract rows where column (number)", 0)
 	WORD (L"Extract all rows where column...", L"")
-	RADIO (L"...is...", 1)
-	RADIOBUTTONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	RADIO_ENUM (L"...is...", kMelder_number, DEFAULT)
 	REAL (L"...the number", L"0.0")
 	OK
 DO
@@ -391,7 +390,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
 		if (! praat_new5 (Table_extractRowsWhereColumn_number (OBJECT,
-			icol, GET_INTEGER (L"...is...") - 1 + Melder_NUMBER_min, value),
+			icol, GET_ENUM (kMelder_number, L"...is..."), value),
 			NAMEW, L"_", Table_messageColumn (OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -400,8 +399,7 @@ END
 
 FORM (Table_extractRowsWhereColumn_text, L"Table: Extract rows where column (text)", 0)
 	WORD (L"Extract all rows where column...", L"")
-	OPTIONMENU (L"...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONMENU_ENUM (L"...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
@@ -410,7 +408,7 @@ DO
 		Table me = OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
 		if (! praat_new3 (Table_extractRowsWhereColumn_string (OBJECT,
-			icol, GET_INTEGER (L"...") - 1 + Melder_STRING_min, value),
+			icol, GET_ENUM (kMelder_string, L"..."), value),
 			NAMEW, L"_", value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
@@ -1087,23 +1085,21 @@ DO
 END
 
 FORM (TableOfReal_extractColumnsWhereLabel, L"Extract column where label", 0)
-	OPTIONMENU (L"Extract all columns whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONMENU_ENUM (L"Extract all columns whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"a")
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
 		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel (OBJECT,
-			GET_INTEGER (L"Extract all columns whose label...") - 1 + Melder_STRING_min, text),
+			GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text),
 			NAMEW, L"_", text)) return 0;
 	}
 END
 
 FORM (TableOfReal_extractColumnsWhereRow, L"Extract columns where row", 0)
 	NATURAL (L"Extract all columns where row...", L"1")
-	OPTIONMENU (L"...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	OPTIONMENU_ENUM (L"...is...", kMelder_number, DEFAULT)
 	REAL (L"...the value", L"0.0")
 	OK
 DO
@@ -1111,7 +1107,7 @@ DO
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
 		if (! praat_new5 (TableOfReal_extractColumnsWhereRow (OBJECT,
-			row, GET_INTEGER (L"...is...") - 1 + Melder_NUMBER_min, value),
+			row, GET_ENUM (kMelder_number, L"...is..."), value),
 			NAMEW, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
@@ -1143,8 +1139,7 @@ END
 
 FORM (TableOfReal_extractRowsWhereColumn, L"Extract rows where column", 0)
 	NATURAL (L"Extract all rows where column...", L"1")
-	OPTIONMENU (L"...is...", 1)
-	OPTIONS_ENUM (Melder_NUMBER_text_adjective (itext), Melder_NUMBER_min, Melder_NUMBER_max)
+	OPTIONMENU_ENUM (L"...is...", kMelder_number, DEFAULT)
 	REAL (L"...the value", L"0.0")
 	OK
 DO
@@ -1152,21 +1147,20 @@ DO
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
 		if (! praat_new5 (TableOfReal_extractRowsWhereColumn (OBJECT,
-			column, GET_INTEGER (L"...is...") - 1 + Melder_NUMBER_min, value),
+			column, GET_ENUM (kMelder_number, L"...is..."), value),
 			NAMEW, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
 FORM (TableOfReal_extractRowsWhereLabel, L"Extract rows where label", 0)
-	OPTIONMENU (L"Extract all rows whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONMENU_ENUM (L"Extract all rows whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"a")
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
 		if (! praat_new3 (TableOfReal_extractRowsWhereLabel (OBJECT,
-			GET_INTEGER (L"Extract all rows whose label...") - 1 + Melder_STRING_min, text),
+			GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text),
 			NAMEW, L"_", text)) return 0;
 	}
 END

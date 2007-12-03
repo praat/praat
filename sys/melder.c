@@ -33,6 +33,7 @@
  * pb 2007/05/26 Melder_stringMatchesCriterionW
  * pb 2007/06/19 removed some
  * pb 2007/08/12 wchar_t in helpProc
+ * pb 2007/12/02 enums
  */
 
 #include <math.h>
@@ -62,6 +63,11 @@
 	#endif
 	#include "Gui.h"
 #endif
+
+#include "enums_getText.h"
+#include "melder_enums.h"
+#include "enums_getValue.h"
+#include "melder_enums.h"
 
 /********** Exported variables. **********/
 
@@ -471,61 +477,41 @@ int Melder_pause (const char *format, ...) {
 
 /********** NUMBER AND STRING COMPARISONS **********/
 
-const wchar_t * Melder_NUMBER_text_adjective (int which_Melder_NUMBER) {
-	static const wchar_t *strings [1+Melder_NUMBER_max] = { L"",
-		L"equal to", L"not equal to",
-		L"less than", L"less than or equal to",
-		L"greater than", L"greater than or equal to"
-	};
-	return strings [which_Melder_NUMBER < 0 || which_Melder_NUMBER > Melder_NUMBER_max ? 0 : which_Melder_NUMBER];
-}
-
-int Melder_numberMatchesCriterion (double value, int which_Melder_NUMBER, double criterion) {
+int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion) {
 	return
-		(which_Melder_NUMBER == Melder_NUMBER_EQUAL_TO && value == criterion) ||
-		(which_Melder_NUMBER == Melder_NUMBER_NOT_EQUAL_TO && value != criterion) ||
-		(which_Melder_NUMBER == Melder_NUMBER_LESS_THAN && value < criterion) ||
-		(which_Melder_NUMBER == Melder_NUMBER_LESS_THAN_OR_EQUAL_TO && value <= criterion) ||
-		(which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN && value > criterion) ||
-		(which_Melder_NUMBER == Melder_NUMBER_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
+		(which_kMelder_number == kMelder_number_EQUAL_TO && value == criterion) ||
+		(which_kMelder_number == kMelder_number_NOT_EQUAL_TO && value != criterion) ||
+		(which_kMelder_number == kMelder_number_LESS_THAN && value < criterion) ||
+		(which_kMelder_number == kMelder_number_LESS_THAN_OR_EQUAL_TO && value <= criterion) ||
+		(which_kMelder_number == kMelder_number_GREATER_THAN && value > criterion) ||
+		(which_kMelder_number == kMelder_number_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-const wchar_t * Melder_STRING_text_finiteVerb (int which_Melder_STRING) {
-	static const wchar_t *strings [1+Melder_STRING_max] = { L"",
-		L"is equal to", L"is not equal to",
-		L"contains", L"does not contain",
-		L"starts with", L"does not start with",
-		L"ends with", L"does not end with",
-		L"matches (regex)"
-	};
-	return strings [which_Melder_STRING < 0 || which_Melder_STRING > Melder_STRING_max ? 0 : which_Melder_STRING];
-}
-
-int Melder_stringMatchesCriterion (const wchar_t *value, int which_Melder_STRING, const wchar_t *criterion) {
+int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_string, const wchar_t *criterion) {
 	if (value == NULL) {
 		value = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
 	if (criterion == NULL) {
 		criterion = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
-	if (which_Melder_STRING <= Melder_STRING_NOT_EQUAL_TO) {
+	if (which_kMelder_string <= kMelder_string_NOT_EQUAL_TO) {
 		int matchPositiveCriterion = wcsequ (value, criterion);
-		return (which_Melder_STRING == Melder_STRING_EQUAL_TO) == matchPositiveCriterion;
+		return (which_kMelder_string == kMelder_string_EQUAL_TO) == matchPositiveCriterion;
 	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_CONTAIN) {
+	if (which_kMelder_string <= kMelder_string_DOES_NOT_CONTAIN) {
 		int matchPositiveCriterion = wcsstr (value, criterion) != NULL;
-		return (which_Melder_STRING == Melder_STRING_CONTAINS) == matchPositiveCriterion;
+		return (which_kMelder_string == kMelder_string_CONTAINS) == matchPositiveCriterion;
 	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_START_WITH) {
+	if (which_kMelder_string <= kMelder_string_DOES_NOT_START_WITH) {
 		int matchPositiveCriterion = wcsnequ (value, criterion, wcslen (criterion));
-		return (which_Melder_STRING == Melder_STRING_STARTS_WITH) == matchPositiveCriterion;
+		return (which_kMelder_string == kMelder_string_STARTS_WITH) == matchPositiveCriterion;
 	}
-	if (which_Melder_STRING <= Melder_STRING_DOES_NOT_END_WITH) {
+	if (which_kMelder_string <= kMelder_string_DOES_NOT_END_WITH) {
 		int criterionLength = wcslen (criterion), valueLength = wcslen (value);
 		int matchPositiveCriterion = criterionLength <= valueLength && wcsequ (value + valueLength - criterionLength, criterion);
-		return (which_Melder_STRING == Melder_STRING_ENDS_WITH) == matchPositiveCriterion;
+		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
-	if (which_Melder_STRING == Melder_STRING_MATCH_REGEXP) {
+	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
 		char *place = NULL, *errorMessage;
 		regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (criterion), & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;

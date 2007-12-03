@@ -90,22 +90,10 @@
 
 /* Enumerated types. */
 
-wchar_t *kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (int value) {
-	return
-		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE ? L"curve" :
-		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE ? L"speckles" :
-		value == kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC ? L"automatic" :
-	kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT);
-}
-
-int kTimeSoundAnalysisEditor_pitch_drawingMethod_getValue (wchar_t *text) {
-	return
-		wcsequ (text, L"curve") || wcsequ (text, L"Curve") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_CURVE :
-		wcsequ (text, L"speckle") || wcsequ (text, L"Speckle") ||
-		wcsequ (text, L"speckles") || wcsequ (text, L"Speckles") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_SPECKLE :
-		wcsequ (text, L"automatic") || wcsequ (text, L"Automatic") ? kTimeSoundAnalysisEditor_pitch_drawingMethod_AUTOMATIC :
-	kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT;
-}
+#include "enums_getText.h"
+#include "TimeSoundAnalysisEditor_enums.h"
+#include "enums_getValue.h"
+#include "TimeSoundAnalysisEditor_enums.h"
 
 static const wchar_t * theMessage_Cannot_compute_spectrogram = L"The spectrogram is not defined at the edge of the sound.";
 static const wchar_t * theMessage_Cannot_compute_pitch = L"The pitch contour is not defined at the edge of the sound.";
@@ -171,7 +159,7 @@ void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor, 75.0);
 	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling, 500.0);
 	Preferences_addInt (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, Pitch_UNIT_HERTZ);
-	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod2", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom, 0.0);   // auto
 	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo, 0.0);   // auto
 	Preferences_addInt (L"FunctionEditor.pitch.method", & preferences.pitch.method, 1);   // autocorrelation

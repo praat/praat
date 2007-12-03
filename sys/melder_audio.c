@@ -30,8 +30,9 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
  * pb 2007/01/03 best sample rate can be over 64 kHz
- * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Koninck)
+ * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Konink)
  * pb 2007/08/12 wchar_t
+ * Stefan de Konink 2007/12/02 big-endian Linux
  */
 
 #include "melder.h"
@@ -1209,13 +1210,20 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #elif defined (linux)
 {
+	/* Big-endian version added by Stefan de Konink, Nov 29, 2007 */
+	#if __BYTE_ORDER == __BIG_ENDIAN
+        int fmt = AFMT_S16_BE;
+	#else
+        int fmt = AFMT_S16_LE;
+	#endif
 	/* O_NDELAY option added by Rafael Laboissiere, May 19, 2005 */
 	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | (Melder_debug == 16 ? 0 : O_NDELAY))) == -1)
 		return cancel (), Melder_error1 (errno == EBUSY ? L"Audio device already in use." :
 			L"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
 	fcntl (my audio_fd, F_SETFL, 0);   /* Added by Rafael Laboissiere, May 19, 2005 */
-	if (ioctl (my audio_fd, SNDCTL_DSP_SAMPLESIZE, (my val = 16, & my val)) == -1 ||   /* Error? */
-	    my val != 16)   /* Has sound card overridden our sample size? */
+	if (ioctl (my audio_fd, SNDCTL_DSP_SETFMT,   /* Changed SND_DSP_SAMPLESIZE to SNDCTL_DSP_SETFMT; Stefan de Konink, Nov 29, 2007 */
+		(my val = fmt, & my val)) == -1 ||   /* Error? */
+	    my val != fmt)   /* Has sound card overridden our sample size? */
 	{
 		return cancel (), Melder_error1 (L"Cannot set sample size to 16 bit.");
 	}

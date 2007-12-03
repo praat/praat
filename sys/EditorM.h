@@ -74,6 +74,10 @@
 #define ENUM(label,type,def)	UiForm_addEnum (cmd -> dialog, label, & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define RADIO_ENUM(label,enum,def) \
+	RADIO (label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM(label,enum,def) \
 	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \

@@ -28,7 +28,7 @@
  * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
  * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
  * pb 2007/01/07 PortAudio
- * Erez Volk
+ * Stefan de Konink 2007/12/02 big-endian Linux
  */
 
 #include <errno.h>
@@ -557,8 +557,12 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			goto error;
 		}
 	#elif defined (linux)
-		val = AFMT_S16_LE;
-		if (ioctl (fd, SNDCTL_DSP_SETFMT, &val) == -1) {
+		#if __BYTE_ORDER == __BIG_ENDIAN
+			val = AFMT_S16_BE;
+		#else
+			val = AFMT_S16_LE;
+		#endif
+		if (ioctl (fd, SNDCTL_DSP_SETFMT, & val) == -1) {
 			Melder_error1 (L"(Sound_record:) Cannot set 16-bit linear.");
 			goto error;
 		}

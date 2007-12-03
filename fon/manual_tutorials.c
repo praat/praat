@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071201)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071203)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##4.6.40# (December 3, 2007)")
+LIST_ITEM (L"\\bu Corrected some minor bugs.")
 NORMAL (L"##4.6.39# (December 1, 2007)")
 LIST_ITEM (L"\\bu Manual: corrected a bug that could cause Praat to crash when viewing certain manual pages with pictures.")
 LIST_ITEM (L"\\bu Scripting: corrected a bug that could cause Praat to crash when a long string was used as an argument to a procedure.")

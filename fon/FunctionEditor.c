@@ -71,8 +71,8 @@ void FunctionEditor_prefs (void) {
 	Preferences_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight, 440);
 	Preferences_addInt (L"FunctionEditor.groupWindow", & preferences.groupWindow, TRUE);
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
-	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
-	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
+	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes2", & preferences.picture.drawSelectionTimes, true);
+	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs2", & preferences.picture.drawSelectionHairs, true);
 }
 
 #define maxGroup 100

@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20061201 Latest modification
+ djmw 20071113 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -658,7 +658,7 @@ NORMAL (L"An object of type ClassificationTable represents the result of a class
 	"column labels. The higher the number the better the match.")
 MAN_END
 
-MAN_BEGIN (L"concentration ellipse", L"djmw", 20000531)
+MAN_BEGIN (L"concentration ellipse", L"djmw", 20071113)
 NORMAL (L"The percentage of bivariate normally distributed data covered by an ellipse "
 	"whose axes have a length of %numberOfSigmas\\.c\\si can be obtained by integration of the p.d.f. "
 	"over an elliptical area. This results in the following equation as can be "
@@ -669,6 +669,9 @@ FORMULA (L"(%x/%\\si__x_)^2 + (%y/%\\si__y_)^2 = %numberOfSigmas^2.")
 NORMAL (L"The %numberOfSigmas = 1 ellipse covers 39.3\\% , "
 	"the %numberOfSigmas = 2 ellipse covers 86.5\\%  and "
 	"the %numberOfSigmas = 3 ellipse covers 98.9\\%  of the data.")
+NORMAL (L"From the formula above we can show that if we want to cover %p percent of the data, we have to "		"chose %numberOfSigmas as:")
+FORMULA (L"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
+NORMAL (L"For covering 95\\% of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
 
 MAN_BEGIN (L"confidence interval", L"djmw", 20011105)

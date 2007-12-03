@@ -39,6 +39,7 @@
  * pb 2007/05/24 some wchar_t
  * pb 2007/06/09 wchar_t
  * pb 2007/08/12 more wchar_t
+ * pb 2007/11/30 removed bug: allowed long arguments to the "call" statement (thanks to Ingmar Steiner)
  */
 
 #include <ctype.h>

@@ -20,12 +20,15 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/12/02
  */
 
 #ifndef _Thing_h_
 	#include "Thing.h"
 #endif
+
+#include "Graphics_enums.h"
+
 typedef struct structGraphics *Graphics;
 Graphics Graphics_create (int resolution);
 Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, int spots,
@@ -126,17 +129,9 @@ void Graphics_unhighlight2 (I, double x1, double x2, double y1, double y2,
 	double innerX1, double innerX2, double innerY1, double innerY2);
 
 #define Graphics_NOCHANGE  -1
-#define kGraphics_horizontalAlignment_MIN  0
-#define kGraphics_horizontalAlignment_LEFT  0
-#define kGraphics_horizontalAlignment_CENTRE  1
-#define kGraphics_horizontalAlignment_RIGHT  2
-#define kGraphics_horizontalAlignment_MAX  2
-#define kGraphics_horizontalAlignment_DEFAULT  kGraphics_horizontalAlignment_LEFT
 #define Graphics_LEFT  kGraphics_horizontalAlignment_LEFT
 #define Graphics_CENTRE  kGraphics_horizontalAlignment_CENTRE
 #define Graphics_RIGHT  kGraphics_horizontalAlignment_RIGHT
-wchar_t *kGraphics_horizontalAlignment_getText (int value);
-int kGraphics_horizontalAlignment_getValue (wchar_t *text);
 #define Graphics_BOTTOM  0
 #define Graphics_HALF  1
 #define Graphics_TOP  2

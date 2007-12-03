@@ -473,21 +473,20 @@ FORM (TextGrid_Sound_extractIntervals, L"TextGrid & Sound: Extract intervals", 0
 	OK
 DO
 	if (! praat_new1 (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
-		GET_INTEGER (STRING_TIER_NUMBER), Melder_STRING_EQUAL_TO, GET_STRING (L"Label text"),
+		GET_INTEGER (STRING_TIER_NUMBER), kMelder_string_EQUAL_TO, GET_STRING (L"Label text"),
 		GET_INTEGER (L"Preserve times")), GET_STRING (L"Label text"))) return 0;
 END
 
 FORM (TextGrid_Sound_extractIntervalsWhere, L"TextGrid & Sound: Extract intervals", 0)
 	INTEGER (STRING_TIER_NUMBER, L"1")
 	BOOLEAN (L"Preserve times", 0)
-	OPTIONMENU (L"Extract all intervals whose label...", 1)
-	OPTIONS_ENUM (Melder_STRING_text_finiteVerb (itext), Melder_STRING_min, Melder_STRING_max)
+	OPTIONMENU_ENUM (L"Extract all intervals whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"")
 	OK
 DO
 	if (! praat_new1 (TextGrid_Sound_extractIntervalsWhere (ONLY (classTextGrid), ONLY (classSound),
 		GET_INTEGER (STRING_TIER_NUMBER),
-		GET_INTEGER (L"Extract all intervals whose label...") - 1 + Melder_STRING_min,
+		GET_ENUM (kMelder_string, L"Extract all intervals whose label..."),
 		GET_STRING (L"...the text"),
 		GET_INTEGER (L"Preserve times")), GET_STRING (L"...the text"))) return 0;
 END

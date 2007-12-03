@@ -700,7 +700,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 		}
 	}
 	if (collection -> size == 0)
-		Melder_warning ("No label that %ls the text \"%ls\" was found.", Melder_STRING_text_finiteVerb (comparison_Melder_STRING), text);
+		Melder_warning ("No label that %ls the text \"%ls\" was found.", kMelder_string_getText (comparison_Melder_STRING), text);
 	return collection;
 error:
 	forget (collection);
