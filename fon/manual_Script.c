@@ -227,7 +227,7 @@ LIST_ITEM (L"4. Those action commands that match the currently selected objects 
 NORMAL (L"To execute any of these blue commands, just click on it.")
 MAN_END
 
-MAN_BEGIN (L"buttons file", L"ppgb", 20070129)
+MAN_BEGIN (L"buttons file", L"ppgb", 20071204)
 NORMAL (L"The file into which changes in the availability and visibility of commands in the fixed "
 	"and dynamic menus are recorded.")
 NORMAL (L"The buttons file is written to disk when you quit Praat, "
@@ -242,12 +242,12 @@ NORMAL (L"To hide a built-in command from a fixed or dynamic menu, or to make a 
 	"you typically use the @ButtonEditor.")
 ENTRY (L"Where is the buttons file?")
 NORMAL (L"The buttons file is in your Praat @@preferences directory@.")
-NORMAL (L"On Unix the file is called #buttons, "
-	"for instance ##/people/miep/.praat-dir/buttons#.")
-NORMAL (L"On Macintosh it is called #Buttons, "
-	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons#.")
-NORMAL (L"On Windows it is called ##Buttons.ini#, "
-	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsButtons.ini#.")
+NORMAL (L"On Unix the file is called #buttons5, "
+	"for instance ##/people/miep/.praat-dir/buttons5#.")
+NORMAL (L"On Macintosh it is called #Buttons5, "
+	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons5#.")
+NORMAL (L"On Windows it is called ##Buttons5.ini#, "
+	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsButtons5.ini#.")
 MAN_END
 
 MAN_BEGIN (L"Calculator", L"ppgb", 20021201)
@@ -1337,7 +1337,7 @@ ENTRY (L"Windows")
 NORMAL (L"If you are user #Miep, your Praat preferences directory will be ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bs#.")
 MAN_END
 
-MAN_BEGIN (L"preferences file", L"ppgb", 20070129)
+MAN_BEGIN (L"preferences file", L"ppgb", 20071205)
 NORMAL (L"The file into which some of your preferences are saved across your sessions with Praat. "
 	"For instance, if you change the font used by the Picture window to Palatino and quit Praat, "
 	"the Picture-window font will still be Palatino when you start Praat again.")
@@ -1346,12 +1346,12 @@ NORMAL (L"The preferences file is written to disk when you quit Praat, "
 	"(but should not edit) with any text editor.")
 ENTRY (L"Where is the preferences file?")
 NORMAL (L"The preferences file is in your Praat @@preferences directory@.")
-NORMAL (L"On Unix the file is called #prefs, "
-	"for instance ##/people/miep/.praat-dir/prefs#.")
-NORMAL (L"On Macintosh it is called #Prefs, "
-	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Prefs#.")
-NORMAL (L"On Windows it is called ##Preferences.ini#, "
-	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences.ini#.")
+NORMAL (L"On Unix the file is called #prefs5, "
+	"for instance ##/people/miep/.praat-dir/prefs5#.")
+NORMAL (L"On Macintosh it is called #Prefs5, "
+	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Prefs5#.")
+NORMAL (L"On Windows it is called ##Preferences5.ini#, "
+	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
 MAN_END
 
 MAN_BEGIN (L"Run script...", L"ppgb", 20050822)
@@ -1701,7 +1701,7 @@ LIST_ITEM (L"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (L"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20070722)
+MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20071210)
 INTRO (L"In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY (L"Numeric variables")
 NORMAL (L"Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
@@ -1746,6 +1746,8 @@ CODE (L"jitter = 0.000000156789")
 CODE (L"echo The jitter is 'jitter:3\\% '.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 0.00002\\% .")
+NORMAL (L"Some ##predefined numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
+	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero.")
 NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
 	"The last one specifies the directory that was the default directory when Praat started up; "
 	"you can use it in scripts that run from the Unix or DOS command line. "

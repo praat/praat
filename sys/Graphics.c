@@ -109,7 +109,7 @@ int Graphics_init (I) {
 	computeTrafo (me);
 	my lineWidth = 1.0;
 	my arrowSize = 1.0;
-	my font = Graphics_FONT_HELVETICA;
+	my font = kGraphics_font_HELVETICA;
 	my fontSize = 10;
 	my fontStyle = Graphics_NORMAL;
 	my record = NULL;

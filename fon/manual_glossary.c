@@ -25,7 +25,7 @@ static void draw_TimeDomain_Sound (Graphics g) {
 	Sound_draw (manual_exampleSound (), g, 0, 0, 0, 0, TRUE, L"curve");
 }
 static void draw_TimeDomain_Pitch (Graphics g) {
-	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, TRUE, Pitch_speckle_NO, Pitch_UNIT_HERTZ);
+	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, TRUE, Pitch_speckle_NO, kPitch_unit_HERTZ);
 }
 
 void manual_glossary_init (ManPages me);

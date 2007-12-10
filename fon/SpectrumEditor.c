@@ -40,15 +40,11 @@ class_create_opaque (SpectrumEditor, FunctionEditor);
 static struct {
 	double bandSmoothing;
 	double dynamicRange;
-}
-	preferences = {
-		100.0,   /* band smoothing */
-		60.0   /* dynamic range */
-	};
+} preferences;
 
 void SpectrumEditor_prefs (void) {
-	Resources_addDouble (L"SpectrumEditor.bandSmoothing", & preferences.bandSmoothing);
-	Resources_addDouble (L"SpectrumEditor.dynamicRange", & preferences.dynamicRange);
+	Preferences_addDouble (L"SpectrumEditor.bandSmoothing", & preferences.bandSmoothing, 100.0);
+	Preferences_addDouble (L"SpectrumEditor.dynamicRange", & preferences.dynamicRange, 60.0);
 }
 
 static void updateRange (SpectrumEditor me) {

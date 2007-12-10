@@ -27,29 +27,25 @@
  * pb 2004/10/20 progress bar
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/01 compatible with stereo sounds
+ * pb 2007/12/06 enums
  */
 
 #include "Sound_and_Spectrogram.h"
 #include "NUM2.h"
 
-const wchar_t * Sound_to_Spectrogram_windowShapeText (int windowShape) {
-	return
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_SQUARE ? L"Square (rectangular)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HAMMING ? L"Hamming (raised sine-squared)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_BARTLETT ? L"Bartlett (triangular)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_WELCH ? L"Welch (parabolic)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_HANNING ? L"Hanning (sine-squared)" :
-		windowShape == Sound_to_Spectrogram_WINDOW_SHAPE_GAUSSIAN ? L"Gaussian" :
-		L"(unknown)";
-}
+#include "enums_getText.h"
+#include "Sound_and_Spectrogram_enums.h"
+#include "enums_getValue.h"
+#include "Sound_and_Spectrogram_enums.h"
 
 Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
-	double minimumTimeStep1, double minimumFreqStep1, int windowType,
+	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowType,
 	double maximumTimeOversampling, double maximumFreqOversampling)
 {
 	Spectrogram thee = NULL;
 	double nyquist = 0.5 / my dx;
-	double physicalAnalysisWidth = windowType == 5 ? 2 * effectiveAnalysisWidth : effectiveAnalysisWidth;
+	double physicalAnalysisWidth =
+		windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? 2 * effectiveAnalysisWidth : effectiveAnalysisWidth;
 	double effectiveTimeWidth = effectiveAnalysisWidth / sqrt (NUMpi);
 	double effectiveFreqWidth = 1 / effectiveTimeWidth;
 	double minimumTimeStep2 = effectiveTimeWidth / maximumTimeOversampling;
@@ -74,7 +70,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	if (physicalAnalysisWidth > duration)
 		return Melder_errorp ("(Sound_to_Spectrogram:) Your sound is too short:\n"
 			"it should be at least as long as %s.",
-			windowType == 5 ? "two window lengths" : "one window length");
+			windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? "two window lengths" : "one window length");
 	numberOfTimes = 1 + (long) floor ((duration - physicalAnalysisWidth) / timeStep);   /* >= 1 */
 	t1 = my x1 + 0.5 * ((double) (my nx - 1) * my dx - (double) (numberOfTimes - 1) * timeStep);
 		/* Centre of first frame. */
@@ -114,17 +110,17 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		double phase = (double) i / nSamplesPerWindow_f;   /* 0 .. 1 */
 		double value;
 		switch (windowType) {
-			case 0: /* None (rectangular). */
+			case kSound_to_Spectrogram_windowShape_SQUARE:
 				value = 1.0;
-			break; case 1: /* Hamming (raised sine-squared). */
+			break; case kSound_to_Spectrogram_windowShape_HAMMING:
 				value = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
-			break; case 2: /* Bartlett (triangular). */
+			break; case kSound_to_Spectrogram_windowShape_BARTLETT:
 				value = 1.0 - fabs ((2.0 * phase - 1.0));
-			break; case 3: /* Welch (parabolic). */
+			break; case kSound_to_Spectrogram_windowShape_WELCH:
 				value = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
-			break; case 4: /* Hanning (sine-squared). */
+			break; case kSound_to_Spectrogram_windowShape_HANNING:
 				value = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
-			break; case 5: /* Gaussian. */
+			break; case kSound_to_Spectrogram_windowShape_GAUSSIAN:
 			{
 				double imid = 0.5 * (double) (nsamp_window + 1), edge = exp (-12.0);
 				phase = ((double) i - imid) / nSamplesPerWindow_f;   /* -0.5 .. +0.5 */

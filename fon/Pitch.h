@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/12/09
  */
 
 #ifndef _Sampled_h_
@@ -29,6 +29,8 @@
 #ifndef _Graphics_h_
 	#include "Graphics.h"
 #endif
+
+#include "Pitch_enums.h"
 
 #include "Pitch_def.h"
 #define Pitch_methods Sampled_methods
@@ -88,18 +90,6 @@ int Pitch_isVoiced_t (Pitch me, double t);
 
 #define Pitch_LEVEL_FREQUENCY  1
 #define Pitch_LEVEL_STRENGTH  2
-
-#define Pitch_UNIT_min  0
-#define Pitch_UNIT_HERTZ  0
-#define Pitch_UNIT_HERTZ_LOGARITHMIC  1
-#define Pitch_UNIT_MEL  2
-#define Pitch_UNIT_LOG_HERTZ  3
-#define Pitch_UNIT_SEMITONES_1  4
-#define Pitch_UNIT_SEMITONES_100  5
-#define Pitch_UNIT_SEMITONES_200  6
-#define Pitch_UNIT_SEMITONES_440  7
-#define Pitch_UNIT_ERB  8
-#define Pitch_UNIT_max  8
 
 #define Pitch_STRENGTH_UNIT_min  0
 #define Pitch_STRENGTH_UNIT_AUTOCORRELATION  0

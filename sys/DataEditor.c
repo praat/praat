@@ -32,7 +32,7 @@
 #define NAME_X  30
 #define TEXT_X  250
 #define BUTTON_X  250
-#define EDITOR_WIDTH  700
+#define EDITOR_WIDTH  820
 #define EDITOR_HEIGHT  (LIST_Y + MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
 #define LIST_Y  40
 #define LIST_TOP_MARGIN  11

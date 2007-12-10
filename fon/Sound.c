@@ -29,13 +29,16 @@
  * pb 2007/01/28 corrected a bug in Sound_extractChannel
  * pb 2007/01/28 more stereo
  * pb 2007/03/17 domain quantity
+ * pb 2007/12/07 enums
  */
 
 #include "Sound.h"
 #include "Sound_extensions.h"
 #include "NUM2.h"
 
-#include "enum_c.h"
+#include "enums_getText.h"
+#include "Sound_enums.h"
+#include "enums_getValue.h"
 #include "Sound_enums.h"
 
 Sound Sound_clipboard;
@@ -452,7 +455,7 @@ end:
 }
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, int garnish, const wchar_t *method)
+	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar_t *method)
 {
 	long ixmin, ixmax, ix;
 	/*
@@ -646,64 +649,64 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 	return me;
 }
 
-void Sound_multiplyByWindow (Sound me, int windowType) {
+void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape) {
 	for (long channel = 1; channel <= my ny; channel ++) {
 		long i, n = my nx;
 		float *amp = my z [channel];
 		double imid, edge, onebyedge1, factor;
-		switch (windowType) {
-			case enumi (Sound_WINDOW, Rectangular):
+		switch (windowShape) {
+			case kSound_windowShape_RECTANGULAR:
 				;
 			break;
-			case enumi (Sound_WINDOW, Triangular):   /* "Bartlett" */
+			case kSound_windowShape_TRIANGULAR:   /* "Bartlett" */
 				for (i = 1; i <= n; i ++) { double phase = (double) i / n;   /* 0..1 */
 					amp [i] *= 1.0 - fabs ((2.0 * phase - 1.0)); }
 			break;
-			case enumi (Sound_WINDOW, Parabolic):   /* "Welch" */
+			case kSound_windowShape_PARABOLIC:   /* "Welch" */
 				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0); }
 			break;
-			case enumi (Sound_WINDOW, Hanning):
+			case kSound_windowShape_HANNING:
 				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.5 * (1.0 - cos (2.0 * NUMpi * phase)); }
 			break;
-			case enumi (Sound_WINDOW, Hamming):
+			case kSound_windowShape_HAMMING:
 				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
 			break;
-			case enumi (Sound_WINDOW, Gaussian1):
+			case kSound_windowShape_GAUSSIAN_1:
 				imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1 / (1.0 - edge);   /* -0.5..+0.5 */
 				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
 			break;
-			case enumi (Sound_WINDOW, Gaussian2):
+			case kSound_windowShape_GAUSSIAN_2:
 				imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1 / (1.0 - edge);
 				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
 			break;
-			case enumi (Sound_WINDOW, Gaussian3):
+			case kSound_windowShape_GAUSSIAN_3:
 				imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1 / (1.0 - edge);
 				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
 			break;
-			case enumi (Sound_WINDOW, Gaussian4):
+			case kSound_windowShape_GAUSSIAN_4:
 				imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1 / (1.0 - edge);
 				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
 			break;
-			case enumi (Sound_WINDOW, Gaussian5):
+			case kSound_windowShape_GAUSSIAN_5:
 				imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1 / (1.0 - edge);
 				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
 			break;
-			case enumi (Sound_WINDOW, Kaiser1):
+			case kSound_windowShape_KAISER_1:
 				imid = 0.5 * (double) (n + 1);
 				factor = 1 / NUMbessel_i0_f (2 * NUMpi);
 				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
 					double root = 1 - phase * phase;
 					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2 * NUMpi * sqrt (root)); }
 			break;
-			case enumi (Sound_WINDOW, Kaiser2):
+			case kSound_windowShape_KAISER_2:
 				imid = 0.5 * (double) (n + 1);
 				factor = 1 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
 				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
@@ -733,7 +736,7 @@ void Sound_overrideSamplingFrequency (Sound me, double rate) {
 	my xmax = my xmin + my nx * my dx;
 }
 
-Sound Sound_extractPart (Sound me, double t1, double t2, int windowType, double relativeWidth, int preserveTimes) {
+Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
 	Sound thee = NULL;
 	long ix1, ix2;
 	/*
@@ -775,7 +778,7 @@ Sound Sound_extractPart (Sound me, double t1, double t2, int windowType, double 
 	/*
 	 * Multiply by a window that extends throughout the target domain.
 	 */
-	Sound_multiplyByWindow (thee, windowType);
+	Sound_multiplyByWindow (thee, windowShape);
 end:
 	iferror { forget (thee); return Melder_errorp ("(Sound_extractPart:) Not performed."); }
 	return thee;

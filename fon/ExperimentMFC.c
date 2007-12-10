@@ -114,6 +114,14 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			 * Relative or absolute file name.
 			 */
 			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
+			#if 0
+				Melder_error3 (L"Full path name <", file.path, L">");
+				MelderInfo_open ();
+				MelderInfo_writeLine3 (L"Path name <", pathName, L">");
+				MelderInfo_writeLine3 (L"Root directory <", my rootDirectory.path, L">");
+				MelderInfo_writeLine3 (L"Full path name <", file.path, L">");
+				MelderInfo_close ();
+			#endif
 		}
 		cherror
 		/*
@@ -127,7 +135,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
 			forget (substimulus);
-			error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different number of channels than some other sound.")
+			error3 (L"The sound in file ", MelderFile_messageNameW (& file), L" has a different number of channels than some other sound.")
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
@@ -136,7 +144,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
 			forget (substimulus);
-			error3 (L"The sound in file \"", MelderFile_messageNameW (& file), L"\" has a different sampling frequency than some other sound.")
+			error3 (L"The sound in file ", MelderFile_messageNameW (& file), L" has a different sampling frequency than some other sound.")
 		}
 		/*
 		 * Append the substimuli, perhaps with silent intervals.

@@ -160,7 +160,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
-			case SET_FONT: Graphics_setFont (thee, (int) get); break;
+			case SET_FONT: Graphics_setFont (thee, (enum kGraphics_font) get); break;
 			case SET_FONT_SIZE: Graphics_setFontSize (thee, (int) get); break;
 			case SET_FONT_STYLE: Graphics_setFontStyle (thee, (int) get); break;
 			case SET_TEXT_ALIGNMENT:
@@ -219,12 +219,12 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case SET_WRAP_WIDTH: Graphics_setWrapWidth (thee, get); break;
 			case SET_SECOND_INDENT: Graphics_setSecondIndent (thee, get); break;
-			case SET_PERCENT_SIGN_IS_ITALIC: Graphics_setPercentSignIsItalic (thee, (int) get); break;
-			case SET_NUMBER_SIGN_IS_BOLD: Graphics_setNumberSignIsBold (thee, (int) get); break;
-			case SET_CIRCUMFLEX_IS_SUPERSCRIPT: Graphics_setCircumflexIsSuperscript (thee, (int) get); break;
-			case SET_UNDERSCORE_IS_SUBSCRIPT: Graphics_setUnderscoreIsSubscript (thee, (int) get); break;
-			case SET_DOLLAR_SIGN_IS_CODE: Graphics_setDollarSignIsCode (thee, (int) get); break;
-			case SET_AT_SIGN_IS_LINK: Graphics_setAtSignIsLink (thee, (int) get); break;
+			case SET_PERCENT_SIGN_IS_ITALIC: Graphics_setPercentSignIsItalic (thee, (bool) get); break;
+			case SET_NUMBER_SIGN_IS_BOLD: Graphics_setNumberSignIsBold (thee, (bool) get); break;
+			case SET_CIRCUMFLEX_IS_SUPERSCRIPT: Graphics_setCircumflexIsSuperscript (thee, (bool) get); break;
+			case SET_UNDERSCORE_IS_SUBSCRIPT: Graphics_setUnderscoreIsSubscript (thee, (bool) get); break;
+			case SET_DOLLAR_SIGN_IS_CODE: Graphics_setDollarSignIsCode (thee, (bool) get); break;
+			case SET_AT_SIGN_IS_LINK: Graphics_setAtSignIsLink (thee, (bool) get); break;
 			case BUTTON:
 			{  float x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_button (thee, x1, x2, y1, y2);

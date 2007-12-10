@@ -18,23 +18,16 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/12/09
  */
 
 #include "praat.h"
 #include "praat_version.h"
 
-const char *test8 = "hfgfhésgɑfhd“f”gh";
-const wchar_t *test16 = L"hfgfhésgɑfhd“f”gh";
-
 static void logo (Graphics g) {
-	if (Melder_debug == 22) {
-		Melder_error3 (Melder_peekUtf8ToWcs (test8), L"...", test16);
-		Melder_flushError (NULL);
-	}
 	Graphics_setWindow (g, 0, 1, 0.00, 0.80);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setFont (g, Graphics_FONT_TIMES);
+	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, 45);
 	Graphics_setColour (g, Graphics_MAROON);
 	#if defined (macintosh)
@@ -54,7 +47,7 @@ static void logo (Graphics g) {
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");
-	Graphics_setFont (g, Graphics_FONT_HELVETICA);
+	Graphics_setFont (g, kGraphics_font_HELVETICA);
 	Graphics_setFontSize (g, 10);
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }

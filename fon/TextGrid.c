@@ -861,7 +861,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		fmin = ClassFunction_convertStandardToSpecialUnit (classPitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
 		fmax = ClassFunction_convertStandardToSpecialUnit (classPitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
 	}
-	if (unit == Pitch_UNIT_HERTZ_LOGARITHMIC)
+	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
 		Pitch_draw (pitch, g, tmin, tmax, pow (10, fmin - 0.25 * (fmax - fmin) * ntier), pow (10, fmax), FALSE, speckle, unit);
 	else
 		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, FALSE, speckle, unit);
@@ -870,15 +870,15 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	 * Restore window for the sake of margin drawing.
 	 */
 	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax);
-	if (unit == Pitch_UNIT_HERTZ_LOGARITHMIC)
+	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
 		fmin = pow (10, fmin), fmax = pow (10, fmax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		if (unit == Pitch_UNIT_HERTZ_LOGARITHMIC) {
+		if (unit == kPitch_unit_HERTZ_LOGARITHMIC) {
 			Graphics_markLeftLogarithmic (g, fmin, TRUE, TRUE, FALSE, NULL);
 			Graphics_markLeftLogarithmic (g, fmax, TRUE, TRUE, FALSE, NULL);
 			autoMarks_logarithmic (g, fmin, fmax, FALSE);
-		} else if (unit == Pitch_UNIT_SEMITONES_100) {
+		} else if (unit == kPitch_unit_SEMITONES_100) {
 			Graphics_markLeft (g, fmin, TRUE, TRUE, FALSE, NULL);
 			Graphics_markLeft (g, fmax, TRUE, TRUE, FALSE, NULL);
 			autoMarks_semitones (g, fmin, fmax, FALSE);
@@ -890,9 +890,9 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
 		MelderString_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
-		Graphics_textLeft (g, TRUE, buffer.string);
-		Graphics_textBottom (g, TRUE, L"Time (s)");
-		Graphics_marksBottom (g, 2, TRUE, TRUE, TRUE);
+		Graphics_textLeft (g, true, buffer.string);
+		Graphics_textBottom (g, true, L"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, true);
 	}
 }
 

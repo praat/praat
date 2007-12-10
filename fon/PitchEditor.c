@@ -81,9 +81,9 @@ END
 
 DIRECT (PitchEditor, cb_getPitch)
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, Pitch_UNIT_HERTZ, 1), L"Hertz");
+		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, kPitch_unit_HERTZ, 1), L"Hertz");
 	} else {
-		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, Pitch_UNIT_HERTZ), L"Hertz");
+		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, kPitch_unit_HERTZ), L"Hertz");
 	}
 END
 
@@ -204,7 +204,7 @@ static void draw (I) {
 		/* Horizontal hair at current pitch. */
 
 		if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-			double f = Pitch_getValueAtTime (pitch, my startSelection, Pitch_UNIT_HERTZ, Pitch_LINEAR);
+			double f = Pitch_getValueAtTime (pitch, my startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (NUMdefined (f)) {
 				Graphics_setColour (my graphics, Graphics_RED);
 				Graphics_line (my graphics, my startWindow - radius, f, my endWindow, f);

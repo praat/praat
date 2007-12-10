@@ -1,6 +1,6 @@
 /* Sound_enums.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,22 @@
  */
 
 /*
- * pb 1997/09/25
- * pb 2002/07/16 GPL
+ * pb 2007/12/07
  */
 
-enum_begin (Sound_WINDOW, Rectangular)
-	enum (Triangular)
-	enum (Parabolic)
-	enum (Hanning)
-	enum (Hamming)
-	enum (Gaussian1)
-	enum (Gaussian2)
-	enum (Gaussian3)
-	enum (Gaussian4)
-	enum (Gaussian5)
-	enum (Kaiser1)
-	enum (Kaiser2)
-enum_end (Sound_WINDOW)
+enums_begin (kSound_windowShape, 0)
+	enums_add (kSound_windowShape, 0, RECTANGULAR, L"rectangular")
+	enums_add (kSound_windowShape, 1, TRIANGULAR, L"triangular")
+	enums_add (kSound_windowShape, 2, PARABOLIC, L"parabolic")
+	enums_add (kSound_windowShape, 3, HANNING, L"Hanning")
+	enums_add (kSound_windowShape, 4, HAMMING, L"Hamming")
+	enums_add (kSound_windowShape, 5, GAUSSIAN_1, L"Gaussian1")
+	enums_add (kSound_windowShape, 6, GAUSSIAN_2, L"Gaussian2")
+	enums_add (kSound_windowShape, 7, GAUSSIAN_3, L"Gaussian3")
+	enums_add (kSound_windowShape, 8, GAUSSIAN_4, L"Gaussian4")
+	enums_add (kSound_windowShape, 9, GAUSSIAN_5, L"Gaussian5")
+	enums_add (kSound_windowShape, 10, KAISER_1, L"Kaiser1")
+	enums_add (kSound_windowShape, 11, KAISER_2, L"Kaiser2")
+enums_end (kSound_windowShape, 11, RECTANGULAR)
 
 /* End of file Sound_enums.h */

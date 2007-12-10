@@ -264,37 +264,20 @@ END
 
 /********** Callbacks of the Preferences menu. **********/
 
-FORM (TextInputEncodingSettings, L"Text reading preferences", L"Text reading preferences")
-	#if defined (macintosh)
-	RADIO (L"Encoding of 8-bit text files", 6)
-	#elif defined (_WIN32)
-	RADIO (L"Encoding of 8-bit text files", 4)
-	#else
-	RADIO (L"Encoding of 8-bit text files", 2)
-	#endif
-		OPTION (L"UTF-8")
-		OPTION (L"Try UTF-8, then ISO Latin-1")
-		OPTION (L"ISO Latin-1")
-		OPTION (L"Try UTF-8, then Windows Latin-1")
-		OPTION (L"Windows Latin-1")
-		OPTION (L"Try UTF-8, then MacRoman")
-		OPTION (L"MacRoman")
+FORM (TextInputEncodingSettings, L"Text reading preferences", L"Unicode")
+	RADIO_ENUM (L"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
 	OK
-SET_INTEGER (L"Encoding of 8-bit text files", Melder_getInputEncoding ())
+SET_ENUM (L"Encoding of 8-bit text files", kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
-	Melder_setInputEncoding (GET_INTEGER (L"Encoding of 8-bit text files"));
+	Melder_setInputEncoding (GET_ENUM (kMelder_textInputEncoding, L"Encoding of 8-bit text files"));
 END
 
-FORM (TextOutputEncodingSettings, L"Text writing preferences", L"Text writing preferences")
-	RADIO (L"Output encoding", 3)
-		OPTION (L"UTF-8")
-		OPTION (L"UTF-16")
-		OPTION (L"Try ASCII, then UTF-16")
-		OPTION (L"Try ISO Latin-1, then UTF-16")
+FORM (TextOutputEncodingSettings, L"Text writing preferences", L"Unicode")
+	RADIO_ENUM (L"Output encoding", kMelder_textOutputEncoding, DEFAULT)
 	OK
-SET_INTEGER (L"Output encoding", Melder_getOutputEncoding ())
+SET_ENUM (L"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
-	Melder_setOutputEncoding (GET_INTEGER (L"Output encoding"));
+	Melder_setOutputEncoding (GET_ENUM (kMelder_textOutputEncoding, L"Output encoding"));
 END
 
 /********** Callbacks of the Goodies menu. **********/

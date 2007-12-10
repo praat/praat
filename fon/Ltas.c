@@ -333,7 +333,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			 */
 			period = Sound_extractPart (sound,
 				pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-				enumi (Sound_WINDOW, Rectangular), 1.0, FALSE); cherror
+				kSound_windowShape_RECTANGULAR, 1.0, FALSE); cherror
 			spectrum = Sound_to_Spectrum (period, FALSE); cherror
 			for (ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
 				double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
@@ -452,7 +452,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 			long localMaximumHarmonic;
 			period = Sound_extractPart (sound,
 				pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-				enumi (Sound_WINDOW, Rectangular), 1.0, FALSE); cherror
+				kSound_windowShape_RECTANGULAR, 1.0, FALSE); cherror
 			spectrum = Sound_to_Spectrum (period, FALSE); cherror
 			localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
 			for (iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {

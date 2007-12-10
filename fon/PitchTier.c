@@ -120,20 +120,20 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 		double frequency = point -> value;
 		if (point -> time < tmin || point -> time > tmax) continue;
 		switch (unit) {
-			case Pitch_UNIT_HERTZ: {	
+			case kPitch_unit_HERTZ: {	
 				frequency += shift;
 				if (frequency <= 0.0)
 					error1 (L"Resulting frequency has to be greater than 0 Hz.")
-			} break; case Pitch_UNIT_MEL: {
+			} break; case kPitch_unit_MEL: {
 				frequency = NUMhertzToMel (frequency) + shift;
 				if (frequency <= 0.0)
 					error1 (L"Resulting frequency has to be greater than 0 mel.")
 				frequency = NUMmelToHertz (frequency);
-			} break; case Pitch_UNIT_LOG_HERTZ: {
+			} break; case kPitch_unit_LOG_HERTZ: {
 				frequency = pow (10.0, log10 (frequency) + shift);
-			} break; case Pitch_UNIT_SEMITONES_1: {
+			} break; case kPitch_unit_SEMITONES_1: {
 				frequency = NUMsemitonesToHertz (NUMhertzToSemitones (frequency) + shift);
-			} break; case Pitch_UNIT_ERB: {
+			} break; case kPitch_unit_ERB: {
 				frequency = NUMhertzToErb (frequency) + shift;
 				if (frequency <= 0.0)
 					error1 (L"Resulting frequency has to be greater than 0 ERB.")

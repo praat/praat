@@ -31,6 +31,7 @@
  * Erez Volk 2007/03 FLAC reading
  * Erez Volk 2007/05/14 FLAC writing
  * Erez Volk 2007/06/04 MP3 reading
+ * pb 2007/12/05 prefs
  */
 
 #include "LongSound.h"
@@ -40,10 +41,10 @@
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
-static long prefs_bufferLength = 60;   /* seconds */
+static long prefs_bufferLength;
 
 void LongSound_prefs (void) {
-	Resources_addLong (L"LongSound.bufferLength", & prefs_bufferLength);
+	Preferences_addLong (L"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
 }
 
 long LongSound_getBufferSizePref_seconds (void) { return prefs_bufferLength; }

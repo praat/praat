@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/06/10 wchar_t
+ * pb 2007/12/09 enums
  */
 
 #include "praatP.h"
@@ -32,14 +33,14 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_fillRectangle (g, 0.05, 0.95, 0.1, 0.9);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setColour (g, Graphics_YELLOW);
-	Graphics_setFont (g, Graphics_FONT_TIMES);
+	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
 	Graphics_setUnderscoreIsSubscript (g, FALSE);   /* Because program names may contain underscores. */
 	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2006");
+	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2007");
 }
 
 static struct {

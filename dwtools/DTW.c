@@ -1601,7 +1601,7 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 	DTW him = NULL;
 	long i, j, myfirst, mylast, thyfirst, thylast;
 	double *pitchx = NULL;
-	int unit = Pitch_UNIT_SEMITONES_100;
+	int unit = kPitch_unit_SEMITONES_100;
  
  	if (vuv_costs < 0) return Melder_errorp1 (L"Voiced-unvoiced costs may not be negative.");
  	if (time_weight < 0) return Melder_errorp1 (L"Time costs weight may not be negative.");
@@ -1664,7 +1664,7 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 	DTW him = NULL;
 	long i, j;
 	double *pitchx = NULL;
-	int unit = Pitch_UNIT_SEMITONES_100;
+	int unit = kPitch_unit_SEMITONES_100;
  
  	if (vuv_costs < 0) return Melder_errorp1 (L"Voiced-unvoiced costs may not be negative.");
  	if (time_weight < 0) return Melder_errorp1 (L"Time costs weight may not be negative.");

@@ -1298,6 +1298,7 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 	return thee;
 }
 
+#if 0
 /********************  PREFERENCE ************************************/
 
 class_methods (Preference, TableOfReal)
@@ -1311,7 +1312,7 @@ Preference Preference_create (long numberOfRows, long numberOfColumns)
 	if (! TableOfReal_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }
-
+#endif
 
 /**************************  CONFUSIONS **************************************/
 

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/07/22
+ * pb 2007/12/07
  */
 
 /* Sound inherits from Vector */
@@ -165,10 +165,10 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-void Sound_multiplyByWindow (Sound me, int windowType);
+void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
-Sound Sound_extractPart (Sound me, double t1, double t2, int windowType, double relativeWidth, int preserveTimes);
+Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
 int Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, float formant [], float bandwidth []);
 Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
@@ -179,7 +179,7 @@ Sound Sound_filter_deemphasis (Sound me, double frequency);
 void Sound_reverse (Sound me, double tmin, double tmax);
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, int garnish, const wchar_t *method);
+	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar_t *method);
 /* For method, see Vector_draw. */
 
 Matrix Sound_to_Matrix (Sound me);

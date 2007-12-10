@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/02 created
+ * pb 2007/12/05
  */
 
 /* See enum.h */
@@ -30,8 +30,8 @@
 #undef enums_alt
 #undef enums_end
 #define enums_begin(type,minimum)  int type##_getValue (const wchar_t *testText) {
-#define enums_add(type,which,text,value)  if (wcsequ (testText, text)) return type##_##which;
-#define enums_alt(type,which,text)  if (wcsequ (testText, text)) return type##_##which;
-#define enums_end(type,def,maximum) return type##_DEFAULT; }
+#define enums_add(type,value,which,text)  if (Melder_wcsequ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
+#define enums_alt(type,which,text)  if (Melder_wcsequ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
+#define enums_end(type,maximum,def) return type##_DEFAULT; }
 
 /* End of file enums_getValue.h */

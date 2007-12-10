@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2007/12/09
  */
 
 #ifndef _FunctionEditor_h_
@@ -29,6 +29,8 @@
 #ifndef _Manipulation_h_
 	#include "Manipulation.h"
 #endif
+
+#include "ManipulationEditor_enums.h"
 
 typedef struct structManipulationEditor *ManipulationEditor;
 

@@ -161,11 +161,11 @@ int Data_createTextFile (I, MelderFile file, bool verbose) {
 	#endif
 	file -> verbose = verbose;
 	file -> outputEncoding = Melder_getOutputEncoding ();
-	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16)
-		file -> outputEncoding = Data_canWriteAsEncoding (me, Melder_OUTPUT_ENCODING_ASCII) ? Melder_OUTPUT_ENCODING_ASCII : Melder_OUTPUT_ENCODING_UTF16;
-	else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16)
-		file -> outputEncoding = Data_canWriteAsEncoding (me, Melder_OUTPUT_ENCODING_ISO_LATIN1) ? Melder_OUTPUT_ENCODING_ISO_LATIN1 : Melder_OUTPUT_ENCODING_UTF16;
-	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF16)
+	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ASCII) ? kMelder_textOutputEncoding_ASCII : kMelder_textOutputEncoding_UTF16;
+	else if (file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ? kMelder_textOutputEncoding_ISO_LATIN1 : kMelder_textOutputEncoding_UTF16;
+	if (file -> outputEncoding == kMelder_textOutputEncoding_UTF16)
 		binputu2 (0xfeff, file -> filePointer);
 end:
 	iferror return 0;

@@ -1171,7 +1171,7 @@ int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *fo
 	Spectrum spec = NULL;
 	int status = 0;
 	
-	part = Sound_extractPart (me, t1, t2, enumi(Sound_WINDOW, Rectangular), 1, 1);
+	part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
 	if (part == NULL) goto end;
 	
 	spec = Sound_to_Spectrum (part, TRUE); 
@@ -1275,7 +1275,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	pitchTier = Pitch_to_PitchTier (pitch);
 	if (pitchTier == NULL) goto end;
 		
-	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
+	median = Pitch_getQuantile (pitch, 0, 0, 0.5, kPitch_unit_HERTZ);
 	if (median != 0 && median != NUMundefined)
 	{
 		/* Incorporate pitch shift from overriding the sampling frequency */
@@ -1426,7 +1426,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	pitchTier = Pitch_to_PitchTier (pitch);
 	if (pitchTier == NULL) goto end;
 		
-	median = Pitch_getQuantile (pitch, 0, 0, 0.5, Pitch_UNIT_HERTZ);
+	median = Pitch_getQuantile (pitch, 0, 0, 0.5, kPitch_unit_HERTZ);
 	if (median != 0 && median != NUMundefined)
 	{
 		/* Incorporate pitch shift from overriding the sampling frequency */

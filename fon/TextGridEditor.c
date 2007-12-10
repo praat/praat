@@ -35,6 +35,7 @@
  * pb 2007/09/04 TimeSoundAnalysisEditor
  * pb 2007/09/05 direct drawing to picture window
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2007/12/07 enums
  */
 
 #include "TextGridEditor.h"
@@ -44,11 +45,18 @@
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"
 
+#include "enums_getText.h"
+#include "TextGridEditor_enums.h"
+#include "enums_getValue.h"
+#include "TextGridEditor_enums.h"
+
 #define TextGridEditor_members TimeSoundAnalysisEditor_members \
 	SpellingChecker spellingChecker; \
 	long selectedTier; \
-	int useTextStyles, fontSize, alignment, shiftDragMultiple, suppressRedraw; \
-	wchar_t *findString, greenString [Resources_STRING_BUFFER_SIZE]; \
+	bool useTextStyles, shiftDragMultiple, suppressRedraw; \
+	int fontSize; \
+	enum kGraphics_horizontalAlignment alignment; \
+	wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod;
 #define TextGridEditor_methods TimeSoundAnalysisEditor_methods
 class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
@@ -58,46 +66,46 @@ class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
 /*
  * If you change any of the following, you may want to raise a version number in TextGridEditor_prefs ().
  */
-#define TextGridEditor_DEFAULT_USE_TEXT_STYLES  FALSE
+#define TextGridEditor_DEFAULT_USE_TEXT_STYLES  false
 #define TextGridEditor_DEFAULT_FONT_SIZE  18
 	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  L"18"
-#define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  TRUE
-#define TextGridEditor_DEFAULT_SHOW_NUMBER_OF  2
+#define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  true
 #define TextGridEditor_DEFAULT_GREEN_STRING  L"some text here for green paint"
 
 static struct {
-		int useTextStyles;
-			int fontSize;
-				int alignment;
-					int shiftDragMultiple;
-		int showNumberOf;
-			int greenMethod;
-				wchar_t greenString [Resources_STRING_BUFFER_SIZE];
+		bool useTextStyles, shiftDragMultiple;
+		int fontSize;
+		enum kGraphics_horizontalAlignment alignment;
+		enum kTextGridEditor_showNumberOf showNumberOf;
+		enum kMelder_string greenMethod;
+		wchar_t greenString [Preferences_STRING_BUFFER_SIZE];
 		struct {
 			bool showBoundaries;
 			bool garnish;
-			struct { bool speckle; } pitch;
+			struct {
+				bool speckle;
+			} pitch;
 		} picture;
 }
 	preferences;
 
 void TextGridEditor_prefs (void) {
-	Preferences_addInt (L"TextGridEditor.useTextStyles", & preferences.useTextStyles, TextGridEditor_DEFAULT_USE_TEXT_STYLES);
+	Preferences_addBool (L"TextGridEditor.useTextStyles", & preferences.useTextStyles, TextGridEditor_DEFAULT_USE_TEXT_STYLES);
 	Preferences_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize, TextGridEditor_DEFAULT_FONT_SIZE);
-	Preferences_addEnum (L"TextGridEditor.alignment2", & preferences.alignment, kGraphics_horizontalAlignment, DEFAULT);
-	Preferences_addInt (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple, TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE);
-	Preferences_addInt (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf, TextGridEditor_DEFAULT_SHOW_NUMBER_OF);
-	Preferences_addEnum (L"TextGridEditor.greenMethod2", & preferences.greenMethod, kMelder_string, DEFAULT);
+	Preferences_addEnum (L"TextGridEditor.alignment", & preferences.alignment, kGraphics_horizontalAlignment, DEFAULT);
+	Preferences_addBool (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple, TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE);
+	Preferences_addEnum (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf, kTextGridEditor_showNumberOf, DEFAULT);
+	Preferences_addEnum (L"TextGridEditor.greenMethod", & preferences.greenMethod, kMelder_string, DEFAULT);
 	Preferences_addString (L"TextGridEditor.greenString", & preferences.greenString [0], TextGridEditor_DEFAULT_GREEN_STRING);
-	Preferences_addBool (L"TextGridEditor.picture.showBoundaries2", & preferences.picture.showBoundaries, true);
-	Preferences_addBool (L"TextGridEditor.picture.garnish2", & preferences.picture.garnish, true);
-	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle2", & preferences.picture.pitch.speckle, false);
+	Preferences_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries, true);
+	Preferences_addBool (L"TextGridEditor.picture.garnish", & preferences.picture.garnish, true);
+	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
 }
 
 static void info (I) {
 	iam (TextGridEditor);
 	inherited (TextGridEditor) info (me);
-	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", my useTextStyles ? L"yes" : L"no");
+	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", Melder_boolean (my useTextStyles));
 	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (my fontSize));
 	MelderInfo_writeLine2 (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (my alignment));
 }
@@ -283,7 +291,7 @@ static int menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 		Editor_openPraatPicture (me);
 		Sound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, true) :
-			Sound_extractPart (my sound.data, my startWindow, my endWindow, enumi (Sound_WINDOW, Rectangular), 1.0, true);
+			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
 		if (! publish) return 0;
 		TextGrid_Sound_draw (my data, publish, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles, preferences.picture.garnish);
 		forget (publish);
@@ -1528,7 +1536,7 @@ static void draw (I) {
 	TextGrid grid = my data;
 	Graphics_Viewport vp1, vp2;
 	long itier, ntier = grid -> tiers -> size;
-	int oldFont = Graphics_inqFont (my graphics);
+	enum kGraphics_font oldFont = Graphics_inqFont (my graphics);
 	int oldFontSize = Graphics_inqFontSize (my graphics);
 	int showAnalysis = (my spectrogram.show || my pitch.show || my intensity.show || my formant.show) && (my longSound.data || my sound.data);
 	double soundY = _TextGridEditor_computeSoundY (me), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
@@ -1576,12 +1584,13 @@ static void draw (I) {
 		Graphics_text2 (my graphics, my startWindow, 0.5, selected ? L"\\pf " : L"", Melder_integer (itier));
 		Graphics_setFontSize (my graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
-			Graphics_setTextAlignment (my graphics, Graphics_LEFT, my showNumberOf > 1 ? Graphics_BOTTOM : Graphics_HALF);
+			Graphics_setTextAlignment (my graphics, Graphics_LEFT,
+				my showNumberOf == kTextGridEditor_showNumberOf_NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (my graphics, my endWindow, 0.5, anyTier -> name);
 		}
-		if (my showNumberOf > 1) {
+		if (my showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-			if (my showNumberOf == 2) {
+			if (my showNumberOf == kTextGridEditor_showNumberOf_NONEMPTY_INTERVALS_OR_POINTS) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
 				long position = itier == my selectedTier ? ( isIntervalTier ? getSelectedInterval (me) : getSelectedPoint (me) ) : 0;
 				if (position) {
@@ -1615,7 +1624,7 @@ static void draw (I) {
 		}
 
 		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setFont (my graphics, Graphics_FONT_TIMES);
+		Graphics_setFont (my graphics, kGraphics_font_TIMES);
 		Graphics_setFontSize (my graphics, my fontSize);
 		if (isIntervalTier)
 			do_drawIntervalTier (me, (IntervalTier) anyTier, itier);
@@ -2094,10 +2103,7 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 	OPTIONMENU (L"With the shift key, you drag", TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE + 1)
 		OPTION (L"a single boundary")
 		OPTION (L"multiple boundaries")
-	OPTIONMENU (L"Show number of", TextGridEditor_DEFAULT_SHOW_NUMBER_OF)
-		OPTION (L"nothing")
-		OPTION (L"intervals or points")
-		OPTION (L"non-empty intervals or points")
+	OPTIONMENU_ENUM (L"Show number of", kTextGridEditor_showNumberOf, DEFAULT)
 	OPTIONMENU_ENUM (L"Paint intervals green whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
 }
@@ -2107,7 +2113,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_INTEGER (L"Font size", my fontSize)
 	SET_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, my alignment)
 	SET_INTEGER (L"With the shift key, you drag", my shiftDragMultiple + 1)
-	SET_INTEGER (L"Show number of", my showNumberOf)
+	SET_ENUM (L"Show number of", kTextGridEditor_showNumberOf, my showNumberOf)
 	SET_ENUM (L"Paint intervals green whose label...", kMelder_string, my greenMethod)
 	SET_STRING (L"...the text", my greenString)
 }
@@ -2117,10 +2123,10 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	preferences.fontSize = my fontSize = GET_INTEGER (L"Font size");
 	preferences.alignment = my alignment = GET_ENUM (kGraphics_horizontalAlignment, L"Text alignment in intervals");
 	preferences.shiftDragMultiple = my shiftDragMultiple = GET_INTEGER (L"With the shift key, you drag") - 1;
-	preferences.showNumberOf = my showNumberOf = GET_INTEGER (L"Show number of");
+	preferences.showNumberOf = my showNumberOf = GET_ENUM (kTextGridEditor_showNumberOf, L"Show number of");
 	preferences.greenMethod = my greenMethod = GET_ENUM (kMelder_string, L"Paint intervals green whose label...");
-	wcsncpy (my greenString, GET_STRING (L"...the text"), Resources_STRING_BUFFER_SIZE);
-	my greenString [Resources_STRING_BUFFER_SIZE - 1] = '\0';
+	wcsncpy (my greenString, GET_STRING (L"...the text"), Preferences_STRING_BUFFER_SIZE);
+	my greenString [Preferences_STRING_BUFFER_SIZE - 1] = '\0';
 	wcscpy (preferences.greenString, my greenString);
 	FunctionEditor_redraw (me);
 }

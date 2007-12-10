@@ -127,7 +127,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		forget (bandSpectrum);
 		hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum); cherror
 		forget (hilbertBandSpectrum);
-		envelope [ienvelope] = Sound_extractPart (band, 0, duration, enumi (Sound_WINDOW, Rectangular), 1.0, TRUE); cherror
+		envelope [ienvelope] = Sound_extractPart (band, 0, duration, kSound_windowShape_RECTANGULAR, 1.0, TRUE); cherror
 		/*
 		 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 		 */

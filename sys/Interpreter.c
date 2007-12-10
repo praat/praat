@@ -40,6 +40,7 @@
  * pb 2007/06/09 wchar_t
  * pb 2007/08/12 more wchar_t
  * pb 2007/11/30 removed bug: allowed long arguments to the "call" statement (thanks to Ingmar Steiner)
+ * pb 2007/12/10 predefined numeric variables macintosh/windows/unix
  */
 
 #include <ctype.h>
@@ -716,6 +717,23 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	Interpreter_addStringVariable (me, L"homeDirectory$", Melder_dirToPath (& dir));
 	Melder_getTempDir (& dir);
 	Interpreter_addStringVariable (me, L"temporaryDirectory$", Melder_dirToPath (& dir));
+	#if defined (macintosh)
+		Interpreter_addNumericVariable (me, L"macintosh", 1);
+		Interpreter_addNumericVariable (me, L"windows", 0);
+		Interpreter_addNumericVariable (me, L"unix", 0);
+	#elif defined (_WIN32)
+		Interpreter_addNumericVariable (me, L"macintosh", 0);
+		Interpreter_addNumericVariable (me, L"windows", 1);
+		Interpreter_addNumericVariable (me, L"unix", 0);
+	#elif defined (UNIX)
+		Interpreter_addNumericVariable (me, L"macintosh", 0);
+		Interpreter_addNumericVariable (me, L"windows", 0);
+		Interpreter_addNumericVariable (me, L"unix", 1);
+	#else
+		Interpreter_addNumericVariable (me, L"macintosh", 0);
+		Interpreter_addNumericVariable (me, L"windows", 0);
+		Interpreter_addNumericVariable (me, L"unix", 0);
+	#endif
 	/*
 	 * Execute commands.
 	 */

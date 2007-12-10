@@ -24,6 +24,8 @@
  * pb 2007/08/12 prefs in wchar_t
  * pb 2007/09/04 Melder_malloc rather than malloc in Melder_wcsToAscii (had caused an error in counting memory leaks)
  * pb 2007/10/06 Melder_peekWcsToCfstring
+ * pb 2007/12/09 made MelderFile_writeCharacter compatible with the ISO Latin-1 preference
+ * pb 2007/12/09 made MelderFile_readText ignore null bytes
  */
 
 #include "melder.h"
@@ -39,27 +41,19 @@
 #endif
 
 static struct {
-	int inputEncoding, outputEncoding;
-} prefs = {
-	#if defined (_WIN32)
-		Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1,
-	#elif defined (macintosh)
-		Melder_INPUT_ENCODING_UTF8_THEN_MACROMAN,
-	#else
-		Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1,
-	#endif
-	Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16
-};
+	enum kMelder_textInputEncoding inputEncoding;
+	enum kMelder_textOutputEncoding outputEncoding;
+} preferences;
 
-void Melder_setInputEncoding (int encoding) { prefs. inputEncoding = encoding; }
-int Melder_getInputEncoding (void) { return prefs. inputEncoding; }
+void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding) { preferences. inputEncoding = encoding; }
+int Melder_getInputEncoding (void) { return preferences. inputEncoding; }
 
-void Melder_setOutputEncoding (int encoding) { prefs. outputEncoding = encoding; }
-int Melder_getOutputEncoding (void) { return prefs. outputEncoding; }
+void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding) { preferences. outputEncoding = encoding; }
+int Melder_getOutputEncoding (void) { return preferences. outputEncoding; }
 
 void Melder_textEncoding_prefs (void) {
-	Resources_addInt (L"TextEncoding.inputEncoding", & prefs. inputEncoding);
-	Resources_addInt (L"TextEncoding.outputEncoding", & prefs. outputEncoding);
+	Preferences_addEnum (L"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, DEFAULT);
+	Preferences_addEnum (L"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, DEFAULT);
 }
 
 bool Melder_isValidAscii (const wchar_t *text) {
@@ -76,7 +70,7 @@ bool Melder_isValidAscii (const wchar_t *text) {
 
 bool Melder_isEncodable (const wchar_t *text, int outputEncoding) {
 	switch (outputEncoding) {
-		case Melder_OUTPUT_ENCODING_ASCII: {
+		case kMelder_textOutputEncoding_ASCII: {
 			for (; *text != '\0'; text ++) {
 				if (sizeof (wchar_t) == 2) {
 					unsigned short kar = *text;
@@ -87,7 +81,7 @@ bool Melder_isEncodable (const wchar_t *text, int outputEncoding) {
 			}
 			return true;
 		} break;
-		case Melder_OUTPUT_ENCODING_ISO_LATIN1: {
+		case kMelder_textOutputEncoding_ISO_LATIN1: {
 			for (; *text != '\0'; text ++) {
 				if (sizeof (wchar_t) == 2) {
 					unsigned short kar = *text;
@@ -98,10 +92,10 @@ bool Melder_isEncodable (const wchar_t *text, int outputEncoding) {
 			}
 			return true;
 		} break;
-		case Melder_OUTPUT_ENCODING_UTF8:
-		case Melder_OUTPUT_ENCODING_UTF16:
-		case Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16:
-		case Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16: {
+		case kMelder_textOutputEncoding_UTF8:
+		case kMelder_textOutputEncoding_UTF16:
+		case kMelder_textOutputEncoding_ASCII_THEN_UTF16:
+		case kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16: {
 			return true;
 		}
 	}
@@ -245,12 +239,12 @@ static wchar_t decodeWindowsLatin1 [256] = {
 int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding) {
 	const unsigned char *ustring = (const unsigned char *) string;
 	if (inputEncoding == 0)
-		inputEncoding = prefs. inputEncoding;
+		inputEncoding = preferences. inputEncoding;
 	long n = strlen (string), i, j;
-	if (inputEncoding == Melder_INPUT_ENCODING_UTF8 ||
-	    inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1 ||
-	    inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1 ||
-		inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_MACROMAN)
+	if (inputEncoding == kMelder_textInputEncoding_UTF8 ||
+	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1 ||
+	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1 ||
+		inputEncoding == kMelder_textInputEncoding_UTF8_THEN_MACROMAN)
 	{
 		bool isValidUtf8 = true;
 		for (i = 0, j = 0; i < n; i ++) {
@@ -282,35 +276,35 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 			}
 		}
 		if (isValidUtf8) {
-			inputEncoding = Melder_INPUT_ENCODING_UTF8;
+			inputEncoding = kMelder_textInputEncoding_UTF8;
 			wcs [j] = '\0';
-		} else if (inputEncoding == Melder_INPUT_ENCODING_UTF8) {
+		} else if (inputEncoding == kMelder_textInputEncoding_UTF8) {
 			wcs [0] = '\0';
 			return Melder_error1 (L"Text is not valid UTF-8; please try a different text input encoding.");
-		} else if (inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1) {
-			inputEncoding = Melder_INPUT_ENCODING_ISO_LATIN1;
-		} else if (inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1) {
-			inputEncoding = Melder_INPUT_ENCODING_WINDOWS_LATIN1;
-		} else if (inputEncoding == Melder_INPUT_ENCODING_UTF8_THEN_MACROMAN) {
-			inputEncoding = Melder_INPUT_ENCODING_MACROMAN;
+		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding_ISO_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding_WINDOWS_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_MACROMAN) {
+			inputEncoding = kMelder_textInputEncoding_MACROMAN;
 		}
 	}
-	if (inputEncoding == Melder_INPUT_ENCODING_ISO_LATIN1) {
+	if (inputEncoding == kMelder_textInputEncoding_ISO_LATIN1) {
 		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
 			wcs [i] = *ustring;
 		}
 		wcs [i] = '\0';
-	} else if (inputEncoding == Melder_INPUT_ENCODING_WINDOWS_LATIN1) {
+	} else if (inputEncoding == kMelder_textInputEncoding_WINDOWS_LATIN1) {
 		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
 			wcs [i] = decodeWindowsLatin1 [*ustring];
 		}
 		wcs [i] = '\0';
-	} else if (inputEncoding == Melder_INPUT_ENCODING_MACROMAN) {
+	} else if (inputEncoding == kMelder_textInputEncoding_MACROMAN) {
 		for (i = 0; *ustring != '\0'; ustring ++, i ++) {
 			wcs [i] = decodeMacRoman [*ustring];
 		}
 		wcs [i] = '\0';
-	} else if (inputEncoding != Melder_INPUT_ENCODING_UTF8) {
+	} else if (inputEncoding != kMelder_textInputEncoding_UTF8) {
 		Melder_fatal ("Unknown text input encoding %d.", inputEncoding);
 	}
 	(void) Melder_killReturns_inlineW (wcs);
@@ -330,7 +324,7 @@ wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding) {
 wchar_t * Melder_utf8ToWcs (const char *string) {
 	if (string == NULL) return NULL;
 	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
-	Melder_8bitToWcs_inline (string, result, Melder_INPUT_ENCODING_UTF8);
+	Melder_8bitToWcs_inline (string, result, kMelder_textInputEncoding_UTF8);
 	return result;
 }
 
@@ -504,6 +498,26 @@ wchar_t * MelderFile_readText (MelderFile file) {
 			return NULL;
 		}
 		text8bit [length] = '\0';
+		/*
+		 * Count and repair null bytes.
+		 */
+		if (length > 0) {
+			long numberOfNullBytes = 0;
+			for (char *p = text8bit + (length - 1); (long) (p - text8bit) >= 0; p --) {
+				if (*p == '\0') {
+					numberOfNullBytes += 1;
+					/*
+					 * Shift.
+					 */
+					for (char *q = p; (unsigned long) (q - text8bit) < length; q ++) {
+						*q = q [1];
+					}
+				}
+			}
+			if (numberOfNullBytes > 0) {
+				Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageNameW (file), L".");
+			}
+		}
 		text = Melder_8bitToWcs (text8bit, 0);
 		Melder_free (text8bit);
 	} else {
@@ -580,10 +594,10 @@ end:
 int MelderFile_writeText (MelderFile file, const wchar_t *text) {
 	FILE *f = Melder_fopen (file, "wb");
 	if (! f) return 0;
-	if (prefs. outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+	if (preferences. outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		Melder_fwriteWcsAsUtf8 (text, wcslen (text), f);
-	} else if ((prefs. outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
-		(prefs. outputEncoding == Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, Melder_OUTPUT_ENCODING_ISO_LATIN1)))
+	} else if ((preferences. outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
+		(preferences. outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 	{
 		size_t n = wcslen (text);
 		for (size_t i = 0; i < n; i ++) {
@@ -646,14 +660,14 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 		type = 2;   // little-endian 16-bit
 	}
 	if (type == 0) {
-		if (prefs. outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+		if (preferences. outputEncoding == kMelder_textOutputEncoding_UTF8) {
 			FILE *f = Melder_fopen (file, "ab");
 			if (! f) return 0;
 			Melder_fwriteWcsAsUtf8 (text, wcslen (text), f);
 			if (fclose (f))
 				return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
-		} else if ((prefs. outputEncoding == Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16 && Melder_isEncodable (text, Melder_OUTPUT_ENCODING_ASCII))
-		    || (prefs. outputEncoding == Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, Melder_OUTPUT_ENCODING_ISO_LATIN1)))
+		} else if ((preferences. outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
+		    || (preferences. outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 		{
 			/*
 			 * Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
@@ -728,13 +742,13 @@ static void _MelderFile_write (MelderFile file, const wchar_t *string) {
 	if (string == NULL) return;
 	unsigned long length = wcslen (string);
 	FILE *f = file -> filePointer;
-	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII || file -> outputEncoding == Melder_OUTPUT_ENCODING_ISO_LATIN1) {
+	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
 		for (unsigned long i = 0; i < length; i ++) {
 			char kar = string [i];
 			if (kar == '\n' && file -> requiresCRLF) putc (13, f);
 			putc (kar, f);
 		}
-	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+	} else if (file -> outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		for (unsigned long i = 0; i < length; i ++) {
 			unsigned long kar = string [i];
 			if (kar <= 0x00007F) {
@@ -766,10 +780,10 @@ static void _MelderFile_write (MelderFile file, const wchar_t *string) {
 void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
 	FILE *f = file -> filePointer;
 	unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) character : character;
-	if (file -> outputEncoding == Melder_OUTPUT_ENCODING_ASCII) {
+	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
 		if (kar == '\n' && file -> requiresCRLF) putc (13, f);
 		putc (kar, f);
-	} else if (file -> outputEncoding == Melder_OUTPUT_ENCODING_UTF8) {
+	} else if (file -> outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		if (kar <= 0x00007F) {
 			if (kar == '\n' && file -> requiresCRLF) putc (13, f);
 			putc (kar, f);

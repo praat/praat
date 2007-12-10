@@ -27,6 +27,7 @@
  * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
  * pb 2007/08/12 wchar_t
  * pb 2007/10/05 less char
+ * pb 2007/12/09 enums
  */
 
 #include "melder.h"
@@ -46,18 +47,19 @@
  */
 
 /* exported */ struct Printer thePrinter = {
-	GraphicsPostscript_FINE, Graphics_US_LETTER, Graphics_PORTRAIT, FALSE, TRUE,
-	GraphicsPostscript_AUTOMATIC, TRUE,
+	kGraphicsPostscript_spots_DEFAULT, kGraphicsPostscript_paperSize_DEFAULT, kGraphicsPostscript_orientation_DEFAULT, false,
+	true, true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
 	600, 5100, 6600,
-	1.0
+	1.0,
+	NULL
 };
 
 void Printer_prefs (void) {
-	Resources_addInt (L"Printer.paperSize", & thePrinter. paperSize);
-	Resources_addInt (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript);
-	Resources_addInt (L"Printer.spots", & thePrinter. spots);
-	Resources_addInt (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy);
-	Resources_addInt (L"Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview);
+	Preferences_addEnum (L"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, DEFAULT);
+	Preferences_addEnum (L"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, DEFAULT);
+	Preferences_addBool (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
+	Preferences_addBool (L"Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview, true);
+	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
 }
 
 #if defined (macintosh)
@@ -66,14 +68,10 @@ void Printer_prefs (void) {
 	static PMPrintSettings theMacPrintSettings;
 	static GrafPtr theMacPort;
 	static PMRect paperSize;
-	#define POSTSCRIPT_BEGIN  190
-	#define POSTSCRIPT_END  191
-	#define POSTSCRIPT_HANDLE  192
 #endif
 #ifdef _WIN32
 	static PRINTDLG theWinPrint;
 	static HDC theWinDC;
-	/* exported */ int nt_is_running = FALSE;
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
@@ -197,16 +195,6 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 #endif
 #if defined (_WIN32)
 	static void initPrinter (void) {
-		OSVERSIONINFOEX osVersionInfo;
-		memset (& osVersionInfo, 0, sizeof (OSVERSIONINFOEX));
-		osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFOEX);
-		if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
-			osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-				return;
-		}
-		if (osVersionInfo. dwPlatformId == VER_PLATFORM_WIN32_NT)
-			nt_is_running = TRUE;
 	}
 #endif
 
@@ -222,8 +210,8 @@ void Printer_nextPage (void) {
 	#elif defined (_WIN32)
 		if (thePrinter. postScript) {
 			exitPostScriptPage ();
-			if (nt_is_running) EndPage (theWinDC);
-			if (nt_is_running) StartPage (theWinDC);
+			EndPage (theWinDC);
+			StartPage (theWinDC);
 			initPostScriptPage ();
 		} else {
 			if (EndPage (theWinDC) < 0) ;   /* BUG: should give the opportunity of cancellation. */
@@ -249,28 +237,28 @@ int Printer_pageSetup (void) {
 static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
 	(void) dummy;
 	#if defined (_WIN32) || defined (macintosh)
-		thePrinter. allowDirectPostScript = UiForm_getInteger (dia, L"Allow direct PostScript");
+		thePrinter. allowDirectPostScript = GET_INTEGER (L"Allow direct PostScript");
 	#endif
-	thePrinter. spots = UiForm_getInteger (dia, L"Grey resolution") - 1;
+	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, L"Grey resolution");
 	#if defined (UNIX)
-		thePrinter. paperSize = UiForm_getInteger (dia, L"Paper size") - 1;
-	 	if (thePrinter. paperSize == Graphics_A3) {
+		thePrinter. paperSize = GET_ENUM (kGraphicsPostscript_paperSize, L"Paper size");
+	 	if (thePrinter. paperSize == kGraphicsPostscript_paperSize_A3) {
 	 		thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
 	 		thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
-		} else if (thePrinter. paperSize == Graphics_US_LETTER) {
+		} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize_US_LETTER) {
 			thePrinter. paperWidth = 612 * thePrinter. resolution / 72;
 			thePrinter. paperHeight = 792 * thePrinter. resolution / 72;
 		} else {
 			thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
 			thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
 		}
-		thePrinter. orientation = UiForm_getInteger (dia, L"Orientation") - 1;
-		thePrinter. magnification = UiForm_getReal (dia, L"Magnification");
-		Site_setPrintCommand (UiForm_getString (dia, L"printCommand"));
+		thePrinter. orientation = GET_ENUM (kGraphicsPostscript_orientation, L"Orientation");
+		thePrinter. magnification = GET_REAL (L"Magnification");
+		Site_setPrintCommand (GET_STRING (L"printCommand"));
 	#endif
-	thePrinter. fontChoiceStrategy = UiForm_getInteger (dia, L"Font choice strategy") - 1;
+	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, L"Font choice strategy");
 	#if defined (macintosh)
-		thePrinter. epsFilesHavePreview = UiForm_getInteger (dia, L"EPS files include preview");
+		thePrinter. epsFilesHavePreview = GET_INTEGER (L"EPS files include preview");
 	#endif
 	return 1;
 }
@@ -281,50 +269,39 @@ int Printer_postScriptSettings (void) {
 		Any radio;
 		dia = UiForm_create (theCurrentPraat -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...");
 		#if defined (_WIN32) || defined (macintosh)
-			UiForm_addBoolean (dia, L"Allow direct PostScript", TRUE);
+			BOOLEAN (L"Allow direct PostScript", TRUE);
 		#endif
-		radio = UiForm_addRadio (dia, L"Grey resolution", 1);
-			UiRadio_addButton (radio, L"Finest");
-			UiRadio_addButton (radio, L"Photocopyable");
+		RADIO_ENUM (L"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
 		#if defined (UNIX)
-			radio = UiForm_addRadio (dia, L"Paper size", 1);
-				UiRadio_addButton (radio, L"A4");
-				UiRadio_addButton (radio, L"A3");
-				UiRadio_addButton (radio, L"US Letter");
-			radio = UiForm_addRadio (dia, L"Orientation", 1);
-				UiRadio_addButton (radio, L"Portrait");
-				UiRadio_addButton (radio, L"Landscape");
-			UiForm_addPositive (dia, L"Magnification", L"1.0");
-			UiForm_addLabel (dia, L"label", L"Print command:");
+			RADIO_ENUM (L"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
+			RADIO_ENUM (L"Orientation", kGraphicsPostscript_orientation, DEFAULT);
+			POSITIVE (L"Magnification", L"1.0");
+			LABEL (L"label", L"Print command:");
 			#if defined (linux)
-				UiForm_addText (dia, L"printCommand", L"lpr %s");
+				TEXTFIELD (L"printCommand", L"lpr %s");
 			#else
-				UiForm_addText (dia, L"printCommand", L"lp -c %s");
+				TEXTFIELD (L"printCommand", L"lp -c %s");
 			#endif
 		#endif
-		radio = UiForm_addOptionMenu (dia, L"Font choice strategy", 1);
-			UiOptionMenu_addButton (radio, L"Automatic");
-			UiOptionMenu_addButton (radio, L"Linotype");
-			UiOptionMenu_addButton (radio, L"Monotype");
-			UiOptionMenu_addButton (radio, L"PS Monotype");
+		RADIO_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
 		#if defined (macintosh)
-			UiForm_addBoolean (dia, L"EPS files include preview", TRUE);
+			BOOLEAN (L"EPS files include preview", TRUE);
 		#endif
 		UiForm_finish (dia);
 	}
 	#if defined (_WIN32) || defined (macintosh)
-		UiForm_setInteger (dia, L"Allow direct PostScript", thePrinter. allowDirectPostScript);
+		SET_INTEGER (L"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
-	UiForm_setInteger (dia, L"Grey resolution", thePrinter. spots + 1);
+	SET_ENUM (L"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
 	#if defined (UNIX)
-		UiForm_setInteger (dia, L"Paper size", thePrinter. paperSize + 1);
-		UiForm_setInteger (dia, L"Orientation", thePrinter. orientation + 1);
-		UiForm_setReal (dia, L"Magnification", thePrinter. magnification);
-		UiForm_setString (dia, L"printCommand", Site_getPrintCommand ());
+		SET_ENUM (L"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
+		SET_ENUM (L"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
+		SET_REAL (L"Magnification", thePrinter. magnification);
+		SET_STRING (L"printCommand", Site_getPrintCommand ());
 	#endif
-	UiForm_setInteger (dia, L"Font choice strategy", thePrinter. fontChoiceStrategy + 1);
+	SET_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
 	#if defined (macintosh)
-		UiForm_setInteger (dia, L"EPS files include preview", thePrinter. epsFilesHavePreview);
+		SET_INTEGER (L"EPS files include preview", thePrinter. epsFilesHavePreview);
 	#endif
 	UiForm_do (dia, FALSE);
 	return 1;
@@ -434,14 +411,14 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		docInfo. lpszOutput = NULL;
 		if (thePrinter. postScript) {
 			StartDoc (theWinDC, & docInfo);
-			if (nt_is_running) StartPage (theWinDC);
+			StartPage (theWinDC);
 			initPostScriptPage ();
 			thePrinter. graphics = Graphics_create_postscriptprinter ();
 			if (! thePrinter. graphics) return Melder_error1 (L"Cannot open printer.");
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			exitPostScriptPage ();
-			if (nt_is_running) EndPage (theWinDC);
+			EndPage (theWinDC);
 			EndDoc (theWinDC);
 		} else {
 			StartDoc (theWinDC, & docInfo);
@@ -515,7 +492,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		PMOrientation orientation;
 		PMGetOrientation (theMacPageFormat, & orientation);
 		thePrinter. orientation = orientation == kPMLandscape ||
-			orientation == kPMReverseLandscape ? Graphics_LANDSCAPE : Graphics_PORTRAIT;
+			orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
 		PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
 		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
 		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);

@@ -35,6 +35,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2007/10/01 corrected nativization
  * pb 2007/11/17 getVectorStr
+ * pb 2007/12/10 Strings_createAsFileList precomposes characters
  */
 
 //#define USE_STAT  1
@@ -158,7 +159,9 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 			}
 			MelderString_copy (& right, asterisk + 1);
 		}
-		d = opendir (Melder_peekWcsToUtf8 (searchDirectory. string [0] ? searchDirectory. string : L"."));
+		char buffer8 [1000];
+		Melder_wcsTo8bitFileRepresentation_inline (searchDirectory. string, buffer8);
+		d = opendir (buffer8 [0] ? buffer8 : ".");
 		if (d == NULL) error3 (L"Cannot open directory ", searchDirectory. string, L".")
 		//Melder_casual ("opened");
 		my strings = NUMpvector (1, 1000000); cherror
@@ -166,10 +169,13 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 		while ((entry = readdir (d)) != NULL) {
 			MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : L".");
 			MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
-			MelderString_append (& filePath, Melder_peekUtf8ToWcs (entry -> d_name));
+			wchar_t bufferW [1000];
+			Melder_8bitFileRepresentationToWcs_inline (entry -> d_name, bufferW);
+			MelderString_append (& filePath, bufferW);
 			//Melder_casual ("read %s", filePath. string);
+			Melder_wcsTo8bitFileRepresentation_inline (filePath. string, buffer8);
 			struct stat stats;
-			if (stat (Melder_peekWcsToUtf8 (filePath. string), & stats) != 0) {
+			if (stat (buffer8, & stats) != 0) {
 				error3 (L"Cannot look at file ", filePath. string, L".")
 				//stats. st_mode = -1L;
 			}
@@ -178,13 +184,13 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 			if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE && S_ISREG (stats. st_mode)) ||
 				(type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && S_ISDIR (stats. st_mode)))
 			{
-				wchar_t *fileName = Melder_peekUtf8ToWcs (entry -> d_name);
-				unsigned long length = wcslen (fileName);
-				if (fileName [0] != '.' &&
-					(left. length == 0 || wcsnequ (fileName, left. string, left. length)) &&
-					(right. length == 0 || (length >= right. length && wcsequ (fileName + (length - right. length), right. string))))
+				Melder_8bitFileRepresentationToWcs_inline (entry -> d_name, bufferW);
+				unsigned long length = wcslen (bufferW);
+				if (bufferW [0] != '.' &&
+					(left. length == 0 || wcsnequ (bufferW, left. string, left. length)) &&
+					(right. length == 0 || (length >= right. length && wcsequ (bufferW + (length - right. length), right. string))))
 				{
-					my strings [++ my numberOfStrings] = Melder_wcsdup (fileName); cherror
+					my strings [++ my numberOfStrings] = Melder_wcsdup (bufferW); cherror
 				}
 			}
 		}

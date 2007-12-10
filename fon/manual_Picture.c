@@ -25,7 +25,7 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *sym
 	Graphics_rectangle (g, x - 0.5, x + 0.5, y - 0.5, y + 0.5);
 	if (! symbol) return;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setFont (g, Graphics_FONT_TIMES);
+	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, fontSize * 3 / 2);
 	Graphics_text (g, x, y + 0.25, symbol);
 	while (*symbol) {
@@ -34,7 +34,7 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *sym
 		symbol ++;
 	}
 	*p = '\0';   /* Trailing null byte. */
-	Graphics_setFont (g, Graphics_FONT_HELVETICA);
+	Graphics_setFont (g, kGraphics_font_HELVETICA);
 	Graphics_setFontSize (g, fontSize * 5 / 6);
 	Graphics_text (g, x, y - 0.25, buffer);
 	Graphics_setFontSize (g, fontSize);
@@ -133,7 +133,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
-MAN_BEGIN (L"Special symbols", L"ppgb", 20070924)
+MAN_BEGIN (L"Special symbols", L"ppgb", 20071210)
 INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
 	"you can use %%backslash sequences% to display various kinds of special symbols. "
 	"You can usually also type the characters themselves, if your computer has an input method for them.")
@@ -157,6 +157,7 @@ LIST_ITEM (L"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N
 LIST_ITEM (L"\\c< \\bsc<  \\d< \\bsd<  \\e< \\bse<  \\g< \\bsg<  \\n< \\bsn<  \\r< \\bsr<  \\s< \\bss<  \\t< \\bst<  \\z< \\bsz<  "
 	"\\C< \\bsC<  \\D< \\bsD<  \\E< \\bsE<  \\G< \\bsG<  \\N< \\bsN<  \\R< \\bsR<  \\S< \\bsS<  \\T< \\bsT<  \\Z< \\bsZ<")
 LIST_ITEM (L"\\ao \\bsao  \\uo \\bsuo  \\Ao \\bsAo  \\Uo \\bsUo")
+LIST_ITEM (L"\\a; \\bsa;  \\e; \\bse;  \\A; \\bsA;  \\E; \\bsE;")
 LIST_ITEM (L"\\ae \\bsae  \\Ae \\bsAe  \\o/ \\bso/  \\O/ \\bsO/  "
 	"\\c, \\bsc,  \\C, \\bsC,  \\l/ \\bsl/  \\L/ \\bsL/  \\ss \\bsss  \\th \\bsth  \\z! \\bsz!  \\Z! \\bsZ!")
 LIST_ITEM (L"\\!d \\bs!d  \\?d \\bs?d")

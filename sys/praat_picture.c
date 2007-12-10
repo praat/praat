@@ -32,6 +32,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/08/15 removed New Century Schoolbook
  * pb 2007/09/01 praat_picture_editor_open/close
+ * pb 2007/12/09 enums
  */
 
 #include "praatP.h"
@@ -40,27 +41,35 @@
 #include "machine.h"
 #include "Formula.h"
 
+static int praat_font;
+static int praat_size;
+static bool praat_mouseSelectsInnerViewport;
+
+void praat_picture_prefs (void) {
+	Preferences_addEnum (L"Picture.font", & praat_font, kGraphics_font, DEFAULT);
+	Preferences_addInt (L"Picture.fontSize", & praat_size, 10);
+	Preferences_addBool (L"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
+}
+
 /***** static variable *****/
 
 static Picture praat_picture;
 
 /********** CALLBACKS OF THE PICTURE MENUS **********/
 
-static int praat_mouseSelectsInnerViewport = FALSE;
 static double x1NDC = 0.0, x2NDC = 6.0, y1NDC = 8.0, y2NDC = 12.0;
 
 /***** "Font" MENU: font part *****/
 
-static int praat_font = Graphics_FONT_HELVETICA;
 static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
 static void updateFontMenu (void) {
 	if (! theCurrentPraat -> batch) {
-		if (praat_font < Graphics_FONT_MIN) praat_font = Graphics_FONT_MIN;
-		if (praat_font > Graphics_FONT_MAX) praat_font = Graphics_FONT_MAX;
-		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_FONT_TIMES, 0);
-		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_FONT_HELVETICA, 0);
-		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_FONT_PALATINO, 0);
-		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_FONT_COURIER, 0);
+		if (praat_font < kGraphics_font_MIN) praat_font = kGraphics_font_MIN;
+		if (praat_font > kGraphics_font_MAX) praat_font = kGraphics_font_MAX;
+		XmToggleButtonGadgetSetState (praatButton_times, praat_font == kGraphics_font_TIMES, 0);
+		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == kGraphics_font_HELVETICA, 0);
+		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == kGraphics_font_PALATINO, 0);
+		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == kGraphics_font_COURIER, 0);
 	}
 }
 static void setFont (int font) {
@@ -72,14 +81,13 @@ static void setFont (int font) {
 		updateFontMenu ();
 	}
 }
-DIRECT (Times) setFont (Graphics_FONT_TIMES); END
-DIRECT (Helvetica) setFont (Graphics_FONT_HELVETICA); END
-DIRECT (Palatino) setFont (Graphics_FONT_PALATINO); END
-DIRECT (Courier) setFont (Graphics_FONT_COURIER); END
+DIRECT (Times) setFont (kGraphics_font_TIMES); END
+DIRECT (Helvetica) setFont (kGraphics_font_HELVETICA); END
+DIRECT (Palatino) setFont (kGraphics_font_PALATINO); END
+DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 
 /***** "Font" MENU: size part *****/
 
-static int praat_size = 10;
 static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
 	if (! theCurrentPraat -> batch) {
@@ -147,7 +155,7 @@ static void updateViewportMenu (void) {
 DIRECT (MouseSelectsInnerViewport)
 	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
-	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = TRUE);
+	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
 	praat_picture_close ();
 	updateViewportMenu ();
 END
@@ -155,7 +163,7 @@ END
 DIRECT (MouseSelectsOuterViewport)
 	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
-	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = FALSE);
+	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
 	praat_picture_close ();
 	updateViewportMenu ();
 END
@@ -546,19 +554,15 @@ END
 FORM (Text_special, L"Praat picture: Text special", 0)
 	REAL (L"Horizontal position", L"0.0")
 	OPTIONMENU (L"Horizontal alignment", 2)
-		OPTION (L"Left")
-		OPTION (L"Centre")
-		OPTION (L"Right")
+		OPTION (L"left")
+		OPTION (L"centre")
+		OPTION (L"right")
 	REAL (L"Vertical position", L"0.0")
 	OPTIONMENU (L"Vertical alignment", 2)
-		OPTION (L"Bottom")
-		OPTION (L"Half")
-		OPTION (L"Top")
-	OPTIONMENU (L"Font", 1)
-		OPTION (L"Times")
-		OPTION (L"Palatino")
-		OPTION (L"Helvetica")
-		OPTION (L"Courier")
+		OPTION (L"bottom")
+		OPTION (L"half")
+		OPTION (L"top")
+	OPTIONMENU_ENUM (L"Font", kGraphics_font, DEFAULT)
 	NATURAL (L"Font size", L"10")
 	SENTENCE (L"Rotation (degrees or dx;dy)", L"0")
 	LABEL (L"", L"Text:")
@@ -567,15 +571,10 @@ FORM (Text_special, L"Praat picture: Text special", 0)
 DO
 	int currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
-	int requiredFont = GET_INTEGER (L"Font");
 	praat_picture_open ();
 	Graphics_setTextAlignment (GRAPHICS, GET_INTEGER (L"Horizontal alignment") - 1, GET_INTEGER (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
-	Graphics_setFont (GRAPHICS,
-		requiredFont == 1 ? Graphics_FONT_TIMES :
-		requiredFont == 2 ? Graphics_FONT_PALATINO :
-		requiredFont == 3 ? Graphics_FONT_HELVETICA :
-		Graphics_FONT_COURIER);
+	Graphics_setFont (GRAPHICS, GET_ENUM (kGraphics_font, L"Font"));
 	Graphics_setFontSize (GRAPHICS, GET_INTEGER (L"Font size"));
 	wchar_t *rotation = GET_STRING (L"Rotation"), *semicolon;
 	if ((semicolon = wcschr (rotation, ';')) != NULL)
@@ -959,7 +958,7 @@ static void dia_marksEvery (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (void *, double, double, int, int, int)) {
+static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (void *, double, double, bool, bool, bool)) {
 	praat_picture_open ();
 	Graphics_marksEvery (GRAPHICS, GET_REAL (L"Units"), GET_REAL (L"Distance"),
 		GET_INTEGER (L"Write numbers"),
@@ -981,7 +980,7 @@ static void dia_marks (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static int do_marks (Any dia, void (*Graphics_marks) (void *, int, int, int, int)) {
+static int do_marks (Any dia, void (*Graphics_marks) (void *, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (L"Number of marks");
 	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
 	praat_picture_open ();
@@ -1005,7 +1004,7 @@ static void dia_marksLogarithmic (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (void *, int, int, int, int)) {
+static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (void *, int, bool, bool, bool)) {
 	long numberOfMarksPerDecade = GET_INTEGER (L"Marks per decade");
 	praat_picture_open ();
 	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (L"Write numbers"),
@@ -1336,12 +1335,7 @@ DIRECT (Picture_settings_report)
 	MelderInfo_writeLine3 (L"Inner viewport right: ", Melder_double (x2NDC - xmargin), L" inches");
 	MelderInfo_writeLine3 (L"Inner viewport top: ", Melder_double (12-y2NDC + ymargin), L" inches");
 	MelderInfo_writeLine3 (L"Inner viewport bottom: ", Melder_double (12-y1NDC - ymargin), L" inches");
-	MelderInfo_writeLine2 (L"Font: ",
-		praat_font == Graphics_FONT_TIMES ? L"Times" :
-		praat_font == Graphics_FONT_HELVETICA ? L"Helvetica" :
-		praat_font == Graphics_FONT_COURIER ? L"Courier" :
-		praat_font == Graphics_FONT_PALATINO ? L"Palatino" :
-		L"(unknown)");
+	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (praat_font));
 	MelderInfo_writeLine2 (L"Line type: ",
 		praat_lineType == Graphics_DRAWN ? L"Solid" :
 		praat_lineType == Graphics_DOTTED ? L"Dotted" :
@@ -1725,12 +1719,6 @@ void praat_picture_init (void) {
 	updateSizeMenu ();
 	updateViewportMenu ();
 	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
-}
-
-void praat_picture_prefs (void) {
-	Resources_addInt (L"Picture.font", & praat_font);
-	Resources_addInt (L"Picture.fontSize", & praat_size);
-	Resources_addInt (L"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport);
 }
 
 void praat_picture_prefsChanged (void) {

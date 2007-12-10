@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/14
+ * pb 2007/12/09
  */
 
 #ifndef _Graphics_h_
@@ -95,7 +95,8 @@ typedef struct {
 	float lineWidth, arrowSize; \
 	int horizontalTextAlignment, verticalTextAlignment; \
 	float textRotation, wrapWidth, secondIndent, textX, textY; \
-	int font, fontSize, fontStyle; \
+	enum kGraphics_font font; \
+	int fontSize, fontStyle; \
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript; \
 	int dollarSignIsCode, atSignIsLink; \
 	int recording; \
@@ -116,9 +117,9 @@ int Graphics_init (I);
 		my fontStyle == Graphics_NORMAL;
 */ 
 
-#define Graphics_SYMBOL  (Graphics_FONT_MAX + 1)
-#define Graphics_IPATIMES  (Graphics_FONT_MAX + 2)
-#define Graphics_DINGBATS  (Graphics_FONT_MAX + 3)
+#define kGraphics_font_SYMBOL  (kGraphics_font_MAX + 1)
+#define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
+#define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
 
 #ifdef UNIX
 	#define GraphicsScreen_members Graphics_members \
@@ -182,7 +183,7 @@ class_create (GraphicsScreen, Graphics);
 	int languageLevel; \
 	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS; \
 	double magnification; \
-	char *fontInfos [1 + Graphics_DINGBATS] [1 + Graphics_BOLD_ITALIC]; \
+	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC]; \
 	const char *lastFid; \
 	int job, eps, pageNumber, lastSize;
 #define GraphicsPostscript_methods Graphics_methods

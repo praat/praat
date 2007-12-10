@@ -22,9 +22,11 @@
  * pb 2006/12/10 separated from melder.c
  * pb 2007/05/24 wcsdup, wcsToAscii, asciiToWcs
  * pb 2007/08/14 underscores for names _Melder_malloc and _Melder_calloc
+ * pb 2007/12/05 Melder_wcsequ_firstCharacterCaseInsensitive
  */
 
 #include "melder.h"
+#include <wctype.h>
 
 static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0;
 
@@ -164,6 +166,14 @@ int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, unsigned lon
 	if (string1 == NULL) string1 = L"";
 	if (string2 == NULL) string2 = L"";
 	return wcsncmp (string1, string2, n);
+}
+
+bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2) {
+	if (string1 == NULL) string1 = L"";
+	if (string2 == NULL) string2 = L"";
+	if (towlower (*string1) != towlower (*string2)) return false;
+	if (*string1 == '\0') return true;
+	return ! wcscmp (string1 + 1, string2 + 1);
 }
 
 /* End of file melder_alloc.c */

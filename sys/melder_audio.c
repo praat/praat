@@ -33,6 +33,7 @@
  * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Konink)
  * pb 2007/08/12 wchar_t
  * Stefan de Konink 2007/12/02 big-endian Linux
+ * pb 2007/12/04 enums
  */
 
 #include "melder.h"
@@ -132,40 +133,41 @@
 #endif
 
 static struct {
-	int maximumAsynchronicity, useInternalSpeaker;
+	enum kMelder_asynchronicityLevel maximumAsynchronicity;
+	bool useInternalSpeaker;
 	double outputGain, zeroPadding;
-} prefs = { Melder_ASYNCHRONOUS, TRUE, 1.0, 0.0 };
+} preferences;
+
+void Melder_audio_prefs (void) {
+	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, DEFAULT);
+	Preferences_addBool (L"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
+	Preferences_addDouble (L"Audio.outputGain", & preferences. outputGain, 1.0);
+	Preferences_addDouble (L"Audio.zeroPadding", & preferences. zeroPadding, 0.0);
+}
 
 void Melder_setMaximumAsynchronicity (int maximumAsynchronicity) {
 	Melder_stopPlaying (Melder_IMPLICIT);
-	prefs. maximumAsynchronicity = maximumAsynchronicity;
+	preferences. maximumAsynchronicity = maximumAsynchronicity;
 }
-int Melder_getMaximumAsynchronicity (void) { return prefs. maximumAsynchronicity; }
+int Melder_getMaximumAsynchronicity (void) { return preferences. maximumAsynchronicity; }
 
 void Melder_setUseInternalSpeaker (int useInternalSpeaker) {
 	Melder_stopPlaying (Melder_IMPLICIT);
-	prefs. useInternalSpeaker = useInternalSpeaker;
+	preferences. useInternalSpeaker = useInternalSpeaker;
 }
-int Melder_getUseInternalSpeaker (void) { return prefs. useInternalSpeaker; }
+int Melder_getUseInternalSpeaker (void) { return preferences. useInternalSpeaker; }
 
 void Melder_setOutputGain (double gain) {
 	Melder_stopPlaying (Melder_IMPLICIT);
-	prefs. outputGain = gain;
+	preferences. outputGain = gain;
 }
-double Melder_getOutputGain (void) { return prefs. outputGain; }
+double Melder_getOutputGain (void) { return preferences. outputGain; }
 
 void Melder_setZeroPadding (double zeroPadding) {
 	Melder_stopPlaying (Melder_IMPLICIT);
-	prefs. zeroPadding = zeroPadding;
+	preferences. zeroPadding = zeroPadding;
 }
-double Melder_getZeroPadding (void) { return prefs. zeroPadding; }
-
-void Melder_audio_prefs (void) {
-	Resources_addInt (L"Audio.maximumAsynchronicity", & prefs. maximumAsynchronicity);
-	Resources_addInt (L"Audio.useInternalSpeaker", & prefs. useInternalSpeaker);
-	Resources_addDouble (L"Audio.outputGain", & prefs. outputGain);
-	Resources_addDouble (L"Audio.zeroPadding", & prefs. zeroPadding);
-}
+double Melder_getZeroPadding (void) { return preferences. zeroPadding; }
 
 long Melder_getBestSampleRate (long fsamp) {
 	#if defined (macintosh)
@@ -312,7 +314,7 @@ static Boolean flush (void) {
 			ALcloseport (my port), my port = 0;
 		}
 	#elif defined (macintosh)
-		if (my asynchronicity == Melder_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
+		if (my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
 			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
 		}
 		Melder_stopClock ();
@@ -386,7 +388,7 @@ static Boolean flush (void) {
 int Melder_stopPlaying (int explicit) {
 	struct MelderPlay *me = & thePlay;
 	my explicit = explicit;
-	if (! Melder_isPlaying || my asynchronicity < Melder_ASYNCHRONOUS) return 0;
+	if (! Melder_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return 0;
 	(void) flush ();
 	XtRemoveWorkProc (thePlay. workProcId);
 	return 1;
@@ -644,9 +646,12 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	my numberOfChannels = numberOfChannels;
 	my callback = playCallback;
 	my closure = playClosure;
-	my asynchronicity = Melder_batch ? Melder_SYNCHRONOUS : Melder_backgrounding ? Melder_INTERRUPTABLE : Melder_ASYNCHRONOUS;
-	if (my asynchronicity > prefs. maximumAsynchronicity)
-		my asynchronicity = prefs. maximumAsynchronicity;
+	my asynchronicity =
+		Melder_batch ? kMelder_asynchronicityLevel_SYNCHRONOUS :
+		Melder_backgrounding ? kMelder_asynchronicityLevel_INTERRUPTABLE :
+		kMelder_asynchronicityLevel_ASYNCHRONOUS;
+	if (my asynchronicity > preferences. maximumAsynchronicity)
+		my asynchronicity = preferences. maximumAsynchronicity;
 	my explicit = Melder_IMPLICIT;
 	my fakeMono = FALSE;
 
@@ -677,16 +682,16 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	err = Pa_StartStream (my stream);
 	if (err) return Melder_error ("PortAudio cannot start sound output: %s", Pa_GetErrorText (err));
 	my startingTime = Pa_GetStreamTime (my stream);
-	if (my asynchronicity <= Melder_INTERRUPTABLE) {
+	if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 		while (Pa_IsStreamActive (my stream)) {
 			bool interrupted = false;
-			if (my asynchronicity != Melder_SYNCHRONOUS && my callback && ! my callback (my closure, my samplesPlayed))
+			if (my asynchronicity != kMelder_asynchronicityLevel_SYNCHRONOUS && my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = true;
 			/*
 			 * Safe operation: only listen to key-down events.
 			 * Do this on the lowest level that will work.
 			 */
-			if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted) {
+			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted) {
 				#if defined (macintosh)
 					EventRecord event;
 					if (EventAvail (keyDownMask, & event)) {
@@ -724,7 +729,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		if (my samplesPlayed != my numberOfSamples) {
 			Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);
 		}
-	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 		my workProcId = XtAppAddWorkProc (0, workProc, 0);
 		return 1;
 	}
@@ -860,11 +865,11 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			Melder_isPlaying = 0;
 			return Melder_error1 (L"Cannot open audio port.");
 		}
-		if (my asynchronicity == Melder_SYNCHRONOUS) {
+		if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 			ALwritesamps (my port, (void *) my buffer, my numberOfSamples * my numberOfChannels);
 			while (ALgetfilled (my port) > 0) { }   /* Drain. */
 			my samplesPlayed = my numberOfSamples;
-		} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+		} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 			while (my samplesLeft > 0 && ! interrupted) {
 				XEvent event;
 				long dsamples = my samplesLeft > 1000 ? 1000 : my samplesLeft;
@@ -874,7 +879,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				my samplesPlayed = my samplesSent - ALgetfilled (my port) / my numberOfChannels;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					interrupted = 1;
-				if (my asynchronicity == Melder_INTERRUPTABLE &&
+				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE &&
 				    XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 					my explicit = Melder_EXPLICIT, interrupted = 1;
 			}
@@ -884,11 +889,11 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				my samplesPlayed = my numberOfSamples - n / my numberOfChannels;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					interrupted = 1;
-				if (my asynchronicity == Melder_INTERRUPTABLE &&
+				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE &&
 				    XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 					my explicit = Melder_EXPLICIT, interrupted = 1;
 			}
-		} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, (XtPointer) me);
 			return 1;
 		}
@@ -898,7 +903,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 }
 #elif defined (macintosh)
 {
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
+	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		static char listResource [500];
 		SndListPtr data = (SndListPtr) & listResource [0];
 		ExtSoundHeaderPtr soundHeader;
@@ -946,7 +951,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		cmd. param2 = (long) soundHeader;
 		Melder_startClock ();
 		SndDoCommand (my soundChannel, & cmd, 0);
-		if (my asynchronicity <= Melder_INTERRUPTABLE) {
+		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 			SCStatus status;
 			while (SndChannelStatus (my soundChannel, sizeof (SCStatus), & status), status. scChannelBusy) {
 				int interrupted = 0;
@@ -958,7 +963,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				 * Safe operation: only listen to key-down events.
 				 * Do this on the lowest level that will work.
 				 */
-				if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
+				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
 					/*
 					 * Remove the event, even if it was a different key.
 					 * Otherwise, the key will block the future availability of the Escape key.
@@ -981,7 +986,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			}
 			SndDisposeChannel (my soundChannel, 0), my soundChannel = NULL;
 			my samplesPlayed = my numberOfSamples;
-		} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			my workProcId = XtAppAddWorkProc (0, workProc, 0);
 			return 1;
 		}
@@ -1026,7 +1031,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	params. gain_matrix. type = AGMTOutput;
 	params. gain_matrix. num_entries = 1;   /* BUG */
 	params. gain_matrix. gain_entries = & gainEntry;
-	gainEntry. u. o. out_dst = prefs. useInternalSpeaker ? AODTMonoIntSpeaker : AODTMonoJack;
+	gainEntry. u. o. out_dst = preferences. useInternalSpeaker ? AODTMonoIntSpeaker : AODTMonoJack;
 	gainEntry. u. o. out_ch = AOCTMono;   /* BUG */
 	gainEntry. gain = AUnityGain;
 	params. play_volume = AUnityGain;
@@ -1046,14 +1051,14 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	 * One of the following is superfluous (loop plus ASetCloseDownMode).
 	 */
 	Melder_startClock ();
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
+	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		for (;;) {
 			ANextEvent (my audio, & audioEvent, & my status);
 			if (audioEvent. any_event. type == AETTransCompleted && audioEvent. any_event. xid == my xid)
 				break;
 		}
 		my samplesPlayed = my numberOfSamples;
-	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+	} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 		for (;;) {
 			XEvent event;
 			int eventAvailable = ACheckEvent (my audio, & audioEvent, & my status);
@@ -1064,7 +1069,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				break;
-			if (my asynchronicity == Melder_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
+			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 				{ my explicit = Melder_EXPLICIT; break; }
 		}
 	} else {
@@ -1099,7 +1104,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	if (channels != 1 && ioctl (my audio_fd, AUDIO_SET_CHANNELS, 1) == -1)
 		return cancel (), Melder_error1 (L"Cannot set mono.");
 
-	wantedOutput = ( prefs. useInternalSpeaker ? AUDIO_OUT_SPEAKER : AUDIO_OUT_HEADPHONE ) | AUDIO_OUT_LINE;
+	wantedOutput = ( preferences. useInternalSpeaker ? AUDIO_OUT_SPEAKER : AUDIO_OUT_HEADPHONE ) | AUDIO_OUT_LINE;
 	ioctl (my audio_fd, AUDIO_GET_OUTPUT, & currentOutput);
 	if (wantedOutput != currentOutput && ioctl (my audio_fd, AUDIO_SET_OUTPUT, wantedOutput) == -1)
 		return cancel (), Melder_error1 (L"Cannot set output device.");
@@ -1124,7 +1129,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	}*/
 	/*ioctl (audio_fd, AUDIO_DESCRIBE, & audioInfo);
 	audioGains. transmit_gain = 9 + 20 * log10 (
-		prefs. outputGain > 1.0 ? 1.0 : prefs. outputGain < 1e-30 ? 1e-30 : prefs. outputGain);
+		preferences. outputGain > 1.0 ? 1.0 : preferences. outputGain < 1e-30 ? 1e-30 : preferences. outputGain);
 	if (audioGains. transmit_gain < -84) audioGains. transmit_gain = -84;
 	audioGains. monitor_gain = audioInfo. min_monitor_gain;
 	if (ioctl (audio_fd, AUDIO_SET_GAINS, & audioGains) == -1)
@@ -1160,17 +1165,17 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	my audioInfo. play. channels = my numberOfChannels;
 	my audioInfo. play. precision = 16;   /* Bits per sample. */
 	my audioInfo. play. encoding = AUDIO_ENCODING_LINEAR;
-	my audioInfo. play. port = ( prefs. useInternalSpeaker ? AUDIO_SPEAKER : 0 ) | AUDIO_HEADPHONE | AUDIO_LINE_OUT;
+	my audioInfo. play. port = ( preferences. useInternalSpeaker ? AUDIO_SPEAKER : 0 ) | AUDIO_HEADPHONE | AUDIO_LINE_OUT;
 	if (ioctl (my audio_fd, AUDIO_SETINFO, & my audioInfo) == -1)
 		return cancel (), Melder_error1 (L"Cannot initialize audio output.");
 
 	Melder_startClock ();
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
+	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		if (write (my audio_fd, & buffer [0], 2 * my numberOfChannels * my numberOfSamples) == -1)
 			return cancel (), Melder_error1 (L"Cannot write audio output.");
 		close (my audio_fd), my audio_fd = 0;   /* Drain. */
 		my samplesPlayed = my numberOfSamples;
-	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+	} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 		int interrupted = 0;
 		while (my samplesLeft && ! interrupted) {
 			int dsamples = my samplesLeft > 2000 ? 2000 : my samplesLeft;
@@ -1182,7 +1187,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
-			if (my asynchronicity == Melder_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
+			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 				my explicit = Melder_EXPLICIT, interrupted = 1;
 		}
 		if (! interrupted) {
@@ -1197,11 +1202,11 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				my samplesPlayed = Melder_clock () * my sampleRate;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					break;
-				if (my asynchronicity == Melder_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
+				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 					{ my explicit = Melder_EXPLICIT; break; }
 			}
 		}
-	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
 		return 1;
 	}
@@ -1257,12 +1262,12 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	}
 
 	Melder_startClock ();
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
+	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		if (write (my audio_fd, & my buffer [0], 2 * numberOfChannels * numberOfSamples) == -1)
 			return cancel (), Melder_error1 (L"Cannot write audio output.");
 		close (my audio_fd), my audio_fd = 0;   /* Drain. Set to zero in order to notify flush (). */
 		my samplesPlayed = my numberOfSamples;
-	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+	} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 		int interrupted = 0;
 		while (my samplesLeft && ! interrupted) {
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
@@ -1274,7 +1279,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
-			if (my asynchronicity == Melder_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
+			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
 				my explicit = Melder_EXPLICIT, interrupted = 1;
 		}
 		if (! interrupted) {
@@ -1284,7 +1289,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			close (my audio_fd), my audio_fd = 0;   /* BUG: should do a loop. */
 			my samplesPlayed = my numberOfSamples;
 		}
-	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
 		return 1;
 	}
@@ -1352,17 +1357,17 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	}
 
 	Melder_startClock ();
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
+	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		while (! (my waveHeader. dwFlags & WHDR_DONE)) { Sleep (10); }
 		my samplesPlayed = my numberOfSamples;
-  	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+  	} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
   		while (! (my waveHeader. dwFlags & WHDR_DONE)) {
 			MSG event;
 			Sleep (10);
 			my samplesPlayed = Melder_clock () * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				break;
-			if (my asynchronicity == Melder_INTERRUPTABLE &&
+			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE &&
 			    PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
 				if (LOWORD (event. wParam) == VK_ESCAPE) { my explicit = Melder_EXPLICIT; break; }
 			}

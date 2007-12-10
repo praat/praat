@@ -100,29 +100,29 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor)
 
 static double HertzToSpecial (double value, int pitchUnit)
 {
-	return	pitchUnit == Pitch_UNIT_HERTZ ? value :
-		pitchUnit == Pitch_UNIT_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
-		pitchUnit == Pitch_UNIT_MEL ? NUMhertzToMel (value) :
-		pitchUnit == Pitch_UNIT_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
-		pitchUnit == Pitch_UNIT_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
-		pitchUnit == Pitch_UNIT_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
-		pitchUnit == Pitch_UNIT_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
-		pitchUnit == Pitch_UNIT_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
-		pitchUnit == Pitch_UNIT_ERB ? NUMhertzToErb (value) :
+	return	pitchUnit == kPitch_unit_HERTZ ? value :
+		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == kPitch_unit_MEL ? NUMhertzToMel (value) :
+		pitchUnit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
+		pitchUnit == kPitch_unit_ERB ? NUMhertzToErb (value) :
 		NUMundefined;
 }
 
 static double SpecialToHertz (double value, int pitchUnit)
 {
-	return	pitchUnit == Pitch_UNIT_HERTZ ? value :
-		pitchUnit == Pitch_UNIT_HERTZ_LOGARITHMIC ? pow (10.0, value) :
-		pitchUnit == Pitch_UNIT_MEL ? NUMmelToHertz (value) :
-		pitchUnit == Pitch_UNIT_LOG_HERTZ ? pow (10.0, value) :
-		pitchUnit == Pitch_UNIT_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
-		pitchUnit == Pitch_UNIT_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
-		pitchUnit == Pitch_UNIT_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
-		pitchUnit == Pitch_UNIT_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
-		pitchUnit == Pitch_UNIT_ERB ? NUMerbToHertz (value) : NUMundefined;
+	return	pitchUnit == kPitch_unit_HERTZ ? value :
+		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? pow (10.0, value) :
+		pitchUnit == kPitch_unit_MEL ? NUMmelToHertz (value) :
+		pitchUnit == kPitch_unit_LOG_HERTZ ? pow (10.0, value) :
+		pitchUnit == kPitch_unit_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == kPitch_unit_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
+		pitchUnit == kPitch_unit_ERB ? NUMerbToHertz (value) : NUMundefined;
 }
 
 PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, 

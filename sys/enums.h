@@ -20,13 +20,13 @@
  */
 
 /*
- * pb 2007/12/02
+ * pb 2007/12/06
  */
 
-#define enums_begin(type,minimum)  enum { type##_MIN = minimum,
-#define enums_add(type,which,text,value)  type##_##which = value,
+#define enums_begin(type,minimum)  enum type { type##_MIN = minimum,
+#define enums_add(type,value,which,text)  type##_##which = value,
 #define enums_alt(type,which,text)
-#define enums_end(type,def,maximum) type##_MAX = maximum, \
+#define enums_end(type,maximum,def) type##_MAX = maximum, \
 	type##_DEFAULT = type##_##def }; \
 	const wchar_t * type##_getText (int value); \
 	int type##_getValue (const wchar_t *text);

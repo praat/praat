@@ -88,8 +88,6 @@
 #include "VoiceAnalysis.h"
 #include "praat_script.h"
 
-/* Enumerated types. */
-
 #include "enums_getText.h"
 #include "TimeSoundAnalysisEditor_enums.h"
 #include "enums_getValue.h"
@@ -121,77 +119,79 @@ static const wchar_t * LOG_1_FORMAT = L"Time 'time:6' seconds, pitch 'f0:2' Hert
 static const wchar_t * LOG_2_FORMAT = L"'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'";
 
 struct logInfo {
-	int toInfoWindow, toLogFile;
-	wchar_t fileName [Resources_STRING_BUFFER_SIZE], format [Resources_STRING_BUFFER_SIZE];
+	bool toInfoWindow, toLogFile;
+	wchar_t fileName [Preferences_STRING_BUFFER_SIZE], format [Preferences_STRING_BUFFER_SIZE];
 };
 
 static struct {
 	double longestAnalysis;
-	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView;
+	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
+	double fixedTimeStep;
+	long numberOfTimeStepsPerView;
 	struct FunctionEditor_spectrogram spectrogram;
 	struct FunctionEditor_pitch pitch;
 	struct FunctionEditor_intensity intensity;
 	struct FunctionEditor_formant formant;
 	struct FunctionEditor_pulses pulses;
 	struct logInfo log [2];
-	wchar_t logScript3 [Resources_STRING_BUFFER_SIZE], logScript4 [Resources_STRING_BUFFER_SIZE];
+	wchar_t logScript3 [Preferences_STRING_BUFFER_SIZE], logScript4 [Preferences_STRING_BUFFER_SIZE];
 } preferences;
 
 void TimeSoundAnalysisEditor_prefs (void) {
 	Preferences_addDouble (L"FunctionEditor.longestAnalysis", & preferences.longestAnalysis, 10.0);   // seconds
-	Preferences_addInt (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy, 1);   // 1 = automatic
+	Preferences_addEnum (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.fixedTimeStep", & preferences.fixedTimeStep, 0.01);   // seconds
 	Preferences_addLong (L"FunctionEditor.numberOfTimeStepsPerView", & preferences.numberOfTimeStepsPerView, 100);
-	Preferences_addInt (L"FunctionEditor.spectrogram.show", & preferences.spectrogram.show, TRUE);
+	Preferences_addBool (L"FunctionEditor.spectrogram.show", & preferences.spectrogram.show, true);
 	Preferences_addDouble (L"FunctionEditor.spectrogram.viewFrom2", & preferences.spectrogram.viewFrom, 0.0);   // Hertz
 	Preferences_addDouble (L"FunctionEditor.spectrogram.viewTo2", & preferences.spectrogram.viewTo, 5000.0);   // Hertz
 	Preferences_addDouble (L"FunctionEditor.spectrogram.windowLength2", & preferences.spectrogram.windowLength, 0.005);   // Hertz
 	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicRange2", & preferences.spectrogram.dynamicRange, 70.0);   // dB
 	Preferences_addLong (L"FunctionEditor.spectrogram.timeSteps2", & preferences.spectrogram.timeSteps, 1000);
 	Preferences_addLong (L"FunctionEditor.spectrogram.frequencySteps2", & preferences.spectrogram.frequencySteps, 250);
-	Preferences_addInt (L"FunctionEditor.spectrogram.method2", & preferences.spectrogram.method, 1);   // 1 = Fourier
-	Preferences_addInt (L"FunctionEditor.spectrogram.windowShape2", & preferences.spectrogram.windowShape, 5);   // 5 = Gaussian
-	Preferences_addInt (L"FunctionEditor.spectrogram.autoscaling2", & preferences.spectrogram.autoscaling, TRUE);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.method2", & preferences.spectrogram.method, kSound_to_Spectrogram_method, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.windowShape2", & preferences.spectrogram.windowShape, kSound_to_Spectrogram_windowShape, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.spectrogram.autoscaling2", & preferences.spectrogram.autoscaling, true);
 	Preferences_addDouble (L"FunctionEditor.spectrogram.maximum2", & preferences.spectrogram.maximum, 100.0);   // dB/Hz
 	Preferences_addDouble (L"FunctionEditor.spectrogram.preemphasis2", & preferences.spectrogram.preemphasis, 6.0);   // dB/octave
 	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicCompression2", & preferences.spectrogram.dynamicCompression, 0.0);
-	Preferences_addInt (L"FunctionEditor.pitch.show", & preferences.pitch.show, TRUE);
+	Preferences_addBool (L"FunctionEditor.pitch.show", & preferences.pitch.show, true);
 	Preferences_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor, 75.0);
 	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling, 500.0);
-	Preferences_addInt (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, Pitch_UNIT_HERTZ);
-	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod2", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, kPitch_unit, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom, 0.0);   // auto
 	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo, 0.0);   // auto
-	Preferences_addInt (L"FunctionEditor.pitch.method", & preferences.pitch.method, 1);   // autocorrelation
-	Preferences_addInt (L"FunctionEditor.pitch.veryAccurate", & preferences.pitch.veryAccurate, FALSE);
+	Preferences_addEnum (L"FunctionEditor.pitch.method", & preferences.pitch.method, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.pitch.veryAccurate", & preferences.pitch.veryAccurate, false);
 	Preferences_addLong (L"FunctionEditor.pitch.maximumNumberOfCandidates", & preferences.pitch.maximumNumberOfCandidates, 15);
 	Preferences_addDouble (L"FunctionEditor.pitch.silenceThreshold", & preferences.pitch.silenceThreshold, 0.03);
 	Preferences_addDouble (L"FunctionEditor.pitch.voicingThreshold", & preferences.pitch.voicingThreshold, 0.45);
 	Preferences_addDouble (L"FunctionEditor.pitch.octaveCost", & preferences.pitch.octaveCost, 0.01);
 	Preferences_addDouble (L"FunctionEditor.pitch.octaveJumpCost", & preferences.pitch.octaveJumpCost, 0.35);
 	Preferences_addDouble (L"FunctionEditor.pitch.voicedUnvoicedCost", & preferences.pitch.voicedUnvoicedCost, 0.14);
-	Preferences_addInt (L"FunctionEditor.intensity.show", & preferences.intensity.show, FALSE);
+	Preferences_addBool (L"FunctionEditor.intensity.show", & preferences.intensity.show, false);
 	Preferences_addDouble (L"FunctionEditor.intensity.viewFrom", & preferences.intensity.viewFrom, 50.0);   // dB
 	Preferences_addDouble (L"FunctionEditor.intensity.viewTo", & preferences.intensity.viewTo, 100.0);   // dB
-	Preferences_addInt (L"FunctionEditor.intensity.averagingMethod", & preferences.intensity.averagingMethod, Intensity_averaging_ENERGY);
-	Preferences_addInt (L"FunctionEditor.intensity.subtractMeanPressure", & preferences.intensity.subtractMeanPressure, TRUE);
-	Preferences_addInt (L"FunctionEditor.formant.show", & preferences.formant.show, FALSE);
+	Preferences_addEnum (L"FunctionEditor.intensity.averagingMethod", & preferences.intensity.averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.intensity.subtractMeanPressure", & preferences.intensity.subtractMeanPressure, true);
+	Preferences_addBool (L"FunctionEditor.formant.show", & preferences.formant.show, false);
 	Preferences_addDouble (L"FunctionEditor.formant.maximumFormant", & preferences.formant.maximumFormant, 5500.0);   // Hertz
 	Preferences_addLong (L"FunctionEditor.formant.numberOfPoles", & preferences.formant.numberOfPoles, 10);
 	Preferences_addDouble (L"FunctionEditor.formant.windowLength", & preferences.formant.windowLength, 0.025);   // seconds
 	Preferences_addDouble (L"FunctionEditor.formant.dynamicRange", & preferences.formant.dynamicRange, 30.0);   // dB
 	Preferences_addDouble (L"FunctionEditor.formant.dotSize", & preferences.formant.dotSize, 1.0);   // mm
-	Preferences_addInt (L"FunctionEditor.formant.method", & preferences.formant.method, 1);   // 1 = Burg
+	Preferences_addEnum (L"FunctionEditor.formant.method", & preferences.formant.method, kTimeSoundAnalysisEditor_formant_analysisMethod, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.formant.preemphasisFrom", & preferences.formant.preemphasisFrom, 50.0);   // Hertz
-	Preferences_addInt (L"FunctionEditor.pulses.show", & preferences.pulses.show, FALSE);
+	Preferences_addBool (L"FunctionEditor.pulses.show", & preferences.pulses.show, false);
 	Preferences_addDouble (L"FunctionEditor.pulses.maximumPeriodFactor", & preferences.pulses.maximumPeriodFactor, 1.3);
 	Preferences_addDouble (L"FunctionEditor.pulses.maximumAmplitudeFactor", & preferences.pulses.maximumAmplitudeFactor, 1.6);
-	Preferences_addInt (L"FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow, TRUE);
-	Preferences_addInt (L"FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile, TRUE);
+	Preferences_addBool (L"FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow, true);
+	Preferences_addBool (L"FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile, true);
 	Preferences_addString (L"FunctionEditor.log1.fileName", & preferences.log[0].fileName [0], LOG_1_FILE_NAME);
 	Preferences_addString (L"FunctionEditor.log1.format", & preferences.log[0].format [0], LOG_1_FORMAT);
-	Preferences_addInt (L"FunctionEditor.log2.toInfoWindow", & preferences.log[1].toInfoWindow, TRUE);
-	Preferences_addInt (L"FunctionEditor.log2.toLogFile", & preferences.log[1].toLogFile, TRUE);
+	Preferences_addBool (L"FunctionEditor.log2.toInfoWindow", & preferences.log[1].toInfoWindow, true);
+	Preferences_addBool (L"FunctionEditor.log2.toLogFile", & preferences.log[1].toLogFile, true);
 	Preferences_addString (L"FunctionEditor.log2.fileName", & preferences.log[1].fileName [0], LOG_2_FILE_NAME);
 	Preferences_addString (L"FunctionEditor.log2.format", & preferences.log[1].format [0], LOG_2_FORMAT);
 	Preferences_addString (L"FunctionEditor.logScript3", & preferences.logScript3 [0], LOG_3_FILE_NAME);
@@ -218,7 +218,7 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Spectrogram number of time steps: ", Melder_integer (my spectrogram.timeSteps));
 	MelderInfo_writeLine2 (L"Spectrogram number of frequency steps: ", Melder_integer (my spectrogram.frequencySteps));
 	MelderInfo_writeLine2 (L"Spectrogram method: ", L"Fourier");
-	MelderInfo_writeLine2 (L"Spectrogram window shape: ", Sound_to_Spectrogram_windowShapeText (my spectrogram.windowShape));
+	MelderInfo_writeLine2 (L"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (my spectrogram.windowShape));
 	MelderInfo_writeLine2 (L"Spectrogram autoscaling: ", Melder_boolean (my spectrogram.autoscaling));
 	MelderInfo_writeLine3 (L"Spectrogram maximum: ", Melder_double (my spectrogram.maximum), L" dB/Hz");
 	MelderInfo_writeLine3 (L"Spectrogram pre-emphasis: ", Melder_integer (my spectrogram.preemphasis), L" dB/octave");
@@ -235,7 +235,7 @@ static void info (I) {
 	/* Advanced pitch settings: */
 	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (my pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (my pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine2 (L"Pitch method: ", my pitch.method == 1 ? L"Autocorrelation" : L"Forward cross-correlation");
+	MelderInfo_writeLine2 (L"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (my pitch.method));
 	MelderInfo_writeLine2 (L"Pitch very accurate: ", Melder_boolean (my pitch.veryAccurate));
 	MelderInfo_writeLine2 (L"Pitch max. number of candidates: ", Melder_integer (my pitch.maximumNumberOfCandidates));
 	MelderInfo_writeLine3 (L"Pitch silence threshold: ", Melder_double (my pitch.silenceThreshold), L" of global peak");
@@ -248,11 +248,7 @@ static void info (I) {
 	/* Intensity settings: */
 	MelderInfo_writeLine3 (L"Intensity view from: ", Melder_double (my intensity.viewFrom), L" dB");
 	MelderInfo_writeLine3 (L"Intensity view to: ", Melder_double (my intensity.viewTo), L" dB");
-	MelderInfo_writeLine2 (L"Intensity averaging method: ",
-		my intensity.averagingMethod == Intensity_averaging_MEDIAN ? L"median" :
-		my intensity.averagingMethod == Intensity_averaging_ENERGY ? L"mean energy" :
-		my intensity.averagingMethod == Intensity_averaging_SONES ? L"mean sones" :
-		my intensity.averagingMethod == Intensity_averaging_DB ? L"mean dB" : L"unknown");
+	MelderInfo_writeLine2 (L"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (my intensity.averagingMethod));
 	MelderInfo_writeLine2 (L"Intensity subtract mean pressure: ", Melder_boolean (my intensity.subtractMeanPressure));
 	/* Formant flag: */
 	MelderInfo_writeLine2 (L"Formant show: ", Melder_boolean (my formant.show));
@@ -263,7 +259,7 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Formant dynamic range: ", Melder_double (my formant.dynamicRange), L" dB");
 	MelderInfo_writeLine3 (L"Formant dot size: ", Melder_double (my formant.dotSize), L" mm");
 	/* Advanced formant settings: */
-	MelderInfo_writeLine2 (L"Formant method: ", L"Burg");
+	MelderInfo_writeLine2 (L"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (my formant.method));
 	MelderInfo_writeLine3 (L"Formant pre-emphasis from: ", Melder_double (my formant.preemphasisFrom), L" Hertz");
 	/* Pulses flag: */
 	MelderInfo_writeLine2 (L"Pulses show: ", Melder_boolean (my pulses.show));
@@ -540,10 +536,7 @@ static int menu_cb_showAnalyses (EDITOR_ARGS) {
 static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Time step settings", L"Time step settings...")
-		OPTIONMENU (L"Time step strategy", 1)
-			OPTION (L"automatic")
-			OPTION (L"fixed")
-			OPTION (L"view-dependent")
+		OPTIONMENU_ENUM (L"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT)
 		LABEL (L"", L"")
 		LABEL (L"", L"If the time step strategy is \"fixed\":")
 		POSITIVE (L"Fixed time step (s)", L"0.01")
@@ -551,11 +544,11 @@ static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 		LABEL (L"", L"If the time step strategy is \"view-dependent\":")
 		NATURAL (L"Number of time steps per view", L"100")
 	EDITOR_OK
-		SET_INTEGER (L"Time step strategy", my timeStepStrategy)
+		SET_ENUM (L"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my timeStepStrategy)
 		SET_REAL (L"Fixed time step", my fixedTimeStep)
 		SET_INTEGER (L"Number of time steps per view", my numberOfTimeStepsPerView)
 	EDITOR_DO
-		preferences.timeStepStrategy = my timeStepStrategy = GET_INTEGER (L"Time step strategy");
+		preferences.timeStepStrategy = my timeStepStrategy = GET_ENUM (kTimeSoundAnalysisEditor_timeStepStrategy, L"Time step strategy");
 		preferences.fixedTimeStep = my fixedTimeStep = GET_REAL (L"Fixed time step");
 		preferences.numberOfTimeStepsPerView = my numberOfTimeStepsPerView = GET_INTEGER (L"Number of time steps per view");
 		forget (my pitch.data);
@@ -590,15 +583,14 @@ static int menu_cb_spectrogramSettings (EDITOR_ARGS) {
 		SET_REAL (L"Window length", my spectrogram.windowLength)
 		SET_REAL (L"Dynamic range", my spectrogram.dynamicRange)
 		if (my spectrogram.timeSteps != 1000 || my spectrogram.frequencySteps != 250 || my spectrogram.method != 1 ||
-			my spectrogram.windowShape != 5 || my spectrogram.maximum != 100.0 || my spectrogram.autoscaling != TRUE ||
+			my spectrogram.windowShape != 5 || my spectrogram.maximum != 100.0 || ! my spectrogram.autoscaling ||
 			my spectrogram.preemphasis != 6.0 || my spectrogram.dynamicCompression != 0.0)
 		{
 			SET_STRING (L"note1", L"Warning: you have non-standard \"advanced settings\".")
 		} else {
 			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
-		if (my timeStepStrategy != 1)
-		{
+		if (my timeStepStrategy != kTimeSoundAnalysisEditor_timeStepStrategy_DEFAULT) {
 			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
@@ -620,12 +612,8 @@ static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 		NATURAL (L"Number of time steps", L"1000")
 		NATURAL (L"Number of frequency steps", L"250")
 		LABEL (L"", L"Spectrogram analysis settings:")
-		OPTIONMENU (L"Method", 1)
-			OPTION (L"Fourier")
-		OPTIONMENU (L"Window shape", 6)
-		for (int i = 0; i < 6; i ++) {
-			OPTION (Sound_to_Spectrogram_windowShapeText (i))
-		}
+		OPTIONMENU_ENUM (L"Method", kSound_to_Spectrogram_method, DEFAULT)
+		OPTIONMENU_ENUM (L"Window shape", kSound_to_Spectrogram_windowShape, DEFAULT)
 		LABEL (L"", L"Spectrogram view settings:")
 		BOOLEAN (L"Autoscaling", 1)
 		REAL (L"Maximum (dB/Hz)", L"100.0")
@@ -634,8 +622,8 @@ static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 	EDITOR_OK
 		SET_INTEGER (L"Number of time steps", my spectrogram.timeSteps)
 		SET_INTEGER (L"Number of frequency steps", my spectrogram.frequencySteps)
-		SET_INTEGER (L"Method", my spectrogram.method)
-		SET_INTEGER (L"Window shape", my spectrogram.windowShape + 1)
+		SET_ENUM (L"Method", kSound_to_Spectrogram_method, my spectrogram.method)
+		SET_ENUM (L"Window shape", kSound_to_Spectrogram_windowShape, my spectrogram.windowShape)
 		SET_REAL (L"Maximum", my spectrogram.maximum)
 		SET_INTEGER (L"Autoscaling", my spectrogram.autoscaling)
 		SET_REAL (L"Pre-emphasis", my spectrogram.preemphasis)
@@ -643,8 +631,8 @@ static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.spectrogram.timeSteps = my spectrogram.timeSteps = GET_INTEGER (L"Number of time steps");
 		preferences.spectrogram.frequencySteps = my spectrogram.frequencySteps = GET_INTEGER (L"Number of frequency steps");
-		preferences.spectrogram.method = my spectrogram.method = GET_INTEGER (L"Method");
-		preferences.spectrogram.windowShape = my spectrogram.windowShape = GET_INTEGER (L"Window shape") - 1;
+		preferences.spectrogram.method = my spectrogram.method = GET_ENUM (kSound_to_Spectrogram_method, L"Method");
+		preferences.spectrogram.windowShape = my spectrogram.windowShape = GET_ENUM (kSound_to_Spectrogram_windowShape, L"Window shape");
 		preferences.spectrogram.maximum = my spectrogram.maximum = GET_REAL (L"Maximum");
 		preferences.spectrogram.autoscaling = my spectrogram.autoscaling = GET_INTEGER (L"Autoscaling");
 		preferences.spectrogram.preemphasis = my spectrogram.preemphasis = GET_REAL (L"Pre-emphasis");
@@ -688,7 +676,7 @@ static Sound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax)
 	} else if (my sound.data) {
 		if (tmin < my sound.data -> xmin) tmin = my sound.data -> xmin;
 		if (tmax > my sound.data -> xmax) tmax = my sound.data -> xmax;
-		sound = Sound_extractPart (my sound.data, tmin, tmax, enumi (Sound_WINDOW, Rectangular), 1.0, TRUE);
+		sound = Sound_extractPart (my sound.data, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, TRUE);
 	}
 	return sound;
 }
@@ -721,12 +709,12 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	Spectrum publish;
 	if (sound == NULL) return 0;
 	Sound_multiplyByWindow (sound,
-		my spectrogram.windowShape == 0 ? enumi (Sound_WINDOW, Rectangular) :
-		my spectrogram.windowShape == 1 ? enumi (Sound_WINDOW, Hamming) :
-		my spectrogram.windowShape == 2 ? enumi (Sound_WINDOW, Triangular) :
-		my spectrogram.windowShape == 3 ? enumi (Sound_WINDOW, Parabolic) :
-		my spectrogram.windowShape == 4 ? enumi (Sound_WINDOW, Hanning) :
-		my spectrogram.windowShape == 5 ? enumi (Sound_WINDOW, Gaussian2) : 0);
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_SQUARE ? kSound_windowShape_RECTANGULAR :
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_HAMMING ? kSound_windowShape_HAMMING :
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_BARTLETT ? kSound_windowShape_TRIANGULAR :
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_WELCH ? kSound_windowShape_PARABOLIC :
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_HANNING ? kSound_windowShape_HANNING :
+		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? kSound_windowShape_GAUSSIAN_2 : 0);
 	publish = Sound_to_Spectrum (sound, TRUE);
 	forget (sound);
 	if (! publish) return 0;
@@ -786,20 +774,19 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_FORM (L"Pitch settings", L"Intro 4.2. Configuring the pitch contour")
 		POSITIVE (L"left Pitch range (Hz)", L"75.0")
 		POSITIVE (L"right Pitch range (Hz)", L"500.0")
-		OPTIONMENU (L"Unit", 1)
-			OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU), Pitch_UNIT_min, Pitch_UNIT_max)
-		RADIO (L"Optimize for", 1)
-			RADIOBUTTON (L"Intonation (AC method)")
-			RADIOBUTTON (L"Voice analysis (CC method)")
+		OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
+		LABEL (L"opt1", L"The autocorrelation method optimizes for intonation research;")
+		LABEL (L"opt2", L"and the cross-correlation method optimizes for voice research:")
+		RADIO_ENUM (L"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT)
 		OPTIONMENU_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT)
 		LABEL (L"note1", L"")
 		LABEL (L"note2", L"")
 	EDITOR_OK
 		SET_REAL (L"left Pitch range", my pitch.floor)
 		SET_REAL (L"right Pitch range", my pitch.ceiling)
-		SET_INTEGER (L"Unit", my pitch.unit + 1 - Pitch_UNIT_min)
+		SET_ENUM (L"Unit", kPitch_unit, my pitch.unit)
+		SET_ENUM (L"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my pitch.method)
 		SET_ENUM (L"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my pitch.drawingMethod)
-		SET_INTEGER (L"Optimize for", my pitch.method)
 		if (my pitch.viewFrom != 0.0 || my pitch.viewTo != 0.0 ||
 			my pitch.veryAccurate != FALSE || my pitch.maximumNumberOfCandidates != 15 ||
 			my pitch.silenceThreshold != 0.03 || my pitch.voicingThreshold != 0.45 || my pitch.octaveCost != 0.01 ||
@@ -809,8 +796,7 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 		} else {
 			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
-		if (my timeStepStrategy != 1)
-		{
+		if (my timeStepStrategy != kTimeSoundAnalysisEditor_timeStepStrategy_DEFAULT) {
 			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
@@ -818,9 +804,9 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.pitch.floor = my pitch.floor = GET_REAL (L"left Pitch range");
 		preferences.pitch.ceiling = my pitch.ceiling = GET_REAL (L"right Pitch range");
-		preferences.pitch.unit = my pitch.unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+		preferences.pitch.unit = my pitch.unit = GET_ENUM (kPitch_unit, L"Unit");
+		preferences.pitch.method = my pitch.method = GET_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, L"Analysis method");
 		preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, L"Drawing method");
-		preferences.pitch.method = my pitch.method = GET_INTEGER (L"Optimize for");
 		forget (my pitch.data);
 		forget (my intensity.data);
 		forget (my pulses.data);
@@ -1086,8 +1072,7 @@ static int menu_cb_intensitySettings (EDITOR_ARGS) {
 		SET_REAL (L"right View range", my intensity.viewTo)
 		SET_INTEGER (L"Averaging method", my intensity.averagingMethod + 1)
 		SET_INTEGER (L"Subtract mean pressure", my intensity.subtractMeanPressure)
-		if (my timeStepStrategy != 1)
-		{
+		if (my timeStepStrategy != kTimeSoundAnalysisEditor_timeStepStrategy_DEFAULT) {
 			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
@@ -1227,8 +1212,7 @@ static int menu_cb_formantSettings (EDITOR_ARGS) {
 		} else {
 			SET_STRING (L"note1", L"(all of your \"advanced settings\" have their standard values)")
 		}
-		if (my timeStepStrategy != 1)
-		{
+		if (my timeStepStrategy != kTimeSoundAnalysisEditor_timeStepStrategy_DEFAULT) {
 			SET_STRING (L"note2", L"Warning: you have a non-standard \"time step strategy\".")
 		} else {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
@@ -1775,7 +1759,7 @@ void FunctionEditor_SoundAnalysis_computeSpectrogram (I) {
 		(my spectrogram.data == NULL || my spectrogram.data -> xmin != my startWindow || my spectrogram.data -> xmax != my endWindow))
 	{
 		Sound sound = NULL;
-		double margin = my spectrogram.windowShape == 5 ? my spectrogram.windowLength : 0.5 * my spectrogram.windowLength;
+		double margin = my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? my spectrogram.windowLength : 0.5 * my spectrogram.windowLength;
 		forget (my spectrogram.data);
 		sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 		if (sound != NULL) {
@@ -1797,11 +1781,13 @@ static void computePitch_inside (TimeSoundAnalysisEditor me) {
 	sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 	if (sound != NULL) {
 		double pitchTimeStep =
-			my timeStepStrategy == 2 ? my fixedTimeStep :
-			my timeStepStrategy == 3 ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
+			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my fixedTimeStep :
+			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
 			0.0;   /* The default: determined by pitch floor. */
 		my pitch.data = Sound_to_Pitch_any (sound, pitchTimeStep,
-			my pitch.floor, my pitch.method == 1 ? 3.0 : 1.0, my pitch.maximumNumberOfCandidates,
+			my pitch.floor,
+			my pitch.method == kTimeSoundAnalysisEditor_pitch_analysisMethod_AUTOCORRELATION ? 3.0 : 1.0,
+			my pitch.maximumNumberOfCandidates,
 			(my pitch.method - 1) * 2 + my pitch.veryAccurate,
 			my pitch.silenceThreshold, my pitch.voicingThreshold,
 			my pitch.octaveCost, my pitch.octaveJumpCost, my pitch.voicedUnvoicedCost, my pitch.ceiling);
@@ -1861,8 +1847,8 @@ void FunctionEditor_SoundAnalysis_computeFormants (I) {
 			sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 		if (sound != NULL) {
 			double formantTimeStep =
-				my timeStepStrategy == 2 ? my fixedTimeStep :
-				my timeStepStrategy == 3 ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
+				my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my fixedTimeStep :
+				my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
 				0.0;   /* The default: determined by analysis window length. */
 			my formant.data = Sound_to_Formant_any (sound, formantTimeStep,
 				my formant.numberOfPoles, my formant.maximumFormant,
@@ -1917,7 +1903,7 @@ static void draw_analysis (I) {
 	Graphics_rectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 
 	if (my endWindow - my startWindow > my longestAnalysis) {
-		Graphics_setFont (my graphics, Graphics_FONT_HELVETICA);
+		Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
 		Graphics_setFontSize (my graphics, 9);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text3 (my graphics, 0.5, 0.67, L"To see the analyses, zoom in to at most ", Melder_half (my longestAnalysis), L" seconds,");
@@ -1933,12 +1919,12 @@ static void draw_analysis (I) {
 	}
 	FunctionEditor_SoundAnalysis_computePitch (me);
 	if (my pitch.show && my pitch.data != NULL) {
-		double periodsPerAnalysisWindow = my pitch.method == 1 ? 3.0 : 1.0;
+		double periodsPerAnalysisWindow = my pitch.method == kTimeSoundAnalysisEditor_pitch_analysisMethod_AUTOCORRELATION ? 3.0 : 1.0;
 		double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my pitch.floor;
 		double defaultTimeStep = 0.5 * greatestNonUndersamplingTimeStep;
 		double timeStep =
-			my timeStepStrategy == 2 ? my fixedTimeStep :
-			my timeStepStrategy == 3 ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
+			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my fixedTimeStep :
+			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
 			defaultTimeStep;
 		int undersampled = timeStep > greatestNonUndersamplingTimeStep;
 		long numberOfVisiblePitchPoints = (long) ((my endWindow - my startWindow) / timeStep);
@@ -2152,8 +2138,6 @@ int TimeSoundAnalysisEditor_init (I, Widget parent, const wchar_t *title, Any da
 	iam (TimeSoundAnalysisEditor);
 	if (! TimeSoundEditor_init (me, parent, title, data, sound, ownSound)) return 0;
 	my longestAnalysis = preferences.longestAnalysis;
-	if (preferences.timeStepStrategy < 1 || preferences.timeStepStrategy > 3)
-		preferences.timeStepStrategy = 1;
 	if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)
 		preferences.log[0].toLogFile = TRUE, preferences.log[0].toInfoWindow = TRUE;
 	if (preferences.log[1].toLogFile == FALSE && preferences.log[1].toInfoWindow == FALSE)

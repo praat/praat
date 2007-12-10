@@ -556,7 +556,7 @@ NORMAL (L"For every stimulus, the same `run text' was written at the top of the 
 CODE1 (L"\"heed\"  \"Choose the vowel you heard.\"")
 CODE1 (L"\"hid\"   \"Click the vowel you heard.\"")
 CODE1 (L"\"hood\"  \"Select the vowel you heard.\"")
-CODE1 (L"\"hud\"   \"What's thevowel you heard?\"")
+CODE1 (L"\"hud\"   \"What's the vowel you heard?\"")
 CODE (L"...")
 CODE (L"...")
 CODE (L"runText = \"\"")

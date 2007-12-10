@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/10/10
+ * pb 2007/12/04
  */
 
 #include "praat.h"
@@ -115,12 +115,12 @@ FORM (LongSound_playPart, L"LongSound: Play part", 0)
 DO
 	int n = 0;
 	EVERY (n ++)
-	if (n == 1 || Melder_getMaximumAsynchronicity () < Melder_ASYNCHRONOUS) {
+	if (n == 1 || Melder_getMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		EVERY (LongSound_playPart (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), NULL, NULL))
 	} else {
-		Melder_setMaximumAsynchronicity (Melder_INTERRUPTABLE);
+		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		EVERY (LongSound_playPart (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), NULL, NULL))
-		Melder_setMaximumAsynchronicity (Melder_ASYNCHRONOUS);
+		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
 END
 
@@ -603,7 +603,7 @@ END
 FORM (Sound_extractPart, L"Sound: Extract part", 0)
 	REAL (L"left Time range (s)", L"0")
 	REAL (L"right Time range (s)", L"0.1")
-	ENUM (L"Window", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
+	OPTIONMENU_ENUM (L"Window shape", kSound_windowShape, DEFAULT)
 	POSITIVE (L"Relative width", L"1.0")
 	BOOLEAN (L"Preserve times", 0)
 	OK
@@ -612,7 +612,7 @@ DO
 		Sound me = OBJECT;
 		if (! praat_new2 (Sound_extractPart (me,
 			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Window"), GET_REAL (L"Relative width"),
+			GET_ENUM (kSound_windowShape, L"Window shape"), GET_REAL (L"Relative width"),
 			GET_INTEGER (L"Preserve times")),
 			my name, L"_part")) return 0;
 	}
@@ -1020,11 +1020,11 @@ DO
 END
 
 FORM (Sound_multiplyByWindow, L"Sound: Multiply by window", 0)
-	ENUM (L"Window shape", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
+	OPTIONMENU_ENUM (L"Window shape", kSound_windowShape, HANNING)
 	OK
 DO
 	WHERE (SELECTED) {
-		Sound_multiplyByWindow (OBJECT, GET_INTEGER (L"Window shape"));
+		Sound_multiplyByWindow (OBJECT, GET_ENUM (kSound_windowShape, L"Window shape"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1042,12 +1042,12 @@ END
 DIRECT (Sound_play)
 	int n = 0;
 	EVERY (n ++)
-	if (n == 1 || Melder_getMaximumAsynchronicity () < Melder_ASYNCHRONOUS) {
+	if (n == 1 || Melder_getMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		EVERY (Sound_play (OBJECT, NULL, NULL))
 	} else {
-		Melder_setMaximumAsynchronicity (Melder_INTERRUPTABLE);
+		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		EVERY (Sound_play (OBJECT, NULL, NULL))
-		Melder_setMaximumAsynchronicity (Melder_ASYNCHRONOUS);
+		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
 END
 
@@ -1563,15 +1563,12 @@ FORM (Sound_to_Spectrogram, L"Sound: To Spectrogram", L"Sound: To Spectrogram...
 	POSITIVE (L"Maximum frequency (Hz)", L"5000")
 	POSITIVE (L"Time step (s)", L"0.002")
 	POSITIVE (L"Frequency step (Hz)", L"20")
-	RADIO (L"Window shape", 6)
-	for (int i = 0; i < 6; i ++) {
-		RADIOBUTTON (Sound_to_Spectrogram_windowShapeText (i))
-	}
+	RADIO_ENUM (L"Window shape", kSound_to_Spectrogram_windowShape, DEFAULT)
 	OK
 DO
 	EVERY_TO (Sound_to_Spectrogram (OBJECT, GET_REAL (L"Window length"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Time step"),
-		GET_REAL (L"Frequency step"), GET_INTEGER (L"Window shape") - 1, 8.0, 8.0))
+		GET_REAL (L"Frequency step"), GET_ENUM (kSound_to_Spectrogram_windowShape, L"Window shape"), 8.0, 8.0))
 END
 
 FORM (Sound_to_Spectrum, L"Sound: To Spectrum", L"Sound: To Spectrum...")
@@ -1624,11 +1621,7 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	LABEL (L"", L"The following determines how sounds are played.")
 	LABEL (L"", L"Between parentheses, you find what you can do simultaneously.")
 	LABEL (L"", L"Decrease asynchronicity if sound plays with discontinuities.")
-	OPTIONMENU (L"Maximum asynchronicity", 4)
-	OPTION (L"Synchronous (nothing)")
-	OPTION (L"Calling back (view running cursor)")
-	OPTION (L"Interruptable (Escape key stops playing)")
-	OPTION (L"Asynchronous (anything)")
+	OPTIONMENU_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
 	REAL (L"Silence before and after (s)", L"0.0")
 	OK
 #if defined (sun) || defined (HPUX)
@@ -1637,7 +1630,7 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 #if defined (pietjepuk)
 	SET_REAL ("Output gain", Melder_getOutputGain ())
 #endif
-SET_INTEGER (L"Maximum asynchronicity", Melder_getMaximumAsynchronicity () + 1);
+SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, Melder_getMaximumAsynchronicity ());
 SET_REAL (L"Silence before and after", Melder_getZeroPadding ());
 DO
 	#if defined (sun) || defined (HPUX)
@@ -1646,7 +1639,7 @@ DO
 	#if defined (pietjepuk)
 		Melder_setOutputGain (GET_REAL (L"Gain"));
 	#endif
-	Melder_setMaximumAsynchronicity (GET_INTEGER (L"Maximum asynchronicity") - 1);
+	Melder_setMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
 	Melder_setZeroPadding (GET_REAL (L"Silence before and after"));
 END
 

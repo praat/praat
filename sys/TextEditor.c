@@ -32,6 +32,7 @@
  * pb 2007/06/12 more wchar_t
  * pb 2007/08/12 more wchar_t
  * pb 2007/10/05 less char
+ * pb 2007/12/05 prefs
  */
 
 #include "TextEditor.h"
@@ -40,6 +41,12 @@
 #include "EditorM.h"
 #include "Preferences.h"
 #include "UnicodeData.h"
+
+static int theTextEditorFontSize;
+
+void TextEditor_prefs (void) {
+	Preferences_addInt (L"TextEditor.fontSize", & theTextEditorFontSize, 12);
+}
 
 /***** TextEditor methods *****/
 
@@ -393,7 +400,6 @@ END
 
 /***** 'Font' menu *****/
 
-static int theTextEditorFontSize = 12;
 static void updateSizeMenu (TextEditor me) {
 	if (my fontSizeButton_10) XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
 	if (my fontSizeButton_12) XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
@@ -510,10 +516,6 @@ TextEditor TextEditor_create (Widget parent, const wchar_t *initialText) {
 void TextEditor_showOpen (I) {
 	iam (TextEditor);
 	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL);
-}
-
-void TextEditor_prefs (void) {
-	Resources_addInt (L"TextEditor.fontSize", & theTextEditorFontSize);
 }
 
 /* End of file TextEditor.c */

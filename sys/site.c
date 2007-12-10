@@ -22,20 +22,21 @@
  * pb 2004/10/21 simplified print command
  * pb 2005/03/02 pref string buffer 260 bytes long
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/09 preferences
  */
 
 #include "Preferences.h"
 #include <string.h>
 #include "site.h"
 
-static wchar_t printCommand [Resources_STRING_BUFFER_SIZE] = L"lp -c %s";
+static wchar_t printCommand [Preferences_STRING_BUFFER_SIZE];
 
 wchar_t * Site_getPrintCommand (void) { return printCommand; }
 
 void Site_setPrintCommand (const wchar_t *text) { wcscpy (printCommand, text); }
 
 void Site_prefs (void) {
-	Resources_addString (L"Site.printCommand", printCommand);
+	Preferences_addString (L"Site.printCommand", printCommand, L"lp -c %s");
 }
 
 /* End of file site.c */

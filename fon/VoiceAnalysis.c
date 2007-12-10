@@ -251,11 +251,11 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	 * Pitch statistics.
 	 */
 	MelderInfo_writeLine1 (L"Pitch:");
-	MelderInfo_writeLine3 (L"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, Pitch_UNIT_HERTZ), 3), L" Hz");
-	MelderInfo_writeLine3 (L"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, Pitch_UNIT_HERTZ), 3), L" Hz");
-	MelderInfo_writeLine3 (L"   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, Pitch_UNIT_HERTZ), 3), L" Hz");
-	MelderInfo_writeLine3 (L"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, Pitch_UNIT_HERTZ, 1), 3), L" Hz");
-	MelderInfo_writeLine3 (L"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, Pitch_UNIT_HERTZ, 1), 3), L" Hz");
+	MelderInfo_writeLine3 (L"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit_HERTZ), 3), L" Hz");
+	MelderInfo_writeLine3 (L"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
+	MelderInfo_writeLine3 (L"   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
+	MelderInfo_writeLine3 (L"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
+	MelderInfo_writeLine3 (L"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
 	/*
 	 * Pulses statistics.
 	 */

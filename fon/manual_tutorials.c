@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071203)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071210)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0# (December 10, 2007)")
+NORMAL (L"##4.6.41# (December 9, 2007)")
+LIST_ITEM (L"\\bu Windows: corrected a bug that could cause listening experiments not to run when the directory path included non-ASCII characters; "
+	"the same bug could (under comparable circumstances) cause scripted menu commands not to work.")
+LIST_ITEM (L"\\bu Corrected a bug that could cause null bytes in data files when the text output encoding preference was ##try ISO Latin-1, then UTF-16#.")
 NORMAL (L"##4.6.40# (December 3, 2007)")
 LIST_ITEM (L"\\bu Corrected some minor bugs.")
 NORMAL (L"##4.6.39# (December 1, 2007)")
@@ -1018,8 +1023,9 @@ INTRO (L"One of the commands in the Spectrogram menu of the @SoundEditor and the
 NORMAL (L"See @@Intro 3. Spectral analysis@")
 MAN_END
 
-MAN_BEGIN (L"FAQ (Frequently Asked Questions)", L"ppgb", 20050227)
+MAN_BEGIN (L"FAQ (Frequently Asked Questions)", L"ppgb", 20071210)
 LIST_ITEM (L"@@FAQ: How to cite Praat")
+LIST_ITEM (L"@Unicode")
 LIST_ITEM (L"@@FAQ: Formant analysis")
 LIST_ITEM (L"@@FAQ: Pitch analysis")
 LIST_ITEM (L"@@FAQ: Spectrograms")
@@ -2762,6 +2768,50 @@ NORMAL (L"Optimality-theoretic learning (see the @@OT learning@ tutorial)")
 LIST_ITEM (L"\\bu @OTGrammar (@OTGrammarEditor)")
 NORMAL (L"Bureaucracy")
 LIST_ITEM (L"\\bu @WordList, @SpellingChecker")
+MAN_END
+
+MAN_BEGIN (L"Unicode", L"ppgb", 20071210)
+INTRO (L"Praat is becoming a fully international program: "
+	"the texts in Praat's TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters "
+	"(see @@special symbols@). "
+	"For this reason, Praat saves its text files in one of two possible formats: ASCII or UTF-16.")
+ENTRY (L"ASCII text files")
+NORMAL (L"If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, "
+	"namely the characters !\\\" \\# \\$ \\% &\\' ()*+,-./0123456789:;<=>?\\@  "
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\bs]\\^ \\_ ` abcdefghijklmnopqrstuvwxyz{|}~, "
+	"then when you say @@Write to text file...@ or #Save, Praat will write an ASCII text file, "
+	"which is a text file in which every character is encoded in a single byte (8 bits). "
+	"All programs that can read plain text files can read such files produced by Praat.")
+ENTRY (L"UTF-16 text files")
+NORMAL (L"If your TextGrid (or Table, or script, or Info window...) contains one or more characters that cannot be encoded as ASCII, "
+	"for instance West-European characters such as \\ao\\c,\\e'\\o\"\\ss\\?d, East-European characters such as \\c<\\l/\\o:\\s<\\uo\\z', "
+	"or Hebrew characters such as \\?+\\B+\\G+\\M%\\vO\\sU, "
+	"then when you say @@Write to text file...@ or #Save, Praat will write an UTF-16 text file, "
+	"which is a text file in which every character is encoded in two bytes (and some very rare characters in four bytes). "
+	"Many programs can read such text files, for instance NotePad, WordPad, Microsoft Word, and TextWrangler.")
+ENTRY (L"What if my other programs cannot read UTF-16 text files?")
+NORMAL (L"If you want to export your Table to Microsoft Excel or to SPSS, or if you want your TextGrid file to be read "
+	"by somebody else's Perl script, then there will be no problem if your Table contains only ASCII characters (see above). "
+	"But if your Table contains any other (i.e. non-ASCII) characters, you may be in trouble, because Praat will write the Table "
+	"as an UTF-16 text file, and not all of the programs just mentioned can read such files yet.")
+NORMAL (L"What you can do is go to ##Text writing preferences...# in the #Preferences submenu of the #Praat menu, "
+	"and there set the output encoding to ##UTF-8#. Praat will from then on save your text files in the UTF-8 format, "
+	"which means one byte for every ASCII character and 2 to 4 bytes for every non-ASCII character. "
+	"Especially on Linux, many programs understand UTF-8 text and will display the correct characters. "
+	"Programs such as SPSS do not understand UTF-8 but will still display ASCII characters correctly; "
+	"for instance, the names M\\u\"nchen and Wa\\l/\\e;sa may appear as M\\A~\\:-nchen and Wa\\Ao,\\A\"\\TMsa or so.")
+NORMAL (L"If you can get by with West-European characters (on Windows), "
+	"then you may choose ##try ISO Latin-1, then UTF-16# for the output encoding. "
+	"It is possible (but not guaranteed) that programs like SPSS then display your West-European text correctly. "
+	"This trick is of limited use, because it will not work if your operating system is set to a \"codepage\" "
+	"differently from ISO Latin-1 (or \"ANSI\"), or if you need East-European or Hebrew characters, or if you want "
+	"to share your text files with Macintosh users.")
+NORMAL (L"If you already have some UTF-16 text files and you want to convert them to UTF-8 or ISO Latin-1 (the latter only if "
+	"they do not contain non-West-European characters), then you can read them into Praat and save them again "
+	"(with the appropriate output encoding setting). "
+	"Other programs, such a NotePad and TextWrangler, can also do this conversion.")
+NORMAL (L"Finally, it is still possible to make sure that all texts are ASCII, e.g. you type the characters \\ss and \\o: "
+	"as \\bsss and \\bso: respectively. See @@special symbols@.")
 MAN_END
 
 MAN_BEGIN (L"View", L"ppgb", 20010512)

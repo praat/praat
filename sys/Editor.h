@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/08
+ * pb 2007/12/05
  */
 
 #ifndef _Collection_h_
@@ -35,6 +35,8 @@
 #ifndef _Graphics_h_
 	#include "Graphics.h"
 #endif
+
+#include "Editor_enums.h"
 
 #define EditorCommand_members Thing_members \
 	Any editor, menu; \

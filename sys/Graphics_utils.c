@@ -111,7 +111,7 @@ void Graphics_drawInnerBox (I) {
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_textLeft (I, int farr, const wchar_t *text) {
+void Graphics_textLeft (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int vert = farr ? Graphics_TOP : Graphics_BOTTOM, colour = my colour;
@@ -127,7 +127,7 @@ void Graphics_textLeft (I, int farr, const wchar_t *text) {
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_textRight (I, int farr, const wchar_t *text) {
+void Graphics_textRight (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int vert = farr ? Graphics_TOP : Graphics_BOTTOM, colour = my colour;
@@ -143,7 +143,7 @@ void Graphics_textRight (I, int farr, const wchar_t *text) {
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_textBottom (I, int farr, const wchar_t *text) {
+void Graphics_textBottom (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int colour = my colour;
@@ -162,7 +162,7 @@ void Graphics_textBottom (I, int farr, const wchar_t *text) {
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_textTop (I, int farr, const wchar_t *text) {
+void Graphics_textTop (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int colour = my colour;
@@ -181,7 +181,7 @@ void Graphics_textTop (I, int farr, const wchar_t *text) {
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksLeft (I, int numberOfMarks, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksLeft (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, i;
@@ -216,7 +216,7 @@ void Graphics_marksLeft (I, int numberOfMarks, int haveNumbers, int haveTicks, i
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksRight (I, int numberOfMarks, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksRight (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, i;
@@ -251,7 +251,7 @@ void Graphics_marksRight (I, int numberOfMarks, int haveNumbers, int haveTicks, 
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksBottom (I, int numberOfMarks, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksBottom (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, i;
@@ -287,7 +287,7 @@ void Graphics_marksBottom (I, int numberOfMarks, int haveNumbers, int haveTicks,
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksTop (I, int numberOfMarks, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksTop (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, i;
@@ -334,7 +334,7 @@ static double decade_y [1 + MAXNUM_MARKS_PER_DECADE] [1 + MAXNUM_MARKS_PER_DECAD
 	{ 0, 10, 15, 20, 30, 40, 50, 70 }
 };
 
-void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, py1, py2;
 	int lineType = my lineType, colour = my colour, i;
@@ -374,7 +374,7 @@ void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, int haveNumbe
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, py1, py2;
 	int lineType = my lineType, colour = my colour, i;
@@ -414,7 +414,7 @@ void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, int haveNumb
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, px1, px2;
 	int lineType = my lineType, colour = my colour, i;
@@ -454,7 +454,7 @@ void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, int haveNumber
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, int haveNumbers, int haveTicks, int haveDottedLines) {
+void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, px1, px2;
 	int lineType = my lineType, colour = my colour, i;
@@ -494,7 +494,7 @@ void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, int haveNum
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markLeft (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markLeft (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -523,7 +523,7 @@ void Graphics_markLeft (I, double position, int hasNumber, int hasTick, int hasD
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markRight (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markRight (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -552,7 +552,7 @@ void Graphics_markRight (I, double position, int hasNumber, int hasTick, int has
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markTop (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markTop (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -581,7 +581,7 @@ void Graphics_markTop (I, double position, int hasNumber, int hasTick, int hasDo
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markBottom (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markBottom (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -610,7 +610,7 @@ void Graphics_markBottom (I, double position, int hasNumber, int hasTick, int ha
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markLeftLogarithmic (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markLeftLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -640,7 +640,7 @@ void Graphics_markLeftLogarithmic (I, double position, int hasNumber, int hasTic
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markRightLogarithmic (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markRightLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -670,7 +670,7 @@ void Graphics_markRightLogarithmic (I, double position, int hasNumber, int hasTi
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markTopLogarithmic (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markTopLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -700,7 +700,7 @@ void Graphics_markTopLogarithmic (I, double position, int hasNumber, int hasTick
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_markBottomLogarithmic (I, double position, int hasNumber, int hasTick, int hasDottedLine, const wchar_t *text) {
+void Graphics_markBottomLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour;
@@ -730,9 +730,7 @@ void Graphics_markBottomLogarithmic (I, double position, int hasNumber, int hasT
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksLeftEvery (I, double units, double distance,
-	int haveNumbers, int haveTicks, int haveDottedLines)
-{
+void Graphics_marksLeftEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, first, last, i;
@@ -769,9 +767,7 @@ void Graphics_marksLeftEvery (I, double units, double distance,
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksRightEvery (I, double units, double distance,
-	int haveNumbers, int haveTicks, int haveDottedLines)
-{
+void Graphics_marksRightEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, first, last, i;
@@ -809,9 +805,7 @@ void Graphics_marksRightEvery (I, double units, double distance,
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksBottomEvery (I, double units, double distance,
-	int haveNumbers, int haveTicks, int haveDottedLines)
-{
+void Graphics_marksBottomEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, first, last, i;
@@ -848,9 +842,7 @@ void Graphics_marksBottomEvery (I, double units, double distance,
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksTopEvery (I, double units, double distance,
-	int haveNumbers, int haveTicks, int haveDottedLines)
-{
+void Graphics_marksTopEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, colour = my colour, first, last, i;

@@ -153,6 +153,7 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 
 #ifdef UNIX
 static char *xresources [200] = {
+	"*toolTipEnable: false",
 	"*initialResourcesPersistent: False",
 	/*"*keyboardFocusPolicy: pointer",*/
 	"*keyboardFocusPolicy: explicit",

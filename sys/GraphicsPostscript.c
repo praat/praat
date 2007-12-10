@@ -25,6 +25,7 @@
  * pb 2005/09/18 useSilipaPS
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
+ * pb 2007/12/09 enums
  */
 
 #include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
@@ -112,8 +113,7 @@ static void exitPage (GraphicsPostscript me) {
 	/*
 	 * A showpage is only needed if we are printing to a file.
 	 * If we are printing directly to a printer, the page will be ejected
-	 * by EndPage (Windows NT/2000/XP) or PMSessionEndPage (MacOSX) or PrClosePage (Old Mac).
-	 * Only on Windows 95 and 98 do we need the showpage, since EndPage is not called there.
+	 * by EndPage (Windows NT/2000/XP/Vista) or PMSessionEndPage (MacOSX).
 	 */
 	if (my file) {
 		if (my job) {
@@ -123,11 +123,7 @@ static void exitPage (GraphicsPostscript me) {
 			my printf (my file, "showpage %% redefined by encapsulating program\n");
 		} 
 	}
-	#ifdef _WIN32
-		if (my printer && ! nt_is_running)
-			my printf (my file, "showpage\n");
-	#endif
-	for (font = 0; font <= Graphics_DINGBATS; font ++)
+	for (font = 0; font <= kGraphics_font_DINGBATS; font ++)
 		for (style = 0; style <= Graphics_BOLD_ITALIC; style ++)
 			Melder_free (my fontInfos [font] [style]);
 	my loadedXipa = FALSE;   /* BUG. Include this because of the unpredictable page order with DSC? */
@@ -151,8 +147,8 @@ class_methods (GraphicsPostscript, Graphics)
 	class_method (destroy)
 class_methods_end
 
-Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots,
-	int paperSize, int rotation, double magnification)
+Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
+	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification)
 {
 	GraphicsPostscript me = new (GraphicsPostscript);
 	time_t today;
@@ -162,16 +158,16 @@ Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots
 	if (! Graphics_init (me)) return NULL;
 	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
 					/* there is no problem if this always equals 600 dpi. */
-	my photocopyable = spots == GraphicsPostscript_PHOTOCOPYABLE;
+	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
- 	if (paperSize == Graphics_A3) my paperWidth = 842 / 72.0, my paperHeight = 1191 / 72.0;
-	else if (paperSize == Graphics_US_LETTER) my paperWidth = 612 / 72.0, my paperHeight = 792 / 72.0;
+ 	if (paperSize == kGraphicsPostscript_paperSize_A3) my paperWidth = 842 / 72.0, my paperHeight = 1191 / 72.0;
+	else if (paperSize == kGraphicsPostscript_paperSize_US_LETTER) my paperWidth = 612 / 72.0, my paperHeight = 792 / 72.0;
 	else my paperWidth = 595 / 72.0, my paperHeight = 842 / 72.0;
-	my landscape = rotation == Graphics_LANDSCAPE;
+	my landscape = rotation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = magnification;
 	my includeFonts = TRUE;
-	if ((my file = Melder_fopen (fs, "w")) == NULL) { forget (me); return 0; }
+	if ((my file = Melder_fopen (file, "w")) == NULL) { forget (me); return 0; }
 	/*
 	 * The Device Coordinates are the PostScript user coordinates.
 	 * They are chosen in such a way that a distance of 1 in device coordinates
@@ -191,7 +187,7 @@ Graphics Graphics_create_postscriptjob (MelderFile fs, int resolution, int spots
 	 */
 	my printf (my file, "%%!PS-Adobe-3.0\n");
 	my printf (my file, "%%%%Creator: Praat Shell 4.2\n");
-	my printf (my file, "%%%%Title: %s\n", Melder_peekWcsToUtf8 (MelderFile_name (fs)));
+	my printf (my file, "%%%%Title: %s\n", Melder_peekWcsToUtf8 (MelderFile_name (file)));
 	today = time (NULL);
 	my printf (my file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my printf (my file, "%%%%PageOrder: Special\n");
@@ -215,14 +211,14 @@ static int Eps_postScript_printf (void *stream, const char *format, ... ) {
 }
 #endif
 
-Graphics Graphics_create_epsfile (MelderFile fs, int resolution, int spots,
-	double x1inches, double x2inches, double y1inches, double y2inches, int includeFonts, int useSilipaPS)
+Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsPostscript_spots spots,
+	double x1inches, double x2inches, double y1inches, double y2inches, bool includeFonts, bool useSilipaPS)
 {
 	GraphicsPostscript me = new (GraphicsPostscript);
 	time_t today;
 	int left, right, top, bottom;
-	my postScript = TRUE, my languageLevel = 2;
-	my job = FALSE, my eps = TRUE, my printer = FALSE;
+	my postScript = true, my languageLevel = 2;
+	my job = false, my eps = true, my printer = false;
 	#if defined (macintosh)
 		/* Replace newlines with carriage returns to be compatible with MS Word 5.1. */
 		my printf = Eps_postScript_printf;
@@ -232,7 +228,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, int spots,
 	if (! Graphics_init (me)) return NULL;
 	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
 					/* there is no problem if this always equals 600 dpi. */
-	my photocopyable = spots == GraphicsPostscript_PHOTOCOPYABLE;
+	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
 	my paperWidth = 7.5, my paperHeight = 11.0;
@@ -278,12 +274,12 @@ Graphics Graphics_create_postscriptprinter (void) {
 	my printf = Printer_postScript_printf;
 	if (! Graphics_init (me)) return NULL;
 	my resolution = thePrinter. resolution;   /* Virtual resolution. */
-	my photocopyable = thePrinter. spots == GraphicsPostscript_PHOTOCOPYABLE;
+	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
 	my paperWidth = (double) thePrinter. paperWidth / my resolution;
 	my paperHeight = (double) thePrinter. paperHeight / my resolution;
-	my landscape = thePrinter. orientation == Graphics_LANDSCAPE;
+	my landscape = thePrinter. orientation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = thePrinter. magnification;
 	my includeFonts = TRUE;
 	my x1DC = my x1DCmin = my resolution / 2;

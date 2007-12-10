@@ -59,7 +59,8 @@ struct FunctionEditor_picture {
 	\
 	/* Private attributes: */ \
 	Widget drawingArea, scrollBar, groupButton, bottomArea; \
-	int group, enableUpdates, nrect; \
+	bool group, enableUpdates; \
+	int nrect; \
 	struct { double left, right, bottom, top; } rect [8]; \
 	double marker [1 + 3], playCursor; \
 	int numberOfMarkers;

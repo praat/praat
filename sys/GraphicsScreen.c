@@ -143,8 +143,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 			visual = DefaultVisual (display, xscreen);
 			depth = DefaultDepth (display, xscreen);
 			colourMap = DefaultColormap (display, xscreen);
-			resolution = floor (25.4 * (double) DisplayWidth (display, xscreen) /
-				DisplayWidthMM (display, xscreen) + 0.5);
+			resolution = 100; // floor (25.4 * (double) DisplayWidth (display, xscreen) / DisplayWidthMM (display, xscreen) + 0.5);
 			/*if (resolution >= 90) resolution = 100; else resolution = 75;*/
 			/*Melder_casual ("nformats %d, depth %d, pad %d", ((_XPrivDisplay) display) -> nformats, depth, BitmapPad (display));*/
 			for (i = 0; i < ((_XPrivDisplay) display) -> nformats; i ++) {

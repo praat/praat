@@ -38,18 +38,19 @@
 #include "EditorM.h"
 
 #define PAGE_HEIGHT  320.0
+#define SCREEN_HEIGHT  15.0
 #define PAPER_TOP  12.0
 #define TOP_MARGIN  0.8
 #define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
 #define BOTTOM_MARGIN  0.5
 static double resolution;
 
-static int prefs_font = Graphics_FONT_TIMES, prefs_fontSize = 12;
-static int codeFont = Graphics_FONT_COURIER;
+static enum kGraphics_font prefs_font;
+static int prefs_fontSize;
 
 void HyperPage_prefs (void) {
-	Resources_addInt (L"HyperPage.font", & prefs_font);
-	Resources_addInt (L"HyperPage.fontSize", & prefs_fontSize);
+	Preferences_addEnum (L"HyperPage.font", & prefs_font, kGraphics_font, DEFAULT);
+	Preferences_addInt (L"HyperPage.fontSize", & prefs_fontSize, 12);
 }
 
 /********** class HyperLink **********/
@@ -122,7 +123,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	my y = PAPER_TOP - TOP_MARGIN;
 	my x = 0;
 	my previousBottomSpacing = 0.0;
-	Graphics_setFont (my ps, Graphics_FONT_TIMES);
+	Graphics_setFont (my ps, kGraphics_font_TIMES);
 	Graphics_setFontSize (my ps, 12);
 	Graphics_setFontStyle (my ps, Graphics_ITALIC);
 	if (leftHeader) {
@@ -172,7 +173,7 @@ if (! my printing) {
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	my y -= size * (1.2/72);
 	my x = x;
-	if (/* my y > PAGE_HEIGHT + 2.0 + heightGuess || */ my y < PAGE_HEIGHT - 10) {
+	if (/* my y > PAGE_HEIGHT + 2.0 + heightGuess || */ my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my y -= heightGuess;
 	} else {
 		Graphics_setFont (my g, font);
@@ -296,27 +297,27 @@ int HyperPage_definition3 (I, const wchar_t *text) {
 }
 int HyperPage_code (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code1 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code2 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code3 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code4 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code5 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, codeFont, my fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_prototype (I, const wchar_t *text) {
 	iam (HyperPage);
@@ -329,7 +330,7 @@ int HyperPage_formula (I, const wchar_t *formula) {
 if (! my printing) {
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	my y -= size * (1.2/72);
-	if (my y > PAGE_HEIGHT + 2.0 || my y < PAGE_HEIGHT - 10) {
+	if (my y > PAGE_HEIGHT + 2.0 || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 	} else {
 		Graphics_setFont (my g, font);
 		Graphics_setFontStyle (my g, 0);
@@ -370,7 +371,7 @@ int HyperPage_picture (I, double width_inches, double height_inches, void (*draw
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - 10) {
+	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my y -= height_inches;
 	} else {
 		my y -= height_inches;
@@ -424,7 +425,7 @@ if (! my printing) {
 	Graphics_Link *paragraphLinks;
 	int numberOfParagraphLinks, ilink;
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - 10) {
+	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my y -= height_inches;
 	} else {
 		my y -= height_inches;
@@ -625,12 +626,12 @@ FORM (HyperPage, cb_font, L"Font", 0)
 		RADIOBUTTON (L"Helvetica")
 		RADIOBUTTON (L"Palatino")
 	OK
-SET_INTEGER (L"Font", my font == Graphics_FONT_TIMES ? 1 :
-		my font == Graphics_FONT_HELVETICA ? 2 : my font == Graphics_FONT_PALATINO ? 3 : 1);
+SET_INTEGER (L"Font", my font == kGraphics_font_TIMES ? 1 :
+		my font == kGraphics_font_HELVETICA ? 2 : my font == kGraphics_font_PALATINO ? 3 : 1);
 DO
 	int font = GET_INTEGER (L"Font");
-	prefs_font = my font = font == 1 ? Graphics_FONT_TIMES : font == 2 ? Graphics_FONT_HELVETICA :
-		font == 3 ? Graphics_FONT_PALATINO : Graphics_FONT_TIMES;
+	prefs_font = my font = font == 1 ? kGraphics_font_TIMES : font == 2 ? kGraphics_font_HELVETICA :
+		font == 3 ? kGraphics_font_PALATINO : kGraphics_font_TIMES;
 	if (my g) Graphics_updateWs (my g);
 END
 
@@ -913,15 +914,16 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 		resolution = floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
 			DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
 	#else
-		resolution = 72;
+		resolution = 100;
 	#endif
+	resolution = 100;
 	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
 	Melder_assert (XtWindow (my drawingArea));
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my g, TRUE);
 	Graphics_setDollarSignIsCode (my g, TRUE);
-	Graphics_setFont (my g, Graphics_FONT_TIMES);
-	my font = prefs_font > Graphics_FONT_MAX ? Graphics_FONT_MAX : prefs_font;
+	Graphics_setFont (my g, kGraphics_font_TIMES);
+	my font = prefs_font;
 	setFontSize (me, prefs_fontSize);
 	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
 	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);

@@ -34,20 +34,28 @@
 
 static struct {
 	struct TimeSoundEditor_sound sound;
-	struct { bool preserveTimes; double bottom, top; bool garnish; } picture;
-	struct { int windowType; double relativeWidth; bool preserveTimes; } extract;
+	struct {
+		bool preserveTimes;
+		double bottom, top;
+		bool garnish;
+	} picture;
+	struct {
+		int windowShape;
+		double relativeWidth;
+		bool preserveTimes;
+	} extract;
 }
 	preferences;
 
 void TimeSoundEditor_prefs (void) {
-	Preferences_addInt (L"TimeSoundEditor.sound.autoscaling", & preferences.sound.autoscaling, TRUE);
-	Preferences_addBool (L"TimeSoundEditor.picture.preserveTimes2", & preferences.picture.preserveTimes, true);
+	Preferences_addBool (L"TimeSoundEditor.sound.autoscaling", & preferences.sound.autoscaling, true);
+	Preferences_addBool (L"TimeSoundEditor.picture.preserveTimes", & preferences.picture.preserveTimes, true);
 	Preferences_addDouble (L"TimeSoundEditor.picture.bottom", & preferences.picture.bottom, 0.0);
 	Preferences_addDouble (L"TimeSoundEditor.picture.top", & preferences.picture.top, 0.0);
-	Preferences_addBool (L"TimeSoundEditor.picture.garnish2", & preferences.picture.garnish, true);
-	Preferences_addInt (L"TimeSoundEditor.extract.windowType", & preferences.extract.windowType, enumi (Sound_WINDOW, Hanning));
+	Preferences_addBool (L"TimeSoundEditor.picture.garnish", & preferences.picture.garnish, true);
+	Preferences_addEnum (L"TimeSoundEditor.extract.windowShape", & preferences.extract.windowShape, kSound_windowShape, DEFAULT);
 	Preferences_addDouble (L"TimeSoundEditor.extract.relativeWidth", & preferences.extract.relativeWidth, 1.0);
-	Preferences_addBool (L"TimeSoundEditor.extract.preserveTimes2", & preferences.extract.preserveTimes, true);
+	Preferences_addBool (L"TimeSoundEditor.extract.preserveTimes", & preferences.extract.preserveTimes, true);
 }
 
 /********** Thing methods **********/
@@ -98,7 +106,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 			return Melder_error1 (L"There is no sound to draw.");
 		Sound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, preferences.picture.preserveTimes) :
-			Sound_extractPart (my sound.data, my startWindow, my endWindow, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.preserveTimes);
+			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
 		if (! publish) return 0;
 		Editor_openPraatPicture (me);
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
@@ -137,7 +145,7 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 			return Melder_error1 (L"There is no sound to draw.");
 		Sound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.preserveTimes) :
-			Sound_extractPart (my sound.data, my startSelection, my endSelection, enumi (Sound_WINDOW, Rectangular), 1.0, preferences.picture.preserveTimes);
+			Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
 		if (! publish) return 0;
 		Editor_openPraatPicture (me);
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
@@ -155,7 +163,7 @@ static int do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 		iferror return 0;
 	} else if (my sound.data) {
 		extract = Sound_extractPart (my sound.data, my startSelection, my endSelection,
-			enumi (Sound_WINDOW, Rectangular), 1.0, preserveTimes);
+			kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 		iferror return 0;
 	}
 	Melder_assert (extract != NULL);
@@ -178,20 +186,20 @@ static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Extract selected sound (windowed)", 0)
 		WORD (L"Name", L"slice")
-		ENUM (L"Window", Sound_WINDOW, enumi (Sound_WINDOW, Hanning))
+		OPTIONMENU_ENUM (L"Window shape", kSound_windowShape, HANNING)
 		POSITIVE (L"Relative width", L"1.0")
 		BOOLEAN (L"Preserve times", 1)
 	EDITOR_OK
-		SET_INTEGER (L"Window", preferences.extract.windowType)
+		SET_ENUM (L"Window shape", kSound_windowShape, preferences.extract.windowShape)
 		SET_REAL (L"Relative width", preferences.extract.relativeWidth)
 		SET_INTEGER (L"Preserve times", preferences.extract.preserveTimes)
 	EDITOR_DO
 		Sound sound = my sound.data;
 		Melder_assert (sound != NULL);
-		preferences.extract.windowType = GET_INTEGER (L"Window");
+		preferences.extract.windowShape = GET_ENUM (kSound_windowShape, L"Window shape");
 		preferences.extract.relativeWidth = GET_REAL (L"Relative width");
 		preferences.extract.preserveTimes = GET_INTEGER (L"Preserve times");
-		Sound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowType,
+		Sound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowShape,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
 		if (! extract) return 0;
 		Thing_setName (extract, GET_STRING (L"Name"));

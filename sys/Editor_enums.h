@@ -1,6 +1,4 @@
-#ifndef _Sound_and_Spectrogram_h_
-#define _Sound_and_Spectrogram_h_
-/* Sound_and_Spectrogram.h
+/* Editor_enums.h
  *
  * Copyright (C) 1992-2007 Paul Boersma
  *
@@ -20,23 +18,17 @@
  */
 
 /*
- * pb 2007/12/06
+ * pb 2007/12/05
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
-#endif
+enums_begin (kEditor_writeNameAtTop, 0)
+	enums_add (kEditor_writeNameAtTop, 0, NO, L"no")
+	enums_add (kEditor_writeNameAtTop, 1, FAR, L"far")
+	enums_add (kEditor_writeNameAtTop, 2, NEAR, L"near")
+	/* For reading old preferences files: */
+	enums_alt (kEditor_writeNameAtTop, NO, L"0")
+	enums_alt (kEditor_writeNameAtTop, FAR, L"1")
+	enums_alt (kEditor_writeNameAtTop, NEAR, L"2")
+enums_end (kEditor_writeNameAtTop, 2, FAR)
 
-#include "Sound_and_Spectrogram_enums.h"
-
-Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
-	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowShape,
-	double maximumTimeOversampling, double maximumFreqOversampling);
-
-Sound Spectrogram_to_Sound (Spectrogram me, double fsamp);
-
-/* End of Sound_and_Spectrogram.h */
-#endif
+/* End of file Editor_enums.h */

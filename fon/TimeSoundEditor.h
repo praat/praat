@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/21
+ * pb 2007/12/07
  */
 
 #ifndef _FunctionEditor_h_
@@ -35,7 +35,8 @@
 
 struct TimeSoundEditor_sound {
 	/* KEEP IN SYNC WITH PREFS. */
-	Sound data; int autoscaling;
+	Sound data;
+	bool autoscaling;
 	double minimum, maximum;
 };
 

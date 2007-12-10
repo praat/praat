@@ -42,6 +42,8 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/12/02 big-endian Linux (suggested by Stefan de Konink)
+ * pb 2007/12/05 prefs
+ * pb 2007/12/09 192 kHz
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -107,13 +109,15 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_IFSAMP_48000  11
 #define SoundRecorder_IFSAMP_64000  12
 #define SoundRecorder_IFSAMP_96000  13
-#define SoundRecorder_IFSAMP_MAX  13
+#define SoundRecorder_IFSAMP_192000  14
+#define SoundRecorder_IFSAMP_MAX  14
 
 #define CommonSoundRecorder_members Editor_members \
 	int numberOfChannels, fakeMono; \
 	XtWorkProcId workProcId; \
 	long nsamp, nmax; \
-	int synchronous, recording, lastLeftMaximum, lastRightMaximum, coupled; \
+	int synchronous, recording, lastLeftMaximum, lastRightMaximum; \
+	bool coupled; \
 	long numberOfInputDevices; \
 	struct SoundRecorder_Device device [1+SoundRecorder_IDEVICE_MAX]; \
 	struct SoundRecorder_Fsamp fsamp [1+SoundRecorder_IFSAMP_MAX]; \
@@ -198,12 +202,12 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_methods Editor_methods
 class_create_opaque (SoundRecorder, Editor);
 
-static int theCouplePreference = 1;
-static int nmaxMB_pref = 4;
+static bool theCouplePreference;
+static int nmaxMB_pref;
 
 void SoundRecorder_prefs (void) {
-	Resources_addInt (L"SoundRecorder.bufferSize_MB", & nmaxMB_pref);
-	Resources_addInt (L"SoundRecorder.coupleSliders", & theCouplePreference);
+	Preferences_addInt (L"SoundRecorder.bufferSize_MB", & nmaxMB_pref, 20);
+	Preferences_addBool (L"SoundRecorder.coupleSliders", & theCouplePreference, true);
 }
 
 int SoundRecorder_getBufferSizePref_MB (void) { return nmaxMB_pref; }
@@ -944,7 +948,7 @@ static void cb_couple (Widget w, XtPointer void_me, XtPointer call) {
 	iam (SoundRecorder);
 	(void) w;
 	(void) call;
-	my coupled = 1 - my coupled;
+	my coupled = ! my coupled;
 	if (my coupled) {
 		theControlPanel. leftGain = theControlPanel. rightGain =
 			(theControlPanel. leftGain + theControlPanel. rightGain) / 2;
@@ -1481,12 +1485,7 @@ static void createChildren (I) {
 		XtManageChild (my playButton);
 	#endif
 	XtVaCreateManagedWidget ("Name:", xmLabelWidgetClass, form,
-		XmNrightAttachment, XmATTACH_FORM,
-		#if defined (macintosh)
-			XmNrightOffset, 100,
-		#else
-			XmNrightOffset, 130,
-		#endif
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 130,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
 		XmNalignment, XmALIGNMENT_END,
 		NULL);
@@ -1764,6 +1763,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	my fsamp [SoundRecorder_IFSAMP_48000]. fsamp = 48000.0;
 	my fsamp [SoundRecorder_IFSAMP_64000]. fsamp = 64000.0;
 	my fsamp [SoundRecorder_IFSAMP_96000]. fsamp = 96000.0;
+	my fsamp [SoundRecorder_IFSAMP_192000]. fsamp = 192000.0;
 
 	/*
 	 * The default set of possible sampling frequencies, to be modified in the initialize () procedure.

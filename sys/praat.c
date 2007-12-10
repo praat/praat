@@ -76,34 +76,28 @@ static structMelderDir homeDir = { { 0 } };
 /*
  * praatDirectory: preferences and buttons files.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
- *    Windows 95 and 98:   C:\WINDOWS\MyProg
- *    Windows 2000 and XP:   \\myserver\myshare\Miep\MyProg
- *                     or:   C:\Documents and settings\Miep\MyProg
+ *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg
+ *                       or:   C:\Documents and settings\Miep\MyProg
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
- *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences
  */
 extern structMelderDir praatDir;
 structMelderDir praatDir = { { 0 } };
 /*
- * prefsFileName: preferences file.
- *    Unix:   /u/miep/.myProg-dir/prefs
- *    Windows 95 and 98:   C:\WINDOWS\MyProg\Preferences.ini
- *    Windows 2000 and XP:   \\myserver\myshare\Miep\MyProg\Preferences.ini
- *                     or:   C:\Documents and settings\Miep\MyProg\Preferences.ini
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs
- *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Prefs
+ * prefs5File: preferences file.
+ *    Unix:   /u/miep/.myProg-dir/prefs5
+ *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg\Preferences5.ini
+ *                       or:   C:\Documents and settings\Miep\MyProg\Preferences5.ini
+ *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
-static structMelderFile prefsFile = { 0 };
+static structMelderFile prefs4File = { 0 }, prefs5File = { 0 };
 /*
- * buttonsFileName: buttons file.
+ * buttons5File: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
- *    Windows 95 and 98:   C:\WINDOWS\MyProg\Buttons.ini
- *    Windows 2000 and XP:   \\myserver\myshare\Miep\MyProg\Buttons.ini
- *                     or:   C:\Documents and settings\Miep\MyProg\Buttons.ini
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons
- *    Mac 9:   Macintosh HD:System Folder:Preferences:MyProg Preferences:Buttons
+ *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
+ *                       or:   C:\Documents and settings\Miep\MyProg\Buttons5.ini
+ *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
-static structMelderFile buttonsFile = { 0 };
+static structMelderFile buttons4File = { 0 }, buttons5File = { 0 };
 #if defined (UNIX)
 	static structMelderFile pidFile = { 0 };   /* Like /u/miep/.myProg-dir/pid */
 	static structMelderFile messageFile = { 0 };   /* Like /u/miep/.myProg-dir/message */
@@ -547,16 +541,16 @@ static void praat_exit (int exit_code) {
 	/*
 	 * Save the preferences.
 	 */
-	Resources_write (& prefsFile);
-	MelderFile_setMacTypeAndCreator (& prefsFile, 'pref', 'PpgB');
+	Preferences_write (& prefs5File);
+	MelderFile_setMacTypeAndCreator (& prefs5File, 'pref', 'PpgB');
 
 	/*
 	 * Save the script buttons.
 	 */
 	if (! theCurrentPraat -> batch) {
-		FILE *f = Melder_fopen (& buttonsFile, "wb");
+		FILE *f = Melder_fopen (& buttons5File, "wb");
 		if (f) {
-			MelderFile_setMacTypeAndCreator (& buttonsFile, 'pref', 'PpgB');
+			MelderFile_setMacTypeAndCreator (& buttons5File, 'pref', 'PpgB');
 			fwprintf (f, L"\ufeff# Buttons (1).\n");
 			fwprintf (f, L"# This file is generated automatically when you quit the %ls program.\n", Melder_peekUtf8ToWcs (praatP.title));
 			fwprintf (f, L"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
@@ -918,6 +912,20 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Remember the current directory. Only useful for scripts run from batch.
 	*/
 	Melder_rememberShellDirectory ();
+
+	/*
+	 * Install the preferences of the Praat shell, and set the defaults.
+	 */
+	praat_statistics_prefs ();   // Number of sessions, memory used...
+	praat_picture_prefs ();   // Font...
+	Editor_prefs ();   // Erase picture first...
+	HyperPage_prefs ();   // Font...
+	Site_prefs ();   // Print command...
+	Melder_audio_prefs ();   // Use speaker (Sun & HP), output gain (HP)...
+	Melder_textEncoding_prefs ();
+	Printer_prefs ();   // Paper size, printer command...
+	TextEditor_prefs ();   // Font size...
+
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
@@ -1016,17 +1024,23 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		MelderDir_getSubdir (& prefParentDir, name, & praatDir);
 		#if defined (UNIX)
-			MelderDir_getFile (& praatDir, L"prefs", & prefsFile);
-			MelderDir_getFile (& praatDir, L"buttons", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"prefs", & prefs4File);
+			MelderDir_getFile (& praatDir, L"prefs5", & prefs5File);
+			MelderDir_getFile (& praatDir, L"buttons", & buttons4File);
+			MelderDir_getFile (& praatDir, L"buttons5", & buttons5File);
 			MelderDir_getFile (& praatDir, L"pid", & pidFile);
 			MelderDir_getFile (& praatDir, L"message", & messageFile);
 		#elif defined (_WIN32)
-			MelderDir_getFile (& praatDir, L"Preferences.ini", & prefsFile);
-			MelderDir_getFile (& praatDir, L"Buttons.ini", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"Preferences.ini", & prefs4File);
+			MelderDir_getFile (& praatDir, L"Preferences5.ini", & prefs5File);
+			MelderDir_getFile (& praatDir, L"Buttons.ini", & buttons4File);
+			MelderDir_getFile (& praatDir, L"Buttons5.ini", & buttons5File);
 			MelderDir_getFile (& praatDir, L"Message.txt", & messageFile);
 		#elif defined (macintosh)
-			MelderDir_getFile (& praatDir, L"Prefs", & prefsFile);   /* We invite trouble if we call it Preferences! */
-			MelderDir_getFile (& praatDir, L"Buttons", & buttonsFile);
+			MelderDir_getFile (& praatDir, L"Prefs", & prefs4File);   /* We invite trouble if we call it Preferences! */
+			MelderDir_getFile (& praatDir, L"Prefs5", & prefs5File);
+			MelderDir_getFile (& praatDir, L"Buttons", & buttons4File);
+			MelderDir_getFile (& praatDir, L"Buttons5", & buttons5File);
 		#endif
 	}
 	#if defined (UNIX)
@@ -1168,7 +1182,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			}
 		#endif
 		#ifdef UNIX
-			Resources_read (& prefsFile);
+			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 		#endif
 		#if ! defined (macintosh)
 			/* praat_showLogo (TRUE);   /* Mac: later. */
@@ -1180,25 +1194,13 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	}
 	Melder_setPublishProc (publishProc);
 	theCurrentPraat -> manPages = ManPages_create ();
+
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	#if defined (macintosh)
 		if (! Melder_batch) {
 			/* praat_showLogo (TRUE);   /* Unix & Windows: earlier. */
 		}
 	#endif
-
-	/*
-	 * Install the preferences of the Praat shell.
-	 */
-	praat_statistics_prefs ();   // Number of sessions, memory used...
-	praat_picture_prefs ();   // Font...
-	Editor_prefs ();   // Erase picture first...
-	HyperPage_prefs ();   // Font...
-	Site_prefs ();   // Print command...
-	Melder_audio_prefs ();   // Use speaker (Sun & HP), output gain (HP)...
-	Melder_textEncoding_prefs ();
-	Printer_prefs ();   // Paper size, printer command...
-	TextEditor_prefs ();   // Font size...
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {
@@ -1237,7 +1239,7 @@ void praat_run (void) {
 	 * and those that regard the start of a new session as a meaningful event
 	 * (namely, the session counter and the cross-session memory counter).
 	 */
-	Resources_read (& prefsFile);
+	Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 	if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
 	praat_statistics_prefsChanged ();
 
@@ -1307,7 +1309,7 @@ void praat_run (void) {
 		/*
 		 * Read the added script buttons. Each line separately: every error should be ignored.
 		 */
-		wchar_t *buttons = MelderFile_readText (& buttonsFile);
+		wchar_t *buttons = MelderFile_readText (MelderFile_readable (& buttons5File) ? & buttons5File : & buttons4File);
 		if (buttons == NULL) {
 			Melder_clearError ();   // The file does not have to exist yet.
 		} else {

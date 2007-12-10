@@ -1,6 +1,4 @@
-#ifndef _Sound_and_Spectrogram_h_
-#define _Sound_and_Spectrogram_h_
-/* Sound_and_Spectrogram.h
+/* TextGridEditor_enums.h
  *
  * Copyright (C) 1992-2007 Paul Boersma
  *
@@ -20,23 +18,17 @@
  */
 
 /*
- * pb 2007/12/06
+ * pb 2007/12/07
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
-#endif
+enums_begin (kTextGridEditor_showNumberOf, 1)
+	enums_add (kTextGridEditor_showNumberOf, 1, NOTHING, L"nothing")
+	enums_add (kTextGridEditor_showNumberOf, 2, INTERVALS_OR_POINTS, L"intervals or points")
+	enums_add (kTextGridEditor_showNumberOf, 3, NONEMPTY_INTERVALS_OR_POINTS, L"non-empty intervals or points")
+	/* For reading old preferences files: */
+	enums_alt (kTextGridEditor_showNumberOf, NOTHING, L"1")
+	enums_alt (kTextGridEditor_showNumberOf, INTERVALS_OR_POINTS, L"2")
+	enums_alt (kTextGridEditor_showNumberOf, NONEMPTY_INTERVALS_OR_POINTS, L"3")
+enums_end (kTextGridEditor_showNumberOf, 3, INTERVALS_OR_POINTS)
 
-#include "Sound_and_Spectrogram_enums.h"
-
-Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
-	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowShape,
-	double maximumTimeOversampling, double maximumFreqOversampling);
-
-Sound Spectrogram_to_Sound (Spectrogram me, double fsamp);
-
-/* End of Sound_and_Spectrogram.h */
-#endif
+/* End of file TextGridEditor_enums.h */

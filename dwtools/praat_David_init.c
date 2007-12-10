@@ -4088,7 +4088,6 @@ void praat_uvafon_David_init (void)
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 		
 	praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
- praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
     praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
     	praat_addMenuCommand (L"Objects", L"New", L"Create Polynomial...", 0, 1, DO_Polynomial_create);
     	praat_addMenuCommand (L"Objects", L"New", L"Create LegendreSeries...", 0, 1, DO_LegendreSeries_create);

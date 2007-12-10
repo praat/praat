@@ -27,6 +27,7 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/07/27 string deallocation size
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/09 preferences
  */
 
 #include <time.h>
@@ -35,14 +36,14 @@
 static struct {
 	long batchSessions, interactiveSessions;
 	double memory;
-	wchar_t dateOfFirstSession [Resources_STRING_BUFFER_SIZE];
+	wchar_t dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs (void) {
-	Resources_addLong (L"PraatShell.batchSessions", & statistics.batchSessions);
-	Resources_addLong (L"PraatShell.interactiveSessions", & statistics.interactiveSessions);
-	Resources_addString (L"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0]);
-	Resources_addDouble (L"PraatShell.memory", & statistics.memory);
+	Preferences_addLong (L"PraatShell.batchSessions", & statistics.batchSessions, 0);
+	Preferences_addLong (L"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
+	Preferences_addDouble (L"PraatShell.memory", & statistics.memory, 0.0);
+	Preferences_addString (L"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0], L"");
 }
 
 void praat_statistics_prefsChanged (void) {

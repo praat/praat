@@ -79,8 +79,10 @@ Widget motif_addItem (Widget menu, const wchar_t *title, long flags,
 	Boolean toggle = flags & (motif_CHECKABLE | motif_CHECKED) ? True : False;
 	Widget button;
 	int accelerator = flags & 127;
+	Melder_assert (title != NULL);
 	button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
+	Melder_assert (button != NULL);
 	if (flags & motif_INSENSITIVE)
 		XtSetSensitive (button, False);
 	if (flags & motif_CHECKED)
@@ -159,6 +161,7 @@ Widget motif_addSeparator (Widget menu) {
 }
 
 int motif_getResolution (Widget widget) {
+	return 100;   // New fixed resolution for Praat 5.
 	#if defined (macintosh)
 		(void) widget;
 		return 72;

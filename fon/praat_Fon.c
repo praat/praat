@@ -114,12 +114,6 @@ static void dia_Vector_getValue (Any dia) {
 	RADIOBUTTON (L"Sinc70")
 	RADIOBUTTON (L"Sinc700")
 }
-static void dia_pitchUnits (Any dia) {
-	Any radio;
-	OPTIONMENU (L"Unit", 1)
-		OPTIONS_ENUM (ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, itext, Function_UNIT_TEXT_MENU),
-			Pitch_UNIT_min, Pitch_UNIT_max)
-}
 
 static int getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmin, double *fmax) {
 	*tmin = GET_REAL (STRING_FROM_TIME);
@@ -2115,7 +2109,7 @@ FORM (Pitch_draw, L"Pitch: Draw", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, Pitch_UNIT_HERTZ))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ))
 END
 
 FORM (Pitch_drawErb, L"Pitch: Draw erb", L"Pitch: Draw...")
@@ -2128,7 +2122,7 @@ FORM (Pitch_drawErb, L"Pitch: Draw erb", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, Pitch_UNIT_ERB))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_ERB))
 END
 
 FORM (Pitch_drawLogarithmic, L"Pitch: Draw logarithmic", L"Pitch: Draw...")
@@ -2141,7 +2135,7 @@ FORM (Pitch_drawLogarithmic, L"Pitch: Draw logarithmic", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC))
 END
 
 FORM (Pitch_drawMel, L"Pitch: Draw mel", L"Pitch: Draw...")
@@ -2154,7 +2148,7 @@ FORM (Pitch_drawMel, L"Pitch: Draw mel", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, Pitch_UNIT_MEL))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_MEL))
 END
 
 FORM (Pitch_drawSemitones, L"Pitch: Draw semitones", L"Pitch: Draw...")
@@ -2168,7 +2162,7 @@ FORM (Pitch_drawSemitones, L"Pitch: Draw semitones", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_100))
 END
 
 DIRECT (Pitch_edit)
@@ -2193,13 +2187,13 @@ END
 
 FORM (Pitch_getMaximum, L"Pitch: Get maximum", 0)
 	praat_dia_timeRange (dia);
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Pitch_getMaximum (ONLY (classPitch), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		unit, GET_INTEGER (L"Interpolation") - 1);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
@@ -2208,10 +2202,10 @@ END
 
 FORM (Pitch_getMean, L"Pitch: Get mean", 0)
 	praat_dia_timeRange (dia);
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Pitch_getMean (ONLY (classPitch), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
@@ -2244,13 +2238,13 @@ END
 
 FORM (Pitch_getMinimum, L"Pitch: Get minimum", 0)
 	praat_dia_timeRange (dia);
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Sampled_getMinimum (ONLY (classPitch), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
@@ -2260,10 +2254,10 @@ END
 FORM (Pitch_getQuantile, L"Pitch: Get quantile", 0)
 	praat_dia_timeRange (dia);
 	REAL (L"Quantile", L"0.50 (= median)")
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Sampled_getQuantile (ONLY (classPitch), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		GET_REAL (L"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
@@ -2284,24 +2278,24 @@ DO
 	double value;
 	const wchar_t *unitText;
 	unit =
-		unit == 1 ? Pitch_UNIT_HERTZ :
-		unit == 2 ? Pitch_UNIT_MEL :
-		unit == 3 ? Pitch_UNIT_LOG_HERTZ :
-		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
-		Pitch_UNIT_ERB;
+		unit == 1 ? kPitch_unit_HERTZ :
+		unit == 2 ? kPitch_unit_MEL :
+		unit == 3 ? kPitch_unit_LOG_HERTZ :
+		unit == 4 ? kPitch_unit_SEMITONES_1 :
+		kPitch_unit_ERB;
 	value = Pitch_getStandardDeviation (ONLY (classPitch), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
 	unitText =
-		unit == Pitch_UNIT_HERTZ ? L"Hz" :
-		unit == Pitch_UNIT_MEL ? L"mel" :
-		unit == Pitch_UNIT_LOG_HERTZ ? L"logHz" :
-		unit == Pitch_UNIT_SEMITONES_1 ? L"semitones" :
+		unit == kPitch_unit_HERTZ ? L"Hz" :
+		unit == kPitch_unit_MEL ? L"mel" :
+		unit == kPitch_unit_LOG_HERTZ ? L"logHz" :
+		unit == kPitch_unit_SEMITONES_1 ? L"semitones" :
 		L"ERB";
 	Melder_informationReal (value, unitText);
 END
 
 FORM (Pitch_getTimeOfMaximum, L"Pitch: Get time of maximum", 0)
 	praat_dia_timeRange (dia);
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -2309,12 +2303,12 @@ FORM (Pitch_getTimeOfMaximum, L"Pitch: Get time of maximum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMaximum (ONLY (classPitch),
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min, GET_INTEGER (L"Interpolation") - 1), L"seconds");
+		GET_ENUM (kPitch_unit, L"Unit"), GET_INTEGER (L"Interpolation") - 1), L"seconds");
 END
 
 FORM (Pitch_getTimeOfMinimum, L"Pitch: Get time of minimum", 0)
 	praat_dia_timeRange (dia);
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -2322,18 +2316,18 @@ FORM (Pitch_getTimeOfMinimum, L"Pitch: Get time of minimum", 0)
 DO
 	Melder_informationReal (Pitch_getTimeOfMinimum (ONLY (classPitch),
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min, GET_INTEGER (L"Interpolation") - 1), L"seconds");
+		GET_ENUM (kPitch_unit, L"Unit"), GET_INTEGER (L"Interpolation") - 1), L"seconds");
 END
 
 FORM (Pitch_getValueAtTime, L"Pitch: Get value at time", L"Pitch: Get value at time...")
 	REAL (L"Time (s)", L"0.5")
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"Nearest")
 	RADIOBUTTON (L"Linear")
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Sampled_getValueAtX (ONLY (classPitch), GET_REAL (L"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
@@ -2341,10 +2335,10 @@ END
 	
 FORM (Pitch_getValueInFrame, L"Pitch: Get value in frame", L"Pitch: Get value in frame...")
 	INTEGER (L"Frame number", L"10")
-	dia_pitchUnits (dia);
+	OPTIONMENU_ENUM (L"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	int unit = GET_INTEGER (L"Unit") - 1 + Pitch_UNIT_min;
+	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	double value = Sampled_getValueAtSample (ONLY (classPitch), GET_INTEGER (L"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
 	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
@@ -2385,7 +2379,7 @@ FORM (Pitch_speckle, L"Pitch: Speckle", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, Pitch_UNIT_HERTZ))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ))
 END
 
 FORM (Pitch_speckleErb, L"Pitch: Speckle erb", L"Pitch: Draw...")
@@ -2398,7 +2392,7 @@ FORM (Pitch_speckleErb, L"Pitch: Speckle erb", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, Pitch_UNIT_ERB))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_ERB))
 END
 
 FORM (Pitch_speckleLogarithmic, L"Pitch: Speckle logarithmic", L"Pitch: Draw...")
@@ -2411,7 +2405,7 @@ FORM (Pitch_speckleLogarithmic, L"Pitch: Speckle logarithmic", L"Pitch: Draw..."
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC))
 END
 
 FORM (Pitch_speckleMel, L"Pitch: Speckle mel", L"Pitch: Draw...")
@@ -2424,7 +2418,7 @@ FORM (Pitch_speckleMel, L"Pitch: Speckle mel", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, Pitch_UNIT_MEL))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_MEL))
 END
 
 FORM (Pitch_speckleSemitones, L"Pitch: Speckle semitones", L"Pitch: Draw...")
@@ -2438,7 +2432,7 @@ FORM (Pitch_speckleSemitones, L"Pitch: Speckle semitones", L"Pitch: Draw...")
 DO
 	GET_TMIN_TMAX_FMIN_FMAX
 	EVERY_DRAW (Pitch_draw (OBJECT, GRAPHICS, tmin, tmax, fmin, fmax,
-		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100))
+		GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100))
 END
 
 FORM (Pitch_subtractLinearFit, L"Pitch: subtract linear fit", 0)
@@ -2725,11 +2719,11 @@ FORM (PitchTier_shiftFrequencies, L"PitchTier: Shift frequencies", 0)
 DO
 	int unit = GET_INTEGER (L"Unit");
 	unit =
-		unit == 1 ? Pitch_UNIT_HERTZ :
-		unit == 2 ? Pitch_UNIT_MEL :
-		unit == 3 ? Pitch_UNIT_LOG_HERTZ :
-		unit == 4 ? Pitch_UNIT_SEMITONES_1 :
-		Pitch_UNIT_ERB;
+		unit == 1 ? kPitch_unit_HERTZ :
+		unit == 2 ? kPitch_unit_MEL :
+		unit == 3 ? kPitch_unit_LOG_HERTZ :
+		unit == 4 ? kPitch_unit_SEMITONES_1 :
+		kPitch_unit_ERB;
 	WHERE (SELECTED) {
 		PitchTier_shiftFrequencies (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit);
 		iferror return 0;

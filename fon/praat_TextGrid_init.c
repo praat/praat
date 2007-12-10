@@ -154,7 +154,7 @@ FORM (TextGrid_Pitch_draw, L"TextGrid & Pitch: Draw", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawErb, L"TextGrid & Pitch: Draw erb", 0)
@@ -168,7 +168,7 @@ FORM (TextGrid_Pitch_drawErb, L"TextGrid & Pitch: Draw erb", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawLogarithmic, L"TextGrid & Pitch: Draw logarithmic", 0)
@@ -182,7 +182,7 @@ FORM (TextGrid_Pitch_drawLogarithmic, L"TextGrid & Pitch: Draw logarithmic", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawMel, L"TextGrid & Pitch: Draw mel", 0)
@@ -196,7 +196,7 @@ FORM (TextGrid_Pitch_drawMel, L"TextGrid & Pitch: Draw mel", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSemitones, L"TextGrid & Pitch: Draw semitones", 0)
@@ -211,7 +211,7 @@ FORM (TextGrid_Pitch_drawSemitones, L"TextGrid & Pitch: Draw semitones", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_NO, kPitch_unit_SEMITONES_100)) return 0;
 END
 
 static int pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int unit) {
@@ -235,7 +235,7 @@ FORM (TextGrid_Pitch_drawSeparately, L"TextGrid & Pitch: Draw separately", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, kPitch_unit_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyErb, L"TextGrid & Pitch: Draw separately erb", 0)
@@ -247,7 +247,7 @@ FORM (TextGrid_Pitch_drawSeparatelyErb, L"TextGrid & Pitch: Draw separately erb"
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, kPitch_unit_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyLogarithmic, L"TextGrid & Pitch: Draw separately logarithmic", 0)
@@ -259,7 +259,7 @@ FORM (TextGrid_Pitch_drawSeparatelyLogarithmic, L"TextGrid & Pitch: Draw separat
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelyMel, L"TextGrid & Pitch: Draw separately mel", 0)
@@ -271,7 +271,7 @@ FORM (TextGrid_Pitch_drawSeparatelyMel, L"TextGrid & Pitch: Draw separately mel"
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, kPitch_unit_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_drawSeparatelySemitones, L"TextGrid & Pitch: Draw separately semitones", 0)
@@ -284,7 +284,7 @@ FORM (TextGrid_Pitch_drawSeparatelySemitones, L"TextGrid & Pitch: Draw separatel
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, Pitch_UNIT_SEMITONES_100)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_NO, kPitch_unit_SEMITONES_100)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckle, L"TextGrid & Pitch: Speckle", 0)
@@ -298,7 +298,7 @@ FORM (TextGrid_Pitch_speckle, L"TextGrid & Pitch: Speckle", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, kPitch_unit_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleErb, L"TextGrid & Pitch: Speckle erb", 0)
@@ -312,7 +312,7 @@ FORM (TextGrid_Pitch_speckleErb, L"TextGrid & Pitch: Speckle erb", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, kPitch_unit_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleLogarithmic, L"TextGrid & Pitch: Speckle logarithmic", 0)
@@ -326,7 +326,7 @@ FORM (TextGrid_Pitch_speckleLogarithmic, L"TextGrid & Pitch: Speckle logarithmic
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleMel, L"TextGrid & Pitch: Speckle mel", 0)
@@ -340,7 +340,7 @@ FORM (TextGrid_Pitch_speckleMel, L"TextGrid & Pitch: Speckle mel", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, kPitch_unit_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSemitones, L"TextGrid & Pitch: Speckle semitones", 0)
@@ -355,7 +355,7 @@ FORM (TextGrid_Pitch_speckleSemitones, L"TextGrid & Pitch: Speckle semitones", 0
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100)) return 0;
+	if (! pr_TextGrid_Pitch_draw (dia, Pitch_speckle_YES, kPitch_unit_SEMITONES_100)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparately, L"TextGrid & Pitch: Speckle separately", 0)
@@ -367,7 +367,7 @@ FORM (TextGrid_Pitch_speckleSeparately, L"TextGrid & Pitch: Speckle separately",
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, kPitch_unit_HERTZ)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyErb, L"TextGrid & Pitch: Speckle separately erb", 0)
@@ -379,7 +379,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyErb, L"TextGrid & Pitch: Speckle separatel
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_ERB)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, kPitch_unit_ERB)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyLogarithmic, L"TextGrid & Pitch: Speckle separately logarithmic", 0)
@@ -391,7 +391,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyLogarithmic, L"TextGrid & Pitch: Speckle s
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_HERTZ_LOGARITHMIC)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelyMel, L"TextGrid & Pitch: Speckle separately mel", 0)
@@ -403,7 +403,7 @@ FORM (TextGrid_Pitch_speckleSeparatelyMel, L"TextGrid & Pitch: Speckle separatel
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_MEL)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, kPitch_unit_MEL)) return 0;
 END
 
 FORM (TextGrid_Pitch_speckleSeparatelySemitones, L"TextGrid & Pitch: Speckle separately semitones", 0)
@@ -416,7 +416,7 @@ FORM (TextGrid_Pitch_speckleSeparatelySemitones, L"TextGrid & Pitch: Speckle sep
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, Pitch_UNIT_SEMITONES_100)) return 0;
+	if (! pr_TextGrid_Pitch_drawSeparately (dia, Pitch_speckle_YES, kPitch_unit_SEMITONES_100)) return 0;
 END
 
 /***** PITCH & TEXTTIER *****/

@@ -64,7 +64,7 @@ static void dataChanged (I) {
 static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Sound publish = my longSound.data ? LongSound_extractPart (my data, my startSelection, my endSelection, FALSE) :
-		Sound_extractPart (my data, my startSelection, my endSelection, enumi (Sound_WINDOW, Rectangular), 1.0, FALSE);
+		Sound_extractPart (my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
 	iferror return 0;
 	forget (Sound_clipboard);
 	Sound_clipboard = publish;

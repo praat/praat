@@ -111,14 +111,9 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) 
 	#endif
 }
 
+#if ! defined (_WIN32)
 void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath) {
-	#if defined (_WIN32)
-		long n = strlen (path), i, j;
-		for (i = 0, j = 0; i < n; i ++) {
-			wpath [j ++] = (unsigned char) path [i];
-		}
-		wpath [j] = '\0';
-	#elif defined (macintosh)
+	#if defined (macintosh)
 		long n = strlen (path);
 		CFStringRef cfpath = CFStringCreateWithCString (NULL, path, kCFStringEncodingUTF8);
 		Melder_assert (cfpath != 0);
@@ -132,9 +127,10 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		wpath [n] = '\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8bitToWcs_inline (path, wpath, Melder_INPUT_ENCODING_UTF8);
+		Melder_8bitToWcs_inline (path, wpath, kMelder_textInputEncoding_UTF8);
 	#endif
 }
+#endif
 
 #if defined (macintosh)
 void Melder_machToFile (void *void_fsref, MelderFile file) {
@@ -254,10 +250,13 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 		} else {
 			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);   /* BUG */
-			if (dir. path [0] != '\0' && dir. path [wcslen (dir. path) - 1] == '\\')
-				swprintf (file -> path, 256, L"%ls%ls", dir. path, path);
-			else
-				swprintf (file -> path, 256, L"%ls\\%ls", dir. path, path);
+			static MelderString buffer = { 0 };
+			MelderString_empty (& buffer);
+			MelderString_append3 (& buffer,
+				dir. path,
+				dir. path [0] != '\0' && dir. path [wcslen (dir. path) - 1] == '\\' ? L"" : L"\\",
+				path);
+			wcscpy (file -> path, buffer.string);
 		}
 	#endif
 	return 1;
@@ -746,9 +745,13 @@ long MelderFile_length (MelderFile file) {
 
 int MelderFile_delete (MelderFile file) {
 	if (! file) return 1;
-	char utf8path [1000];
-	Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8path);
-	remove ((char *) utf8path);
+	#if defined (_WIN32)
+		DeleteFile (file -> path);
+	#else
+		char utf8path [1000];
+		Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8path);
+		remove ((char *) utf8path);
+	#endif
 	return 1;
 }
 
@@ -775,13 +778,21 @@ wchar_t * MelderFile_messageNameW (MelderFile file) {
 }
 
 void Melder_getDefaultDir (MelderDir dir) {
-	char path [1000];
-	getcwd (path, 1000);
-	Melder_8bitFileRepresentationToWcs_inline (path, dir -> path);
+	#if defined (_WIN32)
+		GetCurrentDirectory (260, dir -> path);
+	#else
+		char path [1000];
+		getcwd (path, 1000);
+		Melder_8bitFileRepresentationToWcs_inline (path, dir -> path);
+	#endif
 }
 
 void Melder_setDefaultDir (MelderDir dir) {
-	chdir (Melder_peekWcsToUtf8 (dir -> path));
+	#if defined (_WIN32)
+		SetCurrentDirectory (dir -> path);
+	#else
+		chdir (Melder_peekWcsToUtf8 (dir -> path));
+	#endif
 }
 
 void MelderFile_setDefaultDir (MelderFile file) {
@@ -937,7 +948,7 @@ void MelderFile_rewind (MelderFile me) {
 }
 
 void MelderFile_close (MelderFile me) {
-	if (my outputEncoding == Melder_OUTPUT_ENCODING_FLAC) {
+	if (my outputEncoding == kMelder_textOutputEncoding_FLAC) {
 		if (my flacEncoder) {
 			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
 			FLAC__stream_encoder_delete (my flacEncoder);

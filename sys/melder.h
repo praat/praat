@@ -38,7 +38,10 @@
 #include <stddef.h>
 #include <wchar.h>
 #include <stdbool.h>
+bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2);
 #include "enums.h"
+
+#include "melder_enums.h"
 
 #ifndef TRUE
 	#define TRUE  1
@@ -255,20 +258,9 @@ void Melder_wcsReduceBackslashSequences_inline (const wchar_t *string);
  * Text encodings.
  */
 void Melder_textEncoding_prefs (void);
-#define Melder_INPUT_ENCODING_UTF8  1
-#define Melder_INPUT_ENCODING_UTF8_THEN_ISO_LATIN1  2
-#define Melder_INPUT_ENCODING_ISO_LATIN1  3
-#define Melder_INPUT_ENCODING_UTF8_THEN_WINDOWS_LATIN1  4
-#define Melder_INPUT_ENCODING_WINDOWS_LATIN1  5
-#define Melder_INPUT_ENCODING_UTF8_THEN_MACROMAN  6
-#define Melder_INPUT_ENCODING_MACROMAN  7
-void Melder_setInputEncoding (int encoding);
+void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding);
 int Melder_getInputEncoding (void);
-#define Melder_OUTPUT_ENCODING_UTF8  1
-#define Melder_OUTPUT_ENCODING_UTF16  2
-#define Melder_OUTPUT_ENCODING_ASCII_THEN_UTF16  3
-#define Melder_OUTPUT_ENCODING_ISO_LATIN1_THEN_UTF16  4
-void Melder_setOutputEncoding (int encoding);
+void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding);
 int Melder_getOutputEncoding (void);
 
 /*
@@ -276,10 +268,10 @@ int Melder_getOutputEncoding (void);
  * these constants should stay separate from the above encoding constants
  * because they occur in the same fields of struct MelderFile.
  */
-#define Melder_INPUT_ENCODING_FLAC  0x464C4143
-#define Melder_OUTPUT_ENCODING_ASCII  0x41534349
-#define Melder_OUTPUT_ENCODING_ISO_LATIN1  0x4C415401
-#define Melder_OUTPUT_ENCODING_FLAC  0x464C4143
+#define kMelder_textInputEncoding_FLAC  0x464C4143
+#define kMelder_textOutputEncoding_ASCII  0x41534349
+#define kMelder_textOutputEncoding_ISO_LATIN1  0x4C415401
+#define kMelder_textOutputEncoding_FLAC  0x464C4143
 
 typedef unsigned short MelderUtf16;
 typedef unsigned int MelderUtf32;
@@ -419,34 +411,7 @@ typedef struct {
 
 /********** NUMBER AND STRING COMPARISON **********/
 
-#define kMelder_number_MIN  1
-#define kMelder_number_EQUAL_TO  1
-#define kMelder_number_NOT_EQUAL_TO  2
-#define kMelder_number_LESS_THAN  3
-#define kMelder_number_LESS_THAN_OR_EQUAL_TO  4
-#define kMelder_number_GREATER_THAN  5
-#define kMelder_number_GREATER_THAN_OR_EQUAL_TO  6
-#define kMelder_number_MAX  6
-#define kMelder_number_DEFAULT  kMelder_number_EQUAL_TO
-const wchar_t * kMelder_number_getText (int value);
-int kMelder_number_getValue (const wchar_t *text);
 int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion);
-
-enum {
-	kMelder_string_MIN = 1,
-	kMelder_string_EQUAL_TO = 1,
-	kMelder_string_NOT_EQUAL_TO = 2,
-	kMelder_string_CONTAINS = 3,
-	kMelder_string_DOES_NOT_CONTAIN = 4,
-	kMelder_string_STARTS_WITH = 5,
-	kMelder_string_DOES_NOT_START_WITH = 6,
-	kMelder_string_ENDS_WITH = 7,
-	kMelder_string_DOES_NOT_END_WITH = 8,
-	kMelder_string_MATCH_REGEXP = 9,
-	kMelder_string_MAX = 9,
-	kMelder_string_DEFAULT = kMelder_string_EQUAL_TO };
-const wchar_t * kMelder_string_getText (int value);
-int kMelder_string_getValue (const wchar_t *text);
 int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_string, const wchar_t *criterion);
 
 /********** STRING PARSING **********/
@@ -852,10 +817,6 @@ long Melder_getSamplesPlayed (void);
 int Melder_stopWasExplicit (void);
 
 void Melder_setMaximumAsynchronicity (int maximumAsynchronicity);
-#define Melder_SYNCHRONOUS  0
-#define Melder_CALLING_BACK  1
-#define Melder_INTERRUPTABLE  2
-#define Melder_ASYNCHRONOUS  3
 int Melder_getMaximumAsynchronicity (void);
 
 void Melder_setZeroPadding (double zeroPadding);   /* Seconds of silence before and after playing. */

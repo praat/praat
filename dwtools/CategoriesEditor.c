@@ -32,7 +32,7 @@
 #define CategoriesEditor_TEXTMAXLENGTH 100
 
 #include "CategoriesEditor.h"
-#include "Preferences.h"
+//#include "Preferences.h"
 #include "EditorM.h"
 
 

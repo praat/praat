@@ -61,7 +61,7 @@
 
 static struct {
 	int shellWidth, shellHeight;
-	int groupWindow;
+	bool groupWindow;
 	double arrowScrollStep;
 	struct { bool drawSelectionTimes, drawSelectionHairs; } picture;
 } preferences;
@@ -69,10 +69,10 @@ static struct {
 void FunctionEditor_prefs (void) {
 	Preferences_addInt (L"FunctionEditor.shellWidth", & preferences.shellWidth, 700);
 	Preferences_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight, 440);
-	Preferences_addInt (L"FunctionEditor.groupWindow", & preferences.groupWindow, TRUE);
+	Preferences_addBool (L"FunctionEditor.groupWindow", & preferences.groupWindow, true);
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
-	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes2", & preferences.picture.drawSelectionTimes, true);
-	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs2", & preferences.picture.drawSelectionHairs, true);
+	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
+	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
 }
 
 #define maxGroup 100
@@ -1409,8 +1409,8 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 	Graphics_xorOff (my graphics);
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
-	 * because the asynchronicity is Melder_INTERRUPTABLE or Melder_ASYNCHRONOUS.
-	 * However, if the asynchronicity is just Melder_CALLING_BACK,
+	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
+	 * However, if the asynchronicity is just kMelder_asynchronicityLevel_CALLING_BACK,
 	 * there is no event test. Which means: no server round trip.
 	 * Which means: no automatic flushing of graphics output.
 	 * So: we force the flushing ourselves, lest we see too few moving cursors.

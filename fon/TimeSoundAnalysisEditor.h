@@ -47,8 +47,8 @@
 #ifndef _TimeSoundEditor_h_
 	#include "TimeSoundEditor.h"
 #endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
+#ifndef _Sound_and_Spectrogram_h_
+	#include "Sound_and_Spectrogram.h"
 #endif
 #ifndef _Pitch_h_
 	#include "Pitch.h"
@@ -66,17 +66,16 @@
 #include "TimeSoundAnalysisEditor_enums.h"
 
 struct FunctionEditor_spectrogram {
-	/* KEEP IN SYNC WITH PREFS. */
-	Spectrogram data; int show;
+	Spectrogram data; bool show;
 	/* Spectrogram settings: */
 	double viewFrom, viewTo;   /* Hertz */
 	double windowLength;   /* seconds */
 	double dynamicRange;   /* dB */
 	/* Advanced spectrogram settings: */
 	long timeSteps, frequencySteps;
-	int method;   /* Fourier */
-	int windowShape;   /* 0=Square 1=Hamming 2=Bartlett 3=Welch 4=Hanning 5=Gaussian */
-	int autoscaling;   /* yes/no */
+	enum kSound_to_Spectrogram_method method;
+	enum kSound_to_Spectrogram_windowShape windowShape;
+	bool autoscaling;
 	double maximum;   /* dB/Hz */
 	double preemphasis;   /* dB/octave */
 	double dynamicCompression;   /* 0..1 */
@@ -85,45 +84,47 @@ struct FunctionEditor_spectrogram {
 };
 
 struct FunctionEditor_pitch {
-	/* KEEP IN SYNC WITH PREFS. */
-	Pitch data; int show;
+	Pitch data; bool show;
 	/* Pitch settings: */
-	double floor, ceiling; int unit;
-	int drawingMethod;
+	double floor, ceiling;
+	enum kPitch_unit unit;
+	enum kTimeSoundAnalysisEditor_pitch_drawingMethod drawingMethod;
 	/* Advanced pitch settings: */
 	double viewFrom, viewTo;
-	int method, veryAccurate;
+	enum kTimeSoundAnalysisEditor_pitch_analysisMethod method;
+	bool veryAccurate;
 	long maximumNumberOfCandidates; double silenceThreshold, voicingThreshold;
 	double octaveCost, octaveJumpCost, voicedUnvoicedCost;
 	struct { bool speckle; } picture;
 };
 struct FunctionEditor_intensity {
-	/* KEEP IN SYNC WITH PREFS. */
-	Intensity data; int show;
+	Intensity data; bool show;
 	/* Intensity settings: */
 	double viewFrom, viewTo;
-	int averagingMethod, subtractMeanPressure;
+	enum kTimeSoundAnalysisEditor_intensity_averagingMethod averagingMethod;
+	bool subtractMeanPressure;
 };
 struct FunctionEditor_formant {
-	/* KEEP IN SYNC WITH PREFS. */
-	Formant data; int show;
+	Formant data; bool show;
 	/* Formant settings: */
 	double maximumFormant; long numberOfPoles;
 	double windowLength;
 	double dynamicRange, dotSize;
 	/* Advanced formant settings: */
-	int method; double preemphasisFrom;
+	enum kTimeSoundAnalysisEditor_formant_analysisMethod method;
+	double preemphasisFrom;
 };
 struct FunctionEditor_pulses {
-	/* KEEP IN SYNC WITH PREFS. */
-	PointProcess data; int show;
+	PointProcess data; bool show;
 	/* Pulses settings: */
 	double maximumPeriodFactor, maximumAmplitudeFactor;
 };
 
 #define TimeSoundAnalysisEditor_members TimeSoundEditor_members \
 	double longestAnalysis; \
-	int timeStepStrategy; double fixedTimeStep; long numberOfTimeStepsPerView; \
+	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy; \
+	double fixedTimeStep; \
+	long numberOfTimeStepsPerView; \
 	struct FunctionEditor_spectrogram spectrogram; \
 	struct FunctionEditor_pitch pitch; \
 	struct FunctionEditor_intensity intensity; \

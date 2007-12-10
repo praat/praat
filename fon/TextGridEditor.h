@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/04
+ * pb 2007/12/07
  */
 
 #ifndef _TimeSoundAnalysisEditor_h_
@@ -29,6 +29,8 @@
 #ifndef _TextGrid_h_
 	#include "TextGrid.h"
 #endif
+
+#include "TextGridEditor_enums.h"
 
 typedef struct structTextGridEditor *TextGridEditor;
 

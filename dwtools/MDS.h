@@ -135,6 +135,7 @@ class_create (MDSVecs, Ordered);
 
 MDSVecs MDSVecs_create (void);
 
+#if 0
 /************** class Preference ****************************************/
 
 
@@ -143,7 +144,7 @@ MDSVecs MDSVecs_create (void);
 class_create (Preference, TableOfReal);
 
 Preference Preference_create (long numberOfRows, long numberOfColumns);
-
+#endif
 
 /*********** class ContingencyTable ***********************************/
 

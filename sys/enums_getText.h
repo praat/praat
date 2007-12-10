@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/02 created
+ * pb 2007/12/04
  */
 
 /* See enum.h */
@@ -30,8 +30,8 @@
 #undef enums_alt
 #undef enums_end
 #define enums_begin(type,minimum)  const wchar_t * type##_getText (int testValue) { return
-#define enums_add(type,which,text,value)  testValue == type##_##which ? text :
+#define enums_add(type,value,which,text)  testValue == type##_##which ? text :
 #define enums_alt(type,which,text)
-#define enums_end(type,def,maximum) type##_getText (type##_DEFAULT); }
+#define enums_end(type,maximum,def) type##_getText (type##_DEFAULT); }
 
 /* End of file enums_getText.h */

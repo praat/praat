@@ -25,6 +25,7 @@
  * pb 2007/09/02 form/ok/do_pictureWindow
  * pb 2007/09/08 createMenuItems_file and createMenuItems_edit
  * pb 2007/09/19 info
+ * pb 2007/12/05 enums
  */
 
 #include <time.h>
@@ -35,18 +36,23 @@
 #include "praat_script.h"
 #include "Preferences.h"
 
+#include "enums_getText.h"
+#include "Editor_enums.h"
+#include "enums_getValue.h"
+#include "Editor_enums.h"
+
 /********** PREFERENCES **********/
 
 static struct {
-	struct { bool eraseFirst; int writeNameAtTop; } picture;
-}
-	preferences = {
-		{ true, 1 /* Far */ }   // picture
-	};
+	struct {
+		bool eraseFirst;
+		enum kEditor_writeNameAtTop writeNameAtTop;
+	} picture;
+} preferences;
 
 void Editor_prefs (void) {
-	Resources_addBool (L"Editor.picture.eraseFirst", & preferences.picture.eraseFirst);
-	Resources_addInt (L"Editor.picture.writeNameAtTop", & preferences.picture.writeNameAtTop);
+	Preferences_addBool (L"Editor.picture.eraseFirst", & preferences.picture.eraseFirst, true);
+	Preferences_addEnum (L"Editor.picture.writeNameAtTop", & preferences.picture.writeNameAtTop, kEditor_writeNameAtTop, DEFAULT);
 }
 
 /********** class EditorCommand **********/
@@ -237,9 +243,11 @@ static void destroy (I) {
 	forget (my menus);
 	if (my shell) {
 		#if defined (UNIX)
-			XtUnrealizeWidget (my shell);
+			XtUnrealizeWidget (my shell);   // LEAK BUG: should also destroy; but then, Praat will often crash on a destroy (OpenMotif 2.2 and 2.3)
+			//XtDestroyWidget (my shell);
+		#else
+			XtDestroyWidget (my shell);
 		#endif
-		XtDestroyWidget (my shell);
 	}
 	if (my destroyCallback) my destroyCallback (me, my destroyClosure);
 	forget (my previousData);
@@ -411,18 +419,15 @@ static void form_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
 	Any radio = 0;
 	LABEL (L"", L"Margins:")
-	OPTIONMENU (L"Write name at top", 2);
-		OPTION (L"No")
-		OPTION (L"Far")
-		OPTION (L"Near")
+	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, DEFAULT);
 }
 static void ok_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
-	SET_INTEGER (L"Write name at top", preferences.picture.writeNameAtTop + 1);
+	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, preferences.picture.writeNameAtTop);
 }
 static void do_pictureMargins (I, EditorCommand cmd) {
 	(void) void_me;
-	preferences.picture.writeNameAtTop = GET_INTEGER (L"Write name at top") - 1;
+	preferences.picture.writeNameAtTop = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
 }
 
 class_methods (Editor, Thing) {
@@ -594,12 +599,14 @@ void Editor_openPraatPicture (I) {
 }
 void Editor_closePraatPicture (I) {
 	iam (Editor);
-	if (preferences.picture.writeNameAtTop) {
+	if (preferences.picture.writeNameAtTop != kEditor_writeNameAtTop_NO) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
-		Graphics_textTop (my pictureGraphics, 2 - preferences.picture.writeNameAtTop, ((Data) my data) -> name);
+		Graphics_textTop (my pictureGraphics,
+			preferences.picture.writeNameAtTop == kEditor_writeNameAtTop_FAR,
+			((Data) my data) -> name);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);
