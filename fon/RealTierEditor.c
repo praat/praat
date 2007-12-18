@@ -96,7 +96,7 @@ static void createMenus (I) {
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, cb_addPointAt);
 	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Remove point(s)", motif_OPTION + 'T', cb_removePoints);
+	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', cb_removePoints);
 }
 
 void RealTierEditor_updateScaling (I) {

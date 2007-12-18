@@ -643,7 +643,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			/*
 			 * Divide up the label text into left and right, depending on where the text cursor is.
 			 */
-			text = GuiText_getStringW (my text);
+			text = GuiText_getString (my text);
 			position = XmTextGetInsertionPosition (my text);
 			newInterval = TextInterval_create (t, interval -> xmax, text + position);
 			text [position] = '\0';
@@ -884,7 +884,7 @@ static int findInTier (TextGridEditor me) {
 static void do_find (TextGridEditor me) {
 	if (my findString) {
 		XmTextPosition left, right;
-		wchar_t *label = GuiText_getStringW (my text);
+		wchar_t *label = GuiText_getString (my text);
 		wchar_t *position = wcsstr (XmTextGetSelectionPosition (my text, & left, & right) ? label + right : label, my findString);   /* CRLF BUG? */
 		if (position) {
 			XmTextSetSelection (my text, position - label, position - label + wcslen (my findString), 0);
@@ -972,7 +972,7 @@ static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 		wchar_t *label, *notAllowed;
 		if (XmTextGetSelectionPosition (my text, & left, & right))
 			position = right;
-		label = GuiText_getStringW (my text);
+		label = GuiText_getString (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
 			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
@@ -992,7 +992,7 @@ static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 		wchar_t *label, *notAllowed;
 		if (XmTextGetSelectionPosition (my text, & left, & right))
 			position = right;
-		label = GuiText_getStringW (my text);
+		label = GuiText_getString (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
 			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
@@ -1005,7 +1005,7 @@ static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 static int menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		wchar_t *word = GuiText_getSelectionW (my text);
+		wchar_t *word = GuiText_getSelection (my text);
 		SpellingChecker_addNewWord (my spellingChecker, word);
 		Melder_free (word);
 		iferror return 0;
@@ -1237,14 +1237,14 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Query", L"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
 	menu = Editor_addMenu (me, L"Interval", 0);
-	EditorMenu_addCommand (menu, L"Add interval on tier 1", motif_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
-	EditorMenu_addCommand (menu, L"Add interval on tier 2", motif_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
-	EditorMenu_addCommand (menu, L"Add interval on tier 3", motif_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
-	EditorMenu_addCommand (menu, L"Add interval on tier 4", motif_COMMAND | '4', menu_cb_InsertIntervalOnTier4);
-	EditorMenu_addCommand (menu, L"Add interval on tier 5", motif_COMMAND | '5', menu_cb_InsertIntervalOnTier5);
-	EditorMenu_addCommand (menu, L"Add interval on tier 6", motif_COMMAND | '6', menu_cb_InsertIntervalOnTier6);
-	EditorMenu_addCommand (menu, L"Add interval on tier 7", motif_COMMAND | '7', menu_cb_InsertIntervalOnTier7);
-	EditorMenu_addCommand (menu, L"Add interval on tier 8", motif_COMMAND | '8', menu_cb_InsertIntervalOnTier8);
+	EditorMenu_addCommand (menu, L"Add interval on tier 1", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
+	EditorMenu_addCommand (menu, L"Add interval on tier 2", GuiMenu_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
+	EditorMenu_addCommand (menu, L"Add interval on tier 3", GuiMenu_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
+	EditorMenu_addCommand (menu, L"Add interval on tier 4", GuiMenu_COMMAND | '4', menu_cb_InsertIntervalOnTier4);
+	EditorMenu_addCommand (menu, L"Add interval on tier 5", GuiMenu_COMMAND | '5', menu_cb_InsertIntervalOnTier5);
+	EditorMenu_addCommand (menu, L"Add interval on tier 6", GuiMenu_COMMAND | '6', menu_cb_InsertIntervalOnTier6);
+	EditorMenu_addCommand (menu, L"Add interval on tier 7", GuiMenu_COMMAND | '7', menu_cb_InsertIntervalOnTier7);
+	EditorMenu_addCommand (menu, L"Add interval on tier 8", GuiMenu_COMMAND | '8', menu_cb_InsertIntervalOnTier8);
 
 	menu = Editor_addMenu (me, L"Boundary", 0);
 	/*EditorMenu_addCommand (menu, L"Move to B", 0, menu_cb_MoveToB);
@@ -1252,18 +1252,18 @@ static void createMenus (I) {
 	if (my sound.data)
 		EditorMenu_addCommand (menu, L"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 	EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Add on selected tier", motif_ENTER, menu_cb_InsertOnSelectedTier);
-	EditorMenu_addCommand (menu, L"Add on tier 1", motif_COMMAND | motif_F1, menu_cb_InsertOnTier1);
-	EditorMenu_addCommand (menu, L"Add on tier 2", motif_COMMAND | motif_F2, menu_cb_InsertOnTier2);
-	EditorMenu_addCommand (menu, L"Add on tier 3", motif_COMMAND | motif_F3, menu_cb_InsertOnTier3);
-	EditorMenu_addCommand (menu, L"Add on tier 4", motif_COMMAND | motif_F4, menu_cb_InsertOnTier4);
-	EditorMenu_addCommand (menu, L"Add on tier 5", motif_COMMAND | motif_F5, menu_cb_InsertOnTier5);
-	EditorMenu_addCommand (menu, L"Add on tier 6", motif_COMMAND | motif_F6, menu_cb_InsertOnTier6);
-	EditorMenu_addCommand (menu, L"Add on tier 7", motif_COMMAND | motif_F7, menu_cb_InsertOnTier7);
-	EditorMenu_addCommand (menu, L"Add on tier 8", motif_COMMAND | motif_F8, menu_cb_InsertOnTier8);
-	EditorMenu_addCommand (menu, L"Add on all tiers", motif_COMMAND | motif_F9, menu_cb_InsertOnAllTiers);
+	EditorMenu_addCommand (menu, L"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
+	EditorMenu_addCommand (menu, L"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1, menu_cb_InsertOnTier1);
+	EditorMenu_addCommand (menu, L"Add on tier 2", GuiMenu_COMMAND | GuiMenu_F2, menu_cb_InsertOnTier2);
+	EditorMenu_addCommand (menu, L"Add on tier 3", GuiMenu_COMMAND | GuiMenu_F3, menu_cb_InsertOnTier3);
+	EditorMenu_addCommand (menu, L"Add on tier 4", GuiMenu_COMMAND | GuiMenu_F4, menu_cb_InsertOnTier4);
+	EditorMenu_addCommand (menu, L"Add on tier 5", GuiMenu_COMMAND | GuiMenu_F5, menu_cb_InsertOnTier5);
+	EditorMenu_addCommand (menu, L"Add on tier 6", GuiMenu_COMMAND | GuiMenu_F6, menu_cb_InsertOnTier6);
+	EditorMenu_addCommand (menu, L"Add on tier 7", GuiMenu_COMMAND | GuiMenu_F7, menu_cb_InsertOnTier7);
+	EditorMenu_addCommand (menu, L"Add on tier 8", GuiMenu_COMMAND | GuiMenu_F8, menu_cb_InsertOnTier8);
+	EditorMenu_addCommand (menu, L"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9, menu_cb_InsertOnAllTiers);
 	EditorMenu_addCommand (menu, L"-- remove mark --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Remove", motif_OPTION | motif_BACKSPACE, menu_cb_RemovePointOrBoundary);
+	EditorMenu_addCommand (menu, L"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
 	menu = Editor_addMenu (me, L"Tier", 0);
 	EditorMenu_addCommand (menu, L"Copy tier to list of objects", 0, menu_cb_PublishTier);
@@ -1301,7 +1301,7 @@ static void gui_cb_textChanged (GUI_ARGS) {
 	TextGrid grid = my data;
 	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method calls XmTextSetString. */
 	if (my selectedTier) {
-		wchar_t *text = GuiText_getStringW (my text);
+		wchar_t *text = GuiText_getString (my text);
 		IntervalTier intervalTier;
 		TextTier textTier;
 		_AnyTier_identifyClass (grid -> tiers -> item [my selectedTier], & intervalTier, & textTier);
@@ -2087,7 +2087,7 @@ static void updateText (I) {
 		}
 	}
 	my suppressRedraw = TRUE;   /* Prevent valueChangedCallback from redrawing. */
-	GuiText_setStringW (my text, newText);
+	GuiText_setString (my text, newText);
 	XmTextSetInsertionPosition (my text, wcslen (newText));
 	my suppressRedraw = FALSE;
 }
@@ -2134,12 +2134,12 @@ static void prefs_getValues (I, EditorCommand cmd) {
 static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	iam (TextGridEditor);
 	inherited (TextGridEditor) createMenuItems_view_timeDomain (me, menu);
-	EditorMenu_addCommand (menu, L"Select previous tier", motif_OPTION | motif_UP_ARROW, menu_cb_SelectPreviousTier);
-	EditorMenu_addCommand (menu, L"Select next tier", motif_OPTION | motif_DOWN_ARROW, menu_cb_SelectNextTier);
-	EditorMenu_addCommand (menu, L"Select previous interval", motif_OPTION | motif_LEFT_ARROW, menu_cb_SelectPreviousInterval);
-	EditorMenu_addCommand (menu, L"Select next interval", motif_OPTION | motif_RIGHT_ARROW, menu_cb_SelectNextInterval);
-	EditorMenu_addCommand (menu, L"Extend-select left", motif_SHIFT | motif_OPTION | motif_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
-	EditorMenu_addCommand (menu, L"Extend-select right", motif_SHIFT | motif_OPTION | motif_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
+	EditorMenu_addCommand (menu, L"Select previous tier", GuiMenu_OPTION | GuiMenu_UP_ARROW, menu_cb_SelectPreviousTier);
+	EditorMenu_addCommand (menu, L"Select next tier", GuiMenu_OPTION | GuiMenu_DOWN_ARROW, menu_cb_SelectNextTier);
+	EditorMenu_addCommand (menu, L"Select previous interval", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_SelectPreviousInterval);
+	EditorMenu_addCommand (menu, L"Select next interval", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_SelectNextInterval);
+	EditorMenu_addCommand (menu, L"Extend-select left", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
+	EditorMenu_addCommand (menu, L"Extend-select right", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
 }
 
 static void highlightSelection (I, double left, double right, double bottom, double top) {

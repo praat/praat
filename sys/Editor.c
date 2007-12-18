@@ -111,9 +111,9 @@ Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long fl
 	my menu = menu;
 	if (! (my itemTitle = Melder_wcsdup (itemTitle))) { forget (me); return NULL; }
 	my itemWidget =
-		commandCallback == NULL ? motif_addSeparator (menu -> menuWidget) :
+		commandCallback == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
 		flags & Editor_HIDDEN ? NULL :
-		motif_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, me);
+		GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, me);
 	Collection_addItem (menu -> commands, me);
 	my commandCallback = commandCallback;
 	return my itemWidget;
@@ -125,7 +125,7 @@ EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 	EditorMenu me = new (EditorMenu);
 	my editor = editor;
 	if (! (my menuTitle = Melder_wcsdup (menuTitle))) { forget (me); return NULL; }
-	my menuWidget = motif_addMenu (((Editor) editor) -> menuBar, menuTitle, flags);
+	my menuWidget = GuiMenuBar_addMenu (((Editor) editor) -> menuBar, menuTitle, flags);
 	Collection_addItem (((Editor) editor) -> menus, me);
 	my commands = Ordered_create ();
 	return me;
@@ -165,8 +165,8 @@ Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wcha
 			cmd -> editor = me;
 			cmd -> menu = menu;
 			cmd -> itemTitle = Melder_wcsdup (itemTitle);
-			cmd -> itemWidget = script == NULL ? motif_addSeparator (menu -> menuWidget) :
-				motif_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd);
+			cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
+				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd);
 			Collection_addItem (menu -> commands, cmd);
 			cmd -> commandCallback = Editor_scriptCallback;
 			if (wcslen (script) == 0) {
@@ -269,7 +269,7 @@ static void info (I) {
 static void nameChanged (I) {
 	iam (Editor);
 	if (my name)
-		GuiWindow_setTitleW (my shell, my name);
+		GuiWindow_setTitle (my shell, my name);
 }
 
 static void goAway (I) { iam (Editor); forget (me); }
@@ -342,7 +342,7 @@ static void createMenuItems_edit (I, EditorMenu menu) {
 	iam (Editor);
 	(void) me;
 	if (my data)
-		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", motif_INSENSITIVE + 'Z', menu_cb_undo);
+		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
 static int menu_cb_settingsReport (EDITOR_ARGS) {
@@ -489,7 +489,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 		bottom += Machine_getTitleBarHeight ();
 	#endif
 	my parent = parent;   /* Probably praat.topShell */
-	my shell = motif_addShell (parent, 0);   /* Note that XtParent (my shell) will be NULL! */
+	my shell = Gui_addShell (parent, 0);   /* Note that XtParent (my shell) will be NULL! */
 	if (! my shell) return 0;
 	#if ! defined (sun4)
 	{
@@ -512,7 +512,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	/* Create menus. */
 
 	my menus = Ordered_create ();
-	my menuBar = motif_addMenuBar (my dialog);
+	my menuBar = Gui_addMenuBar (my dialog);
 	Editor_addMenu (me, L"Help", 0);
 	our createMenus (me);
 	Melder_clearError ();   /* TEMPORARY: to protect against CategoriesEditor */

@@ -66,14 +66,14 @@ static void nameChanged (I) {
 	}
 	if (my dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
-	GuiWindow_setTitleW (my shell, buffer.string);
+	GuiWindow_setTitle (my shell, buffer.string);
 	XtVaSetValues (my shell, XmNiconName, "Script", NULL);
 }
 
 static int args_ok (Any dia, I) {
 	iam (ScriptEditor);
 	structMelderFile file = { 0 };
-	wchar_t *text = GuiText_getStringW (my textWidget);
+	wchar_t *text = GuiText_getString (my textWidget);
 	if (my name) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -119,13 +119,13 @@ static void run (ScriptEditor me, wchar_t **text) {
 }
 
 DIRECT (ScriptEditor, cb_go)
-	wchar_t *text = GuiText_getStringW (my textWidget);
+	wchar_t *text = GuiText_getString (my textWidget);
 	run (me, & text);
 	Melder_free (text);
 END
 
 DIRECT (ScriptEditor, cb_runSelection)
-	wchar_t *text = GuiText_getSelectionW (my textWidget);
+	wchar_t *text = GuiText_getSelection (my textWidget);
 	if (! text) {
 		Melder_free (text);
 		return Melder_error1 (L"No text selected.");
@@ -224,7 +224,7 @@ DIRECT (ScriptEditor, cb_viewHistory)
 	}
 	if (! XmTextGetSelectionPosition (my textWidget, & first, & last))
 		first = last = XmTextGetInsertionPosition (my textWidget);
-	GuiText_replaceW (my textWidget, first, last, history);
+	GuiText_replace (my textWidget, first, last, history);
 	#if defined (UNIX) || defined (macintosh)
 		XmTextSetSelection (my textWidget, first, first + length, 0);
 	#endif

@@ -548,8 +548,8 @@ static void destroy (I) {
 	inherited (HyperPage) destroy (me);
 }
 
-MOTIF_CALLBACK (cb_draw)
-	iam (HyperPage);
+static void gui_cb_draw (GUI_ARGS) {
+	GUI_IAM (HyperPage);
 #if defined (UNIX)
 	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 #endif
@@ -564,13 +564,13 @@ MOTIF_CALLBACK (cb_draw)
 		our draw (me);
 		updateVerticalScrollBar (me);
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_input)
-	iam (HyperPage);
-	MotifEvent event = MotifEvent_fromCallData (call);
-	int xDC = MotifEvent_x (event), yDC = MotifEvent_y (event), ilink;
-	if (! MotifEvent_isButtonPressedEvent (event)) return;
+static void gui_cb_input (GUI_ARGS) {
+	GUI_IAM (HyperPage);
+	GuiEvent event = GuiEvent_fromCallData (call);
+	int xDC = GuiEvent_x (event), yDC = GuiEvent_y (event), ilink;
+	if (! GuiEvent_isButtonPressedEvent (event)) return;
 	if (! my links) return;
 	for (ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = my links -> item [ilink];
@@ -583,7 +583,7 @@ MOTIF_CALLBACK (cb_input)
 			return;
 		}
 	}
-MOTIF_CALLBACK_END
+}
 
 DIRECT (HyperPage, cb_postScriptSettings)
 	Printer_postScriptSettings ();
@@ -624,14 +624,12 @@ FORM (HyperPage, cb_font, L"Font", 0)
 	RADIO (L"Font", 1)
 		RADIOBUTTON (L"Times")
 		RADIOBUTTON (L"Helvetica")
-		RADIOBUTTON (L"Palatino")
 	OK
 SET_INTEGER (L"Font", my font == kGraphics_font_TIMES ? 1 :
 		my font == kGraphics_font_HELVETICA ? 2 : my font == kGraphics_font_PALATINO ? 3 : 1);
 DO
 	int font = GET_INTEGER (L"Font");
-	prefs_font = my font = font == 1 ? kGraphics_font_TIMES : font == 2 ? kGraphics_font_HELVETICA :
-		font == 3 ? kGraphics_font_PALATINO : kGraphics_font_TIMES;
+	prefs_font = my font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
 	if (my g) Graphics_updateWs (my g);
 END
 
@@ -710,8 +708,8 @@ static void updateVerticalScrollBar (HyperPage me)
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
-MOTIF_CALLBACK (cb_verticalScroll)
-	iam (HyperPage);
+static void gui_cb_verticalScroll (GUI_ARGS) {
+	GUI_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
 	if (value != my top) {
@@ -721,7 +719,7 @@ MOTIF_CALLBACK (cb_verticalScroll)
 		our draw (me);   /* Do not wait for expose event. */
 		updateVerticalScrollBar (me);
 	}
-MOTIF_CALLBACK_END
+}
 
 DIRECT (HyperPage, cb_pageUp)
 	int value, sliderSize, incr, pincr;
@@ -775,10 +773,11 @@ DIRECT (HyperPage, cb_back)
 	if (! do_back (me)) return 0;
 END
 
-MOTIF_CALLBACK (cb_backButton)
+static void gui_button_cb_back (Widget widget, I) {
+	(void) widget;
 	iam (HyperPage);
 	if (! do_back (me)) Melder_flushError (NULL);
-MOTIF_CALLBACK_END
+}
 
 static int do_forth (HyperPage me) {
 	wchar_t *page;
@@ -802,10 +801,11 @@ DIRECT (HyperPage, cb_forth)
 	if (! do_forth (me)) return 0;
 END
 
-MOTIF_CALLBACK (cb_forthButton)
+static void gui_button_cb_forth (Widget widget, I) {
+	(void) widget;
 	iam (HyperPage);
 	if (! do_forth (me)) Melder_flushError (NULL);
-MOTIF_CALLBACK_END
+}
 
 static void createMenus (I) {
 	iam (HyperPage);
@@ -821,27 +821,27 @@ static void createMenus (I) {
 	if (our hasHistory) {
 		Editor_addMenu (me, L"Go to", 0);
 		Editor_addCommand (me, L"Go to", L"Search for page...", 0, cb_searchForPage);
-		Editor_addCommand (me, L"Go to", L"Back", motif_OPTION | motif_LEFT_ARROW, cb_back);
-		Editor_addCommand (me, L"Go to", L"Forward", motif_OPTION | motif_RIGHT_ARROW, cb_forth);
+		Editor_addCommand (me, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, cb_back);
+		Editor_addCommand (me, L"Go to", L"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, cb_forth);
 		Editor_addCommand (me, L"Go to", L"-- page --", 0, NULL);
-		Editor_addCommand (me, L"Go to", L"Page up", motif_PAGE_UP, cb_pageUp);
-		Editor_addCommand (me, L"Go to", L"Page down", motif_PAGE_DOWN, cb_pageDown);
+		Editor_addCommand (me, L"Go to", L"Page up", GuiMenu_PAGE_UP, cb_pageUp);
+		Editor_addCommand (me, L"Go to", L"Page down", GuiMenu_PAGE_DOWN, cb_pageDown);
 	}
 
 	Editor_addMenu (me, L"Font", 0);
-	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", motif_CHECKABLE, cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", motif_CHECKABLE, cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", motif_CHECKABLE, cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", motif_CHECKABLE, cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", motif_CHECKABLE, cb_24);
+	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKABLE, cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKABLE, cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKABLE, cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKABLE, cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKABLE, cb_24);
 	Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
 	Editor_addCommand (me, L"Font", L"Font...", 0, cb_font);
 }
 
 /********** **********/
 
-MOTIF_CALLBACK (cb_resize)
-	iam (HyperPage);
+static void gui_cb_resize (GUI_ARGS) {
+	GUI_IAM (HyperPage);
 	Dimension width, height, marginWidth, marginHeight;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
@@ -851,43 +851,40 @@ MOTIF_CALLBACK (cb_resize)
 		PAGE_HEIGHT - (height - 2 * marginHeight) / resolution, PAGE_HEIGHT);
 	if (my g) Graphics_updateWs (my g);
 	updateVerticalScrollBar (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_previousPage)
+static void gui_button_cb_previousPage (Widget widget, I) {
+	(void) widget;
 	iam (HyperPage);
 	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) > 1 ?
 		our getCurrentPageNumber (me) - 1 : our getNumberOfPages (me));
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_nextPage)
+static void gui_button_cb_nextPage (Widget widget, I) {
+	(void) widget;
 	iam (HyperPage);
 	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) < our getNumberOfPages (me) ?
 		our getCurrentPageNumber (me) + 1 : 1);
-MOTIF_CALLBACK_END
+}
 
 static void createChildren (I) {
 	iam (HyperPage);
-	Widget button;
 	int height = Machine_getTextHeight ();
 	int y = Machine_getMenuBarHeight () + 4;
 
 	/***** Create navigation buttons. *****/
 
 	if (our hasHistory) {
-		button = XtVaCreateManagedWidget ("<", xmPushButtonWidgetClass, my dialog,
-			XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
-		XtAddCallback (button, XmNactivateCallback, cb_backButton, (XtPointer) me);
-		button = XtVaCreateManagedWidget (">", xmPushButtonWidgetClass, my dialog,
-			XmNx, 54, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
-		XtAddCallback (button, XmNactivateCallback, cb_forthButton, (XtPointer) me);
+		GuiButton_createShown (my dialog, 4, 48, y, y + height,
+			L"<", gui_button_cb_back, me, 0);
+		GuiButton_createShown (my dialog, 54, 98, y, y + height,
+			L">", gui_button_cb_forth, me, 0);
 	}
 	if (our isOrdered) {
-		button = XtVaCreateManagedWidget ("< 1", xmPushButtonWidgetClass, my dialog,
-			XmNx, 174, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
-		XtAddCallback (button, XmNactivateCallback, cb_previousPage, (XtPointer) me);
-		button = XtVaCreateManagedWidget ("1 >", xmPushButtonWidgetClass, my dialog,
-			XmNx, 224, XmNy, y, XmNheight, height, XmNwidth, 44, NULL);
-		XtAddCallback (button, XmNactivateCallback, cb_nextPage, (XtPointer) me);
+		GuiButton_createShown (my dialog, 174, 218, y, y + height,
+			L"< 1", gui_button_cb_previousPage, me, 0);
+		GuiButton_createShown (my dialog, 224, 268, y, y + height,
+			L"1 >", gui_button_cb_nextPage, me, 0);
 	}
 
 	/***** Create scroll bar. *****/
@@ -923,14 +920,16 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 	Graphics_setDollarSignIsCode (my g, TRUE);
 	Graphics_setFont (my g, kGraphics_font_TIMES);
+	if (prefs_font != kGraphics_font_TIMES && prefs_font != kGraphics_font_HELVETICA)
+		prefs_font = kGraphics_font_TIMES;   // Ensure Unicode compatibility.
 	my font = prefs_font;
 	setFontSize (me, prefs_fontSize);
-	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, cb_resize, (XtPointer) me);
-	cb_resize (my drawingArea, (XtPointer) me, NULL);   /* Force WsWindow. */
-	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, cb_verticalScroll, (XtPointer) me);
-	XtAddCallback (my verticalScrollBar, XmNdragCallback, cb_verticalScroll, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
+	gui_cb_resize (my drawingArea, (XtPointer) me, NULL);   /* Force WsWindow. */
+	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
+	XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
 	return 1;
 }

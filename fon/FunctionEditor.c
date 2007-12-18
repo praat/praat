@@ -40,11 +40,11 @@
 	#define space 30
 	#define MARGIN  107
 #elif defined (macintosh)
-	#define space 23
-	#define MARGIN  83
+	#define space 25
+	#define MARGIN  93
 #else
-	#define space 23
-	#define MARGIN  83
+	#define space 25
+	#define MARGIN  93
 #endif
 #define BOTTOM_MARGIN  2
 #define TOP_MARGIN  3
@@ -484,8 +484,9 @@ static void do_showAll (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_cb_showAll (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
+static void gui_button_cb_showAll (Widget widget, I) {
+	(void) widget;
+	iam (FunctionEditor);
 	do_showAll (me);
 }
 
@@ -499,8 +500,9 @@ static void do_zoomIn (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_cb_zoomIn (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
+static void gui_button_cb_zoomIn (Widget widget, I) {
+	(void) widget;
+	iam (FunctionEditor);
 	do_zoomIn (me);
 }
 
@@ -519,8 +521,9 @@ static void do_zoomOut (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_cb_zoomOut (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
+static void gui_button_cb_zoomOut (Widget widget, I) {
+	(void) widget;
+	iam (FunctionEditor);
 	do_zoomOut (me);
 }
 
@@ -535,8 +538,9 @@ static void do_zoomToSelection (FunctionEditor me) {
 	}
 }
 
-static void gui_cb_zoomToSelection (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
+static void gui_button_cb_zoomToSelection (Widget widget, I) {
+	(void) widget;
+	iam (FunctionEditor);
 	do_zoomToSelection (me);
 }
 
@@ -943,25 +947,25 @@ static void createMenuItems_file (I, EditorMenu menu) {
 static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	iam (FunctionEditor);
 	(void) me;
-	EditorMenu_addCommand (menu, our format_domain, motif_INSENSITIVE, menu_cb_zoom /* dummy */);
+	EditorMenu_addCommand (menu, our format_domain, GuiMenu_INSENSITIVE, menu_cb_zoom /* dummy */);
 	EditorMenu_addCommand (menu, L"Zoom...", 0, menu_cb_zoom);
 	EditorMenu_addCommand (menu, L"Show all", 'A', menu_cb_showAll);
 	EditorMenu_addCommand (menu, L"Zoom in", 'I', menu_cb_zoomIn);
 	EditorMenu_addCommand (menu, L"Zoom out", 'O', menu_cb_zoomOut);
 	EditorMenu_addCommand (menu, L"Zoom to selection", 'N', menu_cb_zoomToSelection);
-	EditorMenu_addCommand (menu, L"Scroll page back", motif_PAGE_UP, menu_cb_pageUp);
-	EditorMenu_addCommand (menu, L"Scroll page forward", motif_PAGE_DOWN, menu_cb_pageDown);
+	EditorMenu_addCommand (menu, L"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
+	EditorMenu_addCommand (menu, L"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 }
 
 static void createMenuItems_view_audio (I, EditorMenu menu) {
 	iam (FunctionEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- play --", 0, 0);
-	EditorMenu_addCommand (menu, L"Audio:", motif_INSENSITIVE, menu_cb_play /* dummy */);
+	EditorMenu_addCommand (menu, L"Audio:", GuiMenu_INSENSITIVE, menu_cb_play /* dummy */);
 	EditorMenu_addCommand (menu, L"Play...", 0, menu_cb_play);
-	EditorMenu_addCommand (menu, L"Play or stop", motif_TAB, menu_cb_playOrStop);
-	EditorMenu_addCommand (menu, L"Play window", motif_SHIFT + motif_TAB, menu_cb_playWindow);
-	EditorMenu_addCommand (menu, L"Interrupt playing", motif_ESCAPE, menu_cb_interruptPlaying);
+	EditorMenu_addCommand (menu, L"Play or stop", GuiMenu_TAB, menu_cb_playOrStop);
+	EditorMenu_addCommand (menu, L"Play window", GuiMenu_SHIFT + GuiMenu_TAB, menu_cb_playWindow);
+	EditorMenu_addCommand (menu, L"Interrupt playing", GuiMenu_ESCAPE, menu_cb_interruptPlaying);
 }
 
 static void createMenuItems_view (I, EditorMenu menu) {
@@ -976,7 +980,7 @@ static void createMenuItems_query (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"-- query selection --", 0, 0);
 	EditorMenu_addCommand (menu, L"Get start of selection", 0, menu_cb_getB);
 	EditorMenu_addCommand (menu, L"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
-	EditorMenu_addCommand (menu, L"Get cursor", motif_F6, menu_cb_getCursor);
+	EditorMenu_addCommand (menu, L"Get cursor", GuiMenu_F6, menu_cb_getCursor);
 	EditorMenu_addCommand (menu, L"Get end of selection", 0, menu_cb_getE);
 	EditorMenu_addCommand (menu, L"Get selection length", 0, menu_cb_getSelectionDuration);
 }
@@ -1000,21 +1004,21 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Select", L"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveBby);
 	Editor_addCommand (me, L"Select", L"Move end of selection by...", 0, menu_cb_moveEby);
 	/*Editor_addCommand (me, L"Select", L"Move cursor back by half a second", motif_, menu_cb_moveCursorBy);*/
-	Editor_addCommand (me, L"Select", L"Select earlier", motif_UP_ARROW, menu_cb_selectEarlier);
-	Editor_addCommand (me, L"Select", L"Select later", motif_DOWN_ARROW, menu_cb_selectLater);
-	Editor_addCommand (me, L"Select", L"Move start of selection left", motif_SHIFT + motif_UP_ARROW, menu_cb_moveBleft);
+	Editor_addCommand (me, L"Select", L"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
+	Editor_addCommand (me, L"Select", L"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
+	Editor_addCommand (me, L"Select", L"Move start of selection left", GuiMenu_SHIFT + GuiMenu_UP_ARROW, menu_cb_moveBleft);
 	Editor_addCommand (me, L"Select", L"Move begin of selection left", Editor_HIDDEN, menu_cb_moveBleft);
-	Editor_addCommand (me, L"Select", L"Move start of selection right", motif_SHIFT + motif_DOWN_ARROW, menu_cb_moveBright);
+	Editor_addCommand (me, L"Select", L"Move start of selection right", GuiMenu_SHIFT + GuiMenu_DOWN_ARROW, menu_cb_moveBright);
 	Editor_addCommand (me, L"Select", L"Move begin of selection right", Editor_HIDDEN, menu_cb_moveBright);
-	Editor_addCommand (me, L"Select", L"Move end of selection left", motif_COMMAND + motif_UP_ARROW, menu_cb_moveEleft);
-	Editor_addCommand (me, L"Select", L"Move end of selection right", motif_COMMAND + motif_DOWN_ARROW, menu_cb_moveEright);
+	Editor_addCommand (me, L"Select", L"Move end of selection left", GuiMenu_COMMAND + GuiMenu_UP_ARROW, menu_cb_moveEleft);
+	Editor_addCommand (me, L"Select", L"Move end of selection right", GuiMenu_COMMAND + GuiMenu_DOWN_ARROW, menu_cb_moveEright);
 
 	Editor_addCommand (me, L"Help", L"Intro", 0, menu_cb_intro);
 }
 
 static void createChildren (I) {
 	iam (FunctionEditor);
-	Widget form, button;
+	Widget form;
 	int x = BUTTON_X;
 
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
@@ -1027,26 +1031,17 @@ static void createChildren (I) {
 
 	/***** Create zoom buttons. *****/
 
-	button = XtVaCreateManagedWidget ("all", xmPushButtonWidgetClass, form,
-		XmNx, x,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, gui_cb_showAll, (XtPointer) me);
-	button = XtVaCreateManagedWidget ("in", xmPushButtonWidgetClass, form,
-		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomIn, (XtPointer) me);
-	button = XtVaCreateManagedWidget ("out", xmPushButtonWidgetClass, form,
-		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomOut, (XtPointer) me);
-	button = XtVaCreateManagedWidget ("sel", xmPushButtonWidgetClass, form,
-		XmNx, x += BUTTON_WIDTH + BUTTON_SPACING,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 2, XmNwidth, BUTTON_WIDTH, NULL);
-	XtAddCallback (button, XmNactivateCallback, gui_cb_zoomToSelection, (XtPointer) me);
+	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+		L"all", gui_button_cb_showAll, me, 0);
+	x += BUTTON_WIDTH + BUTTON_SPACING;
+	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+		L"in", gui_button_cb_zoomIn, me, 0);
+	x += BUTTON_WIDTH + BUTTON_SPACING;
+	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+		L"out", gui_button_cb_zoomOut, me, 0);
+	x += BUTTON_WIDTH + BUTTON_SPACING;
+	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+		L"sel", gui_button_cb_zoomToSelection, me, 0);
 
 	/***** Create scroll bar. *****/
 
@@ -1513,7 +1508,7 @@ static void gui_cb_draw (GUI_ARGS) {
 		drawNow (me);
 }
 
-static void do_buttonPress (FunctionEditor me, MotifEvent event) {
+static void do_buttonPress (FunctionEditor me, GuiEvent event) {
 	double xWC, yWC;
 	#ifdef UNIX
 		int leftHanded = FALSE;
@@ -1521,16 +1516,16 @@ static void do_buttonPress (FunctionEditor me, MotifEvent event) {
 		XGetPointerMapping (XtDisplay (my shell), map, 3);
 		if (map [0] == 3) leftHanded = TRUE;
 	#endif
-	my shiftKeyPressed = MotifEvent_shiftKeyPressed (event);
+	my shiftKeyPressed = GuiEvent_shiftKeyPressed (event);
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
-	Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
+	Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
 
 	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   /* In signal region? */
 		int needsUpdate;
 		Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
-		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
+		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
 		if (xWC < my startWindow) xWC = my startWindow;
 		if (xWC > my endWindow) xWC = my endWindow;
 #if defined (macintosh)
@@ -1576,7 +1571,7 @@ static void do_buttonPress (FunctionEditor me, MotifEvent event) {
 	}
 }
 
-static void do_keyPress (FunctionEditor me, MotifEvent event)
+static void do_keyPress (FunctionEditor me, GuiEvent event)
 {
 #if defined (macintosh)
 	enum { charCodeMask = 0x000000FF };
@@ -1592,10 +1587,10 @@ static void do_keyPress (FunctionEditor me, MotifEvent event)
 
 static void gui_cb_input (GUI_ARGS) {
 	GUI_IAM (FunctionEditor);
-	MotifEvent event = MotifEvent_fromCallData (call);
-	if (MotifEvent_isButtonPressedEvent (event))
+	GuiEvent event = GuiEvent_fromCallData (call);
+	if (GuiEvent_isButtonPressedEvent (event))
 		do_buttonPress (me, event);
-	else if (MotifEvent_isKeyPressedEvent (event))
+	else if (GuiEvent_isKeyPressedEvent (event))
 		do_keyPress (me, event);
 }
 

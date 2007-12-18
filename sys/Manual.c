@@ -346,58 +346,73 @@ static void search (Manual me, const wchar_t *query) {
 }
 
 void Manual_search (Manual me, const wchar_t *query) {
-	GuiText_setStringW (my searchText, query);
+	GuiText_setString (my searchText, query);
 	search (me, query);
 }
 
-MOTIF_CALLBACK (cb_home)
+static void gui_button_cb_home (Widget widget, I) {
+	(void) widget;
 	iam (Manual);
 	ManPages pages = my data;
 	long iHome = ManPages_lookUp (pages, L"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
-MOTIF_CALLBACK_END
+}
  
-MOTIF_CALLBACK (cb_record)
+static void gui_button_cb_record (Widget widget, I) {
+	(void) widget;
 	iam (Manual);
 	ManPages manPages = my data;
 	ManPage manPage = my path < 1 ? NULL : manPages -> pages -> item [my path];
-	XtSetSensitive (my recordButton, False);
-	XtSetSensitive (my playButton, False);
-	XtSetSensitive (my publishButton, False);
+	GuiObject_setSensitive (my recordButton, false);
+	GuiObject_setSensitive (my playButton, false);
+	GuiObject_setSensitive (my publishButton, false);
 	XmUpdateDisplay (my shell);
 	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
-	XtSetSensitive (my recordButton, True);
-	XtSetSensitive (my playButton, True);
-	XtSetSensitive (my publishButton, True);
-MOTIF_CALLBACK_END
+	GuiObject_setSensitive (my recordButton, true);
+	GuiObject_setSensitive (my playButton, true);
+	GuiObject_setSensitive (my publishButton, true);
+}
 
-MOTIF_CALLBACK (cb_play)
+static void gui_button_cb_play (Widget widget, I) {
+	(void) widget;
 	iam (Manual);
-	XtSetSensitive (my recordButton, False);
-	XtSetSensitive (my playButton, False);
-	XtSetSensitive (my publishButton, False);
+	GuiObject_setSensitive (my recordButton, false);
+	GuiObject_setSensitive (my playButton, false);
+	GuiObject_setSensitive (my publishButton, false);
 	XmUpdateDisplay (my shell);
 	Melder_play ();
-	XtSetSensitive (my recordButton, True);
-	XtSetSensitive (my playButton, True);
-	XtSetSensitive (my publishButton, True);
-MOTIF_CALLBACK_END
+	GuiObject_setSensitive (my recordButton, true);
+	GuiObject_setSensitive (my playButton, true);
+	GuiObject_setSensitive (my publishButton, true);
+}
 
-MOTIF_CALLBACK (cb_publish)
-	Melder_publishPlayed ();
-MOTIF_CALLBACK_END
-
-MOTIF_CALLBACK (cb_search)
+static void gui_button_cb_publish (Widget widget, I) {
+	(void) widget;
 	iam (Manual);
-	wchar_t *query = GuiText_getStringW (my searchText);
+	(void) me;
+	Melder_publishPlayed ();
+}
+
+static void do_search (Manual me) {
+	wchar_t *query = GuiText_getString (my searchText);
 	search (me, query);
 	Melder_free (query);
-MOTIF_CALLBACK_END
+}
+
+static void gui_button_cb_search (Widget widget, I) {
+	(void) widget;
+	iam (Manual);
+	do_search (me);
+}
+
+static void gui_cb_search (GUI_ARGS) {
+	GUI_IAM (Manual);
+	do_search (me);
+}
 
 static void createChildren (I) {
 	iam (Manual);
 	ManPages pages = my data;   /* Has been installed here by Editor_init (). */
-	Widget button;
 #if defined (macintosh)
 	#define STRING_SPACING 8
 #else
@@ -405,32 +420,29 @@ static void createChildren (I) {
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (Manual) createChildren (me);
-	my homeButton = XtVaCreateManagedWidget ("Home", xmPushButtonWidgetClass, my dialog,
-		XmNx, 104, XmNy, y, XmNheight, height, XmNwidth, 64, NULL);
-	XtAddCallback (my homeButton, XmNactivateCallback, cb_home, (XtPointer) me);
+	my homeButton = GuiButton_createShown (my dialog, 104, 168, y, y + height,
+		L"Home", gui_button_cb_home, me, 0);
 	if (pages -> dynamic) {
 		XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
 		XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
-		my recordButton = XtVaCreateManagedWidget ("Record", xmPushButtonWidgetClass, my dialog,
-			XmNx, 4, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, NULL);
-		XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
-		my playButton = XtVaCreateManagedWidget ("Play", xmPushButtonWidgetClass, my dialog,
-			XmNx, 85, XmNy, y+height+8, XmNheight, height, XmNwidth, 75, NULL);
-		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
-		my publishButton = XtVaCreateManagedWidget ("Copy last played to list", xmPushButtonWidgetClass, my dialog,
-			XmNx, 166, XmNy, y+height+8, XmNheight, height, XmNwidth, 175, NULL);
-		XtAddCallback (my publishButton, XmNactivateCallback, cb_publish, (XtPointer) me);
+		my recordButton = GuiButton_createShown (my dialog, 4, 79, y+height+8, y+height+8 + height,
+			L"Record", gui_button_cb_record, me, 0);
+		my playButton = GuiButton_createShown (my dialog, 85, 160, y+height+8, y+height+8 + height,
+			L"Play", gui_button_cb_play, me, 0);
+		my publishButton = GuiButton_createShown (my dialog, 166, 166 + 175, y+height+8, y+height+8 + height, 
+			L"Copy last played to list", gui_button_cb_publish, me, 0);
 	}
-	button = XtVaCreateManagedWidget ("Search:", xmPushButtonWidgetClass, my dialog,
-		XmNx, 274, XmNy, y, XmNheight, height, XmNwidth, 63, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_search, (XtPointer) me);
-	#ifdef _WIN32
-	/* BUG: activateCallback should work for texts. */
-	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
-	#endif
+	GuiButton_createShown (my dialog, 274, 274 + 63, y, y + height,
+		L"Search:", gui_button_cb_search, me,
+		#ifdef _WIN32
+			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
+		#else
+			0
+		#endif
+		);
 	my searchText = XtVaCreateManagedWidget ("searchText", xmTextFieldWidgetClass, my dialog,
 		XmNx, 274+63 + STRING_SPACING, XmNy, y, XmNwidth, 452 - (274+63) - 2, NULL);
-	XtAddCallback (my searchText, XmNactivateCallback, cb_search, (XtPointer) me);
+	XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
 }
 
 DIRECT (Manual, cb_help)

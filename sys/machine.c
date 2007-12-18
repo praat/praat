@@ -172,7 +172,7 @@ static char *xresources [200] = {
 	"*raam*XmList.visibleItemCount: 1",
 	"*raam*XmList.selectionPolicy: extended_select",
 	"*raam*XmList.automaticSelection: false",
-	"*raam*XmList.listSizePolicy: constant",
+	"*listSizePolicy: constant",
 	"*raam.menuWindow*empty.labelString:",
 	"*Movie.dialogTitle: Movie",
 	"*Movie.movingArea.width: 300",

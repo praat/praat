@@ -34,6 +34,8 @@
  * pb 2007/06/19 removed some
  * pb 2007/08/12 wchar_t in helpProc
  * pb 2007/12/02 enums
+ * pb 2007/12/13 Melder_writeToConsole
+ * pb 2007/12/18 Gui
  */
 
 #include <math.h>
@@ -98,11 +100,15 @@ static void defaultSearch (void) {
 }
 
 static void defaultWarning (wchar_t *message) {
-	fprintf (stderr, "Warning: %s\n", Melder_peekWcsToUtf8 (message));
+	Melder_writeToConsole (L"Warning: ", true);
+	Melder_writeToConsole (message, true);
+	Melder_writeToConsole (L"\n", true);
 }
 
 static void defaultFatal (wchar_t *message) {
-	fprintf (stderr, "Fatal error: %s\n", Melder_peekWcsToUtf8 (message));
+	Melder_writeToConsole (L"Fatal error: ", true);
+	Melder_writeToConsole (message, true);
+	Melder_writeToConsole (L"\n", true);
 }
 
 static int defaultPublish (void *anything) {
@@ -293,9 +299,8 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 					NULL);
 				XtManageChild (scale);
 				#if ! defined (macintosh)
-					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 170, XmNwidth, 400, NULL);
-					XtManageChild (cancelButton);
+					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
+						L"Interrupt", NULL, NULL, 0);
 				#endif
 			}
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
@@ -389,9 +394,8 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 					NULL);
 				XtManageChild (scale);
 				#if ! defined (macintosh)
-					cancelButton = XmCreatePushButton (dia, "Interrupt", NULL, 0);
-					XtVaSetValues (cancelButton, XmNy, 170, XmNwidth, 400, NULL);
-					XtManageChild (cancelButton);
+					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
+						L"Interrupt", NULL, NULL, 0);
 				#endif
 				drawingArea = XmCreateDrawingArea (dia, "drawingArea", NULL, 0);
 				XtVaSetValues (drawingArea, XmNy, 230, XmNwidth, 400, XmNheight, 200,
@@ -648,9 +652,9 @@ static Widget makeMessage (unsigned char dialogType, const char *resourceName, c
 	return dialog;
 }
 
-static int pause_continued, pause_stopped;
-MOTIF_CALLBACK (pause_continue_cb) pause_continued = 1; MOTIF_CALLBACK_END
-MOTIF_CALLBACK (pause_stop_cb) pause_stopped = 1; MOTIF_CALLBACK_END
+static bool pause_continued, pause_stopped;
+static void gui_button_cb_continue (Widget widget, I) { (void) widget; (void) void_me; pause_continued = true; }
+static void gui_button_cb_stop (Widget widget, I) { (void) widget; (void) void_me; pause_stopped = true; }
 static int motif_pause (wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
@@ -666,14 +670,10 @@ static int motif_pause (wchar_t *message) {
 		XtManageChild (text);
 		buttons = XmCreateRowColumn (rc, "rc", NULL, 0);
 		XtVaSetValues (buttons, XmNorientation, XmHORIZONTAL, NULL);
-		continueButton = XmCreatePushButton (buttons, "Continue", NULL, 0);
-		XtVaSetValues (continueButton, XmNx, 10, XmNwidth, 300, NULL);
-		XtAddCallback (continueButton, XmNactivateCallback, pause_continue_cb, (XtPointer) dia);
-		XtManageChild (continueButton);
-		stopButton = XmCreatePushButton (buttons, "Stop", NULL, 0);
-		XtVaSetValues (stopButton, XmNx, 320, XmNwidth, 60, NULL);
-		XtAddCallback (stopButton, XmNactivateCallback, pause_stop_cb, (XtPointer) dia);
-		XtManageChild (stopButton);
+		continueButton = GuiButton_createShown (buttons, 10, 310, Gui_AUTOMATIC, Gui_AUTOMATIC,
+			L"Continue", gui_button_cb_continue, dia, 0);
+		stopButton = GuiButton_createShown (buttons, 320, 380, Gui_AUTOMATIC, Gui_AUTOMATIC,
+			L"Stop", gui_button_cb_stop, dia, 0);
 		XtManageChild (buttons);
 		XtManageChild (rc);
 	}

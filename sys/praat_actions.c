@@ -581,7 +581,7 @@ void praat_actions_show (void) {
 						parent = praat_writeMenu;
 						if (! praat_writeMenuSeparator) {
 							if (writeMenuGoingToSeparate)
-								praat_writeMenuSeparator = motif_addSeparator (parent);
+								praat_writeMenuSeparator = GuiMenu_addSeparator (parent);
 							else if (wcsequ (my title, L"Write to binary file..."))
 								writeMenuGoingToSeparate = TRUE;
 						}
@@ -609,7 +609,7 @@ void praat_actions_show (void) {
 				} else if (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
 					if (writeMenuGoingToSeparate) {
 						if (! praat_writeMenuSeparator)
-							praat_writeMenuSeparator = motif_addSeparator (praat_writeMenu);
+							praat_writeMenuSeparator = GuiMenu_addSeparator (praat_writeMenu);
 						XtManageChild (praat_writeMenuSeparator);
 					} else if (wcsequ (my title, L"Write to binary file...")) {
 						writeMenuGoingToSeparate = TRUE;
@@ -652,7 +652,7 @@ void praat_actions_show (void) {
 					Widget cascadeButton;
 					if (my depth == 0) {
 						my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
-						currentSubmenu1 = motif_addMenu2 (my button, my title, 0, & cascadeButton);
+						currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
 						#if defined (_WIN32)
 							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
 							XtVaSetValues (my button, XmNheight, 21, XmNwidth, BUTTON_WIDTH - 20, NULL);
@@ -661,7 +661,7 @@ void praat_actions_show (void) {
 							XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, NULL);
 						#endif
 					} else {
-						currentSubmenu2 = motif_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
+						currentSubmenu2 = GuiMenuBar_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
 					}
 					XtManageChild (my button);
 				} else {
@@ -701,9 +701,9 @@ void praat_actions_createDynamicMenu (Widget form, int width) {
 		(void) width;
 		XtVaSetValues (praat_dynamicMenuWindow,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
-			XmNleftAttachment, XmATTACH_POSITION, XmNleftPosition, 50,
-			XmNrightAttachment, XmATTACH_POSITION, XmNrightPosition, 100,
+			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 0,
+			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
+			XmNwidth, width,
 			NULL);
 	#else
 		XtVaSetValues (praat_dynamicMenuWindow,

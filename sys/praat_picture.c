@@ -1472,7 +1472,7 @@ void praat_picture_init (void) {
 	if (! theCurrentPraat -> batch) {
 		char pictureWindowTitle [100];
 		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
-		resolution = motif_getResolution (theCurrentPraat -> topShell);
+		resolution = Gui_getResolution (theCurrentPraat -> topShell);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
@@ -1488,7 +1488,7 @@ void praat_picture_init (void) {
 			x = screenWidth - width - 10;
 			width += margin * 2;
 		#endif
-		shell = motif_addShell (theCurrentPraat -> topShell, 0);
+		shell = Gui_addShell (theCurrentPraat -> topShell, 0);
 		sprintf (pictureWindowTitle, "%s picture", praatP.title);
 		XtVaSetValues (shell, XmNwidth, width, XmNheight, height,
 			XmNdeleteResponse, XmUNMAP, XmNiconName, L"Picture", XmNtitle, pictureWindowTitle,
@@ -1498,17 +1498,17 @@ void praat_picture_init (void) {
 		#ifdef UNIX
 			XtVaSetValues (dialog, XmNhighlightThickness, 1, NULL);
 		#endif
-		menuBar = motif_addMenuBar (dialog);
+		menuBar = Gui_addMenuBar (dialog);
 	}
 	if (! theCurrentPraat -> batch) {
-		fileMenu = motif_addMenu (menuBar, L"File", 0);
-		editMenu = motif_addMenu (menuBar, L"Edit", 0);
-		marginsMenu = motif_addMenu (menuBar, L"Margins", 0);
-		worldMenu = motif_addMenu (menuBar, L"World", 0);
-		selectMenu = motif_addMenu (menuBar, L"Select", 0);
-		penMenu = motif_addMenu (menuBar, L"Pen", 0);
-		fontMenu = motif_addMenu (menuBar, L"Font", 0);
-		helpMenu = motif_addMenu (menuBar, L"Help", 0);
+		fileMenu = GuiMenuBar_addMenu (menuBar, L"File", 0);
+		editMenu = GuiMenuBar_addMenu (menuBar, L"Edit", 0);
+		marginsMenu = GuiMenuBar_addMenu (menuBar, L"Margins", 0);
+		worldMenu = GuiMenuBar_addMenu (menuBar, L"World", 0);
+		selectMenu = GuiMenuBar_addMenu (menuBar, L"Select", 0);
+		penMenu = GuiMenuBar_addMenu (menuBar, L"Pen", 0);
+		fontMenu = GuiMenuBar_addMenu (menuBar, L"Font", 0);
+		helpMenu = GuiMenuBar_addMenu (menuBar, L"Help", 0);
 	}
 
 	praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);

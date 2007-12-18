@@ -77,28 +77,10 @@ static int lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu
 	return 0;   /* Not found. */
 }
 
-MOTIF_CALLBACK (cb_menu)
-/*
- *	Convert a Motif callback into a Ui callback, and catch modifier keys and special mouse buttons.
- *	Call that callback!
- *	Catch the error queue for menu commands without dots (...).
- */
+static void do_menu (I, unsigned long modified) {
 	int (*callback) (Any, void *) = (int (*) (Any, void *)) void_me;
-	int i;
-#if defined (macintosh)
-	XEvent *event = (XEvent *) call;
-	enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
-	int modified = event -> what == mouseDown &&
-		(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
-#elif defined (_WIN32)
-	int modified = FALSE;
-#else
-	XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
-	int modified = event -> type == ButtonPress &&
-		((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
-#endif
 	Melder_assert (callback != NULL);
-	for (i = 1; i <= theNumberOfCommands; i ++) {
+	for (int i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my callback == callback) {
 			if (my title && ! wcsequ (my title, L"History to script...")) {
@@ -116,7 +98,34 @@ MOTIF_CALLBACK (cb_menu)
 			praat_updateSelection (); return;
 		}
 	}
-MOTIF_CALLBACK_END
+}
+
+static void gui_button_cb_menu (Widget widget, I) {
+	(void) widget;
+	do_menu (void_me, 0);   // BUG: should recognize modifier keys
+}
+
+static void gui_cb_menu (GUI_ARGS) {
+/*
+ *	Convert a Motif callback into a Ui callback, and catch modifier keys and special mouse buttons.
+ *	Call that callback!
+ *	Catch the error queue for menu commands without dots (...).
+ */
+	(void) w;
+#if defined (macintosh)
+	XEvent *event = (XEvent *) call;
+	enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
+	int modified = event -> what == mouseDown &&
+		(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
+#elif defined (_WIN32)
+	int modified = FALSE;
+#else
+	XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
+	int modified = event -> type == ButtonPress &&
+		((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
+#endif
+	do_menu (void_me, modified);
+}
 
 static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 	return
@@ -211,11 +220,11 @@ if (! parent) return NULL;
 		 */
 
 		if (title == NULL || title [0] == '-') {
-			theCommands [position]. button = motif_addSeparator (parent);
+			theCommands [position]. button = GuiMenu_addSeparator (parent);
 		} else if (callback == NULL) {
-			(void) motif_addMenu2 (parent, title, 0, & theCommands [position]. button);   /* Cascade button with submenu. */
+			(void) GuiMenuBar_addMenu2 (parent, title, 0, & theCommands [position]. button);   /* Cascade button with submenu. */
 		} else {
-			theCommands [position]. button = motif_addItem (parent, title, motifFlags, cb_menu, (void *) callback);
+			theCommands [position]. button = GuiMenu_addItem (parent, title, motifFlags, gui_cb_menu, (void *) callback);
 		}
 		if (hidden) XtUnmanageChild (theCommands [position]. button);
 	}
@@ -303,11 +312,11 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 			/* WHAT TO PUT THERE?
 			 */
 			if (title [0] == '\0' || title [0] == '-') {
-				theCommands [position]. button = motif_addSeparator (parent);
+				theCommands [position]. button = GuiMenu_addSeparator (parent);
 			} else if (script [0] == '\0') {
-				(void) motif_addMenu2 (parent, title, 0, & theCommands [position]. button);
+				(void) GuiMenuBar_addMenu2 (parent, title, 0, & theCommands [position]. button);
 			} else {
-				theCommands [position]. button = motif_addItem (parent, title, 0, cb_menu, (void *) theCommands [position]. script);   /* Not just "script"!! */
+				theCommands [position]. button = GuiMenu_addItem (parent, title, 0, gui_cb_menu, (void *) theCommands [position]. script);   /* Not just "script"!! */
 			}
 		}
 	}
@@ -377,12 +386,10 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 	if (theCurrentPraat -> batch) {
 		my button = NULL;
 	} else {
-		Widget button = my button = XmCreatePushButton (parent, Melder_peekWcsToUtf8 (title), 0, 0);
-		XtVaSetValues (button, XmNx, x,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y, XmNwidth, 76, NULL);
-		XtSetSensitive (button, False);
-		XtAddCallback (button, XmNactivateCallback, cb_menu, (XtPointer) callback);
-		XtManageChild (button);
+		Widget button = my button = GuiButton_create (parent, x, x + 76, Gui_AUTOMATIC, -y,
+			title, gui_button_cb_menu, callback, 0);
+		GuiObject_setSensitive (button, false);
+		GuiObject_show (button);
 	}
 	my executable = False;
 }

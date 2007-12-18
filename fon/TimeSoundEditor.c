@@ -297,7 +297,7 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 
 static void createMenuItems_file_draw (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
 	if (my sound.data || my longSound.data) {
 		EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
 		my drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
@@ -306,7 +306,7 @@ static void createMenuItems_file_draw (I, EditorMenu menu) {
 
 static void createMenuItems_file_extract (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
 	if (my sound.data || my longSound.data) {
 		my publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
 			EditorMenu_addCommand (menu, L"Extract sound selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
@@ -325,7 +325,7 @@ static void createMenuItems_file_extract (I, EditorMenu menu) {
 
 static void createMenuItems_file_write (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
-	EditorMenu_addCommand (menu, L"Write to disk:", motif_INSENSITIVE, menu_cb_WriteWav /* dummy */);
+	EditorMenu_addCommand (menu, L"Write to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
 	if (my sound.data || my longSound.data) {
 		my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
@@ -400,7 +400,7 @@ static void createMenuItems_view (I, EditorMenu menu) {
 static void createMenuItems_view_sound (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	(void) me;
-	EditorMenu_addCommand (menu, L"Sound autoscaling", motif_CHECKABLE | (preferences.sound.autoscaling ? motif_CHECKED : 0), menu_cb_autoscaling);
+	EditorMenu_addCommand (menu, L"Sound autoscaling", GuiMenu_CHECKABLE | (preferences.sound.autoscaling ? GuiMenu_CHECKED : 0), menu_cb_autoscaling);
 	EditorMenu_addCommand (menu, L"-- sound view --", 0, 0);
 }
 

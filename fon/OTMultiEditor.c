@@ -23,6 +23,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 constraint plasticity
+ * pb 2007/12/14 Gui
  */
 
 #include "OTMultiEditor.h"
@@ -95,8 +96,8 @@ DO
 	Editor_save (me, L"Learn one");
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = GuiText_getStringW (my form1Text);
-	my form2 = GuiText_getStringW (my form2Text);
+	my form1 = GuiText_getString (my form1Text);
+	my form2 = GuiText_getString (my form2Text);
 	OTMulti_learnOne (my data, my form1, my form2,
 		GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 	iferror return 0;
@@ -128,18 +129,27 @@ END
 
 DIRECT (OTMultiEditor, cb_OTLearningTutorial) Melder_help (L"OT learning"); END
 
-MOTIF_CALLBACK (cb_limit)
-	iam (OTMultiEditor);
+static void do_limit (OTMultiEditor me) {
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = GuiText_getStringW (my form1Text);
-	my form2 = GuiText_getStringW (my form2Text);
+	my form1 = GuiText_getString (my form1Text);
+	my form2 = GuiText_getString (my form2Text);
 	Graphics_updateWs (my g);
-MOTIF_CALLBACK_END
+}
+
+static void gui_button_cb_limit (Widget widget, I) {
+	(void) widget;
+	iam (OTMultiEditor);
+	do_limit (me);
+}
+
+static void gui_cb_limit (GUI_ARGS) {
+	GUI_IAM (OTMultiEditor);
+	do_limit (me);
+}
 
 static void createChildren (I) {
 	iam (OTMultiEditor);
-	Widget button;
 #if defined (macintosh)
 	#define STRING_SPACING 8
 #else
@@ -147,19 +157,20 @@ static void createChildren (I) {
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (OTMultiEditor) createChildren (me);
-	button = XtVaCreateManagedWidget ("Partial forms:", xmPushButtonWidgetClass, my dialog,
-		XmNx, 4, XmNy, y, XmNheight, height, XmNwidth, 120, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_limit, (XtPointer) me);
-	#ifdef _WIN32
-	/* BUG: activateCallback should work for texts. */
-	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
-	#endif
+	GuiButton_createShown (my dialog, 4, 124, y, y + height,
+		L"Partial forms:", gui_button_cb_limit, me,
+		#ifdef _WIN32
+			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
+		#else
+			0
+		#endif
+		);
 	my form1Text = XtVaCreateManagedWidget ("form1Text", xmTextFieldWidgetClass, my dialog,
 		XmNx, 124 + STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
-	XtAddCallback (my form1Text, XmNactivateCallback, cb_limit, (XtPointer) me);
+	XtAddCallback (my form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
 	my form2Text = XtVaCreateManagedWidget ("form2Text", xmTextFieldWidgetClass, my dialog,
 		XmNx, 274 + 2 * STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
-	XtAddCallback (my form2Text, XmNactivateCallback, cb_limit, (XtPointer) me);
+	XtAddCallback (my form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
 }
 
 static void createMenus (I) {

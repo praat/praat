@@ -264,7 +264,7 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
  * which would bring about a change in device coordinates.
  * On Xwin and Win, we are not interested in moves, because we draw in widget coordinates.
  */
-MOTIF_CALLBACK (cb_move)
+static void cb_move (GUI_ARGS) {
 	iam (GraphicsScreen);
 	Dimension width, height, marginWidth, marginHeight;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
@@ -278,7 +278,7 @@ MOTIF_CALLBACK (cb_move)
 	Graphics_setWsViewport ((Graphics) me, marginWidth /* Left x value in widget coordinates */,
 		width - marginWidth, marginHeight, height - marginHeight);
 	Graphics_updateWs ((Graphics) me);
-MOTIF_CALLBACK_END
+}
 #endif
 
 Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget */
@@ -293,9 +293,9 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#endif
 	if (! Graphics_init (me)) return 0;
 	#ifdef macintosh
-		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) GetWindowPort ((WindowRef) XtWindow (w)), motif_getResolution (w));
+		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) GetWindowPort ((WindowRef) XtWindow (w)), Gui_getResolution (w));
 	#else
-		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), motif_getResolution (w));
+		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), Gui_getResolution (w));
 	#endif
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);

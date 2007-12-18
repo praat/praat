@@ -28,7 +28,7 @@
 #include "GuiP.h"
 #include "UnicodeData.h"
 
-void GuiWindow_setTitleW (Widget me, const wchar_t *title) {
+void GuiWindow_setTitle (Widget me, const wchar_t *title) {
 	#if mac
 		SetWindowTitleWithCFString (my nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win

@@ -242,7 +242,7 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Pitch voicing threshold: ", Melder_double (my pitch.voicingThreshold), L" (periodic power / total power)");
 	MelderInfo_writeLine3 (L"Pitch octave cost: ", Melder_double (my pitch.octaveCost), L" per octave");
 	MelderInfo_writeLine3 (L"Pitch octave jump cost: ", Melder_double (my pitch.octaveJumpCost), L" per octave");
-	MelderInfo_writeLine3 (L"Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost), L" Hertz");
+	MelderInfo_writeLine2 (L"Pitch voiced/unvoiced cost: ", Melder_double (my pitch.voicedUnvoicedCost));
 	/* Intensity flag: */
 	MelderInfo_writeLine2 (L"Intensity show: ", Melder_boolean (my intensity.show));
 	/* Intensity settings: */
@@ -1583,7 +1583,7 @@ static void createMenuItems_view_sound (I, EditorMenu menu) {
 static void createMenuItems_view_sound_analysis (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
-	EditorMenu_addCommand (menu, L"Analysis window:", motif_INSENSITIVE, menu_cb_showAnalyses);
+	EditorMenu_addCommand (menu, L"Analysis window:", GuiMenu_INSENSITIVE, menu_cb_showAnalyses);
 	EditorMenu_addCommand (menu, L"Show analyses...", 0, menu_cb_showAnalyses);
 	EditorMenu_addCommand (menu, L"Time step settings...", 0, menu_cb_timeStepSettings);
 	EditorMenu_addCommand (menu, L"-- sound analysis --", 0, 0);
@@ -1604,10 +1604,10 @@ static void createMenuItems_query_log (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Log settings...", 0, menu_cb_logSettings);
 	EditorMenu_addCommand (menu, L"Delete log file 1", 0, menu_cb_deleteLogFile1);
 	EditorMenu_addCommand (menu, L"Delete log file 2", 0, menu_cb_deleteLogFile2);
-	EditorMenu_addCommand (menu, L"Log 1", motif_F12, menu_cb_log1);
-	EditorMenu_addCommand (menu, L"Log 2", motif_F12 + motif_SHIFT, menu_cb_log2);
-	EditorMenu_addCommand (menu, L"Log script 3 (...)", motif_F12 + motif_OPTION, menu_cb_logScript3);
-	EditorMenu_addCommand (menu, L"Log script 4 (...)", motif_F12 + motif_COMMAND, menu_cb_logScript4);
+	EditorMenu_addCommand (menu, L"Log 1", GuiMenu_F12, menu_cb_log1);
+	EditorMenu_addCommand (menu, L"Log 2", GuiMenu_F12 + GuiMenu_SHIFT, menu_cb_log2);
+	EditorMenu_addCommand (menu, L"Log script 3 (...)", GuiMenu_F12 + GuiMenu_OPTION, menu_cb_logScript3);
+	EditorMenu_addCommand (menu, L"Log script 4 (...)", GuiMenu_F12 + GuiMenu_COMMAND, menu_cb_logScript4);
 }
 
 static void createMenus_analysis (I) {
@@ -1616,81 +1616,81 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Spectrum", 0);
 	my spectrogramToggle = EditorMenu_addCommand (menu, L"Show spectrogram",
-		motif_CHECKABLE | (preferences.spectrogram.show ? motif_CHECKED : 0), menu_cb_showSpectrogram);
+		GuiMenu_CHECKABLE | (preferences.spectrogram.show ? GuiMenu_CHECKED : 0), menu_cb_showSpectrogram);
 	EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
 	EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
 	EditorMenu_addCommand (menu, L"-- spectrum query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
-	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", motif_F7, menu_cb_getSpectralPowerAtCursorCross);
+	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", GuiMenu_F7, menu_cb_getSpectralPowerAtCursorCross);
 	our createMenuItems_spectrum_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
 	EditorMenu_addCommand (menu, L"View spectral slice", 'L', menu_cb_viewSpectralSlice);
 
 	menu = Editor_addMenu (me, L"Pitch", 0);
 	my pitchToggle = EditorMenu_addCommand (menu, L"Show pitch",
-		motif_CHECKABLE | (preferences.pitch.show ? motif_CHECKED : 0), menu_cb_showPitch);
+		GuiMenu_CHECKABLE | (preferences.pitch.show ? GuiMenu_CHECKED : 0), menu_cb_showPitch);
 	EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
 	EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
 	EditorMenu_addCommand (menu, L"-- pitch query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Pitch listing", 0, menu_cb_pitchListing);
-	EditorMenu_addCommand (menu, L"Get pitch", motif_F5, menu_cb_getPitch);
-	EditorMenu_addCommand (menu, L"Get minimum pitch", motif_F5 + motif_COMMAND, menu_cb_getMinimumPitch);
-	EditorMenu_addCommand (menu, L"Get maximum pitch", motif_F5 + motif_SHIFT, menu_cb_getMaximumPitch);
+	EditorMenu_addCommand (menu, L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
+	EditorMenu_addCommand (menu, L"Get minimum pitch", GuiMenu_F5 + GuiMenu_COMMAND, menu_cb_getMinimumPitch);
+	EditorMenu_addCommand (menu, L"Get maximum pitch", GuiMenu_F5 + GuiMenu_SHIFT, menu_cb_getMaximumPitch);
 	EditorMenu_addCommand (menu, L"-- pitch select --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Select:", motif_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
-	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", motif_COMMAND + motif_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
-	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", motif_COMMAND + motif_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
+	EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
+	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
+	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
 	our createMenuItems_pitch_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- pitch extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
 
 	menu = Editor_addMenu (me, L"Intensity", 0);
 	my intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
-		motif_CHECKABLE | (preferences.intensity.show ? motif_CHECKED : 0), menu_cb_showIntensity);
+		GuiMenu_CHECKABLE | (preferences.intensity.show ? GuiMenu_CHECKED : 0), menu_cb_showIntensity);
 	EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
 	EditorMenu_addCommand (menu, L"-- intensity query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
-	EditorMenu_addCommand (menu, L"Get intensity", motif_F8, menu_cb_getIntensity);
+	EditorMenu_addCommand (menu, L"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
 	our createMenuItems_intensity_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
 
 	menu = Editor_addMenu (me, L"Formant", 0);
 	my formantToggle = EditorMenu_addCommand (menu, L"Show formants",
-		motif_CHECKABLE | (preferences.formant.show ? motif_CHECKED : 0), menu_cb_showFormants);
+		GuiMenu_CHECKABLE | (preferences.formant.show ? GuiMenu_CHECKED : 0), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
 	EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
 	EditorMenu_addCommand (menu, L"-- formant query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Formant listing", 0, menu_cb_formantListing);
-	EditorMenu_addCommand (menu, L"Get first formant", motif_F1, menu_cb_getFirstFormant);
+	EditorMenu_addCommand (menu, L"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
 	EditorMenu_addCommand (menu, L"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
-	EditorMenu_addCommand (menu, L"Get second formant", motif_F2, menu_cb_getSecondFormant);
+	EditorMenu_addCommand (menu, L"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
 	EditorMenu_addCommand (menu, L"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
-	EditorMenu_addCommand (menu, L"Get third formant", motif_F3, menu_cb_getThirdFormant);
+	EditorMenu_addCommand (menu, L"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
 	EditorMenu_addCommand (menu, L"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
-	EditorMenu_addCommand (menu, L"Get fourth formant", motif_F4, menu_cb_getFourthFormant);
+	EditorMenu_addCommand (menu, L"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
 	EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
 	EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
 	EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
 	our createMenuItems_formant_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- formant extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
 
 	menu = Editor_addMenu (me, L"Pulses", 0);
 	my pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
-		motif_CHECKABLE | (preferences.pulses.show ? motif_CHECKED : 0), menu_cb_showPulses);
+		GuiMenu_CHECKABLE | (preferences.pulses.show ? GuiMenu_CHECKED : 0), menu_cb_showPulses);
 	EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
 	EditorMenu_addCommand (menu, L"-- pulses query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", motif_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Voice report", 0, menu_cb_voiceReport);
 	EditorMenu_addCommand (menu, L"Pulse listing", 0, menu_cb_pulseListing);
 	/*
@@ -1708,7 +1708,7 @@ static void createMenus_analysis (I) {
 	*/
 	our createMenuItems_pulses_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- pulses extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", motif_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
 }
 
@@ -1716,7 +1716,7 @@ static void createMenuItems_spectrum_picture (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- spectrum draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_paintVisibleSpectrogram /* dummy */);
 	EditorMenu_addCommand (menu, L"Paint visible spectrogram...", 0, menu_cb_paintVisibleSpectrogram);
 }
 
@@ -1724,7 +1724,7 @@ static void createMenuItems_pitch_picture (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- pitch draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisiblePitchContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Draw visible pitch contour...", 0, menu_cb_drawVisiblePitchContour);
 }
 
@@ -1732,7 +1732,7 @@ static void createMenuItems_intensity_picture (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- intensity draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisibleIntensityContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisibleIntensityContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Draw visible intensity contour...", 0, menu_cb_drawVisibleIntensityContour);
 }
 
@@ -1740,7 +1740,7 @@ static void createMenuItems_formant_picture (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- formant draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisibleFormantContour /* dummy */);
 	EditorMenu_addCommand (menu, L"Draw visible formant contour...", 0, menu_cb_drawVisibleFormantContour);
 }
 
@@ -1748,7 +1748,7 @@ static void createMenuItems_pulses_picture (I, EditorMenu menu) {
 	iam (TimeSoundAnalysisEditor);
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- pulses draw --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Draw to picture window:", motif_INSENSITIVE, menu_cb_drawVisiblePulses /* dummy */);
+	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_drawVisiblePulses /* dummy */);
 	EditorMenu_addCommand (menu, L"Draw visible pulses...", 0, menu_cb_drawVisiblePulses);
 }
 
@@ -2045,8 +2045,7 @@ static void draw_analysis (I) {
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}
 	if (my spectrogram.show || my formant.show) {
-		wchar_t text [100];
-		double textWidth;
+		static MelderString text = { 0 };
 		int frequencyCursorVisible = my spectrogram.cursor > my spectrogram.viewFrom && my spectrogram.cursor < my spectrogram.viewTo;
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, my spectrogram.viewFrom, my spectrogram.viewTo);
 		/*
@@ -2055,18 +2054,16 @@ static void draw_analysis (I) {
 		Graphics_setLineType (my graphics, Graphics_DRAWN);
 		Graphics_setColour (my graphics, Graphics_BLACK);
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics, my spectrogram.cursor - my spectrogram.viewFrom) > 5.0) {
-			swprintf (text, 100, L"%.4g Hz", my spectrogram.viewFrom);
-			textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
-			/*Graphics_line (my graphics, my startWindow - textWidth, my spectrogram.viewFrom, my startWindow, my spectrogram.viewFrom);*/
+			MelderString_empty (& text);
+			MelderString_append2 (& text, Melder_half (my spectrogram.viewFrom), L" Hz");
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-			Graphics_text (my graphics, my startWindow, my spectrogram.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5), text);
+			Graphics_text (my graphics, my startWindow, my spectrogram.viewFrom - Graphics_dyMMtoWC (my graphics, 0.5), Melder_float (text.string));
 		}
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics, my spectrogram.viewTo - my spectrogram.cursor) > 5.0) {
-			swprintf (text, 100, L"%.4g Hz", my spectrogram.viewTo);
-			textWidth = Graphics_textWidth (my graphics, text) + Graphics_dxMMtoWC (my graphics, 0.5);
-			/*Graphics_line (my graphics, my startWindow - textWidth, my spectrogram.viewTo, my startWindow, my spectrogram.viewTo);*/
+			MelderString_empty (& text);
+			MelderString_append2 (& text, Melder_half (my spectrogram.viewTo), L" Hz");
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-			Graphics_text (my graphics, my startWindow, my spectrogram.viewTo, text);
+			Graphics_text (my graphics, my startWindow, my spectrogram.viewTo, Melder_float (text.string));
 		}
 		/*
 		 * Cursor lines.

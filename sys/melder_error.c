@@ -24,21 +24,16 @@
  * pb 2006/12/08 turned wchar_t
  * pb 2007/05/28 Melder_error1-9
  * pb 2007/06/14 more wchar_t
+ * pb 2007/12/13 Melder_writeToConsole
  */
 
 #include "melder.h"
 #include "longchar.h"
 
-#define CONSOLE_SUPPORTS_WCHAR  0
-
 static void defaultError (wchar_t *message) {
-	#if CONSOLE_SUPPORTS_WCHAR
-		fwprintf (stderr, wcsstr (message, L"You interrupted") ? L"User interrupt: %ls\n" : L"Error: %ls\n", message);
-	#else
-		fprintf (stderr, wcsstr (message, L"You interrupted") ? "User interrupt: " : "Error: ");
-		Melder_fwriteWcsAsUtf8 (message, wcslen (message), stderr);
-		fprintf (stderr, "\n");
-	#endif
+	Melder_writeToConsole (wcsstr (message, L"You interrupted") ? L"User interrupt: " : L"Error: ", true);
+	Melder_writeToConsole (message, true);
+	Melder_writeToConsole (L"\n", true);
 }
 
 static void (*theError) (wchar_t *) = defaultError;   // initial setting after start-up; will stay if program is run from batch

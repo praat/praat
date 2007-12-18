@@ -37,7 +37,7 @@
 
 
 /* forward declarations */
-static void cb_extended (Widget, XtPointer, XtPointer);
+static void gui_list_cb_extended (Widget, void *);
 static void update (I, long from, long to, const long *select, long nSelect);
 static void update_dos (I);
 
@@ -256,7 +256,7 @@ static int CategoriesEditorRemove_undo (I)
 	return 1;
 }
 
-static Any CategoriesEditorRemove_create (Any data, int *posList, int posCount)
+static Any CategoriesEditorRemove_create (Any data, long *posList, long posCount)
 {
 	CategoriesEditorRemove me = new (CategoriesEditorRemove); 
 	long i;
@@ -264,7 +264,7 @@ static Any CategoriesEditorRemove_create (Any data, int *posList, int posCount)
 	if (! me || ! CategoriesEditorCommand_init (me, L"Remove", data,
 		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, 
 		posCount, posCount)) forget (me);
-	for (i = 1; i <= posCount; i++) my selection[i] = posList[i-1];
+	for (i = 1; i <= posCount; i++) my selection[i] = posList[i];
 	return me;
 }
 
@@ -312,7 +312,7 @@ static int CategoriesEditorReplace_undo (I)
 	return 1;
 }
 
-static Any CategoriesEditorReplace_create (Any data, Any str, int *posList, int posCount)
+static Any CategoriesEditorReplace_create (Any data, Any str, long *posList, long posCount)
 {
 	CategoriesEditorReplace me = new (CategoriesEditorReplace);
 	long i;
@@ -322,7 +322,7 @@ static Any CategoriesEditorReplace_create (Any data, Any str, int *posList, int 
 			posCount + 1, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
 	{
-		my selection[i] = posList[i-1];
+		my selection[i] = posList[i];
 	}
 	Collection_addItem (my categories, str);	
 	return me;
@@ -369,8 +369,8 @@ static int CategoriesEditorMoveUp_undo (I)
 	return 1;
 }
 
-static Any CategoriesEditorMoveUp_create (Any data, int *posList, 
-	int posCount, int newPos)
+static Any CategoriesEditorMoveUp_create (Any data, long *posList, 
+	long posCount, long newPos)
 {
 	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp); 
 	long i;
@@ -380,7 +380,7 @@ static Any CategoriesEditorMoveUp_create (Any data, int *posList,
 		0, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
 	{
-		my selection[i] = posList[i-1];
+		my selection[i] = posList[i];
 	}
 	my newPos = newPos;
 	return me;
@@ -425,8 +425,8 @@ static int CategoriesEditorMoveDown_undo (I)
 	return 1;
 }
 
-static Any CategoriesEditorMoveDown_create (Any data, int *posList, 
-	int posCount, int newPos)
+static Any CategoriesEditorMoveDown_create (Any data, long *posList, 
+	long posCount, long newPos)
 {
 	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown); 
 	long i;
@@ -436,7 +436,7 @@ static Any CategoriesEditorMoveDown_create (Any data, int *posList,
 			0, posCount)) forget (me);
 	for (i = 1; i <= posCount; i++)
 	{
-		my selection[i] = posList[i-1];
+		my selection[i] = posList[i];
 	}
 	my newPos = newPos;
 	return me;
@@ -450,10 +450,10 @@ class_methods_end
 static void notifyOutOfView (I)
 {
 	iam (CategoriesEditor); 
-	int *posList, posCount; 
 	MelderString tmp = { 0 };
 	XmString outOfViewLabel;
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount); 
+	if (posList != NULL)
 	{
 		int i, outOfView = 0, bottom, topItemPosition;
 		int visibleItemCount, itemCount;
@@ -462,11 +462,11 @@ static void notifyOutOfView (I)
 			XmNvisibleItemCount, & visibleItemCount, XmNitemCount, 
 			& itemCount, NULL);
 		bottom = topItemPosition + visibleItemCount - 1;
-		for (i = posCount - 1; i >= 0; i--)
+		for (i = posCount; i > 0; i--)
 		{ 
 			if (posList[i] < topItemPosition || posList[i] > bottom) outOfView++;
 		}
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		if (outOfView > 0)
 		{
 			MelderString_append2 (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
@@ -518,13 +518,13 @@ static void update_dos (I)
 static void updateWidgets (I) /*all buttons except undo & redo */
 {
 	iam (CategoriesEditor); 
-	int *posList, posCount, size = ((Categories) my data)->size;
+	long size = ((Categories) my data)->size;
 	Boolean insert = False, insertAtEnd = True, replace = False, remove = False;
 	Boolean moveUp = False, moveDown = False;
-	
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	if (posList != NULL)
 	{
-		int firstPos = posList[0], lastPos = posList[posCount-1];
+		int firstPos = posList[1], lastPos = posList[posCount];
 		int contiguous = lastPos - firstPos + 1 == posCount;
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
@@ -533,11 +533,11 @@ static void updateWidgets (I) /*all buttons except undo & redo */
 		if (posCount == 1)
 		{
 			insert = True;
-			if (posList[0] == size) insertAtEnd = True;
+			if (posList[1] == size) insertAtEnd = True;
 			if (size == 1 && ! wcscmp (CategoriesEditor_EMPTYLABEL,
 				OrderedOfString_itemAtIndex_c (my data, 1))) remove = False; 
 		}
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 	}
 	XtSetSensitive (my insert, insert); XtSetSensitive (my insertAtEnd, insertAtEnd);
 	XtSetSensitive (my replace, replace); XtSetSensitive (my remove, remove);
@@ -570,15 +570,15 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	}
 	
 	/*
-		Begin optimalization: add the items from a table instead of separately.
+		Begin optimization: add the items from a table instead of separately.
 	*/
 	
 	{
-		XmString *table = NULL; 
+		const wchar_t **table = NULL; 
 		MelderString itemText  = { 0 };
 		int k;
-		
-		if (! (table = Melder_malloc (XmString, to - from + 1))) return;
+
+		if (! (table = Melder_malloc (const wchar_t *, to - from + 1))) return;
 		XtVaGetValues (my list, XmNitemCount, & itemCount, NULL);
 		/*for (k = 0, i = from; i <= to; i++)
 		{
@@ -591,65 +591,60 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		{
 			MelderString_empty (&itemText);
 			MelderString_append2 (&itemText, Melder_integer (i), OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText.string));
+			table[k++] = Melder_wcsdup (itemText.string);
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
 		{
-			XmListDeleteItemsPos (my list, itemCount - size, size + 1);
+			for (long j = itemCount; j > size; j --) {
+				GuiList_deleteItem (my list, j);
+			}
 			itemCount = size;
 		}
 		if (to > itemCount)
 		{
-			XmListAddItemsUnselected (my list, & table[itemCount - from + 1],
-				to - itemCount, 0);
+			for (long j = 1; j <= to - itemCount; j ++) {
+				GuiList_insertItem (my list, table [itemCount - from + j], 0);
+			}
 		}
 		if (from <= itemCount)
 		{
-			XmListReplaceItemsPosUnselected (my list, table, 
-				(to < itemCount ? to : itemCount) - from + 1, from);
+			long n = ( to < itemCount ? to : itemCount );
+			for (long j = 0; j < n; j ++) {
+				GuiList_replaceItem (my list, table [j], from + j);
+			}
 		}
 		for (k = 0, i = from; i <= to; i++)
 		{
-			XmStringFree (table[k++]);
+			Melder_free (table[k++]);
 		}
 		Melder_free (table);
 		MelderString_free (&itemText);
 	}
 	
 	/*
-		End of optimalization
+		End of optimization
 	*/
 	
 	/*
 		HIGHLIGHT
 	*/
 
-	XmListDeselectAllItems (my list);
-	if (size == 1) /* the only item is allways selected */
+	GuiList_deselectAllItems (my list);
+	if (size == 1) /* the only item is always selected */
 	{
 		const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, 1);
-		XmListSelectPos (my list, 1, True);
-		GuiText_setStringW (my text, catg);
+		GuiList_selectItem (my list, 1, True);
+		GuiText_setString (my text, catg);
 	}
 	else if (nSelect > 0)
 	{
-		/*
-			Trick required, or the other items will be deselected.
-		*/
-		
-		#ifndef macintosh
-			XtVaSetValues (my list, XmNselectionPolicy, XmMULTIPLE_SELECT, NULL);
-		#endif
 		/*
 			Select but postpone highlighting
 		*/
 		for (i = 1; i <= nSelect; i++)
 		{
-			XmListSelectPos (my list, select[i] > size ? size : select[i], False);
+			GuiList_selectItem (my list, select[i] > size ? size : select[i], false);
 		}
-		#ifndef macintosh
-			XtVaSetValues (my list, XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
-		#endif
 	}
 	
 	/*
@@ -685,33 +680,34 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		}
 		if (top + visible > size) top = size - visible + 1;
 		if (top < 1) top = 1;
-		XmListSetPos (my list, top);
+		GuiList_scroll (my list, top);
 	}
 }
 
-MOTIF_CALLBACK(cb_remove)
+static void gui_button_cb_remove (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
-	int *posList, posCount;
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	if (posList != NULL)
 	{
 		CategoriesEditorRemove command = CategoriesEditorRemove_create 
 			(me, posList, posCount);
 		if (! command || ! Command_do (command))
 		{
-			forget (command); XtFree ((XtPointer) posList); return;
+			forget (command); NUMlvector_free (posList, 1); return;
 		}
 		if (my history) CommandHistory_insertItem (my history, command);
-		XtFree ((XtPointer) posList);	
+		NUMlvector_free (posList, 1);	
 		updateWidgets (me);
 	}
-MOTIF_CALLBACK_END
+}
 
 static void insert (I, int position)
 {
 	iam (CategoriesEditor);
 	SimpleString str = NULL;
 	CategoriesEditorInsert command = NULL;
-	wchar_t *text = GuiText_getStringW (my text);
+	wchar_t *text = GuiText_getString (my text);
 	
 	if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
 		! (command = CategoriesEditorInsert_create (me, str, position)) ||
@@ -726,25 +722,28 @@ end:
 	forget (command);
 }
 
-MOTIF_CALLBACK (cb_insert)
+static void gui_button_cb_insert (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
 	insert (me, my position);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_insertAtEnd)
+static void gui_button_cb_insertAtEnd (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
 	Categories categories = my data;
 	insert (me, categories->size + 1);
 	my position = categories->size;
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_replace)
+static void gui_button_cb_replace (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
-	int *posList, posCount;
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	if (posList != NULL)
 	{
 		CategoriesEditorReplace command = NULL;
-		wchar_t *text = GuiText_getStringW (my text);
+		wchar_t *text = GuiText_getString (my text);
 		SimpleString str = NULL;
 		
 		if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
@@ -752,7 +751,7 @@ MOTIF_CALLBACK (cb_replace)
 				posCount)) ||
 			! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		Melder_free (text);
 		updateWidgets (me);
 		return;
@@ -761,78 +760,83 @@ end:
 		forget (str);
 		forget (command);
 	}
-MOTIF_CALLBACK_END
+}
 
 /* Precondition: contiguous selection */
-MOTIF_CALLBACK (cb_moveUp)
+static void gui_button_cb_moveUp (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
-	int *posList, posCount;
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	if (posList != NULL)
 	{
 		CategoriesEditorMoveUp command = CategoriesEditorMoveUp_create 
-			(me, posList, posCount, posList[0]-1);
+			(me, posList, posCount, posList[1]-1);
 		if (! command || ! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		updateWidgets (me);
 		return;
 end:
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		forget (command);
 	}
-MOTIF_CALLBACK_END
+}
 
 /* Precondition: contiguous selection */
-MOTIF_CALLBACK (cb_moveDown)
+static void gui_button_cb_moveDown (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
-	int *posList, posCount;
-	if (XmListGetSelectedPos (my list, & posList, & posCount))
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	if (posList != NULL)
 	{
 		CategoriesEditorMoveDown command = CategoriesEditorMoveDown_create 
-			(me, posList, posCount, posList[posCount-1] + 1);
+			(me, posList, posCount, posList[posCount] + 1);
 		if (! command || ! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		updateWidgets (me);
 		return;
 end:
-		XtFree ((XtPointer) posList);
+		NUMlvector_free (posList, 1);
 		forget (command);
 	}
-MOTIF_CALLBACK_END
+}
 
 
-MOTIF_CALLBACK (cb_scroll)
-	iam (CategoriesEditor);
+static void gui_cb_scroll (GUI_ARGS) {
+	GUI_IAM (CategoriesEditor);
 	notifyOutOfView (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_default)
-	iam (CategoriesEditor);
+static void gui_cb_default (GUI_ARGS) {
+	GUI_IAM (CategoriesEditor);
 	const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, my position);
-	GuiText_setStringW (my text, catg);
-MOTIF_CALLBACK_END
+	GuiText_setString (my text, catg);
+}
 
-MOTIF_CALLBACK (cb_extended)
+static void gui_list_cb_extended (Widget widget, void *void_me) {
+	(void) widget;
 	iam (CategoriesEditor);
 	updateWidgets (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_undo)
+static void gui_button_cb_undo (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
 	if (CommandHistory_offleft (my history)) return;
 	Command_undo (CommandHistory_getItem (my history));
 	CommandHistory_back (my history);
 	updateWidgets (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_redo)
+static void gui_button_cb_redo (Widget widget, I) {
+	(void) widget;
 	iam (CategoriesEditor);
 	CommandHistory_forth (my history);	
 	if (CommandHistory_offright (my history)) return;
 	Command_do (CommandHistory_getItem (my history));
 	updateWidgets (me);
-MOTIF_CALLBACK_END
+}
 
 static void destroy (I)
 {
@@ -851,92 +855,62 @@ static void createMenus (I)
 static void createChildren (I)
 {
 	iam (CategoriesEditor);
-	Widget scrolled, vertScrollBar;
+	Widget vertScrollBar;
 	int menuBarOffset = 40;
 	
 	XtVaCreateManagedWidget ("Positions:", xmLabelGadgetClass, my dialog,
 		XmNx, 5, XmNy, 3+menuBarOffset, XmNwidth, 95, NULL);
 	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
 		XmNx, 100, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
-	
-	scrolled = XmCreateScrolledWindow (my dialog, "listWindow", NULL, 0);
-	XtVaSetValues (scrolled, XmNy, 40+menuBarOffset, XmNwidth, 260,
-		#ifdef macintosh
-			XmNheight, 30000,
-		#else
-			XmNheight, 100,
-		#endif
-		NULL);
-	my list = XtVaCreateManagedWidget ("list", xmListWidgetClass, scrolled,
-		 XmNvisibleItemCount, 20, XmNlistSizePolicy, XmCONSTANT,
-		 XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
-	XtAddCallback (my list, XmNextendedSelectionCallback, cb_extended, 
-		(XtPointer) me);
-	XtAddCallback (my list, XmNdefaultActionCallback, cb_default, (XtPointer) me);
-	XtManageChild (scrolled);
+
+	my list = GuiList_create (my dialog, 0, 260, 40+menuBarOffset, 140+menuBarOffset, true);
+	GuiList_setSelectionChangedCallback (my list, gui_list_cb_extended, me);
+	XtAddCallback (my list, XmNdefaultActionCallback, gui_cb_default, (XtPointer) me);
+	GuiObject_show (my list);
 
 	/*
 		The valueChangedCallback does not get any notification in case of:
 			drag, decrement, increment, pageIncrement & pageDecrement
 	*/
-	
-	XtVaGetValues (scrolled, XmNverticalScrollBar, & vertScrollBar, NULL);
-	XtAddCallback (vertScrollBar, XmNvalueChangedCallback, cb_scroll, 
-		(XtPointer) me);
-	XtAddCallback (vertScrollBar, XmNdragCallback, cb_scroll, (XtPointer) me);
-	XtAddCallback (vertScrollBar, XmNdecrementCallback, cb_scroll, 
-		(XtPointer) me);
-	XtAddCallback (vertScrollBar, XmNincrementCallback, cb_scroll, 
-		(XtPointer) me);
-	XtAddCallback (vertScrollBar, XmNpageIncrementCallback, cb_scroll, 
-		(XtPointer) me);
-	XtAddCallback (vertScrollBar, XmNpageDecrementCallback, cb_scroll, 
-		(XtPointer) me);
- 			 
+
+	#ifndef _WIN32
+		XtVaGetValues (XtParent (my list), XmNverticalScrollBar, & vertScrollBar, NULL);
+		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll, 
+			(XtPointer) me);
+		XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
+		XtAddCallback (vertScrollBar, XmNdecrementCallback, gui_cb_scroll, 
+			(XtPointer) me);
+		XtAddCallback (vertScrollBar, XmNincrementCallback, gui_cb_scroll, 
+			(XtPointer) me);
+		XtAddCallback (vertScrollBar, XmNpageIncrementCallback, gui_cb_scroll, 
+			(XtPointer) me);
+		XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll, 
+			(XtPointer) me);
+	#endif
+
 	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
 		XmNx, 280, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
 	my text = XtVaCreateManagedWidget("Text", xmTextWidgetClass, my dialog,
 		 XmNx, 370, XmNy, 3+menuBarOffset, XmNwidth, 140, NULL);
 	XmTextSetMaxLength (my text, CategoriesEditor_TEXTMAXLENGTH);
-	GuiText_setStringW (my text, CategoriesEditor_EMPTYLABEL);
+	GuiText_setString (my text, CategoriesEditor_EMPTYLABEL);
 				 
-	my insert = XtVaCreateManagedWidget ("Insert", xmPushButtonGadgetClass, 
-		my dialog,  XmNx, 280, XmNy, 43+menuBarOffset, XmNwidth, 90, NULL);
-	XtAddCallback (my insert, XmNactivateCallback, cb_insert, (XtPointer) me);
-	
-	my replace = XtVaCreateManagedWidget ("Replace", xmPushButtonGadgetClass,
-		my dialog, XmNx, 380, XmNy, 43+menuBarOffset, XmNwidth, 90, NULL);
-	XtAddCallback (my replace, XmNactivateCallback, cb_replace, (XtPointer) me);
-
-	my insertAtEnd = XtVaCreateManagedWidget ("Insert at end",
-		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 83+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my insertAtEnd, XmNactivateCallback, cb_insertAtEnd,
-		(XtPointer) me);
-
-	my undo = XtVaCreateManagedWidget ("Undo", xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 140+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my undo, XmNactivateCallback, cb_undo, (XtPointer) me);
-
-	my redo = XtVaCreateManagedWidget ("Redo", xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 180+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my redo, XmNactivateCallback, cb_redo, (XtPointer) me);
-
-	my remove = XtVaCreateManagedWidget ("Remove", xmPushButtonGadgetClass, 
-		my dialog, XmNx, 280, XmNy, 240+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my remove, XmNactivateCallback, cb_remove, (XtPointer) me);
-		 	 
-	XtVaSetValues(my dialog, XmNdefaultButton, my insert, NULL);
-	
-	my moveUp = XtVaCreateManagedWidget ("Move selection up",
-		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 280+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my moveUp, XmNactivateCallback, cb_moveUp, (XtPointer) me);
-		
-	my moveDown = XtVaCreateManagedWidget ("Move selection down",
-		xmPushButtonGadgetClass, my dialog,
-		XmNx, 280, XmNy, 320+menuBarOffset, XmNwidth, 190, NULL);
-	XtAddCallback (my moveDown, XmNactivateCallback, cb_moveDown, (XtPointer) me);
+	my insert = GuiButton_createShown (my dialog, 280, 370, 43+menuBarOffset, Gui_AUTOMATIC,
+		L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
+	my replace = GuiButton_createShown (my dialog, 380, 470, 43+menuBarOffset, Gui_AUTOMATIC,
+		L"Replace", gui_button_cb_replace, me, 0);
+	my insertAtEnd = GuiButton_createShown (my dialog, 280, 470, 83+menuBarOffset, Gui_AUTOMATIC,
+		L"Insert at end", gui_button_cb_insertAtEnd, me, 0);
+	my undo = GuiButton_createShown (my dialog, 280, 470, 140+menuBarOffset, Gui_AUTOMATIC,
+		L"Undo", gui_button_cb_undo, me, 0);
+	my redo = GuiButton_createShown (my dialog, 280, 470, 180+menuBarOffset, Gui_AUTOMATIC,
+		L"Redo", gui_button_cb_redo, me, 0);
+	my remove = GuiButton_createShown (my dialog, 280, 470, 240+menuBarOffset, Gui_AUTOMATIC,
+		L"Remove", gui_button_cb_remove, me, 0);	
+	my moveUp = GuiButton_createShown (my dialog, 280, 470, 280+menuBarOffset, Gui_AUTOMATIC,
+		L"Move selection up", gui_button_cb_moveUp, me, 0);	
+	my moveDown = GuiButton_createShown (my dialog, 280, 470, 320+menuBarOffset, Gui_AUTOMATIC,
+		L"Move selection down", gui_button_cb_moveDown, me, 0);	
 
 	my outOfView = XtVaCreateManagedWidget ("", xmLabelGadgetClass, my dialog,
 		XmNx, 5, XmNy, 450, XmNwidth, 200, NULL);

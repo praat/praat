@@ -518,17 +518,17 @@ void praat_addMenus (Widget bar) {
 	 */
 	if (! theCurrentPraat -> batch) {
 		#ifdef macintosh
-			praatMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
+			praatMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
 		#else
-			praatMenu = motif_addMenu (bar, L"Praat", 0);
+			praatMenu = GuiMenuBar_addMenu (bar, L"Praat", 0);
 		#endif
-		newMenu = motif_addMenu (bar, L"New", 0);
-		readMenu = motif_addMenu (bar, L"Read", 0);
+		newMenu = GuiMenuBar_addMenu (bar, L"New", 0);
+		readMenu = GuiMenuBar_addMenu (bar, L"Read", 0);
 		praat_actions_createWriteMenu (bar);
 		#ifdef macintosh
-			applicationHelpMenu = motif_addMenu (bar ? praatP.topBar : NULL, L"Help", 0);
+			applicationHelpMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"Help", 0);
 		#endif
-		helpMenu = motif_addMenu (bar, L"Help", 0);
+		helpMenu = GuiMenuBar_addMenu (bar, L"Help", 0);
 	}
 
 	MelderString_append3 (& itemTitle_about, L"About ", Melder_peekUtf8ToWcs (praatP.title), L"...");
@@ -584,7 +584,7 @@ void praat_addMenus2 (void) {
 	#endif
 
 	#if defined (macintosh) || defined (_WIN32)
-		motif_setOpenDocumentCallback (cb_openDocument);
+		Gui_setOpenDocumentCallback (cb_openDocument);
 	#endif
 }
 

@@ -123,9 +123,15 @@
 		2356B66C0D039FA100A12FAE /* Graphics_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2356B66B0D039FA100A12FAE /* Graphics_enums.h */; };
 		235E4A090D0A0D06009CC7DE /* TextGridEditor_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 235E4A080D0A0D06009CC7DE /* TextGridEditor_enums.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
+		236DDF040D11DC81009CB8B9 /* GuiList.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF030D11DC81009CB8B9 /* GuiList.c */; };
+		236DDF350D11F1EB009CB8B9 /* Gui.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF340D11F1EB009CB8B9 /* Gui.c */; };
+		236DDF370D11F1FB009CB8B9 /* GuiMenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF360D11F1FB009CB8B9 /* GuiMenu.c */; };
 		23760E9C0D0C7B370037FD07 /* Pitch_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23760E9B0D0C7B370037FD07 /* Pitch_enums.h */; };
 		23760F720D0C89870037FD07 /* ManipulationEditor_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23760F710D0C89870037FD07 /* ManipulationEditor_enums.h */; };
 		237EBB2A0CF346A1001364DE /* flac_share_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 237EBB290CF346A1001364DE /* flac_share_alloc.h */; };
+		2395B3F30D158F14001028D9 /* GuiButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395B3F20D158F14001028D9 /* GuiButton.c */; };
+		2395B4520D15DD35001028D9 /* GuiObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395B4510D15DD35001028D9 /* GuiObject.c */; };
+		23A9342E0D110ED900D51876 /* melder_console.c in Sources */ = {isa = PBXBuildFile; fileRef = 23A9342D0D110ED900D51876 /* melder_console.c */; };
 		23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23AC02E90C2195F300990540 /* melder_encodings.c */; };
 		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
 		23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */; };
@@ -493,7 +499,6 @@
 		23E5D0A909A22A57004E41D5 /* melder_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6309A22902004E41D5 /* melder_audio.c */; };
 		23E5D0AA09A22A57004E41D5 /* melder_audiofiles.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6409A22902004E41D5 /* melder_audiofiles.c */; };
 		23E5D0AB09A22A57004E41D5 /* melder_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6609A22902004E41D5 /* melder_files.c */; };
-		23E5D0AC09A22A57004E41D5 /* motif.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5709A22902004E41D5 /* motif.c */; };
 		23E5D0AE09A22A57004E41D5 /* NUM.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5A09A22902004E41D5 /* NUM.c */; };
 		23E5D0AF09A22A57004E41D5 /* NUM.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CB5B09A22902004E41D5 /* NUM.h */; };
 		23E5D0B009A22A57004E41D5 /* NUMarrays.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5C09A22902004E41D5 /* NUMarrays.c */; };
@@ -975,9 +980,15 @@
 		2356B66B0D039FA100A12FAE /* Graphics_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Graphics_enums.h; path = sys/Graphics_enums.h; sourceTree = "<group>"; };
 		235E4A080D0A0D06009CC7DE /* TextGridEditor_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextGridEditor_enums.h; path = fon/TextGridEditor_enums.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
+		236DDF030D11DC81009CB8B9 /* GuiList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiList.c; path = sys/GuiList.c; sourceTree = "<group>"; };
+		236DDF340D11F1EB009CB8B9 /* Gui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Gui.c; path = sys/Gui.c; sourceTree = "<group>"; };
+		236DDF360D11F1FB009CB8B9 /* GuiMenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiMenu.c; path = sys/GuiMenu.c; sourceTree = "<group>"; };
 		23760E9B0D0C7B370037FD07 /* Pitch_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pitch_enums.h; path = fon/Pitch_enums.h; sourceTree = "<group>"; };
 		23760F710D0C89870037FD07 /* ManipulationEditor_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ManipulationEditor_enums.h; path = fon/ManipulationEditor_enums.h; sourceTree = "<group>"; };
 		237EBB290CF346A1001364DE /* flac_share_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flac_share_alloc.h; sourceTree = "<group>"; };
+		2395B3F20D158F14001028D9 /* GuiButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiButton.c; path = sys/GuiButton.c; sourceTree = "<group>"; };
+		2395B4510D15DD35001028D9 /* GuiObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiObject.c; path = sys/GuiObject.c; sourceTree = "<group>"; };
+		23A9342D0D110ED900D51876 /* melder_console.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_console.c; path = sys/melder_console.c; sourceTree = "<group>"; };
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
@@ -1511,7 +1522,6 @@
 		23E5CB5309A22902004E41D5 /* GraphicsScreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = GraphicsScreen.c; path = sys/GraphicsScreen.c; sourceTree = SOURCE_ROOT; };
 		23E5CB5509A22902004E41D5 /* GuiText.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = GuiText.c; path = sys/GuiText.c; sourceTree = SOURCE_ROOT; };
 		23E5CB5609A22902004E41D5 /* GuiWindow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = GuiWindow.c; path = sys/GuiWindow.c; sourceTree = SOURCE_ROOT; };
-		23E5CB5709A22902004E41D5 /* motif.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = motif.c; path = sys/motif.c; sourceTree = SOURCE_ROOT; };
 		23E5CB5809A22902004E41D5 /* motifEmulator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = motifEmulator.c; path = sys/motifEmulator.c; sourceTree = SOURCE_ROOT; };
 		23E5CB5A09A22902004E41D5 /* NUM.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUM.c; path = sys/NUM.c; sourceTree = SOURCE_ROOT; };
 		23E5CB5B09A22902004E41D5 /* NUM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NUM.h; path = sys/NUM.h; sourceTree = SOURCE_ROOT; };
@@ -2577,9 +2587,13 @@
 			children = (
 				23E5CE6A09A22A36004E41D5 /* Gui.h */,
 				23E5CEEE09A22A4E004E41D5 /* GuiP.h */,
+				236DDF340D11F1EB009CB8B9 /* Gui.c */,
+				236DDF030D11DC81009CB8B9 /* GuiList.c */,
+				236DDF360D11F1FB009CB8B9 /* GuiMenu.c */,
+				2395B4510D15DD35001028D9 /* GuiObject.c */,
+				2395B3F20D158F14001028D9 /* GuiButton.c */,
 				23E5CB5509A22902004E41D5 /* GuiText.c */,
 				23E5CB5609A22902004E41D5 /* GuiWindow.c */,
-				23E5CB5709A22902004E41D5 /* motif.c */,
 				23E5CEF009A22A4E004E41D5 /* motifEmulator_resources.h */,
 				23E5CB5809A22902004E41D5 /* motifEmulator.c */,
 			);
@@ -2614,6 +2628,7 @@
 				2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */,
 				23E5CB6309A22902004E41D5 /* melder_audio.c */,
 				23E5CB6409A22902004E41D5 /* melder_audiofiles.c */,
+				23A9342D0D110ED900D51876 /* melder_console.c */,
 				23E5CB6509A22902004E41D5 /* melder_debug.c */,
 				23E5CB6609A22902004E41D5 /* melder_files.c */,
 				23E5CB6709A22902004E41D5 /* melder_sysenv.c */,
@@ -3480,7 +3495,6 @@
 				23E5D0A909A22A57004E41D5 /* melder_audio.c in Sources */,
 				23E5D0AA09A22A57004E41D5 /* melder_audiofiles.c in Sources */,
 				23E5D0AB09A22A57004E41D5 /* melder_files.c in Sources */,
-				23E5D0AC09A22A57004E41D5 /* motif.c in Sources */,
 				23E5D0AE09A22A57004E41D5 /* NUM.c in Sources */,
 				23E5D0B009A22A57004E41D5 /* NUMarrays.c in Sources */,
 				23E5D0B109A22A57004E41D5 /* NUMear.c in Sources */,
@@ -3704,6 +3718,12 @@
 				23D6C4160CD52C1000E90767 /* gsl_sf__laguerre.c in Sources */,
 				23D6C4190CD52C4300E90767 /* gsl_sf__expint.c in Sources */,
 				23D3ADAB0CF0821E004A1305 /* LogisticRegression.c in Sources */,
+				23A9342E0D110ED900D51876 /* melder_console.c in Sources */,
+				236DDF040D11DC81009CB8B9 /* GuiList.c in Sources */,
+				236DDF350D11F1EB009CB8B9 /* Gui.c in Sources */,
+				236DDF370D11F1FB009CB8B9 /* GuiMenu.c in Sources */,
+				2395B3F30D158F14001028D9 /* GuiButton.c in Sources */,
+				2395B4520D15DD35001028D9 /* GuiObject.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -76,8 +76,8 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 	Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
-MOTIF_CALLBACK (cb_draw)
-	iam (RunnerMFC);
+static void gui_cb_draw (GUI_ARGS) {
+	GUI_IAM (RunnerMFC);
 	ExperimentMFC experiment = my data;
 	long iresponse;
 	if (my data == NULL) return;
@@ -185,10 +185,10 @@ MOTIF_CALLBACK (cb_draw)
 				experiment -> oops_label);
 		}
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_resize)
-	iam (RunnerMFC);
+static void gui_cb_resize (GUI_ARGS) {
+	GUI_IAM (RunnerMFC);
 	Dimension width, height, marginWidth = 10, marginHeight = 10;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
@@ -198,7 +198,7 @@ MOTIF_CALLBACK (cb_resize)
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
 	Graphics_updateWs (my graphics);
-MOTIF_CALLBACK_END
+}
 
 static void do_ok (RunnerMFC me) {
 	ExperimentMFC experiment = my data;
@@ -252,14 +252,14 @@ static void do_replay (RunnerMFC me) {
 	}
 }
 
-MOTIF_CALLBACK (cb_input)
-	iam (RunnerMFC);
+static void gui_cb_input (GUI_ARGS) {
+	GUI_IAM (RunnerMFC);
 	ExperimentMFC experiment = my data;
-	MotifEvent event = MotifEvent_fromCallData (call);
+	GuiEvent event = GuiEvent_fromCallData (call);
 	if (my data == NULL) return;
-	if (MotifEvent_isButtonPressedEvent (event)) {
+	if (GuiEvent_isButtonPressedEvent (event)) {
 		double x, y;
-		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
+		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & x, & y);
 		if (experiment -> trial == 0) {   /* The first click of the experiment. */
 			experiment -> trial ++;
 			Editor_broadcastChange (me);
@@ -345,7 +345,7 @@ MOTIF_CALLBACK (cb_input)
 				RunnerMFC_startExperiment (me);
 			}
 		}
-	} else if (MotifEvent_isKeyPressedEvent (event)) {
+	} else if (GuiEvent_isKeyPressedEvent (event)) {
 		#if defined (macintosh)
 			enum { charCodeMask = 0x000000FF };
 			unsigned char key = event -> message & charCodeMask;
@@ -361,7 +361,7 @@ MOTIF_CALLBACK (cb_input)
 			double x, y;
 			ExperimentMFC experiment = my data;
 			long iresponse;
-			Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & x, & y);
+			Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & x, & y);
 			if (experiment -> ok_key != NULL && experiment -> ok_key [0] == key) {
 				do_ok (me);
 			} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == key &&
@@ -389,7 +389,7 @@ MOTIF_CALLBACK (cb_input)
 			}
 		}
 	}
-MOTIF_CALLBACK_END
+}
 
 static void createChildren (I) {
 	iam (RunnerMFC);
@@ -415,10 +415,10 @@ RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experim
 	if (! me || ! Editor_init (me, parent, 0, 0, 2000, 2000, title, NULL)) { forget (me); return 0; }
 	my experiments = experiments;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, cb_resize, (XtPointer) me);
-cb_resize (my drawingArea, (XtPointer) me, 0);
+	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
+	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
+gui_cb_resize (my drawingArea, (XtPointer) me, 0);
 	my iexperiment = 1;
 	if (! RunnerMFC_startExperiment (me)) { forget (me); return NULL; }
 	return me;

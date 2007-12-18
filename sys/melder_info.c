@@ -24,15 +24,14 @@
  * pb 2007/06/11 wchar_t
  * pb 2007/08/14 faster
  * pb 2007/10/05 got rid of MelderStringA_copyW
+ * pb 2007/12/13 Melder_writeToConsole
  */
 
 #include "melder.h"
-#include "NUM.h"
+#include "NUM.h"   // NUMundefined
 
 static void defaultInformation (wchar_t *message) {
-	if (message) {
-		printf ("%s", Melder_peekWcsToUtf8 (message));
-	}
+	Melder_writeToConsole (message, false);
 }
 
 static void (*theInformation) (wchar_t *) = defaultInformation;
@@ -166,7 +165,7 @@ void Melder_print (const wchar_t *s) {
 	 * and a better solution would be to disallow the script from running (BUG: accept fewer events in waitWhileProgress).
 	 */
 	if (theInformation == defaultInformation) {
-		printf ("%s", Melder_peekWcsToUtf8 (s));   // Do not print the previous lines again.
+		theInformation ((wchar_t *) s);   // Do not print the previous lines again.
 	} else {
 		MelderString_append (& theForegroundBuffer, s);
 		theInformation (theForegroundBuffer. string);

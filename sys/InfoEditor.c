@@ -58,7 +58,7 @@ void motif_information (wchar_t *message) {
 		TextEditor_init (theInfoEditor, Melder_topShell, L"");
 		Thing_setName (theInfoEditor, L"Praat: Info");
 	}
-	GuiText_setStringW (theInfoEditor -> textWidget, message);
+	GuiText_setString (theInfoEditor -> textWidget, message);
 	XMapRaised (XtDisplay (theInfoEditor -> shell), XtWindow (theInfoEditor -> shell));
 	GuiWindow_drain (theInfoEditor -> shell);
 }

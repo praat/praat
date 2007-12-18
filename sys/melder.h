@@ -83,6 +83,10 @@ double Melder_atofW (const wchar_t *string);
 	 * "fghfghj" -> NUMundefined
 	 */
 
+/********** CONSOLE **********/
+
+void Melder_writeToConsole (wchar_t *message, bool useStderr);
+
 /********** ERROR **********/
 
 int Melder_error (const char *format, ...);
@@ -445,6 +449,15 @@ long Melder_searchToken (const wchar_t *string, wchar_t **tokens, long n);
 */
 
 void Melder_casual (const char *format, ...);
+void Melder_casual1 (const wchar_t *s1);
+void Melder_casual2 (const wchar_t *s1, const wchar_t *s2);
+void Melder_casual3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void Melder_casual4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void Melder_casual5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void Melder_casual6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void Melder_casual7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void Melder_casual8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void Melder_casual9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 /*
 	Function:
 		Sends a message without user interference.

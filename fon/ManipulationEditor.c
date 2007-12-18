@@ -557,14 +557,14 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Pulse", L"Add pulse at cursor", 'P', cb_addPulseAtCursor);
 	Editor_addCommand (me, L"Pulse", L"Add pulse at...", 0, cb_addPulseAt);
 	Editor_addCommand (me, L"Pulse", L"-- remove pulses --", 0, NULL);
-	Editor_addCommand (me, L"Pulse", L"Remove pulse(s)", motif_OPTION + 'P', cb_removePulses);
+	Editor_addCommand (me, L"Pulse", L"Remove pulse(s)", GuiMenu_OPTION + 'P', cb_removePulses);
 
 	Editor_addMenu (me, L"Pitch", 0);
 	Editor_addCommand (me, L"Pitch", L"Add pitch point at cursor", 'T', cb_addPitchPointAtCursor);
 	Editor_addCommand (me, L"Pitch", L"Add pitch point at time slice", 0, cb_addPitchPointAtSlice);
 	Editor_addCommand (me, L"Pitch", L"Add pitch point at...", 0, cb_addPitchPointAt);
 	Editor_addCommand (me, L"Pitch", L"-- remove pitch --", 0, NULL);
-	Editor_addCommand (me, L"Pitch", L"Remove pitch point(s)", motif_OPTION + 'T', cb_removePitchPoints);
+	Editor_addCommand (me, L"Pitch", L"Remove pitch point(s)", GuiMenu_OPTION + 'T', cb_removePitchPoints);
 	Editor_addCommand (me, L"Pitch", L"-- pitch prefs --", 0, NULL);
 	Editor_addCommand (me, L"Pitch", L"Set pitch range...", 0, cb_setPitchRange);
 	Editor_addCommand (me, L"Pitch", L"Set pitch units...", 0, cb_setPitchUnits);
@@ -572,7 +572,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Pitch", L"-- modify pitch --", 0, NULL);
 	Editor_addCommand (me, L"Pitch", L"Shift pitch frequencies...", 0, cb_shiftPitchFrequencies);
 	Editor_addCommand (me, L"Pitch", L"Multiply pitch frequencies...", 0, cb_multiplyPitchFrequencies);
-	Editor_addCommand (me, L"Pitch", L"All:", motif_INSENSITIVE, cb_stylizePitch);
+	Editor_addCommand (me, L"Pitch", L"All:", GuiMenu_INSENSITIVE, cb_stylizePitch);
 	Editor_addCommand (me, L"Pitch", L"Stylize pitch...", 0, cb_stylizePitch);
 	Editor_addCommand (me, L"Pitch", L"Stylize pitch (2 st)", '2', cb_stylizePitch_2st);
 	Editor_addCommand (me, L"Pitch", L"Interpolate quadratically...", 0, cb_interpolateQuadratically);
@@ -582,7 +582,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Dur", L"Add duration point at cursor", 'D', cb_addDurationPointAtCursor);
 	Editor_addCommand (me, L"Dur", L"Add duration point at...", 0, cb_addDurationPointAt);
 	Editor_addCommand (me, L"Dur", L"-- remove duration --", 0, NULL);
-	Editor_addCommand (me, L"Dur", L"Remove duration point(s)", motif_OPTION + 'D', cb_removeDurationPoints);
+	Editor_addCommand (me, L"Dur", L"Remove duration point(s)", GuiMenu_OPTION + 'D', cb_removeDurationPoints);
 	Editor_addCommand (me, L"Dur", L"-- duration prefs --", 0, NULL);
 	Editor_addCommand (me, L"Dur", L"Set duration range...", 0, cb_setDurationRange);
 	Editor_addCommand (me, L"Dur", L"-- refresh duration --", 0, NULL);
@@ -590,18 +590,18 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Dur", L"Forget duration", 0, cb_forgetDuration);
 
 	Editor_addMenu (me, L"Synth", 0);
-	my synthPulsesButton = Editor_addCommand (me, L"Synth", L"Pulses --", motif_CHECKABLE, cb_Synth_Pulses);
-	my synthPulsesHumButton = Editor_addCommand (me, L"Synth", L"Pulses (hum) --", motif_CHECKABLE, cb_Synth_Pulses_hum);
+	my synthPulsesButton = Editor_addCommand (me, L"Synth", L"Pulses --", GuiMenu_CHECKABLE, cb_Synth_Pulses);
+	my synthPulsesHumButton = Editor_addCommand (me, L"Synth", L"Pulses (hum) --", GuiMenu_CHECKABLE, cb_Synth_Pulses_hum);
 
-	my synthPulsesLpcButton = Editor_addCommand (me, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", motif_CHECKABLE, cb_Synth_Pulses_Lpc);
+	my synthPulsesLpcButton = Editor_addCommand (me, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_CHECKABLE, cb_Synth_Pulses_Lpc);
 	Editor_addCommand (me, L"Synth", L"-- pitch resynth --", 0, NULL);
-	my synthPitchButton = Editor_addCommand (me, L"Synth", L" -- Pitch", motif_CHECKABLE, cb_Synth_Pitch);
-	my synthPitchHumButton = Editor_addCommand (me, L"Synth", L" -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pitch_hum);
-	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", motif_CHECKABLE, cb_Synth_Pulses_Pitch);
-	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", motif_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
+	my synthPitchButton = Editor_addCommand (me, L"Synth", L" -- Pitch", GuiMenu_CHECKABLE, cb_Synth_Pitch);
+	my synthPitchHumButton = Editor_addCommand (me, L"Synth", L" -- Pitch (hum)", GuiMenu_CHECKABLE, cb_Synth_Pitch_hum);
+	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", GuiMenu_CHECKABLE, cb_Synth_Pulses_Pitch);
+	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", GuiMenu_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
 	Editor_addCommand (me, L"Synth", L"-- full resynth --", 0, NULL);
-	my synthOverlapAddButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", motif_CHECKED, cb_Synth_OverlapAdd);
-	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", motif_CHECKABLE, cb_Synth_Pitch_Lpc);
+	my synthOverlapAddButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_CHECKED, cb_Synth_OverlapAdd);
+	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_CHECKABLE, cb_Synth_Pitch_Lpc);
 
 	Editor_addCommand (me, L"Help", L"ManipulationEditor help", '?', cb_ManipulationEditorHelp);
 	Editor_addCommand (me, L"Help", L"Manipulation help", 0, cb_ManipulationHelp);

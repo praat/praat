@@ -50,7 +50,25 @@ static void psRevertLine (GraphicsPostscript me) {
 		my printf (my file, "%g setlinewidth\n", my resolution > 192 ? my resolution / 192.0 : 1.0);   /* 0.375 point */
 }
 
-#if xwin
+#if cairo
+	static void cairoPrepareLine (GraphicsScreen me) {
+		switch (my lineType) {
+			case Graphics_DOTTED:
+				cairo_set_dash (me gc, dash, num_dashes, 0.0);
+				break;
+			// TODO: What else?
+		}
+		if (my lineType >= Graphics_DOTTED) {
+			cairo_set_dash (me gc, dash, num_dashes, 0.0);
+			cairo_set_line_width(me gc, my lineWidth == 1.0 ? 0.0 : my lineWidth); // TODO: Why 1.0?
+		} else if (my lineWidth != 1.0) {
+			cairo_set_line_width(me gc, my lineWidth);
+		}
+	}
+	static void cairoRevertLine (GraphicsScreen me) {
+		cairo_set_line_cap (me gc, CAIRO_LINE_CAP_BUTT);
+	}
+#elif xwin
 	static void xwinPrepareLine (GraphicsScreen me) {
 		if (my lineType >= Graphics_DOTTED) {
 			XSetLineAttributes (my display, my gc,
@@ -122,7 +140,15 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairoPrepareLine (me);
+                        cairo_new_path (my gc);
+                        cairo_move_to (my gc, xyDC[0], xyDC[1]);
+                        for (i = 1; i < numberOfPoints; i ++)
+                                cairo_line_to(xyDC[i + i], xyDC [i + i + 1]);
+                        cairo_close_path(my gc);
+			cairoRevertLine (me);
+		#elif xwin
 			XPoint *p = (void *) xyDC;
 			int nleft = (int) numberOfPoints;
 			xwinPrepareLine (me);
@@ -239,7 +265,14 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairo_new_path (my gc);
+			cairo_move_to (my gc, xyDC[0], xyDC[1]);
+			for (i = 1; i < numberOfPoints; i ++)
+				cairo_line_to(xyDC[i + i], xyDC [i + i + 1]);
+			cairo_close_path(my gc);
+			cairo_fill(my gc);
+		#elif xwin
 			XFillPolygon (my display, my window, my gc, (XPoint *) xyDC,
 				(int) numberOfPoints, Complex, CoordModeOrigin);
 		#elif win
@@ -298,7 +331,13 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		iam (GraphicsScreen);
 		ORDER_DC
 		{
-		#if xwin
+		#if cairo
+			int width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width <= 0 || height <= 0) return;
+			cairoPrepareLine (me);
+			cairo_rectangle(my gc, x1DC, y2DC, width, height);
+			cairoRevertLine (me);
+		#elif xwin
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			xwinPrepareLine (me);
@@ -342,7 +381,12 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 		iam (GraphicsScreen);
 		ORDER_DC
 		{
-		#if xwin
+		#if cairo
+			int width = x2DC - x1DC + 1, height = y1DC - y2DC + 1;
+			if (width <= 0 || height <= 0) return;
+			cairo_rectangle (my gc, x1DC, y2DC, width, height);
+			cairo_fill(my gc);
+		#elif xwin
 			int width = x2DC - x1DC + 1, height = y1DC - y2DC + 1;
 			if (width <= 0 || height <= 0) return;
 			XFillRectangle (my display, my window, my gc, x1DC, y2DC, width, height);
@@ -383,7 +427,11 @@ static void circle (I, short xDC, short yDC, short rDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairoPrepareLine (me);
+			cairo_arc(my gc, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI); // TODO: This is my lucky guess.
+			cairoRevertLine (me);
+		#elif xwin
 			xwinPrepareLine (me);
 			XDrawArc (my display, my window, my gc, xDC - rDC, yDC - rDC, 2 * rDC, 2 * rDC, 0 * 64, 360 * 64L);
 			xwinRevertLine (me);
@@ -415,7 +463,12 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		iam (GraphicsScreen);
 		ORDER_DC
 		{
-		#if xwin
+		#if cairo
+			cairoPrepareLine (me);
+			cairo_arc(my gc, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
+			// xc, yc, radius(!), angle1, angle2
+			cairoRevertLine (me);
+		#elif xwin
 			xwinPrepareLine (me);
 			XDrawArc (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y1DC - y2DC, 0 * 64, 360 * 64);
 			xwinRevertLine (me);
@@ -455,7 +508,13 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			double arcAngle = toAngle - fromAngle;
+			if (arcAngle < 0.0) arcAngle += 360.0;
+			cairoPrepareLine (me);
+			cairo_arc(my gc, xDC - rDC, yDC - rDC, rDC, fromAngle * (M_PI / 180.0), toAngle * (M_PI / 180.0));
+			cairoRevertLine (me);
+		#elif xwin
 			double arcAngle = toAngle - fromAngle;
 			if (arcAngle < 0.0) arcAngle += 360.0;
 			xwinPrepareLine (me);
@@ -498,7 +557,10 @@ static void fillCircle (I, short xDC, short yDC, short rDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairo_arc(my gc, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI);
+			cairo_fill(my gc);		
+		#elif xwin
 			XFillArc (my display, my window, my gc, xDC - rDC, yDC - rDC, 2 * rDC, 2 * rDC, 0 * 64, 360 * 64L);
 		#elif win
 			MY_BRUSH
@@ -531,7 +593,10 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		iam (GraphicsScreen);
 		ORDER_DC
 		{
-		#if xwin
+		#if cairo
+			cairo_arc(my gc, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
+			cairo_fill(my gc);
+		#elif xwin
 			XFillArc (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y1DC - y2DC, 0 * 64, 360 * 64);
 		#elif win
 			MY_BRUSH
@@ -560,6 +625,7 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 static void fillArc (I, short xDC, short yDC, short rDC, double fromAngle, double toAngle) {
 	iam (Graphics);
 	arc (me, xDC, yDC, rDC, fromAngle, toAngle);
+	// TODO: shouldn't there be a cairo entry here with cairo_arc fill?
 }
 
 static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
@@ -744,7 +810,9 @@ static void initLine (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairoPrepareLine (me);
+		#elif xwin
 			xwinPrepareLine (me);
 		#elif win
 			winPrepareLine (me);
@@ -762,7 +830,9 @@ static void exitLine (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairoRevertLine (me);
+		#elif xwin
 			xwinRevertLine (me);
 		#elif win
 			DEFAULT
@@ -781,7 +851,14 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 	initLine (me);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			long i;
+			int halfLine = ceil (0.5 * my lineWidth);
+			for (i = 0; i < numberOfPoints; i ++) {
+				cairo_moveto(my gc, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
+				cairo_lineto(xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
+			}
+		#elif xwin
 			XSegment *s = (void *) xyDC;
 			int nleft = (int) numberOfPoints / 2;
 			while (nleft > 1023) {
@@ -1150,7 +1227,14 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairo_new_path (my gc);
+			cairo_move_to (my gc, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
+			cairo_line_to (my gc, xDC, yDC);
+			cairo_line_to (my gc, xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
+			cairo_close_path(my gc);
+			cairo_fill(my gc);
+		#elif xwin
 			XPoint p [3];
 			double size = 10.0 * my resolution * my arrowSize / 75.0;
 			p [0]. x = xDC + cos ((angle + 160.0) * NUMpi / 180.0) * size;

@@ -73,7 +73,7 @@ static void nameChanged (I) {
 			MelderString_append3 (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 			if (my dirty && ! dirtinessAlreadyShown) MelderString_append (& windowTitle, L" (modified)");
 		}
-		GuiWindow_setTitleW (my shell, windowTitle.string);
+		GuiWindow_setTitle (my shell, windowTitle.string);
 		MelderString_empty (& windowTitle);
 		MelderString_append2 (& windowTitle, my dirty && ! dirtinessAlreadyShown ? L"*" : L"", my name == NULL ? L"(untitled)" : MelderFile_name (& my file));
 		XtVaSetValues (my shell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
@@ -85,7 +85,7 @@ static void nameChanged (I) {
 static int openDocument (TextEditor me, MelderFile file) {
 	wchar_t *text = MelderFile_readText (file);
 	if (! text) return 0;
-	GuiText_setStringW (my textWidget, text);
+	GuiText_setString (my textWidget, text);
 	Melder_free (text);
 	/*
 	 * XmTextSetString has invoked the XmNvalueChangedCallback,
@@ -98,13 +98,13 @@ static int openDocument (TextEditor me, MelderFile file) {
 }
 
 static void newDocument (TextEditor me) {
-	GuiText_setStringW (my textWidget, L"");   /* Implicitly sets my dirty to TRUE. */
+	GuiText_setString (my textWidget, L"");   /* Implicitly sets my dirty to TRUE. */
 	my dirty = FALSE;
 	if (our fileBased) Thing_setName (me, NULL);
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
-	wchar_t *text = GuiText_getStringW (my textWidget);
+	wchar_t *text = GuiText_getString (my textWidget);
 	if (! MelderFile_writeText (file, text)) { Melder_free (text); return 0; }
 	Melder_free (text);
 	my dirty = FALSE;
@@ -150,6 +150,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 }
 
 static void gui_cb_saveAndOpen (GUI_ARGS) {
+	(void) w; (void) call;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	if (my name) {
@@ -161,6 +162,7 @@ static void gui_cb_saveAndOpen (GUI_ARGS) {
 }
 
 static void gui_cb_discardAndOpen (GUI_ARGS) {
+	(void) w; (void) call;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	XtUnmanageChild (my dirtyOpenDialog);
@@ -190,6 +192,7 @@ static int menu_cb_open (EDITOR_ARGS) {
 }
 
 static void gui_cb_saveAndNew (GUI_ARGS) {
+	(void) w; (void) call;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	if (my name) {
@@ -201,6 +204,7 @@ static void gui_cb_saveAndNew (GUI_ARGS) {
 }
 
 static void gui_cb_discardAndNew (GUI_ARGS) {
+	(void) w; (void) call;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	XtUnmanageChild (my dirtyNewDialog);
@@ -245,21 +249,21 @@ static int menu_cb_save (EDITOR_ARGS) {
 	return 1;
 }
 
-MOTIF_CALLBACK (cb_saveAndClose)
-	iam (TextEditor);
+static void gui_cb_saveAndClose (GUI_ARGS) {
+	GUI_IAM (TextEditor);
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
 		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL);
 	}
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_discardAndClose)
-	iam (TextEditor);
+static void gui_cb_discardAndClose (GUI_ARGS) {
+	GUI_IAM (TextEditor);
 	XtUnmanageChild (my dirtyCloseDialog);
 	closeDocument (me);
-MOTIF_CALLBACK_END
+}
 
 static void goAway (I) {
 	iam (TextEditor);
@@ -273,8 +277,8 @@ static void goAway (I) {
 				motif_argXmString (XmNokLabelString, "Save & Close"),
 				motif_argXmString (XmNhelpLabelString, "Discard & Close"),
 				NULL);
-			XtAddCallback (my dirtyCloseDialog, XmNokCallback, cb_saveAndClose, me);
-			XtAddCallback (my dirtyCloseDialog, XmNhelpCallback, cb_discardAndClose, me);
+			XtAddCallback (my dirtyCloseDialog, XmNokCallback, gui_cb_saveAndClose, me);
+			XtAddCallback (my dirtyCloseDialog, XmNhelpCallback, gui_cb_discardAndClose, me);
 		}
 		XtManageChild (my dirtyCloseDialog);
 	} else {
@@ -455,27 +459,27 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Search", L"Go to line...", 'L', cb_goToLine);
 	#ifdef macintosh
 		Editor_addMenu (me, L"Font", 0);
-		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", motif_CHECKABLE, cb_10);
-		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", motif_CHECKABLE, cb_12);
-		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", motif_CHECKABLE, cb_14);
-		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", motif_CHECKABLE, cb_18);
-		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", motif_CHECKABLE, cb_24);
+		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKABLE, cb_10);
+		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKABLE, cb_12);
+		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKABLE, cb_14);
+		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKABLE, cb_18);
+		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKABLE, cb_24);
 		Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
 	#endif
 }
 
-MOTIF_CALLBACK (cb_valueChanged)
-	iam (TextEditor);
+static void gui_cb_valueChanged (GUI_ARGS) {
+	GUI_IAM (TextEditor);
 	if (! my dirty) {
 		my dirty = TRUE;
 		our nameChanged (me);
 	}
-MOTIF_CALLBACK_END
+}
 
 static void createChildren (I) {
 	iam (TextEditor);
 	my textWidget = GuiText_createScrolled (my dialog, "text", TRUE, Machine_getMenuBarHeight ());
-	XtAddCallback (my textWidget, XmNvalueChangedCallback, cb_valueChanged, me);
+	XtAddCallback (my textWidget, XmNvalueChangedCallback, gui_cb_valueChanged, me);
 	XtManageChild (my textWidget);
 }
 
@@ -500,7 +504,7 @@ int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
 	if (! Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL)) return 0;
 	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
-		GuiText_setStringW (my textWidget, initialText);
+		GuiText_setString (my textWidget, initialText);
 		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
 		Thing_setName (me, NULL);
 	}

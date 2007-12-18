@@ -736,10 +736,9 @@ static int portaudioStreamCallback (
 }
 #endif
 
-static void cb_record (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_record (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
-	(void) call;
 	if (my recording) return;
 	my nsamp = 0;
 	my recording = TRUE;
@@ -802,18 +801,16 @@ end:
 	iferror { my recording = FALSE; Melder_flushError ("Cannot record."); }
 }
 
-static void cb_stop (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_stop (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
-	(void) call;
 	stopRecording (me);
 }
 
 #if defined (sgi) || defined (macintosh) || defined (_WIN32)
-static void cb_play (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_play (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
-	(void) call;
 	if (my recording || my nsamp == 0) return;
 	if (! Melder_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL))
 		Melder_flushError (NULL);
@@ -841,7 +838,7 @@ static void publish (SoundRecorder me) {
 		}
 	}
 	if (my soundName) {
-		wchar_t *name = GuiText_getStringW (my soundName);
+		wchar_t *name = GuiText_getString (my soundName);
 		Thing_setName (sound, name);
 		Melder_free (name);
 	}
@@ -849,26 +846,30 @@ static void publish (SoundRecorder me) {
 		my publishCallback (me, my publishClosure, sound);
 }
 
-static void cb_cancel (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_cancel (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
-	(void) call;
 	stopRecording (me);
 	forget (me);
 }
 
-static void cb_apply (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_apply (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
+	stopRecording (me);
+	publish (me);
+}
+static void gui_cb_apply (Widget widget, XtPointer void_me, XtPointer call) {
+	(void) widget;
 	(void) call;
+	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
 }
 
-static void cb_ok (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_button_cb_ok (Widget widget, I) {
+	(void) widget;
 	iam (SoundRecorder);
-	(void) w;
-	(void) call;
 	stopRecording (me);
 	publish (me);
 	forget (me);
@@ -1298,8 +1299,8 @@ end:
 #endif
 }
 
-MOTIF_CALLBACK (cb_resize)
-	iam (SoundRecorder);
+static void gui_cb_resize (GUI_ARGS) {
+	GUI_IAM (SoundRecorder);
 	Dimension width, height, marginWidth = 10, marginHeight = 10;
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
@@ -1309,7 +1310,7 @@ MOTIF_CALLBACK (cb_resize)
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
 	Graphics_updateWs (my graphics);
-MOTIF_CALLBACK_END
+}
 
 static void createChildren (I) {
 	iam (SoundRecorder);
@@ -1458,31 +1459,13 @@ static void createChildren (I) {
 	XtManageChild (my progressScale);
 
 	y = 60;
-	my recordButton = XmCreatePushButton (form, "Record", NULL, 0);
-	XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
-	XtVaSetValues (my recordButton,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 20,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNwidth, 70,
-		NULL);
-	XtManageChild (my recordButton);
-	my stopButton = XmCreatePushButton (form, "Stop", NULL, 0);
-	XtAddCallback (my stopButton, XmNactivateCallback, cb_stop, (XtPointer) me);
-	XtVaSetValues (my stopButton,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 100,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNwidth, 70,
-		NULL);
-	XtManageChild (my stopButton);
+	my recordButton = GuiButton_createShown (form, 20, 90, Gui_AUTOMATIC, -y,
+		L"Record", gui_button_cb_record, me, 0);
+	my stopButton = GuiButton_createShown (form, 100, 170, Gui_AUTOMATIC, -y,
+		L"Stop", gui_button_cb_stop, me, 0);
 	#if defined (sgi) || defined (_WIN32) || defined (macintosh)
-		my playButton = XmCreatePushButton (form, "Play", NULL, 0);
-		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
-		XtVaSetValues (my playButton,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 180,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-			XmNwidth, 70,
-			NULL);
-		XtManageChild (my playButton);
+		my playButton = GuiButton_createShown (form, 180, 250, Gui_AUTOMATIC, -y,
+			L"Play", gui_button_cb_play, me, 0);
 	#endif
 	XtVaCreateManagedWidget ("Name:", xmLabelWidgetClass, form,
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 130,
@@ -1493,37 +1476,17 @@ static void createChildren (I) {
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 20,
 		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
 		NULL);
-	XtAddCallback (my soundName, XmNactivateCallback, cb_apply, (XtPointer) me);
+	XtAddCallback (my soundName, XmNactivateCallback, gui_cb_apply, (XtPointer) me);
 	XmTextFieldSetString (my soundName, "untitled");
 
 	y = 20;
 
-	my cancelButton = XmCreatePushButton (form, "Close", NULL, 0);
-	XtAddCallback (my cancelButton, XmNactivateCallback, cb_cancel, (XtPointer) me);
-	XtVaSetValues (my cancelButton,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 280,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNwidth, 70,
-		NULL);
-	XtManageChild (my cancelButton);
-
-	my applyButton = XmCreatePushButton (form, "Save to list", NULL, 0);
-	XtAddCallback (my applyButton, XmNactivateCallback, cb_apply, (XtPointer) me);
-	XtVaSetValues (my applyButton,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNwidth, 100,
-		NULL);
-	XtManageChild (my applyButton);
-
-	my okButton = XmCreatePushButton (form, "Save to list & Close", NULL, 0);
-	XtAddCallback (my okButton, XmNactivateCallback, cb_ok, (XtPointer) me);
-	XtVaSetValues (my okButton,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 20,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNwidth, 140,
-		NULL);
-	XtManageChild (my okButton);
+	my cancelButton = GuiButton_createShown (form, -350, -280, Gui_AUTOMATIC, -y,
+		L"Close", gui_button_cb_cancel, me, 0);
+	my applyButton = GuiButton_createShown (form, -270, -170, Gui_AUTOMATIC, -y,
+		L"Save to list", gui_button_cb_apply, me, 0);
+	my okButton = GuiButton_createShown (form, -160, -20, Gui_AUTOMATIC, -y,
+		L"Save to list & Close", gui_button_cb_ok, me, 0);
 
 	XtManageChild (form);
 }
@@ -1551,7 +1514,7 @@ static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType)
 }
 
 FORM_WRITE (SoundRecorder, cb_writeWav, L"Write to WAV file", 0)
-	wchar_t *name = GuiText_getStringW (my soundName);
+	wchar_t *name = GuiText_getString (my soundName);
 	swprintf (defaultName, 300, L"%ls.wav", name);
 	Melder_free (name);
 DO_WRITE
@@ -1559,7 +1522,7 @@ DO_WRITE
 END
 
 FORM_WRITE (SoundRecorder, cb_writeAifc, L"Write to AIFC file", 0)
-	wchar_t *name = GuiText_getStringW (my soundName);
+	wchar_t *name = GuiText_getString (my soundName);
 	swprintf (defaultName, 300, L"%ls.aifc", name);
 	Melder_free (name);
 DO_WRITE
@@ -1567,7 +1530,7 @@ DO_WRITE
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNextSun, L"Write to NeXT/Sun file", 0)
-	wchar_t *name = GuiText_getStringW (my soundName);
+	wchar_t *name = GuiText_getString (my soundName);
 	swprintf (defaultName, 300, L"%ls.au", name);
 	Melder_free (name);
 DO_WRITE
@@ -1575,7 +1538,7 @@ DO_WRITE
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNist, L"Write to NIST file", 0)
-	wchar_t *name = GuiText_getStringW (my soundName);
+	wchar_t *name = GuiText_getString (my soundName);
 	swprintf (defaultName, 300, L"%ls.nist", name);
 	Melder_free (name);
 DO_WRITE
@@ -1787,8 +1750,8 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	XtAddCallback (my meter, XmNresizeCallback, cb_resize, (XtPointer) me);
-cb_resize (my meter, (XtPointer) me, 0);
+	XtAddCallback (my meter, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
+gui_cb_resize (my meter, (XtPointer) me, 0);
 	my workProcId = XtAppAddWorkProc (context, workProc, (XtPointer) me);
 	return me;
 error:

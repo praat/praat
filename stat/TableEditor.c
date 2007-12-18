@@ -337,11 +337,11 @@ static void gui_cb_draw (GUI_ARGS) {
 
 static void gui_cb_input (GUI_ARGS) {
 	GUI_IAM (TableEditor);
-	MotifEvent event = MotifEvent_fromCallData (call);
-	int shiftKeyPressed = MotifEvent_shiftKeyPressed (event);
+	GuiEvent event = GuiEvent_fromCallData (call);
+	int shiftKeyPressed = GuiEvent_shiftKeyPressed (event);
 	double xWC, yWC;
-	if (MotifEvent_isButtonPressedEvent (event)) {
-		Graphics_DCtoWC (my graphics, MotifEvent_x (event), MotifEvent_y (event), & xWC, & yWC);
+	if (GuiEvent_isButtonPressedEvent (event)) {
+		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
 	}
 }
 

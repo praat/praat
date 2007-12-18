@@ -168,7 +168,9 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = FALSE;
 	theCurrentPraat -> totalSelection -= 1;
-	if (! theCurrentPraat -> batch && ! Melder_backgrounding) XmListDeselectPos (praatList_objects, IOBJECT);
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
+		GuiList_deselectItem (praatList_objects, IOBJECT);
+	}
 }
 
 void praat_deselectAll (void) { int IOBJECT; WHERE (1) praat_deselect (IOBJECT); }
@@ -177,14 +179,8 @@ void praat_select (int IOBJECT) {
 	if (SELECTED) return;
 	SELECTED = TRUE;
 	theCurrentPraat -> totalSelection += 1;
-	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {  /* Trick required, or the other items will be deselected. */
-		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNselectionPolicy, XmMULTIPLE_SELECT, NULL);
-		#endif
-		XmListSelectPos (praatList_objects, IOBJECT, False);
-		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
-		#endif
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
+		GuiList_selectItem (praatList_objects, IOBJECT, false);
 	}
 }
 
@@ -192,17 +188,13 @@ void praat_selectAll (void) { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
 
 void praat_list_background (void) {
 	int IOBJECT;
-	WHERE (SELECTED) XmListDeselectPos (praatList_objects, IOBJECT);
+	WHERE (SELECTED) GuiList_deselectItem (praatList_objects, IOBJECT);
 }
 void praat_list_foreground (void) {
 	int IOBJECT;
-	#ifdef UNIX
-		XtVaSetValues (praatList_objects, XmNselectionPolicy, XmMULTIPLE_SELECT, NULL);
-	#endif
-	WHERE (SELECTED) XmListSelectPos (praatList_objects, IOBJECT, False);
-	#ifdef UNIX
-		XtVaSetValues (praatList_objects, XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
-	#endif
+	WHERE (SELECTED) {
+		GuiList_selectItem (praatList_objects, IOBJECT, false);
+	}
 }
 
 Any praat_onlyObject (void *klas) {
@@ -349,23 +341,13 @@ bool praat_new1 (I, const wchar_t *myName) {
 	++ uniqueID;
 
 	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
-		MelderString listName = { 0 };
-		MelderString_append3 (& listName, Melder_integer (uniqueID), L". ", name.string);
-		XmString s = XmStringCreateSimple (Melder_peekWcsToUtf8 (listName.string));
-		MelderString_free (& listName);
 		#ifdef UNIX
 			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
 		#endif
-
-		/* The new item must appear unselected (for the moment).
-		 * If we called XmListAddItem () instead, the item would appear selected if there is already
-		 * a selected item with the same name.
-		 * It is an enigma to me why this should be a problem, but it is,
-		 * because the new item would end up UNselected in this case, after praat_updateSelection.
-		 * ppgb, 95/10/16
-		 */
-		XmListAddItemUnselected (praatList_objects, s, theCurrentPraat -> n);
-		XmStringFree (s);
+		MelderString listName = { 0 };
+		MelderString_append3 (& listName, Melder_integer (uniqueID), L". ", name.string);
+		GuiList_insertItem (praatList_objects, listName.string, theCurrentPraat -> n);
+		MelderString_free (& listName);
 	}
 	OBJECT = me;
 	SELECTED = FALSE;
@@ -445,31 +427,31 @@ void praat_updateSelection (void) {
 	}
 }
 
-MOTIF_CALLBACK (cb_list)
-	int pos, position_count, *position_list, IOBJECT, first = TRUE;
+static void gui_cb_list (Widget widget, void *void_me) {
+	(void) widget; (void) void_me;
+	int IOBJECT, first = TRUE;
 	WHERE (1) SELECTED = FALSE;
 	theCurrentPraat -> totalSelection = 0;
-	if (XmListGetSelectedPos (praatList_objects, & position_list, & position_count)) {
-		for (pos = 0; pos < position_count; pos ++) {
-			IOBJECT = position_list [pos];
+	long numberOfSelected, *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
+	if (selected != NULL) {
+		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
+			IOBJECT = selected [iselected];
 			SELECTED = TRUE;
 			UiHistory_write (first ? L"\nselect " : L"\nplus ");
 			UiHistory_write (FULL_NAME);
 			first = FALSE;
 			theCurrentPraat -> totalSelection += 1;
 		}
-		XtFree ((XtPointer) position_list);
+		NUMlvector_free (selected, 1);
 	}
 	praat_show ();
-MOTIF_CALLBACK_END
+}
 
 void praat_list_renameAndSelect (int position, const wchar_t *name) {
 	if (! theCurrentPraat -> batch) {
-		XmString s = XmStringCreateSimple (MOTIF_CONST_CHAR_ARG (Melder_peekWcsToUtf8 (name)));
-		XmListReplaceItemsPos (praatList_objects, & s, 1, position);   /* Void if name equal. */
+		GuiList_replaceItem (praatList_objects, name, position);   /* Void if name equal. */
 		if (! Melder_backgrounding)
-			XmListSelectPos (praatList_objects, position, False);
-		XmStringFree (s);
+			GuiList_selectItem (praatList_objects, position, false);
 	}
 }
 
@@ -502,9 +484,9 @@ void praat_removeObject (int i) {
 	MelderFile_setToNull (& theCurrentPraat -> list [theCurrentPraat -> n]. file);   /* Undangle or remove second reference. */
 	-- theCurrentPraat -> n;
 	if (! theCurrentPraat -> batch) {
-		XmListDeletePos (praatList_objects, i);
+		GuiList_deleteItem (praatList_objects, i);
 		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 1, NULL);
+			//XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 1, NULL);
 		#endif
 	}
 }
@@ -800,9 +782,10 @@ DO
 	praat_exit (0);
 END
 
-MOTIF_CALLBACK (cb_quit)
+static void gui_cb_quit (GUI_ARGS) {
+	(void) w; (void) void_me; (void) call;
 	DO_Quit (NULL, NULL);
-MOTIF_CALLBACK_END
+}
 
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 
@@ -1066,7 +1049,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		if (! Melder_batch) {
 			motif_mac_setUserMessageCallbackA (cb_userMessageA);
 			motif_mac_setUserMessageCallbackW (cb_userMessageW);
-			motif_setQuitApplicationCallback (cb_quitApplication);
+			Gui_setQuitApplicationCallback (cb_quitApplication);
 		}
 	#endif
 
@@ -1097,7 +1080,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Machine_initLookAndFeel (argc, argv);
 		#ifdef _WIN32
 			argv [0] = & praatP. title [0];   /* argc == 4 */
-			motif_setOpenDocumentCallback (cb_openDocument);
+			Gui_setOpenDocumentCallback (cb_openDocument);
 		#endif
 		theCurrentPraat -> topShell = XtVaAppInitialize (& theCurrentPraat -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
 		sprintf (objectWindowTitle, "%s objects", praatP.title);
@@ -1110,7 +1093,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			/* Catch Window Manager "Close" and "Quit". */
 			Atom atom = XmInternAtom (XtDisplay (theCurrentPraat -> topShell), "WM_DELETE_WINDOW", True);
 			XmAddWMProtocols (theCurrentPraat -> topShell, & atom, 1);
-			XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, cb_quit, 0);
+			XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, gui_cb_quit, 0);
 		}
 		#endif
 	}
@@ -1121,19 +1104,16 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (NULL);
 	} else {
 		Widget Raam = NULL;
-		#ifndef _WIN32
-			Widget listWindow = 0;
-		#endif
 		#ifdef macintosh
 			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
 		#ifdef macintosh
 			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
-			praatP.topBar = motif_addMenuBar (Raam);
+			praatP.topBar = Gui_addMenuBar (Raam);
 			XtManageChild (praatP.topBar);
 		#endif
-		praatP.menuBar = motif_addMenuBar (Raam);
+		praatP.menuBar = Gui_addMenuBar (Raam);
 		praat_addMenus (praatP.menuBar);
 		XtManageChild (praatP.menuBar);
 		#ifndef UNIX
@@ -1141,34 +1121,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
 			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
-		#if defined (_WIN32) || defined (macintoshXXXX)
-			praatList_objects = XmCreateList (Raam, "list", NULL, 0);
-			XtVaSetValues (praatList_objects,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 210, NULL);
-		#elif defined (UNIX)
-			praatList_objects = XmCreateScrolledList (Raam, "list", NULL, 0);
-			listWindow = XtParent (praatList_objects);
-			XtVaSetValues (listWindow,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNleftAttachment, XmATTACH_POSITION, XmNleftPosition, 0,
-				XmNrightAttachment, XmATTACH_POSITION, XmNrightPosition, 50, NULL);
-		#elif defined (macintosh)
-			listWindow = XmCreateScrolledWindow (Raam, "listWindow", NULL, 0);
-			XtVaSetValues (listWindow,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight () + 26,
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 100,
-				XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 210, NULL);
-			praatList_objects = XmCreateList (listWindow, "list", NULL, 0);
-			XtVaSetValues (praatList_objects, XmNwidth, 530, NULL);
-		#endif
-		XtAddCallback (praatList_objects, XmNextendedSelectionCallback, cb_list, 0);
-		XtManageChild (praatList_objects);
-		#if ! defined (_WIN32)
-			if (listWindow) XtManageChild (listWindow);
-		#endif
+		praatList_objects = GuiList_create (Raam, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
+		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
+		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, 0);
+		GuiObject_show (praatList_objects);
 		praat_addFixedButtons (Raam);
 		praat_actions_createDynamicMenu (Raam, 210);
 		XtManageChild (Raam);

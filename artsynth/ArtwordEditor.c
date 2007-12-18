@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/05/19 Melder_atof
  * pb 2007/08/30 include menu bar height
+ * pb 2007/12/14 Gui
  */
 
 #include "ArtwordEditor.h"
@@ -35,42 +36,38 @@ static void destroy (I) {
 static void updateList (ArtwordEditor me) {
 	Artword artword = my data;
 	ArtwordData a = & artword -> data [my feature];
-	int i;
-	XmListDeleteAllItems (my list);
-	for (i = 1; i <= a -> numberOfTargets; i ++) {
-		XmString item;
-		char itemText [100];
-		sprintf (itemText, "%8g  %8g", (double) a -> times [i], (double) a -> targets [i]);
-		item = XmStringCreateSimple (itemText);
-		XmListAddItem (my list, item, i);
-		XmStringFree (item);
+	GuiList_deleteAllItems (my list);
+	for (int i = 1; i <= a -> numberOfTargets; i ++) {
+		static MelderString itemText = { 0 };
+		MelderString_empty (& itemText);
+		MelderString_append3 (& itemText, Melder_single (a -> times [i]), L"  ", Melder_single (a -> targets [i]));
+		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
 }
 
-MOTIF_CALLBACK (cb_removeTarget)
+static void gui_pushButton_cb_removeTarget (Widget widget, I) {
+	(void) widget;
 	iam (ArtwordEditor);
 	Artword artword = my data;
-	int *position_list;
-	int i, position_count;
-	if (XmListGetSelectedPos (my list, & position_list, & position_count)) {
-		for (i = position_count - 1; i >= 0; i --)
-			Artword_removeTarget (artword, my feature, position_list [i]);
-		XtFree ((XtPointer) position_list);
-		updateList (me);
-		Editor_broadcastChange (me);
+	long numberOfSelectedPositions, *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);
+	if (selectedPositions != NULL) {
+		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --)
+			Artword_removeTarget (artword, my feature, selectedPositions [ipos]);
 	}
-MOTIF_CALLBACK_END
+	NUMlvector_free (selectedPositions, 1);
+	updateList (me);
+	Editor_broadcastChange (me);
+}
 
-MOTIF_CALLBACK (cb_addTarget)
+static void gui_pushButton_cb_addTarget (Widget widget, I) {
+	(void) widget;
 	iam (ArtwordEditor);
 	Artword artword = my data;
-	wchar_t *timeText = GuiText_getStringW (my time);
+	wchar_t *timeText = GuiText_getString (my time);
 	double tim = Melder_atofW (timeText);
-	wchar_t *valueText = GuiText_getStringW (my value);
+	wchar_t *valueText = GuiText_getString (my value);
 	double value = Melder_atofW (valueText);
-	XmString item;
-	char itemText [100];
 	ArtwordData a = & artword -> data [my feature];
 	int i = 1, oldCount = a -> numberOfTargets;
 	Melder_free (timeText);
@@ -82,49 +79,50 @@ MOTIF_CALLBACK (cb_addTarget)
 	if (tim < 0) tim = 0;
 	if (tim > artword -> totalTime) tim = artword -> totalTime;
 	while (tim != a -> times [i]) i ++;
-	sprintf (itemText, "%8g %8g", (double) tim, (double) value);
-	item = XmStringCreateSimple (itemText);
-	if (a -> numberOfTargets == oldCount)
-		XmListReplaceItemsPos (my list, & item, 1, i);
-	else
-		XmListAddItem (my list, item, i);
-	XmStringFree (item);
+	static MelderString itemText = { 0 };
+	MelderString_empty (& itemText);
+	MelderString_append3 (& itemText, Melder_single (tim), L"  ", Melder_single (value));
+	if (a -> numberOfTargets == oldCount) {
+		GuiList_replaceItem (my list, itemText.string, i);
+	} else {
+		GuiList_insertItem (my list, itemText.string, i);
+	}
 	Graphics_updateWs (my graphics);
 	Editor_broadcastChange (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_toggle)
-	iam (ArtwordEditor);
+static void cb_toggle (GUI_ARGS) {
+	GUI_IAM (ArtwordEditor);
 	int i = 0;
 	while (w != my button [i]) i ++;
 	my feature = i;
 	updateList (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_draw)
-	iam (ArtwordEditor);
+static void cb_draw (GUI_ARGS) {
+	GUI_IAM (ArtwordEditor);
 	Artword artword = my data;
 	#ifdef UNIX
 		if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
 	#endif
 	Graphics_clearWs (my graphics);
 	Artword_draw (artword, my graphics, my feature, TRUE);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_click)
-	iam (ArtwordEditor);
-	MotifEvent event = MotifEvent_fromCallData (call);
-	if (! MotifEvent_isButtonPressedEvent (event)) return;
+static void cb_click (GUI_ARGS) {
+	GUI_IAM (ArtwordEditor);
+	GuiEvent event = GuiEvent_fromCallData (call);
+	if (! GuiEvent_isButtonPressedEvent (event)) return;
 	Artword artword = my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);
-	int x = MotifEvent_x (event), y = MotifEvent_y (event);
+	int x = GuiEvent_x (event), y = GuiEvent_y (event);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, x, y, & xWC, & yWC);
 	Graphics_unsetInner (my graphics);
-	GuiText_setStringW (my time, Melder_fixed (xWC, 6));
-	GuiText_setStringW (my value, Melder_fixed (yWC, 6));
-MOTIF_CALLBACK_END
+	GuiText_setString (my time, Melder_fixed (xWC, 6));
+	GuiText_setString (my value, Melder_fixed (yWC, 6));
+}
 
 static void dataChanged (I) {
 	iam (ArtwordEditor);
@@ -134,7 +132,6 @@ static void dataChanged (I) {
 
 static void createChildren (I) {
 	iam (ArtwordEditor);
-	Widget button, scrolled;
 	int dy = Machine_getMenuBarHeight ();
 	XtVaCreateManagedWidget ("Targets:", xmLabelGadgetClass, my dialog,
 		XmNx, 40, XmNy, dy + 3, XmNwidth, 60, NULL);
@@ -142,18 +139,11 @@ static void createChildren (I) {
 		XmNx, 5, XmNy, dy + 20, XmNwidth, 60, NULL);
 	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
 		XmNx, 80, XmNy, dy + 20, XmNwidth, 60, NULL);
-	scrolled = XmCreateScrolledWindow (my dialog, "listWindow", NULL, 0);
-	XtVaSetValues (scrolled, XmNy, dy + 40, XmNwidth, 140, XmNheight, 300, NULL);
-	my list = XtVaCreateManagedWidget
-		("list", xmListWidgetClass, scrolled,
-		 XmNvisibleItemCount, 20 /*Artword_maximumNumberOfTargets*/,
-		 XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
-	XtManageChild (scrolled);
+	my list = GuiList_create (my dialog, 0, 140, dy + 40, dy + 340, true);
+	GuiObject_show (my list);
 
-	button = XtVaCreateManagedWidget
-		("Remove target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 10, XmNy, dy + 410, XmNwidth, 120, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_removeTarget, (XtPointer) me);
+	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC,
+		L"Remove target", gui_pushButton_cb_removeTarget, me, 0);
 
 	my drawingArea = XtVaCreateManagedWidget
 		("drawingArea", xmDrawingAreaWidgetClass, my dialog,
@@ -172,11 +162,8 @@ static void createChildren (I) {
 		("Value", xmTextWidgetClass, my dialog,
 		 XmNx, 270, XmNy, dy + 370, XmNwidth, 100, NULL);
 
-	button = XtVaCreateManagedWidget
-		("Add target", xmPushButtonGadgetClass, my dialog,
-		 XmNx, 240, XmNy, dy + 410, XmNwidth, 120, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_addTarget, (XtPointer) me);
-	XtVaSetValues (my dialog, XmNdefaultButton, button, NULL);
+	GuiButton_createShown (my dialog, 240, 360, dy + 410, Gui_AUTOMATIC,
+		L"Add target", gui_pushButton_cb_addTarget, me, GuiButton_DEFAULT);
 
 	my radio = XtVaCreateManagedWidget
 		("radioBox", xmRowColumnWidgetClass, my dialog,

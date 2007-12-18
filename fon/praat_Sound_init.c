@@ -1907,7 +1907,7 @@ void praat_uvafon_Sound_init (void) {
 	praat_addMenuCommand (L"Objects", L"Read", L"Read from special sound file", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw Alaw file...", 0, 1, DO_Sound_readFromRawAlawFile);
 
-	praat_addMenuCommand (L"Objects", L"Goodies", L"Stop playing sound", 0, motif_ESCAPE, DO_stopPlayingSound);
+	praat_addMenuCommand (L"Objects", L"Goodies", L"Stop playing sound", 0, GuiMenu_ESCAPE, DO_stopPlayingSound);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- sound prefs --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Sound recording preferences...", 0, 0, DO_SoundInputPrefs);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Sound playing preferences...", 0, 0, DO_SoundOutputPrefs);

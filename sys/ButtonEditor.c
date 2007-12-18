@@ -22,6 +22,7 @@
  * pb 2004/05/10 corrected redrawing
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/14 Gui
  */
 
 #include "ButtonEditor.h"
@@ -251,11 +252,11 @@ static void which (ButtonEditor me, int show) {
 	HyperPage_goToPage (me, L"Buttons");
 }
 
-MOTIF_CALLBACK (cb_objects) which (void_me, 1); MOTIF_CALLBACK_END
-MOTIF_CALLBACK (cb_picture) which (void_me, 2); MOTIF_CALLBACK_END
-MOTIF_CALLBACK (cb_editors) which (void_me, 3); MOTIF_CALLBACK_END
-MOTIF_CALLBACK (cb_actionsAM) which (void_me, 4); MOTIF_CALLBACK_END
-MOTIF_CALLBACK (cb_actionsNZ) which (void_me, 5); MOTIF_CALLBACK_END
+static void gui_cb_objects (GUI_ARGS) { which (void_me, 1); }
+static void gui_cb_picture (GUI_ARGS) { which (void_me, 2); }
+static void gui_cb_editors (GUI_ARGS) { which (void_me, 3); }
+static void gui_cb_actionsAM (GUI_ARGS) { which (void_me, 4); }
+static void gui_cb_actionsNZ (GUI_ARGS) { which (void_me, 5); }
 
 static void createChildren (I) {
 	iam (ButtonEditor);
@@ -263,19 +264,19 @@ static void createChildren (I) {
 	inherited (ButtonEditor) createChildren (me);
 	my button1 = XtVaCreateManagedWidget ("Objects", xmToggleButtonWidgetClass, my dialog,
 		XmNx, x, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button1, XmNvalueChangedCallback, cb_objects, (XtPointer) me);
+	XtAddCallback (my button1, XmNvalueChangedCallback, gui_cb_objects, (XtPointer) me);
 	my button2 = XtVaCreateManagedWidget ("Picture", xmToggleButtonWidgetClass, my dialog,
 		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button2, XmNvalueChangedCallback, cb_picture, (XtPointer) me);
+	XtAddCallback (my button2, XmNvalueChangedCallback, gui_cb_picture, (XtPointer) me);
 	my button3 = XtVaCreateManagedWidget ("Editors", xmToggleButtonWidgetClass, my dialog,
 		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button3, XmNvalueChangedCallback, cb_editors, (XtPointer) me);
+	XtAddCallback (my button3, XmNvalueChangedCallback, gui_cb_editors, (XtPointer) me);
 	my button4 = XtVaCreateManagedWidget ("Actions A-M", xmToggleButtonWidgetClass, my dialog,
 		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button4, XmNvalueChangedCallback, cb_actionsAM, (XtPointer) me);
+	XtAddCallback (my button4, XmNvalueChangedCallback, gui_cb_actionsAM, (XtPointer) me);
 	my button5 = XtVaCreateManagedWidget ("Actions N-Z", xmToggleButtonWidgetClass, my dialog,
 		XmNx, x += width + 30, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button5, XmNvalueChangedCallback, cb_actionsNZ, (XtPointer) me);
+	XtAddCallback (my button5, XmNvalueChangedCallback, gui_cb_actionsNZ, (XtPointer) me);
 }
 
 DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END

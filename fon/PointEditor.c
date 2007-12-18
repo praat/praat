@@ -160,7 +160,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Point", L"Add point at cursor", 'P', cb_addPointAtCursor);
 	Editor_addCommand (me, L"Point", L"Add point at...", 0, cb_addPointAt);
 	Editor_addCommand (me, L"Point", L"-- remove point --", 0, NULL);
-	Editor_addCommand (me, L"Point", L"Remove point(s)", motif_OPTION + 'P', cb_removePoints);
+	Editor_addCommand (me, L"Point", L"Remove point(s)", GuiMenu_OPTION + 'P', cb_removePoints);
 
 	Editor_addCommand (me, L"Help", L"PointEditor help", '?', cb_PointEditorHelp);
 }

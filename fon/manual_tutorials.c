@@ -23,10 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071210)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071218)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.01# (December 18, 2007)")
+LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when redrawing the sound or TextGrid window.")
 NORMAL (L"##5.0# (December 10, 2007)")
+LIST_ITEM (L"\\bu Corrected many bugs.")
+LIST_ITEM (L"\\bu Display font sizes in points rather than pixels.")
 NORMAL (L"##4.6.41# (December 9, 2007)")
 LIST_ITEM (L"\\bu Windows: corrected a bug that could cause listening experiments not to run when the directory path included non-ASCII characters; "
 	"the same bug could (under comparable circumstances) cause scripted menu commands not to work.")

@@ -114,7 +114,7 @@ const wchar_t * Melder_single (double value) {
 const wchar_t * Melder_half (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.5g", value);
+	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.4g", value);
 	return buffers [ibuffer];
 }
 
@@ -159,7 +159,7 @@ const wchar_t * Melder_percent (double value, int precision) {
 
 const wchar_t * Melder_float (const wchar_t *number) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	if (wcschr (buffers [ibuffer], 'e') == NULL) {
+	if (wcschr (number, 'e') == NULL) {
 		wcscpy (buffers [ibuffer], number);
 	} else {
 		wchar_t *b = buffers [ibuffer];
@@ -170,10 +170,13 @@ const wchar_t * Melder_float (const wchar_t *number) {
 		} else {
 			wcscat (buffers [ibuffer], L"\\.c10^^"); b += 7;
 		}
+		Melder_assert (*n == 'e');
 		if (*++n == '+') n ++;   /* Ignore leading plus sign in exponent. */
 		if (*n == '-') *(b++) = *(n++);   /* Copy sign of negative exponent. */
 		while (*n == '0') n ++;   /* Ignore leading zeroes in exponent. */
-		while (*n) *(b++) = *(n++); *b = '\0';
+		while (*n >= '0' && *n <= '9') *(b++) = *(n++);
+		*(b++) = '^';
+		while (*n != '\0') *(b++) = *(n++); *b = '\0';
 	}
 	return buffers [ibuffer];
 }

@@ -123,8 +123,8 @@ static void drawSelection (Picture me, int high) {
 }
 
 static int SMERIG_valid;
-MOTIF_CALLBACK (cb_draw)
-	iam (Picture);
+static void gui_cb_draw (GUI_ARGS) {
+	GUI_IAM (Picture);
 #if defined (macintosh)
 	WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
 	static RgnHandle visRgn;
@@ -166,22 +166,22 @@ MOTIF_CALLBACK (cb_draw)
 	}
 	SMERIG_valid = 0;
 #endif
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_click)
-	iam (Picture);
-	MotifEvent event = MotifEvent_fromCallData (call);
-	int xstart = MotifEvent_x (event);
-	int ystart = MotifEvent_y (event);
+static void gui_cb_click (GUI_ARGS) {
+	GUI_IAM (Picture);
+	GuiEvent event = GuiEvent_fromCallData (call);
+	int xstart = GuiEvent_x (event);
+	int ystart = GuiEvent_y (event);
 	double xWC, yWC;
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
-	if (! MotifEvent_isButtonPressedEvent (event)) return;
+	if (! GuiEvent_isButtonPressedEvent (event)) return;
 
 	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
 	ix = ixstart = 1 + floor (xWC * SQUARES / SIDE);
 	iy = iystart = SQUARES - floor (yWC * SQUARES / SIDE);
 	if (ixstart < 1 || ixstart > SQUARES || iystart < 1 || iystart > SQUARES) return;
-	if (MotifEvent_shiftKeyPressed (event)) {
+	if (GuiEvent_shiftKeyPressed (event)) {
 		int ix1 = 1 + floor (my selx1 * SQUARES / SIDE);
 		int ix2 = floor (my selx2 * SQUARES / SIDE);
 		int iy1 = SQUARES + 1 - floor (my sely2 * SQUARES / SIDE);
@@ -216,7 +216,7 @@ MOTIF_CALLBACK (cb_click)
 	if (my selectionChangedCallback)
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
-MOTIF_CALLBACK_END
+}
 
 Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	Picture me = Melder_calloc (struct structPicture, 1);
@@ -233,7 +233,7 @@ Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	if (drawingArea) {
 		/* The drawing area must have been realized; see manual at XtWindow. */
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
+		XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
 	} else {
 		/*
 		 * Create a dummy Graphics.
@@ -247,7 +247,10 @@ Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
 	if (my sensitive) {
 		my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
-		XtAddCallback (my drawingArea, XmNinputCallback, cb_click, (XtPointer) me);
+		#if gtk
+		#elif motif
+			XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_click, (XtPointer) me);
+		#endif
 		Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
 	}
 	Graphics_startRecording (my graphics);

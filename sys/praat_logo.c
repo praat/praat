@@ -62,15 +62,17 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	theLogo.draw = draw;
 }
 
-MOTIF_CALLBACK (logo_cb_expose)
+static void gui_cb_expose (GUI_ARGS) {
+	(void) w; (void) void_me; (void) call;
 	if (! theLogo.graphics)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	theLogo.draw (theLogo.graphics);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (logo_cb_input)
+static void gui_cb_input (GUI_ARGS) {
+	(void) w; (void) void_me; (void) call;
  	XtUnmanageChild (theLogo.form);
-MOTIF_CALLBACK_END
+}
 
 void praat_showLogo (int autoPopDown) {
 	#ifdef UNIX
@@ -93,16 +95,16 @@ void praat_showLogo (int autoPopDown) {
 			Widget shell = XtParent (theLogo.form);
 			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
 			XmAddWMProtocols (shell, & atom, 1);
-			XmAddWMProtocolCallback (shell, atom, logo_cb_input, NULL);
+			XmAddWMProtocolCallback (shell, atom, gui_cb_input, NULL);
 		}
 		#endif
 		theLogo.drawingArea = XmCreateDrawingArea (theLogo.form, "drawingArea", NULL, 0);
 		XtVaSetValues (theLogo.drawingArea,
-			XmNwidth, (int) (theLogo.width_mm / 25.4 * motif_getResolution (theLogo.drawingArea)),
-			XmNheight, (int) (theLogo.height_mm / 25.4 * motif_getResolution (theLogo.drawingArea)), NULL);
+			XmNwidth, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+			XmNheight, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)), NULL);
 		XtManageChild (theLogo.drawingArea);
-		XtAddCallback (theLogo.drawingArea, XmNexposeCallback, logo_cb_expose, (XtPointer) NULL);
-		XtAddCallback (theLogo.drawingArea, XmNinputCallback, logo_cb_input, (XtPointer) NULL);
+		XtAddCallback (theLogo.drawingArea, XmNexposeCallback, gui_cb_expose, (XtPointer) NULL);
+		XtAddCallback (theLogo.drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) NULL);
 	}
 	XtManageChild (theLogo.form);
 	/*
@@ -117,7 +119,7 @@ void praat_showLogo (int autoPopDown) {
 		XtAppNextEvent (theCurrentPraat -> context, & event);
 		XtDispatchEvent (& event);
 	}
-	logo_cb_expose (0, 0, 0);
+	gui_cb_expose (0, 0, 0);
 	#endif
 
 	if (autoPopDown)

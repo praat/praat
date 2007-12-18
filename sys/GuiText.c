@@ -30,6 +30,7 @@
  * pb 2007/06/01 Mac: erased TextEdit stuff as well as changeCount
  * pb 2007/06/11 GuiText_getSelectionW, GuiText_replaceW
  * pb 2007/06/12 let command-key combinations pass through
+ * pb 2007/12/15 erased ASCII versions
  */
 
 #include "GuiP.h"
@@ -154,7 +155,7 @@ void _GuiText_setTheTextFocus (Widget me) {
  * CHANGE NOTIFICATION
  */
 void _GuiText_handleValueChanged (Widget me) {
-	_Gui_callCallbacks (me, & my motif.text.valueChangedCallbacks, NULL);
+	_Gui_callCallbacks (me, & my motiff.text.valueChangedCallbacks, NULL);
 }
 
 /*
@@ -178,7 +179,7 @@ void _GuiText_handleValueChanged (Widget me) {
 					return 1;
 				}
 			} else if (isMLTE (me)) {
-				if (charCode == 'X' && my motif.text.editable) {
+				if (charCode == 'X' && my motiff.text.editable) {
 					if (event -> what != autoKey) XmTextCut (me, 0);
 					return 1;
 				}
@@ -186,7 +187,7 @@ void _GuiText_handleValueChanged (Widget me) {
 					if (event -> what != autoKey) XmTextCopy (me, 0);
 					return 1;
 				}
-				if (charCode == 'V' && my motif.text.editable) {
+				if (charCode == 'V' && my motiff.text.editable) {
 					XmTextPaste (me);
 					return 1;
 				}
@@ -196,7 +197,7 @@ void _GuiText_handleValueChanged (Widget me) {
 	}
 	int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget me, unsigned char keyCode, unsigned char charCode, EventRecord *event) {
 		(void) keyCode;
-		if (me && my motif.text.editable) {
+		if (me && my motiff.text.editable) {
 			_GuiMac_clipOnParent (me);
 			if (isTextControl (me)) {
 				CallNextEventHandler (eventHandlerCallRef, eventRef);
@@ -207,7 +208,7 @@ void _GuiText_handleValueChanged (Widget me) {
 			}
 			GuiMac_clipOff ();
 			if (charCode > 31 || charCode < 28)   /* Arrows do not change the value of the text. */
-				_Gui_callCallbacks (me, & my motif.text.valueChangedCallbacks, (XtPointer) & event);
+				_Gui_callCallbacks (me, & my motiff.text.valueChangedCallbacks, (XtPointer) & event);
 			return 1;
 		}
 		return 0;   /* Not handled. */
@@ -223,7 +224,7 @@ void _GuiText_handleValueChanged (Widget me) {
 			GlobalToLocal (& event -> where);
 		}
 		GuiMac_clipOff ();
-		_Gui_callCallbacks (me, & my motif.text.motionVerifyCallbacks, 0);
+		_Gui_callCallbacks (me, & my motiff.text.motionVerifyCallbacks, 0);
 	}
 #endif
 
@@ -324,7 +325,7 @@ void _GuiText_nativizeWidget (Widget me) {
 		static HFONT font;
 		if (! font) font = CreateFontW (15, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
 		SetWindowFont (my window, font /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);
-		my motif.text.editable = TRUE;
+		my motiff.text.editable = TRUE;
 		Edit_LimitText (my window, 0);
 	#elif mac
 	{
@@ -357,7 +358,7 @@ void _GuiText_nativizeWidget (Widget me) {
 			InsetRect (& r, 3, 3);
 			CreateEditUnicodeTextControl (my macWindow, & r, NULL, false, NULL, & my nat.control.handle);
 			SetControlReference (my nat.control.handle, (long) me);
-			my motif.text.editable = True;
+			my motiff.text.editable = True;
 			my isControl = TRUE;
 		} else {
 			Melder_fatal ("Old style TE record.");
@@ -568,7 +569,7 @@ void XmTextSetString (Widget me, const char *text) {
 		Edit_SetText (my window, Melder_peekUtf8ToWcs (winText));
 		Melder_free (winText);
 	#elif mac
-		GuiText_setStringW (me, Melder_peekUtf8ToWcs (text));
+		GuiText_setString (me, Melder_peekUtf8ToWcs (text));
 		return;
 		
 		long length = strlen (text), i;
@@ -775,7 +776,7 @@ void XmTextShowPosition (Widget me, XmTextPosition position) {
 
 Boolean XmTextCut (Widget me, long time) {
 	(void) time;
-	if (! my motif.text.editable || ! NativeText_getSelectionRange (me, NULL, NULL)) return False;
+	if (! my motiff.text.editable || ! NativeText_getSelectionRange (me, NULL, NULL)) return False;
 	#if win
 		SendMessage (my window, WM_CUT, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
@@ -807,7 +808,7 @@ Boolean XmTextCopy (Widget me, long time) {
 }
 
 Boolean XmTextPaste (Widget me) {
-	if (! my motif.text.editable) return False;
+	if (! my motiff.text.editable) return False;
 	#if win
 		SendMessage (my window, WM_PASTE, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
@@ -824,7 +825,7 @@ Boolean XmTextPaste (Widget me) {
 }
 
 Boolean XmTextRemove (Widget me) {
-	if (! my motif.text.editable || ! NativeText_getSelectionRange (me, NULL, NULL)) return False;
+	if (! my motiff.text.editable || ! NativeText_getSelectionRange (me, NULL, NULL)) return False;
 	#if win
 		SendMessage (my window, WM_CLEAR, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 	#elif mac
@@ -888,7 +889,7 @@ Widget GuiText_createScrolled (Widget parent, const char *name, int editable, in
 	#else
 		theScrolledHint = TRUE;
 		me = _Gui_initializeWidget (xmTextWidgetClass, parent, Melder_peekUtf8ToWcs (name));
-		my motif.text.editable = editable;
+		my motiff.text.editable = editable;
 		_GuiText_nativizeWidget (me);
 		XtVaSetValues (me,
 			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
@@ -931,7 +932,7 @@ void GuiText_redo (Widget me) {
 	#endif
 }
 
-wchar_t *GuiText_getStringW (Widget me) {
+wchar_t *GuiText_getString (Widget me) {
 	#if defined (UNIX)
 		char *textUtf8 = XmTextGetString (me);
 		wchar_t *result = Melder_utf8ToWcs (textUtf8);
@@ -946,8 +947,9 @@ wchar_t *GuiText_getStringW (Widget me) {
 	#endif
 }
 
-void GuiText_setStringW (Widget me, const wchar_t *text) {
-	#if defined (UNIX)
+void GuiText_setString (Widget me, const wchar_t *text) {
+	#if gtk
+	#elif defined (UNIX)
 		char *textUtf8 = Melder_wcsToUtf8 (text);
 		XmTextSetString (me, textUtf8);
 		Melder_free (textUtf8);
@@ -1002,7 +1004,7 @@ void GuiText_setStringW (Widget me, const wchar_t *text) {
 	#endif
 }
 
-wchar_t * GuiText_getSelectionW (Widget me) {
+wchar_t * GuiText_getSelection (Widget me) {
 	#if defined (UNIX)
 		char *selectionUtf8 = XmTextGetSelection (me);
 		wchar_t *selection = Melder_utf8ToWcs (selectionUtf8);
@@ -1031,7 +1033,7 @@ wchar_t * GuiText_getSelectionW (Widget me) {
 	#endif
 }
 
-void GuiText_replaceW (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, const wchar_t *text) {
+void GuiText_replace (Widget me, XmTextPosition from_pos, XmTextPosition to_pos, const wchar_t *text) {
 	XmTextReplace (me, from_pos, to_pos, Melder_peekWcsToUtf8 (text));
 }
 

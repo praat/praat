@@ -27,15 +27,15 @@
  * pb 2005/12/04 wider names
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/16 Gui
  */
 
 #define NAME_X  30
 #define TEXT_X  250
 #define BUTTON_X  250
+#define LIST_Y  (2 * Gui_TOP_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT)
 #define EDITOR_WIDTH  820
 #define EDITOR_HEIGHT  (LIST_Y + MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
-#define LIST_Y  40
-#define LIST_TOP_MARGIN  11
 #define ROW_HEIGHT  31
 
 #define SCROLL_BAR_WIDTH  Machine_getScrollBarWidth ()
@@ -156,14 +156,15 @@ static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const wch
 	return NULL;
 }
 
-MOTIF_CALLBACK (cb_change)
+static void gui_pushButton_cb_change (Widget widget, I) {
+	(void) widget;
 	iam (DataSubEditor);
-	int i;
+	int i;   // has to be declared here
 	for (i = 1; i <= MAXNUM_ROWS; i ++) if (XtIsManaged (my fieldData [i]. text)) {
 		int type = my fieldData [i]. description -> type;
 		wchar_t *text;
 		if (type > maxsingletypewa) continue;
-		text = GuiText_getStringW (my fieldData [i]. text);
+		text = GuiText_getString (my fieldData [i]. text);
 		switch (type) {
 			case bytewa: {
 				signed char oldValue = * (signed char *) my fieldData [i]. address, newValue = wcstol (text, NULL, 10);
@@ -280,22 +281,23 @@ MOTIF_CALLBACK (cb_change)
 error:
 	Melder_error3 (L"Edit field \"", my fieldData [i]. description -> name, L"\" or click \"Cancel\".");
 	Melder_flushError (NULL);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_cancel)
+static void gui_pushButton_cb_cancel (Widget widget, I) {
+	(void) widget;
 	iam (DataSubEditor);
 	update (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_scroll)
-	iam (DataSubEditor);
+static void gui_cb_scroll (GUI_ARGS) {
+	GUI_IAM (DataSubEditor);
 	int value, slider, incr, pincr;
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
 	my topField = value + 1;
 	update (me);
-MOTIF_CALLBACK_END
+}
 
-MOTIF_CALLBACK (cb_open)
+static void gui_pushButton_cb_open (Widget w, I) {
 	iam (DataSubEditor);
 	int ifield = 0;
 	static MelderString name = { 0 };
@@ -343,21 +345,18 @@ MOTIF_CALLBACK (cb_open)
 			fieldData -> description -> type,
 			fieldData -> description -> rank);*/
 	}
-MOTIF_CALLBACK_END
+}
 
 static void classDataSubEditor_createChildren (I) {
 	iam (DataSubEditor);
-	Widget button, scrolledWindow, board;
+	Widget scrolledWindow, board;
+	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
-	button = XtVaCreateManagedWidget
-		("Change", xmPushButtonWidgetClass, my dialog,
-		 XmNx, 30, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_change, (XtPointer) me);
-
-	button = XtVaCreateManagedWidget
-		("Cancel", xmPushButtonWidgetClass, my dialog,
-		 XmNx, 170, XmNy, 5 + Machine_getMenuBarHeight (), XmNwidth, 120, NULL);
-	XtAddCallback (button, XmNactivateCallback, cb_cancel, (XtPointer) me);
+	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Change", gui_pushButton_cb_change, me, 0);
+	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
+	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Cancel", gui_pushButton_cb_cancel, me, 0);
 
 	scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
@@ -377,18 +376,17 @@ static void classDataSubEditor_createChildren (I) {
 		NULL);
 	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
 	XtManageChild (scrolledWindow);
-	XtAddCallback (my scrollBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
+	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 
 	board = XmCreateBulletinBoard (scrolledWindow, "list", NULL, 0);
 	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
-		int y = LIST_TOP_MARGIN + (i - 1) * ROW_HEIGHT;
+		y = Gui_TOP_DIALOG_SPACING + (i - 1) * ROW_HEIGHT;
 		my fieldData [i]. label = XtVaCreateWidget ("label", xmLabelWidgetClass, board,
 			XmNy, y, NULL);   /* No fixed x value: sometimes indent. */
-		my fieldData [i]. button = XtVaCreateWidget ("Open", xmPushButtonWidgetClass, board,
-			XmNy, y, XmNx, BUTTON_X, NULL);
+		my fieldData [i]. button = GuiButton_create (board, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
+			L"Open", gui_pushButton_cb_open, me, 0);
 		my fieldData [i]. text = XtVaCreateWidget ("text", xmTextWidgetClass, board,
 			XmNeditable, True, XmNy, y, XmNx, TEXT_X, NULL);
-		XtAddCallback (my fieldData [i]. button, XmNactivateCallback, cb_open, (XtPointer) me);
 	}
 	XtManageChild (board);
 }
@@ -496,7 +494,7 @@ static void showStructMember (
 		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
 		MelderString_empty (& buffer);
 		wchar_t *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
-		GuiText_setStringW (fieldData -> text, text);
+		GuiText_setString (fieldData -> text, text);
 		XtManageChild (fieldData -> text);
 		fieldData -> address = memberAddress;
 		fieldData -> description = memberDescription;
@@ -656,7 +654,7 @@ static void classVectorEditor_showMembers (I) {
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
 			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
-			GuiText_setStringW (fieldData -> text, text);
+			GuiText_setString (fieldData -> text, text);
 			XtManageChild (fieldData -> text);
 			fieldData -> address = elementAddress;
 			fieldData -> description = my description;
@@ -765,7 +763,7 @@ static void classMatrixEditor_showMembers (I) {
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
 			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
-			GuiText_setStringW (fieldData -> text, text);
+			GuiText_setString (fieldData -> text, text);
 			XtManageChild (fieldData -> text);
 			fieldData -> address = elementAddress;
 			fieldData -> description = my description;
