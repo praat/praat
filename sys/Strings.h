@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/10
+ * pb 2007/12/19
  */
 
 #ifndef _Data_h_
@@ -40,6 +40,10 @@ void Strings_randomize (Strings me);
 int Strings_genericize (Strings me);
 int Strings_nativize (Strings me);
 void Strings_sort (Strings me);
+
+void Strings_remove (Strings me, long position);
+int Strings_replace (Strings me, long position, const wchar_t *text);
+int Strings_insert (Strings me, long position, const wchar_t *text);
 
 /* End of file Strings.h */
 #endif

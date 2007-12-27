@@ -100,9 +100,8 @@ static void do_menu (I, unsigned long modified) {
 	}
 }
 
-static void gui_button_cb_menu (Widget widget, I) {
-	(void) widget;
-	do_menu (void_me, 0);   // BUG: should recognize modifier keys
+static void gui_button_cb_menu (I, GuiButtonEvent event) {
+	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
 static void gui_cb_menu (GUI_ARGS) {

@@ -244,39 +244,38 @@ static int goToPage (Any editor, const wchar_t *title) {
 
 static void which (ButtonEditor me, int show) {
 	my show = show;
-	XmToggleButtonSetState (my button1, show == 1,  False);
-	XmToggleButtonSetState (my button2, show == 2,  False);
-	XmToggleButtonSetState (my button3, show == 3,  False);
-	XmToggleButtonSetState (my button4, show == 4,  False);
-	XmToggleButtonSetState (my button5, show == 5,  False);
+	GuiRadioButton_setValue (my button1, show == 1);
+	GuiRadioButton_setValue (my button2, show == 2);
+	GuiRadioButton_setValue (my button3, show == 3);
+	GuiRadioButton_setValue (my button4, show == 4);
+	GuiRadioButton_setValue (my button5, show == 5);
 	HyperPage_goToPage (me, L"Buttons");
 }
 
-static void gui_cb_objects (GUI_ARGS) { which (void_me, 1); }
-static void gui_cb_picture (GUI_ARGS) { which (void_me, 2); }
-static void gui_cb_editors (GUI_ARGS) { which (void_me, 3); }
-static void gui_cb_actionsAM (GUI_ARGS) { which (void_me, 4); }
-static void gui_cb_actionsNZ (GUI_ARGS) { which (void_me, 5); }
+static void gui_radiobutton_cb_objects (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 1); }
+static void gui_radiobutton_cb_picture (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 2); }
+static void gui_radiobutton_cb_editors (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 3); }
+static void gui_radiobutton_cb_actionsAM (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 4); }
+static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 5); }
 
 static void createChildren (I) {
 	iam (ButtonEditor);
-	int height = Machine_getTextHeight (), width = BUTTON_WIDTH, x = 3, y = Machine_getMenuBarHeight () + 4;
+	int x = 3, y = Machine_getMenuBarHeight () + 4;
 	inherited (ButtonEditor) createChildren (me);
-	my button1 = XtVaCreateManagedWidget ("Objects", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button1, XmNvalueChangedCallback, gui_cb_objects, (XtPointer) me);
-	my button2 = XtVaCreateManagedWidget ("Picture", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button2, XmNvalueChangedCallback, gui_cb_picture, (XtPointer) me);
-	my button3 = XtVaCreateManagedWidget ("Editors", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button3, XmNvalueChangedCallback, gui_cb_editors, (XtPointer) me);
-	my button4 = XtVaCreateManagedWidget ("Actions A-M", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 5, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button4, XmNvalueChangedCallback, gui_cb_actionsAM, (XtPointer) me);
-	my button5 = XtVaCreateManagedWidget ("Actions N-Z", xmToggleButtonWidgetClass, my dialog,
-		XmNx, x += width + 30, XmNy, y, XmNheight, height, XmNwidth, width + 30, XmNindicatorType, XmONE_OF_MANY, NULL);
-	XtAddCallback (my button5, XmNvalueChangedCallback, gui_cb_actionsNZ, (XtPointer) me);
+	my button1 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Objects", gui_radiobutton_cb_objects, me, GuiRadioButton_SET);
+	x += BUTTON_WIDTH + 5;
+	my button2 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Picture", gui_radiobutton_cb_picture, me, 0);
+	x += BUTTON_WIDTH + 5;
+	my button3 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Editors", gui_radiobutton_cb_editors, me, 0);
+	x += BUTTON_WIDTH + 5;
+	my button4 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+		L"Actions A-M", gui_radiobutton_cb_actionsAM, me, 0);
+	x += BUTTON_WIDTH + 35;
+	my button5 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, me, 0);
 }
 
 DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END

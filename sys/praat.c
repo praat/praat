@@ -180,7 +180,7 @@ void praat_select (int IOBJECT) {
 	SELECTED = TRUE;
 	theCurrentPraat -> totalSelection += 1;
 	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
-		GuiList_selectItem (praatList_objects, IOBJECT, false);
+		GuiList_selectItem (praatList_objects, IOBJECT);
 	}
 }
 
@@ -193,7 +193,7 @@ void praat_list_background (void) {
 void praat_list_foreground (void) {
 	int IOBJECT;
 	WHERE (SELECTED) {
-		GuiList_selectItem (praatList_objects, IOBJECT, false);
+		GuiList_selectItem (praatList_objects, IOBJECT);
 	}
 }
 
@@ -427,8 +427,8 @@ void praat_updateSelection (void) {
 	}
 }
 
-static void gui_cb_list (Widget widget, void *void_me) {
-	(void) widget; (void) void_me;
+static void gui_cb_list (void *void_me, GuiListEvent event) {
+	(void) event; (void) void_me;
 	int IOBJECT, first = TRUE;
 	WHERE (1) SELECTED = FALSE;
 	theCurrentPraat -> totalSelection = 0;
@@ -451,7 +451,7 @@ void praat_list_renameAndSelect (int position, const wchar_t *name) {
 	if (! theCurrentPraat -> batch) {
 		GuiList_replaceItem (praatList_objects, name, position);   /* Void if name equal. */
 		if (! Melder_backgrounding)
-			GuiList_selectItem (praatList_objects, position, false);
+			GuiList_selectItem (praatList_objects, position);
 	}
 }
 
@@ -1119,8 +1119,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#ifndef UNIX
 			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
 		#endif
-		XtVaCreateManagedWidget ("Objects:", xmLabelWidgetClass, Raam,
-			XmNx, 3, XmNy, Machine_getMainWindowMenuBarHeight () + 5, NULL);
+		GuiLabel_createShown (Raam, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
 		praatList_objects = GuiList_create (Raam, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
 		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, 0);

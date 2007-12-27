@@ -44,6 +44,7 @@
  * pb 2007/12/02 big-endian Linux (suggested by Stefan de Konink)
  * pb 2007/12/05 prefs
  * pb 2007/12/09 192 kHz
+ * pb 2007/12/23 Gui
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -85,7 +86,7 @@
 #endif
 
 struct SoundRecorder_Device {
-	char name [1+40];
+	wchar_t name [1+40];
 	bool canDo;
 	Widget button;
 };
@@ -594,26 +595,27 @@ static Boolean workProc (XtPointer void_me) {
 
 	/* Set the buttons according to the audio parameters. */
 
-	if (my recordButton) XtSetSensitive (my recordButton, my recording == FALSE);
-	if (my stopButton) XtSetSensitive (my stopButton, my recording == TRUE);
-	if (my playButton) XtSetSensitive (my playButton, my recording == FALSE && my nsamp > 0);
-	if (my applyButton) XtSetSensitive (my applyButton, my recording == FALSE && my nsamp > 0);
-	if (my okButton) XtSetSensitive (my okButton, my recording == FALSE && my nsamp > 0);
-	if (my monoButton) XmToggleButtonSetState (my monoButton, my numberOfChannels == 1, False);
-	if (my stereoButton) XmToggleButtonSetState (my stereoButton, my numberOfChannels == 2, False);
+	if (my recordButton) GuiObject_setSensitive (my recordButton, my recording == FALSE);
+	if (my stopButton) GuiObject_setSensitive (my stopButton, my recording == TRUE);
+	if (my playButton) GuiObject_setSensitive (my playButton, my recording == FALSE && my nsamp > 0);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, my recording == FALSE && my nsamp > 0);
+	if (my okButton) GuiObject_setSensitive (my okButton, my recording == FALSE && my nsamp > 0);
+	if (my monoButton) GuiRadioButton_setValue (my monoButton, my numberOfChannels == 1);
+	if (my stereoButton) GuiRadioButton_setValue (my stereoButton, my numberOfChannels == 2);
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 		if (my fsamp [i]. button)
-			XmToggleButtonSetState (my fsamp [i]. button, theControlPanel. sampleRate == my fsamp [i]. fsamp, False);
+			GuiRadioButton_setValue (my fsamp [i]. button, theControlPanel. sampleRate == my fsamp [i]. fsamp);
 	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 		if (my device [i]. button)
-			XmToggleButtonSetState (my device [i]. button, theControlPanel. inputSource == i, False);
-	if (my monoButton) XtSetSensitive (my monoButton, ! my recording);
-	if (my stereoButton) XtSetSensitive (my stereoButton, ! my recording);
+			GuiRadioButton_setValue (my device [i]. button, theControlPanel. inputSource == i);
+	if (my monoButton) GuiObject_setSensitive (my monoButton, ! my recording);
+	if (my stereoButton) GuiObject_setSensitive (my stereoButton, ! my recording);
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-		if (my fsamp [i]. button) XtSetSensitive (my fsamp [i]. button, ! my recording);
+		if (my fsamp [i]. button)
+			GuiObject_setSensitive (my fsamp [i]. button, ! my recording);
 	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 		if (my device [i]. button)
-			XtSetSensitive (my device [i]. button, ! my recording);
+			GuiObject_setSensitive (my device [i]. button, ! my recording);
 	if (my leftGainScale) XmScaleSetValue (my leftGainScale, theControlPanel. leftGain);
 	if (my rightGainScale) XmScaleSetValue (my rightGainScale, theControlPanel. rightGain);
 
@@ -736,8 +738,8 @@ static int portaudioStreamCallback (
 }
 #endif
 
-static void gui_button_cb_record (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_record (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	if (my recording) return;
 	my nsamp = 0;
@@ -801,15 +803,15 @@ end:
 	iferror { my recording = FALSE; Melder_flushError ("Cannot record."); }
 }
 
-static void gui_button_cb_stop (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_stop (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	stopRecording (me);
 }
 
 #if defined (sgi) || defined (macintosh) || defined (_WIN32)
-static void gui_button_cb_play (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_play (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	if (my recording || my nsamp == 0) return;
 	if (! Melder_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL))
@@ -846,15 +848,15 @@ static void publish (SoundRecorder me) {
 		my publishCallback (me, my publishClosure, sound);
 }
 
-static void gui_button_cb_cancel (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_cancel (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	stopRecording (me);
 	forget (me);
 }
 
-static void gui_button_cb_apply (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_apply (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
@@ -867,8 +869,8 @@ static void gui_cb_apply (Widget widget, XtPointer void_me, XtPointer call) {
 	publish (me);
 }
 
-static void gui_button_cb_ok (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_ok (I, GuiButtonEvent event) {
+	(void) event;
 	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
@@ -1203,16 +1205,15 @@ static int initialize (SoundRecorder me) {
 	return 1;
 }
 
-static void cb_input (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
 	iam (SoundRecorder);
 	theControlPanel. inputSource = 1;   // Default.
-	Melder_assert (w != NULL);
+	Melder_assert (event -> toggle != NULL);
 	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
-		if (w == my device [i]. button) {
+		if (event -> toggle == my device [i]. button) {
 			theControlPanel. inputSource = i;
 		}
 	}
-	(void) call;
 
 	/* Set system's input source. */
 	#if USE_PORTAUDIO || defined (_WIN32)
@@ -1246,15 +1247,14 @@ static void cb_input (Widget w, XtPointer void_me, XtPointer call) {
 	#endif
 }
 
-static void cb_fsamp (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
 	iam (SoundRecorder);
 	if (my recording) return;
 	double fsamp = NUMundefined;
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-		if (w == my fsamp [i]. button)
+		if (event -> toggle == my fsamp [i]. button)
 			fsamp = my fsamp [i]. fsamp;
 	Melder_assert (NUMdefined (fsamp));
-	(void) call;
 	/*
 	 * If we push the 48000 button while the sampling frequency is 22050,
 	 * we first get a message that the 22050 button has changed,
@@ -1322,60 +1322,34 @@ static void createChildren (I) {
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
 		NULL);
 
-	XtVaCreateManagedWidget ("Channels:", xmLabelWidgetClass, form,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
-		NULL);
+	GuiLabel_createShown (form, 10, 160, 20, Gui_AUTOMATIC, L"Channels:", 0);
 	Widget channels = XmCreateRadioBox (form, "channels", NULL, 0);
 	XtVaSetValues (channels,
 		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
 		XmNwidth, 150,
 		NULL);
-	my monoButton = XmCreateToggleButton (channels, "Mono", NULL, 0);
-	XtManageChild (my monoButton);
-	my stereoButton = XmCreateToggleButton (channels, "Stereo", NULL, 0);
-	XtManageChild (my stereoButton);
+	my monoButton = GuiRadioButton_createShown (channels, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+		L"Mono", NULL, NULL, 0);
+	my stereoButton = GuiRadioButton_createShown (channels, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+		L"Stereo", NULL, NULL, 0);
 	XtManageChild (channels);
 
 	long y = 110, dy = 25;
-	XtVaCreateManagedWidget ("Input source:", xmLabelWidgetClass, form,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
-		NULL);
+	GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"Input source:", 0);
 	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
 		if (my device [i]. canDo) {
 			y += dy;
-			my device [i]. button = XtVaCreateManagedWidget (my device [i]. name, 
-			xmToggleButtonWidgetClass, form, XmNindicatorType, XmONE_OF_MANY,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
-			NULL);
+			my device [i]. button = GuiRadioButton_createShown (form, 10, 160, y, Gui_AUTOMATIC,
+				my device [i]. name, gui_radiobutton_cb_input, me, 0);
 		}
 	}
 	#if defined (_WIN32)
-		XtVaCreateManagedWidget ("(use Windows mixer", xmLabelWidgetClass, form,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
-			NULL);
-		XtVaCreateManagedWidget ("   without meters)", xmLabelWidgetClass, form,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + dy,
-			NULL);
+		GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"(use Windows mixer", 0);
+		GuiLabel_createShown (form, 10, 160, y + dy, Gui_AUTOMATIC, L"   without meters)", 0);
 	#endif
-	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
-		if (my device [i]. button) {
-			XtAddCallback (my device [i]. button, XmNvalueChangedCallback, cb_input, me);
-			XtManageChild (my device [i]. button);
-		}
-	}
 
-	XtVaCreateManagedWidget ("Meter", xmLabelWidgetClass, form,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 170,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
-		XmNalignment, XmALIGNMENT_CENTER,
-		NULL);
+	GuiLabel_createShown (form, 170, -170, 20, Gui_AUTOMATIC, L"Meter", GuiLabel_CENTRE);
 	my meter = XmCreateDrawingArea (form, "meter", NULL, 0);
 	XtVaSetValues (my meter,
 		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 170,
@@ -1385,49 +1359,7 @@ static void createChildren (I) {
 		XmNborderWidth, 1, NULL);
 	XtManageChild (my meter);
 
-	#if defined (UNIX) && 0
-		Widget rcG, rcGain, rcGains;
-		rcG = XmCreateRowColumn (row, "rcG", NULL, 0);
-		rcGain = XmCreateRowColumn (rcG, "rcGain", NULL, 0);
-		XtVaCreateManagedWidget ("Gain:", xmLabelWidgetClass, rcGain, NULL);
-		rcGains = XmCreateRowColumn (rcGain, "rc", NULL, 0);
-		XtVaSetValues (rcGains, XmNorientation, XmHORIZONTAL, XmNspacing, 12, NULL);
-		my leftGainScale = XmCreateScale (rcGains, "gainScale", NULL, 0);
-		XtVaSetValues (my leftGainScale, XmNscaleHeight, 150, XmNy, 25,
-			#ifdef macintosh
-				XmNwidth, 16,
-			#endif
-			XmNminimum, 0, XmNmaximum, 255, NULL);
-		XtAddCallback (my leftGainScale, XmNvalueChangedCallback, cb_leftGain, me);
-		XtAddCallback (my leftGainScale, XmNdragCallback, cb_leftGain, me);
-		XtManageChild (my leftGainScale);
-		if (my numberOfChannels == 2) {
-			my rightGainScale = XmCreateScale (rcGains, "gainScale", NULL, 0);
-			XtVaSetValues (my rightGainScale, XmNscaleHeight, 150, XmNy, 25,
-				#ifdef macintosh
-					XmNwidth, 16,
-				#endif
-				XmNminimum, 0, XmNmaximum, 255, NULL);
-			XtAddCallback (my rightGainScale, XmNvalueChangedCallback, cb_rightGain, me);
-			XtAddCallback (my rightGainScale, XmNdragCallback, cb_rightGain, me);
-			XtManageChild (my rightGainScale);
-		}
-		XtManageChild (rcGains);
-		if (my numberOfChannels == 2) {
-			my coupleButton = XtVaCreateManagedWidget ("Tied", xmToggleButtonWidgetClass, rcG, NULL);
-			XtVaSetValues (my coupleButton, XmNwidth, 20, NULL);
-			XmToggleButtonSetState (my coupleButton, my coupled = theCouplePreference, False);
-			XtAddCallback (my coupleButton, XmNvalueChangedCallback, cb_couple, me);
-		}
-		XtManageChild (rcGain);
-		XtManageChild (rcG);
-	#endif
-
-	XtVaCreateManagedWidget ("Sampling frequency:", xmLabelWidgetClass, form,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
-		XmNwidth, 150,
-		NULL);
+	GuiLabel_createShown (form, -160, -10, 20, Gui_AUTOMATIC, L"Sampling frequency:", 0);
 	Widget fsampBox = XmCreateRadioBox (form, "fsamp", NULL, 0);
 	XtVaSetValues (fsampBox,
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
@@ -1439,9 +1371,9 @@ static void createChildren (I) {
 			double fsamp = my fsamp [i]. fsamp;
 			wchar_t title [40];
 			swprintf (title, 40, L"%ls Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
-			my fsamp [i]. button = XmCreateToggleButton (fsampBox, Melder_peekWcsToUtf8 (title), NULL, 0);
-			XtAddCallback (my fsamp [i]. button, XmNvalueChangedCallback, cb_fsamp, me);
-			XtManageChild (my fsamp [i]. button);
+			my fsamp [i]. button = GuiRadioButton_createShown (fsampBox,
+				Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+				title, gui_radiobutton_cb_fsamp, me, 0);
 		}
 	}
 	XtManageChild (fsampBox);
@@ -1467,17 +1399,10 @@ static void createChildren (I) {
 		my playButton = GuiButton_createShown (form, 180, 250, Gui_AUTOMATIC, -y,
 			L"Play", gui_button_cb_play, me, 0);
 	#endif
-	XtVaCreateManagedWidget ("Name:", xmLabelWidgetClass, form,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 130,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		XmNalignment, XmALIGNMENT_END,
-		NULL);
-	my soundName = XtVaCreateManagedWidget ("name", xmTextFieldWidgetClass, form, XmNcolumns, 10,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 20,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
-		NULL);
+	GuiLabel_createShown (form, -200, -130, Gui_AUTOMATIC, -y - 2, L"Name:", GuiLabel_RIGHT);
+	my soundName = GuiText_createShown (form, -120, -20, Gui_AUTOMATIC, -y, 0);
 	XtAddCallback (my soundName, XmNactivateCallback, gui_cb_apply, (XtPointer) me);
-	XmTextFieldSetString (my soundName, "untitled");
+	GuiText_setString (my soundName, L"untitled");
 
 	y = 20;
 
@@ -1664,7 +1589,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 				deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels, deviceInfo -> defaultSampleRate);
 			if (deviceInfo -> maxInputChannels > 0 && my numberOfInputDevices < SoundRecorder_IDEVICE_MAX) {
 				my device [++ my numberOfInputDevices]. canDo = true;
-				strncpy (my device [my numberOfInputDevices]. name, deviceInfo -> name, 40);
+				wcsncpy (my device [my numberOfInputDevices]. name, Melder_peekUtf8ToWcs (deviceInfo -> name), 40);
 				my device [my numberOfInputDevices]. name [40] = '\0';
 				my deviceInfos [my numberOfInputDevices] = deviceInfo;
 				my deviceIndices [my numberOfInputDevices] = idevice;
@@ -1688,7 +1613,8 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 						my device [++ my numberOfInputDevices]. canDo = true;
 						strcpy ((char *) my hybridDeviceNames [my numberOfInputDevices], (const char *) hybridDeviceName);
 						my macSource [my numberOfInputDevices] = deviceSource;
-						strncpy (my device [my numberOfInputDevices]. name, plength + 1, *plength < 40 ? *plength : 40);
+						plength [40] = '\0';
+						wcsncpy (my device [my numberOfInputDevices]. name, Melder_peekUtf8ToWcs (plength + 1), *plength < 40 ? *plength : 40);
 						my device [my numberOfInputDevices]. name [*plength < 40 ? *plength : 40] = '\0';
 						plength += *plength + 1;
 					}
@@ -1701,12 +1627,12 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 		// No device info: use Windows mixer.
 	#else
 		my device [1]. canDo = true;
-		strcpy (my device [1]. name, "Microphone");
+		wcscpy (my device [1]. name, L"Microphone");
 		my device [2]. canDo = true;
-		strcpy (my device [2]. name, "Line");
+		wcscpy (my device [2]. name, L"Line");
 		#if defined (sgi)
 			my device [3]. canDo = true;
-			strcpy (my device [3]. name, "Digital");
+			wcscpy (my device [3]. name, L"Digital");
 		#endif
 	#endif
 

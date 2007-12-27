@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071218)
+MAN_BEGIN (L"What's new?", L"ppgb", 20071227)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.02# (December 27, 2007)")
+LIST_ITEM (L"\\bu TextGrid window: corrected the drawing of numbers to the right of the tiers.")
+LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash when doing ##SpectrumTier: List#.")
 NORMAL (L"##5.0.01# (December 18, 2007)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when redrawing the sound or TextGrid window.")
 NORMAL (L"##5.0# (December 10, 2007)")

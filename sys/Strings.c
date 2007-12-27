@@ -340,4 +340,39 @@ void Strings_sort (Strings me) {
 	NUMsort_str (my numberOfStrings, my strings);
 }
 
+void Strings_remove (Strings me, long position) {
+	Melder_assert (position >= 1);
+	Melder_assert (position <= my numberOfStrings);
+	Melder_free (my strings [position]);
+	for (long i = position; i < my numberOfStrings; i ++) {
+		my strings [i] = my strings [i + 1];
+	}
+	my numberOfStrings --;
+}
+
+int Strings_replace (Strings me, long position, const wchar_t *text) {
+	Melder_assert (position >= 1);
+	Melder_assert (position <= my numberOfStrings);
+	if (Melder_wcsequ (my strings [position], text)) return 1;
+	Melder_free (my strings [position]);
+	my strings [position] = Melder_wcsdup (text); cherror
+end:
+	iferror return 0;
+	return 1;
+}
+
+int Strings_insert (Strings me, long position, const wchar_t *text) {
+	if (position == 0) position = my numberOfStrings + 1;
+	Melder_assert (position >= 1);
+	Melder_assert (position <= my numberOfStrings + 1);
+	for (long i = my numberOfStrings + 1; i > position; i --) {
+		my strings [i] = my strings [i - 1];
+	}
+	my strings [position] = Melder_wcsdup (text); cherror
+	my numberOfStrings ++;
+end:
+	iferror return 0;
+	return 1;
+}
+
 /* End of file Strings.c */

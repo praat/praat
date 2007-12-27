@@ -350,16 +350,16 @@ void Manual_search (Manual me, const wchar_t *query) {
 	search (me, query);
 }
 
-static void gui_button_cb_home (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_home (I, GuiButtonEvent event) {
+	(void) event;
 	iam (Manual);
 	ManPages pages = my data;
 	long iHome = ManPages_lookUp (pages, L"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
 }
  
-static void gui_button_cb_record (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_record (I, GuiButtonEvent event) {
+	(void) event;
 	iam (Manual);
 	ManPages manPages = my data;
 	ManPage manPage = my path < 1 ? NULL : manPages -> pages -> item [my path];
@@ -373,8 +373,8 @@ static void gui_button_cb_record (Widget widget, I) {
 	GuiObject_setSensitive (my publishButton, true);
 }
 
-static void gui_button_cb_play (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_play (I, GuiButtonEvent event) {
+	(void) event;
 	iam (Manual);
 	GuiObject_setSensitive (my recordButton, false);
 	GuiObject_setSensitive (my playButton, false);
@@ -386,8 +386,8 @@ static void gui_button_cb_play (Widget widget, I) {
 	GuiObject_setSensitive (my publishButton, true);
 }
 
-static void gui_button_cb_publish (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_publish (I, GuiButtonEvent event) {
+	(void) event;
 	iam (Manual);
 	(void) me;
 	Melder_publishPlayed ();
@@ -399,8 +399,8 @@ static void do_search (Manual me) {
 	Melder_free (query);
 }
 
-static void gui_button_cb_search (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_search (I, GuiButtonEvent event) {
+	(void) event;
 	iam (Manual);
 	do_search (me);
 }
@@ -440,8 +440,7 @@ static void createChildren (I) {
 			0
 		#endif
 		);
-	my searchText = XtVaCreateManagedWidget ("searchText", xmTextFieldWidgetClass, my dialog,
-		XmNx, 274+63 + STRING_SPACING, XmNy, y, XmNwidth, 452 - (274+63) - 2, NULL);
+	my searchText = GuiText_createShown (my dialog, 274+63 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
 	XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
 }
 

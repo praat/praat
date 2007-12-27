@@ -21,7 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/05/19 Melder_atof
  * pb 2007/08/30 include menu bar height
- * pb 2007/12/14 Gui
+ * pb 2007/12/27 Gui
  */
 
 #include "ArtwordEditor.h"
@@ -46,8 +46,8 @@ static void updateList (ArtwordEditor me) {
 	Graphics_updateWs (my graphics);
 }
 
-static void gui_pushButton_cb_removeTarget (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
+	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = my data;
 	long numberOfSelectedPositions, *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);
@@ -60,8 +60,8 @@ static void gui_pushButton_cb_removeTarget (Widget widget, I) {
 	Editor_broadcastChange (me);
 }
 
-static void gui_pushButton_cb_addTarget (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
+	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = my data;
 	wchar_t *timeText = GuiText_getString (my time);
@@ -91,10 +91,10 @@ static void gui_pushButton_cb_addTarget (Widget widget, I) {
 	Editor_broadcastChange (me);
 }
 
-static void cb_toggle (GUI_ARGS) {
-	GUI_IAM (ArtwordEditor);
+static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
+	iam (ArtwordEditor);
 	int i = 0;
-	while (w != my button [i]) i ++;
+	while (event -> toggle != my button [i]) i ++;
 	my feature = i;
 	updateList (me);
 }
@@ -133,52 +133,36 @@ static void dataChanged (I) {
 static void createChildren (I) {
 	iam (ArtwordEditor);
 	int dy = Machine_getMenuBarHeight ();
-	XtVaCreateManagedWidget ("Targets:", xmLabelGadgetClass, my dialog,
-		XmNx, 40, XmNy, dy + 3, XmNwidth, 60, NULL);
-	XtVaCreateManagedWidget ("Times:", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, dy + 20, XmNwidth, 60, NULL);
-	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
-		XmNx, 80, XmNy, dy + 20, XmNwidth, 60, NULL);
-	my list = GuiList_create (my dialog, 0, 140, dy + 40, dy + 340, true);
-	GuiObject_show (my list);
+	GuiLabel_createShown (my dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
+	GuiLabel_createShown (my dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
+	GuiLabel_createShown (my dialog, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
+	my list = GuiList_createShown (my dialog, 0, 140, dy + 40, dy + 340, true);
 
-	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC,
-		L"Remove target", gui_pushButton_cb_removeTarget, me, 0);
+	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, me, 0);
 
 	my drawingArea = XtVaCreateManagedWidget
 		("drawingArea", xmDrawingAreaWidgetClass, my dialog,
 		 XmNx, 170, XmNy, dy + 10,
 		 XmNwidth, 300, XmNheight, 300, NULL);
 
-	XtVaCreateManagedWidget ("Time:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, dy + 340, XmNwidth, 50, NULL);
-	my time = XtVaCreateManagedWidget
-		("Time", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, dy + 340, XmNwidth, 100, NULL);
+	GuiLabel_createShown (my dialog, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
+	my time = GuiText_createShown (my dialog, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
 
-	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
-		XmNx, 220, XmNy, dy + 370, XmNwidth, 50, NULL);
-	my value = XtVaCreateManagedWidget
-		("Value", xmTextWidgetClass, my dialog,
-		 XmNx, 270, XmNy, dy + 370, XmNwidth, 100, NULL);
+	GuiLabel_createShown (my dialog, 220, 270, dy + 370, Gui_AUTOMATIC, L"Value:", 0);
+	my value = GuiText_createShown (my dialog, 270, 370, dy + 370, Gui_AUTOMATIC, 0);
 
-	GuiButton_createShown (my dialog, 240, 360, dy + 410, Gui_AUTOMATIC,
-		L"Add target", gui_pushButton_cb_addTarget, me, GuiButton_DEFAULT);
+	GuiButton_createShown (my dialog, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, me, GuiButton_DEFAULT);
 
 	my radio = XtVaCreateManagedWidget
 		("radioBox", xmRowColumnWidgetClass, my dialog,
 		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
 	for (int i = 1; i <= enumlength (Art_MUSCLE); i ++) {
-		my button [i] = XtVaCreateManagedWidget
-			(Melder_peekWcsToUtf8 (enumstring (Art_MUSCLE, i)), xmToggleButtonGadgetClass, my radio,
-			#if defined (_WIN32) || defined (macintosh)
-				XmNheight, 18,
-			#endif
-				XmNwidth, 160, NULL);
-		XtAddCallback (my button [i], XmNvalueChangedCallback, cb_toggle, (XtPointer) me);
+		my button [i] = GuiRadioButton_createShown (my radio,
+			0, 160, Gui_AUTOMATIC, Gui_AUTOMATIC,
+			enumstring (Art_MUSCLE, i), gui_radiobutton_cb_toggle, me, 0);
 	}
 	my feature = 1;
-	XmToggleButtonGadgetSetState (my button [1], True, False);
+	GuiRadioButton_setValue (my button [1], true);
 }
 
 class_methods (ArtwordEditor, Editor)

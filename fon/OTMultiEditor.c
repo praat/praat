@@ -37,75 +37,89 @@
 #define OTMultiEditor_methods HyperPage_methods
 class_create_opaque (OTMultiEditor, HyperPage);
 
-FORM (OTMultiEditor, cb_evaluate, L"Evaluate", 0)
-	REAL (L"Evaluation noise", L"2.0")
-	OK
-DO
-	Editor_save (me, L"Evaluate");
-	OTMulti_newDisharmonies (my data, GET_REAL (L"Evaluation noise"));
-	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_evaluate (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
+	EDITOR_FORM (L"Evaluate", 0)
+		REAL (L"Evaluation noise", L"2.0")
+	EDITOR_OK
+	EDITOR_DO
+		Editor_save (me, L"Evaluate");
+		OTMulti_newDisharmonies (my data, GET_REAL (L"Evaluation noise"));
+		Graphics_updateWs (my g);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-DIRECT (OTMultiEditor, cb_evaluate_noise_2_0)
+static int menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
 	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies (my data, 2.0);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (OTMultiEditor, cb_evaluate_tinyNoise)
+static int menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
 	Editor_save (me, L"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies (my data, 1e-9);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-FORM (OTMultiEditor, cb_editRanking, L"Edit ranking", 0)
-	LABEL (L"constraint", L"");
-	REAL (L"Ranking value", L"100.0");
-	REAL (L"Disharmony", L"100.0");
-	OK
-OTMulti grammar = my data;
-OTConstraint constraint;
-if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
-constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-SET_STRING (L"constraint", constraint -> name)
-SET_REAL (L"Ranking value", constraint -> ranking)
-SET_REAL (L"Disharmony", constraint -> disharmony)
-DO
-	OTMulti grammar = my data;
-	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-	Editor_save (me, L"Edit ranking");
-	constraint -> ranking = GET_REAL (L"Ranking value");
-	constraint -> disharmony = GET_REAL (L"Disharmony");
-	OTMulti_sort (grammar);
-	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_editRanking (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
+	EDITOR_FORM (L"Edit ranking", 0)
+		LABEL (L"constraint", L"");
+		REAL (L"Ranking value", L"100.0");
+		REAL (L"Disharmony", L"100.0");
+	EDITOR_OK
+		OTMulti grammar = my data;
+		OTConstraint constraint;
+		if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
+		constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
+		SET_STRING (L"constraint", constraint -> name)
+		SET_REAL (L"Ranking value", constraint -> ranking)
+		SET_REAL (L"Disharmony", constraint -> disharmony)
+	EDITOR_DO
+		OTMulti grammar = my data;
+		OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
+		Editor_save (me, L"Edit ranking");
+		constraint -> ranking = GET_REAL (L"Ranking value");
+		constraint -> disharmony = GET_REAL (L"Disharmony");
+		OTMulti_sort (grammar);
+		Graphics_updateWs (my g);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-FORM (OTMultiEditor, cb_learnOne, L"Learn one", L"OTGrammar: Learn one...")
-	OPTIONMENU (L"Learn", 3)
-		OPTION (L"forward")
-		OPTION (L"backward")
-		OPTION (L"bidirectionally")
-	REAL (L"Plasticity", L"0.1")
-	REAL (L"Rel. plasticity spreading", L"0.1")
-	OK
-DO
-	Editor_save (me, L"Learn one");
-	Melder_free (my form1);
-	Melder_free (my form2);
-	my form1 = GuiText_getString (my form1Text);
-	my form2 = GuiText_getString (my form2Text);
-	OTMulti_learnOne (my data, my form1, my form2,
-		GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
-	iferror return 0;
-	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_learnOne (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
+	EDITOR_FORM (L"Learn one", L"OTGrammar: Learn one...")
+		OPTIONMENU (L"Learn", 3)
+			OPTION (L"forward")
+			OPTION (L"backward")
+			OPTION (L"bidirectionally")
+		REAL (L"Plasticity", L"0.1")
+		REAL (L"Rel. plasticity spreading", L"0.1")
+	EDITOR_OK
+	EDITOR_DO
+		Editor_save (me, L"Learn one");
+		Melder_free (my form1);
+		Melder_free (my form2);
+		my form1 = GuiText_getString (my form1Text);
+		my form2 = GuiText_getString (my form2Text);
+		OTMulti_learnOne (my data, my form1, my form2,
+			GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
+		iferror return 0;
+		Graphics_updateWs (my g);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-DIRECT (OTMultiEditor, cb_removeConstraint)
+static int menu_cb_removeConstraint (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
 	OTMulti grammar = my data;
 	OTConstraint constraint;
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
@@ -115,19 +129,28 @@ DIRECT (OTMultiEditor, cb_removeConstraint)
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-FORM (OTMultiEditor, cb_resetAllRankings, L"Reset all rankings", 0)
-	REAL (L"Ranking", L"100.0")
-	OK
-DO
-	Editor_save (me, L"Reset all rankings");
-	OTMulti_reset (my data, GET_REAL (L"Ranking"));
-	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_resetAllRankings (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
+	EDITOR_FORM (L"Reset all rankings", 0)
+		REAL (L"Ranking", L"100.0")
+	EDITOR_OK
+	EDITOR_DO
+		Editor_save (me, L"Reset all rankings");
+		OTMulti_reset (my data, GET_REAL (L"Ranking"));
+		Graphics_updateWs (my g);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-DIRECT (OTMultiEditor, cb_OTLearningTutorial) Melder_help (L"OT learning"); END
+static int menu_cb_OTLearningTutorial (EDITOR_ARGS) {
+	EDITOR_IAM (OTMultiEditor);
+	(void) me;
+	Melder_help (L"OT learning");
+	return 1;
+}
 
 static void do_limit (OTMultiEditor me) {
 	Melder_free (my form1);
@@ -137,8 +160,8 @@ static void do_limit (OTMultiEditor me) {
 	Graphics_updateWs (my g);
 }
 
-static void gui_button_cb_limit (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_limit (I, GuiButtonEvent event) {
+	(void) event;
 	iam (OTMultiEditor);
 	do_limit (me);
 }
@@ -165,11 +188,9 @@ static void createChildren (I) {
 			0
 		#endif
 		);
-	my form1Text = XtVaCreateManagedWidget ("form1Text", xmTextFieldWidgetClass, my dialog,
-		XmNx, 124 + STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
+	my form1Text = GuiText_createShown (my dialog, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	XtAddCallback (my form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
-	my form2Text = XtVaCreateManagedWidget ("form2Text", xmTextFieldWidgetClass, my dialog,
-		XmNx, 274 + 2 * STRING_SPACING, XmNy, y, XmNwidth, 150, NULL);
+	my form2Text = GuiText_createShown (my dialog, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	XtAddCallback (my form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
 }
 
@@ -177,15 +198,15 @@ static void createMenus (I) {
 	iam (OTMultiEditor);
 	inherited (OTMultiEditor) createMenus (me);
 	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, cb_evaluate);
-	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', cb_evaluate_noise_2_0);
-	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', cb_evaluate_tinyNoise);
-	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', cb_editRanking);
-	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', cb_resetAllRankings);
-	Editor_addCommand (me, L"Edit", L"Learn one...", '1', cb_learnOne);
+	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
+	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
+	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
+	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', menu_cb_editRanking);
+	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', menu_cb_resetAllRankings);
+	Editor_addCommand (me, L"Edit", L"Learn one...", '1', menu_cb_learnOne);
 	Editor_addCommand (me, L"Edit", L"-- remove --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, cb_removeConstraint);
-	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, cb_OTLearningTutorial);
+	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
+	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 
 static OTMulti drawTableau_grammar;

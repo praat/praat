@@ -139,13 +139,11 @@ static Any UiOption_create (const wchar_t *label) {
 	return me;
 }
 
-static void cb_radioChanged (Widget w, XtPointer void_me, XtPointer call) {
+static void gui_radiobutton_cb_toggled (I, GuiRadioButtonEvent event) {
 	iam (UiField);
-	int i;
-	(void) call;
-	for (i = 1; i <= my options -> size; i ++) {
+	for (int i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
-		XmToggleButtonSetState (b -> toggle, b -> toggle == w, FALSE);
+		GuiRadioButton_setValue (b -> toggle, b -> toggle == event -> toggle);
 	}
 }
 
@@ -196,11 +194,11 @@ static void UiField_setDefault (UiField me) {
 		{
 			GuiText_setString (my text, my stringDefaultValue);
 		} break; case UI_BOOLEAN: {
-			XmToggleButtonSetState (my toggle, my integerDefaultValue, False);
+			GuiCheckButton_setValue (my toggle, my integerDefaultValue);
 		} break; case UI_RADIO: {
 			for (int i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
-				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
+				GuiRadioButton_setValue (b -> toggle, i == my integerDefaultValue);
 			}
 		} break; case UI_OPTIONMENU: {
 			for (int i = 1; i <= my options -> size; i ++) {
@@ -211,9 +209,9 @@ static void UiField_setDefault (UiField me) {
 				}
 			}
 		} break; case UI_ENUM: {
-			GuiList_selectItem (my list, my integerDefaultValue + my includeZero, false);
+			GuiList_selectItem (my list, my integerDefaultValue + my includeZero);
 		} break; case UI_LIST: {
-			GuiList_selectItem (my list, my integerDefaultValue, false);
+			GuiList_selectItem (my list, my integerDefaultValue);
 		}
 	}
 }
@@ -295,8 +293,18 @@ static int UiField_widgetToValue (UiField me) {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 		} break; case UI_BOOLEAN: {
-			my integerValue = XmToggleButtonGetState (my toggle);
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+			my integerValue = GuiCheckButton_getValue (my toggle);
+		} break; case UI_RADIO: {
+			int i;
+			my integerValue = 0;
+			for (i = 1; i <= my options -> size; i ++) {
+				UiOption b = my options -> item [i];
+				if (GuiRadioButton_getValue (b -> toggle))
+					my integerValue = i;
+			}
+			if (my integerValue == 0)
+				return Melder_error3 (L"No option chosen for `", my name, L"'.");
+		} break; case UI_OPTIONMENU: {
 			int i;
 			my integerValue = 0;
 			for (i = 1; i <= my options -> size; i ++) {
@@ -503,8 +511,8 @@ class_methods (UiForm, Thing) {
 	class_method_local (UiForm, destroy)
 class_methods_end }
 
-static void gui_button_cb_useStandards (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_useStandards (I, GuiButtonEvent event) {
+	(void) event;
 	iam (UiForm);
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
@@ -517,8 +525,8 @@ static void UiForm_hide (Widget w, XtPointer void_me, XtPointer call) {
 	XtUnmanageChild (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
 }
-static void gui_button_UiForm_hide (Widget widget, I) {
-	(void) widget;
+static void gui_button_UiForm_hide (I, GuiButtonEvent event) {
+	(void) event;
 	iam (UiForm);
 	XtUnmanageChild (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
@@ -557,7 +565,7 @@ static void UiForm_okOrApply (I, int hide) {
 		for (int ifield = 1; ifield <= size; ifield ++)
 			UiField_valueToHistory (my field [ifield], ifield == size);
 		if (hide) {
-			gui_button_UiForm_hide (NULL, me);
+			gui_button_UiForm_hide (me, 0);   // BUG: should not send 0
 			if (destroyWhenUnmanaged) return;
 		}
 	} else {
@@ -586,20 +594,20 @@ static void UiForm_okOrApply (I, int hide) {
 	if (my helpButton) XtSetSensitive (my helpButton, True);
 }
 
-static void gui_button_UiForm_ok (Widget widget, I) {
-	(void) widget;
+static void gui_button_UiForm_ok (I, GuiButtonEvent event) {
+	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, true);
 }
 
-static void gui_button_UiForm_apply (Widget widget, I) {
-	(void) widget;
+static void gui_button_UiForm_apply (I, GuiButtonEvent event) {
+	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, false);
 }
 
-static void gui_button_cb_help (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_help (I, GuiButtonEvent event) {
+	(void) event;
 	iam (UiForm);
 	Melder_help (my helpTitle);
 }
@@ -775,7 +783,7 @@ static void appendColon (void) {
 
 void UiForm_finish (I) {
 	iam (UiForm);
-	int ifield, size = my numberOfFields, ibutton;
+	int size = my numberOfFields;
 	int dialogHeight = 0, x = Gui_LEFT_DIALOG_SPACING, y;
 	int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
 	int dialogWidth = 480, dialogCentre = dialogWidth / 2, fieldX = dialogCentre + Gui_LABEL_SPACING / 2;
@@ -784,7 +792,7 @@ void UiForm_finish (I) {
 	/*
 		Compute height. Cannot leave this to the default geometry management system.
 	*/
-	for (ifield = 1; ifield <= my numberOfFields; ifield ++ ) {
+	for (long ifield = 1; ifield <= my numberOfFields; ifield ++ ) {
 		UiField thee = my field [ifield], previous = my field [ifield - 1];
 		dialogHeight +=
 			ifield == 1 ? Gui_TOP_DIALOG_SPACING :
@@ -819,7 +827,7 @@ void UiForm_finish (I) {
 	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_peekWcsToUtf8 (my name), XmNdeleteResponse, XmDO_NOTHING, NULL);
 	XtVaSetValues (my dialog, XmNautoUnmanage, False,
 		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ NULL);
-	for (ifield = 1; ifield <= size; ifield ++) {
+	for (long ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
 		switch (field -> type) {
@@ -831,105 +839,67 @@ void UiForm_finish (I) {
 			case UI_SENTENCE:
 			case UI_COLOUR:
 			{
+				int ylabel = y;
+				#if defined (macintosh)
+					ylabel += 3;
+				#endif
 				if (wcsnequ (field -> name, L"left ", 5)) {
 					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
-					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-						XmNx, x, XmNy, y
-						#if defined (macintosh)
-							+ 3
-						#endif
-						, XmNwidth, labelWidth, XmNheight, textFieldHeight,
-						XmNalignment, XmALIGNMENT_END, NULL);
-					field -> text = XmCreateText (my dialog, "UiLabelledRange_textLeft", NULL, 0);
-					XtVaSetValues (field -> text,
-						XmNx, fieldX, XmNy, y,
-						#if defined (UNIXppp)
-							XmNcolumns, 11,
-						#else
-							XmNwidth, halfFieldWidth,
-						#endif
-						XmNheight, textFieldHeight, NULL);
-					XtManageChild (field -> text);
+					GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+						theFinishBuffer.string, GuiLabel_RIGHT);
+					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
 				} else if (wcsnequ (field -> name, L"right ", 6)) {
-					field -> text = XmCreateText (my dialog, "UiLabelledRange_textRight", NULL, 0);
-					XtVaSetValues (field -> text,
-						XmNx, fieldX + halfFieldWidth + 12, XmNy, y,
-						#if defined (UNIXppp)
-							XmNcolumns, 11,
-						#else
-							XmNwidth, halfFieldWidth,
-						#endif
-						XmNheight, textFieldHeight, NULL);
-					XtManageChild (field -> text);
+					field -> text = GuiText_createShown (my dialog, fieldX + halfFieldWidth + 12, fieldX + fieldWidth, y, Gui_AUTOMATIC, 0);
 				} else {
 					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-						XmNx, x, XmNy, y
-						#if defined (macintosh)
-							+ 3
-						#endif
-						, XmNwidth, labelWidth, XmNheight, textFieldHeight,
-						XmNalignment, XmALIGNMENT_END, NULL);
-					field -> text = XmCreateTextField (my dialog, "UiLabelledText_text", NULL, 0);
-					XtVaSetValues (field -> text,
-						XmNx, fieldX, XmNy, y,
-						#if defined (UNIXppp)
-							XmNcolumns, 23,
-						#else
-							XmNwidth, fieldWidth,
-						#endif
-						XmNheight, textFieldHeight, NULL);
-					XtManageChild (field -> text);
+					GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+						theFinishBuffer.string, GuiLabel_RIGHT);
+					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + fieldWidth, y, Gui_AUTOMATIC, 0);
 				}
 			} break;
 			case UI_TEXT:
 			{
-				field -> text = XtVaCreateManagedWidget ("UiText_text", xmTextFieldWidgetClass, my dialog,
-					XmNx, x, XmNy, y, XmNwidth, dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					XmNheight, textFieldHeight, NULL);
+				field -> text = GuiText_createShown (my dialog, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+				y, Gui_AUTOMATIC, 0);
 			} break;
 			case UI_LABEL:
 			{
 				MelderString_copy (& theFinishBuffer, field -> stringValue);
-				field -> text = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y + 5, XmNwidth, dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					XmNheight, textFieldHeight, 0, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (theFinishBuffer.string)), NULL);
+				field -> text = GuiLabel_createShown (my dialog,
+					x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING, y + 5, y + 5 + textFieldHeight,
+					theFinishBuffer.string, 0);
 			} break;
 			case UI_RADIO:
 			{
+				int ylabel = y;
+				#if defined (macintosh)
+					ylabel += 1;
+				#endif
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y
-					#if defined (macintosh)
-						+ 1
-					#endif
-					, XmNwidth, labelWidth, XmNheight, Gui_RADIOBUTTON_HEIGHT,
-					XmNalignment, XmALIGNMENT_END, NULL);
-				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
+				GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
+					theFinishBuffer.string, GuiLabel_RIGHT);
+				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
-						XmNx, fieldX, XmNy, y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING),
-						XmNwidth, fieldWidth, XmNheight, Gui_RADIOBUTTON_HEIGHT,
-						XmNindicatorType, XmONE_OF_MANY, NULL);
-					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_radioChanged, (XtPointer) field);
+					button -> toggle = GuiRadioButton_createShown (my dialog,
+						fieldX, fieldX + fieldWidth, y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
+						theFinishBuffer.string, gui_radiobutton_cb_toggled, field, 0);
 				}
 			} break; 
 			case UI_OPTIONMENU:
 			{
+				int ylabel = y;
+				#if defined (macintosh)
+					ylabel += 2;
+				#endif
 				Widget bar, box;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y
-					#if defined (macintosh)
-						+ 2
-					#endif
-					, XmNwidth, labelWidth, XmNheight, Gui_OPTIONMENU_HEIGHT,
-					XmNalignment, XmALIGNMENT_END, NULL);
+				GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
+					theFinishBuffer.string, GuiLabel_RIGHT);
 				bar = XmCreateMenuBar (my dialog, "UiOptionMenu", NULL, 0);
 				XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
 					#if defined (macintosh)
@@ -939,7 +909,7 @@ void UiForm_finish (I) {
 				box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
 				XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
 				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_OPTIONMENU_HEIGHT, NULL);
-				for (ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
+				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
@@ -949,24 +919,21 @@ void UiForm_finish (I) {
 			} break;
 			case UI_BOOLEAN:
 			{
-				/*XtVaCreateManagedWidget ("", xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y, XmNwidth, labelWidth, XmNheight, Gui_checkButtonHeight (),
-					XmNalignment, XmALIGNMENT_END, NULL);*/
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
-				field -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, my dialog,
-					XmNx, fieldX, XmNy, y, XmNheight, Gui_CHECKBUTTON_HEIGHT, NULL);
+				/*GuiLabel_createShown (my dialog, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
+					theFinishBuffer.string, GuiLabel_RIGHT); */
+				field -> toggle = GuiCheckButton_createShown (my dialog,
+					fieldX, fieldX + labelWidth, y, Gui_AUTOMATIC,
+					theFinishBuffer.string, NULL, NULL, 0);
 			} break;
 			case UI_ENUM:
 			{
 				int max = enum_length (field -> enumerated), n = max + field -> includeZero, i;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
-					XmNalignment, XmALIGNMENT_END, NULL);
+				GuiLabel_createShown (my dialog, x, x + labelWidth, y + 1, y + 21,
+					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> list = GuiList_create (my dialog, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false);
-				//XtVaSetValues (field -> list, XmNwidth, fieldWidth + 100,
-					//XmNvisibleItemCount, n < 10 ? n + 1 : 11, NULL);
 				for (i = field -> includeZero ? 0 : 1; i <= max; i ++) {
 					GuiList_insertItem (field -> list, enum_string (field -> enumerated, i), 0);
 				}
@@ -977,12 +944,9 @@ void UiForm_finish (I) {
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmLabelWidgetClass, my dialog,
-					XmNx, x, XmNy, y + 1, XmNwidth, labelWidth, XmNheight, 20,
-					XmNalignment, XmALIGNMENT_END, NULL);
+				GuiLabel_createShown (my dialog, x, x + labelWidth, y + 1, y + 21,
+					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> list = GuiList_create (my dialog, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false);
-				//XtVaSetValues (field -> list, XmNwidth, listWidth + 100,
-					//XmNvisibleItemCount, (int) (field -> numberOfStrings < 10 ? field -> numberOfStrings + 1 : 11), NULL);
 				for (long i = 1; i <= field -> numberOfStrings; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
@@ -990,7 +954,7 @@ void UiForm_finish (I) {
 			} break;
 		}
 	}
-	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
+	for (long ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
 	/*separator = XmCreateSeparatorGadget (column, "separator", NULL, 0);*/
 	y = dialogHeight - Gui_BOTTOM_DIALOG_SPACING - Gui_PUSHBUTTON_HEIGHT;
@@ -1008,7 +972,7 @@ void UiForm_finish (I) {
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
 		 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
 	my cancelButton = GuiButton_createShown (my dialog, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"Cancel", gui_button_UiForm_hide, me, 0);
+		L"Cancel", gui_button_UiForm_hide, me, GuiButton_CANCEL);
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
 		my applyButton = GuiButton_createShown (my dialog, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
@@ -1036,7 +1000,7 @@ void UiForm_do (I, int modified) {
 	XtManageChild (my dialog);
 	XMapRaised (XtDisplay (my shell), XtWindow (my shell));
 	if (modified)
-		gui_button_UiForm_ok (my okButton, me);
+		gui_button_UiForm_ok (me, 0);   // BUG: should not send 0
 }
 
 int UiForm_parseString (I, const wchar_t *arguments) {
@@ -1156,23 +1120,28 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 				GuiText_setString (field -> text, Melder_integer (value));
 			}
 		} break; case UI_BOOLEAN: {
-			XmToggleButtonSetState (field -> toggle, (int) value, False);
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			int i;
+			GuiCheckButton_setValue (field -> toggle, value);
+		} break; case UI_RADIO: {
 			if (value < 1 || value > field -> options -> size) value = 1;   /* Guard against incorrect prefs file. */
-			for (i = 1; i <= field -> options -> size; i ++) {
+			for (int i = 1; i <= field -> options -> size; i ++) {
+				UiOption b = field -> options -> item [i];
+				GuiRadioButton_setValue (b -> toggle, i == value);
+			}
+		} break; case UI_OPTIONMENU: {
+			if (value < 1 || value > field -> options -> size) value = 1;   /* Guard against incorrect prefs file. */
+			for (int i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
 				XmToggleButtonSetState (b -> toggle, i == value, False);
-				if (field -> type == UI_OPTIONMENU && i == value) {
+				if (i == value) {
 					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 				}
 			}
 		} break; case UI_ENUM: {
 			if (value < 0 || value > enum_length (field -> enumerated)) value = 0;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, value + field -> includeZero, false);
+			GuiList_selectItem (field -> list, value + field -> includeZero);
 		} break; case UI_LIST: {
 			if (value < 1 || value > field -> numberOfStrings) value = 1;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, value, false);
+			GuiList_selectItem (field -> list, value);
 		} break; default: {
 			fatalField (me);
 		}
@@ -1189,14 +1158,26 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 		{
 			GuiText_setString (field -> text, value);
 		} break; case UI_LABEL: {
-			XtVaSetValues (field -> text, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			int i, found = FALSE;
-			for (i = 1; i <= field -> options -> size; i ++) {
+			GuiLabel_setString (field -> text, value);
+		} break; case UI_RADIO: {
+			bool found = false;
+			for (int i = 1; i <= field -> options -> size; i ++) {
+				UiOption b = field -> options -> item [i];
+				if (wcsequ (value, b -> name)) {
+					GuiRadioButton_setValue (b -> toggle, true);
+					found = true;
+				} else {
+					GuiRadioButton_setValue (b -> toggle, false);
+				}
+			}
+			/* If not found: do nothing (guard against incorrect prefs file). */
+		} break; case UI_OPTIONMENU: {
+			bool found = false;
+			for (int i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
 				if (wcsequ (value, b -> name)) {
 					XmToggleButtonSetState (b -> toggle, True, False);
-					found = TRUE;
+					found = true;
 					if (field -> type == UI_OPTIONMENU) {
 						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
 					}
@@ -1208,13 +1189,13 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 		} break; case UI_ENUM: {
 			long integerValue = enum_search (field -> enumerated, value);
 			if (integerValue < 0) integerValue = 0;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, integerValue + field -> includeZero, false);
+			GuiList_selectItem (field -> list, integerValue + field -> includeZero);
 		} break; case UI_LIST: {
 			long i;
 			for (i = 1; i <= field -> numberOfStrings; i ++)
 				if (wcsequ (value, field -> strings [i])) break;
 			if (i > field -> numberOfStrings) i = 1;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, i, false);
+			GuiList_selectItem (field -> list, i);
 		} break; default: {
 			fatalField (me);
 		}

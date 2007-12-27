@@ -589,7 +589,7 @@ FORM (SpellingChecker_nextNotAllowedWord, L"Next not allowed word?", L"SpellingC
 	OK
 DO
 	wchar_t *sentence = GET_STRING (L"sentence");
-	int startingCharacter = GET_INTEGER (L"Starting character");
+	long startingCharacter = GET_INTEGER (L"Starting character");
 	REQUIRE (startingCharacter >= 0, L"Starting character should be 0 or positive.")
 	REQUIRE (startingCharacter <= (int) wcslen (sentence), L"Starting character should not exceed end of sentence.")
 	Melder_information1 (SpellingChecker_nextNotAllowedWord (ONLY_OBJECT, sentence, & startingCharacter));

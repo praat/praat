@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/09
+ * pb 2007/12/20
  */
 
 #ifndef _Thing_h_
@@ -42,6 +42,8 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 	Graphics Graphics_create_port (void *display, unsigned long port, int resolution);
 #endif
 Graphics Graphics_create_xmdrawingarea (/* Widget */ void *drawingArea);
+
+int Graphics_getResolution (I);
 
 void Graphics_setWsViewport (I, short x1DC, short x2DC, short y1DC, short y2DC);
 void Graphics_setWsWindow (I, double x1NDC, double x2NDC, double y1NDC, double y2NDC);

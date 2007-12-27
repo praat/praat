@@ -102,7 +102,7 @@ int Machine_getTextHeight (void) {
 		29,   /* HP */
 		29,   /* Sun4 */
 		22,   /* Mac */
-		17,   /* Win32 */
+		19,   /* Win32 */
 		29    /* Linux */
 	};
 	return heights [lookAndFeel];
@@ -376,7 +376,6 @@ static char *motifFonts [] = {
 	"*menuBar*fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso10646-1",
 	"*dynamicSubmenuBar*XmPushButton.fontList: -*-helvetica-bold-o-normal-*-14-*-*-*-*-*-iso10646-1",
 	"*XmLabel.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso10646-1",
-	"*XmLabelGadget.fontList: -*-helvetica-bold-r-normal-*-14-*-*-*-*-*-iso10646-1",
 	"*information*text*fontList: -*-helvetica-medium-r-normal-*-14-*-*-*-*-*-iso10646-1",
 0 };
 static char *linuxFonts [] = {
@@ -385,17 +384,14 @@ static char *linuxFonts [] = {
 static char *solarisFonts [] = {
 	"*fontList: -b&h-lucida sans-medium-r-normal-sans-*-120-*-*-p-*-iso8859-1",
 	"*information*fontList: -b&h-lucida sans-medium-r-normal-sans-*-120-*-*-p-*-iso8859-1",
-	"*raam*XmLabelGadget.fontList: -b&h-lucida sans-bold-r-normal-sans-*-120-*-*-p-*-iso8859-1",
+	"*raam*XmLabel.fontList: -b&h-lucida sans-bold-r-normal-sans-*-120-*-*-p-*-iso8859-1",
 	"*XmText.fontList: -b&h-lucida sans typewriter-medium-r-normal-sans-*-120-*-*-m-*-iso8859-1",
-	"*XmTextField.fontList: -b&h-lucida sans typewriter-medium-r-normal-sans-*-120-*-*-m-*-iso8859-1",
 0 };
 static char *sun4Fonts [] = {
 	"*XmText.fontList: 9x15",
-	"*XmTextField.fontList: 7x13",
 0 };
 static char *hpFonts [] = {
 	"*XmText.fontList: user9x17",
-	"*XmTextField.fontList: user9x17",
 	"*UiRadio*XmToggleButton.fontList: user9x17",
 0 };
 static void appendResources (char **extra) {

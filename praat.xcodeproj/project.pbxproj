@@ -42,6 +42,8 @@
 		230E41D40B0A833A000CCE15 /* melder_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 230E41D30B0A833A000CCE15 /* melder_error.c */; };
 		231E5F980AC6D1C4004B07A8 /* DTW_and_TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */; };
 		231E5F990AC6D1C4004B07A8 /* DTW_and_TextGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */; };
+		2320D63D0D190A56002D5AE0 /* StringsEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 2320D63C0D190A56002D5AE0 /* StringsEditor.c */; };
+		2320D63F0D190A60002D5AE0 /* StringsEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2320D63E0D190A60002D5AE0 /* StringsEditor.h */; };
 		2327C98B0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2327C98A0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h */; };
 		232D545C0AB8B8FA0018C769 /* Strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 232D545B0AB8B8FA0018C769 /* Strings.c */; };
 		2332F8850B32BF2D005E2D38 /* ipaSerifRegular24.c in Sources */ = {isa = PBXBuildFile; fileRef = 2332F8800B32BF2D005E2D38 /* ipaSerifRegular24.c */; };
@@ -131,6 +133,7 @@
 		237EBB2A0CF346A1001364DE /* flac_share_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 237EBB290CF346A1001364DE /* flac_share_alloc.h */; };
 		2395B3F30D158F14001028D9 /* GuiButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395B3F20D158F14001028D9 /* GuiButton.c */; };
 		2395B4520D15DD35001028D9 /* GuiObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 2395B4510D15DD35001028D9 /* GuiObject.c */; };
+		23A2C5DA0D21BEF600E80FED /* GuiLabel.c in Sources */ = {isa = PBXBuildFile; fileRef = 23A2C5D90D21BEF600E80FED /* GuiLabel.c */; };
 		23A9342E0D110ED900D51876 /* melder_console.c in Sources */ = {isa = PBXBuildFile; fileRef = 23A9342D0D110ED900D51876 /* melder_console.c */; };
 		23AC02EA0C2195F300990540 /* melder_encodings.c in Sources */ = {isa = PBXBuildFile; fileRef = 23AC02E90C2195F300990540 /* melder_encodings.c */; };
 		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
@@ -815,6 +818,8 @@
 		23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C509F2E61200E660F9 /* melder_atof.c */; };
 		23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C709F2E62700E660F9 /* melder_ftoa.c */; };
 		23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */ = {isa = PBXBuildFile; fileRef = 23EE67C909F2E63900E660F9 /* melder_token.c */; };
+		23F04F440D23032700685061 /* GuiCheckButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F04F430D23032700685061 /* GuiCheckButton.c */; };
+		23F04FAF0D242DC700685061 /* GuiRadioButton.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F04FAE0D242DC700685061 /* GuiRadioButton.c */; };
 		23F8A8CE0BF103B2000ED19D /* flac_bitmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A00BF103B2000ED19D /* flac_bitmath.c */; };
 		23F8A8CF0BF103B2000ED19D /* flac_bitreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A10BF103B2000ED19D /* flac_bitreader.c */; };
 		23F8A8D00BF103B2000ED19D /* flac_bitwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = 23F8A8A20BF103B2000ED19D /* flac_bitwriter.c */; };
@@ -899,6 +904,8 @@
 		230E41D30B0A833A000CCE15 /* melder_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_error.c; path = sys/melder_error.c; sourceTree = "<group>"; };
 		231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = DTW_and_TextGrid.c; path = dwtools/DTW_and_TextGrid.c; sourceTree = "<group>"; };
 		231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DTW_and_TextGrid.h; path = dwtools/DTW_and_TextGrid.h; sourceTree = "<group>"; };
+		2320D63C0D190A56002D5AE0 /* StringsEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = StringsEditor.c; path = sys/StringsEditor.c; sourceTree = "<group>"; };
+		2320D63E0D190A60002D5AE0 /* StringsEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringsEditor.h; path = sys/StringsEditor.h; sourceTree = "<group>"; };
 		2327C98A0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound_and_Spectrogram_enums.h; path = fon/Sound_and_Spectrogram_enums.h; sourceTree = "<group>"; };
 		232D545B0AB8B8FA0018C769 /* Strings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Strings.c; path = sys/Strings.c; sourceTree = "<group>"; };
 		2332F8800B32BF2D005E2D38 /* ipaSerifRegular24.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ipaSerifRegular24.c; path = kar/ipaSerifRegular24.c; sourceTree = "<group>"; };
@@ -988,6 +995,7 @@
 		237EBB290CF346A1001364DE /* flac_share_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flac_share_alloc.h; sourceTree = "<group>"; };
 		2395B3F20D158F14001028D9 /* GuiButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiButton.c; path = sys/GuiButton.c; sourceTree = "<group>"; };
 		2395B4510D15DD35001028D9 /* GuiObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiObject.c; path = sys/GuiObject.c; sourceTree = "<group>"; };
+		23A2C5D90D21BEF600E80FED /* GuiLabel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiLabel.c; path = sys/GuiLabel.c; sourceTree = "<group>"; };
 		23A9342D0D110ED900D51876 /* melder_console.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_console.c; path = sys/melder_console.c; sourceTree = "<group>"; };
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
@@ -1674,6 +1682,8 @@
 		23EE67C509F2E61200E660F9 /* melder_atof.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_atof.c; path = sys/melder_atof.c; sourceTree = "<group>"; };
 		23EE67C709F2E62700E660F9 /* melder_ftoa.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_ftoa.c; path = sys/melder_ftoa.c; sourceTree = "<group>"; };
 		23EE67C909F2E63900E660F9 /* melder_token.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_token.c; path = sys/melder_token.c; sourceTree = "<group>"; };
+		23F04F430D23032700685061 /* GuiCheckButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiCheckButton.c; path = sys/GuiCheckButton.c; sourceTree = "<group>"; };
+		23F04FAE0D242DC700685061 /* GuiRadioButton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiRadioButton.c; path = sys/GuiRadioButton.c; sourceTree = "<group>"; };
 		23F8A8A00BF103B2000ED19D /* flac_bitmath.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitmath.c; sourceTree = "<group>"; };
 		23F8A8A10BF103B2000ED19D /* flac_bitreader.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitreader.c; sourceTree = "<group>"; };
 		23F8A8A20BF103B2000ED19D /* flac_bitwriter.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = flac_bitwriter.c; sourceTree = "<group>"; };
@@ -2553,6 +2563,8 @@
 				23E5CB3F09A22902004E41D5 /* Manual.c */,
 				23E5CB4209A22902004E41D5 /* ScriptEditor.h */,
 				23E5CB4109A22902004E41D5 /* ScriptEditor.c */,
+				2320D63E0D190A60002D5AE0 /* StringsEditor.h */,
+				2320D63C0D190A56002D5AE0 /* StringsEditor.c */,
 				23E5CB4409A22902004E41D5 /* TextEditor.h */,
 				23E5CB4309A22902004E41D5 /* TextEditor.c */,
 			);
@@ -2588,10 +2600,13 @@
 				23E5CE6A09A22A36004E41D5 /* Gui.h */,
 				23E5CEEE09A22A4E004E41D5 /* GuiP.h */,
 				236DDF340D11F1EB009CB8B9 /* Gui.c */,
+				2395B3F20D158F14001028D9 /* GuiButton.c */,
+				23F04F430D23032700685061 /* GuiCheckButton.c */,
+				23A2C5D90D21BEF600E80FED /* GuiLabel.c */,
 				236DDF030D11DC81009CB8B9 /* GuiList.c */,
 				236DDF360D11F1FB009CB8B9 /* GuiMenu.c */,
 				2395B4510D15DD35001028D9 /* GuiObject.c */,
-				2395B3F20D158F14001028D9 /* GuiButton.c */,
+				23F04FAE0D242DC700685061 /* GuiRadioButton.c */,
 				23E5CB5509A22902004E41D5 /* GuiText.c */,
 				23E5CB5609A22902004E41D5 /* GuiWindow.c */,
 				23E5CEF009A22A4E004E41D5 /* motifEmulator_resources.h */,
@@ -3239,6 +3254,7 @@
 				235E4A090D0A0D06009CC7DE /* TextGridEditor_enums.h in Headers */,
 				23760E9C0D0C7B370037FD07 /* Pitch_enums.h in Headers */,
 				23760F720D0C89870037FD07 /* ManipulationEditor_enums.h in Headers */,
+				2320D63F0D190A60002D5AE0 /* StringsEditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3724,6 +3740,10 @@
 				236DDF370D11F1FB009CB8B9 /* GuiMenu.c in Sources */,
 				2395B3F30D158F14001028D9 /* GuiButton.c in Sources */,
 				2395B4520D15DD35001028D9 /* GuiObject.c in Sources */,
+				2320D63D0D190A56002D5AE0 /* StringsEditor.c in Sources */,
+				23A2C5DA0D21BEF600E80FED /* GuiLabel.c in Sources */,
+				23F04F440D23032700685061 /* GuiCheckButton.c in Sources */,
+				23F04FAF0D242DC700685061 /* GuiRadioButton.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

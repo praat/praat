@@ -191,7 +191,7 @@ MAN_BEGIN (L"Smolensky & Legendre (2006)", L"ppgb", 20070423)
 NORMAL (L"Paul Smolensky & G\\e'raldine Legendre (1993): %%The harmonic mind.% "
 	"MIT Press.")
 NORMAL (L"These two books contain all material on connectionism by Smolensky and colleagues from the late eighties on, "
-	"with extensive editing to make it into a conherent work, plus much new material.")
+	"with extensive editing to make it into a coherent work, plus much new material.")
 NORMAL (L"This book can be seen in many respects as the predecessor of @@Prince & Smolensky (1993)@.")
 MAN_END
 

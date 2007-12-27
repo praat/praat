@@ -44,7 +44,9 @@
 
 static void destroy (I) {
 	iam (GraphicsScreen);
-	#if xwin
+	#if cairo
+		cairo_destroy (my cr);
+	#elif xwin
 		XFreeGC (my display, my gc);
 	#elif win
 		if (my dc) {
@@ -67,7 +69,10 @@ void Graphics_flushWs (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			// TODO: een aanroep die de eventuele grafische buffer ledigt,
+			// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
+		#elif xwin
 			XFlush (my display);
 		#elif win
 			/*GdiFlush ();*/
@@ -81,7 +86,12 @@ void Graphics_clearWs (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
+			// TODO: cairo_rectangle (my gc, 0, 0, GTK_WIDGET(I)->allocation.width, GTK_WIDGET(I)->allocation.height); ?
+			cairo_rectangle (my cr, my x1DC, my y1DC, my x1DC - my x2DC, my y1DC - my y2DC);
+			cairo_fill (my cr);
+		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, False);
 		#elif win
 			RECT rect;
@@ -106,17 +116,28 @@ void Graphics_clearWs (I) {
 }
 
 void Graphics_updateWs (I) {
+	/*
+	 * A function that invalidates the graphics.
+	 * This function is typically called by the owner of the drawing area
+	 * whenever the data to be displayed in the drawing area has changed;
+	 * the idea is to generate an expose event to which the drawing area will
+	 * respond by redrawing its contents from the (changed) data.
+	 */
 	iam (Graphics);
 	if (me && my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			cairo_rectangle (my cr, my x1DC, my y1DC, my x1DC - my x2DC, my y1DC - my y2DC);
+			cairo_clip (my cr);
+			// TODO: niet goed. Deze functie behoort een expose event te genereren.
+		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, True);
 		#elif win
 			//clear (me); // lll
 			if (my window) InvalidateRect (my window, NULL, TRUE);
 		#elif mac
 			Rect r;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
+			if (my drawingArea) GuiMac_clipOn (my drawingArea);   // to prevent invalidating invisible parts of the canvas
 			SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
 			SetPort (my macPort);
 			/*EraseRect (& r);*/
@@ -134,7 +155,9 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 
 	/* Fill in new members. */
 
-	#if xwin
+	#if cairo
+		_Graphics_text_init (me);
+	#elif xwin
 		if (! inited) {
 			int i;
 			display = (Display *) voidDisplay;

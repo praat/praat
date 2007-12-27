@@ -22,6 +22,7 @@
  * pb 2007/03/14 arrowSize
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2007/12/02 enums
+ * pb 2007/12/20 getResolution
  */
 
 #include <stdarg.h>
@@ -128,6 +129,11 @@ Graphics Graphics_create (int resolution) {
 	if (! me || ! Graphics_init (me)) forget (me);
 	my resolution = resolution;
 	return me;
+}
+
+int Graphics_getResolution (I) {
+	iam (Graphics);
+	return my resolution;
 }
 
 void Graphics_setWsViewport (I,

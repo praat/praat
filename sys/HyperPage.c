@@ -773,8 +773,8 @@ DIRECT (HyperPage, cb_back)
 	if (! do_back (me)) return 0;
 END
 
-static void gui_button_cb_back (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_back (I, GuiButtonEvent event) {
+	(void) event;
 	iam (HyperPage);
 	if (! do_back (me)) Melder_flushError (NULL);
 }
@@ -801,8 +801,8 @@ DIRECT (HyperPage, cb_forth)
 	if (! do_forth (me)) return 0;
 END
 
-static void gui_button_cb_forth (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_forth (I, GuiButtonEvent event) {
+	(void) event;
 	iam (HyperPage);
 	if (! do_forth (me)) Melder_flushError (NULL);
 }
@@ -853,15 +853,15 @@ static void gui_cb_resize (GUI_ARGS) {
 	updateVerticalScrollBar (me);
 }
 
-static void gui_button_cb_previousPage (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_previousPage (I, GuiButtonEvent event) {
+	(void) event;
 	iam (HyperPage);
 	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) > 1 ?
 		our getCurrentPageNumber (me) - 1 : our getNumberOfPages (me));
 }
 
-static void gui_button_cb_nextPage (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
+	(void) event;
 	iam (HyperPage);
 	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) < our getNumberOfPages (me) ?
 		our getCurrentPageNumber (me) + 1 : 1);

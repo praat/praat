@@ -221,7 +221,7 @@ static int stringContains (const wchar_t *string, int character) {
 	return FALSE;
 }
 
-wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, int *start) {
+wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, long *start) {
 	const wchar_t *p = sentence + *start;
 	for (;;) {
 		if (*p == '\0') {

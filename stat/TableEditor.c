@@ -33,6 +33,7 @@
 #include "EditorM.h"
 
 #define MAXNUM_VISIBLE_COLUMNS  100
+#define SIZE_INCHES  40
 
 #define TableEditor_members Editor_members \
 	long topRow, leftColumn, selectedRow, selectedColumn; \
@@ -88,22 +89,22 @@ static void dataChanged (I) {
 #ifndef macintosh
 static int menu_cb_Cut (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	XmTextCut (my text, 0);
+	GuiText_cut (my text);
 	return 1;
 }
 static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	XmTextCopy (my text, 0);
+	GuiText_copy (my text);
 	return 1;
 }
 static int menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	XmTextPaste (my text);
+	GuiText_paste (my text);
 	return 1;
 }
 static int menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	XmTextRemove (my text);
+	GuiText_remove (my text);
 	return 1;
 }
 #endif
@@ -118,8 +119,9 @@ static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
 	return 1;
 }
 
-static void cb_textChanged (GUI_ARGS) {
-	GUI_IAM (TableEditor);
+static void gui_text_cb_change (I, GuiTextEvent event) {
+	iam (TableEditor);
+	(void) event;
 	Table table = my data;
 	Editor_broadcastChange (me);
 }
@@ -139,19 +141,11 @@ static void createChildren (I) {
 
 	/***** Create text field. *****/
 
-	my text = XmCreateText (form, "text", NULL, 0);
-	XtVaSetValues (my text,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM,
-		XmNheight, Machine_getTextHeight (),
-		XmNwordWrap, False,
-		XmNeditMode, XmSINGLE_LINE_EDIT,
-		NULL);
-	XtManageChild (my text);
+	my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
 	#ifdef UNIX
 		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
 	#endif
-	XtAddCallback (my text, XmNvalueChangedCallback, cb_textChanged, (XtPointer) me);
+	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
 
 	/***** Create drawing area. *****/
 
@@ -226,7 +220,9 @@ static void draw (I) {
 	Table table = my data;
 	double spacing = 2.0;   /* millimetres at both edges */
 	double columnWidth, cellWidth;
-	long irow, icol;
+	/*
+	 * We fit 200 rows in 40 inches, which is 14.4 points per row.
+	 */
 	long rowmin = my topRow, rowmax = rowmin + 197;
 	long colmin = my leftColumn, colmax = colmin + (MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
@@ -243,7 +239,7 @@ static void draw (I) {
 	 * Determine the width of the column with the row numbers.
 	 */
 	columnWidth = Graphics_textWidth (my graphics, L"row");
-	for (irow = rowmin; irow <= rowmax; irow ++) {
+	for (long irow = rowmin; irow <= rowmax; irow ++) {
 		cellWidth = Graphics_textWidth (my graphics, Melder_integer (irow));
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 	}
@@ -255,13 +251,13 @@ static void draw (I) {
 	/*
 	 * Determine the width of the columns.
 	 */
-	for (icol = colmin; icol <= colmax; icol ++) {
+	for (long icol = colmin; icol <= colmax; icol ++) {
 		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
 		columnWidth = Graphics_textWidth (my graphics, Melder_integer (icol));
 		if (columnLabel == NULL) columnLabel = L"";
 		cellWidth = Graphics_textWidth (my graphics, columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
-		for (irow = rowmin; irow <= rowmax; irow ++) {
+		for (long irow = rowmin; irow <= rowmax; irow ++) {
 			const wchar_t *cell = Table_getStringValue (table, irow, icol);
 			Melder_assert (cell != NULL);
 			if (cell [0] == '\0') cell = L"?";
@@ -275,18 +271,24 @@ static void draw (I) {
 	 * Show the row numbers.
 	 */
 	Graphics_text (my graphics, my columnLeft [0] / 2, rowmin - 1, L"row");
-	for (irow = rowmin; irow <= rowmax; irow ++) {
+	for (long irow = rowmin; irow <= rowmax; irow ++) {
 		Graphics_text1 (my graphics, my columnLeft [0] / 2, irow, Melder_integer (irow));
 	}
-	for (icol = colmin; icol <= colmax; icol ++) {
+	/*
+	 * Show the column labels.
+	 */
+	for (long icol = colmin; icol <= colmax; icol ++) {
 		double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
 		const wchar_t *columnLabel = table -> columnHeaders [icol]. label;
 		if (columnLabel == NULL || columnLabel [0] == '\0') columnLabel = L"?";
 		Graphics_text1 (my graphics, mid, rowmin - 2, Melder_integer (icol));
 		Graphics_text (my graphics, mid, rowmin - 1, columnLabel);
 	}
-	for (irow = rowmin; irow <= rowmax; irow ++) {
-		for (icol = colmin; icol <= colmax; icol ++) {
+	/*
+	 * Show the cell contents.
+	 */
+	for (long irow = rowmin; irow <= rowmax; irow ++) {
+		for (long icol = colmin; icol <= colmax; icol ++) {
 			double mid = (my columnLeft [icol - colmin] + my columnRight [icol - colmin]) / 2;
 			const wchar_t *cell = Table_getStringValue (table, irow, icol);
 			Melder_assert (cell != NULL);
@@ -354,9 +356,10 @@ TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table
 	my selectedColumn = 1;
 	my selectedRow = 1;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setWsViewport (my graphics, 0, 3000, 0, 3000);
-	Graphics_setWsWindow (my graphics, 0, 3000, 0, 3000);
-	Graphics_setViewport (my graphics, 0, 3000, 0, 3000);
+	double size_pixels = SIZE_INCHES * Graphics_getResolution (my graphics);
+	Graphics_setWsViewport (my graphics, 0, size_pixels, 0, size_pixels);
+	Graphics_setWsWindow (my graphics, 0, size_pixels, 0, size_pixels);
+	Graphics_setViewport (my graphics, 0, size_pixels, 0, size_pixels);
 	Graphics_setFont (my graphics, kGraphics_font_COURIER);
 	Graphics_setFontSize (my graphics, 12);
 	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);

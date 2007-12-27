@@ -26,6 +26,7 @@
  * pb 2007/09/19 info
  * pb 2007/09/21 query menu hierarchical
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2007/12/27 Gui
  */
 
 #include "FunctionEditor.h"
@@ -484,8 +485,8 @@ static void do_showAll (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_button_cb_showAll (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_showAll (I, GuiButtonEvent event) {
+	(void) event;
 	iam (FunctionEditor);
 	do_showAll (me);
 }
@@ -500,8 +501,8 @@ static void do_zoomIn (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_button_cb_zoomIn (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_zoomIn (I, GuiButtonEvent event) {
+	(void) event;
 	iam (FunctionEditor);
 	do_zoomIn (me);
 }
@@ -521,8 +522,8 @@ static void do_zoomOut (FunctionEditor me) {
 	updateGroup (me);
 }
 
-static void gui_button_cb_zoomOut (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_zoomOut (I, GuiButtonEvent event) {
+	(void) event;
 	iam (FunctionEditor);
 	do_zoomOut (me);
 }
@@ -538,8 +539,8 @@ static void do_zoomToSelection (FunctionEditor me) {
 	}
 }
 
-static void gui_button_cb_zoomToSelection (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_zoomToSelection (I, GuiButtonEvent event) {
+	(void) event;
 	iam (FunctionEditor);
 	do_zoomToSelection (me);
 }
@@ -886,8 +887,9 @@ static void gui_cb_resize (GUI_ARGS) {
 	preferences.shellHeight = shellHeight;
 }
 
-static void gui_cb_group (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
+static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
+	iam (FunctionEditor);
+	(void) event;
 	int i;
 	my group = ! my group;
 	if (my group) {
@@ -1060,12 +1062,8 @@ static void createChildren (I) {
 
 	/***** Create Group button. *****/
 
-	my groupButton = XtVaCreateManagedWidget ("Group", xmToggleButtonWidgetClass, form,
-		XmNrightAttachment, XmATTACH_FORM,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 4,
-		XmNheight, Machine_getScrollBarWidth () + 1, XmNwidth, 80, NULL);
-	XtAddCallback (my groupButton, XmNvalueChangedCallback, gui_cb_group, (XtPointer) me);
-	XmToggleButtonSetState (my groupButton, group_equalDomain (my tmin, my tmax), False);
+	my groupButton = GuiCheckButton_createShown (form, -80, 0, - Machine_getScrollBarWidth () - 5, -4,
+		L"Group", gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
 
 	/***** Create drawing area. *****/
 
@@ -1080,15 +1078,7 @@ static void createChildren (I) {
 	/***** Create optional text field. *****/
 
 	if (our hasText) {
-		my text = XmCreateText (form, "text", NULL, 0);
-		XtVaSetValues (my text,
-			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-			XmNtopAttachment, XmATTACH_FORM,
-			XmNheight, TEXT_HEIGHT,
-			XmNwordWrap, True,
-			XmNeditMode, XmMULTI_LINE_EDIT,   /* Otherwise, cannot wrap. */
-			NULL);
-		XtManageChild (my text);
+		my text = GuiText_createShown (form, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
 		/*
 		 * X Toolkit 4:184,461 says: "you should never call XtSetKeyboardFocus",
 		 * "since it interferes with the keyboard traversal code".
@@ -1616,7 +1606,7 @@ gui_cb_resize (my drawingArea, (XtPointer) me, 0);
 	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	our updateText (me);
 	if (group_equalDomain (my tmin, my tmax))
-		gui_cb_group (NULL, (XtPointer) me, NULL);
+		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
 	my enableUpdates = TRUE;
 	my arrowScrollStep = preferences.arrowScrollStep;
 	return 1;
@@ -1650,7 +1640,7 @@ void FunctionEditor_ungroup (I) {
 	int i = 1;
 	if (! my group) return;
 	my group = FALSE;
-	XmToggleButtonSetState (my groupButton, False, False);
+	GuiCheckButton_setValue (my groupButton, false);
 	while (group [i] != me) i ++;
 	group [i] = NULL;
 	nGroup --;

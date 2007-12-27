@@ -60,6 +60,7 @@
 #include "Spectrum_to_Formant.h"
 #include "SpectrumEditor.h"
 #include "SpellingChecker.h"
+#include "StringsEditor.h"
 #include "Table.h"
 #include "TextGrid.h"
 #include "VocalTract.h"
@@ -3727,7 +3728,7 @@ END
 FORM (SpectrumTier_list, L"SpectrumTier: List", 0)
 	BOOLEAN (L"Include indexes", true)
 	BOOLEAN (L"Include frequency", true)
-	BOOLEAN (L"IncludePOSITIVEW power density", true)
+	BOOLEAN (L"Include power density", true)
 	OK
 DO
 	EVERY (SpectrumTier_list (OBJECT, GET_INTEGER (L"Include indexes"), GET_INTEGER (L"Include frequency"),
@@ -3800,6 +3801,16 @@ if (! inited) {
 }
 DO
 	if (! praat_new1 (Strings_createAsDirectoryList (GET_STRING (L"path")), GET_STRING (L"Name"))) return 0;
+END
+
+DIRECT (Strings_edit)
+	if (theCurrentPraat -> batch) {
+		return Melder_error1 (L"Cannot edit a Strings from batch.");
+	} else {
+		WHERE (SELECTED && CLASS == classStrings)
+			if (! praat_installEditor (StringsEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+				OBJECT), IOBJECT)) return 0;
+	}
 END
 
 DIRECT (Strings_equal)
@@ -4756,6 +4767,7 @@ praat_addAction1 (classSpectrogram, 0, L"Hack", 0, 0, 0);
 
 	praat_addAction1 (classStrings, 0, L"Strings help", 0, 0, DO_Strings_help);
 	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, L"Edit", 0, 0, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, L"Query", 0, 0, 0);
 		praat_addAction1 (classStrings, 2, L"Equal?", 0, 0, DO_Strings_equal);
 		praat_addAction1 (classStrings, 1, L"Get number of strings", 0, 0, DO_Strings_getNumberOfStrings);

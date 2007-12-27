@@ -1,7 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* Code version: February 17, 2006 */
-/* Comments version: February 17, 2006 */
+/* December 24, 2007 */
 
 /*
  * The sendpraat subroutine (Unix with X Window; Windows; Macintosh) sends a message
@@ -493,7 +492,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			 * Use interrupt mechanism.
 			 */
 			if (kill (pid, SIGUSR1)) {
-				swprintf (errorMessageW, L"Cannot send message to %ls (process %ld). "
+				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (process %ld). "
 					"The program %ls may have been started by a different user, "
 					"or may have crashed.", programName, pid, programName);
 				return errorMessageW;

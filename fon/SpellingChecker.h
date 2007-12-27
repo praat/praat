@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2007/12/23
  */
 
 #ifndef _WordList_h_
@@ -42,7 +42,7 @@ SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
 int SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
 
 int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word);
-wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, int *start);
+wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, long *start);
 
 int SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word);
 

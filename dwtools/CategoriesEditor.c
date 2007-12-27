@@ -37,7 +37,6 @@
 
 
 /* forward declarations */
-static void gui_list_cb_extended (Widget, void *);
 static void update (I, long from, long to, const long *select, long nSelect);
 static void update_dos (I);
 
@@ -451,20 +450,14 @@ static void notifyOutOfView (I)
 {
 	iam (CategoriesEditor); 
 	MelderString tmp = { 0 };
-	XmString outOfViewLabel;
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount); 
 	if (posList != NULL)
 	{
-		int i, outOfView = 0, bottom, topItemPosition;
-		int visibleItemCount, itemCount;
+		long outOfView = 0, top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
 		
-		XtVaGetValues (my list, XmNtopItemPosition, & topItemPosition,
-			XmNvisibleItemCount, & visibleItemCount, XmNitemCount, 
-			& itemCount, NULL);
-		bottom = topItemPosition + visibleItemCount - 1;
-		for (i = posCount; i > 0; i--)
+		for (long i = posCount; i > 0; i--)
 		{ 
-			if (posList[i] < topItemPosition || posList[i] > bottom) outOfView++;
+			if (posList[i] < top || posList[i] > bottom) outOfView++;
 		}
 		NUMlvector_free (posList, 1);
 		if (outOfView > 0)
@@ -472,9 +465,7 @@ static void notifyOutOfView (I)
 			MelderString_append2 (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
 		}
 	}
-	outOfViewLabel = XmStringCreateSimple (Melder_peekWcsToUtf8 (tmp.string));
-	XtVaSetValues (my outOfView, XmNlabelString, outOfViewLabel, NULL);
-	XmStringFree (outOfViewLabel);
+	GuiLabel_setString (my outOfView, tmp.string);
 	MelderString_free (&tmp);
 }
 
@@ -483,7 +474,6 @@ static void update_dos (I)
 	iam (CategoriesEditor);
 	wchar_t *name;
 	MelderString tmp = { 0 };
-	XmString commandName;
 	Boolean undoSense = True, redoSense = True;
 	/*
 		undo
@@ -495,9 +485,8 @@ static void update_dos (I)
 	}
 	
 	MelderString_append4 (&tmp, L"Undo ", L"\"", name, L"\"");
-	commandName = XmStringCreateSimple (Melder_wcsToUtf8 (tmp.string)); 
-	XtVaSetValues (my undo, XmNlabelString, commandName, NULL);
-	XtSetSensitive (my undo, undoSense);
+	GuiButton_setString (my undo, tmp.string);
+	GuiObject_setSensitive (my undo, undoSense);
 	
 	/*
 		redo
@@ -509,9 +498,8 @@ static void update_dos (I)
 	}
 	MelderString_empty (&tmp);
 	MelderString_append4 (&tmp, L"Redo ", L"\"", name, L"\"");
-	commandName = XmStringCreateSimple (Melder_wcsToUtf8 (tmp.string)); 
-	XtVaSetValues (my redo, XmNlabelString, commandName, NULL);
-	XtSetSensitive (my redo, redoSense);
+	GuiButton_setString (my redo, tmp.string);
+	GuiObject_setSensitive (my redo, redoSense);
 	MelderString_free (&tmp);
 }
 
@@ -539,9 +527,9 @@ static void updateWidgets (I) /*all buttons except undo & redo */
 		}
 		NUMlvector_free (posList, 1);
 	}
-	XtSetSensitive (my insert, insert); XtSetSensitive (my insertAtEnd, insertAtEnd);
-	XtSetSensitive (my replace, replace); XtSetSensitive (my remove, remove);
-	XtSetSensitive (my moveUp, moveUp); XtSetSensitive (my moveDown, moveDown);
+	GuiObject_setSensitive (my insert, insert); GuiObject_setSensitive (my insertAtEnd, insertAtEnd);
+	GuiObject_setSensitive (my replace, replace); GuiObject_setSensitive (my remove, remove);
+	GuiObject_setSensitive (my moveUp, moveUp); GuiObject_setSensitive (my moveDown, moveDown);
 	if (my history) update_dos (me);
 	notifyOutOfView (me);
 }
@@ -579,7 +567,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		int k;
 
 		if (! (table = Melder_malloc (const wchar_t *, to - from + 1))) return;
-		XtVaGetValues (my list, XmNitemCount, & itemCount, NULL);
+		itemCount = GuiList_getNumberOfItems (my list);
 		/*for (k = 0, i = from; i <= to; i++)
 		{
 			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
@@ -633,7 +621,8 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	if (size == 1) /* the only item is always selected */
 	{
 		const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, 1);
-		GuiList_selectItem (my list, 1, True);
+		GuiList_selectItem (my list, 1);
+		updateWidgets (me);   // instead of "notify". BUG?
 		GuiText_setString (my text, catg);
 	}
 	else if (nSelect > 0)
@@ -643,7 +632,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		*/
 		for (i = 1; i <= nSelect; i++)
 		{
-			GuiList_selectItem (my list, select[i] > size ? size : select[i], false);
+			GuiList_selectItem (my list, select[i] > size ? size : select[i]);
 		}
 	}
 	
@@ -652,9 +641,8 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	*/
 	
 	{
-		int top, visible, itemCount;
-		XtVaGetValues (my list, XmNtopItemPosition, & top,
-			XmNvisibleItemCount, & visible, XmNitemCount, & itemCount, NULL);
+		long top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
+		long visible = bottom - top + 1;
 		if (nSelect == 0)
 		{
 			top = my position - visible / 2;
@@ -664,7 +652,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 			/* selection above visible area*/
 			top = select[1];
 		}
-		else if (select[1] >= top + visible - 1)
+		else if (select[1] > bottom)
 		{
 			/* selection below visible area */
 			top = select[nSelect] - visible + 1;
@@ -680,12 +668,12 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		}
 		if (top + visible > size) top = size - visible + 1;
 		if (top < 1) top = 1;
-		GuiList_scroll (my list, top);
+		GuiList_setTopPosition (my list, top);
 	}
 }
 
-static void gui_button_cb_remove (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_remove (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
@@ -722,22 +710,22 @@ end:
 	forget (command);
 }
 
-static void gui_button_cb_insert (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_insert (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	insert (me, my position);
 }
 
-static void gui_button_cb_insertAtEnd (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_insertAtEnd (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	Categories categories = my data;
 	insert (me, categories->size + 1);
 	my position = categories->size;
 }
 
-static void gui_button_cb_replace (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_replace (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
@@ -763,8 +751,8 @@ end:
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveUp (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
@@ -783,8 +771,8 @@ end:
 }
 
 /* Precondition: contiguous selection */
-static void gui_button_cb_moveDown (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_moveDown (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
@@ -808,20 +796,21 @@ static void gui_cb_scroll (GUI_ARGS) {
 	notifyOutOfView (me);
 }
 
-static void gui_cb_default (GUI_ARGS) {
-	GUI_IAM (CategoriesEditor);
+static void gui_list_cb_double_click (void *void_me, GuiListEvent event) {
+	(void) event;
+	iam (CategoriesEditor);
 	const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, my position);
 	GuiText_setString (my text, catg);
 }
 
-static void gui_list_cb_extended (Widget widget, void *void_me) {
-	(void) widget;
+static void gui_list_cb_extended (void *void_me, GuiListEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	updateWidgets (me);
 }
 
-static void gui_button_cb_undo (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_undo (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	if (CommandHistory_offleft (my history)) return;
 	Command_undo (CommandHistory_getItem (my history));
@@ -829,8 +818,8 @@ static void gui_button_cb_undo (Widget widget, I) {
 	updateWidgets (me);
 }
 
-static void gui_button_cb_redo (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_redo (I, GuiButtonEvent event) {
+	(void) event;
 	iam (CategoriesEditor);
 	CommandHistory_forth (my history);	
 	if (CommandHistory_offright (my history)) return;
@@ -858,14 +847,12 @@ static void createChildren (I)
 	Widget vertScrollBar;
 	int menuBarOffset = 40;
 	
-	XtVaCreateManagedWidget ("Positions:", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 3+menuBarOffset, XmNwidth, 95, NULL);
-	XtVaCreateManagedWidget ("Values:", xmLabelGadgetClass, my dialog,
-		XmNx, 100, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
+	GuiLabel_createShown (my dialog, 5, 100, 3+menuBarOffset, Gui_AUTOMATIC, L"Positions:", 0);
+	GuiLabel_createShown (my dialog, 100, 190, 3+menuBarOffset, Gui_AUTOMATIC, L"Values:", 0);
 
 	my list = GuiList_create (my dialog, 0, 260, 40+menuBarOffset, 140+menuBarOffset, true);
 	GuiList_setSelectionChangedCallback (my list, gui_list_cb_extended, me);
-	XtAddCallback (my list, XmNdefaultActionCallback, gui_cb_default, (XtPointer) me);
+	GuiList_setDoubleClickCallback (my list, gui_list_cb_double_click, me);
 	GuiObject_show (my list);
 
 	/*
@@ -888,11 +875,8 @@ static void createChildren (I)
 			(XtPointer) me);
 	#endif
 
-	XtVaCreateManagedWidget ("Value:", xmLabelGadgetClass, my dialog,
-		XmNx, 280, XmNy, 3+menuBarOffset, XmNwidth, 90, NULL);
-	my text = XtVaCreateManagedWidget("Text", xmTextWidgetClass, my dialog,
-		 XmNx, 370, XmNy, 3+menuBarOffset, XmNwidth, 140, NULL);
-	XmTextSetMaxLength (my text, CategoriesEditor_TEXTMAXLENGTH);
+	GuiLabel_createShown (my dialog, 280, 370, 3+menuBarOffset, Gui_AUTOMATIC, L"Value:", 0);
+	my text = GuiText_createShown (my dialog, 370, 510, 3+menuBarOffset, Gui_AUTOMATIC, 0);
 	GuiText_setString (my text, CategoriesEditor_EMPTYLABEL);
 				 
 	my insert = GuiButton_createShown (my dialog, 280, 370, 43+menuBarOffset, Gui_AUTOMATIC,
@@ -912,8 +896,7 @@ static void createChildren (I)
 	my moveDown = GuiButton_createShown (my dialog, 280, 470, 320+menuBarOffset, Gui_AUTOMATIC,
 		L"Move selection down", gui_button_cb_moveDown, me, 0);	
 
-	my outOfView = XtVaCreateManagedWidget ("", xmLabelGadgetClass, my dialog,
-		XmNx, 5, XmNy, 450, XmNwidth, 200, NULL);
+	my outOfView = GuiLabel_createShown (my dialog, 5, 205, 450, Gui_AUTOMATIC, L"", 0);
 }
 
 static void dataChanged (I)

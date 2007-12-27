@@ -253,12 +253,12 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 			static MelderString buffer = { 0 };
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = '\0';
-			XtVaSetValues (label1, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), NULL);
+			GuiLabel_setString (label1, buffer.string);
 			buffer.string [newline - message] = '\n';
-			XtVaSetValues (label2, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string + (newline - message) + 1)), NULL);
+			GuiLabel_setString (label2, buffer.string + (newline - message) + 1);
 		} else {
-			XtVaSetValues (label1, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
-			XtVaSetValues (label2, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (L"")), NULL);
+			GuiLabel_setString (label1, message);
+			GuiLabel_setString (label2, L"");
 		}
 		XmScaleSetValue (scale, floor (progress * 1000.0));
 		XmUpdateDisplay (dia);
@@ -284,12 +284,8 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 					XmNdeleteResponse, XmUNMAP,
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
-				label1 = XmCreateLabel (dia, "label1", NULL, 0);
-				XtVaSetValues (label1, XmNwidth, 400, NULL);
-				XtManageChild (label1);
-				label2 = XmCreateLabel (dia, "label2", NULL, 0);
-				XtVaSetValues (label2, XmNy, 30, XmNwidth, 400, NULL);
-				XtManageChild (label2);
+				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
+				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
 				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
 					XmNorientation, XmHORIZONTAL,
@@ -379,12 +375,8 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 					XmNdeleteResponse, XmUNMAP,
 					NULL);
 				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
-				label1 = XmCreateLabel (dia, "label1", NULL, 0);
-				XtVaSetValues (label1, XmNwidth, 400, NULL);
-				XtManageChild (label1);
-				label2 = XmCreateLabel (dia, "label2", NULL, 0);
-				XtVaSetValues (label2, XmNy, 30, XmNwidth, 400, NULL);
-				XtManageChild (label2);
+				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
+				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
 				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
 					XmNorientation, XmHORIZONTAL,
@@ -653,8 +645,8 @@ static Widget makeMessage (unsigned char dialogType, const char *resourceName, c
 }
 
 static bool pause_continued, pause_stopped;
-static void gui_button_cb_continue (Widget widget, I) { (void) widget; (void) void_me; pause_continued = true; }
-static void gui_button_cb_stop (Widget widget, I) { (void) widget; (void) void_me; pause_stopped = true; }
+static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
+static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
 static int motif_pause (wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
@@ -665,9 +657,7 @@ static int motif_pause (wchar_t *message) {
 			NULL);
 		XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
 		rc = XmCreateRowColumn (dia, "rc", NULL, 0);
-		text = XmCreateLabel (rc, "text", NULL, 0);
-		XtVaSetValues (text, XmNwidth, 400, NULL);
-		XtManageChild (text);
+		text = GuiLabel_createShown (rc, 3, 403, Gui_AUTOMATIC, Gui_AUTOMATIC, L"text", 0);
 		buttons = XmCreateRowColumn (rc, "rc", NULL, 0);
 		XtVaSetValues (buttons, XmNorientation, XmHORIZONTAL, NULL);
 		continueButton = GuiButton_createShown (buttons, 10, 310, Gui_AUTOMATIC, Gui_AUTOMATIC,
@@ -678,7 +668,7 @@ static int motif_pause (wchar_t *message) {
 		XtManageChild (rc);
 	}
 	if (! message) message = L"";
-	XtVaSetValues (text, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (message)), NULL);
+	GuiLabel_setString (text, message);
 	XtManageChild (dia);
 	pause_continued = pause_stopped = FALSE;
 	do {

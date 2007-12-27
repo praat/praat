@@ -33,6 +33,7 @@
  * pb 2007/08/12 more wchar_t
  * pb 2007/10/05 less char
  * pb 2007/12/05 prefs
+ * pb 2007/12/23 Gui
  */
 
 #include "TextEditor.h"
@@ -88,7 +89,7 @@ static int openDocument (TextEditor me, MelderFile file) {
 	GuiText_setString (my textWidget, text);
 	Melder_free (text);
 	/*
-	 * XmTextSetString has invoked the XmNvalueChangedCallback,
+	 * GuiText_setString has invoked the changeCallback,
 	 * which has set 'my dirty' to TRUE. Fix this.
 	 */
 	my dirty = FALSE;
@@ -295,36 +296,27 @@ DIRECT (TextEditor, cb_redo)
 END
 
 DIRECT (TextEditor, cb_cut)
-	#if defined (UNIX)
-		XmTextCut (my textWidget, 0/*((XmAnyCallbackStruct *) call) -> event -> xbutton. time*/);
-	#else
-		XmTextCut (my textWidget, 0);
-	#endif
+	GuiText_cut (my textWidget);  // use ((XmAnyCallbackStruct *) call) -> event -> xbutton. time
 END
 
 DIRECT (TextEditor, cb_copy)
-	#if defined (UNIX)
-		XmTextCopy (my textWidget, 0/*((XmAnyCallbackStruct *) call) -> event -> xbutton. time*/);
-	#else
-		XmTextCopy (my textWidget, 0);
-	#endif
+	GuiText_copy (my textWidget);
 END
 
 DIRECT (TextEditor, cb_paste)
-	XmTextPaste (my textWidget);
+	GuiText_paste (my textWidget);
 END
 
 DIRECT (TextEditor, cb_erase)
-	XmTextRemove (my textWidget);
+	GuiText_remove (my textWidget);
 END
 
 static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
-	char *text = XmTextGetString (my textWidget);
-	XmTextPosition left, right;
+	wchar_t *text = GuiText_getString (my textWidget);
+	long left, right;
 	long i;
 	*firstLine = 1;
-	if (! XmTextGetSelectionPosition (my textWidget, & left, & right))
-		left = right = XmTextGetInsertionPosition (my textWidget);
+	GuiText_getSelectionPosition (my textWidget, & left, & right);
 	/*
 	 * Cycle through the text in order to see how many linefeeds we pass.
 	 */
@@ -336,7 +328,7 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 			#endif
 		}
 	}
-	Melder_assert (left <= (XmTextPosition) strlen (text));
+	Melder_assert (left <= (long) wcslen (text));
 	if (left == right) return FALSE;
 	*lastLine = *firstLine;
 	for (; i < right; i ++) {
@@ -347,8 +339,8 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 			#endif
 		}
 	}
-	Melder_assert (right <= (XmTextPosition) strlen (text));
-	XtFree (text);
+	Melder_assert (right <= (long) wcslen (text));
+	Melder_free (text);
 	return TRUE;
 }
 
@@ -371,7 +363,7 @@ long firstLine, lastLine;
 getSelectedLines (me, & firstLine, & lastLine);
 SET_INTEGER (L"Line", firstLine);
 DO
-	char *text = XmTextGetString (my textWidget);
+	wchar_t *text = GuiText_getString (my textWidget);
 	long lineToGo = GET_INTEGER (L"Line"), currentLine = 1;
 	unsigned long left = 0, right = 0;
 	if (lineToGo == 1) {
@@ -388,18 +380,18 @@ DO
 			}
 		}
 	}
-	if (left == strlen (text)) {
+	if (left == wcslen (text)) {
 		right = left;
 	} else if (text [right] == '\n') {
 		right ++;
 	}
-	XtFree (text);
+	Melder_free (text);
 	#if defined (_WIN32)
 		left += lineToGo - 1;
 		right += lineToGo - 1;
 	#endif
-	XmTextSetSelection (my textWidget, left, right, 0);
-	XmTextShowPosition (my textWidget, left);
+	GuiText_setSelection (my textWidget, left, right);
+	GuiText_scrollToSelection (my textWidget);
 END
 
 /***** 'Font' menu *****/
@@ -468,8 +460,9 @@ static void createMenus (I) {
 	#endif
 }
 
-static void gui_cb_valueChanged (GUI_ARGS) {
-	GUI_IAM (TextEditor);
+static void gui_text_cb_change (I, GuiTextEvent event) {
+	(void) event;
+	iam (TextEditor);
 	if (! my dirty) {
 		my dirty = TRUE;
 		our nameChanged (me);
@@ -478,9 +471,8 @@ static void gui_cb_valueChanged (GUI_ARGS) {
 
 static void createChildren (I) {
 	iam (TextEditor);
-	my textWidget = GuiText_createScrolled (my dialog, "text", TRUE, Machine_getMenuBarHeight ());
-	XtAddCallback (my textWidget, XmNvalueChangedCallback, gui_cb_valueChanged, me);
-	XtManageChild (my textWidget);
+	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
+	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
 }
 
 static void clear (I) {

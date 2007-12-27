@@ -27,7 +27,7 @@
  * pb 2005/12/04 wider names
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
- * pb 2007/12/16 Gui
+ * pb 2007/12/23 Gui
  */
 
 #define NAME_X  30
@@ -156,8 +156,8 @@ static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const wch
 	return NULL;
 }
 
-static void gui_pushButton_cb_change (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_change (I, GuiButtonEvent event) {
+	(void) event;
 	iam (DataSubEditor);
 	int i;   // has to be declared here
 	for (i = 1; i <= MAXNUM_ROWS; i ++) if (XtIsManaged (my fieldData [i]. text)) {
@@ -283,8 +283,8 @@ error:
 	Melder_flushError (NULL);
 }
 
-static void gui_pushButton_cb_cancel (Widget widget, I) {
-	(void) widget;
+static void gui_button_cb_cancel (I, GuiButtonEvent event) {
+	(void) event;
 	iam (DataSubEditor);
 	update (me);
 }
@@ -297,7 +297,7 @@ static void gui_cb_scroll (GUI_ARGS) {
 	update (me);
 }
 
-static void gui_pushButton_cb_open (Widget w, I) {
+static void gui_button_cb_open (I, GuiButtonEvent event) {
 	iam (DataSubEditor);
 	int ifield = 0;
 	static MelderString name = { 0 };
@@ -306,7 +306,7 @@ static void gui_pushButton_cb_open (Widget w, I) {
 
 	/* Identify the pressed button; it must be one of those created in the list. */
 
-	for (int i = 1; i <= MAXNUM_ROWS; i ++) if (my fieldData [i]. button == w) { ifield = i; break; }
+	for (int i = 1; i <= MAXNUM_ROWS; i ++) if (my fieldData [i]. button == event -> button) { ifield = i; break; }
 	Melder_assert (ifield != 0);
 
 	/* Launch the appropriate subeditor. */
@@ -349,16 +349,15 @@ static void gui_pushButton_cb_open (Widget w, I) {
 
 static void classDataSubEditor_createChildren (I) {
 	iam (DataSubEditor);
-	Widget scrolledWindow, board;
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Change", gui_pushButton_cb_change, me, 0);
+		L"Change", gui_button_cb_change, me, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Cancel", gui_pushButton_cb_cancel, me, 0);
+		L"Cancel", gui_button_cb_cancel, me, 0);
 
-	scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
+	Widget scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
@@ -378,17 +377,15 @@ static void classDataSubEditor_createChildren (I) {
 	XtManageChild (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 
-	board = XmCreateBulletinBoard (scrolledWindow, "list", NULL, 0);
+	Widget form = XmCreateForm (scrolledWindow, "list", NULL, 0);
 	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
 		y = Gui_TOP_DIALOG_SPACING + (i - 1) * ROW_HEIGHT;
-		my fieldData [i]. label = XtVaCreateWidget ("label", xmLabelWidgetClass, board,
-			XmNy, y, NULL);   /* No fixed x value: sometimes indent. */
-		my fieldData [i]. button = GuiButton_create (board, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
-			L"Open", gui_pushButton_cb_open, me, 0);
-		my fieldData [i]. text = XtVaCreateWidget ("text", xmTextWidgetClass, board,
-			XmNeditable, True, XmNy, y, XmNx, TEXT_X, NULL);
+		my fieldData [i]. label = GuiLabel_create (form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   /* No fixed x value: sometimes indent. */
+		my fieldData [i]. button = GuiButton_create (form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
+			L"Open", gui_button_cb_open, me, 0);
+		my fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
 	}
-	XtManageChild (board);
+	XtManageChild (form);
 }
 
 DIRECT (DataSubEditor, cb_help) Melder_help (L"Inspect"); END
@@ -484,8 +481,8 @@ static void showStructMember (
 		MelderString_append2 (& buffer, memberDescription -> name,
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
-	XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)),
-		XmNx, type == inheritwa ? 0 : NAME_X, NULL);
+	GuiLabel_setString (fieldData -> label, buffer.string);
+	XtVaSetValues (fieldData -> label, XmNx, type == inheritwa ? 0 : NAME_X, NULL);
 	XtManageChild (fieldData -> label);
 
 	/* Show the value (for a single type) or a button (for a composite type). */
@@ -648,7 +645,8 @@ static void classVectorEditor_showMembers (I) {
 		if (isSingleType) {
 			MelderString_append4 (& buffer, my description -> name, L" [",
 				my description -> rank == 3 ? enum_string (my description -> max1, ielement) : Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiLabel_setString (fieldData -> label, buffer.string);
 			XtManageChild (fieldData -> label);
 
 			MelderString_empty (& buffer);
@@ -676,7 +674,8 @@ static void classVectorEditor_showMembers (I) {
 				my irow --;
 			} else {
 				MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
-				XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
+				XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+				GuiLabel_setString (fieldData -> label, buffer.string);
 				XtManageChild (fieldData -> label);
 			}
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history.string);
@@ -692,7 +691,8 @@ static void classVectorEditor_showMembers (I) {
 			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
 			MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiLabel_setString (fieldData -> label, buffer.string);
 			XtManageChild (fieldData -> label);
 
 			Data object = * (Data *) elementAddress;
@@ -757,7 +757,8 @@ static void classMatrixEditor_showMembers (I) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			MelderString_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
-			XtVaSetValues (fieldData -> label, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (buffer.string)), XmNx, 0, NULL);
+			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiLabel_setString (fieldData -> label, buffer.string);
 			XtManageChild (fieldData -> label);
 
 			MelderString_empty (& buffer);

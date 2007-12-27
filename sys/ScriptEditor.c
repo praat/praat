@@ -35,9 +35,8 @@
 static Collection theScriptEditors;
 
 int ScriptEditors_dirty (void) {
-	long i;
 	if (! theScriptEditors) return FALSE;
-	for (i = 1; i <= theScriptEditors -> size; i ++) {
+	for (long i = 1; i <= theScriptEditors -> size; i ++) {
 		ScriptEditor me = theScriptEditors -> item [i];
 		if (my dirty) return TRUE;
 	}
@@ -207,7 +206,7 @@ DIRECT (ScriptEditor, cb_clearHistory)
 END
 
 DIRECT (ScriptEditor, cb_viewHistory)
-	XmTextPosition first = 0, last = 0;
+	long first = 0, last = 0;
 	wchar_t *history = UiHistory_get ();
 	long length;
 	if (! history || history [0] == '\0')
@@ -222,11 +221,10 @@ DIRECT (ScriptEditor, cb_viewHistory)
 		history ++;
 		length --;
 	}
-	if (! XmTextGetSelectionPosition (my textWidget, & first, & last))
-		first = last = XmTextGetInsertionPosition (my textWidget);
+	GuiText_getSelectionPosition (my textWidget, & first, & last);
 	GuiText_replace (my textWidget, first, last, history);
 	#if defined (UNIX) || defined (macintosh)
-		XmTextSetSelection (my textWidget, first, first + length, 0);
+		GuiText_setSelection (my textWidget, first, first + length);
 	#endif
 END
 

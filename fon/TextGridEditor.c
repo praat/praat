@@ -313,22 +313,22 @@ static void createMenuItems_file_draw (I, EditorMenu menu) {
 #ifndef macintosh
 static int menu_cb_Cut (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	XmTextCut (my text, 0);
+	GuiText_cut (my text);
 	return 1;
 }
 static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	XmTextCopy (my text, 0);
+	GuiText_copy (my text);
 	return 1;
 }
 static int menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	XmTextPaste (my text);
+	GuiText_paste (my text);
 	return 1;
 }
 static int menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	XmTextRemove (my text);
+	GuiText_remove (my text);
 	return 1;
 }
 #endif
@@ -644,7 +644,9 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			 * Divide up the label text into left and right, depending on where the text cursor is.
 			 */
 			text = GuiText_getString (my text);
-			position = XmTextGetInsertionPosition (my text);
+			long left, right;
+			GuiText_getSelectionPosition (my text, & left, & right);
+			position = left;
 			newInterval = TextInterval_create (t, interval -> xmax, text + position);
 			text [position] = '\0';
 			TextInterval_setText (interval, text);
@@ -850,7 +852,7 @@ static int findInTier (TextGridEditor me) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					XmTextSetSelection (my text, position - text, position - text + wcslen (my findString), 0);
+					GuiText_setSelection (my text, position - text, position - text + wcslen (my findString));
 					return 1;
 				}
 			}
@@ -869,7 +871,7 @@ static int findInTier (TextGridEditor me) {
 				if (position) {
 					my startSelection = my endSelection = point -> time;
 					scrollToView (me, point -> time);
-					XmTextSetSelection (my text, position - text, position - text + wcslen (my findString), 0);
+					GuiText_setSelection (my text, position - text, position - text + wcslen (my findString));
 					return 1;
 				}
 			}
@@ -883,11 +885,12 @@ static int findInTier (TextGridEditor me) {
 
 static void do_find (TextGridEditor me) {
 	if (my findString) {
-		XmTextPosition left, right;
+		long left, right;
 		wchar_t *label = GuiText_getString (my text);
-		wchar_t *position = wcsstr (XmTextGetSelectionPosition (my text, & left, & right) ? label + right : label, my findString);   /* CRLF BUG? */
+		GuiText_getSelectionPosition (my text, & left, & right);
+		wchar_t *position = wcsstr (left == right ? label + right : label, my findString);   /* CRLF BUG? */
 		if (position) {
-			XmTextSetSelection (my text, position - label, position - label + wcslen (my findString), 0);
+			GuiText_setSelection (my text, position - label, position - label + wcslen (my findString));
 		} else {
 			if (! findInTier (me)) Melder_flushError (NULL);
 		}
@@ -926,13 +929,13 @@ static int checkSpellingInTier (TextGridEditor me) {
 			TextInterval interval = tier -> intervals -> item [iinterval];
 			wchar_t *text = interval -> text;
 			if (text) {
-				int position = 0;
+				long position = 0;
 				wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
+					GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 					return 1;
 				}
 			}
@@ -947,12 +950,12 @@ static int checkSpellingInTier (TextGridEditor me) {
 			TextPoint point = tier -> points -> item [ipoint];
 			wchar_t *text = point -> mark;
 			if (text) {
-				int position = 0;
+				long position = 0;
 				wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = my endSelection = point -> time;
 					scrollToView (me, point -> time);
-					XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
+					GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 					return 1;
 				}
 			}
@@ -967,15 +970,14 @@ static int checkSpellingInTier (TextGridEditor me) {
 static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		XmTextPosition left, right;
-		int position = 0;
+		long left, right, position = 0;
 		wchar_t *label, *notAllowed;
-		if (XmTextGetSelectionPosition (my text, & left, & right))
-			position = right;
+		GuiText_getSelectionPosition (my text, & left, & right);
+		position = right;
 		label = GuiText_getString (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
-			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
+			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		} else {
 			if (! checkSpellingInTier (me)) Melder_flushError (NULL);
 		}
@@ -987,15 +989,14 @@ static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		XmTextPosition left, right;
-		int position = 0;
+		long left, right, position = 0;
 		wchar_t *label, *notAllowed;
-		if (XmTextGetSelectionPosition (my text, & left, & right))
-			position = right;
+		GuiText_getSelectionPosition (my text, & left, & right);
+		position = right;
 		label = GuiText_getString (my text);
 		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
-			XmTextSetSelection (my text, position, position + wcslen (notAllowed), 0);
+			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		}
 		Melder_free (label);
 	}
@@ -1296,10 +1297,11 @@ static void createMenus (I) {
 
 /***** CHILDREN *****/
 
-static void gui_cb_textChanged (GUI_ARGS) {
-	GUI_IAM (TextGridEditor);
+static void gui_text_cb_change (I, GuiTextEvent event) {
+	iam (TextGridEditor);
+	(void) event;
 	TextGrid grid = my data;
-	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method calls XmTextSetString. */
+	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method calls GuiText_setString. */
 	if (my selectedTier) {
 		wchar_t *text = GuiText_getString (my text);
 		IntervalTier intervalTier;
@@ -1331,7 +1333,7 @@ static void gui_cb_textChanged (GUI_ARGS) {
 static void createChildren (I) {
 	iam (TextGridEditor);
 	inherited (TextGridEditor) createChildren (me);
-	XtAddCallback (my text, XmNvalueChangedCallback, gui_cb_textChanged, (XtPointer) me);
+	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
 }
 
 static void dataChanged (I) {
@@ -1590,7 +1592,7 @@ static void draw (I) {
 		}
 		if (my showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
 			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
-			if (my showNumberOf == kTextGridEditor_showNumberOf_NONEMPTY_INTERVALS_OR_POINTS) {
+			if (my showNumberOf == kTextGridEditor_showNumberOf_INTERVALS_OR_POINTS) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
 				long position = itier == my selectedTier ? ( isIntervalTier ? getSelectedInterval (me) : getSelectedPoint (me) ) : 0;
 				if (position) {
@@ -1599,6 +1601,7 @@ static void draw (I) {
 					Graphics_text3 (my graphics, my endWindow, 0.5, L"(", Melder_integer (count), L")");
 				}
 			} else {
+				Melder_assert (kTextGridEditor_showNumberOf_NONEMPTY_INTERVALS_OR_POINTS);
 				long count = 0;
 				if (isIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
@@ -2088,7 +2091,8 @@ static void updateText (I) {
 	}
 	my suppressRedraw = TRUE;   /* Prevent valueChangedCallback from redrawing. */
 	GuiText_setString (my text, newText);
-	XmTextSetInsertionPosition (my text, wcslen (newText));
+	long cursor = wcslen (newText);   // at end
+	GuiText_setSelection (my text, cursor, cursor);
 	my suppressRedraw = FALSE;
 }
 

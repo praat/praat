@@ -150,9 +150,7 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
 		_GuiObject_setUserData (my widget, me);
 		my widget -> window = CreateWindow (L"button", _GuiWin_expandAmpersands (my widget -> name),
-			WS_CHILD
-			| ( flags & GuiButton_DEFAULT ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
-			| WS_CLIPSIBLINGS,
+			WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
 			my widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
 		SetWindowLong (my widget -> window, GWL_USERDATA, (long) my widget);

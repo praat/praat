@@ -18,18 +18,30 @@
  */
 
 /*
- * pb 2007/12/18 abstraction from motif
+ * pb 2007/12/26 abstraction from motif
  */
 
 #include "GuiP.h"
+#include "machine.h"
+#define my  me ->
 
-static int _Gui_defaultHeight (WidgetClass klas) {
+static int _Gui_defaultHeight (Widget me) {
+	WidgetClass klas = XtClass (me);
+	if (klas == xmLabelWidgetClass) return Gui_LABEL_HEIGHT;
 	if (klas == xmPushButtonWidgetClass) return Gui_PUSHBUTTON_HEIGHT;
+	if (klas == xmTextWidgetClass) return Gui_TEXTFIELD_HEIGHT;
+	if (klas == xmToggleButtonWidgetClass) return
+		#ifdef UNIX
+			Gui_CHECKBUTTON_HEIGHT;   // BUG
+		#else
+			my isRadioButton ? Gui_RADIOBUTTON_HEIGHT : Gui_CHECKBUTTON_HEIGHT;
+		#endif
 	return 100;
 }
 
 void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 	#if gtk
+		// TODO: ...nog even te creatief
 	#else
 		if (left >= 0) {
 			if (right > 0) {
@@ -52,7 +64,7 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 			if (bottom > 0) {
 				XtVaSetValues (me, XmNy, top, XmNheight, bottom - top, NULL);
 			} else if (bottom == Gui_AUTOMATIC) {
-				XtVaSetValues (me, XmNy, top, XmNheight, _Gui_defaultHeight (XtClass (me)), NULL);
+				XtVaSetValues (me, XmNy, top, XmNheight, _Gui_defaultHeight (me), NULL);
 			} else {
 				XtVaSetValues (me, XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, top,
 					XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, NULL);
@@ -60,7 +72,7 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 		} else if (top == Gui_AUTOMATIC) {
 			Melder_assert (bottom <= 0);
 			if (bottom != Gui_AUTOMATIC)
-				XtVaSetValues (me, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, _Gui_defaultHeight (XtClass (me)), NULL);
+				XtVaSetValues (me, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, _Gui_defaultHeight (me), NULL);
 		} else {
 			Melder_assert (bottom <= 0);
 			XtVaSetValues (me, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, NULL);
@@ -71,7 +83,7 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 void * _GuiObject_getUserData (Widget me) {
 	void *userData = NULL;
 	#if gtk
-		userData = (void *) g_object_get_data (G_OBJECT (me), "userData")
+		userData = (void *) g_object_get_data (G_OBJECT (me), "praat")
 	#else
 		XtVaGetValues (me, XmNuserData, & userData, NULL);
 	#endif
@@ -80,7 +92,7 @@ void * _GuiObject_getUserData (Widget me) {
 
 void _GuiObject_setUserData (Widget me, void *userData) {
 	#if gtk
-		g_object_set_data (G_OBJECT (me), "userData", userData);
+		g_object_set_data (G_OBJECT (me), "praat", userData);
 	#else
 		XtVaSetValues (me, XmNuserData, userData, NULL);
 	#endif

@@ -25,6 +25,7 @@
  * pb 2007/01/25 width of button list is 50 procent
  * pb 2007/06/10 wchar_t
  * pb 2007/10/17 removed a bug that caused a crash in praat_show/hideAction if class2 or class3 was NULL
+ * pb 2007/12/26 Gui
  */
 
 #include "praatP.h"
@@ -32,9 +33,7 @@
 #include "longchar.h"
 #include "machine.h"
 
-#if defined (_WIN32) || defined (macintosh)
-	#define BUTTON_WIDTH  200
-#endif
+#define BUTTON_WIDTH  200
 
 #define praat_MAXNUM_LOOSE_COMMANDS  5000
 static long theNumberOfActions = 0;
@@ -447,28 +446,14 @@ static int allowExecutionHook (void *closure) {
 	return FALSE;
 }
 
-static void cb_menu (GUI_ARGS) {
-	(void) w;
+static void do_menu (I, bool modified) {
 /*
  *	Convert a Motif callback into a Ui callback, and catch modifier keys and special mouse buttons.
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
 	int (*callback) (Any, void *) = (int (*) (Any, void *)) void_me;
-	int i;
-#if defined (macintosh)
-	XEvent *event = (XEvent *) call;
-	enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
-	int modified = event -> what == mouseDown &&
-		(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
-#elif defined (_WIN32)
-	int modified = FALSE;
-#else
-	XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
-	int modified = event -> type == ButtonPress &&
-		((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
-#endif
-	for (i = 1; i <= theNumberOfActions; i ++) {
+	for (int i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			if (my title) {
@@ -488,6 +473,30 @@ static void cb_menu (GUI_ARGS) {
 			praat_updateSelection (); return;
 		}
 	}
+}
+
+static void cb_menu (GUI_ARGS) {
+	(void) w;
+	bool modified = false;
+	if (call) {
+		#if defined (macintosh)
+			XEvent *event = (XEvent *) call;
+			enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
+			modified = event -> what == mouseDown &&
+				(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
+		#elif defined (_WIN32)
+			modified = FALSE;
+		#else
+			XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
+			modified = event -> type == ButtonPress &&
+				((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
+		#endif
+	}
+	do_menu (void_me, modified);
+}
+
+static void gui_button_cb_menu (I, GuiButtonEvent event) {
+	do_menu (void_me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
 }
 
 void praat_actions_show (void) {
@@ -587,25 +596,27 @@ void praat_actions_show (void) {
 						}
 					}
 
-					/* Create a new push-button widget.
-					 * Unfortunately, we cannot use motif_addItem, which would create a gadget.
-					 */
-					my button = XmCreatePushButton (parent, Melder_peekWcsToUtf8 (my title), NULL, 0);
-					#if defined (_WIN32)
-						XtVaSetValues (my button, XmNx, 4, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 20, NULL);
-					#elif defined (macintosh)
-						/*
-						 * Keep 5 pixels distance on both sides for shadow.
-						 */
-						XtVaSetValues (my button, XmNx, 9, XmNheight, 18, XmNwidth, BUTTON_WIDTH - 25, NULL);
-					#endif
-					if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand)
-						XtAddCallback (my button, XmNactivateCallback, cb_menu, (void *) my script);
-					else
-						XtAddCallback (my button, XmNactivateCallback, cb_menu, (void *) my callback);
-					if (! my executable)
-						XtSetSensitive (my button, False);
-					XtManageChild (my button);
+					if (parent == praat_dynamicMenu) {
+						my button = GuiButton_createShown (praat_dynamicMenu,
+							#if defined (_WIN32)
+								4, BUTTON_WIDTH - 16, Gui_AUTOMATIC, Gui_AUTOMATIC,
+							#elif defined (macintosh)
+								/*
+								 * Keep 5 pixels distance on both sides for shadow.
+								 */
+								9, BUTTON_WIDTH - 16, Gui_AUTOMATIC, Gui_AUTOMATIC,
+							#else
+								Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+							#endif
+							my title, gui_button_cb_menu,
+							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback,
+							( my executable ? 0 : GuiButton_INSENSITIVE ));
+					} else {
+						my button = GuiMenu_addItem (parent, my title,
+							( my executable ? 0 : GuiMenu_INSENSITIVE ),
+							cb_menu,
+							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback);
+					}
 				} else if (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
 					if (writeMenuGoingToSeparate) {
 						if (! praat_writeMenuSeparator)
@@ -624,13 +635,7 @@ void praat_actions_show (void) {
 				 * Apparently a labelled separator.
 				 */
 				if (! my button) {
-					my button = XmCreateLabelGadget (praat_dynamicMenu, Melder_peekWcsToUtf8 (my title), NULL, 0);
-					#if defined (_WIN32)
-						XtVaSetValues (my button, XmNheight, 19, NULL);
-					#elif defined (macintosh)
-						XtVaSetValues (my button, XmNheight, 15, NULL);
-					#endif
-					XtManageChild (my button);
+					my button = GuiLabel_createShown (praat_dynamicMenu, 0, BUTTON_WIDTH - 20, Gui_AUTOMATIC, Gui_AUTOMATIC, my title, 0);
 				} else {
 					if (XtParent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
