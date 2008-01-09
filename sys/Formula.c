@@ -326,7 +326,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (NUMBER_)
-			tokgetal (Melder_atofW (token.string));
+			tokgetal (Melder_atof (token.string));
 		} else if ((kar >= 'a' && kar <= 'z') || (kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
 			int tok, endsInDollarSign = FALSE;
@@ -2343,7 +2343,7 @@ static void do_replace_regexStr (void) {
 			long numberOfMatches;
 			char *resultA = str_replace_regexp (sA, compiled_regexp, uA, x->content.number, & numberOfMatches); cherror
 			wchar_t *result = Melder_utf8ToWcs (resultA ? resultA : ""); cherror
-			free (resultA);
+			Melder_free (resultA);
 			pushString (result);
 		}
 		Melder_free (sA);
@@ -2377,17 +2377,17 @@ static void do_extractNumber (void) {
 				}
 				if (i >= 100) {
 					buffer [100] = '\0';
-					pushNumber (Melder_atofW (buffer));
+					pushNumber (Melder_atof (buffer));
 				} else {
 					buffer [i + 1] = '\0';
 					slash = wcschr (buffer, '/');
 					if (slash) {
 						double numerator, denominator;
 						*slash = '\0';
-						numerator = Melder_atofW (buffer), denominator = Melder_atofW (slash + 1);
+						numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
 						pushNumber (numerator / denominator);
 					} else {
-						pushNumber (Melder_atofW (buffer));
+						pushNumber (Melder_atof (buffer));
 					}
 				}
 			}

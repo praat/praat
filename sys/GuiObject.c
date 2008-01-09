@@ -19,6 +19,7 @@
 
 /*
  * pb 2007/12/26 abstraction from motif
+ * pb 2007/12/28 _GuiObject_position: allow the combination of fixed height and automatic position
  */
 
 #include "GuiP.h"
@@ -54,8 +55,10 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 			}
 		} else if (left == Gui_AUTOMATIC) {
 			Melder_assert (right <= 0);
-			if (right != Gui_AUTOMATIC)
+			if (right > Gui_AUTOMATIC + 3000)
 				XtVaSetValues (me, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, NULL);
+			else if (right != Gui_AUTOMATIC)
+				XtVaSetValues (me, XmNwidth, right - Gui_AUTOMATIC, NULL);
 		} else {
 			Melder_assert (right <= 0);
 			XtVaSetValues (me, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, NULL);
@@ -71,8 +74,10 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 			}
 		} else if (top == Gui_AUTOMATIC) {
 			Melder_assert (bottom <= 0);
-			if (bottom != Gui_AUTOMATIC)
+			if (bottom > Gui_AUTOMATIC + 3000)
 				XtVaSetValues (me, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, _Gui_defaultHeight (me), NULL);
+			else if (bottom != Gui_AUTOMATIC)
+				XtVaSetValues (me, XmNheight, bottom - Gui_AUTOMATIC, NULL);
 		} else {
 			Melder_assert (bottom <= 0);
 			XtVaSetValues (me, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, NULL);
@@ -106,6 +111,73 @@ void GuiObject_destroy (Widget me) {
 	#endif
 }
 
+long GuiObject_getHeight (Widget me) {
+	long height = 0;
+	#if gtk
+	#elif win || mac
+		height = my height;
+	#elif motif
+		Dimension height_motif;
+		XtVaGetValues (me, XmNheight, & height_motif, NULL);
+		height = height_motif;
+	#endif
+	return height;
+}
+
+long GuiObject_getWidth (Widget me) {
+	long width = 0;
+	#if gtk
+	#elif win || mac
+		width = my width;
+	#elif motif
+		Dimension width_motif;
+		XtVaGetValues (me, XmNwidth, & width_motif, NULL);
+		width = width_motif;
+	#endif
+	return width;
+}
+
+long GuiObject_getX (Widget me) {
+	long x = 0;
+	#if gtk
+	#elif win || mac
+		x = my x;
+	#elif motif
+		Position x_motif;
+		XtVaGetValues (me, XmNx, & x_motif, NULL);
+		x = x_motif;
+	#endif
+	return x;
+}
+
+long GuiObject_getY (Widget me) {
+	long y = 0;
+	#if gtk
+	#elif win || mac
+		y = my y;
+	#elif motif
+		Position y_motif;
+		XtVaGetValues (me, XmNy, & y_motif, NULL);
+		y = y_motif;
+	#endif
+	return y;
+}
+
+void GuiObject_move (Widget me, long x, long y) {
+	#if gtk
+	#elif motif
+		if (x != Gui_AUTOMATIC) {
+			if (y != Gui_AUTOMATIC) {
+				XtVaSetValues (me, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
+			} else {
+				XtVaSetValues (me, XmNx, (Position) x, NULL);   // 64-bit-compatible
+			}
+		} else if (y != Gui_AUTOMATIC) {
+			XtVaSetValues (me, XmNy, (Position) y, NULL);   // 64-bit-compatible
+		}
+	#endif
+}
+
 void GuiObject_hide (Widget me) {
 	#if gtk
 		gtk_widget_hide (me);
@@ -115,13 +187,23 @@ void GuiObject_hide (Widget me) {
 			// nothing, because the scrolled window is not a widget
 		#elif mac
 			if (my widgetClass == xmListWidgetClass) {
-				XtUnmanageChild (XtParent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
+				XtUnmanageChild (my parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 			}
 		#elif motif
 			if (XtClass (me) == xmListWidgetClass) {
 				XtUnmanageChild (XtParent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
 			}
 		#endif
+	#endif
+}
+
+Widget GuiObject_parent (Widget me) {
+	#if gtk
+		return NULL;   // TODO: implement
+	#elif win || mac
+		return my parent;
+	#elif motif
+		return XtParent (me);
 	#endif
 }
 
@@ -145,9 +227,24 @@ void GuiObject_show (Widget me) {
 			// nothing, because the scrolled window is not a widget
 		#elif mac || motif
 			if (XtClass (me) == xmListWidgetClass) {
-				XtManageChild (XtParent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
+				XtManageChild (GuiObject_parent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
 			}
 		#endif
+	#endif
+}
+
+void GuiObject_size (Widget me, long width, long height) {
+	#if gtk
+	#elif motif
+		if (width != Gui_AUTOMATIC) {
+			if (height != Gui_AUTOMATIC) {
+				XtVaSetValues (me, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible
+			} else {
+				XtVaSetValues (me, XmNwidth, (Dimension) width, NULL);   // 64-bit-compatible
+			}
+		} else if (height != Gui_AUTOMATIC) {
+			XtVaSetValues (me, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible
+		}
 	#endif
 }
 

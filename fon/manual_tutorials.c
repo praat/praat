@@ -1,6 +1,6 @@
 /* manual_tutorials.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20071227)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080109)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.03# (January 9, 2008)")
+LIST_ITEM (L"\\bu Scripting: guard against opening the same file more than once.")
+LIST_ITEM (L"\\bu Table: possibility of regarding a column as a distribution (#Generate menu).")
+LIST_ITEM (L"\\bu Macintosh: corrected line colours.")
 NORMAL (L"##5.0.02# (December 27, 2007)")
 LIST_ITEM (L"\\bu TextGrid window: corrected the drawing of numbers to the right of the tiers.")
 LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash when doing ##SpectrumTier: List#.")
@@ -2322,7 +2326,7 @@ NORMAL (L"If you click a query command, the answer will be written to the @@Info
 ENTRY (L"Scripting")
 NORMAL (L"In a script, you can still use query commands to write the information to the Info window "
 	"but you can also use any query command to put the information into a variable. "
-	"(see @@Scripting 6.4. Query commands@). In such a case, the value will not be written into the Info window.")
+	"(see @@Scripting 6.3. Query commands@). In such a case, the value will not be written into the Info window.")
 ENTRY (L"Query commands in the Praat program")
 NORMAL (L"The Praat program contains the following query commands:")
 MAN_END

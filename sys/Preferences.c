@@ -153,8 +153,8 @@ void Preferences_read (MelderFile file) {
 				wcsnequ (value, L"no", 2) ? false :
 				wcstol (value, NULL, 10) != 0; break;
 			case charwa: * (wchar_t *) pref -> value = value [0]; break;
-			case floatwa: * (float *) pref -> value = wcstod (value, NULL); break;
-			case doublewa: * (double *) pref -> value = wcstod (value, NULL); break;
+			case floatwa: * (float *) pref -> value = Melder_atof (value); break;
+			case doublewa: * (double *) pref -> value = Melder_atof (value); break;
 			case stringwwa: {
 				wcsncpy ((wchar_t *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
 				((wchar_t *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;

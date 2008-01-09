@@ -1,6 +1,6 @@
 /* GuiWindow.c
  *
- * Copyright (C) 1993-2006 Paul Boersma
+ * Copyright (C) 1993-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,83 @@
  * pb 2004/04/06 GuiWindow_drain separated from XmUpdateDisplay
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/06/19 wchar_t
+ * pb 2007/12/30 extraction
  */
 
 #include "GuiP.h"
 #include "UnicodeData.h"
+#define my  me ->
+#define iam(x)  x me = (x) void_me
+
+typedef struct structGuiWindow {
+	Widget widget;
+	void (*goAwayCallback) (void *boss);
+	void *goAwayBoss;
+} *GuiWindow;
+
+#if gtk
+#elif motif
+	static void _GuiMotifWindow_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
+		(void) widget; (void) call;
+		iam (GuiWindow);
+		Melder_free (me);
+	}
+	static void _GuiMotifWindow_goAwayCallback (Widget widget, XtPointer void_me, XtPointer call) {
+		(void) widget; (void) call;
+		iam (GuiWindow);
+		if (my goAwayCallback != NULL) {
+			my goAwayCallback (my goAwayBoss);
+		}
+	}
+#endif
+
+Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
+	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
+{
+	GuiWindow me = Melder_calloc (struct structGuiWindow, 1);
+	my goAwayCallback = goAwayCallback;
+	my goAwayBoss = goAwayBoss;
+	#if gtk
+	#elif motif
+		#if win || mac
+			(void) parent;
+			Widget shell = XmCreateShell (NULL, "Praatwulg", NULL, 0);
+		#else
+			Widget shell = XtAppCreateShell (NULL, "Praatwulg", applicationShellWidgetClass, XtDisplay (parent), NULL, 0);
+			/*Widget shell = XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, NULL);*/
+		#endif
+		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
+		if (x != Gui_AUTOMATIC) XtVaSetValues (shell, XmNx, x, NULL);
+		if (y != Gui_AUTOMATIC) XtVaSetValues (shell, XmNy, y, NULL);
+		if (width != Gui_AUTOMATIC) XtVaSetValues (shell, XmNwidth, (Dimension) width, NULL);
+		if (height != Gui_AUTOMATIC) XtVaSetValues (shell, XmNheight, (Dimension) height, NULL);			
+		if (goAwayCallback) {
+			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
+			XmAddWMProtocols (shell, & atom, 1);
+			XmAddWMProtocolCallback (shell, atom, _GuiMotifWindow_goAwayCallback, (void *) me);
+		}
+		GuiWindow_setTitle (shell, title);
+		my widget = XmCreateForm (shell, "dialog", NULL, 0);
+		_GuiObject_setUserData (my widget, me);
+		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me);
+		XtVaSetValues (my widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, NULL);
+	#endif
+	return my widget;
+}
+
+void GuiWindow_show (Widget widget) {
+	#if gtk
+	#elif motif
+		XtManageChild (widget);
+		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));
+	#endif
+}
 
 void GuiWindow_setTitle (Widget me, const wchar_t *title) {
 	#if mac
 		SetWindowTitleWithCFString (my nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win
-		SetWindowTextW (my window, title);
+		SetWindowText (my window, title);
 	#else
 		char *titleA = Melder_peekWcsToUtf8 (title);
 		XtVaSetValues (me, XmNtitle, titleA, XmNiconName, titleA, NULL);

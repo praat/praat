@@ -22,6 +22,7 @@
  * pb 2004/10/21 clear method also clears the info buffer, not just the visible text
  * pb 2007/05/24 wchar_t
  * pb 2007/06/09 more wchar_t
+ * pb 2007/12/31 Gui
  */
 
 #include "TextEditor.h"
@@ -59,7 +60,7 @@ void motif_information (wchar_t *message) {
 		Thing_setName (theInfoEditor, L"Praat: Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);
-	XMapRaised (XtDisplay (theInfoEditor -> shell), XtWindow (theInfoEditor -> shell));
+	GuiWindow_show (theInfoEditor -> dialog);
 	GuiWindow_drain (theInfoEditor -> shell);
 }
 

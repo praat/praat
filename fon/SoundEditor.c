@@ -399,10 +399,10 @@ static void draw (I) {
 	selectedSamples = Sampled_getWindowSamples (my data, my startSelection, my endSelection, & first, & last);
 	our updateMenuItems_file (me);
 	if (my sound.data) {
-		XtSetSensitive (my cutButton, selectedSamples != 0 && selectedSamples < my sound.data -> nx);
-		XtSetSensitive (my copyButton, selectedSamples != 0);
-		XtSetSensitive (my zeroButton, selectedSamples != 0);
-		XtSetSensitive (my reverseButton, selectedSamples != 0);
+		GuiObject_setSensitive (my cutButton, selectedSamples != 0 && selectedSamples < my sound.data -> nx);
+		GuiObject_setSensitive (my copyButton, selectedSamples != 0);
+		GuiObject_setSensitive (my zeroButton, selectedSamples != 0);
+		GuiObject_setSensitive (my reverseButton, selectedSamples != 0);
 	}
 }
 

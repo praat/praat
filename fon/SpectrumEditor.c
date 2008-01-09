@@ -81,8 +81,8 @@ static void draw (I) {
 	/* Update buttons. */
 
 	selectedSamples = Sampled_getWindowSamples (spectrum, my startSelection, my endSelection, & first, & last);
-	XtSetSensitive (my publishBandButton, selectedSamples != 0);
-	XtSetSensitive (my publishSoundButton, selectedSamples != 0);
+	GuiObject_setSensitive (my publishBandButton, selectedSamples != 0);
+	GuiObject_setSensitive (my publishSoundButton, selectedSamples != 0);
 }
 
 static int click (I, double xWC, double yWC, int shiftKeyPressed) {

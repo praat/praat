@@ -193,12 +193,12 @@ static void deleteDynamicMenu (void) {
 		praat_dynamicMenu = NULL;
 		for (i = 1; i <= theNumberOfActions; i ++)
 			theActions [i]. button = NULL;
-	}
-	if (praat_writeMenu) {
-		XtDestroyWidget (praat_writeMenu);
-		praat_writeMenuSeparator = NULL;
-		praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
-		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+		if (praat_writeMenu) {   // ppgb 20080103: put into praat_dynamicMenu condition
+			XtDestroyWidget (praat_writeMenu);
+			praat_writeMenuSeparator = NULL;
+			praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
+			XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+		}
 	}
 }
 
@@ -480,7 +480,7 @@ static void cb_menu (GUI_ARGS) {
 	bool modified = false;
 	if (call) {
 		#if defined (macintosh)
-			XEvent *event = (XEvent *) call;
+			EventRecord *event = (EventRecord *) call;
 			enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
 			modified = event -> what == mouseDown &&
 				(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
@@ -512,20 +512,20 @@ void praat_actions_show (void) {
 		#endif
 		if (! Melder_backgrounding) {
 			int nbuttons = 0, nwriteButtons = 0;
-			XtSetSensitive (praat_writeMenuTitle, False);
-			if (praat_writeMenuSeparator) XtUnmanageChild (praat_writeMenuSeparator);
-			if (praat_dynamicMenu) XtUnmanageChild (praat_dynamicMenu);
+			GuiObject_setSensitive (praat_writeMenuTitle, False);
+			if (praat_writeMenuSeparator) GuiObject_hide (praat_writeMenuSeparator);
+			if (praat_dynamicMenu) GuiObject_hide (praat_dynamicMenu);
 			for (i = theNumberOfActions; i >= 1; i --) {
 				praat_Command me = & theActions [i];
 				if (! my visible) continue;
 				if (my button) {
-					if (XtParent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
+					if (GuiObject_parent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
 						buttons [nbuttons ++] = my button;
 					else if (my title && (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
 						writeButtons [nwriteButtons ++] = my button;
 				}
-				if (nbuttons) XtUnmanageChildren (buttons, nbuttons);
-				if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);
+				if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
+				if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
 			}
 			/*
 			 * BUG: Despite all these precautions,
@@ -538,7 +538,7 @@ void praat_actions_show (void) {
 		/* Determine the visibility and sensitivity of all the actions.
 		 */
 		if (theCurrentPraat -> totalSelection != 0 && ! Melder_backgrounding)
-			XtSetSensitive (praat_writeMenuTitle, True);
+			GuiObject_setSensitive (praat_writeMenuTitle, True);
 	}
 	for (i = 1; i <= theNumberOfActions; i ++) {
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
@@ -621,14 +621,14 @@ void praat_actions_show (void) {
 					if (writeMenuGoingToSeparate) {
 						if (! praat_writeMenuSeparator)
 							praat_writeMenuSeparator = GuiMenu_addSeparator (praat_writeMenu);
-						XtManageChild (praat_writeMenuSeparator);
+						GuiObject_show (praat_writeMenuSeparator);
 					} else if (wcsequ (my title, L"Write to binary file...")) {
 						writeMenuGoingToSeparate = TRUE;
 					}
-					XtSetSensitive (writeButtons [nwriteButtons++] = my button, my executable);
+					GuiObject_setSensitive (writeButtons [nwriteButtons++] = my button, my executable);
 				} else {
-					XtSetSensitive (my button, my executable);
-					if (XtParent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					GuiObject_setSensitive (my button, my executable);
+					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
 			} else if (i == theNumberOfActions || theActions [i + 1]. depth == 0) {
 				/*
@@ -637,7 +637,7 @@ void praat_actions_show (void) {
 				if (! my button) {
 					my button = GuiLabel_createShown (praat_dynamicMenu, 0, BUTTON_WIDTH - 20, Gui_AUTOMATIC, Gui_AUTOMATIC, my title, 0);
 				} else {
-					if (XtParent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
 			} else if (my title == NULL || my title [0] == '-') {
 				/*
@@ -646,7 +646,7 @@ void praat_actions_show (void) {
 				if (currentSubmenu2 || currentSubmenu1) {   /* These separators are not shown in a flattened menu. */
 					if (! my button) {
 						my button = XmCreateSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1, "separator", NULL, 0);
-						XtManageChild (my button);
+						GuiObject_show (my button);
 					}
 				}
 			} else {
@@ -659,31 +659,31 @@ void praat_actions_show (void) {
 						my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
 						currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
 						#if defined (_WIN32)
-							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 24, NULL);
-							XtVaSetValues (my button, XmNheight, 21, XmNwidth, BUTTON_WIDTH - 20, NULL);
+							GuiObject_size (cascadeButton, BUTTON_WIDTH - 24, 19);
+							GuiObject_size (my button, BUTTON_WIDTH - 20, 21);
 						#elif defined (macintosh)
-							XtVaSetValues (cascadeButton, XmNheight, 19, XmNwidth, BUTTON_WIDTH - 29, NULL);
-							XtVaSetValues (my button, XmNheight, 22, XmNwidth, BUTTON_WIDTH - 25, NULL);
+							GuiObject_size (cascadeButton, BUTTON_WIDTH - 29, 19);
+							GuiObject_size (my button, BUTTON_WIDTH - 25, 22);
 						#endif
 					} else {
 						currentSubmenu2 = GuiMenuBar_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
 					}
-					XtManageChild (my button);
+					GuiObject_show (my button);
 				} else {
-					if (XtParent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
 			}
 		}
-		if (nbuttons) XtManageChildren (buttons, nbuttons);
-		if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);
-		XtManageChild (praat_dynamicMenu);
+		if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
+		if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
+		GuiObject_show (praat_dynamicMenu);
 	}
 }
 
 void praat_actions_createWriteMenu (Widget bar) {
 	if (theCurrentPraat -> batch) return;
 	praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
-	XtSetSensitive (praat_writeMenuTitle, False);
+	GuiObject_setSensitive (praat_writeMenuTitle, False);
 	praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
 	XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 }
@@ -719,8 +719,8 @@ void praat_actions_createDynamicMenu (Widget form, int width) {
 			NULL);
 	#endif
 	praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
-	XtManageChild (praat_dynamicMenu);
-	XtManageChild (praat_dynamicMenuWindow);
+	GuiObject_show (praat_dynamicMenu);
+	GuiObject_show (praat_dynamicMenuWindow);
 }
 
 void praat_saveAddedActions (FILE *f) {

@@ -1250,8 +1250,8 @@ static TableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_
 		TableOfReal_setRowLabel (thee, i, row -> cells[4].string);
 		for (j = 1; j <= 3; j++)
 		{
-			thy data[i][j] = Melder_atofW (row -> cells[4+j].string);
-			if (include_levels) thy data[i][3+j] = Melder_atofW (row -> cells[7+j].string);
+			thy data[i][j] = Melder_atof (row -> cells[4+j].string);
+			if (include_levels) thy data[i][3+j] = Melder_atof (row -> cells[7+j].string);
 		}
 	}
 	for (j = 1; j <= 3; j++)
@@ -1301,7 +1301,7 @@ TableOfReal TableOfReal_createFromWeeninkData (int option)
 		TableOfReal_setRowLabel (thee, i, row -> cells[5].string);
 		for (j = 1; j <= 3; j++)
 		{
-			thy data[i][j] = Melder_atofW (row -> cells[6+j].string); /* Skip F0 */
+			thy data[i][j] = Melder_atof (row -> cells[6+j].string); /* Skip F0 */
 		}
 	}
 	for (j = 1; j <= 3; j++)

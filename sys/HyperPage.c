@@ -422,8 +422,6 @@ int HyperPage_script (I, double width_inches, double height_inches, const wchar_
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
-	Graphics_Link *paragraphLinks;
-	int numberOfParagraphLinks, ilink;
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my y -= height_inches;
@@ -460,8 +458,9 @@ if (! my printing) {
 					my scriptErrorHasBeenNotified = true;
 				}
 			}
-			/*numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-			if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+			/*Graphics_Link *paragraphLinks;
+			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+			if (my links) for (long ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 				HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
@@ -548,11 +547,10 @@ static void destroy (I) {
 	inherited (HyperPage) destroy (me);
 }
 
-static void gui_cb_draw (GUI_ARGS) {
-	GUI_IAM (HyperPage);
-#if defined (UNIX)
-	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
-#endif
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (HyperPage);
+	(void) event;
+	if (my g == NULL) return;   // Could be the case in the very beginning.
 	initScreen (me);
 	our draw (me);
 	if (my entryHint && my entryPosition) {
@@ -566,15 +564,13 @@ static void gui_cb_draw (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_input (GUI_ARGS) {
-	GUI_IAM (HyperPage);
-	GuiEvent event = GuiEvent_fromCallData (call);
-	int xDC = GuiEvent_x (event), yDC = GuiEvent_y (event), ilink;
-	if (! GuiEvent_isButtonPressedEvent (event)) return;
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (HyperPage);
+	if (my g == NULL) return;   // Could be the case in the very beginning.
 	if (! my links) return;
-	for (ilink = 1; ilink <= my links -> size; ilink ++) {
+	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = my links -> item [ilink];
-		if (yDC > link -> y2DC && yDC < link -> y1DC && xDC > link -> x1DC && xDC < link -> x2DC) {
+		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
 			if (! HyperPage_goToPage (me, link -> name)) {
 				/* Allow for a returned 0 just to mean: 'do not jump'. */
@@ -840,16 +836,15 @@ static void createMenus (I) {
 
 /********** **********/
 
-static void gui_cb_resize (GUI_ARGS) {
-	GUI_IAM (HyperPage);
-	Dimension width, height, marginWidth, marginHeight;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	Graphics_setWsViewport (my g, marginWidth, width - marginWidth,
-		marginHeight, height - marginHeight);
-	Graphics_setWsWindow (my g, 0.0, my rightMargin = (width - 2 * marginWidth) / resolution,
-		PAGE_HEIGHT - (height - 2 * marginHeight) / resolution, PAGE_HEIGHT);
-	if (my g) Graphics_updateWs (my g);
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (HyperPage);
+	if (my g == NULL) return;
+	Dimension marginWidth, marginHeight;
+	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Graphics_setWsViewport (my g, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	Graphics_setWsWindow (my g, 0.0, my rightMargin = (event -> width - 2 * marginWidth) / resolution,
+		PAGE_HEIGHT - (event -> height - 2 * marginHeight) / resolution, PAGE_HEIGHT);
+	Graphics_updateWs (my g);
 	updateVerticalScrollBar (me);
 }
 
@@ -893,15 +888,8 @@ static void createChildren (I) {
 
 	/***** Create drawing area. *****/
 
-	my drawingArea = XmCreateDrawingArea (my dialog, "drawingArea", NULL, 0);
-	XtVaSetValues (my drawingArea,
-		XmNleftAttachment, XmATTACH_FORM,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + height + 8,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-		XmNmarginWidth, 20, XmNborderWidth, 1,
-		NULL);
-	XtManageChild (my drawingArea);
+	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
 }
 
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
@@ -924,10 +912,12 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 		prefs_font = kGraphics_font_TIMES;   // Ensure Unicode compatibility.
 	my font = prefs_font;
 	setFontSize (me, prefs_fontSize);
-	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
-	gui_cb_resize (my drawingArea, (XtPointer) me, NULL);   /* Force WsWindow. */
+
+struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+event. width = GuiObject_getWidth (my drawingArea);
+event. height = GuiObject_getHeight (my drawingArea);
+gui_drawingarea_cb_resize (me, & event);
+
 	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
 	XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */

@@ -1109,24 +1109,24 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
 		#ifdef macintosh
-			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
+			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
 			praatP.topBar = Gui_addMenuBar (Raam);
-			XtManageChild (praatP.topBar);
+			GuiObject_show (praatP.topBar);
 		#endif
 		praatP.menuBar = Gui_addMenuBar (Raam);
 		praat_addMenus (praatP.menuBar);
-		XtManageChild (praatP.menuBar);
+		GuiObject_show (praatP.menuBar);
 		#ifndef UNIX
-			XtVaSetValues (Raam, XmNwidth, WINDOW_WIDTH, NULL);
+			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
 		#endif
 		GuiLabel_createShown (Raam, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
 		praatList_objects = GuiList_create (Raam, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
-		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, 0);
+		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, NULL);
 		GuiObject_show (praatList_objects);
 		praat_addFixedButtons (Raam);
 		praat_actions_createDynamicMenu (Raam, 210);
-		XtManageChild (Raam);
+		GuiObject_show (Raam);
 		XtRealizeWidget (theCurrentPraat -> topShell);
 		#ifdef UNIX
 			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {

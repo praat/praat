@@ -55,11 +55,10 @@ static void widgetToWindowCoordinates (I) {
 				Widget widget = my drawingArea;
 				int shellX = 0, shellY = 0;
 				do {
-					int x, y;
-					XtVaGetValues (widget, XmNx, & x, XmNy, & y, NULL);
+					int x = GuiObject_getX (widget), y = GuiObject_getY (widget);
 					shellX += x;
 					shellY += y;
-					widget = XtParent (widget);
+					widget = GuiObject_parent (widget);
 				} while (! XtIsShell (widget));
 				my x1DC += shellX;
 				my x2DC += shellX;

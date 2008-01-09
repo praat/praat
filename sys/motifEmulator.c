@@ -39,6 +39,7 @@
  * pb 2007/10/16 Unicode support in lists
  * pb 2007/12/15 userData
  * pb 2007/12/26 extractions to Gui*.c
+ * pb 2007/12/30 extractions to Gui*.c
  */
 #ifndef UNIX
 
@@ -203,6 +204,7 @@ static int (*theQuitApplicationCallback) (void);
 #if win
 	static int theCommandShow = False;   /* Last argument of WinMain. */
 	static wchar_t theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
+	wchar_t * _GuiWin_getDrawingAreaClassName (void) { return theDrawingAreaClassName; }
 	static int (*theUserMessageCallback) (void);
 	#define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
 	#define MAXIMUM_MENU_ITEM_ID  32767
@@ -230,34 +232,6 @@ static void _motif_removeShell (Widget me) {
 	int i;
 	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
 		if (theShells [i] == me) { theShells [i] = NULL; break; }
-}
-
-/* For 'automatic' unmanaging. */
-
-static void cb_unmanage (Widget me, XtPointer closure, XtPointer call) {
-	(void) closure;
-	(void) call;
-	XtUnmanageChild (my shell);
-}
-
-static void gui_button_cb_messageBox_ok (void *void_me, GuiButtonEvent event) {
-	Widget me = (Widget) void_me;
-	(void) event;
-	_Gui_callCallbacks (me, & my motiff.messageBox.okCallbacks, event);   // BUG: event != call
-	if (my autoUnmanage) XtUnmanageChild (me);
-}
-
-static void gui_button_cb_messageBox_cancel (void *void_me, GuiButtonEvent event) {
-	Widget me = (Widget) void_me;
-	(void) event;
-	_Gui_callCallbacks (me, & my motiff.messageBox.cancelCallbacks, event);   // BUG
-	if (my autoUnmanage) XtUnmanageChild (me);
-}
-
-static void gui_button_cb_messageBox_help (void *void_me, GuiButtonEvent event) {
-	Widget me = (Widget) void_me;
-	(void) event;
-	_Gui_callCallbacks (me, & my motiff.messageBox.helpCallbacks, event);   // BUG
 }
 
 /* AppContext level */
@@ -328,9 +302,17 @@ static int Native_titleWidth (Widget me) {
 	#endif
 }
 
+static int NativeLabel_preferredWidth (Widget me) {
+	return Native_titleWidth (me) + 10;
+}
+
 static int NativeButton_preferredWidth (Widget me) {
 	int width = Native_titleWidth (me) + ( win ? 10 : ( my parent -> rowColumnType == XmMENU_BAR ? 10 : 28 ) );
 	return width < 41 ? 41 : width;
+}
+
+static int NativeToggleButton_preferredWidth (Widget me) {
+	return Native_titleWidth (me) + 25;
 }
 
 static int NativeButton_preferredHeight (Widget me) {
@@ -419,12 +401,12 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		} break; case xmPushButtonWidgetClass: {
 			my x = 2;
 			my y = 2;
-			my width = 100;
+			my width = NativeButton_preferredWidth (me);
 			my height = Gui_PUSHBUTTON_HEIGHT;
 		} break; case xmLabelWidgetClass: {
 			my x = 2;
 			my y = 2;
-			my width = 100;
+			my width = NativeLabel_preferredWidth (me);
 			my height = Gui_LABEL_HEIGHT;
 		} break; case xmCascadeButtonWidgetClass: {
 			if (my parent -> rowColumnType == XmMENU_BAR) {
@@ -440,7 +422,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		} break; case xmToggleButtonWidgetClass: {
 			my x = 2;
 			my y = 2;
-			my width = 100;
+			my width = NativeToggleButton_preferredWidth (me);
 			my height = Gui_CHECKBUTTON_HEIGHT;
 		} break; case xmSeparatorWidgetClass: {
 			my width = parent -> width;
@@ -514,7 +496,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 
 	/* Automatic attachment of dialog to parent shell. */
 
-	if (MEMBER3 (me, BulletinBoard, Form, MessageBox) && MEMBER (my parent, Shell))
+	if (MEMBER2 (me, BulletinBoard, Form) && MEMBER (my parent, Shell))
 		my leftAttachment = my rightAttachment = my topAttachment = my bottomAttachment = XmATTACH_FORM;
 
 	if (MEMBER (me, CascadeButton) && wcsequ (name, L"Help"))
@@ -1010,13 +992,7 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
-		case xmDrawingAreaWidgetClass: {
-			#if win
-				my window = CreateWindowEx (0, theDrawingAreaClassName, L"drawingArea", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
-			#endif
-		} break;
+		case xmDrawingAreaWidgetClass: Melder_fatal ("Should be implemented in GuiDrawingArea."); break;
 		case xmFormWidgetClass: {
 			#if win
 				my window = CreateWindowEx (0, theWindowClassName, L"form", WS_CHILD | WS_CLIPSIBLINGS,
@@ -1031,9 +1007,7 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#endif
 		} break;
-		case xmListWidgetClass: {
-			Melder_fatal ("Should be implemented in GuiList.");
-		} break;
+		case xmListWidgetClass: Melder_fatal ("Should be implemented in GuiList."); break;
 		case xmMenuBarWidgetClass: {
 			#if win
 				if (! my shell -> motiff.shell.isDialog && my shell -> nat.shell.menuBar == NULL && my parent -> widgetClass != xmRowColumnWidgetClass) {
@@ -1064,23 +1038,6 @@ static void _GuiNativizeWidget (Widget me) {
 					my rowColumnType = XmMENU_BAR;
 				}
 			#endif
-		} break;
-		case xmMessageBoxWidgetClass: {
-			#if win
-				my window = CreateWindowEx (0, theWindowClassName, L"messageBox", WS_CHILD | WS_CLIPSIBLINGS,
-					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
-			#endif
-			my motiff.messageBox.okButton = GuiButton_createShown (me,
-				10, 10 + MESSAGE_BOX_BUTTON_WIDTH, 105, Gui_AUTOMATIC,
-				L"OK", gui_button_cb_messageBox_ok, me, GuiButton_DEFAULT);
-			my motiff.messageBox.cancelButton = GuiButton_createShown (me,
-				20 + MESSAGE_BOX_BUTTON_WIDTH, 20 + 2 * MESSAGE_BOX_BUTTON_WIDTH, 105, Gui_AUTOMATIC,
-				L"Cancel", gui_button_cb_messageBox_cancel, me, 0);
-			my motiff.messageBox.helpButton = GuiButton_createShown (me,
-				30 + 2 * MESSAGE_BOX_BUTTON_WIDTH, 30 + 3 * MESSAGE_BOX_BUTTON_WIDTH, 105, Gui_AUTOMATIC,
-				L"Help", gui_button_cb_messageBox_help, me, 0);
-			my messageText = GuiText_createShown (me, 0, 42 + 3 * MESSAGE_BOX_BUTTON_WIDTH, 0, 100, GuiText_NONEDITABLE);
 		} break;
 		case xmPulldownMenuWidgetClass: {
 			#if win
@@ -1299,21 +1256,6 @@ static Widget createWidget (int widgetClass, Widget parent, const char *name) {
 	return me;
 }
 
-static Widget vaCreateWidget (int widgetClass, Widget parent, const char *name, va_list arg) {
-	Widget me = _Gui_initializeWidget (widgetClass, parent, Melder_peekUtf8ToWcs (name));
-	int resource;
-	while (resource = va_arg (arg, int), resource != 0) switch (resource) {
-		case XmNindicatorType: {
-			Melder_assert (my widgetClass == xmToggleButtonWidgetClass);
-			my motiff.toggleButton.indicatorType = va_arg (arg, int);
-		} break; default: {
-			(void) va_arg (arg, int);
-		}
-	}
-	_GuiNativizeWidget (me);
-	return me;
-}
-
 void _Gui_invalidateWidget (Widget me) {
 	if (! my managed) return;   /* Should be: visible. */
 	if (MEMBER (me, Shell) /*||
@@ -1453,7 +1395,7 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 			Melder_warning ("class %d x %d left %d y %d top %d width %d right %d height %d bottom %d",
 			my widgetClass, my x, rect.left, my y, rect.top, my width, rect.right, my height, rect.bottom);*/
 			MoveWindow (my window, my x, my y, my width, my height, TRUE);
-			if (MEMBER (me, DrawingArea) && my resizeCallback) my resizeCallback (me, my resizeClosure, NULL);
+			if (MEMBER (me, DrawingArea)) _GuiWinDrawingArea_shellResize (me);
 		}
 	#elif mac
 		if ((dx == 0 && dy == 0 && dw == 0 && dh == 0) || MEMBER (me, MenuBar) || (my parent && MEMBER (my parent, PulldownMenu))) return;
@@ -1489,7 +1431,7 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 			GetWindowPortBounds (my nat.window.ptr, & portRect);
 			InvalWindowRect (my nat.window.ptr, & portRect);
 		} else if (MEMBER (me, DrawingArea)) {
-			if (my resizeCallback) my resizeCallback (me, my resizeClosure, NULL);
+			_GuiMacDrawingArea_shellResize (me);
 			if (dx != 0 || dy != 0)
 				_Gui_callCallbacks (me, & my motiff.drawingArea.moveCallbacks, 0);
 		}
@@ -1533,7 +1475,7 @@ static void resizeWidget (Widget me, int dw, int dh) {
 	#if win
 		if (my window && ! MEMBER (me, Shell)) {
 			MoveWindow (my window, my x, my y, my width, my height, TRUE);
-			if (MEMBER (me, DrawingArea) && my resizeCallback) my resizeCallback (me, my resizeClosure, NULL);
+			if (MEMBER (me, DrawingArea)) _GuiWinDrawingArea_shellResize (me);
 		}
 	#elif mac
 	{
@@ -1551,7 +1493,7 @@ static void resizeWidget (Widget me, int dw, int dh) {
 		} else if (MEMBER (me, Shell)) {
 			SizeWindow (my macWindow, my width, my height, true);
 		} else if (MEMBER (me, DrawingArea)) {
-			if (my resizeCallback) my resizeCallback (me, my resizeClosure, NULL);
+			_GuiMacDrawingArea_shellResize (me);
 		}
 		if (! my isControl) _Gui_invalidateWidget (me);   /* At new position. */
 	}
@@ -1687,7 +1629,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNautoUnmanage:
 			my autoUnmanage = va_arg (arg, int);
 			break;
-		case XmNborderWidth: (void) va_arg (arg, int); break;
 		case XmNbottomAttachment:
 			my bottomAttachment = va_arg (arg, int);
 			attach = True;
@@ -1699,12 +1640,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNbottomPosition: my bottomPosition = va_arg (arg, int);
 			attach = True;
 			break;
-		case XmNcancelLabelString: {
-			char *text = va_arg (arg, char *);
-			Melder_assert (MEMBER (me, MessageBox));
-			if (my motiff.messageBox.cancelButton) GuiButton_setString (my motiff.messageBox.cancelButton, Melder_peekUtf8ToWcs (text));
-			break;
-		}
 		case XmNcolumns: {
 			int columns = va_arg (arg, int);
 			Melder_assert (MEMBER (me, Text));
@@ -1721,11 +1656,11 @@ static void _motif_setValues (Widget me, va_list arg) {
 			}
 			break;
 		case XmNdialogStyle:
-			Melder_assert (MEMBER3 (me, Form, BulletinBoard, MessageBox));
+			Melder_assert (MEMBER2 (me, Form, BulletinBoard));
 			my shell -> dialogStyle = my dialogStyle = va_arg (arg, int);
 			break;
 		case XmNdialogTitle:
-			Melder_assert (MEMBER3 (me, Form, BulletinBoard, MessageBox));
+			Melder_assert (MEMBER2 (me, Form, BulletinBoard));
 			text = va_arg (arg, char *);
 			#if win
 				SetWindowText (my shell -> window, Melder_peekUtf8ToWcs (text));
@@ -1733,10 +1668,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 				ptext [0] = strlen (text); strcpy ((char *) ptext + 1, text);
 				SetWTitle (my macWindow, ptext);
 			#endif
-			break;
-		case XmNdialogType:
-			Melder_assert (MEMBER (me, MessageBox));
-			my shell -> dialogType = my dialogType = va_arg (arg, int);
 			break;
 		case XmNheight:
 			my height = va_arg (arg, int);
@@ -1752,12 +1683,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 			}
 			resize = True;
 			break;
-		case XmNhelpLabelString: {
-			char *text = va_arg (arg, char *);
-			Melder_assert (MEMBER (me, MessageBox));
-			if (my motiff.messageBox.helpButton) GuiButton_setString (my motiff.messageBox.helpButton, Melder_peekUtf8ToWcs (text));
-			break;
-		}
 		case XmNhorizontalScrollBar: {
 			/* Have to kill my own bar first. */
 			XtDestroyWidget (my motiff.scrolledWindow.horizontalBar);
@@ -1787,9 +1712,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNincrement:
 			Melder_assert (MEMBER (me, ScrollBar));
 			my increment = va_arg (arg, int);
-			break;
-		case XmNindicatorType:
-			(void) va_arg (arg, int);
 			break;
 		case XmNlabelString:
 			Melder_assert (MEMBER2 (me, CascadeButton, PushButton));
@@ -1823,21 +1745,11 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNmenuHelpWidget:
 			(void) va_arg (arg, Widget);
 			break;
-		case XmNmessageString:
-			Melder_assert (MEMBER (me, MessageBox));
-			text = va_arg (arg, char *);
-			GuiText_setString (my messageText, Melder_peekUtf8ToWcs (text));
-			break;
 		case XmNminimum:
 			my minimum = va_arg (arg, int);
 			if (MEMBER (me, ScrollBar)) scrollset = True;
 			else if (MEMBER (me, Scale)) _Gui_invalidateWidget (me);
 			break;
-		case XmNokLabelString: {
-			char *text = va_arg (arg, char *);
-			Melder_assert (MEMBER (me, MessageBox));
-			if (my motiff.messageBox.okButton) GuiButton_setString (my motiff.messageBox.okButton, Melder_peekUtf8ToWcs (text));
-			break; }
 		case XmNorientation:
 			Melder_assert (MEMBER3 (me, RowColumn, ScrollBar, Scale));
 			my orientation = va_arg (arg, int);
@@ -2164,7 +2076,7 @@ static void _motif_manage (Widget me) {
 				width = child -> x + child -> width;
 			if (child -> y + child -> height > height)
 				height = child -> y + child -> height;
-			if (MEMBER4 (me, Shell, Form, BulletinBoard, MessageBox)) {
+			if (MEMBER3 (me, Shell, Form, BulletinBoard)) {
 				/* These widgets grow with their children. */
 				dw = width - my width, dh = height - my height;
 				if (dw < 0) dw = 0;
@@ -2238,7 +2150,7 @@ static void _motif_manage (Widget me) {
 	/* If I have grown, I have to notify my parent. */
 
 	if (! MEMBER (me, Shell)) {
-		if (MEMBER5 (my parent, RowColumn, Form, BulletinBoard, Shell, MessageBox)) _motif_manage (my parent);
+		if (MEMBER4 (my parent, RowColumn, Form, BulletinBoard, Shell)) _motif_manage (my parent);
 		else if (MEMBER (my parent, ScrolledWindow)) _Gui_manageScrolledWindow (my parent);
 	}
 }
@@ -2262,10 +2174,6 @@ void XtAddCallback (Widget me, int kind, XtCallbackProc proc, XtPointer closure)
 		case XmNactivateCallback:
 			my activateCallback = proc; my activateClosure = closure;
 		break;
-		case XmNcancelCallback:
-			Melder_assert (my widgetClass == xmMessageBoxWidgetClass);
-			xt_addCallback (& my motiff.messageBox.cancelCallbacks, proc, closure);
-		break;
 		case XmNdecrementCallback:
 		break;
 		case XmNdestroyCallback:
@@ -2275,32 +2183,15 @@ void XtAddCallback (Widget me, int kind, XtCallbackProc proc, XtPointer closure)
 			Melder_assert (my widgetClass == xmScrollBarWidgetClass);
 			xt_addCallback (& my motiff.scrollBar.dragCallbacks, proc, closure);
 		break;
-		case XmNexposeCallback:
-			my exposeCallback = proc; my exposeClosure = closure;
-		break;
-		case XmNhelpCallback:
-			Melder_assert (my widgetClass == xmMessageBoxWidgetClass);
-			xt_addCallback (& my motiff.messageBox.helpCallbacks, proc, closure);
-		break;
 		case XmNincrementCallback:
-		break;
-		case XmNinputCallback:
-			my inputCallback = proc; my inputClosure = closure;
 		break;
 		case XmNmoveCallback:
 			Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
 			xt_addCallback (& my motiff.drawingArea.moveCallbacks, proc, closure);
 		break;
-		case XmNokCallback:
-			Melder_assert (my widgetClass == xmMessageBoxWidgetClass);
-			xt_addCallback (& my motiff.messageBox.okCallbacks, proc, closure);
-		break;
 		case XmNpageIncrementCallback:
 		break;
 		case XmNpageDecrementCallback:
-		break;
-		case XmNresizeCallback:
-			my resizeCallback = proc; my resizeClosure = closure;
 		break;
 		case XmNvalueChangedCallback:
 			if (my widgetClass == xmScrollBarWidgetClass)
@@ -2390,7 +2281,7 @@ void XtDestroyWidget (Widget me) {
 			my macWindow = NULL;   /* Notify children. */
 		#endif
 	}
-	if (MEMBER3 (me, Form, BulletinBoard, MessageBox) && MEMBER (my parent, Shell) &&
+	if (MEMBER2 (me, Form, BulletinBoard) && MEMBER (my parent, Shell) &&
 		#if win
 		 	my parent -> window
 		#elif mac
@@ -2438,7 +2329,6 @@ void XtDestroyWidget (Widget me) {
 		case xmDrawingAreaWidgetClass:
 		case xmRowColumnWidgetClass:
 		case xmFormWidgetClass:
-		case xmMessageBoxWidgetClass:
 		case xmBulletinBoardWidgetClass: {
 			#if win
 				DestroyWindow (my window);
@@ -2532,10 +2422,6 @@ void XtDestroyWidget (Widget me) {
 	}
 	Melder_free (me);
 	numberOfWidgets --;
-}
-
-void XtFree (char *me) {
-	Melder_free (me);
 }
 
 Boolean XtIsManaged (Widget me) { return my managed; }
@@ -2639,7 +2525,6 @@ static void mapWidget (Widget me) {
 		case xmScrolledWindowWidgetClass:
 		case xmFormWidgetClass:
 		case xmRowColumnWidgetClass:
-		case xmMessageBoxWidgetClass:
 			ShowWindow (my window, SW_SHOW); break;
 		#endif
 		case xmShellWidgetClass: {
@@ -2714,7 +2599,7 @@ void XtManageChild (Widget me) {
 	/* Geometry management if my parent is a manager. */
 
 	if (! MEMBER (me, Shell)) {
-		if (MEMBER5 (my parent, RowColumn, Form, BulletinBoard, Shell, MessageBox)) _motif_manage (my parent);
+		if (MEMBER4 (my parent, RowColumn, Form, BulletinBoard, Shell)) _motif_manage (my parent);
 		if (MEMBER (me, ScrolledWindow)) _Gui_manageScrolledWindow (me);
 		if (MEMBER (my parent, ScrolledWindow)) _Gui_manageScrolledWindow (my parent);
 	}
@@ -2723,7 +2608,7 @@ void XtManageChild (Widget me) {
 	/* Condition: the entire up chain has been managed. */
 	/* Shells or their immediate manager children can be mapped directly. */
 
-	if (my parent && MEMBER (my parent, Shell) && MEMBER3 (me, Form, BulletinBoard, MessageBox)) {
+	if (my parent && MEMBER (my parent, Shell) && MEMBER2 (me, Form, BulletinBoard)) {
 		my parent -> managed = 1;
 		mapWidget (my parent);
 	} else if (my inMenu) {
@@ -2749,10 +2634,6 @@ void XtManageChild (Widget me) {
 void XtManageChildren (WidgetList children, Cardinal num_children) {
 	Cardinal i;
 	for (i = 0; i < num_children; i ++) XtManageChild (children [i]);
-}
-
-Widget XtParent (Widget me) {
-	return my parent;
 }
 
 void XtSetSensitive (Widget me, Boolean value) {
@@ -2815,7 +2696,7 @@ void XtUnmanageChild (Widget me) {
 					theGui.modalDialog = NULL;
 				HideWindow (my nat.window.ptr);
 			#endif
-			if (my firstChild && MEMBER3 (my firstChild, Form, BulletinBoard, MessageBox))
+			if (my firstChild && MEMBER2 (my firstChild, Form, BulletinBoard))
 				my firstChild -> managed = 0;
 			break;
 		case xmPushButtonWidgetClass: _GuiNativeControl_hide (me); break;
@@ -2831,7 +2712,6 @@ void XtUnmanageChild (Widget me) {
 		case xmScrollBarWidgetClass: _GuiNativeControl_hide (me); break;
 		case xmFormWidgetClass:
 		case xmBulletinBoardWidgetClass:
-		case xmMessageBoxWidgetClass:
 			if (MEMBER (my parent, Shell)) XtUnmanageChild (my parent);
 			break;
 		case xmTextWidgetClass: {
@@ -2845,7 +2725,7 @@ void XtUnmanageChild (Widget me) {
 	my managed = 0;
 
 	if (! MEMBER (me, Shell)) {
-		if (MEMBER5 (my parent, RowColumn, Form, BulletinBoard, Shell, MessageBox)) _motif_manage (my parent);
+		if (MEMBER4 (my parent, RowColumn, Form, BulletinBoard, Shell)) _motif_manage (my parent);
 		else if (MEMBER (my parent, ScrolledWindow)) _Gui_manageScrolledWindow (my parent);
 	}
 }
@@ -3041,7 +2921,7 @@ Widget XtVaCreateManagedWidget (const char *name, int widgetClass, Widget parent
 	Widget me;
 	va_list arg;
 	va_start (arg, parent);
-	me = vaCreateWidget (widgetClass, parent, name, arg);
+	me = createWidget (widgetClass, parent, name);
 	_motif_setValues (me, arg);
 	va_end (arg);
 	XtManageChild (me);
@@ -3052,7 +2932,7 @@ Widget XtVaCreateWidget (const char *name, int widgetClass, Widget parent, ...) 
 	Widget me;
 	va_list arg;
 	va_start (arg, parent);
-	me = vaCreateWidget (widgetClass, parent, name, arg);
+	me = createWidget (widgetClass, parent, name);
 	_motif_setValues (me, arg);
 	va_end (arg);
 	return me;
@@ -3092,9 +2972,7 @@ void XtVaGetValues (Widget me, ...) {
 			*va_arg (arg, char **) = text;
 			break;
 		case XmNdialogTitle:
-			Melder_assert (my widgetClass == xmFormWidgetClass ||
-								my widgetClass == xmBulletinBoardWidgetClass ||
-								my widgetClass == xmMessageBoxWidgetClass);
+			Melder_assert (my widgetClass == xmFormWidgetClass || my widgetClass == xmBulletinBoardWidgetClass);
 			#if mac
 				GetWTitle (my macWindow, ptext);
 				text = Melder_malloc (char, ptext [0] + 1);
@@ -3129,10 +3007,6 @@ void XtVaGetValues (Widget me, ...) {
 			Melder_assert (my widgetClass == xmFormWidgetClass ||
 								my widgetClass == xmBulletinBoardWidgetClass);
 			*va_arg (arg, int *) = my dialogStyle;
-			break;
-		case XmNdialogType:
-			Melder_assert (my widgetClass == xmMessageBoxWidgetClass);
-			*va_arg (arg, int *) = my dialogType;
 			break;
 		case XmNleftAttachment:
 			Melder_assert (my parent -> widgetClass == xmFormWidgetClass);
@@ -3268,12 +3142,6 @@ Widget XmCreateDialogShell (Widget parent, const char *name, ArgList dum1, int d
 	return shell;
 }
 
-Widget XmCreateDrawingArea (Widget parent, const char *name, ArgList dum1, int dum2) {
-	(void) dum1;
-	(void) dum2;
-	return createWidget (xmDrawingAreaWidgetClass, parent, name);
-}
-
 Widget XmCreateForm (Widget parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
@@ -3285,32 +3153,10 @@ Widget XmCreateFormDialog (Widget parent, const char *name, ArgList dum1, int du
 	return XmCreateForm (shell, name, dum1, dum2);
 }
 
-Widget XmCreateFrame (Widget parent, const char *name, ArgList dum1, int dum2) {
-	(void) dum1;
-	(void) dum2;
-	return createWidget (xmFrameWidgetClass, parent, name);
-}
-
 Widget XmCreateMenuBar (Widget parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmMenuBarWidgetClass, parent, name);
-}
-
-Widget XmCreateMessageBox (Widget parent, const char *name, ArgList dum1, int dum2) {
-	(void) dum1;
-	(void) dum2;
-	return createWidget (xmMessageBoxWidgetClass, parent, name);
-}
-
-Widget XmCreateMessageDialog (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget shell = XmCreateDialogShell (parent, name, dum1, dum2), dialog;
-	int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
-	int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent))) - 22;
-	shell -> deleteResponse = XmUNMAP;
-	dialog = XmCreateMessageBox (shell, name, dum1, dum2);
-	XtVaSetValues (shell, XmNx, (screenWidth - 300) / 2, XmNy, (screenHeight - 150) / 3, NULL);
-	return dialog;
 }
 
 Widget XmCreatePulldownMenu (Widget parent, const char *name, ArgList dum1, int dum2) {
@@ -3343,13 +3189,6 @@ Widget XmCreateScrollBar (Widget parent, const char *name, ArgList dum1, int dum
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmScrollBarWidgetClass, parent, name);
-}
-
-Widget XmCreateScrolledList (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget scrolled = createWidget (xmScrolledWindowWidgetClass, parent, name);
-	(void) dum1;
-	(void) dum2;
-	return createWidget (xmListWidgetClass, scrolled, name);
 }
 
 Widget XmCreateScrolledWindow (Widget parent, const char *name, ArgList dum1, int dum2) {
@@ -3389,14 +3228,6 @@ Atom XmInternAtom (Display *display, String name, Boolean only_if_exists) {
 	(void) only_if_exists;
 	if (strequ (name, "WM_DELETE_WINDOW")) return 'delw';
 	return 0;
-}
-
-Widget XmMessageBoxGetChild (Widget me, int child) {
-	return
-		child == XmDIALOG_OK_BUTTON ? my motiff.messageBox.okButton :
-		child == XmDIALOG_CANCEL_BUTTON ? my motiff.messageBox.cancelButton :
-		child == XmDIALOG_HELP_BUTTON ? my motiff.messageBox.helpButton :
-		NULL;
 }
 
 void XmScaleGetValue (Widget me, int *value_return) {
@@ -3441,14 +3272,6 @@ void XmScrollBarSetValues (Widget me, int value, int sliderSize,
 	if (notify)	_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, NULL);
 }
 
-XmString XmStringCreateSimple (const char *cstring) {
-	return (XmString) Melder_strdup (cstring);
-}
-
-void XmStringFree (XmString me) {
-	Melder_free (me);
-}
-
 Boolean XmToggleButtonGadgetGetState (Widget me) {
 	Melder_assert (MEMBER (me, ToggleButton));
 	Melder_assert (my inMenu);
@@ -3490,13 +3313,7 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 				GuiMac_clipOff ();
 			} break;
 			case xmListWidgetClass: _GuiMacList_update (me, visRgn); break;
-			case xmDrawingAreaWidgetClass: {
-				if (my exposeCallback) {
-					_GuiMac_clipOnParent (me);
-					my exposeCallback (me, my exposeClosure, (XtPointer) event);
-					GuiMac_clipOff ();
-				}
-			} break;
+			case xmDrawingAreaWidgetClass: _GuiMacDrawingArea_update (me); break;
 			case xmTextWidgetClass: _GuiMacText_update (me); break;
 			case xmLabelWidgetClass: {
 				_GuiMac_clipOnParent (me);
@@ -4060,8 +3877,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 	/* Last chance: try drawingArea. */
 	if (shell) {
 		Widget drawingArea = _motif_findDrawingArea (shell);
-		if (drawingArea && drawingArea -> inputCallback) {
-			drawingArea -> inputCallback (drawingArea, drawingArea -> inputClosure, (XtPointer) event);
+		if (drawingArea && _GuiMacDrawingArea_tryToHandleKey (drawingArea, event)) {
 			return true;
 		}
 	}
@@ -4260,8 +4076,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 								_GuiMacText_handleClick (clicked, event);
 							}
 						} else if (clicked -> widgetClass == xmDrawingAreaWidgetClass) {
-							if (clicked -> inputCallback)
-								clicked -> inputCallback (clicked, clicked -> inputClosure, (XtPointer) event);
+							_GuiMacDrawingArea_handleClick (clicked, event);
 						} else if (clicked -> widgetClass == xmCascadeButtonWidgetClass && 0) {
 							Widget menu = clicked -> subMenuId;
 							if (menu && ! clicked -> insensitive) {
@@ -4566,13 +4381,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			if (me && MEMBER2 (me, PushButton, ToggleButton)) {
 				Widget drawingArea = _motif_findDrawingArea (my shell);
 				if (drawingArea) {
-					if (drawingArea -> inputCallback) {
-						WinDrawingAreaEvent event;
-						event. message = WM_CHAR;
-						event. key = kar;
-						event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-						drawingArea -> inputCallback (drawingArea, drawingArea -> inputClosure, (XtPointer) & event);
-					}
+					_GuiWinDrawingArea_handleKey (drawingArea, kar);   // TODO: event -> key?
 					return;
 				}
 			}
@@ -4732,14 +4541,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			if (MEMBER (me, DrawingArea)) {
-				if (my inputCallback) {
-					WinDrawingAreaEvent event;
-					event. message = WM_LBUTTONDOWN;
-					event. x = x;
-					event. y = y;
-					event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-					my inputCallback (me, my inputClosure, (XtPointer) & event);
-				}
+				_GuiWinDrawingArea_handleClick (me, x, y);
 			} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 		} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 	}
@@ -4747,12 +4549,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			if (my widgetClass == xmDrawingAreaWidgetClass) {
-				PAINTSTRUCT paintStruct;
-				BeginPaint (window, & paintStruct);
-				if (my exposeCallback)
-					my exposeCallback (me, my exposeClosure, (XtPointer) & paintStruct);
-				EndPaint (window, & paintStruct);
-				return;
+				_GuiWinDrawingArea_update (me);
 			} else FORWARD_WM_PAINT (window, DefWindowProc);
 		} else FORWARD_WM_PAINT (window, DefWindowProc);
 	}
@@ -4797,14 +4594,8 @@ void XtAppMainLoop (XtAppContext appctxt) {
 			if (MEMBER (me, Shell)) {
 				Widget drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
-					Widget textFocus = drawingArea -> shell -> textFocus;
-					if (drawingArea -> inputCallback) {
-						WinDrawingAreaEvent event;
-						event. message = WM_CHAR;
-						event. key = kar;
-						event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-						drawingArea -> inputCallback (drawingArea, drawingArea -> inputClosure, (XtPointer) & event);
-					}
+					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+					_GuiWinDrawingArea_handleKey (me, kar);
 				} else {
 					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
 				}

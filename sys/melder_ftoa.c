@@ -1,6 +1,6 @@
 /* melder_ftoa.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/12/10 A and W versions
  * pb 2006/12/29 removed future bug
  * pb 2007/11/30 Melder_float
+ * pb 2008/01/06 Mac: use strtod instead of wcstod for speed
  */
 
 #include "melder.h"
@@ -96,11 +97,24 @@ const wchar_t * Melder_boolean (bool value) {
 const wchar_t * Melder_double (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
-	if (wcstod (buffers [ibuffer], NULL) != value) {
-		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
-		if (wcstod (buffers [ibuffer], NULL) != value) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
-	}
+	#if defined (macintosh)
+		/*
+		 * OPTIMIZATION: strtod may be 100 times faster than wcstod on the Mac. 20080106
+		 */
+		static char buffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+		sprintf (buffer, "%.15g", value);
+		if (strtod (buffer, NULL) != value) {
+			sprintf (buffer, "%.16g", value);
+			if (strtod (buffer, NULL) != value) sprintf (buffer, "%.17g", value);
+		}
+		Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);
+	#else
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
+		if (wcstod (buffers [ibuffer], NULL) != value) {
+			swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
+			if (wcstod (buffers [ibuffer], NULL) != value) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
+		}
+	#endif
 	return buffers [ibuffer];
 }
 

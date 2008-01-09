@@ -23,21 +23,10 @@
  * pb 2004/10/21 on Unix, Ctrl becomes the command key
  * pb 2007/06/09 wchar_t
  * pb 2007/12/13 Gui
+ * pb 2007/12/30 Gui
  */
 
 #include "Gui.h"
-
-Widget Gui_addShell (Widget widget, long flags) {
-	(void) flags;
-	#if defined (macintosh) || defined (_WIN32)
-		(void) widget;
-		return XmCreateShell (NULL, "Praatwulg", NULL, 0);
-	#else
-		return XtAppCreateShell (NULL, "Praatwulg", applicationShellWidgetClass,
-			XtDisplay (widget), NULL, 0);
-		/*return XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, NULL);*/
-	#endif
-}
 
 Widget Gui_addMenuBar (Widget form) {
 	Widget menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);

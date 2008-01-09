@@ -65,9 +65,9 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 	iam (ArtwordEditor);
 	Artword artword = my data;
 	wchar_t *timeText = GuiText_getString (my time);
-	double tim = Melder_atofW (timeText);
+	double tim = Melder_atof (timeText);
 	wchar_t *valueText = GuiText_getString (my value);
-	double value = Melder_atofW (valueText);
+	double value = Melder_atof (valueText);
 	ArtwordData a = & artword -> data [my feature];
 	int i = 1, oldCount = a -> numberOfTargets;
 	Melder_free (timeText);
@@ -99,26 +99,23 @@ static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
 	updateList (me);
 }
 
-static void cb_draw (GUI_ARGS) {
-	GUI_IAM (ArtwordEditor);
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (ArtwordEditor);
+	(void) event;
+	if (my graphics == NULL) return;
 	Artword artword = my data;
-	#ifdef UNIX
-		if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
-	#endif
 	Graphics_clearWs (my graphics);
 	Artword_draw (artword, my graphics, my feature, TRUE);
 }
 
-static void cb_click (GUI_ARGS) {
-	GUI_IAM (ArtwordEditor);
-	GuiEvent event = GuiEvent_fromCallData (call);
-	if (! GuiEvent_isButtonPressedEvent (event)) return;
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (ArtwordEditor);
+	if (my graphics == NULL) return;
 	Artword artword = my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);
-	int x = GuiEvent_x (event), y = GuiEvent_y (event);
 	double xWC, yWC;
-	Graphics_DCtoWC (my graphics, x, y, & xWC, & yWC);
+	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 	Graphics_unsetInner (my graphics);
 	GuiText_setString (my time, Melder_fixed (xWC, 6));
 	GuiText_setString (my value, Melder_fixed (yWC, 6));
@@ -140,10 +137,8 @@ static void createChildren (I) {
 
 	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, me, 0);
 
-	my drawingArea = XtVaCreateManagedWidget
-		("drawingArea", xmDrawingAreaWidgetClass, my dialog,
-		 XmNx, 170, XmNy, dy + 10,
-		 XmNwidth, 300, XmNheight, 300, NULL);
+	my drawingArea = GuiDrawingArea_createShown (my dialog, 170, 470, dy + 10, dy + 310,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, me, 0);
 
 	GuiLabel_createShown (my dialog, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
 	my time = GuiText_createShown (my dialog, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
@@ -177,9 +172,6 @@ ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword
 		return NULL;
 	//XtUnmanageChild (my menuBar);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-
-	XtAddCallback (my drawingArea, XmNexposeCallback, cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, cb_click, (XtPointer) me);
 	updateList (me);
 	return me;
 }

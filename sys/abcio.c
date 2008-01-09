@@ -193,12 +193,12 @@ static double getReal (MelderReadString *text) {
 	if (slash) {
 		double numerator, denominator;
 		*slash = '\0';
-		numerator = Melder_atofW (buffer), denominator = Melder_atofW (slash + 1);
+		numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
 		if (numerator == HUGE_VAL || denominator == HUGE_VAL || denominator == 0.0)
 			return HUGE_VAL;
 		return numerator / denominator;
 	}
-	return Melder_atofW (buffer);
+	return Melder_atof (buffer);
 }
 
 static short getEnum (MelderReadString *text, void *enumerated) {

@@ -1299,14 +1299,14 @@ end:
 #endif
 }
 
-static void gui_cb_resize (GUI_ARGS) {
-	GUI_IAM (SoundRecorder);
-	Dimension width, height, marginWidth = 10, marginHeight = 10;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	Graphics_setWsViewport (my graphics, marginWidth, width - marginWidth, marginHeight, height - marginHeight);
-	width = width - marginWidth - marginWidth;
-	height = height - marginHeight - marginHeight;
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (SoundRecorder);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	Dimension marginWidth = 10, marginHeight = 10;
+	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	long width = event -> width - marginWidth - marginWidth;
+	long height = event -> height - marginHeight - marginHeight;
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
 	Graphics_updateWs (my graphics);
@@ -1333,7 +1333,7 @@ static void createChildren (I) {
 		L"Mono", NULL, NULL, 0);
 	my stereoButton = GuiRadioButton_createShown (channels, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
 		L"Stereo", NULL, NULL, 0);
-	XtManageChild (channels);
+	GuiObject_show (channels);
 
 	long y = 110, dy = 25;
 	GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"Input source:", 0);
@@ -1350,14 +1350,8 @@ static void createChildren (I) {
 	#endif
 
 	GuiLabel_createShown (form, 170, -170, 20, Gui_AUTOMATIC, L"Meter", GuiLabel_CENTRE);
-	my meter = XmCreateDrawingArea (form, "meter", NULL, 0);
-	XtVaSetValues (my meter,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 170,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 150,
-		XmNborderWidth, 1, NULL);
-	XtManageChild (my meter);
+	my meter = GuiDrawingArea_createShown (form, 170, -170, 45, -150,
+		NULL, NULL, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
 
 	GuiLabel_createShown (form, -160, -10, 20, Gui_AUTOMATIC, L"Sampling frequency:", 0);
 	Widget fsampBox = XmCreateRadioBox (form, "fsamp", NULL, 0);
@@ -1376,7 +1370,7 @@ static void createChildren (I) {
 				title, gui_radiobutton_cb_fsamp, me, 0);
 		}
 	}
-	XtManageChild (fsampBox);
+	GuiObject_show (fsampBox);
 
 	my progressScale = XmCreateScale (form, "scale", NULL, 0);
 	XtVaSetValues (my progressScale, XmNorientation, XmHORIZONTAL,
@@ -1388,7 +1382,7 @@ static void createChildren (I) {
 			XmNscaleWidth, 340,
 		#endif
 		NULL);
-	XtManageChild (my progressScale);
+	GuiObject_show (my progressScale);
 
 	y = 60;
 	my recordButton = GuiButton_createShown (form, 20, 90, Gui_AUTOMATIC, -y,
@@ -1413,7 +1407,7 @@ static void createChildren (I) {
 	my okButton = GuiButton_createShown (form, -160, -20, Gui_AUTOMATIC, -y,
 		L"Save to list & Close", gui_button_cb_ok, me, 0);
 
-	XtManageChild (form);
+	GuiObject_show (form);
 }
 
 static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
@@ -1676,8 +1670,12 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	XtAddCallback (my meter, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
-gui_cb_resize (my meter, (XtPointer) me, 0);
+
+struct structGuiDrawingAreaResizeEvent event = { my meter, 0 };
+event. width = GuiObject_getWidth (my meter);
+event. height = GuiObject_getHeight (my meter);
+gui_drawingarea_cb_resize (me, & event);
+
 	my workProcId = XtAppAddWorkProc (context, workProc, (XtPointer) me);
 	return me;
 error:

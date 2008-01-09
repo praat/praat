@@ -80,7 +80,7 @@ static void classUiFile_destroy (I) {
 	iam (UiFile);
 	#ifdef UNIX
 		XtUnrealizeWidget (XtParent (my dialog));
-		XtDestroyWidget (my dialog);
+		GuiObject_destroy (my dialog);
 	#endif
 	if (me == currentUiFile) currentUiFile = NULL;   /* Undangle. */
 	inherited (UiFile) destroy (me);
@@ -179,7 +179,7 @@ MelderFile UiFile_getFile (I) {
 
 void UiFile_hide (void) {
 	if (currentUiFile) {
-		XtUnmanageChild (currentUiFile -> dialog);
+		GuiObject_hide (currentUiFile -> dialog);
 		currentUiFile = NULL;
 	}
 }
@@ -200,13 +200,17 @@ static void classUiInfile_ok (I) {
 		if (inDirMask) XmStringFree (inDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & inDirMask, NULL);
 	#endif
-	if (! my okCallback (me, my okClosure))
-		Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
-	else if (! my shiftKeyPressed)
-		XtUnmanageChild (my dialog);
-	my shiftKeyPressed = 0;
+	structMelderFile file;
+	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+	if (! my okCallback (me, my okClosure)) {
+		Melder_error3 (L"File ", MelderFile_messageNameW (& file), L" not finished.");
+		Melder_flushError (NULL);
+	} else if (! my shiftKeyPressed) {
+		GuiObject_hide (my dialog);
+	}
+	//my shiftKeyPressed = 0;   // BUG (perhaps), but "me" can have been deleted
 	UiHistory_write (L" ");
-	UiHistory_write (my file. path);
+	UiHistory_write (file. path);
 }
 #endif
 
@@ -247,12 +251,14 @@ void UiInfile_do (I) {
 				FSRef machFile;
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 					Melder_machToFile (& machFile, & my file);
+				structMelderFile file;
+				MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 				if (! my okCallback (me, my okClosure)) {
-					Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+					Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
 					Melder_flushError (NULL);
 				}
 				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPath (& my file));
+				UiHistory_write (Melder_fileToPath (& file));
 				NavDisposeReply (& reply);
 			}
 			NavDialogDispose (dialogRef);
@@ -298,13 +304,15 @@ void UiInfile_do (I) {
 				MelderInfo_close ();
 			#endif
 			Melder_pathToFile (fullFileName, & my file);
+			structMelderFile file;
+			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 			if (! my okCallback (me, my okClosure)) {
-				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+				Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
 				Melder_flushError (NULL);
-				//Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+				//Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& file));
 			}
 			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPath (& my file));
+			UiHistory_write (Melder_fileToPath (& file));
 		}
 		if (hasFileInfoTipsBug) {
 			if (infoTipsWereVisible | ! extensionsWereVisible) {
@@ -323,8 +331,7 @@ void UiInfile_do (I) {
 			XmFileSelectionDoSearch (my dialog, dirMask);
 			XmStringFree (dirMask);
 		#endif
-		XtManageChild (my dialog);
-		XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
+		GuiDialog_show (my dialog);
 		currentUiFile = (UiFile) me;
 	#endif
 }
@@ -341,10 +348,10 @@ class_create (UiOutfile, UiFile);
 static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
 	(void) call;
-	if (w) XtUnmanageChild (w);
+	if (w) GuiObject_hide (w);
 	if (! my okCallback (me, my okClosure))
 		Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
-	XtUnmanageChild (my dialog);
+	GuiObject_hide (my dialog);
 	UiHistory_write (L" ");
 	UiHistory_write (my file. path);
 }
@@ -511,7 +518,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
 		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
 		bool extensionsWereVisible = settings. fShowExtensions != 0;
-		if (infoTipsWereVisible | ! extensionsWereVisible) {
+		if (infoTipsWereVisible || ! extensionsWereVisible) {
 			SHELLSTATE state = { 0 };
 			state. fShowInfoTip = 0;
 			state. fShowExtensions = /*1*/ extensionsWereVisible;
@@ -530,7 +537,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 			UiHistory_write (L" ");
 			UiHistory_write (Melder_fileToPath (& my file));
 		}
-		if (infoTipsWereVisible | ! extensionsWereVisible) {
+		if (infoTipsWereVisible || ! extensionsWereVisible) {
 			SHELLSTATE state = { 0 };
 			state. fShowInfoTip = infoTipsWereVisible;
 			state. fShowExtensions = extensionsWereVisible;

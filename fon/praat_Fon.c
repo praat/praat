@@ -144,22 +144,17 @@ int praat_Fon_formula (Any dia) {
 Graphics Movie_create (const wchar_t *title, int width, int height);
 Graphics Movie_create (const wchar_t *title, int width, int height) {
 	static Graphics graphics;
-	static Widget shell, dialog, drawingArea;
+	static Widget dialog, drawingArea;
 	if (! graphics) {
-		dialog = XmCreateFormDialog (theCurrentPraat -> topShell, "Movie", NULL, 0);
-		shell = XtParent (dialog);
-		drawingArea = XmCreateDrawingArea (dialog, "movingArea", NULL, 0);
-		XtVaSetValues (shell, XmNx, 100, XmNy, 100, XmNtitle, Melder_peekWcsToUtf8 (title), XmNwidth, width + 2, XmNheight, height + 2,
-			XmNdeleteResponse, XmUNMAP, NULL);
-		XtVaSetValues (drawingArea, XmNwidth, width, XmNheight, height, NULL);
-		XtManageChild (drawingArea);
-		XtManageChild (dialog);
+		dialog = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		GuiDialog_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
-	XtVaSetValues (XtParent (dialog), XmNtitle, Melder_peekWcsToUtf8 (title), XmNwidth, width + 2, XmNheight, height + 2, NULL);
-	XtVaSetValues (drawingArea, XmNwidth, width, XmNheight, height, NULL);
-	XtManageChild (dialog);
-	XMapRaised (XtDisplay (shell), XtWindow (shell));
+	GuiWindow_setTitle (GuiObject_parent (dialog), title);
+	GuiObject_size (GuiObject_parent (dialog), width + 2, height + 2);
+	GuiObject_size (drawingArea, width, height);
+	GuiDialog_show (dialog);
 	return graphics;
 }
 

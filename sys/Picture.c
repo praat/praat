@@ -123,9 +123,9 @@ static void drawSelection (Picture me, int high) {
 }
 
 static int SMERIG_valid;
-static void gui_cb_draw (GUI_ARGS) {
-	GUI_IAM (Picture);
-#if defined (macintosh)
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (Picture);
+#if defined (macintosh) && 0
 	WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
 	static RgnHandle visRgn;
 	Rect rect;
@@ -140,18 +140,18 @@ static void gui_cb_draw (GUI_ARGS) {
 		Graphics_play (my graphics, my graphics);
 		drawSelection (me, 1);
 	}
-#elif defined (_WIN32)
+#elif defined (_WIN32) || 1
+	(void) event;
 	drawMarkers (me);
 	Graphics_play (my graphics, my graphics);
 	drawSelection (me, 1);
 #else
-	XExposeEvent *event = (XExposeEvent *) & ((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose;
 	XRectangle rectangle;
 	if (! my updateRegion) my updateRegion = XCreateRegion ();
-	rectangle. x = (short) event -> x;
-	rectangle. y = (short) event -> y;
-	rectangle. width = (short) event -> width;
-	rectangle. height = (short) event -> height;
+	rectangle. x = event -> x;
+	rectangle. y = event -> y;
+	rectangle. width = event -> width;
+	rectangle. height = event -> height;
 	XUnionRectWithRegion (& rectangle, my updateRegion, my updateRegion);
 	if (event -> count == 0) {
 		XSetRegion (XtDisplay (my drawingArea), Graphics_x_getGC (my graphics), my updateRegion);
@@ -168,20 +168,18 @@ static void gui_cb_draw (GUI_ARGS) {
 #endif
 }
 
-static void gui_cb_click (GUI_ARGS) {
-	GUI_IAM (Picture);
-	GuiEvent event = GuiEvent_fromCallData (call);
-	int xstart = GuiEvent_x (event);
-	int ystart = GuiEvent_y (event);
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (Picture);
+	int xstart = event -> x;
+	int ystart = event -> y;
 	double xWC, yWC;
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
-	if (! GuiEvent_isButtonPressedEvent (event)) return;
 
 	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
 	ix = ixstart = 1 + floor (xWC * SQUARES / SIDE);
 	iy = iystart = SQUARES - floor (yWC * SQUARES / SIDE);
 	if (ixstart < 1 || ixstart > SQUARES || iystart < 1 || iystart > SQUARES) return;
-	if (GuiEvent_shiftKeyPressed (event)) {
+	if (event -> shiftKeyPressed) {
 		int ix1 = 1 + floor (my selx1 * SQUARES / SIDE);
 		int ix2 = floor (my selx2 * SQUARES / SIDE);
 		int iy1 = SQUARES + 1 - floor (my sely2 * SQUARES / SIDE);
@@ -233,7 +231,7 @@ Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	if (drawingArea) {
 		/* The drawing area must have been realized; see manual at XtWindow. */
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
+		GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
 	} else {
 		/*
 		 * Create a dummy Graphics.
@@ -247,10 +245,7 @@ Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
 	if (my sensitive) {
 		my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
-		#if gtk
-		#elif motif
-			XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_click, (XtPointer) me);
-		#endif
+		GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
 		Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
 	}
 	Graphics_startRecording (my graphics);

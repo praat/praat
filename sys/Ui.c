@@ -34,6 +34,7 @@
  *   so that scripts cannot prevent this hook from working
  * pb 2007/06/09 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2007/12/30 Gui
  */
 
 #include <ctype.h>
@@ -253,7 +254,7 @@ static int UiField_widgetToValue (UiField me) {
 			 * Put a clean version of the new value in the form.
 			 * If the value is equal to the default, make sure that any default comments are included.
 			 */
-			if (my realValue == Melder_atofW (my stringDefaultValue)) {
+			if (my realValue == Melder_atof (my stringDefaultValue)) {
 				GuiText_setString (my text, my stringDefaultValue);
 			} else {
 				wchar_t clean [40];
@@ -502,7 +503,7 @@ static void classUiForm_destroy (I) {
 	int ifield;
 	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
 		forget (my field [ifield]);
-	if (my dialog) XtDestroyWidget (my dialog);
+	if (my dialog) GuiObject_destroy (my dialog);
 	Melder_free (my helpTitle);
 	inherited (UiForm) destroy (me);
 }
@@ -518,17 +519,15 @@ static void gui_button_cb_useStandards (I, GuiButtonEvent event) {
 		UiField_setDefault (my field [ifield]);
 }
 
-static void UiForm_hide (Widget w, XtPointer void_me, XtPointer call) {
+static void UiForm_hide (I) {
 	iam (UiForm);
-	(void) w;
-	(void) call;
-	XtUnmanageChild (my dialog);
+	GuiObject_hide (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
 }
 static void gui_button_UiForm_hide (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
-	XtUnmanageChild (my dialog);
+	GuiObject_hide (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
 }
 
@@ -548,11 +547,11 @@ static void UiForm_okOrApply (I, int hide) {
 	}
 	/* In the next, w must become my okButton? */
 	/*XtRemoveCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
-	XtSetSensitive (my okButton, False);
-	if (my applyButton) XtSetSensitive (my applyButton, False);
-	XtSetSensitive (my cancelButton, False);
-	if (my useStandards) XtSetSensitive (my useStandards, False);
-	if (my helpButton) XtSetSensitive (my helpButton, False);
+	GuiObject_setSensitive (my okButton, False);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, False);
+	GuiObject_setSensitive (my cancelButton, False);
+	if (my useStandards) GuiObject_setSensitive (my useStandards, False);
+	if (my helpButton) GuiObject_setSensitive (my helpButton, False);
 	XmUpdateDisplay (my dialog);
 	if (my okCallback (me, my okClosure)) {
 		int destroyWhenUnmanaged = my destroyWhenUnmanaged;   /* Save before destruction. */
@@ -587,11 +586,11 @@ static void UiForm_okOrApply (I, int hide) {
 		/*XtAddCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
 		Melder_flushError (NULL);
 	}
-	XtSetSensitive (my okButton, True);
-	if (my applyButton) XtSetSensitive (my applyButton, True);
-	XtSetSensitive (my cancelButton, True);
-	if (my useStandards) XtSetSensitive (my useStandards, True);
-	if (my helpButton) XtSetSensitive (my helpButton, True);
+	GuiObject_setSensitive (my okButton, True);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, True);
+	GuiObject_setSensitive (my cancelButton, True);
+	if (my useStandards) GuiObject_setSensitive (my useStandards, True);
+	if (my helpButton) GuiObject_setSensitive (my helpButton, True);
 }
 
 static void gui_button_UiForm_ok (I, GuiButtonEvent event) {
@@ -817,16 +816,7 @@ void UiForm_finish (I) {
 			textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
-	my shell = XmCreateDialogShell (my parent, "UiForm", NULL, 0);
-	XtVaSetValues (my shell, XmNx, DIALOG_X, XmNy, DIALOG_Y, XmNwidth, dialogWidth, XmNheight, dialogHeight, NULL);
-	my dialog = XmCreateBulletinBoard (my shell, Melder_peekWcsToUtf8 (my name), NULL, 0);
-	/* Catch Window Manager "Close". */
-	Atom atom = XmInternAtom (XtDisplay (my shell), "WM_DELETE_WINDOW", True);
-	XmAddWMProtocols (my shell, & atom, 1);
-	XmAddWMProtocolCallback (my shell, atom, UiForm_hide, (void *) me);
-	XtVaSetValues (XtParent (my dialog), XmNtitle, Melder_peekWcsToUtf8 (my name), XmNdeleteResponse, XmDO_NOTHING, NULL);
-	XtVaSetValues (my dialog, XmNautoUnmanage, False,
-		/*XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,*/ NULL);
+	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, UiForm_hide, me, 0);
 	for (long ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
@@ -915,7 +905,7 @@ void UiForm_finish (I) {
 					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 				}
-				XtManageChild (bar);
+				GuiObject_show (bar);
 			} break;
 			case UI_BOOLEAN:
 			{
@@ -928,13 +918,13 @@ void UiForm_finish (I) {
 			} break;
 			case UI_ENUM:
 			{
-				int max = enum_length (field -> enumerated), n = max + field -> includeZero, i;
+				int max = enum_length (field -> enumerated);
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
 				GuiLabel_createShown (my dialog, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> list = GuiList_create (my dialog, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false);
-				for (i = field -> includeZero ? 0 : 1; i <= max; i ++) {
+				for (int i = field -> includeZero ? 0 : 1; i <= max; i ++) {
 					GuiList_insertItem (field -> list, enum_string (field -> enumerated, i), 0);
 				}
 				GuiObject_show (field -> list);
@@ -981,7 +971,7 @@ void UiForm_finish (I) {
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
 	my okButton = GuiButton_createShown (my dialog, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"OK", gui_button_UiForm_ok, me, GuiButton_DEFAULT);
-	/*XtManageChild (separator);*/
+	/*GuiObject_show (separator);*/
 }
 
 void UiForm_destroyWhenUnmanaged (I) {
@@ -997,8 +987,7 @@ void UiForm_do (I, int modified) {
 	/*XtRemoveCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	/* This is the only place where this callback is installed. Moved from UiForm_close ppgb950613. */
 	/*XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
-	XtManageChild (my dialog);
-	XMapRaised (XtDisplay (my shell), XtWindow (my shell));
+	GuiDialog_show (my dialog);
 	if (modified)
 		gui_button_UiForm_ok (me, 0);   // BUG: should not send 0
 }
@@ -1078,7 +1067,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 	UiField field = findField (me, fieldName);
 	switch (field -> type) {
 		case UI_REAL: case UI_POSITIVE: {
-			if (value == Melder_atofW (field -> stringDefaultValue)) {
+			if (value == Melder_atof (field -> stringDefaultValue)) {
 				GuiText_setString (field -> text, field -> stringDefaultValue);
 			} else {
 				wchar_t s [40];

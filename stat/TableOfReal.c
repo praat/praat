@@ -1292,7 +1292,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 			while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
 			MelderString_empty (& buffer);
 			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
-			my data [irow] [icol] = Melder_atofW (buffer.string);   /* If cell contains a string, this will be 0. */
+			my data [irow] [icol] = Melder_atof (buffer.string);   /* If cell contains a string, this will be 0. */
 			MelderString_empty (& buffer);
 		}
 	}

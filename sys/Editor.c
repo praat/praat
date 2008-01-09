@@ -189,7 +189,7 @@ void Editor_setMenuSensitive (Any editor, const wchar_t *menuTitle, int sensitiv
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
-			XtSetSensitive (menu -> menuWidget, sensitive);
+			GuiObject_setSensitive (menu -> menuWidget, sensitive);
 			return;
 		}
 	}
@@ -456,8 +456,8 @@ class_methods (Editor, Thing) {
 	class_methods_end
 }
 
-static void gui_cb_goAway (GUI_ARGS) {
-	GUI_IAM (Editor);
+static void gui_window_cb_goAway (I) {
+	iam (Editor);
 	our goAway (me);
 }
 
@@ -489,24 +489,10 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 		bottom += Machine_getTitleBarHeight ();
 	#endif
 	my parent = parent;   /* Probably praat.topShell */
-	my shell = Gui_addShell (parent, 0);   /* Note that XtParent (my shell) will be NULL! */
-	if (! my shell) return 0;
-	#if ! defined (sun4)
-	{
-		/* Catch Window Manager "Close" and "Quit". */
-		Atom atom = XmInternAtom (XtDisplay (my shell), "WM_DELETE_WINDOW", True);
-		XmAddWMProtocols (my shell, & atom, 1);
-		XmAddWMProtocolCallback (my shell, atom, gui_cb_goAway, (void *) me);
-	}
-	#endif
-	XtVaSetValues (my shell, XmNdeleteResponse, XmDO_NOTHING,
-		XmNx, left, XmNy, top, XmNwidth, right - left, XmNheight, bottom - top, NULL);
-	/*if (width != 0) XtVaSetValues (my shell, XmNwidth, right - left, NULL);
-	if (height != 0) XtVaSetValues (my shell, XmNheight, bottom - top, NULL);*/
-	Thing_setName (me, title);
-	my dialog = XtVaCreateWidget ("editor", xmFormWidgetClass, my shell,
-		XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
+	my dialog = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, 0);
 	if (! my dialog) return 0;
+	my shell = GuiObject_parent (my dialog);   /* Note that GuiObject_parent (my shell) will be NULL! */
+	Thing_setName (me, title);
 	my data = data;
 
 	/* Create menus. */
@@ -529,10 +515,10 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	praat_addCommandsToEditor (me);
 
 	Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
-	XtManageChild (my menuBar);
+	GuiObject_show (my menuBar);
 
 	our createChildren (me);
-	XtManageChild (my dialog);
+	GuiObject_show (my dialog);
 	XtRealizeWidget (my shell);
 	return 1;
 }
@@ -588,7 +574,7 @@ void Editor_save (I, const wchar_t *text) {
 	iam (Editor);
 	our save (me);
 	if (! my undoButton) return;
-	XtSetSensitive (my undoButton, True);
+	GuiObject_setSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
 	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
 }

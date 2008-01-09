@@ -868,25 +868,6 @@ static void gui_cb_scroll (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_resize (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
-	Dimension width, height, marginWidth = 10, marginHeight = 10, shellWidth, shellHeight;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	Graphics_setWsViewport (my graphics, marginWidth, width - marginWidth, marginHeight, height - marginHeight);
-	my width = width - marginWidth - marginWidth + 111;
-	my height = height - marginHeight - marginHeight + 111;
-	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
-	Graphics_setViewport (my graphics, 0, my width, 0, my height);
-	Graphics_updateWs (my graphics);
-
-	/* Save the current shell size as the user's preference for a new FunctionEditor. */
-
-	XtVaGetValues (my shell, XmNwidth, & shellWidth, XmNheight, & shellHeight, NULL);
-	preferences.shellWidth = shellWidth;
-	preferences.shellHeight = shellHeight;
-}
-
 static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 	iam (FunctionEditor);
 	(void) event;
@@ -1018,6 +999,95 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Help", L"Intro", 0, menu_cb_intro);
 }
 
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (FunctionEditor);
+	(void) event;
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	if (my enableUpdates)
+		drawNow (me);
+}
+
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (FunctionEditor);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	double xWC, yWC;
+	my shiftKeyPressed = event -> shiftKeyPressed;
+	Graphics_setWindow (my graphics, 0, my width, 0, my height);
+	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
+
+	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   /* In signal region? */
+		int needsUpdate;
+		Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
+			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
+		Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
+		if (xWC < my startWindow) xWC = my startWindow;
+		if (xWC > my endWindow) xWC = my endWindow;
+#if defined (macintosh)
+		needsUpdate =
+			event -> optionKeyPressed || event -> extraControlKeyPressed ? our clickB (me, xWC, yWC) :
+			event -> commandKeyPressed ? our clickE (me, xWC, yWC) :
+			our click (me, xWC, yWC, my shiftKeyPressed);
+#elif defined (_WIN32)
+		needsUpdate =
+			event -> commandKeyPressed ? our clickB (me, xWC, yWC) :
+			event -> optionKeyPressed ? our clickE (me, xWC, yWC) :
+			our click (me, xWC, yWC, my shiftKeyPressed);
+#else
+		needsUpdate =
+			event -> commandKeyPressed ? our clickB (me, xWC, yWC) :
+			event -> optionKeyPressed || event -> extraControlKeyPressed ? our clickE (me, xWC, yWC) :
+			event -> button == 1 ? our click (me, xWC, yWC, my shiftKeyPressed) :
+			event -> button == 2 ? our clickB (me, xWC, yWC) : our clickE (me, xWC, yWC);
+#endif
+		if (needsUpdate) our updateText (me);
+		Graphics_setViewport (my graphics, 0, my width, 0, my height);
+		if (needsUpdate) /*Graphics_updateWs (my graphics);*/ drawNow (me);
+		if (needsUpdate) updateGroup (me);
+	}
+	else   /* Clicked outside signal region? Let us hear it. */
+	{
+		int i;
+		for (i = 0; i < 8; i ++)
+			if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
+				 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
+				switch (i) {
+					case 0: our play (me, my tmin, my tmax); break;
+					case 1: our play (me, my startWindow, my endWindow); break;
+					case 2: our play (me, my tmin, my startWindow); break;
+					case 3: our play (me, my endWindow, my tmax); break;
+					case 4: our play (me, my startWindow, my marker [1]); break;
+					case 5: our play (me, my marker [1], my marker [2]); break;
+					case 6: our play (me, my marker [2], my marker [3]); break;
+					case 7: our play (me, my startSelection, my endSelection); break;
+				}
+	}
+}
+
+static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
+	iam (FunctionEditor);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	our key (me, event -> key);
+}
+
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (FunctionEditor);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	Dimension marginWidth = 10, marginHeight = 10;
+	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	my width = event -> width - marginWidth - marginWidth + 111;
+	my height = event -> height - marginHeight - marginHeight + 111;
+	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
+	Graphics_setViewport (my graphics, 0, my width, 0, my height);
+	Graphics_updateWs (my graphics);
+
+	/* Save the current shell size as the user's preference for a new FunctionEditor. */
+
+	preferences.shellWidth = GuiObject_getWidth (my shell);
+	preferences.shellHeight = GuiObject_getHeight (my shell);
+}
+
 static void createChildren (I) {
 	iam (FunctionEditor);
 	Widget form;
@@ -1067,13 +1137,8 @@ static void createChildren (I) {
 
 	/***** Create drawing area. *****/
 
-	my drawingArea = XmCreateDrawingArea (form, "drawingArea", NULL, 0);
-	XtVaSetValues (my drawingArea,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, our hasText ? TEXT_HEIGHT : 0,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth () + 9,
-		NULL);
-	XtManageChild (my drawingArea);
+	my drawingArea = GuiDrawingArea_createShown (form, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
 
 	/***** Create optional text field. *****/
 
@@ -1092,7 +1157,7 @@ static void createChildren (I) {
 		#endif
 	}
 
-	XtManageChild (form);
+	GuiObject_show (form);
 }
 
 static void dataChanged (I) {
@@ -1489,101 +1554,6 @@ class_methods (FunctionEditor, Editor) {
 	class_methods_end
 }
 
-static void gui_cb_draw (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
-#ifdef UNIX
-	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
-#endif
-	if (my enableUpdates)
-		drawNow (me);
-}
-
-static void do_buttonPress (FunctionEditor me, GuiEvent event) {
-	double xWC, yWC;
-	#ifdef UNIX
-		int leftHanded = FALSE;
-		unsigned char map [4];
-		XGetPointerMapping (XtDisplay (my shell), map, 3);
-		if (map [0] == 3) leftHanded = TRUE;
-	#endif
-	my shiftKeyPressed = GuiEvent_shiftKeyPressed (event);
-	Graphics_setWindow (my graphics, 0, my width, 0, my height);
-	Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
-
-	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   /* In signal region? */
-		int needsUpdate;
-		Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
-			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
-		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
-		if (xWC < my startWindow) xWC = my startWindow;
-		if (xWC > my endWindow) xWC = my endWindow;
-#if defined (macintosh)
-		needsUpdate =
-			! (event -> modifiers & (optionKey | cmdKey | controlKey)) ?
-				our click (me, xWC, yWC, my shiftKeyPressed) :
-			event -> modifiers & (optionKey | controlKey) ?
-				our clickB (me, xWC, yWC) :
-			/* Command key. */
-				our clickE (me, xWC, yWC);
-#elif defined (_WIN32)
-		needsUpdate = our click (me, xWC, yWC, my shiftKeyPressed);
-#else
-		needsUpdate =
-			((XButtonPressedEvent *) event) -> button == Button1   /* Left button? */ ?
-				our click (me, xWC, yWC, my shiftKeyPressed) :
-			((XButtonPressedEvent *) event) -> button == (leftHanded ? Button3 : Button2)   /* Middle button? */ ?
-				our clickB (me, xWC, yWC) :
-			/* Right button. */
-				our clickE (me, xWC, yWC);
-#endif
-		if (needsUpdate) our updateText (me);
-		Graphics_setViewport (my graphics, 0, my width, 0, my height);
-		if (needsUpdate) /*Graphics_updateWs (my graphics);*/ drawNow (me);
-		if (needsUpdate) updateGroup (me);
-	}
-	else   /* Clicked outside signal region? Let us hear it. */
-	{
-		int i;
-		for (i = 0; i < 8; i ++)
-			if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
-				 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
-				switch (i) {
-					case 0: our play (me, my tmin, my tmax); break;
-					case 1: our play (me, my startWindow, my endWindow); break;
-					case 2: our play (me, my tmin, my startWindow); break;
-					case 3: our play (me, my endWindow, my tmax); break;
-					case 4: our play (me, my startWindow, my marker [1]); break;
-					case 5: our play (me, my marker [1], my marker [2]); break;
-					case 6: our play (me, my marker [2], my marker [3]); break;
-					case 7: our play (me, my startSelection, my endSelection); break;
-				}
-	}
-}
-
-static void do_keyPress (FunctionEditor me, GuiEvent event)
-{
-#if defined (macintosh)
-	enum { charCodeMask = 0x000000FF };
-	unsigned char key = event -> message & charCodeMask;
-#elif defined (_WIN32)
-	char key = event -> key;
-#else
-	char key;
-	XLookupString (& event -> xkey, & key, 1, NULL, NULL);
-#endif
-	our key (me, key);
-}
-
-static void gui_cb_input (GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
-	GuiEvent event = GuiEvent_fromCallData (call);
-	if (GuiEvent_isButtonPressedEvent (event))
-		do_buttonPress (me, event);
-	else if (GuiEvent_isKeyPressedEvent (event))
-		do_keyPress (me, event);
-}
-
 int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (FunctionEditor);
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
@@ -1596,12 +1566,12 @@ int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	Melder_assert (XtWindow (my drawingArea));
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 Graphics_setFontSize (my graphics, 10);
-gui_cb_resize (my drawingArea, (XtPointer) me, 0);
 
-	/* Callbacks only now that "graphics" exists. */   
-	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
+struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+event. width = GuiObject_getWidth (my drawingArea);
+event. height = GuiObject_getHeight (my drawingArea);
+gui_drawingarea_cb_resize (me, & event);
+
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	our updateText (me);

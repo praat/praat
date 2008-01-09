@@ -27,7 +27,7 @@
 #include "melder.h"
 #include "NUM.h"
 
-static const wchar_t *findEndOfNumericStringW (const wchar_t *string) {
+static const wchar_t *findEndOfNumericString (const wchar_t *string) {
 	const wchar_t *p = & string [0];
 	/*
 	 * Leading white space is OK.
@@ -88,9 +88,9 @@ static const wchar_t *findEndOfNumericStringW (const wchar_t *string) {
 	return p;
 }
 
-int Melder_isStringNumericW (const wchar_t *string) {
+int Melder_isStringNumeric (const wchar_t *string) {
 	if (string == NULL) return false;
-	const wchar_t *p = findEndOfNumericStringW (string);
+	const wchar_t *p = findEndOfNumericString (string);
 	if (p == NULL) return FALSE;
 	/*
 	 * We accept only white space after the numeric string.
@@ -100,12 +100,17 @@ int Melder_isStringNumericW (const wchar_t *string) {
 	return *p == '\0';
 }
 
-double Melder_atofW (const wchar_t *string) {
+double Melder_atof (const wchar_t *string) {
 	if (string == NULL) return NUMundefined;
-	const wchar_t *p = findEndOfNumericStringW (string);
+	const wchar_t *p = findEndOfNumericString (string);
 	if (p == NULL) return NUMundefined;
 	Melder_assert (p - string > 0);
-	return p [-1] == '%' ? 0.01 * wcstod (string, NULL) : wcstod (string, NULL);
+	#if defined (macintosh)
+		/* strtod may be 100 times faster than wcstod: */
+		return p [-1] == '%' ? 0.01 * strtod (Melder_peekWcsToUtf8 (string), NULL) : strtod (Melder_peekWcsToUtf8 (string), NULL);
+	#else
+		return p [-1] == '%' ? 0.01 * wcstod (string, NULL) : wcstod (string, NULL);
+	#endif
 }
 
 /* End of file melder_atof.c */

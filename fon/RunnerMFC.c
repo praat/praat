@@ -76,14 +76,13 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 	Graphics_text (my graphics, 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
-static void gui_cb_draw (GUI_ARGS) {
-	GUI_IAM (RunnerMFC);
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (RunnerMFC);
+	Melder_assert (event -> widget == my drawingArea);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = my data;
 	long iresponse;
 	if (my data == NULL) return;
-	#ifdef UNIX
-		if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
-	#endif
 	Graphics_setGrey (my graphics, 0.8);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setGrey (my graphics, 0.0);
@@ -187,14 +186,14 @@ static void gui_cb_draw (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_resize (GUI_ARGS) {
-	GUI_IAM (RunnerMFC);
-	Dimension width, height, marginWidth = 10, marginHeight = 10;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	Graphics_setWsViewport (my graphics, marginWidth, width - marginWidth, marginHeight, height - marginHeight);
-	width = width - marginWidth - marginWidth;
-	height = height - marginHeight - marginHeight;
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (RunnerMFC);
+	if (my graphics == NULL) return;
+	Dimension marginWidth = 10, marginHeight = 10;
+	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	long width = event -> width - marginWidth - marginWidth;
+	long height = event -> height - marginHeight - marginHeight;
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
 	Graphics_updateWs (my graphics);
@@ -252,138 +251,131 @@ static void do_replay (RunnerMFC me) {
 	}
 }
 
-static void gui_cb_input (GUI_ARGS) {
-	GUI_IAM (RunnerMFC);
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (RunnerMFC);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = my data;
-	GuiEvent event = GuiEvent_fromCallData (call);
 	if (my data == NULL) return;
-	if (GuiEvent_isButtonPressedEvent (event)) {
-		double x, y;
-		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & x, & y);
-		if (experiment -> trial == 0) {   /* The first click of the experiment. */
+	double x, y;
+	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
+	if (experiment -> trial == 0) {   /* The first click of the experiment. */
+		experiment -> trial ++;
+		Editor_broadcastChange (me);
+		Graphics_updateWs (my graphics);
+		if (experiment -> stimuliAreSounds) {
+			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);
+		}
+	} else if (experiment -> pausing) {   /* A click to leave the break. */
+		if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
+		{
+			do_oops (me);
+		} else {
+			experiment -> pausing = FALSE;
 			experiment -> trial ++;
 			Editor_broadcastChange (me);
 			Graphics_updateWs (my graphics);
 			if (experiment -> stimuliAreSounds) {
-				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);
+				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
-		} else if (experiment -> pausing) {   /* A click to leave the break. */
-			if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			    y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
-			{
-				do_oops (me);
-			} else {
-				experiment -> pausing = FALSE;
-				experiment -> trial ++;
-				Editor_broadcastChange (me);
-				Graphics_updateWs (my graphics);
-				if (experiment -> stimuliAreSounds) {
-					ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
-				}
-			}
-		} else if (experiment -> trial <= experiment -> numberOfTrials) {
-			long iresponse;
-			if (x > experiment -> ok_left && x < experiment -> ok_right &&
-			    y > experiment -> ok_bottom && y < experiment -> ok_top &&
-			    experiment -> responses [experiment -> trial] != 0 &&
-			    (experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
-			{
-				do_ok (me);
-			} else if (x > experiment -> replay_left && x < experiment -> replay_right &&
-			    y > experiment -> replay_bottom && y < experiment -> replay_top && my numberOfReplays < experiment -> maximumNumberOfReplays)
-			{
-				do_replay (me);
-			} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			    y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
-			{
-				do_oops (me);
-			} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-				for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-					ResponseMFC response = & experiment -> response [iresponse];
-					if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
-						experiment -> responses [experiment -> trial] = iresponse;
-						if (experiment -> responsesAreSounds) {
-							ExperimentMFC_playResponse (experiment, iresponse);
-						}
-						if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
-							do_ok (me);
-						} else {
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-						}
+		}
+	} else if (experiment -> trial <= experiment -> numberOfTrials) {
+		long iresponse;
+		if (x > experiment -> ok_left && x < experiment -> ok_right &&
+			y > experiment -> ok_bottom && y < experiment -> ok_top &&
+			experiment -> responses [experiment -> trial] != 0 &&
+			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+		{
+			do_ok (me);
+		} else if (x > experiment -> replay_left && x < experiment -> replay_right &&
+			y > experiment -> replay_bottom && y < experiment -> replay_top && my numberOfReplays < experiment -> maximumNumberOfReplays)
+		{
+			do_replay (me);
+		} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
+		{
+			do_oops (me);
+		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
+			for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+				ResponseMFC response = & experiment -> response [iresponse];
+				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
+					experiment -> responses [experiment -> trial] = iresponse;
+					if (experiment -> responsesAreSounds) {
+						ExperimentMFC_playResponse (experiment, iresponse);
+					}
+					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+						do_ok (me);
+					} else {
+						Editor_broadcastChange (me);
+						Graphics_updateWs (my graphics);
 					}
 				}
-				if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-					for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-						GoodnessMFC cat = & experiment -> goodness [iresponse];
-						if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
-							experiment -> goodnesses [experiment -> trial] = iresponse;
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-						}
-					}
-				}
-			} else if (experiment -> responses [experiment -> trial] != 0) {
-				Melder_assert (experiment -> ok_right <= experiment -> ok_left);
+			}
+			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
 				for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
-						do_ok (me);
+						Editor_broadcastChange (me);
+						Graphics_updateWs (my graphics);
 					}
 				}
 			}
-		} else {
-			if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			    y > experiment -> oops_bottom && y < experiment -> oops_top)
-			{
-				do_oops (me);
-				return;
-			}
-			if (my iexperiment < my experiments -> size) {
-				my iexperiment ++;
-				RunnerMFC_startExperiment (me);
+		} else if (experiment -> responses [experiment -> trial] != 0) {
+			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
+			for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+				GoodnessMFC cat = & experiment -> goodness [iresponse];
+				if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
+					experiment -> goodnesses [experiment -> trial] = iresponse;
+					do_ok (me);
+				}
 			}
 		}
-	} else if (GuiEvent_isKeyPressedEvent (event)) {
-		#if defined (macintosh)
-			enum { charCodeMask = 0x000000FF };
-			unsigned char key = event -> message & charCodeMask;
-		#elif defined (_WIN32)
-			char key = event -> key;
-		#else
-			char key;
-			XLookupString (& event -> xkey, & key, 1, NULL, NULL);
-		#endif
-		if (experiment -> trial == 0) {
-		} else if (experiment -> pausing) {
-		} else if (experiment -> trial <= experiment -> numberOfTrials) {
-			double x, y;
-			ExperimentMFC experiment = my data;
-			long iresponse;
-			Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & x, & y);
-			if (experiment -> ok_key != NULL && experiment -> ok_key [0] == key) {
-				do_ok (me);
-			} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == key &&
-			    my numberOfReplays < experiment -> maximumNumberOfReplays)
-			{
-				do_replay (me);
-			} else if (experiment -> oops_key != NULL && experiment -> oops_key [0] == key) {
-				do_oops (me);
-			} else if (experiment -> responses [experiment -> trial] == 0) {
-				for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-					ResponseMFC response = & experiment -> response [iresponse];
-					if (response -> key != NULL && response -> key [0] == key) {
-						experiment -> responses [experiment -> trial] = iresponse;
-						if (experiment -> responsesAreSounds) {
-							ExperimentMFC_playResponse (experiment, iresponse);
-						}
-						if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
-							do_ok (me);
-						} else {
-							Editor_broadcastChange (me);
-							Graphics_updateWs (my graphics);
-						}
+	} else {
+		if (x > experiment -> oops_left && x < experiment -> oops_right &&
+			y > experiment -> oops_bottom && y < experiment -> oops_top)
+		{
+			do_oops (me);
+			return;
+		}
+		if (my iexperiment < my experiments -> size) {
+			my iexperiment ++;
+			RunnerMFC_startExperiment (me);
+		}
+	}
+}
+
+static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
+	iam (RunnerMFC);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	ExperimentMFC experiment = my data;
+	if (my data == NULL) return;
+	if (experiment -> trial == 0) {
+	} else if (experiment -> pausing) {
+	} else if (experiment -> trial <= experiment -> numberOfTrials) {
+		ExperimentMFC experiment = my data;
+		long iresponse;
+		if (experiment -> ok_key != NULL && experiment -> ok_key [0] == event -> key) {
+			do_ok (me);
+		} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == event -> key &&
+			my numberOfReplays < experiment -> maximumNumberOfReplays)
+		{
+			do_replay (me);
+		} else if (experiment -> oops_key != NULL && experiment -> oops_key [0] == event -> key) {
+			do_oops (me);
+		} else if (experiment -> responses [experiment -> trial] == 0) {
+			for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+				ResponseMFC response = & experiment -> response [iresponse];
+				if (response -> key != NULL && response -> key [0] == event -> key) {
+					experiment -> responses [experiment -> trial] = iresponse;
+					if (experiment -> responsesAreSounds) {
+						ExperimentMFC_playResponse (experiment, iresponse);
+					}
+					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+						do_ok (me);
+					} else {
+						Editor_broadcastChange (me);
+						Graphics_updateWs (my graphics);
 					}
 				}
 			}
@@ -393,13 +385,8 @@ static void gui_cb_input (GUI_ARGS) {
 
 static void createChildren (I) {
 	iam (RunnerMFC);
-	my drawingArea = XmCreateDrawingArea (my dialog, "drawingArea", NULL, 0);
-	XtVaSetValues (my drawingArea,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-		XmNbottomAttachment, XmATTACH_FORM,
-		NULL);
-	XtManageChild (my drawingArea);
+	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
 }
 
 class_methods (RunnerMFC, Editor)
@@ -415,10 +402,12 @@ RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experim
 	if (! me || ! Editor_init (me, parent, 0, 0, 2000, 2000, title, NULL)) { forget (me); return 0; }
 	my experiments = experiments;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNresizeCallback, gui_cb_resize, (XtPointer) me);
-gui_cb_resize (my drawingArea, (XtPointer) me, 0);
+
+struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+event. width = GuiObject_getWidth (my drawingArea);
+event. height = GuiObject_getHeight (my drawingArea);
+gui_drawingarea_cb_resize (me, & event);
+
 	my iexperiment = 1;
 	if (! RunnerMFC_startExperiment (me)) { forget (me); return NULL; }
 	return me;

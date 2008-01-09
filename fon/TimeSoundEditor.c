@@ -410,17 +410,17 @@ static void updateMenuItems_file (I) {
 	if (sound == NULL) return;
 	long first, last, selectedSamples = Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
 	if (my drawButton) {
-		XtSetSensitive (my drawButton, selectedSamples != 0);
-		XtSetSensitive (my publishButton, selectedSamples != 0);
-		XtSetSensitive (my publishPreserveButton, selectedSamples != 0);
-		if (my publishWindowButton) XtSetSensitive (my publishWindowButton, selectedSamples != 0);
+		GuiObject_setSensitive (my drawButton, selectedSamples != 0);
+		GuiObject_setSensitive (my publishButton, selectedSamples != 0);
+		GuiObject_setSensitive (my publishPreserveButton, selectedSamples != 0);
+		if (my publishWindowButton) GuiObject_setSensitive (my publishWindowButton, selectedSamples != 0);
 	}
-	XtSetSensitive (my writeWavButton, selectedSamples != 0);
-	XtSetSensitive (my writeAiffButton, selectedSamples != 0);
-	XtSetSensitive (my writeAifcButton, selectedSamples != 0);
-	XtSetSensitive (my writeNextSunButton, selectedSamples != 0);
-	XtSetSensitive (my writeNistButton, selectedSamples != 0);
-	XtSetSensitive (my writeFlacButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeWavButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeAiffButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeAifcButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeNextSunButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeNistButton, selectedSamples != 0);
+	GuiObject_setSensitive (my writeFlacButton, selectedSamples != 0);
 }
 
 void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum) {

@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2007 Paul Boersma
+ * Copyright (C) 2002-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/11/17
+ * pb 2008/01/02
  */
 
 #ifndef _Collection_h_
@@ -85,6 +85,7 @@ double Table_getMaximum_e (Table me, long icol);
 double Table_getMinimum_e (Table me, long icol);
 double Table_getGroupMean (Table me, long column, long groupColumn, const wchar_t *group);
 double Table_getStdev_e (Table me, long column);
+long Table_drawRowFromDistribution (Table me, long column);
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getCorrelation_kendallTau (Table me, long column1, long column2, double significanceLevel,

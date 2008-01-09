@@ -125,10 +125,9 @@ void _GuiObject_setUserData (Widget me, void *userData);
 				struct { XtCallbackList moveCallbacks; } drawingArea;
 				struct { int active, isDialog;
 					unsigned long lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
-				struct { Widget okButton, cancelButton, helpButton; XtCallbackList okCallbacks, cancelCallbacks, helpCallbacks; } messageBox;
 				struct { unsigned char acceleratorChar; int acceleratorModifiers; } pushButton;
 				struct { int inBar; } cascadeButton;
-				struct { int indicatorType; XtCallbackList valueChangedCallbacks; } toggleButton;
+				struct { XtCallbackList valueChangedCallbacks; } toggleButton;
 				struct { XtCallbackList valueChangedCallbacks, dragCallbacks; } scrollBar;
 			} motiff;
 
@@ -140,15 +139,14 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			int orientation;   /* For row-columns and scroll bars. */
 			Widget defaultButton, cancelButton;   /* For forms and shells. */
 			int dialogStyle;   /* For forms and shells. */
-			int dialogType;   /* For message boxes and shells. */
 			Widget messageText;   /* For message boxes. */
 			bool autoUnmanage;   /* For bulletin boards. */
 			Widget subMenuId, popUpButton;   /* For cascade buttons and their menus. */
 			long increment, pageIncrement, sliderSize;   /* For scroll bars. */
 			long minimum, maximum, value;   /* For scales and scroll bars. */
 
-			XtCallbackProc activateCallback, destroyCallback, exposeCallback, inputCallback, resizeCallback;
-			XtPointer activateClosure, destroyClosure, exposeClosure, inputClosure, resizeClosure;
+			XtCallbackProc activateCallback, destroyCallback;
+			XtPointer activateClosure, destroyClosure;
 			int leftAttachment, rightAttachment, topAttachment, bottomAttachment;
 			int leftOffset, rightOffset, topOffset, bottomOffset;
 			int leftPosition, rightPosition, topPosition, bottomPosition;
@@ -173,6 +171,8 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			void _GuiMac_clipOnParent (Widget me);
 			void _GuiMac_clipOffValid (Widget me);
 			void _GuiMac_clipOffInvalid (Widget me);
+		#elif win
+			wchar_t * _GuiWin_getDrawingAreaClassName (void);
 		#endif
 		Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name);
 		void _Gui_invalidateWidget (Widget me);
@@ -203,6 +203,20 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			void _GuiWinCheckButton_handleClick (Widget widget);
 		#elif mac
 			void _GuiMacCheckButton_handleClick (Widget widget, EventRecord *macEvent);
+		#endif
+
+		/********** GuiDrawingArea.c **********/
+		void _GuiWinMacDrawingArea_destroy (Widget widget);
+		#if win
+			void _GuiWinDrawingArea_update (Widget widget);
+			void _GuiWinDrawingArea_handleClick (Widget widget, int x, int y);
+			void _GuiWinDrawingArea_handleKey (Widget widget, TCHAR kar);
+			void _GuiWinDrawingArea_shellResize (Widget widget);
+		#elif mac
+			void _GuiMacDrawingArea_update (Widget widget);
+			void _GuiMacDrawingArea_handleClick (Widget widget, EventRecord *macEvent);
+			bool _GuiMacDrawingArea_tryToHandleKey (Widget widget, EventRecord *macEvent);
+			void _GuiMacDrawingArea_shellResize (Widget widget);
 		#endif
 
 		/********** GuiLabel.c **********/

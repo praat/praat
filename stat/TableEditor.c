@@ -119,100 +119,6 @@ static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
 	return 1;
 }
 
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	iam (TableEditor);
-	(void) event;
-	Table table = my data;
-	Editor_broadcastChange (me);
-}
-
-static void createChildren (I) {
-	iam (TableEditor);
-	Table table = my data;
-	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
-
-	form = XmCreateForm (my dialog, "buttons", NULL, 0);
-	XtVaSetValues (form,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-		XmNbottomAttachment, XmATTACH_FORM,
-		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
-		NULL);
-
-	/***** Create text field. *****/
-
-	my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
-	#ifdef UNIX
-		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
-	#endif
-	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
-
-	/***** Create drawing area. *****/
-
-	my drawingArea = XmCreateDrawingArea (form, "drawingArea", NULL, 0);
-	XtVaSetValues (my drawingArea,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
-		NULL);
-	XtManageChild (my drawingArea);
-
-	/***** Create horizontal scroll bar. *****/
-
-	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
-		xmScrollBarWidgetClass, form,
-		XmNorientation, XmHORIZONTAL,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
-		XmNbottomAttachment, XmATTACH_FORM,
-		XmNheight, Machine_getScrollBarWidth (),
-		XmNminimum, 1,
-		XmNmaximum, table -> numberOfColumns + 1,
-		XmNvalue, 1,
-		XmNsliderSize, 1,
-		XmNincrement, 1,
-		XmNpageIncrement, 3,
-		NULL);
-
-	/***** Create vertical scroll bar. *****/
-
-	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
-		xmScrollBarWidgetClass, form,
-		XmNorientation, XmVERTICAL,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
-		XmNwidth, Machine_getScrollBarWidth (),
-		XmNminimum, 1,
-		XmNmaximum, table -> rows -> size + 1,
-		XmNvalue, 1,
-		XmNsliderSize, 1,
-		XmNincrement, 1,
-		XmNpageIncrement, 10,
-		NULL);
-
-	XtManageChild (form);
-}
-
-static void createMenus (I) {
-	iam (TableEditor);
-	inherited (TableEditor) createMenus (me);
-
-	#ifndef macintosh
-	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
-	#endif
-	Editor_addCommand (me, L"Help", L"TableEditor help", '?', menu_cb_TableEditorHelp);
-}
-
 /********** DRAWING AREA **********/
 
 static void draw (I) {
@@ -304,6 +210,109 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 	return 1;
 }
 
+static void gui_text_cb_change (I, GuiTextEvent event) {
+	iam (TableEditor);
+	(void) event;
+	Table table = my data;
+	Editor_broadcastChange (me);
+}
+
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	iam (TableEditor);
+	(void) event;
+	if (my graphics == NULL) return;
+	draw (me);
+}
+
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	iam (TableEditor);
+	if (my graphics == NULL) return;
+	double xWC, yWC;
+	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
+	// TODO: implement selection
+}
+
+static void createChildren (I) {
+	iam (TableEditor);
+	Table table = my data;
+	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
+
+	form = XmCreateForm (my dialog, "buttons", NULL, 0);
+	XtVaSetValues (form,
+		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
+		XmNbottomAttachment, XmATTACH_FORM,
+		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
+		NULL);
+
+	/***** Create text field. *****/
+
+	my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
+	#ifdef UNIX
+		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
+	#endif
+	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
+
+	/***** Create drawing area. *****/
+
+	my drawingArea = GuiDrawingArea_createShown (form, 0, - Machine_getScrollBarWidth (), Machine_getTextHeight (), - Machine_getScrollBarWidth (),
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, me, 0);
+
+	/***** Create horizontal scroll bar. *****/
+
+	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
+		xmScrollBarWidgetClass, form,
+		XmNorientation, XmHORIZONTAL,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
+		XmNbottomAttachment, XmATTACH_FORM,
+		XmNheight, Machine_getScrollBarWidth (),
+		XmNminimum, 1,
+		XmNmaximum, table -> numberOfColumns + 1,
+		XmNvalue, 1,
+		XmNsliderSize, 1,
+		XmNincrement, 1,
+		XmNpageIncrement, 3,
+		NULL);
+
+	/***** Create vertical scroll bar. *****/
+
+	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
+		xmScrollBarWidgetClass, form,
+		XmNorientation, XmVERTICAL,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
+		XmNwidth, Machine_getScrollBarWidth (),
+		XmNminimum, 1,
+		XmNmaximum, table -> rows -> size + 1,
+		XmNvalue, 1,
+		XmNsliderSize, 1,
+		XmNincrement, 1,
+		XmNpageIncrement, 10,
+		NULL);
+
+	GuiObject_show (form);
+}
+
+static void createMenus (I) {
+	iam (TableEditor);
+	inherited (TableEditor) createMenus (me);
+
+	#ifndef macintosh
+	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
+	Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
+	Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
+	Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
+	Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
+	Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
+	Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
+	Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
+	#endif
+	Editor_addCommand (me, L"Help", L"TableEditor help", '?', menu_cb_TableEditorHelp);
+}
+
 class_methods (TableEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
@@ -329,24 +338,6 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 	our draw (me);
 }
 
-static void gui_cb_draw (GUI_ARGS) {
-	GUI_IAM (TableEditor);
-#ifdef UNIX
-	if (((XmDrawingAreaCallbackStruct *) call) -> event -> xexpose. count) return;
-#endif
-	draw (me);
-}
-
-static void gui_cb_input (GUI_ARGS) {
-	GUI_IAM (TableEditor);
-	GuiEvent event = GuiEvent_fromCallData (call);
-	int shiftKeyPressed = GuiEvent_shiftKeyPressed (event);
-	double xWC, yWC;
-	if (GuiEvent_isButtonPressedEvent (event)) {
-		Graphics_DCtoWC (my graphics, GuiEvent_x (event), GuiEvent_y (event), & xWC, & yWC);
-	}
-}
-
 TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
 	Editor_init (me, parent, 0, 0, 700, 500, title, table); cherror
@@ -365,8 +356,6 @@ TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table
 	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 	Graphics_setAtSignIsLink (my graphics, TRUE);
 
-	XtAddCallback (my drawingArea, XmNexposeCallback, gui_cb_draw, (XtPointer) me);
-	XtAddCallback (my drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) me);
 	XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, gui_cb_horizontalScroll, (XtPointer) me);
 	XtAddCallback (my horizontalScrollBar, XmNdragCallback, gui_cb_horizontalScroll, (XtPointer) me);
 	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);

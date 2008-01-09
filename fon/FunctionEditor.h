@@ -169,7 +169,7 @@ int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data);
 		my scrollBar only to the bottom, left and right sides.
 		The other members are 0.0 or NULL.
 		The inheritor should call
-			'XtManageChild (my dialog); XtManageChild (my shell);'
+			'GuiObject_show (my dialog); GuiObject_show (my shell);'
 			before calling FunctionEditor_open (me).
 */ 
 

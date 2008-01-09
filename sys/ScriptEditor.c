@@ -290,6 +290,16 @@ ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const w
 }
 
 ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script) {
+	if (theScriptEditors) {
+		for (long ieditor = 1; ieditor <= theScriptEditors -> size; ieditor ++) {
+			TextEditor editor = theScriptEditors -> item [ieditor];
+			if (MelderFile_equal (& script -> file, & editor -> file)) {
+				Editor_raise (editor);
+				Melder_error3 (L"Script ", MelderFile_messageNameW (& script -> file), L" is already open.");
+				return NULL;
+			}
+		}
+	}
 	ScriptEditor me;
 	wchar_t *text = MelderFile_readText (& script -> file);
 	if (! text) return NULL;

@@ -607,9 +607,9 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 	Melder_assert (type != 0);
 	wcscpy (parameter, in_parameter);
 	if (type >= Interpreter_REAL && type <= Interpreter_BOOLEAN) {
-		Interpreter_addNumericVariable (me, parameter, wcstod (my arguments [ipar], NULL));
+		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar]));
 	} else if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
-		Interpreter_addNumericVariable (me, parameter, wcstod (my arguments [ipar], NULL));
+		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar]));
 		wcscat (parameter, L"$");
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
@@ -1351,7 +1351,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 							value = theCurrentPraat -> list [result]. id;
 						}
 					} else {
-						value = Melder_atofW (valueString.string);   /* Including --undefined-- */
+						value = Melder_atof (valueString.string);   /* Including --undefined-- */
 					}
 					Melder_divertInfo (NULL); cherror
 				} else {
@@ -1437,7 +1437,7 @@ end2:
 int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *result) {
 	Melder_assert (result != NULL);
 	if (wcsstr (expression, L"(=")) {
-		*result = Melder_atofW (expression);
+		*result = Melder_atof (expression);
 	} else {
 		Formula_compile (me, NULL, expression, 0, FALSE); cherror
 		Formula_run (0, 0, result, NULL); cherror

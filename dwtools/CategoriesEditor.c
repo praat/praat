@@ -568,13 +568,6 @@ static void update (I, long from, long to, const long *select, long nSelect)
 
 		if (! (table = Melder_malloc (const wchar_t *, to - from + 1))) return;
 		itemCount = GuiList_getNumberOfItems (my list);
-		/*for (k = 0, i = from; i <= to; i++)
-		{
-			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
-			swprintf (itemText, CategoriesEditor_TEXTMAXLENGTH+10, L"%6d     %.*ls", i, CategoriesEditor_TEXTMAXLENGTH,
-				OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
-		}*/
 		for (k = 0, i = from; i <= to; i++)
 		{
 			MelderString_empty (&itemText);
@@ -861,7 +854,7 @@ static void createChildren (I)
 	*/
 
 	#ifndef _WIN32
-		XtVaGetValues (XtParent (my list), XmNverticalScrollBar, & vertScrollBar, NULL);
+		XtVaGetValues (GuiObject_parent (my list), XmNverticalScrollBar, & vertScrollBar, NULL);
 		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll, 
 			(XtPointer) me);
 		XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);

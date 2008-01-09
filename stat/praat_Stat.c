@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/11/18
+ * pb 2008/01/02
  */
 
 #include "praat.h"
@@ -365,6 +365,17 @@ DO
 	}
 	praat_picture_close ();
 	return 1;
+end:
+END
+
+FORM (Table_drawRowFromDistribution, L"Table: Draw row from distribution", 0)
+	WORD (L"Column with distribution", L"")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); cherror
+	long row = Table_drawRowFromDistribution (me, icol); cherror
+	Melder_information1 (Melder_integer (row));
 end:
 END
 
@@ -1609,6 +1620,8 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classTable, 0, L"Analyse -      ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"To linear regression", 0, 1, DO_Table_to_LinearRegression);
 		praat_addAction1 (classTable, 0, L"To logistic regression...", 0, 1, DO_Table_to_LogisticRegression);
+	praat_addAction1 (classTable, 0, L"Generate -      ", 0, 0, 0);
+		praat_addAction1 (classTable, 1, L"Draw row from distribution...", 0, 1, DO_Table_drawRowFromDistribution);
 	praat_addAction1 (classTable, 0, L"Extract -     ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Extract rows where column (number)...", 0, 1, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, L"Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);

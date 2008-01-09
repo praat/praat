@@ -28,6 +28,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/12/23 Gui
+ * pb 2007/12/31 Gui
  */
 
 #define NAME_X  30
@@ -130,9 +131,9 @@ static void update (DataSubEditor me) {
 	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
 		my fieldData [i]. address = NULL;
 		my fieldData [i]. description = NULL;
-		XtUnmanageChild (my fieldData [i]. label);
-		XtUnmanageChild (my fieldData [i]. button);
-		XtUnmanageChild (my fieldData [i]. text);
+		GuiObject_hide (my fieldData [i]. label);
+		GuiObject_hide (my fieldData [i]. button);
+		GuiObject_hide (my fieldData [i]. text);
 	}
 
 	my irow = 0;
@@ -223,8 +224,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			case uintwa: { * (unsigned int *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 			case ulongwa: { * (unsigned long *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 			case boolwa: { * (bool *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
-			case floatwa: { * (float *) my fieldData [i]. address = Melder_atofW (text); } break;
-			case doublewa: { * (double *) my fieldData [i]. address = Melder_atofW (text); } break;
+			case floatwa: { * (float *) my fieldData [i]. address = Melder_atof (text); } break;
+			case doublewa: { * (double *) my fieldData [i]. address = Melder_atof (text); } break;
 			case fcomplexwa: { fcomplex *x = (fcomplex *) my fieldData [i]. address;
 				swscanf (text, L"%f + %f i", & x -> re, & x -> im); } break;
 			case dcomplexwa: { dcomplex *x = (dcomplex *) my fieldData [i]. address;
@@ -374,7 +375,7 @@ static void classDataSubEditor_createChildren (I) {
 		XmNincrement, 1, XmNpageIncrement, MAXNUM_ROWS - 1,
 		NULL);
 	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
-	XtManageChild (scrolledWindow);
+	GuiObject_show (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 
 	Widget form = XmCreateForm (scrolledWindow, "list", NULL, 0);
@@ -385,7 +386,7 @@ static void classDataSubEditor_createChildren (I) {
 			L"Open", gui_button_cb_open, me, 0);
 		my fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
 	}
-	XtManageChild (form);
+	GuiObject_show (form);
 }
 
 DIRECT (DataSubEditor, cb_help) Melder_help (L"Inspect"); END
@@ -482,17 +483,17 @@ static void showStructMember (
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
 	GuiLabel_setString (fieldData -> label, buffer.string);
-	XtVaSetValues (fieldData -> label, XmNx, type == inheritwa ? 0 : NAME_X, NULL);
-	XtManageChild (fieldData -> label);
+	GuiObject_move (fieldData -> label, type == inheritwa ? 0 : NAME_X, Gui_AUTOMATIC);
+	GuiObject_show (fieldData -> label);
 
 	/* Show the value (for a single type) or a button (for a composite type). */
 
 	if (isSingleType) {
-		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
+		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 		MelderString_empty (& buffer);
 		wchar_t *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
 		GuiText_setString (fieldData -> text, text);
-		XtManageChild (fieldData -> text);
+		GuiObject_show (fieldData -> text);
 		fieldData -> address = memberAddress;
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
@@ -511,7 +512,7 @@ static void showStructMember (
 		fieldData -> maximum = maximum;
 		fieldData -> rank = 1;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	} else if (rank < 0) {
 		/*
 		 * This represents an in-line array.
@@ -526,7 +527,7 @@ static void showStructMember (
 		fieldData -> maximum = maximum;   /* Probably between -1 and capacity - 1. */
 		fieldData -> rank = rank;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	} else if (rank == 3) {
 		/*
 		 * This represents an in-line set.
@@ -537,7 +538,7 @@ static void showStructMember (
 		fieldData -> maximum = enum_length (memberDescription -> max1);
 		fieldData -> rank = rank;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
 		long min1, max1, min2, max2;
@@ -559,20 +560,20 @@ static void showStructMember (
 		fieldData -> max2 = max2;
 		fieldData -> rank = 2;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	} else if (type == structwa) {   /* In-line struct. */
 		fieldData -> address = memberAddress;   /* Direct. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	} else if (type == objectwa || type == collectionwa) {
 		fieldData -> address = * (Data *) memberAddress;   /* Indirect. */
 		if (! fieldData -> address) return;   /* No button if no object. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
-		XtManageChild (fieldData -> button);
+		GuiObject_show (fieldData -> button);
 	}
 }
 
@@ -645,15 +646,15 @@ static void classVectorEditor_showMembers (I) {
 		if (isSingleType) {
 			MelderString_append4 (& buffer, my description -> name, L" [",
 				my description -> rank == 3 ? enum_string (my description -> max1, ielement) : Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
 			GuiLabel_setString (fieldData -> label, buffer.string);
-			XtManageChild (fieldData -> label);
+			GuiObject_show (fieldData -> label);
 
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
+			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			GuiText_setString (fieldData -> text, text);
-			XtManageChild (fieldData -> text);
+			GuiObject_show (fieldData -> text);
 			fieldData -> address = elementAddress;
 			fieldData -> description = my description;
 		} else if (type == structwa) {
@@ -674,9 +675,9 @@ static void classVectorEditor_showMembers (I) {
 				my irow --;
 			} else {
 				MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
-				XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+				GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
 				GuiLabel_setString (fieldData -> label, buffer.string);
-				XtManageChild (fieldData -> label);
+				GuiObject_show (fieldData -> label);
 			}
 			showStructMembers (me, elementAddress, my description -> tagType, skip, history.string);
 		} else if (type == objectwa) {
@@ -691,9 +692,9 @@ static void classVectorEditor_showMembers (I) {
 			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
 			MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
-			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
 			GuiLabel_setString (fieldData -> label, buffer.string);
-			XtManageChild (fieldData -> label);
+			GuiObject_show (fieldData -> label);
 
 			Data object = * (Data *) elementAddress;
 			if (object == NULL) return;   /* No button if no object. */
@@ -703,7 +704,7 @@ static void classVectorEditor_showMembers (I) {
 			fieldData -> rank = 0;
 			if (fieldData -> history) Melder_free (fieldData -> history);
 			fieldData -> history = Melder_wcsdup (history.string);
-			XtManageChild (fieldData -> button);			
+			GuiObject_show (fieldData -> button);			
 		}
 	}
 }
@@ -757,15 +758,15 @@ static void classMatrixEditor_showMembers (I) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			MelderString_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
-			XtVaSetValues (fieldData -> label, XmNx, 0, NULL);
+			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
 			GuiLabel_setString (fieldData -> label, buffer.string);
-			XtManageChild (fieldData -> label);
+			GuiObject_show (fieldData -> label);
 
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);
+			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			GuiText_setString (fieldData -> text, text);
-			XtManageChild (fieldData -> text);
+			GuiObject_show (fieldData -> text);
 			fieldData -> address = elementAddress;
 			fieldData -> description = my description;
 		}

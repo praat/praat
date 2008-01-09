@@ -128,7 +128,6 @@ static void Sound_alawDecode (Sound me) {
 			*/
 			structMelderDir parentDir = { { 0 } };
 			char romanName [260];
-			CFStringRef unicodeName;
 			Str255 pname;
 			FSCatalogInfo info;
 			FSRef parentDirectory;

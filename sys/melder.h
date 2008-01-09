@@ -75,8 +75,8 @@ const wchar_t * Melder_float (const wchar_t *number);
 
 /********** STRING TO NUMBER CONVERSION **********/
 
-int Melder_isStringNumericW (const wchar_t *string);
-double Melder_atofW (const wchar_t *string);
+int Melder_isStringNumeric (const wchar_t *string);
+double Melder_atof (const wchar_t *string);
 	/*
 	 * "3.14e-3" -> 3.14e-3
 	 * "15.6%" -> 0.156

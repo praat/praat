@@ -53,7 +53,7 @@ static struct {
 static void logo_timeOut (XtPointer closure, XtIntervalId *id) {
 	(void) closure;
 	(void) id;
- 	XtUnmanageChild (theLogo.form);
+ 	GuiObject_hide (theLogo.form);
 }
 
 void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)) {
@@ -62,16 +62,23 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	theLogo.draw = draw;
 }
 
-static void gui_cb_expose (GUI_ARGS) {
-	(void) w; (void) void_me; (void) call;
-	if (! theLogo.graphics)
+static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	(void) void_me;
+	(void) event;
+	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	theLogo.draw (theLogo.graphics);
 }
 
-static void gui_cb_input (GUI_ARGS) {
-	(void) w; (void) void_me; (void) call;
- 	XtUnmanageChild (theLogo.form);
+static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
+	(void) void_me;
+	(void) event;
+ 	GuiObject_hide (theLogo.form);
+}
+
+static void gui_cb_goAway (I) {
+	(void) void_me;
+ 	GuiObject_hide (theLogo.form);
 }
 
 void praat_showLogo (int autoPopDown) {
@@ -80,33 +87,16 @@ void praat_showLogo (int autoPopDown) {
 	#endif
 	if (theCurrentPraat -> batch || ! theLogo.draw) return;
 	if (! theLogo.form) {
-		theLogo.form = XmCreateFormDialog (theCurrentPraat -> topShell, "logo", NULL, 0);
-		XtVaSetValues (XtParent (theLogo.form), XmNx, 100, XmNy, 100,
-			XmNtitle, "About",
-			#ifdef UNIX
-			XmNmwmDecorations, 4, XmNmwmFunctions, 0,
-			#else
-			XmNdeleteResponse, XmDO_NOTHING,
-			#endif
-			NULL);
-		#if ! defined (sun4)
-		{
-			/* Catch Window Manager "Close" and "Quit". */
-			Widget shell = XtParent (theLogo.form);
-			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
-			XmAddWMProtocols (shell, & atom, 1);
-			XmAddWMProtocolCallback (shell, atom, gui_cb_input, NULL);
-		}
+		theLogo.form = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
+		#ifdef UNIX
+			XtVaSetValues (XtParent (theLogo.form), XmNmwmDecorations, 4, XmNmwmFunctions, 0, NULL);
 		#endif
-		theLogo.drawingArea = XmCreateDrawingArea (theLogo.form, "drawingArea", NULL, 0);
-		XtVaSetValues (theLogo.drawingArea,
-			XmNwidth, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
-			XmNheight, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)), NULL);
-		XtManageChild (theLogo.drawingArea);
-		XtAddCallback (theLogo.drawingArea, XmNexposeCallback, gui_cb_expose, (XtPointer) NULL);
-		XtAddCallback (theLogo.drawingArea, XmNinputCallback, gui_cb_input, (XtPointer) NULL);
+		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
+			0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+			0, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
 	}
-	XtManageChild (theLogo.form);
+	GuiObject_show (theLogo.form);
 	/*
 	 * Do not wait for the first expose event before drawing:
 	 * at start-up time, this would take too long.
@@ -119,7 +109,7 @@ void praat_showLogo (int autoPopDown) {
 		XtAppNextEvent (theCurrentPraat -> context, & event);
 		XtDispatchEvent (& event);
 	}
-	gui_cb_expose (0, 0, 0);
+	gui_drawingarea_cb_expose (NULL, NULL);   // BUG
 	#endif
 
 	if (autoPopDown)

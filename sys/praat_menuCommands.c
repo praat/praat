@@ -112,7 +112,7 @@ static void gui_cb_menu (GUI_ARGS) {
  */
 	(void) w;
 #if defined (macintosh)
-	XEvent *event = (XEvent *) call;
+	EventRecord *event = (EventRecord *) call;
 	enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
 	int modified = event -> what == mouseDown &&
 		(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
@@ -225,7 +225,7 @@ if (! parent) return NULL;
 		} else {
 			theCommands [position]. button = GuiMenu_addItem (parent, title, motifFlags, gui_cb_menu, (void *) callback);
 		}
-		if (hidden) XtUnmanageChild (theCommands [position]. button);
+		if (hidden) GuiObject_hide (theCommands [position]. button);
 	}
 	return theCommands [position]. button;
 }
@@ -334,7 +334,7 @@ int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wch
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = TRUE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) XtUnmanageChild (command -> button);
+		if (command -> button) GuiObject_hide (command -> button);
 	}
 	return 1;
 }
@@ -349,7 +349,7 @@ int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wch
 	if (command -> hidden) {
 		command -> hidden = FALSE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) XtManageChild (command -> button);
+		if (command -> button) GuiObject_show (command -> button);
 	}
 	return 1;
 }
@@ -398,7 +398,7 @@ void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
 	for (i = 1; i <= theNumberOfCommands; i ++)
 		if (wcsequ (theCommands [i]. title, title)) break;   /* Search. */
 	theCommands [i]. executable = sensitive;
-	if (! theCurrentPraat -> batch && ! Melder_backgrounding) XtSetSensitive (theCommands [i]. button, sensitive);
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) GuiObject_setSensitive (theCommands [i]. button, sensitive);
 }
 
 int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments) {

@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, December 27, 2007
+# Paul Boersma, December 30, 2007
 
 include ../makefile.defs
 CFLAGS = -I ../dwsys -I ../GSL -I ../kar -I ../audio -I ../FLAC -I ../mp3
@@ -23,8 +23,9 @@ OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    praat_script.o praat_statistics.o praat_logo.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
    StringsEditor.o \
-   motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o \
-   GuiList.o GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o
+   motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
+   GuiList.o GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
+   GuiDialog.o GuiRowColumn.o
 
 all: libsys.a
 libsys.a: $(OBJECTS)

@@ -88,12 +88,12 @@ typedef struct structGuiButton {
 			GuiMac_clipOff ();
 			if (pushed && my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
-				enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
+				//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
 				Melder_assert (macEvent -> what == mouseDown);
-				event. shiftKeyPressed = ( macEvent -> modifiers & shiftKey ) != 0;
-				event. commandKeyPressed = ( macEvent -> modifiers & cmdKey ) != 0;
-				event. optionKeyPressed = ( macEvent -> modifiers & optionKey ) != 0;
-				event. extraControlKeyPressed = ( macEvent -> modifiers & controlKey ) != 0;
+				event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
+				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
+				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
+				event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
 				my activateCallback (my activateBoss, & event);
 			}
 		}
@@ -140,6 +140,7 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 	my activateBoss = activateBoss;
 	#if gtk
 		my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
+		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
@@ -189,7 +190,7 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 			GuiObject_setSensitive (my widget, false);
 		}
 	#elif motif
-		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (buttonText), xmPushButtonWidgetClass, parent, NULL);
+		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (buttonText), xmPushButtonWidgetClass, parent, XmNalignment, XmALIGNMENT_CENTER, NULL);
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifButton_destroyCallback, me);

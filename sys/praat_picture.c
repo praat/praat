@@ -578,9 +578,9 @@ DO
 	Graphics_setFontSize (GRAPHICS, GET_INTEGER (L"Font size"));
 	wchar_t *rotation = GET_STRING (L"Rotation"), *semicolon;
 	if ((semicolon = wcschr (rotation, ';')) != NULL)
-		Graphics_setTextRotation_vector (GRAPHICS, Melder_atofW (rotation), Melder_atofW (semicolon + 1));
+		Graphics_setTextRotation_vector (GRAPHICS, Melder_atof (rotation), Melder_atof (semicolon + 1));
 	else
-		Graphics_setTextRotation (GRAPHICS, Melder_atofW (rotation));
+		Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
 	Graphics_text (GRAPHICS, GET_REAL (L"Horizontal position"), GET_REAL (L"Vertical position"), GET_STRING (L"text"));
 	Graphics_setFont (GRAPHICS, currentFont);
 	Graphics_setFontSize (GRAPHICS, currentSize);
@@ -1488,13 +1488,9 @@ void praat_picture_init (void) {
 			x = screenWidth - width - 10;
 			width += margin * 2;
 		#endif
-		shell = Gui_addShell (theCurrentPraat -> topShell, 0);
 		sprintf (pictureWindowTitle, "%s picture", praatP.title);
-		XtVaSetValues (shell, XmNwidth, width, XmNheight, height,
-			XmNdeleteResponse, XmUNMAP, XmNiconName, L"Picture", XmNtitle, pictureWindowTitle,
-			XmNx, x, NULL);
-		dialog = XtVaCreateWidget ("picture", xmFormWidgetClass, shell,
-			XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_MODELESS, NULL);
+		dialog = GuiWindow_create (theCurrentPraat -> topShell, x, Gui_AUTOMATIC, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
+		shell = GuiObject_parent (dialog);
 		#ifdef UNIX
 			XtVaSetValues (dialog, XmNhighlightThickness, 1, NULL);
 		#endif
@@ -1669,6 +1665,7 @@ void praat_picture_init (void) {
 
 	if (! theCurrentPraat -> batch) {
 		XtManageChild (menuBar);
+		width = height = resolution * 12;
 		#if defined (macintosh) || defined (_WIN32)
 			scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
 			XtVaSetValues (scrollWindow,
@@ -1676,40 +1673,16 @@ void praat_picture_init (void) {
 				XmNrightAttachment, XmATTACH_FORM,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
 				XmNbottomAttachment, XmATTACH_FORM, NULL);
-			drawingArea = XmCreateDrawingArea (scrollWindow, "drawingArea", NULL, 0);
-			width = height = resolution * 12;
-			XtVaSetValues (drawingArea,
-				XmNwidth, width, XmNheight, height,
-				XmNmarginWidth, 0, XmNmarginHeight, 0, NULL);
-			XtManageChild (drawingArea);
 		#else
-			#if ! defined(sun4)
 			scrollWindow = XtVaCreateWidget (
 				"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
 				XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
 				XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
-			drawingArea = XmCreateDrawingArea (scrollWindow, "drawingArea", NULL, 0);
-			#else
-			drawingArea = XmCreateDrawingArea (dialog, "drawingArea", NULL, 0);
-			#endif
-			width = height = resolution * 12;
-			XtVaSetValues (drawingArea,
-				#if defined(sun4)
-					XmNleftAttachment, XmATTACH_FORM,
-					XmNrightAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-					XmNbottomAttachment, XmATTACH_FORM,
-				#endif
-				XmNwidth, width, XmNheight, height,
-				XmNmarginWidth, 0, XmNmarginHeight, 0, XmNborderWidth, 1,
-				NULL);
-			XtManageChild (drawingArea);
 		#endif
-		#if ! defined(sun4)
-			XtManageChild (scrollWindow);
-		#endif
-		XtManageChild (dialog);
+		drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		GuiObject_show (scrollWindow);
+		GuiObject_show (dialog);
 		XtRealizeWidget (shell);
 	}
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);

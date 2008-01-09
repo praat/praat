@@ -1,6 +1,6 @@
 /* manual_Script.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1364,7 +1364,7 @@ NORMAL (L"In scripts, the command ##%%Run script...#% is automatically replaced 
 	"by the script directive #execute.")
 MAN_END
 
-MAN_BEGIN (L"Scripting", L"ppgb", 20041028)
+MAN_BEGIN (L"Scripting", L"ppgb", 20080106)
 INTRO (L"This is one of the tutorials of the P\\s{RAAT} program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1385,10 +1385,10 @@ LIST_ITEM1 (L"@@Scripting 5.7. Including other scripts")
 LIST_ITEM1 (L"@@Scripting 5.8. Quitting@ (exit)")
 LIST_ITEM (L"@@Scripting 6. Communication outside the script")
 LIST_ITEM1 (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
-LIST_ITEM1 (L"@@Scripting 6.2. Calling system commands@ (system, system_nocheck)")
-LIST_ITEM1 (L"@@Scripting 6.3. Writing to the Info window@ (echo, print, printtab, printline)")
-LIST_ITEM1 (L"@@Scripting 6.4. Query commands@ (Get, Count)")
-LIST_ITEM1 (L"@@Scripting 6.5. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM1 (L"@@Scripting 6.2. Writing to the Info window@ (echo, print, printtab, printline)")
+LIST_ITEM1 (L"@@Scripting 6.3. Query commands@ (Get, Count)")
+LIST_ITEM1 (L"@@Scripting 6.4. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM1 (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
 LIST_ITEM1 (L"@@Scripting 6.6. Controlling the user@ (pause)")
 LIST_ITEM1 (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
 LIST_ITEM1 (L"@@Scripting 6.8. Messages to the user@ (exit, assert, nowarn, nocheck)")
@@ -1787,7 +1787,7 @@ CODE1 (L"Draw line... 0 \"height * 2\" 0 height")
 NORMAL (L"You can use numeric expressions in assignments (as above), or after "
 	"#if, #elsif, #while, #until, and twice after #for.")
 NORMAL (L"On how to get information from commands that normally write to the Info window, "
-	"see @@Scripting 6.4. Query commands@.")
+	"see @@Scripting 6.3. Query commands@.")
 MAN_END
 
 MAN_BEGIN (L"Scripting 5.3. Jumps", L"ppgb", 19991112)
@@ -1949,12 +1949,12 @@ DEFINITION (L"stops the execution of the script while sending an error message t
 NORMAL (L"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20041027)
+MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20080106)
 LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
-LIST_ITEM (L"@@Scripting 6.2. Calling system commands@ (system, system_nocheck)")
-LIST_ITEM (L"@@Scripting 6.3. Writing to the Info window@ (echo, print, printtab, printline)")
-LIST_ITEM (L"@@Scripting 6.4. Query commands@ (Get, Count)")
-LIST_ITEM (L"@@Scripting 6.5. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM (L"@@Scripting 6.2. Writing to the Info window@ (echo, print, printtab, printline)")
+LIST_ITEM (L"@@Scripting 6.3. Query commands@ (Get, Count)")
+LIST_ITEM (L"@@Scripting 6.4. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
 LIST_ITEM (L"@@Scripting 6.6. Controlling the user@ (pause)")
 LIST_ITEM (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
 LIST_ITEM (L"@@Scripting 6.8. Messages to the user@ (exit, assert, nowarn, nocheck)")
@@ -2078,22 +2078,7 @@ CODE (L"#execute \"fill attributes.praat\" \"Navy blue\" With holes")
 NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.2. Calling system commands", L"ppgb", 20020317)
-INTRO (L"You can call system commands from a Praat script on Unix, Windows, and MacOS X computers.")
-TAG (L"#system %command")
-DEFINITION (L"executes a Unix or Windows shell command, interpreting non-zero return values as errors:")
-CODE1 (L"#system cd /u/miep/sounds; sfplay hallo.aifc")
-TAG (L"#system_nocheck %command")
-DEFINITION (L"executes a Unix or Windows shell command, ignoring return values:")
-CODE1 (L"#system_nocheck rm dummy.aifc")
-NORMAL (L"In the last example, using $$#system rm dummy.aifc$ would cause the script to stop "
-	"if the file $$dummy.aifc$ does not exist.")
-TAG (L"##environment\\$  (#%%symbol-string%#)")
-DEFINITION (L"returns the value of an environment variable under Unix, e.g.")
-CODE (L"   homeDirectory\\$  = ##environment\\$ # (\"HOME\")")
-MAN_END
-
-MAN_BEGIN (L"Scripting 6.3. Writing to the Info window", L"ppgb", 20070225)
+MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20070225)
 NORMAL (L"With the @Info button and several commands in the #Query menus, "
 	"you write to the @@Info window@. If your program is run from batch (on Unix or Windows), "
 	"the text goes to %stdout.")
@@ -2129,7 +2114,7 @@ NORMAL (L"or:")
 CODE (L"#print 'minimum''tab\\$ ''maximum''newline\\$ '")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.4. Query commands", L"ppgb", 19990108)
+MAN_BEGIN (L"Scripting 6.3. Query commands", L"ppgb", 19990108)
 NORMAL (L"If you click the \"Get mean...\" command for a Pitch object, "
 	"the Info window will contain a text like \"150 Hz\" as a result. In a script, you would rather "
 	"have this result in a variable instead of in the Info window. The solution is simple:")
@@ -2142,7 +2127,7 @@ NORMAL (L"The string variable \"mean\\$ \" now contains the entire string \"150 
 NORMAL (L"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.5. Files", L"ppgb", 20010821)
+MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20010821)
 INTRO (L"You can read from and write to text files from a Praat script.")
 ENTRY (L"Reading a file")
 NORMAL (L"You can check the availability of a file for reading with the function")
@@ -2209,6 +2194,42 @@ CODE (L"#fappendinfo %fileName")
 ENTRY (L"Directory listings")
 NORMAL (L"To get the names of the files if a certain type in a certain directory, "
 	"use @@Create Strings as file list...@.")
+MAN_END
+
+MAN_BEGIN (L"Scripting 6.5. Calling system commands", L"ppgb", 20080106)
+INTRO (L"From a Praat script you can call system commands. "
+	"These are the same commands that you would normally type into a terminal window or into the Window command line prompt.")
+TAG (L"#system %command")
+DEFINITION (L"executes a system command.")
+NORMAL (L"Some system commands are identical on all platforms (Macintosh, Windows, Unix):")
+CODE (L"#system mkdir sounds")
+NORMAL (L"which creates a new directory #sounds in the directory of the script. Some other system commands "
+	"are different on different platforms. For instance, to throw away all WAV files in the script's directory, "
+	"you would write")
+CODE (L"#system del *.wav")
+NORMAL (L"on Windows, but")
+CODE (L"#system rm *.wav")
+NORMAL (L"on Macintosh and Unix.")
+NORMAL (L"The script will stop running if a system command returns an error. For instance,")
+CODE (L"#system mkdir sounds")
+NORMAL (L"will stop the script if the directory #sounds already exists. "
+	"In order to prevent this, you can tell Praat to ignore the return value of the system command:")
+TAG (L"#system_nocheck %command")
+DEFINITION (L"executes a system command, ignoring any errors.")
+NORMAL (L"Thus, to make sure that the directory #sounds exists, you would write")
+CODE (L"#system_nocheck mkdir sounds")
+TAG (L"##environment\\$  (#%%symbol-string%#)")
+DEFINITION (L"returns the value of an environment variable, e.g.")
+CODE1 (L"homeDirectory\\$  = ##environment\\$ # (\"HOME\")")
+TAG (L"##stopwatch")
+DEFINITION (L"returns the time that has elapsed since the previous #stopwatch.")
+NORMAL (L"Here is a Praat script that measures how long it takes to do a million assignments:")
+CODE (L"stopwatch")
+CODE (L"for i to 1000000")
+CODE1 (L"a = 1.23456789e123")
+CODE (L"endfor")
+CODE (L"time = stopwatch")
+CODE (L"echo 'a' 'time:3'")
 MAN_END
 
 MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20040414)

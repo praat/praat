@@ -178,6 +178,7 @@ double Melder_stopwatch (void) {
 	static clock_t lastTime;
 	clock_t now = clock ();
 	double timeElapsed = lastTime == 0 ? -1.0 : (now - lastTime) / (double) CLOCKS_PER_SEC;
+	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
 	lastTime = now;
 	return timeElapsed;
 }
@@ -244,10 +245,10 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 	}
 	#endif
 	if (progress >= 1.0) {
-		XtUnmanageChild (dia);
+		GuiObject_hide (dia);
 	} else {
 		if (progress <= 0.0) progress = 0.0;
-		XtManageChild (dia);
+		GuiObject_show (dia);   // TODO: prevent raising to the front
 		wchar_t *newline = wcschr (message, '\n');
 		if (newline != NULL) {
 			static MelderString buffer = { 0 };
@@ -278,12 +279,8 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
 			if (dia == NULL) {
-				dia = XmCreateFormDialog (Melder_topShell, "melderProgress", NULL, 0);
-				XtVaSetValues (XtParent (dia), XmNx, 200, XmNy, 100,
-					XmNtitle, "Work in progress",
-					XmNdeleteResponse, XmUNMAP,
-					NULL);
-				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
+				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
+					L"Work in progress", NULL, NULL, 0);
 				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
@@ -293,7 +290,7 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 						XmNscaleHeight, 20,
 					#endif
 					NULL);
-				XtManageChild (scale);
+				GuiObject_show (scale);
 				#if ! defined (macintosh)
 					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
 						L"Interrupt", NULL, NULL, 0);
@@ -369,12 +366,8 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
 			if (dia == NULL) {
-				dia = XmCreateFormDialog (Melder_topShell, "melderMonitor", NULL, 0);
-				XtVaSetValues (XtParent (dia), XmNx, 200, XmNy, 100,
-					XmNtitle, "Work in progress",
-					XmNdeleteResponse, XmUNMAP,
-					NULL);
-				XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
+				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
+					L"Work in progress", NULL, NULL, 0);
 				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 				scale = XmCreateScale (dia, "scale", NULL, 0);
@@ -384,16 +377,13 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 						XmNscaleHeight, 20,
 					#endif
 					NULL);
-				XtManageChild (scale);
+				GuiObject_show (scale);
 				#if ! defined (macintosh)
 					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
 						L"Interrupt", NULL, NULL, 0);
 				#endif
-				drawingArea = XmCreateDrawingArea (dia, "drawingArea", NULL, 0);
-				XtVaSetValues (drawingArea, XmNy, 230, XmNwidth, 400, XmNheight, 200,
-					XmNmarginWidth, 10, XmNmarginHeight, 10, NULL);
-				XtManageChild (drawingArea);
-				XtManageChild (dia);
+				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
+				GuiObject_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
@@ -631,31 +621,13 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 }
 
 #ifndef CONSOLE_APPLICATION
-static Widget makeMessage (unsigned char dialogType, const char *resourceName, const char *title) {
-	Widget dialog = XmCreateMessageDialog (Melder_topShell, MOTIF_CONST_CHAR_ARG (resourceName), NULL, 0);
-	XtVaSetValues (dialog,
-		XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-		XmNdialogType, dialogType,
-		XmNautoUnmanage, True,
-		NULL);
-	XtVaSetValues (XtParent (dialog), XmNtitle, title, XmNdeleteResponse, XmUNMAP, NULL);
-	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_CANCEL_BUTTON));
-	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_HELP_BUTTON));
-	return dialog;
-}
-
 static bool pause_continued, pause_stopped;
 static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
 static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
 static int motif_pause (wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
-		dia = XmCreateFormDialog (Melder_topShell, "melderPause", NULL, 0);
-		XtVaSetValues (XtParent (dia),
-			XmNtitle, "Pause",
-			XmNdeleteResponse, XmDO_NOTHING,
-			NULL);
-		XtVaSetValues (dia, XmNautoUnmanage, True, NULL);
+		dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Pause", NULL, NULL, 0);
 		rc = XmCreateRowColumn (dia, "rc", NULL, 0);
 		text = GuiLabel_createShown (rc, 3, 403, Gui_AUTOMATIC, Gui_AUTOMATIC, L"text", 0);
 		buttons = XmCreateRowColumn (rc, "rc", NULL, 0);
@@ -669,28 +641,15 @@ static int motif_pause (wchar_t *message) {
 	}
 	if (! message) message = L"";
 	GuiLabel_setString (text, message);
-	XtManageChild (dia);
+	GuiDialog_show (dia);
 	pause_continued = pause_stopped = FALSE;
 	do {
 		XEvent event;
 		XtAppNextEvent (Melder_appContext, & event);
 		XtDispatchEvent (& event);
 	} while (! pause_continued && ! pause_stopped);
-	XtUnmanageChild (dia);
+	GuiObject_hide (dia);
 	return pause_continued;
-}
-
-static void motif_warning (wchar_t *message) {
-#ifdef _WIN32
-	MessageBox (NULL, message, L"Warning", MB_OK);
-#else
-	static Widget dia = NULL;
-	if (dia == NULL)
-		dia = makeMessage (XmDIALOG_WARNING, "warning", "Warning");
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
-	XtManageChild (dia);
-	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
-#endif
 }
 
 #ifdef macintosh
@@ -720,6 +679,19 @@ static void motif_error (wchar_t *messageW) {
 	RunStandardAlert (dialog, NULL, NULL);
 	XmUpdateDisplay (0);
 }
+static void motif_warning (wchar_t *messageW) {
+	DialogRef dialog;
+	static UniChar messageU [2000+1];
+	int messageLength = wcslen (messageW);
+	for (int i = 0; i < messageLength; i ++) {
+		messageU [i] = messageW [i];   // BUG: should convert to UTF16
+	}
+	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
+	CreateStandardAlert (kAlertNoteAlert, messageCF, NULL, NULL, & dialog);
+	CFRelease (messageCF);
+	RunStandardAlert (dialog, NULL, NULL);
+	XmUpdateDisplay (0);
+}
 #elif defined (_WIN32)
 static void motif_fatal (wchar_t *message) {
 	MessageBox (NULL, message, L"Fatal error", MB_OK);
@@ -727,7 +699,23 @@ static void motif_fatal (wchar_t *message) {
 static void motif_error (wchar_t *message) {
 	MessageBox (NULL, message, L"Message", MB_OK);
 }
+static void motif_warning (wchar_t *message) {
+	MessageBox (NULL, message, L"Warning", MB_OK);
+}
 #else
+static Widget makeMessage (unsigned char dialogType, const char *resourceName, const char *title) {
+	Arg arg [1];
+	arg [0]. name = XmNautoUnmanage; arg [0]. value = True;
+	Widget dialog = XmCreateMessageDialog (Melder_topShell, (char *) resourceName, arg, 1);
+	XtVaSetValues (dialog,
+		XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
+		XmNdialogType, dialogType,
+		NULL);
+	XtVaSetValues (XtParent (dialog), XmNtitle, title, XmNdeleteResponse, XmUNMAP, NULL);
+	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_CANCEL_BUTTON));
+	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_HELP_BUTTON));
+	return dialog;
+}
 static void motif_error (wchar_t *messageW) {
 	static Widget dia = NULL;
 	static char messageA [2000+1];
@@ -738,6 +726,14 @@ static void motif_error (wchar_t *messageW) {
 		messageA [i] = messageW [i];
 	}
 	XtVaSetValues (dia, motif_argXmString (XmNmessageString, messageA), NULL);
+	XtManageChild (dia);
+	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
+}
+static void motif_warning (wchar_t *message) {
+	static Widget dia = NULL;
+	if (dia == NULL)
+		dia = makeMessage (XmDIALOG_WARNING, "warning", "Warning");
+	XtVaSetValues (dia, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
 	XtManageChild (dia);
 	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
 }

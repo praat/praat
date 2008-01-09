@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/26
+ * pb 2007/12/30
  */
 
 #ifdef USE_GTK
@@ -58,6 +58,7 @@
 #define Gui_APPLY_BUTTON_WIDTH  69
 
 #define Gui_AUTOMATIC  -32768
+#define Gui_HOMOGENEOUS  1
 
 #if gtk
 	// GTK include files...
@@ -118,7 +119,6 @@
 			typedef struct EventRecord XEvent;
 		#else
 			typedef MSG XEvent;
-			typedef struct { int message, x, y, key, shiftKeyPressed; } WinDrawingAreaEvent;
 		#endif
 		typedef unsigned char Boolean;
 		typedef long Cardinal;
@@ -168,7 +168,6 @@
 		void XtDestroyWidget (Widget w);
 		void XtDispatchEvent (XEvent *event);
 		#define XtDisplay(w)  0
-		void XtFree (char *);
 		Widget XtInitialize (void *dum1, const char *name,
 			void *dum2, int dum3, unsigned int *argc, char **argv);
 		Boolean XtIsManaged (Widget w);
@@ -177,7 +176,6 @@
 		void XtManageChildren (WidgetList children, Cardinal num_children);
 		void XtMapWidget (Widget w);
 		void XtNextEvent (XEvent *event);
-		Widget XtParent (Widget w);
 		#define XtRealizeWidget  XtManageChild
 		void XtRemoveTimeOut (XtIntervalId id);
 		void XtRemoveWorkProc (XtWorkProcId id);
@@ -203,7 +201,6 @@
 		#define xmLabelWidgetClass  0x00000010
 		#define xmListWidgetClass  0x00000020
 		#define xmMenuBarWidgetClass  0x00000040
-		#define xmMessageBoxWidgetClass  0x00000080
 		#define xmPulldownMenuWidgetClass  0x00000100
 		#define xmPushButtonWidgetClass  0x00000200
 		#define xmRowColumnWidgetClass  0x00000400
@@ -239,33 +236,10 @@
 		 */
 		enum /* dialog styles */ { XmDIALOG_MODELESS = 1, XmDIALOG_FULL_APPLICATION_MODAL };
 		enum /* orientation */ { XmVERTICAL = 1, XmHORIZONTAL };
-		enum /* packing */ { XmPACK_TIGHT = 1, XmPACK_COLUMN, XmPACK_NONE };
 		enum /* attachment */ { XmATTACH_NONE = 1, XmATTACH_FORM, XmATTACH_POSITION };
 		enum /* rowColumn types */ { XmWORK_AREA = 1, XmMENU_BAR };
 		enum /* delete responses */ { XmDESTROY = 1, XmUNMAP, XmDO_NOTHING };
 		enum /* indicator types */ { XmONE_OF_MANY = 1, XmN_OF_MANY };
-		enum /* dialog children */ { XmDIALOG_OK_BUTTON = 1, XmDIALOG_CANCEL_BUTTON, XmDIALOG_HELP_BUTTON };
-		enum /* highlight modes */ { XmHIGHLIGHT_NORMAL = 1, XmHIGHLIGHT_SELECTED, XmHIGHLIGHT_SECONDARY_SELECTED };
-		enum /* alignments */ { XmALIGNMENT_BEGINNING = 1, XmALIGNMENT_CENTER, XmALIGNMENT_END };
-		enum /* dialog types */ {
-			XmDIALOG_MESSAGE = 1,
-			XmDIALOG_ERROR,
-			XmDIALOG_WARNING,
-			XmDIALOG_INFORMATION,
-			XmDIALOG_QUESTION
-		};
-		enum /* policies */ {
-			XmCONSTANT = 1,
-			XmVARIABLE,   /* list size policies */
-			XmRESIZE_IF_POSSIBLE,
-			XmAUTOMATIC,   /* scrolling policies */
-			XmAPPLICATION_DEFINED
-		};
-
-		/*
-		 * Definitions of Xm types.
-		 */
-		typedef char *XmString;
 
 		/*
 		 * Declarations of Xm functions.
@@ -277,19 +251,14 @@
 		Widget XmCreateCascadeButton (Widget, const char *, ArgList, int);
 		Widget XmCreateCascadeButtonGadget (Widget, const char *, ArgList, int);
 		Widget XmCreateDialogShell (Widget, const char *, ArgList, int);
-		Widget XmCreateDrawingArea (Widget, const char *, ArgList, int);
 		Widget XmCreateForm (Widget, const char *, ArgList, int);
 		Widget XmCreateFormDialog (Widget, const char *, ArgList, int);
-		Widget XmCreateFrame (Widget, const char *, ArgList, int);
 		Widget XmCreateMenuBar (Widget, const char *, ArgList, int);
-		Widget XmCreateMessageBox (Widget, const char *, ArgList, int);   
-		Widget XmCreateMessageDialog (Widget, const char *, ArgList, int);   
 		Widget XmCreatePulldownMenu (Widget, const char *, ArgList, int);   
 		Widget XmCreateRadioBox (Widget, const char *, ArgList, int);
 		Widget XmCreateRowColumn (Widget, const char *, ArgList, int);
 		Widget XmCreateScale (Widget, const char *, ArgList, int);
 		Widget XmCreateScrolledWindow (Widget, const char *, ArgList, int);
-		Widget XmCreateScrolledList (Widget, const char *, ArgList, int);
 		Widget XmCreateScrollBar (Widget, const char *, ArgList, int);
 		Widget XmCreateSeparator (Widget, const char *, ArgList, int);
 		Widget XmCreateSeparatorGadget (Widget, const char *, ArgList, int);
@@ -297,13 +266,10 @@
 		Widget XmCreateToggleButton (Widget, const char *, ArgList, int);
 		Widget XmCreateToggleButtonGadget (Widget, const char *, ArgList, int);   
 		Atom XmInternAtom (Display *display, String name, Boolean only_if_exists);
-		Widget XmMessageBoxGetChild (Widget me, int child);
 		void XmScaleGetValue (Widget widget, int *value_return);
 		void XmScaleSetValue (Widget widget, int value);
 		void XmScrollBarGetValues (Widget me, int *value, int *sliderSize, int *increment, int *pageIncrement);
 		void XmScrollBarSetValues (Widget me, int value, int sliderSize, int increment, int pageIncrement, Boolean notify);
-		XmString XmStringCreateSimple (const char *cstring);
-		void XmStringFree (XmString self);
 		Boolean XmToggleButtonGadgetGetState (Widget widget);
 		#define XmToggleButtonGetState XmToggleButtonGadgetGetState
 		void XmToggleButtonGadgetSetState (Widget widget, Boolean value, Boolean notify);
@@ -370,7 +336,6 @@
 #define GuiMenu_F12  28
 
 Widget Gui_addMenuBar (Widget form);
-Widget Gui_addShell (Widget widget, long flags);
 int Gui_getResolution (Widget widget);
 
 /* GuiButton creation flags: */
@@ -399,6 +364,51 @@ Widget GuiCheckButton_createShown (Widget parent, int left, int right, int top, 
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags);
 bool GuiCheckButton_getValue (Widget widget);
 void GuiCheckButton_setValue (Widget widget, bool value);
+
+Widget GuiColumn_createShown (Widget parent, unsigned long flags);
+Widget GuiRow_createShown (Widget parent, unsigned long flags);
+
+/* GuiDialog creation flags: */
+#define GuiDialog_MODAL  1
+Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
+	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
+void GuiDialog_show (Widget widget);
+
+/* GuiDrawingArea creation flags: */
+#define GuiDrawingArea_BORDER  1
+typedef struct structGuiDrawingAreaExposeEvent {
+	Widget widget;
+	int x, y, width, height;
+} *GuiDrawingAreaExposeEvent;
+typedef struct structGuiDrawingAreaClickEvent {
+	Widget widget;
+	int x, y;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	int button;
+} *GuiDrawingAreaClickEvent;
+typedef struct structGuiDrawingAreaKeyEvent {
+	Widget widget;
+	wchar_t key;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+} *GuiDrawingAreaKeyEvent;
+typedef struct structGuiDrawingAreaResizeEvent {
+	Widget widget;
+	int width, height;
+} *GuiDrawingAreaResizeEvent;
+Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int bottom,
+	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
+	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
+	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
+	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	unsigned long flags);
+Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, int bottom,
+	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
+	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
+	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
+	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	unsigned long flags);
+void GuiDrawingArea_setExposeCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
+void GuiDrawingArea_setClickCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss);
 
 /* GuiLabel creation flags: */
 #define GuiLabel_CENTRE  1
@@ -480,6 +490,9 @@ void GuiText_setString (Widget widget, const wchar_t *text);
 void GuiText_undo (Widget widget);
 void GuiText_updateChangeCountAfterSave (Widget widget);
 
+Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
+	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
+void GuiWindow_show (Widget widget);
 void GuiWindow_setTitle (Widget widget, const wchar_t *titleW);
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*
@@ -500,56 +513,21 @@ void GuiWindow_drain (Widget me);
 */
 
 void GuiObject_destroy (Widget me);
+long GuiObject_getHeight (Widget me);
+long GuiObject_getWidth (Widget me);
+long GuiObject_getX (Widget me);
+long GuiObject_getY (Widget me);
 void GuiObject_hide (Widget me);
+void GuiObject_move (Widget me, long x, long y);
+Widget GuiObject_parent (Widget w);
 void GuiObject_setSensitive (Widget me, bool sensitive);
 void GuiObject_show (Widget me);
+void GuiObject_size (Widget me, long width, long height);
 
 /********** EVENTS **********/
 
-#if gtk
-	typedef GTKEvent GuiEvent;
-	#define GuiEvent_fromCallData(call)  ((GuiEvent) 0)
-	#define GuiEvent_shiftKeyPressed(event)  false
-	#define GuiEvent_x(event)  0
-	#define GuiEvent_y(event)  0
-	#define GuiEvent_isButtonPressedEvent(event)  false
-	#define GuiEvent_isKeyPressedEvent(event)  false
-#elif defined (macintosh)
-	typedef XEvent *GuiEvent;
-	#define GuiEvent_fromCallData(call)  ((GuiEvent) call)
-	#define GuiEvent_shiftKeyPressed(event)  ((event -> modifiers & 512) != 0)
-	#define GuiEvent_x(event)  (event -> where. h)
-	#define GuiEvent_y(event)  (event -> where. v)
-	#define GuiEvent_isButtonPressedEvent(event)  (event -> what == mouseDown)
-	#define GuiEvent_isKeyPressedEvent(event)  (event -> what == keyDown)
-#elif defined (_WIN32)
-	typedef WinDrawingAreaEvent *GuiEvent;
-	#define GuiEvent_fromCallData(call)  ((GuiEvent) call)
-	#define GuiEvent_shiftKeyPressed(event)  (event -> shiftKeyPressed != 0)
-	#define GuiEvent_x(event)  (event -> x)
-	#define GuiEvent_y(event)  (event -> y)
-	#define GuiEvent_isButtonPressedEvent(event)  (event -> message == WM_LBUTTONDOWN)
-	#define GuiEvent_isKeyPressedEvent(event)  (event -> message == WM_CHAR)
-#else
-	typedef XEvent *GuiEvent;
-	#define GuiEvent_fromCallData(call)  (((XmDrawingAreaCallbackStruct *) call) -> event)
-	#define GuiEvent_shiftKeyPressed(event)  ((event -> xkey.state & ShiftMask) != 0)
-	#define GuiEvent_x(event)  (event -> xbutton.x)
-	#define GuiEvent_y(event)  (event -> xbutton.y)
-	#define GuiEvent_isButtonPressedEvent(event)  (event -> type == ButtonPress)
-	#define GuiEvent_isKeyPressedEvent(event)  (event -> type == KeyPress)
-#endif
-
 void Gui_setOpenDocumentCallback (int (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
-
-/********** COMPATIBILITY **********/
-
-#ifdef UNIX
-	#define MOTIF_CONST_CHAR_ARG(a)  (char *) (a)
-#else
-	#define MOTIF_CONST_CHAR_ARG(a)  (a)
-#endif
 
 /* End of file Gui.h */
 #endif

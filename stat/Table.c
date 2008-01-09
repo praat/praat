@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2007 Paul Boersma
+ * Copyright (C) 2002-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2007/10/13 made Table_getExtrema global
  * pb 2007/11/18 refactoring
+ * pb 2008/01/02 Table_drawRowFromDistribution
  */
 
 #include <ctype.h>
@@ -106,7 +107,7 @@ static double getMatrix (I, long irow, long icol) {
 	if (irow < 1 || irow > my rows -> size) return NUMundefined;
 	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
 	stringValue = ((TableRow) my rows -> item [irow]) -> cells [icol]. string;
-	return stringValue == NULL ? NUMundefined : Melder_atofW (stringValue);
+	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
 }
 static wchar_t * getMatrixStr (I, long irow, long icol) {
 	iam (Table);
@@ -361,7 +362,7 @@ static int Table_isCellNumeric (Table me, long irow, long icol) {
 		while (*cell == ' ' || *cell == '\t' || *cell == '\n' || *cell == '\r') cell ++;
 		return *cell == '\0';   /* Only white space after the "?" or "--undefined--". */
 	}
-	return Melder_isStringNumericW (cell);
+	return Melder_isStringNumeric (cell);
 }
 
 static int Table_isColumnNumeric (Table me, long icol) {
@@ -410,7 +411,7 @@ void Table_numericize (Table me, long icol) {
 			wchar_t *string = row -> cells [icol]. string;
 			row -> cells [icol]. number =
 				string == NULL || string [0] == '\0' || (string [0] == '?' && string [1] == '\0') ? NUMundefined :
-				Melder_atofW (string);
+				Melder_atof (string);
 		}
 	} else {
 		long iunique = 0;
@@ -569,6 +570,33 @@ double Table_getStdev_e (Table me, long icol) {
 		sum += d * d;
 	}
 	return sqrt (sum / (my rows -> size - 1));
+}
+
+long Table_drawRowFromDistribution (Table me, long column) {
+	long irow = 0;
+	if (column < 1 || column > my numberOfColumns)
+		error3 (L"No column ", Melder_integer (column), L".")
+	Table_numericize (me, column);
+	double total = 0.0;
+	if (my rows -> size < 1)
+		error1 (L"No candidates.")
+	for (irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		total += row -> cells [column]. number;
+	}
+	if (total <= 0.0)
+		error1 (L"Column total not positive.")
+	do {
+		double rand = NUMrandomUniform (0, total), sum = 0.0;
+		for (irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = my rows -> item [irow];
+			sum += row -> cells [column]. number;
+			if (rand <= sum) break;
+		}
+	} while (irow > my rows -> size);   /* Guard against rounding errors. */
+end:
+	iferror return Melder_error1 (L"(Table_drawRowFromDistribution:) Not performed.");
+	return irow;
 }
 
 Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Melder_NUMBER, double criterion) {

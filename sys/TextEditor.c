@@ -1,6 +1,6 @@
 /* TextEditor.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2007/10/05 less char
  * pb 2007/12/05 prefs
  * pb 2007/12/23 Gui
+ * pb 2008/01/04 guard against multiple opening of same file
  */
 
 #include "TextEditor.h"
@@ -49,6 +50,8 @@ void TextEditor_prefs (void) {
 	Preferences_addInt (L"TextEditor.fontSize", & theTextEditorFontSize, 12);
 }
 
+static Collection theOpenTextEditors = NULL;
+
 /***** TextEditor methods *****/
 
 static void destroy (I) {
@@ -57,6 +60,9 @@ static void destroy (I) {
 	forget (my saveDialog);
 	forget (my printDialog);
 	forget (my findDialog);
+	if (theOpenTextEditors) {
+		Collection_undangleItem (theOpenTextEditors, me);
+	}
 	inherited (TextEditor) destroy (me);
 }
 
@@ -84,6 +90,17 @@ static void nameChanged (I) {
 }
 
 static int openDocument (TextEditor me, MelderFile file) {
+	if (theOpenTextEditors) {
+		for (long ieditor = 1; ieditor <= theOpenTextEditors -> size; ieditor ++) {
+			TextEditor editor = theOpenTextEditors -> item [ieditor];
+			if (editor != me && MelderFile_equal (file, & editor -> file)) {
+				Editor_raise (editor);
+				Melder_error3 (L"Text file ", MelderFile_messageNameW (file), L" is already open.");
+				forget (me);   // don't forget me before Melder_error, because "file" is owned by one of my dialogs
+				return 0;
+			}
+		}
+	}
 	wchar_t *text = MelderFile_readText (file);
 	if (! text) return 0;
 	GuiText_setString (my textWidget, text);
@@ -150,10 +167,11 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	return 1;
 }
 
-static void gui_cb_saveAndOpen (GUI_ARGS) {
-	(void) w; (void) call;
+static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
+	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
+	GuiObject_hide (my dirtyOpenDialog);
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		cb_showOpen (cmd, NULL);
@@ -162,11 +180,18 @@ static void gui_cb_saveAndOpen (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_discardAndOpen (GUI_ARGS) {
-	(void) w; (void) call;
+static void gui_button_cb_cancelOpen (I, GuiButtonEvent event) {
+	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
-	XtUnmanageChild (my dirtyOpenDialog);
+	GuiObject_hide (my dirtyOpenDialog);
+}
+
+static void gui_button_cb_discardAndOpen (I, GuiButtonEvent event) {
+	(void) event;
+	EditorCommand cmd = (EditorCommand) void_me;
+	TextEditor me = (TextEditor) cmd -> editor;
+	GuiObject_hide (my dirtyOpenDialog);
 	cb_showOpen (cmd, NULL);
 }
 
@@ -174,28 +199,26 @@ static int menu_cb_open (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my dirty) {
 		if (! my dirtyOpenDialog) {
-			my dirtyOpenDialog = XmCreateMessageDialog (my shell, "dirtyOpenDialog", NULL, 0);
-			XtVaSetValues (my dirtyOpenDialog, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				XmNautoUnmanage, True, XmNdialogType, XmDIALOG_QUESTION,
-				motif_argXmString (XmNdialogTitle, "Text changed"),
-				motif_argXmString (XmNmessageString, "Save changes?"),
-				motif_argXmString (XmNokLabelString, "Save & Open"),
-				motif_argXmString (XmNhelpLabelString, "Discard & Open"),
-				NULL);
-			XtAddCallback (my dirtyOpenDialog, XmNokCallback, gui_cb_saveAndOpen, cmd);
-			XtAddCallback (my dirtyOpenDialog, XmNhelpCallback, gui_cb_discardAndOpen, cmd);
+			my dirtyOpenDialog = GuiDialog_create (my shell, 150, 70, 420, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
+			Widget column1 = GuiColumn_createShown (my dirtyOpenDialog, 0);
+			GuiLabel_createShown (column1, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
+			Widget row1 = GuiRow_createShown (column1, Gui_HOMOGENEOUS);
+			GuiButton_createShown (row1, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & Open", gui_button_cb_discardAndOpen, cmd, 0);
+			GuiButton_createShown (row1, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Cancel", gui_button_cb_cancelOpen, cmd, 0);
+			GuiButton_createShown (row1, 290, 410, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & Open", gui_button_cb_saveAndOpen, cmd, 0);
 		}
-		XtManageChild (my dirtyOpenDialog);
+		GuiDialog_show (my dirtyOpenDialog);
 	} else {
 		cb_showOpen (cmd, sender);
 	}
 	return 1;
 }
 
-static void gui_cb_saveAndNew (GUI_ARGS) {
-	(void) w; (void) call;
+static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
+	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
+	GuiObject_hide (my dirtyNewDialog);
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		newDocument (me);
@@ -204,11 +227,18 @@ static void gui_cb_saveAndNew (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_discardAndNew (GUI_ARGS) {
-	(void) w; (void) call;
+static void gui_button_cb_cancelNew (I, GuiButtonEvent event) {
+	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
-	XtUnmanageChild (my dirtyNewDialog);
+	GuiObject_hide (my dirtyNewDialog);
+}
+
+static void gui_button_cb_discardAndNew (I, GuiButtonEvent event) {
+	(void) event;
+	EditorCommand cmd = (EditorCommand) void_me;
+	TextEditor me = (TextEditor) cmd -> editor;
+	GuiObject_hide (my dirtyNewDialog);
 	newDocument (me);
 }
 
@@ -216,18 +246,15 @@ static int menu_cb_new (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (our fileBased && my dirty) {
 		if (! my dirtyNewDialog) {
-			my dirtyNewDialog = XmCreateMessageDialog (my shell, "dirtyNewDialog", NULL, 0);
-			XtVaSetValues (my dirtyNewDialog, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				XmNautoUnmanage, True, XmNdialogType, XmDIALOG_QUESTION,
-				motif_argXmString (XmNdialogTitle, "Text changed"),
-				motif_argXmString (XmNmessageString, "Save changes?"),
-				motif_argXmString (XmNokLabelString, "Save & New"),
-				motif_argXmString (XmNhelpLabelString, "Discard & New"),
-				NULL);
-			XtAddCallback (my dirtyNewDialog, XmNokCallback, gui_cb_saveAndNew, cmd);
-			XtAddCallback (my dirtyNewDialog, XmNhelpCallback, gui_cb_discardAndNew, cmd);
+			my dirtyNewDialog = GuiDialog_create (my shell, 150, 70, 420, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
+			Widget column1 = GuiColumn_createShown (my dirtyNewDialog, 0);
+			GuiLabel_createShown (column1, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
+			Widget row1 = GuiRow_createShown (column1, Gui_HOMOGENEOUS);
+			GuiButton_createShown (row1, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & New", gui_button_cb_discardAndNew, cmd, 0);
+			GuiButton_createShown (row1, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Cancel", gui_button_cb_cancelNew, cmd, 0);
+			GuiButton_createShown (row1, 290, 410, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & New", gui_button_cb_saveAndNew, cmd, 0);
 		}
-		XtManageChild (my dirtyNewDialog);
+		GuiDialog_show (my dirtyNewDialog);
 	} else {
 		newDocument (me);
 	}
@@ -250,8 +277,10 @@ static int menu_cb_save (EDITOR_ARGS) {
 	return 1;
 }
 
-static void gui_cb_saveAndClose (GUI_ARGS) {
-	GUI_IAM (TextEditor);
+static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
+	(void) event;
+	iam (TextEditor);
+	GuiObject_hide (my dirtyCloseDialog);
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
@@ -260,9 +289,10 @@ static void gui_cb_saveAndClose (GUI_ARGS) {
 	}
 }
 
-static void gui_cb_discardAndClose (GUI_ARGS) {
-	GUI_IAM (TextEditor);
-	XtUnmanageChild (my dirtyCloseDialog);
+static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
+	(void) event;
+	iam (TextEditor);
+	GuiObject_hide (my dirtyCloseDialog);
 	closeDocument (me);
 }
 
@@ -270,46 +300,54 @@ static void goAway (I) {
 	iam (TextEditor);
 	if (our fileBased && my dirty) {
 		if (! my dirtyCloseDialog) {
-			my dirtyCloseDialog = XmCreateMessageDialog (my shell, "dirtyCloseDialog", NULL, 0);
-			XtVaSetValues (my dirtyCloseDialog, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				XmNautoUnmanage, True, XmNdialogType, XmDIALOG_QUESTION,
-				motif_argXmString (XmNdialogTitle, "Text changed"),
-				motif_argXmString (XmNmessageString, "Save changes?"),
-				motif_argXmString (XmNokLabelString, "Save & Close"),
-				motif_argXmString (XmNhelpLabelString, "Discard & Close"),
-				NULL);
-			XtAddCallback (my dirtyCloseDialog, XmNokCallback, gui_cb_saveAndClose, me);
-			XtAddCallback (my dirtyCloseDialog, XmNhelpCallback, gui_cb_discardAndClose, me);
+			my dirtyCloseDialog = GuiDialog_create (my shell, 150, 70, 290, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
+			Widget column1 = GuiColumn_createShown (my dirtyCloseDialog, 0);
+			GuiLabel_createShown (column1, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
+			Widget row1 = GuiRow_createShown (column1, Gui_HOMOGENEOUS);
+			GuiButton_createShown (row1, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & Close", gui_button_cb_discardAndClose, me, 0);
+			GuiButton_createShown (row1, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & Close", gui_button_cb_saveAndClose, me, 0);
 		}
-		XtManageChild (my dirtyCloseDialog);
+		GuiDialog_show (my dirtyCloseDialog);
 	} else {
 		closeDocument (me);
 	}
 }
 
-DIRECT (TextEditor, cb_undo)
+static int cb_undo (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_undo (my textWidget);
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_redo)
+static int cb_redo (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_redo (my textWidget);
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_cut)
+static int cb_cut (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_cut (my textWidget);  // use ((XmAnyCallbackStruct *) call) -> event -> xbutton. time
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_copy)
+static int cb_copy (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_copy (my textWidget);
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_paste)
+static int cb_paste (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_paste (my textWidget);
-END
+	return 1;
+}
 
-DIRECT (TextEditor, cb_erase)
+static int cb_erase (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	GuiText_remove (my textWidget);
-END
+	return 1;
+}
 
 static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 	wchar_t *text = GuiText_getString (my textWidget);
@@ -499,6 +537,12 @@ int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
 		GuiText_setString (my textWidget, initialText);
 		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
 		Thing_setName (me, NULL);
+	}
+	if (theOpenTextEditors == NULL) {
+		theOpenTextEditors = Collection_create (classTextEditor, 100);
+	}
+	if (theOpenTextEditors != NULL) {
+		Collection_addItem (theOpenTextEditors, me);
 	}
 	return 1;
 }
