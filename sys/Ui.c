@@ -840,13 +840,16 @@ void UiForm_finish (I) {
 						theFinishBuffer.string, GuiLabel_RIGHT);
 					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
 				} else if (wcsnequ (field -> name, L"right ", 6)) {
-					field -> text = GuiText_createShown (my dialog, fieldX + halfFieldWidth + 12, fieldX + fieldWidth, y, Gui_AUTOMATIC, 0);
+					field -> text = GuiText_createShown (my dialog, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
+						y, Gui_AUTOMATIC, 0);
 				} else {
 					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+					GuiLabel_createShown (my dialog, x, x + labelWidth,
+						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
-					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + fieldWidth, y, Gui_AUTOMATIC, 0);
+					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
+						y, Gui_AUTOMATIC, 0);
 				}
 			} break;
 			case UI_TEXT:
@@ -858,7 +861,7 @@ void UiForm_finish (I) {
 			{
 				MelderString_copy (& theFinishBuffer, field -> stringValue);
 				field -> text = GuiLabel_createShown (my dialog,
-					x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING, y + 5, y + 5 + textFieldHeight,
+					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
 			} break;
 			case UI_RADIO:
@@ -875,7 +878,8 @@ void UiForm_finish (I) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> toggle = GuiRadioButton_createShown (my dialog,
-						fieldX, fieldX + fieldWidth, y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
+						fieldX, dialogWidth /* allow to extend into the margin */,
+						y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
 						theFinishBuffer.string, gui_radiobutton_cb_toggled, field, 0);
 				}
 			} break; 
@@ -913,7 +917,7 @@ void UiForm_finish (I) {
 				/*GuiLabel_createShown (my dialog, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT); */
 				field -> toggle = GuiCheckButton_createShown (my dialog,
-					fieldX, fieldX + labelWidth, y, Gui_AUTOMATIC,
+					fieldX, dialogWidth /* allow to extend into the margin */, y, Gui_AUTOMATIC,
 					theFinishBuffer.string, NULL, NULL, 0);
 			} break;
 			case UI_ENUM:

@@ -461,6 +461,7 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 }
 
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
+	Melder_assert (my graphics != NULL);
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	//#ifndef _WIN32
 	//	Graphics_setColour (my graphics, Graphics_WHITE);
@@ -638,7 +639,8 @@ static Boolean workProc (XtPointer void_me) {
 				stepje = step;
 			#else
 				// linux, sun, HPUX
-				stepje = read (my fd, (void *) buffertje, step * (sizeof (short) * my numberOfChannels)) / (sizeof (short) * my numberOfChannels);
+				if (my fd != -1)
+					stepje = read (my fd, (void *) buffertje, step * (sizeof (short) * my numberOfChannels)) / (sizeof (short) * my numberOfChannels);
 			#endif
 
 			if (my recording) {

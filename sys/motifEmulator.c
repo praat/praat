@@ -4595,7 +4595,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 				Widget drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
 					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
-					_GuiWinDrawingArea_handleKey (me, kar);
+					_GuiWinDrawingArea_handleKey (drawingArea, kar);
 				} else {
 					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
 				}

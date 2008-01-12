@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080109)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080112)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.04# (January 12, 2008)")
+LIST_ITEM (L"\\bu Windows: corrected a bug introduced in 5.0.03 that caused Praat to crash if you pressed a key in the Sound window.")
+LIST_ITEM (L"\\bu Macintosh: some cosmetic corrections.")
 NORMAL (L"##5.0.03# (January 9, 2008)")
 LIST_ITEM (L"\\bu Scripting: guard against opening the same file more than once.")
 LIST_ITEM (L"\\bu Table: possibility of regarding a column as a distribution (#Generate menu).")
