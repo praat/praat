@@ -1,6 +1,6 @@
 /* manual_Fon.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "ManPagesM.h"
 
 static void draw_CreateDurationTier (Graphics g) {
-	static float x [] = { 0, 0.3, 0.6, 0.7, 0.9 }, y [] = { 1, 1, 2.3, 1, 1 };
+	static double x [] = { 0, 0.3, 0.6, 0.7, 0.9 }, y [] = { 1, 1, 2.3, 1, 1 };
 	Graphics_setWindow (g, 0, 0.9, 0, 2.5);
 	Graphics_drawInnerBox (g);
 	Graphics_marksLeftEvery (g, 1, 1, TRUE, TRUE, FALSE);

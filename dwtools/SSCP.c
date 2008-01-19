@@ -190,12 +190,12 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale,
 	double a, angle, b, cs, sn, twoPi = 2 * NUMpi; 
 	long nsteps = 100;
 	double angle_inc = twoPi / nsteps; 
-	float *x = NULL, *y = NULL; long i;
+	double *x = NULL, *y = NULL; long i;
 	wchar_t *name;
 	
-	x = NUMfvector (0, nsteps);
+	x = NUMdvector (0, nsteps);
 	if (x == NULL) return; 
-	y = NUMfvector (0, nsteps);
+	y = NUMdvector (0, nsteps);
 	if (y == NULL) goto end;
 
 	/*
@@ -231,8 +231,8 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale,
 		Graphics_setFontSize (g, oldFontSize);
 	}
 end:
-	NUMfvector_free (x, 0); 
-	NUMfvector_free (y, 0);
+	NUMdvector_free (x, 0); 
+	NUMdvector_free (y, 0);
 }
 
 static SSCP _SSCP_toTwoDimensions (SSCP me, double *v1, double *v2)
@@ -595,8 +595,8 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 	/*
 		Get upper and lower quantiles.
 	*/
-	low  = NUMquantile_d (nrows, ds, qlow);
-	high = NUMquantile_d (nrows, ds, qhigh);
+	low  = NUMquantile (nrows, ds, qlow);
+	high = NUMquantile (nrows, ds, qhigh);
 
 	/* 
 		Count the number filtered.

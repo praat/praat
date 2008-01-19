@@ -642,7 +642,6 @@
 		23E5D14009A22A57004E41D5 /* Tube.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C98109A228FD004E41D5 /* Tube.c */; };
 		23E5D14109A22A57004E41D5 /* Tube.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C98209A228FD004E41D5 /* Tube.h */; };
 		23E5D14209A22A57004E41D5 /* NUMfft_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C99209A228FD004E41D5 /* NUMfft_d.c */; };
-		23E5D14309A22A57004E41D5 /* NUMfft_f.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C99309A228FD004E41D5 /* NUMfft_f.c */; };
 		23E5D14E09A22A57004E41D5 /* gsl_sf__trig.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9709A22903004E41D5 /* gsl_sf__trig.c */; };
 		23E5D15209A22A57004E41D5 /* gsl_err__error.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB6C09A22902004E41D5 /* gsl_err__error.c */; };
 		23E5D15309A22A57004E41D5 /* gsl_sys__pow_int.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9C09A22903004E41D5 /* gsl_sys__pow_int.c */; };
@@ -1121,7 +1120,6 @@
 		23E5C99009A228FD004E41D5 /* NUMf2c.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUMf2c.c; path = dwsys/NUMf2c.c; sourceTree = SOURCE_ROOT; };
 		23E5C99109A228FD004E41D5 /* NUMf2c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NUMf2c.h; path = dwsys/NUMf2c.h; sourceTree = SOURCE_ROOT; };
 		23E5C99209A228FD004E41D5 /* NUMfft_d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUMfft_d.c; path = dwsys/NUMfft_d.c; sourceTree = SOURCE_ROOT; };
-		23E5C99309A228FD004E41D5 /* NUMfft_f.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUMfft_f.c; path = dwsys/NUMfft_f.c; sourceTree = SOURCE_ROOT; };
 		23E5C99409A228FD004E41D5 /* NUMlapack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUMlapack.c; path = dwsys/NUMlapack.c; sourceTree = SOURCE_ROOT; };
 		23E5C99509A228FD004E41D5 /* NUMlapack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NUMlapack.h; path = dwsys/NUMlapack.h; sourceTree = SOURCE_ROOT; };
 		23E5C99609A228FD004E41D5 /* NUMmachar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = NUMmachar.c; path = dwsys/NUMmachar.c; sourceTree = SOURCE_ROOT; };
@@ -1998,7 +1996,6 @@
 				23E5C99009A228FD004E41D5 /* NUMf2c.c */,
 				23E5CF0209A22A51004E41D5 /* NUMfft_core.h */,
 				23E5C99209A228FD004E41D5 /* NUMfft_d.c */,
-				23E5C99309A228FD004E41D5 /* NUMfft_f.c */,
 				23E5C99509A228FD004E41D5 /* NUMlapack.h */,
 				23E5C99409A228FD004E41D5 /* NUMlapack.c */,
 				23E5C99709A228FD004E41D5 /* NUMmachar.h */,
@@ -3601,7 +3598,6 @@
 				23E5D13E09A22A57004E41D5 /* LPC_and_Tube.c in Sources */,
 				23E5D14009A22A57004E41D5 /* Tube.c in Sources */,
 				23E5D14209A22A57004E41D5 /* NUMfft_d.c in Sources */,
-				23E5D14309A22A57004E41D5 /* NUMfft_f.c in Sources */,
 				23E5D14E09A22A57004E41D5 /* gsl_sf__trig.c in Sources */,
 				23E5D15209A22A57004E41D5 /* gsl_err__error.c in Sources */,
 				23E5D15309A22A57004E41D5 /* gsl_sys__pow_int.c in Sources */,

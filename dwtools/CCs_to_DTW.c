@@ -26,7 +26,7 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (I, long frame, float r[], long nr)
+static void regression (I, long frame, double r[], long nr)
 {
 	iam (CC);
 	long i, j, nmin, nrd2 = nr / 2;
@@ -65,7 +65,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 {
 	iam (CC); thouart (CC);
 	DTW him = NULL;
-	float *ri = NULL, *rj = NULL;
+	double *ri = NULL, *rj = NULL;
 	long i, j, k, nr = dtr / my dx, nmax = my maximumNumberOfCoefficients;
 	
 	if (nmax != thy maximumNumberOfCoefficients)
@@ -86,8 +86,8 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 
 	if (((him = DTW_create (my xmin, my xmax, my nx, my dx, my x1,
 			thy xmin, thy xmax, thy nx, thy dx, thy x1)) == NULL) ||
-		((ri = NUMfvector (0, nmax)) == NULL) ||
-		((rj = NUMfvector (0, nmax)) == NULL)) goto end;
+		((ri = NUMdvector (0, nmax)) == NULL) ||
+		((rj = NUMdvector (0, nmax)) == NULL)) goto end;
 
 	/*
 		Calculate distance matrix
@@ -168,8 +168,8 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 end:
 
 	Melder_progress1 (1.0, NULL);
-	NUMfvector_free (ri, 0);
-	NUMfvector_free (rj, 0); 	
+	NUMdvector_free (ri, 0);
+	NUMdvector_free (rj, 0); 	
 	if (Melder_hasError ()) forget (him);
 	return him;
 }

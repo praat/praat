@@ -343,11 +343,11 @@ static void info (I) {
 
 	if (nVoiced >= 1) {   /* Quantiles. */
 		double quantile10, quantile16, quantile50, quantile84, quantile90;
-		quantile10 = NUMquantile_d (nVoiced, frequencies, 0.10);
-		quantile16 = NUMquantile_d (nVoiced, frequencies, 0.16);
-		quantile50 = NUMquantile_d (nVoiced, frequencies, 0.50);   /* Median. */
-		quantile84 = NUMquantile_d (nVoiced, frequencies, 0.84);
-		quantile90 = NUMquantile_d (nVoiced, frequencies, 0.90);
+		quantile10 = NUMquantile (nVoiced, frequencies, 0.10);
+		quantile16 = NUMquantile (nVoiced, frequencies, 0.16);
+		quantile50 = NUMquantile (nVoiced, frequencies, 0.50);   /* Median. */
+		quantile84 = NUMquantile (nVoiced, frequencies, 0.84);
+		quantile90 = NUMquantile (nVoiced, frequencies, 0.90);
 		MelderInfo_writeLine1 (L"\nEstimated quantiles:");
 		MelderInfo_write5 (L"   10% = ", Melder_single (quantile10), L" Hz = ", Melder_single (MEL (quantile10)), L" Mel = ");
 		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile10)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile10)), L" ERB");
@@ -406,6 +406,7 @@ static void info (I) {
 }
 
 class_methods (Pitch, Sampled) {
+	us -> version = 1;
 	class_method_local (Pitch, destroy)
 	class_method_local (Pitch, description)
 	class_method_local (Pitch, copy)

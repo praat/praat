@@ -112,7 +112,7 @@ static double sigmoid (I, double x, double *deriv)
 		if target < activity ==> error < 0
 */
 
-static double minimumSquaredError (I, const float target[])
+static double minimumSquaredError (I, const double target[])
 {
     iam (FFNet); 
 	long i, k = my nNodes - my nOutputs + 1;
@@ -129,7 +129,7 @@ static double minimumSquaredError (I, const float target[])
 /* E = - sum (i=1; i=nPatterns; sum (k=1;k=nOutputs; t[k]*ln (o[k]) + (1-t[k])ln (1-o[k]))) */
 /* dE/do[k] = -(1-t[k])/ (1-o[k]) + t[k]/o[k] */
 /* werkt niet bij (grote?) netten */
-static double minimumCrossEntropy (I, const float target[])
+static double minimumCrossEntropy (I, const double target[])
 {
     iam (FFNet); 
 	long i, k = my nNodes - my nOutputs + 1;
@@ -310,7 +310,7 @@ void FFNet_reset (FFNet me, double wrange)
 
 /***** OPERATION: ***********************************************************/
 /* step 1 */
-void FFNet_propagate (FFNet me, const float input[], float output[])
+void FFNet_propagate (FFNet me, const double input[], double output[])
 {
     double act; long i, j, k = 1;
     long nNodes = my outputsAreLinear ? my nNodes - my nOutputs : my nNodes;
@@ -343,7 +343,7 @@ void FFNet_propagate (FFNet me, const float input[], float output[])
 }
 
 
-double FFNet_computeError (FFNet me, const float target[])
+double FFNet_computeError (FFNet me, const double target[])
 {
 	long i, j, k; double cost;
 	
@@ -400,7 +400,7 @@ long FFNet_getWinningUnit (FFNet me, int labeling)
 	return pos;
 }
 
-void FFNet_propagateToLayer (FFNet me, const float input[], float activity[], long layer)
+void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], long layer)
 {
 	long i, k = 0;
 	Melder_assert (activity);

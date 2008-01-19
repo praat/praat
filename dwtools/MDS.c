@@ -436,7 +436,7 @@ static Distance classISplineTransformator_transform (I, MDSVec vec,
 	for (i = 1; i <= my numberOfInteriorKnots; i++)
 	{
 		double fraction = (double) i / (my numberOfInteriorKnots + 1);
-		my knot[my order+1+i] = NUMquantile_d (nx, vec -> proximity, fraction);
+		my knot[my order+1+i] = NUMquantile (nx, vec -> proximity, fraction);
 	}
 	 
 	/*
@@ -4428,7 +4428,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 {
 	long i, j, k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	long nSplines, n = 1000;
-	double knot[101]; float y[1001];
+	double knot[101]; double y[1001];
 	wchar_t *start, *end;
 	
 	if (type == MDS_ISPLINE) k++;

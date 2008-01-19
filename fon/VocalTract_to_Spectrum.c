@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.c
  *
- * Copyright (C) 1991-2002 Paul Boersma
+ * Copyright (C) 1991-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 1994/03/23 C version
  * pb 2002/06/04
  * pb 2002/07/16 GPL
+ * pb 2008/01/19 double
  */
 
 #include "VocalTract_to_Spectrum.h"
@@ -34,8 +35,8 @@
 #define eta 1.4
 #define shapeFactor 2.0
 
-static void TUBE_transfer (float area [], int numberOfSections, double sectionLength, double frequency,
-	float *re, float *im,   /* Output. */
+static void TUBE_transfer (double area [], int numberOfSections, double sectionLength, double frequency,
+	double *re, double *im,   /* Output. */
 	double glottalDamping,   /* 0 or 0.1 */
 	int hasRadiationDamping, int hasInternalDamping)
 	/* (Re,Im) := (air current at lips) / (air current at glottis) */

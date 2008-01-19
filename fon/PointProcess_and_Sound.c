@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2005/07/07 glottal source signals
  * pb 2006/12/30 new Sound_create API
  * pb 2007/02/25 changed default sampling frequency to 44100 Hz
+ * pb 2008/01/19 double
  */
 
 #include "PointProcess_and_Sound.h"
@@ -38,7 +39,7 @@ Sound PointProcess_to_Sound_pulseTrain
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (my xmin + my xmax) / 2;
 	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
-	float *sound;
+	double *sound;
 	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	sound = thy z [1];
@@ -83,7 +84,7 @@ Sound PointProcess_to_Sound_phonation
 	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 	double a = (power1 + power2 + 1.0) / (power2 - power1);
 	double re = openPhase - collisionPhase;
-	float *sound;
+	double *sound;
 	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	/*
@@ -205,9 +206,9 @@ int PointProcess_play (PointProcess me) {
 }
 
 int PointProcess_hum (PointProcess me, double tmin, double tmax) {
-	static float formant [1 + 6] =
+	static double formant [1 + 6] =
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static float bandwidth [1 + 6] =
+	static double bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	if (! sound) return 0;
@@ -218,9 +219,9 @@ int PointProcess_hum (PointProcess me, double tmin, double tmax) {
 }
 
 Sound PointProcess_to_Sound_hum (PointProcess me) {
-	static float formant [1 + 6] =
+	static double formant [1 + 6] =
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static float bandwidth [1 + 6] =
+	static double bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	if (! sound) return 0;

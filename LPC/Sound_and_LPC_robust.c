@@ -38,7 +38,7 @@ struct huber_struct
 	int wantlocation, wantscale;
 	double location, scale;
 	long n, p;
-	float *w, *work;
+	double *w, *work;
 	double *a;
 	double **covar, *c;
 	SVD svd;
@@ -55,10 +55,10 @@ static int huber_struct_init (struct huber_struct *hs, double windowDuration,
 	hs -> n = n;
 	hs -> p = p;
 	
-	hs -> w = NUMfvector (1, n);
+	hs -> w = NUMdvector (1, n);
 	if (hs -> w == NULL) return 0;
 	
-	hs -> work = NUMfvector (1, n);
+	hs -> work = NUMdvector (1, n);
 	if (hs -> work == NULL) return 0;
 	
 	hs -> a = NUMdvector (1, p);
@@ -85,30 +85,30 @@ static void huber_struct_destroy (struct huber_struct *hs)
 {
 	forget (hs -> e);
 	forget (hs -> svd);
-	NUMfvector_free (hs -> w, 1);
-	NUMfvector_free (hs -> work, 1);
+	NUMdvector_free (hs -> w, 1);
+	NUMdvector_free (hs -> work, 1);
 	NUMdvector_free (hs -> a, 1);
 	NUMdmatrix_free (hs -> covar, 1, 1);
 	NUMdvector_free (hs -> c, 1);
 }
 
-static void huber_struct_getWeights (struct huber_struct *hs, float *e)
+static void huber_struct_getWeights (struct huber_struct *hs, double *e)
 {
 	double ks = hs -> k * hs -> scale;
-	float *w = hs -> w;
+	double *w = hs -> w;
 	long i;
 	
 	for (i = 1 ; i <= hs -> n; i++)
 	{
-		float ei = e[i] - hs -> location;
+		double ei = e[i] - hs -> location;
 		w[i] = ei > -ks && ei < ks ? 1 : ks / fabs (ei);	
 	}
 }
 
-static void huber_struct_getWeightedCovars (struct huber_struct *hs, float *s)
+static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 {
 	long i, j, k, p = hs -> p, n = hs -> n;
-	float *w = hs -> w;
+	double *w = hs -> w;
 	double tmp, **covar = hs -> covar, *c = hs -> c;
 		
 	for (i = 1; i <= p; i++)
@@ -164,7 +164,7 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 	long p = my nCoefficients > his nCoefficients ? his nCoefficients : 
 						my nCoefficients;
 	long i, n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
-	float *e = hs -> e -> z[1], *s = thy z[1];
+	double *e = hs -> e -> z[1], *s = thy z[1];
 	double s0;
 
 	hs -> iter = 0;
@@ -177,7 +177,7 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 		
 		s0 = hs -> scale;
 		
-		if (! NUMstatistics_huber_f (e, n, &(hs -> location), 
+		if (! NUMstatistics_huber_d (e, n, &(hs -> location), 
 			hs -> wantlocation, &(hs -> scale), hs -> wantscale, 
 			hs -> k, hs -> tol, hs -> work)) return 0;
 

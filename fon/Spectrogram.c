@@ -1,6 +1,6 @@
 /* Spectrogram.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/03/08 more info
  * pb 2003/05/27 autoscaling
  * pb 2007/03/17 domain quantity
+ * pb 2008/01/19 double
  */
 
 #include <time.h>
@@ -67,15 +68,15 @@ void Spectrogram_paintInside (I, Graphics g, double tmin, double tmax, double fm
 {
 	iam (Spectrogram);
 	long itmin, itmax, ifmin, ifmax, ifreq, itime;
-	float *preemphasisFactor, *dynamicFactor;
+	double *preemphasisFactor, *dynamicFactor;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (fmax <= fmin) { fmin = my ymin; fmax = my ymax; }
 	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
 		 ! Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax))
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	if (! (preemphasisFactor = NUMfvector (ifmin, ifmax)) ||
-		 ! (dynamicFactor = NUMfvector (itmin, itmax)))
+	if (! (preemphasisFactor = NUMdvector (ifmin, ifmax)) ||
+		 ! (dynamicFactor = NUMdvector (itmin, itmax)))
 		return;
 	/* Pre-emphasis in place; also compute maximum after pre-emphasis. */
 	for (ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
@@ -113,8 +114,8 @@ void Spectrogram_paintInside (I, Graphics g, double tmin, double tmax, double fm
 				- preemphasisFactor [ifreq]) * (NUMln10 / 10.0)) - 1e-30;
 			my z [ifreq] [itime] = value > 0.0 ? value : 0.0;
 		}
-	NUMfvector_free (preemphasisFactor, ifmin);
-	NUMfvector_free (dynamicFactor, itmin);
+	NUMdvector_free (preemphasisFactor, ifmin);
+	NUMdvector_free (dynamicFactor, itmin);
 }
 
 void Spectrogram_paint (I, Graphics g,
@@ -141,7 +142,7 @@ Spectrogram Matrix_to_Spectrogram (I) {
 	Spectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 	if (! thee) return NULL;
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	return thee;
 }
 
@@ -150,7 +151,7 @@ Matrix Spectrogram_to_Matrix (I) {
 	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 	if (! thee) return NULL;
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	return thee;
 }
 

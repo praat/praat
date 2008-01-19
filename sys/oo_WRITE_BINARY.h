@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
+ * pb 2008/01/19 NUM##storage
  */
 
 #include "oo_undef.h"
@@ -46,10 +46,10 @@
 	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (my x && ! NUM##t##vector_writeBinary (my x, min, max, f)) return 0;
+	if (my x && ! NUM##t##vector_writeBinary_##storage (my x, min, max, f)) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (my x && ! NUM##t##matrix_writeBinary (my x, row1, row2, col1, col2, f)) return 0;
+	if (my x && ! NUM##t##matrix_writeBinary_##storage (my x, row1, row2, col1, col2, f)) return 0;
 
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -70,7 +70,7 @@
 	}
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	if (my x && ! NUM##t##vector_writeBinary (my x, min, max, f)) return 0;
+	if (my x && ! NUM##t##vector_writeBinary_##storage (my x, min, max, f)) return 0;
 
 
 #define oo_STRINGx(storage,x)  \

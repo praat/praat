@@ -1,6 +1,6 @@
 /* Graphics_record.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,27 @@
  * pb 2004/02/15 highlight2
  * pb 2007/03/14 arrowSize
  * pb 2007/08/08 text is saved as UTF-8
+ * pb 2008/01/19 removed 16M limitation on number of elements (-> double)
  */
 
 #include "GraphicsP.h"
 
 #define RECORDING_HEADER_LENGTH 2
 
-float * _Graphics_check (Graphics me, long number) {
+double * _Graphics_check (Graphics me, long number) {
 	static int messageShown = FALSE;
-	float *result = NULL;
-	float *record = my record;
+	double *result = NULL;
+	double *record = my record;
 	long nrecord = my nrecord;
 	if (nrecord == 0) {
 		nrecord = 1000;
-		record = Melder_malloc (float, 1 + nrecord);
+		record = Melder_malloc (double, 1 + nrecord);
 		if (record == NULL) goto error;
 		my record = record; my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
-		record = Melder_realloc (record, (1 + nrecord) * sizeof (float));
+		record = Melder_realloc (record, (1 + nrecord) * sizeof (double));
 		if (record == NULL) goto error;
 		my record = record; my nrecord = nrecord;
 	}
@@ -75,7 +76,7 @@ int Graphics_stopRecording (I) {
 }
 
 void Graphics_play (Graphics me, Graphics thee) {
-	float *p = my record, *endp = p + my irecord;
+	double *p = my record, *endp = p + my irecord;
 	int wasRecording = my recording;
 	if (! p) return;
 	my recording = 0;   /* Temporarily, in case me == thee. */
@@ -84,77 +85,82 @@ void Graphics_play (Graphics me, Graphics thee) {
 		#define mget(n)  (p += n, p - n)
 		#define sget(n)  ((char *) (p += n, p - n + 1))
 		int opcode = (int) get;
-		(void) (long) get;   /* Ignore number of arguments. */
+		(void) (long) get;   // ignore number of arguments
 		switch (opcode) {
 			case SET_VIEWPORT:
-			{  float x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setViewport (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			}  break;
 			case SET_INNER: Graphics_setInner (thee); break;
 			case UNSET_INNER: Graphics_unsetInner (thee); break;
 			case SET_WINDOW:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			}  break;
 			case TEXT:
-			{  float x = get, y = get; long length = get; char *text_utf8 = sget (length);
+			{  double x = get, y = get; long length = get; char *text_utf8 = sget (length);
 				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text_utf8));
 			}  break;
 			case POLYLINE:
-			{  long n = get; float *x = mget (n), *y = mget (n);
+			{  long n = get; double *x = mget (n), *y = mget (n);
 				Graphics_polyline (thee, n, & x [1], & y [1]);
-			}  break;
+			} break;
 			case LINE:
-			{  float x1 = get, y1 = get, x2 = get, y2 = get;
+			{  double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_line (thee, x1, y1, x2, y2);
 			}  break;
 			case ARROW:
-			{  float x1 = get, y1 = get, x2 = get, y2 = get;
+			{  double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_arrow (thee, x1, y1, x2, y2);
 			}  break;
 			case FILL_AREA:
-			{  long n = get; float *x = mget (n), *y = mget (n);
+			{  long n = get; double *x = mget (n), *y = mget (n);
 				Graphics_fillArea (thee, n, & x [1], & y [1]);
 			}  break;
 			case FUNCTION:
-			{  long n = get; float x1 = get, x2 = get, *y = mget (n);
+			{  long n = get; double x1 = get, x2 = get, *y = mget (n);
 				Graphics_function (thee, y, 1, n, x1, x2);
 			}  break;
 			case RECTANGLE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_rectangle (thee, x1, x2, y1, y2);
 			}  break;
 			case FILL_RECTANGLE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillRectangle (thee, x1, x2, y1, y2);
 			}  break;
 			case CIRCLE:
-			{  float x = get, y = get, r = get;
+			{  double x = get, y = get, r = get;
 				Graphics_circle (thee, x, y, r);
 			}  break;
 			case FILL_CIRCLE:
-			{  float x = get, y = get, r = get;
+			{  double x = get, y = get, r = get;
 				Graphics_fillCircle (thee, x, y, r);
 			}  break;
 			case ARC:
-			{  float x = get, y = get, r = get, fromAngle = get, toAngle = get;
+			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_arc (thee, x, y, r, fromAngle, toAngle);
 			}  break;
 			case ARC_ARROW:
-			{  float x = get, y = get, r = get, fromAngle = get, toAngle = get;
+			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				int arrowAtStart = get, arrowAtEnd = get;
 				Graphics_arcArrow (thee, x, y, r, fromAngle, toAngle, arrowAtStart, arrowAtEnd);
 			}  break;
 			case HIGHLIGHT:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_highlight (thee, x1, x2, y1, y2);
 			}  break;
 			case CELL_ARRAY:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get, irow;
-				float **z = Melder_malloc (float *, nrow);
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
+				/*
+				 * We don't copy all the data into a new matrix.
+				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
+				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
+				 */
+				double **z = Melder_malloc (double *, nrow);
 				z [0] = p + 1;
-				for (irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
 				Graphics_cellArray (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
@@ -169,52 +175,52 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case SET_TEXT_ROTATION: Graphics_setTextRotation (thee, get); break;
 			case SET_LINE_TYPE: Graphics_setLineType (thee, (int) get); break;
-			case SET_LINE_WIDTH: Graphics_setLineWidth (thee, (double) get); break;
+			case SET_LINE_WIDTH: Graphics_setLineWidth (thee, get); break;
 			case SET_COLOUR: Graphics_setColour (thee, (int) get); break;
 			case SET_GREY: Graphics_setGrey (thee, get); break;
 			case MARK_GROUP: Graphics_markGroup (thee); break;
 			case ELLIPSE: {
-				float x1 = get, x2 = get, y1 = get, y2 = get;
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_ellipse (thee, x1, x2, y1, y2);
 			} break;
 			case FILL_ELLIPSE: {
-				float x1 = get, x2 = get, y1 = get, y2 = get;
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillEllipse (thee, x1, x2, y1, y2);
 			} break;
 			case CIRCLE_MM:
-			{  float x = get, y = get, d = get;
+			{  double x = get, y = get, d = get;
 				Graphics_circle_mm (thee, x, y, d);
 			}  break;
 			case FILL_CIRCLE_MM:
-			{  float x = get, y = get, d = get;
+			{  double x = get, y = get, d = get;
 				Graphics_fillCircle_mm (thee, x, y, d);
 			}  break;
 			case IMAGE8:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get, irow, icol;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
 				unsigned char **z = NUMubmatrix (1, nrow, 1, ncol);
-				for (irow = 1; irow <= nrow; irow ++)
-					for (icol = 1; icol <= ncol; icol ++)
+				for (long irow = 1; irow <= nrow; irow ++)
+					for (long icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMubmatrix_free (z, 1, 1);
 			}  break;
 			case UNHIGHLIGHT:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_unhighlight (thee, x1, x2, y1, y2);
 			}  break;
 			case XOR_ON: Graphics_xorOn (thee, get); break;
 			case XOR_OFF: Graphics_xorOff (thee); break;
 			case RECTANGLE_MM:
-			{  float x = get, y = get, horSide = get, vertSide = get;
+			{  double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_rectangle_mm (thee, x, y, horSide, vertSide);
 			}  break;
 			case FILL_RECTANGLE_MM:
-			{  float x = get, y = get, horSide = get, vertSide = get;
+			{  double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_fillRectangle_mm (thee, x, y, horSide, vertSide);
 			}  break;
 			case SET_WS_WINDOW:
-			{  float x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setWsWindow (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			}  break;
 			case SET_WRAP_WIDTH: Graphics_setWrapWidth (thee, get); break;
@@ -226,57 +232,62 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_DOLLAR_SIGN_IS_CODE: Graphics_setDollarSignIsCode (thee, (bool) get); break;
 			case SET_AT_SIGN_IS_LINK: Graphics_setAtSignIsLink (thee, (bool) get); break;
 			case BUTTON:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_button (thee, x1, x2, y1, y2);
 			}  break;
 			case ROUNDED_RECTANGLE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_roundedRectangle (thee, x1, x2, y1, y2, r);
 			}  break;
 			case FILL_ROUNDED_RECTANGLE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_fillRoundedRectangle (thee, x1, x2, y1, y2, r);
 			}  break;
 			case FILL_ARC:
-			{  float x = get, y = get, r = get, fromAngle = get, toAngle = get;
+			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_fillArc (thee, x, y, r, fromAngle, toAngle);
 			}  break;
 			case INNER_RECTANGLE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_innerRectangle (thee, x1, x2, y1, y2);
 			}  break;
 			case CELL_ARRAY8:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get, irow, icol;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
 				unsigned char **z = NUMubmatrix (1, nrow, 1, ncol);
-				for (irow = 1; irow <= nrow; irow ++)
-					for (icol = 1; icol <= ncol; icol ++)
+				for (long irow = 1; irow <= nrow; irow ++)
+					for (long icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMubmatrix_free (z, 1, 1);
 			}  break;
 			case IMAGE:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get, irow;
-				float **z = Melder_malloc (float *, nrow);
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
+				/*
+				 * We don't copy all the data into a new matrix.
+				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
+				 * This works because the data is a packed array of double, just as Graphics_image expects.
+				 */
+				double **z = Melder_malloc (double *, nrow);
 				z [0] = p + 1;
-				for (irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
 				Graphics_image (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
 			case HIGHLIGHT2:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_highlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
 			}  break;
 			case UNHIGHLIGHT2:
-			{  float x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_unhighlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
 			}  break;
-			case SET_ARROW_SIZE: Graphics_setArrowSize (thee, (double) get); break;
+			case SET_ARROW_SIZE: Graphics_setArrowSize (thee, get); break;
 			case DOUBLE_ARROW:
-			{  float x1 = get, y1 = get, x2 = get, y2 = get;
+			{  double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
 			default:
@@ -294,7 +305,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 */
 int Graphics_writeRecordings (I, FILE *f) {
 	iam (Graphics);
-	float *p = my record, *endp = p + my irecord;
+	double *p = my record, *endp = p + my irecord;
 	if (! p) return 0;
 /*ascio_verbose(0);*/
 	binputi4 (my irecord, f);
@@ -302,6 +313,11 @@ int Graphics_writeRecordings (I, FILE *f) {
 		#define get  (* ++ p)
 		int opcode = (int) get;
 		long numberOfArguments = (long) get;
+		if (numberOfArguments > 0x000FFFFF) {
+			return Melder_error1 (L"This picture has more than 16 million points "
+				"and can therefore not be saved in a Praat picture file. "
+				"Contact paul.boersma@uva.nl to have this corrected.");
+		}
 		binputr4 ((float) opcode, f);
 		binputr4 ((float) numberOfArguments, f);
 		if (opcode == TEXT) {
@@ -311,8 +327,7 @@ int Graphics_writeRecordings (I, FILE *f) {
 			fwrite (++ p, 4, numberOfArguments - 3, f);   /* text */
 			p += numberOfArguments - 4;
 		} else {
-			long i;
-			for (i = numberOfArguments; i > 0; i --) binputr4 (get, f);
+			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
 		}
 	}
 	return ! ferror (f) && ! feof (f);
@@ -326,13 +341,13 @@ int Graphics_writeRecordings (I, FILE *f) {
 int Graphics_readRecordings_oldWindows (I, FILE *f) {
 	iam (Graphics);
 	long i, added_irecord, old_irecord = my irecord;
-	float *p;
+	double *p;
 	added_irecord = bingeti4 (f);
 	p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
 	if (! p) return 0;
 	Melder_assert (my irecord == old_irecord + added_irecord);
 	for (i = 1; i <= added_irecord; i ++) {
-		float value = bingetr4 (f);
+		double value = bingetr4 (f);
 		if (ferror (f) || feof (f)) {
 			my irecord = old_irecord;
 			return Melder_error ("Graphics_readRecordings: "
@@ -347,7 +362,7 @@ int Graphics_readRecordings_oldWindows (I, FILE *f) {
 int Graphics_readRecordings (I, FILE *f) {
 	iam (Graphics);
 	long added_irecord, old_irecord = my irecord;
-	float *p, *endp;
+	double *p, *endp;
 	added_irecord = bingeti4 (f);
 	p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
 	if (! p) return 0;

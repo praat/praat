@@ -274,7 +274,7 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 {
 	iam (Matrix);
 	long i, ix, iymin, iymax, ny;
-	float *y;
+	double *y;
 	
 	if (x < my xmin || x > my xmax) return;
 	ix = Matrix_xToNearestColumn (me, x);
@@ -296,7 +296,7 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 	{ 
 		min -= 0.5; max += 0.5;
 	}
-	y = NUMfvector (iymin, iymax);
+	y = NUMdvector (iymin, iymax);
 	if (y == NULL) return;
 	
 	Graphics_setWindow (g, ymin, ymax, min, max);
@@ -309,7 +309,7 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 	Graphics_function (g, y, iymin, iymax, Matrix_rowToY (me, iymin),
 		 Matrix_rowToY (me, iymax)); 
 	Graphics_unsetInner (g);	
-	NUMfvector_free (y, 1);	
+	NUMdvector_free (y, 1);	
 }
 
 Matrix Matrix_solveEquation (I, double tolerance)

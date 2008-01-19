@@ -1,6 +1,6 @@
 /* Data.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/10/16 C++ compatible struct tags
  * pb 2007/06/21 wchar_t
  * pb 2007/07/21 Data_canWriteAsEncoding
+ * pb 2008/01/18 guarded against some crashes (-> Data me = NULL)
  */
 
 #include "Collection.h"
@@ -276,7 +277,7 @@ int Data_readText (I, MelderReadString *text) {
 }
 
 Any Data_readFromTextFile (MelderFile file) {
-	Data me;
+	Data me = NULL;
 	wchar_t *klas = NULL, *string = NULL;
 	string = MelderFile_readText (file); cherror
 	MelderReadString text = { string, string };
@@ -316,7 +317,7 @@ int Data_readBinary (I, FILE *f) {
 }
 
 Any Data_readFromBinaryFile (MelderFile file) {
-	Data me;
+	Data me = NULL;
 	int n;
 	FILE *f;
 	char line [200], *end;
@@ -359,7 +360,7 @@ int Data_readLisp (I, FILE *f) {
 }
 
 Any Data_readFromLispFile (MelderFile file) {
-	Data me;
+	Data me = NULL;
 	FILE *f;
 	char line [200], *end;
 	if ((f = Melder_fopen (file, "r")) == NULL) return NULL;

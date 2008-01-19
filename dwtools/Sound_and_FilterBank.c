@@ -69,13 +69,13 @@ static Matrix Sound_to_spectralpower (Sound me)
 		if (thee != NULL)
 		{
 			long i;
-			float scale = 2.0 * s -> dx / (my xmax - my xmin);
+			double scale = 2.0 * s -> dx / (my xmax - my xmin);
 			/*
 				factor '2' because of positive and negative frequencies
 				s -> dx : width of frequncy bin
 				my xmax - my xmin : duration of sound
 			*/
-			float *z = thy z[1], *re = s -> z[1], *im = s -> z[2];
+			double *z = thy z[1], *re = s -> z[1], *im = s -> z[2];
 			for (i = 1; i <= s -> nx; i++)
 			{
 				z[i] = scale * (re[i] * re[i] + im[i] * im [i]);
@@ -113,7 +113,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame)
 	{
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
-		float *pow = pv -> z[1];		
+		double *pow = pv -> z[1];		
 		for (j = 1; j <= nf; j++)
 		{
 			/*
@@ -187,7 +187,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 	ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 	
-	NUMfmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref,
+	NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref,
 		FilterBank_DBFAC, FilterBank_DBFLOOR);
 
 end:
@@ -219,7 +219,7 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame)
 		double fc_hz = MELTOHZ (fc_mel);
 		double fl_hz = MELTOHZ (fc_mel - df);
 		double fh_hz =  MELTOHZ (fc_mel + df);
-		float *pow = pv -> z[1];	
+		double *pow = pv -> z[1];	
 		for (j = 1; j <= nf; j++)
 		{
 			/*
@@ -295,7 +295,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 
 	ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 		
-	NUMfmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref,
+	NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref,
 		FilterBank_DBFAC, FilterBank_DBFLOOR);
 
 end:
@@ -331,7 +331,7 @@ static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee,
 	{
 		double p = 0;
 		double fc = f1 + (i - 1) * df;
-		float *pow = pv -> z[1];		
+		double *pow = pv -> z[1];		
 		for (j = 1; j <= nf; j++)
 		{
 			/*
@@ -444,7 +444,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 
 	ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 		
-	NUMfmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, 
+	NUMdmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, 
 		FilterBank_DBFAC, FilterBank_DBFLOOR);
 
 end:

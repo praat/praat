@@ -48,7 +48,7 @@
 #undef oo_BOOL
 #define oo_BOOL(x)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool) },
 #undef oo_FLOAT
-#define oo_FLOAT(x)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float) },
+#define oo_FLOAT(x)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double) },
 #undef oo_DOUBLE
 #define oo_DOUBLE(x)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double) },
 #undef oo_FCOMPLEX
@@ -79,7 +79,7 @@
 #undef oo_BOOL_ARRAY
 #define oo_BOOL_ARRAY(x,cap,n)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, - cap, 0, L"" #n },
 #undef oo_FLOAT_ARRAY
-#define oo_FLOAT_ARRAY(x,cap,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, - cap, 0, L"" #n },
+#define oo_FLOAT_ARRAY(x,cap,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, - cap, 0, L"" #n },
 #undef oo_DOUBLE_ARRAY
 #define oo_DOUBLE_ARRAY(x,cap,n)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, - cap, 0, L"" #n },
 #undef oo_FCOMPLEX_ARRAY
@@ -110,7 +110,7 @@
 #undef oo_BOOL_SET
 #define oo_BOOL_SET(x,setType)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_FLOAT_SET
-#define oo_FLOAT_SET(x,setType)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
+#define oo_FLOAT_SET(x,setType)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_DOUBLE_SET
 #define oo_DOUBLE_SET(x,setType)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 3, 0, (wchar_t *) & enum_##setType },
 #undef oo_FCOMPLEX_SET
@@ -141,7 +141,7 @@
 #undef oo_BOOL_VECTOR_FROM
 #define oo_BOOL_VECTOR_FROM(x,min,max)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_FLOAT_VECTOR_FROM
-#define oo_FLOAT_VECTOR_FROM(x,min,max)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, L"" #min, L"" #max },
+#define oo_FLOAT_VECTOR_FROM(x,min,max)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_DOUBLE_VECTOR_FROM
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_FCOMPLEX_VECTOR_FROM
@@ -172,7 +172,7 @@
 #undef oo_BOOL_MATRIX_FROM
 #define oo_BOOL_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_FLOAT_MATRIX_FROM
-#define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_DOUBLE_MATRIX_FROM
 #define oo_DOUBLE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_FCOMPLEX_MATRIX_FROM
@@ -203,7 +203,7 @@
 #undef oo_BOOL_VECTOR
 #define oo_BOOL_VECTOR(x,n)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 1, 0, L"" #n },
 #undef oo_FLOAT_VECTOR
-#define oo_FLOAT_VECTOR(x,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 1, 0, L"" #n },
+#define oo_FLOAT_VECTOR(x,n)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, 0, L"" #n },
 #undef oo_DOUBLE_VECTOR
 #define oo_DOUBLE_VECTOR(x,n)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 1, 0, L"" #n },
 #undef oo_FCOMPLEX_VECTOR
@@ -234,7 +234,7 @@
 #undef oo_BOOL_MATRIX
 #define oo_BOOL_MATRIX(x,nrow,ncol)  { L"" #x, boolwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (bool), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_FLOAT_MATRIX
-#define oo_FLOAT_MATRIX(x,nrow,ncol)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (float), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
+#define oo_FLOAT_MATRIX(x,nrow,ncol)  { L"" #x, floatwa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_DOUBLE_MATRIX
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  { L"" #x, doublewa, (int) & ((ooSTRUCT) 0) -> x, sizeof (double), 0, 0, 2, 0, L"" #nrow, 0, L"" #ncol },
 #undef oo_FCOMPLEX_MATRIX

@@ -1,6 +1,6 @@
 /* Artword.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
+ * pb 2008/01/19 double
  */
 
 #include "Artword.h"
@@ -143,7 +144,7 @@ void Artword_intoArt (Artword me, Art art, double time) {
 }
 
 void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
-	float x [Artword_maximumNumberOfTargets], y [Artword_maximumNumberOfTargets];
+	double x [Artword_maximumNumberOfTargets], y [Artword_maximumNumberOfTargets];
 	int i;
 
 	Graphics_setInner (g);

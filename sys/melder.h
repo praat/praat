@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/02
+ * pb 2008/01/19
  */
 
 #include <stdio.h>
@@ -879,7 +879,7 @@ int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *enco
  */
 int Melder_bytesPerSamplePoint (int encoding);
 int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding,
-	float *leftBuffer, float *rightBuffer, long numberOfSamples);
+	double *leftBuffer, double *rightBuffer, long numberOfSamples);
 /* If rightBuffer is NULL, reads mono data or averaged stereo data into leftBuffer.
  * If rightBuffer exists, read mono data into leftBuffer or stereo data into leftBuffer and rightBuffer.
  * Buffers are base-1.
@@ -888,7 +888,7 @@ int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short 
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped);
+int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const double *left, long nleft, const double *right, long nright, int warnIfClipped);
 int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
 
 void Melder_audioTrigger (void);

@@ -1,6 +1,6 @@
 /* Graphics_surface.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2001/08/02
  * pb 2002/03/07 GPL
+ * pb 2008/01/19 double
  */
 
 #include "Graphics.h"
 
-void Graphics_surface (I, float **z,
+void Graphics_surface (I, double **z,
 	long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2,
 	double minimum, double maximum,
@@ -79,7 +79,7 @@ void Graphics_surface (I, float **z,
 			 * and that the left and right borders of the figure have world coordinates -1 and +1.
 			 * Also, we suppose that the bottom and top are around 'minimum' and 'maximum'.
 			 */
-			float x [5], y [5];
+			double x [5], y [5];
 
 			/* Elevation and azimuth fixed???
 			 */

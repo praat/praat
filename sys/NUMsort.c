@@ -1,6 +1,6 @@
 /* NUMsort.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/06/24 removed NUMselect
  * pb 2007/08/10 NUMsort_strW
+ * pb 2008/01/21 double
  */
 
 #include "NUM.h"
@@ -86,9 +87,6 @@ if (n <= 12) { \
 		a [i] = k; \
 	} \
 }
-
-void NUMsort_f (long n, float a [])
-	MACRO_NUMsort (float)
 
 void NUMsort_d (long n, double a [])
 	MACRO_NUMsort (double)
@@ -157,18 +155,15 @@ void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *))
 	}
 }
 
-#define NUMquantile_MACRO(proc,type) \
-double proc (long n, type a [], double factor) { \
-	double place = factor * n + 0.5;	 \
-	long left = floor (place); \
-	if (n < 1) return 0.0; \
-	if (n == 1) return a [1]; \
-	if (left < 1) left = 1; \
-	if (left >= n) left = n - 1; \
-	if (a [left + 1] == a [left]) return a [left]; \
-	return a [left] + (place - left) * (a [left + 1] - a [left]); \
+double NUMquantile (long n, double a [], double factor) {
+	double place = factor * n + 0.5;
+	long left = floor (place);
+	if (n < 1) return 0.0;
+	if (n == 1) return a [1];
+	if (left < 1) left = 1;
+	if (left >= n) left = n - 1;
+	if (a [left + 1] == a [left]) return a [left];
+	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }
-NUMquantile_MACRO (NUMquantile_f, float)
-NUMquantile_MACRO (NUMquantile_d, double)
 
 /* End of file NUMsort.c */

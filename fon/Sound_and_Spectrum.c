@@ -35,20 +35,20 @@
 Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	Spectrum thee = NULL;
 	long numberOfSamples = my nx, i, numberOfFrequencies;
-	float *data = NULL, scaling;
-	float *re, *im;
-	struct NUMfft_Table_f fourierTable = { 0 };
+	double *data = NULL, scaling;
+	double *re, *im;
+	struct NUMfft_Table_d fourierTable = { 0 };
 
 	if (fast) {
 		numberOfSamples = 2;
 		while (numberOfSamples < my nx) numberOfSamples *= 2;
 	}
 	numberOfFrequencies = numberOfSamples / 2 + 1;   /* 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2 */
-	data = NUMfvector (1, numberOfSamples); cherror
-	NUMfft_Table_init_f (& fourierTable, numberOfSamples); cherror
+	data = NUMdvector (1, numberOfSamples); cherror
+	NUMfft_Table_init_d (& fourierTable, numberOfSamples); cherror
 
 	for (i = 1; i <= my nx; i ++) data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
-	NUMfft_forward_f (& fourierTable, data); cherror
+	NUMfft_forward_d (& fourierTable, data); cherror
 	thee = Spectrum_create (0.5 / my dx, numberOfFrequencies); cherror
 	thy dx = 1.0 / (my dx * numberOfSamples);   /* Override. */
 	re = thy z [1]; im = thy z [2];
@@ -69,8 +69,8 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 		im [numberOfFrequencies] = 0.0;
 	}
 end:
-	NUMfvector_free (data, 1);
-	NUMfft_Table_free_f (& fourierTable);
+	NUMdvector_free (data, 1);
+	NUMfft_Table_free_d (& fourierTable);
 	iferror forget (thee);
 	return thee;
 }
@@ -78,7 +78,7 @@ end:
 Sound Spectrum_to_Sound (Spectrum me) {
 	Sound thee = NULL;
 	long numberOfSamples, i;
-	float *amp, scaling, *re = my z [1], *im = my z [2];
+	double *amp, scaling, *re = my z [1], *im = my z [2];
 	double lastFrequency = my x1 + (my nx - 1) * my dx;
 	int originalNumberOfSamplesProbablyOdd = im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx;
 	if (my x1 != 0.0)
@@ -98,7 +98,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 	} else {
 		amp [2] = re [my nx] * scaling;
 	}
-	NUMrealft (amp, numberOfSamples, -1); cherror
+	NUMrealft_d (amp, numberOfSamples, -1); cherror
 end:
 	iferror forget (thee);
 	return thee;
@@ -107,7 +107,7 @@ end:
 Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency) {
 	Sound sound = NULL;
 	Spectrum thee = NULL;
-	float gain, a [100], *data = NULL, *re, *im;
+	double gain, a [100], *data = NULL, *re, *im;
 	long i, numberOfCoefficients = 2 * numberOfPeaks, nfft, halfnfft, ndata;
 	double scale;
 
@@ -121,11 +121,11 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 	nfft = 2 * (thy nx - 1);
 	ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
 	scale = 10 * (gain > 0 ? sqrt (gain) : 1) / numberOfCoefficients;
-	data = NUMfvector (1, nfft); cherror
+	data = NUMdvector (1, nfft); cherror
 	data [1] = 1;
 	for (i = 1; i <= ndata; i ++)
 		data [i + 1] = a [i];
-	NUMrealft (data, nfft, 1); cherror
+	NUMrealft_d (data, nfft, 1); cherror
 	re = thy z [1], im = thy z [2];
 	re [1] = scale / data [1];
 	im [1] = 0.0;
@@ -139,7 +139,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 	im [halfnfft + 1] = 0.0;
 end:
 	forget (sound);
-	NUMfvector_free (data, 1);
+	NUMdvector_free (data, 1);
 	iferror forget (thee);
 	return thee;
 }
@@ -151,7 +151,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
 		spec = Sound_to_Spectrum (me, TRUE); cherror
 		Matrix_formula ((Matrix) spec, formula, 0); cherror
 		him = Spectrum_to_Sound (spec); cherror
-		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+		NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	} else {
 		for (long channel = 1; channel <= my ny; channel ++) {
 			forget (him);
@@ -161,7 +161,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
 			Matrix_formula ((Matrix) spec, formula, 0); cherror
 			forget (him);
 			him = Spectrum_to_Sound (spec); cherror
-			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+			NUMdvector_copyElements (his z [1], thy z [channel], 1, thy nx);
 		}
 	}
 end:
@@ -178,7 +178,7 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 		spec = Sound_to_Spectrum (me, TRUE); cherror
 		Spectrum_passHannBand (spec, fmin, fmax, smooth);
 		him = Spectrum_to_Sound (spec); cherror
-		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+		NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	} else {
 		for (long channel = 1; channel <= my ny; channel ++) {
 			forget (him);
@@ -188,7 +188,7 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 			Spectrum_passHannBand (spec, fmin, fmax, smooth);
 			forget (him);
 			him = Spectrum_to_Sound (spec); cherror
-			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+			NUMdvector_copyElements (his z [1], thy z [channel], 1, thy nx);
 		}
 	}
 end:
@@ -205,7 +205,7 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 		spec = Sound_to_Spectrum (me, TRUE); cherror
 		Spectrum_stopHannBand (spec, fmin, fmax, smooth);
 		him = Spectrum_to_Sound (spec); cherror
-		NUMfvector_copyElements (his z [1], thy z [1], 1, thy nx);
+		NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	} else {
 		for (long channel = 1; channel <= my ny; channel ++) {
 			forget (him);
@@ -215,7 +215,7 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 			Spectrum_stopHannBand (spec, fmin, fmax, smooth);
 			forget (him);
 			him = Spectrum_to_Sound (spec); cherror
-			NUMfvector_copyElements (his z [1], thy z [channel], 1, thy nx);
+			NUMdvector_copyElements (his z [1], thy z [channel], 1, thy nx);
 		}
 	}
 end:

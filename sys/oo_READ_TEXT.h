@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/06/21 asc -> tex
  * pb 2007/07/21 MelderReadString
  * pb 2007/07/22 improved reading of <exists>
+ * pb 2008/01/19 NUM##storage
  */
 
 #include "oo_undef.h"
@@ -49,11 +50,11 @@
 	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readText (min, max, text, #x))) return 0;
+	if (max >= min && ! (my x = NUM##t##vector_readText_##storage (min, max, text, #x))) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readText (row1, row2, col1, col2, text, #x))) return 0;
+	    ! (my x = NUM##t##matrix_readText_##storage (row1, row2, col1, col2, text, #x))) return 0;
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	if ((my x = texget##storage (text, & enum_##Type)) < 0) return 0;

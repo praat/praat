@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/20
+ * pb 2008/01/19
  */
 
 #ifndef _Thing_h_
@@ -61,7 +61,7 @@ Graphics_Viewport Graphics_insetViewport (I, double x1rel, double x2rel, double 
 void Graphics_resetViewport (I, Graphics_Viewport viewport);
 void Graphics_setWindow (I, double x1, double x2, double y1, double y2);
 
-void Graphics_polyline (I, long numberOfPoints, float *x, float *y);
+void Graphics_polyline (I, long numberOfPoints, double *x, double *y);
 void Graphics_text (I, double x, double y, const wchar_t *text);
 void Graphics_text1 (I, double x, double y, const wchar_t *s1);
 void Graphics_text2 (I, double x, double y, const wchar_t *s1, const wchar_t *s2);
@@ -76,12 +76,12 @@ void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wch
 double Graphics_textWidth (I, const wchar_t *text);
 double Graphics_textWidth_ps (I, const wchar_t *text, bool useSilipaPS);
 double Graphics_textWidth_ps_mm (I, const wchar_t *text, bool useSilipaPS);
-void Graphics_fillArea (I, long numberOfPoints, float *x, float *y);
-void Graphics_cellArray (I, float **z, long ix1, long ix2, double x1, double x2,
+void Graphics_fillArea (I, long numberOfPoints, double *x, double *y);
+void Graphics_cellArray (I, double **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_cellArray8 (I, unsigned char **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
-void Graphics_image (I, float **z, long ix1, long ix2, double x1, double x2,
+void Graphics_image (I, double **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (I, unsigned char **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
@@ -90,7 +90,7 @@ void Graphics_rectangle (I, double x1, double x2, double y1, double y2);
 void Graphics_fillRectangle (I, double x1, double x2, double y1, double y2);
 void Graphics_roundedRectangle (I, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_fillRoundedRectangle (I, double x1, double x2, double y1, double y2, double r_mm);
-void Graphics_function (I, float y [], long ix1, long ix2, double x1, double x2);   /* y [ix1..ix2] */
+void Graphics_function (I, double y [], long ix1, long ix2, double x1, double x2);   /* y [ix1..ix2] */
 void Graphics_function16 (I, short y [], int stagger, long ix1, long ix2, double x1, double x2);
 	/* y [ix1..ix2] or y [ix1*2..ix2*2] */
 void Graphics_circle (I, double x, double y, double r);
@@ -143,9 +143,9 @@ void Graphics_setTextRotation (I, double angle);
 void Graphics_setTextRotation_vector (I, double dx, double dy);
 void Graphics_setWrapWidth (I, double wrapWidth);
 void Graphics_setSecondIndent (I, double indent);
-float Graphics_inqTextX (I);
-float Graphics_inqTextY (I);
-typedef struct { float x1, x2, y1, y2; wchar_t *name; } Graphics_Link;
+double Graphics_inqTextX (I);
+double Graphics_inqTextY (I);
+typedef struct { double x1, x2, y1, y2; wchar_t *name; } Graphics_Link;
 int Graphics_getLinks (Graphics_Link **plinks);
 void Graphics_setNumberSignIsBold (I, bool isBold);
 void Graphics_setPercentSignIsItalic (I, bool isItalic);
@@ -188,18 +188,18 @@ int Graphics_inqFont (I);
 int Graphics_inqFontSize (I);
 int Graphics_inqFontStyle (I);
 int Graphics_inqLineType (I);
-float Graphics_inqLineWidth (I);
-float Graphics_inqArrowSize (I);
+double Graphics_inqLineWidth (I);
+double Graphics_inqArrowSize (I);
 int Graphics_inqColour (I);
 
-void Graphics_contour (I, float **z,
+void Graphics_contour (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);
-void Graphics_altitude (I, float **z,
-	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, float borders []);
-void Graphics_grey (I, float **z,
-	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, float borders []);
+void Graphics_altitude (I, double **z,
+	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, double borders []);
+void Graphics_grey (I, double **z,
+	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
-void Graphics_surface (I, float **z, long ix1, long ix2, double x1, double x2,
+void Graphics_surface (I, double **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum, double elevation, double azimuth);
 
 void Graphics_setInner (I);

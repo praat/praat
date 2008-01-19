@@ -1,6 +1,6 @@
 /* melder_audiofiles.c
  *
- * Copyright (C) 1992-2007 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/05/17 corrected stereo FLAC writing
  * Erez Volk 2007/06/02 MP3 reading
  * pb 2007/10/05 FSOpenResFile
+ * pb 2008/01/19 double
  */
 
 #include "melder.h"
@@ -695,7 +696,7 @@ typedef struct {
 	FILE *file;
 	int numberOfChannels;
 	long numberOfSamples;
-	float *channels [2];
+	double *channels [2];
 } MelderDecodeFlacContext;
 
 /* The same goes for MP3 */
@@ -703,7 +704,7 @@ typedef struct {
 typedef struct {
 	int numberOfChannels;
 	long numberOfSamples;
-	float *channels [2];
+	double *channels [2];
 } MelderDecodeMp3Context;
 
 static FLAC__StreamDecoderReadStatus Melder_DecodeFlac_read (const FLAC__StreamDecoder *decoder,
@@ -727,7 +728,7 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 	const FLAC__FrameHeader *header = & frame -> header;
 	long count = header -> blocksize;
 	const FLAC__int32 *input;
-	float multiplier, *output;
+	double multiplier, *output;
 
 	(void) decoder;
 
@@ -752,7 +753,7 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long count, void *context) {
 	MelderDecodeMp3Context *c = (MelderDecodeMp3Context *) context;
 	const MP3F_SAMPLE *input;
-	float *output;
+	double *output;
 	for (long i = 0; i < c -> numberOfChannels; ++ i) {
 		input = channels [i];
 		output = c -> channels [i];
@@ -768,7 +769,7 @@ static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__S
 	Melder_warning2 (L"FLAC decoder error: ", Melder_peekUtf8ToWcs (FLAC__StreamDecoderErrorStatusString [status]));
 }
 
-static int Melder_readFlacFile (FILE *f, int numberOfChannels, float *leftBuffer, float *rightBuffer, long numberOfSamples) {
+static int Melder_readFlacFile (FILE *f, int numberOfChannels, double *leftBuffer, double *rightBuffer, long numberOfSamples) {
 	FLAC__StreamDecoder *decoder;
 	MelderDecodeFlacContext c;
 	int result = 0;
@@ -794,7 +795,7 @@ end:
 	return result;
 }
 
-static int Melder_readMp3File (FILE *f, int numberOfChannels, float *leftBuffer, float *rightBuffer, long numberOfSamples) {
+static int Melder_readMp3File (FILE *f, int numberOfChannels, double *leftBuffer, double *rightBuffer, long numberOfSamples) {
 	MP3_FILE mp3f;
 	MelderDecodeMp3Context c;
 	int result = 0;
@@ -811,10 +812,10 @@ static int Melder_readMp3File (FILE *f, int numberOfChannels, float *leftBuffer,
 	return result;
 }
 
-int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float *leftBuffer, float *rightBuffer, long numberOfSamples) {
+int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double *leftBuffer, double *rightBuffer, long numberOfSamples) {
 	long i;
 	int readEverything = 0;
-	Melder_assert (sizeof (char) == 1 && sizeof (short) == 2 && sizeof (float) == 4);
+	Melder_assert (sizeof (char) == 1 && sizeof (short) == 2 && sizeof (double) == 8);   // the "double" size checks the Melder_LINEAR_16 memory reuse trick
 	switch (encoding) {
 		case Melder_LINEAR_8_SIGNED:
 			if (numberOfChannels == 1)
@@ -854,7 +855,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 			break;
 		case Melder_LINEAR_16_BIG_ENDIAN:
 			if (numberOfChannels == 1) {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1] + numberOfSamples * 2;   /* in top half */
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 2;   // memory reuse: in bottom quarter
 				fread (bytes, 1, numberOfSamples * 2, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
@@ -862,7 +863,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 					leftBuffer [i] = value * (1.0f / 32768);
 				}
 			} else if (rightBuffer) {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1];
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 4;   // memory reuse: in bottom half
 				fread (bytes, 1, numberOfSamples * 4, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
@@ -872,7 +873,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 					rightBuffer [i] = right * (1.0f / 32768);
 				}
 			} else {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1];
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 4;   // memory reuse: in bottom half
 				fread (bytes, 1, numberOfSamples * 4, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
@@ -884,7 +885,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 			break;
 		case Melder_LINEAR_16_LITTLE_ENDIAN:
 			if (numberOfChannels == 1) {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1] + numberOfSamples * 2;   /* in top half */
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 2;   /* memory reuse: in bottom quarter */
 				fread (bytes, 1, numberOfSamples * 2, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
@@ -892,7 +893,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 					leftBuffer [i] = value * (1.0f / 32768);
 				}
 			} else if (rightBuffer) {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1];
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 4;   // memory reuse: in bottom half
 				fread (bytes, 1, numberOfSamples * 4, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
@@ -902,7 +903,7 @@ int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, float 
 					rightBuffer [i] = right * (1.0f / 32768);
 				}
 			} else {
-				unsigned char *bytes = (unsigned char *) & leftBuffer [1];
+				unsigned char *bytes = (unsigned char *) & leftBuffer [numberOfSamples + 1] - numberOfSamples * 4;   // memory reuse: in bottom half
 				fread (bytes, 1, numberOfSamples * 4, f);
 				for (i = 1; i <= numberOfSamples; i ++) {
 					unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
@@ -1185,7 +1186,7 @@ int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int enc
 	return 1;
 }
 
-int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const float *left, long nleft, const float *right, long nright, int warnIfClipped) {
+int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const double *left, long nleft, const double *right, long nright, int warnIfClipped) {
 	FILE *f = file -> filePointer;
 	long n = nleft > nright ? nleft : nright, i, nclipped = 0;
 	switch (encoding) {

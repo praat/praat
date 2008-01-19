@@ -1,6 +1,6 @@
 /* LongSound.c
  *
- * Copyright (C) 1992-2007 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * Erez Volk 2007/05/14 FLAC writing
  * Erez Volk 2007/06/04 MP3 reading
  * pb 2007/12/05 prefs
+ * pb 2008/01/19 double
  */
 
 #include "LongSound.h"
@@ -91,9 +92,7 @@ static void info (I) {
 }
 
 static void _LongSound_FLAC_convertFloats (LongSound me, const FLAC__int32 * const samples[], long bitsPerSample, long numberOfSamples) {
-	long i, j;
-	const FLAC__int32 *input;
-	float multiplier, *output;
+	double multiplier;
 	switch (bitsPerSample) {
 		case 8: multiplier = (1.0f / 128); break;
 		case 16: multiplier = (1.0f / 32768); break;
@@ -101,12 +100,11 @@ static void _LongSound_FLAC_convertFloats (LongSound me, const FLAC__int32 * con
 		case 32: multiplier = (1.0f / 32768 / 65536); break;
 		default: multiplier = 0.0;
 	}
-
-	for (i = 0; i < 2; ++i) {
-		input = samples [i];
-		output = my compressedFloats [i];
+	for (long i = 0; i < 2; ++i) {
+		const FLAC__int32 *input = samples [i];
+		double *output = my compressedFloats [i];
 		if (! output ) continue;
-		for (j = 0; j < numberOfSamples; ++j)
+		for (long j = 0; j < numberOfSamples; ++j)
 			output [j] = (long)input [j] * multiplier;
 		my compressedFloats [i] += numberOfSamples;
 	}
@@ -157,27 +155,21 @@ static void _LongSound_FLAC_error (const FLAC__StreamDecoder *decoder, FLAC__Str
 }
 
 static void _LongSound_MP3_convertFloats (LongSound me, const MP3F_SAMPLE *channels[MP3F_MAX_CHANNELS], long numberOfSamples) {
-	long i, j;
-	const MP3F_SAMPLE *input;
-	float *output;
-	for (i = 0; i < 2; ++i) {
-		input = channels [i];
-		output = my compressedFloats [i];
+	for (long i = 0; i < 2; ++i) {
+		const MP3F_SAMPLE *input = channels [i];
+		double *output = my compressedFloats [i];
 		if (! output ) continue;
-		for (j = 0; j < numberOfSamples; ++j)
+		for (long j = 0; j < numberOfSamples; ++j)
 			output [j] = mp3f_sample_to_float (input [j]);
 		my compressedFloats [i] += numberOfSamples;
 	}
 }
 
 static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *channels[MP3F_MAX_CHANNELS], long numberOfSamples) {
-	long i, j;
-	const MP3F_SAMPLE *input;
-	short *output;
-	for (i = 0; i < my numberOfChannels; ++ i) {
-		output = my compressedShorts + i;
-		input = channels [i];
-		for (j = 0; j < numberOfSamples; ++j, output += my numberOfChannels) {
+	for (long i = 0; i < my numberOfChannels; ++ i) {
+		const MP3F_SAMPLE *input = channels [i];
+		short *output = my compressedShorts + i;
+		for (long j = 0; j < numberOfSamples; ++j, output += my numberOfChannels) {
 			int sample = *input++;
 			*output = mp3f_sample_to_short (sample);
 		}
@@ -291,7 +283,7 @@ static int _LongSound_FILE_seekSample (LongSound me, long firstSample) {
 	return 1;
 }
 
-static int _LongSound_FLAC_readAudioToFloat (LongSound me, float *leftBuffer, float *rightBuffer, long firstSample, long numberOfSamples) {
+static int _LongSound_FLAC_readAudioToFloat (LongSound me, double *leftBuffer, double *rightBuffer, long firstSample, long numberOfSamples) {
 	my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 	my compressedFloats [0] = leftBuffer ? leftBuffer + 1 : NULL;
 	my compressedFloats [1] = rightBuffer ? rightBuffer + 1 : NULL;
@@ -313,7 +305,7 @@ static int _LongSound_MP3_process (LongSound me, long firstSample, long numberOf
 	return 1;
 }
 
-static int _LongSound_MP3_readAudioToFloat (LongSound me, float *leftBuffer, float *rightBuffer, long firstSample, long numberOfSamples) {
+static int _LongSound_MP3_readAudioToFloat (LongSound me, double *leftBuffer, double *rightBuffer, long firstSample, long numberOfSamples) {
 	my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 	my compressedFloats [0] = leftBuffer ? leftBuffer + 1 : NULL;
 	my compressedFloats [1] = rightBuffer ? rightBuffer + 1 : NULL;
@@ -326,7 +318,7 @@ static int _LongSound_MP3_readAudioToShort (LongSound me, short *buffer, long fi
 	return _LongSound_MP3_process (me, firstSample, numberOfSamples - 1);
 }
 
-int LongSound_readAudioToFloat (LongSound me, float *leftBuffer, float *rightBuffer, long firstSample, long numberOfSamples) {
+int LongSound_readAudioToFloat (LongSound me, double *leftBuffer, double *rightBuffer, long firstSample, long numberOfSamples) {
 	if (my encoding == Melder_FLAC_COMPRESSION)
 		return _LongSound_FLAC_readAudioToFloat (me, leftBuffer, rightBuffer, firstSample, numberOfSamples);
 	if (my encoding == Melder_MPEG_COMPRESSION)

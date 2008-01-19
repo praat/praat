@@ -1,6 +1,6 @@
 /* Sound_enhance.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2007/01/28 made compatible with stereo sounds (by rejecting them)
  * pb 2007/07/22 renamed the overlap-add method in such a way that it does not sound like a trademark for diphone concatenation
+ * pb 2008/01/19 double
  */
 
 #include "Manipulation.h"
@@ -64,7 +65,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	Spectrum orgspec = NULL, spec = NULL, intensityFilter = NULL;
 	double fmin, maximumFactor = pow (10, enhancement_dB / 20), alpha = sqrt (log (2.0));
 	long i, n;
-	float *amp;
+	double *amp;
 	double alphaslow = alpha / slowModulation, alphafast = alpha / fastModulation;
 
 	for (long channel = 1; channel <= my ny; channel ++) {
@@ -94,7 +95,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1);
 			if (fmax > fhigh) fmax = fhigh;
 			Melder_progress5 (fmin / fhigh, L"Band: ", Melder_fixed (fmin, 0), L" ... ", Melder_fixed (fmax, 0), L" Hz"); cherror
-			NUMfmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
+			NUMdmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
 			Spectrum_passHannBand (spec, fmin, fmax, bandSmoothing);
 			forget (band);
 			band = Spectrum_to_Sound (spec); cherror

@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/09
+ * pb 2008/01/19
  */
 
 #ifndef _melder_h_
@@ -46,7 +46,6 @@ void Preferences_addUint (const wchar_t *string, unsigned int *value, unsigned i
 void Preferences_addUlong (const wchar_t *string, unsigned long *value, unsigned long defaultValue);
 void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue);
 void Preferences_addChar (const wchar_t *string, wchar_t *value, wchar_t defaultValue);
-void Preferences_addFloat (const wchar_t *string, float *value, float defaultValue);
 void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue);
 void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue);
 void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value, int min, int max,

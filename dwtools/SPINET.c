@@ -119,14 +119,14 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	double minimum, double maximum, int enhanced, int garnish)
 {
 	long i, ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
-	double **z = enhanced ? my s : my y; float *spec;
+	double **z = enhanced ? my s : my y; double *spec;
 	if (icol < 1 || icol > my nx) return;
 	if (toErb <= fromErb) { fromErb = my ymin; toErb = my ymax; }
 	if (! Sampled2_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax) ||
-		! (spec = NUMfvector (1, my ny))) return;
+		! (spec = NUMdvector (1, my ny))) return;
 		
 	for (i=1; i <= my ny; i++) spec[i] = z[i][icol];
-	if (maximum <= minimum) NUMfvector_extrema (spec, ifmin, ifmax, &minimum, &maximum);
+	if (maximum <= minimum) NUMdvector_extrema (spec, ifmin, ifmax, &minimum, &maximum);
 	if (maximum <= minimum) { minimum -= 1; maximum += 1; }
 	for (i=ifmin; i <= ifmax; i++)
 		if (spec[i] > maximum) spec[i] = maximum;
@@ -144,7 +144,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 		Graphics_textLeft (g, 1, L"strength");
 		Graphics_marksLeft( g, 2, 1, 1, 0);
 	}
-	NUMfvector_free (spec, 1);
+	NUMdvector_free (spec, 1);
 }
 
 /* End of file SPINET.c */

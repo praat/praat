@@ -1,6 +1,6 @@
 /* NUMarrays.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2007/07/21 readText and writeText API changes
+ * pb 2008/01/19 include storage in I/O names
  */
 
 #include "NUM.h"
@@ -133,7 +134,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 
 /*** Typed memory and I/O routines for vectors and matrices. ***/
 
-#define FUNCTION(t,type,storage)  \
+#define FUNCTION(t,type)  \
 	type * NUM##t##vector (long lo, long hi) \
 		{ return NUMvector (sizeof (type), lo, hi); } \
 	void NUM##t##vector_free (type *v, long lo) \
@@ -144,7 +145,33 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
-	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
+	type ** NUM##t##matrix (long row1, long row2, long col1, long col2) \
+		{ return NUMmatrix (sizeof (type), row1, row2, col1, col2); } \
+	void NUM##t##matrix_free (type **m, long row1, long col1) \
+		{ NUMmatrix_free (sizeof (type), m, row1, col1); } \
+	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2) \
+		{ return NUMmatrix_copy (sizeof (type), m, row1, row2, col1, col2); } \
+	void NUM##t##matrix_copyElements (type **m, type **to, long row1, long row2, long col1, long col2) \
+		{ NUMmatrix_copyElements (sizeof (type), m, to, row1, row2, col1, col2); } \
+	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
+		{ return NUMmatrix_equal (sizeof (type), m1, m2, row1, row2, col1, col2); }
+
+FUNCTION (b, signed char)
+FUNCTION (s, short)
+FUNCTION (i, int)
+FUNCTION (l, long)
+FUNCTION (ub, unsigned char)
+FUNCTION (us, unsigned short)
+FUNCTION (ui, unsigned int)
+FUNCTION (ul, unsigned long)
+FUNCTION (d, double)
+FUNCTION (fc, fcomplex)
+FUNCTION (dc, dcomplex)
+FUNCTION (c, char)
+#undef FUNCTION
+
+#define FUNCTION(t,type,storage)  \
+	int NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
 		texputintro (file, name, L" []: ", hi >= lo ? NULL : L"(empty)", 0,0,0); \
 		for (long i = lo; i <= hi; i ++) \
 			texput##storage (file, v [i], name, L" [", Melder_integer (i), L"]", 0,0); \
@@ -152,20 +179,20 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
 	} \
-	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f) { \
+	int NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f) { \
 		long i; \
 		for (i = lo; i <= hi; i ++) \
 			binput##storage (v [i], f); \
 		if (feof (f) || ferror (f)) return 0; \
 		return 1; \
 	} \
-	int NUM##t##vector_writeCache (const type *v, long lo, long hi, CACHE *f) { \
+	int NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f) { \
 		long i; \
 		for (i = lo; i <= hi; i ++) \
 			cacput##storage (v [i], f); \
 		return 1; \
 	} \
-	type * NUM##t##vector_readText (long lo, long hi, MelderReadString *text, const char *name) { \
+	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadString *text, const char *name) { \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
 		for (long i = lo; i <= hi; i ++) { \
@@ -177,7 +204,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return result; \
 	} \
-	type * NUM##t##vector_readBinary (long lo, long hi, FILE *f) { \
+	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f) { \
 		long i; \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
@@ -190,7 +217,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return result; \
 	} \
-	type * NUM##t##vector_readCache (long lo, long hi, CACHE *f) { \
+	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f) { \
 		long i; \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
@@ -199,17 +226,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return result; \
 	} \
-	type ** NUM##t##matrix (long row1, long row2, long col1, long col2) \
-		{ return NUMmatrix (sizeof (type), row1, row2, col1, col2); } \
-	void NUM##t##matrix_free (type **m, long row1, long col1) \
-		{ NUMmatrix_free (sizeof (type), m, row1, col1); } \
-	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2) \
-		{ return NUMmatrix_copy (sizeof (type), m, row1, row2, col1, col2); } \
-	void NUM##t##matrix_copyElements (type **m, type **to, long row1, long row2, long col1, long col2) \
-		{ NUMmatrix_copyElements (sizeof (type), m, to, row1, row2, col1, col2); } \
-	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
-		{ return NUMmatrix_equal (sizeof (type), m1, m2, row1, row2, col1, col2); } \
-	int NUM##t##matrix_writeText (type **m, long row1, long row2, long col1, long col2, MelderFile file, const wchar_t *name) { \
+	int NUM##t##matrix_writeText_##storage (type **m, long row1, long row2, long col1, long col2, MelderFile file, const wchar_t *name) { \
 		texputintro (file, name, L" [] []: ", row2 >= row1 ? NULL : L"(empty)", 0,0,0); \
 		if (row2 >= row1) { \
 			long row, col; \
@@ -225,7 +242,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
 		return 1; \
 	} \
-	int NUM##t##matrix_writeBinary (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
+	int NUM##t##matrix_writeBinary_##storage (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
 		if (row2 >= row1) { \
 			long row, col; \
 			for (row = row1; row <= row2; row ++) { \
@@ -236,7 +253,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		if (feof (f) || ferror (f)) return 0; \
 		return 1; \
 	} \
-	int NUM##t##matrix_writeCache (type **m, long row1, long row2, long col1, long col2, CACHE *f) { \
+	int NUM##t##matrix_writeCache_##storage (type **m, long row1, long row2, long col1, long col2, CACHE *f) { \
 		if (row2 >= row1) { \
 			long row, col; \
 			for (row = row1; row <= row2; row ++) { \
@@ -246,7 +263,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return 1; \
 	} \
-	type ** NUM##t##matrix_readText (long row1, long row2, long col1, long col2, MelderReadString *text, const char *name) { \
+	type ** NUM##t##matrix_readText_##storage (long row1, long row2, long col1, long col2, MelderReadString *text, const char *name) { \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
 		for (long i = row1; i <= row2; i ++) for (long j = col1; j <= col2; j ++) { \
@@ -259,7 +276,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return result; \
 	} \
-	type ** NUM##t##matrix_readBinary (long row1, long row2, long col1, long col2, FILE *f) { \
+	type ** NUM##t##matrix_readBinary_##storage (long row1, long row2, long col1, long col2, FILE *f) { \
 		long i, j; \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
@@ -272,7 +289,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		} \
 		return result; \
 	} \
-	type ** NUM##t##matrix_readCache (long row1, long row2, long col1, long col2, CACHE *f) { \
+	type ** NUM##t##matrix_readCache_##storage (long row1, long row2, long col1, long col2, CACHE *f) { \
 		long i, j; \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
@@ -282,7 +299,6 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		return result; \
 	}
 
-		
 FUNCTION (b, signed char, i1)
 FUNCTION (s, short, i2)
 FUNCTION (i, int, i2)
@@ -291,10 +307,11 @@ FUNCTION (ub, unsigned char, u1)
 FUNCTION (us, unsigned short, u2)
 FUNCTION (ui, unsigned int, u2)
 FUNCTION (ul, unsigned long, u4)
-FUNCTION (f, float, r4)
+FUNCTION (d, double, r4)
 FUNCTION (d, double, r8)
 FUNCTION (fc, fcomplex, c8)
 FUNCTION (dc, dcomplex, c16)
 FUNCTION (c, char, c1)
+#undef FUNCTION
 
 /* End of file NUMarrays.c */

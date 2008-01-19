@@ -86,6 +86,8 @@
  * 		Added #ifdef __MACH__ ... #endif for MacOS 10.3
  *  djmw 20061218 To Melder_information<x> format
  *  djmw 20070614 updated from version 1.25 to 1.30
+ *  djmw 20080110 Extra parameter for SubstituteRE to allow error differentiation (not enough memory can be repaired upstream).
+ *                Changed Melder_information in reg_error to Melder_error.
  */
 
 #include <stdio.h>
@@ -95,7 +97,6 @@
 
 #ifdef __MACH__
 	#define __CHAR_BIT__ 8
-	#define __SCHAR_MAX__ 255
 #endif
 
 #include <limits.h>
@@ -3995,7 +3996,7 @@ static unsigned char * next_ptr (unsigned char *ptr) {
 **  To give the caller a chance to react to this the function returns False
 **  on any error. The substitution will still be executed.
 */
-int SubstituteRE(const regexp* prog, const char* source, char* dest, const int max)
+int SubstituteRE(const regexp* prog, const char* source, char* dest, const int max, int *errorType)
 {
 
    register unsigned char *src;
@@ -4008,13 +4009,15 @@ int SubstituteRE(const regexp* prog, const char* source, char* dest, const int m
    register unsigned char  chgcase;
    int anyWarnings = FALSE;
 
+	*errorType = 0;
    if (prog == NULL || source == NULL || dest == NULL) {
       reg_error ("NULL parm to `SubstituteRE\'");
-
+	*errorType = 2;
       return FALSE;
    }
 
    if (U_CHAR_AT (prog->program) != MAGIC) {
+		*errorType = 3;
       reg_error ("damaged regexp passed to `SubstituteRE\'");
 
       return FALSE;
@@ -4071,6 +4074,7 @@ int SubstituteRE(const regexp* prog, const char* source, char* dest, const int m
 
       if (paren_no < 0) { /* Ordinary character. */
          if (((char *) dst - (char *) dest) >= (max - 1)) {
+			*errorType = 1;
             reg_error("replacing expression in `SubstituteRE\' too long; "
                       "truncating");
             anyWarnings = TRUE;
@@ -4084,6 +4088,7 @@ int SubstituteRE(const regexp* prog, const char* source, char* dest, const int m
          len = prog->endp [paren_no] - prog->startp [paren_no];
 
          if (((char *) dst + len - (char *) dest) >= max-1) {
+			*errorType = 1;
             reg_error("replacing expression in `SubstituteRE\' too long; "
                       "truncating");
             anyWarnings = TRUE;
@@ -4097,6 +4102,7 @@ int SubstituteRE(const regexp* prog, const char* source, char* dest, const int m
          dst += len;
 
          if (len != 0 && *(dst - 1) == '\0') {  /* strncpy hit NUL. */
+			*errorType = 3;
             reg_error ("damaged match string in `SubstituteRE\'");
             anyWarnings = TRUE;
          }
@@ -4142,7 +4148,7 @@ static void adjustcase (unsigned char *str, int len, unsigned char chgcase) {
  *----------------------------------------------------------------------*/
 
 static void reg_error (char *str) {
-	Melder_information2 (L"Internal error processing regular expression: ", Melder_peekUtf8ToWcs (str));
+	Melder_error2 (L"Internal error processing regular expression: ", Melder_peekUtf8ToWcs (str));
 }
 
 /*----------------------------------------------------------------------*

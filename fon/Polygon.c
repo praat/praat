@@ -1,6 +1,6 @@
 /* Polygon.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2004/06/15 allow reversed axes
  * pb 2007/06/21 tex
  * pb 2007/10/01 canWriteAsEncoding
+ * pb 2008/01/19 double
  */
 
 #include "Polygon.h"
@@ -64,7 +65,7 @@ static int readText (I, MelderReadString *text) {
 	my numberOfPoints = texgeti4 (text);
 	if (my numberOfPoints < 1)
 		return Melder_error3 (L"Cannot read a Polygon with only ", Melder_integer (my numberOfPoints), L" points.");
-	if (! (my x = NUMfvector (1, my numberOfPoints)) || ! (my y = NUMfvector (1, my numberOfPoints)))
+	if (! (my x = NUMdvector (1, my numberOfPoints)) || ! (my y = NUMdvector (1, my numberOfPoints)))
 		return 0;
 	for (long i = 1; i <= my numberOfPoints; i ++) {
 		my x [i] = texgetr4 (text);
@@ -74,6 +75,7 @@ static int readText (I, MelderReadString *text) {
 }
 
 class_methods (Polygon, Data) {
+	us -> version = 1;
 	class_method_local (Polygon, destroy)
 	class_method (info)
 	class_method_local (Polygon, description)
@@ -91,7 +93,7 @@ Polygon Polygon_create (long numberOfPoints) {
 	Polygon me = new (Polygon);
 	if (! me) return NULL;
 	my numberOfPoints = numberOfPoints;
-	if (! (my x = NUMfvector (1, numberOfPoints)) || ! (my y = NUMfvector (1, numberOfPoints)))
+	if (! (my x = NUMdvector (1, numberOfPoints)) || ! (my y = NUMdvector (1, numberOfPoints)))
 		{ forget (me); return Melder_errorp ("Polygon not created."); }
 	return me;
 }
@@ -99,7 +101,7 @@ Polygon Polygon_create (long numberOfPoints) {
 void Polygon_randomize (I) {
 	iam (Polygon);
 	long i, j;
-	float xdum, ydum;
+	double xdum, ydum;
 	for (i = 1; i <= my numberOfPoints; i ++) {
 		j = NUMrandomInteger (i, my numberOfPoints);
 		xdum = my x [i];
@@ -123,10 +125,9 @@ double Polygon_perimeter (I) {
 }
 
 static void computeDistanceTable (Polygon me, int **table) {
-	int i, j;
-	for (i = 1; i <= my numberOfPoints - 1; i ++)
-		for (j = i + 1; j <= my numberOfPoints; j ++) {
-			float dx, dy;
+	for (long i = 1; i <= my numberOfPoints - 1; i ++)
+		for (long j = i + 1; j <= my numberOfPoints; j ++) {
+			double dx, dy;
 			table [i] [j] = table [j] [i] =
 				sqrt (( dx = my x [i] - my x [j], dx * dx ) + ( dy = my y [i] - my y [j], dy * dy ));
 					/* Round to zero. */
@@ -134,16 +135,14 @@ static void computeDistanceTable (Polygon me, int **table) {
 }
 
 static long computeTotalDistance (int **distance, int path [], int numberOfCities) {
-	int i;
 	long result = 0;
-	for (i = 1; i <= numberOfCities; i ++)
+	for (long i = 1; i <= numberOfCities; i ++)
 		result += distance [path [i - 1]] [path [i]];
 	return result;
 }
 
 static void shuffle (int path [], int numberOfCities) {
-	int i;
-	for (i = 1; i <= numberOfCities; i ++) {
+	for (long i = 1; i <= numberOfCities; i ++) {
 		int j = NUMrandomInteger (i, numberOfCities);
 		int help = path [i];
 		path [i] = path [j];

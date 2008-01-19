@@ -47,12 +47,12 @@ void Formant_Frame_scale (Formant_Frame me, double scale)
 int Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin)
 {
 	double f, b, fLow = margin, fHigh = samplingFrequency / 2 - margin;
-	float *fc = NULL, *bc = NULL;
+	double *fc = NULL, *bc = NULL;
 	long i, n = my max - my min + 1;
 	
-	fc = NUMfvector (1, n);
+	fc = NUMdvector (1, n);
 	if (fc == NULL) return 0;
-	bc = NUMfvector (1, n);
+	bc = NUMdvector (1, n);
 	if (bc == NULL) goto end;
 	
 	/*
@@ -84,8 +84,8 @@ int Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequ
 	
 end:
 
-	NUMfvector_free (fc, 1); 
-	NUMfvector_free (bc, 1);
+	NUMdvector_free (fc, 1); 
+	NUMdvector_free (bc, 1);
 	return ! Melder_hasError ();   
 }
 

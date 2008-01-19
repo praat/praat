@@ -46,7 +46,7 @@ struct tribolet_struct
 {
 	double thlinc, thlcon;
 	double ddf, dvtmn2;
-	float *x;
+	double *x;
 	long nx, l, count;
 	int reverse_sign;	
 };
@@ -62,7 +62,7 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 {
 	double cosf = cos (freq_rad), sinf = sin (freq_rad);
 	double a = 2 * cosf, b, u1 = 0, u2 = u1, w1 = u1, w2 = u1;
-	float *x = tbs -> x;
+	double *x = tbs -> x;
 	long j, nx = tbs -> nx;
 	
 	for (j = 1; j <= nx; j++)

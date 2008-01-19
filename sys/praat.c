@@ -877,10 +877,12 @@ String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 	
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
-#ifdef UNIX
+#if defined (UNIX)
 	FILE *f;
 	//setlocale (LC_ALL, "en_US");
 	XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
+#elif defined (macintosh)
+	setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 #endif
 	char *p;
 	#ifdef macintosh

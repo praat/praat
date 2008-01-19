@@ -20,14 +20,25 @@
 /*
  * pb 1999/05/21
  * pb 2002/07/16 GPL
+ * pb 2008/01/19 version 2
  */
 
 
 #define ooSTRUCT Formant_Formant
 oo_DEFINE_STRUCT (Formant_Formant)
 
-	oo_FLOAT (frequency)
-	oo_FLOAT (bandwidth)
+	#if oo_READING
+		if (localVersion <= 1) {
+			oo_FLOAT (frequency)
+			oo_FLOAT (bandwidth)
+		} else {
+			oo_DOUBLE (frequency)
+			oo_DOUBLE (bandwidth)
+		}
+	#else
+		oo_DOUBLE (frequency)
+		oo_DOUBLE (bandwidth)
+	#endif
 
 oo_END_STRUCT (Formant_Formant)
 #undef ooSTRUCT

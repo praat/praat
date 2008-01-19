@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2004/11/28 truncated tleft in Pitch_getVoicedIntervalAfter to my xmin (otherwise, getValue can crash)
  * pb 2005/06/16 units
  * pb 2007/01/26 compatible with stereo sounds
+ * pb 2008/01/19 double
  */
 
 #include "Pitch_to_PointProcess.h"
@@ -70,8 +71,8 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 	return 1;
 }
 
-static double findExtremum_3 (float *channel1_base, float *channel2_base, long d, long n, int includeMaxima, int includeMinima) {
-	float *channel1 = channel1_base + d, *channel2 = channel2_base ? channel2_base + d : NULL;
+static double findExtremum_3 (double *channel1_base, double *channel2_base, long d, long n, int includeMaxima, int includeMinima) {
+	double *channel1 = channel1_base + d, *channel2 = channel2_base ? channel2_base + d : NULL;
 	int includeAll = includeMaxima == includeMinima;
 	long imin = 1, imax = 1, i, iextr;
 	double minimum, maximum;

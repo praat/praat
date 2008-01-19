@@ -1,8 +1,23 @@
 #!/usr/bin/perl -w
 
-$s = "ababccccd";
+$s = "ababccccdd";
 
-$s =~ s/^ab/x/g;
-print $s,"\n";
-$s =~ s/ab/x/g;
-print $s,"\n";
+$s1 = $s;
+$s1 =~ s/^ab/x/g;
+print "\"",$s1,"\"\n";
+
+$s1 = $s;
+$s1 =~ s/ab/x/g;
+print "\"",$s1,"\"\n";
+
+$s1 = $s;
+$s1 =~ s/d$/x/g;
+print "\"",$s1,"\"\n";
+
+$s1 = $s;
+$s1 =~ s/d\$/x/g;
+print "\"",$s1,"\"\n";
+
+$s1 = "";
+$s1 =~ s/^/x/g;
+print "\"",$s1,"\"\n";

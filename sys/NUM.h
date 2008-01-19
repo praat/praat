@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/06/28 double degreesOfFreedom
  * pb 2007/07/21 readText API change
  * pb 2007/08/10 NUMsort_strW
+ * pb 2008/01/19 double
  */
 
 /* "NUM" = "NUMerics" */
@@ -285,17 +286,13 @@ double NUMerbToHertz (double erb);
 
 /********** Sorting (NUMsort.c) **********/
 
-#define NUMsort NUMsort_f
-void NUMsort_f (long n, float ra []);   /* Heap sort. */
-void NUMsort_d (long n, double ra []);
+void NUMsort_d (long n, double ra []);   /* Heap sort. */
 void NUMsort_i (long n, int ra []);
 void NUMsort_l (long n, long ra []);
 void NUMsort_str (long n, wchar_t *a []);
 void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *));
 
-double NUMquantile_f (long n, float  a [], double factor);
-double NUMquantile_d (long n, double a [], double factor);
-#define NUMquantile NUMquantile_f
+double NUMquantile (long n, double a [], double factor);
 /*
 	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
 	from which the set 'a [1..n]' is a sorted array of random samples.
@@ -313,9 +310,7 @@ double NUMquantile_d (long n, double a [], double factor);
 // Higher values than 2 yield a true sinc interpolation. Here are some examples:
 #define NUM_VALUE_INTERPOLATE_SINC70  70
 #define NUM_VALUE_INTERPOLATE_SINC700  700
-double NUM_interpolate_sinc_f (float  y [], long nx, double x, long interpolationDepth);
-double NUM_interpolate_sinc_d (double y [], long nx, double x, long interpolationDepth);
-#define NUM_interpolate_sinc NUM_interpolate_sinc_f
+double NUM_interpolate_sinc (double y [], long nx, double x, long interpolationDepth);
 
 #define NUM_PEAK_INTERPOLATE_NONE  0
 #define NUM_PEAK_INTERPOLATE_PARABOLIC  1
@@ -323,14 +318,9 @@ double NUM_interpolate_sinc_d (double y [], long nx, double x, long interpolatio
 #define NUM_PEAK_INTERPOLATE_SINC70  3
 #define NUM_PEAK_INTERPOLATE_SINC700  4
 
-double NUMimproveExtremum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum);
-double NUMimproveMaximum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real);
-double NUMimproveMinimum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real);
-double NUMimproveExtremum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum);
-double NUMimproveMaximum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
-double NUMimproveMinimum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
-#define NUMimproveMaximum NUMimproveMaximum_f
-#define NUMimproveMinimum NUMimproveMinimum_f
+double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum);
+double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
+double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
 
 int NUM_viterbi (
 	long numberOfFrames, long maxnCandidates,
@@ -350,7 +340,7 @@ int NUM_viterbi_multi (
 /********** Metrics (NUM.c) **********/
 
 int NUMrotationsPointInPolygon
-	(double x0, double y0, long n, float x [], float y []);
+	(double x0, double y0, long n, double x [], double y []);
 /*
 	Returns the number of times that the closed polygon
 	(x [1], y [1]), (x [2], y [2]),..., (x [n], y [n]), (x [1], y [1]) encloses the point (x0, y0).
@@ -379,75 +369,75 @@ double NUMrandomGauss (double mean, double standardDeviation);
 double NUMrandomPoisson (double mean);
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
-void NUMfilterSecondOrderSection_a (float x [], long n, double a1, double a2);
-void NUMfilterSecondOrderSection_fb (float x [], long n, double dt, double formant, double bandwidth);
+void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2);
+void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth);
 double NUMftopreemphasis (double f, double dt);
-void NUMpreemphasize_a (float x [], long n, double preemphasis);
-void NUMdeemphasize_a (float x [], long n, double preemphasis);
-void NUMpreemphasize_f (float x [], long n, double dt, double frequency);
-void NUMdeemphasize_f (float x [], long n, double dt, double frequency);
-void NUMautoscale (float x [], long n, double scale);
+void NUMpreemphasize_a (double x [], long n, double preemphasis);
+void NUMdeemphasize_a (double x [], long n, double preemphasis);
+void NUMpreemphasize_f (double x [], long n, double dt, double frequency);
+void NUMdeemphasize_f (double x [], long n, double dt, double frequency);
+void NUMautoscale (double x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
-#define FUNCTION(t,type)  \
-	int NUM##t##vector_writeText (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
-	int NUM##t##vector_writeBinary (const type *v, long lo, long hi, FILE *f); \
-	int NUM##t##vector_writeCache (const type *v, long lo, long hi, CACHE *f); \
-	type * NUM##t##vector_readText (long lo, long hi, MelderReadString *text, const char *name); \
-	type * NUM##t##vector_readBinary (long lo, long hi, FILE *f); \
-	type * NUM##t##vector_readCache (long lo, long hi, CACHE *f); \
-	int NUM##t##matrix_writeText (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
-	int NUM##t##matrix_writeBinary (type **v, long r1, long r2, long c1, long c2, FILE *f); \
-	int NUM##t##matrix_writeCache (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
-	type ** NUM##t##matrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name); \
-	type ** NUM##t##matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f); \
-	type ** NUM##t##matrix_readCache (long r1, long r2, long c1, long c2, CACHE *f);
-FUNCTION (b, signed char)
-FUNCTION (s, short)
-FUNCTION (i, int)
-FUNCTION (l, long)
-FUNCTION (ub, unsigned char)
-FUNCTION (us, unsigned short)
-FUNCTION (ui, unsigned int)
-FUNCTION (ul, unsigned long)
-FUNCTION (f, float)
-FUNCTION (d, double)
-FUNCTION (fc, fcomplex)
-FUNCTION (dc, dcomplex)
-FUNCTION (c, char)
+#define FUNCTION(t,type,storage)  \
+	int NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
+	int NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
+	int NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
+	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadString *text, const char *name); \
+	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f); \
+	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f); \
+	int NUM##t##matrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
+	int NUM##t##matrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
+	int NUM##t##matrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
+	type ** NUM##t##matrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name); \
+	type ** NUM##t##matrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f); \
+	type ** NUM##t##matrix_readCache_##storage (long r1, long r2, long c1, long c2, CACHE *f);
+FUNCTION (b, signed char, i1)
+FUNCTION (s, short, i2)
+FUNCTION (i, int, i2)
+FUNCTION (l, long, i4)
+FUNCTION (ub, unsigned char, u1)
+FUNCTION (us, unsigned short, u2)
+FUNCTION (ui, unsigned int, u2)
+FUNCTION (ul, unsigned long, u4)
+FUNCTION (d, double, r4)
+FUNCTION (d, double, r8)
+FUNCTION (fc, fcomplex, c8)
+FUNCTION (dc, dcomplex, c16)
+FUNCTION (c, char, c1)
 #undef FUNCTION
 
 /*
-int NUMfvector_writeBinary (const float *v, long lo, long hi, FILE *f);   // etc
+int NUMr8vector_writeBinary (const double *v, long lo, long hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The vectors need not have been created by NUM...vector.
-float * NUMfvector_readText (long lo, long hi, MelderReadString *text, const char *name);   // etc
+double * NUMr8vector_readText (long lo, long hi, MelderReadString *text, const char *name);   // etc
 	create and read a vector as text.
 	Queue an error message and return NULL if something went wrong.
 	Every element is supposed to be on the beginning of a line.
-float * NUMfvector_readBinary (long lo, long hi, FILE *f);   // etc
+double * NUMr8vector_readBinary (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Queue an error message and return NULL if something went wrong.
-int NUMfvector_writeText (const float *v, long lo, long hi, MelderFile file, const char *name);   // etc
+int NUMr8vector_writeText (const double *v, long lo, long hi, MelderFile file, const char *name);   // etc
 	write the vector elements v [lo..hi] as text to the stream f,
 	each element on its own line, preceded by "name [index]: ".
 	Return 0 if something went wrong, else return 1.
 	The vectors need not have been created by NUMvector.
-int NUMfmatrix_writeText (float **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
+int NUMr8matrix_writeText (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-int NUMfmatrix_writeBinary (float **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+int NUMr8matrix_writeBinary (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
 	Return 0 if something went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-float ** NUMfmatrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
+double ** NUMr8matrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
 	create and read a matrix as text.
 	Give an error message and return NULL if something went wrong.
-float ** NUMfmatrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc
+double ** NUMr8matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
 	Give an error message and return NULL if something went wrong.
 */

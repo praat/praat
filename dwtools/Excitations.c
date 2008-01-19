@@ -65,7 +65,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join)
 	if (! (thee = Pattern_create (my size / join, join * m->nx))) return thee;
 	for (i = 1; i <= my size; i++)
 	{
-		float *z = ((Matrix) my item[i])->z[1];
+		double *z = ((Matrix) my item[i])->z[1];
 		if ((i - 1) % join == 0) { r++; c = 1; }
 		for (j = 1; j <= m->nx; j++) thy z[r][c++] = z[j];
 	}
@@ -85,7 +85,7 @@ TableOfReal Excitations_to_TableOfReal (Excitations me)
 		long i, j;
 		for (i = 1;  i <= my size; i++)
 		{
-			float *z = ((Matrix) my item[i]) -> z[1];
+			double *z = ((Matrix) my item[i]) -> z[1];
 			for (j = 1; j <= m -> nx; j++) thy data[i][j] = z[j];
 		}
 	}

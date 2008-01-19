@@ -224,7 +224,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			case uintwa: { * (unsigned int *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 			case ulongwa: { * (unsigned long *) my fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 			case boolwa: { * (bool *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
-			case floatwa: { * (float *) my fieldData [i]. address = Melder_atof (text); } break;
+			case floatwa: { * (double *) my fieldData [i]. address = Melder_atof (text); } break;
 			case doublewa: { * (double *) my fieldData [i]. address = Melder_atof (text); } break;
 			case fcomplexwa: { fcomplex *x = (fcomplex *) my fieldData [i]. address;
 				swscanf (text, L"%f + %f i", & x -> re, & x -> im); } break;
@@ -441,7 +441,7 @@ static wchar_t * singleTypeToText (void *address, int type, void *tagType, Melde
 		case uintwa: MelderString_append1 (buffer, Melder_integer (* (unsigned int *) address)); break;
 		case ulongwa: MelderString_append1 (buffer, Melder_integer (* (unsigned long *) address)); break;
 		case boolwa: MelderString_append1 (buffer, Melder_integer (* (bool *) address)); break;
-		case floatwa: MelderString_append1 (buffer, Melder_single (* (float *) address)); break;
+		case floatwa: MelderString_append1 (buffer, Melder_single (* (double *) address)); break;
 		case doublewa: MelderString_append1 (buffer, Melder_double (* (double *) address)); break;
 		case fcomplexwa: { fcomplex value = * (fcomplex *) address;
 			MelderString_append4 (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;

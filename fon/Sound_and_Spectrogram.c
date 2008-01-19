@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/01 compatible with stereo sounds
  * pb 2007/12/06 enums
+ * pb 2008/01/19 double
  */
 
 #include "Sound_and_Spectrogram.h"
@@ -55,11 +56,11 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 
 	long nsamp_window, halfnsamp_window, numberOfTimes, numberOfFreqs, nsampFFT = 1, half_nsampFFT;
 	long iframe, iband, i, j;
-	float *frame = NULL, *spec = NULL, *window = NULL, oneByBinWidth;
+	double *frame = NULL, *spec = NULL, *window = NULL, oneByBinWidth;
 	long binWidth_samples;
 	double duration = my dx * (double) my nx, t1, windowssq = 0.0, binWidth_hertz;
 
-	struct NUMfft_Table_f fftTable = { 0 };
+	struct NUMfft_Table_d fftTable = { 0 };
 
 	/*
 	 * Compute the time sampling.
@@ -99,10 +100,10 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 			0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz)); cherror
 
-	frame = NUMfvector (1, nsampFFT); cherror
-	spec = NUMfvector (1, nsampFFT); cherror
-	window = NUMfvector (1, nsamp_window); cherror
-	NUMfft_Table_init_f (& fftTable, nsampFFT); cherror
+	frame = NUMdvector (1, nsampFFT); cherror
+	spec = NUMdvector (1, nsampFFT); cherror
+	window = NUMdvector (1, nsamp_window); cherror
+	NUMfft_Table_init_d (& fftTable, nsampFFT); cherror
 
 	Melder_progress1 (0.0, L"Sound to Spectrogram...");
 	for (i = 1; i <= nsamp_window; i ++) {
@@ -156,7 +157,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 
 			/* Compute Fast Fourier Transform of the frame. */
 
-			NUMfft_forward_f (& fftTable, frame);   /* Complex spectrum. */
+			NUMfft_forward_d (& fftTable, frame);   /* Complex spectrum. */
 
 			/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
 
@@ -179,10 +180,10 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	}
 end:
 	Melder_progress1 (1.0, NULL);
-	NUMfvector_free (frame, 1);
-	NUMfvector_free (spec, 1);
-	NUMfvector_free (window, 1);
-	NUMfft_Table_free_f (& fftTable);
+	NUMdvector_free (frame, 1);
+	NUMdvector_free (spec, 1);
+	NUMdvector_free (window, 1);
+	NUMfft_Table_free_d (& fftTable);
 	iferror forget (thee);
 	return thee;
 }

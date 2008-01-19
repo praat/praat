@@ -1,6 +1,6 @@
 /* Cochleagram.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 1995/07/24
  * pb 2002/07/16 GPL
  * pb 2007/03/17 domain quantity
+ * pb 2008/01/19 double
  */
 
 #include "Graphics.h"
@@ -41,7 +42,7 @@ Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, do
 
 void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish)
 {
-	static float border [1 + 12] =
+	static double border [1 + 12] =
 		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
 	Cochleagram copy = Data_copy (me);
 	long iy, ix, itmin, itmax;
@@ -98,7 +99,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me)
 	Cochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1,
 		my dy, my ny);
 	if (! thee) return NULL;
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	return thee;
 }
 
@@ -107,7 +108,7 @@ Matrix Cochleagram_to_Matrix (Cochleagram me)
 	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 					my ymin, my ymax, my ny, my dy, my y1);
 	if (! thee) return NULL;
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	return thee;
 }
 

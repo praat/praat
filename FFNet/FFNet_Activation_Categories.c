@@ -26,9 +26,9 @@
 
 #include "FFNet_Activation_Categories.h"
 
-static long winnerTakesAll (I, const float activation[])
+static long winnerTakesAll (I, const double activation[])
 {
-	iam (FFNet); long i, pos = 1; float max = activation[1];
+	iam (FFNet); long i, pos = 1; double max = activation[1];
 	for (i=2; i <= my nOutputs; i++)
 	{
 		if (activation[i] > max)
@@ -39,10 +39,10 @@ static long winnerTakesAll (I, const float activation[])
 	return pos;
 }
 
-static long stochastic (I, const float activation[])
+static long stochastic (I, const double activation[])
 {
 	iam (FFNet); long i; double number;
-	float range = 0, lower = 0;
+	double range = 0, lower = 0;
 	for (i=1; i <= my nOutputs; i++) range += activation[i];
 	number = NUMrandomUniform (0,1)*range;
 	for (i=1; i <= my nOutputs; i++) if (number < (lower += activation[i])) break;
@@ -52,7 +52,7 @@ static long stochastic (I, const float activation[])
 Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling)
 {
 	Categories thee = NULL, categories = my outputCategories;
-	long i, (*labelingFunction) (I, const float act[]);
+	long i, (*labelingFunction) (I, const double act[]);
 	
 	if (! my outputCategories)
 	{

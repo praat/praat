@@ -1,6 +1,6 @@
 /* SoundEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2007/09/08 moved File menu to TimeSoundEditor.c
  * pb 2007/09/19 moved settings report to info
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/01/19 double
  */
 
 #include "SoundEditor.h"
@@ -83,7 +84,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 			"because you cannot create a Sound with 0 samples.\n"
 			"You could consider using Copy instead.");
 	if (selectionNumberOfSamples) {
-		float **newData, **oldData = sound -> z;
+		double **newData, **oldData = sound -> z;
 		forget (Sound_clipboard);
 		Sound_clipboard = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
 						selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
@@ -94,7 +95,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 				Sound_clipboard -> z [channel] [++ j] = oldData [channel] [i];
 			}
 		}
-		newData = NUMfmatrix (1, sound -> ny, 1, newNumberOfSamples);
+		newData = NUMdmatrix (1, sound -> ny, 1, newNumberOfSamples);
 		for (long channel = 1; channel <= sound -> ny; channel ++) {
 			long j = 0;
 			for (long i = 1; i < first; i ++) {
@@ -105,7 +106,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 			}
 		}
 		Editor_save (me, L"Cut");
-		NUMfmatrix_free (oldData, 1, 1);
+		NUMdmatrix_free (oldData, 1, 1);
 		sound -> xmin = 0.0;
 		sound -> xmax = newNumberOfSamples * sound -> dx;
 		sound -> nx = newNumberOfSamples;
@@ -169,7 +170,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	Sound sound = my data;
 	long leftSample = Sampled_xToLowIndex (sound, my endSelection);
 	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
-	float **newData, **oldData = sound -> z;
+	double **newData, **oldData = sound -> z;
 	if (! Sound_clipboard) {
 		Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
 		return 1;
@@ -185,7 +186,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	if (leftSample < 0) leftSample = 0;
 	if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
 	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
-	if (! (newData = NUMfmatrix (1, sound -> ny, 1, newNumberOfSamples))) return 0;
+	if (! (newData = NUMdmatrix (1, sound -> ny, 1, newNumberOfSamples))) return 0;
 	for (long channel = 1; channel <= sound -> ny; channel ++) {
 		long j = 0;
 		for (long i = 1; i <= leftSample; i ++) {
@@ -199,7 +200,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 		}
 	}
 	Editor_save (me, L"Paste");
-	NUMfmatrix_free (oldData, 1, 1);
+	NUMdmatrix_free (oldData, 1, 1);
 	sound -> xmin = 0.0;
 	sound -> xmax = newNumberOfSamples * sound -> dx;
 	sound -> nx = newNumberOfSamples;

@@ -29,7 +29,7 @@
 
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee)
 {
-	float s, *c = thy c, *a = my a;
+	double s, *c = thy c, *a = my a;
 	long k, n;
 	
 	thy c0 = 0.5 * log (my gain);
@@ -59,7 +59,7 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee)
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee)
 {
 	long i, j, n = MIN (my numberOfCoefficients, thy nCoefficients);
-	float *c = my c, *a = thy a;
+	double *c = my c, *a = thy a;
 	
 	thy gain = exp (2 * my c0);
 	
@@ -68,7 +68,7 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee)
 	a[1] = -c[1];
 	for (i=2; i <= n; i++)
 	{
-		float ai = c[i] * i;
+		double ai = c[i] * i;
 		for (j=1; j < i; j++)
 		{
 			ai += a[j] * c[i - j] * (i - j);

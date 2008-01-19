@@ -1,6 +1,6 @@
 /* AmplitudeTier.c
  *
- * Copyright (C) 2003-2007 Paul Boersma
+ * Copyright (C) 2003-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/01/27 compatible with stereo Sounds
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
+ * pb 2008/01/19 double
  */
 
 #include "AmplitudeTier.h"
@@ -114,7 +115,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound 
 /*
 static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
 	double minimum, timeOfMinimum, maximum, timeOfMaximum;
-	float *y = my z [channel];
+	double *y = my z [channel];
 	long i, imin, imax, sampleOfMinimum, sampleOfMaximum;
 	if (Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax) < 3) return NUMundefined;
 	maximum = minimum = y [imin];
@@ -340,7 +341,7 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (my xmin + my xmax) / 2;
 	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
-	float *sound;
+	double *sound;
 	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	sound = thy z [1];

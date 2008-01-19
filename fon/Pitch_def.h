@@ -1,6 +1,6 @@
 /* Pitch_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1995/08/24
  * pb 2002/07/16 GPL
+ * pb 2008/01/19 version 1
  */
 
 /* Attributes:
@@ -60,15 +61,18 @@ oo_END_STRUCT (Pitch_Candidate)
 oo_DEFINE_STRUCT (Pitch_Frame)
 
 	#if oo_READING_BINARY
-		if (Thing_version < 0) {
+		if (localVersion < 0) {
 			oo_SHORT (nCandidates)
 			oo_FLOAT (intensity)
-		} else {
+		} else if (localVersion == 0) {
 			oo_FLOAT (intensity)
+			oo_LONG (nCandidates)
+		} else {
+			oo_DOUBLE (intensity)
 			oo_LONG (nCandidates)
 		}
 	#else
-		oo_FLOAT (intensity)
+		oo_DOUBLE (intensity)
 		oo_LONG (nCandidates)
 	#endif
 	oo_STRUCT_VECTOR (Pitch_Candidate, candidate, my nCandidates)

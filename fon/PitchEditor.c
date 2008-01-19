@@ -1,6 +1,6 @@
 /* PitchEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/16 Get pitch: F5 shortcut, as in Sound windows
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/01/19 double
  */
 
 #include "Pitch_to_Sound.h"
@@ -230,7 +231,7 @@ static void draw (I) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			int icand;
-			float f = frame -> candidate [1]. frequency;
+			double f = frame -> candidate [1]. frequency;
 			if (f > 0.0 && f < pitch -> ceiling) {
 				Graphics_setColour (my graphics, Graphics_MAGENTA);
 				Graphics_fillCircle_mm (my graphics, t, f, RADIUS * 2);
@@ -288,7 +289,7 @@ static void draw (I) {
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
-			float f = frame -> candidate [1]. frequency;
+			double f = frame -> candidate [1]. frequency;
 			if (f != 0.0 || tright <= my startWindow || tleft >= my endWindow) continue;
 			if (tleft < my startWindow) tleft = my startWindow;
 			if (tright > my endWindow) tright = my endWindow;

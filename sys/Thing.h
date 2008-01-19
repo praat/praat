@@ -285,7 +285,7 @@ class_create (Thing, Thing);   /* Root class: no parent. */
 			You can call the inherited 'destroy' last, for destroying the inherited arrays and objects.
 		Example:
 			iam (Miep);
-			NUMfvector_free (my array);
+			NUMdvector_free (my array);
 			forget (my object);
 			inherited (Miep) destroy (me);
 		Thing::destroy does nothing.

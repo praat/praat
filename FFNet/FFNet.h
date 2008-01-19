@@ -153,16 +153,16 @@ void FFNet_reset (FFNet me, double wrange);
  *   forget links with minimizer.
  */
  
-void FFNet_propagateToLayer (FFNet me, const float input[], float activity[], long layer);
+void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], long layer);
 /* propagate the input through the net to layer and calculate the activities */ 
 
-void FFNet_propagate (FFNet me, const float input[], float output[]);
+void FFNet_propagate (FFNet me, const double input[], double output[]);
 /* step (1) feed forward input from "input layer" to "output layer"
  * if output != NULL the output activity is copied into output.
  * postcondition: my activities defined
  */
 
-double FFNet_computeError (FFNet me, const float target[]);
+double FFNet_computeError (FFNet me, const double target[]);
 /* step (2) calculate error on output nodes w.r.t. desired output */
 /* step (3) backpropagate this error to previous nodes */
 /* precondition: step (1) */

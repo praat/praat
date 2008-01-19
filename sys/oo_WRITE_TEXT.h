@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/21 asc -> tex
  * pb 2007/08/14 enums wchar_t
+ * pb 2008/01/19 NUM##storage
  */
 
 #include "oo_undef.h"
@@ -43,10 +44,10 @@
 	texexdent (file);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (! NUM##t##vector_writeText (my x, min, max, file, L"" #x)) return 0;
+	if (! NUM##t##vector_writeText_##storage (my x, min, max, file, L"" #x)) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (! NUM##t##matrix_writeText (my x, row1, row2, col1, col2, file, L"" #x)) return 0;
+	if (! NUM##t##matrix_writeText_##storage (my x, row1, row2, col1, col2, file, L"" #x)) return 0;
 
 
 

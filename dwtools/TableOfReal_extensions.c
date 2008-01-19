@@ -427,7 +427,7 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	iam (TableOfReal);
 	SVD svd;
 	double lambda1, lambda2;
-	float *x = NULL, *y = NULL;
+	double *x = NULL, *y = NULL;
 	long i, numberOfZeroed;
 	long nr = my numberOfRows, nc = my numberOfColumns, nmin;
 	long nPoints = nr + nc; 
@@ -450,9 +450,9 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 		goto end;
 	}
 
-	x = NUMfvector (1, nPoints);
+	x = NUMdvector (1, nPoints);
 	if (x == NULL) goto end;
-	y = NUMfvector (1, nPoints);
+	y = NUMdvector (1, nPoints);
 	if (y == NULL) goto end;
 
 	lambda1 = pow (svd -> d[1], sv_splitfactor);
@@ -470,9 +470,9 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 			y[nr + i] = svd -> v[i][2] * lambda2;
 	}
 		
-	if (xmax <= xmin) NUMfvector_extrema (x, 1, nPoints, &xmin, &xmax);
+	if (xmax <= xmin) NUMdvector_extrema (x, 1, nPoints, &xmin, &xmax);
 	if (xmax <= xmin) { xmax += 1; xmin -= 1; }
-	if (ymax <= ymin) NUMfvector_extrema (y, 1, nPoints, &ymin, &ymax);
+	if (ymax <= ymin) NUMdvector_extrema (y, 1, nPoints, &ymin, &ymax);
 	if (ymax <= ymin) { ymax += 1; ymin -= 1; }
 	
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);	
@@ -509,8 +509,8 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 				
 end:
 	forget (svd);
-	NUMfvector_free (x, 1);
-	NUMfvector_free (y, 1);
+	NUMdvector_free (x, 1);
+	NUMdvector_free (y, 1);
 }
 
 /*
@@ -554,9 +554,9 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	for (mean=0, i=1; i <= ndata; i++) mean += data[i];
 	mean /= ndata;
 			
-	q25 = NUMquantile_d (ndata, data, 0.25);
-	q50 = NUMquantile_d (ndata, data, 0.5);
-	q75 = NUMquantile_d (ndata, data, 0.75);
+	q25 = NUMquantile (ndata, data, 0.25);
+	q50 = NUMquantile (ndata, data, 0.5);
+	q75 = NUMquantile (ndata, data, 0.75);
 		
 	hspread = fabs (q75 - q25);
 	lowerOuterFence = q25 - 3.0 * hspread;
@@ -1214,7 +1214,7 @@ double TableOfReal_getColumnQuantile (I, long col, double quantile)
 	}
 	
 	NUMsort_d (m, values);
-	r = NUMquantile_d (m, values, quantile);
+	r = NUMquantile (m, values, quantile);
 	
 	NUMdvector_free (values, 1);
 	
@@ -1612,7 +1612,7 @@ static void NUMmedianizeColumns (double **a, long rb, long re, long cb, long ce)
 		k = 1;
 		for (i = rb; i <= re; i++, k++) tmp[k]= a[i][j];
 		NUMsort_d (n, tmp);
-		median = NUMquantile_d (n, tmp, 0.5);
+		median = NUMquantile (n, tmp, 0.5);
 		for (i = rb; i <= re; i++) a[i][j] = median;
 	}
 	NUMdvector_free (tmp, 1);

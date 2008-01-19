@@ -74,7 +74,7 @@ class_methods_end
 
 int CC_Frame_init (CC_Frame me, long numberOfCoefficients)
 {
-	if ((my c = NUMfvector (1, numberOfCoefficients)) == NULL) return 0;
+	if ((my c = NUMdvector (1, numberOfCoefficients)) == NULL) return 0;
 	my numberOfCoefficients = numberOfCoefficients;
 	return 1;
 }
@@ -136,7 +136,7 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish)
 {
 	iam (CC);
-	float *c;
+	double *c;
 	long i, bframe, eframe, nframes;
 	(void) garnish;
 	
@@ -147,7 +147,7 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	
 	nframes = Sampled_getWindowSamples (me, xmin, xmax, &bframe, &eframe);
 	
-	if ((c = NUMfvector (bframe, eframe)) == NULL) return;
+	if ((c = NUMdvector (bframe, eframe)) == NULL) return;
 	
 	for (i = bframe; i <= eframe; i++)
 	{
@@ -156,12 +156,12 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	}
 	if (ymin >= ymax)
 	{
-		NUMfvector_extrema (c, bframe, eframe, &ymin, &ymax);
+		NUMdvector_extrema (c, bframe, eframe, &ymin, &ymax);
 		if (ymax <= ymin) { ymin -= 1.0; ymax += 1.0; }
 	}
 	else
 	{
-		NUMfvector_clip (c, bframe, eframe, ymin, ymax);
+		NUMdvector_clip (c, bframe, eframe, ymin, ymax);
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -169,7 +169,7 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	Graphics_function (g, c, bframe, eframe, xmin, xmax);
 	Graphics_unsetInner (g);
 	
-	NUMfvector_free (c, bframe);
+	NUMdvector_free (c, bframe);
 }
 
 void CC_getNumberOfCoefficients_extrema (I, long startframe, 

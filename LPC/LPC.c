@@ -75,7 +75,7 @@ class_methods_end
 int LPC_Frame_init (LPC_Frame me, int nCoefficients)
 {
 	if (nCoefficients !=0 &&
-		((my a = NUMfvector (1, nCoefficients)) == NULL)) return 0;
+		((my a = NUMdvector (1, nCoefficients)) == NULL)) return 0;
 	my nCoefficients = nCoefficients;
 	return 1;
 }
@@ -100,12 +100,12 @@ Any LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 
 void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish)
 {
-	long itmin, itmax, iframe; float *gain;
+	long itmin, itmax, iframe; double *gain;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
-	if ((gain = NUMfvector (itmin, itmax)) == NULL) return;
+	if ((gain = NUMdvector (itmin, itmax)) == NULL) return;
 	for (iframe=itmin; iframe <= itmax; iframe++) gain[iframe] = my frame[iframe].gain;
-	if (gmax <= gmin) NUMfvector_extrema (gain, itmin, itmax, & gmin, & gmax);
+	if (gmax <= gmin) NUMdvector_extrema (gain, itmin, itmax, & gmin, & gmax);
 	if (gmax == gmin) { gmin = 0; gmax += 0.5; }
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
@@ -123,7 +123,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
-	NUMfvector_free (gain, itmin);
+	NUMdvector_free (gain, itmin);
 }
 
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)

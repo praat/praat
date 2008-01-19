@@ -1,6 +1,6 @@
 /* Sound_files.c
  *
- * Copyright (C) 1992-2007 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2008 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2007/05/08 removed warning about stereo sounds
  * pb 2007/10/05 removed FSSpec
  * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sample rates between 32768 and 65535 Hertz
+ * pb 2008/01/19 double
  */
 
 /*
@@ -250,7 +251,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 	double samplingFrequency;
 	SoundHeader *header;
 	unsigned const char *from;
-	float *to;
+	double *to;
 	long i;
 	Melder_fileToMach (file, & fsRef);
 	path = FSOpenResFile (& fsRef, fsRdPerm);   /* Open resource fork; there are the sounds. */
@@ -650,7 +651,7 @@ int Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 	SndResourceHandle dataH = (SndResourceHandle) NewHandle (42 + numberOfSamples);
 	SndResourcePtr data;
 	long i;
-	float *from;
+	double *from;
 	unsigned char *to;
 	if (! dataH) return Melder_error1 (L"Sound_writeToMacSoundFile: not enough memory.");
 	data = *dataH;

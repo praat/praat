@@ -1,6 +1,6 @@
 /* Matrix.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/05/26 wchar_t
  * pb 2007/06/21 tex
  * pb 2007/10/01 can write as encoding
+ * pb 2008/01/19 double
  */
 
 #include "Matrix.h"
@@ -78,7 +79,7 @@ static int readText (I, MelderReadString *text) {
 		return Melder_error1 (L"(Matrix::readText:) nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
 		return Melder_error1 (L"(Matrix::readText:) dx should > 0 and dy > 0.");
-	if (! (my z = NUMfmatrix_readText (1, my ny, 1, my nx, text, "z"))) return 0;
+	if (! (my z = NUMdmatrix_readText_r8 (1, my ny, 1, my nx, text, "z"))) return 0;
 	return 1;
 }
 
@@ -136,6 +137,7 @@ static double getFunction2 (I, double x, double y) {
 }
 
 class_methods (Matrix, Sampled) {
+	us -> version = 2;
 	class_method_local (Matrix, destroy)
 	class_method_local (Matrix, description)
 	class_method_local (Matrix, copy)
@@ -166,7 +168,7 @@ int Matrix_init
 	iam (Matrix);
 	if (! Sampled_init (me, xmin, xmax, nx, dx, x1)) return 0;
 	my ymin = ymin; my ymax = ymax; my ny = ny; my dy = dy; my y1 = y1;
-	if (! (my z = NUMfmatrix (1, my ny, 1, my nx))) return 0;
+	if (! (my z = NUMdmatrix (1, my ny, 1, my nx))) return 0;
 	return 1;
 }
 
@@ -346,7 +348,7 @@ void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, 
 	double minimum, double maximum)
 {
 	iam (Matrix);
-	float border [1 + 8];
+	double border [1 + 8];
 	long ixmin, ixmax, iymin, iymax, iborder;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
@@ -372,7 +374,7 @@ void Matrix_paintContours (I, Graphics g, double xmin, double xmax, double ymin,
 	double minimum, double maximum)
 {
 	iam (Matrix);
-	float border [1 + 30];
+	double border [1 + 30];
 	long ixmin, ixmax, iymin, iymax, iborder;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
@@ -459,17 +461,14 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 }
 
 extern int sginap (long);
-void Matrix_movie (I, Graphics g)
-{
+void Matrix_movie (I, Graphics g) {
 	iam (Matrix);
 	double minimum = 0, maximum = 1;
-	long icol;
-	float *column = NUMfvector (1, my ny);
+	double *column = NUMdvector (1, my ny);
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	Graphics_setViewport (g, 0, 1, 0, 1);
 	Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
-	for (icol = 1; icol <= my nx; icol ++)
-	{
+	for (long icol = 1; icol <= my nx; icol ++) {
 		long irow;
 		for (irow = 1; irow <= my ny; irow ++)
 			column [irow] = my z [irow] [icol];
@@ -480,7 +479,7 @@ void Matrix_movie (I, Graphics g)
 			sginap (2);
 		#endif
 	}
-	NUMfvector_free (column, 1);
+	NUMdvector_free (column, 1);
 }
 
 Matrix Matrix_readAP (MelderFile fs) {
@@ -534,7 +533,7 @@ Matrix Matrix_appendRows (I, thou) {
 	return him;
 }
 
-Matrix Matrix_readFromRawTextFile (MelderFile fs) {
+Matrix Matrix_readFromRawTextFile (MelderFile fs) {   // BUG: not Unicode-compatible
 	FILE *f = NULL;
 	Matrix me = NULL;
 	long nrow, ncol, nelements, irow, icol;
@@ -564,8 +563,8 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {
 	rewind (f);
 	nelements = 0;
 	for (;;) {
-		float element;
-		if (fscanf (f, "%f", & element) < 1) break;   /* Zero or end-of-file. */
+		double element;
+		if (fscanf (f, "%lf", & element) < 1) break;   /* Zero or end-of-file. */
 		nelements ++;
 	}
 
@@ -590,7 +589,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {
 	rewind (f);
 	for (irow = 1; irow <= nrow; irow ++)
 		for (icol = 1; icol <= ncol; icol ++)
-			fscanf (f, "%f", & my z [irow] [icol]);
+			fscanf (f, "%lf", & my z [irow] [icol]);
 
 end:
 	Melder_fclose (fs, f);
@@ -702,7 +701,7 @@ end:
 }
 
 void Matrix_scaleAbsoluteExtremum (I, double scale) { iam (Matrix);
-	float extremum = 0.0;
+	double extremum = 0.0;
 	for (long i = 1; i <= my ny; i ++) {
 		for (long j = 1; j <= my nx; j ++) {
 			if (fabs (my z [i] [j]) > extremum) {
@@ -751,7 +750,7 @@ Matrix Table_to_Matrix (Table me) {
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy z [irow] [icol] = (float) row -> cells [icol]. number;
+			thy z [irow] [icol] = row -> cells [icol]. number;
 		}
 	}
 end:

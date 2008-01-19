@@ -81,7 +81,7 @@ static int readText (I, MelderReadString *text)
 	iam (Permutation);
 	my numberOfElements = texgeti4 (text);
 	if (my numberOfElements < 1) return Melder_error1 (L"(Permutation::readText:) Number of elements must be >= 1.");
-	if (! (my p = NUMlvector_readText (1, my numberOfElements, text, "p"))) return 0;
+	if (! (my p = NUMlvector_readText_i4 (1, my numberOfElements, text, "p"))) return 0;
 	if (! Permutation_checkInvariant (me)) return Melder_error
 		("(Permutation::readText:) All values must be unique and in the [1, %d] range.", my numberOfElements);
 	return 1;

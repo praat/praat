@@ -1,6 +1,6 @@
 /* Harmonicity.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
+ * pb 2008/01/19 double
  */
 
 #include "Graphics.h"
@@ -73,7 +74,7 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 			strengths [++ nSounding] = my z [1] [ix];
 	if (nSounding >= 1) {
 		NUMsort_d (nSounding, strengths);
-		result = NUMquantile_d (nSounding, strengths, quantile);
+		result = NUMquantile (nSounding, strengths, quantile);
 	}
 	NUMdvector_free (strengths, 1);
 	return result;
@@ -99,13 +100,13 @@ static void info (I) {
 		double sum = 0, sumOfSquares = 0;
 		MelderInfo_writeLine1 (L"Periodicity-to-noise ratios of sounding frames:");
 		NUMsort_d (nSounding, strengths);
-		MelderInfo_writeLine3 (L"   Median ", Melder_single (NUMquantile_d (nSounding, strengths, 0.50)), L" dB");
-		MelderInfo_writeLine5 (L"   10 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.10)), L" dB   90 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.90)), L" dB");
-		MelderInfo_writeLine5 (L"   16 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.16)), L" dB   84 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.84)), L" dB");
-		MelderInfo_writeLine5 (L"   25 % = ", Melder_single (NUMquantile_d (nSounding, strengths, 0.25)), L" dB   75 %% = ",
-			Melder_single (NUMquantile_d (nSounding, strengths, 0.75)), L" dB");
+		MelderInfo_writeLine3 (L"   Median ", Melder_single (NUMquantile (nSounding, strengths, 0.50)), L" dB");
+		MelderInfo_writeLine5 (L"   10 % = ", Melder_single (NUMquantile (nSounding, strengths, 0.10)), L" dB   90 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths, 0.90)), L" dB");
+		MelderInfo_writeLine5 (L"   16 % = ", Melder_single (NUMquantile (nSounding, strengths, 0.16)), L" dB   84 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths, 0.84)), L" dB");
+		MelderInfo_writeLine5 (L"   25 % = ", Melder_single (NUMquantile (nSounding, strengths, 0.25)), L" dB   75 %% = ",
+			Melder_single (NUMquantile (nSounding, strengths, 0.75)), L" dB");
 		MelderInfo_writeLine3 (L"Minimum: ", Melder_single (strengths [1]), L" dB");
 		MelderInfo_writeLine3 (L"Maximum: ", Melder_single (strengths [nSounding]), L" dB");
 		for (long i = 1; i <= nSounding; i ++) {
@@ -136,7 +137,7 @@ Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, do
 Matrix Harmonicity_to_Matrix (Harmonicity me) {
 	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 						my ymin, my ymax, my ny, my dy, my y1);
-	NUMfvector_copyElements (my z [1], thy z [1], 1, my nx);
+	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 	return thee;
 }
 
@@ -144,7 +145,7 @@ Harmonicity Matrix_to_Harmonicity (I) {
 	iam (Matrix);
 	Harmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
 	if (! thee) return NULL;
-	NUMfvector_copyElements (my z [1], thy z [1], 1, my nx);
+	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 	return thee;
 }
 

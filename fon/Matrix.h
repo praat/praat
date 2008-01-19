@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/10
+ * pb 2008/01/19
  */
 
 /* Matrix inherits from Sampled */
@@ -41,7 +41,7 @@
 	double ymin, ymax; \
 	long ny; \
 	double dy, y1; \
-	float **z;
+	double **z;
 #define Matrix_methods Sampled_methods
 class_create (Matrix, Sampled);
 

@@ -461,10 +461,10 @@ double FunctionTerms_getXOfMaximum (I, double x1, double x2)
 	return xmax;
 }
 
-static void Graphics_polyline_clipTopBottom (Graphics g, float *x, float *y,
+static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y,
 	long numberOfPoints, double ymin, double ymax)
 {
-	float xb, xe, yb, ye, x1, x2, y1, y2;
+	double xb, xe, yb, ye, x1, x2, y1, y2;
 	long i, index = 0;
 	
 	if (numberOfPoints < 2) return;
@@ -540,11 +540,11 @@ void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin,
 {
 	iam (FunctionTerms);
 	double dx, fxmin, fxmax, x1, x2;
-	float *x = NULL, *y = NULL;
+	double *x = NULL, *y = NULL;
 	long i, numberOfPoints = 1000;
 		
-	if (((y = NUMfvector (1, numberOfPoints +1)) == NULL) ||
-		((x = NUMfvector (1, numberOfPoints +1)) == NULL)) goto end;
+	if (((y = NUMdvector (1, numberOfPoints +1)) == NULL) ||
+		((x = NUMdvector (1, numberOfPoints +1)) == NULL)) goto end;
 
 	if (xmax <= xmin)
 	{
@@ -587,7 +587,7 @@ void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin,
     	Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 end:
-	NUMfvector_free (y, 1); NUMfvector_free (x, 1);
+	NUMdvector_free (y, 1); NUMdvector_free (x, 1);
 }
 
 void FunctionTerms_drawBasisFunction (I, Graphics g, long index, double xmin,

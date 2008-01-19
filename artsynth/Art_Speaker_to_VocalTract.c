@@ -1,6 +1,6 @@
 /* Art_Speaker_to_VocalTract.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1994/05/09
  * pb 2002/07/16 GPL
+ * pb 2008/01/19 double
  */
 
 #include "VocalTract.h"
@@ -32,7 +33,7 @@ Any Art_Speaker_to_VocalTract (Any art, Any speaker)
 {
 	VocalTract thee = NULL;
 	long isection;
-	float area [300];
+	double area [300];
 	int numberOfSections;
 	double sectionLength = 0.001;   /* One millimetre. */
 	Delta delta = NULL;

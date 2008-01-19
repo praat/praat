@@ -138,7 +138,7 @@ static double to_dB (double a, double factor, double ref_dB)
 	return a;
 }
 
-static void setDrawingLimits (float *a, long n, double amin, double amax,
+static void setDrawingLimits (double *a, long n, double amin, double amax,
 	long *ibegin, long *iend)
 {
 	long i, lower = 1;
@@ -232,7 +232,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 {
 	iam (FilterBank);
 	long i, ibegin, iend, n = 2000;
-	float *a, df;
+	double *a, df;
 	int myFreqScale = FilterBank_getFrequencyScale (me);
 
 	if (xmin < 0 || xmax < 0 ||ymin < 0 || ymax < 0)
@@ -260,7 +260,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 		ymax = scaleFrequency (xmax, horizontalScale, verticalScale);
 	}
 	
-	a = NUMfvector (1, n);
+	a = NUMdvector (1, n);
 	if (a == NULL) return;
 	
 	Graphics_setInner (g);
@@ -292,7 +292,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
     	Graphics_textBottom (g, 1, GetFreqScaleText (horizontalScale));
 	}
 	
-	NUMfvector_free (a, 1);
+	NUMdvector_free (a, 1);
 }
 
 void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
@@ -300,12 +300,12 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	int dbScale, double ymin, double ymax, int garnish)
 {
 	long i, j, n = 1000; 
-	float *a = NULL;
+	double *a = NULL;
 		
 	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, 
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 	
-	a = NUMfvector (1, n);
+	a = NUMdvector (1, n);
 	if (a == NULL) return;
 	
 	Graphics_setInner (g);
@@ -358,7 +358,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
     	Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
 	}
 	
-	NUMfvector_free (a, 1);
+	NUMdvector_free (a, 1);
 }
 
 static int classMelFilter_getFrequencyScale (I)
@@ -412,12 +412,12 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 	int dbScale, double ymin, double ymax, int garnish)
 {
 	long i, j, n = 1000; 
-	float *a = NULL;
+	double *a = NULL;
 
 	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, 
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 		
-	a = NUMfvector (1, n);
+	a = NUMdvector (1, n);
 	if (a == NULL) return;
 	
 	Graphics_setInner (g);
@@ -475,7 +475,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
     	Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
 	}
 	
-	NUMfvector_free (a, 1);
+	NUMdvector_free (a, 1);
 }
 
 /*
@@ -520,7 +520,7 @@ Matrix FilterBank_to_Matrix (I)
 	if ((thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		my ymin, my ymax, my ny, my dy, my y1)) == NULL) return NULL;
 		
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	
 	return thee;
 }
@@ -532,7 +532,7 @@ BarkFilter Matrix_to_BarkFilter (I)
 	if ((thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		my ymin, my ymax, my ny, my dy, my y1)) == NULL) return NULL;
 		
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	
 	return thee;
 }
@@ -544,7 +544,7 @@ MelFilter Matrix_to_MelFilter (I)
 	if ((thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		my ymin, my ymax, my ny, my dy, my y1)) == NULL) return NULL;
 		
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	
 	return thee;
 }
@@ -569,7 +569,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	int dbScale, double ymin, double ymax, int garnish)
 {
 	long i, j, n = 1000; 
-	float *a = NULL;
+	double *a = NULL;
 		
 	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, 
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
@@ -579,7 +579,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 		Melder_warning ("Bandwidth must be greater than zero.");
 	}
 		
-	a = NUMfvector (1, n);
+	a = NUMdvector (1, n);
 	if (a == NULL) return;
 		
 	Graphics_setInner (g);
@@ -631,7 +631,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
     	Graphics_textBottom (g, 1, GetFreqScaleText (toFreqScale));
 	}
 	
-	NUMfvector_free (a, 1);
+	NUMdvector_free (a, 1);
 }
 
 FormantFilter Matrix_to_FormantFilter (I)
@@ -641,7 +641,7 @@ FormantFilter Matrix_to_FormantFilter (I)
 	if ((thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		my ymin, my ymax, my ny, my dy, my y1)) == NULL) return NULL;
 		
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	
 	return thee;
 }

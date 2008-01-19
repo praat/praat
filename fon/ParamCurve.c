@@ -1,6 +1,6 @@
 /* ParamCurve.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * pb 1997/04/27
  * pb 2002/07/16 GPL
- * pb 2006/12/10
+ * pb 2008/01/19 double
  */
 
 #include "ParamCurve.h"
@@ -138,7 +138,7 @@ int ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 {
 	iam (ParamCurve);
 	long numberOfPoints, i;
-	float *x, *y;
+	double *x, *y;
 	if (t2 <= t1) {
 		double tx1 = my x -> x1;
 		double ty1 = my y -> x1;
@@ -154,8 +154,8 @@ int ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 	if (dt <= 0.0)
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
 	numberOfPoints = (long) ceil ((t2 - t1) / dt) + 1;
-	if (! (x = NUMfvector (1, numberOfPoints)) || ! (y = NUMfvector (1, numberOfPoints))) {
-		NUMfvector_free (x, 1);
+	if (! (x = NUMdvector (1, numberOfPoints)) || ! (y = NUMdvector (1, numberOfPoints))) {
+		NUMdvector_free (x, 1);
 		return 0;
 	}
 	for (i = 1; i <= numberOfPoints; i ++) {
@@ -169,8 +169,8 @@ int ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 	Graphics_setInner (g);
 	Graphics_polyline (g, numberOfPoints, & x [1], & y [1]);
 	Graphics_unsetInner (g);
-	NUMfvector_free (x, 1);
-	NUMfvector_free (y, 1);
+	NUMdvector_free (x, 1);
+	NUMdvector_free (y, 1);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);

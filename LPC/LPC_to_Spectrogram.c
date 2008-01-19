@@ -46,7 +46,7 @@ Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction,
 		if (spec == NULL) goto end;
 		for (j=1; j <= spec -> nx; j++)
 		{
-			float re = spec -> z[1][j], im = spec -> z[2][j];
+			double re = spec -> z[1][j], im = spec -> z[2][j];
 			thy z[j][i] =  re * re + im * im;
 		}
 		forget (spec);

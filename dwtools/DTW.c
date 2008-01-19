@@ -659,7 +659,7 @@ static int slope_constraints (long x, long y, long nsteps_x, long nsteps_y, long
 static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duration, int adjustment_window_includes_end, 
 	long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy)
 {
-	float **delta = NULL, minimum;
+	double **delta = NULL, minimum;
 	long xmargin = my dx, ymargin = my dy, x, y, ylow, yhigh, xpos, ypos, **psi = NULL;
 	long pathIndex, numberOfCells = 0, nodirection_assigned = 0;
 	long nsteps_x = nsteps_xory, nsteps_y = nsteps_xory;
@@ -668,7 +668,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 			 
 	/* Always allow HOR+VER = DIAG */
 	
-	if (((delta = NUMfmatrix_copy (my z, 1, my ny, 1, my nx)) == NULL) ||
+	if (((delta = NUMdmatrix_copy (my z, 1, my ny, 1, my nx)) == NULL) ||
 		((psi = NUMlmatrix (1, my ny, 1, my nx)) == NULL)) goto end;
 	/*
 		1. Forward pass.
@@ -732,7 +732,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 		if (yhigh > my ny) yhigh = my ny;
 		for (y = ylow; y <= yhigh; y++)
 		{
-			long direction; float g;
+			long direction; double g;
 			
 			numberOfCells++;
 			minimum = DTW_BIG;
@@ -859,7 +859,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 end:
 
 	Melder_progress1 (1.0, NULL);
-	NUMfmatrix_free (delta, 1, 1);
+	NUMdmatrix_free (delta, 1, 1);
 	NUMlmatrix_free (psi, 1, 1);
 	return ! Melder_hasError();
 }
@@ -882,9 +882,9 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 {
 	long pathIndex = my nx + my ny - 1; /* At maximum path length */
 	long i, j, ipos = 0, **psi = NULL;
-	float **delta = NULL, minimum;
-	float slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
-	float relDuration = (my ymax - my ymin) / (my xmax - my xmin);
+	double **delta = NULL, minimum;
+	double slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
+	double relDuration = (my ymax - my ymin) / (my xmax - my xmin);
 
 	if (slope < 1 || slope > 4) Melder_error1 (L"DTW_findPath: Invalid slope constraint.");
 	
@@ -899,7 +899,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 		"The duration ratio of the longest and the shortest object is %.17g. This implies that the largest slope in the \n"
 		"constraint must have a value greater or equal to this ratio.", relDuration);
 	} 
-	if (((delta = NUMfmatrix_copy (my z, 1, my ny, 1, my nx)) == NULL) ||
+	if (((delta = NUMdmatrix_copy (my z, 1, my ny, 1, my nx)) == NULL) ||
 		((psi = NUMlmatrix (1, my ny, 1, my nx)) == NULL)) goto end;
 	
 	/*
@@ -930,7 +930,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 		for (i = 2; i <= my ny; i++)
 		{
 			long direction = DTW_XANDY;
-			float g;
+			double g;
 			/* move along the diagonal */			
 			minimum = delta[i-1][j-1] + 2 * my z[i][j];
 			
@@ -1121,7 +1121,7 @@ s3:			{
 end:
 
 	Melder_progress1 (1.0, NULL);
-	NUMfmatrix_free (delta, 1, 1);
+	NUMdmatrix_free (delta, 1, 1);
 	NUMlmatrix_free (psi, 1, 1);
 }
 
@@ -1422,7 +1422,7 @@ Matrix DTW_distancesToMatrix (DTW me)
 	if ((thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		my ymin, my ymax, my ny, my dy, my y1)) == NULL) return thee;
 
-	NUMfmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 	return thee;
 }
 
@@ -1431,9 +1431,9 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	double dmin, double dmax, int garnish)
 {
 	long i, ixmax, ixmin;
-	float *d = NULL;
+	double *d = NULL;
 	
-	if (! (d = NUMfvector (1, my nx))) return;
+	if (! (d = NUMdvector (1, my nx))) return;
 	
 	if (xmin >= xmax)
 	{
@@ -1448,7 +1448,7 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	while (i <= my pathLength && my path[i].x < ixmax) i++;
 	ixmax = i;
 	
-	if ((d = NUMfvector (ixmin, ixmax)) == NULL) return;
+	if ((d = NUMdvector (ixmin, ixmax)) == NULL) return;
 	
 	for (i = ixmin; i <= ixmax; i++)
 	{
@@ -1457,7 +1457,7 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	
 	if (dmin >= dmax)
 	{
-		NUMfvector_extrema (d, ixmin, ixmax, &dmin, &dmax);
+		NUMdvector_extrema (d, ixmin, ixmax, &dmin, &dmax);
 	}
 	else
 	{
@@ -1487,7 +1487,7 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 	
-	NUMfvector_free (d, ixmin);
+	NUMdvector_free (d, ixmin);
 }
 
 /*

@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/28 made compatible with stereo sounds
+ * pb 2008/01/19 double
  */
 
 #include "Sound_to_Cochleagram.h"
@@ -138,7 +139,7 @@ Cochleagram Sound_to_Cochleagram_edb
 	/* From acoustic sound to oval window. */
 
 	for (ifreq = 1; ifreq <= nfreq; ifreq ++) {
-		float *response = thy z [ifreq];
+		double *response = thy z [ifreq];
 
 		/* Stage 3: basilar membrane filtering by gammatones. */
 		/* From oval window to basilar membrane response. */

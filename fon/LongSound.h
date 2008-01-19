@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2004 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2008 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/05/08
+ * pb 2008/01/19
  */
 
 #ifndef _Sound_h_
@@ -50,7 +50,7 @@ struct _MP3_FILE;
 	struct _MP3_FILE *mp3f; \
 	int compressedMode; \
 	long compressedSamplesLeft; \
-	float *compressedFloats [2]; \
+	double *compressedFloats [2]; \
 	short *compressedShorts;
 #define LongSound_methods Sampled_methods
 class_create (LongSound, Sampled);
@@ -72,7 +72,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 int LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file);
 int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int channel, MelderFile file);
 
-int LongSound_readAudioToFloat (LongSound me, float *leftBuffer, float *rightBuffer, long firstSample, long numberOfSamples);
+int LongSound_readAudioToFloat (LongSound me, double *leftBuffer, double *rightBuffer, long firstSample, long numberOfSamples);
 int LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
 
 int LongSound_concatenate (Ordered collection, MelderFile file, int audioFileType);

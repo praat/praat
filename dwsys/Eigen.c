@@ -268,24 +268,6 @@ end:
 	return ! Melder_hasError();
 }
 
-int Eigen_initFromSymmetricMatrix_f (I, float **a, long n)
-{
-	iam (Eigen);
-	double **m;
-	long i, j;
-	int status;
-
-	m = NUMdmatrix (1, n, 1, n);
-	if (m == NULL) return 0;
-	for (i = 1; i <= n; i++)
-	{
-		for (j = 1; j <= n; j++) m[i][j] = a[i][j];
-	}
-	status = Eigen_initFromSymmetricMatrix (me, m, n);
-	NUMdmatrix_free (m, 1, 1);
-	return status;
-}
-
 int Eigen_initFromSymmetricMatrix (I, double **a, long n)
 {
 	iam (Eigen);

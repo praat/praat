@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2007/08/15 removed New Century Schoolbook
  * pb 2007/09/01 praat_picture_editor_open/close
  * pb 2007/12/09 enums
+ * pb 2008/01/19 double
  */
 
 #include "praatP.h"
@@ -276,7 +277,7 @@ END
 
 static int praat_lineType = Graphics_DRAWN;
 static int praat_colour = Graphics_BLACK;
-static float praat_lineWidth = 1.0, praat_arrowSize = 1.0;
+static double praat_lineWidth = 1.0, praat_arrowSize = 1.0;
 
 static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
 static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
@@ -662,13 +663,13 @@ DO
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
 	long n = GET_INTEGER (L"Number of horizontal steps"), i;
-	float *y = NULL;
+	double *y = NULL;
 	PraatPictureFunction function = NULL;
 	wchar_t *formula = GET_STRING (L"formula");
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
-	y = NUMfvector (1, n); cherror
+	y = NUMdvector (1, n); cherror
 	function = new (PraatPictureFunction); cherror
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;
@@ -687,7 +688,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 end:
-	NUMfvector_free (y, 1);
+	NUMdvector_free (y, 1);
 	forget (function);
 	iferror return 0;
 END

@@ -27,8 +27,18 @@
 oo_DEFINE_CLASS (Polygon, Data)
 
 	oo_LONG (numberOfPoints)
-	oo_FLOAT_VECTOR (x, my numberOfPoints)
-	oo_FLOAT_VECTOR (y, my numberOfPoints)
+	#if oo_READING
+		if (localVersion >= 1) {
+			oo_DOUBLE_VECTOR (x, my numberOfPoints)
+			oo_DOUBLE_VECTOR (y, my numberOfPoints)
+		} else {
+			oo_FLOAT_VECTOR (x, my numberOfPoints)
+			oo_FLOAT_VECTOR (y, my numberOfPoints)
+		}
+	#else
+		oo_DOUBLE_VECTOR (x, my numberOfPoints)
+		oo_DOUBLE_VECTOR (y, my numberOfPoints)
+	#endif
 
 oo_END_CLASS (Polygon)
 #undef ooSTRUCT

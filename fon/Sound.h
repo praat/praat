@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/07
+ * pb 2008/01/19
  */
 
 /* Sound inherits from Vector */
@@ -170,7 +170,7 @@ void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
 Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
 int Sound_filterWithFormants (Sound me, double tmin, double tmax,
-	int numberOfFormants, float formant [], float bandwidth []);
+	int numberOfFormants, double formant [], double bandwidth []);
 Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
 int Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth);
 Sound Sound_filter_preemphasis (Sound me, double frequency);

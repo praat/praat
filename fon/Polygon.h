@@ -2,7 +2,7 @@
 #define _Polygon_h_
 /* Polygon.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1997/03/25
- * pb 2002/07/16 GPL
+ * pb 2008/01/19
  */
 
 #ifndef _Data_h_
@@ -33,7 +32,7 @@
 
 #define Polygon_members  Data_members \
 	long numberOfPoints; \
-	float *x, *y;
+	double *x, *y;
 #define Polygon_methods  Data_methods
 class_create (Polygon, Data);
 

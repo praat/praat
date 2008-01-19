@@ -1,6 +1,6 @@
 /* Vector.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2006/10/28 Vector_draw case-insensitive
  * pb 2007/01/27 multiple channels
  * pb 2007/01/28 new getVector and getFunction1
+ * pb 2008/01/19 double
  */
 
 #include "Vector.h"
@@ -137,14 +138,14 @@ double Vector_getValueAtX (I, double x, long ilevel, int interpolation) {
 	if (x <  leftEdge || x > rightEdge) return NUMundefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc_f (my z [ilevel], my nx, Sampled_xToIndex (me, x),
+		return NUM_interpolate_sinc (my z [ilevel], my nx, Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
 	double sum = 0.0;
 	for (long channel = 1; channel <= my ny; channel ++) {
-		sum += NUM_interpolate_sinc_f (my z [channel], my nx, Sampled_xToIndex (me, x),
+		sum += NUM_interpolate_sinc (my z [channel], my nx, Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
@@ -160,7 +161,7 @@ void Vector_getMinimumAndX (I, double xmin, double xmax, long channel, int inter
 	iam (Vector);
 	long imin, imax, i, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
-	float *y = my z [channel];
+	double *y = my z [channel];
 	double minimum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
@@ -181,7 +182,7 @@ void Vector_getMinimumAndX (I, double xmin, double xmax, long channel, int inter
 		if (imax == my nx) imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
-				double i_real, localMinimum = NUMimproveMinimum_f (y, n, i, interpolation, & i_real);
+				double i_real, localMinimum = NUMimproveMinimum (y, n, i, interpolation, & i_real);
 				if (localMinimum < minimum) minimum = localMinimum, x = i_real;
 			}
 		}
@@ -240,7 +241,7 @@ void Vector_getMaximumAndX (I, double xmin, double xmax, long channel, int inter
 	iam (Vector);
 	long imin, imax, i, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
-	float *y = my z [channel];
+	double *y = my z [channel];
 	double maximum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
@@ -261,7 +262,7 @@ void Vector_getMaximumAndX (I, double xmin, double xmax, long channel, int inter
 		if (imax == my nx) imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-				double i_real, localMaximum = NUMimproveMaximum_f (y, n, i, interpolation, & i_real);
+				double i_real, localMaximum = NUMimproveMaximum (y, n, i, interpolation, & i_real);
 				if (localMaximum > maximum) maximum = localMaximum, x = i_real;
 			}
 		}

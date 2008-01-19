@@ -100,14 +100,14 @@ void Polygon_Categories_draw (I, thou, Any graphics, double xmin, double xmax,
 	
     if (xmax == xmin)
     {
-		NUMfvector_extrema (my x, 1, my numberOfPoints, & min, & max);
+		NUMdvector_extrema (my x, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		xmin = min - tmp; xmax = max + tmp;
     }
 	
     if (ymax == ymin)
     {
-		NUMfvector_extrema (my y, 1, my numberOfPoints, & min, & max);
+		NUMdvector_extrema (my y, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		ymin = min - tmp; ymax = max + tmp;
     }

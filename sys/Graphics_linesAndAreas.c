@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/01/06 made ORDER_DC compatible with PostScript
  * pb 2007/03/14 arrowSize
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
+ * pb 2008/01/19 double
  */
 
 #include "GraphicsP.h"
@@ -757,7 +758,7 @@ static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_polyline (I, long numberOfPoints, float *xWC, float *yWC) {	/* Base 0. */
+void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* Base 0. */
 	iam (Graphics);
 	short *xyDC;
 	long i;
@@ -789,7 +790,7 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
-void Graphics_fillArea (I, long numberOfPoints, float *xWC, float *yWC) {
+void Graphics_fillArea (I, long numberOfPoints, double *xWC, double *yWC) {
 	iam (Graphics);
 	short *xyDC = Melder_malloc (short, 2 * numberOfPoints);
 	if (! xyDC) return;
@@ -1090,10 +1091,10 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		Melder_free (xyDC); \
 	}
 
-void Graphics_function (I, float yWC [], long ix1, long ix2, double x1WC, double x2WC) {
+void Graphics_function (I, double yWC [], long ix1, long ix2, double x1WC, double x2WC) {
 	iam (Graphics);
 	#define STAGGER(i)  (i)
-	MACRO_Graphics_function (float)
+	MACRO_Graphics_function (double)
 	#undef STAGGER
 	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
@@ -1362,7 +1363,7 @@ void Graphics_setArrowSize (I, double arrowSize) {
 /* Inquiries. */
 
 int Graphics_inqLineType (I) { iam (Graphics); return my lineType; }
-float Graphics_inqLineWidth (I) { iam (Graphics); return my lineWidth; }
-float Graphics_inqArrowSize (I) { iam (Graphics); return my arrowSize; }
+double Graphics_inqLineWidth (I) { iam (Graphics); return my lineWidth; }
+double Graphics_inqArrowSize (I) { iam (Graphics); return my arrowSize; }
 
 /* End of file Graphics_linesAndAreas.c */

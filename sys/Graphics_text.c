@@ -1242,7 +1242,7 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 	#endif
 }
 
-static struct { float width; short alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
+static struct { double width; short alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
 	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE },
 	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE } };
 
@@ -1550,13 +1550,13 @@ void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 	exitText (me);
 	if (my recording) {
 		char *txt_utf8 = Melder_peekWcsToUtf8 (txt);
-		int length = strlen (txt_utf8) / sizeof (float) + 1;
+		int length = strlen (txt_utf8) / sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	}
 }
 
-float Graphics_inqTextX (I) { iam (Graphics); return my textX; }
-float Graphics_inqTextY (I) { iam (Graphics); return my textY; }
+double Graphics_inqTextX (I) { iam (Graphics); return my textX; }
+double Graphics_inqTextY (I) { iam (Graphics); return my textY; }
 
 int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return numberOfLinks; }
 

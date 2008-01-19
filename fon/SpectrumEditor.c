@@ -1,6 +1,6 @@
 /* SpectrumEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/09/04 new FunctionEditor API
+ * pb 2008/01/19 double
  */
 
 #include "SpectrumEditor.h"
@@ -93,7 +94,7 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
 	long i, imin, imax;
-	float *re, *im;
+	double *re, *im;
 	Spectrum band = Data_copy (me);
 	if (! band) return NULL;
 	re = band -> z [1], im = band -> z [2];

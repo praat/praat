@@ -1,6 +1,6 @@
 /* VocalTract.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2006/08/08 reduced compiler warnings
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
+ * pb 2008/01/19 double
  */
 
 #include "VocalTract.h"
@@ -46,7 +47,7 @@ VocalTract VocalTract_create (long nx, double dx) {
 }
 
 #define MinimumWidth 0.0001
-static struct { wchar_t *phone; int numberOfSections; float area [40]; }
+static struct { wchar_t *phone; int numberOfSections; double area [40]; }
 	data [] = {
 { L"a", 34, { 1.7, 1.2, 1.6, 3.39, 2.1, 1.4, 1, 0.8, 0.8, 0.8, 1, 1.4,
 	2.1, 2.9, 3.09, 2.1, 2.5, 4, 5.3, 6.16, 7, 7.6, 8.15, 8.5, 8.6,
@@ -143,14 +144,14 @@ void VocalTract_draw (VocalTract me, Graphics g) {
 Matrix VocalTract_to_Matrix (VocalTract me) {
 	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 							my ymin, my ymax, my ny, my dy, my y1);
-	NUMfvector_copyElements (my z [1], thy z [1], 1, my nx);
+	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 	return thee;
 }
 
 VocalTract Matrix_to_VocalTract (Matrix me) {
 	VocalTract thee = VocalTract_create (my nx, my dx);
 	if (! thee) return NULL;
-	NUMfvector_copyElements (my z [1], thy z [1], 1, my nx);
+	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 	return thee;
 }
 

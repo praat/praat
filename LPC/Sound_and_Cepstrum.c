@@ -38,7 +38,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 {
 	Cepstrum thee = NULL;
 	long i, nfft = 2, nfftd2;
-	float *x = NULL, *nx = NULL;
+	double *x = NULL, *nx = NULL;
 	double lnxa = 0, qmax;
 		
 	while (nfft < my nx) nfft *= 2;
@@ -47,8 +47,8 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 	qmax = (my xmax - my xmin) * nfft / my nx;
 	if ((thee = Cepstrum_create (0, qmax, nfft)) == NULL) return NULL;
 
-	if (((x  = NUMfvector (1, nfft)) == NULL) ||
-		((nx = NUMfvector (1, nfft)) == NULL)) goto end;
+	if (((x  = NUMdvector (1, nfft)) == NULL) ||
+		((nx = NUMdvector (1, nfft)) == NULL)) goto end;
 
 	for (i=1; i <= my nx; i++)
 	{
@@ -61,8 +61,8 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 			and n*x(n) -> NX(f)
 	*/
 
-	NUMforwardRealFastFourierTransform_f (x , nfft);
-	NUMforwardRealFastFourierTransform_f (nx, nfft);
+	NUMforwardRealFastFourierTransform_d (x , nfft);
+	NUMforwardRealFastFourierTransform_d (nx, nfft);
 	
 	/*
 		Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
@@ -105,7 +105,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 			results in: n * xhat (n)
 	*/
 		
-	NUMreverseRealFastFourierTransform_f (x , nfft);
+	NUMreverseRealFastFourierTransform_d (x , nfft);
 
 	/*
 		Step 5: Inverse fft-correction factor: 1/nfftd2 
@@ -124,8 +124,8 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 	thy z[1][1] = lnxa;
 end:
 
-	NUMfvector_free (x , 1);	
-	NUMfvector_free (nx, 1);
+	NUMdvector_free (x , 1);	
+	NUMdvector_free (nx, 1);
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }

@@ -1,6 +1,6 @@
 /* Formant.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  * pb 2005/12/08 Formant_getQuantileOfBandwidth
  * pb 2007/03/17 domain quantity
  * pb 2007/10/01 can write as encoding
+ * pb 2008/01/19 version 2
+ * pb 2008/01/19 don't draw undefined lines
  */
 
 #include "Formant.h"
@@ -82,7 +84,7 @@ static double getValueAtSample (I, long iframe, long which, int units) {
 }
 
 class_methods (Formant, Sampled) {
-	us -> version = 1;   /* With intensity. */
+	us -> version = 2;   /* With intensity, and double. */
 	class_method_local (Formant, destroy)
 	class_method_local (Formant, description)
 	class_method_local (Formant, copy)
@@ -139,7 +141,8 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 			double x1 = Sampled_indexToX (me, iframe), x2 = Sampled_indexToX (me, iframe + 1);
 			double f1 = curFrame -> formant [itrack]. frequency;
 			double f2 = nextFrame -> formant [itrack]. frequency;
-			Graphics_line (g, x1, f1, x2, f2);
+			if (NUMdefined (x1) && NUMdefined (f1) && NUMdefined (x2) && NUMdefined (f2))
+				Graphics_line (g, x1, f1, x2, f2);
 		}
 	}
 	Graphics_unsetInner (g);

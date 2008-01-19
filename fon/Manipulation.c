@@ -1,6 +1,6 @@
 /* Manipulation.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/03/17 domain quantity
  * pb 2007/07/22 changed names of overlap-add method in such a way that it does not sound like an existing trademark of a diphone concatenation method
  * pb 2007/10/01 can write as encoding
+ * pb 2008/01/19 double
  */
 
 #include "Manipulation.h"
@@ -152,7 +153,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 	if (method == Manipulation_OVERLAPADD) {
 		Sound part, saved = my sound, played;
 		long i, imin, imax;
-		float *amp;
+		double *amp;
 		if (! my sound) return Melder_error1 (L"Cannot synthesize overlap-add without a sound.");
 		part = Data_copy (my sound);
 		if (! part) return 0;
@@ -261,7 +262,7 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
 	iminTarget = Sampled_xToHighIndex (thee, tminTarget);
-	NUMfvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
+	NUMdvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
 }
 
 Sound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
@@ -270,7 +271,7 @@ Sound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess ta
 	if (! thee) return NULL;
 
 	if (source -> nt < 2 || target -> nt < 2) {   /* Almost completely voiceless? */
-		NUMfvector_copyElements (my z [1], thy z [1], 1, my nx);
+		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee;
 	}
 		

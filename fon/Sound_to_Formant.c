@@ -31,10 +31,10 @@
 #include "NUM2.h"
 #include "Polynomial.h"
 
-static int burg (float sample [], long nsamp_window, float cof [], int nPoles,
+static int burg (double sample [], long nsamp_window, double cof [], int nPoles,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
-	float a0;
+	double a0;
 	Polynomial polynomial = NULL;
 	Roots roots = NULL;
 	int i, iformant;
@@ -234,7 +234,7 @@ loopEnd:
 static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
 	for (long channel = 1; channel <= my ny; channel ++) {
-		float *s = my z [channel]; 
+		double *s = my z [channel]; 
 		for (long i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
 	}
 }
@@ -267,8 +267,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	Formant thee = NULL;
-	double *frame_d = NULL, *window = NULL;
-	float *frame_f = NULL, *cof_f = NULL;
+	double *frame = NULL, *window = NULL, *cof = NULL;
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
 	double dt_window = 2 * halfdt_window;
@@ -287,9 +286,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	}
 	thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2); cherror
 	window = NUMdvector (1, nsamp_window); cherror
-	if (which == 1) { frame_f = NUMfvector (1, nsamp_window); cherror }
-	if (which == 2) { frame_d = NUMdvector (1, nsamp_window); cherror }
-	if (which == 1) { cof_f = NUMfvector (1, numberOfPoles); cherror }
+	frame = NUMdvector (1, nsamp_window); cherror
+	if (which == 1) { cof = NUMdvector (1, numberOfPoles); cherror }
 
 	Melder_progress1 (0.0, L"Formant analysis");
 
@@ -325,14 +323,11 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		if (maximumIntensity == 0.0) continue;   /* Burg cannot stand all zeroes. */
 
 		/* Copy a pre-emphasized window to a frame. */
-		if (which == 1) for (j = 1, i = startSample; i <= endSample; j ++) {
-			frame_f [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
-		} else for (j = 1, i = startSample; j <= nsamp_window; j ++) {
-			frame_d [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
-		}
+		for (j = 1, i = startSample; j <= nsamp_window; j ++)
+			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
 
-		if ((which == 1 && ! burg (frame_f, endSample - startSample + 1, cof_f, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin)) ||
-		    (which == 2 && ! splitLevinson (frame_d, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)))
+		if ((which == 1 && ! burg (frame, endSample - startSample + 1, cof, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin)) ||
+		    (which == 2 && ! splitLevinson (frame, endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)))
 		{
 			Melder_clearError ();
 			Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
@@ -343,9 +338,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 end:
 	Melder_progress1 (1.0, NULL);
 	NUMdvector_free (window, 1);
-	NUMfvector_free (frame_f, 1);
-	NUMdvector_free (frame_d, 1);
-	NUMfvector_free (cof_f, 1);
+	NUMdvector_free (frame, 1);
+	NUMdvector_free (cof, 1);
 	iferror { forget (thee); return Melder_errorp ("(Sound_to_Formant:) Not performed."); }
 	if (thee) Formant_sort (thee);
 	return thee;

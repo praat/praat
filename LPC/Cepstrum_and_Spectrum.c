@@ -58,7 +58,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me)
 		((thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx)) == NULL))
 			goto end;
 	
-	NUMfvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
+	NUMdvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 	
 end:
 
@@ -76,7 +76,7 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me)
 	if ((x = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1)) == NULL)
 		return NULL;
 	
-	NUMfvector_copyElements	(my z[1], x -> z[1], 1, my nx);
+	NUMdvector_copyElements	(my z[1], x -> z[1], 1, my nx);
 	
 	if ((thee = Sound_to_Spectrum (x, TRUE)) == NULL) goto end;
 	

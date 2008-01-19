@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2006/12/30 new Sound_create API
+ * pb 2008/01/19 double
  */
 
 #include "Speaker_to_Delta.h"
@@ -52,7 +53,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	Delta delta;
 	Sound result = Sound_createSimple (1, artword -> totalTime, fsamp);
 	long numberOfSamples = result -> nx;
-	float minTract [1+78], maxTract [1+78];   /* For drawing. */
+	double minTract [1+78], maxTract [1+78];   /* For drawing. */
 	double Dt = 1 / fsamp / oversampling,
 		rho0 = 1.14,
 		c = 353,
@@ -113,11 +114,10 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		Art_Speaker_intoDelta (art, speaker, delta);
 		if (sample % MONITOR_SAMPLES == 0) {
 if (graphics) {   /* Because we can be in batch. */
-	int i;
-	float area [1+78];
+	double area [1+78];
 	Graphics_Viewport vp;
-	for (i = 1; i <= 78; i ++) {
-		area [i] = (float) delta -> tube [i]. A;
+	for (int i = 1; i <= 78; i ++) {
+		area [i] = delta -> tube [i]. A;
 		if (area [i] < minTract [i]) minTract [i] = area [i];
 		if (area [i] > maxTract [i]) maxTract [i] = area [i];
 	}
@@ -169,7 +169,7 @@ if (graphics) {   /* Because we can be in batch. */
 	Graphics_setLineType (graphics, Graphics_DRAWN);
 	Graphics_resetViewport (graphics, vp);
 }
-			if (! Melder_monitor3 ((float) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds")) {
+			if (! Melder_monitor3 ((double) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds")) {
 				forget (result);
 				if (iw1) forget (*w1); if (iw2) forget (*w2); if (iw3) forget (*w3);
 				if (ip1) forget (*p1); if (ip2) forget (*p2); if (ip3) forget (*p3);

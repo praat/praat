@@ -28,7 +28,7 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants)
 {
 	Formant thee = NULL;
 	long i, nfreq = my nx, nform = 0;
-	float *p = NUMfvector (1, nfreq); if (! p) goto end;   /* power */
+	double *p = NUMdvector (1, nfreq); if (! p) goto end;   /* power */
 
 	thee = Formant_create (0, 1, 1, 1, 0.5, maxnFormants); if (! thee) goto end;
 	thy frame [1]. formant = NUMstructvector (Formant_Formant, 1, maxnFormants);
@@ -38,8 +38,8 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants)
 	for (i = 2; i < nfreq; i ++)
 		if (p [i] > p [i - 1] && p [i] >= p [i + 1])
 		{
-			float min3dB;
-			float firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
+			double min3dB;
+			double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
 			long j;
 			Formant_Formant formant = & thy frame [1]. formant [++ nform];
 			formant -> frequency = my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative);
@@ -62,7 +62,7 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants)
 		}
 	thy frame [1]. nFormants = nform;
 end:
-	NUMfvector_free (p, 1);
+	NUMdvector_free (p, 1);
 	return thee;
 }
 

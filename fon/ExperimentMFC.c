@@ -299,19 +299,19 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 	}
 	if (carrierBefore) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMfvector_copyElements (carrierBefore -> z [channel],
+			NUMdvector_copyElements (carrierBefore -> z [channel],
 				my playBuffer -> z [channel] + initialSilenceSamples, 1, carrierBeforeSamples);
 		}
 	}
 	if (sound) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMfvector_copyElements (sound -> z [channel],
+			NUMdvector_copyElements (sound -> z [channel],
 				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
 		}
 	}
 	if (carrierAfter) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMfvector_copyElements (carrierAfter -> z [channel],
+			NUMdvector_copyElements (carrierAfter -> z [channel],
 				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
 		}
 	}

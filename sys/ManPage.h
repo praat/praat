@@ -2,7 +2,7 @@
 #define _ManPage_h_
 /* ManPage.h
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/01/19
  */
 
 #ifndef _Graphics_h_
@@ -32,7 +32,7 @@
 typedef struct structManPage_Paragraph {
 	short type;
 	const wchar_t *text;
-	float width, height;
+	double width, height;
 	void (*draw) (Graphics g);
 } *ManPage_Paragraph;
 

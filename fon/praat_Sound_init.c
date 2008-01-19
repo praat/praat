@@ -1,6 +1,6 @@
 /* praat_Sound_init.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/04
+ * pb 2008/01/19
  */
 
 #include "praat.h"
@@ -317,7 +317,7 @@ DIRECT (Sounds_concatenate)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMfvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
+			NUMdvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
 		}
 		nx += my nx;
 	}
@@ -351,7 +351,7 @@ DIRECT (Sounds_concatenateRecoverably)
 		Sound me = OBJECT;
 		double tmax = tmin + my nx * dx;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMfvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
+			NUMdvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
 		}
 		iinterval ++;
 		if (iinterval > 1) { TextGrid_insertBoundary (him, 1, tmin); cherror }

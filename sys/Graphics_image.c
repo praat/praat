@@ -1,6 +1,6 @@
 /* Graphics_image.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2007/04/25 better image drawing on the Mac
  * pb 2007/08/03 Quartz
+ * pb 2008/01/19 double
  */
 
 #include "GraphicsP.h"
@@ -35,7 +36,7 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
+static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC,
 	double minimum, double maximum,
@@ -274,7 +275,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		#endif
 		if (interpolate) {
 			long *ileft = NUMlvector (clipx1, clipx2), *iright = NUMlvector (clipx1, clipx2);
-			float *rightWeight = NUMfvector (clipx1, clipx2), *leftWeight = NUMfvector (clipx1, clipx2);
+			double *rightWeight = NUMdvector (clipx1, clipx2), *leftWeight = NUMdvector (clipx1, clipx2);
 			if (! ileft || ! iright || ! rightWeight || ! leftWeight) goto ready1;
 			for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 				double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
@@ -291,7 +292,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				if (itop > iy2) itop = iy2;
 				if (ibottom < iy1) ibottom = iy1;
 				if (z_float) {
-					float *ztop = z_float [itop], *zbottom = z_float [ibottom];
+					double *ztop = z_float [itop], *zbottom = z_float [ibottom];
 					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double interpol =
 							rightWeight [xDC] *
@@ -317,8 +318,8 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			ready1:
 			NUMlvector_free (ileft, clipx1);
 			NUMlvector_free (iright, clipx1);
-			NUMfvector_free (rightWeight, clipx1);
-			NUMfvector_free (leftWeight, clipx1);
+			NUMdvector_free (rightWeight, clipx1);
+			NUMdvector_free (leftWeight, clipx1);
 		} else {
 			long *ix = NUMlvector (clipx1, clipx2);
 			if (! ix) goto ready2;
@@ -329,7 +330,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				unsigned char *pixelAddress = ROW_START_ADDRESS;
 				Melder_assert (iy >= iy1 && iy <= iy2);
 				if (z_float) {
-					float *ziy = z_float [iy];
+					double *ziy = z_float [iy];
 					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 						double value = offset - scale * ziy [ix [xDC]];
 						PUT_PIXEL
@@ -419,7 +420,7 @@ static void screenCellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 
 #define INTERPOLATE_IN_POSTSCRIPT  TRUE
 
-static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
+static void _cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC, double minimum, double maximum,
 	short clipx1, short clipx2, short clipy1, short clipy2, int interpolate)
@@ -457,7 +458,7 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			#else
 			short xDC, yDC;
 			long *ileft, *iright;
-			float *rightWeight, *leftWeight;
+			double *rightWeight, *leftWeight;
 			if (x2DC <= x1DC || y2DC <= y1DC) return;   /* Different from the screen test! */
 			/* Clip by the intersection of the world window and the outline of the cells. */
 			if (clipx1 < x1DC) clipx1 = x1DC;
@@ -466,8 +467,8 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			if (clipy2 > y2DC) clipy2 = y2DC;
 			ileft = NUMlvector (clipx1, clipx2);
 			iright = NUMlvector (clipx1, clipx2);
-			rightWeight = NUMfvector (clipx1, clipx2);
-			leftWeight = NUMfvector (clipx1, clipx2);
+			rightWeight = NUMdvector (clipx1, clipx2);
+			leftWeight = NUMdvector (clipx1, clipx2);
 			if (! ileft || ! iright || ! rightWeight || ! leftWeight) goto ready1;
 			/* Allow extra interpolation for PDF. */
 			my printf (my file, "/DeviceGray setcolorspace << /ImageType 1 /Width %ld /Height %ld\n"
@@ -488,7 +489,7 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 				if (ibottom < iy1) ibottom = iy1;
 				if (itop > iy2) itop = iy2;
 				if (z_float) {
-					float *zbottom = z_float [ibottom], *ztop = z_float [itop];
+					double *zbottom = z_float [ibottom], *ztop = z_float [itop];
 					for (xDC = clipx1; xDC < clipx2; xDC ++) {
 						double interpol =
 							rightWeight [xDC] *
@@ -516,8 +517,8 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 			ready1:
 			NUMlvector_free (ileft, clipx1);
 			NUMlvector_free (iright, clipx1);
-			NUMfvector_free (rightWeight, clipx1);
-			NUMfvector_free (leftWeight, clipx1);
+			NUMdvector_free (rightWeight, clipx1);
+			NUMdvector_free (leftWeight, clipx1);
 			#endif
 		}
 		#if ! INTERPOLATE_IN_POSTSCRIPT
@@ -677,7 +678,7 @@ static void _cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 	_Graphics_setColour (me, my colour);
 }
 
-static void cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
+static void cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	double minimum, double maximum, int interpolate)
@@ -695,13 +696,13 @@ static void cellArrayOrImage (I, float **z_float, unsigned char **z_byte,
 		put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (minimum); put (maximum);
 		put (nrow); put (ncol);
 		if (z_float) for (iy = iy1; iy <= iy2; iy ++)
-			{ float *row = z_float [iy]; for (ix = ix1; ix <= ix2; ix ++) put (row [ix]); }
+			{ double *row = z_float [iy]; for (ix = ix1; ix <= ix2; ix ++) put (row [ix]); }
 		else for (iy = iy1; iy <= iy2; iy ++)
 			{ unsigned char *row = z_byte [iy]; for (ix = ix1; ix <= ix2; ix ++) put (row [ix]); }
 	}
 }
 
-void Graphics_cellArray (I, float **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_cellArray (I, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
 { cellArrayOrImage (void_me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
@@ -709,7 +710,7 @@ void Graphics_cellArray8 (I, unsigned char **z, long ix1, long ix2, double x1WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
 { cellArrayOrImage (void_me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
-void Graphics_image (I, float **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_image (I, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
 { cellArrayOrImage (void_me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 

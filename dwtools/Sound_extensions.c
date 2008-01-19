@@ -98,11 +98,11 @@ static void Pitch_scalePitch (Pitch me, double multiplier)
 
 static void i1write (Sound me, FILE *f, long *nClip)
 {
-	long i; float *s = my z[1], min = -128, max = 127;
+	long i; double *s = my z[1], min = -128, max = 127;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
 	{
-		float sample = floor (s[i] * 128 + 0.5);
+		double sample = floor (s[i] * 128 + 0.5);
 		if (sample > max) { sample = max; (*nClip)++; }
 		else if (sample < min) { sample = min; (*nClip)++; }
 		binputi1 (sample, f);
@@ -111,17 +111,17 @@ static void i1write (Sound me, FILE *f, long *nClip)
 
 static void i1read (Sound me, FILE *f)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	for (i = 1; i <= my nx; i++) s[i] = bingeti1 (f) / 128.0;
 }
 
 static void u1write (Sound me, FILE *f, long *nClip)
 {
-	long i; float *s = my z[1], min = 0, max = 255;
+	long i; double *s = my z[1], min = 0, max = 255;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
 	{
-		float sample = floor ((s[i] + 1) * 255 / 2 + 0.5);
+		double sample = floor ((s[i] + 1) * 255 / 2 + 0.5);
 		if (sample > max) { sample = max; (*nClip)++; }
 		else if (sample < min) { sample = min; (*nClip)++; }
 		binputu1 (sample, f);
@@ -130,18 +130,18 @@ static void u1write (Sound me, FILE *f, long *nClip)
 
 static void u1read (Sound me, FILE *f)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	for (i=1; i <= my nx; i++) s[i] = bingetu1 (f) / 128.0 - 1.0;
 }
 
 static void i2write (Sound me, FILE *f, int littleEndian, long *nClip)
 {
-	long i; float *s = my z[1], min = -32768, max = 32767;
+	long i; double *s = my z[1], min = -32768, max = 32767;
 	void (*put) (int, FILE *) = littleEndian ? binputi2LE: binputi2;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
 	{
-		float sample = floor (s[i] * 32768 + 0.5);
+		double sample = floor (s[i] * 32768 + 0.5);
 		if (sample > max) { sample = max; (*nClip)++; }
 		else if (sample < min) { sample = min; (*nClip)++; }
 		put (sample, f);
@@ -150,19 +150,19 @@ static void i2write (Sound me, FILE *f, int littleEndian, long *nClip)
 
 static void i2read (Sound me, FILE *f, int littleEndian)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	int (*get) (FILE *) = littleEndian ? bingeti2LE : bingeti2;
 	for (i=1; i <= my nx; i++) s[i] = get (f) / 32768.;
 }
 
 static void u2write (Sound me, FILE *f, int littleEndian, long *nClip)
 {
-	long i; float *s = my z[1], min = 0, max = 65535;
+	long i; double *s = my z[1], min = 0, max = 65535;
 	void (*put) (unsigned int, FILE *) = littleEndian ? binputu2LE : binputu2;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
 	{
-		float sample = floor ((s[i] + 1) * 65535 / 2 + 0.5);
+		double sample = floor ((s[i] + 1) * 65535 / 2 + 0.5);
 		if (sample > max) { sample = max; (*nClip)++; }
 		else if (sample < min) { sample = min; (*nClip)++; }
 		put (sample, f);
@@ -171,14 +171,14 @@ static void u2write (Sound me, FILE *f, int littleEndian, long *nClip)
 
 static void u2read (Sound me, FILE *f, int littleEndian)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	unsigned int (*get) (FILE *) = littleEndian ? bingetu2LE : bingetu2;
 	for (i=1; i <= my nx; i++) s[i] = get (f) / 32768.0 - 1.0;
 }
 
 static void i4write (Sound me, FILE *f, int littleEndian, long *nClip)
 {
-	long i; float *s = my z[1]; double min = -2147483648.0, max = 2147483647.0;
+	long i; double *s = my z[1]; double min = -2147483648.0, max = 2147483647.0;
 	void (*put) (long, FILE *) = littleEndian ? binputi4LE : binputi4;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
@@ -192,7 +192,7 @@ static void i4write (Sound me, FILE *f, int littleEndian, long *nClip)
 
 static void i4read (Sound me, FILE *f, int littleEndian)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	long (*get) (FILE *) = littleEndian ? bingeti4LE : bingeti4;
 	for (i=1; i <= my nx; i++) s[i] = get (f) / 2147483648.;
 }
@@ -200,7 +200,7 @@ static void i4read (Sound me, FILE *f, int littleEndian)
 
 static void u4write (Sound me, FILE *f, int littleEndian, long *nClip)
 {
-	long i; float *s = my z[1]; double min = 0.0, max = 4294967295.0;
+	long i; double *s = my z[1]; double min = 0.0, max = 4294967295.0;
 	void (*put) (unsigned long, FILE *) = littleEndian ? binputu4LE : binputu4;
 	*nClip = 0;
 	for (i=1; i <= my nx; i++)
@@ -214,7 +214,7 @@ static void u4write (Sound me, FILE *f, int littleEndian, long *nClip)
 
 static void u4read (Sound me, FILE *f, int littleEndian)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	long (*get) (FILE *) = littleEndian ? bingeti4LE : bingeti4;
 	for (i=1; i <= my nx; i++) s[i] = get (f) / 2147483648.0 - 1.0;
 }
@@ -222,13 +222,13 @@ static void u4read (Sound me, FILE *f, int littleEndian)
 
 static void r4write (Sound me, FILE *f)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	for (i=1; i <= my nx; i++) binputr4 (s[i], f);
 }
 
 static void r4read (Sound me, FILE *f)
 {
-	long i; float *s = my z[1];
+	long i; double *s = my z[1];
 	for (i=1; i <= my nx; i++) s[i] = bingetr4 (f);
 }
 
@@ -415,10 +415,10 @@ static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm)
 		building and programming systems using Dialogic and Related 
 		Hardware", 272-276.
 */
-static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm)
+static double dialogic_adpcm_decode (struct dialogic_adpcm *adpcm)
 {
 	short diff, e, ss, s;
-	float scale = 32767.0 / 32768.0 / 2048.0;
+	double scale = 32767.0 / 32768.0 / 2048.0;
 
 	/*
 		nibble = B3 B2 B1 B0 (4 lower bits)
@@ -515,7 +515,7 @@ void Sound_preEmphasis (Sound me, double preEmphasisFrequency)
 	
 	for (long channel = 1; channel <= my ny; channel++)
 	{
-		float *s = my z[channel];
+		double *s = my z[channel];
 		for (long i = my nx; i >= 2; i--) s[i] -= preEmphasis * s[i-1];
 	}
 }
@@ -525,7 +525,7 @@ void Sound_deEmphasis (Sound me, double deEmphasisFrequency)
 	double deEmphasis = exp(- 2.0 * NUMpi * deEmphasisFrequency * my dx);
 	for (long channel = 1; channel <= my ny; channel++)
 	{
-		float *s = my z[channel];
+		double *s = my z[channel];
 		for (long i = 2; i <= my nx; i++) s[i] += deEmphasis * s[i-1];
 	}
 }
@@ -534,7 +534,7 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 {
 	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 	double imid, edge;
-	float *s = my z[1];
+	double *s = my z[1];
 	
 	if (me == NULL) return NULL;
 	
@@ -551,7 +551,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 {
 	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 	double p;
-	float *s = my z[1];
+	double *s = my z[1];
 	
 	if (me == NULL) return NULL;
 	
@@ -1011,7 +1011,7 @@ Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samp
 void Sounds_multiply (Sound me, Sound thee)
 {
 	long i, n = my nx < thy nx ? my nx : thy nx;
-	float *s1 = my z[1], *s2 = thy z[1];
+	double *s1 = my z[1], *s2 = thy z[1];
 	
 	for (i=1; i <= n; i++) s1[i] *= s2[i];
 }
@@ -1019,7 +1019,7 @@ void Sounds_multiply (Sound me, Sound thee)
 
 double Sound_power (Sound me)
 {
-	double e = 0; float *amplitude = my z[1]; long i;
+	double e = 0; double *amplitude = my z[1]; long i;
 	for (i=1; i <= my nx; i++) e += amplitude[i] * amplitude[i];
 	return sqrt (e) * my dx / (my xmax - my xmin);
 }
@@ -1027,7 +1027,7 @@ double Sound_power (Sound me)
 double Sound_correlateParts (Sound me, double tx, double ty, double duration)
 {
 	double xm = 0, ym = 0, sxx = 0, syy = 0, sxy = 0, denum, rxy;
-	float *x, *y; long i, nbx, nby, ney, ns, increment = 0, decrement = 0;
+	double *x, *y; long i, nbx, nby, ney, ns, increment = 0, decrement = 0;
 	
 	if (ty < tx ) { double t = tx; tx = ty; ty = t; }
 	nbx = Sampled_xToNearestIndex (me, tx);
@@ -1055,7 +1055,7 @@ void Sound_localMean (Sound me, double fromTime, double toTime, double *mean)
 {
 	long i, n1 = Sampled_xToNearestIndex (me, fromTime);
 	long n2 = Sampled_xToNearestIndex (me, toTime);
-	float *s = my z[1];
+	double *s = my z[1];
 	*mean = 0;
 	if (fromTime > toTime) return;
 	if (n1 < 1) n1 = 1;
@@ -1068,7 +1068,7 @@ void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, doub
 {
 	long i, n1 = Sampled_xToNearestIndex (me, fromTime);
 	long n2 = Sampled_xToNearestIndex (me, toTime);
-	float *s = my z[1];
+	double *s = my z[1];
 	*peak = -1e38;
 	if (fromTime > toTime) return;
 	if (n1 < 1) n1 = 1;
@@ -1203,7 +1203,7 @@ end:
 PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt)
 {
 	PointProcess thee;
-	float *s = my z[1];
+	double *s = my z[1];
 	long i = 1, dtn = dt / my dx;
 
 	thee = PointProcess_create (my xmin, my xmax, 10);	

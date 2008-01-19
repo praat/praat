@@ -28,14 +28,14 @@ Excitation Spectrum_to_Excitation (I, double dbark)
 {
 	iam (Spectrum);
 	Excitation thee = NULL;
-	float *inSig = NULL, *outSig = NULL, *rFreqs = NULL, *auditoryFilter = NULL, filterArea = 0;
+	double *inSig = NULL, *outSig = NULL, *rFreqs = NULL, *auditoryFilter = NULL, filterArea = 0;
 	long *iFreqs = NULL;
 	long i, j, nbark = (int) floor (25.6 / dbark + 0.5);
-	float *re = my z [1], *im = my z [2]; 
+	double *re = my z [1], *im = my z [2]; 
 
-	if (! (inSig = NUMfvector (1, nbark)) || ! (outSig = NUMfvector (1, 2 * nbark)) ||
-		 ! (rFreqs = NUMfvector (1, nbark + 1)) || ! (iFreqs = NUMlvector (1, nbark + 1)) ||
-		 ! (auditoryFilter = NUMfvector (1, nbark))) goto end;
+	if (! (inSig = NUMdvector (1, nbark)) || ! (outSig = NUMdvector (1, 2 * nbark)) ||
+		 ! (rFreqs = NUMdvector (1, nbark + 1)) || ! (iFreqs = NUMlvector (1, nbark + 1)) ||
+		 ! (auditoryFilter = NUMdvector (1, nbark))) goto end;
 	for (i = 1; i <= nbark; i ++)
 	{
 		double bark = dbark * (i - nbark/2) + 0.474;
@@ -73,11 +73,11 @@ Excitation Spectrum_to_Excitation (I, double dbark)
 			Sampled_indexToX (thee, i));
 
 end:
-	NUMfvector_free (inSig, 1);
-	NUMfvector_free (outSig, 1);
-	NUMfvector_free (rFreqs, 1);
+	NUMdvector_free (inSig, 1);
+	NUMdvector_free (outSig, 1);
+	NUMdvector_free (rFreqs, 1);
 	NUMlvector_free (iFreqs, 1);
-	NUMfvector_free (auditoryFilter, 1);
+	NUMdvector_free (auditoryFilter, 1);
 	return thee;
 }
 

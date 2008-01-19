@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,9 @@
  djmw 20070302 NUMclipLineWithinRectangle
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071022 Removed function NUMfvector_moment2.
+ djmw 20071201 Melder_warning<n>
+ djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable_d
+ djmw 20080110 Corrected some bugs in str_replace_regexp
 */
 
 #include "SVD.h"
@@ -333,6 +336,14 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 	return result; 
 }
 
+static int expand_buffer (char **bufp, int new_size)
+{
+	char *tbuf = (char *) Melder_realloc (*bufp, new_size);
+	if (tbuf == NULL) return 0;
+	*bufp = tbuf;
+	return 1;
+}
+
 char *str_replace_regexp (char *string, regexp *compiledSearchRE, 
 	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
@@ -340,19 +351,22 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	int buf_size; 					/* inclusive nul-byte */
 	int buf_nchar = 0;				/* # characters in 'buf' */
 	int string_length;				/* exclusive 0-byte*/
+	int replace_length;
 	int gap_copied = 0;
 	int nchar, reverse = 0;
+	int errorType;
+	char prev_char = '\0';
 	char *pos; 	/* current position in 'string' / start of current match */
 	char *posp; /* end of previous match */
-	char *buf, *tbuf;
+	char *buf = NULL;
 
-	*nmatches = 0;	
-	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL || strlen (replaceRE) == 0)
-		return NULL;
+	*nmatches = 0;
+	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL) return NULL;
 		
 	string_length = strlen (string);
+	replace_length = strlen (replaceRE);
 	if (string_length == 0) maximumNumberOfReplaces = 1;
-
+	
 	i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
 		  
 	/*
@@ -361,47 +375,30 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		original string. After all replaces have taken place we do a
 		final realloc to the then exactly known size. 
 		If during the replace, the size of the buffer happens to be too
-		small (this is signalled when the last byte in the buffer equals 
-		'\0' after the replace), we double its size and restart the replace.
-		We cannot detect, however, whether the buffer was exactly filled up
-		or it was too small. In the former case we are penalized by one 
-		extra memory reallocation.
+		small (this is signalled by thre replaceRE function), 
+		we double its size and restart the replace.
 	*/
-	  	
-	buf_size = 2 * string_length + 1;
-	buf_size = MAX (buf_size, 100);	
-	buf = Melder_malloc (char, buf_size);
-	if (buf == NULL) return 0;
+
+	buf_size = MAX (2 * string_length, 100);
+	if (! expand_buffer (& buf, buf_size)) return 0;
 	
-	/*
-		The last byte of 'buf' is our buffer_full test.
-		Make sure it is not '\0'.
-	*/
-	
-	buf[buf_size - 1] = 'a';
-	
-	pos = posp = string;
-	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, 
-		pos == posp ? '\0' : pos[-1], '\0', NULL, NULL, NULL) && 
-		i++ < maximumNumberOfReplaces)
+	pos = posp = string; 
+	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, prev_char, '\0', NULL, NULL, NULL) && i++ < maximumNumberOfReplaces)
 	{
 		/*
 			Copy gap between the end of the previous match and the start
 			of the current match.
-			Check buffer overflow. 
+			Check buffer overflow. pos == posp ? '\0' : pos[-1],
 		*/
 		
 		pos = compiledSearchRE -> startp[0];
 		nchar = pos - posp;
 		if (nchar > 0 && ! gap_copied)
 		{
-			if (buf_nchar + nchar > buf_size - 1)
+			if (buf_nchar + nchar + 1 > buf_size)
 			{
 				buf_size *= 2;
-				tbuf = (char *) Melder_realloc (buf, buf_size);
-				if (tbuf == NULL) goto end;
-				buf = tbuf;
-				buf[buf_size - 1] = 'a';
+				if (! expand_buffer (& buf, buf_size)) goto end;
 			}
 			strncpy (buf + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
@@ -411,26 +408,24 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		
 		/*
 			Do the substitution. We can only check afterwards for buffer
-			overflow. SubstituteRE puts null byte at last replaced position.
+			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
-		
-		SubstituteRE (compiledSearchRE, replaceRE, buf + buf_nchar,
-			buf_size - buf_nchar);
-		
-		/*
-			Check buffer overflow; 
-		*/
-		
-		if (buf[buf_size - 1] == '\0')
+				
+		if ((SubstituteRE (compiledSearchRE, replaceRE, buf + buf_nchar, buf_size - buf_nchar, &errorType)) == FALSE)
 		{
-			buf_size *= 2;
-			tbuf = (char *) Melder_realloc (buf, buf_size);
-			if (tbuf == NULL) goto end;
-			buf = tbuf;
-			buf[buf_size - 1] = 'a';
-			/* redo */
-			i--;
+			if (errorType == 1) // not enough memory
+			{
+				buf_size *= 2;
+				if (! expand_buffer (& buf, buf_size)) goto end;
+				Melder_clearError ();
+				i--; // retry
+				//gap_copied = 0;
 			continue;
+			}
+			else
+			{
+				goto end;
+			}
 		}
 		
 		/*
@@ -444,28 +439,24 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 			Update next start position in search string.
 		*/
 		
-		pos = posp = compiledSearchRE -> endp[0];
+		posp = pos;
+		pos = compiledSearchRE -> endp[0];
+		if (pos != posp) prev_char = pos[-1];
 		gap_copied = 0;
+		posp = pos;
 		(*nmatches)++;
 	}
 	
 	/*
-		Were done, final allocation to exact size
+		Copy last part of string to destination string
 	*/
 	
-	pos = string + string_length;
-	nchar = pos - posp;
-	buf_size = buf_nchar + nchar;
-	tbuf = (char *) Melder_realloc (buf, buf_size + 1);
-	if (tbuf == NULL) goto end;
-	buf = tbuf;
+	nchar = (string + string_length) - pos;
+	buf_size = buf_nchar + nchar + 1;
+	if (! expand_buffer (& buf, buf_size)) goto end;
 	
-	/*
-		Copy the last part of 'string'.
-	*/
-	
-	strncpy (buf + buf_nchar, posp, nchar);
-	buf[buf_size] = '\0';
+	strncpy (buf + buf_nchar, pos, nchar);
+	buf[buf_size-1] = '\0';
 	
 end:
 
@@ -833,28 +824,12 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	if (icol1 == icol2) *covariance = *variance1;
 }
 
-#define HUBER_MAD NUMmad_f
-#define HUBER_STATISTICS_HUBER NUMstatistics_huber_f
-#define HUBER_DATA_TYPE float
-#define HUBER_VECTOR  NUMfvector
-#define HUBER_VECTOR_FREE  NUMfvector_free
-#define HUBER_QUANTILE NUMquantile_f
-#define HUBER_SORT NUMsort_f
-#include "NUMhuber_core.h"
-#undef HUBER_MAD
-#undef HUBER_STATISTICS_HUBER
-#undef HUBER_DATA_TYPE
-#undef HUBER_VECTOR
-#undef HUBER_VECTOR_FREE
-#undef HUBER_QUANTILE
-#undef HUBER_SORT
-
 #define HUBER_MAD NUMmad_d
 #define HUBER_STATISTICS_HUBER NUMstatistics_huber_d
 #define HUBER_DATA_TYPE double
 #define HUBER_VECTOR  NUMdvector
 #define HUBER_VECTOR_FREE  NUMdvector_free
-#define HUBER_QUANTILE NUMquantile_d
+#define HUBER_QUANTILE NUMquantile
 #define HUBER_SORT NUMsort_d
 #include "NUMhuber_core.h"
 
@@ -926,21 +901,6 @@ int NUMwcscmp (const wchar_t *s1, const wchar_t *s2)
 	}
 }
 
-void NUMlocate_f (float *xx, long n, float x, long *index)
-{
-	long ju = n + 1, jm, jl = 0;
-	int ascend = xx[n] >= xx[1];
-
-	while (ju - jl > 1)
-	{
-		jm = (ju + jl) / 2;
-		if ((x >= xx[jm]) == ascend) jl = jm; else ju = jm;
-	}
-	if (x == xx[1]) *index = 1;
-	else if (x == xx[n]) *index = n - 1;
-	else *index = jl;
-}
-
 void NUMlocate_d (double *xx, long n, double x, long *index)
 {
 	long ju = n + 1, jm, jl = 0;
@@ -992,36 +952,6 @@ void NUMmonotoneRegression_d (const double x[], long n, double xs[])
 	}
 }
 
-float NUMfvector_getNorm1 (const float v[], long n)
-{
-	float norm = 0; long i;
-	for (i=1; i <= n; i++) norm += fabs (v[i]);
-	return norm;
-}
-
-float NUMfvector_getNorm2 (const float v[], long n)
-{
-	float norm = 0; long i;
-	for (i=1; i <= n; i++) norm += v[i] * v[i];
-	return sqrt (norm);
-}
-
-float NUMfvector_normalize1 (float v[], long n)
-{
-	float norm = 0; long i;
-	for (i=1; i <= n; i++) norm += fabs (v[i]);
-	for (i=1; i <= n; i++) v[i] /= norm;
-	return norm;
-}
-
-float NUMfvector_normalize2 (float v[], long n)
-{
-	float norm = 0; long i;
-	for (i=1; i <= n; i++) norm += v[i] * v[i];
-	norm = sqrt (norm);
-	for (i=1; i <= n; i++) v[i] /= norm;
-	return norm;
-}
 double NUMdvector_getNorm1 (const double v[], long n)
 {
 	double norm = 0; long i;
@@ -2149,8 +2079,7 @@ int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure),
 			xh = *root;
 		}
 	}
-	Melder_warning ("NUMnrbis: maximum number of iterations (%d) "
-		"exceeded.", itermax);
+	Melder_warning3 (L"NUMnrbis: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
 	return 1;
 }
 
@@ -2171,7 +2100,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	if (f2 == NUMundefined) return NUMundefined;
 	if ((f1 < 0 && f2 < 0) || (f1 > 0 && f2 > 0))
 	{
-		Melder_warning ("NUMridders: root must be bracketed.");
+		Melder_warning1 (L"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
 	
@@ -2190,8 +2119,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		d = f3 * f3 - f1 * f2;
 		if (d < 0.0)
 		{
-			Melder_warning ("d < 0 in ridders; x1=%.17g, x2=%.17g, x3=%.17g, f1=%.17g, f2=%.17g, f3=%.17g, iter=%ld",
-				x1, x2, x3, f1, f2, f3, iter);
+			Melder_warning3 (L"d < 0 in ridders (iter = ", Melder_integer (iter), L").");
 			return NUMundefined;
 		}
 
@@ -2302,10 +2230,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	{
 		static long nwarnings = 0;
 		nwarnings++;
-		Melder_warning ("NUMridders: maximum number of iterations (%ld) "
-		"exceeded.\n%ld root=%.17g x1=%.17g x2=%.17g x3=%.17g x4=%.17g\n"
-		"f1=%.17g f2=%.17g f3=%.17g f4=%.17g d=%.17g", itermax, nwarnings,
-		root, x1, x2, x3, x4, f1, f2, f3, f4, d);
+		Melder_warning3 (L"NUMridders: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
 	}
 	return root;
 }
@@ -2585,15 +2510,15 @@ b2 = & work[n+1];
 aa = & work[n+n+1];
 for (i=1; i<=n+n+n; i++) work[i]=0;
 */
-int NUMburg (float x[], long n, float a[], int m, float *xms)
+int NUMburg (double x[], long n, double a[], int m, double *xms)
 {
 	long i = 1, j; int status = 0;
-	float p = 0.0;
-	float *b1 , *b2 = NULL, *aa = NULL;
+	double p = 0.0;
+	double *b1 , *b2 = NULL, *aa = NULL;
 	
-	if (((b1 = NUMfvector (1, n)) == NULL) ||
-		((b2 = NUMfvector (1, n)) == NULL) ||
-		((aa = NUMfvector (1, m)) == NULL)) goto end;
+	if (((b1 = NUMdvector (1, n)) == NULL) ||
+		((b2 = NUMdvector (1, n)) == NULL) ||
+		((aa = NUMdvector (1, m)) == NULL)) goto end;
 	
 	/* (3) */
 		
@@ -2618,7 +2543,7 @@ int NUMburg (float x[], long n, float a[], int m, float *xms)
 	{
 		/* (7) */
 		
-		float num = 0.0, denum = 0.0;
+		double num = 0.0, denum = 0.0;
 		for (j = 1; j <= n - i; j++)
 		{
 			num += b1[j] * b2[j];
@@ -2661,18 +2586,18 @@ int NUMburg (float x[], long n, float a[], int m, float *xms)
 	status = 1;
 	
 end:	
-	NUMfvector_free (aa, 1);
-	NUMfvector_free (b2, 1);
-	NUMfvector_free (b1, 1);
+	NUMdvector_free (aa, 1);
+	NUMdvector_free (b2, 1);
+	NUMdvector_free (b1, 1);
 	for (j = i; j <= m; j++) a[j] = 0;
 	return status;
 }
 
-int NUMfmatrix_to_dBs (float **m, long rb, long re, long cb, long ce, 
+int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, 
 	double ref, double factor, double floor)
 {
 	double ref_db, factor10 = factor * 10;
-	float max = m[rb][cb], min = max;
+	double max = m[rb][cb], min = max;
 	long i, j;
 	
 	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
@@ -2712,7 +2637,7 @@ double **NUMcosinesTable_d (long first, long last, long npoints)
 	double **m;
 	long i, j;
 	
-	Melder_assert (0 < first && first <= last && npoints > 1);
+	Melder_assert (0 < first && first <= last && npoints > 0);
 	
 	if ((m = NUMdmatrix (first, last, 1, npoints)) == NULL) return NULL;
 	
@@ -2725,55 +2650,6 @@ double **NUMcosinesTable_d (long first, long last, long npoints)
 		}
 	}
 	return m;
-}
-
-int NUMspline_f (float x[], float y[], long n, float yp1, float ypn, float y2[])
-{
-	float p, qn, sig, un, *u;
-	long i,k;
-
-	if ((u = NUMfvector (1, n - 1)) == NULL) return 0;
-	
-	if (yp1 > 0.99e30)
-	{
-		y2[1] = u[1] = 0.0;
-	}
-	else
-	{
-		y2[1] = -0.5;
-		u[1] = (3.0 / (x[2] - x[1])) * ((y[2] - y[1]) / (x[2] - x[1]) - yp1);
-	}
-	
-	for (i=2; i <= n-1; i++)
-	{
-		sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
-		p = sig * y2[i-1] + 2.0;
-		y2[i] = (sig - 1.0) / p;
-		u[i] = (y[i+1] - y[i]) / (x[i+1] - x[i]) - (y[i] - y[i-1]) /
-			(x[i] - x[i-1]);
-		u[i] = (6.0 * u[i] / (x[i+1] - x[i-1]) - sig * u[i-1]) / p;
-	}
-	
-	if (ypn > 0.99e30)
-	{
-		qn = un = 0.0;
-	}
-	else
-	{
-		qn = 0.5;
-		un = (3.0 / (x[n] - x[n-1])) * (ypn - (y[n] - y[n-1]) /
-			(x[n] - x[n-1]));
-	}
-	
-	y2[n] = (un - qn * u[n-1]) / (qn * y2[n-1] + 1.0);
-	for (k=n-1; k >= 1; k--)
-	{
-		y2[k] = y2[k] * y2[k+1] + u[k];
-	}
-	
-	NUMfvector_free (u, 1);
-	
-	return 1;
 }
 
 int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
@@ -2826,27 +2702,6 @@ int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
 	return 1;
 }
 
-int NUMsplint_f (float xa[], float ya[], float y2a[], long n, float x, float *y)
-{
-	long klo, khi, k;
-	float h, b, a;
-
-	klo = 1; khi = n;
-	while (khi-klo > 1)
-	{
-		k = (khi + klo) >> 1;
-		if (xa[k] > x) khi = k;
-		else klo = k;
-	}
-	h = xa[khi] - xa[klo];
-	if (h == 0.0) return Melder_error1 (L"NUMsplint_f: bad input value");
-	a = (xa[khi] - x) / h;
-	b = (x - xa[klo]) / h;
-	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
-		(b * b * b - b) * y2a[khi]) * (h * h) / 6.0;
-	return 1;
-}
-
 int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
 	double x, double *y)
 {
@@ -2885,9 +2740,6 @@ int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
 void NUMlvector_extrema (long v[], long lo, long hi, double *min, double *max)
 MACRO_NUMvector_extrema (long)
 
-void NUMfvector_extrema (float v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (float)
-
 void NUMivector_extrema (int v[], long lo, long hi, double *min, double *max)
 MACRO_NUMvector_extrema (int)
 
@@ -2913,9 +2765,6 @@ MACRO_NUMvector_extrema (short)
 
 void NUMlvector_clip (long v[], long lo, long hi, double min, double max)
 MACRO_NUMclip (long)
-
-void NUMfvector_clip (float v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (float)
 
 void NUMivector_clip (int v[], long lo, long hi, double min, double max)
 MACRO_NUMclip (int)
@@ -2948,10 +2797,6 @@ MACRO_NUMclip (short)
 void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce, 
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(double)
-
-void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce, 
-	double *min, double *max)
-MACRO_NUMmatrix_extrema(float)
 
 void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce, 
 	double *min, double *max)
@@ -3366,8 +3211,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 			}
 		}
 	}
-	Melder_warning ("NUMminimize_brent: maximum number of iterations (%d) "
-		"exceeded.", itermax);
+	Melder_warning3 (L"NUMminimize_brent: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
 	return x;
 }
 

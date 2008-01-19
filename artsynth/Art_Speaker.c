@@ -1,6 +1,6 @@
 /* Art_Speaker.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 1996/09/04 latest change
  * pb 2002/07/16 GPL
  * pb 2007/08/12 wchar_t
+ * pb 2008/01/19 double
  */
 
 #include "Art_Speaker.h"
@@ -237,7 +238,7 @@ void Art_Speaker_draw (Art art, Speaker speaker, Graphics g) {
 void Art_Speaker_fillInnerContour (Art art, Speaker speaker, Graphics g) {
 	double f = speaker -> relativeSize * 1e-3;
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11];
-	float x [1 + 16], y [1 + 16];
+	double x [1 + 16], y [1 + 16];
 	double bodyX, bodyY;
 	int i;
 	Graphics_Viewport previous;

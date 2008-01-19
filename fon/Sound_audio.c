@@ -1,6 +1,6 @@
 /* Sound_audio.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
  * pb 2007/01/07 PortAudio
  * Stefan de Konink 2007/12/02 big-endian Linux
+ * pb 2008/01/19 double
  */
 
 #include <errno.h>
@@ -777,7 +778,7 @@ int Sound_playPart (Sound me, double tmin, double tmax,
 	long ifsamp = floor (1.0 / my dx + 0.5), bestSampleRate = Melder_getBestSampleRate (ifsamp);
 	if (ifsamp == bestSampleRate) {
 		struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
-		float *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : NULL;
+		double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : NULL;
 		Melder_stopPlaying (Melder_IMPLICIT);
 		long i1, i2;
 		if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) goto end;

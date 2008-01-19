@@ -802,14 +802,14 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 		dq = (fc * fc - f * f) / (bw * f)
 */
 
-int NUMburg (float x[], long n, float a[], int m, float *xms);
+int NUMburg (double x[], long n, double a[], int m, double *xms);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
 */
 
-int NUMfmatrix_to_dBs (float **m, long rb, long re, long cb, long ce, 
+int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, 
 	double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's

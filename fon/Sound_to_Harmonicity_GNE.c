@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity_GNE.c
  *
- * Copyright (C) 1999-2004 Paul Boersma
+ * Copyright (C) 1999-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ * pb 2008/01/19 double
  */
 
 /* a replication of:
@@ -36,7 +37,7 @@
 
 static void bandFilter (Spectrum me, double fmid, double bandwidth) {
 	long col;
-	float *re = my z [1], *im = my z [2];
+	double *re = my z [1], *im = my z [2];
 	double fmin = fmid - bandwidth / 2, fmax = fmid + bandwidth / 2;
 	double twopibybandwidth = 2 * NUMpi / bandwidth;
 	for (col = 1; col <= my nx; col ++) {

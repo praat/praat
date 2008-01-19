@@ -1,6 +1,6 @@
 /* Manual.c
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/10/20 embedded scripts: not on opening page
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2008/01/19 double
  */
 
 #include <ctype.h>
@@ -262,9 +263,9 @@ END
 
 /********** SEARCHING **********/
 
-static float *goodnessOfMatch;
+static double *goodnessOfMatch;
 
-static float searchToken (ManPages me, long ipage, wchar_t *token) {
+static double searchToken (ManPages me, long ipage, wchar_t *token) {
 	double goodness = 0.0;
 	ManPage page = my pages -> item [ipage];
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
@@ -311,7 +312,7 @@ static void search (Manual me, const wchar_t *query) {
 		if (*p == '\n') *p = ' ';
 		*p = tolower (*p);
 	}
-	if (! goodnessOfMatch && ! (goodnessOfMatch = NUMfvector (1, numberOfPages)))
+	if (! goodnessOfMatch && ! (goodnessOfMatch = NUMdvector (1, numberOfPages)))
 		{ Melder_flushError (NULL); return; }
 	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
 		wchar_t *token = searchText.string;
@@ -331,7 +332,7 @@ static void search (Manual me, const wchar_t *query) {
 	my numberOfMatches = 0;
 	for (imatch = 1; imatch <= 20; imatch ++) {
 		long imax = 0;
-		float max = 0.0;
+		double max = 0.0;
 		for (ipage = 1; ipage <= numberOfPages; ipage ++) {
 			if (goodnessOfMatch [ipage] > max) {
 				max = goodnessOfMatch [ipage];

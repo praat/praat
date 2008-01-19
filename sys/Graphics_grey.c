@@ -1,6 +1,6 @@
 /* Graphics_grey.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 1994/10/13
  * pb 1999/09/09 bug fix: ori = 1 --> ori == 1
  * pb 2002/03/07 GPL
+ * pb 2008/01/19 double
  */
 
 #include <stdlib.h>
@@ -39,42 +40,42 @@ typedef struct {
 	int beginRow, beginCol, beginOri;
 	int endRow, endCol, endOri;
 	int lowerGrey, upperGrey;
-	float *x, *y;
+	double *x, *y;
 } structEdgeContour, *EdgeContour;
 
 static EdgeContour EdgeContour_create (int numberOfPoints) {
 	EdgeContour result = Melder_calloc (structEdgeContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = NUMfvector (1, 2 * numberOfPoints);
+	result -> x = NUMdvector (1, 2 * numberOfPoints);
 	result -> y = result -> x + numberOfPoints;
 	return result;
 }
 static void EdgeContour_delete (EdgeContour e) {
-	NUMfvector_free (e -> x, 1);
+	NUMdvector_free (e -> x, 1);
 	Melder_free (e);
 }
 
 typedef struct {
 	int numberOfPoints;
 	int grey, drawn;
-	float xmin, xmax, ymin, ymax, *x, *y;
+	double xmin, xmax, ymin, ymax, *x, *y;
 } structClosedContour, *ClosedContour;
 
 static ClosedContour ClosedContour_create (int numberOfPoints) {
 	ClosedContour result = Melder_calloc (structClosedContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = NUMfvector (1, 2 * numberOfPoints);
+	result -> x = NUMdvector (1, 2 * numberOfPoints);
 	result -> y = result -> x + numberOfPoints;
 	return result;
 }
 static void ClosedContour_delete (ClosedContour c) {
-	NUMfvector_free (c -> x, 1);
+	NUMdvector_free (c -> x, 1);
 	Melder_free (c);
 }
 
 typedef struct {
 	int ori, iContour, start, usedAsEntry, grey;
-	float val;
+	double val;
 } structEdgePoint, *EdgePoint;
 
 static Graphics theGraphics;
@@ -89,7 +90,7 @@ static int numberOfPoints;
 static long row1, row2, col1, col2;
 static int iBorder, numberOfBorders;
 static int **right, **below;
-static float **data, *border, *x, *y;
+static double **data, *border, *x, *y;
 static double dx, dy, xoff, yoff;
 
 static int empty (int row, int col, int ori)
@@ -128,7 +129,7 @@ static int note (int row, int col, int ori)
 	return 1;
 }
 
-static void fillGrey (int numberOfPoints, float *x, float *y, int igrey)
+static void fillGrey (int numberOfPoints, double *x, double *y, int igrey)
 /* "igrey" is in between 1 and numberOfBorders + 1. */
 {
 	Graphics_setGrey (theGraphics, 1.0 - (igrey - 1.0) / numberOfBorders);
@@ -189,7 +190,7 @@ static void makeEdgeContour (int row0, int col0, int ori0) {
 
 static void makeClosedContour (int row0, int col0, int ori0) {
 	int row, col, ori, clockwise = 0, up = 0;
-	float x1, y1;
+	double x1, y1;
 	ClosedContour c;
 
 	numberOfPoints = 0;
@@ -459,10 +460,10 @@ static void smallGrey (void) {
 		ClosedContour_delete (closedContours [i]);
 }
 
-void Graphics_grey (I, float **z,
+void Graphics_grey (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
-	int _numberOfBorders, float borders [])
+	int _numberOfBorders, double borders [])
 {
 	iam (Graphics);
 	if (ix2 <= ix1 || iy2 <= iy1) return;
@@ -480,8 +481,8 @@ void Graphics_grey (I, float **z,
 	if (! right) {
 		right = NUMimatrix (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);
 		below = NUMimatrix (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);
-		x = NUMfvector (1, MAXGREYPATH);
-		y = NUMfvector (1, MAXGREYPATH);
+		x = NUMdvector (1, MAXGREYPATH);
+		y = NUMdvector (1, MAXGREYPATH);
 		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
 		closedContours = Melder_calloc (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
 		edgePoints = Melder_calloc (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);

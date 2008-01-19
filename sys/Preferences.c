@@ -1,6 +1,6 @@
 /* Preferences.c
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/11/14 removed swprintf(%ls) because of bug on Mac
  * pb 2007/11/30 Preferences_write forgets thePreferences
  * pb 2007/12/09 removed "resources"
+ * pb 2008/01/19 removed float
  */
 
 #include "Preferences.h"
@@ -105,9 +106,6 @@ void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue)
 void Preferences_addChar (const wchar_t *string, wchar_t *value, wchar_t defaultValue)
 	{ *value = defaultValue; Preferences_add (string, charwa, value, 0, 0, NULL, NULL); }
 
-void Preferences_addFloat (const wchar_t *string, float *value, float defaultValue)
-	{ *value = defaultValue; Preferences_add (string, floatwa, value, 0, 0, NULL, NULL); }
-
 void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue)
 	{ *value = defaultValue; Preferences_add (string, doublewa, value, 0, 0, NULL, NULL); }
 
@@ -153,7 +151,6 @@ void Preferences_read (MelderFile file) {
 				wcsnequ (value, L"no", 2) ? false :
 				wcstol (value, NULL, 10) != 0; break;
 			case charwa: * (wchar_t *) pref -> value = value [0]; break;
-			case floatwa: * (float *) pref -> value = Melder_atof (value); break;
 			case doublewa: * (double *) pref -> value = Melder_atof (value); break;
 			case stringwwa: {
 				wcsncpy ((wchar_t *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
@@ -184,7 +181,6 @@ void Preferences_write (MelderFile file) {
 			case ulongwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned long *) pref -> value)); break;
 			case boolwa: MelderString_append1 (& buffer, Melder_boolean (* (bool *) pref -> value)); break;
 			case charwa: MelderString_appendCharacter (& buffer, * (char *) pref -> value); break;
-			case floatwa: MelderString_append1 (& buffer, Melder_single (* (float *) pref -> value)); break;
 			case doublewa: MelderString_append1 (& buffer, Melder_double (* (double *) pref -> value)); break;
 			case stringwwa: MelderString_append1 (& buffer, pref -> value); break;
 			case enumwa: MelderString_append1 (& buffer, pref -> getText (* (enum kPreferences_dummy *) pref -> value)); break;

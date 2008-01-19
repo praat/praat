@@ -1,6 +1,6 @@
 /* Sampled.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2005/03/21 implemented Sampled_getStandardDeviation
  * pb 2005/06/16 removed units
  * pb 2007/10/01 can write as encoding
+ * pb 2008/01/19 double
  */
 
 #include <math.h>
@@ -208,7 +209,7 @@ double Sampled_getQuantile (I, double xmin, double xmax, double quantile, long i
 	}
 	if (numberOfDefinedSamples >= 1) {
 		NUMsort_d (numberOfDefinedSamples, values);
-		result = NUMquantile_d (numberOfDefinedSamples, values, quantile);
+		result = NUMquantile (numberOfDefinedSamples, values, quantile);
 	}
 	NUMdvector_free (values, 1);
 	return result;
@@ -593,7 +594,7 @@ void Sampled_getMinimumAndX (I, double xmin, double xmax, long ilevel, int unit,
 				} else if (fmid < fleft && fmid <= fright) {
 					double y [4], i_real, localMinimum;
 					y [1] = fleft, y [2] = fmid, y [3] = fright;
-					localMinimum = NUMimproveMinimum_d (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					localMinimum = NUMimproveMinimum (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMinimum < minimum)
 						minimum = localMinimum, xOfMinimum = i_real + i - 2;
 				}
@@ -671,7 +672,7 @@ void Sampled_getMaximumAndX (I, double xmin, double xmax, long ilevel, int unit,
 				} else if (fmid > fleft && fmid >= fright) {
 					double y [4], i_real, localMaximum;
 					y [1] = fleft, y [2] = fmid, y [3] = fright;
-					localMaximum = NUMimproveMaximum_d (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					localMaximum = NUMimproveMaximum (y, 3, 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMaximum > maximum)
 						maximum = localMaximum, xOfMaximum = i_real + i - 2;
 				}
@@ -737,7 +738,7 @@ void Sampled_drawInside (I, Graphics g, double xmin, double xmax, double ymin, d
 {
 	iam (Sampled);
 	long ixmin, ixmax, ix, startOfDefinedStretch = -1;
-	float *xarray = NULL, *yarray = NULL;
+	double *xarray = NULL, *yarray = NULL;
 	double previousValue = NUMundefined;
 	if (speckle_mm != 0.0) {
 		Sampled_speckleInside (me, g, xmin, xmax, ymin, ymax, speckle_mm, ilevel, unit);
@@ -751,8 +752,8 @@ void Sampled_drawInside (I, Graphics g, double xmin, double xmax, double ymin, d
 	}
 	if (ymax <= ymin) return;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	xarray = NUMfvector (ixmin - 1, ixmax + 1); cherror
-	yarray = NUMfvector (ixmin - 1, ixmax + 1); cherror
+	xarray = NUMdvector (ixmin - 1, ixmax + 1); cherror
+	yarray = NUMdvector (ixmin - 1, ixmax + 1); cherror
 	previousValue = Sampled_getValueAtSample (me, ixmin - 1, ilevel, unit);
 	if (NUMdefined (previousValue)) {
 		startOfDefinedStretch = ixmin - 1;
@@ -811,8 +812,8 @@ void Sampled_drawInside (I, Graphics g, double xmin, double xmax, double ymin, d
 		Graphics_polyline (g, ixmax + 2 - startOfDefinedStretch, & xarray [startOfDefinedStretch], & yarray [startOfDefinedStretch]);
 	}
 end:
-	NUMfvector_free (xarray, ixmin - 1);
-	NUMfvector_free (yarray, ixmin - 1);
+	NUMdvector_free (xarray, ixmin - 1);
+	NUMdvector_free (yarray, ixmin - 1);
 	Melder_clearError ();
 }
 

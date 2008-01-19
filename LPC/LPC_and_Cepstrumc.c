@@ -27,7 +27,7 @@
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee)
 {
 	int i, k, n = my nCoefficients > thy nCoefficients ? thy nCoefficients : my nCoefficients;
-	float *c = thy c, *a = my a;
+	double *c = thy c, *a = my a;
 	
 	c[0] = 0.5 * log (my gain);
 	if (n == 0) return;
@@ -44,7 +44,7 @@ void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee)
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee)
 {
 	int i, j;
-	float *c = my c, *a = thy a;
+	double *c = my c, *a = thy a;
 	thy gain = exp (2 * c[0]);
 	if (thy nCoefficients == 0) return;
 	a[1] = -c[1];

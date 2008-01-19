@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/10/18 use of constant FFT tables speeds up AC method by a factor of 1.9
  * pb 2006/12/31 compatible with stereo sounds
  * pb 2007/01/30 loop split for stereo speeds up CC method by a factor of 6
+ * pb 2008/01/19 double
  */
 
 #include "Sound_to_Pitch.h"
@@ -288,7 +289,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			offset = startSample - 1;
 			double sumx2 = 0;   /* Sum of squares. */
 			for (long channel = 1; channel <= my ny; channel ++) {
-				float *amp = my z [channel] + offset;
+				double *amp = my z [channel] + offset;
 				for (i = 1; i <= nsamp_window; i ++) {
 					double x = amp [i] - localMean [channel];
 					sumx2 += x * x;
@@ -299,7 +300,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			for (i = 1; i <= localMaximumLag; i ++) {
 				double product = 0.0;
 				for (long channel = 1; channel <= my ny; channel ++) {
-					float *amp = my z [channel] + offset;
+					double *amp = my z [channel] + offset;
 					double y0 = amp [i] - localMean [channel];
 					double yZ = amp [i + nsamp_window] - localMean [channel];
 					sumy2 += yZ * yZ - y0 * y0;
@@ -375,7 +376,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			double frequencyOfMaximum = 1 / my dx / (i + dr / d2r);
 			long offset = - brent_ixmax - 1;
 			double strengthOfMaximum = /* method & 1 ? */
-				NUM_interpolate_sinc_d (r + offset, brent_ixmax - offset, 1 / my dx / frequencyOfMaximum - offset, 30)
+				NUM_interpolate_sinc (r + offset, brent_ixmax - offset, 1 / my dx / frequencyOfMaximum - offset, 30)
 				/* : r [i] + 0.5 * dr * dr / d2r */;
 			/* High values due to short windows are to be reflected around 1. */
 			if (strengthOfMaximum > 1.0) strengthOfMaximum = 1.0 / strengthOfMaximum;
@@ -414,7 +415,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			if (method != AC_HANNING || pitchFrame->candidate[i].frequency > 0.0 / my dx) {
 				double xmid, ymid;
 				long offset = - brent_ixmax - 1;
-				ymid = NUMimproveMaximum_d (r + offset, brent_ixmax - offset, imax [i] - offset,
+				ymid = NUMimproveMaximum (r + offset, brent_ixmax - offset, imax [i] - offset,
 					pitchFrame->candidate[i].frequency > 0.3 / my dx ? NUM_PEAK_INTERPOLATE_SINC700 : brent_depth, & xmid);
 				xmid += offset;
 				pitchFrame->candidate[i].frequency = 1.0 / my dx / xmid;

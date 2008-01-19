@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2005/07/08 PitchTier_to_Sound_phonation
  * pb 2006/12/30 new Sound_create API
  * pb 2007/02/25 changed default sampling frequency to 44100 Hz
+ * pb 2008/01/19 double
  */
 
 #include "PitchTier_to_Sound.h"
@@ -31,9 +32,9 @@
 Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double adaptTime, long interpolationDepth, int hum)
 {
-	static float formant [1 + 6] =
+	static double formant [1 + 6] =
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static float bandwidth [1 + 6] =
+	static double bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
 	PointProcess point = PitchTier_to_PointProcess (me);
 	Sound sound;
@@ -48,9 +49,9 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2, int hum)
 {
-	static float formant [1 + 6] =
+	static double formant [1 + 6] =
 		{ 0, 600, 1400, 2400, 3400, 4500, 5500 };
-	static float bandwidth [1 + 6] =
+	static double bandwidth [1 + 6] =
 		{ 0, 50, 100, 200, 300, 400, 500 };
 	PointProcess point = PitchTier_to_PointProcess (me);
 	Sound sound;

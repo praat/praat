@@ -72,7 +72,7 @@ class_methods_end
 
 int Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients)
 {
-	if ((my c = NUMfvector (0, nCoefficients)) == NULL) return 0;
+	if ((my c = NUMdvector (0, nCoefficients)) == NULL) return 0;
 	my nCoefficients = nCoefficients;
 	return 1;
 }
@@ -94,7 +94,7 @@ Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double
 	return me;
 }
 
-static void regression (Cepstrumc me, long frame, float r[], long nr)
+static void regression (Cepstrumc me, long frame, double r[], long nr)
 {
 	long i, j, nc = 1e6; double sumsq = 0;
 	for (i=0; i <= my maxnCoefficients; i++) r[i] = 0;
@@ -118,7 +118,7 @@ static void regression (Cepstrumc me, long frame, float r[], long nr)
 DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint)
 {
-	DTW him = NULL; float *ri = NULL, *rj = NULL;
+	DTW him = NULL; double *ri = NULL, *rj = NULL;
 	long i, j, nr = dtr / my dx;
 	
 	if (my maxnCoefficients != thy maxnCoefficients) return Melder_errorp(
@@ -130,8 +130,8 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 
 	if (((him = DTW_create (my xmin, my xmax, my nx, my dx, my x1,
 			thy xmin, thy xmax, thy nx, thy dx, thy x1)) == NULL) ||
-		((ri = NUMfvector (0, my maxnCoefficients)) == NULL) ||
-		((rj = NUMfvector (0, my maxnCoefficients)) == NULL)) { forget (him); goto end; }
+		((ri = NUMdvector (0, my maxnCoefficients)) == NULL) ||
+		((rj = NUMdvector (0, my maxnCoefficients)) == NULL)) { forget (him); goto end; }
 
 	/*
 		Calculate distance matrix
@@ -180,8 +180,8 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	Melder_progress1 (1.0, NULL);
 	DTW_findPath (him, matchStart, matchEnd, constraint);
 end:
-	NUMfvector_free (ri, 0);
-	NUMfvector_free (rj, 0); 	
+	NUMdvector_free (ri, 0);
+	NUMdvector_free (rj, 0); 	
 	return him;
 }
 

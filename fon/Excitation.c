@@ -1,6 +1,6 @@
 /* Excitation.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2004/02/11 Excitation_soundPressureToPhon: handle zero sound pressure correctly (thanks to James Keidel)
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
+ * pb 2008/01/19 double
  */
 
 #include "Excitation.h"
@@ -66,7 +67,7 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 
 static void info (I) {
 	iam (Excitation);
-	float *y = my z [1];
+	double *y = my z [1];
 	long i, numberOfMaxima = 0;
 	classData -> info (me);
 	MelderInfo_writeLine3 (L"Loudness: ", Melder_half (Excitation_getLoudness (me)), L" sones");

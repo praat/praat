@@ -1,6 +1,6 @@
 /* Spectrum.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/03/17 domain quantity
  * pb 2007/03/30 Spectrum_downto_Table
  * pb 2007/08/12 wchar_t
+ * pb 2008/01/19 double
  */
 
 #include "Sound_and_Spectrum.h"
@@ -78,7 +79,6 @@ static double getValueAtSample (I, long isamp, long which, int units) {
 }
 
 class_methods (Spectrum, Matrix)
-	us -> version = 1;   /* Changed sign of imaginary part. */
 	class_method (info)
 	class_method_local (Spectrum, readText)
 	class_method_local (Spectrum, readBinary)
@@ -109,14 +109,14 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 }
 
 void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum) {
-	float *yWC = NULL;
+	double *yWC = NULL;
 	long ifreq, ifmin, ifmax;
 	int autoscaling = minimum >= maximum;
 
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
 	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
 
-	yWC = NUMfvector (ifmin, ifmax); cherror
+	yWC = NUMdvector (ifmin, ifmax); cherror
 
 	/*
 	 * First pass: compute power density.
@@ -140,7 +140,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	Graphics_setWindow (g, fmin, fmax, minimum, maximum);
 	Graphics_function (g, yWC, ifmin, ifmax, Matrix_columnToX (me, ifmin), Matrix_columnToX (me, ifmax));
 end:
-	NUMfvector_free (yWC, ifmin);
+	NUMdvector_free (yWC, ifmin);
 	Melder_clearError ();
 }
 
@@ -158,14 +158,14 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 }
 
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
-	float *xWC = NULL, *yWC = NULL;
+	double *xWC = NULL, *yWC = NULL;
 	long ifreq, ifmin, ifmax;
 	int autoscaling = minimum >= maximum;
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
 	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
 if(ifmin==1)ifmin=2;  /* BUG */
-	xWC = NUMfvector (ifmin, ifmax); cherror
-	yWC = NUMfvector (ifmin, ifmax); cherror
+	xWC = NUMdvector (ifmin, ifmax); cherror
+	yWC = NUMdvector (ifmin, ifmax); cherror
 
 	/*
 	 * First pass: compute power density.
@@ -198,8 +198,8 @@ if(ifmin==1)ifmin=2;  /* BUG */
 		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
 	}
 end:
-	NUMfvector_free (xWC, ifmin);
-	NUMfvector_free (yWC, ifmin);
+	NUMdvector_free (xWC, ifmin);
+	NUMdvector_free (yWC, ifmin);
 	Melder_clearError ();
 }
 
@@ -259,7 +259,7 @@ Matrix Spectrum_to_Matrix (Spectrum me) {
 Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 	Spectrum dBspectrum = NULL, thee = NULL;
 	Sound cepstrum = NULL;
-	float *re, *im;
+	double *re, *im;
 	double factor = - bandWidth * bandWidth;
 	long i;
 
@@ -304,12 +304,11 @@ cleanUp:
 }
 
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
-	long i;
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2 * smooth) : 0.0;
-	float *re = my z [1], *im = my z [2];
-	for (i = 1; i <= my nx; i ++) {
+	double *re = my z [1], *im = my z [2];
+	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) re [i] = im [i] = 0.0;
 		if (frequency < f2 && fmin > 0.0) {
@@ -325,12 +324,11 @@ void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smoot
 }
 
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
-	long i;
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2 * smooth) : 0.0;
-	float *re = my z [1], *im = my z [2];
-	for (i = 1; i <= my nx; i ++) {
+	double *re = my z [1], *im = my z [2];
+	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) continue;
 		if (frequency < f2 && fmin > 0.0) {

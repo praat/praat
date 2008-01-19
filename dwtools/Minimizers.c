@@ -218,11 +218,11 @@ void Minimizer_drawHistory (I, Any graphics, long iFrom, long iTo, double hmin,
     double hmax, int garnish)
 {
     iam (Minimizer); 
-	float *history;
+	double *history;
     long i, itmin, itmax;
 	
     if (my history == NULL ||
-		(history = NUMfvector (1, my iteration)) == NULL) return;
+		(history = NUMdvector (1, my iteration)) == NULL) return;
     for (i = 1; i <= my iteration; i++)
 	{
 		history[i] = my history[i];
@@ -236,7 +236,7 @@ void Minimizer_drawHistory (I, Any graphics, long iFrom, long iTo, double hmin,
     if (itmax > my iteration) itmax = my iteration;
     if (hmax <= hmin)
 	{
-		NUMfvector_extrema (history, itmin, itmax, & hmin, & hmax);
+		NUMdvector_extrema (history, itmin, itmax, & hmin, & hmax);
 	}
     if (hmax <= hmin)
 	{
@@ -246,7 +246,7 @@ void Minimizer_drawHistory (I, Any graphics, long iFrom, long iTo, double hmin,
     Graphics_setInner (graphics);
     Graphics_setWindow (graphics, iFrom, iTo, hmin, hmax);
     Graphics_function (graphics, history, itmin, itmax, itmin, itmax);
-    NUMfvector_free (history, 1);
+    NUMdvector_free (history, 1);
     Graphics_unsetInner (graphics);
     if (garnish)
     {

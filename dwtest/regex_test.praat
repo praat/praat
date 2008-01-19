@@ -21,15 +21,15 @@ endproc
 
 procedure replace_re .string$ .search$ .replace$ .n .result$
   .r$ = replace_regex$ (.string$, .search$, .replace$, .n)
-  if debug = 2
+  if debug = 1
     printline '.result$' ("'.r$'" = replace_regex$ ("'.string$'", "'.search$'", "'.replace$'", "'.n'"))
   endif
-  printline "'.r$'" "'.result$'"
   assert .r$ = .result$; '.result$' ("'.r$'" = replace_regex ("'.string$'", "'.search$'", "'.replace$'", "'.n'"))
 endproc
 
 # ordinary characters
 
+printline ----  # match characters
 alphabet$ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 s$ = alphabet$
@@ -43,9 +43,7 @@ for i to 52
   call  match_rindex "'sd$'" "'match$'" ir
 endfor
 
-# special characters
-
-  # backslash \
+printline ----  # special characters # backslash \
 
 call match_index "cscscAaa\n" "aa\\n" 7
 call match_rindex "cscscAaa\n" "aa\\n" 7
@@ -55,17 +53,17 @@ call match_index "cscscAa+a+" "a\+" 7
 call match_rindex "cscscAa+a+" "b\+" 0
 call match_rindex "cscscAa+a+" "a\+" 9
 
-
-  # caret ^
+printline ----  # special characters # caret ^
 
 call match_index "cscscAa+a+" "^c" 1
 call match_rindex "cscscAa+a+" "^c" 1 
 
-  # dollar $
+printline ----  # special characters # dollar $
+
 call match_index "cscscAa+ac" "c$" 10
 call match_rindex "cscscAa+ac" "c$" 10
 
-  # quantifier brackets {}
+printline ----  # special characters # quantifier brackets {}
 
 call match_index "cscscAaa\n" "a{1}" 7
 call match_rindex "cscscAaa\n" "a{1}" 8
@@ -78,7 +76,8 @@ call match_rindex "cscscAaa\n" "a{,2}" 11
 call match_index "cscscAaa\n" "a{1,2}" 7
 call match_rindex "cscscAaa\n" "a{1,2}" 8
 
-  # open and close brackets
+printline ----  # special characters # open and close brackets []
+
 s$ = alphabet$
 sd$ = s$ + s$
 for i to 26
@@ -101,7 +100,7 @@ for i to 26
   call match_rindex "'sd$'" "'match$'" ir  
 endfor
 
-  # grouping characters ()
+printline ----  # special characters # grouping characters ()
 
 match$ = "(ab)"
 call match_index "c" "(ab)" 0
@@ -123,7 +122,7 @@ call match_rindex "cccccccabab" "(ab)" 10
 call match_index "ababcccc" "(ab)\1" 1
 call match_rindex "ababcccc" "(ab)\1" 1
 
-  # dot .
+printline ----  # special characters # dot .
 
 call match_index "ababcccc" ".d" 0
 call match_rindex "ababcccc" ".d" 0
@@ -134,26 +133,24 @@ call match_rindex "ababcccc" ".a" 2
 call match_index "ababcccc" ".c" 4
 call match_rindex "ababcccc" ".c" 7
 
-  # star *
+printline ----  # special characters # star *
 
 call match_index "ababccccd" "b*" 1
 call match_index "ababccccd" "ab*" 1
 call match_rindex "ababccccd" "ab*" 3
 call match_index "ababccccd" "^.*$" 1
 
-  # plus +
+printline ----  # special characters # plus +
 
 call match_index "ababccccd" "b+" 2
 call match_rindex "ababccccd" "b+" 4
 
-  # question mark ?
+printline ----  # special characters # question mark ?
 
 call match_index "ababccccd" "ab?" 1
 call match_rindex "ababccccd" "ab?" 3
 
-# quantifiers
-
-  # *
+printline ----  # quantifiers # *
 
 call replace_re "ab" "(ab)c*" "x" 0 x
 call replace_re "abc" "(ab)c*" "x" 0 x
@@ -164,8 +161,9 @@ call replace_re "ab" "(ab)c+" "x" 0 ab
 call replace_re "abc" "(ab)c+" "x" 0 x
 call replace_re "abcc" "(ab)c+" "x" 0 x
 call replace_re "abcccd" "(ab)c+" "x" 0 xd
+call replace_re "yyabcccd" "(ab)c+" "x" 0 yyxd
 
-  # non greedy ?
+printline ----  # non greedy ?
 
 call replace_re "abc" "(ab)c*?" "x" 0 xc
 call replace_re "abcc" "(ab)c*?" "x" 0 xcc
@@ -174,13 +172,9 @@ call replace_re "abcccd" "(ab)c*?" "x" 0 xcccd
 call replace_re "abcc" "(ab)c+?" "x" 0 xc
 call replace_re "abcccd" "(ab)c+?" "x" 0 xccd
 
-# anchors
+printline ----  # anchors
 
 call replace_re "ababccccd" "ab" "x" 1 xabccccd
-
-# The folowing replace exposes a bug in regexp version 1.25 2004/08/20 16:37:30
-# The returned value is "xxccccd" instead of "xabccccd".
-#call replace_re "ababccccd" "^ab" "x" 0 xabccccd
 
 call replace_re "ababccccd" "^ab" "x" 1 xabccccd
 
@@ -193,3 +187,22 @@ call replace_re "ababccccd" "^ab" "x" 1 xabccccd
 # octal and hexadecima escapes
 
 # sustitution special characters
+
+printline ----  # replaced string much longer than original
+
+call replace_re "ababababababababababababababababababab" "b" "xxxxx" 1 axxxxxabababababababababababababababababab
+
+# The returned value is "xxccccd" instead of "xabccccd".
+call replace_re "ababccccd" "^ab" "x" 0 xabccccd
+
+printline --------- PREVIOUS BUGS
+printline ----  # replace by empty string ""
+# Bugs in praat versions before 5.0.4
+# Returned empty string ""
+call replace_re "abc " " $" "" 1 abc
+# Returned "xxccccd" instead of "xabccccd".
+call replace_re "ababccccd" "^ab" "x" 0 xabccccd
+printline --------- PREVIOUS BUGS --- END
+
+call replace_re "hallo" "l" "b" 0 habbo
+call replace_re "hallo" "." "&&" 0 hhaalllloo

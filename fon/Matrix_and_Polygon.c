@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1995/11/07
  * pb 2002/07/16 GPL
+ * pb 2008/01/19 double
  */
 
 #include "Matrix_and_Polygon.h"
@@ -31,8 +32,8 @@ Polygon Matrix_to_Polygon (I) {
 		return Melder_errorp ("Matrix_to_Polygon: matrix must have exactly 2 rows or columns.");
 	if (my ny == 2) {
 		if (! (thee = Polygon_create (my nx))) return NULL;
-		NUMfvector_copyElements (my z [1], thy x, 1, my nx);
-		NUMfvector_copyElements (my z [2], thy y, 1, my nx);
+		NUMdvector_copyElements (my z [1], thy x, 1, my nx);
+		NUMdvector_copyElements (my z [2], thy y, 1, my nx);
 	} else {
 		long i;
 		if (! (thee = Polygon_create (my ny))) return NULL;
@@ -48,8 +49,8 @@ Matrix Polygon_to_Matrix (I) {
 	iam (Polygon);
 	Matrix thee = Matrix_create (1, my numberOfPoints, my numberOfPoints, 1, 1, 1, 2, 2, 1, 1);
 	if (! thee) return NULL;
-	NUMfvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
-	NUMfvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
+	NUMdvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
+	NUMdvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
 	return thee;
 }
 

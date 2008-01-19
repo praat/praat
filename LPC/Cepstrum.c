@@ -41,7 +41,7 @@ Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
 void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	double minimum, double maximum, int garnish)
 {
-	float *y = NULL, *z;
+	double *y = NULL, *z;
 	long i, imin, imax;
 	int autoscaling = minimum >= maximum;
 
@@ -54,7 +54,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) return;
 
-	if ((y = NUMfvector (imin, imax)) == NULL) return;
+	if ((y = NUMdvector (imin, imax)) == NULL) return;
 	
 	z = my z[1];
 	
@@ -63,7 +63,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 		y[i] = z[i];
 	}
 	
-	if (autoscaling) NUMfvector_extrema (y, imin, imax, & minimum, & maximum);
+	if (autoscaling) NUMdvector_extrema (y, imin, imax, & minimum, & maximum);
 
 	for (i = imin; i <= imax; i ++)
 	{
@@ -84,7 +84,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 		Graphics_textLeft (g, 1, L"Amplitude");
 	}
 
-	NUMfvector_free (y, imin);
+	NUMdvector_free (y, imin);
 }
 
 Matrix Cepstrum_to_Matrix (Cepstrum me)
@@ -104,7 +104,7 @@ Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
 	if (row < 0) row = my ny + 1 - row;
 	if (row < 1) row = 1;
 	if (row > my ny) row = my ny;
-	NUMfvector_copyElements (my z[row], thy z[1], 1, my nx);
+	NUMdvector_copyElements (my z[row], thy z[1], 1, my nx);
 	return thee;
 }
 

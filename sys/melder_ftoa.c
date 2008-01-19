@@ -107,7 +107,14 @@ const wchar_t * Melder_double (double value) {
 			sprintf (buffer, "%.16g", value);
 			if (strtod (buffer, NULL) != value) sprintf (buffer, "%.17g", value);
 		}
-		Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);
+		#if 0
+			wchar_t *to = & buffers [ibuffer] [0];
+			char *from = & buffer [0];
+			for (; (*to++ = *from++) != '\0';) ;
+			*to = '\0';
+		#else
+			Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);
+		#endif
 	#else
 		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
 		if (wcstod (buffers [ibuffer], NULL) != value) {

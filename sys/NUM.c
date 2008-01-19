@@ -1,6 +1,6 @@
 /* NUM.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2007/01/27 use #defines for value interpolation
  * pb 2007/08/20 built a "weird value" check into NUMviterbi (bug report by Adam Jacks)
+ * pb 2008/01/19 double
  */
 
 #include "NUM.h"
@@ -49,14 +50,13 @@ void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *
 	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
 }
 
-void NUMfilterSecondOrderSection_a (float x [], long n, double a1, double a2) {
-	long i;
+void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2) {
 	x [2] += a1 * x [1];
-	for (i = 3; i <= n; i ++)
+	for (long i = 3; i <= n; i ++)
 		x [i] += a1 * x [i - 1] - a2 * x [i - 2];
 }
 
-void NUMfilterSecondOrderSection_fb (float x [], long n, double dt, double formant, double bandwidth) {
+void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth) {
 	double a1, a2;
 	NUMfbtoa (formant, bandwidth, dt, & a1, & a2);
 	NUMfilterSecondOrderSection_a (x, n, a1, a2);
@@ -66,27 +66,27 @@ double NUMftopreemphasis (double f, double dt) {
 	return exp (- 2.0 * NUMpi * f * dt);
 }
 
-void NUMpreemphasize_a (float x [], long n, double preemphasis) {
+void NUMpreemphasize_a (double x [], long n, double preemphasis) {
 	long i;
 	for (i = n; i >= 2; i --)
 		x [i] -= preemphasis * x [i - 1];
 }
 
-void NUMdeemphasize_a (float x [], long n, double preemphasis) {
+void NUMdeemphasize_a (double x [], long n, double preemphasis) {
 	long i;
 	for (i = 2; i <= n; i ++)
 		x [i] += preemphasis * x [i - 1];
 }
 
-void NUMpreemphasize_f (float x [], long n, double dt, double frequency) {
+void NUMpreemphasize_f (double x [], long n, double dt, double frequency) {
 	NUMpreemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMdeemphasize_f (float x [], long n, double dt, double frequency) {
+void NUMdeemphasize_f (double x [], long n, double dt, double frequency) {
 	NUMdeemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMautoscale (float x [], long n, double scale) {
+void NUMautoscale (double x [], long n, double scale) {
 	long i;
 	double maximum = 0.0;
 	for (i = 1; i <= n; i ++)
@@ -355,97 +355,87 @@ double NUMcombinations (long n, long k) {
 	}
 
 #if defined (sgi) || defined (sun) || defined (HPUX) || __POWERPC__
-#define NUM_interpolate_sinc_MACRO(proc,type) \
-double proc (type y [], long nx, double x, long maxDepth) { \
-	long ix, midleft = floor (x), midright = midleft + 1, left, right; \
-	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa; \
-	NUM_interpolate_simple_cases \
-	left = midright - maxDepth, right = midleft + maxDepth; \
-	a = NUMpi * (x - midleft); \
-	halfsina = 0.5 * sin (a); \
-	aa = a / (x - left + 1); cosaa = cos (aa); sinaa = sin (aa); \
-	daa = NUMpi / (x - left + 1); cosdaa = cos (daa); sindaa = sin (daa); \
-	for (ix = midleft; ix >= left; ix --) { \
-		double d = halfsina / a * (1.0 + cosaa), help; \
-		result += y [ix] * d; \
-		a += NUMpi; \
-		help = cosaa * cosdaa - sinaa * sindaa; \
-		sinaa = cosaa * sindaa + sinaa * cosdaa; \
-		cosaa = help; \
-		halfsina = - halfsina; \
-	} \
-	a = NUMpi * (midright - x); \
-	halfsina = 0.5 * sin (a); \
-	aa = a / (right - x + 1); cosaa = cos (aa); sinaa = sin (aa); \
-	daa = NUMpi / (right - x + 1); cosdaa = cos (daa); sindaa = sin (daa); \
-	for (ix = midright; ix <= right; ix ++) { \
-		double d = halfsina / a * (1.0 + cosaa), help; \
-		result += y [ix] * d; \
-		a += NUMpi;	 \
-		help = cosaa * cosdaa - sinaa * sindaa; \
-		sinaa = cosaa * sindaa + sinaa * cosdaa; \
-		cosaa = help; \
-		halfsina = - halfsina; \
-	} \
-	return result; \
+double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
+	long ix, midleft = floor (x), midright = midleft + 1, left, right;
+	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;
+	NUM_interpolate_simple_cases
+	left = midright - maxDepth, right = midleft + maxDepth;
+	a = NUMpi * (x - midleft);
+	halfsina = 0.5 * sin (a);
+	aa = a / (x - left + 1); cosaa = cos (aa); sinaa = sin (aa);
+	daa = NUMpi / (x - left + 1); cosdaa = cos (daa); sindaa = sin (daa);
+	for (ix = midleft; ix >= left; ix --) {
+		double d = halfsina / a * (1.0 + cosaa), help;
+		result += y [ix] * d;
+		a += NUMpi;
+		help = cosaa * cosdaa - sinaa * sindaa;
+		sinaa = cosaa * sindaa + sinaa * cosdaa;
+		cosaa = help;
+		halfsina = - halfsina;
+	}
+	a = NUMpi * (midright - x);
+	halfsina = 0.5 * sin (a);
+	aa = a / (right - x + 1); cosaa = cos (aa); sinaa = sin (aa);
+	daa = NUMpi / (right - x + 1); cosdaa = cos (daa); sindaa = sin (daa);
+	for (ix = midright; ix <= right; ix ++) {
+		double d = halfsina / a * (1.0 + cosaa), help;
+		result += y [ix] * d;
+		a += NUMpi;
+		help = cosaa * cosdaa - sinaa * sindaa;
+		sinaa = cosaa * sindaa + sinaa * cosdaa;
+		cosaa = help;
+		halfsina = - halfsina;
+	}
+	return result;
 }
 #else
-#define NUM_interpolate_sinc_MACRO(proc,type) \
-double proc (type y [], long nx, double x, long maxDepth) { \
-	long ix, midleft = floor (x), midright = midleft + 1, left, right; \
-	double result = 0.0, a, halfsina, aa, daa; \
-	NUM_interpolate_simple_cases \
-	left = midright - maxDepth, right = midleft + maxDepth; \
-	a = NUMpi * (x - midleft); \
-	halfsina = 0.5 * sin (a); \
-	aa = a / (x - left + 1); \
-	daa = NUMpi / (x - left + 1); \
-	for (ix = midleft; ix >= left; ix --) { \
-		double d = halfsina / a * (1.0 + cos (aa)); \
-		result += y [ix] * d; \
-		a += NUMpi;	 \
-		aa += daa;	 \
-		halfsina = - halfsina; \
-	} \
-	a = NUMpi * (midright - x); \
-	halfsina = 0.5 * sin (a); \
-	aa = a / (right - x + 1); \
+double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
+	long ix, midleft = floor (x), midright = midleft + 1, left, right;
+	double result = 0.0, a, halfsina, aa, daa;
+	NUM_interpolate_simple_cases
+	left = midright - maxDepth, right = midleft + maxDepth;
+	a = NUMpi * (x - midleft);
+	halfsina = 0.5 * sin (a);
+	aa = a / (x - left + 1);
+	daa = NUMpi / (x - left + 1);
+	for (ix = midleft; ix >= left; ix --) {
+		double d = halfsina / a * (1.0 + cos (aa));
+		result += y [ix] * d;
+		a += NUMpi;
+		aa += daa;
+		halfsina = - halfsina;
+	}
+	a = NUMpi * (midright - x);
+	halfsina = 0.5 * sin (a);
+	aa = a / (right - x + 1);
 	daa = NUMpi / (right - x + 1); \
-	for (ix = midright; ix <= right; ix ++) { \
-		double d = halfsina / a * (1.0 + cos (aa)); \
-		result += y [ix] * d; \
-		a += NUMpi;	 \
-		aa += daa; \
-		halfsina = - halfsina; \
-	} \
-	return result; \
+	for (ix = midright; ix <= right; ix ++) {
+		double d = halfsina / a * (1.0 + cos (aa));
+		result += y [ix] * d;
+		a += NUMpi;
+		aa += daa;
+		halfsina = - halfsina;
+	}
+	return result;
 }
 #endif
-NUM_interpolate_sinc_MACRO (NUM_interpolate_sinc_f, float)
-NUM_interpolate_sinc_MACRO (NUM_interpolate_sinc_d, double)
 
 /********** Improving extrema **********/
 
 struct improve_params {
 	int depth;
-	float *y_f;
-	double *y_d;
+	double *y;
 	long ixmax;
 	int isMaximum;
 };
 
-static double improve_evaluate_f (double x, void *closure) {
+static double improve_evaluate (double x, void *closure) {
 	struct improve_params *me = closure;
-	double y = NUM_interpolate_sinc_f (my y_f, my ixmax, x, my depth);
-	return my isMaximum ? - y : y;
-}
-static double improve_evaluate_d (double x, void *closure) {
-	struct improve_params *me = closure;
-	double y = NUM_interpolate_sinc_d (my y_d, my ixmax, x, my depth);
+	double y = NUM_interpolate_sinc (my y, my ixmax, x, my depth);
 	return my isMaximum ? - y : y;
 }
 
-double NUMimproveExtremum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum) {
+double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum) {
 	struct improve_params params;
 	double result;
 	if (ixmid <= 1) { *ixmid_real = 1; return y [1]; }
@@ -458,51 +448,21 @@ double NUMimproveExtremum_f (float *y, long nx, long ixmid, int interpolation, d
 		return y [ixmid] + 0.5 * dy * dy / d2y;
 	}
 	/* Sinc interpolation. */
-	params. y_f = y;
-	params. depth = interpolation == NUM_PEAK_INTERPOLATE_CUBIC ? 2 :
-		interpolation == NUM_PEAK_INTERPOLATE_SINC70 ? 70 : 700;
-	params. ixmax = nx;
-	params. isMaximum = isMaximum;
-	/*return isMaximum ?
-		- NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate_f, & params, 1e-10, 1e-7, ixmid_real) :
-		NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate_f, & params, 1e-10, 1e-7, ixmid_real);*/
-	*ixmid_real = NUMminimize_brent (improve_evaluate_f, ixmid - 1, ixmid + 1, & params, 1e-8, & result);
-	return isMaximum ? - result : result;
-}
-
-double NUMimproveMaximum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum_f (y, nx, ixmid, interpolation, ixmid_real, 1); }
-double NUMimproveMinimum_f (float *y, long nx, long ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum_f (y, nx, ixmid, interpolation, ixmid_real, 0); }
-
-double NUMimproveExtremum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum) {
-	struct improve_params params;
-	double result;
-	if (ixmid <= 1) { *ixmid_real = 1; return y [1]; }
-	if (ixmid >= nx) { *ixmid_real = nx; return y [nx]; }
-	if (interpolation <= NUM_PEAK_INTERPOLATE_NONE) { *ixmid_real = ixmid; return y [ixmid]; }
-	if (interpolation == NUM_PEAK_INTERPOLATE_PARABOLIC) {
-		double dy = 0.5 * (y [ixmid + 1] - y [ixmid - 1]);
-		double d2y = 2 * y [ixmid] - y [ixmid - 1] - y [ixmid + 1];
-		*ixmid_real = ixmid + dy / d2y;
-		return y [ixmid] + 0.5 * dy * dy / d2y;
-	}
-	/* Sinc interpolation. */
-	params. y_d = y;
+	params. y = y;
 	params. depth = interpolation == NUM_PEAK_INTERPOLATE_SINC70 ? 70 : 700;
 	params. ixmax = nx;
 	params. isMaximum = isMaximum;
 	/*return isMaximum ?
-		- NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate_d, & params, 1e-10, 1e-11, ixmid_real) :
-		NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate_d, & params, 1e-10, 1e-11, ixmid_real);*/
-	*ixmid_real = NUMminimize_brent (improve_evaluate_d, ixmid - 1, ixmid + 1, & params, 1e-10, & result);
+		- NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate, & params, 1e-10, 1e-11, ixmid_real) :
+		NUM_minimize (ixmid - 1, ixmid, ixmid + 1, improve_evaluate, & params, 1e-10, 1e-11, ixmid_real);*/
+	*ixmid_real = NUMminimize_brent (improve_evaluate, ixmid - 1, ixmid + 1, & params, 1e-10, & result);
 	return isMaximum ? - result : result;
 }
 
-double NUMimproveMaximum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum_d (y, nx, ixmid, interpolation, ixmid_real, 1); }
-double NUMimproveMinimum_d (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
-	{ return NUMimproveExtremum_d (y, nx, ixmid, interpolation, ixmid_real, 0); }
+double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 1); }
+double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 0); }
 
 /********** Viterbi **********/
 
@@ -667,7 +627,7 @@ end:
 	return 1;
 }
 
-int NUMrotationsPointInPolygon (double x0, double y0, long n, float x [], float y []) {
+int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], double y []) {
 	long nup = 0, i;
 	int upold = y [n] > y0, upnew;
 	for (i = 1; i <= n; i ++) if ((upnew = y [i] > y0) != upold) {

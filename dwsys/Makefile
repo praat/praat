@@ -14,7 +14,7 @@ clean:
 OBJECTS = Collection_extensions.o Command.o \
 	Eigen.o Index.o \
 	NUM2.o NUMlapack.o NUMmachar.o \
-	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_f.o NUMfft_d.o NUMsort2.o \
+	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_d.o NUMsort2.o \
 	Permutation.o Permutation_and_Index.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o

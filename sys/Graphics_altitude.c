@@ -1,6 +1,6 @@
 /* Graphics_altitude.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /*
- * pb 2000/09/21
  * pb 2002/03/07 GPL
+ * pb 2008/01/19 double
  */
 
 #include "Graphics.h"
 
-static int empty (float **data, int **right, int **below, long row1, long col1, double height, int row, int col, int ori) {
+static int empty (double **data, int **right, int **below, long row1, long col1, double height, int row, int col, int ori) {
 	if (ori == 3) { row ++; ori = 1; } else if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1)
 		return (data [row] [col] < height) != (data [row] [col + 1] < height) &&
@@ -40,11 +40,11 @@ static int empty (float **data, int **right, int **below, long row1, long col1, 
 static long numberOfPoints;
 static long row1, row2, col1, col2;
 static int **right, **below;
-static float *x, *y;
+static double *x, *y;
 static int closed;
 static double dx, dy, xoff, yoff;
 
-static int note (float **z, double height, int row, int col, int ori, int forget) {
+static int note (double **z, double height, int row, int col, int ori, int forget) {
 	++ numberOfPoints;
 	Melder_assert (numberOfPoints <= MAXALTPATH);
 	if (ori == 3) { row ++; ori = 1; } else if (ori == 2) { col ++; ori = 4; }
@@ -62,7 +62,7 @@ static int note (float **z, double height, int row, int col, int ori, int forget
 	return 1;
 }
 
-static void makeContour (Graphics graphics, float **z, double height, int row0, int col0, int ori0) {
+static void makeContour (Graphics graphics, double **z, double height, int row0, int col0, int ori0) {
 	int row, col, ori, clockwise = 0, edge = 0;
 	numberOfPoints = 0;
 	row = row0; col = col0; ori = ori0;
@@ -94,7 +94,7 @@ static void makeContour (Graphics graphics, float **z, double height, int row0, 
 	Graphics_polyline (graphics, numberOfPoints, & x [1], & y [1]);
 }
 
-static void smallAlt (Graphics graphics, float **z, double height) {
+static void smallAlt (Graphics graphics, double **z, double height) {
 	int row, col;
 	for (row = 0; row < MAXALTSIDE; row ++) for (col = 0; col < MAXALTSIDE; col ++)
 		right [row] [col] = below [row] [col] = 0;
@@ -128,7 +128,7 @@ static void smallAlt (Graphics graphics, float **z, double height) {
 				makeContour (graphics, z, height, row, col, 4);
 }
 
-void Graphics_contour (I, float **z,
+void Graphics_contour (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	double height)
@@ -142,8 +142,8 @@ void Graphics_contour (I, float **z,
 	if (! right) {   /* Static! */
 		right = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		below = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		x = NUMfvector (1, MAXALTPATH);
-		y = NUMfvector (1, MAXALTPATH);
+		x = NUMdvector (1, MAXALTPATH);
+		y = NUMdvector (1, MAXALTPATH);
 		if (! y) {
 			right = NULL;
 			Melder_flushError ("Graphics_altitude: not enough memory.");
@@ -158,10 +158,10 @@ void Graphics_contour (I, float **z,
 		}
 }
 
-void Graphics_altitude (I, float **z,
+void Graphics_altitude (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
-	int numberOfBorders, float borders [])
+	int numberOfBorders, double borders [])
 {
 	iam (Graphics);
 	int iborder;
@@ -173,8 +173,8 @@ void Graphics_altitude (I, float **z,
 	if (! right) {   /* Static! */
 		right = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		below = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		x = NUMfvector (1, MAXALTPATH);
-		y = NUMfvector (1, MAXALTPATH);
+		x = NUMdvector (1, MAXALTPATH);
+		y = NUMdvector (1, MAXALTPATH);
 		if (! y) {
 			right = NULL;
 			Melder_flushError ("Graphics_altitude: not enough memory.");

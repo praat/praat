@@ -37,7 +37,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 	double deEmphasisFrequency)
 {
 	long i, nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
-	float scale = 1.0 / sqrt (2 * thy xmax * thy dx), *fftbuffer;
+	double scale = 1.0 / sqrt (2 * thy xmax * thy dx), *fftbuffer;
 	
 	if (my nCoefficients == 0)
 	{
@@ -57,7 +57,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 		return Melder_error1 (L"Spectrum size not large enough.");
 	}
 	
-	if ((fftbuffer = NUMfvector (1, nfft)) == NULL) return 0;
+	if ((fftbuffer = NUMdvector (1, nfft)) == NULL) return 0;
 	
 	/*
 		Copy 1, a[1], ... a[p] into fftbuffer
@@ -100,7 +100,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 		The imaginary parts of the frequencies 0 and Nyquist are 0.
 	*/
 	
-	NUMforwardRealFastFourierTransform_f (fftbuffer, nfft);
+	NUMforwardRealFastFourierTransform_d (fftbuffer, nfft);
 	if (my gain > 0) scale *= sqrt (my gain);
 	thy z[1][1] = scale / fftbuffer[1];
 	thy z[2][1] = 0;
@@ -109,15 +109,15 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 		/*
 			We use: 1 / (a + ib) = (a - ib) / (a^2 + b^2)
 		*/
-		float re = fftbuffer[i+i-1], im = fftbuffer[i+i];
-		float invSquared = scale / (re * re + im * im);
+		double re = fftbuffer[i+i-1], im = fftbuffer[i+i];
+		double invSquared = scale / (re * re + im * im);
 		thy z[1][i] =  re * invSquared;
 		thy z[2][i] = -im * invSquared;
 	}
 	thy z[1][thy nx] = scale / fftbuffer[2];
 	thy z[2][thy nx] = 0;
 	
-	NUMfvector_free (fftbuffer, 1);
+	NUMdvector_free (fftbuffer, 1);
 	return 1;
 }
 

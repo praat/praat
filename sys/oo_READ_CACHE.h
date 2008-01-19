@@ -1,6 +1,6 @@
 /* oo_READ_CACHE.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * pb 2002/03/07 GPL
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
+ * pb 2008/01/19 NUM##storage
  */
 
 #include "oo_undef.h"
@@ -46,11 +46,11 @@
 	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readCache (min, max, f))) return 0;
+	if (max >= min && ! (my x = NUM##t##vector_readCache_##storage (min, max, f))) return 0;
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readCache (row1, row2, col1, col2, f))) return 0;
+	    ! (my x = NUM##t##matrix_readCache_##storage (row1, row2, col1, col2, f))) return 0;
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	if ((my x = cacget##storage (f, & enum_##Type)) < 0) return 0;

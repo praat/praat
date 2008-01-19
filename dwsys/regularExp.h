@@ -26,7 +26,9 @@
 *                                                                              *
 *                                                                              *
 *******************************************************************************/
-/* djmw 20070917 latest modification */
+/*
+	djmw 20080110 Extra parameter for SubstituteRE to allow error differentiation 
+ */
 
 /* Number of text capturing parentheses allowed. */
 
@@ -99,7 +101,8 @@ int SubstituteRE (
    const regexp *prog,
    const char   *source,
    char   *dest,
-   int     max);
+   int     max,
+   int *errorType); // djmw 20080110 0: ok; 1: is not enough memory
 
 /* Builds a default delimiter table that persists across `ExecRE' calls that
    is identical to `delimiters'.  Pass NULL for "default default" set of

@@ -49,11 +49,11 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, double *window_a
 {
 	long i = 1; /* For error condition at end */
 	long j, m = thy nCoefficients;
-	float *r = NULL, *a = NULL, *rc = NULL, *x = my z[1];
+	double *r = NULL, *a = NULL, *rc = NULL, *x = my z[1];
 	
-	if (((r = NUMfvector (1, m + 1)) == NULL) ||
-		((a = NUMfvector (1, m + 1)) == NULL) ||
-		((rc = NUMfvector (1, m   )) == NULL)) goto end;
+	if (((r = NUMdvector (1, m + 1)) == NULL) ||
+		((a = NUMdvector (1, m + 1)) == NULL) ||
+		((rc = NUMdvector (1, m   )) == NULL)) goto end;
 	
 	for (i = 1; i <= m + 1; i++)
 	{
@@ -88,7 +88,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, double *window_a
 	thy gain = r[1] + r[2] * rc[1];
 	for (i = 2; i <= m; i++)
 	{
-		float s = 0;
+		double s = 0;
 		for (j = 1; j <= i; j++)
 		{
 			s += r[i-j+2] * a[j];
@@ -96,7 +96,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, double *window_a
 		rc[i] = - s / thy gain;
 		for (j = 2; j <= i/2+1; j++)
 		{
-			float at = a[j] + rc[i] * a[i-j+2];
+			double at = a[j] + rc[i] * a[i-j+2];
 			a[i-j+2] += rc[i] * a[j];
 			a[j] = at;
 		}
@@ -108,9 +108,9 @@ end:
 
 	i--;
 	for (j = 1; j <= i; j++) thy a[j] = a[j+1];
-	NUMfvector_free (rc, 1);
-	NUMfvector_free (a, 1);
-	NUMfvector_free (r, 1);
+	NUMdvector_free (rc, 1);
+	NUMdvector_free (a, 1);
+	NUMdvector_free (r, 1);
 	if (i == m) return 1;
 	thy nCoefficients = i;	
 	for (j = i + 1; j <= m; j++) thy a[j] = 0;
@@ -128,14 +128,14 @@ end:
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 {
-	long i = 1, j, k, n = my nx, m = thy nCoefficients; float *x = my z[1];
-	float *b = NULL, *grc = NULL, *a = NULL, *beta = NULL, *cc = NULL;
+	long i = 1, j, k, n = my nx, m = thy nCoefficients; double *x = my z[1];
+	double *b = NULL, *grc = NULL, *a = NULL, *beta = NULL, *cc = NULL;
 	
-	if (! (b =  NUMfvector (1, m * (m+1) / 2)) ||
-		! (grc = NUMfvector (1, m)) ||
-		! (a = NUMfvector (1, m + 1)) ||
-		! (beta = NUMfvector (1, m)) ||
-		! (cc = NUMfvector (1, m + 1))) goto end;
+	if (! (b =  NUMdvector (1, m * (m+1) / 2)) ||
+		! (grc = NUMdvector (1, m)) ||
+		! (a = NUMdvector (1, m + 1)) ||
+		! (beta = NUMdvector (1, m)) ||
+		! (cc = NUMdvector (1, m + 1))) goto end;
 
 	thy gain = 0;
 	for (i = m + 1; i <= n; i++)
@@ -158,7 +158,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 	
 	for (i = 2; i <= m; i++) /*130*/
 	{
-		float s = 0; /* 20 */
+		double s = 0; /* 20 */
 		for (j = 1; j <= i; j++)
 		{
 			cc[i-j+2] = cc[i-j+1] + x[m-i+1] * x[m-i+j] - x[n-i+1] * x[n-i+j];
@@ -171,7 +171,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 		b[i*(i+1)/2] = 1;
 		for (j = 1; j <= i - 1; j++) /* 70 */
 		{
-			float gam = 0;
+			double gam = 0;
 			if (beta[j] < 0) goto end; 
 			else if (beta[j] == 0) continue;
 			for (k = 1; k <= j; k++)
@@ -217,11 +217,11 @@ end:
 		thy a[j] = a[j+1];
 	}
 	
-	NUMfvector_free (b, 1);
-	NUMfvector_free (grc, 1);
-	NUMfvector_free (a, 1);
-	NUMfvector_free (beta, 1);
-	NUMfvector_free (cc, 1);
+	NUMdvector_free (b, 1);
+	NUMdvector_free (grc, 1);
+	NUMdvector_free (a, 1);
+	NUMdvector_free (beta, 1);
+	NUMdvector_free (cc, 1);
 	
 	if (i == m) return 1;
 	
@@ -244,8 +244,8 @@ static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee)
 static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2)
 {
 	long k, m = 1, n = my nx, mmax = thy nCoefficients; int status = 1;
-	float den, e0, h, q, q1, q2, q3, q4, q5, q6, q7, s, s1, u, v, w;
-	float *a = thy a, *x = my z[1], *c = NULL, *d = NULL, *r = NULL;
+	double den, e0, h, q, q1, q2, q3, q4, q5, q6, q7, s, s1, u, v, w;
+	double *a = thy a, *x = my z[1], *c = NULL, *d = NULL, *r = NULL;
 
 	/*
 	c = & work[1];
@@ -253,9 +253,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	r = & work [mmax+1+mmax+1+1];
 	for (k=1; k<= 3*(mmax+1); k++) work[k] = 0;	
 	*/
-	if (! (c = NUMfvector (1, mmax + 1)) ||
-		! (d = NUMfvector (1, mmax + 1)) ||
-		! (r = NUMfvector (1, mmax + 1)))
+	if (! (c = NUMdvector (1, mmax + 1)) ||
+		! (d = NUMdvector (1, mmax + 1)) ||
+		! (r = NUMdvector (1, mmax + 1)))
 	{
 		status = 0; goto end;
 	}
@@ -290,8 +290,8 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	thy gain *= (1.0 - a[1] * a[1]);
 	while (m < mmax)
 	{
-		float delta, eOld = thy gain, f = x[m+1], b = x[n-m]; /*n-1 ->n-m*/
-		float alf, c1, c2, c3, c4, c5, c6, y1, y2, y3, y4, y5;
+		double delta, eOld = thy gain, f = x[m+1], b = x[n-m]; /*n-1 ->n-m*/
+		double alf, c1, c2, c3, c4, c5, c6, y1, y2, y3, y4, y5;
 		for (k = 1; k <= m; k++)
 		{	/* n-1 -> n-m */
 			f += x[m+1-k] * a[k];
@@ -345,7 +345,7 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		}
 		for (k = 1; k <= m / 2 + 1; k++)
 		{
-			float s1 = c[k], s2 = d[k], s3 = c[m+2-k], s4 = d[m+2-k];
+			double s1 = c[k], s2 = d[k], s3 = c[m+2-k], s4 = d[m+2-k];
 			c[k] += c3 * s3 + c4 * s4;
 			d[k] += c5 * s3 + c6 * s4;
         	if (m + 2 - k == k) continue;
@@ -393,9 +393,9 @@ end:
 
 	thy gain *= 0.5; /* because e0 is twice the energy */
 	thy nCoefficients = m;
-	NUMfvector_free (c, 1);
-	NUMfvector_free (d, 1);
-	NUMfvector_free (r, 1);
+	NUMdvector_free (c, 1);
+	NUMdvector_free (d, 1);
+	NUMdvector_free (r, 1);
 	
 	return status == 1 || status == 4 || status == 5;
 }
@@ -505,7 +505,7 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
 Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 {
 	char *proc = "LPC_and_Sound_filterInverse";
-	Sound him; float *x = thy z[1], *e; long i;
+	Sound him; double *x = thy z[1], *e; long i;
 	
 	if (my samplingPeriod != thy dx) Melder_warning 
 		("%s: Sampling frequencies are not the same.", proc); 
@@ -518,7 +518,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 	{
 		double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 		long iFrame = floor ((t - my x1) / my dx + 1.5); /* Sampled_xToNearestIndex (me, t) */
-		float *a; long m, j;
+		double *a; long m, j;
 		if (iFrame < 1 || iFrame > my nx) { e[i] = 0; continue; }
 		a = my frame[iFrame].a;
 		m = i > my frame[iFrame].nCoefficients ? my frame[iFrame].nCoefficients : i-1;
@@ -534,7 +534,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 {
 	char *proc = "LPC_and_Sound_filter";
-	Sound him; long i, ifirst = 0, ilast = 0; float *x;
+	Sound him; long i, ifirst = 0, ilast = 0; double *x;
 	
 	if (my samplingPeriod != thy dx) Melder_warning 
 		("%s: Sampling frequencies are not the same.", proc); 
@@ -547,7 +547,7 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 	{
 		double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 		long iFrame = floor ((t - my x1) / my dx + 1.5); /* Sampled_xToNearestIndex (me, t) */
-		float *a; long m, j; 
+		double *a; long m, j; 
 		if (iFrame < 1) { ifirst = i; continue; }
 		if (iFrame > my nx) { ilast = i; break; } 
 		a = my frame[iFrame].a;
@@ -578,7 +578,7 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound out, Sound source)
 {
 	long i, j, m, n = out -> nx > source -> nx ? source -> nx : out -> nx;
-	float *e = source -> z[1], *x = out -> z[1];
+	double *e = source -> z[1], *x = out -> z[1];
 	
 	for (i = 1; i <= n; i++)
 	{

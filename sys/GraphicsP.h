@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/09
+ * pb 2008/01/19
  */
 
 #ifndef _Graphics_h_
@@ -30,7 +30,7 @@
 typedef struct {
 	unsigned char first, second, link;
 	short style, size, code, baseline, kar;
-	float width;
+	double width;
 	union { long integer; const char *string; } font;
 } _Graphics_widechar;
 
@@ -92,18 +92,18 @@ typedef struct {
 		/* Current coordinate transformation. */ \
 	/* Graphics state. */ \
 	int lineType, colour; \
-	float lineWidth, arrowSize; \
+	double lineWidth, arrowSize; \
 	int horizontalTextAlignment, verticalTextAlignment; \
-	float textRotation, wrapWidth, secondIndent, textX, textY; \
+	double textRotation, wrapWidth, secondIndent, textX, textY; \
 	enum kGraphics_font font; \
 	int fontSize, fontStyle; \
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript; \
 	int dollarSignIsCode, atSignIsLink; \
 	int recording; \
 	long irecord, nrecord; \
-	float *record; \
+	double *record; \
 	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */ \
-	float horTick, vertTick;   /* For Graphics_mark(s)XXX (). */ \
+	double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */ \
 	double paperWidth, paperHeight;
 
 #define Graphics_methods Thing_methods
@@ -191,10 +191,10 @@ class_create (GraphicsPostscript, Graphics);
 
 /* Opcodes for recording. */
 
-float * _Graphics_check (Graphics me, long number);
-#define put(f)  * ++ p = (float) (f)
-#define op(opcode,number)  float *p = _Graphics_check (me, number); if (! p) return; put (opcode); put (number)
-#define mput(n,a)  { long l; float *f = a; for (l = 0; l < n; l ++) put (f [l]); }
+double * _Graphics_check (Graphics me, long number);
+#define put(f)  * ++ p = (double) (f)
+#define op(opcode,number)  double *p = _Graphics_check (me, number); if (! p) return; put (opcode); put (number)
+#define mput(n,a)  { double *f = a; for (long l = 0; l < n; l ++) put (f [l]); }
 #define sput(s,l)  { put (l); strcpy ((char *) (p + 1), s); p += l; }
 
 /* When adding opcodes in the following list, add them at the end. */

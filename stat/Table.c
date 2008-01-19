@@ -552,7 +552,7 @@ double Table_getQuantile_e (Table me, long icol, double quantile) {
 		sortingColumn [irow] = ((TableRow) my rows -> item [irow]) -> cells [icol]. number;
 	}
 	NUMsort_d (my rows -> size, sortingColumn);
-	result = NUMquantile_d (my rows -> size, sortingColumn, quantile);
+	result = NUMquantile (my rows -> size, sortingColumn, quantile);
 end:
 	NUMdvector_free (sortingColumn, 1);
 	return result;
@@ -827,7 +827,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 				sortingColumn [jrow] = ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
 			}
 			NUMsort_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1);
-			median = NUMquantile_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
+			median = NUMquantile (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
 			Table_setNumericValue (thee, thy rows -> size, icol, median);
 		}
 		for (i = 1; i <= numberToAverageLogarithmically; i ++) {
@@ -861,7 +861,7 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 				sortingColumn [jrow] = log (value);
 			}
 			NUMsort_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1);
-			median = NUMquantile_d (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
+			median = NUMquantile (rowmax - rowmin + 1, sortingColumn + rowmin - 1, 0.5);
 			Table_setNumericValue (thee, thy rows -> size, icol, exp (median));
 		}
 		irow = rowmax;

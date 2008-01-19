@@ -178,9 +178,6 @@ end:	\
 	return ! Melder_hasError();	\
 }
 
-int NUMrankColumns_f (float **m, long rb, long re, long cb, long ce)
-	MACRO_NUMrankcolumns(float,f)
-
 int NUMrankColumns_d (double **m, long rb, long re, long cb, long ce)
 	MACRO_NUMrankcolumns(double,d)
 

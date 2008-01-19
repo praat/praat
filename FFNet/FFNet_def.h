@@ -51,7 +51,7 @@ oo_DEFINE_CLASS (FFNet, Data)
 		#if oo_DECLARING
 			double (*nonLinearity) (I, double /* x */, double * /* deriv */);
     		void *nlClosure;
-    		double (*costFunction) (I, const float * /* target */);
+    		double (*costFunction) (I, const double * /* target */);
 			void *cfClosure;
 		#endif
 		
@@ -59,7 +59,7 @@ oo_DEFINE_CLASS (FFNet, Data)
 			oo_DOUBLE (accumulatedCost)
 			oo_LONG (nPatterns)
 			oo_LONG (currentPattern)
-			float **inputPattern, **targetActivation;
+			double **inputPattern, **targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
 			oo_OBJECT (Minimizer, 0, minimizer)
