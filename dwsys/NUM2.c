@@ -48,8 +48,9 @@
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071022 Removed function NUMfvector_moment2.
  djmw 20071201 Melder_warning<n>
- djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable_d
+ djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable
  djmw 20080110 Corrected some bugs in str_replace_regexp
+ djmw 20080122 Bug in str_replace_regexp
 */
 
 #include "SVD.h"
@@ -78,11 +79,6 @@ extern machar_Table NUMfpp;
 
 struct pdf1_struct { double p; double df; };
 struct pdf2_struct { double p; double df1; double df2; };
-
-static double NUMgauss (double x)
-{
-	return exp (- 0.5 * x * x) / sqrt(2 * NUMpi);
-}
 
 int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce)
 {
@@ -419,7 +415,6 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 				if (! expand_buffer (& buf, buf_size)) goto end;
 				Melder_clearError ();
 				i--; // retry
-				//gap_copied = 0;
 			continue;
 			}
 			else
@@ -443,14 +438,14 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		pos = compiledSearchRE -> endp[0];
 		if (pos != posp) prev_char = pos[-1];
 		gap_copied = 0;
-		posp = pos;
+		posp = pos; //pb 20080121
 		(*nmatches)++;
 	}
 	
 	/*
 		Copy last part of string to destination string
 	*/
-	
+
 	nchar = (string + string_length) - pos;
 	buf_size = buf_nchar + nchar + 1;
 	if (! expand_buffer (& buf, buf_size)) goto end;
@@ -594,7 +589,7 @@ double **NUMdmatrix_transpose (double **m, long nr, long nc)
 	return to;
 }
 
-void NUMcentreRows_d (double **a, long rb, long re, long cb, long ce)
+void NUMcentreRows (double **a, long rb, long re, long cb, long ce)
 {
 	long i, j;
 	for (i=rb; i <= re; i++)
@@ -606,27 +601,26 @@ void NUMcentreRows_d (double **a, long rb, long re, long cb, long ce)
 	}
 }
 
-void NUMcentreColumns_d (double **a, long rb, long re, long cb, long ce, 
-	double *centres)
+void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres)
 {
 	long i, j;
-	for (j=cb; j <= ce; j++)
+	for (j = cb; j <= ce; j++)
 	{
 		double colmean = 0;
-		for (i=rb; i <= re; i++) colmean += a[i][j];
+		for (i = rb; i <= re; i++) colmean += a[i][j];
 		colmean /= (re - rb + 1);
-		for (i=rb; i <= re; i++) a[i][j] -= colmean;
+		for (i = rb; i <= re; i++) a[i][j] -= colmean;
 		if (centres != NULL) centres[j - cb + 1] = colmean;
 	}
 }
 
-void NUMdoubleCentre_d (double **a, long rb, long re, long cb, long ce)
+void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce)
 {
-	NUMcentreRows_d (a, rb, re, cb, ce);
-	NUMcentreColumns_d (a, rb, re, cb, ce, NULL);
+	NUMcentreRows (a, rb, re, cb, ce);
+	NUMcentreColumns (a, rb, re, cb, ce, NULL);
 }
 
-void NUMnormalizeColumns_d (double **a, long nr, long nc, double norm)
+void NUMnormalizeColumns (double **a, long nr, long nc, double norm)
 {
 	long i, j; double s;
 	Melder_assert (norm > 0);
@@ -639,7 +633,7 @@ void NUMnormalizeColumns_d (double **a, long nr, long nc, double norm)
 	}
 }
 
-void NUMnormalizeRows_d (double **a, long nr, long nc, double norm)
+void NUMnormalizeRows (double **a, long nr, long nc, double norm)
 {
 	long i, j; double s;
 	Melder_assert (norm > 0);
@@ -652,7 +646,7 @@ void NUMnormalizeRows_d (double **a, long nr, long nc, double norm)
 	}
 }
 
-void NUMnormalize_d (double **a, long nr, long nc, double norm)
+void NUMnormalize (double **a, long nr, long nc, double norm)
 {
 	double sq; long i, j;
 	Melder_assert (norm > 0);
@@ -823,19 +817,26 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	if (covariance != NULL) *covariance = covar;
 	if (icol1 == icol2) *covariance = *variance1;
 }
+/* obsolete 20080121
 
-#define HUBER_MAD NUMmad_d
-#define HUBER_STATISTICS_HUBER NUMstatistics_huber_d
-#define HUBER_DATA_TYPE double
-#define HUBER_VECTOR  NUMdvector
-#define HUBER_VECTOR_FREE  NUMdvector_free
-#define HUBER_QUANTILE NUMquantile
-#define HUBER_SORT NUMsort_d
+#define HUBER_MAD NUMmad_f
+#define HUBER_STATISTICS_HUBER NUMstatistics_huber_f
+#define HUBER_DATA_TYPE float
+#define HUBER_VECTOR  NUMfvector
+#define HUBER_VECTOR_FREE  NUMfvector_free
+#define HUBER_QUANTILE NUMquantile_f
+#define HUBER_SORT NUMsort_f
 #include "NUMhuber_core.h"
+#undef HUBER_MAD
+#undef HUBER_STATISTICS_HUBER
+#undef HUBER_DATA_TYPE
+#undef HUBER_VECTOR
+#undef HUBER_VECTOR_FREE
+#undef HUBER_QUANTILE
+#undef HUBER_SORT
+*/
 
-
-
-void eigenSort_d (double d[], double **v, long n, int sort)
+void eigenSort (double d[], double **v, long n, int sort)
 {
     long i, j, k;
 	if (sort == 0) return;
@@ -901,7 +902,22 @@ int NUMwcscmp (const wchar_t *s1, const wchar_t *s2)
 	}
 }
 
-void NUMlocate_d (double *xx, long n, double x, long *index)
+void NUMlocate_f (float *xx, long n, float x, long *index)
+{
+	long ju = n + 1, jm, jl = 0;
+	int ascend = xx[n] >= xx[1];
+
+	while (ju - jl > 1)
+	{
+		jm = (ju + jl) / 2;
+		if ((x >= xx[jm]) == ascend) jl = jm; else ju = jm;
+	}
+	if (x == xx[1]) *index = 1;
+	else if (x == xx[n]) *index = n - 1;
+	else *index = jl;
+}
+
+void NUMlocate (double *xx, long n, double x, long *index)
 {
 	long ju = n + 1, jm, jl = 0;
 	int ascend = xx[n] >= xx[1];
@@ -922,7 +938,7 @@ void NUMlocate_d (double *xx, long n, double x, long *index)
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression_d (const double x[], long n, double xs[])
+void NUMmonotoneRegression (const double x[], long n, double xs[])
 {
 	double sum;
 	double xt = NUMundefined; // Only to stop gcc complaining "may be used unitialized"
@@ -952,6 +968,36 @@ void NUMmonotoneRegression_d (const double x[], long n, double xs[])
 	}
 }
 
+float NUMfvector_getNorm1 (const float v[], long n)
+{
+	float norm = 0; long i;
+	for (i=1; i <= n; i++) norm += fabs (v[i]);
+	return norm;
+}
+
+float NUMfvector_getNorm2 (const float v[], long n)
+{
+	float norm = 0; long i;
+	for (i=1; i <= n; i++) norm += v[i] * v[i];
+	return sqrt (norm);
+}
+
+float NUMfvector_normalize1 (float v[], long n)
+{
+	float norm = 0; long i;
+	for (i=1; i <= n; i++) norm += fabs (v[i]);
+	for (i=1; i <= n; i++) v[i] /= norm;
+	return norm;
+}
+
+float NUMfvector_normalize2 (float v[], long n)
+{
+	float norm = 0; long i;
+	for (i=1; i <= n; i++) norm += v[i] * v[i];
+	norm = sqrt (norm);
+	for (i=1; i <= n; i++) v[i] /= norm;
+	return norm;
+}
 double NUMdvector_getNorm1 (const double v[], long n)
 {
 	double norm = 0; long i;
@@ -1130,7 +1176,7 @@ double NUMtrace2 (double **a1, double **a2, long n)
 	return trace;
 }
 
-int NUMeigensystem_d (double **a, long n, double **evec, double eval[])
+int NUMeigensystem (double **a, long n, double **evec, double eval[])
 {
 	Eigen me = new (Eigen);
 	
@@ -1142,7 +1188,7 @@ end:
 	return ! Melder_hasError ();
 }
 
-int NUMdominantEigenvector_d (double **mns, long n, double *q,
+int NUMdominantEigenvector (double **mns, long n, double *q,
 	double *lambda, double tolerance)
 {
 	long k, l, iter = 0; double val, cval = 0, *z;
@@ -1177,11 +1223,11 @@ end:
 	return 1;
 }
 
-int NUMprincipalComponents_d (double **a, long n, long nComponents, double **pc)
+int NUMprincipalComponents (double **a, long n, long nComponents, double **pc)
 {
 	long i, j, k; int status = 0; double **evec = NULL;
 	if (((evec = NUMdmatrix (1, n, 1, n)) == NULL) ||
-		! NUMeigensystem_d (a, n, evec, NULL)) goto end;
+		! NUMeigensystem (a, n, evec, NULL)) goto end;
     for (i=1; i <= n; i++) for (j=1; j<= nComponents; j++)
     {
     	double s = 0;
@@ -1206,7 +1252,7 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 	
 	if ((mc = NUMdmatrix_copy (m, 1, nrows, 1, ncols)) == NULL) return 0;
 	
-	/*NUMcentreColumns_d (mc, nrows, ncols);*/
+	/*NUMcentreColumns (mc, nrows, ncols);*/
 	if ((svd = SVD_create_d (mc, nrows, ncols)) == NULL) goto end;
 	for (i = 1; i <= nrows; i++)
 	{
@@ -1226,7 +1272,7 @@ end:
 	return ! Melder_hasError ();
 }
 
-int NUMpseudoInverse_d (double **y, long nr, long nc, double **yinv,
+int NUMpseudoInverse (double **y, long nr, long nc, double **yinv,
 	double tolerance)
 {
 	SVD me; long i, j, k;
@@ -1251,7 +1297,7 @@ int NUMpseudoInverse_d (double **y, long nr, long nc, double **yinv,
 	return 1;
 }
 
-int NUMsolveEquation_d (double **a, long nr, long nc, double *b,
+int NUMsolveEquation (double **a, long nr, long nc, double *b,
 	double tolerance, double *result)
 {
 	SVD me;
@@ -1273,7 +1319,7 @@ int NUMsolveEquation_d (double **a, long nr, long nc, double *b,
 }
 
 
-int NUMsolveEquations_d (double **a, long nr, long nc, double **b,
+int NUMsolveEquations (double **a, long nr, long nc, double **b,
 	long ncb, double tolerance, double **x)
 {
 	SVD me;
@@ -1473,7 +1519,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
 	*/
 	
-	if (! NUMeigensystem_d (g, 3, p, delta)) goto end;
+	if (! NUMeigensystem (g, 3, p, delta)) goto end;
 	
 	NUMsort_d(3, delta); /* ascending */
 	
@@ -1508,7 +1554,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		}
 	}
 	
-	if (! NUMsolveEquation_d (ftinvp, 3, 3, otd, 1e-6, y)) goto end;
+	if (! NUMsolveEquation (ftinvp, 3, 3, otd, 1e-6, y)) goto end;
 	
 	/*
 		The solution (3 cases) 
@@ -1527,11 +1573,11 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		w[2] = t2 * delta[2];
 		w[3] = t3 * delta[3];
 		
-		if (! NUMsolveEquation_d (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
+		if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 		
 		w[1] = -w[1]; 
 		if (fabs (chi[3] / chi[1]) < eps &&
-			! NUMsolveEquation_d (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
+			! NUMsolveEquation (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
 	}
 	else if (fabs (y[2]) < eps)
 	{
@@ -1547,10 +1593,10 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		{
 			w[2] = sqrt (- delta[2] * t2); /* +- */
 			w[3] = t3 * delta[3];
-			if (! NUMsolveEquation_d (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
+			if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 			w[2] = -w[2]; 
 			if (fabs (chi[3] / chi[1]) < eps &&
-				! NUMsolveEquation_d (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
+				! NUMsolveEquation (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
 		}
 		else if (((delta[2] < delta[3] + eps) || (delta[2] > delta[3] - eps))
 			&& fabs (y[3]) < eps)
@@ -1561,7 +1607,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			
 			w[2] = w[1];
 			w[3] = sqrt (- t1 * t1 * delta[1] * delta[2] - w[2] * w[2]);
-			if (! NUMsolveEquation_d (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
+			if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 		}
 	}
 	else 
@@ -1582,7 +1628,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		{
 			w[i] = y[i] / (1 - xlambda / delta[i]);
 		}
-		if (! NUMsolveEquation_d (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
+		if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 	}
 	
 	*alpha = chi[1]; *gamma = chi[3];
@@ -1660,7 +1706,7 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 	
 	sqrtc = svd -> d; ut = svd -> v;
 		
-	NUMindexx_d (sqrtc, m, indx);
+	NUMindexx (sqrtc, m, indx);
 	
 	for (j=m; j > 0; j--)
 	{
@@ -1781,7 +1827,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 			JY amounts to centering the columns of Y.
 	*/
 	
-	if (! orthogonal) NUMcentreColumns_d (yc, 1, nPoints, 1, nDimensions, NULL);
+	if (! orthogonal) NUMcentreColumns (yc, 1, nPoints, 1, nDimensions, NULL);
 	for (i = 1; i <= nDimensions; i++)
 	{
 		for (j = 1; j <= nDimensions; j++)
@@ -1851,7 +1897,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 			X'J amount to centering the columns of X
 		*/
 	
-		NUMcentreColumns_d (xc, 1, nPoints, 1, nDimensions, NULL);
+		NUMcentreColumns (xc, 1, nPoints, 1, nDimensions, NULL);
 	
 		/*
 			tr X'J YT == tr xc' yt
@@ -2632,7 +2678,7 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 	return 1;
 }
 
-double **NUMcosinesTable_d (long first, long last, long npoints)
+double **NUMcosinesTable (long first, long last, long npoints)
 {
 	double **m;
 	long i, j;
@@ -2652,7 +2698,7 @@ double **NUMcosinesTable_d (long first, long last, long npoints)
 	return m;
 }
 
-int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
+int NUMspline (double x[], double y[], long n, double yp1, double ypn,
 	double y2[])
 {
 	double p, qn, sig, un, *u;
@@ -2702,8 +2748,7 @@ int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
 	return 1;
 }
 
-int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
-	double x, double *y)
+int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y)
 {
 	long klo, khi, k;
 	double h, b, a;
@@ -2716,7 +2761,7 @@ int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
 		else klo = k;
 	}
 	h = xa[khi] - xa[klo];
-	if (h == 0.0) return Melder_error1 (L"NUMsplint_d: bad input value");
+	if (h == 0.0) return Melder_error1 (L"NUMsplint: bad input value");
 	a = (xa[khi] - x) / h;
 	b = (x - xa[klo]) / h;
 	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
@@ -2739,6 +2784,9 @@ int NUMsplint_d (double xa[], double ya[], double y2a[], long n,
 
 void NUMlvector_extrema (long v[], long lo, long hi, double *min, double *max)
 MACRO_NUMvector_extrema (long)
+
+void NUMfvector_extrema (float v[], long lo, long hi, double *min, double *max)
+MACRO_NUMvector_extrema (float)
 
 void NUMivector_extrema (int v[], long lo, long hi, double *min, double *max)
 MACRO_NUMvector_extrema (int)
@@ -2765,6 +2813,9 @@ MACRO_NUMvector_extrema (short)
 
 void NUMlvector_clip (long v[], long lo, long hi, double min, double max)
 MACRO_NUMclip (long)
+
+void NUMfvector_clip (float v[], long lo, long hi, double min, double max)
+MACRO_NUMclip (float)
 
 void NUMivector_clip (int v[], long lo, long hi, double min, double max)
 MACRO_NUMclip (int)
@@ -2797,6 +2848,10 @@ MACRO_NUMclip (short)
 void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce, 
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(double)
+
+void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce, 
+	double *min, double *max)
+MACRO_NUMmatrix_extrema(float)
 
 void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce, 
 	double *min, double *max)

@@ -1,6 +1,6 @@
 /* LPC_to_Spectrum.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020529 GPL header
  djmw 20020529 Changed NUMrealft to NUMforwardRealFastFourierTransform_f
  djmw 20030708 Added NUM2.h
+ djmw 20080122 float -> double
 */
 
 #include "LPC_to_Spectrum.h"
@@ -100,7 +101,7 @@ int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduct
 		The imaginary parts of the frequencies 0 and Nyquist are 0.
 	*/
 	
-	NUMforwardRealFastFourierTransform_d (fftbuffer, nfft);
+	NUMforwardRealFastFourierTransform (fftbuffer, nfft);
 	if (my gain > 0) scale *= sqrt (my gain);
 	thy z[1][1] = scale / fftbuffer[1];
 	thy z[2][1] = 0;

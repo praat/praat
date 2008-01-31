@@ -1,6 +1,6 @@
 /* SVD.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,7 +313,7 @@ int SVD_sort (I)
 	if (((thee = Data_copy (me)) == NULL) ||
 		((index = NUMlvector (1, mn_min)) == NULL)) goto end;
 	
-	NUMindexx_d (my d, mn_min, index);
+	NUMindexx (my d, mn_min, index);
 			
 	for (j = 1; j <= mn_min; j++)
 	{

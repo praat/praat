@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20030814 First version
  djmw 20061218 To Melder_information<x> format
  djmw 20070103 Sound interface changes
+ djmw 20080122 float -> double
 */
 
 #include "Sound_and_LPC.h"
@@ -108,8 +109,7 @@ static void huber_struct_getWeights (struct huber_struct *hs, double *e)
 static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 {
 	long i, j, k, p = hs -> p, n = hs -> n;
-	double *w = hs -> w;
-	double tmp, **covar = hs -> covar, *c = hs -> c;
+	double tmp, *w = hs -> w, **covar = hs -> covar, *c = hs -> c;
 		
 	for (i = 1; i <= p; i++)
 	{
@@ -177,7 +177,7 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 		
 		s0 = hs -> scale;
 		
-		if (! NUMstatistics_huber_d (e, n, &(hs -> location), 
+		if (! NUMstatistics_huber (e, n, &(hs -> location), 
 			hs -> wantlocation, &(hs -> scale), hs -> wantscale, 
 			hs -> k, hs -> tol, hs -> work)) return 0;
 
@@ -275,8 +275,8 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) goto end;
 	}
 	
-	if (frameErrorCount) Melder_warning ("Sound_to_LPC: analysis results of %ld"
-		" frame(s) out of %ld could not be optimised.", frameErrorCount, nFrames);
+	if (frameErrorCount) Melder_warning5 (L"Results of ", Melder_integer (frameErrorCount), 
+		L" frame(s) out of ", Melder_integer (nFrames), L" could not be optimised.");
 
 end:
 

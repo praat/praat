@@ -1,5 +1,5 @@
 # regex_test.praat
-# djmw 20070528, 20070917
+# djmw 20070528, 20070917, 20080122
 
 debug = 0
 
@@ -195,14 +195,14 @@ call replace_re "ababababababababababababababababababab" "b" "xxxxx" 1 axxxxxaba
 # The returned value is "xxccccd" instead of "xabccccd".
 call replace_re "ababccccd" "^ab" "x" 0 xabccccd
 
-printline --------- PREVIOUS BUGS
+printline --------- PREVIOUS BUGS < 5.0.4
 printline ----  # replace by empty string ""
 # Bugs in praat versions before 5.0.4
 # Returned empty string ""
 call replace_re "abc " " $" "" 1 abc
 # Returned "xxccccd" instead of "xabccccd".
 call replace_re "ababccccd" "^ab" "x" 0 xabccccd
-printline --------- PREVIOUS BUGS --- END
-
+printline --------- PREVIOUS BUGS < 5.0.5
 call replace_re "hallo" "l" "b" 0 habbo
 call replace_re "hallo" "." "&&" 0 hhaalllloo
+printline --------- PREVIOUS BUGS --- END

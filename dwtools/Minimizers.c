@@ -6,6 +6,7 @@
  djmw 20030205 Latest modification
  djmw 20030701 Removed non-GPL minimizations
  djmw 20040421 Bug removed: delayed message when learning was interrupted by user.
+ djmw 20080122 float -> double
 */
 
 #include "NUM2.h"

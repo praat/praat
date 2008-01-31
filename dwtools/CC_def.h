@@ -1,6 +1,6 @@
 /* CC_def.h
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,28 @@
 /*
  djmw 2000
  djmw 20020315 GPL header
+ djmw 20080122 Version 1: float -> double
  */
 
 #define ooSTRUCT CC_Frame
 oo_DEFINE_STRUCT (CC_Frame)
 
 	oo_LONG (numberOfCoefficients)
-	oo_FLOAT (c0)
-	oo_FLOAT_VECTOR (c, my numberOfCoefficients)
+	#if oo_READING_BINARY
+		if (localVersion == 0)
+		{
+			oo_FLOAT (c0)
+			oo_FLOAT_VECTOR (c, my numberOfCoefficients)
+		}
+		else
+		{
+			oo_DOUBLE (c0)
+			oo_DOUBLE_VECTOR (c, my numberOfCoefficients)
+		}
+	#else
+		oo_DOUBLE (c0)
+		oo_DOUBLE_VECTOR (c, my numberOfCoefficients)
+	#endif
 
 oo_END_STRUCT (CC_Frame)
 #undef ooSTRUCT

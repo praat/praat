@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,11 @@
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20061021 printf expects %ld for 'long int'
-<<<<<<< HEAD:dwtools/TableOfReal_extensions.c
  djmw 20070822 wchar_t
  djmw 20070902 Better error messages (object type and name feedback)
-=======
  djmw 20070614 updated to version 1.30 of regular expressions.
->>>>>>> regex:dwtools/TableOfReal_extensions.c
+ djmw 20071202 Melder_warning<n>
+ djmw 20080122 float -> double
 */
 
 #include <ctype.h>
@@ -319,7 +318,6 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 	double interbarsFraction, wchar_t *greys, int garnish)	
 {
 	iam (TableOfReal);
-	char *proc = "TableOfReal_drawRowsAsHistogram";
 	long i, j, irow, nrows, ncols, ngreys;
 	double *irows, *igreys, grey, bar_width = 1, xb, dx, x1, x2, y1, y2;
 	
@@ -329,14 +327,14 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 	}
 	if (colb <= cole && (colb < 1 || cole > my numberOfColumns))
 	{
-		    Melder_warning ("%s: Invalid columns", proc);
+		    Melder_warning1 (L"Invalid columns");
 			return;
 	}
 	
 	irows = NUMstring_to_numbers (rows, &nrows);
 	if (irows == NULL)
 	{
-		 Melder_warning ("%s: No rows!", proc);
+		 Melder_warning1 (L"No rows!");
 		 return;
 	}
 	
@@ -345,7 +343,7 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 		irow = irows[i];
 		if (irow < 0 || irow > my numberOfRows)
 		{
-			 Melder_warning ("%s: Invalid row (%d)", proc, irow);
+			 Melder_warning3 (L"Invalid row (", Melder_integer (irow), L").");
 			 goto end;
 		}
 		if (ymin >= ymax)
@@ -367,10 +365,10 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 	igreys = NUMstring_to_numbers (greys, &ngreys);
 	if (igreys == NULL)
 	{
-		 Melder_warning ("%s: No greys!", proc);
+		 Melder_warning1 (L"No greys!");
 		 return;
 	}
-    
+ 
     Graphics_setWindow (g, 0, 1, ymin, ymax);
     Graphics_setInner (g);
 	
@@ -437,7 +435,7 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	if (svd == NULL) goto end;
 	
 	NUMdmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
-	NUMcentreColumns_d (svd -> u, 1, nr, 1, nc, NULL);
+	NUMcentreColumns (svd -> u, 1, nr, 1, nc, NULL);
 	
 	if (! SVD_compute (svd)) goto end; 	
 	numberOfZeroed = SVD_zeroSmallSingularValues (svd, 0);
@@ -445,8 +443,7 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	nmin = MIN (nr, nc) - numberOfZeroed;
 	if (nmin < 2)
 	{
-		Melder_warning ("TableOfReal_drawBiplot: There must be at least two "
-			"(independent) columns in the table.");
+		Melder_warning1 (L" There must be at least two (independent) columns in the table.");
 		goto end;
 	}
 
@@ -799,8 +796,7 @@ void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 void TableOfReal_centreColumns (I)
 {
 	iam (TableOfReal);
-	NUMcentreColumns_d (my data, 1, my numberOfRows, 1, my numberOfColumns,
-		NULL);
+	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, NULL);
 }
 
 int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
@@ -842,11 +838,11 @@ void TableOfReal_centreColumns_byRowLabel (I)
 		wchar_t *li = my rowLabels[i];
 		if (li != NULL && li != label && wcscmp (li, label))
 		{
-			NUMcentreColumns_d (my data, index, i - 1, 1, my numberOfColumns, NULL);
+			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, NULL);
 			label = li; index = i;
 		}
 	}
-	NUMcentreColumns_d (my data, index, my numberOfRows, 1, my numberOfColumns, NULL);
+	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, NULL);
 }
 
 double TableOfReal_getRowSum (I, long index)
@@ -899,25 +895,25 @@ double TableOfReal_getGrandSum (I)
 void TableOfReal_centreRows (I)
 {
 	iam (TableOfReal);
-	NUMcentreRows_d (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	NUMcentreRows (my data, 1, my numberOfRows, 1, my numberOfColumns);
 }
 
 void TableOfReal_doubleCentre (I)
 {
 	iam (TableOfReal);
-	NUMdoubleCentre_d (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	NUMdoubleCentre (my data, 1, my numberOfRows, 1, my numberOfColumns);
 }
 
 void TableOfReal_normalizeColumns (I, double norm)
 {
 	iam (TableOfReal);
-	NUMnormalizeColumns_d (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, norm);
 }
 
 void TableOfReal_normalizeRows (I, double norm)
 {
 	iam (TableOfReal);
-	NUMnormalizeRows_d (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalizeRows (my data, my numberOfRows, my numberOfColumns, norm);
 }
 
 void TableOfReal_standardizeColumns (I)
@@ -935,7 +931,7 @@ void TableOfReal_standardizeRows (I)
 void TableOfReal_normalizeTable (I, double norm)
 {
 	iam (TableOfReal);
-	NUMnormalize_d (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalize (my data, my numberOfRows, my numberOfColumns, norm);
 }
 
 double TableOfReal_getTableNorm (I)
@@ -1140,9 +1136,8 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 			Graphics_marksRight (g, 2, 1, 1, 0);
 		}
 	}
-	if (noLabel > 0) Melder_warning ("TableOfReal_drawScatterPlot: %d from %d labels are "
-		"not visible because they are empty or they contain only spaces or "
-		"non-printable characters", noLabel, my numberOfRows);
+	if (noLabel > 0) Melder_warning4 (Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows), L" labels are "
+		"not visible because they are empty or they contain only spaces or non-printable characters");
 }
 
 /****************  TABLESOFREAL **************************************/
@@ -1437,7 +1432,6 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 	long colx2, long coly2, double xmin, double xmax, 
 	double ymin, double ymax, int vectype, int labelsize, int garnish)
 {
-	char *proc = "TableOfReal_drawVectors";
 	iam (TableOfReal);
 	long i, nx = my numberOfColumns, ny = my numberOfRows;
 	double min, max;
@@ -1445,14 +1439,12 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 
 	if (colx1 < 1 || colx1 > nx || coly1 < 1 || coly1 > nx)
 	{
-		Melder_warning ("%s: The index in the \"From\" column(s) must be "
-			"in range [1, %d].", proc, nx);
+		Melder_warning3 (L"The index in the \"From\" column(s) must be in range [1, ", Melder_integer (nx), L"].");
 		return;
 	}
 	if (colx2 < 1 || colx2 > nx || coly2 < 1 || coly2 > nx)
 	{
-		Melder_warning ("%s: The index in the \"To\" column(s) must be "
-			"in range [1, %d].", proc, nx);
+		Melder_warning3 (L"The index in the \"To\" column(s) must be in range [1, ", Melder_integer (nx), L"].");
 		return;
 	}
  
@@ -1697,7 +1689,7 @@ TableOfReal TableOfReal_rankColumns (I)
 	TableOfReal thee = Data_copy (me);
 	
 	if (thee == NULL) return NULL;
-	if (! NUMrankColumns_d (thy data, 1, thy numberOfRows, 
+	if (! NUMrankColumns (thy data, 1, thy numberOfRows, 
 		1, thy numberOfColumns)) forget (thee);
 	return thee;	
 }
@@ -1777,7 +1769,6 @@ end:
 
 TableOfReal TableOfReal_appendColumns (I, thou)
 {
-	char *proc = "TableOfReal_appendColumns";
 	iam (TableOfReal); thouart (TableOfReal);
 	TableOfReal him;
 	long i, ncols = my numberOfColumns + thy numberOfColumns;
@@ -1811,7 +1802,7 @@ end:
 	}
 	else if (labeldiffs > 0)
 	{
-		Melder_warning ("%s: %d row labels differed.", proc, labeldiffs);
+		Melder_warning2 (Melder_integer (labeldiffs), L" row labels differed.");
 	}
 	return him;
 }

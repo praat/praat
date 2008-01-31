@@ -1,6 +1,6 @@
 /* Configuration.c
  * 
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,13 +132,12 @@ void Configuration_normalize (Configuration me, double sumsq, int columns)
 	if (columns)
 	{
 		sumsq = sumsq <= 0 ? 1.0 : sqrt (sumsq);
-		NUMnormalizeColumns_d (my data, my numberOfRows, my numberOfColumns,
-			sumsq);
+		NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, sumsq);
 	}
 	else
 	{
 		if (sumsq <= 0) sumsq = my numberOfRows;
-		NUMnormalize_d (my data, my numberOfRows, my numberOfColumns, 
+		NUMnormalize (my data, my numberOfRows, my numberOfColumns, 
 			sqrt (sumsq));
 	}
 }
@@ -462,9 +461,8 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
     	}
 	}
 	
-	if (noLabel > 0) Melder_warning ("Configuration_draw: %d from %d labels are "
-		"not visible because they are empty or they contain only spaces or "
-		"they contain only non-printable characters", noLabel, my numberOfRows);
+	if (noLabel > 0) Melder_warning5 (L"Configuration_draw: ", Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows), 
+		L" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
 	
 end:
 

@@ -23,6 +23,7 @@
  djmw 20041124 Changed call to Sound_to_Spectrum.
  djmw 20070103 Sound interface changes
  djmw 20071107 Errors/warnings text changes
+ djmw 20071202 Melder_warning<n>
 */
 
 #include "Sound_and_FilterBank.h"
@@ -181,8 +182,8 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 	if (frameErrorCount > 0)
 	{
-		Melder_warning ("Analysis results of %ld "
-			"frame(s) out of %ld will be suspect.", frameErrorCount, nt);
+		Melder_warning5 (L"Analysis results of ", Melder_integer (frameErrorCount), L" frame(s) out of ", Melder_integer (nt),
+			L" will be suspect.");
 	}
 
 	ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
@@ -286,8 +287,8 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) goto end;
 	}
 	
-	if (frameErrorCount) Melder_warning ("Analysis results"
-		" of %ld frame(s) out of %ld will be suspect.", frameErrorCount, nt);
+	if (frameErrorCount) Melder_warning5 (L"Analysis results of ", Melder_integer (frameErrorCount), L" frame(s) out of ", 
+		Melder_integer (nt), L" will be suspect.");
 
 	/*
 		Window correction. 
@@ -400,7 +401,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 	if (f0_median == NUMundefined || f0_median == 0)
 	{
 		f0_median = 100;
-		Melder_warning ("Pitch values undefined. Bandwith fixed to 100 Hz. ");
+		Melder_warning1 (L"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 	}
 
 	if (f1_hz <= 0) f1_hz = 100;

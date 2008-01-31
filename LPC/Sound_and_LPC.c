@@ -1,6 +1,6 @@
 /* Sound_and_LPC.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw corrected a bug in Sound_into_LPC_Frame_marple that could crash praat when signal has only zero samples.
  djmw 20040303 Removed warning in Sound_to_LPC.
  djmw 20070103 Sound interface changes
+ djmw 20080122 float -> double
 */
 
 #include "Sound_and_LPC.h"
@@ -128,7 +129,8 @@ end:
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 {
-	long i = 1, j, k, n = my nx, m = thy nCoefficients; double *x = my z[1];
+	long i = 1, j, k, n = my nx, m = thy nCoefficients; 
+	double *x = my z[1];
 	double *b = NULL, *grc = NULL, *a = NULL, *beta = NULL, *cc = NULL;
 	
 	if (! (b =  NUMdvector (1, m * (m+1) / 2)) ||
@@ -504,13 +506,11 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
 
 Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 {
-	char *proc = "LPC_and_Sound_filterInverse";
-	Sound him; double *x = thy z[1], *e; long i;
+	Sound him; 
+	double *x = thy z[1], *e; long i;
 	
-	if (my samplingPeriod != thy dx) Melder_warning 
-		("%s: Sampling frequencies are not the same.", proc); 
-	if (my xmin != thy xmin || thy xmax != my xmax) return Melder_errorp 
-		("%s: Domains of LPC and Sound are not equal.", proc);
+	if (my samplingPeriod != thy dx) Melder_warning1 (L"Sampling frequencies are not the same."); 
+	if (my xmin != thy xmin || thy xmax != my xmax) return Melder_errorp1 (L"Domains of LPC and Sound are not equal.");
 	if ((him = Data_copy (thee)) == NULL) return NULL;
 	
 	e = his z[1];
@@ -533,13 +533,10 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 */		
 Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 {
-	char *proc = "LPC_and_Sound_filter";
 	Sound him; long i, ifirst = 0, ilast = 0; double *x;
 	
-	if (my samplingPeriod != thy dx) Melder_warning 
-		("%s: Sampling frequencies are not the same.", proc); 
-	if (my xmin != thy xmin || my xmax != thy xmax) Melder_warning
-		("%s: Time domains of source and filter do not match.", proc);
+	if (my samplingPeriod != thy dx) Melder_warning1 (L"Sampling frequencies are not the same."); 
+	if (my xmin != thy xmin || my xmax != thy xmax) Melder_warning1 (L"Time domains of source and filter do not match.");
 	if ((him = Data_copy (thee)) == NULL) return him;
 	
 	x = his z[1];
@@ -552,7 +549,7 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 		if (iFrame > my nx) { ilast = i; break; } 
 		a = my frame[iFrame].a;
 		m = i > my frame[iFrame].nCoefficients ? my frame[iFrame].nCoefficients : i-1;
-		for (j=1; j <= m; j++) x[i] -= a[j] * x[i-j];
+		for (j = 1; j <= m; j++) x[i] -= a[j] * x[i-j];
 	}
 	/*
 		Make samples before first frame and after last frame zero.

@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20080122 float -> double
 */
 
 #include "Polygon_extensions.h"
@@ -116,7 +117,7 @@ void Polygon_Categories_draw (I, thou, Any graphics, double xmin, double xmax,
     Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
     Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 	
-    for (i=1; i <= my numberOfPoints; i++)
+    for (i = 1; i <= my numberOfPoints; i++)
 	{
 		OrderedOfString_drawItem (thee, graphics, i, my x[i], my y[i]);
 	}

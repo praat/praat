@@ -1,6 +1,6 @@
 # Makefile
 # 
-#  Copyright (C) 1993-2005 David Weenink
+#  Copyright (C) 1993-2008 David Weenink
 # 
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20070622 Latest modification.
+#  djmw 20080122 Latest modification.
 
 
 include ../makefile.defs
 
-CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat
+CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat -I ../audio
 
 all: libdwtools.a
 
@@ -64,6 +64,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TableOfReal_extensions.o TableOfReal_and_Matrix.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
+	VowelGenerator.o \
 	praat_MDS_init.o praat_David_init.o
 
 $(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h

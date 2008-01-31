@@ -23,7 +23,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20071106 Latest modification.
+ djmw 20071213 Latest modification.
 */
 
 #define KRUSKAL_MAXDIMENSION 10
@@ -135,16 +135,6 @@ class_create (MDSVecs, Ordered);
 
 MDSVecs MDSVecs_create (void);
 
-#if 0
-/************** class Preference ****************************************/
-
-
-#define Preference_members TableOfReal_members
-#define Preference_methods TableOfReal_methods
-class_create (Preference, TableOfReal);
-
-Preference Preference_create (long numberOfRows, long numberOfColumns);
-#endif
 
 /*********** class ContingencyTable ***********************************/
 

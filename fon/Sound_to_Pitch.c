@@ -61,7 +61,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	long nsamp_period, halfnsamp_period;   /* Number of samples in longest period. */
 	long brent_ixmax, brent_depth;
 	double brent_accuracy;   /* Obsolete. */
-	struct NUMfft_Table_d fftTable = { 0 };
+	struct NUMfft_Table fftTable = { 0 };
 
 	Melder_assert (maxnCandidates >= 2);
 	Melder_assert (method >= AC_HANNING && method <= FCC_ACCURATE);
@@ -182,7 +182,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		frame = NUMdmatrix (1, my ny, 1, nsampFFT); cherror
 		windowR = NUMdvector (1, nsampFFT); cherror
 		window = NUMdvector (1, nsamp_window); cherror
-		NUMfft_Table_init_d (& fftTable, nsampFFT); cherror
+		NUMfft_Table_init (& fftTable, nsampFFT); cherror
 		ac = NUMdvector (1, nsampFFT); cherror
 
 		/*
@@ -204,14 +204,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 		* Compute the normalized autocorrelation of the window.
 		*/
 		for (i = 1; i <= nsamp_window; i ++) windowR [i] = window [i];
-		NUMfft_forward_d (& fftTable, windowR);
+		NUMfft_forward (& fftTable, windowR);
 		windowR [1] *= windowR [1];   /* DC component. */
 		for (i = 2; i < nsampFFT; i += 2) {
 			windowR [i] = windowR [i] * windowR [i] + windowR [i+1] * windowR [i+1];
 			windowR [i + 1] = 0.0;   /* Power spectrum: square and zero. */
 		}
 		windowR [nsampFFT] *= windowR [nsampFFT];   /* Nyquist frequency. */
-		NUMfft_backward_d (& fftTable, windowR);   /* Autocorrelation. */
+		NUMfft_backward (& fftTable, windowR);   /* Autocorrelation. */
 		for (i = 2; i <= nsamp_window; i ++) windowR [i] /= windowR [1];   /* Normalize. */
 		windowR [1] = 1.0;   /* Normalize. */
 
@@ -321,14 +321,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 				ac [i] = 0.0;
 			}
 			for (long channel = 1; channel <= my ny; channel ++) {
-				NUMfft_forward_d (& fftTable, frame [channel]);   /* Complex spectrum. */
+				NUMfft_forward (& fftTable, frame [channel]);   /* Complex spectrum. */
 				ac [1] += frame [channel] [1] * frame [channel] [1];   /* DC component. */
 				for (i = 2; i < nsampFFT; i += 2) {
 					ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1]; /* Power spectrum. */
 				}
 				ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   /* Nyquist frequency. */
 			}
-			NUMfft_backward_d (& fftTable, ac);   /* Autocorrelation. */
+			NUMfft_backward (& fftTable, ac);   /* Autocorrelation. */
 
 			/*
 			 * Normalize the autocorrelation to the value with zero lag,
@@ -437,7 +437,7 @@ end:
 	NUMdvector_free (windowR, 1);
 	NUMdvector_free (r, - nsamp_window);
 	NUMlvector_free (imax, 1);
-	NUMfft_Table_free_d (& fftTable);
+	NUMfft_Table_free (& fftTable);
 	iferror forget (thee);
 	return thee;
 }

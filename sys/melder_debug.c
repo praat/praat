@@ -1,6 +1,6 @@
 /* melder_debug.c
  *
- * Copyright (C) 2000-2007 Paul Boersma
+ * Copyright (C) 2000-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2007/08/26
+ * pb 2008/01/26
  */
 
 #include "melder.h"
@@ -50,6 +50,7 @@ the behaviour of that program changes in the following way:
 20: trace PortAudio
 21: Mac: list supported document formats when printing
 22: UTF-8 tests in logo
+23: recognize special chunks in WAV files
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

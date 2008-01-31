@@ -1,6 +1,6 @@
 /* Cepstrumc_def.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,25 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20080122 Version 1: float -> double
 */
 
 #define ooSTRUCT Cepstrumc_Frame
 oo_DEFINE_STRUCT (Cepstrumc_Frame)
 
 	oo_INT (nCoefficients)
-	oo_FLOAT_VECTOR_FROM (c, 0, my nCoefficients)
+	#if oo_READING_BINARY
+		if (localVersion == 0)
+		{
+			oo_FLOAT_VECTOR_FROM (c, 0, my nCoefficients)
+		}
+		else
+		{
+			oo_DOUBLE_VECTOR_FROM (c, 0, my nCoefficients)
+		}
+	#else
+		oo_DOUBLE_VECTOR_FROM (c, 0, my nCoefficients)
+	#endif
 	
 oo_END_STRUCT (Cepstrumc_Frame)
 #undef ooSTRUCT

@@ -1,6 +1,6 @@
 /* Table_extensions.c
 	 *
- * Copyright (C) 1997-2007 David Weenink
+ * Copyright (C) 1997-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20040113 Added comment header for Peterson&Barney data.
  djmw 20040512 Corrected Peterson&Barney ARPABET-labeling.
  djmw 20041213 Added Table_createFromWeeninkData.
+ djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset
 */
 /*	speaker type (m|w|c), sex(m|f), id, vowel_number, vowel_label
 	F0, F1, F2, F3
@@ -64,9 +65,12 @@ Table Table_createFromPetersonBarneyData (void)
 	wchar_t *columnLabels[9] = 
 		{L"Type", L"Sex", L"Speaker", L"Vowel", L"IPA", L"F0", L"F1", L"F2", L"F3"};
 	wchar_t *type[3] = {L"m", L"w", L"c"};
-	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"aa", L"ao", L"uh", L"uw", L"ah", L"er"};
-	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u", 
-		L"\\vt", L"\\er\\hr"};
+// Wrong order before 20080125
+//	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"aa", L"ao", L"uh", L"uw", L"ah", L"er"};
+//	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u", 
+//		L"\\vt", L"\\er\\hr"};
+	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"ah", L"aa", L"ao", L"uh", L"uw", L"er"};
+	wchar_t *ipa[10] = {L"i", L"\\ic", L"e", L"\\ae", L"\\vt", L"\\as", L"o", L"\\hs", L"u", L"\\er"};
 	wchar_t *sex[2] = {L"m", L"f"};
 	struct pbdatum {
 		short star; /* was there a * in front of the vowel-type? */

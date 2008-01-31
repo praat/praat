@@ -1,6 +1,6 @@
 /* MDS.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20071022 Removed unused code.
  djmw 20071106 drawSplines: to wchar_t
+ djmw 20071201 Melder_warning<n>
+ djmw 20071213 Removed Preference.
 */
 
 #include "SVD.h"
@@ -116,7 +118,7 @@ static int NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom,
 		! (atmp = NUMdvector (ifrom, ito)) ||
 		! (itmp = NUMlvector (ifrom, ito))) goto end;
 	
-	NUMindexx_d (data + ifrom - 1, n, indx + ifrom - 1);
+	NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
 		
 	if (! ascending)
 	{
@@ -1043,7 +1045,7 @@ Configuration Covariance_to_Configuration (Covariance me, long numberOfDimension
 	{
 		for (j = 1; j <= my ny; j++) a[i][j] = my z[i][j];
 	}
-	NUMprincipalComponents_d (a, my nx, numberOfDimensions, thy data);
+	NUMprincipalComponents (a, my nx, numberOfDimensions, thy data);
 	
 end:
 
@@ -1067,7 +1069,7 @@ Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensi
 	{
 		for (j = 1; j <= my ny; j++) a[i][j] = my z[i][j];
 	}
-	NUMprincipalComponents_d (a, my nx, numberOfDimensions, thy data);
+	NUMprincipalComponents (a, my nx, numberOfDimensions, thy data);
 	
 end:
 
@@ -1298,21 +1300,6 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 	return thee;
 }
 
-#if 0
-/********************  PREFERENCE ************************************/
-
-class_methods (Preference, TableOfReal)
-class_methods_end
-
-Preference Preference_create (long numberOfRows, long numberOfColumns)
-{
-	Preference me = new (Preference);
-	
-	if (me == NULL) return NULL;
-	if (! TableOfReal_init (me, numberOfRows, numberOfColumns)) forget (me);
-	return me;
-}
-#endif
 
 /**************************  CONFUSIONS **************************************/
 
@@ -1444,8 +1431,8 @@ int Dissimilarity_getAdditiveConstant (I, double *c)
 		}
 	}
 	
-	NUMdoubleCentre_d (wdsqrt, 1, nPoints, 1, nPoints);
-	NUMdoubleCentre_d (wd, 1, nPoints, 1, nPoints);
+	NUMdoubleCentre (wdsqrt, 1, nPoints, 1, nPoints);
+	NUMdoubleCentre (wd, 1, nPoints, 1, nPoints);
 	
 	/*
 		Calculate the B matrix according to eq. 6
@@ -1465,7 +1452,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c)
 		Get eigenvalues and sort them descending
 	*/
 	
-	if (! NUMeigensystem_d (b, nPoints2, NULL, eigenvalue) ||
+	if (! NUMeigensystem (b, nPoints2, NULL, eigenvalue) ||
 		eigenvalue[1] <= 0) goto end;
 	*c = eigenvalue[1];
 	status = 1;
@@ -1593,8 +1580,8 @@ Dissimilarity Similarity_to_Dissimilarity (Similarity me,
 	
 	if (maximumDissimilarity <= 0) maximumDissimilarity = max;
 
-	if (maximumDissimilarity < max) Melder_warning 
-		("Similarity_to_Dissimilarity: Your maximumDissimilarity is "
+	if (maximumDissimilarity < max) Melder_warning1 
+		(L"Similarity_to_Dissimilarity: Your maximumDissimilarity is "
 		"smaller than the maximum similarity. Some data may be lost.");
 
 	for (i = 1; i <= nxy; i++)
@@ -1622,7 +1609,7 @@ Distance Dissimilarity_to_Distance (Dissimilarity me, int scale)
 	if (scale == MDS_ORDINAL && 
 		! Dissimilarity_getAdditiveConstant (me, &additiveConstant))
 	{
-		Melder_warning ("Dissimilarity_to_Distance: could not determine " 
+		Melder_warning1 (L"Dissimilarity_to_Distance: could not determine " 
 			"\"additive constant\", the average dissimilarity was used as "
 			"its value.");
 	}
@@ -1789,8 +1776,7 @@ Configuration Distance_to_Configuration_torsca (Distance me,
 	if (! (sp = Distance_to_ScalarProduct (me, 0))) return NULL;
 	if (! (thee = Configuration_create (my numberOfRows, numberOfDimensions)) ||
 		! TableOfReal_copyLabels (me, thee, 1, 0) ||
-		! NUMprincipalComponents_d (sp->data, my numberOfRows, 
-			numberOfDimensions, thy data))
+		! NUMprincipalComponents (sp->data, my numberOfRows, numberOfDimensions, thy data))
 	{
 		forget (thee);
 	}
@@ -2016,7 +2002,7 @@ Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee,
 		}
 	}
 		
-	NUMmonotoneRegression_d (distance, nProximities, fit);
+	NUMmonotoneRegression (distance, nProximities, fit);
 	
 	/*
 		Fill Distance with monotone regressed distances
@@ -2205,7 +2191,7 @@ int ScalarProducts_to_Configuration_ytl (ScalarProducts me,
 								  yinv P[i] yinv'
 	*/
 
-	if (! NUMpseudoInverse_d (y, nPoints, numberOfDimensions, yinv, 1e-14))
+	if (! NUMpseudoInverse (y, nPoints, numberOfDimensions, yinv, 1e-14))
 		goto end;
 /*    for (i = 1;i <= nPoints; i++)Melder_info ("yinv[1][%ld] %g",i,y[1][i]);*/
 	for (i = 1; i <= numberOfSources; i++)
@@ -2252,7 +2238,7 @@ int ScalarProducts_to_Configuration_ytl (ScalarProducts me,
 		}
 	}
 	
-	if (! NUMeigensystem_d (a, numberOfSources, evec, eval)) goto end;
+	if (! NUMeigensystem (a, numberOfSources, evec, eval)) goto end;
 	
 	for (i = 1; i <= numberOfSources; i++)
 	{
@@ -2270,7 +2256,7 @@ int ScalarProducts_to_Configuration_ytl (ScalarProducts me,
 		Is the following still correct??? eigensystem was not sorted??
 	*/
 
-	if (! NUMeigensystem_d (cl, numberOfDimensions, K, NULL)) goto end;
+	if (! NUMeigensystem (cl, numberOfDimensions, K, NULL)) goto end;
 
 	/*
 		Now get the configuration: X = Y.K
@@ -2740,7 +2726,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof
 		V^-1 does not exist -> get Moore-Penrose inverse.
 	*/
 	
-	if (! NUMpseudoInverse_d (v, nPoints, nPoints, vplus, tol)) goto end;
+	if (! NUMpseudoInverse (v, nPoints, nPoints, vplus, tol)) goto end;
 
 	for (iter = 1; iter <= numberOfIterations; iter++)
 	{
@@ -3110,8 +3096,8 @@ static double func (I, const double p[])
 		Normalize
 	*/
 	
-	NUMcentreColumns_d (x, 1, numberOfPoints, 1, numberOfDimensions, NULL);
-	NUMnormalize_d (x, numberOfPoints, numberOfDimensions, 
+	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, NULL);
+	NUMnormalize (x, numberOfPoints, numberOfDimensions, 
 		sqrt (numberOfPoints));
 
 	/*
@@ -3641,7 +3627,7 @@ static int indscal_iteration_tenBerge (ScalarProducts zc, Configuration xc,
 			solution[k] = x[k][h];
 		}
 		
-		if (! NUMdominantEigenvector_d (wsih, nPoints, solution, &lambda,
+		if (! NUMdominantEigenvector (wsih, nPoints, solution, &lambda,
 			tolerance))
 		{
 			 forget (sprc); goto end;
@@ -4445,12 +4431,12 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		start = end;
 		if (value < low || value > high)
 		{
-			Melder_warning ("drawSplines: knots must be in interval (%f, %f)", low, high);
+			Melder_warning5 (L"drawSplines: knots must be in interval (", Melder_double (low), L", ", Melder_double (high), L")");
 			return;
 		}
 		if (numberOfKnots == 100) 
 		{
-			Melder_warning ("drawSplines: too many knots (101)");
+			Melder_warning1 (L"drawSplines: too many knots (101)");
 			return;
 		}
 	    knot[++numberOfKnots] = value;

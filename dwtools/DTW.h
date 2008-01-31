@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070304 Latest modification.
+ djmw 20071204 Latest modification.
 */
 
 #ifndef _Spectrogram_h_
@@ -38,6 +38,9 @@
 #endif
 #ifndef _DurationTier_h
 	#include "DurationTier.h"
+#endif
+#ifndef _Sound_h
+	#include "Sound.h"
 #endif
 
 #include "DTW_def.h"
@@ -101,12 +104,17 @@ void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
 
 void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
-	
+void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);	
 void DTW_pathRemoveRedundantNodes (DTW me);
 void DTW_pathQueryRecode (DTW me);
 
 void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
 	double dmin, double dmax, int garnish);
+	
+void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+	double ymin, double ymax, int garnish);
+void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+	double ymin, double ymax, double tx, int garnish);
 	
 Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end);
 Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy);

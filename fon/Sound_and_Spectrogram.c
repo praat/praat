@@ -60,7 +60,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	long binWidth_samples;
 	double duration = my dx * (double) my nx, t1, windowssq = 0.0, binWidth_hertz;
 
-	struct NUMfft_Table_d fftTable = { 0 };
+	struct NUMfft_Table fftTable = { 0 };
 
 	/*
 	 * Compute the time sampling.
@@ -103,7 +103,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	frame = NUMdvector (1, nsampFFT); cherror
 	spec = NUMdvector (1, nsampFFT); cherror
 	window = NUMdvector (1, nsamp_window); cherror
-	NUMfft_Table_init_d (& fftTable, nsampFFT); cherror
+	NUMfft_Table_init (& fftTable, nsampFFT); cherror
 
 	Melder_progress1 (0.0, L"Sound to Spectrogram...");
 	for (i = 1; i <= nsamp_window; i ++) {
@@ -157,7 +157,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 
 			/* Compute Fast Fourier Transform of the frame. */
 
-			NUMfft_forward_d (& fftTable, frame);   /* Complex spectrum. */
+			NUMfft_forward (& fftTable, frame);   /* Complex spectrum. */
 
 			/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
 
@@ -183,7 +183,7 @@ end:
 	NUMdvector_free (frame, 1);
 	NUMdvector_free (spec, 1);
 	NUMdvector_free (window, 1);
-	NUMfft_Table_free_d (& fftTable);
+	NUMfft_Table_free (& fftTable);
 	iferror forget (thee);
 	return thee;
 }

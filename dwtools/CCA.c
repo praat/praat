@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,8 +171,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 		Centre the data and svd it.
 	*/
 
-	NUMcentreColumns_d (uy, 1, n, 1, ny, NULL);
-	NUMcentreColumns_d (ux, 1, n, 1, nx, NULL);
+	NUMcentreColumns (uy, 1, n, 1, ny, NULL);
+	NUMcentreColumns (ux, 1, n, 1, nx, NULL);
 
 	if (! SVD_compute (svdy) || ! SVD_compute (svdx)) goto end;
 
@@ -252,8 +252,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 	/*
 		Normalize eigenvectors.
 	*/
-	NUMnormalizeRows_d (thy y -> eigenvectors, numberOfCoefficients, ny, 1);
-	NUMnormalizeRows_d (thy x -> eigenvectors, numberOfCoefficients, nx, 1);
+	NUMnormalizeRows (thy y -> eigenvectors, numberOfCoefficients, ny, 1);
+	NUMnormalizeRows (thy x -> eigenvectors, numberOfCoefficients, nx, 1);
 	
 end:
 

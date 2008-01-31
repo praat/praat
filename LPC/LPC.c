@@ -1,6 +1,6 @@
 /* LPC.c
  *
- * Copyright (C) 1994-2006 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20060510 LPC_drawPoles error cleared if something goes wrong.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
+ djmw 20080122 float -> double
 */
 
 #include "LPC_and_Polynomial.h"
@@ -60,6 +61,7 @@ static void info (I)
 }
 
 class_methods (LPC, Sampled)
+	us -> version = 1;
 	class_method_local (LPC, destroy)
 	class_method_local (LPC, equal)
 	class_method_local (LPC, copy)

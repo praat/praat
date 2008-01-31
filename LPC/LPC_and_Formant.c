@@ -1,6 +1,6 @@
 /* LPC_and_Formant.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20030616 Formant_Frame_into_LPC_Frame: remove formant with f >= Nyquist +
  		change lpc indexing from -1..m
+ djmw 20080122 float -> double
 */
 
 #include "LPC_and_Formant.h"
@@ -119,7 +120,6 @@ end:
 
 Formant LPC_to_Formant (LPC me, double margin)
 {
-	char *proc = "LPC_to_Formant";
 	Formant thee = NULL;
 	double samplingFrequency = 1.0 / my samplingPeriod;
 	int nmax = my maxnCoefficients;
@@ -159,7 +159,7 @@ end:
 
 	(void) Melder_progress1 (1.0, NULL);
 	
-	if (err > 0) Melder_warning ("%s: %d formant frames out of %d suspect.", proc, err, my nx);
+	if (err > 0) Melder_warning4 (Melder_integer (err), L" formant frames out of ", Melder_integer (my nx), L" suspect.");
 	if (Melder_hasError()) forget (thee);
 	return thee;
 }

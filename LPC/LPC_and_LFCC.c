@@ -68,7 +68,7 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee)
 	a[1] = -c[1];
 	for (i=2; i <= n; i++)
 	{
-		double ai = c[i] * i;
+		float ai = c[i] * i;
 		for (j=1; j < i; j++)
 		{
 			ai += a[j] * c[i - j] * (i - j);

@@ -1,6 +1,6 @@
 /* Sound_extensions.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
  djmw 20070129 Warning added in changeGender_old.
  djmw 20071022 Possible (bug?) correction in Sound_createShepardToneComplex
  djmw 20071030 Sound_preEmphasis: no pre-emphasis above the Nyquist frequency.
+ djmw 20071202 Melder_warning<n>
+ djmw 20080122 float -> double
 */
 
 #include "Intensity_extensions.h"
@@ -131,7 +133,7 @@ static void u1write (Sound me, FILE *f, long *nClip)
 static void u1read (Sound me, FILE *f)
 {
 	long i; double *s = my z[1];
-	for (i=1; i <= my nx; i++) s[i] = bingetu1 (f) / 128.0 - 1.0;
+	for (i = 1; i <= my nx; i++) s[i] = bingetu1 (f) / 128.0 - 1.0;
 }
 
 static void i2write (Sound me, FILE *f, int littleEndian, long *nClip)
@@ -152,7 +154,7 @@ static void i2read (Sound me, FILE *f, int littleEndian)
 {
 	long i; double *s = my z[1];
 	int (*get) (FILE *) = littleEndian ? bingeti2LE : bingeti2;
-	for (i=1; i <= my nx; i++) s[i] = get (f) / 32768.;
+	for (i = 1; i <= my nx; i++) s[i] = get (f) / 32768.;
 }
 
 static void u2write (Sound me, FILE *f, int littleEndian, long *nClip)
@@ -173,7 +175,7 @@ static void u2read (Sound me, FILE *f, int littleEndian)
 {
 	long i; double *s = my z[1];
 	unsigned int (*get) (FILE *) = littleEndian ? bingetu2LE : bingetu2;
-	for (i=1; i <= my nx; i++) s[i] = get (f) / 32768.0 - 1.0;
+	for (i = 1; i <= my nx; i++) s[i] = get (f) / 32768.0 - 1.0;
 }
 
 static void i4write (Sound me, FILE *f, int littleEndian, long *nClip)
@@ -181,7 +183,7 @@ static void i4write (Sound me, FILE *f, int littleEndian, long *nClip)
 	long i; double *s = my z[1]; double min = -2147483648.0, max = 2147483647.0;
 	void (*put) (long, FILE *) = littleEndian ? binputi4LE : binputi4;
 	*nClip = 0;
-	for (i=1; i <= my nx; i++)
+	for (i = 1; i <= my nx; i++)
 	{
 		double sample = floor (s[i] * 2147483648.0 + 0.5);
 		if (sample > max) { sample = max; (*nClip)++; }
@@ -194,7 +196,7 @@ static void i4read (Sound me, FILE *f, int littleEndian)
 {
 	long i; double *s = my z[1];
 	long (*get) (FILE *) = littleEndian ? bingeti4LE : bingeti4;
-	for (i=1; i <= my nx; i++) s[i] = get (f) / 2147483648.;
+	for (i = 1; i <= my nx; i++) s[i] = get (f) / 2147483648.;
 }
 
 
@@ -216,14 +218,14 @@ static void u4read (Sound me, FILE *f, int littleEndian)
 {
 	long i; double *s = my z[1];
 	long (*get) (FILE *) = littleEndian ? bingeti4LE : bingeti4;
-	for (i=1; i <= my nx; i++) s[i] = get (f) / 2147483648.0 - 1.0;
+	for (i = 1; i <= my nx; i++) s[i] = get (f) / 2147483648.0 - 1.0;
 }
 
 
 static void r4write (Sound me, FILE *f)
 {
 	long i; double *s = my z[1];
-	for (i=1; i <= my nx; i++) binputr4 (s[i], f);
+	for (i = 1; i <= my nx; i++) binputr4 (s[i], f);
 }
 
 static void r4read (Sound me, FILE *f)
@@ -240,13 +242,6 @@ static long fileLengthBytes (FILE *f)
 		fseek (f, 0L, SEEK_END) || (end = ftell (f)) < 0 ||
 		fseek (f, current, SEEK_SET)) end = begin = 0;
 	return end - begin;
-}
-
-static void warning (char *p, long nClip, long nSamp)
-{
-	Melder_warning ("%s: %ld from %ld samples have been clipped.\n"
-		"Advice: you could scale the amplitudes or write to a binary file.",  
-		p, nClip, nSamp);
 }
 
 /* Old TIMIT sound-file format */
@@ -370,7 +365,8 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 	else if (nBytesPerSample == 4 &&   unSigned) u4write (me, f, littleEndian, & nClip);
 	else if (nBytesPerSample == 4 && ! unSigned) i4write (me, f, littleEndian, & nClip);
 	else if (nBytesPerSample == 4 && strequ (format, "float")) r4write (me, f);
-	if (nClip > 0) warning ("Sound_writeToRawAudioFile", nClip, my nx);
+	if (nClip > 0) Melder_warning4 (Melder_integer (nClip), L" from ", Melder_integer (my nx), L" samples have been clipped.\n"
+		"Advice: you could scale the amplitudes or write to a binary file.");
 	if (feof (f) || ferror (f))
 	{ 
 		Melder_error1 (L"Sound_writeToRawFile: not completed"); goto error;
@@ -415,10 +411,10 @@ static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm)
 		building and programming systems using Dialogic and Related 
 		Hardware", 272-276.
 */
-static double dialogic_adpcm_decode (struct dialogic_adpcm *adpcm)
+static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm)
 {
 	short diff, e, ss, s;
-	double scale = 32767.0 / 32768.0 / 2048.0;
+	float scale = 32767.0 / 32768.0 / 2048.0;
 
 	/*
 		nibble = B3 B2 B1 B0 (4 lower bits)
@@ -550,8 +546,7 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 {
 	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
-	double p;
-	double *s = my z[1];
+	double p, *s = my z[1];
 	
 	if (me == NULL) return NULL;
 	
@@ -616,7 +611,7 @@ Sound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, dou
 {
 	if (firstFrequency + (numberOfComponents - 1) * frequencyDistance > samplingFrequency / 2)
 	{
-		Melder_warning ("Sound_createSimpleToneComplex: frequency of (some) components too high.");
+		Melder_warning1 (L"Sound_createSimpleToneComplex: frequency of (some) components too high.");
 		numberOfComponents = 1.0 + (samplingFrequency / 2 - firstFrequency) / frequencyDistance;
 	}
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
@@ -629,11 +624,10 @@ Sound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTim
 {
 	if (firstFrequency + (numberOfComponents - 1) * firstFrequency > samplingFrequency/2)
 	{
-		Melder_warning ("Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
+		Melder_warning1 (L"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
 		numberOfComponents = 1.0 + (samplingFrequency / 2 - firstFrequency) / firstFrequency;
 	}
-	if (mistunedComponent > numberOfComponents) Melder_warning ("Sound_createMistunedHarmonicComplex:"
-		"mistuned component too high.");
+	if (mistunedComponent > numberOfComponents) Melder_warning1 (L"Sound_createMistunedHarmonicComplex: mistuned component too high.");
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
 		firstFrequency, numberOfComponents, firstFrequency, mistunedComponent,
 		mistuningFraction, scaleAmplitudes);
@@ -823,7 +817,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 	Sound me; long i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
 	double lmin = pow (10, - amplitudeRange / 10);
 	double twoPi = 2.0 * NUMpi, f = baseFrequency * (1 + frequencyShiftFraction);
-	if (nComponents < 2) Melder_warning ("Sound_createShepardTone: only 1 component.");
+	if (nComponents < 2) Melder_warning1 (L"Sound_createShepardTone: only 1 component.");
 	Melder_casual ("Sound_createShepardTone: %ld components.", nComponents);
 	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return NULL;
 	
@@ -1013,14 +1007,14 @@ void Sounds_multiply (Sound me, Sound thee)
 	long i, n = my nx < thy nx ? my nx : thy nx;
 	double *s1 = my z[1], *s2 = thy z[1];
 	
-	for (i=1; i <= n; i++) s1[i] *= s2[i];
+	for (i = 1; i <= n; i++) s1[i] *= s2[i];
 }
 
 
 double Sound_power (Sound me)
 {
-	double e = 0; double *amplitude = my z[1]; long i;
-	for (i=1; i <= my nx; i++) e += amplitude[i] * amplitude[i];
+	double e = 0, *amplitude = my z[1]; long i;
+	for (i = 1; i <= my nx; i++) e += amplitude[i] * amplitude[i];
 	return sqrt (e) * my dx / (my xmax - my xmin);
 }
 
@@ -1239,7 +1233,6 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	double pitchRangeMultiplier, // any number 
 	double durationMultiplier) // > 0
 {
-	char *proc = "Sound_changeGender";
 	Sound sound = NULL, thee = NULL; 
 	Pitch pitch = NULL;
 	PointProcess pulses = NULL;
@@ -1284,7 +1277,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	}
 	else if (pitchMultiplier != 1)
 	{
-		Melder_warning ("%s: Pitch has not been changed because the sound was entirely voiceless.", proc);	
+		Melder_warning1 (L"Pitch has not been changed because the sound was entirely voiceless.");	
 	}
 	duration = DurationTier_create (my xmin, my xmax);
 	if (duration == NULL) goto end;	
@@ -1390,7 +1383,6 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
 	double new_pitch, double pitchRangeFactor, double durationFactor)
 {
-	char *proc = "Sound_changeGender";
 	Sound sound = NULL, thee = NULL; 
 	Pitch pitch = NULL;
 	PointProcess pulses = NULL;
@@ -1439,7 +1431,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	}
 	else
 	{
-		Melder_warning ("%s: There were no voiced segments found.", proc);	
+		Melder_warning1 (L"There were no voiced segments found.");	
 	}
 	duration = DurationTier_create (my xmin, my xmax);
 	if (duration == NULL) goto end;	
@@ -1484,5 +1476,77 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 }
 
 /*  End of compatibility with Sound_changeGender and Sound_and_Pitch_changeGender ***********************************/
+
+/* Draw a sound vertically, from bottom to top */
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, int garnish)
+{
+	long itmin, itmax, it;
+	double t1, t2, a1, a2;
+	double xmin, xmax, ymin, ymax;
+	
+	if (tmin == tmax)
+	{
+		tmin = my xmin; tmax = my xmax;
+	}
+	Matrix_getWindowSamplesX (me, tmin, tmax, &itmin, &itmax);
+	if (amin == amax)
+	{
+		Matrix_getWindowExtrema (me, itmin, itmax, 1, my ny, &amin, &amax);
+		if (amin == amax)
+		{
+			amin -= 1.0; amax += 1.0;
+		}
+	}
+	/* In bottom-to-top-drawing the maximum amplitude is on the left, minimum on the right */
+	if (direction == FROM_BOTTOM_TO_TOP)
+	{
+		xmin = amax; xmax = amin; ymin = tmin; ymax = tmax;
+	}
+	else if (direction == FROM_TOP_TO_BOTTOM)
+	{
+		xmin = amin; xmax = amax; ymin = tmax; ymax = tmin;
+	}
+	else if (direction == FROM_RIGHT_TO_LEFT)
+	{
+		xmin = tmax; xmax = tmin; ymin = amin; ymax = amax;
+	}
+	else //if (direction == FROM_LEFT_TO_RIGHT)
+	{
+		xmin = tmin; xmax = tmax; ymin = amin; ymax = amax;
+	}
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	a1 = my z[1][itmin];
+	t1 = Sampled_indexToX (me, itmin);
+	for (it = itmin+1; it <= itmax; it++)
+	{
+		t2 = Sampled_indexToX (me, it);
+		a2 = my z[1][it];
+		if (direction == FROM_BOTTOM_TO_TOP || direction == FROM_TOP_TO_BOTTOM)
+			Graphics_line (g, a1, t1, a2, t2);
+		else
+			Graphics_line (g, t1, a1, t2, a2);
+		a1 = a2; t1 = t2; 
+	}
+	if (garnish)
+	{	
+		if (direction == FROM_BOTTOM_TO_TOP)
+		{
+			if (amin * amax < 0) Graphics_markBottom (g, 0, 0, 1, 1, NULL);
+		}
+		else if (direction == FROM_TOP_TO_BOTTOM)
+		{
+			if (amin * amax < 0) Graphics_markTop (g, 0, 0, 1, 1, NULL);
+		}
+		else if (direction == FROM_RIGHT_TO_LEFT)
+		{
+			if (amin * amax < 0) Graphics_markRight (g, 0, 0, 1, 1, NULL);
+		}
+		else //if (direction == FROM_LEFT_TO_RIGHT)
+		{
+			if (amin * amax < 0) Graphics_markLeft (g, 0, 0, 1, 1, NULL);
+		}
+		Graphics_rectangle (g, xmin, xmax, ymin, ymax);
+	}
+}
 
 /* End of file Sound_extensions.c */

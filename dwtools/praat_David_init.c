@@ -1,6 +1,6 @@
 /* praat_David_init.c
  * 
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
  djmw 20070304 Latest modification.
  djmw 20070903 Melder_new<1...>
  djmw 20071011 REQUIRE requires L"".
+ djmw 20071202 Melder_warning<n>
 */
 
 #include "praat.h"
@@ -103,6 +104,7 @@ extern machar_Table NUMfpp;
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
 #include "TableOfReal_and_SVD.h"
+#include "VowelGenerator.h"
 
 static wchar_t *QUERY_BUTTON   = L"Query -                ";
 static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
@@ -1026,6 +1028,51 @@ END
 	
 /********************** DTW *******************************************/
 
+FORM (DTW_and_Sounds_draw, L"DTW & Sounds: Draw", L"DTW & Sounds: Draw...")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	WHERE (SELECTED && CLASS == classSound)
+	{
+		if (s1) s2 = OBJECT; else s1 = OBJECT;
+	}
+	praat_picture_open ();
+	DTW_and_Sounds_draw (ONLY (classDTW), s2, s1, GRAPHICS,
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"), 
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),  
+		GET_INTEGER (L"Garnish"));
+	praat_picture_close ();
+	return 1;
+END
+
+FORM (DTW_and_Sounds_drawWarpX, L"DTW & Sounds: Draw warp (x)", L"DTW & Sounds: Draw warp (x)...")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	REAL (L"Time (s)", L"0.1")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	WHERE (SELECTED && CLASS == classSound)
+	{
+		if (s1) s2 = OBJECT; else s1 = OBJECT;
+	}
+	praat_picture_open ();
+	DTW_and_Sounds_drawWarpX (ONLY (classDTW), s2, s1, GRAPHICS,
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"), 
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),  
+		GET_REAL (L"Time"), GET_INTEGER (L"Garnish"));
+	praat_picture_close ();
+	return 1;
+END
+
 void DTW_constraints_addCommonFields (void *dia)
 {
 	Any radio;
@@ -1091,6 +1138,21 @@ DO
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 		GET_REAL (L"Minimum"), GET_REAL (L"Maximum"),
 		GET_INTEGER (L"Garnish")))
+END
+
+FORM (DTW_drawWarpX, L"DTW: Draw warp (x)", L"DTW: Draw warp (x)...")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	REAL (L"Time (s)", L"0.1")
+    BOOLEAN (L"Garnish", 0);
+	OK
+DO
+	EVERY_DRAW (DTW_drawWarpX (OBJECT, GRAPHICS,
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_REAL (L"Time"), GET_INTEGER (L"Garnish")))
 END
 
 FORM (DTW_getPathY, L"DTW: Get time along path", L"DTW: Get time along path...")
@@ -1207,7 +1269,7 @@ END
 /******************** Eigen ********************************************/
 
 DIRECT (Eigen_drawEigenvalues_scree)
-	Melder_warning ("The command \"Draw eigenvalues (scree)...\" has been "
+	Melder_warning1 (L"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
 END
@@ -3900,6 +3962,11 @@ DO
 		praat_dataChanged (OBJECT);
 END	
 
+DIRECT (VowelGenerator_create)
+	VowelGenerator vg = VowelGenerator_create (theCurrentPraat -> topShell, L"VowelGenerator", NULL);
+	if (vg == NULL) return 0;
+END
+
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
 {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
@@ -4087,7 +4154,7 @@ void praat_uvafon_David_init (void)
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 		
-	praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
+ praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
     praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
     	praat_addMenuCommand (L"Objects", L"New", L"Create Polynomial...", 0, 1, DO_Polynomial_create);
     	praat_addMenuCommand (L"Objects", L"New", L"Create LegendreSeries...", 0, 1, DO_LegendreSeries_create);
@@ -4102,6 +4169,7 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Pols 1973)...", L"Create TableOfReal...", 1, DO_TableOfReal_createFromPolsData_50males);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Van Nierop 1973)...", L"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_createFromVanNieropData_25females);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
+	praat_addMenuCommand (L"Objects", L"New", L"Create VowelGenerator", 0, praat_HIDDEN, DO_VowelGenerator_create);
 	
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
@@ -4284,6 +4352,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classDTW, 0, L"Draw", 0, 0, 0);
     praat_addAction1 (classDTW, 0, L"Draw path...", 0, 0, DO_DTW_drawPath);
     praat_addAction1 (classDTW, 0, L"Paint distances...", 0, 0, DO_DTW_paintDistances);
+    praat_addAction1 (classDTW, 0, L"Draw warp (x)...", 0, 0, DO_DTW_drawWarpX);
     praat_addAction1 (classDTW, 0, QUERY_BUTTON, 0, 0, 0);
     praat_addAction1 (classDTW, 1, L"Get distance (weighted)", 0, 1, DO_DTW_getWeightedDistance);
 	praat_addAction1 (classDTW, 1, L"Get maximum consecutive steps...", 0, 1, DO_DTW_getMaximumConsecutiveSteps);
@@ -4304,6 +4373,9 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classDTW, 0, L"Swap axes", 0, 0, DO_DTW_swapAxes);
 
 	praat_addAction2 (classDTW, 1, classTextGrid, 1, L"To TextGrid (warp times)", 0, 0, DO_DTW_and_TextGrid_to_TextGrid);
+	
+	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw...", 0, 0, DO_DTW_and_Sounds_draw);
+	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw warp (x)...", 0, 0, DO_DTW_and_Sounds_drawWarpX);
 	
 	praat_Index_init (classStringsIndex);
     praat_addAction1 (classIndex, 0, L"Index help", 0, 0, DO_Index_help);

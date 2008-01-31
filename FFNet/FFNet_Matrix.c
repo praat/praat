@@ -1,6 +1,6 @@
 /* FFNet_Matrix.c
  *
- * Copyright (C) 1997-2002 David Weenink
+ * Copyright (C) 1997-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights)
 		0.5, my nUnitsInLayer[layer]+0.5, my nUnitsInLayer[layer], 1, 1,
 		0.5, my nUnitsInLayer[layer-1]+1+0.5, my nUnitsInLayer[layer-1]+1, 1, 1)
 		 )) return thee;
-	for (i=0; i < layer; i++) node += my nUnitsInLayer[i] + 1;
-	for (i=1; i <= my nUnitsInLayer[layer]; i++, node++)
+	for (i = 0; i < layer; i++) node += my nUnitsInLayer[i] + 1;
+	for (i = 1; i <= my nUnitsInLayer[layer]; i++, node++)
 	{
 		long j, k = 1;
-		for (j=my wFirst[node]; j <= my wLast[node]; j++)
+		for (j = my wFirst[node]; j <= my wLast[node]; j++)
 			thy z[k++][i] = deltaWeights ? my dwi[j] : my w[j];
 	}
 	return thee;	
@@ -53,11 +53,11 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer)
 	if (my nUnitsInLayer[layer-1]+1 != his ny) return Melder_errorp5 (L"FFNet_weightsFromMatrix:"
 		"#rows in Matrix must equal (#units in layer ", Melder_integer (layer-1), L") + 1 (", Melder_integer (my nUnitsInLayer[layer-1] + 1), L").");
 	if (! (thee = Data_copy (me))) return NULL;
-	for (i=0; i < layer; i++) node += thy nUnitsInLayer[i] + 1;
-	for (i=1; i <= thy nUnitsInLayer[layer]; i++, node++)
+	for (i = 0; i < layer; i++) node += thy nUnitsInLayer[i] + 1;
+	for (i = 1; i <= thy nUnitsInLayer[layer]; i++, node++)
 	{
 		long j, k = 1;
-		for (j=thy wFirst[node]; j <= thy wLast[node]; j++, k++)
+		for (j = thy wFirst[node]; j <= thy wLast[node]; j++, k++)
 			 thy w[j] = his z[k][i];
 	}
 	return thee;

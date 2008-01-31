@@ -37,7 +37,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	long numberOfSamples = my nx, i, numberOfFrequencies;
 	double *data = NULL, scaling;
 	double *re, *im;
-	struct NUMfft_Table_d fourierTable = { 0 };
+	struct NUMfft_Table fourierTable = { 0 };
 
 	if (fast) {
 		numberOfSamples = 2;
@@ -45,10 +45,10 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	}
 	numberOfFrequencies = numberOfSamples / 2 + 1;   /* 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2 */
 	data = NUMdvector (1, numberOfSamples); cherror
-	NUMfft_Table_init_d (& fourierTable, numberOfSamples); cherror
+	NUMfft_Table_init (& fourierTable, numberOfSamples); cherror
 
 	for (i = 1; i <= my nx; i ++) data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
-	NUMfft_forward_d (& fourierTable, data); cherror
+	NUMfft_forward (& fourierTable, data); cherror
 	thee = Spectrum_create (0.5 / my dx, numberOfFrequencies); cherror
 	thy dx = 1.0 / (my dx * numberOfSamples);   /* Override. */
 	re = thy z [1]; im = thy z [2];
@@ -70,7 +70,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	}
 end:
 	NUMdvector_free (data, 1);
-	NUMfft_Table_free_d (& fourierTable);
+	NUMfft_Table_free (& fourierTable);
 	iferror forget (thee);
 	return thee;
 }
@@ -98,7 +98,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 	} else {
 		amp [2] = re [my nx] * scaling;
 	}
-	NUMrealft_d (amp, numberOfSamples, -1); cherror
+	NUMrealft (amp, numberOfSamples, -1); cherror
 end:
 	iferror forget (thee);
 	return thee;
@@ -125,7 +125,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 	data [1] = 1;
 	for (i = 1; i <= ndata; i ++)
 		data [i + 1] = a [i];
-	NUMrealft_d (data, nfft, 1); cherror
+	NUMrealft (data, nfft, 1); cherror
 	re = thy z [1], im = thy z [2];
 	re [1] = scale / data [1];
 	im [1] = 0.0;

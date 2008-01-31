@@ -1,6 +1,6 @@
 /* NUMfft_d.c
  *
- * Copyright (C) 1997-2004 David Weenink
+ * Copyright (C) 1997-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,14 @@
 #include "NUMfft_core.h"
 
 
-int NUMforwardRealFastFourierTransform_d (double *data, long n)
+int NUMforwardRealFastFourierTransform (double *data, long n)
 {
-	struct NUMfft_Table_d table_struct;
-	NUMfft_Table_d table = &table_struct;
+	struct NUMfft_Table table_struct;
+	NUMfft_Table table = &table_struct;
 
-	if (!NUMfft_Table_init_d (table, n))
+	if (!NUMfft_Table_init (table, n))
 		return 0;
-	NUMfft_forward_d (table, data);
+	NUMfft_forward (table, data);
 
 	if (n > 1)
 	{
@@ -51,14 +51,14 @@ int NUMforwardRealFastFourierTransform_d (double *data, long n)
 		data[2] = tmp;
 	}
 
-	NUMfft_Table_free_d (table);
+	NUMfft_Table_free (table);
 	return 1;
 }
 
-int NUMreverseRealFastFourierTransform_d (double *data, long n)
+int NUMreverseRealFastFourierTransform (double *data, long n)
 {
-	struct NUMfft_Table_d table_struct;
-	NUMfft_Table_d table = &table_struct;
+	struct NUMfft_Table table_struct;
+	NUMfft_Table table = &table_struct;
 
 	if (n > 1)
 	{
@@ -71,27 +71,27 @@ int NUMreverseRealFastFourierTransform_d (double *data, long n)
 		data[n] = tmp;
 	}
 
-	if (!NUMfft_Table_init_d (table, n)) return 0;
-	NUMfft_backward_d (table, data);
-	NUMfft_Table_free_d (table);
+	if (!NUMfft_Table_init (table, n)) return 0;
+	NUMfft_backward (table, data);
+	NUMfft_Table_free (table);
 	return 1;
 }
 
-void NUMfft_forward_d (NUMfft_Table_d me, double *data)
+void NUMfft_forward (NUMfft_Table me, double *data)
 {
 	if (my n == 1)
 		return;
 	drftf1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-void NUMfft_backward_d (NUMfft_Table_d me, double *data)
+void NUMfft_backward (NUMfft_Table me, double *data)
 {
 	if (my n == 1)
 		return;
 	drftb1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-int NUMfft_Table_init_d (NUMfft_Table_d me, long n)
+int NUMfft_Table_init (NUMfft_Table me, long n)
 {
 	int status = 0;
 	
@@ -108,12 +108,12 @@ int NUMfft_Table_init_d (NUMfft_Table_d me, long n)
 
   end:
 
-	if (Melder_hasError ()) NUMfft_Table_free_d (me);
+	if (Melder_hasError ()) NUMfft_Table_free (me);
 	
 	return status;
 }
 
-void NUMfft_Table_free_d (NUMfft_Table_d me)
+void NUMfft_Table_free (NUMfft_Table me)
 {
 	if (me)
 	{
@@ -122,10 +122,10 @@ void NUMfft_Table_free_d (NUMfft_Table_d me)
 	}
 }
 
-int NUMrealft_d (double *data, long n, int isign)
+int NUMrealft (double *data, long n, int isign)
 {
-	return isign == 1 ? NUMforwardRealFastFourierTransform_d (data, n) :
-		NUMreverseRealFastFourierTransform_d (data, n);
+	return isign == 1 ? NUMforwardRealFastFourierTransform (data, n) :
+		NUMreverseRealFastFourierTransform (data, n);
 }
 
 /* End of file NUMfft.c */

@@ -1,6 +1,6 @@
 /* praat_MDS_init.c
  *
- * Copyright (C) 1992-2007 David Weenink
+ * Copyright (C) 1992-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ static int TabelOfReal_testSorting (I, long rowtoindex)
 	NUMsort2_dd (nc, my data[4], my data[5]);
 
 	/* make index */
-	NUMindexx_d (my data[rowtoindex], nc, index);
+	NUMindexx (my data[rowtoindex], nc, index);
 	for (i = 1; i <= nc; i++) my data[6][i] = index[i];
 	NUMlvector_free (index, 1);
 	return 1;

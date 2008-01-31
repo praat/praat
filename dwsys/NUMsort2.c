@@ -1,6 +1,6 @@
 /* NUMsort.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,39 +149,33 @@ void NUMsort2_ll (long n, long a[], long b[])
 void NUMrank_f (long n, float a[])
 	MACRO_NUMrank(float)
 
-void NUMrank_d (long n, double a[])
+void NUMrank (long n, double a[])
 	MACRO_NUMrank(double)
 
-#undef MACRO_NUMrank
 
-#define MACRO_NUMrankcolumns(TYPE,TS)			\
-{	\
-	long i, j, nr = re - rb + 1, *index = NULL;	\
-	TYPE *v = NULL;	\
-	\
-	v = NUM##TS##vector (1, nr);	\
-	if (v == NULL) return 0;	\
-	index = NUMlvector (1, nr);	\
-	if (index == NULL) goto end;	\
-\
-	for (j = cb; j <= ce; j++)	\
-	{	\
-		for (i = 1; i <= nr; i++) v[i] = m[rb + i - 1][j]; \
-		for (i = 1; i <= nr; i++) index[i] = i;	\
-		NUMsort2_##TS##l (nr, v, index);	\
-		NUMrank_##TS (nr, v);	\
-		for (i = 1; i <= nr; i++) m[rb + index[i] - 1][j] = v[i];	\
-	}	\
-end:	\
-	NUM##TS##vector_free (v, 1);	\
-	NUMlvector_free (index, 1);	\
-	return ! Melder_hasError();	\
+int NUMrankColumns (double **m, long rb, long re, long cb, long ce)
+{
+	long i, j, nr = re - rb + 1, *index = NULL;
+	double *v = NULL;
+
+	v = NUMdvector (1, nr);
+	if (v == NULL) return 0;
+	index = NUMlvector (1, nr);
+	if (index == NULL) goto end;
+
+	for (j = cb; j <= ce; j++)
+	{
+		for (i = 1; i <= nr; i++) v[i] = m[rb + i - 1][j];
+		for (i = 1; i <= nr; i++) index[i] = i;
+		NUMsort2_dl (nr, v, index);
+		NUMrank (nr, v);
+		for (i = 1; i <= nr; i++) m[rb + index[i] - 1][j] = v[i];
+	}
+end:
+	NUMdvector_free (v, 1);
+	NUMlvector_free (index, 1);
+	return ! Melder_hasError();
 }
-
-int NUMrankColumns_d (double **m, long rb, long re, long cb, long ce)
-	MACRO_NUMrankcolumns(double,d)
-
-#undef MACRO_NUMrankcolumns
 
 #define MACRO_NUMindex(TYPE) \
 { \
@@ -265,7 +259,7 @@ int NUMrankColumns_d (double **m, long rb, long re, long cb, long ce)
 void NUMindexx_f (const float a[], long n, long index[])
 	MACRO_NUMindex(float)
 
-void NUMindexx_d (const double a[], long n, long index[])
+void NUMindexx (const double a[], long n, long index[])
 	MACRO_NUMindex(float)
 	
 #undef COMPARELT

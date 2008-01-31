@@ -198,12 +198,12 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			spectral values for the increased number of frequency points.
 		*/
 		
-		if (! NUMspline_d (fl2, specAmp, nfft2, 1e30, 1e30, y2))
+		if (! NUMspline (fl2, specAmp, nfft2, 1e30, 1e30, y2))
 			{ forget (spec); goto cleanup; };
 		for (j=1; j <= nFrequencyPoints; j++)
 		{
 			double f = fminl2 + (j-1) * dfl2;
-			NUMsplint_d (fl2, specAmp, y2, nfft2, f, &al2[j]);
+			NUMsplint (fl2, specAmp, y2, nfft2, f, &al2[j]);
 		}
 		
 		/*

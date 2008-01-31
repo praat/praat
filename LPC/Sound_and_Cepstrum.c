@@ -1,6 +1,6 @@
 /* Sound_and_Cepstrum.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 {
 	Cepstrum thee = NULL;
 	long i, nfft = 2, nfftd2;
-	double *x = NULL, *nx = NULL;
-	double lnxa = 0, qmax;
+	double *x = NULL, *nx = NULL, lnxa = 0, qmax;
 		
 	while (nfft < my nx) nfft *= 2;
 	nfftd2 = nfft / 2;
@@ -61,8 +60,8 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 			and n*x(n) -> NX(f)
 	*/
 
-	NUMforwardRealFastFourierTransform_d (x , nfft);
-	NUMforwardRealFastFourierTransform_d (nx, nfft);
+	NUMforwardRealFastFourierTransform (x , nfft);
+	NUMforwardRealFastFourierTransform (nx, nfft);
 	
 	/*
 		Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
@@ -105,7 +104,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 			results in: n * xhat (n)
 	*/
 		
-	NUMreverseRealFastFourierTransform_d (x , nfft);
+	NUMreverseRealFastFourierTransform (x , nfft);
 
 	/*
 		Step 5: Inverse fft-correction factor: 1/nfftd2 

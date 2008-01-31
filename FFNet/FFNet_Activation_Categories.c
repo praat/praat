@@ -29,7 +29,7 @@
 static long winnerTakesAll (I, const double activation[])
 {
 	iam (FFNet); long i, pos = 1; double max = activation[1];
-	for (i=2; i <= my nOutputs; i++)
+	for (i = 2; i <= my nOutputs; i++)
 	{
 		if (activation[i] > max)
 		{
@@ -41,11 +41,11 @@ static long winnerTakesAll (I, const double activation[])
 
 static long stochastic (I, const double activation[])
 {
-	iam (FFNet); long i; double number;
-	double range = 0, lower = 0;
-	for (i=1; i <= my nOutputs; i++) range += activation[i];
-	number = NUMrandomUniform (0,1)*range;
-	for (i=1; i <= my nOutputs; i++) if (number < (lower += activation[i])) break;
+	iam (FFNet); long i;
+	double number, range = 0, lower = 0;
+	for (i = 1; i <= my nOutputs; i++) range += activation[i];
+	number = NUMrandomUniform (0,1) * range;
+	for (i = 1; i <= my nOutputs; i++) if (number < (lower += activation[i])) break;
 	return i;
 }
 

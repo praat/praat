@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20080122 float -> double
 */
 /* LPC_and_Cepstrumc.c */
 
@@ -48,14 +49,14 @@ void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee)
 	thy gain = exp (2 * c[0]);
 	if (thy nCoefficients == 0) return;
 	a[1] = -c[1];
-	for (i=2; i <= thy nCoefficients; i++) c[i] *= i;
-	for (i=2; i <= thy nCoefficients; i++)
+	for (i = 2; i <= thy nCoefficients; i++) c[i] *= i;
+	for (i = 2; i <= thy nCoefficients; i++)
 	{
 		a[i] = c[i];
-		for (j=1; j < i; j++) a[i] += a[j] * c[i-j];
+		for (j =1 ; j < i; j++) a[i] += a[j] * c[i-j];
 		a[i] /= -i;
 	}
-	for (i=2; i <= thy nCoefficients; i++) c[i] /= i;
+	for (i = 2; i <= thy nCoefficients; i++) c[i] /= i;
 	
 }
 

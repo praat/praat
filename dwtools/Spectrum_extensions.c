@@ -1,6 +1,6 @@
 /* Spectrum_extensions.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20041124 Changed call to Sound_to_Spectrum.
  djmw 20061218 Introduction of Melder_information<12...9>
  djmw 20071022 phase_unwrap initialize phase = 0.
+ djmw 20080122 float -> double
 */
 
 #include "Spectrum_extensions.h"
@@ -295,7 +296,7 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 		thee = Spectrum_unwrap (me);
 		if (thee == NULL)
 		{
-		    Melder_warning ("Spectrum_drawPhases: Spectrum has not been unwrapped.");
+		    Melder_warning1 (L"Spectrum_drawPhases: Spectrum has not been unwrapped.");
 		    return;
 		}
 	}

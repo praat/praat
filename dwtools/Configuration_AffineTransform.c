@@ -1,6 +1,6 @@
 /* Configuration_AffineTransform.c
  * 
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ static int NUMmaximizeCongruence (double **b, double **a, long nr, long nc,
 	*/
 	
 	evec[1] = 1;
-	if (! NUMdominantEigenvector_d (c, nc, evec, &rho, 1.0e-6)) goto end;
+	if (! NUMdominantEigenvector (c, nc, evec, &rho, 1.0e-6)) goto end;
 	
 	do_steps45 (w, t, c, nc, &f);
 		

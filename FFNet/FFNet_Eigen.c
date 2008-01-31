@@ -1,6 +1,6 @@
 /* FFNet_Eigen.c
  *
- * Copyright (C) 1994-2004 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020712 GPL header
+ djmw 20071202 Melder_warning<n>
 */
 
 #include "FFNet_Eigen.h"
@@ -148,14 +149,14 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
 	}
 	if (we1 == 0 && we2 == 0)
 	{
-		Melder_warning ("We cannot draw the intersection of the neural net decision plane\n"
-			"for unit %ld in layer %ld with the plane spanned by the eigenvectors because \n"
-			"both planes are parallel.", unit, layer);
+		Melder_warning5 (L"We cannot draw the intersection of the neural net decision plane\n"
+			"for unit ", Melder_integer (unit), L" in layer ", Melder_integer (layer), 
+			L" with the plane spanned by the eigenvectors because \nboth planes are parallel.");
 		return;
 	}
 	ni = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, xi, yi);
 	if (ni == 2) Graphics_line (g, xi[1], yi[1], xi[2], yi[2]);
-	else Melder_warning ("There were no intersections in the drawing area.\n"
+	else Melder_warning1 (L"There were no intersections in the drawing area.\n"
 		"Please enlarge the drawing area.");
     Graphics_unsetInner (g);
 }

@@ -1,6 +1,6 @@
 /* Eigen.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,7 +253,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 
 	Eigen_sort (me);
 
-	NUMnormalizeRows_d (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
+	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 
 end:
 
@@ -266,6 +266,24 @@ end:
 	NUMdvector_free (alpha, 1);
 
 	return ! Melder_hasError();
+}
+
+int Eigen_initFromSymmetricMatrix_f (I, float **a, long n)
+{
+	iam (Eigen);
+	double **m;
+	long i, j;
+	int status;
+
+	m = NUMdmatrix (1, n, 1, n);
+	if (m == NULL) return 0;
+	for (i = 1; i <= n; i++)
+	{
+		for (j = 1; j <= n; j++) m[i][j] = a[i][j];
+	}
+	status = Eigen_initFromSymmetricMatrix (me, m, n);
+	NUMdmatrix_free (m, 1, 1);
+	return status;
 }
 
 int Eigen_initFromSymmetricMatrix (I, double **a, long n)

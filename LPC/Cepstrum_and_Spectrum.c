@@ -1,6 +1,6 @@
 /* Cepstrum_and_Spectrum.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020812 GPL header
  djmw 20041124 Changed call to Sound_to_Spectrum.
  djmw 20070103 Sound interface changes
+ djmw 20080122 float -> double
 */
 
 #include "Cepstrum_and_Spectrum.h"

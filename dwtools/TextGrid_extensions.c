@@ -28,6 +28,7 @@
  djmw 20061113 Reassign item in list after a deletion.
  djmw 20061116 Added IntervalTier_removeInterval to correct a bug in IntervalTier_removeBoundary...
  djmw 20071008 Removed two unused variables.
+ djmw 20071202 Melder_warning<n>
 */
 
 #include <ctype.h>
@@ -189,7 +190,6 @@ static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const wc
 
 TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 {
-	char *proc = "TextGrid_readFromTIMITLabelFile";
 	TextGrid me = NULL; 
 	IntervalTier timit, ipa; 
 	TextInterval interval;
@@ -237,8 +237,8 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		if (xmin < interval -> xmax && linesRead > 1)
 		{
 			xmin = interval -> xmax;
-			Melder_warning("%s: file \"%s\":Start time set to previous end "
-				"time for label at line %ld", proc, MelderFile_messageName (file), linesRead);
+			Melder_warning5 (L"File \"", MelderFile_messageNameW (file), L"\": Start time set to previous end "
+				"time for label at line ", Melder_integer (linesRead), L".");
 		}
 		/* standard: new TextInterval */
 		labelstring = (strncmp (label, "h#", 2) ? label : TIMIT_DELIMITER);

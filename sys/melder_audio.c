@@ -195,6 +195,8 @@ long Melder_getBestSampleRate (long fsamp) {
 
 int Melder_isPlaying;
 
+static double theStartingTime = 0.0;
+
 static struct MelderPlay {
 	const short *buffer;
 	unsigned long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
@@ -243,56 +245,6 @@ int Melder_stopWasExplicit (void) {
 	return thePlay. explicit;
 }
 
-#if defined (macintosh) || defined (UNIX)
-	static double theTide;
-	static void Melder_startClock (void) {
-		struct timeval timeVal;
-		struct timezone timeZone;
-		gettimeofday (& timeVal, & timeZone);
-		theTide = timeVal. tv_sec + 1e-6 * timeVal. tv_usec;
-	}
-	static double Melder_clock (void) {
-		struct timeval timeVal;
-		struct timezone timeZone;
-		gettimeofday (& timeVal, & timeZone);
-		return (timeVal. tv_sec + 1e-6 * timeVal. tv_usec) - theTide;
-	}
-	static void Melder_stopClock (void) {
-	}
-#elif defined (_WIN32)
-	static long theTide;
-	static void Melder_startClock (void) {
-		theTide = GetTickCount ();
-	}
-	static double Melder_clock (void) {
-		long ticks = GetTickCount ();
-		double elapsedTime = (ticks - theTide) / 1000.0;
-		//MelderInfo_writeLine5 (Melder_integer (theTide), "  ", Melder_integer (ticks), "  ", Melder_double (elapsedTime));
-		//MelderInfo_close ();
-		return elapsedTime;
-	}
-	static void Melder_stopClock (void) {
-	}
-#else
-	static struct itimerval theTide;
-	static void Melder_startClock (void) {
-		theTide.it_value.tv_sec = 20000;
-		theTide.it_value.tv_usec = 0;
-		signal (SIGALRM, SIG_IGN);
-		setitimer (ITIMER_REAL, & theTide, NULL);
-	}
-	static double Melder_clock (void) {
-		getitimer (ITIMER_REAL, & theTide);
-		return (20000 - theTide.it_value.tv_sec) - theTide.it_value.tv_usec / 1000000.0;
-	}
-	static void Melder_stopClock (void) {
-		theTide.it_value.tv_sec = 0;
-		theTide.it_value.tv_usec = 0;
-		setitimer (ITIMER_REAL, & theTide, NULL);
-		signal (SIGALRM, SIG_DFL);
-	}
-#endif
-
 /*
  * The flush () procedure will always have to be invoked after normal play, i.e. in the following cases:
  * 1. After synchronous play (asynchronicity = 0, 1, or 2).
@@ -304,7 +256,6 @@ static Boolean flush (void) {
 	struct MelderPlay *me = & thePlay;
 	#if USE_PORTAUDIO
 		Pa_CloseStream (my stream), my stream = NULL;
-		Melder_stopClock ();
 	#elif defined (sgi)
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) {
@@ -317,7 +268,6 @@ static Boolean flush (void) {
 		if (my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
 			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
 		}
-		Melder_stopClock ();
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		if (my audio) {
 			AStopAudio (my audio, my xid, ASMThisTrans, NULL, & my status);
@@ -329,7 +279,6 @@ static Boolean flush (void) {
 			ADestroySBucket (my audio, my bucket, & my status), my bucket = NULL;
 			ACloseAudio (my audio, & my status), my audio = NULL;
 		}
-		Melder_stopClock ();
 	#elif defined (sun)
 		/*
 		 * On Sun, draining is performed by calling close ().
@@ -340,7 +289,6 @@ static Boolean flush (void) {
 			ioctl (my audio_fd, I_FLUSH, FLUSHW);   /* Discard what's in the buffers! */
 			close (my audio_fd), my audio_fd = 0;
 		}
-		Melder_stopClock ();
 	#elif defined (linux)
 		/*
 		 * As on Sun.
@@ -349,7 +297,6 @@ static Boolean flush (void) {
 			ioctl (my audio_fd, SNDCTL_DSP_RESET, (my val = 0, & my val));
 			close (my audio_fd), my audio_fd = 0;
 		}
-		Melder_stopClock ();
 	#elif defined (_WIN32)
 		/*
 		 * FIX: Do not reset the sound card if played to the end:
@@ -402,7 +349,7 @@ static Boolean workProc (XtPointer closure) {
 			if (my callback && ! my callback (my closure,
 					//my samplesPlayed)
 					//(Pa_GetStreamTime (my stream) - my startingTime) * my sampleRate)
-					Melder_clock () * my sampleRate)
+					(Melder_clock () - theStartingTime) * my sampleRate)
 				)
 				return flush ();
 		} else {
@@ -439,7 +386,7 @@ static Boolean workProc (XtPointer closure) {
 		SCStatus status;
 		SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
 		if (status. scChannelBusy) {
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();
 		} else {
@@ -453,7 +400,7 @@ static Boolean workProc (XtPointer closure) {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
 		} else {
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed)) {
 				/*APauseAudio (my audio, my xid, NULL, & my status);*/
 				/*ASetCloseDownMode (my audio, ADestroyAll, & my status);*/
@@ -466,7 +413,7 @@ static Boolean workProc (XtPointer closure) {
 			write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();
 			if (my samplesLeft == 0) {
@@ -481,7 +428,7 @@ static Boolean workProc (XtPointer closure) {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
   		} else {
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();
 		}
@@ -491,7 +438,7 @@ static Boolean workProc (XtPointer closure) {
 			write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();
 		} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
@@ -499,7 +446,7 @@ static Boolean workProc (XtPointer closure) {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
   		/*} else {
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();*/
 		}
@@ -511,7 +458,7 @@ static Boolean workProc (XtPointer closure) {
   			static long previousTime = 0;
   			unsigned long currentTime = clock ();
   			if (Melder_debug == 1) {
-				my samplesPlayed = Melder_clock () * my sampleRate;
+				my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
   			} else {
 	  			MMTIME mmtime;
 	  			mmtime. wType = TIME_BYTES;
@@ -678,7 +625,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 		paDitherOff, thePaStreamCallback, me);
 	if (err) return Melder_error ("PortAudio cannot open sound output: %s", Pa_GetErrorText (err));
-	Melder_startClock ();
+	theStartingTime = Melder_clock ();
 	err = Pa_StartStream (my stream);
 	if (err) return Melder_error ("PortAudio cannot start sound output: %s", Pa_GetErrorText (err));
 	my startingTime = Pa_GetStreamTime (my stream);
@@ -949,14 +896,14 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		cmd. cmd = bufferCmd;
 		cmd. param1 = 0;
 		cmd. param2 = (long) soundHeader;
-		Melder_startClock ();
+		theStartingTime = Melder_clock ();
 		SndDoCommand (my soundChannel, & cmd, 0);
 		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 			SCStatus status;
 			while (SndChannelStatus (my soundChannel, sizeof (SCStatus), & status), status. scChannelBusy) {
 				int interrupted = 0;
 				EventRecord event;
-				my samplesPlayed = Melder_clock () * my sampleRate;
+				my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					interrupted = 1;
 				/*
@@ -977,7 +924,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 						my explicit = Melder_EXPLICIT, interrupted = 1;
 				}
 				if (interrupted) {
-					my samplesPlayed = Melder_clock () * my sampleRate;
+					my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 					/*FlushEvents (everyEvent, 0);*/
 					SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
 					flush ();
@@ -1050,7 +997,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	/*
 	 * One of the following is superfluous (loop plus ASetCloseDownMode).
 	 */
-	Melder_startClock ();
+	theStartingTime = Melder_clock ();
 	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		for (;;) {
 			ANextEvent (my audio, & audioEvent, & my status);
@@ -1066,7 +1013,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				my samplesPlayed = my numberOfSamples;
 				break;
 			}
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				break;
 			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
@@ -1169,7 +1116,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	if (ioctl (my audio_fd, AUDIO_SETINFO, & my audioInfo) == -1)
 		return cancel (), Melder_error1 (L"Cannot initialize audio output.");
 
-	Melder_startClock ();
+	theStartingTime = Melder_clock ();
 	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		if (write (my audio_fd, & buffer [0], 2 * my numberOfChannels * my numberOfSamples) == -1)
 			return cancel (), Melder_error1 (L"Cannot write audio output.");
@@ -1184,7 +1131,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				return cancel (), Melder_error1 (L"Cannot write audio output.");
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
 			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
@@ -1199,7 +1146,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			write (my audio_fd, NULL, 0);
 			while (ioctl (my audio_fd, AUDIO_GETINFO, & my audioInfo), my audioInfo. play. eof == 0) {
 				XEvent event;
-				my samplesPlayed = Melder_clock () * my sampleRate;
+				my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					break;
 				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
@@ -1261,7 +1208,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		return cancel (), Melder_error ("Cannot set sampling frequency to %d.", my sampleRate);
 	}
 
-	Melder_startClock ();
+	theStartingTime = Melder_clock ();
 	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		if (write (my audio_fd, & my buffer [0], 2 * numberOfChannels * numberOfSamples) == -1)
 			return cancel (), Melder_error1 (L"Cannot write audio output.");
@@ -1276,7 +1223,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 				return cancel (), Melder_error1 (L"Cannot write audio output.");
 			my samplesLeft -= dsamples;
 			my samplesSent += dsamples;
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
 			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
@@ -1356,7 +1303,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		return Melder_error ("(Melder_play16:) Error %d while writing.", err);   /* BUG: should flush */
 	}
 
-	Melder_startClock ();
+	theStartingTime = Melder_clock ();
 	if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
 		while (! (my waveHeader. dwFlags & WHDR_DONE)) { Sleep (10); }
 		my samplesPlayed = my numberOfSamples;
@@ -1364,7 +1311,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
   		while (! (my waveHeader. dwFlags & WHDR_DONE)) {
 			MSG event;
 			Sleep (10);
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				break;
 			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE &&

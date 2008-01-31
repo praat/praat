@@ -1,6 +1,6 @@
 /* FFNet.c
  *
- * Copyright (C) 1997-2007 David Weenink
+ * Copyright (C) 1997-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070902 FFNet_createNameFromTopology to wchar_t
  djmw 20071014 Melder_error<n>
+ djmw 20080121 float -> double
 */
 
 #include "FFNet_Matrix.h"
@@ -351,7 +352,7 @@ double FFNet_computeError (FFNet me, const double target[])
 	cost = my costFunction (me, target);
     for (i=1; i <= my nNodes - my nOutputs; i++) my error[i] = 0.0;
     /* backpropagation of errors from output to first hidden layer*/
-    for (i=my nNodes; i > my nInputs+1; i--)
+    for (i = my nNodes; i > my nInputs+1; i--)
     {
         if (my isbias[i]) continue;
         my error[i] *= my deriv[i];
@@ -405,8 +406,8 @@ void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], 
 	long i, k = 0;
 	Melder_assert (activity);
 	FFNet_propagate (me, input, NULL);
-	for (i=0; i < layer; i++) k += my nUnitsInLayer[i] + 1;
-	for (i=1; i <= my nUnitsInLayer[layer]; i++) activity[i] = my activity[k+i];
+	for (i = 0; i < layer; i++) k += my nUnitsInLayer[i] + 1;
+	for (i = 1; i <= my nUnitsInLayer[layer]; i++) activity[i] = my activity[k+i];
 }
 
 void FFNet_selectAllWeights (FFNet me)

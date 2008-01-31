@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2008/01/30
  */
 
 #include <stdio.h>
@@ -909,7 +909,8 @@ const wchar_t * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 /********** MISCELLANEOUS **********/
 
 wchar_t * Melder_getenv (const wchar_t *variableName);
-int Melder_system (const wchar_t *command);   /* Spawn a system command; return 0 if error. */
+int Melder_system (const wchar_t *command);   // spawn a system command; return 0 if error
+double Melder_clock (void);   // seconds since 1969
 
 /* End of file melder.h */
 #endif

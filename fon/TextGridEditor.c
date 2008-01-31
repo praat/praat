@@ -888,7 +888,7 @@ static void do_find (TextGridEditor me) {
 		long left, right;
 		wchar_t *label = GuiText_getString (my text);
 		GuiText_getSelectionPosition (my text, & left, & right);
-		wchar_t *position = wcsstr (left == right ? label + right : label, my findString);   /* CRLF BUG? */
+		wchar_t *position = wcsstr (label + right, my findString);   /* CRLF BUG? */
 		if (position) {
 			GuiText_setSelection (my text, position - label, position - label + wcslen (my findString));
 		} else {

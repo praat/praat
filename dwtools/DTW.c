@@ -1,6 +1,6 @@
 /* DTW.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,17 @@
  djmw 20061214 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071016 To Melder_error<n>
- djmw 20071022 Extra comments + possible bug correction in DTW_Path_recode. 
+ djmw 20071022 Extra comments + possible bug correction in DTW_Path_recode.
+ djmw 20071201 Melder_warning<n>.
+ djmw 20071204 DTW_and_Sounds_draw.
+ djmw 20080122 float -> double
 */
 
 #include "DTW.h"
+#include "Sound_extensions.h"
 #include "NUM2.h"
 #include "NUMmachar.h"
+#include "GraphicsP.h"
 
 #include "oo_DESTROY.h"
 #include "DTW_def.h"
@@ -57,6 +62,14 @@
 #define DTW_BIG 1e38
 
 extern machar_Table NUMfpp;
+
+static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
+static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, double minimum, double maximum, int garnish, int inset);
+static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, int garnish, int inset);
+static void box (Graphics g);
+static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
 
 /*
 	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
@@ -895,9 +908,10 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 	 
 	if (relDuration > slopeConstraint[slope])
 	{
-		Melder_warning ("DTW_findPath: There is a conflict between the chosen slope constraint and the relative  duration.\n "
-		"The duration ratio of the longest and the shortest object is %.17g. This implies that the largest slope in the \n"
-		"constraint must have a value greater or equal to this ratio.", relDuration);
+		Melder_warning3 (L"DTW_findPath: There is a conflict between the chosen slope constraint and the relative  duration.\n "
+		"The duration ratio of the longest and the shortest object is ", Melder_double (relDuration), 
+		L". This implies that the largest slope in the \n"
+		"constraint must have a value greater or equal to this ratio.");
 	} 
 	if (((delta = NUMdmatrix_copy (my z, 1, my ny, 1, my nx)) == NULL) ||
 		((psi = NUMlmatrix (1, my ny, 1, my nx)) == NULL)) goto end;
@@ -1258,13 +1272,6 @@ long DTW_getMaximumConsecutiveSteps (DTW me, int direction)
 	return nglobal;
 }
 
-void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
-	double ymax, double minimum, double maximum, int garnish)
-{
-	(void) garnish;
-	Matrix_paintCells (me, g, xmin, xmax, ymin, ymax, minimum, maximum);
-}
-
 static Polygon _DTW_to_Polygon (DTW me, int choice, double adjustment_window_duration, int adjustment_window_includes_end, 
 	long nsteps_xory, long nsteps_xandy)
 {
@@ -1327,58 +1334,43 @@ Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
 		_DTW_to_Polygon (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy) : NULL;
 }
 
-/*
-void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
-	double ymax, int garnish)
+static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, double minimum, double maximum, int garnish, int inset)
 {
-	long i, ixmin, ixmax, iymin, iymax, ipmin = 1, ipmax;
-	double x1, x2, y1, y2;
-	
-	if (xmin >= xmax)
-	{
-		xmin = my xmin; xmax = my xmax;
-	}
-	if (ymin >= ymax)
-	{
-		ymin = my ymin; ymax = my ymax;
-	}
-	
-	if (! Matrix_getWindowSamplesY (me, ymin, ymax, &iymin, &iymax) ||
-		! Matrix_getWindowSamplesX (me, xmin, xmax, &ixmin, &ixmax)) return;
-	
-	Graphics_setInner (g);
+	long ixmin, ixmax, iymin, iymax;
+	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx,
+		& ixmin, & ixmax);
+	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy,
+		& iymin, & iymax);
+	if (maximum <= minimum)
+		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
+	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
+	if (xmin >= xmax || ymin >= ymax) return;
+	if (inset) Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	
-	while (ipmin < my pathLength && my path[ipmin].x < ixmin) ipmin++;
-	
-	ipmax = ipmin;
-	
-	while (ipmax < my pathLength && my path[ipmax].x <= ixmax) ipmax++;
-	
-	x1 = Matrix_columnToX (me, my path[ipmin].x);
-	y1 = Matrix_rowToY (me, my path[ipmin].y);
-	
-	for (i = ipmin + 1; i <= ipmax; i++)
-	{
-		x2 = Matrix_columnToX (me, my path[i].x);
-		y2 = Matrix_rowToY (me, my path[i].y);
-		Graphics_line (g, x1, y1, x2, y2);
-		x1 = x2;
-		y1 = y2;
-	}
-	
-	Graphics_unsetInner (g);
+	Graphics_cellArray (g, my z,
+			ixmin, ixmax, Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5),
+			iymin, iymax, Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5),
+			minimum, maximum);
+	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
+	if (inset) Graphics_unsetInner (g);
 	if (garnish)
 	{
-		Graphics_drawInnerBox(g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }
-*/
 
-void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
-	double ymax, int garnish)
+void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, double minimum, double maximum, int garnish)
+{
+	DTW_paintDistances_raw (me, g, xmin, xmax, ymin, ymax, minimum, maximum, garnish, 1);
+}
+
+static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, int garnish, int inset)
 {
 	DTW_Path_Query thee = & my pathQuery;
 	long i;
@@ -1392,7 +1384,7 @@ void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 		ymin = my ymin; ymax = my ymax;
 	}
 
-	Graphics_setInner (g);
+	if (inset) Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	for (i = 1; i < thy nxy; i++)
@@ -1406,12 +1398,203 @@ void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 		}
 	}
 
-	Graphics_unsetInner (g);
+	if (inset) Graphics_unsetInner (g);
 	if (garnish)
 	{
 		Graphics_drawInnerBox(g);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
+	}
+}
+
+void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
+	double ymax, int garnish)
+{
+	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, garnish, 1);
+}
+
+static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset)
+{
+	double ty = DTW_getYTime (me, tx);
+	int lineType = Graphics_inqLineType (g);
+	
+	if (xmin >= xmax)
+	{
+		xmin = my xmin; xmax = my xmax;
+	}
+	if (ymin >= ymax)
+	{
+		ymin = my ymin; ymax = my ymax;
+	}
+
+	if (inset) Graphics_setInner (g);
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	
+	ty = DTW_getYTime (me, tx);
+	Graphics_setLineType (g, Graphics_DOTTED);
+	
+	Graphics_line (g, tx, ymin, tx, ty);
+	Graphics_line (g, tx, ty, xmin, ty);
+	
+	Graphics_setLineType (g, lineType);
+	
+	if (inset) Graphics_unsetInner (g);
+	
+	if (garnish)
+	{
+		Graphics_markBottom (g, tx, 1, 1, 0, NULL);
+		Graphics_markLeft (g, ty, 1, 1, 0, NULL);
+	}
+}
+
+void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish)
+{
+	DTW_drawWarpX_raw (me, g, xmin, xmax, ymin, ymax, tx, garnish, 1);
+}
+
+static int DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax)
+{
+	Sound yy = *y, xx = *x;
+	if (my ymin == yy -> xmin && my ymax == yy -> xmax)
+	{
+		if (my xmin != xx -> xmin || my xmax != xx -> xmax)
+		{
+			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+		}
+	}
+	else if (my ymin == xx -> xmin && my ymax == xx -> xmax)
+	{
+		if (my xmin != yy -> xmin || my xmax != yy -> xmax)
+		{
+			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+		}
+		y = &xx; x = &yy; // swap x and y
+	}
+	else
+	{
+		return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+	}
+	
+	if (*xmin >= *xmax)
+	{
+		*xmin = my xmin; *xmax = my xmax;
+	}
+	if (*ymin >= *ymax)
+	{
+		*ymin = my ymin; *ymax = my ymax;
+	}
+	return 1;
+}
+
+static void drawBox (Graphics g)
+{
+	double x1WC, x2WC, y1WC, y2WC;
+	double lineWidth = Graphics_inqLineWidth (g);
+	Graphics_inqWindow (g, &x1WC, &x2WC, &y1WC, &y2WC);
+	Graphics_setLineWidth (g, 2.0*lineWidth);
+	Graphics_rectangle (g, x1WC, x2WC, y1WC, y2WC);
+	Graphics_setLineWidth (g, lineWidth);
+}
+
+/* 
+  In a picture with a DTW and a left and bottom Sound, we want "width" of the vertical sound
+  and the "height" of the horizontal Sound t be equal.
+  Given the horizontal fraction of the DTW-part, this routine returns the vertical part.
+*/
+static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x)
+{
+	double x1NDC, x2NDC, y1NDC, y2NDC;
+	Graphics_inqViewport (g, &x1NDC, &x2NDC, &y1NDC, &y2NDC);
+	return 1 - ((1 - dtw_part_x) * (x2NDC -x1NDC))/(y2NDC -y1NDC);
+}
+
+void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+	double ymin, double ymax, int garnish)
+{
+	Sound y = yy, x = xx;
+	double xmin3, ymin3, dtw_part_x = 0.85, dtw_part_y = dtw_part_x;
+	Graphics_Viewport vp, ovp;
+	
+	if (! DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax)) return;
+	
+	Graphics_setInner (g);
+	ovp = g -> outerViewport; // save for unsetInner
+	
+	dtw_part_y = _DTW_and_Sounds_getPartY (g, dtw_part_x);
+	
+	/* DTW */
+	
+	vp = Graphics_insetViewport (g, 1 - dtw_part_x, 1, 1 - dtw_part_y, 1); 
+	DTW_paintDistances_raw (me, g, xmin, xmax, ymin, ymax, 0, 0, 0, 0);
+	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, 0, 0);
+	drawBox(g);
+	Graphics_resetViewport (g, vp);
+	
+	/* Sound y */
+	
+	vp = Graphics_insetViewport (g, 0, 1 - dtw_part_x, 1 - dtw_part_y, 1); 
+	Sound_draw_btlr (y, g, ymin, ymax, -1, 1, FROM_BOTTOM_TO_TOP, 0);
+	if (garnish) drawBox(g);
+	Graphics_resetViewport (g, vp);
+
+	/* Sound x */
+	
+	vp = Graphics_insetViewport (g, 1 - dtw_part_x, 1, 0, 1 - dtw_part_y); 
+	Sound_draw_btlr (x, g, xmin, xmax, -1, 1, FROM_LEFT_TO_RIGHT, 0);
+	if (garnish) drawBox(g);
+	Graphics_resetViewport (g, vp);
+
+	
+	/* Set window coordinates so that margins will work, i.e. extend time domains */
+	
+	xmin3 = xmax - (xmax - xmin) / dtw_part_x;
+	ymin3 = ymax - (ymax - ymin) / dtw_part_y;
+	Graphics_setWindow (g, xmin3, xmax, ymin3, ymax);
+	
+	g -> outerViewport = ovp; // restore from _setInner
+	Graphics_unsetInner (g);
+	
+	if (garnish)
+	{
+		Graphics_markLeft (g, ymin, 1, 1, 0, NULL);
+		Graphics_markLeft (g, ymax, 1, 1, 0, NULL);
+		
+		Graphics_markBottom (g, xmin, 1, 1, 0, NULL);
+		Graphics_markBottom (g, xmax, 1, 1, 0, NULL);
+	}
+}
+
+void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+	double ymin, double ymax, double tx, int garnish)
+{
+	Sound y = yy, x = xx;
+	double dtw_part_x = 0.85, dtw_part_y;
+	double ty = DTW_getYTime (me, tx);
+	int lineType = Graphics_inqLineType (g);
+		
+	if (! DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax )) return;
+	
+	Graphics_setInner (g);
+	dtw_part_y = _DTW_and_Sounds_getPartY (g, dtw_part_x);
+	
+	xmin = xmax - (xmax - xmin) / dtw_part_x;
+	ymin = ymax - (ymax - ymin) / dtw_part_y;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+
+	ty = DTW_getYTime (me, tx);
+	Graphics_setLineType (g, Graphics_DOTTED);
+	
+	Graphics_line (g, tx, ymin, tx, ty);
+	Graphics_line (g, tx, ty, xmin, ty);
+	
+	Graphics_setLineType (g, lineType);
+	
+	Graphics_unsetInner (g);
+	
+	if (garnish)
+	{
+		Graphics_markBottom (g, tx, 1, 1, 0, NULL);
+		Graphics_markLeft (g, ty, 1, 1, 0, NULL);
 	}
 }
 

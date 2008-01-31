@@ -1,6 +1,6 @@
 /* AffineTransform.c
  * 
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ static Any classAffineTransform_invert (I)
 	
 	if (thee == NULL) return NULL;
 	
-	if (NUMpseudoInverse_d (my r, my n, my n, thy r, tolerance))
+	if (NUMpseudoInverse (my r, my n, my n, thy r, tolerance))
 	{
 		long i, j;
 		for (i = 1; i <= my n; i++)

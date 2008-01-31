@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2008/01/31
  */
 
 #ifndef _Graphics_h_
@@ -222,6 +222,7 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 void _Graphics_setColour (I, int colour);
 void _Graphics_setGrey (I, double grey);
 void _Graphics_colour_init (I);
+bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
 
 /* End of file GraphicsP.h */
 #endif

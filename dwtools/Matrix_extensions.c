@@ -1,6 +1,6 @@
 /* Matrix_extensions.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20041110 Matrix_drawDistribution did't draw lowest bin correctly.
  djmw 20050221 Matrix_drawDistribution would draw outside window.
  djmw 20050405 Matrix_drawDistribution crashed if minimum > data minimum5
+ djmw 20080122 float -> double
 */
 
 #include "Matrix_extensions.h"
@@ -159,8 +160,7 @@ void Matrix_scale (I, int choice)
 		Melder_flushError ("Matrix_scale: choice must be >= 0 && < 3.");
 		return;
 	}
-	if (nZero)  Melder_warning ("Matrix_scale: extremum == 0, "
-		"(part of) matrix unscaled.");
+	if (nZero)  Melder_warning1 (L"Matrix_scale: extremum == 0, (part of) matrix unscaled.");
 }
 
 Any Matrix_transpose (I)
@@ -321,8 +321,7 @@ Matrix Matrix_solveEquation (I, double tolerance)
 
 	if (n == 0) return Melder_errorp1 (L"Matrix_solveEquation: there must be at least 2 columns in the matrix.");
 
-	if (m < n) Melder_warning ("Matrix_solveEquation: solution is not unique "
-		"(fewer equations than unknowns).");
+	if (m < n) Melder_warning1 (L"Matrix_solveEquation: solution is not unique (fewer equations than unknowns).");
 
 	if (! (u = NUMdmatrix (1, m, 1, n)) ||
 		! (b = NUMdvector (1, m)) ||
@@ -335,7 +334,7 @@ Matrix Matrix_solveEquation (I, double tolerance)
 		b[i] = my z[i][my nx];
 	}
 
-	if (! NUMsolveEquation_d (u, m, n, b, tol, x)) goto end;
+	if (! NUMsolveEquation (u, m, n, b, tol, x)) goto end;
 	for (j=1; j <= n; j++) thy z[1][j] = x[j];
 	status = 1;
 

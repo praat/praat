@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020812 GPL header
  djmw 20061218 Changed info to Melder_writeLine<x> format.
  djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
+ djmw 20080122 Version 1: float -> double
 */
 
 #include "Cepstrumc.h"
@@ -58,6 +59,7 @@ static void info (I)
 }
 
 class_methods (Cepstrumc, Sampled)
+	us -> version = 1;
 	class_method_local (Cepstrumc, destroy)
 	class_method_local (Cepstrumc, equal)
 	class_method_local (Cepstrumc, copy)

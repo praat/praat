@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  * 
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20071113 Latest modification
+ djmw 20080121 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1191,7 +1191,7 @@ CODE1 (L"Formula... if x>xmax-twin then self*(1+cos(2*pi*fwin*(x-xmax+twin)))/2 
 CODE (L"endfor")
 MAN_END
 
-MAN_BEGIN (L"Create formant table (Peterson & Barney 1952)", L"djmw", 20040512)
+MAN_BEGIN (L"Create formant table (Peterson & Barney 1952)", L"djmw", 20080125)
 INTRO (L"A command to create a @Table object filled with the "
 	"fundamental frequency and the first three formant frequency values from 10 "
 	"American-English monophthongal vowels as spoken in a /h_d/ context by 76 speakers "
@@ -1211,7 +1211,8 @@ DEFINITION (L"the vowel name. The following list gives the vowel in a %h_d conte
 	"(%head, eh), (%had, ae), (%hod, aa), (%hawed, ao), (%hood, uh), (%%who'd%, uw), "
 	"(%hud, ah), (%heard, er).")
 TAG (L"Column 5, labelled as %IPA")
-DEFINITION (L"the IPA notation for the vowels.")
+DEFINITION (L"the IPA notation for the vowels as defined in @@Watrous (1991)@. "
+	"He uses /e/ and /o/ for the vowels where Peterson & Barney use /\\ef/ and /\\ct/, respectively.")
 TAG (L"Column 6, labelled as %F0")
 DEFINITION (L"the fundamental frequency in Hertz.")
 TAG (L"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
@@ -1219,7 +1220,8 @@ DEFINITION (L"the frequencies in Hertz of the first three formants.")
 NORMAL (L"We originally downloaded the data from a University of Pennsylvania FTP site, "
 	"where they were reportedly based on a printed version supplied by Ignatius Mattingly. "
 	"More details about these data and how they were measured can be found in "
-	"@@Peterson & Barney (1952)@.")
+	"@@Watrous (1991)@ and in @@Peterson & Barney (1952)@.")
+
 MAN_END
 
 MAN_BEGIN (L"Create formant table (Pols & Van Nierop 1973)", L"djmw", 20020620)
@@ -1574,6 +1576,10 @@ NORMAL (L"Query:")
 LIST_ITEM (L"\\bu @@DTW: Get time along path...@")
 MAN_END
 
+MAN_BEGIN (L"DTW: Draw warp (x)...", L"djmw", 20071204)
+INTRO (L"Draws the warp given a time on the \"x-direction\"")
+MAN_END
+
 MAN_BEGIN (L"DTW: Find path (band)...", L"djmw", 20050306)
 INTRO (L"Finds the optimal path for the selected @DTW satisfying constraints within a Sakoe-Chiba band.")
 ENTRY (L"Arguments")
@@ -1692,6 +1698,14 @@ NORMAL (L"First we check whether the y-domain of the DTW and the domain of the T
 	"equal. If they are, a new TextGrid is created by copying the selected one. "
 	"We then change its domain and make it equal to the x-domain of the DTW. "
 	"Then for each tier we change the domain and @@DTW: Get x time...|calculate new times@ by using the path.")
+MAN_END
+
+MAN_BEGIN (L"DTW & Sounds: Draw...", L"djmw", 20071204)
+INTRO (L"Draws the distances, the path and the sounds for the selected @DTW and the two selected @@Sound|Sounds@.")
+MAN_END
+
+MAN_BEGIN (L"DTW & Sounds: Draw warp (x)...", L"djmw", 20071204)
+INTRO (L"Draws the warp given a time on the \"x-direction\" for the selected @DTW and the two selected @@Sound|Sounds@.")
 MAN_END
 
 MAN_BEGIN (L"Eigen", L"djmw", 19981102)
@@ -3565,6 +3579,15 @@ NORMAL (L"The text corpus design was done by the Massachusetts Institute of "
 	"verified and prepared for CDROM production by the American National Institute "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
+
+MAN_BEGIN (L"VowelGenerator", L"djmw", 20080126)
+INTRO (L"Generates vowel-like sounds by moving the mouse in the Formant plane. ")
+NORMAL (L"Moving the mouse, with the mouse-button down, in the plane spanned by the first two formants creates "
+	"a vowel-like sound whose formants follow the formants in the trajectory described by the mouse. "
+	"This trajectory can be played, reversed, shifted, extended or time-scaled. ")
+NORMAL (L"The fundamental frequency can be set to a follow a contour that falls, rises or stays constant. ")
+MAN_END
+
 /********************** GSL ********************************************/
 MAN_BEGIN (L"incompleteBeta", L"djmw", 20071024)
 TAG (L"##incompleteBeta (%a, %b, %x)")
@@ -3727,9 +3750,14 @@ NORMAL (L"D.J.M. Weenink (1999), \"Formant analysis of Dutch vowels from 10 chil
 		"University of Amsterdam% #25, 81-99.")
 MAN_END
 
+MAN_BEGIN (L"Watrous (1991)", L"djmw", 20080125)
+NORMAL (L"R.L. Watrous (1991), \"Current status of Peterson-Barney vowel formant data\", "
+	"%%J.Acoust.Soc.Am.% #89, 2459-2460.")
+MAN_END
+
 MAN_BEGIN (L"Weenink (1985)", L"djmw", 20041217)
 NORMAL (L"D.J.M. Weenink (1985), \"Accurate algorithms for performing "
- 		"principal component analysis  and discriminant analysis\", "
+ 		"principal component analysis and discriminant analysis\", "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
 		"University of Amsterdam% #19, 45-52.")
 MAN_END

@@ -1,6 +1,6 @@
 /* SSCP.c
  * 
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@
  djmw 20061214 Corrected possible integer overflow in ellipseScalefactor.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071016 To Melder_error<n>
+ djmw 20071202 Melder_warning<n>
+ djmw 20080122 float -> double
 */
 
 #include "SSCP.h"
@@ -488,7 +490,7 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 	
 	m = rowe - rowb + 1; /* # rows */
 	n = cole - colb + 1; /* # columns */
-	if (m < n) Melder_warning ("TableOfReal_to_SSCP: The SSCP will not have \n"
+	if (m < n) Melder_warning1 (L"TableOfReal_to_SSCP: The SSCP will not have \n"
 		"full dimensionality. This may be a problem in following analysis steps. \n"
 		"(The number of data points was less than the number of variables.)");
 		
@@ -505,7 +507,7 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 		}
 	}
 	
-	NUMcentreColumns_d (v, 1, m, 1, n, thy centroid);
+	NUMcentreColumns (v, 1, m, 1, n, thy centroid);
 	
 	SSCP_setNumberOfObservations (thee, m);
 
@@ -719,7 +721,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I)
 	if (nsingle > 0)
 	{
 		nsingle == numberOfCases ? (void) Melder_error3 (L"There are ", Melder_integer (nsingle), L" groups with only one data record. ") : 
-			Melder_warning ("There are %d groups with only one data record.", nsingle);
+			Melder_warning3 (L"There are ", Melder_integer (nsingle), L" groups with only one data record.");
 	}
 end:
 
@@ -904,7 +906,7 @@ CCA SSCP_to_CCA (I, long ny)
 		}
 	}
 
-	NUMnormalizeRows_d (thy y -> eigenvectors, thy y -> numberOfEigenvalues, thy y -> numberOfEigenvalues, 1);
+	NUMnormalizeRows (thy y -> eigenvectors, thy y -> numberOfEigenvalues, thy y -> numberOfEigenvalues, 1);
 
 	thy numberOfCoefficients = thy y -> numberOfEigenvalues;
 	thy numberOfObservations = my numberOfObservations;
@@ -932,7 +934,7 @@ CCA SSCP_to_CCA (I, long ny)
 		}
 	}
 
-	NUMnormalizeRows_d (thy x -> eigenvectors, thy x -> numberOfEigenvalues, nx, 1);
+	NUMnormalizeRows (thy x -> eigenvectors, thy x -> numberOfEigenvalues, nx, 1);
 
 	if (ny < nx)
 	{
@@ -1233,14 +1235,12 @@ int Covariance_difference (Covariance me, Covariance thee, double *prob,
 		numberOfObservations = (my numberOfObservations > 
 			thy numberOfObservations ?
 			thy numberOfObservations : my numberOfObservations) - 1;
-		Melder_warning("Covariance_difference: number of observations of "
-			"matrices do not agree.\n The minimum  size (%ld) of the two is "
-			"used.", numberOfObservations);
+		Melder_warning3 (L"Covariance_difference: number of observations of matrices do not agree.\n"
+			" The minimum  size (", Melder_integer (numberOfObservations), L") of the two is used.");
 	}
 	if (numberOfObservations < 2)
 	{
-		return Melder_error1 (L"Covariance_difference: number of observations "
-			"too small.");
+		return Melder_error1 (L"Covariance_difference: number of observations too small.");
 	}
 	
 	if (((linv = NUMdmatrix_copy (thy data, 1, p, 1, p)) == NULL) ||
@@ -1326,7 +1326,6 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	long index1, long index2, double mu, int paired, int equalVariances, 
 	double *probability, double *t, double *ndf)
 {
-	char *proc = "Covariance_getSignificanceOfMeansDifference";
 	long n = my numberOfObservations;
 	double df, var1, var2, var_pooled;
 
@@ -1341,8 +1340,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	var_pooled = var1 + var2;
 	if (var_pooled == 0)
 	{
-		Melder_warning ("%s: The pooled variance turned out to be zero. "
-			"Check your data. ", proc);
+		Melder_warning1 (L"The pooled variance turned out to be zero. Check your data. ");
 		return;
 	}
 	if (paired)
@@ -1353,8 +1351,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	
 	if (var_pooled == 0) 
 	{
-		Melder_warning ("%s: The pooled variance with the paired correction turned out "
-			"to be zero. ", proc);
+		Melder_warning1 (L"The pooled variance with the paired correction turned out to be zero. ");
 		*probability = 0;
 		return;
 	}
@@ -1440,8 +1437,7 @@ TableOfReal Correlation_confidenceIntervals (Correlation me,
 
 	if (numberOfTests > m_bonferroni)
 	{
-		Melder_warning ("Correlation_getConfidenceIntervals: \"number of tests\" "
-			"exceeds the number of elements in the Correlation object.");
+		Melder_warning1 (L"Correlation_getConfidenceIntervals: \"number of tests\" exceeds the number of elements in the Correlation object.");
 	}
 	
 	thee = TableOfReal_create (my numberOfRows, my numberOfRows);
@@ -1540,8 +1536,7 @@ void Correlation_testDiagonality_bartlett (Correlation me,
 	if (numberOfContraints <= 0) numberOfContraints = 1;
 	if (numberOfContraints > my numberOfObservations)
 	{
-		Melder_warning ("Correlation_testDiagonality_bartlett: number of "
-			"constraints can not exceed the number of observations.");
+		Melder_warning1 (L"Correlation_testDiagonality_bartlett: number of constraints can not exceed the number of observations.");
 		return;
 	}
 	

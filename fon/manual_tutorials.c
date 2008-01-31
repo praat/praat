@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080119)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080131)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.06# (January 31, 2008)")
+LIST_ITEM (L"\\bu Corrected a bug that caused ##Find again# in the TextGrid window not to work.")
+LIST_ITEM (L"\\bu Macintosh: made Praat work correctly on 10.3 computers with missing fonts.")
 NORMAL (L"##5.0.05# (January 19, 2008)")
 LIST_ITEM (L"\\bu All Matrix, Sound, Spectrogram, Pitch, Ltas, and Spectrum objects (and more) are now in 52-bit relative precision (instead of the earlier 23 bits).")
 LIST_ITEM (L"\\bu Corrected a bug that could lead to \"Unknown opcode (0)\" messages when drawing large sounds (more than 16 million samples) in the Picture window.")

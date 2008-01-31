@@ -164,7 +164,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		u [icell] [numberOfParameters] = 1.0;   /* For the intercept. */
 		b [icell] = Table_getNumericValue (me, icell, my numberOfColumns);   /* The dependent variable. */
 	}
-	NUMsolveEquation_d (u, numberOfCells, numberOfParameters, b, NUMeps * numberOfCells, x);
+	NUMsolveEquation (u, numberOfCells, numberOfParameters, b, NUMeps * numberOfCells, x);
 	thy intercept = x [numberOfParameters];
 	for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 		RegressionParameter parm = thy parameters -> item [ivar];

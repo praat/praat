@@ -1,6 +1,6 @@
 /* FilterBank.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  djmw 20030901 Added fiter function drawing and frequency scale drawing.
  djmw 20050731 +FilterBank_and_PCA_drawComponent
  djmw 20071017 Melder_error<n>
+ djmw 20071201 Melder_warning<n>
+ djmw 20080122 float -> double
 */
 
 #include "Eigen_and_Matrix.h"
@@ -104,13 +106,13 @@ static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
 	if (*toFilter > my ny) *toFilter = my ny;
 	if (*fromFilter > *toFilter)
 	{
-		Melder_warning ("Filter numbers must be in range [1, ", Melder_integer (my ny), "]");
+		Melder_warning3 (L"Filter numbers must be in range [1, ", Melder_integer (my ny), L"]");
 		return 0;
 	}
 		
 	if (*zmin < 0 || *zmax < 0)
 	{
-		Melder_warning ("Frequencies must be positive.");
+		Melder_warning1 (L"Frequencies must be positive.");
 		return 0;
 	}
 	if (*zmax <= *zmin)
@@ -237,7 +239,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 
 	if (xmin < 0 || xmax < 0 ||ymin < 0 || ymax < 0)
 	{
-		Melder_warning ("Frequencies must be >= 0.");
+		Melder_warning1 (L"Frequencies must be >= 0.");
 		return;
 	}
 	
@@ -576,7 +578,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	
 	if (bandwidth <= 0)
 	{
-		Melder_warning ("Bandwidth must be greater than zero.");
+		Melder_warning1 (L"Bandwidth must be greater than zero.");
 	}
 		
 	a = NUMdvector (1, n);

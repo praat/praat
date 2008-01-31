@@ -1,6 +1,6 @@
 /* LPC_def.h
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,28 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20080122 Version 1: float -> double
 */
 
 #define ooSTRUCT LPC_Frame
 oo_DEFINE_STRUCT (LPC_Frame)
 
 	oo_INT (nCoefficients)
-	oo_FLOAT_VECTOR (a, my nCoefficients)
-	oo_FLOAT (gain)
+	#if oo_READING_BINARY
+		if (localVersion == 0) 
+		{
+			oo_FLOAT_VECTOR (a, my nCoefficients)
+			oo_FLOAT (gain)
+		}
+		else
+		{
+			oo_DOUBLE_VECTOR (a, my nCoefficients)
+			oo_DOUBLE (gain)
+		}
+	#else
+		oo_DOUBLE_VECTOR (a, my nCoefficients)
+		oo_DOUBLE (gain)
+	#endif
 	
 oo_END_STRUCT (LPC_Frame)
 #undef ooSTRUCT

@@ -235,8 +235,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 		double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);
 		if (wakita_length == NUMundefined)
 		{
-			Melder_warning ("LPC_to_VocalTract: Vocal tract length could not be calculated.\n"
-				"Relevant tract dimensions will be undefined.");
+			Melder_warning1 (L"Vocal tract length could not be calculated.\nRelevant tract dimensions will be undefined.");
 			thy xmax = thy x1 = thy dx = NUMundefined;
 		}
 	}

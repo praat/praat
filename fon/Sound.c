@@ -317,13 +317,13 @@ Sound Sound_upsample (Sound me) {
 	data = NUMdvector (1, 2 * nfft); cherror
 	for (long channel = 1; channel <= my ny; channel ++) {
 		NUMdvector_copyElements (my z [channel], data + 1000, 1, my nx);
-		NUMrealft_d (data, nfft, 1); cherror
+		NUMrealft (data, nfft, 1); cherror
 		long imin = (long) (nfft * 0.95);
 		for (long i = imin + 1; i <= nfft; i ++) {
 			data [i] *= ((double) (nfft - i)) / (nfft - imin);
 		}
 		data [2] = 0.0;
-		NUMrealft_d (data, 2 * nfft, -1); cherror
+		NUMrealft (data, 2 * nfft, -1); cherror
 		double factor = 1.0 / nfft;
 		for (long i = 1; i <= thy nx; i ++) {
 			thy z [channel] [i] = data [i + 2000] * factor;
@@ -356,12 +356,12 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 				data [i] = 0;
 			}
 			NUMdvector_copyElements (my z [channel], data + antiTurnAround, 1, my nx);
-			NUMrealft_d (data, nfft, 1); cherror   /* Go to the frequency domain. */
+			NUMrealft (data, nfft, 1); cherror   /* Go to the frequency domain. */
 			for (long i = floor (upfactor * nfft); i <= nfft; i ++) {
 				data [i] = 0;   /* Filter away high frequencies. */
 			}
 			data [2] = 0.0;
-			NUMrealft_d (data, nfft, -1); cherror   /* Return to the time domain. */
+			NUMrealft (data, nfft, -1); cherror   /* Return to the time domain. */
 			double factor = 1.0 / nfft;
 			double *to = filtered -> z [channel];
 			for (long i = 1; i <= my nx; i ++) {
@@ -432,8 +432,8 @@ Sound Sounds_convolve (Sound me, Sound thee) {
 		a = thy z [thy ny == 1 ? 1 : channel];
 		for (i = n2; i > 0; i --) data2 [i] = a [i];
 		if (channel > 1) for (i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
-		NUMrealft_d (data1, nfft, 1); cherror
-		NUMrealft_d (data2, nfft, 1); cherror
+		NUMrealft (data1, nfft, 1); cherror
+		NUMrealft (data2, nfft, 1); cherror
 		data2 [1] *= data1 [1];
 		data2 [2] *= data1 [2];
 		for (i = 3; i <= nfft; i += 2) {
@@ -441,7 +441,7 @@ Sound Sounds_convolve (Sound me, Sound thee) {
 			data2 [i + 1] = data1 [i] * data2 [i + 1] + data1 [i + 1] * data2 [i];
 			data2 [i] = temp;
 		}
-		NUMrealft_d (data2, nfft, -1); cherror
+		NUMrealft (data2, nfft, -1); cherror
 		scale = 1.0 / nfft;
 		a = him -> z [channel];
 		for (i = 1; i <= n3; i ++)

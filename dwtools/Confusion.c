@@ -213,10 +213,13 @@ class_methods_end
 static Any Pointer_create (void)
 {
 	Pointer me = NULL; long i;
-	float x[NPOINTS+1] = { 0, 0, 0.9, 1, 0.9, 0, 0 };
-	float y[NPOINTS+1] = { 0, 0, 0, 0.5,   1, 1, 0 };
+	double x[NPOINTS+1] = { 0, 0, 0.9, 1, 0.9, 0, 0 };
+	double y[NPOINTS+1] = { 0, 0, 0, 0.5,   1, 1, 0 };
 	if (! (me = (Pointer) Polygon_create (NPOINTS))) { forget (me); return me; }
-	for (i=1; i <= NPOINTS; i++) { my x[i] = x[i]; my y[i] = y[i]; }
+	for (i = 1; i <= NPOINTS; i++)
+	{
+		my x[i] = x[i]; my y[i] = y[i];
+	}
 	return me;
 }
 

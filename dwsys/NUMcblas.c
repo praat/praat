@@ -5,12 +5,12 @@
 	and Rice University October 31, 1999 -- translated by f2c (version
 	19990503)
 	
-	Adapted by David Weenink 20021201.
+	Adapted by David Weenink 20021201
 */
 
 /*
  djmw 20020813 GPL header
- djmw 20030205 Latest modification
+ djmw 20071201 Latest modification
 */
 
 
@@ -1385,10 +1385,10 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 		if (iwarn)
 		{
 			first = TRUE;
-			Melder_warning ("\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = %8i\n"
-				"If, after inspection, the value EMIN looks acceptable"
+			Melder_warning3 (L"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", Melder_integer (lemin),
+				L"\nIf, after inspection, the value EMIN looks acceptable"
 				"please comment out \n the IF block as marked within the"
-				"code of routine DLAMC2, \n otherwise supply EMIN" "explicitly.\n", lemin);
+				"code of routine DLAMC2, \n otherwise supply EMIN" "explicitly.\n");
 		}
 		/* ** Assume IEEE arithmetic if we found denormalised numbers above,
 		   or if arithmetic seems to round in the IEEE style, determined in

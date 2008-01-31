@@ -36,10 +36,6 @@
 /* dx = dy = 1																*/
 /* x1 = y1 = 1																*/
 /*																			*/
-/* NOTICE:																	*/
-/* A conversion FFNet_weightsToMatrix followed by FFNet_weightsFromMatrix	*/
-/* may result in a loss of precision since it involves a conversion from	*/
-/* double -> float -> double.												*/
 
 Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights);
 /* (delta) weights connected to layer into Matrix */

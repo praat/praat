@@ -1,6 +1,6 @@
 /* Cepstrum.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,14 @@
 /*
  djmw 20010514
  djmw 20020812 GPL header
+ djmw 20080122 Version 1: float -> double
 */
 
 #include "Cepstrum.h"
 #include "NUM2.h"
 
 class_methods (Cepstrum, Matrix)
+	us -> version = 1;
 class_methods_end
 
 Cepstrum Cepstrum_create (double qmin, double qmax, long nq)

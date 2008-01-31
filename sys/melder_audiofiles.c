@@ -54,7 +54,7 @@
 #define WAVE_FORMAT_IEEE_FLOAT  0x0003
 #define WAVE_FORMAT_ALAW  0x0006
 #define WAVE_FORMAT_MULAW  0x0007
-#define WAVE_FORMAT_DVI_ADPCM 0x0011
+#define WAVE_FORMAT_DVI_ADPCM  0x0011
 
 static int MelderFile_createFlacFile (MelderFile file, long sampleRate, long numberOfSamples, int numberOfChannels) {
 	FLAC__StreamEncoder *encoder;
@@ -447,9 +447,15 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			dataChunkPresent = TRUE;
 			dataChunkSize = chunkSize;
 			*startOfData = ftell (f);
-			if (formatChunkPresent) break;   /* Optimization: do not read whole data chunk if we have already read the format chunk. */
+			if (Melder_debug == 23) {
+				for (i = 1; i <= chunkSize; i ++)
+					if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes of data, but found %ld.", chunkSize, i);
+			} else {
+				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
+			}
 		} else {   /* Ignore other chunks. */
-		    /*Melder_warning ("chunk %c%c%c%c",chunkID[0],chunkID[1],chunkID[2],chunkID[3]);*/
+		    if (Melder_debug == 23)
+				Melder_warning ("chunk ID %c%c%c%c %d", chunkID[0],chunkID[1],chunkID[2],chunkID[3],chunkSize);
 			for (i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);
 		}

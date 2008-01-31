@@ -31,6 +31,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar_t
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071201 Melder_warning<n>
 */
 
 #include "Discriminant.h"
@@ -436,7 +437,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	
 	if (numberOfFunctions <= 1)
 	{
-		Melder_warning ("Discriminant_drawConcentrationEllipses: Nothing drawn "
+		Melder_warning1 (L"Discriminant_drawConcentrationEllipses: Nothing drawn "
 			"because there is only one dimension in the discriminant space.");
 		return;
 	}
@@ -725,8 +726,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
 				ln_determinant[j] = lnd;
 			}
 		}
-		if (npool > 0) Melder_warning ("Discriminant_and_TableOfReal_to_"
-			"ClassificationTable: %d groups use pooled covariance matrix.");
+		if (npool > 0) Melder_warning3 (L"Discriminant_and_TableOfReal_to_ClassificationTable: ", Melder_integer (npool), 
+			L" groups use pooled covariance matrix.");
 	}
 	
 	/*
@@ -888,8 +889,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 				ln_determinant[j] = lnd;
 			}
 		}
-		if (npool > 0) Melder_warning ("Discriminant_and_TableOfReal_to_"
-			"ClassificationTable: %d groups use pooled covariance matrix.");
+		if (npool > 0) Melder_warning3 (L"Discriminant_and_TableOfReal_to_ClassificationTable: ", 
+			Melder_integer (npool), L" groups use pooled covariance matrix.");
 	}
 	
 	/*

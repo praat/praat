@@ -333,7 +333,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				if (theIpaTimesFont != 0) {
 					ipaAvailable = TRUE;
 				} else {
-					Melder_warning1 (L"The phonetic font is not available.\nPraat will use an ugly bitmap font instead.\nSee http://www.praat.org");
+					Melder_warning1 (L"The phonetic font SILDoulos IPA93 is not available.\nPraat will use an ugly bitmap font instead.\nSee http://www.praat.org");
 				}
 				font = theIpaTimesFont;
 			}
@@ -1639,27 +1639,48 @@ double Graphics_textWidth_ps (I, const wchar_t *txt, bool useSilipaPS) {
 	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt, useSilipaPS));
 }
 
+#if mac
+bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
+	theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times"), kATSOptionFlagsDefault);
+	if (! theTimesAtsuiFont) theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times New Roman"), kATSOptionFlagsDefault);
+	theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Helvetica"), kATSOptionFlagsDefault);
+	if (! theHelveticaAtsuiFont) theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Arial"), kATSOptionFlagsDefault);
+	theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier"), kATSOptionFlagsDefault);
+	if (! theCourierAtsuiFont) theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier New"), kATSOptionFlagsDefault);
+	theSymbolAtsuiFont = ATSFontFindFromName (CFSTR ("Symbol"), kATSOptionFlagsDefault);
+	thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Palatino"), kATSOptionFlagsDefault);
+	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Book Antiqua"), kATSOptionFlagsDefault);
+	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = theTimesAtsuiFont;
+	theZapfDingbatsAtsuiFont = ATSFontFindFromName (CFSTR ("Zapf Dingbats"), kATSOptionFlagsDefault);
+	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
+	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
+		Melder_warning ("Praat cannot find one or more of the fonts Times (or Times New Roman), "
+			"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
+			"Praat will have limited capabilities for international text.");
+		return false;
+	}
+	theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Charis SIL"), kATSOptionFlagsDefault);
+	if (! theIpaTimesAtsuiFont) {
+		theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
+		if (! theIpaTimesAtsuiFont) {
+			theIpaTimesAtsuiFont = theTimesAtsuiFont;
+			Melder_warning ("Praat cannot find the Charis SIL or Doulos SIL font.\n"
+				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
+		}
+	}
+	return true;
+}
+#endif
+
 void _Graphics_text_init (I) {   /* BUG: should be done as late as possible. */
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if mac
 			if (! thePalatinoFont) {
-				long systemVersion;
-				Gestalt (gestaltSystemVersion, & systemVersion);
-				/*
-				 * Screen fonts (New York, Geneva, Monaco) can only be used on newer systems,
-				 * because earlier versions did not have all characters.
-				 */
-				if (/*systemVersion >= 0x0900 && ! my printer*/ 0) {   /* Postpone this till the layout is better (fifl, courier factor, italics, subscript factor...) */
-					GetFNum ("\pNew York", & theTimesFont);
-					GetFNum ("\pGeneva", & theHelveticaFont);
-					GetFNum ("\pMonaco", & theCourierFont);
-				} else {
-					GetFNum ("\pTimes", & theTimesFont);
-					GetFNum ("\pHelvetica", & theHelveticaFont);
-					GetFNum ("\pCourier", & theCourierFont);
-				}
+				GetFNum ("\pTimes", & theTimesFont);
+				GetFNum ("\pHelvetica", & theHelveticaFont);
+				GetFNum ("\pCourier", & theCourierFont);
 				GetFNum ("\pSymbol", & theSymbolFont);
 				GetFNum ("\pPalatino", & thePalatinoFont);
 				if (! thePalatinoFont) thePalatinoFont = theTimesFont;
@@ -1669,26 +1690,9 @@ void _Graphics_text_init (I) {   /* BUG: should be done as late as possible. */
 					Melder_fatal ("Praat cannot start up because it cannot find one or more of the fonts Times, Helvetica, Courier and Symbol. "
 						"Please install these fonts from your system CD. Praat will now quit.");
 				}
-				theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times"), kATSOptionFlagsDefault);
-				if (! theTimesAtsuiFont) theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times New Roman"), kATSOptionFlagsDefault);
-				theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Helvetica"), kATSOptionFlagsDefault);
-				if (! theHelveticaAtsuiFont) theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Arial"), kATSOptionFlagsDefault);
-				theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier"), kATSOptionFlagsDefault);
-				if (! theCourierAtsuiFont) theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier New"), kATSOptionFlagsDefault);
-				theSymbolAtsuiFont = ATSFontFindFromName (CFSTR ("Symbol"), kATSOptionFlagsDefault);
-				thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Palatino"), kATSOptionFlagsDefault);
-				if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Book Antiqua"), kATSOptionFlagsDefault);
-				if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = theTimesAtsuiFont;
-				theZapfDingbatsAtsuiFont = ATSFontFindFromName (CFSTR ("Zapf Dingbats"), kATSOptionFlagsDefault);
-				if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
-				if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
-					Melder_fatal ("Praat cannot start up because it cannot find one or more of the fonts Times (or Times New Roman), "
-						"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
-						"Please install these fonts from your system CD. Praat will now quit.");
-				}
-				theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Charis SIL"), kATSOptionFlagsDefault);
-				if (! theIpaTimesAtsuiFont) theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
-				if (! theIpaTimesAtsuiFont) theIpaTimesAtsuiFont = theTimesAtsuiFont;
+			}
+			if (my useQuartz && theTimesAtsuiFont == 0) {
+				Melder_assert (_GraphicsMac_tryToInitializeAtsuiFonts ());   // should have been handled when setting my useQuartz to true
 			}
 		#elif win
 			int font, size, style;
@@ -1807,4 +1811,3 @@ int Graphics_inqFontSize (I) { iam (Graphics); return my fontSize; }
 int Graphics_inqFontStyle (I) { iam (Graphics); return my fontStyle; }
 
 /* End of file Graphics_text.c */
-

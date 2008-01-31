@@ -1,6 +1,6 @@
 /* FFNet_Pattern_Activation.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

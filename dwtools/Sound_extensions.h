@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070129 Latest modification
+ djmw 20071203 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -132,6 +132,15 @@ void Sound_scale_dB (Sound me, double level_dB);
 		10^(level_dB/10) / extremum,
 	where extremum is the maximum of the absolute values the signal values. 
 */
+
+#define FROM_LEFT_TO_RIGHT 0
+#define FROM_RIGHT_TO_LEFT 1
+#define FROM_BOTTOM_TO_TOP 2
+#define FROM_TOP_TO_BOTTOM 3
+
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, 
+	int direction, int garnish);
+/* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, 
 	double formantFrequenciesRatio, double durationRatio);

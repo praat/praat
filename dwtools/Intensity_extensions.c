@@ -20,6 +20,7 @@
 /*
  djmw 20061204 Initial version
  djmw 20070129 Extra argument for Vector_get<Maximum/Minimum>AndX
+ djmw 20071201 Melder_warning<n>
 */
 
 #include "Intensity_extensions.h"
@@ -67,7 +68,8 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	Vector_getMinimumAndX (me, 0, 0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, &intensity_min_db, &xOfMinimum);
 	intensity_dbRange = intensity_max_db - intensity_min_db;
 	
-	if (intensity_dbRange < 10) Melder_warning ("The loudest and softest part in your sound only differ by %lf dB.", intensity_dbRange);
+	if (intensity_dbRange < 10) Melder_warning3 (L"The loudest and softest part in your sound only differ by ", 
+		Melder_double (intensity_dbRange), L" dB.");
 	
 	intensityThreshold = intensity_max_db - fabs (silenceThreshold_dB);
 	

@@ -88,11 +88,11 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 		
 		pitchFrame->intensity = power[j] / maxPower;
 		for (i=1; i <= my ny; i++) y[i] = my s[i][j];
-		if (! NUMspline_d (fl2, y, my ny, 1e30, 1e30, y2)) goto cleanup; 
+		if (! NUMspline (fl2, y, my ny, 1e30, 1e30, y2)) goto cleanup; 
 		for (k=1; k <= nFrequencyPoints; k++)
 		{
 			double f = fminl2 + (k-1) * dfl2;
-			NUMsplint_d (fl2, y, y2, my ny, f, & pitch[k]);
+			NUMsplint (fl2, y, y2, my ny, f, & pitch[k]);
 			sumspec[k] = 0;
 		}
 		

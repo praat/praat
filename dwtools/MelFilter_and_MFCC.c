@@ -1,6 +1,6 @@
 /* MelFilter_and_MFCC.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,7 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients)
 
 	Melder_assert (numberOfCoefficients > 0);
 		
-	if ((dct = NUMcosinesTable_d (1, numberOfCoefficients, nf)) == NULL)
-		return NULL;
+	if ((dct = NUMcosinesTable (1, numberOfCoefficients, nf)) == NULL) return NULL;
 
 	if ((thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1,
 		numberOfCoefficients, my y1, fmax_mel)) == NULL) goto end;
@@ -111,7 +110,7 @@ MelFilter MFCC_to_MelFilter (MFCC me, long first_cc,
 		("MFCC_to_MelFilter: coefficients must be in interval [%d,%d].",
 			1, my maximumNumberOfCoefficients);
 	
-	if ((dct = NUMcosinesTable_d (first_cc, last_cc, nf)) == NULL) return NULL;
+	if ((dct = NUMcosinesTable (first_cc, last_cc, nf)) == NULL) return NULL;
 
 	if ((thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		fmin, fmax, nf, df_mel, f1_mel)) == NULL) goto end;

@@ -1,6 +1,6 @@
 /* Polynomial.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
  	In previous version a NULL pointer was returned. New error messages.
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071201 Melder_warning<n>
+ djmw 20080122 float -> double
 */
 
 #include "Polynomial.h"
@@ -301,8 +303,7 @@ static void defaultGetExtrema (I, double x1, double x2, double *xmin,
 	long i, numberOfPoints = 1000; double x = x1, dx, y;
 	
 	/*
-		Melder_warning ("defaultGetExtrema: extrema calculated by sampling " 
-		"the interval");
+		Melder_warning1 (L"defaultGetExtrema: extrema calculated by sampling the interval");
 	*/
 	
 	dx = (x2 - x1) / (numberOfPoints - 1);
@@ -470,7 +471,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y,
 	if (numberOfPoints < 2) return;
 	
 	xb = x1 = x[0]; yb = y1 = y[0];
-	for (i=1; i < numberOfPoints; i++)
+	for (i = 1; i < numberOfPoints; i++)
 	{
 		x2 = x[i]; y2 = y[i];
 		
@@ -1226,7 +1227,6 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
 
 Roots Polynomial_to_Roots (Polynomial me)
 {
-	char *proc = "Polynomial_to_Roots";
 	Roots thee = NULL;
 	char job = 'E', compz = 'N';
 	double *hes = NULL, *wr, *wi, *work = NULL, *z = NULL, wt[1];
@@ -1285,7 +1285,7 @@ Roots Polynomial_to_Roots (Polynomial me)
 			WR and WI contain those eigenvalues which have been successfully computed */
 		nrootsfound -= info;
 		if (nrootsfound < 1) goto end;
-		Melder_warning ("%s: Calculated only % roots", proc, nrootsfound);
+		Melder_warning3 (L"Calculated only ", Melder_integer (nrootsfound), L" roots.");
 		ioffset = info;
 	}
 	else if (info < 0)

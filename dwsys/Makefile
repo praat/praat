@@ -1,6 +1,6 @@
 # makefile for library dwsys.
 # David Weenink 20061222
-# djmw 20071122 Latest modification.
+# djmw 20080122 Latest modification.
 
 include ../makefile.defs
 
@@ -13,7 +13,7 @@ clean:
 
 OBJECTS = Collection_extensions.o Command.o \
 	Eigen.o Index.o \
-	NUM2.o NUMlapack.o NUMmachar.o \
+	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_d.o NUMsort2.o \
 	Permutation.o Permutation_and_Index.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \

@@ -302,6 +302,9 @@ static void cb_move (GUI_ARGS) {
 		width - marginWidth, marginHeight, height - marginHeight);
 	Graphics_updateWs ((Graphics) me);
 }
+static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
+	return _GraphicsMac_tryToInitializeAtsuiFonts ();
+}
 #endif
 
 Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget */
@@ -312,7 +315,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
-		my useQuartz = true;
+		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	if (! Graphics_init (me)) return 0;
 	#ifdef macintosh

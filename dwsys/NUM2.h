@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2007 David Weenink
+ * Copyright (C) 1997-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,31 +171,30 @@ double NUMdvector_normalize2 (double v[], long n);
 double NUMdvector_getNorm1 (const double v[], long n);
 double NUMdvector_getNorm2 (const double v[], long n);
 
-void  NUMcentreRows_d(double **a, long rb, long re, long cb, long ce);
+void  NUMcentreRows (double **a, long rb, long re, long cb, long ce);
 /*
 	a[i][j] -= a[i][.]
 */
-void NUMcentreColumns_d (double **a, long rb, long re, long cb, long ce, 
-	double *centres);
+void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres);
 /*
 	a[i][j] -= a[.][j]
 	if centres != NULL the means are returned in centres[1..re-rb+1]
 */
 
-void NUMdoubleCentre_d (double **a, long rb, long re, long cb, long ce);
+void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce);
 /*
 	Function: Make the average value of each column and each row zero.
 		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
 */
 
-void NUMnormalizeRows_d (double **a, long nr, long nc, double norm);
+void NUMnormalizeRows (double **a, long nr, long nc, double norm);
 
-void NUMnormalizeColumns_d (double **a, long nr, long nc, double norm);
+void NUMnormalizeColumns (double **a, long nr, long nc, double norm);
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
 */
 
-void NUMnormalize_d (double **a, long nr, long nc, double norm);
+void NUMnormalize (double **a, long nr, long nc, double norm);
 /*
 	Scale all elements of the matrix [1..nr][1..nc] such that
 	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.	
@@ -226,9 +225,7 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	NOT given.   
  */
 
-int NUMmad_f (float *x, long n, double *location, int wantlocation,
-	double *mad, float *work);
-int NUMmad_d (double *x, long n, double *location, int wantlocation,
+int NUMmad (double *x, long n, double *location, int wantlocation,
 	double *mad, double *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
@@ -241,9 +238,7 @@ int NUMmad_d (double *x, long n, double *location, int wantlocation,
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
-int NUMstatistics_huber_f (float *x, long n, double *location, int wantlocation,
-	double *scale, int wantscale, double k, double tol, float *work);
-int NUMstatistics_huber_d (double *x, long n, double *location, int wantlocation,
+int NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 	double *scale, int wantscale, double k, double tol, double *work);
 /*
 	Finds the Huber M-estimator for location with scale specified,
@@ -254,7 +249,7 @@ int NUMstatistics_huber_d (double *x, long n, double *location, int wantlocation
 	If work == NULL, the routine allocates (and destroys) its own memory.
 */
 
-void NUMmonotoneRegression_d (const double x[], long n, double xs[]);
+void NUMmonotoneRegression (const double x[], long n, double xs[]);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with 
 	the numbers in x[1..n].
@@ -276,7 +271,7 @@ void NUMsort2_ll (long n, long a[], long b[]);
 */
 
 void NUMindexx_f (const float a[], long n, long indx[]);
-void NUMindexx_d (const double a[], long n, long indx[]);
+void NUMindexx (const double a[], long n, long indx[]);
 void NUMindexx_s (wchar_t *a[], long n, long indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
@@ -285,19 +280,16 @@ void NUMindexx_s (wchar_t *a[], long n, long indx[]);
 */
 
 void NUMrank_f (long n, float a []);
-void NUMrank_d (long n, double a []);
+void NUMrank (long n, double a []);
 /*
 	Replace content of array by rank number, including midranking of ties.
 	E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
     by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively.
 */
-int NUMrankColumns_f (float **m, long rb, long re, long cb, long ce);
-int NUMrankColumns_d (double **m, long rb, long re, long cb, long ce);
-
-
+int NUMrankColumns (double **m, long rb, long re, long cb, long ce);
 
 void NUMhunt_f (float xx[], long n, float x, long *jlo);
-void NUMhunt_d (double xx[], long n, double x, long *jlo);
+void NUMhunt (double xx[], long n, double x, long *jlo);
 /*
 	Given an array xx[1..n], and given a value x, returns a value jlo such that
 	x is between xx[jlo] and xx[jlo+1]. xx[1..n] must be monotonic, either
@@ -306,7 +298,7 @@ void NUMhunt_d (double xx[], long n, double x, long *jlo);
 */
 
 void NUMlocate_f (float *xx, long n, float x, long *index);
-void NUMlocate_d (double *xx, long n, double x, long *index);
+void NUMlocate (double *xx, long n, double x, long *index);
 /*
 	Given an array xx[1..n], and given a value x, returns a value index
 	such that xx[index] < x <=  xx[index+1].
@@ -328,7 +320,7 @@ int NUMjacobi (float **a, long n, float d[], float **v, long *nrot);
  */
  
 void NUMtred2_f (float **a, long n, float d[], float e[]);
-void NUMtred2_d (double **a, long n, double d[], double e[]);
+void NUMtred2 (double **a, long n, double d[], double e[]);
 /*
 	Householder reduction of a real, symmetric matrix a[1..n][1..n]. On output,
 	a is replaced by the orthogonal matrix Q effecting the transformation.
@@ -337,7 +329,7 @@ void NUMtred2_d (double **a, long n, double d[], double e[]);
 */
 
 int NUMtqli_f (float d[], float e[], long n, float **z);
-int NUMtqli_d (double d[], double e[], long n, double **z);
+int NUMtqli (double d[], double e[], long n, double **z);
 /*
 	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues 
 	and eigenvectors of a real, symmetric, tridiagonal matrix, or of a real,
@@ -355,9 +347,9 @@ int NUMtqli_d (double d[], double e[], long n, double **z);
 	Returns 0 in case of too many rotations.
 */
 
-int NUMgaussj_d (double **a, long n, double **b, long m);
+int NUMgaussj (double **a, long n, double **b, long m);
 
-int NUMgaussj (float **a, long n);
+int NUMgaussj_f (float **a, long n);
 /* 
 	Calculate inverse of square matrix a[1..n][1..n] (in-place).
 	Method: Gauss-Jordan elimination with full pivoting.
@@ -434,9 +426,9 @@ double NUMtrace2 (double **a1, double **a2, long n);
 	a1 and a2 are [1..n][1..n] square matrices.
 */
 
-void eigenSort_d (double d[], double **v, long n, int sort);
+void eigenSort (double d[], double **v, long n, int sort);
 
-int NUMeigensystem_d (double **a, long n, double **evec, double eval[]);
+int NUMeigensystem (double **a, long n, double **evec, double eval[]);
 /*
 	Determines the eigensystem of a real, symmetric matrix[1..][1..n].
 	Returned are: evec[1..n][1..n] with eigenvectors (columnwise) and
@@ -446,7 +438,7 @@ int NUMeigensystem_d (double **a, long n, double **evec, double eval[]);
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
 
-int NUMdominantEigenvector_d (double **mns, long n, double *q, double *lambda, double tolerance);
+int NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
 /*
 	Determines the first dominant eigenvector from a GENERAL matrix
 	mns[1..n][1..].
@@ -485,13 +477,13 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 		principal directions.
 */
 
-int NUMprincipalComponents_d (double **a, long n, long nComponents, double **pc);
+int NUMprincipalComponents (double **a, long n, long nComponents, double **pc);
 /*
 	Determines the principal components of a real symmetric matrix 
 	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
 */
 
-int NUMpseudoInverse_d (double **y, long nr, long nc, double **yinv, double tolerance);
+int NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance);
 /*
 	Determines the pseudo-inverse Y^-1 of Y[1..nr][1..nc] via s.v.d.
 	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
@@ -499,7 +491,7 @@ int NUMpseudoInverse_d (double **y, long nr, long nc, double **yinv, double tole
 */
 
 
-int NUMsolveEquation_d (double **a, long nr, long nc, double *b, double tol, double *x);
+int NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, double *x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
@@ -507,7 +499,7 @@ int NUMsolveEquation_d (double **a, long nr, long nc, double *b, double tol, dou
 	Algorithm: s.v.d.
 */
 
-int NUMsolveEquations_d (double **a, long nr, long nc, double **b, long ncb, double tol, double **x);
+int NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tol, double **x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
@@ -826,7 +818,7 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 		Matrix elements < 0;
 */
 
-double **NUMcosinesTable_d (long first, long last, long npoints);
+double **NUMcosinesTable (long first, long last, long npoints);
 /*
 	Generate table with cosines.
 	
@@ -840,10 +832,7 @@ double **NUMcosinesTable_d (long first, long last, long npoints);
 
 /******  Interpolation ****/
 
-int NUMspline_f (float x[], float y[], long n, float yp1, float ypn,
-	float y2[]);
-int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
-	double y2[]);
+int NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]);
 /*
 	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
@@ -856,14 +845,11 @@ int NUMspline_d (double x[], double y[], long n, double yp1, double ypn,
 	zero second derivative on that boundary.
 */
 
-int NUMsplint_f (float xa[], float ya[], float y2a[], long n, float x,
-	float *y);
-int NUMsplint_d (double xa[], double ya[], double y2a[], long n, double x,
-	double *y);
+int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
-	array y2a[1..n] which is the output of NUMspline_d above, and given
+	array y2a[1..n] which is the output of NUMspline above, and given
 	a value of x, this routine returns an interpolated value y.
 */
 
@@ -956,7 +942,7 @@ struct NUMfft_Table_f
   long *splitcache;
 };
 
-struct NUMfft_Table_d
+struct NUMfft_Table
 {
   long n;
   double *trigcache;
@@ -964,19 +950,19 @@ struct NUMfft_Table_d
 };
 
 typedef struct NUMfft_Table_f *NUMfft_Table_f;
-typedef struct NUMfft_Table_d *NUMfft_Table_d;
+typedef struct NUMfft_Table *NUMfft_Table;
 
 int NUMfft_Table_init_f (NUMfft_Table_f table, long n);
-int NUMfft_Table_init_d (NUMfft_Table_d table, long n);
+int NUMfft_Table_init (NUMfft_Table table, long n);
 /*
 	n : data size
 */
 
 void NUMfft_Table_free_f (NUMfft_Table_f table);
-void NUMfft_Table_free_d (NUMfft_Table_d table);
+void NUMfft_Table_free (NUMfft_Table table);
 
 void NUMfft_forward_f (NUMfft_Table_f table, float *data);
-void NUMfft_forward_d (NUMfft_Table_d table, double *data);
+void NUMfft_forward (NUMfft_Table table, double *data);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1023,7 +1009,7 @@ void NUMfft_forward_d (NUMfft_Table_d table, double *data);
 */
 
 void NUMfft_backward_f (NUMfft_Table_f table, float *data);
-void NUMfft_backward_d (NUMfft_Table_d table, double *data);
+void NUMfft_backward (NUMfft_Table table, double *data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1066,7 +1052,7 @@ void NUMfft_backward_d (NUMfft_Table_d table, double *data);
 /**** Compatibility with NR fft's */
 
 int NUMforwardRealFastFourierTransform_f (float  *data, long n);
-int NUMforwardRealFastFourierTransform_d (double  *data, long n);
+int NUMforwardRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1081,7 +1067,7 @@ int NUMforwardRealFastFourierTransform_d (double  *data, long n);
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
 int NUMreverseRealFastFourierTransform_f (float  *data, long n);
-int NUMreverseRealFastFourierTransform_d (double  *data, long n);
+int NUMreverseRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1094,7 +1080,6 @@ int NUMreverseRealFastFourierTransform_d (double  *data, long n);
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
 int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. */ 
-int NUMrealft_d (double *data, long n, int direction);
-#define NUMrealft NUMrealft_f
+int NUMrealft (double *data, long n, int direction);
 
 #endif /* _NUM2_h_ */

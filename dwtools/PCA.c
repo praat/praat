@@ -28,6 +28,7 @@
  djmw 20030324 Added PCA_and_TableOfReal_getFractionVariance.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071201 Melder_warning<n>
 */
 
 #include "PCA.h"
@@ -134,7 +135,6 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 
 PCA TableOfReal_to_PCA (I)
 {
-	char *proc = "TableOfReal_to_PCA"; 
 	iam (TableOfReal); 
 	PCA thee;
 	double **a = NULL;
@@ -143,8 +143,8 @@ PCA TableOfReal_to_PCA (I)
 	if (m < 2) return Melder_errorp1 (L"There is not enough data to perform a PCA.\n"
 		"Your table has less than 2 rows.");
 
-	if (m < n) Melder_warning ("%s: The number of rows in your table is less than the\n"
-		"number of columns. ", proc);
+	if (m < n) Melder_warning1 (L"The number of rows in your table is less than the\n"
+		"number of columns. ");
 	
 	if (NUMfrobeniusnorm (m, n, my data) == 0) return Melder_errorp1 
 		(L"All values in your table are zero. ");

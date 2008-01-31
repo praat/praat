@@ -2,7 +2,7 @@
  *
  *	Dynamic Time Warp of two CCs.
  * 
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 2001
  djmw 20020315 GPL header
+ djmw 20080122 float -> double
  */
 
 #include "CCs_to_DTW.h"
