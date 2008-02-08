@@ -161,7 +161,11 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	(void) event;
 	iam (DataSubEditor);
 	int i;   // has to be declared here
-	for (i = 1; i <= MAXNUM_ROWS; i ++) if (XtIsManaged (my fieldData [i]. text)) {
+	for (i = 1; i <= MAXNUM_ROWS; i ++) {
+	
+	#if motif
+	if (XtIsManaged (my fieldData [i]. text)) {
+	#endif
 		int type = my fieldData [i]. description -> type;
 		wchar_t *text;
 		if (type > maxsingletypewa) continue;
@@ -266,6 +270,9 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			default: break;
 		}
 		Melder_free (text);
+	#if motif
+	}
+	#endif
 	}
 	/* Several collaborators have to be notified of this change:
 	 * 1. The owner (creator) of our root DataEditor: so that she can notify other editors, if any.
@@ -293,7 +300,9 @@ static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 static void gui_cb_scroll (GUI_ARGS) {
 	GUI_IAM (DataSubEditor);
 	int value, slider, incr, pincr;
-	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	#if motif
+		XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	#endif
 	my topField = value + 1;
 	update (me);
 }
@@ -358,6 +367,7 @@ static void classDataSubEditor_createChildren (I) {
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_cb_cancel, me, 0);
 
+	#if motif
 	Widget scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
@@ -387,6 +397,7 @@ static void classDataSubEditor_createChildren (I) {
 		my fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
 	}
 	GuiObject_show (form);
+	#endif
 }
 
 DIRECT (DataSubEditor, cb_help) Melder_help (L"Inspect"); END
@@ -489,7 +500,9 @@ static void showStructMember (
 	/* Show the value (for a single type) or a button (for a composite type). */
 
 	if (isSingleType) {
-		XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+		#if motif
+			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+		#endif
 		MelderString_empty (& buffer);
 		wchar_t *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
 		GuiText_setString (fieldData -> text, text);
@@ -652,7 +665,9 @@ static void classVectorEditor_showMembers (I) {
 
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			#if motif
+				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiObject_show (fieldData -> text);
 			fieldData -> address = elementAddress;
@@ -764,7 +779,9 @@ static void classMatrixEditor_showMembers (I) {
 
 			MelderString_empty (& buffer);
 			wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			#if motif
+				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiObject_show (fieldData -> text);
 			fieldData -> address = elementAddress;

@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/11/18
+ * pb 2008/02/07
  */
 
 #include "Editor.h"
@@ -143,7 +143,9 @@ typedef struct {   /* Readonly */
 	int batch;   /* Was the program called from the command line? */
 	int totalSelection;   /* The total number of selected objects, <= n. */
 	int totalBeingCreated;
-	XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
+	#if motif
+		XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
+	#endif
 	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
 	Graphics graphics;   /* The Graphics associated with the Picture window. */
 	ManPages manPages;
@@ -332,6 +334,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define GRAPHICS  theCurrentPraat -> graphics
 #define FULL_NAME  (theCurrentPraat -> list [IOBJECT]. name)
 #define ID  (theCurrentPraat -> list [IOBJECT]. id)
+#define ID_AND_FULL_NAME  Melder_wcscat3 (Melder_integer (ID), L". ", FULL_NAME)
 #define NAMEW  praat_name (IOBJECT)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
@@ -357,7 +360,7 @@ int praat_installEditor (Any editor, int iobject);
 		if (praat.batch) return Melder_error1 (L"Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 	END
 */
 int praat_installEditor2 (Any editor, int iobject1, int iobject2);

@@ -212,7 +212,7 @@ class_methods (SpectrumEditor, FunctionEditor)
 	class_method (play)
 class_methods_end
 
-SpectrumEditor SpectrumEditor_create (Widget parent, wchar_t *title, Any data) {
+SpectrumEditor SpectrumEditor_create (Widget parent, const wchar_t *title, Any data) {
 	SpectrumEditor me = new (SpectrumEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
 	my cursorHeight = -1000;

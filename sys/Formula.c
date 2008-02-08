@@ -1,6 +1,6 @@
 /* Formula.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@
  * pb 2007/05/26 wchar_t
  * pb 2007/06/09 wchar_t for Interpreter
  * pb 2007/11/17 implemented self0$
+ * pb 2008/02/01 object
  */
 
 #include <ctype.h>
@@ -105,7 +106,7 @@ enum { GEENSYMBOOL_,
 		#define HIGH_ATTRIBUTE  X_
 	#define HIGH_VALUE  HIGH_ATTRIBUTE
 
-	SELF_, SELFSTR_, MATRIKS_, MATRIKSSTR_,
+	SELF_, SELFSTR_, OBJECT_, OBJECTSTR_, MATRIKS_, MATRIKSSTR_,
 	STOPWATCH_,
 
 /* The following symbols can be followed by "-" only if they are a variable. */
@@ -165,7 +166,10 @@ enum { GEENSYMBOOL_,
 /* Symbols introduced by the parser. */
 
 	TRUE_, FALSE_, IFTRUE_, IFFALSE_, GOTO_, LABEL_,
-	SELF0_, SELFSTR0_, SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
+	SELF0_, SELFSTR0_,
+	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
+	OBJECTLOCATION0_, OBJECTLOCATIONSTR0_, OBJECTLOCATION1_, OBJECTLOCATIONSTR1_, OBJECTLOCATION2_, OBJECTLOCATIONSTR2_,
+	SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
 	SELFFUNKTIE1_, SELFFUNKTIESTR1_, SELFFUNKTIE2_, SELFFUNKTIESTR2_,
 	MATRIKS0_, MATRIKSSTR0_, MATRIKS1_, MATRIKSSTR1_, MATRIKS2_, MATRIKSSTR2_,
 	FUNKTIE0_, FUNKTIESTR0_, FUNKTIE1_, FUNKTIESTR1_, FUNKTIE2_, FUNKTIESTR2_,
@@ -190,7 +194,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"_number", L"pi", L"e", L"undefined",
 	L"xmin", L"xmax", L"ymin", L"ymax", L"nx", L"ny", L"dx", L"dy",
 	L"row", L"col", L"nrow", L"ncol", L"row$", L"col$", L"y", L"x",
-	L"self", L"self$", L"_matriks", L"_matriks$",
+	L"self", L"self$", L"object", L"object$", L"_matriks", L"_matriks$",
 	L"stopwatch",
 	L"abs", L"round", L"floor", L"ceiling", L"sqrt", L"sin", L"cos", L"tan", L"arcsin", L"arccos", L"arctan",
 	L"exp", L"sinh", L"cosh", L"tanh", L"arcsinh", L"arccosh", L"arctanh",
@@ -218,7 +222,10 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"fixed$", L"percent$",
 	L".",
 	L"_true", L"_false", L"_iftrue", L"_iffalse", L"_gaNaar", L"_label",
-	L"_self0", L"_self0$", L"_selfmatriks1", L"_selfmatriks1$", L"_selfmatriks2", L"_selfmatriks2$",
+	L"_self0", L"_self0$",
+	L"_objectcell0", L"_objectcell0$", L"_objectcell1", L"_objectcell1$", L"_objectcell2", L"_objectcell2$",
+	L"_objectlocation0", L"_objectlocation0$", L"_objectlocation1", L"_objectlocation1$", L"_objectlocation2", L"_objectlocation2$",
+	L"_selfmatriks1", L"_selfmatriks1$", L"_selfmatriks2", L"_selfmatriks2$",
 	L"_selffunktie1", L"_selffunktie1$", L"_selffunktie2", L"_selffunktie2$",
 	L"_matriks0", L"_matriks0$", L"_matriks1", L"_matriks1$", L"_matriks2", L"_matriks2$",
 	L"_funktie0", L"_funktie0$", L"_funktie1", L"_funktie1$", L"_funktie2", L"_funktie2$",
@@ -723,6 +730,96 @@ static int parsePowerFactor (void) {
 		}
 		oudlees;
 		nieuwontleed (SELFSTR0_);
+		return 1;
+	}
+
+	if (symbol == OBJECT_) {
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (! parseExpression ()) return 0;   // the object's name or ID
+			if (nieuwlees == RECHTEHAAKSLUITEN_) {
+				nieuwontleed (OBJECTCELL0_);
+			} else {
+				oudlees;
+				if (! pas (KOMMA_)) return 0;
+				if (! parseExpression ()) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					nieuwontleed (OBJECTCELL2_);
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (OBJECTCELL1_);
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				}
+			}
+		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
+			if (! parseExpression ()) return 0;
+			if (nieuwlees == HAAKJESLUITEN_) {
+				nieuwontleed (OBJECTLOCATION0_);
+			} else {
+				oudlees;
+				if (! pas (KOMMA_)) return 0;
+				if (! parseExpression ()) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					nieuwontleed (OBJECTLOCATION2_);
+					if (! pas (HAAKJESLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (OBJECTLOCATION1_);
+					if (! pas (HAAKJESLUITEN_)) return 0;
+				}
+			}
+		} else {
+			formulefout (L"After \"object\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			return 0;
+		}
+		return 1;
+	}
+
+	if (symbol == OBJECTSTR_) {
+		symbol = nieuwlees;
+		if (symbol == RECHTEHAAKOPENEN_) {
+			if (! parseExpression ()) return 0;   // the object's name or ID
+			if (nieuwlees == RECHTEHAAKSLUITEN_) {
+				nieuwontleed (OBJECTCELLSTR0_);
+			} else {
+				oudlees;
+				if (! pas (KOMMA_)) return 0;
+				if (! parseExpression ()) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					nieuwontleed (OBJECTCELLSTR2_);
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (OBJECTCELLSTR1_);
+					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				}
+			}
+		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
+			if (! parseExpression ()) return 0;
+			if (nieuwlees == HAAKJESLUITEN_) {
+				nieuwontleed (OBJECTLOCATIONSTR0_);
+			} else {
+				oudlees;
+				if (! pas (KOMMA_)) return 0;
+				if (! parseExpression ()) return 0;
+				if (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					nieuwontleed (OBJECTLOCATIONSTR2_);
+					if (! pas (HAAKJESLUITEN_)) return 0;
+				} else {
+					oudlees;
+					nieuwontleed (OBJECTLOCATIONSTR1_);
+					if (! pas (HAAKJESLUITEN_)) return 0;
+				}
+			}
+		} else {
+			formulefout (L"After \"object$\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			return 0;
+		}
 		return 1;
 	}
 
@@ -2634,6 +2731,61 @@ static void do_selfStr0 (long irow, long icol) {
 	}
 end: return;
 }
+static Data getObjectFromUniqueID (Stackel object) {
+	Data thee = NULL;
+	if (object->which == Stackel_NUMBER) {
+		int i = theCurrentPraat -> n;
+		while (i > 0 && object->content.number != theCurrentPraat -> list [i]. id)
+			i --;
+		if (i == 0) {
+			error2 (L"No such object: ", Melder_integer (object->content.number));
+		}
+		thee = theCurrentPraat -> list [i]. object;
+	} else if (object->which == Stackel_STRING) {
+		int i = theCurrentPraat -> n;
+		while (i > 0 && ! Melder_wcsequ (object->content.string, theCurrentPraat -> list [i]. name))
+			i --;
+		if (i == 0) {
+			error2 (L"No such object: ", object->content.string);
+		}
+		thee = theCurrentPraat -> list [i]. object;
+	} else {
+		error3 (L"The first argument to \"object\" must be a number (unique ID) or a string (name), not ", Stackel_whichText (object), L".")
+	}
+end:
+	return thee;
+}
+static void do_objectCell0 (long irow, long icol) {
+	Data thee = getObjectFromUniqueID (pop); cherror
+	if (your getCell) {
+		pushNumber (your getCell (thee));
+	} else if (your getVector) {
+		if (icol == 0) {
+			error3 (L"We are not in a loop,\n"
+				"hence no implicit column index for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object [id, column].")
+		} else {
+			pushNumber (your getVector (thee, irow, icol));
+		}
+	} else if (your getMatrix) {
+		if (irow == 0) {
+			if (icol == 0) {
+				error3 (L"We are not in a loop over rows and columns,\n"
+					"hence no implicit row and column indexing for this ", Thing_classNameW (thee), L" object.\n"
+					"Try using: object [id, row, column].")
+			} else {
+				error3 (L"We are not in a loop over columns only,\n"
+					"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+					"Try using: object [id, row].")
+			}
+		} else {
+			pushNumber (your getMatrix (thee, irow, icol));
+		}
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept no [] indexing.")
+	}
+end: return;
+}
 static void do_matriks0 (long irow, long icol) {
 	Data thee = parse [programPointer]. content.object;
 	if (your getCell) {
@@ -2709,6 +2861,25 @@ static void do_selfMatriksStr1 (long irow) {
 	}
 end: return;
 }
+static void do_objectCell1 (long irow) {
+	Stackel column = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	long icol = Stackel_getColumnNumber (column, thee); cherror
+	if (your getVector) {
+		pushNumber (your getVector (thee, irow, icol));
+	} else if (your getMatrix) {
+		if (irow == 0) {
+			error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object [id, row, column].")
+		} else {
+			pushNumber (your getMatrix (thee, irow, icol));
+		}
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes.")
+	}
+end: return;
+}
 static void do_matriks1 (long irow) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop;
@@ -2725,6 +2896,25 @@ static void do_matriks1 (long irow) {
 		}
 	} else {
 		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes.")
+	}
+end: return;
+}
+static void do_objectCellStr1 (long irow) {
+	Stackel column = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	long icol = Stackel_getColumnNumber (column, thee); cherror
+	if (your getVectorStr) {
+		pushString (Melder_wcsdup (your getVectorStr (thee, icol)));
+	} else if (your getMatrixStr) {
+		if (irow == 0) {
+			error3 (L"We are not in a loop,\n"
+				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object [id, row, column].")
+		} else {
+			pushString (Melder_wcsdup (your getMatrixStr (thee, irow, icol)));
+		}
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes for string cells.")
 	}
 end: return;
 }
@@ -2771,6 +2961,15 @@ static void do_selfMatriksStr2 (void) {
 	pushString (result);
 end: return;
 }
+static void do_objectCell2 (void) {
+	Stackel column = pop, row = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	long irow = Stackel_getRowNumber (row, thee); cherror
+	long icol = Stackel_getColumnNumber (column, thee); cherror
+	if (your getMatrix == NULL) error2 (Thing_classNameW (thee), L" objects accept no [id, row, column] indexing.")
+	pushNumber (your getMatrix (thee, irow, icol));
+end: return;
+}
 static void do_matriks2 (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
@@ -2778,6 +2977,16 @@ static void do_matriks2 (void) {
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrix == NULL) error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing.")
 	pushNumber (your getMatrix (thee, irow, icol));
+end: return;
+}
+static void do_objectCellStr2 (void) {
+	Stackel column = pop, row = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	long irow = Stackel_getRowNumber (row, thee); cherror
+	long icol = Stackel_getColumnNumber (column, thee); cherror
+	if (your getMatrixStr == NULL) error2 (Thing_classNameW (thee), L" objects accept no [id, row, column] indexing for string cells.")
+	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
+	pushString (result);
 end: return;
 }
 static void do_matriksStr2 (void) {
@@ -2788,6 +2997,45 @@ static void do_matriksStr2 (void) {
 	if (your getMatrixStr == NULL) error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing for string cells.")
 	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
 	pushString (result);
+end: return;
+}
+static void do_objectLocation0 (long irow, long icol) {
+	Data thee = getObjectFromUniqueID (pop); cherror
+	if (your getFunction0) {
+		pushNumber (your getFunction0 (thee));
+	} else if (your getFunction1) {
+		Data me = theSource;
+		if (me == NULL)
+			error3 (L"No current object (we are not in a Formula command),\n"
+				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object (id, x).")
+		if (our getX == NULL)
+			error5 (L"The current ", Thing_classNameW (me),
+				L" object gives no implicit x values,\nhence no implicit x value for this ",
+				Thing_classNameW (thee), L" object.\n"
+				"Try using: object (id, x).")
+		double x = our getX (me, icol);
+		pushNumber (your getFunction1 (thee, irow, x));
+	} else if (your getFunction2) {
+		Data me = theSource;
+		if (me == NULL)
+			error3 (L"No current object (we are not in a Formula command),\n"
+				"hence no implicit x or y values for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object (id, x, y).")
+		if (our getX == NULL)
+			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit x values,\n"
+				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+				"Try using: object (id, x, y).")
+		double x = our getX (me, icol);
+		if (our getY == NULL)
+			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+					"Try using: object (id, y).")
+		double y = our getY (me, irow);
+		pushNumber (your getFunction2 (thee, x, y));
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept no () values.")
+	}
 end: return;
 }
 static void do_funktie0 (long irow, long icol) {
@@ -2850,6 +3098,32 @@ static void do_selfFunktie1 (long irow) {
 	}
 end: return;
 }
+static void do_objectLocation1 (long irow) {
+	Stackel x = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	if (x->which == Stackel_NUMBER) {
+		if (your getFunction1) {
+			pushNumber (your getFunction1 (thee, irow, x->content.number));
+		} else if (your getFunction2) {
+			Data me = theSource;
+			if (me == NULL)
+				error3 (L"No current object (we are not in a Formula command),\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+					"Try using: object (id, x, y).")
+			if (our getY == NULL)
+				error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+					"Try using: object (id, x, y).")
+			double y = our getY (me, irow);
+			pushNumber (your getFunction2 (thee, x->content.number, y));
+		} else {
+			error2 (Thing_classNameW (thee), L" objects accept no (x) values.")
+		}
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
+	}
+end: return;
+}
 static void do_funktie1 (long irow) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel x = pop;
@@ -2885,6 +3159,17 @@ static void do_selfFunktie2 (void) {
 		pushNumber (our getFunction2 (me, x->content.number, y->content.number));
 	} else {
 		error2 (Thing_classNameW (me), L" objects accept only numeric x values.")
+	}
+end: return;
+}
+static void do_objectLocation2 (void) {
+	Stackel y = pop, x = pop;
+	Data thee = getObjectFromUniqueID (pop); cherror
+	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+		if (your getFunction2 == NULL) error2 (Thing_classNameW (thee), L" objects accept no (x, y) values.")
+		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
+	} else {
+		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
 	}
 end: return;
 }
@@ -3109,6 +3394,14 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SELFMATRIKSSTR2_: { do_selfMatriksStr2 ();
 } break; case SELFFUNKTIE1_: { do_selfFunktie1 (row);
 } break; case SELFFUNKTIE2_: { do_selfFunktie2 ();
+} break; case OBJECTCELL0_: { do_objectCell0 (row, col);
+} break; case OBJECTCELL1_: { do_objectCell1 (row);
+} break; case OBJECTCELLSTR1_: { do_objectCellStr1 (row);
+} break; case OBJECTCELL2_: { do_objectCell2 ();
+} break; case OBJECTCELLSTR2_: { do_objectCellStr2 ();
+} break; case OBJECTLOCATION0_: { do_objectLocation0 (row, col);
+} break; case OBJECTLOCATION1_: { do_objectLocation1 (row);
+} break; case OBJECTLOCATION2_: { do_objectLocation2 ();
 } break; case MATRIKS0_: { do_matriks0 (row, col);
 } break; case MATRIKS1_: { do_matriks1 (row);
 } break; case MATRIKSSTR1_: { do_matrixStr1 (row);

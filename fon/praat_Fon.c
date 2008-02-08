@@ -198,7 +198,7 @@ DIRECT (AmplitudeTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classAmplitudeTier)
-			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -451,7 +451,7 @@ DIRECT (DurationTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classDurationTier)
-			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1218,7 +1218,7 @@ DIRECT (IntensityTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classIntensityTier)
-			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1586,7 +1586,7 @@ DIRECT (Manipulation_edit)
 		return Melder_error1 (L"Cannot edit a Manipulation from batch.");
 	} else {
 		WHERE (SELECTED) {
-			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_ManipulationEditor_publish, NULL);
 		}
@@ -2166,7 +2166,7 @@ DIRECT (Pitch_edit)
 		return Melder_error1 (L"Cannot edit a Pitch from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -2610,7 +2610,7 @@ DIRECT (PitchTier_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPitchTier)
-			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -2873,7 +2873,7 @@ DIRECT (PointProcess_edit)
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPointProcess)
-			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound), IOBJECT)) return 0;
 	}
 END
@@ -3503,7 +3503,7 @@ DIRECT (Spectrogram_view)
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+				(SpectrogramEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 					return 0;
 END
 
@@ -3545,7 +3545,7 @@ END
 DIRECT (Spectrum_edit)
 	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit a Spectrum from batch.");
 	else WHERE (SELECTED)
-		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Spectrum_formula, L"Spectrum: Formula", L"Spectrum: Formula...")
@@ -3803,7 +3803,7 @@ DIRECT (Strings_edit)
 		return Melder_error1 (L"Cannot edit a Strings from batch.");
 	} else {
 		WHERE (SELECTED && CLASS == classStrings)
-			if (! praat_installEditor (StringsEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (StringsEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 	}
 END

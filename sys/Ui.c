@@ -164,6 +164,8 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 	(void) call;
 	for (i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
+		#if motif
+			// TODO
 		if (b -> toggle == w) {
 			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
@@ -173,6 +175,7 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 		} else {
 			XmToggleButtonSetState (b -> toggle, FALSE, FALSE);
 		}
+		#endif
 	}
 }
 
@@ -204,10 +207,13 @@ static void UiField_setDefault (UiField me) {
 		} break; case UI_OPTIONMENU: {
 			for (int i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
+				#if motif
+				// TODO
 				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
 				if (i == my integerDefaultValue) {
 					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 				}
+				#endif
 			}
 		} break; case UI_ENUM: {
 			GuiList_selectItem (my list, my integerDefaultValue + my includeZero);
@@ -310,8 +316,11 @@ static int UiField_widgetToValue (UiField me) {
 			my integerValue = 0;
 			for (i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
+				#if motif
+				// TODO
 				if (XmToggleButtonGetState (b -> toggle))
 					my integerValue = i;
+				#endif
 			}
 			if (my integerValue == 0)
 				return Melder_error3 (L"No option chosen for `", my name, L"'.");
@@ -552,7 +561,9 @@ static void UiForm_okOrApply (I, int hide) {
 	GuiObject_setSensitive (my cancelButton, False);
 	if (my useStandards) GuiObject_setSensitive (my useStandards, False);
 	if (my helpButton) GuiObject_setSensitive (my helpButton, False);
+	#if motif
 	XmUpdateDisplay (my dialog);
+	#endif
 	if (my okCallback (me, my okClosure)) {
 		int destroyWhenUnmanaged = my destroyWhenUnmanaged;   /* Save before destruction. */
 		/*
@@ -894,20 +905,28 @@ void UiForm_finish (I) {
 				appendColon ();
 				GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
+
+				#if motif
 				bar = XmCreateMenuBar (my dialog, "UiOptionMenu", NULL, 0);
 				XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
 					#if defined (macintosh)
 						- 1
 					#endif
 					, XmNwidth, fieldWidth + 8, XmNheight, Gui_OPTIONMENU_HEIGHT + 8, NULL);
+				#endif
 				box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
+
+				#if motif
 				XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
 				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_OPTIONMENU_HEIGHT, NULL);
+				#endif
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
+					#if motif
+						button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
+					#endif
 				}
 				GuiObject_show (bar);
 			} break;
@@ -1124,10 +1143,12 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 			if (value < 1 || value > field -> options -> size) value = 1;   /* Guard against incorrect prefs file. */
 			for (int i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
+				#if motif
 				XmToggleButtonSetState (b -> toggle, i == value, False);
 				if (i == value) {
 					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 				}
+				#endif
 			}
 		} break; case UI_ENUM: {
 			if (value < 0 || value > enum_length (field -> enumerated)) value = 0;   /* Guard against incorrect prefs file. */
@@ -1169,13 +1190,19 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 			for (int i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = field -> options -> item [i];
 				if (wcsequ (value, b -> name)) {
+					#if motif
 					XmToggleButtonSetState (b -> toggle, True, False);
+					#endif
 					found = true;
 					if (field -> type == UI_OPTIONMENU) {
+						#if motif
 						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
+						#endif
 					}
 				} else {
-					XmToggleButtonSetState (b -> toggle, False, False);
+					#if motif
+						XmToggleButtonSetState (b -> toggle, False, False);
+					#endif
 				}
 			}
 			/* If not found: do nothing (guard against incorrect prefs file). */

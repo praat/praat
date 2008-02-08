@@ -3580,11 +3580,12 @@ NORMAL (L"The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN (L"VowelGenerator", L"djmw", 20080126)
+MAN_BEGIN (L"VowelEditor", L"djmw", 20080202)
 INTRO (L"Generates vowel-like sounds by moving the mouse in the Formant plane. ")
 NORMAL (L"Moving the mouse, with the mouse-button down, in the plane spanned by the first two formants creates "
 	"a vowel-like sound whose formants follow the formants in the trajectory described by the mouse. "
 	"This trajectory can be played, reversed, shifted, extended or time-scaled. ")
+NORMAL (L"You can also define a trajectory of straight-line segments either by shift-clicking or with menu options.")
 NORMAL (L"The fundamental frequency can be set to a follow a contour that falls, rises or stays constant. ")
 MAN_END
 

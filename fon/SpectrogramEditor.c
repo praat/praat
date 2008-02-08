@@ -85,7 +85,7 @@ class_methods (SpectrogramEditor, FunctionEditor)
 	class_method (click)
 class_methods_end
 
-Any SpectrogramEditor_create (Widget parent, wchar_t *title, Any data) {
+Any SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data) {
 	SpectrogramEditor me = new (SpectrogramEditor);
 	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
 	my maximum = 10000;

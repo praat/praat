@@ -384,7 +384,7 @@ DIRECT (Table_edit)
 		return Melder_error1 (L"Cannot edit a Table from batch.");
 	} else {
 		WHERE (SELECTED) {
-			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, FULL_NAME, ONLY_OBJECT);
+			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, ONLY_OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 		}
 	}

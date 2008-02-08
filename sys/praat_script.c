@@ -56,14 +56,37 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *s
 		}
 	} else {
 		double value;
-		long id;
 		if (! Interpreter_numericExpression (interpreter, string, & value)) goto end;
-		id = (long) value;
+		long id = (long) value;
 		WHERE (ID == id) return IOBJECT;
 		goto end;
 	}
 end:
 	return Melder_error3 (L"Object \"", string, L"\" does not exist.");
+}
+
+Editor praat_findEditorFromString (const wchar_t *string) {
+	int IOBJECT;
+	while (*string == ' ') string ++;
+	if (*string >= 'A' && *string <= 'Z') {
+		WHERE_DOWN (1) {
+			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+				Editor editor = theCurrentPraat -> list [IOBJECT]. editors [ieditor];
+				if (editor != NULL) {
+					const wchar_t *name = wcschr (editor -> name, ' ') + 1;
+					if (wcsequ (name, string)) return editor;
+				}
+			}
+		}
+	} else {
+		WHERE_DOWN (1) {
+			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+				Editor editor = theCurrentPraat -> list [IOBJECT]. editors [ieditor];
+				if (editor && wcsequ (editor -> name, string)) return editor;
+			}
+		}
+	}
+	return NULL;
 }
 
 int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
@@ -200,10 +223,12 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error1 (L"Missing command after `sendpraat'.");
+			#if motif
 			char *result = sendpraat (XtDisplay (theCurrentPraat -> topShell), Melder_peekWcsToUtf8 (programName),
 				SENDPRAAT_TIMEOUT, Melder_peekWcsToUtf8 (p));
 			if (result)
 				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", programName, L" not completed.");
+			#endif
 		} else if (wcsnequ (command, L"sendsocket ", 11)) {
 			if (theCurrentPraat != & theForegroundPraat)
 				return Melder_error1 (L"The script command \"sendsocket\" is not available inside pictures.");

@@ -111,7 +111,7 @@ DIRECT (Inspect)
 		return Melder_error1 (L"Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED)
-			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 	}
 END
 
@@ -553,11 +553,15 @@ void praat_addMenus (Widget bar) {
 	praat_addMenuCommand (L"Objects", L"Praat", L"Hide action command...", 0, praat_HIDDEN, DO_praat_hideAction);
 	praat_addMenuCommand (L"Objects", L"Praat", L"Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
 	button = praat_addMenuCommand (L"Objects", L"Praat", L"Goodies", 0, praat_UNHIDABLE, 0);
+	#if motif
 	if (button) XtVaGetValues (button, XmNsubMenuId, & goodiesMenu, NULL);
+	#endif
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Calculator...", 0, 'U', DO_praat_calculator);
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
 	button = praat_addMenuCommand (L"Objects", L"Praat", L"Preferences", 0, praat_UNHIDABLE, 0);
+	#if motif
 	if (button) XtVaGetValues (button, XmNsubMenuId, & preferencesMenu, NULL);
+	#endif
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- encoding prefs --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);

@@ -155,7 +155,7 @@ DIRECT (LongSound_view)
 		return Melder_error1 (L"Cannot view a LongSound from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -574,7 +574,7 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	if (Thing_member (publish, classSpectrum)) {
 		int IOBJECT;
 		WHERE (SELECTED) {
-			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor2) return;
 			if (! praat_installEditor (editor2, IOBJECT)) Melder_flushError (NULL);
 		}
@@ -585,7 +585,7 @@ DIRECT (Sound_edit)
 		return Melder_error1 (L"Cannot edit a Sound from batch.");
 	} else {
 		WHERE (SELECTED) {
-			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_SoundEditor_publish, NULL);

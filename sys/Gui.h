@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 
 /*
  * pb 2007/12/30
+ * sdk 2008/01/14 GTK
+ * pb 2008/02/08
  */
 
 #ifdef USE_GTK
@@ -61,9 +63,17 @@
 #define Gui_HOMOGENEOUS  1
 
 #if gtk
+	#include <gtk/gtk.h>
+	#include <gdk/gdk.h>
+	#include <cairo/cairo.h>
 	// GTK include files...
+	typedef GtkWidget *Widget;
 	typedef void *XtPointer;
-	typedef GTKWidget Widget;
+	typedef gint Dimension;
+	typedef gboolean Boolean;
+	#define True 1
+	#define False 0
+
 #elif motif
 	#if defined (UNIX)
 		#include <Xm/Xm.h>

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/30
+ * pb 2008/02/06
  */
 
 #include <stdio.h>
@@ -390,6 +390,15 @@ double MelderString_deallocationSize (void);
 wchar_t * MelderReadString_readLine (MelderReadString *text);
 const wchar_t * MelderReadString_getLineNumber (MelderReadString *text);
 
+const wchar_t * Melder_wcscat2 (const wchar_t *s1, const wchar_t *s2);
+const wchar_t * Melder_wcscat3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+const wchar_t * Melder_wcscat4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+const wchar_t * Melder_wcscat5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+const wchar_t * Melder_wcscat6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+const wchar_t * Melder_wcscat7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+const wchar_t * Melder_wcscat8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+const wchar_t * Melder_wcscat9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
+
 /********** FILES **********/
 
 #if defined (_WIN32)
@@ -511,8 +520,7 @@ void Melder_help (const wchar_t *query);
 
 void Melder_search (void);
 
-void Melder_warning (const char *format, ...);
-	/* Give warning to stderr (batch) or to a "Warning" dialog. */
+/* Give warning to stderr (batch) or to a "Warning" dialog. */
 void Melder_warning1 (const wchar_t *s1);
 void Melder_warning2 (const wchar_t *s1, const wchar_t *s2);
 void Melder_warning3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);

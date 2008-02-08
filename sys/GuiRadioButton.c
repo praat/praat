@@ -115,7 +115,7 @@ Widget GuiRadioButton_create (Widget parent, int left, int right, int top, int b
 	my valueChangedCallback = valueChangedCallback;
 	my valueChangedBoss = valueChangedBoss;
 	#if gtk
-		my widget = gtk_radio_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
+		my widget = gtk_radio_button_new_with_label (GTK_RADIO_BUTTON (my widget), Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);

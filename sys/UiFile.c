@@ -79,7 +79,9 @@ static UiFile currentUiFile = NULL;
 static void classUiFile_destroy (I) {
 	iam (UiFile);
 	#ifdef UNIX
-		XtUnrealizeWidget (XtParent (my dialog));
+		#if motif
+			XtUnrealizeWidget (XtParent (my dialog));
+		#endif
 		GuiObject_destroy (my dialog);
 	#endif
 	if (me == currentUiFile) currentUiFile = NULL;   /* Undangle. */
@@ -99,6 +101,7 @@ class_methods_end
 
 #ifdef UNIX
 static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
+	#if motif
 	iam (UiFile);
 	char *fileName;
 	int motifBug;
@@ -120,11 +123,14 @@ static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
 		our ok (me);
 	}
 	XtFree (fileName);
+	#endif
 }
 static void UiFile_cancel (Widget w, XtPointer void_me, XtPointer call) {
+	#if motif
 	(void) void_me;
 	(void) call;
 	XtUnmanageChild (w);
+	#endif
 }
 static void UiFile_help (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
@@ -152,6 +158,7 @@ static void UiFile_init (I, Widget parent, const wchar_t *title) {
 	iam (UiFile);
 	my parent = parent;
 	#ifdef UNIX
+		#if motif
 		if (my parent) {
 			my dialog = XmCreateFileSelectionDialog (my parent, "FSB dialog", NULL, 0);
 		}
@@ -168,6 +175,7 @@ static void UiFile_init (I, Widget parent, const wchar_t *title) {
 			XtAddCallback (my dialog, XmNcancelCallback, UiFile_cancel, (XtPointer) me);
 			XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
 		}
+		#endif
 	#endif
 	Thing_setName (me, title);
 }
@@ -191,12 +199,14 @@ void UiFile_hide (void) {
 class_create (UiInfile, UiFile);
 
 #if defined (UNIX)
+#if motif
 static XmString inDirMask;
+#endif
 	/* Set when users clicks 'OK'. */
 	/* Used just before managing dialog. */
 static void classUiInfile_ok (I) {
 	iam (UiFile);
-	#if 1
+	#if motif
 		if (inDirMask) XmStringFree (inDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & inDirMask, NULL);
 	#endif
@@ -323,7 +333,7 @@ void UiInfile_do (I) {
 			}
 		}
 	#else
-		#if 1
+		#if motif
 			XmString dirMask;
 			if (inDirMask != NULL)
 				XtVaSetValues (my dialog, XmNdirMask, inDirMask, NULL);
@@ -355,31 +365,37 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	UiHistory_write (L" ");
 	UiHistory_write (my file. path);
 }
+#if motif
 static XmString outDirMask;
+#endif
 	/* Set when users clicks 'OK'. */
 	/* Used just before managing dialog. */
 static void classUiOutfile_ok (I) {
 	iam (UiFile);
 	char message [1000];
-	#if 1
+	#if motif
 		if (outDirMask) XmStringFree (outDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & outDirMask, NULL);
 	#endif
 	if (MelderFile_exists (& my file)) {
 		if (! my warning) {
-			my warning = XmCreateWarningDialog (my dialog, "fileExists", NULL, 0);
-			XtVaSetValues (my warning,
-				motif_argXmString (XmNdialogTitle, "File exists"),
-				XmNautoUnmanage, True,
-				XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
-			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
-			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
+			#if motif
+				my warning = XmCreateWarningDialog (my dialog, "fileExists", NULL, 0);
+				XtVaSetValues (my warning,
+					motif_argXmString (XmNdialogTitle, "File exists"),
+					XmNautoUnmanage, True,
+					XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
+					motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
+				XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
+				XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
+			#endif
 		}
 		sprintf (message, "A file with the name \"%s\" already exists.\n"
 			"Do you want to replace it?", MelderFile_messageName (& my file));
-		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, message), NULL);
-		XtManageChild (my warning);
+		#if motif
+			XtVaSetValues (my warning, motif_argXmString (XmNmessageString, message), NULL);
+			XtManageChild (my warning);
+		#endif
 	} else {
 		UiFile_ok_ok (NULL, me, NULL);
 	}
@@ -394,6 +410,7 @@ class_methods_end
 
 #ifdef UNIX
 static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
+	#if motif
 	iam (UiOutfile);
 	XmString dirMask;
 	(void) w;
@@ -401,6 +418,7 @@ static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
 	XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
 	XmFileSelectionDoSearch (my dialog, dirMask);
 	XmStringFree (dirMask);
+	#endif
 }
 #endif
 Any UiOutfile_create (Widget parent, const wchar_t *title,
@@ -413,6 +431,7 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 	UiFile_init (me, parent, title);
 	#ifdef UNIX
 		if (my dialog) {
+			#if motif
 			XtUnmanageChild (XtParent (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST)));
 			XtUnmanageChild (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST_LABEL));
 			/* Work around a Motif BUG. */
@@ -423,6 +442,7 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 				XmNdefaultActionCallback);
 			XtAddCallback (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
 				XmNdefaultActionCallback, defaultAction_cb, me);
+			#endif
 		}
 	#endif
 	my allowExecutionHook = theAllowExecutionHookHint;
@@ -544,6 +564,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
 		}
 	#else
+		#if motif
 		XmString xmDirMask, xmDirSpec;
 		char *dirMask, *dirSpecc, dirSpec [1000];
 		int length;
@@ -571,6 +592,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		XtFree (dirSpecc);
 		XtManageChild (my dialog);
 		XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
+		#endif
 		currentUiFile = (UiFile) me;
 	#endif
 }

@@ -383,17 +383,20 @@ void _GuiWinMacText_map (Widget widget) {
 	#endif
 }
 
+#endif
+
+
 static long NativeText_getLength (Widget widget) {
 	#if gtk
 		// TODO: Even uitzoeken hoe dit precies werkt:
 
-		if (G_OBJECT_TYPE(widget) == GTK_ENTRY) {
-			return g_utf8_strlen (gtk_entry_get_text (widget), -1); // TODO: Paul wil je hem zo hebben?
+		if (G_OBJECT_TYPE (widget) == GTK_TYPE_ENTRY) {
+			return g_utf8_strlen (gtk_entry_get_text (GTK_ENTRY (widget)), -1); // TODO: Paul wil je hem zo hebben?
 									   // Ik zou me zelfs kunnen voorstellen om
 									   // melder functies selectief naar glib
 									   // functies te mappen.
-		} else if (G_OBJECT_TYPE(widget) == GTK_TEXT_VIEW) {
-			return gtk_text_buffer_get_char_count (gtk_text_view_get_buffer (widget)); // TODO: Dit is dus char != byte
+		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
+			return gtk_text_buffer_get_char_count (gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget))); // TODO: Dit is dus char != byte
 		}
 		return 0;   // Should not occur.
 	#elif win
@@ -447,15 +450,16 @@ static void NativeText_getText (Widget widget, wchar_t *buffer, long length) {
 	// te zetten als het geen multi/single is. Waarom bij die andere wel een 'SNO'?
 
 	#if gtk
-		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_ENTRY) {
-			g_utf8_strncpy (buffer, gtk_entry_get_text (widget), length); // TODO: Is length gezet of niet?
-		} else if (G_OBJECT_TYPE(G_OBJECT(widget)) == GTK_TEXT_VIEW) {
+		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
+			// TODO: wsc
+//			g_utf8_strncpy (buffer, gtk_entry_get_text (GTK_ENTRY(widget)), length); // TODO: Is length gezet of niet?
+		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer;
 			GtkTextIter start, end;
 			textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
-			buffer = gtk_text_buffer_get_text (textBuffer, & start, & end, true); // TODO: Hidden chars ook maar doen he?
+//			buffer = gtk_text_buffer_get_text (textBuffer, & start, & end, true); // TODO: Hidden chars ook maar doen he?
 		}
 	#elif win
 		GetWindowText (widget -> window, buffer, length + 1);
@@ -515,11 +519,13 @@ static void NativeText_getText (Widget widget, wchar_t *buffer, long length) {
 
 static int NativeText_getSelectionRange (Widget widget, long *out_left, long *out_right) {
 	unsigned long left, right;
+	#ifndef unix
 	Melder_assert (MEMBER (widget, Text));
+	#endif
 	#if gtk
-		if (G_OBJECT_TYPE(G_OBJECT(widget)) == GTK_ENTRY) {
-			gtk_editable_get_selection_bounds(GTK_EDITABLE(widget), (gint) & left, (gint) & right); // TODO: Ga er vanuit dat dit wel werkt
-		} else if (G_OBJECT_TYPE(G_OBJECT(widget)) == GTK_TEXT_VIEW) {
+		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
+			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), (gint *) & left, (gint *) & right); // TODO: Ga er vanuit dat dit wel werkt
+		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer;
 			GtkTextIter start, end;
 			textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
@@ -568,7 +574,6 @@ void _GuiText_exit (void) {
 	#endif
 }
 
-#endif
 
 #if gtk
 	static void _GuiGtkEntry_valueChangedCallback (Widget widget, gpointer void_me) {
@@ -598,18 +603,23 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 	GuiText me = Melder_calloc (struct structGuiText, 1);
 	#if gtk
 		if (flags & GuiText_SCROLLED) {
+			GtkWrapMode ww;
 			my widget = gtk_text_view_new ();
-			gtk_text_view_set_editable (my widget, (flags & GuiText_NONEDITABLE) == 0);
-			gtk_text_view_set_wordwrap (my widget, (flags & GuiText_WORDWRAP) != 0);
+			gtk_text_view_set_editable (GTK_TEXT_VIEW (my widget), (flags & GuiText_NONEDITABLE) == 0);
+			if ((flags & GuiText_WORDWRAP) != 0) 
+				ww = GTK_WRAP_WORD_CHAR;
+			else
+				ww = GTK_WRAP_NONE;
+			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my widget), ww);
 		} else {
 			my widget = gtk_entry_new ();
-			gtk_entry_set_editable (my widget, (flags & GuiText_NONEDITABLE) == 0);
+			gtk_entry_set_editable (GTK_ENTRY (my widget), (flags & GuiText_NONEDITABLE) == 0);
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
-		g_signal_connect (G_OBJECT (my widget), "destroy",
-			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
+//		g_signal_connect (G_OBJECT (my widget), "destroy",
+//			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
 		g_signal_connect (GTK_EDITABLE (my widget), "changed",
 			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
 		// TODO: First input focus verhaal? *check*
@@ -763,7 +773,7 @@ wchar_t * GuiText_getSelection (Widget widget) {
 		long start, end;
 		NativeText_getSelectionRange (widget, & start, & end);
 		if (end <= start) return NULL;
-		return gtk_editable_get_chars (widget, start, end);
+		return Melder_utf8ToWcs (gtk_editable_get_chars (GTK_EDITABLE (widget), start, end));
 	#elif win || mac
 		long length, start, end;
 		wchar_t *result;
@@ -888,8 +898,9 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 	#if gtk
 		gchar *new = Melder_peekWcsToUtf8 (text);
 		gtk_editable_delete_text (GTK_EDITABLE (widget), from_pos, to_pos);
-		gtk_editable_insert_text (GTK_EDITABLE (widget), new, g_utf8_strlen (new, -1), from_pos);
-		// TODO: Wat is dit lelijk...
+		gint from_pos_gint = from_pos;
+		gtk_editable_insert_text (GTK_EDITABLE (widget), new, g_utf8_strlen (new, -1), & from_pos_gint);
+		// TODO: Wat is dit lelijk... en fout was het ook nog!
 	#elif win
 		const wchar_t *from;
 		wchar_t *winText = Melder_malloc (wchar_t, 2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
@@ -960,7 +971,7 @@ void GuiText_scrollToSelection (Widget widget) {
 		GtkTextIter start, end;
 		textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 		gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-		gtk_text_view_scroll_to_iter (widget, & start, 0.0, TRUE, 0.0, 0.0); 
+		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (widget), & start, 0.0, TRUE, 0.0, 0.0); 
 	#elif win
 		Edit_ScrollCaret (widget -> window);
 	#elif mac
@@ -1001,7 +1012,7 @@ void GuiText_setFontSize (Widget widget, int size) {
 
 void GuiText_setSelection (Widget widget, long first, long last) {
 	#if gtk
-		gtk_editable_select_region (widget, first, last);
+		gtk_editable_select_region (GTK_EDITABLE (widget), first, last);
 	#elif win
 		Edit_SetSel (widget -> window, first, last);
 	#elif mac
@@ -1021,9 +1032,9 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 
 void GuiText_setString (Widget widget, const wchar_t *text) {
 	#if gtk
-		if (G_OBJECT_TYPE (widget) == GTK_ENTRY) {	
-			gtk_entry_set_text (widget, Melder_peekWcsToUtf8 (text));
-		} else if (G_OBJECT_TYPE(widget) == GTK_TEXT_VIEW) {
+		if (G_OBJECT_TYPE (widget) == GTK_TYPE_ENTRY) {	
+			gtk_entry_set_text (GTK_ENTRY (widget), Melder_peekWcsToUtf8 (text));
+		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			gchar *new = Melder_peekWcsToUtf8 (text);
 			gtk_text_buffer_set_text (textBuffer, new, g_utf8_strlen (new, -1));   // TODO: lengte in bytes?

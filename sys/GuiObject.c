@@ -27,6 +27,7 @@
 #define my  me ->
 
 static int _Gui_defaultHeight (Widget me) {
+	#if motif
 	WidgetClass klas = XtClass (me);
 	if (klas == xmLabelWidgetClass) return Gui_LABEL_HEIGHT;
 	if (klas == xmPushButtonWidgetClass) return Gui_PUSHBUTTON_HEIGHT;
@@ -37,6 +38,7 @@ static int _Gui_defaultHeight (Widget me) {
 		#else
 			my isRadioButton ? Gui_RADIOBUTTON_HEIGHT : Gui_CHECKBUTTON_HEIGHT;
 		#endif
+	#endif
 	return 100;
 }
 
@@ -88,7 +90,7 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 void * _GuiObject_getUserData (Widget me) {
 	void *userData = NULL;
 	#if gtk
-		userData = (void *) g_object_get_data (G_OBJECT (me), "praat")
+		userData = (void *) g_object_get_data (G_OBJECT (me), "praat");
 	#else
 		XtVaGetValues (me, XmNuserData, & userData, NULL);
 	#endif
@@ -180,7 +182,7 @@ void GuiObject_move (Widget me, long x, long y) {
 
 void GuiObject_hide (Widget me) {
 	#if gtk
-		gtk_widget_hide (me);
+		gtk_widget_hide (GTK_WIDGET (me));
 	#else
 		XtUnmanageChild (me);
 		#if win

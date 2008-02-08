@@ -97,7 +97,6 @@
 
 #ifdef __MACH__
 	#define __CHAR_BIT__ 8
-	#define __SCHAR_MAX__ 255
 #endif
 
 #include <limits.h>

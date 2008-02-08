@@ -35,7 +35,7 @@
 #define SpectrogramEditor_methods FunctionEditor_methods
 class_create (SpectrogramEditor, FunctionEditor);
 
-Any SpectrogramEditor_create (Widget parent, wchar_t *title, Any data);
+Any SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data);
 
 /* End of file SpectrogramEditor.h */
 #endif

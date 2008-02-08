@@ -85,7 +85,7 @@ DIRECT (Artword_edit)
 		return Melder_error1 (L"Cannot edit an Artword from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Artword_getTarget, L"Get one Artword target", 0)

@@ -53,17 +53,19 @@ static void psRevertLine (GraphicsPostscript me) {
 
 #if cairo
 	static void cairoPrepareLine (GraphicsScreen me) {
+		double dotted_line[] = { 0, 6 };
+		double rounded_line[] = { 2, 6 };
 		switch (my lineType) {
 			case Graphics_DOTTED:
-				cairo_set_dash (my cr, dash, num_dashes, 0.0);
+				cairo_set_dash (my cr, dotted_line, 2, 0.0);
 				break;
 			case  Graphics_DASHED:
-				cairo_set_dash (my cr, dash, num_dashes, 0.0);
+				cairo_set_dash (my cr, rounded_line, 2, 0.0);
 				break;
 			// TODO: What else?
 		}
 		if (my lineType >= Graphics_DOTTED) {
-			cairo_set_dash (my cr, dash, num_dashes, 0.0);
+			cairo_set_dash (my cr, dotted_line, 2, 0.0);
 			cairo_set_line_width (my cr, my lineWidth == 1.0 ? 0.0 : my lineWidth); // TODO: Why 1.0?
 		} else if (my lineWidth != 1.0) {
 			cairo_set_line_width (my cr, my lineWidth);
@@ -145,11 +147,12 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			int i;
 			cairoPrepareLine (me);
 			cairo_new_path (my cr);
 			cairo_move_to (my cr, xyDC[0], xyDC[1]);
 			for (i = 1; i < numberOfPoints; i ++)
-				cairo_line_to (xyDC[i + i], xyDC [i + i + 1]);
+				cairo_line_to (my cr, xyDC[i + i], xyDC [i + i + 1]);
 			cairo_close_path (my cr);
 			cairoRevertLine (me);
 		#elif xwin
@@ -273,7 +276,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 			cairo_new_path (my cr);
 			cairo_move_to (my cr, xyDC [0], xyDC [1]);
 			for (long i = 1; i < numberOfPoints; i ++)
-				cairo_line_to (xyDC [i + i], xyDC [i + i + 1]);
+				cairo_line_to (my cr, xyDC [i + i], xyDC [i + i + 1]);
 			cairo_close_path (my cr);
 			cairo_fill (my cr);
 		#elif xwin
@@ -857,8 +860,8 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 			long i;
 			int halfLine = ceil (0.5 * my lineWidth);
 			for (i = 0; i < numberOfPoints; i ++) {
-				cairo_moveto (my cr, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
-				cairo_lineto (xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
+				cairo_move_to (my cr, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
+				cairo_line_to (my cr, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
 			}
 		#elif xwin
 			XSegment *s = (void *) xyDC;
@@ -1230,6 +1233,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			double size = 10.0 * my resolution * my arrowSize / 75.0; // TODO: die 75 zou dat niet de scherm resolutie moeten worden?
 			cairo_new_path (my cr);
 			cairo_move_to (my cr, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
 			cairo_line_to (my cr, xDC, yDC);

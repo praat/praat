@@ -55,20 +55,24 @@ static void destroy (I) {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = my data;
+	#if motif
 	/*int value, slider, incr, pincr;
 	XmScrollBarGetValues (my verticalScrollBar, & value, & slider, & incr, & pincr);
 	XmScrollBarSetValues (my verticalScrollBar, my topRow, slider, incr, pincr, False);*/
 	XtVaSetValues (my verticalScrollBar,
 		XmNvalue, my topRow, XmNmaximum, table -> rows -> size + 1, NULL);
+	#endif
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
 	Table table = my data;
+	#if motif
 	/*int value, slider, incr, pincr;
 	XmScrollBarGetValues (my horizontalScrollBar, & value, & slider, & incr, & pincr);
 	XmScrollBarSetValues (my horizontalScrollBar, my topRow, slider, incr, pincr, False);*/
 	XtVaSetValues (my horizontalScrollBar,
 		XmNvalue, my leftColumn, XmNmaximum, table -> numberOfColumns + 1, NULL);
+	#endif
 }
 
 static void dataChanged (I) {
@@ -237,6 +241,7 @@ static void createChildren (I) {
 	Table table = my data;
 	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
 
+	#if motif
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -244,12 +249,15 @@ static void createChildren (I) {
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
 		NULL);
+	#endif
 
 	/***** Create text field. *****/
 
 	my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
 	#ifdef UNIX
+		#if motif
 		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
+		#endif
 	#endif
 	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
 
@@ -260,6 +268,7 @@ static void createChildren (I) {
 
 	/***** Create horizontal scroll bar. *****/
 
+	#if motif
 	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmHORIZONTAL,
@@ -274,9 +283,11 @@ static void createChildren (I) {
 		XmNincrement, 1,
 		XmNpageIncrement, 3,
 		NULL);
+	#endif
 
 	/***** Create vertical scroll bar. *****/
 
+	#if motif
 	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmVERTICAL,
@@ -291,6 +302,7 @@ static void createChildren (I) {
 		XmNincrement, 1,
 		XmNpageIncrement, 10,
 		NULL);
+	#endif
 
 	GuiObject_show (form);
 }
@@ -325,7 +337,9 @@ class_methods_end }
 static void gui_cb_horizontalScroll (GUI_ARGS) {
 	GUI_IAM (TableEditor);
 	int value, slider, incr, pincr;
+	#if motif
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	#endif
 	my leftColumn = value;
 	our draw (me);
 }
@@ -333,7 +347,9 @@ static void gui_cb_horizontalScroll (GUI_ARGS) {
 static void gui_cb_verticalScroll (GUI_ARGS) {
 	GUI_IAM (TableEditor);
 	int value, slider, incr, pincr;
+	#if motif
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	#endif
 	my topRow = value;
 	our draw (me);
 }
@@ -341,7 +357,9 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
 	Editor_init (me, parent, 0, 0, 700, 500, title, table); cherror
+	#if motif
 	Melder_assert (XtWindow (my drawingArea));
+	#endif
 	my topRow = 1;
 	my leftColumn = 1;
 	my selectedColumn = 1;
@@ -356,10 +374,12 @@ TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table
 	Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 	Graphics_setAtSignIsLink (my graphics, TRUE);
 
+	#if motif
 	XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, gui_cb_horizontalScroll, (XtPointer) me);
 	XtAddCallback (my horizontalScrollBar, XmNdragCallback, gui_cb_horizontalScroll, (XtPointer) me);
 	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
 	XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
+	#endif
 
 end:
 	iferror forget (me);

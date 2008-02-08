@@ -1,6 +1,6 @@
-#ifndef _VowelGenerator_h_
-#define _VowelGenerator_h_
-/* VowelGenerator.h
+#ifndef _VowelEditor_h_
+#define _VowelEditor_h_
+/* VowelEditor.h
  *
  * Copyright (C) 2008 David Weenink
  *
@@ -21,14 +21,14 @@
 
 /*
  djmw 20070130 First
- djmw 20080111 Latest modification.
+ djmw 20080202 Latest modification.
 */
 
 #ifndef _Graphics_h_
 	#include "Graphics.h"
 #endif
-#ifndef _Klatt_h_
-	#include "Klatt.h"
+#ifndef _Vowel_h_
+	#include "Vowel.h"
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
@@ -37,12 +37,6 @@
 #include "Command.h"
 #include "Editor.h"
 #include "portaudio.h"
-
-struct structPosTrace
-{
-	double t;
-	double x, y;
-};
 
 struct structF0 
 {
@@ -53,47 +47,38 @@ struct structF0
 	long interpolationDepth;
 };
 
-struct structGrid
+struct structF1F2Grid
 {
 	double df1, df2;
 	int text_left, text_right, text_bottom, text_top;
 	double grey;
 };
 
-#define VowelGenerator_members Editor_members \
+#define VowelEditor_members Editor_members \
+	int soundFollowsMouse, shiftKeyPressed; \
 	double f1min, f1max, f2min, f2max; /* Domain of graphics F1-F2 area */ \
 	int frequencyScale; /* 0: lin, 1: log, 2: bark, 3: mel */ \
 	int axisOrientation; /* 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up */ \
 	int speakerType; /* 1 male, 2 female, 3 child */ \
 	Graphics g; /* the drawing */ \
 	short width, height; /* Size of drawing area in pixels. */ \
-	TableOfReal marks; /* rowlabel, F1, F2, ... */ \
-	long nptrace; \
-	long maximumPosTrace; \
-	struct structPosTrace *ptrace; \
+	Table marks; /* Vowel, F1, F2, Colour... */ \
+	Vowel vowel; \
 	double markTraceEvery; \
 	struct structF0 f0; \
-	double maximumDuration; \
+	double maximumDuration, extendDuration; \
 	Sound source, target; \
 	Widget drawingArea, playButton, reverseButton, publishButton; \
-	Widget f0TextField, f0SlopeTextField, durationTextField; \
-	int clicking; \
-	struct structGrid grid;
+	Widget f0Label, f0TextField, f0SlopeLabel, f0SlopeTextField; \
+	Widget durationLabel, durationTextField, extendLabel, extendTextField; \
+	Widget startInfo, endInfo; \
+	struct structF1F2Grid grid;
 
-#define VowelGenerator_methods Editor_methods
-class_create (VowelGenerator, Editor);
+#define VowelEditor_methods Editor_methods
+class_create (VowelEditor, Editor);
 
-VowelGenerator VowelGenerator_create (Widget parent, wchar_t *title, Any data);
+VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data);
 
-void VowelGenerator_prefs (void);
+void VowelEditor_prefs (void);
 
-// click (mousedown) audio generation
-// shift-click select track
-// code factoriseren zodat VG en Interface afzonderlijke componenten zijn.
-// VG krijgt krijgt op willekeurige tijden input en genereert audio tot een stop moment
-// input: (t,f0,nf, f[1],b[1],...f[n],intensiteit)
-
-int VowelGenerator_and_TableOfReal_setMarks (VowelGenerator me, TableOfReal thee);
-// Get new reference point from table
-
-#endif /* _VowelGenerator_h_ */
+#endif /* _VowelEditor_h_ */

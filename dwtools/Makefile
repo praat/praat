@@ -19,12 +19,12 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20080122 Latest modification.
+#  djmw 20080202 Latest modification.
 
 
 include ../makefile.defs
 
-CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../stat -I ../audio
+CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
 
 all: libdwtools.a
 
@@ -64,7 +64,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TableOfReal_extensions.o TableOfReal_and_Matrix.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
-	VowelGenerator.o \
+	Vowel.o VowelEditor.o \
 	praat_MDS_init.o praat_David_init.o
 
 $(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h

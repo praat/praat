@@ -1,6 +1,6 @@
 /* praat_LPC_init.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,7 +386,7 @@ void praat_uvafon_LPC_init (void);
 void praat_uvafon_LPC_init (void)
 {
 	Thing_recognizeClassesByName (classCepstrumc, classLPC, classLFCC, classMFCC, NULL);
-
+	
 	praat_addAction1 (classCepstrum, 0, L"Cepstrum help", 0, 0, DO_Cepstrum_help);
 	praat_addAction1 (classCepstrum, 0, L"Draw...", 0, 0, DO_Cepstrum_draw);
 	praat_addAction1 (classCepstrum, 0, L"To Spectrum", 0, 0, DO_Cepstrum_to_Spectrum);

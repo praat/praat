@@ -243,8 +243,10 @@ static void destroy (I) {
 	forget (my menus);
 	if (my shell) {
 		#if defined (UNIX)
+			#if motif
 			XtUnrealizeWidget (my shell);   // LEAK BUG: should also destroy; but then, Praat will often crash on a destroy (OpenMotif 2.2 and 2.3)
 			//XtDestroyWidget (my shell);
+			#endif
 		#else
 			XtDestroyWidget (my shell);
 		#endif
@@ -299,7 +301,9 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
 	else wcscpy (my undoText, L"Undo?");
+	#if motif
 	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+	#endif
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
 	 */
@@ -464,8 +468,14 @@ static void gui_window_cb_goAway (I) {
 extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (I, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	iam (Editor);
-	int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
-	int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+	#if gtk
+		GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (parent));
+		int screenWidth = gdk_screen_get_width (screen);
+		int screenHeight = gdk_screen_get_height (screen);
+	#elif motif
+		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+		int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+	#endif
 	int left, right, top, bottom;
 	screenHeight -= Machine_getTitleBarHeight ();
 	if (width < 0) width += screenWidth;
@@ -519,13 +529,17 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 
 	our createChildren (me);
 	GuiObject_show (my dialog);
-	XtRealizeWidget (my shell);
+	#if motif
+		XtRealizeWidget (my shell);
+	#endif
 	return 1;
 }
 
 void Editor_raise (I) {
 	iam (Editor);
+	#if motif
 	XMapRaised (XtDisplay (my shell), XtWindow (my shell));
+	#endif
 }
  
 void Editor_dataChanged (I, Any data) {
@@ -576,7 +590,9 @@ void Editor_save (I, const wchar_t *text) {
 	if (! my undoButton) return;
 	GuiObject_setSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+	#if motif
+		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+	#endif
 }
 
 void Editor_openPraatPicture (I) {
@@ -585,7 +601,7 @@ void Editor_openPraatPicture (I) {
 }
 void Editor_closePraatPicture (I) {
 	iam (Editor);
-	if (preferences.picture.writeNameAtTop != kEditor_writeNameAtTop_NO) {
+	if (my data != NULL && preferences.picture.writeNameAtTop != kEditor_writeNameAtTop_NO) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);

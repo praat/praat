@@ -454,8 +454,8 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   /* Ignore other chunks. */
-		    if (Melder_debug == 23)
-				Melder_warning ("chunk ID %c%c%c%c %d", chunkID[0],chunkID[1],chunkID[2],chunkID[3],chunkSize);
+		    //if (Melder_debug == 23)
+			//	Melder_warning ("chunk ID %c%c%c%c %d", chunkID[0],chunkID[1],chunkID[2],chunkID[3],chunkSize);
 			for (i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);
 		}
@@ -1441,8 +1441,8 @@ int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const double *l
 			return Melder_error1 (L"(MelderFile_writeFloatToAudio:) Unknown format.");
 	}
 	if (nclipped > 0 && warnIfClipped)
-		Melder_warning ("(MelderFile_writeFloatToAudio:) %ld out of %ld samples have been clipped.\n"
-			"Advice: you could scale the amplitudes or write to a binary file.", nclipped, n);
+		Melder_warning5 (L"(MelderFile_writeFloatToAudio:) ", Melder_integer (nclipped), L" out of ", Melder_integer (n), L" samples have been clipped.\n"
+			"Advice: you could scale the amplitudes or write to a binary file.");
 	return 1;
 }
 

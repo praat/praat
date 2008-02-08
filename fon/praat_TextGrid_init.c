@@ -661,7 +661,7 @@ static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
 	if (Thing_member (publish, classSpectrum) && wcsequ (Thing_getName (publish), L"slice")) {
 		int IOBJECT;
 		WHERE (SELECTED) {
-			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
+			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor2) return;
 			if (! praat_installEditor (editor2, IOBJECT)) Melder_flushError (NULL);
 		}
@@ -672,7 +672,7 @@ DIRECT (TextGrid_edit)
 		return Melder_error1 (L"Cannot edit a TextGrid from batch.");
 	} else {
 		WHERE (SELECTED && CLASS == classTextGrid) {
-			TextGridEditor editor = TextGridEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			TextGridEditor editor = TextGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, ONLY (classSound), NULL);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_TextGridEditor_publish, NULL);
@@ -690,7 +690,7 @@ DIRECT (TextGrid_LongSound_edit)
 			if (CLASS == classLongSound) longSound = OBJECT, ilongSound = IOBJECT;
 		Melder_assert (ilongSound != 0);
 		WHERE (SELECTED && CLASS == classTextGrid)
-			if (! praat_installEditor2 (TextGridEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor2 (TextGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, longSound, NULL), IOBJECT, ilongSound)) return 0;
 	}
 END
@@ -705,7 +705,7 @@ DIRECT (TextGrid_SpellingChecker_edit)
 			if (CLASS == classSpellingChecker) spellingChecker = OBJECT, ispellingChecker = IOBJECT;
 		Melder_assert (ispellingChecker != 0);
 		WHERE (SELECTED && CLASS == classTextGrid)
-			if (! praat_installEditor2 (TextGridEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor2 (TextGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, ONLY (classSound), spellingChecker), IOBJECT, ispellingChecker)) return 0;
 	}
 END
@@ -723,7 +723,7 @@ DIRECT (TextGrid_LongSound_SpellingChecker_edit)
 		}
 		Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 		WHERE (SELECTED && CLASS == classTextGrid)
-			if (! praat_installEditor3 (TextGridEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor3 (TextGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, longSound, spellingChecker), IOBJECT, ilongSound, ispellingChecker)) return 0;
 	}
 END

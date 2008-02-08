@@ -321,12 +321,18 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#ifdef macintosh
 		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) GetWindowPort ((WindowRef) XtWindow (w)), Gui_getResolution (w));
 	#else
+		#if motif
 		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), Gui_getResolution (w));
+		#endif
 	#endif
+
+	#if motif
 	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	// TODO
 	Graphics_setWsViewport ((Graphics) me,
 		marginWidth, width - marginWidth, marginHeight, height - marginHeight);
+	#endif
 	#ifdef macintosh
 		XtAddCallback (w, XmNmoveCallback, cb_move, (XtPointer) me);
 	#endif

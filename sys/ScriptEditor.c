@@ -66,7 +66,9 @@ static void nameChanged (I) {
 	if (my dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
 	GuiWindow_setTitle (my shell, buffer.string);
+	#if motif
 	XtVaSetValues (my shell, XmNiconName, "Script", NULL);
+	#endif
 }
 
 static int args_ok (Any dia, I) {

@@ -38,6 +38,7 @@ typedef struct structGuiWindow {
 } *GuiWindow;
 
 #if gtk
+	// Bla..
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -96,13 +97,14 @@ void GuiWindow_show (Widget widget) {
 }
 
 void GuiWindow_setTitle (Widget me, const wchar_t *title) {
-	#if mac
+	#if gtk
+		gtk_window_set_title (GTK_WINDOW (me), Melder_peekWcsToUtf8 (title));
+	#elif mac
 		SetWindowTitleWithCFString (my nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win
 		SetWindowText (my window, title);
-	#else
-		char *titleA = Melder_peekWcsToUtf8 (title);
-		XtVaSetValues (me, XmNtitle, titleA, XmNiconName, titleA, NULL);
+	#elif motif
+		XtVaSetValues (me, XmNtitle, Melder_peekWcsToUtf8 (title), XmNiconName, Melder_peekWcsToUtf8 (title), NULL);
 	#endif
 }
 

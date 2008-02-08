@@ -332,17 +332,16 @@ int Printer_postScriptSettings (void) {
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	#if defined (UNIX)
 		structMelderFile tempFile = { 0 };
-		wchar_t tempPath [200];
-		wcscpy (tempPath, L"/tmp/picXXXXXX");
-		mktemp (Melder_peekWcsToUtf8 (tempPath));
-		Melder_pathToFile (tempPath, & tempFile);
+		char tempPath_utf8 [] = "/tmp/picXXXXXX";
+		close (mkstemp (tempPath_utf8));
+		Melder_pathToFile (Melder_peekUtf8ToWcs (tempPath_utf8), & tempFile);
 		thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
 			thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
 		if (! thePrinter. graphics) return Melder_error1 (L"Cannot create temporary PostScript file for printing.");
 		draw (boss, thePrinter. graphics);
 		forget (thePrinter. graphics);
 		char command [500];
-		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), Melder_peekWcsToUtf8 (tempPath));
+		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath_utf8);
 		system (command);
 		MelderFile_delete (& tempFile);
 	#elif defined (_WIN32)

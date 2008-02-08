@@ -43,7 +43,9 @@ struct structPicture {
 	XtPointer selectionChangedClosure;
 	int backgrounding, mouseSelectsInnerViewport;
 #if defined (UNIX)
+	#if motif
 	Region updateRegion;
+	#endif
 #endif
 };
 

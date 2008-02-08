@@ -1,6 +1,6 @@
 /* GuiMenu.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,33 +23,52 @@
  * pb 2004/10/21 on Unix, Ctrl becomes the command key
  * pb 2007/06/09 wchar_t
  * pb 2007/12/13 Gui
+ * sdk 2008/02/08 GTK
  */
 
 #include "Gui.h"
 
 Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags) {
-	Widget menuTitle, menu;
-	menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-	if (wcsequ (title, L"Help"))   /* BUG: Mac reacts to this title... */
-		XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
-	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-	if (flags & GuiMenu_INSENSITIVE)
-		XtSetSensitive (menu, False);
-	XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
-	XtManageChild (menuTitle);
+	Widget menu = NULL;
+	#if gtk
+		menu = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		if (flags & GuiMenu_INSENSITIVE)
+			gtk_widget_set_sensitive (menu, FALSE);
+		gtk_widget_show (menu);
+		gtk_menu_bar_append (GTK_MENU_BAR (bar), menu);
+	#elif motif
+		Widget menuTitle;
+		menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (wcsequ (title, L"Help"))   /* BUG: Mac reacts to this title... */
+			XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
+		menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (menu, False);
+		XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
+		XtManageChild (menuTitle);
+	#endif
 	return menu;
 }
 
 Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle) {
 	Widget menu;
-	*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-	if (wcsequ (title, L"Help"))
-		XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
-	menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-	if (flags & GuiMenu_INSENSITIVE)
-		XtSetSensitive (menu, False);
-	XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
-	XtManageChild (*menuTitle);
+	#if gtk
+		menu = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		if (flags & GuiMenu_INSENSITIVE)
+			gtk_widget_set_sensitive(menu, FALSE);
+		gtk_widget_show (menu);
+		gtk_menu_bar_append (GTK_MENU_SHELL (bar), menu);
+		*menuTitle = menu;
+	#elif motif
+		*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (wcsequ (title, L"Help"))
+			XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
+		menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (menu, False);
+		XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
+		XtManageChild (*menuTitle);
+	#endif
 	return menu;
 }
 
@@ -60,13 +79,29 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	Widget button;
 	int accelerator = flags & 127;
 	Melder_assert (title != NULL);
-	button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
-		toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
+	#if gtk
+		if (toggle) {
+			button = gtk_check_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		} else {
+			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		}
+	#elif motif
+		button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
+			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
+	#endif
 	Melder_assert (button != NULL);
 	if (flags & GuiMenu_INSENSITIVE)
-		XtSetSensitive (button, False);
+		#if gtk
+			gtk_widget_set_sensitive (button, FALSE);
+		#elif motif
+			XtSetSensitive (button, False);
+		#endif
 	if (flags & GuiMenu_CHECKED)
-		XmToggleButtonGadgetSetState (button, True, False);
+		#if gtk
+			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (button), TRUE);
+		#elif motif
+			XmToggleButtonGadgetSetState (button, True, False);
+		#endif
 	if (accelerator) {
 		static char *acceleratorStrings [] = { "",
 			"Left", "Right", "Up", "Down", "Pause", "Delete", "Insert", "BackSpace",
@@ -126,18 +161,28 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 			strcat (acceleratorString, single);
 			strcat (acceleratorText, single);
 		}
+		#if motif
 		if (acceleratorString [0])
 			XtVaSetValues (button, XmNaccelerator, acceleratorString, NULL);
+		#endif
+		#if motif
 		XtVaSetValues (button, motif_argXmString (XmNacceleratorText, acceleratorText), NULL);
+		#endif
 	}
+	#if motif
 	XtAddCallback (button,
 		toggle ? XmNvalueChangedCallback : XmNactivateCallback,
 		commandCallback, (XtPointer) closure);
+	#endif
 	return button;
 }
 
 Widget GuiMenu_addSeparator (Widget menu) {
-	return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
+	#if gtk
+		return gtk_separator_menu_item_new ();
+	#elif motif
+		return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
+	#endif
 }
 
 /* End of file GuiMenu.c */

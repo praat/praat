@@ -54,10 +54,12 @@ typedef struct structGuiDrawingArea {
 	}
 	static void _GuiGtkDrawingArea_activateCallback (Widget widget, gpointer void_me) {
 		iam (GuiDrawingArea);
+		// TODO: compliled niet
+		/*
 		struct structGuiDrawingAreaEvent event = { widget, 0 };
 		if (my activateCallback != NULL) {
 			my activateCallback (my activateBoss, & event);
-		}
+		}*/
 	}
 #elif win || mac
 	void _GuiWinMacDrawingArea_destroy (Widget widget) {
@@ -236,7 +238,9 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 	my resizeCallback = resizeCallback;
 	my resizeBoss = boss;
 	#if gtk
-		my widget = ...
+//		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
+//		_GuiObject_setUserData (my widget, me);
+//		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif win
 		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
 		_GuiObject_setUserData (my widget, me);

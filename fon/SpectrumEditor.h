@@ -32,7 +32,7 @@
 
 typedef struct structSpectrumEditor *SpectrumEditor;
 
-SpectrumEditor SpectrumEditor_create (Widget parent, wchar_t *title, Any data);
+SpectrumEditor SpectrumEditor_create (Widget parent, const wchar_t *title, Any data);
 
 void SpectrumEditor_prefs (void);
 

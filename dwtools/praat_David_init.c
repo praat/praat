@@ -104,7 +104,7 @@ extern machar_Table NUMfpp;
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
 #include "TableOfReal_and_SVD.h"
-#include "VowelGenerator.h"
+#include "VowelEditor.h"
 
 static wchar_t *QUERY_BUTTON   = L"Query -                ";
 static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
@@ -3962,9 +3962,29 @@ DO
 		praat_dataChanged (OBJECT);
 END	
 
-DIRECT (VowelGenerator_create)
-	VowelGenerator vg = VowelGenerator_create (theCurrentPraat -> topShell, L"VowelGenerator", NULL);
-	if (vg == NULL) return 0;
+static VowelEditor vowelEditor = NULL;
+DIRECT (VowelEditor_create)
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot create a Sound from batch.");
+	vowelEditor = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", NULL);
+	if (vowelEditor == NULL) return 0;
+END
+
+FORM (Vowel_create, L"Create Vowel", 0)
+	POSITIVE (L"Duration (s)", L"0.2")
+	OK
+DO
+	if (! praat_new1 (Vowel_create_twoFormantSchwa (GET_REAL (L"Duration")), NULL)) return 0;
+END
+
+DIRECT (Vowel_play)
+	WHERE (SELECTED) {
+		Vowel_play (OBJECT);
+	}
+END
+
+DIRECT (Vowel_edit)
+	VowelEditor ve = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", OBJECT);
+	if (ve == NULL) return 0;
 END
 
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
@@ -4163,13 +4183,14 @@ void praat_uvafon_David_init (void)
     	praat_addMenuCommand (L"Objects", L"New", L"Create ISpline...", 0, 1, DO_ISpline_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gamma-tone...", 1, DO_Sound_createFromShepardTone);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_HIDDEN + praat_DEPTH_1, DO_VowelEditor_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Weenink 1985)", L"Create formant table (Peterson & Barney 1952)",1, DO_Table_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Pols 1973)...", L"Create TableOfReal...", 1, DO_TableOfReal_createFromPolsData_50males);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Van Nierop 1973)...", L"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_createFromVanNieropData_25females);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
-	praat_addMenuCommand (L"Objects", L"New", L"Create VowelGenerator", 0, praat_HIDDEN, DO_VowelGenerator_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Vowel...", 0, praat_HIDDEN, DO_Vowel_create);
 	
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
@@ -4649,6 +4670,9 @@ void praat_uvafon_David_init (void)
 			praat_addAction1 (classTextGrid, 0, L"Replace interval text...", L"Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
 			praat_addAction1 (classTextGrid, 0, L"Replace point text...", L"Set point text...", 2, DO_TextGrid_replacePointTexts);
 
+	praat_addAction1 (classTextGrid, 0, L"Edit", 0, 0, DO_Vowel_edit);
+	praat_addAction1 (classTextGrid, 0, L"Play", 0, 0, DO_Vowel_play);
+	
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

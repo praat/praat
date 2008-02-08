@@ -24,8 +24,8 @@ OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
    StringsEditor.o \
    motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
-   GuiList.o GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
-   GuiDialog.o GuiRowColumn.o
+   GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
+   GuiDialog.o GuiRowColumn.o GuiList.o
 
 all: libsys.a
 libsys.a: $(OBJECTS)

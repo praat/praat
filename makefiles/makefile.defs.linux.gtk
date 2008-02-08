@@ -1,0 +1,12 @@
+# File: makefile.defs.linux.gtk
+
+# System: Linux
+# Paul Boersma & Stefan de Konink, February 7, 2008
+
+CC = gcc -std=gnu99 -DUNIX -Dlinux `pkg-config --cflags gtk+` -I /usr/X11R6/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O -DUSE_GTK
+
+LIBS = -L -lm -lpthread `pkg-config --libs gtk+`  
+
+RANLIB = ls
+ICON =
+MAIN_ICON =

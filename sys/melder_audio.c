@@ -120,16 +120,18 @@
 #endif
 
 #ifdef UNIX
-	static Bool predicateProcedure (Display *display, XEvent *event, char *arg) {
-		char buffer [20];
-		KeySym key;
-		XComposeStatus compose;
-		(void) display;
-		(void) arg;
-		if (event -> type != KeyPress) return False;
-		XLookupString ((XKeyEvent *) event, buffer, 20, & key, & compose);
-		return key == 0xFF1B || key == 0xFF09;   /* Escape key or Tab key. */
-	}
+	#if motif
+		static Bool predicateProcedure (Display *display, XEvent *event, char *arg) {
+			char buffer [20];
+			KeySym key;
+			XComposeStatus compose;
+			(void) display;
+			(void) arg;
+			if (event -> type != KeyPress) return False;
+			XLookupString ((XKeyEvent *) event, buffer, 20, & key, & compose);
+			return key == 0xFF1B || key == 0xFF09;   /* Escape key or Tab key. */
+		}
+	#endif
 #endif
 
 static struct {
@@ -203,7 +205,9 @@ static struct MelderPlay {
 	int asynchronicity, numberOfChannels, explicit, fakeMono;
 	int (*callback) (void *closure, long samplesPlayed);
 	void *closure;
-	XtWorkProcId workProcId;
+	#if motif
+		XtWorkProcId workProcId;
+	#endif
 	#if USE_PORTAUDIO
 		PaStream *stream;
 		double startingTime;
@@ -252,6 +256,7 @@ int Melder_stopWasExplicit (void) {
  * 3. After asynchronous play, by the workProc.
  * 4. After interruption of asynchronicity 3 by Melder_stopPlaying ().
  */
+#if motif
 static Boolean flush (void) {
 	struct MelderPlay *me = & thePlay;
 	#if USE_PORTAUDIO
@@ -331,16 +336,20 @@ static Boolean flush (void) {
 	my closure = 0;
 	return True;   /* Remove workProc if called from workProc. */
 }
+#endif
 
 int Melder_stopPlaying (int explicit) {
 	struct MelderPlay *me = & thePlay;
 	my explicit = explicit;
 	if (! Melder_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return 0;
-	(void) flush ();
-	XtRemoveWorkProc (thePlay. workProcId);
+	#if motif
+		(void) flush ();
+		XtRemoveWorkProc (thePlay. workProcId);
+	#endif
 	return 1;
 }
 
+#if motif
 static Boolean workProc (XtPointer closure) {
 	struct MelderPlay *me = & thePlay;
 	#if USE_PORTAUDIO
@@ -476,6 +485,7 @@ static Boolean workProc (XtPointer closure) {
 	(void) closure;
 	return False;
 }
+#endif
 
 #if ! USE_PORTAUDIO && ! defined (macintosh)
 static void cancel (void) {
@@ -1218,7 +1228,9 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		int interrupted = 0;
 		while (my samplesLeft && ! interrupted) {
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
-			XEvent event;
+			#if motif
+				XEvent event;
+			#endif
 			if (write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels) == -1)
 				return cancel (), Melder_error1 (L"Cannot write audio output.");
 			my samplesLeft -= dsamples;
@@ -1226,8 +1238,10 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
-			if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
-				my explicit = Melder_EXPLICIT, interrupted = 1;
+			#if motif
+				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && XCheckIfEvent (XtDisplay (Melder_topShell), & event, predicateProcedure, 0))
+					my explicit = Melder_EXPLICIT, interrupted = 1;
+			#endif
 		}
 		if (! interrupted) {
 			/*
@@ -1237,10 +1251,14 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 			my samplesPlayed = my numberOfSamples;
 		}
 	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+		#if motif
+			my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+		#endif
 		return 1;
 	}
-	flush ();
+	#if motif
+		flush ();
+	#endif
 	return 1;
 }
 #elif defined (_WIN32)

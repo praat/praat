@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080131)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080208)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.07# (February 8, 2008)")
+LIST_ITEM (L"\\bu Object IDs are visible in editor windows.")
 NORMAL (L"##5.0.06# (January 31, 2008)")
 LIST_ITEM (L"\\bu Corrected a bug that caused ##Find again# in the TextGrid window not to work.")
 LIST_ITEM (L"\\bu Macintosh: made Praat work correctly on 10.3 computers with missing fonts.")

@@ -68,7 +68,7 @@ Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
 		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
-		gtk_label_set_justify(flags);
+		gtk_label_set_justify (GTK_LABEL (my widget), flags);
 	#elif win
 		my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
 		_GuiObject_setUserData (my widget, me);

@@ -119,11 +119,15 @@ static void gui_cb_menu (GUI_ARGS) {
 #elif defined (_WIN32)
 	int modified = FALSE;
 #else
+	#if motif
 	XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
 	int modified = event -> type == ButtonPress &&
 		((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
+	#endif
 #endif
+	#if motif
 	do_menu (void_me, modified);
+	#endif
 }
 
 static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
@@ -207,7 +211,12 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 			for (i = position - 1; i > 0; i --) {
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
-						XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
+						#if gtk
+							// TODO: Is dit de bedoeling? Tja, wie zal het zeggen? De GTK-menuhierarchie?
+							parent = gtk_widget_get_parent (theCommands [i]. button);
+						#elif motif
+							XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
+						#endif
 					break;
 				}
 			}
@@ -225,7 +234,10 @@ if (! parent) return NULL;
 		} else {
 			theCommands [position]. button = GuiMenu_addItem (parent, title, motifFlags, gui_cb_menu, (void *) callback);
 		}
+		#if motif
+		// TODO BREAKS HORRIBLY
 		if (hidden) GuiObject_hide (theCommands [position]. button);
+		#endif
 	}
 	return theCommands [position]. button;
 }
@@ -301,7 +313,9 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 			for (i = position - 1; i > 0; i --) {
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
+						#if motif
 						XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
+						#endif
 					break;
 				}
 			}

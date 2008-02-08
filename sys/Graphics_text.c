@@ -634,7 +634,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 		if (lc -> link) my printf (my file, "0 0 0 setrgbcolor\n");
 	} else if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if gtk
+			// TODO!
+			int font = 11;
+			int needBitmappedIPA = 0;
+		#elif xwin
 			Font font = (Font) lc -> font.integer;
 			int needBitmappedIPA = (long) font == IPA_ID;
 		#elif win
@@ -1654,7 +1658,7 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 	theZapfDingbatsAtsuiFont = ATSFontFindFromName (CFSTR ("Zapf Dingbats"), kATSOptionFlagsDefault);
 	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
 	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
-		Melder_warning ("Praat cannot find one or more of the fonts Times (or Times New Roman), "
+		Melder_warning1 (L"Praat cannot find one or more of the fonts Times (or Times New Roman), "
 			"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
 			"Praat will have limited capabilities for international text.");
 		return false;
@@ -1664,7 +1668,7 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 		theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
 		if (! theIpaTimesAtsuiFont) {
 			theIpaTimesAtsuiFont = theTimesAtsuiFont;
-			Melder_warning ("Praat cannot find the Charis SIL or Doulos SIL font.\n"
+			Melder_warning1 (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
 				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
 		}
 	}

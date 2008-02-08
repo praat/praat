@@ -56,7 +56,6 @@ F1 and F2 axis changes the sound!!!!!!
 #include "Preferences.h"
 #include "EditorM.h"
 #include "time.h"
-#include "FormantTier.h"
 
 // Male, Female, Child speaker
 #define VG_SPEAKER_M 0

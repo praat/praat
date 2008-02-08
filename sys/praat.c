@@ -1,6 +1,6 @@
 /* praat.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@
  * pb 2007/06/16 text encoding prefs
  * pb 2007/08/31 praat_new1-9
  * pb 2007/09/02 include Editor prefs
+ * sdk 2008/01/14 GTK
+ * pb 2008/02/01 made sure that praat_dataChanged can be called at error time
  */
 
 #include "melder.h"
@@ -342,7 +344,9 @@ bool praat_new1 (I, const wchar_t *myName) {
 
 	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
 		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
+			#if motif
+				XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
+			#endif
 		#endif
 		MelderString listName = { 0 };
 		MelderString_append3 (& listName, Melder_integer (uniqueID), L". ", name.string);
@@ -720,10 +724,23 @@ int praat_installEditorN (Any editor, Ordered objects) {
 }
 
 void praat_dataChanged (Any object) {
+	/*
+	 * This function can be called at error time.
+	 */
+	wchar_t *saveError = NULL;
+	bool duringError = Melder_hasError ();
+	if (duringError) {
+		saveError = Melder_wcsdup (Melder_getError ());
+		Melder_clearError ();
+	}
 	int IOBJECT, ieditor;
 	WHERE (OBJECT == object) {
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (EDITOR [ieditor]) Editor_dataChanged (EDITOR [ieditor], object);
+	}
+	if (duringError) {
+		Melder_error1 (saveError);
+		Melder_free (saveError);
 	}
 }
 
@@ -746,16 +763,6 @@ static int publishProc (void *anything) {
 	if (! praat_new1 (anything, NULL)) return Melder_error1 (L"(Melder_publish:) not published.");
 	praat_updateSelection ();
 	return 1;
-}
-
-Editor praat_findEditorFromString (const wchar_t *string) {
-	int iobject, ieditor;
-	for (iobject = theCurrentPraat -> n; iobject >= 1; iobject --)
-		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-			Editor editor = theCurrentPraat -> list [iobject]. editors [ieditor];
-			if (editor && wcsequ (editor -> name, string)) return editor;
-	}
-	return NULL;
 }
 
 /***** QUIT *****/
@@ -792,6 +799,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
 #if defined (UNIX)
+	#if motif
 	int haveMessage = FALSE;
 	static void timerProc_userMessage (XtPointer dummy, XtIntervalId *id) {
 		FILE *f;
@@ -820,6 +828,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		haveMessage = FALSE;
 		XtAppAddTimeOut (theCurrentPraat -> context, 100, timerProc_userMessage, 0);
 	}
+	#endif
 #elif defined (_WIN32)
 	static int cb_userMessage (void) {
 		praat_background ();
@@ -864,6 +873,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 #endif
 
 #ifdef UNIX
+#if motif
 String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 	(void) display;
 	(void) xnl;
@@ -874,16 +884,21 @@ String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 	return setlocale (LC_ALL, NULL);
 }
 #endif
+#endif
 	
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
-#if defined (UNIX)
-	FILE *f;
-	//setlocale (LC_ALL, "en_US");
-	XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
-#elif defined (macintosh)
-	setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
-#endif
+	#if defined (UNIX)
+		FILE *f;
+		//setlocale (LC_ALL, "en_US");
+		#if gtk
+			gtk_init (& argc, & argv);
+		#elif motif
+			XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
+		#endif
+	#elif defined (macintosh)
+		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
+	#endif
 	char *p;
 	#ifdef macintosh
 		Gestalt ('sysv', (long *) & Melder_systemVersion);
@@ -1029,6 +1044,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 	}
 	#if defined (UNIX)
+		#if motif
 		if (! Melder_batch) {
 			/*
 			 * Make sure that the directory /u/miep/.myProg-dir exists,
@@ -1044,6 +1060,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				Melder_clearError ();
 			}
 		}
+		#endif
 	#elif defined (_WIN32)
 		if (! Melder_batch)
 			motif_win_setUserMessageCallback (cb_userMessage);
@@ -1080,6 +1097,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	} else {
 		char objectWindowTitle [100];
 		Machine_initLookAndFeel (argc, argv);
+		#if gtk
+			theCurrentPraat -> topShell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+			gtk_window_set_title (GTK_WINDOW (theCurrentPraat -> topShell), objectWindowTitle);
+		#else
 		#ifdef _WIN32
 			argv [0] = & praatP. title [0];   /* argc == 4 */
 			Gui_setOpenDocumentCallback (cb_openDocument);
@@ -1098,6 +1119,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, gui_cb_quit, 0);
 		}
 		#endif
+		#endif
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
@@ -1109,7 +1131,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#ifdef macintosh
 			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
-		Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
+		#if gtk
+			Raam = gtk_vbox_new (FALSE, 0);
+			gtk_container_add (GTK_CONTAINER (theCurrentPraat -> topShell), Raam);
+		#elif motif
+			Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
+		#endif
 		#ifdef macintosh
 			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
 			praatP.topBar = Gui_addMenuBar (Raam);
@@ -1129,14 +1156,20 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (Raam);
 		praat_actions_createDynamicMenu (Raam, 210);
 		GuiObject_show (Raam);
-		XtRealizeWidget (theCurrentPraat -> topShell);
+		#if gtk
+			gtk_widget_show (theCurrentPraat -> topShell); // TODO: Ugh?
+		#else
+			XtRealizeWidget (theCurrentPraat -> topShell);
+		#endif
 		#ifdef UNIX
-			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
-				fprintf (f, " %ld", (long) XtWindow (theCurrentPraat -> topShell));
-				fclose (f);
-			} else {
-				Melder_clearError ();
-			}
+			#if motif
+				if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
+					fprintf (f, " %ld", (long) XtWindow (theCurrentPraat -> topShell));
+					fclose (f);
+				} else {
+					Melder_clearError ();
+				}
+			#endif
 		#endif
 		#ifdef UNIX
 			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
@@ -1144,7 +1177,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#if ! defined (macintosh)
 			/* praat_showLogo (TRUE);   /* Mac: later. */
 		#endif
-		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
+		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh) && motif
 			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* Mac: done this earlier. */
 		#endif
 		Melder_setHelpProc (helpProc);
@@ -1288,6 +1321,10 @@ void praat_run (void) {
 
 		praatP.phase = praat_HANDLING_EVENTS;
 		
+		#if gtk
+			gtk_main();
+		#else
+
 		#if defined (_WIN32)
 			if (theCurrentPraat -> batchName [0]) {
 				wchar_t text [500];
@@ -1343,6 +1380,7 @@ void praat_run (void) {
 			#endif
 			XtDispatchEvent (& event);
 		}
+		#endif
 	}
 }
 

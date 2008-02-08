@@ -668,7 +668,7 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 			Collection_addItem (collection, interval); cherror
 		}
 	}
-	if (collection -> size == 0) Melder_warning ("No non-empty intervals were found.");
+	if (collection -> size == 0) Melder_warning1 (L"No non-empty intervals were found.");
 end:
 	iferror forget (collection);
 	return collection;
@@ -700,7 +700,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 		}
 	}
 	if (collection -> size == 0)
-		Melder_warning ("No label that %ls the text \"%ls\" was found.", kMelder_string_getText (comparison_Melder_STRING), text);
+		Melder_warning5 (L"No label that ", kMelder_string_getText (comparison_Melder_STRING), L" the text \"", text, L"\" was found.");
 	return collection;
 error:
 	forget (collection);

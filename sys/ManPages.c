@@ -367,7 +367,7 @@ static void grind (ManPages me) {
 	}
 	if (ndangle) {
 		MelderInfo_close ();
-		Melder_warning ("(ManPages::grind:) %ld dangling links encountered. See console window.", ndangle);
+		Melder_warning3 (L"(ManPages::grind:) ", Melder_integer (ndangle), L" dangling links encountered. See console window.");
 	}
 
 	/*

@@ -230,7 +230,7 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 	if (npc > my numberOfEigenvalues)
 	{
 		npc = my numberOfEigenvalues;
-		Melder_warning ("");
+		Melder_warning1 (L"");
 	}
 
 	him = TableOfReal_create (thy numberOfRows, my dimension);

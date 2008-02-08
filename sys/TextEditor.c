@@ -83,7 +83,9 @@ static void nameChanged (I) {
 		GuiWindow_setTitle (my shell, windowTitle.string);
 		MelderString_empty (& windowTitle);
 		MelderString_append2 (& windowTitle, my dirty && ! dirtinessAlreadyShown ? L"*" : L"", my name == NULL ? L"(untitled)" : MelderFile_name (& my file));
-		XtVaSetValues (my shell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
+		#if motif	
+			XtVaSetValues (my shell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
+		#endif
 	} else {
 		inherited (TextEditor) nameChanged (me);
 	}
@@ -435,11 +437,13 @@ END
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
+	#if motif
 	if (my fontSizeButton_10) XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
 	if (my fontSizeButton_12) XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
 	if (my fontSizeButton_14) XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
 	if (my fontSizeButton_18) XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
 	if (my fontSizeButton_24) XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
+	#endif
 }
 static void setFontSize (TextEditor me, int fontSize) {
 	GuiText_setFontSize (my textWidget, fontSize);

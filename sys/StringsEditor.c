@@ -1,6 +1,6 @@
 /* StringsEditor.c
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 
 /*
  * pb 2007/12/19 created
-*/
+ * pb 2008/02/06 const
+ */
 
 #include "StringsEditor.h"
 #include "EditorM.h"
@@ -160,7 +161,7 @@ class_methods (StringsEditor, Editor)
 	class_method (createMenus)
 class_methods_end
 
-Any StringsEditor_create (Widget parent, wchar_t *title, Any data) {
+Any StringsEditor_create (Widget parent, const wchar_t *title, Any data) {
 	StringsEditor me = new (StringsEditor);
 	if (me && Editor_init (me, parent, 20, 40, 600, 600, title, data)) {
 		updateList (me);

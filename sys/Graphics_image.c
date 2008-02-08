@@ -36,6 +36,15 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
+#if cairo
+static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
+	long ix1, long ix2, short x1DC, short x2DC,
+	long iy1, long iy2, short y1DC, short y2DC,
+	double minimum, double maximum,
+	short clipx1, short clipx2, short clipy1, short clipy2, int interpolate)
+{
+}
+#elif motif
 static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC,
@@ -48,7 +57,9 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ny = iy2 - iy1 + 1;   /* The number of cells along the vertical axis. */
 	double dx = (double) (x2DC - x1DC) / (double) nx;   /* Horizontal pixels per cell. Positive. */
 	double dy = (double) (y2DC - y1DC) / (double) ny;   /* Vertical pixels per cell. Negative. */
-	#if xwin
+	#if gtk
+		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
+	#elif xwin
 		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
 	#elif win || mac
 		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
@@ -245,7 +256,11 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		/*
 		 * Draw into the bitmap.
 		 */
-		#if xwin
+		#if cairo
+			// Kan dit niet beter met een cairo_image_surface_create ()
+			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
+			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value];
+		#elif xwin
 			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \
 				if (mayOptimize) *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]; \
@@ -417,6 +432,8 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	#endif
 	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
 }
+
+#endif
 
 #define INTERPOLATE_IN_POSTSCRIPT  TRUE
 

@@ -38,6 +38,10 @@
 		230022C40B3347D900A7FE19 /* pa_mac_core_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 230022C30B3347D900A7FE19 /* pa_mac_core_internal.h */; };
 		230022C60B3347E000A7FE19 /* pa_mac_core_utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 230022C50B3347E000A7FE19 /* pa_mac_core_utilities.h */; };
 		230026EB0B34E03200A7FE19 /* pa_mac_util.h in Headers */ = {isa = PBXBuildFile; fileRef = 230026EA0B34E03200A7FE19 /* pa_mac_util.h */; };
+		2307EF840D57CF3100DA27AF /* Vowel.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307EF800D57CF3100DA27AF /* Vowel.c */; };
+		2307EF850D57CF3100DA27AF /* Vowel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2307EF810D57CF3100DA27AF /* Vowel.h */; };
+		2307EF860D57CF3100DA27AF /* VowelEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307EF820D57CF3100DA27AF /* VowelEditor.c */; };
+		2307EF870D57CF3100DA27AF /* VowelEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2307EF830D57CF3100DA27AF /* VowelEditor.h */; };
 		230CF8E40D06B83F00068DB5 /* Editor_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 230CF8E30D06B83F00068DB5 /* Editor_enums.h */; };
 		230E41D40B0A833A000CCE15 /* melder_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 230E41D30B0A833A000CCE15 /* melder_error.c */; };
 		231E5F980AC6D1C4004B07A8 /* DTW_and_TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */; };
@@ -128,8 +132,6 @@
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
 		23660A0B0D50C95200FB6B8B /* NUMhuber.c in Sources */ = {isa = PBXBuildFile; fileRef = 23660A0A0D50C95200FB6B8B /* NUMhuber.c */; };
 		23660A0D0D50C96000FB6B8B /* NUMhuber_core.h in Headers */ = {isa = PBXBuildFile; fileRef = 23660A0C0D50C96000FB6B8B /* NUMhuber_core.h */; };
-		23660A110D50C9B600FB6B8B /* VowelGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23660A0F0D50C9B500FB6B8B /* VowelGenerator.c */; };
-		23660A120D50C9B600FB6B8B /* VowelGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 23660A100D50C9B600FB6B8B /* VowelGenerator.h */; };
 		23660A630D510E4600FB6B8B /* melder_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 23660A620D510E4600FB6B8B /* melder_time.c */; };
 		236DDF040D11DC81009CB8B9 /* GuiList.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF030D11DC81009CB8B9 /* GuiList.c */; };
 		236DDF350D11F1EB009CB8B9 /* Gui.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF340D11F1EB009CB8B9 /* Gui.c */; };
@@ -907,6 +909,10 @@
 		230022C30B3347D900A7FE19 /* pa_mac_core_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pa_mac_core_internal.h; path = audio/pa_mac_core_internal.h; sourceTree = "<group>"; };
 		230022C50B3347E000A7FE19 /* pa_mac_core_utilities.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pa_mac_core_utilities.h; path = audio/pa_mac_core_utilities.h; sourceTree = "<group>"; };
 		230026EA0B34E03200A7FE19 /* pa_mac_util.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pa_mac_util.h; path = audio/pa_mac_util.h; sourceTree = "<group>"; };
+		2307EF800D57CF3100DA27AF /* Vowel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Vowel.c; path = dwtools/Vowel.c; sourceTree = "<group>"; };
+		2307EF810D57CF3100DA27AF /* Vowel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vowel.h; path = dwtools/Vowel.h; sourceTree = "<group>"; };
+		2307EF820D57CF3100DA27AF /* VowelEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VowelEditor.c; path = dwtools/VowelEditor.c; sourceTree = "<group>"; };
+		2307EF830D57CF3100DA27AF /* VowelEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VowelEditor.h; path = dwtools/VowelEditor.h; sourceTree = "<group>"; };
 		230CF8E30D06B83F00068DB5 /* Editor_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Editor_enums.h; path = sys/Editor_enums.h; sourceTree = "<group>"; };
 		230E41D30B0A833A000CCE15 /* melder_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_error.c; path = sys/melder_error.c; sourceTree = "<group>"; };
 		231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = DTW_and_TextGrid.c; path = dwtools/DTW_and_TextGrid.c; sourceTree = "<group>"; };
@@ -997,8 +1003,6 @@
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
 		23660A0A0D50C95200FB6B8B /* NUMhuber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NUMhuber.c; path = dwsys/NUMhuber.c; sourceTree = "<group>"; };
 		23660A0C0D50C96000FB6B8B /* NUMhuber_core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NUMhuber_core.h; path = dwsys/NUMhuber_core.h; sourceTree = "<group>"; };
-		23660A0F0D50C9B500FB6B8B /* VowelGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VowelGenerator.c; path = dwtools/VowelGenerator.c; sourceTree = "<group>"; };
-		23660A100D50C9B600FB6B8B /* VowelGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VowelGenerator.h; path = dwtools/VowelGenerator.h; sourceTree = "<group>"; };
 		23660A620D510E4600FB6B8B /* melder_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_time.c; path = sys/melder_time.c; sourceTree = "<group>"; };
 		236DDF030D11DC81009CB8B9 /* GuiList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiList.c; path = sys/GuiList.c; sourceTree = "<group>"; };
 		236DDF340D11F1EB009CB8B9 /* Gui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Gui.c; path = sys/Gui.c; sourceTree = "<group>"; };
@@ -2168,8 +2172,10 @@
 				23E5CA1909A228FE004E41D5 /* TableOfReal_extensions.c */,
 				23E5CA1C09A228FE004E41D5 /* TextGrid_extensions.h */,
 				23E5CA1B09A228FE004E41D5 /* TextGrid_extensions.c */,
-				23660A100D50C9B600FB6B8B /* VowelGenerator.h */,
-				23660A0F0D50C9B500FB6B8B /* VowelGenerator.c */,
+				2307EF810D57CF3100DA27AF /* Vowel.h */,
+				2307EF800D57CF3100DA27AF /* Vowel.c */,
+				2307EF830D57CF3100DA27AF /* VowelEditor.h */,
+				2307EF820D57CF3100DA27AF /* VowelEditor.c */,
 			);
 			name = dwtools;
 			sourceTree = "<group>";
@@ -3277,7 +3283,8 @@
 				23760F720D0C89870037FD07 /* ManipulationEditor_enums.h in Headers */,
 				2320D63F0D190A60002D5AE0 /* StringsEditor.h in Headers */,
 				23660A0D0D50C96000FB6B8B /* NUMhuber_core.h in Headers */,
-				23660A120D50C9B600FB6B8B /* VowelGenerator.h in Headers */,
+				2307EF850D57CF3100DA27AF /* Vowel.h in Headers */,
+				2307EF870D57CF3100DA27AF /* VowelEditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3770,8 +3777,9 @@
 				23F17E750D27EE4B00C3941D /* GuiDialog.c in Sources */,
 				23F17EEE0D281CA300C3941D /* GuiRowColumn.c in Sources */,
 				23660A0B0D50C95200FB6B8B /* NUMhuber.c in Sources */,
-				23660A110D50C9B600FB6B8B /* VowelGenerator.c in Sources */,
 				23660A630D510E4600FB6B8B /* melder_time.c in Sources */,
+				2307EF840D57CF3100DA27AF /* Vowel.c in Sources */,
+				2307EF860D57CF3100DA27AF /* VowelEditor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,6 @@
 /* Gui.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,20 @@
  * pb 2007/06/09 wchar_t
  * pb 2007/12/13 Gui
  * pb 2007/12/30 Gui
+ * sdk 2008/02/08 GTK
  */
 
 #include "Gui.h"
 
 Widget Gui_addMenuBar (Widget form) {
-	Widget menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
-	XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
+	Widget menuBar;
+	#if gtk
+		menuBar = gtk_menu_bar_new ();
+		gtk_box_pack_start (GTK_BOX (form), menuBar, FALSE, TRUE, 0);
+	#elif motif
+		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
+		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
+	#endif
 	return menuBar;
 }
 
@@ -43,9 +50,11 @@ int Gui_getResolution (Widget widget) {
 		(void) widget;
 		return 72;
 	#else
-		Display *display = XtDisplay (widget);
-		return floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
-			DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+		#if motif
+			Display *display = XtDisplay (widget);
+			return floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
+				DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+		#endif
 	#endif
 }
 

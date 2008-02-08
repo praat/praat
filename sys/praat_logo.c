@@ -50,11 +50,13 @@ static struct {
 	Graphics graphics;
 } theLogo = { 90, 40, logo_defaultDraw };
 
+#if motif
 static void logo_timeOut (XtPointer closure, XtIntervalId *id) {
 	(void) closure;
 	(void) id;
  	GuiObject_hide (theLogo.form);
 }
+#endif
 
 void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)) {
 	theLogo.width_mm = width_mm;
@@ -83,13 +85,17 @@ static void gui_cb_goAway (I) {
 
 void praat_showLogo (int autoPopDown) {
 	#ifdef UNIX
-	XWindowAttributes windowAttributes;
+		#if motif
+			XWindowAttributes windowAttributes;
+		#endif
 	#endif
 	if (theCurrentPraat -> batch || ! theLogo.draw) return;
 	if (! theLogo.form) {
 		theLogo.form = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
 		#ifdef UNIX
-			XtVaSetValues (XtParent (theLogo.form), XmNmwmDecorations, 4, XmNmwmFunctions, 0, NULL);
+			#if motif
+				XtVaSetValues (XtParent (theLogo.form), XmNmwmDecorations, 4, XmNmwmFunctions, 0, NULL);
+			#endif
 		#endif
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
 			0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
@@ -102,6 +108,7 @@ void praat_showLogo (int autoPopDown) {
 	 * at start-up time, this would take too long.
 	 */
 	#ifdef UNIX
+	#if motif
 	while (XGetWindowAttributes (XtDisplay (theLogo.form), XtWindow (theLogo.form), & windowAttributes),
 	       windowAttributes. map_state != IsViewable)
 	{
@@ -109,11 +116,14 @@ void praat_showLogo (int autoPopDown) {
 		XtAppNextEvent (theCurrentPraat -> context, & event);
 		XtDispatchEvent (& event);
 	}
+	#endif
 	gui_drawingarea_cb_expose (NULL, NULL);   // BUG
 	#endif
 
+	#if motif
 	if (autoPopDown)
 		XtAppAddTimeOut (theCurrentPraat -> context, 2000, logo_timeOut, (XtPointer) NULL);
+	#endif
 }
 
 /* End of file praat_logo.c */

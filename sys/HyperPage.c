@@ -630,11 +630,13 @@ DO
 END
 
 static void updateSizeMenu (HyperPage me) {
-	XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
-	XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
-	XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
-	XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
-	XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
+	#if motif
+		XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
+		XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
+		XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
+		XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
+		XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
+	#endif
 }
 static void setFontSize (HyperPage me, int fontSize) {
 	prefs_fontSize = my fontSize = fontSize;
@@ -678,17 +680,20 @@ END
  */
 
 static void createVerticalScrollBar (HyperPage me, Widget parent) {
-	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
-		xmScrollBarWidgetClass, parent, XmNorientation, XmVERTICAL,
-		XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM,
-			XmNtopOffset, Machine_getMenuBarHeight () + Machine_getTextHeight () + 12,
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-		XmNwidth, Machine_getScrollBarWidth (),
-		XmNminimum, 0, XmNmaximum, (int) (PAGE_HEIGHT * 5),
-		XmNsliderSize, 25, XmNvalue, 0,
-		XmNincrement, 1, XmNpageIncrement, 24,
-		NULL);
+	#if motif
+		// TODO: Kan dit niet een algemele gui klasse worden?
+		my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
+			xmScrollBarWidgetClass, parent, XmNorientation, XmVERTICAL,
+			XmNrightAttachment, XmATTACH_FORM,
+			XmNtopAttachment, XmATTACH_FORM,
+				XmNtopOffset, Machine_getMenuBarHeight () + Machine_getTextHeight () + 12,
+			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
+			XmNwidth, Machine_getScrollBarWidth (),
+			XmNminimum, 0, XmNmaximum, (int) (PAGE_HEIGHT * 5),
+			XmNsliderSize, 25, XmNvalue, 0,
+			XmNincrement, 1, XmNpageIncrement, 24,
+			NULL);
+	#endif
 }
 
 static void updateVerticalScrollBar (HyperPage me)
@@ -697,17 +702,24 @@ static void updateVerticalScrollBar (HyperPage me)
 {
 	Dimension width, height, marginWidth, marginHeight;
 	int sliderSize;
+	#if motif
 	XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	#endif
 	sliderSize = 25 /*height / resolution * 5*/;   /* Don't change slider unless you clip value! */
-	XmScrollBarSetValues (my verticalScrollBar, my top, sliderSize, 1, sliderSize - 1, False);
+	#if motif
+		XmScrollBarSetValues (my verticalScrollBar, my top, sliderSize, 1, sliderSize - 1, False);
+	#endif
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
 static void gui_cb_verticalScroll (GUI_ARGS) {
 	GUI_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
+	#if motif
+	// TODO: deze heb ik ook al eerder gezien...
 	XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
+	#endif
 	if (value != my top) {
 		my top = value;
 		Graphics_clearWs (my g);
@@ -720,7 +732,10 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 DIRECT (HyperPage, cb_pageUp)
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
-	XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
+	#if motif
+		// TODO: something like Gui get value...?
+		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
+	#endif
 	value -= pincr;
 	if (value < 0) value = 0;
 	if (value != my top) {
@@ -735,7 +750,9 @@ END
 DIRECT (HyperPage, cb_pageDown)
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
-	XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
+	#if motif
+		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
+	#endif
 	value += pincr;
 	if (value > (int) (PAGE_HEIGHT * 5) - sliderSize) value = (int) (PAGE_HEIGHT * 5) - sliderSize;
 	if (value != my top) {
@@ -840,7 +857,9 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;
 	Dimension marginWidth, marginHeight;
-	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	#if motif
+		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	#endif
 	Graphics_setWsViewport (my g, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	Graphics_setWsWindow (my g, 0.0, my rightMargin = (event -> width - 2 * marginWidth) / resolution,
 		PAGE_HEIGHT - (event -> height - 2 * marginHeight) / resolution, PAGE_HEIGHT);
@@ -895,15 +914,20 @@ static void createChildren (I) {
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (HyperPage);
 	#if defined (UNIX)
+		#if motif
+		// TODO: Ugh!
 		Display *display = XtDisplay (parent);
 		resolution = floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
 			DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+		#endif
 	#else
 		resolution = 100;
 	#endif
 	resolution = 100;
 	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
+	#if motif
 	Melder_assert (XtWindow (my drawingArea));
+	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my g, TRUE);
 	Graphics_setDollarSignIsCode (my g, TRUE);
@@ -918,8 +942,10 @@ event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-	XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
-	XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
+	#if motif
+		XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
+		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
+	#endif
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
 	return 1;
 }

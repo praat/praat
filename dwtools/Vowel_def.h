@@ -1,8 +1,6 @@
-#ifndef _StringsEditor_h_
-#define _StringsEditor_h_
-/* StringsEditor.h
+/* Vowel_def.h
  *
- * Copyright (C) 1993-2008 David Weenink & Paul Boersma
+ * Copyright (C) 2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +18,16 @@
  */
 
 /*
- * 2008/02/06
+ djmw 20080130
 */
 
-#include "Editor.h"
-#include "Strings.h"
+#define ooSTRUCT Vowel
+oo_DEFINE_CLASS (Vowel, Function)
 
-#define StringsEditor_members Editor_members \
-	Widget list, text;
+	oo_OBJECT (PitchTier, 0, pt)
+	oo_OBJECT (FormantTier, 0, ft)
 	
-#define StringsEditor_methods Editor_methods
-class_create (StringsEditor, Editor);
+oo_END_CLASS (Vowel)
+#undef ooSTRUCT
 
-Any StringsEditor_create (Widget parent, const wchar_t *title, Any data);
-
-/* End of file StringsEditor.h */
-#endif
+/* End of file Klatt_def.h */

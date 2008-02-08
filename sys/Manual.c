@@ -367,7 +367,9 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	GuiObject_setSensitive (my recordButton, false);
 	GuiObject_setSensitive (my playButton, false);
 	GuiObject_setSensitive (my publishButton, false);
-	XmUpdateDisplay (my shell);
+	#if motif
+		XmUpdateDisplay (my shell);
+	#endif
 	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
 	GuiObject_setSensitive (my recordButton, true);
 	GuiObject_setSensitive (my playButton, true);
@@ -380,7 +382,9 @@ static void gui_button_cb_play (I, GuiButtonEvent event) {
 	GuiObject_setSensitive (my recordButton, false);
 	GuiObject_setSensitive (my playButton, false);
 	GuiObject_setSensitive (my publishButton, false);
-	XmUpdateDisplay (my shell);
+	#if motif
+		XmUpdateDisplay (my shell);
+	#endif
 	Melder_play ();
 	GuiObject_setSensitive (my recordButton, true);
 	GuiObject_setSensitive (my playButton, true);
@@ -424,8 +428,10 @@ static void createChildren (I) {
 	my homeButton = GuiButton_createShown (my dialog, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, me, 0);
 	if (pages -> dynamic) {
-		XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
-		XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
+		#if motif
+			XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
+			XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
+		#endif
 		my recordButton = GuiButton_createShown (my dialog, 4, 79, y+height+8, y+height+8 + height,
 			L"Record", gui_button_cb_record, me, 0);
 		my playButton = GuiButton_createShown (my dialog, 85, 160, y+height+8, y+height+8 + height,
@@ -442,7 +448,9 @@ static void createChildren (I) {
 		#endif
 		);
 	my searchText = GuiText_createShown (my dialog, 274+63 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
-	XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
+	#if motif
+		XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
+	#endif
 }
 
 DIRECT (Manual, cb_help)

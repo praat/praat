@@ -27,6 +27,7 @@
  djmw 20061218 Introduction of Melder_information<12...9>
  djmw 20071022 phase_unwrap initialize phase = 0.
  djmw 20080122 float -> double
+ djmw 20080202 Warning in Spectrum_drawPhases to wchar_t
 */
 
 #include "Spectrum_extensions.h"

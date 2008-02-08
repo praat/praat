@@ -1,6 +1,6 @@
 /* melder.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
  * pb 2007/12/02 enums
  * pb 2007/12/13 Melder_writeToConsole
  * pb 2007/12/18 Gui
+ * sdk 2008/01/22 GTK
  */
 
 #include <math.h>
@@ -191,6 +192,9 @@ void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
 static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label1, Widget label2, Widget cancelButton) {
+	#if gtk
+		// TODO: Something, what?
+	#else
 	#if defined (macintosh)
 	{
 		EventRecord event;
@@ -264,6 +268,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 		XmScaleSetValue (scale, floor (progress * 1000.0));
 		XmUpdateDisplay (dia);
 	}
+	#endif
 	return 1;
 }
 #endif
@@ -283,17 +288,21 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 					L"Work in progress", NULL, NULL, 0);
 				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
-				scale = XmCreateScale (dia, "scale", NULL, 0);
-				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
-					XmNorientation, XmHORIZONTAL,
+				#if gtk
+					// TODO: Progressbar ofzo?
+				#elif motif
+					scale = XmCreateScale (dia, "scale", NULL, 0);
+					XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
+						XmNorientation, XmHORIZONTAL,
+						#if ! defined (macintosh)
+							XmNscaleHeight, 20,
+						#endif
+						NULL);
+					GuiObject_show (scale);
 					#if ! defined (macintosh)
-						XmNscaleHeight, 20,
+						cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
+							L"Interrupt", NULL, NULL, 0);
 					#endif
-					NULL);
-				GuiObject_show (scale);
-				#if ! defined (macintosh)
-					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
-						L"Interrupt", NULL, NULL, 0);
 				#endif
 			}
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
@@ -370,17 +379,22 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 					L"Work in progress", NULL, NULL, 0);
 				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
-				scale = XmCreateScale (dia, "scale", NULL, 0);
-				XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
-					XmNorientation, XmHORIZONTAL,
-					#if ! defined (macintosh) && ! defined (_WIN32)
-						XmNscaleHeight, 20,
+
+				#if gtk
+					// TODO: Wat hier?
+				#elif motif
+					scale = XmCreateScale (dia, "scale", NULL, 0);
+					XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
+						XmNorientation, XmHORIZONTAL,
+						#if ! defined (macintosh) && ! defined (_WIN32)
+							XmNscaleHeight, 20,
+						#endif
+						NULL);
+					GuiObject_show (scale);
+					#if ! defined (macintosh)
+						cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
+							L"Interrupt", NULL, NULL, 0);
 					#endif
-					NULL);
-				GuiObject_show (scale);
-				#if ! defined (macintosh)
-					cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
-						L"Interrupt", NULL, NULL, 0);
 				#endif
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
 				GuiObject_show (dia);
@@ -624,6 +638,7 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 static bool pause_continued, pause_stopped;
 static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
 static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
+#if motif
 static int motif_pause (wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
@@ -651,6 +666,7 @@ static int motif_pause (wchar_t *message) {
 	GuiObject_hide (dia);
 	return pause_continued;
 }
+#endif
 
 #ifdef macintosh
 static void motif_fatal (wchar_t *message) {
@@ -702,7 +718,7 @@ static void motif_error (wchar_t *message) {
 static void motif_warning (wchar_t *message) {
 	MessageBox (NULL, message, L"Warning", MB_OK);
 }
-#else
+#elif motif
 static Widget makeMessage (unsigned char dialogType, const char *resourceName, const char *title) {
 	Arg arg [1];
 	arg [0]. name = XmNautoUnmanage; arg [0]. value = True;
@@ -739,6 +755,8 @@ static void motif_warning (wchar_t *message) {
 }
 #endif
 
+#if motif
+	// TODO: dit is volgens mij voor de console application, niet?
 void MelderMotif_create (void *appContext, void *parent) {
 	extern void motif_information (wchar_t *);
 	Melder_appContext = appContext;
@@ -751,6 +769,7 @@ void MelderMotif_create (void *appContext, void *parent) {
 	#endif
 	Melder_setPauseProc (motif_pause);
 }
+#endif
 
 #endif
 

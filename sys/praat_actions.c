@@ -189,15 +189,23 @@ static void deleteDynamicMenu (void) {
 //Melder_information1(Melder_integer(++deletions));
 	if (praat_dynamicMenu) {
 		int i;
+		#if motif
 		XtDestroyWidget (praat_dynamicMenu);
+		#endif
 		praat_dynamicMenu = NULL;
 		for (i = 1; i <= theNumberOfActions; i ++)
 			theActions [i]. button = NULL;
 		if (praat_writeMenu) {   // ppgb 20080103: put into praat_dynamicMenu condition
+			#if motif
 			XtDestroyWidget (praat_writeMenu);
+			#endif
+
 			praat_writeMenuSeparator = NULL;
+
+			#if motif
 			praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
 			XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+			#endif
 		}
 	}
 }
@@ -487,9 +495,11 @@ static void cb_menu (GUI_ARGS) {
 		#elif defined (_WIN32)
 			modified = FALSE;
 		#else
+			#if motif
 			XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
 			modified = event -> type == ButtonPress &&
 				((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
+			#endif
 		#endif
 	}
 	do_menu (void_me, modified);
@@ -524,8 +534,10 @@ void praat_actions_show (void) {
 					else if (my title && (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
 						writeButtons [nwriteButtons ++] = my button;
 				}
+				#if motif
 				if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
 				if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
+				#endif
 			}
 			/*
 			 * BUG: Despite all these precautions,
@@ -572,8 +584,10 @@ void praat_actions_show (void) {
 		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
 		int nbuttons = 0, nwriteButtons = 0;
+		#if motif
 		if (! praat_dynamicMenu)
 			praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
+		#endif
 		for (i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
 			praat_Command me = & theActions [i];
 			if (my depth == 0) currentSubmenu1 = NULL, currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
@@ -645,7 +659,9 @@ void praat_actions_show (void) {
 				 */
 				if (currentSubmenu2 || currentSubmenu1) {   /* These separators are not shown in a flattened menu. */
 					if (! my button) {
+						#if motif
 						my button = XmCreateSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1, "separator", NULL, 0);
+						#endif
 						GuiObject_show (my button);
 					}
 				}
@@ -654,6 +670,7 @@ void praat_actions_show (void) {
 				 * Apparently a submenu.
 				 */
 				if (! my button) {
+					#if motif
 					Widget cascadeButton;
 					if (my depth == 0) {
 						my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
@@ -669,23 +686,28 @@ void praat_actions_show (void) {
 						currentSubmenu2 = GuiMenuBar_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
 					}
 					GuiObject_show (my button);
+					#endif
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
 			}
 		}
+		#if motif
 		if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
 		if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
+		#endif
 		GuiObject_show (praat_dynamicMenu);
 	}
 }
 
 void praat_actions_createWriteMenu (Widget bar) {
 	if (theCurrentPraat -> batch) return;
+	#if motif
 	praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
 	GuiObject_setSensitive (praat_writeMenuTitle, False);
 	praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
 	XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+	#endif
 }
 
 void praat_actions_init (void) {
@@ -694,6 +716,8 @@ void praat_actions_init (void) {
 
 void praat_actions_createDynamicMenu (Widget form, int width) {
 	if (theCurrentPraat -> batch) return;
+	// Kan dit bovenstaande niet met een #if constructie?
+	#if motif
 	praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
 	#if defined (macintosh)
 		XtVaSetValues (praat_dynamicMenuWindow,
@@ -721,6 +745,7 @@ void praat_actions_createDynamicMenu (Widget form, int width) {
 	praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
 	GuiObject_show (praat_dynamicMenu);
 	GuiObject_show (praat_dynamicMenuWindow);
+	#endif
 }
 
 void praat_saveAddedActions (FILE *f) {

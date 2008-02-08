@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/31
+ * pb 2008/02/08
  */
 
 #ifndef _Graphics_h_
@@ -121,7 +121,15 @@ int Graphics_init (I);
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
 #define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
 
-#ifdef UNIX
+#if defined (USE_GTK)
+	#define GraphicsScreen_members Graphics_members \
+		cairo_t *cr;
+	#define mac 0
+	#define win 0
+	#define xwin 0
+	#define cairo 1
+	#define pango 1
+#elif defined (UNIX)
 	#define GraphicsScreen_members Graphics_members \
 		Display *display; \
 		int xscreen; \
@@ -139,11 +147,12 @@ int Graphics_init (I);
 	#define mac 0
 	#define win 0
 	#define xwin 1
+	#define cairo 0
+	#define pango 0
 	extern unsigned long black, white, red, green, blue, cyan, magenta, yellow,
 		maroon, lime, navy, teal, purple, olive, grey [101];
-#endif
-#ifdef _WIN32
-   	#include <windowsx.h>
+#elif defined (_WIN32)
+	#include <windowsx.h>
 	#define GraphicsScreen_members Graphics_members \
 		HWND window; \
 		HDC dc; \
@@ -154,8 +163,9 @@ int Graphics_init (I);
 	#define mac 0
 	#define win 1
 	#define xwin 0
-#endif
-#if defined (macintosh)
+	#define cairo 0
+	#define pango 0
+#elif defined (macintosh)
 	#include "macport_on.h"
 	#include <Quickdraw.h>
 	#include <MacWindows.h>
@@ -172,6 +182,8 @@ int Graphics_init (I);
 	#define mac 1
 	#define win 0
 	#define xwin 0
+	#define cairo 0
+	#define pango 0
 #endif
 
 #define GraphicsScreen_methods Graphics_methods

@@ -102,7 +102,7 @@ DIRECT (OTGrammar_edit)
 		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -663,7 +663,7 @@ DIRECT (OTMulti_edit)
 		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, FULL_NAME,
+			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}

@@ -485,4 +485,64 @@ const wchar_t * MelderReadString_getLineNumber (MelderReadString *text) {
 	return Melder_integer (result);
 }
 
+#define NUMBER_OF_BUFFERS  33
+static MelderString buffer [NUMBER_OF_BUFFERS] = { { 0 } };
+static int ibuffer = 0;
+
+const wchar_t * Melder_wcscat2 (const wchar_t *s1, const wchar_t *s2) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append2 (& buffer [ibuffer], s1, s2);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append3 (& buffer [ibuffer], s1, s2, s3);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append4 (& buffer [ibuffer], s1, s2, s3, s4);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append5 (& buffer [ibuffer], s1, s2, s3, s4, s5);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append6 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append7 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append8 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8);
+	return buffer [ibuffer].string;
+}
+
+const wchar_t * Melder_wcscat9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	MelderString_empty (& buffer [ibuffer]);
+	MelderString_append9 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	return buffer [ibuffer].string;
+}
+
 /* End of file melder_strings.c */
