@@ -187,6 +187,10 @@ typedef struct structGuiDrawingArea {
 				unsigned char map [4];
 				XGetPointerMapping (XtDisplay (widget), map, 3);
 				bool leftHanded = ( map [0] == 3 );
+				if (Melder_debug == 24) {
+					Melder_casual ("GuiDrawingArea::_motif_inputCallback: button %d left-handed %d state %ld",
+						xevent -> xbutton.button, leftHanded, xevent -> xbutton.state);
+				}
 				event. button =
 					xevent -> xbutton.button == Button1 ? 1 :
 					xevent -> xbutton.button == Button2 ? ( leftHanded ? 3 : 2 ) :

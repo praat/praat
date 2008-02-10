@@ -189,22 +189,29 @@ static void deleteDynamicMenu (void) {
 //Melder_information1(Melder_integer(++deletions));
 	if (praat_dynamicMenu) {
 		int i;
-		#if motif
-		XtDestroyWidget (praat_dynamicMenu);
+		#if gtk
+			gtk_widget_destroy (praat_dynamicMenu);
+		#elif motif
+			XtDestroyWidget (praat_dynamicMenu);
 		#endif
 		praat_dynamicMenu = NULL;
 		for (i = 1; i <= theNumberOfActions; i ++)
 			theActions [i]. button = NULL;
 		if (praat_writeMenu) {   // ppgb 20080103: put into praat_dynamicMenu condition
-			#if motif
-			XtDestroyWidget (praat_writeMenu);
+			#if gtk
+				gtk_widget_destroy (praat_writeMenu);
+			#elif motif
+				XtDestroyWidget (praat_writeMenu);
 			#endif
 
 			praat_writeMenuSeparator = NULL;
 
-			#if motif
-			praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
-			XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+			// RFC: Beter?
+			#if gtk
+				praat_writeMenu = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
+			#elif motif
+				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
+				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 			#endif
 		}
 	}
@@ -534,9 +541,21 @@ void praat_actions_show (void) {
 					else if (my title && (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
 						writeButtons [nwriteButtons ++] = my button;
 				}
-				#if motif
-				if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
-				if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
+				#if gtk
+					// TODO: Is er een reden waarom je dit pas achteraf zou willen
+					// in plaats van direct zonder twee lijstjes te maken?
+					// Antwoord: onder Motif gaat/ging UnmanageChildren veel sneller dan een serie UnmanageChild's
+					while (nbuttons > 0) {
+						gtk_widget_hide (buttons [nbuttons]);
+						nbuttons --;
+					}
+					while (nwriteButtons > 0) {
+						gtk_widget_hide (writeButtons [nwriteButtons]);
+						nwriteButtons --;
+					}
+				#elif motif
+					if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
+					if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
 				#endif
 			}
 			/*
@@ -584,10 +603,14 @@ void praat_actions_show (void) {
 		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
 		int nbuttons = 0, nwriteButtons = 0;
-		#if motif
-		if (! praat_dynamicMenu)
-			praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
-		#endif
+		if (! praat_dynamicMenu) {
+			#if gtk
+				praat_dynamicMenu = gtk_vbutton_box_new ();
+				gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);
+			#elif motif
+				praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
+			#endif
+		}
 		for (i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
 			praat_Command me = & theActions [i];
 			if (my depth == 0) currentSubmenu1 = NULL, currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
@@ -659,8 +682,11 @@ void praat_actions_show (void) {
 				 */
 				if (currentSubmenu2 || currentSubmenu1) {   /* These separators are not shown in a flattened menu. */
 					if (! my button) {
-						#if motif
-						my button = XmCreateSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1, "separator", NULL, 0);
+						// RFC: Beter?
+						#if gtk
+							GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
+						#elif motif
+							my button = XmCreateSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1, "separator", NULL, 0);
 						#endif
 						GuiObject_show (my button);
 					}
@@ -692,9 +718,18 @@ void praat_actions_show (void) {
 				}
 			}
 		}
-		#if motif
-		if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
-		if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
+		#if gtk
+			while (nbuttons > 0) {
+				gtk_widget_show (buttons [nbuttons]);
+				nbuttons --;
+			}
+			while (nwriteButtons > 0) {
+				gtk_widget_show (writeButtons [nwriteButtons]);
+				nwriteButtons --;
+			}
+		#elif motif
+			if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
+			if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
 		#endif
 		GuiObject_show (praat_dynamicMenu);
 	}
@@ -702,11 +737,16 @@ void praat_actions_show (void) {
 
 void praat_actions_createWriteMenu (Widget bar) {
 	if (theCurrentPraat -> batch) return;
-	#if motif
-	praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
-	GuiObject_setSensitive (praat_writeMenuTitle, False);
-	praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
-	XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
+	// RFC: korter dus beter?
+	// Vraag: ik zie dat er twee keer een Menu Write wordt gedaan. Waar is dat goed voor?
+	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
+	#if gtk
+		praat_writeMenu = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
+	#elif motif
+		praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
+		GuiObject_setSensitive (praat_writeMenuTitle, False);
+		praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
+		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 	#endif
 }
 
@@ -717,34 +757,39 @@ void praat_actions_init (void) {
 void praat_actions_createDynamicMenu (Widget form, int width) {
 	if (theCurrentPraat -> batch) return;
 	// Kan dit bovenstaande niet met een #if constructie?
-	#if motif
-	praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
-	#if defined (macintosh)
-		XtVaSetValues (praat_dynamicMenuWindow,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -1,
-			XmNwidth, width,
-			NULL);
-	#elif defined (UNIX)
-		(void) width;
-		XtVaSetValues (praat_dynamicMenuWindow,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 0,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
-			XmNwidth, width,
-			NULL);
-	#else
-		XtVaSetValues (praat_dynamicMenuWindow,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -3,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -3,
-			XmNwidth, width,
-			NULL);
-	#endif
-	praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
-	GuiObject_show (praat_dynamicMenu);
-	GuiObject_show (praat_dynamicMenuWindow);
+	// Wat doet dit?
+	// Dit maakt de buitenkant van de dynamische knoppenlijst (Sound help, Edit, Draw, Modify...):
+	// een scrolledWindow met daarin een kolom.
+	#if gtk
+
+	#elif motif
+		praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
+		#if defined (macintosh)
+			XtVaSetValues (praat_dynamicMenuWindow,
+				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
+				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -1,
+				XmNwidth, width,
+				NULL);
+		#elif defined (UNIX)
+			(void) width;
+			XtVaSetValues (praat_dynamicMenuWindow,
+				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 0,
+				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
+				XmNwidth, width,
+				NULL);
+		#else
+			XtVaSetValues (praat_dynamicMenuWindow,
+				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
+				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -3,
+				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -3,
+				XmNwidth, width,
+				NULL);
+		#endif
+		praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
+		GuiObject_show (praat_dynamicMenu);
+		GuiObject_show (praat_dynamicMenuWindow);
 	#endif
 }
 

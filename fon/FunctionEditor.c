@@ -1023,6 +1023,10 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 		if (xWC < my startWindow) xWC = my startWindow;
 		if (xWC > my endWindow) xWC = my endWindow;
+		if (Melder_debug == 24) {
+			Melder_casual ("FunctionEditor::gui_drawingarea_cb_click: button %d shift %d option %d command %d control %d",
+				event -> button, my shiftKeyPressed, event -> optionKeyPressed, event -> commandKeyPressed, event -> extraControlKeyPressed);
+		}
 #if defined (macintosh)
 		needsUpdate =
 			event -> optionKeyPressed || event -> extraControlKeyPressed ? our clickB (me, xWC, yWC) :

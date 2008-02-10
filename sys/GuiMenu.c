@@ -29,36 +29,22 @@
 #include "Gui.h"
 
 Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags) {
-	Widget menu = NULL;
-	#if gtk
-		menu = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
-		if (flags & GuiMenu_INSENSITIVE)
-			gtk_widget_set_sensitive (menu, FALSE);
-		gtk_widget_show (menu);
-		gtk_menu_bar_append (GTK_MENU_BAR (bar), menu);
-	#elif motif
-		Widget menuTitle;
-		menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-		if (wcsequ (title, L"Help"))   /* BUG: Mac reacts to this title... */
-			XtVaSetValues (bar, XmNmenuHelpWidget, menuTitle, NULL);   /* ...instead of to this resource. */
-		menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (menu, False);
-		XtVaSetValues (menuTitle, XmNsubMenuId, menu, NULL);
-		XtManageChild (menuTitle);
-	#endif
+	Widget menu = NULL, menuTitle;
+	menu = GuiMenuBar_addMenu2 (bar, title, flags, &menuTitle);
 	return menu;
 }
 
 Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle) {
 	Widget menu;
 	#if gtk
-		menu = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		*menuTitle = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		menu = gtk_menu_new ();
 		if (flags & GuiMenu_INSENSITIVE)
-			gtk_widget_set_sensitive(menu, FALSE);
+			gtk_widget_set_sensitive (menu, FALSE);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (*menuTitle), menu);
+		gtk_menu_shell_append (GTK_MENU_SHELL (bar), *menuTitle);
 		gtk_widget_show (menu);
-		gtk_menu_bar_append (GTK_MENU_SHELL (bar), menu);
-		*menuTitle = menu;
+		gtk_widget_show (*menuTitle);
 	#elif motif
 		*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 		if (wcsequ (title, L"Help"))
@@ -85,6 +71,7 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 		} else {
 			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		}
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), button);
 	#elif motif
 		button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
@@ -161,25 +148,33 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 			strcat (acceleratorString, single);
 			strcat (acceleratorText, single);
 		}
-		#if motif
-		if (acceleratorString [0])
-			XtVaSetValues (button, XmNaccelerator, acceleratorString, NULL);
-		#endif
-		#if motif
-		XtVaSetValues (button, motif_argXmString (XmNacceleratorText, acceleratorText), NULL);
+		#if gtk
+// TODO: Even uitzoeken hoe dit 'accel_path' werkt
+//			gtk_menu_item_set_accel_path (GTK_MENU_ITEM (button), ...);
+		#elif motif
+			if (acceleratorString [0])
+				XtVaSetValues (button, XmNaccelerator, acceleratorString, NULL);
+			XtVaSetValues (button, motif_argXmString (XmNacceleratorText, acceleratorText), NULL);
 		#endif
 	}
-	#if motif
-	XtAddCallback (button,
-		toggle ? XmNvalueChangedCallback : XmNactivateCallback,
-		commandCallback, (XtPointer) closure);
+	#if gtk
+		g_signal_connect_swapped (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
+		gtk_widget_show (button);
+	#elif motif
+		XtAddCallback (button,
+			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
+			commandCallback, (XtPointer) closure);
 	#endif
+
 	return button;
 }
 
 Widget GuiMenu_addSeparator (Widget menu) {
 	#if gtk
-		return gtk_separator_menu_item_new ();
+		Widget separator = gtk_separator_menu_item_new ();
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), separator);
+		gtk_widget_show (separator);
+		return separator;
 	#elif motif
 		return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
 	#endif

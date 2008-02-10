@@ -411,7 +411,7 @@ static struct Longchar_Info Longchar_database [] = {
 { 'O', '|', 1, { "/emptyset",       823, 0,   0,   0,    823, 0,    823, 0,   0,   0   }, 198, 198, 198, 198, UNICODE_EMPTY_SET },
 { 'e', '=', 1, { "/element",        713, 0,   0,   0,    713, 0,    713, 0,   0,   0   }, 206, 206, 206, 206, UNICODE_ELEMENT_OF },
 { 's', 'u', 1, { "/summation",      713, 0,   0,   0,    713, 0,    713, 0,   0,   0   }, 229, 229, 229, 229, UNICODE_N_ARY_SUMMATION },
-{ '-', 'm', 1, { "/minus",          549, 0,   0,   0,    549, 0,    549, 0,   0,   0   },  36,  36,  36,  36, UNICODE_MINUS_SIGN },   // MEASURE
+{ '-', 'm', 1, { "/minus",          549, 0,   0,   0,    549, 0,    549, 0,   0,   0   },  45,  45,  45,  45, UNICODE_MINUS_SIGN },
 { '/', 'd', 1, { "/fraction",       167, 0,   0,   0,    167, 0,    167, 0,   0,   0   }, 164, 164, 164, 164, UNICODE_DIVISION_SLASH },
 { 'V', 'r', 1, { "/radical",        549, 0,   0,   0,    549, 0,    549, 0,   0,   0   }, 214, 214, 214, 214, UNICODE_SQUARE_ROOT },
 { 'o', 'c', 1, { "/proportional",   713, 0,   0,   0,    713, 0,    713, 0,   0,   0   }, 181, 181, 181, 181, UNICODE_PROPORTIONAL_TO },
