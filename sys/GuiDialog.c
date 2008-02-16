@@ -61,6 +61,15 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk
+		// TODO: Even uitvissen wat de rest doet
+		Widget shell = gtk_dialog_new();
+		// g_signal_connect(G_OBJECT(theCurrentPraat -> topShell), "delete-event", goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
+//		if (width == Gui_AUTOMATIC) width = -1;
+//		if (height == Gui_AUTOMATIC) height = -1;
+//		gtk_window_set_default_size(GTK_WINDOW(shell), width, height);
+		gtk_window_set_modal(GTK_WINDOW(shell), (flags & GuiDialog_MODAL));
+		GuiWindow_setTitle (shell, title);
+		my widget = shell;
 	#elif motif
 		Widget shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, NULL);
@@ -84,6 +93,7 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 
 void GuiDialog_show (Widget widget) {
 	#if gtk
+		gtk_widget_show (widget);
 	#elif motif
 		XtManageChild (widget);
 		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));

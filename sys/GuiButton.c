@@ -122,7 +122,7 @@ typedef struct structGuiButton {
 			event. shiftKeyPressed = ( xevent -> state & ShiftMask ) != 0;
 			event. commandKeyPressed = ( xevent -> state & ControlMask ) != 0;
 			event. optionKeyPressed = ( xevent -> state & Mod1Mask ) != 0;
-			event. extraControlKeyPressed = ( xevent -> state & Mod2Mask ) != 0;
+			event. extraControlKeyPressed = false;
 		} else {
 			(void) 0;   // ignore modifier keys for Enter
 		}
@@ -141,12 +141,21 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 	#if gtk
 		my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
+//		_GuiObject_position (my widget, left, right, top, bottom);
+		gtk_container_add (GTK_CONTAINER (parent), my widget);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkButton_destroyCallback), me);
 		g_signal_connect (GTK_BUTTON (my widget), "clicked",
 				  G_CALLBACK (_GuiGtkButton_activateCallback), me);
+		if (flags & GuiButton_DEFAULT) {
+			// TODO: Werkt nog niet
+			GTK_WIDGET_SET_FLAGS (my widget, GTK_CAN_DEFAULT);
+			gtk_widget_activate (my widget);
+			gtk_widget_grab_default (my widget);
+		}
+//		if (flags & GuiButton_CANCEL) {
+//			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
+//		}
 	#elif win
 		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
 		_GuiObject_setUserData (my widget, me);
@@ -164,9 +173,6 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		}
 		if (flags & GuiButton_CANCEL) {
 			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
-		}
-		if (flags & GuiButton_INSENSITIVE) {
-			GuiObject_setSensitive (my widget, false);
 		}
 	#elif mac
 		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
@@ -186,9 +192,6 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		if (flags & GuiButton_CANCEL) {
 			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 		}
-		if (flags & GuiButton_INSENSITIVE) {
-			GuiObject_setSensitive (my widget, false);
-		}
 	#elif motif
 		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (buttonText), xmPushButtonWidgetClass, parent, XmNalignment, XmALIGNMENT_CENTER, NULL);
 		_GuiObject_setUserData (my widget, me);
@@ -201,10 +204,11 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		if (flags & GuiButton_CANCEL) {
 			XtVaSetValues (parent, XmNcancelButton, my widget, NULL);
 		}
-		if (flags & GuiButton_INSENSITIVE) {
-			GuiObject_setSensitive (my widget, false);
-		}
 	#endif
+	if (flags & GuiButton_INSENSITIVE) {
+		GuiObject_setSensitive (my widget, false);
+	}
+
 	return my widget;
 }
 
@@ -218,6 +222,7 @@ Widget GuiButton_createShown (Widget parent, int left, int right, int top, int b
 
 void GuiButton_setString (Widget widget, const wchar_t *text) {
 	#if gtk
+		gtk_button_set_label (GTK_BUTTON (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup (text);

@@ -201,13 +201,28 @@ static int menu_cb_open (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my dirty) {
 		if (! my dirtyOpenDialog) {
+			Widget form, buttons;
 			my dirtyOpenDialog = GuiDialog_create (my shell, 150, 70, 420, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
-			Widget column1 = GuiColumn_createShown (my dirtyOpenDialog, 0);
-			GuiLabel_createShown (column1, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
-			Widget row1 = GuiRow_createShown (column1, Gui_HOMOGENEOUS);
-			GuiButton_createShown (row1, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & Open", gui_button_cb_discardAndOpen, cmd, 0);
-			GuiButton_createShown (row1, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Cancel", gui_button_cb_cancelOpen, cmd, 0);
-			GuiButton_createShown (row1, 290, 410, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & Open", gui_button_cb_saveAndOpen, cmd, 0);
+			#if gtk
+				  form = GTK_DIALOG (my dirtyOpenDialog) -> vbox;
+				  buttons = GTK_DIALOG (my dirtyOpenDialog) -> action_area;
+			#elif motif
+				  form = my dirtyOpenDialog;    /* TODO: Kan dit ook met een define? */
+				  buttons = my dirtyOpenDialog;
+			#endif
+			#if gtk
+			GuiLabel_createShown (form, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
+			GuiButton_createShown (buttons, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & Open", gui_button_cb_discardAndOpen, cmd, 0);
+			GuiButton_createShown (buttons, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Cancel", gui_button_cb_cancelOpen, cmd, 0);
+			GuiButton_createShown (buttons, 290, 410, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & Open", gui_button_cb_saveAndOpen, cmd, 0);
+			#elif motif
+			form = GuiColumn_createShown (my dirtyOpenDialog, 0);
+			GuiLabel_createShown (form, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save changes?", 0);
+			buttons = GuiRow_createShown (form, Gui_HOMOGENEOUS);
+			GuiButton_createShown (buttons, 10, 130, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Discard & Open", gui_button_cb_discardAndOpen, cmd, 0);
+			GuiButton_createShown (buttons, 150, 270, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Cancel", gui_button_cb_cancelOpen, cmd, 0);
+			GuiButton_createShown (buttons, 290, 410, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Save & Open", gui_button_cb_saveAndOpen, cmd, 0);
+			#endif
 		}
 		GuiDialog_show (my dirtyOpenDialog);
 	} else {

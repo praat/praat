@@ -119,15 +119,17 @@ static void gui_cb_menu (GUI_ARGS) {
 #elif defined (_WIN32)
 	int modified = FALSE;
 #else
-	#if motif
-	XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
-	int modified = event -> type == ButtonPress &&
-		((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
+	#if gtk
+		// TODO: We kunnen bij GDK events geregistreren om key en button press af te vangen, maar dan
+		// wordt dit geen gewoon 'activate' signaal meer.
+		int modified = 0;
+	#elif motif
+		XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
+		int modified = event -> type == ButtonPress &&
+			((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
 	#endif
 #endif
-	#if motif
 	do_menu (void_me, modified);
-	#endif
 }
 
 static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
@@ -213,7 +215,8 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
 						#if gtk
 							// TODO: Is dit de bedoeling? Tja, wie zal het zeggen? De GTK-menuhierarchie?
-							parent = gtk_widget_get_parent (theCommands [i]. button);
+//						parent = gtk_widget_get_parent (theCommands [i]. button);
+							parent = gtk_menu_item_get_submenu (GTK_MENU_ITEM (theCommands [i]. button));
 						#elif motif
 							XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
 						#endif
@@ -234,10 +237,7 @@ if (! parent) return NULL;
 		} else {
 			theCommands [position]. button = GuiMenu_addItem (parent, title, motifFlags, gui_cb_menu, (void *) callback);
 		}
-		#if motif
-		// TODO BREAKS HORRIBLY
 		if (hidden) GuiObject_hide (theCommands [position]. button);
-		#endif
 	}
 	return theCommands [position]. button;
 }

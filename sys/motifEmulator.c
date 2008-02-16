@@ -2870,7 +2870,7 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				Melder_relativePathToFile (Melder_peekUtf8ToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);
+				Melder_relativePathToFile (Melder_peekUtf8ToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);  // BUG
 				if (wcslen (file. path) > 0 && file. path [wcslen (file. path) - 1] == '\"') {
 					file. path [wcslen (file. path) - 1] = '\0';
 				}
@@ -4423,7 +4423,16 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		sprintf (commandShowString, "%d", commandShow);
 		argv [1] = & instanceString [0];
 		argv [2] = & commandShowString [0];
-		argv [3] = commandLine;
+		argv [3] = Melder_wcsToUtf8 (GetCommandLineW ());
+		if (argv [3] [0] == '\"') {
+			argv [3] ++;   // skip quote
+			while (argv [3] [0] != '\"') { argv [3] ++; }
+			argv [3] ++;   // skip quote
+			if (argv [3] [0] == ' ') argv [3] ++;
+		} else {
+			while (argv [3] [0] != ' ' && argv [3] [0] != '\0')  { argv [3] ++; }
+			if (argv [3] [0] == ' ') argv [3] ++;
+		}
 		return main (argc, & argv [0]);
 	}
 

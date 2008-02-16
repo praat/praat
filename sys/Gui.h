@@ -37,7 +37,12 @@
 	#include "melder.h"
 #endif
 
-#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
+//#if gtk
+//	#define GUI_ARGS  Widget w, gpointer void_me
+//#elif motif
+	#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
+//#endif
+
 #define GUI_IAM(klas)  (void) w; (void) void_me; (void) call; iam (klas);
 
 #define Gui_LEFT_DIALOG_SPACING  20
@@ -471,6 +476,11 @@ Widget GuiRadioButton_createShown (Widget parent, int left, int right, int top, 
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
 bool GuiRadioButton_getValue (Widget widget);
 void GuiRadioButton_setValue (Widget widget, bool value);
+
+#if gtk
+void * GuiRadioButton_getGroup(Widget widget);
+void GuiRadioButton_setGroup(Widget widget, void *group);
+#endif
 
 typedef struct structGuiTextEvent {
 	Widget text;

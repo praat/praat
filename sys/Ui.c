@@ -141,11 +141,13 @@ static Any UiOption_create (const wchar_t *label) {
 }
 
 static void gui_radiobutton_cb_toggled (I, GuiRadioButtonEvent event) {
+	#if !gtk
 	iam (UiField);
 	for (int i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
 		GuiRadioButton_setValue (b -> toggle, b -> toggle == event -> toggle);
 	}
+	#endif
 }
 
 Any UiRadio_addButton (I, const wchar_t *label) {
@@ -798,6 +800,13 @@ void UiForm_finish (I) {
 	int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
 	int dialogWidth = 480, dialogCentre = dialogWidth / 2, fieldX = dialogCentre + Gui_LABEL_SPACING / 2;
 	int labelWidth = fieldX - Gui_LABEL_SPACING - x, fieldWidth = labelWidth, halfFieldWidth = fieldWidth / 2 - 6;
+
+	#if gtk
+		Widget form, buttons;
+	#else
+		Widget form, buttons; // Define?
+	#endif
+
 	if (! my parent) return;
 	/*
 		Compute height. Cannot leave this to the default geometry management system.
@@ -828,6 +837,15 @@ void UiForm_finish (I) {
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, UiForm_hide, me, 0);
+	
+	#if gtk
+		form = GTK_DIALOG(my dialog) -> vbox;
+		buttons = GTK_DIALOG(my dialog) -> action_area;
+	#else
+		form = my dialog;
+		buttons = my dialog;
+	#endif
+
 	for (long ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
@@ -847,51 +865,60 @@ void UiForm_finish (I) {
 				if (wcsnequ (field -> name, L"left ", 5)) {
 					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
-					GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+					GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
-					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
+					field -> text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
 				} else if (wcsnequ (field -> name, L"right ", 6)) {
-					field -> text = GuiText_createShown (my dialog, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
+					field -> text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						y, Gui_AUTOMATIC, 0);
 				} else {
 					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					GuiLabel_createShown (my dialog, x, x + labelWidth,
+					GuiLabel_createShown (form, x, x + labelWidth,
 						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
-					field -> text = GuiText_createShown (my dialog, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
+					field -> text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
 						y, Gui_AUTOMATIC, 0);
 				}
 			} break;
 			case UI_TEXT:
 			{
-				field -> text = GuiText_createShown (my dialog, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-				y, Gui_AUTOMATIC, 0);
+				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, Gui_AUTOMATIC, 0);
 			} break;
 			case UI_LABEL:
 			{
 				MelderString_copy (& theFinishBuffer, field -> stringValue);
-				field -> text = GuiLabel_createShown (my dialog,
+				field -> text = GuiLabel_createShown (form,
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
 			} break;
 			case UI_RADIO:
 			{
 				int ylabel = y;
+				#if gtk
+					 void *group = NULL;
+				#endif
 				#if defined (macintosh)
 					ylabel += 1;
 				#endif
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
+				GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					button -> toggle = GuiRadioButton_createShown (my dialog,
+					button -> toggle = GuiRadioButton_createShown (form,
 						fieldX, dialogWidth /* allow to extend into the margin */,
 						y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
 						theFinishBuffer.string, gui_radiobutton_cb_toggled, field, 0);
+					#if gtk
+					if (group != NULL) {
+						GuiRadioButton_setGroup(button -> toggle, group);
+					} 
+					group = GuiRadioButton_getGroup(button -> toggle);
+					#endif
 				}
 			} break; 
 			case UI_OPTIONMENU:
@@ -903,11 +930,12 @@ void UiForm_finish (I) {
 				Widget bar, box;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (my dialog, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
+				GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 
+				// TODO
 				#if motif
-				bar = XmCreateMenuBar (my dialog, "UiOptionMenu", NULL, 0);
+				bar = XmCreateMenuBar (form, "UiOptionMenu", NULL, 0);
 				XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
 					#if defined (macintosh)
 						- 1
@@ -933,9 +961,9 @@ void UiForm_finish (I) {
 			case UI_BOOLEAN:
 			{
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
-				/*GuiLabel_createShown (my dialog, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
+				/*GuiLabel_createShown (form, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT); */
-				field -> toggle = GuiCheckButton_createShown (my dialog,
+				field -> toggle = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, y, Gui_AUTOMATIC,
 					theFinishBuffer.string, NULL, NULL, 0);
 			} break;
@@ -944,9 +972,9 @@ void UiForm_finish (I) {
 				int max = enum_length (field -> enumerated);
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (my dialog, x, x + labelWidth, y + 1, y + 21,
+				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> list = GuiList_create (my dialog, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false);
+				field -> list = GuiList_create (form, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false);
 				for (int i = field -> includeZero ? 0 : 1; i <= max; i ++) {
 					GuiList_insertItem (field -> list, enum_string (field -> enumerated, i), 0);
 				}
@@ -957,9 +985,9 @@ void UiForm_finish (I) {
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (my dialog, x, x + labelWidth, y + 1, y + 21,
+				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> list = GuiList_create (my dialog, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false);
+				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false);
 				for (long i = 1; i <= field -> numberOfStrings; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
@@ -972,11 +1000,11 @@ void UiForm_finish (I) {
 	/*separator = XmCreateSeparatorGadget (column, "separator", NULL, 0);*/
 	y = dialogHeight - Gui_BOTTOM_DIALOG_SPACING - Gui_PUSHBUTTON_HEIGHT;
 	if (my helpTitle) {
-		my helpButton = GuiButton_createShown (my dialog, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		my helpButton = GuiButton_createShown (buttons, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 			L"Help", gui_button_cb_help, me, 0);
 	}
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
-		my useStandards = GuiButton_createShown (my dialog,
+		my useStandards = GuiButton_createShown (buttons,
 			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,
 			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + DEF_BUTTON_WIDTH,
 			y, Gui_AUTOMATIC,
@@ -984,15 +1012,15 @@ void UiForm_finish (I) {
 	}
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
 		 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
-	my cancelButton = GuiButton_createShown (my dialog, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	my cancelButton = GuiButton_createShown (buttons, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_UiForm_hide, me, GuiButton_CANCEL);
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
-		my applyButton = GuiButton_createShown (my dialog, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		my applyButton = GuiButton_createShown (buttons, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 			L"Apply", gui_button_UiForm_apply, me, 0);
 	}
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
-	my okButton = GuiButton_createShown (my dialog, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	my okButton = GuiButton_createShown (buttons, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"OK", gui_button_UiForm_ok, me, GuiButton_DEFAULT);
 	/*GuiObject_show (separator);*/
 }

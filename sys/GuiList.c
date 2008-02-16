@@ -283,11 +283,31 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 	GuiList me = Melder_calloc (struct structGuiList, 1);
 	my allowMultipleSelection = allowMultipleSelection;
 	#if gtk
-//		g_object_set_data_full (G_OBJECT (me widget), "guiList", guiList, _GuiGtkList_destroyCallback); 
-		// TODO Maken list store? Waar en wanneer.
+		enum
+		{
+			COL_OBJECTS = 0,
+			NUM_COLS
+		};
 
-/*		GtkTreeSelection *sel;
 		GtkCellRenderer *renderer;
+		GtkTreeViewColumn *col;
+		GtkTreeSelection *sel;
+		GtkListStore *liststore;
+
+		liststore = gtk_list_store_new (1, G_TYPE_STRING);
+		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
+		g_object_unref(liststore); // Destroys the widget after the list is destroyed
+
+		renderer = gtk_cell_renderer_text_new ();
+		col = gtk_tree_view_column_new ();
+		gtk_tree_view_column_pack_start (col, renderer, TRUE);
+		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_OBJECTS);
+		gtk_tree_view_column_set_title (col, " Objects ");
+		gtk_tree_view_append_column (GTK_TREE_VIEW (my widget), col);	
+
+		g_object_set_data_full (G_OBJECT (my widget), "guiList",  me, _GuiGtkList_destroyCallback); 
+
+/*		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *col;
 		
 		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
@@ -311,15 +331,17 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		gtk_tree_view_column_pack_start (col, renderer, TRUE);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_NAME);
 		gtk_tree_view_column_set_title (col, " Name ");
-		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);		
+		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
+*/
 
 		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (my widget));
-		if (allowMultiple) {
+		if (allowMultipleSelection) {
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_MULTIPLE);
 		} else {
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
 		}
-		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_SelectionChangedCallback), NULL);*/
+		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, TRUE, 0);
+		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), NULL);
 	#elif win
 		my widget = _Gui_initializeWidget (xmListWidgetClass, parent, L"list");
 		_GuiObject_setUserData (my widget, me);
@@ -474,7 +496,7 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		int n = gtk_tree_selection_count_selected_rows (selection);
 		if (n > 0) {
-			GList *list = gtk_tree_selection_get_selected_rows (selection, GTK_TREE_MODEL (list_store));
+			GList *list = gtk_tree_selection_get_selected_rows (selection, list_store);
 			long ipos = 1;
 			*numberOfSelectedPositions = n;
 			selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
@@ -550,6 +572,7 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 
 long GuiList_getBottomPosition (Widget widget) {
 	#if gtk
+		// TODO
 		return 1;
 	#elif win
 		long bottom = ListBox_GetTopIndex (widget -> window) + widget -> height / ListBox_GetItemHeight (widget -> window, 0);
@@ -577,6 +600,8 @@ long GuiList_getBottomPosition (Widget widget) {
 long GuiList_getNumberOfItems (Widget widget) {
 	long numberOfItems = 0;
 	#if gtk
+		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+		numberOfItems = gtk_tree_model_iter_n_children (model, NULL); 
 	#elif win
 		numberOfItems = ListBox_GetCount (widget -> window);
 	#elif mac
@@ -592,6 +617,7 @@ long GuiList_getNumberOfItems (Widget widget) {
 
 long GuiList_getTopPosition (Widget widget) {
 	#if gtk
+		// TODO
 		return 1;
 	#elif win
 		long top = ListBox_GetTopIndex (widget -> window);
@@ -747,7 +773,7 @@ void GuiList_setSelectionChangedCallback (Widget widget, void (*callback) (void 
 
 void GuiList_setTopPosition (Widget widget, long topPosition) {
 	#if gtk
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
+//		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);
 		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (widget), path, NULL, FALSE, 0.0, 0.0);
 		gtk_tree_path_free (path);

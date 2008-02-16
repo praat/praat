@@ -46,7 +46,7 @@ static void logo_defaultDraw (Graphics g) {
 static struct {
 	double width_mm, height_mm;
 	void (*draw) (Graphics g);
-	Widget form, drawingArea;
+	Widget dia, form, drawingArea;
 	Graphics graphics;
 } theLogo = { 90, 40, logo_defaultDraw };
 
@@ -90,19 +90,29 @@ void praat_showLogo (int autoPopDown) {
 		#endif
 	#endif
 	if (theCurrentPraat -> batch || ! theLogo.draw) return;
-	if (! theLogo.form) {
-		theLogo.form = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
+	if (! theLogo.dia) {
+		theLogo.dia = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
+		#if gtk
+			theLogo.form = GTK_DIALOG (theLogo.dia) -> vbox;
+		#else
+			theLogo.form = theLogo.dia;
+		#endif
+
 		#ifdef UNIX
 			#if motif
 				XtVaSetValues (XtParent (theLogo.form), XmNmwmDecorations, 4, XmNmwmFunctions, 0, NULL);
 			#endif
 		#endif
+
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
 			0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
 			0, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
 	}
+
 	GuiObject_show (theLogo.form);
+	GuiDialog_show (theLogo.dia);
+	
 	/*
 	 * Do not wait for the first expose event before drawing:
 	 * at start-up time, this would take too long.

@@ -1040,7 +1040,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 #else
 		needsUpdate =
 			event -> commandKeyPressed ? our clickB (me, xWC, yWC) :
-			event -> optionKeyPressed || event -> extraControlKeyPressed ? our clickE (me, xWC, yWC) :
+			event -> optionKeyPressed ? our clickE (me, xWC, yWC) :
 			event -> button == 1 ? our click (me, xWC, yWC, my shiftKeyPressed) :
 			event -> button == 2 ? our clickB (me, xWC, yWC) : our clickE (me, xWC, yWC);
 #endif

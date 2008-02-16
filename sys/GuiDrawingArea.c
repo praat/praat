@@ -183,7 +183,7 @@ typedef struct structGuiDrawingArea {
 				event. shiftKeyPressed = (xevent -> xbutton.state & ShiftMask) != 0;
 				event. commandKeyPressed = (xevent -> xbutton.state & ControlMask) != 0;
 				event. optionKeyPressed = (xevent -> xbutton.state & Mod1Mask) != 0;
-				event. extraControlKeyPressed = (xevent -> xbutton.state & Mod2Mask) != 0;
+				event. extraControlKeyPressed = false;
 				unsigned char map [4];
 				XGetPointerMapping (XtDisplay (widget), map, 3);
 				bool leftHanded = ( map [0] == 3 );
@@ -206,7 +206,7 @@ typedef struct structGuiDrawingArea {
 				event. shiftKeyPressed = (xevent -> xkey.state & ShiftMask) != 0;
 				event. commandKeyPressed = (xevent -> xkey.state & ControlMask) != 0;
 				event. optionKeyPressed = (xevent -> xkey.state & Mod1Mask) != 0;
-				event. extraControlKeyPressed = (xevent -> xkey.state & Mod2Mask) != 0;
+				event. extraControlKeyPressed = false;
 				my keyCallback (my keyBoss, & event);
 			}
 		}

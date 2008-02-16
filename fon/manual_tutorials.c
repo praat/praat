@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080210)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080216)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.09# (February 16, 2008)")
+LIST_ITEM (L"\\bu Windows: corrected a bug by which Praat would not open files that were dragged on the Praat icon "
+	"if the names of these files or their directory paths contained non-ASCII characters.")
+LIST_ITEM (L"\\bu Linux: ignore the Mod2 key, because of its unpredictable assignment.")
 NORMAL (L"##5.0.08# (February 10, 2008)")
 LIST_ITEM (L"\\bu Corrected the minus sign (\\bs-m = \"\\-m\").")
 NORMAL (L"##5.0.07# (February 8, 2008)")

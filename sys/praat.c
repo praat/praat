@@ -1097,16 +1097,18 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	} else {
 		char objectWindowTitle [100];
 		Machine_initLookAndFeel (argc, argv);
+		sprintf (objectWindowTitle, "%s objects", praatP.title);
 		#if gtk
 			theCurrentPraat -> topShell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_title (GTK_WINDOW (theCurrentPraat -> topShell), objectWindowTitle);
+			gtk_window_set_default_size (GTK_WINDOW (theCurrentPraat -> topShell), -1, 600);
+			g_signal_connect (G_OBJECT (theCurrentPraat -> topShell), "delete-event", DO_Quit, NULL);
 		#else
 		#ifdef _WIN32
 			argv [0] = & praatP. title [0];   /* argc == 4 */
 			Gui_setOpenDocumentCallback (cb_openDocument);
 		#endif
 		theCurrentPraat -> topShell = XtVaAppInitialize (& theCurrentPraat -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
-		sprintf (objectWindowTitle, "%s objects", praatP.title);
 		XtVaSetValues (theCurrentPraat -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
 		#if defined (macintosh) || defined (_WIN32)
 			XtVaSetValues (theCurrentPraat -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
@@ -1128,6 +1130,13 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (NULL);
 	} else {
 		Widget Raam = NULL;
+		#if gtk
+			Widget raHoriz, raLeft; /* I want to have more possibilities for GTK widgets */
+		#else
+			#define raHoriz Raam 
+			#define raLeft Raam 
+		#endif
+
 		#ifdef macintosh
 			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
@@ -1145,17 +1154,31 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praatP.menuBar = Gui_addMenuBar (Raam);
 		praat_addMenus (praatP.menuBar);
 		GuiObject_show (praatP.menuBar);
+
 		#ifndef UNIX
 			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
 		#endif
-		GuiLabel_createShown (Raam, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
-		praatList_objects = GuiList_create (Raam, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
+		#if gtk
+			raHoriz = gtk_hpaned_new ();
+			gtk_container_add (GTK_CONTAINER (Raam), raHoriz);
+			raLeft = gtk_vbox_new (FALSE, 0);
+			gtk_container_add (GTK_CONTAINER (raHoriz), raLeft);
+		#else
+		// TODO: Paul hoe moet dit? #if not gtk?
+		GuiLabel_createShown (raLeft, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
+		#endif
+		praatList_objects = GuiList_create (raLeft, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
 		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, NULL);
 		GuiObject_show (praatList_objects);
-		praat_addFixedButtons (Raam);
-		praat_actions_createDynamicMenu (Raam, 210);
+		praat_addFixedButtons (raLeft);
+		praat_actions_createDynamicMenu (raHoriz, 210);
+		#if gtk
+			GuiObject_show (raLeft);
+			GuiObject_show (raHoriz);
+		#endif
 		GuiObject_show (Raam);
+		
 		#if gtk
 			gtk_widget_show (theCurrentPraat -> topShell); // TODO: Ugh?
 		#else
@@ -1232,6 +1255,8 @@ void praat_run (void) {
 	Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 	if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
 	praat_statistics_prefsChanged ();
+			//Melder_error2 (L"batch name ", theCurrentPraat -> batchName);
+			//Melder_flushError (NULL);
 
 	praatP.phase = praat_STARTING_UP;
 

@@ -260,6 +260,9 @@ static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void)
 
 static void createChildren (I) {
 	iam (ButtonEditor);
+	#if gtk
+		void *group = NULL;
+	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
 	inherited (ButtonEditor) createChildren (me);
 	my button1 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
@@ -276,6 +279,17 @@ static void createChildren (I) {
 	x += BUTTON_WIDTH + 35;
 	my button5 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
 		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, me, 0);
+	
+	#if gtk
+		group = GuiRadioButton_getGroup(my button1);
+		GuiRadioButton_setGroup(my button2, group);
+		group = GuiRadioButton_getGroup(my button2);
+		GuiRadioButton_setGroup(my button3, group);
+		group = GuiRadioButton_getGroup(my button3);
+		GuiRadioButton_setGroup(my button4, group);
+		group = GuiRadioButton_getGroup(my button4);
+		GuiRadioButton_setGroup(my button5, group);
+	#endif
 }
 
 DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END

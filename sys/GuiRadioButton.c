@@ -115,14 +115,20 @@ Widget GuiRadioButton_create (Widget parent, int left, int right, int top, int b
 	my valueChangedCallback = valueChangedCallback;
 	my valueChangedBoss = valueChangedBoss;
 	#if gtk
-		my widget = gtk_radio_button_new_with_label (GTK_RADIO_BUTTON (my widget), Melder_peekWcsToUtf8 (buttonText));
+		my widget = gtk_radio_button_new_with_label (NULL, Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
+//		_GuiObject_position (my widget, left, right, top, bottom);
+		gtk_container_add (GTK_CONTAINER (parent), my widget);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 			G_CALLBACK (_GuiGtkRadioButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my widget), "toggled",   // gtk_check_button inherits from gtk_toggle_button
 			G_CALLBACK (_GuiGtkRadioButton_valueChangedCallback), me);
+		if (flags & GuiRadioButton_SET) {
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(my widget), TRUE);
+		}
+		if (flags & GuiCheckButton_INSENSITIVE) {
+			GuiObject_setSensitive (my widget, FALSE);
+		}
 	#elif win
 		my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
 		_GuiObject_setUserData (my widget, me);
@@ -204,5 +210,15 @@ void GuiRadioButton_setValue (Widget widget, bool value) {
 		XmToggleButtonSetState (widget, value, False);
 	#endif
 }
+
+#if gtk
+void * GuiRadioButton_getGroup (Widget widget) {
+	return (void *) gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+}
+
+void GuiRadioButton_setGroup (Widget widget, void *group) {
+	gtk_radio_button_set_group (GTK_RADIO_BUTTON (widget), (GSList *) group);
+}
+#endif
 
 /* End of file GuiRadioButton.c */

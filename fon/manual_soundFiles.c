@@ -283,7 +283,7 @@ INTRO (L"With this command, you write one or more selected @Sound and/or @LongSo
 MAN_END
 
 MAN_BEGIN (L"Sound files 2.7. MP3 files", L"Erez Volk", 20070601)
-NORMAL (L"A ubiquituous lossy audio compression format. "
+NORMAL (L"A ubiquitous lossy audio compression format. "
 	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
 	"##http://www.underbit.com/products/mad/##. "
 	"(see also @@Sound files 1.6. Compression|\\SS1.6@)")

@@ -114,6 +114,10 @@ Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int b
 			G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my widget), "toggled",   // gtk_check_button inherits from gtk_toggle_button
 			G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my widget), (flags & GuiCheckButton_SET) != 0);
+		if (flags & GuiCheckButton_INSENSITIVE) {
+			GuiObject_setSensitive (my widget, false);
+		}
 	#elif win
 		my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
 		_GuiObject_setUserData (my widget, me);

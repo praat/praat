@@ -761,7 +761,15 @@ void praat_actions_createDynamicMenu (Widget form, int width) {
 	// Dit maakt de buitenkant van de dynamische knoppenlijst (Sound help, Edit, Draw, Modify...):
 	// een scrolledWindow met daarin een kolom.
 	#if gtk
+		praat_dynamicMenu = gtk_vbutton_box_new ();
+		gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);
 
+		/* Oh yes, we are lazy */
+		praat_dynamicMenuWindow = gtk_scrolled_window_new (NULL, NULL);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (praat_dynamicMenuWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (praat_dynamicMenuWindow), praat_dynamicMenu);
+		gtk_container_add (GTK_CONTAINER (form), praat_dynamicMenuWindow);
+		gtk_widget_set_size_request (praat_dynamicMenuWindow, width, -1);
 	#elif motif
 		praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
 		#if defined (macintosh)
@@ -788,9 +796,9 @@ void praat_actions_createDynamicMenu (Widget form, int width) {
 				NULL);
 		#endif
 		praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
-		GuiObject_show (praat_dynamicMenu);
-		GuiObject_show (praat_dynamicMenuWindow);
 	#endif
+	GuiObject_show (praat_dynamicMenu);
+	GuiObject_show (praat_dynamicMenuWindow);
 }
 
 void praat_saveAddedActions (FILE *f) {

@@ -33,7 +33,7 @@ Widget Gui_addMenuBar (Widget form) {
 	Widget menuBar;
 	#if gtk
 		menuBar = gtk_menu_bar_new ();
-		gtk_box_pack_start (GTK_BOX (form), menuBar, FALSE, TRUE, 0);
+		gtk_box_pack_start (GTK_VBOX (form), menuBar, FALSE, TRUE, 0);
 	#elif motif
 		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
 		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
@@ -50,7 +50,9 @@ int Gui_getResolution (Widget widget) {
 		(void) widget;
 		return 72;
 	#else
-		#if motif
+		#if gtk
+			return (int) gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (widget)));
+		#elif motif
 			Display *display = XtDisplay (widget);
 			return floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
 				DisplayWidthMM (display, DefaultScreen (display)) + 0.5);

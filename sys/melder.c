@@ -286,8 +286,17 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 			if (dia == NULL) {
 				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
 					L"Work in progress", NULL, NULL, 0);
-				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
-				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
+
+				#if gtk
+					Widget form = GTK_DIALOG (dia) -> vbox;
+					Widget buttons = GTK_DIALOG (dia) -> action_area;
+				#elif motif
+					Widget form = dia;    /* TODO: Kan dit ook met een define? */
+					Widget buttons = dia;
+				#endif
+
+				label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
+				label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 				#if gtk
 					// TODO: Progressbar ofzo?
 				#elif motif
@@ -300,7 +309,7 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 						NULL);
 					GuiObject_show (scale);
 					#if ! defined (macintosh)
-						cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
+						cancelButton = GuiButton_createShown (buttons, 0, 400, 170, Gui_AUTOMATIC,
 							L"Interrupt", NULL, NULL, 0);
 					#endif
 				#endif
@@ -377,6 +386,16 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			if (dia == NULL) {
 				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
 					L"Work in progress", NULL, NULL, 0);
+
+                #if gtk
+                        Widget form = GTK_DIALOG (dia) -> vbox;
+                        Widget buttons = GTK_DIALOG (dia) -> action_area;
+                #elif motif
+                        Widget form = dia;    /* TODO: Kan dit ook met een define? */
+                        Widget buttons = dia;
+                #endif
+
+
 				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
 
