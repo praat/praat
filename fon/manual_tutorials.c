@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080216)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080227)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.10# (February 27, 2008)")
+LIST_ITEM (L"\\bu Added the characters \\d- and \\D-.")
+LIST_ITEM (L"\\bu Windows: made ##praatcon.exe# compatible with Unicode command lines.")
 NORMAL (L"##5.0.09# (February 16, 2008)")
 LIST_ITEM (L"\\bu Windows: corrected a bug by which Praat would not open files that were dragged on the Praat icon "
 	"if the names of these files or their directory paths contained non-ASCII characters.")

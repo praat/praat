@@ -454,8 +454,9 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   /* Ignore other chunks. */
-		    //if (Melder_debug == 23)
-			//	Melder_warning ("chunk ID %c%c%c%c %d", chunkID[0],chunkID[1],chunkID[2],chunkID[3],chunkSize);
+		    if (Melder_debug == 23)
+				Melder_warning9 (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
+					Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
 			for (i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);
 		}

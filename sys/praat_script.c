@@ -422,15 +422,18 @@ int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArgument
 	while (*p == ' ' || *p == '\t') p ++;
 	if (*p == '\"') {
 		wchar_t *q = path;
-		p ++;
+		p ++;   // skip quote
 		while (*p != '\"' && *p != '\0') * q ++ = * p ++;
 		*q = '\0';
-		arguments = p; if (*p) arguments ++;
+		arguments = p;
+		if (*arguments == '\"') arguments ++;
+		if (*arguments == ' ') arguments ++;
 	} else {
-		wcscpy (path, p);
-		wchar_t *space = wcschr (path, ' ');
-		if (space) *space = '\0';
-		arguments = p + wcslen (path);
+		wchar_t *q = path;
+		while (*p != ' ' && *p != '\0') * q ++ = * p ++;
+		*q = '\0';
+		arguments = p;
+		if (*arguments == ' ') arguments ++;
 	}
 	if (! Melder_relativePathToFile (path, & file)) return 0;
 	return praat_executeScriptFromFile (& file, arguments);

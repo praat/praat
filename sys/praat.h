@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/02/07
+ * pb 2008/02/18
  */
 
 #include "Editor.h"
@@ -139,7 +139,7 @@ typedef struct {
 typedef struct {   /* Readonly */
 	int n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
-	wchar_t *batchName;   /* The name of the command file when called from batch. */
+	MelderString batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
 	int totalSelection;   /* The total number of selected objects, <= n. */
 	int totalBeingCreated;

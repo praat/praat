@@ -1,6 +1,6 @@
 /* longchar.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2006/12/05 first wchar support
  * pb 2006/12/15 stress marks
  * pb 2007/08/08 Longchar_genericizeW
+ * pb 2008/02/27 \d- and \D-
  */
 
 #include "longchar.h"
@@ -181,6 +182,7 @@ static struct Longchar_Info Longchar_database [] = {
 { 'c','\'', 0, { "/cacute",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_C_WITH_ACUTE },
 { 'c', '<', 0, { "/ccaron",         444, 444, 444, 444,  500, 556,  444, 444, 407, 444 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_C_WITH_CARON },
 { 'd', '<', 0, { "/dcaron",         500, 556, 500, 500,  556, 611,  611, 611, 500, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_D_WITH_CARON },
+{ 'd', '-', 0, { "/dbar",           500, 556, 500, 500,  556, 611,  611, 611, 500, 556 },   0,   0,   0,   0, UNICODE_LATIN_SMALL_LETTER_D_WITH_STROKE },
 { 'e', '`', 0, { "/egrave",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 232, 232, 143, 143, UNICODE_LATIN_SMALL_LETTER_E_WITH_GRAVE },
 { 'e','\'', 0, { "/eacute",         444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 233, 233, 142, 142, UNICODE_LATIN_SMALL_LETTER_E_WITH_ACUTE },
 { 'e', '^', 0, { "/ecircumflex",    444, 444, 444, 444,  556, 556,  479, 500, 389, 444 }, 234, 234, 144, 144, UNICODE_LATIN_SMALL_LETTER_E_WITH_CIRCUMFLEX },
@@ -229,6 +231,7 @@ static struct Longchar_Info Longchar_database [] = {
 { 'C','\'', 0, { "/Cacute",         667, 722, 667, 667,  722, 722,  709, 722, 667, 685 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_ACUTE },
 { 'C', '<', 0, { "/Ccaron",         667, 722, 667, 667,  722, 722,  709, 722, 667, 685 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_C_WITH_CARON },
 { 'D', '<', 0, { "/Dcaron",         722, 722, 722, 722,  722, 722,  774, 833, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_D_WITH_CARON },
+{ 'D', '-', 0, { "/Dbar",           722, 722, 722, 722,  722, 722,  774, 833, 778, 778 },   0,   0,   0,   0, UNICODE_LATIN_CAPITAL_LETTER_D_WITH_STROKE },
 { 'E', '`', 0, { "/Egrave",         611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 200, 200, 233, 233, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_GRAVE },
 { 'E','\'', 0, { "/Eacute",         611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 201, 201, 131, 131, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_ACUTE },
 { 'E', '^', 0, { "/Ecircumflex",    611, 667, 611, 667,  667, 667,  611, 611, 611, 611 }, 202, 202, 230, 230, UNICODE_LATIN_CAPITAL_LETTER_E_WITH_CIRCUMFLEX },

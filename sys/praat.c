@@ -932,9 +932,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * or running PRAATCON.EXE from the Windows command prompt:
 		 *    <programName> <scriptFileName>
 		 */
-		theCurrentPraat -> batchName = argc > 1 && (int) argv [1] [0] != '-' ? Melder_utf8ToWcs (argv [1]) : NULL;
+		MelderString_copy (& theCurrentPraat -> batchName,
+			argc > 1 && (int) argv [1] [0] != '-' ? Melder_peekUtf8ToWcs (argv [1]) : L"");
 
-		Melder_batch = theCurrentPraat -> batchName != NULL;
+		Melder_batch = theCurrentPraat -> batchName.string [0] != '\0';
 
 		#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			if (! Melder_batch) {
@@ -955,9 +956,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		sprintf (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
 	#else
 		#if defined (_WIN32)
-			theCurrentPraat -> batchName = argv [3] ? Melder_utf8ToWcs (argv [3]) : L"";   /* The command line. */
+			MelderString_copy (& theCurrentPraat -> batchName,
+				argv [3] ? Melder_peekUtf8ToWcs (argv [3]) : L"");   /* The command line. */
 		#endif
-		Melder_batch = FALSE;   /* Classic Macintosh and PRAAT.EXE are always interactive. */
+		Melder_batch = FALSE;   /* PRAAT.EXE on Windows is always interactive. */
 		sprintf (truncatedTitle, title && title [0] ? title : "praat");
 	#endif
 	theCurrentPraat -> batch = Melder_batch;
@@ -1079,20 +1081,17 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	praat_menuCommands_init ();
 
 	if (Melder_batch) {
-		theCurrentPraat -> batchName = Melder_calloc (wchar_t, 1000);
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
-		{
-			unsigned int i;
-			for (i = 1; i < argc; i ++) {
+			MelderString_empty (& theCurrentPraat -> batchName);
+			for (unsigned int i = 1; i < argc; i ++) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == 1 || i < argc - 1);
-				if (i > 1) wcscat (theCurrentPraat -> batchName, L" ");
-				if (needsQuoting) wcscat (theCurrentPraat -> batchName, L"\"");
-				wcscat (theCurrentPraat -> batchName, Melder_utf8ToWcs (argv [i]));
-				if (needsQuoting) wcscat (theCurrentPraat -> batchName, L"\"");
+				if (i > 1) MelderString_append1 (& theCurrentPraat -> batchName, L" ");
+				if (needsQuoting) MelderString_append1 (& theCurrentPraat -> batchName, L"\"");
+				MelderString_append1 (& theCurrentPraat -> batchName, Melder_peekUtf8ToWcs (argv [i]));
+				if (needsQuoting) MelderString_append1 (& theCurrentPraat -> batchName, L"\"");
 			}
-		}
 		#elif defined (_WIN32)
-			wcscpy (theCurrentPraat -> batchName, Melder_peekUtf8ToWcs (argv [3]));
+			MelderString_copy (& theCurrentPraat -> batchName, Melder_peekUtf8ToWcs (argv [3]));
 		#endif
 	} else {
 		char objectWindowTitle [100];
@@ -1306,11 +1305,11 @@ void praat_run (void) {
 				praat_exit (-1);
 			}
 		} else {
-			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraat -> batchName)) {
+			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraat -> batchName.string)) {
 				praat_exit (0);
 			} else {
 				structMelderFile batchFile = { 0 };
-				if (! Melder_relativePathToFile (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
+				if (! Melder_relativePathToFile (theCurrentPraat -> batchName.string, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);
 				#endif
@@ -1351,7 +1350,7 @@ void praat_run (void) {
 		#else
 
 		#if defined (_WIN32)
-			if (theCurrentPraat -> batchName [0]) {
+			if (theCurrentPraat -> batchName.string [0] != '\0') {
 				wchar_t text [500];
 				/*
 				 * The user dropped a file on the Praat icon, while Praat was not running yet.
@@ -1359,7 +1358,7 @@ void praat_run (void) {
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				swprintf (text, 500, L"Read from file... %ls", theCurrentPraat -> batchName [0] == '\"' ? theCurrentPraat -> batchName + 1 : theCurrentPraat -> batchName);
+				swprintf (text, 500, L"Read from file... %ls", theCurrentPraat -> batchName.string [0] == '\"' ? theCurrentPraat -> batchName.string + 1 : theCurrentPraat -> batchName.string);
 				if (wcslen (text) > 0 && text [wcslen (text) - 1] == '\"') {
 					text [wcslen (text) - 1] = '\0';
 				}

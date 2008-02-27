@@ -133,7 +133,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
-MAN_BEGIN (L"Special symbols", L"ppgb", 20071210)
+MAN_BEGIN (L"Special symbols", L"ppgb", 20080227)
 INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
 	"you can use %%backslash sequences% to display various kinds of special symbols. "
 	"You can usually also type the characters themselves, if your computer has an input method for them.")
@@ -156,6 +156,7 @@ LIST_ITEM (L"\\a^ \\bsa\\^   \\e^ \\bse\\^   \\i^ \\bsi\\^   \\o^ \\bso\\^   \\u
 LIST_ITEM (L"\\a~ \\bsa\\~   \\n~ \\bsn\\~   \\o~ \\bso\\~   \\A~ \\bsA\\~   \\N~ \\bsN\\~   \\O~ \\bsO\\~  ")
 LIST_ITEM (L"\\c< \\bsc<  \\d< \\bsd<  \\e< \\bse<  \\g< \\bsg<  \\n< \\bsn<  \\r< \\bsr<  \\s< \\bss<  \\t< \\bst<  \\z< \\bsz<  "
 	"\\C< \\bsC<  \\D< \\bsD<  \\E< \\bsE<  \\G< \\bsG<  \\N< \\bsN<  \\R< \\bsR<  \\S< \\bsS<  \\T< \\bsT<  \\Z< \\bsZ<")
+LIST_ITEM (L"\\d- \\bsd-  \\D- \\bsD-")
 LIST_ITEM (L"\\ao \\bsao  \\uo \\bsuo  \\Ao \\bsAo  \\Uo \\bsUo")
 LIST_ITEM (L"\\a; \\bsa;  \\e; \\bse;  \\A; \\bsA;  \\E; \\bsE;")
 LIST_ITEM (L"\\ae \\bsae  \\Ae \\bsAe  \\o/ \\bso/  \\O/ \\bsO/  "
