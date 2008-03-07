@@ -60,7 +60,7 @@
 #include "Manipulation_def.h"
 
 class_methods (Manipulation, Function) {
-	us -> version = 4;
+	us -> version = 5;
 	class_method_local (Manipulation, destroy)
 	class_method_local (Manipulation, description)
 	class_method_local (Manipulation, copy)

@@ -1,6 +1,6 @@
 /* melder_quantity.c
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2007/03/17 created
  * pb 2007/08/14 wchar_t
+ * pb 2008/03/07 typo
  */
 
 #include "melder.h"
@@ -28,7 +29,7 @@ static const wchar_t * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
 	{ L"", L"", L"", L"" },
 	{ L"Time", L"Time (s)", L"seconds", L"s" },
 	{ L"Frequency", L"Frequency (Hz)", L"Hertz", L"Hz" },
-	{ L"Frequency", L"Frequency (Bark)", L"Bark", L"LBark" },
+	{ L"Frequency", L"Frequency (Bark)", L"Bark", L"Bark" },
 	{ L"Distance from glottis", L"Distance from glottis (m)", L"metres", L"m" },	
 };
 

@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/08
+ * pb 2008/03/07
  */
 
 #ifndef _Strings_h_
@@ -82,16 +82,16 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 long OTGrammar_getWinner (OTGrammar me, long itab);
 	/* Gives randomized results in case of tied candidates. */
 long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab);
-int OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand);
-int OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand);
+bool OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand);
+bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand);
 
 /* Interpretive parsing. */
 int OTGrammar_getInterpretiveParse
 	(OTGrammar me, const wchar_t *partialOutput, long *bestTableau, long *bestCandidate);
 	/* Gives randomized results in case of tied candidates. */
-int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput);
+bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput);
 	/* Is there an input for which this partial output is contained in any of the optimal outputs? */
-int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput);
+bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput);
 	/* Is every optimal output that contains this partial output the only optimal output in its tableau? */
 
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input);
@@ -111,6 +111,8 @@ Distributions OTGrammar_measureTypology (OTGrammar me);
 #define OTGrammar_WEIGHTED_UNCANCELLED  3
 #define OTGrammar_WEIGHTED_ALL  4
 #define OTGrammar_EDCD  5
+#define OTGrammar_EDCD_WITH_VACATION  6
+#define OTGrammar_DEMOTE_ONE_WITH_VACATION  7
 
 int OTGrammar_learnOne (OTGrammar me, const wchar_t *input, const wchar_t *adultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
@@ -151,6 +153,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 	/* T&S: 1, FALSE, FALSE, FALSE, 1, TRUE, FALSE, FALSE */
 
 void OTGrammar_reset (OTGrammar me, double ranking);
+void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, double rankingDistance);
 int OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double disharmony);
 int OTGrammar_setConstraintPlasticity (OTGrammar me, long constraint, double plasticity);
 

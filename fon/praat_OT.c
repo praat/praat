@@ -1,6 +1,6 @@
 /* praat_OT.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/10/01
+ * pb 2008/03/07
  */
 
 #include "praat.h"
@@ -334,6 +334,8 @@ FORM (OTGrammar_learn, L"OTGrammar: Learn", L"OTGrammar & 2 Strings: Learn...")
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -359,6 +361,8 @@ FORM (OTGrammar_learnFromPartialOutputs, L"OTGrammar: Learn from partial adult o
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -391,6 +395,8 @@ FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -416,6 +422,8 @@ FORM (OTGrammar_learnOneFromPartialOutput, L"OTGrammar: Learn one from partial a
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -457,6 +465,17 @@ FORM (OTGrammar_resetAllRankings, L"OTGrammar: Reset all rankings", 0)
 DO
 	WHERE (SELECTED) {
 		OTGrammar_reset (OBJECT, GET_REAL (L"Ranking"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (OTGrammar_resetToRandomTotalRanking, L"OTGrammar: Reset to random total ranking", 0)
+	REAL (L"Maximum ranking", L"100.0")
+	POSITIVE (L"Ranking distance", L"1.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		OTGrammar_resetToRandomTotalRanking (OBJECT, GET_REAL (L"Maximum ranking"), GET_REAL (L"Ranking distance"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -531,6 +550,8 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, L"OTGrammar & Distributio
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	REAL (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -587,6 +608,8 @@ FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", 
 		OPTION (L"Weighted uncancelled")
 		OPTION (L"Weighted all")
 		OPTION (L"EDCD")
+		OPTION (L"EDCD with vacation")
+		OPTION (L"Demote one with vacation")
 	POSITIVE (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -954,11 +977,12 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTGrammar, 0, L"Input to outputs...", 0, 0, DO_OTGrammar_inputToOutputs);
 	praat_addAction1 (classOTGrammar, 0, L"To output Distributions...", 0, 0, DO_OTGrammar_to_Distributions);
 	praat_addAction1 (classOTGrammar, 0, L"To PairDistribution...", 0, 0, DO_OTGrammar_to_PairDistribution);
-	praat_addAction1 (classOTGrammar, 0, L"Modify ranking", 0, 0, 0);
-	praat_addAction1 (classOTGrammar, 0, L"Set ranking...", 0, 0, DO_OTGrammar_setRanking);
-	praat_addAction1 (classOTGrammar, 0, L"Reset all rankings...", 0, 0, DO_OTGrammar_resetAllRankings);
-	praat_addAction1 (classOTGrammar, 0, L"Learn one...", 0, 0, DO_OTGrammar_learnOne);
-	praat_addAction1 (classOTGrammar, 0, L"Learn one from partial output...", 0, 0, DO_OTGrammar_learnOneFromPartialOutput);
+	praat_addAction1 (classOTGrammar, 0, L"Modify ranking -", 0, 0, 0);
+	praat_addAction1 (classOTGrammar, 0, L"Set ranking...", 0, 1, DO_OTGrammar_setRanking);
+	praat_addAction1 (classOTGrammar, 0, L"Reset all rankings...", 0, 1, DO_OTGrammar_resetAllRankings);
+	praat_addAction1 (classOTGrammar, 0, L"Reset to random total ranking...", 0, 1, DO_OTGrammar_resetToRandomTotalRanking);
+	praat_addAction1 (classOTGrammar, 0, L"Learn one...", 0, 1, DO_OTGrammar_learnOne);
+	praat_addAction1 (classOTGrammar, 0, L"Learn one from partial output...", 0, 1, DO_OTGrammar_learnOneFromPartialOutput);
 	praat_addAction1 (classOTGrammar, 0, L"Modify behaviour -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 1, L"Set harmony computation method...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_OTGrammar_setDecisionStrategy);
 	praat_addAction1 (classOTGrammar, 1, L"Set decision strategy...", 0, 1, DO_OTGrammar_setDecisionStrategy);

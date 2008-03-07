@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080227)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080307)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.11# (March 7, 2008)")
+LIST_ITEM (L"\\bu Corrected writing of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).")
 NORMAL (L"##5.0.10# (February 27, 2008)")
 LIST_ITEM (L"\\bu Added the characters \\d- and \\D-.")
 LIST_ITEM (L"\\bu Windows: made ##praatcon.exe# compatible with Unicode command lines.")

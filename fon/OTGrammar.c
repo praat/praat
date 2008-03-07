@@ -1,6 +1,6 @@
 /* OTGrammar.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,9 @@
  * pb 2007/07/27 leak and constraint plasticity also written...
  * pb 2007/08/08 wchar_t
  * pb 2007/10/01 can write as encoding
+ * pb 2008/03/03 EDCD with vacation
+ * pb 2008/03/07 Demote one with vacation
+ * pb 2008/03/07 Reset to random total ranking
  */
 
 #include "OTGrammar.h"
@@ -467,29 +470,27 @@ long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab) {
 	return numberOfBestCandidates;
 }
 
-int OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand) {
-	long jcand;
-	for (jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
+bool OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand) {
+	for (long jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
 		if (jcand != icand && OTGrammar_compareCandidates (me, itab, jcand, itab, icand) < 0)
-			return FALSE;
+			return false;
 	}
-	return TRUE;
+	return true;
 }
 
-int OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand) {
-	long jcand;
-	for (jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
+bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand) {
+	for (long jcand = 1; jcand <= my tableaus [itab]. numberOfCandidates; jcand ++) {
 		if (jcand != icand && OTGrammar_compareCandidates (me, itab, jcand, itab, icand) <= 0)
-			return FALSE;
+			return false;
 	}
-	return TRUE;
+	return true;
 }
 
 int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, long *bestTableau, long *bestCandidate) {
-	long itab_best = 0, icand_best = 0, itab, icand, numberOfBestCandidates = 0;
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+	long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {   /* T&S idea of surface->overt mapping */
 				if (itab_best == 0) {
 					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
@@ -523,36 +524,35 @@ end:
 	return 1;
 }
 
-int OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput) {
-	long itab, icand;
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput) {
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {
 				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
-					return TRUE;
+					return true;
 				}
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-int OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput) {
-	long itab, icand, jcand, found = FALSE;
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput) {
+	bool found = false;
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {
 				if (OTGrammar_isCandidateGrammatical (me, itab, icand)) {
-					found = TRUE;
+					found = true;
 					/*
 					 * All other grammatical candidates should match.
 					 */
-					for (jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
+					for (long jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
 						if (OTGrammar_compareCandidates (me, itab, jcand, itab, icand) == 0) {
 							if (wcsstr (tableau -> candidates [jcand]. output, partialOutput) == NULL) {
-								return FALSE;   /* Partial output is multiply optimal. */
+								return false;   // Partial output is multiply optimal.
 							}
 						}
 					}
@@ -1180,14 +1180,14 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 			}
 		}
-	} else if (strategy == OTGrammar_EDCD) {
+	} else if (strategy == OTGrammar_EDCD || strategy == OTGrammar_EDCD_WITH_VACATION) {
 		/*
 		 * Determine the crucial winner mark.
 		 */
 		double pivotRanking;
 		int equivalent = TRUE;
-		long icons;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		long icons = 1;
+		for (; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks < winnerMarks) break;
@@ -1203,18 +1203,42 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		 * Determine the stratum into which some constraints will be demoted.
 		 */
 		pivotRanking = my constraints [my index [icons]]. ranking;
+		if (strategy == OTGrammar_EDCD_WITH_VACATION) {
+			long numberOfConstraintsToDemote = 0;
+			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+				int winnerMarks = winner -> marks [icons];
+				int loserMarks = loser -> marks [icons];
+				if (loserMarks > winnerMarks) {
+					OTGrammarConstraint constraint = & my constraints [icons];
+					if (constraint -> ranking >= pivotRanking) {
+						numberOfConstraintsToDemote += 1;
+					}
+				}
+			}
+			if (numberOfConstraintsToDemote > 0) {
+				for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+					OTGrammarConstraint constraint = & my constraints [icons];
+					if (constraint -> ranking < pivotRanking) {
+						constraint -> ranking -= numberOfConstraintsToDemote * step * constraint -> plasticity;
+						if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
+					}
+				}
+			}
+		}
 		/*
 		 * Demote all the uniquely violated constraints in the loser
 		 * that have rankings not lower than the pivot.
 		 */
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			long numberOfConstraintsDemoted = 0;
+			int winnerMarks = winner -> marks [my index [icons]];   // For the vacation version, the order is important, so indirect.
+			int loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks > winnerMarks) {
-				OTGrammarConstraint constraint = & my constraints [icons];
+				OTGrammarConstraint constraint = & my constraints [my index [icons]];
 				double constraintStep = step * constraint -> plasticity;
 				if (constraint -> ranking >= pivotRanking) {
-					constraint -> ranking = pivotRanking - constraintStep;
+					numberOfConstraintsDemoted += 1;
+					constraint -> ranking = pivotRanking - numberOfConstraintsDemoted * constraintStep;   // This preserves the order of the demotees.
 					if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 				}
 			}
@@ -1225,8 +1249,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		 */
 		long crucialLoserMark;
 		OTGrammarConstraint offendingConstraint;
-		long icons;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		long icons = 1;
+		for (; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
 			int loserMarks = loser -> marks [my index [icons]];
 			if (my constraints [my index [icons]]. tiedToTheRight)
@@ -1370,10 +1394,22 @@ end:
 }
 
 void OTGrammar_reset (OTGrammar me, double ranking) {
-	long icons;
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
 		constraint -> disharmony = constraint -> ranking = ranking;
+	}
+	OTGrammar_sort (me);
+}
+
+void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, double rankingDistance) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & my constraints [icons];
+		constraint -> ranking = 0.0;
+	}
+	OTGrammar_newDisharmonies (me, 1.0);
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & my constraints [my index [icons]];
+		constraint -> disharmony = constraint -> ranking = maximumRanking - (icons - 1) * rankingDistance;
 	}
 	OTGrammar_sort (me);
 }

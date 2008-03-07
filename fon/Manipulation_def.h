@@ -1,6 +1,6 @@
 /* Manipulation_def.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,21 @@
  * pb 2002/07/16 GPL
  * pb 2003/02/17 removed pitch analysis properties
  * pb 2006/05/29 added versions to included objects
+ * pb 2008/03/07 version 5 (too late!)
  */
 
 #define ooSTRUCT Manipulation
 oo_DEFINE_CLASS (Manipulation, Function)
 
-	oo_OBJECT (Sound, 0, sound)
+	#if oo_READING
+		if (localVersion >= 5) {
+			oo_OBJECT (Sound, 2, sound)
+		} else {
+			oo_OBJECT (Sound, 0, sound)
+		}
+	#else
+		oo_OBJECT (Sound, 0, sound)
+	#endif
 	oo_OBJECT (PointProcess, 0, pulses)
 	oo_OBJECT (PitchTier, 0, pitch)
 
