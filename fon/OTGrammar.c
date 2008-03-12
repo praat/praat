@@ -1625,7 +1625,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 			}
 			OTGrammar_learnOneFromPartialOutput (me, partialOutput,
 				evaluationNoise, strategy, honourLocalRankings,
-				plasticity, relativePlasticityNoise, numberOfChews, TRUE);
+				plasticity, relativePlasticityNoise, numberOfChews, FALSE);   // No warning if stalled: RIP form is allowed to be harmonically bounded.
 			if (history) {
 				OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, partialOutput);
 			}

@@ -562,6 +562,8 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 /*
  * To compile on MacOS X:
 cc -o sendpraat -framework CoreServices -framework ApplicationServices -I/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
+ * or else
+cc -o sendpraat -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
 */
 int main (int argc, char **argv) {
 	int iarg, line, length = 0;

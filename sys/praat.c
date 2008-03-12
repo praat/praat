@@ -1254,7 +1254,7 @@ void praat_run (void) {
 	Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 	if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
 	praat_statistics_prefsChanged ();
-			//Melder_error2 (L"batch name ", theCurrentPraat -> batchName);
+			//Melder_error3 (L"batch name <<", theCurrentPraat -> batchName.string, L">>");
 			//Melder_flushError (NULL);
 
 	praatP.phase = praat_STARTING_UP;
@@ -1358,10 +1358,13 @@ void praat_run (void) {
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				swprintf (text, 500, L"Read from file... %ls", theCurrentPraat -> batchName.string [0] == '\"' ? theCurrentPraat -> batchName.string + 1 : theCurrentPraat -> batchName.string);
+				swprintf (text, 500, L"Read from file... %ls",
+					theCurrentPraat -> batchName.string [0] == '\"' ? theCurrentPraat -> batchName.string + 1 : theCurrentPraat -> batchName.string);
 				if (wcslen (text) > 0 && text [wcslen (text) - 1] == '\"') {
 					text [wcslen (text) - 1] = '\0';
 				}
+				//Melder_error3 (L"command <<", text, L">>");
+				//Melder_flushError (NULL);
 				if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG
 			}
 		#endif

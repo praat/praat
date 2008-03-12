@@ -318,7 +318,7 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20070914)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20080312)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
@@ -333,11 +333,15 @@ LIST_ITEM (L"n\\|v n\\bs|v (%%combining vertical line below%): syllabic consonan
 LIST_ITEM (L"b\\0v b\\bs0v (%%combining ring below%): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)")
 LIST_ITEM (L"o\\Tv o\\bsTv (%%combining down tack below%, %lowering): lowered vowel; or turns a fricative into an approximant")
 LIST_ITEM (L"o\\T^ o\\bsT\\^  (%%combining up tack below%, %raising): raised vowel; or turns an approximant into a fricative")
+LIST_ITEM (L"o\\T( o\\bsT( (%%combining left tack below%, %atr): advanced tongue root")
+LIST_ITEM (L"o\\T) o\\bsT) (%%combining right tack below%, %rtr): retracted tongue root")
 LIST_ITEM (L"e\\-v e\\bs-v (%%combining macron below%): backed")
 LIST_ITEM (L"o\\+v o\\bs+v (%%combining plus sign below%): fronted")
 LIST_ITEM (L"o\\:v o\\bs:v (%%combining diaeresis below%): breathy voice")
 LIST_ITEM (L"o\\~v o\\bs~v (%%combining tilde below%): creaky voice")
-LIST_ITEM (L"t\\Nv t\\bsNv (%%combining bridge below%): dental (as opposed to alveolar)")
+LIST_ITEM (L"d\\Nv d\\bsNv (%%combining bridge below%): dental (as opposed to alveolar)")
+LIST_ITEM (L"d\\Uv d\\bsUv (%%combining inverted bridge below%): apical")
+LIST_ITEM (L"d\\Dv d\\bsDv (%%combining square below%): laminal")
 LIST_ITEM (L"u\\nv u\\bsnv (%%combining inverted breve below%): nonsyllabic")
 LIST_ITEM (L"e\\3v e\\bs3v (%%combining right half ring below%): slightly rounded")
 LIST_ITEM (L"u\\cv u\\bscv (%%combining left half ring below%): slightly unrounded")
@@ -350,7 +354,7 @@ LIST_ITEM (L"\\ep\\~^ \\bsep\\bs~\\^  (%%combining tilde%): nasalized")
 LIST_ITEM (L"\\ep\\v^ \\bsep\\bsv\\^  (%%combining caron%, %hac\\v^ek, %wedge): rising tone")
 LIST_ITEM (L"\\ep\\^^ \\bsep\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
 LIST_ITEM (L"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
-LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%character tie%, %ligature): simultaneous articulation, or single segment")
+LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
 MAN_END
 
 MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20070825)

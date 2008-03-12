@@ -453,7 +453,7 @@ static struct Longchar_Info Longchar_database [] = {
 { '_', '#', 1, { "/arrowdbldown",   603, 0,   0,   0,    603, 0,    603, 0,   0,   0   }, 223, 223, 223, 223, UNICODE_DOWNWARDS_DOUBLE_ARROW },
 { 'e', 'q', 1, { "/arrowdblboth",  1042, 0,   0,   0,   1042, 0,   1042, 0,   0,   0   }, 219, 219, 219, 219, UNICODE_LEFT_RIGHT_DOUBLE_ARROW }, /* equivalence */
 
-/* Phonetic.                                                                                                   i89+ i93  i93  i89+ */
+/* Phonetic.                                                                              i89+ i93  i93  i89+ */
 /*fir  sec  al    ps                xipa b   ipa93   b   xipa b     xipa b    i    bi    xwin  win  mac   ps  unicode decomp  */
 { 'd', 'h', 2, { "/eth",            500, 0,   510, 532,  500, 0,    500, 0,   0,   0   },  68,  68,  68,  68, UNICODE_LATIN_SMALL_LETTER_ETH },
 { 'h', '-', 2, { "/hbar",           525, 0,   520, 578,  525, 0,    525, 0,   0,   0   }, 240, 240, 240, 240, UNICODE_LATIN_SMALL_LETTER_H_WITH_STROKE },
@@ -550,17 +550,21 @@ static struct Longchar_Info Longchar_database [] = {
 { 'c', 'v', 2, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
 { 'T', 'v', 2, { "/lowering",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  52,  52,  52,  52, UNICODE_COMBINING_DOWN_TACK_BELOW },
+{ 'T', '(', 2, { "/atr",              0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  49,  49,  49,  49, UNICODE_COMBINING_LEFT_TACK_BELOW },
+{ 'T', ')', 2, { "/rtr",              0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  50,  50,  50,  50, UNICODE_COMBINING_RIGHT_TACK_BELOW },
 { '+', 'v', 2, { "/plusunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  43,  43,  43,  43, UNICODE_COMBINING_PLUS_SIGN_BELOW }, // fronted
 { ':', 'v', 2, { "/diaeresisunder",   0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  45,  45,  45,  45, UNICODE_COMBINING_DIAERESIS_BELOW }, // breathy voiced
 { '0', 'v', 2, { "/ringunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  56,  56,  56,  56, UNICODE_COMBINING_RING_BELOW }, // voiceless
 { '|', 'v', 2, { "/strokeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  96,  96,  96,  96, UNICODE_COMBINING_VERTICAL_LINE_BELOW }, // syllabicity mark
 { 'N', 'v', 2, { "/bridgeunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  53,  53,  53,  53, UNICODE_COMBINING_BRIDGE_BELOW }, // dental
+{ 'U', 'v', 2, { "/shelfunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 176, 176, 176, 176, UNICODE_COMBINING_INVERTED_BRIDGE_BELOW }, // apical
+{ 'D', 'v', 2, { "/squareunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  54,  54,  54,  54, UNICODE_COMBINING_SQUARE_BELOW }, // laminal
 { 'n', 'v', 2, { "/archunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  57,  57,  57,  57, UNICODE_COMBINING_INVERTED_BREVE_BELOW }, // nonsyllabic
 { '~', 'v', 2, { "/tildeunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  48,  48,  48,  48, UNICODE_COMBINING_TILDE_BELOW }, // creaky voiced
 { '-', 'v', 2, { "/minusunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  61,  61,  61,  61, UNICODE_COMBINING_MACRON_BELOW }, // backed
 { '~', '<', 2, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, { "/halfringright",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
-{ 'l', 'i', 2, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_CHARACTER_TIE },
+{ 'l', 'i', 2, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_INVERTED_BREVE },
 { 'b', 'f', 2, { "/betaphonetic",   500, 0,   520, 597,  500, 0,    500, 0,   0,   0   },  66,  66,  66,  66, UNICODE_GREEK_SMALL_LETTER_BETA }, // second version
 { 't', 'f', 2, { "/thetaphonetic",  444, 0,   520, 585,  444, 0,    444, 0,   0,   0   },  84,  84,  84,  84, UNICODE_GREEK_SMALL_LETTER_THETA }, // second version
 { 'c', 'f', 2, { "/chiphonetic",    500, 0,   572, 610,  500, 0,    500, 0,   0,   0   },  88,  88,  88,  88, UNICODE_GREEK_SMALL_LETTER_CHI }, // second version
