@@ -24,6 +24,7 @@
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20070902 Melder_error<1...>
  djmw 20071011 REQUIRE requires L"".
+ djmw 20080313 Cepstrum_formula
 */
 
 #include <math.h>
@@ -46,6 +47,7 @@
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "Cepstrum_and_Spectrum.h"
+int praat_Fon_formula (Any dia);
 
 static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
 static wchar_t *QUERY_BUTTON   = L"Query -                ";
@@ -73,6 +75,16 @@ DO
 		GET_REAL (L"Minimum"), GET_REAL (L"Maximum"),
 		GET_INTEGER (L"Garnish")))
 END
+
+FORM (Cepstrum_formula, L"Cepstrum: Formula...", L"Cepstrum: Formula...")
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	if (! praat_Fon_formula (dia)) return 0;
+END
+
 
 DIRECT (Cepstrum_to_Spectrum)
 	EVERY_TO (Cepstrum_to_Spectrum (OBJECT))
@@ -389,6 +401,7 @@ void praat_uvafon_LPC_init (void)
 	
 	praat_addAction1 (classCepstrum, 0, L"Cepstrum help", 0, 0, DO_Cepstrum_help);
 	praat_addAction1 (classCepstrum, 0, L"Draw...", 0, 0, DO_Cepstrum_draw);
+	praat_addAction1 (classCepstrum, 0, L"Formula...", 0, 0, DO_Cepstrum_formula);
 	praat_addAction1 (classCepstrum, 0, L"To Spectrum", 0, 0, DO_Cepstrum_to_Spectrum);
 	praat_addAction1 (classCepstrum, 0, L"To Matrix", 0, 0, DO_Cepstrum_to_Matrix);
 

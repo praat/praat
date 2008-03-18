@@ -684,7 +684,7 @@ wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educa
 			#ifdef macintosh
 			if (location == 0) {
 			#else
-			if (location == 0 || Longchar_database [location]. alphabet != Longchar_ROMAN) {
+			if (location == 0 /*|| Longchar_database [location]. alphabet != Longchar_ROMAN*/) {
 			#endif
 				*native++ = kar;
 				*native++ = kar1;   /* Even if this is a backslash itself... */

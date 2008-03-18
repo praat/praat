@@ -51,6 +51,7 @@
  djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable
  djmw 20080110 Corrected some bugs in str_replace_regexp
  djmw 20080122 Bug in str_replace_regexp
+ djmw 20080317 +NUMsinc
 */
 
 #include "SVD.h"
@@ -68,6 +69,7 @@
 #include "gsl_sf_bessel.h"
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_erf.h"
+#include "gsl_sf_trig.h"
 
 #define my me ->
 
@@ -2767,6 +2769,20 @@ int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double 
 	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
 		(b * b * b - b) * y2a[khi]) * (h * h) / 6.0;
 	return 1;
+}
+
+double NUMsinc (const double x)
+{
+	struct gsl_sf_result_struct result;
+	int status = gsl_sf_sinc_e (x / NUMpi, &result);
+	return status == GSL_SUCCESS ? result. val * NUMpi : NUMundefined;
+}
+
+double NUMsincpi (const double x)
+{
+	struct gsl_sf_result_struct result;
+	int status = gsl_sf_sinc_e (x, &result);
+	return status == GSL_SUCCESS ? result. val : NUMundefined;
 }
 
 #define MACRO_NUMvector_extrema(TYPE) \

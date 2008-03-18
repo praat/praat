@@ -1300,8 +1300,10 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 1, L"-- query labels --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Count labels...", 0, 1, DO_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, L"Modify -        ", 0, 0, 0);
-		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, 1, DO_TextGrid_genericize);
-		praat_addAction1 (classTextGrid, 0, L"Nativize", 0, 1, DO_TextGrid_nativize);
+		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_genericize);
+		praat_addAction1 (classTextGrid, 0, L"Convert to backslash trigraphs", 0, 1, DO_TextGrid_genericize);
+		praat_addAction1 (classTextGrid, 0, L"Nativize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_nativize);
+		praat_addAction1 (classTextGrid, 0, L"Convert to Unicode", 0, 1, DO_TextGrid_nativize);
 		praat_addAction1 (classTextGrid, 0, L"Modify time domain", 0, 1, 0);
 			praat_addAction1 (classTextGrid, 0, L"Shift times...", 0, 2, DO_TextGrid_shiftTimes);
 			praat_addAction1 (classTextGrid, 0, L"Shift to zero", 0, 2, DO_TextGrid_shiftToZero);

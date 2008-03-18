@@ -1,6 +1,6 @@
 /* TextGridEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@
  * pb 2007/09/05 direct drawing to picture window
  * pb 2007/11/30 erased Graphics_printf
  * pb 2007/12/07 enums
+ * Erez Volk 2008/03/16 Write selected TextGrid to text file
+ * pb 2008/03/17 extract selected TextGrid
+ * pb 2008/03/18 renamed: "convert to backslash trigraphs/Unicode"
  */
 
 #include "TextGridEditor.h"
@@ -57,7 +60,8 @@
 	int fontSize; \
 	enum kGraphics_horizontalAlignment alignment; \
 	wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE]; \
-	int showNumberOf, greenMethod;
+	int showNumberOf, greenMethod; \
+	Widget extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
 #define TextGridEditor_methods TimeSoundAnalysisEditor_methods
 class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
 
@@ -231,6 +235,47 @@ static void destroy (I) {
 
 /***** FILE MENU *****/
 
+static int menu_cb_ExtractSelectedTextGrid_preserveTimes (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	if (my endSelection <= my startSelection) return Melder_error1 (L"No selection.");
+	TextGrid extract = TextGrid_extractPart (my data, my startSelection, my endSelection, true);
+	if (! extract) return 0;
+	if (my publishCallback)
+		my publishCallback (me, my publishClosure, extract);
+	return 1;
+}
+
+static int menu_cb_ExtractSelectedTextGrid_timeFromZero (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	if (my endSelection <= my startSelection) return Melder_error1 (L"No selection.");
+	TextGrid extract = TextGrid_extractPart (my data, my startSelection, my endSelection, false);
+	if (! extract) return 0;
+	if (my publishCallback)
+		my publishCallback (me, my publishClosure, extract);
+	return 1;
+}
+
+static void createMenuItems_file_extract (I, EditorMenu menu) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) createMenuItems_file_extract (me, menu);
+	my extractSelectedTextGridPreserveTimesButton =
+		EditorMenu_addCommand (menu, L"Extract selected TextGrid (preserve times)", 0, menu_cb_ExtractSelectedTextGrid_preserveTimes);
+	my extractSelectedTextGridTimeFromZeroButton =
+		EditorMenu_addCommand (menu, L"Extract selected TextGrid (time from zero)", 0, menu_cb_ExtractSelectedTextGrid_timeFromZero);
+}
+
+static int menu_cb_WriteSelectionToTextFile (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORM_WRITE (L"Write selection to TextGrid text file", 0)
+		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> name);
+	EDITOR_DO_WRITE
+		TextGrid publish = TextGrid_extractPart (my data, my startSelection, my endSelection, false);
+		if (! publish) return 0;
+		if (! Data_writeToTextFile (publish, file)) return 0;
+		forget (publish);
+	EDITOR_END
+}
+
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM_WRITE (L"Write to TextGrid text file", 0)
@@ -244,6 +289,7 @@ static void createMenuItems_file_write (I, EditorMenu menu) {
 	iam (TextGridEditor);
 	inherited (TextGridEditor) createMenuItems_file_write (me, menu);
 	EditorMenu_addCommand (menu, L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
+	my writeSelectedTextGridButton = EditorMenu_addCommand (menu, L"Write selected TextGrid to text file...", 0, menu_cb_WriteSelectionToTextFile);
 }
 
 static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
@@ -335,7 +381,7 @@ static int menu_cb_Erase (EDITOR_ARGS) {
 
 static int menu_cb_Genericize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, L"Genericize");
+	Editor_save (me, L"Convert to Backslash Trigraphs");
 	TextGrid_genericize (my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
@@ -345,7 +391,7 @@ static int menu_cb_Genericize (EDITOR_ARGS) {
 
 static int menu_cb_Nativize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, L"Nativize");
+	Editor_save (me, L"Convert to Unicode");
 	TextGrid_nativize (my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
@@ -1216,9 +1262,11 @@ static void createMenus (I) {
 		Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
 	Editor_addCommand (me, L"Edit", L"-- encoding --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Genericize entire TextGrid", 0, menu_cb_Genericize);
+	Editor_addCommand (me, L"Edit", L"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
+	Editor_addCommand (me, L"Edit", L"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
 	Editor_addCommand (me, L"Edit", L"Genericize", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (me, L"Edit", L"Nativize entire TextGrid", 0, menu_cb_Nativize);
+	Editor_addCommand (me, L"Edit", L"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
+	Editor_addCommand (me, L"Edit", L"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
 	Editor_addCommand (me, L"Edit", L"Nativize", Editor_HIDDEN, menu_cb_Nativize);
 	Editor_addCommand (me, L"Edit", L"-- search --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Find...", 'F', menu_cb_Find);
@@ -2181,11 +2229,20 @@ static void createMenuItems_pitch_picture (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
+static void updateMenuItems_file (I) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) updateMenuItems_file (me);
+	GuiObject_setSensitive (my writeSelectedTextGridButton, my endSelection > my startSelection);
+	GuiObject_setSensitive (my extractSelectedTextGridPreserveTimesButton, my endSelection > my startSelection);
+	GuiObject_setSensitive (my extractSelectedTextGridTimeFromZeroButton, my endSelection > my startSelection);
+}
+
 class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (destroy)
 	class_method (info)
 	class_method (dataChanged)
 	class_method (createChildren)
+	class_method (createMenuItems_file_extract)
 	class_method (createMenuItems_file_write)
 	class_method (createMenuItems_file_draw)
 	class_method (createMenus)
@@ -2206,6 +2263,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (unhighlightSelection)
 	class_method (getBottomOfSoundAndAnalysisArea)
 	class_method (createMenuItems_pitch_picture)
+	class_method (updateMenuItems_file)
 	class_methods_end
 }
 

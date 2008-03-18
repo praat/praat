@@ -3178,6 +3178,34 @@ DO
 		GET_INTEGER (L"Number of points per octave")))
 END
 
+FORM (Sound_fadeIn, L"Sound: Fade in", L"Sound: Fade in...")
+	REAL (L"Time (s)", L"-10000.0")
+	REAL (L"Fade time (s)", L"0.005")
+	BOOLEAN (L"Silent from start", 0)
+	OK
+DO
+	WHERE (SELECTED)
+	{
+		Sound_fade (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Fade time"),
+			 -1, GET_INTEGER (L"Silent from start"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (Sound_fadeOut, L"Sound: Fade out", L"Sound: Fade out...")
+	REAL (L"Time (s)", L"10000.0")
+	REAL (L"Fade time (s)", L"-0.005")
+	BOOLEAN (L"Silent to end", 0)
+	OK
+DO
+	WHERE (SELECTED)
+	{
+		Sound_fade (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Fade time"),
+			1, GET_INTEGER (L"Silent to end"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
 FORM (Sound_to_Pitch_SPINET, L"Sound: To SPINET", L"Sound: To SPINET...")
 	POSITIVE (L"Time step (s)", L"0.005")
 	POSITIVE (L"Analysis window duration (s)", L"0.040")
@@ -3964,7 +3992,7 @@ END
 
 static VowelEditor vowelEditor = NULL;
 DIRECT (VowelEditor_create)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot create a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit a Sound from batch.");
 	vowelEditor = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", NULL);
 	if (vowelEditor == NULL) return 0;
 END
@@ -4574,6 +4602,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
 		
 	praat_addAction1 (classSound, 0, L"To Pitch (shs)...", L"To Pitch (cc)...", 1, DO_Sound_to_Pitch_shs);
+	praat_addAction1 (classSound, 0, L"Fade in...", L"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeIn);
+	praat_addAction1 (classSound, 0, L"Fade out...", L"Fade in...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeOut);
 	praat_addAction1 (classSound, 0, L"To Pitch (SPINET)...", L"To Pitch (cc)...", 1, DO_Sound_to_Pitch_SPINET);
 
 	praat_addAction1 (classSound, 0, L"To FormantFilter...", L"To Cochleagram (edb)...", 1, DO_Sound_to_FormantFilter);

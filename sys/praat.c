@@ -39,6 +39,7 @@
  * pb 2007/09/02 include Editor prefs
  * sdk 2008/01/14 GTK
  * pb 2008/02/01 made sure that praat_dataChanged can be called at error time
+ * pb 2008/03/13 Windows: better file dropping
  */
 
 #include "melder.h"
@@ -1355,14 +1356,14 @@ void praat_run (void) {
 				/*
 				 * The user dropped a file on the Praat icon, while Praat was not running yet.
 				 * Windows may have enclosed the path between quotes;
-				 * this is especially likely to happen if the path contains spaces,
-				 * which on Windows XP is very usual.
+				 * this is especially likely to happen if the path contains spaces (which is usual).
+				 * And sometimes, Windows prepends a space before the quote.
+				 * Peel all that off.
 				 */
-				swprintf (text, 500, L"Read from file... %ls",
-					theCurrentPraat -> batchName.string [0] == '\"' ? theCurrentPraat -> batchName.string + 1 : theCurrentPraat -> batchName.string);
-				if (wcslen (text) > 0 && text [wcslen (text) - 1] == '\"') {
-					text [wcslen (text) - 1] = '\0';
-				}
+				wchar_t *s = theCurrentPraat -> batchName.string;
+				swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
+				long l = wcslen (text);
+				if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
 				//Melder_error3 (L"command <<", text, L">>");
 				//Melder_flushError (NULL);
 				if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG

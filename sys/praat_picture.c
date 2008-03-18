@@ -34,6 +34,7 @@
  * pb 2007/09/01 praat_picture_editor_open/close
  * pb 2007/12/09 enums
  * pb 2008/01/19 double
+ * pb 2008/03/18 function comment
  */
 
 #include "praatP.h"
@@ -661,6 +662,8 @@ class_methods (PraatPictureFunction, Data)
 class_methods_end
 
 FORM (DrawFunction, L"Praat picture: Draw function", 0)
+	LABEL (L"", L"This command assumes that the x and y axes")
+	LABEL (L"", L"have been set by a Draw command or by \"Axes...\".")
 	REAL (L"From x", L"0.0")
 	REAL (L"To x", L"0.0 (= all)")
 	NATURAL (L"Number of horizontal steps", L"1000")

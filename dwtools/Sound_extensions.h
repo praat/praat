@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20071203 Latest modification
+ djmw 20080313 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -132,6 +132,9 @@ void Sound_scale_dB (Sound me, double level_dB);
 		10^(level_dB/10) / extremum,
 	where extremum is the maximum of the absolute values the signal values. 
 */
+
+void Sound_fade (Sound me, double t, double fadeTime, int inout, int fadeGlobal);
+/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2 */
 
 #define FROM_LEFT_TO_RIGHT 0
 #define FROM_RIGHT_TO_LEFT 1

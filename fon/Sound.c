@@ -493,8 +493,8 @@ void Sound_draw (Sound me, Graphics g,
 				double y = my z [channel] [ix];
 				double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
 				if (y > maximum) y = maximum;
-				if (left < minimum) left = minimum;
-				if (right > maximum) right = maximum;
+				if (left < tmin) left = tmin;
+				if (right > tmax) right = tmax;
 				Graphics_line (g, left, y, right, y);
 				Graphics_line (g, left, y, left, minimum);
 				Graphics_line (g, right, y, right, minimum);

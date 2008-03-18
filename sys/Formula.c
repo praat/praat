@@ -113,7 +113,7 @@ enum { GEENSYMBOOL_,
 
 	/* Functions of 1 variable; if you add, update the #defines. */
 	#define LOW_FUNCTION_1  ABS_
-		ABS_, ROUND_, FLOOR_, CEILING_, SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_,
+		ABS_, ROUND_, FLOOR_, CEILING_, SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
 		EXP_, SINH_, COSH_, TANH_, ARCSINH_, ARCCOSH_, ARCTANH_,
 		SIGMOID_, INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_POISSON_, LOG2_, LN_, LOG10_, LN_GAMMA_,
@@ -196,7 +196,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"row", L"col", L"nrow", L"ncol", L"row$", L"col$", L"y", L"x",
 	L"self", L"self$", L"object", L"object$", L"_matriks", L"_matriks$",
 	L"stopwatch",
-	L"abs", L"round", L"floor", L"ceiling", L"sqrt", L"sin", L"cos", L"tan", L"arcsin", L"arccos", L"arctan",
+	L"abs", L"round", L"floor", L"ceiling", L"sqrt", L"sin", L"cos", L"tan", L"arcsin", L"arccos", L"arctan", L"sinc", L"sincpi",
 	L"exp", L"sinh", L"cosh", L"tanh", L"arcsinh", L"arccosh", L"arctanh",
 	L"sigmoid", L"invSigmoid", L"erf", L"erfc", L"gaussP", L"gaussQ", L"invGaussQ",
 	L"randomPoisson", L"log2", L"ln", L"log10", L"lnGamma",
@@ -3268,6 +3268,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ARCSIN_: { do_arcsin ();
 } break; case ARCCOS_: { do_arccos ();
 } break; case ARCTAN_: { do_arctan ();
+} break; case SINC_: { do_function_n_n (NUMsinc);
+} break; case SINCPI_: { do_function_n_n (NUMsincpi);
 } break; case EXP_: { do_exp ();
 } break; case SINH_: { do_sinh ();
 } break; case COSH_: { do_cosh ();

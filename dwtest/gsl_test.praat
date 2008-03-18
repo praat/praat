@@ -1,5 +1,5 @@
 # gsl_test.praat
-# djmw 20071017
+# djmw 20071017, 20080317
 
 debug = 0
 eps = 2.2204460492503131e-16
@@ -20,6 +20,7 @@ call test_erf
 call test_lnGamma
 call test_incompleteBeta
 call test_incompleteGammaP
+call test_sinc
 
 procedure func_1arg .func$ .arg .r .tol
   assert$ = ""
@@ -35,6 +36,19 @@ procedure func_1arg .func$ .arg .r .tol
   if debug <> 0 or assert$ <> ""
     .neps = .z / eps
     printline 'assert$' '.func$'('.arg')='.res' ('.r'), n*eps='.neps:2'
+  endif
+endproc
+
+procedure func_1argzero .func$ .arg .tol
+  assert$ = ""
+  .res = '.func$' (.arg)
+  .z = abs (.res)
+  if .z > .tol
+    assert$ = "!!Assertion failed: "
+  endif 
+  if debug <> 0 or assert$ <> ""
+    .neps = .z / eps
+    printline 'assert$' '.func$'('.arg')=0, n*eps='.neps:2'
   endif
 endproc
 
@@ -130,7 +144,7 @@ procedure test_lnGamma
   call func_1arg lnGamma -1.0-1.0/268435456.0 19.408121054103474300 tol0
   call func_1arg lnGamma -100.5 -364.9009683094273518 tol0
   call func_1arg lnGamma -100-1.0/65536.0 -352.6490910117097874 tol0
-  call func_1arg lnGamma -1.5 ln(4*sqrt(pi)/3) tol0
+  call func_1arg lnGamma -1.5 ln(4*sqrt(pi)/3) tol1
   call func_1arg lnGamma 0.5 0.5*ln(pi) tol0
   call func_1arg lnGamma 1 0 tol0
   call func_1arg lnGamma 1.5 ln(sqrt(pi)/2) tol1
@@ -195,4 +209,15 @@ procedure test_incompleteGammaP
   printline test_incompleteGammaP: succes
 endproc
 
+procedure test_sinc
+  printline test_sinc: start
+  call func_1arg sinc 0 1 tol0
+  for .i to 200
+    .arg = .i
+    call func_1argzero sinc .arg tol0
+    .arg = -.arg
+    call func_1argzero sinc .arg tol0
+  endfor
+  printline test_sinc: succes
+endproc
 

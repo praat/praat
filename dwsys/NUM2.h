@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20071022 Latest modification.
+ djmw 20080317 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -852,6 +852,11 @@ int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double 
 	array y2a[1..n] which is the output of NUMspline above, and given
 	a value of x, this routine returns an interpolated value y.
 */
+
+double NUMsinc(const double x);
+/* Calculates sin(x)/x */
+double NUMsincpi(const double x);
+/* Calculates sin(pi*x)/(pi*x) */
 
 /*********************** Geometry *************************************/
 

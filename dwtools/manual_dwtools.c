@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20080121 Latest modification
+ djmw 20080314 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2881,6 +2881,42 @@ NORMAL (L"If you want more control over the synthesis you can supply your own "
 ENTRY (L"Algorithm")
 NORMAL (L"The shifting of formant frequencies is done via manipulation of the sampling frequency. "
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
+MAN_END
+
+MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20080314)
+INTRO (L"A command to gradually increase the amplitude of a selected @Sound.")
+ENTRY (L"Arguments")
+TAG (L"%%Time (s)%")
+DEFINITION (L"determines where the fade-in will take place. If %time is earlier than the start time of the sound, the start time of the sound wil be used.")
+TAG (L"%%Fade time (s)%")
+DEFINITION (L"determines the start point and the endpoint of the fade-in with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-in. If %%fadeTime% is positive, fade-in will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-in wil take place between %%time+fadeTime% and %time.")
+TAG (L"%%Silent from start%")
+DEFINITION (L"when on, makes the sound silent before the fade-in starts. "
+	"When off, the sound before the fade-in starts will not be changed. ")
+ENTRY (L"Algorithm")
+NORMAL (L"Multiplication with the first half period of a (1-cos(x))/2 function. ")
+ENTRY (L"Cross-fading two sounds")
+NORMAL (L"The following script cross-fades two sounds s1 and s2 at time 1 second and leaves the result in s2.")
+CODE1 (L"crossFTime = 0.5")
+CODE1 (L"t = 1")
+CODE1 (L"Create Sound from formula... s1 Mono 0 2 44100 sin(2*pi*500*x)")
+CODE1 (L"Fade out... t-crossFTime/2 crossFTime y")
+CODE1 (L"Create Sound from formula... s2 Mono 0 2 44100 sin(2*pi*1000*x)")
+CODE1 (L"Fade in... t-crossFTime/2 crossFTime y")
+CODE1 (L"Formula... self+Sound_s1[]")
+MAN_END
+
+MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20080314)
+INTRO (L"A command to gradually decrease the amplitude of a selected @Sound.")
+ENTRY (L"Arguments")
+TAG (L"%%Time (s)%")
+DEFINITION (L"determines where the fade-out will take place. If %time is later than the end time of the sound, the end time of the sound wil be used.")
+TAG (L"%%Fade time (s)%")
+DEFINITION (L"determines the start point and the endpoint of the fade-out with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-out. If %%fadeTime% is positive, fade-out will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-out wil take place between %%time+fadeTime% and %time.")
+TAG (L"%%Silent to end")
+DEFINITION (L"Make the sound silent after the fade-out finishes. ")
+ENTRY (L"Algorithm")
+NORMAL (L"Multiplication with the first half period of a (1+cos(%%x%))/2 function.")
 MAN_END
 
 MAN_BEGIN (L"Sound: Filter (gammatone)...", L"djmw", 19980712)
