@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
  	for 64-bit compatibility.
  djmw 20070620 Latest modification.
+ pb 20080320 split off Help menu
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -834,11 +835,11 @@ static void destroy (I)
 	inherited (CategoriesEditor) destroy (me);
 }
 
-static void createMenus (I)
+static void createHelpMenuItems (I, EditorMenu menu)
 {
 	iam (CategoriesEditor);
-	inherited (CategoriesEditor) createMenus (me);
-	Editor_addCommand (me, L"Help", L"CategoriesEditor help", '?', cb_help);
+	inherited (CategoriesEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', cb_help);
 }
 
 static void createChildren (I)
@@ -906,12 +907,13 @@ static void dataChanged (I)
 	updateWidgets (me);
 }
 
-class_methods (CategoriesEditor, Editor)
+class_methods (CategoriesEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
-	class_method (createMenus)
-class_methods_end
+	class_method (createHelpMenuItems)
+	class_methods_end
+}
 
 Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data)
 {

@@ -35,6 +35,7 @@
  * pb 2007/09/19 moved settings report to info
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/01/19 double
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "SoundEditor.h"
@@ -323,9 +324,13 @@ static void createMenus (I) {
 	}
 
 	our createMenus_analysis (me);
+}
 
-	Editor_addCommand (me, L"Help", L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
-	Editor_addCommand (me, L"Help", L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (SoundEditor);
+	inherited (SoundEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
+	EditorMenu_addCommand (menu, L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
 }
 
 /********** UPDATE **********/
@@ -442,6 +447,7 @@ static void unhighlightSelection (I, double left, double right, double bottom, d
 
 class_methods (SoundEditor, TimeSoundAnalysisEditor) {
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (dataChanged)
 	class_method (prepareDraw)
 	class_method (draw)

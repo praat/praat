@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/03/19
  */
 
 /* Collections contain a number of items whose class is a subclass of Data.
@@ -276,15 +276,6 @@ class_create (SortedSetOfLong, SortedSet);
 
 int SortedSetOfLong_init (I);
 SortedSetOfLong SortedSetOfLong_create (void);
-
-/********** class SortedSetOfFloat **********/
-
-#define SortedSetOfFloat_members SortedSet_members
-#define SortedSetOfFloat_methods SortedSet_methods
-class_create (SortedSetOfFloat, SortedSet);
-
-int SortedSetOfFloat_init (I);
-SortedSetOfFloat SortedSetOfFloat_create (void);
 
 /********** class SortedSetOfDouble **********/
 

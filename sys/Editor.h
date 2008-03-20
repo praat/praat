@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/12/05
+ * pb 2008/03/20
  */
 
 #ifndef _Collection_h_
@@ -80,6 +80,7 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void (*createMenuItems_query) (I, EditorMenu menu); \
 	void (*createMenuItems_query_info) (I, EditorMenu menu); \
 	void (*createMenus) (I); \
+	void (*createHelpMenuItems) (I, EditorMenu menu); \
 	void (*createChildren) (I); \
 	void (*dataChanged) (I); \
 	void (*save) (I); \
@@ -93,7 +94,7 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void (*do_pictureMargins) (I, EditorCommand cmd);
 class_create_opaque (Editor, Thing);
 
-#define Editor_HIDDEN  (1 << 11)
+#define Editor_HIDDEN  (1 << 13)
 Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender));
 Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,

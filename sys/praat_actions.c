@@ -115,11 +115,11 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
 	if (flags > 7) {
-		depth = ((flags & 0x00070000) >> 16);
+		depth = ((flags & praat_DEPTH_7) >> 16);
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		motifFlags = key ? flags & 0x002007FF : flags & 0x00000700;
+		motifFlags = key ? flags & 0x00201FFF : flags & 0x00001F00;
 	}
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 

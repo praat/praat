@@ -66,22 +66,6 @@
 
 /********** Conversion of Roman native and generic string encodings. **********/
 
-char * Longchar_nativize (const char *generic, char *native, int educateQuotes);
-/*
-	Copies the string 'generic' to the string 'native',
-	translating backslash trigraphs into natively encoded characters,
-	if they are in the Roman alphabet.
-	For instance, \n~ will be translated into an "ntilde",
-	but the trigraphs \al, \as, and \pf will not be translated,
-	because they are in the Symbol, Phonetic, and Dingbats alphabets, respectively.
-	Returns 'native' as a convenience.
-	'native' will never become longer than 'generic'.
-	Usage:
-		translating a generic string into a format that your system can put
-		into one-font widgets such as menu items, labels, and push buttons.
-		For drawing text with mixed alphabets and mixed styles,
-		use Graphics_text instead.
-*/
 wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes);
 
 char * Longchar_genericize (const char *native, char *generic);

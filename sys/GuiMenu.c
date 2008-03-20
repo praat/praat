@@ -61,7 +61,7 @@ Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget
 Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure)
 {
-	Boolean toggle = flags & (GuiMenu_CHECKABLE | GuiMenu_CHECKED) ? True : False;
+	Boolean toggle = flags & (GuiMenu_CHECKBUTTON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON) ? True : False;
 	Widget button;
 	int accelerator = flags & 127;
 	Melder_assert (title != NULL);
@@ -83,7 +83,7 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 		#elif motif
 			XtSetSensitive (button, False);
 		#endif
-	if (flags & GuiMenu_CHECKED)
+	if (flags & GuiMenu_TOGGLE_ON)
 		#if gtk
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (button), TRUE);
 		#elif motif

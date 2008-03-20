@@ -1,6 +1,6 @@
 /* ScriptEditor.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/01/07 use GuiWindow_setDirty
  * pb 2007/06/12 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "ScriptEditor.h"
@@ -253,28 +254,35 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"-- history --", 0, 0);
 	Editor_addCommand (me, L"Edit", L"Clear history", 0, cb_clearHistory);
 	Editor_addCommand (me, L"Edit", L"Paste history", 'H', cb_viewHistory);
-	Editor_addCommand (me, L"Help", L"About ScriptEditor", '?', cb_AboutScriptEditor);
-	Editor_addCommand (me, L"Help", L"Scripting tutorial", 0, cb_ScriptingTutorial);
-	Editor_addCommand (me, L"Help", L"Scripting examples", 0, cb_ScriptingExamples);
-	Editor_addCommand (me, L"Help", L"Praat script", 0, cb_PraatScript);
-	Editor_addCommand (me, L"Help", L"Formulas tutorial", 0, cb_FormulasTutorial);
-	Editor_addCommand (me, L"Help", L"-- help history --", 0, NULL);
-	Editor_addCommand (me, L"Help", L"The History mechanism", 0, cb_TheHistoryMechanism);
-	Editor_addCommand (me, L"Help", L"Initialization scripts", 0, cb_InitializationScripts);
-	Editor_addCommand (me, L"Help", L"-- help add --", 0, NULL);
-	Editor_addCommand (me, L"Help", L"Adding to a fixed menu", 0, cb_AddingToAFixedMenu);
-	Editor_addCommand (me, L"Help", L"Adding to a dynamic menu", 0, cb_AddingToADynamicMenu);
 	Editor_addMenu (me, L"Run", 0);
 	Editor_addCommand (me, L"Run", L"Run", 'R', cb_go);
 	Editor_addCommand (me, L"Run", L"Run selection", 0, cb_runSelection);
 }
 
-class_methods (ScriptEditor, TextEditor)
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (ScriptEditor);
+	inherited (ScriptEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"About ScriptEditor", '?', cb_AboutScriptEditor);
+	EditorMenu_addCommand (menu, L"Scripting tutorial", 0, cb_ScriptingTutorial);
+	EditorMenu_addCommand (menu, L"Scripting examples", 0, cb_ScriptingExamples);
+	EditorMenu_addCommand (menu, L"Praat script", 0, cb_PraatScript);
+	EditorMenu_addCommand (menu, L"Formulas tutorial", 0, cb_FormulasTutorial);
+	EditorMenu_addCommand (menu, L"-- help history --", 0, NULL);
+	EditorMenu_addCommand (menu, L"The History mechanism", 0, cb_TheHistoryMechanism);
+	EditorMenu_addCommand (menu, L"Initialization scripts", 0, cb_InitializationScripts);
+	EditorMenu_addCommand (menu, L"-- help add --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Adding to a fixed menu", 0, cb_AddingToAFixedMenu);
+	EditorMenu_addCommand (menu, L"Adding to a dynamic menu", 0, cb_AddingToADynamicMenu);
+}
+
+class_methods (ScriptEditor, TextEditor) {
 	class_method (destroy)
 	class_method (nameChanged)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	us -> scriptable = FALSE;
-class_methods_end
+	class_methods_end
+}
 
 ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const wchar_t *initialText) {
 	Editor editor = (Editor) voidEditor;

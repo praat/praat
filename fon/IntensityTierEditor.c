@@ -1,6 +1,6 @@
 /* IntensityTierEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2007/06/10 wchar_t
  * pb 2007/08/11 wchar_t
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "IntensityTierEditor.h"
@@ -33,11 +34,11 @@ class_create_opaque (IntensityTierEditor, RealTierEditor);
 /*DIRECT (IntensityTierEditor, cb_IntensityTierEditorHelp) Melder_help (L"IntensityTierEditor"); END*/
 DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help (L"IntensityTier"); END
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (IntensityTierEditor);
-	inherited (IntensityTierEditor) createMenus (me);
-	/*Editor_addCommand (me, L"Help", L"IntensityTierEditor help", 0, cb_IntensityTierEditorHelp);*/
-	Editor_addCommand (me, L"Help", L"IntensityTier help", 0, cb_IntensityTierHelp);
+	inherited (IntensityTierEditor) createHelpMenuItems (me, menu);
+	/*EditorMenu_addCommand (menu, L"IntensityTierEditor help", 0, cb_IntensityTierEditorHelp);*/
+	EditorMenu_addCommand (menu, L"IntensityTier help", 0, cb_IntensityTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -50,7 +51,7 @@ static void play (I, double tmin, double tmax) {
 }
 
 class_methods (IntensityTierEditor, RealTierEditor)
-	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Intensity (dB)", us -> quantityKey = L"Intensity";

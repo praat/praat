@@ -1616,7 +1616,7 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Spectrum", 0);
 	my spectrogramToggle = EditorMenu_addCommand (menu, L"Show spectrogram",
-		GuiMenu_CHECKABLE | (preferences.spectrogram.show ? GuiMenu_CHECKED : 0), menu_cb_showSpectrogram);
+		GuiMenu_CHECKBUTTON | (preferences.spectrogram.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showSpectrogram);
 	EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
 	EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
 	EditorMenu_addCommand (menu, L"-- spectrum query --", 0, NULL);
@@ -1631,7 +1631,7 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Pitch", 0);
 	my pitchToggle = EditorMenu_addCommand (menu, L"Show pitch",
-		GuiMenu_CHECKABLE | (preferences.pitch.show ? GuiMenu_CHECKED : 0), menu_cb_showPitch);
+		GuiMenu_CHECKBUTTON | (preferences.pitch.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPitch);
 	EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
 	EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
 	EditorMenu_addCommand (menu, L"-- pitch query --", 0, NULL);
@@ -1651,7 +1651,7 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Intensity", 0);
 	my intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
-		GuiMenu_CHECKABLE | (preferences.intensity.show ? GuiMenu_CHECKED : 0), menu_cb_showIntensity);
+		GuiMenu_CHECKBUTTON | (preferences.intensity.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showIntensity);
 	EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
 	EditorMenu_addCommand (menu, L"-- intensity query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
@@ -1664,7 +1664,7 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Formant", 0);
 	my formantToggle = EditorMenu_addCommand (menu, L"Show formants",
-		GuiMenu_CHECKABLE | (preferences.formant.show ? GuiMenu_CHECKED : 0), menu_cb_showFormants);
+		GuiMenu_CHECKBUTTON | (preferences.formant.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
 	EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
 	EditorMenu_addCommand (menu, L"-- formant query --", 0, NULL);
@@ -1687,7 +1687,7 @@ static void createMenus_analysis (I) {
 
 	menu = Editor_addMenu (me, L"Pulses", 0);
 	my pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
-		GuiMenu_CHECKABLE | (preferences.pulses.show ? GuiMenu_CHECKED : 0), menu_cb_showPulses);
+		GuiMenu_CHECKBUTTON | (preferences.pulses.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPulses);
 	EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
 	EditorMenu_addCommand (menu, L"-- pulses query --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);

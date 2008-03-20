@@ -1,6 +1,6 @@
 /* OTGrammarEditor.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2003/05/27 learnOne and learnOneFromPartialOutput
  * pb 2004/03/16 Evaluate (tiny noise)
  * pb 2007/06/10 wchar_t
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "OTGrammarEditor.h"
@@ -184,9 +185,14 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Learn one from partial output...", '1', cb_learnOneFromPartialOutput);
 	Editor_addCommand (me, L"Edit", L"-- remove ot --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, cb_removeConstraint);
-	Editor_addCommand (me, L"Help", L"OTGrammarEditor help", '?', cb_OTGrammarEditor_help);
-	Editor_addCommand (me, L"Help", L"OTGrammar help", 0, cb_OTGrammar_help);
-	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, cb_OTLearningTutorial);
+}
+
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (OTGrammarEditor);
+	inherited (OTGrammarEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"OTGrammarEditor help", '?', cb_OTGrammarEditor_help);
+	EditorMenu_addCommand (menu, L"OTGrammar help", 0, cb_OTGrammar_help);
+	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, cb_OTLearningTutorial);
 }
 
 static OTGrammar drawTableau_ot;
@@ -227,12 +233,14 @@ static int goToPage (I, const wchar_t *title) {
 	return 1;
 }
 
-class_methods (OTGrammarEditor, HyperPage)
+class_methods (OTGrammarEditor, HyperPage) {
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	us -> editable = TRUE;
 	class_method (goToPage)
-class_methods_end
+	class_methods_end
+}
 
 OTGrammarEditor OTGrammarEditor_create (Widget parent, const wchar_t *title, OTGrammar ot) {
 	OTGrammarEditor me = new (OTGrammarEditor);

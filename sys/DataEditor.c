@@ -1,6 +1,6 @@
 /* DataEditor.c
  *
- * Copyright (C) 1995-2007 Paul Boersma
+ * Copyright (C) 1995-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/12/23 Gui
  * pb 2007/12/31 Gui
+ * pb 2008/03/20 split off Help menu
  */
 
 #define NAME_X  30
@@ -402,10 +403,10 @@ static void classDataSubEditor_createChildren (I) {
 
 DIRECT (DataSubEditor, cb_help) Melder_help (L"Inspect"); END
 
-static void classDataSubEditor_createMenus (I) {
+static void classDataSubEditor_createHelpMenuItems (I, EditorMenu menu) {
 	iam (DataSubEditor);
-	inherited (DataSubEditor) createMenus (me);
-	Editor_addCommand (me, L"Help", L"DataEditor help", '?', cb_help);
+	inherited (DataSubEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"DataEditor help", '?', cb_help);
 }
 
 static long classDataSubEditor_countFields (I) { iam (DataSubEditor); (void) me; return 0; }
@@ -415,7 +416,7 @@ static void classDataSubEditor_showMembers (I) { iam (DataSubEditor); (void) me;
 class_methods (DataSubEditor, Editor)
 	class_method_local (DataSubEditor, destroy)
 	class_method_local (DataSubEditor, createChildren)
-	class_method_local (DataSubEditor, createMenus)
+	class_method_local (DataSubEditor, createHelpMenuItems)
 	class_method_local (DataSubEditor, countFields)
 	class_method_local (DataSubEditor, showMembers)
 	us -> scriptable = FALSE;

@@ -1,6 +1,6 @@
 /* FunctionEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/09/21 query menu hierarchical
  * pb 2007/11/30 erased Graphics_printf
  * pb 2007/12/27 Gui
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "FunctionEditor.h"
@@ -995,8 +996,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Select", L"Move begin of selection right", Editor_HIDDEN, menu_cb_moveBright);
 	Editor_addCommand (me, L"Select", L"Move end of selection left", GuiMenu_COMMAND + GuiMenu_UP_ARROW, menu_cb_moveEleft);
 	Editor_addCommand (me, L"Select", L"Move end of selection right", GuiMenu_COMMAND + GuiMenu_DOWN_ARROW, menu_cb_moveEright);
+}
 
-	Editor_addCommand (me, L"Help", L"Intro", 0, menu_cb_intro);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (FunctionEditor);
+	inherited (FunctionEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"Intro", 0, menu_cb_intro);
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -1524,6 +1529,7 @@ class_methods (FunctionEditor, Editor) {
 	class_method (createMenuItems_file)
 	class_method (createMenuItems_query)
 	class_method (createChildren)
+	class_method (createHelpMenuItems)
 	class_method (dataChanged)
 	class_method (draw)
 	class_method (prepareDraw)

@@ -29,6 +29,7 @@
  * pb 2007/10/16 Get pitch: F5 shortcut, as in Sound windows
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/01/19 double
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "Pitch_to_Sound.h"
@@ -161,9 +162,13 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Selection", L"Fifth up", 0, cb_fifthUp);
 	Editor_addCommand (me, L"Selection", L"Fifth down", 0, cb_fifthDown);
 	Editor_addCommand (me, L"Selection", L"Octave down", 0, cb_octaveDown);
+}
 
-	Editor_addCommand (me, L"Help", L"PitchEditor help", '?', cb_PitchEditorHelp);
-	Editor_addCommand (me, L"Help", L"Pitch help", 0, cb_PitchHelp);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (PitchEditor);
+	inherited (PitchEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"PitchEditor help", '?', cb_PitchEditorHelp);
+	EditorMenu_addCommand (menu, L"Pitch help", 0, cb_PitchHelp);
 }
 	
 /********** DRAWING AREA **********/
@@ -352,12 +357,14 @@ static int click (I, double xWC, double yWC, int dummy) {
 	return inherited (PitchEditor) click (me, xWC, yWC, dummy);   /* Move cursor or drag selection. */
 }
 
-class_methods (PitchEditor, FunctionEditor)
+class_methods (PitchEditor, FunctionEditor) {
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (play)
 	class_method (click)
-class_methods_end
+	class_methods_end
+}
 
 PitchEditor PitchEditor_create (Widget parent, const wchar_t *title, Pitch pitch) {
 	PitchEditor me = new (PitchEditor);

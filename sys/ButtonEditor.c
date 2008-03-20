@@ -1,6 +1,6 @@
 /* ButtonEditor.c
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/12/14 Gui
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "ButtonEditor.h"
@@ -294,16 +295,16 @@ static void createChildren (I) {
 
 DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (ButtonEditor);
-	inherited (ButtonEditor) createMenus (me);
-	Editor_addCommand (me, L"Help", L"ButtonEditor help", '?', cb_ButtonEditorHelp);
+	inherited (ButtonEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', cb_ButtonEditorHelp);
 }
 
 class_methods (ButtonEditor, HyperPage)
 	us -> scriptable = FALSE;
 	class_method (createChildren)
-	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (goToPage)
 class_methods_end

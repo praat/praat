@@ -2,7 +2,7 @@
 #define _Simple_h_
 /* Simple.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/03/19
  */
 
 #ifndef _Data_h_
@@ -38,9 +38,6 @@ oo_CLASS_CREATE (SimpleShort, Data);
 #define SimpleLong_methods Data_methods
 oo_CLASS_CREATE (SimpleLong, Data);
 
-#define SimpleFloat_methods Data_methods
-oo_CLASS_CREATE (SimpleFloat, Data);
-
 #define SimpleDouble_methods Data_methods
 oo_CLASS_CREATE (SimpleDouble, Data);
 
@@ -50,7 +47,6 @@ oo_CLASS_CREATE (SimpleString, Data);
 SimpleInt SimpleInt_create (int number);
 SimpleShort SimpleShort_create (short number);
 SimpleLong SimpleLong_create (long number);
-SimpleFloat SimpleFloat_create (float number);
 SimpleDouble SimpleDouble_create (double number);
 SimpleString SimpleString_create (const wchar_t *string);
 

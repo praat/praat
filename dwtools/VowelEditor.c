@@ -1173,7 +1173,12 @@ static void createMenus (I)
 	Editor_addCommand (me, L"Edit", L"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (me, L"Edit", L"Shift trajectory...", 0, menu_cb_shiftTrajectory);
 	Editor_addCommand (me, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
-	Editor_addCommand (me, L"Help", L"VowelEditor help", '?', menu_cb_help);
+}
+
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (VowelEditor);
+	inherited (VowelEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"VowelEditor help", '?', menu_cb_help);
 }
 
 static void createChildren (I)
@@ -1229,10 +1234,10 @@ static void createChildren (I)
 	// The status startInfo and endInfo widget at the bottom:
 	
 	bottom = -(STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
-	my startInfo = GuiLabel_createShown (form, left, right, top, bottom, NULL, 0);
+	my startInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
 	
 	left = right; right = left + status_info_width;
-	my endInfo = GuiLabel_createShown (form, left, right, top, bottom, NULL, 0);
+	my endInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
 		
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
@@ -1251,12 +1256,14 @@ static void dataChanged (I)
 	(void) me;
 }
 
-class_methods (VowelEditor, Editor)
+class_methods (VowelEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenus)
-class_methods_end
+	class_method (createHelpMenuItems)
+	class_methods_end
+}
 
 static int VowelEditor_setSource (VowelEditor me)
 {
@@ -1290,7 +1297,6 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = new (VowelEditor);
-	
 	if (me == NULL || ! Editor_init (me, parent, 20, 40, 650, 650, title, data)) goto end;
 	Melder_assert (XtWindow (my drawingArea));
 	my g = Graphics_create_xmdrawingarea (my drawingArea);

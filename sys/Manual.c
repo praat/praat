@@ -29,6 +29,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2008/01/19 double
+ * pb 2008/03/20 split off Help menu
  */
 
 #include <ctype.h>
@@ -467,8 +468,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
 	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, cb_searchForPageList);
+}
 
-	Editor_addCommand (me, L"Help", L"Manual help", '?', cb_help);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (Manual);
+	inherited (Manual) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"Manual help", '?', cb_help);
 }
 
 static void defaultHeaders (EditorCommand cmd) {
@@ -551,13 +556,14 @@ static int goToPage (I, const wchar_t *title) {
 
 static int hasHistory = TRUE, isOrdered = TRUE;
 
-class_methods (Manual, HyperPage)
+class_methods (Manual, HyperPage) {
 	class_method (destroy)
 	us -> scriptable = FALSE;
 	class_method (draw)
 	class_method (createChildren)
 	class_method (createMenus)
 	us -> createMenuItems_query = NULL;
+	class_method (createHelpMenuItems)
 	class_method (defaultHeaders)
 	class_method (getNumberOfPages)
 	class_method (getCurrentPageNumber)
@@ -565,7 +571,8 @@ class_methods (Manual, HyperPage)
 	class_method (goToPage_i)
 	class_method (hasHistory)
 	class_method (isOrdered)
-class_methods_end
+	class_methods_end
+}
 
 int Manual_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (Manual);

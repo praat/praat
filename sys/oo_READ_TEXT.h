@@ -28,6 +28,7 @@
  * pb 2007/07/21 MelderReadString
  * pb 2007/07/22 improved reading of <exists>
  * pb 2008/01/19 NUM##storage
+ * pb 2008/03/20 layout
  */
 
 #include "oo_undef.h"
@@ -61,24 +62,17 @@
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	{ \
-		long i; \
-		for (i = 0; i < n; i ++) \
-			if ((my x [i] = texget##storage (text, & enum_##Type)) < 0) return 0; \
-	}
+	for (long i = 0; i < n; i ++) \
+		if ((my x [i] = texget##storage (text, & enum_##Type)) < 0) return 0;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	{ \
-		long i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if ((my x [i] = texget##storage (text, & enum_##Type)) < 0) return 0; \
-	}
+	for (long i = 0; i <= enumlength (setType); i ++) \
+		if ((my x [i] = texget##storage (text, & enum_##Type)) < 0) return 0;
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		long i; \
 		if (! (my x = NUM##t##vector (min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if ((my x [i] = texget##storage (text, & enum_##Type)) < 0) return 0; \
 	}
 
@@ -87,24 +81,17 @@
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	{ \
-		long i; \
-		for (i = 0; i < n; i ++) \
-			if (! (my x [i] = texget##storage (text))) return 0; \
-	}
+	for (long i = 0; i < n; i ++) \
+		if (! (my x [i] = texget##storage (text))) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	{ \
-		long i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! (my x [i] = texget##storage (text))) return 0; \
-	}
+	for (long i = 0; i <= enumlength (setType); i ++) \
+		if (! (my x [i] = texget##storage (text))) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		long i; \
 		if (! (my x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) { \
+		for (long i = min; i <= max; i ++) { \
 			if (! (my x [i] = texget##storage (text))) \
 				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
 		} \
@@ -115,24 +102,17 @@
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	{ \
-		long i; \
-		for (i = 0; i < n; i ++) \
-			if (! (my x [i] = texget##storage (text))) return 0; \
-	}
+	for (long i = 0; i < n; i ++) \
+		if (! (my x [i] = texget##storage (text))) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	{ \
-		long i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! (my x [i] = texget##storage (text))) return 0; \
-	}
+	for (long i = 0; i <= enumlength (setType); i ++) \
+		if (! (my x [i] = texget##storage (text))) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		long i; \
 		if (! (my x = NUMvector (sizeof (wchar_t *), min, max))) return 0; \
-		for (i = min; i <= max; i ++) { \
+		for (long i = min; i <= max; i ++) { \
 			if (! (my x [i] = texget##storage (text))) \
 				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
 		} \
@@ -143,24 +123,17 @@
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	{ \
-		long i; \
-		for (i = 0; i < n; i ++) \
-			if (! Type##_readText (& my x [i], text)) return 0; \
-	}
+	for (long i = 0; i < n; i ++) \
+		if (! Type##_readText (& my x [i], text)) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType) \
-	{ \
-		long i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (! Type##_readText (& my x [i], text)) return 0; \
-	}
+	for (long i = 0; i <= enumlength (setType); i ++) \
+		if (! Type##_readText (& my x [i], text)) return 0;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		long i; \
 		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			if (! Type##_readText (& my x [i], text)) return 0; \
 	}
 
@@ -175,9 +148,9 @@
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = texgeti4 (text), i; \
+		long n = texgeti4 (text); \
 		if ((my x = Class##_create ()) == NULL) return 0; \
-		for (i = 1; i <= n; i ++) { \
+		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
 			ItemClass item = new (ItemClass); \
 			if (item == NULL) return 0; \

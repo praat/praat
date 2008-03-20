@@ -1,6 +1,6 @@
 /* DurationTierEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/03/20
  */
 
 #include "DurationTierEditor.h"
@@ -31,11 +31,11 @@ class_create_opaque (DurationTierEditor, RealTierEditor);
 /*DIRECT (DurationTierEditor, cb_DurationTierEditorHelp) Melder_help (L"DurationTierEditor"); END*/
 DIRECT (DurationTierEditor, cb_DurationTierHelp) Melder_help (L"DurationTier"); END
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (DurationTierEditor);
-	inherited (DurationTierEditor) createMenus (me);
-	/*Editor_addCommand (me, L"Help", L"DurationTierEditor help", 0, cb_DurationTierEditorHelp);*/
-	Editor_addCommand (me, L"Help", L"DurationTier help", 0, cb_DurationTierHelp);
+	inherited (DurationTierEditor) createHelpMenuItems (me, menu);
+	/*EditorMenu_addCommand (menu, L"DurationTierEditor help", 0, cb_DurationTierEditorHelp);*/
+	EditorMenu_addCommand (menu, L"DurationTier help", 0, cb_DurationTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -47,8 +47,8 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-class_methods (DurationTierEditor, RealTierEditor)
-	class_method (createMenus)
+class_methods (DurationTierEditor, RealTierEditor) {
+	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> zeroIsMinimum = TRUE;
 	us -> quantityText = L"Relative duration", us -> quantityKey = L"Relative duration";
@@ -58,7 +58,8 @@ class_methods (DurationTierEditor, RealTierEditor)
 	us -> defaultYminText = L"0.25", us -> defaultYmaxText = L"3.0";
 	us -> yminText = L"Minimum duration", us -> ymaxText = L"Maximum duration";
 	us -> yminKey = L"Minimum duration", us -> ymaxKey = L"Maximum duration";
-class_methods_end
+	class_methods_end
+}
 
 DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
 	DurationTierEditor me = new (DurationTierEditor);

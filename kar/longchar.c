@@ -619,49 +619,6 @@ static void init (void) {
 	inited = 1;
 }
 
-char * Longchar_nativize (const char *generic, char *native, int educateQuotes) {
-	short kar;
-	#ifdef macintosh
-		long nquote = 0;
-	#endif
-	unsigned char kar1, kar2;
-	if (! inited) init ();
-	while ((kar = *generic++) != '\0') {
-		#ifdef macintosh
-			if (educateQuotes) {
-				if (kar == '\"') {   /* Replace by left or right double quote. */
-					*native++ = ++nquote & 1 ? 210 : 211;   /* Mac encoding */
-					continue;
-				} else if (kar == '`') {   /* Grave. */
-					*native++ = 212;   /* Left single quote. */
-					continue;
-				} else if (kar == '\'') {   /* Straight apostrophe. */
-					*native++ = 213;   /* Right single quote. */
-					continue;
-				}
-			}
-		#else
-			(void) educateQuotes;
-		#endif
-		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
-			long location = where [kar1 - 32] [kar2 - 32];
-			if (location == 0 || Longchar_database [location]. alphabet != Longchar_ROMAN) {
-				*native++ = kar;
-				*native++ = kar1;   /* Even if this is a backslash itself... */
-				*native++ = kar2;   /* Even if this is a backslash itself... */
-				/* These "evens" are here to ensure that Longchar_nativize does nothing on an already nativized string. */
-			} else {
-				*native++ = Longchar_database [location]. unicode;
-			}	
-			generic += 2;
-		} else {
-			*native++ = kar;
-		}
-	}
-	*native++ = '\0';
-	return native;
-}
-
 wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educateQuotes) {
 	long nquote = 0;
 	wchar_t kar, kar1, kar2;
@@ -681,11 +638,7 @@ wchar_t * Longchar_nativizeW (const wchar_t *generic, wchar_t *native, int educa
 		}
 		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
 			long location = where [kar1 - 32] [kar2 - 32];
-			#ifdef macintosh
 			if (location == 0) {
-			#else
-			if (location == 0 /*|| Longchar_database [location]. alphabet != Longchar_ROMAN*/) {
-			#endif
 				*native++ = kar;
 				*native++ = kar1;   /* Even if this is a backslash itself... */
 				*native++ = kar2;   /* Even if this is a backslash itself... */

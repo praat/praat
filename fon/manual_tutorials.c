@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080318)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080320)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.14# (March 20, 2008)")
+LIST_ITEM (L"\\bu David's vowel editor (New \\-> Sound).")
+LIST_ITEM (L"\\bu Formulas: corrected scaling of sinc function.")
 NORMAL (L"##5.0.13# (March 18, 2008)")
 LIST_ITEM (L"\\bu Corrected drawing of histograms.")
 LIST_ITEM (L"\\bu TextGrid window: selected part of the TextGrid can be extracted and saved.")

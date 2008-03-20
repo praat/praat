@@ -20,6 +20,7 @@
 /*
  * pb 2007/12/19 created
  * pb 2008/02/06 const
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "StringsEditor.h"
@@ -38,10 +39,10 @@ static int menu_cb_help (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (StringsEditor);
-	inherited (StringsEditor) createMenus (me);
-	Editor_addCommand (me, L"Help", L"StringsEditor help", '?', menu_cb_help);
+	inherited (StringsEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"StringsEditor help", '?', menu_cb_help);
 }
 
 static void updateList (I) {
@@ -154,12 +155,13 @@ static void dataChanged (I) {
 	updateList (me);
 }
 
-class_methods (StringsEditor, Editor)
+class_methods (StringsEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
-	class_method (createMenus)
-class_methods_end
+	class_method (createHelpMenuItems)
+	class_methods_end
+}
 
 Any StringsEditor_create (Widget parent, const wchar_t *title, Any data) {
 	StringsEditor me = new (StringsEditor);

@@ -181,7 +181,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
 			if (wasBackgrounding) praat_foreground ();
-			if (! Melder_pause (Melder_peekWcsToUtf8 (command + 5))) return Melder_error1 (L"You interrupted the script.");
+			if (! Melder_pause (command + 5)) return Melder_error1 (L"You interrupted the script.");
 			if (wasBackgrounding) praat_background ();
 			Melder_setDefaultDir (& dir);
 			/* BUG: should also restore praatP. editor. */

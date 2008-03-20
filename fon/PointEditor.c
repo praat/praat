@@ -1,6 +1,6 @@
 /* PointEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/09/22 autoscaling
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "PointEditor.h"
@@ -161,8 +162,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Point", L"Add point at...", 0, cb_addPointAt);
 	Editor_addCommand (me, L"Point", L"-- remove point --", 0, NULL);
 	Editor_addCommand (me, L"Point", L"Remove point(s)", GuiMenu_OPTION + 'P', cb_removePoints);
+}
 
-	Editor_addCommand (me, L"Help", L"PointEditor help", '?', cb_PointEditorHelp);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (PointEditor);
+	inherited (PointEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"PointEditor help", '?', cb_PointEditorHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -213,12 +218,14 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-class_methods (PointEditor, TimeSoundEditor)
+class_methods (PointEditor, TimeSoundEditor) {
 	class_method (destroy)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (play)
-class_methods_end
+	class_methods_end
+}
 
 PointEditor PointEditor_create (Widget parent, const wchar_t *title, PointProcess point, Sound sound) {
 	PointEditor me = new (PointEditor); cherror

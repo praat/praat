@@ -1,6 +1,6 @@
 /* Collection.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/06/24 wchar_t
  * pb 2007/08/08 canWriteAsEncoding
  * pb 2007/10/01 make sure that names are encodable when writing
+ * pb 2008/03/19 removed SortedSetOfFloat
  */
 
 #include "Collection.h"
@@ -534,27 +535,6 @@ int SortedSetOfLong_init (I) { iam (SortedSetOfLong); return SortedSet_init (me,
 SortedSetOfLong SortedSetOfLong_create (void) {
 	SortedSetOfLong me = new (SortedSetOfLong);
 	if (! me || ! SortedSetOfLong_init (me)) { forget (me); return NULL; }
-	return me;
-}
-
-/********** class SortedSetOfFloat **********/
-
-static int classSortedSetOfFloat_compare (I, thou) {
-	iam (SimpleFloat); thouart (SimpleFloat);
-	if (my number < thy number) return -1;
-	if (my number > thy number) return +1;
-	return 0;
-}
-
-class_methods (SortedSetOfFloat, SortedSet)
-	class_method_local (SortedSetOfFloat, compare)
-class_methods_end
-
-int SortedSetOfFloat_init (I) { iam (SortedSetOfFloat); return SortedSet_init (me, classSimpleFloat, 10); }
-
-SortedSetOfFloat SortedSetOfFloat_create (void) {
-	SortedSetOfFloat me = new (SortedSetOfFloat);
-	if (! me || ! SortedSetOfFloat_init (me)) { forget (me); return NULL; }
 	return me;
 }
 

@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.c
  *
- * Copyright (C) 2003-2007 Paul Boersma
+ * Copyright (C) 2003-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2003/05/31 created
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "AmplitudeTierEditor.h"
@@ -33,11 +34,11 @@ class_create_opaque (AmplitudeTierEditor, RealTierEditor);
 /*DIRECT (AmplitudeTierEditor, cb_AmplitudeTierEditorHelp) Melder_help (L"AmplitudeTierEditor"); END*/
 DIRECT (AmplitudeTierEditor, cb_AmplitudeTierHelp) Melder_help (L"AmplitudeTier"); END
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (AmplitudeTierEditor);
-	inherited (AmplitudeTierEditor) createMenus (me);
-	/*Editor_addCommand (me, L"Help", L"AmplitudeTierEditor help", 0, cb_AmplitudeTierEditorHelp);*/
-	Editor_addCommand (me, L"Help", L"AmplitudeTier help", 0, cb_AmplitudeTierHelp);
+	inherited (AmplitudeTierEditor) createHelpMenuItems (me, menu);
+	/*EditorMenu_addCommand (menu, L"AmplitudeTierEditor help", 0, cb_AmplitudeTierEditorHelp);*/
+	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, cb_AmplitudeTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -49,8 +50,8 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-class_methods (AmplitudeTierEditor, RealTierEditor)
-	class_method (createMenus)
+class_methods (AmplitudeTierEditor, RealTierEditor) {
+	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Sound pressure (Pa)", us -> quantityKey = L"Sound pressure";
@@ -60,7 +61,8 @@ class_methods (AmplitudeTierEditor, RealTierEditor)
 	us -> defaultYminText = L"-1.0", us -> defaultYmaxText = L"+1.0";
 	us -> yminText = L"Minimum amplitude (Pa)", us -> ymaxText = L"Maximum amplitude (Pa)";
 	us -> yminKey = L"Minimum amplitude", us -> ymaxKey = L"Maximum amplitude";
-class_methods_end
+	class_methods_end
+}
 
 AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const wchar_t *title, AmplitudeTier amplitude, Sound sound, int ownSound) {
 	AmplitudeTierEditor me = new (AmplitudeTierEditor);

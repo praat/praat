@@ -24,6 +24,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/04 new FunctionEditor API
  * pb 2008/01/19 double
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "SpectrumEditor.h"
@@ -183,8 +184,6 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"-- edit band --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Pass band...", 0, cb_passBand);
 	Editor_addCommand (me, L"Edit", L"Stop band...", 0, cb_stopBand);
-	Editor_addCommand (me, L"Help", L"SpectrumEditor help", '?', cb_help_SpectrumEditor);
-	Editor_addCommand (me, L"Help", L"Spectrum help", 0, cb_help_Spectrum);
 }
 
 static void createMenuItems_view (I, EditorMenu menu) {
@@ -195,9 +194,17 @@ static void createMenuItems_view (I, EditorMenu menu) {
 	inherited (SpectrumEditor) createMenuItems_view (me, menu);
 }
 
-class_methods (SpectrumEditor, FunctionEditor)
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (SpectrumEditor);
+	inherited (SpectrumEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', cb_help_SpectrumEditor);
+	EditorMenu_addCommand (menu, L"Spectrum help", 0, cb_help_Spectrum);
+}
+
+class_methods (SpectrumEditor, FunctionEditor) {
 	class_method (createMenus)
 	class_method (createMenuItems_view)
+	class_method (createHelpMenuItems)
 	class_method (dataChanged)
 	class_method (draw)
 	us -> format_domain = L"Frequency domain:";
@@ -210,7 +217,8 @@ class_methods (SpectrumEditor, FunctionEditor)
 	us -> format_selection = L"%.2f Hz";
 	class_method (click)
 	class_method (play)
-class_methods_end
+	class_methods_end
+}
 
 SpectrumEditor SpectrumEditor_create (Widget parent, const wchar_t *title, Any data) {
 	SpectrumEditor me = new (SpectrumEditor);

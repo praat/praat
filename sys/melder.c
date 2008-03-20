@@ -84,10 +84,9 @@ unsigned long Melder_systemVersion;
 	void *Melder_topShell;   /* Widget */
 #endif
 
-static int defaultPause (wchar_t *message) {
-	int key;
+static bool defaultPause (const wchar_t *message) {
 	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or any other key to continue.\n", Melder_peekWcsToUtf8 (message));
-	key = getc (stdin);
+	int key = getc (stdin);
 	return key != 'q' && key != 'Q';
 }
 
@@ -138,7 +137,7 @@ static int defaultPublishPlayed (void) {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	int (*pause) (wchar_t *message);
+	bool (*pause) (const wchar_t *message);
 	void (*help) (const wchar_t *query);
 	void (*search) (void);
 	void (*warning) (wchar_t *message);
@@ -163,25 +162,13 @@ void Melder_casual (const char *format, ...) {
 	va_list arg;
 	va_start (arg, format);
 	vsprintf (Melder_buffer1, format, arg);
-	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
 	#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 	if (! Melder_batch) {
-		MessageBox (NULL, Melder_peekUtf8ToWcs (Melder_buffer2), L"Casual info", MB_OK);
+		MessageBox (NULL, Melder_peekUtf8ToWcs (Melder_buffer1), L"Casual info", MB_OK);
 	} else
 	#endif
-	fprintf (stderr, "%s\n", Melder_buffer2);
+	fprintf (stderr, "%s\n", Melder_buffer1);
 	va_end (arg);
-}
-
-/********** STOPWATCH **********/
-
-double Melder_stopwatch (void) {
-	static clock_t lastTime;
-	clock_t now = clock ();
-	double timeElapsed = lastTime == 0 ? -1.0 : (now - lastTime) / (double) CLOCKS_PER_SEC;
-	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
-	lastTime = now;
-	return timeElapsed;
 }
 
 /********** PROGRESS **********/
@@ -479,19 +466,8 @@ void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, c
 
 /********** PAUSE **********/
 
-int Melder_pause (const char *format, ...) {
-	int interruption;
-	va_list arg;
-	va_start (arg, format);
-	if (format) {
-		vsprintf (Melder_buffer1, format, arg);
-		Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-	} else {
-		Melder_buffer2 [0] = '\0';
-	}
-	interruption = theMelder. pause (Melder_peekUtf8ToWcs (Melder_buffer1));
-	va_end (arg);
-	return interruption;
+bool Melder_pause (const wchar_t *message) {
+	return theMelder. pause (message);
 }
 
 /********** NUMBER AND STRING COMPARISONS **********/
@@ -555,17 +531,6 @@ void Melder_search (void) {
 static int theWarningDepth = 0;
 void Melder_warningOff (void) { theWarningDepth --; }
 void Melder_warningOn (void) { theWarningDepth ++; }
-
-void Melder_warning (const char *format, ...) {
-	va_list arg;
-	va_start (arg, format);
-	if (theWarningDepth >= 0) {
-		vsprintf (Melder_buffer1, format, arg);
-		Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-		theMelder. warning (Melder_peekUtf8ToWcs (Melder_buffer2));
-	}
-	va_end (arg);
-}
 
 static MelderString theWarningBuffer = { 0 };
 
@@ -632,7 +597,7 @@ void Melder_beep (void) {
 	#endif
 }
 
-/*********** ERROR **********/
+/*********** FATAL **********/
 
 int Melder_fatal (const char *format, ...) {
 	const char *lead = strstr (format, "Praat cannot start up") ? "" :
@@ -641,8 +606,7 @@ int Melder_fatal (const char *format, ...) {
 	va_start (arg, format);
 	strcpy (Melder_buffer1, lead);
 	vsprintf (Melder_buffer1 + strlen (lead), format, arg);
-	Longchar_nativize (Melder_buffer1, Melder_buffer2, ! Melder_batch);
-	theMelder. fatal (Melder_peekUtf8ToWcs (Melder_buffer2));
+	theMelder. fatal (Melder_peekUtf8ToWcs (Melder_buffer1));
 	va_end (arg);
 	abort ();
 	return 0;   /* Make some compilers happy, some unhappy. */
@@ -658,7 +622,7 @@ static bool pause_continued, pause_stopped;
 static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
 static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
 #if motif
-static int motif_pause (wchar_t *message) {
+static bool motif_pause (const wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
 	if (dia == NULL) {
 		dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Pause", NULL, NULL, 0);
@@ -818,7 +782,7 @@ int Melder_publishPlayed (void) {
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
-void Melder_setPauseProc (int (*pause) (wchar_t *))
+void Melder_setPauseProc (bool (*pause) (const wchar_t *))
 	{ theMelder. pause = pause ? pause : defaultPause; }
 
 void Melder_setHelpProc (void (*help) (const wchar_t *query))

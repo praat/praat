@@ -145,11 +145,13 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
 	if (flags > 7) {
-		depth = ((flags & 0x00070000) >> 16);
+		depth = ((flags & praat_DEPTH_7) >> 16);
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		motifFlags = key ? flags & 0x006007FF : flags & 0x00000700;
+		motifFlags = key ?
+			flags & (0x006000FF | GuiMenu_INSENSITIVE | GuiMenu_CHECKBUTTON | GuiMenu_TOGGLE_ON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT) :
+			flags & (GuiMenu_INSENSITIVE | GuiMenu_CHECKBUTTON | GuiMenu_TOGGLE_ON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT);
 	}
 	if (callback && ! title) {
 		Melder_error5 (L"praat_addMenuCommand: command with callback has no title. Window \"", window, L"\", menu \"", menu, L"\".");

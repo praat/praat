@@ -1,6 +1,6 @@
 /* Simple.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
+ * pb 2008/03/19 removed SimpleFloat
  */
 
 #include "Simple.h"
@@ -109,28 +110,6 @@ class_methods (SimpleLong, Data) {
 
 SimpleLong SimpleLong_create (long number) {
 	SimpleLong me = new (SimpleLong);
-	if (! me) return NULL;
-	my number = number;
-	return me;
-}
-
-class_methods (SimpleFloat, Data) {
-	class_method_local (SimpleFloat, description)
-	class_method_local (SimpleFloat, destroy)
-	class_method_local (SimpleFloat, copy)
-	class_method_local (SimpleFloat, equal)
-	class_method_local (SimpleFloat, canWriteAsEncoding)
-	class_method_local (SimpleFloat, writeText)
-	class_method_local (SimpleFloat, writeBinary)
-	//class_method_local (SimpleFloat, writeCache)
-	class_method_local (SimpleFloat, readText)
-	class_method_local (SimpleFloat, readBinary)
-	//class_method_local (SimpleFloat, readCache)
-	class_methods_end
-}
-
-SimpleFloat SimpleFloat_create (float number) {
-	SimpleFloat me = new (SimpleFloat);
 	if (! me) return NULL;
 	my number = number;
 	return me;

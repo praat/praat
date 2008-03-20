@@ -1,6 +1,6 @@
 /* SoundRecorder.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@
  * pb 2007/12/05 prefs
  * pb 2007/12/09 192 kHz
  * pb 2007/12/23 Gui
+ * pb 2008/03/20 split off Help menu
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -1476,7 +1477,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, cb_writeNextSun);
 	Editor_addCommand (me, L"File", L"Write to NIST file...", 0, cb_writeNist);
 	Editor_addCommand (me, L"File", L"-- write --", 0, 0);
-	Editor_addCommand (me, L"Help", L"SoundRecorder help", '?', cb_SoundRecorder_help);
+}
+
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (SoundRecorder);
+	inherited (SoundRecorder) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', cb_SoundRecorder_help);
 }
 
 class_methods (SoundRecorder, Editor)
@@ -1485,6 +1491,7 @@ class_methods (SoundRecorder, Editor)
 	us -> editable = FALSE;
 	us -> scriptable = FALSE;
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 class_methods_end
 
 SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppContext context) {

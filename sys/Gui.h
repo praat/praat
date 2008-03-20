@@ -22,7 +22,7 @@
 /*
  * pb 2007/12/30
  * sdk 2008/01/14 GTK
- * pb 2008/02/08
+ * pb 2008/03/20
  */
 
 #ifdef USE_GTK
@@ -314,8 +314,10 @@
 
 /* Button layout and state: */
 #define GuiMenu_INSENSITIVE  (1 << 8)
-#define GuiMenu_CHECKABLE  (1 << 9)
-#define GuiMenu_CHECKED  (1 << 10)
+#define GuiMenu_CHECKBUTTON  (1 << 9)
+#define GuiMenu_TOGGLE_ON  (1 << 10)
+#define GuiMenu_RADIO_FIRST  (1 << 11)
+#define GuiMenu_RADIO_NEXT  (1 << 12)
 
 /* Accelerators: */
 #define GuiMenu_OPTION  (1 << 21)

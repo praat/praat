@@ -1,6 +1,6 @@
 /* PitchTierEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "PitchTierEditor.h"
@@ -34,11 +35,11 @@ class_create_opaque (PitchTierEditor, RealTierEditor);
 DIRECT (PitchTierEditor, cb_PitchTierEditorHelp) Melder_help (L"PitchTierEditor"); END
 DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help (L"PitchTier"); END
 
-static void createMenus (I) {
+static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (PitchTierEditor);
-	inherited (PitchTierEditor) createMenus (me);
-	Editor_addCommand (me, L"Help", L"PitchTierEditor help", 0, cb_PitchTierEditorHelp);
-	Editor_addCommand (me, L"Help", L"PitchTier help", 0, cb_PitchTierHelp);
+	inherited (PitchTierEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, cb_PitchTierEditorHelp);
+	EditorMenu_addCommand (menu, L"PitchTier help", 0, cb_PitchTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {
@@ -48,7 +49,7 @@ static void play (I, double tmin, double tmax) {
 }
 
 class_methods (PitchTierEditor, RealTierEditor)
-	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> zeroIsMinimum = TRUE;
 	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";

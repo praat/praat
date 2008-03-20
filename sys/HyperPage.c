@@ -842,11 +842,11 @@ static void createMenus (I) {
 	}
 
 	Editor_addMenu (me, L"Font", 0);
-	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKABLE, cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKABLE, cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKABLE, cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKABLE, cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKABLE, cb_24);
+	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, cb_24);
 	Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
 	Editor_addCommand (me, L"Font", L"Font...", 0, cb_font);
 }

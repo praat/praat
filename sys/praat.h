@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/02/18
+ * pb 2008/03/20
  */
 
 #include "Editor.h"
@@ -101,11 +101,13 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	You may want to restrict the availability to one object for commands that write objects to file,
 	commands that present information in a dialog, or the Edit command.
 */
-#define praat_INSENSITIVE  0x00000100
-#define praat_CHECKABLE  0x00000200
-#define praat_CHECKED  0x00000400
-#define praat_HIDDEN  0x00000800
-#define praat_UNHIDABLE  0x00001000
+#define praat_INSENSITIVE  GuiMenu_INSENSITIVE
+#define praat_CHECKBUTTON  GuiMenu_CHECKBUTTON
+#define praat_TOGGLE_ON  GuiMenu_TOGGLE_ON
+#define praat_RADIO_FIRST  GuiMenu_RADIO_FIRST
+#define praat_RADIO_NEXT  GuiMenu_RADIO_NEXT
+#define praat_HIDDEN  0x00002000
+#define praat_UNHIDABLE  0x00004000
 #define praat_DEPTH_1  0x00010000
 #define praat_DEPTH_2  0x00020000
 #define praat_DEPTH_3  0x00030000

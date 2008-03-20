@@ -20,6 +20,7 @@
 /*
  * pb 2008/01/30 moved from Melder_audio.c
  * pb 2008/01/31 Win: use QueryPerformanceCounter
+ * pb 2008/03/18 moved Melder_stopwatch here and made it call Melder_clock
  */
 
 #include "melder.h"
@@ -58,6 +59,15 @@ double Melder_clock (void) {
 	#else
 		return 0;
 	#endif
+}
+
+double Melder_stopwatch (void) {
+	static double lastTime;
+	double now = Melder_clock ();
+	double timeElapsed = lastTime == 0 ? -1.0 : now - lastTime;
+	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
+	lastTime = now;
+	return timeElapsed;
 }
 
 /* End of file melder_time.c */

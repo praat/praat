@@ -39,6 +39,7 @@
  * Erez Volk 2008/03/16 Write selected TextGrid to text file
  * pb 2008/03/17 extract selected TextGrid
  * pb 2008/03/18 renamed: "convert to backslash trigraphs/Unicode"
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "TextGridEditor.h"
@@ -1336,11 +1337,15 @@ static void createMenus (I) {
 	if (my sound.data || my longSound.data) {
 		our createMenus_analysis (me);   // Insert some of the ancestor's menus *after* the TextGrid menus.
 	}
+}
 
-	Editor_addCommand (me, L"Help", L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
-	Editor_addCommand (me, L"Help", L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
-	Editor_addCommand (me, L"Help", L"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
-	Editor_addCommand (me, L"Help", L"About text styles", 0, menu_cb_AboutTextStyles);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (TextGridEditor);
+	inherited (TextGridEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
+	EditorMenu_addCommand (menu, L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
+	EditorMenu_addCommand (menu, L"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
+	EditorMenu_addCommand (menu, L"About text styles", 0, menu_cb_AboutTextStyles);
 }
 
 /***** CHILDREN *****/
@@ -2246,6 +2251,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 	class_method (createMenuItems_file_write)
 	class_method (createMenuItems_file_draw)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (prepareDraw)
 	class_method (draw)
 	us -> hasText = TRUE;

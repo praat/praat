@@ -1,6 +1,6 @@
 /* OTMultiEditor.c
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 constraint plasticity
  * pb 2007/12/14 Gui
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "OTMultiEditor.h"
@@ -206,7 +207,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Learn one...", '1', menu_cb_learnOne);
 	Editor_addCommand (me, L"Edit", L"-- remove --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
-	Editor_addCommand (me, L"Help", L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
+}
+
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (OTMultiEditor);
+	inherited (OTMultiEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 
 static OTMulti drawTableau_grammar;
@@ -251,13 +257,15 @@ static int goToPage (I, const wchar_t *title) {
 	return 1;
 }
 
-class_methods (OTMultiEditor, HyperPage)
+class_methods (OTMultiEditor, HyperPage) {
 	class_method (createChildren)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	us -> editable = TRUE;
 	class_method (goToPage)
-class_methods_end
+	class_methods_end
+}
 
 OTMultiEditor OTMultiEditor_create (Widget parent, const wchar_t *title, OTMulti grammar) {
 	OTMultiEditor me = new (OTMultiEditor);

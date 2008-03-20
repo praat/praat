@@ -1,6 +1,6 @@
 /* ManipulationEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "ManipulationEditor.h"
@@ -590,21 +591,25 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Dur", L"Forget duration", 0, cb_forgetDuration);
 
 	Editor_addMenu (me, L"Synth", 0);
-	my synthPulsesButton = Editor_addCommand (me, L"Synth", L"Pulses --", GuiMenu_CHECKABLE, cb_Synth_Pulses);
-	my synthPulsesHumButton = Editor_addCommand (me, L"Synth", L"Pulses (hum) --", GuiMenu_CHECKABLE, cb_Synth_Pulses_hum);
+	my synthPulsesButton = Editor_addCommand (me, L"Synth", L"Pulses --", GuiMenu_RADIO_FIRST, cb_Synth_Pulses);
+	my synthPulsesHumButton = Editor_addCommand (me, L"Synth", L"Pulses (hum) --", GuiMenu_RADIO_NEXT, cb_Synth_Pulses_hum);
 
-	my synthPulsesLpcButton = Editor_addCommand (me, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_CHECKABLE, cb_Synth_Pulses_Lpc);
+	my synthPulsesLpcButton = Editor_addCommand (me, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_RADIO_NEXT, cb_Synth_Pulses_Lpc);
 	Editor_addCommand (me, L"Synth", L"-- pitch resynth --", 0, NULL);
-	my synthPitchButton = Editor_addCommand (me, L"Synth", L" -- Pitch", GuiMenu_CHECKABLE, cb_Synth_Pitch);
-	my synthPitchHumButton = Editor_addCommand (me, L"Synth", L" -- Pitch (hum)", GuiMenu_CHECKABLE, cb_Synth_Pitch_hum);
-	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", GuiMenu_CHECKABLE, cb_Synth_Pulses_Pitch);
-	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", GuiMenu_CHECKABLE, cb_Synth_Pulses_Pitch_hum);
+	my synthPitchButton = Editor_addCommand (me, L"Synth", L" -- Pitch", GuiMenu_RADIO_NEXT, cb_Synth_Pitch);
+	my synthPitchHumButton = Editor_addCommand (me, L"Synth", L" -- Pitch (hum)", GuiMenu_RADIO_NEXT, cb_Synth_Pitch_hum);
+	my synthPulsesPitchButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch", GuiMenu_RADIO_NEXT, cb_Synth_Pulses_Pitch);
+	my synthPulsesPitchHumButton = Editor_addCommand (me, L"Synth", L"Pulses -- Pitch (hum)", GuiMenu_RADIO_NEXT, cb_Synth_Pulses_Pitch_hum);
 	Editor_addCommand (me, L"Synth", L"-- full resynth --", 0, NULL);
-	my synthOverlapAddButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_CHECKED, cb_Synth_OverlapAdd);
-	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_CHECKABLE, cb_Synth_Pitch_Lpc);
+	my synthOverlapAddButton = Editor_addCommand (me, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON, cb_Synth_OverlapAdd);
+	my synthPitchLpcButton = Editor_addCommand (me, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_RADIO_NEXT, cb_Synth_Pitch_Lpc);
+}
 
-	Editor_addCommand (me, L"Help", L"ManipulationEditor help", '?', cb_ManipulationEditorHelp);
-	Editor_addCommand (me, L"Help", L"Manipulation help", 0, cb_ManipulationHelp);
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (ManipulationEditor);
+	inherited (ManipulationEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"ManipulationEditor help", '?', cb_ManipulationEditorHelp);
+	EditorMenu_addCommand (menu, L"Manipulation help", 0, cb_ManipulationHelp);
 }
 
 /********** DRAWING AREA **********/
@@ -1227,15 +1232,17 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-class_methods (ManipulationEditor, FunctionEditor)
+class_methods (ManipulationEditor, FunctionEditor) {
 	class_method (destroy)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (save)
 	class_method (restore)
 	class_method (draw)
 	class_method (click)
 	class_method (play)
-class_methods_end
+	class_methods_end
+}
 
 ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana) {
 	ManipulationEditor me = new (ManipulationEditor);

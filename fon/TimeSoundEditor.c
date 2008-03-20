@@ -400,7 +400,7 @@ static void createMenuItems_view (I, EditorMenu menu) {
 static void createMenuItems_view_sound (I, EditorMenu menu) {
 	iam (TimeSoundEditor);
 	(void) me;
-	EditorMenu_addCommand (menu, L"Sound autoscaling", GuiMenu_CHECKABLE | (preferences.sound.autoscaling ? GuiMenu_CHECKED : 0), menu_cb_autoscaling);
+	EditorMenu_addCommand (menu, L"Sound autoscaling", GuiMenu_CHECKBUTTON | (preferences.sound.autoscaling ? GuiMenu_TOGGLE_ON : 0), menu_cb_autoscaling);
 	EditorMenu_addCommand (menu, L"-- sound view --", 0, 0);
 }
 

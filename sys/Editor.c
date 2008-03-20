@@ -1,6 +1,6 @@
 /* Editor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/09/08 createMenuItems_file and createMenuItems_edit
  * pb 2007/09/19 info
  * pb 2007/12/05 enums
+ * pb 2008/03/20 split off Help menu
  */
 
 #include <time.h>
@@ -392,6 +393,12 @@ static void createMenus (I) {
 	}
 }
 
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (Editor);
+	(void) me;
+	(void) menu;
+}
+
 static void createChildren (Any editor) {
 	(void) editor;
 }
@@ -446,6 +453,7 @@ class_methods (Editor, Thing) {
 	class_method (createMenuItems_query)
 	class_method (createMenuItems_query_info)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (createChildren)
 	class_method (dataChanged)
 	class_method (save)
@@ -509,11 +517,12 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 
 	my menus = Ordered_create ();
 	my menuBar = Gui_addMenuBar (my dialog);
-	Editor_addMenu (me, L"Help", 0);
 	our createMenus (me);
 	Melder_clearError ();   /* TEMPORARY: to protect against CategoriesEditor */
-	Editor_addCommand (me, L"Help", L"-- search --", 0, NULL);
-	my searchButton = Editor_addCommand (me, L"Help", L"Search manual...", 'M', menu_cb_searchManual);
+	EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
+	our createHelpMenuItems (me, helpMenu);
+	EditorMenu_addCommand (helpMenu, L"-- search --", 0, NULL);
+	my searchButton = EditorMenu_addCommand (helpMenu, L"Search manual...", 'M', menu_cb_searchManual);
 	if (our scriptable) {
 		Editor_addCommand (me, L"File", L"New editor script", 0, menu_cb_newScript);
 		Editor_addCommand (me, L"File", L"Open editor script...", 0, menu_cb_openScript);

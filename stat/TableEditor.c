@@ -1,6 +1,6 @@
 /* TableEditor.c
  *
- * Copyright (C) 2006-2007 Paul Boersma
+ * Copyright (C) 2006-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/03/20 split off Help menu
  */
 
 #include "TableEditor.h"
@@ -322,7 +323,12 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
 	Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
-	Editor_addCommand (me, L"Help", L"TableEditor help", '?', menu_cb_TableEditorHelp);
+}
+
+static void createHelpMenuItems (I, EditorMenu menu) {
+	iam (TableEditor);
+	inherited (TableEditor) createHelpMenuItems (me, menu);
+	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
 class_methods (TableEditor, Editor) {
@@ -330,6 +336,7 @@ class_methods (TableEditor, Editor) {
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenus)
+	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (click)
 class_methods_end }
